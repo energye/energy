@@ -1,4 +1,7 @@
-# energy
+# energy go基于CEF的桌面客户端框架
+[中文 ](https://github.com/energye/energy/blob/main/README.zh-CN.md)
+[English](https://github.com/energye/energy/blob/main/README.md)
+
 golang 基于CEF的GUI框架
 
 
