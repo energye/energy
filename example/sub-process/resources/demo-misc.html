@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        a, button {
+            margin: 5px;
+        }
+
+        .title, .select {
+            background: #C4E3FD;
+            width: 100%;
+            height: 35px;
+            position: fixed;
+            top: 0;
+        }
+
+        .select {
+            background: #ffffff;
+            top: 0px;
+            display: flex;
+        }
+
+        .select .inps {
+            flex: 1;
+        }
+
+        .select .inpQuery {
+            width: 50px;
+        }
+    </style>
+</head>
+<body id="bodyId" style="border: 0; padding: 0;margin:0;overflow-x: hidden;overflow-y: hidden;">
+
+<h3>主子进程独立示例</h3>
+
+<button onclick="GetVar()">GetVar</button>
+<button onclick="SetVarA(-1)">SetVar</button>
+<button onclick="SetVarA(0)">VarSetString</button>
+<button onclick="SetVarA(1)">VarSetInt</button>
+<button onclick="SetVarA(2)">VarSetDouble</button>
+<button onclick="SetVarA(3)">VarSetBool</button>
+<br>
+<a target="_blank" href="demo-misc.html">新窗口</a>
+<a href="https://www.baidu.com">百度一下</a>
+<br>
+<div id="test" style="width: 100%;border: solid 1px red;min-height: 100px;"></div>
+
+<script>
+    var doc = document.getElementById("test");
+
+    function test(...vvv) {
+        var str = doc.innerHTML;
+        for (var i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        doc.innerHTML = str;
+    }
+
+
+    function GetVar() {
+        try {
+            document.getElementById("test").innerHTML = "";
+            test('stringv:', window.gocobj.stringv);
+            test('integerv:', window.gocobj.integerv);
+            test('doublev:', window.gocobj.doublev);
+            test('booleanv:', window.gocobj.booleanv);
+            test('nullv:', window.gocobj.nullv);
+            test('undefinedv:', window.gocobj.undefinedv);
+        } catch (e) {
+            test(e)
+        }
+    }
+
+    function SetVarA(t) {
+        try {
+            if (t === 0) {
+                window.gocobj.stringv = "stringv我是字符串";
+                window.gocobj.integerv = "integerv我是字符串";
+                window.gocobj.doublev = "doublev我是字符串";
+                window.gocobj.booleanv = "booleanv我是字符串";
+            } else if (t === 1) {
+                window.gocobj.stringv = 111111;
+                window.gocobj.integerv = 222222;
+                window.gocobj.doublev = 33333;
+                window.gocobj.booleanv = 44444;
+            } else if (t === 2) {
+                window.gocobj.stringv = 111111.11111;
+                window.gocobj.integerv = 222222.22222;
+                window.gocobj.doublev = 33333.33333;
+                window.gocobj.booleanv = 44444.44444;
+            } else if (t === 3) {
+                window.gocobj.stringv = false;
+                window.gocobj.integerv = true;
+                window.gocobj.doublev = false;
+                window.gocobj.booleanv = true;
+            } else {
+                window.gocobj.stringv = "stringv"
+                window.gocobj.integerv = 3333;
+                window.gocobj.doublev = "我本来是double";
+                window.gocobj.booleanv = false;
+            }
+        } catch (e) {
+            test(e)
+        }
+    }
+
+
+</script>
+</body>
+</html>

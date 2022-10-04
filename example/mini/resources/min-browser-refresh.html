@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body id="bodyId" style="border: 0; padding: 0;margin:0;overflow-x: hidden;overflow-y: hidden;">
+    <h1>1秒刷新一次</h1>
+    <script>
+
+        //地址栏
+        ipc.on("OnLoadingStateChange", function (isLoading, canGoBack, canGoForward) {
+            console.log("OnLoadingStateChange", isLoading, canGoBack, canGoForward);
+            test("OnLoadingStateChange", isLoading, canGoBack, canGoForward);
+        })
+        ipc.on("OnLoadingProgressChange", function (progress) {
+            console.log("OnLoadingProgressChange", progress);
+            test("OnLoadingProgressChange", progress);
+        })
+        ipc.on("window-resize", function (x, y, w, h) {
+            document.getElementById("test").innerHTML = "";
+            test("window-resize", x, y, w, h);
+        });
+
+
+        //js 注册监听一些事件
+        ipc.on("ondalert", function () {
+            // alert("onalert执行了");
+        })
+        ipc.on("onDemoRetString", function (v1, v2, v3, v4) {
+            document.getElementById("test").innerHTML = "";
+            test("onDemoRetString", v1, v2, v3, v4);
+            return "onDemoRetString 我是结果";
+        })
+        ipc.on("onDemoRetInt", function (v1, v2, v3, v4) {
+            test("onDemoRetInt", v1, v2, v3, v4);
+            return 110;
+        })
+        ipc.on("onDemoRetDouble", function (v1, v2, v3, v4) {
+            test("onDemoRetDouble", v1, v2, v3, v4);
+            return 110.120;
+        })
+        ipc.on("onDemoRetBoolean", function (v1, v2, v3, v4) {
+            test("onDemoRetBoolean", v1, v2, v3, v4);
+            return true;
+        })
+        ipc.on("ondemo", function (v1, v2, v3, v4) {
+            test("ondemo", v1, v2, v3, v4);
+            return "ondemo 我是结果";
+        })
+        ipc.on("ondemo1", function (v1, v2, v3, v4) {
+            test("ondemo1", v1, v2, v3, v4);
+            return "ondemo1 我是结果";
+        })
+        ipc.on("ondemo2", function (v1, v2, v3, v4) {
+            test("ondemo2", v1, v2, v3, v4);
+            return "ondemo2 我是结果";
+        })
+        var retIdx = 0;
+        ipc.on("ondemo3", function (v1, v2, v3, v4) {
+            test("ondemo3", v1, v2, v3, v4)
+            retIdx++;
+            return "ondemo3 我是结果" + v1 + v2 + v3 + v4 + "  " + retIdx;
+        })
+        ipc.on("ondemo4", function (v1, v2, v3, v4) {
+            test("ondemo4", v1, v2, v3, v4)
+            return document.getElementById("bodyId").innerHTML.replaceAll("\n", "");
+        })
+
+        setTimeout(function () {
+            window.location.reload();
+        }, 1);
+    </script>
+</div>
+</body>
+</html>

@@ -1,0 +1,259 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License 2.0
+//
+//----------------------------------------
+
+package cef
+
+import (
+	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
+)
+
+// 窗口信息
+type TCefWindowInfo struct {
+	Window         *BaseWindow          `json:"-"` //窗口Form
+	Browser        *ICefBrowser         `json:"-"` //浏览器对象,加载完chromium之后创建
+	WindowProperty *WindowProperty      `json:"-"` //窗口属性
+	Frames         map[int64]*ICefFrame `json:"-"` //当前浏览器下的frame
+	auxTools       *auxTools            //辅助工具
+}
+
+type auxTools struct {
+	devToolsWindow   *BaseWindow //开发者工具窗口
+	devToolsX        int32       //上次改变的窗体位置，宽度
+	devToolsY        int32       //
+	devToolsWidth    int32       //
+	devToolsHeight   int32       //
+	viewSourceWindow *BaseWindow //viewSource
+	viewSourceUrl    string      //
+	viewSourceX      int32       //上次改变的窗体位置，宽度
+	viewSourceY      int32       //
+	viewSourceWidth  int32       //
+	viewSourceHeight int32       //
+}
+
+type WindowProperty struct {
+	IsShowModel    bool //是否以模态窗口显示
+	windowState    types.TWindowState
+	currentWindowX int32
+	currentWindowY int32
+	currentWindowW int32
+	currentWindowH int32
+}
+
+func NewWindowProperty() *WindowProperty {
+	return &WindowProperty{}
+}
+
+func (m *TCefWindowInfo) Chromium() IChromiumProc {
+	return m.Window.chromium
+}
+
+func (m *TCefWindowInfo) chromiumEvent() IChromiumEvent {
+	return m.Window.chromium
+}
+
+func (m *TCefWindowInfo) Minimize() {
+	QueueAsyncCall(func(id int) {
+		m.Window.SetWindowState(types.WsMinimized)
+	})
+}
+
+func (m *TCefWindowInfo) Maximize() {
+	BrowserWindow.uiLock.Lock()
+	defer BrowserWindow.uiLock.Unlock()
+	QueueAsyncCall(func(id int) {
+		var bs = m.Window.BorderStyle()
+		var monitor = m.Window.Monitor().WorkareaRect()
+		if bs == types.BsNone {
+			var ws = m.Window.WindowState()
+			var redWindowState types.TWindowState
+			//默认状态0
+			if m.WindowProperty.windowState == types.WsNormal && m.WindowProperty.windowState == ws {
+				redWindowState = types.WsMaximized
+			} else {
+				if m.WindowProperty.windowState == types.WsNormal {
+					redWindowState = types.WsMaximized
+				} else if m.WindowProperty.windowState == types.WsMaximized {
+					redWindowState = types.WsNormal
+				}
+			}
+			m.WindowProperty.windowState = redWindowState
+			if redWindowState == types.WsMaximized {
+				m.WindowProperty.currentWindowX = m.Window.Left()
+				m.WindowProperty.currentWindowY = m.Window.Top()
+				m.WindowProperty.currentWindowW = m.Window.Width()
+				m.WindowProperty.currentWindowH = m.Window.Height()
+				m.Window.SetLeft(monitor.Left)
+				m.Window.SetTop(monitor.Top)
+				m.Window.SetWidth(monitor.Right - monitor.Left - 1)
+				m.Window.SetHeight(monitor.Bottom - monitor.Top - 1)
+			} else if redWindowState == types.WsNormal {
+				m.Window.SetLeft(m.WindowProperty.currentWindowX)
+				m.Window.SetTop(m.WindowProperty.currentWindowY)
+				m.Window.SetWidth(m.WindowProperty.currentWindowW)
+				m.Window.SetHeight(m.WindowProperty.currentWindowH)
+			}
+		} else {
+			if m.Window.WindowState() == types.WsMaximized {
+				m.Window.SetWindowState(types.WsNormal)
+				if IsDarwin() {
+					m.Window.SetWindowState(types.WsMaximized)
+					m.Window.SetWindowState(types.WsNormal)
+				}
+			} else if m.Window.WindowState() == types.WsNormal {
+				m.Window.SetWindowState(types.WsMaximized)
+			}
+			m.WindowProperty.windowState = m.Window.WindowState()
+		}
+	})
+}
+
+func (m *TCefWindowInfo) WindowId() int32 {
+	return m.Window.windowId
+}
+
+// 关闭窗口-在ui线程中执行
+func (m *TCefWindowInfo) Close() {
+	BrowserWindow.uiLock.Lock()
+	defer BrowserWindow.uiLock.Unlock()
+	QueueAsyncCall(func(id int) {
+		if m == nil {
+			Logger.Error("关闭浏览器 WindowInfo 为空")
+			return
+		}
+		if m.Window == nil {
+			Logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
+			return
+		}
+		m.Window.isClosing = true
+		m.Window.Hide()
+		m.Window.chromium.CloseBrowser(true)
+	})
+}
+
+// 设置或增加一个窗口序号
+func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
+	if len(browserId) > 0 {
+		m.windowSerial = browserId[0]
+	} else {
+		m.windowSerial++
+	}
+	Logger.Debug("下一个窗口ID:", m.windowSerial)
+	return m.windowSerial
+}
+
+// 设置或减少一个窗口序号
+func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
+	if len(browserId) > 0 {
+		m.windowSerial = browserId[0]
+	} else {
+		m.windowSerial--
+	}
+	return m.windowSerial
+}
+
+// 获得窗口序号
+func (m *browser) GetNextWindowNum() int32 {
+	return m.windowSerial
+}
+
+func (m *browser) createNextPopupWindow() {
+	m.popupWindow = &BaseWindow{}
+	m.popupWindow.TForm = lcl.NewForm(m.MainWindowForm())
+	m.popupWindow.FormCreate()
+	m.popupWindow.defaultWindowEvent()
+	m.popupWindow.defaultWindowCloseEvent()
+}
+
+// 拿到窗口信息
+func (m *browser) GetWindowInfo(browserId int32) *TCefWindowInfo {
+	if winInfo, ok := m.windowInfo[browserId]; ok {
+		return winInfo
+	}
+	return nil
+}
+
+func (m *browser) GetWindowsInfo() map[int32]*TCefWindowInfo {
+	return m.windowInfo
+}
+
+func (m *browser) putWindowInfo(browserId int32, windowInfo *TCefWindowInfo) {
+	if winInfo, ok := m.windowInfo[browserId]; ok {
+		winInfo.Window = windowInfo.Window
+		//winInfo.chromiumEvent = windowInfo.chromiumEvent
+	} else {
+		m.windowInfo[browserId] = windowInfo
+	}
+}
+
+func (m *browser) removeWindowInfo(browseId int32) {
+	delete(m.windowInfo, browseId)
+	Proc("CEF_RemoveGoForm").Call(uintptr(browseId))
+}
+
+func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
+	if winInfo, ok := m.windowInfo[browseId]; ok {
+		return winInfo.Browser
+	}
+	return nil
+}
+
+func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
+	if winInfo, ok := m.windowInfo[browser.Identifier()]; !ok {
+		winInfo = &TCefWindowInfo{
+			Browser: browser,
+			Frames:  make(map[int64]*ICefFrame),
+		}
+		if frame != nil {
+			winInfo.Frames[frame.Id] = frame
+		}
+		m.windowInfo[browser.Identifier()] = winInfo
+	} else {
+		winInfo.Browser = browser
+		if frame != nil {
+			winInfo.Frames[frame.Id] = frame
+		}
+	}
+}
+
+func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
+	if winInfo, ok := m.windowInfo[browseId]; ok {
+		return winInfo.Frames
+	}
+	return nil
+}
+
+func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
+	if winInfo, ok := m.windowInfo[browseId]; ok {
+		return winInfo.Frames[frameId]
+	}
+	return nil
+}
+
+func (m *browser) RemoveFrame(browseId int32, frameId int64) {
+	if winInfo, ok := m.windowInfo[browseId]; ok {
+		delete(winInfo.Frames, frameId)
+	}
+}
+
+func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
+	if frame := m.GetFrame(browseId, frameId); frame != nil {
+		return true
+	}
+	return false
+}
+
+func (m *browser) removeNoValidFrames() {
+	for _, winInfo := range m.windowInfo {
+		for _, frm := range winInfo.Frames {
+			if !frm.IsValid() {
+				delete(winInfo.Frames, frm.Id)
+			}
+		}
+	}
+}

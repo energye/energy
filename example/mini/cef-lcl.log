@@ -1,0 +1,36 @@
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnContextCreated eventId: 218760992768 commonInstance.instance: 1855624239344
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnProcessMessageReceived eventId: 218758850560 commonInstance.instance: 1855624239344
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnBeforeChildProcessLaunch eventId: 218760947712 commonInstance.instance: 1855624239344
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnBeforeChildProcessLaunch eventId: 218758674432 commonInstance.instance: 1855624239344
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnContextCreated eventId: 218760439808 commonInstance.instance: 1855624239344
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnProcessMessageReceived eventId: 218758322176 commonInstance.instance: 1855624239344
+[CEF-LCL-Info] 2022/10/01 10:25:31 Create IPC browser
+[CEF-LCL-Info] 2022/10/01 10:25:31 IPC Server Accept
+[CEF-LCL-Debug] 2022/10/01 10:25:31 Total number of bindings： 6039
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnContextCreated eventId: 224900405248 commonInstance.instance: 2218023772896
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnProcessMessageReceived eventId: 224902457344 commonInstance.instance: 2218023772896
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnContextCreated eventId: 224899852288 commonInstance.instance: 2218023772896
+[CEF-LCL-Debug] 2022/10/01 10:25:31 CEFApplication Event name: OnProcessMessageReceived eventId: 224901928960 commonInstance.instance: 2218023772896
+[CEF-LCL-Debug] 2022/10/01 10:25:32 下一个窗口ID: 2
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 112653490176 commonInstance.instance: 1710152867920
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 112651347968 commonInstance.instance: 1710152867920
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 112652937216 commonInstance.instance: 1710152867920
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 112650819584 commonInstance.instance: 1710152867920
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 119073921024 commonInstance.instance: 2549285970000
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 119075973120 commonInstance.instance: 2549285970000
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 119073368064 commonInstance.instance: 2549285970000
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 119075444736 commonInstance.instance: 2549285970000
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 10081785856 commonInstance.instance: 1595852841520
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 10079643648 commonInstance.instance: 1595852841520
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 10081232896 commonInstance.instance: 1595852841520
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 10079115264 commonInstance.instance: 1595852841520
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 227271235584 commonInstance.instance: 1928955552224
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 227269093376 commonInstance.instance: 1928955552224
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnContextCreated eventId: 227270682624 commonInstance.instance: 1928955552224
+[CEF-LCL-Debug] 2022/10/01 10:25:32 CEFApplication Event name: OnProcessMessageReceived eventId: 227268564992 commonInstance.instance: 1928955552224
+[CEF-LCL-Debug] 2022/10/01 10:25:32 Total number of bindings： 6039
+[CEF-LCL-Info] 2022/10/01 10:25:32 Create IPC render isConnect: false channelId: 21474836481
+[CEF-LCL-Info] 2022/10/01 10:25:32 IPC browser on connect channelId: 21474836481
+[CEF-LCL-Debug] 2022/10/01 10:25:41 IPC Read size == 0 header: [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
+[CEF-LCL-Debug] 2022/10/01 10:25:41 IPC Read Disconnect type: [net socket] channelType: [server] browserId: 0 channelId: 0 processType: 
+[CEF-LCL-Debug] 2022/10/01 10:25:41 IPC browser channel remove channelId: 21474836481
