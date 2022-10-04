@@ -81,6 +81,7 @@ plugins
 /bin/win64
 /bin/win32
 /Librarys
+*.syso
 *.she
 *.vsf
 *.ini
