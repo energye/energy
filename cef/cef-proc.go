@@ -16,12 +16,6 @@ import (
 
 //--------TCEFApplication proc begin--------
 
-// TCEFApplication DemoCreateChromium
-func DemoCreateChromium() uintptr {
-
-	return 0
-}
-
 // TCEFApplication AddCrDelegate
 func AddCrDelegate() uintptr {
 	r1, _, _ := Proc("CEF_AddCrDelegate").Call()

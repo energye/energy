@@ -33,7 +33,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL
 	if cef.IsWindows() {
-		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\min-browser\\resources\\demo-misc.html"
+		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini\\resources\\demo-misc.html"
 		if !tools.IsExist(cef.BrowserWindow.Config.DefaultUrl) {
 			cef.BrowserWindow.Config.DefaultUrl = cef.ExePath + cef.Separator + "demo-misc.html"
 		}
