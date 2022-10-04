@@ -2,7 +2,7 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under Apache License 2.0
+// Licensed under GNU General Public License v3.0
 //
 //----------------------------------------
 
@@ -270,17 +270,10 @@ func removeMemory() {
 	os.Remove(ipcSock)
 }
 
-var (
-//ipcWriteBuf  = new(bytes.Buffer)
-//ipcWriteLock = new(sync.Mutex)
-)
-
 func ipcWrite(triggerMode triggerMode, channelId int64, eventId int32, eventName, data []byte, conn net.Conn) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
-	//ipcWriteLock.Lock()
-	//defer ipcWriteLock.Unlock()
 	if conn == nil {
 		return 0, errors.New("链接未建立成功")
 	}
@@ -299,8 +292,6 @@ func ipcWrite(triggerMode triggerMode, channelId int64, eventId int32, eventName
 	binary.Write(ipcWriteBuf, binary.BigEndian, int32(dataByteLen))    //数据长度
 	binary.Write(ipcWriteBuf, binary.BigEndian, eventName)             //监听事件名
 	binary.Write(ipcWriteBuf, binary.BigEndian, data)                  //数据
-	//Logger.Println("IPC Write 事件长度:", eventByteLen, " 数据长度:", dataByteLen, " 发送的数据：", buf.Bytes())
-	//Logger.Println("IPC Write Null判断:", conn == nil)
 	n, err = conn.Write(ipcWriteBuf.Bytes())
 	ipcWriteBuf.Reset()
 	return n, err
@@ -351,7 +342,6 @@ func ipcRead(handler *ipcReadHandler) {
 			low = protocolHeaderLength
 			high = protocolHeaderLength + triggerModeByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &triggerMode)
-			//Logger.Debug("IPC Read triggerMode:", triggerMode)
 			if err != nil {
 				Logger.Debug("binary.Read.triggerMode: ", err)
 				return
@@ -359,7 +349,6 @@ func ipcRead(handler *ipcReadHandler) {
 			low = high
 			high = high + renderChannelIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
-			//Logger.Debug("IPC Read channelId:", channelId)
 			if err != nil {
 				Logger.Debug("binary.Read.channelId: ", err)
 				return
@@ -367,7 +356,6 @@ func ipcRead(handler *ipcReadHandler) {
 			low = high
 			high = high + eventIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventId)
-			//Logger.Debug("IPC Read eventId:", eventId)
 			if err != nil {
 				Logger.Debug("binary.Read.eventIdByteLength: ", err)
 				return
@@ -375,14 +363,12 @@ func ipcRead(handler *ipcReadHandler) {
 			low = high
 			high = high + eventNameByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventLen)
-			//Logger.Debug("IPC Read eventLen:", eventLen)
 			if err != nil {
 				Logger.Debug("binary.Read.eventLen: ", err)
 				return
 			}
 			low = high
 			err = binary.Read(bytes.NewReader(header[low:headerLength]), binary.BigEndian, &dataLen)
-			//Logger.Debug("IPC Read dataLen:", dataLen, header[low:headerLength])
 			if err != nil {
 				Logger.Debug("binary.Read.dataLen: ", err)
 				return
@@ -390,7 +376,6 @@ func ipcRead(handler *ipcReadHandler) {
 
 			eventNameByte := make([]byte, eventLen)
 			size, err = handler.Read(eventNameByte)
-			//Logger.Debug("IPC Read eventNameByte:", eventNameByte)
 			if err != nil {
 				Logger.Debug("binary.Read.eventNameByte: ", err)
 				return
@@ -401,13 +386,10 @@ func ipcRead(handler *ipcReadHandler) {
 			if dataLen > 0 {
 				size, err = handler.Read(dataByte)
 			}
-			//Logger.Debug("IPC Read dataByteLen:", len(dataByte), "dataByte:", dataByte)
-			//Logger.Debug("----------------------------------------")
 			if err != nil {
 				Logger.Debug("binary.Read.data: ", err)
 				return
 			}
-			//Logger.Debug("eventName:", eventName, "data:", string(dataByte[:size]), " dataSize:", size, len(dataByte), dataByte, " error:", err)
 			ctx := &IPCContext{
 				ipcType:     handler.ipcType,
 				triggerMode: triggerMode,

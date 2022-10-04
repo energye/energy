@@ -2,7 +2,7 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under Apache License 2.0
+// Licensed under GNU General Public License v3.0
 //
 //----------------------------------------
 
