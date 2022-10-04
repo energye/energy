@@ -10,6 +10,10 @@ package cef
 
 import (
 	"embed"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/inits"
 	"github.com/energye/golcl/lcl"
 )
@@ -27,14 +31,14 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 	inits.Init(libs, resources)
 	if Args.IsRender() {
 		netIpcPort := Args.Args(MAINARGS_NETIPCPORT)
-		if netIpcPort != empty {
-			IPC.port = int(StrToInt32(netIpcPort))
+		if netIpcPort != Empty {
+			ipc.IPC.SetPort(int(StrToInt32(netIpcPort)))
 		}
 	}
-	ipcChannelChooseInit()
-	setMacOSXCommandLine(GoStrToDStr(Args.commandLine))
+	ipc.IPCChannelChooseInit()
+	setMacOSXCommandLine(GoStrToDStr(Args.CommandLine()))
 	applicationQueueAsyncCallInit()
-	commonInstanceInit()
+	CommonInstanceInit()
 	cefV8WindowBindFuncEventsInit()
 	cefIPCInit()
 	//应用低层出错异常捕获
@@ -42,7 +46,7 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 		if exceptionCallback != nil {
 			exceptionCallback(sender, e)
 		} else {
-			Logger.Error("Exception:", e.Message())
+			logger.Logger.Error("Exception:", e.Message())
 		}
 	})
 }

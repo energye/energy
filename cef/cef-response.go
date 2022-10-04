@@ -9,6 +9,8 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )

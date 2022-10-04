@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
 	"github.com/energye/energy/example/sub-process/common"
 	"github.com/energye/energy/example/sub-process/main-process/src"
 	"github.com/energye/golcl/pkgs/macapp"
@@ -22,7 +23,7 @@ func main() {
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
 	//MacOS配置要在 GlobalCEFInit 它之前
 	//特别说明MacOS：子进程不需要配置
-	if cef.IsDarwin() {
+	if commons.IsDarwin() {
 		//自动生成mac app程序包
 		macapp.MacApp.IsCEF(true)
 		//IsCEF=True 必须指定Frameworks目录
@@ -35,17 +36,17 @@ func main() {
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
 	cfg := cef.NewApplicationConfig()
 	//配置chromium frameworks 编译好的二进制目录
-	if cef.IsWindows() {
+	if commons.IsWindows() {
 		cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-103.0.9\\chromium")
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEFDelphi-Libs-103.09/chromium")
 	}
 	//子进程执行程序如果在 chromium 目录中可不配置
-	if cef.IsWindows() {
+	if commons.IsWindows() {
 		cfg.SetBrowseSubprocessPath("E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\demo-sub-process\\sub-process\\sub-process.exe")
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cfg.SetBrowseSubprocessPath("/home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/demo-sub-process/sub-process/sub-process")
-	} else if cef.IsDarwin() {
+	} else if commons.IsDarwin() {
 		//MacOS SetBrowseSubprocessPath 将不起任何作用。
 		//独立的子程序包需要在 macapp.MacApp.SetBrowseSubprocessPath 配置
 	}

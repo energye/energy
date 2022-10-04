@@ -9,6 +9,8 @@
 package cef
 
 import (
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -89,8 +91,8 @@ type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFr
 type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
 
 // 进程消息接收
-type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ICefProcessMessage) bool
-type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ICefProcessMessage) bool
+type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool
+type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool
 type ChromiumEventOnFindResult func(sender lcl.IObject, browser *ICefBrowser, identifier, count int32, selectionRect *TCefRect, activeMatchOrdinal int32, finalUpdate bool)
 
 // frame

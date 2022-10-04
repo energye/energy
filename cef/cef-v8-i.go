@@ -10,6 +10,8 @@ package cef
 
 import (
 	"bytes"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"strconv"
@@ -55,8 +57,8 @@ type JSValue interface {
 	setThat(that JSValue)
 	Bytes() []byte
 	ValueToPtr() (unsafe.Pointer, error)
-	lock()
-	unLock()
+	Lock()
+	UnLock()
 }
 
 //ICefV8Context bindGoToJS
@@ -68,7 +70,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//变量绑定回调函数
 	VariableBind.callVariableBind(browser, frame)
 	var valueBindInfos []*valueBindInfo
-	Logger.Debug("Total number of bindings：", VariableBind.ValueBindCount())
+	logger.Logger.Debug("Total number of bindings：", VariableBind.ValueBindCount())
 	for _, value := range VariableBind.valuesBind {
 		if !value.isCommon() {
 			continue

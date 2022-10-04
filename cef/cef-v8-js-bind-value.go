@@ -11,6 +11,9 @@ package cef
 import (
 	"errors"
 	"fmt"
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"sync"
@@ -68,7 +71,7 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	for i := 0; i < numIn; i++ {
 		idx = i + int(fnType)
 		inTyp := fnOf.In(idx).Kind().String()
-		if jsv, gov := paramType(inTyp); jsv == -1 && gov == -1 {
+		if jsv, gov := commons.ParamType(inTyp); jsv == -1 && gov == -1 {
 			//入参参数类型不正确
 			return nil, errors.New("WindowBind function parameter error: input parameter type can only be [string int float bool]")
 		} else {
@@ -79,7 +82,7 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 		r.OutParam = make([]*vt, numOut, numOut)
 		for i := 0; i < numOut; i++ {
 			outTyp := fnOf.Out(i)
-			if jsv, gov := paramType(outTyp.Kind().String()); jsv == -1 && gov == -1 {
+			if jsv, gov := commons.ParamType(outTyp.Kind().String()); jsv == -1 && gov == -1 {
 				//出参类型错误
 				return nil, errors.New("WindowBind function parameter error: output parameter type can only be [string int float bool]")
 			} else {
@@ -91,11 +94,11 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	return r, nil
 }
 
-func (m *ICEFv8Value) lock() {
+func (m *ICEFv8Value) Lock() {
 	m.rwLock.Lock()
 }
 
-func (m *ICEFv8Value) unLock() {
+func (m *ICEFv8Value) UnLock() {
 	m.rwLock.Unlock()
 }
 
@@ -121,22 +124,22 @@ func (m *ICEFv8Value) Bytes() []byte {
 	}
 	switch m.valueType {
 	case V8_VALUE_STRING:
-		return StringToBytes(iValue.(string))
+		return commons.StringToBytes(iValue.(string))
 	case V8_VALUE_INT:
-		if v, err := ValueToInt32(iValue); err == nil {
-			return Int32ToBytes(v)
+		if v, err := commons.ValueToInt32(iValue); err == nil {
+			return commons.Int32ToBytes(v)
 		} else {
 			return nil
 		}
 	case V8_VALUE_DOUBLE:
-		if v, err := ValueToFloat64(iValue); err == nil {
-			return Float64ToBytes(v)
+		if v, err := commons.ValueToFloat64(iValue); err == nil {
+			return commons.Float64ToBytes(v)
 		} else {
 			return nil
 		}
 	case V8_VALUE_BOOLEAN:
-		if v, err := ValueToBool(iValue); err == nil {
-			return []byte{BoolToByte(v)}
+		if v, err := commons.ValueToBool(iValue); err == nil {
+			return []byte{commons.BoolToByte(v)}
 		} else {
 			return nil
 		}
@@ -161,19 +164,19 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 		return unsafe.Pointer(api.GoStrToDStr(iValue.(string))), nil
 		//return GoStrToDStrPointer(iValue.(string)), nil
 	case V8_VALUE_INT:
-		if v, err := ValueToInt32(iValue); err == nil {
+		if v, err := commons.ValueToInt32(iValue); err == nil {
 			return unsafe.Pointer(uintptr(v)), nil
 		} else {
 			return nil, err
 		}
 	case V8_VALUE_DOUBLE:
-		if v, err := ValueToFloat64(iValue); err == nil {
+		if v, err := commons.ValueToFloat64(iValue); err == nil {
 			return unsafe.Pointer(&v), nil
 		} else {
 			return nil, err
 		}
 	case V8_VALUE_BOOLEAN:
-		if v, err := ValueToBool(iValue); err == nil {
+		if v, err := commons.ValueToBool(iValue); err == nil {
 			return unsafe.Pointer(api.GoBoolToDBool(v)), nil
 		} else {
 			return nil, err
@@ -184,7 +187,7 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 }
 
 func (m *ICEFv8Value) SetAnyValue(value interface{}) error {
-	switch JSValueAssertType(value) {
+	switch commons.JSValueAssertType(value) {
 	case V8_VALUE_STRING:
 		m.setValueType(V8_VALUE_STRING)
 	case V8_VALUE_INT:
@@ -246,28 +249,28 @@ func (m *ICEFv8Value) setInstance(instance uintptr) {
 
 func (m *ICEFv8Value) StringValue() (string, error) {
 	if m.IsString() {
-		return ValueToString(m.value)
+		return commons.ValueToString(m.value)
 	}
 	return "", errors.New("failed to get a string value")
 }
 
 func (m *ICEFv8Value) IntegerValue() (int32, error) {
 	if m.IsInteger() {
-		return ValueToInt32(m.value)
+		return commons.ValueToInt32(m.value)
 	}
 	return 0, errors.New("failed to get a integer value")
 }
 
 func (m *ICEFv8Value) DoubleValue() (float64, error) {
 	if m.IsDouble() {
-		return ValueToFloat64(m.value)
+		return commons.ValueToFloat64(m.value)
 	}
 	return 0, errors.New("failed to get a double value")
 }
 
 func (m *ICEFv8Value) BooleanValue() (bool, error) {
 	if m.IsBool() {
-		return ValueToBool(m.value)
+		return commons.ValueToBool(m.value)
 	}
 	return false, errors.New("failed to get a boolean value")
 }
@@ -365,7 +368,7 @@ func (m *ICEFv8Value) AsFunction() (*JSFunction, error) {
 func (m *ICEFv8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool) {
 	defer func() {
 		if err := recover(); err != nil {
-			Logger.Error("V8BindFuncCallbackHandler recover:", err)
+			logger.Logger.Error("V8BindFuncCallbackHandler recover:", err)
 			outParams = []reflect.Value{reflect.ValueOf(err.(error).Error())}
 			success = false
 		}

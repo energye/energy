@@ -10,6 +10,7 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/consts"
 )
 
 type JSInteger struct {
@@ -36,7 +37,7 @@ func (m *JSInteger) Value() int32 {
 	}
 }
 func (m *JSInteger) SetValue(value int32) {
-	m.valueType = V8_VALUE_INT
+	m.valueType = consts.V8_VALUE_INT
 	m.value = value
 }
 

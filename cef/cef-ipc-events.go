@@ -9,6 +9,11 @@
 package cef
 
 import (
+	"bytes"
+	"encoding/binary"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"net"
@@ -64,7 +69,7 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 	//	}
 	//}()
 	getVal := func(i int) uintptr {
-		return getParamOf(i, args)
+		return GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -80,7 +85,7 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 		ipcId := *(*int32)(getPtr(0))
 		tmType := *(*int32)(getPtr(1))
 		result := (*rGoResult)(getPtr(2))
-		ipcGoEmitJS(ipcId, triggerMode(tmType), result, args)
+		ipcGoEmitJS(ipcId, TriggerMode(tmType), result, args)
 		result.set(0, 0, 0, 0, 0)
 		result = nil
 	}
@@ -88,8 +93,8 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 }
 
 //ipc - go emit js on event
-func ipcGoEmitJS(ipcId int32, triggerMode triggerMode, result *rGoResult, args uintptr) {
-	inArgument := NewArgumentList()
+func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args uintptr) {
+	inArgument := ipc.NewArgumentList()
 	inArgument.SetBool(1, true)
 	if CEF_V8_EXCEPTION(result.exception) == CVE_ERROR_OK {
 		switch V8_JS_VALUE_TYPE(result.valueType) {
@@ -98,9 +103,9 @@ func ipcGoEmitJS(ipcId int32, triggerMode triggerMode, result *rGoResult, args u
 		case V8_VALUE_INT:
 			inArgument.SetInt32(0, int32(result.value))
 		case V8_VALUE_DOUBLE:
-			inArgument.SetFloat64(0, *(*float64)(getParamPtr(result.value, 0)))
+			inArgument.SetFloat64(0, *(*float64)(GetParamPtr(result.value, 0)))
 		case V8_VALUE_BOOLEAN:
-			inArgument.SetBool(0, *(*bool)(getParamPtr(result.value, 0)))
+			inArgument.SetBool(0, *(*bool)(GetParamPtr(result.value, 0)))
 		default:
 			inArgument.SetBool(1, false)
 			inArgument.SetString(0, "不支持的数据类型")
@@ -109,26 +114,20 @@ func ipcGoEmitJS(ipcId int32, triggerMode triggerMode, result *rGoResult, args u
 		inArgument.SetBool(1, false)
 		inArgument.SetString(0, api.DStrToGoStr(result.value))
 	}
-	if triggerMode == tm_Callback { //回调函数
-		if callback, ok := executeJS.emitCallback.emitCollection.Load(ipcId); ok {
-			executeJS.emitCallback.emitCollection.Delete(ipcId)
-			ctx := &IPCContext{
-				result:    &IPCContextResult{},
-				arguments: inArgument,
-			}
-			callback.(ipcCallback)(ctx)
+	if triggerMode == Tm_Callback { //回调函数
+		if callback, ok := executeJS.emitCallback.EmitCollection.Load(ipcId); ok {
+			executeJS.emitCallback.EmitCollection.Delete(ipcId)
+			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, nil, &ipc.IPCContextResult{}, inArgument)
+			callback.(ipc.IPCCallback)(ctx)
 			ctx.Free()
 		}
-	} else if triggerMode == tm_Sync { //同步调用
-		if chn, ok := executeJS.emitSync.emitCollection.Load(ipcId); ok {
-			ctx := &IPCContext{
-				result:    &IPCContextResult{},
-				arguments: inArgument,
-			}
-			var c = chn.(chan IIPCContext)
+	} else if triggerMode == Tm_Sync { //同步调用
+		if chn, ok := executeJS.emitSync.EmitCollection.Load(ipcId); ok {
+			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, nil, &ipc.IPCContextResult{}, inArgument)
+			var c = chn.(chan ipc.IIPCContext)
 			c <- ctx
 			close(c)
-			executeJS.emitSync.emitCollection.Delete(ctx.eventId)
+			executeJS.emitSync.EmitCollection.Delete(ctx.EventId())
 		}
 	}
 }
@@ -136,13 +135,13 @@ func ipcGoEmitJS(ipcId int32, triggerMode triggerMode, result *rGoResult, args u
 //ipc - js emit go on event
 func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	getVal := func(i int) uintptr {
-		return getParamOf(i, args)
+		return GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
 	var (
-		inArgument   = NewArgumentList()
+		inArgument   = ipc.NewArgumentList()
 		fullName     = api.DStrToGoStr(eventParam.FullName)
 		valueTypeLen = eventParam.ValueTypeArrLen //入参类型数组
 		accIdx       = 2                          //占用的下标
@@ -150,7 +149,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	if valueTypeLen > 0 {
 		//取入参
 		for i := 0; i < int(valueTypeLen); i++ {
-			valueType := V8_JS_VALUE_TYPE(*(*byte)(getParamPtr(eventParam.ValueTypeArr, i)))
+			valueType := V8_JS_VALUE_TYPE(*(*byte)(GetParamPtr(eventParam.ValueTypeArr, i)))
 			switch valueType {
 			case V8_VALUE_STRING:
 				inArgument.SetString(i, api.DStrToGoStr(getVal(i+accIdx)))
@@ -173,9 +172,9 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			if bindType == IS_OBJECT {
 				name = name[len(objectRootName)+1:]
 			}
-			if jsValue, ok := VariableBind.getValueBind(name); ok {
-				jsValue.lock()
-				defer jsValue.unLock()
+			if jsValue, ok := VariableBind.GetValueBind(name); ok {
+				jsValue.Lock()
+				defer jsValue.UnLock()
 				if jsValue.ValueType() == V8_VALUE_FUNCTION { //func
 					var fnInfo = jsValue.getFuncInfo()
 					if fnInfo != nil {
@@ -223,18 +222,18 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 							errorMsg = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
 						} else {
 							if fieldNewValue.IsString() {
-								errorMsg = cefErrorMessage(_setPtrValue(jsValue, V8_VALUE_STRING, fieldNewValue.GetString(), 0, 0, false))
+								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_STRING, fieldNewValue.GetString(), 0, 0, false))
 							} else if fieldNewValue.IsIntAuto() {
-								errorMsg = cefErrorMessage(_setPtrValue(jsValue, V8_VALUE_INT, empty, fieldNewValue.GetInt32(), 0, false))
+								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_INT, Empty, fieldNewValue.GetInt32(), 0, false))
 							} else if fieldNewValue.IsFloatAuto() {
-								errorMsg = cefErrorMessage(_setPtrValue(jsValue, V8_VALUE_DOUBLE, empty, 0, fieldNewValue.GetFloat64(), false))
+								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_DOUBLE, Empty, 0, fieldNewValue.GetFloat64(), false))
 							} else if fieldNewValue.IsBoolean() {
-								errorMsg = cefErrorMessage(_setPtrValue(jsValue, V8_VALUE_BOOLEAN, empty, 0, 0, fieldNewValue.GetBool()))
+								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_BOOLEAN, Empty, 0, 0, fieldNewValue.GetBool()))
 							} else {
 								errorMsg = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
 							}
 						}
-						if empty == errorMsg {
+						if Empty == errorMsg {
 							result.set(uintptr(oldValuePtr), uintptr(jsValue.ValueType()), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 						} else {
 							result.set(api.GoStrToDStr(errorMsg), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
@@ -260,31 +259,21 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 		}
 	} else {
 		//尝试触发用户自定义 ipc fullName emit
-		if callback := IPC.browser.events.get(fullName); callback != nil {
+		if callback := ipc.IPC.Browser().Events().Get(fullName); callback != nil {
 			var (
 				channelId = StrToInt64(api.DStrToGoStr(eventParam.FrameId))
 				ipcType   IPC_TYPE
 				unixConn  *net.UnixConn
 				netConn   net.Conn
 			)
-			if chn, ok := IPC.browser.channel[channelId]; chn != nil && ok {
-				ipcType = chn.ipcType
-				unixConn = chn.unixConn
-				netConn = chn.netConn
+			if chn := ipc.IPC.Browser().Channel(channelId); chn != nil {
+				ipcType = chn.IPCType
+				unixConn = chn.UnixConn
+				netConn = chn.NetConn
 			}
-			ctx := &IPCContext{
-				eventName:    fullName,
-				browserId:    eventParam.BrowserId,
-				channelId:    channelId,
-				ipcType:      ipcType,
-				unixConn:     unixConn,
-				netConn:      netConn,
-				eventMessage: &IPCEventMessage{},
-				result:       &IPCContextResult{},
-				arguments:    inArgument,
-			}
+			ctx := ipc.NewIPCContext(fullName, eventParam.BrowserId, channelId, ipcType, unixConn, netConn, &ipc.IPCEventMessage{}, &ipc.IPCContextResult{}, inArgument)
 			callback(ctx)
-			result.set(uintptr(ctx.result.result), uintptr(ctx.result.vType), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
+			result.set(uintptr(ctx.Result().Result()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
 		} else {
 			result.set(0, 0, 0, 0, uintptr(CVE_ERROR_NOT_FOUND_FIELD))
 		}
@@ -317,7 +306,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 			fullName = strings.Join(fnArr, ".")
 			return IS_COMMON, fullName, V8_VALUE_ROOT_OBJECT, 0, CVE_ERROR_OK
 		} else if fnArrLen == 2 {
-			if jsValue, ok := VariableBind.getValueBind(fnArr[1]); ok { //通用类型 fnArr[1] 1是因为 obj.field ,这个field 就是1
+			if jsValue, ok := VariableBind.GetValueBind(fnArr[1]); ok { //通用类型 fnArr[1] 1是因为 obj.field ,这个field 就是1
 				return IS_COMMON, jsValue.Name(), jsValue.ValueType(), int32(jsValue.getEventId()), CVE_ERROR_OK
 			} else {
 				//不存在
@@ -369,7 +358,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 
 }
 
-func inArgumentAdapter(argsIdxOffset int, inArgument IArgumentList, fnInfo *funcInfo) {
+func inArgumentAdapter(argsIdxOffset int, inArgument ipc.IArgumentList, fnInfo *funcInfo) {
 	items := inArgument.Items()
 	inParamType := fnInfo.InParam
 	for i := argsIdxOffset; i < inArgument.Size(); i++ {
@@ -379,7 +368,7 @@ func inArgumentAdapter(argsIdxOffset int, inArgument IArgumentList, fnInfo *func
 	}
 }
 
-func outArgumentAdapter(argsIdxOffset int, outArgument IArgumentList, fnInfo *funcInfo) {
+func outArgumentAdapter(argsIdxOffset int, outArgument ipc.IArgumentList, fnInfo *funcInfo) {
 	items := outArgument.Items()
 	outParamType := fnInfo.OutParam
 	for i := argsIdxOffset; i < outArgument.Size(); i++ {
@@ -387,4 +376,118 @@ func outArgumentAdapter(argsIdxOffset int, outArgument IArgumentList, fnInfo *fu
 			outArgument.SetIntAuto(i, items[i].GetInt32(), fnInfo.InParam[i-argsIdxOffset].Gov)
 		}
 	}
+}
+
+func internalBrowserIPCOnEventInit() {
+	var ipcJsBindGetValueSuccess = func(buf *bytes.Buffer, valueType int8, data []byte) {
+		//rec
+		//	eventID 	[]byte		4bit
+		//ret
+		//	isSuccess 	[]byte 		1bit
+		//	valueType 	[]byte 		1bit
+		//	value		[]byte 		MaxInt32bit
+		binary.Write(buf, binary.BigEndian, true)      //成功
+		binary.Write(buf, binary.BigEndian, valueType) //字段类型
+		binary.Write(buf, binary.BigEndian, data)      //字段值
+	}
+
+	var ipcJsBindGetValueFail = func(buf *bytes.Buffer, err CEF_V8_EXCEPTION) {
+		binary.Write(buf, binary.BigEndian, false) //失败
+		binary.Write(buf, binary.BigEndian, int8(err))
+	}
+	//var occIdx = ipcAccIdx
+	//主进程监听回调
+	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
+		//var fieldReadWriteLock = new(sync.Mutex)
+		//获取字段值-同步
+		event.On(ipc.Ln_GET_BIND_FIELD_VALUE, func(context ipc.IIPCContext) {
+			args := context.Arguments()
+			defer args.Clear()
+			fullName := args.GetString(0)
+			var jsValue, ok = VariableBind.GetValueBind(fullName)
+			buf := &bytes.Buffer{}
+			defer buf.Reset()
+			if ok {
+				jsValue.Lock()
+				defer jsValue.UnLock()
+				var valueType = int8(jsValue.ValueType())
+				ipcJsBindGetValueSuccess(buf, valueType, jsValue.Bytes())
+			} else {
+				ipcJsBindGetValueFail(buf, CVE_ERROR_NOT_FOUND_FIELD)
+			}
+			context.Response(buf.Bytes())
+			buf = nil
+			context.Free()
+		})
+		//设置字段值-同步
+		event.On(ipc.Ln_SET_BIND_FIELD_VALUE, func(context ipc.IIPCContext) {
+			args := context.Arguments()
+			defer args.Clear()
+			fullName := args.GetString(0)
+			item := args.Item(1)
+			newValueType := item.VTypeToJS()
+			jsValue, ok := VariableBind.GetValueBind(fullName)
+			isSuccess := false
+			retArgs := ipc.NewArgumentList()
+			defer retArgs.Clear()
+			if ok {
+				jsValue.Lock()
+				defer jsValue.UnLock()
+				switch newValueType { //设置值，这里是通用类型只需要知道js里设置的什么类型即可
+				case V8_VALUE_STRING:
+					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, item.GetString(), 0, 0, false))
+				case V8_VALUE_INT:
+					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, item.GetInt32(), 0, false))
+				case V8_VALUE_DOUBLE:
+					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, 0, item.GetFloat64(), false))
+				case V8_VALUE_BOOLEAN:
+					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, 0, 0, item.GetBool()))
+				}
+			} else {
+				retArgs.SetInt8(1, int8(CVE_ERROR_NOT_FOUND_FIELD))
+			}
+			retArgs.SetBool(0, isSuccess)
+			context.Response(retArgs.Package())
+			context.Free()
+		})
+		//执行函数-同步
+		event.On(ipc.Ln_EXECUTE_BIND_FUNC, func(context ipc.IIPCContext) {
+			args := context.Arguments()
+			fullName := args.GetString(args.Size() - 1)
+			dataItems := args.RangeItems(0, args.Size()-1)
+			var inArgument = ipc.NewArgumentList()
+			inArgument.SetItems(dataItems)
+			var jsValue, ok = VariableBind.GetValueBind(fullName)
+			var (
+				outParams []reflect.Value
+				isSuccess bool
+			)
+			var buf = &bytes.Buffer{}
+			defer buf.Reset()
+			if ok {
+				jsValue.Lock()
+				defer jsValue.UnLock()
+				var fnInfo = jsValue.getFuncInfo()
+				if fnInfo != nil {
+					outParams, isSuccess = jsValue.invoke(inArgument.ToReflectValue())
+					inArgument.Clear()
+					var outArguments = ipc.NewArgumentList()
+					outArguments.ReflectValueConvert(outParams)
+					binary.Write(buf, binary.BigEndian, isSuccess)
+					binary.Write(buf, binary.BigEndian, outArguments.Package())
+					outArguments.Clear()
+				} else {
+					binary.Write(buf, binary.BigEndian, isSuccess)
+					binary.Write(buf, binary.BigEndian, int8(CVE_ERROR_NOT_FOUND_FUNC))
+				}
+			} else {
+				binary.Write(buf, binary.BigEndian, isSuccess)
+				binary.Write(buf, binary.BigEndian, int8(CVE_ERROR_NOT_FOUND_FUNC))
+			}
+			context.Response(buf.Bytes())
+			buf = nil
+			args.Clear()
+			context.Free()
+		})
+	})
 }

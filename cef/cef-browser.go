@@ -9,6 +9,8 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -312,7 +314,7 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	Proc("CEFBrowser_GetFrameNames").Call(uintptr(m.browseId), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultSize)))
 	frameNames := make([]*FrameNames, resultSize, resultSize)
 	for i := 0; i < int(resultSize); i++ {
-		fnsPtr := (*frameNamesPtr)(unsafe.Pointer(getParamOf(i, result)))
+		fnsPtr := (*frameNamesPtr)(unsafe.Pointer(GetParamOf(i, result)))
 		frameNames[i] = &FrameNames{
 			Name:  api.DStrToGoStr(fnsPtr.Name),
 			Value: api.DStrToGoStr(fnsPtr.Value),

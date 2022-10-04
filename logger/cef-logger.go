@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cef
+package logger
 
 import (
 	"io"

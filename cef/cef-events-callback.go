@@ -9,6 +9,9 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
@@ -121,8 +124,8 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 }
 
 func chromiumOnBeforeClose(browser *ICefBrowser) {
-	if IPC.render != nil && !SingleProcess && processName != PT_DEVTOOLS {
-		IPC.render.close()
+	if ipc.IPC.Render() != nil && !SingleProcess && processName != PT_DEVTOOLS {
+		ipc.IPC.Render().Close()
 	}
 }
 
@@ -145,7 +148,7 @@ func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
 		clearValueBind()
 		bindGoToJS(browser, frame)
 	}
-	IPC.CreateRenderIPC(browser.Identifier(), frame.Id)
+	ipc.IPC.CreateRenderIPC(browser.Identifier(), frame.Id)
 }
 
 var (

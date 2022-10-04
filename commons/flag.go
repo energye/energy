@@ -6,11 +6,12 @@
 //
 //----------------------------------------
 
-package cef
+package commons
 
 import (
 	"bytes"
 	"fmt"
+	"github.com/energye/energy/logger"
 	"os"
 	"strings"
 )
@@ -45,6 +46,10 @@ func argsParse() *_args {
 		args.isMain = true
 	}
 	return args
+}
+
+func (m *_args) CommandLine() string {
+	return m.commandLine
 }
 
 func (m *_args) Size() int {
@@ -89,6 +94,9 @@ func (m *_args) IsSubprocess() bool {
 	return ok
 }
 
+func (m *_args) SetArgs(name, value string) {
+	m.value[name] = PRCESS_TYPE(value)
+}
 func (m *_args) Args(name string) string {
 	if v, ok := m.value[name]; ok {
 		return string(v)
@@ -97,7 +105,7 @@ func (m *_args) Args(name string) string {
 }
 
 func (m *_args) Print() {
-	Logger.Debug("command line:", m.size)
+	logger.Logger.Debug("command line:", m.size)
 	for key, value := range m.value {
 		fmt.Printf("_args[%v = %v]\n", key, value)
 	}

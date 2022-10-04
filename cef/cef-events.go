@@ -9,6 +9,10 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -47,7 +51,7 @@ func init() {
 			FirstPartyForCookies: api.DStrToGoStr(cefRequest.FirstPartyForCookies),
 			ResourceType:         int32(cefRequest.ResourceType),
 			TransitionType:       int(cefRequest.TransitionType),
-			Identifier:           *(*uint64)(getParamPtr(cefRequest.Identifier, 0)),
+			Identifier:           *(*uint64)(GetParamPtr(cefRequest.Identifier, 0)),
 		}
 		if resp {
 			cefResponse := (*iCefResponse)(getPtr(4))
@@ -68,7 +72,7 @@ func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		defer func() {
 			if err := recover(); err != nil {
-				Logger.Error("CEF Events Error:", err)
+				logger.Logger.Error("CEF Events Error:", err)
 			}
 		}()
 		var (
@@ -101,10 +105,10 @@ func init() {
 				Url:     api.DStrToGoStr(tempFrame.Url),
 				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
 			}
-			cefProcMsg := (*cefProcessMessage)(getPtr(4))
-			args := NewArgumentList()
+			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(4))
+			args := ipc.NewArgumentList()
 			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
-			processMessage := &ICefProcessMessage{
+			processMessage := &ipc.ICefProcessMessage{
 				Name:         api.DStrToGoStr(cefProcMsg.Name),
 				ArgumentList: args,
 			}
@@ -223,18 +227,18 @@ func init() {
 			fn.(ChromiumEventOnCookiesFlushed)(lcl.AsObject(getVal(0)))
 		case ChromiumEventOnCookiesVisited:
 			cookie := *(*cefCookie)(getPtr(1))
-			creation := *(*float64)(getParamPtr(cookie.creation, 0))
-			lastAccess := *(*float64)(getParamPtr(cookie.lastAccess, 0))
-			expires := *(*float64)(getParamPtr(cookie.expires, 0))
+			creation := *(*float64)(GetParamPtr(cookie.creation, 0))
+			lastAccess := *(*float64)(GetParamPtr(cookie.lastAccess, 0))
+			expires := *(*float64)(GetParamPtr(cookie.expires, 0))
 			iCookie := &ICefCookie{
 				Url:            api.DStrToGoStr(cookie.url),
 				Name:           api.DStrToGoStr(cookie.name),
 				Value:          api.DStrToGoStr(cookie.value),
 				Domain:         api.DStrToGoStr(cookie.domain),
 				Path:           api.DStrToGoStr(cookie.path),
-				Secure:         *(*bool)(getParamPtr(cookie.secure, 0)),
-				Httponly:       *(*bool)(getParamPtr(cookie.httponly, 0)),
-				HasExpires:     *(*bool)(getParamPtr(cookie.hasExpires, 0)),
+				Secure:         *(*bool)(GetParamPtr(cookie.secure, 0)),
+				Httponly:       *(*bool)(GetParamPtr(cookie.httponly, 0)),
+				HasExpires:     *(*bool)(GetParamPtr(cookie.hasExpires, 0)),
 				Creation:       DDateTimeToGoDateTime(creation),
 				LastAccess:     DDateTimeToGoDateTime(lastAccess),
 				Expires:        DDateTimeToGoDateTime(expires),
@@ -243,9 +247,9 @@ func init() {
 				ID:             int32(cookie.aID),
 				SameSite:       TCefCookieSameSite(cookie.sameSite),
 				Priority:       TCefCookiePriority(cookie.priority),
-				SetImmediately: *(*bool)(getParamPtr(cookie.aSetImmediately, 0)),
-				DeleteCookie:   *(*bool)(getParamPtr(cookie.aDeleteCookie, 0)),
-				Result:         *(*bool)(getParamPtr(cookie.aResult, 0)),
+				SetImmediately: *(*bool)(GetParamPtr(cookie.aSetImmediately, 0)),
+				DeleteCookie:   *(*bool)(GetParamPtr(cookie.aDeleteCookie, 0)),
+				Result:         *(*bool)(GetParamPtr(cookie.aResult, 0)),
 			}
 			fn.(ChromiumEventOnCookiesVisited)(lcl.AsObject(getVal(0)), iCookie)
 		case ChromiumEventOnCookieVisitorDestroyed:
@@ -370,8 +374,8 @@ func init() {
 				PercentComplete:    int32(item.PercentComplete),
 				TotalBytes:         int64(item.TotalBytes),
 				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          DDateTimeToGoDateTime(*(*float64)(getParamPtr(item.StartTime, 0))),
-				EndTime:            DDateTimeToGoDateTime(*(*float64)(getParamPtr(item.EndTime, 0))),
+				StartTime:          DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.StartTime, 0))),
+				EndTime:            DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.EndTime, 0))),
 				FullPath:           api.DStrToGoStr(item.FullPath),
 				Url:                api.DStrToGoStr(item.Url),
 				OriginalUrl:        api.DStrToGoStr(item.OriginalUrl),
@@ -399,8 +403,8 @@ func init() {
 				PercentComplete:    int32(item.PercentComplete),
 				TotalBytes:         int64(item.TotalBytes),
 				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          DDateTimeToGoDateTime(*(*float64)(getParamPtr(item.StartTime, 0))),
-				EndTime:            DDateTimeToGoDateTime(*(*float64)(getParamPtr(item.EndTime, 0))),
+				StartTime:          DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.StartTime, 0))),
+				EndTime:            DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.EndTime, 0))),
 				FullPath:           api.DStrToGoStr(item.FullPath),
 				Url:                api.DStrToGoStr(item.Url),
 				OriginalUrl:        api.DStrToGoStr(item.OriginalUrl),

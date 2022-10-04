@@ -11,6 +11,8 @@ package cef
 import (
 	"bytes"
 	"encoding/binary"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 )
 
 type ICefDictionaryValue struct {

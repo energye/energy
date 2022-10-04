@@ -8,7 +8,10 @@
 
 package cef
 
-import "unsafe"
+import (
+	. "github.com/energye/energy/commons"
+	"unsafe"
+)
 
 type ICefCallback struct {
 	instance uintptr

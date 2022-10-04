@@ -10,6 +10,8 @@ package cef
 
 //应用主线程异步回调
 import (
+	. "github.com/energye/energy/commons"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"math"
@@ -54,7 +56,7 @@ type queueAsyncCall struct {
 func QueueAsyncCall(fn QacFn) int {
 	defer func() {
 		if err := recover(); err != nil {
-			Logger.Error("QueueAsyncCall Error:", err)
+			logger.Logger.Error("QueueAsyncCall Error:", err)
 		}
 	}()
 	id := qac.set(&queueCall{
@@ -75,7 +77,7 @@ func QueueAsyncCall(fn QacFn) int {
 func QueueSyncCall(fn QacFn) int {
 	defer func() {
 		if err := recover(); err != nil {
-			Logger.Error("QueueSyncCall Error:", err)
+			logger.Logger.Error("QueueSyncCall Error:", err)
 		}
 	}()
 	qc := &queueCall{
@@ -96,7 +98,7 @@ func QueueSyncCall(fn QacFn) int {
 func (m *queueAsyncCall) call(id uintptr) {
 	defer func() {
 		if err := recover(); err != nil {
-			Logger.Error("QueueSyncCall Call Error:", err)
+			logger.Logger.Error("QueueSyncCall Call Error:", err)
 		}
 	}()
 	if call, ok := m.calls.LoadAndDelete(id); ok {

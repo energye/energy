@@ -6,16 +6,18 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
 	"fmt"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 	"net"
 	"sync"
 )
 
 type renderChannel struct {
-	msgID              *msgID
+	msgID              *MsgID
 	browserId          int32
 	channelId          int64 //render channel Id
 	ipcType            IPC_TYPE
@@ -24,27 +26,27 @@ type renderChannel struct {
 	netConn            net.Conn
 	mutex              sync.Mutex
 	events             *event
-	emitCallback       *emitCallbackCollection
-	emitSync           map[string]*emitSyncCollection
+	emitCallback       *EmitCallbackCollection
+	emitSync           map[string]*EmitSyncCollection
 	renderOnEvents     []func(browseProcess IEventOn)
 	renderEmitCallback []func(renderProcess IEventEmit)
 	isConnect          bool
 }
 
 // 触发事件回调函数集合
-type emitCallbackCollection struct {
-	emitCollection sync.Map
+type EmitCallbackCollection struct {
+	EmitCollection sync.Map
 }
 
 // 触发同步事件集合
-type emitSyncCollection struct {
-	mutex          *sync.Mutex
-	emitCollection sync.Map
+type EmitSyncCollection struct {
+	Mutex          *sync.Mutex
+	EmitCollection sync.Map
 }
 
 func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 	if UseNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPC.port)
+		address := fmt.Sprintf("localhost:%d", IPC.Port)
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
@@ -56,11 +58,11 @@ func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 		if len(memoryAddresses) > 0 {
 			memoryAddr = memoryAddresses[0]
 		}
-		unixAddr, err := net.ResolveUnixAddr(memoryNetwork, memoryAddr)
+		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, memoryAddr)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
-		unixConn, err := net.DialUnix(memoryNetwork, nil, unixAddr)
+		unixConn, err := net.DialUnix(MemoryNetwork, nil, unixAddr)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
@@ -71,11 +73,19 @@ func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 	go m.render.receive()
 }
 
-func (m *emitCallbackCollection) remove(key int32) {
-	m.emitCollection.Delete(key)
+func (m *EmitCallbackCollection) remove(key int32) {
+	m.EmitCollection.Delete(key)
 }
 
-func (m *renderChannel) close() {
+func (m *renderChannel) Events() *event {
+	return m.events
+}
+
+func (m *renderChannel) Channel(channelId int64) *channel {
+	return nil
+}
+
+func (m *renderChannel) Close() {
 	if m.unixConn != nil {
 		m.unixConn.Close()
 		m.unixConn = nil
@@ -95,7 +105,7 @@ func (m *renderChannel) SetOnEvent(callback func(event IEventOn)) {
 }
 
 func (m *renderChannel) call(name string, context IIPCContext) bool {
-	callBack := m.events.get(name)
+	callBack := m.events.Get(name)
 	if callBack != nil {
 		callBack(context)
 		return true
@@ -115,10 +125,10 @@ func (m *renderChannel) Emit(eventName string, arguments IArgumentList) {
 	if arguments == nil {
 		arguments = NewArgumentList()
 	}
-	ipcWrite(tm_Async, m.channelId, m.msgID.new(), []byte(eventName), arguments.Package(), m.conn())
+	ipcWrite(Tm_Async, m.channelId, m.msgID.New(), []byte(eventName), arguments.Package(), m.conn())
 }
 
-func (m *renderChannel) EmitAndCallback(eventName string, arguments IArgumentList, callback ipcCallback) {
+func (m *renderChannel) EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) {
 	if m.conn() == nil {
 		return
 	}
@@ -127,9 +137,9 @@ func (m *renderChannel) EmitAndCallback(eventName string, arguments IArgumentLis
 	if arguments == nil {
 		arguments = NewArgumentList()
 	}
-	eventId := m.msgID.new()
-	m.emitCallback.emitCollection.Store(eventId, callback)
-	ipcWrite(tm_Callback, m.channelId, eventId, []byte(eventName), arguments.Package(), m.conn())
+	eventId := m.msgID.New()
+	m.emitCallback.EmitCollection.Store(eventId, callback)
+	ipcWrite(Tm_Callback, m.channelId, eventId, []byte(eventName), arguments.Package(), m.conn())
 }
 
 func (m *renderChannel) EmitAndReturn(eventName string, arguments IArgumentList) IIPCContext {
@@ -138,13 +148,13 @@ func (m *renderChannel) EmitAndReturn(eventName string, arguments IArgumentList)
 	}
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	var emit = func(emitAsync *emitSyncCollection) IIPCContext {
-		emitAsync.mutex.Lock()
-		defer emitAsync.mutex.Unlock()
-		eventId := m.msgID.new()
+	var emit = func(emitAsync *EmitSyncCollection) IIPCContext {
+		emitAsync.Mutex.Lock()
+		defer emitAsync.Mutex.Unlock()
+		eventId := m.msgID.New()
 		var chn = make(chan IIPCContext)
-		emitAsync.emitCollection.Store(eventId, chn)
-		ipcWrite(tm_Sync, m.channelId, eventId, []byte(eventName), arguments.Package(), m.conn())
+		emitAsync.EmitCollection.Store(eventId, chn)
+		ipcWrite(Tm_Sync, m.channelId, eventId, []byte(eventName), arguments.Package(), m.conn())
 		return <-chn
 	}
 	if arguments == nil {
@@ -153,7 +163,7 @@ func (m *renderChannel) EmitAndReturn(eventName string, arguments IArgumentList)
 	if emitAsync, ok := m.emitSync[eventName]; ok {
 		return emit(emitAsync)
 	} else {
-		m.emitSync[eventName] = &emitSyncCollection{mutex: new(sync.Mutex), emitCollection: sync.Map{}}
+		m.emitSync[eventName] = &EmitSyncCollection{Mutex: new(sync.Mutex), EmitCollection: sync.Map{}}
 		return emit(m.emitSync[eventName])
 	}
 }
@@ -168,42 +178,42 @@ func (m *renderChannel) conn() net.Conn {
 func (m *renderChannel) emitConnect() {
 	args := NewArgumentList()
 	args.SetString(0, "-connecting")
-	m.Emit(ln_onConnectEvent, args)
+	m.Emit(Ln_onConnectEvent, args)
 	m.isConnect = true
 }
 
 func (m *renderChannel) receive() {
 	defer func() {
-		m.close()
+		m.Close()
 	}()
 	var readHandler = &ipcReadHandler{
 		browserId: m.browserId,
 		channelId: m.channelId,
-		ct:        ct_Client,
+		ct:        Ct_Client,
 		ipcType:   m.ipcType,
 		unixConn:  m.unixConn,
 		unixAddr:  m.unixAddr,
 		netConn:   m.netConn,
 		handler: func(ctx *IPCContext) {
 			if m.call(ctx.eventName, ctx) {
-				if (ctx.triggerMode == tm_Callback || ctx.triggerMode == tm_Sync) && !ctx.isReply {
+				if (ctx.triggerMode == Tm_Callback || ctx.triggerMode == Tm_Sync) && !ctx.isReply {
 					ctx.Response([]byte{})
 				}
 			} else {
-				if ctx.triggerMode == tm_Callback { //回调函数
+				if ctx.triggerMode == Tm_Callback { //回调函数
 					m.mutex.Lock()
 					defer m.mutex.Unlock()
-					if callback, ok := m.emitCallback.emitCollection.Load(ctx.eventId); ok {
-						callback.(ipcCallback)(ctx)
-						m.emitCallback.emitCollection.Delete(ctx.eventId)
+					if callback, ok := m.emitCallback.EmitCollection.Load(ctx.eventId); ok {
+						callback.(IPCCallback)(ctx)
+						m.emitCallback.EmitCollection.Delete(ctx.eventId)
 					}
-				} else if ctx.triggerMode == tm_Sync { //同步调用
+				} else if ctx.triggerMode == Tm_Sync { //同步调用
 					if emitAsync, ok := m.emitSync[ctx.eventName]; ok {
-						if chn, ok := emitAsync.emitCollection.Load(ctx.eventId); ok {
+						if chn, ok := emitAsync.EmitCollection.Load(ctx.eventId); ok {
 							var c = chn.(chan IIPCContext)
 							c <- ctx
 							close(c)
-							emitAsync.emitCollection.Delete(ctx.eventId)
+							emitAsync.EmitCollection.Delete(ctx.eventId)
 						}
 					}
 				}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
 	"github.com/energye/energy/example/sub-process/common"
 	"github.com/energye/energy/example/sub-process/sub-process/src"
 )
@@ -19,9 +20,9 @@ func main() {
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
 	cfg := cef.NewApplicationConfig()
 	//配置chromium frameworks 编译好的二进制目录
-	if cef.IsWindows() {
+	if commons.IsWindows() {
 		cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-103.0.9\\chromium")
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEFDelphi-Libs-103.09/chromium")
 	}
 	//创建Cef应用

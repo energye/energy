@@ -6,14 +6,16 @@
 //
 //----------------------------------------
 
-package cef
+package commons
 
 import (
 	"bytes"
 	"encoding/binary"
 	"errors"
 	"fmt"
+	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/dylib"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"math"
 	"reflect"
@@ -24,8 +26,26 @@ import (
 	"unsafe"
 )
 
-//proc_name 名称获取
-func proc_name(procName, methodName string) string {
+var (
+	IntSize   = int32(unsafe.Sizeof(0))
+	CommonPtr = &commonInstance{} //通用实例
+)
+
+type commonInstance struct {
+	lcl.IObject
+	instance uintptr
+	ptr      unsafe.Pointer
+}
+
+func (m *commonInstance) Ptr() unsafe.Pointer {
+	return m.ptr
+}
+func (m *commonInstance) Instance() uintptr {
+	return m.instance
+}
+
+//Proc_Concat_Name 名称获取
+func Proc_Concat_Name(procName, methodName string) string {
 	return procName + "_" + methodName
 }
 
@@ -94,12 +114,12 @@ func GoStrToDStr(s string) uintptr {
 }
 
 // 获取参数指针
-func getParamOf(index int, ptr uintptr) uintptr {
+func GetParamOf(index int, ptr uintptr) uintptr {
 	return *(*uintptr)(unsafe.Pointer(ptr + uintptr(index)*unsafe.Sizeof(ptr)))
 }
 
 // 根据指定指针位置开始 偏移获取指针
-func getParamPtr(ptr uintptr, offset int) unsafe.Pointer {
+func GetParamPtr(ptr uintptr, offset int) unsafe.Pointer {
 	return unsafe.Pointer(ptr + uintptr(offset))
 }
 
@@ -481,7 +501,7 @@ func ValueToBytes(v interface{}) []byte {
 	return nil
 }
 
-func paramType(t string) (V8_JS_VALUE_TYPE, GO_VALUE_TYPE) {
+func ParamType(t string) (V8_JS_VALUE_TYPE, GO_VALUE_TYPE) {
 	switch t {
 	case "string":
 		return V8_VALUE_STRING, GO_VALUE_STRING
@@ -508,7 +528,7 @@ func paramType(t string) (V8_JS_VALUE_TYPE, GO_VALUE_TYPE) {
 	}
 }
 
-func funcParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {
+func FuncParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {
 	switch jsValue {
 	case V8_VALUE_STRING:
 		return "string"
@@ -525,7 +545,7 @@ func funcParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {
 	}
 }
 
-func funcParamGoTypeStr(jsValue GO_VALUE_TYPE) string {
+func FuncParamGoTypeStr(jsValue GO_VALUE_TYPE) string {
 	switch jsValue {
 	case GO_VALUE_STRING:
 		return "string"
@@ -563,7 +583,7 @@ func CopyBytePtr(bytePtr uintptr, low, high int) []byte {
 
 func IntToBytes(i int) []byte {
 	buf := bytes.NewBuffer([]byte{})
-	if intSize == 4 {
+	if IntSize == 4 {
 		if err := binary.Write(buf, binary.BigEndian, int32(i)); err == nil {
 			return buf.Bytes()
 		}
@@ -747,10 +767,10 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 	return -1
 }
 
-func commonInstanceInit() {
+func CommonInstanceInit() {
 	r1, _, _ := Proc("CEFApplication_GetCommonInstance").Call()
-	commonInstance.instance = r1
-	commonInstance.ptr = unsafe.Pointer(r1)
+	CommonPtr.instance = r1
+	CommonPtr.ptr = unsafe.Pointer(r1)
 }
 
 //获取指针的指针的地址

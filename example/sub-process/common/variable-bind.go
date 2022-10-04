@@ -3,6 +3,7 @@ package common
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
 )
 
 func VariableBind() {
@@ -12,7 +13,7 @@ func VariableBind() {
 	*/
 	//ar integer cef.JSValue
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
-		fmt.Println("GO变量和函数绑定回调 当前进程类型-ProcessType:", cef.Args.ProcessType())
+		fmt.Println("GO变量和函数绑定回调 当前进程类型-ProcessType:", commons.Args.ProcessType())
 		bind.NewString("stringv", "我是渲染进程里的值")
 		bind.NewInteger("integerv", 1211111)
 		bind.NewDouble("doublev", 11.0505)

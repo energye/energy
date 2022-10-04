@@ -10,7 +10,7 @@ package cef
 
 import (
 	"bytes"
-	"github.com/energye/golcl/lcl"
+	. "github.com/energye/energy/consts"
 	"strings"
 	"time"
 	"unsafe"
@@ -20,12 +20,6 @@ type TCefCloseBrowsesAction CBS
 
 type String struct {
 	value string
-}
-
-type CommonInstance struct {
-	lcl.IObject
-	instance uintptr
-	ptr      unsafe.Pointer
 }
 
 type cefV8Context struct {

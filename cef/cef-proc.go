@@ -9,6 +9,7 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"unsafe"
@@ -94,178 +95,178 @@ func _CEFLinkedWindow_OnExit(instance uintptr, fn interface{}) {
 
 // Create 创建
 func Create(name string, owner uintptr) uintptr {
-	name = proc_name(name, "Create")
+	name = Proc_Concat_Name(name, "Create")
 	r1, _, _ := Proc(name).Call(owner)
 	return r1
 }
 
 // GetHandle 获取组件句柄
 func GetHandle(name string, instance uintptr) uintptr {
-	name = proc_name(name, "GetHandle")
+	name = Proc_Concat_Name(name, "GetHandle")
 	ret, _, _ := Proc(name).Call(instance)
 	return ret
 }
 
 func DestroyChildWindow(name string, instance uintptr) uintptr {
-	name = proc_name(name, "DestroyChildWindow")
+	name = Proc_Concat_Name(name, "DestroyChildWindow")
 	ret, _, _ := Proc(name).Call(instance)
 	return ret
 }
 
 // _HandleAllocated
 func HandleAllocated(name string, instance uintptr) uintptr {
-	name = proc_name(name, "HandleAllocated")
+	name = Proc_Concat_Name(name, "HandleAllocated")
 	r1, _, _ := Proc(name).Call(instance)
 	return r1
 }
 
 // CreateHandle
 func CreateHandle(name string, instance uintptr) {
-	name = proc_name(name, "CreateHandle")
+	name = Proc_Concat_Name(name, "CreateHandle")
 	Proc(name).Call(instance)
 }
 
 // Free 释放
 func Free(name string, instance uintptr) uintptr {
-	name = proc_name(name, "Free")
+	name = Proc_Concat_Name(name, "Free")
 	r1, _, _ := Proc(name).Call(instance)
 	return r1
 }
 
 // SetParent 设置父组件
 func SetParent(name string, instance, owner uintptr) {
-	name = proc_name(name, "SetParent")
+	name = Proc_Concat_Name(name, "SetParent")
 	Proc(name).Call(instance, owner)
 }
 
 // Align 获取控件自动调整。
 func Align(name string, instance uintptr) types.TAlign {
-	name = proc_name(name, "GetAlign")
+	name = Proc_Concat_Name(name, "GetAlign")
 	r1, _, _ := Proc(name).Call(instance)
 	return types.TAlign(r1)
 }
 
 // SetAlign 设置获取控件自动调整。
 func SetAlign(name string, instance uintptr, value types.TAlign) {
-	name = proc_name(name, "SetAlign")
+	name = Proc_Concat_Name(name, "SetAlign")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // Anchors 获取四个角位置的锚点。
 func Anchors(name string, instance uintptr) types.TAnchors {
-	name = proc_name(name, "GetAnchors")
+	name = Proc_Concat_Name(name, "GetAnchors")
 	r1, _, _ := Proc(name).Call(instance)
 	return types.TAnchors(r1)
 }
 
 // SetAnchors 设置四个角位置的锚点。
 func SetAnchors(name string, instance uintptr, value types.TAnchors) {
-	name = proc_name(name, "SetAnchors")
+	name = Proc_Concat_Name(name, "SetAnchors")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // GetVisible 获取控件可视。
 func GetVisible(name string, instance uintptr) bool {
-	name = proc_name(name, "GetVisible")
+	name = Proc_Concat_Name(name, "GetVisible")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DBoolToGoBool(ret)
 }
 
 // SetVisible 设置控件可视。
 func SetVisible(name string, instance uintptr, value bool) {
-	name = proc_name(name, "SetVisible")
+	name = Proc_Concat_Name(name, "SetVisible")
 	Proc(name).Call(instance, api.GoBoolToDBool(value))
 }
 
 // GetEnabled 获取是否启用
 func GetEnabled(name string, instance uintptr) bool {
-	name = proc_name(name, "GetEnabled")
+	name = Proc_Concat_Name(name, "GetEnabled")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DBoolToGoBool(ret)
 }
 
 // SetEnabled 设置是否启用
 func SetEnabled(name string, instance uintptr, value bool) {
-	name = proc_name(name, "SetEnabled")
+	name = Proc_Concat_Name(name, "SetEnabled")
 	Proc(name).Call(instance, api.GoBoolToDBool(value))
 }
 
 // GetLeft 获取左边距
 func GetLeft(name string, instance uintptr) int32 {
-	name = proc_name(name, "GetLeft")
+	name = Proc_Concat_Name(name, "GetLeft")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
 // SetLeft 设置左边距
 func SetLeft(name string, instance uintptr, value int32) {
-	name = proc_name(name, "SetLeft")
+	name = Proc_Concat_Name(name, "SetLeft")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // Top 获取上边距
 func GetTop(name string, instance uintptr) int32 {
-	name = proc_name(name, "GetTop")
+	name = Proc_Concat_Name(name, "GetTop")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
 // SetTop 设置上边距
 func SetTop(name string, instance uintptr, value int32) {
-	name = proc_name(name, "SetTop")
+	name = Proc_Concat_Name(name, "SetTop")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // GetWidth 获取宽度
 func GetWidth(name string, instance uintptr) int32 {
-	name = proc_name(name, "GetWidth")
+	name = Proc_Concat_Name(name, "GetWidth")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
 // SetWidth 设置宽度
 func SetWidth(name string, instance uintptr, value int32) {
-	name = proc_name(name, "SetWidth")
+	name = Proc_Concat_Name(name, "SetWidth")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // GetHeight 获取高度
 func GetHeight(name string, instance uintptr) int32 {
-	name = proc_name(name, "GetHeight")
+	name = Proc_Concat_Name(name, "GetHeight")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
 // SetHeight 设置高度
 func SetHeight(name string, instance uintptr, value int32) {
-	name = proc_name(name, "SetHeight")
+	name = Proc_Concat_Name(name, "SetHeight")
 	Proc(name).Call(instance, uintptr(value))
 }
 
 // GetBoundsRect
 func GetBoundsRect(name string, instance uintptr) types.TRect {
 	var ret types.TRect
-	name = proc_name(name, "GetBoundsRect")
+	name = Proc_Concat_Name(name, "GetBoundsRect")
 	Proc(name).Call(instance, uintptr(unsafe.Pointer(&ret)))
 	return ret
 }
 
 // SetBoundsRect
 func SetBoundsRect(name string, instance uintptr, value types.TRect) {
-	name = proc_name(name, "SetBoundsRect")
+	name = Proc_Concat_Name(name, "SetBoundsRect")
 	Proc(name).Call(instance, uintptr(unsafe.Pointer(&value)))
 }
 
 // GetName 获取组件名称。
 func GetName(name string, instance uintptr) string {
-	name = proc_name(name, "GetName")
+	name = Proc_Concat_Name(name, "GetName")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DStrToGoStr(ret)
 }
 
 // SetName 设置组件名称。
 func SetName(name string, instance uintptr, value string) {
-	name = proc_name(name, "SetName")
+	name = Proc_Concat_Name(name, "SetName")
 	Proc(name).Call(instance, api.GoStrToDStr(value))
 }
 

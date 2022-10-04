@@ -10,6 +10,7 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/consts"
 	"strconv"
 )
 
@@ -200,7 +201,7 @@ func NewCefARGB(a, r, g, b uint32) *TCefARGB {
 	}
 }
 
-func (m *TCefARGB) ARGB() ARGB {
+func (m *TCefARGB) ARGB() consts.ARGB {
 	ca, _ := strconv.ParseUint(fmt.Sprintf("%02X%02X%02X%02X", m.A, m.R, m.G, m.B), 16, 32)
-	return ARGB(ca)
+	return consts.ARGB(ca)
 }

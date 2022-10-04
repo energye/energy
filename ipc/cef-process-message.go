@@ -6,18 +6,16 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
 	"bytes"
 	"encoding/binary"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 	"reflect"
 	"sync"
 	"unsafe"
-)
-
-var (
-	intSize = int32(unsafe.Sizeof(0))
 )
 
 type IArgumentList interface {
@@ -65,7 +63,7 @@ type ICefProcessMessage struct {
 	ArgumentList IArgumentList
 }
 
-type cefProcessMessage struct {
+type CefProcessMessagePtr struct {
 	Name    uintptr
 	Data    uintptr
 	DataLen uintptr
@@ -98,7 +96,7 @@ func NewProcessMessage(name string) *ICefProcessMessage {
 func baseDataLength(gvt GO_VALUE_TYPE) int32 {
 	switch gvt {
 	case GO_VALUE_INT, GO_VALUE_UINT:
-		return intSize
+		return IntSize
 	case GO_VALUE_INT8, GO_VALUE_UINT8, GO_VALUE_BOOL:
 		return 1
 	case GO_VALUE_INT16, GO_VALUE_UINT16:

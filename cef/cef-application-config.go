@@ -9,6 +9,7 @@
 package cef
 
 import (
+	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
 )
 
@@ -37,16 +38,16 @@ type tCefApplicationConfig struct {
 //创建应用全局配置
 func NewApplicationConfig() *tCefApplicationConfig {
 	m := &tCefApplicationConfig{}
-	m.SetFrameworkDirPath(empty)
-	m.SetResourcesDirPath(empty)
-	m.SetLocalesDirPath(empty)
-	m.SetCache(empty)
-	m.SetUserDataPath(empty)
+	m.SetFrameworkDirPath(Empty)
+	m.SetResourcesDirPath(Empty)
+	m.SetLocalesDirPath(Empty)
+	m.SetCache(Empty)
+	m.SetUserDataPath(Empty)
 	m.SetLanguage(LANGUAGE_zh_CN)
-	m.SetLocalesRequired(empty)
-	m.SetLogFile(empty)
-	m.SetMainBundlePath(empty)
-	m.SetBrowseSubprocessPath(empty)
+	m.SetLocalesRequired(Empty)
+	m.SetLogFile(Empty)
+	m.SetMainBundlePath(Empty)
+	m.SetBrowseSubprocessPath(Empty)
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
 	m.SetEnableGPU(enableGPU)
 	m.SetSingleProcess(false)

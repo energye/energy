@@ -3,14 +3,17 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"strings"
 )
 
 func AppRenderInit() *cef.TCEFApplication {
 	//Cef应用的配置
 	cfg := cef.NewApplicationConfig()
-	var env = cef.Args.Args("env")
-	if cef.IsWindows() {
+	var env = commons.Args.Args("env")
+	if commons.IsWindows() {
 		if env == "32" {
 			cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32")
 			cfg.SetResourcesDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32")
@@ -26,7 +29,7 @@ func AppRenderInit() *cef.TCEFApplication {
 			cfg.SetCache("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64\\UserData")
 			cfg.SetLogFile("E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\debug.log")
 		}
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium")
 		cfg.SetResourcesDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium")
 		cfg.SetLocalesDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium/locales")
@@ -35,8 +38,8 @@ func AppRenderInit() *cef.TCEFApplication {
 		cfg.SetLogFile("/home/sxm/app/swt/gopath/src/swt-lazarus/demo17-dll-load/debug.log")
 	}
 	//cfg.SetLogSeverity(cef.LOGSEVERITY_DEBUG)
-	cfg.SetLogSeverity(cef.LOGSEVERITY_DISABLE)
-	cfg.SetLanguage(cef.LANGUAGE_zh_CN)
+	cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
+	cfg.SetLanguage(consts.LANGUAGE_zh_CN)
 	cfg.SetEnableGPU(false)
 	cfg.SetSingleProcess(false)
 	//cfg.SetDisableZygote(true)
@@ -47,20 +50,20 @@ func AppRenderInit() *cef.TCEFApplication {
 	//创建Cef应用
 	cefApp := cef.NewApplication(cfg)
 	//fmt.Printf("cefApp:%+v %s\n", cefApp, runtime.GOOS)
-	if cef.Args.IsMain() {
+	if commons.Args.IsMain() {
 		//cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
 		//	//主进程 自定义参数
 		//	fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", cef.Args.ProcessType())
 		//	commandLine.AppendSwitch("env", env)
 		//})
-	} else if cef.Args.IsRender() {
+	} else if commons.Args.IsRender() {
 		//取出主进程 自定义参数
 
-		fmt.Println("ipc-port", cef.Args.Args("net-ipc-port"), cef.Args.ProcessType())
+		fmt.Println("ipc-port", commons.Args.Args("net-ipc-port"), commons.Args.ProcessType())
 	}
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
 		//主进程 自定义参数
-		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", cef.Args.ProcessType())
+		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", commons.Args.ProcessType())
 		commandLine.AppendSwitch("env", env)
 		commandLine.AppendArgument("--test")
 	})
@@ -74,12 +77,12 @@ func AppRenderInit() *cef.TCEFApplication {
 		return false //返回 false 时，运行IPC 和 变量绑定
 	})
 	//渲染进程的消息处理
-	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess cef.CefProcessId, message *cef.ICefProcessMessage) bool {
+	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		fmt.Println("======================渲染进程 OnProcessMessageReceived IPC browserId:", browser.Identifier(), "frameId:", frame.Id, "sourceProcess:", sourceProcess, "processMessage.Name:", message.Name)
-		fmt.Println("\t|--Args:", cef.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
-		message = cef.NewProcessMessage("test")
+		fmt.Println("\t|--Args:", commons.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
+		message = ipc.NewProcessMessage("test")
 		message.ArgumentList.SetString(0, "渲染进程发送数据")
-		frame.SendProcessMessage(cef.PID_BROWSER, message)
+		frame.SendProcessMessage(consts.PID_BROWSER, message)
 		message.ArgumentList.Clear()
 		return false
 	})
@@ -94,10 +97,10 @@ func AppRenderInit() *cef.TCEFApplication {
 	//})
 
 	//渲染进程 IPC事件
-	cef.IPC.Render().SetOnEvent(func(event cef.IEventOn) {
+	ipc.IPC.Render().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("渲染进程IPC事件注册")
 		//渲染进程监听的事件
-		event.On("renderOnEventSubWindowIPCOn", func(context cef.IIPCContext) {
+		event.On("renderOnEventSubWindowIPCOn", func(context ipc.IIPCContext) {
 			fmt.Println("render renderOnEventSubWindowIPCOn")
 			//渲染进程处理程序....
 			context.Response([]byte("返回了,可以关闭"))

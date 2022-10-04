@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
 	"fmt"

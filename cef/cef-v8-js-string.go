@@ -8,6 +8,8 @@
 
 package cef
 
+import "github.com/energye/energy/consts"
+
 type JSString struct {
 	ICEFv8Value
 }
@@ -25,7 +27,7 @@ func (m *JSString) Value() string {
 }
 
 func (m *JSString) SetValue(value string) {
-	m.valueType = V8_VALUE_STRING
+	m.valueType = consts.V8_VALUE_STRING
 	m.value = value
 }
 func (m *JSString) ToString() string {

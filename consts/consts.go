@@ -6,10 +6,57 @@
 //
 //----------------------------------------
 
-package cef
+package consts
+
+import (
+	"github.com/energye/golcl/tools/homedir"
+	"os"
+	"path/filepath"
+	"strings"
+)
+
+var (
+	ExePath       string                       //执行文件目录
+	HomeDir, _    = homedir.Dir()              //系统用户目录
+	Separator     = string(filepath.Separator) //
+	SingleProcess = false                      //进程启动方式, true单进程 false多进程
+)
+
+func init() {
+	ExePath = os.Args[0]
+	ExePath = ExePath[:strings.LastIndex(ExePath, Separator)]
+}
 
 const (
-	empty               = ""
+	MemoryAddress = "go_cef.sock"
+	MemoryNetwork = "unix"
+)
+
+//0:net 1:unix
+type IPC_TYPE int8
+
+const (
+	IPCT_NET IPC_TYPE = iota
+	IPCT_UNIX
+)
+
+type ChannelType int8
+
+const (
+	Ct_Server ChannelType = iota
+	Ct_Client
+)
+
+type TriggerMode int8
+
+const (
+	Tm_Async    TriggerMode = iota //异步
+	Tm_Callback                    //异步，带回调函数返回结果
+	Tm_Sync                        //同步，阻塞等待结果返回值
+)
+
+const (
+	Empty               = ""
 	MAINARGS_NETIPCPORT = "net-ipc-port"
 	download_dir        = "downloads"
 	ipcAccIdx           = 8 //ipc args新的参数开始位置
@@ -190,15 +237,15 @@ const (
 type CEF_ON_EVENTS string
 
 const (
-	onContextCreated           CEF_ON_EVENTS = "OnContextCreated"
-	onWebKitInitialized                      = "OnWebKitInitialized"
-	onProcessMessageReceived                 = "OnProcessMessageReceived"
-	onBeforeChildProcessLaunch               = "OnBeforeChildProcessLaunch"
-	onBrowserDestroyed                       = "OnBrowserDestroyed"
-	onRenderLoadStart                        = "OnRenderLoadStart"
-	onRenderLoadEnd                          = "OnRenderLoadEnd"
-	onRenderLoadError                        = "OnRenderLoadError"
-	onRenderLoadingStateChange               = "OnRenderLoadingStateChange"
+	OnContextCreated           CEF_ON_EVENTS = "OnContextCreated"
+	OnWebKitInitialized                      = "OnWebKitInitialized"
+	OnProcessMessageReceived                 = "OnProcessMessageReceived"
+	OnBeforeChildProcessLaunch               = "OnBeforeChildProcessLaunch"
+	OnBrowserDestroyed                       = "OnBrowserDestroyed"
+	OnRenderLoadStart                        = "OnRenderLoadStart"
+	OnRenderLoadEnd                          = "OnRenderLoadEnd"
+	OnRenderLoadError                        = "OnRenderLoadError"
+	OnRenderLoadingStateChange               = "OnRenderLoadingStateChange"
 )
 
 //JS属性

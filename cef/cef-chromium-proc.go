@@ -9,6 +9,9 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"strings"
@@ -18,11 +21,11 @@ import (
 
 type IChromiumProc interface {
 	lcl.IObject
-	On(name string, eventCallback EventCallback)
+	On(name string, eventCallback ipc.EventCallback)
 	ExecuteJavaScript(code, scriptURL string, startLine int32)
-	Emit(eventName string, args IArgumentList, target *GoEmitTarget) ProcessMessageError
-	EmitAndCallback(eventName string, args IArgumentList, target *GoEmitTarget, callback ipcCallback) ProcessMessageError
-	EmitAndReturn(eventName string, args IArgumentList, target *GoEmitTarget) (IIPCContext, ProcessMessageError)
+	Emit(eventName string, args ipc.IArgumentList, target *GoEmitTarget) ProcessMessageError
+	EmitAndCallback(eventName string, args ipc.IArgumentList, target *GoEmitTarget, callback ipc.IPCCallback) ProcessMessageError
+	EmitAndReturn(eventName string, args ipc.IArgumentList, target *GoEmitTarget) (ipc.IIPCContext, ProcessMessageError)
 	SetDefaultURL(defaultURL string)
 	SetEnableMultiBrowserMode(enableMultiBrowserMode bool)
 	LoadUrl(url string)
@@ -58,7 +61,7 @@ type IChromiumProc interface {
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
-	SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage) int
+	SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
 	SendCaptureLostEvent()
@@ -245,8 +248,8 @@ func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dic
 }
 
 // 发送进程消息 默认主browser 和 主frame
-func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage) int {
-	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || internalIPCNameCheck(processMessage.Name) {
+func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int {
+	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || ipc.InternalIPCNameCheck(processMessage.Name) {
 		return -3
 	}
 	//var browser = Browsers.MainBrowser()

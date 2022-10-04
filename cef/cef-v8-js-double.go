@@ -10,6 +10,7 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/consts"
 )
 
 type JSDouble struct {
@@ -29,7 +30,7 @@ func (m *JSDouble) Value() float64 {
 }
 
 func (m *JSDouble) SetValue(value float64) {
-	m.valueType = V8_VALUE_DOUBLE
+	m.valueType = consts.V8_VALUE_DOUBLE
 	m.value = value
 }
 func (m *JSDouble) ToString() string {

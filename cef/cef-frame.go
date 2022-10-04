@@ -9,6 +9,9 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -95,10 +98,10 @@ func (m *ICefFrame) IsFocused() bool {
 	return api.DBoolToGoBool(r1)
 }
 
-func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage) ProcessMessageError {
+func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) ProcessMessageError {
 	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil {
 		return PMErr_REQUIRED_PARAMS_IS_NULL
-	} else if internalIPCNameCheck(processMessage.Name) {
+	} else if ipc.InternalIPCNameCheck(processMessage.Name) {
 		return PMErr_NAME_CANNOT_USED
 	}
 	data := processMessage.ArgumentList.Package()

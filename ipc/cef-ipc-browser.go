@@ -6,17 +6,20 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
 	"fmt"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"net"
 	"sync"
 )
 
 type browserChannel struct {
-	msgID              *msgID
-	cliID              *cliID
+	msgID              *MsgID
+	cliID              *CliID
 	ipcType            IPC_TYPE
 	unixAddr           *net.UnixAddr
 	unixListener       *net.UnixListener
@@ -24,24 +27,22 @@ type browserChannel struct {
 	mutex              sync.Mutex
 	events             *event
 	channel            map[int64]*channel
-	emitCallback       *emitCallbackCollection
-	emitSync           map[string]*emitSyncCollection
+	emitCallback       *EmitCallbackCollection
+	emitSync           map[string]*EmitSyncCollection
 	browseOnEvents     []func(browseProcess IEventOn)
 	browseEmitCallback []func(renderProcess IEventEmit)
 }
 
 type channel struct {
-	ipcType  IPC_TYPE
-	unixConn *net.UnixConn
-	netConn  net.Conn
+	IPCType  IPC_TYPE
+	UnixConn *net.UnixConn
+	NetConn  net.Conn
 }
 
 func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 	if UseNetIPCChannel {
-		if IPC.port == 0 {
-			IPC.port = getFreePort()
-		}
-		address := fmt.Sprintf("localhost:%d", IPC.port)
+		IPC.SetPort()
+		address := fmt.Sprintf("localhost:%d", IPC.Port)
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
@@ -54,11 +55,11 @@ func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 		if len(memoryAddresses) > 0 {
 			memoryAddr = memoryAddresses[0]
 		}
-		unixAddr, err := net.ResolveUnixAddr(memoryNetwork, memoryAddr)
+		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, memoryAddr)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
 		}
-		unixListener, err := net.ListenUnix(memoryNetwork, unixAddr)
+		unixListener, err := net.ListenUnix(MemoryNetwork, unixAddr)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
 		}
@@ -71,10 +72,10 @@ func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 }
 
 func (m *channel) conn() net.Conn {
-	if m.ipcType == IPCT_NET {
-		return m.netConn
+	if m.IPCType == IPCT_NET {
+		return m.NetConn
 	}
-	return m.unixConn
+	return m.UnixConn
 }
 
 func (m *event) check(name string) bool {
@@ -94,32 +95,35 @@ func (m *event) removeOnEvent(name string) {
 	delete(m.event, name)
 }
 
-func (m *event) get(name string) EventCallback {
+func (m *event) Get(name string) EventCallback {
 	if call, ok := m.event[name]; ok {
 		return call
 	}
 	return nil
 }
 
-func (m *browserChannel) close() {
+func (m *browserChannel) Channel(channelId int64) *channel {
+	return m.channel[channelId]
+}
+func (m *browserChannel) Close() {
 	if m.unixListener != nil {
 		m.unixListener.Close()
 	}
 }
 
 func (m *browserChannel) onConnect() {
-	m.On(ln_onConnectEvent, func(context IIPCContext) {
-		Logger.Info("IPC browser on connect channelId:", context.ChannelId())
+	m.On(Ln_onConnectEvent, func(context IIPCContext) {
+		logger.Logger.Info("IPC browser on connect channelId:", context.ChannelId())
 		if context.ChannelId() > 0 {
 			if chn, ok := m.channel[context.ChannelId()]; ok {
-				chn.ipcType = m.ipcType
-				chn.unixConn = context.uConn()
-				chn.netConn = context.conn()
+				chn.IPCType = m.ipcType
+				chn.UnixConn = context.uConn()
+				chn.NetConn = context.conn()
 			} else {
 				m.channel[context.ChannelId()] = &channel{
-					ipcType:  m.ipcType,
-					unixConn: context.uConn(),
-					netConn:  context.conn(),
+					IPCType:  m.ipcType,
+					UnixConn: context.uConn(),
+					NetConn:  context.conn(),
 				}
 			}
 			//context.setChannelId(context.ChannelId())
@@ -129,16 +133,16 @@ func (m *browserChannel) onConnect() {
 }
 
 func (m *browserChannel) removeChannel(id int64) {
-	Logger.Debug("IPC browser channel remove channelId:", id)
+	logger.Logger.Debug("IPC browser channel remove channelId:", id)
 	delete(m.channel, id)
 }
 
-func (m *browserChannel) event() *event {
+func (m *browserChannel) Events() *event {
 	return m.events
 }
 
 func (m *browserChannel) call(name string, context IIPCContext) bool {
-	callBack := m.events.get(name)
+	callBack := m.events.Get(name)
 	if callBack != nil {
 		callBack(context)
 		return true
@@ -148,7 +152,7 @@ func (m *browserChannel) call(name string, context IIPCContext) bool {
 
 // IPC browser 设置监听初始化回调
 func (m *browserChannel) SetOnEvent(callback func(event IEventOn)) {
-	if Args.isMain {
+	if Args.IsMain() {
 		m.browseOnEvents = append(m.browseOnEvents, callback)
 	}
 }
@@ -182,7 +186,7 @@ func (m *browserChannel) EmitChannelId(eventName string, chnId int64, arguments 
 		if arguments == nil {
 			arguments = NewArgumentList()
 		}
-		_, _ = ipcWrite(tm_Async, chnId, m.msgID.new(), []byte(eventName), arguments.Package(), chn.conn())
+		_, _ = ipcWrite(Tm_Async, chnId, m.msgID.New(), []byte(eventName), arguments.Package(), chn.conn())
 		arguments.Clear()
 		arguments = nil
 	}
@@ -193,7 +197,7 @@ func (m *browserChannel) Emit(eventName string, arguments IArgumentList) {
 	m.EmitChannelId(eventName, int64(PID_RENDERER), arguments)
 }
 
-func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64, arguments IArgumentList, callback ipcCallback) {
+func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64, arguments IArgumentList, callback IPCCallback) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	if channelId, ok := m.singleProcessChannelId(); ok {
@@ -203,13 +207,13 @@ func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64,
 		if arguments == nil {
 			arguments = NewArgumentList()
 		}
-		eventId := m.msgID.new()
-		m.emitCallback.emitCollection.Store(eventId, callback)
-		_, _ = ipcWrite(tm_Callback, chnId, eventId, []byte(eventName), arguments.Package(), chn.conn())
+		eventId := m.msgID.New()
+		m.emitCallback.EmitCollection.Store(eventId, callback)
+		_, _ = ipcWrite(Tm_Callback, chnId, eventId, []byte(eventName), arguments.Package(), chn.conn())
 	}
 
 }
-func (m *browserChannel) EmitAndCallback(eventName string, arguments IArgumentList, callback ipcCallback) {
+func (m *browserChannel) EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) {
 	m.EmitChannelIdAndCallback(eventName, int64(PID_RENDERER), arguments, callback)
 }
 
@@ -218,22 +222,22 @@ func (m *browserChannel) EmitChannelIdAndReturn(eventName string, chnId int64, a
 		chnId = channelId
 	}
 	if chn, ok := m.channel[chnId]; ok {
-		var emit = func(emitAsync *emitSyncCollection, arguments IArgumentList, conn net.Conn) IIPCContext {
-			emitAsync.mutex.Lock()
-			defer emitAsync.mutex.Unlock()
+		var emit = func(emitAsync *EmitSyncCollection, arguments IArgumentList, conn net.Conn) IIPCContext {
+			emitAsync.Mutex.Lock()
+			defer emitAsync.Mutex.Unlock()
 			if arguments == nil {
 				arguments = NewArgumentList()
 			}
-			eventId := m.msgID.new()
+			eventId := m.msgID.New()
 			var chn = make(chan IIPCContext)
-			emitAsync.emitCollection.Store(eventId, chn)
-			_, _ = ipcWrite(tm_Sync, chnId, eventId, []byte(eventName), arguments.Package(), conn)
+			emitAsync.EmitCollection.Store(eventId, chn)
+			_, _ = ipcWrite(Tm_Sync, chnId, eventId, []byte(eventName), arguments.Package(), conn)
 			return <-chn
 		}
 		if emitAsync, ok := m.emitSync[eventName]; ok {
 			return emit(emitAsync, arguments, chn.conn())
 		} else {
-			m.emitSync[eventName] = &emitSyncCollection{mutex: new(sync.Mutex), emitCollection: sync.Map{}}
+			m.emitSync[eventName] = &EmitSyncCollection{Mutex: new(sync.Mutex), EmitCollection: sync.Map{}}
 			return emit(m.emitSync[eventName], arguments, chn.conn())
 		}
 	}
@@ -245,7 +249,7 @@ func (m *browserChannel) EmitAndReturn(eventName string, arguments IArgumentList
 }
 
 func (m *browserChannel) accept() {
-	Logger.Info("IPC Server Accept")
+	logger.Logger.Info("IPC Server Accept")
 	for {
 		var (
 			err      error
@@ -258,7 +262,7 @@ func (m *browserChannel) accept() {
 			netConn, err = m.netListener.Accept()
 		}
 		if err != nil {
-			Logger.Info("accept Error:", err.Error())
+			logger.Logger.Info("accept Error:", err.Error())
 			continue
 		}
 		go func() {
@@ -272,7 +276,7 @@ func (m *browserChannel) accept() {
 				}
 			}()
 			var readHandler = &ipcReadHandler{
-				ct:       ct_Server,
+				ct:       Ct_Server,
 				ipcType:  m.ipcType,
 				unixConn: unixConn,
 				unixAddr: m.unixAddr,
@@ -282,22 +286,22 @@ func (m *browserChannel) accept() {
 						if id == 0 && ctx.channelId > 0 {
 							id = ctx.channelId
 						}
-						if (ctx.triggerMode == tm_Callback || ctx.triggerMode == tm_Sync) && !ctx.isReply {
+						if (ctx.triggerMode == Tm_Callback || ctx.triggerMode == Tm_Sync) && !ctx.isReply {
 							ctx.Response([]byte{})
 						}
 					} else {
-						if ctx.triggerMode == tm_Callback { //回调函数
-							if callback, ok := m.emitCallback.emitCollection.Load(ctx.eventId); ok {
-								m.emitCallback.emitCollection.Delete(ctx.eventId)
-								callback.(ipcCallback)(ctx)
+						if ctx.triggerMode == Tm_Callback { //回调函数
+							if callback, ok := m.emitCallback.EmitCollection.Load(ctx.eventId); ok {
+								m.emitCallback.EmitCollection.Delete(ctx.eventId)
+								callback.(IPCCallback)(ctx)
 							}
-						} else if ctx.triggerMode == tm_Sync { //同步调用
+						} else if ctx.triggerMode == Tm_Sync { //同步调用
 							if emitAsync, ok := m.emitSync[ctx.eventName]; ok {
-								if chn, ok := emitAsync.emitCollection.Load(ctx.eventId); ok {
+								if chn, ok := emitAsync.EmitCollection.Load(ctx.eventId); ok {
 									var c = chn.(chan IIPCContext)
 									c <- ctx
 									close(c)
-									emitAsync.emitCollection.Delete(ctx.eventId)
+									emitAsync.EmitCollection.Delete(ctx.eventId)
 								}
 							}
 						}

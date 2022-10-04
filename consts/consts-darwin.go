@@ -9,7 +9,7 @@
 //go:build darwin
 // +build darwin
 
-package cef
+package consts
 
 type TCefMenuAccelerator = int32
 

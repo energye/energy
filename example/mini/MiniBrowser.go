@@ -3,7 +3,9 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
 	"github.com/energye/energy/example/mini/src"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/pkgs/macapp"
 )
 
@@ -14,8 +16,8 @@ var libs embed.FS
 var resources embed.FS
 
 func main() {
-	cef.Logger.SetLevel(cef.CefLog_Debug)
-	if cef.IsDarwin() {
+	logger.Logger.SetLevel(logger.CefLog_Debug)
+	if commons.IsDarwin() {
 		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
 		macapp.MacApp.IsCEF(true)
 		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt-lazarus/CEF4Delphi-Libs-105.3.39/chromium")

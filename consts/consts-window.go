@@ -9,7 +9,7 @@
 //go:build windows
 // +build windows
 
-package cef
+package consts
 
 type TCefMenuAccelerator = int32
 

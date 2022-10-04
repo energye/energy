@@ -9,6 +9,10 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
@@ -27,7 +31,7 @@ func cefV8WindowBindFuncEventsInit() {
 
 func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintptr {
 	getVal := func(i int) uintptr {
-		return getParamOf(i, args)
+		return GetParamOf(i, args)
 	}
 	eventType := BIND_EVENT(getVal(0))
 	if BE_FUNC == eventType {
@@ -42,18 +46,18 @@ func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintpt
 func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
-		errorMessage = empty
+		errorMessage = Empty
 	)
 	defer func() {
 		if err := recover(); err != nil {
 			if exceptionPrt != nil {
 				*exceptionPrt = api.GoStrToDStr((err.(error)).Error())
 			}
-			Logger.Error("V8BindFieldCallbackHandler Error", err)
+			logger.Logger.Error("V8BindFieldCallbackHandler Error", err)
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return getParamOf(i, args)
+		return GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -68,7 +72,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 			newBoolValue   bool
 		)
 		exceptionPrt = (*uintptr)(getPtr(3))
-		args := NewArgumentList()
+		args := ipc.NewArgumentList()
 		defer args.Clear()
 		args.SetString(0, fullName)
 		switch newValueType {
@@ -87,8 +91,8 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 		default:
 			errorMessage = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
 		}
-		if errorMessage == empty {
-			iCtx := IPC.render.EmitAndReturn(ln_SET_BIND_FIELD_VALUE, args)
+		if errorMessage == Empty {
+			iCtx := ipc.IPC.Render().EmitAndReturn(ipc.Ln_SET_BIND_FIELD_VALUE, args)
 			if iCtx != nil {
 				args := iCtx.Arguments()
 				isSuccess := args.GetBool(0)
@@ -111,21 +115,21 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 			retBoolValuePrt   = (*bool)(getPtr(5))
 		)
 		exceptionPrt = (*uintptr)(getPtr(6))
-		args := NewArgumentList()
+		args := ipc.NewArgumentList()
 		defer args.Clear()
 		args.SetString(0, fullName)
-		iCtx := IPC.render.EmitAndReturn(ln_GET_BIND_FIELD_VALUE, args)
+		iCtx := ipc.IPC.Render().EmitAndReturn(ipc.Ln_GET_BIND_FIELD_VALUE, args)
 		if iCtx != nil {
 			data := iCtx.Message().Data()
 			isSuccess := ByteToBool(data[0])
 			valueType := V8_JS_VALUE_TYPE(ByteToInt8(data[1]))
 			if isSuccess {
-				errorMessage = _getPtrValue(valueType, data[2:], retStringValuePrt, retIntValuePrt, retDoubleValuePrt, retBoolValuePrt)
+				errorMessage = GetPtrValue(valueType, data[2:], retStringValuePrt, retIntValuePrt, retDoubleValuePrt, retBoolValuePrt)
 			} else {
 				exception := CEF_V8_EXCEPTION(int8(data[1]))
 				errorMessage = cefErrorMessage(exception)
 			}
-			if errorMessage == empty {
+			if errorMessage == Empty {
 				*newValueType = valueType
 			}
 			iCtx.Free()
@@ -136,7 +140,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 	}
 }
 
-func _setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue string, intValue int32, doubleValue float64, boolValue bool) CEF_V8_EXCEPTION {
+func SetPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue string, intValue int32, doubleValue float64, boolValue bool) CEF_V8_EXCEPTION {
 	if jsValue.isCommon() {
 		//valueType说明给的值类型不相同，需要将 jsValue 转换一下
 		switch newValueType { //设置值，这里是通用类型只需要知道js里设置的什么类型即可
@@ -172,7 +176,7 @@ func _setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue st
 	return CVE_ERROR_OK
 }
 
-func _getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
+func GetPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
 	switch valueType {
 	case V8_VALUE_STRING:
 		if value, err := ValueToString(newValue); err == nil {
@@ -210,25 +214,25 @@ func _getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValueP
 func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
-		errorMessage = empty
+		errorMessage = Empty
 	)
 	defer func() {
 		if err := recover(); err != nil {
-			Logger.Error("V8BindFuncCallbackHandler recover:", err)
+			logger.Logger.Error("V8BindFuncCallbackHandler recover:", err)
 			if exceptionPrt != nil {
 				*exceptionPrt = api.GoStrToDStr(" " + (err.(error)).Error())
 			}
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return getParamOf(i, args)
+		return GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
 	fullName := api.DStrToGoStr(fullNamePtr)
 	exceptionPrt = (*uintptr)(getPtr(1))
-	var jsValue, ok = VariableBind.getValueBind(fullName)
+	var jsValue, ok = VariableBind.GetValueBind(fullName)
 	var fnInfo *funcInfo
 	if !ok {
 		errorMessage = cefErrorMessage(CVE_ERROR_NOT_FOUND_FUNC)
@@ -244,7 +248,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 		var (
 			outParams         []reflect.Value
 			ok                bool
-			inArgumentList    IArgumentList
+			inArgumentList    ipc.IArgumentList
 			retStringValuePrt *uintptr
 			retIntValuePrt    *int32
 			retDoubleValuePrt *float64
@@ -264,7 +268,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 				outVType = fnInfo.OutParam[0]
 			}
 		}
-		inArgumentList = NewArgumentList()
+		inArgumentList = ipc.NewArgumentList()
 		defer inArgumentList.Clear()
 		//遍历入参，并校验，默认参数结束下标位置开始
 		for inIdx = argsDefLen; inIdx < argsLen && i < len(fnInfo.InParam); inIdx++ {
@@ -298,7 +302,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 		}
 		//有出参时，出参长度是2，并校验
 		//出参的固定下标为2
-		if errorMessage == empty && outVType != nil {
+		if errorMessage == Empty && outVType != nil {
 			//得到出参的类型指针 出参的固定下标为2
 			switch outVType.Jsv {
 			case V8_VALUE_STRING:
@@ -315,15 +319,15 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 			}
 		}
 
-		if errorMessage == empty {
+		if errorMessage == Empty {
 			if SingleProcess || Args.IsMain() {
 				outParams, ok = jsValue.invoke(inArgumentList.ToReflectValue())
 			} else {
 				ok = true
 				inArgumentList.SetString(inArgumentList.Size(), fullName)
-				var iCtx = IPC.render.EmitAndReturn(ln_EXECUTE_BIND_FUNC, inArgumentList)
+				var iCtx = ipc.IPC.Render().EmitAndReturn(ipc.Ln_EXECUTE_BIND_FUNC, inArgumentList)
 				if iCtx != nil {
-					var outArgument = NewArgumentList()
+					var outArgument = ipc.NewArgumentList()
 					defer outArgument.Clear()
 					data := iCtx.Message().Data()
 					isSuccess := ByteToBool(data[0])

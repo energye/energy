@@ -6,9 +6,13 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
+	"fmt"
+	. "github.com/energye/energy/commons"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/rtl/version"
 	"net"
 	"sync"
@@ -23,20 +27,20 @@ var (
 	//主进程Browser启动 IPC，Render进程创建 IPC
 	IPC = &ipcChannel{
 		browser: &browserChannel{
-			msgID:              &msgID{},
-			cliID:              &cliID{},
+			msgID:              &MsgID{},
+			cliID:              &CliID{},
 			events:             &event{event: make(map[string]EventCallback)},
 			channel:            make(map[int64]*channel),
-			emitSync:           make(map[string]*emitSyncCollection),
+			emitSync:           make(map[string]*EmitSyncCollection),
 			mutex:              sync.Mutex{},
-			emitCallback:       &emitCallbackCollection{emitCollection: sync.Map{}},
+			emitCallback:       &EmitCallbackCollection{EmitCollection: sync.Map{}},
 			browseOnEvents:     make([]func(browseProcess IEventOn), 0),
 			browseEmitCallback: make([]func(renderProcess IEventEmit), 0)},
 		render: &renderChannel{
-			msgID:              &msgID{},
+			msgID:              &MsgID{},
 			mutex:              sync.Mutex{},
-			emitCallback:       &emitCallbackCollection{emitCollection: sync.Map{}},
-			emitSync:           make(map[string]*emitSyncCollection),
+			emitCallback:       &EmitCallbackCollection{EmitCollection: sync.Map{}},
+			emitSync:           make(map[string]*EmitSyncCollection),
 			events:             &event{event: make(map[string]EventCallback)},
 			renderOnEvents:     make([]func(browseProcess IEventOn), 0),
 			renderEmitCallback: make([]func(renderProcess IEventEmit), 0),
@@ -44,7 +48,11 @@ var (
 	}
 )
 
-func ipcChannelChooseInit() {
+func init() {
+	ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, consts.MemoryAddress)
+}
+
+func IPCChannelChooseInit() {
 	UseNetIPCChannel = isUseNetIPC()
 }
 
@@ -65,14 +73,17 @@ func isUseNetIPC() bool {
 // 主Browser进程和Render进程事件on
 type IEventOn interface {
 	On(name string, eventCallback EventCallback) //IPC 事件监听
+	Close()
 }
 
 // 主Browser进程和Render进程事件emit
 type IEventEmit interface {
 	IEventOn
+	Events() *event
+	Channel(channelId int64) *channel
 	SetOnEvent(callback func(event IEventOn))                                        //IPC 设置主进程或子进程事件监听
 	Emit(eventName string, arguments IArgumentList)                                  //IPC 异步事件触发
-	EmitAndCallback(eventName string, arguments IArgumentList, callback ipcCallback) //IPC 回调事件触发
+	EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) //IPC 回调事件触发
 	EmitAndReturn(eventName string, arguments IArgumentList) IIPCContext             //IPC 返回值事件触发(处理时间复杂操作尽量不使用，容易造成UI进程锁死)
 }
 
@@ -81,7 +92,7 @@ type IBrowseEventEmit interface {
 	IEventOn
 	IEventEmit
 	EmitChannelId(eventName string, channelId int64, arguments IArgumentList)                                  //IPC 异步事件触发-指定通道ID
-	EmitChannelIdAndCallback(eventName string, channelId int64, arguments IArgumentList, callback ipcCallback) //IPC 回调事件触发-指定通道ID
+	EmitChannelIdAndCallback(eventName string, channelId int64, arguments IArgumentList, callback IPCCallback) //IPC 回调事件触发-指定通道ID
 	EmitChannelIdAndReturn(eventName string, channelId int64, arguments IArgumentList) IIPCContext             //IPC 返回值事件触发(处理时间复杂操作尽量不使用，容易造成UI进程锁死)-指定通道ID
 }
 
@@ -90,11 +101,11 @@ func getFreePort() int {
 	if Args.IsMain() {
 		addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
 		if err != nil {
-			panic("Failed to get unused port number Error: " + err.Error())
+			panic("Failed to Get unused Port number Error: " + err.Error())
 		}
 		listen, err := net.ListenTCP("tcp", addr)
 		if err != nil {
-			panic("Failed to get unused port number Error: " + err.Error())
+			panic("Failed to Get unused Port number Error: " + err.Error())
 		}
 		defer listen.Close()
 		return listen.Addr().(*net.TCPAddr).Port
@@ -111,7 +122,19 @@ type ipcChannel struct {
 
 func (m *ipcChannel) closeClient() {
 	if m.render != nil {
-		m.render.close()
+		m.render.Close()
+	}
+}
+func (m *ipcChannel) Port() int {
+	return m.port
+}
+func (m *ipcChannel) SetPort(port ...int) {
+	if len(port) > 0 {
+		m.port = port[0]
+	} else {
+		if m.port == 0 {
+			m.port = getFreePort()
+		}
 	}
 }
 
@@ -125,16 +148,13 @@ func (m *ipcChannel) Render() IEventEmit {
 
 // 启动IPC服务
 func (m *ipcChannel) StartBrowserIPC() {
-	Logger.Info("Create IPC browser")
+	logger.Logger.Info("Create IPC browser")
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
-		if m.port == 0 {
-			m.port = getFreePort()
-		}
+		m.SetPort()
 		m.newBrowseChannel()
-		m.internalBrowserIPCOnEventInit()
-		defer m.browser.close()
+		defer m.browser.Close()
 		if m.browser.browseOnEvents != nil {
 			for _, cb := range m.browser.browseOnEvents {
 				if cb != nil {
@@ -161,13 +181,12 @@ func (m *ipcChannel) StartBrowserIPC() {
 //
 //多进程，每个渲染进程创建一个连接
 func (m *ipcChannel) CreateRenderIPC(browserId int32, channelId int64) *renderChannel {
-	Logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
+	logger.Logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
 	if m.render.isConnect {
 		return m.render
 	}
 	//m.closeClient()
 	m.newRenderChannel()
-	m.internalRenderIPCOnEventInit()
 	if m.render.renderOnEvents != nil {
 		for _, cb := range m.render.renderOnEvents {
 			if cb != nil {

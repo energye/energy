@@ -9,21 +9,24 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"sync"
 	"unsafe"
 )
 
 var executeJS = &ExecuteJS{
-	msgID:        &msgID{},
-	emitSync:     &emitSyncCollection{mutex: new(sync.Mutex), emitCollection: sync.Map{}},
-	emitCallback: &emitCallbackCollection{emitCollection: sync.Map{}},
+	msgID:        &MsgID{},
+	emitSync:     &ipc.EmitSyncCollection{Mutex: new(sync.Mutex), EmitCollection: sync.Map{}},
+	emitCallback: &ipc.EmitCallbackCollection{EmitCollection: sync.Map{}},
 }
 
 type ExecuteJS struct {
-	msgID        *msgID                  //ipc 消息ID生成
-	emitCallback *emitCallbackCollection //回调函数集合
-	emitSync     *emitSyncCollection     //触发同步事件集合
+	msgID        *MsgID                      //ipc 消息ID生成
+	emitCallback *ipc.EmitCallbackCollection //回调函数集合
+	emitSync     *ipc.EmitSyncCollection     //触发同步事件集合
 }
 
 type IChromium interface {
@@ -82,17 +85,17 @@ func (m *TCEFChromium) DisableIndependentEvent() {
 	m.independentEvent = false
 }
 
-func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList IArgumentList) ProcessMessageError {
+func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList ipc.IArgumentList) ProcessMessageError {
 	data := argumentList.Package()
 	r1 := _CEFFrame_SendProcessMessage(browseId, frameId, name, PID_RENDERER, int32(argumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
 	return ProcessMessageError(r1)
 }
 
-func (m *TCEFChromium) On(name string, eventCallback EventCallback) {
+func (m *TCEFChromium) On(name string, eventCallback ipc.EventCallback) {
 	if eventCallback == nil {
 		return
 	}
-	IPC.browser.On(name, eventCallback)
+	ipc.IPC.Browser().On(name, eventCallback)
 }
 
 // 执行JS代码
@@ -109,7 +112,7 @@ func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32
 // 触发JS监听的事件-异步执行
 //
 // GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) Emit(eventName string, args IArgumentList, target *GoEmitTarget) ProcessMessageError {
+func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target *GoEmitTarget) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -120,7 +123,7 @@ func (m *TCEFChromium) Emit(eventName string, args IArgumentList, target *GoEmit
 		frameId  int64
 	)
 	if args == nil {
-		args = NewArgumentList()
+		args = ipc.NewArgumentList()
 	}
 	if target == nil {
 		browser := m.Browser()
@@ -134,17 +137,17 @@ func (m *TCEFChromium) Emit(eventName string, args IArgumentList, target *GoEmit
 		}
 	}
 	var idx = args.Size()
-	args.SetInt32(idx, int32(tm_Async))
+	args.SetInt32(idx, int32(Tm_Async))
 	args.SetInt32(idx+1, 0)
 	args.SetString(idx+2, eventName, true)
-	m.browseEmitJsOnEvent(browseId, frameId, ln_IPC_GoEmitJS, args)
+	m.browseEmitJsOnEvent(browseId, frameId, ipc.Ln_IPC_GoEmitJS, args)
 	return PME_OK
 }
 
 // 触发JS监听的事件-异步执行-带回调
 //
 // GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndCallback(eventName string, args IArgumentList, target *GoEmitTarget, callback ipcCallback) ProcessMessageError {
+func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList, target *GoEmitTarget, callback ipc.IPCCallback) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -153,11 +156,11 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args IArgumentList, tar
 	var (
 		browseId int32
 		frameId  int64
-		ipcId    = executeJS.msgID.new()
+		ipcId    = executeJS.msgID.New()
 		idx      = args.Size()
 	)
 	if args == nil {
-		args = NewArgumentList()
+		args = ipc.NewArgumentList()
 	}
 	if target == nil {
 		browser := m.Browser()
@@ -170,11 +173,11 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args IArgumentList, tar
 			return PMErr_NOT_FOUND_FRAME
 		}
 	}
-	args.SetInt32(idx, int32(tm_Callback))
+	args.SetInt32(idx, int32(Tm_Callback))
 	args.SetInt32(idx+1, ipcId)
 	args.SetString(idx+2, eventName, true)
-	executeJS.emitCallback.emitCollection.Store(ipcId, callback)
-	m.browseEmitJsOnEvent(browseId, frameId, ln_IPC_GoEmitJS, args)
+	executeJS.emitCallback.EmitCollection.Store(ipcId, callback)
+	m.browseEmitJsOnEvent(browseId, frameId, ipc.Ln_IPC_GoEmitJS, args)
 	return PME_OK
 }
 
@@ -183,7 +186,7 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args IArgumentList, tar
 // 使用不当会造成 UI线程 锁死
 //
 // GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndReturn(eventName string, args IArgumentList, target *GoEmitTarget) (IIPCContext, ProcessMessageError) {
+func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, target *GoEmitTarget) (ipc.IIPCContext, ProcessMessageError) {
 	if eventName == "" {
 		return nil, PMErr_NAME_IS_NULL
 	}
@@ -192,11 +195,11 @@ func (m *TCEFChromium) EmitAndReturn(eventName string, args IArgumentList, targe
 	var (
 		browseId int32
 		frameId  int64
-		ipcId    = executeJS.msgID.new()
+		ipcId    = executeJS.msgID.New()
 		idx      = args.Size()
 	)
 	if args == nil {
-		args = NewArgumentList()
+		args = ipc.NewArgumentList()
 	}
 	if target == nil {
 		browser := m.Browser()
@@ -209,19 +212,19 @@ func (m *TCEFChromium) EmitAndReturn(eventName string, args IArgumentList, targe
 			return nil, PMErr_NOT_FOUND_FRAME
 		}
 	}
-	args.SetInt32(idx, int32(tm_Sync))
+	args.SetInt32(idx, int32(Tm_Sync))
 	args.SetInt32(idx+1, ipcId)
 	args.SetString(idx+2, eventName, true)
-	var callback = func(emitAsync *emitSyncCollection, ipcId int32) IIPCContext {
-		emitAsync.mutex.Lock()
-		defer emitAsync.mutex.Unlock()
-		var chn = make(chan IIPCContext)
-		var ret IIPCContext
-		emitAsync.emitCollection.Store(ipcId, chn)
+	var callback = func(emitAsync *ipc.EmitSyncCollection, ipcId int32) ipc.IIPCContext {
+		emitAsync.Mutex.Lock()
+		defer emitAsync.Mutex.Unlock()
+		var chn = make(chan ipc.IIPCContext)
+		var ret ipc.IIPCContext
+		emitAsync.EmitCollection.Store(ipcId, chn)
 		ret = <-chn //锁住当前线程
-		executeJS.emitSync.emitCollection.Delete(ipcId)
+		executeJS.emitSync.EmitCollection.Delete(ipcId)
 		return ret
 	}
-	m.browseEmitJsOnEvent(browseId, frameId, ln_IPC_GoEmitJS, args)
+	m.browseEmitJsOnEvent(browseId, frameId, ipc.Ln_IPC_GoEmitJS, args)
 	return callback(executeJS.emitSync, ipcId), PME_OK
 }

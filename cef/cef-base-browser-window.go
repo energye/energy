@@ -9,6 +9,10 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -369,7 +373,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 		return false
 	})
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ICefProcessMessage) bool {
+	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
 		}
@@ -489,7 +493,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			var tempClose = func() {
 				defer func() {
 					if err := recover(); err != nil {
-						Logger.Error("OnBeforeClose Error:", err)
+						logger.Logger.Error("OnBeforeClose Error:", err)
 					}
 				}()
 				if window.windowInfo.auxTools.viewSourceWindow != nil {

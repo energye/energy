@@ -9,6 +9,8 @@
 package cef
 
 import (
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -36,7 +38,7 @@ type TCEFLinkedWindowParent struct {
 }
 
 func NewCEFWindow(owner lcl.IComponent) ITCefWindow {
-	if IsWindows() {
+	if commons.IsWindows() {
 		return NewCEFWindowParent(owner)
 	} else {
 		return NewCEFLinkedWindowParent(owner)

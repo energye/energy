@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cef
+package consts
 
 //net error
 type CEF_NET_ERROR int32

@@ -8,6 +8,8 @@
 
 package cef
 
+import "github.com/energye/energy/consts"
+
 type JSBoolean struct {
 	ICEFv8Value
 }
@@ -24,7 +26,7 @@ func (m *JSBoolean) Value() bool {
 }
 
 func (m *JSBoolean) SetValue(value bool) {
-	m.valueType = V8_VALUE_BOOLEAN
+	m.valueType = consts.V8_VALUE_BOOLEAN
 	m.value = value
 }
 

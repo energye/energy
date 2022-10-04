@@ -9,6 +9,8 @@
 package cef
 
 import (
+	"github.com/energye/energy/commons"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -101,7 +103,7 @@ func (m *TCefWindowInfo) Maximize() {
 		} else {
 			if m.Window.WindowState() == types.WsMaximized {
 				m.Window.SetWindowState(types.WsNormal)
-				if IsDarwin() {
+				if commons.IsDarwin() {
 					m.Window.SetWindowState(types.WsMaximized)
 					m.Window.SetWindowState(types.WsNormal)
 				}
@@ -123,11 +125,11 @@ func (m *TCefWindowInfo) Close() {
 	defer BrowserWindow.uiLock.Unlock()
 	QueueAsyncCall(func(id int) {
 		if m == nil {
-			Logger.Error("关闭浏览器 WindowInfo 为空")
+			logger.Logger.Error("关闭浏览器 WindowInfo 为空")
 			return
 		}
 		if m.Window == nil {
-			Logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
+			logger.Logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
 			return
 		}
 		m.Window.isClosing = true
@@ -143,7 +145,7 @@ func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	} else {
 		m.windowSerial++
 	}
-	Logger.Debug("下一个窗口ID:", m.windowSerial)
+	logger.Logger.Debug("下一个窗口ID:", m.windowSerial)
 	return m.windowSerial
 }
 
@@ -193,7 +195,7 @@ func (m *browser) putWindowInfo(browserId int32, windowInfo *TCefWindowInfo) {
 
 func (m *browser) removeWindowInfo(browseId int32) {
 	delete(m.windowInfo, browseId)
-	Proc("CEF_RemoveGoForm").Call(uintptr(browseId))
+	commons.Proc("CEF_RemoveGoForm").Call(uintptr(browseId))
 }
 
 func (m *browser) GetBrowser(browseId int32) *ICefBrowser {

@@ -9,7 +9,7 @@
 //go:build linux
 // +build linux
 
-package cef
+package consts
 
 type TCefMenuAccelerator = int32
 

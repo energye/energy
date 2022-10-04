@@ -4,6 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/tools"
@@ -17,7 +20,7 @@ func AppBrowserInit() {
 	*/
 	//ar integer cef.JSValue
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
-		fmt.Println("GO变量和函数绑定回调", cef.Args.ProcessType())
+		fmt.Println("GO变量和函数绑定回调", commons.Args.ProcessType())
 		bind.NewInteger("integerv", 1211111)
 		bind.NewDouble("doublev", 11.0505)
 		bind.NewBoolean("booleanv", true)
@@ -32,39 +35,39 @@ func AppBrowserInit() {
 	config.SetEnableWindowPopup(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL
-	if cef.IsWindows() {
+	if commons.IsWindows() {
 		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini\\resources\\demo-misc.html"
 		if !tools.IsExist(cef.BrowserWindow.Config.DefaultUrl) {
-			cef.BrowserWindow.Config.DefaultUrl = cef.ExePath + cef.Separator + "demo-misc.html"
+			cef.BrowserWindow.Config.DefaultUrl = consts.ExePath + consts.Separator + "demo-misc.html"
 		}
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cef.BrowserWindow.Config.DefaultUrl = "file:///home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/min-browser/resources/demo-misc.html"
-	} else if cef.IsDarwin() {
+	} else if commons.IsDarwin() {
 		cef.BrowserWindow.Config.DefaultUrl = "file:///Users/zhangli/go/src/github.com/energye/energy/demos/min-browser/resources/demo-misc.html"
 	}
 	//主进程 IPC事件
-	cef.IPC.Browser().SetOnEvent(func(event cef.IEventOn) {
+	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
 		//这个事件监听演示了几个示例
 		//1.
-		event.On("subWindowIPCOn", func(context cef.IIPCContext) {
+		event.On("subWindowIPCOn", func(context ipc.IIPCContext) {
 			//函数内的 context 返回给调用方
 			//取入参
 			fmt.Println("browser renderOnEventSubWindowIPCOn:", context.Arguments().GetString(0), "channelId:", context.ChannelId())
 			fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowsInfo()))
 			//调用指定渲染进程监听
-			cef.IPC.Browser().EmitChannelId("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
+			ipc.IPC.Browser().EmitChannelId("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
 			context.Result().SetString("\t|-- 111")
 
 			//调用指定渲染进程监听 回调的方式
-			cef.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context cef.IIPCContext) {
+			ipc.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context ipc.IIPCContext) {
 				fmt.Println("browser renderOnEventSubWindowIPCOn ret:", string(context.Message().Data()))
 				//在这里 不能使用 context 返回给页面
 				//函数内的 context 返回给调用方
 			})
 			context.Result().SetString("\t|-- 222")
 			//调用指定渲染进程监听 同步的方式
-			ctx := cef.IPC.Browser().EmitChannelIdAndReturn("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
+			ctx := ipc.IPC.Browser().EmitChannelIdAndReturn("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
 			context.Result().SetString("\t|-- 333")
 			//返回给页面数据
 			context.Result().SetString("成功返回, " + string(ctx.Message().Data()))
@@ -72,26 +75,26 @@ func AppBrowserInit() {
 			//返回给页面数据
 			//context.Result().SetString("成功返回,")
 		})
-		event.On("close", func(context cef.IIPCContext) {
+		event.On("close", func(context ipc.IIPCContext) {
 			bsr := cef.BrowserWindow.GetBrowser(context.BrowserId())
 			fmt.Println("close browserId:", context.BrowserId())
 			//发送给渲染进程消息
 			bsr.CloseBrowser(true)
 		})
-		event.On("minWindow", func(context cef.IIPCContext) {
+		event.On("minWindow", func(context ipc.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Minimize()
 		})
-		event.On("maxWindow", func(context cef.IIPCContext) {
+		event.On("maxWindow", func(context ipc.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Maximize()
 		})
-		event.On("closeWindow", func(context cef.IIPCContext) {
+		event.On("closeWindow", func(context ipc.IIPCContext) {
 			fmt.Println("closeWindow", context.BrowserId())
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Close()
 		})
-		event.On("window-list", func(context cef.IIPCContext) {
+		event.On("window-list", func(context ipc.IIPCContext) {
 			var ids []int32
 			for id, _ := range cef.BrowserWindow.GetWindowsInfo() {
 				ids = append(ids, id)
@@ -100,19 +103,19 @@ func AppBrowserInit() {
 			fmt.Println("获得window-id-list", ids, idsStr, err)
 			context.Result().SetString(string(idsStr))
 		})
-		event.On("find", func(context cef.IIPCContext) {
+		event.On("find", func(context ipc.IIPCContext) {
 			args := context.Arguments().GetString(0)
 			fmt.Println("find-args:", args)
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Browser.Find(args, false, false, true)
 		})
-		event.On("find-stop", func(context cef.IIPCContext) {
+		event.On("find-stop", func(context ipc.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Browser.StopFinding(true)
 		})
 		var newForm *cef.Window
-		event.On("js-new-window", func(context cef.IIPCContext) {
-			fmt.Println("创建新窗口 ProcessType:", cef.Args.ProcessType())
+		event.On("js-new-window", func(context ipc.IIPCContext) {
+			fmt.Println("创建新窗口 ProcessType:", commons.Args.ProcessType())
 			if newForm == nil {
 				newForm = cef.NewWindow()
 				newForm.SetCaption("新窗口标题")
@@ -139,8 +142,8 @@ func AppBrowserInit() {
 			})
 		})
 		var browserWindow *cef.Window
-		event.On("js-new-browser-window", func(context cef.IIPCContext) {
-			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", cef.Args.ProcessType())
+		event.On("js-new-browser-window", func(context ipc.IIPCContext) {
+			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", commons.Args.ProcessType())
 			if browserWindow == nil {
 				browserWindow = cef.NewBrowserWindow(nil, "https://www.baidu.com")
 				browserWindow.Chromium().EnableIndependentEvent()
@@ -196,13 +199,13 @@ func AppBrowserInit() {
 					BrowseId: browserWindow.Browser.Identifier(),
 					FrameId:  browserWindow.Browser.MainFrame().Id,
 				}
-				var argumentList = cef.NewArgumentList()
+				var argumentList = ipc.NewArgumentList()
 				argumentList.SetInt32(0, browserWindow.Window.Left())
 				argumentList.SetInt32(1, browserWindow.Window.Top())
 				argumentList.SetInt32(2, browserWindow.Window.Width())
 				argumentList.SetInt32(3, browserWindow.Window.Height())
 				browserWindow.Chromium().Emit("window-resize", argumentList, target)
-				browserWindow.Chromium().EmitAndCallback("window-resize", argumentList, target, func(context cef.IIPCContext) {
+				browserWindow.Chromium().EmitAndCallback("window-resize", argumentList, target, func(context ipc.IIPCContext) {
 					fmt.Println("EmitAndCallback AddOnResize")
 				})
 				//使用EmitAndReturn函数会锁死
@@ -219,7 +222,7 @@ func AppBrowserInit() {
 					BrowseId: browserWindow.Browser.Identifier(),
 					FrameId:  browserWindow.Browser.MainFrame().Id,
 				}
-				var argumentList = cef.NewArgumentList()
+				var argumentList = ipc.NewArgumentList()
 				argumentList.SetInt32(0, browserWindow.Window.Left())
 				argumentList.SetInt32(1, browserWindow.Window.Top())
 				argumentList.SetInt32(2, browserWindow.Window.Width())
@@ -244,7 +247,7 @@ func AppBrowserInit() {
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
 			//linux下 需要这样使用 Sync
-			if cef.IsLinux() {
+			if commons.IsLinux() {
 				cef.QueueSyncCall(func(id int) {
 					dlSave.SetFileName(suggestedName)
 					if dlSave.Execute() {
@@ -253,7 +256,7 @@ func AppBrowserInit() {
 					}
 				})
 			} else {
-				callback.Cont(cef.ExePath+cef.Separator+suggestedName, true)
+				callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 			}
 		})
 		event.SetOnDownloadUpdated(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.DownloadItem, callback *cef.ICefDownloadItemCallback) {
@@ -280,7 +283,7 @@ func AppBrowserInit() {
 						BrowseId: popupWindow.Browser.Identifier(),
 						FrameId:  popupWindow.Browser.MainFrame().Id,
 					}
-					var argumentList = cef.NewArgumentList()
+					var argumentList = ipc.NewArgumentList()
 					argumentList.SetInt32(0, popupWindow.Window.Left())
 					argumentList.SetInt32(1, popupWindow.Window.Top())
 					argumentList.SetInt32(2, popupWindow.Window.Width())
@@ -297,7 +300,7 @@ func AppBrowserInit() {
 						BrowseId: popupWindow.Browser.Identifier(),
 						FrameId:  popupWindow.Browser.MainFrame().Id,
 					}
-					var argumentList = cef.NewArgumentList()
+					var argumentList = ipc.NewArgumentList()
 					argumentList.SetInt32(0, popupWindow.Window.Left())
 					argumentList.SetInt32(1, popupWindow.Window.Top())
 					argumentList.SetInt32(2, popupWindow.Window.Width())
@@ -323,7 +326,7 @@ func AppBrowserInit() {
 		})
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息 将会失败
-			fmt.Println("OnLoadingStateChange-ProcessType:", cef.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
+			fmt.Println("OnLoadingStateChange-ProcessType:", commons.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
 			if isSendEmit {
 				info := cef.BrowserWindow.GetWindowInfo(browser.Identifier())
 				var target = &cef.GoEmitTarget{
@@ -331,7 +334,7 @@ func AppBrowserInit() {
 					FrameId:  browser.MainFrame().Id,
 				}
 				fmt.Println("browseEmitJsOnEvent 1 browseId:", browser.Identifier(), "info-browserId:", info.Chromium().BrowserId(), "GetFrameById:", browser.GetFrameById(target.FrameId))
-				var argumentList = cef.NewArgumentList()
+				var argumentList = ipc.NewArgumentList()
 				argumentList.SetBool(0, isLoading)
 				argumentList.SetBool(1, canGoBack)
 				argumentList.SetBool(2, canGoForward)
@@ -341,13 +344,13 @@ func AppBrowserInit() {
 		})
 		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息
-			fmt.Println("OnLoadingProgressChange-ProcessType:", cef.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
+			fmt.Println("OnLoadingProgressChange-ProcessType:", commons.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
 			if isSendEmit {
 				var target = &cef.GoEmitTarget{
 					BrowseId: browser.Identifier(),
 					FrameId:  browser.MainFrame().Id,
 				}
-				var argumentList = cef.NewArgumentList()
+				var argumentList = ipc.NewArgumentList()
 				argumentList.SetFloat64(0, progress)
 				fmt.Println("OnLoadingProgressChange-Emit:", browserWindow.Chromium().Emit("OnLoadingProgressChange", argumentList, target), " frame:", cef.BrowserWindow.GetFrames(browser.Identifier()))
 			}
@@ -357,7 +360,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
-		if cef.IsWindows() {
+		if commons.IsWindows() {
 			cefTray(browserWindow)
 		} else {
 			tray(browserWindow)
@@ -369,7 +372,7 @@ func AppBrowserInit() {
 func cefTray(browserWindow *cef.TCefWindowInfo) {
 	var url = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\min-browser\\resources\\min-browser-tray.html"
 	if !tools.IsExist(url) {
-		url = cef.ExePath + cef.Separator + "min-browser-tray.html"
+		url = consts.ExePath + consts.Separator + "min-browser-tray.html"
 	}
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
@@ -379,12 +382,12 @@ func cefTray(browserWindow *cef.TCefWindowInfo) {
 		browserWindow.Window.SetVisible(!browserWindow.Window.Visible())
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
-	cef.IPC.Browser().On("tray-show-balloon", func(context cef.IIPCContext) {
+	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
 		fmt.Println("tray-show-balloon")
 		tray.ShowBalloon()
 		tray.Hide()
 	})
-	cef.IPC.Browser().On("tray-show-main-window", func(context cef.IIPCContext) {
+	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
 		vb := !browserWindow.Window.Visible()
 		browserWindow.Window.SetVisible(vb)
 		if vb {
@@ -395,7 +398,7 @@ func cefTray(browserWindow *cef.TCefWindowInfo) {
 		}
 		tray.Hide()
 	})
-	cef.IPC.Browser().On("tray-close-main-window", func(context cef.IIPCContext) {
+	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
 		browserWindow.Window.Close()
 	})
 	//托盘 end

@@ -12,6 +12,9 @@
 package cef
 
 import (
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -225,7 +228,7 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	})
 	//关闭独立出事件
 	m.chromium.DisableIndependentEvent()
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ICefProcessMessage) bool {
+	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
 		return false
 	})
 	m.windowParent.SetChromium(m.chromium, 0)

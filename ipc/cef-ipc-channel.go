@@ -6,47 +6,21 @@
 //
 //----------------------------------------
 
-package cef
+package ipc
 
 import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"io"
 	"math"
 	"net"
 	"os"
-	"sync"
 	"unsafe"
-)
-
-const (
-	memoryAddress = "go_cef.sock"
-	memoryNetwork = "unix"
-)
-
-//0:net 1:unix
-type IPC_TYPE int8
-
-const (
-	IPCT_NET IPC_TYPE = iota
-	IPCT_UNIX
-)
-
-type channelType int8
-
-const (
-	ct_Server channelType = iota
-	ct_Client
-)
-
-type triggerMode int8
-
-const (
-	tm_Async    triggerMode = iota //异步
-	tm_Callback                    //异步，带回调函数返回结果
-	tm_Sync                        //同步，阻塞等待结果返回值
 )
 
 var (
@@ -60,13 +34,14 @@ var (
 	headerLength                    = int(protocolHeaderLength + triggerModeByteLength + renderChannelIdByteLength + eventIdByteLength + eventNameByteLength + dataByteLength)
 )
 
-type ipcCallback func(context IIPCContext)
+type IPCCallback func(context IIPCContext)
 
 // 进程间IPC通信回调上下文
 type IIPCContext interface {
 	setArguments(argument IArgumentList)
 	uConn() *net.UnixConn
 	conn() net.Conn
+	EventId() int32
 	ChannelId() int64          //render channel channelId
 	BrowserId() int32          //render channel browserId
 	Message() *IPCEventMessage //接收的消息数据 一搬配合Response函数
@@ -83,25 +58,11 @@ type IEventMessage interface {
 
 type EventCallback func(context IIPCContext)
 
-// IPC ID生成
-type ipcIDGen struct {
-	_id   int32
-	mutex sync.Mutex
-}
-type cliID struct {
-	ipcIDGen
-}
-
-// 消息ID生成
-type msgID struct {
-	ipcIDGen
-}
-
 type ipcReadHandler struct {
 	browserId int32
 	channelId int64
 	ipcType   IPC_TYPE
-	ct        channelType
+	ct        ChannelType
 	unixConn  *net.UnixConn
 	unixAddr  *net.UnixAddr
 	netConn   net.Conn
@@ -116,6 +77,13 @@ type IPCEventMessage struct {
 type IPCContextResult struct {
 	vType  V8_JS_VALUE_TYPE
 	result unsafe.Pointer //[]byte
+}
+
+func (m *IPCContextResult) Result() unsafe.Pointer {
+	return m.result
+}
+func (m *IPCContextResult) VType() V8_JS_VALUE_TYPE {
+	return m.vType
 }
 
 func (m *IPCContextResult) SetString(ret string) {
@@ -150,7 +118,7 @@ type IPCContext struct {
 	eventId      int32             //
 	ipcType      IPC_TYPE          //
 	isReply      bool              //回复状态 true已回复 false未回复
-	triggerMode  triggerMode       //触发模式 0异步 1回调 2同步
+	triggerMode  TriggerMode       //触发模式 0异步 1回调 2同步
 	eventName    string            //
 	unixConn     *net.UnixConn     //
 	unixAddr     *net.UnixAddr     //
@@ -163,6 +131,20 @@ type IPCContext struct {
 // 事件集合
 type event struct {
 	event map[string]EventCallback
+}
+
+func NewIPCContext(eventName string, browserId int32, channelId int64, ipcType IPC_TYPE, unixConn *net.UnixConn, netConn net.Conn, eventMessage *IPCEventMessage, result *IPCContextResult, arguments IArgumentList) IIPCContext {
+	return &IPCContext{
+		eventName:    eventName,
+		browserId:    browserId,
+		channelId:    channelId,
+		ipcType:      ipcType,
+		unixConn:     unixConn,
+		netConn:      netConn,
+		eventMessage: eventMessage,
+		result:       result,
+		arguments:    arguments,
+	}
 }
 
 func (m *ipcReadHandler) Close() {
@@ -188,13 +170,6 @@ func (m *ipcReadHandler) Read(b []byte) (n int, err error) {
 	}
 }
 
-func (m *ipcIDGen) new() int32 {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	m._id++
-	return m._id
-}
-
 func (m *IPCContext) Result() *IPCContextResult {
 	return m.result
 }
@@ -212,6 +187,9 @@ func (m *IPCContext) Free() {
 		m.result.clear()
 		m.result = nil
 	}
+}
+func (m *IPCContext) EventId() int32 {
+	return m.eventId
 }
 
 func (m *IPCContext) Arguments() IArgumentList {
@@ -270,7 +248,7 @@ func removeMemory() {
 	os.Remove(ipcSock)
 }
 
-func ipcWrite(triggerMode triggerMode, channelId int64, eventId int32, eventName, data []byte, conn net.Conn) (n int, err error) {
+func ipcWrite(triggerMode TriggerMode, channelId int64, eventId int32, eventName, data []byte, conn net.Conn) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -305,22 +283,22 @@ func ipcRead(handler *ipcReadHandler) {
 		} else {
 			ipcType = "[unix]"
 		}
-		if handler.ct == ct_Server {
+		if handler.ct == Ct_Server {
 			chnType = "[server]"
 		} else {
 			chnType = "[client]"
 		}
-		Logger.Debug("IPC Read Disconnect type:", ipcType, "channelType:", chnType, "browserId:", handler.browserId, "channelId:", handler.channelId, "processType:", Args.ProcessType())
+		logger.Logger.Debug("IPC Read Disconnect type:", ipcType, "channelType:", chnType, "browserId:", handler.browserId, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
 		handler.Close()
 	}()
 	for {
 		header := make([]byte, headerLength)
 		size, err := handler.Read(header)
 		if err == io.EOF {
-			Logger.Debug("IPC Read err:", err)
+			logger.Logger.Debug("IPC Read err:", err)
 			return
 		} else if size == 0 {
-			Logger.Debug("IPC Read size == 0 header:", header)
+			logger.Logger.Debug("IPC Read size == 0 header:", header)
 			return
 		}
 		if size == headerLength {
@@ -331,7 +309,7 @@ func ipcRead(handler *ipcReadHandler) {
 			}
 			//Logger.Debug("IPC Read protocolHeaderLength:", header)
 			var (
-				triggerMode triggerMode
+				triggerMode TriggerMode
 				channelId   int64 //render channel Id
 				eventId     int32
 				eventLen    int16
@@ -343,41 +321,41 @@ func ipcRead(handler *ipcReadHandler) {
 			high = protocolHeaderLength + triggerModeByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &triggerMode)
 			if err != nil {
-				Logger.Debug("binary.Read.triggerMode: ", err)
+				logger.Logger.Debug("binary.Read.triggerMode: ", err)
 				return
 			}
 			low = high
 			high = high + renderChannelIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
 			if err != nil {
-				Logger.Debug("binary.Read.channelId: ", err)
+				logger.Logger.Debug("binary.Read.channelId: ", err)
 				return
 			}
 			low = high
 			high = high + eventIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventId)
 			if err != nil {
-				Logger.Debug("binary.Read.eventIdByteLength: ", err)
+				logger.Logger.Debug("binary.Read.eventIdByteLength: ", err)
 				return
 			}
 			low = high
 			high = high + eventNameByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventLen)
 			if err != nil {
-				Logger.Debug("binary.Read.eventLen: ", err)
+				logger.Logger.Debug("binary.Read.eventLen: ", err)
 				return
 			}
 			low = high
 			err = binary.Read(bytes.NewReader(header[low:headerLength]), binary.BigEndian, &dataLen)
 			if err != nil {
-				Logger.Debug("binary.Read.dataLen: ", err)
+				logger.Logger.Debug("binary.Read.dataLen: ", err)
 				return
 			}
 
 			eventNameByte := make([]byte, eventLen)
 			size, err = handler.Read(eventNameByte)
 			if err != nil {
-				Logger.Debug("binary.Read.eventNameByte: ", err)
+				logger.Logger.Debug("binary.Read.eventNameByte: ", err)
 				return
 			}
 			eventName = string(eventNameByte[:size])
@@ -387,7 +365,7 @@ func ipcRead(handler *ipcReadHandler) {
 				size, err = handler.Read(dataByte)
 			}
 			if err != nil {
-				Logger.Debug("binary.Read.data: ", err)
+				logger.Logger.Debug("binary.Read.data: ", err)
 				return
 			}
 			ctx := &IPCContext{
@@ -406,7 +384,7 @@ func ipcRead(handler *ipcReadHandler) {
 			}
 			handler.handler(ctx)
 		} else {
-			Logger.Debug("无效的 != headerLength")
+			logger.Logger.Debug("无效的 != headerLength")
 			break
 		}
 	}

@@ -11,6 +11,9 @@ package cef
 import (
 	"bytes"
 	"fmt"
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"strconv"
@@ -79,8 +82,8 @@ type cefObject struct {
 }
 
 func (m *vt) ToValueTypeString() string {
-	govs := funcParamGoTypeStr(m.Gov)
-	jsvs := funcParamJsTypeStr(m.Jsv)
+	govs := commons.FuncParamGoTypeStr(m.Gov)
+	jsvs := commons.FuncParamJsTypeStr(m.Jsv)
 	return fmt.Sprintf("GO=%s,JS:=%s", govs, jsvs)
 }
 
@@ -113,7 +116,7 @@ func bindObject(objects ...interface{}) {
 			objectSti.StructsObject[objTyp.Name()] = &structObjectInfo{FieldsInfo: make(map[string]*structFieldInfo), SubStructObjectInfo: make(map[string]*structObjectInfo)}
 			objectSti.StructsObject[objTyp.Name()].analysisObjectField(objTyp, typ, value)
 		} else {
-			Logger.Error("结构对象非指针类型:", typ.Name())
+			logger.Logger.Error("结构对象非指针类型:", typ.Name())
 		}
 	}
 	objectSti._objectToCefObject()
@@ -257,7 +260,7 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 			//过滤掉指针类型和非导出大写字段，和不是结构类型
 			b = true
 		} else if fieldType.Kind() == reflect.Struct && field.IsZero() {
-			Logger.Debug("字段类型-对象,", fieldName, " 未初始化, 忽略JS绑定映射.")
+			logger.Logger.Debug("字段类型-对象,", fieldName, " 未初始化, 忽略JS绑定映射.")
 		}
 		if b { //b=true可以正常解析映射
 			filedValue := value.Elem().FieldByName(fieldName)
@@ -265,8 +268,8 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 			m.FieldsInfo[fieldName] = &structFieldInfo{
 				EventId: uintptr(__bind_id()),
 				ValueType: &vt{
-					Jsv: JSValueType(t),
-					Gov: GOValueType(t),
+					Jsv: commons.JSValueType(t),
+					Gov: commons.GOValueType(t),
 				},
 				FieldValue: &filedValue,
 			}

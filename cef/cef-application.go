@@ -9,6 +9,9 @@
 package cef
 
 import (
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -39,7 +42,8 @@ func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != 0 {
 		b := api.DBoolToGoBool(_CEFStartMainProcess(m.instance))
 		if b {
-			IPC.StartBrowserIPC()
+			internalBrowserIPCOnEventInit()
+			ipc.IPC.StartBrowserIPC()
 			bindGoToJS(nil, nil)
 		}
 		return b
@@ -68,7 +72,7 @@ func (m *TCEFApplication) Free() {
 //
 //对于一些不想绑定的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
-	_SetCEFCallbackEvent(onContextCreated, fn)
+	_SetCEFCallbackEvent(OnContextCreated, fn)
 }
 func (m *TCEFApplication) defaultSetOnContextCreated() {
 	m.SetOnContextCreated(func(browse *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool {
@@ -78,15 +82,15 @@ func (m *TCEFApplication) defaultSetOnContextCreated() {
 
 //初始化设置全局回调
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
-	_SetCEFCallbackEvent(onWebKitInitialized, fn)
+	_SetCEFCallbackEvent(OnWebKitInitialized, fn)
 }
 
 //进程间通信处理消息接收
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
-	_SetCEFCallbackEvent(onProcessMessageReceived, fn)
+	_SetCEFCallbackEvent(OnProcessMessageReceived, fn)
 }
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
-	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ICefProcessMessage) bool {
+	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ipc.ICefProcessMessage) bool {
 		return false
 	})
 }
@@ -97,8 +101,8 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 
 //启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
-	if Args.IsMain() {
-		_SetCEFCallbackEvent(onBeforeChildProcessLaunch, fn)
+	if commons.Args.IsMain() {
+		_SetCEFCallbackEvent(OnBeforeChildProcessLaunch, fn)
 	}
 }
 func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
@@ -106,21 +110,21 @@ func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
 }
 
 func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDestroyed) {
-	_SetCEFCallbackEvent(onBrowserDestroyed, fn)
+	_SetCEFCallbackEvent(OnBrowserDestroyed, fn)
 }
 
 func (m *TCEFApplication) SetOnLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-	_SetCEFCallbackEvent(onRenderLoadStart, fn)
+	_SetCEFCallbackEvent(OnRenderLoadStart, fn)
 }
 
 func (m *TCEFApplication) SetOnLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
-	_SetCEFCallbackEvent(onRenderLoadEnd, fn)
+	_SetCEFCallbackEvent(OnRenderLoadEnd, fn)
 }
 
 func (m *TCEFApplication) SetOnLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
-	_SetCEFCallbackEvent(onRenderLoadError, fn)
+	_SetCEFCallbackEvent(OnRenderLoadError, fn)
 }
 
 func (m *TCEFApplication) SetOnLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
-	_SetCEFCallbackEvent(onRenderLoadingStateChange, fn)
+	_SetCEFCallbackEvent(OnRenderLoadingStateChange, fn)
 }

@@ -8,7 +8,10 @@
 
 package cef
 
-import "github.com/energye/golcl/lcl/api"
+import (
+	. "github.com/energye/energy/commons"
+	"github.com/energye/golcl/lcl/api"
+)
 
 func WindowInfoAsChild(windowInfo, windowHandle uintptr, windowName string) {
 	Proc("CEFWindowInfoAsChild").Call(windowInfo, windowHandle, api.GoStrToDStr(windowName))

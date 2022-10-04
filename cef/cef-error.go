@@ -8,10 +8,14 @@
 
 package cef
 
+import (
+	. "github.com/energye/energy/consts"
+)
+
 func cefErrorMessage(code CEF_V8_EXCEPTION) string {
 	switch code {
 	case CVE_ERROR_OK:
-		return empty
+		return Empty
 	case CVE_ERROR_NOT_FOUND_FIELD:
 		return "field not found, or field undefined"
 	case CVE_ERROR_NOT_FOUND_FUNC:

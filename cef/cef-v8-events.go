@@ -10,6 +10,10 @@ package cef
 
 import (
 	"fmt"
+	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"strings"
@@ -20,7 +24,7 @@ func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		defer func() {
 			if err := recover(); err != nil {
-				Logger.Error("v8event Error:", err)
+				logger.Logger.Error("v8event Error:", err)
 			}
 		}()
 		getPtr := func(i int) unsafe.Pointer {
@@ -78,10 +82,10 @@ func init() {
 				Url:     api.DStrToGoStr(tempFrame.Url),
 				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
 			}
-			cefProcMsg := (*cefProcessMessage)(getPtr(3))
-			args := NewArgumentList()
+			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(3))
+			args := ipc.NewArgumentList()
 			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
-			processMessage := &ICefProcessMessage{
+			processMessage := &ipc.ICefProcessMessage{
 				Name:         api.DStrToGoStr(cefProcMsg.Name),
 				ArgumentList: args,
 			}
@@ -128,10 +132,8 @@ func init() {
 		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
 			commands := (*uintptr)(getPtr(0))
 			commandLine := &TCefCommandLine{commandLines: make(map[string]string)}
-			if IPC.port == 0 {
-				IPC.port = getFreePort()
-			}
-			commandLine.AppendSwitch(MAINARGS_NETIPCPORT, fmt.Sprintf("%d", IPC.port))
+			ipc.IPC.SetPort()
+			commandLine.AppendSwitch(MAINARGS_NETIPCPORT, fmt.Sprintf("%d", ipc.IPC.Port()))
 			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(commandLine)
 			*commands = api.GoStrToDStr(commandLine.toString())
 		default:
@@ -142,7 +144,7 @@ func init() {
 }
 
 func _SetCEFCallbackEvent(fnName CEF_ON_EVENTS, fn interface{}) {
-	var eventId = api.GetAddEventToMapFn()(commonInstance.instance, fn)
+	var eventId = api.GetAddEventToMapFn()(CommonPtr.Instance(), fn)
 	//Logger.Debug("CEFApplication Event name:", fnName, "eventId:", eventId, "commonInstance.instance:", commonInstance.instance)
 	Proc("SetCEFCallbackEvent").Call(api.GoStrToDStr(string(fnName)), eventId)
 }

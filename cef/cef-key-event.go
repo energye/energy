@@ -8,6 +8,11 @@
 
 package cef
 
+import (
+	"github.com/energye/energy/commons"
+	. "github.com/energye/energy/consts"
+)
+
 type KeyEventCallback func(browse *ICefBrowser, event *TCefKeyEvent, result *bool)
 
 type AcceleratorCustom struct {
@@ -32,7 +37,7 @@ func acceleratorCode(shift, ctrl, alt bool, keyCode rune) string {
 
 var defaultAcceleratorCustom = func() {
 	//macos 下快捷键
-	if IsDarwin() {
+	if commons.IsDarwin() {
 		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
 			Accelerator: "ctrl+a",
 			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
