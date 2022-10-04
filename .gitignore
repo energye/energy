@@ -108,6 +108,7 @@ plugins
 /samples/controls
 
 # other
+.idea
 1048576000
 /exe/app.ico
 /resources/manifest.xml
