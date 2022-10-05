@@ -16,6 +16,12 @@ import (
 )
 
 var (
+	//1. BrowserWindow 是基于 BaseWindow 浏览器主窗口
+	//
+	//2. 可以对窗口的属性设置和事件监听，chromium 的配置和事件监听
+	//
+	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
+	//你也可以在 SetBrowserInit 回调函数初始化时创建子窗口，但是不能在主窗体显示之前显示子窗口. 尤其是带有chromium的窗口.
 	BrowserWindow = &browser{
 		browserWindow: &browserWindowForm{},
 		browserEvent:  &BrowserEvent{},
@@ -37,6 +43,7 @@ type browser struct {
 	uiLock        *sync.Mutex
 }
 
+//创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
 	DefaultUrl                        string                                                   //默认URL地址
 	Title                             string                                                   //窗口标题
@@ -44,7 +51,7 @@ type browserConfig struct {
 	Height                            int32                                                    //窗口高
 	chromiumConfig                    *tCefChromiumConfig                                      //主窗体浏览器配置
 	browserWindowOnEventCallback      func(browserEvent *BrowserEvent, window *TCefWindowInfo) //主窗口初始化回调
-	browserWindowAfterOnEventCallback func(window *TCefWindowInfo)                             //在初始化子窗体时使用的函数
+	browserWindowAfterOnEventCallback func(window *TCefWindowInfo)                             //主窗口初始化之后回调
 }
 
 // 浏览器全局事件监听
@@ -76,6 +83,10 @@ type browserWindowForm struct {
 }
 
 // 运行应用
+//
+// 多进程方式，启动主进程然后启动子进程，在MacOS下，需要单独调用启动子进程函数，单进程只启动主进程
+//
+// 主进程启动成功之后，将创建主窗口 browserWindow 是一个默认的主窗口
 //
 // 在这里启动浏览器的主进程和子进程
 func Run(cefApp *TCEFApplication) {
@@ -135,15 +146,6 @@ func (m *browserWindowForm) OnFormCreate(sender lcl.IObject) {
 	})
 }
 
-// 主窗体浏览器初始回调，事件监听和主窗体设置，不适用添加子窗体组件
-//
-// 主窗体初始化时调用，改变和设置浏览器事件、主窗体、功能
-//
-// 只适用于主窗口和事件设置
-func (m *browser) SetBrowserInit(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
-	m.Config.setBrowserWindowInitOnEvent(fn)
-}
-
 func (m *browser) MainWindowForm() *lcl.TForm {
 	if m.browserWindow != nil {
 		return m.browserWindow.TForm
@@ -151,17 +153,32 @@ func (m *browser) MainWindowForm() *lcl.TForm {
 	return nil
 }
 
-// 主窗体浏览器初始之后回调，主窗体设置，和添加子窗体组件
+// 主窗口和chromium初始化时回调
 //
-// 主窗体初始化之后调用，改变和设置浏览器事件、主窗体、添加子组件、功能
+// 在这里可以对主窗体事件监听和属性设置,和主窗口上的子组件创建
 //
-// 主窗口和添加子组件使用
+// 如果想创建子窗口或带有browser的窗口最好在 SetBrowserInitAfter 回调函数中创建
+//
+// event 浏览器事件
+// browserWindow 窗口信息对象
+func (m *browser) SetBrowserInit(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
+	m.Config.setBrowserWindowInitOnEvent(fn)
+}
+
+// 主窗体和chromium初始后回调
+//
+// 在这里可以对主窗体属性设置、添加子窗口、带有browser的窗口和子组件创建
+//
+// browserWindow 窗口信息对象
 func (m *browser) SetBrowserInitAfter(fn func(browserWindow *TCefWindowInfo)) {
 	m.Config.setBrowserWindowInitAfterOnEvent(fn)
 }
 
+//设置chromium配置
 func (m *browserConfig) SetChromiumConfig(chromiumConfig *tCefChromiumConfig) {
-	m.chromiumConfig = chromiumConfig
+	if chromiumConfig != nil && Args.IsMain() {
+		m.chromiumConfig = chromiumConfig
+	}
 }
 
 func (m *browserConfig) setBrowserWindowInitOnEvent(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {

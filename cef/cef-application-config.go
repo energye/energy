@@ -59,7 +59,9 @@ func NewApplicationConfig() *tCefApplicationConfig {
 	return m
 }
 
-//设置 Chromium Framework 编译好的二进制包根目录，默认当前目录
+//设置 Chromium Framework 编译好的二进制包根目录
+//
+//默认当前目录
 func (m *tCefApplicationConfig) SetFrameworkDirPath(s string) *tCefApplicationConfig {
 	m.frameworkDirPath = api.GoStrToDStr(s)
 	return m

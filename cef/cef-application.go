@@ -16,6 +16,7 @@ import (
 	"unsafe"
 )
 
+//CEF应用对象
 type TCEFApplication struct {
 	instance uintptr
 	ptr      unsafe.Pointer
@@ -38,6 +39,7 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	return m
 }
 
+//启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != 0 {
 		b := api.DBoolToGoBool(_CEFStartMainProcess(m.instance))
@@ -51,6 +53,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 	return false
 }
 
+//启动子进程, 如果指定了子进程执行程序将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() bool {
 	if m.instance != 0 {
 		b := api.DBoolToGoBool(_CEFStartSubProcess(m.instance))

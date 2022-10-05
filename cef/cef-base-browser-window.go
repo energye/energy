@@ -28,6 +28,7 @@ type IBaseWindow interface {
 	registerDefaultEvent()
 }
 
+//BaseWindow 是一个基于chromium 和 lcl 的窗口组件
 type BaseWindow struct {
 	*lcl.TForm                          //
 	chromium         *TCEFChromium      //
@@ -48,6 +49,7 @@ type BaseWindow struct {
 	isMainWindow     bool               //是否为主窗口
 }
 
+// 自定义窗口组件
 type Window struct {
 	BaseWindow
 	defaultUrl string
@@ -66,7 +68,7 @@ func NewWindow() *Window {
 	return window
 }
 
-//创建一个带有 chromium browser window窗口
+//创建一个带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
 func NewBrowserWindow(config *tCefChromiumConfig, defaultUrl string) *Window {
