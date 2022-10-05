@@ -160,6 +160,27 @@ func AppBrowserInit() {
 				}
 			})
 		})
+		event.On("go-call-js-code", func(context ipc.IIPCContext) {
+			fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", commons.Args.ProcessType())
+			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			info.Chromium().ExecuteJavaScript("jsCode('值值值')", "", 0)
+			list := ipc.NewArgumentList()
+			list.SetString(0, "js-ipc-on参数", true)
+			list.SetFloat64(1, 99999111.0121212)
+			//只触发js ipc.on 的函数，忽略返回值
+			info.Chromium().Emit("js-ipc-on", list, nil)
+			list.SetFloat64(1, 8888888111.0121212)
+			//触发js ipc.on 的函数，通过回调函数接收返回值
+			info.Chromium().EmitAndCallback("js-ipc-on", list, nil, func(context ipc.IIPCContext) {
+				fmt.Println("回调函数方式返回值:", context.Arguments().GetString(0))
+			})
+			//这个方式不适合于ui线程
+			//ctx, err := info.Chromium().EmitAndReturn("js-ipc-on", list, nil)
+			//if err != consts.PME_OK {
+			//
+			//}
+			//fmt.Println("等待阻塞的方式返回值:", ctx.Arguments().GetString(0))
+		})
 	})
 
 	//主进程初始化回调函数

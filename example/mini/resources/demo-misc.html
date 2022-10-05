@@ -66,6 +66,7 @@
     <button onclick="myFunc()">执行函数</button>
     <button onclick="newWindow()">创建新窗口</button>
     <button onclick="newBrowserWindow()">创建Browser新窗口</button>
+    <button onclick="goCallJsCode()">在GO中调用JS代码</button>
     <br>
     对象固定类型
     <button onclick="getObjectFieldValue()">Object-获取字段值</button>
@@ -123,6 +124,20 @@
         var a = 0;
         function newWindow() {
             ipc.emit("js-new-window");
+        }
+        //监听一个js函数，在Go中调用，带有参数和返回值
+        ipc.on("js-ipc-on",function (val,doubleValue) {
+            alert("js-ipc-on 执行了 参数: " + val + "  doubleValue: "+doubleValue);
+            return "返回值";
+        });
+        //定义一个函数，在Go中调用，带有参数, 返回值GO中接收不到
+        function jsCode(val) {
+            alert("jsCode 执行了: " + val);
+        }
+        function goCallJsCode() {
+            //这个示例通过 ipc触发go的代码，然后在go中调用js
+            //在go中执行js调用 jsCode() 函数
+            ipc.emit("go-call-js-code");
         }
         function newBrowserWindow() {
             ipc.emit("js-new-browser-window");

@@ -71,9 +71,9 @@ func (m *TCEFApplication) Free() {
 
 //上下文件创建回调
 //
-//返回false 创建 render IPC 和 变量绑定
+//返回值 false 将会创建 render进程的IPC和GO绑定变量
 //
-//对于一些不想绑定的URL地址，实现该函数，通过 frame.Url
+//对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
 	_SetCEFCallbackEvent(OnContextCreated, fn)
 }

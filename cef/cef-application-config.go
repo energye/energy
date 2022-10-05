@@ -171,9 +171,7 @@ func (m *tCefApplicationConfig) SetRemoteDebuggingPort(s int32) *tCefApplication
 	return m
 }
 
-// SetCommonRootName
-//
-//通用类型所属对象名定义 默认值:gocobj
+// GO绑定JS通用类型所属对象名定义
 //
 //默认值  gocobj
 func (m *tCefApplicationConfig) SetCommonRootName(name string) {
@@ -185,9 +183,7 @@ func (m *tCefApplicationConfig) SetCommonRootName(name string) {
 	_CEFV8ValueRef_SetCommonRootName(name)
 }
 
-// SetObjectRootName
-//
-//对象类型所属对象名定义 默认值:goobj
+// GO绑定JS对象类型所属对象名定义
 //
 //默认值 goobj
 func (m *tCefApplicationConfig) SetObjectRootName(name string) {

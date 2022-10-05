@@ -70,9 +70,9 @@ func clearValueBind() {
 	//valuesBind = make(map[uintptr]JSValue)
 }
 
-// Javascript 和 Go的函数和变量绑定声明初始函数
+// Go 和 javascript的函数或变量绑定声明初始函数
 //
-// 在JS中访问Go中的（函数,变量）或Go中访问JS的（函数,变量）需要在此回调函数中初始化
+// 在javascript中调用Go中的（函数,变量）需要在此回调函数中绑定
 //
 // 主进程回调 browser 和 frame 为 nil
 func (m *variableBind) VariableCreateCallback(callback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)) {

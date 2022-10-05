@@ -16,26 +16,11 @@ func AppRenderInit() *cef.TCEFApplication {
 	if commons.IsWindows() {
 		if env == "32" {
 			cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32")
-			cfg.SetResourcesDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32")
-			cfg.SetLocalesDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32\\locales")
-			cfg.SetUserDataPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32\\locales")
-			cfg.SetCache("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32\\UserData")
-			cfg.SetLogFile("E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\debug.log")
 		} else {
 			cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64")
-			cfg.SetResourcesDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64")
-			cfg.SetLocalesDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64\\locales")
-			cfg.SetUserDataPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64\\locales")
-			cfg.SetCache("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64\\UserData")
-			cfg.SetLogFile("E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\debug.log")
 		}
 	} else if commons.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium")
-		cfg.SetResourcesDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium")
-		cfg.SetLocalesDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium/locales")
-		cfg.SetUserDataPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium/locales")
-		cfg.SetCache("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium/UserData")
-		cfg.SetLogFile("/home/sxm/app/swt/gopath/src/swt-lazarus/demo17-dll-load/debug.log")
 	}
 	//cfg.SetLogSeverity(cef.LOGSEVERITY_DEBUG)
 	cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
@@ -86,15 +71,6 @@ func AppRenderInit() *cef.TCEFApplication {
 		message.ArgumentList.Clear()
 		return false
 	})
-	//cefApp.SetOnLoadStart(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType cef.TCefTransitionType) {
-	//	fmt.Println("====================== cefApp.SetOnLoadStart ", browser.Identifier(), frame.Id, transitionType)
-	//})
-	//cefApp.SetOnLoadEnd(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
-	//	fmt.Println("====================== cefApp.SetOnLoadEnd ", browser.Identifier(), frame.Id, httpStatusCode)
-	//})
-	//cefApp.SetOnBrowserDestroyed(func(browser *cef.ICefBrowser) {
-	//	fmt.Println("====================== cefApp.SetOnBrowserDestroyed ", browser.Identifier())
-	//})
 
 	//渲染进程 IPC事件
 	ipc.IPC.Render().SetOnEvent(func(event ipc.IEventOn) {

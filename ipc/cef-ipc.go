@@ -81,7 +81,7 @@ type IEventEmit interface {
 	IEventOn
 	Events() *event
 	Channel(channelId int64) *channel
-	SetOnEvent(callback func(event IEventOn))                                        //IPC 设置主进程或子进程事件监听
+	SetOnEvent(callback func(event IEventOn))                                        //IPC 事件监听
 	Emit(eventName string, arguments IArgumentList)                                  //IPC 异步事件触发
 	EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) //IPC 回调事件触发
 	EmitAndReturn(eventName string, arguments IArgumentList) IIPCContext             //IPC 返回值事件触发(处理时间复杂操作尽量不使用，容易造成UI进程锁死)
