@@ -16,7 +16,7 @@ var libs embed.FS
 var resources embed.FS
 
 func main() {
-	logger.Logger.SetLevel(logger.CefLog_Debug)
+	logger.SetLevel(logger.CefLog_Debug)
 	if commons.IsDarwin() {
 		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
 		macapp.MacApp.IsCEF(true)

@@ -288,17 +288,17 @@ func ipcRead(handler *ipcReadHandler) {
 		} else {
 			chnType = "[client]"
 		}
-		logger.Logger.Debug("IPC Read Disconnect type:", ipcType, "channelType:", chnType, "browserId:", handler.browserId, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
+		logger.Debug("IPC Read Disconnect type:", ipcType, "channelType:", chnType, "browserId:", handler.browserId, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
 		handler.Close()
 	}()
 	for {
 		header := make([]byte, headerLength)
 		size, err := handler.Read(header)
 		if err == io.EOF {
-			logger.Logger.Debug("IPC Read err:", err)
+			logger.Debug("IPC Read err:", err)
 			return
 		} else if size == 0 {
-			logger.Logger.Debug("IPC Read size == 0 header:", header)
+			logger.Debug("IPC Read size == 0 header:", header)
 			return
 		}
 		if size == headerLength {
@@ -321,41 +321,41 @@ func ipcRead(handler *ipcReadHandler) {
 			high = protocolHeaderLength + triggerModeByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &triggerMode)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.triggerMode: ", err)
+				logger.Debug("binary.Read.triggerMode: ", err)
 				return
 			}
 			low = high
 			high = high + renderChannelIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.channelId: ", err)
+				logger.Debug("binary.Read.channelId: ", err)
 				return
 			}
 			low = high
 			high = high + eventIdByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventId)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.eventIdByteLength: ", err)
+				logger.Debug("binary.Read.eventIdByteLength: ", err)
 				return
 			}
 			low = high
 			high = high + eventNameByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &eventLen)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.eventLen: ", err)
+				logger.Debug("binary.Read.eventLen: ", err)
 				return
 			}
 			low = high
 			err = binary.Read(bytes.NewReader(header[low:headerLength]), binary.BigEndian, &dataLen)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.dataLen: ", err)
+				logger.Debug("binary.Read.dataLen: ", err)
 				return
 			}
 
 			eventNameByte := make([]byte, eventLen)
 			size, err = handler.Read(eventNameByte)
 			if err != nil {
-				logger.Logger.Debug("binary.Read.eventNameByte: ", err)
+				logger.Debug("binary.Read.eventNameByte: ", err)
 				return
 			}
 			eventName = string(eventNameByte[:size])
@@ -365,7 +365,7 @@ func ipcRead(handler *ipcReadHandler) {
 				size, err = handler.Read(dataByte)
 			}
 			if err != nil {
-				logger.Logger.Debug("binary.Read.data: ", err)
+				logger.Debug("binary.Read.data: ", err)
 				return
 			}
 			ctx := &IPCContext{
@@ -384,7 +384,7 @@ func ipcRead(handler *ipcReadHandler) {
 			}
 			handler.handler(ctx)
 		} else {
-			logger.Logger.Debug("无效的 != headerLength")
+			logger.Debug("无效的 != headerLength")
 			break
 		}
 	}

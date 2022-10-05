@@ -30,75 +30,69 @@ type CefLogger struct {
 	level   CefLoggerLevel
 }
 
-var Logger = &CefLogger{}
+var logger = &CefLogger{}
 
 func init() {
 	logFile, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return
 	}
-	Logger.enable = true
-	Logger.logFile = logFile
-	Logger.level = CefLog_Error
-	Logger.logger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate|log.Ltime)
+	logger.enable = true
+	logger.logFile = logFile
+	logger.level = CefLog_Error
+	logger.logger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate|log.Ltime)
 }
 
-func SetLogger(logger *CefLogger) {
-	if logger != nil {
-		Logger = logger
-	}
+func SetLevel(l CefLoggerLevel) {
+	logger.level = l
 }
 
-func (m *CefLogger) SetLevel(l CefLoggerLevel) {
-	m.level = l
-}
-
-func (m *CefLogger) SetEnable(enable bool) {
-	m.enable = enable
-	if !m.enable {
-		m.logFile.Close()
+func SetEnable(enable bool) {
+	logger.enable = enable
+	if !logger.enable {
+		logger.logFile.Close()
 		os.Remove(log_file_name)
 	}
 }
 
-func (m *CefLogger) Error(v ...interface{}) {
-	if m.enable && m.level >= CefLog_Error {
-		m.logger.SetPrefix("[CEF-LCL-Error] ")
-		m.logger.Println(v...)
+func Error(v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Error {
+		logger.logger.SetPrefix("[CEF-LCL-Error] ")
+		logger.logger.Println(v...)
 	}
 }
 
-func (m *CefLogger) Errorf(format string, v ...interface{}) {
-	if m.enable && m.level >= CefLog_Error {
-		m.logger.SetPrefix("[CEF-LCL-Error] ")
-		m.logger.Printf(format, v...)
+func Errorf(format string, v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Error {
+		logger.logger.SetPrefix("[CEF-LCL-Error] ")
+		logger.logger.Printf(format, v...)
 	}
 }
 
-func (m *CefLogger) Info(v ...interface{}) {
-	if m.enable && m.level >= CefLog_Info {
-		m.logger.SetPrefix("[CEF-LCL-Info] ")
-		m.logger.Println(v...)
+func Info(v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Info {
+		logger.logger.SetPrefix("[CEF-LCL-Info] ")
+		logger.logger.Println(v...)
 	}
 }
 
-func (m *CefLogger) Infof(format string, v ...interface{}) {
-	if m.enable && m.level >= CefLog_Info {
-		m.logger.SetPrefix("[CEF-LCL-Info] ")
-		m.logger.Printf(format, v...)
+func Infof(format string, v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Info {
+		logger.logger.SetPrefix("[CEF-LCL-Info] ")
+		logger.logger.Printf(format, v...)
 	}
 }
 
-func (m *CefLogger) Debug(v ...interface{}) {
-	if m.enable && m.level >= CefLog_Debug {
-		m.logger.SetPrefix("[CEF-LCL-Debug] ")
-		m.logger.Println(v...)
+func Debug(v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Debug {
+		logger.logger.SetPrefix("[CEF-LCL-Debug] ")
+		logger.logger.Println(v...)
 	}
 }
 
-func (m *CefLogger) Debugf(format string, v ...interface{}) {
-	if m.enable && m.level >= CefLog_Debug {
-		m.logger.SetPrefix("[CEF-LCL-Debug] ")
-		m.logger.Printf(format, v...)
+func Debugf(format string, v ...interface{}) {
+	if logger.enable && logger.level >= CefLog_Debug {
+		logger.logger.SetPrefix("[CEF-LCL-Debug] ")
+		logger.logger.Printf(format, v...)
 	}
 }

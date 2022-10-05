@@ -113,7 +113,7 @@ func (m *browserChannel) Close() {
 
 func (m *browserChannel) onConnect() {
 	m.On(Ln_onConnectEvent, func(context IIPCContext) {
-		logger.Logger.Info("IPC browser on connect channelId:", context.ChannelId())
+		logger.Info("IPC browser on connect channelId:", context.ChannelId())
 		if context.ChannelId() > 0 {
 			if chn, ok := m.channel[context.ChannelId()]; ok {
 				chn.IPCType = m.ipcType
@@ -133,7 +133,7 @@ func (m *browserChannel) onConnect() {
 }
 
 func (m *browserChannel) removeChannel(id int64) {
-	logger.Logger.Debug("IPC browser channel remove channelId:", id)
+	logger.Debug("IPC browser channel remove channelId:", id)
 	delete(m.channel, id)
 }
 
@@ -249,7 +249,7 @@ func (m *browserChannel) EmitAndReturn(eventName string, arguments IArgumentList
 }
 
 func (m *browserChannel) accept() {
-	logger.Logger.Info("IPC Server Accept")
+	logger.Info("IPC Server Accept")
 	for {
 		var (
 			err      error
@@ -262,7 +262,7 @@ func (m *browserChannel) accept() {
 			netConn, err = m.netListener.Accept()
 		}
 		if err != nil {
-			logger.Logger.Info("accept Error:", err.Error())
+			logger.Info("browser channel accept Error:", err.Error())
 			continue
 		}
 		go func() {

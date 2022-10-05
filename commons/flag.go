@@ -105,7 +105,7 @@ func (m *_args) Args(name string) string {
 }
 
 func (m *_args) Print() {
-	logger.Logger.Debug("command line:", m.size)
+	logger.Debug("command line:", m.size)
 	for key, value := range m.value {
 		fmt.Printf("_args[%v = %v]\n", key, value)
 	}

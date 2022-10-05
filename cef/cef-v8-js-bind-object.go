@@ -116,7 +116,7 @@ func bindObject(objects ...interface{}) {
 			objectSti.StructsObject[objTyp.Name()] = &structObjectInfo{FieldsInfo: make(map[string]*structFieldInfo), SubStructObjectInfo: make(map[string]*structObjectInfo)}
 			objectSti.StructsObject[objTyp.Name()].analysisObjectField(objTyp, typ, value)
 		} else {
-			logger.Logger.Error("结构对象非指针类型:", typ.Name())
+			logger.Error("结构对象非指针类型:", typ.Name())
 		}
 	}
 	objectSti._objectToCefObject()
@@ -260,7 +260,7 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 			//过滤掉指针类型和非导出大写字段，和不是结构类型
 			b = true
 		} else if fieldType.Kind() == reflect.Struct && field.IsZero() {
-			logger.Logger.Debug("字段类型-对象,", fieldName, " 未初始化, 忽略JS绑定映射.")
+			logger.Debug("字段类型-对象,", fieldName, " 未初始化, 忽略JS绑定映射.")
 		}
 		if b { //b=true可以正常解析映射
 			filedValue := value.Elem().FieldByName(fieldName)

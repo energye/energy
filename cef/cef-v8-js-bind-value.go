@@ -368,7 +368,7 @@ func (m *ICEFv8Value) AsFunction() (*JSFunction, error) {
 func (m *ICEFv8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool) {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Logger.Error("V8BindFuncCallbackHandler recover:", err)
+			logger.Error("V8BindFuncCallbackHandler recover:", err)
 			outParams = []reflect.Value{reflect.ValueOf(err.(error).Error())}
 			success = false
 		}

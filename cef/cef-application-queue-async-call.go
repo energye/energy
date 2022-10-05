@@ -56,7 +56,7 @@ type queueAsyncCall struct {
 func QueueAsyncCall(fn QacFn) int {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Logger.Error("QueueAsyncCall Error:", err)
+			logger.Error("QueueAsyncCall Error:", err)
 		}
 	}()
 	id := qac.set(&queueCall{
@@ -77,7 +77,7 @@ func QueueAsyncCall(fn QacFn) int {
 func QueueSyncCall(fn QacFn) int {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Logger.Error("QueueSyncCall Error:", err)
+			logger.Error("QueueSyncCall Error:", err)
 		}
 	}()
 	qc := &queueCall{
@@ -98,7 +98,7 @@ func QueueSyncCall(fn QacFn) int {
 func (m *queueAsyncCall) call(id uintptr) {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Logger.Error("QueueSyncCall Call Error:", err)
+			logger.Error("QueueSyncCall Call Error:", err)
 		}
 	}()
 	if call, ok := m.calls.LoadAndDelete(id); ok {

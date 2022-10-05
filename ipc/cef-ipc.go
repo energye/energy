@@ -148,7 +148,7 @@ func (m *ipcChannel) Render() IEventEmit {
 
 // 启动IPC服务
 func (m *ipcChannel) StartBrowserIPC() {
-	logger.Logger.Info("Create IPC browser")
+	logger.Info("Create IPC browser")
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
@@ -181,7 +181,7 @@ func (m *ipcChannel) StartBrowserIPC() {
 //
 //多进程，每个渲染进程创建一个连接
 func (m *ipcChannel) CreateRenderIPC(browserId int32, channelId int64) *renderChannel {
-	logger.Logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
+	logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
 	if m.render.isConnect {
 		return m.render
 	}

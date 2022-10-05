@@ -59,7 +59,7 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 		if exceptionCallback != nil {
 			exceptionCallback(sender, e)
 		} else {
-			logger.Logger.Error("Exception:", e.Message())
+			logger.Error("Exception:", e.Message())
 		}
 	})
 }

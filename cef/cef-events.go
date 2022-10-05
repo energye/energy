@@ -72,7 +72,7 @@ func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		defer func() {
 			if err := recover(); err != nil {
-				logger.Logger.Error("CEF Events Error:", err)
+				logger.Error("CEF Events Error:", err)
 			}
 		}()
 		var (

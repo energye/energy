@@ -495,7 +495,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			var tempClose = func() {
 				defer func() {
 					if err := recover(); err != nil {
-						logger.Logger.Error("OnBeforeClose Error:", err)
+						logger.Error("OnBeforeClose Error:", err)
 					}
 				}()
 				if window.windowInfo.auxTools.viewSourceWindow != nil {

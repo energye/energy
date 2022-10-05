@@ -125,11 +125,11 @@ func (m *TCefWindowInfo) Close() {
 	defer BrowserWindow.uiLock.Unlock()
 	QueueAsyncCall(func(id int) {
 		if m == nil {
-			logger.Logger.Error("关闭浏览器 WindowInfo 为空")
+			logger.Error("关闭浏览器 WindowInfo 为空")
 			return
 		}
 		if m.Window == nil {
-			logger.Logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
+			logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
 			return
 		}
 		m.Window.isClosing = true
@@ -145,7 +145,7 @@ func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	} else {
 		m.windowSerial++
 	}
-	logger.Logger.Debug("next window serial:", m.windowSerial)
+	logger.Debug("next window serial:", m.windowSerial)
 	return m.windowSerial
 }
 

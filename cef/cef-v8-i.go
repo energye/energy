@@ -70,7 +70,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//变量绑定回调函数
 	VariableBind.callVariableBind(browser, frame)
 	var valueBindInfos []*valueBindInfo
-	logger.Logger.Debug("Total number of bindings：", VariableBind.ValueBindCount())
+	logger.Debug("Total number of bindings：", VariableBind.ValueBindCount())
 	for _, value := range VariableBind.valuesBind {
 		if !value.isCommon() {
 			continue

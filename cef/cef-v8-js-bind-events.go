@@ -53,7 +53,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 			if exceptionPrt != nil {
 				*exceptionPrt = api.GoStrToDStr((err.(error)).Error())
 			}
-			logger.Logger.Error("V8BindFieldCallbackHandler Error", err)
+			logger.Error("V8BindFieldCallbackHandler Error", err)
 		}
 	}()
 	getVal := func(i int) uintptr {
@@ -218,7 +218,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 	)
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Logger.Error("V8BindFuncCallbackHandler recover:", err)
+			logger.Error("V8BindFuncCallbackHandler recover:", err)
 			if exceptionPrt != nil {
 				*exceptionPrt = api.GoStrToDStr(" " + (err.(error)).Error())
 			}

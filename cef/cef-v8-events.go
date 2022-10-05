@@ -24,7 +24,7 @@ func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		defer func() {
 			if err := recover(); err != nil {
-				logger.Logger.Error("v8event Error:", err)
+				logger.Error("v8event Error:", err)
 			}
 		}()
 		getPtr := func(i int) unsafe.Pointer {
