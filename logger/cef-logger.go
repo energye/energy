@@ -6,6 +6,8 @@
 //
 //----------------------------------------
 
+//简单的日志输出
+
 package logger
 
 import (
@@ -21,18 +23,24 @@ const (
 	CefLog_Info
 	CefLog_Debug
 )
-const log_file_name = "cef-lcl.log"
+
+const log_file_name = "energy.log"
 
 type CefLogger struct {
 	logFile *os.File
 	logger  *log.Logger
 	enable  bool
+	isInit  bool
 	level   CefLoggerLevel
 }
 
 var logger = &CefLogger{}
 
-func init() {
+func loggerInit() {
+	if logger.isInit {
+		return
+	}
+	logger.isInit = true
 	logFile, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return
@@ -49,9 +57,8 @@ func SetLevel(l CefLoggerLevel) {
 
 func SetEnable(enable bool) {
 	logger.enable = enable
-	if !logger.enable {
-		logger.logFile.Close()
-		os.Remove(log_file_name)
+	if enable {
+		loggerInit()
 	}
 }
 

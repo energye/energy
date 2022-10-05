@@ -16,6 +16,7 @@ var libs embed.FS
 var resources embed.FS
 
 func main() {
+	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
 	if commons.IsDarwin() {
 		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
