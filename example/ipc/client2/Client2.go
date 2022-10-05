@@ -2,14 +2,14 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/ipc"
 )
 
 func main() {
-	cef.UseNetIPCChannel = false
-	cef.IPC.CreateRenderIPC(1, 10)
+	ipc.UseNetIPCChannel = false
+	ipc.IPC.CreateRenderIPC(1, 10)
 	var i = 0
-	cef.IPC.Render().On("on-client", func(context cef.IIPCContext) {
+	ipc.IPC.Render().On("on-client", func(context ipc.IIPCContext) {
 		var message = context.Arguments()
 		var data = message.GetString(0)
 		//context.Free()
@@ -20,9 +20,9 @@ func main() {
 	for j := 0; j < 1; j++ {
 		go func() {
 			for {
-				args := cef.NewArgumentList()
+				args := ipc.NewArgumentList()
 				args.SetString(0, "数据:"+fmt.Sprintf("%d", i))
-				cef.IPC.Render().Emit("on-server", args)
+				ipc.IPC.Render().Emit("on-server", args)
 				//cef.IPC.Render().EmitAndCallback("on-server", args, func(context cef.IIPCContext) {
 				//	fmt.Println("客户端接收:", string(context.Message().Data()))
 				//	//context.Free()

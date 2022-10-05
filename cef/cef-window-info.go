@@ -145,7 +145,7 @@ func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	} else {
 		m.windowSerial++
 	}
-	logger.Logger.Debug("下一个窗口ID:", m.windowSerial)
+	logger.Logger.Debug("next window serial:", m.windowSerial)
 	return m.windowSerial
 }
 

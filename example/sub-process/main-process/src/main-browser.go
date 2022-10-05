@@ -3,6 +3,8 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/commons"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -15,15 +17,15 @@ func MainBrowserInit() {
 	config.SetEnableDevTools(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL
-	if cef.IsWindows() {
+	if commons.IsWindows() {
 		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\demo-sub-process\\resources\\demo-misc.html"
-	} else if cef.IsLinux() {
+	} else if commons.IsLinux() {
 		cef.BrowserWindow.Config.DefaultUrl = "/home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
-	} else if cef.IsDarwin() {
+	} else if commons.IsDarwin() {
 		cef.BrowserWindow.Config.DefaultUrl = "/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
 	}
 	//主进程 IPC事件
-	cef.IPC.Browser().SetOnEvent(func(event cef.IEventOn) {
+	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
 	})
 

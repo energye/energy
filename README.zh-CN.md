@@ -2,7 +2,9 @@
 [中文 ](https://github.com/energye/energy/blob/main/README.zh-CN.md)
 [English](https://github.com/energye/energy/blob/main/README.md)
 
-golang 基于CEF的GUI框架
+---
+### 简介
+#### [energy](https://github.com/energye/energy) 使用GO基于Chromium Embedded Framework (CEF)开发的桌面客户端框架
 
 
 ### 授权

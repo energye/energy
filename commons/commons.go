@@ -14,6 +14,7 @@ import (
 	"errors"
 	"fmt"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/decimal"
 	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -733,23 +734,27 @@ const (
 var dBaseDateTime = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
 
 func GoDateTimeToDDateTime(dateTime time.Time) float64 {
-	hour := dateTime.Hour()
-	minute := dateTime.Minute()
-	second := dateTime.Second()
 	date := float64(dateTime.Sub(dBaseDateTime).Milliseconds() / 1000 / 60 / 60 / 24)
-	dTime := (float64(hour)*dSecond + float64(minute)*float64(60) + float64(second)) / dDay
-	dTime, _ = strconv.ParseFloat(fmt.Sprintf("%.10f", date+dTime), 64)
+	diHour := decimal.NewFromFloat(float64(dateTime.Hour()))
+	diMinute := decimal.NewFromFloat(float64(dateTime.Minute())).Mul(decimal.NewFromFloat(60))
+	diSecond := decimal.NewFromFloat(float64(dateTime.Second()))
+	diTime := diHour.Mul(decimal.NewFromFloat(dSecond)).Add(diMinute).Add(diSecond).Div(decimal.NewFromFloat(dDay))
+	var dTime, _ = diTime.Add(decimal.NewFromFloat(date)).Float64()
 	return dTime
 }
 
 func DDateTimeToGoDateTime(dateTime float64) time.Time {
 	dtStr := strings.Split(fmt.Sprintf("%v", dateTime), ".")
 	dDate, _ := strconv.Atoi(dtStr[0])
-	dTime, _ := strconv.ParseFloat(fmt.Sprintf("%.10f", dateTime-float64(dDate)), 64)
-	gTime := time.Time{}
-	gTime = gTime.AddDate(1899, 12, 30)
-	gTime = gTime.AddDate(-1, -1, dDate)
-	gTime = gTime.Add(time.Second * time.Duration(dTime*dDay))
+	diDateTime := decimal.NewFromFloat(dateTime)
+	diDate := decimal.NewFromFloat(float64(dDate))
+	diTime := diDateTime.Sub(diDate)
+	dTime, _ := diTime.Float64()
+	gTime := time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
+	gTime = gTime.AddDate(0, 0, dDate)
+	diTime = decimal.NewFromFloat(float64(time.Second)).Mul(decimal.NewFromFloat(dTime).Mul(decimal.NewFromFloat(dDay)))
+	diTime = diTime.Add(decimal.NewFromFloat(dTime))
+	gTime = gTime.Add(time.Duration(diTime.IntPart()))
 	return gTime
 }
 
