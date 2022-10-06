@@ -1,4 +1,4 @@
-# Energy go CEF based desktop client framework
+# Energy is Go's framework for building desktop applications based on CEF
 [中文 ](https://github.com/energye/energy/blob/main/README.md) |
 English
 
