@@ -1,5 +1,5 @@
 # Energy 是Go基于CEF的构建桌面应用的框架
-[中文 ](https://github.com/energye/energy/blob/main/README.md)
+中文 |
 [English](https://github.com/energye/energy/blob/main/README.en-US.md)
 
 ---

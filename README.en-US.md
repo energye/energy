@@ -1,6 +1,6 @@
 # Energy go CEF based desktop client framework
-[中文 ](https://github.com/energye/energy/blob/main/README.md)
-[English](https://github.com/energye/energy/blob/main/README.en-US.md)
+[中文 ](https://github.com/energye/energy/blob/main/README.md) |
+English
 
 ### authorization
 
