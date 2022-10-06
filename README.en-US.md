@@ -91,7 +91,3 @@ func main() {
 * Download the binary package for the corresponding platform and energy version
 * Install Energy dependencies go get github.com/energye/energy Or use: go mod init, go mod tidy
 * Create a GO application, see the Getting Started Guide and Example
-
-### Authorization
-
-**Maintain the same licensing agreement as GOLCL: [golcl.LICENSE](https://github.com/energye/golcl/blob/main/LICENSE)**

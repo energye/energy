@@ -91,8 +91,3 @@ func main() {
 * 下载对应平台和对应energy版本的二进制压缩包
 * 安装energy依赖 go get github.com/energye/energy 或者使用 go mod init, go mod tidy
 * 创建GO程序应用, 参考入门指南和example示例
-
-
-### 授权
-
-**保持跟golcl采用相同的授权协议: [golcl.LICENSE](https://github.com/energye/golcl/blob/main/LICENSE)**  
