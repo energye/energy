@@ -47,7 +47,7 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 	//macos的命令行设置
 	setMacOSXCommandLine(GoStrToDStr(Args.CommandLine()))
 	//在主应用UI线程中执行，以队列异步方式调用的UI线程执行回调函数
-	applicationQueueAsyncCallInit()
+	//applicationQueueAsyncCallInit()
 	//通用对象初始化
 	CommonInstanceInit()
 	//对于go绑定到v8引擎js的事件处理函数

@@ -24,11 +24,6 @@ package cef
 // static void* doGetCefWindowBindEventAddr() {
 //    return &doCefWindowBindEventProc;
 // }
-//
-// extern void* doApplicationQueueAsyncCallEventProc(void* f);
-// static void* doGetApplicationQueueAsyncCallEventAddr() {
-//    return &doApplicationQueueAsyncCallEventProc;
-// }
 import "C"
 
 import (
@@ -47,14 +42,7 @@ func doCefWindowBindEventProc(f unsafe.Pointer, args unsafe.Pointer, argcount C.
 	return nullptr
 }
 
-//export doApplicationQueueAsyncCallEventProc
-func doApplicationQueueAsyncCallEventProc(f unsafe.Pointer) unsafe.Pointer {
-	applicationQueueAsyncCallProc(uintptr(f))
-	return nullptr
-}
-
 var (
-	cefIPCCallbackFuncEvent        = uintptr(C.doGetCefIPCCallbackFuncEventAddr())
-	cefWindowBindEvent             = uintptr(C.doGetCefWindowBindEventAddr())
-	applicationQueueAsyncCallEvent = uintptr(C.doGetApplicationQueueAsyncCallEventAddr())
+	cefIPCCallbackFuncEvent = uintptr(C.doGetCefIPCCallbackFuncEventAddr())
+	cefWindowBindEvent      = uintptr(C.doGetCefWindowBindEventAddr())
 )

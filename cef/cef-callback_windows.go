@@ -11,7 +11,6 @@ package cef
 import "syscall"
 
 var (
-	cefIPCCallbackFuncEvent        = syscall.NewCallback(cefIPCEventProc)
-	cefWindowBindEvent             = syscall.NewCallback(cefWindowBindCallbackEventProc)
-	applicationQueueAsyncCallEvent = syscall.NewCallback(applicationQueueAsyncCallProc)
+	cefIPCCallbackFuncEvent = syscall.NewCallback(cefIPCEventProc)
+	cefWindowBindEvent      = syscall.NewCallback(cefWindowBindCallbackEventProc)
 )
