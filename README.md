@@ -13,12 +13,12 @@
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 
 ### CEF(105.3.39)和Energy和二进制下载
-| CEF                                                                                                                               | Energy                                                                                                                             |
-|-----------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
-| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [Windows 32 bits](https://github.com/energye/energy/releases/download/untagged-cf913093ed82524dcacc/liblcl-105.0.5195.127_windows32.zip)    |
-| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [Windows 64 bits](https://github.com/energye/energy/releases/download/untagged-cf913093ed82524dcacc/liblcl-105.0.5195.127_macosx64.zip)    |
-| [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [Linux x86 64 bits](https://github.com/energye/energy/releases/download/untagged-cf913093ed82524dcacc/liblcl-105.0.5195.127_linux64.zip)  |
-| [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [MacOSX x86 64 bits](https://github.com/energye/energy/releases/download/untagged-cf913093ed82524dcacc/liblcl-105.0.5195.127_macosx64.zip) |
+| CEF                                                                                                                               | Energy                                                                                                                           |
+|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
+| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [Windows 32 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_windows32.zip)  |
+| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [Windows 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip)  |
+| [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [Linux x86 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)|
+| [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [MacOSX x86 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
 
 ### 入门指南
 * [教程]()
