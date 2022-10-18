@@ -12,24 +12,27 @@
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 
-### CEF(105.3.39)和Energy和二进制下载
-| CEF                                                                                                                               | Energy                                                                                                                           |
-|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------|
-| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [Windows 32 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_windows32.zip)  |
-| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [Windows 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip)  |
-| [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [Linux x86 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)|
-| [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [MacOSX x86 64 bits](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
+### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy和二进制下载 
+| CEF                                                                                                                               | Energy                                                                                                                                                                                              |
+|-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_windows32.zip)        |
+| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [![windows 64 bits](https://img.shields.io/badge/downloads-Windows%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip)         |
+| [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)    |
+| [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
 
-### 入门指南
-* [教程]()
-* [示例]()
-* [文档]()
+#### [二进制包使用和目录说明]()
+> 
+
+### [入门指南](https://energy.yanghy.cn)
+* [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065)
+* [示例](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067)
+* [文档](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069)
 
 ### 快速入门
 #### 基本需求
 > golang >= 1.9.2
 >
-> 下载对应平台和版本的CEF二进制包,解压到目录.
+> 下载对应平台的CEF和Energy版本的二进制包.并将其解压至任意目录.
 >
 > 以example/simple示例为例
 >
