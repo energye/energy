@@ -13,6 +13,7 @@
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 
 ### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy和二进制下载 
+#### 这里CEF是[Chromium](https://bitbucket.org/chromiumembedded/cef/)提供的下载地址, [Energy](https://github.com/energye/liblcl)是预编译好的动态链接库
 | CEF                                                                                                                               | Energy                                                                                                                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_windows32.zip)        |
@@ -20,10 +21,67 @@
 | [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)    |
 | [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
 
-#### [二进制包使用和目录说明]()
+#### [二进制压缩包使用说明]()
+##### 压缩包文件windows和linux只用到了Release和Resources目录内的文件, MacOSX只用到了Release目录内文件
+##### windows和linux使用
+> 下载CEF和Energy对应版本的二进制压缩包
 > 
+> 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
+> 2. CEF 提取Release和Resources目录‘内’文件到ChromiumDemo文件夹
+> 3. Energy 提取动态链接库到ChromiumDemo文件夹
+> 4. 最终的目录结构
+>>   ChromiumDemo文件夹目录
+>>>  locales
+>>>
+>>>  cef_sandbox.lib
+>>>
+>>>  chrome_100_percent.pak
+>>>
+>>>  chrome_200_percent.pak
+>>>
+>>>  chrome_elf.dll
+>>>
+>>>  d3dcompiler_47.dll
+>>>
+>>>  icudtl.dat
+>>>
+>>>  libcef.dll
+>>>
+>>>  libcef.lib
+>>>
+>>>  libEGL.dll
+>>>
+>>>  libGLESv2.dll
+>>>
+>>>  liblcl.dll
+>>>
+>>>  resources.pak
+>>>
+>>>  snapshot_blob.bin
+>>>
+>>>  v8_context_snapshot.bin
+>>>
+>>>  vk_swiftshader.dll
+>>>
+>>>  vk_swiftshader_icd.json
+>>>
+>>>  vulkan-1.dll
+>  5. 最后把Go编写的程序编译好执行文件放到ChromiumDemo目录
 
-### [入门指南](https://energy.yanghy.cn)
+##### MacOSX使用
+> 下载CEF和Energy对应版本的二进制压缩包
+> 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
+> 2. CEF 提取Release目录‘内’文件到ChromiumDemo文件夹
+> 3. Energy 提取动态链接库到ChromiumDemo文件夹
+> 4. 最终的目录结构
+>> ChromiumDemo文件夹目录
+>>> Chromium Embedded Framework.framework
+>>> 
+>>> cef_sandbox.a
+>>> 
+>>> liblcl.dylib
+
+### [入门指南-网址](https://energy.yanghy.cn)
 * [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065)
 * [示例](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067)
 * [文档](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069)
@@ -93,6 +151,6 @@ func main() {
 }
 ```
 ### 安装
-* 下载对应平台和对应energy版本的二进制压缩包
+* 下载对应平台CEF和Energy的二进制压缩包
 * 安装energy依赖 go get github.com/energye/energy 或者使用 go mod init, go mod tidy
 * 创建GO程序应用, 参考入门指南和example示例
