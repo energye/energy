@@ -21,7 +21,7 @@ func main() {
 	if commons.IsDarwin() {
 		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
 		macapp.MacApp.IsCEF(true)
-		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt-lazarus/CEF4Delphi-Libs-105.3.39/chromium")
+		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt/energy/chromium")
 	}
 	cef.GlobalCEFInit(&libs, &resources)
 	//Render 子进程一些初始化配置

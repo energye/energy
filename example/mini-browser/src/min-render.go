@@ -15,12 +15,12 @@ func AppRenderInit() *cef.TCEFApplication {
 	var env = commons.Args.Args("env")
 	if commons.IsWindows() {
 		if env == "32" {
-			cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-32")
+			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-32")
 		} else {
-			cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-105.3.39\\chromium-64")
+			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-64")
 		}
 	} else if commons.IsLinux() {
-		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEF4Delphi-Libs-105.3.39/chromium")
+		cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
 	}
 	//cfg.SetLogSeverity(cef.LOGSEVERITY_DEBUG)
 	cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)

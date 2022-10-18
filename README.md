@@ -136,13 +136,13 @@ func main() {
 	cef.BrowserWindow.Config.Height = 768
 	//chromium配置
 	cef.BrowserWindow.Config.SetChromiumConfig(cef.NewChromiumConfig())
-	//通过创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
+	//创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
 		//设置应用图标 这里加载的图标是内置到执行程序里的资源文件
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
 		fmt.Println("SetBrowserInit")
 	})
-	//通过创建窗口之后对对主窗口的属性、组件或子创建的创建
+	//创建窗口之后对对主窗口的属性、组件或子创建的创建
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		fmt.Println("SetBrowserInitAfter")
 	})
