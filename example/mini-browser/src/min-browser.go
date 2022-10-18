@@ -391,7 +391,7 @@ func AppBrowserInit() {
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
 func cefTray(browserWindow *cef.TCefWindowInfo) {
-	var url = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\min-browser\\resources\\min-browser-tray.html"
+	var url = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini-browser\\resources\\min-browser-tray.html"
 	if !tools.IsExist(url) {
 		url = consts.ExePath + consts.Separator + "min-browser-tray.html"
 	}
@@ -421,6 +421,12 @@ func cefTray(browserWindow *cef.TCefWindowInfo) {
 	})
 	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
 		browserWindow.Window.Close()
+	})
+	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
+		cef.QueueAsyncCall(func(id int) {
+			lcl.ShowMessage("tray-show-message-box 提示消息")
+		})
+		tray.Hide()
 	})
 	//托盘 end
 }
