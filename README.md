@@ -12,7 +12,7 @@
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 
-### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy和二进制下载 
+### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy动态链接库压缩包下载 
 #### 这里CEF是[Chromium](https://bitbucket.org/chromiumembedded/cef/)提供的下载地址, [Energy](https://github.com/energye/liblcl)是预编译好的动态链接库
 | CEF                                                                                                                               | Energy                                                                                                                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -21,10 +21,10 @@
 | [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)    |
 | [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
 
-#### [二进制压缩包使用说明]()
+#### [动态链接库压缩包使用说明]()
 ##### 压缩包文件windows和linux只用到了Release和Resources目录内的文件, MacOSX只用到了Release目录内文件
 ##### windows和linux使用
-> 下载CEF和Energy对应版本的二进制压缩包
+> 下载CEF和Energy对应版本的动态链接库压缩包
 > 
 > 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
 > 2. CEF 提取Release和Resources目录‘内’文件到ChromiumDemo文件夹
@@ -69,7 +69,7 @@
 >  5. 最后把Go编写的程序编译好执行文件放到ChromiumDemo目录
 
 ##### MacOSX使用
-> 下载CEF和Energy对应版本的二进制压缩包
+> 下载CEF和Energy对应版本的动态链接库压缩包
 > 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
 > 2. CEF 提取Release目录‘内’文件到ChromiumDemo文件夹
 > 3. Energy 提取动态链接库到ChromiumDemo文件夹
@@ -90,7 +90,7 @@
 #### 基本需求
 > golang >= 1.9.2
 >
-> 下载对应平台的CEF和Energy版本的二进制包.并将其解压至任意目录.
+> 下载对应平台的CEF和Energy的动态链接库.并将其解压至任意目录.
 >
 > 以example/simple示例为例
 >
@@ -123,7 +123,7 @@ func main() {
 	//可选的应用配置
 	cfg := cef.NewApplicationConfig()
 	//指定chromium的二进制包框架根目录, 不指定为当前程序执行目录
-	cfg.SetFrameworkDirPath("/xxxx/xxxx/chromium")
+	cfg.SetFrameworkDirPath("/xxxx/xxxx/ChromiumDemo")
 	//创建应用
 	cefApp := cef.NewApplication(cfg)
 	//主窗口的配置
