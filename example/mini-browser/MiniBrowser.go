@@ -4,7 +4,7 @@ import (
 	"embed"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/commons"
-	"github.com/energye/energy/example/mini/src"
+	"github.com/energye/energy/example/mini-browser/src"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/pkgs/macapp"
 )

@@ -36,12 +36,12 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL
 	if commons.IsWindows() {
-		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini\\resources\\demo-misc.html"
+		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini-browser\\resources\\demo-misc.html"
 		if !tools.IsExist(cef.BrowserWindow.Config.DefaultUrl) {
 			cef.BrowserWindow.Config.DefaultUrl = consts.ExePath + consts.Separator + "demo-misc.html"
 		}
 	} else if commons.IsLinux() {
-		cef.BrowserWindow.Config.DefaultUrl = "file:///home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/min-browser/resources/demo-misc.html"
+		cef.BrowserWindow.Config.DefaultUrl = "file:///home/sxm/app/swt/gopath/src/github.com/energye/energy/example/mini-browser/resources/demo-misc.html"
 	} else if commons.IsDarwin() {
 		cef.BrowserWindow.Config.DefaultUrl = "file:///Users/zhangli/go/src/github.com/energye/energy/demos/min-browser/resources/demo-misc.html"
 	}
