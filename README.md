@@ -155,5 +155,5 @@ func main() {
 * 安装energy依赖 go get github.com/energye/energy 或者使用 go mod init, go mod tidy
 * 创建GO程序应用, 参考入门指南和example示例
 
-
+----
 ### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)
