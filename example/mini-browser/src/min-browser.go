@@ -43,7 +43,7 @@ func AppBrowserInit() {
 	} else if commons.IsLinux() {
 		cef.BrowserWindow.Config.DefaultUrl = "file:///home/sxm/app/swt/gopath/src/github.com/energye/energy/example/mini-browser/resources/demo-misc.html"
 	} else if commons.IsDarwin() {
-		cef.BrowserWindow.Config.DefaultUrl = "file:///Users/zhangli/go/src/github.com/energye/energy/demos/min-browser/resources/demo-misc.html"
+		cef.BrowserWindow.Config.DefaultUrl = "file:///Users/zhangli/go/src/github.com/energye/energy/example/mini-browser/resources/demo-misc.html"
 	}
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {

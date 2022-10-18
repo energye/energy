@@ -46,7 +46,7 @@ type EmitSyncCollection struct {
 
 func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 	if UseNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPC.Port)
+		address := fmt.Sprintf("localhost:%d", IPC.Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())

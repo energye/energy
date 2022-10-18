@@ -42,7 +42,7 @@ type channel struct {
 func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 	if UseNetIPCChannel {
 		IPC.SetPort()
-		address := fmt.Sprintf("localhost:%d", IPC.Port)
+		address := fmt.Sprintf("localhost:%d", IPC.Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())

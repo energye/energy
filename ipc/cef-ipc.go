@@ -57,9 +57,7 @@ func IPCChannelChooseInit() {
 }
 
 func isUseNetIPC() bool {
-	if IsDarwin() {
-		return true
-	} else if IsLinux() {
+	if IsDarwin() || IsLinux() {
 		return false
 	}
 	ov := version.OSVersion
@@ -67,6 +65,7 @@ func isUseNetIPC() bool {
 		//不支持UnixSocket
 		return false
 	}
+	//使用net socket
 	return true
 }
 
