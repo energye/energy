@@ -21,6 +21,7 @@ func AppBrowserInit() {
 	//ar integer cef.JSValue
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
 		fmt.Println("GO变量和函数绑定回调", commons.Args.ProcessType())
+		bind.NewString("stringv", "这是一个字符串变量")
 		bind.NewInteger("integerv", 1211111)
 		bind.NewDouble("doublev", 11.0505)
 		bind.NewBoolean("booleanv", true)
