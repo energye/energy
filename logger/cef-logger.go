@@ -43,6 +43,7 @@ func loggerInit() {
 	logger.isInit = true
 	logFile, err := os.OpenFile(log_file_name, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
+		logger.enable = false
 		return
 	}
 	logger.enable = true
