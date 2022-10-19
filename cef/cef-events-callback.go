@@ -186,7 +186,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "撤销",
 			Accelerator: "ctrl+z",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().Undo()
+				browser.GetFocusedFrame().Undo()
 			},
 		})
 		model.SetEnabled(undoId, undoEnabled)
@@ -198,7 +198,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "恢复",
 			Accelerator: "ctrl+shift+z",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().Redo()
+				browser.GetFocusedFrame().Redo()
 			},
 		})
 		model.SetEnabled(redoId, redoEnabled)
@@ -213,7 +213,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "剪切",
 			Accelerator: "ctrl+x",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().Cut()
+				browser.GetFocusedFrame().Cut()
 			},
 		})
 		model.SetEnabled(cutId, cutEnabled)
@@ -225,7 +225,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "复制",
 			Accelerator: "ctrl+c",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().Copy()
+				browser.GetFocusedFrame().Copy()
 			},
 		})
 		model.SetEnabled(copyId, copyEnabled)
@@ -237,7 +237,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "粘贴",
 			Accelerator: "ctrl+v",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().Paste()
+				browser.GetFocusedFrame().Paste()
 			},
 		})
 		model.SetEnabled(pasteId, pasteEnabled)
@@ -249,7 +249,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "全选",
 			Accelerator: "ctrl+a",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				//browser.GetFocusedFrame().SelectAll()
+				browser.GetFocusedFrame().SelectAll()
 			},
 		})
 		model.SetEnabled(pasteId, selectAllEnabled)
