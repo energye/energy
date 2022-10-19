@@ -23,11 +23,6 @@ func main() {
 				args := ipc.NewArgumentList()
 				args.SetString(0, "数据:"+fmt.Sprintf("%d", i))
 				ipc.IPC.Render().Emit("on-server", args)
-				//cef.IPC.Render().EmitAndCallback("on-server", args, func(context cef.IIPCContext) {
-				//	fmt.Println("客户端接收:", string(context.Message().Data()))
-				//	//context.Free()
-				//	i++
-				//})
 				args.Clear()
 			}
 		}()

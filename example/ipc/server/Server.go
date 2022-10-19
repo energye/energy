@@ -14,7 +14,7 @@ func main() {
 		var data = message.GetString(0)
 		fmt.Println("on-server:", data)
 		context.Response([]byte("服务端回复:" + fmt.Sprintf("%d", i)))
-		ipc.IPC.Browser().EmitChannelId("on-client", 10, message)
+		ipc.IPC.Browser().EmitChannelId("on-client", context.ChannelId(), message)
 		i++
 	})
 	select {}
