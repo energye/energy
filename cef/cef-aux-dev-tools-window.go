@@ -44,12 +44,24 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		winAuxTools.devToolsWindow.FormCreate()
 		winAuxTools.devToolsWindow.defaultWindowEvent()
 		winAuxTools.devToolsWindow.defaultWindowCloseEvent()
+		winAuxTools.devToolsWindow.SetWidth(1024)
+		winAuxTools.devToolsWindow.SetHeight(768)
 
 		winAuxTools.devToolsWindow.SetOnResize(func(sender lcl.IObject) {
 			winAuxTools.devToolsX = winAuxTools.devToolsWindow.Left()
 			winAuxTools.devToolsY = winAuxTools.devToolsWindow.Top()
 			winAuxTools.devToolsWidth = winAuxTools.devToolsWindow.Width()
 			winAuxTools.devToolsHeight = winAuxTools.devToolsWindow.Height()
+
+			if winAuxTools.devToolsWindow.isClosing {
+				return
+			}
+			if winAuxTools.devToolsWindow.chromium != nil {
+				winAuxTools.devToolsWindow.chromium.NotifyMoveOrResizeStarted()
+			}
+			if winAuxTools.devToolsWindow.windowParent != nil {
+				winAuxTools.devToolsWindow.windowParent.UpdateSize()
+			}
 		})
 		winAuxTools.devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 			if winAuxTools.devToolsWindow.isClosing {

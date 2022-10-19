@@ -44,19 +44,21 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 	var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
 	QueueAsyncCall(func(id int) {
 		var m = BrowserWindow.popupWindow
-		BrowserWindow.popupWindow.SetWindowType(WT_VIEW_SOURCE)
-		BrowserWindow.popupWindow.ChromiumCreate(nil, viewSourceUrl)
-		BrowserWindow.popupWindow.putChromiumWindowInfo()
-		BrowserWindow.popupWindow.defaultChromiumEvent()
-		if winInfo := BrowserWindow.GetWindowInfo(BrowserWindow.popupWindow.windowId); winInfo != nil {
+		m.SetWindowType(WT_VIEW_SOURCE)
+		m.ChromiumCreate(nil, viewSourceUrl)
+		m.putChromiumWindowInfo()
+		m.defaultChromiumEvent()
+		m.SetWidth(1024)
+		m.SetHeight(768)
+		if winInfo := BrowserWindow.GetWindowInfo(m.windowId); winInfo != nil {
 			winInfo.auxTools.viewSourceUrl = viewSourceUrl
-			winInfo.auxTools.viewSourceWindow = BrowserWindow.popupWindow
+			winInfo.auxTools.viewSourceWindow = m
 		}
 		m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool { return false })
 		m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {})
 		m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {})
 		m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {})
 		m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {})
-		BrowserWindow.popupWindow.Show()
+		m.Show()
 	})
 }
