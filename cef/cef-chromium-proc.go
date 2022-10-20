@@ -489,8 +489,8 @@ func _CEFChromium_UpdatePreferences(instance uintptr) {
 func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
 	var data = []byte{}
 	var dataPtr unsafe.Pointer
-	var dataLen int = 0
-	var argsLen int = 0
+	var dataLen int32 = 0
+	var argsLen int32 = 0
 	if dictionaryValue != nil && dictionaryValue.dataLen > 0 {
 		defer func() {
 			dictionaryValue.Clear()
@@ -499,9 +499,9 @@ func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, metho
 			dataPtr = nil
 		}()
 		data = dictionaryValue.Package()
-		argsLen = dictionaryValue.dataLen
+		argsLen = int32(dictionaryValue.dataLen)
 		dataPtr = unsafe.Pointer(&data[0])
-		dataLen = len(data) - 1
+		dataLen = int32(len(data) - 1)
 	} else {
 		dataPtr = unsafe.Pointer(&data)
 	}

@@ -104,3 +104,17 @@ func Debugf(format string, v ...interface{}) {
 		logger.logger.Printf(format, v...)
 	}
 }
+
+func Fatal(v ...interface{}) {
+	if logger.enable {
+		logger.logger.SetPrefix("[CEF-LCL-Fatal] ")
+		logger.logger.Fatal(v...)
+	}
+}
+
+func Fatalf(format string, v ...interface{}) {
+	if logger.enable {
+		logger.logger.SetPrefix("[CEF-LCL-Fatal] ")
+		logger.logger.Fatalf(format, v...)
+	}
+}
