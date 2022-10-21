@@ -82,9 +82,9 @@
 >>> liblcl.dylib
 
 ### [入门指南-网址](https://energy.yanghy.cn)
-* [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065)
-* [示例](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067)
-* [文档](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069)
+* [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+* [示例](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
+* [文档](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
 
 ### 快速入门
 #### 基本需求
