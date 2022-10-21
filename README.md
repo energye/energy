@@ -21,65 +21,7 @@
 | [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_linux64.zip)    |
 | [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://github.com/energye/energy/releases/download/v1.0.0/liblcl-105.0.5195.127_macosx64.zip) |
 
-#### [动态链接库压缩包使用说明]()
-##### 压缩包文件windows和linux只用到了Release和Resources目录内的文件, MacOSX只用到了Release目录内文件
-##### windows和linux使用
-> 下载CEF和Energy对应版本的动态链接库压缩包
-> 
-> 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
-> 2. CEF 提取Release和Resources目录‘内’文件到ChromiumDemo文件夹
-> 3. Energy 提取动态链接库到ChromiumDemo文件夹
-> 4. 最终的目录结构
->>   ChromiumDemo文件夹目录
->>>  locales
->>>
->>>  cef_sandbox.lib
->>>
->>>  chrome_100_percent.pak
->>>
->>>  chrome_200_percent.pak
->>>
->>>  chrome_elf.dll
->>>
->>>  d3dcompiler_47.dll
->>>
->>>  icudtl.dat
->>>
->>>  libcef.dll
->>>
->>>  libcef.lib
->>>
->>>  libEGL.dll
->>>
->>>  libGLESv2.dll
->>>
->>>  liblcl.dll
->>>
->>>  resources.pak
->>>
->>>  snapshot_blob.bin
->>>
->>>  v8_context_snapshot.bin
->>>
->>>  vk_swiftshader.dll
->>>
->>>  vk_swiftshader_icd.json
->>>
->>>  vulkan-1.dll
->  5. 最后把Go编写的程序编译好执行文件放到ChromiumDemo目录
-
-##### MacOSX使用
-> 下载CEF和Energy对应版本的动态链接库压缩包
-> 1. 新建文件夹ChromiumDemo(文件夹名称自己随意取)
-> 2. CEF 提取Release目录‘内’文件到ChromiumDemo文件夹
-> 3. Energy 提取动态链接库到ChromiumDemo文件夹
-> 4. 最终的目录结构
->> ChromiumDemo文件夹目录
->>> Chromium Embedded Framework.framework
->>> 
->>> cef_sandbox.a
->>> 
->>> liblcl.dylib
+### [CEF和Energy动态链接库压缩包使用说明](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
 
 ### [入门指南-网址](https://energy.yanghy.cn)
 * [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
