@@ -382,6 +382,9 @@ func (m *BaseWindow) registerDefaultEvent() {
 		return false
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.putBrowserFrame(browser, frame)
+		})
 		if bwEvent.onFrameCreated != nil {
 			bwEvent.onFrameCreated(sender, browser, frame)
 		}

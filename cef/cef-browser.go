@@ -33,6 +33,17 @@ type FrameNames struct {
 	Value string
 }
 
+func (m *ICefBrowser) GetBrowserId() int32 {
+	return m.browseId
+}
+
+func (m *ICefBrowser) GetFrameId() int64 {
+	if mainFrame := m.MainFrame(); mainFrame != nil {
+		return mainFrame.Id
+	}
+	return 0
+}
+
 func (m *ICefBrowser) Free() {
 	m.browseId = 0
 }

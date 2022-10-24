@@ -15,13 +15,15 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+type TCEFFrame map[int64]*ICefFrame
+
 // 窗口信息
 type TCefWindowInfo struct {
-	Window         *BaseWindow          `json:"-"` //窗口Form
-	Browser        *ICefBrowser         `json:"-"` //浏览器对象,加载完chromium之后创建
-	WindowProperty *WindowProperty      `json:"-"` //窗口属性
-	Frames         map[int64]*ICefFrame `json:"-"` //当前浏览器下的frame
-	auxTools       *auxTools            //辅助工具
+	Window         *BaseWindow     `json:"-"` //窗口Form
+	Browser        *ICefBrowser    `json:"-"` //浏览器对象,加载完chromium之后创建
+	WindowProperty *WindowProperty `json:"-"` //窗口属性
+	Frames         TCEFFrame       `json:"-"` //当前浏览器下的所有frame
+	auxTools       *auxTools       //辅助工具
 }
 
 type auxTools struct {
@@ -258,4 +260,13 @@ func (m *browser) removeNoValidFrames() {
 			}
 		}
 	}
+}
+
+func (m TCEFFrame) GetByFrameId(frameId int64) *ICefFrame {
+	if m != nil {
+		if frame, ok := m[frameId]; ok {
+			return frame
+		}
+	}
+	return nil
 }

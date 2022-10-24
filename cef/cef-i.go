@@ -28,12 +28,6 @@ type cefV8Context struct {
 	Global uintptr
 }
 
-//GoEmit相关事件的接收目标
-type GoEmitTarget struct {
-	BrowseId int32
-	FrameId  int64
-}
-
 //Type ICefCookie
 type ICefCookie struct {
 	Url, Name, Value, Domain, Path string

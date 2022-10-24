@@ -111,8 +111,8 @@ func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32
 
 // 触发JS监听的事件-异步执行
 //
-// GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target *GoEmitTarget) ProcessMessageError {
+// EmitTarget 接收目标, nil = mainBrowser mainFrame
+func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target IEmitTarget) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -126,12 +126,12 @@ func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target *Go
 		args = ipc.NewArgumentList()
 	}
 	if target == nil {
-		browser := m.Browser()
-		browseId = browser.Identifier()
-		frameId = browser.MainFrame().Id
+		bsr := m.Browser()
+		browseId = bsr.Identifier()
+		frameId = bsr.MainFrame().Id
 	} else {
-		browseId = target.BrowseId
-		frameId = target.FrameId
+		browseId = target.GetBrowserId()
+		frameId = target.GetFrameId()
 		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
 			return PMErr_NOT_FOUND_FRAME
 		}
@@ -146,8 +146,8 @@ func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target *Go
 
 // 触发JS监听的事件-异步执行-带回调
 //
-// GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList, target *GoEmitTarget, callback ipc.IPCCallback) ProcessMessageError {
+// EmitTarget 接收目标, nil = mainBrowser mainFrame
+func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList, target IEmitTarget, callback ipc.IPCCallback) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -163,12 +163,12 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList,
 		args = ipc.NewArgumentList()
 	}
 	if target == nil {
-		browser := m.Browser()
-		browseId = browser.Identifier()
-		frameId = browser.MainFrame().Id
+		bsr := m.Browser()
+		browseId = bsr.Identifier()
+		frameId = bsr.MainFrame().Id
 	} else {
-		browseId = target.BrowseId
-		frameId = target.FrameId
+		browseId = target.GetBrowserId()
+		frameId = target.GetFrameId()
 		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
 			return PMErr_NOT_FOUND_FRAME
 		}
@@ -185,8 +185,8 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList,
 //
 // 使用不当会造成 UI线程 锁死
 //
-// GoEmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, target *GoEmitTarget) (ipc.IIPCContext, ProcessMessageError) {
+// EmitTarget 接收目标, nil = mainBrowser mainFrame
+func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, target IEmitTarget) (ipc.IIPCContext, ProcessMessageError) {
 	if eventName == "" {
 		return nil, PMErr_NAME_IS_NULL
 	}
@@ -202,12 +202,12 @@ func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, t
 		args = ipc.NewArgumentList()
 	}
 	if target == nil {
-		browser := m.Browser()
-		browseId = browser.Identifier()
-		frameId = browser.MainFrame().Id
+		bsr := m.Browser()
+		browseId = bsr.Identifier()
+		frameId = bsr.MainFrame().Id
 	} else {
-		browseId = target.BrowseId
-		frameId = target.FrameId
+		browseId = target.GetBrowserId()
+		frameId = target.GetFrameId()
 		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
 			return nil, PMErr_NOT_FOUND_FRAME
 		}

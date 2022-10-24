@@ -23,9 +23,9 @@ type IChromiumProc interface {
 	lcl.IObject
 	On(name string, eventCallback ipc.EventCallback)
 	ExecuteJavaScript(code, scriptURL string, startLine int32) //单纯的执行js，没有返回值
-	Emit(eventName string, args ipc.IArgumentList, target *GoEmitTarget) ProcessMessageError
-	EmitAndCallback(eventName string, args ipc.IArgumentList, target *GoEmitTarget, callback ipc.IPCCallback) ProcessMessageError
-	EmitAndReturn(eventName string, args ipc.IArgumentList, target *GoEmitTarget) (ipc.IIPCContext, ProcessMessageError)
+	Emit(eventName string, args ipc.IArgumentList, target IEmitTarget) ProcessMessageError
+	EmitAndCallback(eventName string, args ipc.IArgumentList, target IEmitTarget, callback ipc.IPCCallback) ProcessMessageError
+	EmitAndReturn(eventName string, args ipc.IArgumentList, target IEmitTarget) (ipc.IIPCContext, ProcessMessageError)
 	SetDefaultURL(defaultURL string)
 	SetEnableMultiBrowserMode(enableMultiBrowserMode bool)
 	LoadUrl(url string)
