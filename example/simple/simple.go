@@ -22,7 +22,7 @@ func main() {
 	cefApp := cef.NewApplication(cfg)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "https://energy.yanghy.cn"
+	cef.BrowserWindow.Config.DefaultUrl = "https://www.baidu.com"
 	//窗口的标题
 	cef.BrowserWindow.Config.Title = "energy - 这是一个简单的窗口示例"
 	//窗口宽高
