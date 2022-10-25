@@ -11,6 +11,7 @@
             isLoading: false,
             canGoBack: false,
             canGoForward: false,
+            url: "",
         }
         let methods = {
             //返回
@@ -35,43 +36,48 @@
         ipc.on("onLoadingProgressChange", function (progress) {
             console.log("onLoadingProgressChange:", progress)
             data.progress = progress
-            document.getElementById("state").innerHTML = "状态:" + (progress * 100)
+            // document.getElementById("state").innerHTML = "状态:" + (progress * 100)
         });
         //监听页面加载状态
         // isLoading: true 加载中 false 加载完成
         // canGoBack: true 可以后退 false 不可以后退
         // canGoForward: true 可以前进 false 不可以前进
-        ipc.on("onLoadingStateChange", function (isLoading, canGoBack, canGoForward) {
+        ipc.on("onLoadingStateChange", function (isLoading, canGoBack, canGoForward, url) {
             console.log("onLoadingStateChange:", isLoading, canGoBack, canGoForward)
             data.isLoading = isLoading
             data.canGoBack = canGoBack
             data.canGoForward = canGoForward
-            document.getElementById("refresh").disabled = isLoading
-            document.getElementById("goBack").disabled = !canGoBack
-            document.getElementById("goForward").disabled = !canGoForward
+            data.url = url
+            // document.getElementById("refresh").disabled = isLoading
+            // document.getElementById("goBack").disabled = !canGoBack
+            // document.getElementById("goForward").disabled = !canGoForward
+            // document.getElementById("url").value = url
         });
 
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
-<div style="width: 100vw;height: 100vh;">
-    <div style="width: 100%;height: 32px;">
-        <span style="width: 150px;">
-            <button id="goBack" onclick="methods.goBack()">返回</button>
-            <button id="goForward" onclick="methods.goForward()">前进</button>
-            <button id="refresh" onclick="methods.refresh()">刷新</button>
-         </span>
-        <input id="url" style="width: calc(100vw - 200px);" value="https://note.yanghy.cn">
-        <span style="width: 50px;">
-            <button id="goUrl" onclick="methods.goUrl()">GO</button>
-        </span>
-    </div>
-    <iframe id="contentFrame" src="https://energy.yanghy.cn" style="width: 100%;height: calc(100vh - 64px);border: none;">
+<a href="https://www.baidu.com">百度</a>
+<a href="https://energy.yanghy.cn">Energy</a>
+<!--<div style="width: 100vw;height: 100vh;">-->
+<!--    <div style="width: 100%;height: 32px;">-->
+<!--        <span style="width: 150px;">-->
+<!--            <button id="goBack" onclick="methods.goBack()">返回</button>-->
+<!--            <button id="goForward" onclick="methods.goForward()">前进</button>-->
+<!--            <button id="refresh" onclick="methods.refresh()">刷新</button>-->
+<!--         </span>-->
+<!--        <input id="url" style="width: calc(100vw - 200px);" value="https://note.yanghy.cn">-->
+<!--        <span style="width: 50px;">-->
+<!--            <button id="goUrl" onclick="methods.goUrl()">GO</button>-->
+<!--        </span>-->
+<!--    </div>-->
+<!--    <iframe id="contentFrame" src="https://energy.yanghy.cn"-->
+<!--            style="width: 100%;height: calc(100vh - 64px);border: none;">-->
 
-    </iframe>
-    <div id="state" style="height: 32px;border: solid 1px gray;width: 100%;text-align: center;">
-        状态
-    </div>
-</div>
+<!--    </iframe>-->
+<!--    <div id="state" style="height: 32px;border: solid 1px gray;width: 100%;text-align: center;">-->
+<!--        状态-->
+<!--    </div>-->
+<!--</div>-->
 </body>
 </html>

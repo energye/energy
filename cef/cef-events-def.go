@@ -24,6 +24,9 @@ type ChromiumEventOnResultFloat func(sender lcl.IObject, result float64)
 // chromiumEvent Beforebrowser - 主进程执行每创建一个新的浏览器进程都会调用
 type ChromiumEventOnBeforeBrowser func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool
 
+// chromiumEvent 地址改变事件
+type ChromiumEventOnAddressChange func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, url string)
+
 // chromiumEvent browser TitleChange
 type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, title string)
 

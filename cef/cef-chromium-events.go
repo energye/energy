@@ -22,6 +22,7 @@ type IChromiumEvent interface {
 	lcl.IObject
 	SetOnAfterCreated(fn ChromiumEventOnAfterCreated)
 	SetOnBeforeBrowser(fn ChromiumEventOnBeforeBrowser)
+	SetOnAddressChange(fn ChromiumEventOnAddressChange)
 	SetOnBeforeClose(fn ChromiumEventOnBeforeClose)
 	SetOnClose(fn ChromiumEventOnClose)
 	SetOnPdfPrintFinished(fn ChromiumEventOnResult)
@@ -69,6 +70,10 @@ func (m *TCEFChromium) SetOnAfterCreated(fn ChromiumEventOnAfterCreated) {
 
 func (m *TCEFChromium) SetOnBeforeBrowser(fn ChromiumEventOnBeforeBrowser) {
 	_CEFChromium_SetOnBeforeBrowser(m.instance, fn, m.independentEvent)
+}
+
+func (m *TCEFChromium) SetOnAddressChange(fn ChromiumEventOnAddressChange) {
+	_CEFChromium_SetOnAddressChange(m.instance, fn, m.independentEvent)
 }
 
 func (m *TCEFChromium) SetOnBeforeClose(fn ChromiumEventOnBeforeClose) {
@@ -326,6 +331,11 @@ func _CEFChromium_SetOnFullScreenModeChange(instance uintptr, fn interface{}, in
 // TCEFChromium _CEFChromium_SetOnBeforeBrowser
 func _CEFChromium_SetOnBeforeBrowser(instance uintptr, fn interface{}, independentEvent bool) {
 	Proc("CEFChromium_SetOnBeforeBrowse").Call(instance, chromiumOnEventNameToId(instance, fn, independentEvent))
+}
+
+// TCEFChromium _CEFChromium_SetOnAddressChange
+func _CEFChromium_SetOnAddressChange(instance uintptr, fn interface{}, independentEvent bool) {
+	Proc("CEFChromium_SetOnAddressChange").Call(instance, chromiumOnEventNameToId(instance, fn, independentEvent))
 }
 
 // TCEFChromium _CEFChromium_SetOnKeyEvent

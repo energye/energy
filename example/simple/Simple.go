@@ -36,7 +36,7 @@ func main() {
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
 		fmt.Println("SetBrowserInit")
 	})
-	//创建窗口之后对对主窗口的属性、组件或子创建的创建
+	//创建窗口之后对对主窗口的属性、组件或子窗口的创建
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		fmt.Println("SetBrowserInitAfter")
 	})

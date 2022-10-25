@@ -113,22 +113,31 @@ func (m *BaseWindow) SetVisible(value bool) {
 	m.TForm.SetVisible(value)
 }
 
+//返回窗口信息
 func (m *BaseWindow) WindowInfo() *TCefWindowInfo {
 	return m.windowInfo
 }
 
+//以默认的方式展示在任务栏上
 func (m *BaseWindow) SetDefaultInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StDefault)
 }
 
+//展示在任务栏上
 func (m *BaseWindow) SetShowInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StAlways)
 }
 
+//不会展示在任务栏上
 func (m *BaseWindow) SetNotInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StNever)
 }
 
+//返回chromium的父组件对象，该对象不是window窗口组件对象
+//
+//在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
+//
+//通过函数可调整该组件的属性
 func (m *BaseWindow) WindowParent() ITCefWindow {
 	return m.windowParent
 }

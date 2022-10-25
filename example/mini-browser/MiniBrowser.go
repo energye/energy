@@ -15,6 +15,8 @@ var libs embed.FS
 //go:embed resources
 var resources embed.FS
 
+//GOOS=windows;GOARCH=386;
+//env=32
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)

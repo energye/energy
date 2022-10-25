@@ -28,7 +28,7 @@ type IArgumentList interface {
 	ReflectValueConvert(ref []reflect.Value)
 	capacity(index int)
 	SetArguments(index int, argument IArgumentList)
-	SetString(index int, v string, isDStr ...bool)
+	SetString(index int, v string, isDStr ...bool) //设置字符串参数 isDStr: 在传递参数到JavaScript需要设置为true
 	GetString(index int) string
 	SetIntAuto(index int, v interface{}, gov GO_VALUE_TYPE)
 	SetInt(index int, v int)

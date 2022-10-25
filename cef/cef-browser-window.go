@@ -207,6 +207,13 @@ func (m *BrowserEvent) SetOnBeforeBrowser(event ChromiumEventOnBeforeBrowser) {
 	}
 }
 
+// BrowserEvent.SetOnAddressChange
+func (m *BrowserEvent) SetOnAddressChange(event ChromiumEventOnAddressChange) {
+	if Args.IsMain() {
+		m.chromium.SetOnAddressChange(event)
+	}
+}
+
 // BrowserEvent.SetOnBeforeClose
 func (m *BrowserEvent) SetOnBeforeClose(event ChromiumEventOnBeforeClose) {
 	if Args.IsMain() {

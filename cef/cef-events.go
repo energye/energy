@@ -298,6 +298,17 @@ func init() {
 			chromiumOnBeforeBrowser(browser, frame)
 			var result = (*bool)(getPtr(3))
 			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browser, frame)
+		case ChromiumEventOnAddressChange: //创建浏览器之前
+			sender := getVal(0)
+			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
+			tempFrame := (*cefFrame)(getPtr(2))
+			frame := &ICefFrame{
+				Browser: browser,
+				Name:    api.DStrToGoStr(tempFrame.Name),
+				Url:     api.DStrToGoStr(tempFrame.Url),
+				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+			}
+			fn.(ChromiumEventOnAddressChange)(lcl.AsObject(sender), browser, frame, api.DStrToGoStr(getVal(3)))
 		case ChromiumEventOnAfterCreated: //创建浏览器之后
 			sender := getVal(0)
 			//事件处理函数返回true将不继续执行
