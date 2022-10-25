@@ -90,7 +90,7 @@ func controlUI(browserWindow *cef.TCefWindowInfo) (goBack *lcl.TButton, goForwar
 	//创建下拉框
 	addrBox = lcl.NewComboBox(addrPanel)
 	addrBox.SetParent(addrPanel)
-	addrBox.SetLeft(35 + 35 + 35 + 35)                                         //这里是设置左边距 上面三个按钮的宽度
+	addrBox.SetLeft(35 + 35 + 35 + 35)                                         //这里是设置左边距 上面按钮的宽度
 	addrBox.SetWidth(window.Width() - (35 + 35 + 35 + 35 + 35 + 35))           //宽度 减按钮的宽度
 	addrBox.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight)) //设置锚点定位，让宽高自动根据窗口调整大小
 	addrBox.Items().Add("https://energy.yanghy.cn")

@@ -243,6 +243,8 @@ func (m *BrowserEvent) SetOnZoomPctAvailable(event ChromiumEventOnResultFloat) {
 }
 
 // BrowserEvent.SetOnLoadStart
+//
+// 开始加载事件
 func (m *BrowserEvent) SetOnLoadStart(event ChromiumEventOnLoadStart) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadStart(event)
@@ -250,6 +252,8 @@ func (m *BrowserEvent) SetOnLoadStart(event ChromiumEventOnLoadStart) {
 }
 
 // BrowserEvent.SetOnLoadingStateChange
+//
+// 页面加载状态事件
 func (m *BrowserEvent) SetOnLoadingStateChange(event ChromiumEventOnLoadingStateChange) {
 	if Args.IsMain() {
 		m.onLoadingStateChange = event
@@ -257,6 +261,8 @@ func (m *BrowserEvent) SetOnLoadingStateChange(event ChromiumEventOnLoadingState
 }
 
 // BrowserEvent.SetOnLoadingProgressChange
+//
+// 页面加载进度改变事件
 func (m *BrowserEvent) SetOnLoadingProgressChange(event ChromiumEventOnLoadingProgressChange) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadingProgressChange(event)
