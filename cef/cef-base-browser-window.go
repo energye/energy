@@ -49,25 +49,6 @@ type BaseWindow struct {
 	isMainWindow     bool               //是否为主窗口
 }
 
-// 自定义窗口组件
-type Window struct {
-	BaseWindow
-	defaultUrl string
-	config     *tCefChromiumConfig
-}
-
-//创建一个新window窗口
-func NewWindow() *Window {
-	var window = &Window{}
-	//window.TForm = lcl.NewForm(owner)
-	lcl.Application.CreateForm(&window)
-	window.ParentDoubleBuffered()
-	window.FormCreate()
-	window.SetNotInTaskBar()
-	window.defaultWindowEvent()
-	return window
-}
-
 //创建一个带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
@@ -78,23 +59,6 @@ func NewBrowserWindow(config *tCefChromiumConfig, defaultUrl string) *Window {
 	//BeforeBrowser是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
 	window.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool { return false })
 	return window
-}
-
-//返回完整的chromium对象
-func (m *Window) Chromium() IChromium {
-	return m.chromium
-}
-
-//启用默认关闭事件行为-该窗口将被关闭
-func (m *Window) EnableDefaultClose() {
-	m.defaultWindowCloseEvent()
-	m.registerDefaultChromiumCloseEvent()
-}
-
-//启用所有默认事件行为
-func (m *Window) EnableAllDefaultEvent() {
-	m.defaultWindowCloseEvent()
-	m.defaultChromiumEvent()
 }
 
 func (m *BaseWindow) Show() {

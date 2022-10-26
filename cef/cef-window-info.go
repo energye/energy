@@ -11,7 +11,6 @@ package cef
 import (
 	"github.com/energye/energy/commons"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
 
@@ -192,128 +191,6 @@ func (m *TCefWindowInfo) EnableSystemMenu() {
 //启用帮助菜单
 func (m *TCefWindowInfo) EnableHelp() {
 	m.Window.SetBorderIcons(m.Window.BorderIcons().Include(types.BiHelp))
-}
-
-// 设置或增加一个窗口序号
-func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
-	if len(browserId) > 0 {
-		m.windowSerial = browserId[0]
-	} else {
-		m.windowSerial++
-	}
-	logger.Debug("next window serial:", m.windowSerial)
-	return m.windowSerial
-}
-
-// 设置或减少一个窗口序号
-func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
-	if len(browserId) > 0 {
-		m.windowSerial = browserId[0]
-	} else {
-		m.windowSerial--
-	}
-	return m.windowSerial
-}
-
-// 获得窗口序号
-func (m *browser) GetNextWindowNum() int32 {
-	return m.windowSerial
-}
-
-func (m *browser) createNextPopupWindow() {
-	m.popupWindow = &BaseWindow{}
-	m.popupWindow.TForm = lcl.NewForm(m.MainWindowForm())
-	m.popupWindow.FormCreate()
-	m.popupWindow.defaultWindowEvent()
-	m.popupWindow.defaultWindowCloseEvent()
-}
-
-// 拿到窗口信息
-func (m *browser) GetWindowInfo(browserId int32) *TCefWindowInfo {
-	if winInfo, ok := m.windowInfo[browserId]; ok {
-		return winInfo
-	}
-	return nil
-}
-
-func (m *browser) GetWindowsInfo() map[int32]*TCefWindowInfo {
-	return m.windowInfo
-}
-
-func (m *browser) putWindowInfo(browserId int32, windowInfo *TCefWindowInfo) {
-	if winInfo, ok := m.windowInfo[browserId]; ok {
-		winInfo.Window = windowInfo.Window
-		//winInfo.chromiumEvent = windowInfo.chromiumEvent
-	} else {
-		m.windowInfo[browserId] = windowInfo
-	}
-}
-
-func (m *browser) removeWindowInfo(browseId int32) {
-	delete(m.windowInfo, browseId)
-	commons.Proc("CEF_RemoveGoForm").Call(uintptr(browseId))
-}
-
-func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Browser
-	}
-	return nil
-}
-
-func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
-	if winInfo, ok := m.windowInfo[browser.Identifier()]; !ok {
-		winInfo = &TCefWindowInfo{
-			Browser: browser,
-			Frames:  make(map[int64]*ICefFrame),
-		}
-		if frame != nil {
-			winInfo.Frames[frame.Id] = frame
-		}
-		m.windowInfo[browser.Identifier()] = winInfo
-	} else {
-		winInfo.Browser = browser
-		if frame != nil {
-			winInfo.Frames[frame.Id] = frame
-		}
-	}
-}
-
-func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames
-	}
-	return nil
-}
-
-func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames[frameId]
-	}
-	return nil
-}
-
-func (m *browser) RemoveFrame(browseId int32, frameId int64) {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		delete(winInfo.Frames, frameId)
-	}
-}
-
-func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
-	if frame := m.GetFrame(browseId, frameId); frame != nil {
-		return true
-	}
-	return false
-}
-
-func (m *browser) removeNoValidFrames() {
-	for _, winInfo := range m.windowInfo {
-		for _, frm := range winInfo.Frames {
-			if !frm.IsValid() {
-				delete(winInfo.Frames, frm.Id)
-			}
-		}
-	}
 }
 
 func (m TCEFFrame) GetByFrameId(frameId int64) *ICefFrame {
