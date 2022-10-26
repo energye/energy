@@ -9,7 +9,6 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -17,28 +16,8 @@ import (
 	"unsafe"
 )
 
-type ITCefWindow interface {
-	lcl.IWinControl
-	Type() consts.TCefWindowHandleType
-	SetChromium(chromium *TCEFChromium, tag int32)
-	UpdateSize()
-	HandleAllocated() bool
-	CreateHandle()
-	SetOnEnter(fn lcl.TNotifyEvent)
-	SetOnExit(fn lcl.TNotifyEvent)
-	DestroyChildWindow() bool
-}
-
 type TCEFWindowParent struct {
 	BaseWinControl
-}
-
-func NewCEFWindow(owner lcl.IComponent) ITCefWindow {
-	if commons.IsWindows() {
-		return NewCEFWindowParent(owner)
-	} else {
-		return NewCEFLinkedWindowParent(owner)
-	}
 }
 
 func NewCEFWindowParent(owner lcl.IComponent) *TCEFWindowParent {
