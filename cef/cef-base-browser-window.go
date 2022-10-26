@@ -97,7 +97,7 @@ func (m *BaseWindow) SetNotInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StNever)
 }
 
-//返回chromium的父组件对象，该对象不是window窗口组件对象
+//返回chromium的父组件对象，该对象不是window组件对象,属于window的一个子组件
 //
 //在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
 //
@@ -118,7 +118,7 @@ func (m *BaseWindow) SetWindowType(windowType WINDOW_TYPE) {
 	m.windowType = windowType
 }
 
-// 创建窗口浏览器组件
+// 创建window浏览器组件
 //
 // 不带有默认事件的chromium
 func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl string) {
