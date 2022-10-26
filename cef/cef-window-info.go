@@ -140,6 +140,60 @@ func (m *TCefWindowInfo) Close() {
 	})
 }
 
+//禁用口透明
+func (m *TCefWindowInfo) DisableTransparent() {
+	m.Window.SetAllowDropFiles(false)
+	m.Window.SetAlphaBlend(false)
+	m.Window.SetAlphaBlendValue(255)
+}
+
+//使窗口透明 value 0 ~ 255
+func (m *TCefWindowInfo) EnableTransparent(value uint8) {
+	m.Window.SetAllowDropFiles(true)
+	m.Window.SetAlphaBlend(true)
+	m.Window.SetAlphaBlendValue(value)
+}
+
+//禁用最小化按钮
+func (m *TCefWindowInfo) DisableMinimize() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Exclude(types.BiMinimize))
+}
+
+//禁用最大化按钮
+func (m *TCefWindowInfo) DisableMaximize() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Exclude(types.BiMaximize))
+}
+
+//禁用系统菜单-同时禁用最小化，最大化，关闭按钮
+func (m *TCefWindowInfo) DisableSystemMenu() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Exclude(types.BiSystemMenu))
+}
+
+//禁用帮助菜单
+func (m *TCefWindowInfo) DisableHelp() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Exclude(types.BiHelp))
+}
+
+//启用最小化按钮
+func (m *TCefWindowInfo) EnableMinimize() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Include(types.BiMinimize))
+}
+
+//启用最大化按钮
+func (m *TCefWindowInfo) EnableMaximize() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Include(types.BiMaximize))
+}
+
+//启用系统菜单-同时禁用最小化，最大化，关闭按钮
+func (m *TCefWindowInfo) EnableSystemMenu() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Include(types.BiSystemMenu))
+}
+
+//启用帮助菜单
+func (m *TCefWindowInfo) EnableHelp() {
+	m.Window.SetBorderIcons(m.Window.BorderIcons().Include(types.BiHelp))
+}
+
 // 设置或增加一个窗口序号
 func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	if len(browserId) > 0 {

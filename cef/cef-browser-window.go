@@ -23,7 +23,7 @@ var (
 	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
 	//你也可以在 SetBrowserInit 回调函数初始化时创建子窗口，但是不能在主窗体显示之前显示子窗口. 尤其是带有chromium的窗口.
 	BrowserWindow = &browser{
-		browserWindow: &browserWindowForm{},
+		browserWindow: &browserWindow{},
 		browserEvent:  &BrowserEvent{},
 		Config:        &browserConfig{},
 		windowInfo:    make(map[int32]*TCefWindowInfo),
@@ -34,7 +34,7 @@ var (
 
 // 浏览器包装结构体
 type browser struct {
-	browserWindow *browserWindowForm        //主窗口
+	browserWindow *browserWindow            //主窗口
 	popupWindow   *BaseWindow               //弹出的子窗口
 	browserEvent  *BrowserEvent             //浏览器全局事件
 	Config        *browserConfig            //浏览器和窗口配置
@@ -76,7 +76,7 @@ type BrowserEvent struct {
 	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu  //default
 }
 
-type browserWindowForm struct {
+type browserWindow struct {
 	BaseWindow
 	isFirstActivate bool
 	tray            ITray
@@ -100,7 +100,7 @@ func Run(cefApp *TCEFApplication) {
 	}
 }
 
-func (m *browserWindowForm) OnFormCreate(sender lcl.IObject) {
+func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	if BrowserWindow.Config.chromiumConfig == nil {
 		BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
 		BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)

@@ -169,17 +169,12 @@
         }
 
         function divMnmousedown(e) {
-            document.getElementById("test").innerHTML = "";
-            test("onmousedown client:", e.clientX, e.clientY);
-            //ipc.emit("windowMouseDown",[e.clientX,e.clientY]);
             windowDrag.mousedown(e.clientX, e.clientY);
             document.onmousemove = function (e) {
                 e.preventDefault()
                 windowDrag.mousemove(e.clientX, e.clientY);
-                //ipc.emit("windowMouseMove",[e.clientX,e.clientY]);
             }
             document.onmouseup = function () {
-                //ipc.emit("windowMouseUp");
                 windowDrag.mouseup();
                 document.onmousemove = null;
                 document.onmouseup = null;
