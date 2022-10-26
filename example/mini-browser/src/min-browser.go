@@ -249,14 +249,11 @@ func AppBrowserInit() {
 				argumentList.SetInt32(1, browserWindow.Window.Top())
 				argumentList.SetInt32(2, browserWindow.Window.Width())
 				argumentList.SetInt32(3, browserWindow.Window.Height())
-				fmt.Println("window-resize:", target, "count:", browserWindow.Browser.FrameCount(), "\n\t", browserWindow.Browser.GetFrameNames())
 				browserWindow.Chromium().Emit("window-resize", argumentList, target)
-
 				//使用EmitAndReturn函数会锁死
 				//	browserWindow.Chromium.EmitAndCallback("window-resize", argumentList, target, func(context cef.IIPCContext) {
 				//		fmt.Println("EmitAndCallback OnConstrainedResize")
 				//	})
-
 			}
 		})
 		//自定义browser窗体
