@@ -21,18 +21,6 @@ type BaseWinControl struct {
 	ptr      unsafe.Pointer
 }
 
-func (m *BaseComponent) Instance() uintptr {
-	return m.instance
-}
-
-func (m *BaseComponent) Handle() types.HWND {
-	return GetHandle(m.procName, m.instance)
-}
-
-func (m *BaseComponent) IsValid() bool {
-	return m.instance != 0
-}
-
 func (m *BaseWinControl) IsValid() bool {
 	return m.instance != 0
 }
