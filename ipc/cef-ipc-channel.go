@@ -276,29 +276,29 @@ func ipcWrite(triggerMode TriggerMode, channelId int64, eventId int32, eventName
 }
 
 func ipcRead(handler *ipcReadHandler) {
+	var ipcType, chnType string
+	if handler.ipcType == IPCT_NET {
+		ipcType = "[net]"
+	} else {
+		ipcType = "[unix]"
+	}
+	if handler.ct == Ct_Server {
+		chnType = "[server]"
+	} else {
+		chnType = "[client]"
+	}
 	defer func() {
-		var ipcType, chnType string
-		if handler.ipcType == IPCT_NET {
-			ipcType = "[net]"
-		} else {
-			ipcType = "[unix]"
-		}
-		if handler.ct == Ct_Server {
-			chnType = "[server]"
-		} else {
-			chnType = "[client]"
-		}
-		logger.Debug("IPC Read Disconnect type:", ipcType, "channelType:", chnType, "browserId:", handler.browserId, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
+		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
 		handler.Close()
 	}()
 	for {
 		header := make([]byte, headerLength)
 		size, err := handler.Read(header)
 		if err == io.EOF {
-			logger.Debug("IPC Read err:", err)
+			logger.Debug("IPC Read ChannelType:", chnType, "channelId:", handler.channelId, "Error:", err)
 			return
 		} else if size == 0 {
-			logger.Debug("IPC Read size == 0 header:", header)
+			logger.Debug("IPC Read ChannelType:", chnType, "channelId:", handler.channelId, "Read size == 0 header:", header, "Error:", err)
 			return
 		}
 		if size == headerLength {
@@ -381,6 +381,9 @@ func ipcRead(handler *ipcReadHandler) {
 					dataLen: dataLen,
 					data:    dataByte,
 				},
+			}
+			if handler.channelId == 0 {
+				handler.channelId = ctx.channelId
 			}
 			handler.handler(ctx)
 		} else {

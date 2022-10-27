@@ -19,6 +19,7 @@ import (
 )
 
 var (
+	MemoryAddress = "energy.sock"
 	//GO IPC 通道选择条件
 	//
 	//默认值=IsDarwin() true:使用net socket, false:使用unix socket
@@ -30,7 +31,7 @@ var (
 			msgID:              &MsgID{},
 			cliID:              &CliID{},
 			events:             &event{event: make(map[string]EventCallback)},
-			channel:            make(map[int64]*channel),
+			channel:            sync.Map{},
 			emitSync:           make(map[string]*EmitSyncCollection),
 			mutex:              sync.Mutex{},
 			emitCallback:       &EmitCallbackCollection{EmitCollection: sync.Map{}},
@@ -49,7 +50,7 @@ var (
 )
 
 func init() {
-	ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, consts.MemoryAddress)
+	ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, MemoryAddress)
 }
 
 func IPCChannelChooseInit() {
@@ -151,6 +152,9 @@ func (m *ipcChannel) StartBrowserIPC() {
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
+		if err := recover(); err != nil {
+			logger.Error("Create IPC Browser Recover:", err)
+		}
 		m.SetPort()
 		m.newBrowseChannel()
 		defer m.browser.Close()

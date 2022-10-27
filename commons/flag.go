@@ -70,7 +70,7 @@ func (m *_args) IsMain() bool {
 
 func (m *_args) IsRender() bool {
 	if v, ok := m.value["type"]; ok {
-		return v == PT_RENDERER
+		return v == PT_RENDER
 	}
 	return false
 }
@@ -117,6 +117,6 @@ const (
 	PT_MAIN     PRCESS_TYPE = ""
 	PT_GPU                  = "gpu-process"
 	PT_UTILITY              = "utility"
-	PT_RENDERER             = "renderer"
+	PT_RENDER               = "render"
 	PT_DEVTOOLS             = "devtools"
 )

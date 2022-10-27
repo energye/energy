@@ -12,6 +12,7 @@ import (
 	"fmt"
 	. "github.com/energye/energy/commons"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"net"
 	"sync"
 )
@@ -184,6 +185,9 @@ func (m *renderChannel) emitConnect() {
 
 func (m *renderChannel) receive() {
 	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("IPC Render Channel Recover:", err)
+		}
 		m.Close()
 	}()
 	var readHandler = &ipcReadHandler{

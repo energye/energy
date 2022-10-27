@@ -9,6 +9,7 @@
 package cef
 
 import (
+	"fmt"
 	. "github.com/energye/energy/commons"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -16,6 +17,7 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
+	"time"
 )
 
 type IBaseWindow interface {
@@ -191,6 +193,7 @@ func (m *BaseWindow) FormCreate() {
 	}
 	m.isFormCreate = true
 	m.SetPosition(types.PoDesktopCenter)
+	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
 }
 
 //默认窗口活动/关闭处理事件

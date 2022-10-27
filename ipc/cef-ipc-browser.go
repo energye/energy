@@ -26,7 +26,7 @@ type browserChannel struct {
 	netListener        net.Listener
 	mutex              sync.Mutex
 	events             *event
-	channel            map[int64]*channel
+	channel            sync.Map
 	emitCallback       *EmitCallbackCollection
 	emitSync           map[string]*EmitSyncCollection
 	browseOnEvents     []func(browseProcess IEventOn)
@@ -103,8 +103,16 @@ func (m *event) Get(name string) EventCallback {
 }
 
 func (m *browserChannel) Channel(channelId int64) *channel {
-	return m.channel[channelId]
+	if value, ok := m.channel.Load(channelId); ok {
+		return value.(*channel)
+	}
+	return nil
 }
+
+func (m *browserChannel) putChannel(channelId int64, value *channel) {
+	m.channel.Store(channelId, value)
+}
+
 func (m *browserChannel) Close() {
 	if m.unixListener != nil {
 		m.unixListener.Close()
@@ -115,26 +123,24 @@ func (m *browserChannel) onConnect() {
 	m.On(Ln_onConnectEvent, func(context IIPCContext) {
 		logger.Info("IPC browser on connect channelId:", context.ChannelId())
 		if context.ChannelId() > 0 {
-			if chn, ok := m.channel[context.ChannelId()]; ok {
+			if chn := m.Channel(context.ChannelId()); chn != nil {
 				chn.IPCType = m.ipcType
 				chn.UnixConn = context.uConn()
 				chn.NetConn = context.conn()
 			} else {
-				m.channel[context.ChannelId()] = &channel{
+				m.putChannel(context.ChannelId(), &channel{
 					IPCType:  m.ipcType,
 					UnixConn: context.uConn(),
 					NetConn:  context.conn(),
-				}
+				})
 			}
-			//context.setChannelId(context.ChannelId())
-			//context.Response(Int16ToBytes(context.ChannelId()))
 		}
 	})
 }
 
 func (m *browserChannel) removeChannel(id int64) {
 	logger.Debug("IPC browser channel remove channelId:", id)
-	delete(m.channel, id)
+	m.channel.Delete(id)
 }
 
 func (m *browserChannel) Events() *event {
@@ -168,8 +174,13 @@ func (m *browserChannel) RemoveOn(name string) {
 //单进程进程通道获取
 func (m *browserChannel) singleProcessChannelId() (int64, bool) {
 	if SingleProcess {
+		var channelId int64 = 0
 		//单进程，只有一个IPC连接，直接取出来就好
-		for channelId, _ := range IPC.browser.channel {
+		m.channel.Range(func(key, value any) bool {
+			channelId = key.(int64)
+			return true
+		})
+		if channelId != 0 {
 			return channelId, true
 		}
 	}
@@ -182,7 +193,7 @@ func (m *browserChannel) EmitChannelId(eventName string, chnId int64, arguments 
 	if channelId, ok := m.singleProcessChannelId(); ok {
 		chnId = channelId
 	}
-	if chn, ok := m.channel[chnId]; ok {
+	if chn := m.Channel(chnId); chn != nil {
 		if arguments == nil {
 			arguments = NewArgumentList()
 		}
@@ -194,7 +205,7 @@ func (m *browserChannel) EmitChannelId(eventName string, chnId int64, arguments 
 }
 
 func (m *browserChannel) Emit(eventName string, arguments IArgumentList) {
-	m.EmitChannelId(eventName, int64(PID_RENDERER), arguments)
+	m.EmitChannelId(eventName, int64(PID_RENDER), arguments)
 }
 
 func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64, arguments IArgumentList, callback IPCCallback) {
@@ -203,7 +214,7 @@ func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64,
 	if channelId, ok := m.singleProcessChannelId(); ok {
 		chnId = channelId
 	}
-	if chn, ok := m.channel[chnId]; ok {
+	if chn := m.Channel(chnId); chn != nil {
 		if arguments == nil {
 			arguments = NewArgumentList()
 		}
@@ -214,14 +225,14 @@ func (m *browserChannel) EmitChannelIdAndCallback(eventName string, chnId int64,
 
 }
 func (m *browserChannel) EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) {
-	m.EmitChannelIdAndCallback(eventName, int64(PID_RENDERER), arguments, callback)
+	m.EmitChannelIdAndCallback(eventName, int64(PID_RENDER), arguments, callback)
 }
 
 func (m *browserChannel) EmitChannelIdAndReturn(eventName string, chnId int64, arguments IArgumentList) IIPCContext {
 	if channelId, ok := m.singleProcessChannelId(); ok {
 		chnId = channelId
 	}
-	if chn, ok := m.channel[chnId]; ok {
+	if chn := m.Channel(chnId); chn != nil {
 		var emit = func(emitAsync *EmitSyncCollection, arguments IArgumentList, conn net.Conn) IIPCContext {
 			emitAsync.Mutex.Lock()
 			defer emitAsync.Mutex.Unlock()
@@ -245,7 +256,7 @@ func (m *browserChannel) EmitChannelIdAndReturn(eventName string, chnId int64, a
 }
 
 func (m *browserChannel) EmitAndReturn(eventName string, arguments IArgumentList) IIPCContext {
-	return m.EmitChannelIdAndReturn(eventName, int64(PID_RENDERER), arguments)
+	return m.EmitChannelIdAndReturn(eventName, int64(PID_RENDER), arguments)
 }
 
 func (m *browserChannel) accept() {
@@ -266,6 +277,11 @@ func (m *browserChannel) accept() {
 			continue
 		}
 		go func() {
+			defer func() {
+				if err := recover(); err != nil {
+					logger.Error("IPC Server Accept Recover:", err)
+				}
+			}()
 			var id int64 //render channel channelId
 			defer func() {
 				m.removeChannel(id)

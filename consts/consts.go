@@ -28,7 +28,6 @@ func init() {
 }
 
 const (
-	MemoryAddress = "go_cef.sock"
 	MemoryNetwork = "unix"
 )
 
@@ -182,7 +181,7 @@ type CefProcessId int32
 
 const (
 	PID_BROWSER CefProcessId = iota
-	PID_RENDERER
+	PID_RENDER
 )
 
 //支持的JS类型
@@ -333,7 +332,7 @@ type TCefProcessType int8
 
 const (
 	PtBrowser TCefProcessType = iota
-	PtRenderer
+	PtRender
 	PtZygote
 	PtGPU
 	PtUtility
