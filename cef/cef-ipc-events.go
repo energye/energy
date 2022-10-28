@@ -14,6 +14,7 @@ import (
 	. "github.com/energye/energy/commons"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"net"
@@ -63,11 +64,11 @@ func cefIPCInit() {
 }
 
 func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
-	//defer func() {
-	//	if err := recover(); err != nil {
-	//		Logger.Error("IPCEventProc Error:", err)
-	//	}
-	//}()
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("IPCEventProc Error:", err)
+		}
+	}()
 	getVal := func(i int) uintptr {
 		return GetParamOf(i, args)
 	}

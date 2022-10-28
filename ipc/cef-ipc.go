@@ -152,9 +152,11 @@ func (m *ipcChannel) StartBrowserIPC() {
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
-		if err := recover(); err != nil {
-			logger.Error("Create IPC Browser Recover:", err)
-		}
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error("Create IPC Browser Recover:", err)
+			}
+		}()
 		m.SetPort()
 		m.newBrowseChannel()
 		defer m.browser.Close()
