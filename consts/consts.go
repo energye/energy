@@ -167,7 +167,13 @@ const (
 	LANGUAGE_vi              = "vi"
 )
 
-//关闭的操作类型
+// Chromium关闭的操作类型
+// 在 TChromium.Onclose 使用
+// -------------------------
+// cbaCancel : 停止关闭浏览器
+// cbaClose  : 继续关闭浏览器
+// cbaDelay  : 暂时停止关闭浏览器
+//			 : 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
 type CBS int32
 
 const (
