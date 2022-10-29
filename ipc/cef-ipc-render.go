@@ -22,9 +22,7 @@ type renderChannel struct {
 	browserId          int32
 	channelId          int64 //render channel Id
 	ipcType            IPC_TYPE
-	unixAddr           *net.UnixAddr
-	unixConn           *net.UnixConn
-	netConn            net.Conn
+	connect            net.Conn
 	mutex              sync.Mutex
 	events             *event
 	emitCallback       *EmitCallbackCollection
@@ -53,7 +51,7 @@ func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
 		m.render.ipcType = IPCT_NET
-		m.render.netConn = conn
+		m.render.connect = conn
 	} else {
 		memoryAddr := ipcSock
 		if len(memoryAddresses) > 0 {
@@ -68,8 +66,7 @@ func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
 		m.render.ipcType = IPCT_UNIX
-		m.render.unixAddr = unixAddr
-		m.render.unixConn = unixConn
+		m.render.connect = unixConn
 	}
 	go m.render.receive()
 }
@@ -87,13 +84,9 @@ func (m *renderChannel) Channel(channelId int64) *channel {
 }
 
 func (m *renderChannel) Close() {
-	if m.unixConn != nil {
-		m.unixConn.Close()
-		m.unixConn = nil
-	}
-	if m.netConn != nil {
-		m.netConn.Close()
-		m.netConn = nil
+	if m.connect != nil {
+		m.connect.Close()
+		m.connect = nil
 	}
 	m.isConnect = false
 }
@@ -170,10 +163,7 @@ func (m *renderChannel) EmitAndReturn(eventName string, arguments IArgumentList)
 }
 
 func (m *renderChannel) conn() net.Conn {
-	if m.ipcType == IPCT_NET {
-		return m.netConn
-	}
-	return m.unixConn
+	return m.connect
 }
 
 func (m *renderChannel) emitConnect() {
@@ -195,9 +185,7 @@ func (m *renderChannel) receive() {
 		channelId: m.channelId,
 		ct:        Ct_Client,
 		ipcType:   m.ipcType,
-		unixConn:  m.unixConn,
-		unixAddr:  m.unixAddr,
-		netConn:   m.netConn,
+		connect:   m.connect,
 		handler: func(ctx *IPCContext) {
 			if m.call(ctx.eventName, ctx) {
 				if (ctx.triggerMode == Tm_Callback || ctx.triggerMode == Tm_Sync) && !ctx.isReply {

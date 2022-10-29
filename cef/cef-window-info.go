@@ -26,17 +26,17 @@ type TCefWindowInfo struct {
 }
 
 type auxTools struct {
-	devToolsWindow   *BaseWindow //开发者工具窗口
-	devToolsX        int32       //上次改变的窗体位置，宽度
-	devToolsY        int32       //
-	devToolsWidth    int32       //
-	devToolsHeight   int32       //
-	viewSourceWindow *BaseWindow //viewSource
-	viewSourceUrl    string      //
-	viewSourceX      int32       //上次改变的窗体位置，宽度
-	viewSourceY      int32       //
-	viewSourceWidth  int32       //
-	viewSourceHeight int32       //
+	devToolsWindow   *BaseWindow    //开发者工具窗口
+	devToolsX        int32          //上次改变的窗体位置，宽度
+	devToolsY        int32          //
+	devToolsWidth    int32          //
+	devToolsHeight   int32          //
+	viewSourceWindow *browserWindow //viewSource
+	viewSourceUrl    string         //
+	viewSourceX      int32          //上次改变的窗体位置，宽度
+	viewSourceY      int32          //
+	viewSourceWidth  int32          //
+	viewSourceHeight int32          //
 }
 
 type WindowProperty struct {

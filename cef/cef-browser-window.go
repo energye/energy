@@ -36,7 +36,7 @@ var (
 // 浏览器包装结构体
 type browser struct {
 	browserWindow *browserWindow            //主窗口
-	popupWindow   *BaseWindow               //弹出的子窗口
+	popupWindow   *browserWindow            //弹出的子窗口
 	browserEvent  *BrowserEvent             //浏览器全局事件
 	Config        *browserConfig            //浏览器和窗口配置
 	windowInfo    map[int32]*TCefWindowInfo //窗口信息集合
@@ -101,7 +101,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.Config.Width = 800
 		BrowserWindow.Config.Height = 600
 	}
-	m.isMainWindow = true
+	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()
 	m.defaultWindowEvent()
 	m.defaultWindowCloseEvent()
@@ -191,7 +191,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextPopupWindow() {
-	m.popupWindow = &BaseWindow{}
+	m.popupWindow = &browserWindow{}
 	m.popupWindow.TForm = lcl.NewForm(m.MainWindowForm())
 	m.popupWindow.FormCreate()
 	m.popupWindow.defaultWindowEvent()

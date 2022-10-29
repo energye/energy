@@ -118,13 +118,13 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 	if triggerMode == Tm_Callback { //回调函数
 		if callback, ok := executeJS.emitCallback.EmitCollection.Load(ipcId); ok {
 			executeJS.emitCallback.EmitCollection.Delete(ipcId)
-			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, nil, &ipc.IPCContextResult{}, inArgument)
+			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, &ipc.IPCContextResult{}, inArgument)
 			callback.(ipc.IPCCallback)(ctx)
 			ctx.Free()
 		}
 	} else if triggerMode == Tm_Sync { //同步调用
 		if chn, ok := executeJS.emitSync.EmitCollection.Load(ipcId); ok {
-			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, nil, &ipc.IPCContextResult{}, inArgument)
+			ctx := ipc.NewIPCContext("", 0, 0, 0, nil, nil, &ipc.IPCContextResult{}, inArgument)
 			var c = chn.(chan ipc.IIPCContext)
 			c <- ctx
 			close(c)
@@ -264,15 +264,13 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			var (
 				channelId = StrToInt64(api.DStrToGoStr(eventParam.FrameId))
 				ipcType   IPC_TYPE
-				unixConn  *net.UnixConn
-				netConn   net.Conn
+				conn      net.Conn
 			)
 			if chn := ipc.IPC.Browser().Channel(channelId); chn != nil {
 				ipcType = chn.IPCType
-				unixConn = chn.UnixConn
-				netConn = chn.NetConn
+				conn = chn.Conn
 			}
-			ctx := ipc.NewIPCContext(fullName, eventParam.BrowserId, channelId, ipcType, unixConn, netConn, &ipc.IPCEventMessage{}, &ipc.IPCContextResult{}, inArgument)
+			ctx := ipc.NewIPCContext(fullName, eventParam.BrowserId, channelId, ipcType, conn, &ipc.IPCEventMessage{}, &ipc.IPCContextResult{}, inArgument)
 			callback(ctx)
 			result.set(uintptr(ctx.Result().Result()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
 		} else {

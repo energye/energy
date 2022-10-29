@@ -34,9 +34,8 @@ type browserChannel struct {
 }
 
 type channel struct {
-	IPCType  IPC_TYPE
-	UnixConn *net.UnixConn
-	NetConn  net.Conn
+	IPCType IPC_TYPE
+	Conn    net.Conn
 }
 
 func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
@@ -72,10 +71,7 @@ func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 }
 
 func (m *channel) conn() net.Conn {
-	if m.IPCType == IPCT_NET {
-		return m.NetConn
-	}
-	return m.UnixConn
+	return m.Conn
 }
 
 func (m *event) check(name string) bool {
@@ -125,13 +121,11 @@ func (m *browserChannel) onConnect() {
 		if context.ChannelId() > 0 {
 			if chn := m.Channel(context.ChannelId()); chn != nil {
 				chn.IPCType = m.ipcType
-				chn.UnixConn = context.uConn()
-				chn.NetConn = context.conn()
+				chn.Conn = context.Connect()
 			} else {
 				m.putChannel(context.ChannelId(), &channel{
-					IPCType:  m.ipcType,
-					UnixConn: context.uConn(),
-					NetConn:  context.conn(),
+					IPCType: m.ipcType,
+					Conn:    context.Connect(),
 				})
 			}
 		}
@@ -259,73 +253,67 @@ func (m *browserChannel) EmitAndReturn(eventName string, arguments IArgumentList
 	return m.EmitChannelIdAndReturn(eventName, int64(PID_RENDER), arguments)
 }
 
+func (m *browserChannel) ipcReadHandler(conn net.Conn) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("IPC Server Accept Recover:", err)
+		}
+	}()
+	var id int64 //render channel channelId
+	defer func() {
+		m.removeChannel(id)
+	}()
+	var readHandler = &ipcReadHandler{
+		ct:      Ct_Server,
+		ipcType: m.ipcType,
+		connect: conn,
+		handler: func(ctx *IPCContext) {
+			if m.call(ctx.eventName, ctx) {
+				if id == 0 && ctx.channelId > 0 {
+					id = ctx.channelId
+				}
+				if (ctx.triggerMode == Tm_Callback || ctx.triggerMode == Tm_Sync) && !ctx.isReply {
+					ctx.Response([]byte{})
+				}
+			} else {
+				if ctx.triggerMode == Tm_Callback { //回调函数
+					if callback, ok := m.emitCallback.EmitCollection.Load(ctx.eventId); ok {
+						m.emitCallback.EmitCollection.Delete(ctx.eventId)
+						callback.(IPCCallback)(ctx)
+					}
+				} else if ctx.triggerMode == Tm_Sync { //同步调用
+					if emitAsync, ok := m.emitSync[ctx.eventName]; ok {
+						if chn, ok := emitAsync.EmitCollection.Load(ctx.eventId); ok {
+							var c = chn.(chan IIPCContext)
+							c <- ctx
+							close(c)
+							emitAsync.EmitCollection.Delete(ctx.eventId)
+						}
+					}
+				}
+			}
+		},
+	}
+	ipcRead(readHandler)
+}
+
 func (m *browserChannel) accept() {
 	logger.Info("IPC Server Accept")
 	for {
 		var (
-			err      error
-			unixConn *net.UnixConn
-			netConn  net.Conn
+			err  error
+			conn net.Conn
 		)
 		if m.ipcType == IPCT_UNIX {
-			unixConn, err = m.unixListener.AcceptUnix()
+			conn, err = m.unixListener.AcceptUnix()
 		} else {
-			netConn, err = m.netListener.Accept()
+			conn, err = m.netListener.Accept()
 		}
 		if err != nil {
 			logger.Info("browser channel accept Error:", err.Error())
 			continue
 		}
-		go func() {
-			defer func() {
-				if err := recover(); err != nil {
-					logger.Error("IPC Server Accept Recover:", err)
-				}
-			}()
-			var id int64 //render channel channelId
-			defer func() {
-				m.removeChannel(id)
-				if unixConn != nil {
-					unixConn.Close()
-				} else if netConn != nil {
-					netConn.Close()
-				}
-			}()
-			var readHandler = &ipcReadHandler{
-				ct:       Ct_Server,
-				ipcType:  m.ipcType,
-				unixConn: unixConn,
-				unixAddr: m.unixAddr,
-				netConn:  netConn,
-				handler: func(ctx *IPCContext) {
-					if m.call(ctx.eventName, ctx) {
-						if id == 0 && ctx.channelId > 0 {
-							id = ctx.channelId
-						}
-						if (ctx.triggerMode == Tm_Callback || ctx.triggerMode == Tm_Sync) && !ctx.isReply {
-							ctx.Response([]byte{})
-						}
-					} else {
-						if ctx.triggerMode == Tm_Callback { //回调函数
-							if callback, ok := m.emitCallback.EmitCollection.Load(ctx.eventId); ok {
-								m.emitCallback.EmitCollection.Delete(ctx.eventId)
-								callback.(IPCCallback)(ctx)
-							}
-						} else if ctx.triggerMode == Tm_Sync { //同步调用
-							if emitAsync, ok := m.emitSync[ctx.eventName]; ok {
-								if chn, ok := emitAsync.EmitCollection.Load(ctx.eventId); ok {
-									var c = chn.(chan IIPCContext)
-									c <- ctx
-									close(c)
-									emitAsync.EmitCollection.Delete(ctx.eventId)
-								}
-							}
-						}
-					}
-				},
-			}
-			ipcRead(readHandler)
-		}()
+		go m.ipcReadHandler(conn)
 	}
 }
 

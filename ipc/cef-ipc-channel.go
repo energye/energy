@@ -39,8 +39,7 @@ type IPCCallback func(context IIPCContext)
 // 进程间IPC通信回调上下文
 type IIPCContext interface {
 	setArguments(argument IArgumentList)
-	uConn() *net.UnixConn
-	conn() net.Conn
+	Connect() net.Conn
 	EventId() int32
 	ChannelId() int64          //render channel channelId
 	BrowserId() int32          //render channel browserId
@@ -63,9 +62,7 @@ type ipcReadHandler struct {
 	channelId int64
 	ipcType   IPC_TYPE
 	ct        ChannelType
-	unixConn  *net.UnixConn
-	unixAddr  *net.UnixAddr
-	netConn   net.Conn
+	connect   net.Conn
 	handler   func(ctx *IPCContext)
 }
 
@@ -120,9 +117,7 @@ type IPCContext struct {
 	isReply      bool              //回复状态 true已回复 false未回复
 	triggerMode  TriggerMode       //触发模式 0异步 1回调 2同步
 	eventName    string            //
-	unixConn     *net.UnixConn     //
-	unixAddr     *net.UnixAddr     //
-	netConn      net.Conn          //
+	connect      net.Conn          //
 	eventMessage *IPCEventMessage  //
 	arguments    IArgumentList     //
 	result       *IPCContextResult //用于 render(js)进程触发 browser(go)进程监听返回值
@@ -133,14 +128,13 @@ type event struct {
 	event map[string]EventCallback
 }
 
-func NewIPCContext(eventName string, browserId int32, channelId int64, ipcType IPC_TYPE, unixConn *net.UnixConn, netConn net.Conn, eventMessage *IPCEventMessage, result *IPCContextResult, arguments IArgumentList) IIPCContext {
+func NewIPCContext(eventName string, browserId int32, channelId int64, ipcType IPC_TYPE, conn net.Conn, eventMessage *IPCEventMessage, result *IPCContextResult, arguments IArgumentList) IIPCContext {
 	return &IPCContext{
 		eventName:    eventName,
 		browserId:    browserId,
 		channelId:    channelId,
 		ipcType:      ipcType,
-		unixConn:     unixConn,
-		netConn:      netConn,
+		connect:      conn,
 		eventMessage: eventMessage,
 		result:       result,
 		arguments:    arguments,
@@ -148,24 +142,17 @@ func NewIPCContext(eventName string, browserId int32, channelId int64, ipcType I
 }
 
 func (m *ipcReadHandler) Close() {
-	if m.ipcType == IPCT_NET {
-		if m.netConn != nil {
-			m.netConn.Close()
-			m.netConn = nil
-		}
-	} else {
-		if m.unixConn != nil {
-			m.unixConn.Close()
-			m.unixConn = nil
-		}
+	if m.connect != nil {
+		m.connect.Close()
+		m.connect = nil
 	}
 }
 
 func (m *ipcReadHandler) Read(b []byte) (n int, err error) {
 	if m.ipcType == IPCT_NET {
-		return m.netConn.Read(b)
+		return m.connect.Read(b)
 	} else {
-		n, _, err := m.unixConn.ReadFromUnix(b)
+		n, _, err := m.connect.(*net.UnixConn).ReadFromUnix(b)
 		return n, err
 	}
 }
@@ -205,7 +192,7 @@ func (m *IPCContext) setArguments(argument IArgumentList) {
 }
 
 func (m *IPCContext) Response(data []byte) {
-	_, _ = ipcWrite(m.triggerMode, m.channelId, m.eventId, []byte(m.eventName), data, m.conn())
+	_, _ = ipcWrite(m.triggerMode, m.channelId, m.eventId, []byte(m.eventName), data, m.Connect())
 	m.isReply = true
 	data = nil
 }
@@ -221,15 +208,8 @@ func (m *IPCContext) Message() *IPCEventMessage {
 	return m.eventMessage
 }
 
-func (m *IPCContext) uConn() *net.UnixConn {
-	return m.unixConn
-}
-
-func (m *IPCContext) conn() net.Conn {
-	if m.ipcType == IPCT_NET {
-		return m.netConn
-	}
-	return m.uConn()
+func (m *IPCContext) Connect() net.Conn {
+	return m.connect
 }
 
 func (m *IPCEventMessage) Data() []byte {
@@ -374,9 +354,7 @@ func ipcRead(handler *ipcReadHandler) {
 				channelId:   channelId,
 				eventId:     eventId,
 				eventName:   eventName,
-				unixConn:    handler.unixConn,
-				unixAddr:    handler.unixAddr,
-				netConn:     handler.netConn,
+				connect:     handler.connect,
 				eventMessage: &IPCEventMessage{
 					dataLen: dataLen,
 					data:    dataByte,

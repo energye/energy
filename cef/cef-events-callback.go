@@ -41,7 +41,7 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 		TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
 		UserGesture:       api.DBoolToGoBool(beforePInfoPtr.UserGesture),
 	}
-	BrowserWindow.popupWindow.SetWindowType(WT_BROWSER)
+	BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
 	BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePInfo.TargetUrl)
 	BrowserWindow.popupWindow.putChromiumWindowInfo()
 	BrowserWindow.popupWindow.defaultChromiumEvent()
@@ -164,9 +164,9 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		model.Clear()
 		return
 	}
-
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 		if winInfo.Window != nil {
+			//开发者工具和显示源代码不展示框架自定义菜单
 			if winInfo.Window.windowType == WT_DEV_TOOLS || winInfo.Window.windowType == WT_VIEW_SOURCE {
 				return
 			}

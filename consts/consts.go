@@ -600,10 +600,10 @@ const (
 type WINDOW_TYPE int8
 
 const (
-	WT_BROWSER WINDOW_TYPE = iota
+	WT_MAIN_BROWSER WINDOW_TYPE = iota
+	WT_POPUP_SUB_BROWSER
 	WT_DEV_TOOLS
 	WT_VIEW_SOURCE
-	WT_VIEW_TRAY
 )
 
 type TCefContextMenuTypeFlags uint32

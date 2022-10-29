@@ -62,3 +62,7 @@ func (m *TCEFWindowParent) SetOnEnter(fn lcl.TNotifyEvent) {
 func (m *TCEFWindowParent) SetOnExit(fn lcl.TNotifyEvent) {
 	_CEFWindow_OnExit(m.instance, fn)
 }
+
+func (m *TCEFWindowParent) Free() {
+	Free(m.procName, m.instance)
+}

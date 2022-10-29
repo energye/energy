@@ -48,7 +48,6 @@ type BaseWindow struct {
 	onActivateAfter  lcl.TNotifyEvent   //
 	isFormCreate     bool               //是否创建完成 WindowForm
 	isChromiumCreate bool               //是否创建完成 Chromium
-	isMainWindow     bool               //是否为主窗口
 }
 
 //创建一个带有 chromium 窗口
@@ -114,8 +113,6 @@ func (m *BaseWindow) IsClosing() bool {
 }
 
 // 窗口类型
-//
-//0:browser 1:devTools 2:viewSource 默认:0
 func (m *BaseWindow) SetWindowType(windowType WINDOW_TYPE) {
 	m.windowType = windowType
 }
@@ -266,12 +263,11 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 	}
 	if !ret {
 		*close = m.canClose
-		if m.isClosing {
-			return
+		if !m.isClosing {
+			m.isClosing = true
+			m.Hide()
+			m.chromium.CloseBrowser(true)
 		}
-		m.isClosing = true
-		m.Hide()
-		m.chromium.CloseBrowser(true)
 	}
 }
 
@@ -445,11 +441,6 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		BrowserWindow.uiLock.Lock()
 		defer BrowserWindow.uiLock.Unlock()
-		if IsDarwin() { //macos x
-			*aAction = CbaDelay
-		} else { // window linux
-			*aAction = CbaClose
-		}
 		if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 			if winInfo.Window.windowParent != nil {
 				if IsDarwin() { //macos x
@@ -461,6 +452,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				}
 			}
 		}
+		*aAction = CbaDelay
 		if bwEvent.onClose != nil {
 			bwEvent.onClose(sender, browser, aAction)
 		}
@@ -486,13 +478,9 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				BrowserWindow.removeWindowInfo(winInfo.Window.windowId)
 				winInfo.Window.Close()
 			}
-			if IsWindows() {
+			QueueAsyncCall(func(id int) {
 				tempClose()
-			} else {
-				QueueAsyncCall(func(id int) {
-					tempClose()
-				})
-			}
+			})
 		}
 		if bwEvent.onBeforeClose != nil {
 			bwEvent.onBeforeClose(sender, browser)

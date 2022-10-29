@@ -16,6 +16,7 @@ type ITCefWindow interface {
 	SetOnEnter(fn lcl.TNotifyEvent)
 	SetOnExit(fn lcl.TNotifyEvent)
 	DestroyChildWindow() bool
+	Free()
 }
 
 func NewCEFWindow(owner lcl.IComponent) ITCefWindow {
