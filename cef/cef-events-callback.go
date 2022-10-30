@@ -46,17 +46,12 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 	BrowserWindow.popupWindow.putChromiumWindowInfo()
 	BrowserWindow.popupWindow.defaultChromiumEvent()
 	var (
-		//windowInfoPtr      = getVal(4)
-		//clientPtr          = getVal(5)
-		//client             = &ICefClient{instance: instance, ptr: unsafe.Pointer(clientPtr)}
 		noJavascriptAccess = (*bool)(getPtr(6))
 		result             = (*bool)(getPtr(7))
 	)
 	//callback
 	*result = callback(lcl.AsObject(sender), browser, frame, beforePInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
 	if !*result {
-		//BrowserWindow.popupWindow.Show()
-		//WindowInfoAsChild(windowInfoPtr, BrowserWindow.popupWindow.windowParent.Instance(), "")
 		*result = true
 		QueueAsyncCall(func(id int) {
 			BrowserWindow.uiLock.Lock()
@@ -71,32 +66,6 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 			BrowserWindow.popupWindow.Show()
 		})
 	}
-
-	/*
-		if !*result {
-			BrowserWindow.browserWindow.popupWindow.browser = browser
-			if BrowserWindow.browserWindow.popupWindow.Caption() == "" {
-				BrowserWindow.browserWindow.popupWindow.SetCaption(beforePInfo.TargetUrl)
-			}
-			windowInfoInstance := getVal(4)
-			clientInstance := getVal(5)
-			client := &ICefClient{instance: clientInstance, ptr: unsafe.Pointer(clientInstance)}
-			var windowHandle = BrowserWindow.browserWindow.popupWindow.window.Instance()
-			if IsLinux() {
-				lcl.ThreadSync(func() {
-					BrowserWindow.browserWindow.popupWindow.chromiumEvent.CreateClientHandler(client, false)
-					BrowserWindow.browserWindow.popupWindow.Show()
-					WindowInfoAsChild(windowInfoInstance, windowHandle, "")
-					BrowserWindow.browserWindow.createNextPopup()
-				})
-			} else {
-				BrowserWindow.browserWindow.popupWindow.chromiumEvent.CreateClientHandler(client, false)
-				BrowserWindow.browserWindow.popupWindow.Show()
-				WindowInfoAsChild(windowInfoInstance, windowHandle, "")
-				BrowserWindow.browserWindow.createNextPopup()
-			}
-		}
-	*/
 }
 
 // 事件处理函数返回true将不继续执行
