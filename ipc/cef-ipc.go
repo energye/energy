@@ -120,11 +120,6 @@ type ipcChannel struct {
 	render        *renderChannel
 }
 
-func (m *ipcChannel) closeClient() {
-	if m.render != nil {
-		m.render.Close()
-	}
-}
 func (m *ipcChannel) Port() int {
 	return m.port
 }

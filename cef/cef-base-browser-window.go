@@ -141,6 +141,7 @@ func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl strin
 	//windowParent
 	m.windowParent = NewCEFWindow(m)
 	m.windowParent.SetParent(m)
+	m.windowParent.CreateHandle()
 	m.windowParent.HandleAllocated()
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
@@ -441,16 +442,12 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		BrowserWindow.uiLock.Lock()
 		defer BrowserWindow.uiLock.Unlock()
-		if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-			if winInfo.Window.windowParent != nil {
-				if IsDarwin() { //macos x
-					winInfo.Window.windowParent.DestroyChildWindow()
-				} else { // window linux
-					QueueAsyncCall(func(id int) { //主进程执行
-						winInfo.Window.windowParent.Free()
-					})
-				}
-			}
+		if IsDarwin() { //MacOSX
+			m.windowParent.DestroyChildWindow()
+		} else { // Window  and Linux
+			QueueAsyncCall(func(id int) { //主进程执行
+				m.windowParent.Free()
+			})
 		}
 		*aAction = CbaDelay
 		if bwEvent.onClose != nil {
@@ -460,28 +457,25 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		BrowserWindow.uiLock.Lock()
 		defer BrowserWindow.uiLock.Unlock()
-		if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-			window := winInfo.Window
-			window.canClose = true
-			var tempClose = func() {
-				defer func() {
-					if err := recover(); err != nil {
-						logger.Error("OnBeforeClose Error:", err)
-					}
-				}()
-				if window.windowInfo.auxTools.viewSourceWindow != nil {
-					window.windowInfo.auxTools.viewSourceWindow = nil
+		m.canClose = true
+		var tempClose = func() {
+			defer func() {
+				if err := recover(); err != nil {
+					logger.Error("OnBeforeClose Error:", err)
 				}
-				if window.windowInfo != nil && window.windowInfo.auxTools.devToolsWindow != nil {
-					window.windowInfo.auxTools.devToolsWindow.Close()
-				}
-				BrowserWindow.removeWindowInfo(winInfo.Window.windowId)
-				winInfo.Window.Close()
+			}()
+			if m.windowInfo.auxTools.viewSourceWindow != nil {
+				m.windowInfo.auxTools.viewSourceWindow = nil
 			}
-			QueueAsyncCall(func(id int) {
-				tempClose()
-			})
+			if m.windowInfo != nil && m.windowInfo.auxTools.devToolsWindow != nil {
+				m.windowInfo.auxTools.devToolsWindow.Close()
+			}
+			BrowserWindow.removeWindowInfo(m.windowId)
+			m.Close()
 		}
+		QueueAsyncCall(func(id int) {
+			tempClose()
+		})
 		if bwEvent.onBeforeClose != nil {
 			bwEvent.onBeforeClose(sender, browser)
 		}

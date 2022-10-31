@@ -16,7 +16,6 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
-	"io"
 	"math"
 	"net"
 	"os"
@@ -274,11 +273,11 @@ func ipcRead(handler *ipcReadHandler) {
 	for {
 		header := make([]byte, headerLength)
 		size, err := handler.Read(header)
-		if err == io.EOF {
-			logger.Debug("IPC Read ChannelType:", chnType, "channelId:", handler.channelId, "Error:", err)
+		if err != nil {
+			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "channelId:", handler.channelId, "Error:", err)
 			return
 		} else if size == 0 {
-			logger.Debug("IPC Read ChannelType:", chnType, "channelId:", handler.channelId, "Read size == 0 header:", header, "Error:", err)
+			logger.Debug("IPC Read【Size == 0】IPCType:", ipcType, "ChannelType:", chnType, "channelId:", handler.channelId, "header:", header, "Error:", err)
 			return
 		}
 		if size == headerLength {

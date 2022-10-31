@@ -43,6 +43,7 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 	}
 	BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
 	BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePInfo.TargetUrl)
+	BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
 	BrowserWindow.popupWindow.putChromiumWindowInfo()
 	BrowserWindow.popupWindow.defaultChromiumEvent()
 	var (
