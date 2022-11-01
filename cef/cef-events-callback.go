@@ -137,7 +137,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 		if winInfo.Window != nil {
 			//开发者工具和显示源代码不展示框架自定义菜单
-			if winInfo.Window.windowType == WT_DEV_TOOLS || winInfo.Window.windowType == WT_VIEW_SOURCE {
+			if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
 				return
 			}
 		}

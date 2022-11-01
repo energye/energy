@@ -19,7 +19,7 @@ const (
 )
 
 func updateBrowserViewSource(browser *ICefBrowser, title string) {
-	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil && browserWinInfo.Window != nil && browserWinInfo.Window.windowType == WT_VIEW_SOURCE {
+	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil && browserWinInfo.Window != nil && browserWinInfo.Window.WindowType() == WT_VIEW_SOURCE {
 		if browserWinInfo.Window != nil {
 			QueueAsyncCall(func(id int) {
 				if mainFrame := browser.MainFrame(); mainFrame != nil {
@@ -34,7 +34,7 @@ func updateBrowserViewSource(browser *ICefBrowser, title string) {
 
 func viewSourceAfterCreate(browser *ICefBrowser) bool {
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		if winInfo.Window.windowType == WT_VIEW_SOURCE && winInfo.auxTools.viewSourceWindow != nil {
+		if winInfo.Window.WindowType() == WT_VIEW_SOURCE && winInfo.auxTools.viewSourceWindow != nil {
 			winInfo.auxTools.viewSourceWindow.chromium.LoadUrl(winInfo.auxTools.viewSourceUrl)
 			return true
 		}

@@ -112,9 +112,14 @@ func (m *BaseWindow) IsClosing() bool {
 	return m.isClosing
 }
 
-// 窗口类型
+// 设置窗口类型
 func (m *BaseWindow) SetWindowType(windowType WINDOW_TYPE) {
 	m.windowType = windowType
+}
+
+// 返回窗口类型
+func (m *BaseWindow) WindowType() WINDOW_TYPE {
+	return m.windowType
 }
 
 // 创建window浏览器组件
@@ -141,8 +146,6 @@ func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl strin
 	//windowParent
 	m.windowParent = NewCEFWindow(m)
 	m.windowParent.SetParent(m)
-	//m.windowParent.CreateHandle()
-	//m.windowParent.HandleAllocated()
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
 	m.windowParent.SetChromium(m.chromium, 0)
@@ -175,7 +178,7 @@ func (m *BaseWindow) putChromiumWindowInfo() {
 
 //默认的chromium事件
 func (m *BaseWindow) defaultChromiumEvent() {
-	if m.windowType != WT_DEV_TOOLS {
+	if m.WindowType() != WT_DEV_TOOLS {
 		Proc("CEF_AddGoForm").Call(uintptr(m.windowId), m.Instance())
 		m.registerDefaultEvent()
 		m.registerDefaultChromiumCloseEvent()
@@ -196,7 +199,7 @@ func (m *BaseWindow) FormCreate() {
 
 //默认窗口活动/关闭处理事件
 func (m *BaseWindow) defaultWindowEvent() {
-	if m.windowType != WT_DEV_TOOLS {
+	if m.WindowType() != WT_DEV_TOOLS {
 		m.SetOnResize(m.resize)
 		m.SetOnActivate(m.activate)
 	}
@@ -386,7 +389,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
 		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-				if winInfo.Window.windowType == WT_DEV_TOOLS || winInfo.Window.windowType == WT_VIEW_SOURCE {
+				if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
 					return
 				}
 			}
@@ -471,7 +474,10 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				m.windowInfo.auxTools.devToolsWindow.Close()
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
-			if m.windowType == WT_MAIN_BROWSER {
+			if m.WindowType() == WT_MAIN_BROWSER {
+				//当是主窗口关闭，m.Close将关闭所有窗口
+				//也可以拿到所有子窗口，逐步关闭
+				//在关闭子窗口时，不能使用m.Close，会发生chromium browser进程自动断开连接，导致主进程关闭
 				m.Close()
 			}
 		}
