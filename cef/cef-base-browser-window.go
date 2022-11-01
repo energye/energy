@@ -141,8 +141,8 @@ func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl strin
 	//windowParent
 	m.windowParent = NewCEFWindow(m)
 	m.windowParent.SetParent(m)
-	m.windowParent.CreateHandle()
-	m.windowParent.HandleAllocated()
+	//m.windowParent.CreateHandle()
+	//m.windowParent.HandleAllocated()
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
 	m.windowParent.SetChromium(m.chromium, 0)
@@ -175,7 +175,7 @@ func (m *BaseWindow) putChromiumWindowInfo() {
 
 //默认的chromium事件
 func (m *BaseWindow) defaultChromiumEvent() {
-	if m.windowType != WT_DEV_TOOLS && m.windowType != WT_VIEW_SOURCE {
+	if m.windowType != WT_DEV_TOOLS {
 		Proc("CEF_AddGoForm").Call(uintptr(m.windowId), m.Instance())
 		m.registerDefaultEvent()
 		m.registerDefaultChromiumCloseEvent()
@@ -471,7 +471,9 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				m.windowInfo.auxTools.devToolsWindow.Close()
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
-			m.Close()
+			if m.windowType == WT_MAIN_BROWSER {
+				m.Close()
+			}
 		}
 		QueueAsyncCall(func(id int) {
 			tempClose()

@@ -12,7 +12,6 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/lcl"
 )
 
 const (
@@ -52,6 +51,7 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 		if m != nil {
 			m.SetWindowType(WT_VIEW_SOURCE)
 			m.ChromiumCreate(nil, viewSourceUrl)
+			m.chromium.EnableIndependentEvent()
 			m.putChromiumWindowInfo()
 			m.defaultChromiumEvent()
 			m.SetWidth(1024)
@@ -60,11 +60,6 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 				winInfo.auxTools.viewSourceUrl = viewSourceUrl
 				winInfo.auxTools.viewSourceWindow = m
 			}
-			m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool { return false })
-			m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {})
-			m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {})
-			m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {})
-			m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {})
 			m.Show()
 		} else {
 			logger.Fatal("Window not initialized successfully")
