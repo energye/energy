@@ -10,7 +10,7 @@ package cef
 
 import (
 	"fmt"
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"

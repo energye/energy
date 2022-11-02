@@ -1,7 +1,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 )
 
 //创建主窗口指定的一些快捷配置属性
@@ -17,19 +17,19 @@ type browserConfig struct {
 
 //设置chromium配置
 func (m *browserConfig) SetChromiumConfig(chromiumConfig *tCefChromiumConfig) {
-	if chromiumConfig != nil && commons.Args.IsMain() {
+	if chromiumConfig != nil && common.Args.IsMain() {
 		m.chromiumConfig = chromiumConfig
 	}
 }
 
 func (m *browserConfig) setBrowserWindowInitOnEvent(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
-	if fn != nil && commons.Args.IsMain() {
+	if fn != nil && common.Args.IsMain() {
 		m.browserWindowOnEventCallback = fn
 	}
 }
 
 func (m *browserConfig) setBrowserWindowInitAfterOnEvent(fn func(browserWindow *TCefWindowInfo)) {
-	if fn != nil && commons.Args.IsMain() {
+	if fn != nil && common.Args.IsMain() {
 		m.browserWindowAfterOnEventCallback = fn
 	}
 }

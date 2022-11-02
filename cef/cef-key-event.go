@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 )
 
@@ -37,7 +37,7 @@ func acceleratorCode(shift, ctrl, alt bool, keyCode rune) string {
 
 var defaultAcceleratorCustom = func() {
 	//macos 下快捷键
-	if commons.IsDarwin() {
+	if common.IsDarwin() {
 		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
 			Accelerator: "ctrl+a",
 			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {

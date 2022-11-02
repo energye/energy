@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/commons"
-	"github.com/energye/energy/example/sub-process/common"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/example/sub-process/sub-process/src"
+	"github.com/energye/energy/example/sub-process/vars"
 )
 
 /*
@@ -20,15 +20,15 @@ func main() {
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
 	cfg := cef.NewApplicationConfig()
 	//配置chromium frameworks 编译好的二进制目录
-	if commons.IsWindows() {
+	if common.IsWindows() {
 		cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-103.0.9\\chromium")
-	} else if commons.IsLinux() {
+	} else if common.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEFDelphi-Libs-103.09/chromium")
 	}
 	//创建Cef应用
 	cefApp := cef.NewApplication(cfg)
 	//主进程和子进程的变量绑定函数定义
-	common.VariableBind()
+	vars.VariableBind()
 	//启动子进程
 	cefApp.StartSubProcess()
 	cefApp.Free()

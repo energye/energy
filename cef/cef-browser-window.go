@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
@@ -31,7 +31,19 @@ var (
 		windowSerial:  1,
 		uiLock:        new(sync.Mutex),
 	}
+	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
+
+type browserProcessStartAfterCallbackFunc func(b bool)
+
+// SetBrowserProcessStartAfterCallback 主进程启动之后回调函数
+func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallbackFunc) {
+	if Args.IsMain() {
+		if browserProcessStartAfterCallback == nil {
+			browserProcessStartAfterCallback = callback
+		}
+	}
+}
 
 // 浏览器包装结构体
 type browser struct {
@@ -84,7 +96,11 @@ func Run(cefApp *TCEFApplication) {
 		// mac os 启动子进程
 		cefApp.StartSubProcess()
 	} else {
-		if cefApp.StartMainProcess() {
+		b := cefApp.StartMainProcess()
+		if browserProcessStartAfterCallback != nil {
+			browserProcessStartAfterCallback(b)
+		}
+		if b {
 			lcl.RunApp(&BrowserWindow.browserWindow)
 		}
 	}

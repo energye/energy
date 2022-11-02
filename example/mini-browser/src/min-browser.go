@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/tools"
 	"strings"
 )
 
@@ -20,7 +19,7 @@ func AppBrowserInit() {
 	*/
 	//ar integer cef.JSValue
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
-		fmt.Println("GO变量和函数绑定回调", commons.Args.ProcessType())
+		fmt.Println("GO变量和函数绑定回调", common.Args.ProcessType())
 		bind.NewString("stringv", "这是一个字符串变量")
 		bind.NewInteger("integerv", 1211111)
 		bind.NewDouble("doublev", 11.0505)
@@ -35,17 +34,8 @@ func AppBrowserInit() {
 	config.SetEnableDevTools(true)
 	config.SetEnableWindowPopup(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
-	//默认加载的URL
-	if commons.IsWindows() {
-		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini-browser\\resources\\demo-misc.html"
-		if !tools.IsExist(cef.BrowserWindow.Config.DefaultUrl) {
-			cef.BrowserWindow.Config.DefaultUrl = consts.ExePath + consts.Separator + "demo-misc.html"
-		}
-	} else if commons.IsLinux() {
-		cef.BrowserWindow.Config.DefaultUrl = "file:///home/sxm/app/swt/gopath/src/github.com/energye/energy/example/mini-browser/resources/demo-misc.html"
-	} else if commons.IsDarwin() {
-		cef.BrowserWindow.Config.DefaultUrl = "file:///Users/zhangli/go/src/github.com/energye/energy/example/mini-browser/resources/demo-misc.html"
-	}
+	//默认加载的URL 这个示例启动了一个内置http服务
+	cef.BrowserWindow.Config.DefaultUrl = "http://localhost/demo-misc.html"
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
@@ -116,7 +106,7 @@ func AppBrowserInit() {
 		})
 		var newForm *cef.Window
 		event.On("js-new-window", func(context ipc.IIPCContext) {
-			fmt.Println("创建新窗口 ProcessType:", commons.Args.ProcessType())
+			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
 				newForm = cef.NewWindow()
 				newForm.SetCaption("新窗口标题")
@@ -144,7 +134,7 @@ func AppBrowserInit() {
 		})
 		var browserWindow *cef.Window
 		event.On("js-new-browser-window", func(context ipc.IIPCContext) {
-			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", commons.Args.ProcessType())
+			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
 			if browserWindow == nil {
 				browserWindow = cef.NewBrowserWindow(nil, "https://www.baidu.com")
 				browserWindow.Chromium().EnableIndependentEvent()
@@ -162,7 +152,7 @@ func AppBrowserInit() {
 			})
 		})
 		event.On("go-call-js-code", func(context ipc.IIPCContext) {
-			fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", commons.Args.ProcessType())
+			fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", common.Args.ProcessType())
 			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			info.Chromium().ExecuteJavaScript("jsCode('值值值')", "", 0)
 			list := ipc.NewArgumentList()
@@ -184,12 +174,12 @@ func AppBrowserInit() {
 		})
 	})
 
-	//主进程初始化回调函数
+	//主窗口初始化回调函数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
-		fmt.Println("主进程初始化回调函数")
+		fmt.Println("主窗口初始化回调函数")
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
 		browserWindow.Window.SetCaption("这里设置应用标题")
 		browserWindow.Window.SetPosition(types.PoScreenCenter) //窗口局中显示
@@ -266,7 +256,7 @@ func AppBrowserInit() {
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
 			//linux下 需要这样使用 Sync
-			if commons.IsLinux() {
+			if common.IsLinux() {
 				cef.QueueSyncCall(func(id int) {
 					dlSave.SetFileName(suggestedName)
 					if dlSave.Execute() {
@@ -345,7 +335,7 @@ func AppBrowserInit() {
 		})
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息 将会失败
-			fmt.Println("OnLoadingStateChange-ProcessType:", commons.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
+			fmt.Println("OnLoadingStateChange-ProcessType:", common.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
 			if isSendEmit {
 				info := cef.BrowserWindow.GetWindowInfo(browser.Identifier())
 				var target = &cef.EmitTarget{
@@ -363,7 +353,7 @@ func AppBrowserInit() {
 		})
 		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息
-			fmt.Println("OnLoadingProgressChange-ProcessType:", commons.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
+			fmt.Println("OnLoadingProgressChange-ProcessType:", common.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
 			if isSendEmit {
 				var target = &cef.EmitTarget{
 					BrowseId: browser.Identifier(),
@@ -379,7 +369,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
-		if commons.IsWindows() {
+		if common.IsWindows() {
 			cefTray(browserWindow)
 		} else {
 			tray(browserWindow)
@@ -389,10 +379,7 @@ func AppBrowserInit() {
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
 func cefTray(browserWindow *cef.TCefWindowInfo) {
-	var url = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\mini-browser\\resources\\min-browser-tray.html"
-	if !tools.IsExist(url) {
-		url = consts.ExePath + consts.Separator + "min-browser-tray.html"
-	}
+	var url = "http://localhost/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")

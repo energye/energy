@@ -10,14 +10,14 @@ package ipc
 
 import (
 	"fmt"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"testing"
 	"time"
 )
 
 //emit方式发送到render
 func TestRenderOnEmit(t *testing.T) {
-	commons.Args.SetArgs("type", "render")
+	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
 	IPC.render.SetOnEvent(func(event IEventOn) {
 		event.On("renderOnTest", func(context IIPCContext) {
@@ -57,7 +57,7 @@ func TestRenderOnEmit(t *testing.T) {
 
 //响应的方式返回给render
 func TestRenderOnResponse(t *testing.T) {
-	commons.Args.SetArgs("type", "render")
+	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
 	IPC.CreateRenderIPC(1, 20)
 	IPC.render.emitConnect()
@@ -74,7 +74,7 @@ func TestRenderOnResponse(t *testing.T) {
 
 //render 1
 func TestRender1OnEmit(t *testing.T) {
-	commons.Args.SetArgs("type", "render")
+	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
 	IPC.render.SetOnEvent(func(event IEventOn) {
 		event.On("testRender1OnEmit", func(context IIPCContext) {
@@ -100,7 +100,7 @@ func TestRender1OnEmit(t *testing.T) {
 
 //render 2
 func TestRender2OnEmit(t *testing.T) {
-	commons.Args.SetArgs("type", "render")
+	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
 	IPC.render.SetOnEvent(func(event IEventOn) {
 		event.On("testRender2OnEmit", func(context IIPCContext) {

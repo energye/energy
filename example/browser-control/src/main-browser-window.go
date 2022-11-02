@@ -3,7 +3,7 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"os"
@@ -12,7 +12,7 @@ import (
 //主浏览器窗口
 func MainBrowserWindow() {
 	//只有启动主进程才会继续执行
-	if !commons.Args.IsMain() {
+	if !common.Args.IsMain() {
 		return
 	}
 	fmt.Println("os.Args", os.Args)

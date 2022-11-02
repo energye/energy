@@ -10,7 +10,7 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"reflect"
 	"sync"
@@ -23,7 +23,7 @@ var (
 	objectRootName = "goobj"                    //ICEFv8Value 对象类型变量属性的所属默认对象名称
 	DownloadsDir   string                       //下载目录
 	enableGPU      = false                      //启用GPU true启用 false不启用
-	processName    commons.PRCESS_TYPE          //进程名称
+	processName    common.PRCESS_TYPE           //进程名称
 )
 
 type initBindVariableCallback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)
@@ -158,7 +158,7 @@ func (m *provisionalBindStorage) NewUndefined(name string) *JSUndefined {
 //
 // 绑定 定义的普通函数 prefix default struct name
 func (m *provisionalBindStorage) NewFunction(name string, fn interface{}) error {
-	if commons.GOValueReflectType(fn) == GO_VALUE_FUNC {
+	if common.GOValueReflectType(fn) == GO_VALUE_FUNC {
 		if info, err := checkFunc(reflect.TypeOf(fn), FN_TYPE_COMMON); err == nil {
 			jsValueBind := new(JSFunction)
 			jsValueBind.rwLock = new(sync.Mutex)

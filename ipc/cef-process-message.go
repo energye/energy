@@ -11,7 +11,7 @@ package ipc
 import (
 	"bytes"
 	"encoding/binary"
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"reflect"
 	"sync"

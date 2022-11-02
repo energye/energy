@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
@@ -104,7 +104,7 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 
 //启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
-	if commons.Args.IsMain() {
+	if common.Args.IsMain() {
 		_SetCEFCallbackEvent(OnBeforeChildProcessLaunch, fn)
 	}
 }

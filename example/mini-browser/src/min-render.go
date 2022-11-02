@@ -3,7 +3,7 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"strings"
@@ -12,18 +12,18 @@ import (
 func AppRenderInit() *cef.TCEFApplication {
 	//Cef应用的配置
 	cfg := cef.NewApplicationConfig()
-	var env = commons.Args.Args("env")
-	if commons.IsWindows() {
+	var env = common.Args.Args("env")
+	if common.IsWindows() {
 		if env == "32" {
 			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-32")
 		} else {
 			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-64")
 		}
-	} else if commons.IsLinux() {
+	} else if common.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
 	}
-	//cfg.SetLogSeverity(cef.LOGSEVERITY_DEBUG)
-	cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
+	cfg.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
+	//cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
 	cfg.SetLanguage(consts.LANGUAGE_zh_CN)
 	cfg.SetEnableGPU(false)
 	cfg.SetSingleProcess(false)
@@ -35,20 +35,20 @@ func AppRenderInit() *cef.TCEFApplication {
 	//创建Cef应用
 	cefApp := cef.NewApplication(cfg)
 	//fmt.Printf("cefApp:%+v %s\n", cefApp, runtime.GOOS)
-	if commons.Args.IsMain() {
+	if common.Args.IsMain() {
 		//cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
 		//	//主进程 自定义参数
 		//	fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", cef.Args.ProcessType())
 		//	commandLine.AppendSwitch("env", env)
 		//})
-	} else if commons.Args.IsRender() {
+	} else if common.Args.IsRender() {
 		//取出主进程 自定义参数
 
-		fmt.Println("ipc-port", commons.Args.Args("net-ipc-port"), commons.Args.ProcessType())
+		fmt.Println("ipc-port", common.Args.Args("net-ipc-port"), common.Args.ProcessType())
 	}
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
 		//主进程 自定义参数
-		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", commons.Args.ProcessType())
+		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", common.Args.ProcessType())
 		commandLine.AppendSwitch("env", env)
 		commandLine.AppendArgument("--test")
 	})
@@ -64,7 +64,7 @@ func AppRenderInit() *cef.TCEFApplication {
 	//渲染进程的消息处理
 	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		fmt.Println("======================渲染进程 OnProcessMessageReceived IPC browserId:", browser.Identifier(), "frameId:", frame.Id, "sourceProcess:", sourceProcess, "processMessage.Name:", message.Name)
-		fmt.Println("\t|--Args:", commons.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
+		fmt.Println("\t|--Args:", common.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
 		message = ipc.NewProcessMessage("test")
 		message.ArgumentList.SetString(0, "渲染进程发送数据")
 		frame.SendProcessMessage(consts.PID_BROWSER, message)
@@ -77,7 +77,7 @@ func AppRenderInit() *cef.TCEFApplication {
 		fmt.Println("渲染进程IPC事件注册")
 		//渲染进程监听的事件
 		event.On("renderOnEventSubWindowIPCOn", func(context ipc.IIPCContext) {
-			fmt.Println("render renderOnEventSubWindowIPCOn")
+			fmt.Println("render renderOnEventSubWindowIPCOn", common.Args.ProcessType())
 			//渲染进程处理程序....
 			context.Response([]byte("返回了,可以关闭"))
 		})

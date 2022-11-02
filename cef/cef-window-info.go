@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -104,7 +104,7 @@ func (m *TCefWindowInfo) Maximize() {
 		} else {
 			if m.Window.WindowState() == types.WsMaximized {
 				m.Window.SetWindowState(types.WsNormal)
-				if commons.IsDarwin() {
+				if common.IsDarwin() {
 					m.Window.SetWindowState(types.WsMaximized)
 					m.Window.SetWindowState(types.WsNormal)
 				}

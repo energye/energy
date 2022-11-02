@@ -12,7 +12,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -267,7 +267,7 @@ func ipcRead(handler *ipcReadHandler) {
 		chnType = "[client]"
 	}
 	defer func() {
-		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "channelId:", handler.channelId, "processType:", commons.Args.ProcessType())
+		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "channelId:", handler.channelId, "processType:", common.Args.ProcessType())
 		handler.Close()
 	}()
 	for {

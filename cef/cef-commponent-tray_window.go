@@ -12,7 +12,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"

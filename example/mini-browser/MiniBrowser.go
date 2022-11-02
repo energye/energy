@@ -2,8 +2,10 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/mini-browser/src"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/pkgs/macapp"
@@ -20,7 +22,7 @@ var resources embed.FS
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
-	if commons.IsDarwin() {
+	if common.IsDarwin() {
 		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
 		macapp.MacApp.IsCEF(true)
 		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt/energy/chromium")
@@ -30,5 +32,13 @@ func main() {
 	cefApp := src.AppRenderInit()
 	//Browser 主进程一些初始配置
 	src.AppBrowserInit()
+	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
+		fmt.Println("主进程启动 创建一个内置http服务")
+		//通过内置http服务加载资源
+		server := assetserve.NewAssetsHttpServer()
+		server.AssetsFSName = "resources" //必须设置目录名
+		server.Assets = &resources
+		go server.StartHttpServer()
+	})
 	cef.Run(cefApp)
 }

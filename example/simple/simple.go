@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -43,6 +44,16 @@ func main() {
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		fmt.Println("SetBrowserInitAfter")
 	})
+
+	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
+		fmt.Println("主进程启动 创建一个内置http服务 然后使用 http://localhost/资源目录或资源名称")
+		//通过内置http服务加载资源
+		server := assetserve.NewAssetsHttpServer()
+		server.AssetsFSName = "resources" //必须设置目录名
+		server.Assets = &resources
+		go server.StartHttpServer()
+	})
+
 	//运行应用
 	cef.Run(cefApp)
 }

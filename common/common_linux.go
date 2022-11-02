@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-//go:build windows
-// +build windows
+//go:build linux
+// +build linux
 
-package commons
+package common

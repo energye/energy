@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"unsafe"

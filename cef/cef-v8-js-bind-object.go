@@ -11,7 +11,7 @@ package cef
 import (
 	"bytes"
 	"fmt"
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -82,8 +82,8 @@ type cefObject struct {
 }
 
 func (m *vt) ToValueTypeString() string {
-	govs := commons.FuncParamGoTypeStr(m.Gov)
-	jsvs := commons.FuncParamJsTypeStr(m.Jsv)
+	govs := common.FuncParamGoTypeStr(m.Gov)
+	jsvs := common.FuncParamJsTypeStr(m.Jsv)
 	return fmt.Sprintf("GO=%s,JS:=%s", govs, jsvs)
 }
 
@@ -268,8 +268,8 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 			m.FieldsInfo[fieldName] = &structFieldInfo{
 				EventId: uintptr(__bind_id()),
 				ValueType: &vt{
-					Jsv: commons.JSValueType(t),
-					Gov: commons.GOValueType(t),
+					Jsv: common.JSValueType(t),
+					Gov: common.GOValueType(t),
 				},
 				FieldValue: &filedValue,
 			}

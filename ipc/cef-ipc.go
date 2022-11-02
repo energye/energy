@@ -10,7 +10,7 @@ package ipc
 
 import (
 	"fmt"
-	. "github.com/energye/energy/commons"
+	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/rtl/version"

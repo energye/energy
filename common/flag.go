@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package commons
+package common
 
 import (
 	"bytes"

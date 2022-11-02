@@ -1,7 +1,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/commons"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 )
@@ -20,7 +20,7 @@ type ITCefWindow interface {
 }
 
 func NewCEFWindow(owner lcl.IComponent) ITCefWindow {
-	if commons.IsWindows() {
+	if common.IsWindows() {
 		return NewCEFWindowParent(owner)
 	} else {
 		return NewCEFLinkedWindowParent(owner)
