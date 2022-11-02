@@ -132,6 +132,11 @@ func (m *assetsHttpServer) StartHttpServer() error {
 }
 
 func (m *assetsHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if AssetsServerHeaderKeyValue != "" {
+		if AssetsServerHeaderKeyValue != r.Header.Get(AssetsServerHeaderKeyName) {
+			return
+		}
+	}
 	defer func() {
 		if err := recover(); err != nil {
 		}
@@ -146,11 +151,6 @@ func (m *assetsHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		byt []byte
 		err error
 	)
-	if AssetsServerHeaderKeyValue != "" {
-		if AssetsServerHeaderKeyValue != r.Header.Get(AssetsServerHeaderKeyName) {
-			return
-		}
-	}
 	if m.Assets != nil {
 		byt, err = m.Assets.ReadFile(m.AssetsFSName + path)
 	} else if m.LocalAssets != "" {
