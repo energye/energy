@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
@@ -70,6 +71,9 @@ func (m *tCefTrayForm) Hide() {
 }
 
 func (m *tCefTrayForm) close() {
+	if m.isClosing {
+		return
+	}
 	m.Hide()
 	m.TForm.Close()
 }
@@ -179,12 +183,14 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 
 	m.TForm.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
 		*canClose = m.canClose
+		fmt.Println("tray close query", m.canClose)
 		if m.isClosing {
 			return
 		}
 		m.isClosing = true
 		m.Hide()
 		m.chromium.CloseBrowser(true)
+		m.trayIcon.Free()
 	})
 	m.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 		*action = types.CaFree
@@ -217,17 +223,13 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	})
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		if IsDarwin() {
-			*aAction = CbaDelay
-		} else {
-			*aAction = CbaClose
-		}
-		if IsDarwin() {
 			m.windowParent.DestroyChildWindow()
 		} else {
 			QueueAsyncCall(func(id int) { //主进程执行
 				m.windowParent.Free()
 			})
 		}
+		*aAction = CbaDelay
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		m.canClose = true
