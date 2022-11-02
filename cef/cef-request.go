@@ -66,17 +66,24 @@ func (m *ICefRequest) SetFlags(flags TCefUrlRequestFlags) {
 func (m *ICefRequest) SetFirstPartyForCookies(url string) {
 	cefRequest_SetFirstPartyForCookies(m.instance, url)
 }
+
 func (m *ICefRequest) GetHeaderByName(name string) string {
 	return api.DStrToGoStr(cefRequest_GetHeaderByName(m.instance, name))
 }
+
 func (m *ICefRequest) SetHeaderByName(name, value string, overwrite bool) {
 	cefRequest_SetHeaderByName(m.instance, name, value, overwrite)
 }
+
 func (m *ICefRequest) GetHeaderMap() *ICefStringMultiMap {
 	headerMap := &ICefStringMultiMap{}
 	headerMap.instance = cefRequest_GetHeaderMap(m.instance)
 	headerMap.ptr = unsafe.Pointer(headerMap.instance)
 	return headerMap
+}
+
+func (m *ICefRequest) SetHeaderMap(headerMap *ICefStringMultiMap) {
+	cefRequest_SetHeaderMap(m.instance, headerMap.instance)
 }
 
 //request
@@ -116,5 +123,10 @@ func cefRequest_SetHeaderByName(instance uintptr, url, value string, overwrite b
 
 func cefRequest_GetHeaderMap(instance uintptr) uintptr {
 	r1, _, _ := Proc("cefRequest_GetHeaderMap").Call(instance)
+	return r1
+}
+
+func cefRequest_SetHeaderMap(instance, headerMap uintptr) uintptr {
+	r1, _, _ := Proc("cefRequest_SetHeaderMap").Call(instance, headerMap)
 	return r1
 }

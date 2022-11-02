@@ -32,6 +32,9 @@ func main() {
 	cefApp := src.AppRenderInit()
 	//Browser 主进程一些初始配置
 	src.AppBrowserInit()
+	//内置http服务链接安全配置
+	assetserve.AssetsServerHeaderKeyName = "energy"
+	assetserve.AssetsServerHeaderKeyValue = "energy"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源

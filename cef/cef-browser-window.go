@@ -76,6 +76,7 @@ type BrowserEvent struct {
 	onLoadingStateChange     ChromiumEventOnLoadingStateChange //default
 	onContextMenuCommand     ChromiumEventOnContextMenuCommand //default
 	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu  //default
+	onBeforeResourceLoad     ChromiumEventOnBeforeResourceLoad //default
 }
 
 type browserWindow struct {
@@ -458,7 +459,7 @@ func (m *BrowserEvent) SetOnBrowseProcessMessageReceived(event BrowseProcessMess
 // BrowserEvent.SetOnBeforeResourceLoad
 func (m *BrowserEvent) SetOnBeforeResourceLoad(event ChromiumEventOnBeforeResourceLoad) {
 	if Args.IsMain() {
-		m.chromium.SetOnBeforeResourceLoad(event)
+		m.onBeforeResourceLoad = event
 	}
 }
 

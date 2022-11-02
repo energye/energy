@@ -11,6 +11,7 @@ package cef
 import (
 	"fmt"
 	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -373,6 +374,14 @@ func (m *BaseWindow) registerDefaultEvent() {
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 		if bwEvent.onAfterCreated != nil {
 			bwEvent.onAfterCreated(sender, browser)
+		}
+	})
+	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
+		if assetserve.AssetsServerHeaderKeyValue != "" {
+			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
+		}
+		if bwEvent.onBeforeResourceLoad != nil {
+			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result)
 		}
 	})
 	//事件可以被覆盖

@@ -14,6 +14,16 @@ import (
 
 var contentType = map[string]string{}
 
+//用于保证链接的安全的请求头(header)key名称
+var AssetsServerHeaderKeyName = "ASSETS_SERVER_KEY"
+
+//用于保证链接的安全的key值
+//
+//这里简单的在请求所有资源时增加请求头的判断
+//
+//不为空时生效
+var AssetsServerHeaderKeyValue string
+
 type assetsHttpServer struct {
 	LocalAssets  string    //本地静态资源目录 示例: /app/assets/   http://127.0.0.1:8888/demo/demo.html -> /app/assets/demo/demo.html
 	AssetsFSName string    //静态资源内置FS目录名 示例: assets
@@ -136,6 +146,11 @@ func (m *assetsHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		byt []byte
 		err error
 	)
+	if AssetsServerHeaderKeyValue != "" {
+		if AssetsServerHeaderKeyValue != r.Header.Get(AssetsServerHeaderKeyName) {
+			return
+		}
+	}
 	if m.Assets != nil {
 		byt, err = m.Assets.ReadFile(m.AssetsFSName + path)
 	} else if m.LocalAssets != "" {

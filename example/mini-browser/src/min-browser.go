@@ -364,6 +364,13 @@ func AppBrowserInit() {
 				fmt.Println("OnLoadingProgressChange-Emit:", browserWindow.Chromium().Emit("OnLoadingProgressChange", argumentList, target), " frame:", cef.BrowserWindow.GetFrames(browser.Identifier()))
 			}
 		})
+		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
+			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			headerMap := request.GetHeaderMap()
+			for i := 0; i < headerMap.GetSize(); i++ {
+				fmt.Println("\theader:", headerMap.GetKey(i), "=", headerMap.GetValue(i))
+			}
+		})
 	})
 	//添加子窗口初始化
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
