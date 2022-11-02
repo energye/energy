@@ -13,6 +13,7 @@ package cef
 
 import (
 	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
@@ -208,6 +209,11 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
 		BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
 		return false
+	})
+	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
+		if assetserve.AssetsServerHeaderKeyValue != "" {
+			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
+		}
 	})
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		if IsDarwin() {

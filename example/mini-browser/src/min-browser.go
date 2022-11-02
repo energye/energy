@@ -35,7 +35,7 @@ func AppBrowserInit() {
 	config.SetEnableWindowPopup(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost/demo-misc.html"
+	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/demo-misc.html"
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
@@ -386,7 +386,7 @@ func AppBrowserInit() {
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
 func cefTray(browserWindow *cef.TCefWindowInfo) {
-	var url = "http://localhost/min-browser-tray.html"
+	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")

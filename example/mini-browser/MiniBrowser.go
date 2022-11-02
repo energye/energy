@@ -39,6 +39,7 @@ func main() {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
 		server := assetserve.NewAssetsHttpServer()
+		server.PORT = 22022
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
