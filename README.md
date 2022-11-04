@@ -11,6 +11,14 @@
 > 也可以使用 [Energy](https://github.com/energye/energy) 和 [Golcl](https://github.com/energye/golcl) 构建使用系统级本地UI和使用Web前端技术跨平台的应用
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
+>
+> 在Go和Web端技术中，基于IPC通信，你可以很方便的在Go和Web端交互数据,函数调用以及事件调用, 不再需要繁琐的Web Service接口，就像调用语言本身函数一样简单
+> 
+> 在Go中还可以定义JS变量，提供给Web端JS使用，实现Go变量或结构对象数据同步
+> 
+> 在Go中调用JavaScript函数，和JavaScript的监听事件
+> 
+> 在JavaScript中调用Go函数，和Go的监听事件
 
 ### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy动态链接库压缩包下载 
 #### 这里CEF是[Chromium](https://bitbucket.org/chromiumembedded/cef/)提供的下载地址, [Energy](https://github.com/energye/liblcl)是预编译好的动态链接库
