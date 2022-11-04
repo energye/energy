@@ -37,16 +37,22 @@ func MainBrowserWindow() {
 		back, forward, stop, refresh, progressLabel, addr := controlUI(browserWindow)
 		//页面加载处理进度
 		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
-			//参数-进度
-			progressLabel.SetCaption(fmt.Sprintf("%v", progress*100))
+			//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
+			cef.QueueAsyncCall(func(id int) {
+				//参数-进度
+				progressLabel.SetCaption(fmt.Sprintf("%v", progress*100))
+			})
 		})
 		//页面加载状态，根据状态判断是否加载完成，和是否可前进后退
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-			//控制按钮状态
-			stop.SetEnabled(isLoading)
-			refresh.SetEnabled(!isLoading)
-			back.SetEnabled(canGoBack)
-			forward.SetEnabled(canGoForward)
+			//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
+			cef.QueueAsyncCall(func(id int) {
+				//控制按钮状态
+				stop.SetEnabled(isLoading)
+				refresh.SetEnabled(!isLoading)
+				back.SetEnabled(canGoBack)
+				forward.SetEnabled(canGoForward)
+			})
 		})
 		event.SetOnAddressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, url string) {
 			addr.SetText(url)
