@@ -49,6 +49,7 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 	QueueAsyncCall(func(id int) {
 		var m = BrowserWindow.popupWindow
 		if m != nil {
+			m.SetShowInTaskBar()
 			m.SetWindowType(WT_VIEW_SOURCE)
 			m.ChromiumCreate(nil, viewSourceUrl)
 			m.chromium.EnableIndependentEvent()

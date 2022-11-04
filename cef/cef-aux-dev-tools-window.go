@@ -46,6 +46,7 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		winAuxTools.devToolsWindow.defaultWindowCloseEvent()
 		winAuxTools.devToolsWindow.SetWidth(1024)
 		winAuxTools.devToolsWindow.SetHeight(768)
+		winAuxTools.devToolsWindow.SetShowInTaskBar()
 
 		winAuxTools.devToolsWindow.SetOnResize(func(sender lcl.IObject) {
 			winAuxTools.devToolsX = winAuxTools.devToolsWindow.Left()

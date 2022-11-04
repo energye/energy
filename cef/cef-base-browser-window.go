@@ -17,7 +17,9 @@ import (
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/types/messages"
 	"time"
 )
 
@@ -452,8 +454,6 @@ func (m *BaseWindow) registerDefaultEvent() {
 func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
-		BrowserWindow.uiLock.Lock()
-		defer BrowserWindow.uiLock.Unlock()
 		if IsDarwin() { //MacOSX
 			m.windowParent.DestroyChildWindow()
 		} else { // Window  and Linux
@@ -462,10 +462,10 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			})
 		}
 		if IsLinux() {
-			//继续关闭
+			//继续关闭 -> OnBeforeClose
 			*aAction = CbaClose
 		} else {
-			//暂时停止关闭
+			//暂时停止关闭 -> OnBeforeClose
 			*aAction = CbaDelay
 		}
 		if bwEvent.onClose != nil {
@@ -473,8 +473,6 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-		BrowserWindow.uiLock.Lock()
-		defer BrowserWindow.uiLock.Unlock()
 		m.canClose = true
 		var tempClose = func() {
 			defer func() {
@@ -489,9 +487,12 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				m.windowInfo.auxTools.devToolsWindow.Close()
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
+			//主窗口关闭
 			if m.WindowType() == WT_MAIN_BROWSER {
-				//主窗口关闭调用Close函数
 				m.Close()
+				if IsWindows() {
+					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+				}
 			}
 		}
 		QueueAsyncCall(func(id int) {
