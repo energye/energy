@@ -22,8 +22,9 @@ var resources embed.FS
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
+	//开发环境中 MacOSX平台必须在"GlobalCEFInit"之前设置CEF
+	//设置使用CEF 和 CEF框架目录，生成开发执行应用程序包
 	if common.IsDarwin() {
-		//libname.LibName = "/Users/zhangli/go/bin/liblcl.dylib"
 		macapp.MacApp.IsCEF(true)
 		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt/energy/chromium")
 	}

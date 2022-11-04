@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/pkgs/macapp"
 )
 
 //go:embed resources
@@ -17,6 +18,12 @@ var libs embed.FS
 
 //这是一个简单的窗口创建示例
 func main() {
+	//开发环境中 MacOSX平台必须在"GlobalCEFInit"之前设置CEF
+	//设置使用CEF 和 CEF框架目录，生成开发执行应用程序包
+	if common.IsDarwin() {
+		macapp.MacApp.IsCEF(true)
+		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt/energy/chromium")
+	}
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalCEFInit(&libs, &resources)
 	//可选的应用配置

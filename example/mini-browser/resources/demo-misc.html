@@ -46,7 +46,15 @@
     <button class="inpQuery">GO</button>
 </div>
 <div style="margin-top: 70px;overflow-y: auto;height: 850px;overflow-x: hidden;">
-    <h3>Golang 绑定 Javascrip 示例.测试页面-resources</h3>
+    <h3>这是一个各种使用方式的集合示例</h3>
+    <h3>
+        在Go和Web端技术中，基于IPC通信，你可以很方便的在Go和Web端交互数据和事件
+        <br>不再需要繁琐的web service接口
+        <br>在Go中还可以定义JS变量，提供给Web端JS使用
+        <br>在Go中调用JavaScript函数
+        <br>在JavaScript中调用Go函数
+        <br>就像调用语言本身函数一样简单
+    </h3>
 
     <p>Golang 绑定映射 Javascript 通用类型属性、函数，结构对象属性</p>
     通用类型：
@@ -79,7 +87,9 @@
     <button onclick="asyncIPCGet()">异步IPC-获取值</button>
     <button onclick="GetValue()">获取值</button>
     <br>
-    <input id="find" value=""><button onclick="find()">查找</button><button onclick="findStop()">停止查找</button>
+    <input id="find" value="">
+    <button onclick="find()">查找</button>
+    <button onclick="findStop()">停止查找</button>
     <br>
     UI操作
     <button onclick="disabledUIBtn()">禁用【打印PDF】按钮</button>
@@ -100,8 +110,8 @@
     <a href="http://120.48.25.102:8089/">http://120.48.25.102:8089/</a>
     <div id="test" style="width: 100%;border: solid 1px red;min-height: 100px;"></div>
     <br>
-<!--    <iframe id="aaaaa" name="aaaaa" src="demo-misc.html" width="49%" height="300"></iframe>-->
-<!--    <iframe id="bbbbb" name="bbbbb"  src="demo-misc.html" width="49%" height="300"></iframe>-->
+    <!--    <iframe id="aaaaa" name="aaaaa" src="demo-misc.html" width="49%" height="300"></iframe>-->
+    <!--    <iframe id="bbbbb" name="bbbbb"  src="demo-misc.html" width="49%" height="300"></iframe>-->
     <textarea style="width: 100%;height: 200px;"></textarea>
     <br>
     <img src="icon.ico">
@@ -121,30 +131,37 @@
     </video>
     <script>
         var a = 0;
+
         function newWindow() {
             ipc.emit("js-new-window");
         }
+
         //监听一个js函数，在Go中调用，带有参数和返回值
-        ipc.on("js-ipc-on",function (val,doubleValue) {
-            alert("js-ipc-on 执行了 参数: " + val + "  doubleValue: "+doubleValue);
+        ipc.on("js-ipc-on", function (val, doubleValue) {
+            alert("js-ipc-on 执行了 参数: " + val + "  doubleValue: " + doubleValue);
             return "返回值";
         });
+
         //定义一个函数，在Go中调用，带有参数, 返回值GO中接收不到
         function jsCode(val) {
             alert("jsCode 执行了: " + val);
         }
+
         function goCallJsCode() {
             //这个示例通过 ipc触发go的代码，然后在go中调用js
             //在go中执行js调用 jsCode() 函数
             ipc.emit("go-call-js-code");
         }
+
         function newBrowserWindow() {
             ipc.emit("js-new-browser-window");
         }
-        function find(){
-            ipc.emit("find",[document.getElementById('find').value]);
+
+        function find() {
+            ipc.emit("find", [document.getElementById('find').value]);
         }
-        function findStop(){
+
+        function findStop() {
             ipc.emit("find-stop");
         }
 
@@ -272,7 +289,7 @@
             });
         }
 
-        function GetValue(){
+        function GetValue() {
             document.getElementById("test").innerHTML = "获取值<br>";
             test(goobj.ObjDemo.ObjFnParams(1, "string", 555.44, true))
             test("NameField-value:", goobj.ObjDemo.NameField)
@@ -288,11 +305,13 @@
             // test("普通对象:", JSON.stringify(v8obj))
             test("结构对象:", JSON.stringify(goobj))
         }
+
         function asyncIPCGet() {
             for (let i = 0; i < 1; i++) {
                 asyncIPCGetFor();
             }
         }
+
         function asyncIPCGetFor() {
             document.getElementById("test").innerHTML = "异步IPC-获取值<br>";
             try {
@@ -322,9 +341,9 @@
                 ipc.emit("window.goobj.ObjDemo", function (value) {
                     test("ObjDemo-value:", JSON.stringify(value))
                 });
-                ipc.emit("goobj.ObjDemo.ObjDemoIntField",[88888]);
-                ipc.emit("goobj.ObjDemo.ObjDemoIntField",[666666]);
-                ipc.emit("goobj.ObjDemo.ObjDemoIntField",[555555]);
+                ipc.emit("goobj.ObjDemo.ObjDemoIntField", [88888]);
+                ipc.emit("goobj.ObjDemo.ObjDemoIntField", [666666]);
+                ipc.emit("goobj.ObjDemo.ObjDemoIntField", [555555]);
                 test("stringv-value:", v8obj.stringv);
                 test("integerv-value:", v8obj.integerv);
                 test("doublev-value:", v8obj.doublev);
