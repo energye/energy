@@ -461,7 +461,13 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 				m.windowParent.Free()
 			})
 		}
-		*aAction = CbaDelay
+		if IsLinux() {
+			//继续关闭
+			*aAction = CbaClose
+		} else {
+			//暂时停止关闭
+			*aAction = CbaDelay
+		}
 		if bwEvent.onClose != nil {
 			bwEvent.onClose(sender, browser, aAction)
 		}
@@ -484,9 +490,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
 			if m.WindowType() == WT_MAIN_BROWSER {
-				//当是主窗口关闭，m.Close将关闭所有窗口
-				//也可以拿到所有子窗口，逐步关闭
-				//在关闭子窗口时，不能使用m.Close，会发生chromium browser进程自动断开连接，导致主进程关闭
+				//主窗口关闭调用Close函数
 				m.Close()
 			}
 		}
