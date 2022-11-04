@@ -489,9 +489,10 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			BrowserWindow.removeWindowInfo(m.windowId)
 			//主窗口关闭
 			if m.WindowType() == WT_MAIN_BROWSER {
-				m.Close()
 				if IsWindows() {
 					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+				} else {
+					m.Close()
 				}
 			}
 		}
