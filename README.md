@@ -12,7 +12,7 @@
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 >
-> 在Go和Web端技术中，基于IPC通信，你可以很方便的在Go和Web端交互数据,函数调用以及事件调用, 不再需要繁琐的Web Service接口，就像调用语言本身函数一样简单
+> 在Go和Web端技术中，基于IPC通信，你可以很方便的在Go和Web端交互数据,函数调用以及事件调用, 不再需Web Service接口，就像调用语言本身函数一样简单
 > 
 > 在Go中还可以定义JS变量，提供给Web端JS使用，实现Go变量或结构对象数据同步
 > 
