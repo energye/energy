@@ -21,7 +21,7 @@
 > 在JavaScript中调用Go函数，和Go的监听事件
 
 ### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy动态链接库压缩包下载 
-#### CEF(https://bitbucket.org/chromiumembedded/cef/)下载地址, [Energy](https://github.com/energye/liblcl)下载地址
+#### [CEF](https://bitbucket.org/chromiumembedded/cef/)下载地址, [Energy](https://github.com/energye/liblcl)下载地址
 | CEF                                                                                                                               | Energy                                                                                                                                                                                              |
 |-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2032%20bits.zip)        |
