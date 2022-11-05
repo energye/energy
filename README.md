@@ -3,12 +3,13 @@
 [English](https://github.com/energye/energy/blob/main/README.en-US.md)
 
 ---
-### 简介
-> [Energy](https://github.com/energye/energy) 是使用JavaScript,HTML,CSS 构建桌面应用的框架, 是基于 [Golcl](https://github.com/energye/golcl) 和 [CEF4Delphi](https://patreon.com/salvadordf) 纯Go语言开发的框架,内嵌 [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
+### [简介](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+> [Energy](https://github.com/energye/energy) 使用JavaScript、HTML和CSS 构建桌面应用的框架, 是Golang基于 [CEF]() 和 [Golcl](https://github.com/energye/golcl) 开发的框架，内嵌 [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
 >
-> 可以让你使用web前端开发技术构建在Windows, Linux, MacOS跨平台的应用
+> 可以让你使用 [Web]() 前端技术构建在Windows, Linux, MacOS跨平台的应用
 >
-> 也可以使用 [Energy](https://github.com/energye/energy) 和 [Golcl](https://github.com/energye/golcl) 构建使用系统级本地UI和使用Web前端技术跨平台的应用
+>> 也可以使用 [Energy](https://github.com/energye/energy) 和 [Golcl](https://github.com/energye/golcl) 单独构建小巧的系统UI跨平台应用程序
+>>
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 >
