@@ -20,16 +20,15 @@
 > 
 > 在JavaScript中调用Go函数，和Go的监听事件
 
-### ![windows 32 bits](https://img.shields.io/badge/Downloads-green) CEF(105.3.39)和Energy动态链接库压缩包下载 
-#### [CEF](https://bitbucket.org/chromiumembedded/cef/)下载地址, [Energy](https://github.com/energye/liblcl)下载地址
-| CEF                                                                                                                               | Energy                                                                                                                                                                                              |
-|-----------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2032%20bits.zip)        |
-| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [![windows 64 bits](https://img.shields.io/badge/downloads-Windows%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2064%20bits.zip)         |
+### [![windows 32 bits](https://img.shields.io/badge/Downloads-green)](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6364c5c2a749ba01d04ff485) 
+| CEF(105.3.39)  | Energy(1.1.0)                                                                                                                                                                                |
+|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2032%20bits.zip)              |
+| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [![windows 64 bits](https://img.shields.io/badge/downloads-Windows%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2064%20bits.zip)              |
 | [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Linux%20x86%2064%20bits.zip)    |
 | [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/MacOSX%20x86%2064%20bits.zip) |
 
-### [CEF和Energy动态链接库压缩包使用说明](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+#### [CEF和Energy框架压缩包使用说明](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
 
 ### [入门指南-网址](https://energy.yanghy.cn)
 * [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
