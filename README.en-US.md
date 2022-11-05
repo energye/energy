@@ -11,17 +11,29 @@ English
 > You can also use the [Energy](https://github.com/energye/golcl) and [Golcl](https://github.com/energye/energy) Build applications that use system-level native UI and cross platform with Web front-end technology
 >
 > Supports Windows_32, 64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
+> 
+> In Go and Web technologies, based on IPC communication, you can easily interact data, function calls, and event calls between Go and Web without the need for a Web Service interface, just as easily as calling functions in the language itself
+> 
+> In Go, you can also define JS variables, which can be used by Web end JS to realize Go variable or structure object data synchronization
+> 
+> Call JS function and JS event listener in Go to realize functional interaction between GO and JS
+> 
+> Call Go function in JS, listen to events of Go, and realize functional interaction between JS and GO
 
-### CEF(105.3.39)Binary download
-* [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)
-* [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)
-* [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)
-* [MacOS x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2)
+### [![windows 32 bits](https://img.shields.io/badge/Downloads-green)](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6364c5c2a749ba01d04ff485)
+| CEF(105.3.39)  | Energy(1.1.0)                                                                                                                                                                                |
+|-----------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Windows 32 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows32.tar.bz2)   | [![windows 32 bits](https://img.shields.io/badge/downloads-Windows%2032%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2032%20bits.zip)              |
+| [Windows 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_windows64.tar.bz2)   | [![windows 64 bits](https://img.shields.io/badge/downloads-Windows%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Windows%2064%20bits.zip)              |
+| [Linux x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_linux64.tar.bz2)   | [![linux x86 64 bits](https://img.shields.io/badge/downloads-Linux%20x86%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/Linux%20x86%2064%20bits.zip)    |
+| [MacOSX x86 64 bits](https://cef-builds.spotifycdn.com/cef_binary_105.3.39%2Bg2ec21f9%2Bchromium-105.0.5195.127_macosx64.tar.bz2) | [![macOSX x86 64 bits](https://img.shields.io/badge/downloads-MacOSX%20x86%2064%20bits-brightgreen)](https://gitee.com/energye/energy/releases/download/v1.1.0/MacOSX%20x86%2064%20bits.zip) |
 
-### Getting started guide
-* [tutorial]()
-* [sample]()
-* [document]()
+#### [CEF and Energy framework compression package instructions](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+
+### [Getting started guide](https://energy.yanghy.cn)
+* [tutorial](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+* [sample](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
+* [document](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
 
 ### Quick start
 #### Basic needs
@@ -91,3 +103,7 @@ func main() {
 * Download the binary package for the corresponding platform and energy version
 * Install Energy dependencies go get github.com/energye/energy Or use: go mod init, go mod tidy
 * Create a GO application, see the Getting Started Guide and Example
+
+----
+### License
+### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)

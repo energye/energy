@@ -56,7 +56,9 @@ func main() {
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
 		fmt.Println("SetBrowserInitAfter")
 	})
-
+	//内置http服务链接安全配置
+	assetserve.AssetsServerHeaderKeyName = "energy"
+	assetserve.AssetsServerHeaderKeyValue = "energy"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务 然后使用 http://localhost/资源目录或资源名称")
 		//通过内置http服务加载资源

@@ -16,9 +16,9 @@
 > 
 > 在Go中还可以定义JS变量，提供给Web端JS使用，实现Go变量或结构对象数据同步
 > 
-> 在Go中调用JavaScript函数，和JavaScript的监听事件
+> 在Go中调用JS函数、JS事件监听，实现GO与JS的功能交互
 > 
-> 在JavaScript中调用Go函数，和Go的监听事件
+> 在JS中调用Go函数，Go的监听事件，实现JS与GO的功能交互
 
 ### [![windows 32 bits](https://img.shields.io/badge/Downloads-green)](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6364c5c2a749ba01d04ff485) 
 | CEF(105.3.39)  | Energy(1.1.0)                                                                                                                                                                                |
