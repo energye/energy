@@ -11,6 +11,13 @@ type EmitTarget struct {
 	FrameId  int64
 }
 
+func NewEmitTarget(browserId int32, frameId int64) *EmitTarget {
+	return &EmitTarget{
+		BrowseId: browserId,
+		FrameId:  frameId,
+	}
+}
+
 func (m *EmitTarget) GetBrowserId() int32 {
 	return m.BrowseId
 }
