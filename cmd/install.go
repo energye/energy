@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bytes"
 	"compress/bzip2"
 	"encoding/json"
 	"errors"
@@ -26,7 +27,12 @@ During this process, CEF and Energy are downloaded
 Default framework name is "CEFEnergy"`,
 }
 
-const download_version_config_url = "https://energy.yanghy.cn/energy_download.json"
+const (
+	cefKey                      = "cef"
+	energyKey                   = "energy"
+	download_version_config_url = "https://energy.yanghy.cn/autoconfig/%s.json"
+	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
+)
 
 type downloadInfo struct {
 	fileName string
@@ -50,12 +56,13 @@ func runInstall(c *CommandConfig) error {
 	}
 	os.MkdirAll(c.Install.Path, fs.ModeDir)
 	println("Start downloading CEF and Energy dependency")
-	downloadJSON, err := downloadConfig()
+	downloadJSON, err := downloadConfig(fmt.Sprintf(download_version_config_url, c.Install.Version))
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
 	var downloadVersion map[string]interface{}
+	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &downloadVersion); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
@@ -72,15 +79,29 @@ func runInstall(c *CommandConfig) error {
 		bits := osConfig.(map[string]interface{})
 		osVersion = bits[fmt.Sprintf("%d", strconv.IntSize)].(map[string]interface{})
 	}
+	//提取文件配置
+	extractData, err := downloadConfig(download_extract_url)
+	if err != nil {
+		fmt.Errorf("%s", err.Error())
+		os.Exit(1)
+	}
+	var extractConfig map[string]interface{}
+	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
+	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
+		fmt.Fprint(os.Stderr, err.Error()+"\n")
+		os.Exit(1)
+	}
+	extractOSConfig := extractConfig[runtime.GOOS].(map[string]interface{})
+
 	//下载地址
 	var (
-		cef, cefOk       = osVersion["cef"].(string)
-		energy, energyOk = osVersion["energy"].(string)
+		cefUrl, cefOk       = osVersion[cefKey].(string)
+		energyUrl, energyOk = osVersion[energyKey].(string)
 	)
 	if cefOk && energyOk {
 		var downloads = make(map[string]*downloadInfo)
-		downloads["cef"] = &downloadInfo{fileName: urlName(cef), savePath: filepath.Join(c.Install.Path, urlName(cef)), url: cef}
-		downloads["energy"] = &downloadInfo{fileName: urlName(energy), savePath: filepath.Join(c.Install.Path, urlName(energy)), url: energy}
+		downloads[cefKey] = &downloadInfo{fileName: urlName(cefUrl), savePath: filepath.Join(c.Install.Path, urlName(cefUrl)), url: cefUrl}
+		downloads[energyKey] = &downloadInfo{fileName: urlName(energyUrl), savePath: filepath.Join(c.Install.Path, urlName(energyUrl)), url: energyUrl}
 		for key, dl := range downloads {
 			fmt.Printf("start download %s url: %s\n", key, dl.url)
 			bar := progressbar.NewBar(100)
@@ -99,7 +120,7 @@ func runInstall(c *CommandConfig) error {
 		println("Release files")
 		for key, dl := range downloads {
 			if dl.success {
-				if key == "cef" {
+				if key == cefKey {
 					bar := progressbar.NewBar(0)
 					bar.SetNotice("Unpack file " + dl.fileName + ": ")
 					tarName := UnBz2ToTar(dl.savePath, func(processLength int64) {
@@ -107,9 +128,9 @@ func runInstall(c *CommandConfig) error {
 					})
 					bar.PrintEnd()
 					println("Unpack file", dl.fileName, "end.")
-					ExtractFiles(key, tarName)
-				} else if key == "energy" {
-					ExtractFiles(key, dl.savePath)
+					ExtractFiles(key, tarName, extractOSConfig)
+				} else if key == energyKey {
+					ExtractFiles(key, dl.savePath, extractOSConfig)
 				}
 			}
 		}
@@ -121,8 +142,15 @@ func runInstall(c *CommandConfig) error {
 }
 
 //提取文件
-func ExtractFiles(keyName, path string) {
-	println("extract", keyName, "file path:", path)
+func ExtractFiles(keyName, sourcePath string, extractOSConfig map[string]interface{}) {
+	println("extract", keyName, "sourcePath:", sourcePath)
+	files := extractOSConfig[keyName].([]interface{})
+	fmt.Println("extractOSConfig:", files)
+	if keyName == cefKey {
+		//tar
+	} else if keyName == energyKey {
+		//zip
+	}
 }
 
 //释放bz2文件到tar
@@ -176,9 +204,9 @@ func urlName(downloadUrl string) string {
 }
 
 //下载文件配置
-func downloadConfig() ([]byte, error) {
+func downloadConfig(url string) ([]byte, error) {
 	client := new(http.Client)
-	resp, err := client.Get(download_version_config_url)
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
