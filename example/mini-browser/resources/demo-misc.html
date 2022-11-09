@@ -206,18 +206,14 @@
 
         //地址栏
         ipc.on("OnLoadingStateChange", function (isLoading, canGoBack, canGoForward) {
-            console.log("OnLoadingStateChange", isLoading, canGoBack, canGoForward);
             test("OnLoadingStateChange", isLoading, canGoBack, canGoForward);
         })
         ipc.on("OnLoadingProgressChange", function (progress) {
-            console.log("OnLoadingProgressChange", progress);
             test("OnLoadingProgressChange", progress);
         })
         ipc.on("window-resize", function (x, y, w, h) {
             document.getElementById("test").innerHTML = "";
             test("window-resize", x, y, w, h);
-            console.log("window-resize", x, y, w, h);
-            //document.getElementById("bodyId").style.height=h+"px";
         });
 
 
@@ -364,7 +360,7 @@
                     test("subWindowIPCOn", ret);
                 });
                 ipc.emit("v8obj", function (value) {
-                    console.log(value); //这里会变成同步 stringify
+                    //这里会变成同步 stringify
                     var str = JSON.stringify(value);
                     test("普通对象:", str)
                 });
@@ -546,15 +542,6 @@
             if (interval > 0) {
                 return
             }
-            // const obj = window.goobj.ObjDemo.SubObjDemoField;
-            // const objCopy = JSON.parse(JSON.stringify(obj))
-            // objCopy.NameField = 'copy'
-            // a++
-            // obj.SubSubObjDemoField.SubSubInt = 123
-            // console.log(obj.NameField, objCopy.NameField)
-            /*ipc.emit("goobj.ObjDemo.NameField", function (value) {
-                test("NameField-value:", value)
-            });*/
             interval = setInterval(function () {
                 doc.innerHTML = "";
                 SetVarA(a % 1)
