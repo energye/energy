@@ -1,6 +1,8 @@
 package cmd
 
 type CommandConfig struct {
+	Index   int
+	Wd      string
 	Install Install `command:"install"`
 	Package Package `command:"package"`
 }
@@ -10,4 +12,9 @@ type Install struct {
 }
 
 type Package struct {
+}
+
+type Command struct {
+	Run                    func(c *CommandConfig) error
+	UsageLine, Short, Long string
 }
