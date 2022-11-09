@@ -8,7 +8,9 @@ type CommandConfig struct {
 }
 
 type Install struct {
-	Path string `short:"m" long:"path" description:"Installation directory Default current directory"`
+	Path    string `short:"p" long:"path" description:"Installation directory Default current directory"`
+	Version string `short:"v" long:"version" description:"Specifying a version number"`
+	Name    string `short:"n" long:"name" description:"Name of the frame after installation" default:"CEFEnergy"`
 }
 
 type Package struct {
