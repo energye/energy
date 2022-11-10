@@ -111,6 +111,7 @@ plugins
 
 # other
 .idea
+test
 1048576000
 /exe/app.ico
 /resources/manifest.xml
