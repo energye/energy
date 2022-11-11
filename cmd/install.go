@@ -110,8 +110,7 @@ func runInstall(c *CommandConfig) error {
 		for key, dl := range downloads {
 			fmt.Printf("start download %s url: %s\n", key, dl.url)
 			bar := progressbar.NewBar(100)
-			bar.SetNotice("downloading " + dl.fileName + ": ")
-			bar.SetGraph("█")
+			bar.SetNotice("\t")
 			bar.HideRatio()
 			err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
 				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
