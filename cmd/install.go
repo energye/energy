@@ -66,7 +66,7 @@ func runInstall(c *CommandConfig) error {
 	}
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
-	println("Start downloading CEF and Energy dependency")
+	println("start downloading CEF and Energy dependency")
 	downloadJSON, err := downloadConfig(fmt.Sprintf(download_version_config_url, c.Install.Version))
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
@@ -80,7 +80,7 @@ func runInstall(c *CommandConfig) error {
 	}
 	version, ok := downloadVersion[c.Install.Version]
 	if !ok {
-		println("Invalid version number:", c.Install.Version)
+		println("invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
 	osConfig := version.(map[string]interface{})[runtime.GOOS].(map[string]interface{})
@@ -115,20 +115,20 @@ func runInstall(c *CommandConfig) error {
 		downloads[cefKey] = &downloadInfo{fileName: urlName(cefUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(cefUrl)), frameworkPath: installPathName, url: cefUrl}
 		downloads[energyKey] = &downloadInfo{fileName: urlName(energyUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(energyUrl)), frameworkPath: installPathName, url: energyUrl}
 		for key, dl := range downloads {
-			fmt.Printf("start download %s url: %s\n", key, dl.url)
+			fmt.Printf("download %s url: %s\n", key, dl.url)
 			bar := progressbar.NewBar(100)
 			bar.SetNotice("\t")
 			bar.HideRatio()
 			err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
 				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 			})
-			bar.PrintEnd("download " + dl.fileName + " end")
+			bar.PrintEnd("download " + dl.fileName + " success")
 			if err != nil {
 				println("download", dl.fileName, "error", err)
 			}
 			dl.success = err == nil
 		}
-		println("Release files")
+		println("release files")
 		var removeFileList = make([]string, 0, 0)
 		for key, di := range downloads {
 			if di.success {
@@ -144,16 +144,16 @@ func runInstall(c *CommandConfig) error {
 				} else if key == energyKey {
 					ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 				}
-				println("Unpack file", di.fileName, "end.")
+				println("Unpack file", di.fileName, "success")
 			}
 		}
 		for _, rmFile := range removeFileList {
 			println("remove file", rmFile)
 			os.Remove(rmFile)
 		}
-		println("Success.")
+		println("\n", CmdInstall.Short, "SUCCESS.")
 	} else {
-		println("Invalid version number:", c.Install.Version)
+		println("invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
 	return nil
@@ -232,7 +232,7 @@ func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
 		}
 		info := header.FileInfo()
 		targetFile := filepath.Join(targetPath, includePath)
-		fmt.Println("compressPath:", compressPath, "targetFile:", targetFile)
+		fmt.Println("compressPath:", compressPath, "-> targetFile:", targetFile)
 		if info.IsDir() {
 			if err = os.MkdirAll(targetFile, info.Mode()); err != nil {
 				fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
@@ -287,7 +287,7 @@ func ExtractUnZip(filePath, targetPath string, files ...interface{}) {
 					continue
 				}
 				if targetFile, err := os.Create(targetFileName); err == nil {
-					fmt.Println("Extract file: ", st.Name())
+					fmt.Println("extract file: ", st.Name())
 					bar := progressbar.NewBar(100)
 					bar.SetNotice("\t")
 					bar.HideRatio()
@@ -322,10 +322,6 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) st
 	defer fileBz2.Close()
 	dirName := fileBz2.Name()
 	dirName = dirName[:strings.LastIndex(dirName, ".")]
-	//_, err = os.Stat(dirName)
-	//if os.IsExist(err) {
-	//	return dirName
-	//}
 	r := bzip2.NewReader(fileBz2)
 	w, err := os.Create(dirName)
 	if err != nil {

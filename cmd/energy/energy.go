@@ -32,7 +32,7 @@ func main() {
 			cc.Index = 2
 		}
 		command := commands[cc.Index]
-		if len(extraArgs) < 1 {
+		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {
 			fmt.Fprintf(os.Stderr, "%s\n%s", command.UsageLine, command.Long)
 			os.Exit(1)
 		}
