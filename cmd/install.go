@@ -6,7 +6,6 @@ import (
 	"bytes"
 	"compress/bzip2"
 	"encoding/json"
-	"errors"
 	"fmt"
 	progressbar "github.com/energye/energy/cmd/progress-bar"
 	"io"
@@ -22,7 +21,7 @@ import (
 )
 
 var CmdInstall = &Command{
-	UsageLine: "install [path] [version]",
+	UsageLine: "install [path] [version] [name]",
 	Short:     "Automatically configure the CEF and Energy framework",
 	Long: `Automatically configure the CEF and Energy framework
 During this process, CEF and Energy are downloaded
@@ -34,7 +33,7 @@ const (
 	energyKey                   = "energy"
 	download_version_config_url = "https://energy.yanghy.cn/autoconfig/%s.json"
 	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
-	frameworkCache              = "frameworkDownloadCache"
+	frameworkCache              = "EnergyFrameworkDownloadCache"
 )
 
 type downloadInfo struct {
@@ -54,7 +53,7 @@ func runInstall(c *CommandConfig) error {
 	if c.Install.Path == "" {
 		c.Install.Path = c.Wd
 	}
-	c.Install.Path = filepath.Join(c.Install.Path, c.Install.Name)
+	installPathName := filepath.Join(c.Install.Path, c.Install.Name)
 	if c.Install.Version == "" {
 		c.Install.Version = "latest"
 	}
@@ -105,8 +104,8 @@ func runInstall(c *CommandConfig) error {
 	)
 	if cefOk && energyOk {
 		var downloads = make(map[string]*downloadInfo)
-		downloads[cefKey] = &downloadInfo{fileName: urlName(cefUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(cefUrl)), frameworkPath: c.Install.Path, url: cefUrl}
-		downloads[energyKey] = &downloadInfo{fileName: urlName(energyUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(energyUrl)), frameworkPath: c.Install.Path, url: energyUrl}
+		downloads[cefKey] = &downloadInfo{fileName: urlName(cefUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(cefUrl)), frameworkPath: installPathName, url: cefUrl}
+		downloads[energyKey] = &downloadInfo{fileName: urlName(energyUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(energyUrl)), frameworkPath: installPathName, url: energyUrl}
 		for key, dl := range downloads {
 			fmt.Printf("start download %s url: %s\n", key, dl.url)
 			bar := progressbar.NewBar(100)
@@ -122,6 +121,7 @@ func runInstall(c *CommandConfig) error {
 			dl.success = err == nil
 		}
 		println("Release files")
+		var removeFileList = make([]string, 0, 0)
 		for key, di := range downloads {
 			if di.success {
 				if key == cefKey {
@@ -131,12 +131,17 @@ func runInstall(c *CommandConfig) error {
 						bar.PrintSizeBar(processLength)
 					})
 					bar.PrintEnd()
-					println("Unpack file", di.fileName, "end.")
 					ExtractFiles(key, tarName, di, extractOSConfig)
+					removeFileList = append(removeFileList, tarName)
 				} else if key == energyKey {
 					ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 				}
+				println("Unpack file", di.fileName, "end.")
 			}
+		}
+		for _, rmFile := range removeFileList {
+			println("remove file", rmFile)
+			os.Remove(rmFile)
 		}
 		println("Success.")
 	} else {
@@ -397,23 +402,31 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	client := new(http.Client)
 	resp, err := client.Get(url)
 	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
 		return err
 	}
 	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
 	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
 		return err
 	}
 	if isFileExist(localPath, fsize) {
-		return err
+		return nil
 	}
 	println("save path: [", localPath, "] file size:", fsize)
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
 		return err
 	}
 	defer file.Close()
 	if resp.Body == nil {
-		return errors.New("body is null")
+		fmt.Printf("download-error=[body is null]\n")
+		os.Exit(1)
+		return nil
 	}
 	defer resp.Body.Close()
 	for {
