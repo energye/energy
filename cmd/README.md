@@ -28,7 +28,7 @@
 |---------|-----------------------------------------|
 | install | 安装energy框架, 需要连接互联网, 自动下载CEF和Energy框架环境 |
 | path    | 可选参数, 指定安装目录, 默认当前目录生成CEFEnergy文件夹      |
-| version | 指定版本号v1.1.0, 默认最新版本latest               |
+| version | 可选参数, 指定版本号v1.1.0, 默认最新版本latest               |
 
 >示例
 >> 1. energy install
