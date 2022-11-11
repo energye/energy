@@ -15,7 +15,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"path"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -35,7 +34,7 @@ const (
 	energyKey                   = "energy"
 	download_version_config_url = "https://energy.yanghy.cn/autoconfig/%s.json"
 	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
-	frameworkCache              = "frameworkCache"
+	frameworkCache              = "frameworkDownloadCache"
 )
 
 type downloadInfo struct {
@@ -140,6 +139,7 @@ func runInstall(c *CommandConfig) error {
 				}
 			}
 		}
+		println("Success.")
 	} else {
 		println("Invalid version number:", c.Install.Version)
 		os.Exit(1)
@@ -151,13 +151,52 @@ func runInstall(c *CommandConfig) error {
 func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]interface{}) {
 	println("extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	files := extractOSConfig[keyName].([]interface{})
-	fmt.Println("extractOSConfig:", files)
 	if keyName == cefKey {
 		//tar
+		ExtractUnTar(sourcePath, di.frameworkPath, files...)
 	} else if keyName == energyKey {
 		//zip
 		ExtractUnZip(sourcePath, di.frameworkPath, files...)
 	}
+}
+
+func filePathInclude(compressPath string, files ...interface{}) (string, bool) {
+	for _, file := range files {
+		f := file.(string)
+		tIdx := strings.LastIndex(f, "/*")
+		if tIdx != -1 {
+			f = f[:tIdx]
+			if f[0] == '/' {
+				if strings.Index(compressPath, f[1:]) == 0 {
+					return compressPath, true
+				}
+			}
+			if strings.Index(compressPath, f) == 0 {
+				return strings.Replace(compressPath, f, "", 1), true
+			}
+		} else {
+			if f[0] == '/' {
+				if compressPath == f[1:] {
+					return f, true
+				}
+			}
+			if compressPath == f {
+				f = f[strings.Index(f, "/")+1:]
+				return f, true
+			}
+		}
+	}
+	return "", false
+}
+
+func dir(path string) string {
+	path = strings.ReplaceAll(path, "\\", string(filepath.Separator))
+	lastSep := strings.LastIndex(path, string(filepath.Separator))
+	lastExt := strings.LastIndex(path, ".")
+	if lastExt < lastSep {
+		return path
+	}
+	return path[:lastSep]
 }
 
 func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
@@ -174,38 +213,53 @@ func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			//fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
+			fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
+			os.Exit(1)
 			return
 		}
+		compressPath := header.Name[strings.Index(header.Name, "/")+1:]
+		includePath, isInclude := filePathInclude(compressPath, files...)
+		if !isInclude {
+			continue
+		}
 		info := header.FileInfo()
+		targetFile := filepath.Join(targetPath, includePath)
+		fmt.Println("compressPath:", compressPath, "targetFile:", targetFile)
 		if info.IsDir() {
-			if err = os.MkdirAll(header.Name, info.Mode()); err != nil {
-				//fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
+			if err = os.MkdirAll(targetFile, info.Mode()); err != nil {
+				fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
+				os.Exit(1)
 				return
 			}
 		} else {
-			if err = os.MkdirAll(path.Dir(header.Name), info.Mode()); err != nil {
-				//fmt.Printf("error: cannot file mkdir file, error=[%v]\n", err)
-				return
+			fDir := dir(targetFile)
+			_, err = os.Stat(fDir)
+			if os.IsNotExist(err) {
+				if err = os.MkdirAll(fDir, info.Mode()); err != nil {
+					fmt.Printf("error: cannot file mkdir file, error=[%v]\n", err)
+					os.Exit(1)
+					return
+				}
 			}
-			file, err := os.OpenFile(header.Name, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
+			file, err := os.OpenFile(targetFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
 			if err != nil {
-				//fmt.Printf("error: cannot open file, error=[%v]\n", err)
+				fmt.Printf("111error: cannot open file, error=[%v]\n", err)
+				os.Exit(1)
 				return
 			}
 			defer file.Close()
-			fmt.Println("Extract file: ", header.Name)
 			bar := progressbar.NewBar(100)
 			bar.SetNotice("\t")
 			bar.HideRatio()
 			writeFile(tarReader, file, header.Size, func(totalLength, processLength int64) {
-				ratio := int((float64(processLength) / float64(totalLength)) * 100)
-				bar.PrintBar(ratio)
+				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 			})
+			file.Sync()
 			bar.PrintBar(100)
 			bar.PrintEnd()
 			if err != nil {
 				fmt.Printf("error: cannot write file, error=[%v]\n", err)
+				os.Exit(1)
 				return
 			}
 		}
@@ -230,21 +284,22 @@ func ExtractUnZip(filePath, targetPath string, files ...interface{}) {
 					bar.SetNotice("\t")
 					bar.HideRatio()
 					writeFile(f, targetFile, st.Size(), func(totalLength, processLength int64) {
-						ratio := int((float64(processLength) / float64(totalLength)) * 100)
-						bar.PrintBar(ratio)
+						bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 					})
 					bar.PrintBar(100)
-					bar.PrintEnd("\n")
+					bar.PrintEnd()
 					targetFile.Close()
 				}
 			} else {
 				fmt.Printf("error: cannot open file, error=[%v]\n", err)
+				os.Exit(1)
 				return
 			}
 		}
 	} else {
 		if err != nil {
 			fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
+			os.Exit(1)
 		}
 	}
 }
@@ -271,25 +326,25 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) st
 }
 
 func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLength, processLength int64)) {
-	buf := make([]byte, 1024)
+	buf := make([]byte, 1024*10)
 	var written int64
 	for {
 		nr, err := r.Read(buf)
-		if nr == 0 || err != nil {
-			break
-		}
-		nw, err := w.Write(buf[:nr])
-		if nw > 0 {
-			written += int64(nw)
-		}
-		if callback != nil {
+		if nr > 0 {
+			nw, err := w.Write(buf[0:nr])
+			if nw > 0 {
+				written += int64(nw)
+			}
 			callback(totalLength, written)
+			if err != nil {
+				break
+			}
+			if nr != nw {
+				err = io.ErrShortWrite
+				break
+			}
 		}
 		if err != nil {
-			break
-		}
-		if nr != nw {
-			err = io.ErrShortWrite
 			break
 		}
 	}
@@ -328,17 +383,16 @@ func isFileExist(filename string, filesize int64) bool {
 	if filesize == info.Size() {
 		return true
 	}
-	del := os.Remove(filename)
-	if del != nil {
-		println(del)
-	}
+	os.Remove(filename)
 	return false
 }
 
 //下载文件
 func downloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
 	var (
-		fsize int64
+		fsize   int64
+		buf     = make([]byte, 1024*10)
+		written int64
 	)
 	tmpFilePath := localPath + ".download"
 	client := new(http.Client)
@@ -363,8 +417,31 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 		return errors.New("body is null")
 	}
 	defer resp.Body.Close()
-	writeFile(resp.Body, file, fsize, callback)
+	for {
+		nr, er := resp.Body.Read(buf)
+		if nr > 0 {
+			nw, err := file.Write(buf[0:nr])
+			if nw > 0 {
+				written += int64(nw)
+			}
+			callback(fsize, written)
+			if err != nil {
+				break
+			}
+			if nr != nw {
+				err = io.ErrShortWrite
+				break
+			}
+		}
+		if er != nil {
+			if er != io.EOF {
+				err = er
+			}
+			break
+		}
+	}
 	if err == nil {
+		file.Sync()
 		file.Close()
 		err = os.Rename(tmpFilePath, localPath)
 		if err != nil {
