@@ -14,6 +14,9 @@ type Install struct {
 }
 
 type Package struct {
+	Path string `short:"p" long:"path" description:"Package directory"`
+	Mode string `short:"m" long:"mode" description:"Use mode to set online or offline, offline by default." default:"offline"`
+	Out  string `short:"o" long:"out" description:"Output directory" default:"EnergyInstallPkg"`
 }
 
 type Command struct {

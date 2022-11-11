@@ -1,9 +1,22 @@
 package cmd
 
+import "fmt"
+
 var CmdPackage = &Command{
-	UsageLine: "package",
+	UsageLine: "package -p [path] -m [model] -o [out]",
 	Short:     "Making an Installation Package",
-	Long:      `Making an Installation Package`,
+	Long: `
+
+	-p Package directory
+	-m Use mode to set online or offline, offline by default
+	-o Output directory
+
+Making an Installation Package.
+
+	Set the package directory by specifying Path. The current directory is the default
+		Use mode to set online or offline, offline by default.
+		The framework is automatically downloaded when installed in online mode, installation package will be much smaller.
+		Offline mode makes the framework into the package,installation package will be large`,
 }
 
 func init() {
@@ -11,5 +24,6 @@ func init() {
 }
 
 func runPackage(c *CommandConfig) error {
+	fmt.Println("runPackage", "mode:", c.Package.Mode, "path:", c.Package.Path, "out:", c.Package.Out)
 	return nil
 }

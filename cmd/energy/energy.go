@@ -21,11 +21,10 @@ func main() {
 		parser.WriteHelp(os.Stdout)
 		os.Exit(1)
 	}
-	if _, err := parser.ParseArgs(os.Args[1:]); err != nil {
+	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	} else {
-		//fmt.Println("retArgs:", retArgs)
 		switch parser.Active.Name {
 		case "install":
 			cc.Index = 1
@@ -33,6 +32,10 @@ func main() {
 			cc.Index = 2
 		}
 		command := commands[cc.Index]
+		if len(extraArgs) < 1 {
+			fmt.Fprintf(os.Stderr, "%s\n%s", command.UsageLine, command.Long)
+			os.Exit(1)
+		}
 		fmt.Println("Energy executing:", command.Short)
 		if err := command.Run(cc); err != nil {
 			fmt.Fprint(os.Stderr, err.Error()+"\n")

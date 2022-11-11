@@ -21,11 +21,18 @@ import (
 )
 
 var CmdInstall = &Command{
-	UsageLine: "install [path] [version] [name]",
+	UsageLine: "install -p [path] -v [version] -n [name]",
 	Short:     "Automatically configure the CEF and Energy framework",
-	Long: `Automatically configure the CEF and Energy framework
-During this process, CEF and Energy are downloaded
-Default framework name is "CEFEnergy"`,
+	Long: `
+	-p Installation directory Default current directory
+	-v Specifying a version number,Default latest
+	-n Name of the frame after installation
+
+Automatically configure the CEF and Energy framework.
+
+During this process, CEF and Energy are downloaded.
+
+Default framework name is "EnergyFramework".`,
 }
 
 const (
