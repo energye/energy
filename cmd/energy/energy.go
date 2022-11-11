@@ -21,11 +21,11 @@ func main() {
 		parser.WriteHelp(os.Stdout)
 		os.Exit(1)
 	}
-	if retArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
+	if _, err := parser.ParseArgs(os.Args[1:]); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	} else {
-		fmt.Println("retArgs:", retArgs)
+		//fmt.Println("retArgs:", retArgs)
 		switch parser.Active.Name {
 		case "install":
 			cc.Index = 1

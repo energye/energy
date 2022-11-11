@@ -57,8 +57,8 @@ func runInstall(c *CommandConfig) error {
 	if c.Install.Version == "" {
 		c.Install.Version = "latest"
 	}
-	os.MkdirAll(c.Install.Path, fs.ModeDir)
-	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModeDir)
+	os.MkdirAll(c.Install.Path, fs.ModePerm)
+	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
 	downloadJSON, err := downloadConfig(fmt.Sprintf(download_version_config_url, c.Install.Version))
 	if err != nil {
@@ -76,12 +76,13 @@ func runInstall(c *CommandConfig) error {
 		println("Invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
-	osConfig := version.(map[string]interface{})[runtime.GOOS]
+	osConfig := version.(map[string]interface{})[runtime.GOOS].(map[string]interface{})
 	var osVersion map[string]interface{}
 	if runtime.GOOS == "windows" {
 		//区分windows系统位数
-		bits := osConfig.(map[string]interface{})
-		osVersion = bits[fmt.Sprintf("%d", strconv.IntSize)].(map[string]interface{})
+		osVersion = osConfig[fmt.Sprintf("%d", strconv.IntSize)].(map[string]interface{})
+	} else {
+		osVersion = osConfig
 	}
 	//提取文件配置
 	extractData, err := downloadConfig(download_extract_url)
@@ -196,10 +197,6 @@ func filePathInclude(compressPath string, files ...interface{}) (string, bool) {
 func dir(path string) string {
 	path = strings.ReplaceAll(path, "\\", string(filepath.Separator))
 	lastSep := strings.LastIndex(path, string(filepath.Separator))
-	lastExt := strings.LastIndex(path, ".")
-	if lastExt < lastSep {
-		return path
-	}
 	return path[:lastSep]
 }
 
@@ -247,7 +244,7 @@ func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
 			}
 			file, err := os.OpenFile(targetFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
 			if err != nil {
-				fmt.Printf("111error: cannot open file, error=[%v]\n", err)
+				fmt.Printf("error: cannot open file, error=[%v]\n", err)
 				os.Exit(1)
 				return
 			}
@@ -318,6 +315,10 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) st
 	defer fileBz2.Close()
 	dirName := fileBz2.Name()
 	dirName = dirName[:strings.LastIndex(dirName, ".")]
+	//_, err = os.Stat(dirName)
+	//if os.IsExist(err) {
+	//	return dirName
+	//}
 	r := bzip2.NewReader(fileBz2)
 	w, err := os.Create(dirName)
 	if err != nil {

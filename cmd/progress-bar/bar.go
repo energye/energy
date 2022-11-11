@@ -123,7 +123,7 @@ func (m *Bar) PrintSizeBar(size int64) {
 	printStr := "\r" + m.NoticePrintString()
 	var sizeStr = fmt.Sprintf("%f MB", float64(size)/s_kb)
 	if runtime.GOOS != "windows" {
-		printStr = fmt.Sprintf(" %c[%vm%v%c[0m", 0x1B, m.color.Notice, sizeStr, 0x1B)
+		printStr += fmt.Sprintf(" %c[%vm%v%c[0m", 0x1B, m.color.Notice, sizeStr, 0x1B)
 	} else {
 		printStr += sizeStr
 	}
