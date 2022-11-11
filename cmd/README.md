@@ -1,15 +1,20 @@
 **# Energy 命令行工具
 
 ## 使用方式
-> 一、使用已编译
+> 一、使用预编译
 >
->> [下载地址]()
+> 下载地址
+>> [energy_cmd_windows64](http://energy.yanghy.cn/download/energy_cmd_windows64.zip)
+>>
+>> [energy_cmd_macosx64](http://energy.yanghy.cn/download/energy_cmd_macosx64.zip)
+>>
+>> [energy_cmd_linux64](http://energy.yanghy.cn/download/energy_cmd_linux64.zip)
 >>
 >> 配置到环境变量 或 直接在命令行中执行
 > 
 > 二、自行编译
 >
-> 需要安装[Go环境]()
+> 需要安装[Golang](https://golang.google.cn/dl/)环境
 >>go get -u github.com/energye/energy
 >>
 >> 进入 cmd/energy 目录
