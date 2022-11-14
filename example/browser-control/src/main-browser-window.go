@@ -53,7 +53,9 @@ func MainBrowserWindow() {
 			})
 		})
 		event.SetOnAddressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, url string) {
-			addr.SetText(url)
+			cef.QueueAsyncCall(func(id int) {
+				addr.SetText(url)
+			})
 		})
 	})
 	//创建窗口之后对对主窗口的属性、组件或子窗口的创建
