@@ -24,10 +24,7 @@ func main() {
 	logger.SetLevel(logger.CefLog_Debug)
 	//开发环境中 MacOSX平台必须在"GlobalCEFInit"之前设置CEF
 	//设置使用CEF 和 CEF框架目录，生成开发执行应用程序包
-	if common.IsDarwin() {
-		macapp.MacApp.IsCEF(true)
-		macapp.MacApp.SetBaseCefFrameworksDir("/Users/zhangli/app/swt/energy/chromium")
-	}
+	macapp.MacApp.IsCEF(common.IsDarwin())
 	cef.GlobalCEFInit(&libs, &resources)
 	//Render 子进程一些初始化配置
 	cefApp := src.AppRenderInit()

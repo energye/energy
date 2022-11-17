@@ -221,22 +221,22 @@ func ceflib() string {
 		return "libcef.dll"
 	} else if common.IsLinux() {
 		return "libcef.so"
-	} else if common.IsDarwin() {
-		return "Chromium Embedded Framework.framework/Chromium Embedded Framework"
 	}
 	return ""
 }
 
 func libPath() string {
 	var lib = ceflib()
-	//当前目录
-	if tools.IsExist(consts.ExePath + consts.Separator + lib) {
-		return consts.ExePath
-	}
-	//环境变量
-	var env = os.Getenv("ENERGY_HOME")
-	if tools.IsExist(env + consts.Separator + lib) {
-		return env
+	if lib != "" {
+		//当前目录
+		if tools.IsExist(consts.ExePath + consts.Separator + lib) {
+			return consts.ExePath
+		}
+		//环境变量
+		var env = os.Getenv("ENERGY_HOME")
+		if tools.IsExist(env + consts.Separator + lib) {
+			return env
+		}
 	}
 	return ""
 }
