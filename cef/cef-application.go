@@ -28,6 +28,7 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	if cfg == nil {
 		cfg = NewApplicationConfig()
 	}
+	cfg.framework()
 	m := new(TCEFApplication)
 	m.procName = "CEFApplication"
 	m.instance = _CEFApplication_Create(uintptr(unsafe.Pointer(cfg)))

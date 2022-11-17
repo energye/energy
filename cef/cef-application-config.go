@@ -9,8 +9,13 @@
 package cef
 
 import (
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/golcl/consts"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/tools"
+	"os"
+	"path/filepath"
 )
 
 // Application 支持的配置
@@ -193,4 +198,45 @@ func (m *tCefApplicationConfig) SetObjectRootName(name string) {
 		objectRootName = name
 	}
 	_CEFV8ValueRef_SetObjectRootName(name)
+}
+
+//energy framework env
+func (m *tCefApplicationConfig) framework() {
+	var path = libPath()
+	if path != "" {
+		if m.frameworkDirPath == 0 {
+			m.SetFrameworkDirPath(path)
+		}
+		if m.cache == 0 {
+			m.SetCache(filepath.Join(path, "cache"))
+		}
+		if m.userDataPath == 0 {
+			m.SetUserDataPath(filepath.Join(path, "userDataPath"))
+		}
+	}
+}
+
+func ceflib() string {
+	if common.IsWindows() {
+		return "libcef.dll"
+	} else if common.IsLinux() {
+		return "libcef.so"
+	} else if common.IsDarwin() {
+		return "Chromium Embedded Framework.framework/Chromium Embedded Framework"
+	}
+	return ""
+}
+
+func libPath() string {
+	var lib = ceflib()
+	//当前目录
+	if tools.IsExist(consts.ExePath + consts.Separator + lib) {
+		return consts.ExePath
+	}
+	//环境变量
+	var env = os.Getenv("ENERGY_HOME")
+	if tools.IsExist(env + consts.Separator + lib) {
+		return env
+	}
+	return ""
 }
