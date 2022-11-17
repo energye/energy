@@ -14,11 +14,7 @@ func AppRenderInit() *cef.TCEFApplication {
 	cfg := cef.NewApplicationConfig()
 	var env = common.Args.Args("env")
 	if common.IsWindows() {
-		if env == "32" {
-			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-32")
-		} else {
-			cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-64")
-		}
+		//SetFrameworkDirPath 或 配置环境变量 ENERGY_HOME
 	} else if common.IsLinux() {
 		cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
 	}
