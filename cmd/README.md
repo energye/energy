@@ -4,6 +4,8 @@
 > 一、使用预编译
 >
 > 下载地址
+>> [energy_cmd_windows32](http://energy.yanghy.cn/download/energy_cmd_windows32.zip)
+>>
 >> [energy_cmd_windows64](http://energy.yanghy.cn/download/energy_cmd_windows64.zip)
 >>
 >> [energy_cmd_macosx64](http://energy.yanghy.cn/download/energy_cmd_macosx64.zip)
