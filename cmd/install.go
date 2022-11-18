@@ -63,6 +63,7 @@ func runInstall(c *CommandConfig) error {
 		c.Install.Version = "latest"
 	}
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
+	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
 	downloadJSON, err := downloadConfig(download_version_config_url)
@@ -152,7 +153,7 @@ func runInstall(c *CommandConfig) error {
 		if di.success {
 			if key == cefKey {
 				bar := progressbar.NewBar(0)
-				bar.SetNotice("Unpack file " + di.fileName + ": ")
+				bar.SetNotice("Unpack file " + key + ": ")
 				tarName := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
 					bar.PrintSizeBar(processLength)
 				})
@@ -162,7 +163,7 @@ func runInstall(c *CommandConfig) error {
 			} else if key == energyKey {
 				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 			}
-			println("Unpack file", di.fileName, "success")
+			println("Unpack file", key, "success\n")
 		}
 	}
 	for _, rmFile := range removeFileList {
