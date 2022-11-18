@@ -17,7 +17,8 @@ Making an Installation Package.
 	Set the package directory by specifying Path. The current directory is the default
 		Use mode to set online or offline, offline by default.
 		The framework is automatically downloaded when installed in online mode, installation package will be much smaller.
-		Offline mode makes the framework into the package,installation package will be large`,
+		Offline mode makes the framework into the package,installation package will be large
+`,
 }
 
 func init() {

@@ -35,7 +35,8 @@ Automatically configure the CEF and Energy framework.
 
 During this process, CEF and Energy are downloaded.
 
-Default framework name is "EnergyFramework".`,
+Default framework name is "EnergyFramework".
+`,
 }
 
 type downloadInfo struct {

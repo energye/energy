@@ -12,7 +12,8 @@ var CmdVersion = &Command{
 	Short:     "Get version list",
 	Long: `
 	-a show all details
-	.  Execute default command`,
+	.  Execute default command
+`,
 }
 
 func init() {
