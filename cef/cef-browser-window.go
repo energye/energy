@@ -26,10 +26,14 @@ var (
 	BrowserWindow = &browser{
 		browserWindow: &browserWindow{},
 		browserEvent:  &BrowserEvent{},
-		Config:        &browserConfig{},
-		windowInfo:    make(map[int32]*TCefWindowInfo),
-		windowSerial:  1,
-		uiLock:        new(sync.Mutex),
+		Config: &browserConfig{
+			Title:  "Energy",
+			Width:  1024,
+			Height: 768,
+		},
+		windowInfo:   make(map[int32]*TCefWindowInfo),
+		windowSerial: 1,
+		uiLock:       new(sync.Mutex),
 	}
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
@@ -114,9 +118,6 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.Config.chromiumConfig.SetEnableDevTools(true)
 		BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
 		BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
-		BrowserWindow.Config.Title = ""
-		BrowserWindow.Config.Width = 800
-		BrowserWindow.Config.Height = 600
 	}
 	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>执行开发者工具方法</title>
+    <script type="application/javascript">
+        //按钮点击事件
+        function devMethod() {
+            //使用ipc.emit触发Go中监听的事件
+            ipc.emit("execute-dev-method");
+        }
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+<button style="margin: 50px 50px 50px 50px;" onclick="devMethod()">dev-method-仿真</button>
+<a href="https://note.yanghy.cn">Note</a>
+</body>
+</html>
