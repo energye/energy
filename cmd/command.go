@@ -8,9 +8,10 @@ type CommandConfig struct {
 }
 
 type Install struct {
-	Path    string `short:"p" long:"path" description:"Installation directory Default current directory"`
-	Version string `short:"v" long:"version" description:"Specifying a version number"`
-	Name    string `short:"n" long:"name" description:"Name of the frame after installation" default:"EnergyFramework"`
+	Path     string `short:"p" long:"path" description:"Installation directory Default current directory"`
+	Version  string `short:"v" long:"version" description:"Specifying a version number"`
+	Name     string `short:"n" long:"name" description:"Name of the frame after installation" default:"EnergyFramework"`
+	Download string `short:"d" long:"download" description:"Download Source, gitee or github, Default gitee" default:"gitee"`
 }
 
 type Package struct {

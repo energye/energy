@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	progressbar "github.com/energye/energy/cmd/progress-bar"
+	"github.com/energye/energy/common"
 	"io"
 	"io/fs"
 	"io/ioutil"
@@ -21,12 +22,14 @@ import (
 )
 
 var CmdInstall = &Command{
-	UsageLine: "install -p [path] -v [version] -n [name]",
+	UsageLine: "install -p [path] -v [version] -n [name] -d [download]",
 	Short:     "Automatically configure the CEF and Energy framework",
 	Long: `
 	-p Installation directory Default current directory
 	-v Specifying a version number,Default latest
 	-n Name of the frame after installation
+	-d Download Source, gitee or github, Default gitee
+	.  Execute default command
 
 Automatically configure the CEF and Energy framework.
 
@@ -38,7 +41,7 @@ Default framework name is "EnergyFramework".`,
 const (
 	cefKey                      = "cef"
 	energyKey                   = "energy"
-	download_version_config_url = "https://energy.yanghy.cn/autoconfig/%s.json"
+	download_version_config_url = "https://energy.yanghy.cn/autoconfig/edv.json"
 	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
 	frameworkCache              = "EnergyFrameworkDownloadCache"
 )
@@ -55,42 +58,70 @@ func init() {
 	CmdInstall.Run = runInstall
 }
 
+// https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 //运行安装
 func runInstall(c *CommandConfig) error {
 	if c.Install.Path == "" {
 		c.Install.Path = c.Wd
 	}
 	installPathName := filepath.Join(c.Install.Path, c.Install.Name)
+	println("Install Path", installPathName)
 	if c.Install.Version == "" {
 		c.Install.Version = "latest"
 	}
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
-	println("start downloading CEF and Energy dependency")
-	downloadJSON, err := downloadConfig(fmt.Sprintf(download_version_config_url, c.Install.Version))
+	println("Start downloading CEF and Energy dependency")
+	downloadJSON, err := downloadConfig(download_version_config_url)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	var downloadVersion map[string]interface{}
+	var edv map[string]interface{}
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
-	if err := json.Unmarshal(downloadJSON, &downloadVersion); err != nil {
+	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	version, ok := downloadVersion[c.Install.Version]
-	if !ok {
-		println("invalid version number:", c.Install.Version)
+	var latest = edv["latest"].(string)
+	var versionList = edv["versionList"].(map[string]interface{})
+
+	var version map[string]interface{}
+	if c.Install.Version == "latest" {
+		if v, ok := versionList[latest]; ok {
+			version = v.(map[string]interface{})
+		}
+	} else {
+		if c.Install.Version[0] != 'v' {
+			c.Install.Version = string('v') + c.Install.Version
+		}
+		if v, ok := versionList[c.Install.Version]; ok {
+			version = v.(map[string]interface{})
+		}
+	}
+	println("Check version")
+	if version == nil || len(version) == 0 {
+		println("Invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
-	osConfig := version.(map[string]interface{})[runtime.GOOS].(map[string]interface{})
-	var osVersion map[string]interface{}
-	if runtime.GOOS == "windows" {
-		//区分windows系统位数
-		osVersion = osConfig[fmt.Sprintf("%d", strconv.IntSize)].(map[string]interface{})
+	var versionCEF = version["cef"].(string)
+	var versionENERGY = version["energy"].(string)
+	var downloadURL map[string]interface{}
+	if c.Install.Download == "gitee" {
+		downloadURL = edv["gitee"].(map[string]interface{})
+	} else if c.Install.Download == "github" {
+		downloadURL = edv["github"].(map[string]interface{})
 	} else {
-		osVersion = osConfig
+		println("Invalid download source, only support github or gitee:", c.Install.Download)
+		os.Exit(1)
 	}
+	var downloadCefURL = downloadURL["cefURL"].(string)
+	var downloadEnergyURL = downloadURL["energyURL"].(string)
+	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", versionCEF)
+	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", cefOSARCH())
+	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", versionENERGY)
+	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", energyOSARCH())
+
 	//提取文件配置
 	extractData, err := downloadConfig(download_extract_url)
 	if err != nil {
@@ -105,63 +136,75 @@ func runInstall(c *CommandConfig) error {
 	}
 	extractOSConfig := extractConfig[runtime.GOOS].(map[string]interface{})
 
-	//下载地址
-	var (
-		cefUrl, cefOk       = osVersion[cefKey].(string)
-		energyUrl, energyOk = osVersion[energyKey].(string)
-	)
-	if cefOk && energyOk {
-		var downloads = make(map[string]*downloadInfo)
-		downloads[cefKey] = &downloadInfo{fileName: urlName(cefUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(cefUrl)), frameworkPath: installPathName, url: cefUrl}
-		downloads[energyKey] = &downloadInfo{fileName: urlName(energyUrl), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(energyUrl)), frameworkPath: installPathName, url: energyUrl}
-		for key, dl := range downloads {
-			fmt.Printf("download %s url: %s\n", key, dl.url)
-			bar := progressbar.NewBar(100)
-			bar.SetNotice("\t")
-			bar.HideRatio()
-			err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
-				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
-			})
-			bar.PrintEnd("download " + dl.fileName + " success")
-			if err != nil {
-				println("download", dl.fileName, "error", err)
-			}
-			dl.success = err == nil
+	var downloads = make(map[string]*downloadInfo)
+	downloads[cefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
+	downloads[energyKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
+	for key, dl := range downloads {
+		fmt.Printf("Download %s: %s\n", key, dl.url)
+		bar := progressbar.NewBar(100)
+		bar.SetNotice("\t")
+		bar.HideRatio()
+		err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
+			bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+		})
+		bar.PrintEnd("Download " + dl.fileName + " success")
+		if err != nil {
+			println("Download", dl.fileName, "error", err)
 		}
-		println("release files")
-		var removeFileList = make([]string, 0, 0)
-		for key, di := range downloads {
-			if di.success {
-				if key == cefKey {
-					bar := progressbar.NewBar(0)
-					bar.SetNotice("Unpack file " + di.fileName + ": ")
-					tarName := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
-						bar.PrintSizeBar(processLength)
-					})
-					bar.PrintEnd()
-					ExtractFiles(key, tarName, di, extractOSConfig)
-					removeFileList = append(removeFileList, tarName)
-				} else if key == energyKey {
-					ExtractFiles(key, di.downloadPath, di, extractOSConfig)
-				}
-				println("Unpack file", di.fileName, "success")
-			}
-		}
-		for _, rmFile := range removeFileList {
-			println("remove file", rmFile)
-			os.Remove(rmFile)
-		}
-		println("\n", CmdInstall.Short, "SUCCESS.")
-	} else {
-		println("invalid version number:", c.Install.Version)
-		os.Exit(1)
+		dl.success = err == nil
 	}
+	println("Unpack files")
+	var removeFileList = make([]string, 0, 0)
+	for key, di := range downloads {
+		if di.success {
+			if key == cefKey {
+				bar := progressbar.NewBar(0)
+				bar.SetNotice("Unpack file " + di.fileName + ": ")
+				tarName := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
+					bar.PrintSizeBar(processLength)
+				})
+				bar.PrintEnd()
+				ExtractFiles(key, tarName, di, extractOSConfig)
+				removeFileList = append(removeFileList, tarName)
+			} else if key == energyKey {
+				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
+			}
+			println("Unpack file", di.fileName, "success")
+		}
+	}
+	for _, rmFile := range removeFileList {
+		println("Remove file", rmFile)
+		os.Remove(rmFile)
+	}
+	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version)
 	return nil
+}
+
+func cefOSARCH() string {
+	if common.IsWindows() {
+		return fmt.Sprintf("windows%d", strconv.IntSize)
+	} else if common.IsLinux() {
+		return "linux64"
+	} else if common.IsDarwin() {
+		return "macosx64"
+	}
+	return ""
+}
+
+func energyOSARCH() string {
+	if common.IsWindows() {
+		return fmt.Sprintf("Windows %d bits", strconv.IntSize)
+	} else if common.IsLinux() {
+		return "Linux x86 64 bits"
+	} else if common.IsDarwin() {
+		return "MacOSX x86 64 bits"
+	}
+	return ""
 }
 
 //提取文件
 func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]interface{}) {
-	println("extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
+	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	files := extractOSConfig[keyName].([]interface{})
 	if keyName == cefKey {
 		//tar
@@ -419,7 +462,7 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	if isFileExist(localPath, fsize) {
 		return nil
 	}
-	println("save path: [", localPath, "] file size:", fsize)
+	println("Save path: [", localPath, "] file size:", fsize)
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
 		fmt.Printf("download-error=[%v]\n", err)
@@ -428,7 +471,7 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	}
 	defer file.Close()
 	if resp.Body == nil {
-		fmt.Printf("download-error=[body is null]\n")
+		fmt.Printf("Download-error=[body is null]\n")
 		os.Exit(1)
 		return nil
 	}

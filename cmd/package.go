@@ -10,6 +10,7 @@ var CmdPackage = &Command{
 	-p Package directory
 	-m Use mode to set online or offline, offline by default
 	-o Output directory
+	.  Execute default command
 
 Making an Installation Package.
 

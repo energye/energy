@@ -12,7 +12,6 @@ import (
 	"github.com/energye/golcl/tools/homedir"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 var (
@@ -23,8 +22,7 @@ var (
 )
 
 func init() {
-	ExePath = os.Args[0]
-	ExePath = ExePath[:strings.LastIndex(ExePath, Separator)]
+	ExePath, _ = os.Getwd()
 }
 
 const (
