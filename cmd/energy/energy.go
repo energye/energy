@@ -11,6 +11,7 @@ var commands = []*cmd.Command{
 	nil,
 	cmd.CmdInstall,
 	cmd.CmdPackage,
+	cmd.CmdVersion,
 }
 
 func main() {
@@ -30,6 +31,8 @@ func main() {
 			cc.Index = 1
 		case "package":
 			cc.Index = 2
+		case "version", "v":
+			cc.Index = 3
 		}
 		command := commands[cc.Index]
 		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {

@@ -5,6 +5,7 @@ type CommandConfig struct {
 	Wd      string
 	Install Install `command:"install"`
 	Package Package `command:"package"`
+	Version Version `command:"version"`
 }
 
 type Install struct {
@@ -18,6 +19,10 @@ type Package struct {
 	Path string `short:"p" long:"path" description:"Package directory"`
 	Mode string `short:"m" long:"mode" description:"Use mode to set online or offline, offline by default." default:"offline"`
 	Out  string `short:"o" long:"out" description:"Output directory" default:"EnergyInstallPkg"`
+}
+
+type Version struct {
+	All bool `short:"a" long:"all" description:"show all"`
 }
 
 type Command struct {

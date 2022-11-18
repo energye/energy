@@ -38,14 +38,6 @@ During this process, CEF and Energy are downloaded.
 Default framework name is "EnergyFramework".`,
 }
 
-const (
-	cefKey                      = "cef"
-	energyKey                   = "energy"
-	download_version_config_url = "https://energy.yanghy.cn/autoconfig/edv.json"
-	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
-	frameworkCache              = "EnergyFrameworkDownloadCache"
-)
-
 type downloadInfo struct {
 	fileName      string
 	frameworkPath string
