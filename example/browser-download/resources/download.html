@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>下载文件示例</title>
+    <script>
+        console.log("下载文件示例")
+        //使用ipc.on监听事件
+        ipc.on("downloadUpdateDemo", function (id, suggestedFileName, receivedBytes, totalBytes) {
+            console.log(id, suggestedFileName, receivedBytes, totalBytes)
+            var downloadMessage = document.getElementById("downloadMessage")
+            downloadMessage.innerHTML = downloadMessage.innerHTML + ("id: " + id + "  suggestedFileName: " + suggestedFileName + "  receivedBytes: " + receivedBytes + " / totalBytes: " + totalBytes) + "<br>"
+        });
+    </script>
+</head>
+<body style="overflow: hidden;margin: 10px;padding: 10px;">
+<h3>download demo:</h3><br>
+<h4>
+
+</h4>
+<a href="https://gitee.com/energye/energy/releases/download/v1.107.1.11/Windows%2032%20bits.zip">Windows 32 bits</a>
+<br>
+<a href="https://gitee.com/energye/energy/releases/download/v1.107.1.11/Windows%2064%20bits.zip">Windows 64 bits</a>
+<br>
+<a href="https://gitee.com/energye/energy/releases/download/v1.107.1.11/Linux%20x86%2064%20bits.zip">Linux x86 64
+    bits</a> <br>
+<a href="https://gitee.com/energye/energy/releases/download/v1.107.1.11/MacOSX%20x86%2064%20bits.zip">MacOSX x86 64
+    bits</a> <br>
+<div id="downloadMessage">
+
+</div>
+</body>
+</html>

@@ -107,6 +107,10 @@ func (m *ICefDownloadItemCallback) DownloadResume(browseId, downloadId int32) {
 }
 
 // 设置下载目录
+//
+// downloadPath 设置完整的下载目录. 包含文件包
+//
+// showDialog 显示保存窗口
 func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) {
 	Proc("CEFChromium_SetDownloadPath").Call(m.instance, api.GoStrToDStr(downloadPath), api.GoBoolToDBool(showDialog))
 }

@@ -9,7 +9,6 @@ func main() {
 	cef.GlobalCEFInit(nil, nil)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
-	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.DefaultUrl = "https://energy.yanghy.cn"
 	//运行应用
