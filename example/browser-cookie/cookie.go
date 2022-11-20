@@ -55,6 +55,7 @@ func main() {
 		//获取cookie时触发
 		event.SetOnCookiesVisited(func(sender lcl.IObject, cookie *cef.ICefCookie) {
 			fmt.Printf("SetOnCookiesVisited: %+v\n", cookie)
+			//将结果返回到html中
 			args := ipc.NewArgumentList()
 			data, _ := json.Marshal(cookie)
 			args.SetString(0, string(data), true)
