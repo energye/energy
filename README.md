@@ -34,17 +34,17 @@
 #### 基本需求
 > golang >= 1.9.2
 >
-> 下载对应平台的CEF和Energy的动态链接库.并将其解压至任意目录.
+> 1. 使用energy命令行工具自动安装环境依赖
+> 
+> 2. 配置ENERGY_HOME环境变量, ENERGY_HOME=框架根目录
 >
 > 以example/simple示例为例
 >
-> 安装energy依赖 go get github.com/energye/energy
+> go mod tidy
 >
-> 或者使用 go mod init, go mod tidy
+> 在IDE中运行simple
 >
-> 运行simple
->
-> 打包应用程序 Energy 没有打包模块, windows你可以使用(MSI或Inno Setup)和其它绿色打包工具, linux下deb安装包等, MacOS默认开发时会生成.app包或者自行定制.app包
+> 目前命令行工具不支持打包应用程序, windows你可以使用(MSI或Inno Setup)和其它绿色打包工具, linux下deb安装包等, MacOS默认开发时会生成.app包或者自行定制.app包
 
 ##### example/simple 示例代码
 ```go

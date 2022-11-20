@@ -33,17 +33,17 @@ English
 #### Basic needs
 > golang >= 1.9.2
 >
-> Download the CEF binary package for the corresponding platform and version, and decompress it to the directory.
+> 1. Use the energy command line tool to automatically install environment dependencies
+> 
+> 2. Configure the ENERGY_HOME environment variable, ENERGY_HOME= framework root
 >
 > Example/simple example
 >
-> Install Energy dependencies go get github.com/energye/energy
+> go mod tidy
 >
-> Or use: go mod init, go mod tidy
+> IDE run simple
 >
-> run simple
->
-> The packaging application Energy does not have packaging modules, Windows you can use (MSI or Inno Setup) and other green packaging tools, Deb installation package in Linux, MacOS generates. App packages by default or custom. App packages
+> Currently, the command line tools do not support packaged applications, Windows you can use (MSI or Inno Setup) and other green packaging tools, Deb installation package in Linux, MacOS generates. App packages by default or custom. App packages
 
 ##### example/simple code
 ```go
