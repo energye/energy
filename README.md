@@ -23,7 +23,7 @@
 
 ### [![windows 32 bits](https://img.shields.io/badge/Downloads-green)](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6364c5c2a749ba01d04ff485) 
 
-#### 安装 [CEF和Energy框架压缩包使用说明](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+#### [Installation Environment](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
 
 ### [入门指南-网址](https://energy.yanghy.cn)
 * [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
@@ -72,5 +72,4 @@ func main() {
 * 创建GO程序应用, 参考入门指南和example示例
 
 ----
-### 授权
-### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)
+### [License GPL 3.0](https://opensource.org/licenses/GPL-3.0)

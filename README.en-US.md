@@ -71,5 +71,4 @@ func main() {
 * Create a GO application, see the Getting Started Guide and Example
 
 ----
-### License
-### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)
+### [License GPL 3.0](https://opensource.org/licenses/GPL-3.0)
