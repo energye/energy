@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cookie</title>
+    <style type="text/css">
+        button {
+            margin: 10px;
+        }
+    </style>
+    <script type="application/javascript">
+        function message() {
+            return document.getElementById("message");
+        }
+        //显示cookie
+        function VisitCookie() {
+            message().innerHTML = "";
+            //触发go中监听的事件
+            ipc.emit("VisitCookie", function (data) {
+                message().innerHTML = data;
+            });
+        }
+        //显示cookie的结果，从go中返回到html
+        ipc.on("VisitCookieResult", function (data) {
+            message().innerHTML = message().innerHTML + data + "<br><br>";
+        });
+
+        //删除cookie
+        function DeleteCookie() {
+            message().innerHTML = "";
+            //触发go中监听的事件
+            ipc.emit("DeleteCookie", function (data) {
+                message().innerHTML = data;
+            });
+        }
+
+        //设置cookie
+        function SetCookie() {
+            message().innerHTML = "";
+            //触发go中监听的事件
+            ipc.emit("SetCookie", function (data) {
+                message().innerHTML = data;
+            });
+        }
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+<button onclick="VisitCookie()">查看cookie</button>
+<button onclick="DeleteCookie()">删除cookie</button>
+<button onclick="SetCookie()">设置cookie</button>
+<br>
+<div id="message">
+
+</div>
+</body>
+</html>
