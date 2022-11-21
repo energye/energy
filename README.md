@@ -64,12 +64,7 @@ func main() {
 	//运行应用
 	cef.Run(cefApp)
 }
-}
 ```
-### 安装
-* 下载对应平台CEF和Energy的二进制压缩包
-* 安装energy依赖 go get github.com/energye/energy 或者使用 go mod init, go mod tidy
-* 创建GO程序应用, 参考入门指南和example示例
 
 ----
 ### [License GPL 3.0](https://opensource.org/licenses/GPL-3.0)

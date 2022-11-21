@@ -65,10 +65,6 @@ func main() {
 }
 
 ```
-### Installation
-* Download the binary package for the corresponding platform and energy version
-* Install Energy dependencies go get github.com/energye/energy Or use: go mod init, go mod tidy
-* Create a GO application, see the Getting Started Guide and Example
 
 ----
 ### [License GPL 3.0](https://opensource.org/licenses/GPL-3.0)
