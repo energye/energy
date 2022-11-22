@@ -16,7 +16,7 @@ func AppRenderInit() *cef.TCEFApplication {
 	if common.IsWindows() {
 		//SetFrameworkDirPath 或 配置环境变量 ENERGY_HOME
 	} else if common.IsLinux() {
-		cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
+		//cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")  或 配置环境变量 ENERGY_HOME
 	}
 	cfg.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	//cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)

@@ -11,7 +11,6 @@ package cef
 import (
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/golcl/consts"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/tools"
 	"os"
@@ -229,12 +228,12 @@ func libPath() string {
 	var lib = ceflib()
 	if lib != "" {
 		//当前目录
-		if tools.IsExist(consts.ExePath + consts.Separator + lib) {
-			return consts.ExePath
+		if tools.IsExist(ExePath + Separator + lib) {
+			return ExePath
 		}
 		//环境变量
 		var env = os.Getenv("ENERGY_HOME")
-		if tools.IsExist(env + consts.Separator + lib) {
+		if tools.IsExist(env + Separator + lib) {
 			return env
 		}
 	}
