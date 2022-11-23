@@ -60,7 +60,7 @@ func (m *tCefTrayForm) Tray() *Tray {
 }
 
 func (m *tCefTrayForm) Show() {
-	if BrowserWindow.browserWindow.chromium == nil || !BrowserWindow.browserWindow.chromium.Initialized() {
+	if BrowserWindow.mainBrowserWindow.chromium == nil || !BrowserWindow.mainBrowserWindow.chromium.Initialized() {
 		return
 	}
 	m.TForm.Show()

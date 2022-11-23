@@ -158,7 +158,9 @@ func (m *browserChannel) SetOnEvent(callback func(event IEventOn)) {
 }
 
 func (m *browserChannel) On(name string, eventCallback EventCallback) {
-	m.events.add(name, eventCallback)
+	if Args.IsMain() {
+		m.events.add(name, eventCallback)
+	}
 }
 
 func (m *browserChannel) RemoveOn(name string) {

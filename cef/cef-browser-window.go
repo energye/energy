@@ -24,8 +24,8 @@ var (
 	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
 	//你也可以在 SetBrowserInit 回调函数初始化时创建子窗口，但是不能在主窗体显示之前显示子窗口. 尤其是带有chromium的窗口.
 	BrowserWindow = &browser{
-		browserWindow: &browserWindow{},
-		browserEvent:  &BrowserEvent{},
+		mainBrowserWindow: &browserWindow{},
+		browserEvent:      &BrowserEvent{},
 		Config: &browserConfig{
 			Title:  "Energy",
 			Width:  1024,
@@ -51,13 +51,14 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 
 // 浏览器包装结构体
 type browser struct {
-	browserWindow *browserWindow            //主窗口
-	popupWindow   *browserWindow            //弹出的子窗口
-	browserEvent  *BrowserEvent             //浏览器全局事件
-	Config        *browserConfig            //浏览器和窗口配置
-	windowInfo    map[int32]*TCefWindowInfo //窗口信息集合
-	windowSerial  int32                     //窗口序号
-	uiLock        *sync.Mutex
+	mainBrowserWindow *browserWindow            //主浏览器窗口
+	mainWindow        *TCefWindowInfo           //主窗口信息
+	popupWindow       *browserWindow            //弹出的子窗口
+	browserEvent      *BrowserEvent             //浏览器全局事件
+	Config            *browserConfig            //浏览器和窗口配置
+	windowInfo        map[int32]*TCefWindowInfo //窗口信息集合
+	windowSerial      int32                     //窗口序号
+	uiLock            *sync.Mutex
 }
 
 // 浏览器全局事件监听
@@ -93,7 +94,7 @@ type browserWindow struct {
 //
 // 多进程方式，启动主进程然后启动子进程，在MacOS下，需要单独调用启动子进程函数，单进程只启动主进程
 //
-// 主进程启动成功之后，将创建主窗口 browserWindow 是一个默认的主窗口
+// 主进程启动成功之后，将创建主窗口 mainBrowserWindow 是一个默认的主窗口
 //
 // 在这里启动浏览器的主进程和子进程
 func Run(cefApp *TCEFApplication) {
@@ -106,7 +107,7 @@ func Run(cefApp *TCEFApplication) {
 			browserProcessStartAfterCallback(b)
 		}
 		if b {
-			lcl.RunApp(&BrowserWindow.browserWindow)
+			lcl.RunApp(&BrowserWindow.mainBrowserWindow)
 		}
 	}
 }
@@ -126,6 +127,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.DefaultUrl)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
+	BrowserWindow.mainWindow = m.windowInfo
 	m.AddOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 		if m.tray != nil {
 			m.tray.close()
@@ -134,6 +136,9 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 	if BrowserWindow.Config.Title != "" {
 		m.SetCaption(BrowserWindow.Config.Title)
+	}
+	if BrowserWindow.Config.Icon != "" {
+		lcl.Application.Icon().LoadFromFSFile(BrowserWindow.Config.Icon)
 	}
 	m.SetWidth(BrowserWindow.Config.Width)
 	m.SetHeight(BrowserWindow.Config.Height)
@@ -154,11 +159,8 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 }
 
-func (m *browser) MainWindowForm() *lcl.TForm {
-	if m.browserWindow != nil {
-		return m.browserWindow.TForm
-	}
-	return nil
+func (m *browser) MainWindow() *TCefWindowInfo {
+	return m.mainWindow
 }
 
 // 主窗口和chromium初始化时回调
@@ -168,7 +170,7 @@ func (m *browser) MainWindowForm() *lcl.TForm {
 // 如果想创建子窗口或带有browser的窗口最好在 SetBrowserInitAfter 回调函数中创建
 //
 // event 浏览器事件
-// browserWindow 窗口信息对象
+// mainBrowserWindow 窗口信息对象
 func (m *browser) SetBrowserInit(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
@@ -177,7 +179,7 @@ func (m *browser) SetBrowserInit(fn func(event *BrowserEvent, browserWindow *TCe
 //
 // 在这里可以对主窗体属性设置、添加子窗口、带有browser的窗口和子组件创建
 //
-// browserWindow 窗口信息对象
+// mainBrowserWindow 窗口信息对象
 func (m *browser) SetBrowserInitAfter(fn func(browserWindow *TCefWindowInfo)) {
 	m.Config.setBrowserWindowInitAfterOnEvent(fn)
 }
@@ -210,7 +212,7 @@ func (m *browser) GetNextWindowNum() int32 {
 
 func (m *browser) createNextPopupWindow() {
 	m.popupWindow = &browserWindow{}
-	m.popupWindow.TForm = lcl.NewForm(m.MainWindowForm())
+	m.popupWindow.TForm = lcl.NewForm(m.MainWindow().Window)
 	m.popupWindow.FormCreate()
 	m.popupWindow.defaultWindowEvent()
 	m.popupWindow.defaultWindowCloseEvent()

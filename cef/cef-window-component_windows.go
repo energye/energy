@@ -13,8 +13,8 @@ package cef
 
 //只适用于windows的无菜单托盘
 func (m *TCefWindowInfo) NewCefTray(width, height int32, url string) ITray {
-	if BrowserWindow.browserWindow.tray == nil {
-		BrowserWindow.browserWindow.tray = newCefTray(m.Window, width, height, url)
+	if BrowserWindow.mainBrowserWindow.tray == nil {
+		BrowserWindow.mainBrowserWindow.tray = newCefTray(m.Window, width, height, url)
 	}
-	return BrowserWindow.browserWindow.tray
+	return BrowserWindow.mainBrowserWindow.tray
 }
