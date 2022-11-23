@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>execute-javascript</title>
+    <script type="application/javascript">
+        function GoExecuteJSFunc(param, param1) {
+            let message = document.getElementById("message");
+            message.innerHTML = message.innerHTML + param + "  " + param1 + "<br>"
+            if (param % 2 === 0) {
+                message.style.color = "red"
+            } else {
+                message.style.color = "blue"
+            }
+        }
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+execute-javascript:<br>
+<div id="message">
+
+</div>
+</body>
+</html>
