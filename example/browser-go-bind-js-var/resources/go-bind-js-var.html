@@ -106,6 +106,13 @@
             writeMessage('调用JSFunc函数: ' + gocobj.JSFunc('JS传入的参数'))
         }
 
+        /** to json */
+        function toJSON() {
+            clearMessage()
+            writeMessage("ToJSON")
+            writeMessage('结构类型-JSON: ' + JSON.stringify(goobj))
+            writeMessage('通用类型-JSON: ' + JSON.stringify(gocobj))
+        }
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
@@ -121,6 +128,9 @@ execute-go-bind-js-var:<br>
     <button onclick="getGoBindCVar()">获取Go中定义的通用类型绑定变量值</button>
     <button onclick="setGoBindCVar()">设置Go中定义的通用类型绑定变量值</button>
     <button onclick="callGoBindCFunc()">调用Go中定义的函数</button>
+</div>
+<div style="margin: 10px">
+    <button onclick="toJSON()">toJSON</button>
 </div>
 <div id="message">
 

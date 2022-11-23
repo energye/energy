@@ -34,9 +34,11 @@ func main() {
 	//变量的值绑定到主进程
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
 		//初始化要绑定的变量
+		//结构类型
 		src.JSStructVarDemo = &src.StructVarDemo{}
 		src.JSStructVarDemo.StringField = "初始的字符串值"
 		bind.NewObjects(src.JSStructVarDemo)
+		//通用类型
 		src.JSString = bind.NewString("JSString", "初始的字符串值")
 		src.JSInt = bind.NewInteger("JSInt", 0)
 		src.JSBool = bind.NewBoolean("JSBool", false)
