@@ -15,7 +15,7 @@
 
         //通过根对象 goobj 和 gocobj 获取或设置值
         //goobj   是结构类型的根对象
-        //gocobj  是普通类型的根对象
+        //gocobj  是通用类型的根对象
 
         /** 结构类型 */
         //获取Go中定义的绑定变量值
@@ -75,6 +75,37 @@
         }
 
         /** 普通类型 */
+        //获取通用变量类型值
+        function getGoBindCVar() {
+            clearMessage()
+            writeMessage("通用类型")
+            writeMessage('JSString: ' + gocobj.JSString)
+            writeMessage('JSInt: ' + gocobj.JSInt)
+            writeMessage('JSBool: ' + gocobj.JSBool)
+            writeMessage('JSDouble: ' + gocobj.JSDouble)
+        }
+
+        function setGoBindCVar() {
+            clearMessage()
+            writeMessage("通用类型")
+            //通用类型可以任意修改变量存放的值类型
+            gocobj.JSString = 'JS中改变了通用类型字符串值'
+            writeMessage('JSString值改变: ' + gocobj.JSString)
+            //改变为其它类型后，在Go中使用时需要判断类型，否则类型不一样无法正确取值
+            gocobj.JSString = 99999
+            writeMessage('JSString值变成了Int类型: ' + gocobj.JSString)
+            //将其它变量值改变
+            gocobj.JSInt = 999911
+            gocobj.JSBool = true
+            gocobj.JSDouble = 999999.999
+        }
+
+        function callGoBindCFunc() {
+            clearMessage()
+            writeMessage("通用类型")
+            writeMessage('调用JSFunc函数: ' + gocobj.JSFunc('JS传入的参数'))
+        }
+
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
@@ -86,9 +117,10 @@ execute-go-bind-js-var:<br>
     <button onclick="callGoBindFunc()">调用Go中定义的函数</button>
 </div>
 <div style="margin: 10px">
-    普通类型：
-    <button onclick="getGoBindVar()">获取Go中定义的绑定变量值</button>
-    <button onclick="setGoBindVar()">设置Go中定义的绑定变量值</button>
+    通用类型：
+    <button onclick="getGoBindCVar()">获取Go中定义的通用类型绑定变量值</button>
+    <button onclick="setGoBindCVar()">设置Go中定义的通用类型绑定变量值</button>
+    <button onclick="callGoBindCFunc()">调用Go中定义的函数</button>
 </div>
 <div id="message">
 

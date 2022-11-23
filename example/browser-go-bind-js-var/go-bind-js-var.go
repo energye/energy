@@ -37,6 +37,11 @@ func main() {
 		src.JSStructVarDemo = &src.StructVarDemo{}
 		src.JSStructVarDemo.StringField = "初始的字符串值"
 		bind.NewObjects(src.JSStructVarDemo)
+		src.JSString = bind.NewString("JSString", "初始的字符串值")
+		src.JSInt = bind.NewInteger("JSInt", 0)
+		src.JSBool = bind.NewBoolean("JSBool", false)
+		src.JSDouble = bind.NewDouble("JSDouble", 0.0)
+		_ = bind.NewFunction("JSFunc", src.JSFunc)
 	})
 	//运行应用
 	cef.Run(cefApp)
