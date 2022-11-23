@@ -27,9 +27,9 @@ func main() {
 	//不指定为当前程序执行目录
 	if common.IsWindows() {
 		//SetFrameworkDirPath 或 配置环境变量 ENERGY_HOME
-		cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\105.0.5195.127\\dev\\chromium-64")
+		//cfg.SetFrameworkDirPath("D:\\app.exe\\energy\\chromium64")
 	} else if common.IsLinux() {
-		cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
+		//cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")
 	}
 	//创建应用
 	cefApp := cef.NewApplication(cfg)
