@@ -35,8 +35,9 @@ func main() {
 	//5. 点击Note链接
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		event.On("execute-dev-method", func(context ipc.IIPCContext) {
+			//获得当前窗口信息
 			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			//字段对象
+			//字典对象
 			var dict = cef.NewCefDictionaryValue()
 			//根据chromium字典设置
 			dict.SetInt("width", 500)

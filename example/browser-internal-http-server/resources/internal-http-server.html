@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>内置资源和内置服务示例</title>
+    <script type="application/javascript">
+
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+内置资源和内置服务示例<br>
+地址为：http://localhost:22022/internal-http-server.html 该地址无法在应用以外正常访问<br>
+Assets 内置资源不支持热更新 - 适用应用发布<br>
+LocalAssets 指定本地资源支持热更新 - 适用开发或web端源码可以查看<br>
+通过设置AssetsServerHeaderKeyName和AssetsServerHeaderKeyValue在一定程度上保证资源只能在应用内访问，即使在应用外使用正确的IP和端口号也无法访问到资源<br>
+assetserve.AssetsServerHeaderKeyName = "自定义KeyName"<br>
+assetserve.AssetsServerHeaderKeyValue = "自定义KeyValue"<br>
+<img src="icon.ico">
+<img src="energy-icon.png"><br><br>
+<a href="https://energy.yanghy.cn">ENERGY</a>
+</body>
+</html>
