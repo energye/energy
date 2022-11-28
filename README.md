@@ -4,7 +4,7 @@
 
 ---
 ### [简介](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-> [Energy](https://github.com/energye/energy) 使用JavaScript、HTML和CSS 构建桌面应用的框架, 是Golang基于 [CEF]() 和 [Golcl](https://github.com/energye/golcl) 开发的框架，内嵌 [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
+> [Energy](https://github.com/energye/energy) 使用JavaScript、HTML和CSS 构建桌面应用的框架, 是Golang基于 [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi) 和 [Golcl](https://github.com/energye/golcl) 开发的框架，内嵌 [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
 >
 > 可以让你使用 [Web]() 前端技术构建在Windows, Linux, MacOS跨平台的应用
 >

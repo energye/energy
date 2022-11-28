@@ -4,7 +4,7 @@ English
 
 ---
 ### [Introduction](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-> [Energy](https://github.com/energye/energy) Is a framework for building desktop applications using JavaScript,HTML, and CSS based on [Golcl](https://github.com/energye/golcl) and [CEF4Delphi](https://patreon.com/salvadordf) Pure Go language development framework, embedded [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) binary
+> [Energy](https://github.com/energye/energy) Is a framework for building desktop applications using JavaScript,HTML, and CSS based on [Golcl](https://github.com/energye/golcl) and [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi) Pure Go language development framework, embedded [Chromium CEF](https://bitbucket.org/chromiumembedded/cef) binary
 >
 > Allows you to use [Web]() front-end technology to build cross-platform applications on Windows, Linux, and MacOS
 >
