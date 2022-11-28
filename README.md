@@ -9,7 +9,6 @@
 > 可以让你使用 [Web]() 前端技术构建在Windows, Linux, MacOS跨平台的应用
 >
 >> 也可以使用 [Energy](https://github.com/energye/energy) 和 [Golcl](https://github.com/energye/golcl) 单独构建小巧的系统UI跨平台应用程序
->>
 >
 > 支持 Windows_32、64 bits, Linux_x86_64 bits, MacOS_x86_64 bits
 >
