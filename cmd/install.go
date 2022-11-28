@@ -9,6 +9,8 @@ import (
 	"fmt"
 	progressbar "github.com/energye/energy/cmd/progress-bar"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
+	"github.com/energye/golcl/tools/command"
 	"io"
 	"io/fs"
 	"io/ioutil"
@@ -170,8 +172,26 @@ func runInstall(c *CommandConfig) error {
 		println("Remove file", rmFile)
 		os.Remove(rmFile)
 	}
+	setEnergyHomeEnv(consts.ENERGY_HOME_KEY, installPathName)
 	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version)
 	return nil
+}
+
+func setEnergyHomeEnv(key, value string) {
+	println("\nSetting environment Variables to ", value)
+	cmd := command.NewCMD()
+	cmd.MessageCallback = func(s []byte, e error) {
+		fmt.Println("CMD", s, " error", e)
+	}
+	if common.IsWindows() {
+		var args = []string{"/c", "setx", key, value}
+		cmd.Command("cmd.exe", args...)
+	} else if common.IsLinux() {
+
+	} else if common.IsDarwin() {
+
+	}
+	cmd.Close()
 }
 
 func cefOSARCH() string {

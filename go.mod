@@ -3,7 +3,7 @@ module github.com/energye/energy
 go 1.18
 
 require (
-	github.com/energye/golcl v0.0.0-20221117060417-675832f433a2
+	github.com/energye/golcl v0.0.0-20221128042918-6b005641c26d
 	github.com/jessevdk/go-flags v1.5.0
 )
 

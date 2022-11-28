@@ -232,7 +232,7 @@ func libPath() string {
 			return ExePath
 		}
 		//环境变量
-		var env = os.Getenv("ENERGY_HOME")
+		var env = os.Getenv(ENERGY_HOME_KEY)
 		if tools.IsExist(env + Separator + lib) {
 			return env
 		}

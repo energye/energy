@@ -26,7 +26,8 @@ func init() {
 }
 
 const (
-	MemoryNetwork = "unix"
+	ENERGY_HOME_KEY = "ENERGY_HOME"
+	MemoryNetwork   = "unix"
 )
 
 //0:net 1:unix
