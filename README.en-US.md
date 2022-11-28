@@ -23,6 +23,15 @@ English
 ### [![windows 32 bits](https://img.shields.io/badge/Downloads-green)](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6364c5c2a749ba01d04ff485)
 
 #### [Installation Environment](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+> Install it automatically using the energy command line tool
+>
+> 1. go get github.com/energye/energy
+>
+> 2. cd energy/cmd/energy
+>
+> 3. go install
+>
+> 4. energy install .
 
 ### [Getting started guide](https://energy.yanghy.cn)
 * [tutorial](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
