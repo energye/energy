@@ -1,8 +1,8 @@
 # Energy 命令行工具
-
+## 自动配置环境
 ## 使用方式
 > 一、使用预编译
->
+> 
 > 下载地址
 >> [energy_cmd_windows32](http://energy.yanghy.cn/download/energy_cmd_windows32.zip)
 >>
@@ -42,7 +42,7 @@
 >> 1. energy install
 >>
 >> 2. energy install --path=/app/energyFramework --version=v1.1.0
-
+>>
 ----
 ### 授权
 ### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)
