@@ -223,13 +223,13 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 							errorMsg = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
 						} else {
 							if fieldNewValue.IsString() {
-								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_STRING, fieldNewValue.GetString(), 0, 0, false))
+								errorMsg = cefErrorMessage(setPtrValue(jsValue, V8_VALUE_STRING, fieldNewValue.GetString(), 0, 0, false))
 							} else if fieldNewValue.IsIntAuto() {
-								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_INT, Empty, fieldNewValue.GetInt32(), 0, false))
+								errorMsg = cefErrorMessage(setPtrValue(jsValue, V8_VALUE_INT, Empty, fieldNewValue.GetInt32(), 0, false))
 							} else if fieldNewValue.IsFloatAuto() {
-								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_DOUBLE, Empty, 0, fieldNewValue.GetFloat64(), false))
+								errorMsg = cefErrorMessage(setPtrValue(jsValue, V8_VALUE_DOUBLE, Empty, 0, fieldNewValue.GetFloat64(), false))
 							} else if fieldNewValue.IsBoolean() {
-								errorMsg = cefErrorMessage(SetPtrValue(jsValue, V8_VALUE_BOOLEAN, Empty, 0, 0, fieldNewValue.GetBool()))
+								errorMsg = cefErrorMessage(setPtrValue(jsValue, V8_VALUE_BOOLEAN, Empty, 0, 0, fieldNewValue.GetBool()))
 							} else {
 								errorMsg = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
 							}
@@ -434,13 +434,13 @@ func internalBrowserIPCOnEventInit() {
 				defer jsValue.UnLock()
 				switch newValueType { //设置值，这里是通用类型只需要知道js里设置的什么类型即可
 				case V8_VALUE_STRING:
-					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, item.GetString(), 0, 0, false))
+					isSuccess = Empty == cefErrorMessage(setPtrValue(jsValue, newValueType, item.GetString(), 0, 0, false))
 				case V8_VALUE_INT:
-					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, item.GetInt32(), 0, false))
+					isSuccess = Empty == cefErrorMessage(setPtrValue(jsValue, newValueType, Empty, item.GetInt32(), 0, false))
 				case V8_VALUE_DOUBLE:
-					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, 0, item.GetFloat64(), false))
+					isSuccess = Empty == cefErrorMessage(setPtrValue(jsValue, newValueType, Empty, 0, item.GetFloat64(), false))
 				case V8_VALUE_BOOLEAN:
-					isSuccess = Empty == cefErrorMessage(SetPtrValue(jsValue, newValueType, Empty, 0, 0, item.GetBool()))
+					isSuccess = Empty == cefErrorMessage(setPtrValue(jsValue, newValueType, Empty, 0, 0, item.GetBool()))
 				}
 			} else {
 				retArgs.SetInt8(1, int8(CVE_ERROR_NOT_FOUND_FIELD))

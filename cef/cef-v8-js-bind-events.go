@@ -124,7 +124,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 			isSuccess := ByteToBool(data[0])
 			valueType := V8_JS_VALUE_TYPE(ByteToInt8(data[1]))
 			if isSuccess {
-				errorMessage = GetPtrValue(valueType, data[2:], retStringValuePrt, retIntValuePrt, retDoubleValuePrt, retBoolValuePrt)
+				errorMessage = getPtrValue(valueType, data[2:], retStringValuePrt, retIntValuePrt, retDoubleValuePrt, retBoolValuePrt)
 			} else {
 				exception := CEF_V8_EXCEPTION(int8(data[1]))
 				errorMessage = cefErrorMessage(exception)
@@ -140,7 +140,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 	}
 }
 
-func SetPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue string, intValue int32, doubleValue float64, boolValue bool) CEF_V8_EXCEPTION {
+func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue string, intValue int32, doubleValue float64, boolValue bool) CEF_V8_EXCEPTION {
 	if jsValue.isCommon() {
 		//valueType说明给的值类型不相同，需要将 jsValue 转换一下
 		switch newValueType { //设置值，这里是通用类型只需要知道js里设置的什么类型即可
@@ -176,7 +176,7 @@ func SetPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue str
 	return CVE_ERROR_OK
 }
 
-func GetPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
+func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
 	switch valueType {
 	case V8_VALUE_STRING:
 		if value, err := ValueToString(newValue); err == nil {

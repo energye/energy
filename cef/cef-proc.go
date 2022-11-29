@@ -93,179 +93,179 @@ func _CEFLinkedWindow_OnExit(instance uintptr, fn interface{}) {
 
 /* 通用 PROC --- begin ---*/
 
-// Create 创建
-func Create(name string, owner uintptr) uintptr {
+// _Create 创建
+func _Create(name string, owner uintptr) uintptr {
 	name = Proc_Concat_Name(name, "Create")
 	r1, _, _ := Proc(name).Call(owner)
 	return r1
 }
 
-// GetHandle 获取组件句柄
-func GetHandle(name string, instance uintptr) uintptr {
+// _GetHandle 获取组件句柄
+func _GetHandle(name string, instance uintptr) uintptr {
 	name = Proc_Concat_Name(name, "GetHandle")
 	ret, _, _ := Proc(name).Call(instance)
 	return ret
 }
 
-func DestroyChildWindow(name string, instance uintptr) uintptr {
+func _DestroyChildWindow(name string, instance uintptr) uintptr {
 	name = Proc_Concat_Name(name, "DestroyChildWindow")
 	ret, _, _ := Proc(name).Call(instance)
 	return ret
 }
 
 // _HandleAllocated
-func HandleAllocated(name string, instance uintptr) uintptr {
+func _HandleAllocated(name string, instance uintptr) uintptr {
 	name = Proc_Concat_Name(name, "HandleAllocated")
 	r1, _, _ := Proc(name).Call(instance)
 	return r1
 }
 
-// CreateHandle
-func CreateHandle(name string, instance uintptr) {
+// _CreateHandle
+func _CreateHandle(name string, instance uintptr) {
 	name = Proc_Concat_Name(name, "CreateHandle")
 	Proc(name).Call(instance)
 }
 
-// Free 释放
-func Free(name string, instance uintptr) uintptr {
+// _Free 释放
+func _Free(name string, instance uintptr) uintptr {
 	name = Proc_Concat_Name(name, "Free")
 	r1, _, _ := Proc(name).Call(instance)
 	return r1
 }
 
-// SetParent 设置父组件
-func SetParent(name string, instance, owner uintptr) {
+// _SetParent 设置父组件
+func _SetParent(name string, instance, owner uintptr) {
 	name = Proc_Concat_Name(name, "SetParent")
 	Proc(name).Call(instance, owner)
 }
 
-// Align 获取控件自动调整。
-func Align(name string, instance uintptr) types.TAlign {
+// _Align 获取控件自动调整。
+func _Align(name string, instance uintptr) types.TAlign {
 	name = Proc_Concat_Name(name, "GetAlign")
 	r1, _, _ := Proc(name).Call(instance)
 	return types.TAlign(r1)
 }
 
-// SetAlign 设置获取控件自动调整。
-func SetAlign(name string, instance uintptr, value types.TAlign) {
+// _SetAlign 设置获取控件自动调整。
+func _SetAlign(name string, instance uintptr, value types.TAlign) {
 	name = Proc_Concat_Name(name, "SetAlign")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// Anchors 获取四个角位置的锚点。
-func Anchors(name string, instance uintptr) types.TAnchors {
+// _Anchors 获取四个角位置的锚点。
+func _Anchors(name string, instance uintptr) types.TAnchors {
 	name = Proc_Concat_Name(name, "GetAnchors")
 	r1, _, _ := Proc(name).Call(instance)
 	return types.TAnchors(r1)
 }
 
-// SetAnchors 设置四个角位置的锚点。
-func SetAnchors(name string, instance uintptr, value types.TAnchors) {
+// _SetAnchors 设置四个角位置的锚点。
+func _SetAnchors(name string, instance uintptr, value types.TAnchors) {
 	name = Proc_Concat_Name(name, "SetAnchors")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// GetVisible 获取控件可视。
-func GetVisible(name string, instance uintptr) bool {
+// _GetVisible 获取控件可视。
+func _GetVisible(name string, instance uintptr) bool {
 	name = Proc_Concat_Name(name, "GetVisible")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DBoolToGoBool(ret)
 }
 
-// SetVisible 设置控件可视。
-func SetVisible(name string, instance uintptr, value bool) {
+// _SetVisible 设置控件可视。
+func _SetVisible(name string, instance uintptr, value bool) {
 	name = Proc_Concat_Name(name, "SetVisible")
 	Proc(name).Call(instance, api.GoBoolToDBool(value))
 }
 
-// GetEnabled 获取是否启用
-func GetEnabled(name string, instance uintptr) bool {
+// _GetEnabled 获取是否启用
+func _GetEnabled(name string, instance uintptr) bool {
 	name = Proc_Concat_Name(name, "GetEnabled")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DBoolToGoBool(ret)
 }
 
-// SetEnabled 设置是否启用
-func SetEnabled(name string, instance uintptr, value bool) {
+// _SetEnabled 设置是否启用
+func _SetEnabled(name string, instance uintptr, value bool) {
 	name = Proc_Concat_Name(name, "SetEnabled")
 	Proc(name).Call(instance, api.GoBoolToDBool(value))
 }
 
-// GetLeft 获取左边距
-func GetLeft(name string, instance uintptr) int32 {
+// _GetLeft 获取左边距
+func _GetLeft(name string, instance uintptr) int32 {
 	name = Proc_Concat_Name(name, "GetLeft")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
-// SetLeft 设置左边距
-func SetLeft(name string, instance uintptr, value int32) {
+// _SetLeft 设置左边距
+func _SetLeft(name string, instance uintptr, value int32) {
 	name = Proc_Concat_Name(name, "SetLeft")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// Top 获取上边距
-func GetTop(name string, instance uintptr) int32 {
+// _Top 获取上边距
+func _GetTop(name string, instance uintptr) int32 {
 	name = Proc_Concat_Name(name, "GetTop")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
-// SetTop 设置上边距
-func SetTop(name string, instance uintptr, value int32) {
+// _SetTop 设置上边距
+func _SetTop(name string, instance uintptr, value int32) {
 	name = Proc_Concat_Name(name, "SetTop")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// GetWidth 获取宽度
-func GetWidth(name string, instance uintptr) int32 {
+// _GetWidth 获取宽度
+func _GetWidth(name string, instance uintptr) int32 {
 	name = Proc_Concat_Name(name, "GetWidth")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
-// SetWidth 设置宽度
-func SetWidth(name string, instance uintptr, value int32) {
+// _SetWidth 设置宽度
+func _SetWidth(name string, instance uintptr, value int32) {
 	name = Proc_Concat_Name(name, "SetWidth")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// GetHeight 获取高度
-func GetHeight(name string, instance uintptr) int32 {
+// _GetHeight 获取高度
+func _GetHeight(name string, instance uintptr) int32 {
 	name = Proc_Concat_Name(name, "GetHeight")
 	ret, _, _ := Proc(name).Call(instance)
 	return int32(ret)
 }
 
-// SetHeight 设置高度
-func SetHeight(name string, instance uintptr, value int32) {
+// _SetHeight 设置高度
+func _SetHeight(name string, instance uintptr, value int32) {
 	name = Proc_Concat_Name(name, "SetHeight")
 	Proc(name).Call(instance, uintptr(value))
 }
 
-// GetBoundsRect
-func GetBoundsRect(name string, instance uintptr) types.TRect {
+// _GetBoundsRect
+func _GetBoundsRect(name string, instance uintptr) types.TRect {
 	var ret types.TRect
 	name = Proc_Concat_Name(name, "GetBoundsRect")
 	Proc(name).Call(instance, uintptr(unsafe.Pointer(&ret)))
 	return ret
 }
 
-// SetBoundsRect
-func SetBoundsRect(name string, instance uintptr, value types.TRect) {
+// _SetBoundsRect
+func _SetBoundsRect(name string, instance uintptr, value types.TRect) {
 	name = Proc_Concat_Name(name, "SetBoundsRect")
 	Proc(name).Call(instance, uintptr(unsafe.Pointer(&value)))
 }
 
-// GetName 获取组件名称。
-func GetName(name string, instance uintptr) string {
+// _GetName 获取组件名称。
+func _GetName(name string, instance uintptr) string {
 	name = Proc_Concat_Name(name, "GetName")
 	ret, _, _ := Proc(name).Call(instance)
 	return api.DStrToGoStr(ret)
 }
 
-// SetName 设置组件名称。
-func SetName(name string, instance uintptr, value string) {
+// _SetName 设置组件名称。
+func _SetName(name string, instance uintptr, value string) {
 	name = Proc_Concat_Name(name, "SetName")
 	Proc(name).Call(instance, api.GoStrToDStr(value))
 }

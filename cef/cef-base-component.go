@@ -26,7 +26,7 @@ func (m *BaseComponent) Instance() uintptr {
 }
 
 func (m *BaseComponent) Handle() types.HWND {
-	return GetHandle(m.procName, m.instance)
+	return _GetHandle(m.procName, m.instance)
 }
 
 func (m *BaseComponent) IsValid() bool {

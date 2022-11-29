@@ -15,13 +15,13 @@ type TCEFLinkedWindowParent struct {
 func NewCEFLinkedWindowParent(owner lcl.IComponent) *TCEFLinkedWindowParent {
 	m := new(TCEFLinkedWindowParent)
 	m.procName = "CEFLinkedWindow"
-	m.instance = Create(m.procName, lcl.CheckPtr(owner))
+	m.instance = _Create(m.procName, lcl.CheckPtr(owner))
 	m.ptr = unsafe.Pointer(m.instance)
 	return m
 }
 
 func (m *TCEFLinkedWindowParent) Handle() types.HWND {
-	return GetHandle(m.procName, m.instance)
+	return _GetHandle(m.procName, m.instance)
 }
 
 func (m *TCEFLinkedWindowParent) UpdateSize() {
@@ -37,15 +37,15 @@ func (m *TCEFLinkedWindowParent) SetChromium(chromium *TCEFChromium, tag int32) 
 }
 
 func (m *TCEFLinkedWindowParent) HandleAllocated() bool {
-	return api.DBoolToGoBool(HandleAllocated(m.procName, m.instance))
+	return api.DBoolToGoBool(_HandleAllocated(m.procName, m.instance))
 }
 
 func (m *TCEFLinkedWindowParent) CreateHandle() {
-	CreateHandle(m.procName, m.instance)
+	_CreateHandle(m.procName, m.instance)
 }
 
 func (m *TCEFLinkedWindowParent) DestroyChildWindow() bool {
-	return api.DBoolToGoBool(DestroyChildWindow(m.procName, m.instance))
+	return api.DBoolToGoBool(_DestroyChildWindow(m.procName, m.instance))
 }
 
 func (m *TCEFLinkedWindowParent) SetOnEnter(fn lcl.TNotifyEvent) {
@@ -57,5 +57,5 @@ func (m *TCEFLinkedWindowParent) SetOnExit(fn lcl.TNotifyEvent) {
 }
 
 func (m *TCEFLinkedWindowParent) Free() {
-	Free(m.procName, m.instance)
+	_Free(m.procName, m.instance)
 }
