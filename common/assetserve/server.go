@@ -26,10 +26,10 @@ var AssetsServerHeaderKeyValue string
 
 type assetsHttpServer struct {
 	LocalAssets  string    //本地静态资源目录 示例: /app/assets/   http://127.0.0.1:8888/demo/demo.html -> /app/assets/demo/demo.html
-	AssetsFSName string    //静态资源内置FS目录名 示例: assets
+	AssetsFSName string    //静态资源内置FS目录名 默认值: resources
 	Assets       *embed.FS //静态资源内置FS目录对象
-	IP           string    //
-	PORT         int       //
+	IP           string    //默认值: 127.0.0.1
+	PORT         int       //默认值: 80
 	SSL          *SSL      //设置后启动https
 }
 
@@ -52,8 +52,9 @@ func init() {
 
 func NewAssetsHttpServer() *assetsHttpServer {
 	return &assetsHttpServer{
-		IP:   "127.0.0.1",
-		PORT: 80,
+		AssetsFSName: "resources",
+		IP:           "127.0.0.1",
+		PORT:         80,
 	}
 }
 
