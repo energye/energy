@@ -32,7 +32,7 @@ func main() {
 			fmt.Println("VisitCookie")
 			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			info.Chromium().VisitURLCookies("https://www.baidu.com", true, 1)
-			info.Chromium().VisitAllCookies(0)
+			info.Chromium().VisitAllCookies(1)
 			context.Result().SetString("执行成功，结果将在 SetOnCookiesVisited 事件中获得")
 		})
 		//监听删除cookie
@@ -68,6 +68,12 @@ func main() {
 		//设置cookie时触发
 		event.SetOnCookieSet(func(sender lcl.IObject, success bool, ID int32) {
 			fmt.Println("SetOnCookieSet: ", success, ID)
+		})
+		event.SetOnCookiesFlushed(func(sender lcl.IObject) {
+			fmt.Println("OnCookiesFlushed")
+		})
+		event.SetOnCookieVisitorDestroyed(func(sender lcl.IObject, ID int32) {
+			fmt.Println("OnCookieVisitorDestroyed")
 		})
 	})
 	//在主进程启动成功之后执行

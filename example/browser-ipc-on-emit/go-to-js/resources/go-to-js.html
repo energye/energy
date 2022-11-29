@@ -4,11 +4,48 @@
     <meta charset="UTF-8">
     <title>go-to-js</title>
     <script type="application/javascript">
+        function clearMessage() {
+            document.getElementById("message").innerHTML = "";
+        }
 
+        function writeMessage(data) {
+            let message = document.getElementById("message");
+            message.innerHTML = message.innerHTML + data + "<br>"
+        }
+
+        //ipc.emit函数有3个参数
+        //参数1 事件名        必填    string类型
+        //参数2 参数          非必填  array类型,传递到Go中的数据,
+        //                          参数只保留了 string, integer, double, boolean 的对应关系，其它类型在 go和 js数据传递时不支持
+        //                          参数是以js调用时传递的参数下标位置开始计算，从0开始表示第1个参数
+        //参数3 回调函数      非必填   function类型, go返回的结果
+
+        //调用Go中监听的事件
+        function goOnEventDemo() {
+            clearMessage()
+            //参数传递,从下标0开始表示第1个参数
+            ipc.emit('go-on-event-demo', ['传递的数据'])
+        }
+
+        //带有返回值的事件
+        function goOnEventDemoReturn() {
+            clearMessage()
+            //参数传递,从下标0开始表示第1个参数
+            var strData = ""
+            for (var i = 0; i < 100000; i++) {
+                strData += "[" + i + "]";
+            }
+            ipc.emit('go-on-event-demo-return', ['传递的数据:' + strData, 99999, false, 9999.999], function (data) {
+                writeMessage("data-length: " + data.length)
+                writeMessage("data: " + data)
+            })
+        }
     </script>
 </head>
-<body style="overflow: hidden;margin: 0px;padding: 0px;">
-go-to-js<br>
+<body style="margin: 0px;padding: 0px;">
+Go中监听事件，JS中调用<br>
+<button onclick="goOnEventDemo()">go-on-event-demo</button>
+<button onclick="goOnEventDemoReturn()">go-on-event-demo-return</button>
 <div id="message"></div>
 </body>
 </html>
