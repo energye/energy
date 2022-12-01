@@ -9,7 +9,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -42,7 +41,6 @@ func (m *TCEFWindowParent) Type() consts.TCefWindowHandleType {
 }
 
 func (m *TCEFWindowParent) SetChromium(chromium IChromium, tag int32) {
-	fmt.Println("chromium.Instance()", chromium.Instance())
 }
 
 func (m *TCEFWindowParent) HandleAllocated() bool {
