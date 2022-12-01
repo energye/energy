@@ -36,7 +36,7 @@ type IBaseWindow interface {
 //BaseWindow 是一个基于chromium 和 lcl 的窗口组件
 type BaseWindow struct {
 	*lcl.TForm                          //
-	chromium         *TCEFChromium      //
+	chromium         IChromium          //
 	windowParent     ITCefWindow        //
 	windowInfo       *TCefWindowInfo    //窗口信息
 	windowId         int32              //

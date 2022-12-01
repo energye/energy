@@ -26,7 +26,7 @@ type tCefTrayForm struct {
 	*lcl.TForm
 	owner        lcl.IWinControl
 	trayIcon     *lcl.TTrayIcon
-	chromium     *TCEFChromium
+	chromium     IChromium
 	windowParent ITCefWindow
 	x, y, w, h   int32
 	mouseUp      TMouseEvent

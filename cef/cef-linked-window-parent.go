@@ -32,7 +32,7 @@ func (m *TCEFLinkedWindowParent) Type() consts.TCefWindowHandleType {
 	return consts.Wht_LinkedWindowParent
 }
 
-func (m *TCEFLinkedWindowParent) SetChromium(chromium *TCEFChromium, tag int32) {
+func (m *TCEFLinkedWindowParent) SetChromium(chromium IChromium, tag int32) {
 	_CEFLinkedWindow_SetChromium(m.instance, chromium, tag)
 }
 

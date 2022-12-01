@@ -77,8 +77,8 @@ func _CEFLinkedWindow_UpdateSize(instance uintptr) {
 	Proc("CEFLinkedWindow_UpdateSize").Call(instance)
 }
 
-func _CEFLinkedWindow_SetChromium(instance uintptr, chromium *TCEFChromium, tag int32) {
-	Proc("CEFLinkedWindow_SetChromium").Call(instance, chromium.instance, uintptr(tag))
+func _CEFLinkedWindow_SetChromium(instance uintptr, chromium IChromium, tag int32) {
+	Proc("CEFLinkedWindow_SetChromium").Call(instance, chromium.Instance(), uintptr(tag))
 }
 
 func _CEFLinkedWindow_OnEnter(instance uintptr, fn interface{}) {

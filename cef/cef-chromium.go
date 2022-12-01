@@ -54,7 +54,7 @@ type TCEFChromium struct {
 	emitLock         *sync.Mutex
 }
 
-func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) *TCEFChromium {
+func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
 	m := new(TCEFChromium)
 	m.procName = "CEFChromium"
 	if config != nil {

@@ -9,7 +9,7 @@ import (
 type ITCefWindow interface {
 	lcl.IWinControl
 	Type() consts.TCefWindowHandleType
-	SetChromium(chromium *TCEFChromium, tag int32)
+	SetChromium(chromium IChromium, tag int32)
 	UpdateSize()
 	HandleAllocated() bool
 	CreateHandle()
