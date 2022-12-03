@@ -1,5 +1,5 @@
 # Energy is Go's framework for building desktop applications based on CEF
-[中文 ](https://github.com/energye/energy/blob/main/README.zh_CN.md) |
+[中文 ](README.zh_CN.md) |
 English
 
 ---
