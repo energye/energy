@@ -70,19 +70,19 @@ func (m *ICefBrowser) HostWindowHandle() types.HWND {
 //CloseBrowser
 func (m *ICefBrowser) CloseBrowser(forceClose bool) {
 	if m.IsValid() {
-		Proc("CEFBrowser_CloseBrowser").Call(uintptr(m.browseId), api.GoBoolToDBool(forceClose))
+		Proc("CEFBrowser_CloseBrowser").Call(uintptr(m.browseId), api.PascalBool(forceClose))
 	}
 }
 
 //TryCloseBrowser
 func (m *ICefBrowser) TryCloseBrowser() bool {
 	r1, _, _ := Proc("CEFBrowser_TryCloseBrowser").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 //SetFocus
 func (m *ICefBrowser) SetFocus(focus bool) {
-	Proc("CEFBrowser_SetFocus").Call(uintptr(m.browseId), api.GoBoolToDBool(focus))
+	Proc("CEFBrowser_SetFocus").Call(uintptr(m.browseId), api.PascalBool(focus))
 }
 
 //GetZoomLevel
@@ -99,17 +99,17 @@ func (m *ICefBrowser) SetZoomLevel(zoomLevel float64) {
 
 //RunFileDialog
 func (m *ICefBrowser) RunFileDialog(mode int32, title, defaultFilePath string, acceptFilters *lcl.TStrings) {
-	Proc("CEFBrowser_RunFileDialog").Call(uintptr(m.browseId), uintptr(mode), api.GoStrToDStr(title), api.GoStrToDStr(defaultFilePath), acceptFilters.Instance())
+	Proc("CEFBrowser_RunFileDialog").Call(uintptr(m.browseId), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFilters.Instance())
 }
 
 //StartDownload
 func (m *ICefBrowser) StartDownload(url string) {
-	Proc("CEFBrowser_StartDownload").Call(uintptr(m.browseId), api.GoStrToDStr(url))
+	Proc("CEFBrowser_StartDownload").Call(uintptr(m.browseId), api.PascalStr(url))
 }
 
 //DownloadImage
 func (m *ICefBrowser) DownloadImage(imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool) {
-	Proc("CEFBrowser_DownloadImage").Call(uintptr(m.browseId), api.GoStrToDStr(imageUrl), api.GoBoolToDBool(isFavicon), uintptr(maxImageSize), api.GoBoolToDBool(bypassCache))
+	Proc("CEFBrowser_DownloadImage").Call(uintptr(m.browseId), api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache))
 }
 
 //Print
@@ -123,9 +123,9 @@ func (m *ICefBrowser) GetFocusedFrame() *ICefFrame {
 	if cf != nil {
 		ret := &ICefFrame{}
 		ret.Browser = m
-		ret.Id = StrToInt64(api.DStrToGoStr(cf.Identifier))
-		ret.Name = api.DStrToGoStr(cf.Name)
-		ret.Url = api.DStrToGoStr(cf.Url)
+		ret.Id = StrToInt64(api.GoStr(cf.Identifier))
+		ret.Name = api.GoStr(cf.Name)
+		ret.Url = api.GoStr(cf.Url)
 		return ret
 	}
 	return nil
@@ -136,9 +136,9 @@ func (m *ICefBrowser) MainFrame() *ICefFrame {
 	if cf != nil {
 		ret := &ICefFrame{}
 		ret.Browser = m
-		ret.Id = StrToInt64(api.DStrToGoStr(cf.Identifier))
-		ret.Name = api.DStrToGoStr(cf.Name)
-		ret.Url = api.DStrToGoStr(cf.Url)
+		ret.Id = StrToInt64(api.GoStr(cf.Identifier))
+		ret.Name = api.GoStr(cf.Name)
+		ret.Url = api.GoStr(cf.Url)
 		return ret
 	}
 	return nil
@@ -150,9 +150,9 @@ func (m *ICefBrowser) GetFrameById(frameId int64) *ICefFrame {
 	if cf != nil {
 		ret := &ICefFrame{}
 		ret.Browser = m
-		ret.Id = StrToInt64(api.DStrToGoStr(cf.Identifier))
-		ret.Name = api.DStrToGoStr(cf.Name)
-		ret.Url = api.DStrToGoStr(cf.Url)
+		ret.Id = StrToInt64(api.GoStr(cf.Identifier))
+		ret.Name = api.GoStr(cf.Name)
+		ret.Url = api.GoStr(cf.Url)
 		cf = nil
 		return ret
 	}
@@ -160,14 +160,14 @@ func (m *ICefBrowser) GetFrameById(frameId int64) *ICefFrame {
 }
 
 func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
-	r1, _, _ := Proc("CEFBrowser_GetFrameByName").Call(uintptr(m.browseId), api.GoStrToDStr(frameName))
+	r1, _, _ := Proc("CEFBrowser_GetFrameByName").Call(uintptr(m.browseId), api.PascalStr(frameName))
 	cf := (*cefFrame)(unsafe.Pointer(r1))
 	if cf != nil {
 		ret := &ICefFrame{}
 		ret.Browser = m
-		ret.Id = StrToInt64(api.DStrToGoStr(cf.Identifier))
-		ret.Name = api.DStrToGoStr(cf.Name)
-		ret.Url = api.DStrToGoStr(cf.Url)
+		ret.Id = StrToInt64(api.GoStr(cf.Identifier))
+		ret.Name = api.GoStr(cf.Name)
+		ret.Url = api.GoStr(cf.Url)
 		cf = nil
 		return ret
 	}
@@ -176,7 +176,7 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 
 //PrintToPdf
 //func (m *ICefBrowser) PrintToPdf(path string) {
-//	Proc("CEFBrowser_PrintToPdf").Call(uintptr(m.browseId), api.GoStrToDStr(path))
+//	Proc("CEFBrowser_PrintToPdf").Call(uintptr(m.browseId), api.PascalStr(path))
 //}
 
 //ExecuteDevToolsMethod
@@ -199,7 +199,7 @@ func (m *ICefBrowser) ExecuteDevToolsMethod(messageId int32, method string, dict
 	} else {
 		dataPtr = unsafe.Pointer(&data)
 	}
-	Proc("CEFBrowser_ExecuteDevToolsMethod").Call(uintptr(m.browseId), uintptr(messageId), api.GoStrToDStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
+	Proc("CEFBrowser_ExecuteDevToolsMethod").Call(uintptr(m.browseId), uintptr(messageId), api.PascalStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
 }
 
 //SendKeyEvent
@@ -208,16 +208,16 @@ func (m *ICefBrowser) SendKeyEvent(event *TCefKeyEvent) {
 }
 
 func (m *ICefBrowser) SetAudioMuted(mute bool) {
-	Proc("CEFBrowser_SetAudioMuted").Call(uintptr(m.browseId), api.GoBoolToDBool(mute))
+	Proc("CEFBrowser_SetAudioMuted").Call(uintptr(m.browseId), api.PascalBool(mute))
 }
 
 func (m *ICefBrowser) IsAudioMuted() bool {
 	r1, _, _ := Proc("CEFBrowser_IsAudioMuted").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefBrowser) SetAutoResizeEnabled(enabled bool, minSize, maxSize *TCefSize) {
-	Proc("CEFBrowser_SetAutoResizeEnabled").Call(uintptr(m.browseId), api.GoBoolToDBool(enabled), uintptr(unsafe.Pointer(minSize)), uintptr(unsafe.Pointer(maxSize)))
+	Proc("CEFBrowser_SetAutoResizeEnabled").Call(uintptr(m.browseId), api.PascalBool(enabled), uintptr(unsafe.Pointer(minSize)), uintptr(unsafe.Pointer(maxSize)))
 }
 
 func (m *ICefBrowser) SetAccessibilityState(accessibilityState TCefState) {
@@ -245,11 +245,11 @@ func (m *ICefBrowser) SendMouseWheelEvent(event *TCefMouseEvent, deltaX, deltaY 
 }
 
 func (m *ICefBrowser) SendMouseMoveEvent(event *TCefMouseEvent, mouseLeave bool) {
-	Proc("CEFBrowser_SendMouseMoveEvent").Call(uintptr(m.browseId), uintptr(unsafe.Pointer(event)), api.GoBoolToDBool(mouseLeave))
+	Proc("CEFBrowser_SendMouseMoveEvent").Call(uintptr(m.browseId), uintptr(unsafe.Pointer(event)), api.PascalBool(mouseLeave))
 }
 
 func (m *ICefBrowser) SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouseButtonType, mouseUp bool, clickCount int32) {
-	Proc("CEFBrowser_SendMouseClickEvent").Call(uintptr(m.browseId), uintptr(unsafe.Pointer(event)), uintptr(type_), api.GoBoolToDBool(mouseUp), uintptr(clickCount))
+	Proc("CEFBrowser_SendMouseClickEvent").Call(uintptr(m.browseId), uintptr(unsafe.Pointer(event)), uintptr(type_), api.PascalBool(mouseUp), uintptr(clickCount))
 }
 
 func (m *ICefBrowser) ViewSource(frame *ICefFrame) {
@@ -272,12 +272,12 @@ func (m *ICefBrowser) CloseDevTools() {
 
 func (m *ICefBrowser) HasDevTools() bool {
 	r1, _, _ := Proc("CEFBrowser_HasDevTools").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefBrowser) CanGoBack() bool {
 	r1, _, _ := Proc("CEFBrowser_CanGoBack").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefBrowser) GoBack() {
@@ -288,7 +288,7 @@ func (m *ICefBrowser) GoBack() {
 
 func (m *ICefBrowser) CanGoForward() bool {
 	r1, _, _ := Proc("CEFBrowser_CanGoForward").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefBrowser) GoForward() {
@@ -299,7 +299,7 @@ func (m *ICefBrowser) GoForward() {
 
 func (m *ICefBrowser) IsLoading() bool {
 	r1, _, _ := Proc("CEFBrowser_IsLoading").Call(uintptr(m.browseId))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefBrowser) Reload() {
@@ -327,8 +327,8 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	for i := 0; i < int(resultSize); i++ {
 		fnsPtr := (*frameNamesPtr)(unsafe.Pointer(GetParamOf(i, result)))
 		frameNames[i] = &FrameNames{
-			Name:  api.DStrToGoStr(fnsPtr.Name),
-			Value: api.DStrToGoStr(fnsPtr.Value),
+			Name:  api.GoStr(fnsPtr.Name),
+			Value: api.GoStr(fnsPtr.Value),
 		}
 	}
 	result = 0
@@ -337,9 +337,9 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 }
 
 func (m *ICefBrowser) Find(searchText string, forward, matchCase, findNext bool) {
-	Proc("CEFBrowser_Find").Call(uintptr(m.browseId), api.GoStrToDStr(searchText), api.GoBoolToDBool(forward), api.GoBoolToDBool(matchCase), api.GoBoolToDBool(findNext))
+	Proc("CEFBrowser_Find").Call(uintptr(m.browseId), api.PascalStr(searchText), api.PascalBool(forward), api.PascalBool(matchCase), api.PascalBool(findNext))
 }
 
 func (m *ICefBrowser) StopFinding(clearSelection bool) {
-	Proc("CEFBrowser_StopFinding").Call(uintptr(m.browseId), api.GoBoolToDBool(clearSelection))
+	Proc("CEFBrowser_StopFinding").Call(uintptr(m.browseId), api.PascalBool(clearSelection))
 }

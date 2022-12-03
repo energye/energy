@@ -30,16 +30,16 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 	tempFrame := (*cefFrame)(getPtr(2))
 	frame := &ICefFrame{
 		Browser: browser,
-		Name:    api.DStrToGoStr(tempFrame.Name),
-		Url:     api.DStrToGoStr(tempFrame.Url),
-		Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+		Name:    api.GoStr(tempFrame.Name),
+		Url:     api.GoStr(tempFrame.Url),
+		Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 	}
 	beforePInfoPtr := (*beforePopupInfo)(getPtr(3))
 	beforePInfo := &BeforePopupInfo{
-		TargetUrl:         api.DStrToGoStr(beforePInfoPtr.TargetUrl),
-		TargetFrameName:   api.DStrToGoStr(beforePInfoPtr.TargetFrameName),
+		TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
+		TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
 		TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
-		UserGesture:       api.DBoolToGoBool(beforePInfoPtr.UserGesture),
+		UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
 	}
 	BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
 	BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePInfo.TargetUrl)
@@ -130,7 +130,7 @@ var (
 )
 
 func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-	if !api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
+	if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
 		model.Clear()
 		return
 	}
@@ -303,7 +303,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		},
 	})
 	model.AddSeparator()
-	if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
@@ -314,7 +314,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			},
 		})
 	}
-	if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, "开发者工具(F12)")
 	}
@@ -346,11 +346,11 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 	} else if commandId == forcedRefreshId {
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
-		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
 			browser.ViewSource(frame)
 		}
 	} else if commandId == devToolsId {
-		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {

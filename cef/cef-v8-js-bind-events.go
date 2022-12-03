@@ -51,7 +51,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 	defer func() {
 		if err := recover(); err != nil {
 			if exceptionPrt != nil {
-				*exceptionPrt = api.GoStrToDStr((err.(error)).Error())
+				*exceptionPrt = api.PascalStr((err.(error)).Error())
 			}
 			logger.Error("V8BindFieldCallbackHandler Error", err)
 		}
@@ -62,7 +62,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
-	fullName := api.DStrToGoStr(fullNamePtr)
+	fullName := api.GoStr(fullNamePtr)
 	if eventType == BE_SET { //设置值
 		var (
 			newValueType   = (V8_JS_VALUE_TYPE)(getVal(1))
@@ -77,7 +77,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 		args.SetString(0, fullName)
 		switch newValueType {
 		case V8_VALUE_STRING:
-			newStringValue = api.DStrToGoStr(getVal(2))
+			newStringValue = api.GoStr(getVal(2))
 			args.SetString(1, newStringValue)
 		case V8_VALUE_INT:
 			newIntValue = int32(getVal(2))
@@ -86,7 +86,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 			newDoubleValue = *(*float64)(getPtr(2))
 			args.SetFloat64(1, newDoubleValue)
 		case V8_VALUE_BOOLEAN:
-			newBoolValue = api.DBoolToGoBool(getVal(2))
+			newBoolValue = api.GoBool(getVal(2))
 			args.SetBool(1, newBoolValue)
 		default:
 			errorMessage = cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED)
@@ -105,7 +105,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 				errorMessage = cefErrorMessage(CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL)
 			}
 		}
-		*exceptionPrt = api.GoStrToDStr(errorMessage)
+		*exceptionPrt = api.PascalStr(errorMessage)
 	} else if eventType == BE_GET { //获取值和set处理不一样，需要在go里知道实际类型
 		var (
 			newValueType      = (*V8_JS_VALUE_TYPE)(getPtr(1))
@@ -136,7 +136,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 		} else {
 			errorMessage = cefErrorMessage(CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL)
 		}
-		*exceptionPrt = api.GoStrToDStr(errorMessage)
+		*exceptionPrt = api.PascalStr(errorMessage)
 	}
 }
 
@@ -180,7 +180,7 @@ func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePr
 	switch valueType {
 	case V8_VALUE_STRING:
 		if value, err := ValueToString(newValue); err == nil {
-			*stringValuePrt = api.GoStrToDStr(value)
+			*stringValuePrt = api.PascalStr(value)
 		} else {
 			return cefErrorMessage(CVE_ERROR_GET_STRING_FAIL)
 		}
@@ -220,7 +220,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 		if err := recover(); err != nil {
 			logger.Error("V8BindFuncCallbackHandler recover:", err)
 			if exceptionPrt != nil {
-				*exceptionPrt = api.GoStrToDStr(" " + (err.(error)).Error())
+				*exceptionPrt = api.PascalStr(" " + (err.(error)).Error())
 			}
 		}
 	}()
@@ -230,7 +230,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
-	fullName := api.DStrToGoStr(fullNamePtr)
+	fullName := api.GoStr(fullNamePtr)
 	exceptionPrt = (*uintptr)(getPtr(1))
 	var jsValue, ok = VariableBind.GetValueBind(fullName)
 	var fnInfo *funcInfo
@@ -276,7 +276,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 			inVType := fnInfo.InParam[i]
 			switch inVType.Jsv {
 			case V8_VALUE_STRING:
-				str := api.DStrToGoStr(getVal(inIdx))
+				str := api.GoStr(getVal(inIdx))
 				inArgumentList.SetString(i, str)
 			case V8_VALUE_INT:
 				if value := NumberUintPtrToInt(getVal(inIdx), inVType.Gov); value != nil {
@@ -293,7 +293,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 					break
 				}
 			case V8_VALUE_BOOLEAN:
-				inArgumentList.SetBool(i, api.DBoolToGoBool(getVal(inIdx)))
+				inArgumentList.SetBool(i, api.GoBool(getVal(inIdx)))
 			default:
 				//参数错误停止调用，返回
 				errorMessage = cefErrorMessage(CVE_ERROR_FUNC_IN_PAM)
@@ -349,7 +349,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 					switch outVType.Jsv {
 					case V8_VALUE_STRING:
 						if value, err := ValueToString(outParamValue.Interface()); err == nil {
-							*retStringValuePrt = api.GoStrToDStr(value)
+							*retStringValuePrt = api.PascalStr(value)
 						} else {
 							errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL)
 						}
@@ -383,5 +383,5 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 	} else {
 		errorMessage = cefErrorMessage(CVE_ERROR_NOT_FOUND_FUNC)
 	}
-	*exceptionPrt = api.GoStrToDStr(errorMessage)
+	*exceptionPrt = api.PascalStr(errorMessage)
 }

@@ -72,30 +72,30 @@ func (m *ICefFrame) ViewSource() {
 
 func (m *ICefFrame) LoadUrl(url string) {
 	var frameId = m.Id
-	Proc("CEFFrame_LoadUrl").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.GoStrToDStr(url))
+	Proc("CEFFrame_LoadUrl").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(url))
 }
 
 func (m *ICefFrame) ExecuteJavaScript(code, scriptUrl string, startLine int32) {
 	var frameId = m.Id
-	Proc("CEFFrame_ExecuteJavaScript").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.GoStrToDStr(code), api.GoStrToDStr(scriptUrl), uintptr(startLine))
+	Proc("CEFFrame_ExecuteJavaScript").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine))
 }
 
 func (m *ICefFrame) IsValid() bool {
 	var frameId = m.Id
 	r1, _, _ := Proc("CEFFrame_IsValid").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefFrame) IsMain() bool {
 	var frameId = m.Id
 	r1, _, _ := Proc("CEFFrame_IsMain").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefFrame) IsFocused() bool {
 	var frameId = m.Id
 	r1, _, _ := Proc("CEFFrame_IsFocused").Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) ProcessMessageError {
@@ -110,6 +110,6 @@ func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, processMessag
 }
 
 func _CEFFrame_SendProcessMessage(browseId int32, frameId int64, name string, targetProcess CefProcessId, itemLength int32, data, dataLen uintptr) uintptr {
-	r1, _, _ := Proc("CEFFrame_SendProcessMessage").Call(uintptr(browseId), uintptr(unsafe.Pointer(&frameId)), api.GoStrToDStr(name), uintptr(targetProcess), uintptr(itemLength), data, dataLen)
+	r1, _, _ := Proc("CEFFrame_SendProcessMessage").Call(uintptr(browseId), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(name), uintptr(targetProcess), uintptr(itemLength), data, dataLen)
 	return r1
 }

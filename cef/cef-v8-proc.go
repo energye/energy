@@ -14,11 +14,11 @@ import (
 )
 
 func _CEFV8ValueRef_SetCommonRootName(commonRootName string) {
-	Proc("CEFV8ValueRef_SetCommonRootName").Call(api.GoStrToDStr(commonRootName))
+	Proc("CEFV8ValueRef_SetCommonRootName").Call(api.PascalStr(commonRootName))
 }
 
 func _CEFV8ValueRef_SetObjectRootName(objectRootName string) {
-	Proc("CEFV8ValueRef_SetObjectRootName").Call(api.GoStrToDStr(objectRootName))
+	Proc("CEFV8ValueRef_SetObjectRootName").Call(api.PascalStr(objectRootName))
 }
 
 func _CEFV8ValueRef_CommonValueBindInfo(binds uintptr) {

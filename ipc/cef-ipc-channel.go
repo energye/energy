@@ -83,7 +83,7 @@ func (m *IPCContextResult) VType() V8_JS_VALUE_TYPE {
 }
 
 func (m *IPCContextResult) SetString(ret string) {
-	m.result = unsafe.Pointer(api.GoStrToDStr(ret)) //StringToBytes(ret)
+	m.result = unsafe.Pointer(api.PascalStr(ret)) //StringToBytes(ret)
 	m.vType = V8_VALUE_STRING
 }
 
@@ -98,7 +98,7 @@ func (m *IPCContextResult) SetFloat64(ret float64) {
 }
 
 func (m *IPCContextResult) SetBool(ret bool) {
-	m.result = unsafe.Pointer(api.GoBoolToDBool(ret)) //[]byte{BoolToByte(ret)
+	m.result = unsafe.Pointer(api.PascalBool(ret)) //[]byte{BoolToByte(ret)
 	m.vType = V8_VALUE_BOOLEAN
 }
 

@@ -161,7 +161,7 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 	}
 	switch m.valueType {
 	case V8_VALUE_STRING:
-		return unsafe.Pointer(api.GoStrToDStr(iValue.(string))), nil
+		return unsafe.Pointer(api.PascalStr(iValue.(string))), nil
 		//return GoStrToDStrPointer(iValue.(string)), nil
 	case V8_VALUE_INT:
 		if v, err := common.ValueToInt32(iValue); err == nil {
@@ -177,7 +177,7 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 		}
 	case V8_VALUE_BOOLEAN:
 		if v, err := common.ValueToBool(iValue); err == nil {
-			return unsafe.Pointer(api.GoBoolToDBool(v)), nil
+			return unsafe.Pointer(api.PascalBool(v)), nil
 		} else {
 			return nil, err
 		}

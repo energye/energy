@@ -67,99 +67,99 @@ func NewApplicationConfig() *tCefApplicationConfig {
 //
 //默认当前目录
 func (m *tCefApplicationConfig) SetFrameworkDirPath(s string) *tCefApplicationConfig {
-	m.frameworkDirPath = api.GoStrToDStr(s)
+	m.frameworkDirPath = api.PascalStr(s)
 	return m
 }
 
 //设置资源目录，默认当前目录
 func (m *tCefApplicationConfig) SetResourcesDirPath(s string) *tCefApplicationConfig {
-	m.resourcesDirPath = api.GoStrToDStr(s)
+	m.resourcesDirPath = api.PascalStr(s)
 	return m
 }
 
 //设置本地语言目录，默认当前目录
 func (m *tCefApplicationConfig) SetLocalesDirPath(s string) *tCefApplicationConfig {
-	m.localesDirPath = api.GoStrToDStr(s)
+	m.localesDirPath = api.PascalStr(s)
 	return m
 }
 
 //设置缓存目录，默认当前目录
 func (m *tCefApplicationConfig) SetCache(s string) *tCefApplicationConfig {
-	m.cache = api.GoStrToDStr(s)
+	m.cache = api.PascalStr(s)
 	return m
 }
 
 //设置用户数据目录，默认当前目录
 func (m *tCefApplicationConfig) SetUserDataPath(s string) *tCefApplicationConfig {
-	m.userDataPath = api.GoStrToDStr(s)
+	m.userDataPath = api.PascalStr(s)
 	return m
 }
 
 //设置进程模型，作用于linux-默认禁用
 func (m *tCefApplicationConfig) SetDisableZygote(s bool) *tCefApplicationConfig {
-	m.disableZygote = api.GoBoolToDBool(s)
+	m.disableZygote = api.PascalBool(s)
 	return m
 }
 
 //设置关闭沙盒-默认关闭
 func (m *tCefApplicationConfig) SetNoSandbox(s bool) *tCefApplicationConfig {
-	m.noSandbox = api.GoBoolToDBool(s)
+	m.noSandbox = api.PascalBool(s)
 	return m
 }
 
 //设置开启关闭GPU加速
 func (m *tCefApplicationConfig) SetEnableGPU(s bool) *tCefApplicationConfig {
 	enableGPU = s
-	m.enableGPU = api.GoBoolToDBool(s)
+	m.enableGPU = api.PascalBool(s)
 	return m
 }
 
 //设置进程模式，true:单进程模式
 func (m *tCefApplicationConfig) SetSingleProcess(s bool) *tCefApplicationConfig {
 	SingleProcess = s
-	m.singleProcess = api.GoBoolToDBool(s)
+	m.singleProcess = api.PascalBool(s)
 	return m
 }
 
 //设置使用模拟key chain
 func (m *tCefApplicationConfig) SetUseMockKeyChain(s bool) *tCefApplicationConfig {
-	m.useMockKeyChain = api.GoBoolToDBool(s)
+	m.useMockKeyChain = api.PascalBool(s)
 	return m
 }
 
 //检测CEF文件默认不检测
 func (m *tCefApplicationConfig) SetCheckCEFFiles(s bool) *tCefApplicationConfig {
-	m.checkCEFFiles = api.GoBoolToDBool(s)
+	m.checkCEFFiles = api.PascalBool(s)
 	return m
 }
 
 //设置语言
 func (m *tCefApplicationConfig) SetLanguage(s LANGUAGE) *tCefApplicationConfig {
-	m.language = api.GoStrToDStr(string(s))
+	m.language = api.PascalStr(string(s))
 	return m
 }
 
 //设置必备的本地语言支持，逗号分隔的字符串 s="zh-CN,en-US" ,默认情况下 en-US 是必须的
 func (m *tCefApplicationConfig) SetLocalesRequired(s string) *tCefApplicationConfig {
-	m.localesRequired = api.GoStrToDStr(s)
+	m.localesRequired = api.PascalStr(s)
 	return m
 }
 
 //设置日志文件目录
 func (m *tCefApplicationConfig) SetLogFile(s string) *tCefApplicationConfig {
-	m.logFile = api.GoStrToDStr(s)
+	m.logFile = api.PascalStr(s)
 	return m
 }
 
 //设置主程序绑定目录 作用于macos
 func (m *tCefApplicationConfig) SetMainBundlePath(s string) *tCefApplicationConfig {
-	m.mainBundlePath = api.GoStrToDStr(s)
+	m.mainBundlePath = api.PascalStr(s)
 	return m
 }
 
 //设置子进程执行文件目录，一搬用于主进程过于复杂启动慢，需要独立出子进程
 func (m *tCefApplicationConfig) SetBrowseSubprocessPath(s string) *tCefApplicationConfig {
-	m.browseSubprocessPath = api.GoStrToDStr(s)
+	m.browseSubprocessPath = api.PascalStr(s)
 	return m
 }
 

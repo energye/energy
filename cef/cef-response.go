@@ -37,7 +37,7 @@ type iCefResponse struct {
 }
 
 func (m *ICefResponse) IsReadOnly() bool {
-	return api.DBoolToGoBool(cefResponse_IsReadOnly(m.instance))
+	return api.GoBool(cefResponse_IsReadOnly(m.instance))
 }
 
 func (m *ICefResponse) SetError(error TCefErrorCode) {
@@ -57,7 +57,7 @@ func (m *ICefResponse) SetCharset(charset string) {
 }
 
 func (m *ICefResponse) GetHeaderByName(name string) string {
-	return api.DStrToGoStr(cefResponse_GetHeaderByName(m.instance, name))
+	return api.GoStr(cefResponse_GetHeaderByName(m.instance, name))
 }
 
 func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
@@ -89,28 +89,28 @@ func cefResponse_SetStatus(instance uintptr, error int32) {
 }
 
 func cefResponse_SetStatusText(instance uintptr, statusText string) {
-	Proc("cefResponse_SetStatusText").Call(instance, api.GoStrToDStr(statusText))
+	Proc("cefResponse_SetStatusText").Call(instance, api.PascalStr(statusText))
 }
 
 func cefResponse_SetMimeType(instance uintptr, mimetype string) {
-	Proc("cefResponse_SetMimeType").Call(instance, api.GoStrToDStr(mimetype))
+	Proc("cefResponse_SetMimeType").Call(instance, api.PascalStr(mimetype))
 }
 
 func cefResponse_SetCharset(instance uintptr, charset string) {
-	Proc("cefResponse_SetCharset").Call(instance, api.GoStrToDStr(charset))
+	Proc("cefResponse_SetCharset").Call(instance, api.PascalStr(charset))
 }
 
 func cefResponse_GetHeaderByName(instance uintptr, name string) uintptr {
-	r1, _, _ := Proc("cefResponse_GetHeaderByName").Call(instance, api.GoStrToDStr(name))
+	r1, _, _ := Proc("cefResponse_GetHeaderByName").Call(instance, api.PascalStr(name))
 	return r1
 }
 
 func cefResponse_SetHeaderByName(instance uintptr, name, value string, overwrite bool) {
-	Proc("cefResponse_SetHeaderByName").Call(instance, api.GoStrToDStr(name), api.GoStrToDStr(value), api.GoBoolToDBool(overwrite))
+	Proc("cefResponse_SetHeaderByName").Call(instance, api.PascalStr(name), api.PascalStr(value), api.PascalBool(overwrite))
 }
 
 func cefResponse_SetURL(instance uintptr, url string) {
-	Proc("cefResponse_SetURL").Call(instance, api.GoStrToDStr(url))
+	Proc("cefResponse_SetURL").Call(instance, api.PascalStr(url))
 }
 
 func cefResponse_GetHeaderMap(instance uintptr) uintptr {

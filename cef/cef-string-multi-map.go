@@ -27,16 +27,16 @@ func (m *ICefStringMultiMap) FindCount(key string) int {
 	return cefHeaderMap_FindCount(m.instance, key)
 }
 func (m *ICefStringMultiMap) GetEnumerate(key string, valueIndex int) string {
-	return api.DStrToGoStr(cefHeaderMap_GetEnumerate(m.instance, key, valueIndex))
+	return api.GoStr(cefHeaderMap_GetEnumerate(m.instance, key, valueIndex))
 }
 func (m *ICefStringMultiMap) GetKey(index int) string {
-	return api.DStrToGoStr(cefHeaderMap_GetKey(m.instance, index))
+	return api.GoStr(cefHeaderMap_GetKey(m.instance, index))
 }
 func (m *ICefStringMultiMap) GetValue(index int) string {
-	return api.DStrToGoStr(cefHeaderMap_GetValue(m.instance, index))
+	return api.GoStr(cefHeaderMap_GetValue(m.instance, index))
 }
 func (m *ICefStringMultiMap) Append(key, value string) bool {
-	return api.DBoolToGoBool(cefHeaderMap_Append(m.instance, key, value))
+	return api.GoBool(cefHeaderMap_Append(m.instance, key, value))
 }
 func (m *ICefStringMultiMap) Clear() {
 	cefHeaderMap_Clear(m.instance)
@@ -47,11 +47,11 @@ func cefHeaderMap_GetSize(instance uintptr) int {
 	return int(r1)
 }
 func cefHeaderMap_FindCount(instance uintptr, key string) int {
-	r1, _, _ := Proc("cefHeaderMap_FindCount").Call(instance, api.GoStrToDStr(key))
+	r1, _, _ := Proc("cefHeaderMap_FindCount").Call(instance, api.PascalStr(key))
 	return int(r1)
 }
 func cefHeaderMap_GetEnumerate(instance uintptr, key string, valueIndex int) uintptr {
-	r1, _, _ := Proc("cefHeaderMap_GetEnumerate").Call(instance, api.GoStrToDStr(key), uintptr(valueIndex))
+	r1, _, _ := Proc("cefHeaderMap_GetEnumerate").Call(instance, api.PascalStr(key), uintptr(valueIndex))
 	return r1
 }
 func cefHeaderMap_GetKey(instance uintptr, index int) uintptr {
@@ -63,7 +63,7 @@ func cefHeaderMap_GetValue(instance uintptr, index int) uintptr {
 	return r1
 }
 func cefHeaderMap_Append(instance uintptr, key, value string) uintptr {
-	r1, _, _ := Proc("cefHeaderMap_Append").Call(instance, api.GoStrToDStr(key), api.GoStrToDStr(value))
+	r1, _, _ := Proc("cefHeaderMap_Append").Call(instance, api.PascalStr(key), api.PascalStr(value))
 	return r1
 }
 func cefHeaderMap_Clear(instance uintptr) {

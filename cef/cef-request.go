@@ -44,7 +44,7 @@ type rICefRequest struct {
 
 //request
 func (m *ICefRequest) IsReadOnly() bool {
-	return api.DBoolToGoBool(cefRequest_IsReadOnly(m.instance))
+	return api.GoBool(cefRequest_IsReadOnly(m.instance))
 }
 
 func (m *ICefRequest) SetUrl(url string) {
@@ -68,7 +68,7 @@ func (m *ICefRequest) SetFirstPartyForCookies(url string) {
 }
 
 func (m *ICefRequest) GetHeaderByName(name string) string {
-	return api.DStrToGoStr(cefRequest_GetHeaderByName(m.instance, name))
+	return api.GoStr(cefRequest_GetHeaderByName(m.instance, name))
 }
 
 func (m *ICefRequest) SetHeaderByName(name, value string, overwrite bool) {
@@ -93,15 +93,15 @@ func cefRequest_IsReadOnly(instance uintptr) uintptr {
 }
 
 func cefRequest_SetUrl(instance uintptr, url string) {
-	Proc("cefRequest_SetUrl").Call(instance, api.GoStrToDStr(url))
+	Proc("cefRequest_SetUrl").Call(instance, api.PascalStr(url))
 }
 
 func cefRequest_SetMethod(instance uintptr, method string) {
-	Proc("cefRequest_SetMethod").Call(instance, api.GoStrToDStr(method))
+	Proc("cefRequest_SetMethod").Call(instance, api.PascalStr(method))
 }
 
 func cefRequest_SetReferrer(instance uintptr, referrerUrl string, policy TCefReferrerPolicy) {
-	Proc("cefRequest_SetReferrer").Call(instance, api.GoStrToDStr(referrerUrl), uintptr(policy))
+	Proc("cefRequest_SetReferrer").Call(instance, api.PascalStr(referrerUrl), uintptr(policy))
 }
 
 func cefRequest_SetFlags(instance uintptr, flags TCefUrlRequestFlags) {
@@ -109,16 +109,16 @@ func cefRequest_SetFlags(instance uintptr, flags TCefUrlRequestFlags) {
 }
 
 func cefRequest_SetFirstPartyForCookies(instance uintptr, url string) {
-	Proc("cefRequest_SetFirstPartyForCookies").Call(instance, api.GoStrToDStr(url))
+	Proc("cefRequest_SetFirstPartyForCookies").Call(instance, api.PascalStr(url))
 }
 
 func cefRequest_GetHeaderByName(instance uintptr, name string) uintptr {
-	r1, _, _ := Proc("cefRequest_GetHeaderByName").Call(instance, api.GoStrToDStr(name))
+	r1, _, _ := Proc("cefRequest_GetHeaderByName").Call(instance, api.PascalStr(name))
 	return r1
 }
 
 func cefRequest_SetHeaderByName(instance uintptr, url, value string, overwrite bool) {
-	Proc("cefRequest_SetHeaderByName").Call(instance, api.GoStrToDStr(url), api.GoStrToDStr(value), api.GoBoolToDBool(overwrite))
+	Proc("cefRequest_SetHeaderByName").Call(instance, api.PascalStr(url), api.PascalStr(value), api.PascalBool(overwrite))
 }
 
 func cefRequest_GetHeaderMap(instance uintptr) uintptr {

@@ -52,7 +52,7 @@ func _AddCustomCommandLine(commandLine, value uintptr) {
 }
 
 func _CEFApplication_ExecuteJS(browseId int32, jsCode string) {
-	Proc("CEFApplication_ExecuteJS").Call(uintptr(browseId), api.GoStrToDStr(jsCode))
+	Proc("CEFApplication_ExecuteJS").Call(uintptr(browseId), api.PascalStr(jsCode))
 }
 
 //--------TCEFApplication proc end--------
@@ -169,26 +169,26 @@ func _SetAnchors(name string, instance uintptr, value types.TAnchors) {
 func _GetVisible(name string, instance uintptr) bool {
 	name = Proc_Concat_Name(name, "GetVisible")
 	ret, _, _ := Proc(name).Call(instance)
-	return api.DBoolToGoBool(ret)
+	return api.GoBool(ret)
 }
 
 // _SetVisible 设置控件可视。
 func _SetVisible(name string, instance uintptr, value bool) {
 	name = Proc_Concat_Name(name, "SetVisible")
-	Proc(name).Call(instance, api.GoBoolToDBool(value))
+	Proc(name).Call(instance, api.PascalBool(value))
 }
 
 // _GetEnabled 获取是否启用
 func _GetEnabled(name string, instance uintptr) bool {
 	name = Proc_Concat_Name(name, "GetEnabled")
 	ret, _, _ := Proc(name).Call(instance)
-	return api.DBoolToGoBool(ret)
+	return api.GoBool(ret)
 }
 
 // _SetEnabled 设置是否启用
 func _SetEnabled(name string, instance uintptr, value bool) {
 	name = Proc_Concat_Name(name, "SetEnabled")
-	Proc(name).Call(instance, api.GoBoolToDBool(value))
+	Proc(name).Call(instance, api.PascalBool(value))
 }
 
 // _GetLeft 获取左边距
@@ -261,13 +261,13 @@ func _SetBoundsRect(name string, instance uintptr, value types.TRect) {
 func _GetName(name string, instance uintptr) string {
 	name = Proc_Concat_Name(name, "GetName")
 	ret, _, _ := Proc(name).Call(instance)
-	return api.DStrToGoStr(ret)
+	return api.GoStr(ret)
 }
 
 // _SetName 设置组件名称。
 func _SetName(name string, instance uintptr, value string) {
 	name = Proc_Concat_Name(name, "SetName")
-	Proc(name).Call(instance, api.GoStrToDStr(value))
+	Proc(name).Call(instance, api.PascalStr(value))
 }
 
 /* 通用 PROC --- end ---*/

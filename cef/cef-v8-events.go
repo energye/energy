@@ -38,9 +38,9 @@ func init() {
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browser, frame, TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
@@ -48,9 +48,9 @@ func init() {
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browser, frame, int32(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadError:
@@ -58,35 +58,35 @@ func init() {
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.DStrToGoStr(getVal(3)), api.DStrToGoStr(getVal(4)))
+			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadingStateChange:
 			browser := &ICefBrowser{browseId: int32(getVal(0))}
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.DBoolToGoBool(getVal(2)), api.DBoolToGoBool(getVal(3)), api.DBoolToGoBool(getVal(4)))
+			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case RenderProcessMessageReceived:
 			browser := &ICefBrowser{browseId: int32(getVal(0))}
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(3))
 			args := ipc.NewArgumentList()
 			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
 			processMessage := &ipc.ICefProcessMessage{
-				Name:         api.DStrToGoStr(cefProcMsg.Name),
+				Name:         api.GoStr(cefProcMsg.Name),
 				ArgumentList: args,
 			}
 			var result = (*bool)(getPtr(4))
@@ -102,9 +102,9 @@ func init() {
 			tempFrame := (*cefFrame)(getPtr(1))
 			frame := &ICefFrame{
 				Browser: browser,
-				Name:    api.DStrToGoStr(tempFrame.Name),
-				Url:     api.DStrToGoStr(tempFrame.Url),
-				Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			if strings.Index(frame.Url, "devtools://") == 0 {
 				processName = PT_DEVTOOLS
@@ -135,7 +135,7 @@ func init() {
 			ipc.IPC.SetPort()
 			commandLine.AppendSwitch(MAINARGS_NETIPCPORT, fmt.Sprintf("%d", ipc.IPC.Port()))
 			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(commandLine)
-			*commands = api.GoStrToDStr(commandLine.toString())
+			*commands = api.PascalStr(commandLine.toString())
 		default:
 			return false
 		}
@@ -146,5 +146,5 @@ func init() {
 func _SetCEFCallbackEvent(fnName CEF_ON_EVENTS, fn interface{}) {
 	var eventId = api.GetAddEventToMapFn()(CommonPtr.Instance(), fn)
 	//Logger.Debug("CEFApplication Event name:", fnName, "eventId:", eventId, "commonInstance.instance:", commonInstance.instance)
-	Proc("SetCEFCallbackEvent").Call(api.GoStrToDStr(string(fnName)), eventId)
+	Proc("SetCEFCallbackEvent").Call(api.PascalStr(string(fnName)), eventId)
 }

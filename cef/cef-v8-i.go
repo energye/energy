@@ -80,7 +80,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 		var vBind = &valueBindInfo{
 			BindType: uintptr(valueType),
 		}
-		vBind.Name = api.GoStrToDStr(jsValue.Name())
+		vBind.Name = api.PascalStr(jsValue.Name())
 		vBind.EventId = jsValue.getEventId()
 		valueBindInfos = append(valueBindInfos, vBind)
 		if jsValue.IsFunction() {
@@ -97,14 +97,14 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 				}
 				inParamBuf.WriteString(strconv.Itoa(int(inParamType.Jsv)))
 			}
-			vBind.FnInParamType = api.GoStrToDStr(inParamBuf.String())
+			vBind.FnInParamType = api.PascalStr(inParamBuf.String())
 			for i, outParamType := range fnInfo.OutParam {
 				if i > 0 {
 					outParamBuf.WriteString(",")
 				}
 				outParamBuf.WriteString(strconv.Itoa(int(outParamType.Jsv)))
 			}
-			vBind.FnOutParamType = api.GoStrToDStr(outParamBuf.String())
+			vBind.FnOutParamType = api.PascalStr(outParamBuf.String())
 		}
 	}
 	if len(valueBindInfos) > 0 {

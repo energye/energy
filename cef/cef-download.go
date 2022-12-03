@@ -112,5 +112,5 @@ func (m *ICefDownloadItemCallback) DownloadResume(browseId, downloadId int32) {
 //
 // showDialog 显示保存窗口
 func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) {
-	Proc("CEFChromium_SetDownloadPath").Call(m.instance, api.GoStrToDStr(downloadPath), api.GoBoolToDBool(showDialog))
+	Proc("CEFChromium_SetDownloadPath").Call(m.instance, api.PascalStr(downloadPath), api.PascalBool(showDialog))
 }

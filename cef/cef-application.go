@@ -43,7 +43,7 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 //启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != 0 {
-		b := api.DBoolToGoBool(_CEFStartMainProcess(m.instance))
+		b := api.GoBool(_CEFStartMainProcess(m.instance))
 		if b {
 			internalBrowserIPCOnEventInit()
 			ipc.IPC.StartBrowserIPC()
@@ -57,7 +57,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 //启动子进程, 如果指定了子进程执行程序将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() bool {
 	if m.instance != 0 {
-		b := api.DBoolToGoBool(_CEFStartSubProcess(m.instance))
+		b := api.GoBool(_CEFStartSubProcess(m.instance))
 		return b
 	}
 	return false
@@ -100,7 +100,7 @@ func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 }
 
 func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
-	_AddCustomCommandLine(api.GoStrToDStr(commandLine), api.GoStrToDStr(value))
+	_AddCustomCommandLine(api.PascalStr(commandLine), api.PascalStr(value))
 }
 
 //启动子进程之前自定义命令行参数设置

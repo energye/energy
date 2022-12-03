@@ -14,13 +14,13 @@ import (
 )
 
 func WindowInfoAsChild(windowInfo, windowHandle uintptr, windowName string) {
-	Proc("CEFWindowInfoAsChild").Call(windowInfo, windowHandle, api.GoStrToDStr(windowName))
+	Proc("CEFWindowInfoAsChild").Call(windowInfo, windowHandle, api.PascalStr(windowName))
 }
 
 func WindowInfoAsPopUp(windowInfo, windowParent uintptr, windowName string) {
-	Proc("CEFWindowInfoAsPopUp").Call(windowInfo, windowParent, api.GoStrToDStr(windowName))
+	Proc("CEFWindowInfoAsPopUp").Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
 func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string) {
-	Proc("CEFWindowInfoAsWindowless").Call(windowInfo, windowParent, api.GoStrToDStr(windowName))
+	Proc("CEFWindowInfoAsWindowless").Call(windowInfo, windowParent, api.PascalStr(windowName))
 }

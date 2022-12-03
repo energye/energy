@@ -179,7 +179,7 @@ func (m *TCEFChromium) NotifyMoveOrResizeStarted() {
 
 func (m *TCEFChromium) CloseBrowser(forceClose bool) {
 	if m.IsValid() {
-		_CEFChromium_CloseBrowser(m.instance, api.GoBoolToDBool(forceClose))
+		_CEFChromium_CloseBrowser(m.instance, api.PascalBool(forceClose))
 	}
 }
 
@@ -226,15 +226,15 @@ func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
 	proxy := &tCefProxy{
 		ProxyType:              uintptr(cefProxy.ProxyType),
 		ProxyScheme:            uintptr(cefProxy.ProxyScheme),
-		ProxyServer:            api.GoStrToDStr(cefProxy.ProxyServer),
+		ProxyServer:            api.PascalStr(cefProxy.ProxyServer),
 		ProxyPort:              uintptr(cefProxy.ProxyPort),
-		ProxyUsername:          api.GoStrToDStr(cefProxy.ProxyUsername),
-		ProxyPassword:          api.GoStrToDStr(cefProxy.ProxyPassword),
-		ProxyScriptURL:         api.GoStrToDStr(cefProxy.ProxyScriptURL),
-		ProxyByPassList:        api.GoStrToDStr(cefProxy.ProxyByPassList),
+		ProxyUsername:          api.PascalStr(cefProxy.ProxyUsername),
+		ProxyPassword:          api.PascalStr(cefProxy.ProxyPassword),
+		ProxyScriptURL:         api.PascalStr(cefProxy.ProxyScriptURL),
+		ProxyByPassList:        api.PascalStr(cefProxy.ProxyByPassList),
 		MaxConnectionsPerProxy: uintptr(cefProxy.MaxConnectionsPerProxy),
-		CustomHeaderName:       api.GoStrToDStr(cefProxy.CustomHeaderName),
-		CustomHeaderValue:      api.GoStrToDStr(cefProxy.CustomHeaderValue),
+		CustomHeaderName:       api.PascalStr(cefProxy.CustomHeaderName),
+		CustomHeaderValue:      api.PascalStr(cefProxy.CustomHeaderValue),
 	}
 	_CEFChromium_SetProxy(m.instance, proxy)
 }
@@ -261,16 +261,16 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMes
 }
 
 func (m *TCEFChromium) CreateClientHandler(client *ICefClient, alsOSR bool) bool {
-	return api.DBoolToGoBool(_CEFChromium_CreateClientHandler(m.instance, client.instance, api.GoBoolToDBool(alsOSR)))
+	return api.GoBool(_CEFChromium_CreateClientHandler(m.instance, client.instance, api.PascalBool(alsOSR)))
 }
 func (m *TCEFChromium) SetFocus(value bool) {
-	_CEFChromium_SetFocus(m.instance, api.GoBoolToDBool(value))
+	_CEFChromium_SetFocus(m.instance, api.PascalBool(value))
 }
 func (m *TCEFChromium) SendCaptureLostEvent() {
 	_CEFChromium_SendCaptureLostEvent(m.instance)
 }
 func (m *TCEFChromium) FrameIsFocused() bool {
-	return api.DBoolToGoBool(_CEFChromium_FrameIsFocused(m.instance))
+	return api.GoBool(_CEFChromium_FrameIsFocused(m.instance))
 }
 
 //--------TCEFChromium proc begin--------
@@ -283,32 +283,32 @@ func _CEFChromium_Create(owner, config uintptr) uintptr {
 
 // TCEFChromium _CEFChromium_SetDefaultURL
 func _CEFChromium_SetDefaultURL(instance uintptr, url string) {
-	Proc("CEFChromium_SetDefaultURL").Call(instance, api.GoStrToDStr(url))
+	Proc("CEFChromium_SetDefaultURL").Call(instance, api.PascalStr(url))
 }
 
 // TCEFChromium _CEFChromium_SetDefaultURL
 func _CEFChromium_SetMultiBrowserMode(instance uintptr, url bool) {
-	Proc("CEFChromium_SetMultiBrowserMode").Call(instance, api.GoBoolToDBool(url))
+	Proc("CEFChromium_SetMultiBrowserMode").Call(instance, api.PascalBool(url))
 }
 
 // TCEFChromium _CEFChromium_LoadURL
 func _CEFChromium_LoadURL(instance uintptr, url string) {
-	Proc("CEFChromium_LoadURL").Call(instance, api.GoStrToDStr(url))
+	Proc("CEFChromium_LoadURL").Call(instance, api.PascalStr(url))
 }
 
 // TCEFChromium _CEFChromium_LoadString
 func _CEFChromium_LoadString(instance uintptr, html string) {
-	Proc("CEFChromium_LoadString").Call(instance, api.GoStrToDStr(html))
+	Proc("CEFChromium_LoadString").Call(instance, api.PascalStr(html))
 }
 
 // TCEFChromium _CEFChromium_StartDownload
 func _CEFChromium_StartDownload(instance uintptr, url string) {
-	Proc("CEFChromium_StartDownload").Call(instance, api.GoStrToDStr(url))
+	Proc("CEFChromium_StartDownload").Call(instance, api.PascalStr(url))
 }
 
 // TCEFChromium _CEFChromium_DownloadImage
 func _CEFChromium_DownloadImage(instance uintptr, imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool) {
-	Proc("CEFChromium_DownloadImage").Call(instance, api.GoStrToDStr(imageUrl), api.GoBoolToDBool(isFavicon), uintptr(maxImageSize), api.GoBoolToDBool(bypassCache))
+	Proc("CEFChromium_DownloadImage").Call(instance, api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache))
 }
 
 // TCEFChromium _CEFChromium_Reload
@@ -334,19 +334,19 @@ func _CEFChromium_CloseAllBrowses(instance uintptr) {
 // TCEFChromium _CEFChromium_CreateBrowseByWindow
 func _CEFChromium_CreateBrowseByWindow(instance, window uintptr) bool {
 	r1, _, _ := Proc("CEFChromium_CreateBrowserByWindow").Call(instance, window)
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 // TCEFChromium _CEFChromium_CreateBrowseByLinkedWindow
 func _CEFChromium_CreateBrowseByLinkedWindow(instance, window uintptr) bool {
 	r1, _, _ := Proc("CEFChromium_CreateBrowserByLinkedWindow").Call(instance, window)
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 // TCEFChromium _CEFChromium_Initialized
 func _CEFChromium_Initialized(instance uintptr) bool {
 	r1, _, _ := Proc("CEFChromium_Initialized").Call(instance)
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 // TCEFChromium _CEFChromium_GetBrowserId
@@ -358,12 +358,12 @@ func _CEFChromium_GetBrowserId(instance uintptr) int32 {
 // TCEFChromium _CEFChromium_IsSameBrowser
 func _CEFChromium_IsSameBrowser(instance, browser uintptr) bool {
 	r1, _, _ := Proc("CEFChromium_IsSameBrowser").Call(instance, browser)
-	return api.DBoolToGoBool(r1)
+	return api.GoBool(r1)
 }
 
 // TCEFChromium _CEFChromium_PrintToPDF
 func _CEFChromium_PrintToPDF(instance uintptr, saveFilePath string) {
-	Proc("CEFChromium_PrintToPDF").Call(instance, api.GoStrToDStr(saveFilePath))
+	Proc("CEFChromium_PrintToPDF").Call(instance, api.PascalStr(saveFilePath))
 }
 
 // TCEFChromium _CEFChromium_Print
@@ -408,7 +408,7 @@ func _CEFChromium_CloseBrowser(instance, forceClose uintptr) {
 
 // TCEFChromium _CEFChromium_ExecuteJavaScript
 func _CEFChromium_ExecuteJavaScript(instance uintptr, code, scriptURL string, startLine int32) {
-	Proc("CEFChromium_ExecuteJavaScript").Call(instance, api.GoStrToDStr(code), api.GoStrToDStr(scriptURL), uintptr(startLine))
+	Proc("CEFChromium_ExecuteJavaScript").Call(instance, api.PascalStr(code), api.PascalStr(scriptURL), uintptr(startLine))
 }
 
 // TCEFChromium _CEFChromium_ShowDevTools
@@ -434,12 +434,12 @@ func _CEFChromium_VisitAllCookies(instance uintptr, id int32) {
 
 // TCEFChromium _CEFChromium_VisitURLCookies
 func _CEFChromium_VisitURLCookies(instance uintptr, url string, includeHttpOnly bool, id int32) {
-	Proc("CEFChromium_VisitURLCookies").Call(instance, api.GoStrToDStr(url), api.GoBoolToDBool(includeHttpOnly), uintptr(id))
+	Proc("CEFChromium_VisitURLCookies").Call(instance, api.PascalStr(url), api.PascalBool(includeHttpOnly), uintptr(id))
 }
 
 // TCEFChromium _CEFChromium_DeleteCookies
 func _CEFChromium_DeleteCookies(instance uintptr, url, cookieName string, deleteImmediately bool) {
-	Proc("CEFChromium_DeleteCookies").Call(instance, api.GoStrToDStr(url), api.GoStrToDStr(cookieName), api.GoBoolToDBool(deleteImmediately))
+	Proc("CEFChromium_DeleteCookies").Call(instance, api.PascalStr(url), api.PascalStr(cookieName), api.PascalBool(deleteImmediately))
 }
 
 // TCEFChromium _CEFChromium_SetCookie
@@ -451,20 +451,20 @@ func _CEFChromium_SetCookie(instance uintptr, url, name, value, domain, path str
 	lastAccessPtr := GoDateTimeToDDateTime(lastAccess)
 	expiresPtr := GoDateTimeToDDateTime(expires)
 	cCookie := &cefCookie{
-		url:             api.GoStrToDStr(url),
-		name:            api.GoStrToDStr(name),
-		value:           api.GoStrToDStr(value),
-		domain:          api.GoStrToDStr(domain),
-		path:            api.GoStrToDStr(path),
-		secure:          api.GoBoolToDBool(secure),
-		httponly:        api.GoBoolToDBool(httponly),
-		hasExpires:      api.GoBoolToDBool(hasExpires),
+		url:             api.PascalStr(url),
+		name:            api.PascalStr(name),
+		value:           api.PascalStr(value),
+		domain:          api.PascalStr(domain),
+		path:            api.PascalStr(path),
+		secure:          api.PascalBool(secure),
+		httponly:        api.PascalBool(httponly),
+		hasExpires:      api.PascalBool(hasExpires),
 		creation:        uintptr(unsafe.Pointer(&creationPtr)),
 		lastAccess:      uintptr(unsafe.Pointer(&lastAccessPtr)),
 		expires:         uintptr(unsafe.Pointer(&expiresPtr)),
 		sameSite:        uintptr(sameSite),
 		priority:        uintptr(priority),
-		aSetImmediately: api.GoBoolToDBool(aSetImmediately),
+		aSetImmediately: api.PascalBool(aSetImmediately),
 		aID:             uintptr(aID),
 		aDeleteCookie:   uintptr(0),
 		aResult:         uintptr(0),
@@ -505,7 +505,7 @@ func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, metho
 	} else {
 		dataPtr = unsafe.Pointer(&data)
 	}
-	Proc("CEFChromium_ExecuteDevToolsMethod").Call(instance, uintptr(messageId), api.GoStrToDStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
+	Proc("CEFChromium_ExecuteDevToolsMethod").Call(instance, uintptr(messageId), api.PascalStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
 }
 
 // TCEFChromium  _CEFChromium_CreateClientHandler

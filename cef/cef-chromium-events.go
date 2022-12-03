@@ -203,13 +203,13 @@ func (m *TCEFChromium) SetOnBeforeContextMenu(fn ChromiumEventOnBeforeContextMen
 }
 
 func (m *TCEFChromium) SetOnContextMenuCommand(fn ChromiumEventOnContextMenuCommand) {
-	if api.DBoolToGoBool(m.cfg.enableMenu) {
+	if api.GoBool(m.cfg.enableMenu) {
 		_CEFChromium_SetOnContextMenuCommand(m.instance, fn, m.independentEvent)
 	}
 }
 
 func (m *TCEFChromium) SetOnContextMenuDismissed(fn ChromiumEventOnContextMenuDismissed) {
-	if api.DBoolToGoBool(m.cfg.enableMenu) {
+	if api.GoBool(m.cfg.enableMenu) {
 		_CEFChromium_SetOnContextMenuDismissed(m.instance, fn, m.independentEvent)
 	}
 }

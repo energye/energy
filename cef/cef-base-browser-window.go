@@ -346,7 +346,7 @@ func (m *BaseWindow) activate(sender lcl.IObject) {
 func (m *BaseWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, windowInfo *TCefWindowInfo, noJavascriptAccess *bool) bool {
-		if !api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
+		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
 		if bwEvent.onBeforePopup != nil {
@@ -398,7 +398,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 	defaultAcceleratorCustom()
 	//事件可以被覆盖
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
-		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 				if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
 					return

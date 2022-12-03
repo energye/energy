@@ -85,7 +85,7 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		winAuxTools.devToolsWindow.Show()
 		//明确的生成下一个窗体序号
 		BrowserWindow.setOrIncNextWindowNum()
-		_CEFBrowser_ShowDevTools(winAuxTools.devToolsWindow.chromium.Instance(), uintptr(browser.Identifier()), winAuxTools.devToolsWindow.windowParent.Instance(), api.GoStrToDStr(dev_tools_name))
+		_CEFBrowser_ShowDevTools(winAuxTools.devToolsWindow.chromium.Instance(), uintptr(browser.Identifier()), winAuxTools.devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 	})
 }
 

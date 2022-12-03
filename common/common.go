@@ -111,7 +111,7 @@ func DStrToGoStr(ustr uintptr, len int) string {
 }
 
 func GoStrToDStr(s string) uintptr {
-	return api.GoStrToDStr(s)
+	return api.PascalStr(s)
 }
 
 // 获取参数指针

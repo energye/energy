@@ -154,7 +154,7 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 		cofs = make([]*valueBindInfo, fieldLen, fieldLen)
 		for fieldName, fi := range info.FieldsInfo {
 			cofs[i] = &valueBindInfo{
-				Name:     api.GoStrToDStr(fieldName),
+				Name:     api.PascalStr(fieldName),
 				EventId:  fi.EventId,
 				BindType: uintptr(fi.ValueType.Jsv),
 			}
@@ -183,13 +183,13 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 				outParamBuf.WriteString(strconv.Itoa(int(outParanType.Jsv)))
 			}
 			fns[i] = &valueBindInfo{
-				Name:           api.GoStrToDStr(fnName),
+				Name:           api.PascalStr(fnName),
 				EventId:        fn.EventId,
 				BindType:       uintptr(V8_VALUE_FUNCTION),
 				FnInNum:        uintptr(fn.InNum),
-				FnInParamType:  api.GoStrToDStr(inParamBuf.String()),
+				FnInParamType:  api.PascalStr(inParamBuf.String()),
 				FnOutNum:       uintptr(fn.OutNum),
-				FnOutParamType: api.GoStrToDStr(outParamBuf.String()),
+				FnOutParamType: api.PascalStr(outParamBuf.String()),
 			}
 			i++
 			m.createObjectFuncVariable(info.FullObjName, fnName, fn)
@@ -199,8 +199,8 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 	co := &cefObject{
 		Id:          info.Instance,
 		ParentId:    info.ParentInstance,
-		Name:        api.GoStrToDStr(info.ObjName),
-		FullObjName: api.GoStrToDStr(info.FullObjName),
+		Name:        api.PascalStr(info.ObjName),
+		FullObjName: api.PascalStr(info.FullObjName),
 		FieldLen:    uintptr(fieldLen),
 		Fields:      fieldPtr,
 		FuncLen:     uintptr(funcLen),

@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/golcl/tools/winRes"
+	"github.com/energye/golcl/energy/tools/winRes"
 )
 
 func main() {

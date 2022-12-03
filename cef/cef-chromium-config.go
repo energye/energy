@@ -22,47 +22,47 @@ type tCefChromiumConfig struct {
 //New CefChromiumConfig 默认禁用相关功能
 func NewChromiumConfig() *tCefChromiumConfig {
 	return &tCefChromiumConfig{
-		enableMenu:        api.GoBoolToDBool(false),
-		enableViewSource:  api.GoBoolToDBool(false),
-		enableDevTools:    api.GoBoolToDBool(false),
-		enableWindowPopup: api.GoBoolToDBool(false),
-		enableOpenUrlTab:  api.GoBoolToDBool(false),
-		enabledJavascript: api.GoBoolToDBool(false),
+		enableMenu:        api.PascalBool(false),
+		enableViewSource:  api.PascalBool(false),
+		enableDevTools:    api.PascalBool(false),
+		enableWindowPopup: api.PascalBool(false),
+		enableOpenUrlTab:  api.PascalBool(false),
+		enabledJavascript: api.PascalBool(false),
 	}
 }
 
 //设置启用右键菜单
 func (m *tCefChromiumConfig) SetEnableMenu(value bool) *tCefChromiumConfig {
-	m.enableMenu = api.GoBoolToDBool(value)
+	m.enableMenu = api.PascalBool(value)
 	return m
 }
 
 //设置启用查询源文件
 func (m *tCefChromiumConfig) SetEnableViewSource(value bool) *tCefChromiumConfig {
-	m.enableViewSource = api.GoBoolToDBool(value)
+	m.enableViewSource = api.PascalBool(value)
 	return m
 }
 
 //设置启用开发者工具
 func (m *tCefChromiumConfig) SetEnableDevTools(value bool) *tCefChromiumConfig {
-	m.enableDevTools = api.GoBoolToDBool(value)
+	m.enableDevTools = api.PascalBool(value)
 	return m
 }
 
 //设置启用打开链接弹出新窗口
 func (m *tCefChromiumConfig) SetEnableWindowPopup(value bool) *tCefChromiumConfig {
-	m.enableWindowPopup = api.GoBoolToDBool(value)
+	m.enableWindowPopup = api.PascalBool(value)
 	return m
 }
 
 //设置启用打开链接打开新tab
 func (m *tCefChromiumConfig) SetEnableOpenUrlTab(value bool) *tCefChromiumConfig {
-	m.enableOpenUrlTab = api.GoBoolToDBool(value)
+	m.enableOpenUrlTab = api.PascalBool(value)
 	return m
 }
 
 //设置启用Javascript
 func (m *tCefChromiumConfig) SetEnabledJavascript(value bool) *tCefChromiumConfig {
-	m.enabledJavascript = api.GoBoolToDBool(value)
+	m.enabledJavascript = api.PascalBool(value)
 	return m
 }

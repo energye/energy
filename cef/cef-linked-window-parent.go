@@ -37,7 +37,7 @@ func (m *TCEFLinkedWindowParent) SetChromium(chromium IChromium, tag int32) {
 }
 
 func (m *TCEFLinkedWindowParent) HandleAllocated() bool {
-	return api.DBoolToGoBool(_HandleAllocated(m.procName, m.instance))
+	return api.GoBool(_HandleAllocated(m.procName, m.instance))
 }
 
 func (m *TCEFLinkedWindowParent) CreateHandle() {
@@ -45,7 +45,7 @@ func (m *TCEFLinkedWindowParent) CreateHandle() {
 }
 
 func (m *TCEFLinkedWindowParent) DestroyChildWindow() bool {
-	return api.DBoolToGoBool(_DestroyChildWindow(m.procName, m.instance))
+	return api.GoBool(_DestroyChildWindow(m.procName, m.instance))
 }
 
 func (m *TCEFLinkedWindowParent) SetOnEnter(fn lcl.TNotifyEvent) {
