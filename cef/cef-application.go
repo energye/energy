@@ -18,9 +18,7 @@ import (
 
 //CEF应用对象
 type TCEFApplication struct {
-	instance uintptr
-	ptr      unsafe.Pointer
-	procName string
+	instance unsafe.Pointer
 }
 
 //创建应用程序
@@ -30,9 +28,7 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	}
 	cfg.framework()
 	m := new(TCEFApplication)
-	m.procName = "CEFApplication"
-	m.instance = _CEFApplication_Create(uintptr(unsafe.Pointer(cfg)))
-	m.ptr = unsafe.Pointer(m.instance)
+	m.instance = unsafe.Pointer(_CEFApplication_Create(uintptr(unsafe.Pointer(cfg))))
 	//注册默认的函数
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
@@ -40,10 +36,14 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	return m
 }
 
+func (m *TCEFApplication) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
 //启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
-	if m.instance != 0 {
-		b := api.GoBool(_CEFStartMainProcess(m.instance))
+	if m.instance != nullptr {
+		b := api.GoBool(_CEFStartMainProcess(m.Instance()))
 		if b {
 			internalBrowserIPCOnEventInit()
 			ipc.IPC.StartBrowserIPC()
@@ -56,17 +56,17 @@ func (m *TCEFApplication) StartMainProcess() bool {
 
 //启动子进程, 如果指定了子进程执行程序将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() bool {
-	if m.instance != 0 {
-		b := api.GoBool(_CEFStartSubProcess(m.instance))
+	if m.instance != nullptr {
+		b := api.GoBool(_CEFStartSubProcess(m.Instance()))
 		return b
 	}
 	return false
 }
 
 func (m *TCEFApplication) Free() {
-	if m.instance != 0 {
+	if m.instance != nullptr {
 		_CEFApplication_Free()
-		m.instance, m.ptr = 0, nullptr
+		m.instance = nullptr
 	}
 }
 

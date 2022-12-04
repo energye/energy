@@ -17,42 +17,32 @@ import (
 
 //--------TCEFApplication proc begin--------
 
-// TCEFApplication AddCrDelegate
-func AddCrDelegate() uintptr {
-	r1, _, _ := Proc("CEF_AddCrDelegate").Call()
-	return r1
-}
-
 // TCEFApplication _CEFApplication_Create
 func _CEFApplication_Create(config uintptr) uintptr {
-	r1, _, _ := Proc("CEFApplication_Create").Call(config)
-	return r1
+	return api.EnergyDefSyscallN(internale_CEFApplication_Create, config)
 }
 
 // TCEFApplication _CEFApplication_Free
 func _CEFApplication_Free() uintptr {
-	r1, _, _ := Proc("CEFApplication_Free").Call()
-	return r1
+	return api.EnergyDefSyscallN(internale_CEFApplication_Free)
 }
 
 // TCEFApplication _CEFStartMainProcess
 func _CEFStartMainProcess(instance uintptr) uintptr {
-	r1, _, _ := Proc("CEFStartMainProcess").Call(instance)
-	return r1
+	return api.EnergyDefSyscallN(internale_CEFStartMainProcess, instance)
 }
 
 // TCEFApplication _CEFStartSubProcess
 func _CEFStartSubProcess(instance uintptr) uintptr {
-	r1, _, _ := Proc("CEFStartSubProcess").Call(instance)
-	return r1
+	return api.EnergyDefSyscallN(internale_CEFStartSubProcess, instance)
 }
 
 func _AddCustomCommandLine(commandLine, value uintptr) {
-	Proc("AddCustomCommandLine").Call(commandLine, value)
+	api.EnergyDefSyscallN(internale_AddCustomCommandLine, commandLine, value)
 }
 
 func _CEFApplication_ExecuteJS(browseId int32, jsCode string) {
-	Proc("CEFApplication_ExecuteJS").Call(uintptr(browseId), api.PascalStr(jsCode))
+	api.EnergyDefSyscallN(internale_CEFApplication_ExecuteJS, uintptr(browseId), api.PascalStr(jsCode))
 }
 
 //--------TCEFApplication proc end--------
@@ -61,7 +51,7 @@ func _CEFApplication_ExecuteJS(browseId int32, jsCode string) {
 
 // TCEFWindowParent _CEFWindow_UpdateSize
 func _CEFWindow_UpdateSize(instance uintptr) {
-	Proc("CEFWindow_UpdateSize").Call(instance)
+	api.EnergyDefSyscallN(internale_CEFWindow_UpdateSize, instance)
 }
 
 func _CEFWindow_OnEnter(instance uintptr, fn interface{}) {

@@ -18,12 +18,12 @@ import (
 )
 
 var (
-	nullptr        = unsafe.Pointer(uintptr(0)) //
-	commonRootName = "gocobj"                   //ICEFv8Value 通用类型变量属性的所属默认对象名称
-	objectRootName = "goobj"                    //ICEFv8Value 对象类型变量属性的所属默认对象名称
-	DownloadsDir   string                       //下载目录
-	enableGPU      = false                      //启用GPU true启用 false不启用
-	processName    common.PRCESS_TYPE           //进程名称
+	nullptr        unsafe.Pointer     = nil      //
+	commonRootName                    = "gocobj" //ICEFv8Value 通用类型变量属性的所属默认对象名称
+	objectRootName                    = "goobj"  //ICEFv8Value 对象类型变量属性的所属默认对象名称
+	DownloadsDir   string                        //下载目录
+	enableGPU      = false                       //启用GPU true启用 false不启用
+	processName    common.PRCESS_TYPE            //进程名称
 )
 
 type initBindVariableCallback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)
