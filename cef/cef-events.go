@@ -134,8 +134,8 @@ func init() {
 			fn.(ChromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))
 		case ChromiumEventOnBeforeResourceLoad:
 			sender, browse, frame, request, _ := resourceEventGet(fn, getVal, false)
-			instance, ptr = getInstance(getVal(4))
-			callback := &ICefCallback{instance: instance, ptr: ptr}
+			_, ptr = getInstance(getVal(4))
+			callback := &ICefCallback{instance: ptr}
 			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*TCefReturnValue)(getPtr(5)))
 		//menu begin
 		case ChromiumEventOnBeforeContextMenu:

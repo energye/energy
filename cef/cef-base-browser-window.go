@@ -182,7 +182,7 @@ func (m *BaseWindow) putChromiumWindowInfo() {
 //默认的chromium事件
 func (m *BaseWindow) defaultChromiumEvent() {
 	if m.WindowType() != WT_DEV_TOOLS {
-		Proc("CEF_AddGoForm").Call(uintptr(m.windowId), m.Instance())
+		AddGoForm(m.windowId, m.Instance())
 		m.registerDefaultEvent()
 		m.registerDefaultChromiumCloseEvent()
 	}

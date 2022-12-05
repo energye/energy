@@ -48,7 +48,8 @@ type IChromium interface {
 }
 
 type TCEFChromium struct {
-	BaseComponent
+	lcl.TComponent
+	instance         unsafe.Pointer
 	cfg              *tCefChromiumConfig
 	independentEvent bool
 	emitLock         *sync.Mutex
@@ -56,16 +57,18 @@ type TCEFChromium struct {
 
 func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
 	m := new(TCEFChromium)
-	m.procName = "CEFChromium"
 	if config != nil {
 		m.cfg = config
 	} else {
 		m.cfg = NewChromiumConfig()
 	}
-	m.instance = _CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg)))
-	m.ptr = unsafe.Pointer(m.instance)
+	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg))))
 	m.emitLock = new(sync.Mutex)
 	return m
+}
+
+func (m *TCEFChromium) Instance() uintptr {
+	return uintptr(m.instance)
 }
 
 func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
@@ -106,7 +109,7 @@ func (m *TCEFChromium) On(name string, eventCallback ipc.EventCallback) {
 //
 // startLine: js脚本启始执行行号
 func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32) {
-	_CEFChromium_ExecuteJavaScript(m.instance, code, scriptURL, startLine)
+	_CEFChromium_ExecuteJavaScript(uintptr(m.instance), code, scriptURL, startLine)
 }
 
 // 触发JS监听的事件-异步执行

@@ -14,14 +14,13 @@ import (
 )
 
 type ICefCallback struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
 }
 
 func (m *ICefCallback) Cont() {
-	Proc("cefCallback_Cont").Call(m.instance)
+	Proc(internale_cefCallback_Cont).Call(uintptr(m.instance))
 }
 
 func (m *ICefCallback) Cancel() {
-	Proc("cefCallback_Cancel").Call(m.instance)
+	Proc(internale_cefCallback_Cancel).Call(uintptr(m.instance))
 }

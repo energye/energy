@@ -240,7 +240,7 @@ func (m *browser) putWindowInfo(browserId int32, windowInfo *TCefWindowInfo) {
 
 func (m *browser) removeWindowInfo(browseId int32) {
 	delete(m.windowInfo, browseId)
-	Proc("CEF_RemoveGoForm").Call(uintptr(browseId))
+	RemoveGoForm(browseId)
 }
 
 func (m *browser) GetBrowser(browseId int32) *ICefBrowser {

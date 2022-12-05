@@ -26,3 +26,11 @@ func CommonInstanceInit() {
 	r1, _, _ := Proc(internale_CEFApplication_GetCommonInstance).Call()
 	CommonPtr.SetInstance(unsafe.Pointer(r1))
 }
+
+func AddGoForm(windowId int32, instance uintptr) {
+	Proc(internale_CEF_AddGoForm).Call(uintptr(windowId), instance)
+}
+
+func RemoveGoForm(windowId int32) {
+	Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
+}

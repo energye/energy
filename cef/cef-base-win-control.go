@@ -23,6 +23,6 @@ func (m *BaseWinControl) IsValid() bool {
 }
 
 //Instance 当前实例
-func (m *BaseWinControl) Instance() unsafe.Pointer {
-	return m.instance
+func (m *BaseWinControl) Instance() uintptr {
+	return uintptr(m.instance)
 }
