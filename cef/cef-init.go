@@ -14,7 +14,7 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/inits"
+	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 )
 

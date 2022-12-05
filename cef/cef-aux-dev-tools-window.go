@@ -10,7 +10,6 @@ package cef
 
 import (
 	"fmt"
-	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -87,9 +86,4 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		BrowserWindow.setOrIncNextWindowNum()
 		_CEFBrowser_ShowDevTools(winAuxTools.devToolsWindow.chromium.Instance(), uintptr(browser.Identifier()), winAuxTools.devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 	})
-}
-
-// ICefBrowser _CEFBrowser_ShowDevTools
-func _CEFBrowser_ShowDevTools(chromium, browser, windowParent, name uintptr) {
-	Proc("CEFBrowser_ShowDevTools").Call(chromium, browser, windowParent, name)
 }

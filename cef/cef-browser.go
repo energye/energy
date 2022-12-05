@@ -19,6 +19,7 @@ import (
 
 //type ICefBrowser
 type ICefBrowser struct {
+	instance unsafe.Pointer
 	browseId int32
 	chromium uintptr
 }
@@ -44,16 +45,12 @@ func (m *ICefBrowser) GetFrameId() int64 {
 	return 0
 }
 
-func (m *ICefBrowser) Free() {
-	m.browseId = 0
-}
-
 func (m *ICefBrowser) Instance() uintptr {
-	return uintptr(m.browseId)
+	return uintptr(m.instance)
 }
 
 func (m *ICefBrowser) IsValid() bool {
-	return uintptr(m.browseId) != 0
+	return m.instance != nullptr
 }
 
 //得到浏览器ID号
@@ -342,4 +339,9 @@ func (m *ICefBrowser) Find(searchText string, forward, matchCase, findNext bool)
 
 func (m *ICefBrowser) StopFinding(clearSelection bool) {
 	Proc("CEFBrowser_StopFinding").Call(uintptr(m.browseId), api.PascalBool(clearSelection))
+}
+
+// ICefBrowser _CEFBrowser_ShowDevTools
+func _CEFBrowser_ShowDevTools(chromium, browser, windowParent, name uintptr) {
+	Proc("CEFBrowser_ShowDevTools").Call(chromium, browser, windowParent, name)
 }

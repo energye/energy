@@ -10,6 +10,7 @@ package cef
 
 import (
 	"bytes"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -109,7 +110,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	}
 	if len(valueBindInfos) > 0 {
 		for i := 0; i < len(valueBindInfos); i++ {
-			_CEFV8ValueRef_CommonValueBindInfo(uintptr(unsafe.Pointer(valueBindInfos[i])))
+			common.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
 		}
 	}
 }

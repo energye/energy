@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/common"
+	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
@@ -28,7 +28,8 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	}
 	cfg.framework()
 	m := new(TCEFApplication)
-	m.instance = unsafe.Pointer(_CEFApplication_Create(uintptr(unsafe.Pointer(cfg))))
+	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
+	m.instance = unsafe.Pointer(r1)
 	//注册默认的函数
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
@@ -43,7 +44,8 @@ func (m *TCEFApplication) Instance() uintptr {
 //启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nullptr {
-		b := api.GoBool(_CEFStartMainProcess(m.Instance()))
+		r1, _, _ := Proc(internale_CEFStartMainProcess).Call(m.Instance())
+		var b = api.GoBool(r1)
 		if b {
 			internalBrowserIPCOnEventInit()
 			ipc.IPC.StartBrowserIPC()
@@ -57,17 +59,21 @@ func (m *TCEFApplication) StartMainProcess() bool {
 //启动子进程, 如果指定了子进程执行程序将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() bool {
 	if m.instance != nullptr {
-		b := api.GoBool(_CEFStartSubProcess(m.Instance()))
-		return b
+		r1, _, _ := Proc(internale_CEFStartSubProcess).Call(m.Instance())
+		return api.GoBool(r1)
 	}
 	return false
 }
 
 func (m *TCEFApplication) Free() {
 	if m.instance != nullptr {
-		_CEFApplication_Free()
+		Proc(internale_CEFApplication_Free).Call()
 		m.instance = nullptr
 	}
+}
+
+func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
+	Proc(internale_CEFApplication_ExecuteJS).Call()
 }
 
 //上下文件创建回调
@@ -78,6 +84,7 @@ func (m *TCEFApplication) Free() {
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
 	_SetCEFCallbackEvent(OnContextCreated, fn)
 }
+
 func (m *TCEFApplication) defaultSetOnContextCreated() {
 	m.SetOnContextCreated(func(browse *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool {
 		return false
@@ -100,12 +107,12 @@ func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 }
 
 func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
-	_AddCustomCommandLine(api.PascalStr(commandLine), api.PascalStr(value))
+	Proc(internale_AddCustomCommandLine).Call(api.PascalStr(commandLine), api.PascalStr(value))
 }
 
 //启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
-	if common.Args.IsMain() {
+	if Args.IsMain() {
 		_SetCEFCallbackEvent(OnBeforeChildProcessLaunch, fn)
 	}
 }

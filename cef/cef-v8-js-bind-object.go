@@ -206,7 +206,7 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 		FuncLen:     uintptr(funcLen),
 		Funcs:       funcPtr,
 	}
-	_CEFV8ValueRef_ObjectValueBindInfo(uintptr(unsafe.Pointer(co)))
+	common.Proc(internale_CEFV8ValueRef_ObjectValueBindInfo).Call(uintptr(unsafe.Pointer(co)))
 }
 
 //创建 结构对象的字段变量

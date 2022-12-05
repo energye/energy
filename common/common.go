@@ -15,9 +15,9 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/decimal"
-	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"reflect"
 	"runtime"
@@ -34,24 +34,19 @@ var (
 
 type commonInstance struct {
 	lcl.IObject
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
 }
 
-func (m *commonInstance) Ptr() unsafe.Pointer {
-	return m.ptr
+func (m *commonInstance) SetInstance(instance unsafe.Pointer) {
+	m.instance = instance
 }
-func (m *commonInstance) Instance() uintptr {
+
+func (m *commonInstance) Instance() unsafe.Pointer {
 	return m.instance
 }
 
-//Proc_Concat_Name 名称获取
-func Proc_Concat_Name(procName, methodName string) string {
-	return procName + "_" + methodName
-}
-
-func Proc(name string) *dylib.LazyProc {
-	return api.GetLazyProc(name)
+func Proc(index int) dllimports.ProcAddr {
+	return api.EnergyDefSyscallN(index)
 }
 
 func IsWindows() bool {
@@ -770,12 +765,6 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 		}
 	}
 	return -1
-}
-
-func CommonInstanceInit() {
-	r1, _, _ := Proc("CEFApplication_GetCommonInstance").Call()
-	CommonPtr.instance = r1
-	CommonPtr.ptr = unsafe.Pointer(r1)
 }
 
 //获取指针的指针的地址

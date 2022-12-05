@@ -11,8 +11,8 @@ package cef
 import (
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/tools"
 	"os"
 	"path/filepath"
 )
@@ -184,7 +184,7 @@ func (m *tCefApplicationConfig) SetCommonRootName(name string) {
 	} else {
 		commonRootName = name
 	}
-	_CEFV8ValueRef_SetCommonRootName(name)
+	common.Proc(internale_CEFV8ValueRef_SetCommonRootName).Call(api.PascalStr(commonRootName))
 }
 
 // GO绑定JS对象类型所属对象名定义
@@ -196,7 +196,7 @@ func (m *tCefApplicationConfig) SetObjectRootName(name string) {
 	} else {
 		objectRootName = name
 	}
-	_CEFV8ValueRef_SetObjectRootName(name)
+	common.Proc(internale_CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(objectRootName))
 }
 
 //energy framework env

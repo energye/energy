@@ -9,7 +9,7 @@
 package consts
 
 import (
-	"github.com/energye/golcl/tools/homedir"
+	"github.com/energye/golcl/energy/homedir"
 	"os"
 	"path/filepath"
 )
