@@ -25,7 +25,7 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
-	sender := getVal(0)
+	sender := getPtr(0)
 	browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 	tempFrame := (*cefFrame)(getPtr(2))
 	frame := &ICefFrame{

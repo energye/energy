@@ -29,7 +29,7 @@ func init() {
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}
-		senderPtr := getVal(0)
+		senderPtr := getPtr(0)
 		browser = &ICefBrowser{browseId: int32(getVal(1)), chromium: senderPtr}
 		tempFrame := (*cefFrame)(getPtr(2))
 		frame = &ICefFrame{
@@ -85,7 +85,7 @@ func init() {
 		}
 		switch fn.(type) {
 		case ChromiumEventOnFindResult:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			cefRectPtr := (*tCefRect)(getPtr(4))
 			cefRect := &TCefRect{
@@ -96,7 +96,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnFindResult)(lcl.AsObject(sender), browser, int32(getVal(2)), int32(getVal(3)), cefRect, int32(getVal(5)), api.GoBool(getVal(6)))
 		case BrowseProcessMessageReceived:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -139,7 +139,7 @@ func init() {
 			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*TCefReturnValue)(getPtr(5)))
 		//menu begin
 		case ChromiumEventOnBeforeContextMenu:
-			sender := getVal(0)
+			sender := getPtr(0)
 			instance, ptr = getInstance(getVal(1))
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
@@ -171,7 +171,7 @@ func init() {
 			model := &ICefMenuModel{instance: instance, ptr: ptr, CefMis: KeyAccelerator}
 			fn.(ChromiumEventOnBeforeContextMenu)(lcl.AsObject(sender), browser, frame, params, model)
 		case ChromiumEventOnContextMenuCommand:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -203,7 +203,7 @@ func init() {
 				fn.(ChromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browser, frame, params, commandId, eventFlags, (*bool)(getPtr(6)))
 			}
 		case ChromiumEventOnContextMenuDismissed:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -258,35 +258,35 @@ func init() {
 		//cookie end
 		//--- other
 		case ChromiumEventOnScrollOffsetChanged:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnScrollOffsetChanged)(lcl.AsObject(sender), browser, float64(getVal(2)), float64(getVal(2)))
 		case ChromiumEventOnRenderProcessTerminated:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, TCefTerminationStatus(getVal(2)))
 		case ChromiumEventOnRenderCompMsg:
 			message := *(*types.TMessage)(getPtr(1))
 			fn.(ChromiumEventOnRenderCompMsg)(lcl.AsObject(getVal(0)), message, api.GoBool(getVal(2)))
 		case ChromiumEventOnCefBrowser:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnCefBrowser)(lcl.AsObject(sender), browser)
 		case ChromiumEventOnTitleChange:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnTitleChange)(lcl.AsObject(sender), browser, api.GoStr(getVal(2)))
 		case ChromiumEventOnKeyEvent:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
 			fn.(ChromiumEventOnKeyEvent)(lcl.AsObject(sender), browser, keyEvent, (*bool)(getPtr(3)))
 		case ChromiumEventOnFullScreenModeChange:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnFullScreenModeChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)))
 		case ChromiumEventOnBeforeBrowser: //创建浏览器之前
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -299,7 +299,7 @@ func init() {
 			var result = (*bool)(getPtr(3))
 			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnAddressChange: //创建浏览器之前
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -310,7 +310,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnAddressChange)(lcl.AsObject(sender), browser, frame, api.GoStr(getVal(3)))
 		case ChromiumEventOnAfterCreated: //创建浏览器之后
-			sender := getVal(0)
+			sender := getPtr(0)
 			//事件处理函数返回true将不继续执行
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			if chromiumOnAfterCreate(browser) {
@@ -318,12 +318,12 @@ func init() {
 			}
 			fn.(ChromiumEventOnAfterCreated)(lcl.AsObject(sender), browser)
 		case ChromiumEventOnBeforeClose: //关闭浏览器之前
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			chromiumOnBeforeClose(browser)
 			fn.(ChromiumEventOnBeforeClose)(lcl.AsObject(sender), browser)
 		case ChromiumEventOnClose:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			chromiumOnClose(browser)
 			fn.(ChromiumEventOnClose)(lcl.AsObject(sender), browser, (*TCefCloseBrowsesAction)(getPtr(2)))
@@ -332,7 +332,7 @@ func init() {
 		case ChromiumEventOnResultFloat: //通用Result float事件
 			fn.(ChromiumEventOnResultFloat)(lcl.AsObject(getVal(0)), *(*float64)(getPtr(1)))
 		case ChromiumEventOnLoadStart:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -344,17 +344,17 @@ func init() {
 			BrowserWindow.putBrowserFrame(browser, frame)
 			fn.(ChromiumEventOnLoadStart)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnLoadingStateChange:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			BrowserWindow.putBrowserFrame(browser, nil)
 			fn.(ChromiumEventOnLoadingStateChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)),
 				api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case ChromiumEventOnLoadingProgressChange:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnLoadingProgressChange)(lcl.AsObject(sender), browser, *(*float64)(getPtr(2)))
 		case ChromiumEventOnLoadError:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -365,7 +365,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnLoadError)(lcl.AsObject(sender), browser, frame, CEF_NET_ERROR(getVal(3)), api.GoStr(getVal(4)), api.GoStr(getVal(5)))
 		case ChromiumEventOnLoadEnd:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -376,7 +376,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnLoadEnd)(lcl.AsObject(sender), browser, frame, int32(getVal(3)))
 		case ChromiumEventOnBeforeDownload: //下载之前
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			item := (*downloadItem)(getPtr(2))
 			downItem := &DownloadItem{
@@ -405,7 +405,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnBeforeDownload)(lcl.AsObject(sender), browser, downItem, suggestedName, callback)
 		case ChromiumEventOnDownloadUpdated: //下载更新
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			item := *(*downloadItem)(getPtr(2))
 			downItem := &DownloadItem{
@@ -434,7 +434,7 @@ func init() {
 			fn.(ChromiumEventOnDownloadUpdated)(lcl.AsObject(sender), browser, downItem, callback)
 		//frame
 		case ChromiumEventOnFrameAttached:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -445,7 +445,7 @@ func init() {
 			}
 			fn.(ChromiumEventOnFrameAttached)(lcl.AsObject(sender), browser, frame, api.GoBool(getVal(3)))
 		case ChromiumEventOnFrameCreated:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -468,7 +468,7 @@ func init() {
 			chromiumOnFrameDetached(browser, frame)
 			fn.(ChromiumEventOnFrameDetached)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnMainFrameChanged:
-			sender := getVal(0)
+			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			var (
 				oldFrame *ICefFrame = nil

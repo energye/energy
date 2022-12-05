@@ -216,6 +216,23 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetFocus", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendCaptureLostEvent", 0),
 		dllimports.NewEnergyImport("CEFChromium_FrameIsFocused", 0),
+		//ICefBeforeDownloadCallback
+		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
+		//ICefFrame
+		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
+		dllimports.NewEnergyImport("CEFFrame_Redo", 0),
+		dllimports.NewEnergyImport("CEFFrame_Cut", 0),
+		dllimports.NewEnergyImport("CEFFrame_Copy", 0),
+		dllimports.NewEnergyImport("CEFFrame_Paste", 0),
+		dllimports.NewEnergyImport("CEFFrame_Del", 0),
+		dllimports.NewEnergyImport("CEFFrame_SelectAll", 0),
+		dllimports.NewEnergyImport("CEFFrame_ViewSource", 0),
+		dllimports.NewEnergyImport("CEFFrame_LoadUrl", 0),
+		dllimports.NewEnergyImport("CEFFrame_ExecuteJavaScript", 0),
+		dllimports.NewEnergyImport("CEFFrame_IsValid", 0),
+		dllimports.NewEnergyImport("CEFFrame_IsMain", 0),
+		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
+		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
 	}
 	dllimports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -435,4 +452,21 @@ const (
 	internale_CEFChromium_SetFocus
 	internale_CEFChromium_SendCaptureLostEvent
 	internale_CEFChromium_FrameIsFocused
+	//ICefBeforeDownloadCallback
+	internale_CEFChromium_SetDownloadPath
+	//ICefFrame
+	internale_CEFFrame_Undo
+	internale_CEFFrame_Redo
+	internale_CEFFrame_Cut
+	internale_CEFFrame_Copy
+	internale_CEFFrame_Paste
+	internale_CEFFrame_Del
+	internale_CEFFrame_SelectAll
+	internale_CEFFrame_ViewSource
+	internale_CEFFrame_LoadUrl
+	internale_CEFFrame_ExecuteJavaScript
+	internale_CEFFrame_IsValid
+	internale_CEFFrame_IsMain
+	internale_CEFFrame_IsFocused
+	internale_CEFFrame_SendProcessMessage
 )
