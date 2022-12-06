@@ -1,3 +1,11 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 package cef
 
 import "github.com/energye/golcl/lcl/api/dllimports"
@@ -233,6 +241,64 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsMain", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
+		//ICefMenuModel
+		dllimports.NewEnergyImport("cefMenuModel_AddSeparator", 0),
+		dllimports.NewEnergyImport("cefMenuModel_Clear", 0),
+		dllimports.NewEnergyImport("cefMenuModel_IsSubMenu", 0),
+		dllimports.NewEnergyImport("cefMenuModel_GetCount", 0),
+		dllimports.NewEnergyImport("cefMenuModel_AddItem", 0),
+		dllimports.NewEnergyImport("cefMenuModel_AddCheckItem", 0),
+		dllimports.NewEnergyImport("cefMenuModel_AddRadioItem", 0),
+		dllimports.NewEnergyImport("cefMenuModel_AddSubMenu", 0),
+		dllimports.NewEnergyImport("cefMenuModel_Remove", 0),
+		dllimports.NewEnergyImport("cefMenuModel_RemoveAt", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetChecked", 0),
+		dllimports.NewEnergyImport("cefMenuModel_IsChecked", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetColor", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetFontList", 0),
+		dllimports.NewEnergyImport("cefMenuModel_HasAccelerator", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetAccelerator", 0),
+		dllimports.NewEnergyImport("cefMenuModel_RemoveAccelerator", 0),
+		dllimports.NewEnergyImport("cefMenuModel_IsVisible", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetVisible", 0),
+		dllimports.NewEnergyImport("cefMenuModel_IsEnabled", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetEnabled", 0),
+		dllimports.NewEnergyImport("cefMenuModel_SetLabel", 0),
+		dllimports.NewEnergyImport("cefMenuModel_GetIndexOf", 0),
+		//CEFWindowInfo
+		dllimports.NewEnergyImport("CEFWindowInfoAsChild", 0),
+		dllimports.NewEnergyImport("CEFWindowInfoAsPopUp", 0),
+		dllimports.NewEnergyImport("CEFWindowInfoAsWindowless", 0),
+		//ICefRequest
+		dllimports.NewEnergyImport("cefRequest_IsReadOnly", 0),
+		dllimports.NewEnergyImport("cefRequest_SetUrl", 0),
+		dllimports.NewEnergyImport("cefRequest_SetMethod", 0),
+		dllimports.NewEnergyImport("cefRequest_SetReferrer", 0),
+		dllimports.NewEnergyImport("cefRequest_SetFlags", 0),
+		dllimports.NewEnergyImport("cefRequest_SetFirstPartyForCookies", 0),
+		dllimports.NewEnergyImport("cefRequest_GetHeaderByName", 0),
+		dllimports.NewEnergyImport("cefRequest_SetHeaderByName", 0),
+		dllimports.NewEnergyImport("cefRequest_GetHeaderMap", 0),
+		dllimports.NewEnergyImport("cefRequest_SetHeaderMap", 0),
+		//ICefResponse
+		dllimports.NewEnergyImport("cefResponse_IsReadOnly", 0),
+		dllimports.NewEnergyImport("cefResponse_SetError", 0),
+		dllimports.NewEnergyImport("cefResponse_SetStatus", 0),
+		dllimports.NewEnergyImport("cefResponse_SetStatusText", 0),
+		dllimports.NewEnergyImport("cefResponse_SetMimeType", 0),
+		dllimports.NewEnergyImport("cefResponse_SetCharset", 0),
+		dllimports.NewEnergyImport("cefResponse_GetHeaderByName", 0),
+		dllimports.NewEnergyImport("cefResponse_SetHeaderByName", 0),
+		dllimports.NewEnergyImport("cefResponse_SetURL", 0),
+		dllimports.NewEnergyImport("cefResponse_GetHeaderMap", 0),
+		//ICefStringMultiMap
+		dllimports.NewEnergyImport("cefHeaderMap_GetSize", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_FindCount", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_GetEnumerate", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_GetKey", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_GetValue", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_Append", 0),
+		dllimports.NewEnergyImport("cefHeaderMap_Clear", 0),
 	}
 	dllimports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -469,4 +535,62 @@ const (
 	internale_CEFFrame_IsMain
 	internale_CEFFrame_IsFocused
 	internale_CEFFrame_SendProcessMessage
+	//ICefMenuModel
+	internale_cefMenuModel_AddSeparator
+	internale_cefMenuModel_Clear
+	internale_cefMenuModel_IsSubMenu
+	internale_cefMenuModel_GetCount
+	internale_cefMenuModel_AddItem
+	internale_cefMenuModel_AddCheckItem
+	internale_cefMenuModel_AddRadioItem
+	internale_cefMenuModel_AddSubMenu
+	internale_cefMenuModel_Remove
+	internale_cefMenuModel_RemoveAt
+	internale_cefMenuModel_SetChecked
+	internale_cefMenuModel_IsChecked
+	internale_cefMenuModel_SetColor
+	internale_cefMenuModel_SetFontList
+	internale_cefMenuModel_HasAccelerator
+	internale_cefMenuModel_SetAccelerator
+	internale_cefMenuModel_RemoveAccelerator
+	internale_cefMenuModel_IsVisible
+	internale_cefMenuModel_SetVisible
+	internale_cefMenuModel_IsEnabled
+	internale_cefMenuModel_SetEnabled
+	internale_cefMenuModel_SetLabel
+	internale_cefMenuModel_GetIndexOf
+	//CEFWindowInfo
+	internale_CEFWindowInfoAsChild
+	internale_CEFWindowInfoAsPopUp
+	internale_CEFWindowInfoAsWindowless
+	//ICefRequest
+	internale_cefRequest_IsReadOnly
+	internale_cefRequest_SetUrl
+	internale_cefRequest_SetMethod
+	internale_cefRequest_SetReferrer
+	internale_cefRequest_SetFlags
+	internale_cefRequest_SetFirstPartyForCookies
+	internale_cefRequest_GetHeaderByName
+	internale_cefRequest_SetHeaderByName
+	internale_cefRequest_GetHeaderMap
+	internale_cefRequest_SetHeaderMap
+	//ICefResponse
+	internale_cefResponse_IsReadOnly
+	internale_cefResponse_SetError
+	internale_cefResponse_SetStatus
+	internale_cefResponse_SetStatusText
+	internale_cefResponse_SetMimeType
+	internale_cefResponse_SetCharset
+	internale_cefResponse_GetHeaderByName
+	internale_cefResponse_SetHeaderByName
+	internale_cefResponse_SetURL
+	internale_cefResponse_GetHeaderMap
+	//ICefStringMultiMap
+	internale_cefHeaderMap_GetSize
+	internale_cefHeaderMap_FindCount
+	internale_cefHeaderMap_GetEnumerate
+	internale_cefHeaderMap_GetKey
+	internale_cefHeaderMap_GetValue
+	internale_cefHeaderMap_Append
+	internale_cefHeaderMap_Clear
 )
