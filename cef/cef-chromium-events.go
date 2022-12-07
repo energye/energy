@@ -250,7 +250,6 @@ var chromiumOnEventIdMapping = map[string]uintptr{}
 func chromiumOnEventNameToId(fn interface{}, independentEvent bool) uintptr {
 	var eventId uintptr
 	if independentEvent {
-		api.MakeEventDataPtr(fn)
 		eventId = api.MakeEventDataPtr(fn)
 	} else {
 		var (

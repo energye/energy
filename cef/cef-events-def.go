@@ -84,8 +84,6 @@ type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefB
 // 渲染进程执行每个浏览器上下文时都会调用
 type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
 type GlobalCEFAppEventOnWebKitInitialized func()
-
-//子进程命令行设置
 type GlobalCEFAppEventOnBeforeChildProcessLaunch func(commandLine *TCefCommandLine)
 type GlobalCEFAppEventOnBrowserDestroyed func(browser *ICefBrowser)
 type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType)

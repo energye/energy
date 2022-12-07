@@ -35,6 +35,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetObjectRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_CommonValueBindInfo", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_ObjectValueBindInfo", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextCreated", 0),
 		//CEFParentWindow
 		dllimports.NewEnergyImport("CEFWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetHandle", 0),
@@ -97,6 +98,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFLinkedWindow_UpdateSize", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnEnter", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnExit", 0),
+		dllimports.NewEnergyImport("CEFLinkedWindow_SetChromium", 0),
 		//CEFBrowser
 		dllimports.NewEnergyImport("CEFBrowser_GetHostWindowHandle", 0),
 		dllimports.NewEnergyImport("CEFBrowser_CloseBrowser", 0),
@@ -327,6 +329,7 @@ const (
 	internale_CEFV8ValueRef_SetObjectRootName
 	internale_CEFV8ValueRef_CommonValueBindInfo
 	internale_CEFV8ValueRef_ObjectValueBindInfo
+	internale_CEFGlobalApp_SetOnContextCreated
 	//CEFParentWindow
 	internale_CEFWindow_Create
 	internale_CEFWindow_GetHandle
@@ -358,7 +361,7 @@ const (
 	internale_CEFWindow_UpdateSize
 	internale_CEFWindow_OnEnter
 	internale_CEFWindow_OnExit
-	internale_CEFWindow_SetChromium
+	//internale_CEFWindow_SetChromium
 	//CEFLinkedParentWindow
 	internale_CEFLinkedWindow_Create
 	internale_CEFLinkedWindow_GetHandle

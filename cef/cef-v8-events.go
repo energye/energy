@@ -142,9 +142,3 @@ func init() {
 		return true
 	})
 }
-
-func _SetCEFCallbackEvent(fnName CEF_ON_EVENTS, fn interface{}) {
-	var eventId = api.GetAddEventToMapFn()(CommonPtr.Instance(), fn)
-	//Logger.Debug("CEFApplication Event name:", fnName, "eventId:", eventId, "commonInstance.instance:", commonInstance.instance)
-	Proc("SetCEFCallbackEvent").Call(api.PascalStr(string(fnName)), eventId)
-}

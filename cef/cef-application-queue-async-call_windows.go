@@ -8,13 +8,8 @@
 
 package cef
 
-import (
-	"github.com/energye/golcl/lcl/api/dllimports"
-	"testing"
-)
+import "syscall"
 
-func TestProcDef(t *testing.T) {
-	for i, impTab := range dllimports.GetEnergyImports() {
-		println(i, impTab.Name())
-	}
-}
+var (
+	applicationQueueAsyncCallEvent = syscall.NewCallback(applicationQueueAsyncCallProc)
+)

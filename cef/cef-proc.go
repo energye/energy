@@ -17,7 +17,7 @@ import (
 
 // 针对 MacOSX 设置命令行参数
 //
-//没找到什么好的方式，只能这样设置
+// 没找到什么好的方式，只能这样设置
 func setMacOSXCommandLine(commandLine uintptr) {
 	Proc(internale_SetMacOSXCommandLine).Call(commandLine)
 }

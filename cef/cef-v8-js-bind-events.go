@@ -13,20 +13,21 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"unsafe"
 )
 
 var (
-	setCefWindowBindCallbackFunc *dylib.LazyProc
+//TODO 注释后面改
+//setCefWindowBindCallbackFunc *dylib.LazyProc
 )
 
 func cefV8WindowBindFuncEventsInit() {
+	//TODO 注释后面改
 	// 初始设置回调函数指针
-	setCefWindowBindCallbackFunc = api.GetLibLCL().NewProc("SetCEFWindowBindCallbackFunc")
-	setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
+	//setCefWindowBindCallbackFunc = api.GetLibLCL().NewProc("SetCEFWindowBindCallbackFunc")
+	//setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
 }
 
 func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintptr {

@@ -15,7 +15,6 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
 	"net"
 	"reflect"
@@ -29,7 +28,8 @@ const (
 )
 
 var (
-	setCefIPCCallbackFunc *dylib.LazyProc
+//TODO 注释后面改
+//setCefIPCCallbackFunc *dylib.LazyProc
 )
 
 type rGoResult struct {
@@ -59,8 +59,9 @@ type rIPCEventParam struct {
 }
 
 func cefIPCInit() {
-	setCefIPCCallbackFunc = api.GetLibLCL().NewProc("SetCEFIPCCallbackFunc")
-	setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
+	//TODO 注释后面改
+	//setCefIPCCallbackFunc = api.GetLibLCL().NewProc("SetCEFIPCCallbackFunc")
+	//setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
 }
 
 func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
