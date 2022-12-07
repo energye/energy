@@ -49,7 +49,7 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 	applicationQueueAsyncCallInit()
 	//对于go绑定到v8引擎js的事件处理函数
 	cefV8WindowBindFuncEventsInit()
-	//ipc初始化
+	//ipc事件初始化
 	cefIPCInit()
 	//应用低层出错异常捕获
 	lcl.Application.SetOnException(func(sender lcl.IObject, e *lcl.Exception) {

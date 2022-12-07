@@ -11,11 +11,13 @@ package cef
 import (
 	"bytes"
 	"encoding/binary"
+	"github.com/energye/energy.bak/common"
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"net"
 	"reflect"
 	"strings"
@@ -28,8 +30,7 @@ const (
 )
 
 var (
-//TODO 注释后面改
-//setCefIPCCallbackFunc *dylib.LazyProc
+	setCefIPCCallbackFunc dllimports.ProcAddr
 )
 
 type rGoResult struct {
@@ -59,9 +60,8 @@ type rIPCEventParam struct {
 }
 
 func cefIPCInit() {
-	//TODO 注释后面改
-	//setCefIPCCallbackFunc = api.GetLibLCL().NewProc("SetCEFIPCCallbackFunc")
-	//setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
+	setCefIPCCallbackFunc = common.Proc(internale_SetCEFIPCCallbackFunc)
+	setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
 }
 
 func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {

@@ -17,6 +17,8 @@ func init() {
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
+		dllimports.NewEnergyImport("SetCEFWindowBindCallbackFunc", 0),
+		dllimports.NewEnergyImport("SetCEFIPCCallbackFunc", 0),
 		//GoForm
 		dllimports.NewEnergyImport("CEF_AddGoForm", 0),
 		dllimports.NewEnergyImport("CEF_RemoveGoForm", 0),
@@ -320,6 +322,8 @@ const (
 	//ApplicationQueueAsyncCallFunc
 	internale_SetApplicationQueueAsyncCallFunc
 	internale_CEFApplication_QueueAsyncCall
+	internale_SetCEFWindowBindCallbackFunc
+	internale_SetCEFIPCCallbackFunc
 	//GoForm
 	internale_CEF_AddGoForm
 	internale_CEF_RemoveGoForm

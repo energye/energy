@@ -9,25 +9,25 @@
 package cef
 
 import (
+	"github.com/energye/energy.bak/common"
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"reflect"
 	"unsafe"
 )
 
 var (
-//TODO 注释后面改
-//setCefWindowBindCallbackFunc *dylib.LazyProc
+	setCefWindowBindCallbackFunc dllimports.ProcAddr
 )
 
 func cefV8WindowBindFuncEventsInit() {
-	//TODO 注释后面改
 	// 初始设置回调函数指针
-	//setCefWindowBindCallbackFunc = api.GetLibLCL().NewProc("SetCEFWindowBindCallbackFunc")
-	//setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
+	setCefWindowBindCallbackFunc = common.Proc(internale_SetCEFWindowBindCallbackFunc)
+	setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
 }
 
 func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintptr {
