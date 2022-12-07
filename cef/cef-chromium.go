@@ -48,7 +48,7 @@ type IChromium interface {
 }
 
 type TCEFChromium struct {
-	lcl.TComponent
+	*lcl.TComponent
 	instance         unsafe.Pointer
 	cfg              *tCefChromiumConfig
 	independentEvent bool

@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 	"strings"
 	"time"
 	"unsafe"
@@ -66,6 +67,53 @@ type IChromiumProc interface {
 	SetFocus(value bool)
 	SendCaptureLostEvent()
 	FrameIsFocused() bool
+}
+
+func (m *TCEFChromium) IsValid() bool {
+	return m.instance != nil
+}
+
+func (m *TCEFChromium) UnsafeAddr() unsafe.Pointer {
+	return m.instance
+}
+
+func (m *TCEFChromium) ClassName() string {
+	r1, _, _ := Proc(internale_CEFChromium_ClassName).Call()
+	return api.GoStr(r1)
+}
+
+func (m *TCEFChromium) Free() {
+	Proc(internale_CEFChromium_Free).Call()
+}
+
+func (m *TCEFChromium) GetHashCode() int32 {
+	r1, _, _ := Proc(internale_CEFChromium_GetHashCode).Call()
+	return int32(r1)
+}
+
+func (m *TCEFChromium) Equals(object lcl.IObject) bool {
+	r1, _, _ := Proc(internale_CEFChromium_Equals).Call(lcl.CheckPtr(object))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) ClassType() types.TClass {
+	r1, _, _ := Proc(internale_CEFChromium_ClassType).Call()
+	return types.TClass(r1)
+}
+
+func (m *TCEFChromium) InstanceSize() int32 {
+	r1, _, _ := Proc(internale_CEFChromium_InstanceSize).Call()
+	return int32(r1)
+}
+
+func (m *TCEFChromium) InheritsFrom(class types.TClass) bool {
+	r1, _, _ := Proc(internale_CEFChromium_InheritsFrom).Call(uintptr(class))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) ToString() string {
+	r1, _, _ := Proc(internale_CEFChromium_ToString).Call()
+	return api.GoStr(r1)
 }
 
 func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
@@ -178,9 +226,7 @@ func (m *TCEFChromium) NotifyMoveOrResizeStarted() {
 }
 
 func (m *TCEFChromium) CloseBrowser(forceClose bool) {
-	if m.IsValid() {
-		_CEFChromium_CloseBrowser(m.Instance(), api.PascalBool(forceClose))
-	}
+	_CEFChromium_CloseBrowser(m.Instance(), api.PascalBool(forceClose))
 }
 
 func (m *TCEFChromium) ShowDevTools(window ITCefWindow) {

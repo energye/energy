@@ -246,6 +246,7 @@ func (m *BaseWindow) SetOnActivateAfter(fn lcl.TNotifyEvent) {
 }
 
 func (m *BaseWindow) close(sender lcl.IObject, action *types.TCloseAction) {
+	fmt.Println("close")
 	var ret bool
 	if m.onClose != nil {
 		for _, fn := range m.onClose {
@@ -274,6 +275,7 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 			m.isClosing = true
 			m.Hide()
 			m.chromium.CloseBrowser(true)
+			fmt.Println("closeQuery")
 		}
 	}
 }
@@ -454,6 +456,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
+		fmt.Println("SetOnClose")
 		if IsDarwin() { //MacOSX
 			m.windowParent.DestroyChildWindow()
 		} else { // Window  and Linux
@@ -473,6 +476,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+		fmt.Println("SetOnBeforeClose")
 		m.canClose = true
 		var tempClose = func() {
 			defer func() {

@@ -186,6 +186,14 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetOnBeforePopup", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnOpenUrlFromTab", 0),
 		//TCEFChromium - proc
+		dllimports.NewEnergyImport("CEFChromium_Free", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetHashCode", 0),
+		dllimports.NewEnergyImport("CEFChromium_ClassName", 0),
+		dllimports.NewEnergyImport("CEFChromium_Equals", 0),
+		dllimports.NewEnergyImport("CEFChromium_ClassType", 0),
+		dllimports.NewEnergyImport("CEFChromium_InstanceSize", 0),
+		dllimports.NewEnergyImport("CEFChromium_InheritsFrom", 0),
+		dllimports.NewEnergyImport("CEFChromium_ToString", 0),
 		dllimports.NewEnergyImport("CEFChromium_Create", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetDefaultURL", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetMultiBrowserMode", 0),
@@ -482,6 +490,14 @@ const (
 	internale_CEFChromium_SetOnBeforePopup
 	internale_CEFChromium_SetOnOpenUrlFromTab
 	//TCEFChromium - proc
+	internale_CEFChromium_Free
+	internale_CEFChromium_GetHashCode
+	internale_CEFChromium_ClassName
+	internale_CEFChromium_Equals
+	internale_CEFChromium_ClassType
+	internale_CEFChromium_InstanceSize
+	internale_CEFChromium_InheritsFrom
+	internale_CEFChromium_ToString
 	internale_CEFChromium_Create
 	internale_CEFChromium_SetDefaultURL
 	internale_CEFChromium_SetMultiBrowserMode

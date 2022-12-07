@@ -66,7 +66,7 @@ type JSValue interface {
 //
 //主进程创建完之后和渲染进程每次创建之后调用
 //
-//TODO 潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
+//潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
 func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//变量绑定回调函数
 	VariableBind.callVariableBind(browser, frame)
