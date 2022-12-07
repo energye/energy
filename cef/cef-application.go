@@ -82,8 +82,7 @@ func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
 //
 //对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
-	Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
-	//_SetCEFCallbackEvent(OnContextCreated, fn)
+	Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) defaultSetOnContextCreated() {
