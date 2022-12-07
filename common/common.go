@@ -15,7 +15,6 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/decimal"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
@@ -28,22 +27,8 @@ import (
 )
 
 var (
-	IntSize   = int32(unsafe.Sizeof(0))
-	CommonPtr = &commonInstance{} //通用实例
+	IntSize = int32(unsafe.Sizeof(0))
 )
-
-type commonInstance struct {
-	lcl.IObject
-	instance unsafe.Pointer
-}
-
-func (m *commonInstance) SetInstance(instance unsafe.Pointer) {
-	m.instance = instance
-}
-
-func (m *commonInstance) Instance() unsafe.Pointer {
-	return m.instance
-}
 
 func Proc(index int) dllimports.ProcAddr {
 	return api.EnergyDefSyscallN(index)

@@ -14,14 +14,15 @@ func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
+		//ApplicationQueueAsyncCallFunc
+		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
+		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
 		//GoForm
 		dllimports.NewEnergyImport("CEF_AddGoForm", 0),
 		dllimports.NewEnergyImport("CEF_RemoveGoForm", 0),
 		//ICefCallback
 		dllimports.NewEnergyImport("cefCallback_Cont", 0),
 		dllimports.NewEnergyImport("cefCallback_Cancel", 0),
-		//CommonInstance
-		dllimports.NewEnergyImport("CEFApplication_GetCommonInstance", 0),
 		//process
 		dllimports.NewEnergyImport("SetMacOSXCommandLine", 0),
 		dllimports.NewEnergyImport("CEFStartMainProcess", 0),
@@ -308,14 +309,15 @@ func init() {
 const (
 	//null nil
 	internale_null_nil = iota
+	//ApplicationQueueAsyncCallFunc
+	internale_SetApplicationQueueAsyncCallFunc
+	internale_CEFApplication_QueueAsyncCall
 	//GoForm
 	internale_CEF_AddGoForm
 	internale_CEF_RemoveGoForm
 	//ICefCallback
 	internale_cefCallback_Cont
 	internale_cefCallback_Cancel
-	//CommonInstance
-	internale_CEFApplication_GetCommonInstance
 	//process
 	internale_SetMacOSXCommandLine
 	internale_CEFStartMainProcess

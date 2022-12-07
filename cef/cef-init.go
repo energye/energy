@@ -46,8 +46,7 @@ func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
 	ipc.IPCChannelChooseInit()
 	//macos的命令行设置
 	setMacOSXCommandLine(GoStrToDStr(Args.CommandLine()))
-	//通用对象初始化
-	CommonInstanceInit()
+	applicationQueueAsyncCallInit()
 	//对于go绑定到v8引擎js的事件处理函数
 	cefV8WindowBindFuncEventsInit()
 	//ipc初始化

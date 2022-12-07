@@ -10,33 +10,33 @@ package cef
 
 //应用主线程异步回调
 import (
+	"github.com/energye/energy/common"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"sync"
 )
 
 var (
-	Qac = &queueAsyncCall{id: 0, calls: sync.Map{}}
-	//TODO 注释后面改
-	//applicationQueueAsyncCallFunc *dylib.LazyProc
+	qac                           = &queueAsyncCall{id: 0, calls: sync.Map{}}
+	applicationQueueAsyncCallFunc dllimports.ProcAddr
 )
 
-func ApplicationQueueAsyncCallInit() {
-	//TODO 注释后面改
-	//applicationQueueAsyncCallFunc = api.GetLibLCL().NewProc("SetApplicationQueueAsyncCallFunc")
-	//applicationQueueAsyncCallFunc.Call(applicationQueueAsyncCallEvent)
+func applicationQueueAsyncCallInit() {
+	applicationQueueAsyncCallFunc = common.Proc(internale_SetApplicationQueueAsyncCallFunc)
+	applicationQueueAsyncCallFunc.Call(applicationQueueAsyncCallEvent)
 }
 
 func applicationQueueAsyncCallProc(id uintptr) uintptr {
-	Qac.call(id)
+	qac.call(id)
 	return 0
 }
 
 // 队列异步调用函数 id:事件id
-type QacFn func(id int)
+type qacFn func(id int)
 
-type QueueCall struct {
+type queueCall struct {
 	IsSync bool
-	Fn     QacFn
+	Fn     qacFn
 	Wg     *sync.WaitGroup
 }
 
@@ -52,13 +52,12 @@ type queueAsyncCall struct {
 // 3.在任何变更UI的操作都有可能导致UI线程不一至出现程序错误或程序崩溃, 可以尝试使用该回调函数解决.
 //
 // 4.在windows linux macos 可同时使用
-func QueueAsyncCall(fn QacFn) int {
-	id := Qac.Set(&QueueCall{
+func QueueAsyncCall(fn qacFn) int {
+	id := qac.set(&queueCall{
 		IsSync: false,
 		Fn:     fn,
 	})
-	//TODO 注释后面改
-	//api.GetLazyProc("CEFApplication_QueueAsyncCall").Call(id)
+	common.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
 	return int(id)
 }
 
@@ -69,16 +68,15 @@ func QueueAsyncCall(fn QacFn) int {
 // 3.在任何变更UI的操作都有可能导致UI线程不一至出现程序错误或程序崩溃, 可以尝试使用该回调函数解决.
 //
 // 4.在windows linux macos 需要注意使用场景, 当非UI线程使用时正常执行, UI线程使用时会造成UI线程锁死, 这种情况建议使用 QueueAsyncCall 自己增加同步锁
-func QueueSyncCall(fn QacFn) int {
-	qc := &QueueCall{
+func QueueSyncCall(fn qacFn) int {
+	qc := &queueCall{
 		IsSync: true,
 		Fn:     fn,
 		Wg:     &sync.WaitGroup{},
 	}
 	qc.Wg.Add(1)
-	id := Qac.Set(qc)
-	//TODO 注释后面改
-	//api.GetLazyProc("CEFApplication_QueueAsyncCall").Call(id)
+	id := qac.set(qc)
+	common.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
 	qc.Wg.Wait()
 	qc.Fn = nil
 	qc.Wg = nil
@@ -88,7 +86,7 @@ func QueueSyncCall(fn QacFn) int {
 
 func (m *queueAsyncCall) call(id uintptr) {
 	if call, ok := m.calls.LoadAndDelete(id); ok {
-		qc := call.(*QueueCall)
+		qc := call.(*queueCall)
 		if qc.IsSync {
 			qc.Fn(int(id))
 			qc.Wg.Done()
@@ -97,7 +95,7 @@ func (m *queueAsyncCall) call(id uintptr) {
 		}
 	}
 }
-func (m *queueAsyncCall) Set(fn *QueueCall) uintptr {
+func (m *queueAsyncCall) set(fn *queueCall) uintptr {
 	if m.id >= math.MaxUint {
 		m.id = 0
 	}

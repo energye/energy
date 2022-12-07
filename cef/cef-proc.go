@@ -10,7 +10,6 @@ package cef
 
 import (
 	. "github.com/energye/energy/common"
-	"unsafe"
 )
 
 //--------TCEFWindowParent proc end--------
@@ -20,11 +19,6 @@ import (
 // 没找到什么好的方式，只能这样设置
 func setMacOSXCommandLine(commandLine uintptr) {
 	Proc(internale_SetMacOSXCommandLine).Call(commandLine)
-}
-
-func CommonInstanceInit() {
-	r1, _, _ := Proc(internale_CEFApplication_GetCommonInstance).Call()
-	CommonPtr.SetInstance(unsafe.Pointer(r1))
 }
 
 func AddGoForm(windowId int32, instance uintptr) {
