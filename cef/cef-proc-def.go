@@ -38,7 +38,30 @@ func init() {
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetObjectRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_CommonValueBindInfo", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_ObjectValueBindInfo", 0),
+		//application - event
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextCreated", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegCustomSchemes", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnWebKitInitialized", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBeforeChildProcessLaunch", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnScheduleMessagePumpWork", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDefaultClient", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetLocalizedString", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDataResource", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDataResourceForScale", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnProcessMessageReceived", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBrowserDestroyed", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadStart", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadEnd", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadError", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadingStateChange", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBrowserCreated", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextReleased", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnUncaughtException", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnFocusedNodeChanged", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadingStateChange", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadStart", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadEnd", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadError", 0),
 		//CEFParentWindow
 		dllimports.NewEnergyImport("CEFWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetHandle", 0),
@@ -343,7 +366,30 @@ const (
 	internale_CEFV8ValueRef_SetObjectRootName
 	internale_CEFV8ValueRef_CommonValueBindInfo
 	internale_CEFV8ValueRef_ObjectValueBindInfo
+	//application - event
 	internale_CEFGlobalApp_SetOnContextCreated
+	internale_CEFGlobalApp_SetOnRegCustomSchemes
+	internale_CEFGlobalApp_SetOnWebKitInitialized
+	internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch
+	internale_CEFGlobalApp_SetOnScheduleMessagePumpWork
+	internale_CEFGlobalApp_SetOnGetDefaultClient
+	internale_CEFGlobalApp_SetOnGetLocalizedString
+	internale_CEFGlobalApp_SetOnGetDataResource
+	internale_CEFGlobalApp_SetOnGetDataResourceForScale
+	internale_CEFGlobalApp_SetOnProcessMessageReceived
+	internale_CEFGlobalApp_SetOnBrowserDestroyed
+	internale_CEFGlobalApp_SetOnRenderLoadStart
+	internale_CEFGlobalApp_SetOnRenderLoadEnd
+	internale_CEFGlobalApp_SetOnRenderLoadError
+	internale_CEFGlobalApp_SetOnRenderLoadingStateChange
+	internale_CEFGlobalApp_SetOnBrowserCreated
+	internale_CEFGlobalApp_SetOnContextReleased
+	internale_CEFGlobalApp_SetOnUncaughtException
+	internale_CEFGlobalApp_SetOnFocusedNodeChanged
+	internale_CEFGlobalApp_SetOnLoadingStateChange
+	internale_CEFGlobalApp_SetOnLoadStart
+	internale_CEFGlobalApp_SetOnLoadEnd
+	internale_CEFGlobalApp_SetOnLoadError
 	//CEFParentWindow
 	internale_CEFWindow_Create
 	internale_CEFWindow_GetHandle

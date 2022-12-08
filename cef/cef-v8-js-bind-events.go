@@ -9,8 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy.bak/common"
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -32,7 +31,7 @@ func cefV8WindowBindFuncEventsInit() {
 
 func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintptr {
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	eventType := BIND_EVENT(getVal(0))
 	if BE_FUNC == eventType {
@@ -58,7 +57,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -122,8 +121,8 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 		iCtx := ipc.IPC.Render().EmitAndReturn(ipc.Ln_GET_BIND_FIELD_VALUE, args)
 		if iCtx != nil {
 			data := iCtx.Message().Data()
-			isSuccess := ByteToBool(data[0])
-			valueType := V8_JS_VALUE_TYPE(ByteToInt8(data[1]))
+			isSuccess := common.ByteToBool(data[0])
+			valueType := V8_JS_VALUE_TYPE(common.ByteToInt8(data[1]))
 			if isSuccess {
 				errorMessage = getPtrValue(valueType, data[2:], retStringValuePrt, retIntValuePrt, retDoubleValuePrt, retBoolValuePrt)
 			} else {
@@ -180,25 +179,25 @@ func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue str
 func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
 	switch valueType {
 	case V8_VALUE_STRING:
-		if value, err := ValueToString(newValue); err == nil {
+		if value, err := common.ValueToString(newValue); err == nil {
 			*stringValuePrt = api.PascalStr(value)
 		} else {
 			return cefErrorMessage(CVE_ERROR_GET_STRING_FAIL)
 		}
 	case V8_VALUE_INT:
-		if value, err := ValueToInt32(newValue); err == nil {
+		if value, err := common.ValueToInt32(newValue); err == nil {
 			*intValuePrt = value
 		} else {
 			return cefErrorMessage(CVE_ERROR_GET_INT_FAIL)
 		}
 	case V8_VALUE_DOUBLE:
-		if value, err := ValueToFloat64(newValue); err == nil {
+		if value, err := common.ValueToFloat64(newValue); err == nil {
 			*doubleValuePrt = value
 		} else {
 			return cefErrorMessage(CVE_ERROR_GET_DOUBLE_FAIL)
 		}
 	case V8_VALUE_BOOLEAN:
-		if value, err := ValueToBool(newValue); err == nil {
+		if value, err := common.ValueToBool(newValue); err == nil {
 			*boolValuePrt = value
 		} else {
 			return cefErrorMessage(CVE_ERROR_GET_BOOL_FAIL)
@@ -226,7 +225,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -280,14 +279,14 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 				str := api.GoStr(getVal(inIdx))
 				inArgumentList.SetString(i, str)
 			case V8_VALUE_INT:
-				if value := NumberUintPtrToInt(getVal(inIdx), inVType.Gov); value != nil {
+				if value := common.NumberUintPtrToInt(getVal(inIdx), inVType.Gov); value != nil {
 					inArgumentList.SetIntAuto(i, value, inVType.Gov)
 				} else {
 					errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL)
 					break
 				}
 			case V8_VALUE_DOUBLE:
-				if value := NumberPtrToFloat(getPtr(inIdx), inVType.Gov); value != nil {
+				if value := common.NumberPtrToFloat(getPtr(inIdx), inVType.Gov); value != nil {
 					inArgumentList.SetFloatAuto(i, value, inVType.Gov)
 				} else {
 					errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL)
@@ -321,7 +320,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 		}
 
 		if errorMessage == Empty {
-			if SingleProcess || Args.IsMain() {
+			if SingleProcess || common.Args.IsMain() {
 				outParams, ok = jsValue.invoke(inArgumentList.ToReflectValue())
 			} else {
 				ok = true
@@ -331,7 +330,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 					var outArgument = ipc.NewArgumentList()
 					defer outArgument.Clear()
 					data := iCtx.Message().Data()
-					isSuccess := ByteToBool(data[0])
+					isSuccess := common.ByteToBool(data[0])
 					if isSuccess {
 						outArgument.UnPackage(data[1:])
 						outParams = outArgument.ToReflectValue()
@@ -349,25 +348,25 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 					outParamValue := outParams[fnInfo.OutParamIdx]
 					switch outVType.Jsv {
 					case V8_VALUE_STRING:
-						if value, err := ValueToString(outParamValue.Interface()); err == nil {
+						if value, err := common.ValueToString(outParamValue.Interface()); err == nil {
 							*retStringValuePrt = api.PascalStr(value)
 						} else {
 							errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL)
 						}
 					case V8_VALUE_INT:
-						if value, err := ValueToInt32(outParamValue.Interface()); err == nil {
+						if value, err := common.ValueToInt32(outParamValue.Interface()); err == nil {
 							*retIntValuePrt = value
 						} else {
 							errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL)
 						}
 					case V8_VALUE_DOUBLE:
-						if value, err := ValueToFloat64(outParamValue.Interface()); err == nil {
+						if value, err := common.ValueToFloat64(outParamValue.Interface()); err == nil {
 							*retDoubleValuePrt = value
 						} else {
 							errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL)
 						}
 					case V8_VALUE_BOOLEAN:
-						if value, err := ValueToBool(outParamValue.Interface()); err == nil {
+						if value, err := common.ValueToBool(outParamValue.Interface()); err == nil {
 							*retBoolValuePrt = value
 						} else {
 							errorMessage = cefErrorMessage(CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL)

@@ -11,8 +11,7 @@ package cef
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/energye/energy.bak/common"
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -71,7 +70,7 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -105,9 +104,9 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 		case V8_VALUE_INT:
 			inArgument.SetInt32(0, int32(result.value))
 		case V8_VALUE_DOUBLE:
-			inArgument.SetFloat64(0, *(*float64)(GetParamPtr(result.value, 0)))
+			inArgument.SetFloat64(0, *(*float64)(common.GetParamPtr(result.value, 0)))
 		case V8_VALUE_BOOLEAN:
-			inArgument.SetBool(0, *(*bool)(GetParamPtr(result.value, 0)))
+			inArgument.SetBool(0, *(*bool)(common.GetParamPtr(result.value, 0)))
 		default:
 			inArgument.SetBool(1, false)
 			inArgument.SetString(0, "不支持的数据类型")
@@ -137,7 +136,7 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 //ipc - js emit go on event
 func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -151,7 +150,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	if valueTypeLen > 0 {
 		//取入参
 		for i := 0; i < int(valueTypeLen); i++ {
-			valueType := V8_JS_VALUE_TYPE(*(*byte)(GetParamPtr(eventParam.ValueTypeArr, i)))
+			valueType := V8_JS_VALUE_TYPE(*(*byte)(common.GetParamPtr(eventParam.ValueTypeArr, i)))
 			switch valueType {
 			case V8_VALUE_STRING:
 				inArgument.SetString(i, api.GoStr(getVal(i+accIdx)))
@@ -260,10 +259,10 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			}
 		}
 	} else {
-		//尝试触发用户自定义 ipc fullName emit
+		//尝试触发用户自定义ipc事件
 		if callback := ipc.IPC.Browser().Events().Get(fullName); callback != nil {
 			var (
-				channelId = StrToInt64(api.GoStr(eventParam.FrameId))
+				channelId = common.StrToInt64(api.GoStr(eventParam.FrameId))
 				ipcType   IPC_TYPE
 				conn      net.Conn
 			)
@@ -273,7 +272,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			}
 			ctx := ipc.NewIPCContext(fullName, eventParam.BrowserId, channelId, ipcType, conn, &ipc.IPCEventMessage{}, &ipc.IPCContextResult{}, inArgument)
 			callback(ctx)
-			result.set(uintptr(ctx.Result().Result()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
+			result.set(uintptr(ctx.Result().Data()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
 		} else {
 			result.set(0, 0, 0, 0, uintptr(CVE_ERROR_NOT_FOUND_FIELD))
 		}

@@ -93,12 +93,12 @@ func (m *TCEFApplication) defaultSetOnContextCreated() {
 
 //初始化设置全局回调
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
-	_SetCEFCallbackEvent(OnWebKitInitialized, fn)
+	Proc(internale_CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
 //进程间通信处理消息接收
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
-	_SetCEFCallbackEvent(OnProcessMessageReceived, fn)
+	Proc(internale_CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
 }
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ipc.ICefProcessMessage) bool {
@@ -112,36 +112,28 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 
 //启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
-	if Args.IsMain() {
-		_SetCEFCallbackEvent(OnBeforeChildProcessLaunch, fn)
-	}
+	Proc(internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
 func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
 	m.SetOnBeforeChildProcessLaunch(func(commandLine *TCefCommandLine) {})
 }
 
 func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDestroyed) {
-	_SetCEFCallbackEvent(OnBrowserDestroyed, fn)
+	Proc(internale_CEFGlobalApp_SetOnBrowserDestroyed).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-	_SetCEFCallbackEvent(OnRenderLoadStart, fn)
+	Proc(internale_CEFGlobalApp_SetOnLoadStart).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
-	_SetCEFCallbackEvent(OnRenderLoadEnd, fn)
+	Proc(internale_CEFGlobalApp_SetOnLoadEnd).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
-	_SetCEFCallbackEvent(OnRenderLoadError, fn)
+	Proc(internale_CEFGlobalApp_SetOnLoadError).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
-	_SetCEFCallbackEvent(OnRenderLoadingStateChange, fn)
-}
-
-func _SetCEFCallbackEvent(fnName CEF_ON_EVENTS, fn interface{}) {
-	//var eventId = api.GetAddEventToMapFn()(CommonPtr.Instance(), fn)
-	////Logger.Debug("CEFApplication Event name:", fnName, "eventId:", eventId, "commonInstance.instance:", commonInstance.instance)
-	//Proc("SetCEFCallbackEvent").Call(api.PascalStr(string(fnName)), eventId)
+	Proc(internale_CEFGlobalApp_SetOnLoadingStateChange).Call(api.MakeEventDataPtr(fn))
 }

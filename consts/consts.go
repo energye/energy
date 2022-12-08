@@ -237,21 +237,6 @@ const (
 	GO_VALUE_DICTVALUE    //dictValue
 )
 
-//CEF事件名
-type CEF_ON_EVENTS string
-
-const (
-	OnContextCreated           CEF_ON_EVENTS = "OnContextCreated"
-	OnWebKitInitialized                      = "OnWebKitInitialized"
-	OnProcessMessageReceived                 = "OnProcessMessageReceived"
-	OnBeforeChildProcessLaunch               = "OnBeforeChildProcessLaunch"
-	OnBrowserDestroyed                       = "OnBrowserDestroyed"
-	OnRenderLoadStart                        = "OnRenderLoadStart"
-	OnRenderLoadEnd                          = "OnRenderLoadEnd"
-	OnRenderLoadError                        = "OnRenderLoadError"
-	OnRenderLoadingStateChange               = "OnRenderLoadingStateChange"
-)
-
 //JS属性
 type V8_PROPERTY_ATTRIBUTE int32
 

@@ -71,40 +71,40 @@ type IPCEventMessage struct {
 }
 
 type IPCContextResult struct {
-	vType  V8_JS_VALUE_TYPE
-	result unsafe.Pointer //[]byte
+	vType V8_JS_VALUE_TYPE
+	data  unsafe.Pointer //[]byte
 }
 
-func (m *IPCContextResult) Result() unsafe.Pointer {
-	return m.result
+func (m *IPCContextResult) Data() unsafe.Pointer {
+	return m.data
 }
 func (m *IPCContextResult) VType() V8_JS_VALUE_TYPE {
 	return m.vType
 }
 
 func (m *IPCContextResult) SetString(ret string) {
-	m.result = unsafe.Pointer(api.PascalStr(ret)) //StringToBytes(ret)
+	m.data = unsafe.Pointer(api.PascalStr(ret)) //StringToBytes(ret)
 	m.vType = V8_VALUE_STRING
 }
 
 func (m *IPCContextResult) SetInt(ret int32) {
-	m.result = unsafe.Pointer(uintptr(ret)) //Int32ToBytes(ret)
+	m.data = unsafe.Pointer(uintptr(ret)) //Int32ToBytes(ret)
 	m.vType = V8_VALUE_INT
 }
 
 func (m *IPCContextResult) SetFloat64(ret float64) {
-	m.result = unsafe.Pointer(&ret) //Float64ToBytes(ret)
+	m.data = unsafe.Pointer(&ret) //Float64ToBytes(ret)
 	m.vType = V8_VALUE_DOUBLE
 }
 
 func (m *IPCContextResult) SetBool(ret bool) {
-	m.result = unsafe.Pointer(api.PascalBool(ret)) //[]byte{BoolToByte(ret)
+	m.data = unsafe.Pointer(api.PascalBool(ret)) //[]byte{BoolToByte(ret)
 	m.vType = V8_VALUE_BOOLEAN
 }
 
 func (m *IPCContextResult) clear() {
 	m.vType = 0
-	m.result = nil
+	m.data = nil
 }
 
 // IPC 上下文

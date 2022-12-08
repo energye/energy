@@ -73,7 +73,7 @@ func AppRenderInit() *cef.TCEFApplication {
 		fmt.Println("渲染进程IPC事件注册")
 		//渲染进程监听的事件
 		event.On("renderOnEventSubWindowIPCOn", func(context ipc.IIPCContext) {
-			fmt.Println("render renderOnEventSubWindowIPCOn", common.Args.ProcessType())
+			fmt.Println("渲染进程监听事件-执行 renderOnEventSubWindowIPCOn", common.Args.ProcessType())
 			//渲染进程处理程序....
 			context.Response([]byte("返回了,可以关闭"))
 		})

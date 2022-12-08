@@ -48,23 +48,21 @@ func AppBrowserInit() {
 			fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowsInfo()))
 			//调用指定渲染进程监听
 			ipc.IPC.Browser().EmitChannelId("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
-			context.Result().SetString("\t|-- 111")
+			fmt.Println("\t|-- 111")
 
 			//调用指定渲染进程监听 回调的方式
 			ipc.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context ipc.IIPCContext) {
-				fmt.Println("browser renderOnEventSubWindowIPCOn ret:", string(context.Message().Data()))
+				fmt.Println("browser renderOnEventSubWindowIPCOn 回调的方式:", string(context.Message().Data()))
 				//在这里 不能使用 context 返回给页面
 				//函数内的 context 返回给调用方
 			})
-			context.Result().SetString("\t|-- 222")
+			fmt.Println("\t|-- 222")
 			//调用指定渲染进程监听 同步的方式
 			ctx := ipc.IPC.Browser().EmitChannelIdAndReturn("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
-			context.Result().SetString("\t|-- 333")
-			//返回给页面数据
 			context.Result().SetString("成功返回, " + string(ctx.Message().Data()))
-
+			fmt.Println("\t|-- 333")
 			//返回给页面数据
-			//context.Result().SetString("成功返回,")
+			//context.Result().SetString("成功返回 ")
 		})
 		event.On("close", func(context ipc.IIPCContext) {
 			bsr := cef.BrowserWindow.GetBrowser(context.BrowserId())
