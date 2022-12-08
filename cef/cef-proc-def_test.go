@@ -17,4 +17,5 @@ func TestProcDef(t *testing.T) {
 	for i, impTab := range dllimports.GetEnergyImports() {
 		println(i, impTab.Name())
 	}
+
 }
