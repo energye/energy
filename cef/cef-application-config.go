@@ -201,11 +201,14 @@ func (m *tCefApplicationConfig) SetObjectRootName(name string) {
 
 //energy framework env
 func (m *tCefApplicationConfig) framework() {
-	var path = libPath()
+	var path string
+	if m.frameworkDirPath == 0 {
+		path = libPath()
+	} else {
+		path = api.GoStr(m.frameworkDirPath)
+	}
 	if path != "" {
-		if m.frameworkDirPath == 0 {
-			m.SetFrameworkDirPath(path)
-		}
+		m.SetFrameworkDirPath(path)
 		if m.cache == 0 {
 			m.SetCache(filepath.Join(path, "cache"))
 		}
