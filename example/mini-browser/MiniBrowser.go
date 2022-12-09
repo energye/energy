@@ -4,11 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/mini-browser/src"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/pkgs/macapp"
 )
 
 //go:embed libs
@@ -22,9 +20,6 @@ var resources embed.FS
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
-	//开发环境中 MacOSX平台必须在"GlobalCEFInit"之前设置CEF
-	//设置使用CEF 和 CEF框架目录，生成开发执行应用程序包
-	macapp.MacApp.IsCEF(common.IsDarwin())
 	//环境变量 ENERGY_HOME="/app/cefframework" 配置框架所在目录
 	//全局初始化
 	cef.GlobalCEFInit(&libs, &resources)

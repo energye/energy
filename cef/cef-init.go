@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/pkgs/macapp"
 )
 
 type ExceptionCallback func(sender lcl.IObject, e *lcl.Exception)
@@ -35,6 +36,7 @@ func SetOnException(exception ExceptionCallback) {
 //
 //resources 内置到应用程序的资源文件
 func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
+	macapp.MacApp.IsCEF(IsDarwin())
 	inits.Init(libs, resources)
 	if Args.IsRender() {
 		netIpcPort := Args.Args(MAINARGS_NETIPCPORT)

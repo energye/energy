@@ -10,6 +10,7 @@ package cef
 
 import (
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -133,9 +134,21 @@ func (m *TCefWindowInfo) Close() {
 			logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
 			return
 		}
-		m.Window.isClosing = true
-		m.Window.Hide()
-		m.Window.chromium.CloseBrowser(true)
+		if common.IsDarwin() {
+			//main window close
+			if m.Window.WindowType() == consts.WT_MAIN_BROWSER {
+				m.Window.Close()
+			} else {
+				//sub window close
+				m.Window.isClosing = true
+				m.Window.Hide()
+				m.Window.chromium.CloseBrowser(true)
+			}
+		} else {
+			m.Window.isClosing = true
+			m.Window.Hide()
+			m.Window.chromium.CloseBrowser(true)
+		}
 	})
 }
 

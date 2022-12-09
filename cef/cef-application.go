@@ -27,14 +27,19 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 		cfg = NewApplicationConfig()
 	}
 	cfg.framework()
-	m := new(TCEFApplication)
-	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
-	m.instance = unsafe.Pointer(r1)
-	//注册默认的函数
-	m.defaultSetOnContextCreated()
-	m.defaultSetOnProcessMessageReceived()
-	m.defaultSetOnBeforeChildProcessLaunch()
-	return m
+	result := new(TCEFApplication)
+	if Args.IsMain() {
+		r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
+		result.instance = unsafe.Pointer(r1)
+	} else {
+		r1, _, _ := Proc(internale_CEFApplicationSub_Create).Call(uintptr(unsafe.Pointer(cfg)))
+		result.instance = unsafe.Pointer(r1)
+	}
+	//register default function
+	result.defaultSetOnContextCreated()
+	result.defaultSetOnProcessMessageReceived()
+	result.defaultSetOnBeforeChildProcessLaunch()
+	return result
 }
 
 func (m *TCEFApplication) Instance() uintptr {
@@ -56,13 +61,21 @@ func (m *TCEFApplication) StartMainProcess() bool {
 	return false
 }
 
-//启动子进程, 如果指定了子进程执行程序将执行指定的子进程程序
-func (m *TCEFApplication) StartSubProcess() bool {
+//启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
+func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nullptr {
 		r1, _, _ := Proc(internale_CEFStartSubProcess).Call(m.Instance())
-		return api.GoBool(r1)
+		result = api.GoBool(r1)
 	}
 	return false
+}
+
+func (m *TCEFApplication) StopScheduler() {
+	Proc(internale_CEFApplication_StopScheduler).Call()
+}
+
+func (m *TCEFApplication) Destroy() {
+	Proc(internale_CEFApplication_Destroy).Call()
 }
 
 func (m *TCEFApplication) Free() {

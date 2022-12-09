@@ -101,6 +101,7 @@ func Run(cefApp *TCEFApplication) {
 	if IsDarwin() && !SingleProcess && !Args.IsMain() {
 		// mac os 启动子进程
 		cefApp.StartSubProcess()
+		cefApp.Free()
 	} else {
 		b := cefApp.StartMainProcess()
 		if browserProcessStartAfterCallback != nil {

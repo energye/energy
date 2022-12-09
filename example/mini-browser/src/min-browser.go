@@ -65,10 +65,9 @@ func AppBrowserInit() {
 			//context.Result().SetString("成功返回 ")
 		})
 		event.On("close", func(context ipc.IIPCContext) {
-			bsr := cef.BrowserWindow.GetBrowser(context.BrowserId())
 			fmt.Println("close browserId:", context.BrowserId())
-			//发送给渲染进程消息
-			bsr.CloseBrowser(true)
+			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			winInfo.Close()
 		})
 		event.On("minWindow", func(context ipc.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())

@@ -32,7 +32,10 @@ func init() {
 		dllimports.NewEnergyImport("AddCustomCommandLine", 0),
 		//application
 		dllimports.NewEnergyImport("CEFApplication_Create", 0),
+		dllimports.NewEnergyImport("CEFApplicationSub_Create", 0),
+		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
+		dllimports.NewEnergyImport("CEFApplication_StopScheduler", 0),
 		dllimports.NewEnergyImport("CEFApplication_ExecuteJS", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetCommonRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetObjectRootName", 0),
@@ -360,7 +363,10 @@ const (
 	internale_AddCustomCommandLine
 	//application
 	internale_CEFApplication_Create
+	internale_CEFApplicationSub_Create
+	internale_CEFApplication_Destroy
 	internale_CEFApplication_Free
+	internale_CEFApplication_StopScheduler
 	internale_CEFApplication_ExecuteJS
 	internale_CEFV8ValueRef_SetCommonRootName
 	internale_CEFV8ValueRef_SetObjectRootName
