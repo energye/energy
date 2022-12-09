@@ -364,9 +364,8 @@ func AppBrowserInit() {
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
 			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
-			for i := 0; i < headerMap.GetSize(); i++ {
-				fmt.Println("\theader:", headerMap.GetKey(i), "=", headerMap.GetValue(i))
-			}
+			fmt.Println(request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1))
+
 		})
 	})
 	//添加子窗口初始化
