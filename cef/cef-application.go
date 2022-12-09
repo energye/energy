@@ -28,13 +28,8 @@ func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	}
 	cfg.framework()
 	result := new(TCEFApplication)
-	if Args.IsMain() {
-		r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
-		result.instance = unsafe.Pointer(r1)
-	} else {
-		r1, _, _ := Proc(internale_CEFApplicationSub_Create).Call(uintptr(unsafe.Pointer(cfg)))
-		result.instance = unsafe.Pointer(r1)
-	}
+	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
+	result.instance = unsafe.Pointer(r1)
 	//register default function
 	result.defaultSetOnContextCreated()
 	result.defaultSetOnProcessMessageReceived()
