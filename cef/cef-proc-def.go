@@ -14,6 +14,8 @@ func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
+		dllimports.NewEnergyImport("CEFVersion", 0),
+		dllimports.NewEnergyImport("LibBuildVersion", 0),
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
@@ -344,6 +346,8 @@ func init() {
 const (
 	//null nil
 	internale_null_nil = iota
+	internale_CEFVersion
+	internale_LibBuildVersion
 	//ApplicationQueueAsyncCallFunc
 	internale_SetApplicationQueueAsyncCallFunc
 	internale_CEFApplication_QueueAsyncCall
