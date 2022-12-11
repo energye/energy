@@ -1,3 +1,11 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 package cmd
 
 import (
@@ -5,6 +13,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 )
 
 var CmdVersion = &Command{
@@ -33,14 +42,22 @@ func runVersion(c *CommandConfig) error {
 		os.Exit(1)
 	}
 	if versionList, ok := edv["versionList"].(map[string]interface{}); ok {
-		for version, fver := range versionList {
-			var ver = fver.(map[string]interface{})
+		var keys []string
+		for k, _ := range versionList {
+			keys = append(keys, k)
+		}
+		sort.Strings(keys)
+		println("Latest:", edv["latest"].(string))
+		println("Version list")
+		for i := len(keys) - 1; i >= 0; i-- {
+			var version = keys[i]
+			var ver = versionList[version].(map[string]interface{})
 			if c.Version.All {
-				println(" ", version, fmt.Sprintf(`
-    CEF: %s
-    ENERGY: %s`, ver["cef"].(string), ver["energy"].(string)))
+				println("  ", version, fmt.Sprintf(`
+	CEF: %s
+	ENERGY: %s`, ver["cef"].(string), ver["energy"].(string)))
 			} else {
-				println(" ", version)
+				println("  ", version)
 			}
 		}
 	}

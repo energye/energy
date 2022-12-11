@@ -1,3 +1,11 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 package main
 
 import (
@@ -27,9 +35,9 @@ func main() {
 		os.Exit(1)
 	} else {
 		switch parser.Active.Name {
-		case "install":
+		case "install", "i":
 			cc.Index = 1
-		case "package":
+		case "package", "p":
 			cc.Index = 2
 		case "version", "v":
 			cc.Index = 3
