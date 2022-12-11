@@ -417,7 +417,6 @@ func (m *BaseWindow) registerDefaultEvent() {
 	})
 }
 func (m *BaseWindow) close(sender lcl.IObject, action *types.TCloseAction) {
-	logger.Debug("close")
 	var ret bool
 	if m.onClose != nil {
 		for _, fn := range m.onClose {
@@ -427,6 +426,7 @@ func (m *BaseWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 		}
 	}
 	if !ret {
+		logger.Debug("window.onClose")
 		*action = types.CaFree
 	}
 }
@@ -441,13 +441,13 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 		}
 	}
 	if !ret {
-		logger.Debug("closeQuery windowType:", m.WindowType())
+		logger.Debug("window.onCloseQuery windowType:", m.WindowType())
 		if IsDarwin() {
 			//main window close
 			if m.WindowType() == WT_MAIN_BROWSER {
 				*close = true
 				desChildWind := m.windowParent.DestroyChildWindow()
-				logger.Debug("closeQuery windowParent DestroyChildWindow:", desChildWind)
+				logger.Debug("window.onCloseQuery => windowParent.DestroyChildWindow:", desChildWind)
 			} else {
 				//sub window close
 				*close = m.canClose
@@ -472,33 +472,39 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
-		logger.Debug("chromium close")
+		logger.Debug("chromium.onClose")
 		if IsDarwin() { //MacOSX
-			logger.Debug("chromium close windowParent DestroyChildWindow:", m.windowParent.DestroyChildWindow())
+			desChildWind := m.windowParent.DestroyChildWindow()
+			logger.Debug("chromium.onClose => windowParent.DestroyChildWindow:", desChildWind)
 		} else { // Window  and Linux
-			QueueAsyncCall(func(id int) { //main thread run
-				m.windowParent.Free()
-				logger.Debug("chromium close windowParent Free")
-			})
+			//QueueAsyncCall(func(id int) { //main thread run
+			//	m.windowParent.Free()
+			//	logger.Debug("chromium.onClose => windowParent.Free")
+			//})
 		}
-		if IsLinux() {
-			//继续关闭 -> OnBeforeClose
-			*aAction = CbaClose
-		} else {
-			//暂时停止关闭 -> OnBeforeClose
-			*aAction = CbaDelay
-		}
+		QueueAsyncCall(func(id int) { //main thread run
+			m.windowParent.Free()
+			logger.Debug("chromium.onClose => windowParent.Free")
+		})
+		*aAction = CbaClose
+		//if IsLinux() {
+		//	//继续关闭 -> OnBeforeClose
+		//	*aAction = CbaClose
+		//} else {
+		//	//暂时停止关闭 -> OnBeforeClose
+		//	*aAction = CbaDelay
+		//}
 		if bwEvent.onClose != nil {
 			bwEvent.onClose(sender, browser, aAction)
 		}
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-		logger.Debug("chromium beforeClose")
+		logger.Debug("chromium.onBeforeClose")
 		m.canClose = true
 		var tempClose = func() {
 			defer func() {
 				if err := recover(); err != nil {
-					logger.Error("OnBeforeClose Error:", err)
+					logger.Error("chromium.OnBeforeClose Error:", err)
 				}
 			}()
 			if m.windowInfo.auxTools.viewSourceWindow != nil {
