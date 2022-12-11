@@ -474,18 +474,20 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		logger.Debug("chromium.onClose")
 		if IsDarwin() { //MacOSX
-			*aAction = CbaClose
 			desChildWind := m.windowParent.DestroyChildWindow()
 			logger.Debug("chromium.onClose => windowParent.DestroyChildWindow:", desChildWind)
+			*aAction = CbaClose
 		} else if IsLinux() {
 			*aAction = CbaClose
 		} else if IsWindows() {
 			*aAction = CbaDelay
 		}
-		QueueAsyncCall(func(id int) { //main thread run
-			m.windowParent.Free()
-			logger.Debug("chromium.onClose => windowParent.Free")
-		})
+		if !IsDarwin() {
+			QueueAsyncCall(func(id int) { //main thread run
+				m.windowParent.Free()
+				logger.Debug("chromium.onClose => windowParent.Free")
+			})
+		}
 		if bwEvent.onClose != nil {
 			bwEvent.onClose(sender, browser, aAction)
 		}
