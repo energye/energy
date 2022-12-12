@@ -4,6 +4,7 @@ import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
 
@@ -86,32 +87,45 @@ func (m *TCEFWindowComponent) SendMouseMove(screenX, screenY int32) {
 	Proc(internale_CEFWindowComponent_SendMouseMove).Call(uintptr(m.instance), uintptr(screenX), uintptr(screenY))
 }
 
-func (m *TCEFWindowComponent) SendMouseEvents() {
-	Proc(internale_CEFWindowComponent_SendMouseEvents).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SendMouseEvents(button consts.TCefMouseButtonType, mouseDown, mouseUp bool) {
+	Proc(internale_CEFWindowComponent_SendMouseEvents).Call(uintptr(m.instance), uintptr(button), api.PascalBool(mouseDown), api.PascalBool(mouseUp))
 }
 
-func (m *TCEFWindowComponent) SetAccelerator() {
-	Proc(internale_CEFWindowComponent_SetAccelerator).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) {
+	Proc(internale_CEFWindowComponent_SetAccelerator).Call(uintptr(m.instance), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
 }
 
-func (m *TCEFWindowComponent) RemoveAccelerator() {
-	Proc(internale_CEFWindowComponent_RemoveAccelerator).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) RemoveAccelerator(commandId int32) {
+	Proc(internale_CEFWindowComponent_RemoveAccelerator).Call(uintptr(m.instance), uintptr(commandId))
 }
 
 func (m *TCEFWindowComponent) RemoveAllAccelerators() {
 	Proc(internale_CEFWindowComponent_RemoveAllAccelerators).Call(uintptr(m.instance))
 }
 
-func (m *TCEFWindowComponent) Title() {
-	Proc(internale_CEFWindowComponent_Title).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetTitle(title string) {
+	Proc(internale_CEFWindowComponent_SetTitle).Call(uintptr(m.instance), api.PascalStr(title))
 }
 
-func (m *TCEFWindowComponent) WindowIcon() {
-	Proc(internale_CEFWindowComponent_WindowIcon).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) Title() string {
+	r1, _, _ := Proc(internale_CEFWindowComponent_Title).Call(uintptr(m.instance))
+	return api.GoStr(r1)
 }
 
-func (m *TCEFWindowComponent) WindowAppIcon() {
-	Proc(internale_CEFWindowComponent_WindowAppIcon).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) WindowIcon() *ICefImage {
+	var ret uintptr
+	Proc(internale_CEFWindowComponent_WindowIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
+	return &ICefImage{
+		instance: unsafe.Pointer(ret),
+	}
+}
+
+func (m *TCEFWindowComponent) WindowAppIcon() *ICefImage {
+	var ret uintptr
+	Proc(internale_CEFWindowComponent_WindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
+	return &ICefImage{
+		instance: unsafe.Pointer(ret),
+	}
 }
 
 func (m *TCEFWindowComponent) Display() {

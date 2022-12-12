@@ -318,6 +318,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, "开发者工具(F12)")
 	}
+	model.AddSubMenu(model.CefMis.NextCommandId(), "asdfsadf")
 	if browser.CanGoBack() {
 		model.SetEnabled(backId, true)
 	} else {

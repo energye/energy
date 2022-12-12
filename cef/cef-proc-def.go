@@ -368,6 +368,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetAccelerator", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_RemoveAccelerator", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_RemoveAllAccelerators", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetTitle", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Title", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowIcon", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowAppIcon", 0),
@@ -767,6 +768,7 @@ const (
 	internale_CEFWindowComponent_SetAccelerator
 	internale_CEFWindowComponent_RemoveAccelerator
 	internale_CEFWindowComponent_RemoveAllAccelerators
+	internale_CEFWindowComponent_SetTitle
 	internale_CEFWindowComponent_Title
 	internale_CEFWindowComponent_WindowIcon
 	internale_CEFWindowComponent_WindowAppIcon
