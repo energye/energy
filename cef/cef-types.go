@@ -96,11 +96,6 @@ type TCefProxy struct {
 	CustomHeaderValue      string
 }
 
-type TCefSize struct {
-	Width  int32
-	Height int32
-}
-
 type TCefTouchEvent struct {
 	Id            int32
 	X             float32
@@ -118,6 +113,11 @@ type TCefMouseEvent struct {
 	X         int32
 	Y         int32
 	Modifiers TCefEventFlags
+}
+
+type TCefSize struct {
+	Width  int32
+	Height int32
 }
 
 type BeforePopupInfo struct {
@@ -148,9 +148,17 @@ type tCefRect struct {
 	Height uintptr //int32
 }
 
+type TCefPoint struct {
+	X int32
+	Y int32
+}
+
 type ICefClient struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
+}
+
+func (m *ICefClient) SetClient(client *ICefClient) {
+	m.instance = client.instance
 }
 
 func (m *TCefCommandLine) AppendSwitch(name, value string) {

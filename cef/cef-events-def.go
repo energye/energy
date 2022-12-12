@@ -90,6 +90,7 @@ type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFr
 type GlobalCEFAppEventOnRenderLoadEnd func(browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
 type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode TCefErrorCode, errorText, failedUrl string)
 type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
+type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
 
 // 进程消息接收
 type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool

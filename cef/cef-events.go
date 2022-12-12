@@ -76,8 +76,7 @@ func init() {
 			}
 		}()
 		var (
-			instance uintptr
-			ptr      unsafe.Pointer
+			instance unsafe.Pointer
 		)
 		// 指针
 		getPtr := func(i int) unsafe.Pointer {
@@ -134,13 +133,13 @@ func init() {
 			fn.(ChromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))
 		case ChromiumEventOnBeforeResourceLoad:
 			sender, browse, frame, request, _ := resourceEventGet(fn, getVal, false)
-			_, ptr = getInstance(getVal(4))
-			callback := &ICefCallback{instance: ptr}
+			instance = getInstance(getVal(4))
+			callback := &ICefCallback{instance: instance}
 			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*TCefReturnValue)(getPtr(5)))
 		//menu begin
 		case ChromiumEventOnBeforeContextMenu:
 			sender := getPtr(0)
-			instance, ptr = getInstance(getVal(1))
+			instance = getInstance(getVal(1))
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
@@ -166,9 +165,9 @@ func init() {
 				SelectionText:     api.GoStr(cefParams.SelectionText),
 				EditStateFlags:    TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
 			}
-			instance, ptr = getInstance(getVal(4))
+			instance = getInstance(getVal(4))
 			KeyAccelerator.clear()
-			model := &ICefMenuModel{instance: instance, ptr: ptr, CefMis: KeyAccelerator}
+			model := &ICefMenuModel{instance: instance, CefMis: KeyAccelerator}
 			fn.(ChromiumEventOnBeforeContextMenu)(lcl.AsObject(sender), browser, frame, params, model)
 		case ChromiumEventOnContextMenuCommand:
 			sender := getPtr(0)
@@ -397,9 +396,9 @@ func init() {
 				State:              int32(item.State),
 			}
 			suggestedName := api.GoStr(getVal(3))
-			instance, ptr = getInstance(getVal(4))
+			instance = getInstance(getVal(4))
 			callback := &ICefBeforeDownloadCallback{
-				instance: instance, ptr: ptr,
+				instance: instance,
 				browseId: browser.Identifier(),
 				downId:   downItem.Id,
 			}
@@ -425,9 +424,9 @@ func init() {
 				IsValid:            *(*bool)(unsafe.Pointer(item.IsValid)),
 				State:              int32(item.State),
 			}
-			instance, ptr = getInstance(getVal(3))
+			instance = getInstance(getVal(3))
 			callback := &ICefDownloadItemCallback{
-				instance: instance, ptr: ptr,
+				instance: instance,
 				browseId: browser.Identifier(),
 				downId:   downItem.Id,
 			}
@@ -507,7 +506,7 @@ func init() {
 	})
 }
 
-func getInstance(value interface{}) (uintptr, unsafe.Pointer) {
+func getInstance(value interface{}) unsafe.Pointer {
 	var ptr uintptr
 	switch value.(type) {
 	case uintptr:
@@ -519,7 +518,7 @@ func getInstance(value interface{}) (uintptr, unsafe.Pointer) {
 	default:
 		ptr = getUIntPtr(value)
 	}
-	return ptr, unsafe.Pointer(ptr)
+	return unsafe.Pointer(ptr)
 }
 
 func getUIntPtr(v interface{}) uintptr {

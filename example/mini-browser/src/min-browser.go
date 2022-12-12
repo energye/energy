@@ -364,7 +364,10 @@ func AppBrowserInit() {
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
 			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
-			fmt.Println(request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1))
+			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
+			for i := 0; i < headerMap.GetSize(); i++ {
+				fmt.Println("\tkey:", headerMap.GetKey(i), "value:", headerMap.GetValue(i))
+			}
 
 		})
 	})

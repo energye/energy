@@ -70,8 +70,7 @@ type ICefContextMenuParams struct {
 }
 
 type ICefMenuModel struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
 	CefMis   *keyEventAccelerator
 }
 
@@ -217,74 +216,74 @@ func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 }
 
 func (m *ICefMenuModel) AddSeparator() bool {
-	return cefMenuModel_AddSeparator(m.instance)
+	return cefMenuModel_AddSeparator(uintptr(m.instance))
 }
 func (m *ICefMenuModel) Clear() bool {
-	return cefMenuModel_Clear(m.instance)
+	return cefMenuModel_Clear(uintptr(m.instance))
 }
 func (m *ICefMenuModel) IsSubMenu() bool {
-	return cefMenuModel_IsSubMenu(m.instance)
+	return cefMenuModel_IsSubMenu(uintptr(m.instance))
 }
 func (m *ICefMenuModel) GetCount() int32 {
-	return cefMenuModel_GetCount(m.instance)
+	return cefMenuModel_GetCount(uintptr(m.instance))
 }
 func (m *ICefMenuModel) AddItem(commandId MenuId, text string) bool {
-	return cefMenuModel_AddItem(m.instance, commandId, text)
+	return cefMenuModel_AddItem(uintptr(m.instance), commandId, text)
 }
 func (m *ICefMenuModel) AddCheckItem(commandId MenuId, text string) bool {
-	return cefMenuModel_AddCheckItem(m.instance, commandId, text)
+	return cefMenuModel_AddCheckItem(uintptr(m.instance), commandId, text)
 }
 func (m *ICefMenuModel) AddRadioItem(commandId MenuId, text string, groupId int32) bool {
-	return cefMenuModel_AddRadioItem(m.instance, commandId, text, groupId)
+	return cefMenuModel_AddRadioItem(uintptr(m.instance), commandId, text, groupId)
 }
 func (m *ICefMenuModel) AddSubMenu(commandId MenuId, text string) *ICefMenuModel {
-	return cefMenuModel_AddSubMenu(m.instance, commandId, text)
+	return cefMenuModel_AddSubMenu(uintptr(m.instance), commandId, text)
 }
 func (m *ICefMenuModel) Remove(commandId MenuId) bool {
-	return cefMenuModel_Remove(m.instance, commandId)
+	return cefMenuModel_Remove(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) RemoveAt(index int32) bool {
-	return cefMenuModel_RemoveAt(m.instance, index)
+	return cefMenuModel_RemoveAt(uintptr(m.instance), index)
 }
 func (m *ICefMenuModel) SetChecked(commandId MenuId, check bool) bool {
-	return cefMenuModel_SetChecked(m.instance, commandId, check)
+	return cefMenuModel_SetChecked(uintptr(m.instance), commandId, check)
 }
 func (m *ICefMenuModel) IsChecked(commandId MenuId) bool {
-	return cefMenuModel_IsChecked(m.instance, commandId)
+	return cefMenuModel_IsChecked(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, color *TCefARGB) bool {
-	return cefMenuModel_SetColor(m.instance, commandId, colorType, color)
+	return cefMenuModel_SetColor(uintptr(m.instance), commandId, colorType, color)
 }
 
 //func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
-//	return cefMenuModel_SetFontList(m.instance, commandId, fontList)
+//	return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
 //}
 func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
-	return cefMenuModel_HasAccelerator(m.instance, commandId)
+	return cefMenuModel_HasAccelerator(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) SetAccelerator(commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
-	return cefMenuModel_SetAccelerator(m.instance, commandId, keyCode, shiftPressed, ctrlPressed, altPressed)
+	return cefMenuModel_SetAccelerator(uintptr(m.instance), commandId, keyCode, shiftPressed, ctrlPressed, altPressed)
 }
 func (m *ICefMenuModel) RemoveAccelerator(commandId MenuId) bool {
-	return cefMenuModel_RemoveAccelerator(m.instance, commandId)
+	return cefMenuModel_RemoveAccelerator(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) IsVisible(commandId MenuId) bool {
-	return cefMenuModel_IsVisible(m.instance, commandId)
+	return cefMenuModel_IsVisible(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) SetVisible(commandId MenuId, visible bool) bool {
-	return cefMenuModel_SetVisible(m.instance, commandId, visible)
+	return cefMenuModel_SetVisible(uintptr(m.instance), commandId, visible)
 }
 func (m *ICefMenuModel) IsEnabled(commandId MenuId) bool {
-	return cefMenuModel_IsEnabled(m.instance, commandId)
+	return cefMenuModel_IsEnabled(uintptr(m.instance), commandId)
 }
 func (m *ICefMenuModel) SetEnabled(commandId MenuId, enabled bool) bool {
-	return cefMenuModel_SetEnabled(m.instance, commandId, enabled)
+	return cefMenuModel_SetEnabled(uintptr(m.instance), commandId, enabled)
 }
 func (m *ICefMenuModel) SetLabel(commandId MenuId, text string) bool {
-	return cefMenuModel_SetLabel(m.instance, commandId, text)
+	return cefMenuModel_SetLabel(uintptr(m.instance), commandId, text)
 }
 func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
-	return cefMenuModel_GetIndexOf(m.instance, commandId)
+	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
 }
 
 //------------------------------------ PROC
@@ -332,10 +331,11 @@ func cefMenuModel_AddRadioItem(instance uintptr, commandId MenuId, text string, 
 
 //ICefMenuModel cefMenuModel_AddSubMenu
 func cefMenuModel_AddSubMenu(instance uintptr, commandId MenuId, text string) *ICefMenuModel {
-	var ret = &ICefMenuModel{}
-	Proc(internale_cefMenuModel_AddSubMenu).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(ret)))
-	ret.ptr = unsafe.Pointer(ret.instance)
-	return ret
+	var ret uintptr
+	Proc(internale_cefMenuModel_AddSubMenu).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
+	return &ICefMenuModel{
+		instance: unsafe.Pointer(ret),
+	}
 }
 
 //ICefMenuModel cefMenuModel_Remove

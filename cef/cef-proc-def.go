@@ -339,6 +339,72 @@ func init() {
 		dllimports.NewEnergyImport("cefHeaderMap_GetValue", 0),
 		dllimports.NewEnergyImport("cefHeaderMap_Append", 0),
 		dllimports.NewEnergyImport("cefHeaderMap_Clear", 0),
+		//ICefImage
+		dllimports.NewEnergyImport("CEFImage_New", 0),
+		dllimports.NewEnergyImport("CEFImage_AddPng", 0),
+		dllimports.NewEnergyImport("CEFImage_AddJpeg", 0),
+		dllimports.NewEnergyImport("CEFImage_GetWidth", 0),
+		dllimports.NewEnergyImport("CEFImage_GetHeight", 0),
+		//TCEFWindowComponent
+		dllimports.NewEnergyImport("CEFWindowComponent_Create", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_CreateTopLevelWindow", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Show", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Hide", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_CenterWindow", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Close", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Activate", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Deactivate", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_BringToTop", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Maximize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Minimize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Restore", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_AddOverlayView", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_ShowMenu", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_CancelMenu", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetDraggableRegions", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SendKeyPress", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SendMouseMove", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SendMouseEvents", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetAccelerator", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_RemoveAccelerator", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_RemoveAllAccelerators", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Title", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_WindowIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_WindowAppIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Display", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_ClientAreaBoundsInScreen", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_WindowHandle", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsClosed", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsActive", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsAlwaysOnTop", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsFullscreen", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsMaximized", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_IsMinimized", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowCreated", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowDestroyed", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowActivationChanged", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetParentWindow", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialBounds", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialShowState", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnIsFrameless", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanResize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanMaximize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanMinimize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanClose", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnAccelerator", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnKeyEvent", 0),
+		//TCEFBrowserViewComponent
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_Create", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_CreateBrowserView", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_GetForBrowser", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetPreferAccelerators", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_Browser", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_BrowserView", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnBrowserCreated", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnBrowserDestroyed", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnPopupBrowserViewCreated", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetChromeToolbarType", 0),
 	}
 	dllimports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -672,4 +738,70 @@ const (
 	internale_cefHeaderMap_GetValue
 	internale_cefHeaderMap_Append
 	internale_cefHeaderMap_Clear
+	//ICefImage
+	internale_CEFImage_New
+	internale_CEFImage_AddPng
+	internale_CEFImage_AddJpeg
+	internale_CEFImage_GetWidth
+	internale_CEFImage_GetHeight
+	//TCEFWindowComponent
+	internale_CEFWindowComponent_Create
+	internale_CEFWindowComponent_CreateTopLevelWindow
+	internale_CEFWindowComponent_Show
+	internale_CEFWindowComponent_Hide
+	internale_CEFWindowComponent_CenterWindow
+	internale_CEFWindowComponent_Close
+	internale_CEFWindowComponent_Activate
+	internale_CEFWindowComponent_Deactivate
+	internale_CEFWindowComponent_BringToTop
+	internale_CEFWindowComponent_Maximize
+	internale_CEFWindowComponent_Minimize
+	internale_CEFWindowComponent_Restore
+	internale_CEFWindowComponent_AddOverlayView
+	internale_CEFWindowComponent_ShowMenu
+	internale_CEFWindowComponent_CancelMenu
+	internale_CEFWindowComponent_SetDraggableRegions
+	internale_CEFWindowComponent_SendKeyPress
+	internale_CEFWindowComponent_SendMouseMove
+	internale_CEFWindowComponent_SendMouseEvents
+	internale_CEFWindowComponent_SetAccelerator
+	internale_CEFWindowComponent_RemoveAccelerator
+	internale_CEFWindowComponent_RemoveAllAccelerators
+	internale_CEFWindowComponent_Title
+	internale_CEFWindowComponent_WindowIcon
+	internale_CEFWindowComponent_WindowAppIcon
+	internale_CEFWindowComponent_Display
+	internale_CEFWindowComponent_ClientAreaBoundsInScreen
+	internale_CEFWindowComponent_WindowHandle
+	internale_CEFWindowComponent_IsClosed
+	internale_CEFWindowComponent_IsActive
+	internale_CEFWindowComponent_IsAlwaysOnTop
+	internale_CEFWindowComponent_IsFullscreen
+	internale_CEFWindowComponent_IsMaximized
+	internale_CEFWindowComponent_IsMinimized
+	internale_CEFWindowComponent_SetOnWindowCreated
+	internale_CEFWindowComponent_SetOnWindowDestroyed
+	internale_CEFWindowComponent_SetOnWindowActivationChanged
+	internale_CEFWindowComponent_SetOnGetParentWindow
+	internale_CEFWindowComponent_SetOnGetInitialBounds
+	internale_CEFWindowComponent_SetOnGetInitialShowState
+	internale_CEFWindowComponent_SetOnIsFrameless
+	internale_CEFWindowComponent_SetOnCanResize
+	internale_CEFWindowComponent_SetOnCanMaximize
+	internale_CEFWindowComponent_SetOnCanMinimize
+	internale_CEFWindowComponent_SetOnCanClose
+	internale_CEFWindowComponent_SetOnAccelerator
+	internale_CEFWindowComponent_SetOnKeyEvent
+	//TCEFBrowserViewComponent
+	internale_CEFBrowserViewComponent_Create
+	internale_CEFBrowserViewComponent_CreateBrowserView
+	internale_CEFBrowserViewComponent_GetForBrowser
+	internale_CEFBrowserViewComponent_SetPreferAccelerators
+	internale_CEFBrowserViewComponent_Browser
+	internale_CEFBrowserViewComponent_BrowserView
+	internale_CEFBrowserViewComponent_SetOnBrowserCreated
+	internale_CEFBrowserViewComponent_SetOnBrowserDestroyed
+	internale_CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView
+	internale_CEFBrowserViewComponent_SetOnPopupBrowserViewCreated
+	internale_CEFBrowserViewComponent_SetOnGetChromeToolbarType
 )

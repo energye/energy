@@ -307,14 +307,17 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMes
 }
 
 func (m *TCEFChromium) CreateClientHandler(client *ICefClient, alsOSR bool) bool {
-	return api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), client.instance, api.PascalBool(alsOSR)))
+	return api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), uintptr(client.instance), api.PascalBool(alsOSR)))
 }
+
 func (m *TCEFChromium) SetFocus(value bool) {
 	_CEFChromium_SetFocus(m.Instance(), api.PascalBool(value))
 }
+
 func (m *TCEFChromium) SendCaptureLostEvent() {
 	_CEFChromium_SendCaptureLostEvent(m.Instance())
 }
+
 func (m *TCEFChromium) FrameIsFocused() bool {
 	return api.GoBool(_CEFChromium_FrameIsFocused(m.Instance()))
 }

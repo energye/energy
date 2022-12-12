@@ -593,3 +593,11 @@ const (
 type TCefContextMenuTypeFlags uint32
 type TCefContextMenuMediaStateFlags uint32
 type TCefContextMenuEditStateFlags uint32
+
+type TCefMenuAnchorPosition = int32
+
+const (
+	CEF_MENU_ANCHOR_TOPLEFT TCefMenuAnchorPosition = iota
+	CEF_MENU_ANCHOR_TOPRIGHT
+	CEF_MENU_ANCHOR_BOTTOMCENTER
+)

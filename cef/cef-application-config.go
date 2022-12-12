@@ -19,24 +19,27 @@ import (
 
 // Application 支持的配置
 type tCefApplicationConfig struct {
-	frameworkDirPath     uintptr //string cef框架根目录
-	resourcesDirPath     uintptr //string
-	localesDirPath       uintptr //string
-	cache                uintptr //string
-	userDataPath         uintptr //string
-	language             uintptr //string 语言设置
-	localesRequired      uintptr //string 默认空,检查所有的语言环境 逗号分隔
-	logFile              uintptr //string
-	mainBundlePath       uintptr //string 只对 darwin 启作用
-	browseSubprocessPath uintptr //string 只对 非darwin 启作用
-	logSeverity          uintptr //uint32
-	noSandbox            uintptr //bool
-	disableZygote        uintptr //bool 只对 linux 启作用
-	enableGPU            uintptr //bool
-	singleProcess        uintptr //bool 进程启动模式,默认false true:单进程 false:多进程
-	useMockKeyChain      uintptr //bool
-	checkCEFFiles        uintptr //bool
-	remoteDebuggingPort  uintptr //int32
+	frameworkDirPath         uintptr //string cef框架根目录
+	resourcesDirPath         uintptr //string
+	localesDirPath           uintptr //string
+	cache                    uintptr //string
+	userDataPath             uintptr //string
+	language                 uintptr //string 语言设置
+	localesRequired          uintptr //string 默认空,检查所有的语言环境 逗号分隔
+	logFile                  uintptr //string
+	mainBundlePath           uintptr //string 只对 darwin 启作用
+	browseSubprocessPath     uintptr //string 只对 非darwin 启作用
+	logSeverity              uintptr //uint32
+	noSandbox                uintptr //bool
+	disableZygote            uintptr //bool 只对 linux 启作用
+	enableGPU                uintptr //bool
+	singleProcess            uintptr //bool 进程启动模式,默认false true:单进程 false:多进程
+	useMockKeyChain          uintptr //bool
+	checkCEFFiles            uintptr //bool
+	remoteDebuggingPort      uintptr //int32
+	externalMessagePump      uintptr //bool
+	multiThreadedMessageLoop uintptr //bool
+	chromeRuntime            uintptr //bool
 }
 
 //创建应用全局配置
@@ -60,6 +63,9 @@ func NewApplicationConfig() *tCefApplicationConfig {
 	m.SetDisableZygote(true)
 	m.SetCheckCEFFiles(false)
 	m.SetRemoteDebuggingPort(0)
+	m.SetExternalMessagePump(false)
+	m.SetMultiThreadedMessageLoop(true)
+	m.SetChromeRuntime(false)
 	return m
 }
 
@@ -172,6 +178,21 @@ func (m *tCefApplicationConfig) SetLogSeverity(s LOG) *tCefApplicationConfig {
 //设置远程调式端口 (1024 ~ 65535)
 func (m *tCefApplicationConfig) SetRemoteDebuggingPort(s int32) *tCefApplicationConfig {
 	m.remoteDebuggingPort = uintptr(s)
+	return m
+}
+
+func (m *tCefApplicationConfig) SetExternalMessagePump(s bool) *tCefApplicationConfig {
+	m.externalMessagePump = api.PascalBool(s)
+	return m
+}
+
+func (m *tCefApplicationConfig) SetMultiThreadedMessageLoop(s bool) *tCefApplicationConfig {
+	m.multiThreadedMessageLoop = api.PascalBool(s)
+	return m
+}
+
+func (m *tCefApplicationConfig) SetChromeRuntime(s bool) *tCefApplicationConfig {
+	m.chromeRuntime = api.PascalBool(s)
 	return m
 }
 

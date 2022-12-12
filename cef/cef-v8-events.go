@@ -136,6 +136,11 @@ func init() {
 			commandLine.AppendSwitch(MAINARGS_NETIPCPORT, fmt.Sprintf("%d", ipc.IPC.Port()))
 			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(commandLine)
 			*commands = api.PascalStr(commandLine.toString())
+		case GlobalCEFAppEventOnGetDefaultClient:
+			client := (*uintptr)(getPtr(0))
+			getClient := &ICefClient{instance: unsafe.Pointer(client)}
+			fn.(GlobalCEFAppEventOnGetDefaultClient)(getClient)
+			*client = uintptr(getClient.instance)
 		default:
 			return false
 		}
