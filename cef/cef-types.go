@@ -153,6 +153,11 @@ type TCefPoint struct {
 	Y int32
 }
 
+type TCefDraggableRegion struct {
+	Bounds    TCefRect
+	Draggable int32
+}
+
 type ICefClient struct {
 	instance unsafe.Pointer
 }
