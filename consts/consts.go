@@ -45,6 +45,7 @@ type _uint8 uint8
 type _uint16 uint16
 type _uint32 uint32
 type _uint64 uint64
+type _uint uint
 type _uintptr uintptr
 type _string string
 type _boolean bool
@@ -86,6 +87,11 @@ func (m _uint32) ToPtr() uintptr {
 func (m _uint64) ToPtr() uintptr {
 	return uintptr(m)
 }
+
+func (m _uint) ToPtr() uintptr {
+	return uintptr(m)
+}
+
 func (m _uintptr) ToPtr() uintptr {
 	return uintptr(m)
 }
