@@ -26,8 +26,6 @@ var (
 const (
 	Empty               = ""
 	MAINARGS_NETIPCPORT = "net-ipc-port"
-	download_dir        = "downloads"
-	ipcAccIdx           = 8 //ipc args新的参数开始位置
 	ENERGY_HOME_KEY     = "ENERGY_HOME"
 	MemoryNetwork       = "unix"
 )
