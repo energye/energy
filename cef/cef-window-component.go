@@ -4,6 +4,7 @@ import (
 	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -178,42 +179,123 @@ func (m *TCEFWindowComponent) IsMinimized() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFWindowComponent) SetOnWindowCreated() {
-	Proc(internale_CEFWindowComponent_SetOnWindowCreated).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnWindowCreated(fn WindowComponentOnWindowCreated) {
+	Proc(internale_CEFWindowComponent_SetOnWindowCreated).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnWindowDestroyed() {
-	Proc(internale_CEFWindowComponent_SetOnWindowDestroyed).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnWindowDestroyed(fn WindowComponentOnWindowDestroyed) {
+	Proc(internale_CEFWindowComponent_SetOnWindowDestroyed).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnWindowActivationChanged() {
-	Proc(internale_CEFWindowComponent_SetOnWindowActivationChanged).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnWindowActivationChanged(fn WindowComponentOnWindowActivationChanged) {
+	Proc(internale_CEFWindowComponent_SetOnWindowActivationChanged).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnGetParentWindow() {
-	Proc(internale_CEFWindowComponent_SetOnGetParentWindow).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnGetParentWindow(fn WindowComponentOnGetParentWindow) {
+	Proc(internale_CEFWindowComponent_SetOnGetParentWindow).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnGetInitialBounds() {
-	Proc(internale_CEFWindowComponent_SetOnGetInitialBounds).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnGetInitialBounds(fn WindowComponentOnGetInitialBounds) {
+	Proc(internale_CEFWindowComponent_SetOnGetInitialBounds).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnGetInitialShowState() {
-	Proc(internale_CEFWindowComponent_SetOnGetInitialShowState).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnGetInitialShowState(fn WindowComponentOnGetInitialShowState) {
+	Proc(internale_CEFWindowComponent_SetOnGetInitialShowState).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnIsFrameless() {
-	Proc(internale_CEFWindowComponent_SetOnIsFrameless).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnIsFrameless(fn WindowComponentOnIsFrameless) {
+	Proc(internale_CEFWindowComponent_SetOnIsFrameless).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnCanResize() {
-	Proc(internale_CEFWindowComponent_SetOnCanResize).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnCanResize(fn WindowComponentOnCanResize) {
+	Proc(internale_CEFWindowComponent_SetOnCanResize).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnCanMaximize() {
-	Proc(internale_CEFWindowComponent_SetOnCanMaximize).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnCanMaximize(fn WindowComponentOnCanMaximize) {
+	Proc(internale_CEFWindowComponent_SetOnCanMaximize).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnCanMinimize() {
-	Proc(internale_CEFWindowComponent_SetOnCanMinimize).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnCanMinimize(fn WindowComponentOnCanMinimize) {
+	Proc(internale_CEFWindowComponent_SetOnCanMinimize).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnCanClose() {
-	Proc(internale_CEFWindowComponent_SetOnCanClose).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnCanClose(fn WindowComponentOnCanClose) {
+	Proc(internale_CEFWindowComponent_SetOnCanClose).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnAccelerator() {
-	Proc(internale_CEFWindowComponent_SetOnAccelerator).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnAccelerator(fn WindowComponentOnAccelerator) {
+	Proc(internale_CEFWindowComponent_SetOnAccelerator).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
 }
-func (m *TCEFWindowComponent) SetOnKeyEvent() {
-	Proc(internale_CEFWindowComponent_SetOnKeyEvent).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
+	Proc(internale_CEFWindowComponent_SetOnKeyEvent).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+}
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		defer func() {
+			if err := recover(); err != nil {
+				logger.Error("v8event Error:", err)
+			}
+		}()
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case WindowComponentOnWindowCreated:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnWindowCreated)(lcl.AsObject(sender), &ICefWindow{instance: window})
+		case WindowComponentOnWindowDestroyed:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnWindowDestroyed)(lcl.AsObject(sender), &ICefWindow{instance: window})
+		case WindowComponentOnWindowActivationChanged:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnWindowActivationChanged)(lcl.AsObject(sender), &ICefWindow{instance: window}, api.GoBool(getVal(2)))
+		case WindowComponentOnGetParentWindow:
+			sender := getPtr(0)
+			window := getPtr(1)
+			resultWindowPtr := (*uintptr)(getPtr(4))
+			resultWindow := &ICefWindow{}
+			fn.(WindowComponentOnGetParentWindow)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
+			*resultWindowPtr = uintptr(resultWindow.instance)
+		case WindowComponentOnGetInitialBounds:
+			sender := getPtr(0)
+			window := getPtr(1)
+			resultRectPtr := (*tCefRect)(getPtr(2))
+			resultRect := &TCefRect{}
+			fn.(WindowComponentOnGetInitialBounds)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultRect)
+			resultRectPtr.X = uintptr(resultRect.X)
+			resultRectPtr.Y = uintptr(resultRect.Y)
+			resultRectPtr.Width = uintptr(resultRect.Width)
+			resultRectPtr.Height = uintptr(resultRect.Height)
+		case WindowComponentOnGetInitialShowState:
+			sender := getPtr(0)
+			window := getPtr(1)
+			resultShowState := (*consts.TCefShowState)(getPtr(2))
+			fn.(WindowComponentOnGetInitialShowState)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultShowState)
+		case WindowComponentOnIsFrameless:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnIsFrameless)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnCanResize:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnCanResize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnCanMaximize:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnCanMaximize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnCanMinimize:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnCanMinimize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnCanClose:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnCanClose)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnAccelerator:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnAccelerator)(lcl.AsObject(sender), &ICefWindow{instance: window}, int32(getVal(2)), (*bool)(getPtr(3)))
+		case WindowComponentOnKeyEvent:
+			sender := getPtr(0)
+			window := getPtr(1)
+			keyEvent := (*TCefKeyEvent)(getPtr(2))
+			fn.(WindowComponentOnKeyEvent)(lcl.AsObject(sender), &ICefWindow{instance: window}, keyEvent, (*bool)(getPtr(3)))
+		default:
+			return false
+		}
+		return true
+	})
 }

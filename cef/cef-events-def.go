@@ -113,3 +113,18 @@ type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser
 type TCloseEvent func(sender lcl.IObject, action *types.TCloseAction) bool
 type TNotifyEvent func(sender lcl.IObject) bool
 type TCloseQueryEvent func(sender lcl.IObject, canClose *bool) bool
+
+//TCEFWindowComponent
+type WindowComponentOnWindowCreated func(sender lcl.IObject, window *ICefWindow)
+type WindowComponentOnWindowDestroyed func(sender lcl.IObject, window *ICefWindow)
+type WindowComponentOnWindowActivationChanged func(sender lcl.IObject, window *ICefWindow, active bool)
+type WindowComponentOnGetParentWindow func(sender lcl.IObject, window *ICefWindow, isMenu, canActivateMenu *bool, aResult *ICefWindow)
+type WindowComponentOnGetInitialBounds func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect)
+type WindowComponentOnGetInitialShowState func(sender lcl.IObject, window *ICefWindow, aResult *TCefShowState)
+type WindowComponentOnIsFrameless func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnCanResize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnCanMaximize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnCanMinimize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
+type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)

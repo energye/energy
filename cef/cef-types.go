@@ -162,8 +162,16 @@ type ICefDisplay struct {
 	instance unsafe.Pointer
 }
 
+type ICefWindow struct {
+	instance unsafe.Pointer
+}
+
 type ICefClient struct {
 	instance unsafe.Pointer
+}
+
+func (m *ICefWindow) SetWindow(window *ICefWindow) {
+	m.instance = window.instance
 }
 
 func (m *ICefClient) SetClient(client *ICefClient) {
