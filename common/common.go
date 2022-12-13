@@ -69,31 +69,6 @@ func InterfaceToString(value interface{}) string {
 	return fmt.Sprintf("%v", value)
 }
 
-func copyStr(src uintptr, strLen int) string {
-	if strLen == 0 {
-		return ""
-	}
-	str := make([]uint8, strLen)
-	for i := 0; i < strLen; i++ {
-		str[i] = *(*uint8)(unsafe.Pointer(src + uintptr(i)))
-	}
-	return string(str)
-}
-
-//golcl > stdstr.go > DStrToGoStr
-//Lazarus的string转换为Go的string
-//参数1 要转换字符串的地址，参数2 已知字符串长度
-func DStrToGoStr(ustr uintptr, len int) string {
-	if len == 0 {
-		return ""
-	}
-	return copyStr(ustr, len)
-}
-
-func GoStrToDStr(s string) uintptr {
-	return api.PascalStr(s)
-}
-
 // 获取参数指针
 func GetParamOf(index int, ptr uintptr) uintptr {
 	return *(*uintptr)(unsafe.Pointer(ptr + uintptr(index)*unsafe.Sizeof(ptr)))
