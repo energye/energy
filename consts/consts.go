@@ -10,8 +10,10 @@ package consts
 
 import (
 	"github.com/energye/golcl/energy/homedir"
+	"github.com/energye/golcl/lcl/api"
 	"os"
 	"path/filepath"
+	"unsafe"
 )
 
 var (
@@ -30,27 +32,93 @@ const (
 	MemoryNetwork   = "unix"
 )
 
+type _int8 int8
+type _int16 int16
+type _int32 int32
+type _int64 int64
+type _int int
+type _uint8 uint8
+type _uint16 uint16
+type _uint32 uint32
+type _uint64 uint64
+type _string string
+type _boolean bool
+type _float32 float32
+type _float64 float64
+
+func (m _int8) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _int16) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _int32) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _int64) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _int) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _uint8) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _uint16) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _uint32) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _uint64) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+func (m _string) ToPtr() uintptr {
+	return api.PascalStr(string(m))
+}
+
+func (m _boolean) ToPtr() uintptr {
+	return api.PascalBool(bool(m))
+}
+
+func (m _float32) ToPtr() uintptr {
+	return uintptr(unsafe.Pointer(&m))
+}
+
+func (m _float64) ToPtr() uintptr {
+	return uintptr(unsafe.Pointer(&m))
+}
+
 //0:net 1:unix
-type IPC_TYPE int8
+type IPC_TYPE = _int8
 
 const (
-	IPCT_NET IPC_TYPE = iota
+	IPCT_NET = IPC_TYPE(iota)
 	IPCT_UNIX
 )
 
-type ChannelType int8
+type ChannelType = _int8
 
 const (
-	Ct_Server ChannelType = iota
+	Ct_Server = ChannelType(iota)
 	Ct_Client
 )
 
-type TriggerMode int8
+type TriggerMode = _int8
 
 const (
-	Tm_Async    TriggerMode = iota //异步
-	Tm_Callback                    //异步，带回调函数返回结果
-	Tm_Sync                        //同步，阻塞等待结果返回值
+	Tm_Async    = TriggerMode(iota) //异步
+	Tm_Callback                     //异步，带回调函数返回结果
+	Tm_Sync                         //同步，阻塞等待结果返回值
 )
 
 const (
@@ -68,34 +136,34 @@ const (
 )
 
 //缩放、放大
-type ZOOM int32
+type ZOOM = _int32
 
 const (
-	ZOOM_RESET ZOOM = iota
+	ZOOM_RESET = ZOOM(iota)
 	ZOOM_INC
 	ZOOM_DEC
 )
 
 //进程结束的状态
-type TCefTerminationStatus int32
+type TCefTerminationStatus = _int32
 
 const (
-	TS_ABNORMAL_TERMINATION TCefTerminationStatus = iota
+	TS_ABNORMAL_TERMINATION = TCefTerminationStatus(iota)
 	TS_PROCESS_WAS_KILLED
 	TS_PROCESS_CRASHED
 	TS_PROCESS_OOM
 )
 
 //前进 & 后退
-type BF int32
+type BF = _int32
 
 const (
-	BF_GOBACK    BF = iota
-	BF_GOFORWARD    = iota
+	BF_GOBACK = BF(iota)
+	BF_GOFORWARD
 )
 
 //日志等级
-type LOG uint32
+type LOG = _uint32
 
 const (
 	LOGSEVERITY_DEFAULT LOG = 0
@@ -108,62 +176,62 @@ const (
 	LOGSEVERITY_DISABLE LOG = 99
 )
 
-type LANGUAGE string
+type LANGUAGE = _string
 
 const (
 	LANGUAGE_zh_CN  LANGUAGE = "zh-CN"
-	LANGUAGE_zh_TW           = "zh-TW"
-	LANGUAGE_am              = "am"
-	LANGUAGE_ar              = "ar"
-	LANGUAGE_bg              = "bg"
-	LANGUAGE_bn              = "bn"
-	LANGUAGE_ca              = "ca"
-	LANGUAGE_cs              = "cs"
-	LANGUAGE_da              = "da"
-	LANGUAGE_de              = "de"
-	LANGUAGE_el              = "el"
-	LANGUAGE_en_GB           = "en-GB"
-	LANGUAGE_en_US           = "en-US"
-	LANGUAGE_es              = "es"
-	LANGUAGE_es_419          = "es-419"
-	LANGUAGE_et              = "et"
-	LANGUAGE_fa              = "fa"
-	LANGUAGE_fi              = "fi"
-	LANGUAGE_fil             = "fil"
-	LANGUAGE_fr              = "fr"
-	LANGUAGE_gu              = "gu"
-	LANGUAGE_he              = "he"
-	LANGUAGE_hi              = "hi"
-	LANGUAGE_hr              = "hr"
-	LANGUAGE_hu              = "hu"
-	LANGUAGE_id              = "channelId"
-	LANGUAGE_it              = "it"
-	LANGUAGE_ja              = "ja"
-	LANGUAGE_kn              = "kn"
-	LANGUAGE_ko              = "ko"
-	LANGUAGE_lt              = "lt"
-	LANGUAGE_lv              = "lv"
-	LANGUAGE_ml              = "ml"
-	LANGUAGE_mr              = "mr"
-	LANGUAGE_ms              = "ms"
-	LANGUAGE_nb              = "nb"
-	LANGUAGE_nl              = "nl"
-	LANGUAGE_pl              = "pl"
-	LANGUAGE_pt_BR           = "pt-BR"
-	LANGUAGE_pt_PT           = "pt-PT"
-	LANGUAGE_ro              = "ro"
-	LANGUAGE_ru              = "ru"
-	LANGUAGE_sk              = "sk"
-	LANGUAGE_sl              = "sl"
-	LANGUAGE_sr              = "sr"
-	LANGUAGE_sv              = "sv"
-	LANGUAGE_sw              = "sw"
-	LANGUAGE_ta              = "ta"
-	LANGUAGE_te              = "te"
-	LANGUAGE_th              = "th"
-	LANGUAGE_tr              = "tr"
-	LANGUAGE_uk              = "uk"
-	LANGUAGE_vi              = "vi"
+	LANGUAGE_zh_TW  LANGUAGE = "zh-TW"
+	LANGUAGE_am     LANGUAGE = "am"
+	LANGUAGE_ar     LANGUAGE = "ar"
+	LANGUAGE_bg     LANGUAGE = "bg"
+	LANGUAGE_bn     LANGUAGE = "bn"
+	LANGUAGE_ca     LANGUAGE = "ca"
+	LANGUAGE_cs     LANGUAGE = "cs"
+	LANGUAGE_da     LANGUAGE = "da"
+	LANGUAGE_de     LANGUAGE = "de"
+	LANGUAGE_el     LANGUAGE = "el"
+	LANGUAGE_en_GB  LANGUAGE = "en-GB"
+	LANGUAGE_en_US  LANGUAGE = "en-US"
+	LANGUAGE_es     LANGUAGE = "es"
+	LANGUAGE_es_419 LANGUAGE = "es-419"
+	LANGUAGE_et     LANGUAGE = "et"
+	LANGUAGE_fa     LANGUAGE = "fa"
+	LANGUAGE_fi     LANGUAGE = "fi"
+	LANGUAGE_fil    LANGUAGE = "fil"
+	LANGUAGE_fr     LANGUAGE = "fr"
+	LANGUAGE_gu     LANGUAGE = "gu"
+	LANGUAGE_he     LANGUAGE = "he"
+	LANGUAGE_hi     LANGUAGE = "hi"
+	LANGUAGE_hr     LANGUAGE = "hr"
+	LANGUAGE_hu     LANGUAGE = "hu"
+	LANGUAGE_id     LANGUAGE = "channelId"
+	LANGUAGE_it     LANGUAGE = "it"
+	LANGUAGE_ja     LANGUAGE = "ja"
+	LANGUAGE_kn     LANGUAGE = "kn"
+	LANGUAGE_ko     LANGUAGE = "ko"
+	LANGUAGE_lt     LANGUAGE = "lt"
+	LANGUAGE_lv     LANGUAGE = "lv"
+	LANGUAGE_ml     LANGUAGE = "ml"
+	LANGUAGE_mr     LANGUAGE = "mr"
+	LANGUAGE_ms     LANGUAGE = "ms"
+	LANGUAGE_nb     LANGUAGE = "nb"
+	LANGUAGE_nl     LANGUAGE = "nl"
+	LANGUAGE_pl     LANGUAGE = "pl"
+	LANGUAGE_pt_BR  LANGUAGE = "pt-BR"
+	LANGUAGE_pt_PT  LANGUAGE = "pt-PT"
+	LANGUAGE_ro     LANGUAGE = "ro"
+	LANGUAGE_ru     LANGUAGE = "ru"
+	LANGUAGE_sk     LANGUAGE = "sk"
+	LANGUAGE_sl     LANGUAGE = "sl"
+	LANGUAGE_sr     LANGUAGE = "sr"
+	LANGUAGE_sv     LANGUAGE = "sv"
+	LANGUAGE_sw     LANGUAGE = "sw"
+	LANGUAGE_ta     LANGUAGE = "ta"
+	LANGUAGE_te     LANGUAGE = "te"
+	LANGUAGE_th     LANGUAGE = "th"
+	LANGUAGE_tr     LANGUAGE = "tr"
+	LANGUAGE_uk     LANGUAGE = "uk"
+	LANGUAGE_vi     LANGUAGE = "vi"
 )
 
 // Chromium关闭的操作类型
@@ -173,27 +241,27 @@ const (
 // cbaClose  : 继续关闭浏览器
 // cbaDelay  : 暂时停止关闭浏览器
 //			 : 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
-type CBS int32
+type CBS = _int32
 
 const (
-	CbaClose = iota
+	CbaClose = CBS(iota)
 	CbaDelay
 	CbaCancel
 )
 
 //CEF 进程 ChannelId
-type CefProcessId int32
+type CefProcessId = _int32
 
 const (
-	PID_BROWSER CefProcessId = iota
+	PID_BROWSER = CefProcessId(iota)
 	PID_RENDER
 )
 
 //支持的JS类型
-type V8_JS_VALUE_TYPE int32
+type V8_JS_VALUE_TYPE = _int32
 
 const (
-	V8_VALUE_STRING V8_JS_VALUE_TYPE = iota
+	V8_VALUE_STRING = V8_JS_VALUE_TYPE(iota)
 	V8_VALUE_INT
 	V8_VALUE_DOUBLE
 	V8_VALUE_BOOLEAN
@@ -208,10 +276,10 @@ const (
 )
 
 //支持的GO类型
-type GO_VALUE_TYPE int32
+type GO_VALUE_TYPE = _int32
 
 const (
-	GO_VALUE_STRING GO_VALUE_TYPE = iota
+	GO_VALUE_STRING = GO_VALUE_TYPE(iota)
 	GO_VALUE_INT
 	GO_VALUE_INT8
 	GO_VALUE_INT16
@@ -238,54 +306,54 @@ const (
 )
 
 //JS属性
-type V8_PROPERTY_ATTRIBUTE int32
+type V8_PROPERTY_ATTRIBUTE = _int32
 
 const (
 	V8_PROPERTY_ATTRIBUTE_NONE       V8_PROPERTY_ATTRIBUTE = 0
-	V8_PROPERTY_ATTRIBUTE_READONLY                         = 1 << 0
-	V8_PROPERTY_ATTRIBUTE_DONTENUM                         = 1 << 1
-	V8_PROPERTY_ATTRIBUTE_DONTDELETE                       = 1 << 2
+	V8_PROPERTY_ATTRIBUTE_READONLY   V8_PROPERTY_ATTRIBUTE = 1 << 0
+	V8_PROPERTY_ATTRIBUTE_DONTENUM   V8_PROPERTY_ATTRIBUTE = 1 << 1
+	V8_PROPERTY_ATTRIBUTE_DONTDELETE V8_PROPERTY_ATTRIBUTE = 1 << 2
 )
 
 //JS交互绑定的事件类型
-type BIND_EVENT int32
+type BIND_EVENT = _int32
 
 const (
-	BE_SET  BIND_EVENT = 0
-	BE_GET             = 1
-	BE_FUNC            = 2
+	BE_SET = BIND_EVENT(iota)
+	BE_GET
+	BE_FUNC
 )
 
 //异常信息
-type CEF_V8_EXCEPTION int32
+type CEF_V8_EXCEPTION = _int32
 
 const (
-	CVE_ERROR_OK                             CEF_V8_EXCEPTION = iota //操作成功
-	CVE_ERROR_NOT_FOUND_FIELD                                        //未找到字段 或字段未定义
-	CVE_ERROR_NOT_FOUND_FUNC                                         //未找到函数 或函数未定义
-	CVE_ERROR_TYPE_NOT_SUPPORTED                                     //不支持的变量类型 变量类型只支持[string int double bool null undefined]
-	CVE_ERROR_TYPE_CANNOT_CHANGE                                     //字段为普通类型不能变更为 array、object、function
-	CVE_ERROR_TYPE_INVALID                                           //类型无效
-	CVE_ERROR_GET_STRING_FAIL                                        //获取string类型失败
-	CVE_ERROR_GET_INT_FAIL                                           //获取int类型失败
-	CVE_ERROR_GET_DOUBLE_FAIL                                        //获取double类型失败
-	CVE_ERROR_GET_BOOL_FAIL                                          //获取bool类型失败
-	CVE_ERROR_GET_NULL_FAIL                                          //获取null类型失败
-	CVE_ERROR_GET_UNDEFINED_FAIL                                     //获取undefined类型失败
-	CVE_ERROR_FUNC_INVALID_P_L_9                                     //该函数非法 类型不正确 或参数个数大于9个
-	CVE_ERROR_FUNC_IN_PAM                                            //入参类型不正确 只能为string int double boolean
-	CVE_ERROR_FUNC_OUT_PAM                                           //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
-	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                            //入参获取string类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                               //入参获取int类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                            //入参获取double类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                           //入参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                           //出参获取string类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                              //出参获取int类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                           //出参获取double类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                          //出参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                         //出参获取CefError值失败
-	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                          //IPC获取绑定值失败
-	CVE_ERROR_UNKNOWN_ERROR                                          //未知错误
+	CVE_ERROR_OK                             = CEF_V8_EXCEPTION(iota) //操作成功
+	CVE_ERROR_NOT_FOUND_FIELD                                         //未找到字段 或字段未定义
+	CVE_ERROR_NOT_FOUND_FUNC                                          //未找到函数 或函数未定义
+	CVE_ERROR_TYPE_NOT_SUPPORTED                                      //不支持的变量类型 变量类型只支持[string int double bool null undefined]
+	CVE_ERROR_TYPE_CANNOT_CHANGE                                      //字段为普通类型不能变更为 array、object、function
+	CVE_ERROR_TYPE_INVALID                                            //类型无效
+	CVE_ERROR_GET_STRING_FAIL                                         //获取string类型失败
+	CVE_ERROR_GET_INT_FAIL                                            //获取int类型失败
+	CVE_ERROR_GET_DOUBLE_FAIL                                         //获取double类型失败
+	CVE_ERROR_GET_BOOL_FAIL                                           //获取bool类型失败
+	CVE_ERROR_GET_NULL_FAIL                                           //获取null类型失败
+	CVE_ERROR_GET_UNDEFINED_FAIL                                      //获取undefined类型失败
+	CVE_ERROR_FUNC_INVALID_P_L_9                                      //该函数非法 类型不正确 或参数个数大于9个
+	CVE_ERROR_FUNC_IN_PAM                                             //入参类型不正确 只能为string int double boolean
+	CVE_ERROR_FUNC_OUT_PAM                                            //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
+	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                             //入参获取string类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                                //入参获取int类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                             //入参获取double类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                            //入参获取boolean类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                            //出参获取string类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                               //出参获取int类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                            //出参获取double类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                           //出参获取boolean类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                          //出参获取CefError值失败
+	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                           //IPC获取绑定值失败
+	CVE_ERROR_UNKNOWN_ERROR                                           //未知错误
 )
 
 const (
@@ -294,34 +362,34 @@ const (
 )
 
 //函数类型
-type FN_TYPE int8
+type FN_TYPE = _int8
 
 const (
-	FN_TYPE_COMMON FN_TYPE = iota //普通函数，直接定义的
-	FN_TYPE_OBJECT                //对象函数，所属对象
+	FN_TYPE_COMMON = FN_TYPE(iota) //普通函数，直接定义的
+	FN_TYPE_OBJECT                 //对象函数，所属对象
 )
 
 //通用类型或对象类型
-type IS_CO int8
+type IS_CO = _int8
 
 const (
-	IS_COMMON IS_CO = iota
+	IS_COMMON = IS_CO(iota)
 	IS_OBJECT
 )
 
 //进程消息类型
-type PROCESS_MESSAGE_TYPE int8
+type PROCESS_MESSAGE_TYPE = _int8
 
 const (
-	PMT_JS_CODE PROCESS_MESSAGE_TYPE = iota //执行JS代码消息
-	PMT_TEXT                                //文本传递消息
-	PMT_BINARY                              //二进制消息
+	PMT_JS_CODE = PROCESS_MESSAGE_TYPE(iota) //执行JS代码消息
+	PMT_TEXT                                 //文本传递消息
+	PMT_BINARY                               //二进制消息
 )
 
-type TCefProcessType int8
+type TCefProcessType = _int8
 
 const (
-	PtBrowser TCefProcessType = iota
+	PtBrowser = TCefProcessType(iota)
 	PtRender
 	PtZygote
 	PtGPU
@@ -525,6 +593,10 @@ const (
 	STATE_DISABLE
 )
 
+func (m TCefState) ToPtr() uintptr {
+	return uintptr(m)
+}
+
 type TCefTouchEeventType int32
 
 const (
@@ -533,6 +605,10 @@ const (
 	CEF_TET_MOVED
 	CEF_TET_CANCELLED
 )
+
+func (m TCefTouchEeventType) ToPtr() uintptr {
+	return uintptr(m)
+}
 
 type TCefPointerType int32
 
@@ -544,6 +620,10 @@ const (
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
+func (m TCefPointerType) ToPtr() uintptr {
+	return uintptr(m)
+}
+
 type TCefMouseButtonType int32
 
 const (
@@ -551,6 +631,10 @@ const (
 	MBT_MIDDLE
 	MBT_RIGHT
 )
+
+func (m TCefMouseButtonType) ToPtr() uintptr {
+	return uintptr(m)
+}
 
 //进程消息错误码
 type ProcessMessageError int32
@@ -564,6 +648,10 @@ const (
 	PMErr_REQUIRED_PARAMS_IS_NULL                     = -5       //必要参数为空
 	PMErr_NAME_CANNOT_USED                            = -6       //不能使用的消息名称
 )
+
+func (m ProcessMessageError) ToPtr() uintptr {
+	return uintptr(m)
+}
 
 type TCefWindowOpenDisposition int32
 
@@ -582,6 +670,10 @@ const (
 	WOD_NEW_PICTURE_IN_PICTURE
 )
 
+func (m TCefWindowOpenDisposition) ToPtr() uintptr {
+	return uintptr(m)
+}
+
 // Browser Window Type
 type WINDOW_TYPE int8
 
@@ -592,11 +684,15 @@ const (
 	WT_VIEW_SOURCE
 )
 
+func (m WINDOW_TYPE) ToPtr() uintptr {
+	return uintptr(m)
+}
+
 type TCefContextMenuTypeFlags uint32
 type TCefContextMenuMediaStateFlags uint32
 type TCefContextMenuEditStateFlags uint32
 
-type TCefMenuAnchorPosition = int32
+type TCefMenuAnchorPosition int32
 
 const (
 	CEF_MENU_ANCHOR_TOPLEFT TCefMenuAnchorPosition = iota
@@ -604,4 +700,12 @@ const (
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
-type TCefShowState = int32
+func (m TCefMenuAnchorPosition) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+type TCefShowState int32
+
+func (m TCefShowState) ToPtr() uintptr {
+	return uintptr(m)
+}

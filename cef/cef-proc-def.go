@@ -399,6 +399,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_CreateBrowserView", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_GetForBrowser", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetPreferAccelerators", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_RequestFocus", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_Browser", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_BrowserView", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnBrowserCreated", 0),
@@ -799,6 +800,7 @@ const (
 	internale_CEFBrowserViewComponent_CreateBrowserView
 	internale_CEFBrowserViewComponent_GetForBrowser
 	internale_CEFBrowserViewComponent_SetPreferAccelerators
+	internale_CEFBrowserViewComponent_RequestFocus
 	internale_CEFBrowserViewComponent_Browser
 	internale_CEFBrowserViewComponent_BrowserView
 	internale_CEFBrowserViewComponent_SetOnBrowserCreated

@@ -246,7 +246,7 @@ func init() {
 			} else {
 				processName = Args.ProcessType()
 			}
-			v8ctx := (*cefV8Context)(getPtr(2))
+			v8ctx := (*iCefV8ContextPtr)(getPtr(2))
 			ctx := &ICefV8Context{
 				Browser: browser,
 				Frame:   frame,

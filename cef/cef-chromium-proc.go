@@ -269,7 +269,7 @@ func (m *TCEFChromium) SetCookie(url, name, value, domain, path string,
 }
 
 func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
-	proxy := &tCefProxy{
+	proxy := &tCefProxyPtr{
 		ProxyType:              uintptr(cefProxy.ProxyType),
 		ProxyScheme:            uintptr(cefProxy.ProxyScheme),
 		ProxyServer:            api.PascalStr(cefProxy.ProxyServer),
@@ -525,7 +525,7 @@ func _CEFChromium_SetCookie(instance uintptr, url, name, value, domain, path str
 }
 
 // TCEFChromium  _CEFChromium_SetProxy
-func _CEFChromium_SetProxy(instance uintptr, proxy *tCefProxy) {
+func _CEFChromium_SetProxy(instance uintptr, proxy *tCefProxyPtr) {
 	Proc(internale_CEFChromium_SetProxy).Call(instance, uintptr(unsafe.Pointer(proxy)))
 }
 

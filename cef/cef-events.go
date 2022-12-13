@@ -86,7 +86,7 @@ func init() {
 		case ChromiumEventOnFindResult:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			cefRectPtr := (*tCefRect)(getPtr(4))
+			cefRectPtr := (*tCefRectPtr)(getPtr(4))
 			cefRect := &TCefRect{
 				X:      int32(cefRectPtr.X),
 				Y:      int32(cefRectPtr.Y),
@@ -124,10 +124,10 @@ func init() {
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
 		case ChromiumEventOnResourceRedirect:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
-			var newStr = &String{}
+			var newStr = new(String)
 			var newStrPtr = (*uintptr)(getPtr(5))
 			fn.(ChromiumEventOnResourceRedirect)(sender, browse, frame, request, response, newStr)
-			*newStrPtr = api.PascalStr(newStr.GetValue())
+			*newStrPtr = newStr.ToPtr()
 		case ChromiumEventOnResourceResponse:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))

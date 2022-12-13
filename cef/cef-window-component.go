@@ -252,7 +252,7 @@ func init() {
 		case WindowComponentOnGetInitialBounds:
 			sender := getPtr(0)
 			window := getPtr(1)
-			resultRectPtr := (*tCefRect)(getPtr(2))
+			resultRectPtr := (*tCefRectPtr)(getPtr(2))
 			resultRect := &TCefRect{}
 			fn.(WindowComponentOnGetInitialBounds)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultRect)
 			resultRectPtr.X = uintptr(resultRect.X)

@@ -11,24 +11,18 @@ package cef
 import (
 	"bytes"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/golcl/lcl/api"
 	"strings"
 	"time"
 	"unsafe"
 )
 
-type TCefCloseBrowsesAction CBS
+type TCefCloseBrowsesAction = CBS
 
 type String struct {
 	value string
 }
 
-type cefV8Context struct {
-	Browse uintptr
-	Frame  uintptr
-	Global uintptr
-}
-
-//Type ICefCookie
 type ICefCookie struct {
 	Url, Name, Value, Domain, Path string
 	Secure, Httponly, HasExpires   bool
@@ -39,18 +33,6 @@ type ICefCookie struct {
 	SetImmediately                 bool
 	DeleteCookie                   bool
 	Result                         bool
-}
-
-type cefCookie struct {
-	url, name, value, domain, path uintptr //string
-	secure, httponly, hasExpires   uintptr //bool
-	creation, lastAccess, expires  uintptr //float64
-	count, total, aID              uintptr //int32
-	sameSite                       uintptr //int32 TCefCookieSameSite
-	priority                       uintptr //int32 TCefCookiePriority
-	aSetImmediately                uintptr //bool
-	aDeleteCookie                  uintptr //bool
-	aResult                        uintptr //bool
 }
 
 type TCefKeyEvent struct {
@@ -64,22 +46,82 @@ type TCefKeyEvent struct {
 	FocusOnEditableField int32
 }
 
-type TCefCommandLine struct {
-	commandLines map[string]string
+type TCefRequestContextSettings struct {
+	Size                             uint32
+	CachePath                        TCefString
+	PersistSessionCookies            int32
+	PersistUserPreferences           int32
+	AcceptLanguageList               TCefString
+	CookieableSchemesList            TCefString
+	CookieableSchemesExcludeDefaults int32
 }
 
-type tCefProxy struct {
-	ProxyType              uintptr
-	ProxyScheme            uintptr
-	ProxyServer            uintptr
-	ProxyPort              uintptr
-	ProxyUsername          uintptr
-	ProxyPassword          uintptr
-	ProxyScriptURL         uintptr
-	ProxyByPassList        uintptr
-	MaxConnectionsPerProxy uintptr
-	CustomHeaderName       uintptr
-	CustomHeaderValue      uintptr
+type TCefBrowserSettings struct {
+	Size                       NativeUInt
+	WindowlessFrameRate        Integer
+	StandardFontFamily         TCefString
+	FixedFontFamily            TCefString
+	SerifFontFamily            TCefString
+	SansSerifFontFamily        TCefString
+	CursiveFontFamily          TCefString
+	FantasyFontFamily          TCefString
+	DefaultFontSize            Integer
+	DefaultFixedFontSize       Integer
+	MinimumFontSize            Integer
+	MinimumLogicalFontSize     Integer
+	DefaultEncoding            TCefString
+	RemoteFonts                TCefState
+	Javascript                 TCefState
+	JavascriptCloseWindows     TCefState
+	JavascriptAccessClipboard  TCefState
+	JavascriptDomPaste         TCefState
+	ImageLoading               TCefState
+	ImageShrinkStandaLonetoFit TCefState
+	TextAreaResize             TCefState
+	TabToLinks                 TCefState
+	LocalStorage               TCefState
+	Databases                  TCefState
+	Webgl                      TCefState
+	BackgroundColor            TCefColor
+	AcceptLanguageList         TCefString
+	ChromeStatusBubble         TCefState
+}
+
+func (m *TCefBrowserSettings) ToPtr() *TCefBrowserSettingsPtr {
+	return &TCefBrowserSettingsPtr{
+		Size:                       m.Size.ToPtr(),
+		WindowlessFrameRate:        m.WindowlessFrameRate.ToPtr(),
+		StandardFontFamily:         m.StandardFontFamily.ToPtr(),
+		FixedFontFamily:            m.FixedFontFamily.ToPtr(),
+		SerifFontFamily:            m.SerifFontFamily.ToPtr(),
+		SansSerifFontFamily:        m.SansSerifFontFamily.ToPtr(),
+		CursiveFontFamily:          m.CursiveFontFamily.ToPtr(),
+		FantasyFontFamily:          m.FantasyFontFamily.ToPtr(),
+		DefaultFontSize:            m.DefaultFontSize.ToPtr(),
+		DefaultFixedFontSize:       m.DefaultFixedFontSize.ToPtr(),
+		MinimumFontSize:            m.MinimumFontSize.ToPtr(),
+		MinimumLogicalFontSize:     m.MinimumLogicalFontSize.ToPtr(),
+		DefaultEncoding:            m.DefaultEncoding.ToPtr(),
+		RemoteFonts:                m.RemoteFonts.ToPtr(),
+		Javascript:                 m.Javascript.ToPtr(),
+		JavascriptCloseWindows:     m.JavascriptCloseWindows.ToPtr(),
+		JavascriptAccessClipboard:  m.JavascriptAccessClipboard.ToPtr(),
+		JavascriptDomPaste:         m.JavascriptDomPaste.ToPtr(),
+		ImageLoading:               m.ImageLoading.ToPtr(),
+		ImageShrinkStandaLonetoFit: m.ImageShrinkStandaLonetoFit.ToPtr(),
+		TextAreaResize:             m.TextAreaResize.ToPtr(),
+		TabToLinks:                 m.TabToLinks.ToPtr(),
+		LocalStorage:               m.LocalStorage.ToPtr(),
+		Databases:                  m.Databases.ToPtr(),
+		Webgl:                      m.Webgl.ToPtr(),
+		BackgroundColor:            m.BackgroundColor.ToPtr(),
+		AcceptLanguageList:         m.AcceptLanguageList.ToPtr(),
+		ChromeStatusBubble:         m.ChromeStatusBubble.ToPtr(),
+	}
+}
+
+type TCefCommandLine struct {
+	commandLines map[string]string
 }
 
 type TCefProxy struct {
@@ -127,25 +169,11 @@ type BeforePopupInfo struct {
 	UserGesture       bool
 }
 
-type beforePopupInfo struct {
-	TargetUrl         uintptr //string
-	TargetFrameName   uintptr //string
-	TargetDisposition uintptr //int32
-	UserGesture       uintptr //bool
-}
-
 type TCefRect struct {
 	X      int32
 	Y      int32
 	Width  int32
 	Height int32
-}
-
-type tCefRect struct {
-	X      uintptr //int32
-	Y      uintptr //int32
-	Width  uintptr //int32
-	Height uintptr //int32
 }
 
 type TCefPoint struct {
@@ -222,4 +250,38 @@ func (m *String) SetValue(v string) {
 
 func (m *String) GetValue() string {
 	return m.value
+}
+
+func (m *String) ToPtr() uintptr {
+	return api.PascalStr(m.value)
+}
+
+type PChar string
+
+func (m PChar) ToPtr() uintptr {
+	return api.PascalStr(string(m))
+}
+
+type TCefColor uint16
+
+func (m TCefColor) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+type Integer int32
+
+func (m Integer) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+type NativeUInt uint32
+
+func (m NativeUInt) ToPtr() uintptr {
+	return uintptr(m)
+}
+
+type TCefString string
+
+func (m TCefString) ToPtr() uintptr {
+	return api.PascalStr(string(m))
 }

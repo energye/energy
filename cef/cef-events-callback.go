@@ -34,7 +34,7 @@ func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx 
 		Url:     api.GoStr(tempFrame.Url),
 		Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 	}
-	beforePInfoPtr := (*beforePopupInfo)(getPtr(3))
+	beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
 	beforePInfo := &BeforePopupInfo{
 		TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
 		TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
