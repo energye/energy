@@ -447,6 +447,8 @@ type TCefEventFlags uint32
 
 type TCefWindowHandleType int8
 
+type TCefWindowHandle = uintptr
+
 const (
 	Wht_WindowParent TCefWindowHandleType = iota
 	Wht_LinkedWindowParent

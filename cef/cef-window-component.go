@@ -1,6 +1,7 @@
 package cef
 
 import (
+	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
@@ -128,34 +129,55 @@ func (m *TCEFWindowComponent) WindowAppIcon() *ICefImage {
 	}
 }
 
-func (m *TCEFWindowComponent) Display() {
-	Proc(internale_CEFWindowComponent_Display).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) Display() *ICefDisplay {
+	var ret uintptr
+	Proc(internale_CEFWindowComponent_Display).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
+	return &ICefDisplay{
+		instance: unsafe.Pointer(ret),
+	}
 }
 
-func (m *TCEFWindowComponent) ClientAreaBoundsInScreen() {
-	Proc(internale_CEFWindowComponent_ClientAreaBoundsInScreen).Call(uintptr(m.instance))
+func (m *TCEFWindowComponent) ClientAreaBoundsInScreen() (result TCefRect) {
+	Proc(internale_CEFWindowComponent_ClientAreaBoundsInScreen).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&result)))
+	return
 }
-func (m *TCEFWindowComponent) WindowHandle() {
-	Proc(internale_CEFWindowComponent_WindowHandle).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) WindowHandle() consts.TCefWindowHandle {
+	r1, _, _ := Proc(internale_CEFWindowComponent_WindowHandle).Call(uintptr(m.instance))
+	return consts.TCefWindowHandle(r1)
 }
-func (m *TCEFWindowComponent) IsClosed() {
-	Proc(internale_CEFWindowComponent_IsClosed).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsClosed() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsClosed).Call(uintptr(m.instance))
+	fmt.Println(r1)
+	return api.GoBool(r1)
 }
-func (m *TCEFWindowComponent) IsActive() {
-	Proc(internale_CEFWindowComponent_IsActive).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsActive() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsActive).Call(uintptr(m.instance))
+	return api.GoBool(r1)
 }
-func (m *TCEFWindowComponent) IsAlwaysOnTop() {
-	Proc(internale_CEFWindowComponent_IsAlwaysOnTop).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsAlwaysOnTop() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsAlwaysOnTop).Call(uintptr(m.instance))
+	return api.GoBool(r1)
 }
-func (m *TCEFWindowComponent) IsFullscreen() {
-	Proc(internale_CEFWindowComponent_IsFullscreen).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsFullscreen() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsFullscreen).Call(uintptr(m.instance))
+	return api.GoBool(r1)
 }
-func (m *TCEFWindowComponent) IsMaximized() {
-	Proc(internale_CEFWindowComponent_IsMaximized).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsMaximized() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsMaximized).Call(uintptr(m.instance))
+	return api.GoBool(r1)
 }
-func (m *TCEFWindowComponent) IsMinimized() {
-	Proc(internale_CEFWindowComponent_IsMinimized).Call(uintptr(m.instance))
+
+func (m *TCEFWindowComponent) IsMinimized() bool {
+	r1, _, _ := Proc(internale_CEFWindowComponent_IsMinimized).Call(uintptr(m.instance))
+	return api.GoBool(r1)
 }
+
 func (m *TCEFWindowComponent) SetOnWindowCreated() {
 	Proc(internale_CEFWindowComponent_SetOnWindowCreated).Call(uintptr(m.instance))
 }

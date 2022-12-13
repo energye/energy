@@ -158,6 +158,10 @@ type TCefDraggableRegion struct {
 	Draggable int32
 }
 
+type ICefDisplay struct {
+	instance unsafe.Pointer
+}
+
 type ICefClient struct {
 	instance unsafe.Pointer
 }
