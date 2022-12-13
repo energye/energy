@@ -26,8 +26,10 @@ import (
 	"unsafe"
 )
 
-var (
-	IntSize = int32(unsafe.Sizeof(0))
+const (
+	IntSize   = strconv.IntSize
+	IntSize32 = 32
+	intSize64 = 64
 )
 
 func Proc(index int) dllimports.ProcAddr {
@@ -539,7 +541,7 @@ func CopyBytePtr(bytePtr uintptr, low, high int) []byte {
 
 func IntToBytes(i int) []byte {
 	buf := bytes.NewBuffer([]byte{})
-	if IntSize == 4 {
+	if IntSize == IntSize32 {
 		if err := binary.Write(buf, binary.BigEndian, int32(i)); err == nil {
 			return buf.Bytes()
 		}
