@@ -23,14 +23,18 @@ var (
 	SingleProcess = false                      //进程启动方式, true单进程 false多进程
 )
 
+const (
+	Empty               = ""
+	MAINARGS_NETIPCPORT = "net-ipc-port"
+	download_dir        = "downloads"
+	ipcAccIdx           = 8 //ipc args新的参数开始位置
+	ENERGY_HOME_KEY     = "ENERGY_HOME"
+	MemoryNetwork       = "unix"
+)
+
 func init() {
 	ExePath, _ = os.Getwd()
 }
-
-const (
-	ENERGY_HOME_KEY = "ENERGY_HOME"
-	MemoryNetwork   = "unix"
-)
 
 type _int8 int8
 type _int16 int16
@@ -123,13 +127,6 @@ const (
 	Tm_Async    = TriggerMode(iota) //异步
 	Tm_Callback                     //异步，带回调函数返回结果
 	Tm_Sync                         //同步，阻塞等待结果返回值
-)
-
-const (
-	Empty               = ""
-	MAINARGS_NETIPCPORT = "net-ipc-port"
-	download_dir        = "downloads"
-	ipcAccIdx           = 8 //ipc args新的参数开始位置
 )
 
 //功能和消息常量
