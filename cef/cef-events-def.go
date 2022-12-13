@@ -60,7 +60,7 @@ type ChromiumEventOnCookieVisitorDestroyed func(sender lcl.IObject, ID int32)
 
 // chromiumEvent context menu
 type ChromiumEventOnBeforeContextMenu func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel)
-type ChromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId int32, eventFlags uint32, result *bool)
+type ChromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool)
 type ChromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 
 // chromiumEvent 全屏模式

@@ -80,8 +80,8 @@ func cefResponse_IsReadOnly(instance uintptr) uintptr {
 	return r1
 }
 
-func cefResponse_SetError(instance uintptr, error int32) {
-	Proc(internale_cefResponse_SetError).Call(instance, uintptr(error))
+func cefResponse_SetError(instance uintptr, error TCefErrorCode) {
+	Proc(internale_cefResponse_SetError).Call(instance, error.ToPtr())
 }
 
 func cefResponse_SetStatus(instance uintptr, error int32) {

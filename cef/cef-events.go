@@ -46,11 +46,11 @@ func init() {
 			Url:                  api.GoStr(cefRequest.Url),
 			Method:               api.GoStr(cefRequest.Method),
 			ReferrerUrl:          api.GoStr(cefRequest.ReferrerUrl),
-			ReferrerPolicy:       int32(cefRequest.ReferrerPolicy),
-			Flags:                int(cefRequest.Flags),
+			ReferrerPolicy:       TCefReferrerPolicy(cefRequest.ReferrerPolicy),
+			Flags:                TCefUrlRequestFlags(cefRequest.Flags),
 			FirstPartyForCookies: api.GoStr(cefRequest.FirstPartyForCookies),
-			ResourceType:         int32(cefRequest.ResourceType),
-			TransitionType:       int(cefRequest.TransitionType),
+			ResourceType:         TCefResourceType(cefRequest.ResourceType),
+			TransitionType:       TCefTransitionType(cefRequest.TransitionType),
 			Identifier:           *(*uint64)(GetParamPtr(cefRequest.Identifier, 0)),
 		}
 		if resp {
@@ -63,7 +63,7 @@ func init() {
 				StatusText: api.GoStr(cefResponse.StatusText),
 				MimeType:   api.GoStr(cefResponse.MimeType),
 				Charset:    api.GoStr(cefResponse.Charset),
-				Error:      int32(cefResponse.Error),
+				Error:      TCefErrorCode(cefResponse.Error),
 				URL:        api.GoStr(cefResponse.URL),
 			}
 		}
@@ -196,7 +196,7 @@ func init() {
 				SelectionText:     api.GoStr(cefParams.SelectionText),
 				EditStateFlags:    TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
 			}
-			commandId := int32(getVal(4))
+			commandId := MenuId(getVal(4))
 			eventFlags := uint32(getVal(5))
 			if !KeyAccelerator.commandIdEventCallback(browser, commandId, params, eventFlags, (*bool)(getPtr(5))) {
 				fn.(ChromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browser, frame, params, commandId, eventFlags, (*bool)(getPtr(6)))

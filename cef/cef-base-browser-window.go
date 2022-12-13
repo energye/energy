@@ -404,7 +404,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
 		}
 	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId int32, eventFlags uint32, result *bool) {
+	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
 		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)

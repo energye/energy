@@ -41,6 +41,7 @@ type _uint8 uint8
 type _uint16 uint16
 type _uint32 uint32
 type _uint64 uint64
+type _uintptr uintptr
 type _string string
 type _boolean bool
 type _float32 float32
@@ -79,6 +80,9 @@ func (m _uint32) ToPtr() uintptr {
 }
 
 func (m _uint64) ToPtr() uintptr {
+	return uintptr(m)
+}
+func (m _uintptr) ToPtr() uintptr {
 	return uintptr(m)
 }
 
@@ -399,55 +403,55 @@ const (
 	PtOther
 )
 
-type TDateTime float64
+type TDateTime = _float64
 
-type TCefCookieSameSite int32
+type TCefCookieSameSite = _int32
 
 const (
-	Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED TCefCookieSameSite = iota
+	Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED = TCefCookieSameSite(iota)
 	Ccss_CEF_COOKIE_SAME_SITE_NO_RESTRICTION
 	Ccss_CEF_COOKIE_SAME_SITE_LAX_MODE
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
-type TCefCookiePriority int32
+type TCefCookiePriority = _int32
 
 const (
 	CEF_COOKIE_PRIORITY_LOW    TCefCookiePriority = -1
-	CEF_COOKIE_PRIORITY_MEDIUM                    = 0
-	CEF_COOKIE_PRIORITY_HIGH                      = 1
+	CEF_COOKIE_PRIORITY_MEDIUM TCefCookiePriority = 0
+	CEF_COOKIE_PRIORITY_HIGH   TCefCookiePriority = 1
 )
 
-type TCefProxyType int32
+type TCefProxyType = _int32
 
 const (
-	PtDirect TCefProxyType = iota
+	PtDirect = TCefProxyType(iota)
 	PtAutodetect
 	PtSystem
 	PtFixedServers
 	PtPACScript
 )
 
-type TCefProxyScheme int32
+type TCefProxyScheme = _int32
 
 const (
-	PsHTTP TCefProxyScheme = iota
+	PsHTTP = TCefProxyScheme(iota)
 	PsSOCKS4
 	PsSOCKS5
 )
 
-type TCefContextMenuType int32
+type TCefContextMenuType = _int32
 
 const (
-	CMT_NONE TCefContextMenuType = iota
+	CMT_NONE = TCefContextMenuType(iota)
 	CMT_CHECK
 	CMT_RADIO
 )
 
-type TCefContextMenuMediaType = int32
+type TCefContextMenuMediaType = _int32
 
 const (
-	CM_MEDIATYPE_NONE TCefContextMenuMediaType = iota
+	CM_MEDIATYPE_NONE = TCefContextMenuMediaType(iota)
 	CM_MEDIATYPE_IMAGE
 	CM_MEDIATYPE_VIDEO
 	CM_MEDIATYPE_AUDIO
@@ -456,42 +460,42 @@ const (
 	CM_MEDIATYPE_PLUGIN
 )
 
-type MenuId = int32
+type MenuId = _int32
 
 const (
 	MENU_ID_BACK                       MenuId = 100
-	MENU_ID_FORWARD                           = 101
-	MENU_ID_RELOAD                            = 102
-	MENU_ID_RELOAD_NOCACHE                    = 103
-	MENU_ID_STOPLOAD                          = 104
-	MENU_ID_UNDO                              = 110
-	MENU_ID_REDO                              = 111
-	MENU_ID_CUT                               = 112
-	MENU_ID_COPY                              = 113
-	MENU_ID_PASTE                             = 114
-	MENU_ID_DELETE                            = 115
-	MENU_ID_SELECT_ALL                        = 116
-	MENU_ID_FIND                              = 130
-	MENU_ID_PRINT                             = 131
-	MENU_ID_VIEW_SOURCE                       = 132
-	MENU_ID_SPELLCHECK_SUGGESTION_0           = 200
-	MENU_ID_SPELLCHECK_SUGGESTION_1           = 201
-	MENU_ID_SPELLCHECK_SUGGESTION_2           = 202
-	MENU_ID_SPELLCHECK_SUGGESTION_3           = 203
-	MENU_ID_SPELLCHECK_SUGGESTION_4           = 204
-	MENU_ID_SPELLCHECK_SUGGESTION_LAST        = 204
-	MENU_ID_NO_SPELLING_SUGGESTIONS           = 205
-	MENU_ID_ADD_TO_DICTIONARY                 = 206
-	MENU_ID_CUSTOM_FIRST                      = 220
-	MENU_ID_CUSTOM_LAST                       = 250
-	MENU_ID_USER_FIRST                        = 26500
-	MENU_ID_USER_LAST                         = 28500
+	MENU_ID_FORWARD                    MenuId = 101
+	MENU_ID_RELOAD                     MenuId = 102
+	MENU_ID_RELOAD_NOCACHE             MenuId = 103
+	MENU_ID_STOPLOAD                   MenuId = 104
+	MENU_ID_UNDO                       MenuId = 110
+	MENU_ID_REDO                       MenuId = 111
+	MENU_ID_CUT                        MenuId = 112
+	MENU_ID_COPY                       MenuId = 113
+	MENU_ID_PASTE                      MenuId = 114
+	MENU_ID_DELETE                     MenuId = 115
+	MENU_ID_SELECT_ALL                 MenuId = 116
+	MENU_ID_FIND                       MenuId = 130
+	MENU_ID_PRINT                      MenuId = 131
+	MENU_ID_VIEW_SOURCE                MenuId = 132
+	MENU_ID_SPELLCHECK_SUGGESTION_0    MenuId = 200
+	MENU_ID_SPELLCHECK_SUGGESTION_1    MenuId = 201
+	MENU_ID_SPELLCHECK_SUGGESTION_2    MenuId = 202
+	MENU_ID_SPELLCHECK_SUGGESTION_3    MenuId = 203
+	MENU_ID_SPELLCHECK_SUGGESTION_4    MenuId = 204
+	MENU_ID_SPELLCHECK_SUGGESTION_LAST MenuId = 204
+	MENU_ID_NO_SPELLING_SUGGESTIONS    MenuId = 205
+	MENU_ID_ADD_TO_DICTIONARY          MenuId = 206
+	MENU_ID_CUSTOM_FIRST               MenuId = 220
+	MENU_ID_CUSTOM_LAST                MenuId = 250
+	MENU_ID_USER_FIRST                 MenuId = 26500
+	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
-type TCefMenuColorType = int32
+type TCefMenuColorType = _int32
 
 const (
-	CEF_MENU_COLOR_TEXT TCefMenuColorType = iota
+	CEF_MENU_COLOR_TEXT = TCefMenuColorType(iota)
 	CEF_MENU_COLOR_TEXT_HOVERED
 	CEF_MENU_COLOR_TEXT_ACCELERATOR
 	CEF_MENU_COLOR_TEXT_ACCELERATOR_HOVERED
@@ -500,40 +504,40 @@ const (
 	CEF_MENU_COLOR_COUNT
 )
 
-type ARGB uint32
+type ARGB = _uint32
 
-type TCefKeyEventType int32
+type TCefKeyEventType = _int32
 
 const (
-	KEYEVENT_RAW_KEYDOWN TCefKeyEventType = iota
+	KEYEVENT_RAW_KEYDOWN = TCefKeyEventType(iota)
 	KEYEVENT_KEYDOWN
 	KEYEVENT_KEYUP
 	KEYEVENT_CHAR
 )
 
-type TCefEventFlags uint32
+type TCefEventFlags = _uint32
 
-type TCefWindowHandleType int8
+type TCefWindowHandleType = _int8
 
-type TCefWindowHandle = uintptr
+type TCefWindowHandle = _uintptr
 
 const (
-	Wht_WindowParent TCefWindowHandleType = iota
+	Wht_WindowParent = TCefWindowHandleType(iota)
 	Wht_LinkedWindowParent
 )
 
-type TCefReturnValue int32
+type TCefReturnValue = _int32
 
 const (
-	RV_CANCEL TCefReturnValue = iota
+	RV_CANCEL = TCefReturnValue(iota)
 	RV_CONTINUE
 	RV_CONTINUE_ASYNC
 )
 
-type TCefReferrerPolicy = int32
+type TCefReferrerPolicy = _int32
 
 const (
-	REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE TCefReferrerPolicy = iota // same value as REFERRER_POLICY_DEFAULT
+	REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE = TCefReferrerPolicy(iota) // same value as REFERRER_POLICY_DEFAULT
 	REFERRER_POLICY_REDUCE_REFERRER_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN
 	REFERRER_POLICY_ORIGIN_ONLY_ON_TRANSITION_CROSS_ORIGIN
 	REFERRER_POLICY_NEVER_CLEAR_REFERRER
@@ -543,14 +547,14 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
-type TCefUrlRequestFlags = int
+type TCefUrlRequestFlags = _int
 
-type TCefErrorCode = int32
+type TCefErrorCode = _int32
 
-type TCefResourceType = int32
+type TCefResourceType = _int32
 
 const (
-	RT_MAIN_FRAME TCefResourceType = iota
+	RT_MAIN_FRAME = TCefResourceType(iota)
 	RT_SUB_FRAME
 	RT_STYLESHEET
 	RT_SCRIPT
@@ -573,90 +577,70 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME
 )
 
-type TCefTransitionType = int
+type TCefTransitionType = _int
 
-type TCefUrlRequestStatus = int32
+type TCefUrlRequestStatus = _int32
 
 const (
-	UR_UNKNOWN TCefUrlRequestStatus = iota
+	UR_UNKNOWN = TCefUrlRequestStatus(iota)
 	UR_SUCCESS
 	UR_IO_PENDING
 	UR_CANCELED
 	UR_FAILED
 )
 
-type TCefState int32
+type TCefState = _int32
 
 const (
-	STATE_DEFAULT TCefState = iota
+	STATE_DEFAULT = TCefState(iota)
 	STATE_ENABLED
 	STATE_DISABLE
 )
 
-func (m TCefState) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefTouchEeventType int32
+type TCefTouchEeventType = _int32
 
 const (
-	CEF_TET_RELEASED TCefTouchEeventType = iota
+	CEF_TET_RELEASED = TCefTouchEeventType(iota)
 	CEF_TET_PRESSED
 	CEF_TET_MOVED
 	CEF_TET_CANCELLED
 )
 
-func (m TCefTouchEeventType) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefPointerType int32
+type TCefPointerType = _int32
 
 const (
-	CEF_POINTER_TYPE_TOUCH TCefPointerType = iota
+	CEF_POINTER_TYPE_TOUCH = TCefPointerType(iota)
 	CEF_POINTER_TYPE_MOUSE
 	CEF_POINTER_TYPE_PEN
 	CEF_POINTER_TYPE_ERASER
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
-func (m TCefPointerType) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefMouseButtonType int32
+type TCefMouseButtonType = _int32
 
 const (
-	MBT_LEFT TCefMouseButtonType = iota
+	MBT_LEFT = TCefMouseButtonType(iota)
 	MBT_MIDDLE
 	MBT_RIGHT
 )
 
-func (m TCefMouseButtonType) ToPtr() uintptr {
-	return uintptr(m)
-}
-
 //进程消息错误码
-type ProcessMessageError int32
+type ProcessMessageError = _int32
 
 const (
 	PME_OK                        ProcessMessageError = iota + 1 //发送成功
-	PMErr_NOT_FOUND_FRAME                             = -1       //没找到Frame
-	PMErr_TARGET_PROCESS                              = -2       //目标进程标识错误
-	PMErr_NAME_IS_NULL                                = -3       //消息名称为空
-	PMErr_NO_INVALID_FRAME                            = -4       //无效的Frame
-	PMErr_REQUIRED_PARAMS_IS_NULL                     = -5       //必要参数为空
-	PMErr_NAME_CANNOT_USED                            = -6       //不能使用的消息名称
+	PMErr_NOT_FOUND_FRAME         ProcessMessageError = -1       //没找到Frame
+	PMErr_TARGET_PROCESS          ProcessMessageError = -2       //目标进程标识错误
+	PMErr_NAME_IS_NULL            ProcessMessageError = -3       //消息名称为空
+	PMErr_NO_INVALID_FRAME        ProcessMessageError = -4       //无效的Frame
+	PMErr_REQUIRED_PARAMS_IS_NULL ProcessMessageError = -5       //必要参数为空
+	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
-func (m ProcessMessageError) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefWindowOpenDisposition int32
+type TCefWindowOpenDisposition = _int32
 
 const (
-	WOD_UNKNOWN TCefWindowOpenDisposition = iota
+	WOD_UNKNOWN = TCefWindowOpenDisposition(iota)
 	WOD_CURRENT_TAB
 	WOD_SINGLETON_TAB
 	WOD_NEW_FOREGROUND_TAB
@@ -670,42 +654,26 @@ const (
 	WOD_NEW_PICTURE_IN_PICTURE
 )
 
-func (m TCefWindowOpenDisposition) ToPtr() uintptr {
-	return uintptr(m)
-}
-
 // Browser Window Type
-type WINDOW_TYPE int8
+type WINDOW_TYPE = _int8
 
 const (
-	WT_MAIN_BROWSER WINDOW_TYPE = iota
+	WT_MAIN_BROWSER = WINDOW_TYPE(iota)
 	WT_POPUP_SUB_BROWSER
 	WT_DEV_TOOLS
 	WT_VIEW_SOURCE
 )
 
-func (m WINDOW_TYPE) ToPtr() uintptr {
-	return uintptr(m)
-}
+type TCefContextMenuTypeFlags = _uint32
+type TCefContextMenuMediaStateFlags = _uint32
+type TCefContextMenuEditStateFlags = _uint32
 
-type TCefContextMenuTypeFlags uint32
-type TCefContextMenuMediaStateFlags uint32
-type TCefContextMenuEditStateFlags uint32
-
-type TCefMenuAnchorPosition int32
+type TCefMenuAnchorPosition = _int32
 
 const (
-	CEF_MENU_ANCHOR_TOPLEFT TCefMenuAnchorPosition = iota
+	CEF_MENU_ANCHOR_TOPLEFT = TCefMenuAnchorPosition(iota)
 	CEF_MENU_ANCHOR_TOPRIGHT
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
-func (m TCefMenuAnchorPosition) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefShowState int32
-
-func (m TCefShowState) ToPtr() uintptr {
-	return uintptr(m)
-}
+type TCefShowState = _int32
