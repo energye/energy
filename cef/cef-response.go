@@ -16,8 +16,7 @@ import (
 )
 
 type ICefResponse struct {
-	instance   uintptr
-	ptr        unsafe.Pointer
+	instance   unsafe.Pointer
 	Status     int32
 	StatusText string
 	MimeType   string
@@ -37,40 +36,40 @@ type iCefResponse struct {
 }
 
 func (m *ICefResponse) IsReadOnly() bool {
-	return api.GoBool(cefResponse_IsReadOnly(m.instance))
+	return api.GoBool(cefResponse_IsReadOnly(uintptr(m.instance)))
 }
 
 func (m *ICefResponse) SetError(error TCefErrorCode) {
-	cefResponse_SetError(m.instance, error)
+	cefResponse_SetError(uintptr(m.instance), error)
 }
 func (m *ICefResponse) SetStatus(status int32) {
-	cefResponse_SetStatus(m.instance, status)
+	cefResponse_SetStatus(uintptr(m.instance), status)
 }
 func (m *ICefResponse) SetStatusText(statusText string) {
-	cefResponse_SetStatusText(m.instance, statusText)
+	cefResponse_SetStatusText(uintptr(m.instance), statusText)
 }
 func (m *ICefResponse) SetMimeType(mimetype string) {
-	cefResponse_SetMimeType(m.instance, mimetype)
+	cefResponse_SetMimeType(uintptr(m.instance), mimetype)
 }
 func (m *ICefResponse) SetCharset(charset string) {
-	cefResponse_SetCharset(m.instance, charset)
+	cefResponse_SetCharset(uintptr(m.instance), charset)
 }
 
 func (m *ICefResponse) GetHeaderByName(name string) string {
-	return api.GoStr(cefResponse_GetHeaderByName(m.instance, name))
+	return api.GoStr(cefResponse_GetHeaderByName(uintptr(m.instance), name))
 }
 
 func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
-	cefResponse_SetHeaderByName(m.instance, name, value, overwrite)
+	cefResponse_SetHeaderByName(uintptr(m.instance), name, value, overwrite)
 }
 
 func (m *ICefResponse) SetURL(url string) {
-	cefResponse_SetURL(m.instance, url)
+	cefResponse_SetURL(uintptr(m.instance), url)
 }
 
 func (m *ICefResponse) GetHeaderMap() *ICefStringMultiMap {
 	headerMap := &ICefStringMultiMap{}
-	headerMap.instance = cefResponse_GetHeaderMap(m.instance)
+	headerMap.instance = cefResponse_GetHeaderMap(uintptr(m.instance))
 	headerMap.ptr = unsafe.Pointer(headerMap.instance)
 	return headerMap
 }

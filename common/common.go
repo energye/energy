@@ -753,7 +753,7 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 }
 
 //获取指针的指针的地址
-func GetInstancePtr(ptr uintptr) (uintptr, unsafe.Pointer) {
+func GetInstancePtr(ptr uintptr) unsafe.Pointer {
 	ptr = *(*uintptr)(unsafe.Pointer(ptr))
-	return ptr, unsafe.Pointer(ptr)
+	return unsafe.Pointer(ptr)
 }

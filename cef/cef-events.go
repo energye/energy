@@ -22,8 +22,7 @@ import (
 func init() {
 	var resourceEventGet = func(fn interface{}, getVal func(idx int) uintptr, resp bool) (sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) {
 		var (
-			instance uintptr
-			ptr      unsafe.Pointer
+			instance unsafe.Pointer
 		)
 		// 指针
 		getPtr := func(i int) unsafe.Pointer {
@@ -39,10 +38,9 @@ func init() {
 			Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 		}
 		cefRequest := (*rICefRequest)(getPtr(3))
-		instance, ptr = GetInstancePtr(cefRequest.Instance)
+		instance = GetInstancePtr(cefRequest.Instance)
 		request = &ICefRequest{
 			instance:             instance,
-			ptr:                  ptr,
 			Url:                  api.GoStr(cefRequest.Url),
 			Method:               api.GoStr(cefRequest.Method),
 			ReferrerUrl:          api.GoStr(cefRequest.ReferrerUrl),
@@ -55,10 +53,9 @@ func init() {
 		}
 		if resp {
 			cefResponse := (*iCefResponse)(getPtr(4))
-			instance, ptr = GetInstancePtr(cefResponse.Instance)
+			instance = GetInstancePtr(cefResponse.Instance)
 			response = &ICefResponse{
 				instance:   instance,
-				ptr:        ptr,
 				Status:     int32(cefResponse.Status),
 				StatusText: api.GoStr(cefResponse.StatusText),
 				MimeType:   api.GoStr(cefResponse.MimeType),
