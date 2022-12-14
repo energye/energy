@@ -38,8 +38,8 @@ type IPCCallback func(context IIPCContext)
 // 进程间IPC通信回调上下文
 type IIPCContext interface {
 	setArguments(argument IArgumentList)
-	Connect() net.Conn
-	EventId() int32
+	Connect() net.Conn         //IPC 链接
+	EventId() int32            //IPC 事件ID
 	ChannelId() int64          //render channel channelId
 	BrowserId() int32          //render channel browserId
 	Message() *IPCEventMessage //接收的消息数据 一搬配合Response函数
