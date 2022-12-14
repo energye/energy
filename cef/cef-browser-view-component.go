@@ -19,31 +19,31 @@ func NewBrowserViewComponent(AOwner lcl.TComponent) *TCEFBrowserViewComponent {
 	}
 }
 
-func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, settings *TCefBrowserSettings, extraInfo *ICefDictionaryValue) {
-	settingsPtr := settings.ToPtr()
-	var data = []byte{}
-	var dataPtr unsafe.Pointer
-	var dataLen int = 0
+func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, requestContextSettings *TCefRequestContextSettings, browserSettings *TCefBrowserSettings, extraInfo *ICefDictionaryValue) {
+	contextSettingsPtr := requestContextSettings.ToPtr()
+	browserSettingsPtr := browserSettings.ToPtr()
+	var dataBytes = []byte{}
+	var dataBytesPtr unsafe.Pointer
+	var dataBytesLen int = 0
 	var argsLen int = 0
 	if extraInfo != nil && extraInfo.dataLen > 0 {
 		defer func() {
 			extraInfo.Clear()
 			extraInfo = nil
-			data = nil
-			dataPtr = nil
+			dataBytes = nil
+			dataBytesPtr = nil
 		}()
-		data = extraInfo.Package()
+		dataBytes = extraInfo.Package()
 		argsLen = extraInfo.dataLen
-		dataPtr = unsafe.Pointer(&data[0])
-		dataLen = len(data) - 1
+		dataBytesPtr = unsafe.Pointer(&dataBytes[0])
+		dataBytesLen = len(dataBytes) - 1
 	} else {
-		dataPtr = unsafe.Pointer(&data)
+		dataBytesPtr = unsafe.Pointer(&dataBytes)
 	}
-	Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&settingsPtr)), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
+	Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&contextSettingsPtr)), uintptr(unsafe.Pointer(&browserSettingsPtr)), uintptr(argsLen), uintptr(dataBytesPtr), uintptr(dataBytesLen))
 }
 
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {
-
 	Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), browser.Instance())
 }
 

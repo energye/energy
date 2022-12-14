@@ -20,11 +20,11 @@ type String string
 type Boolean bool
 type Float32 float32
 type Float64 float64
-type PChar string
-type TCefColor uint16
-type Integer int32
-type NativeUInt uint32
-type TCefString string
+type PChar = String
+type TCefColor = UInt16
+type Integer = Int32
+type NativeUInt = UInt32
+type TCefString = String
 
 type TString struct {
 	value string
@@ -40,26 +40,6 @@ func (m *TString) GetValue() string {
 
 func (m *TString) ToPtr() uintptr {
 	return api.PascalStr(m.value)
-}
-
-func (m PChar) ToPtr() uintptr {
-	return api.PascalStr(string(m))
-}
-
-func (m TCefColor) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m Integer) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m NativeUInt) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m TCefString) ToPtr() uintptr {
-	return api.PascalStr(string(m))
 }
 
 func (m Int8) ToPtr() uintptr {
