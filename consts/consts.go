@@ -601,3 +601,5 @@ const (
 )
 
 type TCefShowState = types.Int32
+
+type TCefChromeToolbarType = types.Int32

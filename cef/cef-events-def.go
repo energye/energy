@@ -129,3 +129,10 @@ type WindowComponentOnCanMinimize func(sender lcl.IObject, window *ICefWindow, a
 type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
 type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)
+
+//TCEFBrowserViewComponent
+type BrowserViewComponentOnBrowserCreated func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
+type BrowserViewComponentOnBrowserDestroyed func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
+type BrowserViewComponentOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool, aResult *ICefBrowserViewDelegate)
+type BrowserViewComponentOnPopupBrowserViewCreated func(sender lcl.IObject, browserView, popupBrowserView *ICefBrowserView, isDevtools bool, aResult *bool)
+type BrowserViewComponentOnGetChromeToolbarType func(sender lcl.IObject, aResult *TCefChromeToolbarType)

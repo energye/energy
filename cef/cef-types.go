@@ -95,8 +95,8 @@ type TCefBrowserSettings struct {
 	ChromeStatusBubble         TCefState
 }
 
-func (m *TCefBrowserSettings) ToPtr() *TCefBrowserSettingsPtr {
-	return &TCefBrowserSettingsPtr{
+func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
+	return &tCefBrowserSettingsPtr{
 		Size:                       m.Size.ToPtr(),
 		WindowlessFrameRate:        m.WindowlessFrameRate.ToPtr(),
 		StandardFontFamily:         m.StandardFontFamily.ToPtr(),

@@ -19,7 +19,6 @@ import (
 
 //type ICefBrowser
 type ICefBrowser struct {
-	instance unsafe.Pointer
 	chromium unsafe.Pointer
 	browseId int32
 }
@@ -43,14 +42,6 @@ func (m *ICefBrowser) GetFrameId() int64 {
 		return mainFrame.Id
 	}
 	return 0
-}
-
-func (m *ICefBrowser) Instance() uintptr {
-	return uintptr(m.instance)
-}
-
-func (m *ICefBrowser) IsValid() bool {
-	return m.instance != nullptr
 }
 
 //得到浏览器ID号

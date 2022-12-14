@@ -8,6 +8,12 @@
 
 package cef
 
+import (
+	. "github.com/energye/energy/consts"
+	. "github.com/energye/energy/types"
+	"github.com/energye/golcl/lcl/api"
+)
+
 type iCefV8ContextPtr struct {
 	Browse uintptr //ptr
 	Frame  uintptr //ptr
@@ -36,7 +42,7 @@ type tCefRequestContextSettingsPtr struct {
 	CookieableSchemesExcludeDefaults uintptr //int32
 }
 
-type TCefBrowserSettingsPtr struct {
+type tCefBrowserSettingsPtr struct {
 	Size                       uintptr //NativeUInt
 	WindowlessFrameRate        uintptr //Integer
 	StandardFontFamily         uintptr //TCefString
@@ -65,6 +71,39 @@ type TCefBrowserSettingsPtr struct {
 	BackgroundColor            uintptr //TCefColor
 	AcceptLanguageList         uintptr //TCefString
 	ChromeStatusBubble         uintptr //TCefState
+}
+
+func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
+	return &TCefBrowserSettings{
+		Size:                       NativeUInt(m.Size),
+		WindowlessFrameRate:        Integer(m.WindowlessFrameRate),
+		StandardFontFamily:         TCefString(api.GoStr(m.StandardFontFamily)),
+		FixedFontFamily:            TCefString(api.GoStr(m.FixedFontFamily)),
+		SerifFontFamily:            TCefString(api.GoStr(m.SerifFontFamily)),
+		SansSerifFontFamily:        TCefString(api.GoStr(m.SansSerifFontFamily)),
+		CursiveFontFamily:          TCefString(api.GoStr(m.CursiveFontFamily)),
+		FantasyFontFamily:          TCefString(api.GoStr(m.FantasyFontFamily)),
+		DefaultFontSize:            Integer(m.DefaultFontSize),
+		DefaultFixedFontSize:       Integer(m.DefaultFixedFontSize),
+		MinimumFontSize:            Integer(m.MinimumFontSize),
+		MinimumLogicalFontSize:     Integer(m.MinimumLogicalFontSize),
+		DefaultEncoding:            TCefString(api.GoStr(m.DefaultEncoding)),
+		RemoteFonts:                TCefState(m.RemoteFonts),
+		Javascript:                 TCefState(m.Javascript),
+		JavascriptCloseWindows:     TCefState(m.JavascriptCloseWindows),
+		JavascriptAccessClipboard:  TCefState(m.JavascriptAccessClipboard),
+		JavascriptDomPaste:         TCefState(m.JavascriptDomPaste),
+		ImageLoading:               TCefState(m.ImageLoading),
+		ImageShrinkStandaLonetoFit: TCefState(m.ImageShrinkStandaLonetoFit),
+		TextAreaResize:             TCefState(m.TextAreaResize),
+		TabToLinks:                 TCefState(m.TabToLinks),
+		LocalStorage:               TCefState(m.LocalStorage),
+		Databases:                  TCefState(m.Databases),
+		Webgl:                      TCefState(m.Webgl),
+		BackgroundColor:            TCefColor(m.BackgroundColor),
+		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList)),
+		ChromeStatusBubble:         TCefState(m.ChromeStatusBubble),
+	}
 }
 
 type tCefProxyPtr struct {
