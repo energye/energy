@@ -6,7 +6,7 @@ type iCefV8ContextPtr struct {
 	Global uintptr //ptr
 }
 
-type cefCookie struct {
+type iCefCookiePtr struct {
 	url, name, value, domain, path uintptr //string
 	secure, httponly, hasExpires   uintptr //bool
 	creation, lastAccess, expires  uintptr //float64

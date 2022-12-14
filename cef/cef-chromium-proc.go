@@ -499,7 +499,7 @@ func _CEFChromium_SetCookie(instance uintptr, url, name, value, domain, path str
 	creationPtr := GoDateTimeToDDateTime(creation)
 	lastAccessPtr := GoDateTimeToDDateTime(lastAccess)
 	expiresPtr := GoDateTimeToDDateTime(expires)
-	cCookie := &cefCookie{
+	cCookie := &iCefCookiePtr{
 		url:             api.PascalStr(url),
 		name:            api.PascalStr(name),
 		value:           api.PascalStr(value),

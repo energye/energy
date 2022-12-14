@@ -11,17 +11,13 @@ package cef
 import (
 	"bytes"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/golcl/lcl/api"
+	. "github.com/energye/energy/types"
 	"strings"
 	"time"
 	"unsafe"
 )
 
 type TCefCloseBrowsesAction = CBS
-
-type String struct {
-	value string
-}
 
 type ICefCookie struct {
 	Url, Name, Value, Domain, Path string
@@ -38,22 +34,34 @@ type ICefCookie struct {
 type TCefKeyEvent struct {
 	Kind                 TCefKeyEventType // called 'type' in the original CEF source code
 	Modifiers            TCefEventFlags
-	WindowsKeyCode       int32
-	NativeKeyCode        int32
-	IsSystemKey          int32
-	Character            uint16
-	UnmodifiedCharacter  uint16
-	FocusOnEditableField int32
+	WindowsKeyCode       Int32
+	NativeKeyCode        Int32
+	IsSystemKey          Int32
+	Character            UInt16
+	UnmodifiedCharacter  UInt16
+	FocusOnEditableField Int32
 }
 
 type TCefRequestContextSettings struct {
-	Size                             uint32
+	Size                             UInt32
 	CachePath                        TCefString
-	PersistSessionCookies            int32
-	PersistUserPreferences           int32
+	PersistSessionCookies            Int32
+	PersistUserPreferences           Int32
 	AcceptLanguageList               TCefString
 	CookieableSchemesList            TCefString
-	CookieableSchemesExcludeDefaults int32
+	CookieableSchemesExcludeDefaults Int32
+}
+
+func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
+	return &tCefRequestContextSettingsPtr{
+		Size:                             m.Size.ToPtr(),
+		CachePath:                        m.CachePath.ToPtr(),
+		PersistSessionCookies:            m.PersistSessionCookies.ToPtr(),
+		PersistUserPreferences:           m.PersistUserPreferences.ToPtr(),
+		AcceptLanguageList:               m.AcceptLanguageList.ToPtr(),
+		CookieableSchemesList:            m.CookieableSchemesList.ToPtr(),
+		CookieableSchemesExcludeDefaults: m.CookieableSchemesExcludeDefaults.ToPtr(),
+	}
 }
 
 type TCefBrowserSettings struct {
@@ -242,46 +250,4 @@ func (m *TCefKeyEvent) KeyDown() bool {
 
 func (m *TCefKeyEvent) KeyUp() bool {
 	return m.Kind == KEYEVENT_KEYUP
-}
-
-func (m *String) SetValue(v string) {
-	m.value = v
-}
-
-func (m *String) GetValue() string {
-	return m.value
-}
-
-func (m *String) ToPtr() uintptr {
-	return api.PascalStr(m.value)
-}
-
-type PChar string
-
-func (m PChar) ToPtr() uintptr {
-	return api.PascalStr(string(m))
-}
-
-type TCefColor uint16
-
-func (m TCefColor) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type Integer int32
-
-func (m Integer) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type NativeUInt uint32
-
-func (m NativeUInt) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-type TCefString string
-
-func (m TCefString) ToPtr() uintptr {
-	return api.PascalStr(string(m))
 }

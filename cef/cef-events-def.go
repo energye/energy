@@ -11,6 +11,7 @@ package cef
 import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -78,7 +79,7 @@ type ChromiumEventOnKeyEvent func(sender lcl.IObject, browser *ICefBrowser, even
 // 资源加载
 type ChromiumEventOnBeforeResourceLoad func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue)
 type ChromiumEventOnResourceResponse func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, result *bool)
-type ChromiumEventOnResourceRedirect func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, newUrl *String)
+type ChromiumEventOnResourceRedirect func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, newUrl *t.TString)
 type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, status TCefUrlRequestStatus, receivedContentLength int64)
 
 // 渲染进程执行每个浏览器上下文时都会调用

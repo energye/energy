@@ -11,7 +11,9 @@
 
 package consts
 
-type TCefMenuAccelerator = int32
+import "github.com/energye/energy/types"
+
+type TCefMenuAccelerator = types.Int32
 
 const (
 	MA_Shift                          = "SHIFT"

@@ -13,6 +13,7 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
+	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -121,7 +122,7 @@ func init() {
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
 		case ChromiumEventOnResourceRedirect:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
-			var newStr = new(String)
+			var newStr = new(t.TString)
 			var newStrPtr = (*uintptr)(getPtr(5))
 			fn.(ChromiumEventOnResourceRedirect)(sender, browse, frame, request, response, newStr)
 			*newStrPtr = newStr.ToPtr()
@@ -222,7 +223,7 @@ func init() {
 		case ChromiumEventOnCookiesFlushed:
 			fn.(ChromiumEventOnCookiesFlushed)(lcl.AsObject(getVal(0)))
 		case ChromiumEventOnCookiesVisited:
-			cookie := *(*cefCookie)(getPtr(1))
+			cookie := *(*iCefCookiePtr)(getPtr(1))
 			creation := *(*float64)(GetParamPtr(cookie.creation, 0))
 			lastAccess := *(*float64)(GetParamPtr(cookie.lastAccess, 0))
 			expires := *(*float64)(GetParamPtr(cookie.expires, 0))

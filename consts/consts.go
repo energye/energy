@@ -9,11 +9,10 @@
 package consts
 
 import (
+	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/homedir"
-	"github.com/energye/golcl/lcl/api"
 	"os"
 	"path/filepath"
-	"unsafe"
 )
 
 var (
@@ -34,98 +33,22 @@ func init() {
 	ExePath, _ = os.Getwd()
 }
 
-type _int8 int8
-type _int16 int16
-type _int32 int32
-type _int64 int64
-type _int int
-type _uint8 uint8
-type _uint16 uint16
-type _uint32 uint32
-type _uint64 uint64
-type _uint uint
-type _uintptr uintptr
-type _string string
-type _boolean bool
-type _float32 float32
-type _float64 float64
-
-func (m _int8) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _int16) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _int32) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _int64) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _int) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uint8) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uint16) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uint32) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uint64) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uint) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _uintptr) ToPtr() uintptr {
-	return uintptr(m)
-}
-
-func (m _string) ToPtr() uintptr {
-	return api.PascalStr(string(m))
-}
-
-func (m _boolean) ToPtr() uintptr {
-	return api.PascalBool(bool(m))
-}
-
-func (m _float32) ToPtr() uintptr {
-	return uintptr(unsafe.Pointer(&m))
-}
-
-func (m _float64) ToPtr() uintptr {
-	return uintptr(unsafe.Pointer(&m))
-}
-
 //0:net 1:unix
-type IPC_TYPE = _int8
+type IPC_TYPE = types.Int8
 
 const (
 	IPCT_NET = IPC_TYPE(iota)
 	IPCT_UNIX
 )
 
-type ChannelType = _int8
+type ChannelType = types.Int8
 
 const (
 	Ct_Server = ChannelType(iota)
 	Ct_Client
 )
 
-type TriggerMode = _int8
+type TriggerMode = types.Int8
 
 const (
 	Tm_Async    = TriggerMode(iota) //异步
@@ -141,7 +64,7 @@ const (
 )
 
 //缩放、放大
-type ZOOM = _int32
+type ZOOM = types.Int32
 
 const (
 	ZOOM_RESET = ZOOM(iota)
@@ -150,7 +73,7 @@ const (
 )
 
 //进程结束的状态
-type TCefTerminationStatus = _int32
+type TCefTerminationStatus = types.Int32
 
 const (
 	TS_ABNORMAL_TERMINATION = TCefTerminationStatus(iota)
@@ -160,7 +83,7 @@ const (
 )
 
 //前进 & 后退
-type BF = _int32
+type BF = types.Int32
 
 const (
 	BF_GOBACK = BF(iota)
@@ -168,7 +91,7 @@ const (
 )
 
 //日志等级
-type LOG = _uint32
+type LOG = types.UInt32
 
 const (
 	LOGSEVERITY_DEFAULT LOG = 0
@@ -181,7 +104,7 @@ const (
 	LOGSEVERITY_DISABLE LOG = 99
 )
 
-type LANGUAGE = _string
+type LANGUAGE = types.String
 
 const (
 	LANGUAGE_zh_CN  LANGUAGE = "zh-CN"
@@ -246,7 +169,7 @@ const (
 // cbaClose  : 继续关闭浏览器
 // cbaDelay  : 暂时停止关闭浏览器
 //			 : 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
-type CBS = _int32
+type CBS = types.Int32
 
 const (
 	CbaClose = CBS(iota)
@@ -255,7 +178,7 @@ const (
 )
 
 //CEF 进程 ChannelId
-type CefProcessId = _int32
+type CefProcessId = types.Int32
 
 const (
 	PID_BROWSER = CefProcessId(iota)
@@ -263,7 +186,7 @@ const (
 )
 
 //支持的JS类型
-type V8_JS_VALUE_TYPE = _int32
+type V8_JS_VALUE_TYPE = types.Int32
 
 const (
 	V8_VALUE_STRING = V8_JS_VALUE_TYPE(iota)
@@ -281,7 +204,7 @@ const (
 )
 
 //支持的GO类型
-type GO_VALUE_TYPE = _int32
+type GO_VALUE_TYPE = types.Int32
 
 const (
 	GO_VALUE_STRING = GO_VALUE_TYPE(iota)
@@ -311,7 +234,7 @@ const (
 )
 
 //JS属性
-type V8_PROPERTY_ATTRIBUTE = _int32
+type V8_PROPERTY_ATTRIBUTE = types.Int32
 
 const (
 	V8_PROPERTY_ATTRIBUTE_NONE       V8_PROPERTY_ATTRIBUTE = 0
@@ -321,7 +244,7 @@ const (
 )
 
 //JS交互绑定的事件类型
-type BIND_EVENT = _int32
+type BIND_EVENT = types.Int32
 
 const (
 	BE_SET = BIND_EVENT(iota)
@@ -330,7 +253,7 @@ const (
 )
 
 //异常信息
-type CEF_V8_EXCEPTION = _int32
+type CEF_V8_EXCEPTION = types.Int32
 
 const (
 	CVE_ERROR_OK                             = CEF_V8_EXCEPTION(iota) //操作成功
@@ -367,7 +290,7 @@ const (
 )
 
 //函数类型
-type FN_TYPE = _int8
+type FN_TYPE = types.Int8
 
 const (
 	FN_TYPE_COMMON = FN_TYPE(iota) //普通函数，直接定义的
@@ -375,7 +298,7 @@ const (
 )
 
 //通用类型或对象类型
-type IS_CO = _int8
+type IS_CO = types.Int8
 
 const (
 	IS_COMMON = IS_CO(iota)
@@ -383,7 +306,7 @@ const (
 )
 
 //进程消息类型
-type PROCESS_MESSAGE_TYPE = _int8
+type PROCESS_MESSAGE_TYPE = types.Int8
 
 const (
 	PMT_JS_CODE = PROCESS_MESSAGE_TYPE(iota) //执行JS代码消息
@@ -391,7 +314,7 @@ const (
 	PMT_BINARY                               //二进制消息
 )
 
-type TCefProcessType = _int8
+type TCefProcessType = types.Int8
 
 const (
 	PtBrowser = TCefProcessType(iota)
@@ -404,9 +327,9 @@ const (
 	PtOther
 )
 
-type TDateTime = _float64
+type TDateTime = types.Float64
 
-type TCefCookieSameSite = _int32
+type TCefCookieSameSite = types.Int32
 
 const (
 	Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED = TCefCookieSameSite(iota)
@@ -415,7 +338,7 @@ const (
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
-type TCefCookiePriority = _int32
+type TCefCookiePriority = types.Int32
 
 const (
 	CEF_COOKIE_PRIORITY_LOW    TCefCookiePriority = -1
@@ -423,7 +346,7 @@ const (
 	CEF_COOKIE_PRIORITY_HIGH   TCefCookiePriority = 1
 )
 
-type TCefProxyType = _int32
+type TCefProxyType = types.Int32
 
 const (
 	PtDirect = TCefProxyType(iota)
@@ -433,7 +356,7 @@ const (
 	PtPACScript
 )
 
-type TCefProxyScheme = _int32
+type TCefProxyScheme = types.Int32
 
 const (
 	PsHTTP = TCefProxyScheme(iota)
@@ -441,7 +364,7 @@ const (
 	PsSOCKS5
 )
 
-type TCefContextMenuType = _int32
+type TCefContextMenuType = types.Int32
 
 const (
 	CMT_NONE = TCefContextMenuType(iota)
@@ -449,7 +372,7 @@ const (
 	CMT_RADIO
 )
 
-type TCefContextMenuMediaType = _int32
+type TCefContextMenuMediaType = types.Int32
 
 const (
 	CM_MEDIATYPE_NONE = TCefContextMenuMediaType(iota)
@@ -461,7 +384,7 @@ const (
 	CM_MEDIATYPE_PLUGIN
 )
 
-type MenuId = _int32
+type MenuId = types.Int32
 
 const (
 	MENU_ID_BACK                       MenuId = 100
@@ -493,7 +416,7 @@ const (
 	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
-type TCefMenuColorType = _int32
+type TCefMenuColorType = types.Int32
 
 const (
 	CEF_MENU_COLOR_TEXT = TCefMenuColorType(iota)
@@ -505,9 +428,9 @@ const (
 	CEF_MENU_COLOR_COUNT
 )
 
-type ARGB = _uint32
+type ARGB = types.UInt32
 
-type TCefKeyEventType = _int32
+type TCefKeyEventType = types.Int32
 
 const (
 	KEYEVENT_RAW_KEYDOWN = TCefKeyEventType(iota)
@@ -516,18 +439,18 @@ const (
 	KEYEVENT_CHAR
 )
 
-type TCefEventFlags = _uint32
+type TCefEventFlags = types.UInt32
 
-type TCefWindowHandleType = _int8
+type TCefWindowHandleType = types.Int8
 
-type TCefWindowHandle = _uintptr
+type TCefWindowHandle = types.UIntptr
 
 const (
 	Wht_WindowParent = TCefWindowHandleType(iota)
 	Wht_LinkedWindowParent
 )
 
-type TCefReturnValue = _int32
+type TCefReturnValue = types.Int32
 
 const (
 	RV_CANCEL = TCefReturnValue(iota)
@@ -535,7 +458,7 @@ const (
 	RV_CONTINUE_ASYNC
 )
 
-type TCefReferrerPolicy = _int32
+type TCefReferrerPolicy = types.Int32
 
 const (
 	REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE = TCefReferrerPolicy(iota) // same value as REFERRER_POLICY_DEFAULT
@@ -548,11 +471,11 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
-type TCefUrlRequestFlags = _int
+type TCefUrlRequestFlags = types.Int
 
-type TCefErrorCode = _int32
+type TCefErrorCode = types.Int32
 
-type TCefResourceType = _int32
+type TCefResourceType = types.Int32
 
 const (
 	RT_MAIN_FRAME = TCefResourceType(iota)
@@ -578,9 +501,9 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME
 )
 
-type TCefTransitionType = _int
+type TCefTransitionType = types.Int
 
-type TCefUrlRequestStatus = _int32
+type TCefUrlRequestStatus = types.Int32
 
 const (
 	UR_UNKNOWN = TCefUrlRequestStatus(iota)
@@ -590,7 +513,7 @@ const (
 	UR_FAILED
 )
 
-type TCefState = _int32
+type TCefState = types.Int32
 
 const (
 	STATE_DEFAULT = TCefState(iota)
@@ -598,7 +521,7 @@ const (
 	STATE_DISABLE
 )
 
-type TCefTouchEeventType = _int32
+type TCefTouchEeventType = types.Int32
 
 const (
 	CEF_TET_RELEASED = TCefTouchEeventType(iota)
@@ -607,7 +530,7 @@ const (
 	CEF_TET_CANCELLED
 )
 
-type TCefPointerType = _int32
+type TCefPointerType = types.Int32
 
 const (
 	CEF_POINTER_TYPE_TOUCH = TCefPointerType(iota)
@@ -617,7 +540,7 @@ const (
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
-type TCefMouseButtonType = _int32
+type TCefMouseButtonType = types.Int32
 
 const (
 	MBT_LEFT = TCefMouseButtonType(iota)
@@ -626,7 +549,7 @@ const (
 )
 
 //进程消息错误码
-type ProcessMessageError = _int32
+type ProcessMessageError = types.Int32
 
 const (
 	PME_OK                        ProcessMessageError = iota + 1 //发送成功
@@ -638,7 +561,7 @@ const (
 	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
-type TCefWindowOpenDisposition = _int32
+type TCefWindowOpenDisposition = types.Int32
 
 const (
 	WOD_UNKNOWN = TCefWindowOpenDisposition(iota)
@@ -656,7 +579,7 @@ const (
 )
 
 // Browser Window Type
-type WINDOW_TYPE = _int8
+type WINDOW_TYPE = types.Int8
 
 const (
 	WT_MAIN_BROWSER = WINDOW_TYPE(iota)
@@ -665,11 +588,11 @@ const (
 	WT_VIEW_SOURCE
 )
 
-type TCefContextMenuTypeFlags = _uint32
-type TCefContextMenuMediaStateFlags = _uint32
-type TCefContextMenuEditStateFlags = _uint32
+type TCefContextMenuTypeFlags = types.UInt32
+type TCefContextMenuMediaStateFlags = types.UInt32
+type TCefContextMenuEditStateFlags = types.UInt32
 
-type TCefMenuAnchorPosition = _int32
+type TCefMenuAnchorPosition = types.Int32
 
 const (
 	CEF_MENU_ANCHOR_TOPLEFT = TCefMenuAnchorPosition(iota)
@@ -677,4 +600,4 @@ const (
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
-type TCefShowState = _int32
+type TCefShowState = types.Int32

@@ -141,7 +141,7 @@ func (m *keyEventAccelerator) accelerator(browse *ICefBrowser, event *TCefKeyEve
 		} else if event.WindowsKeyCode == MA_Alt_Code {
 			m.alt = true
 		} else {
-			var accelerator = acceleratorCode(m.shift, m.ctrl, m.alt, event.WindowsKeyCode)
+			var accelerator = acceleratorCode(m.shift, m.ctrl, m.alt, rune(event.WindowsKeyCode))
 			//m.shift = false
 			//m.ctrl = false
 			//m.alt = false
