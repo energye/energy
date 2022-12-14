@@ -87,10 +87,6 @@ func (m *event) add(name string, eventCallback EventCallback) {
 	}
 }
 
-func (m *event) removeOnEvent(name string) {
-	delete(m.event, name)
-}
-
 func (m *event) Get(name string) EventCallback {
 	if call, ok := m.event[name]; ok {
 		return call
@@ -105,8 +101,20 @@ func (m *browserChannel) Channel(channelId int64) *channel {
 	return nil
 }
 
+func (m *browserChannel) ChannelIds() (result []int64) {
+	m.channel.Range(func(key, value any) bool {
+		result = append(result, key.(int64))
+		return true
+	})
+	return
+}
+
 func (m *browserChannel) putChannel(channelId int64, value *channel) {
 	m.channel.Store(channelId, value)
+}
+
+func (m *event) removeOnEvent(name string) {
+	delete(m.event, name)
 }
 
 func (m *browserChannel) Close() {
@@ -174,7 +182,7 @@ func (m *browserChannel) singleProcessChannelId() (int64, bool) {
 		//单进程，只有一个IPC连接，直接取出来就好
 		m.channel.Range(func(key, value any) bool {
 			channelId = key.(int64)
-			return true
+			return false
 		})
 		if channelId != 0 {
 			return channelId, true

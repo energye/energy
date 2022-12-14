@@ -63,5 +63,6 @@ func timeTask() {
 			//需要正确的获取类型，否则会失败
 			fmt.Println("JS返回数据:", arguments.GetString(0))
 		})
+		fmt.Println(ipc.IPC.Browser().ChannelIds())
 	}
 }
