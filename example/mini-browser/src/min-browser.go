@@ -134,7 +134,6 @@ func AppBrowserInit() {
 			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
 			if browserWindow == nil {
 				browserWindow = cef.NewBrowserWindow(nil, "https://www.baidu.com")
-				browserWindow.Chromium().EnableIndependentEvent()
 				browserWindow.SetCaption("Browser新窗口标题")
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)

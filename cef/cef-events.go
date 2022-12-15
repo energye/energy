@@ -292,7 +292,6 @@ func init() {
 				Url:     api.GoStr(tempFrame.Url),
 				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			chromiumOnBeforeBrowser(browser, frame)
 			var result = (*bool)(getPtr(3))
 			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnAddressChange: //创建浏览器之前
@@ -310,19 +309,14 @@ func init() {
 			sender := getPtr(0)
 			//事件处理函数返回true将不继续执行
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			if chromiumOnAfterCreate(browser) {
-				return true
-			}
 			fn.(ChromiumEventOnAfterCreated)(lcl.AsObject(sender), browser)
 		case ChromiumEventOnBeforeClose: //关闭浏览器之前
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			chromiumOnBeforeClose(browser)
 			fn.(ChromiumEventOnBeforeClose)(lcl.AsObject(sender), browser)
 		case ChromiumEventOnClose:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			chromiumOnClose(browser)
 			fn.(ChromiumEventOnClose)(lcl.AsObject(sender), browser, (*TCefCloseBrowsesAction)(getPtr(2)))
 		case ChromiumEventOnResult: //通用Result bool事件
 			fn.(ChromiumEventOnResult)(lcl.AsObject(getVal(0)), api.GoBool(getVal(1)))
@@ -338,14 +332,11 @@ func init() {
 				Url:     api.GoStr(tempFrame.Url),
 				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			BrowserWindow.putBrowserFrame(browser, frame)
 			fn.(ChromiumEventOnLoadStart)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnLoadingStateChange:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			BrowserWindow.putBrowserFrame(browser, nil)
-			fn.(ChromiumEventOnLoadingStateChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)),
-				api.GoBool(getVal(3)), api.GoBool(getVal(4)))
+			fn.(ChromiumEventOnLoadingStateChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case ChromiumEventOnLoadingProgressChange:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
@@ -462,7 +453,6 @@ func init() {
 				Url:     api.GoStr(tempFrame.Url),
 				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			chromiumOnFrameDetached(browser, frame)
 			fn.(ChromiumEventOnFrameDetached)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnMainFrameChanged:
 			sender := getPtr(0)
@@ -489,11 +479,33 @@ func init() {
 					Id:      StrToInt64(api.GoStr(tempNewFrame.Identifier)),
 				}
 			}
-			chromiumOnMainFrameChanged(browser, oldFrame, newFrame)
 			fn.(ChromiumEventOnMainFrameChanged)(lcl.AsObject(sender), browser, oldFrame, newFrame)
 		//windowParent popup
 		case ChromiumEventOnBeforePopup:
-			chromiumOnBeforePopup(fn.(ChromiumEventOnBeforePopup), getVal)
+			sender := getPtr(0)
+			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
+			tempFrame := (*cefFrame)(getPtr(2))
+			frame := &ICefFrame{
+				Browser: browser,
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+			}
+			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
+			beforePInfo := &BeforePopupInfo{
+				TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
+				TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
+				TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
+				UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
+			}
+
+			var (
+				client             = &ICefClient{instance: getPtr(5)}
+				noJavascriptAccess = (*bool)(getPtr(6))
+				result             = (*bool)(getPtr(7))
+			)
+			//callback
+			*result = fn.(ChromiumEventOnBeforePopup)(lcl.AsObject(sender), browser, frame, beforePInfo, client, noJavascriptAccess)
 		//windowParent open url from tab
 		case ChromiumEventOnOpenUrlFromTab:
 

@@ -11,6 +11,7 @@ package cef
 import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"sync"
@@ -65,23 +66,23 @@ type browser struct {
 //
 // 在主浏览器进程调用
 type BrowserEvent struct {
-	chromium                 IChromiumEvent                    //chromium event
-	onBeforePopup            ChromiumEventOnBeforePopup        //default
-	onAfterCreated           ChromiumEventOnAfterCreated       //default
-	onBeforeBrowser          ChromiumEventOnBeforeBrowser      //default
-	onBeforeClose            ChromiumEventOnBeforeClose        //default
-	onClose                  ChromiumEventOnClose              //default
-	onFrameCreated           ChromiumEventOnFrameCreated       //default
-	onFrameDetached          ChromiumEventOnFrameDetached      //default
-	onMainFrameChanged       ChromiumEventOnMainFrameChanged   //default
-	onBeforeDownload         ChromiumEventOnBeforeDownload     //default
-	onKeyEvent               ChromiumEventOnKeyEvent           //default
-	onProcessMessageReceived BrowseProcessMessageReceived      //default
-	onTitleChange            ChromiumEventOnTitleChange        //default
-	onLoadingStateChange     ChromiumEventOnLoadingStateChange //default
-	onContextMenuCommand     ChromiumEventOnContextMenuCommand //default
-	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu  //default
-	onBeforeResourceLoad     ChromiumEventOnBeforeResourceLoad //default
+	chromium                 IChromiumEvent                          //chromium event
+	onBeforePopup            ChromiumEventOnBeforePopupForWindowInfo //default
+	onAfterCreated           ChromiumEventOnAfterCreated             //default
+	onBeforeBrowser          ChromiumEventOnBeforeBrowser            //default
+	onBeforeClose            ChromiumEventOnBeforeClose              //default
+	onClose                  ChromiumEventOnClose                    //default
+	onFrameCreated           ChromiumEventOnFrameCreated             //default
+	onFrameDetached          ChromiumEventOnFrameDetached            //default
+	onMainFrameChanged       ChromiumEventOnMainFrameChanged         //default
+	onBeforeDownload         ChromiumEventOnBeforeDownload           //default
+	onKeyEvent               ChromiumEventOnKeyEvent                 //default
+	onProcessMessageReceived BrowseProcessMessageReceived            //default
+	onTitleChange            ChromiumEventOnTitleChange              //default
+	onLoadingStateChange     ChromiumEventOnLoadingStateChange       //default
+	onContextMenuCommand     ChromiumEventOnContextMenuCommand       //default
+	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu        //default
+	onBeforeResourceLoad     ChromiumEventOnBeforeResourceLoad       //default
 }
 
 type browserWindow struct {
@@ -104,6 +105,11 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.Free()
 	} else {
 		b := cefApp.StartMainProcess()
+		if b {
+			internalBrowserIPCOnEventInit()
+			ipc.IPC.StartBrowserIPC()
+			bindGoToJS(nil, nil)
+		}
 		if browserProcessStartAfterCallback != nil {
 			browserProcessStartAfterCallback(b)
 		}
@@ -575,7 +581,7 @@ func (m *BrowserEvent) SetOnMainFrameChanged(event ChromiumEventOnMainFrameChang
 // BrowserEvent.SetOnBeforePopup
 //
 // 子窗口弹出之前，设置子窗口样式及系统组件和功能
-func (m *BrowserEvent) SetOnBeforePopup(event ChromiumEventOnBeforePopup) {
+func (m *BrowserEvent) SetOnBeforePopup(event ChromiumEventOnBeforePopupForWindowInfo) {
 	if Args.IsMain() {
 		m.onBeforePopup = event
 	}

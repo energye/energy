@@ -33,6 +33,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFStartSubProcess", 0),
 		dllimports.NewEnergyImport("AddCustomCommandLine", 0),
 		//application
+		dllimports.NewEnergyImport("CEFApplication_RunMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_Create", 0),
 		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
@@ -45,6 +46,7 @@ func init() {
 		//application - event
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextCreated", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegCustomSchemes", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextInitialized", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnWebKitInitialized", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBeforeChildProcessLaunch", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnScheduleMessagePumpWork", 0),
@@ -433,6 +435,7 @@ const (
 	internale_CEFStartSubProcess
 	internale_AddCustomCommandLine
 	//application
+	internale_CEFApplication_RunMessageLoop
 	internale_CEFApplication_Create
 	internale_CEFApplication_Destroy
 	internale_CEFApplication_Free
@@ -445,6 +448,7 @@ const (
 	//application - event
 	internale_CEFGlobalApp_SetOnContextCreated
 	internale_CEFGlobalApp_SetOnRegCustomSchemes
+	internale_CEFGlobalApp_SetOnContextInitialized
 	internale_CEFGlobalApp_SetOnWebKitInitialized
 	internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch
 	internale_CEFGlobalApp_SetOnScheduleMessagePumpWork

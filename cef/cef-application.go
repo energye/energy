@@ -25,20 +25,32 @@ type TCEFApplication struct {
 	instance unsafe.Pointer
 }
 
-//创建应用程序
-func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
+//创建CEF应用程序
+func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	if cfg == nil {
 		cfg = NewApplicationConfig()
 	}
 	cfg.framework()
-	result := new(TCEFApplication)
+	m := new(TCEFApplication)
 	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
-	result.instance = unsafe.Pointer(r1)
+	m.instance = unsafe.Pointer(r1)
+	return m
+}
+
+//创建应用程序
+//
+//带有默认的应用事件
+func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
+	cefApp := NewCEFApplication(cfg)
+	cefApp.registerDefaultEvent()
+	return cefApp
+}
+
+func (m *TCEFApplication) registerDefaultEvent() {
 	//register default function
-	result.defaultSetOnContextCreated()
-	result.defaultSetOnProcessMessageReceived()
-	result.defaultSetOnBeforeChildProcessLaunch()
-	return result
+	m.defaultSetOnContextCreated()
+	m.defaultSetOnProcessMessageReceived()
+	m.defaultSetOnBeforeChildProcessLaunch()
 }
 
 func (m *TCEFApplication) Instance() uintptr {
@@ -49,13 +61,7 @@ func (m *TCEFApplication) Instance() uintptr {
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nullptr {
 		r1, _, _ := Proc(internale_CEFStartMainProcess).Call(m.Instance())
-		var b = api.GoBool(r1)
-		if b {
-			internalBrowserIPCOnEventInit()
-			ipc.IPC.StartBrowserIPC()
-			bindGoToJS(nil, nil)
-		}
-		return b
+		return api.GoBool(r1)
 	}
 	return false
 }
@@ -67,6 +73,10 @@ func (m *TCEFApplication) StartSubProcess() (result bool) {
 		result = api.GoBool(r1)
 	}
 	return false
+}
+
+func (m *TCEFApplication) RunMessageLoop() {
+	Proc(internale_CEFApplication_RunMessageLoop).Call()
 }
 
 func (m *TCEFApplication) StopScheduler() {
@@ -101,6 +111,10 @@ func (m *TCEFApplication) defaultSetOnContextCreated() {
 	m.SetOnContextCreated(func(browse *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool {
 		return false
 	})
+}
+
+func (m *TCEFApplication) SetOnContextInitialized(fn GlobalCEFAppEventOnContextInitialized) {
+	Proc(internale_CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
 //初始化设置全局回调
@@ -263,6 +277,8 @@ func init() {
 			}
 		case GlobalCEFAppEventOnWebKitInitialized:
 			fn.(GlobalCEFAppEventOnWebKitInitialized)()
+		case GlobalCEFAppEventOnContextInitialized:
+			fn.(GlobalCEFAppEventOnContextInitialized)()
 		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
 			commands := (*uintptr)(getPtr(0))
 			commandLine := &TCefCommandLine{commandLines: make(map[string]string)}

@@ -85,6 +85,7 @@ type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefB
 // 渲染进程执行每个浏览器上下文时都会调用
 type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
 type GlobalCEFAppEventOnWebKitInitialized func()
+type GlobalCEFAppEventOnContextInitialized func()
 type GlobalCEFAppEventOnBeforeChildProcessLaunch func(commandLine *TCefCommandLine)
 type GlobalCEFAppEventOnBrowserDestroyed func(browser *ICefBrowser)
 type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType)
@@ -105,7 +106,10 @@ type ChromiumEventOnFrameDetached func(sender lcl.IObject, browser *ICefBrowser,
 type ChromiumEventOnMainFrameChanged func(sender lcl.IObject, browser *ICefBrowser, oldFrame *ICefFrame, newFrame *ICefFrame)
 
 // windowParent popup
-type ChromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow *TCefWindowInfo /*client *ICefClient,*/, noJavascriptAccess *bool) bool
+type ChromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool
+
+// windowParent popup
+type ChromiumEventOnBeforePopupForWindowInfo func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow *TCefWindowInfo, noJavascriptAccess *bool) bool
 
 // windowParent open url from tab
 type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)

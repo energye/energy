@@ -312,14 +312,36 @@ func (m *BaseWindow) activate(sender lcl.IObject) {
 // 默认事件注册 部分事件允许被覆盖
 func (m *BaseWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
-	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, windowInfo *TCefWindowInfo, noJavascriptAccess *bool) bool {
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
+		BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
+		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePopupInfo.TargetUrl)
+		BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
+		BrowserWindow.popupWindow.putChromiumWindowInfo()
+		BrowserWindow.popupWindow.defaultChromiumEvent()
+		var result = false
+		defer func() {
+			if result {
+				QueueAsyncCall(func(id int) {
+					BrowserWindow.uiLock.Lock()
+					defer BrowserWindow.uiLock.Unlock()
+					winProperty := BrowserWindow.popupWindow.windowInfo.WindowProperty
+					if winProperty != nil {
+						if winProperty.IsShowModel {
+							BrowserWindow.popupWindow.ShowModal()
+							return
+						}
+					}
+					BrowserWindow.popupWindow.Show()
+				})
+			}
+		}()
 		if bwEvent.onBeforePopup != nil {
-			return bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, windowInfo, noJavascriptAccess)
+			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
 		}
-		return false
+		return result
 	})
 	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
@@ -336,11 +358,15 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		chromiumOnFrameDetached(browser, frame)
 		if bwEvent.onFrameDetached != nil {
 			bwEvent.onFrameDetached(sender, browser, frame)
 		}
 	})
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+		if chromiumOnAfterCreate(browser) {
+			return
+		}
 		if bwEvent.onAfterCreated != nil {
 			bwEvent.onAfterCreated(sender, browser)
 		}
@@ -386,6 +412,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
+		chromiumOnBeforeBrowser(browser, frame)
 		if bwEvent.onBeforeBrowser != nil {
 			return bwEvent.onBeforeBrowser(sender, browser, frame)
 		}
@@ -411,6 +438,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+		//BrowserWindow.putBrowserFrame(browser, nil)
 		if bwEvent.onLoadingStateChange != nil {
 			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
 		}
@@ -494,6 +522,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		logger.Debug("chromium.onBeforeClose")
+		chromiumOnBeforeClose(browser)
 		m.canClose = true
 		var tempClose = func() {
 			defer func() {

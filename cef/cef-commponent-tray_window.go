@@ -12,11 +12,11 @@
 package cef
 
 import (
-	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -30,7 +30,6 @@ type tCefTrayForm struct {
 	windowParent ITCefWindow
 	x, y, w, h   int32
 	mouseUp      TMouseEvent
-	canClose     bool
 	isClosing    bool
 	url          string
 }
@@ -182,8 +181,8 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	})
 
 	m.TForm.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
-		*canClose = m.canClose
-		fmt.Println("tray close query", m.canClose)
+		*canClose = true
+		logger.Debug("tray.window.onCloseQuery canClose:", *canClose)
 		if m.isClosing {
 			return
 		}
@@ -194,6 +193,7 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	})
 	m.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 		*action = types.CaFree
+		logger.Debug("tray.window.onClose action:", *action)
 	})
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if m.windowParent != nil {
@@ -222,20 +222,21 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 		}
 	})
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
+		logger.Debug("tray.chromium.onClose")
 		if IsDarwin() {
 			m.windowParent.DestroyChildWindow()
 		} else {
-			QueueAsyncCall(func(id int) { //主进程执行
-				m.windowParent.Free()
-			})
+			//QueueAsyncCall(func(id int) { //主进程执行
+			//m.windowParent.Free()
+			//logger.Debug("tray.chromium.onClose => windowParent.Free")
+			//})
 		}
-		*aAction = CbaDelay
+		*aAction = CbaClose
+		//*aAction = CbaDelay
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-		m.canClose = true
+		logger.Debug("tray.chromium.onBeforeClose")
 	})
-	//关闭独立出事件
-	m.chromium.DisableIndependentEvent()
 	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
 		return false
 	})

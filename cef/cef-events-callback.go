@@ -16,58 +16,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types/messages"
-	"unsafe"
 )
-
-func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx int) uintptr) {
-	BrowserWindow.uiLock.Lock()
-	defer BrowserWindow.uiLock.Unlock()
-	getPtr := func(i int) unsafe.Pointer {
-		return unsafe.Pointer(getVal(i))
-	}
-	sender := getPtr(0)
-	browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-	tempFrame := (*cefFrame)(getPtr(2))
-	frame := &ICefFrame{
-		Browser: browser,
-		Name:    api.GoStr(tempFrame.Name),
-		Url:     api.GoStr(tempFrame.Url),
-		Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
-	}
-	beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
-	beforePInfo := &BeforePopupInfo{
-		TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
-		TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
-		TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
-		UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
-	}
-	BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
-	BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePInfo.TargetUrl)
-	BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
-	BrowserWindow.popupWindow.putChromiumWindowInfo()
-	BrowserWindow.popupWindow.defaultChromiumEvent()
-	var (
-		noJavascriptAccess = (*bool)(getPtr(6))
-		result             = (*bool)(getPtr(7))
-	)
-	//callback
-	*result = callback(lcl.AsObject(sender), browser, frame, beforePInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
-	if !*result {
-		*result = true
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.uiLock.Lock()
-			defer BrowserWindow.uiLock.Unlock()
-			winProperty := BrowserWindow.popupWindow.windowInfo.WindowProperty
-			if winProperty != nil {
-				if winProperty.IsShowModel {
-					BrowserWindow.popupWindow.ShowModal()
-					return
-				}
-			}
-			BrowserWindow.popupWindow.Show()
-		})
-	}
-}
 
 // 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(browser *ICefBrowser) bool {
@@ -101,13 +50,6 @@ func chromiumOnBeforeClose(browser *ICefBrowser) {
 
 func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.RemoveFrame(browser.Identifier(), frame.Id)
-}
-
-func chromiumOnMainFrameChanged(browser *ICefBrowser, oldFrame, newFrame *ICefFrame) {
-
-}
-
-func chromiumOnClose(browser *ICefBrowser) {
 }
 
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
