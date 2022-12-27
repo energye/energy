@@ -34,6 +34,7 @@ func init() {
 		dllimports.NewEnergyImport("AddCustomCommandLine", 0),
 		//application
 		dllimports.NewEnergyImport("CEFApplication_RunMessageLoop", 0),
+		dllimports.NewEnergyImport("CEFApplication_QuitMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_Create", 0),
 		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
@@ -238,6 +239,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_CloseAllBrowsers", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByWindow", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByLinkedWindow", 0),
+		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByBrowserViewComponent", 0),
 		dllimports.NewEnergyImport("CEFChromium_Initialized", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetBrowserId", 0),
 		dllimports.NewEnergyImport("CEFChromium_IsSameBrowser", 0),
@@ -266,6 +268,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetFocus", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendCaptureLostEvent", 0),
 		dllimports.NewEnergyImport("CEFChromium_FrameIsFocused", 0),
+		dllimports.NewEnergyImport("CEFChromium_TryCloseBrowser", 0),
 		//ICefBeforeDownloadCallback
 		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
 		//ICefFrame
@@ -383,6 +386,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_IsFullscreen", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_IsMaximized", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_IsMinimized", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_AddChildView", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowCreated", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowDestroyed", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowActivationChanged", 0),
@@ -436,6 +440,7 @@ const (
 	internale_AddCustomCommandLine
 	//application
 	internale_CEFApplication_RunMessageLoop
+	internale_CEFApplication_QuitMessageLoop
 	internale_CEFApplication_Create
 	internale_CEFApplication_Destroy
 	internale_CEFApplication_Free
@@ -641,6 +646,7 @@ const (
 	internale_CEFChromium_CloseAllBrowsers
 	internale_CEFChromium_CreateBrowserByWindow
 	internale_CEFChromium_CreateBrowserByLinkedWindow
+	internale_CEFChromium_CreateBrowserByBrowserViewComponent
 	internale_CEFChromium_Initialized
 	internale_CEFChromium_GetBrowserId
 	internale_CEFChromium_IsSameBrowser
@@ -669,6 +675,7 @@ const (
 	internale_CEFChromium_SetFocus
 	internale_CEFChromium_SendCaptureLostEvent
 	internale_CEFChromium_FrameIsFocused
+	internale_CEFChromium_TryCloseBrowser
 	//ICefBeforeDownloadCallback
 	internale_CEFChromium_SetDownloadPath
 	//ICefFrame
@@ -786,6 +793,7 @@ const (
 	internale_CEFWindowComponent_IsFullscreen
 	internale_CEFWindowComponent_IsMaximized
 	internale_CEFWindowComponent_IsMinimized
+	internale_CEFWindowComponent_AddChildView
 	internale_CEFWindowComponent_SetOnWindowCreated
 	internale_CEFWindowComponent_SetOnWindowDestroyed
 	internale_CEFWindowComponent_SetOnWindowActivationChanged

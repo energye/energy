@@ -79,6 +79,10 @@ func (m *TCEFApplication) RunMessageLoop() {
 	Proc(internale_CEFApplication_RunMessageLoop).Call()
 }
 
+func (m *TCEFApplication) QuitMessageLoop() {
+	Proc(internale_CEFApplication_QuitMessageLoop).Call()
+}
+
 func (m *TCEFApplication) StopScheduler() {
 	Proc(internale_CEFApplication_StopScheduler).Call()
 }

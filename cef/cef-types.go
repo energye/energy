@@ -206,6 +206,13 @@ type ICefClient struct {
 	instance unsafe.Pointer
 }
 
+func NewCefSize(width, height int32) *TCefSize {
+	return &TCefSize{
+		Width:  width,
+		Height: height,
+	}
+}
+
 func (m *ICefWindow) SetWindow(window *ICefWindow) {
 	m.instance = window.instance
 }

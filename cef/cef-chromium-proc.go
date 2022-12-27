@@ -38,6 +38,7 @@ type IChromiumProc interface {
 	ResetZoomLevel()
 	CloseAllBrowsers()
 	CreateBrowser(window ITCefWindow) bool
+	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool
 	Initialized() bool
 	BrowserId() int32
 	IsSameBrowser(browser *ICefBrowser) bool
@@ -67,6 +68,7 @@ type IChromiumProc interface {
 	SetFocus(value bool)
 	SendCaptureLostEvent()
 	FrameIsFocused() bool
+	TryCloseBrowser() bool
 }
 
 func (m *TCEFChromium) IsValid() bool {
@@ -171,6 +173,10 @@ func (m *TCEFChromium) CreateBrowser(window ITCefWindow) bool {
 		return _CEFChromium_CreateBrowseByLinkedWindow(m.Instance(), window.Instance())
 	}
 	return false
+}
+
+func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {
+	return _CEFChromium_CreateBrowserByBrowserViewComponent(m.Instance(), api.PascalStr(homePage), browserViewComponent.Instance())
 }
 
 func (m *TCEFChromium) Initialized() bool {
@@ -322,6 +328,10 @@ func (m *TCEFChromium) FrameIsFocused() bool {
 	return api.GoBool(_CEFChromium_FrameIsFocused(m.Instance()))
 }
 
+func (m *TCEFChromium) TryCloseBrowser() bool {
+	return api.GoBool(_CEFChromium_TryCloseBrowser(m.Instance()))
+}
+
 //--------TCEFChromium proc begin--------
 
 // TCEFChromium _CEFChromium_Create
@@ -389,6 +399,12 @@ func _CEFChromium_CreateBrowseByWindow(instance, window uintptr) bool {
 // TCEFChromium _CEFChromium_CreateBrowseByLinkedWindow
 func _CEFChromium_CreateBrowseByLinkedWindow(instance, window uintptr) bool {
 	r1, _, _ := Proc(internale_CEFChromium_CreateBrowserByLinkedWindow).Call(instance, window)
+	return api.GoBool(r1)
+}
+
+// TCEFChromium _CEFChromium_CreateBrowserByBrowserViewComponent
+func _CEFChromium_CreateBrowserByBrowserViewComponent(instance, homePage, browserViewComponent uintptr) bool {
+	r1, _, _ := Proc(internale_CEFChromium_CreateBrowserByBrowserViewComponent).Call(instance, homePage, browserViewComponent)
 	return api.GoBool(r1)
 }
 
@@ -573,6 +589,11 @@ func _CEFChromium_SendCaptureLostEvent(instance uintptr) {
 
 func _CEFChromium_FrameIsFocused(instance uintptr) uintptr {
 	r1, _, _ := Proc(internale_CEFChromium_FrameIsFocused).Call(instance)
+	return r1
+}
+
+func _CEFChromium_TryCloseBrowser(instance uintptr) uintptr {
+	r1, _, _ := Proc(internale_CEFChromium_TryCloseBrowser).Call(instance)
 	return r1
 }
 

@@ -13,7 +13,7 @@ type TCEFBrowserViewComponent struct {
 	instance unsafe.Pointer
 }
 
-func NewBrowserViewComponent(AOwner lcl.TComponent) *TCEFBrowserViewComponent {
+func NewBrowserViewComponent(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
 	r1, _, _ := Proc(internale_CEFBrowserViewComponent_Create).Call(lcl.CheckPtr(AOwner))
 	return &TCEFBrowserViewComponent{
 		instance: unsafe.Pointer(r1),
@@ -42,6 +42,10 @@ func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url str
 		dataBytesPtr = unsafe.Pointer(&dataBytes)
 	}
 	Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&contextSettingsPtr)), uintptr(unsafe.Pointer(&browserSettingsPtr)), uintptr(argsLen), uintptr(dataBytesPtr), uintptr(dataBytesLen))
+}
+
+func (m *TCEFBrowserViewComponent) Instance() uintptr {
+	return uintptr(m.instance)
 }
 
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {

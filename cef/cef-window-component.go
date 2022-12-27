@@ -33,8 +33,8 @@ func (m *TCEFWindowComponent) Hide() {
 	Proc(internale_CEFWindowComponent_Hide).Call(uintptr(m.instance))
 }
 
-func (m *TCEFWindowComponent) CenterWindow(size TCefSize) {
-	Proc(internale_CEFWindowComponent_CenterWindow).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&size)))
+func (m *TCEFWindowComponent) CenterWindow(size *TCefSize) {
+	Proc(internale_CEFWindowComponent_CenterWindow).Call(uintptr(m.instance), uintptr(unsafe.Pointer(size)))
 }
 
 func (m *TCEFWindowComponent) Close() {
@@ -177,6 +177,10 @@ func (m *TCEFWindowComponent) IsMaximized() bool {
 func (m *TCEFWindowComponent) IsMinimized() bool {
 	r1, _, _ := Proc(internale_CEFWindowComponent_IsMinimized).Call(uintptr(m.instance))
 	return api.GoBool(r1)
+}
+
+func (m *TCEFWindowComponent) AddChildView(browserViewComponent *TCEFBrowserViewComponent) {
+	Proc(internale_CEFWindowComponent_AddChildView).Call(uintptr(m.instance), browserViewComponent.Instance())
 }
 
 func (m *TCEFWindowComponent) SetOnWindowCreated(fn WindowComponentOnWindowCreated) {
