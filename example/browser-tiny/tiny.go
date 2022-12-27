@@ -17,20 +17,24 @@ func main() {
 	config.SetExternalMessagePump(false)
 	//config.SetChromeRuntime(true)
 	application := cef.NewCEFApplication(config)
+	application.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
+		fmt.Println("OnContextCreated")
+		return false
+	})
 	application.SetOnContextInitialized(func() {
 		fmt.Println("OnContextInitialized()")
 		component := lcl.NewComponent(nil)
 		chromiumConfig := cef.NewChromiumConfig()
 		chromium := cef.NewChromium(component, chromiumConfig)
+		browserViewComponent := cef.NewBrowserViewComponent(component)
+		windowComponent := cef.NewWindowComponent(component)
 		chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *cef.ICefBrowser) {
 			fmt.Println("OnBeforeClose")
-			application.QuitMessageLoop()
 		})
 		chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 			fmt.Println("OnTitleChange", title)
+			windowComponent.SetTitle(title)
 		})
-		browserViewComponent := cef.NewBrowserViewComponent(component)
-		windowComponent := cef.NewWindowComponent(component)
 		windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 			fmt.Println("OnWindowCreated")
 			b := chromium.CreateBrowserByBrowserViewComponent("https://www.baidu.com", browserViewComponent)
@@ -43,7 +47,7 @@ func main() {
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
-			chromium.TryCloseBrowser()
+			application.QuitMessageLoop()
 		})
 
 		windowComponent.CreateTopLevelWindow()
