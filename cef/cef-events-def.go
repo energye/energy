@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
@@ -32,7 +32,7 @@ type ChromiumEventOnAddressChange func(sender lcl.IObject, browser *ICefBrowser,
 type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, title string)
 
 // render
-type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status TCefTerminationStatus)
+type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
 type ChromiumEventOnRenderCompMsg func(sender lcl.IObject, message types.TMessage, aHandled bool)
 
 // Event CefBrowse
@@ -49,7 +49,7 @@ type ChromiumEventOnScrollOffsetChanged func(sender lcl.IObject, browser *ICefBr
 type ChromiumEventOnLoadStart func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type ChromiumEventOnLoadingStateChange func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool)
 type ChromiumEventOnLoadingProgressChange func(sender lcl.IObject, browser *ICefBrowser, progress float64)
-type ChromiumEventOnLoadError func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, errorCode CEF_NET_ERROR, errorText, failedUrl string)
+type ChromiumEventOnLoadError func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, errorCode consts.CEF_NET_ERROR, errorText, failedUrl string)
 type ChromiumEventOnLoadEnd func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
 
 // chromiumEvent cookie
@@ -61,7 +61,7 @@ type ChromiumEventOnCookieVisitorDestroyed func(sender lcl.IObject, ID int32)
 
 // chromiumEvent context menu
 type ChromiumEventOnBeforeContextMenu func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel)
-type ChromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool)
+type ChromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool)
 type ChromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 
 // chromiumEvent 全屏模式
@@ -77,10 +77,10 @@ type ChromiumEventOnDownloadUpdated func(sender lcl.IObject, browser *ICefBrowse
 type ChromiumEventOnKeyEvent func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool)
 
 // 资源加载
-type ChromiumEventOnBeforeResourceLoad func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue)
+type ChromiumEventOnBeforeResourceLoad func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue)
 type ChromiumEventOnResourceResponse func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, result *bool)
 type ChromiumEventOnResourceRedirect func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, newUrl *t.TString)
-type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, status TCefUrlRequestStatus, receivedContentLength int64)
+type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, status consts.TCefUrlRequestStatus, receivedContentLength int64)
 
 // 渲染进程执行每个浏览器上下文时都会调用
 type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
@@ -88,15 +88,15 @@ type GlobalCEFAppEventOnWebKitInitialized func()
 type GlobalCEFAppEventOnContextInitialized func()
 type GlobalCEFAppEventOnBeforeChildProcessLaunch func(commandLine *TCefCommandLine)
 type GlobalCEFAppEventOnBrowserDestroyed func(browser *ICefBrowser)
-type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType)
+type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType)
 type GlobalCEFAppEventOnRenderLoadEnd func(browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
-type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode TCefErrorCode, errorText, failedUrl string)
+type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode consts.TCefErrorCode, errorText, failedUrl string)
 type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
 type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
 
 // 进程消息接收
-type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool
-type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool
+type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
+type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
 type ChromiumEventOnFindResult func(sender lcl.IObject, browser *ICefBrowser, identifier, count int32, selectionRect *TCefRect, activeMatchOrdinal int32, finalUpdate bool)
 
 // frame
@@ -125,7 +125,7 @@ type WindowComponentOnWindowDestroyed func(sender lcl.IObject, window *ICefWindo
 type WindowComponentOnWindowActivationChanged func(sender lcl.IObject, window *ICefWindow, active bool)
 type WindowComponentOnGetParentWindow func(sender lcl.IObject, window *ICefWindow, isMenu, canActivateMenu *bool, aResult *ICefWindow)
 type WindowComponentOnGetInitialBounds func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect)
-type WindowComponentOnGetInitialShowState func(sender lcl.IObject, window *ICefWindow, aResult *TCefShowState)
+type WindowComponentOnGetInitialShowState func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState)
 type WindowComponentOnIsFrameless func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanResize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanMaximize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
@@ -139,4 +139,4 @@ type BrowserViewComponentOnBrowserCreated func(sender lcl.IObject, browserView *
 type BrowserViewComponentOnBrowserDestroyed func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
 type BrowserViewComponentOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool, aResult *ICefBrowserViewDelegate)
 type BrowserViewComponentOnPopupBrowserViewCreated func(sender lcl.IObject, browserView, popupBrowserView *ICefBrowserView, isDevtools bool, aResult *bool)
-type BrowserViewComponentOnGetChromeToolbarType func(sender lcl.IObject, aResult *TCefChromeToolbarType)
+type BrowserViewComponentOnGetChromeToolbarType func(sender lcl.IObject, aResult *consts.TCefChromeToolbarType)

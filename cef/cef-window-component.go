@@ -257,7 +257,11 @@ func init() {
 			sender := getPtr(0)
 			window := getPtr(1)
 			resultRectPtr := (*tCefRectPtr)(getPtr(2))
-			resultRect := &TCefRect{}
+			resultRect := new(TCefRect)
+			resultRect.X = 0
+			resultRect.Y = 0
+			resultRect.Width = 0
+			resultRect.Height = 0
 			fn.(WindowComponentOnGetInitialBounds)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultRect)
 			resultRectPtr.X = uintptr(resultRect.X)
 			resultRectPtr.Y = uintptr(resultRect.Y)

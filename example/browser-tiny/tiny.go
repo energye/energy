@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 )
@@ -41,15 +42,21 @@ func main() {
 			fmt.Println("\tCreateBrowserByBrowserViewComponent", b)
 			windowComponent.AddChildView(browserViewComponent)
 
-			windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
+			//windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
 			windowComponent.Show()
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
 			application.QuitMessageLoop()
+			*aResult = true
 		})
-
+		windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
+			fmt.Println("OnGetInitialBounds")
+		})
+		windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *cef.ICefWindow, aResult *consts.TCefShowState) {
+			fmt.Println("OnGetInitialShowState", *aResult)
+		})
 		windowComponent.CreateTopLevelWindow()
 	})
 	application.SetOnGetDefaultClient(func(client *cef.ICefClient) {
