@@ -376,7 +376,11 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetTitle", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Title", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetWindowIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetWindowIconImage", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowAppIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetWindowAppIcon", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetWindowAppIconImage", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Display", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_ClientAreaBoundsInScreen", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowHandle", 0),
@@ -789,7 +793,11 @@ const (
 	internale_CEFWindowComponent_SetTitle
 	internale_CEFWindowComponent_Title
 	internale_CEFWindowComponent_WindowIcon
+	internale_CEFWindowComponent_SetWindowIcon
+	internale_CEFWindowComponent_SetWindowIconImage
 	internale_CEFWindowComponent_WindowAppIcon
+	internale_CEFWindowComponent_SetWindowAppIcon
+	internale_CEFWindowComponent_SetWindowAppIconImage
 	internale_CEFWindowComponent_Display
 	internale_CEFWindowComponent_ClientAreaBoundsInScreen
 	internale_CEFWindowComponent_WindowHandle

@@ -5,6 +5,7 @@ import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
+	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -122,12 +123,40 @@ func (m *TCEFWindowComponent) WindowIcon() *ICefImage {
 	}
 }
 
+func (m *TCEFWindowComponent) SetWindowIconImage(icon *ICefImage) error {
+	Proc(internale_CEFWindowComponent_SetWindowIconImage).Call(uintptr(m.instance), uintptr(icon.instance))
+	return nil
+}
+
+func (m *TCEFWindowComponent) SetWindowIcon(scaleFactor float32, filename string) error {
+	bytes, err := emfs.GetResources(filename)
+	if err != nil {
+		return err
+	}
+	Proc(internale_CEFWindowComponent_SetWindowIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&bytes[0])), uintptr(int32(len(bytes))))
+	return nil
+}
+
 func (m *TCEFWindowComponent) WindowAppIcon() *ICefImage {
 	var ret uintptr
 	Proc(internale_CEFWindowComponent_WindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
 	return &ICefImage{
 		instance: unsafe.Pointer(ret),
 	}
+}
+
+func (m *TCEFWindowComponent) SetWindowAppIcon(scaleFactor float32, filename string) error {
+	bytes, err := emfs.GetResources(filename)
+	if err != nil {
+		return err
+	}
+	Proc(internale_CEFWindowComponent_SetWindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&bytes[0])), uintptr(int32(len(bytes))))
+	return nil
+}
+
+func (m *TCEFWindowComponent) SetWindowAppIconImage(icon *ICefImage) error {
+	Proc(internale_CEFWindowComponent_SetWindowAppIconImage).Call(uintptr(m.instance), uintptr(icon.instance))
+	return nil
 }
 
 func (m *TCEFWindowComponent) Display() *ICefDisplay {

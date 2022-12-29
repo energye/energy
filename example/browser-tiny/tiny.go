@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
@@ -9,8 +10,11 @@ import (
 	"github.com/energye/golcl/lcl"
 )
 
+//go:embed resources
+var resources embed.FS
+
 func main() {
-	inits.Init(nil, nil)
+	inits.Init(nil, &resources)
 	fmt.Println("main", common.Args.ProcessType())
 
 	config := cef.NewApplicationConfig()
@@ -38,8 +42,9 @@ func main() {
 		})
 		chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup")
-			return true
+			return false
 		})
+
 		windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 			fmt.Println("OnWindowCreated")
 			b := chromium.CreateBrowserByBrowserViewComponent("https://www.baidu.com", browserViewComponent)
@@ -50,7 +55,16 @@ func main() {
 			fmt.Println("\t", display.Bounds(), display.WorkArea())
 			windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
+			image := cef.NewImage()
+			fs := image.AddPngFS(1, "resources/icon.png")
+			fmt.Println("image", image, fs)
+			windowComponent.SetWindowIcon(1, "resources/icon.png")
+			windowComponent.SetWindowAppIcon(1, "resources/icon.png")
+			windowComponent.SetWindowAppIconImage(image)
 			windowComponent.Show()
+			icon := windowComponent.WindowIcon()
+			appIcon := windowComponent.WindowAppIcon()
+			fmt.Println("WindowIcon", icon, appIcon)
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
