@@ -413,6 +413,12 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnPopupBrowserViewCreated", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetChromeToolbarType", 0),
+		//ICefDisplay
+		dllimports.NewEnergyImport("CEFDisplay_ID", 0),
+		dllimports.NewEnergyImport("CEFDisplay_DeviceScaleFactor", 0),
+		dllimports.NewEnergyImport("CEFDisplay_Rotation", 0),
+		dllimports.NewEnergyImport("CEFDisplay_Bounds", 0),
+		dllimports.NewEnergyImport("CEFDisplay_WorkArea", 0),
 	}
 	dllimports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -820,4 +826,10 @@ const (
 	internale_CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView
 	internale_CEFBrowserViewComponent_SetOnPopupBrowserViewCreated
 	internale_CEFBrowserViewComponent_SetOnGetChromeToolbarType
+	//ICefDisplay
+	internale_CEFDisplay_ID
+	internale_CEFDisplay_DeviceScaleFactor
+	internale_CEFDisplay_Rotation
+	internale_CEFDisplay_Bounds
+	internale_CEFDisplay_WorkArea
 )

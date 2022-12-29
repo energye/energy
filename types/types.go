@@ -20,6 +20,7 @@ type String string
 type Boolean bool
 type Float32 float32
 type Float64 float64
+type Single = Float32
 type PChar = String
 type TCefColor = UInt16
 type Integer = Int32

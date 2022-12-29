@@ -36,13 +36,19 @@ func main() {
 			fmt.Println("OnTitleChange", title)
 			windowComponent.SetTitle(title)
 		})
+		chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
+			fmt.Println("OnBeforePopup")
+			return true
+		})
 		windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 			fmt.Println("OnWindowCreated")
 			b := chromium.CreateBrowserByBrowserViewComponent("https://www.baidu.com", browserViewComponent)
 			fmt.Println("\tCreateBrowserByBrowserViewComponent", b)
 			windowComponent.AddChildView(browserViewComponent)
-
-			//windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
+			display := windowComponent.Display()
+			fmt.Println("\tdisplay", display, "ClientAreaBoundsInScreen", windowComponent.ClientAreaBoundsInScreen(), display.ID(), display.DeviceScaleFactor())
+			fmt.Println("\t", display.Bounds(), display.WorkArea())
+			windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
 			windowComponent.Show()
 		})

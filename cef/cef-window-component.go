@@ -65,9 +65,9 @@ func (m *TCEFWindowComponent) Restore() {
 	Proc(internale_CEFWindowComponent_Restore).Call(uintptr(m.instance))
 }
 
-func (m *TCEFWindowComponent) AddOverlayView() {
-	//Proc(internale_CEFWindowComponent_AddOverlayView).Call(uintptr(m.instance))
-}
+//func (m *TCEFWindowComponent) AddOverlayView() {
+//Proc(internale_CEFWindowComponent_AddOverlayView).Call(uintptr(m.instance))
+//}
 
 func (m *TCEFWindowComponent) ShowMenu(menuModel *ICefMenuModel, point TCefPoint, anchorPosition consts.TCefMenuAnchorPosition) {
 	Proc(internale_CEFWindowComponent_ShowMenu).Call(uintptr(m.instance), uintptr(menuModel.instance), uintptr(unsafe.Pointer(&point)), uintptr(anchorPosition))
