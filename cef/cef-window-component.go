@@ -107,6 +107,14 @@ func (m *TCEFWindowComponent) RemoveAllAccelerators() {
 	Proc(internale_CEFWindowComponent_RemoveAllAccelerators).Call(uintptr(m.instance))
 }
 
+func (m *TCEFWindowComponent) SetAlwaysOnTop(onTop bool) {
+	Proc(internale_CEFWindowComponent_SetAlwaysOnTop).Call(uintptr(m.instance), api.PascalBool(onTop))
+}
+
+func (m *TCEFWindowComponent) SetFullscreen(fullscreen bool) {
+	Proc(internale_CEFWindowComponent_SetFullscreen).Call(uintptr(m.instance), api.PascalBool(fullscreen))
+}
+
 func (m *TCEFWindowComponent) SetTitle(title string) {
 	Proc(internale_CEFWindowComponent_SetTitle).Call(uintptr(m.instance), api.PascalStr(title))
 }

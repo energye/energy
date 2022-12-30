@@ -57,8 +57,8 @@ func main() {
 			window.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
 			window.SetWindowAppIconFS(1, "resources/golang.jpeg")
-			window.SetAlwaysOnTop(true)
-			window.SetFullscreen(true)
+			windowComponent.SetAlwaysOnTop(true)
+			//window.SetFullscreen(true)
 			window.Show()
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
