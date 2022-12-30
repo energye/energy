@@ -20,7 +20,6 @@ func main() {
 	config := cef.NewApplicationConfig()
 	config.SetMultiThreadedMessageLoop(false)
 	config.SetExternalMessagePump(false)
-	config.SetChromeRuntime(false)
 	application := cef.NewCEFApplication(config)
 	application.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		fmt.Println("OnContextCreated")

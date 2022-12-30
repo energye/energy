@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"sync"
 )
 
@@ -104,6 +105,8 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.StartSubProcess()
 		cefApp.Free()
 	} else {
+		isMessageLoop := !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
+
 		b := cefApp.StartMainProcess()
 		if b {
 			internalBrowserIPCOnEventInit()
@@ -114,7 +117,11 @@ func Run(cefApp *TCEFApplication) {
 			browserProcessStartAfterCallback(b)
 		}
 		if b {
-			lcl.RunApp(&BrowserWindow.mainBrowserWindow)
+			if isMessageLoop {
+				cefApp.RunMessageLoop()
+			} else {
+				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
+			}
 		}
 	}
 }
