@@ -20,7 +20,7 @@ func main() {
 	config := cef.NewApplicationConfig()
 	config.SetMultiThreadedMessageLoop(false)
 	config.SetExternalMessagePump(false)
-	//config.SetChromeRuntime(true)
+	config.SetChromeRuntime(false)
 	application := cef.NewCEFApplication(config)
 	application.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		fmt.Println("OnContextCreated")
@@ -42,6 +42,7 @@ func main() {
 		})
 		chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup TargetUrl:", beforePopupInfo.TargetUrl)
+
 			return false
 		})
 
@@ -53,10 +54,12 @@ func main() {
 			display := windowComponent.Display()
 			fmt.Println("\tdisplay", display, "ClientAreaBoundsInScreen", windowComponent.ClientAreaBoundsInScreen(), display.ID(), display.DeviceScaleFactor())
 			fmt.Println("\t", display.Bounds(), display.WorkArea())
-			windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
+			window.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
-			windowComponent.SetWindowAppIcon(1, "resources/golang.jpeg")
-			windowComponent.Show()
+			window.SetWindowAppIconFS(1, "resources/golang.jpeg")
+			window.SetAlwaysOnTop(true)
+			window.SetFullscreen(true)
+			window.Show()
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")

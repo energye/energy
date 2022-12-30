@@ -421,6 +421,44 @@ func init() {
 		dllimports.NewEnergyImport("CEFDisplay_Rotation", 0),
 		dllimports.NewEnergyImport("CEFDisplay_Bounds", 0),
 		dllimports.NewEnergyImport("CEFDisplay_WorkArea", 0),
+		//ICefWindow
+		dllimports.NewEnergyImport("ICEFWindow_Show", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Hide", 0),
+		dllimports.NewEnergyImport("ICEFWindow_CenterWindow", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Close", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsClosed", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Activate", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Deactivate", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsActive", 0),
+		dllimports.NewEnergyImport("ICEFWindow_BringToTop", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetAlwaysOnTop", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsAlwaysOnTop", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Maximize", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Minimize", 0),
+		dllimports.NewEnergyImport("ICEFWindow_Restore", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetFullscreen", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsMaximized", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsMinimized", 0),
+		dllimports.NewEnergyImport("ICEFWindow_IsFullscreen", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetTitle", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetTitle", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetWindowIcon", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetWindowIcon", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetWindowAppIcon", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetWindowAppIcon", 0),
+		dllimports.NewEnergyImport("ICEFWindow_AddOverlayView", 0),
+		dllimports.NewEnergyImport("ICEFWindow_ShowMenu", 0),
+		dllimports.NewEnergyImport("ICEFWindow_CancelMenu", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetDisplay", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetClientAreaBoundsInScreen", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetDraggableRegions", 0),
+		dllimports.NewEnergyImport("ICEFWindow_GetWindowHandle", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SendKeyPress", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SendMouseMove", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SendMouseEvents", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetAccelerator", 0),
+		dllimports.NewEnergyImport("ICEFWindow_RemoveAccelerator", 0),
+		dllimports.NewEnergyImport("ICEFWindow_RemoveAllAccelerators", 0),
 	}
 	dllimports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -836,4 +874,42 @@ const (
 	internale_CEFDisplay_Rotation
 	internale_CEFDisplay_Bounds
 	internale_CEFDisplay_WorkArea
+	//ICefWindow
+	internale_ICEFWindow_Show
+	internale_ICEFWindow_Hide
+	internale_ICEFWindow_CenterWindow
+	internale_ICEFWindow_Close
+	internale_ICEFWindow_IsClosed
+	internale_ICEFWindow_Activate
+	internale_ICEFWindow_Deactivate
+	internale_ICEFWindow_IsActive
+	internale_ICEFWindow_BringToTop
+	internale_ICEFWindow_SetAlwaysOnTop
+	internale_ICEFWindow_IsAlwaysOnTop
+	internale_ICEFWindow_Maximize
+	internale_ICEFWindow_Minimize
+	internale_ICEFWindow_Restore
+	internale_ICEFWindow_SetFullscreen
+	internale_ICEFWindow_IsMaximized
+	internale_ICEFWindow_IsMinimized
+	internale_ICEFWindow_IsFullscreen
+	internale_ICEFWindow_SetTitle
+	internale_ICEFWindow_GetTitle
+	internale_ICEFWindow_SetWindowIcon
+	internale_ICEFWindow_GetWindowIcon
+	internale_ICEFWindow_SetWindowAppIcon
+	internale_ICEFWindow_GetWindowAppIcon
+	internale_ICEFWindow_AddOverlayView
+	internale_ICEFWindow_ShowMenu
+	internale_ICEFWindow_CancelMenu
+	internale_ICEFWindow_GetDisplay
+	internale_ICEFWindow_GetClientAreaBoundsInScreen
+	internale_ICEFWindow_SetDraggableRegions
+	internale_ICEFWindow_GetWindowHandle
+	internale_ICEFWindow_SendKeyPress
+	internale_ICEFWindow_SendMouseMove
+	internale_ICEFWindow_SendMouseEvents
+	internale_ICEFWindow_SetAccelerator
+	internale_ICEFWindow_RemoveAccelerator
+	internale_ICEFWindow_RemoveAllAccelerators
 )
