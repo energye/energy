@@ -11,11 +11,15 @@ type ICefImage struct {
 	instance unsafe.Pointer
 }
 
-func NewImage() *ICefImage {
-	r1, _, _ := Proc(internale_CEFImage_New).Call()
-	return &ICefImage{
-		instance: unsafe.Pointer(r1),
-	}
+//func NewImage() *ICefImage {
+//	r1, _, _ := Proc(internale_CEFImage_New).Call()
+//	return &ICefImage{
+//		instance: unsafe.Pointer(r1),
+//	}
+//}
+
+func (m *ICefImage) Instance() uintptr {
+	return uintptr(m.instance)
 }
 
 func (m *ICefImage) AddPngFS(scaleFactor float32, filename string) bool {

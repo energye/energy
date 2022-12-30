@@ -123,11 +123,6 @@ func (m *TCEFWindowComponent) WindowIcon() *ICefImage {
 	}
 }
 
-func (m *TCEFWindowComponent) SetWindowIconImage(icon *ICefImage) error {
-	Proc(internale_CEFWindowComponent_SetWindowIconImage).Call(uintptr(m.instance), uintptr(icon.instance))
-	return nil
-}
-
 func (m *TCEFWindowComponent) SetWindowIcon(scaleFactor float32, filename string) error {
 	bytes, err := emfs.GetResources(filename)
 	if err != nil {
@@ -151,11 +146,6 @@ func (m *TCEFWindowComponent) SetWindowAppIcon(scaleFactor float32, filename str
 		return err
 	}
 	Proc(internale_CEFWindowComponent_SetWindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&bytes[0])), uintptr(int32(len(bytes))))
-	return nil
-}
-
-func (m *TCEFWindowComponent) SetWindowAppIconImage(icon *ICefImage) error {
-	Proc(internale_CEFWindowComponent_SetWindowAppIconImage).Call(uintptr(m.instance), uintptr(icon.instance))
 	return nil
 }
 
