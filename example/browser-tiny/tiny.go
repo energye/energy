@@ -41,7 +41,7 @@ func main() {
 			windowComponent.SetTitle(title)
 		})
 		chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
-			fmt.Println("OnBeforePopup")
+			fmt.Println("OnBeforePopup TargetUrl:", beforePopupInfo.TargetUrl)
 			return false
 		})
 
@@ -55,10 +55,8 @@ func main() {
 			fmt.Println("\t", display.Bounds(), display.WorkArea())
 			windowComponent.CenterWindow(cef.NewCefSize(1024, 768))
 			browserViewComponent.RequestFocus()
+			windowComponent.SetWindowAppIcon(1, "resources/golang.jpeg")
 			windowComponent.Show()
-			windowComponent.SetWindowAppIcon(1, "resources/gitcode.png")
-			appIcon := windowComponent.WindowAppIcon()
-			fmt.Println("WindowIcon", appIcon.GetHeight())
 		})
 		windowComponent.SetOnCanClose(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
