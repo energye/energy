@@ -44,7 +44,6 @@ func main() {
 
 			return false
 		})
-
 		windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 			fmt.Println("OnWindowCreated")
 			b := chromium.CreateBrowserByBrowserViewComponent("https://www.baidu.com", browserViewComponent)
@@ -70,6 +69,22 @@ func main() {
 		})
 		windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *cef.ICefWindow, aResult *consts.TCefShowState) {
 			fmt.Println("OnGetInitialShowState", *aResult)
+		})
+		windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
+			fmt.Println("OnCanMinimize")
+			*aResult = false
+		})
+		windowComponent.SetOnCanResize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
+			fmt.Println("OnCanResize")
+			*aResult = false
+		})
+		windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
+			fmt.Println("OnCanMaximize")
+			*aResult = false
+		})
+		windowComponent.SetOnKeyEvent(func(sender lcl.IObject, window *cef.ICefWindow, event *cef.TCefKeyEvent, aResult *bool) {
+			fmt.Println("OnKeyEvent")
+			*aResult = false
 		})
 		windowComponent.CreateTopLevelWindow()
 	})

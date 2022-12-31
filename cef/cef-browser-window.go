@@ -98,6 +98,8 @@ type browserWindow struct {
 //
 // 主进程启动成功之后，将创建主窗口 mainBrowserWindow 是一个默认的主窗口
 //
+// externalMessagePump和multiThreadedMessageLoop是false时将使用RunMessageLoop，这对linux v107.xxx之后版本支持的更好
+//
 // 在这里启动浏览器的主进程和子进程
 func Run(cefApp *TCEFApplication) {
 	if IsDarwin() && !SingleProcess && !Args.IsMain() {
@@ -106,17 +108,17 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.Free()
 	} else {
 		isMessageLoop := !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
-
-		b := cefApp.StartMainProcess()
-		if b {
+		if isMessageLoop {
+			BrowserWindow.mainBrowserWindow.appContextInitialized(cefApp)
+		}
+		success := cefApp.StartMainProcess()
+		if browserProcessStartAfterCallback != nil {
+			browserProcessStartAfterCallback(success)
+		}
+		if success {
 			internalBrowserIPCOnEventInit()
 			ipc.IPC.StartBrowserIPC()
 			bindGoToJS(nil, nil)
-		}
-		if browserProcessStartAfterCallback != nil {
-			browserProcessStartAfterCallback(b)
-		}
-		if b {
 			if isMessageLoop {
 				cefApp.RunMessageLoop()
 			} else {

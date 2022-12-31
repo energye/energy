@@ -44,12 +44,12 @@ func (m *ICefBrowser) GetFrameId() int64 {
 	return 0
 }
 
-//得到浏览器ID号
+//浏览器ID号
 func (m *ICefBrowser) Identifier() int32 {
 	return m.browseId
 }
 
-//得到HostWindowHandle
+//HostWindowHandle
 func (m *ICefBrowser) HostWindowHandle() types.HWND {
 	r1, _, _ := Proc(internale_CEFBrowser_GetHostWindowHandle).Call(uintptr(m.browseId))
 	return r1

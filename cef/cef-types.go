@@ -202,6 +202,10 @@ type ICefWindow struct {
 	instance unsafe.Pointer
 }
 
+type ICefView struct {
+	instance unsafe.Pointer
+}
+
 type ICefClient struct {
 	instance unsafe.Pointer
 }

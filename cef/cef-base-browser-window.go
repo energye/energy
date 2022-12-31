@@ -35,22 +35,24 @@ type IBaseWindow interface {
 
 //BaseWindow 是一个基于chromium 和 lcl 的窗口组件
 type BaseWindow struct {
-	*lcl.TForm                          //
-	chromium         IChromium          //
-	windowParent     ITCefWindow        //
-	windowInfo       *TCefWindowInfo    //窗口信息
-	windowId         int32              //
-	windowType       WINDOW_TYPE        //0:browser 1:devTools 2:viewSource 默认:0
-	isClosing        bool               //
-	canClose         bool               //
-	onResize         []TNotifyEvent     //
-	onActivate       []TNotifyEvent     //
-	onShow           []TNotifyEvent     //
-	onClose          []TCloseEvent      //
-	onCloseQuery     []TCloseQueryEvent //
-	onActivateAfter  lcl.TNotifyEvent   //
-	isFormCreate     bool               //是否创建完成 WindowForm
-	isChromiumCreate bool               //是否创建完成 Chromium
+	*lcl.TForm                                     //
+	chromium             IChromium                 //
+	windowParent         ITCefWindow               //
+	browserViewComponent *TCEFBrowserViewComponent //
+	windowComponent      *TCEFWindowComponent      //
+	windowInfo           *TCefWindowInfo           //窗口信息
+	windowId             int32                     //
+	windowType           WINDOW_TYPE               //0:browser 1:devTools 2:viewSource 默认:0
+	isClosing            bool                      //
+	canClose             bool                      //
+	onResize             []TNotifyEvent            //
+	onActivate           []TNotifyEvent            //
+	onShow               []TNotifyEvent            //
+	onClose              []TCloseEvent             //
+	onCloseQuery         []TCloseQueryEvent        //
+	onActivateAfter      lcl.TNotifyEvent          //
+	isFormCreate         bool                      //是否创建完成 WindowForm
+	isChromiumCreate     bool                      //是否创建完成 Chromium
 }
 
 //创建一个带有 chromium 窗口

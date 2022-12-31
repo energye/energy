@@ -1,7 +1,14 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 package cef
 
 import (
-	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -196,7 +203,6 @@ func (m *TCEFWindowComponent) WindowHandle() consts.TCefWindowHandle {
 
 func (m *TCEFWindowComponent) IsClosed() bool {
 	r1, _, _ := Proc(internale_CEFWindowComponent_IsClosed).Call(uintptr(m.instance))
-	fmt.Println(r1)
 	return api.GoBool(r1)
 }
 
