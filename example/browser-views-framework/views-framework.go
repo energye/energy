@@ -76,7 +76,7 @@ func main() {
 		})
 		windowComponent.SetOnCanResize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanResize")
-			*aResult = false
+			*aResult = true
 		})
 		windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
 			fmt.Println("OnCanMaximize")

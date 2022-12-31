@@ -56,8 +56,8 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		})
 		m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
-			app.QuitMessageLoop()
 			*aResult = true
+			app.QuitMessageLoop()
 		})
 		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
 			fmt.Println("OnGetInitialBounds")
