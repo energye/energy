@@ -98,7 +98,7 @@ type browserWindow struct {
 //
 // 主进程启动成功之后，将创建主窗口 mainBrowserWindow 是一个默认的主窗口
 //
-// externalMessagePump和multiThreadedMessageLoop是false时将使用RunMessageLoop，这对linux v107.xxx之后版本支持的更好
+// externalMessagePump和multiThreadedMessageLoop是false时启用 ViewsFrameworkBrowserWindow 窗口
 //
 // 在这里启动浏览器的主进程和子进程
 func Run(cefApp *TCEFApplication) {
@@ -179,24 +179,40 @@ func (m *browser) MainWindow() *TCefWindowInfo {
 	return m.mainWindow
 }
 
-// 主窗口和chromium初始化时回调
+// 基于CEF views framework窗口 - 主窗口和chromium初始化时回调
+//
+// 当使用ViewsFramework创建窗口后，我们无法使用lcl创建组件到窗口中
+//
+// ViewsFramework窗口主要解决在linux下gtk2和gtk3共存以及无法输入中文问题
+//
+// ViewsFramework窗口 和 LCL窗口同时只能存在一种
+//
+// event 			浏览器事件
+//
+// views framework window 	窗口信息对象
+func (m *browser) SetViewFrameBrowserInit(fn viewsFrameBrowserWindowOnEventCallback) {
+	m.Config.setViewsFrameBrowserWindowOnEventCallback(fn)
+}
+
+// 基于LCL窗口 - 主窗口和chromium初始化时回调
 //
 // 在这里可以对主窗体事件监听和属性设置,和主窗口上的子组件创建
 //
 // 如果想创建子窗口或带有browser的窗口最好在 SetBrowserInitAfter 回调函数中创建
 //
-// event 浏览器事件
-// mainBrowserWindow 窗口信息对象
-func (m *browser) SetBrowserInit(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
+// event 			浏览器事件
+//
+// browserWindow 	窗口信息对象
+func (m *browser) SetBrowserInit(fn browserWindowOnEventCallback) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
 
-// 主窗体和chromium初始后回调
+// 基于LCL窗口 - 主窗体和chromium初始后回调
 //
 // 在这里可以对主窗体属性设置、添加子窗口、带有browser的窗口和子组件创建
 //
 // mainBrowserWindow 窗口信息对象
-func (m *browser) SetBrowserInitAfter(fn func(browserWindow *TCefWindowInfo)) {
+func (m *browser) SetBrowserInitAfter(fn browserWindowAfterOnEventCallback) {
 	m.Config.setBrowserWindowInitAfterOnEvent(fn)
 }
 

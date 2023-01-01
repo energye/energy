@@ -117,10 +117,6 @@ func (m *TCefWindowInfo) Maximize() {
 	})
 }
 
-func (m *TCefWindowInfo) WindowId() int32 {
-	return m.Window.windowId
-}
-
 // 关闭窗口-在ui线程中执行
 func (m *TCefWindowInfo) Close() {
 	BrowserWindow.uiLock.Lock()
@@ -131,7 +127,7 @@ func (m *TCefWindowInfo) Close() {
 			return
 		}
 		if m.Window == nil {
-			logger.Error("关闭浏览器 Form 为空 WindowId:", m.WindowId())
+			logger.Error("关闭浏览器 Window 为空")
 			return
 		}
 		if common.IsDarwin() {

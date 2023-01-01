@@ -10,17 +10,41 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 )
 
+//基于CEF views framework窗口
+//
+//该窗口使用CEF内部实现，在linux下107.xx以后版本默认使用GTK3，但无法使用lcl组件集成到窗口中
+//
+//当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
+	component            lcl.IComponent            //
+	windowComponent      *TCEFWindowComponent      //
+	browserViewComponent *TCEFBrowserViewComponent //
+}
+
+func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
+	return m.component
+}
+
+func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
+	return m.windowComponent
+}
+
+func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
+	return m.browserViewComponent
 }
 
 func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
+	if !common.Args.IsMain() {
+		return
+	}
 	app.SetOnContextInitialized(func() {
-		fmt.Println("OnContextInitialized()")
-		component := lcl.NewComponent(nil)
+		m.vFrameBrowserWindow = &ViewsFrameworkBrowserWindow{}
+		m.vFrameBrowserWindow.component = lcl.NewComponent(nil)
 		if BrowserWindow.Config.chromiumConfig == nil {
 			BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
 			BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)
@@ -28,43 +52,43 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
 			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
 		}
-		m.chromium = NewChromium(component, BrowserWindow.Config.chromiumConfig)
+		m.chromium = NewChromium(m.vFrameBrowserWindow.component, BrowserWindow.Config.chromiumConfig)
 		m.chromium.SetEnableMultiBrowserMode(true)
-		m.browserViewComponent = NewBrowserViewComponent(component)
-		m.windowComponent = NewWindowComponent(component)
+		m.vFrameBrowserWindow.browserViewComponent = NewBrowserViewComponent(m.vFrameBrowserWindow.component)
+		m.vFrameBrowserWindow.windowComponent = NewWindowComponent(m.vFrameBrowserWindow.component)
 
 		m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup TargetUrl:", beforePopupInfo.TargetUrl)
 
 			return false
 		})
-		m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-			if m.chromium.CreateBrowserByBrowserViewComponent(BrowserWindow.Config.DefaultUrl, m.browserViewComponent) {
-				m.windowComponent.AddChildView(m.browserViewComponent)
-				m.windowComponent.SetTitle(BrowserWindow.Config.Title)
+		m.vFrameBrowserWindow.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+			if m.chromium.CreateBrowserByBrowserViewComponent(BrowserWindow.Config.DefaultUrl, m.vFrameBrowserWindow.browserViewComponent) {
+				m.vFrameBrowserWindow.windowComponent.AddChildView(m.vFrameBrowserWindow.browserViewComponent)
+				m.vFrameBrowserWindow.windowComponent.SetTitle(BrowserWindow.Config.Title)
 				window.CenterWindow(NewCefSize(BrowserWindow.Config.Width, BrowserWindow.Config.Height))
-				m.browserViewComponent.RequestFocus()
+				m.vFrameBrowserWindow.browserViewComponent.RequestFocus()
 				if BrowserWindow.Config.Icon != "" {
 					window.SetWindowAppIconFS(1, BrowserWindow.Config.Icon)
 				}
-				if BrowserWindow.Config.browserWindowOnEventCallback != nil {
+				if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
 					BrowserWindow.browserEvent.chromium = m.chromium
-					BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m.windowInfo)
+					BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, m.vFrameBrowserWindow)
 				}
 				window.Show()
 			}
 		})
-		m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		m.vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
 			*aResult = true
 			app.QuitMessageLoop()
 		})
-		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+		m.vFrameBrowserWindow.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
 			fmt.Println("OnGetInitialBounds")
 		})
-		m.windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
+		m.vFrameBrowserWindow.windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
 			fmt.Println("OnGetInitialShowState", *aResult)
 		})
-		m.windowComponent.CreateTopLevelWindow()
+		m.vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
 }

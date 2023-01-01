@@ -20,6 +20,7 @@ import (
 )
 
 type TCEFWindowComponent struct {
+	lcl.IComponent
 	instance unsafe.Pointer
 }
 

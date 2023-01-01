@@ -32,14 +32,6 @@ func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 		cfg = NewApplicationConfig()
 	}
 	cfg.framework()
-
-	//linux >= 107.xxx 版本以后，默认不支持GTK2，同时GTK2又无法正常输入中文
-	//顾强制使用GTK3方式，但又无法正常创建lcl组件到窗口中，该框架只是对浏览器应用做封装
-	//所以尽量以正常使用为基准
-	if IsLinux() {
-		cfg.SetExternalMessagePump(false)
-		cfg.SetMultiThreadedMessageLoop(false)
-	}
 	m := new(TCEFApplication)
 	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
 	m.instance = unsafe.Pointer(r1)

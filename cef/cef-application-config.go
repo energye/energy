@@ -63,9 +63,18 @@ func NewApplicationConfig() *tCefApplicationConfig {
 	m.SetDisableZygote(true)
 	m.SetCheckCEFFiles(false)
 	m.SetRemoteDebuggingPort(0)
-	m.SetExternalMessagePump(false)
-	m.SetMultiThreadedMessageLoop(true)
 	m.SetChromeRuntime(false)
+	//linux >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
+	//顾强制使用GTK3方式，但又无法正常创建lcl组件到窗口中，该框架只对浏览器应用做封装
+	//所以初衷以浏览器应用建设为目标
+	if common.IsLinux() {
+		//linux平台默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
+		m.SetExternalMessagePump(false)
+		m.SetMultiThreadedMessageLoop(false)
+	} else {
+		m.SetExternalMessagePump(false)
+		m.SetMultiThreadedMessageLoop(true)
+	}
 	return m
 }
 

@@ -18,6 +18,7 @@ import (
 )
 
 type TCEFBrowserViewComponent struct {
+	lcl.IComponent
 	instance unsafe.Pointer
 }
 
