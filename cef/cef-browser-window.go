@@ -107,8 +107,8 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.StartSubProcess()
 		cefApp.Free()
 	} else {
-		isMessageLoop := !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
-		if isMessageLoop {
+		IsMessageLoop = !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
+		if IsMessageLoop {
 			BrowserWindow.mainBrowserWindow.appContextInitialized(cefApp)
 		}
 		success := cefApp.StartMainProcess()
@@ -119,7 +119,7 @@ func Run(cefApp *TCEFApplication) {
 			internalBrowserIPCOnEventInit()
 			ipc.IPC.StartBrowserIPC()
 			bindGoToJS(nil, nil)
-			if isMessageLoop {
+			if IsMessageLoop {
 				cefApp.RunMessageLoop()
 			} else {
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)

@@ -20,6 +20,7 @@ var (
 	HomeDir, _    = homedir.Dir()              //系统用户目录
 	Separator     = string(filepath.Separator) //
 	SingleProcess = false                      //进程启动方式, true单进程 false多进程
+	IsMessageLoop = false                      //
 )
 
 const (

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/consts"
+	"github.com/energye/golcl/lcl"
 )
 
 //go:embed resources
@@ -24,7 +26,12 @@ func main() {
 	cef.BrowserWindow.SetViewFrameBrowserInit(func(event *cef.BrowserEvent, window *cef.ViewsFrameworkBrowserWindow) {
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Printf("%+v\n", window)
-
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+			model.AddCheckItem(model.CefMis.NextCommandId(), "测试")
+		})
+		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+			fmt.Println("SetOnContextMenuCommand", commandId)
+		})
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window *cef.TCefWindowInfo) {
 		fmt.Println("cef.BrowserWindow.SetBrowserInit", window)

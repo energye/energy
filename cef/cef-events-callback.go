@@ -193,9 +193,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoBack()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoBack()
+					})
+				}
 			}
 		},
 	})
@@ -206,9 +210,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoForward()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoForward()
+					})
+				}
 			}
 		},
 	})

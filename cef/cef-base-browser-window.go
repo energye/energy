@@ -12,7 +12,7 @@ import (
 	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
@@ -41,7 +41,7 @@ type BaseWindow struct {
 	vFrameBrowserWindow *ViewsFrameworkBrowserWindow //基于CEF views framework窗口
 	windowInfo          *TCefWindowInfo              //基于LCL窗口信息
 	windowId            int32                        //
-	windowType          WINDOW_TYPE                  //0:browser 1:devTools 2:viewSource 默认:0
+	windowType          consts.WINDOW_TYPE           //0:browser 1:devTools 2:viewSource 默认:0
 	isClosing           bool                         //
 	canClose            bool                         //
 	onResize            []TNotifyEvent               //
@@ -121,12 +121,12 @@ func (m *BaseWindow) IsClosing() bool {
 }
 
 // 设置窗口类型
-func (m *BaseWindow) SetWindowType(windowType WINDOW_TYPE) {
+func (m *BaseWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
 	m.windowType = windowType
 }
 
 // 返回窗口类型
-func (m *BaseWindow) WindowType() WINDOW_TYPE {
+func (m *BaseWindow) WindowType() consts.WINDOW_TYPE {
 	return m.windowType
 }
 
@@ -186,7 +186,7 @@ func (m *BaseWindow) putChromiumWindowInfo() {
 
 //默认的chromium事件
 func (m *BaseWindow) defaultChromiumEvent() {
-	if m.WindowType() != WT_DEV_TOOLS {
+	if m.WindowType() != consts.WT_DEV_TOOLS {
 		AddGoForm(m.windowId, m.Instance())
 		m.registerDefaultEvent()
 		m.registerDefaultChromiumCloseEvent()
@@ -207,7 +207,7 @@ func (m *BaseWindow) FormCreate() {
 
 //默认窗口活动/关闭处理事件
 func (m *BaseWindow) defaultWindowEvent() {
-	if m.WindowType() != WT_DEV_TOOLS {
+	if m.WindowType() != consts.WT_DEV_TOOLS {
 		m.SetOnResize(m.resize)
 		m.SetOnActivate(m.activate)
 	}
@@ -321,7 +321,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
-		BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
+		BrowserWindow.popupWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePopupInfo.TargetUrl)
 		BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
 		BrowserWindow.popupWindow.putChromiumWindowInfo()
@@ -348,7 +348,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 		return result
 	})
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
+	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
 		}
@@ -376,7 +376,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 			bwEvent.onAfterCreated(sender, browser)
 		}
 	})
-	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
+	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
 			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 		}
@@ -389,7 +389,7 @@ func (m *BaseWindow) registerDefaultEvent() {
 		if bwEvent.onBeforeDownload != nil {
 			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback)
 		} else {
-			callback.Cont(ExePath+Separator+suggestedName, true)
+			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
 	})
 	//默认自定义快捷键
@@ -398,14 +398,14 @@ func (m *BaseWindow) registerDefaultEvent() {
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-				if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
+				if winInfo.Window.WindowType() == consts.WT_DEV_TOOLS || winInfo.Window.WindowType() == consts.WT_VIEW_SOURCE {
 					return
 				}
 			}
-			if event.WindowsKeyCode == VkF12 && event.Kind == KEYEVENT_RAW_KEYDOWN {
+			if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
 				browser.ShowDevTools()
 				*result = true
-			} else if event.WindowsKeyCode == VkF12 && event.Kind == KEYEVENT_KEYUP {
+			} else if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
 				*result = true
 			}
 		}
@@ -436,14 +436,13 @@ func (m *BaseWindow) registerDefaultEvent() {
 			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
 		}
 	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
+	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
 		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
 	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		//BrowserWindow.putBrowserFrame(browser, nil)
 		if bwEvent.onLoadingStateChange != nil {
 			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
 		}
@@ -477,7 +476,7 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 		logger.Debug("window.onCloseQuery windowType:", m.WindowType())
 		if IsDarwin() {
 			//main window close
-			if m.WindowType() == WT_MAIN_BROWSER {
+			if m.WindowType() == consts.WT_MAIN_BROWSER {
 				*close = true
 				desChildWind := m.windowParent.DestroyChildWindow()
 				logger.Debug("window.onCloseQuery => windowParent.DestroyChildWindow:", desChildWind)
@@ -509,11 +508,11 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 		if IsDarwin() { //MacOSX
 			desChildWind := m.windowParent.DestroyChildWindow()
 			logger.Debug("chromium.onClose => windowParent.DestroyChildWindow:", desChildWind)
-			*aAction = CbaClose
+			*aAction = consts.CbaClose
 		} else if IsLinux() {
-			*aAction = CbaClose
+			*aAction = consts.CbaClose
 		} else if IsWindows() {
-			*aAction = CbaDelay
+			*aAction = consts.CbaDelay
 		}
 		if !IsDarwin() {
 			QueueAsyncCall(func(id int) { //main thread run
@@ -543,7 +542,7 @@ func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
 			//主窗口关闭
-			if m.WindowType() == WT_MAIN_BROWSER {
+			if m.WindowType() == consts.WT_MAIN_BROWSER {
 				if IsWindows() {
 					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
 				} else {
