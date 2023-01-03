@@ -16,7 +16,7 @@ func MainBrowserWindow() {
 	}
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "https://energy.yanghy.cn/"
+	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn/"
 	//窗口的标题
 	cef.BrowserWindow.Config.Title = "Energy - 浏览器控制"
 	//窗口宽高

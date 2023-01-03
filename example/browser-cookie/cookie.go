@@ -24,7 +24,7 @@ func main() {
 	cefApp := cef.NewApplication(nil)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/cookie.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/cookie.html"
 
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		//监听获取cookie事件

@@ -29,9 +29,11 @@ var (
 		mainBrowserWindow: &browserWindow{},
 		browserEvent:      &BrowserEvent{},
 		Config: &browserConfig{
-			Title:  "Energy",
-			Width:  1024,
-			Height: 768,
+			WindowProperty: WindowProperty{
+				Title:  "Energy",
+				Width:  1024,
+				Height: 768,
+			},
 		},
 		windowInfo:   make(map[int32]*TCefWindowInfo),
 		windowSerial: 1,
@@ -140,7 +142,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.FormCreate()
 	m.defaultWindowEvent()
 	m.defaultWindowCloseEvent()
-	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.DefaultUrl)
+	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
 	BrowserWindow.mainWindow = m.windowInfo

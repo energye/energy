@@ -41,12 +41,20 @@ type auxTools struct {
 }
 
 type WindowProperty struct {
-	IsShowModel    bool //是否以模态窗口显示
-	windowState    types.TWindowState
-	currentWindowX int32
-	currentWindowY int32
-	currentWindowW int32
-	currentWindowH int32
+	IsShowModel    bool               //是否以模态窗口显示
+	WindowState    types.TWindowState //窗口状态
+	Title          string             //标题
+	Url            string             //默认打开URL
+	Icon           string             //窗口图标 加载本地图片或emfs内置图片
+	CanMinimize    bool               //窗口 是否显示最小化按钮
+	CanMaximize    bool               //窗口 是否显示最大化按钮
+	CanResize      bool               //窗口 是否允许调整窗口大小
+	OnCanClose     bool               //窗口 关闭时是否关闭窗口
+	IsCenterWindow bool               //窗口 是否居中显示
+	X              int32              //窗口 IsCenterWindow=false X坐标
+	Y              int32              //窗口 IsCenterWindow=false Y坐标
+	Width          int32              //窗口 宽
+	Height         int32              //窗口 高
 }
 
 func NewWindowProperty() *WindowProperty {
@@ -77,30 +85,30 @@ func (m *TCefWindowInfo) Maximize() {
 			var ws = m.Window.WindowState()
 			var redWindowState types.TWindowState
 			//默认状态0
-			if m.WindowProperty.windowState == types.WsNormal && m.WindowProperty.windowState == ws {
+			if m.WindowProperty.WindowState == types.WsNormal && m.WindowProperty.WindowState == ws {
 				redWindowState = types.WsMaximized
 			} else {
-				if m.WindowProperty.windowState == types.WsNormal {
+				if m.WindowProperty.WindowState == types.WsNormal {
 					redWindowState = types.WsMaximized
-				} else if m.WindowProperty.windowState == types.WsMaximized {
+				} else if m.WindowProperty.WindowState == types.WsMaximized {
 					redWindowState = types.WsNormal
 				}
 			}
-			m.WindowProperty.windowState = redWindowState
+			m.WindowProperty.WindowState = redWindowState
 			if redWindowState == types.WsMaximized {
-				m.WindowProperty.currentWindowX = m.Window.Left()
-				m.WindowProperty.currentWindowY = m.Window.Top()
-				m.WindowProperty.currentWindowW = m.Window.Width()
-				m.WindowProperty.currentWindowH = m.Window.Height()
+				m.WindowProperty.X = m.Window.Left()
+				m.WindowProperty.Y = m.Window.Top()
+				m.WindowProperty.Width = m.Window.Width()
+				m.WindowProperty.Height = m.Window.Height()
 				m.Window.SetLeft(monitor.Left)
 				m.Window.SetTop(monitor.Top)
 				m.Window.SetWidth(monitor.Right - monitor.Left - 1)
 				m.Window.SetHeight(monitor.Bottom - monitor.Top - 1)
 			} else if redWindowState == types.WsNormal {
-				m.Window.SetLeft(m.WindowProperty.currentWindowX)
-				m.Window.SetTop(m.WindowProperty.currentWindowY)
-				m.Window.SetWidth(m.WindowProperty.currentWindowW)
-				m.Window.SetHeight(m.WindowProperty.currentWindowH)
+				m.Window.SetLeft(m.WindowProperty.X)
+				m.Window.SetTop(m.WindowProperty.Y)
+				m.Window.SetWidth(m.WindowProperty.Width)
+				m.Window.SetHeight(m.WindowProperty.Height)
 			}
 		} else {
 			if m.Window.WindowState() == types.WsMaximized {
@@ -112,7 +120,7 @@ func (m *TCefWindowInfo) Maximize() {
 			} else if m.Window.WindowState() == types.WsNormal {
 				m.Window.SetWindowState(types.WsMaximized)
 			}
-			m.WindowProperty.windowState = m.Window.WindowState()
+			m.WindowProperty.WindowState = m.Window.WindowState()
 		}
 	})
 }

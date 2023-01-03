@@ -21,7 +21,7 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - 内置资源和内置服务示例"
 	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/internal-http-server.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/internal-http-server.html"
 	//内置静态资源服务的安全key和value设置
 	//通过设置AssetsServerHeaderKeyName和AssetsServerHeaderKeyValue在一定程度上保证资源只能在应用内访问，即使在应用外使用正确的IP和端口号也无法访问到资源
 	assetserve.AssetsServerHeaderKeyName = "energy"

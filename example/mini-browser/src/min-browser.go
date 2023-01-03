@@ -35,7 +35,7 @@ func AppBrowserInit() {
 	config.SetEnableWindowPopup(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/demo-misc.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")

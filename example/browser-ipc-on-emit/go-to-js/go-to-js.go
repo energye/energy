@@ -19,7 +19,7 @@ func main() {
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/go-to-js.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/go-to-js.html"
 	cef.BrowserWindow.Config.Title = "Energy - go on event - js emit event"
 	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
 

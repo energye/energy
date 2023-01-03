@@ -13,7 +13,7 @@ func main() {
 	cefApp := cef.NewApplication(applicationConfig)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "https://www.csdn.net"
+	cef.BrowserWindow.Config.Url = "https://www.csdn.net"
 	//chromium 配置
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)     //启用右键菜单

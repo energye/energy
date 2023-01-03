@@ -17,7 +17,7 @@ func main() {
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/execute-javascript.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/execute-javascript.html"
 	cef.BrowserWindow.Config.Title = "Energy - execute-javascript"
 	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
 	//内置http服务链接安全配置

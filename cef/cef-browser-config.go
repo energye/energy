@@ -18,11 +18,7 @@ type browserWindowAfterOnEventCallback func(window *TCefWindowInfo)
 
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
-	DefaultUrl                             string                                 //默认URL地址
-	Title                                  string                                 //窗口标题
-	Icon                                   string                                 //窗口图标
-	Width                                  int32                                  //窗口宽
-	Height                                 int32                                  //窗口高
+	WindowProperty
 	chromiumConfig                         *tCefChromiumConfig                    //主窗体浏览器配置
 	viewsFrameBrowserWindowOnEventCallback viewsFrameBrowserWindowOnEventCallback //主窗口初始化回调 - 基于CEF views framework窗口
 	browserWindowOnEventCallback           browserWindowOnEventCallback           //主窗口初始化回调 - 基于LCL窗口

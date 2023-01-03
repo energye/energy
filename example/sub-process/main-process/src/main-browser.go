@@ -18,11 +18,11 @@ func MainBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL
 	if common.IsWindows() {
-		cef.BrowserWindow.Config.DefaultUrl = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\demo-sub-process\\resources\\demo-misc.html"
+		cef.BrowserWindow.Config.Url = "E:\\SWT\\gopath\\src\\swt-lazarus\\demo17-dll-load\\demo-golang-dll-01-chromium\\demos\\demo-sub-process\\resources\\demo-misc.html"
 	} else if common.IsLinux() {
-		cef.BrowserWindow.Config.DefaultUrl = "/home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
+		cef.BrowserWindow.Config.Url = "/home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
 	} else if common.IsDarwin() {
-		cef.BrowserWindow.Config.DefaultUrl = "/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
+		cef.BrowserWindow.Config.Url = "/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/resources/demo-misc.html"
 	}
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {

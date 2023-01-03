@@ -30,6 +30,7 @@ type ViewsFrameworkBrowserWindow struct {
 	component            lcl.IComponent            //
 	windowComponent      *TCEFWindowComponent      //
 	browserViewComponent *TCEFBrowserViewComponent //
+	windowProperty       *WindowProperty           //
 }
 
 func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
@@ -56,7 +57,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
 			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
 		}
-		var component = lcl.NewComponent(nil)
+		component := lcl.NewComponent(nil)
 		m.vFrameBrowserWindow = &ViewsFrameworkBrowserWindow{
 			component:            component,
 			chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
@@ -68,7 +69,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		m.vFrameBrowserWindow.registerPopupEvent()
 		//m.vFrameBrowserWindow.registerDefaultEvent()
 		m.vFrameBrowserWindow.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-			if m.chromium.CreateBrowserByBrowserViewComponent(BrowserWindow.Config.DefaultUrl, m.vFrameBrowserWindow.browserViewComponent) {
+			if m.chromium.CreateBrowserByBrowserViewComponent(BrowserWindow.Config.Url, m.vFrameBrowserWindow.browserViewComponent) {
 				m.vFrameBrowserWindow.windowComponent.AddChildView(m.vFrameBrowserWindow.browserViewComponent)
 				m.vFrameBrowserWindow.windowComponent.SetTitle(BrowserWindow.Config.Title)
 				window.CenterWindow(NewCefSize(BrowserWindow.Config.Width, BrowserWindow.Config.Height))
@@ -103,16 +104,58 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 	})
 }
 
+func NewViewsFrameworkBrowserWindow(windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
+	component := lcl.NewComponent(nil)
+	vFrameBrowserWindow := &ViewsFrameworkBrowserWindow{
+		windowProperty:       windowProperty,
+		component:            component,
+		chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
+		windowComponent:      NewWindowComponent(component),
+		browserViewComponent: NewBrowserViewComponent(component),
+	}
+	return vFrameBrowserWindow
+}
+
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
-		fmt.Println("BrowserWindow")
+		fmt.Println("BrowserWindow-beforePopupInfo", beforePopupInfo.TargetUrl)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
+		}
+		if !result {
+			result = true
+			component := lcl.NewComponent(nil)
+			vFrameBrowserWindow := &ViewsFrameworkBrowserWindow{
+				component:            component,
+				chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
+				windowComponent:      NewWindowComponent(component),
+				browserViewComponent: NewBrowserViewComponent(component),
+			}
+			vFrameBrowserWindow.chromium.SetEnableMultiBrowserMode(true)
+			vFrameBrowserWindow.registerPopupEvent()
+			vFrameBrowserWindow.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+				if vFrameBrowserWindow.chromium.CreateBrowserByBrowserViewComponent(beforePopupInfo.TargetUrl, vFrameBrowserWindow.browserViewComponent) {
+					vFrameBrowserWindow.windowComponent.AddChildView(vFrameBrowserWindow.browserViewComponent)
+					vFrameBrowserWindow.windowComponent.SetTitle(BrowserWindow.Config.Title)
+					window.CenterWindow(NewCefSize(BrowserWindow.Config.Width, BrowserWindow.Config.Height))
+					vFrameBrowserWindow.browserViewComponent.RequestFocus()
+					if BrowserWindow.Config.Icon != "" {
+						window.SetWindowAppIconFS(1, BrowserWindow.Config.Icon)
+					}
+					if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
+						BrowserWindow.browserEvent.chromium = m.chromium
+						BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
+					}
+					window.Show()
+				}
+			})
+			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
+
 		}
 		return result
 	})

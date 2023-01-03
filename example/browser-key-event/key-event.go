@@ -17,7 +17,7 @@ func main() {
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/key-event.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/key-event.html"
 	cef.BrowserWindow.Config.Title = "Energy - Key Event"
 	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件

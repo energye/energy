@@ -68,7 +68,7 @@ func main() {
 	//Creating an Application
 	cefApp := cef.NewApplication(nil)
 	//Specify a URL address, or a local html file directory
-	cef.BrowserWindow.Config.DefaultUrl = "https://energy.yanghy.cn"
+	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	//Running the Application
 	cef.Run(cefApp)
 }
