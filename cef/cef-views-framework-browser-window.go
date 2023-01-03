@@ -33,61 +33,16 @@ type ViewsFrameworkBrowserWindow struct {
 	windowProperty       *WindowProperty           //
 }
 
-func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
-	return m.component
-}
-
-func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
-	return m.windowComponent
-}
-
-func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
-	return m.browserViewComponent
-}
-
-func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
-	if !common.Args.IsMain() {
-		return
+//创建 ViewsFrameworkBrowserWindow 窗口
+func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty, callback viewsFrameBrowserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
+	if chromiumConfig == nil {
+		chromiumConfig = BrowserWindow.Config.chromiumConfig
 	}
-	app.SetOnContextInitialized(func() {
-		if BrowserWindow.Config.chromiumConfig == nil {
-			BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
-			BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableDevTools(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
-		}
-		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(&BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
-		m.chromium = m.vFrameBrowserWindow.chromium
-		m.vFrameBrowserWindow.registerPopupEvent()
-		//m.vFrameBrowserWindow.registerDefaultEvent()
-		m.vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			fmt.Println("OnCanClose")
-			*aResult = true
-			app.QuitMessageLoop()
-		})
-		//m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		//	fmt.Println("OnBeforePopup TargetUrl:", beforePopupInfo.TargetUrl)
-		//
-		//	return false
-		//})
-		//m.vFrameBrowserWindow.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
-		//	fmt.Println("OnGetInitialBounds")
-		//})
-		//m.vFrameBrowserWindow.windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
-		//	fmt.Println("OnGetInitialShowState", *aResult)
-		//})
-		m.vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
-	})
-}
-
-//创建一个 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(windowProperty *WindowProperty, callback viewsFrameBrowserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
 	component := lcl.NewComponent(nil)
 	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       windowProperty,
 		component:            component,
-		chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
+		chromium:             NewChromium(component, chromiumConfig),
 		windowComponent:      NewWindowComponent(component),
 		browserViewComponent: NewBrowserViewComponent(component),
 	}
@@ -135,6 +90,45 @@ func NewViewsFrameworkBrowserWindow(windowProperty *WindowProperty, callback vie
 	return m
 }
 
+func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
+	return m.component
+}
+
+func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
+	return m.windowComponent
+}
+
+func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
+	return m.browserViewComponent
+}
+
+//ViewsFrameworkBrowserWindow 主窗口初始化
+func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
+	if !common.Args.IsMain() {
+		return
+	}
+	app.SetOnContextInitialized(func() {
+		if BrowserWindow.Config.chromiumConfig == nil {
+			BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
+			BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)
+			BrowserWindow.Config.chromiumConfig.SetEnableDevTools(true)
+			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
+			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
+		}
+		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
+		m.chromium = m.vFrameBrowserWindow.chromium
+		m.putChromiumWindowInfo()
+		m.vFrameBrowserWindow.registerPopupEvent()
+		m.vFrameBrowserWindow.registerDefaultEvent()
+		m.vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+			fmt.Println("OnCanClose")
+			*aResult = true
+			app.QuitMessageLoop()
+		})
+		m.vFrameBrowserWindow.CreateTopLevelWindow()
+	})
+}
+
 func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
 	m.windowComponent.CreateTopLevelWindow()
 }
@@ -169,7 +163,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 				Width:          BrowserWindow.Config.WindowProperty.Width,
 				Height:         BrowserWindow.Config.WindowProperty.Height,
 			}
-			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(wp, nil)
+			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp, nil)
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 
 		}
@@ -255,8 +249,8 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		return false
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		updateBrowserDevTools(browser, title)
-		updateBrowserViewSource(browser, title)
+		//updateBrowserDevTools(browser, title)
+		//updateBrowserViewSource(browser, title)
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
