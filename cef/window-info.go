@@ -45,11 +45,12 @@ type WindowProperty struct {
 	WindowState    types.TWindowState //窗口状态
 	Title          string             //标题
 	Url            string             //默认打开URL
-	Icon           string             //窗口图标 加载本地图片或emfs内置图片
+	Icon           string             //窗口图标 加载本地图
+	IconFS         string             //窗口图标 加载emfs内置图片
 	CanMinimize    bool               //窗口 是否显示最小化按钮
 	CanMaximize    bool               //窗口 是否显示最大化按钮
 	CanResize      bool               //窗口 是否允许调整窗口大小
-	OnCanClose     bool               //窗口 关闭时是否关闭窗口
+	CanClose       bool               //窗口 关闭时是否关闭窗口
 	IsCenterWindow bool               //窗口 是否居中显示
 	X              int32              //窗口 IsCenterWindow=false X坐标
 	Y              int32              //窗口 IsCenterWindow=false Y坐标
@@ -58,7 +59,17 @@ type WindowProperty struct {
 }
 
 func NewWindowProperty() *WindowProperty {
-	return &WindowProperty{}
+	return &WindowProperty{
+		Title:          "Energy",
+		Url:            "about:blank",
+		CanMinimize:    true,
+		CanMaximize:    true,
+		CanResize:      true,
+		CanClose:       true,
+		IsCenterWindow: true,
+		Width:          1024,
+		Height:         768,
+	}
 }
 
 func (m *TCefWindowInfo) Chromium() IChromiumProc {

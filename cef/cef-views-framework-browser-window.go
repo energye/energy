@@ -57,33 +57,10 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
 			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
 		}
-		component := lcl.NewComponent(nil)
-		m.vFrameBrowserWindow = &ViewsFrameworkBrowserWindow{
-			component:            component,
-			chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
-			windowComponent:      NewWindowComponent(component),
-			browserViewComponent: NewBrowserViewComponent(component),
-		}
-		m.vFrameBrowserWindow.chromium.SetEnableMultiBrowserMode(true)
+		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(&BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
 		m.chromium = m.vFrameBrowserWindow.chromium
 		m.vFrameBrowserWindow.registerPopupEvent()
 		//m.vFrameBrowserWindow.registerDefaultEvent()
-		m.vFrameBrowserWindow.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-			if m.chromium.CreateBrowserByBrowserViewComponent(BrowserWindow.Config.Url, m.vFrameBrowserWindow.browserViewComponent) {
-				m.vFrameBrowserWindow.windowComponent.AddChildView(m.vFrameBrowserWindow.browserViewComponent)
-				m.vFrameBrowserWindow.windowComponent.SetTitle(BrowserWindow.Config.Title)
-				window.CenterWindow(NewCefSize(BrowserWindow.Config.Width, BrowserWindow.Config.Height))
-				m.vFrameBrowserWindow.browserViewComponent.RequestFocus()
-				if BrowserWindow.Config.Icon != "" {
-					window.SetWindowAppIconFS(1, BrowserWindow.Config.Icon)
-				}
-				if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
-					BrowserWindow.browserEvent.chromium = m.chromium
-					BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, m.vFrameBrowserWindow)
-				}
-				window.Show()
-			}
-		})
 		m.vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
 			*aResult = true
@@ -104,16 +81,62 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 	})
 }
 
-func NewViewsFrameworkBrowserWindow(windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
+//创建一个 ViewsFrameworkBrowserWindow 窗口
+func NewViewsFrameworkBrowserWindow(windowProperty *WindowProperty, callback viewsFrameBrowserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
 	component := lcl.NewComponent(nil)
-	vFrameBrowserWindow := &ViewsFrameworkBrowserWindow{
+	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       windowProperty,
 		component:            component,
 		chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
 		windowComponent:      NewWindowComponent(component),
 		browserViewComponent: NewBrowserViewComponent(component),
 	}
-	return vFrameBrowserWindow
+	m.chromium.SetEnableMultiBrowserMode(true)
+	m.registerPopupEvent()
+	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
+			m.windowComponent.AddChildView(m.browserViewComponent)
+			m.windowComponent.SetTitle(windowProperty.Title)
+			if windowProperty.IsCenterWindow {
+				window.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
+			}
+			if windowProperty.IconFS != "" {
+				m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
+			} else if windowProperty.Icon != "" {
+				m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
+			}
+			m.browserViewComponent.RequestFocus()
+			if callback != nil {
+				callback(BrowserWindow.browserEvent, m)
+			}
+			m.windowComponent.Show()
+		}
+	})
+	if !windowProperty.IsCenterWindow {
+		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+			aResult.X = windowProperty.X
+			aResult.Y = windowProperty.Y
+			aResult.Width = windowProperty.Width
+			aResult.Height = windowProperty.Height
+		})
+	}
+	m.windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanMinimize
+	})
+	m.windowComponent.SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanResize
+	})
+	m.windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanMaximize
+	})
+	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanClose
+	})
+	return m
+}
+
+func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
+	m.windowComponent.CreateTopLevelWindow()
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
@@ -129,31 +152,24 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		}
 		if !result {
 			result = true
-			component := lcl.NewComponent(nil)
-			vFrameBrowserWindow := &ViewsFrameworkBrowserWindow{
-				component:            component,
-				chromium:             NewChromium(component, BrowserWindow.Config.chromiumConfig),
-				windowComponent:      NewWindowComponent(component),
-				browserViewComponent: NewBrowserViewComponent(component),
+			wp := &WindowProperty{
+				Title:          BrowserWindow.Config.WindowProperty.Title,
+				Url:            beforePopupInfo.TargetUrl,
+				CanMinimize:    BrowserWindow.Config.WindowProperty.CanMinimize,
+				CanMaximize:    BrowserWindow.Config.WindowProperty.CanMaximize,
+				CanResize:      BrowserWindow.Config.WindowProperty.CanResize,
+				CanClose:       BrowserWindow.Config.WindowProperty.CanClose,
+				IsCenterWindow: BrowserWindow.Config.WindowProperty.IsCenterWindow,
+				IsShowModel:    BrowserWindow.Config.WindowProperty.IsShowModel,
+				WindowState:    BrowserWindow.Config.WindowProperty.WindowState,
+				Icon:           BrowserWindow.Config.WindowProperty.Icon,
+				IconFS:         BrowserWindow.Config.WindowProperty.IconFS,
+				X:              BrowserWindow.Config.WindowProperty.X,
+				Y:              BrowserWindow.Config.WindowProperty.Y,
+				Width:          BrowserWindow.Config.WindowProperty.Width,
+				Height:         BrowserWindow.Config.WindowProperty.Height,
 			}
-			vFrameBrowserWindow.chromium.SetEnableMultiBrowserMode(true)
-			vFrameBrowserWindow.registerPopupEvent()
-			vFrameBrowserWindow.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-				if vFrameBrowserWindow.chromium.CreateBrowserByBrowserViewComponent(beforePopupInfo.TargetUrl, vFrameBrowserWindow.browserViewComponent) {
-					vFrameBrowserWindow.windowComponent.AddChildView(vFrameBrowserWindow.browserViewComponent)
-					vFrameBrowserWindow.windowComponent.SetTitle(BrowserWindow.Config.Title)
-					window.CenterWindow(NewCefSize(BrowserWindow.Config.Width, BrowserWindow.Config.Height))
-					vFrameBrowserWindow.browserViewComponent.RequestFocus()
-					if BrowserWindow.Config.Icon != "" {
-						window.SetWindowAppIconFS(1, BrowserWindow.Config.Icon)
-					}
-					if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
-						BrowserWindow.browserEvent.chromium = m.chromium
-						BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
-					}
-					window.Show()
-				}
-			})
+			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(wp, nil)
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 
 		}

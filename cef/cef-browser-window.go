@@ -29,11 +29,7 @@ var (
 		mainBrowserWindow: &browserWindow{},
 		browserEvent:      &BrowserEvent{},
 		Config: &browserConfig{
-			WindowProperty: WindowProperty{
-				Title:  "Energy",
-				Width:  1024,
-				Height: 768,
-			},
+			WindowProperty: *NewWindowProperty(),
 		},
 		windowInfo:   make(map[int32]*TCefWindowInfo),
 		windowSerial: 1,

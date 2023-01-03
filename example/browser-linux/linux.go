@@ -22,7 +22,7 @@ func main() {
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.Icon = "resources/icon.png"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.SetViewFrameBrowserInit(func(event *cef.BrowserEvent, window *cef.ViewsFrameworkBrowserWindow) {
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Printf("%+v\n", window)
