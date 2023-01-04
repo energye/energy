@@ -117,6 +117,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		}
 		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
 		m.chromium = m.vFrameBrowserWindow.chromium
+		m.windowId = BrowserWindow.GetNextWindowNum()
 		m.putChromiumWindowInfo()
 		m.vFrameBrowserWindow.registerPopupEvent()
 		m.vFrameBrowserWindow.registerDefaultEvent()

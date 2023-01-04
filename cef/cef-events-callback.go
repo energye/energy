@@ -14,8 +14,6 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/lcl/rtl"
-	"github.com/energye/golcl/lcl/types/messages"
 )
 
 // 事件处理函数返回true将不继续执行
@@ -23,9 +21,9 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 	if viewSourceAfterCreate(browser) {
 		return true
 	}
-	if IsWindows() {
-		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
-	}
+	//if IsWindows() {
+	//	rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
+	//}
 	return false
 }
 
@@ -193,13 +191,9 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
-				if IsMessageLoop {
+				QueueAsyncCall(func(id int) {
 					browser.GoBack()
-				} else {
-					QueueAsyncCall(func(id int) {
-						browser.GoBack()
-					})
-				}
+				})
 			}
 		},
 	})
@@ -210,13 +204,9 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
-				if IsMessageLoop {
+				QueueAsyncCall(func(id int) {
 					browser.GoForward()
-				} else {
-					QueueAsyncCall(func(id int) {
-						browser.GoForward()
-					})
-				}
+				})
 			}
 		},
 	})

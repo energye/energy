@@ -24,7 +24,6 @@ var (
 	//2. 可以对窗口的属性设置和事件监听，chromium 的配置和事件监听
 	//
 	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
-	//你也可以在 SetBrowserInit 回调函数初始化时创建子窗口，但是不能在主窗体显示之前显示子窗口. 尤其是带有chromium的窗口.
 	BrowserWindow = &browser{
 		mainBrowserWindow: &browserWindow{},
 		browserEvent:      &BrowserEvent{},
