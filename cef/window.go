@@ -27,7 +27,9 @@ func NewWindow(windowProperty *WindowProperty) *LCLBrowserWindow {
 	window.SetNotInTaskBar()
 	window.defaultWindowEvent()
 	window.SetCaption(windowProperty.Title)
-	if windowProperty.IsCenterWindow {
+	if windowProperty.CenterWindow {
+		window.SetWidth(windowProperty.Width)
+		window.SetHeight(windowProperty.Height)
 		window.SetPosition(types.PoDesktopCenter)
 	} else {
 		window.SetPosition(types.PoDefault)

@@ -50,7 +50,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			m.windowComponent.SetTitle(windowProperty.Title)
-			if windowProperty.IsCenterWindow {
+			if windowProperty.CenterWindow {
 				window.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
@@ -65,7 +65,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 			m.windowComponent.Show()
 		}
 	})
-	if !windowProperty.IsCenterWindow {
+	if !windowProperty.CenterWindow {
 		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
 			aResult.X = windowProperty.X
 			aResult.Y = windowProperty.Y
@@ -146,21 +146,21 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		if !result {
 			result = true
 			wp := &WindowProperty{
-				Title:          BrowserWindow.Config.WindowProperty.Title,
-				Url:            beforePopupInfo.TargetUrl,
-				CanMinimize:    BrowserWindow.Config.WindowProperty.CanMinimize,
-				CanMaximize:    BrowserWindow.Config.WindowProperty.CanMaximize,
-				CanResize:      BrowserWindow.Config.WindowProperty.CanResize,
-				CanClose:       BrowserWindow.Config.WindowProperty.CanClose,
-				IsCenterWindow: BrowserWindow.Config.WindowProperty.IsCenterWindow,
-				IsShowModel:    BrowserWindow.Config.WindowProperty.IsShowModel,
-				WindowState:    BrowserWindow.Config.WindowProperty.WindowState,
-				Icon:           BrowserWindow.Config.WindowProperty.Icon,
-				IconFS:         BrowserWindow.Config.WindowProperty.IconFS,
-				X:              BrowserWindow.Config.WindowProperty.X,
-				Y:              BrowserWindow.Config.WindowProperty.Y,
-				Width:          BrowserWindow.Config.WindowProperty.Width,
-				Height:         BrowserWindow.Config.WindowProperty.Height,
+				Title:        BrowserWindow.Config.WindowProperty.Title,
+				Url:          beforePopupInfo.TargetUrl,
+				CanMinimize:  BrowserWindow.Config.WindowProperty.CanMinimize,
+				CanMaximize:  BrowserWindow.Config.WindowProperty.CanMaximize,
+				CanResize:    BrowserWindow.Config.WindowProperty.CanResize,
+				CanClose:     BrowserWindow.Config.WindowProperty.CanClose,
+				CenterWindow: BrowserWindow.Config.WindowProperty.CenterWindow,
+				IsShowModel:  BrowserWindow.Config.WindowProperty.IsShowModel,
+				WindowState:  BrowserWindow.Config.WindowProperty.WindowState,
+				Icon:         BrowserWindow.Config.WindowProperty.Icon,
+				IconFS:       BrowserWindow.Config.WindowProperty.IconFS,
+				X:            BrowserWindow.Config.WindowProperty.X,
+				Y:            BrowserWindow.Config.WindowProperty.Y,
+				Width:        BrowserWindow.Config.WindowProperty.Width,
+				Height:       BrowserWindow.Config.WindowProperty.Height,
 			}
 			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp, nil)
 			vFrameBrowserWindow.registerPopupEvent()
