@@ -36,7 +36,7 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 			winAuxTools.devToolsWindow.Show()
 			return
 		}
-		winAuxTools.devToolsWindow = &BaseWindow{}
+		winAuxTools.devToolsWindow = &LCLBrowserWindow{}
 		winAuxTools.devToolsWindow.SetWindowType(WT_DEV_TOOLS)
 		winAuxTools.devToolsWindow.TForm = lcl.NewForm(browserWinInfo.Window)
 		winAuxTools.devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))

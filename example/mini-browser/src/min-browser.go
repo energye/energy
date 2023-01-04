@@ -101,11 +101,11 @@ func AppBrowserInit() {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Browser.StopFinding(true)
 		})
-		var newForm *cef.Window
+		var newForm *cef.LCLBrowserWindow
 		event.On("js-new-window", func(context ipc.IIPCContext) {
 			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
-				newForm = cef.NewWindow()
+				newForm = cef.NewWindow(nil)
 				newForm.SetCaption("新窗口标题")
 				btn := lcl.NewButton(newForm)
 				btn.SetParent(newForm)
@@ -129,12 +129,14 @@ func AppBrowserInit() {
 				}
 			})
 		})
-		var browserWindow *cef.Window
+		var browserWindow *cef.LCLBrowserWindow
 		event.On("js-new-browser-window", func(context ipc.IIPCContext) {
 			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
 			if browserWindow == nil {
-				browserWindow = cef.NewBrowserWindow(nil, "https://www.baidu.com")
-				browserWindow.SetCaption("Browser新窗口标题")
+				wp := cef.NewWindowProperty()
+				wp.Url = "https://www.baidu.com"
+				wp.Title = "Browser新窗口标题"
+				browserWindow = cef.NewBrowserWindow(nil, wp)
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)
 			}
@@ -180,9 +182,9 @@ func AppBrowserInit() {
 		browserWindow.Window.SetCaption("这里设置应用标题")
 		browserWindow.Window.SetPosition(types.PoScreenCenter) //窗口局中显示
 		//设置窗口样式，无标题 ，最大化按钮等
-		//window.Window.SetBorderStyle(types.BsNone)
-		//window.Form.SetFormStyle(types.FsNormal)
-		//window.Form.SetFormStyle(types.FsSystemStayOnTop)
+		//browserWindow.Window.SetBorderStyle(types.BsSingle)
+		//browserWindow.Window.SetFormStyle(types.FsNormal)
+		//browserWindow.Window.SetFormStyle(types.FsSystemStayOnTop)
 		//设置窗口大小
 		browserWindow.Window.SetWidth(1600)
 		browserWindow.Window.SetHeight(900)
@@ -448,7 +450,7 @@ func tray(browserWindow *cef.TCefWindowInfo) {
 }
 
 // 自定义组件
-func addressBar(window *cef.BaseWindow) {
+func addressBar(window *cef.LCLBrowserWindow) {
 	window.WindowParent().SetAlign(types.AlNone)
 	window.WindowParent().SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
 	window.WindowParent().SetTop(0)

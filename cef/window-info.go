@@ -19,39 +19,40 @@ type TCEFFrame map[int64]*ICefFrame
 
 // 窗口信息
 type TCefWindowInfo struct {
-	Window         *BaseWindow     `json:"-"` //窗口Form
-	Browser        *ICefBrowser    `json:"-"` //浏览器对象,加载完chromium之后创建
-	WindowProperty *WindowProperty `json:"-"` //窗口属性
-	Frames         TCEFFrame       `json:"-"` //当前浏览器下的所有frame
-	auxTools       *auxTools       //辅助工具
+	Window         *LCLBrowserWindow `json:"-"` //窗口Form
+	Browser        *ICefBrowser      `json:"-"` //浏览器对象,加载完chromium之后创建
+	WindowProperty *WindowProperty   `json:"-"` //窗口属性
+	Frames         TCEFFrame         `json:"-"` //当前浏览器下的所有frame
+	auxTools       *auxTools         //辅助工具
 }
 
 type auxTools struct {
-	devToolsWindow   *BaseWindow    //开发者工具窗口
-	devToolsX        int32          //上次改变的窗体位置，宽度
-	devToolsY        int32          //
-	devToolsWidth    int32          //
-	devToolsHeight   int32          //
-	viewSourceWindow *browserWindow //viewSource
-	viewSourceUrl    string         //
-	viewSourceX      int32          //上次改变的窗体位置，宽度
-	viewSourceY      int32          //
-	viewSourceWidth  int32          //
-	viewSourceHeight int32          //
+	devToolsWindow   *LCLBrowserWindow //devTools
+	devToolsX        int32             //上次改变的窗体位置，宽度
+	devToolsY        int32             //
+	devToolsWidth    int32             //
+	devToolsHeight   int32             //
+	viewSourceWindow *LCLBrowserWindow //viewSource
+	viewSourceUrl    string            //
+	viewSourceX      int32             //上次改变的窗体位置，宽度
+	viewSourceY      int32             //
+	viewSourceWidth  int32             //
+	viewSourceHeight int32             //
 }
 
 type WindowProperty struct {
 	IsShowModel    bool               //是否以模态窗口显示
-	WindowState    types.TWindowState //窗口状态
-	Title          string             //标题
+	WindowState    types.TWindowState //窗口 状态
+	Title          string             //窗口 标题
 	Url            string             //默认打开URL
-	Icon           string             //窗口图标 加载本地图
-	IconFS         string             //窗口图标 加载emfs内置图片
-	CanMinimize    bool               //窗口 是否显示最小化按钮
-	CanMaximize    bool               //窗口 是否显示最大化按钮
+	Icon           string             //窗口图标 加载本地图标
+	IconFS         string             //窗口图标 加载emfs内置图标
+	CanMinimize    bool               //窗口 是否启用最小化功能
+	CanMaximize    bool               //窗口 是否启用最大化功能
 	CanResize      bool               //窗口 是否允许调整窗口大小
 	CanClose       bool               //窗口 关闭时是否关闭窗口
 	IsCenterWindow bool               //窗口 是否居中显示
+	AlwaysOnTop    bool               //窗口 置顶
 	X              int32              //窗口 IsCenterWindow=false X坐标
 	Y              int32              //窗口 IsCenterWindow=false Y坐标
 	Width          int32              //窗口 宽

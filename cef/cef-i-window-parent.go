@@ -14,7 +14,7 @@ import (
 	"github.com/energye/golcl/lcl"
 )
 
-type ITCefWindow interface {
+type ITCefWindowParent interface {
 	lcl.IWinControl
 	Type() consts.TCefWindowHandleType
 	SetChromium(chromium IChromium, tag int32)
@@ -27,7 +27,7 @@ type ITCefWindow interface {
 	Free()
 }
 
-func NewCEFWindow(owner lcl.IComponent) ITCefWindow {
+func NewCEFWindow(owner lcl.IComponent) ITCefWindowParent {
 	if common.IsWindows() {
 		return NewCEFWindowParent(owner)
 	} else {

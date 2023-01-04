@@ -37,7 +37,7 @@ type IChromiumProc interface {
 	StopLoad()
 	ResetZoomLevel()
 	CloseAllBrowsers()
-	CreateBrowser(window ITCefWindow) bool
+	CreateBrowser(window ITCefWindowParent) bool
 	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool
 	Initialized() bool
 	BrowserId() int32
@@ -51,8 +51,8 @@ type IChromiumProc interface {
 	GoForward()
 	NotifyMoveOrResizeStarted()
 	CloseBrowser(forceClose bool)
-	ShowDevTools(window ITCefWindow)
-	CloseDevTools(window ITCefWindow)
+	ShowDevTools(window ITCefWindowParent)
+	CloseDevTools(window ITCefWindowParent)
 	VisitAllCookies(id int32)
 	VisitURLCookies(url string, includeHttpOnly bool, id int32)
 	DeleteCookies(url, cookieName string, deleteImmediately bool)
@@ -166,7 +166,7 @@ func (m *TCEFChromium) CloseAllBrowsers() {
 	_CEFChromium_CloseAllBrowses(m.Instance())
 }
 
-func (m *TCEFChromium) CreateBrowser(window ITCefWindow) bool {
+func (m *TCEFChromium) CreateBrowser(window ITCefWindowParent) bool {
 	if window.Type() == Wht_WindowParent {
 		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
 	} else if window.Type() == Wht_LinkedWindowParent {
@@ -235,7 +235,7 @@ func (m *TCEFChromium) CloseBrowser(forceClose bool) {
 	_CEFChromium_CloseBrowser(m.Instance(), api.PascalBool(forceClose))
 }
 
-func (m *TCEFChromium) ShowDevTools(window ITCefWindow) {
+func (m *TCEFChromium) ShowDevTools(window ITCefWindowParent) {
 	if window == nil {
 		_CEFChromium_ShowDevTools(m.Instance())
 	} else {
@@ -243,7 +243,7 @@ func (m *TCEFChromium) ShowDevTools(window ITCefWindow) {
 	}
 }
 
-func (m *TCEFChromium) CloseDevTools(window ITCefWindow) {
+func (m *TCEFChromium) CloseDevTools(window ITCefWindowParent) {
 	if window == nil {
 		_CEFChromium_CloseDevTools(m.Instance())
 	} else {

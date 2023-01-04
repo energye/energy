@@ -51,8 +51,7 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 // 浏览器包装结构体
 type browser struct {
 	mainBrowserWindow *browserWindow            //主浏览器窗口
-	mainWindow        *TCefWindowInfo           //主窗口信息
-	popupWindow       *browserWindow            //弹出的子窗口
+	popupWindow       *LCLBrowserWindow         //弹出的子窗口
 	browserEvent      *BrowserEvent             //浏览器全局事件
 	Config            *browserConfig            //浏览器和窗口配置
 	windowInfo        map[int32]*TCefWindowInfo //窗口信息集合
@@ -84,7 +83,7 @@ type BrowserEvent struct {
 }
 
 type browserWindow struct {
-	BaseWindow
+	LCLBrowserWindow
 	isFirstActivate bool
 	tray            ITray
 }
@@ -140,7 +139,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
-	BrowserWindow.mainWindow = m.windowInfo
+	BrowserWindow.mainBrowserWindow.windowInfo = m.windowInfo
 	m.AddOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 		if m.tray != nil {
 			m.tray.close()
@@ -173,7 +172,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 }
 
 func (m *browser) MainWindow() *TCefWindowInfo {
-	return m.mainWindow
+	return m.mainBrowserWindow.windowInfo
 }
 
 // 基于CEF views framework窗口 - 主窗口和chromium初始化时回调
@@ -240,7 +239,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextPopupWindow() {
-	m.popupWindow = &browserWindow{}
+	m.popupWindow = &LCLBrowserWindow{}
 	m.popupWindow.TForm = lcl.NewForm(m.MainWindow().Window)
 	m.popupWindow.FormCreate()
 	m.popupWindow.defaultWindowEvent()

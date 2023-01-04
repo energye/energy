@@ -18,8 +18,6 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-//为解决linux 107.xx以后版本gtk2和gtk3共存和中文输入问题
-//
 //基于CEF views framework窗口
 //
 //该窗口使用CEF内部实现，在linux下107.xx以后版本默认使用GTK3，但无法使用lcl组件集成到窗口中
@@ -30,7 +28,7 @@ type ViewsFrameworkBrowserWindow struct {
 	component            lcl.IComponent            //
 	windowComponent      *TCEFWindowComponent      //
 	browserViewComponent *TCEFBrowserViewComponent //
-	windowProperty       *WindowProperty           //
+	windowProperty       *WindowProperty           //窗口属性
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
@@ -87,6 +85,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = windowProperty.CanClose
 	})
+	m.windowComponent.SetAlwaysOnTop(windowProperty.AlwaysOnTop)
 	return m
 }
 
@@ -117,7 +116,6 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		}
 		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
 		m.chromium = m.vFrameBrowserWindow.chromium
-		m.windowId = BrowserWindow.GetNextWindowNum()
 		m.putChromiumWindowInfo()
 		m.vFrameBrowserWindow.registerPopupEvent()
 		m.vFrameBrowserWindow.registerDefaultEvent()
@@ -165,6 +163,8 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 				Height:         BrowserWindow.Config.WindowProperty.Height,
 			}
 			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp, nil)
+			vFrameBrowserWindow.registerPopupEvent()
+			vFrameBrowserWindow.registerDefaultEvent()
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 
 		}
@@ -174,33 +174,13 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 
 func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
+	//默认自定义快捷键
+	defaultAcceleratorCustom()
 	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
 		}
 		return false
-	})
-	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.putBrowserFrame(browser, frame)
-		})
-		if bwEvent.onFrameCreated != nil {
-			bwEvent.onFrameCreated(sender, browser, frame)
-		}
-	})
-	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		chromiumOnFrameDetached(browser, frame)
-		if bwEvent.onFrameDetached != nil {
-			bwEvent.onFrameDetached(sender, browser, frame)
-		}
-	})
-	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		if chromiumOnAfterCreate(browser) {
-			return
-		}
-		if bwEvent.onAfterCreated != nil {
-			bwEvent.onAfterCreated(sender, browser)
-		}
 	})
 	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
@@ -218,8 +198,46 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
 	})
-	//默认自定义快捷键
-	defaultAcceleratorCustom()
+	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
+		if bwEvent.onBeforeContextMenu != nil {
+			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+		}
+	})
+	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		if bwEvent.onContextMenuCommand != nil {
+			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		}
+	})
+	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+		if bwEvent.onLoadingStateChange != nil {
+			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
+		}
+	})
+	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.putBrowserFrame(browser, frame)
+		})
+		if bwEvent.onFrameCreated != nil {
+			bwEvent.onFrameCreated(sender, browser, frame)
+		}
+	})
+	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		chromiumOnFrameDetached(browser, frame)
+		if bwEvent.onFrameDetached != nil {
+			bwEvent.onFrameDetached(sender, browser, frame)
+		}
+	})
+
+	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+		if chromiumOnAfterCreate(browser) {
+			return
+		}
+		if bwEvent.onAfterCreated != nil {
+			bwEvent.onAfterCreated(sender, browser)
+		}
+	})
 	//事件可以被覆盖
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
@@ -250,27 +268,10 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		return false
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		//updateBrowserDevTools(browser, title)
-		//updateBrowserViewSource(browser, title)
+		updateBrowserDevTools(browser, title)
+		updateBrowserViewSource(browser, title)
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title)
-		}
-	})
-	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
-		if bwEvent.onBeforeContextMenu != nil {
-			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
-		}
-	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		if bwEvent.onContextMenuCommand != nil {
-			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		}
-	})
-	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		if bwEvent.onLoadingStateChange != nil {
-			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
 		}
 	})
 }

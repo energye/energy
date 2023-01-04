@@ -26,18 +26,19 @@ import (
 type IBaseWindow interface {
 	lcl.IWinControl
 	FormCreate()
-	WindowParent() ITCefWindow
+	WindowParent() ITCefWindowParent
 	Chromium() IChromium
 	ChromiumCreate(config *tCefChromiumConfig, defaultUrl string)
 	registerEvent()
 	registerDefaultEvent()
 }
 
-//BaseWindow 是一个基于chromium 和 lcl 的窗口组件
-type BaseWindow struct {
-	*lcl.TForm                                       //
-	chromium            IChromium                    //
-	windowParent        ITCefWindow                  //
+//LCLBrowserWindow 基于chromium 和 lcl 的窗口组件
+type LCLBrowserWindow struct {
+	*lcl.TForm                            //
+	chromium            IChromium         //
+	windowParent        ITCefWindowParent //
+	windowProperty      *WindowProperty
 	vFrameBrowserWindow *ViewsFrameworkBrowserWindow //基于CEF views framework窗口
 	windowInfo          *TCefWindowInfo              //基于LCL窗口信息
 	windowId            int32                        //
@@ -57,52 +58,80 @@ type BaseWindow struct {
 //创建一个带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewBrowserWindow(config *tCefChromiumConfig, defaultUrl string) *Window {
-	var window = NewWindow()
-	window.ChromiumCreate(config, defaultUrl)
+func NewBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty) *LCLBrowserWindow {
+	if windowProperty == nil {
+		windowProperty = NewWindowProperty()
+	}
+	var window = NewWindow(windowProperty)
+	window.ChromiumCreate(config, windowProperty.Url)
 	window.putChromiumWindowInfo()
-	//BeforeBrowser是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
+	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
 	window.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool { return false })
 	return window
 }
 
-func (m *BaseWindow) Id() int32 {
+func (m *LCLBrowserWindow) Chromium() IChromium {
+	return m.chromium
+}
+
+func (m *LCLBrowserWindow) Id() int32 {
 	return m.windowId
 }
 
-func (m *BaseWindow) Show() {
+func (m *LCLBrowserWindow) Show() {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.Show()
 }
 
-func (m *BaseWindow) Hide() {
+func (m *LCLBrowserWindow) Hide() {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.Hide()
 }
 
-func (m *BaseWindow) Visible() bool {
+func (m *LCLBrowserWindow) Visible() bool {
+	if m.TForm == nil {
+		return false
+	}
 	return m.TForm.Visible()
 }
 
-func (m *BaseWindow) SetVisible(value bool) {
+func (m *LCLBrowserWindow) SetVisible(value bool) {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.SetVisible(value)
 }
 
 //返回窗口信息
-func (m *BaseWindow) WindowInfo() *TCefWindowInfo {
+func (m *LCLBrowserWindow) WindowInfo() *TCefWindowInfo {
 	return m.windowInfo
 }
 
 //以默认的方式展示在任务栏上
-func (m *BaseWindow) SetDefaultInTaskBar() {
+func (m *LCLBrowserWindow) SetDefaultInTaskBar() {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.SetShowInTaskBar(types.StDefault)
 }
 
 //展示在任务栏上
-func (m *BaseWindow) SetShowInTaskBar() {
+func (m *LCLBrowserWindow) SetShowInTaskBar() {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.SetShowInTaskBar(types.StAlways)
 }
 
 //不会展示在任务栏上
-func (m *BaseWindow) SetNotInTaskBar() {
+func (m *LCLBrowserWindow) SetNotInTaskBar() {
+	if m.TForm == nil {
+		return
+	}
 	m.TForm.SetShowInTaskBar(types.StNever)
 }
 
@@ -111,29 +140,29 @@ func (m *BaseWindow) SetNotInTaskBar() {
 //在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
 //
 //通过函数可调整该组件的属性
-func (m *BaseWindow) WindowParent() ITCefWindow {
+func (m *LCLBrowserWindow) WindowParent() ITCefWindowParent {
 	return m.windowParent
 }
 
 //返回窗口关闭状态
-func (m *BaseWindow) IsClosing() bool {
+func (m *LCLBrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
 
 // 设置窗口类型
-func (m *BaseWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
+func (m *LCLBrowserWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
 	m.windowType = windowType
 }
 
 // 返回窗口类型
-func (m *BaseWindow) WindowType() consts.WINDOW_TYPE {
+func (m *LCLBrowserWindow) WindowType() consts.WINDOW_TYPE {
 	return m.windowType
 }
 
 // 创建window浏览器组件
 //
 // 不带有默认事件的chromium
-func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl string) {
+func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl string) {
 	if m.isChromiumCreate {
 		return
 	}
@@ -173,7 +202,7 @@ func (m *BaseWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl strin
 	})
 }
 
-func (m *BaseWindow) putChromiumWindowInfo() {
+func (m *LCLBrowserWindow) putChromiumWindowInfo() {
 	m.windowInfo = &TCefWindowInfo{
 		Window:         m,
 		Browser:        nil,
@@ -185,9 +214,10 @@ func (m *BaseWindow) putChromiumWindowInfo() {
 }
 
 //默认的chromium事件
-func (m *BaseWindow) defaultChromiumEvent() {
+func (m *LCLBrowserWindow) defaultChromiumEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		AddGoForm(m.windowId, m.Instance())
+		m.registerPopupEvent()
 		m.registerDefaultEvent()
 		m.registerDefaultChromiumCloseEvent()
 	}
@@ -196,7 +226,7 @@ func (m *BaseWindow) defaultChromiumEvent() {
 // 创建窗口
 //
 // 不带有默认事件的窗口
-func (m *BaseWindow) FormCreate() {
+func (m *LCLBrowserWindow) FormCreate() {
 	if m.isFormCreate {
 		return
 	}
@@ -206,7 +236,7 @@ func (m *BaseWindow) FormCreate() {
 }
 
 //默认窗口活动/关闭处理事件
-func (m *BaseWindow) defaultWindowEvent() {
+func (m *LCLBrowserWindow) defaultWindowEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		m.SetOnResize(m.resize)
 		m.SetOnActivate(m.activate)
@@ -215,42 +245,54 @@ func (m *BaseWindow) defaultWindowEvent() {
 }
 
 //默认的窗口关闭事件
-func (m *BaseWindow) defaultWindowCloseEvent() {
+func (m *LCLBrowserWindow) defaultWindowCloseEvent() {
 	m.SetOnClose(m.close)
 	m.SetOnCloseQuery(m.closeQuery)
 }
 
+//启用默认关闭事件行为-该窗口将被关闭
+func (m *LCLBrowserWindow) EnableDefaultClose() {
+	m.defaultWindowCloseEvent()
+	m.registerDefaultChromiumCloseEvent()
+}
+
+//启用所有默认事件行为
+func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
+	m.defaultWindowCloseEvent()
+	m.defaultChromiumEvent()
+}
+
 // 添加OnResize事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *BaseWindow) AddOnResize(fn TNotifyEvent) {
+func (m *LCLBrowserWindow) AddOnResize(fn TNotifyEvent) {
 	m.onResize = append(m.onResize, fn)
 }
 
 // 添加OnActivate事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *BaseWindow) AddOnActivate(fn TNotifyEvent) {
+func (m *LCLBrowserWindow) AddOnActivate(fn TNotifyEvent) {
 	m.onActivate = append(m.onActivate, fn)
 }
 
 // 添加OnShow事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *BaseWindow) AddOnShow(fn TNotifyEvent) {
+func (m *LCLBrowserWindow) AddOnShow(fn TNotifyEvent) {
 	m.onShow = append(m.onShow, fn)
 }
 
 // 添加OnClose事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *BaseWindow) AddOnClose(fn TCloseEvent) {
+func (m *LCLBrowserWindow) AddOnClose(fn TCloseEvent) {
 	m.onClose = append(m.onClose, fn)
 }
 
 // 添加OnCloseQuery事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *BaseWindow) AddOnCloseQuery(fn TCloseQueryEvent) {
+func (m *LCLBrowserWindow) AddOnCloseQuery(fn TCloseQueryEvent) {
 	m.onCloseQuery = append(m.onCloseQuery, fn)
 }
 
 //每次激活窗口之后执行一次
-func (m *BaseWindow) SetOnActivateAfter(fn lcl.TNotifyEvent) {
+func (m *LCLBrowserWindow) SetOnActivateAfter(fn lcl.TNotifyEvent) {
 	m.onActivateAfter = fn
 }
 
-func (m *BaseWindow) show(sender lcl.IObject) {
+func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	var ret bool
 	if m.onShow != nil {
 		for _, fn := range m.onShow {
@@ -268,7 +310,7 @@ func (m *BaseWindow) show(sender lcl.IObject) {
 	}
 }
 
-func (m *BaseWindow) resize(sender lcl.IObject) {
+func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	var ret bool
 	if m.onResize != nil {
 		for _, fn := range m.onResize {
@@ -290,7 +332,7 @@ func (m *BaseWindow) resize(sender lcl.IObject) {
 	}
 }
 
-func (m *BaseWindow) activate(sender lcl.IObject) {
+func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 	var ret bool
 	if m.onActivate != nil {
 		for _, fn := range m.onActivate {
@@ -313,9 +355,7 @@ func (m *BaseWindow) activate(sender lcl.IObject) {
 		m.onActivateAfter(sender)
 	}
 }
-
-// 默认事件注册 部分事件允许被覆盖
-func (m *BaseWindow) registerDefaultEvent() {
+func (m *LCLBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
@@ -348,33 +388,18 @@ func (m *BaseWindow) registerDefaultEvent() {
 		}
 		return result
 	})
+}
+
+// 默认事件注册 部分事件允许被覆盖
+func (m *LCLBrowserWindow) registerDefaultEvent() {
+	var bwEvent = BrowserWindow.browserEvent
+	//默认自定义快捷键
+	defaultAcceleratorCustom()
 	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
 		}
 		return false
-	})
-	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.putBrowserFrame(browser, frame)
-		})
-		if bwEvent.onFrameCreated != nil {
-			bwEvent.onFrameCreated(sender, browser, frame)
-		}
-	})
-	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		chromiumOnFrameDetached(browser, frame)
-		if bwEvent.onFrameDetached != nil {
-			bwEvent.onFrameDetached(sender, browser, frame)
-		}
-	})
-	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		if chromiumOnAfterCreate(browser) {
-			return
-		}
-		if bwEvent.onAfterCreated != nil {
-			bwEvent.onAfterCreated(sender, browser)
-		}
 	})
 	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
@@ -392,8 +417,46 @@ func (m *BaseWindow) registerDefaultEvent() {
 			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
 	})
-	//默认自定义快捷键
-	defaultAcceleratorCustom()
+	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
+		if bwEvent.onBeforeContextMenu != nil {
+			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+		}
+	})
+	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		if bwEvent.onContextMenuCommand != nil {
+			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		}
+	})
+	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+		if bwEvent.onLoadingStateChange != nil {
+			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
+		}
+	})
+	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.putBrowserFrame(browser, frame)
+		})
+		if bwEvent.onFrameCreated != nil {
+			bwEvent.onFrameCreated(sender, browser, frame)
+		}
+	})
+	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
+		chromiumOnFrameDetached(browser, frame)
+		if bwEvent.onFrameDetached != nil {
+			bwEvent.onFrameDetached(sender, browser, frame)
+		}
+	})
+
+	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+		if chromiumOnAfterCreate(browser) {
+			return
+		}
+		if bwEvent.onAfterCreated != nil {
+			bwEvent.onAfterCreated(sender, browser)
+		}
+	})
 	//事件可以被覆盖
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
@@ -430,25 +493,14 @@ func (m *BaseWindow) registerDefaultEvent() {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
 	})
-	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
-		if bwEvent.onBeforeContextMenu != nil {
-			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
-		}
-	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		if bwEvent.onContextMenuCommand != nil {
-			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		}
-	})
-	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		if bwEvent.onLoadingStateChange != nil {
-			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
-		}
-	})
 }
-func (m *BaseWindow) close(sender lcl.IObject, action *types.TCloseAction) {
+
+//控制LCL创建的窗口事件
+func (m *LCLBrowserWindow) registerControlLCLWindowEvent() {
+
+}
+
+func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	var ret bool
 	if m.onClose != nil {
 		for _, fn := range m.onClose {
@@ -463,7 +515,7 @@ func (m *BaseWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	}
 }
 
-func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
+func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 	var ret bool
 	if m.onCloseQuery != nil {
 		for _, fn := range m.onCloseQuery {
@@ -501,7 +553,7 @@ func (m *BaseWindow) closeQuery(sender lcl.IObject, close *bool) {
 }
 
 //默认的chromium关闭事件
-func (m *BaseWindow) registerDefaultChromiumCloseEvent() {
+func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {
 		logger.Debug("chromium.onClose")

@@ -14,6 +14,8 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/rtl"
+	"github.com/energye/golcl/lcl/types/messages"
 )
 
 // 事件处理函数返回true将不继续执行
@@ -21,9 +23,9 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 	if viewSourceAfterCreate(browser) {
 		return true
 	}
-	//if IsWindows() {
-	//	rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
-	//}
+	if IsWindows() {
+		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
+	}
 	return false
 }
 
