@@ -77,11 +77,9 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		return
 	}
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		if winInfo.Window != nil {
-			//开发者工具和显示源代码不展示框架自定义菜单
-			if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
-				return
-			}
+		//开发者工具和显示源代码不展示框架自定义菜单
+		if winInfo.WindowType() == WT_DEV_TOOLS || winInfo.WindowType() == WT_VIEW_SOURCE {
+			return
 		}
 	}
 	undoVisible, undoEnabled := model.IsVisible(MENU_ID_UNDO), model.IsEnabled(MENU_ID_UNDO)
@@ -282,7 +280,7 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 		browser.Print()
 	} else if commandId == closeBrowserId {
 		winInfo := BrowserWindow.GetWindowInfo(browser.Identifier())
-		winInfo.Close()
+		winInfo.CloseBrowserWindow()
 	} else if commandId == refreshId {
 		browser.Reload()
 	} else if commandId == forcedRefreshId {

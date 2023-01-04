@@ -109,7 +109,7 @@ type ChromiumEventOnMainFrameChanged func(sender lcl.IObject, browser *ICefBrows
 type ChromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool
 
 // windowParent popup
-type ChromiumEventOnBeforePopupForWindowInfo func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow *TCefWindowInfo, noJavascriptAccess *bool) bool
+type ChromiumEventOnBeforePopupForWindowInfo func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow *LCLBrowserWindow, noJavascriptAccess *bool) bool
 
 // windowParent open url from tab
 type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)

@@ -30,7 +30,7 @@ var (
 		Config: &browserConfig{
 			WindowProperty: *NewWindowProperty(),
 		},
-		windowInfo:   make(map[int32]*TCefWindowInfo),
+		windowInfo:   make(map[int32]*LCLBrowserWindow),
 		windowSerial: 1,
 		uiLock:       new(sync.Mutex),
 	}
@@ -50,12 +50,12 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 
 // 浏览器包装结构体
 type browser struct {
-	mainBrowserWindow *browserWindow            //主浏览器窗口
-	popupWindow       *LCLBrowserWindow         //弹出的子窗口
-	browserEvent      *BrowserEvent             //浏览器全局事件
-	Config            *browserConfig            //浏览器和窗口配置
-	windowInfo        map[int32]*TCefWindowInfo //窗口信息集合
-	windowSerial      int32                     //窗口序号
+	mainBrowserWindow *browserWindow              //主浏览器窗口
+	popupWindow       *LCLBrowserWindow           //弹出的子窗口
+	browserEvent      *BrowserEvent               //浏览器全局事件
+	Config            *browserConfig              //浏览器和窗口配置
+	windowInfo        map[int32]*LCLBrowserWindow //窗口信息集合
+	windowSerial      int32                       //窗口序号
 	uiLock            *sync.Mutex
 }
 
@@ -139,7 +139,6 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
-	BrowserWindow.mainBrowserWindow.windowInfo = m.windowInfo
 	m.AddOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 		if m.tray != nil {
 			m.tray.close()
@@ -149,14 +148,14 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	if BrowserWindow.Config.Title != "" {
 		m.SetCaption(BrowserWindow.Config.Title)
 	}
-	if BrowserWindow.Config.Icon != "" {
-		lcl.Application.Icon().LoadFromFSFile(BrowserWindow.Config.Icon)
+	if BrowserWindow.Config.IconFS != "" {
+		lcl.Application.Icon().LoadFromFSFile(BrowserWindow.Config.IconFS)
 	}
 	m.SetWidth(BrowserWindow.Config.Width)
 	m.SetHeight(BrowserWindow.Config.Height)
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.chromium
-		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m.windowInfo)
+		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
 	}
 
 	//主进程（主窗口）启动后回调函数事件
@@ -165,14 +164,14 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		if !m.isFirstActivate {
 			m.isFirstActivate = true
 			if BrowserWindow.Config.browserWindowAfterOnEventCallback != nil {
-				BrowserWindow.Config.browserWindowAfterOnEventCallback(m.windowInfo)
+				BrowserWindow.Config.browserWindowAfterOnEventCallback(&m.LCLBrowserWindow)
 			}
 		}
 	})
 }
 
-func (m *browser) MainWindow() *TCefWindowInfo {
-	return m.mainBrowserWindow.windowInfo
+func (m *browser) MainWindow() *LCLBrowserWindow {
+	return &m.mainBrowserWindow.LCLBrowserWindow
 }
 
 // 基于CEF views framework窗口 - 主窗口和chromium初始化时回调
@@ -240,30 +239,26 @@ func (m *browser) GetNextWindowNum() int32 {
 
 func (m *browser) createNextPopupWindow() {
 	m.popupWindow = &LCLBrowserWindow{}
-	m.popupWindow.TForm = lcl.NewForm(m.MainWindow().Window)
+	m.popupWindow.TForm = lcl.NewForm(m.MainWindow())
 	m.popupWindow.FormCreate()
 	m.popupWindow.defaultWindowEvent()
 	m.popupWindow.defaultWindowCloseEvent()
 }
 
 // 拿到窗口信息
-func (m *browser) GetWindowInfo(browserId int32) *TCefWindowInfo {
+func (m *browser) GetWindowInfo(browserId int32) *LCLBrowserWindow {
 	if winInfo, ok := m.windowInfo[browserId]; ok {
 		return winInfo
 	}
 	return nil
 }
 
-func (m *browser) GetWindowsInfo() map[int32]*TCefWindowInfo {
+func (m *browser) GetWindowsInfo() map[int32]*LCLBrowserWindow {
 	return m.windowInfo
 }
 
-func (m *browser) putWindowInfo(browserId int32, windowInfo *TCefWindowInfo) {
-	if winInfo, ok := m.windowInfo[browserId]; ok {
-		winInfo.Window = windowInfo.Window
-	} else {
-		m.windowInfo[browserId] = windowInfo
-	}
+func (m *browser) putWindowInfo(browserId int32, windowInfo *LCLBrowserWindow) {
+	m.windowInfo[browserId] = windowInfo
 }
 
 func (m *browser) removeWindowInfo(browseId int32) {
@@ -273,46 +268,38 @@ func (m *browser) removeWindowInfo(browseId int32) {
 
 func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Browser
+		return winInfo.browser
 	}
 	return nil
 }
 
 func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
-	if winInfo, ok := m.windowInfo[browser.Identifier()]; !ok {
-		winInfo = &TCefWindowInfo{
-			Browser: browser,
-			Frames:  make(map[int64]*ICefFrame),
+	if winInfo, ok := m.windowInfo[browser.Identifier()]; ok {
+		if winInfo.frames == nil {
+			winInfo.frames = make(TCEFFrame)
 		}
-		if frame != nil {
-			winInfo.Frames[frame.Id] = frame
-		}
-		m.windowInfo[browser.Identifier()] = winInfo
-	} else {
-		winInfo.Browser = browser
-		if frame != nil {
-			winInfo.Frames[frame.Id] = frame
-		}
+		winInfo.browser = browser
+		winInfo.frames[frame.Id] = frame
 	}
 }
 
 func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames
+		return winInfo.frames
 	}
 	return nil
 }
 
 func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames[frameId]
+		return winInfo.frames[frameId]
 	}
 	return nil
 }
 
 func (m *browser) RemoveFrame(browseId int32, frameId int64) {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		delete(winInfo.Frames, frameId)
+		delete(winInfo.frames, frameId)
 	}
 }
 
@@ -325,9 +312,9 @@ func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
 
 func (m *browser) removeNoValidFrames() {
 	for _, winInfo := range m.windowInfo {
-		for _, frm := range winInfo.Frames {
+		for _, frm := range winInfo.frames {
 			if !frm.IsValid() {
-				delete(winInfo.Frames, frm.Id)
+				delete(winInfo.frames, frm.Id)
 			}
 		}
 	}

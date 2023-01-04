@@ -28,7 +28,7 @@ func MainBrowserWindow() {
 	config.SetEnableDevTools(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.LCLBrowserWindow) {
 		//设置应用图标 这里加载的图标是内置到执行程序里的资源文件
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
 		//在窗体初始化时创建窗口内的组件
@@ -59,15 +59,15 @@ func MainBrowserWindow() {
 		})
 	})
 	//创建窗口之后对对主窗口的属性、组件或子窗口的创建
-	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.LCLBrowserWindow) {
 		fmt.Println("SetBrowserInitAfter")
 	})
 }
 
 //控制组件UI
 //地址栏和控制按钮创建
-func controlUI(browserWindow *cef.TCefWindowInfo) (goBack *lcl.TButton, goForward *lcl.TButton, stop *lcl.TButton, refresh *lcl.TButton, progressLabel *lcl.TLabel, addrBox *lcl.TComboBox) {
-	window := browserWindow.Window
+func controlUI(browserWindow *cef.LCLBrowserWindow) (goBack *lcl.TButton, goForward *lcl.TButton, stop *lcl.TButton, refresh *lcl.TButton, progressLabel *lcl.TLabel, addrBox *lcl.TComboBox) {
+	window := browserWindow
 	//这里使用系统UI组件
 	//创建panel做为地址栏的父组件
 	addrPanel := lcl.NewPanel(window) //设置父组件

@@ -13,8 +13,8 @@ import (
 )
 
 type viewsFrameBrowserWindowOnEventCallback func(event *BrowserEvent, window *ViewsFrameworkBrowserWindow)
-type browserWindowOnEventCallback func(event *BrowserEvent, window *TCefWindowInfo)
-type browserWindowAfterOnEventCallback func(window *TCefWindowInfo)
+type browserWindowOnEventCallback func(event *BrowserEvent, window *LCLBrowserWindow)
+type browserWindowAfterOnEventCallback func(window *LCLBrowserWindow)
 
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {

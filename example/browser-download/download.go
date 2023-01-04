@@ -27,10 +27,10 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/download.html"
 	//在主窗口初始化回调函数里设置浏览器事件
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.LCLBrowserWindow) {
 		//linux 下载文件 系统弹出保存对话框不启作用
 		//所以 自己调用系统的保存对话框获得保存路径
-		linuxDlSave := lcl.NewSaveDialog(browserWindow.Window)
+		linuxDlSave := lcl.NewSaveDialog(browserWindow)
 		linuxDlSave.SetTitle("保存对话框标题")
 
 		//下载之前事件

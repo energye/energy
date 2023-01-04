@@ -55,9 +55,9 @@ func timeTask() {
 		args.SetString(0, fmt.Sprintf("Go发送的数据: %d", param0), true)
 		args.SetFloat64(1, float64(param0+10))
 		//将数据发送出去
-		info.Chromium().Emit("js-on-event-demo", args, info.Browser)
+		info.Chromium().Emit("js-on-event-demo", args, info.Browser())
 		//触发js监听函数，这个函数带有返回值到go中
-		info.Chromium().EmitAndCallback("js-on-event-demo-return", args, info.Browser, func(context ipc.IIPCContext) {
+		info.Chromium().EmitAndCallback("js-on-event-demo-return", args, info.Browser(), func(context ipc.IIPCContext) {
 			//因为js和go不一样，返回值只能有1个，且是通过 Arguments 获取
 			arguments := context.Arguments()
 			//需要正确的获取类型，否则会失败

@@ -172,11 +172,17 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 		m.TForm.InheritedWndProc(msg)
 		if msg.Msg == 6 && msg.WParam == 0 && msg.LParam == 0 {
 			QueueAsyncCall(func(id int) {
+				if m.isClosing {
+					return
+				}
 				m.TForm.Hide()
 			})
 		}
 	})
 	m.TForm.SetOnDeactivate(func(sender lcl.IObject) {
+		if m.isClosing {
+			return
+		}
 		m.TForm.Hide()
 	})
 

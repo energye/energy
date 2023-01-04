@@ -30,6 +30,17 @@ type cefFrame struct {
 	Identifier uintptr
 }
 
+type TCEFFrame map[int64]*ICefFrame
+
+func (m TCEFFrame) GetByFrameId(frameId int64) *ICefFrame {
+	if m != nil {
+		if frame, ok := m[frameId]; ok {
+			return frame
+		}
+	}
+	return nil
+}
+
 func (m *ICefFrame) Undo() {
 	var frameId = m.Id
 	Proc(internale_CEFFrame_Undo).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))

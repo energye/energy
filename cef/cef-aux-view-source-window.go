@@ -19,22 +19,20 @@ const (
 )
 
 func updateBrowserViewSource(browser *ICefBrowser, title string) {
-	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil && browserWinInfo.Window != nil && browserWinInfo.Window.WindowType() == WT_VIEW_SOURCE {
-		if browserWinInfo.Window != nil {
-			QueueAsyncCall(func(id int) {
-				if mainFrame := browser.MainFrame(); mainFrame != nil {
-					browserWinInfo.Window.SetCaption(fmt.Sprintf("%s - %s", view_source_name, mainFrame.Url))
-				} else {
-					logger.Error("failed to get main frame")
-				}
-			})
-		}
+	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil && browserWinInfo.WindowType() == WT_VIEW_SOURCE {
+		QueueAsyncCall(func(id int) {
+			if mainFrame := browser.MainFrame(); mainFrame != nil {
+				browserWinInfo.SetCaption(fmt.Sprintf("%s - %s", view_source_name, mainFrame.Url))
+			} else {
+				logger.Error("failed to get main frame")
+			}
+		})
 	}
 }
 
 func viewSourceAfterCreate(browser *ICefBrowser) bool {
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		if winInfo.Window.WindowType() == WT_VIEW_SOURCE && winInfo.auxTools.viewSourceWindow != nil {
+		if winInfo.WindowType() == WT_VIEW_SOURCE && winInfo.auxTools.viewSourceWindow != nil {
 			winInfo.auxTools.viewSourceWindow.chromium.LoadUrl(winInfo.auxTools.viewSourceUrl)
 			return true
 		}
@@ -58,6 +56,9 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 			m.SetWidth(1024)
 			m.SetHeight(768)
 			if winInfo := BrowserWindow.GetWindowInfo(m.windowId); winInfo != nil {
+				if winInfo.auxTools == nil {
+					winInfo.auxTools = &auxTools{}
+				}
 				winInfo.auxTools.viewSourceUrl = viewSourceUrl
 				winInfo.auxTools.viewSourceWindow = m
 			}

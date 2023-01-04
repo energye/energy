@@ -114,17 +114,17 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
 			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
 		}
-		m.vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
-		m.chromium = m.vFrameBrowserWindow.chromium
+		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
+		m.chromium = vFrameBrowserWindow.chromium
 		m.putChromiumWindowInfo()
-		m.vFrameBrowserWindow.registerPopupEvent()
-		m.vFrameBrowserWindow.registerDefaultEvent()
-		m.vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		vFrameBrowserWindow.registerPopupEvent()
+		vFrameBrowserWindow.registerDefaultEvent()
+		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			fmt.Println("OnCanClose")
 			*aResult = true
 			app.QuitMessageLoop()
 		})
-		m.vFrameBrowserWindow.CreateTopLevelWindow()
+		vFrameBrowserWindow.CreateTopLevelWindow()
 	})
 }
 
@@ -141,7 +141,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		fmt.Println("BrowserWindow-beforePopupInfo", beforePopupInfo.TargetUrl)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
+			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
 		}
 		if !result {
 			result = true
@@ -242,7 +242,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-				if winInfo.Window.WindowType() == consts.WT_DEV_TOOLS || winInfo.Window.WindowType() == consts.WT_VIEW_SOURCE {
+				if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
 					return
 				}
 			}

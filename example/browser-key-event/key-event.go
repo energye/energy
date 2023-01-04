@@ -21,7 +21,7 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - Key Event"
 	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.LCLBrowserWindow) {
 		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, result *bool) {
 			fmt.Printf("%s  %+v\n", string(rune(event.Character)), event)
 		})

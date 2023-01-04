@@ -29,8 +29,11 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 		}
 	}
 }
-func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo) {
+func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *LCLBrowserWindow) {
 	QueueAsyncCall(func(id int) {
+		if browserWinInfo.auxTools == nil {
+			browserWinInfo.auxTools = &auxTools{}
+		}
 		winAuxTools := browserWinInfo.auxTools
 		if winAuxTools.devToolsWindow != nil {
 			winAuxTools.devToolsWindow.Show()
@@ -38,7 +41,7 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		}
 		winAuxTools.devToolsWindow = &LCLBrowserWindow{}
 		winAuxTools.devToolsWindow.SetWindowType(WT_DEV_TOOLS)
-		winAuxTools.devToolsWindow.TForm = lcl.NewForm(browserWinInfo.Window)
+		winAuxTools.devToolsWindow.TForm = lcl.NewForm(browserWinInfo)
 		winAuxTools.devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
 		winAuxTools.devToolsWindow.FormCreate()
 		winAuxTools.devToolsWindow.defaultWindowEvent()
@@ -80,7 +83,7 @@ func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *TCefWindowInfo)
 		winAuxTools.devToolsWindow.ChromiumCreate(nil, "")
 		winAuxTools.devToolsWindow.putChromiumWindowInfo()
 		winAuxTools.devToolsWindow.defaultChromiumEvent()
-		winAuxTools.devToolsWindow.windowInfo = browserWinInfo
+		//winAuxTools.devToolsWindow.windowInfo = browserWinInfo
 		winAuxTools.devToolsWindow.Show()
 		//明确的生成下一个窗体序号
 		BrowserWindow.setOrIncNextWindowNum()
