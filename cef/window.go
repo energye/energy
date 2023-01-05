@@ -49,17 +49,20 @@ type WindowProperty struct {
 }
 
 //创建一个新window窗口
-func NewWindow(windowProperty *WindowProperty) *LCLBrowserWindow {
+func NewWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
 	if windowProperty == nil {
 		windowProperty = NewWindowProperty()
 	}
 	var window = &LCLBrowserWindow{}
 	window.windowProperty = windowProperty
-	//window.TForm = lcl.NewForm(owner)
-	lcl.Application.CreateForm(&window)
+	if len(owner) > 0 {
+		window.TForm = lcl.NewForm(owner[0])
+	} else {
+		lcl.Application.CreateForm(&window)
+	}
 	window.ParentDoubleBuffered()
 	window.FormCreate()
-	window.SetNotInTaskBar()
+	window.SetShowInTaskBar()
 	window.defaultWindowEvent()
 	window.SetCaption(windowProperty.Title)
 	if windowProperty.CenterWindow {
@@ -67,7 +70,7 @@ func NewWindow(windowProperty *WindowProperty) *LCLBrowserWindow {
 		window.SetHeight(windowProperty.Height)
 		window.SetPosition(types.PoDesktopCenter)
 	} else {
-		window.SetPosition(types.PoDefault)
+		window.SetPosition(types.PoDesigned)
 		window.SetBounds(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height)
 	}
 	if windowProperty.IconFS != "" {
@@ -113,6 +116,8 @@ func NewWindowProperty() *WindowProperty {
 		CanResize:    true,
 		CanClose:     true,
 		CenterWindow: true,
+		X:            100,
+		Y:            100,
 		Width:        1024,
 		Height:       768,
 	}

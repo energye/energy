@@ -32,7 +32,7 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty, callback viewsFrameBrowserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
+func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = BrowserWindow.Config.chromiumConfig
 	}
@@ -59,9 +59,6 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
 			}
 			m.browserViewComponent.RequestFocus()
-			if callback != nil {
-				callback(BrowserWindow.browserEvent, m)
-			}
 			m.windowComponent.Show()
 		}
 	})
@@ -107,14 +104,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		return
 	}
 	app.SetOnContextInitialized(func() {
-		if BrowserWindow.Config.chromiumConfig == nil {
-			BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
-			BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableDevTools(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
-			BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
-		}
-		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, &BrowserWindow.Config.WindowProperty, BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback)
+		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), &BrowserWindow.Config.WindowProperty)
 		m.chromium = vFrameBrowserWindow.chromium
 		m.putChromiumWindowInfo()
 		vFrameBrowserWindow.registerPopupEvent()
@@ -124,12 +114,11 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			*aResult = true
 			app.QuitMessageLoop()
 		})
-		vFrameBrowserWindow.CreateTopLevelWindow()
+		if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
+			BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
+		}
+		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
-}
-
-func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
-	m.windowComponent.CreateTopLevelWindow()
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
@@ -162,7 +151,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 				Width:        BrowserWindow.Config.WindowProperty.Width,
 				Height:       BrowserWindow.Config.WindowProperty.Height,
 			}
-			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp, nil)
+			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp)
 			vFrameBrowserWindow.registerPopupEvent()
 			vFrameBrowserWindow.registerDefaultEvent()
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()

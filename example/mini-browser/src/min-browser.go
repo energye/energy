@@ -36,6 +36,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
+	//cef.BrowserWindow.Config.CenterWindow = false
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
@@ -181,14 +182,13 @@ func AppBrowserInit() {
 		fmt.Println("主窗口初始化回调函数")
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
 		browserWindow.SetCaption("这里设置应用标题")
-		browserWindow.SetPosition(types.PoScreenCenter) //窗口局中显示
 		//设置窗口样式，无标题 ，最大化按钮等
 		//browserWindow.SetBorderStyle(types.BsSingle)
 		//browserWindow.SetFormStyle(types.FsNormal)
 		//browserWindow.SetFormStyle(types.FsSystemStayOnTop)
 		//设置窗口大小
-		browserWindow.SetWidth(1600)
-		browserWindow.SetHeight(900)
+		//browserWindow.SetWidth(1600)
+		//browserWindow.SetHeight(900)
 		//限制窗口大小 linux 下不是很友好
 		//browserWindow.Window.Constraints().SetMinHeight(300)
 		//browserWindow.Window.Constraints().SetMinWidth(300)

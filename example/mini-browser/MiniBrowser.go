@@ -6,9 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/mini-browser/src"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
-	"time"
 )
 
 //go:embed libs
@@ -41,12 +39,12 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
-		go func() {
-			for {
-				time.Sleep(time.Second)
-				fmt.Println("ChannelIds:", ipc.IPC.Browser().ChannelIds())
-			}
-		}()
+		//go func() {
+		//	for {
+		//		time.Sleep(time.Second)
+		//		fmt.Println("ChannelIds:", ipc.IPC.Browser().ChannelIds())
+		//	}
+		//}()
 	})
 	cef.Run(cefApp)
 }

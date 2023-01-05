@@ -32,6 +32,13 @@ func (m *browserConfig) SetChromiumConfig(chromiumConfig *tCefChromiumConfig) {
 	}
 }
 
+func (m *browserConfig) ChromiumConfig() *tCefChromiumConfig {
+	if m.chromiumConfig == nil {
+		m.chromiumConfig = NewChromiumConfig()
+	}
+	return m.chromiumConfig
+}
+
 //主窗口初始化回调 - 基于CEF views framework窗口
 //
 //该回调函数和基于LCL窗口回调是互斥的，默认情况只有一个会被回调

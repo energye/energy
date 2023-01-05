@@ -22,10 +22,10 @@ type tCefChromiumConfig struct {
 //New CefChromiumConfig 默认禁用相关功能
 func NewChromiumConfig() *tCefChromiumConfig {
 	return &tCefChromiumConfig{
-		enableMenu:        api.PascalBool(false),
-		enableViewSource:  api.PascalBool(false),
-		enableDevTools:    api.PascalBool(false),
-		enableWindowPopup: api.PascalBool(false),
+		enableMenu:        api.PascalBool(true),
+		enableViewSource:  api.PascalBool(true),
+		enableDevTools:    api.PascalBool(true),
+		enableWindowPopup: api.PascalBool(true),
 		enableOpenUrlTab:  api.PascalBool(false),
 		enabledJavascript: api.PascalBool(false),
 	}

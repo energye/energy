@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 	"sync"
 )
 
@@ -125,18 +126,11 @@ func Run(cefApp *TCEFApplication) {
 }
 
 func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
-	if BrowserWindow.Config.chromiumConfig == nil {
-		BrowserWindow.Config.chromiumConfig = NewChromiumConfig()
-		BrowserWindow.Config.chromiumConfig.SetEnableMenu(true)
-		BrowserWindow.Config.chromiumConfig.SetEnableDevTools(true)
-		BrowserWindow.Config.chromiumConfig.SetEnableOpenUrlTab(true)
-		BrowserWindow.Config.chromiumConfig.SetEnableWindowPopup(true)
-	}
 	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()
 	m.defaultWindowEvent()
 	m.defaultWindowCloseEvent()
-	m.ChromiumCreate(BrowserWindow.Config.chromiumConfig, BrowserWindow.Config.Url)
+	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
 	m.AddOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
@@ -145,14 +139,28 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		}
 		return false
 	})
-	if BrowserWindow.Config.Title != "" {
-		m.SetCaption(BrowserWindow.Config.Title)
-	}
+	m.SetCaption(BrowserWindow.Config.Title)
 	if BrowserWindow.Config.IconFS != "" {
 		lcl.Application.Icon().LoadFromFSFile(BrowserWindow.Config.IconFS)
+	} else if BrowserWindow.Config.Icon != "" {
+		lcl.Application.Icon().LoadFromFile(BrowserWindow.Config.Icon)
 	}
-	m.SetWidth(BrowserWindow.Config.Width)
-	m.SetHeight(BrowserWindow.Config.Height)
+	if BrowserWindow.Config.CenterWindow {
+		m.SetWidth(BrowserWindow.Config.Width)
+		m.SetHeight(BrowserWindow.Config.Height)
+		m.SetPosition(types.PoDesktopCenter)
+	} else {
+		m.SetPosition(types.PoDesigned)
+		m.SetBounds(BrowserWindow.Config.X, BrowserWindow.Config.Y, BrowserWindow.Config.Width, BrowserWindow.Config.Height)
+	}
+	if BrowserWindow.Config.AlwaysOnTop {
+		m.SetFormStyle(types.FsSystemStayOnTop)
+	}
+	m.EnabledMinimize(BrowserWindow.Config.CanMinimize)
+	m.EnabledMaximize(BrowserWindow.Config.CanMaximize)
+	if !BrowserWindow.Config.CanResize {
+		m.SetBorderStyle(types.BsSingle)
+	}
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.chromium
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
@@ -238,10 +246,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextPopupWindow() {
-	m.popupWindow = &LCLBrowserWindow{}
-	m.popupWindow.TForm = lcl.NewForm(m.MainWindow())
-	m.popupWindow.FormCreate()
-	m.popupWindow.defaultWindowEvent()
+	m.popupWindow = NewWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow())
 	m.popupWindow.defaultWindowCloseEvent()
 }
 

@@ -170,10 +170,6 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl
 	m.windowId = BrowserWindow.GetNextWindowNum()
 	if config == nil {
 		config = NewChromiumConfig()
-		config.SetEnableMenu(true)
-		config.SetEnableDevTools(true)
-		config.SetEnableOpenUrlTab(true)
-		config.SetEnableWindowPopup(true)
 	}
 	m.chromium = NewChromium(m, config)
 	m.chromium.SetEnableMultiBrowserMode(true)
