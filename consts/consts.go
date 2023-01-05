@@ -18,9 +18,9 @@ import (
 var (
 	ExePath       string                       //执行文件目录
 	HomeDir, _    = homedir.Dir()              //系统用户目录
-	Separator     = string(filepath.Separator) //
+	Separator     = string(filepath.Separator) //系统目录分隔符
 	SingleProcess = false                      //进程启动方式, true单进程 false多进程
-	IsMessageLoop = false                      //
+	IsMessageLoop = false                      //CEF应用的窗口, 使用views framework为true, 使用LCL为false, 其实是窗口消息轮询使用方式
 )
 
 const (

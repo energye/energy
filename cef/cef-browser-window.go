@@ -101,6 +101,7 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.StartSubProcess()
 		cefApp.Free()
 	} else {
+		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时启用CEF views framework (ViewsFrameworkBrowserWindow) 窗口
 		IsMessageLoop = !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
 		if IsMessageLoop {
 			BrowserWindow.mainBrowserWindow.appContextInitialized(cefApp)

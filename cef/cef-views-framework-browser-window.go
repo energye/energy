@@ -117,7 +117,6 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
 		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
-		fmt.Println("SetOnContextInitialized IsMessageLoop:", consts.IsMessageLoop)
 	})
 }
 
