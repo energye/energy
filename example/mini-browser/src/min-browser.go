@@ -187,6 +187,7 @@ func AppBrowserInit() {
 		fmt.Println("主窗口初始化回调函数")
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
 		browserWindow.SetCaption("这里设置应用标题")
+		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		//browserWindow.SetBorderStyle(types.BsSingle)
 		//browserWindow.SetFormStyle(types.FsNormal)
@@ -194,7 +195,7 @@ func AppBrowserInit() {
 		//设置窗口大小
 		//browserWindow.SetWidth(1600)
 		//browserWindow.SetHeight(900)
-		//限制窗口大小 linux 下不是很友好
+		//限制窗口大小
 		//browserWindow.Window.Constraints().SetMinHeight(300)
 		//browserWindow.Window.Constraints().SetMinWidth(300)
 		//browserWindow.Window.Constraints().SetMaxWidth(1600)

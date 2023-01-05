@@ -57,7 +57,7 @@ type browser struct {
 	windowSerial      int32                       //窗口序号
 }
 
-// 浏览器全局事件监听
+// 浏览器全局事件监听-扩展
 //
 // 在主浏览器进程调用
 type BrowserEvent struct {
@@ -70,11 +70,10 @@ type BrowserEvent struct {
 	onFrameCreated           ChromiumEventOnFrameCreated             //default
 	onFrameDetached          ChromiumEventOnFrameDetached            //default
 	onMainFrameChanged       ChromiumEventOnMainFrameChanged         //default
-	onBeforeDownload         ChromiumEventOnBeforeDownload           //default
-	onKeyEvent               ChromiumEventOnKeyEvent                 //default
+	onBeforeDownload         ChromiumEventOnBeforeDownload           //default can cover
+	onKeyEvent               ChromiumEventOnKeyEvent                 //default can cover
 	onProcessMessageReceived BrowseProcessMessageReceived            //default
 	onTitleChange            ChromiumEventOnTitleChange              //default
-	onLoadingStateChange     ChromiumEventOnLoadingStateChange       //default
 	onContextMenuCommand     ChromiumEventOnContextMenuCommand       //default
 	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu        //default
 	onBeforeResourceLoad     ChromiumEventOnBeforeResourceLoad       //default
@@ -104,7 +103,7 @@ func Run(cefApp *TCEFApplication) {
 		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时启用CEF views framework (ViewsFrameworkBrowserWindow) 窗口
 		IsMessageLoop = !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
 		if IsMessageLoop {
-			BrowserWindow.mainBrowserWindow.appContextInitialized(cefApp)
+			BrowserWindow.appContextInitialized(cefApp)
 		}
 		success := cefApp.StartMainProcess()
 		if browserProcessStartAfterCallback != nil {
@@ -382,7 +381,7 @@ func (m *BrowserEvent) SetOnLoadStart(event ChromiumEventOnLoadStart) {
 // BrowserEvent.SetOnLoadingStateChange
 func (m *BrowserEvent) SetOnLoadingStateChange(event ChromiumEventOnLoadingStateChange) {
 	if Args.IsMain() {
-		m.onLoadingStateChange = event
+		m.chromium.SetOnLoadingStateChange(event)
 	}
 }
 

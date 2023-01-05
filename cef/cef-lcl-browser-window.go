@@ -525,30 +525,29 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 func (m *LCLBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
+		if !api.GoBool(BrowserWindow.Config.ChromiumConfig().enableWindowPopup) {
 			return true
 		}
 		BrowserWindow.popupWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePopupInfo.TargetUrl)
+		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
 		BrowserWindow.popupWindow.putChromiumWindowInfo()
 		BrowserWindow.popupWindow.defaultChromiumEvent()
 		var result = false
-		defer func() {
-			if result {
-				QueueAsyncCall(func(id int) {
-					winProperty := BrowserWindow.popupWindow.windowProperty
-					if winProperty != nil {
-						if winProperty.IsShowModel {
-							BrowserWindow.popupWindow.ShowModal()
-							return
-						}
-					}
-					BrowserWindow.popupWindow.Show()
-				})
-			}
-		}()
 		if bwEvent.onBeforePopup != nil {
-			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
+		}
+		if !result {
+			QueueAsyncCall(func(id int) {
+				winProperty := BrowserWindow.popupWindow.windowProperty
+				if winProperty != nil {
+					if winProperty.IsShowModel {
+						BrowserWindow.popupWindow.ShowModal()
+						return
+					}
+				}
+				BrowserWindow.popupWindow.Show()
+			})
+			result = true
 		}
 		return result
 	})
@@ -591,11 +590,6 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		}
-	})
-	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		if bwEvent.onLoadingStateChange != nil {
-			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {

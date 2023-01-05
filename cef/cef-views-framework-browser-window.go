@@ -99,22 +99,22 @@ func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewCom
 }
 
 //ViewsFrameworkBrowserWindow 主窗口初始化
-func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
+func (m *browser) appContextInitialized(app *TCEFApplication) {
 	if !common.Args.IsMain() {
 		return
 	}
 	app.SetOnContextInitialized(func() {
-		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), &BrowserWindow.Config.WindowProperty)
-		m.chromium = vFrameBrowserWindow.chromium
-		m.putChromiumWindowInfo()
+		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), &m.Config.WindowProperty)
+		//BrowserWindow.mainBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
+		//BrowserWindow.mainBrowserWindow.putChromiumWindowInfo()
 		vFrameBrowserWindow.registerPopupEvent()
 		vFrameBrowserWindow.registerDefaultEvent()
 		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			*aResult = true
 			app.QuitMessageLoop()
 		})
-		if BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback != nil {
-			BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
+		if m.Config.viewsFrameBrowserWindowOnEventCallback != nil {
+			m.Config.viewsFrameBrowserWindowOnEventCallback(m.browserEvent, vFrameBrowserWindow)
 		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
@@ -129,10 +129,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		fmt.Println("BrowserWindow-TargetUrl:", beforePopupInfo.TargetUrl, "IsMessageLoop:", consts.IsMessageLoop)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
 		}
 		if !result {
-			result = true
 			wp := &WindowProperty{
 				Title:        BrowserWindow.Config.WindowProperty.Title,
 				Url:          beforePopupInfo.TargetUrl,
@@ -151,10 +150,12 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 				Height:       BrowserWindow.Config.WindowProperty.Height,
 			}
 			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp)
+			//BrowserWindow.mainBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
+			//BrowserWindow.mainBrowserWindow.putChromiumWindowInfo()
 			vFrameBrowserWindow.registerPopupEvent()
 			vFrameBrowserWindow.registerDefaultEvent()
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
-
+			result = true
 		}
 		return result
 	})
@@ -178,7 +179,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result)
 		}
 	})
-	//事件可以被覆盖
+	//事件可以覆盖
 	m.chromium.SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *DownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
 		if bwEvent.onBeforeDownload != nil {
 			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback)
@@ -198,11 +199,6 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
-	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		if bwEvent.onLoadingStateChange != nil {
-			bwEvent.onLoadingStateChange(sender, browser, isLoading, canGoBack, canGoForward)
-		}
-	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
 		QueueAsyncCall(func(id int) {
 			BrowserWindow.putBrowserFrame(browser, frame)
@@ -217,7 +213,6 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onFrameDetached(sender, browser, frame)
 		}
 	})
-
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 		if chromiumOnAfterCreate(browser) {
 			return
@@ -228,24 +223,25 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	})
 	//事件可以被覆盖
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool) {
-		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
-			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-				if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
-					return
-				}
-			}
-			if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-				browser.ShowDevTools()
-				*result = true
-			} else if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
-				*result = true
-			}
-		}
-		if KeyAccelerator.accelerator(browser, event, result) {
-			return
-		}
 		if bwEvent.onKeyEvent != nil {
 			bwEvent.onKeyEvent(sender, browser, event, result)
+		} else {
+			if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+				if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
+					if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
+						return
+					}
+				}
+				if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
+					browser.ShowDevTools()
+					*result = true
+				} else if event.WindowsKeyCode == VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
+					*result = true
+				}
+			}
+			if KeyAccelerator.accelerator(browser, event, result) {
+				return
+			}
 		}
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
