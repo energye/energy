@@ -24,11 +24,17 @@ import (
 //
 //当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
+	isClosing            bool                      //
+	windowType           consts.WINDOW_TYPE        //0:browser 1:devTools 2:viewSource 默认:0
+	windowId             int32                     //
 	chromium             IChromium                 //
+	browser              *ICefBrowser              //
 	component            lcl.IComponent            //
 	windowComponent      *TCEFWindowComponent      //
 	browserViewComponent *TCEFBrowserViewComponent //
 	windowProperty       *WindowProperty           //窗口属性
+	frames               TCEFFrame                 //当前浏览器下的所有frame
+	auxTools             *auxTools                 //辅助工具
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口

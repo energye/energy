@@ -49,12 +49,13 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 
 // 浏览器包装结构体
 type browser struct {
-	mainBrowserWindow *browserWindow              //主浏览器窗口
-	popupWindow       *LCLBrowserWindow           //弹出的子窗口
-	browserEvent      *BrowserEvent               //浏览器全局事件
-	Config            *browserConfig              //浏览器和窗口配置
-	windowInfo        map[int32]*LCLBrowserWindow //窗口信息集合
-	windowSerial      int32                       //窗口序号
+	mainBrowserWindow   *browserWindow              //主浏览器窗口
+	mainVFBrowserWindow *vfBrowserWindow            //主浏览器窗口
+	popupWindow         *LCLBrowserWindow           //弹出的子窗口
+	browserEvent        *BrowserEvent               //浏览器全局事件
+	Config              *browserConfig              //浏览器和窗口配置
+	windowInfo          map[int32]*LCLBrowserWindow //窗口信息集合
+	windowSerial        int32                       //窗口序号
 }
 
 // 浏览器全局事件监听-扩展
@@ -81,6 +82,12 @@ type BrowserEvent struct {
 
 type browserWindow struct {
 	LCLBrowserWindow
+	isFirstActivate bool
+	tray            ITray
+}
+
+type vfBrowserWindow struct {
+	ViewsFrameworkBrowserWindow
 	isFirstActivate bool
 	tray            ITray
 }
