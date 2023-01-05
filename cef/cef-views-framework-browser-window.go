@@ -110,7 +110,6 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		vFrameBrowserWindow.registerPopupEvent()
 		vFrameBrowserWindow.registerDefaultEvent()
 		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			fmt.Println("OnCanClose")
 			*aResult = true
 			app.QuitMessageLoop()
 		})
