@@ -16,7 +16,6 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
-	"sync"
 )
 
 var (
@@ -33,7 +32,6 @@ var (
 		},
 		windowInfo:   make(map[int32]*LCLBrowserWindow),
 		windowSerial: 1,
-		uiLock:       new(sync.Mutex),
 	}
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
@@ -57,7 +55,6 @@ type browser struct {
 	Config            *browserConfig              //浏览器和窗口配置
 	windowInfo        map[int32]*LCLBrowserWindow //窗口信息集合
 	windowSerial      int32                       //窗口序号
-	uiLock            *sync.Mutex
 }
 
 // 浏览器全局事件监听

@@ -41,8 +41,6 @@ func viewSourceAfterCreate(browser *ICefBrowser) bool {
 }
 
 func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
-	BrowserWindow.uiLock.Lock()
-	defer BrowserWindow.uiLock.Unlock()
 	var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
 	QueueAsyncCall(func(id int) {
 		var m = BrowserWindow.popupWindow

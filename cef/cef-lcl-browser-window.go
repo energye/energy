@@ -534,8 +534,6 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		defer func() {
 			if result {
 				QueueAsyncCall(func(id int) {
-					BrowserWindow.uiLock.Lock()
-					defer BrowserWindow.uiLock.Unlock()
 					winProperty := BrowserWindow.popupWindow.windowProperty
 					if winProperty != nil {
 						if winProperty.IsShowModel {
