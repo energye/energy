@@ -48,7 +48,6 @@ func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 			m.SetShowInTaskBar()
 			m.SetWindowType(WT_VIEW_SOURCE)
 			m.ChromiumCreate(nil, viewSourceUrl)
-			m.chromium.EnableIndependentEvent()
 			m.putChromiumWindowInfo()
 			m.defaultChromiumEvent()
 			m.SetWidth(1024)

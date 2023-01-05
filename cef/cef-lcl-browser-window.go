@@ -67,7 +67,10 @@ func NewBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty
 	window.ChromiumCreate(config, windowProperty.Url)
 	window.putChromiumWindowInfo()
 	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
-	window.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool { return false })
+	window.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
+		chromiumOnBeforeBrowser(browser, frame)
+		return false
+	})
 	return window
 }
 
@@ -527,7 +530,6 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		}
 		BrowserWindow.popupWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePopupInfo.TargetUrl)
-		BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
 		BrowserWindow.popupWindow.putChromiumWindowInfo()
 		BrowserWindow.popupWindow.defaultChromiumEvent()
 		var result = false

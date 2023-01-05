@@ -12,7 +12,6 @@ import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/logger"
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -68,11 +67,11 @@ func init() {
 		return lcl.AsObject(senderPtr), browser, frame, request, response
 	}
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("CEF Events Error:", err)
-			}
-		}()
+		//defer func() {
+		//	if err := recover(); err != nil {
+		//		logger.Error("CEF Events Error:", err)
+		//	}
+		//}()
 		var (
 			instance unsafe.Pointer
 		)

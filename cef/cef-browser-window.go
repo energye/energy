@@ -36,7 +36,7 @@ var (
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
 
-type browserProcessStartAfterCallbackFunc func(b bool)
+type browserProcessStartAfterCallbackFunc func(success bool)
 
 // SetBrowserProcessStartAfterCallback 主进程启动之后回调函数
 func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallbackFunc) {

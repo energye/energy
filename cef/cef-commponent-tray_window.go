@@ -213,8 +213,6 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
 	m.chromium = NewChromium(m.windowParent, nil)
-	//打开独立出事件
-	m.chromium.EnableIndependentEvent()
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		model.Clear()
 	})

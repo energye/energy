@@ -133,7 +133,8 @@ func AppBrowserInit() {
 		var browserWindow *cef.LCLBrowserWindow
 		event.On("js-new-browser-window", func(context ipc.IIPCContext) {
 			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
-			if browserWindow == nil {
+
+			if browserWindow == nil || browserWindow.IsClosing() {
 				wp := cef.NewWindowProperty()
 				wp.Url = "https://www.baidu.com"
 				wp.Title = "Browser新窗口标题"
@@ -141,6 +142,10 @@ func AppBrowserInit() {
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)
 				browserWindow.SetShowInTaskBar()
+				browserWindow.EnableDefaultClose()
+				browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
+					fmt.Println(wp.Title, title)
+				})
 			}
 			fmt.Println("\t|--", browserWindow.IsClosing())
 			cef.QueueAsyncCall(func(id int) {

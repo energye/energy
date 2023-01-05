@@ -32,27 +32,13 @@ type ExecuteJS struct {
 type IChromium interface {
 	IChromiumProc
 	IChromiumEvent
-	//启用独立事件 默认禁用, 启用后所有默认事件行为将不在主窗口chromium event执行
-	//
-	//启用后注册的事件才生效
-	//
-	//只对当前chromium对象有效
-	EnableIndependentEvent()
-
-	//禁用独立事件 默认禁用, 禁用后所有默认事件行为在主窗口chromium event执行
-	//
-	//禁用后注册的事件才生效
-	//
-	//只对当前chromium对象有效
-	DisableIndependentEvent()
 }
 
 type TCEFChromium struct {
 	*lcl.TComponent
-	instance         unsafe.Pointer
-	cfg              *tCefChromiumConfig
-	independentEvent bool
-	emitLock         *sync.Mutex
+	instance unsafe.Pointer
+	cfg      *tCefChromiumConfig
+	emitLock *sync.Mutex
 }
 
 func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
@@ -76,16 +62,6 @@ func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
 		browseId: browserId,
 		chromium: m.instance,
 	}
-}
-
-//启用独立事件 默认 false
-func (m *TCEFChromium) EnableIndependentEvent() {
-	m.independentEvent = true
-}
-
-//禁用独立事件 默认 false
-func (m *TCEFChromium) DisableIndependentEvent() {
-	m.independentEvent = false
 }
 
 func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList ipc.IArgumentList) ProcessMessageError {
