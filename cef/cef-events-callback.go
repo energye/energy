@@ -37,9 +37,13 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 		}
 	}
 	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-	QueueAsyncCall(func(id int) {
-		BrowserWindow.createNextPopupWindow()
-	})
+	if IsMessageLoop {
+
+	} else {
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.createNextPopupWindow()
+		})
+	}
 }
 
 func chromiumOnBeforeClose(browser *ICefBrowser) {

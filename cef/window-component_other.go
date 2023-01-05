@@ -12,6 +12,6 @@
 package cef
 
 // 非windows系统不支持CefTray
-func (m *TCefWindowInfo) NewCefTray(width, height int32, url string) ITray {
+func (m *LCLBrowserWindow) NewCefTray(width, height int32, url string) ITray {
 	return nil
 }

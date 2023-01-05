@@ -34,7 +34,7 @@ type ViewsFrameworkBrowserWindow struct {
 //创建 ViewsFrameworkBrowserWindow 窗口
 func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
-		chromiumConfig = BrowserWindow.Config.chromiumConfig
+		chromiumConfig = BrowserWindow.Config.ChromiumConfig()
 	}
 	component := lcl.NewComponent(nil)
 	m := &ViewsFrameworkBrowserWindow{
@@ -118,6 +118,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			BrowserWindow.Config.viewsFrameBrowserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
 		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
+		fmt.Println("SetOnContextInitialized IsMessageLoop:", consts.IsMessageLoop)
 	})
 }
 
@@ -127,7 +128,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
-		fmt.Println("BrowserWindow-beforePopupInfo", beforePopupInfo.TargetUrl)
+		fmt.Println("BrowserWindow-TargetUrl:", beforePopupInfo.TargetUrl, "IsMessageLoop:", consts.IsMessageLoop)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = !bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
@@ -151,7 +152,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 				Width:        BrowserWindow.Config.WindowProperty.Width,
 				Height:       BrowserWindow.Config.WindowProperty.Height,
 			}
-			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.chromiumConfig, wp)
+			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp)
 			vFrameBrowserWindow.registerPopupEvent()
 			vFrameBrowserWindow.registerDefaultEvent()
 			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
