@@ -110,12 +110,16 @@ func (m *Tray) SetHint(value string) {
 }
 
 func (m *Tray) SetTitle(title string) {
+	m.trayIcon.SetHint(title)
 }
 
 //设置托盘气泡
-//title 气泡标题
-//content 气泡内容
-//timeout 显示时间(毫秒)
+//
+//title	气泡标题
+//
+//content	气泡内容
+//
+//timeout	显示时间(毫秒)
 func (m *Tray) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)

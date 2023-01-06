@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -40,7 +41,7 @@ func main() {
 			popupWindow.SetCenterWindow(true)
 			return false
 		})
-		cefTray(window)
+		tray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -94,5 +95,32 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 		})
 		tray.Hide()
 	})
+	//托盘 end
+}
+
+// 托盘 系统原生 windows linux macos
+func tray(browserWindow cef.IBrowserWindow) {
+	//托盘 windows linux macos 系统托盘
+	newTray := browserWindow.NewTray()
+	tray := newTray.Tray()
+	tray.SetIcon("resources/icon.ico")
+	tray.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) bool {
+		fmt.Println("SetOnMouseUp", button, shift, x, y)
+		return false
+	})
+	menu1 := tray.AddMenuItem("父菜单", nil)
+	menu1.Add(tray.NewMenuItem("子菜单", func(object lcl.IObject) {
+		lcl.ShowMessage("子菜单点击 提示消息")
+	}))
+	tray.AddMenuItem("显示气泡", func(object lcl.IObject) {
+		newTray.ShowBalloon()
+	})
+	tray.AddMenuItem("显示/隐藏", func(object lcl.IObject) {
+	})
+	tray.AddMenuItem("退出", func(object lcl.IObject) {
+		browserWindow.CloseBrowserWindow()
+	})
+	//linux下有些问题
+	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	//托盘 end
 }
