@@ -29,7 +29,7 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 		}
 	}
 }
-func createBrowserDevTools(browser *ICefBrowser, browserWinInfo *LCLBrowserWindow) {
+func createLCLBrowserDevTools(browser *ICefBrowser, browserWinInfo *LCLBrowserWindow) {
 	QueueAsyncCall(func(id int) {
 		if browserWinInfo.auxTools == nil {
 			browserWinInfo.auxTools = &auxTools{}

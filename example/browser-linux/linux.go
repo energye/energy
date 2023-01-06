@@ -35,8 +35,8 @@ func main() {
 		})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
-			popupWindow.WindowProperty().Url = "https://www.csdn.net/"
-			popupWindow.SetTitle("修改了标题")
+			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
+			popupWindow.SetCenterWindow(true)
 			return false
 		})
 	})

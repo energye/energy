@@ -244,7 +244,9 @@ func (m *ICefBrowser) ViewSource(frame *ICefFrame) {
 //显示开发者工具
 func (m *ICefBrowser) ShowDevTools() {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(m.Identifier()); browserWinInfo != nil {
-		createBrowserDevTools(m, browserWinInfo.AsLCLBrowserWindow().BrowserWindow())
+		if browserWinInfo.IsLCL() {
+			createLCLBrowserDevTools(m, browserWinInfo.AsLCLBrowserWindow().BrowserWindow())
+		}
 	}
 }
 

@@ -76,6 +76,10 @@ type IBrowserWindow interface {
 	IsViewsFramework() bool
 	IsLCL() bool
 	WindowProperty() *WindowProperty
+	SetWidth(value int32)
+	SetHeight(value int32)
+	SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32)
+	SetCenterWindow(value bool)
 }
 
 type ILCLBrowserWindow interface {

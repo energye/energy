@@ -128,11 +128,43 @@ func (m *LCLBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return m
 }
 
+func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
+	if m.TForm == nil {
+		return
+	}
+	if value {
+		m.SetPosition(types.PoDesktopCenter)
+	} else {
+		m.SetPosition(types.PoDesigned)
+	}
+}
+
 func (m *LCLBrowserWindow) SetTitle(title string) {
 	if m.TForm == nil {
 		return
 	}
 	m.TForm.SetCaption(title)
+}
+
+func (m *LCLBrowserWindow) SetWidth(value int32) {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetWidth(value)
+}
+
+func (m *LCLBrowserWindow) SetHeight(value int32) {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetHeight(value)
+}
+
+func (m *LCLBrowserWindow) SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32) {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetBounds(ALeft, ATop, AWidth, AHeight)
 }
 
 func (m *LCLBrowserWindow) getAuxTools() *auxTools {

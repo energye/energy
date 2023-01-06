@@ -53,11 +53,12 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.registerPopupEvent()
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+		fmt.Println("SetOnWindowCreated")
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			m.windowComponent.SetTitle(windowProperty.Title)
 			if windowProperty.CenterWindow {
-				window.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
+				m.windowComponent.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
 				_ = m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
@@ -153,6 +154,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
 		}
 		if !result {
+			vfbw.resetWindowPropertyEvent()
 			vfbw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 			vfbw.windowId = BrowserWindow.GetNextWindowNum()
 			vfbw.putChromiumWindowInfo()
@@ -163,6 +165,19 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		}
 		return result
 	})
+}
+
+func (m *ViewsFrameworkBrowserWindow) resetWindowPropertyEvent() {
+	if m.WindowProperty().CenterWindow {
+		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
+	} else {
+		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+			aResult.X = m.WindowProperty().X
+			aResult.Y = m.WindowProperty().Y
+			aResult.Width = m.WindowProperty().Width
+			aResult.Height = m.WindowProperty().Height
+		})
+	}
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
@@ -284,8 +299,27 @@ func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return nil
 }
 
+func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
+	m.WindowProperty().CenterWindow = value
+}
+
 func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
 	m.WindowProperty().Title = title
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetWidth(value int32) {
+	m.WindowProperty().Width = value
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetHeight(value int32) {
+	m.WindowProperty().Height = value
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32) {
+	m.WindowProperty().X = ALeft
+	m.WindowProperty().Y = ATop
+	m.WindowProperty().Width = AWidth
+	m.WindowProperty().Height = AHeight
 }
 
 func (m *ViewsFrameworkBrowserWindow) getAuxTools() *auxTools {

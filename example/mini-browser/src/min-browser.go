@@ -107,7 +107,7 @@ func AppBrowserInit() {
 			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
 				newForm = cef.NewLCLWindow(nil)
-				newForm.SetCaption("新窗口标题")
+				newForm.SetTitle("新窗口标题")
 				btn := lcl.NewButton(newForm)
 				btn.SetParent(newForm)
 				btn.SetCaption("点击我有提示")
@@ -284,7 +284,7 @@ func AppBrowserInit() {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: "+beforePopupInfo.TargetUrl, "isLCL:", popupWindow.IsLCL())
 			window := popupWindow.AsLCLBrowserWindow().BrowserWindow()
-			window.SetCaption("改变了标题 - " + beforePopupInfo.TargetUrl)
+			window.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
 			//popupWindow.Form.SetBorderStyle(types.BsNone)
 			//popupWindow.Form.SetFormStyle(types.FsNormal)
 			window.SetWidth(800)
