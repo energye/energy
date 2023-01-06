@@ -23,7 +23,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	cef.BrowserWindow.SetViewFrameBrowserInit(func(event *cef.BrowserEvent, window *cef.ViewsFrameworkBrowserWindow) {
+	cef.BrowserWindow.SetViewFrameBrowserInit(func(event *cef.BrowserEvent, window cef.IViewsFrameworkBrowserWindow) {
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Printf("%+v\n", window)
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {

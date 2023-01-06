@@ -22,9 +22,9 @@ const (
 
 func updateBrowserDevTools(browser *ICefBrowser, title string) {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil {
-		if browserWinInfo.auxTools != nil && browserWinInfo.auxTools.devToolsWindow != nil {
+		if browserWinInfo.getAuxTools() != nil && browserWinInfo.getAuxTools().devToolsWindow != nil {
 			QueueAsyncCall(func(id int) {
-				browserWinInfo.auxTools.devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
+				browserWinInfo.getAuxTools().devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
 			})
 		}
 	}

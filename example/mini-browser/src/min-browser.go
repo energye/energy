@@ -142,7 +142,7 @@ func AppBrowserInit() {
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)
 				browserWindow.SetShowInTaskBar()
-				browserWindow.EnableDefaultClose()
+				browserWindow.EnableDefaultCloseEvent()
 				browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 					fmt.Println(wp.Title, title)
 				})
@@ -180,13 +180,13 @@ func AppBrowserInit() {
 	})
 
 	//主窗口初始化回调函数
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.LCLBrowserWindow) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.ILCLBrowserWindow) {
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
 		fmt.Println("主窗口初始化回调函数")
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
-		browserWindow.SetCaption("这里设置应用标题")
+		browserWindow.SetTitle("这里设置应用标题")
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		//browserWindow.SetBorderStyle(types.BsSingle)
@@ -200,16 +200,16 @@ func AppBrowserInit() {
 		//browserWindow.Window.Constraints().SetMinWidth(300)
 		//browserWindow.Window.Constraints().SetMaxWidth(1600)
 		//browserWindow.Window.Constraints().SetMaxHeight(900)
-		browserWindow.Constraints().SetOnChange(func(sender lcl.IObject) {
+		browserWindow.BrowserWindow().Constraints().SetOnChange(func(sender lcl.IObject) {
 			fmt.Println("browserWindow SetOnChange")
 		})
 		//添加事件，add不会覆盖默认的事件 set会覆盖默认的事件
-		browserWindow.AddOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
+		browserWindow.BrowserWindow().AddOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 			fmt.Println("添加onclose事件")
 			return false
 		})
 		//窗口大小改变后触发
-		browserWindow.AddOnResize(func(sender lcl.IObject) bool {
+		browserWindow.BrowserWindow().AddOnResize(func(sender lcl.IObject) bool {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 			if browserWindow.Browser() != nil {
 				var target = &cef.EmitTarget{
@@ -217,10 +217,10 @@ func AppBrowserInit() {
 					FrameId:  browserWindow.Browser().MainFrame().Id,
 				}
 				var argumentList = ipc.NewArgumentList()
-				argumentList.SetInt32(0, browserWindow.Left())
-				argumentList.SetInt32(1, browserWindow.Top())
-				argumentList.SetInt32(2, browserWindow.Width())
-				argumentList.SetInt32(3, browserWindow.Height())
+				argumentList.SetInt32(0, browserWindow.BrowserWindow().Left())
+				argumentList.SetInt32(1, browserWindow.BrowserWindow().Top())
+				argumentList.SetInt32(2, browserWindow.BrowserWindow().Width())
+				argumentList.SetInt32(3, browserWindow.BrowserWindow().Height())
 				browserWindow.Chromium().Emit("window-resize", argumentList, target)
 				browserWindow.Chromium().EmitAndCallback("window-resize", argumentList, target, func(context ipc.IIPCContext) {
 					fmt.Println("EmitAndCallback AddOnResize")
@@ -232,7 +232,7 @@ func AppBrowserInit() {
 			return false
 		})
 		//windows下可以使用这个函数，实时触发
-		browserWindow.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+		browserWindow.BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 			if browserWindow.Browser() != nil {
 				var target = &cef.EmitTarget{
@@ -240,10 +240,10 @@ func AppBrowserInit() {
 					FrameId:  browserWindow.Browser().MainFrame().Id,
 				}
 				var argumentList = ipc.NewArgumentList()
-				argumentList.SetInt32(0, browserWindow.Left())
-				argumentList.SetInt32(1, browserWindow.Top())
-				argumentList.SetInt32(2, browserWindow.Width())
-				argumentList.SetInt32(3, browserWindow.Height())
+				argumentList.SetInt32(0, browserWindow.BrowserWindow().Left())
+				argumentList.SetInt32(1, browserWindow.BrowserWindow().Top())
+				argumentList.SetInt32(2, browserWindow.BrowserWindow().Width())
+				argumentList.SetInt32(3, browserWindow.BrowserWindow().Height())
 				browserWindow.Chromium().Emit("window-resize", argumentList, target)
 				//使用EmitAndReturn函数会锁死
 				//	browserWindow.Chromium.EmitAndCallback("window-resize", argumentList, target, func(context cef.IIPCContext) {
@@ -252,11 +252,11 @@ func AppBrowserInit() {
 			}
 		})
 		//自定义browser窗体
-		addressBar(browserWindow)
+		addressBar(browserWindow.BrowserWindow())
 		//下载文件
 		//linux系统弹出保存对话框不启作用
 		//自己调用系统的保存对话框获得保存路径
-		dlSave := lcl.NewSaveDialog(browserWindow)
+		dlSave := lcl.NewSaveDialog(browserWindow.BrowserWindow())
 		dlSave.SetTitle("保存对话框标题")
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
@@ -380,13 +380,13 @@ func AppBrowserInit() {
 		})
 	})
 	//添加子窗口初始化
-	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.LCLBrowserWindow) {
+	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.ILCLBrowserWindow) {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
-			cefTray(browserWindow)
+			cefTray(browserWindow.BrowserWindow())
 		} else {
-			tray(browserWindow)
+			tray(browserWindow.BrowserWindow())
 		}
 	})
 }

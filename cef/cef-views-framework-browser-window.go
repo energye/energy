@@ -92,18 +92,6 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	return m
 }
 
-func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
-	return m.component
-}
-
-func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
-	return m.windowComponent
-}
-
-func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
-	return m.browserViewComponent
-}
-
 //ViewsFrameworkBrowserWindow 主窗口初始化
 func (m *browser) appContextInitialized(app *TCEFApplication) {
 	if !common.Args.IsMain() {
@@ -264,4 +252,152 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
 	})
+}
+
+func (m *ViewsFrameworkBrowserWindow) BrowserWindow() *ViewsFrameworkBrowserWindow {
+	return m
+}
+
+func (m *ViewsFrameworkBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
+	return m
+}
+
+func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
+	return nil
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
+	m.WindowComponent().SetTitle(title)
+}
+
+func (m *ViewsFrameworkBrowserWindow) getAuxTools() *auxTools {
+	return m.auxTools
+}
+
+func (m *ViewsFrameworkBrowserWindow) createAuxTools() {
+	if m.auxTools == nil {
+		m.auxTools = &auxTools{}
+	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) Browser() *ICefBrowser {
+	return m.browser
+}
+
+func (m *ViewsFrameworkBrowserWindow) Frames() TCEFFrame {
+	return m.frames
+}
+
+func (m *ViewsFrameworkBrowserWindow) createFrames() {
+	if m.frames == nil {
+		m.frames = make(TCEFFrame)
+	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) setBrowser(browser *ICefBrowser) {
+	m.browser = browser
+}
+
+func (m *ViewsFrameworkBrowserWindow) addFrame(frame *ICefFrame) {
+	m.createFrames()
+	m.frames[frame.Id] = frame
+}
+
+func (m *ViewsFrameworkBrowserWindow) Chromium() IChromium {
+	return m.chromium
+}
+
+func (m *ViewsFrameworkBrowserWindow) Id() int32 {
+	return m.windowId
+}
+
+func (m *ViewsFrameworkBrowserWindow) Show() {
+	m.WindowComponent().Show()
+}
+
+func (m *ViewsFrameworkBrowserWindow) Hide() {
+	m.WindowComponent().Hide()
+}
+
+func (m *ViewsFrameworkBrowserWindow) Close() {
+	m.WindowComponent().Close()
+}
+
+func (m *ViewsFrameworkBrowserWindow) Maximize() {
+	m.WindowComponent().Maximize()
+}
+
+func (m *ViewsFrameworkBrowserWindow) Minimize() {
+	m.WindowComponent().Minimize()
+}
+
+func (m *ViewsFrameworkBrowserWindow) Restore() {
+	m.WindowComponent().Restore()
+}
+
+func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
+	m.chromium.CloseBrowser(true)
+}
+
+func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
+	m.WindowComponent().CreateTopLevelWindow()
+}
+
+func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
+	m.WindowComponent().CenterWindow(size)
+}
+
+//返回窗口关闭状态
+func (m *ViewsFrameworkBrowserWindow) IsClosing() bool {
+	return m.isClosing
+}
+
+// 返回窗口类型
+func (m *ViewsFrameworkBrowserWindow) WindowType() consts.WINDOW_TYPE {
+	return m.windowType
+}
+
+// 设置窗口类型
+func (m *ViewsFrameworkBrowserWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
+	m.windowType = windowType
+}
+
+//禁用最小化按钮
+func (m *ViewsFrameworkBrowserWindow) DisableMinimize() {
+	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = false
+	})
+}
+
+//禁用最大化按钮
+func (m *ViewsFrameworkBrowserWindow) DisableMaximize() {
+	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = false
+	})
+}
+
+//启用最小化按钮
+func (m *ViewsFrameworkBrowserWindow) EnableMinimize() {
+	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = true
+	})
+}
+
+//启用最大化按钮
+func (m *ViewsFrameworkBrowserWindow) EnableMaximize() {
+	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = true
+	})
+}
+
+func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
+	return m.component
+}
+
+func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
+	return m.windowComponent
+}
+
+func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
+	return m.browserViewComponent
 }

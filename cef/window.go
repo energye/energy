@@ -9,6 +9,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -90,20 +91,56 @@ func NewWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLBrow
 }
 
 type IBrowserWindow interface {
+	Id() int32
 	Show()
 	Hide()
-	Close()
+	Maximize()
+	Minimize()
+	CloseBrowserWindow()
+	WindowType() consts.WINDOW_TYPE
+	SetWindowType(windowType consts.WINDOW_TYPE)
+	Browser() *ICefBrowser
+	Chromium() IChromium
+	DisableMaximize()
+	DisableMinimize()
+	EnableMaximize()
+	EnableMinimize()
+	IsClosing() bool
+	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow
+	AsLCLBrowserWindow() ILCLBrowserWindow
+	Frames() TCEFFrame
+	addFrame(frame *ICefFrame)
+	setBrowser(browser *ICefBrowser)
+	createAuxTools()
+	getAuxTools() *auxTools
+	SetTitle(title string)
 }
 
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	Id() int32
+	BrowserWindow() *LCLBrowserWindow
+	EnableDefaultCloseEvent()
+	EnableAllDefaultEvent()
+	SetDefaultInTaskBar()
+	SetShowInTaskBar()
+	SetNotInTaskBar()
+	WindowParent() ITCefWindowParent
+	DisableTransparent()
+	EnableTransparent(value uint8)
+	DisableSystemMenu()
+	DisableHelp()
+	EnableSystemMenu()
+	EnableHelp()
 }
 
 type IViewsFrameworkBrowserWindow interface {
 	IBrowserWindow
+	BrowserWindow() *ViewsFrameworkBrowserWindow
 	CreateTopLevelWindow()
 	CenterWindow(size *TCefSize)
+	Component() lcl.IComponent
+	WindowComponent() *TCEFWindowComponent
+	BrowserViewComponent() *TCEFBrowserViewComponent
 }
 
 //创建一个 窗口默认属性

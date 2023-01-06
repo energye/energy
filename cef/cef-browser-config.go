@@ -12,9 +12,9 @@ import (
 	"github.com/energye/energy/common"
 )
 
-type viewsFrameBrowserWindowOnEventCallback func(event *BrowserEvent, window *ViewsFrameworkBrowserWindow)
-type browserWindowOnEventCallback func(event *BrowserEvent, window *LCLBrowserWindow)
-type browserWindowAfterOnEventCallback func(window *LCLBrowserWindow)
+type viewsFrameBrowserWindowOnEventCallback func(event *BrowserEvent, window IViewsFrameworkBrowserWindow)
+type browserWindowOnEventCallback func(event *BrowserEvent, window ILCLBrowserWindow)
+type browserWindowAfterOnEventCallback func(window ILCLBrowserWindow)
 
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {

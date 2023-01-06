@@ -30,7 +30,7 @@ var (
 		Config: &browserConfig{
 			WindowProperty: *NewWindowProperty(),
 		},
-		windowInfo:   make(map[int32]*LCLBrowserWindow),
+		windowInfo:   make(map[int32]IBrowserWindow),
 		windowSerial: 1,
 	}
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
@@ -49,13 +49,13 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 
 // 浏览器包装结构体
 type browser struct {
-	mainBrowserWindow   *browserWindow              //主浏览器窗口
-	mainVFBrowserWindow *vfBrowserWindow            //主浏览器窗口
-	popupWindow         *LCLBrowserWindow           //弹出的子窗口
-	browserEvent        *BrowserEvent               //浏览器全局事件
-	Config              *browserConfig              //浏览器和窗口配置
-	windowInfo          map[int32]*LCLBrowserWindow //窗口信息集合
-	windowSerial        int32                       //窗口序号
+	mainBrowserWindow   *browserWindow               //主浏览器窗口
+	mainVFBrowserWindow IViewsFrameworkBrowserWindow //主浏览器窗口
+	popupWindow         *LCLBrowserWindow            //弹出的子窗口
+	browserEvent        *BrowserEvent                //浏览器全局事件
+	Config              *browserConfig               //浏览器和窗口配置
+	windowInfo          map[int32]IBrowserWindow     //窗口信息集合
+	windowSerial        int32                        //窗口序号
 }
 
 // 浏览器全局事件监听-扩展
@@ -83,13 +83,6 @@ type BrowserEvent struct {
 type browserWindow struct {
 	LCLBrowserWindow
 	isFirstActivate bool
-	tray            ITray
-}
-
-type vfBrowserWindow struct {
-	ViewsFrameworkBrowserWindow
-	isFirstActivate bool
-	tray            ITray
 }
 
 // 运行应用
@@ -183,7 +176,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 }
 
 func (m *browser) MainWindow() *LCLBrowserWindow {
-	return &m.mainBrowserWindow.LCLBrowserWindow
+	return m.mainBrowserWindow.BrowserWindow()
 }
 
 // 基于CEF views framework窗口 - 主窗口和chromium初始化时回调
@@ -255,18 +248,18 @@ func (m *browser) createNextPopupWindow() {
 }
 
 // 拿到窗口信息
-func (m *browser) GetWindowInfo(browserId int32) *LCLBrowserWindow {
+func (m *browser) GetWindowInfo(browserId int32) IBrowserWindow {
 	if winInfo, ok := m.windowInfo[browserId]; ok {
 		return winInfo
 	}
 	return nil
 }
 
-func (m *browser) GetWindowsInfo() map[int32]*LCLBrowserWindow {
+func (m *browser) GetWindowsInfo() map[int32]IBrowserWindow {
 	return m.windowInfo
 }
 
-func (m *browser) putWindowInfo(browserId int32, windowInfo *LCLBrowserWindow) {
+func (m *browser) putWindowInfo(browserId int32, windowInfo IBrowserWindow) {
 	m.windowInfo[browserId] = windowInfo
 }
 
@@ -277,38 +270,35 @@ func (m *browser) removeWindowInfo(browseId int32) {
 
 func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.browser
+		return winInfo.Browser()
 	}
 	return nil
 }
 
 func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
 	if winInfo, ok := m.windowInfo[browser.Identifier()]; ok {
-		if winInfo.frames == nil {
-			winInfo.frames = make(TCEFFrame)
-		}
-		winInfo.browser = browser
-		winInfo.frames[frame.Id] = frame
+		winInfo.setBrowser(browser)
+		winInfo.addFrame(frame)
 	}
 }
 
 func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.frames
+		return winInfo.Frames()
 	}
 	return nil
 }
 
 func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.frames[frameId]
+		return winInfo.Frames()[frameId]
 	}
 	return nil
 }
 
 func (m *browser) RemoveFrame(browseId int32, frameId int64) {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
-		delete(winInfo.frames, frameId)
+		delete(winInfo.Frames(), frameId)
 	}
 }
 
@@ -321,9 +311,9 @@ func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
 
 func (m *browser) removeNoValidFrames() {
 	for _, winInfo := range m.windowInfo {
-		for _, frm := range winInfo.frames {
+		for _, frm := range winInfo.Frames() {
 			if !frm.IsValid() {
-				delete(winInfo.frames, frm.Id)
+				delete(winInfo.Frames(), frm.Id)
 			}
 		}
 	}

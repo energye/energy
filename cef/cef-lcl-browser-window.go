@@ -54,6 +54,7 @@ type LCLBrowserWindow struct {
 	isChromiumCreate bool               //是否创建完成 Chromium
 	frames           TCEFFrame          //当前浏览器下的所有frame
 	auxTools         *auxTools          //辅助工具
+	tray             ITray              //
 }
 
 //创建一个带有 chromium 窗口
@@ -74,8 +75,56 @@ func NewBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty
 	return window
 }
 
+func (m *LCLBrowserWindow) BrowserWindow() *LCLBrowserWindow {
+	return m
+}
+
+func (m *LCLBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
+	return nil
+}
+
+func (m *LCLBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
+	return m
+}
+
+func (m *LCLBrowserWindow) SetTitle(title string) {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetCaption(title)
+}
+
+func (m *LCLBrowserWindow) getAuxTools() *auxTools {
+	return m.auxTools
+}
+
+func (m *LCLBrowserWindow) createAuxTools() {
+	if m.auxTools == nil {
+		m.auxTools = &auxTools{}
+	}
+}
+
 func (m *LCLBrowserWindow) Browser() *ICefBrowser {
 	return m.browser
+}
+
+func (m *LCLBrowserWindow) setBrowser(browser *ICefBrowser) {
+	m.browser = browser
+}
+
+func (m *LCLBrowserWindow) addFrame(frame *ICefFrame) {
+	m.createFrames()
+	m.frames[frame.Id] = frame
+}
+
+func (m *LCLBrowserWindow) Frames() TCEFFrame {
+	return m.frames
+}
+
+func (m *LCLBrowserWindow) createFrames() {
+	if m.frames == nil {
+		m.frames = make(TCEFFrame)
+	}
 }
 
 func (m *LCLBrowserWindow) Chromium() IChromium {
@@ -150,6 +199,10 @@ func (m *LCLBrowserWindow) WindowParent() ITCefWindowParent {
 //返回窗口关闭状态
 func (m *LCLBrowserWindow) IsClosing() bool {
 	return m.isClosing
+}
+
+func (m *LCLBrowserWindow) ITray() {
+
 }
 
 // 设置窗口类型
@@ -243,7 +296,7 @@ func (m *LCLBrowserWindow) defaultWindowCloseEvent() {
 }
 
 //启用默认关闭事件行为-该窗口将被关闭
-func (m *LCLBrowserWindow) EnableDefaultClose() {
+func (m *LCLBrowserWindow) EnableDefaultCloseEvent() {
 	m.defaultWindowCloseEvent()
 	m.registerDefaultChromiumCloseEvent()
 }

@@ -28,11 +28,11 @@ func MainBrowserWindow() {
 	config.SetEnableDevTools(true)
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.LCLBrowserWindow) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.ILCLBrowserWindow) {
 		//设置应用图标 这里加载的图标是内置到执行程序里的资源文件
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
 		//在窗体初始化时创建窗口内的组件
-		back, forward, stop, refresh, progressLabel, addr := controlUI(browserWindow)
+		back, forward, stop, refresh, progressLabel, addr := controlUI(browserWindow.BrowserWindow())
 		//页面加载处理进度
 		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 			//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
@@ -59,7 +59,7 @@ func MainBrowserWindow() {
 		})
 	})
 	//创建窗口之后对对主窗口的属性、组件或子窗口的创建
-	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow *cef.LCLBrowserWindow) {
+	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.ILCLBrowserWindow) {
 		fmt.Println("SetBrowserInitAfter")
 	})
 }
