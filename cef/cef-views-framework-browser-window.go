@@ -35,6 +35,7 @@ type ViewsFrameworkBrowserWindow struct {
 	windowProperty       *WindowProperty           //窗口属性
 	frames               TCEFFrame                 //当前浏览器下的所有frame
 	auxTools             *auxTools                 //辅助工具
+	tray                 ITray                     //托盘
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口

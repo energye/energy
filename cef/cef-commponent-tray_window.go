@@ -24,7 +24,7 @@ import (
 //Cef托盘
 type tCefTrayForm struct {
 	*lcl.TForm
-	owner        lcl.IWinControl
+	owner        lcl.IComponent
 	trayIcon     *lcl.TTrayIcon
 	chromium     IChromium
 	windowParent ITCefWindowParent
@@ -34,7 +34,7 @@ type tCefTrayForm struct {
 	url          string
 }
 
-func newCefTray(owner lcl.IWinControl, width, height int32, url string) *tCefTrayForm {
+func newCefTray(owner lcl.IComponent, width, height int32, url string) *tCefTrayForm {
 	var trayForm *tCefTrayForm
 	lcl.Application.CreateForm(&trayForm)
 	trayForm.trayIcon = lcl.NewTrayIcon(owner)

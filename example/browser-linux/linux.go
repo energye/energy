@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -39,6 +40,7 @@ func main() {
 			popupWindow.SetCenterWindow(true)
 			return false
 		})
+		cefTray(window.AsViewsFrameworkBrowserWindow().BrowserWindow())
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -54,4 +56,43 @@ func main() {
 	})
 	//运行应用
 	cef.Run(cefApp)
+}
+
+// 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
+func cefTray(browserWindow cef.IBrowserWindow) {
+	var url = "http://localhost:22022/min-browser-tray.html"
+	tray := browserWindow.NewCefTray(250, 300, url)
+	tray.SetTitle("任务管理器里显示的标题")
+	tray.SetHint("这里是文字\n文字啊")
+	tray.SetIcon("resources/icon.ico")
+	tray.SetOnClick(func(sender lcl.IObject) {
+		//browserWindow.SetVisible(!browserWindow.Visible())
+	})
+	tray.SetBalloon("气泡标题", "气泡内容", 2000)
+	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
+		fmt.Println("tray-show-balloon")
+		tray.ShowBalloon()
+		tray.Hide()
+	})
+	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
+		//vb := !browserWindow.Visible()
+		//browserWindow.SetVisible(vb)
+		//if vb {
+		//	if browserWindow.WindowState() == types.WsMinimized {
+		//		browserWindow.SetWindowState(types.WsNormal)
+		//	}
+		//	browserWindow.Focused()
+		//}
+		tray.Hide()
+	})
+	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
+		browserWindow.CloseBrowserWindow()
+	})
+	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
+		cef.QueueAsyncCall(func(id int) {
+			lcl.ShowMessage("tray-show-message-box 提示消息")
+		})
+		tray.Hide()
+	})
+	//托盘 end
 }

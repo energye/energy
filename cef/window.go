@@ -80,6 +80,8 @@ type IBrowserWindow interface {
 	SetHeight(value int32)
 	SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32)
 	SetCenterWindow(value bool)
+	NewCefTray(width, height int32, url string) ITray
+	NewTray() ITray
 }
 
 type ILCLBrowserWindow interface {

@@ -21,3 +21,14 @@ func (m *LCLBrowserWindow) NewCefTray(width, height int32, url string) ITray {
 	}
 	return BrowserWindow.mainBrowserWindow.AsLCLBrowserWindow().BrowserWindow().tray
 }
+
+//只适用于windows的无菜单托盘
+func (m *ViewsFrameworkBrowserWindow) NewCefTray(width, height int32, url string) ITray {
+	if m == nil {
+		return nil
+	}
+	if m.tray == nil {
+		//m.tray = newCefTray(m.windowComponent, width, height, url)
+	}
+	return m.tray
+}

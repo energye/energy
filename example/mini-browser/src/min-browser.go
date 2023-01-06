@@ -387,7 +387,7 @@ func AppBrowserInit() {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
-			cefTray(browserWindow.AsLCLBrowserWindow().BrowserWindow())
+			cefTray(browserWindow)
 		} else {
 			tray(browserWindow.AsLCLBrowserWindow().BrowserWindow())
 		}
@@ -395,14 +395,15 @@ func AppBrowserInit() {
 }
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
-func cefTray(browserWindow *cef.LCLBrowserWindow) {
+func cefTray(browserWindow cef.IBrowserWindow) {
+	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIcon("resources/icon.ico")
 	tray.SetOnClick(func(sender lcl.IObject) {
-		browserWindow.SetVisible(!browserWindow.Visible())
+		window.SetVisible(!window.Visible())
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
@@ -411,13 +412,13 @@ func cefTray(browserWindow *cef.LCLBrowserWindow) {
 		tray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
-		vb := !browserWindow.Visible()
-		browserWindow.SetVisible(vb)
+		vb := !window.Visible()
+		window.SetVisible(vb)
 		if vb {
-			if browserWindow.WindowState() == types.WsMinimized {
-				browserWindow.SetWindowState(types.WsNormal)
+			if window.WindowState() == types.WsMinimized {
+				window.SetWindowState(types.WsNormal)
 			}
-			browserWindow.Focused()
+			window.Focused()
 		}
 		tray.Hide()
 	})
@@ -434,7 +435,8 @@ func cefTray(browserWindow *cef.LCLBrowserWindow) {
 }
 
 // 托盘 系统原生 windows linux macos
-func tray(browserWindow *cef.LCLBrowserWindow) {
+func tray(browserWindow cef.IBrowserWindow) {
+	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
 	newTray := browserWindow.NewTray()
 	tray := newTray.Tray()
@@ -447,9 +449,9 @@ func tray(browserWindow *cef.LCLBrowserWindow) {
 		newTray.ShowBalloon()
 	})
 	tray.AddMenuItem("显示/隐藏", func(object lcl.IObject) {
-		vis := browserWindow.Visible()
+		vis := window.Visible()
 		cef.BrowserWindow.GetWindowInfo(1)
-		browserWindow.SetVisible(!vis)
+		window.SetVisible(!vis)
 	})
 	tray.AddMenuItem("退出", func(object lcl.IObject) {
 		browserWindow.CloseBrowserWindow()
