@@ -43,7 +43,7 @@ func viewSourceAfterCreate(browser *ICefBrowser) bool {
 func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
 	var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
 	QueueAsyncCall(func(id int) {
-		var m = BrowserWindow.popupWindow
+		var m = BrowserWindow.popupWindow.AsLCLBrowserWindow().BrowserWindow()
 		if m != nil {
 			m.SetShowInTaskBar()
 			m.SetWindowType(WT_VIEW_SOURCE)

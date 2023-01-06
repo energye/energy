@@ -51,7 +51,7 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 type browser struct {
 	mainBrowserWindow   *browserWindow               //主浏览器窗口
 	mainVFBrowserWindow IViewsFrameworkBrowserWindow //主浏览器窗口
-	popupWindow         *LCLBrowserWindow            //弹出的子窗口
+	popupWindow         IBrowserWindow               //弹出的子窗口
 	browserEvent        *BrowserEvent                //浏览器全局事件
 	Config              *browserConfig               //浏览器和窗口配置
 	windowInfo          map[int32]IBrowserWindow     //窗口信息集合
@@ -243,8 +243,8 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextPopupWindow() {
-	m.popupWindow = NewWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow())
-	m.popupWindow.defaultWindowCloseEvent()
+	m.popupWindow = NewLCLWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow())
+	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 
 // 拿到窗口信息

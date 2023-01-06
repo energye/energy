@@ -114,6 +114,14 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 	})
 }
 
+func (m *ViewsFrameworkBrowserWindow) IsViewsFramework() bool {
+	return true
+}
+
+func (m *ViewsFrameworkBrowserWindow) IsLCL() bool {
+	return false
+}
+
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {

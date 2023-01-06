@@ -106,7 +106,7 @@ func AppBrowserInit() {
 		event.On("js-new-window", func(context ipc.IIPCContext) {
 			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
-				newForm = cef.NewWindow(nil)
+				newForm = cef.NewLCLWindow(nil)
 				newForm.SetCaption("新窗口标题")
 				btn := lcl.NewButton(newForm)
 				btn.SetParent(newForm)
@@ -138,7 +138,7 @@ func AppBrowserInit() {
 				wp := cef.NewWindowProperty()
 				wp.Url = "https://www.baidu.com"
 				wp.Title = "Browser新窗口标题"
-				browserWindow = cef.NewBrowserWindow(nil, wp)
+				browserWindow = cef.NewLCLBrowserWindow(nil, wp)
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)
 				browserWindow.SetShowInTaskBar()
@@ -280,17 +280,18 @@ func AppBrowserInit() {
 		event.SetOnFindResult(func(sender lcl.IObject, browser *cef.ICefBrowser, identifier, count int32, selectionRect *cef.TCefRect, activeMatchOrdinal int32, finalUpdate bool) {
 			fmt.Println("OnFindResult:", browser.Identifier(), identifier, count, selectionRect, activeMatchOrdinal, finalUpdate)
 		})
-		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow *cef.LCLBrowserWindow, noJavascriptAccess *bool) bool {
+		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: " + beforePopupInfo.TargetUrl)
-			popupWindow.SetCaption("改变了标题 - " + beforePopupInfo.TargetUrl)
+			window := popupWindow.AsLCLBrowserWindow().BrowserWindow()
+			window.SetCaption("改变了标题 - " + beforePopupInfo.TargetUrl)
 			//popupWindow.Form.SetBorderStyle(types.BsNone)
 			//popupWindow.Form.SetFormStyle(types.FsNormal)
-			popupWindow.SetWidth(800)
-			popupWindow.SetHeight(600)
+			window.SetWidth(800)
+			window.SetHeight(600)
 			//窗口弹出之前可自定义系统组件
 			//窗口大小改变后触发
 			//windows下窗口调整后触发一次
-			popupWindow.AddOnResize(func(sender lcl.IObject) bool {
+			window.AddOnResize(func(sender lcl.IObject) bool {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
 					var target = &cef.EmitTarget{
@@ -298,16 +299,16 @@ func AppBrowserInit() {
 						FrameId:  popupWindow.Browser().MainFrame().Id,
 					}
 					var argumentList = ipc.NewArgumentList()
-					argumentList.SetInt32(0, popupWindow.Left())
-					argumentList.SetInt32(1, popupWindow.Top())
-					argumentList.SetInt32(2, popupWindow.Width())
-					argumentList.SetInt32(3, popupWindow.Height())
+					argumentList.SetInt32(0, window.Left())
+					argumentList.SetInt32(1, window.Top())
+					argumentList.SetInt32(2, window.Width())
+					argumentList.SetInt32(3, window.Height())
 					popupWindow.Chromium().Emit("window-resize", argumentList, target)
 				}
 				return false
 			})
 			//windows下可以使用这个函数，实时触发
-			popupWindow.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+			window.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
 					var target = &cef.EmitTarget{
@@ -315,10 +316,10 @@ func AppBrowserInit() {
 						FrameId:  popupWindow.Browser().MainFrame().Id,
 					}
 					var argumentList = ipc.NewArgumentList()
-					argumentList.SetInt32(0, popupWindow.Left())
-					argumentList.SetInt32(1, popupWindow.Top())
-					argumentList.SetInt32(2, popupWindow.Width())
-					argumentList.SetInt32(3, popupWindow.Height())
+					argumentList.SetInt32(0, window.Left())
+					argumentList.SetInt32(1, window.Top())
+					argumentList.SetInt32(2, window.Width())
+					argumentList.SetInt32(3, window.Height())
 					popupWindow.Chromium().Emit("window-resize", argumentList, target)
 				}
 			})

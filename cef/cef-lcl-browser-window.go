@@ -54,17 +54,17 @@ type LCLBrowserWindow struct {
 	isChromiumCreate bool               //是否创建完成 Chromium
 	frames           TCEFFrame          //当前浏览器下的所有frame
 	auxTools         *auxTools          //辅助工具
-	tray             ITray              //
+	tray             ITray              //托盘
 }
 
-//创建一个带有 chromium 窗口
+//创建一个 LCL 带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty) *LCLBrowserWindow {
+func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty) *LCLBrowserWindow {
 	if windowProperty == nil {
 		windowProperty = NewWindowProperty()
 	}
-	var window = NewWindow(windowProperty)
+	var window = NewLCLWindow(windowProperty)
 	window.ChromiumCreate(config, windowProperty.Url)
 	window.putChromiumWindowInfo()
 	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
@@ -72,6 +72,47 @@ func NewBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty
 		chromiumOnBeforeBrowser(browser, frame)
 		return false
 	})
+	return window
+}
+
+//创建一个LCL window窗口
+func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
+	if windowProperty == nil {
+		windowProperty = NewWindowProperty()
+	}
+	var window = &LCLBrowserWindow{}
+	window.windowProperty = windowProperty
+	if len(owner) > 0 {
+		window.TForm = lcl.NewForm(owner[0])
+	} else {
+		lcl.Application.CreateForm(&window)
+	}
+	window.ParentDoubleBuffered()
+	window.FormCreate()
+	window.SetShowInTaskBar()
+	window.defaultWindowEvent()
+	window.SetCaption(windowProperty.Title)
+	if windowProperty.CenterWindow {
+		window.SetWidth(windowProperty.Width)
+		window.SetHeight(windowProperty.Height)
+		window.SetPosition(types.PoDesktopCenter)
+	} else {
+		window.SetPosition(types.PoDesigned)
+		window.SetBounds(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height)
+	}
+	if windowProperty.IconFS != "" {
+		_ = window.Icon().LoadFromFSFile(windowProperty.IconFS)
+	} else if windowProperty.Icon != "" {
+		window.Icon().LoadFromFile(windowProperty.Icon)
+	}
+	if windowProperty.AlwaysOnTop {
+		window.SetFormStyle(types.FsSystemStayOnTop)
+	}
+	window.EnabledMinimize(windowProperty.CanMinimize)
+	window.EnabledMaximize(windowProperty.CanMaximize)
+	if !windowProperty.CanResize {
+		window.SetBorderStyle(types.BsSingle)
+	}
 	return window
 }
 
@@ -512,6 +553,14 @@ func (m *LCLBrowserWindow) EnableHelp() {
 	m.SetBorderIcons(m.BorderIcons().Include(types.BiHelp))
 }
 
+func (m *LCLBrowserWindow) IsViewsFramework() bool {
+	return false
+}
+
+func (m *LCLBrowserWindow) IsLCL() bool {
+	return true
+}
+
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	var ret bool
 	if m.onShow != nil {
@@ -581,20 +630,21 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		if !api.GoBool(BrowserWindow.Config.ChromiumConfig().enableWindowPopup) {
 			return true
 		}
-		BrowserWindow.popupWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-		BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
-		BrowserWindow.popupWindow.putChromiumWindowInfo()
-		BrowserWindow.popupWindow.defaultChromiumEvent()
+		var bw = BrowserWindow.popupWindow.AsLCLBrowserWindow().BrowserWindow()
+		bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+		bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
+		bw.putChromiumWindowInfo()
+		bw.defaultChromiumEvent()
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
 		}
 		if !result {
 			QueueAsyncCall(func(id int) {
-				winProperty := BrowserWindow.popupWindow.windowProperty
+				winProperty := bw.windowProperty
 				if winProperty != nil {
 					if winProperty.IsShowModel {
-						BrowserWindow.popupWindow.ShowModal()
+						bw.ShowModal()
 						return
 					}
 				}

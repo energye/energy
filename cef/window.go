@@ -49,47 +49,6 @@ type WindowProperty struct {
 	Height       int32              //窗口 高
 }
 
-//创建一个新window窗口
-func NewWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
-	if windowProperty == nil {
-		windowProperty = NewWindowProperty()
-	}
-	var window = &LCLBrowserWindow{}
-	window.windowProperty = windowProperty
-	if len(owner) > 0 {
-		window.TForm = lcl.NewForm(owner[0])
-	} else {
-		lcl.Application.CreateForm(&window)
-	}
-	window.ParentDoubleBuffered()
-	window.FormCreate()
-	window.SetShowInTaskBar()
-	window.defaultWindowEvent()
-	window.SetCaption(windowProperty.Title)
-	if windowProperty.CenterWindow {
-		window.SetWidth(windowProperty.Width)
-		window.SetHeight(windowProperty.Height)
-		window.SetPosition(types.PoDesktopCenter)
-	} else {
-		window.SetPosition(types.PoDesigned)
-		window.SetBounds(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height)
-	}
-	if windowProperty.IconFS != "" {
-		_ = window.Icon().LoadFromFSFile(windowProperty.IconFS)
-	} else if windowProperty.Icon != "" {
-		window.Icon().LoadFromFile(windowProperty.Icon)
-	}
-	if windowProperty.AlwaysOnTop {
-		window.SetFormStyle(types.FsSystemStayOnTop)
-	}
-	window.EnabledMinimize(windowProperty.CanMinimize)
-	window.EnabledMaximize(windowProperty.CanMaximize)
-	if !windowProperty.CanResize {
-		window.SetBorderStyle(types.BsSingle)
-	}
-	return window
-}
-
 type IBrowserWindow interface {
 	Id() int32
 	Show()
@@ -114,6 +73,8 @@ type IBrowserWindow interface {
 	createAuxTools()
 	getAuxTools() *auxTools
 	SetTitle(title string)
+	IsViewsFramework() bool
+	IsLCL() bool
 }
 
 type ILCLBrowserWindow interface {
