@@ -10,11 +10,8 @@ package cef
 
 //适用于 windows linux macos 系统托盘
 func (m *LCLBrowserWindow) NewTray() ITray {
-	return newTray(m)
-}
-
-//适用于 windows linux macos 系统托盘
-func (m *ViewsFrameworkBrowserWindow) NewTray() ITray {
-
+	if m.tray == nil {
+		m.tray = newTray(m.TForm)
+	}
 	return m.tray
 }

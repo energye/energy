@@ -22,7 +22,7 @@ import (
 )
 
 //Cef托盘
-type tCefTrayForm struct {
+type tLCLCefTrayForm struct {
 	*lcl.TForm
 	owner        lcl.IComponent
 	trayIcon     *lcl.TTrayIcon
@@ -34,8 +34,8 @@ type tCefTrayForm struct {
 	url          string
 }
 
-func newCefTray(owner lcl.IComponent, width, height int32, url string) *tCefTrayForm {
-	var trayForm *tCefTrayForm
+func newLCLCefTray(owner lcl.IComponent, width, height int32, url string) *tLCLCefTrayForm {
+	var trayForm *tLCLCefTrayForm
 	lcl.Application.CreateForm(&trayForm)
 	trayForm.trayIcon = lcl.NewTrayIcon(owner)
 	trayForm.trayIcon.SetVisible(true)
@@ -50,26 +50,26 @@ func newCefTray(owner lcl.IComponent, width, height int32, url string) *tCefTray
 	return trayForm
 }
 
-func (m *tCefTrayForm) OnFormCreate(sender lcl.IObject) {
+func (m *tLCLCefTrayForm) OnFormCreate(sender lcl.IObject) {
 	m.SetShowInTaskBar(types.StNever)
 }
 
-func (m *tCefTrayForm) Tray() *Tray {
+func (m *tLCLCefTrayForm) Tray() *Tray {
 	return nil
 }
 
-func (m *tCefTrayForm) Show() {
+func (m *tLCLCefTrayForm) Show() {
 	if BrowserWindow.mainBrowserWindow.Chromium() == nil || !BrowserWindow.mainBrowserWindow.Chromium().Initialized() {
 		return
 	}
 	m.TForm.Show()
 }
 
-func (m *tCefTrayForm) Hide() {
+func (m *tLCLCefTrayForm) Hide() {
 	m.TForm.Hide()
 }
 
-func (m *tCefTrayForm) close() {
+func (m *tLCLCefTrayForm) close() {
 	if m.isClosing {
 		return
 	}
@@ -77,41 +77,41 @@ func (m *tCefTrayForm) close() {
 	m.TForm.Close()
 }
 
-func (m *tCefTrayForm) SetOnDblClick(fn lcl.TNotifyEvent) {
+func (m *tLCLCefTrayForm) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)
 }
 
-func (m *tCefTrayForm) SetOnClick(fn lcl.TNotifyEvent) {
+func (m *tLCLCefTrayForm) SetOnClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnClick(fn)
 }
 
-func (m *tCefTrayForm) SetOnMouseUp(fn TMouseEvent) {
+func (m *tLCLCefTrayForm) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
-func (m *tCefTrayForm) SetOnMouseDown(fn lcl.TMouseEvent) {
+func (m *tLCLCefTrayForm) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
-func (m *tCefTrayForm) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+func (m *tLCLCefTrayForm) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
-func (m *tCefTrayForm) Visible() bool {
+func (m *tLCLCefTrayForm) Visible() bool {
 	return m.TForm.Visible()
 }
 
-func (m *tCefTrayForm) SetVisible(v bool) {
+func (m *tLCLCefTrayForm) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
-func (m *tCefTrayForm) SetHint(value string) {
+func (m *tLCLCefTrayForm) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
-func (m *tCefTrayForm) SetTitle(title string) {
+func (m *tLCLCefTrayForm) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
 
-func (m *tCefTrayForm) onmMouse() {
+func (m *tLCLCefTrayForm) onmMouse() {
 	QueueAsyncCall(func(id int) {
 		m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 			var monitor = m.TForm.Monitor()
@@ -148,7 +148,7 @@ func (m *tCefTrayForm) onmMouse() {
 //title 气泡标题
 //content 气泡内容
 //timeout 显示时间(毫秒)
-func (m *tCefTrayForm) SetBalloon(title, content string, timeout int32) ITray {
+func (m *tLCLCefTrayForm) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)
 	m.trayIcon.SetBalloonTimeout(timeout)
@@ -156,11 +156,11 @@ func (m *tCefTrayForm) SetBalloon(title, content string, timeout int32) ITray {
 }
 
 //显示托盘气泡
-func (m *tCefTrayForm) ShowBalloon() {
+func (m *tLCLCefTrayForm) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
-func (m *tCefTrayForm) createCefTrayWindow() {
+func (m *tLCLCefTrayForm) createCefTrayWindow() {
 	m.TForm.SetBorderStyle(types.BsNone)
 	m.TForm.SetFormStyle(types.FsStayOnTop)
 	m.TForm.SetBounds(-(m.w * 2), -(m.h * 2), m.w, m.h)
@@ -249,6 +249,6 @@ func (m *tCefTrayForm) createCefTrayWindow() {
 }
 
 //设置托盘图标
-func (m *tCefTrayForm) SetIcon(iconResourcePath string) {
+func (m *tLCLCefTrayForm) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }

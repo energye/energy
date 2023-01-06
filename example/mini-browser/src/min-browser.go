@@ -387,15 +387,15 @@ func AppBrowserInit() {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
-			cefTray(browserWindow)
+			cefTray(browserWindow.AsLCLBrowserWindow())
 		} else {
-			tray(browserWindow.AsLCLBrowserWindow().BrowserWindow())
+			tray(browserWindow.AsLCLBrowserWindow())
 		}
 	})
 }
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
-func cefTray(browserWindow cef.IBrowserWindow) {
+func cefTray(browserWindow cef.ILCLBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
@@ -435,7 +435,7 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 }
 
 // 托盘 系统原生 windows linux macos
-func tray(browserWindow cef.IBrowserWindow) {
+func tray(browserWindow cef.ILCLBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
 	newTray := browserWindow.NewTray()

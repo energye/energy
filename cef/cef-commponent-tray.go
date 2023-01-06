@@ -18,6 +18,7 @@ type TMouseEvent func(sender lcl.IObject, button types.TMouseButton, shift types
 type ITray interface {
 	SetTitle(title string)                                 //设置标题
 	SetVisible(v bool)                                     //显示和隐藏托盘图标
+	Visible() bool                                         //
 	Show()                                                 //显示托盘菜单窗口 windows有效
 	Hide()                                                 //隐藏托盘菜单窗口 windows有效
 	close()                                                //关闭托盘菜单窗口 windows有效
@@ -35,17 +36,16 @@ type ITray interface {
 
 //系统托盘
 type Tray struct {
-	owner     lcl.IWinControl
+	owner     lcl.IComponent
 	trayIcon  *lcl.TTrayIcon
 	popupMenu *lcl.TPopupMenu
 }
 
 //创建系统托盘
-func newTray(owner lcl.IWinControl) *Tray {
+func newTray(owner lcl.IComponent) *Tray {
 	trayIcon := lcl.NewTrayIcon(owner)
-	popupMenu := lcl.NewPopupMenu(owner)
+	popupMenu := lcl.NewPopupMenu(trayIcon)
 	trayIcon.SetPopupMenu(popupMenu)
-	trayIcon.SetHint(owner.Caption())
 	trayIcon.SetVisible(true)
 	return &Tray{
 		owner:     owner,
@@ -62,11 +62,18 @@ func (m *Tray) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
+func (m *Tray) Visible() bool {
+	return m.trayIcon.Visible()
+}
+
 func (m *Tray) Show() {
+	m.SetVisible(true)
 }
 
 func (m *Tray) Hide() {
+	m.SetVisible(false)
 }
+
 func (m *Tray) close() {}
 
 func (m *Tray) SetOnDblClick(fn lcl.TNotifyEvent) {
@@ -123,7 +130,7 @@ func (m *Tray) ShowBalloon() {
 
 //创建一个菜单，还未添加到托盘
 func (m *Tray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
-	item := lcl.NewMenuItem(m.owner)
+	item := lcl.NewMenuItem(m.trayIcon)
 	item.SetCaption(caption)
 	if onClick != nil {
 		item.SetOnClick(onClick)

@@ -40,7 +40,7 @@ func main() {
 			popupWindow.SetCenterWindow(true)
 			return false
 		})
-		cefTray(window.AsViewsFrameworkBrowserWindow().BrowserWindow())
+		cefTray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

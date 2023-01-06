@@ -13,13 +13,13 @@ package cef
 
 //只适用于windows的无菜单托盘
 func (m *LCLBrowserWindow) NewCefTray(width, height int32, url string) ITray {
-	if BrowserWindow.mainBrowserWindow.AsLCLBrowserWindow() == nil {
+	if m == nil {
 		return nil
 	}
-	if BrowserWindow.mainBrowserWindow.AsLCLBrowserWindow().BrowserWindow().tray == nil {
-		BrowserWindow.mainBrowserWindow.AsLCLBrowserWindow().BrowserWindow().tray = newCefTray(m, width, height, url)
+	if m.tray == nil {
+		m.tray = newLCLCefTray(m, width, height, url)
 	}
-	return BrowserWindow.mainBrowserWindow.AsLCLBrowserWindow().BrowserWindow().tray
+	return m.tray
 }
 
 //只适用于windows的无菜单托盘
@@ -28,7 +28,7 @@ func (m *ViewsFrameworkBrowserWindow) NewCefTray(width, height int32, url string
 		return nil
 	}
 	if m.tray == nil {
-		//m.tray = newCefTray(m.windowComponent, width, height, url)
+		m.tray = newLCLCefTray(m.component, width, height, url)
 	}
 	return m.tray
 }
