@@ -53,7 +53,6 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.registerPopupEvent()
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-		fmt.Println("SetOnWindowCreated")
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			m.windowComponent.SetTitle(windowProperty.Title)
@@ -112,6 +111,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 			*aResult = true
 			app.QuitMessageLoop()
 		})
+		BrowserWindow.mainVFBrowserWindow = vFrameBrowserWindow
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
 }
@@ -167,6 +167,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	})
 }
 
+//重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) resetWindowPropertyEvent() {
 	if m.WindowProperty().CenterWindow {
 		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
@@ -388,6 +389,7 @@ func (m *ViewsFrameworkBrowserWindow) Restore() {
 }
 
 func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
+	m.isClosing = true
 	m.chromium.CloseBrowser(true)
 }
 

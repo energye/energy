@@ -185,6 +185,7 @@ func AppBrowserInit() {
 			fmt.Println("minimize")
 		})
 		fmt.Println("主窗口初始化回调函数")
+		fmt.Println("LCL", browserWindow.AsLCLBrowserWindow(), "VF", browserWindow.AsViewsFrameworkBrowserWindow())
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
 		browserWindow.SetTitle("这里设置应用标题")
 		//browserWindow.EnableTransparent(100) //窗口透明

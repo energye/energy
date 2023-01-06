@@ -26,7 +26,7 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
-		fmt.Printf("%+v\n", window)
+		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
 			model.AddCheckItem(model.CefMis.NextCommandId(), "测试")
 		})

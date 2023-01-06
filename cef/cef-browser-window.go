@@ -49,8 +49,8 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 
 // 浏览器包装结构体
 type browser struct {
-	mainBrowserWindow   *browserWindow               //主浏览器窗口
-	mainVFBrowserWindow IViewsFrameworkBrowserWindow //主浏览器窗口
+	mainBrowserWindow   *browserWindow               //LCL 主浏览器窗口
+	mainVFBrowserWindow *ViewsFrameworkBrowserWindow //Views Frameworks 主浏览器窗口
 	popupWindow         IBrowserWindow               //弹出的子窗口
 	browserEvent        *BrowserEvent                //浏览器全局事件
 	Config              *browserConfig               //浏览器和窗口配置
@@ -175,30 +175,14 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 }
 
-func (m *browser) MainWindow() *LCLBrowserWindow {
+func (m *browser) MainWindow() IBrowserWindow {
+	if IsMessageLoop {
+		return m.mainVFBrowserWindow.BrowserWindow()
+	}
 	return m.mainBrowserWindow.BrowserWindow()
 }
 
-// 基于CEF views framework窗口 - 主窗口和chromium初始化时回调
-//
-// 当使用ViewsFramework创建窗口后，我们无法使用lcl创建组件到窗口中
-//
-// ViewsFramework窗口主要解决在linux下gtk2和gtk3共存以及无法输入中文问题
-//
-// ViewsFramework窗口 和 LCL窗口同时只能存在一种
-//
-// event 			浏览器事件
-//
-// views framework window 	窗口信息对象
-//func (m *browser) SetViewFrameBrowserInit(fn viewsFrameBrowserWindowOnEventCallback) {
-//	m.Config.setViewsFrameBrowserWindowOnEventCallback(fn)
-//}
-
-// 基于LCL窗口 - 主窗口和chromium初始化时回调
-//
-// 在这里可以对主窗体事件监听和属性设置,和主窗口上的子组件创建
-//
-// 如果想创建子窗口或带有browser的窗口最好在 SetBrowserInitAfter 回调函数中创建
+// 主窗口和chromium初始化时回调
 //
 // event 			浏览器事件
 //
@@ -243,7 +227,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextLCLPopupWindow() {
-	m.popupWindow = NewLCLWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow())
+	m.popupWindow = NewLCLWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 
