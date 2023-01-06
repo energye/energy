@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/win"
 )
 
 //基于CEF views framework窗口
@@ -103,6 +104,11 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 	}
 	app.SetOnContextInitialized(func() {
 		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), &m.Config.WindowProperty, m.Config.browserWindowOnEventCallback)
+		vFrameBrowserWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+			if vFrameBrowserWindow.tray != nil {
+				vFrameBrowserWindow.tray.close()
+			}
+		})
 		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
 		vFrameBrowserWindow.putChromiumWindowInfo()
@@ -367,6 +373,15 @@ func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 
 func (m *ViewsFrameworkBrowserWindow) Show() {
 	m.WindowComponent().Show()
+}
+
+//隐藏标题栏
+func (m *ViewsFrameworkBrowserWindow) HideTitle() {
+	if common.IsWindows() {
+		handle := m.WindowComponent().WindowHandle()
+		win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
+		win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	}
 }
 
 func (m *ViewsFrameworkBrowserWindow) Hide() {

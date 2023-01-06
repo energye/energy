@@ -82,6 +82,7 @@ type IBrowserWindow interface {
 	SetCenterWindow(value bool)
 	NewCefTray(width, height int32, url string) ITray
 	NewTray() ITray
+	HideTitle()
 }
 
 type ILCLBrowserWindow interface {

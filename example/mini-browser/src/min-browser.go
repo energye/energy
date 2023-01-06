@@ -190,9 +190,11 @@ func AppBrowserInit() {
 		browserWindow.SetTitle("这里设置应用标题")
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
-		//browserWindow.SetBorderStyle(types.BsSingle)
-		//browserWindow.SetFormStyle(types.FsNormal)
-		//browserWindow.SetFormStyle(types.FsSystemStayOnTop)
+		window := browserWindow.AsLCLBrowserWindow()
+		browserWindow.HideTitle()
+		//window.BrowserWindow().SetBorderStyle(types.BsNone)
+		//window.BrowserWindow().SetFormStyle(types.FsNormal)
+		//window.BrowserWindow().SetFormStyle(types.FsSystemStayOnTop)
 		//设置窗口大小
 		//browserWindow.SetWidth(1600)
 		//browserWindow.SetHeight(900)
@@ -201,7 +203,6 @@ func AppBrowserInit() {
 		//browserWindow.Window.Constraints().SetMinWidth(300)
 		//browserWindow.Window.Constraints().SetMaxWidth(1600)
 		//browserWindow.Window.Constraints().SetMaxHeight(900)
-		window := browserWindow.AsLCLBrowserWindow()
 		window.BrowserWindow().Constraints().SetOnChange(func(sender lcl.IObject) {
 			fmt.Println("browserWindow SetOnChange")
 		})

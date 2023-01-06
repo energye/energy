@@ -222,6 +222,14 @@ func (m *LCLBrowserWindow) Hide() {
 	m.TForm.Hide()
 }
 
+//隐藏标题栏
+func (m *LCLBrowserWindow) HideTitle() {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetBorderStyle(types.BsNone)
+}
+
 func (m *LCLBrowserWindow) Visible() bool {
 	if m.TForm == nil {
 		return false

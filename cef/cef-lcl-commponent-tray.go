@@ -74,7 +74,9 @@ func (m *Tray) Hide() {
 	m.SetVisible(false)
 }
 
-func (m *Tray) close() {}
+func (m *Tray) close() {
+	m.Hide()
+}
 
 func (m *Tray) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)

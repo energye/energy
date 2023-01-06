@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 )
 
@@ -25,7 +26,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-
+	cef.BrowserWindow.Config.CanResize = false
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
@@ -39,8 +40,17 @@ func main() {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
 			popupWindow.SetCenterWindow(true)
+			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
+			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
 			return false
 		})
+		handle := window.AsViewsFrameworkBrowserWindow().WindowComponent().WindowHandle()
+		fmt.Println("handle", handle, handle.ToPtr(), "rtl.MainInstance()", rtl.MainInstance())
+
+		//设置隐藏窗口标题
+		window.HideTitle()
+		//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
+		//win.SetWindowPos(handle.ToPtr(), handle.ToPtr(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
 		tray(window)
 	})
 	//在主进程启动成功之后执行
