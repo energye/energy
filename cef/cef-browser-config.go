@@ -12,17 +12,17 @@ import (
 	"github.com/energye/energy/common"
 )
 
-type viewsFrameBrowserWindowOnEventCallback func(event *BrowserEvent, window IViewsFrameworkBrowserWindow)
-type browserWindowOnEventCallback func(event *BrowserEvent, window ILCLBrowserWindow)
-type browserWindowAfterOnEventCallback func(window ILCLBrowserWindow)
+//type viewsFrameBrowserWindowOnEventCallback func(event *BrowserEvent, window IViewsFrameworkBrowserWindow)
+type browserWindowOnEventCallback func(event *BrowserEvent, window IBrowserWindow)
+type browserWindowAfterOnEventCallback func(window IBrowserWindow)
 
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
 	WindowProperty
-	chromiumConfig                         *tCefChromiumConfig                    //主窗体浏览器配置
-	viewsFrameBrowserWindowOnEventCallback viewsFrameBrowserWindowOnEventCallback //主窗口初始化回调 - 基于CEF views framework窗口
-	browserWindowOnEventCallback           browserWindowOnEventCallback           //主窗口初始化回调 - 基于LCL窗口
-	browserWindowAfterOnEventCallback      browserWindowAfterOnEventCallback      //主窗口初始化之后回调
+	chromiumConfig *tCefChromiumConfig //主窗体浏览器配置
+	//viewsFrameBrowserWindowOnEventCallback viewsFrameBrowserWindowOnEventCallback //主窗口初始化回调 - 基于CEF views framework窗口
+	browserWindowOnEventCallback      browserWindowOnEventCallback      //主窗口初始化回调 - 基于LCL窗口
+	browserWindowAfterOnEventCallback browserWindowAfterOnEventCallback //主窗口初始化之后回调
 }
 
 //设置chromium配置
@@ -42,11 +42,11 @@ func (m *browserConfig) ChromiumConfig() *tCefChromiumConfig {
 //主窗口初始化回调 - 基于CEF views framework窗口
 //
 //该回调函数和基于LCL窗口回调是互斥的，默认情况只有一个会被回调
-func (m *browserConfig) setViewsFrameBrowserWindowOnEventCallback(fn viewsFrameBrowserWindowOnEventCallback) {
-	if fn != nil && common.Args.IsMain() {
-		m.viewsFrameBrowserWindowOnEventCallback = fn
-	}
-}
+//func (m *browserConfig) setViewsFrameBrowserWindowOnEventCallback(fn viewsFrameBrowserWindowOnEventCallback) {
+//	if fn != nil && common.Args.IsMain() {
+//		//m.viewsFrameBrowserWindowOnEventCallback = fn
+//	}
+//}
 
 //主窗口初始化回调 - 基于LCL窗口
 //

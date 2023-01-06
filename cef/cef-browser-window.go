@@ -190,9 +190,9 @@ func (m *browser) MainWindow() *LCLBrowserWindow {
 // event 			浏览器事件
 //
 // views framework window 	窗口信息对象
-func (m *browser) SetViewFrameBrowserInit(fn viewsFrameBrowserWindowOnEventCallback) {
-	m.Config.setViewsFrameBrowserWindowOnEventCallback(fn)
-}
+//func (m *browser) SetViewFrameBrowserInit(fn viewsFrameBrowserWindowOnEventCallback) {
+//	m.Config.setViewsFrameBrowserWindowOnEventCallback(fn)
+//}
 
 // 基于LCL窗口 - 主窗口和chromium初始化时回调
 //
@@ -242,7 +242,7 @@ func (m *browser) GetNextWindowNum() int32 {
 	return m.windowSerial
 }
 
-func (m *browser) createNextPopupWindow() {
+func (m *browser) createNextLCLPopupWindow() {
 	m.popupWindow = NewLCLWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }

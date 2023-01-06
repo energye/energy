@@ -75,6 +75,7 @@ type IBrowserWindow interface {
 	SetTitle(title string)
 	IsViewsFramework() bool
 	IsLCL() bool
+	WindowProperty() *WindowProperty
 }
 
 type ILCLBrowserWindow interface {

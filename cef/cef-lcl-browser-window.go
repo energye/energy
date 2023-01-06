@@ -295,6 +295,10 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl
 	})
 }
 
+func (m *LCLBrowserWindow) WindowProperty() *WindowProperty {
+	return m.windowProperty
+}
+
 func (m *LCLBrowserWindow) putChromiumWindowInfo() {
 	BrowserWindow.putWindowInfo(m.windowId, m)
 }

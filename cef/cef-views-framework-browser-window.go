@@ -38,7 +38,7 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
+func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty, browserWindowOnEventCallback browserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = BrowserWindow.Config.ChromiumConfig()
 	}
@@ -60,11 +60,14 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				window.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
-				m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
+				_ = m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
 			} else if windowProperty.Icon != "" {
-				m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
+				_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
 			}
 			m.browserViewComponent.RequestFocus()
+			if browserWindowOnEventCallback != nil {
+				browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
+			}
 			m.windowComponent.Show()
 		}
 	})
@@ -98,18 +101,16 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 		return
 	}
 	app.SetOnContextInitialized(func() {
-		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), &m.Config.WindowProperty)
-		//BrowserWindow.mainBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
-		//BrowserWindow.mainBrowserWindow.putChromiumWindowInfo()
+		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), &m.Config.WindowProperty, m.Config.browserWindowOnEventCallback)
+		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
+		vFrameBrowserWindow.putChromiumWindowInfo()
 		vFrameBrowserWindow.registerPopupEvent()
 		vFrameBrowserWindow.registerDefaultEvent()
 		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			*aResult = true
 			app.QuitMessageLoop()
 		})
-		if m.Config.viewsFrameBrowserWindowOnEventCallback != nil {
-			m.Config.viewsFrameBrowserWindowOnEventCallback(m.browserEvent, vFrameBrowserWindow)
-		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
 }
@@ -129,34 +130,35 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			return true
 		}
 		fmt.Println("BrowserWindow-TargetUrl:", beforePopupInfo.TargetUrl, "IsMessageLoop:", consts.IsMessageLoop)
+		wp := &WindowProperty{
+			Title:        BrowserWindow.Config.WindowProperty.Title,
+			Url:          beforePopupInfo.TargetUrl,
+			CanMinimize:  BrowserWindow.Config.WindowProperty.CanMinimize,
+			CanMaximize:  BrowserWindow.Config.WindowProperty.CanMaximize,
+			CanResize:    BrowserWindow.Config.WindowProperty.CanResize,
+			CanClose:     BrowserWindow.Config.WindowProperty.CanClose,
+			CenterWindow: BrowserWindow.Config.WindowProperty.CenterWindow,
+			IsShowModel:  BrowserWindow.Config.WindowProperty.IsShowModel,
+			WindowState:  BrowserWindow.Config.WindowProperty.WindowState,
+			Icon:         BrowserWindow.Config.WindowProperty.Icon,
+			IconFS:       BrowserWindow.Config.WindowProperty.IconFS,
+			X:            BrowserWindow.Config.WindowProperty.X,
+			Y:            BrowserWindow.Config.WindowProperty.Y,
+			Width:        BrowserWindow.Config.WindowProperty.Width,
+			Height:       BrowserWindow.Config.WindowProperty.Height,
+		}
+		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, nil)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, BrowserWindow.popupWindow, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
 		}
 		if !result {
-			wp := &WindowProperty{
-				Title:        BrowserWindow.Config.WindowProperty.Title,
-				Url:          beforePopupInfo.TargetUrl,
-				CanMinimize:  BrowserWindow.Config.WindowProperty.CanMinimize,
-				CanMaximize:  BrowserWindow.Config.WindowProperty.CanMaximize,
-				CanResize:    BrowserWindow.Config.WindowProperty.CanResize,
-				CanClose:     BrowserWindow.Config.WindowProperty.CanClose,
-				CenterWindow: BrowserWindow.Config.WindowProperty.CenterWindow,
-				IsShowModel:  BrowserWindow.Config.WindowProperty.IsShowModel,
-				WindowState:  BrowserWindow.Config.WindowProperty.WindowState,
-				Icon:         BrowserWindow.Config.WindowProperty.Icon,
-				IconFS:       BrowserWindow.Config.WindowProperty.IconFS,
-				X:            BrowserWindow.Config.WindowProperty.X,
-				Y:            BrowserWindow.Config.WindowProperty.Y,
-				Width:        BrowserWindow.Config.WindowProperty.Width,
-				Height:       BrowserWindow.Config.WindowProperty.Height,
-			}
-			vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp)
-			//BrowserWindow.mainBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
-			//BrowserWindow.mainBrowserWindow.putChromiumWindowInfo()
-			vFrameBrowserWindow.registerPopupEvent()
-			vFrameBrowserWindow.registerDefaultEvent()
-			vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
+			vfbw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+			vfbw.windowId = BrowserWindow.GetNextWindowNum()
+			vfbw.putChromiumWindowInfo()
+			vfbw.registerPopupEvent()
+			vfbw.registerDefaultEvent()
+			vfbw.windowComponent.CreateTopLevelWindow()
 			result = true
 		}
 		return result
@@ -262,6 +264,14 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	})
 }
 
+func (m *ViewsFrameworkBrowserWindow) WindowProperty() *WindowProperty {
+	return m.windowProperty
+}
+
+func (m *ViewsFrameworkBrowserWindow) putChromiumWindowInfo() {
+	BrowserWindow.putWindowInfo(m.windowId, m)
+}
+
 func (m *ViewsFrameworkBrowserWindow) BrowserWindow() *ViewsFrameworkBrowserWindow {
 	return m
 }
@@ -275,7 +285,7 @@ func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
-	m.WindowComponent().SetTitle(title)
+	m.WindowProperty().Title = title
 }
 
 func (m *ViewsFrameworkBrowserWindow) getAuxTools() *auxTools {
