@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/lcl/win"
 )
 
 //基于CEF views framework窗口
@@ -377,37 +376,6 @@ func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 
 func (m *ViewsFrameworkBrowserWindow) Show() {
 	m.WindowComponent().Show()
-}
-
-//隐藏标题栏
-func (m *ViewsFrameworkBrowserWindow) HideTitle() {
-	if common.IsWindows() {
-		handle := m.WindowComponent().WindowHandle()
-		win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
-		win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-	}
-}
-
-func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {
-	if common.IsWindows() {
-		m.SetShowInTaskBar()
-	}
-}
-
-func (m *ViewsFrameworkBrowserWindow) SetShowInTaskBar() {
-	if common.IsWindows() {
-		handle := m.WindowComponent().WindowHandle()
-		win.ShowWindow(handle.ToPtr(), win.SW_SHOW)
-		win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, win.WS_EX_APPWINDOW)
-	}
-}
-
-func (m *ViewsFrameworkBrowserWindow) SetNotInTaskBar() {
-	if common.IsWindows() {
-		handle := m.WindowComponent().WindowHandle()
-		win.ShowWindow(handle.ToPtr(), win.SW_HIDE)
-		win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE)|win.WS_EX_TOOLWINDOW&^win.WS_EX_APPWINDOW))
-	}
 }
 
 func (m *ViewsFrameworkBrowserWindow) Hide() {

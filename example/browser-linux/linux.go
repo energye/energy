@@ -75,6 +75,9 @@ func main() {
 func cefTray(browserWindow cef.IBrowserWindow) {
 	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
+	if tray == nil {
+		return
+	}
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
