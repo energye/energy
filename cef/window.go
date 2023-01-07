@@ -81,7 +81,6 @@ type IBrowserWindow interface {
 	SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32)
 	SetCenterWindow(value bool)
 	NewCefTray(width, height int32, url string) ITray
-	NewTray() ITray
 	HideTitle()
 	SetDefaultInTaskBar()
 	SetShowInTaskBar()
@@ -100,6 +99,7 @@ type ILCLBrowserWindow interface {
 	DisableHelp()
 	EnableSystemMenu()
 	EnableHelp()
+	NewTray() ITray
 }
 
 type IViewsFrameworkBrowserWindow interface {
