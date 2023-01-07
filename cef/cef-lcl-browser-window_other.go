@@ -11,6 +11,8 @@
 
 package cef
 
+import "github.com/energye/golcl/lcl/types"
+
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	if m.TForm == nil {
