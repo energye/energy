@@ -11,6 +11,10 @@
 
 package cef
 
+//显示标题栏
+func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
+}
+
 //隐藏标题栏
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 

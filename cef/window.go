@@ -80,9 +80,12 @@ type IBrowserWindow interface {
 	WindowProperty() *WindowProperty
 	SetWidth(value int32)
 	SetHeight(value int32)
-	SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32)
+	SetPoint(x, y int32)
+	SetSize(width, height int32)
+	SetBounds(x, y, width, height int32)
 	SetCenterWindow(value bool)
 	NewCefTray(width, height int32, url string) ITray
+	ShowTitle()
 	HideTitle()
 	SetDefaultInTaskBar()
 	SetShowInTaskBar()
@@ -112,6 +115,7 @@ type IViewsFrameworkBrowserWindow interface {
 	Component() lcl.IComponent
 	WindowComponent() *TCEFWindowComponent
 	BrowserViewComponent() *TCEFBrowserViewComponent
+	SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated)
 }
 
 //创建一个 窗口默认属性

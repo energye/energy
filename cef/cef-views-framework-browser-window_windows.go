@@ -15,6 +15,13 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
+//显示标题栏
+func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
+	handle := m.WindowComponent().WindowHandle()
+	win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)|win.WS_CAPTION))
+	win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+}
+
 //隐藏标题栏
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	handle := m.WindowComponent().WindowHandle()
@@ -35,5 +42,5 @@ func (m *ViewsFrameworkBrowserWindow) SetShowInTaskBar() {
 func (m *ViewsFrameworkBrowserWindow) SetNotInTaskBar() {
 	handle := m.WindowComponent().WindowHandle()
 	win.ShowWindow(handle.ToPtr(), win.SW_HIDE)
-	win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE)|win.WS_EX_TOOLWINDOW&^win.WS_EX_APPWINDOW))
+	win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, win.WS_EX_TOOLWINDOW)
 }

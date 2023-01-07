@@ -27,7 +27,7 @@ func main() {
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		window.DisableResize()
 		window.SetTitle("这里改变了窗口标题")
-		window.SetWidth(1800)
+		window.SetSize(1600, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
@@ -41,22 +41,42 @@ func main() {
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
 			popupWindow.SetCenterWindow(true)
 			popupWindow.EnableResize()
-			popupWindow.SetWidth(1600)
+			popupWindow.SetSize(1600, 1600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
+			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
+				fmt.Println("popupWindow.SetOnWindowCreated", window)
+			})
 			//browserWindow.BrowserWindow().CreateTopLevelWindow()
 			//browserWindow.BrowserWindow().HideTitle()
 			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
 			return false
 		})
-		handle := window.AsViewsFrameworkBrowserWindow().WindowComponent().WindowHandle()
-		fmt.Println("handle", handle, handle.ToPtr())
 		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
 			fmt.Println("SetOnWindowActivationChanged", active)
 		})
-
 		//设置隐藏窗口标题
 		//window.HideTitle()
 		cefTray(window)
+		window.Show()
+	})
+	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
+		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
+		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
+		//window.SetNotInTaskBar()
+		//go func() {
+		//	var s = false
+		//	for {
+		//		fmt.Println("s", s)
+		//		time.Sleep(time.Second)
+		//		s = !s
+		//		if s {
+		//			window.AsViewsFrameworkBrowserWindow().BrowserWindow().ShowTitle()
+		//		} else {
+		//			window.AsViewsFrameworkBrowserWindow().BrowserWindow().HideTitle()
+		//		}
+		//	}
+		//}()
+		//window.HideTitle()
 		window.Show()
 	})
 	//在主进程启动成功之后执行
@@ -85,8 +105,15 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
+	var s = false
 	tray.SetOnClick(func(sender lcl.IObject) {
-		browserWindow.Show()
+		s = !s
+		if s {
+			browserWindow.ShowTitle()
+		} else {
+			browserWindow.HideTitle()
+		}
+		//browserWindow.Show()
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {

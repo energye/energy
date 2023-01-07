@@ -160,11 +160,27 @@ func (m *LCLBrowserWindow) SetHeight(value int32) {
 	m.TForm.SetHeight(value)
 }
 
-func (m *LCLBrowserWindow) SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32) {
+func (m *LCLBrowserWindow) SetPoint(x, y int32) {
 	if m.TForm == nil {
 		return
 	}
-	m.TForm.SetBounds(ALeft, ATop, AWidth, AHeight)
+	m.TForm.SetLeft(x)
+	m.TForm.SetTop(y)
+}
+
+func (m *LCLBrowserWindow) SetSize(width, height int32) {
+	if m.TForm == nil {
+		return
+	}
+	m.SetWidth(width)
+	m.SetHeight(height)
+}
+
+func (m *LCLBrowserWindow) SetBounds(x, y, width, height int32) {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.SetBounds(x, y, width, height)
 }
 
 func (m *LCLBrowserWindow) getAuxTools() *auxTools {
@@ -220,14 +236,6 @@ func (m *LCLBrowserWindow) Hide() {
 		return
 	}
 	m.TForm.Hide()
-}
-
-//隐藏标题栏
-func (m *LCLBrowserWindow) HideTitle() {
-	if m.TForm == nil {
-		return
-	}
-	m.TForm.SetBorderStyle(types.BsNone)
 }
 
 func (m *LCLBrowserWindow) Visible() bool {

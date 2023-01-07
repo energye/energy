@@ -182,6 +182,7 @@ func AppBrowserInit() {
 
 	//主窗口初始化回调函数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
+		browserWindow.DisableResize()
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
@@ -192,7 +193,6 @@ func AppBrowserInit() {
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		window := browserWindow.AsLCLBrowserWindow()
-		browserWindow.DisableMinimize()
 		//browserWindow.DisableResize()
 		//browserWindow.HideTitle()
 		//window.BrowserWindow().SetBorderStyle(types.BsNone)
@@ -289,10 +289,8 @@ func AppBrowserInit() {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: "+beforePopupInfo.TargetUrl, "isLCL:", popupWindow.IsLCL())
 			window := popupWindow.AsLCLBrowserWindow().BrowserWindow()
-			popupWindow.EnableResize()
+			popupWindow.SetNotInTaskBar()
 			window.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
-			window.SetBorderStyle(types.BsNone)
-			//window.SetFormStyle(types.FsNormal)
 			window.SetWidth(800)
 			window.SetHeight(600)
 			//窗口弹出之前可自定义系统组件
@@ -392,23 +390,32 @@ func AppBrowserInit() {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
-			cefTray(browserWindow.AsLCLBrowserWindow())
+			cefTray(browserWindow)
 		} else {
-			tray(browserWindow.AsLCLBrowserWindow())
+			tray(browserWindow)
 		}
 	})
 }
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
-func cefTray(browserWindow cef.ILCLBrowserWindow) {
+func cefTray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
+	var s = false
 	tray.SetOnClick(func(sender lcl.IObject) {
-		window.SetVisible(!window.Visible())
+		cef.QueueAsyncCall(func(id int) {
+			fmt.Println("s", s)
+			s = !s
+			if s {
+				browserWindow.HideTitle()
+			} else {
+				browserWindow.ShowTitle()
+			}
+		})
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
@@ -440,10 +447,10 @@ func cefTray(browserWindow cef.ILCLBrowserWindow) {
 }
 
 // 托盘 系统原生 windows linux macos
-func tray(browserWindow cef.ILCLBrowserWindow) {
+func tray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
-	newTray := browserWindow.NewTray()
+	newTray := window.NewTray()
 	tray := newTray.Tray()
 	tray.SetIconFS("resources/icon.ico")
 	menu1 := tray.AddMenuItem("父菜单", nil)
