@@ -67,6 +67,11 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
 			}
 			m.browserViewComponent.RequestFocus()
+
+			regions := NewCefDraggableRegions()
+			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 600), true))
+			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
+			window.SetDraggableRegions(regions.Regions())
 			m.windowComponent.Show()
 			if m.doOnWindowCreated != nil {
 				m.doOnWindowCreated(sender, window)

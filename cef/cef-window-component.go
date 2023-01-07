@@ -88,8 +88,8 @@ func (m *TCEFWindowComponent) CancelMenu() {
 	Proc(internale_CEFWindowComponent_CancelMenu).Call(uintptr(m.instance))
 }
 
-func (m *TCEFWindowComponent) SetDraggableRegions(regionsCount int32, regions []TCefDraggableRegion) {
-	Proc(internale_CEFWindowComponent_SetDraggableRegions).Call(uintptr(m.instance), uintptr(regionsCount), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
+func (m *TCEFWindowComponent) SetDraggableRegions(regions []TCefDraggableRegion) {
+	Proc(internale_CEFWindowComponent_SetDraggableRegions).Call(uintptr(m.instance), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
 }
 
 func (m *TCEFWindowComponent) SendKeyPress(keyCode int32, eventFlags uint32) {

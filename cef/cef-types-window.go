@@ -199,8 +199,8 @@ func (m *ICefWindow) GetClientAreaBoundsInScreen() (result TCefRect) {
 	return
 }
 
-func (m *ICefWindow) SetDraggableRegions(regionsCount int32, regions []TCefDraggableRegion) {
-	Proc(internale_ICEFWindow_SetDraggableRegions).Call(uintptr(m.instance), uintptr(regionsCount), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
+func (m *ICefWindow) SetDraggableRegions(regions []TCefDraggableRegion) {
+	Proc(internale_ICEFWindow_SetDraggableRegions).Call(uintptr(m.instance), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
 }
 
 func (m *ICefWindow) GetWindowHandle() consts.TCefWindowHandle {

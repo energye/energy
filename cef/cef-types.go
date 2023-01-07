@@ -189,9 +189,13 @@ type TCefPoint struct {
 	Y int32
 }
 
+type TCefDraggableRegions struct {
+	regions []TCefDraggableRegion
+}
+
 type TCefDraggableRegion struct {
 	Bounds    TCefRect
-	Draggable int32
+	Draggable bool
 }
 
 type ICefDisplay struct {
@@ -208,6 +212,27 @@ type ICefView struct {
 
 type ICefClient struct {
 	instance unsafe.Pointer
+}
+
+func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
+	return TCefDraggableRegion{
+		Bounds:    *rect,
+		Draggable: draggable,
+	}
+}
+
+func NewCefDraggableRegions() *TCefDraggableRegions {
+	return &TCefDraggableRegions{
+		regions: make([]TCefDraggableRegion, 0),
+	}
+}
+
+func (m *TCefDraggableRegions) Regions() []TCefDraggableRegion {
+	return m.regions
+}
+
+func (m *TCefDraggableRegions) Append(region TCefDraggableRegion) {
+	m.regions = append(m.regions, region)
 }
 
 func NewCefRect(x, y, width, height int32) *TCefRect {
