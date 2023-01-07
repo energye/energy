@@ -8,7 +8,6 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 )
 
@@ -28,6 +27,7 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.Config.CanResize = false
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.Show()
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
@@ -41,17 +41,20 @@ func main() {
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
 			popupWindow.SetCenterWindow(true)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
+			//browserWindow.BrowserWindow().CreateTopLevelWindow()
+			//browserWindow.BrowserWindow().HideTitle()
 			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
 			return false
 		})
 		handle := window.AsViewsFrameworkBrowserWindow().WindowComponent().WindowHandle()
-		fmt.Println("handle", handle, handle.ToPtr(), "rtl.MainInstance()", rtl.MainInstance())
+		fmt.Println("handle", handle, handle.ToPtr())
+		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
+			fmt.Println("SetOnWindowActivationChanged", active)
+		})
 
 		//设置隐藏窗口标题
-		window.HideTitle()
-		//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
-		//win.SetWindowPos(handle.ToPtr(), handle.ToPtr(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-		tray(window)
+		//window.HideTitle()
+		cefTray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

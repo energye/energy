@@ -375,6 +375,10 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_RemoveAllAccelerators", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetAlwaysOnTop", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetFullscreen", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetBackgroundColor", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetBounds", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetSize", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetPosition", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetTitle", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Title", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_WindowIcon", 0),
@@ -439,6 +443,10 @@ func init() {
 		dllimports.NewEnergyImport("ICEFWindow_Minimize", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Restore", 0),
 		dllimports.NewEnergyImport("ICEFWindow_SetFullscreen", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetBackgroundColor", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetBounds", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetSize", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetPosition", 0),
 		dllimports.NewEnergyImport("ICEFWindow_IsMaximized", 0),
 		dllimports.NewEnergyImport("ICEFWindow_IsMinimized", 0),
 		dllimports.NewEnergyImport("ICEFWindow_IsFullscreen", 0),
@@ -830,6 +838,10 @@ const (
 	internale_CEFWindowComponent_RemoveAllAccelerators
 	internale_CEFWindowComponent_SetAlwaysOnTop
 	internale_CEFWindowComponent_SetFullscreen
+	internale_CEFWindowComponent_SetBackgroundColor
+	internale_CEFWindowComponent_SetBounds
+	internale_CEFWindowComponent_SetSize
+	internale_CEFWindowComponent_SetPosition
 	internale_CEFWindowComponent_SetTitle
 	internale_CEFWindowComponent_Title
 	internale_CEFWindowComponent_WindowIcon
@@ -894,6 +906,10 @@ const (
 	internale_ICEFWindow_Minimize
 	internale_ICEFWindow_Restore
 	internale_ICEFWindow_SetFullscreen
+	internale_ICEFWindow_SetBackgroundColor
+	internale_ICEFWindow_SetBounds
+	internale_ICEFWindow_SetSize
+	internale_ICEFWindow_SetPosition
 	internale_ICEFWindow_IsMaximized
 	internale_ICEFWindow_IsMinimized
 	internale_ICEFWindow_IsFullscreen

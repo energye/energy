@@ -165,11 +165,6 @@ type TCefMouseEvent struct {
 	Modifiers TCefEventFlags
 }
 
-type TCefSize struct {
-	Width  int32
-	Height int32
-}
-
 type BeforePopupInfo struct {
 	TargetUrl         string
 	TargetFrameName   string
@@ -180,6 +175,11 @@ type BeforePopupInfo struct {
 type TCefRect struct {
 	X      int32
 	Y      int32
+	Width  int32
+	Height int32
+}
+
+type TCefSize struct {
 	Width  int32
 	Height int32
 }
@@ -210,10 +210,26 @@ type ICefClient struct {
 	instance unsafe.Pointer
 }
 
+func NewCefRect(x, y, width, height int32) *TCefRect {
+	return &TCefRect{
+		X:      x,
+		Y:      y,
+		Width:  width,
+		Height: height,
+	}
+}
+
 func NewCefSize(width, height int32) *TCefSize {
 	return &TCefSize{
 		Width:  width,
 		Height: height,
+	}
+}
+
+func NewCefPoint(x, y int32) *TCefPoint {
+	return &TCefPoint{
+		X: x,
+		Y: y,
 	}
 }
 

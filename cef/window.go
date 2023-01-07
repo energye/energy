@@ -39,7 +39,7 @@ type WindowProperty struct {
 	IconFS       string             //窗口图标 加载emfs内置图标
 	CanMinimize  bool               //窗口 是否启用最小化功能
 	CanMaximize  bool               //窗口 是否启用最大化功能
-	CanResize    bool               //窗口 是否允许调整窗口大小
+	CanResize    bool               //窗口 是否允许调整大小
 	CanClose     bool               //窗口 关闭时是否关闭窗口
 	CenterWindow bool               //窗口 是否居中显示
 	AlwaysOnTop  bool               //窗口 置顶

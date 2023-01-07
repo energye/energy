@@ -17,7 +17,7 @@ func (m *LCLBrowserWindow) NewCefTray(width, height int32, url string) ITray {
 		return nil
 	}
 	if m.tray == nil {
-		m.tray = newLCLCefTray(m, width, height, url)
+		m.tray = newLCLTrayWindow(m, width, height, url)
 	}
 	return m.tray
 }
@@ -28,7 +28,7 @@ func (m *ViewsFrameworkBrowserWindow) NewCefTray(width, height int32, url string
 		return nil
 	}
 	if m.tray == nil {
-		m.tray = newLCLCefTray(m.component, width, height, url)
+		m.tray = newViewsFrameTray(m.component, width, height, url)
 	}
 	return m.tray
 }

@@ -12,6 +12,7 @@ import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
+	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -121,6 +122,22 @@ func (m *TCEFWindowComponent) SetAlwaysOnTop(onTop bool) {
 
 func (m *TCEFWindowComponent) SetFullscreen(fullscreen bool) {
 	Proc(internale_CEFWindowComponent_SetFullscreen).Call(uintptr(m.instance), api.PascalBool(fullscreen))
+}
+
+func (m *TCEFWindowComponent) SetBackgroundColor(rect *types.TCefColor) {
+	Proc(internale_CEFWindowComponent_SetBackgroundColor).Call(uintptr(m.instance), rect.ToPtr())
+}
+
+func (m *TCEFWindowComponent) SetBounds(rect *TCefRect) {
+	Proc(internale_CEFWindowComponent_SetBounds).Call(uintptr(m.instance), uintptr(unsafe.Pointer(rect)))
+}
+
+func (m *TCEFWindowComponent) SetSize(size *TCefSize) {
+	Proc(internale_CEFWindowComponent_SetSize).Call(uintptr(m.instance), uintptr(unsafe.Pointer(size)))
+}
+
+func (m *TCEFWindowComponent) SetPosition(point *TCefPoint) {
+	Proc(internale_CEFWindowComponent_SetPosition).Call(uintptr(m.instance), uintptr(unsafe.Pointer(point)))
 }
 
 func (m *TCEFWindowComponent) SetTitle(title string) {

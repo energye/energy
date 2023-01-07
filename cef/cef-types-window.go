@@ -11,6 +11,7 @@ package cef
 import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl/api"
 	"io/ioutil"
@@ -78,6 +79,22 @@ func (m *ICefWindow) Restore() {
 
 func (m *ICefWindow) SetFullscreen(fullscreen bool) {
 	Proc(internale_ICEFWindow_SetFullscreen).Call(uintptr(m.instance), api.PascalBool(fullscreen))
+}
+
+func (m *ICefWindow) SetBackgroundColor(rect *types.TCefColor) {
+	Proc(internale_ICEFWindow_SetBackgroundColor).Call(uintptr(m.instance), rect.ToPtr())
+}
+
+func (m *ICefWindow) SetBounds(rect *TCefRect) {
+	Proc(internale_ICEFWindow_SetBounds).Call(uintptr(m.instance), uintptr(unsafe.Pointer(rect)))
+}
+
+func (m *ICefWindow) SetSize(size *TCefSize) {
+	Proc(internale_ICEFWindow_SetSize).Call(uintptr(m.instance), uintptr(unsafe.Pointer(size)))
+}
+
+func (m *ICefWindow) SetPosition(point *TCefPoint) {
+	Proc(internale_ICEFWindow_SetPosition).Call(uintptr(m.instance), uintptr(unsafe.Pointer(point)))
 }
 
 func (m *ICefWindow) IsMaximized() bool {

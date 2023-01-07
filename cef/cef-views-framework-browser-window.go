@@ -69,8 +69,9 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 			m.browserViewComponent.RequestFocus()
 			if browserWindowOnEventCallback != nil {
 				browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
+			} else {
+				m.windowComponent.Show()
 			}
-			m.windowComponent.Show()
 		}
 	})
 	if !windowProperty.CenterWindow {
@@ -155,7 +156,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			Width:        BrowserWindow.Config.WindowProperty.Width,
 			Height:       BrowserWindow.Config.WindowProperty.Height,
 		}
-		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, nil)
+		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, func(event *BrowserEvent, window IBrowserWindow) {
+			window.Show()
+		})
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)

@@ -22,7 +22,7 @@ import (
 )
 
 //Cef托盘
-type tLCLCefTrayForm struct {
+type tLCLTrayWindow struct {
 	*lcl.TForm
 	owner        lcl.IComponent
 	trayIcon     *lcl.TTrayIcon
@@ -34,8 +34,8 @@ type tLCLCefTrayForm struct {
 	url          string
 }
 
-func newLCLCefTray(owner lcl.IComponent, width, height int32, url string) *tLCLCefTrayForm {
-	var trayForm *tLCLCefTrayForm
+func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *tLCLTrayWindow {
+	var trayForm *tLCLTrayWindow
 	lcl.Application.CreateForm(&trayForm)
 	trayForm.trayIcon = lcl.NewTrayIcon(owner)
 	trayForm.trayIcon.SetVisible(true)
@@ -50,26 +50,26 @@ func newLCLCefTray(owner lcl.IComponent, width, height int32, url string) *tLCLC
 	return trayForm
 }
 
-func (m *tLCLCefTrayForm) OnFormCreate(sender lcl.IObject) {
+func (m *tLCLTrayWindow) OnFormCreate(sender lcl.IObject) {
 	m.SetShowInTaskBar(types.StNever)
 }
 
-func (m *tLCLCefTrayForm) Tray() *Tray {
+func (m *tLCLTrayWindow) Tray() *Tray {
 	return nil
 }
 
-func (m *tLCLCefTrayForm) Show() {
+func (m *tLCLTrayWindow) Show() {
 	if BrowserWindow.mainBrowserWindow.Chromium() == nil || !BrowserWindow.mainBrowserWindow.Chromium().Initialized() {
 		return
 	}
 	m.TForm.Show()
 }
 
-func (m *tLCLCefTrayForm) Hide() {
+func (m *tLCLTrayWindow) Hide() {
 	m.TForm.Hide()
 }
 
-func (m *tLCLCefTrayForm) close() {
+func (m *tLCLTrayWindow) close() {
 	if m.isClosing {
 		return
 	}
@@ -77,41 +77,41 @@ func (m *tLCLCefTrayForm) close() {
 	m.TForm.Close()
 }
 
-func (m *tLCLCefTrayForm) SetOnDblClick(fn lcl.TNotifyEvent) {
+func (m *tLCLTrayWindow) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)
 }
 
-func (m *tLCLCefTrayForm) SetOnClick(fn lcl.TNotifyEvent) {
+func (m *tLCLTrayWindow) SetOnClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnClick(fn)
 }
 
-func (m *tLCLCefTrayForm) SetOnMouseUp(fn TMouseEvent) {
+func (m *tLCLTrayWindow) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
-func (m *tLCLCefTrayForm) SetOnMouseDown(fn lcl.TMouseEvent) {
+func (m *tLCLTrayWindow) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
-func (m *tLCLCefTrayForm) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+func (m *tLCLTrayWindow) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
-func (m *tLCLCefTrayForm) Visible() bool {
+func (m *tLCLTrayWindow) Visible() bool {
 	return m.TForm.Visible()
 }
 
-func (m *tLCLCefTrayForm) SetVisible(v bool) {
+func (m *tLCLTrayWindow) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
-func (m *tLCLCefTrayForm) SetHint(value string) {
+func (m *tLCLTrayWindow) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
-func (m *tLCLCefTrayForm) SetTitle(title string) {
+func (m *tLCLTrayWindow) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
 
-func (m *tLCLCefTrayForm) onmMouse() {
+func (m *tLCLTrayWindow) onmMouse() {
 	QueueAsyncCall(func(id int) {
 		m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 			var monitor = m.TForm.Monitor()
@@ -148,7 +148,7 @@ func (m *tLCLCefTrayForm) onmMouse() {
 //title 气泡标题
 //content 气泡内容
 //timeout 显示时间(毫秒)
-func (m *tLCLCefTrayForm) SetBalloon(title, content string, timeout int32) ITray {
+func (m *tLCLTrayWindow) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)
 	m.trayIcon.SetBalloonTimeout(timeout)
@@ -156,11 +156,11 @@ func (m *tLCLCefTrayForm) SetBalloon(title, content string, timeout int32) ITray
 }
 
 //显示托盘气泡
-func (m *tLCLCefTrayForm) ShowBalloon() {
+func (m *tLCLTrayWindow) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
-func (m *tLCLCefTrayForm) createCefTrayWindow() {
+func (m *tLCLTrayWindow) createCefTrayWindow() {
 	m.TForm.SetBorderStyle(types.BsNone)
 	m.TForm.SetFormStyle(types.FsStayOnTop)
 	m.TForm.SetBounds(-(m.w * 2), -(m.h * 2), m.w, m.h)
@@ -229,14 +229,8 @@ func (m *tLCLCefTrayForm) createCefTrayWindow() {
 		logger.Debug("tray.chromium.onClose")
 		if IsDarwin() {
 			m.windowParent.DestroyChildWindow()
-		} else {
-			//QueueAsyncCall(func(id int) { //主进程执行
-			//m.windowParent.Free()
-			//logger.Debug("tray.chromium.onClose => windowParent.Free")
-			//})
 		}
 		*aAction = CbaClose
-		//*aAction = CbaDelay
 	})
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		logger.Debug("tray.chromium.onBeforeClose")
@@ -249,6 +243,6 @@ func (m *tLCLCefTrayForm) createCefTrayWindow() {
 }
 
 //设置托盘图标
-func (m *tLCLCefTrayForm) SetIcon(iconResourcePath string) {
+func (m *tLCLTrayWindow) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
