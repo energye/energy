@@ -83,6 +83,9 @@ type IBrowserWindow interface {
 	NewCefTray(width, height int32, url string) ITray
 	NewTray() ITray
 	HideTitle()
+	SetDefaultInTaskBar()
+	SetShowInTaskBar()
+	SetNotInTaskBar()
 }
 
 type ILCLBrowserWindow interface {
@@ -90,9 +93,6 @@ type ILCLBrowserWindow interface {
 	BrowserWindow() *LCLBrowserWindow
 	EnableDefaultCloseEvent()
 	EnableAllDefaultEvent()
-	SetDefaultInTaskBar()
-	SetShowInTaskBar()
-	SetNotInTaskBar()
 	WindowParent() ITCefWindowParent
 	DisableTransparent()
 	EnableTransparent(value uint8)

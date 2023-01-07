@@ -53,11 +53,12 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 		browserViewComponent: NewBrowserViewComponent(component),
 	}
 	m.chromium.SetEnableMultiBrowserMode(true)
-	m.registerPopupEvent()
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
-			m.windowComponent.SetTitle(windowProperty.Title)
+			if windowProperty.Title != "" {
+				m.windowComponent.SetTitle(windowProperty.Title)
+			}
 			if windowProperty.CenterWindow {
 				m.windowComponent.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
@@ -384,6 +385,28 @@ func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 		handle := m.WindowComponent().WindowHandle()
 		win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
 		win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {
+	if common.IsWindows() {
+		m.SetShowInTaskBar()
+	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetShowInTaskBar() {
+	if common.IsWindows() {
+		handle := m.WindowComponent().WindowHandle()
+		win.ShowWindow(handle.ToPtr(), win.SW_SHOW)
+		win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, win.WS_EX_APPWINDOW)
+	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetNotInTaskBar() {
+	if common.IsWindows() {
+		handle := m.WindowComponent().WindowHandle()
+		win.ShowWindow(handle.ToPtr(), win.SW_HIDE)
+		win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE)|win.WS_EX_TOOLWINDOW&^win.WS_EX_APPWINDOW))
 	}
 }
 

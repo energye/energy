@@ -191,7 +191,7 @@ func AppBrowserInit() {
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		window := browserWindow.AsLCLBrowserWindow()
-		browserWindow.HideTitle()
+		//browserWindow.HideTitle()
 		//window.BrowserWindow().SetBorderStyle(types.BsNone)
 		//window.BrowserWindow().SetFormStyle(types.FsNormal)
 		//window.BrowserWindow().SetFormStyle(types.FsSystemStayOnTop)
@@ -402,7 +402,7 @@ func cefTray(browserWindow cef.ILCLBrowserWindow) {
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
-	tray.SetIcon("resources/icon.ico")
+	tray.SetIconFS("resources/icon.ico")
 	tray.SetOnClick(func(sender lcl.IObject) {
 		window.SetVisible(!window.Visible())
 	})
@@ -441,7 +441,7 @@ func tray(browserWindow cef.ILCLBrowserWindow) {
 	//托盘 windows linux macos 系统托盘
 	newTray := browserWindow.NewTray()
 	tray := newTray.Tray()
-	tray.SetIcon("resources/icon.ico")
+	tray.SetIconFS("resources/icon.ico")
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	menu1.Add(tray.NewMenuItem("子菜单", func(object lcl.IObject) {
 		lcl.ShowMessage("子菜单点击 提示消息")

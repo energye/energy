@@ -78,9 +78,9 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray := browserWindow.NewCefTray(250, 300, url)
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
-	tray.SetIcon("resources/icon.ico")
+	tray.SetIconFS("resources/icon.ico")
 	tray.SetOnClick(func(sender lcl.IObject) {
-		//browserWindow.SetVisible(!browserWindow.Visible())
+		browserWindow.Show()
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
@@ -89,23 +89,15 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 		tray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
-		//vb := !browserWindow.Visible()
-		//browserWindow.SetVisible(vb)
-		//if vb {
-		//	if browserWindow.WindowState() == types.WsMinimized {
-		//		browserWindow.SetWindowState(types.WsNormal)
-		//	}
-		//	browserWindow.Focused()
-		//}
+		browserWindow.Hide()
 		tray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
 		browserWindow.CloseBrowserWindow()
 	})
 	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
-		cef.QueueAsyncCall(func(id int) {
-			lcl.ShowMessage("tray-show-message-box 提示消息")
-		})
+		//无法使用lcl组件
+		//lcl.ShowMessage("提示?") //直接异常退出
 		tray.Hide()
 	})
 	//托盘 end
@@ -116,7 +108,7 @@ func tray(browserWindow cef.IBrowserWindow) {
 	//托盘 windows linux macos 系统托盘
 	newTray := browserWindow.NewTray()
 	tray := newTray.Tray()
-	tray.SetIcon("resources/icon.ico")
+	tray.SetIconFS("resources/icon.ico")
 	tray.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) bool {
 		fmt.Println("SetOnMouseUp", button, shift, x, y)
 		return false

@@ -603,4 +603,17 @@ const (
 
 type TCefShowState = types.Int32
 
+const (
+	CEF_SHOW_STATE_NORMAL     = TCefShowState(1)
+	CEF_SHOW_STATE_MINIMIZED  = TCefShowState(2)
+	CEF_SHOW_STATE_MAXIMIZED  = TCefShowState(3)
+	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
+)
+
 type TCefChromeToolbarType = types.Int32
+
+const (
+	CEF_CTT_NONE     = TCefChromeToolbarType(1)
+	CEF_CTT_NORMAL   = TCefChromeToolbarType(2)
+	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
+)

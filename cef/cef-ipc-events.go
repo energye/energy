@@ -24,8 +24,8 @@ import (
 )
 
 const (
-	IPC_FN_TYPE_IPCJSEmitGo    = 1 // JS fires the Go registerEvent
-	IPC_FN_TYPE_IPCGoEmitJSRet = 2 // Go fires the JS registerEvent
+	IPC_FN_TYPE_IPCJSEmitGo    = 1 // JS fires the Go registerChromiumEvent
+	IPC_FN_TYPE_IPCGoEmitJSRet = 2 // Go fires the JS registerChromiumEvent
 )
 
 var (

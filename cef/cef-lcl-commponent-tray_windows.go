@@ -45,8 +45,8 @@ func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *tL
 	trayForm.w = width
 	trayForm.h = height
 	trayForm.url = url
-	trayForm.onmMouse()
-	trayForm.createCefTrayWindow()
+	trayForm.onMouseEvent()
+	trayForm.createTrayWindow()
 	return trayForm
 }
 
@@ -74,6 +74,7 @@ func (m *tLCLTrayWindow) close() {
 		return
 	}
 	m.Hide()
+	m.trayIcon.SetVisible(false)
 	m.TForm.Close()
 }
 
@@ -111,7 +112,7 @@ func (m *tLCLTrayWindow) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
 
-func (m *tLCLTrayWindow) onmMouse() {
+func (m *tLCLTrayWindow) onMouseEvent() {
 	QueueAsyncCall(func(id int) {
 		m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 			var monitor = m.TForm.Monitor()
@@ -160,7 +161,7 @@ func (m *tLCLTrayWindow) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
-func (m *tLCLTrayWindow) createCefTrayWindow() {
+func (m *tLCLTrayWindow) createTrayWindow() {
 	m.TForm.SetBorderStyle(types.BsNone)
 	m.TForm.SetFormStyle(types.FsStayOnTop)
 	m.TForm.SetBounds(-(m.w * 2), -(m.h * 2), m.w, m.h)
@@ -243,6 +244,11 @@ func (m *tLCLTrayWindow) createCefTrayWindow() {
 }
 
 //设置托盘图标
-func (m *tLCLTrayWindow) SetIcon(iconResourcePath string) {
+func (m *tLCLTrayWindow) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
+}
+
+//设置托盘图标
+func (m *tLCLTrayWindow) SetIcon(iconResourcePath string) {
+	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }

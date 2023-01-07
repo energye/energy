@@ -27,6 +27,7 @@ type ITray interface {
 	SetOnMouseUp(fn TMouseEvent)                           //up事件 linux 和 macos 可能不启作用
 	SetOnMouseDown(fn lcl.TMouseEvent)                     //down事件 linux 和 macos 可能不启作用
 	SetOnMouseMove(fn lcl.TMouseMoveEvent)                 //move事件 linux 和 macos 可能不启作用
+	SetIconFS(iconResourcePath string)                     //设置托盘图标
 	SetIcon(iconResourcePath string)                       //设置托盘图标
 	SetHint(value string)                                  //设置托盘hint(鼠标移动到托盘图标显示的文字)
 	ShowBalloon()                                          //显示托盘气泡
@@ -103,8 +104,13 @@ func (m *Tray) TrayMenu() *lcl.TPopupMenu {
 }
 
 //设置托盘图标
-func (m *Tray) SetIcon(iconResourcePath string) {
+func (m *Tray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
+}
+
+//设置托盘图标
+func (m *Tray) SetIcon(iconResourcePath string) {
+	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }
 
 func (m *Tray) SetHint(value string) {
