@@ -9,7 +9,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
@@ -39,7 +38,7 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty, browserWindowOnEventCallback browserWindowOnEventCallback) *ViewsFrameworkBrowserWindow {
+func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = BrowserWindow.Config.ChromiumConfig()
 	}
@@ -67,34 +66,9 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
 			}
 			m.browserViewComponent.RequestFocus()
-			if browserWindowOnEventCallback != nil {
-				browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
-			} else {
-				m.windowComponent.Show()
-			}
+			m.windowComponent.Show()
 		}
 	})
-	if !windowProperty.CenterWindow {
-		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
-			aResult.X = windowProperty.X
-			aResult.Y = windowProperty.Y
-			aResult.Width = windowProperty.Width
-			aResult.Height = windowProperty.Height
-		})
-	}
-	m.windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.CanMinimize
-	})
-	m.windowComponent.SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.CanResize
-	})
-	m.windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.CanMaximize
-	})
-	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.CanClose
-	})
-	m.windowComponent.SetAlwaysOnTop(windowProperty.AlwaysOnTop)
 	return m
 }
 
@@ -104,12 +78,13 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 		return
 	}
 	app.SetOnContextInitialized(func() {
-		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), &m.Config.WindowProperty, m.Config.browserWindowOnEventCallback)
+		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
 		vFrameBrowserWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			if vFrameBrowserWindow.tray != nil {
 				vFrameBrowserWindow.tray.close()
 			}
 		})
+		vFrameBrowserWindow.resetWindowPropertyEvent()
 		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
 		vFrameBrowserWindow.putChromiumWindowInfo()
@@ -120,16 +95,11 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 			app.QuitMessageLoop()
 		})
 		BrowserWindow.mainVFBrowserWindow = vFrameBrowserWindow
+		if m.Config.browserWindowOnEventCallback != nil {
+			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
+		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()
 	})
-}
-
-func (m *ViewsFrameworkBrowserWindow) IsViewsFramework() bool {
-	return true
-}
-
-func (m *ViewsFrameworkBrowserWindow) IsLCL() bool {
-	return false
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
@@ -138,7 +108,6 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
-		fmt.Println("BrowserWindow-TargetUrl:", beforePopupInfo.TargetUrl, "IsMessageLoop:", consts.IsMessageLoop)
 		wp := &WindowProperty{
 			Title:        BrowserWindow.Config.WindowProperty.Title,
 			Url:          beforePopupInfo.TargetUrl,
@@ -156,9 +125,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			Width:        BrowserWindow.Config.WindowProperty.Width,
 			Height:       BrowserWindow.Config.WindowProperty.Height,
 		}
-		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, func(event *BrowserEvent, window IBrowserWindow) {
-			window.Show()
-		})
+		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp)
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
@@ -179,7 +146,8 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 
 //重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) resetWindowPropertyEvent() {
-	if m.WindowProperty().CenterWindow {
+	windowProperty := m.WindowProperty()
+	if windowProperty.CenterWindow {
 		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
 	} else {
 		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
@@ -189,6 +157,19 @@ func (m *ViewsFrameworkBrowserWindow) resetWindowPropertyEvent() {
 			aResult.Height = m.WindowProperty().Height
 		})
 	}
+	m.windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanMinimize
+	})
+	m.windowComponent.SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanResize
+	})
+	m.windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanMaximize
+	})
+	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = windowProperty.CanClose
+	})
+	m.windowComponent.SetAlwaysOnTop(windowProperty.AlwaysOnTop)
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
@@ -288,6 +269,14 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
 	})
+}
+
+func (m *ViewsFrameworkBrowserWindow) IsViewsFramework() bool {
+	return true
+}
+
+func (m *ViewsFrameworkBrowserWindow) IsLCL() bool {
+	return false
 }
 
 func (m *ViewsFrameworkBrowserWindow) WindowProperty() *WindowProperty {
@@ -428,30 +417,32 @@ func (m *ViewsFrameworkBrowserWindow) SetWindowType(windowType consts.WINDOW_TYP
 
 //禁用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMinimize() {
-	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = false
-	})
+	m.WindowProperty().CanMinimize = false
 }
 
 //禁用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMaximize() {
-	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = false
-	})
+	m.WindowProperty().CanMaximize = false
+}
+
+//禁用调整窗口大小
+func (m *ViewsFrameworkBrowserWindow) DisableResize() {
+	m.WindowProperty().CanResize = false
 }
 
 //启用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMinimize() {
-	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = true
-	})
+	m.WindowProperty().CanMinimize = true
 }
 
 //启用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMaximize() {
-	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = true
-	})
+	m.WindowProperty().CanMaximize = true
+}
+
+//启用调整窗口大小
+func (m *ViewsFrameworkBrowserWindow) EnableResize() {
+	m.WindowProperty().CanResize = true
 }
 
 func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {

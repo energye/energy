@@ -538,7 +538,9 @@ func (m *LCLBrowserWindow) DisableMinimize() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMinimize))
+	//m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMinimize))
+	m.WindowProperty().CanMinimize = false
+	m.EnabledMinimize(m.WindowProperty().CanMinimize)
 }
 
 //禁用最大化按钮
@@ -546,7 +548,18 @@ func (m *LCLBrowserWindow) DisableMaximize() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMaximize))
+	//m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMaximize))
+	m.WindowProperty().CanMaximize = false
+	m.EnabledMaximize(m.WindowProperty().CanMaximize)
+}
+
+//禁用调整窗口大小
+func (m *LCLBrowserWindow) DisableResize() {
+	if m.TForm == nil {
+		return
+	}
+	m.WindowProperty().CanResize = false
+	m.SetBorderStyle(types.BsSingle)
 }
 
 //禁用系统菜单-同时禁用最小化，最大化，关闭按钮
@@ -554,7 +567,8 @@ func (m *LCLBrowserWindow) DisableSystemMenu() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Exclude(types.BiSystemMenu))
+	//m.SetBorderIcons(m.BorderIcons().Exclude(types.BiSystemMenu))
+	m.EnabledSystemMenu(false)
 }
 
 //禁用帮助菜单
@@ -570,7 +584,9 @@ func (m *LCLBrowserWindow) EnableMinimize() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Include(types.BiMinimize))
+	//m.SetBorderIcons(m.BorderIcons().Include(types.BiMinimize))
+	m.WindowProperty().CanMinimize = true
+	m.EnabledMinimize(m.WindowProperty().CanMinimize)
 }
 
 //启用最大化按钮
@@ -578,7 +594,18 @@ func (m *LCLBrowserWindow) EnableMaximize() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Include(types.BiMaximize))
+	//m.SetBorderIcons(m.BorderIcons().Include(types.BiMaximize))
+	m.WindowProperty().CanMaximize = true
+	m.EnabledMaximize(m.WindowProperty().CanMaximize)
+}
+
+//启用调整窗口大小
+func (m *LCLBrowserWindow) EnableResize() {
+	if m.TForm == nil {
+		return
+	}
+	m.WindowProperty().CanResize = true
+	m.SetBorderStyle(types.BsNone)
 }
 
 //启用系统菜单-同时禁用最小化，最大化，关闭按钮
@@ -586,7 +613,8 @@ func (m *LCLBrowserWindow) EnableSystemMenu() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetBorderIcons(m.BorderIcons().Include(types.BiSystemMenu))
+	//m.SetBorderIcons(m.BorderIcons().Include(types.BiSystemMenu))
+	m.EnabledSystemMenu(true)
 }
 
 //启用帮助菜单

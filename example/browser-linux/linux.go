@@ -24,9 +24,10 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	cef.BrowserWindow.Config.CanResize = false
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		window.Show()
+		window.DisableResize()
+		window.SetTitle("这里改变了窗口标题")
+		window.SetWidth(1800)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
@@ -39,6 +40,8 @@ func main() {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
 			popupWindow.SetCenterWindow(true)
+			popupWindow.EnableResize()
+			popupWindow.SetWidth(1600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			//browserWindow.BrowserWindow().CreateTopLevelWindow()
 			//browserWindow.BrowserWindow().HideTitle()
@@ -54,6 +57,7 @@ func main() {
 		//设置隐藏窗口标题
 		//window.HideTitle()
 		cefTray(window)
+		window.Show()
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

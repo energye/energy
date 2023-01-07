@@ -62,8 +62,10 @@ type IBrowserWindow interface {
 	Chromium() IChromium
 	DisableMaximize()
 	DisableMinimize()
+	DisableResize()
 	EnableMaximize()
 	EnableMinimize()
+	EnableResize()
 	IsClosing() bool
 	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow
 	AsLCLBrowserWindow() ILCLBrowserWindow

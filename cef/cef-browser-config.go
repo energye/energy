@@ -17,7 +17,7 @@ type browserWindowAfterOnEventCallback func(window IBrowserWindow)
 
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
-	WindowProperty
+	*WindowProperty
 	chromiumConfig                    *tCefChromiumConfig               //主窗体浏览器配置
 	browserWindowOnEventCallback      browserWindowOnEventCallback      //主窗口初始化回调 - 基于LCL窗口
 	browserWindowAfterOnEventCallback browserWindowAfterOnEventCallback //主窗口初始化之后回调

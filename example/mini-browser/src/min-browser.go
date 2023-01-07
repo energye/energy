@@ -36,6 +36,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
+	//cef.BrowserWindow.Config.CanResize = false
 	//cef.BrowserWindow.Config.CenterWindow = false
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
@@ -191,6 +192,8 @@ func AppBrowserInit() {
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		window := browserWindow.AsLCLBrowserWindow()
+		browserWindow.DisableMinimize()
+		//browserWindow.DisableResize()
 		//browserWindow.HideTitle()
 		//window.BrowserWindow().SetBorderStyle(types.BsNone)
 		//window.BrowserWindow().SetFormStyle(types.FsNormal)
@@ -286,9 +289,10 @@ func AppBrowserInit() {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: "+beforePopupInfo.TargetUrl, "isLCL:", popupWindow.IsLCL())
 			window := popupWindow.AsLCLBrowserWindow().BrowserWindow()
+			popupWindow.EnableResize()
 			window.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
-			//popupWindow.Form.SetBorderStyle(types.BsNone)
-			//popupWindow.Form.SetFormStyle(types.FsNormal)
+			window.SetBorderStyle(types.BsNone)
+			//window.SetFormStyle(types.FsNormal)
 			window.SetWidth(800)
 			window.SetHeight(600)
 			//窗口弹出之前可自定义系统组件

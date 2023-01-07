@@ -45,9 +45,8 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *t
 	wp.CanMinimize = false
 	wp.CanResize = false
 	wp.CenterWindow = false
-	tray.trayWindow = NewViewsFrameworkBrowserWindow(cc, wp, func(event *BrowserEvent, window IBrowserWindow) {
-		window.Hide()
-	})
+	tray.trayWindow = NewViewsFrameworkBrowserWindow(cc, wp)
+	tray.trayWindow.resetWindowPropertyEvent()
 	tray.trayWindow.windowId = BrowserWindow.GetNextWindowNum()
 	tray.trayWindow.putChromiumWindowInfo()
 	tray.trayIcon = lcl.NewTrayIcon(owner)

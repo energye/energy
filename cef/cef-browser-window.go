@@ -28,7 +28,7 @@ var (
 		mainBrowserWindow: &browserWindow{},
 		browserEvent:      &BrowserEvent{},
 		Config: &browserConfig{
-			WindowProperty: *NewWindowProperty(),
+			WindowProperty: NewWindowProperty(),
 		},
 		windowInfo:   make(map[int32]IBrowserWindow),
 		windowSerial: 1,
@@ -123,6 +123,7 @@ func Run(cefApp *TCEFApplication) {
 }
 
 func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
+	m.windowProperty = BrowserWindow.Config.WindowProperty
 	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()
 	m.defaultWindowEvent()
@@ -136,26 +137,26 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		}
 		return false
 	})
-	m.SetCaption(BrowserWindow.Config.Title)
-	if BrowserWindow.Config.IconFS != "" {
-		lcl.Application.Icon().LoadFromFSFile(BrowserWindow.Config.IconFS)
-	} else if BrowserWindow.Config.Icon != "" {
-		lcl.Application.Icon().LoadFromFile(BrowserWindow.Config.Icon)
+	m.SetCaption(m.windowProperty.Title)
+	if m.windowProperty.IconFS != "" {
+		lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
+	} else if m.windowProperty.Icon != "" {
+		lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
 	}
-	if BrowserWindow.Config.CenterWindow {
-		m.SetWidth(BrowserWindow.Config.Width)
-		m.SetHeight(BrowserWindow.Config.Height)
+	if m.windowProperty.CenterWindow {
+		m.SetWidth(m.windowProperty.Width)
+		m.SetHeight(m.windowProperty.Height)
 		m.SetPosition(types.PoDesktopCenter)
 	} else {
 		m.SetPosition(types.PoDesigned)
-		m.SetBounds(BrowserWindow.Config.X, BrowserWindow.Config.Y, BrowserWindow.Config.Width, BrowserWindow.Config.Height)
+		m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
 	}
-	if BrowserWindow.Config.AlwaysOnTop {
+	if m.windowProperty.AlwaysOnTop {
 		m.SetFormStyle(types.FsSystemStayOnTop)
 	}
-	m.EnabledMinimize(BrowserWindow.Config.CanMinimize)
-	m.EnabledMaximize(BrowserWindow.Config.CanMaximize)
-	if !BrowserWindow.Config.CanResize {
+	m.EnabledMinimize(m.windowProperty.CanMinimize)
+	m.EnabledMaximize(m.windowProperty.CanMaximize)
+	if !m.windowProperty.CanResize {
 		m.SetBorderStyle(types.BsSingle)
 	}
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
@@ -227,7 +228,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextLCLPopupWindow() {
-	m.popupWindow = NewLCLWindow(&BrowserWindow.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
+	m.popupWindow = NewLCLWindow(BrowserWindow.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 
