@@ -143,6 +143,9 @@ func (m *assetsHttpServer) graceShutdown(server *http.Server) {
 	}
 }
 
+//启动内置Http Server
+//
+//需要使用goroutine启动 [go x.StartHttpServer()]
 func (m *assetsHttpServer) StartHttpServer() {
 	if m.LocalAssets != "" {
 		m.LocalAssets = strings.ReplaceAll(m.LocalAssets, "\\", "/")

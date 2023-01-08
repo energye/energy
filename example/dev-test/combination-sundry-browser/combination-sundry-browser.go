@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/example/mini-browser/src"
+	"github.com/energye/energy/example/dev-test/combination-sundry-browser/src"
 	"github.com/energye/energy/logger"
 )
 
