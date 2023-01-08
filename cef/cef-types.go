@@ -191,7 +191,7 @@ type TCefPoint struct {
 
 type TCefDraggableRegions struct {
 	regions      []TCefDraggableRegion
-	regionsCount int32
+	regionsCount int
 }
 
 type TCefDraggableRegion struct {
@@ -241,10 +241,10 @@ func (m *TCefDraggableRegions) Regions() []TCefDraggableRegion {
 
 func (m *TCefDraggableRegions) Append(region TCefDraggableRegion) {
 	m.regions = append(m.regions, region)
-	m.regionsCount = int32(len(m.regions))
+	m.regionsCount = len(m.regions)
 }
 
-func (m *TCefDraggableRegions) RegionsCount() int32 {
+func (m *TCefDraggableRegions) RegionsCount() int {
 	return m.regionsCount
 }
 

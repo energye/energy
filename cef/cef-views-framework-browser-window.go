@@ -37,6 +37,7 @@ type ViewsFrameworkBrowserWindow struct {
 	auxTools             *auxTools                      //辅助工具
 	tray                 ITray                          //托盘
 	doOnWindowCreated    WindowComponentOnWindowCreated //
+	regions              *TCefDraggableRegions          //
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
@@ -301,6 +302,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		if bwEvent.onDraggableRegionsChanged != nil {
 			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
 		}
+		m.regions = regions
 		m.windowComponent.SetDraggableRegions(regions.Regions())
 	})
 }

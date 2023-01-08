@@ -35,26 +35,27 @@ type IBaseWindow interface {
 
 //LCLBrowserWindow 基于chromium 和 lcl 的窗口组件
 type LCLBrowserWindow struct {
-	*lcl.TForm                          //
-	chromium         IChromium          //
-	browser          *ICefBrowser       //
-	windowParent     ITCefWindowParent  //
-	windowProperty   *WindowProperty    //
-	windowId         int32              //
-	windowType       consts.WINDOW_TYPE //0:browser 1:devTools 2:viewSource 默认:0
-	isClosing        bool               //
-	canClose         bool               //
-	onResize         []TNotifyEvent     //
-	onActivate       []TNotifyEvent     //
-	onShow           []TNotifyEvent     //
-	onClose          []TCloseEvent      //
-	onCloseQuery     []TCloseQueryEvent //
-	onActivateAfter  lcl.TNotifyEvent   //
-	isFormCreate     bool               //是否创建完成 WindowForm
-	isChromiumCreate bool               //是否创建完成 Chromium
-	frames           TCEFFrame          //当前浏览器下的所有frame
-	auxTools         *auxTools          //辅助工具
-	tray             ITray              //托盘
+	*lcl.TForm                             //
+	chromium         IChromium             //
+	browser          *ICefBrowser          //
+	windowParent     ITCefWindowParent     //
+	windowProperty   *WindowProperty       //
+	windowId         int32                 //
+	windowType       consts.WINDOW_TYPE    //0:browser 1:devTools 2:viewSource 默认:0
+	isClosing        bool                  //
+	canClose         bool                  //
+	onResize         []TNotifyEvent        //
+	onActivate       []TNotifyEvent        //
+	onShow           []TNotifyEvent        //
+	onClose          []TCloseEvent         //
+	onCloseQuery     []TCloseQueryEvent    //
+	onActivateAfter  lcl.TNotifyEvent      //
+	isFormCreate     bool                  //是否创建完成 WindowForm
+	isChromiumCreate bool                  //是否创建完成 Chromium
+	frames           TCEFFrame             //当前浏览器下的所有frame
+	auxTools         *auxTools             //辅助工具
+	tray             ITray                 //托盘
+	regions          *TCefDraggableRegions //
 }
 
 //创建一个 LCL 带有 chromium 窗口
@@ -849,13 +850,9 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		if bwEvent.onDraggableRegionsChanged != nil {
 			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
 		}
+		m.regions = regions
 		//m.windowComponent.SetDraggableRegions(regions.Regions())
 	})
-}
-
-//控制LCL创建的窗口事件
-func (m *LCLBrowserWindow) registerControlLCLWindowEvent() {
-
 }
 
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {

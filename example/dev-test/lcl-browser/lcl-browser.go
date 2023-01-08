@@ -19,12 +19,33 @@ func main() {
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
-			fmt.Println("SetOnWidgetCompMsg:", message)
-		})
+		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+		//	fmt.Println("SetOnWidgetCompMsg:", message)
+		//})
+		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
-			fmt.Println("RegionsCount:", regions.RegionsCount())
+			fmt.Println("RegionsCount:", regions.RegionsCount(), regions.Regions())
+			for i := 0; i < regions.RegionsCount(); i++ {
+				fmt.Println("region:", i, regions.Regions()[i])
+			}
+			newButton := lcl.NewButton(browserWindow)
+			newButton.SetParent(browserWindow)
+			newButton.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+				fmt.Println("SetOnMouseDown")
+			})
+			button := lcl.NewImageButton(browserWindow)
+			button.SetParent(browserWindow)
+			button.SetImageCount(0)
+			button.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+				fmt.Println("SetOnMouseDown")
+			})
+			button.SetBounds(0, 0, 100, 100)
+			//
+			panel := lcl.NewPanel(browserWindow)
+			panel.SetParent(browserWindow)
+			panel.SetCaption("adsfasdfsadfdsaf")
 		})
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
