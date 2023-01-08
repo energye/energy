@@ -11,6 +11,7 @@ package consts
 import (
 	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/homedir"
+	"math"
 	"os"
 	"path/filepath"
 )
@@ -616,4 +617,17 @@ const (
 	CEF_CTT_NONE     = TCefChromeToolbarType(1)
 	CEF_CTT_NORMAL   = TCefChromeToolbarType(2)
 	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
+)
+
+type TCefDragOperations = types.Cardinal
+
+const (
+	DRAG_OPERATION_NONE    = TCefDragOperations(0)
+	DRAG_OPERATION_COPY    = TCefDragOperations(1)
+	DRAG_OPERATION_LINK    = TCefDragOperations(2)
+	DRAG_OPERATION_GENERIC = TCefDragOperations(4)
+	DRAG_OPERATION_PRIVATE = TCefDragOperations(8)
+	DRAG_OPERATION_MOVE    = TCefDragOperations(16)
+	DRAG_OPERATION_DELETE  = TCefDragOperations(32)
+	DRAG_OPERATION_EVERY   = TCefDragOperations(math.MaxUint32)
 )

@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -30,6 +31,9 @@ func main() {
 		window.SetSize(1600, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
+		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regionsCount types.NativeUInt, regions *cef.TCefDraggableRegions) {
+			fmt.Println("SetOnDraggableRegionsChanged", regionsCount)
+		})
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
 			model.AddCheckItem(model.CefMis.NextCommandId(), "测试")
 		})
@@ -58,6 +62,7 @@ func main() {
 		//window.HideTitle()
 		cefTray(window)
 		window.Show()
+		fmt.Println("SetBrowserInit 结束")
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()

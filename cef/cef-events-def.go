@@ -33,7 +33,9 @@ type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, t
 
 // render
 type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
-type ChromiumEventOnRenderCompMsg func(sender lcl.IObject, message types.TMessage, aHandled bool)
+
+// msg
+type ChromiumEventOnCompMsg func(sender lcl.IObject, message types.TMessage, aHandled bool)
 
 // Event CefBrowse
 type ChromiumEventOnCefBrowser func(sender lcl.IObject, browser *ICefBrowser)
@@ -113,6 +115,12 @@ type ChromiumEventOnBeforePopupForWindowInfo func(sender lcl.IObject, browser *I
 
 // windowParent open url from tab
 type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
+
+// drag
+type ChromiumEventOnDragEnter func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool)
+
+// DraggableRegionsChanged css [-webkit-app-region： drag/no-drag]
+type ChromiumEventOnDraggableRegionsChanged func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regionsCount t.NativeUInt, regions *TCefDraggableRegions)
 
 // window event
 type TCloseEvent func(sender lcl.IObject, action *types.TCloseAction) bool

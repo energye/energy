@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
@@ -266,6 +267,12 @@ func AppBrowserInit() {
 		//自己调用系统的保存对话框获得保存路径
 		dlSave := lcl.NewSaveDialog(window.BrowserWindow())
 		dlSave.SetTitle("保存对话框标题")
+		event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+			fmt.Println("SetOnWidgetCompMsg", message)
+		})
+		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regionsCount t.NativeUInt, regions *cef.TCefDraggableRegions) {
+			fmt.Println("SetOnDraggableRegionsChanged", regionsCount)
+		})
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
 			//linux下 需要这样使用 Sync
@@ -407,17 +414,8 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
-	var s = false
 	tray.SetOnClick(func(sender lcl.IObject) {
-		cef.QueueAsyncCall(func(id int) {
-			fmt.Println("s", s)
-			s = !s
-			if s {
-				browserWindow.HideTitle()
-			} else {
-				browserWindow.ShowTitle()
-			}
-		})
+		fmt.Println("SetOnClick", sender)
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {

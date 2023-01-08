@@ -9,6 +9,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
@@ -53,6 +54,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	}
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+		fmt.Println("args-ProcessType", common.Args.ProcessType())
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			if windowProperty.Title != "" {
@@ -68,10 +70,10 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 			}
 			m.browserViewComponent.RequestFocus()
 
-			regions := NewCefDraggableRegions()
-			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 600), true))
-			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
-			window.SetDraggableRegions(regions.Regions())
+			//regions := NewCefDraggableRegions()
+			//regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 100), true))
+			//regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
+			//window.SetDraggableRegions(regions.Regions())
 			m.windowComponent.Show()
 			if m.doOnWindowCreated != nil {
 				m.doOnWindowCreated(sender, window)
@@ -93,6 +95,12 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 				vFrameBrowserWindow.tray.close()
 			}
 		})
+		vFrameBrowserWindow.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
+			regions := NewCefDraggableRegions()
+			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 100), true))
+			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
+			vFrameBrowserWindow.windowComponent.SetDraggableRegions(regions.Regions())
+		})
 		vFrameBrowserWindow.resetWindowPropertyEvent()
 		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
@@ -110,6 +118,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 		}
 		BrowserWindow.mainVFBrowserWindow = vFrameBrowserWindow
 		if m.Config.browserWindowOnEventCallback != nil {
+			BrowserWindow.browserEvent.chromium = vFrameBrowserWindow.chromium
 			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
 		}
 		vFrameBrowserWindow.windowComponent.CreateTopLevelWindow()

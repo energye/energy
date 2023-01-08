@@ -194,6 +194,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetOnKeyEvent", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnTitleChange", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnRenderCompMsg", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnWidgetCompMsg", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnBrowserCompMsg", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnRenderProcessTerminated", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnRenderViewReady", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnScrollOffsetChanged", 0),
@@ -217,6 +219,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetOnMainFrameChanged", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnBeforePopup", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnOpenUrlFromTab", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnDragEnter", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnDraggableRegionsChanged", 0),
 		//TCEFChromium - proc
 		dllimports.NewEnergyImport("CEFChromium_Free", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetHashCode", 0),
@@ -657,6 +661,8 @@ const (
 	internale_CEFChromium_SetOnKeyEvent
 	internale_CEFChromium_SetOnTitleChange
 	internale_CEFChromium_SetOnRenderCompMsg
+	internale_CEFChromium_SetOnWidgetCompMsg
+	internale_CEFChromium_SetOnBrowserCompMsg
 	internale_CEFChromium_SetOnRenderProcessTerminated
 	internale_CEFChromium_SetOnRenderViewReady
 	internale_CEFChromium_SetOnScrollOffsetChanged
@@ -680,6 +686,8 @@ const (
 	internale_CEFChromium_SetOnMainFrameChanged
 	internale_CEFChromium_SetOnBeforePopup
 	internale_CEFChromium_SetOnOpenUrlFromTab
+	internale_CEFChromium_SetOnDragEnter
+	internale_CEFChromium_SetOnDraggableRegionsChanged
 	//TCEFChromium - proc
 	internale_CEFChromium_Free
 	internale_CEFChromium_GetHashCode

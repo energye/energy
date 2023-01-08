@@ -26,6 +26,7 @@ type TCefColor = UInt16
 type Integer = Int32
 type NativeUInt = UInt32
 type TCefString = String
+type Cardinal = UInt32
 
 type TString struct {
 	value string

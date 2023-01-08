@@ -424,9 +424,23 @@ func (m *BrowserEvent) SetOnTitleChange(event ChromiumEventOnTitleChange) {
 }
 
 // BrowserEvent.SetOnRenderCompMsg
-func (m *BrowserEvent) SetOnRenderCompMsg(event ChromiumEventOnRenderCompMsg) {
+func (m *BrowserEvent) SetOnRenderCompMsg(event ChromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.chromium.SetOnRenderCompMsg(event)
+	}
+}
+
+// BrowserEvent.SetOnWidgetCompMsg
+func (m *BrowserEvent) SetOnWidgetCompMsg(event ChromiumEventOnCompMsg) {
+	if Args.IsMain() {
+		m.chromium.SetOnWidgetCompMsg(event)
+	}
+}
+
+// BrowserEvent.SetOnBrowserCompMsg
+func (m *BrowserEvent) SetOnBrowserCompMsg(event ChromiumEventOnCompMsg) {
+	if Args.IsMain() {
+		m.chromium.SetOnBrowserCompMsg(event)
 	}
 }
 
@@ -580,14 +594,29 @@ func (m *BrowserEvent) SetOnBeforePopup(event ChromiumEventOnBeforePopupForWindo
 }
 
 // BrowserEvent.SetOnOpenUrlFromTab
-func (m *BrowserEvent) SetOnOpenUrlFromTab(event ChromiumEventOnOpenUrlFromTab) {
-	if Args.IsMain() {
-		m.chromium.SetOnOpenUrlFromTab(event)
-	}
-}
+//func (m *BrowserEvent) SetOnOpenUrlFromTab(event ChromiumEventOnOpenUrlFromTab) {
+//	if Args.IsMain() {
+//		m.chromium.SetOnOpenUrlFromTab(event)
+//	}
+//}
 
+// BrowserEvent.SetOnFindResult
 func (m *BrowserEvent) SetOnFindResult(event ChromiumEventOnFindResult) {
 	if Args.IsMain() {
 		m.chromium.SetOnFindResult(event)
+	}
+}
+
+// BrowserEvent.SetOnDragEnter
+func (m *BrowserEvent) SetOnDragEnter(event ChromiumEventOnDragEnter) {
+	if Args.IsMain() {
+		m.chromium.SetOnDragEnter(event)
+	}
+}
+
+// BrowserEvent.SetOnDraggableRegionsChanged
+func (m *BrowserEvent) SetOnDraggableRegionsChanged(event ChromiumEventOnDraggableRegionsChanged) {
+	if Args.IsMain() {
+		m.chromium.SetOnDraggableRegionsChanged(event)
 	}
 }

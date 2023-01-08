@@ -214,6 +214,10 @@ type ICefClient struct {
 	instance unsafe.Pointer
 }
 
+type ICefDragData struct {
+	instance unsafe.Pointer
+}
+
 func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
 	return TCefDraggableRegion{
 		Bounds:    *rect,

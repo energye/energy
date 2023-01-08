@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
@@ -171,6 +172,7 @@ func (m *tLCLTrayWindow) createTrayWindow() {
 	})
 	m.TForm.SetOnWndProc(func(msg *types.TMessage) {
 		m.TForm.InheritedWndProc(msg)
+		fmt.Println("msg", msg)
 		if msg.Msg == 6 && msg.WParam == 0 && msg.LParam == 0 {
 			QueueAsyncCall(func(id int) {
 				if m.isClosing {

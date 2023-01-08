@@ -36,7 +36,9 @@ type IChromiumEvent interface {
 	SetOnFullScreenModeChange(fn ChromiumEventOnFullScreenModeChange)
 	SetOnKeyEvent(fn ChromiumEventOnKeyEvent)
 	SetOnTitleChange(fn ChromiumEventOnTitleChange)
-	SetOnRenderCompMsg(fn ChromiumEventOnRenderCompMsg)
+	SetOnRenderCompMsg(fn ChromiumEventOnCompMsg)
+	SetOnWidgetCompMsg(fn ChromiumEventOnCompMsg)
+	SetOnBrowserCompMsg(fn ChromiumEventOnCompMsg)
 	SetOnRenderProcessTerminated(fn ChromiumEventOnRenderProcessTerminated)
 	SetOnRenderViewReady(fn ChromiumEventOnCefBrowser)
 	SetOnScrollOffsetChanged(fn ChromiumEventOnScrollOffsetChanged)
@@ -60,6 +62,8 @@ type IChromiumEvent interface {
 	SetOnMainFrameChanged(fn ChromiumEventOnMainFrameChanged)
 	SetOnBeforePopup(fn ChromiumEventOnBeforePopup)
 	SetOnOpenUrlFromTab(fn ChromiumEventOnOpenUrlFromTab)
+	SetOnDragEnter(fn ChromiumEventOnDragEnter)
+	SetOnDraggableRegionsChanged(fn ChromiumEventOnDraggableRegionsChanged)
 }
 
 // Event
@@ -135,8 +139,16 @@ func (m *TCEFChromium) SetOnTitleChange(fn ChromiumEventOnTitleChange) {
 	_CEFChromium_SetOnTitleChange(m.Instance(), fn)
 }
 
-func (m *TCEFChromium) SetOnRenderCompMsg(fn ChromiumEventOnRenderCompMsg) {
+func (m *TCEFChromium) SetOnRenderCompMsg(fn ChromiumEventOnCompMsg) {
 	_CEFChromium_SetOnRenderCompMsg(m.Instance(), fn)
+}
+
+func (m *TCEFChromium) SetOnWidgetCompMsg(fn ChromiumEventOnCompMsg) {
+	_CEFChromium_SetOnWidgetCompMsg(m.Instance(), fn)
+}
+
+func (m *TCEFChromium) SetOnBrowserCompMsg(fn ChromiumEventOnCompMsg) {
+	_CEFChromium_SetOnBrowserCompMsg(m.Instance(), fn)
 }
 
 func (m *TCEFChromium) SetOnRenderProcessTerminated(fn ChromiumEventOnRenderProcessTerminated) {
@@ -241,28 +253,15 @@ func (m *TCEFChromium) SetOnOpenUrlFromTab(fn ChromiumEventOnOpenUrlFromTab) {
 	_CEFChromium_SetOnOpenUrlFromTab(m.Instance(), fn)
 }
 
-// --------TCEFChromium Event proc begin--------
-
-// 解决事件重复
-var chromiumOnEventIdMapping = map[string]uintptr{}
-
-func chromiumOnEventNameToId(fn interface{}) uintptr {
-	return api.MakeEventDataPtr(fn)
-	//var eventId uintptr
-	//if independentEvent {
-	//	eventId = api.MakeEventDataPtr(fn)
-	//} else {
-	//	var (
-	//		name = reflect.ValueOf(fn).Type().Name()
-	//		ok   bool
-	//	)
-	//	if eventId, ok = chromiumOnEventIdMapping[name]; !ok {
-	//		eventId = api.MakeEventDataPtr(fn)
-	//		chromiumOnEventIdMapping[name] = eventId
-	//	}
-	//}
-	//return eventId
+func (m *TCEFChromium) SetOnDragEnter(fn ChromiumEventOnDragEnter) {
+	_CEFChromium_SetOnDragEnter(m.Instance(), fn)
 }
+
+func (m *TCEFChromium) SetOnDraggableRegionsChanged(fn ChromiumEventOnDraggableRegionsChanged) {
+	_CEFChromium_SetOnDraggableRegionsChanged(m.Instance(), fn)
+}
+
+// --------TCEFChromium Event proc begin--------
 
 func _CEFChromium_SetOnAfterCreated(instance uintptr, fn interface{}) {
 	Proc(internale_CEFChromium_SetOnAfterCreated).Call(instance, api.MakeEventDataPtr(fn))
@@ -351,6 +350,16 @@ func _CEFChromium_SetOnTitleChange(instance uintptr, fn interface{}) {
 // TCEFChromium _CEFChromium_SetOnRenderCompMsg
 func _CEFChromium_SetOnRenderCompMsg(instance uintptr, fn interface{}) {
 	Proc(internale_CEFChromium_SetOnRenderCompMsg).Call(instance, api.MakeEventDataPtr(fn))
+}
+
+// TCEFChromium _CEFChromium_SetOnWidgetCompMsg
+func _CEFChromium_SetOnWidgetCompMsg(instance uintptr, fn interface{}) {
+	Proc(internale_CEFChromium_SetOnWidgetCompMsg).Call(instance, api.MakeEventDataPtr(fn))
+}
+
+// TCEFChromium _CEFChromium_SetOnBrowserCompMsg
+func _CEFChromium_SetOnBrowserCompMsg(instance uintptr, fn interface{}) {
+	Proc(internale_CEFChromium_SetOnBrowserCompMsg).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnRenderProcessTerminated
@@ -466,6 +475,16 @@ func _CEFChromium_SetOnBeforePopup(instance uintptr, fn interface{}) {
 // TCEFChromium _CEFChromium_SetOnOpenUrlFromTab
 func _CEFChromium_SetOnOpenUrlFromTab(instance uintptr, fn interface{}) {
 	Proc(internale_CEFChromium_SetOnOpenUrlFromTab).Call(instance, api.MakeEventDataPtr(fn))
+}
+
+// TCEFChromium _CEFChromium_SetOnDragEnter
+func _CEFChromium_SetOnDragEnter(instance uintptr, fn interface{}) {
+	Proc(internale_CEFChromium_SetOnDragEnter).Call(instance, api.MakeEventDataPtr(fn))
+}
+
+// TCEFChromium _CEFChromium_SetOnDraggableRegionsChanged
+func _CEFChromium_SetOnDraggableRegionsChanged(instance uintptr, fn interface{}) {
+	Proc(internale_CEFChromium_SetOnDraggableRegionsChanged).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 //--------TCEFChromium Event proc end--------

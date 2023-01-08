@@ -261,9 +261,9 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, TCefTerminationStatus(getVal(2)))
-		case ChromiumEventOnRenderCompMsg:
+		case ChromiumEventOnCompMsg:
 			message := *(*types.TMessage)(getPtr(1))
-			fn.(ChromiumEventOnRenderCompMsg)(lcl.AsObject(getVal(0)), message, api.GoBool(getVal(2)))
+			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, api.GoBool(getVal(2)))
 		case ChromiumEventOnCefBrowser:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
@@ -507,7 +507,29 @@ func init() {
 			*result = fn.(ChromiumEventOnBeforePopup)(lcl.AsObject(sender), browser, frame, beforePInfo, client, noJavascriptAccess)
 		//windowParent open url from tab
 		case ChromiumEventOnOpenUrlFromTab:
-
+			//no impl
+		case ChromiumEventOnDragEnter:
+			sender := getPtr(0)
+			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
+			dragData := &ICefDragData{instance: getPtr(2)}
+			mask := TCefDragOperations(getVal(3))
+			result := (*bool)(getPtr(4))
+			fn.(ChromiumEventOnDragEnter)(lcl.AsObject(sender), browser, dragData, mask, result)
+		case ChromiumEventOnDraggableRegionsChanged:
+			sender := getPtr(0)
+			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
+			tempFrame := (*cefFrame)(getPtr(2))
+			frame := &ICefFrame{
+				Browser: browser,
+				Name:    api.GoStr(tempFrame.Name),
+				Url:     api.GoStr(tempFrame.Url),
+				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+			}
+			regionsCount := t.NativeUInt(getVal(3))
+			//regionsPtr := getVal(4)
+			regions := NewCefDraggableRegions()
+			//regions.Append(NewCefDraggableRegion())
+			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browser, frame, regionsCount, regions)
 		default:
 			return false
 		}
