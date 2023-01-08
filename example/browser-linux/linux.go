@@ -67,22 +67,6 @@ func main() {
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
-		//window.SetNotInTaskBar()
-		//go func() {
-		//	var s = false
-		//	for {
-		//		fmt.Println("s", s)
-		//		time.Sleep(time.Second)
-		//		s = !s
-		//		if s {
-		//			window.AsViewsFrameworkBrowserWindow().BrowserWindow().ShowTitle()
-		//		} else {
-		//			window.AsViewsFrameworkBrowserWindow().BrowserWindow().HideTitle()
-		//		}
-		//	}
-		//}()
-		//window.HideTitle()
-		window.Show()
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

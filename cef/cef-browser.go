@@ -246,6 +246,8 @@ func (m *ICefBrowser) ShowDevTools() {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(m.Identifier()); browserWinInfo != nil {
 		if browserWinInfo.IsLCL() {
 			createLCLBrowserDevTools(m, browserWinInfo.AsLCLBrowserWindow().BrowserWindow())
+		} else {
+			browserWinInfo.AsViewsFrameworkBrowserWindow().Chromium().ShowDevTools(nil)
 		}
 	}
 }

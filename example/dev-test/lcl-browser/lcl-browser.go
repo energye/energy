@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/win"
 )
 
 //go:embed resources
@@ -45,7 +46,10 @@ func main() {
 			//
 			panel := lcl.NewPanel(browserWindow)
 			panel.SetParent(browserWindow)
-			panel.SetCaption("adsfasdfsadfdsaf")
+			handle := panel.Handle()
+			panel.SetCaption("adsfasdfsadfdsaf " + fmt.Sprintf("%d", handle))
+			win.SetWindowLong(browserWindow.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
+			win.SetLayeredWindowAttributes(browserWindow.Handle(), 0, 100, win.LWA_ALPHA)
 		})
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
