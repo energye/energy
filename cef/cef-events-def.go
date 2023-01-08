@@ -120,7 +120,7 @@ type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser
 type ChromiumEventOnDragEnter func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool)
 
 // DraggableRegionsChanged css [-webkit-app-region： drag/no-drag]
-type ChromiumEventOnDraggableRegionsChanged func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regionsCount t.NativeUInt, regions *TCefDraggableRegions)
+type ChromiumEventOnDraggableRegionsChanged func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions)
 
 // window event
 type TCloseEvent func(sender lcl.IObject, action *types.TCloseAction) bool

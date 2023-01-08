@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
@@ -270,8 +269,8 @@ func AppBrowserInit() {
 		event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 			fmt.Println("SetOnWidgetCompMsg", message)
 		})
-		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regionsCount t.NativeUInt, regions *cef.TCefDraggableRegions) {
-			fmt.Println("SetOnDraggableRegionsChanged", regionsCount)
+		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
+			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount())
 		})
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)

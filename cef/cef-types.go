@@ -190,7 +190,8 @@ type TCefPoint struct {
 }
 
 type TCefDraggableRegions struct {
-	regions []TCefDraggableRegion
+	regions      []TCefDraggableRegion
+	regionsCount int32
 }
 
 type TCefDraggableRegion struct {
@@ -232,11 +233,23 @@ func NewCefDraggableRegions() *TCefDraggableRegions {
 }
 
 func (m *TCefDraggableRegions) Regions() []TCefDraggableRegion {
+	if m.RegionsCount() == 0 || m.regions == nil || len(m.regions) == 0 {
+		m.Append(NewCefDraggableRegion(NewCefRect(0, 0, 0, 0), false))
+	}
 	return m.regions
 }
 
 func (m *TCefDraggableRegions) Append(region TCefDraggableRegion) {
 	m.regions = append(m.regions, region)
+	m.regionsCount = int32(len(m.regions))
+}
+
+func (m *TCefDraggableRegions) RegionsCount() int32 {
+	return m.regionsCount
+}
+
+func (m *TCefDraggableRegions) SetRegionsCount(regionsCount int32) {
+	m.regionsCount = regionsCount
 }
 
 func NewCefRect(x, y, width, height int32) *TCefRect {

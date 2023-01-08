@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -25,14 +24,15 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	cef.BrowserWindow.Config.CanDragFile = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		window.DisableResize()
 		window.SetTitle("这里改变了窗口标题")
 		window.SetSize(1600, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
-		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regionsCount types.NativeUInt, regions *cef.TCefDraggableRegions) {
-			fmt.Println("SetOnDraggableRegionsChanged", regionsCount)
+		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
+			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Id, frame.Url)
 		})
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
 			model.AddCheckItem(model.CefMis.NextCommandId(), "测试")

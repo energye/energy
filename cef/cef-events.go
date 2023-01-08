@@ -525,11 +525,15 @@ func init() {
 				Url:     api.GoStr(tempFrame.Url),
 				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			regionsCount := t.NativeUInt(getVal(3))
-			//regionsPtr := getVal(4)
+			regionsCount := int32(getVal(3))
 			regions := NewCefDraggableRegions()
-			//regions.Append(NewCefDraggableRegion())
-			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browser, frame, regionsCount, regions)
+			regions.SetRegionsCount(regionsCount)
+			var region TCefDraggableRegion
+			for i := 0; i < int(regionsCount); i++ {
+				region = *(*TCefDraggableRegion)(GetParamPtr(getVal(4), i*int(unsafe.Sizeof(TCefDraggableRegion{}))))
+				regions.Append(region)
+			}
+			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browser, frame, regions)
 		default:
 			return false
 		}

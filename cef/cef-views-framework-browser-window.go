@@ -95,12 +95,6 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 				vFrameBrowserWindow.tray.close()
 			}
 		})
-		vFrameBrowserWindow.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
-			regions := NewCefDraggableRegions()
-			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 100), true))
-			regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
-			vFrameBrowserWindow.windowComponent.SetDraggableRegions(regions.Regions())
-		})
 		vFrameBrowserWindow.resetWindowPropertyEvent()
 		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
@@ -235,9 +229,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.putBrowserFrame(browser, frame)
-		})
+		BrowserWindow.putBrowserFrame(browser, frame)
 		if bwEvent.onFrameCreated != nil {
 			bwEvent.onFrameCreated(sender, browser, frame)
 		}
@@ -280,6 +272,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
+		fmt.Println("SetOnBeforeBrowser")
 		chromiumOnBeforeBrowser(browser, frame)
 		if bwEvent.onBeforeBrowser != nil {
 			return bwEvent.onBeforeBrowser(sender, browser, frame)
@@ -292,6 +285,23 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
+	})
+	m.chromium.SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
+		*result = !m.WindowProperty().CanDragFile
+		if bwEvent.onDragEnter != nil {
+			bwEvent.onDragEnter(sender, browser, dragData, mask, result)
+		}
+	})
+	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
+		if bwEvent.onLoadEnd != nil {
+			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
+		}
+	})
+	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+		if bwEvent.onDraggableRegionsChanged != nil {
+			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+		}
+		m.windowComponent.SetDraggableRegions(regions.Regions())
 	})
 }
 

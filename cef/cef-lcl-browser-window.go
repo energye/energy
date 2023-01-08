@@ -834,6 +834,23 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
 	})
+	m.chromium.SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
+		*result = !m.WindowProperty().CanDragFile
+		if bwEvent.onDragEnter != nil {
+			bwEvent.onDragEnter(sender, browser, dragData, mask, result)
+		}
+	})
+	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
+		if bwEvent.onLoadEnd != nil {
+			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
+		}
+	})
+	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+		if bwEvent.onDraggableRegionsChanged != nil {
+			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+		}
+		//m.windowComponent.SetDraggableRegions(regions.Regions())
+	})
 }
 
 //控制LCL创建的窗口事件

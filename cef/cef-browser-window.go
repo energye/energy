@@ -62,22 +62,25 @@ type browser struct {
 //
 // 在主浏览器进程调用
 type BrowserEvent struct {
-	chromium                 IChromiumEvent                          //chromium event
-	onBeforePopup            ChromiumEventOnBeforePopupForWindowInfo //default
-	onAfterCreated           ChromiumEventOnAfterCreated             //default
-	onBeforeBrowser          ChromiumEventOnBeforeBrowser            //default
-	onBeforeClose            ChromiumEventOnBeforeClose              //default
-	onClose                  ChromiumEventOnClose                    //default
-	onFrameCreated           ChromiumEventOnFrameCreated             //default
-	onFrameDetached          ChromiumEventOnFrameDetached            //default
-	onMainFrameChanged       ChromiumEventOnMainFrameChanged         //default
-	onBeforeDownload         ChromiumEventOnBeforeDownload           //default can cover
-	onKeyEvent               ChromiumEventOnKeyEvent                 //default can cover
-	onProcessMessageReceived BrowseProcessMessageReceived            //default
-	onTitleChange            ChromiumEventOnTitleChange              //default
-	onContextMenuCommand     ChromiumEventOnContextMenuCommand       //default
-	onBeforeContextMenu      ChromiumEventOnBeforeContextMenu        //default
-	onBeforeResourceLoad     ChromiumEventOnBeforeResourceLoad       //default
+	chromium                  IChromiumEvent                          //chromium event
+	onBeforePopup             ChromiumEventOnBeforePopupForWindowInfo //default
+	onDragEnter               ChromiumEventOnDragEnter                //default
+	onDraggableRegionsChanged ChromiumEventOnDraggableRegionsChanged  //default
+	onLoadEnd                 ChromiumEventOnLoadEnd                  //default
+	onAfterCreated            ChromiumEventOnAfterCreated             //default
+	onBeforeBrowser           ChromiumEventOnBeforeBrowser            //default
+	onBeforeClose             ChromiumEventOnBeforeClose              //default
+	onClose                   ChromiumEventOnClose                    //default
+	onFrameCreated            ChromiumEventOnFrameCreated             //default
+	onFrameDetached           ChromiumEventOnFrameDetached            //default
+	onMainFrameChanged        ChromiumEventOnMainFrameChanged         //default
+	onBeforeDownload          ChromiumEventOnBeforeDownload           //default can cover
+	onKeyEvent                ChromiumEventOnKeyEvent                 //default can cover
+	onProcessMessageReceived  BrowseProcessMessageReceived            //default
+	onTitleChange             ChromiumEventOnTitleChange              //default
+	onContextMenuCommand      ChromiumEventOnContextMenuCommand       //default
+	onBeforeContextMenu       ChromiumEventOnBeforeContextMenu        //default
+	onBeforeResourceLoad      ChromiumEventOnBeforeResourceLoad       //default
 }
 
 type browserWindow struct {
@@ -384,7 +387,7 @@ func (m *BrowserEvent) SetOnLoadError(event ChromiumEventOnLoadError) {
 // BrowserEvent.SetOnLoadEnd
 func (m *BrowserEvent) SetOnLoadEnd(event ChromiumEventOnLoadEnd) {
 	if Args.IsMain() {
-		m.chromium.SetOnLoadEnd(event)
+		m.onLoadEnd = event
 	}
 }
 
@@ -610,13 +613,13 @@ func (m *BrowserEvent) SetOnFindResult(event ChromiumEventOnFindResult) {
 // BrowserEvent.SetOnDragEnter
 func (m *BrowserEvent) SetOnDragEnter(event ChromiumEventOnDragEnter) {
 	if Args.IsMain() {
-		m.chromium.SetOnDragEnter(event)
+		m.onDragEnter = event
 	}
 }
 
 // BrowserEvent.SetOnDraggableRegionsChanged
 func (m *BrowserEvent) SetOnDraggableRegionsChanged(event ChromiumEventOnDraggableRegionsChanged) {
 	if Args.IsMain() {
-		m.chromium.SetOnDraggableRegionsChanged(event)
+		m.onDraggableRegionsChanged = event
 	}
 }

@@ -42,6 +42,7 @@ type WindowProperty struct {
 	CanResize    bool               //窗口 是否允许调整大小
 	CanClose     bool               //窗口 关闭时是否关闭窗口
 	CenterWindow bool               //窗口 是否居中显示
+	CanDragFile  bool               //窗口 是否允许向窗口内拖拽文件
 	AlwaysOnTop  bool               //窗口 置顶
 	X            int32              //窗口 CenterWindow=false X坐标
 	Y            int32              //窗口 CenterWindow=false Y坐标
