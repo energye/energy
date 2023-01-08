@@ -527,7 +527,6 @@ func init() {
 			}
 			regionsCount := int32(getVal(3))
 			regions := NewCefDraggableRegions()
-			regions.SetRegionsCount(regionsCount)
 			var region TCefDraggableRegion
 			for i := 0; i < int(regionsCount); i++ {
 				region = *(*TCefDraggableRegion)(GetParamPtr(getVal(4), i*int(unsafe.Sizeof(TCefDraggableRegion{}))))

@@ -248,10 +248,6 @@ func (m *TCefDraggableRegions) RegionsCount() int32 {
 	return m.regionsCount
 }
 
-func (m *TCefDraggableRegions) SetRegionsCount(regionsCount int32) {
-	m.regionsCount = regionsCount
-}
-
 func NewCefRect(x, y, width, height int32) *TCefRect {
 	return &TCefRect{
 		X:      x,
