@@ -79,6 +79,7 @@ type IBrowserWindow interface {
 	setBrowser(browser *ICefBrowser)                             //
 	createAuxTools()                                             //
 	getAuxTools() *auxTools                                      //
+	EnableAllDefaultEvent()                                      //启用所有默认事件
 	SetTitle(title string)                                       //设置窗口标题栏标题
 	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口
 	IsLCL() bool                                                 //是否为 ILCLBrowserWindow 窗口
@@ -107,7 +108,6 @@ type ILCLBrowserWindow interface {
 	IBrowserWindow
 	BrowserWindow() *LCLBrowserWindow //返回LCL窗口结构
 	EnableDefaultCloseEvent()         //启用默认关闭事件
-	EnableAllDefaultEvent()           //启用所有事件
 	WindowParent() ITCefWindowParent  //浏览器父窗口组件
 	DisableTransparent()              //禁用窗口透明
 	EnableTransparent(value uint8)    //设置窗口透明

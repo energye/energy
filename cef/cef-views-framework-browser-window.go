@@ -108,7 +108,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 				vFrameBrowserWindow.tray.close()
 			}
 		})
-		vFrameBrowserWindow.resetWindowPropertyEvent()
+		vFrameBrowserWindow.ResetWindowPropertyForEvent()
 		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
 		vFrameBrowserWindow.putChromiumWindowInfo()
@@ -161,7 +161,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
 		}
 		if !result {
-			vfbw.resetWindowPropertyEvent()
+			vfbw.ResetWindowPropertyForEvent()
 			vfbw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 			vfbw.windowId = BrowserWindow.GetNextWindowNum()
 			vfbw.putChromiumWindowInfo()
@@ -175,7 +175,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 }
 
 //重置窗口属性-通过事件函数
-func (m *ViewsFrameworkBrowserWindow) resetWindowPropertyEvent() {
+func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	windowProperty := m.WindowProperty()
 	if windowProperty.CenterWindow {
 		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
@@ -317,6 +317,12 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		m.regions = regions
 		m.windowComponent.SetDraggableRegions(regions.Regions())
 	})
+}
+
+//启用所有默认事件行为
+func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
+	m.registerPopupEvent()
+	m.registerDefaultEvent()
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated) {

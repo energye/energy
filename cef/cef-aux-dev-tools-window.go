@@ -96,7 +96,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			wp.IconFS = BrowserWindow.Config.IconFS
 			wp.Icon = BrowserWindow.Config.Icon
 			devToolsWindow := NewViewsFrameworkBrowserWindow(nil, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
-			devToolsWindow.resetWindowPropertyEvent()
+			devToolsWindow.ResetWindowPropertyForEvent()
 			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
 			devToolsWindow.windowId = BrowserWindow.GetNextWindowNum()
 			devToolsWindow.putChromiumWindowInfo()
