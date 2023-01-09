@@ -43,7 +43,14 @@ type ViewsFrameworkBrowserWindow struct {
 //创建 ViewsFrameworkBrowserWindow 窗口
 func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
-		chromiumConfig = BrowserWindow.Config.ChromiumConfig()
+		chromiumConfig = NewChromiumConfig()
+		chromiumConfig.SetEnableViewSource(false)
+		chromiumConfig.SetEnableDevTools(false)
+		chromiumConfig.SetEnableMenu(false)
+		chromiumConfig.SetEnableWindowPopup(false)
+	}
+	if windowProperty == nil {
+		windowProperty = NewWindowProperty()
 	}
 	component := lcl.NewComponent(nil)
 	m := &ViewsFrameworkBrowserWindow{

@@ -20,6 +20,8 @@ import (
 	"unsafe"
 )
 
+var application *TCEFApplication
+
 //CEF应用对象
 type TCEFApplication struct {
 	instance unsafe.Pointer
@@ -28,15 +30,19 @@ type TCEFApplication struct {
 
 //创建CEF应用程序
 func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
+	if application != nil {
+		return application
+	}
 	if cfg == nil {
 		cfg = NewApplicationConfig()
 	}
 	cfg.framework()
-	m := new(TCEFApplication)
+	application = new(TCEFApplication)
 	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
-	m.instance = unsafe.Pointer(r1)
-	m.cfg = cfg
-	return m
+	application.instance = unsafe.Pointer(r1)
+	application.cfg = cfg
+
+	return application
 }
 
 //创建应用程序

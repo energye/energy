@@ -89,12 +89,17 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			_CEFBrowser_ShowDevTools(devToolsWindow.chromium.Instance(), uintptr(m.Identifier()), devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 		})
 	} else if browserWinInfo.IsViewsFramework() {
-		//window := browserWinInfo.AsViewsFrameworkBrowserWindow().BrowserWindow()
-		//window.createAuxTools()
-		//winAuxTools := window.auxTools
-		//if winAuxTools.devToolsWindow != nil {
-		//	winAuxTools.devToolsWindow.Show()
-		//	return
-		//}
+		if application.cfg.remoteDebuggingPort > 1024 && application.cfg.remoteDebuggingPort < 65535 {
+			window := browserWinInfo.AsViewsFrameworkBrowserWindow().BrowserWindow()
+			window.createAuxTools()
+			winAuxTools := window.auxTools
+			if winAuxTools.devToolsWindow != nil {
+				winAuxTools.devToolsWindow.Show()
+				return
+			}
+			wp := NewWindowProperty()
+			wp.Url = ""
+			//devToolsWindow := NewViewsFrameworkBrowserWindow(nil, nil)
+		}
 	}
 }
