@@ -351,10 +351,6 @@ func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return nil
 }
 
-func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
-	m.WindowProperty().CenterWindow = value
-}
-
 func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
 	m.WindowProperty().Title = title
 }
@@ -486,6 +482,10 @@ func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
 
 func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
 	m.WindowComponent().CenterWindow(size)
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
+	m.WindowProperty().CenterWindow = value
 }
 
 //返回窗口关闭状态
