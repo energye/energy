@@ -35,7 +35,9 @@ type IBaseWindow interface {
 	registerDefaultEvent()
 }
 
-//LCLBrowserWindow 基于chromium 和 lcl 的窗口组件
+//LCLBrowserWindow 基于CEF lcl 窗口组件
+//
+//该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
 type LCLBrowserWindow struct {
 	*lcl.TForm                             //
 	chromium         IChromium             //
@@ -43,7 +45,7 @@ type LCLBrowserWindow struct {
 	windowParent     ITCefWindowParent     //
 	windowProperty   *WindowProperty       //
 	windowId         int32                 //
-	windowType       consts.WINDOW_TYPE    //0:browser 1:devTools 2:viewSource 默认:0
+	windowType       consts.WINDOW_TYPE    //窗口类型
 	isClosing        bool                  //
 	canClose         bool                  //
 	onResize         []TNotifyEvent        //
@@ -57,7 +59,7 @@ type LCLBrowserWindow struct {
 	frames           TCEFFrame             //当前浏览器下的所有frame
 	auxTools         *auxTools             //辅助工具
 	tray             ITray                 //托盘
-	regions          *TCefDraggableRegions //
+	regions          *TCefDraggableRegions //窗口内html拖拽区域
 }
 
 //创建一个 LCL 带有 chromium 窗口

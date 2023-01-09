@@ -106,7 +106,7 @@ type IBrowserWindow interface {
 //定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *LCLBrowserWindow //返回LCL窗口结构
+	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
 	EnableDefaultCloseEvent()         //启用默认关闭事件
 	WindowParent() ITCefWindowParent  //浏览器父窗口组件
 	DisableTransparent()              //禁用窗口透明
@@ -123,7 +123,7 @@ type ILCLBrowserWindow interface {
 //定义了ViewsFramework常用函数
 type IViewsFrameworkBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *ViewsFrameworkBrowserWindow                       //返回ViewsFramework窗口结构
+	BrowserWindow() *ViewsFrameworkBrowserWindow                       //返回 ViewsFrameworkBrowserWindow 窗口结构
 	CreateTopLevelWindow()                                             //创建窗口, 在窗口组件中需要默认调用Show函数
 	CenterWindow(size *TCefSize)                                       //设置窗口居中，同时指定窗口大小
 	Component() lcl.IComponent                                         //窗口父组件

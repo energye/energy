@@ -20,7 +20,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-//基于CEF views framework窗口
+//ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
 //
 //该窗口使用CEF内部实现，在linux下107.xx以后版本默认使用GTK3，但无法使用lcl组件集成到窗口中
 //
@@ -39,7 +39,7 @@ type ViewsFrameworkBrowserWindow struct {
 	auxTools             *auxTools                      //辅助工具
 	tray                 ITray                          //托盘
 	doOnWindowCreated    WindowComponentOnWindowCreated //
-	regions              *TCefDraggableRegions          //
+	regions              *TCefDraggableRegions          //窗口内html拖拽区域
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
