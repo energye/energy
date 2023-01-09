@@ -9,7 +9,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
@@ -109,7 +108,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 			}
 		})
 		vFrameBrowserWindow.ResetWindowPropertyForEvent()
-		vFrameBrowserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+		vFrameBrowserWindow.SetWindowType(consts.WT_MAIN_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
 		vFrameBrowserWindow.putChromiumWindowInfo()
 		vFrameBrowserWindow.registerPopupEvent()
@@ -229,16 +228,20 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
 	})
+	//事件可以覆盖
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
 		if bwEvent.onBeforeContextMenu != nil {
 			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+		} else {
+			chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
 		}
 	})
+	//事件可以覆盖
 	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		} else {
+			chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
@@ -285,7 +288,6 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
-		fmt.Println("SetOnBeforeBrowser")
 		chromiumOnBeforeBrowser(browser, frame)
 		if bwEvent.onBeforeBrowser != nil {
 			return bwEvent.onBeforeBrowser(sender, browser, frame)

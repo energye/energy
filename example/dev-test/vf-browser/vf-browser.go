@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -35,12 +34,6 @@ func main() {
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Id, frame.Url)
 		})
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
-			model.AddCheckItem(model.CefMis.NextCommandId(), "测试")
-		})
-		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-			fmt.Println("SetOnContextMenuCommand", commandId)
-		})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
@@ -61,13 +54,13 @@ func main() {
 		})
 		//设置隐藏窗口标题
 		//window.HideTitle()
-		cefTray(window)
 		window.Show()
 		fmt.Println("SetBrowserInit 结束")
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
+		cefTray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -99,11 +92,11 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetOnClick(func(sender lcl.IObject) {
 		s = !s
 		if s {
-			browserWindow.ShowTitle()
-		} else {
 			browserWindow.HideTitle()
+		} else {
+			browserWindow.ShowTitle()
 		}
-		//browserWindow.Show()
+		browserWindow.Show()
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {

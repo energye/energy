@@ -84,8 +84,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			devToolsWindow.putChromiumWindowInfo()
 			devToolsWindow.defaultChromiumEvent()
 			winAuxTools.devToolsWindow.Show()
-			//明确的生成下一个窗体序号
-			BrowserWindow.setOrIncNextWindowNum()
+			BrowserWindow.setOrIncNextWindowNum() //明确的生成下一个窗体序号
 			_CEFBrowser_ShowDevTools(devToolsWindow.chromium.Instance(), uintptr(m.Identifier()), devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 		})
 	} else if browserWinInfo.IsViewsFramework() {
@@ -98,9 +97,10 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			devToolsWindow := NewViewsFrameworkBrowserWindow(nil, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 			devToolsWindow.ResetWindowPropertyForEvent()
 			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
-			devToolsWindow.windowId = BrowserWindow.GetNextWindowNum()
-			devToolsWindow.putChromiumWindowInfo()
-			devToolsWindow.registerDefaultEvent()
+			//devToolsWindow.windowId = BrowserWindow.GetNextWindowNum()
+			//devToolsWindow.putChromiumWindowInfo()
+			//devToolsWindow.registerDefaultEvent()
+			BrowserWindow.setOrIncNextWindowNum() //明确的生成下一个窗口序号
 			devToolsWindow.windowComponent.CreateTopLevelWindow()
 		}
 	}

@@ -47,8 +47,6 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *t
 	wp.CenterWindow = false
 	tray.trayWindow = NewViewsFrameworkBrowserWindow(cc, wp)
 	tray.trayWindow.ResetWindowPropertyForEvent()
-	tray.trayWindow.windowId = BrowserWindow.GetNextWindowNum()
-	tray.trayWindow.putChromiumWindowInfo()
 	tray.trayIcon = lcl.NewTrayIcon(owner)
 	tray.trayIcon.SetVisible(true)
 	tray.x = wp.X
@@ -58,6 +56,78 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *t
 	tray.registerMouseEvent()
 	tray.registerChromiumEvent()
 	return tray
+}
+
+func (m *tViewsFrameTrayWindow) registerMouseEvent() {
+	m.trayWindow.WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *ICefWindow, active bool) {
+		if active {
+		} else {
+			m.trayWindow.Hide()
+		}
+	})
+	var isCreateTopLevelWindow = true
+	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+		if isCreateTopLevelWindow {
+			isCreateTopLevelWindow = false
+			//m.trayWindow.windowId = BrowserWindow.GetNextWindowNum()
+			//m.trayWindow.putChromiumWindowInfo()
+			BrowserWindow.setOrIncNextWindowNum() //明确的生成下一个窗口序号
+			m.trayWindow.CreateTopLevelWindow()
+			m.trayWindow.HideTitle()
+			m.trayWindow.SetNotInTaskBar()
+			m.trayWindow.WindowComponent().SetAlwaysOnTop(true)
+		}
+		display := m.trayWindow.WindowComponent().Display()
+		bounds := display.Bounds()
+		var monitorWidth = bounds.Width
+		width, height := m.w, m.h
+		var mx = x + width
+		var my = y + height
+		if mx < monitorWidth {
+			mx = x
+		} else {
+			mx = x - width
+		}
+		if my > m.h {
+			my = y
+		}
+		if my > height {
+			my = y - height
+		}
+		var ret bool
+		if m.mouseUp != nil {
+			ret = m.mouseUp(sender, button, shift, x, y)
+		}
+		if !ret {
+			if button == types.MbRight {
+				m.trayWindow.WindowComponent().SetBounds(NewCefRect(mx, my, width, height))
+				m.trayWindow.Show()
+				m.trayWindow.BrowserViewComponent().RequestFocus()
+			}
+		}
+	})
+}
+
+func (m *tViewsFrameTrayWindow) registerChromiumEvent() {
+	m.trayWindow.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+		model.Clear()
+	})
+	//m.trayWindow.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
+	//	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
+	//	return false
+	//})
+	m.trayWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
+		if assetserve.AssetsServerHeaderKeyValue != "" {
+			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
+		}
+	})
+	m.trayWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+		logger.Debug("tray.chromium.onBeforeClose")
+		m.close()
+	})
+	m.trayWindow.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
+		return false
+	})
 }
 
 func (m *tViewsFrameTrayWindow) Tray() *Tray {
@@ -113,76 +183,6 @@ func (m *tViewsFrameTrayWindow) SetHint(value string) {
 }
 
 func (m *tViewsFrameTrayWindow) SetTitle(title string) {
-}
-
-func (m *tViewsFrameTrayWindow) registerMouseEvent() {
-	m.trayWindow.WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *ICefWindow, active bool) {
-		if active {
-			m.trayWindow.Show()
-		} else {
-			m.trayWindow.Hide()
-		}
-	})
-	var IsCreateTopLevelWindow = true
-	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
-		if IsCreateTopLevelWindow {
-			IsCreateTopLevelWindow = false
-			m.trayWindow.CreateTopLevelWindow()
-			m.trayWindow.HideTitle()
-			m.trayWindow.SetNotInTaskBar()
-			m.trayWindow.WindowComponent().SetAlwaysOnTop(true)
-		}
-		display := m.trayWindow.WindowComponent().Display()
-		bounds := display.Bounds()
-		var monitorWidth = bounds.Width
-		width, height := m.w, m.h
-		var mx = x + width
-		var my = y + height
-		if mx < monitorWidth {
-			mx = x
-		} else {
-			mx = x - width
-		}
-		if my > m.h {
-			my = y
-		}
-		if my > height {
-			my = y - height
-		}
-		var ret bool
-		if m.mouseUp != nil {
-			ret = m.mouseUp(sender, button, shift, x, y)
-		}
-		if !ret {
-			if button == types.MbRight {
-				m.trayWindow.WindowComponent().SetBounds(NewCefRect(mx, my, width, height))
-				m.trayWindow.Show()
-				m.trayWindow.BrowserViewComponent().RequestFocus()
-			}
-		}
-	})
-}
-
-func (m *tViewsFrameTrayWindow) registerChromiumEvent() {
-	m.trayWindow.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		model.Clear()
-	})
-	m.trayWindow.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
-		BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-		return false
-	})
-	m.trayWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
-		if assetserve.AssetsServerHeaderKeyValue != "" {
-			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
-		}
-	})
-	m.trayWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-		logger.Debug("tray.chromium.onBeforeClose")
-		m.close()
-	})
-	m.trayWindow.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
-		return false
-	})
 }
 
 //设置托盘气泡

@@ -79,8 +79,8 @@ type BrowserEvent struct {
 	onKeyEvent                ChromiumEventOnKeyEvent                 //default can cover
 	onProcessMessageReceived  BrowseProcessMessageReceived            //default
 	onTitleChange             ChromiumEventOnTitleChange              //default
-	onContextMenuCommand      ChromiumEventOnContextMenuCommand       //default
-	onBeforeContextMenu       ChromiumEventOnBeforeContextMenu        //default
+	onContextMenuCommand      ChromiumEventOnContextMenuCommand       //default can cover
+	onBeforeContextMenu       ChromiumEventOnBeforeContextMenu        //default can cover
 	onBeforeResourceLoad      ChromiumEventOnBeforeResourceLoad       //default
 }
 

@@ -824,15 +824,17 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
 		if bwEvent.onBeforeContextMenu != nil {
 			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+		} else {
+			chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
 		}
 	})
 	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-		chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+		} else {
+			chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {

@@ -12,6 +12,7 @@ import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
@@ -274,6 +275,11 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 }
 
 func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("OnContextMenuCommand Error:", err)
+		}
+	}()
 	*result = true
 	if commandId == backId {
 		browser.GoBack()
