@@ -41,7 +41,7 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty) *ViewsFrameworkBrowserWindow {
+func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty *WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = NewChromiumConfig()
 		chromiumConfig.SetEnableViewSource(false)
@@ -52,7 +52,12 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	if windowProperty == nil {
 		windowProperty = NewWindowProperty()
 	}
-	component := lcl.NewComponent(nil)
+	var component lcl.IComponent
+	if len(owner) > 0 {
+		component = lcl.NewComponent(owner[0])
+	} else {
+		component = lcl.NewComponent(nil)
+	}
 	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       windowProperty,
 		component:            component,
@@ -62,7 +67,6 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	}
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-		fmt.Println("args-ProcessType", common.Args.ProcessType())
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			if windowProperty.Title != "" {
@@ -77,11 +81,6 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
 			}
 			m.browserViewComponent.RequestFocus()
-
-			//regions := NewCefDraggableRegions()
-			//regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 600, 100), true))
-			//regions.Append(NewCefDraggableRegion(NewCefRect(0, 0, 100, 50), false))
-			//window.SetDraggableRegions(regions.Regions())
 			m.windowComponent.Show()
 			if m.doOnWindowCreated != nil {
 				m.doOnWindowCreated(sender, window)
@@ -150,7 +149,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			Width:        BrowserWindow.Config.WindowProperty.Width,
 			Height:       BrowserWindow.Config.WindowProperty.Height,
 		}
-		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp)
+		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)

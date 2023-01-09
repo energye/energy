@@ -25,13 +25,12 @@ var (
 	//
 	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
 	BrowserWindow = &browser{
-		mainBrowserWindow: &browserWindow{},
-		browserEvent:      &BrowserEvent{},
+		browserEvent: &BrowserEvent{},
 		Config: &browserConfig{
 			WindowProperty: NewWindowProperty(),
 		},
 		windowInfo:   make(map[int32]IBrowserWindow),
-		windowSerial: 1,
+		windowSerial: 1, //默认1开始
 	}
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
@@ -119,6 +118,9 @@ func Run(cefApp *TCEFApplication) {
 			if IsMessageLoop {
 				cefApp.RunMessageLoop()
 			} else {
+				if BrowserWindow.mainBrowserWindow == nil {
+					BrowserWindow.mainBrowserWindow = &browserWindow{}
+				}
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
 			}
 		}
@@ -180,10 +182,16 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 }
 
 func (m *browser) MainWindow() IBrowserWindow {
-	if IsMessageLoop {
-		return m.mainVFBrowserWindow.BrowserWindow()
+	if m.mainVFBrowserWindow != nil {
+		return m.mainVFBrowserWindow
+	} else if m.mainBrowserWindow != nil {
+		return m.mainBrowserWindow
 	}
-	return m.mainBrowserWindow.BrowserWindow()
+	return nil
+	//if IsMessageLoop {
+	//	return m.mainVFBrowserWindow.BrowserWindow()
+	//}
+	//return m.mainBrowserWindow.BrowserWindow()
 }
 
 // 主窗口和chromium初始化时回调

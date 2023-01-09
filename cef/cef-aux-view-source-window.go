@@ -42,23 +42,29 @@ func viewSourceAfterCreate(browser *ICefBrowser) bool {
 
 func (m *ICefBrowser) createBrowserViewSource(frame *ICefFrame) {
 	var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
-	QueueAsyncCall(func(id int) {
-		var browserWindow = BrowserWindow.popupWindow.AsLCLBrowserWindow().BrowserWindow()
-		if browserWindow != nil {
-			browserWindow.SetShowInTaskBar()
-			browserWindow.SetWindowType(WT_VIEW_SOURCE)
-			browserWindow.ChromiumCreate(nil, viewSourceUrl)
-			browserWindow.putChromiumWindowInfo()
-			browserWindow.defaultChromiumEvent()
-			browserWindow.SetSize(1024, 768)
-			if winInfo := BrowserWindow.GetWindowInfo(browserWindow.windowId); winInfo != nil {
-				winInfo.createAuxTools()
-				winInfo.getAuxTools().viewSourceUrl = viewSourceUrl
-				winInfo.getAuxTools().viewSourceWindow = browserWindow
-			}
-			browserWindow.Show()
-		} else {
-			logger.Fatal("Window not initialized successfully")
+	if currentWindowInfo := BrowserWindow.GetWindowInfo(m.Identifier()); currentWindowInfo != nil {
+		if currentWindowInfo.IsLCL() {
+			QueueAsyncCall(func(id int) {
+				var bw = BrowserWindow.popupWindow.AsLCLBrowserWindow().BrowserWindow()
+				if bw != nil {
+					bw.SetShowInTaskBar()
+					bw.SetWindowType(WT_VIEW_SOURCE)
+					bw.ChromiumCreate(nil, viewSourceUrl)
+					bw.putChromiumWindowInfo()
+					bw.defaultChromiumEvent()
+					bw.SetSize(1024, 768)
+					if winInfo := BrowserWindow.GetWindowInfo(bw.windowId); winInfo != nil {
+						winInfo.createAuxTools()
+						winInfo.getAuxTools().viewSourceUrl = viewSourceUrl
+						winInfo.getAuxTools().viewSourceWindow = bw
+					}
+					bw.Show()
+				} else {
+					logger.Fatal("Window not initialized successfully")
+				}
+			})
+		} else if currentWindowInfo.IsViewsFramework() {
+			frame.ViewSource()
 		}
-	})
+	}
 }
