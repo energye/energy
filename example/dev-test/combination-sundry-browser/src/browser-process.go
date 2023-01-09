@@ -450,7 +450,7 @@ func tray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
 	newTray := window.NewTray()
-	tray := newTray.Tray()
+	tray := newTray.AsLCLTray()
 	tray.SetIconFS("resources/icon.ico")
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	menu1.Add(tray.NewMenuItem("子菜单", func(object lcl.IObject) {

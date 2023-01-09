@@ -32,92 +32,107 @@ type ITray interface {
 	SetHint(value string)                                  //设置托盘hint(鼠标移动到托盘图标显示的文字)
 	ShowBalloon()                                          //显示托盘气泡
 	SetBalloon(title, content string, timeout int32) ITray //设置托盘气泡内容
-	Tray() *Tray                                           //获得 Tray, ( CefTray 返回 nil )
+	Tray() ITray                                           //获得 LCLTray, ( CefTray 返回 nil )
+	AsViewsFrameTray() *ViewsFrameTray
+	AsCEFTray() *CEFTray
+	AsLCLTray() *LCLTray
 }
 
 //系统托盘
-type Tray struct {
+type LCLTray struct {
 	owner     lcl.IComponent
 	trayIcon  *lcl.TTrayIcon
 	popupMenu *lcl.TPopupMenu
 }
 
 //创建系统托盘
-func newTray(owner lcl.IComponent) *Tray {
+func newTray(owner lcl.IComponent) *LCLTray {
 	trayIcon := lcl.NewTrayIcon(owner)
 	popupMenu := lcl.NewPopupMenu(trayIcon)
 	trayIcon.SetPopupMenu(popupMenu)
 	trayIcon.SetVisible(true)
-	return &Tray{
+	return &LCLTray{
 		owner:     owner,
 		trayIcon:  trayIcon,
 		popupMenu: popupMenu,
 	}
 }
 
-func (m *Tray) Tray() *Tray {
+func (m *LCLTray) AsViewsFrameTray() *ViewsFrameTray {
+	return nil
+}
+
+func (m *LCLTray) AsCEFTray() *CEFTray {
+	return nil
+}
+
+func (m *LCLTray) AsLCLTray() *LCLTray {
 	return m
 }
 
-func (m *Tray) SetVisible(v bool) {
+func (m *LCLTray) Tray() ITray {
+	return m
+}
+
+func (m *LCLTray) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
-func (m *Tray) Visible() bool {
+func (m *LCLTray) Visible() bool {
 	return m.trayIcon.Visible()
 }
 
-func (m *Tray) Show() {
+func (m *LCLTray) Show() {
 	m.SetVisible(true)
 }
 
-func (m *Tray) Hide() {
+func (m *LCLTray) Hide() {
 	m.SetVisible(false)
 }
 
-func (m *Tray) close() {
+func (m *LCLTray) close() {
 	m.Hide()
 }
 
-func (m *Tray) SetOnDblClick(fn lcl.TNotifyEvent) {
+func (m *LCLTray) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)
 }
 
-func (m *Tray) SetOnClick(fn lcl.TNotifyEvent) {
+func (m *LCLTray) SetOnClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnClick(fn)
 }
-func (m *Tray) SetOnMouseUp(fn TMouseEvent) {
+func (m *LCLTray) SetOnMouseUp(fn TMouseEvent) {
 	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		fn(sender, button, shift, x, y)
 	})
 }
-func (m *Tray) SetOnMouseDown(fn lcl.TMouseEvent) {
+func (m *LCLTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
-func (m *Tray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+func (m *LCLTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
 //返回托盘根菜单 PopupMenu
-func (m *Tray) TrayMenu() *lcl.TPopupMenu {
+func (m *LCLTray) TrayMenu() *lcl.TPopupMenu {
 	return m.popupMenu
 }
 
 //设置托盘图标
-func (m *Tray) SetIconFS(iconResourcePath string) {
+func (m *LCLTray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
 
 //设置托盘图标
-func (m *Tray) SetIcon(iconResourcePath string) {
+func (m *LCLTray) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }
 
-func (m *Tray) SetHint(value string) {
+func (m *LCLTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
-func (m *Tray) SetTitle(title string) {
+func (m *LCLTray) SetTitle(title string) {
 	m.trayIcon.SetHint(title)
 }
 
@@ -128,7 +143,7 @@ func (m *Tray) SetTitle(title string) {
 //content	气泡内容
 //
 //timeout	显示时间(毫秒)
-func (m *Tray) SetBalloon(title, content string, timeout int32) ITray {
+func (m *LCLTray) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)
 	m.trayIcon.SetBalloonTimeout(timeout)
@@ -136,12 +151,12 @@ func (m *Tray) SetBalloon(title, content string, timeout int32) ITray {
 }
 
 //显示托盘气泡
-func (m *Tray) ShowBalloon() {
+func (m *LCLTray) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
 //创建一个菜单，还未添加到托盘
-func (m *Tray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
+func (m *LCLTray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
 	item := lcl.NewMenuItem(m.trayIcon)
 	item.SetCaption(caption)
 	if onClick != nil {
@@ -151,7 +166,7 @@ func (m *Tray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenu
 }
 
 //添加一个托盘菜单
-func (m *Tray) AddMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
+func (m *LCLTray) AddMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
 	item := m.NewMenuItem(caption, onClick)
 	m.popupMenu.Items().Add(item)
 	return item

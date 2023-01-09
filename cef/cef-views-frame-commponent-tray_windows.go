@@ -21,7 +21,7 @@ import (
 )
 
 //Cef托盘
-type tViewsFrameTrayWindow struct {
+type ViewsFrameTray struct {
 	trayWindow *ViewsFrameworkBrowserWindow
 	trayIcon   *lcl.TTrayIcon
 	x, y, w, h int32
@@ -29,8 +29,8 @@ type tViewsFrameTrayWindow struct {
 	isClosing  bool
 }
 
-func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *tViewsFrameTrayWindow {
-	var tray = &tViewsFrameTrayWindow{}
+func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *ViewsFrameTray {
+	var tray = &ViewsFrameTray{}
 	cc := NewChromiumConfig()
 	cc.SetEnableMenu(false)
 	wp := NewWindowProperty()
@@ -58,7 +58,7 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *t
 	return tray
 }
 
-func (m *tViewsFrameTrayWindow) registerMouseEvent() {
+func (m *ViewsFrameTray) registerMouseEvent() {
 	m.trayWindow.WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *ICefWindow, active bool) {
 		if active {
 		} else {
@@ -108,7 +108,7 @@ func (m *tViewsFrameTrayWindow) registerMouseEvent() {
 	})
 }
 
-func (m *tViewsFrameTrayWindow) registerChromiumEvent() {
+func (m *ViewsFrameTray) registerChromiumEvent() {
 	m.trayWindow.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		model.Clear()
 	})
@@ -130,66 +130,79 @@ func (m *tViewsFrameTrayWindow) registerChromiumEvent() {
 	})
 }
 
-func (m *tViewsFrameTrayWindow) Tray() *Tray {
+func (m *ViewsFrameTray) AsViewsFrameTray() *ViewsFrameTray {
+	return m
+}
+
+func (m *ViewsFrameTray) AsCEFTray() *CEFTray {
 	return nil
 }
 
-func (m *tViewsFrameTrayWindow) Show() {
+func (m *ViewsFrameTray) AsLCLTray() *LCLTray {
+	return nil
+}
+
+func (m *ViewsFrameTray) Tray() ITray {
+	return m
+}
+
+func (m *ViewsFrameTray) Show() {
 	m.trayWindow.Show()
 }
 
-func (m *tViewsFrameTrayWindow) Hide() {
+func (m *ViewsFrameTray) Hide() {
 	m.trayWindow.Hide()
 }
 
-func (m *tViewsFrameTrayWindow) close() {
+func (m *ViewsFrameTray) close() {
 	if m.isClosing {
 		return
 	}
 	m.trayIcon.SetVisible(false)
 	m.Hide()
+	m.trayIcon.Free()
 }
 
-func (m *tViewsFrameTrayWindow) SetOnDblClick(fn lcl.TNotifyEvent) {
+func (m *ViewsFrameTray) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)
 }
 
-func (m *tViewsFrameTrayWindow) SetOnClick(fn lcl.TNotifyEvent) {
+func (m *ViewsFrameTray) SetOnClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnClick(fn)
 }
 
-func (m *tViewsFrameTrayWindow) SetOnMouseUp(fn TMouseEvent) {
+func (m *ViewsFrameTray) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
 
-func (m *tViewsFrameTrayWindow) SetOnMouseDown(fn lcl.TMouseEvent) {
+func (m *ViewsFrameTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
 
-func (m *tViewsFrameTrayWindow) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+func (m *ViewsFrameTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
-func (m *tViewsFrameTrayWindow) Visible() bool {
+func (m *ViewsFrameTray) Visible() bool {
 	return false
 }
 
-func (m *tViewsFrameTrayWindow) SetVisible(v bool) {
+func (m *ViewsFrameTray) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
-func (m *tViewsFrameTrayWindow) SetHint(value string) {
+func (m *ViewsFrameTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
-func (m *tViewsFrameTrayWindow) SetTitle(title string) {
+func (m *ViewsFrameTray) SetTitle(title string) {
 }
 
 //设置托盘气泡
 //title 气泡标题
 //content 气泡内容
 //timeout 显示时间(毫秒)
-func (m *tViewsFrameTrayWindow) SetBalloon(title, content string, timeout int32) ITray {
+func (m *ViewsFrameTray) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)
 	m.trayIcon.SetBalloonTimeout(timeout)
@@ -197,16 +210,16 @@ func (m *tViewsFrameTrayWindow) SetBalloon(title, content string, timeout int32)
 }
 
 //显示托盘气泡
-func (m *tViewsFrameTrayWindow) ShowBalloon() {
+func (m *ViewsFrameTray) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
 //设置托盘图标
-func (m *tViewsFrameTrayWindow) SetIconFS(iconResourcePath string) {
+func (m *ViewsFrameTray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
 
 //设置托盘图标
-func (m *tViewsFrameTrayWindow) SetIcon(iconResourcePath string) {
+func (m *ViewsFrameTray) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }

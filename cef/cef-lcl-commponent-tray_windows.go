@@ -23,7 +23,7 @@ import (
 )
 
 //Cef托盘
-type tLCLTrayWindow struct {
+type CEFTray struct {
 	*lcl.TForm
 	owner        lcl.IComponent
 	trayIcon     *lcl.TTrayIcon
@@ -35,8 +35,8 @@ type tLCLTrayWindow struct {
 	url          string
 }
 
-func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *tLCLTrayWindow {
-	var trayForm *tLCLTrayWindow
+func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *CEFTray {
+	var trayForm *CEFTray
 	lcl.Application.CreateForm(&trayForm)
 	trayForm.trayIcon = lcl.NewTrayIcon(owner)
 	trayForm.trayIcon.SetVisible(true)
@@ -51,26 +51,38 @@ func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *tL
 	return trayForm
 }
 
-func (m *tLCLTrayWindow) OnFormCreate(sender lcl.IObject) {
+func (m *CEFTray) OnFormCreate(sender lcl.IObject) {
 	m.SetShowInTaskBar(types.StNever)
 }
 
-func (m *tLCLTrayWindow) Tray() *Tray {
+func (m *CEFTray) AsViewsFrameTray() *ViewsFrameTray {
 	return nil
 }
 
-func (m *tLCLTrayWindow) Show() {
+func (m *CEFTray) AsCEFTray() *CEFTray {
+	return m
+}
+
+func (m *CEFTray) AsLCLTray() *LCLTray {
+	return nil
+}
+
+func (m *CEFTray) Tray() ITray {
+	return m
+}
+
+func (m *CEFTray) Show() {
 	if BrowserWindow.mainBrowserWindow.Chromium() == nil || !BrowserWindow.mainBrowserWindow.Chromium().Initialized() {
 		return
 	}
 	m.TForm.Show()
 }
 
-func (m *tLCLTrayWindow) Hide() {
+func (m *CEFTray) Hide() {
 	m.TForm.Hide()
 }
 
-func (m *tLCLTrayWindow) close() {
+func (m *CEFTray) close() {
 	if m.isClosing {
 		return
 	}
@@ -79,41 +91,41 @@ func (m *tLCLTrayWindow) close() {
 	m.TForm.Close()
 }
 
-func (m *tLCLTrayWindow) SetOnDblClick(fn lcl.TNotifyEvent) {
+func (m *CEFTray) SetOnDblClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnDblClick(fn)
 }
 
-func (m *tLCLTrayWindow) SetOnClick(fn lcl.TNotifyEvent) {
+func (m *CEFTray) SetOnClick(fn lcl.TNotifyEvent) {
 	m.trayIcon.SetOnClick(fn)
 }
 
-func (m *tLCLTrayWindow) SetOnMouseUp(fn TMouseEvent) {
+func (m *CEFTray) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
-func (m *tLCLTrayWindow) SetOnMouseDown(fn lcl.TMouseEvent) {
+func (m *CEFTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
-func (m *tLCLTrayWindow) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+func (m *CEFTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
-func (m *tLCLTrayWindow) Visible() bool {
+func (m *CEFTray) Visible() bool {
 	return m.TForm.Visible()
 }
 
-func (m *tLCLTrayWindow) SetVisible(v bool) {
+func (m *CEFTray) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
-func (m *tLCLTrayWindow) SetHint(value string) {
+func (m *CEFTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
-func (m *tLCLTrayWindow) SetTitle(title string) {
+func (m *CEFTray) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
 
-func (m *tLCLTrayWindow) onMouseEvent() {
+func (m *CEFTray) onMouseEvent() {
 	QueueAsyncCall(func(id int) {
 		m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 			var monitor = m.TForm.Monitor()
@@ -150,7 +162,7 @@ func (m *tLCLTrayWindow) onMouseEvent() {
 //title 气泡标题
 //content 气泡内容
 //timeout 显示时间(毫秒)
-func (m *tLCLTrayWindow) SetBalloon(title, content string, timeout int32) ITray {
+func (m *CEFTray) SetBalloon(title, content string, timeout int32) ITray {
 	m.trayIcon.SetBalloonTitle(title)
 	m.trayIcon.SetBalloonHint(content)
 	m.trayIcon.SetBalloonTimeout(timeout)
@@ -158,11 +170,11 @@ func (m *tLCLTrayWindow) SetBalloon(title, content string, timeout int32) ITray 
 }
 
 //显示托盘气泡
-func (m *tLCLTrayWindow) ShowBalloon() {
+func (m *CEFTray) ShowBalloon() {
 	m.trayIcon.ShowBalloonHint()
 }
 
-func (m *tLCLTrayWindow) createTrayWindow() {
+func (m *CEFTray) createTrayWindow() {
 	m.TForm.SetBorderStyle(types.BsNone)
 	m.TForm.SetFormStyle(types.FsStayOnTop)
 	m.TForm.SetBounds(-(m.w * 2), -(m.h * 2), m.w, m.h)
@@ -246,11 +258,11 @@ func (m *tLCLTrayWindow) createTrayWindow() {
 }
 
 //设置托盘图标
-func (m *tLCLTrayWindow) SetIconFS(iconResourcePath string) {
+func (m *CEFTray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
 
 //设置托盘图标
-func (m *tLCLTrayWindow) SetIcon(iconResourcePath string) {
+func (m *CEFTray) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }
