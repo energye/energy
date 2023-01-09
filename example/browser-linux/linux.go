@@ -20,6 +20,7 @@ func main() {
 	config := cef.NewApplicationConfig()
 	config.SetMultiThreadedMessageLoop(false)
 	config.SetExternalMessagePump(false)
+	config.SetRemoteDebuggingPort(33333)
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"

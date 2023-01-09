@@ -186,7 +186,9 @@ func (m *tCefApplicationConfig) SetLogSeverity(s LOG) *tCefApplicationConfig {
 
 //设置远程调式端口 (1024 ~ 65535)
 func (m *tCefApplicationConfig) SetRemoteDebuggingPort(s int32) *tCefApplicationConfig {
-	m.remoteDebuggingPort = uintptr(s)
+	if s > 1024 && s < 65535 {
+		m.remoteDebuggingPort = uintptr(s)
+	}
 	return m
 }
 

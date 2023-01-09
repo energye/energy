@@ -140,6 +140,13 @@ func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	}
 }
 
+func (m *LCLBrowserWindow) Close() {
+	if m.TForm == nil {
+		return
+	}
+	m.TForm.Close()
+}
+
 func (m *LCLBrowserWindow) SetTitle(title string) {
 	if m.TForm == nil {
 		return
@@ -159,6 +166,50 @@ func (m *LCLBrowserWindow) SetHeight(value int32) {
 		return
 	}
 	m.TForm.SetHeight(value)
+}
+
+func (m *LCLBrowserWindow) Point() *TCefPoint {
+	if m.TForm == nil {
+		return nil
+	}
+	result := &TCefPoint{
+		X: m.Left(),
+		Y: m.Top(),
+	}
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
+	return result
+}
+
+func (m *LCLBrowserWindow) Size() *TCefSize {
+	if m.TForm == nil {
+		return nil
+	}
+	result := &TCefSize{
+		Width:  m.Width(),
+		Height: m.Height(),
+	}
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
+	return result
+}
+
+func (m *LCLBrowserWindow) Bounds() *TCefRect {
+	if m.TForm == nil {
+		return nil
+	}
+	rect := m.BoundsRect()
+	result := &TCefRect{
+		X:      rect.Left,
+		Y:      rect.Top,
+		Width:  rect.Width(),
+		Height: rect.Height(),
+	}
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
+	return result
 }
 
 func (m *LCLBrowserWindow) SetPoint(x, y int32) {

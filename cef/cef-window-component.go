@@ -128,6 +128,21 @@ func (m *TCEFWindowComponent) SetBackgroundColor(rect *types.TCefColor) {
 	Proc(internale_CEFWindowComponent_SetBackgroundColor).Call(uintptr(m.instance), rect.ToPtr())
 }
 
+func (m *TCEFWindowComponent) Bounds() (result *TCefRect) {
+	Proc(internale_CEFWindowComponent_Bounds).Call(uintptr(m.instance), uintptr(unsafe.Pointer(result)))
+	return
+}
+
+func (m *TCEFWindowComponent) Size() (result *TCefSize) {
+	Proc(internale_CEFWindowComponent_Size).Call(uintptr(m.instance), uintptr(unsafe.Pointer(result)))
+	return
+}
+
+func (m *TCEFWindowComponent) Position() (result *TCefPoint) {
+	Proc(internale_CEFWindowComponent_Position).Call(uintptr(m.instance), uintptr(unsafe.Pointer(result)))
+	return
+}
+
 func (m *TCEFWindowComponent) SetBounds(rect *TCefRect) {
 	Proc(internale_CEFWindowComponent_SetBounds).Call(uintptr(m.instance), uintptr(unsafe.Pointer(rect)))
 }

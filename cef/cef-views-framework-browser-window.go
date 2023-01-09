@@ -355,6 +355,29 @@ func (m *ViewsFrameworkBrowserWindow) SetHeight(value int32) {
 	m.WindowProperty().Height = value
 }
 
+func (m *ViewsFrameworkBrowserWindow) Point() *TCefPoint {
+	result := m.WindowComponent().Position()
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
+	return result
+}
+
+func (m *ViewsFrameworkBrowserWindow) Size() *TCefSize {
+	result := m.WindowComponent().Size()
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
+	return result
+}
+
+func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
+	result := m.WindowComponent().Bounds()
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
+	return result
+}
+
 func (m *ViewsFrameworkBrowserWindow) SetPoint(x, y int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y

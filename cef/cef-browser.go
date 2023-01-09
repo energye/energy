@@ -238,17 +238,13 @@ func (m *ICefBrowser) SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouse
 }
 
 func (m *ICefBrowser) ViewSource(frame *ICefFrame) {
-	createBrowserViewSource(m, frame)
+	m.createBrowserViewSource(frame)
 }
 
 //显示开发者工具
 func (m *ICefBrowser) ShowDevTools() {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(m.Identifier()); browserWinInfo != nil {
-		if browserWinInfo.IsLCL() {
-			createLCLBrowserDevTools(m, browserWinInfo.AsLCLBrowserWindow().BrowserWindow())
-		} else {
-			browserWinInfo.AsViewsFrameworkBrowserWindow().Chromium().ShowDevTools(nil)
-		}
+		m.createBrowserDevTools(browserWinInfo)
 	}
 }
 

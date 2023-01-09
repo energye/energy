@@ -380,6 +380,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetAlwaysOnTop", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetFullscreen", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetBackgroundColor", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Bounds", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Size", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_Position", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetBounds", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetSize", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetPosition", 0),
@@ -847,6 +850,9 @@ const (
 	internale_CEFWindowComponent_SetAlwaysOnTop
 	internale_CEFWindowComponent_SetFullscreen
 	internale_CEFWindowComponent_SetBackgroundColor
+	internale_CEFWindowComponent_Bounds
+	internale_CEFWindowComponent_Size
+	internale_CEFWindowComponent_Position
 	internale_CEFWindowComponent_SetBounds
 	internale_CEFWindowComponent_SetSize
 	internale_CEFWindowComponent_SetPosition

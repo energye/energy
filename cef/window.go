@@ -16,17 +16,17 @@ import (
 
 //辅助工具
 type auxTools struct {
-	devToolsWindow   *LCLBrowserWindow //devTools
-	devToolsX        int32             //上次改变的窗体位置，宽度
-	devToolsY        int32             //
-	devToolsWidth    int32             //
-	devToolsHeight   int32             //
-	viewSourceWindow *LCLBrowserWindow //viewSource
-	viewSourceUrl    string            //
-	viewSourceX      int32             //上次改变的窗体位置，宽度
-	viewSourceY      int32             //
-	viewSourceWidth  int32             //
-	viewSourceHeight int32             //
+	devToolsWindow   IBrowserWindow //devTools
+	devToolsX        int32          //上次改变的窗体位置，宽度
+	devToolsY        int32          //
+	devToolsWidth    int32          //
+	devToolsHeight   int32          //
+	viewSourceWindow IBrowserWindow //viewSource
+	viewSourceUrl    string         //
+	viewSourceX      int32          //上次改变的窗体位置，宽度
+	viewSourceY      int32          //
+	viewSourceWidth  int32          //
+	viewSourceHeight int32          //
 }
 
 //窗口属性
@@ -56,6 +56,7 @@ type IBrowserWindow interface {
 	Hide()
 	Maximize()
 	Minimize()
+	Close()
 	CloseBrowserWindow()
 	WindowType() consts.WINDOW_TYPE
 	SetWindowType(windowType consts.WINDOW_TYPE)
@@ -81,6 +82,9 @@ type IBrowserWindow interface {
 	WindowProperty() *WindowProperty
 	SetWidth(value int32)
 	SetHeight(value int32)
+	Point() *TCefPoint
+	Size() *TCefSize
+	Bounds() *TCefRect
 	SetPoint(x, y int32)
 	SetSize(width, height int32)
 	SetBounds(x, y, width, height int32)

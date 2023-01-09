@@ -24,69 +24,77 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil {
 		if browserWinInfo.getAuxTools() != nil && browserWinInfo.getAuxTools().devToolsWindow != nil {
 			QueueAsyncCall(func(id int) {
-				browserWinInfo.getAuxTools().devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
+				browserWinInfo.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
 			})
 		}
 	}
 }
-func createLCLBrowserDevTools(browser *ICefBrowser, browserWinInfo *LCLBrowserWindow) {
-	QueueAsyncCall(func(id int) {
-		if browserWinInfo.auxTools == nil {
-			browserWinInfo.auxTools = &auxTools{}
-		}
-		winAuxTools := browserWinInfo.auxTools
-		if winAuxTools.devToolsWindow != nil {
+
+func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
+	if browserWinInfo.IsLCL() {
+		QueueAsyncCall(func(id int) {
+			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
+			window.createAuxTools()
+			winAuxTools := window.auxTools
+			if winAuxTools.devToolsWindow != nil {
+				winAuxTools.devToolsWindow.Show()
+				return
+			}
+			devToolsWindow := &LCLBrowserWindow{}
+			winAuxTools.devToolsWindow = devToolsWindow
+			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
+			devToolsWindow.TForm = lcl.NewForm(window)
+			devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, m.MainFrame().Url))
+			devToolsWindow.FormCreate()
+			devToolsWindow.defaultWindowEvent()
+			devToolsWindow.defaultWindowCloseEvent()
+			winAuxTools.devToolsWindow.SetSize(1024, 768)
+			winAuxTools.devToolsWindow.SetShowInTaskBar()
+			devToolsWindow.SetOnResize(func(sender lcl.IObject) {
+				winAuxTools.devToolsX = devToolsWindow.Left()
+				winAuxTools.devToolsY = devToolsWindow.Top()
+				winAuxTools.devToolsWidth = devToolsWindow.Width()
+				winAuxTools.devToolsHeight = devToolsWindow.Height()
+
+				if devToolsWindow.isClosing {
+					return
+				}
+				if devToolsWindow.chromium != nil {
+					devToolsWindow.chromium.NotifyMoveOrResizeStarted()
+				}
+				if devToolsWindow.windowParent != nil {
+					devToolsWindow.windowParent.UpdateSize()
+				}
+			})
+			devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
+				if devToolsWindow.isClosing {
+					return
+				}
+				*action = types.CaFree
+			})
+			devToolsWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
+				if devToolsWindow.isClosing {
+					return
+				}
+				devToolsWindow.isClosing = true
+				BrowserWindow.removeWindowInfo(devToolsWindow.windowId)
+			})
+
+			devToolsWindow.ChromiumCreate(nil, "")
+			devToolsWindow.putChromiumWindowInfo()
+			devToolsWindow.defaultChromiumEvent()
 			winAuxTools.devToolsWindow.Show()
-			return
-		}
-		winAuxTools.devToolsWindow = &LCLBrowserWindow{}
-		winAuxTools.devToolsWindow.SetWindowType(WT_DEV_TOOLS)
-		winAuxTools.devToolsWindow.TForm = lcl.NewForm(browserWinInfo)
-		winAuxTools.devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
-		winAuxTools.devToolsWindow.FormCreate()
-		winAuxTools.devToolsWindow.defaultWindowEvent()
-		winAuxTools.devToolsWindow.defaultWindowCloseEvent()
-		winAuxTools.devToolsWindow.SetWidth(1024)
-		winAuxTools.devToolsWindow.SetHeight(768)
-		winAuxTools.devToolsWindow.SetShowInTaskBar()
-
-		winAuxTools.devToolsWindow.SetOnResize(func(sender lcl.IObject) {
-			winAuxTools.devToolsX = winAuxTools.devToolsWindow.Left()
-			winAuxTools.devToolsY = winAuxTools.devToolsWindow.Top()
-			winAuxTools.devToolsWidth = winAuxTools.devToolsWindow.Width()
-			winAuxTools.devToolsHeight = winAuxTools.devToolsWindow.Height()
-
-			if winAuxTools.devToolsWindow.isClosing {
-				return
-			}
-			if winAuxTools.devToolsWindow.chromium != nil {
-				winAuxTools.devToolsWindow.chromium.NotifyMoveOrResizeStarted()
-			}
-			if winAuxTools.devToolsWindow.windowParent != nil {
-				winAuxTools.devToolsWindow.windowParent.UpdateSize()
-			}
+			//明确的生成下一个窗体序号
+			BrowserWindow.setOrIncNextWindowNum()
+			_CEFBrowser_ShowDevTools(devToolsWindow.chromium.Instance(), uintptr(m.Identifier()), devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 		})
-		winAuxTools.devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
-			if winAuxTools.devToolsWindow.isClosing {
-				return
-			}
-			*action = types.CaFree
-		})
-		winAuxTools.devToolsWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
-			if winAuxTools.devToolsWindow.isClosing {
-				return
-			}
-			winAuxTools.devToolsWindow.isClosing = true
-			BrowserWindow.removeWindowInfo(winAuxTools.devToolsWindow.windowId)
-		})
-
-		winAuxTools.devToolsWindow.ChromiumCreate(nil, "")
-		winAuxTools.devToolsWindow.putChromiumWindowInfo()
-		winAuxTools.devToolsWindow.defaultChromiumEvent()
-		//winAuxTools.devToolsWindow.windowInfo = browserWinInfo
-		winAuxTools.devToolsWindow.Show()
-		//明确的生成下一个窗体序号
-		BrowserWindow.setOrIncNextWindowNum()
-		_CEFBrowser_ShowDevTools(winAuxTools.devToolsWindow.chromium.Instance(), uintptr(browser.Identifier()), winAuxTools.devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
-	})
+	} else if browserWinInfo.IsViewsFramework() {
+		//window := browserWinInfo.AsViewsFrameworkBrowserWindow().BrowserWindow()
+		//window.createAuxTools()
+		//winAuxTools := window.auxTools
+		//if winAuxTools.devToolsWindow != nil {
+		//	winAuxTools.devToolsWindow.Show()
+		//	return
+		//}
+	}
 }
