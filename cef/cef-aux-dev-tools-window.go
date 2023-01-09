@@ -90,16 +90,18 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 		})
 	} else if browserWinInfo.IsViewsFramework() {
 		if application.cfg.remoteDebuggingPort > 1024 && application.cfg.remoteDebuggingPort < 65535 {
-			window := browserWinInfo.AsViewsFrameworkBrowserWindow().BrowserWindow()
-			window.createAuxTools()
-			winAuxTools := window.auxTools
-			if winAuxTools.devToolsWindow != nil {
-				winAuxTools.devToolsWindow.Show()
-				return
-			}
 			wp := NewWindowProperty()
-			wp.Url = ""
-			//devToolsWindow := NewViewsFrameworkBrowserWindow(nil, nil)
+			wp.Url = fmt.Sprintf("http://127.0.0.1:%d", application.cfg.remoteDebuggingPort)
+			wp.Title = dev_tools_name
+			wp.IconFS = BrowserWindow.Config.IconFS
+			wp.Icon = BrowserWindow.Config.Icon
+			devToolsWindow := NewViewsFrameworkBrowserWindow(nil, wp)
+			devToolsWindow.resetWindowPropertyEvent()
+			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
+			devToolsWindow.windowId = BrowserWindow.GetNextWindowNum()
+			devToolsWindow.putChromiumWindowInfo()
+			devToolsWindow.registerDefaultEvent()
+			devToolsWindow.windowComponent.CreateTopLevelWindow()
 		}
 	}
 }
