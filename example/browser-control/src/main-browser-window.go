@@ -22,6 +22,7 @@ func MainBrowserWindow() {
 	//窗口宽高
 	cef.BrowserWindow.Config.Width = 1024
 	cef.BrowserWindow.Config.Height = 768
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//chromium配置
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)

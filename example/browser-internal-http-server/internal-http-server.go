@@ -19,7 +19,7 @@ func main() {
 	cefApp := cef.NewApplication(nil)
 	//主窗口的配置
 	cef.BrowserWindow.Config.Title = "Energy - 内置资源和内置服务示例"
-	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/internal-http-server.html"
 	//内置静态资源服务的安全key和value设置

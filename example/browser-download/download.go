@@ -26,6 +26,7 @@ func main() {
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/download.html"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		//linux 下载文件 系统弹出保存对话框不启作用

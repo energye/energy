@@ -14,6 +14,8 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -76,9 +78,13 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 				m.windowComponent.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
-				_ = m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
+				if emfs.IsExist(windowProperty.IconFS) {
+					_ = m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
+				}
 			} else if windowProperty.Icon != "" {
-				_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
+				if tools.IsExist(windowProperty.Icon) {
+					_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
+				}
 			}
 			m.browserViewComponent.RequestFocus()
 			m.windowComponent.Show()

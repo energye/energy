@@ -13,6 +13,8 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
+	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -144,9 +146,13 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 	m.SetCaption(m.windowProperty.Title)
 	if m.windowProperty.IconFS != "" {
-		lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
+		if emfs.IsExist(m.windowProperty.IconFS) {
+			_ = lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
+		}
 	} else if m.windowProperty.Icon != "" {
-		lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
+		if tools.IsExist(m.windowProperty.Icon) {
+			lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
+		}
 	}
 	if m.windowProperty.CenterWindow {
 		m.SetWidth(m.windowProperty.Width)

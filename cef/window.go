@@ -35,8 +35,8 @@ type WindowProperty struct {
 	WindowState  types.TWindowState //窗口 状态
 	Title        string             //窗口 标题
 	Url          string             //默认打开URL
-	Icon         string             //窗口图标 加载本地图标
-	IconFS       string             //窗口图标 加载emfs内置图标
+	Icon         string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
+	IconFS       string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico
 	CanMinimize  bool               //窗口 是否启用最小化功能
 	CanMaximize  bool               //窗口 是否启用最大化功能
 	CanResize    bool               //窗口 是否允许调整大小

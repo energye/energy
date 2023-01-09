@@ -15,6 +15,8 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
+	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
@@ -102,9 +104,13 @@ func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLB
 		window.SetBounds(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height)
 	}
 	if windowProperty.IconFS != "" {
-		_ = window.Icon().LoadFromFSFile(windowProperty.IconFS)
+		if emfs.IsExist(windowProperty.IconFS) {
+			_ = window.Icon().LoadFromFSFile(windowProperty.IconFS)
+		}
 	} else if windowProperty.Icon != "" {
-		window.Icon().LoadFromFile(windowProperty.Icon)
+		if tools.IsExist(windowProperty.Icon) {
+			window.Icon().LoadFromFile(windowProperty.Icon)
+		}
 	}
 	if windowProperty.AlwaysOnTop {
 		window.SetFormStyle(types.FsSystemStayOnTop)

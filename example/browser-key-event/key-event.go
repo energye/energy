@@ -19,7 +19,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/key-event.html"
 	cef.BrowserWindow.Config.Title = "Energy - Key Event"
-	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, result *bool) {
