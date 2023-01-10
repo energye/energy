@@ -631,3 +631,10 @@ const (
 	DRAG_OPERATION_DELETE  = TCefDragOperations(32)
 	DRAG_OPERATION_EVERY   = TCefDragOperations(math.MaxUint32)
 )
+
+type TrayType int8
+
+const (
+	TRAY_SYS TrayType = iota
+	TRAY_LCL
+)
