@@ -15,6 +15,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
@@ -162,10 +163,87 @@ func quit() {
 	close(quitChan)
 }
 
+var usni = &UnimplementedStatusNotifierItem{}
+
+type UnimplementedStatusNotifierItem struct {
+	contextMenu       func(x int32, y int32)
+	activate          func(x int32, y int32)
+	dActivate         func(x int32, y int32)
+	secondaryActivate func(x int32, y int32)
+	scroll            func(delta int32, orientation string)
+	dActivateTime     int64
+}
+
+func (*UnimplementedStatusNotifierItem) iface() string {
+	return notifier.InterfaceStatusNotifierItem
+}
+
+func (m *UnimplementedStatusNotifierItem) ContextMenu(x int32, y int32) (err *dbus.Error) {
+	if m.contextMenu != nil {
+		m.contextMenu(x, y)
+	} else {
+		err = &dbus.ErrMsgUnknownMethod
+	}
+	return
+}
+
+func (m *UnimplementedStatusNotifierItem) Activate(x int32, y int32) (err *dbus.Error) {
+	if m.dActivateTime == 0 {
+		m.dActivateTime = time.Now().UnixMilli()
+	} else {
+		nowMilli := time.Now().UnixMilli()
+		if nowMilli-m.dActivateTime < 500 {
+			if m.dActivate != nil {
+				m.dActivate(x, y)
+				return
+			}
+		} else {
+			m.dActivateTime = nowMilli
+		}
+	}
+
+	if m.activate != nil {
+		m.activate(x, y)
+	} else {
+		err = &dbus.ErrMsgUnknownMethod
+	}
+	return
+}
+
+func (m *UnimplementedStatusNotifierItem) SecondaryActivate(x int32, y int32) (err *dbus.Error) {
+	if m.secondaryActivate != nil {
+		m.secondaryActivate(x, y)
+	} else {
+		err = &dbus.ErrMsgUnknownMethod
+	}
+	return
+}
+
+func (m *UnimplementedStatusNotifierItem) Scroll(delta int32, orientation string) (err *dbus.Error) {
+	if m.scroll != nil {
+		m.scroll(delta, orientation)
+	} else {
+		err = &dbus.ErrMsgUnknownMethod
+	}
+	return
+}
+
+func SetOnClick(click func()) {
+	usni.activate = func(x int32, y int32) {
+		click()
+	}
+}
+
+func SetOnDClick(dClick func()) {
+	usni.dActivate = func(x int32, y int32) {
+		dClick()
+	}
+}
+
 func nativeStart() {
 	systrayReady()
 	conn, _ := dbus.ConnectSessionBus()
-	err := notifier.ExportStatusNotifierItem(conn, path, &notifier.UnimplementedStatusNotifierItem{})
+	err := notifier.ExportStatusNotifierItem(conn, path, usni)
 	if err != nil {
 		log.Printf("systray error: failed to export status notifier item: %s\n", err)
 	}
@@ -205,6 +283,7 @@ func nativeStart() {
 		log.Printf("systray error: failed to export node introspection: %s\n", err)
 		return
 	}
+
 	menuNode := introspect.Node{
 		Name: menuPath,
 		Interfaces: []introspect.Interface{
@@ -226,8 +305,12 @@ func nativeStart() {
 	instance.menuProps = menuProps
 	instance.lock.Unlock()
 
-	obj := conn.Object("org.kde.StatusNotifierWatcher", "/StatusNotifierWatcher")
-	call := obj.Call("org.kde.StatusNotifierWatcher.RegisterStatusNotifierItem", 0, path)
+	var (
+		obj  dbus.BusObject
+		call *dbus.Call
+	)
+	obj = conn.Object("org.kde.StatusNotifierWatcher", "/StatusNotifierWatcher")
+	call = obj.Call("org.kde.StatusNotifierWatcher.RegisterStatusNotifierItem", 0, path)
 	if call.Err != nil {
 		log.Printf("systray error: failed to register our icon with the notifier watcher (maybe no tray is running?): %s\n", call.Err)
 	}
@@ -248,6 +331,10 @@ type tray struct {
 	menuLock         sync.RWMutex
 	props, menuProps *prop.Properties
 	menuVersion      uint32
+}
+
+func (*tray) iface() string {
+	return notifier.InterfaceStatusNotifierItem
 }
 
 func (t *tray) createPropSpec() map[string]map[string]*prop.Prop {
