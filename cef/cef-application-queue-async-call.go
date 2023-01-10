@@ -11,7 +11,6 @@ package cef
 //应用主线程异步回调
 import (
 	"github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"sync"
@@ -46,6 +45,8 @@ type queueAsyncCall struct {
 	calls sync.Map
 }
 
+// LCL UI
+//
 // 1.在UI主进程中执行, 队列异步调用-适用大多场景(包括UI线程和非UI线程)
 //
 // 2.大多数非UI线程操作都需要使用该函数
@@ -54,10 +55,10 @@ type queueAsyncCall struct {
 //
 // 4.在windows linux macos 可同时使用
 func QueueAsyncCall(fn qacFn) int {
-	if consts.IsMessageLoop {
-		fn(0)
-		return 0
-	}
+	//if consts.IsMessageLoop {
+	//	fn(0)
+	//	return 0
+	//}
 	id := qac.set(&queueCall{
 		IsSync: false,
 		Fn:     fn,
@@ -66,6 +67,8 @@ func QueueAsyncCall(fn qacFn) int {
 	return int(id)
 }
 
+// LCL UI
+//
 // 1.在UI主进程中执行, 队列异步调用-适用大多场景(非UI线程)
 //
 // 2.大多数非UI线程操作都需要使用该函数
@@ -74,10 +77,10 @@ func QueueAsyncCall(fn qacFn) int {
 //
 // 4.在windows linux macos 需要注意使用场景, 当非UI线程使用时正常执行, UI线程使用时会造成UI线程锁死, 这种情况建议使用 QueueAsyncCall 自己增加同步锁
 func QueueSyncCall(fn qacFn) int {
-	if consts.IsMessageLoop {
-		fn(0)
-		return 0
-	}
+	//if consts.IsMessageLoop {
+	//	fn(0)
+	//	return 0
+	//}
 	qc := &queueCall{
 		IsSync: true,
 		Fn:     fn,
