@@ -62,7 +62,7 @@ func main() {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
 		//cefTray(window)
-		sys_tray.TrayMain()
+		go sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
 	})
 	//在主进程启动成功之后执行
