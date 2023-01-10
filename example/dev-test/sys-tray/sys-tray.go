@@ -7,12 +7,19 @@ import (
 	"time"
 )
 
+var start func()
+var end func()
+
 func TrayMain() {
 	onExit := func() {
 		now := time.Now()
 		fmt.Println("Exit at", now.String())
 	}
-	go systray.Run(onReady, onExit)
+
+	//go systray.Run(onReady, onExit)
+	//systray.Register(onReady, onExit)//windows
+	start, end = systray.RunWithExternalLoop(onReady, onExit) //windows/linux/macos
+	start()
 }
 
 func addQuitItem() {
@@ -21,12 +28,15 @@ func addQuitItem() {
 	go func() {
 		<-mQuit.ClickedCh
 		fmt.Println("Requesting quit")
-		systray.Quit()
+		//systray.Quit()
+		//systray.Quit()// macos error
+		//end() // macos error
 		fmt.Println("Finished quitting")
 	}()
 }
 
 func onReady() {
+	fmt.Println("systray.onReady")
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	systray.SetTitle("Awesome App")
 	systray.SetTooltip("Lantern")
