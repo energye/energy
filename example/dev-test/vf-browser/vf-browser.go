@@ -129,8 +129,7 @@ func trayMain() {
 		now := time.Now()
 		fmt.Println("Exit at", now.String())
 	}
-
-	systray.Register(onReady, onExit)
+	go systray.Run(onReady, onExit)
 }
 
 func addQuitItem() {

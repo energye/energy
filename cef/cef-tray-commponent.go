@@ -37,3 +37,35 @@ type ITray interface {
 	AsCEFTray() *CEFTray
 	AsLCLTray() *LCLTray
 }
+
+//LCL 系统托盘
+type LCLTray struct {
+	owner     lcl.IComponent
+	trayIcon  *lcl.TTrayIcon
+	popupMenu *lcl.TPopupMenu
+}
+
+//CEF views framework 系统托盘
+type ViewsFrameTray struct {
+	trayWindow *ViewsFrameworkBrowserWindow
+	trayIcon   *lcl.TTrayIcon
+	x, y, w, h int32
+	mouseUp    TMouseEvent
+	isClosing  bool
+}
+
+//CEF + LCL 托盘
+type CEFTray struct {
+	*lcl.TForm
+	owner        lcl.IComponent
+	trayIcon     *lcl.TTrayIcon
+	chromium     IChromium
+	windowParent ITCefWindowParent
+	x, y, w, h   int32
+	mouseUp      TMouseEvent
+	isClosing    bool
+	url          string
+}
+
+type SysTray struct {
+}

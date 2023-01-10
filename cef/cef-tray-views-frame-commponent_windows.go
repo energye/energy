@@ -20,15 +20,6 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//Cef托盘
-type ViewsFrameTray struct {
-	trayWindow *ViewsFrameworkBrowserWindow
-	trayIcon   *lcl.TTrayIcon
-	x, y, w, h int32
-	mouseUp    TMouseEvent
-	isClosing  bool
-}
-
 func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *ViewsFrameTray {
 	var tray = &ViewsFrameTray{}
 	cc := NewChromiumConfig()

@@ -13,13 +13,6 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//系统托盘
-type LCLTray struct {
-	owner     lcl.IComponent
-	trayIcon  *lcl.TTrayIcon
-	popupMenu *lcl.TPopupMenu
-}
-
 //创建系统托盘
 func newTray(owner lcl.IComponent) *LCLTray {
 	trayIcon := lcl.NewTrayIcon(owner)

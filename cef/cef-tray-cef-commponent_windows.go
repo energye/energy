@@ -22,19 +22,6 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//Cef托盘
-type CEFTray struct {
-	*lcl.TForm
-	owner        lcl.IComponent
-	trayIcon     *lcl.TTrayIcon
-	chromium     IChromium
-	windowParent ITCefWindowParent
-	x, y, w, h   int32
-	mouseUp      TMouseEvent
-	isClosing    bool
-	url          string
-}
-
 func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *CEFTray {
 	var trayForm *CEFTray
 	lcl.Application.CreateForm(&trayForm)
