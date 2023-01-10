@@ -154,15 +154,17 @@ func (t *unixTransport) ReadMessage() (*Message, error) {
 		// substitute the values in the message body (which are indices for the
 		// array receiver via OOB) with the actual values
 		for i, v := range msg.Body {
-			switch index := v.(type) {
+			switch v.(type) {
 			case UnixFDIndex:
-				if uint32(index) >= unixfds {
+				j := v.(UnixFDIndex)
+				if uint32(j) >= unixfds {
 					return nil, InvalidMessageError("invalid index for unix fd")
 				}
-				msg.Body[i] = UnixFD(fds[index])
+				msg.Body[i] = UnixFD(fds[j])
 			case []UnixFDIndex:
-				fdArray := make([]UnixFD, len(index))
-				for k, j := range index {
+				idxArray := v.([]UnixFDIndex)
+				fdArray := make([]UnixFD, len(idxArray))
+				for k, j := range idxArray {
 					if uint32(j) >= unixfds {
 						return nil, InvalidMessageError("invalid index for unix fd")
 					}

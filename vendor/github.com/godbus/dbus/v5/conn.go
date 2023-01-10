@@ -169,7 +169,7 @@ func Connect(address string, opts ...ConnOption) (*Conn, error) {
 
 // SystemBusPrivate returns a new private connection to the system bus.
 // Note: this connection is not ready to use. One must perform Auth and Hello
-// on the connection before it is usable.
+// on the connection before it is useable.
 func SystemBusPrivate(opts ...ConnOption) (*Conn, error) {
 	return Dial(getSystemBusPlatformAddress(), opts...)
 }
@@ -284,6 +284,10 @@ func newConn(tr transport, opts ...ConnOption) (*Conn, error) {
 		conn.ctx = context.Background()
 	}
 	conn.ctx, conn.cancelCtx = context.WithCancel(conn.ctx)
+	go func() {
+		<-conn.ctx.Done()
+		conn.Close()
+	}()
 
 	conn.calls = newCallTracker()
 	if conn.handler == nil {
@@ -298,11 +302,6 @@ func newConn(tr transport, opts ...ConnOption) (*Conn, error) {
 	conn.outHandler = &outputHandler{conn: conn}
 	conn.names = newNameTracker()
 	conn.busObj = conn.Object("org.freedesktop.DBus", "/org/freedesktop/DBus")
-
-	go func() {
-		<-conn.ctx.Done()
-		conn.Close()
-	}()
 	return conn, nil
 }
 
@@ -551,11 +550,6 @@ func (conn *Conn) send(ctx context.Context, msg *Message, ch chan *Call) *Call {
 		call.ctx = ctx
 		call.ctxCanceler = canceler
 		conn.calls.track(msg.serial, call)
-		if ctx.Err() != nil {
-			// short path: don't even send the message if context already cancelled
-			conn.calls.handleSendError(msg, ctx.Err())
-			return call
-		}
 		go func() {
 			<-ctx.Done()
 			conn.calls.handleSendError(msg, ctx.Err())
@@ -655,9 +649,7 @@ func (conn *Conn) RemoveMatchSignalContext(ctx context.Context, options ...Match
 
 // Signal registers the given channel to be passed all received signal messages.
 //
-// Multiple of these channels can be registered at the same time. The channel is
-// closed if the Conn is closed; it should not be closed by the caller before
-// RemoveSignal was called on it.
+// Multiple of these channels can be registered at the same time.
 //
 // These channels are "overwritten" by Eavesdrop; i.e., if there currently is a
 // channel for eavesdropped messages, this channel receives all signals, and
@@ -773,12 +765,7 @@ func getKey(s, key string) string {
 	for _, keyEqualsValue := range strings.Split(s, ",") {
 		keyValue := strings.SplitN(keyEqualsValue, "=", 2)
 		if len(keyValue) == 2 && keyValue[0] == key {
-			val, err := UnescapeBusAddressValue(keyValue[1])
-			if err != nil {
-				// No way to return an error.
-				return ""
-			}
-			return val
+			return keyValue[1]
 		}
 	}
 	return ""
