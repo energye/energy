@@ -64,6 +64,14 @@ func setInternalLoop(internal bool) {
 	C.setInternalLoop(C.bool(internal))
 }
 
+func SetOnClick(click func()) {
+
+}
+
+func SetOnDClick(dClick func()) {
+
+}
+
 // SetIcon sets the systray icon.
 // iconBytes should be the content of .ico for windows and .ico/.jpg/.png
 // for other platforms.
