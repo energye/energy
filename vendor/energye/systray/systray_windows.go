@@ -236,6 +236,9 @@ type winTray struct {
 	wmTaskbarCreated uint32
 
 	initialized *abool.AtomicBool
+
+	onClick  func()
+	onDClick func()
 }
 
 // isReady checks if the tray as already been initialized. It is not goroutine safe with in regard to the initialization function, but prevents a panic when functions are called too early.
@@ -292,16 +295,25 @@ var wt = winTray{
 	initialized: abool.New(),
 }
 
+func (t *winTray) setOnClick(click func()) {
+	t.onClick = click
+}
+
+func (t *winTray) setOnDClick(dClick func()) {
+	t.onDClick = dClick
+}
+
 // WindowProc callback function that processes messages sent to a window.
 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms633573(v=vs.85).aspx
 func (t *winTray) wndProc(hWnd windows.Handle, message uint32, wParam, lParam uintptr) (lResult uintptr) {
 	const (
-		WM_RBUTTONUP  = 0x0205
-		WM_LBUTTONUP  = 0x0202
-		WM_COMMAND    = 0x0111
-		WM_ENDSESSION = 0x0016
-		WM_CLOSE      = 0x0010
-		WM_DESTROY    = 0x0002
+		WM_RBUTTONUP     = 0x0205
+		WM_LBUTTONUP     = 0x0202
+		WM_LBUTTONDBLCLK = 0x0203
+		WM_COMMAND       = 0x0111
+		WM_ENDSESSION    = 0x0016
+		WM_CLOSE         = 0x0010
+		WM_DESTROY       = 0x0002
 	)
 	switch message {
 	case WM_COMMAND:
@@ -326,8 +338,16 @@ func (t *winTray) wndProc(hWnd windows.Handle, message uint32, wParam, lParam ui
 		systrayExit()
 	case t.wmSystrayMessage:
 		switch lParam {
-		case WM_RBUTTONUP, WM_LBUTTONUP:
+		case WM_RBUTTONUP:
 			t.showMenu()
+		case WM_LBUTTONUP:
+			if t.onClick != nil {
+				t.onClick()
+			}
+		case WM_LBUTTONDBLCLK:
+			if t.onDClick != nil {
+				t.onDClick()
+			}
 		}
 	case t.wmTaskbarCreated: // on explorer.exe restarts
 		t.muNID.Lock()
@@ -1025,6 +1045,14 @@ func addOrUpdateMenuItem(item *MenuItem) {
 		log.Printf("systray error: unable to addOrUpdateMenuItem: %s\n", err)
 		return
 	}
+}
+
+func SetOnClick(click func()) {
+	wt.setOnClick(click)
+}
+
+func SetOnDClick(dClick func()) {
+	wt.setOnDClick(dClick)
 }
 
 // SetTemplateIcon sets the icon of a menu item as a template icon (on macOS). On Windows, it
