@@ -92,7 +92,7 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
 	var s = false
-	tray.SetOnClick(func(sender lcl.IObject) {
+	tray.SetOnClick(func() {
 		s = !s
 		if s {
 			browserWindow.HideTitle()

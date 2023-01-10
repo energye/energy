@@ -78,12 +78,16 @@ func (m *CEFTray) close() {
 	m.TForm.Close()
 }
 
-func (m *CEFTray) SetOnDblClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnDblClick(fn)
+func (m *CEFTray) SetOnDblClick(fn TrayICONClick) {
+	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 
-func (m *CEFTray) SetOnClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnClick(fn)
+func (m *CEFTray) SetOnClick(fn TrayICONClick) {
+	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 
 func (m *CEFTray) SetOnMouseUp(fn TMouseEvent) {

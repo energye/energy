@@ -413,8 +413,8 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
-	tray.SetOnClick(func(sender lcl.IObject) {
-		fmt.Println("SetOnClick", sender)
+	tray.SetOnClick(func() {
+		fmt.Println("SetOnClick")
 	})
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
@@ -470,6 +470,7 @@ func tray(browserWindow cef.IBrowserWindow) {
 	//linux下有些问题
 	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	//托盘 end
+	tray.Show()
 }
 
 // 自定义组件

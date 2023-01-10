@@ -65,7 +65,7 @@ func onReady() {
 		subMenuMiddle := subMenuTop.AddSubMenuItem("SubMenuMiddle", "SubMenu Test (middle)")
 		subMenuBottom := subMenuMiddle.AddSubMenuItemCheckbox("SubMenuBottom - Toggle Panic!", "SubMenu Test (bottom) - Hide/Show Panic!", false)
 		subMenuBottom2 := subMenuMiddle.AddSubMenuItem("SubMenuBottom - Panic!", "SubMenu Test (bottom)")
-
+		subMenuBottom2.SetIcon(icon.Data)
 		systray.AddSeparator()
 		mToggle := systray.AddMenuItem("Toggle", "Toggle some menu items")
 		shown := true

@@ -15,6 +15,8 @@ import (
 
 type TMouseEvent func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) bool
 
+type TrayICONClick func()
+
 type ITray interface {
 	SetTitle(title string)                                 //设置标题
 	SetVisible(v bool)                                     //显示和隐藏托盘图标
@@ -22,8 +24,8 @@ type ITray interface {
 	Show()                                                 //显示托盘菜单窗口 windows有效
 	Hide()                                                 //隐藏托盘菜单窗口 windows有效
 	close()                                                //关闭托盘菜单窗口 windows有效
-	SetOnDblClick(fn lcl.TNotifyEvent)                     //双击事件 linux 和 macos 可能不启作用
-	SetOnClick(fn lcl.TNotifyEvent)                        //单击事件
+	SetOnDblClick(fn TrayICONClick)                        //双击事件 linux 和 macos 可能不启作用
+	SetOnClick(fn TrayICONClick)                           //单击事件
 	SetOnMouseUp(fn TMouseEvent)                           //up事件 linux 和 macos 可能不启作用
 	SetOnMouseDown(fn lcl.TMouseEvent)                     //down事件 linux 和 macos 可能不启作用
 	SetOnMouseMove(fn lcl.TMouseMoveEvent)                 //move事件 linux 和 macos 可能不启作用

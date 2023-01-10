@@ -16,13 +16,9 @@ import (
 //创建系统托盘
 func newTray(owner lcl.IComponent) *LCLTray {
 	trayIcon := lcl.NewTrayIcon(owner)
-	popupMenu := lcl.NewPopupMenu(trayIcon)
-	trayIcon.SetPopupMenu(popupMenu)
-	trayIcon.SetVisible(true)
 	return &LCLTray{
-		owner:     owner,
-		trayIcon:  trayIcon,
-		popupMenu: popupMenu,
+		owner:    owner,
+		trayIcon: trayIcon,
 	}
 }
 
@@ -62,12 +58,16 @@ func (m *LCLTray) close() {
 	m.Hide()
 }
 
-func (m *LCLTray) SetOnDblClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnDblClick(fn)
+func (m *LCLTray) SetOnDblClick(fn TrayICONClick) {
+	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 
-func (m *LCLTray) SetOnClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnClick(fn)
+func (m *LCLTray) SetOnClick(fn TrayICONClick) {
+	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 func (m *LCLTray) SetOnMouseUp(fn TMouseEvent) {
 	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
@@ -81,8 +81,12 @@ func (m *LCLTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
-//返回托盘根菜单 PopupMenu
+//创建并返回托盘根菜单 PopupMenu
 func (m *LCLTray) TrayMenu() *lcl.TPopupMenu {
+	if m.popupMenu == nil {
+		m.popupMenu = lcl.NewPopupMenu(m.trayIcon)
+		m.trayIcon.SetPopupMenu(m.popupMenu)
+	}
 	return m.popupMenu
 }
 
@@ -136,6 +140,6 @@ func (m *LCLTray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TM
 //添加一个托盘菜单
 func (m *LCLTray) AddMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
 	item := m.NewMenuItem(caption, onClick)
-	m.popupMenu.Items().Add(item)
+	m.TrayMenu().Items().Add(item)
 	return item
 }

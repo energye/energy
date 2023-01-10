@@ -154,12 +154,16 @@ func (m *ViewsFrameTray) close() {
 	m.trayIcon.Free()
 }
 
-func (m *ViewsFrameTray) SetOnDblClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnDblClick(fn)
+func (m *ViewsFrameTray) SetOnDblClick(fn TrayICONClick) {
+	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 
-func (m *ViewsFrameTray) SetOnClick(fn lcl.TNotifyEvent) {
-	m.trayIcon.SetOnClick(fn)
+func (m *ViewsFrameTray) SetOnClick(fn TrayICONClick) {
+	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
+		fn()
+	})
 }
 
 func (m *ViewsFrameTray) SetOnMouseUp(fn TMouseEvent) {
