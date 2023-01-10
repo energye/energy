@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
+	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -50,6 +51,9 @@ func main() {
 			//win.SetWindowLong(browserWindow.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
 			//win.SetLayeredWindowAttributes(browserWindow.Handle(), 0, 100, win.LWA_ALPHA)
 		})
+	})
+	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
+		sys_tray.TrayMain()
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
