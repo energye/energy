@@ -57,6 +57,7 @@ func onReady() {
 	})
 	systray.SetOnRClick(func(menu systray.IMenu) {
 		menu.ShowMenu()
+		fmt.Println("SetOnRClick")
 	})
 	//systray.CreateMenu()
 	//return

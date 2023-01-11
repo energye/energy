@@ -1056,15 +1056,15 @@ func addOrUpdateMenuItem(item *MenuItem) {
 	}
 }
 
-func SetOnClick(fn func()) {
+func setOnClick(fn func()) {
 	wt.setOnClick(fn)
 }
 
-func SetOnDClick(fn func()) {
+func setOnDClick(fn func()) {
 	wt.setOnDClick(fn)
 }
 
-func SetOnRClick(fn func(menu IMenu)) {
+func setOnRClick(fn func(menu IMenu)) {
 	wt.setOnRClick(fn)
 }
 

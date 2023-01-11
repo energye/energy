@@ -16,6 +16,16 @@ import (
 	"unsafe"
 )
 
+var st = &systray{}
+
+type systray struct {
+}
+
+func (m *systray) ShowMenu() error {
+	C.show_menu()
+	return nil
+}
+
 // SetTemplateIcon sets the systray icon as a template icon (on Mac), falling back
 // to a regular icon on other platforms.
 // templateIconBytes and regularIconBytes should be the content of .ico for windows and
@@ -73,17 +83,17 @@ var (
 	isEnableOnClick = false
 )
 
-func SetOnClick(fn func()) {
+func setOnClick(fn func()) {
 	enableOnClick()
 	onClick = fn
 }
 
-func SetOnDClick(fn func()) {
+func setOnDClick(fn func()) {
 	enableOnClick()
 	onDClick = fn
 }
 
-func SetOnRClick(fn func(menu IMenu)) {
+func setOnRClick(fn func(menu IMenu)) {
 	enableOnClick()
 	onRClick = fn
 }
@@ -225,6 +235,8 @@ func systray_on_click() {
 //export systray_on_rclick
 func systray_on_rclick() {
 	if onRClick != nil {
-		onRClick(nil)
+		onRClick(st)
+	} else {
+		C.show_menu()
 	}
 }

@@ -229,11 +229,13 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
         systray_on_click();
     }else if(event.type == NSEventTypeRightMouseUp){
         systray_on_rclick();
-        create_menu();
-        [statusItem.button performClick:nil];
-        [statusItem setMenu: NULL];
-        set_menu_nil();
     }
+}
+
+- (void) show_menu {
+    create_menu();
+    [statusItem.button performClick:nil];
+    set_menu_nil();
 }
 
 - (void) enable_on_click {
@@ -355,6 +357,10 @@ void create_menu() {
 
 void set_menu_nil() {
   runInMainThread(@selector(set_menu_nil), nil);
+}
+
+void show_menu(){
+  runInMainThread(@selector(show_menu), nil);
 }
 
 void enable_on_click(void) {
