@@ -13,8 +13,7 @@
 
 #endif
 
-@interface MenuItem : NSObject
-{
+@interface MenuItem : NSObject {
   @public
     NSNumber* menuId;
     NSNumber* parentMenuId;
@@ -24,6 +23,7 @@
     short disabled;
     short checked;
 }
+
 -(id) initWithId: (int)theMenuId
 withParentMenuId: (int)theParentMenuId
        withTitle: (const char*)theTitle
@@ -60,8 +60,7 @@ withParentMenuId: (int)theParentMenuId
   @property (assign) IBOutlet NSWindow *window;
   @end
 
-  @implementation AppDelegate
-{
+@implementation AppDelegate {
   NSStatusItem *statusItem;
   NSMenu *menu;
   NSCondition* cond;
@@ -69,8 +68,7 @@ withParentMenuId: (int)theParentMenuId
 
 @synthesize window = _window;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
-{
+- (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
   self->statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
   self->menu = [[NSMenu alloc] init];
   [self->menu setAutoenablesItems: FALSE];
@@ -79,8 +77,7 @@ withParentMenuId: (int)theParentMenuId
   systray_ready();
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotification
-{
+- (void)applicationWillTerminate:(NSNotification *)aNotification {
   systray_on_exit();
 }
 
@@ -111,8 +108,7 @@ withParentMenuId: (int)theParentMenuId
   statusItem.button.toolTip = tooltip;
 }
 
-- (IBAction)menuHandler:(id)sender
-{
+- (IBAction)menuHandler:(id)sender {
   NSNumber* menuId = [sender representedObject];
   systray_menu_item_selected(menuId.intValue);
 }
@@ -175,13 +171,11 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
   return NULL;
 };
 
-- (void) add_separator:(NSNumber*) menuId
-{
+- (void) add_separator:(NSNumber*) menuId {
   [menu addItem: [NSMenuItem separatorItem]];
 }
 
-- (void) hide_menu_item:(NSNumber*) menuId
-{
+- (void) hide_menu_item:(NSNumber*) menuId {
   NSMenuItem* menuItem = find_menu_item(menu, menuId);
   if (menuItem != NULL) {
     [menuItem setHidden:TRUE];
@@ -200,28 +194,24 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
   menuItem.image = image;
 }
 
-- (void) show_menu_item:(NSNumber*) menuId
-{
+- (void) show_menu_item:(NSNumber*) menuId {
   NSMenuItem* menuItem = find_menu_item(menu, menuId);
   if (menuItem != NULL) {
     [menuItem setHidden:FALSE];
   }
 }
 
-- (void) create_menu
-{
+- (void) create_menu {
   if(statusItem.menu == NULL){
     [statusItem setMenu:menu];
   }
 }
 
-- (void) reset_menu
-{
+- (void) reset_menu {
   [self->menu removeAllItems];
 }
 
-- (void) quit
-{
+- (void) quit {
   [NSApp terminate:self];
 }
 
@@ -229,8 +219,7 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
     systray_on_click();
 }
 
-- (void) enable_on_click
-{
+- (void) enable_on_click {
   [statusItem.button setAction:@selector(statusOnClick:)];
 }
 
