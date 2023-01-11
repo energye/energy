@@ -15,8 +15,9 @@ var (
 	menuItems     = make(map[uint32]*MenuItem)
 	menuItemsLock sync.RWMutex
 
-	currentID = uint32(0)
-	quitOnce  sync.Once
+	currentID             = uint32(0)
+	quitOnce              sync.Once
+	dClickTimeMinInterval int64 = 500
 )
 
 func init() {
@@ -35,6 +36,8 @@ type MenuItem struct {
 	title string
 	// tooltip is the text shown when pointing to menu item
 	tooltip string
+	// shortcutKey Menu shortcut key
+	shortcutKey string
 	// disabled menu item is grayed out and has no effect when clicked
 	disabled bool
 	// checked menu item has a tick before the title
@@ -59,6 +62,7 @@ func newMenuItem(title string, tooltip string, parent *MenuItem) *MenuItem {
 		id:          atomic.AddUint32(&currentID, 1),
 		title:       title,
 		tooltip:     tooltip,
+		shortcutKey: "",
 		disabled:    false,
 		checked:     false,
 		isCheckable: false,
@@ -73,6 +77,11 @@ func Run(onReady, onExit func()) {
 	Register(onReady, onExit)
 
 	nativeLoop()
+}
+
+//Manually set the interval between triggering double click events
+func SetDClickTimeMinInterval(value int64) {
+	dClickTimeMinInterval = value
 }
 
 // RunWithExternalLoop allows the systemtray module to operate with other tookits.

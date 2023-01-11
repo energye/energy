@@ -53,7 +53,7 @@ func main() {
 		})
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
-		go sys_tray.TrayMain()
+		sys_tray.TrayMain()
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

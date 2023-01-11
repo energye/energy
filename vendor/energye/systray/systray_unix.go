@@ -17,7 +17,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"
 
@@ -192,7 +191,7 @@ func (m *UnimplementedStatusNotifierItem) Activate(x int32, y int32) (err *dbus.
 		m.dActivateTime = time.Now().UnixMilli()
 	} else {
 		nowMilli := time.Now().UnixMilli()
-		if nowMilli-m.dActivateTime < 500 {
+		if nowMilli-m.dActivateTime < dClickTimeMinInterval {
 			if m.dActivate != nil {
 				m.dActivate(x, y)
 				return

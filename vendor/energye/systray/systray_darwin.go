@@ -12,6 +12,7 @@ void setInternalLoop(bool);
 import "C"
 
 import (
+	"time"
 	"unsafe"
 )
 
@@ -64,12 +65,18 @@ func setInternalLoop(internal bool) {
 	C.setInternalLoop(C.bool(internal))
 }
 
-func SetOnClick(click func()) {
+var (
+	onClick    func()
+	onDClick   func()
+	dClickTime int64
+)
 
+func SetOnClick(click func()) {
+	onClick = click
 }
 
 func SetOnDClick(dClick func()) {
-
+	onDClick = dClick
 }
 
 // SetIcon sets the systray icon.
@@ -113,6 +120,7 @@ func addOrUpdateMenuItem(item *MenuItem) {
 		C.int(parentID),
 		C.CString(item.title),
 		C.CString(item.tooltip),
+		C.CString(item.shortcutKey),
 		disabled,
 		checked,
 		isCheckable,
@@ -139,6 +147,10 @@ func resetMenu() {
 	C.reset_menu()
 }
 
+func createMenu() {
+	C.create_menu()
+}
+
 //export systray_ready
 func systray_ready() {
 	systrayReady()
@@ -152,4 +164,24 @@ func systray_on_exit() {
 //export systray_menu_item_selected
 func systray_menu_item_selected(cID C.int) {
 	systrayMenuItemSelected(uint32(cID))
+}
+
+//export systray_mouse_down
+func systray_mouse_down() {
+	if dClickTime == 0 {
+		dClickTime = time.Now().UnixMilli()
+	} else {
+		nowMilli := time.Now().UnixMilli()
+		if nowMilli-dClickTime < dClickTimeMinInterval {
+			if onDClick != nil {
+				onDClick()
+				return
+			}
+		} else {
+			dClickTime = nowMilli
+		}
+	}
+	if onClick != nil {
+		onClick()
+	}
 }

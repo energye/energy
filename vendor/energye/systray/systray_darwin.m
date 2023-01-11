@@ -20,6 +20,7 @@
     NSNumber* parentMenuId;
     NSString* title;
     NSString* tooltip;
+    NSString* shortcutKey;
     short disabled;
     short checked;
 }
@@ -27,6 +28,7 @@
 withParentMenuId: (int)theParentMenuId
        withTitle: (const char*)theTitle
      withTooltip: (const char*)theTooltip
+ withShortcutKey: (const char*)theShortcutKey
     withDisabled: (short)theDisabled
      withChecked: (short)theChecked;
      @end
@@ -35,6 +37,7 @@ withParentMenuId: (int)theParentMenuId
      withParentMenuId: (int)theParentMenuId
             withTitle: (const char*)theTitle
           withTooltip: (const char*)theTooltip
+      withShortcutKey: (const char*)theShortcutKey
          withDisabled: (short)theDisabled
           withChecked: (short)theChecked
 {
@@ -70,8 +73,13 @@ withParentMenuId: (int)theParentMenuId
   self->statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
   self->menu = [[NSMenu alloc] init];
   [self->menu setAutoenablesItems: FALSE];
-  [self->statusItem setMenu:self->menu];
+  [self->statusItem.button setAction:@selector(statusOnClick:)];
+  //[self->statusItem setMenu:self->menu];
   systray_ready();
+}
+
+- (void)statusOnClick:(NSButton *)btn {
+    systray_mouse_down();
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -115,6 +123,7 @@ withParentMenuId: (int)theParentMenuId
 - (void)add_or_update_menu_item:(MenuItem *)item {
   NSMenu *theMenu = self->menu;
   NSMenuItem *parentItem;
+  create_menu();
   if ([item->parentMenuId integerValue] > 0) {
     parentItem = find_menu_item(menu, item->parentMenuId);
     if (parentItem.hasSubmenu) {
@@ -128,10 +137,9 @@ withParentMenuId: (int)theParentMenuId
   
   NSMenuItem *menuItem;
   menuItem = find_menu_item(theMenu, item->menuId);
+  //item->shortcutKey
   if (menuItem == NULL) {
-    menuItem = [theMenu addItemWithTitle:item->title
-                               action:@selector(menuHandler:)
-                        keyEquivalent:@""];
+    menuItem = [theMenu addItemWithTitle:item->title action:@selector(menuHandler:) keyEquivalent:@""];
     [menuItem setRepresentedObject:item->menuId];
   }
   [menuItem setTitle:item->title];
@@ -203,6 +211,13 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
   }
 }
 
+- (void) create_menu
+{
+  if(statusItem.menu == NULL){
+    [statusItem setMenu:menu];
+  }
+}
+
 - (void) reset_menu
 {
   [self->menu removeAllItems];
@@ -221,6 +236,7 @@ AppDelegate *owner;
 void setInternalLoop(bool i) {
 	internalLoop = i;
 }
+
 
 void registerSystray(void) {
   if (!internalLoop) { // with an external loop we don't take ownership of the app
@@ -295,8 +311,8 @@ void setTooltip(char* ctooltip) {
   runInMainThread(@selector(setTooltip:), (id)tooltip);
 }
 
-void add_or_update_menu_item(int menuId, int parentMenuId, char* title, char* tooltip, short disabled, short checked, short isCheckable) {
-  MenuItem* item = [[MenuItem alloc] initWithId: menuId withParentMenuId: parentMenuId withTitle: title withTooltip: tooltip withDisabled: disabled withChecked: checked];
+void add_or_update_menu_item(int menuId, int parentMenuId, char* title, char* tooltip, char* shortcutKey, short disabled, short checked, short isCheckable) {
+  MenuItem* item = [[MenuItem alloc] initWithId: menuId withParentMenuId: parentMenuId withTitle: title withTooltip: tooltip withShortcutKey: shortcutKey withDisabled: disabled withChecked: checked];
   free(title);
   free(tooltip);
   runInMainThread(@selector(add_or_update_menu_item:), (id)item);
@@ -320,6 +336,11 @@ void show_menu_item(int menuId) {
 void reset_menu() {
   runInMainThread(@selector(reset_menu), nil);
 }
+
+void create_menu() {
+  runInMainThread(@selector(create_menu), nil);
+}
+
 
 void quit() {
   runInMainThread(@selector(quit), nil);
