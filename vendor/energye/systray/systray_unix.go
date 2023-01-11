@@ -22,6 +22,7 @@ import (
 
 	"energye/systray/internal/generated/menu"
 	"energye/systray/internal/generated/notifier"
+	dbus "github.com/godbus/dbus/v5"
 )
 
 const (
