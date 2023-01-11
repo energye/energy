@@ -22,6 +22,7 @@ import (
 
 	"energye/systray/internal/generated/menu"
 	"energye/systray/internal/generated/notifier"
+	"github.com/godbus/dbus/v5"
 )
 
 const (
@@ -240,7 +241,7 @@ func setOnDClick(fn func()) {
 	}
 }
 
-func SetOnRClick(dClick func(IMenu)) {
+func setOnRClick(dClick func(IMenu)) {
 }
 
 func nativeStart() {
