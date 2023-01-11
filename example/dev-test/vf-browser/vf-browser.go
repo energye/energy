@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
+	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -21,8 +22,7 @@ func main() {
 	config := cef.NewApplicationConfig()
 	config.SetMultiThreadedMessageLoop(false)
 	config.SetExternalMessagePump(false)
-	config.SetRemoteDebuggingPort(0)
-	config.SetSingleProcess(true)
+	config.SetRemoteDebuggingPort(33333)
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -64,7 +64,7 @@ func main() {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
 		//cefTray(window)
-		//go sys_tray.TrayMain()
+		sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
 	})
 	//在主进程启动成功之后执行

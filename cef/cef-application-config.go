@@ -64,14 +64,23 @@ func NewApplicationConfig() *tCefApplicationConfig {
 	m.SetCheckCEFFiles(false)
 	m.SetRemoteDebuggingPort(0)
 	m.SetChromeRuntime(false)
-	//linux >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
-	//顾强制使用GTK3方式，但又无法正常创建lcl组件到窗口中，该框架只对浏览器应用做封装
-	//所以初衷以浏览器应用建设为目标
-	if common.IsLinux() {
-		//linux平台默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
+	//以下条件判断根据不同平台启动不同的窗口组件
+	//ViewsFrameworkBrowserWindow 窗口组件,同时支持 Windows/Linux/MacOSX
+	//LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本>=107.xx时默认开启GTK3且不支持GTK2和LCL提供的各种组件
+	if common.IsLinux() { //VFBW
+		//Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
+		//强制使用GTK3方式，但又无法正常创建lcl组件到窗口中，该框架只对浏览器应用做封装
+		//所以初衷以浏览器应用建设为目标
+		//Linux平台默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(false)
-	} else {
+	} else if common.IsDarwin() { //LCL
+		//MacOSX 在使用LCL窗口组件必须将ExternalMessagePump=true和MultiThreadedMessageLoop=false
+		//或同Linux一样使用ViewsFrameworkBrowserWindow窗口组件
+		m.SetExternalMessagePump(true)
+		m.SetMultiThreadedMessageLoop(false)
+	} else { //LCL
+		//Windows
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
 	}
