@@ -68,7 +68,7 @@ func setInternalLoop(internal bool) {
 var (
 	onClick         func()
 	onDClick        func()
-	onRClick        func()
+	onRClick        func(menu IMenu)
 	dClickTime      int64
 	isEnableOnClick = false
 )
@@ -83,9 +83,25 @@ func SetOnDClick(fn func()) {
 	onDClick = fn
 }
 
-func SetOnRClick(fn func()) {
+func SetOnRClick(fn func(menu IMenu)) {
 	enableOnClick()
 	onRClick = fn
+}
+
+// CreateMenu 如果菜单项是空，把菜单项添加到托盘
+// 该法主动调用后 鼠标事件失效
+//
+// MacOSX平台
+func CreateMenu() {
+	createMenu()
+}
+
+// SetMenuNil 如果菜单项不是空，把菜单项设置为null
+// 该方法主动调用后 鼠标事件生效
+//
+// MacOSX平台
+func SetMenuNil() {
+	setMenuNil()
 }
 
 // SetIcon sets the systray icon.
@@ -208,8 +224,7 @@ func systray_on_click() {
 
 //export systray_on_rclick
 func systray_on_rclick() {
-	println("systray_on_rclick")
 	if onRClick != nil {
-		onRClick()
+		onRClick(nil)
 	}
 }

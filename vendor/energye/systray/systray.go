@@ -24,6 +24,10 @@ func init() {
 	runtime.LockOSThread()
 }
 
+type IMenu interface {
+	ShowMenu() error
+}
+
 // MenuItem is used to keep track each menu item of systray.
 // Don't create it directly, use the one systray.AddMenuItem() returned
 type MenuItem struct {
@@ -126,22 +130,6 @@ func Register(onReady func(), onExit func()) {
 // ResetMenu will remove all menu items
 func ResetMenu() {
 	resetMenu()
-}
-
-// CreateMenu 如果菜单项是空，把菜单项添加到托盘
-// 该法主动调用后 鼠标事件失效
-//
-// MacOSX平台
-func CreateMenu() {
-	createMenu()
-}
-
-// SetMenuNil 如果菜单项不是空，把菜单项设置为null
-// 该方法主动调用后 鼠标事件生效
-//
-// MacOSX平台
-func SetMenuNil() {
-	setMenuNil()
 }
 
 // Quit the systray

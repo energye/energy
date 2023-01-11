@@ -239,7 +239,7 @@ type winTray struct {
 
 	onClick  func()
 	onDClick func()
-	onRClick func()
+	onRClick func(menu IMenu)
 }
 
 // isReady checks if the tray as already been initialized. It is not goroutine safe with in regard to the initialization function, but prevents a panic when functions are called too early.
@@ -301,10 +301,10 @@ func (t *winTray) setOnClick(fn func()) {
 }
 
 func (t *winTray) setOnDClick(fn func()) {
-	t.onDClick = dClick
+	t.onDClick = fn
 }
 
-func (t *winTray) setOnRClick(fn func()) {
+func (t *winTray) setOnRClick(fn func(menu IMenu)) {
 	t.onRClick = fn
 }
 
@@ -344,7 +344,11 @@ func (t *winTray) wndProc(hWnd windows.Handle, message uint32, wParam, lParam ui
 	case t.wmSystrayMessage:
 		switch lParam {
 		case WM_RBUTTONUP:
-			t.showMenu()
+			if t.onRClick != nil {
+				t.onRClick(t)
+			} else {
+				t.ShowMenu()
+			}
 		case WM_LBUTTONUP:
 			if t.onClick != nil {
 				t.onClick()
@@ -722,7 +726,7 @@ func (t *winTray) hideMenuItem(menuItemId, parentId uint32) error {
 	return nil
 }
 
-func (t *winTray) showMenu() error {
+func (t *winTray) ShowMenu() error {
 	if !wt.isReady() {
 		return ErrTrayNotReadyYet
 	}
@@ -1060,7 +1064,7 @@ func SetOnDClick(fn func()) {
 	wt.setOnDClick(fn)
 }
 
-func SetOnRClick(fn func()) {
+func SetOnRClick(fn func(menu IMenu)) {
 	wt.setOnRClick(fn)
 }
 

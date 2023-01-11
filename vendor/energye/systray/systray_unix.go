@@ -240,7 +240,7 @@ func SetOnDClick(fn func()) {
 	}
 }
 
-func SetOnRClick(dClick func()) {
+func SetOnRClick(dClick func(IMenu)) {
 }
 
 func nativeStart() {
