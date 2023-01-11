@@ -22,7 +22,6 @@ import (
 
 	"energye/systray/internal/generated/menu"
 	"energye/systray/internal/generated/notifier"
-	"github.com/godbus/dbus/v5"
 )
 
 const (
@@ -245,7 +244,9 @@ func setOnRClick(dClick func(IMenu)) {
 }
 
 func nativeStart() {
-	systrayReady()
+	if systrayReady != nil {
+		systrayReady()
+	}
 	conn, _ := dbus.ConnectSessionBus()
 	err := notifier.ExportStatusNotifierItem(conn, path, usni)
 	if err != nil {

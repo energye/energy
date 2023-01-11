@@ -899,7 +899,9 @@ func registerSystray() {
 	}
 
 	wt.initialized.Set()
-	systrayReady()
+	if systrayReady != nil {
+		systrayReady()
+	}
 }
 
 var m = &struct {

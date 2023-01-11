@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 )
@@ -64,28 +63,7 @@ func main() {
 			application.QuitMessageLoop()
 			*aResult = true
 		})
-		windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
-			fmt.Println("OnGetInitialBounds")
-		})
-		windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *cef.ICefWindow, aResult *consts.TCefShowState) {
-			fmt.Println("OnGetInitialShowState", *aResult)
-		})
-		windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
-			fmt.Println("OnCanMinimize")
-			*aResult = false
-		})
-		windowComponent.SetOnCanResize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
-			fmt.Println("OnCanResize")
-			*aResult = false
-		})
-		windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *cef.ICefWindow, aResult *bool) {
-			fmt.Println("OnCanMaximize")
-			*aResult = false
-		})
-		windowComponent.SetOnKeyEvent(func(sender lcl.IObject, window *cef.ICefWindow, event *cef.TCefKeyEvent, aResult *bool) {
-			fmt.Println("OnKeyEvent")
-			*aResult = false
-		})
+
 		windowComponent.CreateTopLevelWindow()
 	})
 	application.SetOnGetDefaultClient(func(client *cef.ICefClient) {

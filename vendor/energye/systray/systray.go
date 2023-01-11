@@ -125,15 +125,16 @@ func RunWithExternalLoop(onReady, onExit func()) (start, end func()) {
 // this does exactly the same as Run().
 func Register(onReady func(), onExit func()) {
 	if onReady == nil {
-		systrayReady = func() {}
+		systrayReady = nil
 	} else {
+		var readyCh = make(chan interface{})
 		// Run onReady on separate goroutine to avoid blocking event loop
-		readyCh := make(chan interface{})
 		go func() {
 			<-readyCh
 			onReady()
 		}()
 		systrayReady = func() {
+			systrayReady = nil
 			close(readyCh)
 		}
 	}

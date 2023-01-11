@@ -59,7 +59,7 @@ func onReady() {
 		menu.ShowMenu()
 		fmt.Println("SetOnRClick")
 	})
-	//systray.CreateMenu()
+	systray.CreateMenu()
 	//return
 	addQuitItem()
 

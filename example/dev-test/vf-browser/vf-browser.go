@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
@@ -77,6 +78,7 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
+	fmt.Println("ARGS", common.Args.ProcessType())
 	//运行应用
 	cef.Run(cefApp)
 }
