@@ -239,6 +239,7 @@ type winTray struct {
 
 	onClick  func()
 	onDClick func()
+	onRClick func()
 }
 
 // isReady checks if the tray as already been initialized. It is not goroutine safe with in regard to the initialization function, but prevents a panic when functions are called too early.
@@ -295,12 +296,16 @@ var wt = winTray{
 	initialized: abool.New(),
 }
 
-func (t *winTray) setOnClick(click func()) {
-	t.onClick = click
+func (t *winTray) setOnClick(fn func()) {
+	t.onClick = fn
 }
 
-func (t *winTray) setOnDClick(dClick func()) {
+func (t *winTray) setOnDClick(fn func()) {
 	t.onDClick = dClick
+}
+
+func (t *winTray) setOnRClick(fn func()) {
+	t.onRClick = fn
 }
 
 // WindowProc callback function that processes messages sent to a window.
@@ -1047,12 +1052,16 @@ func addOrUpdateMenuItem(item *MenuItem) {
 	}
 }
 
-func SetOnClick(click func()) {
-	wt.setOnClick(click)
+func SetOnClick(fn func()) {
+	wt.setOnClick(fn)
 }
 
-func SetOnDClick(dClick func()) {
-	wt.setOnDClick(dClick)
+func SetOnDClick(fn func()) {
+	wt.setOnDClick(fn)
+}
+
+func SetOnRClick(fn func()) {
+	wt.setOnRClick(fn)
 }
 
 // SetTemplateIcon sets the icon of a menu item as a template icon (on macOS). On Windows, it

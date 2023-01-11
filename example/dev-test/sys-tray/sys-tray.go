@@ -49,13 +49,14 @@ func onReady() {
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	systray.SetTitle("Energy Sys Tray")
 	systray.SetTooltip("Energy tooltip")
-	//systray.SetOnClick(func() {
-	//	fmt.Println("SetOnClick")
-	//})
+	systray.SetOnClick(func() {
+		fmt.Println("SetOnClick")
+	})
 	systray.SetOnDClick(func() {
 		fmt.Println("SetOnDClick")
 	})
-	return
+	//systray.CreateMenu()
+	//return
 	addQuitItem()
 
 	systray.SetTemplateIcon(icon.Data, icon.Data)

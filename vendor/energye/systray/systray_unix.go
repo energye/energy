@@ -228,16 +228,19 @@ func (m *UnimplementedStatusNotifierItem) Scroll(delta int32, orientation string
 	return
 }
 
-func SetOnClick(click func()) {
+func SetOnClick(fn func()) {
 	usni.activate = func(x int32, y int32) {
-		click()
+		fn()
 	}
 }
 
-func SetOnDClick(dClick func()) {
+func SetOnDClick(fn func()) {
 	usni.dActivate = func(x int32, y int32) {
-		dClick()
+		fn()
 	}
+}
+
+func SetOnRClick(dClick func()) {
 }
 
 func nativeStart() {

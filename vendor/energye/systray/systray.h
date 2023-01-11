@@ -21,5 +21,6 @@ void hide_menu_item(int menuId);
 void show_menu_item(int menuId);
 void reset_menu();
 void create_menu();
+void set_menu_nil();
 void quit();
 void enable_on_click();

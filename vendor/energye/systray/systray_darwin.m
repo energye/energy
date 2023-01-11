@@ -72,6 +72,8 @@ withParentMenuId: (int)theParentMenuId
   self->statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
   self->menu = [[NSMenu alloc] init];
   [self->menu setAutoenablesItems: FALSE];
+  //[self->statusItem.button setTarget:self];
+  //[self->menu setDelegate:(AppDelegate *)self];
   //[self->statusItem.button setAction:@selector(statusOnClick:)];
   //[self->statusItem setMenu:self->menu]; //注释掉，不然不设置菜单事件也不启作用
   systray_ready();
@@ -116,7 +118,7 @@ withParentMenuId: (int)theParentMenuId
 - (void)add_or_update_menu_item:(MenuItem *)item {
   NSMenu *theMenu = self->menu;
   NSMenuItem *parentItem;
-  create_menu();
+  //create_menu();
   if ([item->parentMenuId integerValue] > 0) {
     parentItem = find_menu_item(menu, item->parentMenuId);
     if (parentItem.hasSubmenu) {
@@ -207,6 +209,12 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
   }
 }
 
+- (void) set_menu_nil {
+  if(statusItem.menu != NULL){
+    [statusItem setMenu:NULL];
+  }
+}
+
 - (void) reset_menu {
   [self->menu removeAllItems];
 }
@@ -216,11 +224,21 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
 }
 
 - (void) statusOnClick:(NSButton *)btn {
-    systray_on_click();
+    NSEvent *event = [NSApp currentEvent];
+    if(event.type == NSEventTypeLeftMouseUp){
+        systray_on_click();
+    }else if(event.type == NSEventTypeRightMouseUp){
+        systray_on_rclick();
+        create_menu();
+        [statusItem.button performClick:nil];
+        [statusItem setMenu: NULL];
+        set_menu_nil();
+    }
 }
 
 - (void) enable_on_click {
   [statusItem.button setAction:@selector(statusOnClick:)];
+  [statusItem.button sendActionOn:(NSEventMaskLeftMouseUp|NSEventMaskRightMouseUp)];
 }
 
 @end
@@ -232,12 +250,10 @@ void setInternalLoop(bool i) {
 	internalLoop = i;
 }
 
-
 void registerSystray(void) {
   if (!internalLoop) { // with an external loop we don't take ownership of the app
     return;
   }
-
   owner = [[AppDelegate alloc] init];
   [[NSApplication sharedApplication] setDelegate:owner];
 
@@ -262,13 +278,10 @@ int nativeLoop(void) {
 
 void nativeStart(void) {
   owner = [[AppDelegate alloc] init];
-
   NSNotification *launched = [NSNotification
-                                            notificationWithName: NSApplicationDidFinishLaunchingNotification
-                                                          object: [NSApplication sharedApplication]];
-
+                                  notificationWithName: NSApplicationDidFinishLaunchingNotification
+                                                object: [NSApplication sharedApplication]];
   [[NSApplication sharedApplication] setDelegate:owner];
-
   [owner applicationDidFinishLaunching:launched];
 }
 
@@ -338,6 +351,10 @@ void reset_menu() {
 
 void create_menu() {
   runInMainThread(@selector(create_menu), nil);
+}
+
+void set_menu_nil() {
+  runInMainThread(@selector(set_menu_nil), nil);
 }
 
 void enable_on_click(void) {

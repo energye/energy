@@ -68,18 +68,24 @@ func setInternalLoop(internal bool) {
 var (
 	onClick         func()
 	onDClick        func()
+	onRClick        func()
 	dClickTime      int64
 	isEnableOnClick = false
 )
 
-func SetOnClick(click func()) {
+func SetOnClick(fn func()) {
 	enableOnClick()
-	onClick = click
+	onClick = fn
 }
 
-func SetOnDClick(dClick func()) {
+func SetOnDClick(fn func()) {
 	enableOnClick()
-	onDClick = dClick
+	onDClick = fn
+}
+
+func SetOnRClick(fn func()) {
+	enableOnClick()
+	onRClick = fn
 }
 
 // SetIcon sets the systray icon.
@@ -154,6 +160,9 @@ func createMenu() {
 	C.create_menu()
 }
 
+func setMenuNil() {
+	C.set_menu_nil()
+}
 func enableOnClick() {
 	if !isEnableOnClick {
 		isEnableOnClick = true
@@ -199,4 +208,8 @@ func systray_on_click() {
 
 //export systray_on_rclick
 func systray_on_rclick() {
+	println("systray_on_rclick")
+	if onRClick != nil {
+		onRClick()
+	}
 }
