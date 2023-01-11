@@ -36,7 +36,7 @@ func SetOnException(exception ExceptionCallback) {
 //libs 内置到应用程序的类库
 //
 //resources 内置到应用程序的资源文件
-func GlobalCEFInit(libs *embed.FS, resources *embed.FS) {
+func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	macapp.MacApp.IsCEF(IsDarwin())
 	inits.Init(libs, resources)
 	if Args.IsRender() {

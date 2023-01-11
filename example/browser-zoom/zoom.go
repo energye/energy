@@ -6,7 +6,7 @@ import (
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//主窗口的配置

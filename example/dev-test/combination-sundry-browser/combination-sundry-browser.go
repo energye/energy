@@ -22,7 +22,7 @@ func main() {
 	logger.SetLevel(logger.CefLog_Debug)
 	//环境变量 ENERGY_HOME="/app/cefframework" 配置框架所在目录
 	//全局初始化
-	cef.GlobalCEFInit(&libs, &resources)
+	cef.GlobalInit(&libs, &resources)
 	fmt.Println("CEFVersion:", cef.CEFVersion(), "LibBuildVersion:", cef.LibBuildVersion())
 	//Render 子进程一些初始化配置
 	cefApp := src.AppRenderInit()

@@ -6,7 +6,7 @@ import (
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	applicationConfig := cef.NewApplicationConfig()
 	applicationConfig.SetRemoteDebuggingPort(8888) //远程端口方式, 需自定义端口号
 	//创建应用

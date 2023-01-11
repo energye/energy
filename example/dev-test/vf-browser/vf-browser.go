@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -15,20 +14,22 @@ import (
 var resources embed.FS
 
 func main() {
+	fmt.Println("ARGS", common.Args.ProcessType())
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, &resources)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	config := cef.NewApplicationConfig()
 	config.SetMultiThreadedMessageLoop(false)
 	config.SetExternalMessagePump(false)
-	config.SetRemoteDebuggingPort(33333)
+	config.SetRemoteDebuggingPort(0)
+	config.SetSingleProcess(true)
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.Config.CanDragFile = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		window.DisableResize()
+		//window.DisableResize()
 		window.SetTitle("这里改变了窗口标题")
 		window.SetSize(1600, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
@@ -63,7 +64,7 @@ func main() {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
 		//cefTray(window)
-		go sys_tray.TrayMain()
+		//go sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
 	})
 	//在主进程启动成功之后执行
@@ -78,7 +79,6 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	fmt.Println("ARGS", common.Args.ProcessType())
 	//运行应用
 	cef.Run(cefApp)
 }
