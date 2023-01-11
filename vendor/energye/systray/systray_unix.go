@@ -192,6 +192,7 @@ func (m *UnimplementedStatusNotifierItem) Activate(x int32, y int32) (err *dbus.
 	} else {
 		nowMilli := time.Now().UnixMilli()
 		if nowMilli-m.dActivateTime < dClickTimeMinInterval {
+			m.dActivateTime = dClickTimeMinInterval
 			if m.dActivate != nil {
 				m.dActivate(x, y)
 				return

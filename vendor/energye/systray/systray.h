@@ -3,7 +3,8 @@
 extern void systray_ready();
 extern void systray_on_exit();
 extern void systray_menu_item_selected(int menu_id);
-extern void systray_mouse_down();
+extern void systray_on_click();
+extern void systray_on_rclick();
 
 void registerSystray(void);
 void nativeEnd(void);
@@ -21,3 +22,4 @@ void show_menu_item(int menuId);
 void reset_menu();
 void create_menu();
 void quit();
+void enable_on_click();

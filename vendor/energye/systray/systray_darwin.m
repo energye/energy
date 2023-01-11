@@ -56,6 +56,7 @@ withParentMenuId: (int)theParentMenuId
 @interface AppDelegate: NSObject <NSApplicationDelegate>
   - (void) add_or_update_menu_item:(MenuItem*) item;
   - (IBAction)menuHandler:(id)sender;
+  - (void)statusOnClick:(NSButton *)btn;
   @property (assign) IBOutlet NSWindow *window;
   @end
 
@@ -73,13 +74,9 @@ withParentMenuId: (int)theParentMenuId
   self->statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSVariableStatusItemLength];
   self->menu = [[NSMenu alloc] init];
   [self->menu setAutoenablesItems: FALSE];
-  [self->statusItem.button setAction:@selector(statusOnClick:)];
-  //[self->statusItem setMenu:self->menu];
+  //[self->statusItem.button setAction:@selector(statusOnClick:)];
+  //[self->statusItem setMenu:self->menu]; //注释掉，不然不设置菜单事件也不启作用
   systray_ready();
-}
-
-- (void)statusOnClick:(NSButton *)btn {
-    systray_mouse_down();
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
@@ -228,6 +225,15 @@ NSMenuItem *find_menu_item(NSMenu *ourMenu, NSNumber *menuId) {
   [NSApp terminate:self];
 }
 
+- (void) statusOnClick:(NSButton *)btn {
+    systray_on_click();
+}
+
+- (void) enable_on_click
+{
+  [statusItem.button setAction:@selector(statusOnClick:)];
+}
+
 @end
 
 bool internalLoop = false;
@@ -268,8 +274,12 @@ int nativeLoop(void) {
 void nativeStart(void) {
   owner = [[AppDelegate alloc] init];
 
-  NSNotification *launched = [NSNotification notificationWithName:NSApplicationDidFinishLaunchingNotification
-                                                        object:[NSApplication sharedApplication]];
+  NSNotification *launched = [NSNotification
+                                            notificationWithName: NSApplicationDidFinishLaunchingNotification
+                                                          object: [NSApplication sharedApplication]];
+
+  [[NSApplication sharedApplication] setDelegate:owner];
+
   [owner applicationDidFinishLaunching:launched];
 }
 
@@ -341,6 +351,9 @@ void create_menu() {
   runInMainThread(@selector(create_menu), nil);
 }
 
+void enable_on_click(void) {
+  runInMainThread(@selector(enable_on_click), nil);
+}
 
 void quit() {
   runInMainThread(@selector(quit), nil);

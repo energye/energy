@@ -66,16 +66,19 @@ func setInternalLoop(internal bool) {
 }
 
 var (
-	onClick    func()
-	onDClick   func()
-	dClickTime int64
+	onClick         func()
+	onDClick        func()
+	dClickTime      int64
+	isEnableOnClick = false
 )
 
 func SetOnClick(click func()) {
+	enableOnClick()
 	onClick = click
 }
 
 func SetOnDClick(dClick func()) {
+	enableOnClick()
 	onDClick = dClick
 }
 
@@ -151,6 +154,13 @@ func createMenu() {
 	C.create_menu()
 }
 
+func enableOnClick() {
+	if !isEnableOnClick {
+		isEnableOnClick = true
+		C.enable_on_click()
+	}
+}
+
 //export systray_ready
 func systray_ready() {
 	systrayReady()
@@ -166,13 +176,14 @@ func systray_menu_item_selected(cID C.int) {
 	systrayMenuItemSelected(uint32(cID))
 }
 
-//export systray_mouse_down
-func systray_mouse_down() {
+//export systray_on_click
+func systray_on_click() {
 	if dClickTime == 0 {
 		dClickTime = time.Now().UnixMilli()
 	} else {
 		nowMilli := time.Now().UnixMilli()
 		if nowMilli-dClickTime < dClickTimeMinInterval {
+			dClickTime = dClickTimeMinInterval
 			if onDClick != nil {
 				onDClick()
 				return
@@ -184,4 +195,8 @@ func systray_mouse_down() {
 	if onClick != nil {
 		onClick()
 	}
+}
+
+//export systray_on_rclick
+func systray_on_rclick() {
 }

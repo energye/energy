@@ -79,7 +79,7 @@ func Run(onReady, onExit func()) {
 	nativeLoop()
 }
 
-//Manually set the interval between triggering double click events
+//Manually set the interval between double click events
 func SetDClickTimeMinInterval(value int64) {
 	dClickTimeMinInterval = value
 }
