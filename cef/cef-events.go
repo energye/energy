@@ -262,7 +262,7 @@ func init() {
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, TCefTerminationStatus(getVal(2)))
 		case ChromiumEventOnCompMsg:
-			message := *(*types.TMessage)(getPtr(1))
+			message := (*types.TMessage)(getPtr(1))
 			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, api.GoBool(getVal(2)))
 		case ChromiumEventOnCefBrowser:
 			sender := getPtr(0)

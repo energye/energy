@@ -797,7 +797,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 	})
 }
 
-func (m *LCLBrowserWindow) windowDragRegions(s int, message types.TMessage) {
+func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage) {
 	fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 
@@ -808,13 +808,13 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message types.TMessage) {
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	if m.WindowProperty().CanWebkitAppRegion {
-		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
 			m.windowDragRegions(1, message)
 			if bwEvent.onWidgetCompMsg != nil {
 				bwEvent.onWidgetCompMsg(sender, message, aHandled)
 			}
 		})
-		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
 			m.windowDragRegions(2, message)
 			if bwEvent.onRenderCompMsg != nil {
 				bwEvent.onRenderCompMsg(sender, message, aHandled)
@@ -822,12 +822,12 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 		})
 	} else {
 		if bwEvent.onWidgetCompMsg != nil {
-			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
 				bwEvent.onWidgetCompMsg(sender, message, aHandled)
 			})
 		}
 		if bwEvent.onRenderCompMsg != nil {
-			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
 				bwEvent.onRenderCompMsg(sender, message, aHandled)
 			})
 		}
