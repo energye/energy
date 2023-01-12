@@ -312,13 +312,15 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
 		}
 	})
-	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
-		if bwEvent.onDraggableRegionsChanged != nil {
-			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
-		}
-		m.regions = regions
-		m.windowComponent.SetDraggableRegions(regions.Regions())
-	})
+	if m.WindowProperty().CanWebkitAppRegion {
+		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+			if bwEvent.onDraggableRegionsChanged != nil {
+				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+			}
+			m.regions = regions
+			m.windowComponent.SetDraggableRegions(regions.Regions())
+		})
+	}
 }
 
 //启用所有默认事件行为

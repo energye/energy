@@ -82,6 +82,8 @@ type BrowserEvent struct {
 	onContextMenuCommand      ChromiumEventOnContextMenuCommand       //default can cover
 	onBeforeContextMenu       ChromiumEventOnBeforeContextMenu        //default can cover
 	onBeforeResourceLoad      ChromiumEventOnBeforeResourceLoad       //default
+	onRenderCompMsg           ChromiumEventOnCompMsg                  //default windows
+	onWidgetCompMsg           ChromiumEventOnCompMsg                  //default windows
 }
 
 type browserWindow struct {
@@ -174,6 +176,8 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.browserEvent.chromium = m.chromium
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
 	}
+	//browserWindowOnEventCallback 执行完后，注册windows消息事件
+	m.registerWindowsCompMsgEvent()
 
 	//主进程（主窗口）启动后回调函数事件
 	//主窗体第一次激活之后执行一次
@@ -440,21 +444,21 @@ func (m *BrowserEvent) SetOnTitleChange(event ChromiumEventOnTitleChange) {
 	}
 }
 
-// BrowserEvent.SetOnRenderCompMsg
+// BrowserEvent.SetOnRenderCompMsg windows
 func (m *BrowserEvent) SetOnRenderCompMsg(event ChromiumEventOnCompMsg) {
 	if Args.IsMain() {
-		m.chromium.SetOnRenderCompMsg(event)
+		m.onRenderCompMsg = event
 	}
 }
 
-// BrowserEvent.SetOnWidgetCompMsg
+// BrowserEvent.SetOnWidgetCompMsg windows
 func (m *BrowserEvent) SetOnWidgetCompMsg(event ChromiumEventOnCompMsg) {
 	if Args.IsMain() {
-		m.chromium.SetOnWidgetCompMsg(event)
+		m.onWidgetCompMsg = event
 	}
 }
 
-// BrowserEvent.SetOnBrowserCompMsg
+// BrowserEvent.SetOnBrowserCompMsg windows
 func (m *BrowserEvent) SetOnBrowserCompMsg(event ChromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.chromium.SetOnBrowserCompMsg(event)

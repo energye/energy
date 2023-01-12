@@ -21,6 +21,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	cef.BrowserWindow.Config.CanWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
@@ -50,6 +51,10 @@ func main() {
 			panel.SetCaption("adsfasdfsadfdsaf " + fmt.Sprintf("%d", handle))
 			//win.SetWindowLong(browserWindow.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
 			//win.SetLayeredWindowAttributes(browserWindow.Handle(), 0, 100, win.LWA_ALPHA)
+		})
+		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
+
+			return false
 		})
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {

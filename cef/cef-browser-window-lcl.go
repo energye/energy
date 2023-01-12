@@ -775,6 +775,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
 		bw.putChromiumWindowInfo()
 		bw.defaultChromiumEvent()
+		bw.registerWindowsCompMsgEvent()
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
@@ -794,6 +795,43 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		}
 		return result
 	})
+}
+
+func (m *LCLBrowserWindow) windowDragRegions(s int, message types.TMessage) {
+	fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
+	if m.regions != nil && m.regions.RegionsCount() > 0 {
+
+	}
+}
+
+// 默认事件注册 windows 消息事件
+func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
+	var bwEvent = BrowserWindow.browserEvent
+	if m.WindowProperty().CanWebkitAppRegion {
+		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+			m.windowDragRegions(1, message)
+			if bwEvent.onWidgetCompMsg != nil {
+				bwEvent.onWidgetCompMsg(sender, message, aHandled)
+			}
+		})
+		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+			m.windowDragRegions(2, message)
+			if bwEvent.onRenderCompMsg != nil {
+				bwEvent.onRenderCompMsg(sender, message, aHandled)
+			}
+		})
+	} else {
+		if bwEvent.onWidgetCompMsg != nil {
+			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+				bwEvent.onWidgetCompMsg(sender, message, aHandled)
+			})
+		}
+		if bwEvent.onRenderCompMsg != nil {
+			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
+				bwEvent.onRenderCompMsg(sender, message, aHandled)
+			})
+		}
+	}
 }
 
 // 默认事件注册 部分事件允许被覆盖
@@ -907,13 +945,15 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
 		}
 	})
-	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
-		if bwEvent.onDraggableRegionsChanged != nil {
-			bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
-		}
-		m.regions = regions
-		//m.windowComponent.SetDraggableRegions(regions.Regions())
-	})
+	if m.WindowProperty().CanWebkitAppRegion {
+		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+			if bwEvent.onDraggableRegionsChanged != nil {
+				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+			}
+			m.regions = regions
+			//m.windowComponent.SetDraggableRegions(regions.Regions())
+		})
+	}
 }
 
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
