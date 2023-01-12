@@ -40,7 +40,7 @@ English
 
 ### Quick start
 #### Basic needs
-> golang >= 1.9.2
+> golang >= 1.18
 >
 > 1. Use the energy command line tool to automatically install environment dependencies
 > 
