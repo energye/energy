@@ -21,7 +21,6 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/types/messages"
 	"time"
 )
 
@@ -60,6 +59,7 @@ type LCLBrowserWindow struct {
 	auxTools         *auxTools             //辅助工具
 	tray             ITray                 //托盘
 	regions          *TCefDraggableRegions //窗口内html拖拽区域
+	rgn              *HRGN                 //
 }
 
 //创建一个 LCL 带有 chromium 窗口
@@ -853,56 +853,49 @@ func (m *windowDragRegionsState) checkDragRegions(x, y int32, regions *TCefDragg
 	return false
 }
 
-func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage) {
+func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
 	//fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
-		case messages.WM_MOUSEMOVE:
-			if !wdrs.dragState {
-				//var mx, my = wdrs.toPoint(message)
-				//if wdrs.checkDragRegions(mx, my, m.regions) {
-				//	//fmt.Println("true")
-				//} else {
-				//	//fmt.Println("false")
-				//}
-				return
-			}
+		case WM_MOUSEMOVE:
 			if wdrs.dragState {
 				var mx, my = wdrs.toPoint(message)
 				var mex = mx - (wdrs.dx - wdrs.bounds.X)
 				var mey = my - (wdrs.dy - wdrs.bounds.Y)
 				wdrs.bounds.X = mex
 				wdrs.bounds.Y = mey
-				//m.SetBounds(mex, mey, wdrs.bounds.Width, wdrs.bounds.Height)
-				//m.SetPoint(mex, mey)
-				//message.Result = WM_CLEAR //HTCAPTION
-				//win.HTCAPTION=2
-				//point := types.TPoint{
-				//	X: mx,
-				//	Y: my,
-				//}
-				fmt.Println("SendMessage")
-				//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, message.LParam)
+				m.SetBounds(mex, mey, wdrs.bounds.Width, wdrs.bounds.Height)
 			}
-		case messages.WM_NCHITTEST:
-			//fmt.Println("WM_NCHITTEST")
-			//message.Result = 2
-		case messages.WM_LBUTTONDOWN:
-			//var mx, my = wdrs.toPoint(message)
-			//point := types.TPoint{
-			//	X: mx,
-			//	Y: my,
-			//}
-			//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, rtl.MakeLParam(uint16(mx), uint16(my)))
-			//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, message.LParam)
-			//wdrs.dx, wdrs.dy = wdrs.toPoint(message)
-			//if wdrs.checkDragRegions(wdrs.dx, wdrs.dy, m.regions) {
-			//	fmt.Println("DOWN")
-			//	wdrs.bounds = m.Bounds()
-			//	wdrs.dragState = true
-			//}
-		case messages.WM_LBUTTONUP:
+		case WM_LBUTTONDOWN:
+			if m.rgn != nil {
+				wdrs.dx, wdrs.dy = wdrs.toPoint(message)
+				if WinPtInRegion(m.rgn, wdrs.dx, wdrs.dy) {
+					fmt.Println("DOWN")
+					wdrs.bounds = m.Bounds()
+					wdrs.dragState = true
+				}
+			}
+		case WM_LBUTTONUP:
 			wdrs.dragState = false
+		case WM_NCHITTEST:
+			if m.rgn != nil {
+				dx, dy := wdrs.toPoint(message)
+				fmt.Println("WmNchitTest", dx, dy)
+				p := &types.TPoint{
+					X: dx,
+					Y: dy,
+				}
+				WinScreenToClient(m.Handle(), p)
+				if WinPtInRegion(m.rgn, p.X, p.Y) {
+					//message.Result = 2
+					//标题范围
+					fmt.Println("标题范围")
+					*lResult = consts.HTCAPTION
+					*aHandled = true
+				} else {
+					//非标题范围
+				}
+			}
 		}
 	}
 }
@@ -911,31 +904,27 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage) {
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	if m.WindowProperty().CanWebkitAppRegion {
-		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-			m.windowDragRegions(1, message)
+		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+			m.windowDragRegions(1, message, lResult, aHandled)
 			if bwEvent.onWidgetCompMsg != nil {
-				bwEvent.onWidgetCompMsg(sender, message, aHandled)
+				bwEvent.onWidgetCompMsg(sender, message, lResult, aHandled)
 			}
 		})
-		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-			m.windowDragRegions(2, message)
+		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+			m.windowDragRegions(2, message, lResult, aHandled)
 			if bwEvent.onRenderCompMsg != nil {
-				bwEvent.onRenderCompMsg(sender, message, aHandled)
+				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
 			}
-		})
-		m.chromium.SetOnBrowserCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-			x, y := wdrs.toPoint(message)
-			fmt.Println("SetOnBrowserCompMsg", message.Msg, x, y)
 		})
 	} else {
 		if bwEvent.onWidgetCompMsg != nil {
-			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-				bwEvent.onWidgetCompMsg(sender, message, aHandled)
+			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+				bwEvent.onWidgetCompMsg(sender, message, lResult, aHandled)
 			})
 		}
 		if bwEvent.onRenderCompMsg != nil {
-			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-				bwEvent.onRenderCompMsg(sender, message, aHandled)
+			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
 			})
 		}
 	}
@@ -1058,11 +1047,12 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
 			}
 			m.regions = regions
-			//m.windowComponent.SetDraggableRegions(regions.Regions())
 			if regions.RegionsCount() > 0 {
-				rgn := WinCreateRectRgn(0, 0, 0, 0)
-				WinSetDraggableRegions(rgn, regions.Regions())
-				fmt.Println("check", WinPtInRegion(rgn, 50, 50))
+				if m.rgn == nil {
+					m.rgn = WinCreateRectRgn(0, 0, 0, 0)
+				}
+				WinSetDraggableRegions(m.rgn, regions.Regions())
+				fmt.Println("check", WinPtInRegion(m.rgn, 50, 50))
 			}
 		})
 	}
@@ -1166,7 +1156,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 			//主窗口关闭
 			if m.WindowType() == consts.WT_MAIN_BROWSER {
 				if IsWindows() {
-					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+					rtl.PostMessage(m.Handle(), WM_CLOSE, 0, 0)
 				} else {
 					m.Close()
 				}

@@ -9,8 +9,8 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
-	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
@@ -35,32 +35,32 @@ func init() {
 			Browser: browser,
 			Name:    api.GoStr(tempFrame.Name),
 			Url:     api.GoStr(tempFrame.Url),
-			Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+			Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 		}
 		cefRequest := (*rICefRequest)(getPtr(3))
-		instance = GetInstancePtr(cefRequest.Instance)
+		instance = common.GetInstancePtr(cefRequest.Instance)
 		request = &ICefRequest{
 			instance:             instance,
 			Url:                  api.GoStr(cefRequest.Url),
 			Method:               api.GoStr(cefRequest.Method),
 			ReferrerUrl:          api.GoStr(cefRequest.ReferrerUrl),
-			ReferrerPolicy:       TCefReferrerPolicy(cefRequest.ReferrerPolicy),
-			Flags:                TCefUrlRequestFlags(cefRequest.Flags),
+			ReferrerPolicy:       consts.TCefReferrerPolicy(cefRequest.ReferrerPolicy),
+			Flags:                consts.TCefUrlRequestFlags(cefRequest.Flags),
 			FirstPartyForCookies: api.GoStr(cefRequest.FirstPartyForCookies),
-			ResourceType:         TCefResourceType(cefRequest.ResourceType),
-			TransitionType:       TCefTransitionType(cefRequest.TransitionType),
-			Identifier:           *(*uint64)(GetParamPtr(cefRequest.Identifier, 0)),
+			ResourceType:         consts.TCefResourceType(cefRequest.ResourceType),
+			TransitionType:       consts.TCefTransitionType(cefRequest.TransitionType),
+			Identifier:           *(*uint64)(common.GetParamPtr(cefRequest.Identifier, 0)),
 		}
 		if resp {
 			cefResponse := (*iCefResponse)(getPtr(4))
-			instance = GetInstancePtr(cefResponse.Instance)
+			instance = common.GetInstancePtr(cefResponse.Instance)
 			response = &ICefResponse{
 				instance:   instance,
 				Status:     int32(cefResponse.Status),
 				StatusText: api.GoStr(cefResponse.StatusText),
 				MimeType:   api.GoStr(cefResponse.MimeType),
 				Charset:    api.GoStr(cefResponse.Charset),
-				Error:      TCefErrorCode(cefResponse.Error),
+				Error:      consts.TCefErrorCode(cefResponse.Error),
 				URL:        api.GoStr(cefResponse.URL),
 			}
 		}
@@ -99,7 +99,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(4))
 			args := ipc.NewArgumentList()
@@ -109,7 +109,7 @@ func init() {
 				ArgumentList: args,
 			}
 			var result = (*bool)(getPtr(5))
-			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, CefProcessId(getVal(3)), processMessage)
+			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, consts.CefProcessId(getVal(3)), processMessage)
 			args.Clear()
 			cefProcMsg.Data = 0
 			cefProcMsg.DataLen = 0
@@ -118,7 +118,7 @@ func init() {
 			args = nil
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
-			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
+			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
 		case ChromiumEventOnResourceRedirect:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			var newStr = new(t.TString)
@@ -132,7 +132,7 @@ func init() {
 			sender, browse, frame, request, _ := resourceEventGet(fn, getVal, false)
 			instance = getInstance(getVal(4))
 			callback := &ICefCallback{instance: instance}
-			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*TCefReturnValue)(getPtr(5)))
+			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*consts.TCefReturnValue)(getPtr(5)))
 		//menu begin
 		case ChromiumEventOnBeforeContextMenu:
 			sender := getPtr(0)
@@ -143,13 +143,13 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			cefParams := (*iCefContextMenuParams)(getPtr(3))
 			params := &ICefContextMenuParams{
 				XCoord:            int32(cefParams.XCoord),
 				YCoord:            int32(cefParams.YCoord),
-				TypeFlags:         TCefContextMenuTypeFlags(cefParams.TypeFlags),
+				TypeFlags:         consts.TCefContextMenuTypeFlags(cefParams.TypeFlags),
 				LinkUrl:           api.GoStr(cefParams.LinkUrl),
 				UnfilteredLinkUrl: api.GoStr(cefParams.UnfilteredLinkUrl),
 				SourceUrl:         api.GoStr(cefParams.SourceUrl),
@@ -157,10 +157,10 @@ func init() {
 				PageUrl:           api.GoStr(cefParams.PageUrl),
 				FrameUrl:          api.GoStr(cefParams.FrameUrl),
 				FrameCharset:      api.GoStr(cefParams.FrameCharset),
-				MediaType:         TCefContextMenuMediaType(cefParams.MediaType),
-				MediaStateFlags:   TCefContextMenuMediaStateFlags(cefParams.MediaStateFlags),
+				MediaType:         consts.TCefContextMenuMediaType(cefParams.MediaType),
+				MediaStateFlags:   consts.TCefContextMenuMediaStateFlags(cefParams.MediaStateFlags),
 				SelectionText:     api.GoStr(cefParams.SelectionText),
-				EditStateFlags:    TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
+				EditStateFlags:    consts.TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
 			}
 			instance = getInstance(getVal(4))
 			KeyAccelerator.clear()
@@ -174,13 +174,13 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			cefParams := (*iCefContextMenuParams)(getPtr(3))
 			params := &ICefContextMenuParams{
 				XCoord:            int32(cefParams.XCoord),
 				YCoord:            int32(cefParams.YCoord),
-				TypeFlags:         TCefContextMenuTypeFlags(cefParams.TypeFlags),
+				TypeFlags:         consts.TCefContextMenuTypeFlags(cefParams.TypeFlags),
 				LinkUrl:           api.GoStr(cefParams.LinkUrl),
 				UnfilteredLinkUrl: api.GoStr(cefParams.UnfilteredLinkUrl),
 				SourceUrl:         api.GoStr(cefParams.SourceUrl),
@@ -188,12 +188,12 @@ func init() {
 				PageUrl:           api.GoStr(cefParams.PageUrl),
 				FrameUrl:          api.GoStr(cefParams.FrameUrl),
 				FrameCharset:      api.GoStr(cefParams.FrameCharset),
-				MediaType:         TCefContextMenuMediaType(cefParams.MediaType),
-				MediaStateFlags:   TCefContextMenuMediaStateFlags(cefParams.MediaStateFlags),
+				MediaType:         consts.TCefContextMenuMediaType(cefParams.MediaType),
+				MediaStateFlags:   consts.TCefContextMenuMediaStateFlags(cefParams.MediaStateFlags),
 				SelectionText:     api.GoStr(cefParams.SelectionText),
-				EditStateFlags:    TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
+				EditStateFlags:    consts.TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
 			}
-			commandId := MenuId(getVal(4))
+			commandId := consts.MenuId(getVal(4))
 			eventFlags := uint32(getVal(5))
 			if !KeyAccelerator.commandIdEventCallback(browser, commandId, params, eventFlags, (*bool)(getPtr(5))) {
 				fn.(ChromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browser, frame, params, commandId, eventFlags, (*bool)(getPtr(6)))
@@ -206,7 +206,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnContextMenuDismissed)(lcl.AsObject(sender), browser, frame)
 		//menu end
@@ -223,29 +223,29 @@ func init() {
 			fn.(ChromiumEventOnCookiesFlushed)(lcl.AsObject(getVal(0)))
 		case ChromiumEventOnCookiesVisited:
 			cookie := *(*iCefCookiePtr)(getPtr(1))
-			creation := *(*float64)(GetParamPtr(cookie.creation, 0))
-			lastAccess := *(*float64)(GetParamPtr(cookie.lastAccess, 0))
-			expires := *(*float64)(GetParamPtr(cookie.expires, 0))
+			creation := *(*float64)(common.GetParamPtr(cookie.creation, 0))
+			lastAccess := *(*float64)(common.GetParamPtr(cookie.lastAccess, 0))
+			expires := *(*float64)(common.GetParamPtr(cookie.expires, 0))
 			iCookie := &ICefCookie{
 				Url:            api.GoStr(cookie.url),
 				Name:           api.GoStr(cookie.name),
 				Value:          api.GoStr(cookie.value),
 				Domain:         api.GoStr(cookie.domain),
 				Path:           api.GoStr(cookie.path),
-				Secure:         *(*bool)(GetParamPtr(cookie.secure, 0)),
-				Httponly:       *(*bool)(GetParamPtr(cookie.httponly, 0)),
-				HasExpires:     *(*bool)(GetParamPtr(cookie.hasExpires, 0)),
-				Creation:       DDateTimeToGoDateTime(creation),
-				LastAccess:     DDateTimeToGoDateTime(lastAccess),
-				Expires:        DDateTimeToGoDateTime(expires),
+				Secure:         *(*bool)(common.GetParamPtr(cookie.secure, 0)),
+				Httponly:       *(*bool)(common.GetParamPtr(cookie.httponly, 0)),
+				HasExpires:     *(*bool)(common.GetParamPtr(cookie.hasExpires, 0)),
+				Creation:       common.DDateTimeToGoDateTime(creation),
+				LastAccess:     common.DDateTimeToGoDateTime(lastAccess),
+				Expires:        common.DDateTimeToGoDateTime(expires),
 				Count:          int32(cookie.count),
 				Total:          int32(cookie.total),
 				ID:             int32(cookie.aID),
-				SameSite:       TCefCookieSameSite(cookie.sameSite),
-				Priority:       TCefCookiePriority(cookie.priority),
-				SetImmediately: *(*bool)(GetParamPtr(cookie.aSetImmediately, 0)),
-				DeleteCookie:   *(*bool)(GetParamPtr(cookie.aDeleteCookie, 0)),
-				Result:         *(*bool)(GetParamPtr(cookie.aResult, 0)),
+				SameSite:       consts.TCefCookieSameSite(cookie.sameSite),
+				Priority:       consts.TCefCookiePriority(cookie.priority),
+				SetImmediately: *(*bool)(common.GetParamPtr(cookie.aSetImmediately, 0)),
+				DeleteCookie:   *(*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0)),
+				Result:         *(*bool)(common.GetParamPtr(cookie.aResult, 0)),
 			}
 			fn.(ChromiumEventOnCookiesVisited)(lcl.AsObject(getVal(0)), iCookie)
 		case ChromiumEventOnCookieVisitorDestroyed:
@@ -260,10 +260,11 @@ func init() {
 		case ChromiumEventOnRenderProcessTerminated:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, TCefTerminationStatus(getVal(2)))
+			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, consts.TCefTerminationStatus(getVal(2)))
 		case ChromiumEventOnCompMsg:
 			message := (*types.TMessage)(getPtr(1))
-			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, api.GoBool(getVal(2)))
+			lRet := (*consts.WmNchitTest)(getPtr(2))
+			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, lRet, (*bool)(getPtr(3)))
 		case ChromiumEventOnCefBrowser:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
@@ -289,7 +290,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			var result = (*bool)(getPtr(3))
 			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browser, frame)
@@ -301,7 +302,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnAddressChange)(lcl.AsObject(sender), browser, frame, api.GoStr(getVal(3)))
 		case ChromiumEventOnAfterCreated: //创建浏览器之后
@@ -329,7 +330,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnLoadStart)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnLoadingStateChange:
@@ -348,9 +349,9 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
-			fn.(ChromiumEventOnLoadError)(lcl.AsObject(sender), browser, frame, CEF_NET_ERROR(getVal(3)), api.GoStr(getVal(4)), api.GoStr(getVal(5)))
+			fn.(ChromiumEventOnLoadError)(lcl.AsObject(sender), browser, frame, consts.CEF_NET_ERROR(getVal(3)), api.GoStr(getVal(4)), api.GoStr(getVal(5)))
 		case ChromiumEventOnLoadEnd:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
@@ -359,7 +360,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnLoadEnd)(lcl.AsObject(sender), browser, frame, int32(getVal(3)))
 		case ChromiumEventOnBeforeDownload: //下载之前
@@ -372,8 +373,8 @@ func init() {
 				PercentComplete:    int32(item.PercentComplete),
 				TotalBytes:         int64(item.TotalBytes),
 				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.StartTime, 0))),
-				EndTime:            DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.EndTime, 0))),
+				StartTime:          common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.StartTime, 0))),
+				EndTime:            common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.EndTime, 0))),
 				FullPath:           api.GoStr(item.FullPath),
 				Url:                api.GoStr(item.Url),
 				OriginalUrl:        api.GoStr(item.OriginalUrl),
@@ -401,8 +402,8 @@ func init() {
 				PercentComplete:    int32(item.PercentComplete),
 				TotalBytes:         int64(item.TotalBytes),
 				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.StartTime, 0))),
-				EndTime:            DDateTimeToGoDateTime(*(*float64)(GetParamPtr(item.EndTime, 0))),
+				StartTime:          common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.StartTime, 0))),
+				EndTime:            common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.EndTime, 0))),
 				FullPath:           api.GoStr(item.FullPath),
 				Url:                api.GoStr(item.Url),
 				OriginalUrl:        api.GoStr(item.OriginalUrl),
@@ -428,7 +429,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnFrameAttached)(lcl.AsObject(sender), browser, frame, api.GoBool(getVal(3)))
 		case ChromiumEventOnFrameCreated:
@@ -437,7 +438,7 @@ func init() {
 			tempFrame := (*cefFrame)(getPtr(2))
 			frame := &ICefFrame{
 				Browser: browser,
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
 			}
@@ -450,7 +451,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(ChromiumEventOnFrameDetached)(lcl.AsObject(sender), browser, frame)
 		case ChromiumEventOnMainFrameChanged:
@@ -466,7 +467,7 @@ func init() {
 					Browser: browser,
 					Name:    api.GoStr(tempOldFrame.Name),
 					Url:     api.GoStr(tempOldFrame.Url),
-					Id:      StrToInt64(api.GoStr(tempOldFrame.Identifier)),
+					Id:      common.StrToInt64(api.GoStr(tempOldFrame.Identifier)),
 				}
 			}
 			tempNewFrame := (*cefFrame)(getPtr(3))
@@ -475,7 +476,7 @@ func init() {
 					Browser: browser,
 					Name:    api.GoStr(tempNewFrame.Name),
 					Url:     api.GoStr(tempNewFrame.Url),
-					Id:      StrToInt64(api.GoStr(tempNewFrame.Identifier)),
+					Id:      common.StrToInt64(api.GoStr(tempNewFrame.Identifier)),
 				}
 			}
 			fn.(ChromiumEventOnMainFrameChanged)(lcl.AsObject(sender), browser, oldFrame, newFrame)
@@ -488,13 +489,13 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
 			beforePInfo := &BeforePopupInfo{
 				TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
 				TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
-				TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
+				TargetDisposition: consts.TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
 				UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
 			}
 
@@ -512,7 +513,7 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
 			dragData := &ICefDragData{instance: getPtr(2)}
-			mask := TCefDragOperations(getVal(3))
+			mask := consts.TCefDragOperations(getVal(3))
 			result := (*bool)(getPtr(4))
 			fn.(ChromiumEventOnDragEnter)(lcl.AsObject(sender), browser, dragData, mask, result)
 		case ChromiumEventOnDraggableRegionsChanged:
@@ -523,13 +524,13 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			regionsCount := int32(getVal(3))
 			regions := NewCefDraggableRegions()
 			var region TCefDraggableRegion
 			for i := 0; i < int(regionsCount); i++ {
-				region = *(*TCefDraggableRegion)(GetParamPtr(getVal(4), i*int(unsafe.Sizeof(TCefDraggableRegion{}))))
+				region = *(*TCefDraggableRegion)(common.GetParamPtr(getVal(4), i*int(unsafe.Sizeof(TCefDraggableRegion{}))))
 				regions.Append(region)
 			}
 			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browser, frame, regions)

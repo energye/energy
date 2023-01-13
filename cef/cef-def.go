@@ -12,6 +12,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 	"unsafe"
 )
 
@@ -69,7 +70,7 @@ func WinCombineRgn(dest, src1, src2 *HRGN, fnCombineMode consts.RNGFnCombineMode
 		r1, _, _ := common.Proc(internale_CEF_Win_CombineRgn).Call(uintptr(dest.instance), uintptr(src1.instance), uintptr(src2.instance), uintptr(fnCombineMode))
 		return int32(r1)
 	}
-	return -1
+	return 0
 }
 
 func WinPtInRegion(RGN *HRGN, X, Y int32) bool {
@@ -78,6 +79,30 @@ func WinPtInRegion(RGN *HRGN, X, Y int32) bool {
 		return api.GoBool(r1)
 	}
 	return false
+}
+
+func WinScreenToClient(handle types.HWND, p *types.TPoint) int32 {
+	if common.IsWindows() {
+		r1, _, _ := common.Proc(internale_CEF_Win_ScreenToClient).Call(handle, uintptr(unsafe.Pointer(p)))
+		return int32(r1)
+	}
+	return 0
+}
+
+func WinClientToScreen(handle types.HWND, p *types.TPoint) bool {
+	if common.IsWindows() {
+		r1, _, _ := common.Proc(internale_CEF_Win_ClientToScreen).Call(handle, uintptr(unsafe.Pointer(p)))
+		return api.GoBool(r1)
+	}
+	return false
+}
+
+func WinDefWindowProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lParam types.LPARAM) types.LRESULT {
+	if common.IsWindows() {
+		r1, _, _ := common.Proc(internale_CEF_Win_DefWindowProc).Call(handle, uintptr(msg), wParam, lParam)
+		return types.LRESULT(r1)
+	}
+	return 0
 }
 
 func WinSetDraggableRegions(aRGN *HRGN, regions []TCefDraggableRegion) {
