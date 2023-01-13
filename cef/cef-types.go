@@ -189,6 +189,10 @@ type TCefPoint struct {
 	Y int32
 }
 
+type HRGN struct {
+	instance unsafe.Pointer
+}
+
 type TCefDraggableRegions struct {
 	regions      []TCefDraggableRegion
 	regionsCount int
@@ -237,6 +241,13 @@ func (m *TCefDraggableRegions) Regions() []TCefDraggableRegion {
 		m.Append(NewCefDraggableRegion(NewCefRect(0, 0, 0, 0), false))
 	}
 	return m.regions
+}
+
+func (m *TCefDraggableRegions) Region(i int) *TCefDraggableRegion {
+	if m.regions != nil && i < m.regionsCount {
+		return &m.regions[i]
+	}
+	return nil
 }
 
 func (m *TCefDraggableRegions) Append(region TCefDraggableRegion) {

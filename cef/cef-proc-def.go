@@ -16,6 +16,12 @@ func init() {
 		dllimports.NewEnergyImport("", 0),
 		dllimports.NewEnergyImport("CEFVersion", 0),
 		dllimports.NewEnergyImport("LibBuildVersion", 0),
+		dllimports.NewEnergyImport("CEF_Win_CreateRectRgn", 0),
+		dllimports.NewEnergyImport("CEF_Win_SetRectRgn", 0),
+		dllimports.NewEnergyImport("CEF_Win_DeleteObject", 0),
+		dllimports.NewEnergyImport("CEF_Win_CombineRgn", 0),
+		dllimports.NewEnergyImport("CEF_Win_SetDraggableRegions", 0),
+		dllimports.NewEnergyImport("CEF_Win_PtInRegion", 0),
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
@@ -485,6 +491,12 @@ const (
 	internale_null_nil = iota
 	internale_CEFVersion
 	internale_LibBuildVersion
+	internale_CEF_Win_CreateRectRgn
+	internale_CEF_Win_SetRectRgn
+	internale_CEF_Win_DeleteObject
+	internale_CEF_Win_CombineRgn
+	internale_CEF_Win_SetDraggableRegions
+	internale_CEF_Win_PtInRegion
 	//ApplicationQueueAsyncCallFunc
 	internale_SetApplicationQueueAsyncCallFunc
 	internale_CEFApplication_QueueAsyncCall

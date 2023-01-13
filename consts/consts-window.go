@@ -39,3 +39,14 @@ const (
 	CEF_SENTINEL_DOCLOSE  = WM_APP + 0x000A0B
 	CEF_BEFORECLOSE       = WM_APP + 0x000A0C
 )
+
+// CombineRgn Mode flags
+type RNGFnCombineMode = int32
+
+const (
+	RGN_AND RNGFnCombineMode = iota + 1
+	RGN_OR
+	RGN_XOR
+	RGN_DIFF
+	RGN_COPY
+)

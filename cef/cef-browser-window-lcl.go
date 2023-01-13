@@ -797,10 +797,113 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 	})
 }
 
-func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage) {
-	fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
-	if m.regions != nil && m.regions.RegionsCount() > 0 {
+//switch message.Msg {
+//case messages.WM_MOUSEMOVE:
+//fmt.Println("鼠标移动")
+//case messages.WM_LBUTTONDOWN:
+//fmt.Println("左键接下")
+//case messages.WM_LBUTTONUP:
+//fmt.Println("左键抬起")
+//
+//case messages.WM_LBUTTONDBLCLK:
+//fmt.Println("左键双击")
+//
+//case messages.WM_RBUTTONDOWN:
+//fmt.Println("右键接下")
+//
+//case messages.WM_RBUTTONUP:
+//fmt.Println("右键抬起")
+//
+//case messages.WM_RBUTTONDBLCLK:
+//fmt.Println("右键双击")
+//
+//case messages.WM_MOUSEWHEEL:
+//fmt.Println("鼠标滚轮")
+//
+//}
 
+var wdrs = &windowDragRegionsState{}
+
+type windowDragRegionsState struct {
+	dragState bool
+	dx, dy    int32
+	bounds    *TCefRect
+}
+
+func (m *windowDragRegionsState) toPoint(message *types.TMessage) (x, y int32) {
+	//shl = <<
+	//shr = >>
+	//x, y
+	return int32(message.LParam & 0xFFFF), int32(message.LParam & 0xFFFF0000 >> 16)
+}
+
+func (m *windowDragRegionsState) checkDragRegions(x, y int32, regions *TCefDraggableRegions) bool {
+	for _, region := range regions.Regions() {
+		if region.Draggable {
+			//var (
+			//	rx = x >= region.Bounds.X && x <= region.Bounds.Width
+			//	ry = y >= region.Bounds.Y && y <= region.Bounds.Height
+			//)
+			fmt.Println("x-y:", x, y, ",x-w:", region.Bounds.X, region.Bounds.Width, ",y-h:", region.Bounds.Y, region.Bounds.Height, ",r:", (x >= region.Bounds.X && x <= (region.Bounds.Width+region.Bounds.X)) && (y >= region.Bounds.Y && y <= (region.Bounds.Height+region.Bounds.Y)))
+			if (x >= region.Bounds.X && x <= (region.Bounds.Width+region.Bounds.X)) && (y >= region.Bounds.Y && y <= (region.Bounds.Height+region.Bounds.Y)) {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage) {
+	//fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
+	if m.regions != nil && m.regions.RegionsCount() > 0 {
+		switch message.Msg {
+		case messages.WM_MOUSEMOVE:
+			if !wdrs.dragState {
+				//var mx, my = wdrs.toPoint(message)
+				//if wdrs.checkDragRegions(mx, my, m.regions) {
+				//	//fmt.Println("true")
+				//} else {
+				//	//fmt.Println("false")
+				//}
+				return
+			}
+			if wdrs.dragState {
+				var mx, my = wdrs.toPoint(message)
+				var mex = mx - (wdrs.dx - wdrs.bounds.X)
+				var mey = my - (wdrs.dy - wdrs.bounds.Y)
+				wdrs.bounds.X = mex
+				wdrs.bounds.Y = mey
+				//m.SetBounds(mex, mey, wdrs.bounds.Width, wdrs.bounds.Height)
+				//m.SetPoint(mex, mey)
+				//message.Result = WM_CLEAR //HTCAPTION
+				//win.HTCAPTION=2
+				//point := types.TPoint{
+				//	X: mx,
+				//	Y: my,
+				//}
+				fmt.Println("SendMessage")
+				//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, message.LParam)
+			}
+		case messages.WM_NCHITTEST:
+			//fmt.Println("WM_NCHITTEST")
+			//message.Result = 2
+		case messages.WM_LBUTTONDOWN:
+			//var mx, my = wdrs.toPoint(message)
+			//point := types.TPoint{
+			//	X: mx,
+			//	Y: my,
+			//}
+			//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, rtl.MakeLParam(uint16(mx), uint16(my)))
+			//rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, 2, message.LParam)
+			//wdrs.dx, wdrs.dy = wdrs.toPoint(message)
+			//if wdrs.checkDragRegions(wdrs.dx, wdrs.dy, m.regions) {
+			//	fmt.Println("DOWN")
+			//	wdrs.bounds = m.Bounds()
+			//	wdrs.dragState = true
+			//}
+		case messages.WM_LBUTTONUP:
+			wdrs.dragState = false
+		}
 	}
 }
 
@@ -819,6 +922,10 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			if bwEvent.onRenderCompMsg != nil {
 				bwEvent.onRenderCompMsg(sender, message, aHandled)
 			}
+		})
+		m.chromium.SetOnBrowserCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
+			x, y := wdrs.toPoint(message)
+			fmt.Println("SetOnBrowserCompMsg", message.Msg, x, y)
 		})
 	} else {
 		if bwEvent.onWidgetCompMsg != nil {
@@ -952,6 +1059,11 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			}
 			m.regions = regions
 			//m.windowComponent.SetDraggableRegions(regions.Regions())
+			if regions.RegionsCount() > 0 {
+				rgn := WinCreateRectRgn(0, 0, 0, 0)
+				WinSetDraggableRegions(rgn, regions.Regions())
+				fmt.Println("check", WinPtInRegion(rgn, 50, 50))
+			}
 		})
 	}
 }
