@@ -857,6 +857,18 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 	//fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
+		case WM_LBUTTONUP, WM_NCLBUTTONUP:
+			fmt.Println("UP")
+			wdrs.dragState = false
+		case WM_LBUTTONDOWN, WM_NCLBUTTONDOWN:
+			fmt.Println("DOWN")
+			if m.rgn != nil {
+				wdrs.dx, wdrs.dy = wdrs.toPoint(message)
+				if WinPtInRegion(m.rgn, wdrs.dx, wdrs.dy) {
+					wdrs.bounds = m.Bounds()
+					wdrs.dragState = true
+				}
+			}
 		case WM_MOUSEMOVE:
 			if wdrs.dragState {
 				var mx, my = wdrs.toPoint(message)
@@ -866,26 +878,18 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 				wdrs.bounds.Y = mey
 				m.SetBounds(mex, mey, wdrs.bounds.Width, wdrs.bounds.Height)
 			}
-		case WM_LBUTTONDOWN:
-			if m.rgn != nil {
-				wdrs.dx, wdrs.dy = wdrs.toPoint(message)
-				if WinPtInRegion(m.rgn, wdrs.dx, wdrs.dy) {
-					fmt.Println("DOWN")
-					wdrs.bounds = m.Bounds()
-					wdrs.dragState = true
-				}
-			}
-		case WM_LBUTTONUP:
-			wdrs.dragState = false
 		case WM_NCHITTEST:
+			//return
 			if m.rgn != nil {
 				dx, dy := wdrs.toPoint(message)
-				fmt.Println("WmNchitTest", dx, dy)
 				p := &types.TPoint{
 					X: dx,
 					Y: dy,
 				}
 				WinScreenToClient(m.Handle(), p)
+
+				//hit := WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
+				//fmt.Println("hit", hit)
 				if WinPtInRegion(m.rgn, p.X, p.Y) {
 					//message.Result = 2
 					//标题范围
@@ -894,6 +898,7 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 					*aHandled = true
 				} else {
 					//非标题范围
+					//*lResult = consts.WmNchitTest(hit)
 				}
 			}
 		}
