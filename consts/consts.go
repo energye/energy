@@ -649,35 +649,3 @@ const (
 	RGN_DIFF
 	RGN_COPY
 )
-
-// WmNchitTest constants
-type WmNchitTest int32
-
-const (
-	HTBORDER      WmNchitTest = 18
-	HTBOTTOM      WmNchitTest = 15
-	HTBOTTOMLEFT  WmNchitTest = 16
-	HTBOTTOMRIGHT WmNchitTest = 17
-	HTCAPTION     WmNchitTest = 2
-	HTCLIENT      WmNchitTest = 1
-	HTCLOSE       WmNchitTest = 20
-	HTERROR       WmNchitTest = -2
-	HTGROWBOX     WmNchitTest = 4
-	HTHELP        WmNchitTest = 21
-	HTHSCROLL     WmNchitTest = 6
-	HTLEFT        WmNchitTest = 10
-	HTMENU        WmNchitTest = 5
-	HTMAXBUTTON   WmNchitTest = 9
-	HTMINBUTTON   WmNchitTest = 8
-	HTNOWHERE     WmNchitTest = 0
-	HTREDUCE      WmNchitTest = 8
-	HTRIGHT       WmNchitTest = 11
-	HTSIZE        WmNchitTest = 4
-	HTSYSMENU     WmNchitTest = 3
-	HTTOP         WmNchitTest = 12
-	HTTOPLEFT     WmNchitTest = 13
-	HTTOPRIGHT    WmNchitTest = 14
-	HTTRANSPARENT WmNchitTest = -1
-	HTVSCROLL     WmNchitTest = 7
-	HTZOOM        WmNchitTest = 9
-)

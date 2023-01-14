@@ -263,7 +263,7 @@ func init() {
 			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, consts.TCefTerminationStatus(getVal(2)))
 		case ChromiumEventOnCompMsg:
 			message := (*types.TMessage)(getPtr(1))
-			lRet := (*consts.WmNchitTest)(getPtr(2))
+			lRet := (*WmNChitTest)(getPtr(2))
 			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, lRet, (*bool)(getPtr(3)))
 		case ChromiumEventOnCefBrowser:
 			sender := getPtr(0)

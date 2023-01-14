@@ -797,35 +797,11 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 	})
 }
 
-//switch message.Msg {
-//case messages.WM_MOUSEMOVE:
-//fmt.Println("鼠标移动")
-//case messages.WM_LBUTTONDOWN:
-//fmt.Println("左键接下")
-//case messages.WM_LBUTTONUP:
-//fmt.Println("左键抬起")
-//
-//case messages.WM_LBUTTONDBLCLK:
-//fmt.Println("左键双击")
-//
-//case messages.WM_RBUTTONDOWN:
-//fmt.Println("右键接下")
-//
-//case messages.WM_RBUTTONUP:
-//fmt.Println("右键抬起")
-//
-//case messages.WM_RBUTTONDBLCLK:
-//fmt.Println("右键双击")
-//
-//case messages.WM_MOUSEWHEEL:
-//fmt.Println("鼠标滚轮")
-//
-//}
-
 var wdrs = &windowDragRegionsState{}
 
 type windowDragRegionsState struct {
 	dragState bool
+	caption   bool
 	dx, dy    int32
 	bounds    *TCefRect
 }
@@ -835,6 +811,17 @@ func (m *windowDragRegionsState) toPoint(message *types.TMessage) (x, y int32) {
 	//shr = >>
 	//x, y
 	return int32(message.LParam & 0xFFFF), int32(message.LParam & 0xFFFF0000 >> 16)
+}
+
+func (m *windowDragRegionsState) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) bool {
+	dx, dy := wdrs.toPoint(message)
+	p := &types.TPoint{
+		X: dx,
+		Y: dy,
+	}
+	WinScreenToClient(hWND, p)
+	m.caption = WinPtInRegion(rgn, p.X, p.Y)
+	return m.caption
 }
 
 func (m *windowDragRegionsState) checkDragRegions(x, y int32, regions *TCefDraggableRegions) bool {
@@ -853,15 +840,13 @@ func (m *windowDragRegionsState) checkDragRegions(x, y int32, regions *TCefDragg
 	return false
 }
 
-func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lResult *WmNChitTest, aHandled *bool) {
 	//fmt.Println("windowDragRegions", s, message, "regions:", m.regions, "Handle", m.Handle())
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
 		case WM_LBUTTONUP, WM_NCLBUTTONUP:
-			fmt.Println("UP")
 			wdrs.dragState = false
 		case WM_LBUTTONDOWN, WM_NCLBUTTONDOWN:
-			fmt.Println("DOWN")
 			if m.rgn != nil {
 				wdrs.dx, wdrs.dy = wdrs.toPoint(message)
 				if WinPtInRegion(m.rgn, wdrs.dx, wdrs.dy) {
@@ -869,8 +854,12 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 					wdrs.dragState = true
 				}
 			}
+		//case WM_RBUTTONUP, WM_NCRBUTTONUP:
+		//	if m.rgn != nil {
+		//		fmt.Println("r up")
+		//	}
 		case WM_MOUSEMOVE:
-			if wdrs.dragState {
+			if wdrs.dragState && wdrs.caption {
 				var mx, my = wdrs.toPoint(message)
 				var mex = mx - (wdrs.dx - wdrs.bounds.X)
 				var mey = my - (wdrs.dy - wdrs.bounds.Y)
@@ -879,27 +868,8 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 				m.SetBounds(mex, mey, wdrs.bounds.Width, wdrs.bounds.Height)
 			}
 		case WM_NCHITTEST:
-			//return
 			if m.rgn != nil {
-				dx, dy := wdrs.toPoint(message)
-				p := &types.TPoint{
-					X: dx,
-					Y: dy,
-				}
-				WinScreenToClient(m.Handle(), p)
-
-				//hit := WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
-				//fmt.Println("hit", hit)
-				if WinPtInRegion(m.rgn, p.X, p.Y) {
-					//message.Result = 2
-					//标题范围
-					fmt.Println("标题范围")
-					*lResult = consts.HTCAPTION
-					*aHandled = true
-				} else {
-					//非标题范围
-					//*lResult = consts.WmNchitTest(hit)
-				}
+				wdrs.isCaption(m.Handle(), m.rgn, message)
 			}
 		}
 	}
@@ -909,13 +879,13 @@ func (m *LCLBrowserWindow) windowDragRegions(s int, message *types.TMessage, lRe
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	if m.WindowProperty().CanWebkitAppRegion {
-		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+		m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *WmNChitTest, aHandled *bool) {
 			m.windowDragRegions(1, message, lResult, aHandled)
 			if bwEvent.onWidgetCompMsg != nil {
 				bwEvent.onWidgetCompMsg(sender, message, lResult, aHandled)
 			}
 		})
-		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *WmNChitTest, aHandled *bool) {
 			m.windowDragRegions(2, message, lResult, aHandled)
 			if bwEvent.onRenderCompMsg != nil {
 				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
@@ -923,12 +893,12 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 		})
 	} else {
 		if bwEvent.onWidgetCompMsg != nil {
-			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+			m.chromium.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *WmNChitTest, aHandled *bool) {
 				bwEvent.onWidgetCompMsg(sender, message, lResult, aHandled)
 			})
 		}
 		if bwEvent.onRenderCompMsg != nil {
-			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *consts.WmNchitTest, aHandled *bool) {
+			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *WmNChitTest, aHandled *bool) {
 				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
 			})
 		}
