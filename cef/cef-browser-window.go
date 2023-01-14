@@ -43,7 +43,7 @@ type WindowProperty struct {
 	CanClose           bool               //窗口 关闭时是否关闭窗口 default:true
 	CenterWindow       bool               //窗口 是否居中显示 default:true
 	CanDragFile        bool               //窗口 是否允许向窗口内拖拽文件
-	CanWebkitAppRegion bool               //窗口 是否允许指定css属性 -webkit-app-region: drag 来拖拽窗口
+	CanWebkitAppRegion bool               //窗口 html元素中设置css属性 -webkit-app-region: drag/no-drag 是否允许拖拽窗口
 	AlwaysOnTop        bool               //窗口 置顶
 	X                  int32              //窗口 CenterWindow=false X坐标 default:100
 	Y                  int32              //窗口 CenterWindow=false Y坐标 default:100
