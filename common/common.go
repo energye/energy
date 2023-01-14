@@ -30,6 +30,10 @@ const (
 	IntSize   = strconv.IntSize
 	IntSize32 = 32
 	intSize64 = 64
+
+	isWindows = runtime.GOOS == "windows"
+	isLinux   = runtime.GOOS == "linux"
+	isDarwin  = runtime.GOOS == "darwin"
 )
 
 func Proc(index int) dllimports.ProcAddr {
@@ -37,15 +41,15 @@ func Proc(index int) dllimports.ProcAddr {
 }
 
 func IsWindows() bool {
-	return runtime.GOOS == "windows"
+	return isWindows
 }
 
 func IsLinux() bool {
-	return runtime.GOOS == "linux"
+	return isLinux
 }
 
 func IsDarwin() bool {
-	return runtime.GOOS == "darwin"
+	return isDarwin
 }
 
 func StrToInt64(value string) int64 {

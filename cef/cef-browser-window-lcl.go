@@ -841,7 +841,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		case WM_LBUTTONUP:
 		case WM_NCLBUTTONUP:
 		case WM_NCRBUTTONDOWN:
-			fmt.Println("r nc r down", wdrs.canCaption)
+			//fmt.Println("r nc r down", wdrs.canCaption)
 			//if m.rgn != nil && wdrs.canCaption {
 			//	WinDefWindowProc(m.hWnd, message.Msg, message.WParam, message.LParam)
 			//	*lResult = HTCAPTION
