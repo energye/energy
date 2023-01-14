@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -24,7 +25,10 @@ func main() {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
 		//})
-		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
+		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
+		//window.DisableResize()
+		browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
+		window.HideTitle()
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("RegionsCount:", regions.RegionsCount(), regions.Regions())
 			for i := 0; i < regions.RegionsCount(); i++ {
@@ -33,6 +37,21 @@ func main() {
 			//win.SetWindowLong(browserWindow.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
 			//win.SetLayeredWindowAttributes(browserWindow.Handle(), 0, 100, win.LWA_ALPHA)
 		})
+		// show or hide, caption bar
+		//go func() {
+		//	var b = true
+		//	for {
+		//		time.Sleep(time.Second)
+		//		cef.QueueAsyncCall(func(id int) {
+		//			b = !b
+		//			if b {
+		//				window.ShowTitle()
+		//			} else {
+		//				window.HideTitle()
+		//			}
+		//		})
+		//	}
+		//}()
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//sys_tray.TrayMain()

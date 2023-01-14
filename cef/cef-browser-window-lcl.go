@@ -635,7 +635,7 @@ func (m *LCLBrowserWindow) DisableResize() {
 		return
 	}
 	m.WindowProperty().CanResize = false
-	m.SetBorderStyle(types.BsSingle)
+	m.TForm.SetBorderStyle(types.BsSingle)
 }
 
 //禁用系统菜单-同时禁用最小化，最大化，关闭按钮
@@ -681,7 +681,7 @@ func (m *LCLBrowserWindow) EnableResize() {
 		return
 	}
 	m.WindowProperty().CanResize = true
-	m.SetBorderStyle(types.BsNone)
+	m.TForm.SetBorderStyle(types.BsSizeable)
 }
 
 //启用系统菜单-同时禁用最小化，最大化，关闭按钮
