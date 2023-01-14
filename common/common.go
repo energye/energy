@@ -27,13 +27,26 @@ import (
 )
 
 const (
-	IntSize   = strconv.IntSize
-	IntSize32 = 32
-	intSize64 = 64
-
-	isWindows = runtime.GOOS == "windows"
-	isLinux   = runtime.GOOS == "linux"
-	isDarwin  = runtime.GOOS == "darwin"
+	IntSize     = strconv.IntSize             //bit
+	IntSize32   = 32                          //
+	intSize64   = 64                          //
+	isWindows   = runtime.GOOS == "windows"   //support
+	isLinux     = runtime.GOOS == "linux"     //support
+	isDarwin    = runtime.GOOS == "darwin"    //support
+	isAndroid   = runtime.GOOS == "android"   //not support
+	isIos       = runtime.GOOS == "ios"       //not support
+	isPlan9     = runtime.GOOS == "plan9"     //not support
+	isAix       = runtime.GOOS == "aix"       //not support
+	isDragonfly = runtime.GOOS == "dragonfly" //not support
+	isFreebsd   = runtime.GOOS == "freebsd"   //not support
+	isHurd      = runtime.GOOS == "hurd"      //not support
+	isIllumos   = runtime.GOOS == "illumos"   //not support
+	isJs        = runtime.GOOS == "js"        //not support
+	isNacl      = runtime.GOOS == "nacl"      //not support
+	isNetbsd    = runtime.GOOS == "netbsd"    //not support
+	isOpenbsd   = runtime.GOOS == "openbsd"   //not support
+	isSolaris   = runtime.GOOS == "solaris"   //not support
+	isZos       = runtime.GOOS == "zos"       //not support
 )
 
 func Proc(index int) dllimports.ProcAddr {
@@ -50,6 +63,10 @@ func IsLinux() bool {
 
 func IsDarwin() bool {
 	return isDarwin
+}
+
+func IsPlan9() bool {
+	return isPlan9
 }
 
 func StrToInt64(value string) int64 {

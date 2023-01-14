@@ -11,10 +11,10 @@ package cef
 import (
 	"bytes"
 	"errors"
+	"github.com/energye/energy/common"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -46,7 +46,7 @@ func Dir() (string, error) {
 
 	var result string
 	var err error
-	if runtime.GOOS == "windows" {
+	if common.IsWindows() {
 		result, err = dirWindows()
 	} else {
 		// Unix-like system, so just assume Unix
@@ -96,7 +96,7 @@ func Reset() {
 
 func dirUnix() (string, error) {
 	homeEnv := "HOME"
-	if runtime.GOOS == "plan9" {
+	if common.IsPlan9() {
 		// On plan9, env vars are lowercase.
 		homeEnv = "home"
 	}
@@ -109,7 +109,7 @@ func dirUnix() (string, error) {
 	var stdout bytes.Buffer
 
 	// If that fails, try OS specific commands
-	if runtime.GOOS == "darwin" {
+	if common.IsDarwin() {
 		cmd := exec.Command("sh", "-c", `dscl -q . -read /Users/"$(whoami)" NFSHomeDirectory | sed 's/^[^ ]*: //'`)
 		cmd.Stdout = &stdout
 		if err := cmd.Run(); err == nil {

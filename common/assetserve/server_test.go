@@ -2,7 +2,6 @@ package assetserve
 
 import (
 	"embed"
-	"fmt"
 	"testing"
 )
 
@@ -13,6 +12,5 @@ func TestServer(t *testing.T) {
 	server := NewAssetsHttpServer()
 	server.AssetsFSName = "assets" //必须设置目录名
 	server.Assets = &assets
-	err := server.StartHttpServer()
-	fmt.Println(err)
+	server.StartHttpServer() //go server.StartHttpServer()
 }
