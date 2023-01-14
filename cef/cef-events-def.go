@@ -34,8 +34,8 @@ type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, t
 // render
 type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
 
-// msg
-type ChromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *WmNChitTest, aHandled *bool)
+// Chromium Windows Comp Message
+type ChromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 
 // Event CefBrowse
 type ChromiumEventOnCefBrowser func(sender lcl.IObject, browser *ICefBrowser)

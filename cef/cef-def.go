@@ -105,6 +105,12 @@ func WinDefWindowProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lP
 	return 0
 }
 
+func WinOnPaint(handle types.HWND) {
+	if common.IsWindows() {
+		common.Proc(internale_CEF_Win_OnPaint).Call(handle)
+	}
+}
+
 func WinSetDraggableRegions(aRGN *HRGN, regions []TCefDraggableRegion) {
 	/*
 		//SetDraggableRegions 代码实现

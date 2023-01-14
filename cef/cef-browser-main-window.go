@@ -83,7 +83,6 @@ type BrowserEvent struct {
 	onBeforeContextMenu       ChromiumEventOnBeforeContextMenu        //default can cover
 	onBeforeResourceLoad      ChromiumEventOnBeforeResourceLoad       //default
 	onRenderCompMsg           ChromiumEventOnCompMsg                  //default windows
-	onWidgetCompMsg           ChromiumEventOnCompMsg                  //default windows
 }
 
 type browserWindow struct {
@@ -454,7 +453,7 @@ func (m *BrowserEvent) SetOnRenderCompMsg(event ChromiumEventOnCompMsg) {
 // BrowserEvent.SetOnWidgetCompMsg windows
 func (m *BrowserEvent) SetOnWidgetCompMsg(event ChromiumEventOnCompMsg) {
 	if Args.IsMain() {
-		m.onWidgetCompMsg = event
+		m.chromium.SetOnWidgetCompMsg(event)
 	}
 }
 

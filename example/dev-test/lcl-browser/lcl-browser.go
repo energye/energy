@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -36,7 +35,7 @@ func main() {
 		})
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
-		sys_tray.TrayMain()
+		//sys_tray.TrayMain()
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

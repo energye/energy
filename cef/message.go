@@ -8,9 +8,7 @@
 
 package cef
 
-// WmNChitTest constants
-type WmNChitTest int32
-
+// WM_NCHITTEST constants
 const (
 	HTBORDER      = 18
 	HTBOTTOM      = 15

@@ -266,9 +266,6 @@ func AppBrowserInit() {
 		//自己调用系统的保存对话框获得保存路径
 		dlSave := lcl.NewSaveDialog(window.BrowserWindow())
 		dlSave.SetTitle("保存对话框标题")
-		event.SetOnWidgetCompMsg(func(sender lcl.IObject, message *types.TMessage, aHandled bool) {
-			fmt.Println("SetOnWidgetCompMsg", message)
-		})
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount())
 		})
