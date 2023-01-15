@@ -548,6 +548,7 @@ func (m *LCLBrowserWindow) Maximize() {
 				m.SetWidth(m.windowProperty.Width)
 				m.SetHeight(m.windowProperty.Height)
 			}
+			m.SetWindowState(redWindowState)
 		} else {
 			if m.WindowState() == types.WsMaximized {
 				m.SetWindowState(types.WsNormal)
@@ -841,7 +842,9 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				if m.windowsState == 0 {
 					m.windowsState = types.WsMaximized
 					m.SetWindowState(types.WsMaximized)
-					m.SetHeight(1500)
+					//m.SetHeight(1500)
+					var monitor = m.Monitor().WorkareaRect()
+					m.SetHeight(monitor.Bottom - monitor.Top - 1)
 				} else {
 					m.windowsState = types.WsNormal
 					m.SetWindowState(types.WsMaximized)

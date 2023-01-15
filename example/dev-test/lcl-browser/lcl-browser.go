@@ -26,13 +26,13 @@ func main() {
 		//})
 		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
 		window.DisableResize()
+		window.HideTitle()
 		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("lcl browser close query")
 			return false
 		})
 		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
 		//browserWindow.SetBorderStyle(types.BsSizeable)
-		window.HideTitle()
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("RegionsCount:", regions.RegionsCount(), regions.Regions())
 			for i := 0; i < regions.RegionsCount(); i++ {

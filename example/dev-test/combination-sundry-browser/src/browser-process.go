@@ -36,6 +36,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
+	cef.BrowserWindow.Config.CanWebkitAppRegion = true
 	//cef.BrowserWindow.Config.CanResize = false
 	//cef.BrowserWindow.Config.CenterWindow = false
 	//主进程 IPC事件
@@ -266,9 +267,6 @@ func AppBrowserInit() {
 		//自己调用系统的保存对话框获得保存路径
 		dlSave := lcl.NewSaveDialog(window.BrowserWindow())
 		dlSave.SetTitle("保存对话框标题")
-		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
-			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount())
-		})
 		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
 			//linux下 需要这样使用 Sync

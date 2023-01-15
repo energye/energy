@@ -32,11 +32,11 @@
     </style>
 </head>
 <body id="bodyId" style="border: 0; padding: 0;margin:0;overflow-x: hidden;overflow-y: hidden;height: 900px;">
-<div class="title" onmousedown="divMnmousedown(event)" style="text-align: right;">
-    <span>这里是 div 窗口标题栏 可以拖动窗口，但有一点延迟</span>
-    <button onclick="minWindow()">最小化</button>
-    <button onclick="maxWindow()">最大化</button>
-    <button onclick="closeWindow()">关闭</button>
+<div class="title" style="-webkit-app-region: drag;width: 100%;border: 1px solid red;text-align: right;">
+    <span>这里是 div 自定义窗口标题栏 可以拖动窗口</span>
+    <button onclick="minWindow()" style="-webkit-app-region:no-drag">最小化</button>
+    <button onclick="maxWindow()" style="-webkit-app-region:no-drag">最大化</button>
+    <button onclick="closeWindow()" style="-webkit-app-region:no-drag">关闭</button>
 </div>
 <div class="select">
     <button class="inpQuery" style="transform: rotate(180deg)" id="back">▶</button>
@@ -46,6 +46,10 @@
     <button class="inpQuery">GO</button>
 </div>
 <div style="margin-top: 70px;overflow-y: auto;height: 850px;overflow-x: hidden;">
+    <div style="-webkit-app-region: drag;border: 1px solid red;width: 600px;background-color: #C4E3FD;color: black;font-family: 'Microsoft YaHei UI';">
+        这个区域是可拖拽的,
+        自定义窗口标题栏(支持:Windows、MacOSX、Linux)<br>LCL(windows,MacOS), WF(Windows、Linux), MacOS(onmousedown="windowDrag(event)")
+    </div>
     <h3>开发时测试的各种使用方式的集合示例</h3>
 
     <p>Golang 绑定映射 Javascript 通用类型属性、函数，结构对象属性</p>
