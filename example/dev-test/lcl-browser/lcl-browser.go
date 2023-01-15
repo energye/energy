@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -25,9 +24,14 @@ func main() {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
 		//})
-		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
-		//window.DisableResize()
-		browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
+		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
+		window.DisableResize()
+		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
+			fmt.Println("lcl browser close query")
+			return false
+		})
+		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
+		//browserWindow.SetBorderStyle(types.BsSizeable)
 		window.HideTitle()
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("RegionsCount:", regions.RegionsCount(), regions.Regions())

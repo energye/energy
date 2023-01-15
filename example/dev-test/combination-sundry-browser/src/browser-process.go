@@ -212,12 +212,12 @@ func AppBrowserInit() {
 			fmt.Println("browserWindow SetOnChange")
 		})
 		//添加事件，add不会覆盖默认的事件 set会覆盖默认的事件
-		window.BrowserWindow().AddOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
+		window.BrowserWindow().SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 			fmt.Println("添加onclose事件")
 			return false
 		})
 		//窗口大小改变后触发
-		window.BrowserWindow().AddOnResize(func(sender lcl.IObject) bool {
+		window.BrowserWindow().SetOnResize(func(sender lcl.IObject) bool {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 			if browserWindow.Browser() != nil {
 				var target = &cef.EmitTarget{
@@ -301,7 +301,7 @@ func AppBrowserInit() {
 			//窗口弹出之前可自定义系统组件
 			//窗口大小改变后触发
 			//windows下窗口调整后触发一次
-			window.AddOnResize(func(sender lcl.IObject) bool {
+			window.SetOnResize(func(sender lcl.IObject) bool {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
 					var target = &cef.EmitTarget{

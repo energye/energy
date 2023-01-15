@@ -50,7 +50,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			devToolsWindow.defaultWindowCloseEvent()
 			winAuxTools.devToolsWindow.SetSize(1024, 768)
 			winAuxTools.devToolsWindow.SetShowInTaskBar()
-			devToolsWindow.SetOnResize(func(sender lcl.IObject) {
+			devToolsWindow.TForm.SetOnResize(func(sender lcl.IObject) {
 				winAuxTools.devToolsX = devToolsWindow.Left()
 				winAuxTools.devToolsY = devToolsWindow.Top()
 				winAuxTools.devToolsWidth = devToolsWindow.Width()
@@ -66,13 +66,13 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 					devToolsWindow.windowParent.UpdateSize()
 				}
 			})
-			devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
+			devToolsWindow.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 				if devToolsWindow.isClosing {
 					return
 				}
 				*action = types.CaFree
 			})
-			devToolsWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
+			devToolsWindow.TForm.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
 				if devToolsWindow.isClosing {
 					return
 				}

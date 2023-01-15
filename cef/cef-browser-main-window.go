@@ -139,12 +139,6 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
-	m.AddOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
-		if m.tray != nil {
-			m.tray.close()
-		}
-		return false
-	})
 	m.SetCaption(m.windowProperty.Title)
 	if m.windowProperty.IconFS != "" {
 		if emfs.IsExist(m.windowProperty.IconFS) {
