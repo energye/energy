@@ -13,6 +13,7 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 	"sync"
 	"unsafe"
 )
@@ -36,9 +37,12 @@ type IChromium interface {
 
 type TCEFChromium struct {
 	*lcl.TComponent
-	instance unsafe.Pointer
-	cfg      *tCefChromiumConfig
-	emitLock *sync.Mutex
+	instance      unsafe.Pointer
+	cfg           *tCefChromiumConfig
+	emitLock      *sync.Mutex
+	browserHandle types.HWND
+	widgetHandle  types.HWND
+	renderHandle  types.HWND
 }
 
 func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {

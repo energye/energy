@@ -69,6 +69,9 @@ type IChromiumProc interface {
 	SendCaptureLostEvent()
 	FrameIsFocused() bool
 	TryCloseBrowser() bool
+	BrowserHandle() types.HWND
+	WidgetHandle() types.HWND
+	RenderHandle() types.HWND
 }
 
 func (m *TCEFChromium) IsValid() bool {
@@ -330,6 +333,27 @@ func (m *TCEFChromium) FrameIsFocused() bool {
 
 func (m *TCEFChromium) TryCloseBrowser() bool {
 	return api.GoBool(_CEFChromium_TryCloseBrowser(m.Instance()))
+}
+
+func (m *TCEFChromium) BrowserHandle() types.HWND {
+	if m.browserHandle == 0 {
+		m.browserHandle = types.HWND(_CEFChromium_BrowserHandle(m.Instance()))
+	}
+	return m.browserHandle
+}
+
+func (m *TCEFChromium) WidgetHandle() types.HWND {
+	if m.widgetHandle == 0 {
+		m.widgetHandle = types.HWND(_CEFChromium_WidgetHandle(m.Instance()))
+	}
+	return m.widgetHandle
+}
+
+func (m *TCEFChromium) RenderHandle() types.HWND {
+	if m.renderHandle == 0 {
+		m.renderHandle = types.HWND(_CEFChromium_RenderHandle(m.Instance()))
+	}
+	return m.renderHandle
 }
 
 //--------TCEFChromium proc begin--------
@@ -594,6 +618,21 @@ func _CEFChromium_FrameIsFocused(instance uintptr) uintptr {
 
 func _CEFChromium_TryCloseBrowser(instance uintptr) uintptr {
 	r1, _, _ := Proc(internale_CEFChromium_TryCloseBrowser).Call(instance)
+	return r1
+}
+
+func _CEFChromium_BrowserHandle(instance uintptr) uintptr {
+	r1, _, _ := Proc(internale_CEFChromium_BrowserHandle).Call(instance)
+	return r1
+}
+
+func _CEFChromium_WidgetHandle(instance uintptr) uintptr {
+	r1, _, _ := Proc(internale_CEFChromium_WidgetHandle).Call(instance)
+	return r1
+}
+
+func _CEFChromium_RenderHandle(instance uintptr) uintptr {
+	r1, _, _ := Proc(internale_CEFChromium_RenderHandle).Call(instance)
 	return r1
 }
 

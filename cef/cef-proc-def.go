@@ -283,6 +283,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SendCaptureLostEvent", 0),
 		dllimports.NewEnergyImport("CEFChromium_FrameIsFocused", 0),
 		dllimports.NewEnergyImport("CEFChromium_TryCloseBrowser", 0),
+		dllimports.NewEnergyImport("CEFChromium_BrowserHandle", 0),
+		dllimports.NewEnergyImport("CEFChromium_WidgetHandle", 0),
+		dllimports.NewEnergyImport("CEFChromium_RenderHandle", 0),
 		//ICefBeforeDownloadCallback
 		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
 		//ICefFrame
@@ -763,6 +766,9 @@ const (
 	internale_CEFChromium_SendCaptureLostEvent
 	internale_CEFChromium_FrameIsFocused
 	internale_CEFChromium_TryCloseBrowser
+	internale_CEFChromium_BrowserHandle
+	internale_CEFChromium_WidgetHandle
+	internale_CEFChromium_RenderHandle
 	//ICefBeforeDownloadCallback
 	internale_CEFChromium_SetDownloadPath
 	//ICefFrame

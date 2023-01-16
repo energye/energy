@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/rtl/version"
 )
 
 //go:embed resources
@@ -24,11 +25,16 @@ func main() {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
 		//})
+		fmt.Printf("os.version: %+v\n", version.OSVersion)
 		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
 		browserWindow.Constraints().SetMinWidth(300)
 		browserWindow.Constraints().SetMinHeight(300)
-		window.DisableResize()
-		window.HideTitle()
+		//window.DisableResize()
+		//window.HideTitle()
+		//browserWindow.SetBorderStyle(types.BsNone)
+		//browserWindow.SetBorderStyle(types.BsSingle)
+		//browserWindow.SetBorderStyle(types.BsSingle)
+		//window.HideTitle()
 		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("lcl browser close query")
 			return false

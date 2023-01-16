@@ -20,7 +20,9 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
+	"github.com/energye/golcl/lcl/rtl/version"
 	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/win"
 	"time"
 )
 
@@ -818,6 +820,8 @@ func (m *windowDragRegionsState) isCaption(hWND types.HWND, rgn *HRGN, message *
 	return p.X, p.Y, m.canCaption
 }
 
+var ov = version.OSVersion
+
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
@@ -825,56 +829,72 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			fmt.Println("WM_GETMINMAXINFO")
 		case WM_MOUSEMOVE:
 			//fmt.Println("move")
-		case WM_NCMOUSEMOVE:
-			//fmt.Println("nc move")
 		case WM_LBUTTONDBLCLK:
 		case WM_LBUTTONDOWN:
+		case WM_LBUTTONUP:
+			fmt.Println("l up", wdrs.canCaption)
 		case WM_MOVE, WM_MOVING:
 			fmt.Println("move")
-		case WM_NCLBUTTONDBLCLK:
+
+		case WM_NCLBUTTONDBLCLK: /*-- NC --*/
 			if !m.WindowProperty().CanCaptionDClkMaximize {
 				break
 			}
+			fmt.Println("nc ld click", m.windowsState)
 			if m.rgn != nil && wdrs.canCaption {
-				fmt.Println("nc ld click", m.windowsState)
-				QueueAsyncCall(func(id int) {
-					if m.windowsState == 0 {
-						m.windowsState = types.WsMaximized
-						m.SetWindowState(types.WsMaximized)
-						var monitor = m.Monitor().WorkareaRect()
-						m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
-					} else {
-						//需要先设置一次-不然不生效
-						m.SetWindowState(m.windowsState)
-						m.windowsState = types.WsNormal
-						m.SetWindowState(types.WsNormal)
-					}
-				})
+				if ov.Major == 6 {
+					//win.ReleaseCapture()
+				}
+				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); // 最大化
+				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); // 最小化
+				//SendMessage(hwnd, WM_SYSCOMMAND, SC_CLOSE, 0); // 关闭
+				//SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0); // 最大化状态还原
+
+				if m.windowsState == 0 {
+					m.windowsState = types.WsMaximized
+					m.SetWindowState(types.WsMaximized)
+					//var monitor = m.Monitor().WorkareaRect()
+					//m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
+				} else {
+					//需要先设置一次-不然不生效
+					m.SetWindowState(m.windowsState)
+					m.windowsState = types.WsNormal
+					m.SetWindowState(types.WsNormal)
+				}
 				return
 			}
 		case WM_NCLBUTTONDOWN:
+			fmt.Println("nc l down", wdrs.canCaption)
 			if m.rgn != nil && wdrs.canCaption {
-				//fmt.Println("nc l down")
-				WinDefWindowProc(m.hWnd, message.Msg, message.WParam, message.LParam)
 				*lResult = HTCAPTION
 				*aHandled = true
+				//1 这个在windows7不正确
+				//WinDefWindowProc(m.hWnd, message.Msg, message.WParam, message.LParam)
+
+				//2 这个在windows7下正常
+				win.ReleaseCapture()
+				rtl.SendMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
+				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
+				//rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
 				return
 			}
-		case WM_LBUTTONUP:
 		case WM_NCLBUTTONUP:
+			fmt.Println("nc l up", wdrs.canCaption)
+		case WM_NCMOUSEMOVE:
+			fmt.Println("nc mouse move", wdrs.canCaption)
+			if m.rgn != nil && wdrs.canCaption {
+				WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
+				*lResult = HTCAPTION
+				*aHandled = true
+				break
+			}
 		case WM_NCRBUTTONDOWN:
-			//fmt.Println("r nc r down", wdrs.canCaption)
-			//if m.rgn != nil && wdrs.canCaption {
-			//	WinDefWindowProc(m.hWnd, message.Msg, message.WParam, message.LParam)
-			//	*lResult = HTCAPTION
-			//	*aHandled = true
-			//	return
-			//}
+			fmt.Println("nc r down", wdrs.canCaption)
 		case WM_NCRBUTTONUP:
-			fmt.Println("r nc r up", wdrs.canCaption)
-		case WM_NCHITTEST:
+			fmt.Println("nc r up", wdrs.canCaption)
+		case WM_NCHITTEST: /*-- NCHITTEST --*/
 			if m.rgn != nil {
-				var hit = WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
+				//var hit = WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
 				_, _, caption := wdrs.isCaption(m.Handle(), m.rgn, message)
 				//设置鼠标坐标是否在标题区域
 				wdrs.canCaption = caption
@@ -884,12 +904,13 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					*aHandled = true
 					return
 				}
-				*lResult = hit
+				//*lResult = hit
 				return
 			}
 		}
 		//other message -> WinDefWindowProc
 		*lResult = WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
+		//m.InheritedWndProc(message)
 	}
 }
 
@@ -913,6 +934,8 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 		})
 		m.TForm.SetOnPaint(func(sender lcl.IObject) {
 			fmt.Println("OnPaint", m.WindowState()) //TODO test
+			//m.chromium.NotifyMoveOrResizeStarted()
+			//m.windowParent.UpdateSize()
 		})
 	} else {
 		if bwEvent.onRenderCompMsg != nil {
