@@ -146,7 +146,7 @@ func AppBrowserInit() {
 				browserWindow.SetShowInTaskBar()
 				browserWindow.EnableDefaultCloseEvent()
 				browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
-					fmt.Println(wp.Title, title)
+					fmt.Println("SetOnTitleChange", wp.Title, title)
 				})
 			}
 			fmt.Println("\t|--", browserWindow.IsClosing())
@@ -214,6 +214,9 @@ func AppBrowserInit() {
 		window.BrowserWindow().SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 			fmt.Println("添加onclose事件")
 			return false
+		})
+		event.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
+			fmt.Println("SetOnTitleChange", title)
 		})
 		//窗口大小改变后触发
 		window.BrowserWindow().SetOnResize(func(sender lcl.IObject) bool {
