@@ -183,7 +183,6 @@ func AppBrowserInit() {
 
 	//主窗口初始化回调函数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
-		browserWindow.DisableResize()
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
@@ -194,7 +193,6 @@ func AppBrowserInit() {
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		window := browserWindow.AsLCLBrowserWindow()
-		window.ShowTitle()
 		//window.BrowserWindow().SetBorderStyle(types.BsSizeable)
 		//browserWindow.DisableResize()
 		//browserWindow.HideTitle()

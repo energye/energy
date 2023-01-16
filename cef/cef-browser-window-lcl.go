@@ -95,7 +95,7 @@ func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLB
 	} else {
 		lcl.Application.CreateForm(&window)
 	}
-	window.ParentDoubleBuffered()
+	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()
 	window.defaultWindowEvent()
