@@ -538,15 +538,9 @@ func (m *LCLBrowserWindow) Maximize() {
 				m.windowProperty.Y = m.Top()
 				m.windowProperty.Width = m.Width()
 				m.windowProperty.Height = m.Height()
-				m.SetLeft(monitor.Left)
-				m.SetTop(monitor.Top)
-				m.SetWidth(monitor.Right - monitor.Left - 1)
-				m.SetHeight(monitor.Bottom - monitor.Top - 1)
+				m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
 			} else if redWindowState == types.WsNormal {
-				m.SetLeft(m.windowProperty.X)
-				m.SetTop(m.windowProperty.Y)
-				m.SetWidth(m.windowProperty.Width)
-				m.SetHeight(m.windowProperty.Height)
+				m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
 			}
 			m.SetWindowState(redWindowState)
 		} else {
@@ -827,6 +821,8 @@ func (m *windowDragRegionsState) isCaption(hWND types.HWND, rgn *HRGN, message *
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
+		case WM_GETMINMAXINFO:
+			fmt.Println("WM_GETMINMAXINFO")
 		case WM_MOUSEMOVE:
 			//fmt.Println("move")
 		case WM_NCMOUSEMOVE:
@@ -846,12 +842,11 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 						m.windowsState = types.WsMaximized
 						m.SetWindowState(types.WsMaximized)
 						var monitor = m.Monitor().WorkareaRect()
-						m.SetHeight(monitor.Bottom - monitor.Top - 1)
+						m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
 					} else {
-						//需要先设置一次
+						//需要先设置一次-不然不生效
 						m.SetWindowState(m.windowsState)
 						m.windowsState = types.WsNormal
-						//还原窗口
 						m.SetWindowState(types.WsNormal)
 					}
 				})

@@ -25,7 +25,7 @@ func main() {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
 		//})
 		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
-		window.DisableResize()
+		//window.DisableResize()
 		window.HideTitle()
 		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("lcl browser close query")
