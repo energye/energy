@@ -105,6 +105,14 @@ func WinDefWindowProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lP
 	return 0
 }
 
+func WinDefSubclassProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lParam types.LPARAM) types.LRESULT {
+	if common.IsWindows() {
+		r1, _, _ := common.Proc(internale_CEF_Win_DefSubclassProc).Call(handle, uintptr(msg), wParam, lParam)
+		return types.LRESULT(r1)
+	}
+	return 0
+}
+
 func WinOnPaint(handle types.HWND) {
 	if common.IsWindows() {
 		common.Proc(internale_CEF_Win_OnPaint).Call(handle)
