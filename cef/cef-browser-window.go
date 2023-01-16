@@ -31,24 +31,25 @@ type auxTools struct {
 
 //窗口属性配置器
 type WindowProperty struct {
-	IsShowModel        bool               //是否以模态窗口显示
-	WindowState        types.TWindowState //窗口 状态
-	Title              string             //窗口 标题
-	Url                string             //默认打开URL
-	Icon               string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
-	IconFS             string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico
-	CanMinimize        bool               //窗口 是否启用最小化功能 default:true
-	CanMaximize        bool               //窗口 是否启用最大化功能 default:true
-	CanResize          bool               //窗口 是否允许调整大小 default:true
-	CanClose           bool               //窗口 关闭时是否关闭窗口 default:true
-	CenterWindow       bool               //窗口 是否居中显示 default:true
-	CanDragFile        bool               //窗口 是否允许向窗口内拖拽文件
-	CanWebkitAppRegion bool               //窗口 html元素中设置css属性 -webkit-app-region: drag/no-drag 是否允许拖拽窗口
-	AlwaysOnTop        bool               //窗口 置顶
-	X                  int32              //窗口 CenterWindow=false X坐标 default:100
-	Y                  int32              //窗口 CenterWindow=false Y坐标 default:100
-	Width              int32              //窗口 宽 default:1024
-	Height             int32              //窗口 高 default:768
+	IsShowModel            bool               //是否以模态窗口显示
+	WindowState            types.TWindowState //窗口 状态
+	Title                  string             //窗口 标题
+	Url                    string             //默认打开URL
+	Icon                   string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
+	IconFS                 string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico
+	CanMinimize            bool               //窗口 是否启用最小化 default: true
+	CanMaximize            bool               //窗口 是否启用最大化 default: true
+	CanResize              bool               //窗口 是否允许调整大小 default: true
+	CanClose               bool               //窗口 关闭时是否关闭窗口 default: true
+	CenterWindow           bool               //窗口 居中显示 default: true
+	CanDragFile            bool               //窗口 是否允许向窗口内拖拽文件
+	CanWebkitAppRegion     bool               //窗口 html元素中设置css属性 -webkit-app-region: drag/no-drag 是否允许拖拽窗口
+	CanCaptionDClkMaximize bool               //窗口 是否启用标题栏双击放大还原 default: true
+	AlwaysOnTop            bool               //窗口 窗口置顶
+	X                      int32              //窗口 CenterWindow=false X坐标 default: 100
+	Y                      int32              //窗口 CenterWindow=false Y坐标 default: 100
+	Width                  int32              //窗口 宽 default: 1024
+	Height                 int32              //窗口 高 default: 768
 }
 
 //浏览器窗口基础接口
@@ -136,16 +137,17 @@ type IViewsFrameworkBrowserWindow interface {
 //创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() *WindowProperty {
 	return &WindowProperty{
-		Title:        "Energy",
-		Url:          "about:blank",
-		CanMinimize:  true,
-		CanMaximize:  true,
-		CanResize:    true,
-		CanClose:     true,
-		CenterWindow: true,
-		X:            100,
-		Y:            100,
-		Width:        1024,
-		Height:       768,
+		Title:                  "Energy",
+		Url:                    "about:blank",
+		CanMinimize:            true,
+		CanMaximize:            true,
+		CanResize:              true,
+		CanClose:               true,
+		CenterWindow:           true,
+		CanCaptionDClkMaximize: true,
+		X:                      100,
+		Y:                      100,
+		Width:                  1024,
+		Height:                 768,
 	}
 }

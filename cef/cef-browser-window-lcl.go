@@ -836,29 +836,27 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		case WM_MOVE, WM_MOVING:
 			fmt.Println("move")
 		case WM_NCLBUTTONDBLCLK:
-			fmt.Println("nc ld click", m.windowsState)
-			//TODO 判断无标题和不可拖拽时
-			QueueAsyncCall(func(id int) {
-				if m.windowsState == 0 {
-					m.windowsState = types.WsMaximized
-					m.SetWindowState(types.WsMaximized)
-					//m.SetHeight(1500)
-					var monitor = m.Monitor().WorkareaRect()
-					m.SetHeight(monitor.Bottom - monitor.Top - 1)
-				} else {
-					m.windowsState = types.WsNormal
-					m.SetWindowState(types.WsMaximized)
-					m.SetWindowState(types.WsNormal)
-				}
-			})
-			//if m.rgn != nil && wdrs.canCaption {
-			//	fmt.Println("nc l down")
-			//	WinDefWindowProc(m.hWnd, message.Msg, message.WParam, message.LParam)
-			//	*lResult = HTCAPTION
-			//	*aHandled = true
-			//	return
-			//}
-			return
+			if !m.WindowProperty().CanCaptionDClkMaximize {
+				break
+			}
+			if m.rgn != nil && wdrs.canCaption {
+				fmt.Println("nc ld click", m.windowsState)
+				QueueAsyncCall(func(id int) {
+					if m.windowsState == 0 {
+						m.windowsState = types.WsMaximized
+						m.SetWindowState(types.WsMaximized)
+						var monitor = m.Monitor().WorkareaRect()
+						m.SetHeight(monitor.Bottom - monitor.Top - 1)
+					} else {
+						//需要先设置一次
+						m.SetWindowState(m.windowsState)
+						m.windowsState = types.WsNormal
+						//还原窗口
+						m.SetWindowState(types.WsNormal)
+					}
+				})
+				return
+			}
 		case WM_NCLBUTTONDOWN:
 			if m.rgn != nil && wdrs.canCaption {
 				//fmt.Println("nc l down")
@@ -912,11 +910,21 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 				m.doOnRenderCompMsg(message, lResult, aHandled)
 			}
 		})
+		m.TForm.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+			m.windowsState = m.WindowState()
+			if m.onConstrainedResizeEvent != nil {
+				m.onConstrainedResizeEvent(sender, minWidth, minHeight, maxWidth, maxHeight)
+			}
+		})
+		m.TForm.SetOnPaint(func(sender lcl.IObject) {
+			fmt.Println("OnPaint", m.WindowState()) //TODO test
+		})
 	} else {
 		if bwEvent.onRenderCompMsg != nil {
-			m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
-			})
+			m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
+		}
+		if m.onConstrainedResizeEvent != nil {
+			m.TForm.SetOnConstrainedResize(m.onConstrainedResizeEvent)
 		}
 	}
 }
@@ -926,15 +934,6 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	//默认自定义快捷键
 	defaultAcceleratorCustom()
-	m.TForm.SetOnPaint(func(sender lcl.IObject) {
-		fmt.Println("OnPaint", m.WindowState())
-	})
-	m.TForm.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
-		m.windowsState = m.WindowState()
-		if m.onConstrainedResizeEvent != nil {
-			m.onConstrainedResizeEvent(sender, minWidth, minHeight, maxWidth, maxHeight)
-		}
-	})
 	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
