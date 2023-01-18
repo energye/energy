@@ -30,6 +30,8 @@ type auxTools struct {
 }
 
 //窗口属性配置器
+//
+//部分属性配置并不支持所有平台
 type WindowProperty struct {
 	IsShowModel            bool               //是否以模态窗口显示
 	WindowState            types.TWindowState //窗口 状态
@@ -37,6 +39,7 @@ type WindowProperty struct {
 	Url                    string             //默认打开URL
 	Icon                   string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
 	IconFS                 string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico
+	_CanHideCaption        bool               //窗口 是否隐藏标题栏
 	CanMinimize            bool               //窗口 是否启用最小化 default: true
 	CanMaximize            bool               //窗口 是否启用最大化 default: true
 	CanResize              bool               //窗口 是否允许调整大小 default: true

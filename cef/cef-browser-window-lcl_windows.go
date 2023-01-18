@@ -24,12 +24,14 @@ var ov = version.OSVersion
 
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
+	m.WindowProperty()._CanHideCaption = false
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
 	win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
 }
 
 //隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
+	m.WindowProperty()._CanHideCaption = true
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
 	win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
 }
@@ -65,7 +67,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			fmt.Println("l up", wdrs.canCaption)
 		case WM_NCLBUTTONDBLCLK: /*-- NC --*/
 			if !m.WindowProperty().CanCaptionDClkMaximize {
-				break
+				return
 			}
 			fmt.Println("nc ld click", m.windowsState, m.WindowState())
 			if m.rgn != nil && wdrs.canCaption {
@@ -85,7 +87,6 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
 				}
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
-				return
 			}
 		case WM_NCLBUTTONDOWN:
 			fmt.Println("nc l down", wdrs.canCaption)
@@ -95,20 +96,21 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				win.ReleaseCapture()
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
-				return
 			}
 		case WM_NCLBUTTONUP:
 			fmt.Println("nc l up", wdrs.canCaption)
 			if m.rgn != nil && wdrs.canCaption {
-				//WinDefWindowProc(m.Handle(), message.Msg, message.WParam, message.LParam)
-				*lResult = HTCAPTION
-				*aHandled = true
-				return
 			}
 		case WM_NCRBUTTONDOWN:
 			fmt.Println("nc r down", wdrs.canCaption)
+			if m.rgn != nil && wdrs.canCaption {
+			}
 		case WM_NCRBUTTONUP:
 			fmt.Println("nc r up", wdrs.canCaption)
+			if m.rgn != nil && wdrs.canCaption {
+				*lResult = HTCAPTION
+				*aHandled = true
+			}
 		case WM_NCHITTEST: /*-- NCHITTEST --*/
 			if m.rgn != nil {
 				_, _, caption := wdrs.isCaption(m.Handle(), m.rgn, message)
@@ -118,14 +120,13 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					//如果光标在一个可拖动区域内，返回HTCAPTION允许拖动。
 					*lResult = HTCAPTION
 					*aHandled = true
-					return
 				}
 			}
 		}
 	}
 }
 
-// 默认事件注册 windows 消息事件
+// 默认事件注册 windows CompMsgEvent
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	if m.WindowProperty().CanWebkitAppRegion {
@@ -137,23 +138,30 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 				m.doOnRenderCompMsg(message, lResult, aHandled)
 			}
 		})
-		m.TForm.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
-			//m.windowsState = m.WindowState()
-			if m.onConstrainedResizeEvent != nil {
-				m.onConstrainedResizeEvent(sender, minWidth, minHeight, maxWidth, maxHeight)
-			}
-		})
 		m.TForm.SetOnPaint(func(sender lcl.IObject) {
-			fmt.Println("OnPaint", m.WindowState()) //TODO test
 			//m.chromium.NotifyMoveOrResizeStarted()
 			//m.windowParent.UpdateSize()
+			var ret bool
+			if m.onPaint != nil {
+				ret = m.onPaint(sender)
+			}
+			if !ret {
+				if m.WindowState() == types.WsMaximized && m.WindowProperty()._CanHideCaption {
+					var monitor = m.Monitor().WorkareaRect()
+					m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
+					m.SetWindowState(types.WsMaximized)
+					//rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0) //WM_PAINT
+				}
+			}
 		})
 	} else {
 		if bwEvent.onRenderCompMsg != nil {
 			m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
 		}
-		if m.onConstrainedResizeEvent != nil {
-			m.TForm.SetOnConstrainedResize(m.onConstrainedResizeEvent)
+		if m.onPaint != nil {
+			m.TForm.SetOnPaint(func(sender lcl.IObject) {
+				m.onPaint(sender)
+			})
 		}
 	}
 }

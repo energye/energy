@@ -169,7 +169,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.browserEvent.chromium = m.chromium
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
 	}
-	//browserWindowOnEventCallback 执行完后，注册windows消息事件
+	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
 	m.registerWindowsCompMsgEvent()
 
 	//主进程（主窗口）启动后回调函数事件

@@ -38,31 +38,31 @@ type IBaseWindow interface {
 //
 //该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
 type LCLBrowserWindow struct {
-	*lcl.TForm                                           //
-	chromium                 IChromium                   //
-	browser                  *ICefBrowser                //
-	windowParent             ITCefWindowParent           //
-	windowProperty           *WindowProperty             //
-	windowId                 int32                       //
-	windowType               consts.WINDOW_TYPE          //窗口类型
-	isClosing                bool                        //
-	canClose                 bool                        //
-	onResize                 TNotifyEvent                //
-	onActivate               TNotifyEvent                //
-	onShow                   TNotifyEvent                //
-	onClose                  TCloseEvent                 //
-	onCloseQuery             TCloseQueryEvent            //
-	onActivateAfter          lcl.TNotifyEvent            //
-	onConstrainedResizeEvent lcl.TConstrainedResizeEvent //
-	isFormCreate             bool                        //是否创建完成 WindowForm
-	isChromiumCreate         bool                        //是否创建完成 Chromium
-	frames                   TCEFFrame                   //当前浏览器下的所有frame
-	auxTools                 *auxTools                   //辅助工具
-	tray                     ITray                       //托盘
-	regions                  *TCefDraggableRegions       //窗口内html拖拽区域
-	rgn                      *HRGN                       //
-	hWnd                     types.HWND                  //
-	windowsState             types.TWindowState          //
+	*lcl.TForm                             //
+	chromium         IChromium             //
+	browser          *ICefBrowser          //
+	windowParent     ITCefWindowParent     //
+	windowProperty   *WindowProperty       //
+	windowId         int32                 //
+	windowType       consts.WINDOW_TYPE    //窗口类型
+	isClosing        bool                  //
+	canClose         bool                  //
+	onResize         TNotifyEvent          //
+	onActivate       TNotifyEvent          //
+	onShow           TNotifyEvent          //
+	onPaint          TNotifyEvent          //
+	onClose          TCloseEvent           //
+	onCloseQuery     TCloseQueryEvent      //
+	onActivateAfter  lcl.TNotifyEvent      //
+	isFormCreate     bool                  //是否创建完成 WindowForm
+	isChromiumCreate bool                  //是否创建完成 Chromium
+	frames           TCEFFrame             //当前浏览器下的所有frame
+	auxTools         *auxTools             //辅助工具
+	tray             ITray                 //托盘
+	regions          *TCefDraggableRegions //窗口内html拖拽区域
+	rgn              *HRGN                 //
+	hWnd             types.HWND            //
+	windowsState     types.TWindowState    //
 }
 
 //创建一个 LCL 带有 chromium 窗口
@@ -470,27 +470,32 @@ func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
 	m.defaultChromiumEvent()
 }
 
-// 添加OnResize事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+// SetOnPaint 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+func (m *LCLBrowserWindow) SetOnPaint(fn TNotifyEvent) {
+	m.onPaint = fn
+}
+
+// SetOnResize 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnResize(fn TNotifyEvent) {
 	m.onResize = fn
 }
 
-// 添加OnActivate事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+// SetOnActivate 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnActivate(fn TNotifyEvent) {
 	m.onActivate = fn
 }
 
-// 添加OnShow事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+// SetOnShow 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnShow(fn TNotifyEvent) {
 	m.onShow = fn
 }
 
-// 添加OnClose事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+// SetOnClose 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnClose(fn TCloseEvent) {
 	m.onClose = fn
 }
 
-// 添加OnCloseQuery事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
+// SetOnCloseQuery 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnCloseQuery(fn TCloseQueryEvent) {
 	m.onCloseQuery = fn
 }
@@ -718,10 +723,6 @@ func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 			})
 		}
 	}
-}
-
-func (m *LCLBrowserWindow) SetOnConstrainedResize(fn lcl.TConstrainedResizeEvent) {
-	m.onConstrainedResizeEvent = fn
 }
 
 func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
