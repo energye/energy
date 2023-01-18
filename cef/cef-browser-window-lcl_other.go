@@ -28,3 +28,8 @@ func (m *LCLBrowserWindow) HideTitle() {
 	}
 	m.TForm.SetBorderStyle(types.BsSingle)
 }
+
+// 默认事件注册 windows 消息事件
+func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
+
+}
