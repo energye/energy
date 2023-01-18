@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/rtl/version"
@@ -66,14 +65,10 @@ func (m *windowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMe
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
 		switch message.Msg {
-		case WM_LBUTTONDBLCLK:
-		case WM_LBUTTONDOWN:
-			fmt.Println("l up", wdrs.canCaption)
-		case WM_NCLBUTTONDBLCLK: /*-- NC --*/
+		case WM_NCLBUTTONDBLCLK: /*-- NC l d click --*/
 			if !m.WindowProperty().CanCaptionDClkMaximize {
 				return
 			}
-			fmt.Println("nc ld click", m.windowsState, m.WindowState())
 			if m.rgn != nil && wdrs.canCaption {
 				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); // 最大化
 				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); // 最小化
@@ -92,8 +87,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				}
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
 			}
-		case WM_NCLBUTTONDOWN:
-			fmt.Println("nc l down", wdrs.canCaption)
+		case WM_NCLBUTTONDOWN: //nc l down
 			if m.rgn != nil && wdrs.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
@@ -101,19 +95,14 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
 			}
-		case WM_NCLBUTTONUP:
-			fmt.Println("nc l up", wdrs.canCaption)
+		case WM_NCLBUTTONUP: //nc l up
 			if m.rgn != nil && wdrs.canCaption {
 			}
-		case WM_NCRBUTTONDOWN:
-			fmt.Println("nc r down", wdrs.canCaption)
+		case WM_NCRBUTTONDOWN: //nc r down
 			if m.rgn != nil && wdrs.canCaption {
 			}
-		case WM_NCRBUTTONUP:
-			fmt.Println("nc r up", wdrs.canCaption)
+		case WM_NCRBUTTONUP: //nc r up
 			if m.rgn != nil && wdrs.canCaption {
-				*lResult = HTCAPTION
-				*aHandled = true
 			}
 		case WM_NCHITTEST: /*-- NCHITTEST --*/
 			if m.rgn != nil {
