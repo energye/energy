@@ -120,8 +120,6 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					*aHandled = true
 					return
 				}
-				//*lResult = hit
-				return
 			}
 		}
 	}
