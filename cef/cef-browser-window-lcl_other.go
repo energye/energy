@@ -11,7 +11,10 @@
 
 package cef
 
-import "github.com/energye/golcl/lcl/types"
+import (
+	"github.com/energye/energy/common"
+	"github.com/energye/golcl/lcl/types"
+)
 
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
@@ -75,7 +78,7 @@ func (m *LCLBrowserWindow) Maximize() {
 		} else {
 			if m.WindowState() == types.WsMaximized {
 				m.SetWindowState(types.WsNormal)
-				if IsDarwin() {
+				if common.IsDarwin() {
 					m.SetWindowState(types.WsMaximized)
 					m.SetWindowState(types.WsNormal)
 				}
