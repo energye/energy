@@ -91,10 +91,11 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				*aHandled = true
 				win.ReleaseCapture()
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
-				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONUP: //nc l up
 			if m.rgn != nil && wdrs.canCaption {
+				*lResult = HTCAPTION
+				*aHandled = true
 			}
 		case WM_NCRBUTTONDOWN: //nc r down
 			if m.rgn != nil && wdrs.canCaption {
