@@ -79,9 +79,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				win.ReleaseCapture()
 				m.windowsState = m.WindowState()
 				if m.windowsState == types.WsNormal {
-					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
-					//var monitor = m.Monitor().WorkareaRect()
-					//m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
+					rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
 				} else {
 					rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
 				}
