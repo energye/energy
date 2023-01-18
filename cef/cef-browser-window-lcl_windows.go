@@ -25,15 +25,19 @@ var ov = version.OSVersion
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	m.WindowProperty()._CanHideCaption = false
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
-	win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
+	//win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	m.SetBorderStyle(types.BsSizeable)
+
 }
 
 //隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty()._CanHideCaption = true
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
-	win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
+	//win.SetWindowPos(m.Handle(), 0, 0, 0, m.Width(), m.Height()+500, win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED|win.SWP_DRAWFRAME)
+	m.SetBorderStyle(types.BsNone)
+
 }
 
 //windows 窗口标题栏管理
@@ -139,18 +143,15 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			}
 		})
 		m.TForm.SetOnPaint(func(sender lcl.IObject) {
-			//m.chromium.NotifyMoveOrResizeStarted()
-			//m.windowParent.UpdateSize()
 			var ret bool
 			if m.onPaint != nil {
 				ret = m.onPaint(sender)
 			}
 			if !ret {
-				if m.WindowState() == types.WsMaximized && m.WindowProperty()._CanHideCaption {
+				if m.WindowState() == types.WsMaximized && (m.WindowProperty()._CanHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 					var monitor = m.Monitor().WorkareaRect()
 					m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
 					m.SetWindowState(types.WsMaximized)
-					//rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0) //WM_PAINT
 				}
 			}
 		})

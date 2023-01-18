@@ -29,12 +29,7 @@ func main() {
 		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
 		browserWindow.Constraints().SetMinWidth(300)
 		browserWindow.Constraints().SetMinHeight(300)
-		window.DisableResize()
 		//window.HideTitle()
-		//browserWindow.SetBorderStyle(types.BsNone)
-		//browserWindow.SetBorderStyle(types.BsSingle)
-		//browserWindow.SetBorderStyle(types.BsSingle)
-		window.HideTitle()
 		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("lcl browser close query")
 			return false
