@@ -20,6 +20,8 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
+var ov = version.OSVersion
+
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
@@ -32,18 +34,19 @@ func (m *LCLBrowserWindow) HideTitle() {
 	win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
 }
 
-var wdrs = &windowDragRegionsState{}
+//windows 窗口拖拽区域管理
+var wdrs = &windowDragRegions{}
 
-type windowDragRegionsState struct {
+type windowDragRegions struct {
 	canCaption bool
 }
 
-func (m *windowDragRegionsState) toPoint(message *types.TMessage) (x, y int32) {
+func (m *windowDragRegions) toPoint(message *types.TMessage) (x, y int32) {
 	return int32(message.LParam & 0xFFFF), int32(message.LParam & 0xFFFF0000 >> 16)
 }
 
 //鼠标在标题栏区域
-func (m *windowDragRegionsState) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (x, y int32, caption bool) {
+func (m *windowDragRegions) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (x, y int32, caption bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
 		X: dx,
@@ -53,8 +56,6 @@ func (m *windowDragRegionsState) isCaption(hWND types.HWND, rgn *HRGN, message *
 	m.canCaption = WinPtInRegion(rgn, p.X, p.Y)
 	return p.X, p.Y, m.canCaption
 }
-
-var ov = version.OSVersion
 
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.regions != nil && m.regions.RegionsCount() > 0 {
