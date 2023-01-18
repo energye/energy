@@ -223,6 +223,10 @@ type ICefDragData struct {
 	instance unsafe.Pointer
 }
 
+func (m *HRGN) Free() {
+	m.instance = nil
+}
+
 func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
 	return TCefDraggableRegion{
 		Bounds:    *rect,

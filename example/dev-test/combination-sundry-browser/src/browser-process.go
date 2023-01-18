@@ -190,6 +190,7 @@ func AppBrowserInit() {
 		fmt.Println("LCL", browserWindow.AsLCLBrowserWindow(), "VF", browserWindow.AsViewsFrameworkBrowserWindow())
 		lcl.Application.Icon().LoadFromFSFile("resources/icon.ico") //设置应用图标
 		browserWindow.SetTitle("这里设置应用标题")
+		browserWindow.HideTitle()
 		//browserWindow.EnableTransparent(100) //窗口透明
 		//设置窗口样式，无标题 ，最大化按钮等
 		window := browserWindow.AsLCLBrowserWindow()

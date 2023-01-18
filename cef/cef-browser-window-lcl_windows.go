@@ -130,7 +130,18 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	}
 }
 
-// 默认事件注册 windows CompMsgEvent
+func (m *LCLBrowserWindow) setDraggableRegions() {
+	if m.regions.RegionsCount() > 0 {
+		if m.rgn != nil {
+			WinDeleteObject(m.rgn)
+			m.rgn.Free()
+		}
+		m.rgn = WinCreateRectRgn(0, 0, 0, 0)
+		WinSetDraggableRegions(m.rgn, m.regions.Regions())
+	}
+}
+
+// default event register: windows CompMsgEvent
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	if m.WindowProperty().CanWebkitAppRegion {
@@ -165,4 +176,20 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			})
 		}
 	}
+}
+
+//for windows maximize and restore
+func (m *LCLBrowserWindow) Maximize() {
+	if m.TForm == nil {
+		return
+	}
+	QueueAsyncCall(func(id int) {
+		win.ReleaseCapture()
+		m.windowsState = m.WindowState()
+		if m.windowsState == types.WsNormal {
+			rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+		} else {
+			rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
+		}
+	})
 }
