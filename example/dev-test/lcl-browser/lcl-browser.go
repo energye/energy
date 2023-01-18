@@ -30,6 +30,7 @@ func main() {
 		browserWindow.Constraints().SetMinWidth(300)
 		browserWindow.Constraints().SetMinHeight(300)
 		window.HideTitle()
+		window.SetTitle("")
 		//window.DisableResize()
 		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("lcl browser close query")
@@ -63,6 +64,10 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//sys_tray.TrayMain()
+
+		//dwWinStyle := win.GetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE)
+		//dwWinStyle |= win.WS_THICKFRAME
+		//win.SetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE, uintptr(dwWinStyle))
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

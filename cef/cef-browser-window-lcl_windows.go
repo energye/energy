@@ -141,27 +141,17 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 				m.doOnRenderCompMsg(message, lResult, aHandled)
 			}
 		})
-		m.TForm.SetOnPaint(func(sender lcl.IObject) {
-			var ret bool
-			if m.onPaint != nil {
-				ret = m.onPaint(sender)
+		m.windowResize = func(sender lcl.IObject) bool {
+			if m.WindowState() == types.WsMaximized && (m.WindowProperty()._CanHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
+				var monitor = m.Monitor().WorkareaRect()
+				m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
+				m.SetWindowState(types.WsMaximized)
 			}
-			if !ret {
-				if m.WindowState() == types.WsMaximized && (m.WindowProperty()._CanHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
-					var monitor = m.Monitor().WorkareaRect()
-					m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
-					m.SetWindowState(types.WsMaximized)
-				}
-			}
-		})
+			return false
+		}
 	} else {
 		if bwEvent.onRenderCompMsg != nil {
 			m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
-		}
-		if m.onPaint != nil {
-			m.TForm.SetOnPaint(func(sender lcl.IObject) {
-				m.onPaint(sender)
-			})
 		}
 	}
 }

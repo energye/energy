@@ -48,9 +48,9 @@ type LCLBrowserWindow struct {
 	isClosing        bool                  //
 	canClose         bool                  //
 	onResize         TNotifyEvent          //
+	windowResize     TNotifyEvent          //
 	onActivate       TNotifyEvent          //
 	onShow           TNotifyEvent          //
-	onPaint          TNotifyEvent          //
 	onClose          TCloseEvent           //
 	onCloseQuery     TCloseQueryEvent      //
 	onActivateAfter  lcl.TNotifyEvent      //
@@ -470,11 +470,6 @@ func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
 	m.defaultChromiumEvent()
 }
 
-// SetOnPaint 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
-func (m *LCLBrowserWindow) SetOnPaint(fn TNotifyEvent) {
-	m.onPaint = fn
-}
-
 // SetOnResize 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnResize(fn TNotifyEvent) {
 	m.onResize = fn
@@ -686,6 +681,9 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	if !ret {
 		if m.isClosing {
 			return
+		}
+		if m.windowResize != nil {
+			m.windowResize(sender)
 		}
 		if m.chromium != nil {
 			m.chromium.NotifyMoveOrResizeStarted()

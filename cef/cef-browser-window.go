@@ -111,6 +111,7 @@ type IBrowserWindow interface {
 //定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
+	Handle() types.HWND               //
 	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
 	EnableDefaultCloseEvent()         //启用默认关闭事件
 	WindowParent() ITCefWindowParent  //浏览器父窗口组件
