@@ -79,11 +79,11 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				win.ReleaseCapture()
 				m.windowsState = m.WindowState()
 				if m.windowsState == types.WsNormal {
-					rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
 				} else {
-					rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
+					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
 				}
-				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
+				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONDOWN: //nc l down
 			if m.rgn != nil && wdrs.canCaption {
@@ -91,7 +91,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				*aHandled = true
 				win.ReleaseCapture()
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
-				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, 0, 0)
+				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONUP: //nc l up
 			if m.rgn != nil && wdrs.canCaption {
