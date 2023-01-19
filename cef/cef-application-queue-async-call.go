@@ -55,10 +55,6 @@ type queueAsyncCall struct {
 //
 // 4.在windows linux macos 可同时使用
 func QueueAsyncCall(fn qacFn) int {
-	//if consts.IsMessageLoop {
-	//	fn(0)
-	//	return 0
-	//}
 	id := qac.set(&queueCall{
 		IsSync: false,
 		Fn:     fn,
@@ -77,10 +73,6 @@ func QueueAsyncCall(fn qacFn) int {
 //
 // 4.在windows linux macos 需要注意使用场景, 当非UI线程使用时正常执行, UI线程使用时会造成UI线程锁死, 这种情况建议使用 QueueAsyncCall 自己增加同步锁
 func QueueSyncCall(fn qacFn) int {
-	//if consts.IsMessageLoop {
-	//	fn(0)
-	//	return 0
-	//}
 	qc := &queueCall{
 		IsSync: true,
 		Fn:     fn,

@@ -38,8 +38,7 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 		}
 	}
 	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-	if IsMessageLoop {
-	} else {
+	if !IsMessageLoop {
 		QueueAsyncCall(func(id int) {
 			BrowserWindow.createNextLCLPopupWindow()
 		})
@@ -195,9 +194,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoBack()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoBack()
+					})
+				}
 			}
 		},
 	})
@@ -208,9 +211,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoForward()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoForward()
+					})
+				}
 			}
 		},
 	})
@@ -303,15 +310,23 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {
-		QueueAsyncCall(func(id int) {
+		if IsMessageLoop {
 			lcl.Clipboard.SetAsText(params.LinkUrl)
-		})
+		} else {
+			QueueAsyncCall(func(id int) {
+				lcl.Clipboard.SetAsText(params.LinkUrl)
+			})
+		}
 	} else if commandId == copyImageId {
 		frame.Copy()
 	} else if commandId == imageUrlId {
-		QueueAsyncCall(func(id int) {
+		if IsMessageLoop {
 			lcl.Clipboard.SetAsText(params.SourceUrl)
-		})
+		} else {
+			QueueAsyncCall(func(id int) {
+				lcl.Clipboard.SetAsText(params.SourceUrl)
+			})
+		}
 	} else if commandId == imageSaveId {
 		browser.StartDownload(params.SourceUrl)
 	}

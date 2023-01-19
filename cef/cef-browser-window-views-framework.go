@@ -138,21 +138,23 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 			return true
 		}
 		wp := &WindowProperty{
-			Title:        BrowserWindow.Config.WindowProperty.Title,
-			Url:          beforePopupInfo.TargetUrl,
-			CanMinimize:  BrowserWindow.Config.WindowProperty.CanMinimize,
-			CanMaximize:  BrowserWindow.Config.WindowProperty.CanMaximize,
-			CanResize:    BrowserWindow.Config.WindowProperty.CanResize,
-			CanClose:     BrowserWindow.Config.WindowProperty.CanClose,
-			CenterWindow: BrowserWindow.Config.WindowProperty.CenterWindow,
-			IsShowModel:  BrowserWindow.Config.WindowProperty.IsShowModel,
-			WindowState:  BrowserWindow.Config.WindowProperty.WindowState,
-			Icon:         BrowserWindow.Config.WindowProperty.Icon,
-			IconFS:       BrowserWindow.Config.WindowProperty.IconFS,
-			X:            BrowserWindow.Config.WindowProperty.X,
-			Y:            BrowserWindow.Config.WindowProperty.Y,
-			Width:        BrowserWindow.Config.WindowProperty.Width,
-			Height:       BrowserWindow.Config.WindowProperty.Height,
+			Title:                  BrowserWindow.Config.WindowProperty.Title,
+			Url:                    beforePopupInfo.TargetUrl,
+			CanMinimize:            BrowserWindow.Config.WindowProperty.CanMinimize,
+			CanMaximize:            BrowserWindow.Config.WindowProperty.CanMaximize,
+			CanResize:              BrowserWindow.Config.WindowProperty.CanResize,
+			CanClose:               BrowserWindow.Config.WindowProperty.CanClose,
+			CenterWindow:           BrowserWindow.Config.WindowProperty.CenterWindow,
+			CanWebkitAppRegion:     BrowserWindow.Config.WindowProperty.CanWebkitAppRegion,
+			CanCaptionDClkMaximize: BrowserWindow.Config.WindowProperty.CanCaptionDClkMaximize,
+			IsShowModel:            BrowserWindow.Config.WindowProperty.IsShowModel,
+			WindowState:            BrowserWindow.Config.WindowProperty.WindowState,
+			Icon:                   BrowserWindow.Config.WindowProperty.Icon,
+			IconFS:                 BrowserWindow.Config.WindowProperty.IconFS,
+			X:                      BrowserWindow.Config.WindowProperty.X,
+			Y:                      BrowserWindow.Config.WindowProperty.Y,
+			Width:                  BrowserWindow.Config.WindowProperty.Width,
+			Height:                 BrowserWindow.Config.WindowProperty.Height,
 		}
 		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
@@ -295,8 +297,6 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		return false
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		updateBrowserDevTools(browser, title)
-		updateBrowserViewSource(browser, title)
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title)
 		}

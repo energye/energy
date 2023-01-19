@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
+	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -63,7 +64,7 @@ func main() {
 		//设置隐藏窗口标题
 		//window.HideTitle()
 		cefTray(window)
-		//sys_tray.TrayMain()
+		sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
 	})
 	//在主进程启动成功之后执行
