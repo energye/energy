@@ -13,8 +13,12 @@ type WindowDemo struct {
 
 func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	fmt.Println("LCLBrowserWindow OnFormCreate")
+	//m.EnabledMaximize(false)
+	fmt.Println(m.BorderIcons())
 	m.EnabledMaximize(false)
 	m.SetBorderStyle(types.BsNone)
+	fmt.Println(m.BorderIcons())
+	m.ScreenCenter()
 }
 func main() {
 	cef.GlobalInit(nil, nil)
