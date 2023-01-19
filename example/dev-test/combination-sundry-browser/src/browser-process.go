@@ -110,6 +110,7 @@ func AppBrowserInit() {
 			if newForm == nil {
 				newForm = cef.NewLCLWindow(nil)
 				newForm.SetTitle("新窗口标题")
+				newForm.HideTitle()
 				btn := lcl.NewButton(newForm)
 				btn.SetParent(newForm)
 				btn.SetCaption("点击我有提示")
@@ -143,6 +144,7 @@ func AppBrowserInit() {
 				browserWindow = cef.NewLCLBrowserWindow(nil, wp)
 				browserWindow.SetWidth(800)
 				browserWindow.SetHeight(600)
+				browserWindow.HideTitle()
 				browserWindow.SetShowInTaskBar()
 				browserWindow.EnableDefaultCloseEvent()
 				browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {

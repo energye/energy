@@ -26,6 +26,9 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	m.WindowProperty()._CanHideCaption = false
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	if m.WindowProperty().CanMaximize {
+		m.EnabledMaximize(true)
+	}
 	m.SetBorderStyle(types.BsSizeable)
 
 }
@@ -35,6 +38,8 @@ func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty()._CanHideCaption = true
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), 0, 0, 0, m.Width(), m.Height()+500, win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED|win.SWP_DRAWFRAME)
+	//无标题栏情况会导致任务栏不能切换窗口，不知道为什么要这样设置一下
+	m.EnabledMaximize(false)
 	m.SetBorderStyle(types.BsNone)
 
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/rtl/version"
 )
 
 //go:embed resources
@@ -25,17 +24,12 @@ func main() {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)
 		//})
-		fmt.Printf("os.version: %+v\n", version.OSVersion)
-		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
-		browserWindow.Constraints().SetMinWidth(300)
-		browserWindow.Constraints().SetMinHeight(300)
+		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
+		//browserWindow.Constraints().SetMinWidth(300)
+		//browserWindow.Constraints().SetMinHeight(300)
 		window.HideTitle()
-		window.SetTitle("")
 		//window.DisableResize()
-		window.AsLCLBrowserWindow().BrowserWindow().SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
-			fmt.Println("lcl browser close query")
-			return false
-		})
+
 		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
 		//browserWindow.SetBorderStyle(types.BsSizeable)
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {

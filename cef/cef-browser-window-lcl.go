@@ -89,12 +89,13 @@ func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLB
 		windowProperty = NewWindowProperty()
 	}
 	var window = &LCLBrowserWindow{}
-	window.windowProperty = windowProperty
 	if len(owner) > 0 {
 		window.TForm = lcl.NewForm(owner[0])
 	} else {
-		lcl.Application.CreateForm(&window)
+		window.TForm = lcl.NewForm(BrowserWindow.mainBrowserWindow)
+		//lcl.Application.CreateForm(&window)
 	}
+	window.windowProperty = windowProperty
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()
