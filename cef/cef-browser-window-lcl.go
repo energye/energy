@@ -439,7 +439,6 @@ func (m *LCLBrowserWindow) FormCreate() {
 		return
 	}
 	m.isFormCreate = true
-	m.SetPosition(types.PoDesktopCenter)
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
 }
 
