@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -55,16 +54,16 @@ func main() {
 		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
 			fmt.Println("SetOnWindowActivationChanged", active)
 		})
-		//设置隐藏窗口标题
-		//window.HideTitle()
 		window.Show()
 		fmt.Println("SetBrowserInit 结束")
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
-		//cefTray(window)
-		sys_tray.TrayMain()
+		//设置隐藏窗口标题
+		//window.HideTitle()
+		cefTray(window)
+		//sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
 	})
 	//在主进程启动成功之后执行

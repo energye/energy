@@ -353,6 +353,10 @@ func (m *ViewsFrameworkBrowserWindow) BrowserWindow() *ViewsFrameworkBrowserWind
 	return m
 }
 
+func (m *ViewsFrameworkBrowserWindow) Handle() consts.TCefWindowHandle {
+	return m.WindowComponent().WindowHandle()
+}
+
 func (m *ViewsFrameworkBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
 	return m
 }
