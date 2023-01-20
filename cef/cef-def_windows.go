@@ -14,6 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"unsafe"
@@ -64,6 +65,18 @@ func WinDefWindowProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lP
 func WinDefSubclassProc(handle types.HWND, msg types.UINT, wParam types.WPARAM, lParam types.LPARAM) types.LRESULT {
 	r1, _, _ := common.Proc(internale_CEF_Win_DefSubclassProc).Call(handle, uintptr(msg), wParam, lParam)
 	return types.LRESULT(r1)
+}
+
+func WinCreateRoundRectRgn(_para1, _para2, _para3, _para4, _para5, _para6 t.LongInt) *HRGN {
+	r1, _, _ := common.Proc(internale_CEF_Win_CreateRoundRectRgn).Call(_para1.ToPtr(), _para2.ToPtr(), _para3.ToPtr(), _para4.ToPtr(), _para5.ToPtr(), _para6.ToPtr())
+	return &HRGN{
+		instance: unsafe.Pointer(r1),
+	}
+}
+
+func WinSetWindowRgn(handle types.HWND, hRgn *HRGN, bRedraw bool) t.LongInt {
+	r1, _, _ := common.Proc(internale_CEF_Win_SetWindowRgn).Call(handle, uintptr(hRgn.instance), api.PascalBool(bRedraw))
+	return t.LongInt(r1)
 }
 
 func WinOnPaint(handle types.HWND) {

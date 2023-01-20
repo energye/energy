@@ -24,9 +24,11 @@ type Single = Float32
 type PChar = String
 type TCefColor = UInt16
 type Integer = Int32
+type LongInt = Int32
 type NativeUInt = UInt32
 type TCefString = String
 type Cardinal = UInt32
+type LongBool = Boolean
 
 type TString struct {
 	value string

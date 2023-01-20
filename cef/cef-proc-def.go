@@ -26,6 +26,8 @@ func init() {
 		dllimports.NewEnergyImport("CEF_Win_ClientToScreen", 0),
 		dllimports.NewEnergyImport("CEF_Win_DefWindowProc", 0),
 		dllimports.NewEnergyImport("CEF_Win_DefSubclassProc", 0),
+		dllimports.NewEnergyImport("CEF_Win_CreateRoundRectRgn", 0),
+		dllimports.NewEnergyImport("CEF_Win_SetWindowRgn", 0),
 		dllimports.NewEnergyImport("CEF_Win_OnPaint", 0),
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
@@ -509,6 +511,8 @@ const (
 	internale_CEF_Win_ClientToScreen
 	internale_CEF_Win_DefWindowProc
 	internale_CEF_Win_DefSubclassProc
+	internale_CEF_Win_CreateRoundRectRgn
+	internale_CEF_Win_SetWindowRgn
 	internale_CEF_Win_OnPaint
 	//ApplicationQueueAsyncCallFunc
 	internale_SetApplicationQueueAsyncCallFunc
