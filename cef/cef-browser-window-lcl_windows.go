@@ -44,19 +44,38 @@ func (m *LCLBrowserWindow) HideTitle() {
 
 }
 
-//windows 窗口标题栏管理
-var wdrs = &windowCaption{}
-
-type windowCaption struct {
-	canCaption bool
+type customWindowCaption struct {
+	canCaption bool                  //当前鼠标是否在标题栏区域
+	regions    *TCefDraggableRegions //窗口内html拖拽区域
+	rgn        *HRGN                 //
 }
 
-func (m *windowCaption) toPoint(message *types.TMessage) (x, y int32) {
+func (m *customWindowCaption) freeRgn() {
+	if m.rgn != nil {
+		WinSetRectRgn(m.rgn, 0, 0, 0, 0)
+		WinDeleteObject(m.rgn)
+		m.rgn.Free()
+	}
+}
+func (m *customWindowCaption) freeRegions() {
+	if m.regions != nil {
+		m.regions.regions = nil
+		m.regions = nil
+	}
+}
+func (m *customWindowCaption) free() {
+	if m != nil {
+		m.freeRgn()
+		m.freeRegions()
+	}
+}
+
+func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 	return int32(message.LParam & 0xFFFF), int32(message.LParam & 0xFFFF0000 >> 16)
 }
 
 //鼠标在标题栏区域
-func (m *windowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (x, y int32, caption bool) {
+func (m *customWindowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (x, y int32, caption bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
 		X: dx,
@@ -68,13 +87,13 @@ func (m *windowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMe
 }
 
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-	if m.regions != nil && m.regions.RegionsCount() > 0 {
+	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
 		switch message.Msg {
 		case WM_NCLBUTTONDBLCLK: /*-- NC l d click --*/
 			if !m.WindowProperty().CanCaptionDClkMaximize {
 				return
 			}
-			if m.rgn != nil && wdrs.canCaption {
+			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); // 最大化
 				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); // 最小化
 				//SendMessage(hwnd, WM_SYSCOMMAND, SC_CLOSE, 0); // 关闭
@@ -91,28 +110,28 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONDOWN: //nc l down
-			if m.rgn != nil && wdrs.canCaption {
+			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
 				win.ReleaseCapture()
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONUP: //nc l up
-			if m.rgn != nil && wdrs.canCaption {
+			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
 			}
 		case WM_NCRBUTTONDOWN: //nc r down
-			if m.rgn != nil && wdrs.canCaption {
+			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
 		case WM_NCRBUTTONUP: //nc r up
-			if m.rgn != nil && wdrs.canCaption {
+			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
 		case WM_NCHITTEST: /*-- NCHITTEST --*/
-			if m.rgn != nil {
-				_, _, caption := wdrs.isCaption(m.Handle(), m.rgn, message)
+			if m.cwcap.rgn != nil {
+				_, _, caption := m.cwcap.isCaption(m.Handle(), m.cwcap.rgn, message)
 				//设置鼠标坐标是否在标题区域
-				wdrs.canCaption = caption
+				m.cwcap.canCaption = caption
 				if caption {
 					//如果光标在一个可拖动区域内，返回HTCAPTION允许拖动。
 					*lResult = HTCAPTION
@@ -124,13 +143,10 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 }
 
 func (m *LCLBrowserWindow) setDraggableRegions() {
-	if m.regions.RegionsCount() > 0 {
-		if m.rgn != nil {
-			WinDeleteObject(m.rgn)
-			m.rgn.Free()
-		}
-		m.rgn = WinCreateRectRgn(0, 0, 0, 0)
-		WinSetDraggableRegions(m.rgn, m.regions.Regions())
+	if m.cwcap.regions.RegionsCount() > 0 {
+		m.cwcap.freeRgn()
+		m.cwcap.rgn = WinCreateRectRgn(0, 0, 0, 0)
+		WinSetDraggableRegions(m.cwcap.rgn, m.cwcap.regions.Regions())
 	}
 }
 

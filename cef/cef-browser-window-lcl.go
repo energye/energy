@@ -38,31 +38,30 @@ type IBaseWindow interface {
 //
 //该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
 type LCLBrowserWindow struct {
-	*lcl.TForm                             //
-	chromium         IChromium             //
-	browser          *ICefBrowser          //
-	windowParent     ITCefWindowParent     //
-	windowProperty   *WindowProperty       //
-	windowId         int32                 //
-	windowType       consts.WINDOW_TYPE    //窗口类型
-	isClosing        bool                  //
-	canClose         bool                  //
-	onResize         TNotifyEvent          //
-	windowResize     TNotifyEvent          //
-	onActivate       TNotifyEvent          //
-	onShow           TNotifyEvent          //
-	onClose          TCloseEvent           //
-	onCloseQuery     TCloseQueryEvent      //
-	onActivateAfter  lcl.TNotifyEvent      //
-	isFormCreate     bool                  //是否创建完成 WindowForm
-	isChromiumCreate bool                  //是否创建完成 Chromium
-	frames           TCEFFrame             //当前浏览器下的所有frame
-	auxTools         *auxTools             //辅助工具
-	tray             ITray                 //托盘
-	regions          *TCefDraggableRegions //窗口内html拖拽区域
-	rgn              *HRGN                 //
-	hWnd             types.HWND            //
-	windowsState     types.TWindowState    //
+	*lcl.TForm                            //
+	chromium         IChromium            //
+	browser          *ICefBrowser         //
+	windowParent     ITCefWindowParent    //
+	windowProperty   *WindowProperty      //
+	windowId         int32                //
+	windowType       consts.WINDOW_TYPE   //窗口类型
+	isClosing        bool                 //
+	canClose         bool                 //
+	onResize         TNotifyEvent         //
+	windowResize     TNotifyEvent         //
+	onActivate       TNotifyEvent         //
+	onShow           TNotifyEvent         //
+	onClose          TCloseEvent          //
+	onCloseQuery     TCloseQueryEvent     //
+	onActivateAfter  lcl.TNotifyEvent     //
+	isFormCreate     bool                 //是否创建完成 WindowForm
+	isChromiumCreate bool                 //是否创建完成 Chromium
+	frames           TCEFFrame            //当前浏览器下的所有frame
+	auxTools         *auxTools            //辅助工具
+	tray             ITray                //托盘
+	hWnd             types.HWND           //
+	windowsState     types.TWindowState   //
+	cwcap            *customWindowCaption //自定义窗口标题栏
 }
 
 //创建一个 LCL 带有 chromium 窗口
@@ -96,6 +95,7 @@ func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLB
 		//lcl.Application.CreateForm(&window)
 	}
 	window.windowProperty = windowProperty
+	window.cwcap = new(customWindowCaption)
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()
@@ -862,7 +862,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			if bwEvent.onDraggableRegionsChanged != nil {
 				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
 			}
-			m.regions = regions
+			m.cwcap.regions = regions
 			m.setDraggableRegions()
 		})
 	}
@@ -935,6 +935,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 				logger.Debug("chromium.onClose => windowParent.Free")
 			})
 		}
+		m.cwcap.free()
 		if bwEvent.onClose != nil {
 			bwEvent.onClose(sender, browser, aAction)
 		}
