@@ -27,8 +27,8 @@ func main() {
 		//browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
 		//browserWindow.Constraints().SetMinWidth(300)
 		//browserWindow.Constraints().SetMinHeight(300)
-		window.HideTitle()
 		//window.DisableResize()
+		window.HideTitle()
 
 		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
 		//browserWindow.SetBorderStyle(types.BsSizeable)

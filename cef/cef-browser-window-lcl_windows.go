@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
@@ -23,9 +24,11 @@ import (
 var ov = version.OSVersion
 
 type customWindowCaption struct {
-	canCaption bool                  //当前鼠标是否在标题栏区域
-	regions    *TCefDraggableRegions //窗口内html拖拽区域
-	rgn        *HRGN                 //
+	canCaption      bool                  //当前鼠标是否在标题栏区域
+	canBorder       bool                  //当前鼠标是否在边框
+	borderDirection int                   //当前鼠标所在边框的方向
+	regions         *TCefDraggableRegions //窗口内html拖拽区域
+	rgn             *HRGN                 //
 }
 
 //显示标题栏
@@ -58,12 +61,14 @@ func (m *customWindowCaption) freeRgn() {
 		m.rgn.Free()
 	}
 }
+
 func (m *customWindowCaption) freeRegions() {
 	if m.regions != nil {
 		m.regions.regions = nil
 		m.regions = nil
 	}
 }
+
 func (m *customWindowCaption) free() {
 	if m != nil {
 		m.freeRgn()
@@ -71,16 +76,16 @@ func (m *customWindowCaption) free() {
 	}
 }
 
-func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
-	return int32(message.LParam & 0xFFFF), int32(message.LParam & 0xFFFF0000 >> 16)
+func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y uint16) {
+	return LOWORD(uint32(message.LParam)), HIWORD(uint32(message.LParam))
 }
 
 //鼠标在标题栏区域
-func (m *customWindowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (x, y int32, caption bool) {
+func (m *customWindowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
-		X: dx,
-		Y: dy,
+		X: int32(dx),
+		Y: int32(dy),
 	}
 	WinScreenToClient(hWND, p)
 	m.canCaption = WinPtInRegion(rgn, p.X, p.Y)
@@ -89,8 +94,9 @@ func (m *customWindowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *typ
 
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
+		fmt.Println("message.Msg", message.Msg)
 		switch message.Msg {
-		case WM_NCLBUTTONDBLCLK: /*-- NC l d click --*/
+		case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 			if !m.WindowProperty().CanCaptionDClkMaximize {
 				return
 			}
@@ -110,33 +116,63 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				}
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
-		case WM_NCLBUTTONDOWN: //nc l down
-			if m.cwcap.rgn != nil && m.cwcap.canCaption {
+		case WM_NCLBUTTONDOWN: // 161 nc left down
+			if m.cwcap.rgn != nil && m.cwcap.canCaption { //拖拽区域已设置，并且在标题栏
 				*lResult = HTCAPTION
 				*aHandled = true
 				win.ReleaseCapture()
 				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
+			} else {
+				if m.cwcap.canBorder { //当前在边框
+					fmt.Println("当前在边框")
+					*lResult = types.LRESULT(m.cwcap.borderDirection)
+					*aHandled = true
+				}
 			}
-		case WM_NCLBUTTONUP: //nc l up
+		case WM_NCLBUTTONUP: // 162 nc l up
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
 			}
-		case WM_NCRBUTTONDOWN: //nc r down
+		case WM_NCRBUTTONDOWN: // nc r down
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
-		case WM_NCRBUTTONUP: //nc r up
+		case WM_NCRBUTTONUP: // nc r up
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
-		case WM_NCHITTEST: /*-- NCHITTEST --*/
+		case WM_NCMOUSEMOVE: // 160 nc mouse move
+			//非客户区边框鼠标移动
+			if m.cwcap.canBorder { //当前在边框
+				*lResult = types.LRESULT(m.cwcap.borderDirection)
+				*aHandled = true
+			}
+		case WM_SETCURSOR: // 32 设置鼠标图标样式
+			//设置鼠标图标样式
+			if m.cwcap.canBorder { //当前在边框
+				switch LOWORD(uint32(message.LParam)) {
+				case HTBOTTOMRIGHT: //右下
+					fmt.Println("WM_SETCURSOR", LOWORD(uint32(message.LParam)))
+					WinSetCursor(WinLoadCursor(0, IDC_SIZENWSE))
+					*lResult = HTBOTTOMRIGHT
+					*aHandled = true
+				}
+			}
+		case WM_NCHITTEST: // 132 NCHITTEST
 			if m.cwcap.rgn != nil {
-				_, _, caption := m.cwcap.isCaption(m.Handle(), m.cwcap.rgn, message)
+				x, y, caption := m.cwcap.isCaption(m.Handle(), m.cwcap.rgn, message)
 				//设置鼠标坐标是否在标题区域
 				m.cwcap.canCaption = caption
-				if caption {
-					//如果光标在一个可拖动区域内，返回HTCAPTION允许拖动。
+				if caption { //窗口标题栏
 					*lResult = HTCAPTION
 					*aHandled = true
+				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize { //窗口隐藏标题栏并且启用了调整窗口大小
+					if m.cwcap.canBorder = x <= m.Width() && x >= m.Width()-5 && y <= m.Height() && y >= m.Height()-5; m.cwcap.canBorder { // 1.右下
+						m.cwcap.borderDirection = HTBOTTOMRIGHT
+						*lResult = HTBOTTOMRIGHT
+						*aHandled = true
+					} else if m.cwcap.canBorder = x <= m.Width() && x >= m.Width()-5 && y <= m.Height() && y >= m.Height()-5; m.cwcap.canBorder { // 2.右
+
+					}
 				}
 			}
 		}

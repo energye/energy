@@ -17,8 +17,66 @@ import (
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
+	"golang.org/x/sys/windows"
 	"unsafe"
 )
+
+const (
+	S_OK           = 0x00000000
+	S_FALSE        = 0x00000001
+	E_UNEXPECTED   = 0x8000FFFF
+	E_NOTIMPL      = 0x80004001
+	E_OUTOFMEMORY  = 0x8007000E
+	E_INVALIDARG   = 0x80070057
+	E_NOINTERFACE  = 0x80004002
+	E_POINTER      = 0x80004003
+	E_HANDLE       = 0x80070006
+	E_ABORT        = 0x80004004
+	E_FAIL         = 0x80004005
+	E_ACCESSDENIED = 0x80070005
+	E_PENDING      = 0x8000000A
+)
+
+//Win32 Predefined cursor constants
+const (
+	IDC_ARROW       = 32512
+	IDC_IBEAM       = 32513
+	IDC_WAIT        = 32514
+	IDC_CROSS       = 32515
+	IDC_UPARROW     = 32516
+	IDC_SIZENWSE    = 32642
+	IDC_SIZENESW    = 32643
+	IDC_SIZEWE      = 32644
+	IDC_SIZENS      = 32645
+	IDC_SIZEALL     = 32646
+	IDC_NO          = 32648
+	IDC_HAND        = 32649
+	IDC_APPSTARTING = 32650
+	IDC_HELP        = 32651
+	IDC_ICON        = 32641
+	IDC_SIZE        = 32640
+)
+
+const (
+	FALSE = 0
+	TRUE  = 1
+)
+
+type HRGN struct {
+	instance unsafe.Pointer
+}
+
+func (m *HRGN) Free() {
+	m.instance = nil
+}
+
+type HCursor struct {
+	instance unsafe.Pointer
+}
+
+func (m *HCursor) Free() {
+	m.instance = nil
+}
 
 func WinCreateRectRgn(X1, Y1, X2, Y2 int32) *HRGN {
 	r1, _, _ := common.Proc(internale_CEF_Win_CreateRectRgn).Call(uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
@@ -79,6 +137,20 @@ func WinSetWindowRgn(handle types.HWND, hRgn *HRGN, bRedraw bool) t.LongInt {
 	return t.LongInt(r1)
 }
 
+func WinSetCursor(hCursor *HCursor) *HCursor {
+	r1, _, _ := common.Proc(internale_CEF_Win_SetCursor).Call(uintptr(hCursor.instance))
+	return &HCursor{
+		instance: unsafe.Pointer(r1),
+	}
+}
+
+func WinLoadCursor(handle types.HWND, lpCursorName int32) *HCursor {
+	r1, _, _ := common.Proc(internale_CEF_Win_LoadCursor).Call(handle, uintptr(lpCursorName))
+	return &HCursor{
+		instance: unsafe.Pointer(r1),
+	}
+}
+
 func WinOnPaint(handle types.HWND) {
 	common.Proc(internale_CEF_Win_OnPaint).Call(handle)
 }
@@ -101,4 +173,49 @@ func WinSetDraggableRegions(aRGN *HRGN, regions []TCefDraggableRegion) {
 		fmt.Println("Check PtInRegion：", WinPtInRegion(draggableRegion, 50, 50))
 	*/
 	common.Proc(internale_CEF_Win_SetDraggableRegions).Call(uintptr(aRGN.instance), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
+}
+
+type (
+	BOOL    int32
+	HRESULT int32
+)
+
+func SUCCEEDED(hr HRESULT) bool {
+	return hr >= 0
+}
+
+func FAILED(hr HRESULT) bool {
+	return hr < 0
+}
+
+func MAKEWORD(lo, hi byte) uint16 {
+	return uint16(uint16(lo) | ((uint16(hi)) << 8))
+}
+
+func LOBYTE(w uint16) byte {
+	return byte(w)
+}
+
+func HIBYTE(w uint16) byte {
+	return byte(w >> 8 & 0xff)
+}
+
+func MAKELONG(lo, hi uint16) uint32 {
+	return uint32(uint32(lo) | ((uint32(hi)) << 16))
+}
+
+func LOWORD(dw uint32) uint16 {
+	return uint16(dw)
+}
+
+func HIWORD(dw uint32) uint16 {
+	return uint16(dw >> 16 & 0xffff)
+}
+
+func UTF16PtrToString(s *uint16) string {
+	return windows.UTF16PtrToString(s)
+}
+
+func MAKEINTRESOURCE(id uintptr) *uint16 {
+	return (*uint16)(unsafe.Pointer(id))
 }

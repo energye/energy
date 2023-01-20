@@ -189,10 +189,6 @@ type TCefPoint struct {
 	Y int32
 }
 
-type HRGN struct {
-	instance unsafe.Pointer
-}
-
 type TCefDraggableRegions struct {
 	regions      []TCefDraggableRegion
 	regionsCount int
@@ -221,10 +217,6 @@ type ICefClient struct {
 
 type ICefDragData struct {
 	instance unsafe.Pointer
-}
-
-func (m *HRGN) Free() {
-	m.instance = nil
 }
 
 func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
