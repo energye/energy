@@ -21,6 +21,12 @@ import (
 
 var ov = version.OSVersion
 
+type customWindowCaption struct {
+	canCaption bool                  //当前鼠标是否在标题栏区域
+	regions    *TCefDraggableRegions //窗口内html拖拽区域
+	rgn        *HRGN                 //
+}
+
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	m.WindowProperty()._CanHideCaption = false
@@ -42,12 +48,6 @@ func (m *LCLBrowserWindow) HideTitle() {
 	m.EnabledMaximize(false)
 	m.SetBorderStyle(types.BsNone)
 
-}
-
-type customWindowCaption struct {
-	canCaption bool                  //当前鼠标是否在标题栏区域
-	regions    *TCefDraggableRegions //窗口内html拖拽区域
-	rgn        *HRGN                 //
 }
 
 func (m *customWindowCaption) freeRgn() {

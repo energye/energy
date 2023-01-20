@@ -16,6 +16,9 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+type customWindowCaption struct {
+}
+
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	if m.TForm == nil {
