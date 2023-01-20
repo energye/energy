@@ -143,11 +143,15 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	}
 }
 
+//每一次拖拽区域改变都需要重新设置
 func (m *LCLBrowserWindow) setDraggableRegions() {
+	//在主线程中运行
 	QueueAsyncCall(func(id int) {
 		if m.cwcap.rgn == nil {
+			//第一次时创建RGN
 			m.cwcap.rgn = WinCreateRectRgn(0, 0, 0, 0)
 		} else {
+			//每次重置RGN
 			WinSetRectRgn(m.cwcap.rgn, 0, 0, 0, 0)
 		}
 		for i := 0; i < m.cwcap.regions.RegionsCount(); i++ {
