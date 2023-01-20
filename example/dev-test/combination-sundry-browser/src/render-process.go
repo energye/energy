@@ -18,7 +18,7 @@ func AppRenderInit() *cef.TCEFApplication {
 	} else if common.IsLinux() {
 		//cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")  或 配置环境变量 ENERGY_HOME
 	}
-	cfg.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
+	//cfg.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	//cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
 	cfg.SetLanguage(consts.LANGUAGE_zh_CN)
 	cfg.SetEnableGPU(false)

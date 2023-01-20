@@ -295,11 +295,12 @@ func AppBrowserInit() {
 		})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: "+beforePopupInfo.TargetUrl, "isLCL:", popupWindow.IsLCL())
+
+			popupWindow.SetShowInTaskBar()
+			popupWindow.HideTitle()
+			popupWindow.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
+			popupWindow.SetSize(800, 600)
 			window := popupWindow.AsLCLBrowserWindow().BrowserWindow()
-			popupWindow.SetNotInTaskBar()
-			window.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
-			window.SetWidth(800)
-			window.SetHeight(600)
 			//窗口弹出之前可自定义系统组件
 			//窗口大小改变后触发
 			//windows下窗口调整后触发一次
@@ -383,12 +384,12 @@ func AppBrowserInit() {
 			}
 		})
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
-			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
-			headerMap := request.GetHeaderMap()
-			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
-			for i := 0; i < headerMap.GetSize(); i++ {
-				fmt.Println("\tkey:", headerMap.GetKey(i), "value:", headerMap.GetValue(i))
-			}
+			//fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			//headerMap := request.GetHeaderMap()
+			//fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
+			//for i := 0; i < headerMap.GetSize(); i++ {
+			//	fmt.Println("\tkey:", headerMap.GetKey(i), "value:", headerMap.GetValue(i))
+			//}
 
 		})
 	})
