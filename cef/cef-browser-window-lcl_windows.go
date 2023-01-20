@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/rtl/version"
@@ -143,11 +144,23 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 }
 
 func (m *LCLBrowserWindow) setDraggableRegions() {
-	if m.cwcap.regions.RegionsCount() > 0 {
-		m.cwcap.freeRgn()
-		m.cwcap.rgn = WinCreateRectRgn(0, 0, 0, 0)
-		WinSetDraggableRegions(m.cwcap.rgn, m.cwcap.regions.Regions())
-	}
+	QueueAsyncCall(func(id int) {
+		if m.cwcap.rgn == nil {
+			m.cwcap.rgn = WinCreateRectRgn(0, 0, 0, 0)
+		} else {
+			WinSetRectRgn(m.cwcap.rgn, 0, 0, 0, 0)
+		}
+		for i := 0; i < m.cwcap.regions.RegionsCount(); i++ {
+			region := m.cwcap.regions.Region(i)
+			creRGN := WinCreateRectRgn(region.Bounds.X, region.Bounds.Y, region.Bounds.X+region.Bounds.Width, region.Bounds.Y+region.Bounds.Height)
+			if region.Draggable {
+				WinCombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_OR)
+			} else {
+				WinCombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_DIFF)
+			}
+			WinDeleteObject(creRGN)
+		}
+	})
 }
 
 // default event register: windows CompMsgEvent
