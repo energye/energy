@@ -16,19 +16,22 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
-	"github.com/energye/golcl/lcl/rtl/version"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"
 )
 
-var ov = version.OSVersion
+//定义四角和边框范围
+var (
+	angleRange  int32 = 10 //四角
+	borderRange int32 = 5  //四边框
+)
 
 type customWindowCaption struct {
-	canCaption      bool                  //当前鼠标是否在标题栏区域
-	canBorder       bool                  //当前鼠标是否在边框
-	borderDirection int                   //当前鼠标所在边框的方向
-	regions         *TCefDraggableRegions //窗口内html拖拽区域
-	rgn             *HRGN                 //
+	canCaption bool                  //当前鼠标是否在标题栏区域
+	canBorder  bool                  //当前鼠标是否在边框
+	ht, wmsz   uintptr               //ht: 鼠标所在边框位置, wmzs: 窗口改变大小边框方向
+	regions    *TCefDraggableRegions //窗口内html拖拽区域
+	rgn        *HRGN                 //
 }
 
 //显示标题栏
@@ -77,23 +80,95 @@ func (m *customWindowCaption) free() {
 }
 
 //NC 鼠标移动
-func (m *customWindowCaption) onNCMouseMove(hWND types.HWND, message *types.TMessage) {
-
-}
-
-//NC 鼠标左键按下
-func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage) {
-
+func (m *customWindowCaption) onNCMouseMove(lResult *types.LRESULT, aHandled *bool) {
+	//非客户区边框鼠标移动
+	if m.canBorder { //当前在边框
+		//fmt.Println("onNCMouseMove canBorder", m.canBorder, "ht", m.ht, "wmsz", m.wmsz)
+		*lResult = m.ht
+		*aHandled = true
+	}
 }
 
 //设置鼠标图标
-func (m *customWindowCaption) onSetCursor(hWND types.HWND, message *types.TMessage) {
-
+func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+	if m.canBorder { //当前在边框
+		switch LOWORD(message.LParam) {
+		case HTBOTTOMRIGHT, HTTOPLEFT: //右下 左上
+			*lResult = m.ht
+			*aHandled = true
+			WinSetCursor(WinLoadCursor(0, IDC_SIZENWSE))
+		case HTRIGHT, HTLEFT: //右 左
+			*lResult = m.ht
+			*aHandled = true
+			WinSetCursor(WinLoadCursor(0, IDC_SIZEWE))
+		case HTTOPRIGHT, HTBOTTOMLEFT: //右上 左下
+			*lResult = m.ht
+			*aHandled = true
+			WinSetCursor(WinLoadCursor(0, IDC_SIZENESW))
+		case HTTOP, HTBOTTOM: //上 下
+			*lResult = m.ht
+			*aHandled = true
+			WinSetCursor(WinLoadCursor(0, IDC_SIZENS))
+		}
+	}
 }
 
 //鼠标是否在边框
-func (m *customWindowCaption) onCanBorder(hWND types.HWND, message *types.TMessage) {
+func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (uintptr, bool) {
+	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
+		m.wmsz = WMSZ_TOPRIGHT
+		m.ht = HTTOPRIGHT
+		return m.ht, true
+	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= rect.Height() && y >= rect.Height()-angleRange; m.canBorder { // 右下
+		m.wmsz = WMSZ_BOTTOMRIGHT
+		m.ht = HTBOTTOMRIGHT
+		return m.ht, true
+	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
+		m.wmsz = WMSZ_TOPLEFT
+		m.ht = HTTOPLEFT
+		return m.ht, true
+	} else if m.canBorder = x <= angleRange && y >= rect.Height()-angleRange; m.canBorder { //左下
+		m.wmsz = WMSZ_BOTTOMLEFT
+		m.ht = HTBOTTOMLEFT
+		return m.ht, true
+	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y <= borderRange; m.canBorder { //上
+		m.wmsz = WMSZ_TOP
+		m.ht = HTTOP
+		return m.ht, true
+	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y >= rect.Height()-borderRange; m.canBorder { //下
+		m.wmsz = WMSZ_BOTTOM
+		m.ht = HTBOTTOM
+		return m.ht, true
+	} else if m.canBorder = x <= borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { //左
+		m.wmsz = WMSZ_LEFT
+		m.ht = HTLEFT
+		return m.ht, true
+	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { // 右
+		m.wmsz = WMSZ_RIGHT
+		m.ht = HTRIGHT
+		return m.ht, true
+	}
+	return 0, false
+}
 
+//NC 鼠标左键按下
+func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+	if m.canCaption { // 标题栏
+		*lResult = HTCAPTION
+		*aHandled = true
+		win.ReleaseCapture()
+		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, 0)
+	} else if m.canBorder { // 边框
+		//fmt.Println("canBorder", m.canBorder, "ht", m.ht, "wmsz", m.wmsz)
+		//当前在边框
+		*lResult = m.ht
+		*aHandled = true
+		win.ReleaseCapture()
+		rtl.PostMessage(hWND, WM_SYSCOMMAND, SC_SIZE|m.wmsz, rtl.MakeLParam(m.toPoint(message)))
+		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.wmsz), rtl.MakeLParam(m.toPoint(message)))
+		//rtl.SendMessage(hWND, WM_NCLBUTTONUP, SC_SIZE|WMSZ_BOTTOMRIGHT, rtl.MakeLParam(m.toPoint(message)))
+		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|WMSZ_BOTTOMRIGHT), rtl.MakeLParam(m.toPoint(message)))
+	}
 }
 
 //转换XY坐标
@@ -102,25 +177,20 @@ func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y uint16) {
 }
 
 //鼠标在标题栏区域
-func (m *customWindowCaption) isCaption(hWND types.HWND, rgn *HRGN, message *types.TMessage) (int32, int32, bool) {
+func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
 		X: int32(dx),
 		Y: int32(dy),
 	}
 	WinScreenToClient(hWND, p)
-	m.canCaption = WinPtInRegion(rgn, p.X, p.Y)
+	m.canCaption = WinPtInRegion(m.rgn, p.X, p.Y)
 	return p.X, p.Y, m.canCaption
 }
 
-//定义四角和边框范围
-var (
-	angleRange  int32 = 8
-	broderRange int32 = 4
-)
-
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
+		fmt.Println("msg:", message.Msg)
 		switch message.Msg {
 		case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 			if !m.WindowProperty().CanCaptionDClkMaximize {
@@ -143,25 +213,19 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
 			}
 		case WM_NCLBUTTONDOWN: // 161 nc left down
-			if m.cwcap.rgn != nil && m.cwcap.canCaption { //拖拽区域已设置，并且在标题栏
-				*lResult = HTCAPTION
-				*aHandled = true
-				win.ReleaseCapture()
-				rtl.PostMessage(m.Handle(), WM_NCLBUTTONDOWN, HTCAPTION, 0)
-			} else {
-				if m.cwcap.canBorder { //当前在边框
-					*lResult = types.LRESULT(m.cwcap.borderDirection)
-					*aHandled = true
-					win.ReleaseCapture()
-					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_SIZE|WMSZ_BOTTOMRIGHT, rtl.MakeLParam(m.cwcap.toPoint(message)))
-				}
-			}
+			m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
 		case WM_NCLBUTTONUP: // 162 nc l up
 			fmt.Println("nc l up")
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
 			}
+		case WM_SIZE, WM_SIZING:
+			//fmt.Println("size canBorder", m.cwcap.canBorder, "ht", m.cwcap.ht, "wmsz", m.cwcap.wmsz)
+			//if m.cwcap.canBorder {
+			//	*lResult = m.cwcap.ht
+			//	*aHandled = true
+			//}
 		case WM_NCRBUTTONDOWN: // nc r down
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
@@ -169,43 +233,23 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 			}
 		case WM_NCMOUSEMOVE: // 160 nc mouse move
-			//非客户区边框鼠标移动
-			if m.cwcap.canBorder { //当前在边框
-				//mx, my := m.cwcap.toPoint(message)
-				//fmt.Println("MOVE 当前在边框:", m.cwcap.borderDirection, "dx-dy:", dx, dy, "mx-my:", mx, my, "dm:", dx-mx, dy-my)
-				*lResult = types.LRESULT(m.cwcap.borderDirection)
-				*aHandled = true
-			}
+			m.cwcap.onNCMouseMove(lResult, aHandled)
 		case WM_SETCURSOR: // 32 设置鼠标图标样式
-			//设置鼠标图标样式
-			if m.cwcap.canBorder { //当前在边框
-				switch LOWORD(message.LParam) {
-				case HTBOTTOMRIGHT: //右下
-					fmt.Println("WM_SETCURSOR", LOWORD(message.LParam))
-					WinSetCursor(WinLoadCursor(0, IDC_SIZENWSE))
-					*lResult = HTBOTTOMRIGHT
-					*aHandled = true
-				}
-			}
+			m.cwcap.onSetCursor(message, lResult, aHandled)
 		case WM_NCHITTEST: // 132 NCHITTEST
 			if m.cwcap.rgn != nil {
-				x, y, caption := m.cwcap.isCaption(m.Handle(), m.cwcap.rgn, message)
+				x, y, caption := m.cwcap.isCaption(m.Handle(), message)
 				//设置鼠标坐标是否在标题区域
-				m.cwcap.canCaption = caption
 				if caption { //窗口标题栏
 					*lResult = HTCAPTION
 					*aHandled = true
 				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
-					if m.cwcap.canBorder = x <= m.Width() && x >= m.Width()-angleRange && y <= m.Height() && y >= m.Height()-angleRange; m.cwcap.canBorder { // 1.右下
-						m.cwcap.borderDirection = HTBOTTOMRIGHT
-						*lResult = HTBOTTOMRIGHT
+					rect := m.BoundsRect()
+					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
+						*lResult = result
 						*aHandled = true
-					} else if m.cwcap.canBorder = x <= m.Width() && x >= m.Width()-5 && y <= m.Height() && y >= m.Height()-5; m.cwcap.canBorder { // 2.右
-
 					}
-					return
 				}
-				m.cwcap.canBorder = false
 			}
 		}
 	}
