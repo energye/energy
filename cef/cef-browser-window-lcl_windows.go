@@ -27,11 +27,12 @@ var (
 )
 
 type customWindowCaption struct {
-	canCaption bool                  //当前鼠标是否在标题栏区域
-	canBorder  bool                  //当前鼠标是否在边框
-	ht, wmsz   uintptr               //ht: 鼠标所在边框位置, wmzs: 窗口改变大小边框方向
-	regions    *TCefDraggableRegions //窗口内html拖拽区域
-	rgn        *HRGN                 //
+	canCaption           bool                  //当前鼠标是否在标题栏区域
+	canBorder            bool                  //当前鼠标是否在边框
+	borderHT, borderWMSZ int                   //borderHT: 鼠标所在边框位置, borderWMSZ: 窗口改变大小边框方向 borderMD:
+	borderMD             bool                  //borderMD: 鼠标调整窗口大小，已按下后，再次接收到132消息应该忽略该消息
+	regions              *TCefDraggableRegions //窗口内html拖拽区域
+	rgn                  *HRGN                 //
 }
 
 //显示标题栏
@@ -83,8 +84,8 @@ func (m *customWindowCaption) free() {
 func (m *customWindowCaption) onNCMouseMove(lResult *types.LRESULT, aHandled *bool) {
 	//非客户区边框鼠标移动
 	if m.canBorder { //当前在边框
-		//fmt.Println("onNCMouseMove canBorder", m.canBorder, "ht", m.ht, "wmsz", m.wmsz)
-		*lResult = m.ht
+		//fmt.Println("onNCMouseMove canBorder", m.canBorder, "borderHT", m.borderHT, "borderWMSZ", m.borderWMSZ)
+		//*lResult = types.LRESULT(m.borderHT)
 		*aHandled = true
 	}
 }
@@ -94,19 +95,19 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 	if m.canBorder { //当前在边框
 		switch LOWORD(message.LParam) {
 		case HTBOTTOMRIGHT, HTTOPLEFT: //右下 左上
-			*lResult = m.ht
+			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
 			WinSetCursor(WinLoadCursor(0, IDC_SIZENWSE))
 		case HTRIGHT, HTLEFT: //右 左
-			*lResult = m.ht
+			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
 			WinSetCursor(WinLoadCursor(0, IDC_SIZEWE))
 		case HTTOPRIGHT, HTBOTTOMLEFT: //右上 左下
-			*lResult = m.ht
+			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
 			WinSetCursor(WinLoadCursor(0, IDC_SIZENESW))
 		case HTTOP, HTBOTTOM: //上 下
-			*lResult = m.ht
+			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
 			WinSetCursor(WinLoadCursor(0, IDC_SIZENS))
 		}
@@ -114,39 +115,39 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 }
 
 //鼠标是否在边框
-func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (uintptr, bool) {
+func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
 	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
-		m.wmsz = WMSZ_TOPRIGHT
-		m.ht = HTTOPRIGHT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_TOPRIGHT
+		m.borderHT = HTTOPRIGHT
+		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= rect.Height() && y >= rect.Height()-angleRange; m.canBorder { // 右下
-		m.wmsz = WMSZ_BOTTOMRIGHT
-		m.ht = HTBOTTOMRIGHT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_BOTTOMRIGHT
+		m.borderHT = HTBOTTOMRIGHT
+		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
-		m.wmsz = WMSZ_TOPLEFT
-		m.ht = HTTOPLEFT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_TOPLEFT
+		m.borderHT = HTTOPLEFT
+		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y >= rect.Height()-angleRange; m.canBorder { //左下
-		m.wmsz = WMSZ_BOTTOMLEFT
-		m.ht = HTBOTTOMLEFT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_BOTTOMLEFT
+		m.borderHT = HTBOTTOMLEFT
+		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y <= borderRange; m.canBorder { //上
-		m.wmsz = WMSZ_TOP
-		m.ht = HTTOP
-		return m.ht, true
+		m.borderWMSZ = WMSZ_TOP
+		m.borderHT = HTTOP
+		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y >= rect.Height()-borderRange; m.canBorder { //下
-		m.wmsz = WMSZ_BOTTOM
-		m.ht = HTBOTTOM
-		return m.ht, true
+		m.borderWMSZ = WMSZ_BOTTOM
+		m.borderHT = HTBOTTOM
+		return m.borderHT, true
 	} else if m.canBorder = x <= borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { //左
-		m.wmsz = WMSZ_LEFT
-		m.ht = HTLEFT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_LEFT
+		m.borderHT = HTLEFT
+		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { // 右
-		m.wmsz = WMSZ_RIGHT
-		m.ht = HTRIGHT
-		return m.ht, true
+		m.borderWMSZ = WMSZ_RIGHT
+		m.borderHT = HTRIGHT
+		return m.borderHT, true
 	}
 	return 0, false
 }
@@ -159,13 +160,15 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 		win.ReleaseCapture()
 		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, 0)
 	} else if m.canBorder { // 边框
-		//fmt.Println("canBorder", m.canBorder, "ht", m.ht, "wmsz", m.wmsz)
+		//fmt.Println("canBorder", m.canBorder, "borderHT", m.borderHT, "borderWMSZ", m.borderWMSZ)
 		//当前在边框
-		*lResult = m.ht
+		//*lResult = types.LRESULT(m.borderHT)
+		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, WM_SYSCOMMAND, SC_SIZE|m.wmsz, rtl.MakeLParam(m.toPoint(message)))
-		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.wmsz), rtl.MakeLParam(m.toPoint(message)))
+		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
+		rtl.PostMessage(hWND, WM_NCLBUTTONUP, HTBORDER, 0)
+		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
 		//rtl.SendMessage(hWND, WM_NCLBUTTONUP, SC_SIZE|WMSZ_BOTTOMRIGHT, rtl.MakeLParam(m.toPoint(message)))
 		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|WMSZ_BOTTOMRIGHT), rtl.MakeLParam(m.toPoint(message)))
 	}
@@ -192,6 +195,18 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
 		fmt.Println("msg:", message.Msg)
 		switch message.Msg {
+		//case WM_SIZE, WM_SIZING:
+		//	//fmt.Println("size canBorder", m.cwcap.canBorder, "borderHT", m.cwcap.borderHT, "borderWMSZ", m.cwcap.borderWMSZ)
+		//	//if m.cwcap.canBorder {
+		//	//	*lResult = m.cwcap.borderHT
+		//	//	*aHandled = true
+		//	//}
+		//case WM_NCRBUTTONDOWN: // nc r down
+		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
+		//	}
+		//case WM_NCRBUTTONUP: // nc r up
+		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
+		//	}
 		case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 			if !m.WindowProperty().CanCaptionDClkMaximize {
 				return
@@ -220,18 +235,6 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				*lResult = HTCAPTION
 				*aHandled = true
 			}
-		case WM_SIZE, WM_SIZING:
-			//fmt.Println("size canBorder", m.cwcap.canBorder, "ht", m.cwcap.ht, "wmsz", m.cwcap.wmsz)
-			//if m.cwcap.canBorder {
-			//	*lResult = m.cwcap.ht
-			//	*aHandled = true
-			//}
-		case WM_NCRBUTTONDOWN: // nc r down
-			if m.cwcap.rgn != nil && m.cwcap.canCaption {
-			}
-		case WM_NCRBUTTONUP: // nc r up
-			if m.cwcap.rgn != nil && m.cwcap.canCaption {
-			}
 		case WM_NCMOUSEMOVE: // 160 nc mouse move
 			m.cwcap.onNCMouseMove(lResult, aHandled)
 		case WM_SETCURSOR: // 32 设置鼠标图标样式
@@ -244,10 +247,16 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					*lResult = HTCAPTION
 					*aHandled = true
 				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
+					if m.cwcap.borderMD {
+						m.cwcap.borderMD = false
+						return
+					}
 					rect := m.BoundsRect()
 					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
-						*lResult = result
+						*lResult = types.LRESULT(result)
 						*aHandled = true
+					} else {
+						m.cwcap.canBorder = false
 					}
 				}
 			}
