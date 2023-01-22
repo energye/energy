@@ -80,12 +80,11 @@ func (m *customWindowCaption) free() {
 	}
 }
 
-//NC 鼠标移动
-func (m *customWindowCaption) onNCMouseMove(lResult *types.LRESULT, aHandled *bool) {
-	//非客户区边框鼠标移动
-	if m.canBorder { //当前在边框
-		//fmt.Println("onNCMouseMove canBorder", m.canBorder, "borderHT", m.borderHT, "borderWMSZ", m.borderWMSZ)
-		//*lResult = types.LRESULT(m.borderHT)
+//NC 非客户区鼠标移动
+func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+	if m.canCaption { // 当前在标题栏
+	} else if m.canBorder { // 当前在边框
+		*lResult = types.LRESULT(m.borderHT)
 		*aHandled = true
 	}
 }
@@ -156,20 +155,16 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
 		*lResult = HTCAPTION
+		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, 0)
+		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, rtl.MakeLParam(m.toPoint(message)))
 	} else if m.canBorder { // 边框
-		//fmt.Println("canBorder", m.canBorder, "borderHT", m.borderHT, "borderWMSZ", m.borderWMSZ)
-		//当前在边框
-		//*lResult = types.LRESULT(m.borderHT)
+		*lResult = types.LRESULT(m.borderHT)
 		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
 		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
-		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
-		//rtl.SendMessage(hWND, WM_NCLBUTTONUP, SC_SIZE|WMSZ_BOTTOMRIGHT, rtl.MakeLParam(m.toPoint(message)))
-		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|WMSZ_BOTTOMRIGHT), rtl.MakeLParam(m.toPoint(message)))
 	}
 }
 
@@ -192,14 +187,13 @@ func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage
 
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
-		fmt.Println("msg:", message.Msg)
+		//fmt.Println("msg:", message.Msg)
 		switch message.Msg {
 		//case WM_SIZE, WM_SIZING:
-		//	//fmt.Println("size canBorder", m.cwcap.canBorder, "borderHT", m.cwcap.borderHT, "borderWMSZ", m.cwcap.borderWMSZ)
-		//	//if m.cwcap.canBorder {
-		//	//	*lResult = m.cwcap.borderHT
-		//	//	*aHandled = true
-		//	//}
+		//	if m.cwcap.canBorder {
+		//		*lResult = types.LRESULT(m.cwcap.borderHT)
+		//		*aHandled = true
+		//	}
 		//case WM_NCRBUTTONDOWN: // nc r down
 		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
 		//	}
@@ -235,27 +229,25 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				*aHandled = true
 			}
 		case WM_NCMOUSEMOVE: // 160 nc mouse move
-			m.cwcap.onNCMouseMove(lResult, aHandled)
+			m.cwcap.onNCMouseMove(message, lResult, aHandled)
 		case WM_SETCURSOR: // 32 设置鼠标图标样式
 			m.cwcap.onSetCursor(message, lResult, aHandled)
 		case WM_NCHITTEST: // 132 NCHITTEST
 			if m.cwcap.rgn != nil {
+				if m.cwcap.borderMD { //TODO 测试windows7, 161消息之后再次处理132消息导致消息错误
+					m.cwcap.borderMD = false
+					return
+				}
 				x, y, caption := m.cwcap.isCaption(m.Handle(), message)
 				//设置鼠标坐标是否在标题区域
 				if caption { //窗口标题栏
 					*lResult = HTCAPTION
 					*aHandled = true
 				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
-					if m.cwcap.borderMD && m.cwcap.canBorder { //TODO 测试 windows7, 161消息之后再次处理132消息导致消息错误
-						m.cwcap.borderMD = false
-						return
-					}
 					rect := m.BoundsRect()
 					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
 						*lResult = types.LRESULT(result)
 						*aHandled = true
-					} else {
-						m.cwcap.canBorder = false
 					}
 				}
 			}
