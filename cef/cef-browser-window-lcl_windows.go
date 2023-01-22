@@ -167,7 +167,6 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 		*aHandled = true
 		win.ReleaseCapture()
 		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
-		rtl.PostMessage(hWND, WM_NCLBUTTONUP, HTBORDER, 0)
 		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
 		//rtl.SendMessage(hWND, WM_NCLBUTTONUP, SC_SIZE|WMSZ_BOTTOMRIGHT, rtl.MakeLParam(m.toPoint(message)))
 		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|WMSZ_BOTTOMRIGHT), rtl.MakeLParam(m.toPoint(message)))
@@ -247,7 +246,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					*lResult = HTCAPTION
 					*aHandled = true
 				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
-					if m.cwcap.borderMD { //TODO 测试 windows7, 161消息之后再次处理132消息导致消息错误
+					if m.cwcap.borderMD && m.cwcap.canBorder { //TODO 测试 windows7, 161消息之后再次处理132消息导致消息错误
 						m.cwcap.borderMD = false
 						return
 					}
