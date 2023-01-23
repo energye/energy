@@ -61,7 +61,15 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//sys_tray.TrayMain()
-
+		//browserWindow := window.AsLCLBrowserWindow()
+		//parent := browserWindow.WindowParent()
+		//parent.SetAlign(types.AlNone)
+		//parent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkBottom, types.AkRight))
+		//parent.SetTop(100)
+		//parent.SetLeft(100)
+		//parent.SetWidth(600)
+		//parent.SetHeight(600)
+		//browserWindow.BrowserWindow().SetTransparentColor()
 		//dwWinStyle := win.GetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE)
 		//dwWinStyle |= win.WS_THICKFRAME
 		//win.SetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE, uintptr(dwWinStyle))

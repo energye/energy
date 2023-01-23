@@ -326,6 +326,16 @@ func (m *LCLBrowserWindow) Maximize() {
 	})
 }
 
-func (m *LCLBrowserWindow) SetTransparentColor() {
-
-}
+//func (m *LCLBrowserWindow) SetTransparentColor() {
+//	m.SetColor(colors.ClNavy)
+//	Exstyle := win.GetWindowLong(m.Handle(), win.GWL_EXSTYLE)
+//	Exstyle = Exstyle | win.WS_EX_LAYERED&^win.WS_EX_TRANSPARENT
+//	win.SetWindowLong(m.Handle(), win.GWL_EXSTYLE, uintptr(Exstyle))
+//	win.SetLayeredWindowAttributes(m.Handle(),
+//		colors.ClNavy, //crKey 指定需要透明的背景颜色值
+//		255,           //bAlpha 设置透明度,0完全透明，255不透明
+//		//LWA_ALPHA: crKey无效,bAlpha有效
+//		//LWA_COLORKEY: 窗体中的所有颜色为crKey的地方全透明，bAlpha无效
+//		//LWA_ALPHA | LWA_COLORKEY: crKey的地方全透明，其它地方根据bAlpha确定透明度
+//		win.LWA_ALPHA|win.LWA_COLORKEY)
+//}
