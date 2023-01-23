@@ -37,19 +37,17 @@ type customWindowCaption struct {
 
 //显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
-	m.WindowProperty()._CanHideCaption = false
+	m.WindowProperty()._EnableHideCaption = false
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-	if m.WindowProperty().CanMaximize {
-		m.EnabledMaximize(true)
-	}
+	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
+	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
 	m.SetBorderStyle(types.BsSizeable)
-
 }
 
 //隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
-	m.WindowProperty()._CanHideCaption = true
+	m.WindowProperty()._EnableHideCaption = true
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), 0, 0, 0, m.Width(), m.Height()+500, win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED|win.SWP_DRAWFRAME)
 	//无标题栏情况会导致任务栏不能切换窗口，不知道为什么要这样设置一下
@@ -165,6 +163,7 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 		*aHandled = true
 		win.ReleaseCapture()
 		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
+		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), 0)
 	}
 }
 
@@ -201,7 +200,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
 		//	}
 		case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
-			if !m.WindowProperty().CanCaptionDClkMaximize {
+			if !m.WindowProperty().EnableCaptionDClkMaximize {
 				return
 			}
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
@@ -243,7 +242,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				if caption { //窗口标题栏
 					*lResult = HTCAPTION
 					*aHandled = true
-				} else if m.WindowProperty()._CanHideCaption && m.WindowProperty().CanResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
+				} else if m.WindowProperty()._EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
 					rect := m.BoundsRect()
 					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
 						*lResult = types.LRESULT(result)
@@ -282,7 +281,7 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 // default event register: windows CompMsgEvent
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
-	if m.WindowProperty().CanWebkitAppRegion {
+	if m.WindowProperty().EnableWebkitAppRegion {
 		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 			if bwEvent.onRenderCompMsg != nil {
 				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
@@ -292,7 +291,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			}
 		})
 		m.windowResize = func(sender lcl.IObject) bool {
-			if m.WindowState() == types.WsMaximized && (m.WindowProperty()._CanHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
+			if m.WindowState() == types.WsMaximized && (m.WindowProperty()._EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 				var monitor = m.Monitor().WorkareaRect()
 				m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
 				m.SetWindowState(types.WsMaximized)

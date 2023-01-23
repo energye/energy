@@ -67,10 +67,7 @@ type LCLBrowserWindow struct {
 //创建一个 LCL 带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowProperty) *LCLBrowserWindow {
-	if windowProperty == nil {
-		windowProperty = NewWindowProperty()
-	}
+func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty WindowProperty) *LCLBrowserWindow {
 	var window = NewLCLWindow(windowProperty)
 	window.ChromiumCreate(config, windowProperty.Url)
 	window.putChromiumWindowInfo()
@@ -83,10 +80,7 @@ func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty *WindowPrope
 }
 
 //创建一个LCL window窗口
-func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
-	if windowProperty == nil {
-		windowProperty = NewWindowProperty()
-	}
+func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
 	var window = &LCLBrowserWindow{}
 	if len(owner) > 0 {
 		window.TForm = lcl.NewForm(owner[0])
@@ -94,39 +88,50 @@ func NewLCLWindow(windowProperty *WindowProperty, owner ...lcl.IComponent) *LCLB
 		window.TForm = lcl.NewForm(BrowserWindow.mainBrowserWindow)
 		//lcl.Application.CreateForm(&window)
 	}
-	window.windowProperty = windowProperty
+	window.windowProperty = &windowProperty
 	window.cwcap = new(customWindowCaption)
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()
 	window.defaultWindowEvent()
-	window.SetCaption(windowProperty.Title)
-	if windowProperty.CenterWindow {
-		window.SetWidth(windowProperty.Width)
-		window.SetHeight(windowProperty.Height)
-		window.SetPosition(types.PoDesktopCenter)
-	} else {
-		window.SetPosition(types.PoDesigned)
-		window.SetBounds(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height)
-	}
-	if windowProperty.IconFS != "" {
-		if emfs.IsExist(windowProperty.IconFS) {
-			_ = window.Icon().LoadFromFSFile(windowProperty.IconFS)
-		}
-	} else if windowProperty.Icon != "" {
-		if tools.IsExist(windowProperty.Icon) {
-			window.Icon().LoadFromFile(windowProperty.Icon)
-		}
-	}
-	if windowProperty.AlwaysOnTop {
-		window.SetFormStyle(types.FsSystemStayOnTop)
-	}
-	window.EnabledMinimize(windowProperty.CanMinimize)
-	window.EnabledMaximize(windowProperty.CanMaximize)
-	if !windowProperty.CanResize {
-		window.SetBorderStyle(types.BsSingle)
-	}
+	window.setProperty()
 	return window
+}
+
+//设置属性
+func (m *LCLBrowserWindow) setProperty() {
+	m.SetTitle(m.windowProperty.Title)
+	if m.windowProperty.IconFS != "" {
+		if emfs.IsExist(m.windowProperty.IconFS) {
+			_ = lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
+		}
+	} else if m.windowProperty.Icon != "" {
+		if tools.IsExist(m.windowProperty.Icon) {
+			lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
+		}
+	}
+	if m.windowProperty.EnableWindow {
+		m.SetSize(m.windowProperty.Width, m.windowProperty.Height)
+		m.SetPosition(types.PoDesktopCenter)
+	} else {
+		m.SetPosition(types.PoDesigned)
+		m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
+	}
+	if m.windowProperty.AlwaysOnTop {
+		m.SetFormStyle(types.FsSystemStayOnTop)
+	}
+	if !m.windowProperty.EnableMinimize {
+		m.DisableMinimize()
+	}
+	if !m.windowProperty.EnableMaximize {
+		m.DisableMaximize()
+	}
+	if !m.windowProperty.EnableResize {
+		m.SetBorderStyle(types.BsSingle)
+	}
+	if m.windowProperty._EnableHideCaption {
+		m.HideTitle()
+	}
 }
 
 func (m *LCLBrowserWindow) Handle() types.HWND {
@@ -563,8 +568,8 @@ func (m *LCLBrowserWindow) DisableMinimize() {
 		return
 	}
 	//m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMinimize))
-	m.WindowProperty().CanMinimize = false
-	m.EnabledMinimize(m.WindowProperty().CanMinimize)
+	m.WindowProperty().EnableMinimize = false
+	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
 }
 
 //禁用最大化按钮
@@ -573,8 +578,8 @@ func (m *LCLBrowserWindow) DisableMaximize() {
 		return
 	}
 	//m.SetBorderIcons(m.BorderIcons().Exclude(types.BiMaximize))
-	m.WindowProperty().CanMaximize = false
-	m.EnabledMaximize(m.WindowProperty().CanMaximize)
+	m.WindowProperty().EnableMaximize = false
+	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
 }
 
 //禁用调整窗口大小
@@ -582,8 +587,10 @@ func (m *LCLBrowserWindow) DisableResize() {
 	if m.TForm == nil {
 		return
 	}
-	m.WindowProperty().CanResize = false
-	m.TForm.SetBorderStyle(types.BsSingle)
+	m.WindowProperty().EnableResize = false
+	if !m.WindowProperty()._EnableHideCaption {
+		m.TForm.SetBorderStyle(types.BsSingle)
+	}
 }
 
 //禁用系统菜单-同时禁用最小化，最大化，关闭按钮
@@ -609,8 +616,8 @@ func (m *LCLBrowserWindow) EnableMinimize() {
 		return
 	}
 	//m.SetBorderIcons(m.BorderIcons().Include(types.BiMinimize))
-	m.WindowProperty().CanMinimize = true
-	m.EnabledMinimize(m.WindowProperty().CanMinimize)
+	m.WindowProperty().EnableMinimize = true
+	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
 }
 
 //启用最大化按钮
@@ -619,8 +626,8 @@ func (m *LCLBrowserWindow) EnableMaximize() {
 		return
 	}
 	//m.SetBorderIcons(m.BorderIcons().Include(types.BiMaximize))
-	m.WindowProperty().CanMaximize = true
-	m.EnabledMaximize(m.WindowProperty().CanMaximize)
+	m.WindowProperty().EnableMaximize = true
+	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
 }
 
 //启用调整窗口大小
@@ -628,8 +635,10 @@ func (m *LCLBrowserWindow) EnableResize() {
 	if m.TForm == nil {
 		return
 	}
-	m.WindowProperty().CanResize = true
-	m.TForm.SetBorderStyle(types.BsSizeable)
+	m.WindowProperty().EnableResize = true
+	if !m.WindowProperty()._EnableHideCaption {
+		m.TForm.SetBorderStyle(types.BsSizeable)
+	}
 }
 
 //启用系统菜单-同时禁用最小化，最大化，关闭按钮
@@ -729,14 +738,12 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
 		}
+		bw.setProperty()
 		if !result {
 			QueueAsyncCall(func(id int) {
-				winProperty := bw.windowProperty
-				if winProperty != nil {
-					if winProperty.IsShowModel {
-						bw.ShowModal()
-						return
-					}
+				if bw.WindowProperty().IsShowModel {
+					bw.ShowModal()
+					return
 				}
 				BrowserWindow.popupWindow.Show()
 			})
@@ -847,7 +854,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
-		*result = !m.WindowProperty().CanDragFile
+		*result = !m.WindowProperty().EnableDragFile
 		if bwEvent.onDragEnter != nil {
 			bwEvent.onDragEnter(sender, browser, dragData, mask, result)
 		}
@@ -857,7 +864,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
 		}
 	})
-	if m.WindowProperty().CanWebkitAppRegion {
+	if m.WindowProperty().EnableWebkitAppRegion {
 		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if bwEvent.onDraggableRegionsChanged != nil {
 				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)

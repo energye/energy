@@ -12,10 +12,7 @@ import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/energy/emfs"
-	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
 )
 
 // 浏览器包装结构体
@@ -61,7 +58,7 @@ type browserWindow struct {
 }
 
 func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
-	m.windowProperty = BrowserWindow.Config.WindowProperty
+	m.windowProperty = &BrowserWindow.Config.WindowProperty
 	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()
 	m.defaultWindowEvent()
@@ -69,36 +66,11 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.putChromiumWindowInfo()
 	m.defaultChromiumEvent()
-	m.SetCaption(m.windowProperty.Title)
-	if m.windowProperty.IconFS != "" {
-		if emfs.IsExist(m.windowProperty.IconFS) {
-			_ = lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
-		}
-	} else if m.windowProperty.Icon != "" {
-		if tools.IsExist(m.windowProperty.Icon) {
-			lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
-		}
-	}
-	if m.windowProperty.CenterWindow {
-		m.SetWidth(m.windowProperty.Width)
-		m.SetHeight(m.windowProperty.Height)
-		m.SetPosition(types.PoDesktopCenter)
-	} else {
-		m.SetPosition(types.PoDesigned)
-		m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
-	}
-	if m.windowProperty.AlwaysOnTop {
-		m.SetFormStyle(types.FsSystemStayOnTop)
-	}
-	m.EnabledMinimize(m.windowProperty.CanMinimize)
-	m.EnabledMaximize(m.windowProperty.CanMaximize)
-	if !m.windowProperty.CanResize {
-		m.SetBorderStyle(types.BsSingle)
-	}
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.chromium
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
 	}
+	m.setProperty()
 	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
 	m.registerWindowsCompMsgEvent()
 
@@ -173,7 +145,7 @@ func (m *browser) GetNextWindowNum() int32 {
 }
 
 func (m *browser) createNextLCLPopupWindow() {
-	m.popupWindow = NewLCLWindow(BrowserWindow.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
+	m.popupWindow = NewLCLWindow(m.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 

@@ -32,10 +32,10 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *V
 	wp.X = -width
 	wp.Y = -height
 	wp.AlwaysOnTop = true
-	wp.CanMaximize = false
-	wp.CanMinimize = false
-	wp.CanResize = false
-	wp.CenterWindow = false
+	wp.EnableMaximize = false
+	wp.EnableMinimize = false
+	wp.EnableResize = false
+	wp.EnableWindow = false
 	tray.trayWindow = NewViewsFrameworkBrowserWindow(cc, wp)
 	tray.trayWindow.ResetWindowPropertyForEvent()
 	tray.trayIcon = lcl.NewTrayIcon(owner)

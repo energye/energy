@@ -17,7 +17,7 @@ import (
 
 //显示标题栏
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
-	m.WindowProperty()._CanHideCaption = false
+	m.WindowProperty()._EnableHideCaption = false
 	handle := m.WindowComponent().WindowHandle()
 	win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)|win.WS_CAPTION))
 	win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
@@ -25,7 +25,7 @@ func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 
 //隐藏标题栏
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
-	m.WindowProperty()._CanHideCaption = true
+	m.WindowProperty()._EnableHideCaption = true
 	handle := m.WindowComponent().WindowHandle()
 	win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
 	win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)

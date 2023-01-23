@@ -36,9 +36,9 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
-	cef.BrowserWindow.Config.CanWebkitAppRegion = true
-	//cef.BrowserWindow.Config.CanResize = false
-	//cef.BrowserWindow.Config.CenterWindow = false
+	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
+	//cef.BrowserWindow.Config.EnableResize = false
+	//cef.BrowserWindow.Config.EnableWindow = false
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
@@ -108,7 +108,7 @@ func AppBrowserInit() {
 		event.On("js-new-window", func(context ipc.IIPCContext) {
 			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
-				newForm = cef.NewLCLWindow(nil)
+				newForm = cef.NewLCLWindow(cef.NewWindowProperty())
 				newForm.SetTitle("新窗口标题")
 				newForm.HideTitle()
 				btn := lcl.NewButton(newForm)
