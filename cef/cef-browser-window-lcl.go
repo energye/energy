@@ -24,16 +24,6 @@ import (
 	"time"
 )
 
-type IBaseWindow interface {
-	lcl.IWinControl
-	FormCreate()
-	WindowParent() ITCefWindowParent
-	Chromium() IChromium
-	ChromiumCreate(config *tCefChromiumConfig, defaultUrl string)
-	registerEvent()
-	registerDefaultEvent()
-}
-
 //LCLBrowserWindow 基于CEF lcl 窗口组件
 //
 //该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
@@ -90,6 +80,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 	}
 	window.windowProperty = &windowProperty
 	window.cwcap = new(customWindowCaption)
+	window.cwcap.bw = window
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()

@@ -26,6 +26,7 @@ var (
 )
 
 type customWindowCaption struct {
+	bw                   *LCLBrowserWindow     //
 	canCaption           bool                  //当前鼠标是否在标题栏区域
 	canBorder            bool                  //当前鼠标是否在边框
 	borderHT, borderWMSZ int                   //borderHT: 鼠标所在边框位置, borderWMSZ: 窗口改变大小边框方向 borderMD:
@@ -181,6 +182,8 @@ func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage
 		Y: dy,
 	}
 	WinScreenToClient(hWND, p)
+	p.X -= m.bw.WindowParent().Left()
+	p.Y -= m.bw.WindowParent().Top()
 	m.canCaption = WinPtInRegion(m.rgn, p.X, p.Y)
 	return p.X, p.Y, m.canCaption
 }
@@ -244,6 +247,8 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 					*aHandled = true
 				} else if m.WindowProperty()._EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
 					rect := m.BoundsRect()
+					//x -= m.WindowParent().Left()
+					//y -= m.WindowParent().Top()
 					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
 						*lResult = types.LRESULT(result)
 						*aHandled = true
