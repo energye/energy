@@ -198,10 +198,18 @@ func HIBYTE(w uint16) byte {
 	return byte(w >> 8 & 0xff)
 }
 
-func LOWORD(dw uintptr) uint16 {
+func LOWORD(dw uint32) uint16 {
 	return uint16(dw & 0xFFFF)
 }
 
-func HIWORD(dw uintptr) uint16 {
+func HIWORD(dw uint32) uint16 {
 	return uint16(dw >> 16 & 0xffff)
+}
+
+func GET_X_LPARAM(lp uintptr) int32 {
+	return int32(int16(LOWORD(uint32(lp))))
+}
+
+func GET_Y_LPARAM(lp uintptr) int32 {
+	return int32(int16(HIWORD(uint32(lp))))
 }

@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
@@ -90,7 +89,7 @@ func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *ty
 //设置鼠标图标
 func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canBorder { //当前在边框
-		switch LOWORD(message.LParam) {
+		switch LOWORD(uint32(message.LParam)) {
 		case HTBOTTOMRIGHT, HTTOPLEFT: //右下 左上
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
@@ -152,32 +151,34 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 //NC 鼠标左键按下
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
+		x, y := m.toPoint(message)
 		*lResult = HTCAPTION
 		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, rtl.MakeLParam(m.toPoint(message)))
+		rtl.PostMessage(hWND, WM_NCLBUTTONDOWN, HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
 	} else if m.canBorder { // 边框
+		x, y := m.toPoint(message)
 		*lResult = types.LRESULT(m.borderHT)
 		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(m.toPoint(message)))
+		rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
 		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), 0)
 	}
 }
 
 //转换XY坐标
-func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y uint16) {
-	return LOWORD(message.LParam), HIWORD(message.LParam)
+func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
+	return GET_X_LPARAM(message.LParam), GET_Y_LPARAM(message.LParam)
 }
 
 //鼠标在标题栏区域
 func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
-		X: int32(dx),
-		Y: int32(dy),
+		X: dx,
+		Y: dy,
 	}
 	WinScreenToClient(hWND, p)
 	m.canCaption = WinPtInRegion(m.rgn, p.X, p.Y)
@@ -222,7 +223,6 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		case WM_NCLBUTTONDOWN: // 161 nc left down
 			m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
 		case WM_NCLBUTTONUP: // 162 nc l up
-			fmt.Println("nc l up")
 			if m.cwcap.rgn != nil && m.cwcap.canCaption {
 				*lResult = HTCAPTION
 				*aHandled = true
