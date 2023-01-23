@@ -37,8 +37,8 @@ func main() {
 			for i := 0; i < regions.RegionsCount(); i++ {
 				fmt.Printf("i: %+v region: %+v\n", i, regions.Regions()[i])
 			}
-			//win.SetWindowLong(browserWindow.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
-			//win.SetLayeredWindowAttributes(browserWindow.Handle(), 0, 100, win.LWA_ALPHA)
+			//win.SetWindowLong(window.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
+			//win.SetLayeredWindowAttributes(window.Handle(), 0, 100, win.LWA_ALPHA)
 		})
 		// show or hide, caption bar
 		//go func() {

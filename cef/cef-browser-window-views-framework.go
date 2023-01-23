@@ -17,6 +17,7 @@ import (
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 )
 
 //ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
@@ -332,8 +333,8 @@ func (m *ViewsFrameworkBrowserWindow) BrowserWindow() *ViewsFrameworkBrowserWind
 	return m
 }
 
-func (m *ViewsFrameworkBrowserWindow) Handle() consts.TCefWindowHandle {
-	return m.WindowComponent().WindowHandle()
+func (m *ViewsFrameworkBrowserWindow) Handle() types.HWND {
+	return types.HWND(m.WindowComponent().WindowHandle().ToPtr())
 }
 
 func (m *ViewsFrameworkBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
