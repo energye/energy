@@ -548,7 +548,6 @@ func (m *LCLBrowserWindow) DisableTransparent() {
 	if m.TForm == nil {
 		return
 	}
-	m.SetAllowDropFiles(false)
 	m.SetAlphaBlend(false)
 	m.SetAlphaBlendValue(255)
 }
@@ -558,7 +557,6 @@ func (m *LCLBrowserWindow) EnableTransparent(value uint8) {
 	if m.TForm == nil {
 		return
 	}
-	m.SetAllowDropFiles(true)
 	m.SetAlphaBlend(true)
 	m.SetAlphaBlendValue(value)
 }

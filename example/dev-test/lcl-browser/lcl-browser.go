@@ -39,6 +39,7 @@ func main() {
 			}
 			//win.SetWindowLong(window.Handle(), win.GWL_EXSTYLE, uintptr(win.GetWindowLong(handle, win.GWL_EXSTYLE)|win.WS_EX_LAYERED))
 			//win.SetLayeredWindowAttributes(window.Handle(), 0, 100, win.LWA_ALPHA)
+			//win.UpdateLayeredWindow
 		})
 		// show or hide, caption bar
 		//go func() {
