@@ -120,17 +120,18 @@ func (m *LCLBrowserWindow) setProperty() {
 	if m.windowProperty.AlwaysOnTop {
 		m.SetFormStyle(types.FsSystemStayOnTop)
 	}
-	if !m.windowProperty.EnableMinimize {
-		m.DisableMinimize()
-	}
-	if !m.windowProperty.EnableMaximize {
-		m.DisableMaximize()
-	}
-	if !m.windowProperty.EnableResize {
-		m.SetBorderStyle(types.BsSingle)
-	}
 	if m.windowProperty._EnableHideCaption {
 		m.HideTitle()
+	} else {
+		if !m.windowProperty.EnableMinimize {
+			m.DisableMinimize()
+		}
+		if !m.windowProperty.EnableMaximize {
+			m.DisableMaximize()
+		}
+		if !m.windowProperty.EnableResize {
+			m.SetBorderStyle(types.BsSingle)
+		}
 	}
 }
 
