@@ -38,7 +38,7 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	//cef.BrowserWindow.Config.EnableResize = false
-	//cef.BrowserWindow.Config.EnableWindow = false
+	//cef.BrowserWindow.Config.EnableCenterWindow = false
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")

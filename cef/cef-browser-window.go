@@ -44,13 +44,13 @@ type WindowProperty struct {
 	EnableMaximize            bool               //窗口 是否启用最大化 default: true
 	EnableResize              bool               //窗口 是否允许调整大小 default: true
 	EnableClose               bool               //窗口 关闭时是否关闭窗口 default: true
-	EnableWindow              bool               //窗口 居中显示 default: true
+	EnableCenterWindow        bool               //窗口 居中显示 default: true
 	EnableDragFile            bool               //窗口 是否允许向窗口内拖拽文件
 	EnableWebkitAppRegion     bool               //窗口 html元素中设置css属性 -webkit-app-region: drag/no-drag 是否允许拖拽窗口 default: true
 	EnableCaptionDClkMaximize bool               //窗口 是否启用标题栏双击放大还原 default: true
 	AlwaysOnTop               bool               //窗口 窗口置顶
-	X                         int32              //窗口 EnableWindow=false X坐标 default: 100
-	Y                         int32              //窗口 EnableWindow=false Y坐标 default: 100
+	X                         int32              //窗口 EnableCenterWindow=false X坐标 default: 100
+	Y                         int32              //窗口 EnableCenterWindow=false Y坐标 default: 100
 	Width                     int32              //窗口 宽 default: 1024
 	Height                    int32              //窗口 高 default: 768
 }
@@ -147,7 +147,7 @@ func NewWindowProperty() WindowProperty {
 		EnableMaximize:            true,
 		EnableResize:              true,
 		EnableClose:               true,
-		EnableWindow:              true,
+		EnableCenterWindow:        true,
 		EnableCaptionDClkMaximize: true,
 		EnableWebkitAppRegion:     true,
 		X:                         100,

@@ -72,7 +72,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 			if windowProperty.Title != "" {
 				m.windowComponent.SetTitle(windowProperty.Title)
 			}
-			if windowProperty.EnableWindow {
+			if windowProperty.EnableCenterWindow {
 				m.windowComponent.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
@@ -158,7 +158,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 //重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	windowProperty := m.WindowProperty()
-	if windowProperty.EnableWindow {
+	if windowProperty.EnableCenterWindow {
 		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
 	} else {
 		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
@@ -479,7 +479,7 @@ func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
-	m.WindowProperty().EnableWindow = value
+	m.WindowProperty().EnableCenterWindow = value
 }
 
 //返回窗口关闭状态

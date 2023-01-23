@@ -28,6 +28,13 @@ func main() {
 		//browserWindow.Constraints().SetMinWidth(300)
 		//browserWindow.Constraints().SetMinHeight(300)
 		window.HideTitle()
+
+		//window.AsLCLBrowserWindow().WindowParent().SetAlign(types.AlCustom)
+		//window.AsLCLBrowserWindow().WindowParent().SetTop(100)
+		//window.AsLCLBrowserWindow().WindowParent().SetLeft(100)
+		//window.AsLCLBrowserWindow().WindowParent().SetWidth(800)
+		//window.AsLCLBrowserWindow().WindowParent().SetHeight(500)
+		//window.AsLCLBrowserWindow().WindowParent().SetBoundsRect(types.Rect(100, 100, 800, 500))
 		//window.DisableResize()
 
 		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)

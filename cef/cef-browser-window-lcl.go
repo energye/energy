@@ -110,7 +110,7 @@ func (m *LCLBrowserWindow) setProperty() {
 			lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
 		}
 	}
-	if m.windowProperty.EnableWindow {
+	if m.windowProperty.EnableCenterWindow {
 		m.SetSize(m.windowProperty.Width, m.windowProperty.Height)
 		m.SetPosition(types.PoDesktopCenter)
 	} else {
