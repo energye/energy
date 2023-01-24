@@ -17,15 +17,18 @@ import (
 )
 
 const (
-	dev_tools_name = "DevTools"
+	dev_tools_name = "dev-tools"
 )
 
 func updateBrowserDevTools(browser *ICefBrowser, title string) {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil {
-		if browserWinInfo.getAuxTools() != nil && browserWinInfo.getAuxTools().devToolsWindow != nil {
-			QueueAsyncCall(func(id int) {
-				browserWinInfo.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
-			})
+		if browserWinInfo.IsLCL() {
+			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
+			if window.getAuxTools() != nil && window.getAuxTools().devToolsWindow != nil {
+				QueueAsyncCall(func(id int) {
+					window.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
+				})
+			}
 		}
 	}
 }
@@ -35,55 +38,42 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 		QueueAsyncCall(func(id int) {
 			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
 			window.createAuxTools()
-			winAuxTools := window.auxTools
-			if winAuxTools.devToolsWindow != nil {
-				winAuxTools.devToolsWindow.Show()
+			if window.getAuxTools().devToolsWindow != nil {
+				dtw := window.getAuxTools().devToolsWindow.AsLCLBrowserWindow().BrowserWindow()
+				if dtw.WindowState() == types.WsMinimized {
+					dtw.SetWindowState(types.WsNormal)
+				}
+				dtw.Show()
+				dtw.Active()
+				dtw.Focused()
 				return
 			}
-			devToolsWindow := &LCLBrowserWindow{}
-			winAuxTools.devToolsWindow = devToolsWindow
-			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
-			devToolsWindow.TForm = lcl.NewForm(window)
-			devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, m.MainFrame().Url))
-			devToolsWindow.FormCreate()
-			devToolsWindow.defaultWindowEvent()
-			devToolsWindow.defaultWindowCloseEvent()
-			winAuxTools.devToolsWindow.SetSize(1024, 768)
-			winAuxTools.devToolsWindow.SetShowInTaskBar()
-			devToolsWindow.TForm.SetOnResize(func(sender lcl.IObject) {
-				winAuxTools.devToolsX = devToolsWindow.Left()
-				winAuxTools.devToolsY = devToolsWindow.Top()
-				winAuxTools.devToolsWidth = devToolsWindow.Width()
-				winAuxTools.devToolsHeight = devToolsWindow.Height()
-
+			wp := NewWindowProperty()
+			wp.Title = fmt.Sprintf("%s - %s", dev_tools_name, m.MainFrame().Url)
+			wp.WindowType = WT_DEV_TOOLS
+			wp.Url = m.MainFrame().Url
+			devToolsWindow := NewLCLBrowserWindow(nil, wp)
+			window.auxTools.devToolsWindow = devToolsWindow
+			devToolsWindow.SetWidth(800)
+			devToolsWindow.SetHeight(600)
+			devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 				if devToolsWindow.isClosing {
-					return
-				}
-				if devToolsWindow.chromium != nil {
-					devToolsWindow.chromium.NotifyMoveOrResizeStarted()
-				}
-				if devToolsWindow.windowParent != nil {
-					devToolsWindow.windowParent.UpdateSize()
-				}
-			})
-			devToolsWindow.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
-				if devToolsWindow.isClosing {
-					return
+					return false
 				}
 				*action = types.CaFree
+				return true
 			})
-			devToolsWindow.TForm.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
+			devToolsWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 				if devToolsWindow.isClosing {
-					return
+					return true
 				}
 				devToolsWindow.isClosing = true
-				BrowserWindow.removeWindowInfo(devToolsWindow.windowId)
+				BrowserWindow.removeWindowInfo(devToolsWindow.Id())
+				window.auxTools.devToolsWindow = nil
+				return true
 			})
-
-			devToolsWindow.ChromiumCreate(nil, "")
-			devToolsWindow.putChromiumWindowInfo()
-			devToolsWindow.defaultChromiumEvent()
-			winAuxTools.devToolsWindow.Show()
+			devToolsWindow.EnableDefaultCloseEvent()
+			devToolsWindow.Show()
 			BrowserWindow.setOrIncNextWindowNum() //明确的生成下一个窗体序号
 			_CEFBrowser_ShowDevTools(devToolsWindow.chromium.Instance(), uintptr(m.Identifier()), devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 		})
@@ -97,9 +87,6 @@ func (m *ICefBrowser) createBrowserDevTools(browserWinInfo IBrowserWindow) {
 			devToolsWindow := NewViewsFrameworkBrowserWindow(nil, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 			devToolsWindow.ResetWindowPropertyForEvent()
 			devToolsWindow.SetWindowType(WT_DEV_TOOLS)
-			//devToolsWindow.windowId = BrowserWindow.GetNextWindowNum()
-			//devToolsWindow.putChromiumWindowInfo()
-			//devToolsWindow.registerDefaultEvent()
 			BrowserWindow.setOrIncNextWindowNum() //明确的生成下一个窗口序号
 			devToolsWindow.windowComponent.CreateTopLevelWindow()
 		}

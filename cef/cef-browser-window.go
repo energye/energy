@@ -35,6 +35,7 @@ type auxTools struct {
 type WindowProperty struct {
 	IsShowModel               bool               //是否以模态窗口显示
 	WindowState               types.TWindowState //窗口 状态
+	WindowType                consts.WINDOW_TYPE //窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
 	Title                     string             //窗口 标题
 	Url                       string             //默认打开URL
 	Icon                      string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
@@ -83,8 +84,6 @@ type IBrowserWindow interface {
 	Frames() TCEFFrame                                           //窗口内的所有Frame
 	addFrame(frame *ICefFrame)                                   //
 	setBrowser(browser *ICefBrowser)                             //
-	createAuxTools()                                             //
-	getAuxTools() *auxTools                                      //
 	EnableAllDefaultEvent()                                      //启用所有默认事件
 	SetTitle(title string)                                       //设置窗口标题栏标题
 	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口

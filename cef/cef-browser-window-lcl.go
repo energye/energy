@@ -57,8 +57,8 @@ type LCLBrowserWindow struct {
 //创建一个 LCL 带有 chromium 窗口
 //
 //该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty WindowProperty) *LCLBrowserWindow {
-	var window = NewLCLWindow(windowProperty)
+func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
+	var window = NewLCLWindow(windowProperty, owner...)
 	window.ChromiumCreate(config, windowProperty.Url)
 	window.putChromiumWindowInfo()
 	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
@@ -82,6 +82,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 	window.cwcap = &customWindowCaption{
 		bw: window,
 	}
+	window.SetWindowType(windowProperty.WindowType)
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()
@@ -444,9 +445,9 @@ func (m *LCLBrowserWindow) FormCreate() {
 //默认窗口活动/关闭处理事件
 func (m *LCLBrowserWindow) defaultWindowEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
-		m.TForm.SetOnResize(m.resize)
 		m.TForm.SetOnActivate(m.activate)
 	}
+	m.TForm.SetOnResize(m.resize)
 	m.TForm.SetOnShow(m.show)
 }
 
@@ -839,7 +840,6 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
 		updateBrowserDevTools(browser, title)
-		updateBrowserViewSource(browser, title)
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title)
 		}
@@ -953,7 +953,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					m.auxTools.viewSourceWindow = nil
 				}
 				if m.auxTools.devToolsWindow != nil {
-					m.auxTools.devToolsWindow.Close()
+					m.auxTools.devToolsWindow = nil
 				}
 			}
 			BrowserWindow.removeWindowInfo(m.windowId)
