@@ -21,7 +21,7 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//cef.BrowserWindow.Config.EnableWebkitAppRegion = false
 	//cef.BrowserWindow.Config.EnableResize = false
-	cef.BrowserWindow.Config.EnableWebkitAppRegionDClk = false
+	//cef.BrowserWindow.Config.EnableWebkitAppRegionDClk = false
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//event.SetOnWidgetCompMsg(func(sender lcl.IObject, message types.TMessage, aHandled bool) {
 		//	fmt.Println("SetOnWidgetCompMsg:", message)

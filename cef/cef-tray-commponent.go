@@ -35,9 +35,9 @@ type ITray interface {
 	ShowBalloon()                                          //显示托盘气泡
 	SetBalloon(title, content string, timeout int32) ITray //设置托盘气泡内容
 	Tray() ITray                                           //获得 LCLTray, ( CefTray 返回 nil )
-	AsViewsFrameTray() *ViewsFrameTray
-	AsCEFTray() *CEFTray
-	AsLCLTray() *LCLTray
+	AsViewsFrameTray() *ViewsFrameTray                     //
+	AsCEFTray() *CEFTray                                   //
+	AsLCLTray() *LCLTray                                   //
 }
 
 //LCL 系统托盘
@@ -67,7 +67,4 @@ type CEFTray struct {
 	mouseUp      TMouseEvent
 	isClosing    bool
 	url          string
-}
-
-type SysTray struct {
 }
