@@ -7,7 +7,3 @@
 //----------------------------------------
 
 package cef
-
-//Sys 系统托盘
-type SysTray struct {
-}

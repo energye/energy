@@ -69,14 +69,17 @@ func (m *LCLTray) SetOnClick(fn TrayICONClick) {
 		fn()
 	})
 }
+
 func (m *LCLTray) SetOnMouseUp(fn TMouseEvent) {
 	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		fn(sender, button, shift, x, y)
 	})
 }
+
 func (m *LCLTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
+
 func (m *LCLTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
@@ -104,6 +107,7 @@ func (m *LCLTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
+//SetTitle 设置标题
 func (m *LCLTray) SetTitle(title string) {
 	m.trayIcon.SetHint(title)
 }

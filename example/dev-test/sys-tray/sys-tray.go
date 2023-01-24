@@ -48,7 +48,7 @@ func onReady() {
 	fmt.Println("systray.onReady")
 	systray.SetTemplateIcon(icon.Data, icon.Data)
 	systray.SetTitle("Energy Sys Tray")
-	systray.SetTooltip("Energy tooltip")
+	systray.SetTooltip("这里是文字\nEnergy tooltip")
 	systray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
