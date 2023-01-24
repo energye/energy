@@ -64,7 +64,6 @@ func onReady() {
 	//return
 	addQuitItem()
 
-	systray.SetTemplateIcon(icon.Data, icon.Data)
 	mChange := systray.AddMenuItem("Change Me", "Change Me")
 	mChecked := systray.AddMenuItemCheckbox("Checked", "Check Me", true)
 	mEnabled := systray.AddMenuItem("Enabled", "Enabled")

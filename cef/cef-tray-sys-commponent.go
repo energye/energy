@@ -8,7 +8,12 @@
 
 package cef
 
-import "energye/systray"
+import (
+	"energye/systray"
+	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/tools"
+	"io/ioutil"
+)
 
 //创建系统托盘
 func newSysTray() *SysTray {
@@ -41,11 +46,15 @@ func (m *SysTray) close() {
 }
 
 func (m *SysTray) SetOnDblClick(fn TrayICONClick) {
-
+	systray.SetOnDClick(fn)
 }
 
 func (m *SysTray) SetOnClick(fn TrayICONClick) {
+	systray.SetOnClick(fn)
+}
 
+func (m *SysTray) SetOnRClick(fn func(menu systray.IMenu)) {
+	systray.SetOnRClick(fn)
 }
 
 func (m *SysTray) Visible() bool {
@@ -77,8 +86,20 @@ func (m *SysTray) ShowBalloon() {
 
 //设置托盘图标
 func (m *SysTray) SetIconFS(iconResourcePath string) {
+	if emfs.IsExist(iconResourcePath) {
+		file, err := emfs.GetResources(iconResourcePath)
+		if err == nil {
+			systray.SetIcon(file)
+		}
+	}
 }
 
 //设置托盘图标
 func (m *SysTray) SetIcon(iconResourcePath string) {
+	if tools.IsExist(iconResourcePath) {
+		file, err := ioutil.ReadFile(iconResourcePath)
+		if err == nil {
+			systray.SetIcon(file)
+		}
+	}
 }
