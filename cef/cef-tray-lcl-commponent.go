@@ -22,6 +22,10 @@ func newTray(owner lcl.IComponent) *LCLTray {
 	}
 }
 
+func (m *LCLTray) AsSysTray() *SysTray {
+	return nil
+}
+
 func (m *LCLTray) AsViewsFrameTray() *ViewsFrameTray {
 	return nil
 }
@@ -31,10 +35,6 @@ func (m *LCLTray) AsCEFTray() *CEFTray {
 }
 
 func (m *LCLTray) AsLCLTray() *LCLTray {
-	return m
-}
-
-func (m *LCLTray) Tray() ITray {
 	return m
 }
 

@@ -121,6 +121,10 @@ func (m *ViewsFrameTray) registerChromiumEvent() {
 	})
 }
 
+func (m *ViewsFrameTray) AsSysTray() *SysTray {
+	return nil
+}
+
 func (m *ViewsFrameTray) AsViewsFrameTray() *ViewsFrameTray {
 	return m
 }
@@ -131,10 +135,6 @@ func (m *ViewsFrameTray) AsCEFTray() *CEFTray {
 
 func (m *ViewsFrameTray) AsLCLTray() *LCLTray {
 	return nil
-}
-
-func (m *ViewsFrameTray) Tray() ITray {
-	return m
 }
 
 func (m *ViewsFrameTray) Show() {

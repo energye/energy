@@ -15,3 +15,10 @@ func (m *LCLBrowserWindow) NewTray() ITray {
 	}
 	return m.tray
 }
+
+func (m *LCLBrowserWindow) NewSysTray() ITray {
+	if m.tray == nil {
+		m.tray = newSysTray()
+	}
+	return m.tray
+}

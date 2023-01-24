@@ -27,20 +27,17 @@ type ITray interface {
 	Show()                                                 //Show 显示托盘菜单窗口 windows有效
 	Hide()                                                 //Hide 隐藏托盘菜单窗口 windows有效
 	close()                                                //close 关闭托盘菜单窗口 windows有效
-	SetOnDblClick(fn TrayICONClick)                        //SetOnDblClick 双击事件 linux 和 macos 可能不启作用
 	SetOnClick(fn TrayICONClick)                           //SetOnClick 单击事件
-	SetOnMouseUp(fn TMouseEvent)                           //SetOnMouseUp up事件 linux 和 macos 可能不启作用
-	SetOnMouseDown(fn lcl.TMouseEvent)                     //SetOnMouseDown down事件 linux 和 macos 可能不启作用
-	SetOnMouseMove(fn lcl.TMouseMoveEvent)                 //SetOnMouseMove move事件 linux 和 macos 可能不启作用
+	SetOnDblClick(fn TrayICONClick)                        //SetOnDblClick 双击事件 linux 和 macos 可能不启作用
 	SetIconFS(iconResourcePath string)                     //SetIconFS 设置托盘图标
 	SetIcon(iconResourcePath string)                       //SetIcon 设置托盘图标
 	SetHint(value string)                                  //SetHint 设置托盘hint(鼠标移动到托盘图标显示的文字)
 	ShowBalloon()                                          //ShowBalloon 显示托盘气泡
 	SetBalloon(title, content string, timeout int32) ITray //SetBalloon 设置托盘气泡内容
-	Tray() ITray                                           //Tray 返回ITray接口
-	AsViewsFrameTray() *ViewsFrameTray                     //AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果当前创建的是其它类型托盘返回nil
-	AsCEFTray() *CEFTray                                   //AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果当前创建的是其它类型托盘返回nil
-	AsLCLTray() *LCLTray                                   //AsLCLTray 尝试转换为 LCL 组件托盘, 如果当前创建的是其它类型托盘返回nil
+	AsSysTray() *SysTray                                   //AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
+	AsViewsFrameTray() *ViewsFrameTray                     //AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
+	AsCEFTray() *CEFTray                                   //AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
+	AsLCLTray() *LCLTray                                   //AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 }
 
 //LCLTray LCL 托盘
@@ -74,5 +71,6 @@ type CEFTray struct {
 
 //SysTray 系统原生托盘
 type SysTray struct {
+	menu                *SysMenu
 	trayStart, trayStop func()
 }

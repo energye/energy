@@ -41,6 +41,10 @@ func (m *CEFTray) OnFormCreate(sender lcl.IObject) {
 	m.SetShowInTaskBar(types.StNever)
 }
 
+func (m *CEFTray) AsSysTray() *SysTray {
+	return nil
+}
+
 func (m *CEFTray) AsViewsFrameTray() *ViewsFrameTray {
 	return nil
 }
@@ -51,10 +55,6 @@ func (m *CEFTray) AsCEFTray() *CEFTray {
 
 func (m *CEFTray) AsLCLTray() *LCLTray {
 	return nil
-}
-
-func (m *CEFTray) Tray() ITray {
-	return m
 }
 
 func (m *CEFTray) Show() {

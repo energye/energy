@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -395,6 +396,9 @@ func AppBrowserInit() {
 	})
 	//添加子窗口初始化
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.IBrowserWindow) {
+		tray(browserWindow)
+		sys_tray.TrayMain()
+		return
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
@@ -451,6 +455,8 @@ func tray(browserWindow cef.IBrowserWindow) {
 	//托盘 windows linux macos 系统托盘
 	newTray := window.NewTray()
 	tray := newTray.AsLCLTray()
+	tray.SetTitle("任务管理器里显示的标题")
+	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	menu1.Add(tray.NewMenuItem("子菜单", func(object lcl.IObject) {
