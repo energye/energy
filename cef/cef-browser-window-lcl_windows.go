@@ -174,7 +174,9 @@ func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 	return GET_X_LPARAM(message.LParam), GET_Y_LPARAM(message.LParam)
 }
 
-//鼠标在标题栏区域
+//鼠标是否在标题栏区域
+//
+//如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
 func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
@@ -184,76 +186,56 @@ func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage
 	WinScreenToClient(hWND, p)
 	p.X -= m.bw.WindowParent().Left()
 	p.Y -= m.bw.WindowParent().Top()
-	m.canCaption = WinPtInRegion(m.rgn, p.X, p.Y)
+	if m.bw.WindowProperty().EnableWebkitAppRegion && m.rgn != nil {
+		m.canCaption = WinPtInRegion(m.rgn, p.X, p.Y)
+	} else {
+		m.canCaption = false
+	}
 	return p.X, p.Y, m.canCaption
 }
 
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-	if m.cwcap.regions != nil && m.cwcap.regions.RegionsCount() > 0 {
-		//fmt.Println("msg:", message.Msg)
-		switch message.Msg {
-		//case WM_SIZE, WM_SIZING:
-		//	if m.cwcap.canBorder {
-		//		*lResult = types.LRESULT(m.cwcap.borderHT)
-		//		*aHandled = true
-		//	}
-		//case WM_NCRBUTTONDOWN: // nc r down
-		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
-		//	}
-		//case WM_NCRBUTTONUP: // nc r up
-		//	if m.cwcap.rgn != nil && m.cwcap.canCaption {
-		//	}
-		case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
-			if !m.WindowProperty().EnableCaptionDClkMaximize {
-				return
+	switch message.Msg {
+	case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
+		//标题栏拖拽区域 双击最大化和还原
+		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk {
+			*lResult = HTCAPTION
+			*aHandled = true
+			win.ReleaseCapture()
+			m.windowsState = m.WindowState()
+			if m.windowsState == types.WsNormal {
+				rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
+			} else {
+				rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
 			}
-			if m.cwcap.rgn != nil && m.cwcap.canCaption {
-				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); // 最大化
-				//SendMessage(hwnd, WM_SYSCOMMAND, SC_MINIMIZE, 0); // 最小化
-				//SendMessage(hwnd, WM_SYSCOMMAND, SC_CLOSE, 0); // 关闭
-				//SendMessage(hwnd, WM_SYSCOMMAND, SC_RESTORE, 0); // 最大化状态还原
-				*lResult = HTCAPTION
+			rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
+		}
+	case WM_NCLBUTTONDOWN: // 161 nc left down
+		m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
+	case WM_NCLBUTTONUP: // 162 nc l up
+		if m.cwcap.canCaption {
+			*lResult = HTCAPTION
+			*aHandled = true
+		}
+	case WM_NCMOUSEMOVE: // 160 nc mouse move
+		m.cwcap.onNCMouseMove(message, lResult, aHandled)
+	case WM_SETCURSOR: // 32 设置鼠标图标样式
+		m.cwcap.onSetCursor(message, lResult, aHandled)
+	case WM_NCHITTEST: // 132 NCHITTEST
+		if m.cwcap.borderMD { //TODO 测试windows7, 161消息之后再次处理132消息导致消息错误
+			m.cwcap.borderMD = false
+			return
+		}
+		//鼠标坐标是否在标题区域
+		x, y, caption := m.cwcap.isCaption(m.Handle(), message)
+		if caption { //窗口标题栏
+			*lResult = HTCAPTION
+			*aHandled = true
+		} else if m.WindowProperty()._EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
+			rect := m.BoundsRect()
+			if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
+				*lResult = types.LRESULT(result)
 				*aHandled = true
-				win.ReleaseCapture()
-				m.windowsState = m.WindowState()
-				if m.windowsState == types.WsNormal {
-					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
-				} else {
-					rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
-				}
-				rtl.SendMessage(m.Handle(), WM_NCLBUTTONUP, HTCAPTION, 0)
-			}
-		case WM_NCLBUTTONDOWN: // 161 nc left down
-			m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
-		case WM_NCLBUTTONUP: // 162 nc l up
-			if m.cwcap.rgn != nil && m.cwcap.canCaption {
-				*lResult = HTCAPTION
-				*aHandled = true
-			}
-		case WM_NCMOUSEMOVE: // 160 nc mouse move
-			m.cwcap.onNCMouseMove(message, lResult, aHandled)
-		case WM_SETCURSOR: // 32 设置鼠标图标样式
-			m.cwcap.onSetCursor(message, lResult, aHandled)
-		case WM_NCHITTEST: // 132 NCHITTEST
-			if m.cwcap.rgn != nil {
-				if m.cwcap.borderMD { //TODO 测试windows7, 161消息之后再次处理132消息导致消息错误
-					m.cwcap.borderMD = false
-					return
-				}
-				x, y, caption := m.cwcap.isCaption(m.Handle(), message)
-				//设置鼠标坐标是否在标题区域
-				if caption { //窗口标题栏
-					*lResult = HTCAPTION
-					*aHandled = true
-				} else if m.WindowProperty()._EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
-					rect := m.BoundsRect()
-					//x -= m.WindowParent().Left()
-					//y -= m.WindowParent().Top()
-					if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
-						*lResult = types.LRESULT(result)
-						*aHandled = true
-					}
-				}
 			}
 		}
 	}
@@ -286,15 +268,15 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 // default event register: windows CompMsgEvent
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
-	if m.WindowProperty().EnableWebkitAppRegion {
-		m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-			if bwEvent.onRenderCompMsg != nil {
-				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
-			}
-			if !*aHandled {
-				m.doOnRenderCompMsg(message, lResult, aHandled)
-			}
-		})
+	m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+		if bwEvent.onRenderCompMsg != nil {
+			bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
+		}
+		if !*aHandled {
+			m.doOnRenderCompMsg(message, lResult, aHandled)
+		}
+	})
+	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
 		m.windowResize = func(sender lcl.IObject) bool {
 			if m.WindowState() == types.WsMaximized && (m.WindowProperty()._EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 				var monitor = m.Monitor().WorkareaRect()
@@ -303,11 +285,15 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			}
 			return false
 		}
-	} else {
-		if bwEvent.onRenderCompMsg != nil {
-			m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
-		}
 	}
+
+	//if m.WindowProperty().EnableWebkitAppRegion {
+	//
+	//} else {
+	//	if bwEvent.onRenderCompMsg != nil {
+	//		m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
+	//	}
+	//}
 }
 
 //for windows maximize and restore

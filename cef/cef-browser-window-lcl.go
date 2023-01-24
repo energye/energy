@@ -79,8 +79,9 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 		//lcl.Application.CreateForm(&window)
 	}
 	window.windowProperty = &windowProperty
-	window.cwcap = new(customWindowCaption)
-	window.cwcap.bw = window
+	window.cwcap = &customWindowCaption{
+		bw: window,
+	}
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
 	window.SetShowInTaskBar()

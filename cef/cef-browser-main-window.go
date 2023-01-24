@@ -84,8 +84,9 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 			}
 		}
 	})
-	m.cwcap = new(customWindowCaption)
-	m.cwcap.bw = &m.LCLBrowserWindow
+	m.cwcap = &customWindowCaption{
+		bw: &m.LCLBrowserWindow,
+	}
 }
 
 func (m *browser) MainWindow() IBrowserWindow {
