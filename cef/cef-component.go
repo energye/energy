@@ -22,3 +22,14 @@ func (m *LCLBrowserWindow) NewSysTray() ITray {
 	}
 	return m.tray
 }
+
+//只适用于windows的无菜单托盘
+func (m *ViewsFrameworkBrowserWindow) NewSysTray() ITray {
+	if m == nil {
+		return nil
+	}
+	if m.tray == nil {
+		m.tray = newSysTray()
+	}
+	return m.tray
+}

@@ -98,12 +98,13 @@ type IBrowserWindow interface {
 	SetSize(width, height int32)                                 //设置窗口宽高
 	SetBounds(x, y, width, height int32)                         //设置窗口坐标和宽高
 	SetCenterWindow(value bool)                                  //设置窗口居中
-	NewCefTray(width, height int32, url string) ITray            //创建托盘CEF自定义html, 实现4种系统托盘，1: LCL原生, 2: CEF基于LCL, 3: VF(views framework), 4:系统原生
 	ShowTitle()                                                  //显示窗口标题栏
 	HideTitle()                                                  //隐藏窗口标题栏
 	SetDefaultInTaskBar()                                        //窗口默认在任务栏上显示图标
 	SetShowInTaskBar()                                           //强制窗口在任务栏上显示图标
 	SetNotInTaskBar()                                            //强制不在任务栏上显示窗口图标
+	NewCefTray(width, height int32, url string) ITray            //创建托盘CEF自定义html
+	NewSysTray() ITray                                           //systray系统原生
 }
 
 //浏览器 LCLBrowserWindow 窗口接口 继承 IBrowserWindow

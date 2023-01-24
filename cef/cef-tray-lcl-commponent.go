@@ -132,17 +132,19 @@ func (m *LCLTray) ShowBalloon() {
 }
 
 //创建一个菜单，还未添加到托盘
-func (m *LCLTray) NewMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
+func (m *LCLTray) NewMenuItem(caption string, onClick MenuItemClick) *lcl.TMenuItem {
 	item := lcl.NewMenuItem(m.trayIcon)
 	item.SetCaption(caption)
 	if onClick != nil {
-		item.SetOnClick(onClick)
+		item.SetOnClick(func(sender lcl.IObject) {
+			onClick()
+		})
 	}
 	return item
 }
 
 //添加一个托盘菜单
-func (m *LCLTray) AddMenuItem(caption string, onClick func(lcl.IObject)) *lcl.TMenuItem {
+func (m *LCLTray) AddMenuItem(caption string, onClick MenuItemClick) *lcl.TMenuItem {
 	item := m.NewMenuItem(caption, onClick)
 	m.TrayMenu().Items().Add(item)
 	return item

@@ -20,6 +20,16 @@ type TMouseEvent func(sender lcl.IObject, button types.TMouseButton, shift types
 type TrayICONClick func()
 
 //ITray 托盘接口
+//
+//实现4种系统托盘 1: LCLTray LCL组件, 2: CEFTray CEF基于LCL组件+html, 3: ViewsFrameTray VF(views framework)组件+html, 4: SysTray 系统原生
+//
+//1. LCLTray 对Windows、MacOSX支持较好，linux由于gtk2与gtk3原因目前无法正常使用
+//
+//2. CEFTray Windows
+//
+//3. ViewsFrameTray Windows
+//
+//4. SysTray 对Windows、MacOSX和Linux支持较好
 type ITray interface {
 	SetTitle(title string)                                 //SetTitle 设置标题
 	SetVisible(v bool)                                     //SetVisible 设置显示和隐藏托盘图标
@@ -40,14 +50,14 @@ type ITray interface {
 	AsLCLTray() *LCLTray                                   //AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 }
 
-//LCLTray LCL 托盘
+//LCLTray LCL组件 托盘
 type LCLTray struct {
 	owner     lcl.IComponent
 	trayIcon  *lcl.TTrayIcon
 	popupMenu *lcl.TPopupMenu
 }
 
-//ViewsFrameTray CEF views framework 托盘
+//ViewsFrameTray VF(views framework)组件+html 托盘
 type ViewsFrameTray struct {
 	trayWindow *ViewsFrameworkBrowserWindow
 	trayIcon   *lcl.TTrayIcon
@@ -56,7 +66,7 @@ type ViewsFrameTray struct {
 	isClosing  bool
 }
 
-//CEFTray CEF + LCL 托盘
+//CEFTray CEF基于LCL组件+html 托盘
 type CEFTray struct {
 	*lcl.TForm
 	owner        lcl.IComponent
@@ -69,7 +79,7 @@ type CEFTray struct {
 	url          string
 }
 
-//SysTray 系统原生托盘
+//SysTray 系统原生
 type SysTray struct {
 	menu                *SysMenu
 	trayStart, trayStop func()

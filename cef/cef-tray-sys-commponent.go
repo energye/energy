@@ -17,7 +17,11 @@ import (
 
 //创建系统托盘
 func newSysTray() *SysTray {
-	return &SysTray{}
+	return &SysTray{
+		menu: &SysMenu{
+			Items: make([]*SysMenuItem, 0, 0),
+		},
+	}
 }
 
 func (m *SysTray) AsSysTray() *SysTray {
@@ -43,6 +47,18 @@ func (m *SysTray) Hide() {
 }
 
 func (m *SysTray) close() {
+}
+
+func (m *SysTray) AddMenuItem(label string, onClick MenuItemClick) *SysMenuItem {
+	return m.menu.AddMenuItem(label, onClick)
+}
+
+func (m *SysTray) AddMenuItemSeparator() {
+	m.menu.AddMenuItemSeparator()
+}
+
+func (m *SysTray) NewMenuItem(label string, onClick MenuItemClick) *SysMenuItem {
+	return NewMenuItem(label, onClick)
 }
 
 func (m *SysTray) SetOnDblClick(fn TrayICONClick) {
@@ -89,7 +105,7 @@ func (m *SysTray) SetIconFS(iconResourcePath string) {
 	if emfs.IsExist(iconResourcePath) {
 		file, err := emfs.GetResources(iconResourcePath)
 		if err == nil {
-			systray.SetIcon(file)
+			systray.SetTemplateIcon(file, file)
 		}
 	}
 }
@@ -99,7 +115,7 @@ func (m *SysTray) SetIcon(iconResourcePath string) {
 	if tools.IsExist(iconResourcePath) {
 		file, err := ioutil.ReadFile(iconResourcePath)
 		if err == nil {
-			systray.SetIcon(file)
+			systray.SetTemplateIcon(file, file)
 		}
 	}
 }

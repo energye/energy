@@ -396,7 +396,8 @@ func AppBrowserInit() {
 	})
 	//添加子窗口初始化
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.IBrowserWindow) {
-		tray(browserWindow)
+		sysTray(browserWindow)
+		//tray(browserWindow)
 		sys_tray.TrayMain()
 		return
 		//在这里创建 一些子窗口 子组件 等
@@ -407,6 +408,11 @@ func AppBrowserInit() {
 			tray(browserWindow)
 		}
 	})
+}
+
+func sysTray(browserWindow cef.IBrowserWindow) {
+	sysTray := browserWindow.NewSysTray()
+	fmt.Printf("NewSysTray %+v\n: ", sysTray)
 }
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
@@ -454,23 +460,23 @@ func tray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
 	newTray := window.NewTray()
+	newTray.SetTitle("任务管理器里显示的标题")
+	newTray.SetHint("这里是文字\n文字啊")
+	newTray.SetIconFS("resources/icon.ico")
 	tray := newTray.AsLCLTray()
-	tray.SetTitle("任务管理器里显示的标题")
-	tray.SetHint("这里是文字\n文字啊")
-	tray.SetIconFS("resources/icon.ico")
 	menu1 := tray.AddMenuItem("父菜单", nil)
-	menu1.Add(tray.NewMenuItem("子菜单", func(object lcl.IObject) {
+	menu1.Add(tray.NewMenuItem("子菜单", func() {
 		lcl.ShowMessage("子菜单点击 提示消息")
 	}))
-	tray.AddMenuItem("显示气泡", func(object lcl.IObject) {
+	tray.AddMenuItem("显示气泡", func() {
 		newTray.ShowBalloon()
 	})
-	tray.AddMenuItem("显示/隐藏", func(object lcl.IObject) {
+	tray.AddMenuItem("显示/隐藏", func() {
 		vis := window.Visible()
 		cef.BrowserWindow.GetWindowInfo(1)
 		window.SetVisible(!vis)
 	})
-	tray.AddMenuItem("退出", func(object lcl.IObject) {
+	tray.AddMenuItem("退出", func() {
 		browserWindow.CloseBrowserWindow()
 	})
 	//linux下有些问题

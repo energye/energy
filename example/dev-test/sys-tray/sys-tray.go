@@ -46,8 +46,8 @@ func addQuitItem() {
 
 func onReady() {
 	fmt.Println("systray.onReady")
-	//systray.SetTemplateIcon(icon.Data, icon.Data)
-	systray.SetIcon(icon.Data)
+	systray.SetTemplateIcon(icon.Data, icon.Data)
+	//systray.SetIcon(icon.Data)
 	systray.SetTitle("Energy Sys Tray")
 	systray.SetTooltip("这里是文字\nEnergy tooltip")
 	systray.SetOnClick(func() {
