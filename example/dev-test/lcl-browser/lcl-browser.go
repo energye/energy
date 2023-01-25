@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
+	"time"
 )
 
 //go:embed resources
@@ -70,19 +71,10 @@ func main() {
 		//}()
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
+		sysTray(window)
+		//tray(browserWindow)
 		//sys_tray.TrayMain()
-		//browserWindow := window.AsLCLBrowserWindow()
-		//parent := browserWindow.WindowParent()
-		//parent.SetAlign(types.AlNone)
-		//parent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkBottom, types.AkRight))
-		//parent.SetTop(100)
-		//parent.SetLeft(100)
-		//parent.SetWidth(600)
-		//parent.SetHeight(600)
-		//browserWindow.BrowserWindow().SetTransparentColor()
-		//dwWinStyle := win.GetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE)
-		//dwWinStyle |= win.WS_THICKFRAME
-		//win.SetWindowLong(window.AsLCLBrowserWindow().Handle(), win.GWL_STYLE, uintptr(dwWinStyle))
+		return
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
@@ -95,4 +87,36 @@ func main() {
 	})
 	//运行应用
 	cef.Run(cefApp)
+}
+
+func sysTray(browserWindow cef.IBrowserWindow) {
+	sysTray := browserWindow.NewSysTray()
+	sysTray.SetIconFS("resources/icon.ico")
+	sysTray.SetHint("中文hint\n换行中文")
+	sysTray.SetOnClick(func() {
+		fmt.Println("SetOnClick")
+	})
+	tray := sysTray.AsSysTray()
+	tray.AddMenuItem("1级菜单1", nil)
+	tray.AddMenuItemSeparator()
+	item := tray.AddMenuItem("1级菜单2", nil)
+	item.AddSubMenu("2级子菜单1", nil)
+	sub2Menu := item.AddSubMenu("2级子菜单2", nil)
+	sub2Menu.AddSubMenu("3级子菜单1", nil)
+
+	sysTray.Show()
+	go func() {
+		var b bool
+		for {
+			time.Sleep(time.Second)
+			b = !b
+			if b {
+				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				sysTray.SetIconFS("resources/icon_1.ico")
+			} else {
+				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				sysTray.SetIconFS("resources/icon.ico")
+			}
+		}
+	}()
 }

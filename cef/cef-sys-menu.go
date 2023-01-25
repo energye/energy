@@ -8,57 +8,182 @@
 
 package cef
 
+import "energye/systray"
+
 type MenuItemClick func()
 
 type SysMenu struct {
-	Label string
-	Items []*SysMenuItem
+	label string
+	items []*SysMenuItem
 }
 
 type SysMenuItem struct {
-	ChildMenu   *SysMenu
-	Label       string
-	Action      MenuItemClick
-	IsSeparator bool
-	Disabled    bool
-	Checked     bool
-	Icon        []byte
-	Shortcut    string
+	childMenu   *SysMenu
+	menuItem    *systray.MenuItem
+	label       string
+	click       MenuItemClick
+	isSeparator bool
+	disabled    bool
+	checked     bool
+	icon        []byte
+	shortcut    string
 }
 
 func (m *SysMenu) AddMenuItem(label string, action MenuItemClick) *SysMenuItem {
 	item := &SysMenuItem{
-		Label:  label,
-		Action: action,
+		label: label,
+		click: action,
 	}
-	m.Items = append(m.Items, item)
+	m.items = append(m.items, item)
 	return item
 }
 
 func (m *SysMenu) Add(menuItem *SysMenuItem) {
-	m.Items = append(m.Items, menuItem)
+	m.items = append(m.items, menuItem)
 }
 
 func (m *SysMenu) AddMenuItemSeparator() {
-	m.Items = append(m.Items, &SysMenuItem{IsSeparator: true})
+	m.items = append(m.items, &SysMenuItem{isSeparator: true})
 }
 
-func (m *SysMenuItem) Add(label string, items ...*SysMenuItem) *SysMenu {
-	m.ChildMenu = &SysMenu{Label: label, Items: items}
-	return m.ChildMenu
+func (m *SysMenuItem) AddSubMenu(label string, action MenuItemClick) *SysMenuItem {
+	if m.childMenu == nil {
+		m.childMenu = &SysMenu{
+			items: make([]*SysMenuItem, 0, 0),
+		}
+	}
+	return m.childMenu.AddMenuItem(label, action)
 }
 
-// NewMenu 创建一个新菜单，给定指定的标签和要显示的项目列表
-func NewMenu(label string, items ...*SysMenuItem) *SysMenu {
-	return &SysMenu{Label: label, Items: items}
+func (m *SysMenuItem) SetIcon(v []byte) {
+	m.icon = v
+	if m.menuItem != nil {
+		m.menuItem.SetIcon(v)
+	}
 }
 
-// NewMenuItem 根据传递的标签和操作参数创建一个新菜单项
-func NewMenuItem(label string, action MenuItemClick) *SysMenuItem {
-	return &SysMenuItem{Label: label, Action: action}
+func (m *SysMenuItem) Icon() []byte {
+	return m.icon
 }
 
-// NewMenuItemSeparator 创建将用作分隔符的菜单项
-func NewMenuItemSeparator() *SysMenuItem {
-	return &SysMenuItem{IsSeparator: true}
+func (m *SysMenuItem) SetChecked(v bool) {
+	m.checked = v
+	if m.menuItem != nil {
+		if v {
+			m.menuItem.Checked()
+		} else {
+			m.menuItem.Uncheck()
+		}
+	}
+}
+
+func (m *SysMenuItem) Checked() bool {
+	if m.menuItem != nil {
+		m.checked = m.menuItem.Checked()
+	}
+	return m.checked
+}
+
+func (m *SysMenuItem) Check() {
+	if m.menuItem != nil {
+		m.menuItem.Check()
+	}
+}
+
+func (m *SysMenuItem) Uncheck() {
+	if m.menuItem != nil {
+		m.menuItem.Uncheck()
+	}
+}
+
+func (m *SysMenuItem) SetDisable(v bool) {
+	m.disabled = v
+	if m.menuItem != nil {
+		m.menuItem.Disable()
+	}
+}
+
+func (m *SysMenuItem) Disable() {
+	if m.menuItem != nil {
+		m.menuItem.Disable()
+	}
+}
+
+func (m *SysMenuItem) Enable() {
+	if m.menuItem != nil {
+		m.menuItem.Enable()
+	}
+}
+
+func (m *SysMenuItem) Disabled() bool {
+	if m.menuItem != nil {
+		m.disabled = m.menuItem.Disabled()
+	}
+	return m.disabled
+}
+
+func (m *SysMenuItem) Show() {
+	if m.menuItem != nil {
+		m.menuItem.Show()
+	}
+}
+
+func (m *SysMenuItem) Hide() {
+	if m.menuItem != nil {
+		m.menuItem.Hide()
+	}
+}
+
+func (m *SysMenuItem) SetSeparator(v bool) {
+	m.isSeparator = v
+}
+
+func (m *SysMenuItem) IsSeparator() bool {
+	return m.isSeparator
+}
+
+func (m *SysMenuItem) SetLabel(v string) {
+	m.label = v
+	if m.menuItem != nil {
+		m.menuItem.SetTitle(v)
+	}
+}
+
+func (m *SysMenuItem) SetTooltip(v string) {
+	if m.menuItem != nil {
+		m.menuItem.SetTooltip(v)
+	}
+}
+
+func (m *SysMenuItem) Label() string {
+	return m.label
+}
+
+func itemForMenuItem(item *SysMenuItem, parent *systray.MenuItem) *systray.MenuItem {
+	if item == nil || item.isSeparator {
+		systray.AddSeparator()
+		return nil
+	}
+	var mItem *systray.MenuItem
+	if item.checked {
+		if parent != nil {
+			mItem = parent.AddSubMenuItemCheckbox(item.label, item.label, true)
+		} else {
+			mItem = systray.AddMenuItemCheckbox(item.label, item.label, true)
+		}
+	} else {
+		if parent != nil {
+			mItem = parent.AddSubMenuItem(item.label, item.label)
+		} else {
+			mItem = systray.AddMenuItem(item.label, item.label)
+		}
+	}
+	if item.disabled {
+		mItem.Disable()
+	}
+	if item.icon != nil {
+		mItem.SetIcon(item.icon)
+	}
+	item.menuItem = mItem
+	return mItem
 }

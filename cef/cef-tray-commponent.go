@@ -9,6 +9,7 @@
 package cef
 
 import (
+	"energye/systray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -81,6 +82,11 @@ type CEFTray struct {
 
 //SysTray 系统原生
 type SysTray struct {
-	menu                *SysMenu
-	trayStart, trayStop func()
+	menu           *SysMenu
+	icon           []byte
+	title, tooltip string
+	click          TrayICONClick
+	dClick         TrayICONClick
+	rClick         func(menu systray.IMenu)
+	start, stop    func()
 }

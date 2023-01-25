@@ -14,7 +14,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -404,10 +403,6 @@ func AppBrowserInit() {
 	})
 	//添加子窗口初始化
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.IBrowserWindow) {
-		sysTray(browserWindow)
-		//tray(browserWindow)
-		sys_tray.TrayMain()
-		return
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
@@ -416,11 +411,6 @@ func AppBrowserInit() {
 			tray(browserWindow)
 		}
 	})
-}
-
-func sysTray(browserWindow cef.IBrowserWindow) {
-	sysTray := browserWindow.NewSysTray()
-	fmt.Printf("NewSysTray %+v\n: ", sysTray)
 }
 
 // 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
