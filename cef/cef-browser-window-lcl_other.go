@@ -16,7 +16,14 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+//TODO no
 type customWindowCaption struct {
+	bw      *LCLBrowserWindow
+	regions *TCefDraggableRegions
+}
+
+func (m *customWindowCaption) free() {
+	//TODO no
 }
 
 //显示标题栏

@@ -10,13 +10,13 @@ package main
 
 import (
 	"embed"
+	"energye/notice"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	sys_tray "github.com/energye/energy/example/dev-test/sys-tray"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"time"
 )
 
 //go:embed resources
@@ -71,9 +71,8 @@ func main() {
 		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
 		//设置隐藏窗口标题
 		//window.HideTitle()
-		cefTray(window)
-		sys_tray.TrayMain()
 		fmt.Println("SetBrowserInitAfter 结束")
+		sysTray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -91,43 +90,63 @@ func main() {
 	cef.Run(cefApp)
 }
 
-// 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
-func cefTray(browserWindow cef.IBrowserWindow) {
-	var url = "http://localhost:22022/min-browser-tray.html"
-	tray := browserWindow.NewCefTray(250, 300, url)
-	if tray == nil {
-		return
-	}
-	tray.SetTitle("任务管理器里显示的标题")
-	tray.SetHint("这里是文字\n文字啊")
-	tray.SetIconFS("resources/icon.ico")
-	var s = false
-	tray.SetOnClick(func() {
-		s = !s
-		if s {
-			browserWindow.HideTitle()
-		} else {
-			browserWindow.ShowTitle()
-		}
-		browserWindow.Show()
+func sysTray(browserWindow cef.IBrowserWindow) {
+	sysTray := browserWindow.NewSysTray()
+	sysTray.SetIconFS("resources/icon.ico")
+	sysTray.SetHint("中文hint\n换行中文")
+	sysTray.SetOnClick(func() {
+		fmt.Println("SetOnClick")
 	})
-	tray.SetBalloon("气泡标题", "气泡内容", 2000)
-	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
-		fmt.Println("tray-show-balloon")
-		tray.ShowBalloon()
-		tray.Hide()
+	tray := sysTray.AsSysTray()
+	check := tray.AddMenuItem("check")
+	check.Check()
+	not := tray.AddMenuItem("通知")
+	not.Click(func() {
+		notice.SendNotification(notice.NewNotification("标题", "内容").SetIconFS("resources/icon.png"))
 	})
-	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
-		browserWindow.Hide()
-		tray.Hide()
+	enable := tray.AddMenuItem("启用/禁用")
+	enable.Click(func() {
+		fmt.Println("启用/禁用 点击")
 	})
-	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
+	tray.AddSeparator()
+	menuItem := tray.AddMenuItem("1级菜单1", func() {
+		fmt.Println("1级菜单1")
+	})
+	menuItem.SetIconFS("resources/icon.ico")
+	tray.AddSeparator()
+	item := tray.AddMenuItem("1级菜单2")
+	item.AddSubMenu("2级子菜单1")
+	sub2Menu := item.AddSubMenu("2级子菜单2")
+	sub2Menu.AddSubMenu("3级子菜单1")
+	tray.AddSeparator()
+	tray.AddMenuItem("退出", func() {
+		fmt.Println("退出")
 		browserWindow.CloseBrowserWindow()
 	})
-	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
-		//无法使用lcl组件
-		//lcl.ShowMessage("提示?") //直接异常退出
-		tray.Hide()
-	})
-	//托盘 end
+
+	sysTray.Show()
+	return
+	//测试图标切换
+	go func() {
+		var b bool
+		for {
+			time.Sleep(time.Second * 2)
+			b = !b
+			if b {
+				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				sysTray.SetIconFS("resources/icon_1.ico")
+				menuItem.SetIconFS("resources/icon_1.ico")
+				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				enable.Enable()
+				check.Check()
+			} else {
+				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				sysTray.SetIconFS("resources/icon.ico")
+				menuItem.SetIconFS("resources/icon.ico")
+				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				enable.Disable()
+				check.Uncheck()
+			}
+		}
+	}()
 }

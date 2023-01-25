@@ -1,4 +1,4 @@
-package app
+package notice
 
 /*
 #cgo CFLAGS: -x objective-c

@@ -10,6 +10,7 @@ package cef
 
 import (
 	"energye/systray"
+	"energye/systray/icon"
 	"github.com/energye/energy/common"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
@@ -28,7 +29,7 @@ func newSysTray() *SysTray {
 
 func (m *SysTray) onReady() {
 	if len(m.icon) > 0 {
-		systray.SetIcon(m.icon)
+		systray.SetIcon(icon.Data)
 	}
 	if m.click != nil {
 		systray.SetOnClick(m.click)
@@ -49,12 +50,6 @@ func (m *SysTray) onReady() {
 	systray.ResetMenu()
 	//刷新并生成菜单
 	m.refreshSystray(m.menu.items, nil)
-	//go func() {
-	//	for {
-	//
-	//		select {}
-	//	}
-	//}()
 }
 
 //refreshSystray 刷新并生成菜单
