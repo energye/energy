@@ -10,6 +10,7 @@ package main
 
 import (
 	"embed"
+	"energye/notice"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
@@ -100,7 +101,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	check.Check()
 	not := tray.AddMenuItem("通知")
 	not.Click(func() {
-		//notice.SendNotification(notice.NewNotification("标题", "内容"))
+		notice.SendNotification(notice.NewNotification("标题", "内容"))
 	})
 	enable := tray.AddMenuItem("启用/禁用")
 	enable.Click(func() {
