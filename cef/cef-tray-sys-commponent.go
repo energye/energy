@@ -10,6 +10,7 @@ package cef
 
 import (
 	"energye/systray"
+	"github.com/energye/energy/common"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"
@@ -44,15 +45,19 @@ func (m *SysTray) onReady() {
 	if m.tooltip != "" {
 		systray.SetTooltip(m.tooltip)
 	}
+	//重置菜单
 	systray.ResetMenu()
+	//刷新并生成菜单
 	m.refreshSystray(m.menu.items, nil)
-	go func() {
-		for {
-			select {}
-		}
-	}()
+	//go func() {
+	//	for {
+	//
+	//		select {}
+	//	}
+	//}()
 }
 
+//refreshSystray 刷新并生成菜单
 func (m *SysTray) refreshSystray(items []*SysMenuItem, parent *systray.MenuItem) {
 	for _, item := range items {
 		mItem := itemForMenuItem(item, parent)
@@ -65,8 +70,11 @@ func (m *SysTray) refreshSystray(items []*SysMenuItem, parent *systray.MenuItem)
 	}
 }
 
+//onExit 退出回调事件
 func (m *SysTray) onExit() {
-	systray.Quit()
+	if !common.IsDarwin() {
+		systray.Quit()
+	}
 }
 
 func (m *SysTray) AsSysTray() *SysTray {
@@ -85,18 +93,83 @@ func (m *SysTray) AsLCLTray() *LCLTray {
 	return nil
 }
 
+//Show 显示/启动 托盘
 func (m *SysTray) Show() {
-	if m.start == nil {
-		m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
-		m.start()
-	}
-}
-
-func (m *SysTray) Hide() {
+	m.once.Do(func() {
+		if m.start == nil {
+			go func() {
+				m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
+				m.start()
+			}()
+		}
+	})
 }
 
 func (m *SysTray) close() {
-	m.onExit()
+	if !common.IsDarwin() {
+		if m.stop != nil {
+			m.stop()
+			m.start = nil
+			m.stop = nil
+		}
+	}
+}
+
+//SetOnDblClick 鼠标双击事件
+func (m *SysTray) SetOnDblClick(fn TrayICONClick) {
+	m.dClick = fn
+}
+
+//SetOnClick 鼠标单击事件
+func (m *SysTray) SetOnClick(fn TrayICONClick) {
+	m.click = fn
+}
+
+//SetOnRClick 鼠标右键
+func (m *SysTray) SetOnRClick(fn func(menu systray.IMenu)) {
+	m.rClick = fn
+}
+
+//SetHint 设置托盘提示
+func (m *SysTray) SetHint(value string) {
+	m.tooltip = value
+	if m.start != nil {
+		systray.SetTooltip(value)
+	}
+}
+
+//SetTitle 设置托盘标题
+func (m *SysTray) SetTitle(title string) {
+	m.title = title
+	if m.start != nil {
+		systray.SetTitle(title)
+	}
+}
+
+//SetIconFS 设置托盘图标
+func (m *SysTray) SetIconFS(iconResourcePath string) {
+	if emfs.IsExist(iconResourcePath) {
+		data, err := emfs.GetResources(iconResourcePath)
+		if err == nil {
+			m.icon = data
+			if m.start != nil {
+				systray.SetIcon(m.icon)
+			}
+		}
+	}
+}
+
+//SetIcon 设置托盘图标
+func (m *SysTray) SetIcon(iconResourcePath string) {
+	if tools.IsExist(iconResourcePath) {
+		data, err := ioutil.ReadFile(iconResourcePath)
+		if err == nil {
+			m.icon = data
+			if m.start != nil {
+				systray.SetIcon(m.icon)
+			}
+		}
+	}
 }
 
 // CreateMenu 创建托盘菜单, 如果托盘菜单是空, 把菜单项添加到托盘
@@ -144,78 +217,4 @@ func (m *SysTray) AddMenuItemSeparator() {
 //NewMenuItem 创建一个新菜单项
 func (m *SysTray) NewMenuItem(label string, onClick MenuItemClick) *SysMenuItem {
 	return &SysMenuItem{label: label, click: onClick}
-}
-
-//SetOnDblClick 鼠标双击事件
-func (m *SysTray) SetOnDblClick(fn TrayICONClick) {
-	m.dClick = fn
-}
-
-//SetOnClick 鼠标单击事件
-func (m *SysTray) SetOnClick(fn TrayICONClick) {
-	m.click = fn
-}
-
-//SetOnRClick 鼠标右键
-func (m *SysTray) SetOnRClick(fn func(menu systray.IMenu)) {
-	m.rClick = fn
-}
-
-func (m *SysTray) SetHint(value string) {
-	m.tooltip = value
-	if m.start != nil {
-		systray.SetTooltip(value)
-	}
-}
-
-func (m *SysTray) SetTitle(title string) {
-	m.title = title
-	if m.start != nil {
-		systray.SetTitle(title)
-	}
-}
-
-//SetIconFS 设置托盘图标
-func (m *SysTray) SetIconFS(iconResourcePath string) {
-	if emfs.IsExist(iconResourcePath) {
-		data, err := emfs.GetResources(iconResourcePath)
-		if err == nil {
-			m.icon = data
-			if m.start != nil {
-				systray.SetIcon(m.icon)
-			}
-		}
-	}
-}
-
-//SetIcon 设置托盘图标
-func (m *SysTray) SetIcon(iconResourcePath string) {
-	if tools.IsExist(iconResourcePath) {
-		data, err := ioutil.ReadFile(iconResourcePath)
-		if err == nil {
-			m.icon = data
-			if m.start != nil {
-				systray.SetIcon(m.icon)
-			}
-		}
-	}
-}
-
-func (m *SysTray) Visible() bool {
-	return false
-}
-
-func (m *SysTray) SetVisible(v bool) {
-}
-
-//设置托盘气泡
-//title 气泡标题
-//content 气泡内容
-//timeout 显示时间(毫秒)
-func (m *SysTray) SetBalloon(title, content string, timeout int32) ITray {
-	return nil
-}
-
-//显示托盘气泡
-func (m *SysTray) ShowBalloon() {
 }

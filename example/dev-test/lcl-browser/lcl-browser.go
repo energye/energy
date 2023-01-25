@@ -110,6 +110,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 		for {
 			time.Sleep(time.Second)
 			b = !b
+			fmt.Println("bool", b)
 			if b {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				sysTray.SetIconFS("resources/icon_1.ico")

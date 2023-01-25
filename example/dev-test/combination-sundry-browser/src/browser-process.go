@@ -418,17 +418,18 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	var url = "http://localhost:22022/min-browser-tray.html"
 	tray := browserWindow.NewCefTray(250, 300, url)
+	asCEFTray := tray.AsCEFTray()
 	tray.SetTitle("任务管理器里显示的标题")
 	tray.SetHint("这里是文字\n文字啊")
 	tray.SetIconFS("resources/icon.ico")
 	tray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
-	tray.SetBalloon("气泡标题", "气泡内容", 2000)
+	asCEFTray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
 		fmt.Println("tray-show-balloon")
-		tray.ShowBalloon()
-		tray.Hide()
+		asCEFTray.ShowBalloon()
+		asCEFTray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
 		vb := !window.Visible()
@@ -439,7 +440,7 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 			}
 			window.Focused()
 		}
-		tray.Hide()
+		asCEFTray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
 		browserWindow.CloseBrowserWindow()
@@ -448,7 +449,7 @@ func cefTray(browserWindow cef.IBrowserWindow) {
 		cef.QueueAsyncCall(func(id int) {
 			lcl.ShowMessage("tray-show-message-box 提示消息")
 		})
-		tray.Hide()
+		asCEFTray.Hide()
 	})
 	//托盘 end
 }
@@ -467,7 +468,7 @@ func tray(browserWindow cef.IBrowserWindow) {
 		lcl.ShowMessage("子菜单点击 提示消息")
 	}))
 	tray.AddMenuItem("显示气泡", func() {
-		newTray.ShowBalloon()
+		tray.ShowBalloon()
 	})
 	tray.AddMenuItem("显示/隐藏", func() {
 		vis := window.Visible()

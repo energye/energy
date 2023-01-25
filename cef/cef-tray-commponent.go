@@ -12,6 +12,7 @@ import (
 	"energye/systray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"sync"
 )
 
 //TMouseEvent 鼠标事件
@@ -32,23 +33,18 @@ type TrayICONClick func()
 //
 //4. SysTray 对Windows、MacOSX和Linux支持较好
 type ITray interface {
-	SetTitle(title string)                                 //SetTitle 设置标题
-	SetVisible(v bool)                                     //SetVisible 设置显示和隐藏托盘图标
-	Visible() bool                                         //Visible 托盘的显示和隐藏状态
-	Show()                                                 //Show 显示托盘菜单窗口 windows有效
-	Hide()                                                 //Hide 隐藏托盘菜单窗口 windows有效
-	close()                                                //close 关闭托盘菜单窗口 windows有效
-	SetOnClick(fn TrayICONClick)                           //SetOnClick 单击事件
-	SetOnDblClick(fn TrayICONClick)                        //SetOnDblClick 双击事件 linux 和 macos 可能不启作用
-	SetIconFS(iconResourcePath string)                     //SetIconFS 设置托盘图标
-	SetIcon(iconResourcePath string)                       //SetIcon 设置托盘图标
-	SetHint(value string)                                  //SetHint 设置托盘hint(鼠标移动到托盘图标显示的文字)
-	ShowBalloon()                                          //ShowBalloon 显示托盘气泡
-	SetBalloon(title, content string, timeout int32) ITray //SetBalloon 设置托盘气泡内容
-	AsSysTray() *SysTray                                   //AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
-	AsViewsFrameTray() *ViewsFrameTray                     //AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
-	AsCEFTray() *CEFTray                                   //AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
-	AsLCLTray() *LCLTray                                   //AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
+	SetTitle(title string)             //SetTitle 设置标题
+	Show()                             //Show 显示/启动 托盘
+	close()                            //
+	SetOnClick(fn TrayICONClick)       //SetOnClick 单击事件
+	SetOnDblClick(fn TrayICONClick)    //SetOnDblClick 双击事件
+	SetIconFS(iconResourcePath string) //SetIconFS 设置托盘图标
+	SetIcon(iconResourcePath string)   //SetIcon 设置托盘图标
+	SetHint(value string)              //SetHint 设置托盘hint(鼠标移动到托盘图标显示的文字)
+	AsSysTray() *SysTray               //AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
+	AsViewsFrameTray() *ViewsFrameTray //AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
+	AsCEFTray() *CEFTray               //AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
+	AsLCLTray() *LCLTray               //AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 }
 
 //LCLTray LCL组件 托盘
@@ -82,6 +78,7 @@ type CEFTray struct {
 
 //SysTray 系统原生
 type SysTray struct {
+	once           sync.Once
 	menu           *SysMenu
 	icon           []byte
 	title, tooltip string
