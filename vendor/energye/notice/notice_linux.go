@@ -29,7 +29,7 @@ func SendNotification(n *Notification) {
 	if n.Icon != nil && len(n.Icon) > 0 {
 		bh := md5.Sum(n.Icon)
 		dataHash := hex.EncodeToString(bh[:])
-		fileName := fmt.Sprintf("notice-%s-%s%s", appName, dataHash, n.iconExt)
+		fileName := fmt.Sprintf("notice-%s-%s", dataHash, n.iconExt)
 		appIcon = filepath.Join(os.TempDir(), fileName)
 		if _, err := os.Stat(appIcon); os.IsNotExist(err) {
 			err = ioutil.WriteFile(appIcon, n.Icon, 0600)

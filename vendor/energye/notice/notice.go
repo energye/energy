@@ -62,3 +62,7 @@ func UniqueID() string {
 	uniqueID = "energy-id-" + strconv.FormatInt(time.Now().Unix(), 10) // This is a fake unique - it just has to not be reused...
 	return uniqueID
 }
+
+func SetUniqueID(v string) {
+	uniqueID = v
+}
