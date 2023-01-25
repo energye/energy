@@ -32,7 +32,7 @@ type IMenu interface {
 // Don't create it directly, use the one systray.AddMenuItem() returned
 type MenuItem struct {
 	// ClickedCh is the channel which will be notified when the menu item is clicked
-	ClickedCh chan struct{}
+	click func()
 
 	// id uniquely identify a menu item, not supposed to be modified
 	id uint32
@@ -52,6 +52,10 @@ type MenuItem struct {
 	parent *MenuItem
 }
 
+func (item *MenuItem) Click(fn func()) {
+	item.click = fn
+}
+
 func (item *MenuItem) String() string {
 	if item.parent == nil {
 		return fmt.Sprintf("MenuItem[%d, %q]", item.id, item.title)
@@ -62,7 +66,6 @@ func (item *MenuItem) String() string {
 // newMenuItem returns a populated MenuItem object
 func newMenuItem(title string, tooltip string, parent *MenuItem) *MenuItem {
 	return &MenuItem{
-		ClickedCh:   make(chan struct{}),
 		id:          atomic.AddUint32(&currentID, 1),
 		title:       title,
 		tooltip:     tooltip,
@@ -274,9 +277,7 @@ func systrayMenuItemSelected(id uint32) {
 		log.Printf("systray error: no menu item with ID %d\n", id)
 		return
 	}
-	select {
-	case item.ClickedCh <- struct{}{}:
-	// in case no one waiting for the channel
-	default:
+	if item.click != nil {
+		item.click()
 	}
 }

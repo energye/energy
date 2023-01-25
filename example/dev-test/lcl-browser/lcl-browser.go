@@ -97,26 +97,49 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 		fmt.Println("SetOnClick")
 	})
 	tray := sysTray.AsSysTray()
-	tray.AddMenuItem("1级菜单1", nil)
-	tray.AddMenuItemSeparator()
-	item := tray.AddMenuItem("1级菜单2", nil)
-	item.AddSubMenu("2级子菜单1", nil)
-	sub2Menu := item.AddSubMenu("2级子菜单2", nil)
-	sub2Menu.AddSubMenu("3级子菜单1", nil)
+	check := tray.AddMenuItem("check")
+	check.Check()
+	enable := tray.AddMenuItem("启用/禁用")
+	enable.Click(func() {
+		fmt.Println("启用/禁用 点击")
+	})
+	tray.AddSeparator()
+	menuItem := tray.AddMenuItem("1级菜单1", func() {
+		fmt.Println("1级菜单1")
+	})
+	menuItem.SetIconFS("resources/icon.ico")
+	tray.AddSeparator()
+	item := tray.AddMenuItem("1级菜单2")
+	item.AddSubMenu("2级子菜单1")
+	sub2Menu := item.AddSubMenu("2级子菜单2")
+	sub2Menu.AddSubMenu("3级子菜单1")
+	tray.AddSeparator()
+	tray.AddMenuItem("退出", func() {
+		fmt.Println("退出")
+		browserWindow.CloseBrowserWindow()
+	})
 
 	sysTray.Show()
+	//测试图标切换
 	go func() {
 		var b bool
 		for {
-			time.Sleep(time.Second)
+			time.Sleep(time.Second * 2)
 			b = !b
-			fmt.Println("bool", b)
 			if b {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				sysTray.SetIconFS("resources/icon_1.ico")
+				menuItem.SetIconFS("resources/icon_1.ico")
+				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				enable.Enable()
+				check.Check()
 			} else {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				sysTray.SetIconFS("resources/icon.ico")
+				menuItem.SetIconFS("resources/icon.ico")
+				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
+				enable.Disable()
+				check.Uncheck()
 			}
 		}
 	}()

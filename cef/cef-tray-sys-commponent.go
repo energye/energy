@@ -205,16 +205,22 @@ func (m *SysTray) Add(menuItem *SysMenuItem) {
 }
 
 //AddMenuItem 添加一个菜单项
-func (m *SysTray) AddMenuItem(label string, onClick MenuItemClick) *SysMenuItem {
-	return m.menu.AddMenuItem(label, onClick)
+func (m *SysTray) AddMenuItem(label string, click ...MenuItemClick) *SysMenuItem {
+	if len(click) > 0 {
+		return m.menu.AddMenuItem(label, click[0])
+	}
+	return m.menu.AddMenuItem(label, nil)
 }
 
-//AddMenuItemSeparator 添加一个分隔线
-func (m *SysTray) AddMenuItemSeparator() {
-	m.menu.AddMenuItemSeparator()
+//AddSeparator 添加一个分隔线
+func (m *SysTray) AddSeparator() {
+	m.menu.AddSeparator()
 }
 
 //NewMenuItem 创建一个新菜单项
-func (m *SysTray) NewMenuItem(label string, onClick MenuItemClick) *SysMenuItem {
-	return &SysMenuItem{label: label, click: onClick}
+func (m *SysTray) NewMenuItem(label string, click ...MenuItemClick) *SysMenuItem {
+	if len(click) > 0 {
+		return &SysMenuItem{label: label, click: click[0]}
+	}
+	return &SysMenuItem{label: label}
 }

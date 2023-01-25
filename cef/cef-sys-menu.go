@@ -8,7 +8,12 @@
 
 package cef
 
-import "energye/systray"
+import (
+	"energye/systray"
+	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/tools"
+	"io/ioutil"
+)
 
 type MenuItemClick func()
 
@@ -42,20 +47,41 @@ func (m *SysMenu) Add(menuItem *SysMenuItem) {
 	m.items = append(m.items, menuItem)
 }
 
-func (m *SysMenu) AddMenuItemSeparator() {
+func (m *SysMenu) AddSeparator() {
 	m.items = append(m.items, &SysMenuItem{isSeparator: true})
 }
 
-func (m *SysMenuItem) AddSubMenu(label string, action MenuItemClick) *SysMenuItem {
+func (m *SysMenuItem) AddSubMenu(label string, click ...MenuItemClick) *SysMenuItem {
 	if m.childMenu == nil {
 		m.childMenu = &SysMenu{
 			items: make([]*SysMenuItem, 0, 0),
 		}
 	}
-	return m.childMenu.AddMenuItem(label, action)
+	if len(click) > 0 {
+		return m.childMenu.AddMenuItem(label, click[0])
+	}
+	return m.childMenu.AddMenuItem(label, nil)
 }
 
-func (m *SysMenuItem) SetIcon(v []byte) {
+func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
+	if emfs.IsExist(iconResourcePath) {
+		data, err := emfs.GetResources(iconResourcePath)
+		if err == nil {
+			m.SetIconBytes(data)
+		}
+	}
+}
+
+func (m *SysMenuItem) SetIcon(iconResourcePath string) {
+	if tools.IsExist(iconResourcePath) {
+		data, err := ioutil.ReadFile(iconResourcePath)
+		if err == nil {
+			m.SetIconBytes(data)
+		}
+	}
+}
+
+func (m *SysMenuItem) SetIconBytes(v []byte) {
 	m.icon = v
 	if m.menuItem != nil {
 		m.menuItem.SetIcon(v)
@@ -85,12 +111,14 @@ func (m *SysMenuItem) Checked() bool {
 }
 
 func (m *SysMenuItem) Check() {
+	m.checked = true
 	if m.menuItem != nil {
 		m.menuItem.Check()
 	}
 }
 
 func (m *SysMenuItem) Uncheck() {
+	m.checked = false
 	if m.menuItem != nil {
 		m.menuItem.Uncheck()
 	}
@@ -159,6 +187,10 @@ func (m *SysMenuItem) Label() string {
 	return m.label
 }
 
+func (m *SysMenuItem) Click(fn MenuItemClick) {
+	m.click = fn
+}
+
 func itemForMenuItem(item *SysMenuItem, parent *systray.MenuItem) *systray.MenuItem {
 	if item == nil || item.isSeparator {
 		systray.AddSeparator()
@@ -185,5 +217,8 @@ func itemForMenuItem(item *SysMenuItem, parent *systray.MenuItem) *systray.MenuI
 		mItem.SetIcon(item.icon)
 	}
 	item.menuItem = mItem
+	if item.click != nil {
+		item.menuItem.Click(item.click)
+	}
 	return mItem
 }
