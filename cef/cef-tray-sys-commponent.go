@@ -10,7 +10,6 @@ package cef
 
 import (
 	"energye/systray"
-	"energye/systray/icon"
 	"github.com/energye/energy/common"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
@@ -29,7 +28,7 @@ func newSysTray() *SysTray {
 
 func (m *SysTray) onReady() {
 	if len(m.icon) > 0 {
-		systray.SetIcon(icon.Data)
+		systray.SetIcon(m.icon)
 	}
 	if m.click != nil {
 		systray.SetOnClick(m.click)
