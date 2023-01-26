@@ -91,10 +91,15 @@ func (m *SysTray) AsLCLTray() *LCLTray {
 func (m *SysTray) Show() {
 	m.once.Do(func() {
 		if m.start == nil {
-			go func() {
+			var runLoop = func() {
 				m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
 				m.start()
-			}()
+			}
+			if common.IsDarwin() {
+				runLoop()
+			} else {
+				go runLoop()
+			}
 		}
 	})
 }

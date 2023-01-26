@@ -1,3 +1,6 @@
+//go:build darwin
+// +build darwin
+
 package notice
 
 /*
@@ -15,6 +18,7 @@ import (
 	"fmt"
 	"golang.org/x/sys/execabs"
 	"strings"
+	"unsafe"
 )
 
 func SendNotification(n *Notification) {
