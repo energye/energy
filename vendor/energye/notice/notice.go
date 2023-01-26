@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
+// notice is a cross-platform system notification library
+// notice 是一个跨平台的系统通知库
 package notice
 
 import (

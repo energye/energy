@@ -1,4 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 // Package systray is a cross-platform Go library to place an icon and menu in the notification area.
+// Package systray是一个跨平台的Go库，用于在通知区域放置图标和菜单。
 package systray
 
 import (
