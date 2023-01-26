@@ -63,6 +63,7 @@ func (m *SysMenuItem) AddSubMenu(label string, click ...MenuItemClick) *SysMenuI
 	return m.childMenu.AddMenuItem(label, nil)
 }
 
+//SetIconFS windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
 	if emfs.IsExist(iconResourcePath) {
 		data, err := emfs.GetResources(iconResourcePath)
@@ -72,6 +73,7 @@ func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
 	}
 }
 
+//SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIcon(iconResourcePath string) {
 	if tools.IsExist(iconResourcePath) {
 		data, err := ioutil.ReadFile(iconResourcePath)
@@ -81,6 +83,7 @@ func (m *SysMenuItem) SetIcon(iconResourcePath string) {
 	}
 }
 
+//SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIconBytes(v []byte) {
 	m.icon = v
 	if m.menuItem != nil {

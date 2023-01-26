@@ -140,7 +140,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 				check.Check()
 			} else {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				sysTray.SetIconFS("resources/icon.png")
+				sysTray.SetIconFS("resources/icon.ico")
 				menuItem.SetIconFS("resources/icon.ico")
 				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				enable.Disable()
