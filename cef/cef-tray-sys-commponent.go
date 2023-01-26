@@ -11,6 +11,7 @@ package cef
 import (
 	"energye/systray"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"
@@ -96,8 +97,17 @@ func (m *SysTray) Show() {
 				m.start()
 			}
 			if common.IsDarwin() {
-				runLoop()
+				// view framework
+				if consts.IsMessageLoop {
+					runLoop()
+				} else {
+					//LCL
+					QueueAsyncCall(func(id int) {
+						runLoop()
+					})
+				}
 			} else {
+				//windows linux
 				go runLoop()
 			}
 		}

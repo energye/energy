@@ -101,7 +101,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	check.Check()
 	not := tray.AddMenuItem("通知")
 	not.Click(func() {
-		notice.SendNotification(notice.NewNotification("标题", "内容"))
+		notice.SendNotification(notice.NewNotification("标题", "内容内容内容内容内容内容内容内容内容内容内容内容内容内容\n内容内容内容内容内容内容内容内容内容内容内容内容内容内"))
 	})
 	enable := tray.AddMenuItem("启用/禁用")
 	enable.Click(func() {
@@ -124,7 +124,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	})
 
 	sysTray.Show()
-	return
+	//return
 	//测试图标切换
 	go func() {
 		var b bool

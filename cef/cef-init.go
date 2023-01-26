@@ -36,8 +36,15 @@ func SetOnException(exception ExceptionCallback) {
 //libs 内置到应用程序的类库
 //
 //resources 内置到应用程序的资源文件
+//
+//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
 func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	macapp.MacApp.IsCEF(IsDarwin())
+	//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
+	energyEnv := Args.Args("energy_env")
+	if energyEnv != "" {
+		macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(energyEnv))
+	}
 	inits.Init(libs, resources)
 	if Args.IsRender() {
 		netIpcPort := Args.Args(MAINARGS_NETIPCPORT)

@@ -10,6 +10,7 @@ package main
 
 import (
 	"embed"
+	"energye/notice"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
@@ -71,7 +72,7 @@ func main() {
 		//设置隐藏窗口标题
 		//window.HideTitle()
 		fmt.Println("SetBrowserInitAfter 结束")
-		//sysTray(window)
+		sysTray(window)
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -101,7 +102,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	check.Check()
 	not := tray.AddMenuItem("通知")
 	not.Click(func() {
-		//notice.SendNotification(notice.NewNotification("标题", "内容").SetIconFS("resources/icon.png"))
+		notice.SendNotification(notice.NewNotification("标题", "notice 是一个跨平台的系统通知库"))
 	})
 	enable := tray.AddMenuItem("启用/禁用")
 	enable.Click(func() {
