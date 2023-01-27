@@ -112,23 +112,15 @@ func (m *LCLTray) SetTitle(title string) {
 	m.trayIcon.SetHint(title)
 }
 
-//设置托盘气泡
+//显示系统通知
 //
-//title	气泡标题
+//title 标题
 //
-//content	气泡内容
+//content 内容
 //
-//timeout	显示时间(毫秒)
-func (m *LCLTray) SetBalloon(title, content string, timeout int32) ITray {
-	m.trayIcon.SetBalloonTitle(title)
-	m.trayIcon.SetBalloonHint(content)
-	m.trayIcon.SetBalloonTimeout(timeout)
-	return m
-}
-
-//显示托盘气泡
-func (m *LCLTray) ShowBalloon() {
-	m.trayIcon.ShowBalloonHint()
+//timeout 显示时间(毫秒)
+func (m *LCLTray) Notice(title, content string, timeout int32) {
+	notification(m.trayIcon, title, content, timeout)
 }
 
 //创建一个菜单，还未添加到托盘

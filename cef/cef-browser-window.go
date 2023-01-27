@@ -61,7 +61,7 @@ type WindowProperty struct {
 //定义了常用函数
 type IBrowserWindow interface {
 	Id() int32                                                   //窗口ID
-	Handle() types.HWND                                          //
+	Handle() types.HWND                                          //窗口句柄
 	Show()                                                       //显示窗口
 	Hide()                                                       //隐藏窗口
 	Maximize()                                                   //窗口最大化
@@ -100,10 +100,10 @@ type IBrowserWindow interface {
 	SetCenterWindow(value bool)                                  //设置窗口居中
 	ShowTitle()                                                  //显示窗口标题栏
 	HideTitle()                                                  //隐藏窗口标题栏
-	SetDefaultInTaskBar()                                        //窗口默认在任务栏上显示图标
-	SetShowInTaskBar()                                           //强制窗口在任务栏上显示图标
-	SetNotInTaskBar()                                            //强制不在任务栏上显示窗口图标
-	NewCefTray(width, height int32, url string) ITray            //创建托盘CEF自定义html
+	SetDefaultInTaskBar()                                        //默认窗口在任务栏上显示按钮
+	SetShowInTaskBar()                                           //强制窗口在任务栏上显示按钮
+	SetNotInTaskBar()                                            //强制窗口不在任务栏上显示按钮
+	NewCefTray(width, height int32, url string) ITray            //创建托盘LCL+CEF（使用web端技术自定义实现）
 	NewSysTray() ITray                                           //systray系统原生
 }
 

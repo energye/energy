@@ -403,8 +403,6 @@ func AppBrowserInit() {
 	})
 	//添加子窗口初始化
 	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.IBrowserWindow) {
-		lclTray(browserWindow)
-		return
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
@@ -427,10 +425,9 @@ func lclCefTray(browserWindow cef.IBrowserWindow) {
 	tray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
-	asCEFTray.SetBalloon("气泡标题", "气泡内容", 2000)
 	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
 		fmt.Println("tray-show-balloon")
-		asCEFTray.ShowBalloon()
+		asCEFTray.Notice("气泡标题", "气泡内容", 2000)
 		asCEFTray.Hide()
 	})
 	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
@@ -470,7 +467,8 @@ func lclTray(browserWindow cef.IBrowserWindow) {
 		lcl.ShowMessage("子菜单点击 提示消息")
 	}))
 	tray.AddMenuItem("显示气泡", func() {
-		tray.ShowBalloon()
+		//linux下有些问题
+		tray.Notice("气泡标题", "气泡内容", 2000)
 	})
 	tray.AddMenuItem("显示/隐藏", func() {
 		vis := window.Visible()
@@ -480,8 +478,6 @@ func lclTray(browserWindow cef.IBrowserWindow) {
 	tray.AddMenuItem("退出", func() {
 		browserWindow.CloseBrowserWindow()
 	})
-	//linux下有些问题
-	tray.SetBalloon("气泡标题", "气泡内容", 2000)
 	//托盘 end
 	tray.Show()
 }

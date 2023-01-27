@@ -580,7 +580,7 @@ const (
 	WOD_NEW_PICTURE_IN_PICTURE
 )
 
-// Browser Window Type
+//WINDOW_TYPE 窗口类型
 type WINDOW_TYPE = types.Int8
 
 const (

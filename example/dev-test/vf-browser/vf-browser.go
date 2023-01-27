@@ -10,7 +10,6 @@ package main
 
 import (
 	"embed"
-	"energye/notice"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
@@ -102,7 +101,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	check.Check()
 	not := tray.AddMenuItem("通知")
 	not.Click(func() {
-		notice.SendNotification(notice.NewNotification("标题", "notice 是一个跨平台的系统通知库"))
+		tray.Notice("标题", "内notice 是一个跨平台的系统通知库\nnotice 是一个跨平台的系统通知库", 1000)
 	})
 	enable := tray.AddMenuItem("启用/禁用")
 	enable.Click(func() {

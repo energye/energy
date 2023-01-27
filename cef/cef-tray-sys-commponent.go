@@ -155,6 +155,17 @@ func (m *SysTray) SetTitle(title string) {
 	}
 }
 
+//显示系统通知
+//
+//title 标题
+//
+//content 内容
+//
+//timeout 显示时间(毫秒)
+func (m *SysTray) Notice(title, content string, timeout int32) {
+	notification(nil, title, content, timeout)
+}
+
 //SetIconFS 设置托盘图标
 func (m *SysTray) SetIconFS(iconResourcePath string) {
 	if emfs.IsExist(iconResourcePath) {

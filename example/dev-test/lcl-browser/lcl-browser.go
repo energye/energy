@@ -10,7 +10,6 @@ package main
 
 import (
 	"embed"
-	"energye/notice"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
@@ -73,7 +72,6 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		sysTray(window)
-		//sys_tray.TrayMain()
 		return
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
@@ -101,7 +99,7 @@ func sysTray(browserWindow cef.IBrowserWindow) {
 	check.Check()
 	not := tray.AddMenuItem("通知")
 	not.Click(func() {
-		notice.SendNotification(notice.NewNotification("标题", "内容内容内容内容内容内容内容内容内容内容内容内容内容内容\n内容内容内容内容内容内容内容内容内容内容内容内容内容内"))
+		sysTray.Notice("标题", "内容内容内容内容内容内容内容内容内容内容内容内容内容内容\n内容内容内容内容内容内容内容内容内容内容内容内容内容内", 1000)
 	})
 	enable := tray.AddMenuItem("启用/禁用")
 	enable.Click(func() {

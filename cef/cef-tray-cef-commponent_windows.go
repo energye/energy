@@ -148,20 +148,15 @@ func (m *CEFTray) onMouseEvent() {
 	})
 }
 
-//设置托盘气泡
-//title 气泡标题
-//content 气泡内容
+//显示系统通知
+//
+//title 标题
+//
+//content 内容
+//
 //timeout 显示时间(毫秒)
-func (m *CEFTray) SetBalloon(title, content string, timeout int32) ITray {
-	m.trayIcon.SetBalloonTitle(title)
-	m.trayIcon.SetBalloonHint(content)
-	m.trayIcon.SetBalloonTimeout(timeout)
-	return m
-}
-
-//显示托盘气泡
-func (m *CEFTray) ShowBalloon() {
-	m.trayIcon.ShowBalloonHint()
+func (m *CEFTray) Notice(title, content string, timeout int32) {
+	notification(m.trayIcon, title, content, timeout)
 }
 
 func (m *CEFTray) createTrayWindow() {
