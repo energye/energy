@@ -11,6 +11,7 @@ package cef
 import (
 	"fmt"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
 )
@@ -34,6 +35,11 @@ func (m *ICefBrowser) createBrowserViewSource(frame *ICefFrame) {
 				if common.IsDarwin() {
 					viewSourceWindow.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 						viewSourceWindow.Chromium().LoadUrl(viewSourceUrl)
+					})
+				}
+				if assetserve.AssetsServerHeaderKeyValue != "" {
+					viewSourceWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
+						request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 					})
 				}
 				viewSourceWindow.EnableDefaultCloseEvent()

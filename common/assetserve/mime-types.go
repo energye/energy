@@ -4,6 +4,8 @@ var mimeTypes = `3dm=x-world/x-3dmf
 3dmf=x-world/x-3dmf
 7z=application/x-7z-compressed
 a=application/octet-stream
+woff2=application/octet-stream
+woff=application/octet-stream
 aab=application/x-authorware-bin
 aam=application/x-authorware-map
 aas=application/x-authorware-seg
