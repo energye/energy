@@ -12,7 +12,6 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/golcl/lcl"
 	"time"
@@ -22,7 +21,6 @@ import (
 var resources embed.FS
 
 func main() {
-	fmt.Println("ARGS", common.Args.ProcessType())
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
@@ -37,8 +35,9 @@ func main() {
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.DisableResize()
+		window.SetCenterWindow(false)
 		window.SetTitle("这里改变了窗口标题")
-		window.SetSize(1600, 900)
+		window.SetSize(1024, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
@@ -47,12 +46,18 @@ func main() {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
-			popupWindow.SetCenterWindow(true)
+			popupWindow.SetCenterWindow(false)
 			popupWindow.EnableResize()
+			popupWindow.DisableMaximize()
+			popupWindow.DisableResize()
+			popupWindow.DisableMinimize()
 			popupWindow.SetSize(1600, 1600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 				fmt.Println("popupWindow.SetOnWindowCreated", window)
+			})
+			browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
+				fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
 			})
 			//browserWindow.BrowserWindow().CreateTopLevelWindow()
 			//browserWindow.BrowserWindow().HideTitle()

@@ -129,13 +129,14 @@ type ILCLBrowserWindow interface {
 //定义了ViewsFramework常用函数
 type IViewsFrameworkBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *ViewsFrameworkBrowserWindow                       //返回 ViewsFrameworkBrowserWindow 窗口结构
-	CreateTopLevelWindow()                                             //创建窗口, 在窗口组件中需要默认调用Show函数
-	CenterWindow(size *TCefSize)                                       //设置窗口居中，同时指定窗口大小
-	Component() lcl.IComponent                                         //窗口父组件
-	WindowComponent() *TCEFWindowComponent                             //窗口组件
-	BrowserViewComponent() *TCEFBrowserViewComponent                   //窗口浏览器组件
-	SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated) //设置窗口默认的创建回调事件函数
+	BrowserWindow() *ViewsFrameworkBrowserWindow                                //返回 ViewsFrameworkBrowserWindow 窗口结构
+	CreateTopLevelWindow()                                                      //创建窗口, 在窗口组件中需要默认调用Show函数
+	CenterWindow(size *TCefSize)                                                //设置窗口居中，同时指定窗口大小
+	Component() lcl.IComponent                                                  //窗口父组件
+	WindowComponent() *TCEFWindowComponent                                      //窗口组件
+	BrowserViewComponent() *TCEFBrowserViewComponent                            //窗口浏览器组件
+	SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated)          //设置窗口默认的创建回调事件函数
+	SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) //设置窗口初始bounds
 }
 
 //创建一个属性配置器，带有窗口默认属性值

@@ -26,20 +26,21 @@ import (
 //
 //当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
-	isClosing            bool                           //
-	windowType           consts.WINDOW_TYPE             //0:browser 1:devTools 2:viewSource 默认:0
-	windowId             int32                          //
-	chromium             IChromium                      //
-	browser              *ICefBrowser                   //
-	component            lcl.IComponent                 //
-	windowComponent      *TCEFWindowComponent           //
-	browserViewComponent *TCEFBrowserViewComponent      //
-	windowProperty       *WindowProperty                //窗口属性
-	frames               TCEFFrame                      //当前浏览器下的所有frame
-	auxTools             *auxTools                      //辅助工具
-	tray                 ITray                          //托盘
-	doOnWindowCreated    WindowComponentOnWindowCreated //
-	regions              *TCefDraggableRegions          //窗口内html拖拽区域
+	isClosing            bool                              //
+	windowType           consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
+	windowId             int32                             //
+	chromium             IChromium                         //
+	browser              *ICefBrowser                      //
+	component            lcl.IComponent                    //
+	windowComponent      *TCEFWindowComponent              //
+	browserViewComponent *TCEFBrowserViewComponent         //
+	windowProperty       *WindowProperty                   //窗口属性
+	frames               TCEFFrame                         //当前浏览器下的所有frame
+	auxTools             *auxTools                         //辅助工具
+	tray                 ITray                             //托盘
+	doOnWindowCreated    WindowComponentOnWindowCreated    //
+	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
+	regions              *TCefDraggableRegions             //窗口内html拖拽区域
 }
 
 //创建 ViewsFrameworkBrowserWindow 窗口
@@ -157,31 +158,36 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 
 //重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
-	windowProperty := m.WindowProperty()
-	if windowProperty.EnableCenterWindow {
-		m.windowComponent.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
-	} else {
-		m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
-			aResult.X = windowProperty.X
-			aResult.Y = windowProperty.Y
-			aResult.Width = windowProperty.Width
-			aResult.Height = windowProperty.Height
-		})
-	}
+	wp := m.WindowProperty()
+	m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+		if wp.EnableCenterWindow {
+			m.windowComponent.CenterWindow(NewCefSize(wp.Width, wp.Height))
+			aResult.Width = wp.Width
+			aResult.Height = wp.Height
+		} else {
+			aResult.X = wp.X
+			aResult.Y = wp.Y
+			aResult.Width = wp.Width
+			aResult.Height = wp.Height
+		}
+		if m.doOnGetInitialBounds != nil {
+			m.doOnGetInitialBounds(sender, window, aResult)
+		}
+	})
 	m.windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.EnableMinimize
+		*aResult = wp.EnableMinimize
 	})
 	m.windowComponent.SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.EnableResize
+		*aResult = wp.EnableResize
 	})
 	m.windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.EnableMaximize
+		*aResult = wp.EnableMaximize
 	})
 	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = windowProperty.EnableClose
+		*aResult = wp.EnableClose
 	})
-	m.windowComponent.SetAlwaysOnTop(windowProperty.AlwaysOnTop)
-	m.windowComponent.SetBounds(NewCefRect(windowProperty.X, windowProperty.Y, windowProperty.Width, windowProperty.Height))
+	m.windowComponent.SetAlwaysOnTop(wp.AlwaysOnTop)
+	m.windowComponent.SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
 }
 
 func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
@@ -313,6 +319,10 @@ func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated WindowC
 	m.doOnWindowCreated = onWindowCreated
 }
 
+func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) {
+	m.doOnGetInitialBounds = onGetInitialBounds
+}
+
 func (m *ViewsFrameworkBrowserWindow) IsViewsFramework() bool {
 	return true
 }
@@ -383,13 +393,11 @@ func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 func (m *ViewsFrameworkBrowserWindow) SetPoint(x, y int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y
-	m.WindowComponent().SetPosition(NewCefPoint(x, y))
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetSize(width, height int32) {
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
-	m.WindowComponent().SetSize(NewCefSize(width, height))
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetBounds(x, y, width, height int32) {
@@ -397,7 +405,6 @@ func (m *ViewsFrameworkBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.WindowProperty().Y = y
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
-	m.WindowComponent().SetBounds(NewCefRect(x, y, width, height))
 }
 
 func (m *ViewsFrameworkBrowserWindow) getAuxTools() *auxTools {
