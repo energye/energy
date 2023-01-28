@@ -60,6 +60,7 @@ type LCLTray struct {
 type ViewsFrameTray struct {
 	trayWindow *ViewsFrameworkBrowserWindow
 	trayIcon   *lcl.TTrayIcon
+	visible    bool
 	x, y, w, h int32
 	mouseUp    TMouseEvent
 	isClosing  bool

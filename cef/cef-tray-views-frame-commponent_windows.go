@@ -180,10 +180,11 @@ func (m *ViewsFrameTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 }
 
 func (m *ViewsFrameTray) Visible() bool {
-	return false
+	return m.visible
 }
 
 func (m *ViewsFrameTray) SetVisible(v bool) {
+	m.visible = v
 	m.trayIcon.SetVisible(v)
 }
 

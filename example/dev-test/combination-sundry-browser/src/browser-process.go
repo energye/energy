@@ -403,14 +403,30 @@ func AppBrowserInit() {
 		})
 	})
 	//添加子窗口初始化
-	cef.BrowserWindow.SetBrowserInitAfter(func(browserWindow cef.IBrowserWindow) {
+	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//在这里创建 一些子窗口 子组件 等
-		//托盘
-		if common.IsWindows() {
-			traydemo.LCLCefTrayDemo(browserWindow)
-		} else {
-			traydemo.LCLTrayDemo(browserWindow)
+		if window.IsLCL() {
+			if common.IsLinux() {
+				traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用, 推荐linux中使用
+			} else {
+				//支持 windows
+				traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
+				//支持 windows or macosx
+				//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+			}
+		} else if window.IsViewsFramework() {
+			if common.IsLinux() || common.IsDarwin() {
+				//在VF窗口组件中, 推荐linux和macosx中使用
+				traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用,
+			} else {
+				//不支持windows VF窗口组件中无法创建或使用LCL组件
+				//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+				//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
+				//支持windows
+				traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
+			}
 		}
+		println("browser init after end")
 	})
 }
 
