@@ -76,10 +76,10 @@ func main() {
 			traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用,
 		} else {
 			//不支持windows VF窗口组件中无法创建或使用LCL组件
-			//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+			traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
 			//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
 			//支持windows
-			traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
+			//traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
 		}
 		println("browser init after end")
 	})
