@@ -35,7 +35,7 @@ func main() {
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.DisableResize()
-		window.SetCenterWindow(false)
+		window.SetCenterWindow(true)
 		window.SetTitle("这里改变了窗口标题")
 		window.SetSize(1024, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
@@ -46,12 +46,11 @@ func main() {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
 			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
-			popupWindow.SetCenterWindow(false)
 			popupWindow.EnableResize()
 			popupWindow.DisableMaximize()
 			popupWindow.DisableResize()
 			popupWindow.DisableMinimize()
-			popupWindow.SetSize(1600, 1600)
+			popupWindow.SetSize(1000, 1000)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 				fmt.Println("popupWindow.SetOnWindowCreated", window)
