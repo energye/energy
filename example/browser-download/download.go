@@ -4,9 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 )
@@ -29,29 +27,6 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
-		//linux 下载文件 系统弹出保存对话框不启作用
-		//所以 自己调用系统的保存对话框获得保存路径
-		linuxDlSave := lcl.NewSaveDialog(browserWindow.AsLCLBrowserWindow().BrowserWindow())
-		linuxDlSave.SetTitle("保存对话框标题")
-
-		//下载之前事件
-		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
-			fmt.Println("下载之前事件")
-			//设置下载目录, 和弹出保存窗口
-			if common.IsLinux() {
-				//linux 在大多数据情况操作UI相关的需要使用 QueueSyncCall 函数包起来
-				cef.QueueSyncCall(func(id int) {
-					linuxDlSave.SetFileName(suggestedName)
-					if linuxDlSave.Execute() {
-						// showDialog = false 不显示保存对话框
-						callback.Cont(linuxDlSave.FileName(), false)
-					}
-				})
-			} else {
-				//windows macosx
-				callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
-			}
-		})
 		//下载更新事件
 		//1. 返回下载进度
 		//2. downloadItem 下载项
