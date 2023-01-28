@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -406,80 +407,11 @@ func AppBrowserInit() {
 		//在这里创建 一些子窗口 子组件 等
 		//托盘
 		if common.IsWindows() {
-			lclCefTray(browserWindow)
+			traydemo.LCLCefTrayDemo(browserWindow)
 		} else {
-			lclTray(browserWindow)
+			traydemo.LCLTrayDemo(browserWindow)
 		}
 	})
-}
-
-// 托盘 只适用 windows 的系统托盘, 基于html 和 ipc 实现功能
-func lclCefTray(browserWindow cef.IBrowserWindow) {
-	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
-	var url = "http://localhost:22022/min-browser-tray.html"
-	tray := browserWindow.NewCefTray(250, 300, url)
-	asCEFTray := tray.AsCEFTray()
-	tray.SetTitle("任务管理器里显示的标题")
-	tray.SetHint("这里是文字\n文字啊")
-	tray.SetIconFS("resources/icon.ico")
-	tray.SetOnClick(func() {
-		fmt.Println("SetOnClick")
-	})
-	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
-		fmt.Println("tray-show-balloon")
-		asCEFTray.Notice("气泡标题", "气泡内容", 2000)
-		asCEFTray.Hide()
-	})
-	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
-		vb := !window.Visible()
-		window.SetVisible(vb)
-		if vb {
-			if window.WindowState() == types.WsMinimized {
-				window.SetWindowState(types.WsNormal)
-			}
-			window.Focused()
-		}
-		asCEFTray.Hide()
-	})
-	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
-		browserWindow.CloseBrowserWindow()
-	})
-	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
-		cef.QueueAsyncCall(func(id int) {
-			lcl.ShowMessage("tray-show-message-box 提示消息")
-		})
-		asCEFTray.Hide()
-	})
-	//托盘 end
-}
-
-// 托盘 LCL  windows linux macos
-func lclTray(browserWindow cef.IBrowserWindow) {
-	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
-	//托盘 windows linux macos 系统托盘
-	newTray := window.NewTray()
-	newTray.SetTitle("任务管理器里显示的标题")
-	newTray.SetHint("这里是文字\n文字啊")
-	newTray.SetIconFS("resources/icon.ico")
-	tray := newTray.AsLCLTray()
-	menu1 := tray.AddMenuItem("父菜单", nil)
-	menu1.Add(tray.NewMenuItem("子菜单", func() {
-		lcl.ShowMessage("子菜单点击 提示消息")
-	}))
-	tray.AddMenuItem("显示气泡", func() {
-		//linux下有些问题
-		tray.Notice("气泡标题", "气泡内容", 2000)
-	})
-	tray.AddMenuItem("显示/隐藏", func() {
-		vis := window.Visible()
-		cef.BrowserWindow.GetWindowInfo(1)
-		window.SetVisible(!vis)
-	})
-	tray.AddMenuItem("退出", func() {
-		browserWindow.CloseBrowserWindow()
-	})
-	//托盘 end
-	tray.Show()
 }
 
 // 自定义组件

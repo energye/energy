@@ -103,7 +103,7 @@ type IBrowserWindow interface {
 	SetDefaultInTaskBar()                                        //默认窗口在任务栏上显示按钮
 	SetShowInTaskBar()                                           //强制窗口在任务栏上显示按钮
 	SetNotInTaskBar()                                            //强制窗口不在任务栏上显示按钮
-	NewCefTray(width, height int32, url string) ITray            //创建托盘LCL+CEF（使用web端技术自定义实现）
+	NewCefTray(width, height int32, url string) ITray            //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
 	NewSysTray() ITray                                           //systray系统原生
 }
 

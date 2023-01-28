@@ -13,8 +13,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/golcl/lcl"
-	"time"
 )
 
 //go:embed resources
@@ -70,12 +70,10 @@ func main() {
 		fmt.Println("SetBrowserInit 结束")
 	})
 	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
-		bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
-		fmt.Println("handle", bw.WindowComponent().WindowHandle().ToPtr())
-		//设置隐藏窗口标题
-		//window.HideTitle()
-		fmt.Println("SetBrowserInitAfter 结束")
-		sysTray(window)
+		//traydemo.SysTrayDemo(window)
+		//traydemo.LCLTrayDemo(window) //VF窗口组件中无法创建或使用LCL组件
+		traydemo.LCLCefTrayDemo(window)
+		println("browser init after end")
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
@@ -91,65 +89,4 @@ func main() {
 	})
 	//运行应用
 	cef.Run(cefApp)
-}
-
-func sysTray(browserWindow cef.IBrowserWindow) {
-	sysTray := browserWindow.NewSysTray()
-	sysTray.SetIconFS("resources/icon.ico")
-	sysTray.SetHint("中文hint\n换行中文")
-	sysTray.SetOnClick(func() {
-		fmt.Println("SetOnClick")
-	})
-	tray := sysTray.AsSysTray()
-	check := tray.AddMenuItem("check")
-	check.Check()
-	not := tray.AddMenuItem("通知")
-	not.Click(func() {
-		tray.Notice("标题", "内notice 是一个跨平台的系统通知库\nnotice 是一个跨平台的系统通知库", 1000)
-	})
-	enable := tray.AddMenuItem("启用/禁用")
-	enable.Click(func() {
-		fmt.Println("启用/禁用 点击")
-	})
-	tray.AddSeparator()
-	menuItem := tray.AddMenuItem("1级菜单1", func() {
-		fmt.Println("1级菜单1")
-	})
-	menuItem.SetIconFS("resources/icon.ico")
-	tray.AddSeparator()
-	item := tray.AddMenuItem("1级菜单2")
-	item.AddSubMenu("2级子菜单1")
-	sub2Menu := item.AddSubMenu("2级子菜单2")
-	sub2Menu.AddSubMenu("3级子菜单1")
-	tray.AddSeparator()
-	tray.AddMenuItem("退出", func() {
-		fmt.Println("退出")
-		browserWindow.CloseBrowserWindow()
-	})
-
-	sysTray.Show()
-	return
-	//测试图标切换
-	go func() {
-		var b bool
-		for {
-			time.Sleep(time.Second * 2)
-			b = !b
-			if b {
-				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				sysTray.SetIconFS("resources/icon_1.ico")
-				menuItem.SetIconFS("resources/icon_1.ico")
-				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				enable.Enable()
-				check.Check()
-			} else {
-				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				sysTray.SetIconFS("resources/icon.ico")
-				menuItem.SetIconFS("resources/icon.ico")
-				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				enable.Disable()
-				check.Uncheck()
-			}
-		}
-	}()
 }

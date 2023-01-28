@@ -9,6 +9,7 @@
 package cef
 
 import (
+	"energye/notice"
 	"energye/systray"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
@@ -19,6 +20,7 @@ import (
 
 //创建系统托盘
 func newSysTray() *SysTray {
+	notice.SetUniqueID(BrowserWindow.Config.WindowProperty.Title)
 	tray := &SysTray{
 		menu: &SysMenu{
 			items: make([]*SysMenuItem, 0, 0),
