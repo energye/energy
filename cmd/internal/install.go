@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cmd
+package internal
 
 import (
 	"archive/tar"
@@ -15,7 +15,7 @@ import (
 	"compress/bzip2"
 	"encoding/json"
 	"fmt"
-	progressbar "github.com/energye/energy/cmd/progress-bar"
+	progressbar "github.com/energye/energy/cmd/internal/progress-bar"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/tools/command"

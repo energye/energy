@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cmd
+package internal
 
 const (
 	cefKey                      = "cef"

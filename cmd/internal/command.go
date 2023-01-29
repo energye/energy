@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cmd
+package internal
 
 type CommandConfig struct {
 	Index   int

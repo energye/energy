@@ -6,7 +6,7 @@
 //
 //----------------------------------------
 
-package cmd
+package internal
 
 import "fmt"
 
