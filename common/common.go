@@ -755,3 +755,13 @@ func GetInstancePtr(ptr uintptr) unsafe.Pointer {
 	ptr = *(*uintptr)(unsafe.Pointer(ptr))
 	return unsafe.Pointer(ptr)
 }
+
+//GoroutineID 获取当前携程ID
+func GoroutineID() (id uint64) {
+	var buf [30]byte
+	runtime.Stack(buf[:], false)
+	for i := 10; buf[i] != ' '; i++ {
+		id = id*10 + uint64(buf[i]&15)
+	}
+	return id
+}
