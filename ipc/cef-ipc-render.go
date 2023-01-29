@@ -54,6 +54,7 @@ func (m *ipcChannel) newRenderChannel(memoryAddresses ...string) {
 		m.render.connect = conn
 	} else {
 		memoryAddr := ipcSock
+		logger.Debug("new render channel for IPC Sock", ipcSock)
 		if len(memoryAddresses) > 0 {
 			memoryAddr = memoryAddresses[0]
 		}

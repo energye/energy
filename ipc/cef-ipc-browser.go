@@ -51,6 +51,7 @@ func (m *ipcChannel) newBrowseChannel(memoryAddresses ...string) {
 	} else {
 		removeMemory()
 		memoryAddr := ipcSock
+		logger.Debug("new browser channel for IPC Sock", ipcSock)
 		if len(memoryAddresses) > 0 {
 			memoryAddr = memoryAddresses[0]
 		}

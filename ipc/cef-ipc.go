@@ -9,12 +9,12 @@
 package ipc
 
 import (
-	"fmt"
 	. "github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/rtl/version"
 	"net"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -50,7 +50,8 @@ var (
 )
 
 func init() {
-	ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, MemoryAddress)
+	//ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, MemoryAddress)
+	ipcSock = filepath.Join(os.TempDir(), MemoryAddress)
 }
 
 func IPCChannelChooseInit() {
@@ -144,7 +145,7 @@ func (m *ipcChannel) Render() IEventEmit {
 
 // 启动IPC服务
 func (m *ipcChannel) StartBrowserIPC() {
-	logger.Info("Create IPC browser")
+	logger.Debug("Create IPC browser")
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
@@ -182,7 +183,7 @@ func (m *ipcChannel) StartBrowserIPC() {
 //
 //多进程，每个渲染进程创建一个连接
 func (m *ipcChannel) CreateRenderIPC(browserId int32, channelId int64) *renderChannel {
-	logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
+	logger.Debug("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
 	if m.render.isConnect {
 		return m.render
 	}

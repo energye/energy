@@ -65,56 +65,56 @@ func SetEnable(enable bool) {
 
 func Error(v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Error {
-		logger.logger.SetPrefix("[CEF-LCL-Error] ")
+		logger.logger.SetPrefix("[ENERGY-Error] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Errorf(format string, v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Error {
-		logger.logger.SetPrefix("[CEF-LCL-Error] ")
+		logger.logger.SetPrefix("[ENERGY-Error] ")
 		logger.logger.Printf(format, v...)
 	}
 }
 
 func Info(v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Info {
-		logger.logger.SetPrefix("[CEF-LCL-Info] ")
+		logger.logger.SetPrefix("[ENERGY-Info] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Infof(format string, v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Info {
-		logger.logger.SetPrefix("[CEF-LCL-Info] ")
+		logger.logger.SetPrefix("[ENERGY-Info] ")
 		logger.logger.Printf(format, v...)
 	}
 }
 
 func Debug(v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Debug {
-		logger.logger.SetPrefix("[CEF-LCL-Debug] ")
+		logger.logger.SetPrefix("[ENERGY-Debug] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Debugf(format string, v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Debug {
-		logger.logger.SetPrefix("[CEF-LCL-Debug] ")
+		logger.logger.SetPrefix("[ENERGY-Debug] ")
 		logger.logger.Printf(format, v...)
 	}
 }
 
 func Fatal(v ...interface{}) {
 	if logger.enable {
-		logger.logger.SetPrefix("[CEF-LCL-Fatal] ")
+		logger.logger.SetPrefix("[ENERGY-Fatal] ")
 		logger.logger.Fatal(v...)
 	}
 }
 
 func Fatalf(format string, v ...interface{}) {
 	if logger.enable {
-		logger.logger.SetPrefix("[CEF-LCL-Fatal] ")
+		logger.logger.SetPrefix("[ENERGY-Fatal] ")
 		logger.logger.Fatalf(format, v...)
 	}
 }
