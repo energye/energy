@@ -137,7 +137,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
 			return true
 		}
-		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.WindowProperty, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+		wp := BrowserWindow.Config.WindowProperty
+		wp.Url = beforePopupInfo.TargetUrl
+		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
