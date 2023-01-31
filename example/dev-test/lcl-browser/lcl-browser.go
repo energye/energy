@@ -16,11 +16,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/energy/logger"
-	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/types/colors"
-	"github.com/energye/golcl/lcl/win"
 )
 
 //go:embed resources
@@ -116,17 +112,17 @@ func main() {
 }
 
 //WindowTransparent 窗口透明组件不透明设置
-func WindowTransparent(hWnd types.HWND) {
-	exStyle := win.GetWindowLong(hWnd, win.GWL_EXSTYLE)
-	exStyle = exStyle | win.WS_EX_LAYERED&^win.WS_EX_TRANSPARENT // or WS_EX_TRANSPARENT;
-	win.SetWindowLong(hWnd, win.GWL_EXSTYLE, uintptr(exStyle))
-	win.SetLayeredWindowAttributes(hWnd, //指定分层窗口句柄
-		colors.ClNavy,                  //crKey指定需要透明的背景颜色值，可用RGB()宏  0-255
-		255,                            //bAlpha设置透明度，0表示完全透明，255表示不透明
-		win.LWA_ALPHA|win.LWA_COLORKEY) //LWA_ALPHA: crKey无效，bAlpha有效；
-	//LWA_COLORKEY：窗体中的所有颜色为crKey的地方全透明，bAlpha无效。
-	//LWA_ALPHA | LWA_COLORKEY：crKey的地方全透明，其它地方根据bAlpha确定透明度
-}
+//func WindowTransparent(hWnd types.HWND) {
+//	exStyle := win.GetWindowLong(hWnd, win.GWL_EXSTYLE)
+//	exStyle = exStyle | win.WS_EX_LAYERED&^win.WS_EX_TRANSPARENT // or WS_EX_TRANSPARENT;
+//	win.SetWindowLong(hWnd, win.GWL_EXSTYLE, uintptr(exStyle))
+//	win.SetLayeredWindowAttributes(hWnd, //指定分层窗口句柄
+//		colors.ClNavy,                  //crKey指定需要透明的背景颜色值，可用RGB()宏  0-255
+//		255,                            //bAlpha设置透明度，0表示完全透明，255表示不透明
+//		win.LWA_ALPHA|win.LWA_COLORKEY) //LWA_ALPHA: crKey无效，bAlpha有效；
+//	//LWA_COLORKEY：窗体中的所有颜色为crKey的地方全透明，bAlpha无效。
+//	//LWA_ALPHA | LWA_COLORKEY：crKey的地方全透明，其它地方根据bAlpha确定透明度
+//}
 
 //WindowAngle 窗口四圆角设置
 //
@@ -136,8 +132,8 @@ func WindowTransparent(hWnd types.HWND) {
 // nBottomRect 指定了y坐标的右下角区域逻辑单位
 // nWidthEllipse 指定创建圆角的宽度逻辑单位
 // nHeightEllipse 指定创建圆角的高度逻辑单位
-func WindowAngle(hWnd types.HWND, nLeftRect, nTopRect, nRightRect, nBottomRect, nWidthEllipse, nHeightEllipse int32) {
-	hr := cef.WinCreateRoundRectRgn(t.LongInt(nLeftRect), t.LongInt(nTopRect), t.LongInt(nRightRect), t.LongInt(nBottomRect), t.LongInt(nWidthEllipse), t.LongInt(nHeightEllipse))
-	cef.WinSetWindowRgn(hWnd, hr, true)
-	cef.WinDeleteObject(hr)
-}
+//func WindowAngle(hWnd types.HWND, nLeftRect, nTopRect, nRightRect, nBottomRect, nWidthEllipse, nHeightEllipse int32) {
+//	hr := cef.WinCreateRoundRectRgn(t.LongInt(nLeftRect), t.LongInt(nTopRect), t.LongInt(nRightRect), t.LongInt(nBottomRect), t.LongInt(nWidthEllipse), t.LongInt(nHeightEllipse))
+//	cef.WinSetWindowRgn(hWnd, hr, true)
+//	cef.WinDeleteObject(hr)
+//}
