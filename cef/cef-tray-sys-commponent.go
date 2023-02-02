@@ -92,28 +92,28 @@ func (m *SysTray) AsLCLTray() *LCLTray {
 
 //Show 显示/启动 托盘
 func (m *SysTray) Show() {
-	m.once.Do(func() {
-		if m.start == nil {
-			var runLoop = func() {
-				m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
-				m.start()
-			}
-			if common.IsDarwin() {
-				// view framework
-				if consts.IsMessageLoop {
-					runLoop()
-				} else {
-					//LCL
-					QueueAsyncCall(func(id int) {
-						runLoop()
-					})
-				}
-			} else {
-				//windows linux
-				go runLoop()
-			}
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	if m.start == nil {
+		var runLoop = func() {
+			m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
+			m.start()
 		}
-	})
+		if common.IsDarwin() {
+			// view framework
+			if consts.IsMessageLoop {
+				runLoop()
+			} else {
+				//LCL
+				QueueAsyncCall(func(id int) {
+					runLoop()
+				})
+			}
+		} else {
+			//windows linux
+			go runLoop()
+		}
+	}
 }
 
 func (m *SysTray) close() {
