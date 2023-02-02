@@ -42,9 +42,7 @@
 #### 基本需求
 > golang >= 1.18
 >
-> 1. 使用energy命令行工具自动安装环境依赖
-> 
-> 2. 配置ENERGY_HOME环境变量, ENERGY_HOME=框架根目录
+> 使用energy命令行工具自动安装环境依赖 【energy install .】自动配置好ENERGY_HOME环境
 >
 > 以example/simple示例为例
 >
@@ -64,7 +62,7 @@ import (
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录

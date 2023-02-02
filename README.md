@@ -42,9 +42,7 @@ English
 #### Basic needs
 > golang >= 1.18
 >
-> 1. Use the energy command line tool to automatically install environment dependencies
-> 
-> 2. Configure the ENERGY_HOME environment variable, ENERGY_HOME= framework root
+> Use the energy command line tool to automatically install environment dependencies  【energy install .】Automatically configure the ENERGY_HOME environment
 >
 > Example/simple example
 >
@@ -64,11 +62,11 @@ import (
 
 func main() {
 	//Global initialization, which every application must call
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	//Creating an Application
 	cefApp := cef.NewApplication(nil)
 	//Specify a URL address, or a local html file directory
-	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	//Running the Application
 	cef.Run(cefApp)
 }
