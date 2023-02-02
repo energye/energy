@@ -11,7 +11,6 @@ package cef
 import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/logger"
 	"github.com/energye/energy/pkgs/notice"
 	"github.com/energye/energy/pkgs/systray"
 	"github.com/energye/golcl/energy/emfs"
@@ -97,7 +96,6 @@ func (m *SysTray) Show() {
 	defer m.lock.Unlock()
 	if m.start == nil {
 		var runLoop = func() {
-			logger.Info("sys tray ready")
 			m.start, m.stop = systray.RunWithExternalLoop(m.onReady, m.onExit)
 			m.start()
 		}
