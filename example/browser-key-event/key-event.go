@@ -13,15 +13,15 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, &resources)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/key-event.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/key-event.html"
 	cef.BrowserWindow.Config.Title = "Energy - Key Event"
-	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, result *bool) {
 			fmt.Printf("%s  %+v\n", string(rune(event.Character)), event)
 		})

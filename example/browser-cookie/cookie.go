@@ -19,12 +19,13 @@ var resources embed.FS
 //这个示例使用了几个事件来演示下载文件
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, &resources)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/cookie.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/cookie.html"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		//监听获取cookie事件
@@ -51,7 +52,7 @@ func main() {
 		})
 	})
 	//在SetBrowserInit中设置cookie事件,这些事件将返回操作后的结果
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow *cef.TCefWindowInfo) {
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		//获取cookie时触发
 		event.SetOnCookiesVisited(func(sender lcl.IObject, cookie *cef.ICefCookie) {
 			fmt.Printf("SetOnCookiesVisited: %+v\n", cookie)

@@ -12,68 +12,15 @@ import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types/messages"
-	"unsafe"
 )
-
-func chromiumOnBeforePopup(callback ChromiumEventOnBeforePopup, getVal func(idx int) uintptr) {
-	BrowserWindow.uiLock.Lock()
-	defer BrowserWindow.uiLock.Unlock()
-	getPtr := func(i int) unsafe.Pointer {
-		return unsafe.Pointer(getVal(i))
-	}
-	sender := getVal(0)
-	browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-	tempFrame := (*cefFrame)(getPtr(2))
-	frame := &ICefFrame{
-		Browser: browser,
-		Name:    api.DStrToGoStr(tempFrame.Name),
-		Url:     api.DStrToGoStr(tempFrame.Url),
-		Id:      StrToInt64(api.DStrToGoStr(tempFrame.Identifier)),
-	}
-	beforePInfoPtr := (*beforePopupInfo)(getPtr(3))
-	beforePInfo := &BeforePopupInfo{
-		TargetUrl:         api.DStrToGoStr(beforePInfoPtr.TargetUrl),
-		TargetFrameName:   api.DStrToGoStr(beforePInfoPtr.TargetFrameName),
-		TargetDisposition: TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
-		UserGesture:       api.DBoolToGoBool(beforePInfoPtr.UserGesture),
-	}
-	BrowserWindow.popupWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
-	BrowserWindow.popupWindow.ChromiumCreate(BrowserWindow.Config.chromiumConfig, beforePInfo.TargetUrl)
-	BrowserWindow.popupWindow.chromium.EnableIndependentEvent()
-	BrowserWindow.popupWindow.putChromiumWindowInfo()
-	BrowserWindow.popupWindow.defaultChromiumEvent()
-	var (
-		noJavascriptAccess = (*bool)(getPtr(6))
-		result             = (*bool)(getPtr(7))
-	)
-	//callback
-	*result = callback(lcl.AsObject(sender), browser, frame, beforePInfo, BrowserWindow.popupWindow.windowInfo, noJavascriptAccess)
-	if !*result {
-		*result = true
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.uiLock.Lock()
-			defer BrowserWindow.uiLock.Unlock()
-			winProperty := BrowserWindow.popupWindow.windowInfo.WindowProperty
-			if winProperty != nil {
-				if winProperty.IsShowModel {
-					BrowserWindow.popupWindow.ShowModal()
-					return
-				}
-			}
-			BrowserWindow.popupWindow.Show()
-		})
-	}
-}
 
 // 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(browser *ICefBrowser) bool {
-	if viewSourceAfterCreate(browser) {
-		return true
-	}
 	if IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
 	}
@@ -88,9 +35,11 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 		}
 	}
 	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-	QueueAsyncCall(func(id int) {
-		BrowserWindow.createNextPopupWindow()
-	})
+	if !IsMessageLoop {
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.createNextLCLPopupWindow()
+		})
+	}
 }
 
 func chromiumOnBeforeClose(browser *ICefBrowser) {
@@ -101,13 +50,6 @@ func chromiumOnBeforeClose(browser *ICefBrowser) {
 
 func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.RemoveFrame(browser.Identifier(), frame.Id)
-}
-
-func chromiumOnMainFrameChanged(browser *ICefBrowser, oldFrame, newFrame *ICefFrame) {
-
-}
-
-func chromiumOnClose(browser *ICefBrowser) {
 }
 
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
@@ -130,16 +72,14 @@ var (
 )
 
 func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-	if !api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
+	if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
 		model.Clear()
 		return
 	}
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		if winInfo.Window != nil {
-			//开发者工具和显示源代码不展示框架自定义菜单
-			if winInfo.Window.WindowType() == WT_DEV_TOOLS || winInfo.Window.WindowType() == WT_VIEW_SOURCE {
-				return
-			}
+		//开发者工具和显示源代码不展示自定义默认菜单
+		if winInfo.WindowType() == WT_DEV_TOOLS || winInfo.WindowType() == WT_VIEW_SOURCE {
+			return
 		}
 	}
 	undoVisible, undoEnabled := model.IsVisible(MENU_ID_UNDO), model.IsEnabled(MENU_ID_UNDO)
@@ -251,9 +191,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoBack()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoBack()
+					})
+				}
 			}
 		},
 	})
@@ -264,9 +208,13 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
-				QueueAsyncCall(func(id int) {
+				if IsMessageLoop {
 					browser.GoForward()
-				})
+				} else {
+					QueueAsyncCall(func(id int) {
+						browser.GoForward()
+					})
+				}
 			}
 		},
 	})
@@ -303,7 +251,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		},
 	})
 	model.AddSeparator()
-	if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
@@ -314,7 +262,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			},
 		})
 	}
-	if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, "开发者工具(F12)")
 	}
@@ -330,7 +278,12 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	}
 }
 
-func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId int32, eventFlags uint32, result *bool) {
+func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
+	defer func() {
+		if err := recover(); err != nil {
+			logger.Error("OnContextMenuCommand Error:", err)
+		}
+	}()
 	*result = true
 	if commandId == backId {
 		browser.GoBack()
@@ -340,29 +293,37 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 		browser.Print()
 	} else if commandId == closeBrowserId {
 		winInfo := BrowserWindow.GetWindowInfo(browser.Identifier())
-		winInfo.Close()
+		winInfo.CloseBrowserWindow()
 	} else if commandId == refreshId {
 		browser.Reload()
 	} else if commandId == forcedRefreshId {
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
-		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
 			browser.ViewSource(frame)
 		}
 	} else if commandId == devToolsId {
-		if api.DBoolToGoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {
-		QueueAsyncCall(func(id int) {
+		if IsMessageLoop {
 			lcl.Clipboard.SetAsText(params.LinkUrl)
-		})
+		} else {
+			QueueAsyncCall(func(id int) {
+				lcl.Clipboard.SetAsText(params.LinkUrl)
+			})
+		}
 	} else if commandId == copyImageId {
 		frame.Copy()
 	} else if commandId == imageUrlId {
-		QueueAsyncCall(func(id int) {
+		if IsMessageLoop {
 			lcl.Clipboard.SetAsText(params.SourceUrl)
-		})
+		} else {
+			QueueAsyncCall(func(id int) {
+				lcl.Clipboard.SetAsText(params.SourceUrl)
+			})
+		}
 	} else if commandId == imageSaveId {
 		browser.StartDownload(params.SourceUrl)
 	}

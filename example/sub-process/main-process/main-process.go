@@ -21,7 +21,7 @@ import (
 */
 func main() {
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
-	//MacOS配置要在 GlobalCEFInit 它之前
+	//MacOS配置要在 GlobalInit 它之前
 	//特别说明MacOS：子进程不需要配置
 	if common.IsDarwin() {
 		//自动生成mac app程序包
@@ -32,7 +32,7 @@ func main() {
 		macapp.MacApp.SetBrowseSubprocessPath("/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/sub-process/sub-process")
 	}
 	//CEF全局初始化
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
 	cfg := cef.NewApplicationConfig()
 	//配置chromium frameworks 编译好的二进制目录

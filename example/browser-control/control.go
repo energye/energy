@@ -5,7 +5,6 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/example/browser-control/src"
-	"github.com/energye/golcl/pkgs/macapp"
 )
 
 //go:embed resources
@@ -15,12 +14,11 @@ var resources embed.FS
 var libs embed.FS
 
 func main() {
-	//开发环境中 MacOSX平台必须在"GlobalCEFInit"之前设置CEF
+	//开发环境中 MacOSX平台必须在"GlobalInit"之前设置CEF
 	//设置使用CEF 和 CEF框架目录，生成开发执行应用程序包
-	macapp.MacApp.IsCEF(common.IsDarwin())
 	//环境变量 ENERGY_HOME="/app/cefframework" 配置框架所在目录
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(&libs, &resources)
+	cef.GlobalInit(&libs, &resources)
 	//可选的应用配置
 	cfg := cef.NewApplicationConfig()
 	//指定chromium的二进制包框架根目录,

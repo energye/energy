@@ -13,6 +13,7 @@ import (
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 	"sync"
 	"unsafe"
 )
@@ -32,40 +33,32 @@ type ExecuteJS struct {
 type IChromium interface {
 	IChromiumProc
 	IChromiumEvent
-	//启用独立事件 默认禁用, 启用后所有默认事件行为将不在主窗口chromium event执行
-	//
-	//启用后注册的事件才生效
-	//
-	//只对当前chromium对象有效
-	EnableIndependentEvent()
-
-	//禁用独立事件 默认禁用, 禁用后所有默认事件行为在主窗口chromium event执行
-	//
-	//禁用后注册的事件才生效
-	//
-	//只对当前chromium对象有效
-	DisableIndependentEvent()
 }
 
 type TCEFChromium struct {
-	BaseComponent
-	cfg              *tCefChromiumConfig
-	independentEvent bool
-	emitLock         *sync.Mutex
+	*lcl.TComponent
+	instance      unsafe.Pointer
+	cfg           *tCefChromiumConfig
+	emitLock      *sync.Mutex
+	browserHandle types.HWND
+	widgetHandle  types.HWND
+	renderHandle  types.HWND
 }
 
 func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
 	m := new(TCEFChromium)
-	m.procName = "CEFChromium"
 	if config != nil {
 		m.cfg = config
 	} else {
 		m.cfg = NewChromiumConfig()
 	}
-	m.instance = _CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg)))
-	m.ptr = unsafe.Pointer(m.instance)
+	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg))))
 	m.emitLock = new(sync.Mutex)
 	return m
+}
+
+func (m *TCEFChromium) Instance() uintptr {
+	return uintptr(m.instance)
 }
 
 func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
@@ -73,16 +66,6 @@ func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
 		browseId: browserId,
 		chromium: m.instance,
 	}
-}
-
-//启用独立事件 默认 false
-func (m *TCEFChromium) EnableIndependentEvent() {
-	m.independentEvent = true
-}
-
-//禁用独立事件 默认 false
-func (m *TCEFChromium) DisableIndependentEvent() {
-	m.independentEvent = false
 }
 
 func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList ipc.IArgumentList) ProcessMessageError {
@@ -106,7 +89,7 @@ func (m *TCEFChromium) On(name string, eventCallback ipc.EventCallback) {
 //
 // startLine: js脚本启始执行行号
 func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32) {
-	_CEFChromium_ExecuteJavaScript(m.instance, code, scriptURL, startLine)
+	_CEFChromium_ExecuteJavaScript(uintptr(m.instance), code, scriptURL, startLine)
 }
 
 // 触发JS监听的事件-异步执行

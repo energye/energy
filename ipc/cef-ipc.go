@@ -9,12 +9,12 @@
 package ipc
 
 import (
-	"fmt"
 	. "github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/rtl/version"
 	"net"
+	"os"
+	"path/filepath"
 	"sync"
 )
 
@@ -50,7 +50,8 @@ var (
 )
 
 func init() {
-	ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, MemoryAddress)
+	//ipcSock = fmt.Sprintf("%s%sgolcl%s%s", consts.HomeDir, consts.Separator, consts.Separator, MemoryAddress)
+	ipcSock = filepath.Join(os.TempDir(), MemoryAddress)
 }
 
 func IPCChannelChooseInit() {
@@ -80,7 +81,6 @@ type IEventOn interface {
 type IEventEmit interface {
 	IEventOn
 	Events() *event
-	Channel(channelId int64) *channel
 	SetOnEvent(callback func(event IEventOn))                                        //IPC 事件监听
 	Emit(eventName string, arguments IArgumentList)                                  //IPC 异步事件触发
 	EmitAndCallback(eventName string, arguments IArgumentList, callback IPCCallback) //IPC 回调事件触发
@@ -91,6 +91,8 @@ type IEventEmit interface {
 type IBrowseEventEmit interface {
 	IEventOn
 	IEventEmit
+	Channel(channelId int64) *channel                                                                          //IPC 获取指定的通道
+	ChannelIds() (result []int64)                                                                              //IPC 获取所有通道
 	EmitChannelId(eventName string, channelId int64, arguments IArgumentList)                                  //IPC 异步事件触发-指定通道ID
 	EmitChannelIdAndCallback(eventName string, channelId int64, arguments IArgumentList, callback IPCCallback) //IPC 回调事件触发-指定通道ID
 	EmitChannelIdAndReturn(eventName string, channelId int64, arguments IArgumentList) IIPCContext             //IPC 返回值事件触发(处理时间复杂操作尽量不使用，容易造成UI进程锁死)-指定通道ID
@@ -143,7 +145,7 @@ func (m *ipcChannel) Render() IEventEmit {
 
 // 启动IPC服务
 func (m *ipcChannel) StartBrowserIPC() {
-	logger.Info("Create IPC browser")
+	logger.Debug("Create IPC browser")
 	group := sync.WaitGroup{}
 	group.Add(1)
 	go func() {
@@ -181,7 +183,7 @@ func (m *ipcChannel) StartBrowserIPC() {
 //
 //多进程，每个渲染进程创建一个连接
 func (m *ipcChannel) CreateRenderIPC(browserId int32, channelId int64) *renderChannel {
-	logger.Info("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
+	logger.Debug("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
 	if m.render.isConnect {
 		return m.render
 	}

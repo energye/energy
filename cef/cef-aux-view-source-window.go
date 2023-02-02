@@ -10,60 +10,43 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/logger"
+	"github.com/energye/golcl/lcl"
 )
 
 const (
-	view_source_name = "ViewSource"
+	view_source_name = "view-source"
 )
 
-func updateBrowserViewSource(browser *ICefBrowser, title string) {
-	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil && browserWinInfo.Window != nil && browserWinInfo.Window.WindowType() == WT_VIEW_SOURCE {
-		if browserWinInfo.Window != nil {
+func (m *ICefBrowser) createBrowserViewSource(frame *ICefFrame) {
+	if currentWindowInfo := BrowserWindow.GetWindowInfo(m.Identifier()); currentWindowInfo != nil {
+		if currentWindowInfo.IsLCL() {
+			var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
 			QueueAsyncCall(func(id int) {
-				if mainFrame := browser.MainFrame(); mainFrame != nil {
-					browserWinInfo.Window.SetCaption(fmt.Sprintf("%s - %s", view_source_name, mainFrame.Url))
-				} else {
-					logger.Error("failed to get main frame")
+				wp := NewWindowProperty()
+				wp.Url = viewSourceUrl
+				wp.Title = fmt.Sprintf("%s - %s", view_source_name, frame.Url)
+				wp.WindowType = WT_VIEW_SOURCE
+				viewSourceWindow := NewLCLBrowserWindow(nil, wp)
+				viewSourceWindow.SetWidth(800)
+				viewSourceWindow.SetHeight(600)
+				if common.IsDarwin() {
+					viewSourceWindow.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+						viewSourceWindow.Chromium().LoadUrl(viewSourceUrl)
+					})
 				}
+				if assetserve.AssetsServerHeaderKeyValue != "" {
+					viewSourceWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
+						request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
+					})
+				}
+				viewSourceWindow.EnableDefaultCloseEvent()
+				viewSourceWindow.Show()
 			})
+		} else if currentWindowInfo.IsViewsFramework() {
+			frame.ViewSource()
 		}
 	}
-}
-
-func viewSourceAfterCreate(browser *ICefBrowser) bool {
-	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		if winInfo.Window.WindowType() == WT_VIEW_SOURCE && winInfo.auxTools.viewSourceWindow != nil {
-			winInfo.auxTools.viewSourceWindow.chromium.LoadUrl(winInfo.auxTools.viewSourceUrl)
-			return true
-		}
-	}
-	return false
-}
-
-func createBrowserViewSource(browser *ICefBrowser, frame *ICefFrame) {
-	BrowserWindow.uiLock.Lock()
-	defer BrowserWindow.uiLock.Unlock()
-	var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url)
-	QueueAsyncCall(func(id int) {
-		var m = BrowserWindow.popupWindow
-		if m != nil {
-			m.SetShowInTaskBar()
-			m.SetWindowType(WT_VIEW_SOURCE)
-			m.ChromiumCreate(nil, viewSourceUrl)
-			m.chromium.EnableIndependentEvent()
-			m.putChromiumWindowInfo()
-			m.defaultChromiumEvent()
-			m.SetWidth(1024)
-			m.SetHeight(768)
-			if winInfo := BrowserWindow.GetWindowInfo(m.windowId); winInfo != nil {
-				winInfo.auxTools.viewSourceUrl = viewSourceUrl
-				winInfo.auxTools.viewSourceWindow = m
-			}
-			m.Show()
-		} else {
-			logger.Fatal("Window not initialized successfully")
-		}
-	})
 }

@@ -10,6 +10,7 @@ package cef
 
 import (
 	"bytes"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -65,7 +66,7 @@ type JSValue interface {
 //
 //主进程创建完之后和渲染进程每次创建之后调用
 //
-//TODO 潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
+//潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
 func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//变量绑定回调函数
 	VariableBind.callVariableBind(browser, frame)
@@ -80,7 +81,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 		var vBind = &valueBindInfo{
 			BindType: uintptr(valueType),
 		}
-		vBind.Name = api.GoStrToDStr(jsValue.Name())
+		vBind.Name = api.PascalStr(jsValue.Name())
 		vBind.EventId = jsValue.getEventId()
 		valueBindInfos = append(valueBindInfos, vBind)
 		if jsValue.IsFunction() {
@@ -97,19 +98,19 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 				}
 				inParamBuf.WriteString(strconv.Itoa(int(inParamType.Jsv)))
 			}
-			vBind.FnInParamType = api.GoStrToDStr(inParamBuf.String())
+			vBind.FnInParamType = api.PascalStr(inParamBuf.String())
 			for i, outParamType := range fnInfo.OutParam {
 				if i > 0 {
 					outParamBuf.WriteString(",")
 				}
 				outParamBuf.WriteString(strconv.Itoa(int(outParamType.Jsv)))
 			}
-			vBind.FnOutParamType = api.GoStrToDStr(outParamBuf.String())
+			vBind.FnOutParamType = api.PascalStr(outParamBuf.String())
 		}
 	}
 	if len(valueBindInfos) > 0 {
 		for i := 0; i < len(valueBindInfos); i++ {
-			_CEFV8ValueRef_CommonValueBindInfo(uintptr(unsafe.Pointer(valueBindInfos[i])))
+			common.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
 		}
 	}
 }

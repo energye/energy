@@ -15,9 +15,8 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/decimal"
-	"github.com/energye/golcl/dylib"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"reflect"
 	"runtime"
@@ -27,43 +26,47 @@ import (
 	"unsafe"
 )
 
-var (
-	IntSize   = int32(unsafe.Sizeof(0))
-	CommonPtr = &commonInstance{} //通用实例
+const (
+	IntSize     = strconv.IntSize             //bit
+	IntSize32   = 32                          //
+	intSize64   = 64                          //
+	isWindows   = runtime.GOOS == "windows"   //support
+	isLinux     = runtime.GOOS == "linux"     //support
+	isDarwin    = runtime.GOOS == "darwin"    //support
+	isAndroid   = runtime.GOOS == "android"   //not support
+	isIos       = runtime.GOOS == "ios"       //not support
+	isPlan9     = runtime.GOOS == "plan9"     //not support
+	isAix       = runtime.GOOS == "aix"       //not support
+	isDragonfly = runtime.GOOS == "dragonfly" //not support
+	isFreebsd   = runtime.GOOS == "freebsd"   //not support
+	isHurd      = runtime.GOOS == "hurd"      //not support
+	isIllumos   = runtime.GOOS == "illumos"   //not support
+	isJs        = runtime.GOOS == "js"        //not support
+	isNacl      = runtime.GOOS == "nacl"      //not support
+	isNetbsd    = runtime.GOOS == "netbsd"    //not support
+	isOpenbsd   = runtime.GOOS == "openbsd"   //not support
+	isSolaris   = runtime.GOOS == "solaris"   //not support
+	isZos       = runtime.GOOS == "zos"       //not support
 )
 
-type commonInstance struct {
-	lcl.IObject
-	instance uintptr
-	ptr      unsafe.Pointer
-}
-
-func (m *commonInstance) Ptr() unsafe.Pointer {
-	return m.ptr
-}
-func (m *commonInstance) Instance() uintptr {
-	return m.instance
-}
-
-//Proc_Concat_Name 名称获取
-func Proc_Concat_Name(procName, methodName string) string {
-	return procName + "_" + methodName
-}
-
-func Proc(name string) *dylib.LazyProc {
-	return api.GetLazyProc(name)
+func Proc(index int) dllimports.ProcAddr {
+	return api.EnergyDefSyscallN(index)
 }
 
 func IsWindows() bool {
-	return runtime.GOOS == "windows"
+	return isWindows
 }
 
 func IsLinux() bool {
-	return runtime.GOOS == "linux"
+	return isLinux
 }
 
 func IsDarwin() bool {
-	return runtime.GOOS == "darwin"
+	return isDarwin
+}
+
+func IsPlan9() bool {
+	return isPlan9
 }
 
 func StrToInt64(value string) int64 {
@@ -87,31 +90,6 @@ func StrToFloat32(value string) float32 {
 
 func InterfaceToString(value interface{}) string {
 	return fmt.Sprintf("%v", value)
-}
-
-func copyStr(src uintptr, strLen int) string {
-	if strLen == 0 {
-		return ""
-	}
-	str := make([]uint8, strLen)
-	for i := 0; i < strLen; i++ {
-		str[i] = *(*uint8)(unsafe.Pointer(src + uintptr(i)))
-	}
-	return string(str)
-}
-
-//golcl > stdstr.go > DStrToGoStr
-//Lazarus的string转换为Go的string
-//参数1 要转换字符串的地址，参数2 已知字符串长度
-func DStrToGoStr(ustr uintptr, len int) string {
-	if len == 0 {
-		return ""
-	}
-	return copyStr(ustr, len)
-}
-
-func GoStrToDStr(s string) uintptr {
-	return api.GoStrToDStr(s)
 }
 
 // 获取参数指针
@@ -584,7 +562,7 @@ func CopyBytePtr(bytePtr uintptr, low, high int) []byte {
 
 func IntToBytes(i int) []byte {
 	buf := bytes.NewBuffer([]byte{})
-	if IntSize == 4 {
+	if IntSize == IntSize32 {
 		if err := binary.Write(buf, binary.BigEndian, int32(i)); err == nil {
 			return buf.Bytes()
 		}
@@ -772,14 +750,18 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 	return -1
 }
 
-func CommonInstanceInit() {
-	r1, _, _ := Proc("CEFApplication_GetCommonInstance").Call()
-	CommonPtr.instance = r1
-	CommonPtr.ptr = unsafe.Pointer(r1)
+//获取指针的指针的地址
+func GetInstancePtr(ptr uintptr) unsafe.Pointer {
+	ptr = *(*uintptr)(unsafe.Pointer(ptr))
+	return unsafe.Pointer(ptr)
 }
 
-//获取指针的指针的地址
-func GetInstancePtr(ptr uintptr) (uintptr, unsafe.Pointer) {
-	ptr = *(*uintptr)(unsafe.Pointer(ptr))
-	return ptr, unsafe.Pointer(ptr)
+//GoroutineID 获取当前携程ID
+func GoroutineID() (id uint64) {
+	var buf [30]byte
+	runtime.Stack(buf[:], false)
+	for i := 10; buf[i] != ' '; i++ {
+		id = id*10 + uint64(buf[i]&15)
+	}
+	return id
 }

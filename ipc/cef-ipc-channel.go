@@ -38,8 +38,8 @@ type IPCCallback func(context IIPCContext)
 // 进程间IPC通信回调上下文
 type IIPCContext interface {
 	setArguments(argument IArgumentList)
-	Connect() net.Conn
-	EventId() int32
+	Connect() net.Conn         //IPC 链接
+	EventId() int32            //IPC 事件ID
 	ChannelId() int64          //render channel channelId
 	BrowserId() int32          //render channel browserId
 	Message() *IPCEventMessage //接收的消息数据 一搬配合Response函数
@@ -71,40 +71,40 @@ type IPCEventMessage struct {
 }
 
 type IPCContextResult struct {
-	vType  V8_JS_VALUE_TYPE
-	result unsafe.Pointer //[]byte
+	vType V8_JS_VALUE_TYPE
+	data  unsafe.Pointer //[]byte
 }
 
-func (m *IPCContextResult) Result() unsafe.Pointer {
-	return m.result
+func (m *IPCContextResult) Data() unsafe.Pointer {
+	return m.data
 }
 func (m *IPCContextResult) VType() V8_JS_VALUE_TYPE {
 	return m.vType
 }
 
 func (m *IPCContextResult) SetString(ret string) {
-	m.result = unsafe.Pointer(api.GoStrToDStr(ret)) //StringToBytes(ret)
+	m.data = unsafe.Pointer(api.PascalStr(ret)) //StringToBytes(ret)
 	m.vType = V8_VALUE_STRING
 }
 
 func (m *IPCContextResult) SetInt(ret int32) {
-	m.result = unsafe.Pointer(uintptr(ret)) //Int32ToBytes(ret)
+	m.data = unsafe.Pointer(uintptr(ret)) //Int32ToBytes(ret)
 	m.vType = V8_VALUE_INT
 }
 
 func (m *IPCContextResult) SetFloat64(ret float64) {
-	m.result = unsafe.Pointer(&ret) //Float64ToBytes(ret)
+	m.data = unsafe.Pointer(&ret) //Float64ToBytes(ret)
 	m.vType = V8_VALUE_DOUBLE
 }
 
 func (m *IPCContextResult) SetBool(ret bool) {
-	m.result = unsafe.Pointer(api.GoBoolToDBool(ret)) //[]byte{BoolToByte(ret)
+	m.data = unsafe.Pointer(api.PascalBool(ret)) //[]byte{BoolToByte(ret)
 	m.vType = V8_VALUE_BOOLEAN
 }
 
 func (m *IPCContextResult) clear() {
 	m.vType = 0
-	m.result = nil
+	m.data = nil
 }
 
 // IPC 上下文

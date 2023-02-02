@@ -1,19 +1,26 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under GNU General Public License v3.0
+//
+//----------------------------------------
+
 package cef
 
 import (
 	"github.com/energye/energy/common"
 )
 
+type browserWindowOnEventCallback func(event *BrowserEvent, window IBrowserWindow)
+type browserWindowAfterOnEventCallback func(window IBrowserWindow)
+
 //创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
-	DefaultUrl                        string                                                   //默认URL地址
-	Title                             string                                                   //窗口标题
-	Icon                              string                                                   //窗口图标
-	Width                             int32                                                    //窗口宽
-	Height                            int32                                                    //窗口高
-	chromiumConfig                    *tCefChromiumConfig                                      //主窗体浏览器配置
-	browserWindowOnEventCallback      func(browserEvent *BrowserEvent, window *TCefWindowInfo) //主窗口初始化回调
-	browserWindowAfterOnEventCallback func(window *TCefWindowInfo)                             //主窗口初始化之后回调
+	WindowProperty
+	chromiumConfig                    *tCefChromiumConfig               //主窗体浏览器配置
+	browserWindowOnEventCallback      browserWindowOnEventCallback      //主窗口初始化回调 - 基于LCL窗口
+	browserWindowAfterOnEventCallback browserWindowAfterOnEventCallback //主窗口初始化之后回调
 }
 
 //设置chromium配置
@@ -23,13 +30,24 @@ func (m *browserConfig) SetChromiumConfig(chromiumConfig *tCefChromiumConfig) {
 	}
 }
 
-func (m *browserConfig) setBrowserWindowInitOnEvent(fn func(event *BrowserEvent, browserWindow *TCefWindowInfo)) {
+func (m *browserConfig) ChromiumConfig() *tCefChromiumConfig {
+	if m.chromiumConfig == nil {
+		m.chromiumConfig = NewChromiumConfig()
+	}
+	return m.chromiumConfig
+}
+
+//主窗口初始化回调
+//
+//该回调函数和基于CEF窗口回调是互斥的，默认情况只有一个会被回调
+func (m *browserConfig) setBrowserWindowInitOnEvent(fn browserWindowOnEventCallback) {
 	if fn != nil && common.Args.IsMain() {
 		m.browserWindowOnEventCallback = fn
 	}
 }
 
-func (m *browserConfig) setBrowserWindowInitAfterOnEvent(fn func(browserWindow *TCefWindowInfo)) {
+//主窗口初始化回调 - 基于LCL窗口
+func (m *browserConfig) setBrowserWindowInitAfterOnEvent(fn browserWindowAfterOnEventCallback) {
 	if fn != nil && common.Args.IsMain() {
 		m.browserWindowAfterOnEventCallback = fn
 	}

@@ -19,8 +19,7 @@ import (
 //
 // 下载之前回调
 type ICefBeforeDownloadCallback struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
 	browseId int32
 	downId   int32
 }
@@ -29,8 +28,7 @@ type ICefBeforeDownloadCallback struct {
 //
 // 下载中回调
 type ICefDownloadItemCallback struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
 	browseId int32
 	downId   int32
 }
@@ -112,5 +110,5 @@ func (m *ICefDownloadItemCallback) DownloadResume(browseId, downloadId int32) {
 //
 // showDialog 显示保存窗口
 func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) {
-	Proc("CEFChromium_SetDownloadPath").Call(m.instance, api.GoStrToDStr(downloadPath), api.GoBoolToDBool(showDialog))
+	Proc(internale_CEFChromium_SetDownloadPath).Call(uintptr(m.instance), api.PascalStr(downloadPath), api.PascalBool(showDialog))
 }

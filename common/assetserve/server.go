@@ -1,6 +1,7 @@
 package assetserve
 
 import (
+	"context"
 	"crypto/tls"
 	"embed"
 	"errors"
@@ -9,7 +10,9 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"time"
 )
 
 var contentType = map[string]string{}
@@ -58,14 +61,15 @@ func NewAssetsHttpServer() *assetsHttpServer {
 	}
 }
 
-func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) error {
+func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) {
 	server := &http.Server{Addr: addr, Handler: handler}
 	if addr == "" {
 		addr = ":https"
 	}
 	ln, err := net.Listen("tcp", addr)
 	if err != nil {
-		return err
+		fmt.Println("serverTLS Listen failed error:", err)
+		return
 	}
 	defer ln.Close()
 	var config = &tls.Config{}
@@ -102,18 +106,47 @@ func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) error {
 			}
 			return tls.X509KeyPair(certPEMBlock, keyPEMBlock)
 		}
-		var err error
 		config.Certificates = make([]tls.Certificate, 1)
 		config.Certificates[0], err = loadX509KeyPair(m.SSL.SSLCert, m.SSL.SSLKey)
 		if err != nil {
-			return err
+			fmt.Println("serverTLS loadX509KeyPair failed error:", err)
+			return
 		}
 	}
 	tlsListener := tls.NewListener(ln, config)
-	return server.Serve(tlsListener)
+	go func() {
+		if err = server.Serve(tlsListener); err != nil {
+			fmt.Println("serverTLS start failed error:", err)
+		}
+	}()
+	m.graceShutdown(server)
 }
 
-func (m *assetsHttpServer) StartHttpServer() error {
+func (m *assetsHttpServer) serve(addr string, handler http.Handler) {
+	server := &http.Server{Addr: addr, Handler: handler}
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			fmt.Println("server start failed error:", err)
+		}
+	}()
+	m.graceShutdown(server)
+}
+
+func (m *assetsHttpServer) graceShutdown(server *http.Server) {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	<-c
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	if err := server.Shutdown(ctx); err != nil {
+		fmt.Println("http server grace shutdown failed error:", err)
+	}
+}
+
+//启动内置Http Server
+//
+//需要使用goroutine启动 [go x.StartHttpServer()]
+func (m *assetsHttpServer) StartHttpServer() {
 	if m.LocalAssets != "" {
 		m.LocalAssets = strings.ReplaceAll(m.LocalAssets, "\\", "/")
 		if strings.LastIndex(m.LocalAssets, "/") != len(m.LocalAssets)-1 {
@@ -123,13 +156,11 @@ func (m *assetsHttpServer) StartHttpServer() error {
 	addr := fmt.Sprintf("%s:%d", m.IP, m.PORT)
 	mux := http.NewServeMux()
 	mux.Handle("/", m)
-	var err error
 	if m.SSL != nil {
-		err = m.serveTLS(addr, mux)
+		m.serveTLS(addr, mux)
 	} else {
-		err = http.ListenAndServe(addr, mux)
+		m.serve(addr, mux)
 	}
-	return err
 }
 
 func (m *assetsHttpServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {

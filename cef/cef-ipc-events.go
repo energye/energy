@@ -11,12 +11,12 @@ package cef
 import (
 	"bytes"
 	"encoding/binary"
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
-	"github.com/energye/golcl/dylib"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"net"
 	"reflect"
 	"strings"
@@ -24,12 +24,12 @@ import (
 )
 
 const (
-	IPC_FN_TYPE_IPCJSEmitGo    = 1 // JS fires the Go registerEvent
-	IPC_FN_TYPE_IPCGoEmitJSRet = 2 // Go fires the JS registerEvent
+	IPC_FN_TYPE_IPCJSEmitGo    = 1 // JS fires the Go registerChromiumEvent
+	IPC_FN_TYPE_IPCGoEmitJSRet = 2 // Go fires the JS registerChromiumEvent
 )
 
 var (
-	setCefIPCCallbackFunc *dylib.LazyProc
+	setCefIPCCallbackFunc dllimports.ProcAddr
 )
 
 type rGoResult struct {
@@ -59,7 +59,7 @@ type rIPCEventParam struct {
 }
 
 func cefIPCInit() {
-	setCefIPCCallbackFunc = api.GetLibLCL().NewProc("SetCEFIPCCallbackFunc")
+	setCefIPCCallbackFunc = common.Proc(internale_SetCEFIPCCallbackFunc)
 	setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
 }
 
@@ -70,7 +70,7 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 		}
 	}()
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
@@ -100,20 +100,20 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 	if CEF_V8_EXCEPTION(result.exception) == CVE_ERROR_OK {
 		switch V8_JS_VALUE_TYPE(result.valueType) {
 		case V8_VALUE_STRING:
-			inArgument.SetString(0, api.DStrToGoStr(result.value))
+			inArgument.SetString(0, api.GoStr(result.value))
 		case V8_VALUE_INT:
 			inArgument.SetInt32(0, int32(result.value))
 		case V8_VALUE_DOUBLE:
-			inArgument.SetFloat64(0, *(*float64)(GetParamPtr(result.value, 0)))
+			inArgument.SetFloat64(0, *(*float64)(common.GetParamPtr(result.value, 0)))
 		case V8_VALUE_BOOLEAN:
-			inArgument.SetBool(0, *(*bool)(GetParamPtr(result.value, 0)))
+			inArgument.SetBool(0, *(*bool)(common.GetParamPtr(result.value, 0)))
 		default:
 			inArgument.SetBool(1, false)
 			inArgument.SetString(0, "不支持的数据类型")
 		}
 	} else {
 		inArgument.SetBool(1, false)
-		inArgument.SetString(0, api.DStrToGoStr(result.value))
+		inArgument.SetString(0, api.GoStr(result.value))
 	}
 	if triggerMode == Tm_Callback { //回调函数
 		if callback, ok := executeJS.emitCallback.EmitCollection.Load(ipcId); ok {
@@ -136,30 +136,30 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 //ipc - js emit go on event
 func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	getVal := func(i int) uintptr {
-		return GetParamOf(i, args)
+		return common.GetParamOf(i, args)
 	}
 	getPtr := func(i int) unsafe.Pointer {
 		return unsafe.Pointer(getVal(i))
 	}
 	var (
 		inArgument   = ipc.NewArgumentList()
-		fullName     = api.DStrToGoStr(eventParam.FullName)
+		fullName     = api.GoStr(eventParam.FullName)
 		valueTypeLen = eventParam.ValueTypeArrLen //入参类型数组
 		accIdx       = 2                          //占用的下标
 	)
 	if valueTypeLen > 0 {
 		//取入参
 		for i := 0; i < int(valueTypeLen); i++ {
-			valueType := V8_JS_VALUE_TYPE(*(*byte)(GetParamPtr(eventParam.ValueTypeArr, i)))
+			valueType := V8_JS_VALUE_TYPE(*(*byte)(common.GetParamPtr(eventParam.ValueTypeArr, i)))
 			switch valueType {
 			case V8_VALUE_STRING:
-				inArgument.SetString(i, api.DStrToGoStr(getVal(i+accIdx)))
+				inArgument.SetString(i, api.GoStr(getVal(i+accIdx)))
 			case V8_VALUE_INT:
 				inArgument.SetInt32(i, int32(getVal(i+accIdx)))
 			case V8_VALUE_DOUBLE:
 				inArgument.SetFloat64(i, *(*float64)(getPtr(i + accIdx)))
 			case V8_VALUE_BOOLEAN:
-				inArgument.SetBool(i, api.DBoolToGoBool(getVal(i+accIdx)))
+				inArgument.SetBool(i, api.GoBool(getVal(i+accIdx)))
 			}
 		}
 	}
@@ -168,7 +168,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	bindType, name, vType, _, exception := searchBindV8Value(fullName)
 	if exception == CVE_ERROR_OK {
 		if vType == V8_VALUE_OBJECT || vType == V8_VALUE_ROOT_OBJECT {
-			result.set(api.GoStrToDStr(name), uintptr(vType), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
+			result.set(api.PascalStr(name), uintptr(vType), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 		} else {
 			if bindType == IS_OBJECT {
 				name = name[len(objectRootName)+1:]
@@ -190,14 +190,14 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 									data := inArgument.GetData(0)
 									switch GO_VALUE_TYPE(data.VType()) {
 									case GO_VALUE_STRING:
-										result.set(api.GoStrToDStr(data.GetString()), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
+										result.set(api.PascalStr(data.GetString()), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 									case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64, GO_VALUE_UINTPTR:
 										result.set(uintptr(data.GetInt32()), uintptr(V8_VALUE_INT), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 									case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
 										var ret = data.GetDouble()
 										result.set(uintptr(unsafe.Pointer(&ret)), uintptr(V8_VALUE_DOUBLE), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 									case GO_VALUE_BOOL:
-										result.set(api.GoBoolToDBool(data.GetBool()), uintptr(V8_VALUE_BOOLEAN), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
+										result.set(api.PascalBool(data.GetBool()), uintptr(V8_VALUE_BOOLEAN), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 									}
 								} else {
 									//没有出参
@@ -205,7 +205,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 								}
 							}
 						} else {
-							result.set(api.GoStrToDStr(outParams[0].Interface().(string)), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_UNKNOWN_ERROR))
+							result.set(api.PascalStr(outParams[0].Interface().(string)), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_UNKNOWN_ERROR))
 						}
 					}
 				} else { //field
@@ -237,7 +237,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 						if Empty == errorMsg {
 							result.set(uintptr(oldValuePtr), uintptr(jsValue.ValueType()), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 						} else {
-							result.set(api.GoStrToDStr(errorMsg), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
+							result.set(api.PascalStr(errorMsg), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
 						}
 					} else {
 						//字段取值
@@ -259,10 +259,10 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			}
 		}
 	} else {
-		//尝试触发用户自定义 ipc fullName emit
+		//尝试触发用户自定义ipc事件
 		if callback := ipc.IPC.Browser().Events().Get(fullName); callback != nil {
 			var (
-				channelId = StrToInt64(api.DStrToGoStr(eventParam.FrameId))
+				channelId = common.StrToInt64(api.GoStr(eventParam.FrameId))
 				ipcType   IPC_TYPE
 				conn      net.Conn
 			)
@@ -272,7 +272,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			}
 			ctx := ipc.NewIPCContext(fullName, eventParam.BrowserId, channelId, ipcType, conn, &ipc.IPCEventMessage{}, &ipc.IPCContextResult{}, inArgument)
 			callback(ctx)
-			result.set(uintptr(ctx.Result().Result()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
+			result.set(uintptr(ctx.Result().Data()), uintptr(ctx.Result().VType()), 0, uintptr(IS_COMMON), uintptr(CVE_ERROR_OK))
 		} else {
 			result.set(0, 0, 0, 0, uintptr(CVE_ERROR_NOT_FOUND_FIELD))
 		}

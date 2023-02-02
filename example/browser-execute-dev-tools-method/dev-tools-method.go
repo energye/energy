@@ -14,12 +14,13 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, &resources)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/execute-dev-tool-method.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/execute-dev-tool-method.html"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//chromium配置
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)     //启用右键菜单

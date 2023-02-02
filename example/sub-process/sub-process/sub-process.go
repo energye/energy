@@ -14,7 +14,7 @@ import (
 */
 func main() {
 	//全局配置初始化
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	//IPC通信
 	src.IPCInit()
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置

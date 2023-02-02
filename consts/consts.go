@@ -9,7 +9,9 @@
 package consts
 
 import (
-	"github.com/energye/golcl/tools/homedir"
+	"github.com/energye/energy/types"
+	"github.com/energye/golcl/energy/homedir"
+	"math"
 	"os"
 	"path/filepath"
 )
@@ -17,47 +19,43 @@ import (
 var (
 	ExePath       string                       //执行文件目录
 	HomeDir, _    = homedir.Dir()              //系统用户目录
-	Separator     = string(filepath.Separator) //
+	Separator     = string(filepath.Separator) //系统目录分隔符
 	SingleProcess = false                      //进程启动方式, true单进程 false多进程
+	IsMessageLoop = false                      //CEF应用的窗口, 使用views framework为true, 使用LCL为false, 其实是窗口消息轮询使用方式
+)
+
+const (
+	Empty               = ""
+	MAINARGS_NETIPCPORT = "net-ipc-port"
+	ENERGY_HOME_KEY     = "ENERGY_HOME"
+	MemoryNetwork       = "unix"
 )
 
 func init() {
 	ExePath, _ = os.Getwd()
 }
 
-const (
-	ENERGY_HOME_KEY = "ENERGY_HOME"
-	MemoryNetwork   = "unix"
-)
-
 //0:net 1:unix
-type IPC_TYPE int8
+type IPC_TYPE = types.Int8
 
 const (
-	IPCT_NET IPC_TYPE = iota
+	IPCT_NET = IPC_TYPE(iota)
 	IPCT_UNIX
 )
 
-type ChannelType int8
+type ChannelType = types.Int8
 
 const (
-	Ct_Server ChannelType = iota
+	Ct_Server = ChannelType(iota)
 	Ct_Client
 )
 
-type TriggerMode int8
+type TriggerMode = types.Int8
 
 const (
-	Tm_Async    TriggerMode = iota //异步
-	Tm_Callback                    //异步，带回调函数返回结果
-	Tm_Sync                        //同步，阻塞等待结果返回值
-)
-
-const (
-	Empty               = ""
-	MAINARGS_NETIPCPORT = "net-ipc-port"
-	download_dir        = "downloads"
-	ipcAccIdx           = 8 //ipc args新的参数开始位置
+	Tm_Async    = TriggerMode(iota) //异步
+	Tm_Callback                     //异步，带回调函数返回结果
+	Tm_Sync                         //同步，阻塞等待结果返回值
 )
 
 //功能和消息常量
@@ -68,34 +66,34 @@ const (
 )
 
 //缩放、放大
-type ZOOM int32
+type ZOOM = types.Int32
 
 const (
-	ZOOM_RESET ZOOM = iota
+	ZOOM_RESET = ZOOM(iota)
 	ZOOM_INC
 	ZOOM_DEC
 )
 
 //进程结束的状态
-type TCefTerminationStatus int32
+type TCefTerminationStatus = types.Int32
 
 const (
-	TS_ABNORMAL_TERMINATION TCefTerminationStatus = iota
+	TS_ABNORMAL_TERMINATION = TCefTerminationStatus(iota)
 	TS_PROCESS_WAS_KILLED
 	TS_PROCESS_CRASHED
 	TS_PROCESS_OOM
 )
 
 //前进 & 后退
-type BF int32
+type BF = types.Int32
 
 const (
-	BF_GOBACK    BF = iota
-	BF_GOFORWARD    = iota
+	BF_GOBACK = BF(iota)
+	BF_GOFORWARD
 )
 
 //日志等级
-type LOG uint32
+type LOG = types.UInt32
 
 const (
 	LOGSEVERITY_DEFAULT LOG = 0
@@ -108,62 +106,62 @@ const (
 	LOGSEVERITY_DISABLE LOG = 99
 )
 
-type LANGUAGE string
+type LANGUAGE = types.String
 
 const (
 	LANGUAGE_zh_CN  LANGUAGE = "zh-CN"
-	LANGUAGE_zh_TW           = "zh-TW"
-	LANGUAGE_am              = "am"
-	LANGUAGE_ar              = "ar"
-	LANGUAGE_bg              = "bg"
-	LANGUAGE_bn              = "bn"
-	LANGUAGE_ca              = "ca"
-	LANGUAGE_cs              = "cs"
-	LANGUAGE_da              = "da"
-	LANGUAGE_de              = "de"
-	LANGUAGE_el              = "el"
-	LANGUAGE_en_GB           = "en-GB"
-	LANGUAGE_en_US           = "en-US"
-	LANGUAGE_es              = "es"
-	LANGUAGE_es_419          = "es-419"
-	LANGUAGE_et              = "et"
-	LANGUAGE_fa              = "fa"
-	LANGUAGE_fi              = "fi"
-	LANGUAGE_fil             = "fil"
-	LANGUAGE_fr              = "fr"
-	LANGUAGE_gu              = "gu"
-	LANGUAGE_he              = "he"
-	LANGUAGE_hi              = "hi"
-	LANGUAGE_hr              = "hr"
-	LANGUAGE_hu              = "hu"
-	LANGUAGE_id              = "channelId"
-	LANGUAGE_it              = "it"
-	LANGUAGE_ja              = "ja"
-	LANGUAGE_kn              = "kn"
-	LANGUAGE_ko              = "ko"
-	LANGUAGE_lt              = "lt"
-	LANGUAGE_lv              = "lv"
-	LANGUAGE_ml              = "ml"
-	LANGUAGE_mr              = "mr"
-	LANGUAGE_ms              = "ms"
-	LANGUAGE_nb              = "nb"
-	LANGUAGE_nl              = "nl"
-	LANGUAGE_pl              = "pl"
-	LANGUAGE_pt_BR           = "pt-BR"
-	LANGUAGE_pt_PT           = "pt-PT"
-	LANGUAGE_ro              = "ro"
-	LANGUAGE_ru              = "ru"
-	LANGUAGE_sk              = "sk"
-	LANGUAGE_sl              = "sl"
-	LANGUAGE_sr              = "sr"
-	LANGUAGE_sv              = "sv"
-	LANGUAGE_sw              = "sw"
-	LANGUAGE_ta              = "ta"
-	LANGUAGE_te              = "te"
-	LANGUAGE_th              = "th"
-	LANGUAGE_tr              = "tr"
-	LANGUAGE_uk              = "uk"
-	LANGUAGE_vi              = "vi"
+	LANGUAGE_zh_TW  LANGUAGE = "zh-TW"
+	LANGUAGE_am     LANGUAGE = "am"
+	LANGUAGE_ar     LANGUAGE = "ar"
+	LANGUAGE_bg     LANGUAGE = "bg"
+	LANGUAGE_bn     LANGUAGE = "bn"
+	LANGUAGE_ca     LANGUAGE = "ca"
+	LANGUAGE_cs     LANGUAGE = "cs"
+	LANGUAGE_da     LANGUAGE = "da"
+	LANGUAGE_de     LANGUAGE = "de"
+	LANGUAGE_el     LANGUAGE = "el"
+	LANGUAGE_en_GB  LANGUAGE = "en-GB"
+	LANGUAGE_en_US  LANGUAGE = "en-US"
+	LANGUAGE_es     LANGUAGE = "es"
+	LANGUAGE_es_419 LANGUAGE = "es-419"
+	LANGUAGE_et     LANGUAGE = "et"
+	LANGUAGE_fa     LANGUAGE = "fa"
+	LANGUAGE_fi     LANGUAGE = "fi"
+	LANGUAGE_fil    LANGUAGE = "fil"
+	LANGUAGE_fr     LANGUAGE = "fr"
+	LANGUAGE_gu     LANGUAGE = "gu"
+	LANGUAGE_he     LANGUAGE = "he"
+	LANGUAGE_hi     LANGUAGE = "hi"
+	LANGUAGE_hr     LANGUAGE = "hr"
+	LANGUAGE_hu     LANGUAGE = "hu"
+	LANGUAGE_id     LANGUAGE = "channelId"
+	LANGUAGE_it     LANGUAGE = "it"
+	LANGUAGE_ja     LANGUAGE = "ja"
+	LANGUAGE_kn     LANGUAGE = "kn"
+	LANGUAGE_ko     LANGUAGE = "ko"
+	LANGUAGE_lt     LANGUAGE = "lt"
+	LANGUAGE_lv     LANGUAGE = "lv"
+	LANGUAGE_ml     LANGUAGE = "ml"
+	LANGUAGE_mr     LANGUAGE = "mr"
+	LANGUAGE_ms     LANGUAGE = "ms"
+	LANGUAGE_nb     LANGUAGE = "nb"
+	LANGUAGE_nl     LANGUAGE = "nl"
+	LANGUAGE_pl     LANGUAGE = "pl"
+	LANGUAGE_pt_BR  LANGUAGE = "pt-BR"
+	LANGUAGE_pt_PT  LANGUAGE = "pt-PT"
+	LANGUAGE_ro     LANGUAGE = "ro"
+	LANGUAGE_ru     LANGUAGE = "ru"
+	LANGUAGE_sk     LANGUAGE = "sk"
+	LANGUAGE_sl     LANGUAGE = "sl"
+	LANGUAGE_sr     LANGUAGE = "sr"
+	LANGUAGE_sv     LANGUAGE = "sv"
+	LANGUAGE_sw     LANGUAGE = "sw"
+	LANGUAGE_ta     LANGUAGE = "ta"
+	LANGUAGE_te     LANGUAGE = "te"
+	LANGUAGE_th     LANGUAGE = "th"
+	LANGUAGE_tr     LANGUAGE = "tr"
+	LANGUAGE_uk     LANGUAGE = "uk"
+	LANGUAGE_vi     LANGUAGE = "vi"
 )
 
 // Chromium关闭的操作类型
@@ -173,27 +171,27 @@ const (
 // cbaClose  : 继续关闭浏览器
 // cbaDelay  : 暂时停止关闭浏览器
 //			 : 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
-type CBS int32
+type CBS = types.Int32
 
 const (
-	CbaClose = iota
+	CbaClose = CBS(iota)
 	CbaDelay
 	CbaCancel
 )
 
 //CEF 进程 ChannelId
-type CefProcessId int32
+type CefProcessId = types.Int32
 
 const (
-	PID_BROWSER CefProcessId = iota
+	PID_BROWSER = CefProcessId(iota)
 	PID_RENDER
 )
 
 //支持的JS类型
-type V8_JS_VALUE_TYPE int32
+type V8_JS_VALUE_TYPE = types.Int32
 
 const (
-	V8_VALUE_STRING V8_JS_VALUE_TYPE = iota
+	V8_VALUE_STRING = V8_JS_VALUE_TYPE(iota)
 	V8_VALUE_INT
 	V8_VALUE_DOUBLE
 	V8_VALUE_BOOLEAN
@@ -208,10 +206,10 @@ const (
 )
 
 //支持的GO类型
-type GO_VALUE_TYPE int32
+type GO_VALUE_TYPE = types.Int32
 
 const (
-	GO_VALUE_STRING GO_VALUE_TYPE = iota
+	GO_VALUE_STRING = GO_VALUE_TYPE(iota)
 	GO_VALUE_INT
 	GO_VALUE_INT8
 	GO_VALUE_INT16
@@ -237,70 +235,55 @@ const (
 	GO_VALUE_DICTVALUE    //dictValue
 )
 
-//CEF事件名
-type CEF_ON_EVENTS string
-
-const (
-	OnContextCreated           CEF_ON_EVENTS = "OnContextCreated"
-	OnWebKitInitialized                      = "OnWebKitInitialized"
-	OnProcessMessageReceived                 = "OnProcessMessageReceived"
-	OnBeforeChildProcessLaunch               = "OnBeforeChildProcessLaunch"
-	OnBrowserDestroyed                       = "OnBrowserDestroyed"
-	OnRenderLoadStart                        = "OnRenderLoadStart"
-	OnRenderLoadEnd                          = "OnRenderLoadEnd"
-	OnRenderLoadError                        = "OnRenderLoadError"
-	OnRenderLoadingStateChange               = "OnRenderLoadingStateChange"
-)
-
 //JS属性
-type V8_PROPERTY_ATTRIBUTE int32
+type V8_PROPERTY_ATTRIBUTE = types.Int32
 
 const (
 	V8_PROPERTY_ATTRIBUTE_NONE       V8_PROPERTY_ATTRIBUTE = 0
-	V8_PROPERTY_ATTRIBUTE_READONLY                         = 1 << 0
-	V8_PROPERTY_ATTRIBUTE_DONTENUM                         = 1 << 1
-	V8_PROPERTY_ATTRIBUTE_DONTDELETE                       = 1 << 2
+	V8_PROPERTY_ATTRIBUTE_READONLY   V8_PROPERTY_ATTRIBUTE = 1 << 0
+	V8_PROPERTY_ATTRIBUTE_DONTENUM   V8_PROPERTY_ATTRIBUTE = 1 << 1
+	V8_PROPERTY_ATTRIBUTE_DONTDELETE V8_PROPERTY_ATTRIBUTE = 1 << 2
 )
 
 //JS交互绑定的事件类型
-type BIND_EVENT int32
+type BIND_EVENT = types.Int32
 
 const (
-	BE_SET  BIND_EVENT = 0
-	BE_GET             = 1
-	BE_FUNC            = 2
+	BE_SET = BIND_EVENT(iota)
+	BE_GET
+	BE_FUNC
 )
 
 //异常信息
-type CEF_V8_EXCEPTION int32
+type CEF_V8_EXCEPTION = types.Int32
 
 const (
-	CVE_ERROR_OK                             CEF_V8_EXCEPTION = iota //操作成功
-	CVE_ERROR_NOT_FOUND_FIELD                                        //未找到字段 或字段未定义
-	CVE_ERROR_NOT_FOUND_FUNC                                         //未找到函数 或函数未定义
-	CVE_ERROR_TYPE_NOT_SUPPORTED                                     //不支持的变量类型 变量类型只支持[string int double bool null undefined]
-	CVE_ERROR_TYPE_CANNOT_CHANGE                                     //字段为普通类型不能变更为 array、object、function
-	CVE_ERROR_TYPE_INVALID                                           //类型无效
-	CVE_ERROR_GET_STRING_FAIL                                        //获取string类型失败
-	CVE_ERROR_GET_INT_FAIL                                           //获取int类型失败
-	CVE_ERROR_GET_DOUBLE_FAIL                                        //获取double类型失败
-	CVE_ERROR_GET_BOOL_FAIL                                          //获取bool类型失败
-	CVE_ERROR_GET_NULL_FAIL                                          //获取null类型失败
-	CVE_ERROR_GET_UNDEFINED_FAIL                                     //获取undefined类型失败
-	CVE_ERROR_FUNC_INVALID_P_L_9                                     //该函数非法 类型不正确 或参数个数大于9个
-	CVE_ERROR_FUNC_IN_PAM                                            //入参类型不正确 只能为string int double boolean
-	CVE_ERROR_FUNC_OUT_PAM                                           //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
-	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                            //入参获取string类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                               //入参获取int类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                            //入参获取double类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                           //入参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                           //出参获取string类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                              //出参获取int类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                           //出参获取double类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                          //出参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                         //出参获取CefError值失败
-	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                          //IPC获取绑定值失败
-	CVE_ERROR_UNKNOWN_ERROR                                          //未知错误
+	CVE_ERROR_OK                             = CEF_V8_EXCEPTION(iota) //操作成功
+	CVE_ERROR_NOT_FOUND_FIELD                                         //未找到字段 或字段未定义
+	CVE_ERROR_NOT_FOUND_FUNC                                          //未找到函数 或函数未定义
+	CVE_ERROR_TYPE_NOT_SUPPORTED                                      //不支持的变量类型 变量类型只支持[string int double bool null undefined]
+	CVE_ERROR_TYPE_CANNOT_CHANGE                                      //字段为普通类型不能变更为 array、object、function
+	CVE_ERROR_TYPE_INVALID                                            //类型无效
+	CVE_ERROR_GET_STRING_FAIL                                         //获取string类型失败
+	CVE_ERROR_GET_INT_FAIL                                            //获取int类型失败
+	CVE_ERROR_GET_DOUBLE_FAIL                                         //获取double类型失败
+	CVE_ERROR_GET_BOOL_FAIL                                           //获取bool类型失败
+	CVE_ERROR_GET_NULL_FAIL                                           //获取null类型失败
+	CVE_ERROR_GET_UNDEFINED_FAIL                                      //获取undefined类型失败
+	CVE_ERROR_FUNC_INVALID_P_L_9                                      //该函数非法 类型不正确 或参数个数大于9个
+	CVE_ERROR_FUNC_IN_PAM                                             //入参类型不正确 只能为string int double boolean
+	CVE_ERROR_FUNC_OUT_PAM                                            //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
+	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                             //入参获取string类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                                //入参获取int类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                             //入参获取double类型值失败
+	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                            //入参获取boolean类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                            //出参获取string类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                               //出参获取int类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                            //出参获取double类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                           //出参获取boolean类型值失败
+	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                          //出参获取CefError值失败
+	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                           //IPC获取绑定值失败
+	CVE_ERROR_UNKNOWN_ERROR                                           //未知错误
 )
 
 const (
@@ -309,34 +292,34 @@ const (
 )
 
 //函数类型
-type FN_TYPE int8
+type FN_TYPE = types.Int8
 
 const (
-	FN_TYPE_COMMON FN_TYPE = iota //普通函数，直接定义的
-	FN_TYPE_OBJECT                //对象函数，所属对象
+	FN_TYPE_COMMON = FN_TYPE(iota) //普通函数，直接定义的
+	FN_TYPE_OBJECT                 //对象函数，所属对象
 )
 
 //通用类型或对象类型
-type IS_CO int8
+type IS_CO = types.Int8
 
 const (
-	IS_COMMON IS_CO = iota
+	IS_COMMON = IS_CO(iota)
 	IS_OBJECT
 )
 
 //进程消息类型
-type PROCESS_MESSAGE_TYPE int8
+type PROCESS_MESSAGE_TYPE = types.Int8
 
 const (
-	PMT_JS_CODE PROCESS_MESSAGE_TYPE = iota //执行JS代码消息
-	PMT_TEXT                                //文本传递消息
-	PMT_BINARY                              //二进制消息
+	PMT_JS_CODE = PROCESS_MESSAGE_TYPE(iota) //执行JS代码消息
+	PMT_TEXT                                 //文本传递消息
+	PMT_BINARY                               //二进制消息
 )
 
-type TCefProcessType int8
+type TCefProcessType = types.Int8
 
 const (
-	PtBrowser TCefProcessType = iota
+	PtBrowser = TCefProcessType(iota)
 	PtRender
 	PtZygote
 	PtGPU
@@ -346,55 +329,55 @@ const (
 	PtOther
 )
 
-type TDateTime float64
+type TDateTime = types.Float64
 
-type TCefCookieSameSite int32
+type TCefCookieSameSite = types.Int32
 
 const (
-	Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED TCefCookieSameSite = iota
+	Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED = TCefCookieSameSite(iota)
 	Ccss_CEF_COOKIE_SAME_SITE_NO_RESTRICTION
 	Ccss_CEF_COOKIE_SAME_SITE_LAX_MODE
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
-type TCefCookiePriority int32
+type TCefCookiePriority = types.Int32
 
 const (
 	CEF_COOKIE_PRIORITY_LOW    TCefCookiePriority = -1
-	CEF_COOKIE_PRIORITY_MEDIUM                    = 0
-	CEF_COOKIE_PRIORITY_HIGH                      = 1
+	CEF_COOKIE_PRIORITY_MEDIUM TCefCookiePriority = 0
+	CEF_COOKIE_PRIORITY_HIGH   TCefCookiePriority = 1
 )
 
-type TCefProxyType int32
+type TCefProxyType = types.Int32
 
 const (
-	PtDirect TCefProxyType = iota
+	PtDirect = TCefProxyType(iota)
 	PtAutodetect
 	PtSystem
 	PtFixedServers
 	PtPACScript
 )
 
-type TCefProxyScheme int32
+type TCefProxyScheme = types.Int32
 
 const (
-	PsHTTP TCefProxyScheme = iota
+	PsHTTP = TCefProxyScheme(iota)
 	PsSOCKS4
 	PsSOCKS5
 )
 
-type TCefContextMenuType int32
+type TCefContextMenuType = types.Int32
 
 const (
-	CMT_NONE TCefContextMenuType = iota
+	CMT_NONE = TCefContextMenuType(iota)
 	CMT_CHECK
 	CMT_RADIO
 )
 
-type TCefContextMenuMediaType = int32
+type TCefContextMenuMediaType = types.Int32
 
 const (
-	CM_MEDIATYPE_NONE TCefContextMenuMediaType = iota
+	CM_MEDIATYPE_NONE = TCefContextMenuMediaType(iota)
 	CM_MEDIATYPE_IMAGE
 	CM_MEDIATYPE_VIDEO
 	CM_MEDIATYPE_AUDIO
@@ -403,42 +386,42 @@ const (
 	CM_MEDIATYPE_PLUGIN
 )
 
-type MenuId = int32
+type MenuId = types.Int32
 
 const (
 	MENU_ID_BACK                       MenuId = 100
-	MENU_ID_FORWARD                           = 101
-	MENU_ID_RELOAD                            = 102
-	MENU_ID_RELOAD_NOCACHE                    = 103
-	MENU_ID_STOPLOAD                          = 104
-	MENU_ID_UNDO                              = 110
-	MENU_ID_REDO                              = 111
-	MENU_ID_CUT                               = 112
-	MENU_ID_COPY                              = 113
-	MENU_ID_PASTE                             = 114
-	MENU_ID_DELETE                            = 115
-	MENU_ID_SELECT_ALL                        = 116
-	MENU_ID_FIND                              = 130
-	MENU_ID_PRINT                             = 131
-	MENU_ID_VIEW_SOURCE                       = 132
-	MENU_ID_SPELLCHECK_SUGGESTION_0           = 200
-	MENU_ID_SPELLCHECK_SUGGESTION_1           = 201
-	MENU_ID_SPELLCHECK_SUGGESTION_2           = 202
-	MENU_ID_SPELLCHECK_SUGGESTION_3           = 203
-	MENU_ID_SPELLCHECK_SUGGESTION_4           = 204
-	MENU_ID_SPELLCHECK_SUGGESTION_LAST        = 204
-	MENU_ID_NO_SPELLING_SUGGESTIONS           = 205
-	MENU_ID_ADD_TO_DICTIONARY                 = 206
-	MENU_ID_CUSTOM_FIRST                      = 220
-	MENU_ID_CUSTOM_LAST                       = 250
-	MENU_ID_USER_FIRST                        = 26500
-	MENU_ID_USER_LAST                         = 28500
+	MENU_ID_FORWARD                    MenuId = 101
+	MENU_ID_RELOAD                     MenuId = 102
+	MENU_ID_RELOAD_NOCACHE             MenuId = 103
+	MENU_ID_STOPLOAD                   MenuId = 104
+	MENU_ID_UNDO                       MenuId = 110
+	MENU_ID_REDO                       MenuId = 111
+	MENU_ID_CUT                        MenuId = 112
+	MENU_ID_COPY                       MenuId = 113
+	MENU_ID_PASTE                      MenuId = 114
+	MENU_ID_DELETE                     MenuId = 115
+	MENU_ID_SELECT_ALL                 MenuId = 116
+	MENU_ID_FIND                       MenuId = 130
+	MENU_ID_PRINT                      MenuId = 131
+	MENU_ID_VIEW_SOURCE                MenuId = 132
+	MENU_ID_SPELLCHECK_SUGGESTION_0    MenuId = 200
+	MENU_ID_SPELLCHECK_SUGGESTION_1    MenuId = 201
+	MENU_ID_SPELLCHECK_SUGGESTION_2    MenuId = 202
+	MENU_ID_SPELLCHECK_SUGGESTION_3    MenuId = 203
+	MENU_ID_SPELLCHECK_SUGGESTION_4    MenuId = 204
+	MENU_ID_SPELLCHECK_SUGGESTION_LAST MenuId = 204
+	MENU_ID_NO_SPELLING_SUGGESTIONS    MenuId = 205
+	MENU_ID_ADD_TO_DICTIONARY          MenuId = 206
+	MENU_ID_CUSTOM_FIRST               MenuId = 220
+	MENU_ID_CUSTOM_LAST                MenuId = 250
+	MENU_ID_USER_FIRST                 MenuId = 26500
+	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
-type TCefMenuColorType = int32
+type TCefMenuColorType = types.Int32
 
 const (
-	CEF_MENU_COLOR_TEXT TCefMenuColorType = iota
+	CEF_MENU_COLOR_TEXT = TCefMenuColorType(iota)
 	CEF_MENU_COLOR_TEXT_HOVERED
 	CEF_MENU_COLOR_TEXT_ACCELERATOR
 	CEF_MENU_COLOR_TEXT_ACCELERATOR_HOVERED
@@ -447,38 +430,40 @@ const (
 	CEF_MENU_COLOR_COUNT
 )
 
-type ARGB uint32
+type ARGB = types.UInt32
 
-type TCefKeyEventType int32
+type TCefKeyEventType = types.Int32
 
 const (
-	KEYEVENT_RAW_KEYDOWN TCefKeyEventType = iota
+	KEYEVENT_RAW_KEYDOWN = TCefKeyEventType(iota)
 	KEYEVENT_KEYDOWN
 	KEYEVENT_KEYUP
 	KEYEVENT_CHAR
 )
 
-type TCefEventFlags uint32
+type TCefEventFlags = types.UInt32
 
-type TCefWindowHandleType int8
+type TCefWindowHandleType = types.Int8
+
+type TCefWindowHandle = types.UIntptr
 
 const (
-	Wht_WindowParent TCefWindowHandleType = iota
+	Wht_WindowParent = TCefWindowHandleType(iota)
 	Wht_LinkedWindowParent
 )
 
-type TCefReturnValue int32
+type TCefReturnValue = types.Int32
 
 const (
-	RV_CANCEL TCefReturnValue = iota
+	RV_CANCEL = TCefReturnValue(iota)
 	RV_CONTINUE
 	RV_CONTINUE_ASYNC
 )
 
-type TCefReferrerPolicy = int32
+type TCefReferrerPolicy = types.Int32
 
 const (
-	REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE TCefReferrerPolicy = iota // same value as REFERRER_POLICY_DEFAULT
+	REFERRER_POLICY_CLEAR_REFERRER_ON_TRANSITION_FROM_SECURE_TO_INSECURE = TCefReferrerPolicy(iota) // same value as REFERRER_POLICY_DEFAULT
 	REFERRER_POLICY_REDUCE_REFERRER_GRANULARITY_ON_TRANSITION_CROSS_ORIGIN
 	REFERRER_POLICY_ORIGIN_ONLY_ON_TRANSITION_CROSS_ORIGIN
 	REFERRER_POLICY_NEVER_CLEAR_REFERRER
@@ -488,14 +473,14 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
-type TCefUrlRequestFlags = int
+type TCefUrlRequestFlags = types.Int
 
-type TCefErrorCode = int32
+type TCefErrorCode = types.Int32
 
-type TCefResourceType = int32
+type TCefResourceType = types.Int32
 
 const (
-	RT_MAIN_FRAME TCefResourceType = iota
+	RT_MAIN_FRAME = TCefResourceType(iota)
 	RT_SUB_FRAME
 	RT_STYLESHEET
 	RT_SCRIPT
@@ -518,70 +503,70 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME
 )
 
-type TCefTransitionType = int
+type TCefTransitionType = types.Int
 
-type TCefUrlRequestStatus = int32
+type TCefUrlRequestStatus = types.Int32
 
 const (
-	UR_UNKNOWN TCefUrlRequestStatus = iota
+	UR_UNKNOWN = TCefUrlRequestStatus(iota)
 	UR_SUCCESS
 	UR_IO_PENDING
 	UR_CANCELED
 	UR_FAILED
 )
 
-type TCefState int32
+type TCefState = types.Int32
 
 const (
-	STATE_DEFAULT TCefState = iota
+	STATE_DEFAULT = TCefState(iota)
 	STATE_ENABLED
 	STATE_DISABLE
 )
 
-type TCefTouchEeventType int32
+type TCefTouchEeventType = types.Int32
 
 const (
-	CEF_TET_RELEASED TCefTouchEeventType = iota
+	CEF_TET_RELEASED = TCefTouchEeventType(iota)
 	CEF_TET_PRESSED
 	CEF_TET_MOVED
 	CEF_TET_CANCELLED
 )
 
-type TCefPointerType int32
+type TCefPointerType = types.Int32
 
 const (
-	CEF_POINTER_TYPE_TOUCH TCefPointerType = iota
+	CEF_POINTER_TYPE_TOUCH = TCefPointerType(iota)
 	CEF_POINTER_TYPE_MOUSE
 	CEF_POINTER_TYPE_PEN
 	CEF_POINTER_TYPE_ERASER
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
-type TCefMouseButtonType int32
+type TCefMouseButtonType = types.Int32
 
 const (
-	MBT_LEFT TCefMouseButtonType = iota
+	MBT_LEFT = TCefMouseButtonType(iota)
 	MBT_MIDDLE
 	MBT_RIGHT
 )
 
 //进程消息错误码
-type ProcessMessageError int32
+type ProcessMessageError = types.Int32
 
 const (
 	PME_OK                        ProcessMessageError = iota + 1 //发送成功
-	PMErr_NOT_FOUND_FRAME                             = -1       //没找到Frame
-	PMErr_TARGET_PROCESS                              = -2       //目标进程标识错误
-	PMErr_NAME_IS_NULL                                = -3       //消息名称为空
-	PMErr_NO_INVALID_FRAME                            = -4       //无效的Frame
-	PMErr_REQUIRED_PARAMS_IS_NULL                     = -5       //必要参数为空
-	PMErr_NAME_CANNOT_USED                            = -6       //不能使用的消息名称
+	PMErr_NOT_FOUND_FRAME         ProcessMessageError = -1       //没找到Frame
+	PMErr_TARGET_PROCESS          ProcessMessageError = -2       //目标进程标识错误
+	PMErr_NAME_IS_NULL            ProcessMessageError = -3       //消息名称为空
+	PMErr_NO_INVALID_FRAME        ProcessMessageError = -4       //无效的Frame
+	PMErr_REQUIRED_PARAMS_IS_NULL ProcessMessageError = -5       //必要参数为空
+	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
-type TCefWindowOpenDisposition int32
+type TCefWindowOpenDisposition = types.Int32
 
 const (
-	WOD_UNKNOWN TCefWindowOpenDisposition = iota
+	WOD_UNKNOWN = TCefWindowOpenDisposition(iota)
 	WOD_CURRENT_TAB
 	WOD_SINGLETON_TAB
 	WOD_NEW_FOREGROUND_TAB
@@ -595,16 +580,72 @@ const (
 	WOD_NEW_PICTURE_IN_PICTURE
 )
 
-// Browser Window Type
-type WINDOW_TYPE int8
+//WINDOW_TYPE 窗口类型
+type WINDOW_TYPE = types.Int8
 
 const (
-	WT_MAIN_BROWSER WINDOW_TYPE = iota
+	WT_MAIN_BROWSER = WINDOW_TYPE(iota)
 	WT_POPUP_SUB_BROWSER
 	WT_DEV_TOOLS
 	WT_VIEW_SOURCE
 )
 
-type TCefContextMenuTypeFlags uint32
-type TCefContextMenuMediaStateFlags uint32
-type TCefContextMenuEditStateFlags uint32
+type TCefContextMenuTypeFlags = types.UInt32
+type TCefContextMenuMediaStateFlags = types.UInt32
+type TCefContextMenuEditStateFlags = types.UInt32
+
+type TCefMenuAnchorPosition = types.Int32
+
+const (
+	CEF_MENU_ANCHOR_TOPLEFT = TCefMenuAnchorPosition(iota)
+	CEF_MENU_ANCHOR_TOPRIGHT
+	CEF_MENU_ANCHOR_BOTTOMCENTER
+)
+
+type TCefShowState = types.Int32
+
+const (
+	CEF_SHOW_STATE_NORMAL     = TCefShowState(1)
+	CEF_SHOW_STATE_MINIMIZED  = TCefShowState(2)
+	CEF_SHOW_STATE_MAXIMIZED  = TCefShowState(3)
+	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
+)
+
+type TCefChromeToolbarType = types.Int32
+
+const (
+	CEF_CTT_NONE     = TCefChromeToolbarType(1)
+	CEF_CTT_NORMAL   = TCefChromeToolbarType(2)
+	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
+)
+
+type TCefDragOperations = types.Cardinal
+
+const (
+	DRAG_OPERATION_NONE    = TCefDragOperations(0)
+	DRAG_OPERATION_COPY    = TCefDragOperations(1)
+	DRAG_OPERATION_LINK    = TCefDragOperations(2)
+	DRAG_OPERATION_GENERIC = TCefDragOperations(4)
+	DRAG_OPERATION_PRIVATE = TCefDragOperations(8)
+	DRAG_OPERATION_MOVE    = TCefDragOperations(16)
+	DRAG_OPERATION_DELETE  = TCefDragOperations(32)
+	DRAG_OPERATION_EVERY   = TCefDragOperations(math.MaxUint32)
+)
+
+type TrayType int8
+
+const (
+	TRAY_SYS TrayType = iota
+	TRAY_LCL
+)
+
+// CombineRgn Mode flags
+type RNGFnCombineMode = int32
+
+const (
+	RGN_AND RNGFnCombineMode = iota + 1
+	RGN_OR
+	RGN_XOR
+	RGN_DIFF
+	RGN_COPY
+)

@@ -13,13 +13,13 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, &resources)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "http://localhost:22022/execute-javascript.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/execute-javascript.html"
 	cef.BrowserWindow.Config.Title = "Energy - execute-javascript"
-	cef.BrowserWindow.Config.Icon = "resources/icon.ico"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

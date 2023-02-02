@@ -6,14 +6,14 @@ import (
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalCEFInit(nil, nil)
+	cef.GlobalInit(nil, nil)
 	applicationConfig := cef.NewApplicationConfig()
 	applicationConfig.SetRemoteDebuggingPort(8888) //远程端口方式, 需自定义端口号
 	//创建应用
 	cefApp := cef.NewApplication(applicationConfig)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.DefaultUrl = "https://www.csdn.net"
+	cef.BrowserWindow.Config.Url = "https://www.csdn.net"
 	//chromium 配置
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)     //启用右键菜单
