@@ -9,10 +9,10 @@
 package cef
 
 import (
-	"energye/notice"
-	"energye/systray"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/notice"
+	"github.com/energye/energy/pkgs/systray"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"

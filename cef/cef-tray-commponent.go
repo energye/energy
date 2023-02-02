@@ -9,8 +9,8 @@
 package cef
 
 import (
-	"energye/notice"
-	"energye/systray"
+	"github.com/energye/energy/pkgs/notice"
+	"github.com/energye/energy/pkgs/systray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"sync"

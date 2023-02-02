@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"energye/systray"
+	"github.com/energye/energy/pkgs/systray"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"
