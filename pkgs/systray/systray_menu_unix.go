@@ -12,12 +12,12 @@
 package systray
 
 import (
+	"github.com/godbus/dbus/v5"
 	"log"
 
-	"github.com/godbus/dbus/v5"
 	"github.com/godbus/dbus/v5/prop"
 
-	"energye/systray/internal/generated/menu"
+	"github.com/energye/energy/pkgs/systray/internal/generated/menu"
 )
 
 // SetIcon sets the icon of a menu item.

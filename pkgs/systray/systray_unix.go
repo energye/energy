@@ -28,8 +28,8 @@ import (
 	"github.com/godbus/dbus/v5/introspect"
 	"github.com/godbus/dbus/v5/prop"
 
-	"energye/systray/internal/generated/menu"
-	"energye/systray/internal/generated/notifier"
+	"github.com/energye/energy/pkgs/systray/internal/generated/menu"
+	"github.com/energye/energy/pkgs/systray/internal/generated/notifier"
 	dbus "github.com/godbus/dbus/v5"
 )
 
