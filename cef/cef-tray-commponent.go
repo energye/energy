@@ -81,7 +81,7 @@ type CEFTray struct {
 
 //SysTray 系统原生
 type SysTray struct {
-	once           sync.Once
+	lock           sync.Mutex
 	menu           *SysMenu
 	icon           []byte
 	title, tooltip string
