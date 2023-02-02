@@ -22,11 +22,19 @@ func LCLTrayDemo(browserWindow cef.IBrowserWindow) {
 	}
 	tray := newTray.AsLCLTray()
 	menu1 := tray.AddMenuItem("父菜单", nil)
+	//带图标的菜单
+	iconItem := tray.NewMenuItem("带个图标", nil)
+	iconItem.Bitmap().SetSize(32, 32)      //图标情况调整大小
+	iconItem.Bitmap().SetTransparent(true) //透明
+	icon := lcl.NewIcon()
+	icon.LoadFromFSFile("resources/icon_1.ico")
+	iconItem.Bitmap().Canvas().Draw(0, 0, icon) //画上去
+	tray.TrayMenu().Items().Add(iconItem)
+
 	menu1.Add(tray.NewMenuItem("子菜单", func() {
 		lcl.ShowMessage("子菜单点击 提示消息")
 	}))
 	tray.AddMenuItem("显示气泡", func() {
-		//linux下有些问题
 		tray.Notice("气泡标题", "气泡内容", 2000)
 	})
 	tray.AddMenuItem("显示/隐藏", func() {
