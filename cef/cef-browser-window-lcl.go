@@ -169,6 +169,7 @@ func (m *LCLBrowserWindow) SetTitle(title string) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().Title = title
 	m.TForm.SetCaption(title)
 }
 
@@ -176,6 +177,7 @@ func (m *LCLBrowserWindow) SetWidth(value int32) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().Width = value
 	m.TForm.SetWidth(value)
 }
 
@@ -183,6 +185,7 @@ func (m *LCLBrowserWindow) SetHeight(value int32) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().Height = value
 	m.TForm.SetHeight(value)
 }
 
@@ -234,6 +237,8 @@ func (m *LCLBrowserWindow) SetPoint(x, y int32) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().X = x
+	m.WindowProperty().Y = y
 	m.TForm.SetLeft(x)
 	m.TForm.SetTop(y)
 }
@@ -242,6 +247,8 @@ func (m *LCLBrowserWindow) SetSize(width, height int32) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().Width = width
+	m.WindowProperty().Height = height
 	m.SetWidth(width)
 	m.SetHeight(height)
 }
@@ -250,6 +257,10 @@ func (m *LCLBrowserWindow) SetBounds(x, y, width, height int32) {
 	if m.TForm == nil {
 		return
 	}
+	m.WindowProperty().X = x
+	m.WindowProperty().Y = y
+	m.WindowProperty().Width = width
+	m.WindowProperty().Height = height
 	m.TForm.SetBounds(x, y, width, height)
 }
 
@@ -358,10 +369,6 @@ func (m *LCLBrowserWindow) WindowParent() ITCefWindowParent {
 //返回窗口关闭状态
 func (m *LCLBrowserWindow) IsClosing() bool {
 	return m.isClosing
-}
-
-func (m *LCLBrowserWindow) ITray() {
-
 }
 
 // 设置窗口类型
