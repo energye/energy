@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <title>cookie</title>
     <style>
+        button {
+            height: 80px;
+            width: 100px;
+            margin: 10px;
+        }
     </style>
     <script type="application/javascript">
-
+        function printPDF() {
+            ipc.emit("print-pdf");
+        }
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
-<a href="https://www.baidu.com">百度</a>
-<a href="https://energy.yanghy.cn">Energy</a>
+<button onclick="printPDF()">当前页面打印PDF</button>
 </body>
 </html>

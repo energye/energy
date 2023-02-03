@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/golcl/lcl"
-	"strings"
+	"github.com/energye/energy/ipc"
+	"os"
+	"path"
 )
 
 //go:embed resources
@@ -14,25 +15,13 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, nil)
+	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		//弹出子窗口
-		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
-			fmt.Println("beforePopupInfo-TargetUrl", beforePopupInfo.TargetUrl, strings.Index(beforePopupInfo.TargetUrl, "popup_1"), strings.Index(beforePopupInfo.TargetUrl, "popup_2"))
-			if strings.Index(beforePopupInfo.TargetUrl, "popup_1") > 0 {
-				popupWindow.SetSize(800, 600)
-				popupWindow.HideTitle()
-			} else if strings.Index(beforePopupInfo.TargetUrl, "popup_2") > 0 {
-				popupWindow.SetSize(300, 300)
-			}
-			return false
-		})
-	})
+	cef.BrowserWindow.Config.Title = "Energy 打印PFD预览"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
@@ -41,6 +30,16 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
+	})
+	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
+		wd, _ := os.Getwd()
+		//监听事件
+		event.On("print-pdf", func(context ipc.IIPCContext) {
+			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			savePath := path.Join(wd, "example", "browser-print-pdf", "test.pdf")
+			fmt.Println("当前页面打印PDF", savePath)
+			bw.Chromium().PrintToPDF(savePath)
+		})
 	})
 	//运行应用
 	cef.Run(cefApp)

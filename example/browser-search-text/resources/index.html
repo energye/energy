@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>cookie</title>
+    <style>
+        button {
+            height: 80px;
+            width: 100px;
+            margin: 10px;
+        }
+    </style>
+    <script type="application/javascript">
+        function searchText() {
+            var text = document.getElementById("text").value;
+            //ipc函数，把要搜索的文本当做参数传递到go中
+            ipc.emit("search-text",[text]);
+        }
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
+<input id="text">
+<button onclick="searchText()">搜索当前页面文本内容</button>
+<br>
+<div>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+    这里放的搜索文本内容, Search text content here<br>
+</div>
+</body>
+</html>
