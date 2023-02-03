@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/example/sub-process/sub-process/src"
 	"github.com/energye/energy/example/sub-process/vars"
+	"github.com/energye/energy/ipc"
 )
 
 /*
@@ -15,21 +15,24 @@ import (
 func main() {
 	//全局配置初始化
 	cef.GlobalInit(nil, nil)
-	//IPC通信
-	src.IPCInit()
-	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
-	cfg := cef.NewApplicationConfig()
-	//配置chromium frameworks 编译好的二进制目录
-	if common.IsWindows() {
-		cfg.SetFrameworkDirPath("E:\\SWT\\CEF4Delphi-Libs-103.0.9\\chromium")
-	} else if common.IsLinux() {
-		cfg.SetFrameworkDirPath("/home/sxm/app/swt/CEFDelphi-Libs-103.09/chromium")
-	}
 	//创建Cef应用
-	cefApp := cef.NewApplication(cfg)
+	cefApp := cef.NewApplication(nil)
 	//主进程和子进程的变量绑定函数定义
-	vars.VariableBind()
+	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
+	//IPC通信
+	ipc.IPC.Render().SetOnEvent(IPCInit)
 	//启动子进程
 	cefApp.StartSubProcess()
 	cefApp.Free()
+}
+
+//渲染进程 IPC事件
+func IPCInit(event ipc.IEventOn) {
+	fmt.Println("渲染进程IPC事件注册")
+	//渲染进程监听的事件
+	event.On("sub-process-on-event", func(context ipc.IIPCContext) {
+		fmt.Println("sub-process-on-event")
+		//渲染进程处理程序....
+		context.Response([]byte("返回结果"))
+	})
 }

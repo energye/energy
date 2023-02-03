@@ -17,9 +17,8 @@ windows linux MacOS 的使用
  
  示例目录说明
      main-process 主进程
+        resources 资源目录
      sub-process 子进程
-     common 通用目录-这里存放了 主,子 进程共用的绑定变量
-     resources 资源目录
  
  
  二 MacOS 的使用 - 手动创建独立子进程 app 包
