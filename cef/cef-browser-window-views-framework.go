@@ -66,6 +66,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 		windowComponent:      NewWindowComponent(component),
 		browserViewComponent: NewBrowserViewComponent(component),
 	}
+	m.SetWindowType(windowProperty.WindowType)
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
 		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
@@ -101,6 +102,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 		return
 	}
 	app.SetOnContextInitialized(func() {
+		m.Config.WindowProperty.WindowType = consts.WT_MAIN_BROWSER
 		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
 		vFrameBrowserWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			if vFrameBrowserWindow.tray != nil {
@@ -108,7 +110,6 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 			}
 		})
 		vFrameBrowserWindow.ResetWindowPropertyForEvent()
-		vFrameBrowserWindow.SetWindowType(consts.WT_MAIN_BROWSER)
 		vFrameBrowserWindow.windowId = BrowserWindow.GetNextWindowNum()
 		vFrameBrowserWindow.putChromiumWindowInfo()
 		vFrameBrowserWindow.registerPopupEvent()
@@ -139,6 +140,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		}
 		wp := BrowserWindow.Config.WindowProperty
 		wp.Url = beforePopupInfo.TargetUrl
+		wp.WindowType = consts.WT_POPUP_SUB_BROWSER
 		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
