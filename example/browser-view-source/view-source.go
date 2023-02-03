@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 )
 
 //go:embed resources
@@ -17,10 +15,12 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication(nil)
-	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	cef.BrowserWindow.Config.Title = "Energy 查看网页源码"
+	config := cef.BrowserWindow.Config.ChromiumConfig()
+	config.SetEnableViewSource(true)
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
@@ -29,23 +29,6 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
-	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		event.On("zoom-inc", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_INC)
-			fmt.Println("zoom-inc")
-		})
-		event.On("zoom-dec", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
-			fmt.Println("zoom-dec")
-		})
-		event.On("zoom-reset", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
-			fmt.Println("zoom-reset")
-		})
 	})
 	//运行应用
 	cef.Run(cefApp)
