@@ -38,8 +38,8 @@ type WindowProperty struct {
 	WindowType                consts.WINDOW_TYPE //窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
 	Title                     string             //窗口 标题
 	Url                       string             //默认打开URL
-	Icon                      string             //窗口图标 加载本地图标 local > /app/resources/icon.ico
-	IconFS                    string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico
+	Icon                      string             //窗口图标 加载本地图标 local > /app/resources/icon.ico, linux使用png
+	IconFS                    string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico, linux使用png
 	_EnableHideCaption        bool               //窗口 是否隐藏标题栏
 	EnableMinimize            bool               //窗口 是否启用最小化 default: true
 	EnableMaximize            bool               //窗口 是否启用最大化 default: true
