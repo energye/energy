@@ -83,13 +83,7 @@ func init() {
 		case ChromiumEventOnFindResult:
 			sender := getPtr(0)
 			browser := &ICefBrowser{browseId: int32(getVal(1)), chromium: sender}
-			cefRectPtr := (*tCefRectPtr)(getPtr(4))
-			cefRect := &TCefRect{
-				X:      int32(cefRectPtr.X),
-				Y:      int32(cefRectPtr.Y),
-				Width:  int32(cefRectPtr.Width),
-				Height: int32(cefRectPtr.Height),
-			}
+			cefRect := (*TCefRect)(getPtr(4))
 			fn.(ChromiumEventOnFindResult)(lcl.AsObject(sender), browser, int32(getVal(2)), int32(getVal(3)), cefRect, int32(getVal(5)), api.GoBool(getVal(6)))
 		case BrowseProcessMessageReceived:
 			sender := getPtr(0)
