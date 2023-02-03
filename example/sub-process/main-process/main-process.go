@@ -45,7 +45,7 @@ func main() {
 	if common.IsWindows() {
 		subExePath = path.Join(wd, "example", "sub-process", "sub-process", "sub-process.exe")
 	} else if common.IsLinux() {
-		subExePath = "/home/sxm/app/swt/gopath/src/github.com/energye/energy/demos/demo-sub-process/sub-process/sub-process"
+		subExePath = path.Join(wd, "example", "sub-process", "sub-process", "sub-process")
 	} else if common.IsDarwin() {
 		//MacOS SetBrowseSubprocessPath 将不起任何作用。
 		//独立的子程序包需要在 macapp.MacApp.SetBrowseSubprocessPath 配置
