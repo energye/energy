@@ -142,8 +142,6 @@ type TCefProxy struct {
 	ProxyScriptURL         string
 	ProxyByPassList        string
 	MaxConnectionsPerProxy int32
-	CustomHeaderName       string
-	CustomHeaderValue      string
 }
 
 type TCefTouchEvent struct {
@@ -157,6 +155,11 @@ type TCefTouchEvent struct {
 	Type          TCefTouchEeventType
 	Modifiers     TCefEventFlags
 	PointerType   TCefPointerType
+}
+
+type TCustomHeader struct {
+	CustomHeaderName  string
+	CustomHeaderValue string
 }
 
 type TCefMouseEvent struct {

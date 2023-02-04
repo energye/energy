@@ -54,7 +54,16 @@ func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
 	}
 	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg))))
 	m.emitLock = new(sync.Mutex)
+	m.initDefault()
 	return m
+}
+
+// 默认的初始配置
+func (m *TCEFChromium) initDefault() {
+	//通过设置这些首选项，可以降低/避免WebRTC的IP泄漏
+	m.SetWebRTCIPHandlingPolicy(HpDisableNonProxiedUDP)
+	m.SetWebRTCMultipleRoutes(STATE_DISABLED)
+	m.SetWebRTCNonproxiedUDP(STATE_DISABLED)
 }
 
 func (m *TCEFChromium) Instance() uintptr {

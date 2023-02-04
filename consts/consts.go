@@ -58,14 +58,14 @@ const (
 	Tm_Sync                         //同步，阻塞等待结果返回值
 )
 
-//功能和消息常量
+// 功能和消息常量
 const (
 	WM_APP                   = 0x008000
 	MINIBROWSER_SHOWDEVTOOLS = WM_APP + 0x00101 //开发工具展示
 	MINIBROWSER_HIDEDEVTOOLS = WM_APP + 0x00102 //开发工具隐藏
 )
 
-//缩放、放大
+// 缩放、放大
 type ZOOM = types.Int32
 
 const (
@@ -74,7 +74,7 @@ const (
 	ZOOM_DEC
 )
 
-//进程结束的状态
+// 进程结束的状态
 type TCefTerminationStatus = types.Int32
 
 const (
@@ -84,7 +84,7 @@ const (
 	TS_PROCESS_OOM
 )
 
-//前进 & 后退
+// 前进 & 后退
 type BF = types.Int32
 
 const (
@@ -92,7 +92,7 @@ const (
 	BF_GOFORWARD
 )
 
-//日志等级
+// 日志等级
 type LOG = types.UInt32
 
 const (
@@ -170,7 +170,8 @@ const (
 // cbaCancel : 停止关闭浏览器
 // cbaClose  : 继续关闭浏览器
 // cbaDelay  : 暂时停止关闭浏览器
-//			 : 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
+//
+//	: 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
 type CBS = types.Int32
 
 const (
@@ -179,7 +180,7 @@ const (
 	CbaCancel
 )
 
-//CEF 进程 ChannelId
+// CEF 进程 ChannelId
 type CefProcessId = types.Int32
 
 const (
@@ -187,7 +188,7 @@ const (
 	PID_RENDER
 )
 
-//支持的JS类型
+// 支持的JS类型
 type V8_JS_VALUE_TYPE = types.Int32
 
 const (
@@ -205,7 +206,7 @@ const (
 	V8_NO_OUT_VALUE
 )
 
-//支持的GO类型
+// 支持的GO类型
 type GO_VALUE_TYPE = types.Int32
 
 const (
@@ -235,7 +236,7 @@ const (
 	GO_VALUE_DICTVALUE    //dictValue
 )
 
-//JS属性
+// JS属性
 type V8_PROPERTY_ATTRIBUTE = types.Int32
 
 const (
@@ -245,7 +246,7 @@ const (
 	V8_PROPERTY_ATTRIBUTE_DONTDELETE V8_PROPERTY_ATTRIBUTE = 1 << 2
 )
 
-//JS交互绑定的事件类型
+// JS交互绑定的事件类型
 type BIND_EVENT = types.Int32
 
 const (
@@ -254,7 +255,7 @@ const (
 	BE_FUNC
 )
 
-//异常信息
+// 异常信息
 type CEF_V8_EXCEPTION = types.Int32
 
 const (
@@ -291,7 +292,7 @@ const (
 	BIND_FUNC_OUT_MAX_SUM = 1 //函数最大出参数
 )
 
-//函数类型
+// 函数类型
 type FN_TYPE = types.Int8
 
 const (
@@ -299,7 +300,7 @@ const (
 	FN_TYPE_OBJECT                 //对象函数，所属对象
 )
 
-//通用类型或对象类型
+// 通用类型或对象类型
 type IS_CO = types.Int8
 
 const (
@@ -307,7 +308,7 @@ const (
 	IS_OBJECT
 )
 
-//进程消息类型
+// 进程消息类型
 type PROCESS_MESSAGE_TYPE = types.Int8
 
 const (
@@ -520,7 +521,7 @@ type TCefState = types.Int32
 const (
 	STATE_DEFAULT = TCefState(iota)
 	STATE_ENABLED
-	STATE_DISABLE
+	STATE_DISABLED
 )
 
 type TCefTouchEeventType = types.Int32
@@ -550,7 +551,7 @@ const (
 	MBT_RIGHT
 )
 
-//进程消息错误码
+// 进程消息错误码
 type ProcessMessageError = types.Int32
 
 const (
@@ -580,7 +581,7 @@ const (
 	WOD_NEW_PICTURE_IN_PICTURE
 )
 
-//WINDOW_TYPE 窗口类型
+// WINDOW_TYPE 窗口类型
 type WINDOW_TYPE = types.Int8
 
 const (
@@ -619,6 +620,7 @@ const (
 	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
 )
 
+// /include/internal/cef_types.h (cef_drag_operations_mask_t)
 type TCefDragOperations = types.Cardinal
 
 const (
@@ -648,4 +650,69 @@ const (
 	RGN_XOR
 	RGN_DIFF
 	RGN_COPY
+)
+
+type TCefWebRTCHandlingPolicy = types.Int32
+
+const (
+	HpDefault TCefWebRTCHandlingPolicy = iota
+	HpDefaultPublicAndPrivateInterfaces
+	HpDefaultPublicInterfaceOnly
+	HpDisableNonProxiedUDP
+)
+
+// Values used by the battery saver mode state preference
+// https://source.chromium.org/chromium/chromium/src/+/main:components/performance_manager/public/user_tuning/prefs.h
+type TCefBatterySaverModeState = types.Int32
+
+const (
+	BsmsDisabled TCefBatterySaverModeState = iota
+	BsmsEnabledBelowThreshold
+	BsmsEnabledOnBattery
+	BsmsEnabled
+	BsmsDefault // Custom value used to update the preferences only when there's a non-default value
+)
+
+// Used in TChromium preferences to allow or block cookies.
+type TCefCookiePref = types.Int32
+
+const (
+	CpDefault TCefCookiePref = iota
+	CpAllow
+	CpBlock
+)
+
+// https://chromium.googlesource.com/chromium/src/+/refs/tags/77.0.3865.90/chrome/common/net/safe_search_util.h (YouTubeRestrictMode)
+// https://www.chromium.org/administrators/policy-list-3#ForceYouTubeRestrict
+type YouTubeRestrict = types.Int32
+
+const (
+	YOUTUBE_RESTRICT_OFF YouTubeRestrict = iota
+	YOUTUBE_RESTRICT_MODERATE
+	YOUTUBE_RESTRICT_STRICT
+)
+
+type ZoomStep = byte
+
+const (
+	ZOOM_STEP_25  ZoomStep = 0
+	ZOOM_STEP_33           = 1
+	ZOOM_STEP_50           = 2
+	ZOOM_STEP_67           = 3
+	ZOOM_STEP_75           = 4
+	ZOOM_STEP_90           = 5
+	ZOOM_STEP_100          = 6
+	ZOOM_STEP_110          = 7
+	ZOOM_STEP_125          = 8
+	ZOOM_STEP_150          = 9
+	ZOOM_STEP_175          = 10
+	ZOOM_STEP_200          = 11
+	ZOOM_STEP_250          = 12
+	ZOOM_STEP_300          = 13
+	ZOOM_STEP_400          = 14
+	ZOOM_STEP_500          = 15
+	ZOOM_STEP_UNK          = 16
+	ZOOM_STEP_MIN          = ZOOM_STEP_25
+	ZOOM_STEP_MAX          = ZOOM_STEP_500
+	ZOOM_STEP_DEF          = ZOOM_STEP_100
 )

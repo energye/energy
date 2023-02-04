@@ -14,9 +14,9 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-//chromium 事件行为
+// chromium 事件行为
 //
-//默认情况所有chromium对象事件行为都在主窗口chromium event中执行
+// 默认情况所有chromium对象事件行为都在主窗口chromium event中执行
 type IChromiumEvent interface {
 	lcl.IObject
 	SetOnAfterCreated(fn ChromiumEventOnAfterCreated)

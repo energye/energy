@@ -291,6 +291,67 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_BrowserHandle", 0),
 		dllimports.NewEnergyImport("CEFChromium_WidgetHandle", 0),
 		dllimports.NewEnergyImport("CEFChromium_RenderHandle", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetCustomHeader", 0), //
+		dllimports.NewEnergyImport("CEFChromium_GetCustomHeader", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetJavascriptEnabled", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetJavascriptEnabled", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetWebRTCIPHandlingPolicy", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetWebRTCIPHandlingPolicy", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetWebRTCMultipleRoutes", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetWebRTCMultipleRoutes", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetWebRTCNonproxiedUDP", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetWebRTCNonproxiedUDP", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetBatterySaverModeState", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetBatterySaverModeState", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetHighEfficiencyMode", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetHighEfficiencyMode", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetLoadImagesAutomatically", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetLoadImagesAutomatically", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetQuicAllowed", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetQuicAllowed", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOffline", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetOffline", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetDefaultWindowInfoExStyle", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetDefaultWindowInfoExStyle", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetBlock3rdPartyCookies", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetBlock3rdPartyCookies", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAcceptCookies", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAcceptCookies", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAcceptLanguageList", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAcceptLanguageList", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetPrintingEnabled", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetPrintingEnabled", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetYouTubeRestrict", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetYouTubeRestrict", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetSafeSearch", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetSafeSearch", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAudioMuted", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAudioMuted", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetDragOperations", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetDragOperations", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetFrameCount", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetSpellCheckerDicts", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetSpellCheckerDicts", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetSpellChecking", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetSpellChecking", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAlwaysOpenPDFExternally", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAlwaysOpenPDFExternally", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAlwaysAuthorizePlugins", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAlwaysAuthorizePlugins", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetAllowOutdatedPlugins", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetAllowOutdatedPlugins", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetSendReferrer", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetSendReferrer", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetDoNotTrack", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetDoNotTrack", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetZoomStep", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetZoomStep", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetZoomPct", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetZoomPct", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetZoomLevel", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetZoomLevel", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetDefaultEncoding", 0),
+		dllimports.NewEnergyImport("CEFChromium_GetDefaultEncoding", 0),
 		//ICefBeforeDownloadCallback
 		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
 		//ICefFrame
@@ -779,6 +840,67 @@ const (
 	internale_CEFChromium_BrowserHandle
 	internale_CEFChromium_WidgetHandle
 	internale_CEFChromium_RenderHandle
+	internale_CEFChromium_SetCustomHeader
+	internale_CEFChromium_GetCustomHeader
+	internale_CEFChromium_SetJavascriptEnabled
+	internale_CEFChromium_GetJavascriptEnabled
+	internale_CEFChromium_SetWebRTCIPHandlingPolicy
+	internale_CEFChromium_GetWebRTCIPHandlingPolicy
+	internale_CEFChromium_SetWebRTCMultipleRoutes
+	internale_CEFChromium_GetWebRTCMultipleRoutes
+	internale_CEFChromium_SetWebRTCNonproxiedUDP
+	internale_CEFChromium_GetWebRTCNonproxiedUDP
+	internale_CEFChromium_SetBatterySaverModeState
+	internale_CEFChromium_GetBatterySaverModeState
+	internale_CEFChromium_SetHighEfficiencyMode
+	internale_CEFChromium_GetHighEfficiencyMode
+	internale_CEFChromium_SetLoadImagesAutomatically
+	internale_CEFChromium_GetLoadImagesAutomatically
+	internale_CEFChromium_SetQuicAllowed
+	internale_CEFChromium_GetQuicAllowed
+	internale_CEFChromium_SetOffline
+	internale_CEFChromium_GetOffline
+	internale_CEFChromium_SetDefaultWindowInfoExStyle
+	internale_CEFChromium_GetDefaultWindowInfoExStyle
+	internale_CEFChromium_SetBlock3rdPartyCookies
+	internale_CEFChromium_GetBlock3rdPartyCookies
+	internale_CEFChromium_SetAcceptCookies
+	internale_CEFChromium_GetAcceptCookies
+	internale_CEFChromium_SetAcceptLanguageList
+	internale_CEFChromium_GetAcceptLanguageList
+	internale_CEFChromium_SetPrintingEnabled
+	internale_CEFChromium_GetPrintingEnabled
+	internale_CEFChromium_SetYouTubeRestrict
+	internale_CEFChromium_GetYouTubeRestrict
+	internale_CEFChromium_SetSafeSearch
+	internale_CEFChromium_GetSafeSearch
+	internale_CEFChromium_SetAudioMuted
+	internale_CEFChromium_GetAudioMuted
+	internale_CEFChromium_SetDragOperations
+	internale_CEFChromium_GetDragOperations
+	internale_CEFChromium_GetFrameCount
+	internale_CEFChromium_SetSpellCheckerDicts
+	internale_CEFChromium_GetSpellCheckerDicts
+	internale_CEFChromium_SetSpellChecking
+	internale_CEFChromium_GetSpellChecking
+	internale_CEFChromium_SetAlwaysOpenPDFExternally
+	internale_CEFChromium_GetAlwaysOpenPDFExternally
+	internale_CEFChromium_SetAlwaysAuthorizePlugins
+	internale_CEFChromium_GetAlwaysAuthorizePlugins
+	internale_CEFChromium_SetAllowOutdatedPlugins
+	internale_CEFChromium_GetAllowOutdatedPlugins
+	internale_CEFChromium_SetSendReferrer
+	internale_CEFChromium_GetSendReferrer
+	internale_CEFChromium_SetDoNotTrack
+	internale_CEFChromium_GetDoNotTrack
+	internale_CEFChromium_SetZoomStep
+	internale_CEFChromium_GetZoomStep
+	internale_CEFChromium_SetZoomPct
+	internale_CEFChromium_GetZoomPct
+	internale_CEFChromium_SetZoomLevel
+	internale_CEFChromium_GetZoomLevel
+	internale_CEFChromium_SetDefaultEncoding
+	internale_CEFChromium_GetDefaultEncoding
 	//ICefBeforeDownloadCallback
 	internale_CEFChromium_SetDownloadPath
 	//ICefFrame

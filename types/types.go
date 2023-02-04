@@ -29,6 +29,8 @@ type NativeUInt = UInt32
 type TCefString = String
 type Cardinal = UInt32
 type LongBool = Boolean
+type DWORD = UInt32
+type HWND = UIntptr
 
 type TString struct {
 	value string

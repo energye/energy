@@ -116,8 +116,6 @@ type tCefProxyPtr struct {
 	ProxyScriptURL         uintptr //string
 	ProxyByPassList        uintptr //string
 	MaxConnectionsPerProxy uintptr //int32
-	CustomHeaderName       uintptr //string
-	CustomHeaderValue      uintptr //string
 }
 
 type beforePopupInfoPtr struct {
@@ -132,4 +130,9 @@ type tCefRectPtr struct {
 	Y      uintptr //int32
 	Width  uintptr //int32
 	Height uintptr //int32
+}
+
+type tCustomHeader struct {
+	CustomHeaderName  uintptr //string
+	CustomHeaderValue uintptr //string
 }

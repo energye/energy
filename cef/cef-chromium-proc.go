@@ -72,6 +72,67 @@ type IChromiumProc interface {
 	BrowserHandle() types.HWND
 	WidgetHandle() types.HWND
 	RenderHandle() types.HWND
+	SetCustomHeader(customHeader *TCustomHeader)
+	CustomHeader() *TCustomHeader
+	SetJavascriptEnabled(value bool)
+	JavascriptEnabled() bool
+	SetWebRTCIPHandlingPolicy(value TCefWebRTCHandlingPolicy)
+	WebRTCIPHandlingPolicy() TCefWebRTCHandlingPolicy
+	SetWebRTCMultipleRoutes(value TCefState)
+	WebRTCMultipleRoutes() TCefState
+	SetWebRTCNonproxiedUDP(value TCefState)
+	WebRTCNonproxiedUDP() TCefState
+	SetBatterySaverModeState(value TCefBatterySaverModeState)
+	BatterySaverModeState() TCefBatterySaverModeState
+	SetHighEfficiencyMode(value TCefState)
+	HighEfficiencyMode() TCefState
+	SetLoadImagesAutomatically(value bool)
+	LoadImagesAutomatically() bool
+	SetQuicAllowed(value bool)
+	QuicAllowed() bool
+	SetOffline(value bool)
+	Offline() bool
+	SetDefaultWindowInfoExStyle(exStyle types.DWORD)
+	DefaultWindowInfoExStyle() types.DWORD
+	SetBlock3rdPartyCookies(value bool)
+	Block3rdPartyCookies() bool
+	SetAcceptCookies(cp TCefCookiePref)
+	AcceptCookies() TCefCookiePref
+	SetAcceptLanguageList(languageList string)
+	AcceptLanguageList() string
+	SetPrintingEnabled(value bool)
+	PrintingEnabled() bool
+	SetYouTubeRestrict(value bool)
+	YouTubeRestrict() bool
+	SetSafeSearch(value bool)
+	SafeSearch() bool
+	SetAudioMuted(value bool)
+	AudioMuted() bool
+	SetDragOperations(value TCefDragOperations)
+	DragOperations() TCefDragOperations
+	FrameCount() uint32
+	SetSpellCheckerDicts(value string)
+	SpellCheckerDicts() string
+	SetSpellChecking(value bool)
+	SpellChecking() bool
+	SetAlwaysOpenPDFExternally(value bool)
+	AlwaysOpenPDFExternally() bool
+	SetAlwaysAuthorizePlugins(value bool)
+	AlwaysAuthorizePlugins() bool
+	SetAllowOutdatedPlugins(value bool)
+	AllowOutdatedPlugins() bool
+	SetSendReferrer(value bool)
+	SendReferrer() bool
+	SetDoNotTrack(value bool)
+	DoNotTrack() bool
+	SetZoomStep(value int8)
+	ZoomStep() int8
+	SetZoomPct(value float64)
+	ZoomPct() float64
+	SetZoomLevel(value float64)
+	ZoomLevel() float64
+	SetDefaultEncoding(value string)
+	DefaultEncoding() string
 }
 
 func (m *TCEFChromium) IsValid() bool {
@@ -91,7 +152,7 @@ func (m *TCEFChromium) Free() {
 	Proc(internale_CEFChromium_Free).Call()
 }
 
-func (m *TCEFChromium) GetHashCode() int32 {
+func (m *TCEFChromium) HashCode() int32 {
 	r1, _, _ := Proc(internale_CEFChromium_GetHashCode).Call()
 	return int32(r1)
 }
@@ -288,8 +349,6 @@ func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
 		ProxyScriptURL:         api.PascalStr(cefProxy.ProxyScriptURL),
 		ProxyByPassList:        api.PascalStr(cefProxy.ProxyByPassList),
 		MaxConnectionsPerProxy: uintptr(cefProxy.MaxConnectionsPerProxy),
-		CustomHeaderName:       api.PascalStr(cefProxy.CustomHeaderName),
-		CustomHeaderValue:      api.PascalStr(cefProxy.CustomHeaderValue),
 	}
 	_CEFChromium_SetProxy(m.Instance(), proxy)
 }
@@ -354,6 +413,289 @@ func (m *TCEFChromium) RenderHandle() types.HWND {
 		m.renderHandle = types.HWND(_CEFChromium_RenderHandle(m.Instance()))
 	}
 	return m.renderHandle
+}
+
+func (m *TCEFChromium) SetCustomHeader(customHeader *TCustomHeader) {
+	ptrCustomHeader := &tCustomHeader{
+		CustomHeaderName:  api.PascalStr(customHeader.CustomHeaderName),
+		CustomHeaderValue: api.PascalStr(customHeader.CustomHeaderValue),
+	}
+	Proc(internale_CEFChromium_SetCustomHeader).Call(m.Instance(), uintptr(unsafe.Pointer(ptrCustomHeader)))
+}
+
+func (m *TCEFChromium) CustomHeader() *TCustomHeader {
+	r1, _, _ := Proc(internale_CEFChromium_GetCustomHeader).Call(m.Instance())
+	ptrCustomHeader := (*tCustomHeader)(unsafe.Pointer(r1))
+	return &TCustomHeader{
+		CustomHeaderName:  api.GoStr(ptrCustomHeader.CustomHeaderName),
+		CustomHeaderValue: api.GoStr(ptrCustomHeader.CustomHeaderValue),
+	}
+}
+
+func (m *TCEFChromium) SetJavascriptEnabled(value bool) {
+	Proc(internale_CEFChromium_SetJavascriptEnabled).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) JavascriptEnabled() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetJavascriptEnabled).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetWebRTCIPHandlingPolicy(value TCefWebRTCHandlingPolicy) {
+	Proc(internale_CEFChromium_SetWebRTCIPHandlingPolicy).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) WebRTCIPHandlingPolicy() TCefWebRTCHandlingPolicy {
+	r1, _, _ := Proc(internale_CEFChromium_GetWebRTCIPHandlingPolicy).Call(m.Instance())
+	return TCefWebRTCHandlingPolicy(r1)
+}
+
+func (m *TCEFChromium) SetWebRTCMultipleRoutes(value TCefState) {
+	Proc(internale_CEFChromium_SetWebRTCMultipleRoutes).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) WebRTCMultipleRoutes() TCefState {
+	r1, _, _ := Proc(internale_CEFChromium_GetWebRTCMultipleRoutes).Call(m.Instance())
+	return TCefState(r1)
+}
+
+func (m *TCEFChromium) SetWebRTCNonproxiedUDP(value TCefState) {
+	Proc(internale_CEFChromium_SetWebRTCNonproxiedUDP).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) WebRTCNonproxiedUDP() TCefState {
+	r1, _, _ := Proc(internale_CEFChromium_GetWebRTCNonproxiedUDP).Call(m.Instance())
+	return TCefState(r1)
+}
+
+func (m *TCEFChromium) SetBatterySaverModeState(value TCefBatterySaverModeState) {
+	Proc(internale_CEFChromium_SetBatterySaverModeState).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) BatterySaverModeState() TCefBatterySaverModeState {
+	r1, _, _ := Proc(internale_CEFChromium_GetBatterySaverModeState).Call(m.Instance())
+	return TCefBatterySaverModeState(r1)
+}
+
+func (m *TCEFChromium) SetHighEfficiencyMode(value TCefState) {
+	Proc(internale_CEFChromium_SetHighEfficiencyMode).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) HighEfficiencyMode() TCefState {
+	r1, _, _ := Proc(internale_CEFChromium_GetHighEfficiencyMode).Call(m.Instance())
+	return TCefState(r1)
+}
+
+func (m *TCEFChromium) SetLoadImagesAutomatically(value bool) {
+	Proc(internale_CEFChromium_SetLoadImagesAutomatically).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) LoadImagesAutomatically() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetLoadImagesAutomatically).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetQuicAllowed(value bool) {
+	Proc(internale_CEFChromium_SetQuicAllowed).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) QuicAllowed() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetQuicAllowed).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetOffline(value bool) {
+	Proc(internale_CEFChromium_SetOffline).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) Offline() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetOffline).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetDefaultWindowInfoExStyle(exStyle types.DWORD) {
+	Proc(internale_CEFChromium_SetDefaultWindowInfoExStyle).Call(m.Instance(), uintptr(exStyle))
+}
+
+func (m *TCEFChromium) DefaultWindowInfoExStyle() types.DWORD {
+	r1, _, _ := Proc(internale_CEFChromium_GetDefaultWindowInfoExStyle).Call(m.Instance())
+	return types.DWORD(r1)
+}
+
+func (m *TCEFChromium) SetBlock3rdPartyCookies(value bool) {
+	Proc(internale_CEFChromium_SetBlock3rdPartyCookies).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) Block3rdPartyCookies() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetBlock3rdPartyCookies).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetAcceptCookies(cp TCefCookiePref) {
+	Proc(internale_CEFChromium_SetAcceptCookies).Call(m.Instance(), cp.ToPtr())
+}
+
+func (m *TCEFChromium) AcceptCookies() TCefCookiePref {
+	r1, _, _ := Proc(internale_CEFChromium_GetAcceptCookies).Call(m.Instance())
+	return TCefCookiePref(r1)
+}
+
+func (m *TCEFChromium) SetAcceptLanguageList(languageList string) {
+	Proc(internale_CEFChromium_SetAcceptLanguageList).Call(m.Instance(), api.PascalStr(languageList))
+}
+
+func (m *TCEFChromium) AcceptLanguageList() string {
+	r1, _, _ := Proc(internale_CEFChromium_GetAcceptLanguageList).Call(m.Instance())
+	return api.GoStr(r1)
+}
+
+func (m *TCEFChromium) SetPrintingEnabled(value bool) {
+	Proc(internale_CEFChromium_SetPrintingEnabled).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) PrintingEnabled() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetPrintingEnabled).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetYouTubeRestrict(value bool) {
+	Proc(internale_CEFChromium_SetYouTubeRestrict).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) YouTubeRestrict() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetYouTubeRestrict).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetSafeSearch(value bool) {
+	Proc(internale_CEFChromium_SetSafeSearch).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) SafeSearch() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetSafeSearch).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetAudioMuted(value bool) {
+	Proc(internale_CEFChromium_SetAudioMuted).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) AudioMuted() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetAudioMuted).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetDragOperations(value TCefDragOperations) {
+	Proc(internale_CEFChromium_SetDragOperations).Call(m.Instance(), value.ToPtr())
+}
+
+func (m *TCEFChromium) DragOperations() TCefDragOperations {
+	r1, _, _ := Proc(internale_CEFChromium_GetDragOperations).Call(m.Instance())
+	return TCefDragOperations(r1)
+}
+
+func (m *TCEFChromium) FrameCount() uint32 {
+	r1, _, _ := Proc(internale_CEFChromium_GetFrameCount).Call(m.Instance())
+	return uint32(r1)
+}
+
+func (m *TCEFChromium) SetSpellCheckerDicts(value string) {
+	Proc(internale_CEFChromium_SetSpellCheckerDicts).Call(m.Instance(), api.PascalStr(value))
+}
+
+func (m *TCEFChromium) SpellCheckerDicts() string {
+	r1, _, _ := Proc(internale_CEFChromium_GetSpellCheckerDicts).Call(m.Instance())
+	return api.GoStr(r1)
+}
+
+func (m *TCEFChromium) SetSpellChecking(value bool) {
+	Proc(internale_CEFChromium_SetSpellChecking).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) SpellChecking() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetSpellChecking).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetAlwaysOpenPDFExternally(value bool) {
+	Proc(internale_CEFChromium_SetAlwaysOpenPDFExternally).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) AlwaysOpenPDFExternally() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetAlwaysOpenPDFExternally).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetAlwaysAuthorizePlugins(value bool) {
+	Proc(internale_CEFChromium_SetAlwaysAuthorizePlugins).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) AlwaysAuthorizePlugins() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetAlwaysAuthorizePlugins).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetAllowOutdatedPlugins(value bool) {
+	Proc(internale_CEFChromium_SetAllowOutdatedPlugins).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) AllowOutdatedPlugins() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetAllowOutdatedPlugins).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetSendReferrer(value bool) {
+	Proc(internale_CEFChromium_SetSendReferrer).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) SendReferrer() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetSendReferrer).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetDoNotTrack(value bool) {
+	Proc(internale_CEFChromium_SetDoNotTrack).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) DoNotTrack() bool {
+	r1, _, _ := Proc(internale_CEFChromium_GetDoNotTrack).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) SetZoomStep(value int8) {
+	Proc(internale_CEFChromium_SetZoomStep).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TCEFChromium) ZoomStep() int8 {
+	r1, _, _ := Proc(internale_CEFChromium_GetZoomStep).Call(m.Instance())
+	return int8(r1)
+}
+
+func (m *TCEFChromium) SetZoomPct(value float64) {
+	Proc(internale_CEFChromium_SetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
+}
+
+func (m *TCEFChromium) ZoomPct() float64 {
+	r1, _, _ := Proc(internale_CEFChromium_GetZoomPct).Call(m.Instance())
+	return *(*float64)(unsafe.Pointer(r1))
+}
+
+func (m *TCEFChromium) SetZoomLevel(value float64) {
+	Proc(internale_CEFChromium_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
+}
+
+func (m *TCEFChromium) ZoomLevel() float64 {
+	r1, _, _ := Proc(internale_CEFChromium_GetZoomLevel).Call(m.Instance())
+	return *(*float64)(unsafe.Pointer(r1))
+}
+
+func (m *TCEFChromium) SetDefaultEncoding(value string) {
+	Proc(internale_CEFChromium_SetDefaultEncoding).Call(m.Instance(), api.PascalStr(value))
+}
+
+func (m *TCEFChromium) DefaultEncoding() string {
+	r1, _, _ := Proc(internale_CEFChromium_GetDefaultEncoding).Call(m.Instance())
+	return api.GoStr(r1)
 }
 
 //--------TCEFChromium proc begin--------
