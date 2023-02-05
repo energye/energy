@@ -35,6 +35,7 @@ func main() {
 		//主进程中 主子进程方式，在这里指定子进程的执行文件
 		macapp.MacApp.SetBrowseSubprocessPath("/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/sub-process/sub-process")
 	}
+	common.Args.ProcessType()
 	//CEF全局初始化
 	cef.GlobalInit(nil, &resources)
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置

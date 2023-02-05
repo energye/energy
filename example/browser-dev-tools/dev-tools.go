@@ -8,6 +8,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	applicationConfig := cef.NewApplicationConfig()
+	//可选配置: VF组件窗口需要指定该配置
 	applicationConfig.SetRemoteDebuggingPort(8888) //远程端口方式, 需自定义端口号
 	//创建应用
 	cefApp := cef.NewApplication(applicationConfig)

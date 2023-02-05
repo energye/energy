@@ -7,12 +7,12 @@ import (
 	"github.com/energye/energy/common/assetserve"
 )
 
-//资源目录，内置到执行程序中
+// 资源目录，内置到执行程序中
+//
 //go:embed resources
 var resources embed.FS
 
 func main() {
-
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用

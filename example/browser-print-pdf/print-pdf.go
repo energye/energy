@@ -37,7 +37,7 @@ func main() {
 		event.On("print-pdf", func(context ipc.IIPCContext) {
 			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			savePath := path.Join(wd, "example", "browser-print-pdf", "test.pdf")
-			fmt.Println("当前页面打印PDF", savePath)
+			fmt.Println("当前页面保存为PDF", savePath)
 			bw.Chromium().PrintToPDF(savePath)
 		})
 	})
