@@ -11,7 +11,6 @@ package cef
 import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/logger"
 	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
@@ -322,11 +321,6 @@ func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("TCEFWindowComponent Error:", err)
-			}
-		}()
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}

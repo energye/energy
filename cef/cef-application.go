@@ -22,13 +22,13 @@ import (
 
 var application *TCEFApplication
 
-//CEF应用对象
+// CEF应用对象
 type TCEFApplication struct {
 	instance unsafe.Pointer
 	cfg      *tCefApplicationConfig
 }
 
-//创建CEF应用程序
+// 创建CEF应用程序
 func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	if application != nil {
 		return application
@@ -45,9 +45,9 @@ func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	return application
 }
 
-//创建应用程序
+// 创建应用程序
 //
-//带有默认的应用事件
+// 带有默认的应用事件
 func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	cefApp := NewCEFApplication(cfg)
 	cefApp.registerDefaultEvent()
@@ -65,18 +65,20 @@ func (m *TCEFApplication) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
-//启动主进程
+// 启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nullptr {
+		logger.Debug("application single exe,", Args.ProcessType(), "process start")
 		r1, _, _ := Proc(internale_CEFStartMainProcess).Call(m.Instance())
 		return api.GoBool(r1)
 	}
 	return false
 }
 
-//启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
+// 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nullptr {
+		logger.Debug("application multiple exe,", Args.ProcessType(), "process start")
 		r1, _, _ := Proc(internale_CEFStartSubProcess).Call(m.Instance())
 		result = api.GoBool(r1)
 	}
@@ -84,10 +86,16 @@ func (m *TCEFApplication) StartSubProcess() (result bool) {
 }
 
 func (m *TCEFApplication) RunMessageLoop() {
+	defer func() {
+		logger.Debug("application run message loop end")
+		api.EnergyLibRelease()
+	}()
+	logger.Debug("application run message loop start")
 	Proc(internale_CEFApplication_RunMessageLoop).Call()
 }
 
 func (m *TCEFApplication) QuitMessageLoop() {
+	logger.Debug("application quit message loop")
 	Proc(internale_CEFApplication_QuitMessageLoop).Call()
 }
 
@@ -110,11 +118,11 @@ func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
 	Proc(internale_CEFApplication_ExecuteJS).Call()
 }
 
-//上下文件创建回调
+// 上下文件创建回调
 //
-//返回值 false 将会创建 render进程的IPC和GO绑定变量
+// 返回值 false 将会创建 render进程的IPC和GO绑定变量
 //
-//对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
+// 对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
 	Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
 }
@@ -129,12 +137,12 @@ func (m *TCEFApplication) SetOnContextInitialized(fn GlobalCEFAppEventOnContextI
 	Proc(internale_CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
-//初始化设置全局回调
+// 初始化设置全局回调
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
 	Proc(internale_CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
-//进程间通信处理消息接收
+// 进程间通信处理消息接收
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
 	Proc(internale_CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
 }
@@ -148,7 +156,7 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 	Proc(internale_AddCustomCommandLine).Call(api.PascalStr(commandLine), api.PascalStr(value))
 }
 
-//启动子进程之前自定义命令行参数设置
+// 启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
 	Proc(internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
@@ -182,11 +190,6 @@ func (m *TCEFApplication) SetOnGetDefaultClient(fn GlobalCEFAppEventOnGetDefault
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("GlobalCEFApp Error:", err)
-			}
-		}()
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}

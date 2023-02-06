@@ -12,6 +12,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -54,6 +55,10 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 //
 // 在这里启动浏览器的主进程和子进程
 func Run(cefApp *TCEFApplication) {
+	defer func() {
+		logger.Debug("application process [", common.Args.ProcessType(), "] run end")
+		api.EnergyLibRelease()
+	}()
 	if common.IsDarwin() && !consts.SingleProcess && !common.Args.IsMain() {
 		// mac os 启动子进程
 		cefApp.StartSubProcess()
