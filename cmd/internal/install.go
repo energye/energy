@@ -56,6 +56,7 @@ type downloadInfo struct {
 	downloadPath  string
 	url           string
 	success       bool
+	isSupport     bool
 }
 
 func init() {
@@ -120,32 +121,38 @@ func runInstall(c *CommandConfig) error {
 		println("Invalid download source, only support github or gitee:", c.Install.Download)
 		os.Exit(1)
 	}
+	libCEFOS, isSupport := cefOS()
+	libEnergyOS, isSupport := energyOS()
 	var downloadCefURL = downloadURL["cefURL"].(string)
 	var downloadEnergyURL = downloadURL["energyURL"].(string)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", versionCEF)
-	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", cefOSARCH())
+	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", versionENERGY)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", energyOSARCH())
+	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
 
 	//提取文件配置
 	extractData, err := downloadConfig(download_extract_url)
 	if err != nil {
-		fmt.Errorf("%s", err.Error())
+		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
 	}
 	var extractConfig map[string]interface{}
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
-		fmt.Fprint(os.Stderr, err.Error()+"\n")
+		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
 	}
 	extractOSConfig := extractConfig[runtime.GOOS].(map[string]interface{})
 
 	var downloads = make(map[string]*downloadInfo)
-	downloads[cefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
-	downloads[energyKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
+	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
+	downloads[energyKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
 	for key, dl := range downloads {
 		fmt.Printf("Download %s: %s\n", key, dl.url)
+		if !dl.isSupport {
+			println("energy command line does not support the system architecture download 【", dl.fileName, "]")
+			continue
+		}
 		bar := progressbar.NewBar(100)
 		bar.SetNotice("\t")
 		bar.HideRatio()
@@ -161,6 +168,10 @@ func runInstall(c *CommandConfig) error {
 	println("Unpack files")
 	var removeFileList = make([]string, 0, 0)
 	for key, di := range downloads {
+		if !di.isSupport {
+			println("energy command line does not support the system architecture, continue.")
+			continue
+		}
 		if di.success {
 			if key == cefKey {
 				bar := progressbar.NewBar(0)
@@ -255,26 +266,39 @@ func setEnergyHomeEnv(key, value string) {
 	cmd.Close()
 }
 
-func cefOSARCH() string {
-	if common.IsWindows() {
-		return fmt.Sprintf("windows%d", strconv.IntSize)
-	} else if common.IsLinux() {
-		return "linux64"
-	} else if common.IsDarwin() {
-		return "macosx64"
+func cefOS() (string, bool) {
+	if common.IsWindows() { // windows arm for 64 bit, windows for 32/64 bit
+		if runtime.GOARCH == "arm64" {
+			return "windowsarm64", true
+		}
+		return fmt.Sprintf("windows%d", strconv.IntSize), true
+	} else if common.IsLinux() { //linux for 64 bit
+		if runtime.GOARCH == "arm64" {
+			return "linuxarm64", true
+		} else if runtime.GOARCH == "amd64" {
+			return "linux64", true
+		}
+	} else if common.IsDarwin() { // macosx for 64 bit
+		if runtime.GOARCH == "arm64" {
+			return "macosarm64", true
+		} else if runtime.GOARCH == "amd64" {
+			return "macosx64", true
+		}
 	}
-	return ""
+	//not support
+	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
-func energyOSARCH() string {
+func energyOS() (string, bool) {
 	if common.IsWindows() {
-		return fmt.Sprintf("Windows %d bits", strconv.IntSize)
+		return fmt.Sprintf("Windows %d bits", strconv.IntSize), true
 	} else if common.IsLinux() {
-		return "Linux x86 64 bits"
+		return "Linux x86 64 bits", true
 	} else if common.IsDarwin() {
-		return "MacOSX x86 64 bits"
+		return "MacOSX x86 64 bits", true
 	}
-	return ""
+	//not support
+	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
 //提取文件
