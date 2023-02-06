@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/sub-process/main-process/src"
 	"github.com/energye/energy/example/sub-process/vars"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/pkgs/macapp"
 	"os"
 	"path"
@@ -28,6 +29,8 @@ var resources embed.FS
  3. 运行主程序
 */
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
 	//MacOS配置要在 GlobalInit 它之前
 	//特别说明MacOS：子进程不需要配置

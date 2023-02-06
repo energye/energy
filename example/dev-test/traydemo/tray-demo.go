@@ -10,6 +10,9 @@ import (
 
 // LCL组件托盘, 适用windows和macosx, 不支持linux因GTK2和GTK3共存问题,
 func LCLTrayDemo(browserWindow cef.IBrowserWindow) {
+	if !browserWindow.IsLCL() {
+		return
+	}
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
 	newTray := window.NewTray()
@@ -49,9 +52,9 @@ func LCLTrayDemo(browserWindow cef.IBrowserWindow) {
 	tray.Show()
 }
 
-//系统托盘 和LCL组件差不多,但不如LCL组件的好用，适用 windows,linux,macosx
+// 系统托盘 和LCL组件差不多,但不如LCL组件的好用，适用 windows,linux,macosx
 //
-//推荐linux中使用
+// 推荐linux中使用
 func SysTrayDemo(browserWindow cef.IBrowserWindow) {
 	sysTray := browserWindow.NewSysTray()
 	if common.IsLinux() {

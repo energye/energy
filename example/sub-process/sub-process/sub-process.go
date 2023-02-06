@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/example/sub-process/vars"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/logger"
 )
 
 /*
@@ -13,6 +14,8 @@ import (
 子进程需要先编译好,提供给主进程(SetBrowseSubprocessPath)配置
 */
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局配置初始化
 	cef.GlobalInit(nil, nil)
 	//创建Cef应用
@@ -26,7 +29,7 @@ func main() {
 	cefApp.Free()
 }
 
-//渲染进程 IPC事件
+// 渲染进程 IPC事件
 func IPCInit(event ipc.IEventOn) {
 	fmt.Println("渲染进程IPC事件注册")
 	//渲染进程监听的事件
