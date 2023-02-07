@@ -675,18 +675,18 @@ func (m *TCEFChromium) SetZoomPct(value float64) {
 	Proc(internale_CEFChromium_SetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
-func (m *TCEFChromium) ZoomPct() float64 {
-	r1, _, _ := Proc(internale_CEFChromium_GetZoomPct).Call(m.Instance())
-	return *(*float64)(unsafe.Pointer(r1))
+func (m *TCEFChromium) ZoomPct() (result float64) {
+	Proc(internale_CEFChromium_GetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return
 }
 
 func (m *TCEFChromium) SetZoomLevel(value float64) {
 	Proc(internale_CEFChromium_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
-func (m *TCEFChromium) ZoomLevel() float64 {
-	r1, _, _ := Proc(internale_CEFChromium_GetZoomLevel).Call(m.Instance())
-	return *(*float64)(unsafe.Pointer(r1))
+func (m *TCEFChromium) ZoomLevel() (result float64) {
+	Proc(internale_CEFChromium_GetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return
 }
 
 func (m *TCEFChromium) SetDefaultEncoding(value string) {
