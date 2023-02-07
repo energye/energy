@@ -86,6 +86,22 @@
     <button onclick="find()">查找</button>
     <button onclick="findStop()">停止查找</button>
     <br>
+    <script>
+        function ZoomPct() {
+            ipc.emit("ZoomPct");
+        }
+        function ZoomLevel() {
+            ipc.emit("ZoomLevel");
+        }
+        function SetZoomStep() {
+            ipc.emit("SetZoomStep");
+        }
+    </script>
+    Chromium其它
+    <button onclick="ZoomPct()">ZoomPct</button>
+    <button onclick="ZoomLevel()">ZoomLevel</button>
+    <button onclick="SetZoomStep()">SetZoomStep</button>
+    <br>
     UI操作
     <button onclick="disabledUIBtn()">禁用【打印PDF】按钮</button>
     <button onclick="ipcServerOn()">IPC Server ON测试</button>

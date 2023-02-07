@@ -51,6 +51,26 @@ func AppBrowserInit() {
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
+		event.On("ZoomPct", func(context ipc.IIPCContext) {
+			fmt.Println("ZoomPct")
+			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			bw.Chromium().SetZoomPct(150.2)
+			fmt.Println(bw.Chromium().ZoomPct())
+			bw.Chromium().SetDefaultEncoding("UTF-8")
+			fmt.Println(bw.Chromium().DefaultEncoding())
+		})
+		event.On("ZoomLevel", func(context ipc.IIPCContext) {
+			fmt.Println("ZoomLevel")
+			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			bw.Chromium().SetZoomLevel(150.2)
+			fmt.Println(bw.Chromium().ZoomLevel())
+		})
+		event.On("SetZoomStep", func(context ipc.IIPCContext) {
+			fmt.Println("SetZoomStep")
+			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+			bw.Chromium().SetZoomStep(1)
+			fmt.Println(bw.Chromium().ZoomStep())
+		})
 		//这个事件监听演示了几个示例
 		//1.
 		event.On("subWindowIPCOn", func(context ipc.IIPCContext) {
