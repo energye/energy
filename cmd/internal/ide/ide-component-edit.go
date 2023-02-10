@@ -20,7 +20,7 @@ func (m *IDEForm) CreateEdit() *IDEEdit {
 	com.Component.SetOnMouseMove(com.IDEComponent.mouseMove)
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
-	com.componentControl = com.Component
+	com.component = com.Component
 	m.addComponent(com.IDEComponent)
 	com.componentType = ctLabel
 	com.name = fmt.Sprintf("Edit%d", com.Id)

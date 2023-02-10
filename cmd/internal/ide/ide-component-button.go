@@ -20,7 +20,7 @@ func (m *IDEForm) CreateButton() *IDEButton {
 	com.Component.SetOnMouseMove(com.IDEComponent.mouseMove)
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
-	com.componentControl = com.Component
+	com.component = com.Component
 	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("Button%d", com.Id)
 	com.componentType = ctButton

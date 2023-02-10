@@ -1,6 +1,7 @@
 package ide
 
 import (
+	"fmt"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -19,8 +20,9 @@ func (m *IDEForm) CreateImage() *IDEImage {
 	com.Component.SetOnMouseMove(com.IDEComponent.mouseMove)
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
-	com.componentControl = com.Component
+	com.component = com.Component
 	m.addComponent(com.IDEComponent)
+	com.name = fmt.Sprintf("Image%d", com.Id)
 	com.componentType = ctImage
 	com.createAfter()
 	//com.createAnchor(m.componentParentPanel)

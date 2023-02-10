@@ -1,10 +1,12 @@
 package ide
 
 import (
+	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
+	"time"
 )
 
 type IDEComponent struct {
@@ -15,9 +17,11 @@ type IDEComponent struct {
 	borderPanel                       *lcl.TPanel
 	isUseBorder                       bool
 	componentParentPanel              *lcl.TPanel
-	componentControl                  lcl.IControl
+	component                         lcl.IComponent
 	componentType                     componentType
 	isBorder, isDown, isComponentArea bool
+	isDClick                          bool
+	clickTime                         time.Time
 	borderHT                          int32
 	ox, oy, ow, oh                    int32
 	dx, dy                            int32
@@ -189,13 +193,14 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 			//Ide.formsSyncSize(m.Id)
 			//m.refreshAnchorsPoint()
 			return
-		} else if m.isComponentArea && m.componentType != ctForm { // mouse down componentControl area > move
+		} else if m.isComponentArea && m.componentType != ctForm { // mouse down component area > move
 			tmpY := m.componentParentPanel.Top() + (y - m.dy)
 			tmpX := m.componentParentPanel.Left() + (x - m.dx)
 			m.borderPanel.SetLeft(tmpX - border/2)
 			m.borderPanel.SetTop(tmpY - border/2)
 			m.componentParentPanel.SetTop(tmpY)
 			m.componentParentPanel.SetLeft(tmpX)
+			m.isDClick = false
 			//rect := m.componentParentPanel.BoundsRect()
 			//fx, fy, fw, fh = rect.Left, rect.Top, rect.Width(), rect.Height()
 			//Ide.formsSyncSize(m.Id)
@@ -231,13 +236,24 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 		m.isBorder = false
 		m.componentParentPanel.SetCursor(types.CrDefault)
 	}
-	if m.componentControl != nil {
-		m.componentControl.SetCursor(m.componentParentPanel.Cursor())
+	if m.component != nil {
+		switch m.component.(type) {
+		case lcl.IControl:
+			m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+		default:
+			m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+		}
 	}
 }
 
 func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 	if button == types.MbLeft {
+		if time.Now().UnixMilli()-m.clickTime.UnixMilli() < 500 {
+			m.isDClick = true
+		} else {
+			m.isDClick = false
+		}
+		m.clickTime = time.Now()
 		m.dx = x
 		m.dy = y
 		if m.componentType == ctForm {
@@ -258,8 +274,13 @@ func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, 
 		if !m.isBorder && m.componentType != ctForm {
 			m.isComponentArea = true
 			m.componentParentPanel.SetCursor(types.CrSizeAll)
-			if m.componentControl != nil {
-				m.componentControl.SetCursor(m.componentParentPanel.Cursor())
+			if m.component != nil {
+				switch m.component.(type) {
+				case lcl.IControl:
+					m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+				default:
+					m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+				}
 			}
 		}
 		m.isDown = true
@@ -269,10 +290,19 @@ func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, 
 func (m *IDEComponent) mouseUp(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 	m.isDown = false
 	if m.isComponentArea {
+		if m.isDClick {
+			fmt.Println("双击自定义组件", m.Id, m.name)
+			return
+		}
 		m.isComponentArea = false
 		m.componentParentPanel.SetCursor(types.CrDefault)
-		if m.componentControl != nil {
-			m.componentControl.SetCursor(m.componentParentPanel.Cursor())
+		if m.component != nil {
+			switch m.component.(type) {
+			case lcl.IControl:
+				m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+			default:
+				m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+			}
 		}
 	}
 	m.ox, m.oy, m.ow, m.oh = m.componentParentPanel.Left(), m.componentParentPanel.Top(), m.componentParentPanel.Width(), m.componentParentPanel.Height()
@@ -300,12 +330,22 @@ func (m *IDEComponent) clearBorderColor() {
 
 func (m *IDEComponent) createAfter() {
 	m.componentParentPanel.SetCaption(m.name)
-	pm := lcl.NewPopupMenu(m.componentControl)
-	item := lcl.NewMenuItem(m.componentControl)
+	m.component.SetName(m.name)
+	pm := lcl.NewPopupMenu(m.component)
+	item := lcl.NewMenuItem(m.component)
 	item.SetCaption("删除")
 	item.SetOnClick(func(lcl.IObject) {
 		m.form.RemoveComponent(m.Id)
 	})
 	pm.Items().Add(item)
-	m.componentControl.SetPopupMenu(pm)
+	switch m.component.(type) {
+	case lcl.IControl:
+		m.component.(lcl.IControl).SetPopupMenu(pm)
+		m.component.(lcl.IControl).SetHint(m.name)
+		m.component.(lcl.IControl).SetShowHint(true)
+	default:
+		m.componentParentPanel.SetPopupMenu(pm)
+		m.componentParentPanel.SetHint(m.name)
+		m.componentParentPanel.SetShowHint(true)
+	}
 }

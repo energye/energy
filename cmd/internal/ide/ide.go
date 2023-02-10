@@ -62,63 +62,6 @@ type IDE struct {
 	pageControlPopupMenu *lcl.TPopupMenu
 }
 
-func (m *IDE) addForm(form *IDEForm) int {
-	form.Id = int(m.pageControl.ControlCount()) - 1
-	m.forms = append(m.forms, form)
-	m.active = form
-	m.pageControl.SetActivePageIndex(int32(form.Id))
-	return form.Id
-}
-
-func (m *IDE) removeForm(index int) {
-	form := m.forms[index]
-	form.tabSheet.Free()
-	m.forms = append(m.forms[:index], m.forms[index+1:]...)
-}
-
-func (m *IDE) formsSyncSize(id int) {
-	for _, form := range m.forms {
-		if form.Id != id {
-			form.borderPanel.SetBounds(fx-border, fy-border, fw+border, fh+border)
-			form.componentParentPanel.SetBounds(fx-border/2, fy-border/2, fw, fh)
-		}
-	}
-}
-
-func (m *IDE) CreateForm() *IDEForm {
-	var left, top, width, height int32 = border, border, 600, 400
-	form := &IDEForm{components: map[int]*IDEComponent{}}
-	form.tabSheet = lcl.NewTabSheet(m.pageControl)
-	form.tabSheet.SetPageControl(m.pageControl)
-	form.tabSheet.SetAlign(types.AlClient)
-
-	form.borderPanel = lcl.NewPanel(form.tabSheet)
-	form.borderPanel.SetParent(form.tabSheet)
-	form.borderPanel.SetDoubleBuffered(true)
-	form.borderPanel.SetBevelInner(types.BvNone)
-	form.borderPanel.SetBevelOuter(types.BvNone)
-	form.borderPanel.SetBorderStyle(types.BsNone)
-	form.borderPanel.SetBounds(left-border, top-border, width+border, height+border)
-	form.borderPanel.SetColor(colors.ClBlack)
-
-	form.componentParentPanel = lcl.NewPanel(form.tabSheet)
-	form.componentParentPanel.SetParent(form.tabSheet)
-	form.componentParentPanel.SetDoubleBuffered(true)
-	form.componentParentPanel.SetBevelInner(types.BvNone)
-	form.componentParentPanel.SetBevelOuter(types.BvNone)
-	form.componentParentPanel.SetBorderStyle(types.BsNone)
-	form.componentParentPanel.SetBounds(left-border/2, top-border/2, width, height)
-	form.componentParentPanel.SetOnMouseMove(form.mouseMove)
-	form.componentParentPanel.SetOnMouseDown(form.mouseDown)
-	form.componentParentPanel.SetOnMouseUp(form.mouseUp)
-	form.ox, form.oy, form.ow, form.oh = form.componentParentPanel.Left(), form.componentParentPanel.Top(), form.componentParentPanel.Width(), form.componentParentPanel.Height()
-	m.addForm(form)
-	form.name = fmt.Sprintf("Form%d", form.Id)
-	form.componentType = ctForm
-	form.tabSheet.SetCaption(form.name)
-	return form
-}
-
 func (m *IDE) OnFormCreate(sender lcl.IObject) {
 	m.forms = make([]*IDEForm, 0, 0)
 	m.SetCaption(fmt.Sprintf(ide_title, ide_version))
@@ -197,6 +140,28 @@ func (m *IDE) OnFormCreate(sender lcl.IObject) {
 	})
 
 }
+func (m *IDE) addForm(form *IDEForm) int {
+	form.Id = int(m.pageControl.ControlCount()) - 1
+	m.forms = append(m.forms, form)
+	m.active = form
+	m.pageControl.SetActivePageIndex(int32(form.Id))
+	return form.Id
+}
+
+func (m *IDE) removeForm(index int) {
+	form := m.forms[index]
+	form.tabSheet.Free()
+	m.forms = append(m.forms[:index], m.forms[index+1:]...)
+}
+
+func (m *IDE) formsSyncSize(id int) {
+	for _, form := range m.forms {
+		if form.Id != id {
+			form.borderPanel.SetBounds(fx-border, fy-border, fw+border, fh+border)
+			form.componentParentPanel.SetBounds(fx-border/2, fy-border/2, fw, fh)
+		}
+	}
+}
 
 func (m *IDE) initPopupMenu() {
 	pm := lcl.NewPopupMenu(m)
@@ -234,7 +199,10 @@ func (m *IDE) initTopMainMenu() {
 	action.SetImageIndex(0)
 	action.SetHint("新建Form窗口|新建一个Form窗口")
 	action.SetOnExecute(func(sender lcl.IObject) {
-		m.CreateForm()
+		form := m.CreateForm()
+		form.CreateDialogOpen()
+		form.CreateEdit()
+		form.CreateImage()
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)
@@ -286,4 +254,38 @@ func (m *IDE) initTopMainMenu() {
 	configMenuItem.Add(configMenuSubEnv)
 	//add config
 	m.mainMenu.Items().Add(configMenuItem)
+}
+
+func (m *IDE) CreateForm() *IDEForm {
+	var left, top, width, height int32 = border, border, 600, 400
+	form := &IDEForm{components: map[int]*IDEComponent{}}
+	form.tabSheet = lcl.NewTabSheet(m.pageControl)
+	form.tabSheet.SetPageControl(m.pageControl)
+	form.tabSheet.SetAlign(types.AlClient)
+
+	form.borderPanel = lcl.NewPanel(form.tabSheet)
+	form.borderPanel.SetParent(form.tabSheet)
+	form.borderPanel.SetDoubleBuffered(true)
+	form.borderPanel.SetBevelInner(types.BvNone)
+	form.borderPanel.SetBevelOuter(types.BvNone)
+	form.borderPanel.SetBorderStyle(types.BsNone)
+	form.borderPanel.SetBounds(left-border, top-border, width+border, height+border)
+	form.borderPanel.SetColor(colors.ClBlack)
+
+	form.componentParentPanel = lcl.NewPanel(form.tabSheet)
+	form.componentParentPanel.SetParent(form.tabSheet)
+	form.componentParentPanel.SetDoubleBuffered(true)
+	form.componentParentPanel.SetBevelInner(types.BvNone)
+	form.componentParentPanel.SetBevelOuter(types.BvNone)
+	form.componentParentPanel.SetBorderStyle(types.BsNone)
+	form.componentParentPanel.SetBounds(left-border/2, top-border/2, width, height)
+	form.componentParentPanel.SetOnMouseMove(form.mouseMove)
+	form.componentParentPanel.SetOnMouseDown(form.mouseDown)
+	form.componentParentPanel.SetOnMouseUp(form.mouseUp)
+	form.ox, form.oy, form.ow, form.oh = form.componentParentPanel.Left(), form.componentParentPanel.Top(), form.componentParentPanel.Width(), form.componentParentPanel.Height()
+	m.addForm(form)
+	form.name = fmt.Sprintf("Form%d", form.Id)
+	form.componentType = ctForm
+	form.tabSheet.SetCaption(form.name)
+	return form
 }
