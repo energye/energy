@@ -14,6 +14,10 @@ func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
+		//LCL Energy Extend
+		dllimports.NewEnergyImport("Ext_Panel_GetBevelColor", 0),
+		dllimports.NewEnergyImport("Ext_Panel_SetBevelColor", 0),
+		//CEF
 		dllimports.NewEnergyImport("CEFVersion", 0),
 		dllimports.NewEnergyImport("LibBuildVersion", 0),
 		dllimports.NewEnergyImport("CEF_Win_CreateRectRgn", 0),
@@ -562,6 +566,10 @@ func init() {
 const (
 	//null nil
 	internale_null_nil = iota
+	//LCL Energy Extend
+	internale_Ext_Panel_GetBevelColor
+	internale_Ext_Panel_SetBevelColor
+	//CEF
 	internale_CEFVersion
 	internale_LibBuildVersion
 	internale_CEF_Win_CreateRectRgn
