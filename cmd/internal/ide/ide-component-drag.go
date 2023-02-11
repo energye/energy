@@ -57,12 +57,6 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				//m.borderPanel.SetTop(tmpY - border/2)
-				//m.componentParentPanel.SetTop(tmpY)
-				//m.borderPanel.SetHeight(tmpHeight + border)
-				//m.componentParentPanel.SetHeight(tmpHeight)
-				//m.borderPanel.SetWidth(tmpWidth + border)
-				//m.componentParentPanel.SetWidth(tmpWidth)
 				m.borderPanel.SetBounds(borderRect.Left, tmpY-border/2, tmpWidth+border, tmpHeight+border)
 				m.componentParentPanel.SetBounds(componentParentRect.Left, tmpY, tmpWidth, tmpHeight)
 			case HTBOTTOMRIGHT:
@@ -71,10 +65,6 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				//m.borderPanel.SetWidth(tmpWidth + border)
-				//m.componentParentPanel.SetWidth(tmpWidth)
-				//m.borderPanel.SetHeight(tmpHeight + border)
-				//m.componentParentPanel.SetHeight(tmpHeight)
 				m.borderPanel.SetBounds(borderRect.Left, borderRect.Top, tmpWidth+border, tmpHeight+border)
 				m.componentParentPanel.SetBounds(componentParentRect.Left, componentParentRect.Top, tmpWidth, tmpHeight)
 			case HTTOPLEFT:
@@ -85,14 +75,6 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				//m.borderPanel.SetLeft(tmpX - border/2)
-				//m.borderPanel.SetWidth(tmpWidth + border)
-				//m.componentParentPanel.SetLeft(tmpX)
-				//m.componentParentPanel.SetWidth(tmpWidth)
-				//m.borderPanel.SetTop(tmpY - border/2)
-				//m.borderPanel.SetHeight(tmpHeight + border)
-				//m.componentParentPanel.SetTop(tmpY)
-				//m.componentParentPanel.SetHeight(tmpHeight)
 				m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, tmpWidth+border, tmpHeight+border)
 				m.componentParentPanel.SetBounds(tmpX, tmpY, tmpWidth, tmpHeight)
 			case HTBOTTOMLEFT:
@@ -102,9 +84,6 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				//m.borderPanel.SetLeft(tmpX - border/2)
-				//m.borderPanel.SetWidth(tmpWidth + border)
-				//m.borderPanel.SetHeight(tmpHeight + border)
 				m.componentParentPanel.SetLeft(tmpX)
 				m.componentParentPanel.SetWidth(tmpWidth)
 				m.componentParentPanel.SetHeight(tmpHeight)
@@ -112,27 +91,14 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				m.borderPanel.SetBounds(tmpX-border/2, borderRect.Top, tmpWidth+border, tmpHeight+border)
 				m.componentParentPanel.SetBounds(tmpX, componentParentRect.Top, tmpWidth, tmpHeight)
 			}
-			//rect := m.componentParentPanel.BoundsRect()
-			//fx, fy, fw, fh = rect.Left, rect.Top, rect.Width(), rect.Height()
-			//Ide.formsSyncSize(m.Id)
-			//m.refreshAnchorsPoint()
-
 			return
 		} else if m.isComponentArea && m.componentType != ctForm { // mouse down component area > move
 			m.isDClick = false
 			tmpY := componentParentRect.Top + (y - m.dy)
 			tmpX := componentParentRect.Left + (x - m.dx)
-			//m.borderPanel.SetLeft(tmpX - border/2)
-			//m.borderPanel.SetTop(tmpY - border/2)
-			//m.componentParentPanel.SetTop(tmpY)
-			//m.componentParentPanel.SetLeft(tmpX)
 
 			m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, borderRect.Width(), borderRect.Height())
 			m.componentParentPanel.SetBounds(tmpX, tmpY, componentParentRect.Width(), componentParentRect.Height())
-			//rect := m.componentParentPanel.BoundsRect()
-			//fx, fy, fw, fh = rect.Left, rect.Top, rect.Width(), rect.Height()
-			//Ide.formsSyncSize(m.Id)
-			//m.refreshAnchorsPoint()
 			return
 		}
 	}

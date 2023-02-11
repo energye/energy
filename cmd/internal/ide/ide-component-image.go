@@ -21,10 +21,9 @@ func (m *IDEForm) CreateImage() *IDEImage {
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
 	com.component = com.Component
+	com.componentType = ctImage
 	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("Image%d", com.Id)
-	com.componentType = ctImage
 	com.createAfter()
-	//com.createAnchor(m.componentParentPanel)
 	return com
 }

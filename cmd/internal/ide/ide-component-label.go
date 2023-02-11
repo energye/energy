@@ -13,7 +13,7 @@ type IDELabel struct {
 
 func (m *IDEForm) CreateLabel() *IDELabel {
 	com := &IDELabel{}
-	com.IDEComponent = m.newIDEComponentContainer(true, 50, 50, 170, 50)
+	com.IDEComponent = m.newIDEComponentContainer(false, 50, 50, 100, 24)
 	com.Component = lcl.NewLabel(com.IDEComponent.componentParentPanel)
 	com.Component.SetParent(com.IDEComponent.componentParentPanel)
 	com.Component.SetAlign(types.AlClient)
@@ -21,10 +21,10 @@ func (m *IDEForm) CreateLabel() *IDELabel {
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
 	com.component = com.Component
-	m.addComponent(com.IDEComponent)
 	com.componentType = ctLabel
+	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("Label%d", com.Id)
 	com.createAfter()
-	//com.createAnchor(m.componentParentPanel)
+	com.isResize = false
 	return com
 }

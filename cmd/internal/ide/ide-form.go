@@ -42,6 +42,7 @@ func (m *IDEForm) componentFrees(control lcl.IComponent) {
 
 func (m *IDEForm) newIDEComponentContainer(useBorder bool, left, top, width, height int32) *IDEComponent {
 	ideComponent := &IDEComponent{}
+	ideComponent.isResize = true
 	ideComponent.borderPanel = lcl.NewPanel(m.componentParentPanel)
 	ideComponent.borderPanel.SetParent(m.componentParentPanel)
 	ideComponent.borderPanel.SetDoubleBuffered(true)

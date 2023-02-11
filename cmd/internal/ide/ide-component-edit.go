@@ -21,11 +21,9 @@ func (m *IDEForm) CreateEdit() *IDEEdit {
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
 	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
 	com.component = com.Component
-	m.addComponent(com.IDEComponent)
 	com.componentType = ctLabel
+	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("Edit%d", com.Id)
-	com.componentParentPanel.SetCaption(com.name)
-	//com.createAnchor(m.componentParentPanel)
 	com.createAfter()
 	return com
 }

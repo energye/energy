@@ -26,7 +26,7 @@ const (
 	borderRange  int32 = 8
 	borderMargin       = 4
 	border             = borderMargin / 2
-	pointW             = 10
+	pointW             = 6
 	pointWC            = pointW / 2
 	minW, minH         = 24, 8
 )
@@ -202,10 +202,10 @@ func (m *IDE) initTopMainMenu() {
 	action.SetOnExecute(func(sender lcl.IObject) {
 		form := m.CreateForm()
 		//form.CreateDialogOpen()
-		form.CreateEdit()
+		//form.CreateEdit()
 		form.CreateImage()
-		form.CreateLabel()
-		form.CreateButton()
+		//form.CreateLabel()
+		//form.CreateButton()
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)

@@ -3,24 +3,27 @@ package ide
 import (
 	"fmt"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 type IDEOpenDialog struct {
 	*IDEComponent
-	openDialog *lcl.TOpenDialog
-	Component  *lcl.TOpenDialog
+	Component *lcl.TImage
 }
 
 func (m *IDEForm) CreateDialogOpen() *IDEOpenDialog {
 	com := &IDEOpenDialog{}
 	com.IDEComponent = m.newIDEComponentContainer(true, 50, 50, 28, 28)
-	com.Component = lcl.NewOpenDialog(com.IDEComponent.componentParentPanel)
+	com.Component = lcl.NewImage(com.IDEComponent.componentParentPanel)
+	com.Component.SetParent(com.IDEComponent.componentParentPanel)
+	com.Component.SetAlign(types.AlClient)
+	com.Component.SetOnMouseMove(com.IDEComponent.mouseMove)
+	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)
+	com.Component.SetOnMouseUp(com.IDEComponent.mouseUp)
 	com.component = com.Component
-	m.addComponent(com.IDEComponent)
 	com.componentType = ctOpenDialog
+	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("DialogOpen%d", com.Id)
-	com.componentParentPanel.SetCaption(com.name)
-	//com.createAnchor(m.componentParentPanel)
 	com.createAfter()
 	return com
 }

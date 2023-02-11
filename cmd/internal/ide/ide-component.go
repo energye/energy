@@ -20,6 +20,7 @@ type IDEComponent struct {
 	componentType                     componentType
 	isBorder, isDown, isComponentArea bool
 	isDClick                          bool
+	isResize                          bool
 	clickTime                         time.Time
 	borderHT                          int32
 	ox, oy, ow, oh                    int32
@@ -105,7 +106,7 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 			point.SetCursor(types.CrDefault)
 		}
 		//m.mouseMove(sender, shift, x, y)
-		if m.isDown {
+		if m.isDown && m.isResize {
 			var (
 				x, y = x - m.anchor.dx, y - m.anchor.dy
 				rect = m.componentParentPanel.BoundsRect()
