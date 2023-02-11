@@ -7,7 +7,8 @@ import (
 
 type IDEOpenDialog struct {
 	*IDEComponent
-	Component *lcl.TOpenDialog
+	openDialog *lcl.TOpenDialog
+	Component  *lcl.TOpenDialog
 }
 
 func (m *IDEForm) CreateDialogOpen() *IDEOpenDialog {

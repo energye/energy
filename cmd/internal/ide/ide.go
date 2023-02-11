@@ -202,8 +202,10 @@ func (m *IDE) initTopMainMenu() {
 	action.SetOnExecute(func(sender lcl.IObject) {
 		form := m.CreateForm()
 		//form.CreateDialogOpen()
-		//form.CreateEdit()
+		form.CreateEdit()
 		form.CreateImage()
+		form.CreateLabel()
+		form.CreateButton()
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)

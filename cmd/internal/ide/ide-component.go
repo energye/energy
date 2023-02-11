@@ -35,10 +35,14 @@ type anchor struct {
 	topRight    *lcl.TPanel
 	bottomLeft  *lcl.TPanel
 	bottomRight *lcl.TPanel
+	isShow      bool
 	dx, dy      int32
 }
 
 func (m *anchor) hide() {
+	if m == nil || !m.isShow {
+		return
+	}
 	m.top.Hide()
 	m.bottom.Hide()
 	m.left.Hide()
@@ -47,9 +51,13 @@ func (m *anchor) hide() {
 	m.topRight.Hide()
 	m.bottomLeft.Hide()
 	m.bottomRight.Hide()
+	m.isShow = false
 }
 
 func (m *anchor) show() {
+	if m == nil || m.isShow {
+		return
+	}
 	m.top.Show()
 	m.bottom.Show()
 	m.left.Show()
@@ -58,6 +66,21 @@ func (m *anchor) show() {
 	m.topRight.Show()
 	m.bottomLeft.Show()
 	m.bottomRight.Show()
+	m.isShow = true
+}
+
+func (m *anchor) remove() {
+	if m == nil {
+		return
+	}
+	m.top.Free()
+	m.bottom.Free()
+	m.left.Free()
+	m.right.Free()
+	m.topLeft.Free()
+	m.topRight.Free()
+	m.bottomLeft.Free()
+	m.bottomRight.Free()
 }
 
 func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPanel {
@@ -124,6 +147,58 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 				}
 				m.borderPanel.SetHeight(tmpHeight + border)
 				m.componentParentPanel.SetHeight(tmpHeight)
+			case HTTOPRIGHT:
+				tmpY := rect.Top + y
+				tmpHeight := rect.Height() + (rect.Top - tmpY)
+				tmpWidth := rect.Width() + x
+				if tmpWidth <= minW || tmpHeight <= minH {
+					return
+				}
+				m.borderPanel.SetTop(tmpY - border/2)
+				m.componentParentPanel.SetTop(tmpY)
+				m.borderPanel.SetHeight(tmpHeight + border)
+				m.componentParentPanel.SetHeight(tmpHeight)
+				m.borderPanel.SetWidth(tmpWidth + border)
+				m.componentParentPanel.SetWidth(tmpWidth)
+			case HTTOPLEFT:
+				tmpX := rect.Left + x
+				tmpWidth := rect.Width() + (rect.Left - tmpX)
+				tmpY := rect.Top + y
+				tmpHeight := rect.Height() + (rect.Top - tmpY)
+				if tmpWidth <= minW || tmpHeight <= minH {
+					return
+				}
+				m.borderPanel.SetLeft(tmpX - border/2)
+				m.borderPanel.SetWidth(tmpWidth + border)
+				m.componentParentPanel.SetLeft(tmpX)
+				m.componentParentPanel.SetWidth(tmpWidth)
+				m.borderPanel.SetTop(tmpY - border/2)
+				m.borderPanel.SetHeight(tmpHeight + border)
+				m.componentParentPanel.SetTop(tmpY)
+				m.componentParentPanel.SetHeight(tmpHeight)
+			case HTBOTTOMRIGHT:
+				tmpWidth := rect.Width() + x
+				tmpHeight := rect.Height() + y
+				if tmpWidth <= minW || tmpHeight <= minH {
+					return
+				}
+				m.borderPanel.SetWidth(tmpWidth + border)
+				m.componentParentPanel.SetWidth(tmpWidth)
+				m.borderPanel.SetHeight(tmpHeight + border)
+				m.componentParentPanel.SetHeight(tmpHeight)
+			case HTBOTTOMLEFT:
+				tmpX := rect.Left + x
+				tmpWidth := rect.Width() + (rect.Left - tmpX)
+				tmpHeight := rect.Height() + y
+				if tmpWidth <= minW || tmpHeight <= minH {
+					return
+				}
+				m.borderPanel.SetLeft(tmpX - border/2)
+				m.borderPanel.SetWidth(tmpWidth + border)
+				m.borderPanel.SetHeight(tmpHeight + border)
+				m.componentParentPanel.SetLeft(tmpX)
+				m.componentParentPanel.SetWidth(tmpWidth)
+				m.componentParentPanel.SetHeight(tmpHeight)
 			default:
 				return
 			}
@@ -143,6 +218,7 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 func (m *IDEComponent) createAnchor() {
 	owner := m.componentParentPanel.Parent()
 	acr := &anchor{}
+	acr.isShow = true
 	acr.top = m.newAnchorPoint(owner, HTTOP)
 	acr.bottom = m.newAnchorPoint(owner, HTBOTTOM)
 	acr.left = m.newAnchorPoint(owner, HTLEFT)
@@ -159,15 +235,17 @@ func (m *IDEComponent) refreshAnchorsPoint() {
 	if m.anchor == nil {
 		return
 	}
-	rect := m.componentParentPanel.BoundsRect()
-	m.anchor.left.SetBounds(rect.Left-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
-	m.anchor.top.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Top-pointWC, pointW, pointW)
-	m.anchor.bottom.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Bottom-pointWC, pointW, pointW)
-	m.anchor.right.SetBounds(rect.Right-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
-	m.anchor.topLeft.SetBounds(rect.Left-pointWC, rect.Top-pointWC, pointW, pointW)
-	m.anchor.topRight.SetBounds(rect.Right-pointWC, rect.Top-pointWC, pointW, pointW)
-	m.anchor.bottomLeft.SetBounds(rect.Left-pointWC, rect.Bottom-pointWC, pointW, pointW)
-	m.anchor.bottomRight.SetBounds(rect.Right-pointWC, rect.Bottom-pointWC, pointW, pointW)
+	if m.anchor.isShow {
+		rect := m.componentParentPanel.BoundsRect()
+		m.anchor.left.SetBounds(rect.Left-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
+		m.anchor.top.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Top-pointWC, pointW, pointW)
+		m.anchor.bottom.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Bottom-pointWC, pointW, pointW)
+		m.anchor.right.SetBounds(rect.Right-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
+		m.anchor.topLeft.SetBounds(rect.Left-pointWC, rect.Top-pointWC, pointW, pointW)
+		m.anchor.topRight.SetBounds(rect.Right-pointWC, rect.Top-pointWC, pointW, pointW)
+		m.anchor.bottomLeft.SetBounds(rect.Left-pointWC, rect.Bottom-pointWC, pointW, pointW)
+		m.anchor.bottomRight.SetBounds(rect.Right-pointWC, rect.Bottom-pointWC, pointW, pointW)
+	}
 }
 
 func (m *IDEComponent) setBorderColor(color types.TColor) {

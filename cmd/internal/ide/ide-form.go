@@ -29,6 +29,7 @@ func (m *IDEForm) RemoveComponent(index int) {
 		if component.componentParentPanel != nil {
 			m.componentFrees(component.componentParentPanel)
 		}
+		component.anchor.remove()
 	}
 	delete(m.components, index)
 	m.active = nil
