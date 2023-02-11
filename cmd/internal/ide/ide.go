@@ -48,6 +48,7 @@ var (
 
 type IDE struct {
 	*lcl.TForm
+	formCount            int
 	statusBar            *lcl.TStatusBar
 	topBox               *lcl.TPanel
 	leftBox              *lcl.TPanel
@@ -146,6 +147,7 @@ func (m *IDE) addForm(form *IDEForm) int {
 	m.forms = append(m.forms, form)
 	m.active = form
 	m.pageControl.SetActivePageIndex(int32(form.Id))
+	m.formCount++
 	return form.Id
 }
 
@@ -287,7 +289,7 @@ func (m *IDE) CreateForm() *IDEForm {
 	form.componentParentPanel.SetOnMouseUp(form.mouseUp)
 	form.ox, form.oy, form.ow, form.oh = form.componentParentPanel.Left(), form.componentParentPanel.Top(), form.componentParentPanel.Width(), form.componentParentPanel.Height()
 	m.addForm(form)
-	form.name = fmt.Sprintf("Form%d", form.Id)
+	form.name = fmt.Sprintf("Form%d", m.formCount)
 	form.componentType = ctForm
 	form.tabSheet.SetCaption(form.name)
 	return form

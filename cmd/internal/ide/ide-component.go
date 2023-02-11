@@ -260,6 +260,7 @@ func (m *IDEComponent) clearBorderColor() {
 	if m == nil {
 		return
 	}
+	m.form.active.anchor.hide()
 	if m.componentType != ctForm {
 		if m.componentType == ctImage {
 			m.borderPanel.SetColor(colors.ClGray)
@@ -289,5 +290,19 @@ func (m *IDEComponent) createAfter() {
 		m.componentParentPanel.SetPopupMenu(pm)
 		m.componentParentPanel.SetHint(m.name)
 		m.componentParentPanel.SetShowHint(true)
+	}
+	m.switchActive(m)
+}
+
+func (m *IDEComponent) switchActive(active *IDEComponent) {
+	if m.form.active != nil {
+		m.form.active.clearBorderColor()
+	}
+	m.form.active = m
+	if m.isUseBorder {
+		m.form.active.setBorderColor(colors.ClBlack)
+		m.form.active.anchor.show()
+	} else {
+		m.form.active.clearBorderColor()
 	}
 }

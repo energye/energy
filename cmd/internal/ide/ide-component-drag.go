@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/types/colors"
 	"time"
 )
 
@@ -159,13 +158,7 @@ func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, 
 				}
 			}
 		} else {
-			m.form.active.clearBorderColor()
-			m.form.active = m
-			if m.isUseBorder {
-				m.form.active.setBorderColor(colors.ClBlack)
-			} else {
-				m.form.active.clearBorderColor()
-			}
+			m.switchActive(m)
 		}
 		if !m.isBorder && m.componentType != ctForm {
 			m.isComponentArea = true
