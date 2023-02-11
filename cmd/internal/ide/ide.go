@@ -202,12 +202,12 @@ func (m *IDE) initTopMainMenu() {
 	action.SetImageIndex(0)
 	action.SetHint("新建Form窗口|新建一个Form窗口")
 	action.SetOnExecute(func(sender lcl.IObject) {
-		form := m.CreateForm()
-		//form.CreateDialogOpen()
-		//form.CreateEdit()
+		var form = m.CreateForm()
+		form.CreateDialogOpen()
+		form.CreateEdit()
 		form.CreateImage()
-		//form.CreateLabel()
-		//form.CreateButton()
+		form.CreateLabel()
+		form.CreateButton()
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)
@@ -263,6 +263,7 @@ func (m *IDE) initTopMainMenu() {
 
 func (m *IDE) CreateForm() *IDEForm {
 	var left, top, width, height int32 = border, border, 600, 400
+
 	form := &IDEForm{components: map[int]*IDEComponent{}}
 	form.tabSheet = lcl.NewTabSheet(m.pageControl)
 	form.tabSheet.SetPageControl(m.pageControl)
