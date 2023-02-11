@@ -38,6 +38,7 @@ const (
 	ctImage
 	ctButton
 	ctLabel
+	ctOpenDialog
 )
 
 var (
@@ -200,8 +201,8 @@ func (m *IDE) initTopMainMenu() {
 	action.SetHint("新建Form窗口|新建一个Form窗口")
 	action.SetOnExecute(func(sender lcl.IObject) {
 		form := m.CreateForm()
-		form.CreateDialogOpen()
-		form.CreateEdit()
+		//form.CreateDialogOpen()
+		//form.CreateEdit()
 		form.CreateImage()
 	})
 

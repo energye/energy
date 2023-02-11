@@ -65,9 +65,9 @@ func (m *IDEForm) newIDEComponentContainer(useBorder bool, left, top, width, hei
 	} else {
 		ideComponent.componentParentPanel.SetBounds(left, top, width, height)
 	}
-	ideComponent.componentParentPanel.SetOnMouseMove(ideComponent.mouseMove)
-	ideComponent.componentParentPanel.SetOnMouseDown(ideComponent.mouseDown)
-	ideComponent.componentParentPanel.SetOnMouseUp(ideComponent.mouseUp)
+	//ideComponent.componentParentPanel.SetOnMouseMove(ideComponent.mouseMove)
+	//ideComponent.componentParentPanel.SetOnMouseDown(ideComponent.mouseDown)
+	//ideComponent.componentParentPanel.SetOnMouseUp(ideComponent.mouseUp)
 	ideComponent.ox, ideComponent.oy, ideComponent.ow, ideComponent.oh = ideComponent.componentParentPanel.Left(), ideComponent.componentParentPanel.Top(), ideComponent.componentParentPanel.Width(), ideComponent.componentParentPanel.Height()
 	ideComponent.form = m
 	ideComponent.isUseBorder = useBorder

@@ -13,7 +13,7 @@ type IDEEdit struct {
 
 func (m *IDEForm) CreateEdit() *IDEEdit {
 	com := &IDEEdit{}
-	com.IDEComponent = m.newIDEComponentContainer(true, 50, 50, 150, 24)
+	com.IDEComponent = m.newIDEComponentContainer(false, 50, 50, 150, 24)
 	com.Component = lcl.NewEdit(com.IDEComponent.componentParentPanel)
 	com.Component.SetParent(com.IDEComponent.componentParentPanel)
 	com.Component.SetAlign(types.AlClient)

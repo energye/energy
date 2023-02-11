@@ -16,7 +16,7 @@ func (m *IDEForm) CreateDialogOpen() *IDEOpenDialog {
 	com.Component = lcl.NewOpenDialog(com.IDEComponent.componentParentPanel)
 	com.component = com.Component
 	m.addComponent(com.IDEComponent)
-	com.componentType = ctLabel
+	com.componentType = ctOpenDialog
 	com.name = fmt.Sprintf("DialogOpen%d", com.Id)
 	com.componentParentPanel.SetCaption(com.name)
 	//com.createAnchor(m.componentParentPanel)
