@@ -12,23 +12,30 @@
 package cef
 
 import (
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/win"
 )
 
-//显示标题栏
+// 显示标题栏
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
-	m.WindowProperty()._EnableHideCaption = false
-	handle := m.WindowComponent().WindowHandle()
-	win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)|win.WS_CAPTION))
-	win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	m.WindowProperty().EnableHideCaption = false
+	//handle := m.WindowComponent().WindowHandle()
+	//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)|win.WS_CAPTION))
+	//win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = false
+	})
 }
 
-//隐藏标题栏
+// 隐藏标题栏
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
-	m.WindowProperty()._EnableHideCaption = true
-	handle := m.WindowComponent().WindowHandle()
-	win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
-	win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	m.WindowProperty().EnableHideCaption = true
+	//handle := m.WindowComponent().WindowHandle()
+	//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
+	//win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
+	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = true
+	})
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {

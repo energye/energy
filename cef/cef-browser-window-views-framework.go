@@ -20,11 +20,11 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
+// ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
 //
-//该窗口使用CEF内部实现，在linux下107.xx以后版本默认使用GTK3，但无法使用lcl组件集成到窗口中
+// 该窗口使用CEF内部实现，在linux下107.xx以后版本默认使用GTK3，但无法使用lcl组件集成到窗口中
 //
-//当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
+// 当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
 	isClosing            bool                              //
 	windowType           consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
@@ -43,7 +43,7 @@ type ViewsFrameworkBrowserWindow struct {
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
 }
 
-//创建 ViewsFrameworkBrowserWindow 窗口
+// 创建 ViewsFrameworkBrowserWindow 窗口
 func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = NewChromiumConfig()
@@ -96,7 +96,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	return m
 }
 
-//ViewsFrameworkBrowserWindow 主窗口初始化
+// ViewsFrameworkBrowserWindow 主窗口初始化
 func (m *browser) appContextInitialized(app *TCEFApplication) {
 	if !common.Args.IsMain() {
 		return
@@ -160,7 +160,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	})
 }
 
-//重置窗口属性-通过事件函数
+// 重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
@@ -189,6 +189,9 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	})
 	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableClose
+	})
+	m.windowComponent.SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = wp.EnableHideCaption
 	})
 	m.windowComponent.SetAlwaysOnTop(wp.AlwaysOnTop)
 	m.windowComponent.SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
@@ -313,7 +316,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	}
 }
 
-//启用所有默认事件行为
+// 启用所有默认事件行为
 func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
 	m.registerPopupEvent()
 	m.registerDefaultEvent()
@@ -493,7 +496,7 @@ func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
 	m.WindowProperty().EnableCenterWindow = value
 }
 
-//返回窗口关闭状态
+// 返回窗口关闭状态
 func (m *ViewsFrameworkBrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
@@ -508,32 +511,32 @@ func (m *ViewsFrameworkBrowserWindow) SetWindowType(windowType consts.WINDOW_TYP
 	m.windowType = windowType
 }
 
-//禁用最小化按钮
+// 禁用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMinimize() {
 	m.WindowProperty().EnableMinimize = false
 }
 
-//禁用最大化按钮
+// 禁用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMaximize() {
 	m.WindowProperty().EnableMaximize = false
 }
 
-//禁用调整窗口大小
+// 禁用调整窗口大小
 func (m *ViewsFrameworkBrowserWindow) DisableResize() {
 	m.WindowProperty().EnableResize = false
 }
 
-//启用最小化按钮
+// 启用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMinimize() {
 	m.WindowProperty().EnableMinimize = true
 }
 
-//启用最大化按钮
+// 启用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMaximize() {
 	m.WindowProperty().EnableMaximize = true
 }
 
-//启用调整窗口大小
+// 启用调整窗口大小
 func (m *ViewsFrameworkBrowserWindow) EnableResize() {
 	m.WindowProperty().EnableResize = true
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//辅助工具
+// 辅助工具
 type auxTools struct {
 	devToolsWindow   IBrowserWindow //devTools
 	devToolsX        int32          //上次改变的窗体位置，宽度
@@ -29,9 +29,9 @@ type auxTools struct {
 	viewSourceHeight int32          //
 }
 
-//窗口属性配置器
+// 窗口属性配置器
 //
-//部分属性配置并不支持所有平台
+// 部分属性配置并不支持所有平台
 type WindowProperty struct {
 	IsShowModel               bool               //是否以模态窗口显示
 	WindowState               types.TWindowState //窗口 状态
@@ -40,7 +40,7 @@ type WindowProperty struct {
 	Url                       string             //默认打开URL
 	Icon                      string             //窗口图标 加载本地图标 local > /app/resources/icon.ico, linux使用png
 	IconFS                    string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico, linux使用png
-	_EnableHideCaption        bool               //窗口 是否隐藏标题栏
+	EnableHideCaption         bool               //窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
 	EnableMinimize            bool               //窗口 是否启用最小化 default: true
 	EnableMaximize            bool               //窗口 是否启用最大化 default: true
 	EnableResize              bool               //窗口 是否允许调整大小 default: true
@@ -56,9 +56,9 @@ type WindowProperty struct {
 	Height                    int32              //窗口 高 default: 768
 }
 
-//浏览器窗口基础接口
+// 浏览器窗口基础接口
 //
-//定义了常用函数
+// 定义了常用函数
 type IBrowserWindow interface {
 	Id() int32                                                   //窗口ID
 	Handle() types.HWND                                          //窗口句柄
@@ -107,9 +107,9 @@ type IBrowserWindow interface {
 	NewSysTray() ITray                                           //systray系统原生
 }
 
-//浏览器 LCLBrowserWindow 窗口接口 继承 IBrowserWindow
+// 浏览器 LCLBrowserWindow 窗口接口 继承 IBrowserWindow
 //
-//定义了LCL常用函数
+// 定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
 	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
@@ -124,9 +124,9 @@ type ILCLBrowserWindow interface {
 	NewTray() ITray                   //创建LCL的系统托盘
 }
 
-//浏览器 ViewsFrameworkBrowserWindow 窗口接口 继承 IBrowserWindow
+// 浏览器 ViewsFrameworkBrowserWindow 窗口接口 继承 IBrowserWindow
 //
-//定义了ViewsFramework常用函数
+// 定义了ViewsFramework常用函数
 type IViewsFrameworkBrowserWindow interface {
 	IBrowserWindow
 	BrowserWindow() *ViewsFrameworkBrowserWindow                                //返回 ViewsFrameworkBrowserWindow 窗口结构
@@ -139,7 +139,7 @@ type IViewsFrameworkBrowserWindow interface {
 	SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) //设置窗口初始bounds
 }
 
-//创建一个属性配置器，带有窗口默认属性值
+// 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
 	return WindowProperty{
 		Title:                     "Energy",

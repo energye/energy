@@ -19,7 +19,7 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
-//定义四角和边框范围
+// 定义四角和边框范围
 var (
 	angleRange  int32 = 10 //四角
 	borderRange int32 = 5  //四边框
@@ -35,9 +35,9 @@ type customWindowCaption struct {
 	rgn                  *HRGN                 //
 }
 
-//显示标题栏
+// 显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
-	m.WindowProperty()._EnableHideCaption = false
+	m.WindowProperty().EnableHideCaption = false
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
 	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
@@ -45,9 +45,9 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	m.SetBorderStyle(types.BsSizeable)
 }
 
-//隐藏标题栏
+// 隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
-	m.WindowProperty()._EnableHideCaption = true
+	m.WindowProperty().EnableHideCaption = true
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
 	//win.SetWindowPos(m.Handle(), 0, 0, 0, m.Width(), m.Height()+500, win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED|win.SWP_DRAWFRAME)
 	//无标题栏情况会导致任务栏不能切换窗口，不知道为什么要这样设置一下
@@ -78,7 +78,7 @@ func (m *customWindowCaption) free() {
 	}
 }
 
-//NC 非客户区鼠标移动
+// NC 非客户区鼠标移动
 func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 当前在标题栏
 	} else if m.canBorder { // 当前在边框
@@ -87,7 +87,7 @@ func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *ty
 	}
 }
 
-//设置鼠标图标
+// 设置鼠标图标
 func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canBorder { //当前在边框
 		switch LOWORD(uint32(message.LParam)) {
@@ -111,7 +111,7 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 	}
 }
 
-//鼠标是否在边框
+// 鼠标是否在边框
 func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
 	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
 		m.borderWMSZ = WMSZ_TOPRIGHT
@@ -149,7 +149,7 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 	return 0, false
 }
 
-//NC 鼠标左键按下
+// NC 鼠标左键按下
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
 		x, y := m.toPoint(message)
@@ -169,14 +169,14 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 	}
 }
 
-//转换XY坐标
+// 转换XY坐标
 func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 	return GET_X_LPARAM(message.LParam), GET_Y_LPARAM(message.LParam)
 }
 
-//鼠标是否在标题栏区域
+// 鼠标是否在标题栏区域
 //
-//如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
+// 如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
 func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &types.TPoint{
@@ -231,7 +231,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		if caption { //窗口标题栏
 			*lResult = HTCAPTION
 			*aHandled = true
-		} else if m.WindowProperty()._EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
+		} else if m.WindowProperty().EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
 			rect := m.BoundsRect()
 			if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
 				*lResult = types.LRESULT(result)
@@ -241,7 +241,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	}
 }
 
-//每一次拖拽区域改变都需要重新设置
+// 每一次拖拽区域改变都需要重新设置
 func (m *LCLBrowserWindow) setDraggableRegions() {
 	//在主线程中运行
 	QueueAsyncCall(func(id int) {
@@ -278,7 +278,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	})
 	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
 		m.windowResize = func(sender lcl.IObject) bool {
-			if m.WindowState() == types.WsMaximized && (m.WindowProperty()._EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
+			if m.WindowState() == types.WsMaximized && (m.WindowProperty().EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 				var monitor = m.Monitor().WorkareaRect()
 				m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
 				m.SetWindowState(types.WsMaximized)
@@ -296,7 +296,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	//}
 }
 
-//for windows maximize and restore
+// for windows maximize and restore
 func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return

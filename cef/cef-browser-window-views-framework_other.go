@@ -12,13 +12,20 @@
 // 非windows的未实现
 package cef
 
-//显示标题栏
+// 显示标题栏
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
+	m.WindowProperty().EnableHideCaption = false
+	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = false
+	})
 }
 
-//隐藏标题栏
+// 隐藏标题栏
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
-
+	m.WindowProperty().EnableHideCaption = true
+	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		*aResult = true
+	})
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {
