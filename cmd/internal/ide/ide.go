@@ -38,6 +38,7 @@ const (
 	ctImage
 	ctButton
 	ctLabel
+	ctEdit
 	ctOpenDialog
 )
 
@@ -161,7 +162,7 @@ func (m *IDE) formsSyncSize(id int) {
 	for _, form := range m.forms {
 		if form.Id != id {
 			form.borderPanel.SetBounds(fx-border, fy-border, fw+border, fh+border)
-			form.componentParentPanel.SetBounds(fx-border/2, fy-border/2, fw, fh)
+			form.parentToPanel().SetBounds(fx-border/2, fy-border/2, fw, fh)
 		}
 	}
 }
@@ -208,6 +209,8 @@ func (m *IDE) initTopMainMenu() {
 		form.CreateImage()
 		form.CreateLabel()
 		form.CreateButton()
+
+		println(form)
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)
@@ -279,16 +282,17 @@ func (m *IDE) CreateForm() *IDEForm {
 	form.borderPanel.SetColor(colors.ClBlack)
 
 	form.componentParentPanel = lcl.NewPanel(form.tabSheet)
-	form.componentParentPanel.SetParent(form.tabSheet)
-	form.componentParentPanel.SetDoubleBuffered(true)
-	form.componentParentPanel.SetBevelInner(types.BvNone)
-	form.componentParentPanel.SetBevelOuter(types.BvNone)
-	form.componentParentPanel.SetBorderStyle(types.BsNone)
-	form.componentParentPanel.SetBounds(left-border/2, top-border/2, width, height)
-	form.componentParentPanel.SetOnMouseMove(form.mouseMove)
-	form.componentParentPanel.SetOnMouseDown(form.mouseDown)
-	form.componentParentPanel.SetOnMouseUp(form.mouseUp)
-	form.ox, form.oy, form.ow, form.oh = form.componentParentPanel.Left(), form.componentParentPanel.Top(), form.componentParentPanel.Width(), form.componentParentPanel.Height()
+	form.parentToPanel().SetParent(form.tabSheet)
+	form.parentToPanel().SetDoubleBuffered(true)
+	form.parentToPanel().SetBevelInner(types.BvNone)
+	form.parentToPanel().SetBevelOuter(types.BvNone)
+	form.parentToPanel().SetBorderStyle(types.BsNone)
+	form.parentToPanel().SetBounds(left-border/2, top-border/2, width, height)
+	form.parentToPanel().SetOnMouseMove(form.mouseMove)
+	form.parentToPanel().SetOnMouseDown(form.mouseDown)
+	form.parentToPanel().SetOnMouseUp(form.mouseUp)
+
+	form.ox, form.oy, form.ow, form.oh = form.parentToPanel().Left(), form.parentToPanel().Top(), form.parentToPanel().Width(), form.parentToPanel().Height()
 	m.addForm(form)
 	form.name = fmt.Sprintf("Form%d", m.formCount)
 	form.componentType = ctForm

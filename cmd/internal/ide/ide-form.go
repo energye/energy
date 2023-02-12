@@ -43,37 +43,38 @@ func (m *IDEForm) componentFrees(control lcl.IComponent) {
 func (m *IDEForm) newIDEComponentContainer(useBorder bool, left, top, width, height int32) *IDEComponent {
 	ideComponent := &IDEComponent{}
 	ideComponent.isResize = true
-	ideComponent.borderPanel = lcl.NewPanel(m.componentParentPanel)
-	ideComponent.borderPanel.SetParent(m.componentParentPanel)
-	ideComponent.borderPanel.SetDoubleBuffered(true)
-	ideComponent.borderPanel.SetBevelInner(types.BvNone)
-	ideComponent.borderPanel.SetBevelOuter(types.BvNone)
-	ideComponent.borderPanel.SetBorderStyle(types.BsNone)
 	if useBorder {
-		ideComponent.borderPanel.SetBounds(left-border, top-border, width+border, height+border)
-		ideComponent.borderPanel.SetColor(colors.ClBlack)
-	} else {
-		ideComponent.borderPanel.SetBounds(left, top, width, height)
-	}
+		ideComponent.borderPanel = lcl.NewPanel(m.parentToPanel())
+		ideComponent.borderPanel.SetParent(m.parentToPanel())
+		ideComponent.borderPanel.SetDoubleBuffered(true)
+		ideComponent.borderPanel.SetBevelInner(types.BvNone)
+		ideComponent.borderPanel.SetBevelOuter(types.BvNone)
+		ideComponent.borderPanel.SetBorderStyle(types.BsNone)
+		if useBorder {
+			ideComponent.borderPanel.SetBounds(left-border, top-border, width+border, height+border)
+			ideComponent.borderPanel.SetColor(colors.ClBlack)
+		} else {
+			ideComponent.borderPanel.SetBounds(left, top, width, height)
+		}
 
-	ideComponent.componentParentPanel = lcl.NewPanel(m.componentParentPanel)
-	ideComponent.componentParentPanel.SetParent(m.componentParentPanel)
-	ideComponent.componentParentPanel.SetDoubleBuffered(true)
-	ideComponent.componentParentPanel.SetBevelInner(types.BvNone)
-	ideComponent.componentParentPanel.SetBevelOuter(types.BvNone)
-	ideComponent.componentParentPanel.SetBorderStyle(types.BsNone)
-	ideComponent.componentParentPanel.SetColor(colors.ClSysDefault)
-	if useBorder {
-		ideComponent.componentParentPanel.SetBounds(left-border/2, top-border/2, width, height)
-	} else {
-		ideComponent.componentParentPanel.SetBounds(left, top, width, height)
+		ideComponent.componentParentPanel = lcl.NewPanel(m.parentToPanel())
+		ideComponent.parentToPanel().SetParent(m.parentToPanel())
+		ideComponent.parentToPanel().SetDoubleBuffered(true)
+		ideComponent.parentToPanel().SetBevelInner(types.BvNone)
+		ideComponent.parentToPanel().SetBevelOuter(types.BvNone)
+		ideComponent.parentToPanel().SetBorderStyle(types.BsNone)
+		ideComponent.parentToPanel().SetColor(colors.ClSysDefault)
+		if useBorder {
+			ideComponent.parentToPanel().SetBounds(left-border/2, top-border/2, width, height)
+		} else {
+			ideComponent.parentToPanel().SetBounds(left, top, width, height)
+		}
+		//ideComponent.parentToPanel().SetOnMouseMove(ideComponent.mouseMove)
+		//ideComponent.parentToPanel().SetOnMouseDown(ideComponent.mouseDown)
+		//ideComponent.parentToPanel().SetOnMouseUp(ideComponent.mouseUp)
+		ideComponent.ox, ideComponent.oy, ideComponent.ow, ideComponent.oh = ideComponent.parentToPanel().Left(), ideComponent.parentToPanel().Top(), ideComponent.parentToPanel().Width(), ideComponent.parentToPanel().Height()
 	}
-	//ideComponent.componentParentPanel.SetOnMouseMove(ideComponent.mouseMove)
-	//ideComponent.componentParentPanel.SetOnMouseDown(ideComponent.mouseDown)
-	//ideComponent.componentParentPanel.SetOnMouseUp(ideComponent.mouseUp)
-	ideComponent.ox, ideComponent.oy, ideComponent.ow, ideComponent.oh = ideComponent.componentParentPanel.Left(), ideComponent.componentParentPanel.Top(), ideComponent.componentParentPanel.Width(), ideComponent.componentParentPanel.Height()
 	ideComponent.form = m
 	ideComponent.isUseBorder = useBorder
-
 	return ideComponent
 }

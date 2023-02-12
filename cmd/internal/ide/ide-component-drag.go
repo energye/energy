@@ -9,8 +9,11 @@ import (
 
 func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x, y int32) {
 	if m.isDown {
-		borderRect := m.borderPanel.BoundsRect()
-		componentParentRect := m.componentParentPanel.BoundsRect()
+		var borderRect types.TRect
+		if m.borderPanel != nil {
+			borderRect = m.borderPanel.BoundsRect()
+		}
+		componentParentRect := m.parentToControl().BoundsRect()
 		if m.isBorder && m.componentType == ctForm { //mouse down borderMargin > resize
 			switch m.borderHT {
 			case HTRIGHT:
@@ -21,34 +24,40 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if m.borderPanel != nil {
 					m.borderPanel.SetWidth(tmpWidth + border)
 				}
-				m.componentParentPanel.SetWidth(tmpWidth)
+				m.parentToControl().SetWidth(tmpWidth)
 			case HTLEFT:
-				tmpX := m.componentParentPanel.Left() + (x - m.dx)
+				tmpX := m.parentToControl().Left() + (x - m.dx)
 				tmpWidth := m.ow + (m.ox - tmpX)
 				if tmpWidth <= minW {
 					return
 				}
-				m.borderPanel.SetLeft(tmpX - border/2)
-				m.componentParentPanel.SetLeft(tmpX)
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.componentParentPanel.SetWidth(tmpWidth)
+				if m.borderPanel != nil {
+					m.borderPanel.SetLeft(tmpX - border/2)
+					m.borderPanel.SetWidth(tmpWidth + border)
+				}
+				m.parentToControl().SetLeft(tmpX)
+				m.parentToControl().SetWidth(tmpWidth)
 			case HTTOP:
-				tmpY := m.componentParentPanel.Top() + (y - m.dy)
+				tmpY := m.parentToControl().Top() + (y - m.dy)
 				tmpHeight := m.oh + (m.oy - tmpY)
 				if tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetTop(tmpY - border/2)
-				m.componentParentPanel.SetTop(tmpY)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetTop(tmpY - border/2)
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetTop(tmpY)
+				m.parentToControl().SetHeight(tmpHeight)
 			case HTBOTTOM:
 				tmpHeight := m.oh + (y - m.dy)
 				if tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetHeight(m.oh + (y - m.dy))
+				if m.borderPanel != nil {
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetHeight(m.oh + (y - m.dy))
 			case HTTOPRIGHT:
 				tmpY := componentParentRect.Top + (y - m.dy)
 				tmpHeight := m.oh + (m.oy - tmpY)
@@ -56,16 +65,20 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetBounds(borderRect.Left, tmpY-border/2, tmpWidth+border, tmpHeight+border)
-				m.componentParentPanel.SetBounds(componentParentRect.Left, tmpY, tmpWidth, tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetBounds(borderRect.Left, tmpY-border/2, tmpWidth+border, tmpHeight+border)
+				}
+				m.parentToControl().SetBounds(componentParentRect.Left, tmpY, tmpWidth, tmpHeight)
 			case HTBOTTOMRIGHT:
 				tmpWidth := m.ow + (x - m.dx)
 				tmpHeight := m.oh + (y - m.dy)
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetBounds(borderRect.Left, borderRect.Top, tmpWidth+border, tmpHeight+border)
-				m.componentParentPanel.SetBounds(componentParentRect.Left, componentParentRect.Top, tmpWidth, tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetBounds(borderRect.Left, borderRect.Top, tmpWidth+border, tmpHeight+border)
+				}
+				m.parentToControl().SetBounds(componentParentRect.Left, componentParentRect.Top, tmpWidth, tmpHeight)
 			case HTTOPLEFT:
 				tmpX := componentParentRect.Left + (x - m.dx)
 				tmpWidth := m.ow + (m.ox - tmpX)
@@ -74,8 +87,10 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, tmpWidth+border, tmpHeight+border)
-				m.componentParentPanel.SetBounds(tmpX, tmpY, tmpWidth, tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, tmpWidth+border, tmpHeight+border)
+				}
+				m.parentToControl().SetBounds(tmpX, tmpY, tmpWidth, tmpHeight)
 			case HTBOTTOMLEFT:
 				tmpX := componentParentRect.Left + (x - m.dx)
 				tmpWidth := m.ow + (m.ox - tmpX)
@@ -83,60 +98,59 @@ func (m *IDEComponent) mouseMove(sender lcl.IObject, shift types.TShiftState, x,
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.componentParentPanel.SetLeft(tmpX)
-				m.componentParentPanel.SetWidth(tmpWidth)
-				m.componentParentPanel.SetHeight(tmpHeight)
-
-				m.borderPanel.SetBounds(tmpX-border/2, borderRect.Top, tmpWidth+border, tmpHeight+border)
-				m.componentParentPanel.SetBounds(tmpX, componentParentRect.Top, tmpWidth, tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetBounds(tmpX-border/2, borderRect.Top, tmpWidth+border, tmpHeight+border)
+				}
+				m.parentToControl().SetBounds(tmpX, componentParentRect.Top, tmpWidth, tmpHeight)
 			}
 			return
 		} else if m.isComponentArea && m.componentType != ctForm { // mouse down component area > move
 			m.isDClick = false
 			tmpY := componentParentRect.Top + (y - m.dy)
 			tmpX := componentParentRect.Left + (x - m.dx)
-
-			m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, borderRect.Width(), borderRect.Height())
-			m.componentParentPanel.SetBounds(tmpX, tmpY, componentParentRect.Width(), componentParentRect.Height())
+			if m.borderPanel != nil {
+				m.borderPanel.SetBounds(tmpX-border/2, tmpY-border/2, borderRect.Width(), borderRect.Height())
+			}
+			m.parentToControl().SetBounds(tmpX, tmpY, componentParentRect.Width(), componentParentRect.Height())
 			return
 		}
 	}
 	if m.componentType == ctForm {
 		if m.isBorder = x <= m.ow && x >= m.ow-borderRange && y <= borderRange; m.isBorder && m.componentType != ctForm { // 右上
-			m.componentParentPanel.SetCursor(types.CrSizeSW)
+			m.parentToControl().SetCursor(types.CrSizeSW)
 			m.borderHT = HTTOPRIGHT
 		} else if m.isBorder = x <= m.ow && x >= m.ow-borderRange && y <= m.oh && y >= m.oh-borderRange; m.isBorder { // 右下
-			m.componentParentPanel.SetCursor(types.CrSizeSE)
+			m.parentToControl().SetCursor(types.CrSizeSE)
 			m.borderHT = HTBOTTOMRIGHT
 		} else if m.isBorder = x <= borderRange && y <= borderRange; m.isBorder && m.componentType != ctForm { //左上
-			m.componentParentPanel.SetCursor(types.CrSizeSE)
+			m.parentToControl().SetCursor(types.CrSizeSE)
 			m.borderHT = HTTOPLEFT
 		} else if m.isBorder = x <= borderRange && y >= m.oh-borderRange; m.isBorder && m.componentType != ctForm { //左下
-			m.componentParentPanel.SetCursor(types.CrSizeSW)
+			m.parentToControl().SetCursor(types.CrSizeSW)
 			m.borderHT = HTBOTTOMLEFT
 		} else if m.isBorder = x <= m.ow && x >= m.ow-borderRange && y > borderRange && y < m.oh-borderRange; m.isBorder { //右
-			m.componentParentPanel.SetCursor(types.CrSizeW)
+			m.parentToControl().SetCursor(types.CrSizeW)
 			m.borderHT = HTRIGHT
 		} else if m.isBorder = x <= borderRange && y > borderRange && y < m.oh-borderRange; m.isBorder && m.componentType != ctForm { //左
-			m.componentParentPanel.SetCursor(types.CrSizeW)
+			m.parentToControl().SetCursor(types.CrSizeW)
 			m.borderHT = HTLEFT
 		} else if m.isBorder = x > borderRange && x < m.ow-borderRange && y <= borderRange; m.isBorder && m.componentType != ctForm { //上
-			m.componentParentPanel.SetCursor(types.CrSizeN)
+			m.parentToControl().SetCursor(types.CrSizeN)
 			m.borderHT = HTTOP
 		} else if m.isBorder = x > borderRange && x < m.ow-borderRange && y >= m.oh-borderRange; m.isBorder { //下
-			m.componentParentPanel.SetCursor(types.CrSizeN)
+			m.parentToControl().SetCursor(types.CrSizeN)
 			m.borderHT = HTBOTTOM
 		} else {
 			m.isBorder = false
-			m.componentParentPanel.SetCursor(types.CrDefault)
+			m.parentToControl().SetCursor(types.CrDefault)
 		}
 	}
 	if m.component != nil {
 		switch m.component.(type) {
 		case lcl.IControl:
-			m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+			m.component.(lcl.IControl).SetCursor(m.parentToControl().Cursor())
 		default:
-			m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+			m.parentToControl().SetCursor(m.parentToControl().Cursor())
 		}
 	}
 }
@@ -163,13 +177,13 @@ func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, 
 		if !m.isBorder && m.componentType != ctForm {
 			m.isComponentArea = true
 			m.anchor.hide()
-			m.componentParentPanel.SetCursor(types.CrSizeAll)
+			m.parentToControl().SetCursor(types.CrSizeAll)
 			if m.component != nil {
 				switch m.component.(type) {
 				case lcl.IControl:
-					m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+					m.component.(lcl.IControl).SetCursor(m.parentToControl().Cursor())
 				default:
-					m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+					m.parentToControl().SetCursor(m.parentToControl().Cursor())
 				}
 			}
 		}
@@ -188,15 +202,15 @@ func (m *IDEComponent) mouseUp(sender lcl.IObject, button types.TMouseButton, sh
 			return
 		}
 		m.refreshAnchorsPoint()
-		m.componentParentPanel.SetCursor(types.CrDefault)
+		m.parentToControl().SetCursor(types.CrDefault)
 		if m.component != nil {
 			switch m.component.(type) {
 			case lcl.IControl:
-				m.component.(lcl.IControl).SetCursor(m.componentParentPanel.Cursor())
+				m.component.(lcl.IControl).SetCursor(m.parentToControl().Cursor())
 			default:
-				m.componentParentPanel.SetCursor(m.componentParentPanel.Cursor())
+				m.parentToControl().SetCursor(m.parentToControl().Cursor())
 			}
 		}
 	}
-	m.ox, m.oy, m.ow, m.oh = m.componentParentPanel.Left(), m.componentParentPanel.Top(), m.componentParentPanel.Width(), m.componentParentPanel.Height()
+	m.ox, m.oy, m.ow, m.oh = m.parentToControl().Left(), m.parentToControl().Top(), m.parentToControl().Width(), m.parentToControl().Height()
 }

@@ -14,8 +14,8 @@ type IDEImage struct {
 func (m *IDEForm) CreateImage() *IDEImage {
 	com := &IDEImage{}
 	com.IDEComponent = m.newIDEComponentContainer(true, 50, 50, 170, 50)
-	com.Component = lcl.NewImage(com.IDEComponent.componentParentPanel)
-	com.Component.SetParent(com.IDEComponent.componentParentPanel)
+	com.Component = lcl.NewImage(com.IDEComponent.parentToPanel())
+	com.Component.SetParent(com.IDEComponent.parentToPanel())
 	com.Component.SetAlign(types.AlClient)
 	com.Component.SetOnMouseMove(com.IDEComponent.mouseMove)
 	com.Component.SetOnMouseDown(com.IDEComponent.mouseDown)

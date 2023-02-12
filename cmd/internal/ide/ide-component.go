@@ -13,9 +13,9 @@ type IDEComponent struct {
 	Id                                int
 	name                              string
 	anchor                            *anchor
-	borderPanel                       *lcl.TPanel
 	isUseBorder                       bool
-	componentParentPanel              *lcl.TPanel
+	borderPanel                       *lcl.TPanel
+	componentParentPanel              lcl.IComponent
 	component                         lcl.IComponent
 	componentType                     componentType
 	isBorder, isDown, isComponentArea bool
@@ -84,6 +84,14 @@ func (m *anchor) remove() {
 	m.bottomRight.Free()
 }
 
+func (m *IDEComponent) parentToPanel() *lcl.TPanel {
+	return m.componentParentPanel.(*lcl.TPanel)
+}
+
+func (m *IDEComponent) parentToControl() lcl.IControl {
+	return m.componentParentPanel.(lcl.IControl)
+}
+
 func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPanel {
 	point := lcl.NewPanel(owner)
 	point.SetParent(owner)
@@ -109,7 +117,7 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 		if m.isDown && m.isResize {
 			var (
 				x, y = x - m.anchor.dx, y - m.anchor.dy
-				rect = m.componentParentPanel.BoundsRect()
+				rect = m.parentToControl().BoundsRect()
 			)
 			switch ht {
 			case HTRIGHT:
@@ -120,34 +128,40 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 				if m.borderPanel != nil {
 					m.borderPanel.SetWidth(tmpWidth + border)
 				}
-				m.componentParentPanel.SetWidth(tmpWidth)
+				m.parentToControl().SetWidth(tmpWidth)
 			case HTLEFT:
 				tmpX := rect.Left + x
 				tmpWidth := rect.Width() + (rect.Left - tmpX)
 				if tmpWidth <= minW {
 					return
 				}
-				m.borderPanel.SetLeft(tmpX - border/2)
-				m.componentParentPanel.SetLeft(tmpX)
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.componentParentPanel.SetWidth(tmpWidth)
+				if m.borderPanel != nil {
+					m.borderPanel.SetLeft(tmpX - border/2)
+					m.borderPanel.SetWidth(tmpWidth + border)
+				}
+				m.parentToControl().SetLeft(tmpX)
+				m.parentToControl().SetWidth(tmpWidth)
 			case HTTOP:
 				tmpY := rect.Top + y
 				tmpHeight := rect.Height() + (rect.Top - tmpY)
 				if tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetTop(tmpY - border/2)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetTop(tmpY)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetTop(tmpY - border/2)
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetTop(tmpY)
+				m.parentToControl().SetHeight(tmpHeight)
 			case HTBOTTOM:
 				tmpHeight := rect.Height() + y
 				if tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetHeight(tmpHeight)
 			case HTTOPRIGHT:
 				tmpY := rect.Top + y
 				tmpHeight := rect.Height() + (rect.Top - tmpY)
@@ -155,12 +169,14 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetTop(tmpY - border/2)
-				m.componentParentPanel.SetTop(tmpY)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetHeight(tmpHeight)
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.componentParentPanel.SetWidth(tmpWidth)
+				if m.borderPanel != nil {
+					m.borderPanel.SetTop(tmpY - border/2)
+					m.borderPanel.SetHeight(tmpHeight + border)
+					m.borderPanel.SetWidth(tmpWidth + border)
+				}
+				m.parentToControl().SetTop(tmpY)
+				m.parentToControl().SetHeight(tmpHeight)
+				m.parentToControl().SetWidth(tmpWidth)
 			case HTTOPLEFT:
 				tmpX := rect.Left + x
 				tmpWidth := rect.Width() + (rect.Left - tmpX)
@@ -169,24 +185,28 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetLeft(tmpX - border/2)
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.componentParentPanel.SetLeft(tmpX)
-				m.componentParentPanel.SetWidth(tmpWidth)
-				m.borderPanel.SetTop(tmpY - border/2)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetTop(tmpY)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetLeft(tmpX - border/2)
+					m.borderPanel.SetWidth(tmpWidth + border)
+					m.borderPanel.SetTop(tmpY - border/2)
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetLeft(tmpX)
+				m.parentToControl().SetWidth(tmpWidth)
+				m.parentToControl().SetTop(tmpY)
+				m.parentToControl().SetHeight(tmpHeight)
 			case HTBOTTOMRIGHT:
 				tmpWidth := rect.Width() + x
 				tmpHeight := rect.Height() + y
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.componentParentPanel.SetWidth(tmpWidth)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetWidth(tmpWidth + border)
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetWidth(tmpWidth)
+				m.parentToControl().SetHeight(tmpHeight)
 			case HTBOTTOMLEFT:
 				tmpX := rect.Left + x
 				tmpWidth := rect.Width() + (rect.Left - tmpX)
@@ -194,12 +214,14 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 				if tmpWidth <= minW || tmpHeight <= minH {
 					return
 				}
-				m.borderPanel.SetLeft(tmpX - border/2)
-				m.borderPanel.SetWidth(tmpWidth + border)
-				m.borderPanel.SetHeight(tmpHeight + border)
-				m.componentParentPanel.SetLeft(tmpX)
-				m.componentParentPanel.SetWidth(tmpWidth)
-				m.componentParentPanel.SetHeight(tmpHeight)
+				if m.borderPanel != nil {
+					m.borderPanel.SetLeft(tmpX - border/2)
+					m.borderPanel.SetWidth(tmpWidth + border)
+					m.borderPanel.SetHeight(tmpHeight + border)
+				}
+				m.parentToControl().SetLeft(tmpX)
+				m.parentToControl().SetWidth(tmpWidth)
+				m.parentToControl().SetHeight(tmpHeight)
 			default:
 				return
 			}
@@ -217,7 +239,7 @@ func (m *IDEComponent) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPan
 }
 
 func (m *IDEComponent) createAnchor() {
-	owner := m.componentParentPanel.Parent()
+	owner := m.parentToControl().Parent()
 	acr := &anchor{}
 	acr.isShow = true
 	acr.top = m.newAnchorPoint(owner, HTTOP)
@@ -237,7 +259,7 @@ func (m *IDEComponent) refreshAnchorsPoint() {
 		return
 	}
 	if m.anchor.isShow {
-		rect := m.componentParentPanel.BoundsRect()
+		rect := m.parentToControl().BoundsRect()
 		m.anchor.left.SetBounds(rect.Left-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
 		m.anchor.top.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Top-pointWC, pointW, pointW)
 		m.anchor.bottom.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Bottom-pointWC, pointW, pointW)
@@ -250,7 +272,7 @@ func (m *IDEComponent) refreshAnchorsPoint() {
 }
 
 func (m *IDEComponent) setBorderColor(color types.TColor) {
-	if m == nil {
+	if m == nil || m.borderPanel == nil {
 		return
 	}
 	m.borderPanel.SetColor(color)
@@ -261,7 +283,7 @@ func (m *IDEComponent) clearBorderColor() {
 		return
 	}
 	m.form.active.anchor.hide()
-	if m.componentType != ctForm {
+	if m.componentType != ctForm && m.borderPanel != nil {
 		if m.componentType == ctImage {
 			m.borderPanel.SetColor(colors.ClGray)
 		} else {
@@ -271,9 +293,17 @@ func (m *IDEComponent) clearBorderColor() {
 }
 
 func (m *IDEComponent) createAfter() {
+	if !m.isUseBorder {
+		m.componentParentPanel = m.component
+	}
 	m.createAnchor()
-	m.componentParentPanel.SetCaption(m.name)
-	m.component.SetName(m.name)
+	switch m.componentType {
+	case ctEdit:
+		m.parentToControl().SetName(m.name)
+	default:
+		m.component.SetName(m.name)
+		m.parentToControl().SetCaption(m.name)
+	}
 	pm := lcl.NewPopupMenu(m.component)
 	item := lcl.NewMenuItem(m.component)
 	item.SetCaption("删除")
@@ -287,9 +317,9 @@ func (m *IDEComponent) createAfter() {
 		m.component.(lcl.IControl).SetHint(m.name)
 		m.component.(lcl.IControl).SetShowHint(true)
 	default:
-		m.componentParentPanel.SetPopupMenu(pm)
-		m.componentParentPanel.SetHint(m.name)
-		m.componentParentPanel.SetShowHint(true)
+		m.parentToControl().SetPopupMenu(pm)
+		m.parentToControl().SetHint(m.name)
+		m.parentToControl().SetShowHint(true)
 	}
 	m.switchActive(m)
 }
