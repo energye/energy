@@ -8,6 +8,7 @@ import (
 	"time"
 )
 
+type dClick func(button types.TMouseButton, shift types.TShiftState, x, y int32)
 type IDEComponent struct {
 	form                              *IDEForm
 	Id                                int
@@ -25,6 +26,7 @@ type IDEComponent struct {
 	borderHT                          int32
 	ox, oy, ow, oh                    int32
 	dx, dy                            int32
+	dClick                            dClick
 }
 
 type anchor struct {

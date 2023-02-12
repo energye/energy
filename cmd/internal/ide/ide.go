@@ -210,7 +210,7 @@ func (m *IDE) initTopMainMenu() {
 		form.CreateLabel()
 		form.CreateButton()
 
-		println(form)
+		println("CreateForm:", form)
 	})
 
 	m.topToolButton = lcl.NewToolButton(m)

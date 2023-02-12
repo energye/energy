@@ -25,5 +25,8 @@ func (m *IDEForm) CreateDialogOpen() *IDEOpenDialog {
 	m.addComponent(com.IDEComponent)
 	com.name = fmt.Sprintf("DialogOpen%d", com.Id)
 	com.createAfter()
+	com.dClick = func(button types.TMouseButton, shift types.TShiftState, x, y int32) {
+		fmt.Println("双击了 打开文件窗口")
+	}
 	return com
 }

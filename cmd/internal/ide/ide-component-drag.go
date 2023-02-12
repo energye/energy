@@ -198,6 +198,9 @@ func (m *IDEComponent) mouseUp(sender lcl.IObject, button types.TMouseButton, sh
 		m.anchor.show()
 		m.isComponentArea = false
 		if m.isDClick {
+			if m.dClick != nil {
+				m.dClick(button, shift, x, y)
+			}
 			fmt.Println("双击自定义组件", m.Id, m.name)
 			return
 		}
