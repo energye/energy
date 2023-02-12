@@ -204,7 +204,7 @@ func (m *IDEComponent) mouseUp(sender lcl.IObject, button types.TMouseButton, sh
 			fmt.Println("双击自定义组件", m.Id, m.name)
 			return
 		}
-		m.refreshAnchorsPoint()
+		m.anchor.refreshAnchorsPoint()
 		m.parentToControl().SetCursor(types.CrDefault)
 		if m.component != nil {
 			switch m.component.(type) {

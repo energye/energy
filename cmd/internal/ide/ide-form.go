@@ -63,7 +63,7 @@ func (m *IDEForm) newIDEComponentContainer(useBorder bool, left, top, width, hei
 		ideComponent.parentToPanel().SetBevelInner(types.BvNone)
 		ideComponent.parentToPanel().SetBevelOuter(types.BvNone)
 		ideComponent.parentToPanel().SetBorderStyle(types.BsNone)
-		ideComponent.parentToPanel().SetColor(colors.ClSysDefault)
+		//ideComponent.parentToPanel().SetColor(colors.ClSysDefault)
 		if useBorder {
 			ideComponent.parentToPanel().SetBounds(left-border/2, top-border/2, width, height)
 		} else {
