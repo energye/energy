@@ -12,6 +12,8 @@
 // 非windows的未实现
 package cef
 
+import "github.com/energye/golcl/lcl"
+
 // 显示标题栏
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	m.WindowProperty().EnableHideCaption = false
