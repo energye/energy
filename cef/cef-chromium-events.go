@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -264,227 +264,227 @@ func (m *TCEFChromium) SetOnDraggableRegionsChanged(fn ChromiumEventOnDraggableR
 // --------TCEFChromium Event proc begin--------
 
 func _CEFChromium_SetOnAfterCreated(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnAfterCreated).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnAfterCreated).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforeClose
 func _CEFChromium_SetOnBeforeClose(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforeClose).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforeClose).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnClose
 func _CEFChromium_SetOnClose(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnClose).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnClose).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnPdfPrintFinished
 func _CEFChromium_SetOnPdfPrintFinished(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnPdfPrintFinished).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnPdfPrintFinished).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnZoomPctAvailable
 func _CEFChromium_SetOnZoomPctAvailable(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnZoomPctAvailable).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnZoomPctAvailable).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnLoadStart
 func _CEFChromium_SetOnLoadStart(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnLoadStart).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnLoadStart).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnLoadingStateChange
 func _CEFChromium_SetOnLoadingStateChange(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnLoadingStateChange).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnLoadingStateChange).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnLoadingProgressChange
 func _CEFChromium_SetOnLoadingProgressChange(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnLoadingProgressChange).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnLoadingProgressChange).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnLoadError
 func _CEFChromium_SetOnLoadError(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnLoadError).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnLoadError).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnLoadEnd
 func _CEFChromium_SetOnLoadEnd(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnLoadEnd).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnLoadEnd).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforeDownload
 func _CEFChromium_SetOnBeforeDownload(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforeDownload).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforeDownload).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnDownloadUpdated
 func _CEFChromium_SetOnDownloadUpdated(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnDownloadUpdated).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnDownloadUpdated).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnFullScreenModeChange
 func _CEFChromium_SetOnFullScreenModeChange(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnFullScreenModeChange).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnFullScreenModeChange).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforeBrowser
 func _CEFChromium_SetOnBeforeBrowser(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforeBrowse).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforeBrowse).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnAddressChange
 func _CEFChromium_SetOnAddressChange(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnAddressChange).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnAddressChange).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnKeyEvent
 func _CEFChromium_SetOnKeyEvent(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnKeyEvent).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnKeyEvent).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnTitleChange
 func _CEFChromium_SetOnTitleChange(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnTitleChange).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnTitleChange).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnRenderCompMsg
 func _CEFChromium_SetOnRenderCompMsg(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnRenderCompMsg).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnRenderCompMsg).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnWidgetCompMsg
 func _CEFChromium_SetOnWidgetCompMsg(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnWidgetCompMsg).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnWidgetCompMsg).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBrowserCompMsg
 func _CEFChromium_SetOnBrowserCompMsg(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBrowserCompMsg).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBrowserCompMsg).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnRenderProcessTerminated
 func _CEFChromium_SetOnRenderProcessTerminated(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnRenderProcessTerminated).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnRenderProcessTerminated).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnRenderViewReady
 func _CEFChromium_SetOnRenderViewReady(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnRenderViewReady).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnRenderViewReady).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnScrollOffsetChanged
 func _CEFChromium_SetOnScrollOffsetChanged(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnScrollOffsetChanged).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnScrollOffsetChanged).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnProcessMessageReceived
 func _CEFChromium_SetOnProcessMessageReceived(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnProcessMessageReceived).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnProcessMessageReceived).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnFindResult
 func _CEFChromium_SetOnFindResult(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnFindResult).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnFindResult).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnCookieSet
 func _CEFChromium_SetOnCookieSet(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnCookieSet).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnCookieSet).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnCookiesDeleted
 func _CEFChromium_SetOnCookiesDeleted(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnCookiesDeleted).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnCookiesDeleted).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnCookiesFlushed
 func _CEFChromium_SetOnCookiesFlushed(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnCookiesFlushed).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnCookiesFlushed).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnCookiesVisited
 func _CEFChromium_SetOnCookiesVisited(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnCookiesVisited).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnCookiesVisited).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnCookieVisitorDestroyed
 func _CEFChromium_SetOnCookieVisitorDestroyed(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnCookieVisitorDestroyed).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnCookieVisitorDestroyed).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforeContextMenu
 func _CEFChromium_SetOnBeforeContextMenu(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforeContextMenu).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforeContextMenu).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnContextMenuCommand
 func _CEFChromium_SetOnContextMenuCommand(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnContextMenuCommand).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnContextMenuCommand).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnContextMenuDismissed
 func _CEFChromium_SetOnContextMenuDismissed(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnContextMenuDismissed).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnContextMenuDismissed).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforeResourceLoad
 func _CEFChromium_SetOnBeforeResourceLoad(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforeResourceLoad).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforeResourceLoad).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnResourceResponse
 func _CEFChromium_SetOnResourceResponse(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnResourceResponse).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnResourceResponse).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnResourceRedirect
 func _CEFChromium_SetOnResourceRedirect(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnResourceRedirect).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnResourceRedirect).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnResourceLoadComplete
 func _CEFChromium_SetOnResourceLoadComplete(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnResourceLoadComplete).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnResourceLoadComplete).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnFrameAttached
 func _CEFChromium_SetOnFrameAttached(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnFrameAttached).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnFrameAttached).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnFrameCreated
 func _CEFChromium_SetOnFrameCreated(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnFrameCreated).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnFrameCreated).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnFrameDetached
 func _CEFChromium_SetOnFrameDetached(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnFrameDetached).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnFrameDetached).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnMainFrameChanged
 func _CEFChromium_SetOnMainFrameChanged(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnMainFrameChanged).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnMainFrameChanged).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBeforePopup
 func _CEFChromium_SetOnBeforePopup(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnBeforePopup).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnBeforePopup).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnOpenUrlFromTab
 func _CEFChromium_SetOnOpenUrlFromTab(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnOpenUrlFromTab).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnOpenUrlFromTab).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnDragEnter
 func _CEFChromium_SetOnDragEnter(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnDragEnter).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnDragEnter).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnDraggableRegionsChanged
 func _CEFChromium_SetOnDraggableRegionsChanged(instance uintptr, fn interface{}) {
-	Proc(internale_CEFChromium_SetOnDraggableRegionsChanged).Call(instance, api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFChromium_SetOnDraggableRegionsChanged).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 //--------TCEFChromium Event proc end--------

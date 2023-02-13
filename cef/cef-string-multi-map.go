@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -19,7 +19,7 @@ type ICefStringMultiMap struct {
 	ptr      unsafe.Pointer
 }
 
-//header map
+// header map
 func (m *ICefStringMultiMap) GetSize() int {
 	return cefHeaderMap_GetSize(m.instance)
 }
@@ -43,29 +43,29 @@ func (m *ICefStringMultiMap) Clear() {
 }
 
 func cefHeaderMap_GetSize(instance uintptr) int {
-	r1, _, _ := Proc(internale_cefHeaderMap_GetSize).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetSize).Call(instance)
 	return int(r1)
 }
 func cefHeaderMap_FindCount(instance uintptr, key string) int {
-	r1, _, _ := Proc(internale_cefHeaderMap_FindCount).Call(instance, api.PascalStr(key))
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_FindCount).Call(instance, api.PascalStr(key))
 	return int(r1)
 }
 func cefHeaderMap_GetEnumerate(instance uintptr, key string, valueIndex int) uintptr {
-	r1, _, _ := Proc(internale_cefHeaderMap_GetEnumerate).Call(instance, api.PascalStr(key), uintptr(valueIndex))
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetEnumerate).Call(instance, api.PascalStr(key), uintptr(valueIndex))
 	return r1
 }
 func cefHeaderMap_GetKey(instance uintptr, index int) uintptr {
-	r1, _, _ := Proc(internale_cefHeaderMap_GetKey).Call(instance, uintptr(index))
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetKey).Call(instance, uintptr(index))
 	return r1
 }
 func cefHeaderMap_GetValue(instance uintptr, index int) uintptr {
-	r1, _, _ := Proc(internale_cefHeaderMap_GetValue).Call(instance, uintptr(index))
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetValue).Call(instance, uintptr(index))
 	return r1
 }
 func cefHeaderMap_Append(instance uintptr, key, value string) uintptr {
-	r1, _, _ := Proc(internale_cefHeaderMap_Append).Call(instance, api.PascalStr(key), api.PascalStr(value))
+	r1, _, _ := imports.Proc(internale_cefHeaderMap_Append).Call(instance, api.PascalStr(key), api.PascalStr(value))
 	return r1
 }
 func cefHeaderMap_Clear(instance uintptr) {
-	Proc(internale_cefHeaderMap_Clear).Call(instance)
+	imports.Proc(internale_cefHeaderMap_Clear).Call(instance)
 }

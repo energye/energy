@@ -9,7 +9,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
 )
 
@@ -18,19 +18,19 @@ var (
 	lib_build_version string
 )
 
-//cef version
+// cef version
 func CEFVersion() string {
 	if cef_version == "" {
-		r1, _, _ := common.Proc(internale_CEFVersion).Call()
+		r1, _, _ := imports.Proc(internale_CEFVersion).Call()
 		cef_version = api.GoStr(r1)
 	}
 	return cef_version
 }
 
-//lib build version
+// lib build version
 func LibBuildVersion() string {
 	if lib_build_version == "" {
-		r1, _, _ := common.Proc(internale_LibBuildVersion).Call()
+		r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
 		lib_build_version = api.GoStr(r1)
 	}
 	return lib_build_version

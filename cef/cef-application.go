@@ -10,7 +10,8 @@ package cef
 
 import (
 	"fmt"
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -38,7 +39,7 @@ func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
 	}
 	cfg.framework()
 	application = new(TCEFApplication)
-	r1, _, _ := Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
+	r1, _, _ := imports.Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
 	application.instance = unsafe.Pointer(r1)
 	application.cfg = cfg
 
@@ -68,8 +69,8 @@ func (m *TCEFApplication) Instance() uintptr {
 // 启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nullptr {
-		logger.Debug("application single exe,", Args.ProcessType(), "process start")
-		r1, _, _ := Proc(internale_CEFStartMainProcess).Call(m.Instance())
+		logger.Debug("application single exe,", common.Args.ProcessType(), "process start")
+		r1, _, _ := imports.Proc(internale_CEFStartMainProcess).Call(m.Instance())
 		return api.GoBool(r1)
 	}
 	return false
@@ -78,8 +79,8 @@ func (m *TCEFApplication) StartMainProcess() bool {
 // 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nullptr {
-		logger.Debug("application multiple exe,", Args.ProcessType(), "process start")
-		r1, _, _ := Proc(internale_CEFStartSubProcess).Call(m.Instance())
+		logger.Debug("application multiple exe,", common.Args.ProcessType(), "process start")
+		r1, _, _ := imports.Proc(internale_CEFStartSubProcess).Call(m.Instance())
 		result = api.GoBool(r1)
 	}
 	return false
@@ -91,31 +92,31 @@ func (m *TCEFApplication) RunMessageLoop() {
 		api.EnergyLibRelease()
 	}()
 	logger.Debug("application run message loop start")
-	Proc(internale_CEFApplication_RunMessageLoop).Call()
+	imports.Proc(internale_CEFApplication_RunMessageLoop).Call()
 }
 
 func (m *TCEFApplication) QuitMessageLoop() {
 	logger.Debug("application quit message loop")
-	Proc(internale_CEFApplication_QuitMessageLoop).Call()
+	imports.Proc(internale_CEFApplication_QuitMessageLoop).Call()
 }
 
 func (m *TCEFApplication) StopScheduler() {
-	Proc(internale_CEFApplication_StopScheduler).Call()
+	imports.Proc(internale_CEFApplication_StopScheduler).Call()
 }
 
 func (m *TCEFApplication) Destroy() {
-	Proc(internale_CEFApplication_Destroy).Call()
+	imports.Proc(internale_CEFApplication_Destroy).Call()
 }
 
 func (m *TCEFApplication) Free() {
 	if m.instance != nullptr {
-		Proc(internale_CEFApplication_Free).Call()
+		imports.Proc(internale_CEFApplication_Free).Call()
 		m.instance = nullptr
 	}
 }
 
 func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
-	Proc(internale_CEFApplication_ExecuteJS).Call()
+	imports.Proc(internale_CEFApplication_ExecuteJS).Call()
 }
 
 // 上下文件创建回调
@@ -124,7 +125,7 @@ func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
 //
 // 对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
-	Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) defaultSetOnContextCreated() {
@@ -134,17 +135,17 @@ func (m *TCEFApplication) defaultSetOnContextCreated() {
 }
 
 func (m *TCEFApplication) SetOnContextInitialized(fn GlobalCEFAppEventOnContextInitialized) {
-	Proc(internale_CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
 // 初始化设置全局回调
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
-	Proc(internale_CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
 // 进程间通信处理消息接收
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
-	Proc(internale_CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
 }
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ipc.ICefProcessMessage) bool {
@@ -153,39 +154,39 @@ func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 }
 
 func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
-	Proc(internale_AddCustomCommandLine).Call(api.PascalStr(commandLine), api.PascalStr(value))
+	imports.Proc(internale_AddCustomCommandLine).Call(api.PascalStr(commandLine), api.PascalStr(value))
 }
 
 // 启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
-	Proc(internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
 func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
 	m.SetOnBeforeChildProcessLaunch(func(commandLine *TCefCommandLine) {})
 }
 
 func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDestroyed) {
-	Proc(internale_CEFGlobalApp_SetOnBrowserDestroyed).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnBrowserDestroyed).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-	Proc(internale_CEFGlobalApp_SetOnLoadStart).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnLoadStart).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
-	Proc(internale_CEFGlobalApp_SetOnLoadEnd).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnLoadEnd).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
-	Proc(internale_CEFGlobalApp_SetOnLoadError).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnLoadError).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
-	Proc(internale_CEFGlobalApp_SetOnLoadingStateChange).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnLoadingStateChange).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnGetDefaultClient(fn GlobalCEFAppEventOnGetDefaultClient) {
-	Proc(internale_CEFGlobalApp_SetOnGetDefaultClient).Call(api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFGlobalApp_SetOnGetDefaultClient).Call(api.MakeEventDataPtr(fn))
 }
 
 func init() {
@@ -203,7 +204,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browser, frame, TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
@@ -213,7 +214,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browser, frame, int32(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadError:
@@ -223,7 +224,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadingStateChange:
@@ -233,7 +234,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case RenderProcessMessageReceived:
@@ -243,7 +244,7 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(3))
 			args := ipc.NewArgumentList()
@@ -267,13 +268,13 @@ func init() {
 				Browser: browser,
 				Name:    api.GoStr(tempFrame.Name),
 				Url:     api.GoStr(tempFrame.Url),
-				Id:      StrToInt64(api.GoStr(tempFrame.Identifier)),
+				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
 			}
 			if strings.Index(frame.Url, "devtools://") == 0 {
-				processName = PT_DEVTOOLS
+				processName = common.PT_DEVTOOLS
 				return true
 			} else {
-				processName = Args.ProcessType()
+				processName = common.Args.ProcessType()
 			}
 			v8ctx := (*iCefV8ContextPtr)(getPtr(2))
 			ctx := &ICefV8Context{

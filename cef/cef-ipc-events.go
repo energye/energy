@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -59,7 +60,7 @@ type rIPCEventParam struct {
 }
 
 func cefIPCInit() {
-	setCefIPCCallbackFunc = common.Proc(internale_SetCEFIPCCallbackFunc)
+	setCefIPCCallbackFunc = imports.Proc(internale_SetCEFIPCCallbackFunc)
 	setCefIPCCallbackFunc.Call(cefIPCCallbackFuncEvent)
 }
 
@@ -93,7 +94,7 @@ func cefIPCEventProc(fnType uintptr, args uintptr, argsLen int) uintptr {
 	return 0
 }
 
-//ipc - go emit js on event
+// ipc - go emit js on event
 func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args uintptr) {
 	inArgument := ipc.NewArgumentList()
 	inArgument.SetBool(1, true)
@@ -133,7 +134,7 @@ func ipcGoEmitJS(ipcId int32, triggerMode TriggerMode, result *rGoResult, args u
 	}
 }
 
-//ipc - js emit go on event
+// ipc - js emit go on event
 func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	getVal := func(i int) uintptr {
 		return common.GetParamOf(i, args)
@@ -279,13 +280,14 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 	}
 }
 
-//检索绑定的JsValue
-//返回值
-//	bindType 绑定类型 0通用类型，1对象类型
-//  fullName 绑定全名称
-//	vType	 js绑定值类型
-//	eventID  事件ID
-//  exception 错误码
+// 检索绑定的JsValue
+// 返回值
+//
+//		bindType 绑定类型 0通用类型，1对象类型
+//	 fullName 绑定全名称
+//		vType	 js绑定值类型
+//		eventID  事件ID
+//	 exception 错误码
 func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32, CEF_V8_EXCEPTION) {
 	if fullName == "" {
 		return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD

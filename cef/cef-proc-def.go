@@ -8,16 +8,15 @@
 
 package cef
 
-import "github.com/energye/golcl/lcl/api/dllimports"
+import (
+	"github.com/energye/energy/common/imports"
+	"github.com/energye/golcl/lcl/api/dllimports"
+)
 
 func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
-		//LCL Energy Extend
-		dllimports.NewEnergyImport("Ext_Panel_GetBevelColor", 0),
-		dllimports.NewEnergyImport("Ext_Panel_SetBevelColor", 0),
-		dllimports.NewEnergyImport("Ext_ReadStringProperty", 0),
 		//CEF
 		dllimports.NewEnergyImport("CEFVersion", 0),
 		dllimports.NewEnergyImport("LibBuildVersion", 0),
@@ -561,16 +560,12 @@ func init() {
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAccelerator", 0),
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAllAccelerators", 0),
 	}
-	dllimports.SetEnergyImportDefs(energyImportDefs)
+	imports.SetEnergyImportDefs(energyImportDefs)
 }
 
 const (
 	//null nil
 	internale_null_nil = iota
-	//LCL Energy Extend
-	internale_Ext_Panel_GetBevelColor
-	internale_Ext_Panel_SetBevelColor
-	internale_Ext_ReadStringProperty
 	//CEF
 	internale_CEFVersion
 	internale_LibBuildVersion

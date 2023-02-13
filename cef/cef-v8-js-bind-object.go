@@ -12,6 +12,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -22,7 +23,7 @@ import (
 
 var objectSti = new(structTypeInfo)
 
-//函数详情 1.参数个数 2.每个参数类型 3.返回参数类型
+// 函数详情 1.参数个数 2.每个参数类型 3.返回参数类型
 type funcInfo struct {
 	InNum          int32   `json:"inNum"`
 	InParam        []*vt   `json:"inParam"`
@@ -38,13 +39,13 @@ type vt struct {
 	Gov GO_VALUE_TYPE    `json:"gov"`
 }
 
-//结构类型信息，结构的字段信息和方法函数信息
+// 结构类型信息，结构的字段信息和方法函数信息
 type structTypeInfo struct {
 	StructsObject map[string]*structObjectInfo //分析后的 有关系的结构信息
 	//v8Value       *ICEFv8Value
 }
 
-//分析后的 结构信息
+// 分析后的 结构信息
 type structObjectInfo struct {
 	Instance            uintptr                      `json:"instance"`
 	ParentInstance      uintptr                      `json:"parentInstance"`
@@ -57,7 +58,7 @@ type structObjectInfo struct {
 	SubStructObjectInfo map[string]*structObjectInfo `json:"subStructObjectInfo"` //子对象信息
 }
 
-//结构的字段信息
+// 结构的字段信息
 type structFieldInfo struct {
 	EventId    uintptr        `json:"event_id"`
 	ValueType  *vt            `json:"valueType"` //字段类型，go 和 js
@@ -103,8 +104,8 @@ func (m *vt) IsGoFloatAuto() bool {
 	return false
 }
 
-//ICefV8Context BindObject
-//对应Golang，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
+// ICefV8Context BindObject
+// 对应Golang，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
 func bindObject(objects ...interface{}) {
 	objectSti.StructsObject = make(map[string]*structObjectInfo, len(objects))
 	for i := 0; i < len(objects); i++ {
@@ -124,7 +125,7 @@ func bindObject(objects ...interface{}) {
 
 //对象字段和函数统计
 
-//对象转换 go to cef
+// 对象转换 go to cef
 func (m *structTypeInfo) _objectToCefObject() {
 	for _, info := range m.StructsObject {
 		m._subInfoToCefObject(info)
@@ -206,20 +207,20 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 		FuncLen:     uintptr(funcLen),
 		Funcs:       funcPtr,
 	}
-	common.Proc(internale_CEFV8ValueRef_ObjectValueBindInfo).Call(uintptr(unsafe.Pointer(co)))
+	imports.Proc(internale_CEFV8ValueRef_ObjectValueBindInfo).Call(uintptr(unsafe.Pointer(co)))
 }
 
-//创建 结构对象的字段变量
+// 创建 结构对象的字段变量
 func (m *structTypeInfo) createObjectFieldVariable(fullParentName, fieldName string, sfi *structFieldInfo) {
 	newICEFv8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType.Jsv, IS_OBJECT)
 }
 
-//创建 结构对象的函数变量
+// 创建 结构对象的函数变量
 func (m *structTypeInfo) createObjectFuncVariable(fullParentName, funcName string, sfi *structFuncInfo) {
 	newICEFv8Value(sfi.EventId, fullParentName, funcName, nil, sfi, V8_VALUE_FUNCTION, IS_OBJECT)
 }
 
-//分析对象的字段
+// 分析对象的字段
 func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.Type, value reflect.Value) {
 	if m.Parent == nil {
 		m.ObjName = typ.Name()
@@ -278,8 +279,8 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 	m.analysisObjectMethod(typPtr, value)
 }
 
-//分析对象的函数方法
-//不符合js类型的函数的参数，不会被解析成js函数
+// 分析对象的函数方法
+// 不符合js类型的函数的参数，不会被解析成js函数
 func (m *structObjectInfo) analysisObjectMethod(typPtr reflect.Type, value reflect.Value) {
 	m.FuncsInfo = make(map[string]*structFuncInfo)
 	for idx := 0; idx < typPtr.NumMethod(); idx++ {

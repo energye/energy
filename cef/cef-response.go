@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -75,44 +75,44 @@ func (m *ICefResponse) GetHeaderMap() *ICefStringMultiMap {
 }
 
 func cefResponse_IsReadOnly(instance uintptr) uintptr {
-	r1, _, _ := Proc(internale_cefResponse_IsReadOnly).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefResponse_IsReadOnly).Call(instance)
 	return r1
 }
 
 func cefResponse_SetError(instance uintptr, error TCefErrorCode) {
-	Proc(internale_cefResponse_SetError).Call(instance, error.ToPtr())
+	imports.Proc(internale_cefResponse_SetError).Call(instance, error.ToPtr())
 }
 
 func cefResponse_SetStatus(instance uintptr, error int32) {
-	Proc(internale_cefResponse_SetStatus).Call(instance, uintptr(error))
+	imports.Proc(internale_cefResponse_SetStatus).Call(instance, uintptr(error))
 }
 
 func cefResponse_SetStatusText(instance uintptr, statusText string) {
-	Proc(internale_cefResponse_SetStatusText).Call(instance, api.PascalStr(statusText))
+	imports.Proc(internale_cefResponse_SetStatusText).Call(instance, api.PascalStr(statusText))
 }
 
 func cefResponse_SetMimeType(instance uintptr, mimetype string) {
-	Proc(internale_cefResponse_SetMimeType).Call(instance, api.PascalStr(mimetype))
+	imports.Proc(internale_cefResponse_SetMimeType).Call(instance, api.PascalStr(mimetype))
 }
 
 func cefResponse_SetCharset(instance uintptr, charset string) {
-	Proc(internale_cefResponse_SetCharset).Call(instance, api.PascalStr(charset))
+	imports.Proc(internale_cefResponse_SetCharset).Call(instance, api.PascalStr(charset))
 }
 
 func cefResponse_GetHeaderByName(instance uintptr, name string) uintptr {
-	r1, _, _ := Proc(internale_cefResponse_GetHeaderByName).Call(instance, api.PascalStr(name))
+	r1, _, _ := imports.Proc(internale_cefResponse_GetHeaderByName).Call(instance, api.PascalStr(name))
 	return r1
 }
 
 func cefResponse_SetHeaderByName(instance uintptr, name, value string, overwrite bool) {
-	Proc(internale_cefResponse_SetHeaderByName).Call(instance, api.PascalStr(name), api.PascalStr(value), api.PascalBool(overwrite))
+	imports.Proc(internale_cefResponse_SetHeaderByName).Call(instance, api.PascalStr(name), api.PascalStr(value), api.PascalBool(overwrite))
 }
 
 func cefResponse_SetURL(instance uintptr, url string) {
-	Proc(internale_cefResponse_SetURL).Call(instance, api.PascalStr(url))
+	imports.Proc(internale_cefResponse_SetURL).Call(instance, api.PascalStr(url))
 }
 
 func cefResponse_GetHeaderMap(instance uintptr) uintptr {
-	r1, _, _ := Proc(internale_cefResponse_GetHeaderMap).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefResponse_GetHeaderMap).Call(instance)
 	return r1
 }

@@ -1,7 +1,7 @@
 package ide
 
 import (
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/pkgs/ext"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
@@ -87,7 +87,7 @@ func (m *anchor) newAnchorPoint(owner lcl.IWinControl, ht int32) *lcl.TPanel {
 	point.SetParent(owner)
 	point.SetBevelInner(types.BvSpace)
 	point.SetBevelOuter(types.BvNone)
-	cef.SetPanelBevelColor(point, colors.ClBlack)
+	ext.SetPanelBevelColor(point, colors.ClBlack)
 	point.SetColor(colors.ClTeal)
 	point.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
 		m.component.borderHT = ht

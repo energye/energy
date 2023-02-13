@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -41,7 +41,7 @@ type rICefRequest struct {
 	Identifier           uintptr //uint64
 }
 
-//request
+// request
 func (m *ICefRequest) IsReadOnly() bool {
 	return api.GoBool(cefRequest_IsReadOnly(uintptr(m.instance)))
 }
@@ -85,47 +85,47 @@ func (m *ICefRequest) SetHeaderMap(headerMap *ICefStringMultiMap) {
 	cefRequest_SetHeaderMap(uintptr(m.instance), headerMap.instance)
 }
 
-//request
+// request
 func cefRequest_IsReadOnly(instance uintptr) uintptr {
-	r1, _, _ := Proc(internale_cefRequest_IsReadOnly).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefRequest_IsReadOnly).Call(instance)
 	return r1
 }
 
 func cefRequest_SetUrl(instance uintptr, url string) {
-	Proc(internale_cefRequest_SetUrl).Call(instance, api.PascalStr(url))
+	imports.Proc(internale_cefRequest_SetUrl).Call(instance, api.PascalStr(url))
 }
 
 func cefRequest_SetMethod(instance uintptr, method string) {
-	Proc(internale_cefRequest_SetMethod).Call(instance, api.PascalStr(method))
+	imports.Proc(internale_cefRequest_SetMethod).Call(instance, api.PascalStr(method))
 }
 
 func cefRequest_SetReferrer(instance uintptr, referrerUrl string, policy TCefReferrerPolicy) {
-	Proc(internale_cefRequest_SetReferrer).Call(instance, api.PascalStr(referrerUrl), uintptr(policy))
+	imports.Proc(internale_cefRequest_SetReferrer).Call(instance, api.PascalStr(referrerUrl), uintptr(policy))
 }
 
 func cefRequest_SetFlags(instance uintptr, flags TCefUrlRequestFlags) {
-	Proc(internale_cefRequest_SetFlags).Call(instance, uintptr(flags))
+	imports.Proc(internale_cefRequest_SetFlags).Call(instance, uintptr(flags))
 }
 
 func cefRequest_SetFirstPartyForCookies(instance uintptr, url string) {
-	Proc(internale_cefRequest_SetFirstPartyForCookies).Call(instance, api.PascalStr(url))
+	imports.Proc(internale_cefRequest_SetFirstPartyForCookies).Call(instance, api.PascalStr(url))
 }
 
 func cefRequest_GetHeaderByName(instance uintptr, name string) uintptr {
-	r1, _, _ := Proc(internale_cefRequest_GetHeaderByName).Call(instance, api.PascalStr(name))
+	r1, _, _ := imports.Proc(internale_cefRequest_GetHeaderByName).Call(instance, api.PascalStr(name))
 	return r1
 }
 
 func cefRequest_SetHeaderByName(instance uintptr, url, value string, overwrite bool) {
-	Proc(internale_cefRequest_SetHeaderByName).Call(instance, api.PascalStr(url), api.PascalStr(value), api.PascalBool(overwrite))
+	imports.Proc(internale_cefRequest_SetHeaderByName).Call(instance, api.PascalStr(url), api.PascalStr(value), api.PascalBool(overwrite))
 }
 
 func cefRequest_GetHeaderMap(instance uintptr) uintptr {
-	r1, _, _ := Proc(internale_cefRequest_GetHeaderMap).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefRequest_GetHeaderMap).Call(instance)
 	return r1
 }
 
 func cefRequest_SetHeaderMap(instance, headerMap uintptr) uintptr {
-	r1, _, _ := Proc(internale_cefRequest_SetHeaderMap).Call(instance, headerMap)
+	r1, _, _ := imports.Proc(internale_cefRequest_SetHeaderMap).Call(instance, headerMap)
 	return r1
 }

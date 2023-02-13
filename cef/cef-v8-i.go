@@ -10,7 +10,7 @@ package cef
 
 import (
 	"bytes"
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
@@ -62,11 +62,11 @@ type JSValue interface {
 	UnLock()
 }
 
-//ICefV8Context bindGoToJS
+// ICefV8Context bindGoToJS
 //
-//主进程创建完之后和渲染进程每次创建之后调用
+// 主进程创建完之后和渲染进程每次创建之后调用
 //
-//潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
+// 潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
 func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//变量绑定回调函数
 	VariableBind.callVariableBind(browser, frame)
@@ -110,7 +110,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	}
 	if len(valueBindInfos) > 0 {
 		for i := 0; i < len(valueBindInfos); i++ {
-			common.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
+			imports.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
 		}
 	}
 }

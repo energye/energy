@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"unsafe"
 )
 
@@ -18,9 +18,9 @@ type ICefCallback struct {
 }
 
 func (m *ICefCallback) Cont() {
-	Proc(internale_cefCallback_Cont).Call(uintptr(m.instance))
+	imports.Proc(internale_cefCallback_Cont).Call(uintptr(m.instance))
 }
 
 func (m *ICefCallback) Cancel() {
-	Proc(internale_cefCallback_Cancel).Call(uintptr(m.instance))
+	imports.Proc(internale_cefCallback_Cancel).Call(uintptr(m.instance))
 }

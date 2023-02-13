@@ -15,8 +15,6 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/decimal"
-	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"reflect"
 	"runtime"
@@ -48,10 +46,6 @@ const (
 	isSolaris   = runtime.GOOS == "solaris"   //not support
 	isZos       = runtime.GOOS == "zos"       //not support
 )
-
-func Proc(index int) dllimports.ProcAddr {
-	return api.EnergyDefSyscallN(index)
-}
 
 func IsWindows() bool {
 	return isWindows
@@ -650,7 +644,7 @@ func BytesToString(data []byte) string {
 //	return *(*[]byte)(unsafe.Pointer(&data))
 //}
 
-//String转换Bytes数组，isDStr转换DString 默认GoString
+// String转换Bytes数组，isDStr转换DString 默认GoString
 func StringToBytes(s string, isDStr ...bool) []byte {
 	if len(isDStr) > 0 && isDStr[0] {
 		temp := []byte(s)
@@ -662,7 +656,7 @@ func StringToBytes(s string, isDStr ...bool) []byte {
 	}
 }
 
-//Float64ToBytes Float64转byte
+// Float64ToBytes Float64转byte
 func Float64ToBytes(float float64) []byte {
 	bits := math.Float64bits(float)
 	bytes := make([]byte, 8)
@@ -670,13 +664,13 @@ func Float64ToBytes(float float64) []byte {
 	return bytes
 }
 
-//BytesToFloat64 byte转Float64
+// BytesToFloat64 byte转Float64
 func BytesToFloat64(bytes []byte) float64 {
 	bits := binary.LittleEndian.Uint64(bytes)
 	return math.Float64frombits(bits)
 }
 
-//Float32ToBytes Float64转byte
+// Float32ToBytes Float64转byte
 func Float32ToBytes(float float32) []byte {
 	bits := math.Float32bits(float)
 	bytes := make([]byte, 4)
@@ -684,7 +678,7 @@ func Float32ToBytes(float float32) []byte {
 	return bytes
 }
 
-//BytesToFloat32 byte转Float64
+// BytesToFloat32 byte转Float64
 func BytesToFloat32(bytes []byte) float32 {
 	bits := binary.LittleEndian.Uint32(bytes)
 	return math.Float32frombits(bits)
@@ -750,13 +744,13 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 	return -1
 }
 
-//获取指针的指针的地址
+// 获取指针的指针的地址
 func GetInstancePtr(ptr uintptr) unsafe.Pointer {
 	ptr = *(*uintptr)(unsafe.Pointer(ptr))
 	return unsafe.Pointer(ptr)
 }
 
-//GoroutineID 获取当前携程ID
+// GoroutineID 获取当前携程ID
 func GoroutineID() (id uint64) {
 	var buf [30]byte
 	runtime.Stack(buf[:], false)

@@ -10,7 +10,7 @@ package cef
 
 //应用主线程异步回调
 import (
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api/dllimports"
 	"math"
 	"sync"
@@ -22,7 +22,7 @@ var (
 )
 
 func applicationQueueAsyncCallInit() {
-	applicationQueueAsyncCallFunc = common.Proc(internale_SetApplicationQueueAsyncCallFunc)
+	applicationQueueAsyncCallFunc = imports.Proc(internale_SetApplicationQueueAsyncCallFunc)
 	applicationQueueAsyncCallFunc.Call(applicationQueueAsyncCallEvent)
 }
 
@@ -59,7 +59,7 @@ func QueueAsyncCall(fn qacFn) int {
 		IsSync: false,
 		Fn:     fn,
 	})
-	common.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
+	imports.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
 	return int(id)
 }
 
@@ -80,7 +80,7 @@ func QueueSyncCall(fn qacFn) int {
 	}
 	qc.Wg.Add(1)
 	id := qac.set(qc)
-	common.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
+	imports.Proc(internale_CEFApplication_QueueAsyncCall).Call(id)
 	qc.Wg.Wait()
 	qc.Fn = nil
 	qc.Wg = nil

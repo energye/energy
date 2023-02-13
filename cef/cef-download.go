@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"time"
 	"unsafe"
@@ -110,5 +110,5 @@ func (m *ICefDownloadItemCallback) DownloadResume(browseId, downloadId int32) {
 //
 // showDialog 显示保存窗口
 func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) {
-	Proc(internale_CEFChromium_SetDownloadPath).Call(uintptr(m.instance), api.PascalStr(downloadPath), api.PascalBool(showDialog))
+	imports.Proc(internale_CEFChromium_SetDownloadPath).Call(uintptr(m.instance), api.PascalStr(downloadPath), api.PascalBool(showDialog))
 }

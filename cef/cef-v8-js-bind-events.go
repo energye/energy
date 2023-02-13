@@ -10,6 +10,7 @@ package cef
 
 import (
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
@@ -25,7 +26,7 @@ var (
 
 func cefV8WindowBindFuncEventsInit() {
 	// 初始设置回调函数指针
-	setCefWindowBindCallbackFunc = common.Proc(internale_SetCEFWindowBindCallbackFunc)
+	setCefWindowBindCallbackFunc = imports.Proc(internale_SetCEFWindowBindCallbackFunc)
 	setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
 }
 
@@ -42,7 +43,7 @@ func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintpt
 	return 0
 }
 
-//字段处理
+// 字段处理
 func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
@@ -210,7 +211,7 @@ func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePr
 	return ""
 }
 
-//函数处理
+// 函数处理
 func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr

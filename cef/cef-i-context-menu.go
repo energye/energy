@@ -10,13 +10,14 @@ package cef
 
 import (
 	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
 	"strings"
 	"unsafe"
 )
 
-//快捷键
+// 快捷键
 var KeyAccelerator = &keyEventAccelerator{
 	menuId:            MENU_ID_USER_FIRST,                  //menuId的启始位置
 	commandItems:      make(map[MenuId]*MenuItem),          //右键菜单命令ID快捷键
@@ -84,7 +85,7 @@ type MenuItem struct {
 	Callback    FuncCallback //点击 或 快捷键触发的回调
 }
 
-//添加自定义快捷键
+// 添加自定义快捷键
 func (m *keyEventAccelerator) AddAcceleratorCustom(accelerator *AcceleratorCustom) {
 	if accelerator == nil {
 		return
@@ -111,13 +112,13 @@ func (m *keyEventAccelerator) acceleratorCustomCallback(accelerator string, brow
 	return false
 }
 
-//生成并返回下一个快捷键ID
+// 生成并返回下一个快捷键ID
 func (m *keyEventAccelerator) NextCommandId() MenuId {
 	m.menuId++
 	return m.menuId
 }
 
-//当前快捷键ID
+// 当前快捷键ID
 func (m *keyEventAccelerator) CommandId() MenuId {
 	return m.menuId
 }
@@ -177,7 +178,7 @@ func (m *keyEventAccelerator) clear() {
 	m.acceleratorItems = make(map[string]*MenuItem)
 }
 
-//添加一个菜单项, 选项类型, 名称, commandId, 快捷键和触发函数
+// 添加一个菜单项, 选项类型, 名称, commandId, 快捷键和触发函数
 func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 	if item == nil {
 		return false
@@ -255,9 +256,9 @@ func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, 
 	return cefMenuModel_SetColor(uintptr(m.instance), commandId, colorType, color)
 }
 
-//func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
-//	return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
-//}
+//	func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
+//		return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
+//	}
 func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
 	return cefMenuModel_HasAccelerator(uintptr(m.instance), commandId)
 }
@@ -286,145 +287,145 @@ func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
 	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
 }
 
-//------------------------------------ PROC
-//ICefMenuModel cefMenuModel_AddSeparator
+// ------------------------------------ PROC
+// ICefMenuModel cefMenuModel_AddSeparator
 func cefMenuModel_AddSeparator(instance uintptr) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_AddSeparator).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefMenuModel_AddSeparator).Call(instance)
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_Clear
+// ICefMenuModel cefMenuModel_Clear
 func cefMenuModel_Clear(instance uintptr) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_Clear).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefMenuModel_Clear).Call(instance)
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_IsSubMenu
+// ICefMenuModel cefMenuModel_IsSubMenu
 func cefMenuModel_IsSubMenu(instance uintptr) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_IsSubMenu).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefMenuModel_IsSubMenu).Call(instance)
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_GetCount
+// ICefMenuModel cefMenuModel_GetCount
 func cefMenuModel_GetCount(instance uintptr) int32 {
-	r1, _, _ := Proc(internale_cefMenuModel_GetCount).Call(instance)
+	r1, _, _ := imports.Proc(internale_cefMenuModel_GetCount).Call(instance)
 	return int32(r1)
 }
 
-//ICefMenuModel cefMenuModel_AddItem
+// ICefMenuModel cefMenuModel_AddItem
 func cefMenuModel_AddItem(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_AddItem).Call(instance, uintptr(commandId), api.PascalStr(text))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_AddItem).Call(instance, uintptr(commandId), api.PascalStr(text))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_AddCheckItem
+// ICefMenuModel cefMenuModel_AddCheckItem
 func cefMenuModel_AddCheckItem(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_AddCheckItem).Call(instance, uintptr(commandId), api.PascalStr(text))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_AddCheckItem).Call(instance, uintptr(commandId), api.PascalStr(text))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_AddRadioItem
+// ICefMenuModel cefMenuModel_AddRadioItem
 func cefMenuModel_AddRadioItem(instance uintptr, commandId MenuId, text string, groupId int32) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_AddRadioItem).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(groupId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_AddRadioItem).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(groupId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_AddSubMenu
+// ICefMenuModel cefMenuModel_AddSubMenu
 func cefMenuModel_AddSubMenu(instance uintptr, commandId MenuId, text string) *ICefMenuModel {
 	var ret uintptr
-	Proc(internale_cefMenuModel_AddSubMenu).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
+	imports.Proc(internale_cefMenuModel_AddSubMenu).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
 	return &ICefMenuModel{
 		instance: unsafe.Pointer(ret),
 	}
 }
 
-//ICefMenuModel cefMenuModel_Remove
+// ICefMenuModel cefMenuModel_Remove
 func cefMenuModel_Remove(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_Remove).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_Remove).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_Remove
+// ICefMenuModel cefMenuModel_Remove
 func cefMenuModel_RemoveAt(instance uintptr, index int32) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_RemoveAt).Call(instance, uintptr(index))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_RemoveAt).Call(instance, uintptr(index))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetChecked
+// ICefMenuModel cefMenuModel_SetChecked
 func cefMenuModel_SetChecked(instance uintptr, commandId MenuId, check bool) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetChecked).Call(instance, uintptr(commandId), api.PascalBool(check))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetChecked).Call(instance, uintptr(commandId), api.PascalBool(check))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_IsChecked
+// ICefMenuModel cefMenuModel_IsChecked
 func cefMenuModel_IsChecked(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_IsChecked).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_IsChecked).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetColor
+// ICefMenuModel cefMenuModel_SetColor
 func cefMenuModel_SetColor(instance uintptr, commandId MenuId, colorType TCefMenuColorType, color *TCefARGB) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetColor).Call(instance, uintptr(commandId), uintptr(colorType), uintptr(color.ARGB()))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetColor).Call(instance, uintptr(commandId), uintptr(colorType), uintptr(color.ARGB()))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetFontList
+// ICefMenuModel cefMenuModel_SetFontList
 func cefMenuModel_SetFontList(instance uintptr, commandId MenuId, fontList string) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetFontList).Call(instance, uintptr(commandId), api.PascalStr(fontList))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetFontList).Call(instance, uintptr(commandId), api.PascalStr(fontList))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_HasAccelerator
+// ICefMenuModel cefMenuModel_HasAccelerator
 func cefMenuModel_HasAccelerator(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_HasAccelerator).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_HasAccelerator).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetAccelerator
+// ICefMenuModel cefMenuModel_SetAccelerator
 func cefMenuModel_SetAccelerator(instance uintptr, commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetAccelerator).Call(instance, uintptr(commandId), uintptr(keyCode),
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetAccelerator).Call(instance, uintptr(commandId), uintptr(keyCode),
 		api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_RemoveAccelerator
+// ICefMenuModel cefMenuModel_RemoveAccelerator
 func cefMenuModel_RemoveAccelerator(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_RemoveAccelerator).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_RemoveAccelerator).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_IsVisible
+// ICefMenuModel cefMenuModel_IsVisible
 func cefMenuModel_IsVisible(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_IsVisible).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_IsVisible).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetVisible
+// ICefMenuModel cefMenuModel_SetVisible
 func cefMenuModel_SetVisible(instance uintptr, commandId MenuId, visible bool) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetVisible).Call(instance, uintptr(commandId), api.PascalBool(visible))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetVisible).Call(instance, uintptr(commandId), api.PascalBool(visible))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_IsEnabled
+// ICefMenuModel cefMenuModel_IsEnabled
 func cefMenuModel_IsEnabled(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_IsEnabled).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_IsEnabled).Call(instance, uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetEnabled
+// ICefMenuModel cefMenuModel_SetEnabled
 func cefMenuModel_SetEnabled(instance uintptr, commandId MenuId, enabled bool) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetEnabled).Call(instance, uintptr(commandId), api.PascalBool(enabled))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetEnabled).Call(instance, uintptr(commandId), api.PascalBool(enabled))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_SetLabel
+// ICefMenuModel cefMenuModel_SetLabel
 func cefMenuModel_SetLabel(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := Proc(internale_cefMenuModel_SetLabel).Call(instance, uintptr(commandId), api.PascalStr(text))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_SetLabel).Call(instance, uintptr(commandId), api.PascalStr(text))
 	return api.GoBool(r1)
 }
 
-//ICefMenuModel cefMenuModel_GetIndexOf
+// ICefMenuModel cefMenuModel_GetIndexOf
 func cefMenuModel_GetIndexOf(instance uintptr, commandId MenuId) int32 {
-	r1, _, _ := Proc(internale_cefMenuModel_GetIndexOf).Call(instance, uintptr(commandId))
+	r1, _, _ := imports.Proc(internale_cefMenuModel_GetIndexOf).Call(instance, uintptr(commandId))
 	return int32(r1)
 }

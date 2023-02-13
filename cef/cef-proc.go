@@ -9,7 +9,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
+	"github.com/energye/energy/common/imports"
 )
 
 //--------TCEFWindowParent proc end--------
@@ -18,13 +18,13 @@ import (
 //
 // 没找到什么好的方式，只能这样设置
 func setMacOSXCommandLine(commandLine uintptr) {
-	Proc(internale_SetMacOSXCommandLine).Call(commandLine)
+	imports.Proc(internale_SetMacOSXCommandLine).Call(commandLine)
 }
 
 func AddGoForm(windowId int32, instance uintptr) {
-	Proc(internale_CEF_AddGoForm).Call(uintptr(windowId), instance)
+	imports.Proc(internale_CEF_AddGoForm).Call(uintptr(windowId), instance)
 }
 
 func RemoveGoForm(windowId int32) {
-	Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
+	imports.Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
 }
