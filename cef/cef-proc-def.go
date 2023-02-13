@@ -17,6 +17,7 @@ func init() {
 		//LCL Energy Extend
 		dllimports.NewEnergyImport("Ext_Panel_GetBevelColor", 0),
 		dllimports.NewEnergyImport("Ext_Panel_SetBevelColor", 0),
+		dllimports.NewEnergyImport("Ext_ReadStringProperty", 0),
 		//CEF
 		dllimports.NewEnergyImport("CEFVersion", 0),
 		dllimports.NewEnergyImport("LibBuildVersion", 0),
@@ -569,6 +570,7 @@ const (
 	//LCL Energy Extend
 	internale_Ext_Panel_GetBevelColor
 	internale_Ext_Panel_SetBevelColor
+	internale_Ext_ReadStringProperty
 	//CEF
 	internale_CEFVersion
 	internale_LibBuildVersion

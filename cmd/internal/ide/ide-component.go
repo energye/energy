@@ -53,23 +53,6 @@ func (m *IDEComponent) createAnchor() {
 	m.anchor.refreshAnchorsPoint()
 }
 
-//func (m *IDEComponent) refreshAnchorsPoint() {
-//	if m.anchor == nil {
-//		return
-//	}
-//	if m.anchor.isShow {
-//		rect := m.parentToControl().BoundsRect()
-//		m.anchor.left.SetBounds(rect.Left-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
-//		m.anchor.top.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Top-pointWC, pointW, pointW)
-//		m.anchor.bottom.SetBounds(rect.Left+rect.Width()/2-pointWC, rect.Bottom-pointWC, pointW, pointW)
-//		m.anchor.right.SetBounds(rect.Right-pointWC, rect.Top+rect.Height()/2-pointWC, pointW, pointW)
-//		m.anchor.topLeft.SetBounds(rect.Left-pointWC, rect.Top-pointWC, pointW, pointW)
-//		m.anchor.topRight.SetBounds(rect.Right-pointWC, rect.Top-pointWC, pointW, pointW)
-//		m.anchor.bottomLeft.SetBounds(rect.Left-pointWC, rect.Bottom-pointWC, pointW, pointW)
-//		m.anchor.bottomRight.SetBounds(rect.Right-pointWC, rect.Bottom-pointWC, pointW, pointW)
-//	}
-//}
-
 func (m *IDEComponent) setBorderColor(color types.TColor) {
 	if m == nil || m.borderPanel == nil {
 		return
