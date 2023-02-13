@@ -166,11 +166,8 @@ func (m *IDEComponent) mouseDown(sender lcl.IObject, button types.TMouseButton, 
 		m.dx = x
 		m.dy = y
 		if m.componentType == ctForm {
-			for _, form := range Ide.forms {
-				if form.active != nil {
-					form.active.clearBorderColor()
-				}
-			}
+			Ide.forms[m.Id].active.clearBorderColor()
+			Ide.forms[m.Id].active = nil
 		} else {
 			m.switchActive(m)
 		}

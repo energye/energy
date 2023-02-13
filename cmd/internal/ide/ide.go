@@ -209,7 +209,6 @@ func (m *IDE) initTopMainMenu() {
 		form.CreateImage()
 		form.CreateLabel()
 		form.CreateButton()
-
 		println("CreateForm:", form)
 	})
 
