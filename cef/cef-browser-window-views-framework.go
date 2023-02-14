@@ -38,9 +38,10 @@ type ViewsFrameworkBrowserWindow struct {
 	frames               TCEFFrame                         //当前浏览器下的所有frame
 	auxTools             *auxTools                         //辅助工具
 	tray                 ITray                             //托盘
-	doOnWindowCreated    WindowComponentOnWindowCreated    //
+	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
 	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
+	windowState          types.TWindowState                //窗口状态
 }
 
 // 创建 ViewsFrameworkBrowserWindow 窗口
@@ -467,8 +468,24 @@ func (m *ViewsFrameworkBrowserWindow) Close() {
 	m.WindowComponent().Close()
 }
 
+func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
+	if m.windowComponent.IsMinimized() {
+		return types.WsMinimized
+	} else if m.windowComponent.IsMaximized() {
+		return types.WsMaximized
+	} else if m.windowComponent.IsFullscreen() {
+		return types.WsFullScreen
+	}
+	return types.WsNormal
+}
+
 func (m *ViewsFrameworkBrowserWindow) Maximize() {
-	m.WindowComponent().Maximize()
+	m.windowState = m.WindowState()
+	if m.windowState == types.WsNormal {
+		m.WindowComponent().Maximize()
+	} else {
+		m.Restore()
+	}
 }
 
 func (m *ViewsFrameworkBrowserWindow) Minimize() {

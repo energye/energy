@@ -50,7 +50,7 @@ type LCLBrowserWindow struct {
 	auxTools         *auxTools            //辅助工具
 	tray             ITray                //托盘
 	hWnd             types.HWND           //
-	windowsState     types.TWindowState   //
+	windowState      types.TWindowState   //窗口状态
 	cwcap            *customWindowCaption //自定义窗口标题栏
 }
 
@@ -513,6 +513,10 @@ func (m *LCLBrowserWindow) Minimize() {
 	QueueAsyncCall(func(id int) {
 		m.SetWindowState(types.WsMinimized)
 	})
+}
+
+func (m *LCLBrowserWindow) Restore() {
+	m.SetWindowState(types.WsNormal)
 }
 
 // 关闭带有浏览器的窗口

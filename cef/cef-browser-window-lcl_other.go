@@ -16,7 +16,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-//TODO no
+// TODO no
 type customWindowCaption struct {
 	bw      *LCLBrowserWindow
 	regions *TCefDraggableRegions
@@ -26,7 +26,7 @@ func (m *customWindowCaption) free() {
 	//TODO no
 }
 
-//显示标题栏
+// 显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	if m.TForm == nil {
 		return
@@ -34,7 +34,7 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	m.TForm.SetBorderStyle(types.BsSizeable)
 }
 
-//隐藏标题栏
+// 隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
 	if m.TForm == nil {
 		return
@@ -50,7 +50,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 func (m *LCLBrowserWindow) setDraggableRegions() {
 }
 
-//for other platform maximize and restore
+// for other platform maximize and restore
 func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
@@ -61,7 +61,7 @@ func (m *LCLBrowserWindow) Maximize() {
 		if m.windowProperty == nil {
 			m.windowProperty = &WindowProperty{}
 		}
-		if bs == types.BsNone || bs == types.BsSingle { //不能调整窗口大，所以手动控制窗口大小
+		if bs == types.BsNone || bs == types.BsSingle { //不能调整窗口大，所以手动控制窗口状态
 			var ws = m.WindowState()
 			var redWindowState types.TWindowState
 			//默认状态0

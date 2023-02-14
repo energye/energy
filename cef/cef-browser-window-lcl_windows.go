@@ -202,8 +202,8 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			*lResult = HTCAPTION
 			*aHandled = true
 			win.ReleaseCapture()
-			m.windowsState = m.WindowState()
-			if m.windowsState == types.WsNormal {
+			m.windowState = m.WindowState()
+			if m.windowState == types.WsNormal {
 				rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
 			} else {
 				rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)
@@ -303,8 +303,8 @@ func (m *LCLBrowserWindow) Maximize() {
 	}
 	QueueAsyncCall(func(id int) {
 		win.ReleaseCapture()
-		m.windowsState = m.WindowState()
-		if m.windowsState == types.WsNormal {
+		m.windowState = m.WindowState()
+		if m.windowState == types.WsNormal {
 			rtl.PostMessage(m.Handle(), WM_SYSCOMMAND, SC_MAXIMIZE, 0)
 		} else {
 			rtl.SendMessage(m.Handle(), WM_SYSCOMMAND, SC_RESTORE, 0)

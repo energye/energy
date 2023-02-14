@@ -66,6 +66,7 @@ type IBrowserWindow interface {
 	Hide()                                                       //隐藏窗口
 	Maximize()                                                   //窗口最大化
 	Minimize()                                                   //窗口最小化
+	Restore()                                                    //窗口还原
 	Close()                                                      //关闭窗口
 	CloseBrowserWindow()                                         //关闭浏览器窗口
 	WindowType() consts.WINDOW_TYPE                              //窗口类型

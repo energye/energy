@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl/api"
+	t "github.com/energye/golcl/lcl/types"
 	"io/ioutil"
 	"unsafe"
 )
@@ -63,6 +64,17 @@ func (m *ICefWindow) SetAlwaysOnTop(onTop bool) {
 func (m *ICefWindow) IsAlwaysOnTop() bool {
 	r1, _, _ := imports.Proc(internale_ICEFWindow_IsAlwaysOnTop).Call(uintptr(m.instance))
 	return api.GoBool(r1)
+}
+
+func (m *ICefWindow) WindowState() t.TWindowState {
+	if m.IsMinimized() {
+		return t.WsMinimized
+	} else if m.IsMaximized() {
+		return t.WsMaximized
+	} else if m.IsFullscreen() {
+		return t.WsFullScreen
+	}
+	return t.WsNormal
 }
 
 func (m *ICefWindow) Maximize() {
