@@ -107,7 +107,7 @@ func main() {
 3. Packaging: use the installation package tool to make it as an installation package, Or refer to the production of installation package for each system platform
 4. Finally: the compiled program or installation package and CEF directory no longer need to configure the environment, and can be run directly in the CEF root directory
 
-#### Go编译命令
+#### Go Compile Command
 1. Compress and hide the cmd window `go build -ldflags "-H windowsgui -s -w"`, Note: Windows needs to hide the CMD window
 2. Compress `go build -ldflags "-s -w"`
 2. Uncompressed `go build`
