@@ -1,5 +1,5 @@
-github.com/energye/golcl v0.0.0-20230206064640-a04350744f3f h1:XlXWYRi6NkbvzM+hedeUuQyV1h8kmFHaDHqNbCGo40Q=
-github.com/energye/golcl v0.0.0-20230206064640-a04350744f3f/go.mod h1:OLKGHMZalCqbSqprOxB72NUtryJMqlwzhIuZ7SU2lXo=
+github.com/energye/golcl v0.0.0-20230213131924-8ba6ccea9913 h1:PDAK7NR7uZh0S3ClNoYIr1Fb++C+pbAMNFnLZCQtrGw=
+github.com/energye/golcl v0.0.0-20230213131924-8ba6ccea9913/go.mod h1:OLKGHMZalCqbSqprOxB72NUtryJMqlwzhIuZ7SU2lXo=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
 github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/jessevdk/go-flags v1.5.0 h1:1jKYvbxEjfUl0fmqTCOfonvskHHXMjBySTLW4y9LFvc=

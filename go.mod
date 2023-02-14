@@ -3,7 +3,7 @@ module github.com/energye/energy
 go 1.18
 
 require (
-	github.com/energye/golcl v0.0.0-20230206064640-a04350744f3f
+	github.com/energye/golcl v0.0.0-20230213131924-8ba6ccea9913
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c
