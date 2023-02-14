@@ -14,7 +14,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/ipc"
-	"runtime"
+	"github.com/energye/golcl/lcl/rtl/version"
 )
 
 //go:embed resources
@@ -34,6 +34,7 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
+	cef.BrowserWindow.Config.Width = 1200
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
 	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
@@ -56,11 +57,8 @@ func main() {
 			bw.CloseBrowserWindow()
 		})
 		event.On("os-info", func(context ipc.IIPCContext) {
-			goos := runtime.GOOS
-			arch := runtime.GOARCH
-			result := fmt.Sprintf("%v-%v", goos, arch)
-			fmt.Println("系统信息", result)
-			context.Result().SetString(result)
+			fmt.Println("系统信息", version.OSVersion.ToString())
+			context.Result().SetString(version.OSVersion.ToString())
 		})
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
