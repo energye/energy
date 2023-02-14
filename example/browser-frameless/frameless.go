@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/ipc"
+	"runtime"
 )
 
 //go:embed resources
@@ -24,8 +25,9 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	config := cef.NewApplicationConfig()
-	config.SetMultiThreadedMessageLoop(false)
-	config.SetExternalMessagePump(false)
+	//config.SetMultiThreadedMessageLoop(false)
+	//config.SetExternalMessagePump(false)
+	//config.SetRemoteDebuggingPort(9999)
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -52,6 +54,13 @@ func main() {
 		event.On("window-close", func(context ipc.IIPCContext) {
 			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			bw.CloseBrowserWindow()
+		})
+		event.On("os-info", func(context ipc.IIPCContext) {
+			goos := runtime.GOOS
+			arch := runtime.GOARCH
+			result := fmt.Sprintf("%v-%v", goos, arch)
+			fmt.Println("系统信息", result)
+			context.Result().SetString(result)
 		})
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
