@@ -150,7 +150,7 @@ func main() {
 <img src="docs/frameless-windows-7-64.png" width="600">
 
 ##### Ubuntu-18.04.6
-<img src="https://raw.githubusercontent.com/energye/energy/dev/docs/frameless-ubuntu-18.04.6.png" width="600">
+<img src="docs/frameless-ubuntu-18.04.6.png" width="600">
 
 ##### MacOSX
 <img src="docs/frameless-macos.png" width="600">
