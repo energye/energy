@@ -61,20 +61,21 @@ func (m *LCLBrowserWindow) Maximize() {
 		if m.windowProperty == nil {
 			m.windowProperty = &WindowProperty{}
 		}
-		if bs == types.BsNone || bs == types.BsSingle { //不能调整窗口大，所以手动控制窗口状态
+		//这个if判断应该不会执行了，windows有自己的，linux是VF的，mac走else
+		if (bs == types.BsNone || bs == types.BsSingle) && !common.IsDarwin() { //不能调整窗口大，所以手动控制窗口状态
 			var ws = m.WindowState()
 			var redWindowState types.TWindowState
 			//默认状态0
-			if m.windowProperty.WindowState == types.WsNormal && m.windowProperty.WindowState == ws {
+			if m.windowProperty.windowState == types.WsNormal && m.windowProperty.windowState == ws {
 				redWindowState = types.WsMaximized
 			} else {
-				if m.windowProperty.WindowState == types.WsNormal {
+				if m.windowProperty.windowState == types.WsNormal {
 					redWindowState = types.WsMaximized
-				} else if m.windowProperty.WindowState == types.WsMaximized {
+				} else if m.windowProperty.windowState == types.WsMaximized {
 					redWindowState = types.WsNormal
 				}
 			}
-			m.windowProperty.WindowState = redWindowState
+			m.windowProperty.windowState = redWindowState
 			if redWindowState == types.WsMaximized {
 				m.windowProperty.X = m.Left()
 				m.windowProperty.Y = m.Top()
@@ -88,14 +89,14 @@ func (m *LCLBrowserWindow) Maximize() {
 		} else {
 			if m.WindowState() == types.WsMaximized {
 				m.SetWindowState(types.WsNormal)
-				if common.IsDarwin() {
+				if common.IsDarwin() { //要这样重复设置2次不然不启作用
 					m.SetWindowState(types.WsMaximized)
 					m.SetWindowState(types.WsNormal)
 				}
 			} else if m.WindowState() == types.WsNormal {
 				m.SetWindowState(types.WsMaximized)
 			}
-			m.windowProperty.WindowState = m.WindowState()
+			m.windowProperty.windowState = m.WindowState()
 		}
 	})
 }

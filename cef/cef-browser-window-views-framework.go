@@ -41,7 +41,6 @@ type ViewsFrameworkBrowserWindow struct {
 	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
 	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
-	windowState          types.TWindowState                //窗口状态
 }
 
 // 创建 ViewsFrameworkBrowserWindow 窗口
@@ -480,8 +479,8 @@ func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
 }
 
 func (m *ViewsFrameworkBrowserWindow) Maximize() {
-	m.windowState = m.WindowState()
-	if m.windowState == types.WsNormal {
+	m.windowProperty.windowState = m.WindowState()
+	if m.windowProperty.windowState == types.WsNormal {
 		m.WindowComponent().Maximize()
 	} else {
 		m.Restore()

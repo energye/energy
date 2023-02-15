@@ -50,7 +50,6 @@ type LCLBrowserWindow struct {
 	auxTools         *auxTools            //辅助工具
 	tray             ITray                //托盘
 	hWnd             types.HWND           //
-	windowState      types.TWindowState   //窗口状态
 	cwcap            *customWindowCaption //自定义窗口标题栏
 }
 

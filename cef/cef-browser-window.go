@@ -34,7 +34,7 @@ type auxTools struct {
 // 部分属性配置并不支持所有平台
 type WindowProperty struct {
 	IsShowModel               bool               //是否以模态窗口显示
-	WindowState               types.TWindowState //窗口 状态
+	windowState               types.TWindowState //窗口 状态
 	WindowType                consts.WINDOW_TYPE //窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
 	Title                     string             //窗口 标题
 	Url                       string             //默认打开URL
