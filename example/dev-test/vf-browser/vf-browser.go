@@ -54,7 +54,7 @@ func main() {
 			popupWindow.DisableMaximize()
 			popupWindow.DisableResize()
 			popupWindow.DisableMinimize()
-			popupWindow.SetSize(1000, 1000)
+			popupWindow.SetSize(800, 600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 				fmt.Println("popupWindow.SetOnWindowCreated", window)

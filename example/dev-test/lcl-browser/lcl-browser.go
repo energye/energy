@@ -58,6 +58,10 @@ func main() {
 			//win.SetLayeredWindowAttributes(window.Handle(), 0, 100, win.LWA_ALPHA)
 			//win.UpdateLayeredWindow
 		})
+		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
+			popupWindow.SetSize(800, 600)
+			return false
+		})
 		// show or hide, caption bar
 		//go func() {
 		//	var b = true
