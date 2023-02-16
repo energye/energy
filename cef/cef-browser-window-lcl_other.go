@@ -39,7 +39,7 @@ func (m *LCLBrowserWindow) HideTitle() {
 	if m.TForm == nil {
 		return
 	}
-	m.TForm.SetBorderStyle(types.BsSingle)
+	m.TForm.SetBorderStyle(types.BsNone)
 }
 
 // 默认事件注册 windows 消息事件
