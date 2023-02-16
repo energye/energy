@@ -31,7 +31,8 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	if m.TForm == nil {
 		return
 	}
-	m.TForm.SetBorderStyle(types.BsSizeable)
+	m.WindowProperty().EnableHideCaption = false
+	m.SetBorderStyle(types.BsSizeable)
 }
 
 // 隐藏标题栏
@@ -39,7 +40,8 @@ func (m *LCLBrowserWindow) HideTitle() {
 	if m.TForm == nil {
 		return
 	}
-	m.TForm.SetBorderStyle(types.BsNone)
+	m.WindowProperty().EnableHideCaption = true
+	m.SetBorderStyle(types.BsNone)
 }
 
 // 默认事件注册 windows 消息事件
