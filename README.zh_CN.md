@@ -2,8 +2,12 @@
 
 中文 |
 [English](README.md)
+<p align="center">
+    <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
+</p>
 
 ---
+
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
