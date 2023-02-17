@@ -140,19 +140,26 @@ func main() {
 
 ### Project screenshot
 ##### Windows-10
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png" width="600">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png" width="400">
 
-##### Windows-7-32
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png" width="600">
+##### Windows-7 32 & 64
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png" width="400">
 
-##### Windows-7-64
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png" width="600">
+##### Linux - Deepin
+<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-20.8.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-hide-20.8.png" width="400">
 
-##### Ubuntu-18.04.6
-<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png" width="600">
+##### Linux - Kylin ARM
+<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-V10-SP1.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-hide-V10-SP1.png" width="400">
+
+##### Linux - Ubuntu
+<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-hide-18.04.6.png" width="400">
 
 ##### MacOSX
-<img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png" width="600">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png" width="400">
 
 
 ----
