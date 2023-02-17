@@ -142,26 +142,26 @@ func main() {
 
 ### 项目截图
 ##### Windows-10
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png" width="400">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png">
 
 ##### Linux - 国产 Deepin
-<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-20.8.png" width="400">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-hide-20.8.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-20.8.png">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-hide-20.8.png">
 
 ##### Linux - 国产 Kylin ARM
-<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-V10-SP1.png" width="400">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-hide-V10-SP1.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-V10-SP1.png">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
-<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png" width="400">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-hide-18.04.6.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOSX
-<img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png" width="400">
+<img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png">
 
 
 ----
