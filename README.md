@@ -1,10 +1,11 @@
+<p align="center">
+    <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
+</p>
+
 # Energy is the framework for Go to build desktop applications based on CEF
 
 [中文](README.zh_CN.md) |
 English
-<p align="center">
-    <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
-</p>
 
 ---
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
