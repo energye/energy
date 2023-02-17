@@ -19,19 +19,25 @@
 > 开发的框架，内嵌 [CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
 >
 > 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
->
-> 基于Go和CEF跨平台特性
+> 
+> 需要会前端开发技术和略懂Go语言
 
-### Go和Web交互
+### 特性
 
-> 在Go和Web技术基于IPC通信，可以在Go和Web交互数据、事件触发, 可以不使用 http 接口，就像调用语言本身函数一样简单
->
-> 在Go中定义JS绑定类型变量，提供给Web端JS使用，实现Go变量或结构对象数据同步
->
-> 在JS监听事件，在Go中触发JS事件，以达到Go调用JS函数和传递参数
->
-> 在Go监听事件，在JS中触发Go事件，以达到JS调用Go函数和传递参数
->
+> - 高性能: 开发环境简单,编译速度快,只需要Go开发环境和Energy依赖的CEF二进制框架
+> - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
+> - 语言职责
+>> - Go: Go只负责窗口创建、各种UI组件创建、系统低层调用，和JS处理不了的功能如文件流、安全加密、高性能处理等等，可作为纯后端开发
+>> - Web: HTML + CSS + JavaScript 只负责客户端界面的功能, 做出任意你想要的界面，可作为纯前端开发
+> - 前端技术: 支持主流前端框架例如：Vue、React、Angular, 或纯HTML+CSS等等
+> - 事件驱动: 高性能事件驱动, 基于IPC通信，实现Go和Web端很方便功能调用以及数据交互
+
+#### 事件驱动 Go和Web交互
+
+> - 在Go和Web技术基于IPC通信，可以在Go和Web交互数据、事件触发, 可以不使用 http 接口，就像调用语言本身函数一样简单
+> - 在Go中定义JS绑定类型变量，提供给Web端JS使用，实现Go变量或结构对象数据同步
+> - 在JS监听事件，在Go中触发JS事件，以达到Go调用JS函数和数据传递
+> - 在Go监听事件，在JS中触发Go事件，以达到JS调用Go函数和数据传递
 
 ### 内置依赖&集成
 
@@ -45,7 +51,6 @@
 #### 基本需求
 
 > - golang >= 1.18
->
 > - energy 开发环境
 >
 > 使用 energy 命令行工具自动安装开发环境
