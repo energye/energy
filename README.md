@@ -23,7 +23,7 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 
 ### Characteristic
 
-> - High performance: development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF binary framework that Energy depends on are needed
+> - development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF binary framework that Energy depends on are needed
 > - cross-platform: A set of code can be packaged into Windows, domestic UOS, Deepin, Kylin, MacOS, Linux
 > - Language responsibilities
 >> - Go: Go is only responsible for window creation, creation of various UI components, low-level system calls, and functions that JS cannot handle, such as file stream, security encryption, high-performance processing, etc., which can be developed as a pure backend
