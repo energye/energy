@@ -54,6 +54,7 @@ func main() {
 		//MacOS SetBrowseSubprocessPath 将不起任何作用。
 		//独立的子程序包需要在 macapp.MacApp.SetBrowseSubprocessPath 配置
 	}
+	//subExePath = path.Join(wd, "sub-process.exe")
 	println("subExePath", subExePath)
 	cfg.SetBrowseSubprocessPath(subExePath)
 	cfg.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
