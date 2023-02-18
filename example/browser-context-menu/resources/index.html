@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>browser-context-menu</title>
+    <style>
+    </style>
+    <script type="application/javascript">
+        ipc.on('menu', function (menuId, param2) {
+            console.log(menuId, param2);
+            let menu = document.getElementById("menu")
+            if (menuId === 1) {
+                menu.style.color = "red"
+            } else if (menuId === 2) {
+                menu.style.color = "green"
+            } else {
+                menu.innerHTML += param2 + "<br>"
+            }
+        })
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
+<h3 id="menu">自定义右键菜单</h3>
+</body>
+</html>

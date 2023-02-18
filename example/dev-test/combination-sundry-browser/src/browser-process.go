@@ -250,6 +250,7 @@ func AppBrowserInit() {
 		event.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 			fmt.Println("SetOnTitleChange", title)
 		})
+
 		//窗口大小改变后触发
 		window.BrowserWindow().SetOnResize(func(sender lcl.IObject) bool {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
