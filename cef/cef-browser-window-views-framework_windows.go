@@ -9,8 +9,8 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
+// VF窗口组件定义和实现-windows平台
 package cef
 
 import (
@@ -18,7 +18,7 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
-// 显示标题栏
+// ShowTitle 显示标题栏-无法动态控制
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	m.WindowProperty().EnableHideCaption = false
 	//handle := m.WindowComponent().WindowHandle()
@@ -29,7 +29,7 @@ func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	})
 }
 
-// 隐藏标题栏
+// HideTitle 隐藏标题栏-无法动态控制
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
 	//handle := m.WindowComponent().WindowHandle()
@@ -40,16 +40,19 @@ func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	})
 }
 
+// SetDefaultInTaskBar 默认窗口在任务栏上显示按钮
 func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {
 	m.SetShowInTaskBar()
 }
 
+// SetShowInTaskBar 强制窗口在任务栏上显示按钮
 func (m *ViewsFrameworkBrowserWindow) SetShowInTaskBar() {
 	handle := m.WindowComponent().WindowHandle()
 	win.ShowWindow(handle.ToPtr(), win.SW_SHOW)
 	win.SetWindowLong(handle.ToPtr(), win.GWL_EXSTYLE, win.WS_EX_APPWINDOW)
 }
 
+// SetNotInTaskBar 强制窗口不在任务栏上显示按钮
 func (m *ViewsFrameworkBrowserWindow) SetNotInTaskBar() {
 	handle := m.WindowComponent().WindowHandle()
 	win.ShowWindow(handle.ToPtr(), win.SW_HIDE)

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// LCL窗口组件定义和实现
 package cef
 
 import (
@@ -129,6 +130,7 @@ func (m *LCLBrowserWindow) setProperty() {
 	}
 }
 
+// Handle 窗口句柄
 func (m *LCLBrowserWindow) Handle() types.HWND {
 	if m.hWnd == 0 {
 		m.hWnd = m.TForm.Handle()
@@ -136,18 +138,22 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 	return m.hWnd
 }
 
+// BrowserWindow 返回LCL窗口组件实现
 func (m *LCLBrowserWindow) BrowserWindow() *LCLBrowserWindow {
 	return m
 }
 
+// AsViewsFrameworkBrowserWindow 转换为VF窗口组件，这里返回nil
 func (m *LCLBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
 	return nil
 }
 
+// AsLCLBrowserWindow 转换为LCL窗口组件，这里返回LCL窗口组件
 func (m *LCLBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return m
 }
 
+// SetCenterWindow
 func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	if m.TForm == nil {
 		return
@@ -159,6 +165,7 @@ func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	}
 }
 
+// Close 关闭窗口 非browser窗口使用
 func (m *LCLBrowserWindow) Close() {
 	if m.TForm == nil {
 		return
@@ -166,6 +173,7 @@ func (m *LCLBrowserWindow) Close() {
 	m.TForm.Close()
 }
 
+// SetTitle 设置窗口标题栏标题
 func (m *LCLBrowserWindow) SetTitle(title string) {
 	if m.TForm == nil {
 		return
@@ -174,6 +182,7 @@ func (m *LCLBrowserWindow) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
 
+// SetWidth 设置窗口宽
 func (m *LCLBrowserWindow) SetWidth(value int32) {
 	if m.TForm == nil {
 		return
@@ -182,6 +191,7 @@ func (m *LCLBrowserWindow) SetWidth(value int32) {
 	m.TForm.SetWidth(value)
 }
 
+// SetHeight 设置窗口高
 func (m *LCLBrowserWindow) SetHeight(value int32) {
 	if m.TForm == nil {
 		return
@@ -190,6 +200,7 @@ func (m *LCLBrowserWindow) SetHeight(value int32) {
 	m.TForm.SetHeight(value)
 }
 
+// Point 窗口坐标
 func (m *LCLBrowserWindow) Point() *TCefPoint {
 	if m.TForm == nil {
 		return nil
@@ -203,6 +214,7 @@ func (m *LCLBrowserWindow) Point() *TCefPoint {
 	return result
 }
 
+// Size 窗口宽高
 func (m *LCLBrowserWindow) Size() *TCefSize {
 	if m.TForm == nil {
 		return nil
@@ -216,6 +228,7 @@ func (m *LCLBrowserWindow) Size() *TCefSize {
 	return result
 }
 
+// Bounds 窗口坐标和宽高
 func (m *LCLBrowserWindow) Bounds() *TCefRect {
 	if m.TForm == nil {
 		return nil
@@ -234,6 +247,7 @@ func (m *LCLBrowserWindow) Bounds() *TCefRect {
 	return result
 }
 
+// SetPoint 设置窗口坐标
 func (m *LCLBrowserWindow) SetPoint(x, y int32) {
 	if m.TForm == nil {
 		return
@@ -244,6 +258,7 @@ func (m *LCLBrowserWindow) SetPoint(x, y int32) {
 	m.TForm.SetTop(y)
 }
 
+// SetSize 设置窗口宽高
 func (m *LCLBrowserWindow) SetSize(width, height int32) {
 	if m.TForm == nil {
 		return
@@ -254,6 +269,7 @@ func (m *LCLBrowserWindow) SetSize(width, height int32) {
 	m.SetHeight(height)
 }
 
+// SetBounds 设置窗口坐标和宽高
 func (m *LCLBrowserWindow) SetBounds(x, y, width, height int32) {
 	if m.TForm == nil {
 		return
@@ -265,47 +281,57 @@ func (m *LCLBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.TForm.SetBounds(x, y, width, height)
 }
 
+// getAuxTools
 func (m *LCLBrowserWindow) getAuxTools() *auxTools {
 	return m.auxTools
 }
 
+// createAuxTools
 func (m *LCLBrowserWindow) createAuxTools() {
 	if m.auxTools == nil {
 		m.auxTools = &auxTools{}
 	}
 }
 
+// Browser
 func (m *LCLBrowserWindow) Browser() *ICefBrowser {
 	return m.browser
 }
 
+// setBrowser
 func (m *LCLBrowserWindow) setBrowser(browser *ICefBrowser) {
 	m.browser = browser
 }
 
+// addFrame
 func (m *LCLBrowserWindow) addFrame(frame *ICefFrame) {
 	m.createFrames()
 	m.frames[frame.Id] = frame
 }
 
+// Frames
 func (m *LCLBrowserWindow) Frames() TCEFFrame {
 	return m.frames
 }
 
+// createFrames
 func (m *LCLBrowserWindow) createFrames() {
 	if m.frames == nil {
 		m.frames = make(TCEFFrame)
 	}
 }
 
+// Chromium
 func (m *LCLBrowserWindow) Chromium() IChromium {
 	return m.chromium
 }
 
+// Id
 func (m *LCLBrowserWindow) Id() int32 {
 	return m.windowId
 }
 
+// Show
 func (m *LCLBrowserWindow) Show() {
 	if m.TForm == nil {
 		return
@@ -313,6 +339,7 @@ func (m *LCLBrowserWindow) Show() {
 	m.TForm.Show()
 }
 
+// Hide
 func (m *LCLBrowserWindow) Hide() {
 	if m.TForm == nil {
 		return
@@ -320,6 +347,15 @@ func (m *LCLBrowserWindow) Hide() {
 	m.TForm.Hide()
 }
 
+// WindowState 返回窗口最小化、最大化、全屏状态
+func (m *LCLBrowserWindow) WindowState() types.TWindowState {
+	if m.TForm == nil {
+		return -1
+	}
+	return m.TForm.WindowState()
+}
+
+// Visible
 func (m *LCLBrowserWindow) Visible() bool {
 	if m.TForm == nil {
 		return false
@@ -327,6 +363,7 @@ func (m *LCLBrowserWindow) Visible() bool {
 	return m.TForm.Visible()
 }
 
+// SetVisible
 func (m *LCLBrowserWindow) SetVisible(value bool) {
 	if m.TForm == nil {
 		return
@@ -334,7 +371,7 @@ func (m *LCLBrowserWindow) SetVisible(value bool) {
 	m.TForm.SetVisible(value)
 }
 
-// 以默认的方式展示在任务栏上
+// SetDefaultInTaskBar 以默认的方式展示在任务栏上
 func (m *LCLBrowserWindow) SetDefaultInTaskBar() {
 	if m.TForm == nil {
 		return
@@ -342,7 +379,7 @@ func (m *LCLBrowserWindow) SetDefaultInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StDefault)
 }
 
-// 展示在任务栏上
+// SetShowInTaskBar 展示在任务栏上
 func (m *LCLBrowserWindow) SetShowInTaskBar() {
 	if m.TForm == nil {
 		return
@@ -350,7 +387,7 @@ func (m *LCLBrowserWindow) SetShowInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StAlways)
 }
 
-// 不会展示在任务栏上
+// SetNotInTaskBar 不会展示在任务栏上
 func (m *LCLBrowserWindow) SetNotInTaskBar() {
 	if m.TForm == nil {
 		return
@@ -358,6 +395,7 @@ func (m *LCLBrowserWindow) SetNotInTaskBar() {
 	m.TForm.SetShowInTaskBar(types.StNever)
 }
 
+// WindowParent
 // 返回chromium的父组件对象，该对象不是window组件对象,属于window的一个子组件
 //
 // 在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
@@ -367,21 +405,22 @@ func (m *LCLBrowserWindow) WindowParent() ITCefWindowParent {
 	return m.windowParent
 }
 
-// 返回窗口关闭状态
+// IsClosing 返回窗口是否正在关闭/或已关闭 true正在或已关闭
 func (m *LCLBrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
 
-// 设置窗口类型
+// SetWindowType 设置窗口类型
 func (m *LCLBrowserWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
 	m.windowType = windowType
 }
 
-// 返回窗口类型
+// WindowType 返回窗口类型
 func (m *LCLBrowserWindow) WindowType() consts.WINDOW_TYPE {
 	return m.windowType
 }
 
+// ChromiumCreate
 // 创建window浏览器组件
 //
 // 不带有默认事件的chromium
@@ -421,15 +460,17 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl
 	})
 }
 
+// WindowProperty 部分提供部分窗口属性设置
 func (m *LCLBrowserWindow) WindowProperty() *WindowProperty {
 	return m.windowProperty
 }
 
+// putChromiumWindowInfo
 func (m *LCLBrowserWindow) putChromiumWindowInfo() {
 	BrowserWindow.putWindowInfo(m.windowId, m)
 }
 
-// 默认的chromium事件
+// defaultChromiumEvent 默认的chromium事件
 func (m *LCLBrowserWindow) defaultChromiumEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		AddGoForm(m.windowId, m.Instance())
@@ -439,6 +480,7 @@ func (m *LCLBrowserWindow) defaultChromiumEvent() {
 	}
 }
 
+// FormCreate
 // 创建窗口
 //
 // 不带有默认事件的窗口
@@ -450,7 +492,7 @@ func (m *LCLBrowserWindow) FormCreate() {
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
 }
 
-// 默认窗口活动/关闭处理事件
+// defaultWindowEvent 默认窗口活动/关闭处理事件
 func (m *LCLBrowserWindow) defaultWindowEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		m.TForm.SetOnActivate(m.activate)
@@ -459,19 +501,19 @@ func (m *LCLBrowserWindow) defaultWindowEvent() {
 	m.TForm.SetOnShow(m.show)
 }
 
-// 默认的窗口关闭事件
+// defaultWindowCloseEvent 默认的窗口关闭事件
 func (m *LCLBrowserWindow) defaultWindowCloseEvent() {
 	m.TForm.SetOnClose(m.close)
 	m.TForm.SetOnCloseQuery(m.closeQuery)
 }
 
-// 启用默认关闭事件行为-该窗口将被关闭
+// EnableDefaultCloseEvent 启用默认关闭事件行为-该窗口将被关闭
 func (m *LCLBrowserWindow) EnableDefaultCloseEvent() {
 	m.defaultWindowCloseEvent()
 	m.registerDefaultChromiumCloseEvent()
 }
 
-// 启用所有默认事件行为
+// EnableAllDefaultEvent 启用所有默认事件行为
 func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
 	m.defaultWindowCloseEvent()
 	m.defaultChromiumEvent()
@@ -502,11 +544,12 @@ func (m *LCLBrowserWindow) SetOnCloseQuery(fn TCloseQueryEvent) {
 	m.onCloseQuery = fn
 }
 
-// 每次激活窗口之后执行一次
+// SetOnActivateAfter 每次激活窗口之后执行一次
 func (m *LCLBrowserWindow) SetOnActivateAfter(fn lcl.TNotifyEvent) {
 	m.onActivateAfter = fn
 }
 
+// Minimize
 func (m *LCLBrowserWindow) Minimize() {
 	if m.TForm == nil {
 		return
@@ -516,11 +559,12 @@ func (m *LCLBrowserWindow) Minimize() {
 	})
 }
 
+// Restore
 func (m *LCLBrowserWindow) Restore() {
 	m.SetWindowState(types.WsNormal)
 }
 
-// 关闭带有浏览器的窗口
+// CloseBrowserWindow 关闭带有浏览器的窗口
 func (m *LCLBrowserWindow) CloseBrowserWindow() {
 	if m.TForm == nil {
 		return
@@ -548,7 +592,7 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 	})
 }
 
-// 禁用口透明
+// DisableTransparent 禁用口透明
 func (m *LCLBrowserWindow) DisableTransparent() {
 	if m.TForm == nil {
 		return
@@ -557,7 +601,7 @@ func (m *LCLBrowserWindow) DisableTransparent() {
 	m.SetAlphaBlendValue(255)
 }
 
-// 使窗口透明 value 0 ~ 255
+// EnableTransparent 使窗口透明 value 0 ~ 255
 func (m *LCLBrowserWindow) EnableTransparent(value uint8) {
 	if m.TForm == nil {
 		return
@@ -566,7 +610,7 @@ func (m *LCLBrowserWindow) EnableTransparent(value uint8) {
 	m.SetAlphaBlendValue(value)
 }
 
-// 禁用最小化按钮
+// DisableMinimize 禁用最小化按钮
 func (m *LCLBrowserWindow) DisableMinimize() {
 	if m.TForm == nil {
 		return
@@ -576,7 +620,7 @@ func (m *LCLBrowserWindow) DisableMinimize() {
 	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
 }
 
-// 禁用最大化按钮
+// DisableMaximize 禁用最大化按钮
 func (m *LCLBrowserWindow) DisableMaximize() {
 	if m.TForm == nil {
 		return
@@ -586,7 +630,7 @@ func (m *LCLBrowserWindow) DisableMaximize() {
 	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
 }
 
-// 禁用调整窗口大小
+// DisableResize 禁用调整窗口大小
 func (m *LCLBrowserWindow) DisableResize() {
 	if m.TForm == nil {
 		return
@@ -597,7 +641,7 @@ func (m *LCLBrowserWindow) DisableResize() {
 	}
 }
 
-// 禁用系统菜单-同时禁用最小化，最大化，关闭按钮
+// DisableSystemMenu 禁用系统菜单-同时禁用最小化，最大化，关闭按钮
 func (m *LCLBrowserWindow) DisableSystemMenu() {
 	if m.TForm == nil {
 		return
@@ -606,7 +650,7 @@ func (m *LCLBrowserWindow) DisableSystemMenu() {
 	m.EnabledSystemMenu(false)
 }
 
-// 禁用帮助菜单
+// DisableHelp 禁用帮助菜单
 func (m *LCLBrowserWindow) DisableHelp() {
 	if m.TForm == nil {
 		return
@@ -614,7 +658,7 @@ func (m *LCLBrowserWindow) DisableHelp() {
 	m.SetBorderIcons(m.BorderIcons().Exclude(types.BiHelp))
 }
 
-// 启用最小化按钮
+// EnableMinimize 启用最小化按钮
 func (m *LCLBrowserWindow) EnableMinimize() {
 	if m.TForm == nil {
 		return
@@ -624,7 +668,7 @@ func (m *LCLBrowserWindow) EnableMinimize() {
 	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
 }
 
-// 启用最大化按钮
+// EnableMaximize 启用最大化按钮
 func (m *LCLBrowserWindow) EnableMaximize() {
 	if m.TForm == nil {
 		return
@@ -634,7 +678,7 @@ func (m *LCLBrowserWindow) EnableMaximize() {
 	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
 }
 
-// 启用调整窗口大小
+// EnableResize 启用允许调整窗口大小
 func (m *LCLBrowserWindow) EnableResize() {
 	if m.TForm == nil {
 		return
@@ -645,7 +689,7 @@ func (m *LCLBrowserWindow) EnableResize() {
 	}
 }
 
-// 启用系统菜单-同时禁用最小化，最大化，关闭按钮
+// EnableSystemMenu 启用系统菜单
 func (m *LCLBrowserWindow) EnableSystemMenu() {
 	if m.TForm == nil {
 		return
@@ -654,7 +698,7 @@ func (m *LCLBrowserWindow) EnableSystemMenu() {
 	m.EnabledSystemMenu(true)
 }
 
-// 启用帮助菜单
+// EnableHelp  启用帮助菜单
 func (m *LCLBrowserWindow) EnableHelp() {
 	if m.TForm == nil {
 		return
@@ -662,14 +706,17 @@ func (m *LCLBrowserWindow) EnableHelp() {
 	m.SetBorderIcons(m.BorderIcons().Include(types.BiHelp))
 }
 
+// IsViewsFramework 返回是否VF窗口组件，这里返回false
 func (m *LCLBrowserWindow) IsViewsFramework() bool {
 	return false
 }
 
+// IsLCL 返回是否LCL窗口组件，这里返回true
 func (m *LCLBrowserWindow) IsLCL() bool {
 	return true
 }
 
+// show 内部调用
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	var ret bool
 	if m.onShow != nil {
@@ -684,6 +731,7 @@ func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	}
 }
 
+// resize 内部调用
 func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	var ret bool
 	if m.onResize != nil {
@@ -707,6 +755,7 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	}
 }
 
+// activate 内部调用
 func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 	var ret bool
 	if m.onActivate != nil {
@@ -726,6 +775,8 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 		m.onActivateAfter(sender)
 	}
 }
+
+// registerPopupEvent 注册弹出子窗口事件
 func (m *LCLBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
@@ -757,7 +808,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 	})
 }
 
-// 默认事件注册 部分事件允许被覆盖
+// registerDefaultEvent 注册默认事件 部分事件允许被覆盖
 func (m *LCLBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	//默认自定义快捷键
@@ -878,6 +929,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	}
 }
 
+// close 内部调用
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	var ret bool
 	if m.onClose != nil {
@@ -889,6 +941,7 @@ func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction)
 	}
 }
 
+// closeQuery 内部调用
 func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 	var ret bool
 	if m.onCloseQuery != nil {
@@ -925,7 +978,7 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 	}
 }
 
-// 默认的chromium关闭事件
+// registerDefaultChromiumCloseEvent 注册默认的chromium关闭事件
 func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction) {

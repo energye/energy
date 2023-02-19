@@ -9,8 +9,8 @@
 //----------------------------------------
 
 //go:build !windows
-// +build !windows
 
+// VF窗口组件定义和实现-非windows平台
 package cef
 
 import "github.com/energye/golcl/lcl"

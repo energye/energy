@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// VF窗口组件定义和实现
 package cef
 
 import (
@@ -45,7 +46,7 @@ type ViewsFrameworkBrowserWindow struct {
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
 }
 
-// 创建 ViewsFrameworkBrowserWindow 窗口
+// NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
 func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
 	if chromiumConfig == nil {
 		chromiumConfig = NewChromiumConfig()
@@ -134,6 +135,7 @@ func (m *browser) appContextInitialized(app *TCEFApplication) {
 	})
 }
 
+// registerPopupEvent 注册弹出子窗口事件
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
@@ -162,7 +164,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 	})
 }
 
-// 重置窗口属性-通过事件函数
+// ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
@@ -199,6 +201,7 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	m.windowComponent.SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
 }
 
+// registerDefaultEvent 注册默认事件
 func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	//默认自定义快捷键
@@ -318,64 +321,78 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	}
 }
 
-// 启用所有默认事件行为
+// EnableAllDefaultEvent 启用所有默认事件行为
 func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
 	m.registerPopupEvent()
 	m.registerDefaultEvent()
 }
 
+// SetOnWindowCreated 窗口创建
 func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated) {
 	m.doOnWindowCreated = onWindowCreated
 }
 
+// SetOnGetInitialBounds 窗口初始坐标和大小
 func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) {
 	m.doOnGetInitialBounds = onGetInitialBounds
 }
 
+// IsViewsFramework 返回是否VF窗口组件，这里返回true
 func (m *ViewsFrameworkBrowserWindow) IsViewsFramework() bool {
 	return true
 }
 
+// IsLCL 返回是否LCL窗口组件，这里返回false
 func (m *ViewsFrameworkBrowserWindow) IsLCL() bool {
 	return false
 }
 
+// WindowProperty 部分提供部分窗口属性设置
 func (m *ViewsFrameworkBrowserWindow) WindowProperty() *WindowProperty {
 	return m.windowProperty
 }
 
+// putChromiumWindowInfo
 func (m *ViewsFrameworkBrowserWindow) putChromiumWindowInfo() {
 	BrowserWindow.putWindowInfo(m.windowId, m)
 }
 
+// BrowserWindow 返回VF窗口组件实现
 func (m *ViewsFrameworkBrowserWindow) BrowserWindow() *ViewsFrameworkBrowserWindow {
 	return m
 }
 
+// Handle 返回窗口句柄
 func (m *ViewsFrameworkBrowserWindow) Handle() types.HWND {
 	return types.HWND(m.WindowComponent().WindowHandle().ToPtr())
 }
 
+// AsViewsFrameworkBrowserWindow 转换为VF窗口组件，这里返回VF窗口组件
 func (m *ViewsFrameworkBrowserWindow) AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow {
 	return m
 }
 
+// AsLCLBrowserWindow 转换为LCL窗口组件，这里返回nil
 func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return nil
 }
 
+// SetTitle 设置窗口标题
 func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
 	m.WindowProperty().Title = title
 }
 
+// SetWidth 设置窗口宽
 func (m *ViewsFrameworkBrowserWindow) SetWidth(value int32) {
 	m.WindowProperty().Width = value
 }
 
+// SetHeight 设置窗口高
 func (m *ViewsFrameworkBrowserWindow) SetHeight(value int32) {
 	m.WindowProperty().Height = value
 }
 
+// Point 返回窗口坐标
 func (m *ViewsFrameworkBrowserWindow) Point() *TCefPoint {
 	result := m.WindowComponent().Position()
 	m.WindowProperty().X = result.X
@@ -383,6 +400,7 @@ func (m *ViewsFrameworkBrowserWindow) Point() *TCefPoint {
 	return result
 }
 
+// Size 返回窗口宽高
 func (m *ViewsFrameworkBrowserWindow) Size() *TCefSize {
 	result := m.WindowComponent().Size()
 	m.WindowProperty().Width = result.Width
@@ -390,6 +408,7 @@ func (m *ViewsFrameworkBrowserWindow) Size() *TCefSize {
 	return result
 }
 
+// Bounds 返回窗口坐标和宽高
 func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 	result := m.WindowComponent().Bounds()
 	m.WindowProperty().X = result.X
@@ -399,16 +418,19 @@ func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 	return result
 }
 
+// SetPoint 设置窗口坐标
 func (m *ViewsFrameworkBrowserWindow) SetPoint(x, y int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y
 }
 
+// SetSize 设置窗口宽高
 func (m *ViewsFrameworkBrowserWindow) SetSize(width, height int32) {
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
 }
 
+// SetBounds 设置窗口坐标和宽高
 func (m *ViewsFrameworkBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y
@@ -416,59 +438,72 @@ func (m *ViewsFrameworkBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.WindowProperty().Height = height
 }
 
+// getAuxTools 获取辅助工具-开发者工具
 func (m *ViewsFrameworkBrowserWindow) getAuxTools() *auxTools {
 	return m.auxTools
 }
 
+// createAuxTools 创建辅助工具-开发者工具
 func (m *ViewsFrameworkBrowserWindow) createAuxTools() {
 	if m.auxTools == nil {
 		m.auxTools = &auxTools{}
 	}
 }
 
+// Browser 返回browser
 func (m *ViewsFrameworkBrowserWindow) Browser() *ICefBrowser {
 	return m.browser
 }
 
+// Frames 获取Frames
 func (m *ViewsFrameworkBrowserWindow) Frames() TCEFFrame {
 	return m.frames
 }
 
+// createFrames 创建TCEFFrame
 func (m *ViewsFrameworkBrowserWindow) createFrames() {
 	if m.frames == nil {
 		m.frames = make(TCEFFrame)
 	}
 }
 
+// setBrowser
 func (m *ViewsFrameworkBrowserWindow) setBrowser(browser *ICefBrowser) {
 	m.browser = browser
 }
 
+// addFrame
 func (m *ViewsFrameworkBrowserWindow) addFrame(frame *ICefFrame) {
 	m.createFrames()
 	m.frames[frame.Id] = frame
 }
 
+// Chromium 返回 chromium
 func (m *ViewsFrameworkBrowserWindow) Chromium() IChromium {
 	return m.chromium
 }
 
+// Id 获取窗口ID
 func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 	return m.windowId
 }
 
+// Show 显示窗口
 func (m *ViewsFrameworkBrowserWindow) Show() {
 	m.WindowComponent().Show()
 }
 
+// Hide 隐藏窗口
 func (m *ViewsFrameworkBrowserWindow) Hide() {
 	m.WindowComponent().Hide()
 }
 
+// Close 关闭窗口,一搬不使用
 func (m *ViewsFrameworkBrowserWindow) Close() {
 	m.WindowComponent().Close()
 }
 
+// WindowState 返回窗口最小化、最大化、全屏状态
 func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
 	if m.windowComponent.IsMinimized() {
 		return types.WsMinimized
@@ -480,6 +515,7 @@ func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
 	return types.WsNormal
 }
 
+// Maximize 窗口最大化/还原
 func (m *ViewsFrameworkBrowserWindow) Maximize() {
 	m.windowProperty.windowState = m.WindowState()
 	if m.windowProperty.windowState == types.WsNormal {
@@ -489,84 +525,93 @@ func (m *ViewsFrameworkBrowserWindow) Maximize() {
 	}
 }
 
+// Minimize 窗口最小化
 func (m *ViewsFrameworkBrowserWindow) Minimize() {
 	m.WindowComponent().Minimize()
 }
 
+// Restore 窗口还原
 func (m *ViewsFrameworkBrowserWindow) Restore() {
 	m.WindowComponent().Restore()
 }
 
+// CloseBrowserWindow 关闭浏览器窗口
 func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
 	m.isClosing = true
 	m.chromium.CloseBrowser(true)
 }
 
+// CreateTopLevelWindow 创建顶层窗口
 func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
 	m.WindowComponent().CreateTopLevelWindow()
 }
 
+// CenterWindow 设置窗口居中，同时指定窗口大小
 func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
 	m.WindowComponent().CenterWindow(size)
 }
 
+// SetCenterWindow 设置窗口居中显示
 func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
 	m.WindowProperty().EnableCenterWindow = value
 }
 
-// 返回窗口关闭状态
+// IsClosing 返回窗口是否正在关闭/或已关闭 true正在或已关闭
 func (m *ViewsFrameworkBrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
 
-// 返回窗口类型
+// WindowType 返回窗口类型
 func (m *ViewsFrameworkBrowserWindow) WindowType() consts.WINDOW_TYPE {
 	return m.windowType
 }
 
-// 设置窗口类型
+// SetWindowType 设置窗口类型
 func (m *ViewsFrameworkBrowserWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
 	m.windowType = windowType
 }
 
-// 禁用最小化按钮
+// DisableMinimize 禁用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMinimize() {
 	m.WindowProperty().EnableMinimize = false
 }
 
-// 禁用最大化按钮
+// DisableMaximize 禁用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) DisableMaximize() {
 	m.WindowProperty().EnableMaximize = false
 }
 
-// 禁用调整窗口大小
+// DisableResize 禁用调整窗口大小
 func (m *ViewsFrameworkBrowserWindow) DisableResize() {
 	m.WindowProperty().EnableResize = false
 }
 
-// 启用最小化按钮
+// EnableMinimize 启用最小化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMinimize() {
 	m.WindowProperty().EnableMinimize = true
 }
 
-// 启用最大化按钮
+// EnableMaximize 启用最大化按钮
 func (m *ViewsFrameworkBrowserWindow) EnableMaximize() {
 	m.WindowProperty().EnableMaximize = true
 }
 
-// 启用调整窗口大小
+// EnableResize 启用允许调整窗口大小
 func (m *ViewsFrameworkBrowserWindow) EnableResize() {
 	m.WindowProperty().EnableResize = true
 }
 
+// Component 返回窗口父组件
 func (m *ViewsFrameworkBrowserWindow) Component() lcl.IComponent {
 	return m.component
 }
 
+// WindowComponent 返回窗口组件
 func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
 	return m.windowComponent
 }
 
+// BrowserViewComponent 返回浏览器显示组件
 func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
 	return m.browserViewComponent
 }

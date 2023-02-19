@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF 回调事件实现
 package cef
 
 import (
@@ -19,10 +20,12 @@ type ICefCallback struct {
 	instance unsafe.Pointer
 }
 
+// Cont 继续执行
 func (m *ICefCallback) Cont() {
 	imports.Proc(internale_cefCallback_Cont).Call(uintptr(m.instance))
 }
 
+// Cancel 取消执行
 func (m *ICefCallback) Cancel() {
 	imports.Proc(internale_cefCallback_Cancel).Call(uintptr(m.instance))
 }

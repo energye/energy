@@ -9,8 +9,8 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
+// LCL窗口组件定义和实现-windows平台
 package cef
 
 import (
@@ -27,6 +27,9 @@ var (
 	borderRange int32 = 5  //四边框
 )
 
+// customWindowCaption 自定义窗口标题栏
+//
+// 隐藏窗口标题栏，通过html+css实现自定义窗口标题栏，实现窗口拖拽等
 type customWindowCaption struct {
 	bw                   *LCLBrowserWindow     //
 	canCaption           bool                  //当前鼠标是否在标题栏区域
@@ -37,7 +40,7 @@ type customWindowCaption struct {
 	rgn                  *HRGN                 //
 }
 
-// 显示标题栏
+// ShowTitle 显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	m.WindowProperty().EnableHideCaption = false
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
@@ -47,7 +50,7 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	m.SetBorderStyle(types.BsSizeable)
 }
 
-// 隐藏标题栏
+// HideTitle 隐藏标题栏
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
 	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
@@ -58,6 +61,7 @@ func (m *LCLBrowserWindow) HideTitle() {
 
 }
 
+// freeRgn
 func (m *customWindowCaption) freeRgn() {
 	if m.rgn != nil {
 		WinSetRectRgn(m.rgn, 0, 0, 0, 0)
@@ -66,6 +70,7 @@ func (m *customWindowCaption) freeRgn() {
 	}
 }
 
+// freeRegions
 func (m *customWindowCaption) freeRegions() {
 	if m.regions != nil {
 		m.regions.regions = nil
@@ -73,6 +78,7 @@ func (m *customWindowCaption) freeRegions() {
 	}
 }
 
+// free
 func (m *customWindowCaption) free() {
 	if m != nil {
 		m.freeRgn()
@@ -80,7 +86,7 @@ func (m *customWindowCaption) free() {
 	}
 }
 
-// NC 非客户区鼠标移动
+// onNCMouseMove NC 非客户区鼠标移动
 func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 当前在标题栏
 	} else if m.canBorder { // 当前在边框
@@ -89,7 +95,7 @@ func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *ty
 	}
 }
 
-// 设置鼠标图标
+// onSetCursor 设置鼠标图标
 func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canBorder { //当前在边框
 		switch LOWORD(uint32(message.LParam)) {
@@ -113,7 +119,7 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 	}
 }
 
-// 鼠标是否在边框
+// onCanBorder 鼠标是否在边框
 func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
 	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
 		m.borderWMSZ = WMSZ_TOPRIGHT
@@ -151,7 +157,7 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 	return 0, false
 }
 
-// NC 鼠标左键按下
+// onNCLButtonDown NC 鼠标左键按下
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
 		x, y := m.toPoint(message)
@@ -171,11 +177,12 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 	}
 }
 
-// 转换XY坐标
+// toPoint 转换XY坐标
 func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 	return GET_X_LPARAM(message.LParam), GET_Y_LPARAM(message.LParam)
 }
 
+// isCaption
 // 鼠标是否在标题栏区域
 //
 // 如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
@@ -196,6 +203,7 @@ func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage
 	return p.X, p.Y, m.canCaption
 }
 
+// doOnRenderCompMsg
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	switch message.Msg {
 	case WM_NCLBUTTONDBLCLK: // 163 NC left dclick
@@ -243,6 +251,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	}
 }
 
+// setDraggableRegions
 // 每一次拖拽区域改变都需要重新设置
 func (m *LCLBrowserWindow) setDraggableRegions() {
 	//在主线程中运行
@@ -267,7 +276,8 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 	})
 }
 
-// default event register: windows CompMsgEvent
+// registerWindowsCompMsgEvent
+// 注册windows下CompMsg事件
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
@@ -298,7 +308,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 	//}
 }
 
-// for windows maximize and restore
+// Maximize Windows平台，窗口最大化/还原
 func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
@@ -314,6 +324,7 @@ func (m *LCLBrowserWindow) Maximize() {
 	})
 }
 
+// 窗口透明
 //func (m *LCLBrowserWindow) SetTransparentColor() {
 //	m.SetColor(colors.ClNavy)
 //	Exstyle := win.GetWindowLong(m.Handle(), win.GWL_EXSTYLE)

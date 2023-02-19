@@ -20,11 +20,14 @@ import (
 )
 
 var (
-	//1. BrowserWindow 是基于 BaseWindow 浏览器主窗口
+	//BrowserWindow 是基于LCL和VF窗口组件的浏览器主窗口
 	//
-	//2. 可以对窗口的属性设置和事件监听，chromium 的配置和事件监听
+	//可以对窗口的属性设置和事件监听，Chromium的配置和事件监听.
 	//
-	//3. 该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
+	//该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
+	//
+	//VF窗口组件默认在Linux平台自动开启
+	//LCL窗口组件默认在Windows、MacOSX平台自动开启
 	BrowserWindow = &browser{
 		browserEvent: &BrowserEvent{},
 		Config: &browserConfig{
@@ -47,6 +50,7 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 	}
 }
 
+// Run
 // 运行应用
 //
 // 多进程方式，启动主进程然后启动子进程，在MacOS下，需要单独调用启动子进程函数，单进程只启动主进程

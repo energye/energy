@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// 窗口定义
 package cef
 
 import (
@@ -16,7 +17,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-// 辅助工具
+// auxTools 辅助工具
 type auxTools struct {
 	devToolsWindow   IBrowserWindow //devTools
 	devToolsX        int32          //上次改变的窗体位置，宽度
@@ -31,6 +32,7 @@ type auxTools struct {
 	viewSourceHeight int32          //
 }
 
+// WindowProperty
 // 窗口属性配置器
 //
 // 部分属性配置并不支持所有平台
@@ -58,6 +60,7 @@ type WindowProperty struct {
 	Height                    int32              //窗口 高 default: 768
 }
 
+// IBrowserWindow
 // 浏览器窗口基础接口
 //
 // 定义了常用函数
@@ -66,11 +69,12 @@ type IBrowserWindow interface {
 	Handle() types.HWND                                          //窗口句柄
 	Show()                                                       //显示窗口
 	Hide()                                                       //隐藏窗口
+	WindowState() types.TWindowState                             //返回窗口最小化、最大化、全屏状态
 	Maximize()                                                   //窗口最大化
 	Minimize()                                                   //窗口最小化
 	Restore()                                                    //窗口还原
-	Close()                                                      //关闭窗口
-	CloseBrowserWindow()                                         //关闭浏览器窗口
+	Close()                                                      //关闭窗口 非browser窗口使用
+	CloseBrowserWindow()                                         //关闭浏览器窗口 带有browser窗口使用
 	WindowType() consts.WINDOW_TYPE                              //窗口类型
 	SetWindowType(windowType consts.WINDOW_TYPE)                 //设置窗口类型
 	Browser() *ICefBrowser                                       //窗口内的Browser对象
@@ -80,17 +84,17 @@ type IBrowserWindow interface {
 	DisableResize()                                              //禁用窗口大小调整
 	EnableMaximize()                                             //启用最大化
 	EnableMinimize()                                             //启用最小化
-	EnableResize()                                               //启用窗口大小调用
-	IsClosing() bool                                             //窗口是否已状态
-	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow //转换为ViewsFramework窗口接口
-	AsLCLBrowserWindow() ILCLBrowserWindow                       //转换为LCL窗口接口
+	EnableResize()                                               //启用允许调整窗口大小
+	IsClosing() bool                                             //返回窗口是否正在关闭/或已关闭 true正在或已关闭
+	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow //转换为ViewsFramework窗口接口, 失败返回nil
+	AsLCLBrowserWindow() ILCLBrowserWindow                       //转换为LCL窗口接口, 失败返回nil
 	Frames() TCEFFrame                                           //窗口内的所有Frame
 	addFrame(frame *ICefFrame)                                   //
 	setBrowser(browser *ICefBrowser)                             //
 	EnableAllDefaultEvent()                                      //启用所有默认事件
 	SetTitle(title string)                                       //设置窗口标题栏标题
-	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口
-	IsLCL() bool                                                 //是否为 ILCLBrowserWindow 窗口
+	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口，失败返回false
+	IsLCL() bool                                                 //是否为 ILCLBrowserWindow 窗口，失败返回false
 	WindowProperty() *WindowProperty                             //窗口常用属性
 	SetWidth(value int32)                                        //设置窗口宽
 	SetHeight(value int32)                                       //设置窗口高
@@ -110,7 +114,8 @@ type IBrowserWindow interface {
 	NewSysTray() ITray                                           //systray系统原生
 }
 
-// 浏览器 LCLBrowserWindow 窗口接口 继承 IBrowserWindow
+// ILCLBrowserWindow
+// 浏览器 LCL 窗口组件接口 继承 IBrowserWindow
 //
 // 定义了LCL常用函数
 type ILCLBrowserWindow interface {
@@ -127,7 +132,8 @@ type ILCLBrowserWindow interface {
 	NewTray() ITray                   //创建LCL的系统托盘
 }
 
-// 浏览器 ViewsFrameworkBrowserWindow 窗口接口 继承 IBrowserWindow
+// IViewsFrameworkBrowserWindow
+// 浏览器 VF 窗口组件接口 继承 IBrowserWindow
 //
 // 定义了ViewsFramework常用函数
 type IViewsFrameworkBrowserWindow interface {
@@ -142,6 +148,7 @@ type IViewsFrameworkBrowserWindow interface {
 	SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) //设置窗口初始bounds
 }
 
+// NewWindowProperty
 // 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
 	return WindowProperty{

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Chromium 事件接口定义
 package cef
 
 import (
@@ -16,6 +17,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
+// IChromiumEvent
 // chromium 事件行为
 //
 // 默认情况所有chromium对象事件行为都在主窗口chromium event中执行

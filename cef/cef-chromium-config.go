@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Chromium的配置
 package cef
 
 import "github.com/energye/golcl/lcl/api"
@@ -22,7 +23,7 @@ type tCefChromiumConfig struct {
 	enabledJavascript uintptr //bool 启用Javascript
 }
 
-// New CefChromiumConfig 默认禁用相关功能
+// NewChromiumConfig 创建默认禁用相关功能
 func NewChromiumConfig() *tCefChromiumConfig {
 	return &tCefChromiumConfig{
 		enableMenu:        api.PascalBool(true),
@@ -34,37 +35,37 @@ func NewChromiumConfig() *tCefChromiumConfig {
 	}
 }
 
-// 设置启用右键菜单
+// SetEnableMenu 设置启用右键菜单
 func (m *tCefChromiumConfig) SetEnableMenu(value bool) *tCefChromiumConfig {
 	m.enableMenu = api.PascalBool(value)
 	return m
 }
 
-// 设置启用查询源文件
+// SetEnableViewSource 设置启用查询源文件
 func (m *tCefChromiumConfig) SetEnableViewSource(value bool) *tCefChromiumConfig {
 	m.enableViewSource = api.PascalBool(value)
 	return m
 }
 
-// 设置启用开发者工具
+// SetEnableDevTools 设置启用开发者工具
 func (m *tCefChromiumConfig) SetEnableDevTools(value bool) *tCefChromiumConfig {
 	m.enableDevTools = api.PascalBool(value)
 	return m
 }
 
-// 设置启用打开链接弹出新窗口
+// SetEnableWindowPopup 设置启用打开链接弹出新窗口
 func (m *tCefChromiumConfig) SetEnableWindowPopup(value bool) *tCefChromiumConfig {
 	m.enableWindowPopup = api.PascalBool(value)
 	return m
 }
 
-// 设置启用打开链接打开新tab
+// SetEnableOpenUrlTab 设置启用打开链接打开新tab
 func (m *tCefChromiumConfig) SetEnableOpenUrlTab(value bool) *tCefChromiumConfig {
 	m.enableOpenUrlTab = api.PascalBool(value)
 	return m
 }
 
-// 设置启用Javascript
+// SetEnabledJavascript 设置启用Javascript
 func (m *tCefChromiumConfig) SetEnabledJavascript(value bool) *tCefChromiumConfig {
 	m.enabledJavascript = api.PascalBool(value)
 	return m

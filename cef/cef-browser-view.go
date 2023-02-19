@@ -13,6 +13,7 @@ package cef
 
 import "unsafe"
 
+// ICefBrowserView TODO 还未实现
 type ICefBrowserView struct {
 	instance unsafe.Pointer
 }
