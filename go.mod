@@ -1,4 +1,4 @@
-module github.com/energye/energy
+module github.com/energye/energy/v2
 
 go 1.18
 
