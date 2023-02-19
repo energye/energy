@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -148,13 +150,13 @@ func (m *CEFTray) onMouseEvent() {
 	})
 }
 
-//显示系统通知
+// 显示系统通知
 //
-//title 标题
+// title 标题
 //
-//content 内容
+// content 内容
 //
-//timeout 显示时间(毫秒)
+// timeout 显示时间(毫秒)
 func (m *CEFTray) Notice(title, content string, timeout int32) {
 	notification(m.trayIcon, title, content, timeout)
 }
@@ -241,12 +243,12 @@ func (m *CEFTray) createTrayWindow() {
 	m.chromium.SetDefaultURL(m.url)
 }
 
-//设置托盘图标
+// 设置托盘图标
 func (m *CEFTray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
 
-//设置托盘图标
+// 设置托盘图标
 func (m *CEFTray) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }

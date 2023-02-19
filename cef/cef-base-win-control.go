@@ -2,10 +2,13 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
+// CEF Window Parent 父组件
 package cef
 
 import (
@@ -13,16 +16,18 @@ import (
 	"unsafe"
 )
 
+// WindowParent和WindowLinkedParent父结构体
 type BaseWinControl struct {
 	lcl.IWinControl
 	instance unsafe.Pointer
 }
 
+// IsValid 是否有效
 func (m *BaseWinControl) IsValid() bool {
 	return m.instance != nullptr
 }
 
-//Instance 当前实例
+// Instance 当前实例
 func (m *BaseWinControl) Instance() uintptr {
 	return uintptr(m.instance)
 }

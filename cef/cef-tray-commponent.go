@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -16,23 +18,23 @@ import (
 	"sync"
 )
 
-//TMouseEvent 鼠标事件
+// TMouseEvent 鼠标事件
 type TMouseEvent func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) bool
 
-//TrayICONClick 托盘图标鼠标事件
+// TrayICONClick 托盘图标鼠标事件
 type TrayICONClick func()
 
-//ITray 托盘接口
+// ITray 托盘接口
 //
-//实现4种系统托盘 1: LCLTray LCL组件, 2: CEFTray CEF基于LCL组件+html, 3: ViewsFrameTray VF(views framework)组件+html, 4: SysTray 系统原生
+// 实现4种系统托盘 1: LCLTray LCL组件, 2: CEFTray CEF基于LCL组件+html, 3: ViewsFrameTray VF(views framework)组件+html, 4: SysTray 系统原生
 //
-//1. LCLTray 对Windows、MacOSX支持较好，linux由于gtk2与gtk3原因目前无法正常使用
+// 1. LCLTray 对Windows、MacOSX支持较好，linux由于gtk2与gtk3原因目前无法正常使用
 //
-//2. CEFTray Windows
+// 2. CEFTray Windows
 //
-//3. ViewsFrameTray Windows
+// 3. ViewsFrameTray Windows
 //
-//4. SysTray 对Windows、MacOSX和Linux支持较好
+// 4. SysTray 对Windows、MacOSX和Linux支持较好
 type ITray interface {
 	SetTitle(title string)                       //SetTitle 设置标题
 	Show()                                       //Show 显示/启动 托盘
@@ -49,14 +51,14 @@ type ITray interface {
 	Notice(title, content string, timeout int32) //Notice 托盘系统通知
 }
 
-//LCLTray LCL组件 托盘
+// LCLTray LCL组件 托盘
 type LCLTray struct {
 	owner     lcl.IComponent
 	trayIcon  *lcl.TTrayIcon
 	popupMenu *lcl.TPopupMenu
 }
 
-//ViewsFrameTray VF(views framework)组件+html 托盘
+// ViewsFrameTray VF(views framework)组件+html 托盘
 type ViewsFrameTray struct {
 	trayWindow *ViewsFrameworkBrowserWindow
 	trayIcon   *lcl.TTrayIcon
@@ -66,7 +68,7 @@ type ViewsFrameTray struct {
 	isClosing  bool
 }
 
-//CEFTray CEF基于LCL组件+html 托盘
+// CEFTray CEF基于LCL组件+html 托盘
 type CEFTray struct {
 	*lcl.TForm
 	owner        lcl.IComponent
@@ -79,7 +81,7 @@ type CEFTray struct {
 	url          string
 }
 
-//SysTray 系统原生
+// SysTray 系统原生
 type SysTray struct {
 	lock           sync.Mutex
 	menu           *SysMenu

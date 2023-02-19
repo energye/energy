@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -30,7 +32,7 @@ type valueBindInfo struct {
 	FnOutParamType uintptr //string 出参变量类型
 }
 
-//绑定到Js的字段
+// 绑定到Js的字段
 type ICEFv8Value struct {
 	eventId        uintptr
 	instance       uintptr
@@ -50,7 +52,7 @@ type CEFv8BindRoot struct {
 	objectRootName string //ICEFv8Value 对象类型变量属性的所属默认对象名称
 }
 
-//检查函数是否符合 返回：函数详情
+// 检查函数是否符合 返回：函数详情
 func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	numIn := fnOf.NumIn() - int(fnType)
 	numOut := fnOf.NumOut()
@@ -102,7 +104,7 @@ func (m *ICEFv8Value) UnLock() {
 	m.rwLock.Unlock()
 }
 
-//ICEFv8Value isCommon
+// ICEFv8Value isCommon
 func (m *ICEFv8Value) isCommon() bool {
 	return m.isCommonObject == IS_COMMON
 }
@@ -381,7 +383,7 @@ func (m *ICEFv8Value) invoke(inParams []reflect.Value) (outParams []reflect.Valu
 	return outParams, true
 }
 
-//ICEFv8Value newICEFv8Value
+// ICEFv8Value newICEFv8Value
 func newICEFv8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *structFuncInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
 	jsValueBind := new(ICEFv8Value)
 	jsValueBind.rwLock = new(sync.Mutex)
@@ -402,17 +404,17 @@ func newICEFv8Value(eventId uintptr, fullParentName, name string, value interfac
 	return jsValueBind
 }
 
-//ICEFv8Value Pointer
+// ICEFv8Value Pointer
 func (m *ICEFv8Value) Pointer() unsafe.Pointer {
 	return m.ptr
 }
 
-//ICEFv8Value setEventId
+// ICEFv8Value setEventId
 func (m *ICEFv8Value) setEventId(eventId uintptr) {
 	m.eventId = eventId
 }
 
-//ICEFv8Value getEventId
+// ICEFv8Value getEventId
 func (m *ICEFv8Value) getEventId() uintptr {
 	return m.eventId
 }

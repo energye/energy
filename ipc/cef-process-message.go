@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -69,7 +71,7 @@ type CefProcessMessagePtr struct {
 	DataLen uintptr
 }
 
-//进程之间消息
+// 进程之间消息
 type argumentList struct {
 	iData []*ArgumentDataItem
 	len   int
@@ -123,7 +125,7 @@ func (m *BuildBytes) Bytes() []byte {
 	return nil
 }
 
-//调用  Free 函数手动释放内存
+// NewArgumentList
 func NewArgumentList() IArgumentList {
 	return &argumentList{lock: new(sync.Mutex)}
 }

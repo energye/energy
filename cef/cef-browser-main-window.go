@@ -2,10 +2,13 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
+// energy 全局窗口管理，窗口初始化、事件注册、属性配置
 package cef
 
 import (
@@ -52,11 +55,13 @@ type BrowserEvent struct {
 	onRenderCompMsg           ChromiumEventOnCompMsg                  //default windows
 }
 
+// LCLBrowserWindow
 type browserWindow struct {
 	LCLBrowserWindow
 	isFirstActivate bool
 }
 
+// OnFormCreate LCL窗口组件窗口创建回调
 func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	m.windowProperty = &BrowserWindow.Config.WindowProperty
 	m.SetWindowType(WT_MAIN_BROWSER)
@@ -89,6 +94,14 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 	}
 }
 
+// MainWindow
+// 获取主浏窗口
+//
+// 返回LCL或VF窗口组件实例
+//
+// # Window和MacOS平台默认LCL窗口组件
+//
+// Linux平台默认VF窗口组件
 func (m *browser) MainWindow() IBrowserWindow {
 	if m.mainVFBrowserWindow != nil {
 		return m.mainVFBrowserWindow
@@ -96,12 +109,9 @@ func (m *browser) MainWindow() IBrowserWindow {
 		return m.mainBrowserWindow
 	}
 	return nil
-	//if IsMessageLoop {
-	//	return m.mainVFBrowserWindow.BrowserWindow()
-	//}
-	//return m.mainBrowserWindow.BrowserWindow()
 }
 
+// SetBrowserInit
 // 主窗口和chromium初始化时回调
 //
 // event 			浏览器事件
@@ -111,7 +121,7 @@ func (m *browser) SetBrowserInit(fn browserWindowOnEventCallback) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
 
-// 基于LCL窗口 - 主窗体和chromium初始后回调
+// SetBrowserInitAfter 基于LCL窗口 - 主窗体和chromium初始后回调
 //
 // 在这里可以对主窗体属性设置、添加子窗口、带有browser的窗口和子组件创建
 //
@@ -120,7 +130,7 @@ func (m *browser) SetBrowserInitAfter(fn browserWindowAfterOnEventCallback) {
 	m.Config.setBrowserWindowInitAfterOnEvent(fn)
 }
 
-// 设置或增加一个窗口序号
+// setOrIncNextWindowNum 设置或增加一个窗口序号
 func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	if len(browserId) > 0 {
 		m.windowSerial = browserId[0]
@@ -131,7 +141,7 @@ func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 	return m.windowSerial
 }
 
-// 设置或减少一个窗口序号
+// setOrDecNextWindowNum 设置或减少一个窗口序号
 func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
 	if len(browserId) > 0 {
 		m.windowSerial = browserId[0]
@@ -141,17 +151,18 @@ func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
 	return m.windowSerial
 }
 
-// 获得窗口序号
+// GetNextWindowNum 获得窗口序号
 func (m *browser) GetNextWindowNum() int32 {
 	return m.windowSerial
 }
 
+// createNextLCLPopupWindow 创建下一个弹出的子窗口
 func (m *browser) createNextLCLPopupWindow() {
 	m.popupWindow = NewLCLWindow(m.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 
-// 拿到窗口信息
+// GetWindowInfo 根据浏览器窗口ID获取窗口信息
 func (m *browser) GetWindowInfo(browserId int32) IBrowserWindow {
 	if winInfo, ok := m.windowInfo[browserId]; ok {
 		return winInfo
@@ -159,19 +170,23 @@ func (m *browser) GetWindowInfo(browserId int32) IBrowserWindow {
 	return nil
 }
 
-func (m *browser) GetWindowsInfo() map[int32]IBrowserWindow {
+// GetWindowInfos 获得所有窗口信息
+func (m *browser) GetWindowInfos() map[int32]IBrowserWindow {
 	return m.windowInfo
 }
 
+// putWindowInfo 创建一个窗口这后会添加到windowInfo中
 func (m *browser) putWindowInfo(browserId int32, windowInfo IBrowserWindow) {
 	m.windowInfo[browserId] = windowInfo
 }
 
+// removeWindowInfo 窗口关闭会从windowInfo移除
 func (m *browser) removeWindowInfo(browseId int32) {
 	delete(m.windowInfo, browseId)
 	RemoveGoForm(browseId)
 }
 
+// GetBrowser 获取窗口Browser
 func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
 		return winInfo.Browser()
@@ -179,6 +194,7 @@ func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
 	return nil
 }
 
+// putBrowserFrame
 func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
 	if winInfo, ok := m.windowInfo[browser.Identifier()]; ok {
 		winInfo.setBrowser(browser)
@@ -186,6 +202,7 @@ func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
 	}
 }
 
+// GetFrames
 func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
 		return winInfo.Frames()
@@ -193,6 +210,7 @@ func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
 	return nil
 }
 
+// GetFrame
 func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
 		return winInfo.Frames()[frameId]
@@ -200,12 +218,14 @@ func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
 	return nil
 }
 
+// RemoveFrame
 func (m *browser) RemoveFrame(browseId int32, frameId int64) {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
 		delete(winInfo.Frames(), frameId)
 	}
 }
 
+// IsSameFrame
 func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
 	if frame := m.GetFrame(browseId, frameId); frame != nil {
 		return true
@@ -213,6 +233,7 @@ func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
 	return false
 }
 
+// removeNoValidFrames 移除无效的frames
 func (m *browser) removeNoValidFrames() {
 	for _, winInfo := range m.windowInfo {
 		for _, frm := range winInfo.Frames() {

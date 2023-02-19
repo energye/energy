@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -15,7 +17,7 @@ import (
 	"time"
 )
 
-//emit方式发送到render
+// emit方式发送到render
 func TestRenderOnEmit(t *testing.T) {
 	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
@@ -55,7 +57,7 @@ func TestRenderOnEmit(t *testing.T) {
 	}
 }
 
-//响应的方式返回给render
+// 响应的方式返回给render
 func TestRenderOnResponse(t *testing.T) {
 	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
@@ -72,7 +74,7 @@ func TestRenderOnResponse(t *testing.T) {
 	}
 }
 
-//render 1
+// render 1
 func TestRender1OnEmit(t *testing.T) {
 	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false
@@ -98,7 +100,7 @@ func TestRender1OnEmit(t *testing.T) {
 	}
 }
 
-//render 2
+// render 2
 func TestRender2OnEmit(t *testing.T) {
 	common.Args.SetArgs("type", "render")
 	UseNetIPCChannel = false

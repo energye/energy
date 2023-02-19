@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -24,20 +26,20 @@ type ExceptionCallback func(sender lcl.IObject, e *lcl.Exception)
 
 var exceptionCallback ExceptionCallback
 
-//设置cef低层异常捕获回调函数
+// 设置cef低层异常捕获回调函数
 func SetOnException(exception ExceptionCallback) {
 	exceptionCallback = exception
 }
 
-//全局初始化
+// 全局初始化
 //
-//需要手动调用的函数,在main函数中调用
+// 需要手动调用的函数,在main函数中调用
 //
-//libs 内置到应用程序的类库
+// libs 内置到应用程序的类库
 //
-//resources 内置到应用程序的资源文件
+// resources 内置到应用程序的资源文件
 //
-//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
+// MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
 func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	macapp.MacApp.IsCEF(IsDarwin())
 	//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行

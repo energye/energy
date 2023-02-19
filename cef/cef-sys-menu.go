@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -63,7 +65,7 @@ func (m *SysMenuItem) AddSubMenu(label string, click ...MenuItemClick) *SysMenuI
 	return m.childMenu.AddMenuItem(label, nil)
 }
 
-//SetIconFS windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
+// SetIconFS windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
 	if emfs.IsExist(iconResourcePath) {
 		data, err := emfs.GetResources(iconResourcePath)
@@ -73,7 +75,7 @@ func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
 	}
 }
 
-//SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
+// SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIcon(iconResourcePath string) {
 	if tools.IsExist(iconResourcePath) {
 		data, err := ioutil.ReadFile(iconResourcePath)
@@ -83,7 +85,7 @@ func (m *SysMenuItem) SetIcon(iconResourcePath string) {
 	}
 }
 
-//SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
+// SetIcon windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIconBytes(v []byte) {
 	m.icon = v
 	if m.menuItem != nil {

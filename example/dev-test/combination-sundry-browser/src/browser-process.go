@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -77,7 +79,7 @@ func AppBrowserInit() {
 			//函数内的 context 返回给调用方
 			//取入参
 			fmt.Println("browser renderOnEventSubWindowIPCOn:", context.Arguments().GetString(0), "channelId:", context.ChannelId())
-			fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowsInfo()))
+			fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowInfos()))
 			//调用指定渲染进程监听
 			ipc.IPC.Browser().EmitChannelId("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
 			fmt.Println("\t|-- 111")
@@ -116,7 +118,7 @@ func AppBrowserInit() {
 		})
 		event.On("window-list", func(context ipc.IIPCContext) {
 			var ids []int32
-			for id, _ := range cef.BrowserWindow.GetWindowsInfo() {
+			for id, _ := range cef.BrowserWindow.GetWindowInfos() {
 				ids = append(ids, id)
 			}
 			idsStr, err := json.Marshal(ids)

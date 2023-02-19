@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -64,7 +66,7 @@ func init() {
 }
 
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
-//运行安装
+// 运行安装
 func runInstall(c *CommandConfig) error {
 	if c.Install.Path == "" {
 		c.Install.Path = c.Wd
@@ -301,7 +303,7 @@ func energyOS() (string, bool) {
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
-//提取文件
+// 提取文件
 func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]interface{}) {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	files := extractOSConfig[keyName].([]interface{})
@@ -454,7 +456,7 @@ func ExtractUnZip(filePath, targetPath string, files ...interface{}) {
 	}
 }
 
-//释放bz2文件到tar
+// 释放bz2文件到tar
 func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) string {
 	fileBz2, err := os.Open(name)
 	if err != nil {
@@ -500,7 +502,7 @@ func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLe
 	}
 }
 
-//url文件名
+// url文件名
 func urlName(downloadUrl string) string {
 	if u, err := url.QueryUnescape(downloadUrl); err != nil {
 		return ""
@@ -510,7 +512,7 @@ func urlName(downloadUrl string) string {
 	}
 }
 
-//下载文件配置
+// 下载文件配置
 func downloadConfig(url string) ([]byte, error) {
 	client := new(http.Client)
 	resp, err := client.Get(url)
@@ -537,7 +539,7 @@ func isFileExist(filename string, filesize int64) bool {
 	return false
 }
 
-//下载文件
+// 下载文件
 func downloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
 	var (
 		fsize   int64

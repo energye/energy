@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -23,8 +25,8 @@ var libs embed.FS
 //go:embed resources
 var resources embed.FS
 
-//GOOS=windows;GOARCH=386;
-//env=32
+// GOOS=windows;GOARCH=386;
+// env=32
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)

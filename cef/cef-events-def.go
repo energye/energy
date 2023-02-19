@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -127,7 +129,7 @@ type TCloseEvent func(sender lcl.IObject, action *types.TCloseAction) bool
 type TNotifyEvent func(sender lcl.IObject) bool
 type TCloseQueryEvent func(sender lcl.IObject, canClose *bool) bool
 
-//TCEFWindowComponent
+// TCEFWindowComponent
 type WindowComponentOnWindowCreated func(sender lcl.IObject, window *ICefWindow)
 type WindowComponentOnWindowDestroyed func(sender lcl.IObject, window *ICefWindow)
 type WindowComponentOnWindowActivationChanged func(sender lcl.IObject, window *ICefWindow, active bool)
@@ -142,7 +144,7 @@ type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aRes
 type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
 type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)
 
-//TCEFBrowserViewComponent
+// TCEFBrowserViewComponent
 type BrowserViewComponentOnBrowserCreated func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
 type BrowserViewComponentOnBrowserDestroyed func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
 type BrowserViewComponentOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool, aResult *ICefBrowserViewDelegate)

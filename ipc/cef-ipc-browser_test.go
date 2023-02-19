@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -13,7 +15,7 @@ import (
 	"testing"
 )
 
-//emit方式发送到render
+// emit方式发送到render
 func TestBrowserOn(t *testing.T) {
 	UseNetIPCChannel = false
 	IPC.browser.SetOnEvent(func(event IEventOn) {
@@ -44,7 +46,7 @@ func TestBrowserOn(t *testing.T) {
 	IPC.StartBrowserIPC()
 }
 
-//响应的方式返回给render
+// 响应的方式返回给render
 func TestBrowserOnResponse(t *testing.T) {
 	UseNetIPCChannel = false
 	IPC.browser.SetOnEvent(func(event IEventOn) {
@@ -76,7 +78,7 @@ func TestBrowserOnResponse(t *testing.T) {
 	IPC.StartBrowserIPC()
 }
 
-//emit方式发送到指定的render channel channelId
+// emit方式发送到指定的render channel channelId
 func TestBrowserOnByRender(t *testing.T) {
 	UseNetIPCChannel = false
 	IPC.browser.SetOnEvent(func(event IEventOn) {

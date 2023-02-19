@@ -2,13 +2,15 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
+// 应用主线程异步回调
 package cef
 
-//应用主线程异步回调
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api/dllimports"

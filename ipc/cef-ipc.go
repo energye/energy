@@ -2,7 +2,9 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
@@ -179,9 +181,9 @@ func (m *ipcChannel) StartBrowserIPC() {
 
 // 创建IPC客户端服务 基于unix socket, windows <= 10.17063 基于net socket
 //
-//单进程，只创建一个连接
+// 单进程，只创建一个连接
 //
-//多进程，每个渲染进程创建一个连接
+// 多进程，每个渲染进程创建一个连接
 func (m *ipcChannel) CreateRenderIPC(browserId int32, channelId int64) *renderChannel {
 	logger.Debug("Create IPC render isConnect:", m.render.isConnect, "channelId:", channelId)
 	if m.render.isConnect {

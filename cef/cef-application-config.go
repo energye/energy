@@ -2,10 +2,14 @@
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// Licensed under GNU General Public License v3.0
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
 //
 //----------------------------------------
 
+// 应用程序的配置
+// 提供部分应用程序配置
 package cef
 
 import (
@@ -34,7 +38,7 @@ type tCefApplicationConfig struct {
 	noSandbox                uintptr //bool
 	disableZygote            uintptr //bool 只对 linux 启作用
 	enableGPU                uintptr //bool
-	singleProcess            uintptr //bool 进程启动模式,默认false true:单进程 false:多进程
+	singleProcess            uintptr //bool 进程启动模式,多进程:false 单进程:true 默认false
 	useMockKeyChain          uintptr //bool
 	checkCEFFiles            uintptr //bool
 	remoteDebuggingPort      uintptr //int32
