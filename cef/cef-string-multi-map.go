@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF 多值MAP类型
 package cef
 
 import (
@@ -16,30 +17,43 @@ import (
 	"unsafe"
 )
 
+// ICefStringMultiMap 实例
 type ICefStringMultiMap struct {
 	instance uintptr
 	ptr      unsafe.Pointer
 }
 
-// header map
+// GetSize 大小
 func (m *ICefStringMultiMap) GetSize() int {
 	return cefHeaderMap_GetSize(m.instance)
 }
+
+// FindCount key值数量
 func (m *ICefStringMultiMap) FindCount(key string) int {
 	return cefHeaderMap_FindCount(m.instance, key)
 }
+
+// GetEnumerate 根据key & index获取枚举
 func (m *ICefStringMultiMap) GetEnumerate(key string, valueIndex int) string {
 	return api.GoStr(cefHeaderMap_GetEnumerate(m.instance, key, valueIndex))
 }
+
+// GetKey 根据 index 获取key
 func (m *ICefStringMultiMap) GetKey(index int) string {
 	return api.GoStr(cefHeaderMap_GetKey(m.instance, index))
 }
+
+// GetValue 根据 index 获取value
 func (m *ICefStringMultiMap) GetValue(index int) string {
 	return api.GoStr(cefHeaderMap_GetValue(m.instance, index))
 }
+
+// Append 给key追加值
 func (m *ICefStringMultiMap) Append(key, value string) bool {
 	return api.GoBool(cefHeaderMap_Append(m.instance, key, value))
 }
+
+// Clear 清空
 func (m *ICefStringMultiMap) Clear() {
 	cefHeaderMap_Clear(m.instance)
 }

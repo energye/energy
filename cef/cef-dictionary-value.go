@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Chromium 字典
 package cef
 
 import (
@@ -17,12 +18,14 @@ import (
 	. "github.com/energye/energy/consts"
 )
 
+// ICefDictionaryValue 字典数据结构
 type ICefDictionaryValue struct {
 	iData    []*dictDataItem
 	dataLen  int
 	dataByte []byte
 }
 
+// dictDataItem 字典数据项
 type dictDataItem struct {
 	vType   int8
 	keyLen  int32
@@ -31,16 +34,19 @@ type dictDataItem struct {
 	data    []byte
 }
 
+// NewCefDictionaryValue 创建一个字典
 func NewCefDictionaryValue() *ICefDictionaryValue {
 	return &ICefDictionaryValue{}
 }
 
+// Clear 清空字典内容
 func (m *ICefDictionaryValue) Clear() {
 	m.iData = []*dictDataItem{}
 	m.dataLen = 0
 	m.dataByte = []byte{}
 }
 
+// Package 将字典数据打包为字节
 func (m *ICefDictionaryValue) Package() []byte {
 	buf := &bytes.Buffer{}
 	for _, data := range m.Items() {
@@ -53,10 +59,12 @@ func (m *ICefDictionaryValue) Package() []byte {
 	return buf.Bytes()
 }
 
+// Items 返回所有字典项
 func (m *ICefDictionaryValue) Items() []*dictDataItem {
 	return m.iData
 }
 
+// SetDictionary 设置 ICefDictionaryValue 类型值
 func (m *ICefDictionaryValue) SetDictionary(name string, dict *ICefDictionaryValue) {
 	if name == "" || dict == nil {
 		return
@@ -74,6 +82,7 @@ func (m *ICefDictionaryValue) SetDictionary(name string, dict *ICefDictionaryVal
 	m.dataLen = len(m.iData)
 }
 
+// SetString 设置 string 类型值
 func (m *ICefDictionaryValue) SetString(name string, v string) {
 	if name == "" || v == "" {
 		return
@@ -91,6 +100,7 @@ func (m *ICefDictionaryValue) SetString(name string, v string) {
 	m.dataLen = len(m.iData)
 }
 
+// SetInt 设置 int32 类型值
 func (m *ICefDictionaryValue) SetInt(name string, v int32) {
 	if name == "" || v < 0 {
 		return
@@ -108,6 +118,7 @@ func (m *ICefDictionaryValue) SetInt(name string, v int32) {
 	m.dataLen = len(m.iData)
 }
 
+// SetDouble 设置 float64 类型值
 func (m *ICefDictionaryValue) SetDouble(name string, v float64) {
 	if name == "" || v < 0 {
 		return
@@ -125,6 +136,7 @@ func (m *ICefDictionaryValue) SetDouble(name string, v float64) {
 	m.dataLen = len(m.iData)
 }
 
+// SetBoolean 设置 bool 类型值
 func (m *ICefDictionaryValue) SetBoolean(name string, v bool) {
 	if name == "" {
 		return

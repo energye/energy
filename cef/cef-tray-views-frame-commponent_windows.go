@@ -11,6 +11,8 @@
 //go:build windows
 // +build windows
 
+// 基于VF组件系统托盘 - windows 平台
+// Html + CSS + JavaScript实现
 package cef
 
 import (
@@ -23,6 +25,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+// 创建系统托盘
 func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *ViewsFrameTray {
 	var tray = &ViewsFrameTray{}
 	cc := NewChromiumConfig()
@@ -106,10 +109,6 @@ func (m *ViewsFrameTray) registerChromiumEvent() {
 	m.trayWindow.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		model.Clear()
 	})
-	//m.trayWindow.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool {
-	//	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-	//	return false
-	//})
 	m.trayWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
 			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
@@ -124,26 +123,32 @@ func (m *ViewsFrameTray) registerChromiumEvent() {
 	})
 }
 
+// AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
 func (m *ViewsFrameTray) AsSysTray() *SysTray {
 	return nil
 }
 
+// AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *ViewsFrameTray) AsViewsFrameTray() *ViewsFrameTray {
 	return m
 }
 
+// AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *ViewsFrameTray) AsCEFTray() *CEFTray {
 	return nil
 }
 
+// AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *ViewsFrameTray) AsLCLTray() *LCLTray {
 	return nil
 }
 
+// Show 显示/启动 托盘
 func (m *ViewsFrameTray) Show() {
 	m.trayWindow.Show()
 }
 
+// Hide 隐藏 托盘
 func (m *ViewsFrameTray) Hide() {
 	m.trayWindow.Hide()
 }
@@ -157,43 +162,52 @@ func (m *ViewsFrameTray) close() {
 	m.trayIcon.Free()
 }
 
+// SetOnDblClick 设置双击事件
 func (m *ViewsFrameTray) SetOnDblClick(fn TrayICONClick) {
 	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
 		fn()
 	})
 }
 
+// SetOnClick 设置单击事件
 func (m *ViewsFrameTray) SetOnClick(fn TrayICONClick) {
 	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
 		fn()
 	})
 }
 
+// SetOnMouseUp 鼠标抬起事件
 func (m *ViewsFrameTray) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
 
+// SetOnMouseDown 鼠标按下事件
 func (m *ViewsFrameTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
 
+// SetOnMouseMove 鼠标移动事件
 func (m *ViewsFrameTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
+// Visible 显示状态
 func (m *ViewsFrameTray) Visible() bool {
 	return m.visible
 }
 
+// SetVisible 设置显示状态
 func (m *ViewsFrameTray) SetVisible(v bool) {
 	m.visible = v
 	m.trayIcon.SetVisible(v)
 }
 
+// SetHint 设置提示
 func (m *ViewsFrameTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
+// SetTitle 设置标题 - 空函数
 func (m *ViewsFrameTray) SetTitle(title string) {
 }
 

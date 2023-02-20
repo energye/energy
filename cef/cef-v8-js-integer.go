@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSInteger 类型实现
 package cef
 
 import (

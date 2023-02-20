@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSDouble 类型实现
 package cef
 
 import (

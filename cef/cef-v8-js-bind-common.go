@@ -8,46 +8,53 @@
 //
 //----------------------------------------
 
+// V8 JSValue 通用类型实现
+//
+// 通用类型是可变类型，对于JS语言可以动态赋任意类型的值
+//
+// # Go中针对几种基本类型增加了可变类型实现
+//
+// 绑定 定义的普通函数 前缀-默认是结构名称, prefix default struct name
 package cef
 
-// ICEFv8Value NewString
+// NewString GO&JS 类型
 func (m *ICEFv8Value) NewString(name, value string) *JSString {
 	return VariableBind.bindStorage.NewString(name, value)
 }
 
-// ICEFv8Value NewInteger
+// NewInteger GO&JS 类型
 func (m *ICEFv8Value) NewInteger(name string, value int32) *JSInteger {
 	return VariableBind.bindStorage.NewInteger(name, value)
 }
 
-// ICEFv8Value NewDouble
+// NewDouble GO&JS 类型
 func (m *ICEFv8Value) NewDouble(name string, value float64) *JSDouble {
 	return VariableBind.bindStorage.NewDouble(name, value)
 }
 
-// ICEFv8Value NewBool
+// NewBoolean  GO&JS 类型
 func (m *ICEFv8Value) NewBoolean(name string, value bool) *JSBoolean {
 	return VariableBind.bindStorage.NewBoolean(name, value)
 }
 
-// ICEFv8Value NewNull
+// NewNull GO&JS 类型
 func (m *ICEFv8Value) NewNull(name string) *JSNull {
 	return VariableBind.bindStorage.NewNull(name)
 }
 
-// ICEFv8Value NewUndefined
+// NewUndefined GO&JS 类型
 func (m *ICEFv8Value) NewUndefined(name string) *JSUndefined {
 	return VariableBind.bindStorage.NewUndefined(name)
 }
 
-// ICEFv8Value NewFunction
-// 绑定 定义的普通函数 prefix default struct name
+// NewFunction GO&JS 类型
 func (m *ICEFv8Value) NewFunction(name string, fn interface{}) error {
 	return VariableBind.bindStorage.NewFunction(name, fn)
 }
 
-// ICEFv8Value NewObjects
-// 对象类型变量和对象函数绑定
+//	NewObjects GO&JS 类型
+//
+// Go结构类型变量和Go结构函数绑定
 func (m *ICEFv8Value) NewObjects(objects ...interface{}) {
 	bindObject(objects...)
 }

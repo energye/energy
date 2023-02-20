@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF 事件函数定义
 package cef
 
 import (
@@ -18,75 +19,74 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-// 通用Result bool
+// ChromiumEvent 通用Result bool
 type ChromiumEventOnResult func(sender lcl.IObject, aResultOK bool)
 
-// 通用Result float
+// ChromiumEvent 通用Result float
 type ChromiumEventOnResultFloat func(sender lcl.IObject, result float64)
 
-// chromiumEvent Beforebrowser - 主进程执行每创建一个新的浏览器进程都会调用
+// ChromiumEvent Beforebrowser - 主进程执行每创建一个新的浏览器进程都会调用
 type ChromiumEventOnBeforeBrowser func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) bool
 
-// chromiumEvent 地址改变事件
+// ChromiumEvent 地址改变事件
 type ChromiumEventOnAddressChange func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, url string)
 
-// chromiumEvent browser TitleChange
+// ChromiumEvent browser TitleChange
 type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, title string)
 
-// render
+// ChromiumEvent Render Process Terminated
 type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
 
-// Chromium Windows Comp Message
+// ChromiumEvent Windows Comp Message
 type ChromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 
-// Event CefBrowse
+// ChromiumEvent CefBrowser
 type ChromiumEventOnCefBrowser func(sender lcl.IObject, browser *ICefBrowser)
 
-// mainChromium Create close
+// ChromiumEvent ChromiumMain Create & close
 type ChromiumEventOnAfterCreated ChromiumEventOnCefBrowser
 type ChromiumEventOnBeforeClose ChromiumEventOnCefBrowser
 type ChromiumEventOnClose func(sender lcl.IObject, browser *ICefBrowser, aAction *TCefCloseBrowsesAction)
 
+// ChromiumEvent ScrollOffsetChanged
 type ChromiumEventOnScrollOffsetChanged func(sender lcl.IObject, browser *ICefBrowser, x, y float64)
 
-// chromiumEvent 加载
+// ChromiumEvent Load
 type ChromiumEventOnLoadStart func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type ChromiumEventOnLoadingStateChange func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool)
 type ChromiumEventOnLoadingProgressChange func(sender lcl.IObject, browser *ICefBrowser, progress float64)
 type ChromiumEventOnLoadError func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, errorCode consts.CEF_NET_ERROR, errorText, failedUrl string)
 type ChromiumEventOnLoadEnd func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
 
-// chromiumEvent cookie
+// ChromiumEvent Cookie
 type ChromiumEventOnCookieSet func(sender lcl.IObject, success bool, ID int32)
 type ChromiumEventOnCookiesDeleted func(sender lcl.IObject, numDeleted int32)
 type ChromiumEventOnCookiesFlushed func(sender lcl.IObject)
 type ChromiumEventOnCookiesVisited func(sender lcl.IObject, cookie *ICefCookie)
 type ChromiumEventOnCookieVisitorDestroyed func(sender lcl.IObject, ID int32)
 
-// chromiumEvent context menu
+// ChromiumEvent context menu
 type ChromiumEventOnBeforeContextMenu func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel)
 type ChromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool)
 type ChromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 
-// chromiumEvent 全屏模式
+// ChromiumEvent 全屏模式改变
 type ChromiumEventOnFullScreenModeChange func(sender lcl.IObject, browser *ICefBrowser, fullscreen bool)
 
-// 下载之前
+// ChromiumEvent 下载
 type ChromiumEventOnBeforeDownload func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *DownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback)
-
-// 下载中
 type ChromiumEventOnDownloadUpdated func(sender lcl.IObject, browser *ICefBrowser, downloadItem *DownloadItem, callback *ICefDownloadItemCallback)
 
-// 键盘
+// ChromiumEvent 键盘
 type ChromiumEventOnKeyEvent func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool)
 
-// 资源加载
+// ChromiumEvent 资源加载
 type ChromiumEventOnBeforeResourceLoad func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue)
 type ChromiumEventOnResourceResponse func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, result *bool)
 type ChromiumEventOnResourceRedirect func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, newUrl *t.TString)
 type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, status consts.TCefUrlRequestStatus, receivedContentLength int64)
 
-// 渲染进程执行每个浏览器上下文时都会调用
+// GlobalCEFAppEvent
 type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
 type GlobalCEFAppEventOnWebKitInitialized func()
 type GlobalCEFAppEventOnContextInitialized func()
@@ -98,33 +98,35 @@ type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFr
 type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
 type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
 
-// 进程消息接收
+// Browser & Rneder 进程消息接收
 type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
 type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
+
+// ChromiumEvent FindResult
 type ChromiumEventOnFindResult func(sender lcl.IObject, browser *ICefBrowser, identifier, count int32, selectionRect *TCefRect, activeMatchOrdinal int32, finalUpdate bool)
 
-// frame
+// ChromiumEvent Frame
 type ChromiumEventOnFrameAttached func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, reattached bool)
 type ChromiumEventOnFrameCreated func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type ChromiumEventOnFrameDetached func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type ChromiumEventOnMainFrameChanged func(sender lcl.IObject, browser *ICefBrowser, oldFrame *ICefFrame, newFrame *ICefFrame)
 
-// windowParent popup
+// ChromiumEvent BeforePopup
 type ChromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool
 
-// windowParent popup
+// ChromiumEvent BeforePopupForWindowInfo
 type ChromiumEventOnBeforePopupForWindowInfo func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow IBrowserWindow, noJavascriptAccess *bool) bool
 
-// windowParent open url from tab
+// ChromiumEvent OpenUrlFromTab
 type ChromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 
-// drag
+// ChromiumEvent DragEnter
 type ChromiumEventOnDragEnter func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool)
 
-// DraggableRegionsChanged css [-webkit-app-region： drag/no-drag]
+// ChromiumEvent DraggableRegionsChanged , web css: [-webkit-app-region： drag/no-drag]
 type ChromiumEventOnDraggableRegionsChanged func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions)
 
-// window event
+// LCL Window event
 type TCloseEvent func(sender lcl.IObject, action *types.TCloseAction) bool
 type TNotifyEvent func(sender lcl.IObject) bool
 type TCloseQueryEvent func(sender lcl.IObject, canClose *bool) bool

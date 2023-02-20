@@ -8,11 +8,13 @@
 //
 //----------------------------------------
 
+// CEF V8 上下文
 package cef
 
 import "unsafe"
 
-// 该对象不做实现
+// ICefV8Context
+// 渲染进程创建时对V8Value创建
 type ICefV8Context struct {
 	instance uintptr
 	ptr      unsafe.Pointer

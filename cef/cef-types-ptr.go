@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// cef -> energy 结构指定类型定义
 package cef
 
 import (
@@ -75,6 +76,41 @@ type tCefBrowserSettingsPtr struct {
 	ChromeStatusBubble         uintptr //TCefState
 }
 
+// ToPtr 转换为指针
+func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
+	return &tCefBrowserSettingsPtr{
+		Size:                       m.Size.ToPtr(),
+		WindowlessFrameRate:        m.WindowlessFrameRate.ToPtr(),
+		StandardFontFamily:         m.StandardFontFamily.ToPtr(),
+		FixedFontFamily:            m.FixedFontFamily.ToPtr(),
+		SerifFontFamily:            m.SerifFontFamily.ToPtr(),
+		SansSerifFontFamily:        m.SansSerifFontFamily.ToPtr(),
+		CursiveFontFamily:          m.CursiveFontFamily.ToPtr(),
+		FantasyFontFamily:          m.FantasyFontFamily.ToPtr(),
+		DefaultFontSize:            m.DefaultFontSize.ToPtr(),
+		DefaultFixedFontSize:       m.DefaultFixedFontSize.ToPtr(),
+		MinimumFontSize:            m.MinimumFontSize.ToPtr(),
+		MinimumLogicalFontSize:     m.MinimumLogicalFontSize.ToPtr(),
+		DefaultEncoding:            m.DefaultEncoding.ToPtr(),
+		RemoteFonts:                m.RemoteFonts.ToPtr(),
+		Javascript:                 m.Javascript.ToPtr(),
+		JavascriptCloseWindows:     m.JavascriptCloseWindows.ToPtr(),
+		JavascriptAccessClipboard:  m.JavascriptAccessClipboard.ToPtr(),
+		JavascriptDomPaste:         m.JavascriptDomPaste.ToPtr(),
+		ImageLoading:               m.ImageLoading.ToPtr(),
+		ImageShrinkStandaLonetoFit: m.ImageShrinkStandaLonetoFit.ToPtr(),
+		TextAreaResize:             m.TextAreaResize.ToPtr(),
+		TabToLinks:                 m.TabToLinks.ToPtr(),
+		LocalStorage:               m.LocalStorage.ToPtr(),
+		Databases:                  m.Databases.ToPtr(),
+		Webgl:                      m.Webgl.ToPtr(),
+		BackgroundColor:            m.BackgroundColor.ToPtr(),
+		AcceptLanguageList:         m.AcceptLanguageList.ToPtr(),
+		ChromeStatusBubble:         m.ChromeStatusBubble.ToPtr(),
+	}
+}
+
+// Convert 转换为结构
 func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
 	return &TCefBrowserSettings{
 		Size:                       NativeUInt(m.Size),

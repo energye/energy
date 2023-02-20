@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF & LCL Color
 package cef
 
 import (

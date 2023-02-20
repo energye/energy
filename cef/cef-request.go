@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF Request
 package cef
 
 import (
@@ -17,6 +18,7 @@ import (
 	"unsafe"
 )
 
+// ICefRequest 实例
 type ICefRequest struct {
 	instance             unsafe.Pointer
 	Url                  string
@@ -30,6 +32,7 @@ type ICefRequest struct {
 	Identifier           uint64
 }
 
+// ICefRequest 指针实例
 type rICefRequest struct {
 	Instance             uintptr
 	Url                  uintptr //string
@@ -43,39 +46,47 @@ type rICefRequest struct {
 	Identifier           uintptr //uint64
 }
 
-// request
+// IsReadOnly 是否只读
 func (m *ICefRequest) IsReadOnly() bool {
 	return api.GoBool(cefRequest_IsReadOnly(uintptr(m.instance)))
 }
 
-func (m *ICefRequest) SetUrl(url string) {
+// SetURL 设置URL
+func (m *ICefRequest) SetURL(url string) {
 	cefRequest_SetUrl(uintptr(m.instance), url)
 }
 
+// SetMethod 设置请求方式
 func (m *ICefRequest) SetMethod(method string) {
 	cefRequest_SetMethod(uintptr(m.instance), method)
 }
 
+// SetReferrer 设置来源策略
 func (m *ICefRequest) SetReferrer(referrerUrl string, policy TCefReferrerPolicy) {
 	cefRequest_SetReferrer(uintptr(m.instance), referrerUrl, policy)
 }
 
+// SetFlags 设置请求标记
 func (m *ICefRequest) SetFlags(flags TCefUrlRequestFlags) {
 	cefRequest_SetFlags(uintptr(m.instance), flags)
 }
 
+// SetFirstPartyForCookies
 func (m *ICefRequest) SetFirstPartyForCookies(url string) {
 	cefRequest_SetFirstPartyForCookies(uintptr(m.instance), url)
 }
 
+// GetHeaderByName
 func (m *ICefRequest) GetHeaderByName(name string) string {
 	return api.GoStr(cefRequest_GetHeaderByName(uintptr(m.instance), name))
 }
 
+// SetHeaderByName
 func (m *ICefRequest) SetHeaderByName(name, value string, overwrite bool) {
 	cefRequest_SetHeaderByName(uintptr(m.instance), name, value, overwrite)
 }
 
+// GetHeaderMap
 func (m *ICefRequest) GetHeaderMap() *ICefStringMultiMap {
 	headerMap := &ICefStringMultiMap{}
 	headerMap.instance = cefRequest_GetHeaderMap(uintptr(m.instance))

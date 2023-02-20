@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Go&JS变量绑定
 package cef
 
 import (
@@ -21,6 +22,8 @@ import (
 	"unsafe"
 )
 
+// JSValue
+// GO和JS变量类型接口
 type JSValue interface {
 	SetAnyValue(value interface{}) error
 	IntegerValue() (int32, error)

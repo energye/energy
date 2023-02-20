@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue 对象类型实现
 package cef
 
 import (
@@ -90,6 +91,7 @@ func (m *vt) ToValueTypeString() string {
 	return fmt.Sprintf("GO=%s,JS:=%s", govs, jsvs)
 }
 
+// IsGoIntAuto 判断Go 所有 int 类型
 func (m *vt) IsGoIntAuto() bool {
 	switch m.Gov {
 	case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64:
@@ -98,6 +100,7 @@ func (m *vt) IsGoIntAuto() bool {
 	return false
 }
 
+// IsGoFloatAuto 判断Go 所有 float 类型
 func (m *vt) IsGoFloatAuto() bool {
 	switch m.Gov {
 	case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
@@ -107,7 +110,7 @@ func (m *vt) IsGoFloatAuto() bool {
 }
 
 // ICefV8Context BindObject
-// 对应Golang，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
+// 对应Go，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
 func bindObject(objects ...interface{}) {
 	objectSti.StructsObject = make(map[string]*structObjectInfo, len(objects))
 	for i := 0; i < len(objects); i++ {
@@ -125,14 +128,15 @@ func bindObject(objects ...interface{}) {
 	objectSti._objectToCefObject()
 }
 
-//对象字段和函数统计
-
+// _objectToCefObject
+// 对象字段和函数统计
 // 对象转换 go to cef
 func (m *structTypeInfo) _objectToCefObject() {
 	for _, info := range m.StructsObject {
 		m._subInfoToCefObject(info)
 	}
 }
+
 func (m *structTypeInfo) _subInfoToCefObject(info *structObjectInfo) {
 	m._infoTo(info)
 	if len(info.SubStructObjectInfo) > 0 {

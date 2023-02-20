@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF 右键菜单
 package cef
 
 import (
@@ -19,7 +20,7 @@ import (
 	"unsafe"
 )
 
-// 快捷键
+// KeyAccelerator 自定义实现快捷键
 var KeyAccelerator = &keyEventAccelerator{
 	menuId:            MENU_ID_USER_FIRST,                  //menuId的启始位置
 	commandItems:      make(map[MenuId]*MenuItem),          //右键菜单命令ID快捷键
@@ -55,6 +56,7 @@ type iCefContextMenuParams struct {
 	EditStateFlags    uintptr
 }
 
+// ICefContextMenuParams 菜单显示时参数，当前鼠标右键的frame & html元素参数
 type ICefContextMenuParams struct {
 	XCoord            int32
 	YCoord            int32
@@ -72,11 +74,13 @@ type ICefContextMenuParams struct {
 	EditStateFlags    TCefContextMenuEditStateFlags
 }
 
+// ICefMenuModel 菜单
 type ICefMenuModel struct {
 	instance unsafe.Pointer
 	CefMis   *keyEventAccelerator
 }
 
+// MenuItem 菜单项
 type MenuItem struct {
 	CommandId   MenuId // >= 26500 and <= 28500
 	Accelerator string // 快捷键 shift ctrl alt【按键VK..】(shift+ctrl+alt+n)
@@ -87,7 +91,7 @@ type MenuItem struct {
 	Callback    FuncCallback //点击 或 快捷键触发的回调
 }
 
-// 添加自定义快捷键
+// AddAcceleratorCustom 添加自定义快捷键
 func (m *keyEventAccelerator) AddAcceleratorCustom(accelerator *AcceleratorCustom) {
 	if accelerator == nil {
 		return
@@ -114,14 +118,9 @@ func (m *keyEventAccelerator) acceleratorCustomCallback(accelerator string, brow
 	return false
 }
 
-// 生成并返回下一个快捷键ID
+// NextCommandId 生成并返回下一个快捷键ID
 func (m *keyEventAccelerator) NextCommandId() MenuId {
 	m.menuId++
-	return m.menuId
-}
-
-// 当前快捷键ID
-func (m *keyEventAccelerator) CommandId() MenuId {
 	return m.menuId
 }
 
@@ -180,7 +179,7 @@ func (m *keyEventAccelerator) clear() {
 	m.acceleratorItems = make(map[string]*MenuItem)
 }
 
-// 添加一个菜单项, 选项类型, 名称, commandId, 快捷键和触发函数
+// AddMenuItem 添加一个菜单项 MenuItem
 func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 	if item == nil {
 		return false
@@ -218,42 +217,66 @@ func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 	return true
 }
 
+// AddSeparator 添加一个分隔线
 func (m *ICefMenuModel) AddSeparator() bool {
 	return cefMenuModel_AddSeparator(uintptr(m.instance))
 }
+
+// Clear 清空菜单
 func (m *ICefMenuModel) Clear() bool {
 	return cefMenuModel_Clear(uintptr(m.instance))
 }
+
+// IsSubMenu 当前菜单项是否为子菜单
 func (m *ICefMenuModel) IsSubMenu() bool {
 	return cefMenuModel_IsSubMenu(uintptr(m.instance))
 }
+
+// GetCount 菜单项数量
 func (m *ICefMenuModel) GetCount() int32 {
 	return cefMenuModel_GetCount(uintptr(m.instance))
 }
+
+// AddItem 添加一个菜单项
 func (m *ICefMenuModel) AddItem(commandId MenuId, text string) bool {
 	return cefMenuModel_AddItem(uintptr(m.instance), commandId, text)
 }
+
+// AddCheckItem 添加一个复选框菜单项
 func (m *ICefMenuModel) AddCheckItem(commandId MenuId, text string) bool {
 	return cefMenuModel_AddCheckItem(uintptr(m.instance), commandId, text)
 }
+
+// AddRadioItem 添加一个单选框菜单项-按分组
 func (m *ICefMenuModel) AddRadioItem(commandId MenuId, text string, groupId int32) bool {
 	return cefMenuModel_AddRadioItem(uintptr(m.instance), commandId, text, groupId)
 }
+
+// AddSubMenu 创建添加并返回一个子菜单项, 使用返回的 ICefMenuModel 给子菜单添加菜单项
 func (m *ICefMenuModel) AddSubMenu(commandId MenuId, text string) *ICefMenuModel {
 	return cefMenuModel_AddSubMenu(uintptr(m.instance), commandId, text)
 }
+
+// Remove 指定移除一个菜单项，可直接移除Chromium默认实现的菜单项 consts.MenuId => MENU_ID_XXX
 func (m *ICefMenuModel) Remove(commandId MenuId) bool {
 	return cefMenuModel_Remove(uintptr(m.instance), commandId)
 }
+
+// RemoveAt 指定根据下标移除一个菜单项，可直接移除Chromium默认实现的菜单项 consts.MenuId => MENU_ID_XXX
 func (m *ICefMenuModel) RemoveAt(index int32) bool {
 	return cefMenuModel_RemoveAt(uintptr(m.instance), index)
 }
+
+// SetChecked 设置Check | Radio 选中
 func (m *ICefMenuModel) SetChecked(commandId MenuId, check bool) bool {
 	return cefMenuModel_SetChecked(uintptr(m.instance), commandId, check)
 }
+
 func (m *ICefMenuModel) IsChecked(commandId MenuId) bool {
 	return cefMenuModel_IsChecked(uintptr(m.instance), commandId)
 }
+
+// SetColor 设置可用菜单项 cef.NewCefARGB(a, r, g, b), 颜色根据 consts.TCefMenuColorType
 func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, color *TCefARGB) bool {
 	return cefMenuModel_SetColor(uintptr(m.instance), commandId, colorType, color)
 }
@@ -261,30 +284,48 @@ func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, 
 //	func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
 //		return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
 //	}
+
+// HasAccelerator 是否有快捷键
 func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
 	return cefMenuModel_HasAccelerator(uintptr(m.instance), commandId)
 }
+
+// SetAccelerator 设置快捷键
 func (m *ICefMenuModel) SetAccelerator(commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
 	return cefMenuModel_SetAccelerator(uintptr(m.instance), commandId, keyCode, shiftPressed, ctrlPressed, altPressed)
 }
+
+// RemoveAccelerator 删除快捷键
 func (m *ICefMenuModel) RemoveAccelerator(commandId MenuId) bool {
 	return cefMenuModel_RemoveAccelerator(uintptr(m.instance), commandId)
 }
+
+// IsVisible 是否显示
 func (m *ICefMenuModel) IsVisible(commandId MenuId) bool {
 	return cefMenuModel_IsVisible(uintptr(m.instance), commandId)
 }
+
+// SetVisible 设置是否显示
 func (m *ICefMenuModel) SetVisible(commandId MenuId, visible bool) bool {
 	return cefMenuModel_SetVisible(uintptr(m.instance), commandId, visible)
 }
+
+// IsEnabled 是启用
 func (m *ICefMenuModel) IsEnabled(commandId MenuId) bool {
 	return cefMenuModel_IsEnabled(uintptr(m.instance), commandId)
 }
+
+// SetEnabled 设置是启用
 func (m *ICefMenuModel) SetEnabled(commandId MenuId, enabled bool) bool {
 	return cefMenuModel_SetEnabled(uintptr(m.instance), commandId, enabled)
 }
+
+// SetLabel 设置标签
 func (m *ICefMenuModel) SetLabel(commandId MenuId, text string) bool {
 	return cefMenuModel_SetLabel(uintptr(m.instance), commandId, text)
 }
+
+// GetIndexOf 获取下标
 func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
 	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
 }

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue js绑定实现
 package cef
 
 import (
@@ -32,21 +33,22 @@ type valueBindInfo struct {
 	FnOutParamType uintptr //string 出参变量类型
 }
 
-// 绑定到Js的字段
+// ICEFv8Value 绑定到JS的字段
 type ICEFv8Value struct {
 	eventId        uintptr
 	instance       uintptr
-	ptr            unsafe.Pointer
+	ptr            unsafe.Pointer   //
 	name           string           //用于字段或函数名
 	value          interface{}      //值
 	valueType      V8_JS_VALUE_TYPE //0:string 1:int 2:double 3:bool 4:null 5:undefined 6:object 7:array 8:function
 	funcInfo       *funcInfo        //普通函数信息
 	sfi            *structFuncInfo  //对象函数信息
 	isCommonObject IS_CO            //通用类型或对象类型 默认通用类型
-	that           JSValue
-	rwLock         *sync.Mutex
+	that           JSValue          //
+	rwLock         *sync.Mutex      //字段|变量独有锁
 }
 
+// CEFv8BindRoot 导出给JavaScript window的根对象名
 type CEFv8BindRoot struct {
 	commonRootName string //ICEFv8Value 通用类型变量属性的所属默认对象名称
 	objectRootName string //ICEFv8Value 对象类型变量属性的所属默认对象名称
@@ -96,10 +98,12 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	return r, nil
 }
 
+// Lock 每一个变量的独有锁 - 加锁
 func (m *ICEFv8Value) Lock() {
 	m.rwLock.Lock()
 }
 
+// UnLock 每一个变量的独有锁 - 解锁
 func (m *ICEFv8Value) UnLock() {
 	m.rwLock.Unlock()
 }
@@ -113,6 +117,7 @@ func (m *ICEFv8Value) setThat(that JSValue) {
 	m.that = that
 }
 
+// Bytes 值转换为字节
 func (m *ICEFv8Value) Bytes() []byte {
 	var iValue interface{}
 	if m.isCommon() {
@@ -150,6 +155,7 @@ func (m *ICEFv8Value) Bytes() []byte {
 	}
 }
 
+// ValueToPtr 转换为指针
 func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 	var iValue interface{}
 	if m.isCommon() {
@@ -188,6 +194,7 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 	}
 }
 
+// SetAnyValue 设置多类型值
 func (m *ICEFv8Value) SetAnyValue(value interface{}) error {
 	switch common.JSValueAssertType(value) {
 	case V8_VALUE_STRING:

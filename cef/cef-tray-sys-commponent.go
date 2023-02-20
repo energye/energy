@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// 系统托盘
 package cef
 
 import (
@@ -76,18 +77,22 @@ func (m *SysTray) onExit() {
 	}
 }
 
+// AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
 func (m *SysTray) AsSysTray() *SysTray {
 	return m
 }
 
+// AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *SysTray) AsViewsFrameTray() *ViewsFrameTray {
 	return nil
 }
 
+// AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *SysTray) AsCEFTray() *CEFTray {
 	return nil
 }
 
+// AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *SysTray) AsLCLTray() *LCLTray {
 	return nil
 }
@@ -159,6 +164,7 @@ func (m *SysTray) SetTitle(title string) {
 	}
 }
 
+// Notice
 // 显示系统通知
 //
 // title 标题

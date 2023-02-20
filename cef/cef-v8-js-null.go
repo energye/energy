@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSNull 实现
 package cef
 
 type JSNull struct {

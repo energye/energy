@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// energy 全局初始化
 package cef
 
 import (
@@ -22,15 +23,17 @@ import (
 	"github.com/energye/golcl/pkgs/macapp"
 )
 
+// ExceptionCallback 异常回调函数
 type ExceptionCallback func(sender lcl.IObject, e *lcl.Exception)
 
 var exceptionCallback ExceptionCallback
 
-// 设置cef低层异常捕获回调函数
+// SetOnException 设置 lib-lcl -> CEF 低层异常捕获回调函数
 func SetOnException(exception ExceptionCallback) {
 	exceptionCallback = exception
 }
 
+// GlobalInit
 // 全局初始化
 //
 // 需要手动调用的函数,在main函数中调用

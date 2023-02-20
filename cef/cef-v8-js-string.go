@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSString 实现
 package cef
 
 import "github.com/energye/energy/consts"

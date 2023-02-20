@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSBoolean 类型实现
 package cef
 
 import "github.com/energye/energy/consts"

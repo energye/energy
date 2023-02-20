@@ -8,9 +8,10 @@
 //
 //----------------------------------------
 
+// CEF 浏览器窗口扩展组件
 package cef
 
-// 适用于 windows linux macos 系统托盘
+// NewTray 适用于 windows linux macos 系统托盘
 func (m *LCLBrowserWindow) NewTray() ITray {
 	if m.tray == nil {
 		m.tray = newTray(m.TForm)
@@ -18,6 +19,7 @@ func (m *LCLBrowserWindow) NewTray() ITray {
 	return m.tray
 }
 
+// NewSysTray LCL窗口组件,系统托盘
 func (m *LCLBrowserWindow) NewSysTray() ITray {
 	if m.tray == nil {
 		m.tray = newSysTray()
@@ -25,7 +27,7 @@ func (m *LCLBrowserWindow) NewSysTray() ITray {
 	return m.tray
 }
 
-// 只适用于windows的无菜单托盘
+// NewSysTray VF窗口组件,只适用于windows的无菜单托盘
 func (m *ViewsFrameworkBrowserWindow) NewSysTray() ITray {
 	if m == nil {
 		return nil

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Chromium 功能函数接口定义
 package cef
 
 import (
@@ -23,6 +24,8 @@ import (
 	"unsafe"
 )
 
+// IChromiumProc
+// Chromium 功能函数接口
 type IChromiumProc interface {
 	lcl.IObject
 	On(name string, eventCallback ipc.EventCallback)
@@ -138,10 +141,12 @@ type IChromiumProc interface {
 	DefaultEncoding() string
 }
 
+// IsValid 实例有效
 func (m *TCEFChromium) IsValid() bool {
 	return m.instance != nil
 }
 
+// UnsafeAddr 实例指针
 func (m *TCEFChromium) UnsafeAddr() unsafe.Pointer {
 	return m.instance
 }
@@ -185,6 +190,7 @@ func (m *TCEFChromium) ToString() string {
 	return api.GoStr(r1)
 }
 
+// SetDefaultURL 设置默认地址
 func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
 	if IsLinux() || IsDarwin() {
 		httpIdx := strings.Index(defaultURL, "http")
@@ -197,22 +203,27 @@ func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
 	_CEFChromium_SetDefaultURL(m.Instance(), defaultURL)
 }
 
+// SetEnableMultiBrowserMode 设置启用多浏览器模式
 func (m *TCEFChromium) SetEnableMultiBrowserMode(enableMultiBrowserMode bool) {
 	_CEFChromium_SetMultiBrowserMode(m.Instance(), enableMultiBrowserMode)
 }
 
+// LoadUrl 加载一个URL地址
 func (m *TCEFChromium) LoadUrl(url string) {
 	_CEFChromium_LoadURL(m.Instance(), url)
 }
 
+// LoadHtml 加载HTML
 func (m *TCEFChromium) LoadHtml(html string) {
 	_CEFChromium_LoadString(m.Instance(), html)
 }
 
+// StartDownload 开始下载
 func (m *TCEFChromium) StartDownload(url string) {
 	_CEFChromium_StartDownload(m.Instance(), url)
 }
 
+// DownloadImage 开始下载图片
 func (m *TCEFChromium) DownloadImage(imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool) {
 	_CEFChromium_DownloadImage(m.Instance(), imageUrl, isFavicon, maxImageSize, bypassCache)
 }
@@ -272,12 +283,10 @@ func (m *TCEFChromium) Print() {
 	_CEFChromium_Print(m.Instance())
 }
 
-// 下载取消
 func (m *TCEFChromium) BrowserDownloadCancel(browseId, downloadId int32) {
 	_CEFChromium_BrowserDownloadCancel(uintptr(browseId), uintptr(downloadId))
 }
 
-// 下载暂停
 func (m *TCEFChromium) BrowserDownloadPause(browseId, downloadId int32) {
 	_CEFChromium_BrowserDownloadPause(uintptr(browseId), uintptr(downloadId))
 }
@@ -364,7 +373,6 @@ func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dic
 	_CEFChromium_ExecuteDevToolsMethod(m.Instance(), messageId, method, dictionaryValue)
 }
 
-// 发送进程消息 默认主browser 和 主frame
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int {
 	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || ipc.InternalIPCNameCheck(processMessage.Name) {
 		return -3
@@ -665,37 +673,45 @@ func (m *TCEFChromium) DoNotTrack() bool {
 	return api.GoBool(r1)
 }
 
+// SetZoomStep 设置缩放步 0~255
 func (m *TCEFChromium) SetZoomStep(value int8) {
 	imports.Proc(internale_CEFChromium_SetZoomStep).Call(m.Instance(), uintptr(value))
 }
 
+// ZoomStep 获取缩放步 0~255
 func (m *TCEFChromium) ZoomStep() int8 {
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetZoomStep).Call(m.Instance())
 	return int8(r1)
 }
 
+// SetZoomPct 设置缩放百分比
 func (m *TCEFChromium) SetZoomPct(value float64) {
 	imports.Proc(internale_CEFChromium_SetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
+// ZoomPct 获取缩放百分比
 func (m *TCEFChromium) ZoomPct() (result float64) {
 	imports.Proc(internale_CEFChromium_GetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
+// SetZoomLevel 设置缩放级别
 func (m *TCEFChromium) SetZoomLevel(value float64) {
 	imports.Proc(internale_CEFChromium_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
+// ZoomLevel 获取缩放级别
 func (m *TCEFChromium) ZoomLevel() (result float64) {
 	imports.Proc(internale_CEFChromium_GetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
+// SetDefaultEncoding 设置默认编码
 func (m *TCEFChromium) SetDefaultEncoding(value string) {
 	imports.Proc(internale_CEFChromium_SetDefaultEncoding).Call(m.Instance(), api.PascalStr(value))
 }
 
+// DefaultEncoding 获取默认编码
 func (m *TCEFChromium) DefaultEncoding() string {
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDefaultEncoding).Call(m.Instance())
 	return api.GoStr(r1)
@@ -942,40 +958,47 @@ func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, metho
 	imports.Proc(internale_CEFChromium_ExecuteDevToolsMethod).Call(instance, uintptr(messageId), api.PascalStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
 }
 
-// TCEFChromium  _CEFChromium_CreateClientHandler
+// TCEFChromium _CEFChromium_CreateClientHandler
 func _CEFChromium_CreateClientHandler(instance, client, alsOSR uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_CreateClientHandler).Call(instance, client, alsOSR)
 	return r1
 }
 
+// TCEFChromium _CEFChromium_SetFocus
 func _CEFChromium_SetFocus(instance, value uintptr) {
 	imports.Proc(internale_CEFChromium_SetFocus).Call(instance, value)
 }
 
+// TCEFChromium _CEFChromium_SendCaptureLostEvent
 func _CEFChromium_SendCaptureLostEvent(instance uintptr) {
 	imports.Proc(internale_CEFChromium_SendCaptureLostEvent).Call(instance)
 }
 
+// TCEFChromium _CEFChromium_FrameIsFocused
 func _CEFChromium_FrameIsFocused(instance uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_FrameIsFocused).Call(instance)
 	return r1
 }
 
+// TCEFChromium _CEFChromium_TryCloseBrowser
 func _CEFChromium_TryCloseBrowser(instance uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_TryCloseBrowser).Call(instance)
 	return r1
 }
 
+// TCEFChromium _CEFChromium_BrowserHandle
 func _CEFChromium_BrowserHandle(instance uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserHandle).Call(instance)
 	return r1
 }
 
+// TCEFChromium _CEFChromium_WidgetHandle
 func _CEFChromium_WidgetHandle(instance uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_WidgetHandle).Call(instance)
 	return r1
 }
 
+// TCEFChromium _CEFChromium_RenderHandle
 func _CEFChromium_RenderHandle(instance uintptr) uintptr {
 	r1, _, _ := imports.Proc(internale_CEFChromium_RenderHandle).Call(instance)
 	return r1

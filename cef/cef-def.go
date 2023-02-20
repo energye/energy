@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// energy 扩展定义, 编译版本, CEF版本
 package cef
 
 import (
@@ -20,7 +21,7 @@ var (
 	lib_build_version string
 )
 
-// cef version
+// CEFVersion 返回CEF版本
 func CEFVersion() string {
 	if cef_version == "" {
 		r1, _, _ := imports.Proc(internale_CEFVersion).Call()
@@ -29,11 +30,29 @@ func CEFVersion() string {
 	return cef_version
 }
 
-// lib build version
+// LibBuildVersion 返回lib-lcl构建版本
 func LibBuildVersion() string {
 	if lib_build_version == "" {
 		r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
 		lib_build_version = api.GoStr(r1)
 	}
 	return lib_build_version
+}
+
+// setMacOSXCommandLine
+// 针对 MacOSX 设置命令行参数
+//
+// 没找到什么好的方式，只能这样设置
+func setMacOSXCommandLine(commandLine uintptr) {
+	imports.Proc(internale_SetMacOSXCommandLine).Call(commandLine)
+}
+
+// AddGoForm
+func AddGoForm(windowId int32, instance uintptr) {
+	imports.Proc(internale_CEF_AddGoForm).Call(uintptr(windowId), instance)
+}
+
+// RemoveGoForm
+func RemoveGoForm(windowId int32) {
+	imports.Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
 }

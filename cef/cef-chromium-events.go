@@ -18,9 +18,7 @@ import (
 )
 
 // IChromiumEvent
-// chromium 事件行为
-//
-// 默认情况所有chromium对象事件行为都在主窗口chromium event中执行
+// Chromium 事件行为接口
 type IChromiumEvent interface {
 	lcl.IObject
 	SetOnAfterCreated(fn ChromiumEventOnAfterCreated)
@@ -70,7 +68,6 @@ type IChromiumEvent interface {
 	SetOnDraggableRegionsChanged(fn ChromiumEventOnDraggableRegionsChanged)
 }
 
-// Event
 func (m *TCEFChromium) SetOnAfterCreated(fn ChromiumEventOnAfterCreated) {
 	_CEFChromium_SetOnAfterCreated(m.Instance(), fn)
 }
@@ -91,17 +88,14 @@ func (m *TCEFChromium) SetOnClose(fn ChromiumEventOnClose) {
 	_CEFChromium_SetOnClose(m.Instance(), fn)
 }
 
-// pdf
 func (m *TCEFChromium) SetOnPdfPrintFinished(fn ChromiumEventOnResult) {
 	_CEFChromium_SetOnPdfPrintFinished(m.Instance(), fn)
 }
 
-// chromiumEvent zoom
 func (m *TCEFChromium) SetOnZoomPctAvailable(fn ChromiumEventOnResultFloat) {
 	_CEFChromium_SetOnZoomPctAvailable(m.Instance(), fn)
 }
 
-// load loading
 func (m *TCEFChromium) SetOnLoadStart(fn ChromiumEventOnLoadStart) {
 	_CEFChromium_SetOnLoadStart(m.Instance(), fn)
 }
@@ -122,7 +116,6 @@ func (m *TCEFChromium) SetOnLoadEnd(fn ChromiumEventOnLoadEnd) {
 	_CEFChromium_SetOnLoadEnd(m.Instance(), fn)
 }
 
-// download
 func (m *TCEFChromium) SetOnBeforeDownload(fn ChromiumEventOnBeforeDownload) {
 	_CEFChromium_SetOnBeforeDownload(m.Instance(), fn)
 }
@@ -167,7 +160,6 @@ func (m *TCEFChromium) SetOnScrollOffsetChanged(fn ChromiumEventOnScrollOffsetCh
 	_CEFChromium_SetOnScrollOffsetChanged(m.Instance(), fn)
 }
 
-// 进程间通信消息接收
 func (m *TCEFChromium) SetOnProcessMessageReceived(fn BrowseProcessMessageReceived) {
 	_CEFChromium_SetOnProcessMessageReceived(m.Instance(), fn)
 }
@@ -192,7 +184,6 @@ func (m *TCEFChromium) SetOnResourceLoadComplete(fn ChromiumEventOnResourceLoadC
 	_CEFChromium_SetOnResourceLoadComplete(m.Instance(), fn)
 }
 
-// cookie begin
 func (m *TCEFChromium) SetOnCookieSet(fn ChromiumEventOnCookieSet) {
 	_CEFChromium_SetOnCookieSet(m.Instance(), fn)
 }
@@ -229,22 +220,18 @@ func (m *TCEFChromium) SetOnContextMenuDismissed(fn ChromiumEventOnContextMenuDi
 	}
 }
 
-// frame附加连接
 func (m *TCEFChromium) SetOnFrameAttached(fn ChromiumEventOnFrameAttached) {
 	_CEFChromium_SetOnFrameAttached(m.Instance(), fn)
 }
 
-// frame创建
 func (m *TCEFChromium) SetOnFrameCreated(fn ChromiumEventOnFrameCreated) {
 	_CEFChromium_SetOnFrameCreated(m.Instance(), fn)
 }
 
-// 当前frame离开
 func (m *TCEFChromium) SetOnFrameDetached(fn ChromiumEventOnFrameDetached) {
 	_CEFChromium_SetOnFrameDetached(m.Instance(), fn)
 }
 
-// 主frame被改变
 func (m *TCEFChromium) SetOnMainFrameChanged(fn ChromiumEventOnMainFrameChanged) {
 	_CEFChromium_SetOnMainFrameChanged(m.Instance(), fn)
 }

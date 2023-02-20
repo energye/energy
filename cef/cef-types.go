@@ -8,19 +8,20 @@
 //
 //----------------------------------------
 
+// cef -> energy 结构类型定义
 package cef
 
 import (
-	"bytes"
 	. "github.com/energye/energy/consts"
 	. "github.com/energye/energy/types"
-	"strings"
 	"time"
 	"unsafe"
 )
 
+// TCefCloseBrowsesAction 浏览器关闭控制
 type TCefCloseBrowsesAction = CBS
 
+// ICefCookie CEF Cookie
 type ICefCookie struct {
 	Url, Name, Value, Domain, Path string
 	Secure, Httponly, HasExpires   bool
@@ -33,6 +34,7 @@ type ICefCookie struct {
 	Result                         bool
 }
 
+// TCefKeyEvent CEF 键盘事件
 type TCefKeyEvent struct {
 	Kind                 TCefKeyEventType // called 'type' in the original CEF source code
 	Modifiers            TCefEventFlags
@@ -44,6 +46,7 @@ type TCefKeyEvent struct {
 	FocusOnEditableField Int32
 }
 
+// TCefRequestContextSettings CEF 请求上下文配置
 type TCefRequestContextSettings struct {
 	Size                             UInt32
 	CachePath                        TCefString
@@ -66,6 +69,7 @@ func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 	}
 }
 
+// TCefBrowserSettings CEF Browser配置
 type TCefBrowserSettings struct {
 	Size                       NativeUInt
 	WindowlessFrameRate        Integer
@@ -97,43 +101,12 @@ type TCefBrowserSettings struct {
 	ChromeStatusBubble         TCefState
 }
 
-func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
-	return &tCefBrowserSettingsPtr{
-		Size:                       m.Size.ToPtr(),
-		WindowlessFrameRate:        m.WindowlessFrameRate.ToPtr(),
-		StandardFontFamily:         m.StandardFontFamily.ToPtr(),
-		FixedFontFamily:            m.FixedFontFamily.ToPtr(),
-		SerifFontFamily:            m.SerifFontFamily.ToPtr(),
-		SansSerifFontFamily:        m.SansSerifFontFamily.ToPtr(),
-		CursiveFontFamily:          m.CursiveFontFamily.ToPtr(),
-		FantasyFontFamily:          m.FantasyFontFamily.ToPtr(),
-		DefaultFontSize:            m.DefaultFontSize.ToPtr(),
-		DefaultFixedFontSize:       m.DefaultFixedFontSize.ToPtr(),
-		MinimumFontSize:            m.MinimumFontSize.ToPtr(),
-		MinimumLogicalFontSize:     m.MinimumLogicalFontSize.ToPtr(),
-		DefaultEncoding:            m.DefaultEncoding.ToPtr(),
-		RemoteFonts:                m.RemoteFonts.ToPtr(),
-		Javascript:                 m.Javascript.ToPtr(),
-		JavascriptCloseWindows:     m.JavascriptCloseWindows.ToPtr(),
-		JavascriptAccessClipboard:  m.JavascriptAccessClipboard.ToPtr(),
-		JavascriptDomPaste:         m.JavascriptDomPaste.ToPtr(),
-		ImageLoading:               m.ImageLoading.ToPtr(),
-		ImageShrinkStandaLonetoFit: m.ImageShrinkStandaLonetoFit.ToPtr(),
-		TextAreaResize:             m.TextAreaResize.ToPtr(),
-		TabToLinks:                 m.TabToLinks.ToPtr(),
-		LocalStorage:               m.LocalStorage.ToPtr(),
-		Databases:                  m.Databases.ToPtr(),
-		Webgl:                      m.Webgl.ToPtr(),
-		BackgroundColor:            m.BackgroundColor.ToPtr(),
-		AcceptLanguageList:         m.AcceptLanguageList.ToPtr(),
-		ChromeStatusBubble:         m.ChromeStatusBubble.ToPtr(),
-	}
-}
-
+// TCefCommandLine 进程启动命令行参数设置
 type TCefCommandLine struct {
 	commandLines map[string]string
 }
 
+// TCefProxy 代理配置
 type TCefProxy struct {
 	ProxyType              TCefProxyType
 	ProxyScheme            TCefProxyScheme
@@ -146,6 +119,7 @@ type TCefProxy struct {
 	MaxConnectionsPerProxy int32
 }
 
+// TCefTouchEvent 触摸事件
 type TCefTouchEvent struct {
 	Id            int32
 	X             float32
@@ -159,17 +133,20 @@ type TCefTouchEvent struct {
 	PointerType   TCefPointerType
 }
 
+// TCustomHeader 自定义请求头
 type TCustomHeader struct {
 	CustomHeaderName  string
 	CustomHeaderValue string
 }
 
+// TCefMouseEvent 鼠标事件
 type TCefMouseEvent struct {
 	X         int32
 	Y         int32
 	Modifiers TCefEventFlags
 }
 
+// BeforePopupInfo 弹出子窗口信息
 type BeforePopupInfo struct {
 	TargetUrl         string
 	TargetFrameName   string
@@ -177,6 +154,7 @@ type BeforePopupInfo struct {
 	UserGesture       bool
 }
 
+// TCefRect 矩形
 type TCefRect struct {
 	X      int32
 	Y      int32
@@ -184,82 +162,56 @@ type TCefRect struct {
 	Height int32
 }
 
+// TCefSize 大小
 type TCefSize struct {
 	Width  int32
 	Height int32
 }
 
+// TCefPoint 位置
 type TCefPoint struct {
 	X int32
 	Y int32
 }
 
+// TCefDraggableRegions 拖拽区域集合
 type TCefDraggableRegions struct {
 	regions      []TCefDraggableRegion
 	regionsCount int
 }
 
+// TCefDraggableRegion 拖拽区域集
 type TCefDraggableRegion struct {
 	Bounds    TCefRect
 	Draggable bool
 }
 
+// ICefDisplay
 type ICefDisplay struct {
 	instance unsafe.Pointer
 }
 
+// ICefWindow
 type ICefWindow struct {
 	instance unsafe.Pointer
 }
 
+// ICefView
 type ICefView struct {
 	instance unsafe.Pointer
 }
 
+// ICefClient
 type ICefClient struct {
 	instance unsafe.Pointer
 }
 
+// ICefDragData
 type ICefDragData struct {
 	instance unsafe.Pointer
 }
 
-func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
-	return TCefDraggableRegion{
-		Bounds:    *rect,
-		Draggable: draggable,
-	}
-}
-
-func NewCefDraggableRegions() *TCefDraggableRegions {
-	return &TCefDraggableRegions{
-		regions: make([]TCefDraggableRegion, 0),
-	}
-}
-
-func (m *TCefDraggableRegions) Regions() []TCefDraggableRegion {
-	if m.RegionsCount() == 0 || m.regions == nil || len(m.regions) == 0 {
-		m.Append(NewCefDraggableRegion(NewCefRect(0, 0, 0, 0), false))
-	}
-	return m.regions
-}
-
-func (m *TCefDraggableRegions) Region(i int) *TCefDraggableRegion {
-	if m.regions != nil && i < m.regionsCount {
-		return &m.regions[i]
-	}
-	return nil
-}
-
-func (m *TCefDraggableRegions) Append(region TCefDraggableRegion) {
-	m.regions = append(m.regions, region)
-	m.regionsCount = len(m.regions)
-}
-
-func (m *TCefDraggableRegions) RegionsCount() int {
-	return m.regionsCount
-}
-
+// NewCefRect
 func NewCefRect(x, y, width, height int32) *TCefRect {
 	return &TCefRect{
 		X:      x,
@@ -269,6 +221,7 @@ func NewCefRect(x, y, width, height int32) *TCefRect {
 	}
 }
 
+// NewCefSize
 func NewCefSize(width, height int32) *TCefSize {
 	return &TCefSize{
 		Width:  width,
@@ -276,6 +229,7 @@ func NewCefSize(width, height int32) *TCefSize {
 	}
 }
 
+// NewCefPoint
 func NewCefPoint(x, y int32) *TCefPoint {
 	return &TCefPoint{
 		X: x,
@@ -289,36 +243,6 @@ func (m *ICefWindow) SetWindow(window *ICefWindow) {
 
 func (m *ICefClient) SetClient(client *ICefClient) {
 	m.instance = client.instance
-}
-
-func (m *TCefCommandLine) AppendSwitch(name, value string) {
-	m.commandLines[name] = value
-}
-
-func (m *TCefCommandLine) AppendArgument(argument string) {
-	m.commandLines[argument] = ""
-}
-
-func (m *TCefCommandLine) toString() string {
-	var str bytes.Buffer
-	var i = 0
-	var replace = func(s, old, new string) string {
-		return strings.ReplaceAll(s, old, new)
-	}
-	for name, value := range m.commandLines {
-		if i > 0 {
-			str.WriteString(" ")
-		}
-		if value != "" {
-			str.WriteString(replace(replace(name, " ", ""), "=", ""))
-			str.WriteString("=")
-			str.WriteString(replace(replace(value, " ", ""), "=", ""))
-		} else {
-			str.WriteString(replace(name, " ", ""))
-		}
-		i++
-	}
-	return str.String()
 }
 
 func (m *TCefKeyEvent) KeyDown() bool {

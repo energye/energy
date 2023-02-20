@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// energy 系统托盘组件
 package cef
 
 import (
@@ -24,7 +25,7 @@ type TMouseEvent func(sender lcl.IObject, button types.TMouseButton, shift types
 // TrayICONClick 托盘图标鼠标事件
 type TrayICONClick func()
 
-// ITray 托盘接口
+// ITray 托盘定义接口
 //
 // 实现4种系统托盘 1: LCLTray LCL组件, 2: CEFTray CEF基于LCL组件+html, 3: ViewsFrameTray VF(views framework)组件+html, 4: SysTray 系统原生
 //

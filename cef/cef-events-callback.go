@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Chromium默认事件实现
 package cef
 
 import (
@@ -21,7 +22,7 @@ import (
 	"github.com/energye/golcl/lcl/types/messages"
 )
 
-// 事件处理函数返回true将不继续执行
+// chromiumOnAfterCreate 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 	if IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
@@ -29,6 +30,7 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 	return false
 }
 
+// chromiumOnBeforeBrowser
 func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.putBrowserFrame(browser, frame)
 	if BrowserWindow.popupWindow != nil {
@@ -44,16 +46,19 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 	}
 }
 
+// chromiumOnBeforeClose - chromium 关闭  - 默认实现
 func chromiumOnBeforeClose(browser *ICefBrowser) {
 	if ipc.IPC.Render() != nil && !SingleProcess && processName != PT_DEVTOOLS {
 		ipc.IPC.Render().Close()
 	}
 }
 
+// chromiumOnFrameDetached
 func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.RemoveFrame(browser.Identifier(), frame.Id)
 }
 
+// cefAppContextCreated 应用创建 - 默认实现
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.putBrowserFrame(browser, frame)
 	BrowserWindow.removeNoValidFrames()
@@ -73,6 +78,7 @@ var (
 	imageUrlId, copyImageId, imageSaveId, aUrlId               MenuId
 )
 
+// chromiumOnBeforeContextMenu 右键菜单 - 默认实现
 func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 	if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
 		model.Clear()
@@ -280,6 +286,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	}
 }
 
+// chromiumOnContextMenuCommand 右键菜单 - 默认实现
 func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
 	defer func() {
 		if err := recover(); err != nil {

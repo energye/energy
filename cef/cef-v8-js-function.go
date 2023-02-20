@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue JSFunction 类型实现
 package cef
 
 type JSFunction struct {

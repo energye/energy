@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// energy Id生成器
 package cef
 
 var (
@@ -15,15 +16,18 @@ var (
 	_event_id = 10000
 )
 
+// __bind_id 绑定变量ID
 func __bind_id() int {
 	_bind_id++
 	return _bind_id
 }
 
+// __idReset 重置ID
 func __idReset() {
 	_bind_id = 10000
 }
 
+// __event_id 事件ID
 func __event_id() int {
 	_event_id++
 	return _event_id

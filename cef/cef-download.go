@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF下载项
 package cef
 
 import (
@@ -73,6 +74,7 @@ type downloadItem struct {
 }
 
 /*
+Cancel
 取消 参数是数组只为了不传参数
 */
 func (m *ICefDownloadItemCallback) Cancel(downloadId ...int32) {
@@ -80,6 +82,7 @@ func (m *ICefDownloadItemCallback) Cancel(downloadId ...int32) {
 }
 
 /*
+Pause
 暂停 参数是数组只为了不传参数
 */
 func (m *ICefDownloadItemCallback) Pause(downloadId ...int32) {
@@ -87,6 +90,7 @@ func (m *ICefDownloadItemCallback) Pause(downloadId ...int32) {
 }
 
 /*
+Resume
 恢复 参数是数组只为了不传参数
 */
 func (m *ICefDownloadItemCallback) Resume(downloadId ...int32) {
@@ -101,11 +105,12 @@ func (m *ICefDownloadItemCallback) Resume(downloadId ...int32) {
 	}
 }
 
-// 下载恢复
+// DownloadResume 下载恢复
 func (m *ICefDownloadItemCallback) DownloadResume(browseId, downloadId int32) {
 	_CEFChromium_DownloadResume(uintptr(browseId), uintptr(downloadId))
 }
 
+// Cont
 // 设置下载目录
 //
 // downloadPath 设置完整的下载目录. 包含文件包

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF Image
 package cef
 
 import (
@@ -17,6 +18,7 @@ import (
 	"unsafe"
 )
 
+// ICefImage 实例
 type ICefImage struct {
 	instance unsafe.Pointer
 }

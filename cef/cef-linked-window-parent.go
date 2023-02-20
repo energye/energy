@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+// CEFWindowParent组件
+// MacOSX, Linux
 package cef
 
 import (
@@ -19,10 +21,12 @@ import (
 	"unsafe"
 )
 
+// TCEFLinkedWindowParent 组件
 type TCEFLinkedWindowParent struct {
 	BaseWinControl
 }
 
+// NewCEFLinkedWindowParent 创建一个新的WindowParent组件
 func NewCEFLinkedWindowParent(owner lcl.IComponent) *TCEFLinkedWindowParent {
 	m := new(TCEFLinkedWindowParent)
 	r1, _, _ := imports.Proc(internale_CEFLinkedWindow_Create).Call(lcl.CheckPtr(owner))
@@ -30,45 +34,55 @@ func NewCEFLinkedWindowParent(owner lcl.IComponent) *TCEFLinkedWindowParent {
 	return m
 }
 
+// Handle 组件句柄
 func (m *TCEFLinkedWindowParent) Handle() types.HWND {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_GetHandle).Call(m.Instance())
 	return types.HWND(ret)
 }
 
+// UpdateSize 更新组件大小
 func (m *TCEFLinkedWindowParent) UpdateSize() {
 	imports.Proc(internale_CEFLinkedWindow_UpdateSize).Call(m.Instance())
 }
 
+// Type 组件类型, 这里返回 TCEFLinkedWindowParent 类型
 func (m *TCEFLinkedWindowParent) Type() consts.TCefWindowHandleType {
 	return consts.Wht_LinkedWindowParent
 }
 
+// SetChromium 设置 IChromium, 只 TCEFLinkedWindowParent 有效
 func (m *TCEFLinkedWindowParent) SetChromium(chromium IChromium, tag int32) {
 	imports.Proc(internale_CEFLinkedWindow_SetChromium).Call(uintptr(m.instance), chromium.Instance(), uintptr(tag))
 }
 
+// HandleAllocated 处理所有
 func (m *TCEFLinkedWindowParent) HandleAllocated() bool {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_HandleAllocated).Call(m.Instance())
 	return api.GoBool(ret)
 }
 
+// CreateHandle 创建句柄
 func (m *TCEFLinkedWindowParent) CreateHandle() {
 	imports.Proc(internale_CEFLinkedWindow_CreateHandle).Call(m.Instance())
 }
 
+// DestroyChildWindow 销毁子窗口
 func (m *TCEFLinkedWindowParent) DestroyChildWindow() bool {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_DestroyChildWindow).Call(m.Instance())
 	return api.GoBool(ret)
 }
 
+// SetOnEnter 进入事件
 func (m *TCEFLinkedWindowParent) SetOnEnter(fn lcl.TNotifyEvent) {
 	imports.Proc(internale_CEFLinkedWindow_OnEnter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// SetOnExit 退出事件
 func (m *TCEFLinkedWindowParent) SetOnExit(fn lcl.TNotifyEvent) {
 	imports.Proc(internale_CEFLinkedWindow_OnExit).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Free 释放
 func (m *TCEFLinkedWindowParent) Free() {
 	if m.IsValid() {
 		imports.Proc(internale_CEFLinkedWindow_Free).Call(m.Instance())
@@ -76,51 +90,51 @@ func (m *TCEFLinkedWindowParent) Free() {
 	}
 }
 
-// 获取组件名称。
+// Name 获取组件名称
 func (m *TCEFLinkedWindowParent) Name() string {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_GetName).Call(m.Instance())
 	return api.GoStr(ret)
 }
 
-// 设置组件名称。
+// SetName 设置组件名称
 func (m *TCEFLinkedWindowParent) SetName(value string) {
 	imports.Proc(internale_CEFLinkedWindow_SetName).Call(m.Instance(), api.PascalStr(value))
 }
 
-// 设置控件父容器。
+// SetParent 设置控件父容器
 func (m *TCEFLinkedWindowParent) SetParent(value lcl.IWinControl) {
 	imports.Proc(internale_CEFLinkedWindow_SetParent).Call(m.Instance(), lcl.CheckPtr(value))
 }
 
-// Align 获取控件自动调整。
+// Align Align 获取控件自动调整
 func (m *TCEFLinkedWindowParent) Align() types.TAlign {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_GetAlign).Call(m.Instance())
 	return types.TAlign(ret)
 }
 
-// SetAlign 设置控件自动调整。
+// SetAlign 设置控件自动调整
 func (m *TCEFLinkedWindowParent) SetAlign(value types.TAlign) {
 	imports.Proc(internale_CEFLinkedWindow_SetAlign).Call(m.Instance(), uintptr(value))
 }
 
-// Anchors 获取四个角位置的锚点。
+// Anchors 获取四个角位置的锚点
 func (m *TCEFLinkedWindowParent) Anchors() types.TAnchors {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_GetAnchors).Call(m.Instance())
 	return types.TAnchors(ret)
 }
 
-// SetAnchors 设置四个角位置的锚点。
+// SetAnchors 设置四个角位置的锚点
 func (m *TCEFLinkedWindowParent) SetAnchors(value types.TAnchors) {
 	imports.Proc(internale_CEFLinkedWindow_SetAnchors).Call(m.Instance(), uintptr(value))
 }
 
-// Visible 获取控件可视。
+// Visible 获取控件可视
 func (m *TCEFLinkedWindowParent) Visible() bool {
 	ret, _, _ := imports.Proc(internale_CEFLinkedWindow_GetVisible).Call(m.Instance())
 	return api.GoBool(ret)
 }
 
-// SetVisible 设置控件可视。
+// SetVisible 设置控件可视
 func (m *TCEFLinkedWindowParent) SetVisible(value bool) {
 	imports.Proc(internale_CEFLinkedWindow_SetVisible).Call(m.Instance(), api.PascalBool(value))
 }
@@ -180,11 +194,13 @@ func (m *TCEFLinkedWindowParent) SetHeight(value int32) {
 	imports.Proc(internale_CEFLinkedWindow_SetHeight).Call(m.Instance(), uintptr(value))
 }
 
+// BoundsRect 获取矩形边界
 func (m *TCEFLinkedWindowParent) BoundsRect() (result types.TRect) {
 	imports.Proc(internale_CEFLinkedWindow_GetBoundsRect).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
+// SetBoundsRect 设置矩形边界
 func (m *TCEFLinkedWindowParent) SetBoundsRect(value types.TRect) {
 	imports.Proc(internale_CEFLinkedWindow_SetBoundsRect).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }

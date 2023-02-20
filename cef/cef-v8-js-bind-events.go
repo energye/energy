@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// V8 JSValue 绑定事件
 package cef
 
 import (
@@ -32,6 +33,7 @@ func cefV8WindowBindFuncEventsInit() {
 	setCefWindowBindCallbackFunc.Call(cefWindowBindEvent)
 }
 
+// cefWindowBindCallbackEventProc 绑定的变量回调事件
 func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintptr {
 	getVal := func(i int) uintptr {
 		return common.GetParamOf(i, args)
@@ -45,7 +47,7 @@ func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintpt
 	return 0
 }
 
-// 字段处理
+// _cefV8BindFieldCallbackHandler 字段处理
 func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
@@ -143,6 +145,7 @@ func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, a
 	}
 }
 
+// setPtrValue 设置指针值
 func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue string, intValue int32, doubleValue float64, boolValue bool) CEF_V8_EXCEPTION {
 	if jsValue.isCommon() {
 		//valueType说明给的值类型不相同，需要将 jsValue 转换一下
@@ -179,6 +182,7 @@ func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue str
 	return CVE_ERROR_OK
 }
 
+// getPtrValue 获取指针值
 func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePrt *uintptr, intValuePrt *int32, doubleValuePrt *float64, boolValuePrt *bool) string {
 	switch valueType {
 	case V8_VALUE_STRING:
@@ -213,7 +217,7 @@ func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePr
 	return ""
 }
 
-// 函数处理
+// _cefV8BindFuncCallbackHandler 函数处理
 func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr

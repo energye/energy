@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// CEF Response
 package cef
 
 import (
@@ -17,6 +18,7 @@ import (
 	"unsafe"
 )
 
+// ICefResponse 实例
 type ICefResponse struct {
 	instance   unsafe.Pointer
 	Status     int32
@@ -27,6 +29,7 @@ type ICefResponse struct {
 	URL        string
 }
 
+// ICefResponse 指针实例
 type iCefResponse struct {
 	Instance   uintptr
 	Status     uintptr //int32
@@ -37,38 +40,52 @@ type iCefResponse struct {
 	URL        uintptr //string
 }
 
+// IsReadOnly 是否只读
 func (m *ICefResponse) IsReadOnly() bool {
 	return api.GoBool(cefResponse_IsReadOnly(uintptr(m.instance)))
 }
 
-func (m *ICefResponse) SetError(error TCefErrorCode) {
-	cefResponse_SetError(uintptr(m.instance), error)
-}
-func (m *ICefResponse) SetStatus(status int32) {
-	cefResponse_SetStatus(uintptr(m.instance), status)
-}
-func (m *ICefResponse) SetStatusText(statusText string) {
-	cefResponse_SetStatusText(uintptr(m.instance), statusText)
-}
-func (m *ICefResponse) SetMimeType(mimetype string) {
-	cefResponse_SetMimeType(uintptr(m.instance), mimetype)
-}
-func (m *ICefResponse) SetCharset(charset string) {
-	cefResponse_SetCharset(uintptr(m.instance), charset)
-}
-
-func (m *ICefResponse) GetHeaderByName(name string) string {
-	return api.GoStr(cefResponse_GetHeaderByName(uintptr(m.instance), name))
-}
-
-func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
-	cefResponse_SetHeaderByName(uintptr(m.instance), name, value, overwrite)
-}
-
+// SetURL 设置URL
 func (m *ICefResponse) SetURL(url string) {
 	cefResponse_SetURL(uintptr(m.instance), url)
 }
 
+// SetError 设置错误码
+func (m *ICefResponse) SetError(error TCefErrorCode) {
+	cefResponse_SetError(uintptr(m.instance), error)
+}
+
+// SetStatus 设置状态码
+func (m *ICefResponse) SetStatus(status int32) {
+	cefResponse_SetStatus(uintptr(m.instance), status)
+}
+
+// SetStatusText 设置状态文本
+func (m *ICefResponse) SetStatusText(statusText string) {
+	cefResponse_SetStatusText(uintptr(m.instance), statusText)
+}
+
+// SetMimeType mime类型
+func (m *ICefResponse) SetMimeType(mimetype string) {
+	cefResponse_SetMimeType(uintptr(m.instance), mimetype)
+}
+
+// SetCharset 设置编码
+func (m *ICefResponse) SetCharset(charset string) {
+	cefResponse_SetCharset(uintptr(m.instance), charset)
+}
+
+// GetHeaderByName
+func (m *ICefResponse) GetHeaderByName(name string) string {
+	return api.GoStr(cefResponse_GetHeaderByName(uintptr(m.instance), name))
+}
+
+// SetHeaderByName
+func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
+	cefResponse_SetHeaderByName(uintptr(m.instance), name, value, overwrite)
+}
+
+// GetHeaderMap
 func (m *ICefResponse) GetHeaderMap() *ICefStringMultiMap {
 	headerMap := &ICefStringMultiMap{}
 	headerMap.instance = cefResponse_GetHeaderMap(uintptr(m.instance))

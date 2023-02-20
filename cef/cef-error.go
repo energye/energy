@@ -8,12 +8,14 @@
 //
 //----------------------------------------
 
+// energy 的错误消息
 package cef
 
 import (
 	. "github.com/energye/energy/consts"
 )
 
+// cefErrorMessage 错误信息描述-内部调用
 func cefErrorMessage(code CEF_V8_EXCEPTION) string {
 	switch code {
 	case CVE_ERROR_OK:

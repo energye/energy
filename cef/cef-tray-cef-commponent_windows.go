@@ -11,6 +11,8 @@
 //go:build windows
 // +build windows
 
+// 基于 LCL 系统托盘 - windows 平台
+// Html + CSS + JavaScript实现
 package cef
 
 import (
@@ -23,6 +25,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+// newLCLTrayWindow 创建LCL系统托盘
 func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *CEFTray {
 	var trayForm *CEFTray
 	lcl.Application.CreateForm(&trayForm)
@@ -39,26 +42,32 @@ func newLCLTrayWindow(owner lcl.IComponent, width, height int32, url string) *CE
 	return trayForm
 }
 
+// OnFormCreate TForm创建
 func (m *CEFTray) OnFormCreate(sender lcl.IObject) {
 	m.SetShowInTaskBar(types.StNever)
 }
 
+// AsSysTray 尝试转换为 SysTray 组件托盘，如果创建的是其它类型托盘返回nil
 func (m *CEFTray) AsSysTray() *SysTray {
 	return nil
 }
 
+// AsViewsFrameTray 尝试转换为 views framework 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *CEFTray) AsViewsFrameTray() *ViewsFrameTray {
 	return nil
 }
 
+// AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *CEFTray) AsCEFTray() *CEFTray {
 	return m
 }
 
+// AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 func (m *CEFTray) AsLCLTray() *LCLTray {
 	return nil
 }
 
+// Show 显示/启动 托盘
 func (m *CEFTray) Show() {
 	if BrowserWindow.mainBrowserWindow.Chromium() == nil || !BrowserWindow.mainBrowserWindow.Chromium().Initialized() {
 		return
@@ -66,6 +75,7 @@ func (m *CEFTray) Show() {
 	m.TForm.Show()
 }
 
+// Hide 隐藏 托盘
 func (m *CEFTray) Hide() {
 	m.TForm.Hide()
 }
@@ -79,40 +89,51 @@ func (m *CEFTray) close() {
 	m.TForm.Close()
 }
 
+// SetOnDblClick 设置双击事件
 func (m *CEFTray) SetOnDblClick(fn TrayICONClick) {
 	m.trayIcon.SetOnDblClick(func(sender lcl.IObject) {
 		fn()
 	})
 }
 
+// SetOnClick 设置单击事件
 func (m *CEFTray) SetOnClick(fn TrayICONClick) {
 	m.trayIcon.SetOnClick(func(sender lcl.IObject) {
 		fn()
 	})
 }
 
+// SetOnMouseUp 鼠标抬起事件
 func (m *CEFTray) SetOnMouseUp(fn TMouseEvent) {
 	m.mouseUp = fn
 }
+
+// SetOnMouseDown 鼠标按下事件
 func (m *CEFTray) SetOnMouseDown(fn lcl.TMouseEvent) {
 	m.trayIcon.SetOnMouseDown(fn)
 }
+
+// SetOnMouseMove 鼠标移动事件
 func (m *CEFTray) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	m.trayIcon.SetOnMouseMove(fn)
 }
 
+// Visible 显示状态
 func (m *CEFTray) Visible() bool {
 	return m.TForm.Visible()
 }
 
+// SetVisible 设置显示状态
 func (m *CEFTray) SetVisible(v bool) {
 	m.trayIcon.SetVisible(v)
 }
 
+// SetHint 设置提示
 func (m *CEFTray) SetHint(value string) {
 	m.trayIcon.SetHint(value)
 }
 
+// SetTitle 设置标题
 func (m *CEFTray) SetTitle(title string) {
 	m.TForm.SetCaption(title)
 }
@@ -150,6 +171,7 @@ func (m *CEFTray) onMouseEvent() {
 	})
 }
 
+// Notice
 // 显示系统通知
 //
 // title 标题
@@ -243,12 +265,12 @@ func (m *CEFTray) createTrayWindow() {
 	m.chromium.SetDefaultURL(m.url)
 }
 
-// 设置托盘图标
+// SetIconFS 设置托盘图标
 func (m *CEFTray) SetIconFS(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
 }
 
-// 设置托盘图标
+// SetIcon 设置托盘图标
 func (m *CEFTray) SetIcon(iconResourcePath string) {
 	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
 }
