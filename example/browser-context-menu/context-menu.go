@@ -56,7 +56,7 @@ func main() {
 		//右键弹出菜单
 		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
 			//既然是自定义，当然要去除之前事先定义好的
-			model.Clear()
+			//model.Clear()
 			//开始创建菜单，每个菜单项都有自己的ID, 所以要先定义一个能保存这些菜单项的ID的变量
 			fmt.Printf("%+v\n", params)
 			//注意： 每个菜单项的ID有固定的 ID 生成函数
@@ -124,6 +124,7 @@ func main() {
 			fmt.Println("menuId: ", menuId, eventFlags, *result)
 			//在这里处理某个菜单项的点击事件所触发的命令，这里的命令对应着一个菜单项的ID
 			var argumentList = ipc.NewArgumentList()
+			argumentList.SetInt32(0, -1) //default -1
 			switch menuId {
 			case menuId01:
 				argumentList.SetInt32(0, 1)
@@ -144,7 +145,7 @@ func main() {
 			}
 			argumentList.SetString(1, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数需要设置一下 isDStr=true 不然中文乱码  后面这个小点会丢失 .", menuId), true)
 			window.Chromium().Emit("menu", argumentList, browser)
-			*result = true
+			//*result = true
 		})
 	})
 	//运行应用
