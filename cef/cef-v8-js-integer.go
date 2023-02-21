@@ -17,11 +17,11 @@ import (
 )
 
 type JSInteger struct {
-	ICEFv8Value
+	V8Value
 }
 
-func (m *JSInteger) AsInteger() (*JSInteger, error) {
-	return m, nil
+func (m *JSInteger) AsInteger() *JSInteger {
+	return m
 }
 
 func (m *JSInteger) Float() float64 {

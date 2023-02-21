@@ -12,5 +12,5 @@
 package cef
 
 type JSFunction struct {
-	ICEFv8Value
+	V8Value
 }

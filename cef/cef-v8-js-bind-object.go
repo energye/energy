@@ -45,7 +45,6 @@ type vt struct {
 // 结构类型信息，结构的字段信息和方法函数信息
 type structTypeInfo struct {
 	StructsObject map[string]*structObjectInfo //分析后的 有关系的结构信息
-	//v8Value       *ICEFv8Value
 }
 
 // 分析后的 结构信息
@@ -218,12 +217,12 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 
 // 创建 结构对象的字段变量
 func (m *structTypeInfo) createObjectFieldVariable(fullParentName, fieldName string, sfi *structFieldInfo) {
-	newICEFv8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType.Jsv, IS_OBJECT)
+	newV8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType.Jsv, IS_OBJECT)
 }
 
 // 创建 结构对象的函数变量
 func (m *structTypeInfo) createObjectFuncVariable(fullParentName, funcName string, sfi *structFuncInfo) {
-	newICEFv8Value(sfi.EventId, fullParentName, funcName, nil, sfi, V8_VALUE_FUNCTION, IS_OBJECT)
+	newV8Value(sfi.EventId, fullParentName, funcName, nil, sfi, V8_VALUE_FUNCTION, IS_OBJECT)
 }
 
 // 分析对象的字段

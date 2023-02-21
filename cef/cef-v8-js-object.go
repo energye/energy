@@ -13,5 +13,5 @@ package cef
 
 // 先保留 未添加
 type JSObject struct {
-	ICEFv8Value
+	V8Value
 }

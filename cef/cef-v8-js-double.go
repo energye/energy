@@ -17,11 +17,11 @@ import (
 )
 
 type JSDouble struct {
-	ICEFv8Value
+	V8Value
 }
 
-func (m *JSDouble) AsDouble() (*JSDouble, error) {
-	return m, nil
+func (m *JSDouble) AsDouble() *JSDouble {
+	return m
 }
 
 func (m *JSDouble) Value() float64 {

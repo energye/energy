@@ -20,5 +20,5 @@ type ICefV8Context struct {
 	ptr      unsafe.Pointer
 	Browser  *ICefBrowser
 	Frame    *ICefFrame
-	Global   *ICEFv8Value
+	Global   *V8Value
 }

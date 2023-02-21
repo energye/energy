@@ -283,7 +283,7 @@ func init() {
 			ctx := &ICefV8Context{
 				Browser: browser,
 				Frame:   frame,
-				Global:  &ICEFv8Value{instance: v8ctx.Global, ptr: unsafe.Pointer(v8ctx.Global)},
+				Global:  &V8Value{instance: v8ctx.Global, ptr: unsafe.Pointer(v8ctx.Global)},
 			}
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定

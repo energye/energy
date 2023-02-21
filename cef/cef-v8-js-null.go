@@ -12,7 +12,7 @@
 package cef
 
 type JSNull struct {
-	ICEFv8Value
+	V8Value
 }
 
 func (m *JSNull) ToString() string {

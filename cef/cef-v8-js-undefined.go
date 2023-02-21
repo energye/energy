@@ -12,7 +12,7 @@
 package cef
 
 type JSUndefined struct {
-	ICEFv8Value
+	V8Value
 }
 
 func (m *JSUndefined) ToString() string {

@@ -102,8 +102,14 @@ func GOValueReflectType(v interface{}) GO_VALUE_TYPE {
 	if v == nil {
 		return GO_VALUE_NIL
 	}
-	vType := reflect.TypeOf(v).Kind()
-	switch vType {
+	var kind reflect.Kind
+	switch v.(type) {
+	case reflect.Type:
+		kind = v.(reflect.Type).Kind()
+	default:
+		kind = reflect.TypeOf(v).Kind()
+	}
+	switch kind {
 	case reflect.String:
 		return GO_VALUE_STRING
 	case reflect.Int:
@@ -142,6 +148,8 @@ func GOValueReflectType(v interface{}) GO_VALUE_TYPE {
 		return GO_VALUE_FUNC
 	case reflect.Ptr:
 		return GO_VALUE_PTR
+	case reflect.Map:
+		return GO_VALUE_MAP
 	default:
 		return GO_VALUE_EXCEPTION
 	}

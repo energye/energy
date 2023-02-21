@@ -14,11 +14,11 @@ package cef
 import "github.com/energye/energy/consts"
 
 type JSString struct {
-	ICEFv8Value
+	V8Value
 }
 
-func (m *JSString) AsString() (*JSString, error) {
-	return m, nil
+func (m *JSString) AsString() *JSString {
+	return m
 }
 
 func (m *JSString) Value() string {

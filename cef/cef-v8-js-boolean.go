@@ -14,11 +14,11 @@ package cef
 import "github.com/energye/energy/consts"
 
 type JSBoolean struct {
-	ICEFv8Value
+	V8Value
 }
 
-func (m *JSBoolean) AsBoolean() (*JSBoolean, error) {
-	return m, nil
+func (m *JSBoolean) AsBoolean() *JSBoolean {
+	return m
 }
 
 func (m *JSBoolean) Value() bool {

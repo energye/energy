@@ -33,28 +33,29 @@ type valueBindInfo struct {
 	FnOutParamType uintptr //string 出参变量类型
 }
 
-// ICEFv8Value 绑定到JS的字段
-type ICEFv8Value struct {
-	eventId        uintptr
-	instance       uintptr
+// V8Value 绑定到JS的字段
+type V8Value struct {
+	eventId        uintptr          //事件ID
+	instance       uintptr          //
 	ptr            unsafe.Pointer   //
 	name           string           //用于字段或函数名
 	value          interface{}      //值
-	valueType      V8_JS_VALUE_TYPE //0:string 1:int 2:double 3:bool 4:null 5:undefined 6:object 7:array 8:function
+	valueType      V8_JS_VALUE_TYPE //JS类型
+	goValueType    GO_VALUE_TYPE    //GO类型
 	funcInfo       *funcInfo        //普通函数信息
 	sfi            *structFuncInfo  //对象函数信息
 	isCommonObject IS_CO            //通用类型或对象类型 默认通用类型
 	that           JSValue          //
-	rwLock         *sync.Mutex      //字段|变量独有锁
+	rwLock         *sync.Mutex      //字段|函数独有锁
 }
 
 // CEFv8BindRoot 导出给JavaScript window的根对象名
 type CEFv8BindRoot struct {
-	commonRootName string //ICEFv8Value 通用类型变量属性的所属默认对象名称
-	objectRootName string //ICEFv8Value 对象类型变量属性的所属默认对象名称
+	commonRootName string //V8Value 通用类型变量属性的所属默认对象名称
+	objectRootName string //V8Value 对象类型变量属性的所属默认对象名称
 }
 
-// 检查函数是否符合 返回：函数详情
+// checkFunc 检查函数是否导出, 返回：函数描述信息
 func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	numIn := fnOf.NumIn() - int(fnType)
 	numOut := fnOf.NumOut()
@@ -99,26 +100,26 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 }
 
 // Lock 每一个变量的独有锁 - 加锁
-func (m *ICEFv8Value) Lock() {
+func (m *V8Value) Lock() {
 	m.rwLock.Lock()
 }
 
 // UnLock 每一个变量的独有锁 - 解锁
-func (m *ICEFv8Value) UnLock() {
+func (m *V8Value) UnLock() {
 	m.rwLock.Unlock()
 }
 
-// ICEFv8Value isCommon
-func (m *ICEFv8Value) isCommon() bool {
+// V8Value isCommon
+func (m *V8Value) isCommon() bool {
 	return m.isCommonObject == IS_COMMON
 }
 
-func (m *ICEFv8Value) setThat(that JSValue) {
+func (m *V8Value) setThat(that JSValue) {
 	m.that = that
 }
 
 // Bytes 值转换为字节
-func (m *ICEFv8Value) Bytes() []byte {
+func (m *V8Value) Bytes() []byte {
 	var iValue interface{}
 	if m.isCommon() {
 		iValue = m.value
@@ -156,7 +157,7 @@ func (m *ICEFv8Value) Bytes() []byte {
 }
 
 // ValueToPtr 转换为指针
-func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
+func (m *V8Value) ValueToPtr() (unsafe.Pointer, error) {
 	var iValue interface{}
 	if m.isCommon() {
 		iValue = m.value
@@ -195,16 +196,16 @@ func (m *ICEFv8Value) ValueToPtr() (unsafe.Pointer, error) {
 }
 
 // SetAnyValue 设置多类型值
-func (m *ICEFv8Value) SetAnyValue(value interface{}) error {
+func (m *V8Value) SetAnyValue(value interface{}) error {
 	switch common.JSValueAssertType(value) {
 	case V8_VALUE_STRING:
-		m.setValueType(V8_VALUE_STRING)
+		m.valueType = V8_VALUE_STRING
 	case V8_VALUE_INT:
-		m.setValueType(V8_VALUE_INT)
+		m.valueType = V8_VALUE_INT
 	case V8_VALUE_DOUBLE:
-		m.setValueType(V8_VALUE_DOUBLE)
+		m.valueType = V8_VALUE_DOUBLE
 	case V8_VALUE_BOOLEAN:
-		m.setValueType(V8_VALUE_BOOLEAN)
+		m.valueType = V8_VALUE_BOOLEAN
 	default:
 		return errors.New(cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED))
 	}
@@ -212,169 +213,173 @@ func (m *ICEFv8Value) SetAnyValue(value interface{}) error {
 	return nil
 }
 
-func (m *ICEFv8Value) getFuncInfo() *funcInfo {
+func (m *V8Value) getFuncInfo() *funcInfo {
 	return m.funcInfo
 }
 
-func (m *ICEFv8Value) Instance() uintptr {
+func (m *V8Value) Instance() uintptr {
 	return m.instance
 }
 
-func (m *ICEFv8Value) Ptr() unsafe.Pointer {
+func (m *V8Value) Ptr() unsafe.Pointer {
 	return m.ptr
 }
 
-func (m *ICEFv8Value) Name() string {
+func (m *V8Value) Name() string {
 	return m.name
 }
 
-func (m *ICEFv8Value) setName(name string) {
+func (m *V8Value) setName(name string) {
 	m.name = name
 }
 
-func (m *ICEFv8Value) getValue() interface{} {
+func (m *V8Value) getValue() interface{} {
 	return m.value
 }
 
-func (m *ICEFv8Value) setValue(value interface{}) {
+func (m *V8Value) setValue(value interface{}) {
 	m.value = value
 }
 
-func (m *ICEFv8Value) ValueType() V8_JS_VALUE_TYPE {
+func (m *V8Value) ValueType() V8_JS_VALUE_TYPE {
 	return m.valueType
 }
 
-func (m *ICEFv8Value) setValueType(vType V8_JS_VALUE_TYPE) {
+func (m *V8Value) setValueType(vType V8_JS_VALUE_TYPE) {
 	m.valueType = vType
 }
 
-func (m *ICEFv8Value) setPtr(ptr unsafe.Pointer) {
+func (m *V8Value) setPtr(ptr unsafe.Pointer) {
 	m.ptr = ptr
 }
 
-func (m *ICEFv8Value) setInstance(instance uintptr) {
+func (m *V8Value) setInstance(instance uintptr) {
 	m.instance = instance
 }
 
-func (m *ICEFv8Value) StringValue() (string, error) {
+func (m *V8Value) StringValue() (string, error) {
 	if m.IsString() {
 		return common.ValueToString(m.value)
 	}
 	return "", errors.New("failed to get a string value")
 }
 
-func (m *ICEFv8Value) IntegerValue() (int32, error) {
+func (m *V8Value) IntegerValue() (int32, error) {
 	if m.IsInteger() {
 		return common.ValueToInt32(m.value)
 	}
 	return 0, errors.New("failed to get a integer value")
 }
 
-func (m *ICEFv8Value) DoubleValue() (float64, error) {
+func (m *V8Value) DoubleValue() (float64, error) {
 	if m.IsDouble() {
 		return common.ValueToFloat64(m.value)
 	}
 	return 0, errors.New("failed to get a double value")
 }
 
-func (m *ICEFv8Value) BooleanValue() (bool, error) {
+func (m *V8Value) BooleanValue() (bool, error) {
 	if m.IsBool() {
 		return common.ValueToBool(m.value)
 	}
 	return false, errors.New("failed to get a boolean value")
 }
 
-func (m *ICEFv8Value) IsString() bool {
+func (m *V8Value) IsString() bool {
 	return m.valueType == V8_VALUE_STRING
 }
 
-func (m *ICEFv8Value) IsInteger() bool {
+func (m *V8Value) IsInteger() bool {
 	return m.valueType == V8_VALUE_INT
 }
 
-func (m *ICEFv8Value) IsDouble() bool {
+func (m *V8Value) IsDouble() bool {
 	return m.valueType == V8_VALUE_DOUBLE
 }
 
-func (m *ICEFv8Value) IsBool() bool {
+func (m *V8Value) IsBool() bool {
 	return m.valueType == V8_VALUE_BOOLEAN
 }
 
-func (m *ICEFv8Value) IsArray() bool {
+func (m *V8Value) IsArray() bool {
 	return m.valueType == V8_VALUE_ARRAY
 }
 
-func (m *ICEFv8Value) IsObject() bool {
+func (m *V8Value) IsObject() bool {
 	return m.valueType == V8_VALUE_OBJECT
 }
 
-func (m *ICEFv8Value) IsFunction() bool {
+func (m *V8Value) IsFunction() bool {
 	return m.valueType == V8_VALUE_FUNCTION
 }
 
-func (m *ICEFv8Value) IsNull() bool {
+func (m *V8Value) IsNull() bool {
 	return m.valueType == V8_VALUE_NULL
 }
 
-func (m *ICEFv8Value) IsUndefined() bool {
+func (m *V8Value) IsUndefined() bool {
 	return m.valueType == V8_VALUE_UNDEFINED
 }
 
-func (m *ICEFv8Value) AsString() (*JSString, error) {
+func (m *V8Value) AsString() *JSString {
 	if m.that != nil {
 		if v, ok := m.that.(*JSString); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to String")
+	return nil
 }
 
-func (m *ICEFv8Value) AsInteger() (*JSInteger, error) {
+func (m *V8Value) AsInteger() *JSInteger {
 	if m.that != nil {
 		if v, ok := m.that.(*JSInteger); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to Integer")
+	return nil
 }
 
-func (m *ICEFv8Value) AsDouble() (*JSDouble, error) {
+func (m *V8Value) AsDouble() *JSDouble {
 	if m.that != nil {
 		if v, ok := m.that.(*JSDouble); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to Double")
+	return nil
 }
 
-func (m *ICEFv8Value) AsBoolean() (*JSBoolean, error) {
+func (m *V8Value) AsBoolean() *JSBoolean {
 	if m.that != nil {
 		if v, ok := m.that.(*JSBoolean); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to Boolean")
+	return nil
 }
 
-func (m *ICEFv8Value) AsArray() (*JSArray, error) {
+func (m *V8Value) AsV8Value() *V8Value {
+	return m
+}
+
+func (m *V8Value) AsArray() *JSArray {
 	if m.that != nil {
 		if v, ok := m.that.(*JSArray); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to Array")
+	return nil
 }
 
-func (m *ICEFv8Value) AsFunction() (*JSFunction, error) {
+func (m *V8Value) AsFunction() *JSFunction {
 	if m.that != nil {
 		if v, ok := m.that.(*JSFunction); ok {
-			return v, nil
+			return v
 		}
 	}
-	return nil, errors.New("unable to cast to Function")
+	return nil
 }
 
-func (m *ICEFv8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool) {
+func (m *V8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("V8BindFuncCallbackHandler recover:", err)
@@ -390,9 +395,8 @@ func (m *ICEFv8Value) invoke(inParams []reflect.Value) (outParams []reflect.Valu
 	return outParams, true
 }
 
-// ICEFv8Value newICEFv8Value
-func newICEFv8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *structFuncInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
-	jsValueBind := new(ICEFv8Value)
+func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *structFuncInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
+	jsValueBind := new(V8Value)
 	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.ptr = unsafe.Pointer(&jsValueBind)
 	jsValueBind.instance = uintptr(jsValueBind.ptr)
@@ -405,23 +409,18 @@ func newICEFv8Value(eventId uintptr, fullParentName, name string, value interfac
 	jsValueBind.sfi = sfi
 	jsValueBind.valueType = valueType
 	jsValueBind.isCommonObject = isCommonObject
-
-	//putValueBind(jsValueBind.eventId, jsValueBind)
 	VariableBind.putValueBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
 	return jsValueBind
 }
 
-// ICEFv8Value Pointer
-func (m *ICEFv8Value) Pointer() unsafe.Pointer {
+func (m *V8Value) Pointer() unsafe.Pointer {
 	return m.ptr
 }
 
-// ICEFv8Value setEventId
-func (m *ICEFv8Value) setEventId(eventId uintptr) {
+func (m *V8Value) setEventId(eventId uintptr) {
 	m.eventId = eventId
 }
 
-// ICEFv8Value getEventId
-func (m *ICEFv8Value) getEventId() uintptr {
+func (m *V8Value) getEventId() uintptr {
 	return m.eventId
 }

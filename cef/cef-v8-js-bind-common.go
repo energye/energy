@@ -18,43 +18,54 @@
 package cef
 
 // NewString GO&JS 类型
-func (m *ICEFv8Value) NewString(name, value string) *JSString {
-	return VariableBind.bindStorage.NewString(name, value)
+func (m *V8Value) NewString(name, value string) *JSString {
+	return VariableBind.NewString(name, value)
 }
 
 // NewInteger GO&JS 类型
-func (m *ICEFv8Value) NewInteger(name string, value int32) *JSInteger {
-	return VariableBind.bindStorage.NewInteger(name, value)
+func (m *V8Value) NewInteger(name string, value int32) *JSInteger {
+	return VariableBind.NewInteger(name, value)
 }
 
 // NewDouble GO&JS 类型
-func (m *ICEFv8Value) NewDouble(name string, value float64) *JSDouble {
-	return VariableBind.bindStorage.NewDouble(name, value)
+func (m *V8Value) NewDouble(name string, value float64) *JSDouble {
+	return VariableBind.NewDouble(name, value)
 }
 
 // NewBoolean  GO&JS 类型
-func (m *ICEFv8Value) NewBoolean(name string, value bool) *JSBoolean {
-	return VariableBind.bindStorage.NewBoolean(name, value)
+func (m *V8Value) NewBoolean(name string, value bool) *JSBoolean {
+	return VariableBind.NewBoolean(name, value)
 }
 
 // NewNull GO&JS 类型
-func (m *ICEFv8Value) NewNull(name string) *JSNull {
-	return VariableBind.bindStorage.NewNull(name)
+func (m *V8Value) NewNull(name string) *JSNull {
+	return VariableBind.NewNull(name)
 }
 
 // NewUndefined GO&JS 类型
-func (m *ICEFv8Value) NewUndefined(name string) *JSUndefined {
-	return VariableBind.bindStorage.NewUndefined(name)
+func (m *V8Value) NewUndefined(name string) *JSUndefined {
+	return VariableBind.NewUndefined(name)
 }
 
 // NewFunction GO&JS 类型
-func (m *ICEFv8Value) NewFunction(name string, fn interface{}) error {
-	return VariableBind.bindStorage.NewFunction(name, fn)
+func (m *V8Value) NewFunction(name string, fn interface{}) error {
+	return VariableBind.NewFunction(name, fn)
 }
 
 //	NewObjects GO&JS 类型
 //
 // Go结构类型变量和Go结构函数绑定
-func (m *ICEFv8Value) NewObjects(objects ...interface{}) {
+func (m *V8Value) NewObjects(objects ...interface{}) {
 	bindObject(objects...)
+}
+
+// Bind V8Value
+//
+// 变量和函数绑定, 在Go中定义的字段绑定到JS字段中, 在Go中定义的函数导出到JS
+//
+// 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, Objects = struct | map,  Array = Slice
+//
+// 主进程和子进程
+func (m *V8Value) Bind(name string, bind interface{}) error {
+	return VariableBind.Bind(name, bind)
 }

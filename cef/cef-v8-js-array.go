@@ -13,5 +13,5 @@ package cef
 
 // JSArray 类型 先保留 未添加
 type JSArray struct {
-	ICEFv8Value
+	V8Value
 }

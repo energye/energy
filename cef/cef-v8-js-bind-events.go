@@ -171,7 +171,7 @@ func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue str
 			} else if newValueType == V8_VALUE_INT && jsValue.ValueType() == V8_VALUE_INT {
 				refValue.SetInt(int64(intValue))
 			} else if newValueType == V8_VALUE_DOUBLE && jsValue.ValueType() == V8_VALUE_DOUBLE {
-				refValue.SetFloat(float64(doubleValue))
+				refValue.SetFloat(doubleValue)
 			} else if newValueType == V8_VALUE_BOOLEAN && jsValue.ValueType() == V8_VALUE_BOOLEAN {
 				refValue.SetBool(boolValue)
 			} else {
