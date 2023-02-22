@@ -84,162 +84,78 @@ func StrToFloat32(value string) float32 {
 	return float32(v)
 }
 
+// InterfaceToString 接口转 string
 func InterfaceToString(value interface{}) string {
 	return fmt.Sprintf("%v", value)
 }
 
-// 获取参数指针
+// GetParamOf 获取参数指针
 func GetParamOf(index int, ptr uintptr) uintptr {
 	return *(*uintptr)(unsafe.Pointer(ptr + uintptr(index)*unsafe.Sizeof(ptr)))
 }
 
-// 根据指定指针位置开始 偏移获取指针
+// GetParamPtr 根据指定指针位置开始 偏移获取指针
 func GetParamPtr(ptr uintptr, offset int) unsafe.Pointer {
 	return unsafe.Pointer(ptr + uintptr(offset))
 }
 
-func GOValueReflectType(v interface{}) GO_VALUE_TYPE {
+// FieldReflectType 通过返回获取字段对应 GO 和 V8 JS 类型
+func FieldReflectType(v interface{}) (GO_VALUE_TYPE, V8_JS_VALUE_TYPE) {
 	if v == nil {
-		return GO_VALUE_NIL
+		return GO_VALUE_NIL, V8_VALUE_NULL
 	}
 	var kind reflect.Kind
 	switch v.(type) {
 	case reflect.Type:
 		kind = v.(reflect.Type).Kind()
+	case reflect.Kind:
+		kind = v.(reflect.Kind)
 	default:
 		kind = reflect.TypeOf(v).Kind()
 	}
 	switch kind {
 	case reflect.String:
-		return GO_VALUE_STRING
+		return GO_VALUE_STRING, V8_VALUE_STRING
 	case reflect.Int:
-		return GO_VALUE_INT
+		return GO_VALUE_INT, V8_VALUE_INT
 	case reflect.Int8:
-		return GO_VALUE_INT8
+		return GO_VALUE_INT8, V8_VALUE_INT
 	case reflect.Int16:
-		return GO_VALUE_INT16
+		return GO_VALUE_INT16, V8_VALUE_INT
 	case reflect.Int32:
-		return GO_VALUE_INT32
+		return GO_VALUE_INT32, V8_VALUE_INT
 	case reflect.Int64:
-		return GO_VALUE_INT64
+		return GO_VALUE_INT64, V8_VALUE_INT
 	case reflect.Uint:
-		return GO_VALUE_UINT
+		return GO_VALUE_UINT, V8_VALUE_INT
 	case reflect.Uint8:
-		return GO_VALUE_UINT8
+		return GO_VALUE_UINT8, V8_VALUE_INT
 	case reflect.Uint16:
-		return GO_VALUE_UINT16
+		return GO_VALUE_UINT16, V8_VALUE_INT
 	case reflect.Uint32:
-		return GO_VALUE_UINT32
+		return GO_VALUE_UINT32, V8_VALUE_INT
 	case reflect.Uint64:
-		return GO_VALUE_UINT64
+		return GO_VALUE_UINT64, V8_VALUE_INT
 	case reflect.Uintptr:
-		return GO_VALUE_UINTPTR
+		return GO_VALUE_UINTPTR, V8_VALUE_INT
 	case reflect.Float32:
-		return GO_VALUE_FLOAT32
+		return GO_VALUE_FLOAT32, V8_VALUE_DOUBLE
 	case reflect.Float64:
-		return GO_VALUE_FLOAT64
+		return GO_VALUE_FLOAT64, V8_VALUE_DOUBLE
 	case reflect.Bool:
-		return GO_VALUE_BOOL
+		return GO_VALUE_BOOL, V8_VALUE_BOOLEAN
 	case reflect.Struct:
-		return GO_VALUE_STRUCT
+		return GO_VALUE_STRUCT, V8_VALUE_OBJECT
 	case reflect.Slice:
-		return GO_VALUE_SLICE
+		return GO_VALUE_SLICE, V8_VALUE_ARRAY
 	case reflect.Func:
-		return GO_VALUE_FUNC
+		return GO_VALUE_FUNC, V8_VALUE_FUNCTION
 	case reflect.Ptr:
-		return GO_VALUE_PTR
+		return GO_VALUE_PTR, V8_VALUE_PTR
 	case reflect.Map:
-		return GO_VALUE_MAP
+		return GO_VALUE_MAP, V8_VALUE_OBJECT
 	default:
-		return GO_VALUE_EXCEPTION
-	}
-}
-
-func GOValueType(v string) GO_VALUE_TYPE {
-	if v == "nil" {
-		return GO_VALUE_NIL
-	}
-	switch v {
-	case "string":
-		return GO_VALUE_STRING
-	case "int":
-		return GO_VALUE_INT
-	case "int8":
-		return GO_VALUE_INT8
-	case "int16":
-		return GO_VALUE_INT16
-	case "int32":
-		return GO_VALUE_INT32
-	case "int64":
-		return GO_VALUE_INT64
-	case "uint":
-		return GO_VALUE_UINT
-	case "uint8":
-		return GO_VALUE_UINT8
-	case "uint16":
-		return GO_VALUE_UINT16
-	case "uint32":
-		return GO_VALUE_UINT32
-	case "uint64":
-		return GO_VALUE_UINT64
-	case "uintptr":
-		return GO_VALUE_UINTPTR
-	case "float32":
-		return GO_VALUE_FLOAT32
-	case "float64":
-		return GO_VALUE_FLOAT64
-	case "bool":
-		return GO_VALUE_BOOL
-	case "struct":
-		return GO_VALUE_STRUCT
-	case "slice":
-		return GO_VALUE_SLICE
-	case "func":
-		return GO_VALUE_FUNC
-	case "ptr":
-		return GO_VALUE_PTR
-	default:
-		return GO_VALUE_EXCEPTION
-	}
-}
-
-func GOValueAssertType(v interface{}) GO_VALUE_TYPE {
-	if v == nil {
-		return GO_VALUE_NIL
-	}
-	switch v.(type) {
-	case string:
-		return GO_VALUE_STRING
-	case int:
-		return GO_VALUE_INT
-	case int8:
-		return GO_VALUE_INT8
-	case int16:
-		return GO_VALUE_INT16
-	case int32:
-		return GO_VALUE_INT32
-	case int64:
-		return GO_VALUE_INT64
-	case uint:
-		return GO_VALUE_UINT
-	case uint8:
-		return GO_VALUE_UINT8
-	case uint16:
-		return GO_VALUE_UINT16
-	case uint32:
-		return GO_VALUE_UINT32
-	case uint64:
-		return GO_VALUE_UINT64
-	case uintptr:
-		return GO_VALUE_UINTPTR
-	case float32:
-		return GO_VALUE_FLOAT32
-	case float64:
-		return GO_VALUE_FLOAT64
-	case bool:
-		return GO_VALUE_BOOL
-	default:
-		return GO_VALUE_EXCEPTION
+		return -1, -1
 	}
 }
 
@@ -258,29 +174,9 @@ func JSValueAssertType(v interface{}) V8_JS_VALUE_TYPE {
 	}
 }
 
-func JSValueType(v string) V8_JS_VALUE_TYPE {
-	if v == "nil" {
-		return V8_VALUE_NULL
-	}
-	switch v {
-	case "string":
-		return V8_VALUE_STRING
-	case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
-		return V8_VALUE_INT
-	case "float32", "float64":
-		return V8_VALUE_DOUBLE
-	case "bool":
-		return V8_VALUE_BOOLEAN
-	case "struct":
-		return V8_VALUE_OBJECT
-	case "slice":
-		return V8_VALUE_ARRAY
-	case "func":
-		return V8_VALUE_FUNCTION
-	default:
-		return V8_VALUE_EXCEPTION
-	}
-}
+// ValueToBool 值转为 bool
+//
+// return: int > 0 = true, double > 0 = true, string != "" = true, bool = true, other = false
 func ValueToBool(v interface{}) (bool, error) {
 	switch v.(type) {
 	case []byte:
@@ -318,6 +214,7 @@ func ValueToBool(v interface{}) (bool, error) {
 	}
 }
 
+// ValueToFloat32
 func ValueToFloat32(v interface{}) (float32, error) {
 	vType := JSValueAssertType(v)
 	switch vType {
@@ -479,36 +376,8 @@ func ValueToBytes(v interface{}) []byte {
 		return v.([]byte)
 	case byte:
 		return []byte{v.(byte)}
-
 	}
 	return nil
-}
-
-func ParamType(t string) (V8_JS_VALUE_TYPE, GO_VALUE_TYPE) {
-	switch t {
-	case "string":
-		return V8_VALUE_STRING, GO_VALUE_STRING
-	case "int":
-		return V8_VALUE_INT, GO_VALUE_INT
-	case "int8":
-		return V8_VALUE_INT, GO_VALUE_INT8
-	case "int16":
-		return V8_VALUE_INT, GO_VALUE_INT16
-	case "int32":
-		return V8_VALUE_INT, GO_VALUE_INT32
-	case "int64":
-		return V8_VALUE_INT, GO_VALUE_INT64
-	case "float32":
-		return V8_VALUE_DOUBLE, GO_VALUE_FLOAT32
-	case "float64":
-		return V8_VALUE_DOUBLE, GO_VALUE_FLOAT64
-	case "bool":
-		return V8_VALUE_BOOLEAN, GO_VALUE_BOOL
-	case "EefError":
-		return V8_VALUE_EXCEPTION, GO_VALUE_EXCEPTION
-	default:
-		return -1, -1
-	}
 }
 
 func FuncParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {

@@ -65,9 +65,9 @@ type objectInfo struct {
 
 // fieldInfo 字段描述
 type fieldInfo struct {
-	EventId    uintptr        `json:"event_id"`
-	ValueType  *VT            `json:"valueType"` //字段类型，go 和 js
-	FieldValue *reflect.Value `json:"-"`         //用于字段值修改和获取
+	EventId    uintptr     `json:"event_id"`
+	ValueType  *VT         `json:"valueType"` //字段类型，go 和 js
+	FieldValue interface{} `json:"-"`         //用于字段值修改和获取 *reflect.Value | *field
 }
 
 // functionInfo 结构的函数描述
@@ -220,12 +220,12 @@ func (m *objectTypeInfo) _infoTo(info *objectInfo) {
 
 // 创建 结构对象的字段变量
 func (m *objectTypeInfo) createObjectFieldVariable(fullParentName, fieldName string, sfi *fieldInfo) {
-	newV8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType.Jsv, IS_OBJECT)
+	newV8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType, IS_OBJECT)
 }
 
 // 创建 结构对象的函数变量
 func (m *objectTypeInfo) createObjectFuncVariable(fullParentName, funcName string, sfi *functionInfo) {
-	newV8Value(sfi.EventId, fullParentName, funcName, nil, sfi, V8_VALUE_FUNCTION, IS_OBJECT)
+	newV8Value(sfi.EventId, fullParentName, funcName, nil, sfi, &VT{Jsv: V8_VALUE_FUNCTION, Gov: GO_VALUE_FUNC}, IS_OBJECT)
 }
 
 // 分析对象的字段
@@ -272,17 +272,19 @@ func (m *objectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.Type, 
 		}
 		if b { //b=true可以正常解析映射
 			filedValue := value.Elem().FieldByName(fieldName)
-			t := fieldType.Kind().String()
+			t := fieldType.Kind()
+			gov, jsv := common.FieldReflectType(t)
 			m.FieldInfos[fieldName] = &fieldInfo{
 				EventId: uintptr(__bind_id()),
 				ValueType: &VT{
-					Jsv: common.JSValueType(t),
-					Gov: common.GOValueType(t),
+					Jsv: jsv,
+					Gov: gov,
 				},
 				FieldValue: &filedValue,
 			}
 		}
 	}
+	//解析当前对象函数
 	m.analysisObjectFunction(typPtr, value)
 }
 
@@ -308,13 +310,15 @@ func (m *objectInfo) analysisObjectFunction(typPtr reflect.Type, value reflect.V
 }
 
 func (m *objectTypeInfo) bind(value JSValue) {
-	if value.IsFunction() {
-
-	} else {
-		m.FieldInfos[value.Name()] = &fieldInfo{
-			EventId:   uintptr(__bind_id()),
-			ValueType: value.ValueType(),
-			//FieldValue: &filedValue,
-		}
+	//m.FunctionInfos[value.Name()] = &functionInfo{
+	//	EventId:  uintptr(__bind_id()),
+	//	funcInfo: value.getFuncInfo(),
+	//	Method:   reflect.ValueOf(value.getValue()),
+	//}
+	//fmt.Println("reflect.ValueOf(value.getValue())", reflect.ValueOf(value.getValue()))
+	m.FieldInfos[value.Name()] = &fieldInfo{
+		EventId:    uintptr(__bind_id()),
+		ValueType:  value.ValueType(),
+		FieldValue: value.getValue(),
 	}
 }

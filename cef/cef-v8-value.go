@@ -66,6 +66,9 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 		//入参个数超出
 		return nil, errors.New(fmt.Sprintf("WindowBind function parameter error: up to %d function input parameters, actually %d", BIND_FUNC_IN_MAX_SUM, numIn))
 	}
+	if numIn < 0 {
+		numIn = 0
+	}
 	r := new(funcInfo)
 	r.InNum = int32(numIn)
 	r.OutNum = int32(numOut)
@@ -74,8 +77,8 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	var idx = 0
 	for i := 0; i < numIn; i++ {
 		idx = i + int(fnType)
-		inTyp := fnOf.In(idx).Kind().String()
-		if jsv, gov := common.ParamType(inTyp); jsv == -1 && gov == -1 {
+		inTyp := fnOf.In(idx).Kind()
+		if gov, jsv := common.FieldReflectType(inTyp); jsv == -1 && gov == -1 {
 			//入参参数类型不正确
 			return nil, errors.New("WindowBind function parameter error: input parameter type can only be [string int float bool]")
 		} else {
@@ -86,8 +89,8 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 		r.OutParam = make([]*VT, numOut, numOut)
 		for i := 0; i < numOut; i++ {
 			outTyp := fnOf.Out(i)
-			if jsv, gov := common.ParamType(outTyp.Kind().String()); jsv == -1 && gov == -1 {
-				//出参类型错误
+			if gov, jsv := common.FieldReflectType(outTyp.Kind()); jsv == -1 && gov == -1 {
+				//出参参数类型不正确
 				return nil, errors.New("WindowBind function parameter error: output parameter type can only be [string int float bool]")
 			} else {
 				r.OutParam[i] = &VT{Jsv: jsv, Gov: gov}
@@ -381,7 +384,7 @@ func (m *V8Value) AsFunction() *JSFunction {
 func (m *V8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool) {
 	defer func() {
 		if err := recover(); err != nil {
-			logger.Error("V8BindFuncCallbackHandler recover:", err)
+			logger.Error("invoke recover:", err)
 			outParams = []reflect.Value{reflect.ValueOf(err.(error).Error())}
 			success = false
 		}
@@ -394,7 +397,7 @@ func (m *V8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, s
 	return outParams, true
 }
 
-func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *functionInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
+func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *functionInfo, valueType *VT, isCommonObject IS_CO) JSValue {
 	jsValueBind := new(V8Value)
 	jsValueBind.valueType = new(VT)
 	jsValueBind.rwLock = new(sync.Mutex)
@@ -407,7 +410,7 @@ func newV8Value(eventId uintptr, fullParentName, name string, value interface{},
 		jsValueBind.funcInfo = sfi.funcInfo
 	}
 	jsValueBind.sfi = sfi
-	jsValueBind.valueType.Jsv = valueType
+	jsValueBind.valueType = valueType
 	jsValueBind.isCommonObject = isCommonObject
 	VariableBind.putValueBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
 	return jsValueBind

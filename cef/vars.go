@@ -179,7 +179,7 @@ func (m *variableBind) NewUndefined(name string) *JSUndefined {
 //
 // 绑定 定义的普通函数 prefix default struct name
 func (m *variableBind) NewFunction(name string, fn interface{}) error {
-	if common.GOValueReflectType(fn) == GO_VALUE_FUNC {
+	if gov, _ := common.FieldReflectType(fn); gov == GO_VALUE_FUNC {
 		if info, err := checkFunc(reflect.TypeOf(fn), FN_TYPE_COMMON); err == nil {
 			jsValueBind := new(JSFunction)
 			jsValueBind.valueType = new(VT)
@@ -231,63 +231,48 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 		if kind != reflect.Ptr && kind != reflect.Func {
 			return errors.New(fmt.Sprintf("绑定字段 %s: 应传递绑定变量指针", name))
 		}
-		var refType GO_VALUE_TYPE
-		var bindType V8_JS_VALUE_TYPE = -1
+		var gov GO_VALUE_TYPE
+		var jsv V8_JS_VALUE_TYPE
 		if kind == reflect.Func {
-			bindType = V8_VALUE_FUNCTION
+			gov = GO_VALUE_FUNC
+			jsv = V8_VALUE_FUNCTION
 		} else {
-			refType = common.GOValueReflectType(typ.Elem())
-			switch refType {
-			case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64, GO_VALUE_UINTPTR:
-				bindType = V8_VALUE_INT
-			case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
-				bindType = V8_VALUE_DOUBLE
-			case GO_VALUE_STRING:
-				bindType = V8_VALUE_STRING
-			case GO_VALUE_BOOL:
-				bindType = V8_VALUE_BOOLEAN
-			case GO_VALUE_NIL:
-				bindType = V8_VALUE_NULL
-			case GO_VALUE_FUNC:
-				bindType = V8_VALUE_FUNCTION
-			case GO_VALUE_STRUCT, GO_VALUE_MAP:
-				bindType = V8_VALUE_OBJECT
-			case GO_VALUE_SLICE:
-				bindType = V8_VALUE_ARRAY
-			}
+			gov, jsv = common.FieldReflectType(typ.Elem())
 		}
-		if bindType == -1 {
+		if jsv == V8_VALUE_EXCEPTION {
 			return errors.New("类型错误, 支持类型: string, int32, float64, bool, func, struct, map, slice")
 		}
-		fmt.Println("name", name, "refType", bindType)
 		value := &V8Value{
-			name:      name,
-			rwLock:    new(sync.Mutex),
-			valueType: new(VT),
+			name:   name,
+			rwLock: new(sync.Mutex),
+			valueType: &VT{
+				Jsv: jsv,
+				Gov: gov,
+			},
+			isCommonObject: IS_OBJECT,
+			eventId:        uintptr(__bind_id()),
 		}
-		value.valueType.Jsv = bindType
-		value.valueType.Gov = refType
-		if bindType == V8_VALUE_FUNCTION {
-			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_COMMON); err == nil {
+		if jsv == V8_VALUE_FUNCTION {
+			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_OBJECT); err == nil {
 				value.funcInfo = info
 				value.ptr = unsafe.Pointer(&bind)
 			} else {
 				return err
 			}
-		} else if bindType == V8_VALUE_OBJECT {
-			if refType == GO_VALUE_STRUCT {
+		} else if jsv == V8_VALUE_OBJECT {
+			if gov == GO_VALUE_STRUCT {
 
-			} else if refType == GO_VALUE_MAP {
+			} else if gov == GO_VALUE_MAP {
 
 			}
-		} else if bindType == V8_VALUE_ARRAY {
+		} else if jsv == V8_VALUE_ARRAY {
 
 		} else {
-			switch bindType {
+			switch jsv {
 			case V8_VALUE_STRING:
 				value.ptr = unsafe.Pointer(bind.(*string))
 			case V8_VALUE_INT:
-				switch refType {
+				switch gov {
 				case GO_VALUE_INT:
 					value.ptr = unsafe.Pointer(bind.(*int))
 				case GO_VALUE_INT8:
@@ -312,7 +297,7 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 					value.ptr = unsafe.Pointer(bind.(*uintptr))
 				}
 			case V8_VALUE_DOUBLE:
-				if refType == GO_VALUE_FLOAT32 {
+				if gov == GO_VALUE_FLOAT32 {
 					value.ptr = unsafe.Pointer(bind.(*float32))
 				} else {
 					value.ptr = unsafe.Pointer(bind.(*float64))
@@ -326,18 +311,8 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 		value.instance = uintptr(value.ptr)
 		value.value = bind
 		value.that = value
-		value.eventId = uintptr(__bind_id())
-		value.isCommonObject = IS_OBJECT
 		m.putValueBind(name, value)
 		objectTI.bind(value)
-		//fieldInfo := &fieldInfo{
-		//	EventId: uintptr(__bind_id()),
-		//	ValueType: &VT{
-		//		Jsv: bindType,
-		//		Gov: refType,
-		//	},
-		//	FieldValue: &filedValue,
-		//}
 	}
 	return nil
 }
