@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -39,16 +40,18 @@ func cefWindowBindCallbackEventProc(f uintptr, args uintptr, argcout int) uintpt
 		return common.GetParamOf(i, args)
 	}
 	eventType := BIND_EVENT(getVal(0))
-	if BE_FUNC == eventType {
-		_cefV8BindFuncCallbackHandler(eventType, f, args, argcout)
-	} else {
-		_cefV8BindFieldCallbackHandler(eventType, f, args, argcout)
+	if BE_FUNC == eventType { //function
+		v8BindFuncCallbackHandler(eventType, f, args, argcout)
+	} else if BE_GET == eventType || BE_SET == eventType { // get or set
+		v8BindFieldCallbackHandler(eventType, f, args, argcout)
+	} else if BE_CTX_CRT_BIND == eventType { // context create bind
+		fmt.Println("WindowBindCallbackEventProc eventType", eventType, argcout)
 	}
 	return 0
 }
 
-// _cefV8BindFieldCallbackHandler 字段处理
-func _cefV8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
+// v8BindFieldCallbackHandler 字段处理
+func v8BindFieldCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
 		errorMessage = Empty
@@ -217,8 +220,8 @@ func getPtrValue(valueType V8_JS_VALUE_TYPE, newValue interface{}, stringValuePr
 	return ""
 }
 
-// _cefV8BindFuncCallbackHandler 函数处理
-func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
+// v8BindFuncCallbackHandler 函数处理
+func v8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args uintptr, argsLen int) {
 	var (
 		exceptionPrt *uintptr
 		errorMessage = Empty

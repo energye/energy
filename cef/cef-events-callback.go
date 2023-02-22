@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -62,7 +63,8 @@ func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.putBrowserFrame(browser, frame)
 	BrowserWindow.removeNoValidFrames()
-	if VariableBind.ValueBindCount() == 0 && len(objectTI.ObjectInfos) == 0 {
+	fmt.Println("cefAppContextCreated-ProcessType:", Args.ProcessType(), "objectTI.isBind:", objectTI.isBind)
+	if !objectTI.isBind {
 		__idReset()
 		clearValueBind()
 		bindGoToJS(browser, frame)

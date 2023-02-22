@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/bind/src"
-	"github.com/energye/energy/logger"
 )
 
 //go:embed resources
@@ -15,8 +14,8 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
-	logger.SetEnable(true)
-	logger.SetLevel(logger.CefLog_Debug)
+	//logger.SetEnable(true)
+	//logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
@@ -48,12 +47,13 @@ func main() {
 		//src.JSInt = bind.NewInteger("JSInt", 0)
 		//src.JSBool = bind.NewBoolean("JSBool", false)
 		src.JSDouble = bind.NewDouble("JSDouble", 0.0)
-		_ = bind.NewFunction("JSFunc", src.JSFunc)
+		bind.NewFunction("JSFunc", src.JSFunc)
 		//cef.VariableBind.Bind("varStr", &varStr)
-
 		bind.NewObjects()
+		cef.VariableBind.Bind("TestFunc", TestFunc)
 	})
-	fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc), "ProcessType", common.Args.ProcessType(), common.Args.IsMain() || common.Args.IsRender())
+	fmt.Println("main-ProcessType:", common.Args.ProcessType())
+	//fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc), "ProcessType", common.Args.ProcessType(), common.Args.IsMain() || common.Args.IsRender())
 
 	//fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc))
 	//var err error

@@ -257,6 +257,7 @@ const (
 	BE_SET = BIND_EVENT(iota)
 	BE_GET
 	BE_FUNC
+	BE_CTX_CRT_BIND
 )
 
 // 异常信息

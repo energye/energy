@@ -4,19 +4,40 @@
     <meta charset="UTF-8">
     <title>bind</title>
     <script type="application/javascript">
-        document.getElementById("message")
-        console.log("goobj", JSON.stringify(goobj))
-        console.log("gocobj", JSON.stringify(gocobj))
-        setInterval(function (){
-            console.log("JSFunc()", gocobj.JSFunc("asdf" + new Date().getTime()))
-            console.log("TestFunc()", gocobj.TestFunc())
-            console.log("JSDouble", gocobj.JSDouble)
-        },1000);
+        window.onload = function () {
+            var doc = document.getElementById("test");
+
+            function test(...vvv) {
+                var str = doc.innerHTML;
+                for (var i = 0; i < vvv.length; i++) {
+                    str = str + "  " + vvv[i];
+                }
+                str += "<br>";
+                doc.innerHTML = str;
+            }
+
+            try {
+                test("JSFunc:", gocobj.JSFunc("asdf" + new Date().getTime()))
+            } catch (e) {
+                test(e)
+            }
+            try {
+                test("JSDouble:", gocobj.JSDouble)
+            } catch (e) {
+                test(e)
+            }
+            try {
+                test("goobj.TestFunc:", goobj.TestFunc())
+            } catch (e) {
+                test(e)
+            }
+
+        }
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
 <p>
 <h3>bind</h3></p>
-<p id="message"></p>
+<p id="test"></p>
 </body>
 </html>

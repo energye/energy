@@ -231,15 +231,18 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 		if kind != reflect.Ptr && kind != reflect.Func {
 			return errors.New(fmt.Sprintf("绑定字段 %s: 应传递绑定变量指针", name))
 		}
-		var gov GO_VALUE_TYPE
-		var jsv V8_JS_VALUE_TYPE
+		var (
+			gov GO_VALUE_TYPE
+			jsv V8_JS_VALUE_TYPE
+		)
 		if kind == reflect.Func {
 			gov = GO_VALUE_FUNC
 			jsv = V8_VALUE_FUNCTION
 		} else {
 			gov, jsv = common.FieldReflectType(typ.Elem())
 		}
-		if jsv == V8_VALUE_EXCEPTION {
+		fmt.Println("value-type:", gov, jsv)
+		if gov == -1 || jsv == -1 {
 			return errors.New("类型错误, 支持类型: string, int32, float64, bool, func, struct, map, slice")
 		}
 		value := &V8Value{
@@ -252,22 +255,22 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			isCommonObject: IS_OBJECT,
 			eventId:        uintptr(__bind_id()),
 		}
-		if jsv == V8_VALUE_FUNCTION {
+		if jsv == V8_VALUE_FUNCTION { //function
 			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_OBJECT); err == nil {
 				value.funcInfo = info
 				value.ptr = unsafe.Pointer(&bind)
 			} else {
 				return err
 			}
-		} else if jsv == V8_VALUE_OBJECT {
+		} else if jsv == V8_VALUE_OBJECT { //object
 			if gov == GO_VALUE_STRUCT {
 
 			} else if gov == GO_VALUE_MAP {
 
 			}
-		} else if jsv == V8_VALUE_ARRAY {
+		} else if jsv == V8_VALUE_ARRAY { //array
 
-		} else {
+		} else { //field
 			switch jsv {
 			case V8_VALUE_STRING:
 				value.ptr = unsafe.Pointer(bind.(*string))

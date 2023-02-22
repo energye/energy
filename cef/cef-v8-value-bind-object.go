@@ -24,6 +24,7 @@ import (
 	"unsafe"
 )
 
+// 对象变量绑定
 var objectTI = &objectTypeInfo{ObjectInfos: make(map[string]*objectInfo), FieldInfos: make(map[string]*fieldInfo), FunctionInfos: make(map[string]*functionInfo)}
 
 // 函数详情 1.参数个数 2.每个参数类型 3.返回参数类型
@@ -45,22 +46,24 @@ type VT struct {
 
 // objectTypeInfo 结构类型描述，结构的字段描述和方法函数描述
 type objectTypeInfo struct {
-	ObjectInfos   map[string]*objectInfo   //分析后有关系的结构描述
+	isBind        bool                     //是否已绑定过
+	ObjectInfos   map[string]*objectInfo   `json:"objectInfos"`   //分析后有关系的结构描述
 	FieldInfos    map[string]*fieldInfo    `json:"fieldInfos"`    //字段描述 key=字段名 value=字段描述
 	FunctionInfos map[string]*functionInfo `json:"functionInfos"` //函数描述 key=函数名 value=函数描述
 }
 
 // objectInfo 分析后的 结构描述
 type objectInfo struct {
-	Instance       uintptr                  `json:"instance"`       //对象地址
-	ParentInstance uintptr                  `json:"parentInstance"` //父对象地址
-	Parent         *objectInfo              `json:"-"`              //父对象结构描述
-	Ptr            unsafe.Pointer           `json:"-"`              //对象指针
-	ObjName        string                   `json:"objName"`        //对象名称
-	FullObjName    string                   `json:"fullObjName"`    //对象全路径名称: structName.FieldName.XXX
-	FieldInfos     map[string]*fieldInfo    `json:"fieldInfos"`     //字段描述 key=字段名 value=字段描述
-	FunctionInfos  map[string]*functionInfo `json:"functionInfos"`  //函数描述 key=函数名 value=函数描述
-	SubObjectInfo  map[string]*objectInfo   `json:"subObjectInfo"`  //子对象描述
+	isCreateJSValue bool                     //是否已创建 JSValue
+	Instance        uintptr                  `json:"instance"`       //对象地址
+	ParentInstance  uintptr                  `json:"parentInstance"` //父对象地址
+	Parent          *objectInfo              `json:"-"`              //父对象结构描述
+	Ptr             unsafe.Pointer           `json:"-"`              //对象指针
+	ObjName         string                   `json:"objName"`        //对象名称
+	FullObjName     string                   `json:"fullObjName"`    //对象全路径名称: structName.FieldName.XXX
+	FieldInfos      map[string]*fieldInfo    `json:"fieldInfos"`     //字段描述 key=字段名 value=字段描述
+	FunctionInfos   map[string]*functionInfo `json:"functionInfos"`  //函数描述 key=函数名 value=函数描述
+	SubObjectInfo   map[string]*objectInfo   `json:"subObjectInfo"`  //子对象描述
 }
 
 // fieldInfo 字段描述
@@ -89,9 +92,9 @@ type cefObject struct {
 }
 
 func (m *VT) ToValueTypeString() string {
-	govs := common.FuncParamGoTypeStr(m.Gov)
-	jsvs := common.FuncParamJsTypeStr(m.Jsv)
-	return fmt.Sprintf("GO=%s,JS:=%s", govs, jsvs)
+	gov := common.FuncParamGoTypeStr(m.Gov)
+	jsv := common.FuncParamJsTypeStr(m.Jsv)
+	return fmt.Sprintf("GO=%s,JS:=%s", gov, jsv)
 }
 
 // IsGoIntAuto 判断Go 所有 int 类型
@@ -127,28 +130,28 @@ func bindObject(objects ...interface{}) {
 			logger.Error("结构对象非指针类型:", typ.Name())
 		}
 	}
-	objectTI._objectToCefObject()
+	objectTI.objectToCefObject()
 }
 
-// _objectToCefObject
-// 对象字段和函数统计
-// 对象转换 go to cef
-func (m *objectTypeInfo) _objectToCefObject() {
+// objectToCefObject
+// 对象转换 go to v8
+func (m *objectTypeInfo) objectToCefObject() {
 	for _, info := range m.ObjectInfos {
-		m._subInfoToCefObject(info)
+		m.subInfoToCefObject(info)
 	}
 }
 
-func (m *objectTypeInfo) _subInfoToCefObject(info *objectInfo) {
-	m._infoTo(info)
+//subInfoToCefObject
+func (m *objectTypeInfo) subInfoToCefObject(info *objectInfo) {
+	m.infoTo(info)
 	if len(info.SubObjectInfo) > 0 {
 		for _, subInfo := range info.SubObjectInfo {
-			m._subInfoToCefObject(subInfo)
+			m.subInfoToCefObject(subInfo)
 		}
 	}
 }
 
-func (m *objectTypeInfo) _infoTo(info *objectInfo) {
+func (m *objectTypeInfo) infoTo(info *objectInfo) {
 	var (
 		fieldLen = len(info.FieldInfos)
 		fieldPtr uintptr
@@ -168,7 +171,9 @@ func (m *objectTypeInfo) _infoTo(info *objectInfo) {
 				BindType: uintptr(fi.ValueType.Jsv),
 			}
 			i++
-			m.createObjectFieldVariable(info.FullObjName, fieldName, fi)
+			if !info.isCreateJSValue {
+				m.createObjectFieldVariable(info.FullObjName, fieldName, fi)
+			}
 		}
 		fieldPtr = uintptr(unsafe.Pointer(&cofs[0]))
 		i = 0
@@ -200,8 +205,11 @@ func (m *objectTypeInfo) _infoTo(info *objectInfo) {
 				FnOutNum:       uintptr(fn.OutNum),
 				FnOutParamType: api.PascalStr(outParamBuf.String()),
 			}
+			fmt.Println("fnName", fnName, info.FullObjName, info.ObjName)
 			i++
-			m.createObjectFuncVariable(info.FullObjName, fnName, fn)
+			if !info.isCreateJSValue {
+				m.createObjectFuncVariable(info.FullObjName, fnName, fn)
+			}
 		}
 		funcPtr = uintptr(unsafe.Pointer(&fns[0]))
 	}
@@ -270,7 +278,7 @@ func (m *objectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.Type, 
 		} else if fieldType.Kind() == reflect.Struct && field.IsZero() {
 			logger.Debug("字段类型-对象,", fieldName, " 未初始化, 忽略JS绑定映射.")
 		}
-		if b { //b=true可以正常解析映射
+		if b { //true 可以解析绑定
 			filedValue := value.Elem().FieldByName(fieldName)
 			t := fieldType.Kind()
 			gov, jsv := common.FieldReflectType(t)
@@ -309,16 +317,36 @@ func (m *objectInfo) analysisObjectFunction(typPtr reflect.Type, value reflect.V
 	}
 }
 
+//bind
+//直接绑定
 func (m *objectTypeInfo) bind(value JSValue) {
-	//m.FunctionInfos[value.Name()] = &functionInfo{
-	//	EventId:  uintptr(__bind_id()),
-	//	funcInfo: value.getFuncInfo(),
-	//	Method:   reflect.ValueOf(value.getValue()),
-	//}
-	//fmt.Println("reflect.ValueOf(value.getValue())", reflect.ValueOf(value.getValue()))
-	m.FieldInfos[value.Name()] = &fieldInfo{
-		EventId:    uintptr(__bind_id()),
-		ValueType:  value.ValueType(),
-		FieldValue: value.getValue(),
+	if value.IsFunction() {
+		m.FunctionInfos[value.Name()] = &functionInfo{
+			EventId:  value.getEventId(),
+			funcInfo: value.getFuncInfo(),
+			Method:   reflect.ValueOf(value.getValue()),
+		}
+	} else {
+		m.FieldInfos[value.Name()] = &fieldInfo{
+			EventId:    uintptr(__bind_id()),
+			ValueType:  value.ValueType(),
+			FieldValue: value.getValue(),
+		}
 	}
+}
+
+//bindTo
+//直接绑定 -> 到CEF
+func (m *objectTypeInfo) bindToCEF() {
+	fmt.Println("ProcessType:", common.Args.ProcessType())
+	fmt.Println("\tFunctionInfos", len(m.FunctionInfos))
+	fmt.Println("\tFieldInfos", len(m.FieldInfos))
+	tmpObjectInfo := &objectInfo{
+		isCreateJSValue: true, //已创建完 JSValue
+		FullObjName:     "",   //FullObjName & ObjName 值一样，绑定到根对象
+		ObjName:         "",   //FullObjName & ObjName 值一样，绑定到根对象
+		FieldInfos:      m.FieldInfos,
+		FunctionInfos:   m.FunctionInfos,
+	}
+	m.infoTo(tmpObjectInfo)
 }
