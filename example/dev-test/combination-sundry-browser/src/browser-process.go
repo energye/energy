@@ -30,6 +30,7 @@ func AppBrowserInit() {
 	*/
 	//ar integer cef.JSValue
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
+		ObjDemoVar = &ObjDemo{SubObjDemoField: &SubObjDemo{}}
 		fmt.Println("GO变量和函数绑定回调", common.Args.ProcessType())
 		bind.NewString("stringv", "这是一个字符串变量")
 		bind.NewInteger("integerv", 1211111)
@@ -37,6 +38,7 @@ func AppBrowserInit() {
 		bind.NewBoolean("booleanv", true)
 		bind.NewNull("nullv")
 		bind.NewUndefined("undefinedv")
+		bind.NewObjects(ObjDemoVar)
 	})
 
 	config := cef.NewChromiumConfig()

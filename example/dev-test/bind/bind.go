@@ -4,8 +4,10 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/example/browser-go-bind-js-var/src"
+	"github.com/energye/energy/example/dev-test/bind/src"
+	"github.com/energye/energy/logger"
 )
 
 //go:embed resources
@@ -13,6 +15,8 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
@@ -36,37 +40,43 @@ func main() {
 	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
 		//初始化要绑定的变量
 		//结构类型
-		src.JSStructVarDemo = &src.StructVarDemo{}
-		src.JSStructVarDemo.StringField = "初始的字符串值"
-		bind.NewObjects(src.JSStructVarDemo)
-		//通用类型
-		src.JSString = bind.NewString("JSString", "初始的字符串值")
-		src.JSInt = bind.NewInteger("JSInt", 0)
-		src.JSBool = bind.NewBoolean("JSBool", false)
+		//src.JSStructVarDemo = &src.StructVarDemo{}
+		//src.JSStructVarDemo.StringField = "初始的字符串值"
+		//bind.NewObjects(src.JSStructVarDemo)
+		////通用类型
+		//src.JSString = bind.NewString("JSString", "初始的字符串值")
+		//src.JSInt = bind.NewInteger("JSInt", 0)
+		//src.JSBool = bind.NewBoolean("JSBool", false)
 		src.JSDouble = bind.NewDouble("JSDouble", 0.0)
-		bind.NewFunction("JSFunc", src.JSFunc)
+		_ = bind.NewFunction("JSFunc", src.JSFunc)
+		//cef.VariableBind.Bind("varStr", &varStr)
+
+		bind.NewObjects()
 	})
-	var err error
-	cef.VariableBind.Bind("TestFunc", TestFunc)
-	err = cef.VariableBind.Bind("bindStr", "直接传字符串")
-	fmt.Println("bindStr:", err)
-	err = cef.VariableBind.Bind("varStr", &varStr)
-	fmt.Println("varStr:", err)
-	err = cef.VariableBind.Bind("varInt", &varInt)
-	fmt.Println("varInt:", err)
-	err = cef.VariableBind.Bind("varInt8", varInt8)
-	fmt.Println("varInt8:", err)
-	err = cef.VariableBind.Bind("varFloat64", varFloat64)
-	fmt.Println("varFloat64:", err)
-	err = cef.VariableBind.Bind("varFloat32", varFloat32)
-	fmt.Println("varFloat32:", err)
-	err = cef.VariableBind.Bind("varBool", &varBool)
-	fmt.Println("varBool:", err)
-	Test(&varStr)
-	fmt.Println(varStr)
-	varStr = "asdfadsf"
-	Test(&varStr)
-	fmt.Println(varStr)
+	fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc), "ProcessType", common.Args.ProcessType(), common.Args.IsMain() || common.Args.IsRender())
+
+	//fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc))
+	//var err error
+	//err = cef.VariableBind.Bind("bindStr", "直接传字符串")
+	//fmt.Println("bindStr:", err)
+	//err = cef.VariableBind.Bind("varStr", &varStr)
+	//fmt.Println("varStr:", err)
+	//err = cef.VariableBind.Bind("varInt", &varInt)
+	//fmt.Println("varInt:", err)
+	//err = cef.VariableBind.Bind("varInt8", &varInt8)
+	//fmt.Println("varInt8:", err)
+	//err = cef.VariableBind.Bind("varFloat64", &varFloat64)
+	//fmt.Println("varFloat64:", err)
+	//err = cef.VariableBind.Bind("varFloat32", &varFloat32)
+	//fmt.Println("varFloat32:", err)
+	//err = cef.VariableBind.Bind("varBool", &varBool)
+	//fmt.Println("varBool:", err)
+
+	//Test(&varStr)
+	//fmt.Println(varStr)
+	//varStr = "asdfadsf"
+	//Test(&varStr)
+	//fmt.Println(varStr)
 
 	//运行应用
 	cef.Run(cefApp)
@@ -82,7 +92,8 @@ var (
 )
 
 func TestFunc() string {
-	return "test"
+	fmt.Println("TestFunc")
+	return "test" + "afdasdfsadf: "
 }
 
 type TestStruct struct {

@@ -4,10 +4,19 @@
     <meta charset="UTF-8">
     <title>bind</title>
     <script type="application/javascript">
-
+        document.getElementById("message")
+        console.log("goobj", JSON.stringify(goobj))
+        console.log("gocobj", JSON.stringify(gocobj))
+        setInterval(function (){
+            console.log("JSFunc()", gocobj.JSFunc("asdf" + new Date().getTime()))
+            console.log("TestFunc()", gocobj.TestFunc())
+            console.log("JSDouble", gocobj.JSDouble)
+        },1000);
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
-<h3>bind</h3>
+<p>
+<h3>bind</h3></p>
+<p id="message"></p>
 </body>
 </html>
