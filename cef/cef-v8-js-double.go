@@ -33,7 +33,8 @@ func (m *JSDouble) Value() float64 {
 }
 
 func (m *JSDouble) SetValue(value float64) {
-	m.valueType = consts.V8_VALUE_DOUBLE
+	m.valueType.Jsv = consts.V8_VALUE_DOUBLE
+	m.valueType.Gov = consts.GO_VALUE_FLOAT64
 	m.value = value
 }
 func (m *JSDouble) ToString() string {

@@ -161,18 +161,18 @@ func setPtrValue(jsValue JSValue, newValueType V8_JS_VALUE_TYPE, stringValue str
 		default:
 			return CVE_ERROR_TYPE_NOT_SUPPORTED
 		}
-		jsValue.setValueType(newValueType)
+		jsValue.ValueType().Jsv = newValueType
 	} else { //object
 		if refValue, ok := jsValue.getValue().(*reflect.Value); !ok {
 			return CVE_ERROR_TYPE_INVALID
 		} else {
-			if newValueType == V8_VALUE_STRING && jsValue.ValueType() == V8_VALUE_STRING {
+			if newValueType == V8_VALUE_STRING && jsValue.ValueType().Jsv == V8_VALUE_STRING {
 				refValue.Set(reflect.ValueOf(stringValue))
-			} else if newValueType == V8_VALUE_INT && jsValue.ValueType() == V8_VALUE_INT {
+			} else if newValueType == V8_VALUE_INT && jsValue.ValueType().Jsv == V8_VALUE_INT {
 				refValue.SetInt(int64(intValue))
-			} else if newValueType == V8_VALUE_DOUBLE && jsValue.ValueType() == V8_VALUE_DOUBLE {
+			} else if newValueType == V8_VALUE_DOUBLE && jsValue.ValueType().Jsv == V8_VALUE_DOUBLE {
 				refValue.SetFloat(doubleValue)
-			} else if newValueType == V8_VALUE_BOOLEAN && jsValue.ValueType() == V8_VALUE_BOOLEAN {
+			} else if newValueType == V8_VALUE_BOOLEAN && jsValue.ValueType().Jsv == V8_VALUE_BOOLEAN {
 				refValue.SetBool(boolValue)
 			} else {
 				return CVE_ERROR_TYPE_NOT_SUPPORTED
@@ -260,7 +260,7 @@ func _cefV8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, ar
 			retIntValuePrt    *int32
 			retDoubleValuePrt *float64
 			retBoolValuePrt   *bool
-			outVType          *vt
+			outVType          *VT
 		)
 		if fnInfo.OutNum == 2 {
 			argsDefLen++

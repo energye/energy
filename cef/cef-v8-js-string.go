@@ -30,7 +30,8 @@ func (m *JSString) Value() string {
 }
 
 func (m *JSString) SetValue(value string) {
-	m.valueType = consts.V8_VALUE_STRING
+	m.valueType.Jsv = consts.V8_VALUE_STRING
+	m.valueType.Gov = consts.GO_VALUE_STRING
 	m.value = value
 }
 func (m *JSString) ToString() string {

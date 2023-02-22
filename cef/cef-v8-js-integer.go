@@ -40,7 +40,8 @@ func (m *JSInteger) Value() int32 {
 	}
 }
 func (m *JSInteger) SetValue(value int32) {
-	m.valueType = consts.V8_VALUE_INT
+	m.valueType.Jsv = consts.V8_VALUE_INT
+	m.valueType.Gov = consts.GO_VALUE_INT32
 	m.value = value
 }
 

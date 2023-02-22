@@ -35,18 +35,17 @@ type valueBindInfo struct {
 
 // V8Value 绑定到JS的字段
 type V8Value struct {
-	eventId        uintptr          //事件ID
-	instance       uintptr          //
-	ptr            unsafe.Pointer   //
-	name           string           //用于字段或函数名
-	value          interface{}      //值
-	valueType      V8_JS_VALUE_TYPE //JS类型
-	goValueType    GO_VALUE_TYPE    //GO类型
-	funcInfo       *funcInfo        //普通函数信息
-	sfi            *structFuncInfo  //对象函数信息
-	isCommonObject IS_CO            //通用类型或对象类型 默认通用类型
-	that           JSValue          //
-	rwLock         *sync.Mutex      //字段|函数独有锁
+	eventId        uintptr        //事件ID
+	instance       uintptr        //
+	ptr            unsafe.Pointer //
+	name           string         //用于字段或函数名
+	value          interface{}    //值
+	valueType      *VT            //字段类型，go 和 js
+	funcInfo       *funcInfo      //普通函数信息
+	sfi            *functionInfo  //对象函数信息
+	isCommonObject IS_CO          //通用类型或对象类型 默认通用类型
+	that           JSValue        //
+	rwLock         *sync.Mutex    //字段|函数独有锁
 }
 
 // CEFv8BindRoot 导出给JavaScript window的根对象名
@@ -70,7 +69,7 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	r := new(funcInfo)
 	r.InNum = int32(numIn)
 	r.OutNum = int32(numOut)
-	r.InParam = make([]*vt, numIn, numIn)
+	r.InParam = make([]*VT, numIn, numIn)
 	r.FnType = fnType
 	var idx = 0
 	for i := 0; i < numIn; i++ {
@@ -80,18 +79,18 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 			//入参参数类型不正确
 			return nil, errors.New("WindowBind function parameter error: input parameter type can only be [string int float bool]")
 		} else {
-			r.InParam[i] = &vt{Jsv: jsv, Gov: gov}
+			r.InParam[i] = &VT{Jsv: jsv, Gov: gov}
 		}
 	}
 	if numOut > 0 && numOut < 3 {
-		r.OutParam = make([]*vt, numOut, numOut)
+		r.OutParam = make([]*VT, numOut, numOut)
 		for i := 0; i < numOut; i++ {
 			outTyp := fnOf.Out(i)
 			if jsv, gov := common.ParamType(outTyp.Kind().String()); jsv == -1 && gov == -1 {
 				//出参类型错误
 				return nil, errors.New("WindowBind function parameter error: output parameter type can only be [string int float bool]")
 			} else {
-				r.OutParam[i] = &vt{Jsv: jsv, Gov: gov}
+				r.OutParam[i] = &VT{Jsv: jsv, Gov: gov}
 				r.OutParamIdx = int32(i)
 			}
 		}
@@ -130,7 +129,7 @@ func (m *V8Value) Bytes() []byte {
 			return nil
 		}
 	}
-	switch m.valueType {
+	switch m.valueType.Jsv {
 	case V8_VALUE_STRING:
 		return common.StringToBytes(iValue.(string))
 	case V8_VALUE_INT:
@@ -168,7 +167,7 @@ func (m *V8Value) ValueToPtr() (unsafe.Pointer, error) {
 			return nil, errors.New("object转换reflect.Value失败")
 		}
 	}
-	switch m.valueType {
+	switch m.valueType.Jsv {
 	case V8_VALUE_STRING:
 		return unsafe.Pointer(api.PascalStr(iValue.(string))), nil
 		//return GoStrToDStrPointer(iValue.(string)), nil
@@ -199,13 +198,17 @@ func (m *V8Value) ValueToPtr() (unsafe.Pointer, error) {
 func (m *V8Value) SetAnyValue(value interface{}) error {
 	switch common.JSValueAssertType(value) {
 	case V8_VALUE_STRING:
-		m.valueType = V8_VALUE_STRING
+		m.valueType.Jsv = V8_VALUE_STRING
+		m.valueType.Gov = GO_VALUE_STRING
 	case V8_VALUE_INT:
-		m.valueType = V8_VALUE_INT
+		m.valueType.Jsv = V8_VALUE_INT
+		m.valueType.Gov = GO_VALUE_INT32
 	case V8_VALUE_DOUBLE:
-		m.valueType = V8_VALUE_DOUBLE
+		m.valueType.Jsv = V8_VALUE_DOUBLE
+		m.valueType.Gov = GO_VALUE_FLOAT64
 	case V8_VALUE_BOOLEAN:
-		m.valueType = V8_VALUE_BOOLEAN
+		m.valueType.Jsv = V8_VALUE_BOOLEAN
+		m.valueType.Gov = GO_VALUE_BOOL
 	default:
 		return errors.New(cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED))
 	}
@@ -241,12 +244,8 @@ func (m *V8Value) setValue(value interface{}) {
 	m.value = value
 }
 
-func (m *V8Value) ValueType() V8_JS_VALUE_TYPE {
+func (m *V8Value) ValueType() *VT {
 	return m.valueType
-}
-
-func (m *V8Value) setValueType(vType V8_JS_VALUE_TYPE) {
-	m.valueType = vType
 }
 
 func (m *V8Value) setPtr(ptr unsafe.Pointer) {
@@ -286,39 +285,39 @@ func (m *V8Value) BooleanValue() (bool, error) {
 }
 
 func (m *V8Value) IsString() bool {
-	return m.valueType == V8_VALUE_STRING
+	return m.valueType.Jsv == V8_VALUE_STRING
 }
 
 func (m *V8Value) IsInteger() bool {
-	return m.valueType == V8_VALUE_INT
+	return m.valueType.Jsv == V8_VALUE_INT
 }
 
 func (m *V8Value) IsDouble() bool {
-	return m.valueType == V8_VALUE_DOUBLE
+	return m.valueType.Jsv == V8_VALUE_DOUBLE
 }
 
 func (m *V8Value) IsBool() bool {
-	return m.valueType == V8_VALUE_BOOLEAN
+	return m.valueType.Jsv == V8_VALUE_BOOLEAN
 }
 
 func (m *V8Value) IsArray() bool {
-	return m.valueType == V8_VALUE_ARRAY
+	return m.valueType.Jsv == V8_VALUE_ARRAY
 }
 
 func (m *V8Value) IsObject() bool {
-	return m.valueType == V8_VALUE_OBJECT
+	return m.valueType.Jsv == V8_VALUE_OBJECT
 }
 
 func (m *V8Value) IsFunction() bool {
-	return m.valueType == V8_VALUE_FUNCTION
+	return m.valueType.Jsv == V8_VALUE_FUNCTION
 }
 
 func (m *V8Value) IsNull() bool {
-	return m.valueType == V8_VALUE_NULL
+	return m.valueType.Jsv == V8_VALUE_NULL
 }
 
 func (m *V8Value) IsUndefined() bool {
-	return m.valueType == V8_VALUE_UNDEFINED
+	return m.valueType.Jsv == V8_VALUE_UNDEFINED
 }
 
 func (m *V8Value) AsString() *JSString {
@@ -395,8 +394,9 @@ func (m *V8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, s
 	return outParams, true
 }
 
-func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *structFuncInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
+func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *functionInfo, valueType V8_JS_VALUE_TYPE, isCommonObject IS_CO) JSValue {
 	jsValueBind := new(V8Value)
+	jsValueBind.valueType = new(VT)
 	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.ptr = unsafe.Pointer(&jsValueBind)
 	jsValueBind.instance = uintptr(jsValueBind.ptr)
@@ -407,7 +407,7 @@ func newV8Value(eventId uintptr, fullParentName, name string, value interface{},
 		jsValueBind.funcInfo = sfi.funcInfo
 	}
 	jsValueBind.sfi = sfi
-	jsValueBind.valueType = valueType
+	jsValueBind.valueType.Jsv = valueType
 	jsValueBind.isCommonObject = isCommonObject
 	VariableBind.putValueBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
 	return jsValueBind

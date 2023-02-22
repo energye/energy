@@ -180,7 +180,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			if jsValue, ok := VariableBind.GetValueBind(name); ok {
 				jsValue.Lock()
 				defer jsValue.UnLock()
-				if jsValue.ValueType() == V8_VALUE_FUNCTION { //func
+				if jsValue.ValueType().Jsv == V8_VALUE_FUNCTION { //func
 					var fnInfo = jsValue.getFuncInfo()
 					if fnInfo != nil {
 						inArgumentAdapter(0, inArgument, fnInfo)
@@ -239,19 +239,19 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 							}
 						}
 						if Empty == errorMsg {
-							result.set(uintptr(oldValuePtr), uintptr(jsValue.ValueType()), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
+							result.set(uintptr(oldValuePtr), uintptr(jsValue.ValueType().Jsv), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 						} else {
 							result.set(api.PascalStr(errorMsg), uintptr(V8_VALUE_STRING), 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
 						}
 					} else {
 						//字段取值
-						switch jsValue.ValueType() {
+						switch jsValue.ValueType().Jsv {
 						case V8_VALUE_STRING, V8_VALUE_INT, V8_VALUE_DOUBLE, V8_VALUE_BOOLEAN:
 							var ret, err = jsValue.ValueToPtr()
 							if err != nil {
 								result.set(0, 0, 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
 							} else {
-								result.set(uintptr(ret), uintptr(jsValue.ValueType()), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
+								result.set(uintptr(ret), uintptr(jsValue.ValueType().Jsv), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 							}
 						default:
 							result.set(0, 0, 0, uintptr(bindType), uintptr(CVE_ERROR_TYPE_NOT_SUPPORTED))
@@ -311,7 +311,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 			return IS_COMMON, fullName, V8_VALUE_ROOT_OBJECT, 0, CVE_ERROR_OK
 		} else if fnArrLen == 2 {
 			if jsValue, ok := VariableBind.GetValueBind(fnArr[1]); ok { //通用类型 fnArr[1] 1是因为 obj.field ,这个field 就是1
-				return IS_COMMON, jsValue.Name(), jsValue.ValueType(), int32(jsValue.getEventId()), CVE_ERROR_OK
+				return IS_COMMON, jsValue.Name(), jsValue.ValueType().Jsv, int32(jsValue.getEventId()), CVE_ERROR_OK
 			} else {
 				//不存在
 				return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD
@@ -327,12 +327,12 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 			return IS_OBJECT, fullName, V8_VALUE_ROOT_OBJECT, 0, CVE_ERROR_OK
 		}
 		//对象类型查找关系
-		var preObj *structObjectInfo
-		var subObj = objectSti.StructsObject
+		var preObj *objectInfo
+		var subObj = objectTI.ObjectInfos
 		var faLen = len(fnArr)
 		for i := 0; i < faLen; i++ {
 			if obj, ok := subObj[fnArr[i]]; ok {
-				subObj = obj.SubStructObjectInfo
+				subObj = obj.SubObjectInfo
 				preObj = obj
 			} else if i > 0 && i+1 < faLen {
 				return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD
@@ -346,9 +346,9 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 				return IS_OBJECT, fullName, V8_VALUE_OBJECT, 0, CVE_ERROR_OK
 			} else {
 				//字段 或 函数
-				if fieldInfo, ok := preObj.FieldsInfo[fieldName]; ok {
+				if fieldInfo, ok := preObj.FieldInfos[fieldName]; ok {
 					return IS_OBJECT, fullName, fieldInfo.ValueType.Jsv, int32(fieldInfo.EventId), CVE_ERROR_OK
-				} else if fnInfo, ok := preObj.FuncsInfo[fieldName]; ok {
+				} else if fnInfo, ok := preObj.FunctionInfos[fieldName]; ok {
 					return IS_OBJECT, fullName, V8_VALUE_FUNCTION, int32(fnInfo.EventId), CVE_ERROR_OK
 				}
 				return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD
@@ -414,7 +414,7 @@ func internalBrowserIPCOnEventInit() {
 			if ok {
 				jsValue.Lock()
 				defer jsValue.UnLock()
-				var valueType = int8(jsValue.ValueType())
+				var valueType = int8(jsValue.ValueType().Jsv)
 				ipcJsBindGetValueSuccess(buf, valueType, jsValue.Bytes())
 			} else {
 				ipcJsBindGetValueFail(buf, CVE_ERROR_NOT_FOUND_FIELD)

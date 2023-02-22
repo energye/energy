@@ -24,50 +24,54 @@ import (
 	"unsafe"
 )
 
-var objectSti = new(structTypeInfo)
+var objectTI = &objectTypeInfo{ObjectInfos: make(map[string]*objectInfo), FieldInfos: make(map[string]*fieldInfo), FunctionInfos: make(map[string]*functionInfo)}
 
 // 函数详情 1.参数个数 2.每个参数类型 3.返回参数类型
 type funcInfo struct {
-	InNum          int32   `json:"inNum"`
-	InParam        []*vt   `json:"inParam"`
-	OutNum         int32   `json:"outNum"`
-	OutParam       []*vt   `json:"outParam"`
-	OutParamErrIdx int32   `json:"outParamErrIdx"`
-	OutParamIdx    int32   `json:"outParamIdx"`
-	FnType         FN_TYPE `json:"fnType"`
+	InNum          int32   `json:"inNum"`          //入参个数
+	InParam        []*VT   `json:"inParam"`        //入参类型
+	OutNum         int32   `json:"outNum"`         //出参个数
+	OutParam       []*VT   `json:"outParam"`       //出参类型
+	OutParamErrIdx int32   `json:"outParamErrIdx"` //出参错误位置
+	OutParamIdx    int32   `json:"outParamIdx"`    //出参位置
+	FnType         FN_TYPE `json:"fnType"`         //函数类型, 直接定义函数或对象函数
 }
 
-type vt struct {
+// VT 值类型
+type VT struct {
 	Jsv V8_JS_VALUE_TYPE `json:"jsv"`
 	Gov GO_VALUE_TYPE    `json:"gov"`
 }
 
-// 结构类型信息，结构的字段信息和方法函数信息
-type structTypeInfo struct {
-	StructsObject map[string]*structObjectInfo //分析后的 有关系的结构信息
+// objectTypeInfo 结构类型描述，结构的字段描述和方法函数描述
+type objectTypeInfo struct {
+	ObjectInfos   map[string]*objectInfo   //分析后有关系的结构描述
+	FieldInfos    map[string]*fieldInfo    `json:"fieldInfos"`    //字段描述 key=字段名 value=字段描述
+	FunctionInfos map[string]*functionInfo `json:"functionInfos"` //函数描述 key=函数名 value=函数描述
 }
 
-// 分析后的 结构信息
-type structObjectInfo struct {
-	Instance            uintptr                      `json:"instance"`
-	ParentInstance      uintptr                      `json:"parentInstance"`
-	Parent              *structObjectInfo            `json:"-"`
-	Ptr                 unsafe.Pointer               `json:"-"`
-	ObjName             string                       `json:"objName"` //对象名称
-	FullObjName         string                       `json:"fullObjName"`
-	FieldsInfo          map[string]*structFieldInfo  `json:"fieldsInfo"` //字段信息 key=字段名 value=字段类型
-	FuncsInfo           map[string]*structFuncInfo   `json:"funcsInfo"`
-	SubStructObjectInfo map[string]*structObjectInfo `json:"subStructObjectInfo"` //子对象信息
+// objectInfo 分析后的 结构描述
+type objectInfo struct {
+	Instance       uintptr                  `json:"instance"`       //对象地址
+	ParentInstance uintptr                  `json:"parentInstance"` //父对象地址
+	Parent         *objectInfo              `json:"-"`              //父对象结构描述
+	Ptr            unsafe.Pointer           `json:"-"`              //对象指针
+	ObjName        string                   `json:"objName"`        //对象名称
+	FullObjName    string                   `json:"fullObjName"`    //对象全路径名称: structName.FieldName.XXX
+	FieldInfos     map[string]*fieldInfo    `json:"fieldInfos"`     //字段描述 key=字段名 value=字段描述
+	FunctionInfos  map[string]*functionInfo `json:"functionInfos"`  //函数描述 key=函数名 value=函数描述
+	SubObjectInfo  map[string]*objectInfo   `json:"subObjectInfo"`  //子对象描述
 }
 
-// 结构的字段信息
-type structFieldInfo struct {
+// fieldInfo 字段描述
+type fieldInfo struct {
 	EventId    uintptr        `json:"event_id"`
-	ValueType  *vt            `json:"valueType"` //字段类型，go 和 js
+	ValueType  *VT            `json:"valueType"` //字段类型，go 和 js
 	FieldValue *reflect.Value `json:"-"`         //用于字段值修改和获取
 }
 
-type structFuncInfo struct {
+// functionInfo 结构的函数描述
+type functionInfo struct {
 	EventId uintptr `json:"event_id"`
 	*funcInfo
 	Method reflect.Value `json:"-"`
@@ -84,14 +88,14 @@ type cefObject struct {
 	Funcs       uintptr //array
 }
 
-func (m *vt) ToValueTypeString() string {
+func (m *VT) ToValueTypeString() string {
 	govs := common.FuncParamGoTypeStr(m.Gov)
 	jsvs := common.FuncParamJsTypeStr(m.Jsv)
 	return fmt.Sprintf("GO=%s,JS:=%s", govs, jsvs)
 }
 
 // IsGoIntAuto 判断Go 所有 int 类型
-func (m *vt) IsGoIntAuto() bool {
+func (m *VT) IsGoIntAuto() bool {
 	switch m.Gov {
 	case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64:
 		return true
@@ -100,7 +104,7 @@ func (m *vt) IsGoIntAuto() bool {
 }
 
 // IsGoFloatAuto 判断Go 所有 float 类型
-func (m *vt) IsGoFloatAuto() bool {
+func (m *VT) IsGoFloatAuto() bool {
 	switch m.Gov {
 	case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
 		return true
@@ -111,45 +115,44 @@ func (m *vt) IsGoFloatAuto() bool {
 // bindObject ICefV8Context
 // 对应Go，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
 func bindObject(objects ...interface{}) {
-	objectSti.StructsObject = make(map[string]*structObjectInfo, len(objects))
 	for i := 0; i < len(objects); i++ {
 		object := objects[i]
 		typ := reflect.TypeOf(object)
 		if typ.Kind() == reflect.Ptr {
 			var value = reflect.ValueOf(object)
 			var objTyp = reflect.ValueOf(object).Type().Elem()
-			objectSti.StructsObject[objTyp.Name()] = &structObjectInfo{FieldsInfo: make(map[string]*structFieldInfo), SubStructObjectInfo: make(map[string]*structObjectInfo)}
-			objectSti.StructsObject[objTyp.Name()].analysisObjectField(objTyp, typ, value)
+			objectTI.ObjectInfos[objTyp.Name()] = &objectInfo{FieldInfos: make(map[string]*fieldInfo), SubObjectInfo: make(map[string]*objectInfo)}
+			objectTI.ObjectInfos[objTyp.Name()].analysisObjectField(objTyp, typ, value)
 		} else {
 			logger.Error("结构对象非指针类型:", typ.Name())
 		}
 	}
-	objectSti._objectToCefObject()
+	objectTI._objectToCefObject()
 }
 
 // _objectToCefObject
 // 对象字段和函数统计
 // 对象转换 go to cef
-func (m *structTypeInfo) _objectToCefObject() {
-	for _, info := range m.StructsObject {
+func (m *objectTypeInfo) _objectToCefObject() {
+	for _, info := range m.ObjectInfos {
 		m._subInfoToCefObject(info)
 	}
 }
 
-func (m *structTypeInfo) _subInfoToCefObject(info *structObjectInfo) {
+func (m *objectTypeInfo) _subInfoToCefObject(info *objectInfo) {
 	m._infoTo(info)
-	if len(info.SubStructObjectInfo) > 0 {
-		for _, subInfo := range info.SubStructObjectInfo {
+	if len(info.SubObjectInfo) > 0 {
+		for _, subInfo := range info.SubObjectInfo {
 			m._subInfoToCefObject(subInfo)
 		}
 	}
 }
 
-func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
+func (m *objectTypeInfo) _infoTo(info *objectInfo) {
 	var (
-		fieldLen = len(info.FieldsInfo)
+		fieldLen = len(info.FieldInfos)
 		fieldPtr uintptr
-		funcLen  = len(info.FuncsInfo)
+		funcLen  = len(info.FunctionInfos)
 		funcPtr  uintptr
 		cofs     []*valueBindInfo
 		fns      []*valueBindInfo
@@ -158,7 +161,7 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 	if fieldLen > 0 {
 		//字段
 		cofs = make([]*valueBindInfo, fieldLen, fieldLen)
-		for fieldName, fi := range info.FieldsInfo {
+		for fieldName, fi := range info.FieldInfos {
 			cofs[i] = &valueBindInfo{
 				Name:     api.PascalStr(fieldName),
 				EventId:  fi.EventId,
@@ -173,7 +176,7 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 	}
 	if funcLen > 0 {
 		fns = make([]*valueBindInfo, funcLen, funcLen)
-		for fnName, fn := range info.FuncsInfo {
+		for fnName, fn := range info.FunctionInfos {
 			var inParamBuf bytes.Buffer
 			var outParamBuf bytes.Buffer
 			for j, inParamType := range fn.InParam {
@@ -216,25 +219,24 @@ func (m *structTypeInfo) _infoTo(info *structObjectInfo) {
 }
 
 // 创建 结构对象的字段变量
-func (m *structTypeInfo) createObjectFieldVariable(fullParentName, fieldName string, sfi *structFieldInfo) {
+func (m *objectTypeInfo) createObjectFieldVariable(fullParentName, fieldName string, sfi *fieldInfo) {
 	newV8Value(sfi.EventId, fullParentName, fieldName, sfi.FieldValue, nil, sfi.ValueType.Jsv, IS_OBJECT)
 }
 
 // 创建 结构对象的函数变量
-func (m *structTypeInfo) createObjectFuncVariable(fullParentName, funcName string, sfi *structFuncInfo) {
+func (m *objectTypeInfo) createObjectFuncVariable(fullParentName, funcName string, sfi *functionInfo) {
 	newV8Value(sfi.EventId, fullParentName, funcName, nil, sfi, V8_VALUE_FUNCTION, IS_OBJECT)
 }
 
 // 分析对象的字段
-func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.Type, value reflect.Value) {
+func (m *objectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.Type, value reflect.Value) {
 	if m.Parent == nil {
 		m.ObjName = typ.Name()
-		m.FullObjName = m.ObjName
 		m.FullObjName = m.ObjName
 	}
 	m.Instance = value.Elem().UnsafeAddr()
 	m.Ptr = unsafe.Pointer(m.Instance)
-	//字段信息遍历
+	//字段描述遍历
 	for i := 0; i < typ.NumField(); i++ {
 		field := value.Elem().Field(i)
 		fieldType := field.Type()
@@ -247,12 +249,12 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 		}
 		//结构对象,循环引用的对象不被支持
 		if isPrt && fieldType.Kind() == reflect.Struct && !field.IsZero() {
-			subSoi := &structObjectInfo{FieldsInfo: make(map[string]*structFieldInfo), SubStructObjectInfo: make(map[string]*structObjectInfo)}
+			subSoi := &objectInfo{FieldInfos: make(map[string]*fieldInfo), SubObjectInfo: make(map[string]*objectInfo)}
 			subSoi.Parent = m
 			subSoi.ParentInstance = m.Instance
 			subSoi.ObjName = fieldName
 			subSoi.FullObjName = fmt.Sprintf("%s.%s", subSoi.Parent.FullObjName, subSoi.ObjName)
-			m.SubStructObjectInfo[fieldName] = subSoi
+			m.SubObjectInfo[fieldName] = subSoi
 			//是结构对象分析
 			if isPrt {
 				subSoi.analysisObjectField(fieldType, field.Type(), field)
@@ -271,9 +273,9 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 		if b { //b=true可以正常解析映射
 			filedValue := value.Elem().FieldByName(fieldName)
 			t := fieldType.Kind().String()
-			m.FieldsInfo[fieldName] = &structFieldInfo{
+			m.FieldInfos[fieldName] = &fieldInfo{
 				EventId: uintptr(__bind_id()),
-				ValueType: &vt{
+				ValueType: &VT{
 					Jsv: common.JSValueType(t),
 					Gov: common.GOValueType(t),
 				},
@@ -281,19 +283,19 @@ func (m *structObjectInfo) analysisObjectField(typ reflect.Type, typPtr reflect.
 			}
 		}
 	}
-	m.analysisObjectMethod(typPtr, value)
+	m.analysisObjectFunction(typPtr, value)
 }
 
-// 分析对象的函数方法
+// 分析对象的函数
 // 不符合js类型的函数的参数，不会被解析成js函数
-func (m *structObjectInfo) analysisObjectMethod(typPtr reflect.Type, value reflect.Value) {
-	m.FuncsInfo = make(map[string]*structFuncInfo)
+func (m *objectInfo) analysisObjectFunction(typPtr reflect.Type, value reflect.Value) {
+	m.FunctionInfos = make(map[string]*functionInfo)
 	for idx := 0; idx < typPtr.NumMethod(); idx++ {
 		method := typPtr.Method(idx)
 		if method.IsExported() {
 			if fi, err := checkFunc(method.Type, FN_TYPE_OBJECT); err == nil {
 				methodValue := value.MethodByName(method.Name)
-				m.FuncsInfo[method.Name] = &structFuncInfo{
+				m.FunctionInfos[method.Name] = &functionInfo{
 					EventId:  uintptr(__bind_id()),
 					funcInfo: fi,
 					Method:   methodValue,
@@ -301,6 +303,18 @@ func (m *structObjectInfo) analysisObjectMethod(typPtr reflect.Type, value refle
 			} else {
 				panic(err.Error())
 			}
+		}
+	}
+}
+
+func (m *objectTypeInfo) bind(value JSValue) {
+	if value.IsFunction() {
+
+	} else {
+		m.FieldInfos[value.Name()] = &fieldInfo{
+			EventId:   uintptr(__bind_id()),
+			ValueType: value.ValueType(),
+			//FieldValue: &filedValue,
 		}
 	}
 }

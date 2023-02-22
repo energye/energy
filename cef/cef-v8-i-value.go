@@ -14,7 +14,6 @@ package cef
 import (
 	"bytes"
 	"github.com/energye/energy/common/imports"
-	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
@@ -49,7 +48,7 @@ type JSValue interface {
 	Instance() uintptr                   //当前变量指针
 	Ptr() unsafe.Pointer                 //当前变量指针
 	Name() string                        //当前变量绑定的名称
-	ValueType() V8_JS_VALUE_TYPE         //变量类型
+	ValueType() *VT                      //变量类型
 	Bytes() []byte                       //变量值转换为字节
 	ValueToPtr() (unsafe.Pointer, error) //值转为指针
 	Lock()                               //变量自有锁-加锁
@@ -60,7 +59,6 @@ type JSValue interface {
 	setName(name string)
 	getValue() interface{}
 	setValue(value interface{})
-	setValueType(vType V8_JS_VALUE_TYPE)
 	getFuncInfo() *funcInfo
 	setEventId(eventId uintptr)
 	getEventId() uintptr
@@ -83,9 +81,8 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 			continue
 		}
 		jsValue := value.(JSValue)
-		var valueType = int32(jsValue.ValueType())
 		var vBind = &valueBindInfo{
-			BindType: uintptr(valueType),
+			BindType: uintptr(int32(jsValue.ValueType().Jsv)),
 		}
 		vBind.Name = api.PascalStr(jsValue.Name())
 		vBind.EventId = jsValue.getEventId()

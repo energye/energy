@@ -29,7 +29,8 @@ func (m *JSBoolean) Value() bool {
 }
 
 func (m *JSBoolean) SetValue(value bool) {
-	m.valueType = consts.V8_VALUE_BOOLEAN
+	m.valueType.Jsv = consts.V8_VALUE_BOOLEAN
+	m.valueType.Gov = consts.GO_VALUE_BOOL
 	m.value = value
 }
 

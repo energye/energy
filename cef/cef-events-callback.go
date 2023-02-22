@@ -62,7 +62,7 @@ func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
 	BrowserWindow.putBrowserFrame(browser, frame)
 	BrowserWindow.removeNoValidFrames()
-	if VariableBind.ValueBindCount() == 0 && len(objectSti.StructsObject) == 0 {
+	if VariableBind.ValueBindCount() == 0 && len(objectTI.ObjectInfos) == 0 {
 		__idReset()
 		clearValueBind()
 		bindGoToJS(browser, frame)
