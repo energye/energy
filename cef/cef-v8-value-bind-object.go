@@ -108,7 +108,7 @@ func (m *vt) IsGoFloatAuto() bool {
 	return false
 }
 
-// ICefV8Context BindObject
+// bindObject ICefV8Context
 // 对应Go，不支持字段的类型修改（包括对象类型）,不支持删除和增加字段变更，支持字段值修改。和获取。
 func bindObject(objects ...interface{}) {
 	objectSti.StructsObject = make(map[string]*structObjectInfo, len(objects))

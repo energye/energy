@@ -187,7 +187,7 @@ func (m *variableBind) NewObjects(objects ...interface{}) {
 
 // Bind V8Value
 //
-// 变量和函数绑定, 在Go中定义的字段绑定到JS字段中, 在Go中定义的函数导出到JS
+// 变量和函数绑定, 在Go中定义字段绑定到JS字段中, 在Go中定义的函数导出到JS
 //
 // 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, Objects = struct | map,  Array = Slice
 //

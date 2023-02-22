@@ -62,13 +62,14 @@ func main() {
 	fmt.Println("varFloat32:", err)
 	err = cef.VariableBind.Bind("varBool", &varBool)
 	fmt.Println("varBool:", err)
-	//运行应用
-	//cef.Run(cefApp)
 	Test(&varStr)
 	fmt.Println(varStr)
 	varStr = "asdfadsf"
 	Test(&varStr)
 	fmt.Println(varStr)
+
+	//运行应用
+	cef.Run(cefApp)
 }
 
 var (
