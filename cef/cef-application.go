@@ -316,13 +316,14 @@ func init() {
 				return true
 			})
 			object := V8ValueRef.NewObject(accessor, nil)
+			function := V8ValueRef.NewFunction("testfn", handler)
 			fmt.Println("V8ValueRef NewObject", object, object.IsValid())
 			object.SetValueByAccessor("testcca", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE)
 			object.SetValueByKey("testcca", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
 			object.SetValueByKey("testcca", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
-			object.SetValueByKey("testfn", V8ValueRef.NewFunction("testfn", handler), V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByKey("testfn", function, V8_PROPERTY_ATTRIBUTE_NONE)
 			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
-
+			fmt.Println("GetFunctionHandler", function.GetFunctionHandler())
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)

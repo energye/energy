@@ -251,7 +251,7 @@ func (m *ICefV8Value) GetFunctionName() string {
 
 func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_GetFunctionName).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefV8Value_GetFunctionHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Handler{
 		instance: unsafe.Pointer(result),
 	}
