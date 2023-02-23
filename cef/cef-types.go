@@ -244,6 +244,18 @@ type ICefV8ArrayBufferReleaseCallback struct {
 	instance unsafe.Pointer
 }
 
+type Exception struct {
+	message string
+}
+
+func (m *Exception) SetMessage(message string) {
+	m.message = message
+}
+
+func (m *Exception) Message() string {
+	return m.message
+}
+
 // NewCefRect
 func NewCefRect(x, y, width, height int32) *TCefRect {
 	return &TCefRect{

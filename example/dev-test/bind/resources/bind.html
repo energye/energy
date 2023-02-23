@@ -5,11 +5,11 @@
     <title>bind</title>
     <script type="application/javascript">
         window.onload = function () {
-            var doc = document.getElementById("test");
+            let doc = document.getElementById("test");
 
             function test(...vvv) {
-                var str = doc.innerHTML;
-                for (var i = 0; i < vvv.length; i++) {
+                let str = doc.innerHTML;
+                for (let i = 0; i < vvv.length; i++) {
                     str = str + "  " + vvv[i];
                 }
                 str += "<br>";
@@ -31,14 +31,19 @@
             } catch (e) {
                 test(e)
             }
-            var ssss={
-                "asdf":"ffffff"
+            let ssss = {
+                "asdf": "ffffff"
             }
-            for (var i=0;i<100000;i++){
-                 var test = window.testset.test
-                //var test=ssss.asdf
+            for (let i = 0; i < 100000; i++) {
+                let test = window.testset.testcca
+                //let test=ssss.asdf
             }
-            test("testset", window.testset.test)
+            test(window.testset.testcca)
+            test(window.testset.testcca)
+            test(window.testset.testcca)
+            test(window.testset.testcca)
+            console.log(window.testset, window.testset.testcca)
+            window.testset.testcca="asdf"
         }
     </script>
 </head>

@@ -300,13 +300,18 @@ func init() {
 			handler := CreateCefV8Handler()
 			accessor := CreateCefV8Accessor()
 			fmt.Println("handler-accessor:", handler, accessor)
-			accessor.Get(func(name string, object, retVal *ICefV8Value, exception string) bool {
-				return false
+			accessor.Get(func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool {
+				retVal.SetResult(V8ValueRef.NewString("这能返回？"))
+				return true
+			})
+			accessor.Set(func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
+				fmt.Println("name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
+				return true
 			})
 			object := V8ValueRef.NewObject(accessor, nil)
 			fmt.Println("V8ValueRef NewObject", object, object.IsValid())
-			object.SetValueByAccessor("test", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE)
-			object.SetValueByKey("test", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByAccessor("testcca", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByKey("testcca", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
 			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
 
 			var status = (*bool)(getPtr(3))

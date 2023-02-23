@@ -7,8 +7,8 @@ import (
 	"unsafe"
 )
 
-type V8AccessorGet func(name string, object, retVal *ICefV8Value, exception string) bool
-type V8AccessorSet func(name string, object, value *ICefV8Value, exception string) bool
+type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool
+type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool
 type V8AccessorDestroy func()
 
 func CreateCefV8Accessor() *ICefV8Accessor {
@@ -41,14 +41,45 @@ func (m *ICefV8Accessor) Destroy(fn V8AccessorDestroy) {
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		//getPtr := func(i int) unsafe.Pointer {
-		//	return unsafe.Pointer(getVal(i))
-		//}
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
 		switch fn.(type) {
 		case V8AccessorGet:
-			//fmt.Println("----V8AccessorGet")
+			name := api.GoStr(getVal(0))
+			object := &ICefV8Value{instance: getPtr(1)}
+			retValPtr := (*uintptr)(getPtr(2))
+			retVal := &ResultV8Value{}
+			exceptionPtr := (*uintptr)(getPtr(3))
+			exception := &Exception{}
+			resultPtr := (*bool)(getPtr(4))
+			result := fn.(V8AccessorGet)(name, object, retVal, exception)
+			if retVal.v8value != nil {
+				*retValPtr = retVal.v8value.Instance()
+			}
+			if exception.Message() != "" {
+				*exceptionPtr = api.PascalStr(exception.Message())
+			} else {
+				*exceptionPtr = 0
+			}
+			*resultPtr = result
+			object.Free()
 		case V8AccessorSet:
-		//fmt.Println("----V8AccessorSet", getPtr)
+			name := api.GoStr(getVal(0))
+			object := &ICefV8Value{instance: getPtr(1)}
+			value := &ICefV8Value{instance: getPtr(2)}
+			exceptionPtr := (*uintptr)(getPtr(3))
+			exception := &Exception{}
+			resultPtr := (*bool)(getPtr(4))
+			result := fn.(V8AccessorSet)(name, object, value, exception)
+			if exception.Message() != "" {
+				*exceptionPtr = api.PascalStr(exception.Message())
+			} else {
+				*exceptionPtr = 0
+			}
+			*resultPtr = result
+			object.Free()
+			value.Free()
 		case V8AccessorDestroy:
 		default:
 			return false

@@ -283,6 +283,18 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 	return api.GoBool(r1)
 }
 
+func (m *ICefV8Value) Free() {
+	m.instance = nil
+}
+
+type ResultV8Value struct {
+	v8value *ICefV8Value
+}
+
+func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
+	m.v8value = v8value
+}
+
 // TCefV8ValueRef
 type TCefV8ValueRef uintptr
 
