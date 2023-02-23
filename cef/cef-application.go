@@ -308,10 +308,19 @@ func init() {
 				fmt.Println("name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
 				return true
 			})
+			handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
+				fmt.Println(arguments.Size())
+				fmt.Println(arguments.Get(0).IsValid(), arguments.Get(0).GetStringValue())
+				fmt.Println(arguments.Get(1).IsValid(), arguments.Get(1).GetIntValue())
+				retVal.SetResult(V8ValueRef.NewString("函数返回值？"))
+				return true
+			})
 			object := V8ValueRef.NewObject(accessor, nil)
 			fmt.Println("V8ValueRef NewObject", object, object.IsValid())
 			object.SetValueByAccessor("testcca", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE)
 			object.SetValueByKey("testcca", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByKey("testcca", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByKey("testfn", V8ValueRef.NewFunction("testfn", handler), V8_PROPERTY_ATTRIBUTE_NONE)
 			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
 
 			var status = (*bool)(getPtr(3))

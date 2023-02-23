@@ -81,6 +81,7 @@ func init() {
 			object.Free()
 			value.Free()
 		case V8AccessorDestroy:
+			fn.(V8AccessorDestroy)()
 		default:
 			return false
 		}

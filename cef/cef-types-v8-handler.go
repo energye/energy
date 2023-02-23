@@ -8,7 +8,7 @@ import (
 	"unsafe"
 )
 
-type V8HandlerExecute func(name string, object ICefV8Value, arguments []*ICefV8Value, retVal ICefV8Value, Exception string) bool
+type V8HandlerExecute func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool
 type V8HandlerDestroy func()
 
 func CreateCefV8Handler() *ICefV8Handler {
@@ -42,9 +42,30 @@ func init() {
 		}
 		switch fn.(type) {
 		case V8HandlerExecute:
-			fmt.Println("----V8HandlerExecute", getPtr)
+			name := api.GoStr(getVal(0))
+			object := &ICefV8Value{instance: getPtr(1)}
+			argumentsPtr := getVal(2)
+			argumentsLength := int32(getVal(3))
+			arguments := &TCefV8ValueArray{arguments: argumentsPtr, argumentsLength: int(argumentsLength)}
+			retValPtr := (*uintptr)(getPtr(4))
+			retVal := &ResultV8Value{}
+			exceptionPtr := (*uintptr)(getPtr(5))
+			exception := &Exception{}
+			resultPtr := (*bool)(getPtr(6))
+			fmt.Println("----V8HandlerExecute", argumentsPtr, argumentsLength)
+			result := fn.(V8HandlerExecute)(name, object, arguments, retVal, exception)
+			if retVal.v8value != nil {
+				*retValPtr = retVal.v8value.Instance()
+			}
+			if exception.Message() != "" {
+				*exceptionPtr = api.PascalStr(exception.Message())
+			} else {
+				*exceptionPtr = 0
+			}
+			*resultPtr = result
+			object.Free()
 		case V8HandlerDestroy:
-			fmt.Println("----V8HandlerDestroy", getPtr)
+			fn.(V8HandlerDestroy)()
 		default:
 			return false
 		}

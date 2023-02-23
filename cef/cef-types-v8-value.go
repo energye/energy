@@ -295,6 +295,22 @@ func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
 	m.v8value = v8value
 }
 
+type TCefV8ValueArray struct {
+	arguments       uintptr
+	argumentsLength int
+}
+
+func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
+	if index < m.argumentsLength {
+		return &ICefV8Value{instance: unsafe.Pointer(common.GetParamOf(index, m.arguments))}
+	}
+	return nil
+}
+
+func (m *TCefV8ValueArray) Size() int {
+	return m.argumentsLength
+}
+
 // TCefV8ValueRef
 type TCefV8ValueRef uintptr
 
