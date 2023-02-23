@@ -297,8 +297,16 @@ func init() {
 			fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory.GetValueByKey", ctx.Global.GetValueByKey("name").GetExternallyAllocatedMemory())
 			fmt.Println("iCefV8ContextPtr GetFunctionName", ctx.Global.GetFunctionName())
 			fmt.Println("V8ValueRef IsValid", V8ValueRef.NewUndefined().IsValid())
-			object := V8ValueRef.NewObject(nil, nil)
+			handler := CreateCefV8Handler()
+			accessor := CreateCefV8Accessor()
+			fmt.Println("handler-accessor:", handler, accessor)
+			accessor.Get(func(name string, object, retVal *ICefV8Value, exception string) bool {
+				return false
+			})
+			object := V8ValueRef.NewObject(accessor, nil)
 			fmt.Println("V8ValueRef NewObject", object, object.IsValid())
+			object.SetValueByAccessor("test", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE)
+			object.SetValueByKey("test", V8ValueRef.NewObject(accessor, nil), V8_PROPERTY_ATTRIBUTE_NONE)
 			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
 
 			var status = (*bool)(getPtr(3))

@@ -1,15 +1,15 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
 
-type V8AccessorGet func(name string, object, retVal ICefV8Value, exception string) bool
-type V8AccessorSet func(name string, object, value ICefV8Value, exception string) bool
+type V8AccessorGet func(name string, object, retVal *ICefV8Value, exception string) bool
+type V8AccessorSet func(name string, object, value *ICefV8Value, exception string) bool
+type V8AccessorDestroy func()
 
 func CreateCefV8Accessor() *ICefV8Accessor {
 	var result uintptr
@@ -35,16 +35,21 @@ func (m *ICefV8Accessor) Set(fn V8AccessorSet) {
 	imports.Proc(internale_CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *ICefV8Accessor) Destroy(fn V8AccessorDestroy) {
+	imports.Proc(internale_CefV8Accessor_Destroy).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
+		//getPtr := func(i int) unsafe.Pointer {
+		//	return unsafe.Pointer(getVal(i))
+		//}
 		switch fn.(type) {
 		case V8AccessorGet:
-			fmt.Println("----V8AccessorGet", getPtr)
+			//fmt.Println("----V8AccessorGet")
 		case V8AccessorSet:
-			fmt.Println("----V8AccessorSet", getPtr)
+		//fmt.Println("----V8AccessorSet", getPtr)
+		case V8AccessorDestroy:
 		default:
 			return false
 		}

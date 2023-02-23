@@ -631,6 +631,18 @@ func init() {
 		dllimports.NewEnergyImport("CefV8Accessor_Create", 0),
 		dllimports.NewEnergyImport("CefV8Accessor_Get", 0),
 		dllimports.NewEnergyImport("CefV8Accessor_Set", 0),
+		dllimports.NewEnergyImport("CefV8Accessor_Destroy", 0),
+		//ICefV8Handler
+		dllimports.NewEnergyImport("CefV8Handler_Create", 0),
+		dllimports.NewEnergyImport("CefV8Handler_Execute", 0),
+		dllimports.NewEnergyImport("CefV8Handler_Destroy", 0),
+		//ICefV8Interceptor
+		dllimports.NewEnergyImport("CefV8InterceptorRef_Create", 0),
+		dllimports.NewEnergyImport("CefV8InterceptorRef_GetByName", 0),
+		dllimports.NewEnergyImport("CefV8InterceptorRef_GetByIndex", 0),
+		dllimports.NewEnergyImport("CefV8InterceptorRef_SetByName", 0),
+		dllimports.NewEnergyImport("CefV8InterceptorRef_SetByIndex", 0),
+		dllimports.NewEnergyImport("CefV8InterceptorRef_Destroy", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1250,4 +1262,16 @@ const (
 	internale_CefV8Accessor_Create
 	internale_CefV8Accessor_Get
 	internale_CefV8Accessor_Set
+	internale_CefV8Accessor_Destroy
+	//ICefV8Handler
+	internale_CefV8Handler_Create
+	internale_CefV8Handler_Execute
+	internale_CefV8Handler_Destroy
+	//ICefV8Interceptor
+	internale_CefV8InterceptorRef_Create
+	internale_CefV8InterceptorRef_GetByName
+	internale_CefV8InterceptorRef_GetByIndex
+	internale_CefV8InterceptorRef_SetByName
+	internale_CefV8InterceptorRef_SetByIndex
+	internale_CefV8InterceptorRef_Destroy
 )
