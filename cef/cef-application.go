@@ -281,10 +281,26 @@ func init() {
 			}
 			v8ctx := (*iCefV8ContextPtr)(getPtr(2))
 			ctx := &ICefV8Context{
-				Browser: browser,
-				Frame:   frame,
-				Global:  &V8Value{instance: v8ctx.Global, ptr: unsafe.Pointer(v8ctx.Global)},
+				instance: unsafe.Pointer(v8ctx.V8Context),
+				Browser:  browser,
+				Frame:    frame,
+				Global:   &ICefV8Value{instance: unsafe.Pointer(v8ctx.Global)},
 			}
+			fmt.Println("iCefV8ContextPtr", v8ctx, "Global.IsValid:", ctx.Global.IsValid(), ctx.Global.IsUndefined(), ctx.Global.GetDateValue())
+			fmt.Println("iCefV8ContextPtr GetStringValuer", ctx.Global.GetStringValue())
+			fmt.Println("iCefV8ContextPtr GetValueByIndex", ctx.Global.GetValueByIndex(0).IsValid())
+			fmt.Println("iCefV8ContextPtr GetValueByIndex", ctx.Global.GetValueByIndex(1).IsValid())
+			fmt.Println("iCefV8ContextPtr GetValueByKey", ctx.Global.GetValueByKey("name").IsValid())
+			fmt.Println("iCefV8ContextPtr SetValueByAccessor", ctx.Global.SetValueByAccessor("nametest", V8_ACCESS_CONTROL_DEFAULT, V8_PROPERTY_ATTRIBUTE_NONE))
+			fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory", ctx.Global.GetExternallyAllocatedMemory())
+			fmt.Println("iCefV8ContextPtr AdjustExternallyAllocatedMemory", ctx.Global.AdjustExternallyAllocatedMemory(0))
+			fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory.GetValueByKey", ctx.Global.GetValueByKey("name").GetExternallyAllocatedMemory())
+			fmt.Println("iCefV8ContextPtr GetFunctionName", ctx.Global.GetFunctionName())
+			fmt.Println("V8ValueRef IsValid", V8ValueRef.NewUndefined().IsValid())
+			object := V8ValueRef.NewObject(nil, nil)
+			fmt.Println("V8ValueRef NewObject", object, object.IsValid())
+			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
+
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)

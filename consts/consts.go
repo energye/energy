@@ -240,16 +240,6 @@ const (
 	GO_VALUE_DICTVALUE    //dictValue
 )
 
-// JS属性
-type V8_PROPERTY_ATTRIBUTE = types.Int32
-
-const (
-	V8_PROPERTY_ATTRIBUTE_NONE       V8_PROPERTY_ATTRIBUTE = 0
-	V8_PROPERTY_ATTRIBUTE_READONLY   V8_PROPERTY_ATTRIBUTE = 1 << 0
-	V8_PROPERTY_ATTRIBUTE_DONTENUM   V8_PROPERTY_ATTRIBUTE = 1 << 1
-	V8_PROPERTY_ATTRIBUTE_DONTDELETE V8_PROPERTY_ATTRIBUTE = 1 << 2
-)
-
 // JS交互绑定的事件类型
 type BIND_EVENT = types.Int32
 
@@ -701,23 +691,43 @@ type ZoomStep = byte
 
 const (
 	ZOOM_STEP_25  ZoomStep = 0
-	ZOOM_STEP_33           = 1
-	ZOOM_STEP_50           = 2
-	ZOOM_STEP_67           = 3
-	ZOOM_STEP_75           = 4
-	ZOOM_STEP_90           = 5
-	ZOOM_STEP_100          = 6
-	ZOOM_STEP_110          = 7
-	ZOOM_STEP_125          = 8
-	ZOOM_STEP_150          = 9
-	ZOOM_STEP_175          = 10
-	ZOOM_STEP_200          = 11
-	ZOOM_STEP_250          = 12
-	ZOOM_STEP_300          = 13
-	ZOOM_STEP_400          = 14
-	ZOOM_STEP_500          = 15
-	ZOOM_STEP_UNK          = 16
-	ZOOM_STEP_MIN          = ZOOM_STEP_25
-	ZOOM_STEP_MAX          = ZOOM_STEP_500
-	ZOOM_STEP_DEF          = ZOOM_STEP_100
+	ZOOM_STEP_33  ZoomStep = 1
+	ZOOM_STEP_50  ZoomStep = 2
+	ZOOM_STEP_67  ZoomStep = 3
+	ZOOM_STEP_75  ZoomStep = 4
+	ZOOM_STEP_90  ZoomStep = 5
+	ZOOM_STEP_100 ZoomStep = 6
+	ZOOM_STEP_110 ZoomStep = 7
+	ZOOM_STEP_125 ZoomStep = 8
+	ZOOM_STEP_150 ZoomStep = 9
+	ZOOM_STEP_175 ZoomStep = 10
+	ZOOM_STEP_200 ZoomStep = 11
+	ZOOM_STEP_250 ZoomStep = 12
+	ZOOM_STEP_300 ZoomStep = 13
+	ZOOM_STEP_400 ZoomStep = 14
+	ZOOM_STEP_500 ZoomStep = 15
+	ZOOM_STEP_UNK ZoomStep = 16
+	ZOOM_STEP_MIN ZoomStep = ZOOM_STEP_25
+	ZOOM_STEP_MAX ZoomStep = ZOOM_STEP_500
+	ZOOM_STEP_DEF ZoomStep = ZOOM_STEP_100
+)
+
+// /include/internal/cef_types.h (cef_v8_accesscontrol_t)
+type TCefV8AccessControls = types.Cardinal
+
+const (
+	V8_ACCESS_CONTROL_DEFAULT               TCefV8AccessControls = 0
+	V8_ACCESS_CONTROL_ALL_CAN_READ          TCefV8AccessControls = 1 << 0
+	V8_ACCESS_CONTROL_ALL_CAN_WRITE         TCefV8AccessControls = 1 << 1
+	V8_ACCESS_CONTROL_PROHIBITS_OVERWRITING TCefV8AccessControls = 1 << 2
+)
+
+// /include/internal/cef_types.h (cef_v8_propertyattribute_t)
+type TCefV8PropertyAttributes = types.Cardinal
+
+const (
+	V8_PROPERTY_ATTRIBUTE_NONE       TCefV8PropertyAttributes = 0
+	V8_PROPERTY_ATTRIBUTE_READONLY   TCefV8PropertyAttributes = 1 << 0
+	V8_PROPERTY_ATTRIBUTE_DONTENUM   TCefV8PropertyAttributes = 1 << 1
+	V8_PROPERTY_ATTRIBUTE_DONTDELETE TCefV8PropertyAttributes = 1 << 2
 )

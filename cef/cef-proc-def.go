@@ -562,6 +562,75 @@ func init() {
 		dllimports.NewEnergyImport("ICEFWindow_SetAccelerator", 0),
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAccelerator", 0),
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAllAccelerators", 0),
+		//ICefV8Value
+		dllimports.NewEnergyImport("CefV8Value_IsValid", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsUndefined", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsNull", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsBool", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsInt", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsUInt", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsDouble", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsDate", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsString", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsObject", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsArray", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsArrayBuffer", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsFunction", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsPromise", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsSame", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetBoolValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetIntValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetUIntValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetDoubleValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetDateValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetStringValue", 0),
+		dllimports.NewEnergyImport("CefV8Value_IsUserCreated", 0),
+		dllimports.NewEnergyImport("CefV8Value_HasException", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetException", 0),
+		dllimports.NewEnergyImport("CefV8Value_ClearException", 0),
+		dllimports.NewEnergyImport("CefV8Value_WillRethrowExceptions", 0),
+		dllimports.NewEnergyImport("CefV8Value_SetRethrowExceptions", 0),
+		dllimports.NewEnergyImport("CefV8Value_HasValueByKey", 0),
+		dllimports.NewEnergyImport("CefV8Value_HasValueByIndex", 0),
+		dllimports.NewEnergyImport("CefV8Value_DeleteValueByKey", 0),
+		dllimports.NewEnergyImport("CefV8Value_DeleteValueByIndex", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetValueByKey", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetValueByIndex", 0),
+		dllimports.NewEnergyImport("CefV8Value_SetValueByKey", 0),
+		dllimports.NewEnergyImport("CefV8Value_SetValueByIndex", 0),
+		dllimports.NewEnergyImport("CefV8Value_SetValueByAccessor", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetKeys", 0),
+		dllimports.NewEnergyImport("CefV8Value_SetUserData", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetUserData", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetExternallyAllocatedMemory", 0),
+		dllimports.NewEnergyImport("CefV8Value_AdjustExternallyAllocatedMemory", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetArrayLength", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetArrayBufferReleaseCallback", 0),
+		dllimports.NewEnergyImport("CefV8Value_NeuterArrayBuffer", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetFunctionName", 0),
+		dllimports.NewEnergyImport("CefV8Value_GetFunctionHandler", 0),
+		dllimports.NewEnergyImport("CefV8Value_ExecuteFunction", 0),
+		dllimports.NewEnergyImport("CefV8Value_ExecuteFunctionWithContext", 0),
+		dllimports.NewEnergyImport("CefV8Value_ResolvePromise", 0),
+		dllimports.NewEnergyImport("CefV8Value_RejectPromise", 0),
+		//TCefV8ValueRef
+		dllimports.NewEnergyImport("CefV8ValueRef_NewUndefined", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewNull", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewBool", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewInt", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewUInt", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewDouble", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewDate", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewString", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewObject", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewArray", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewArrayBuffer", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewFunction", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_NewPromise", 0),
+		//ICefV8Accessor
+		dllimports.NewEnergyImport("CefV8Accessor_Create", 0),
+		dllimports.NewEnergyImport("CefV8Accessor_Get", 0),
+		dllimports.NewEnergyImport("CefV8Accessor_Set", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1112,4 +1181,73 @@ const (
 	internale_ICEFWindow_SetAccelerator
 	internale_ICEFWindow_RemoveAccelerator
 	internale_ICEFWindow_RemoveAllAccelerators
+	//ICefV8Value
+	internale_CefV8Value_IsValid
+	internale_CefV8Value_IsUndefined
+	internale_CefV8Value_IsNull
+	internale_CefV8Value_IsBool
+	internale_CefV8Value_IsInt
+	internale_CefV8Value_IsUInt
+	internale_CefV8Value_IsDouble
+	internale_CefV8Value_IsDate
+	internale_CefV8Value_IsString
+	internale_CefV8Value_IsObject
+	internale_CefV8Value_IsArray
+	internale_CefV8Value_IsArrayBuffer
+	internale_CefV8Value_IsFunction
+	internale_CefV8Value_IsPromise
+	internale_CefV8Value_IsSame
+	internale_CefV8Value_GetBoolValue
+	internale_CefV8Value_GetIntValue
+	internale_CefV8Value_GetUIntValue
+	internale_CefV8Value_GetDoubleValue
+	internale_CefV8Value_GetDateValue
+	internale_CefV8Value_GetStringValue
+	internale_CefV8Value_IsUserCreated
+	internale_CefV8Value_HasException
+	internale_CefV8Value_GetException
+	internale_CefV8Value_ClearException
+	internale_CefV8Value_WillRethrowExceptions
+	internale_CefV8Value_SetRethrowExceptions
+	internale_CefV8Value_HasValueByKey
+	internale_CefV8Value_HasValueByIndex
+	internale_CefV8Value_DeleteValueByKey
+	internale_CefV8Value_DeleteValueByIndex
+	internale_CefV8Value_GetValueByKey
+	internale_CefV8Value_GetValueByIndex
+	internale_CefV8Value_SetValueByKey
+	internale_CefV8Value_SetValueByIndex
+	internale_CefV8Value_SetValueByAccessor
+	internale_CefV8Value_GetKeys
+	internale_CefV8Value_SetUserData
+	internale_CefV8Value_GetUserData
+	internale_CefV8Value_GetExternallyAllocatedMemory
+	internale_CefV8Value_AdjustExternallyAllocatedMemory
+	internale_CefV8Value_GetArrayLength
+	internale_CefV8Value_GetArrayBufferReleaseCallback
+	internale_CefV8Value_NeuterArrayBuffer
+	internale_CefV8Value_GetFunctionName
+	internale_CefV8Value_GetFunctionHandler
+	internale_CefV8Value_ExecuteFunction
+	internale_CefV8Value_ExecuteFunctionWithContext
+	internale_CefV8Value_ResolvePromise
+	internale_CefV8Value_RejectPromise
+	//TCefV8ValueRef
+	internale_CefV8ValueRef_NewUndefined
+	internale_CefV8ValueRef_NewNull
+	internale_CefV8ValueRef_NewBool
+	internale_CefV8ValueRef_NewInt
+	internale_CefV8ValueRef_NewUInt
+	internale_CefV8ValueRef_NewDouble
+	internale_CefV8ValueRef_NewDate
+	internale_CefV8ValueRef_NewString
+	internale_CefV8ValueRef_NewObject
+	internale_CefV8ValueRef_NewArray
+	internale_CefV8ValueRef_NewArrayBuffer
+	internale_CefV8ValueRef_NewFunction
+	internale_CefV8ValueRef_NewPromise
+	//ICefV8Accessor
+	internale_CefV8Accessor_Create
+	internale_CefV8Accessor_Get
+	internale_CefV8Accessor_Set
 )

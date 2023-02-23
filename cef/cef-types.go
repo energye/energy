@@ -211,6 +211,39 @@ type ICefDragData struct {
 	instance unsafe.Pointer
 }
 
+// ICefV8Context
+type ICefV8Context struct {
+	instance unsafe.Pointer
+	Browser  *ICefBrowser
+	Frame    *ICefFrame
+	Global   *ICefV8Value
+}
+
+// ICefV8Value
+type ICefV8Value struct {
+	instance unsafe.Pointer
+}
+
+// ICefV8Handler
+type ICefV8Handler struct {
+	instance unsafe.Pointer
+}
+
+//ICefV8Interceptor
+type ICefV8Interceptor struct {
+	instance unsafe.Pointer
+}
+
+//ICefV8Accessor
+type ICefV8Accessor struct {
+	instance unsafe.Pointer
+}
+
+//ICefV8ArrayBufferReleaseCallback
+type ICefV8ArrayBufferReleaseCallback struct {
+	instance unsafe.Pointer
+}
+
 // NewCefRect
 func NewCefRect(x, y, width, height int32) *TCefRect {
 	return &TCefRect{

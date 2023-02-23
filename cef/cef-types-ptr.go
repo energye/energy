@@ -18,9 +18,10 @@ import (
 )
 
 type iCefV8ContextPtr struct {
-	Browse uintptr //ptr
-	Frame  uintptr //ptr
-	Global uintptr //ptr
+	V8Context uintptr //ptr
+	Browse    uintptr //ptr
+	Frame     uintptr //ptr
+	Global    uintptr //ptr
 }
 
 type iCefCookiePtr struct {
