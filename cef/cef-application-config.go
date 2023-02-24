@@ -19,7 +19,6 @@ import (
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
 	"os"
-	"path/filepath"
 )
 
 // Application 支持的配置
@@ -247,21 +246,22 @@ func (m *tCefApplicationConfig) SetObjectRootName(name string) {
 
 // energy framework env
 func (m *tCefApplicationConfig) framework() {
-	var path string
+	//var path string
 	if m.frameworkDirPath == 0 {
-		path = libPath()
+		//path = libPath()
+		m.SetFrameworkDirPath(libPath())
 	} else {
-		path = api.GoStr(m.frameworkDirPath)
+		//path = api.GoStr(m.frameworkDirPath)
 	}
-	if path != "" {
-		m.SetFrameworkDirPath(path)
-		if m.cache == 0 {
-			m.SetCache(filepath.Join(path, "cache"))
-		}
-		if m.userDataPath == 0 {
-			m.SetUserDataPath(filepath.Join(path, "userDataPath"))
-		}
-	}
+	//if path != "" {
+	//	m.SetFrameworkDirPath(path)
+	//if m.cache == 0 {
+	//m.SetCache(filepath.Join(path, "cache"))
+	//}
+	//if m.userDataPath == 0 {
+	//m.SetUserDataPath(filepath.Join(path, "userDataPath"))
+	//}
+	//}
 }
 
 func ceflib() string {

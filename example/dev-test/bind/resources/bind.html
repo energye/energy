@@ -34,10 +34,11 @@
             let ssss = {
                 "asdf": "ffffff"
             }
-            for (let i = 0; i < 100000; i++) {
-                let test = window.testset.testcca
+            // for (let i = 0; i < 100000; i++) {
+                // let test = window.testset.testcca
+                // window.testset.testfn("字符串", 333)
                 //let test=ssss.asdf
-            }
+            // }
             test(window.testset.testcca)
             test(window.testset.testcca)
             test(window.testset.testcca)
@@ -45,6 +46,16 @@
             console.log(window.testset, window.testset.testcca)
             window.testset.testcca = "asdf"
             test(window.testset.testfn("字符串", 333))
+        }
+        function fntest() {
+            return "返回fntest";
+        }
+        function errtest() {
+            let s = 1/0;
+            throw {
+                code: -1,
+                msg: '类型错误'
+            }
         }
     </script>
 </head>

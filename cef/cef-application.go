@@ -309,10 +309,19 @@ func init() {
 				return true
 			})
 			handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
-				fmt.Println(arguments.Size())
+				fmt.Println(arguments.Size(), arguments.Get(3))
 				fmt.Println(arguments.Get(0).IsValid(), arguments.Get(0).GetStringValue())
 				fmt.Println(arguments.Get(1).IsValid(), arguments.Get(1).GetIntValue())
 				retVal.SetResult(V8ValueRef.NewString("函数返回值？"))
+				val, ex, ok := ctx.Eval("fntest();", "", 0)
+				fmt.Println("Execute eval fntest:", val, ex, ok)
+				fmt.Println("Execute eval fntest-return-value:", val.GetStringValue())
+				if ok {
+					fmt.Println(val.GetStringValue())
+				}
+				val, ex, ok = ctx.Eval("errtest();", "", 0)
+				fmt.Println("Execute errtest:", val, ex, ok)
+				fmt.Println("Execute errtest-error:", ex.Message(), ex.LineNumber())
 				return true
 			})
 			object := V8ValueRef.NewObject(accessor, nil)
@@ -324,6 +333,9 @@ func init() {
 			object.SetValueByKey("testfn", function, V8_PROPERTY_ATTRIBUTE_NONE)
 			fmt.Println("Global.SetValueByKey", ctx.Global.SetValueByKey("testset", object, V8_PROPERTY_ATTRIBUTE_READONLY))
 			fmt.Println("GetFunctionHandler", function.GetFunctionHandler())
+			val, exception, ok := ctx.Eval("console.log('evalaa');", "", 0)
+			fmt.Println("eval:", val, exception, ok)
+			fmt.Println("eval-return-value:", val.GetStringValue())
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)

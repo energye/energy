@@ -211,6 +211,11 @@ type ICefDragData struct {
 	instance unsafe.Pointer
 }
 
+// ICefV8Exception
+type ICefV8Exception struct {
+	instance unsafe.Pointer
+}
+
 // ICefV8Context
 type ICefV8Context struct {
 	instance unsafe.Pointer

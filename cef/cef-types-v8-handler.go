@@ -1,7 +1,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -9,7 +8,6 @@ import (
 )
 
 type V8HandlerExecute func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool
-type V8HandlerDestroy func()
 
 func CreateCefV8Handler() *ICefV8Handler {
 	var result uintptr
@@ -31,8 +29,8 @@ func (m *ICefV8Handler) Execute(fn V8HandlerExecute) {
 	imports.Proc(internale_CefV8Handler_Execute).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefV8Handler) Destroy(fn V8HandlerDestroy) {
-	imports.Proc(internale_CefV8Handler_Destroy).Call(m.Instance(), api.MakeEventDataPtr(fn))
+func (m *ICefV8Handler) Destroy() {
+	imports.Proc(internale_CefV8Handler_Destroy).Call(m.Instance())
 }
 
 func init() {
@@ -52,7 +50,6 @@ func init() {
 			exceptionPtr := (*uintptr)(getPtr(5))
 			exception := &Exception{}
 			resultPtr := (*bool)(getPtr(6))
-			fmt.Println("----V8HandlerExecute", argumentsPtr, argumentsLength)
 			result := fn.(V8HandlerExecute)(name, object, arguments, retVal, exception)
 			if retVal.v8value != nil {
 				*retValPtr = retVal.v8value.Instance()
@@ -64,8 +61,6 @@ func init() {
 			}
 			*resultPtr = result
 			object.Free()
-		case V8HandlerDestroy:
-			fn.(V8HandlerDestroy)()
 		default:
 			return false
 		}

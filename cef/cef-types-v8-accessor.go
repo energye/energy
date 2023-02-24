@@ -9,7 +9,6 @@ import (
 
 type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool
 type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool
-type V8AccessorDestroy func()
 
 func CreateCefV8Accessor() *ICefV8Accessor {
 	var result uintptr
@@ -35,8 +34,8 @@ func (m *ICefV8Accessor) Set(fn V8AccessorSet) {
 	imports.Proc(internale_CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefV8Accessor) Destroy(fn V8AccessorDestroy) {
-	imports.Proc(internale_CefV8Accessor_Destroy).Call(m.Instance(), api.MakeEventDataPtr(fn))
+func (m *ICefV8Accessor) Destroy() {
+	imports.Proc(internale_CefV8Accessor_Destroy).Call(m.Instance())
 }
 
 func init() {
@@ -80,8 +79,6 @@ func init() {
 			*resultPtr = result
 			object.Free()
 			value.Free()
-		case V8AccessorDestroy:
-			fn.(V8AccessorDestroy)()
 		default:
 			return false
 		}

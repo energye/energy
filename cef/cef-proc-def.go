@@ -643,6 +643,20 @@ func init() {
 		dllimports.NewEnergyImport("CefV8InterceptorRef_SetByName", 0),
 		dllimports.NewEnergyImport("CefV8InterceptorRef_SetByIndex", 0),
 		dllimports.NewEnergyImport("CefV8InterceptorRef_Destroy", 0),
+		//ICefV8Context
+		dllimports.NewEnergyImport("CefV8Context_Eval", 0),
+		dllimports.NewEnergyImport("CefV8Context_Enter", 0),
+		dllimports.NewEnergyImport("CefV8Context_Exit", 0),
+		dllimports.NewEnergyImport("CefV8Context_IsSame", 0),
+		//ICefV8Exception
+		dllimports.NewEnergyImport("CefV8Exception_Message", 0),
+		dllimports.NewEnergyImport("CefV8Exception_SourceLine", 0),
+		dllimports.NewEnergyImport("CefV8Exception_ScriptResourceName", 0),
+		dllimports.NewEnergyImport("CefV8Exception_LineNumber", 0),
+		dllimports.NewEnergyImport("CefV8Exception_StartPosition", 0),
+		dllimports.NewEnergyImport("CefV8Exception_EndPosition", 0),
+		dllimports.NewEnergyImport("CefV8Exception_StartColumn", 0),
+		dllimports.NewEnergyImport("CefV8Exception_EndColumn", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1274,4 +1288,18 @@ const (
 	internale_CefV8InterceptorRef_SetByName
 	internale_CefV8InterceptorRef_SetByIndex
 	internale_CefV8InterceptorRef_Destroy
+	//ICefV8Context
+	internale_CefV8Context_Eval
+	internale_CefV8Context_Enter
+	internale_CefV8Context_Exit
+	internale_CefV8Context_IsSame
+	//ICefV8Exception
+	internale_CefV8Exception_Message
+	internale_CefV8Exception_SourceLine
+	internale_CefV8Exception_ScriptResourceName
+	internale_CefV8Exception_LineNumber
+	internale_CefV8Exception_StartPosition
+	internale_CefV8Exception_EndPosition
+	internale_CefV8Exception_StartColumn
+	internale_CefV8Exception_EndColumn
 )

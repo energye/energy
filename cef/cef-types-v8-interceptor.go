@@ -12,7 +12,6 @@ type V8InterceptorGetByName func(name string, object, retVal *ICefV8Value, excep
 type V8InterceptorGetByIndex func(index int32, object, retVal *ICefV8Value, exception string)
 type V8InterceptorSetByName func(name string, object, value, retVal *ICefV8Value, exception string)
 type V8InterceptorSetByIndex func(index int32, object, value, retVal *ICefV8Value, exception string)
-type V8InterceptorDestroy func()
 
 func CreateCefV8InterceptorRef() *ICefV8Interceptor {
 	var result uintptr
@@ -42,8 +41,8 @@ func (m *ICefV8Interceptor) SetByName(fn V8InterceptorSetByName) {
 func (m *ICefV8Interceptor) SetByIndex(fn V8InterceptorSetByIndex) {
 	imports.Proc(internale_CefV8InterceptorRef_SetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
-func (m *ICefV8Interceptor) Destroy(fn V8InterceptorDestroy) {
-	imports.Proc(internale_CefV8InterceptorRef_Destroy).Call(m.Instance(), api.MakeEventDataPtr(fn))
+func (m *ICefV8Interceptor) Destroy() {
+	imports.Proc(internale_CefV8InterceptorRef_Destroy).Call(m.Instance())
 }
 
 func init() {
@@ -60,8 +59,6 @@ func init() {
 			fmt.Println("----V8InterceptorSetByName", getPtr)
 		case V8InterceptorSetByIndex:
 			fmt.Println("----V8InterceptorSetByIndex", getPtr)
-		case V8InterceptorDestroy:
-			fmt.Println("----V8InterceptorDestroy", getPtr)
 		default:
 			return false
 		}
