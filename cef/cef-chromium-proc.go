@@ -68,7 +68,7 @@ type IChromiumProc interface {
 		sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32)
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
-	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
+	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *DictionaryValue)
 	SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
@@ -369,7 +369,7 @@ func (m *TCEFChromium) UpdatePreferences() {
 	_CEFChromium_UpdatePreferences(m.Instance())
 }
 
-func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *DictionaryValue) {
 	_CEFChromium_ExecuteDevToolsMethod(m.Instance(), messageId, method, dictionaryValue)
 }
 
@@ -936,7 +936,7 @@ func _CEFChromium_UpdatePreferences(instance uintptr) {
 }
 
 // TCEFChromium  _CEFChromium_ExecuteDevToolsMethod
-func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, method string, dictionaryValue *DictionaryValue) {
 	var data = []byte{}
 	var dataPtr unsafe.Pointer
 	var dataLen int32 = 0

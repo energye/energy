@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>process-message</title>
+    <script type="application/javascript">
+        window.onload = function () {
+            let doc = document.getElementById("test");
+
+            function test(...vvv) {
+                let str = doc.innerHTML;
+                for (let i = 0; i < vvv.length; i++) {
+                    str = str + "  " + vvv[i];
+                }
+                str += "<br>";
+                doc.innerHTML = str;
+            }
+
+            test(window.testset.testfn("字符串", 333))
+
+        }
+
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+<p>
+<h3>process-message</h3></p>
+<p id="test"></p>
+</body>
+</html>

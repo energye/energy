@@ -176,7 +176,7 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 //}
 
 // ExecuteDevToolsMethod 执行开发者工具方法
-func (m *ICefBrowser) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+func (m *ICefBrowser) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *DictionaryValue) {
 	var data = []byte{}
 	var dataPtr unsafe.Pointer
 	var dataLen int = 0

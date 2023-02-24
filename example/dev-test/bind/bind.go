@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/bind/src"
 )
 
@@ -77,6 +78,78 @@ func main() {
 	//varStr = "asdfadsf"
 	//Test(&varStr)
 	//fmt.Println(varStr)
+
+	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
+		fmt.Println("iCefV8ContextPtr", context, "Global.IsValid:", context.Global.IsValid(), context.Global.IsUndefined(), context.Global.GetDateValue())
+		fmt.Println("iCefV8ContextPtr GetStringValuer", context.Global.GetStringValue())
+		fmt.Println("iCefV8ContextPtr GetValueByIndex", context.Global.GetValueByIndex(0).IsValid())
+		fmt.Println("iCefV8ContextPtr GetValueByIndex", context.Global.GetValueByIndex(1).IsValid())
+		fmt.Println("iCefV8ContextPtr GetValueByKey", context.Global.GetValueByKey("name").IsValid())
+		fmt.Println("iCefV8ContextPtr SetValueByAccessor", context.Global.SetValueByAccessor("nametest", consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE))
+		fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory", context.Global.GetExternallyAllocatedMemory())
+		fmt.Println("iCefV8ContextPtr AdjustExternallyAllocatedMemory", context.Global.AdjustExternallyAllocatedMemory(0))
+		fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory.GetValueByKey", context.Global.GetValueByKey("name").GetExternallyAllocatedMemory())
+		fmt.Println("iCefV8ContextPtr GetFunctionName", context.Global.GetFunctionName())
+		fmt.Println("V8ValueRef IsValid", cef.V8ValueRef.NewUndefined().IsValid())
+		handler := cef.CreateCefV8Handler()
+		accessor := cef.CreateCefV8Accessor()
+		fmt.Println("handler-accessor:", handler, accessor)
+		accessor.Get(func(name string, object *cef.ICefV8Value, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+			retVal.SetResult(cef.V8ValueRef.NewString("这能返回？"))
+			return true
+		})
+		accessor.Set(func(name string, object *cef.ICefV8Value, value *cef.ICefV8Value, exception *cef.Exception) bool {
+			fmt.Println("name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
+			return true
+		})
+		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+			fmt.Println("handler", arguments.Size(), arguments.Get(3))
+			fmt.Println(arguments.Get(0).IsValid(), arguments.Get(0).GetStringValue())
+			fmt.Println(arguments.Get(1).IsValid(), arguments.Get(1).GetIntValue())
+			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
+			val, ex, ok := context.Eval("fntest();", "", 0)
+			fmt.Println("Execute eval fntest:", val, ex, ok)
+			fmt.Println("Execute eval fntest-return-value:", val.GetStringValue())
+			if ok {
+				fmt.Println(val.GetStringValue())
+			}
+			val, ex, ok = context.Eval("errtest();", "", 0)
+			fmt.Println("Execute errtest:", val, ex, ok)
+			fmt.Println("Execute errtest-error:", ex.Message(), ex.LineNumber())
+			return true
+		})
+		object := cef.V8ValueRef.NewObject(accessor, nil)
+		function := cef.V8ValueRef.NewFunction("testfn", handler)
+		fmt.Println("V8ValueRef NewObject", object, object.IsValid())
+		object.SetValueByAccessor("testcca", consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		object.SetValueByKey("testcca", cef.V8ValueRef.NewObject(accessor, nil), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		object.SetValueByKey("testcca", cef.V8ValueRef.NewObject(accessor, nil), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		object.SetValueByKey("testfn", function, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		fmt.Println("Global.SetValueByKey", context.Global.SetValueByKey("testset", object, consts.V8_PROPERTY_ATTRIBUTE_READONLY))
+		fmt.Println("GetFunctionHandler", function.GetFunctionHandler())
+		val, exception, ok := context.Eval("console.log('evalaa');", "", 0)
+		fmt.Println("eval:", val, exception, ok)
+		fmt.Println("eval-return-value:", val.GetStringValue())
+		array := cef.V8ValueRef.NewArray(1024)
+		fmt.Println("数据有效", array.IsValid())
+		fmt.Println("array-GetArrayLength", array.GetArrayLength())
+		array.SetValueByIndex(0, cef.V8ValueRef.NewString("数组里的值"))
+		fmt.Println("array-GetValueByIndex", array.GetValueByIndex(0).GetStringValue())
+		buf := make([]byte, 256)
+		for i := 0; i < len(buf); i++ {
+			buf[i] = byte(i)
+		}
+		fmt.Println(buf)
+		callback := cef.CreateCefV8ArrayBufferReleaseCallback()
+		callback.ReleaseBuffer(func(buffer uintptr) bool {
+			fmt.Println("释放？")
+			return true
+		})
+		buffer := cef.V8ValueRef.NewArrayBuffer(buf, callback)
+		fmt.Println("ArrayBuffer IsValid", buffer.IsValid())
+		context.Global.SetValueByKey("arrBuf", buffer, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		return false
+	})
 
 	//运行应用
 	cef.Run(cefApp)

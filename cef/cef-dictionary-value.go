@@ -18,8 +18,8 @@ import (
 	. "github.com/energye/energy/consts"
 )
 
-// ICefDictionaryValue 字典数据结构
-type ICefDictionaryValue struct {
+// DictionaryValue 字典数据结构
+type DictionaryValue struct {
 	iData    []*dictDataItem
 	dataLen  int
 	dataByte []byte
@@ -35,19 +35,19 @@ type dictDataItem struct {
 }
 
 // NewCefDictionaryValue 创建一个字典
-func NewCefDictionaryValue() *ICefDictionaryValue {
-	return &ICefDictionaryValue{}
+func NewCefDictionaryValue() *DictionaryValue {
+	return &DictionaryValue{}
 }
 
 // Clear 清空字典内容
-func (m *ICefDictionaryValue) Clear() {
+func (m *DictionaryValue) Clear() {
 	m.iData = []*dictDataItem{}
 	m.dataLen = 0
 	m.dataByte = []byte{}
 }
 
 // Package 将字典数据打包为字节
-func (m *ICefDictionaryValue) Package() []byte {
+func (m *DictionaryValue) Package() []byte {
 	buf := &bytes.Buffer{}
 	for _, data := range m.Items() {
 		binary.Write(buf, binary.BigEndian, data.vType)
@@ -60,12 +60,12 @@ func (m *ICefDictionaryValue) Package() []byte {
 }
 
 // Items 返回所有字典项
-func (m *ICefDictionaryValue) Items() []*dictDataItem {
+func (m *DictionaryValue) Items() []*dictDataItem {
 	return m.iData
 }
 
-// SetDictionary 设置 ICefDictionaryValue 类型值
-func (m *ICefDictionaryValue) SetDictionary(name string, dict *ICefDictionaryValue) {
+// SetDictionary 设置 DictionaryValue 类型值
+func (m *DictionaryValue) SetDictionary(name string, dict *DictionaryValue) {
 	if name == "" || dict == nil {
 		return
 	}
@@ -83,7 +83,7 @@ func (m *ICefDictionaryValue) SetDictionary(name string, dict *ICefDictionaryVal
 }
 
 // SetString 设置 string 类型值
-func (m *ICefDictionaryValue) SetString(name string, v string) {
+func (m *DictionaryValue) SetString(name string, v string) {
 	if name == "" || v == "" {
 		return
 	}
@@ -101,7 +101,7 @@ func (m *ICefDictionaryValue) SetString(name string, v string) {
 }
 
 // SetInt 设置 int32 类型值
-func (m *ICefDictionaryValue) SetInt(name string, v int32) {
+func (m *DictionaryValue) SetInt(name string, v int32) {
 	if name == "" || v < 0 {
 		return
 	}
@@ -119,7 +119,7 @@ func (m *ICefDictionaryValue) SetInt(name string, v int32) {
 }
 
 // SetDouble 设置 float64 类型值
-func (m *ICefDictionaryValue) SetDouble(name string, v float64) {
+func (m *DictionaryValue) SetDouble(name string, v float64) {
 	if name == "" || v < 0 {
 		return
 	}
@@ -137,7 +137,7 @@ func (m *ICefDictionaryValue) SetDouble(name string, v float64) {
 }
 
 // SetBoolean 设置 bool 类型值
-func (m *ICefDictionaryValue) SetBoolean(name string, v bool) {
+func (m *DictionaryValue) SetBoolean(name string, v bool) {
 	if name == "" {
 		return
 	}

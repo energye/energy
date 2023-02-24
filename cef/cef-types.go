@@ -186,6 +186,31 @@ type TCefDraggableRegion struct {
 	Draggable bool
 }
 
+// ICefProcessMessage
+type ICefProcessMessage struct {
+	instance unsafe.Pointer
+}
+
+// ICefValue -> ArgumentList
+type ICefValue struct {
+	instance unsafe.Pointer
+}
+
+// ICefListValue -> ArgumentList
+type ICefListValue struct {
+	instance unsafe.Pointer
+}
+
+// ICefBinaryValue -> ArgumentList
+type ICefBinaryValue struct {
+	instance unsafe.Pointer
+}
+
+// ICefDictionaryValue -> ArgumentList
+type ICefDictionaryValue struct {
+	instance unsafe.Pointer
+}
+
 // ICefDisplay
 type ICefDisplay struct {
 	instance unsafe.Pointer

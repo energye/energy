@@ -16,17 +16,22 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-// BrowserWindow 设置到指定窗口做为子窗口
+// WindowInfoAsChild BrowserWindow 设置到指定窗口做为子窗口
 func WindowInfoAsChild(windowInfo, windowHandle uintptr, windowName string) {
 	imports.Proc(internale_CEFWindowInfoAsChild).Call(windowInfo, windowHandle, api.PascalStr(windowName))
 }
 
-// BrowserWindow 设置到做为弹出窗口
+// WindowInfoAsPopUp BrowserWindow 设置到做为弹出窗口
 func WindowInfoAsPopUp(windowInfo, windowParent uintptr, windowName string) {
 	imports.Proc(internale_CEFWindowInfoAsPopUp).Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
-// BrowserWindow 设置到做为无窗口
+// WindowInfoAsWindowless BrowserWindow 设置到做为无窗口
 func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string) {
 	imports.Proc(internale_CEFWindowInfoAsWindowless).Call(windowInfo, windowParent, api.PascalStr(windowName))
+}
+
+// CEFJSRegisterExtension 注册JS扩展
+func CEFJSRegisterExtension(name, code string, handler *ICefV8Handler) {
+	imports.Proc(internale_CEFJSRegisterExtension).Call(api.PascalStr(name), api.PascalStr(code), handler.Instance())
 }

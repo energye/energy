@@ -35,7 +35,7 @@ func NewBrowserViewComponent(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
 }
 
 // CreateBrowserView
-func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, requestContextSettings *TCefRequestContextSettings, browserSettings *TCefBrowserSettings, extraInfo *ICefDictionaryValue) {
+func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, requestContextSettings *TCefRequestContextSettings, browserSettings *TCefBrowserSettings, extraInfo *DictionaryValue) {
 	contextSettingsPtr := requestContextSettings.ToPtr()
 	browserSettingsPtr := browserSettings.ToPtr()
 	var dataBytes = []byte{}

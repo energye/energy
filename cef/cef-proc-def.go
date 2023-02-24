@@ -404,6 +404,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowInfoAsChild", 0),
 		dllimports.NewEnergyImport("CEFWindowInfoAsPopUp", 0),
 		dllimports.NewEnergyImport("CEFWindowInfoAsWindowless", 0),
+		dllimports.NewEnergyImport("CEFJSRegisterExtension", 0),
 		//ICefRequest
 		dllimports.NewEnergyImport("cefRequest_IsReadOnly", 0),
 		dllimports.NewEnergyImport("cefRequest_SetUrl", 0),
@@ -660,6 +661,37 @@ func init() {
 		//ICefV8ArrayBufferReleaseCallback
 		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_Create", 0),
 		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_ReleaseBuffer", 0),
+		//ICefProcessMessage
+		dllimports.NewEnergyImport("CefProcessMessageRef_New", 0),
+		dllimports.NewEnergyImport("CefProcessMessageRef_ArgumentList", 0),
+		dllimports.NewEnergyImport("CefProcessMessageRef_Free", 0),
+		//ICefListValu
+		dllimports.NewEnergyImport("CefListValue_IsValid", 0),
+		dllimports.NewEnergyImport("CefListValue_IsOwned", 0),
+		dllimports.NewEnergyImport("CefListValue_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefListValue_Copy", 0),
+		dllimports.NewEnergyImport("CefListValue_SetSize", 0),
+		dllimports.NewEnergyImport("CefListValue_GetSize", 0),
+		dllimports.NewEnergyImport("CefListValue_Clear", 0),
+		dllimports.NewEnergyImport("CefListValue_Remove", 0),
+		dllimports.NewEnergyImport("CefListValue_GetType", 0),
+		dllimports.NewEnergyImport("CefListValue_GetValue", 0),
+		dllimports.NewEnergyImport("CefListValue_GetBool", 0),
+		dllimports.NewEnergyImport("CefListValue_GetInt", 0),
+		dllimports.NewEnergyImport("CefListValue_GetDouble", 0),
+		dllimports.NewEnergyImport("CefListValue_GetString", 0),
+		dllimports.NewEnergyImport("CefListValue_GetBinary", 0),
+		dllimports.NewEnergyImport("CefListValue_GetDictionary", 0),
+		dllimports.NewEnergyImport("CefListValue_GetList", 0),
+		dllimports.NewEnergyImport("CefListValue_SetValue", 0),
+		dllimports.NewEnergyImport("CefListValue_SetNull", 0),
+		dllimports.NewEnergyImport("CefListValue_SetBool", 0),
+		dllimports.NewEnergyImport("CefListValue_SetInt", 0),
+		dllimports.NewEnergyImport("CefListValue_SetDouble", 0),
+		dllimports.NewEnergyImport("CefListValue_SetString", 0),
+		dllimports.NewEnergyImport("CefListValue_SetBinary", 0),
+		dllimports.NewEnergyImport("CefListValue_SetDictionary", 0),
+		dllimports.NewEnergyImport("CefListValue_SetList", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1052,6 +1084,7 @@ const (
 	internale_CEFWindowInfoAsChild
 	internale_CEFWindowInfoAsPopUp
 	internale_CEFWindowInfoAsWindowless
+	internale_CEFJSRegisterExtension
 	//ICefRequest
 	internale_cefRequest_IsReadOnly
 	internale_cefRequest_SetUrl
@@ -1308,4 +1341,35 @@ const (
 	//ICefV8ArrayBufferReleaseCallback
 	internale_CefV8ArrayBufferReleaseCallback_Create
 	internale_CefV8ArrayBufferReleaseCallback_ReleaseBuffer
+	//ICefProcessMessage
+	internale_CefProcessMessageRef_New
+	internale_CefProcessMessageRef_ArgumentList
+	internale_CefProcessMessageRef_Free
+	//ICefListValue
+	internale_CefListValue_IsValid
+	internale_CefListValue_IsOwned
+	internale_CefListValue_IsReadOnly
+	internale_CefListValue_Copy
+	internale_CefListValue_SetSize
+	internale_CefListValue_GetSize
+	internale_CefListValue_Clear
+	internale_CefListValue_Remove
+	internale_CefListValue_GetType
+	internale_CefListValue_GetValue
+	internale_CefListValue_GetBool
+	internale_CefListValue_GetInt
+	internale_CefListValue_GetDouble
+	internale_CefListValue_GetString
+	internale_CefListValue_GetBinary
+	internale_CefListValue_GetDictionary
+	internale_CefListValue_GetList
+	internale_CefListValue_SetValue
+	internale_CefListValue_SetNull
+	internale_CefListValue_SetBool
+	internale_CefListValue_SetInt
+	internale_CefListValue_SetDouble
+	internale_CefListValue_SetString
+	internale_CefListValue_SetBinary
+	internale_CefListValue_SetDictionary
+	internale_CefListValue_SetList
 )
