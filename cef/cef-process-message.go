@@ -32,7 +32,10 @@ func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
 }
 
 func (m *ICefProcessMessage) IsValid() bool {
-	r1, _, _ := imports.Proc(internale_CefProcessMessage_Name).Call(m.Instance())
+	if m == nil || m.instance == nil {
+		return false
+	}
+	r1, _, _ := imports.Proc(internale_CefProcessMessage_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 

@@ -42,8 +42,11 @@ func main() {
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
 			message := cef.ProcessMessageRef.New("testname")
 			fmt.Println("ProcessMessageRef IsValid", message.IsValid(), message.Name())
+			list := message.ArgumentList()
+			fmt.Println("ArgumentList IsValid", list.IsValid())
 			return true
 		})
+		//
 		object := cef.V8ValueRef.NewObject(nil, nil)
 		function := cef.V8ValueRef.NewFunction("testfn", handler)
 		object.SetValueByKey("testfn", function, consts.V8_PROPERTY_ATTRIBUTE_NONE)
