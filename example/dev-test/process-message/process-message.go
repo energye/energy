@@ -40,6 +40,8 @@ func main() {
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
 			fmt.Println("handler.Execute", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
+			message := cef.ProcessMessageRef.New("testname")
+			fmt.Println("ProcessMessageRef IsValid", message.IsValid(), message.Name())
 			return true
 		})
 		object := cef.V8ValueRef.NewObject(nil, nil)

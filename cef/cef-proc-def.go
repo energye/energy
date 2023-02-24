@@ -663,8 +663,11 @@ func init() {
 		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_ReleaseBuffer", 0),
 		//ICefProcessMessage
 		dllimports.NewEnergyImport("CefProcessMessageRef_New", 0),
-		dllimports.NewEnergyImport("CefProcessMessageRef_ArgumentList", 0),
-		dllimports.NewEnergyImport("CefProcessMessageRef_Free", 0),
+		dllimports.NewEnergyImport("CefProcessMessage_ArgumentList", 0),
+		dllimports.NewEnergyImport("CefProcessMessage_IsValid", 0),
+		dllimports.NewEnergyImport("CefProcessMessage_Copy", 0),
+		dllimports.NewEnergyImport("CefProcessMessage_Name", 0),
+		dllimports.NewEnergyImport("CefProcessMessage_Free", 0),
 		//ICefListValu
 		dllimports.NewEnergyImport("CefListValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefListValue_IsOwned", 0),
@@ -1343,8 +1346,11 @@ const (
 	internale_CefV8ArrayBufferReleaseCallback_ReleaseBuffer
 	//ICefProcessMessage
 	internale_CefProcessMessageRef_New
-	internale_CefProcessMessageRef_ArgumentList
-	internale_CefProcessMessageRef_Free
+	internale_CefProcessMessage_ArgumentList
+	internale_CefProcessMessage_IsValid
+	internale_CefProcessMessage_Copy
+	internale_CefProcessMessage_Name
+	internale_CefProcessMessage_Free
 	//ICefListValue
 	internale_CefListValue_IsValid
 	internale_CefListValue_IsOwned
