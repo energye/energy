@@ -657,6 +657,9 @@ func init() {
 		dllimports.NewEnergyImport("CefV8Exception_EndPosition", 0),
 		dllimports.NewEnergyImport("CefV8Exception_StartColumn", 0),
 		dllimports.NewEnergyImport("CefV8Exception_EndColumn", 0),
+		//ICefV8ArrayBufferReleaseCallback
+		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_Create", 0),
+		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_ReleaseBuffer", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1302,4 +1305,7 @@ const (
 	internale_CefV8Exception_EndPosition
 	internale_CefV8Exception_StartColumn
 	internale_CefV8Exception_EndColumn
+	//ICefV8ArrayBufferReleaseCallback
+	internale_CefV8ArrayBufferReleaseCallback_Create
+	internale_CefV8ArrayBufferReleaseCallback_ReleaseBuffer
 )

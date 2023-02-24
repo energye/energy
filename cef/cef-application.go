@@ -336,6 +336,25 @@ func init() {
 			val, exception, ok := ctx.Eval("console.log('evalaa');", "", 0)
 			fmt.Println("eval:", val, exception, ok)
 			fmt.Println("eval-return-value:", val.GetStringValue())
+			array := V8ValueRef.NewArray(1024)
+			fmt.Println("array", array.IsValid())
+			fmt.Println("array-GetArrayLength", array.GetArrayLength())
+			array.SetValueByIndex(0, V8ValueRef.NewString("数组里的值"))
+			fmt.Println("array-GetValueByIndex", array.GetValueByIndex(0).GetStringValue())
+			buf := make([]byte, 256)
+			for i := 0; i < len(buf); i++ {
+				buf[i] = byte(i)
+			}
+			fmt.Println(buf)
+			callback := CreateCefV8ArrayBufferReleaseCallback()
+			callback.ReleaseBuffer(func(buffer uintptr) bool {
+				fmt.Println("释放？")
+				return true
+			})
+			buffer := V8ValueRef.NewArrayBuffer(buf, callback)
+			fmt.Println("ArrayBuffer IsValid", buffer.IsValid())
+			ctx.Global.SetValueByKey("arrBuf", buffer, V8_PROPERTY_ATTRIBUTE_NONE)
+
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)
