@@ -668,7 +668,8 @@ func init() {
 		dllimports.NewEnergyImport("CefProcessMessage_Copy", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Name", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Free", 0),
-		//ICefListValu
+		//ICefListValue
+		dllimports.NewEnergyImport("CefListValue_New", 0),
 		dllimports.NewEnergyImport("CefListValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefListValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefListValue_IsReadOnly", 0),
@@ -695,6 +696,28 @@ func init() {
 		dllimports.NewEnergyImport("CefListValue_SetBinary", 0),
 		dllimports.NewEnergyImport("CefListValue_SetDictionary", 0),
 		dllimports.NewEnergyImport("CefListValue_SetList", 0),
+		//ICefValue
+		dllimports.NewEnergyImport("CefValueRef_New", 0),
+		dllimports.NewEnergyImport("CefValue_IsValid", 0),
+		dllimports.NewEnergyImport("CefValue_IsOwned", 0),
+		dllimports.NewEnergyImport("CefValue_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefValue_Copy", 0),
+		dllimports.NewEnergyImport("CefValue_GetType", 0),
+		dllimports.NewEnergyImport("CefValue_GetBool", 0),
+		dllimports.NewEnergyImport("CefValue_GetInt", 0),
+		dllimports.NewEnergyImport("CefValue_GetDouble", 0),
+		dllimports.NewEnergyImport("CefValue_GetString", 0),
+		dllimports.NewEnergyImport("CefValue_GetBinary", 0),
+		dllimports.NewEnergyImport("CefValue_GetDictionary", 0),
+		dllimports.NewEnergyImport("CefValue_GetList", 0),
+		dllimports.NewEnergyImport("CefValue_SetNull", 0),
+		dllimports.NewEnergyImport("CefValue_SetBool", 0),
+		dllimports.NewEnergyImport("CefValue_SetInt", 0),
+		dllimports.NewEnergyImport("CefValue_SetDouble", 0),
+		dllimports.NewEnergyImport("CefValue_SetString", 0),
+		dllimports.NewEnergyImport("CefValue_SetBinary", 0),
+		dllimports.NewEnergyImport("CefValue_SetDictionary", 0),
+		dllimports.NewEnergyImport("CefValue_SetList", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1352,6 +1375,7 @@ const (
 	internale_CefProcessMessage_Name
 	internale_CefProcessMessage_Free
 	//ICefListValue
+	internale_CefListValue_New
 	internale_CefListValue_IsValid
 	internale_CefListValue_IsOwned
 	internale_CefListValue_IsReadOnly
@@ -1378,4 +1402,26 @@ const (
 	internale_CefListValue_SetBinary
 	internale_CefListValue_SetDictionary
 	internale_CefListValue_SetList
+	//ICefValue
+	internale_CefValueRef_New
+	internale_CefValue_IsValid
+	internale_CefValue_IsOwned
+	internale_CefValue_IsReadOnly
+	internale_CefValue_Copy
+	internale_CefValue_GetType
+	internale_CefValue_GetBool
+	internale_CefValue_GetInt
+	internale_CefValue_GetDouble
+	internale_CefValue_GetString
+	internale_CefValue_GetBinary
+	internale_CefValue_GetDictionary
+	internale_CefValue_GetList
+	internale_CefValue_SetNull
+	internale_CefValue_SetBool
+	internale_CefValue_SetInt
+	internale_CefValue_SetDouble
+	internale_CefValue_SetString
+	internale_CefValue_SetBinary
+	internale_CefValue_SetDictionary
+	internale_CefValue_SetList
 )
