@@ -649,6 +649,11 @@ func init() {
 		dllimports.NewEnergyImport("CefV8Context_Enter", 0),
 		dllimports.NewEnergyImport("CefV8Context_Exit", 0),
 		dllimports.NewEnergyImport("CefV8Context_IsSame", 0),
+		dllimports.NewEnergyImport("CefV8Context_Browser", 0),
+		dllimports.NewEnergyImport("CefV8Context_Frame", 0),
+		dllimports.NewEnergyImport("CefV8Context_Global", 0),
+		dllimports.NewEnergyImport("CefV8ContextRef_Current", 0),
+		dllimports.NewEnergyImport("CefV8ContextRef_Entered", 0),
 		//ICefV8Exception
 		dllimports.NewEnergyImport("CefV8Exception_Message", 0),
 		dllimports.NewEnergyImport("CefV8Exception_SourceLine", 0),
@@ -1391,6 +1396,11 @@ const (
 	internale_CefV8Context_Enter
 	internale_CefV8Context_Exit
 	internale_CefV8Context_IsSame
+	internale_CefV8Context_Browser
+	internale_CefV8Context_Frame
+	internale_CefV8Context_Global
+	internale_CefV8ContextRef_Current
+	internale_CefV8ContextRef_Entered
 	//ICefV8Exception
 	internale_CefV8Exception_Message
 	internale_CefV8Exception_SourceLine

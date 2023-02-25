@@ -244,9 +244,9 @@ type ICefV8Exception struct {
 // ICefV8Context
 type ICefV8Context struct {
 	instance unsafe.Pointer
-	Browser  *ICefBrowser
-	Frame    *ICefFrame
-	Global   *ICefV8Value
+	//Browser  *ICefBrowser
+	//Frame    *ICefFrame
+	//Global   *ICefV8Value
 }
 
 // ICefV8Value

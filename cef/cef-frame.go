@@ -22,10 +22,11 @@ import (
 // ICefFrame
 // Html <frame>...</frame>
 type ICefFrame struct {
-	Browser *ICefBrowser
-	Name    string
-	Url     string
-	Id      int64
+	instance unsafe.Pointer
+	Browser  *ICefBrowser
+	Name     string
+	Url      string
+	Id       int64
 }
 
 type cefFrame struct {

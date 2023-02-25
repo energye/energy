@@ -23,6 +23,7 @@ import (
 
 // type ICefBrowser
 type ICefBrowser struct {
+	instance unsafe.Pointer
 	chromium unsafe.Pointer
 	browseId int32
 }

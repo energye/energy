@@ -17,6 +17,12 @@ import (
 	"unsafe"
 )
 
+// V8ContextRef -> ICefV8Context
+var V8ContextRef *cefV8ContextRef
+
+// cefV8ContextRef
+type cefV8ContextRef uintptr
+
 // Instance 实例
 func (m *ICefV8Context) Instance() uintptr {
 	return uintptr(m.instance)
@@ -50,4 +56,44 @@ func (m *ICefV8Context) Exit() bool {
 func (m *ICefV8Context) IsSame(that *ICefV8Context) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Context_IsSame).Call(m.Instance(), that.Instance())
 	return api.GoBool(r1)
+}
+
+func (m *ICefV8Context) Browser() *ICefBrowser {
+	var result uintptr
+	imports.Proc(internale_CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{
+		instance: unsafe.Pointer(result),
+	}
+}
+
+func (m *ICefV8Context) Frame() *ICefFrame {
+	var result uintptr
+	imports.Proc(internale_CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefFrame{
+		instance: unsafe.Pointer(result),
+	}
+}
+
+func (m *ICefV8Context) Global() *ICefV8Value {
+	var result uintptr
+	imports.Proc(internale_CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{
+		instance: unsafe.Pointer(result),
+	}
+}
+
+func (m *cefV8ContextRef) Current() *ICefV8Context {
+	var result uintptr
+	imports.Proc(internale_CefV8ContextRef_Current).Call(uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Context{
+		instance: unsafe.Pointer(result),
+	}
+}
+
+func (m *cefV8ContextRef) Entered() *ICefV8Context {
+	var result uintptr
+	imports.Proc(internale_CefV8ContextRef_Entered).Call(uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Context{
+		instance: unsafe.Pointer(result),
+	}
 }

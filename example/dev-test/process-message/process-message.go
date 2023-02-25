@@ -72,7 +72,7 @@ func main() {
 		object := cef.V8ValueRef.NewObject(nil)
 		function := cef.V8ValueRef.NewFunction("testfn", handler)
 		object.SetValueByKey("testfn", function, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-		context.Global.SetValueByKey("testset", object, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+		context.Global().SetValueByKey("testset", object, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 		return false
 	})
 
