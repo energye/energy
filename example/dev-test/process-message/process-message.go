@@ -58,7 +58,15 @@ func main() {
 			buf := make([]byte, 300)
 			fmt.Println("BinaryValueNew GetData", value.GetData(buf, 0))
 			fmt.Println("BinaryValueNew GetData buf", buf)
-			return true
+			dictionaryValue := cef.DictionaryValueRef.New()
+			dictionaryValue.SetString("strdicttest", "字符串？")
+			dictionaryValue.SetDouble("doubledicttest", 9999.666)
+			fmt.Println("DictionaryValueRef IsValid", dictionaryValue.IsValid(), dictionaryValue.GetSize(), dictionaryValue.GetString("strdicttest"), dictionaryValue.GetDouble("doubledicttest"))
+			listCopy.SetDictionary(2, dictionaryValue)
+			dictionaryValue = listCopy.GetDictionary(2)
+			fmt.Println("DictionaryValueRef IsValid", dictionaryValue.IsValid(), dictionaryValue.GetSize(), dictionaryValue.GetDouble("doubledicttest"))
+			//list.SetDictionary()
+			return false
 		})
 		//
 		object := cef.V8ValueRef.NewObject(nil, nil)

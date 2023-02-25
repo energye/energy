@@ -35,11 +35,13 @@ func (m *ICefV8Context) Eval(code, scriptUrl string, startLine int32) (value *IC
 	return value, exception, api.GoBool(r1)
 }
 
+// Enter 进入上下文
 func (m *ICefV8Context) Enter() bool {
 	r1, _, _ := imports.Proc(internale_CefV8Context_Enter).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
+// Exit 退出上下文
 func (m *ICefV8Context) Exit() bool {
 	r1, _, _ := imports.Proc(internale_CefV8Context_Exit).Call(m.Instance())
 	return api.GoBool(r1)

@@ -667,7 +667,6 @@ func init() {
 		dllimports.NewEnergyImport("CefProcessMessage_IsValid", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Copy", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Name", 0),
-		dllimports.NewEnergyImport("CefProcessMessage_Free", 0),
 		//ICefListValue
 		dllimports.NewEnergyImport("CefListValue_New", 0),
 		dllimports.NewEnergyImport("CefListValue_IsValid", 0),
@@ -729,7 +728,7 @@ func init() {
 		//ICefDictionaryValue
 		dllimports.NewEnergyImport("CefDictionaryValueRef_New", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_IsValid", 0),
-		dllimports.NewEnergyImport("CefDictionaryValue_isOwned", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_IsReadOnly", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_Copy", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_GetSize", 0),
@@ -1410,7 +1409,6 @@ const (
 	internale_CefProcessMessage_IsValid
 	internale_CefProcessMessage_Copy
 	internale_CefProcessMessage_Name
-	internale_CefProcessMessage_Free
 	//ICefListValue
 	internale_CefListValue_New
 	internale_CefListValue_IsValid
@@ -1472,7 +1470,7 @@ const (
 	//ICefDictionaryValue
 	internale_CefDictionaryValueRef_New
 	internale_CefDictionaryValue_IsValid
-	internale_CefDictionaryValue_isOwned
+	internale_CefDictionaryValue_IsOwned
 	internale_CefDictionaryValue_IsReadOnly
 	internale_CefDictionaryValue_Copy
 	internale_CefDictionaryValue_GetSize

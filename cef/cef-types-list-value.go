@@ -1,3 +1,14 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+// CEF 集合类型 ListValueRef.New
 package cef
 
 import (
@@ -14,6 +25,7 @@ var ListValueRef cefListValue
 //cefListValue
 type cefListValue uintptr
 
+// New 创建一个集合类型
 func (*cefListValue) New() *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_CefListValue_New).Call(uintptr(unsafe.Pointer(&result)))
@@ -172,4 +184,9 @@ func (m *ICefListValue) SetDictionary(index types.NativeUInt, value *ICefDiction
 func (m *ICefListValue) SetList(index types.NativeUInt, value *ICefListValue) bool {
 	r1, _, _ := imports.Proc(internale_CefListValue_SetList).Call(m.Instance(), index.ToPtr(), value.Instance())
 	return api.GoBool(r1)
+}
+
+func (m *ICefListValue) Free() {
+	m.Clear()
+	m.instance = nil
 }

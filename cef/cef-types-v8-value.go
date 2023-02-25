@@ -1,3 +1,14 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+// CEF v8 value V8所有类型
 package cef
 
 import (
@@ -290,19 +301,23 @@ func (m *ICefV8Value) Free() {
 	m.instance = nil
 }
 
+// ResultV8Value 返回 ICefV8Value 的替代结构
 type ResultV8Value struct {
 	v8value *ICefV8Value
 }
 
+// SetResult 设置 ICefV8Value 返回值
 func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
 	m.v8value = v8value
 }
 
+// TCefV8ValueArray ICefV8Value 数组的替代结构
 type TCefV8ValueArray struct {
 	arguments       uintptr
 	argumentsLength int
 }
 
+// Get 根据下标获取 ICefV8Value
 func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	if index < m.argumentsLength {
 		return &ICefV8Value{instance: unsafe.Pointer(common.GetParamOf(index, m.arguments))}
@@ -310,6 +325,7 @@ func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	return nil
 }
 
+// Size 返回 ICefV8Value 数组长度
 func (m *TCefV8ValueArray) Size() int {
 	return m.argumentsLength
 }

@@ -1,3 +1,14 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+// CEF 进程消息 ProcessMessage.New()
 package cef
 
 import (
@@ -12,6 +23,9 @@ var ProcessMessage processMessageRef
 //processMessageRef
 type processMessageRef uintptr
 
+// New 创建一个进程消息类型
+//
+// 参数: name 消息名
 func (*processMessageRef) New(name string) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(internale_CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
@@ -53,6 +67,6 @@ func (m *ICefProcessMessage) Name() string {
 }
 
 func (m *ICefProcessMessage) Free() {
-	imports.Proc(internale_CefProcessMessage_Free).Call(m.Instance())
+	m.ArgumentList().Free()
 	m.instance = nil
 }
