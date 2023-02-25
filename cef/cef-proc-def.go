@@ -375,6 +375,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsValid", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsMain", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
+		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageByIPC", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
 		//ICefMenuModel
 		dllimports.NewEnergyImport("cefMenuModel_AddSeparator", 0),
@@ -1122,6 +1123,7 @@ const (
 	internale_CEFFrame_IsValid
 	internale_CEFFrame_IsMain
 	internale_CEFFrame_IsFocused
+	internale_CEFFrame_SendProcessMessageByIPC
 	internale_CEFFrame_SendProcessMessage
 	//ICefMenuModel
 	internale_cefMenuModel_AddSeparator

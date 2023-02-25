@@ -116,6 +116,8 @@ func main() {
 			val, ex, ok = context.Eval("errtest();", "", 0)
 			fmt.Println("Execute errtest:", val, ex, ok)
 			fmt.Println("Execute errtest-error:", ex.Message(), ex.LineNumber())
+			fmt.Println("V8ContextRef.Current()", cef.V8ContextRef.Current().Global().GetValueByKey("arrBuf").IsArrayBuffer())
+			fmt.Println("V8ContextRef.Entered()", cef.V8ContextRef.Entered().Global().GetValueByKey("arrBuf").IsArrayBuffer())
 			return true
 		})
 		object := cef.V8ValueRef.NewObject(accessor)
@@ -148,8 +150,6 @@ func main() {
 		buffer := cef.V8ValueRef.NewArrayBuffer(buf, callback)
 		fmt.Println("ArrayBuffer IsValid", buffer.IsValid())
 		context.Global().SetValueByKey("arrBuf", buffer, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-		fmt.Println("V8ContextRef.Current()", cef.V8ContextRef.Current().Global().GetValueByKey("arrBuf").IsArrayBuffer())
-		fmt.Println("V8ContextRef.Entered()", cef.V8ContextRef.Entered().Global().GetValueByKey("arrBuf").IsArrayBuffer())
 		return false
 	})
 

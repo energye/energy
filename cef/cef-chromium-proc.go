@@ -381,7 +381,7 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMes
 	var browser = BrowserWindow.GetBrowser(1)
 	data := processMessage.ArgumentList.Package()
 
-	r1 := _CEFFrame_SendProcessMessage(1, browser.MainFrame().Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
+	r1 := _CEFFrame_SendProcessMessageByIPC(1, browser.MainFrame().Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
 	return int(r1)
 }
 

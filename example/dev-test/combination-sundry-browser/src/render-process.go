@@ -73,7 +73,7 @@ func AppRenderInit() *cef.TCEFApplication {
 		fmt.Println("\t|--Args:", common.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
 		message = ipc.NewProcessMessage("test")
 		message.ArgumentList.SetString(0, "渲染进程发送数据")
-		frame.SendProcessMessage(consts.PID_BROWSER, message)
+		frame.SendProcessMessageByIPC(consts.PID_BROWSER, message)
 		message.ArgumentList.Clear()
 		return false
 	})

@@ -38,12 +38,12 @@ type FrameNames struct {
 	Value string
 }
 
-// 获取浏览器ID 每一个窗口独占唯一ID
+// GetBrowserId 获取浏览器ID 每一个窗口独占唯一ID
 func (m *ICefBrowser) GetBrowserId() int32 {
 	return m.browseId
 }
 
-// 获取FrameID 一个窗口中可以有多Frame
+// GetFrameId 获取FrameID 一个窗口中可以有多Frame
 func (m *ICefBrowser) GetFrameId() int64 {
 	if mainFrame := m.MainFrame(); mainFrame != nil {
 		return mainFrame.Id
@@ -51,7 +51,7 @@ func (m *ICefBrowser) GetFrameId() int64 {
 	return 0
 }
 
-// 浏览器ID号
+// Identifier 浏览器ID号
 func (m *ICefBrowser) Identifier() int32 {
 	return m.browseId
 }

@@ -87,7 +87,7 @@ func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
 
 func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList ipc.IArgumentList) ProcessMessageError {
 	data := argumentList.Package()
-	r1 := _CEFFrame_SendProcessMessage(browseId, frameId, name, PID_RENDER, int32(argumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
+	r1 := _CEFFrame_SendProcessMessageByIPC(browseId, frameId, name, PID_RENDER, int32(argumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
 	return ProcessMessageError(r1)
 }
 
