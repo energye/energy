@@ -15,25 +15,6 @@
                 str += "<br>";
                 doc.innerHTML = str;
             }
-
-            try {
-                test("JSFunc:", gocobj.JSFunc("asdf" + new Date().getTime()))
-            } catch (e) {
-                test(e)
-            }
-            try {
-                test("JSDouble:", gocobj.JSDouble)
-            } catch (e) {
-                test(e)
-            }
-            try {
-                test("goobj.TestFunc:", goobj.TestFunc())
-            } catch (e) {
-                test(e)
-            }
-            let ssss = {
-                "asdf": "ffffff"
-            }
             // for (let i = 0; i < 100000; i++) {
             // let test = window.testset.testcca
             // window.testset.testfn("字符串", 333)

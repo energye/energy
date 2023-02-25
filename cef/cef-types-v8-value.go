@@ -400,9 +400,10 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 	}
 }
 
-func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
+//func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
+func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), interceptor.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}

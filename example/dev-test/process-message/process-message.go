@@ -66,10 +66,10 @@ func main() {
 			dictionaryValue = listCopy.GetDictionary(2)
 			fmt.Println("DictionaryValueRef IsValid", dictionaryValue.IsValid(), dictionaryValue.GetSize(), dictionaryValue.GetDouble("doubledicttest"))
 			//list.SetDictionary()
-			return false
+			return true
 		})
 		//
-		object := cef.V8ValueRef.NewObject(nil, nil)
+		object := cef.V8ValueRef.NewObject(nil)
 		function := cef.V8ValueRef.NewFunction("testfn", handler)
 		object.SetValueByKey("testfn", function, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 		context.Global.SetValueByKey("testset", object, consts.V8_PROPERTY_ATTRIBUTE_READONLY)

@@ -11,12 +11,12 @@
 //CEF v8 对象拦截器 V8InterceptorRef.New
 //
 // ICefV8Value
+//
+// TODO 未使用
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common/imports"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -57,46 +57,42 @@ func (m *ICefV8Interceptor) Instance() uintptr {
 
 // GetByName 拦截函数 根据name获取一个值
 func (m *ICefV8Interceptor) GetByName(fn V8InterceptorGetByName) {
-	imports.Proc(internale_CefV8InterceptorRef_GetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CefV8Interceptor_GetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // GetByIndex 拦截函数 根据index获取一个值
 func (m *ICefV8Interceptor) GetByIndex(fn V8InterceptorGetByIndex) {
-	imports.Proc(internale_CefV8InterceptorRef_GetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CefV8Interceptor_GetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetByName 拦截函数 根据name设置一个值
 func (m *ICefV8Interceptor) SetByName(fn V8InterceptorSetByName) {
-	imports.Proc(internale_CefV8InterceptorRef_SetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CefV8Interceptor_SetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetByIndex 拦截函数 根据index设置一个值
 func (m *ICefV8Interceptor) SetByIndex(fn V8InterceptorSetByIndex) {
-	imports.Proc(internale_CefV8InterceptorRef_SetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CefV8Interceptor_SetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // Destroy 销毁这个拦截器
 func (m *ICefV8Interceptor) Destroy() {
-	imports.Proc(internale_CefV8InterceptorRef_Destroy).Call(m.Instance())
+	imports.Proc(internale_CefV8Interceptor_Destroy).Call(m.Instance())
 }
 
-func init() {
-	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
-		switch fn.(type) {
-		case V8InterceptorGetByName:
-			fmt.Println("----V8InterceptorGetByName", getPtr)
-		case V8InterceptorGetByIndex:
-			fmt.Println("----V8InterceptorGetByIndex", getPtr)
-		case V8InterceptorSetByName:
-			fmt.Println("----V8InterceptorSetByName", getPtr)
-		case V8InterceptorSetByIndex:
-			fmt.Println("----V8InterceptorSetByIndex", getPtr)
-		default:
-			return false
-		}
-		return true
-	})
-}
+//func init() {
+//	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+//		//getPtr := func(i int) unsafe.Pointer {
+//		//	return unsafe.Pointer(getVal(i))
+//		//}
+//		switch fn.(type) {
+//		case V8InterceptorGetByName:
+//		case V8InterceptorGetByIndex:
+//		case V8InterceptorSetByName:
+//		case V8InterceptorSetByIndex:
+//		default:
+//			return false
+//		}
+//		return true
+//	})
+//}
