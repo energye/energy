@@ -718,6 +718,43 @@ func init() {
 		dllimports.NewEnergyImport("CefValue_SetBinary", 0),
 		dllimports.NewEnergyImport("CefValue_SetDictionary", 0),
 		dllimports.NewEnergyImport("CefValue_SetList", 0),
+		//ICefBinaryValue
+		dllimports.NewEnergyImport("CefBinaryValueRef_New", 0),
+		dllimports.NewEnergyImport("CefBinaryValueRef_Create", 0),
+		dllimports.NewEnergyImport("CefBinaryValue_IsValid", 0),
+		dllimports.NewEnergyImport("CefBinaryValue_IsOwned", 0),
+		dllimports.NewEnergyImport("CefBinaryValue_Copy", 0),
+		dllimports.NewEnergyImport("CefBinaryValue_GetSize", 0),
+		dllimports.NewEnergyImport("CefBinaryValue_GetData", 0),
+		//ICefDictionaryValue
+		dllimports.NewEnergyImport("CefDictionaryValueRef_New", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_IsValid", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_isOwned", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_Copy", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetSize", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_Clear", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_HasKey", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetKeys", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_Remove", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetType", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetValue", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetBool", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetInt", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetDouble", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetString", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetBinary", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetDictionary", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_GetList", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetValue", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetNull", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetBool", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetInt", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetDouble", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetString", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetBinary", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetDictionary", 0),
+		dllimports.NewEnergyImport("CefDictionaryValue_SetList", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1424,4 +1461,41 @@ const (
 	internale_CefValue_SetBinary
 	internale_CefValue_SetDictionary
 	internale_CefValue_SetList
+	//ICefBinaryValue
+	internale_CefBinaryValueRef_New
+	internale_CefBinaryValueRef_Create
+	internale_CefBinaryValue_IsValid
+	internale_CefBinaryValue_IsOwned
+	internale_CefBinaryValue_Copy
+	internale_CefBinaryValue_GetSize
+	internale_CefBinaryValue_GetData
+	//ICefDictionaryValue
+	internale_CefDictionaryValueRef_New
+	internale_CefDictionaryValue_IsValid
+	internale_CefDictionaryValue_isOwned
+	internale_CefDictionaryValue_IsReadOnly
+	internale_CefDictionaryValue_Copy
+	internale_CefDictionaryValue_GetSize
+	internale_CefDictionaryValue_Clear
+	internale_CefDictionaryValue_HasKey
+	internale_CefDictionaryValue_GetKeys
+	internale_CefDictionaryValue_Remove
+	internale_CefDictionaryValue_GetType
+	internale_CefDictionaryValue_GetValue
+	internale_CefDictionaryValue_GetBool
+	internale_CefDictionaryValue_GetInt
+	internale_CefDictionaryValue_GetDouble
+	internale_CefDictionaryValue_GetString
+	internale_CefDictionaryValue_GetBinary
+	internale_CefDictionaryValue_GetDictionary
+	internale_CefDictionaryValue_GetList
+	internale_CefDictionaryValue_SetValue
+	internale_CefDictionaryValue_SetNull
+	internale_CefDictionaryValue_SetBool
+	internale_CefDictionaryValue_SetInt
+	internale_CefDictionaryValue_SetDouble
+	internale_CefDictionaryValue_SetString
+	internale_CefDictionaryValue_SetBinary
+	internale_CefDictionaryValue_SetDictionary
+	internale_CefDictionaryValue_SetList
 )

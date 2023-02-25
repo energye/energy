@@ -42,7 +42,22 @@ func main() {
 			message := cef.ProcessMessage.New("testname")
 			fmt.Println("ProcessMessageRef IsValid", message.IsValid(), message.Name())
 			list := message.ArgumentList()
-			fmt.Println("ArgumentList IsValid", list.IsValid())
+			list.SetString(0, "值？")
+			fmt.Println("list IsValid", list.IsValid(), list.GetSize(), list.GetString(0))
+			listCopy := list.Copy()
+			fmt.Println("listCopy GetString", listCopy.IsValid(), list.GetSize(), list.GetString(0), list.GetValue(0).GetType())
+			listCopy.SetDouble(1, 112211.22)
+			fmt.Println("listCopy GetDouble", listCopy.GetDouble(1), listCopy.GetType(1))
+			data := make([]byte, 1024, 1024)
+			for i := 0; i < len(data); i++ {
+				data[i] = byte(i % 255)
+			}
+			value := cef.BinaryValueRef.New(data)
+			fmt.Println("BinaryValueNew IsValid", value.IsValid())
+			fmt.Println("BinaryValueNew size", value.GetSize())
+			buf := make([]byte, 300)
+			fmt.Println("BinaryValueNew GetData", value.GetData(buf, 0))
+			fmt.Println("BinaryValueNew GetData buf", buf)
 			return true
 		})
 		//

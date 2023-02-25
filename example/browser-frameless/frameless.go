@@ -33,7 +33,7 @@ func main() {
 	cefApp := cef.NewApplication(config)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200
