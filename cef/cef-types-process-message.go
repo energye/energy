@@ -6,13 +6,13 @@ import (
 	"unsafe"
 )
 
-// TCefProcessMessageRef -> ICefProcessMessage
-type TCefProcessMessageRef uintptr
+// ProcessMessage -> ICefProcessMessage
+var ProcessMessage processMessageRef
 
-// ProcessMessageRef -> ICefProcessMessage
-var ProcessMessageRef TCefProcessMessageRef
+//processMessageRef
+type processMessageRef uintptr
 
-func (*TCefProcessMessageRef) New(name string) *ICefProcessMessage {
+func (*processMessageRef) New(name string) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(internale_CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{

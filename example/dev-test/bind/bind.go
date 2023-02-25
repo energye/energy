@@ -91,8 +91,8 @@ func main() {
 		fmt.Println("iCefV8ContextPtr GetExternallyAllocatedMemory.GetValueByKey", context.Global.GetValueByKey("name").GetExternallyAllocatedMemory())
 		fmt.Println("iCefV8ContextPtr GetFunctionName", context.Global.GetFunctionName())
 		fmt.Println("V8ValueRef IsValid", cef.V8ValueRef.NewUndefined().IsValid())
-		handler := cef.CreateCefV8Handler()
-		accessor := cef.CreateCefV8Accessor()
+		handler := cef.V8HandlerRef.New()
+		accessor := cef.V8AccessorRef.New()
 		fmt.Println("handler-accessor:", handler, accessor)
 		accessor.Get(func(name string, object *cef.ICefV8Value, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
 			retVal.SetResult(cef.V8ValueRef.NewString("这能返回？"))
@@ -140,7 +140,7 @@ func main() {
 			buf[i] = byte(i)
 		}
 		fmt.Println(buf)
-		callback := cef.CreateCefV8ArrayBufferReleaseCallback()
+		callback := cef.V8ArrayBufferReleaseCallbackRef.New()
 		callback.ReleaseBuffer(func(buffer uintptr) bool {
 			fmt.Println("释放？")
 			return true

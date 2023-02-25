@@ -9,7 +9,13 @@ import (
 
 type V8HandlerExecute func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool
 
-func CreateCefV8Handler() *ICefV8Handler {
+//V8HandlerRef -> ICefV8Handler
+var V8HandlerRef cefV8Handler
+
+//cefV8Handler
+type cefV8Handler uintptr
+
+func (*cefV8Handler) New() *ICefV8Handler {
 	var result uintptr
 	imports.Proc(internale_CefV8Handler_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Handler{

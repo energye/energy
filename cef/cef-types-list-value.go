@@ -8,7 +8,13 @@ import (
 	"unsafe"
 )
 
-func NewCefListValue() *ICefListValue {
+// ListValueRef -> ICefListValue
+var ListValueRef cefListValue
+
+//cefListValue
+type cefListValue uintptr
+
+func (*cefListValue) New() *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_CefListValue_New).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{

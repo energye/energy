@@ -10,7 +10,13 @@ import (
 type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool
 type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool
 
-func CreateCefV8Accessor() *ICefV8Accessor {
+//V8AccessorRef -> ICefV8Accessor
+var V8AccessorRef cefV8Accessor
+
+// cefV8Accessor
+type cefV8Accessor uintptr
+
+func (*cefV8Accessor) New() *ICefV8Accessor {
 	var result uintptr
 	imports.Proc(internale_CefV8Accessor_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Accessor{

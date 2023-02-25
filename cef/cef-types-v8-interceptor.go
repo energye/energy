@@ -13,7 +13,13 @@ type V8InterceptorGetByIndex func(index int32, object, retVal *ICefV8Value, exce
 type V8InterceptorSetByName func(name string, object, value, retVal *ICefV8Value, exception string)
 type V8InterceptorSetByIndex func(index int32, object, value, retVal *ICefV8Value, exception string)
 
-func CreateCefV8InterceptorRef() *ICefV8Interceptor {
+//V8InterceptorRef -> ICefV8Interceptor
+var V8InterceptorRef cefV8Interceptor
+
+//cefV8Interceptor
+type cefV8Interceptor uintptr
+
+func (*cefV8Interceptor) New() *ICefV8Interceptor {
 	var result uintptr
 	imports.Proc(internale_CefV8InterceptorRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Interceptor{

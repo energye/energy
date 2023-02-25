@@ -5,7 +5,13 @@ import (
 	"unsafe"
 )
 
-func NewCefValue() *ICefValue {
+//ValueRef -> ICefValue
+var ValueRef cefValue
+
+//cefValue
+type cefValue uintptr
+
+func (*cefValue) New() *ICefValue {
 	var result uintptr
 	imports.Proc(internale_CefValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefValue{

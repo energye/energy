@@ -449,12 +449,13 @@ func (m *TCefV8ValueArray) Size() int {
 	return m.argumentsLength
 }
 
-// TCefV8ValueRef
-type TCefV8ValueRef uintptr
+// V8ValueRef -> ICefV8Value
+var V8ValueRef cefV8Value
 
-var V8ValueRef TCefV8ValueRef
+// cefV8Value
+type cefV8Value uintptr
 
-func (*TCefV8ValueRef) NewUndefined() *ICefV8Value {
+func (*cefV8Value) NewUndefined() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewUndefined).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -462,7 +463,7 @@ func (*TCefV8ValueRef) NewUndefined() *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewNull() *ICefV8Value {
+func (*cefV8Value) NewNull() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewNull).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -470,14 +471,14 @@ func (*TCefV8ValueRef) NewNull() *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewBool(value bool) *ICefV8Value {
+func (*cefV8Value) NewBool(value bool) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewBool).Call(api.PascalBool(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
 }
-func (*TCefV8ValueRef) NewInt(value int32) *ICefV8Value {
+func (*cefV8Value) NewInt(value int32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewInt).Call(uintptr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -485,7 +486,7 @@ func (*TCefV8ValueRef) NewInt(value int32) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewUInt(value uint32) *ICefV8Value {
+func (*cefV8Value) NewUInt(value uint32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewUInt).Call(uintptr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -493,7 +494,7 @@ func (*TCefV8ValueRef) NewUInt(value uint32) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewDouble(value float64) *ICefV8Value {
+func (*cefV8Value) NewDouble(value float64) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewDouble).Call(uintptr(unsafe.Pointer(&value)), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -501,7 +502,7 @@ func (*TCefV8ValueRef) NewDouble(value float64) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewDate(value time.Time) *ICefV8Value {
+func (*cefV8Value) NewDate(value time.Time) *ICefV8Value {
 	var result uintptr
 	val := common.GoDateTimeToDDateTime(value)
 	imports.Proc(internale_CefV8ValueRef_NewDate).Call(uintptr(unsafe.Pointer(&val)), uintptr(unsafe.Pointer(&result)))
@@ -510,7 +511,7 @@ func (*TCefV8ValueRef) NewDate(value time.Time) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewString(value string) *ICefV8Value {
+func (*cefV8Value) NewString(value string) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewString).Call(api.PascalStr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -518,7 +519,7 @@ func (*TCefV8ValueRef) NewString(value string) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
+func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), interceptor.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -526,7 +527,7 @@ func (*TCefV8ValueRef) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8In
 	}
 }
 
-func (*TCefV8ValueRef) NewArray(len int32) *ICefV8Value {
+func (*cefV8Value) NewArray(len int32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewArray).Call(uintptr(len), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -534,13 +535,13 @@ func (*TCefV8ValueRef) NewArray(len int32) *ICefV8Value {
 	}
 }
 
-func (*TCefV8ValueRef) NewArrayBuffer(buffer []byte, callback *ICefV8ArrayBufferReleaseCallback) *ICefV8Value {
+func (*cefV8Value) NewArrayBuffer(buffer []byte, callback *ICefV8ArrayBufferReleaseCallback) *ICefV8Value {
 	var bufLen = len(buffer)
 	if bufLen == 0 {
 		return nil
 	}
 	if callback == nil {
-		callback = CreateCefV8ArrayBufferReleaseCallback()
+		callback = V8ArrayBufferReleaseCallbackRef.New()
 	}
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewArrayBuffer).Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(int32(bufLen)), callback.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -549,7 +550,7 @@ func (*TCefV8ValueRef) NewArrayBuffer(buffer []byte, callback *ICefV8ArrayBuffer
 	}
 }
 
-func (*TCefV8ValueRef) NewFunction(name string, handler *ICefV8Handler) *ICefV8Value {
+func (*cefV8Value) NewFunction(name string, handler *ICefV8Handler) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewFunction).Call(api.PascalStr(name), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -557,7 +558,7 @@ func (*TCefV8ValueRef) NewFunction(name string, handler *ICefV8Handler) *ICefV8V
 	}
 }
 
-func (*TCefV8ValueRef) NewPromise() *ICefV8Value {
+func (*cefV8Value) NewPromise() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewPromise).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{

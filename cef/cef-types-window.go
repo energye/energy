@@ -292,3 +292,7 @@ func (m *ICefWindow) RemoveAccelerator(commandId int32) {
 func (m *ICefWindow) RemoveAllAccelerators() {
 	imports.Proc(internale_ICEFWindow_RemoveAllAccelerators).Call(uintptr(m.instance))
 }
+
+func (m *ICefWindow) SetWindow(window *ICefWindow) {
+	m.instance = window.instance
+}

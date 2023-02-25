@@ -312,10 +312,6 @@ func NewCefPoint(x, y int32) *TCefPoint {
 	}
 }
 
-func (m *ICefWindow) SetWindow(window *ICefWindow) {
-	m.instance = window.instance
-}
-
 func (m *ICefClient) SetClient(client *ICefClient) {
 	m.instance = client.instance
 }

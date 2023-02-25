@@ -12,10 +12,16 @@ import (
 // 返回 true:释放buffer, false:不释放
 type V8ArrayBufferReleaseCallback func(buffer uintptr) bool
 
-// CreateCefV8ArrayBufferReleaseCallback 创建V8 ArrayBuffer 释放回调函数
+//V8ArrayBufferReleaseCallbackRef -> ICefV8ArrayBufferReleaseCallback
+var V8ArrayBufferReleaseCallbackRef cefV8ArrayBufferReleaseCallback
+
+//cefV8ArrayBufferReleaseCallback
+type cefV8ArrayBufferReleaseCallback uintptr
+
+// New 创建V8 ArrayBuffer 释放回调函数
 //
 // 默认自动释放 buffer
-func CreateCefV8ArrayBufferReleaseCallback() *ICefV8ArrayBufferReleaseCallback {
+func (*cefV8ArrayBufferReleaseCallback) New() *ICefV8ArrayBufferReleaseCallback {
 	var result uintptr
 	imports.Proc(internale_CefV8ArrayBufferReleaseCallback_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8ArrayBufferReleaseCallback{

@@ -33,14 +33,13 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
-		handler := cef.CreateCefV8Handler()
+		handler := cef.V8HandlerRef.New()
 		fmt.Println("handler:", handler)
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
 			fmt.Println("handler.Execute", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
-			message := cef.ProcessMessageRef.New("testname")
+			message := cef.ProcessMessage.New("testname")
 			fmt.Println("ProcessMessageRef IsValid", message.IsValid(), message.Name())
 			list := message.ArgumentList()
 			fmt.Println("ArgumentList IsValid", list.IsValid())
