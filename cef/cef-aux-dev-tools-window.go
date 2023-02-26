@@ -29,9 +29,7 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 		if browserWinInfo.IsLCL() {
 			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
 			if window.getAuxTools() != nil && window.getAuxTools().devToolsWindow != nil {
-				QueueAsyncCall(func(id int) {
-					window.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url))
-				})
+				window.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url()))
 			}
 		}
 	}

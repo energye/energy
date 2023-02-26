@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-// 应用主线程异步回调
+// 在应用主线程中执行(非主线程使用)异步&同步执行包裹函数
 package cef
 
 import (
@@ -33,7 +33,7 @@ func applicationQueueAsyncCallProc(id uintptr) uintptr {
 	return 0
 }
 
-// 队列异步调用函数 id:事件id
+// qacFn 队列异步调用函数 id:事件id
 type qacFn func(id int)
 
 type queueCall struct {
@@ -47,15 +47,15 @@ type queueAsyncCall struct {
 	calls sync.Map
 }
 
-// LCL UI
+// QueueAsyncCall 仅LCL，在主进程中异步调用
 //
-// 1.在UI主进程中执行, 队列异步调用-适用大多场景(包括UI线程和非UI线程)
+// 在UI主进程中执行, 异步执行
 //
-// 2.大多数非UI线程操作都需要使用该函数
+// 非主进程的多线程操作可使用该函数包裹
 //
-// 3.在任何变更UI的操作都有可能导致UI线程不一至出现程序错误或程序崩溃, 可以尝试使用该回调函数解决.
+// 在任何变更UI的操作都有可能因非主线程出现不一至, 而出现程序错误或程序崩溃, 可以尝试使用该回调函数解决.
 //
-// 4.在windows linux macos 可同时使用
+// 提示: CEF事件或函数中不应使用该函数包裹
 func QueueAsyncCall(fn qacFn) int {
 	id := qac.set(&queueCall{
 		IsSync: false,
@@ -65,15 +65,9 @@ func QueueAsyncCall(fn qacFn) int {
 	return int(id)
 }
 
-// LCL UI
+// QueueSyncCall 同 QueueAsyncCall
 //
-// 1.在UI主进程中执行, 队列异步调用-适用大多场景(非UI线程)
-//
-// 2.大多数非UI线程操作都需要使用该函数
-//
-// 3.在任何变更UI的操作都有可能导致UI线程不一至出现程序错误或程序崩溃, 可以尝试使用该回调函数解决.
-//
-// 4.在windows linux macos 需要注意使用场景, 当非UI线程使用时正常执行, UI线程使用时会造成UI线程锁死, 这种情况建议使用 QueueAsyncCall 自己增加同步锁
+// 同步执行 - 阻塞UI
 func QueueSyncCall(fn qacFn) int {
 	qc := &queueCall{
 		IsSync: true,

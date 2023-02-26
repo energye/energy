@@ -303,23 +303,11 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {
-		if IsMessageLoop {
-			lcl.Clipboard.SetAsText(params.LinkUrl)
-		} else {
-			QueueAsyncCall(func(id int) {
-				lcl.Clipboard.SetAsText(params.LinkUrl)
-			})
-		}
+		lcl.Clipboard.SetAsText(params.LinkUrl)
 	} else if commandId == copyImageId {
 		frame.Copy()
 	} else if commandId == imageUrlId {
-		if IsMessageLoop {
-			lcl.Clipboard.SetAsText(params.SourceUrl)
-		} else {
-			QueueAsyncCall(func(id int) {
-				lcl.Clipboard.SetAsText(params.SourceUrl)
-			})
-		}
+		lcl.Clipboard.SetAsText(params.SourceUrl)
 	} else if commandId == imageSaveId {
 		browser.StartDownload(params.SourceUrl)
 	}
