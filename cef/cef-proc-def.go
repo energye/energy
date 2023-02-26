@@ -364,6 +364,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_GetZoomLevel", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetDefaultEncoding", 0),
+		dllimports.NewEnergyImport("CEFChromium_SendProcessMessage", 0),
 		//ICefBeforeDownloadCallback
 		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
 		//ICefFrame
@@ -1124,6 +1125,7 @@ const (
 	internale_CEFChromium_GetZoomLevel
 	internale_CEFChromium_SetDefaultEncoding
 	internale_CEFChromium_GetDefaultEncoding
+	internale_CEFChromium_SendProcessMessage
 	//ICefBeforeDownloadCallback
 	internale_CEFChromium_SetDownloadPath
 	//ICefFrame

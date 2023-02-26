@@ -13,7 +13,6 @@ package cef
 
 import (
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -99,8 +98,8 @@ type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, fram
 type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
 
 // Browser & Rneder 进程消息接收
-type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
-type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool
+type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool
+type BrowseProcessMessageReceived func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool
 
 // ChromiumEvent FindResult
 type ChromiumEventOnFindResult func(sender lcl.IObject, browser *ICefBrowser, identifier, count int32, selectionRect *TCefRect, activeMatchOrdinal int32, finalUpdate bool)

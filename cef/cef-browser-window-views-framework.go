@@ -15,7 +15,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
@@ -33,7 +32,6 @@ type ViewsFrameworkBrowserWindow struct {
 	windowType           consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
 	windowId             int32                             //
 	chromium             IChromium                         //
-	browser              *ICefBrowser                      //
 	component            lcl.IComponent                    //
 	windowComponent      *TCEFWindowComponent              //
 	browserViewComponent *TCEFBrowserViewComponent         //
@@ -206,7 +204,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	//默认自定义快捷键
 	defaultAcceleratorCustom()
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
+	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
 		}

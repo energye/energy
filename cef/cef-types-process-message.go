@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-// CEF 进程消息 ProcessMessage.New()
+// CEF 进程消息 ProcessMessageRef.New()
 package cef
 
 import (
@@ -17,16 +17,16 @@ import (
 	"unsafe"
 )
 
-// ProcessMessage -> ICefProcessMessage
-var ProcessMessage processMessageRef
+// ProcessMessageRef -> ICefProcessMessage
+var ProcessMessageRef processMessage
 
-//processMessageRef
-type processMessageRef uintptr
+// processMessage
+type processMessage uintptr
 
 // New 创建一个进程消息类型
 //
 // 参数: name 消息名
-func (*processMessageRef) New(name string) *ICefProcessMessage {
+func (*processMessage) New(name string) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(internale_CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{

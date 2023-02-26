@@ -19,7 +19,6 @@ import (
 	. "github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -258,7 +257,7 @@ func (m *CEFTray) createTrayWindow() {
 	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		logger.Debug("tray.chromium.onBeforeClose")
 	})
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ipc.ICefProcessMessage) bool {
+	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, message *ICefProcessMessage) bool {
 		return false
 	})
 	m.windowParent.SetChromium(m.chromium, 0)

@@ -54,9 +54,9 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 			return
 		}
 		wp := NewWindowProperty()
-		wp.Title = fmt.Sprintf("%s - %s", dev_tools_name, m.MainFrame().Url)
+		wp.Url = m.MainFrame().Url()
+		wp.Title = fmt.Sprintf("%s - %s", dev_tools_name, wp.Url)
 		wp.WindowType = WT_DEV_TOOLS
-		wp.Url = "https://www.baidu.com" //m.MainFrame().Url
 		devToolsWindow := NewLCLBrowserWindow(nil, wp)
 		window.auxTools.devToolsWindow = devToolsWindow
 		devToolsWindow.SetWidth(800)

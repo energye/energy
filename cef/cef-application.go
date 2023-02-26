@@ -151,7 +151,7 @@ func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageRec
 	imports.Proc(internale_CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
 }
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
-	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ipc.ICefProcessMessage) bool {
+	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ICefProcessMessage) bool {
 		return false
 	})
 }
@@ -219,21 +219,9 @@ func init() {
 		case RenderProcessMessageReceived:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{getPtr(1)}
-			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(3))
-			args := ipc.NewArgumentList()
-			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
-			processMessage := &ipc.ICefProcessMessage{
-				Name:         api.GoStr(cefProcMsg.Name),
-				ArgumentList: args,
-			}
+			processMessage := &ICefProcessMessage{instance: getPtr(3)}
 			var result = (*bool)(getPtr(4))
 			*result = fn.(RenderProcessMessageReceived)(browser, frame, CefProcessId(getVal(2)), processMessage)
-			args.Clear()
-			cefProcMsg.Data = 0
-			cefProcMsg.DataLen = 0
-			cefProcMsg.Name = 0
-			cefProcMsg = nil
-			args = nil
 		case GlobalCEFAppEventOnContextCreated:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}

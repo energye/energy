@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
+	"github.com/energye/golcl/lcl"
 )
 
 //go:embed resources
@@ -39,7 +40,7 @@ func main() {
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
 			fmt.Println("handler.Execute", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
-			message := cef.ProcessMessage.New("testname")
+			message := cef.ProcessMessageRef.New("testname")
 			fmt.Println("ProcessMessageRef IsValid", message.IsValid(), message.Name())
 			list := message.ArgumentList()
 			list.SetString(0, "值？")
@@ -66,16 +67,32 @@ func main() {
 			dictionaryValue = listCopy.GetDictionary(2)
 			fmt.Println("DictionaryValueRef IsValid", dictionaryValue.IsValid(), dictionaryValue.GetSize(), dictionaryValue.GetDouble("doubledicttest"))
 			//list.SetDictionary()
+			//测试 - 给 browser 程发送消息
+			sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
+			sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给主进程, 测试值")
+			frame.SendProcessMessage(consts.PID_BROWSER, sendBrowserProcessMsg)
 			return true
 		})
-		//
 		object := cef.V8ValueRef.NewObject(nil)
 		function := cef.V8ValueRef.NewFunction("testfn", handler)
 		object.SetValueByKey("testfn", function, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 		context.Global().SetValueByKey("testset", object, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 		return false
 	})
-
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
+			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().GetString(0))
+			//测试 - 给 render 进程发送消息
+			sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
+			sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给渲染进程, 测试值")
+			frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
+			return false
+		})
+	})
+	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
+		fmt.Println("render 进程接收消息", message.Name(), message.ArgumentList().GetString(0))
+		return false
+	})
 	//运行应用
 	cef.Run(cefApp)
 }

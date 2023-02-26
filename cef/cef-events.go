@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	t "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -85,21 +84,9 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(4))
-			args := ipc.NewArgumentList()
-			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
-			processMessage := &ipc.ICefProcessMessage{
-				Name:         api.GoStr(cefProcMsg.Name),
-				ArgumentList: args,
-			}
+			processMessage := &ICefProcessMessage{getPtr(4)}
 			var result = (*bool)(getPtr(5))
 			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, consts.CefProcessId(getVal(3)), processMessage)
-			args.Clear()
-			cefProcMsg.Data = 0
-			cefProcMsg.DataLen = 0
-			cefProcMsg.Name = 0
-			cefProcMsg = nil
-			args = nil
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))

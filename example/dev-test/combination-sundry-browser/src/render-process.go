@@ -68,13 +68,9 @@ func AppRenderInit() *cef.TCEFApplication {
 		return false //返回 false 时，运行IPC 和 变量绑定
 	})
 	//渲染进程的消息处理
-	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
+	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
 		fmt.Println("======================渲染进程 OnProcessMessageReceived IPC browserId:", browser.Identifier(), "frameId:", frame.Identifier(), "sourceProcess:", sourceProcess, "processMessage.Name:", message.Name)
-		fmt.Println("\t|--Args:", common.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
-		message = ipc.NewProcessMessage("test")
-		message.ArgumentList.SetString(0, "渲染进程发送数据")
-		//frame.SendProcessMessageByIPC(consts.PID_BROWSER, message)
-		message.ArgumentList.Clear()
+
 		return false
 	})
 

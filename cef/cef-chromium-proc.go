@@ -73,7 +73,7 @@ type IChromiumProc interface {
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
-	SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int
+	SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
 	SendCaptureLostEvent()
@@ -395,18 +395,6 @@ func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dic
 		dictionaryValue = DictionaryValueRef.New()
 	}
 	_CEFChromium_ExecuteDevToolsMethod(m.Instance(), messageId, method, dictionaryValue)
-}
-
-func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int {
-	//if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || ipc.InternalIPCNameCheck(processMessage.Name) {
-	//	return -3
-	//}
-	//var browser = BrowserWindow.GetBrowser(1)
-	//data := processMessage.ArgumentList.Package()
-	//
-	//r1 := _CEFFrame_SendProcessMessageByIPC(1, browser.MainFrame().Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
-	//return int(r1)
-	return 1 //TODO dev
 }
 
 func (m *TCEFChromium) CreateClientHandler(client *ICefClient, alsOSR bool) bool {
@@ -739,6 +727,11 @@ func (m *TCEFChromium) SetDefaultEncoding(value string) {
 func (m *TCEFChromium) DefaultEncoding() string {
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDefaultEncoding).Call(m.Instance())
 	return api.GoStr(r1)
+}
+
+// SendProcessMessage 发送进程消息
+func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
+	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 }
 
 //--------TCEFChromium proc begin--------
