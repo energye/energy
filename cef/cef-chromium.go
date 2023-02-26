@@ -77,18 +77,11 @@ func (m *TCEFChromium) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
-// GetBrowserById 获取ICefBrowser
-func (m *TCEFChromium) GetBrowserById(browserId int32) *ICefBrowser {
-	return &ICefBrowser{
-		browseId: browserId,
-		chromium: m.instance,
-	}
-}
-
 func (m *TCEFChromium) browseEmitJsOnEvent(browseId int32, frameId int64, name string, argumentList ipc.IArgumentList) ProcessMessageError {
-	data := argumentList.Package()
-	r1 := _CEFFrame_SendProcessMessageByIPC(browseId, frameId, name, PID_RENDER, int32(argumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
-	return ProcessMessageError(r1)
+	//data := argumentList.Package()
+	//r1 := _CEFFrame_SendProcessMessageByIPC(browseId, frameId, name, PID_RENDER, int32(argumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
+	//return ProcessMessageError(r1)
+	return 1 //TODO dev
 }
 
 // On 监听事件,事件驱动在Go中监听，JS中触发
@@ -131,11 +124,11 @@ func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target IEm
 	if target == nil {
 		bsr := m.Browser()
 		browseId = bsr.Identifier()
-		frameId = bsr.MainFrame().Id
+		frameId = bsr.MainFrame().Identifier()
 	} else {
 		browseId = target.GetBrowserId()
 		frameId = target.GetFrameId()
-		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
+		if m.BrowserById(browseId).GetFrameById(frameId) == nil {
 			return PMErr_NOT_FOUND_FRAME
 		}
 	}
@@ -169,11 +162,11 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList,
 	if target == nil {
 		bsr := m.Browser()
 		browseId = bsr.Identifier()
-		frameId = bsr.MainFrame().Id
+		frameId = bsr.MainFrame().Identifier()
 	} else {
 		browseId = target.GetBrowserId()
 		frameId = target.GetFrameId()
-		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
+		if m.BrowserById(browseId).GetFrameById(frameId) == nil {
 			return PMErr_NOT_FOUND_FRAME
 		}
 	}
@@ -209,11 +202,11 @@ func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, t
 	if target == nil {
 		bsr := m.Browser()
 		browseId = bsr.Identifier()
-		frameId = bsr.MainFrame().Id
+		frameId = bsr.MainFrame().Identifier()
 	} else {
 		browseId = target.GetBrowserId()
 		frameId = target.GetFrameId()
-		if m.GetBrowserById(browseId).GetFrameById(frameId) == nil {
+		if m.BrowserById(browseId).GetFrameById(frameId) == nil {
 			return nil, PMErr_NOT_FOUND_FRAME
 		}
 	}

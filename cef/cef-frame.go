@@ -14,7 +14,6 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -23,17 +22,13 @@ import (
 // Html <iframe></iframe>
 type ICefFrame struct {
 	instance unsafe.Pointer
-	Browser  *ICefBrowser
-	Name     string
-	Url      string
-	Id       int64
 }
 
-type cefFrame struct {
-	Name       uintptr
-	Url        uintptr
-	Identifier uintptr
-}
+//type cefFrame struct {
+//	Name       uintptr
+//	Url        uintptr
+//	Identifier uintptr
+//}
 
 // TCEFFrame Frame 集合
 type TCEFFrame map[int64]*ICefFrame
@@ -52,136 +47,133 @@ func (m *ICefFrame) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
-// ---- CEF Frame for frameId ----
-
 // Undo 撤销操作
 func (m *ICefFrame) Undo() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Undo).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Undo).Call(m.Instance())
 }
 
 // Redo 恢复
 func (m *ICefFrame) Redo() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Redo).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Redo).Call(m.Instance())
 }
 
 // Cut 剪切
 func (m *ICefFrame) Cut() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Cut).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Cut).Call(m.Instance())
 }
 
 // Copy 复制
 func (m *ICefFrame) Copy() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Copy).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Copy).Call(m.Instance())
 }
 
 // Paste 粘贴
 func (m *ICefFrame) Paste() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Paste).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Paste).Call(m.Instance())
 }
 
 // Del 删除
 func (m *ICefFrame) Del() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_Del).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_Del).Call(m.Instance())
 }
 
 // SelectAll 选择所有
 func (m *ICefFrame) SelectAll() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_SelectAll).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_SelectAll).Call(m.Instance())
 }
 
 // ViewSource 显示源码
 func (m *ICefFrame) ViewSource() {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_ViewSource).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	imports.Proc(internale_CEFFrame_ViewSource).Call(m.Instance())
 }
 
 // LoadUrl 加载URL
 func (m *ICefFrame) LoadUrl(url string) {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_LoadUrl).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(url))
+	imports.Proc(internale_CEFFrame_LoadUrl).Call(m.Instance(), api.PascalStr(url))
 }
 
 // ExecuteJavaScript 执行JS
 func (m *ICefFrame) ExecuteJavaScript(code, scriptUrl string, startLine int32) {
-	var frameId = m.Id
-	imports.Proc(internale_CEFFrame_ExecuteJavaScript).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine))
+	imports.Proc(internale_CEFFrame_ExecuteJavaScript).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine))
 }
 
 // IsValid 该Frame是否有效
 func (m *ICefFrame) IsValid() bool {
-	var frameId = m.Id
-	r1, _, _ := imports.Proc(internale_CEFFrame_IsValid).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	r1, _, _ := imports.Proc(internale_CEFFrame_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsMain 是否为主Frame
 func (m *ICefFrame) IsMain() bool {
-	var frameId = m.Id
-	r1, _, _ := imports.Proc(internale_CEFFrame_IsMain).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	r1, _, _ := imports.Proc(internale_CEFFrame_IsMain).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsFocused 是否已获取焦点
 func (m *ICefFrame) IsFocused() bool {
-	var frameId = m.Id
-	r1, _, _ := imports.Proc(internale_CEFFrame_IsFocused).Call(uintptr(m.Browser.Identifier()), uintptr(unsafe.Pointer(&frameId)))
+	r1, _, _ := imports.Proc(internale_CEFFrame_IsFocused).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
-// SendProcessMessageByIPC 发送进程消息
-func (m *ICefFrame) SendProcessMessageByIPC(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) ProcessMessageError {
-	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil {
-		return PMErr_REQUIRED_PARAMS_IS_NULL
-	} else if ipc.InternalIPCNameCheck(processMessage.Name) {
-		return PMErr_NAME_CANNOT_USED
-	}
-	data := processMessage.ArgumentList.Package()
-	r1 := _CEFFrame_SendProcessMessageByIPC(m.Browser.Identifier(), m.Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
-	return ProcessMessageError(r1)
-}
+//// SendProcessMessageByIPC 发送进程消息
+//func (m *ICefFrame) SendProcessMessageByIPC(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) ProcessMessageError {
+//	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil {
+//		return PMErr_REQUIRED_PARAMS_IS_NULL
+//	} else if ipc.InternalIPCNameCheck(processMessage.Name) {
+//		return PMErr_NAME_CANNOT_USED
+//	}
+//	data := processMessage.ArgumentList.Package()
+//	r1 := _CEFFrame_SendProcessMessageByIPC(m.Browser.Identifier(), m.Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
+//	return ProcessMessageError(r1)
+//}
+//
+//func _CEFFrame_SendProcessMessageByIPC(browseId int32, frameId int64, name string, targetProcess CefProcessId, itemLength int32, data, dataLen uintptr) uintptr {
+//	r1, _, _ := imports.Proc(internale_CEFFrame_SendProcessMessageByIPC).Call(uintptr(browseId), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(name), uintptr(targetProcess), uintptr(itemLength), data, dataLen)
+//	return r1
+//}
 
-func _CEFFrame_SendProcessMessageByIPC(browseId int32, frameId int64, name string, targetProcess CefProcessId, itemLength int32, data, dataLen uintptr) uintptr {
-	r1, _, _ := imports.Proc(internale_CEFFrame_SendProcessMessageByIPC).Call(uintptr(browseId), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(name), uintptr(targetProcess), uintptr(itemLength), data, dataLen)
-	return r1
-}
-
-// ---- CEF Frame for ptr ----
-
-//func (m *ICefFrame)  IsValid: Boolean;
-//func (m *ICefFrame)  Undo;
-//func (m *ICefFrame)  Redo;
-//func (m *ICefFrame)  Cut;
-//func (m *ICefFrame)  Copy;
-//func (m *ICefFrame)  Paste;
-//func (m *ICefFrame)  Del;
-//func (m *ICefFrame)  SelectAll;
-//func (m *ICefFrame)  ViewSource;
-//func (m *ICefFrame)  GetSource(const visitor: ICefStringVisitor);
-//func (m *ICefFrame)  GetSourceProc(const proc: TCefStringVisitorProc);
-//func (m *ICefFrame)  GetText(const visitor: ICefStringVisitor);
-//func (m *ICefFrame)  GetTextProc(const proc: TCefStringVisitorProc);
-//func (m *ICefFrame)  LoadRequest(const request: ICefRequest);
-//func (m *ICefFrame)  LoadUrl(const url: ustring);
-//func (m *ICefFrame)  ExecuteJavaScript(const code, scriptUrl: ustring; startLine: Integer);
-//func (m *ICefFrame)  IsMain: Boolean;
-//func (m *ICefFrame)  IsFocused: Boolean;
-//func (m *ICefFrame)  GetName: ustring;
-//func (m *ICefFrame)  GetIdentifier: Int64;
-//func (m *ICefFrame)  GetParent: ICefFrame;
-//func (m *ICefFrame)  GetUrl: ustring;
-//func (m *ICefFrame)  GetBrowser: ICefBrowser;
-//func (m *ICefFrame)  GetV8Context: ICefv8Context;
-//func (m *ICefFrame)  VisitDom(const visitor: ICefDomVisitor);
-//func (m *ICefFrame)  VisitDomProc(const proc: TCefDomVisitorProc);
-//func (m *ICefFrame)  CreateUrlRequest(const request: ICefRequest; const client: ICefUrlrequestClient): ICefUrlRequest;
-
+// SendProcessMessage 发送进程消息
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
 	imports.Proc(internale_CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+}
+
+func (m *ICefFrame) LoadRequest(request *ICefRequest) {
+	if m == nil || request == nil {
+		return
+	}
+	imports.Proc(internale_CEFFrame_LoadRequest).Call(m.Instance(), request.Instance())
+}
+
+func (m *ICefFrame) Browser() *ICefBrowser {
+	var result uintptr
+	imports.Proc(internale_CEFFrame_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{instance: unsafe.Pointer(result)}
+}
+
+func (m *ICefFrame) V8Context() *ICefV8Context {
+	var result uintptr
+	imports.Proc(internale_CEFFrame_GetV8Context).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Context{instance: unsafe.Pointer(result)}
+}
+
+func (m *ICefFrame) Identifier() int64 {
+	var result uintptr
+	imports.Proc(internale_CEFFrame_Identifier).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return int64(result)
+}
+
+func (m *ICefFrame) Name() string {
+	r1, _, _ := imports.Proc(internale_CEFFrame_Name).Call(m.Instance())
+	return api.GoStr(r1)
+}
+
+func (m *ICefFrame) Url() string {
+	r1, _, _ := imports.Proc(internale_CEFFrame_Url).Call(m.Instance())
+	return api.GoStr(r1)
+}
+
+func (m *ICefFrame) Parent() *ICefFrame {
+	var result uintptr
+	imports.Proc(internale_CEFFrame_Parent).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefFrame{instance: unsafe.Pointer(result)}
 }

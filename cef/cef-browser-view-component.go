@@ -28,35 +28,21 @@ type TCEFBrowserViewComponent struct {
 
 // NewBrowserViewComponent
 func NewBrowserViewComponent(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
-	r1, _, _ := imports.Proc(internale_CEFBrowserViewComponent_Create).Call(lcl.CheckPtr(AOwner))
+	var result uintptr
+	imports.Proc(internale_CEFBrowserViewComponent_Create).Call(lcl.CheckPtr(AOwner), uintptr(unsafe.Pointer(&result)))
 	return &TCEFBrowserViewComponent{
-		instance: unsafe.Pointer(r1),
+		instance: unsafe.Pointer(result),
 	}
 }
 
 // CreateBrowserView
-func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, requestContextSettings *TCefRequestContextSettings, browserSettings *TCefBrowserSettings, extraInfo *DictionaryValue) {
+func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, requestContextSettings *TCefRequestContextSettings, browserSettings *TCefBrowserSettings, extraInfo *ICefDictionaryValue) {
 	contextSettingsPtr := requestContextSettings.ToPtr()
 	browserSettingsPtr := browserSettings.ToPtr()
-	var dataBytes = []byte{}
-	var dataBytesPtr unsafe.Pointer
-	var dataBytesLen int = 0
-	var argsLen int = 0
-	if extraInfo != nil && extraInfo.dataLen > 0 {
-		defer func() {
-			extraInfo.Clear()
-			extraInfo = nil
-			dataBytes = nil
-			dataBytesPtr = nil
-		}()
-		dataBytes = extraInfo.Package()
-		argsLen = extraInfo.dataLen
-		dataBytesPtr = unsafe.Pointer(&dataBytes[0])
-		dataBytesLen = len(dataBytes) - 1
-	} else {
-		dataBytesPtr = unsafe.Pointer(&dataBytes)
+	if extraInfo == nil {
+		extraInfo = DictionaryValueRef.New()
 	}
-	imports.Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&contextSettingsPtr)), uintptr(unsafe.Pointer(&browserSettingsPtr)), uintptr(argsLen), uintptr(dataBytesPtr), uintptr(dataBytesLen))
+	imports.Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&contextSettingsPtr)), uintptr(unsafe.Pointer(&browserSettingsPtr)), extraInfo.Instance())
 }
 
 // Instance
@@ -66,55 +52,55 @@ func (m *TCEFBrowserViewComponent) Instance() uintptr {
 
 // GetForBrowser
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {
-	imports.Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(uintptr(m.instance), uintptr(browser.Identifier()))
+	imports.Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), browser.Instance())
 }
 
 // SetPreferAccelerators
 func (m *TCEFBrowserViewComponent) SetPreferAccelerators(preferAccelerators bool) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetPreferAccelerators).Call(uintptr(m.instance), api.PascalBool(preferAccelerators))
+	imports.Proc(internale_CEFBrowserViewComponent_SetPreferAccelerators).Call(m.Instance(), api.PascalBool(preferAccelerators))
 }
 
 // RequestFocus
 func (m *TCEFBrowserViewComponent) RequestFocus() {
-	imports.Proc(internale_CEFBrowserViewComponent_RequestFocus).Call(uintptr(m.instance))
+	imports.Proc(internale_CEFBrowserViewComponent_RequestFocus).Call(m.Instance())
 }
 
 // Browser
 func (m *TCEFBrowserViewComponent) Browser() *ICefBrowser {
-	r1, _, _ := imports.Proc(internale_CEFBrowserViewComponent_Browser).Call(uintptr(m.instance))
-	browser := &ICefBrowser{
-		browseId: int32(r1),
+	var result uintptr
+	imports.Proc(internale_CEFBrowserViewComponent_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{
+		instance: unsafe.Pointer(result),
 	}
-	return browser
 }
 
 //func (m *TCEFBrowserViewComponent) BrowserView() {
-// Proc(internale_CEFBrowserViewComponent_BrowserView).Call(uintptr(m.instance))
+// Proc(internale_CEFBrowserViewComponent_BrowserView).Call(m.Instance())
 //}
 
 // SetOnBrowserCreated
 func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn BrowserViewComponentOnBrowserCreated) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetOnBrowserCreated).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFBrowserViewComponent_SetOnBrowserCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnBrowserDestroyed
 func (m *TCEFBrowserViewComponent) SetOnBrowserDestroyed(fn BrowserViewComponentOnBrowserDestroyed) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetOnBrowserDestroyed).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFBrowserViewComponent_SetOnBrowserDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetDelegateForPopupBrowserView
 func (m *TCEFBrowserViewComponent) SetOnGetDelegateForPopupBrowserView(fn BrowserViewComponentOnGetDelegateForPopupBrowserView) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnPopupBrowserViewCreated
 func (m *TCEFBrowserViewComponent) SetOnPopupBrowserViewCreated(fn BrowserViewComponentOnPopupBrowserViewCreated) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetOnPopupBrowserViewCreated).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFBrowserViewComponent_SetOnPopupBrowserViewCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetChromeToolbarType
 func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewComponentOnGetChromeToolbarType) {
-	imports.Proc(internale_CEFBrowserViewComponent_SetOnGetChromeToolbarType).Call(uintptr(m.instance), api.MakeEventDataPtr(fn))
+	imports.Proc(internale_CEFBrowserViewComponent_SetOnGetChromeToolbarType).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func init() {
@@ -132,17 +118,13 @@ func init() {
 			browserView := &ICefBrowserView{
 				instance: getPtr(1),
 			}
-			browser := &ICefBrowser{
-				browseId: int32(getVal(2)),
-			}
+			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnBrowserDestroyed:
 			browserView := &ICefBrowserView{
 				instance: getPtr(1),
 			}
-			browser := &ICefBrowser{
-				browseId: int32(getVal(2)),
-			}
+			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnGetDelegateForPopupBrowserView:
 			browserView := &ICefBrowserView{

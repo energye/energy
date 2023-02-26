@@ -154,7 +154,15 @@ func init() {
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnEnter", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnExit", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_SetChromium", 0),
-		//CEFBrowser
+		//ICefBrowser
+		dllimports.NewEnergyImport("CEFBrowser_ShowDevTools", 0),
+		dllimports.NewEnergyImport("CEFBrowser_CloseDevTools", 0),
+		dllimports.NewEnergyImport("CEFBrowser_HasDevTools", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetIdentifier", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetFocusedFrame", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetMainFrame", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetFrameById", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetFrameByName", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GetHostWindowHandle", 0),
 		dllimports.NewEnergyImport("CEFBrowser_CloseBrowser", 0),
 		dllimports.NewEnergyImport("CEFBrowser_TryCloseBrowser", 0),
@@ -165,10 +173,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_StartDownload", 0),
 		dllimports.NewEnergyImport("CEFBrowser_DownloadImage", 0),
 		dllimports.NewEnergyImport("CEFBrowser_Print", 0),
-		dllimports.NewEnergyImport("CEFBrowser_GetFocusedFrame", 0),
-		dllimports.NewEnergyImport("CEFBrowser_GetMainFrame", 0),
-		dllimports.NewEnergyImport("CEFBrowser_GetFrameById", 0),
-		dllimports.NewEnergyImport("CEFBrowser_GetFrameByName", 0),
 		dllimports.NewEnergyImport("CEFBrowser_ExecuteDevToolsMethod", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SendKeyEvent", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SetAudioMuted", 0),
@@ -182,8 +186,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_SendMouseWheelEvent", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SendMouseMoveEvent", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SendMouseClickEvent", 0),
-		dllimports.NewEnergyImport("CEFBrowser_CloseDevTools", 0),
-		dllimports.NewEnergyImport("CEFBrowser_HasDevTools", 0),
 		dllimports.NewEnergyImport("CEFBrowser_CanGoBack", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GoBack", 0),
 		dllimports.NewEnergyImport("CEFBrowser_CanGoForward", 0),
@@ -196,7 +198,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_GetFrameNames", 0),
 		dllimports.NewEnergyImport("CEFBrowser_Find", 0),
 		dllimports.NewEnergyImport("CEFBrowser_StopFinding", 0),
-		dllimports.NewEnergyImport("CEFBrowser_ShowDevTools", 0),
 		//TCEFChromium - event
 		dllimports.NewEnergyImport("CEFChromium_SetOnAfterCreated", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnBeforeClose", 0),
@@ -253,6 +254,11 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_InheritsFrom", 0),
 		dllimports.NewEnergyImport("CEFChromium_ToString", 0),
 		dllimports.NewEnergyImport("CEFChromium_Create", 0),
+		dllimports.NewEnergyImport("CEFChromium_Browser", 0),
+		dllimports.NewEnergyImport("CEFChromium_BrowserById", 0),
+		dllimports.NewEnergyImport("CEFChromium_BrowserIdByIndex", 0),
+		dllimports.NewEnergyImport("CEFChromium_BrowserCount", 0),
+		dllimports.NewEnergyImport("CEFChromium_BrowserId", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetDefaultURL", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetMultiBrowserMode", 0),
 		dllimports.NewEnergyImport("CEFChromium_LoadURL", 0),
@@ -267,7 +273,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByLinkedWindow", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByBrowserViewComponent", 0),
 		dllimports.NewEnergyImport("CEFChromium_Initialized", 0),
-		dllimports.NewEnergyImport("CEFChromium_GetBrowserId", 0),
 		dllimports.NewEnergyImport("CEFChromium_IsSameBrowser", 0),
 		dllimports.NewEnergyImport("CEFChromium_PrintToPDF", 0),
 		dllimports.NewEnergyImport("CEFChromium_Print", 0),
@@ -377,6 +382,13 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageByIPC", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
+		dllimports.NewEnergyImport("CEFFrame_LoadRequest", 0),
+		dllimports.NewEnergyImport("CEFFrame_Browser", 0),
+		dllimports.NewEnergyImport("CEFFrame_GetV8Context", 0),
+		dllimports.NewEnergyImport("CEFFrame_Identifier", 0),
+		dllimports.NewEnergyImport("CEFFrame_Name", 0),
+		dllimports.NewEnergyImport("CEFFrame_Url", 0),
+		dllimports.NewEnergyImport("CEFFrame_Parent", 0),
 		//ICefMenuModel
 		dllimports.NewEnergyImport("cefMenuModel_AddSeparator", 0),
 		dllimports.NewEnergyImport("cefMenuModel_Clear", 0),
@@ -903,6 +915,14 @@ const (
 	internale_CEFLinkedWindow_OnExit
 	internale_CEFLinkedWindow_SetChromium
 	//ICefBrowser
+	internale_CEFBrowser_ShowDevTools
+	internale_CEFBrowser_CloseDevTools
+	internale_CEFBrowser_HasDevTools
+	internale_CEFBrowser_GetIdentifier
+	internale_CEFBrowser_GetFocusedFrame
+	internale_CEFBrowser_GetMainFrame
+	internale_CEFBrowser_GetFrameById
+	internale_CEFBrowser_GetFrameByName
 	internale_CEFBrowser_GetHostWindowHandle
 	internale_CEFBrowser_CloseBrowser
 	internale_CEFBrowser_TryCloseBrowser
@@ -913,10 +933,6 @@ const (
 	internale_CEFBrowser_StartDownload
 	internale_CEFBrowser_DownloadImage
 	internale_CEFBrowser_Print
-	internale_CEFBrowser_GetFocusedFrame
-	internale_CEFBrowser_GetMainFrame
-	internale_CEFBrowser_GetFrameById
-	internale_CEFBrowser_GetFrameByName
 	internale_CEFBrowser_ExecuteDevToolsMethod
 	internale_CEFBrowser_SendKeyEvent
 	internale_CEFBrowser_SetAudioMuted
@@ -930,8 +946,6 @@ const (
 	internale_CEFBrowser_SendMouseWheelEvent
 	internale_CEFBrowser_SendMouseMoveEvent
 	internale_CEFBrowser_SendMouseClickEvent
-	internale_CEFBrowser_CloseDevTools
-	internale_CEFBrowser_HasDevTools
 	internale_CEFBrowser_CanGoBack
 	internale_CEFBrowser_GoBack
 	internale_CEFBrowser_CanGoForward
@@ -944,7 +958,6 @@ const (
 	internale_CEFBrowser_GetFrameNames
 	internale_CEFBrowser_Find
 	internale_CEFBrowser_StopFinding
-	internale_CEFBrowser_ShowDevTools
 	//TCEFChromium - event
 	internale_CEFChromium_SetOnAfterCreated
 	internale_CEFChromium_SetOnBeforeClose
@@ -1001,6 +1014,11 @@ const (
 	internale_CEFChromium_InheritsFrom
 	internale_CEFChromium_ToString
 	internale_CEFChromium_Create
+	internale_CEFChromium_Browser
+	internale_CEFChromium_BrowserById
+	internale_CEFChromium_BrowserIdByIndex
+	internale_CEFChromium_BrowserCount
+	internale_CEFChromium_BrowserId
 	internale_CEFChromium_SetDefaultURL
 	internale_CEFChromium_SetMultiBrowserMode
 	internale_CEFChromium_LoadURL
@@ -1015,7 +1033,6 @@ const (
 	internale_CEFChromium_CreateBrowserByLinkedWindow
 	internale_CEFChromium_CreateBrowserByBrowserViewComponent
 	internale_CEFChromium_Initialized
-	internale_CEFChromium_GetBrowserId
 	internale_CEFChromium_IsSameBrowser
 	internale_CEFChromium_PrintToPDF
 	internale_CEFChromium_Print
@@ -1125,6 +1142,13 @@ const (
 	internale_CEFFrame_IsFocused
 	internale_CEFFrame_SendProcessMessageByIPC
 	internale_CEFFrame_SendProcessMessage
+	internale_CEFFrame_LoadRequest
+	internale_CEFFrame_Browser
+	internale_CEFFrame_GetV8Context
+	internale_CEFFrame_Identifier
+	internale_CEFFrame_Name
+	internale_CEFFrame_Url
+	internale_CEFFrame_Parent
 	//ICefMenuModel
 	internale_cefMenuModel_AddSeparator
 	internale_cefMenuModel_Clear

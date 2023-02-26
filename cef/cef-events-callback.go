@@ -33,7 +33,6 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 
 // chromiumOnBeforeBrowser
 func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
-	BrowserWindow.putBrowserFrame(browser, frame)
 	if BrowserWindow.popupWindow != nil {
 		if browser.Identifier() < BrowserWindow.GetNextWindowNum() {
 			return
@@ -56,20 +55,18 @@ func chromiumOnBeforeClose(browser *ICefBrowser) {
 
 // chromiumOnFrameDetached
 func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
-	BrowserWindow.RemoveFrame(browser.Identifier(), frame.Id)
 }
 
 // cefAppContextCreated 应用创建 - 默认实现
 func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
-	BrowserWindow.putBrowserFrame(browser, frame)
-	BrowserWindow.removeNoValidFrames()
+	//BrowserWindow.removeNoValidFrames()
 	fmt.Println("cefAppContextCreated-ProcessType:", Args.ProcessType(), "objectTI.isBind:", objectTI.isBind)
 	if !objectTI.isBind {
 		__idReset()
 		clearValueBind()
 		bindGoToJS(browser, frame)
 	}
-	ipc.IPC.CreateRenderIPC(browser.Identifier(), frame.Id)
+	ipc.IPC.CreateRenderIPC(browser.Identifier(), frame.Identifier())
 }
 
 var (
@@ -201,13 +198,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
-				if IsMessageLoop {
-					browser.GoBack()
-				} else {
-					QueueAsyncCall(func(id int) {
-						browser.GoBack()
-					})
-				}
+				browser.GoBack()
 			}
 		},
 	})
@@ -218,13 +209,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
-				if IsMessageLoop {
-					browser.GoForward()
-				} else {
-					QueueAsyncCall(func(id int) {
-						browser.GoForward()
-					})
-				}
+				browser.GoForward()
 			}
 		},
 	})
@@ -268,7 +253,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			Text:        "查看网面源代码",
 			Accelerator: "ctrl+u",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
-				browser.ViewSource(frame)
+				browser.ViewSource()
 			},
 		})
 	}
@@ -311,7 +296,7 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
-			browser.ViewSource(frame)
+			browser.ViewSource()
 		}
 	} else if commandId == devToolsId {
 		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {

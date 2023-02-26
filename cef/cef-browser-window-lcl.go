@@ -33,7 +33,6 @@ import (
 type LCLBrowserWindow struct {
 	*lcl.TForm                            //
 	chromium         IChromium            //
-	browser          *ICefBrowser         //
 	windowParent     ITCefWindowParent    //
 	windowProperty   *WindowProperty      //
 	windowId         int32                //
@@ -295,30 +294,10 @@ func (m *LCLBrowserWindow) createAuxTools() {
 
 // Browser
 func (m *LCLBrowserWindow) Browser() *ICefBrowser {
-	return m.browser
-}
-
-// setBrowser
-func (m *LCLBrowserWindow) setBrowser(browser *ICefBrowser) {
-	m.browser = browser
-}
-
-// addFrame
-func (m *LCLBrowserWindow) addFrame(frame *ICefFrame) {
-	m.createFrames()
-	m.frames[frame.Id] = frame
-}
-
-// Frames
-func (m *LCLBrowserWindow) Frames() TCEFFrame {
-	return m.frames
-}
-
-// createFrames
-func (m *LCLBrowserWindow) createFrames() {
-	if m.frames == nil {
-		m.frames = make(TCEFFrame)
+	if m == nil || m.Chromium() == nil || !m.Chromium().Initialized() {
+		return nil
 	}
+	return m.Chromium().Browser()
 }
 
 // Chromium
@@ -850,9 +829,6 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		QueueAsyncCall(func(id int) {
-			BrowserWindow.putBrowserFrame(browser, frame)
-		})
 		if bwEvent.onFrameCreated != nil {
 			bwEvent.onFrameCreated(sender, browser, frame)
 		}

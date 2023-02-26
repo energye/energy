@@ -46,56 +46,60 @@ type rICefRequest struct {
 	Identifier           uintptr //uint64
 }
 
+func (m *ICefRequest) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
 // IsReadOnly 是否只读
 func (m *ICefRequest) IsReadOnly() bool {
-	return api.GoBool(cefRequest_IsReadOnly(uintptr(m.instance)))
+	return api.GoBool(cefRequest_IsReadOnly(m.Instance()))
 }
 
 // SetURL 设置URL
 func (m *ICefRequest) SetURL(url string) {
-	cefRequest_SetUrl(uintptr(m.instance), url)
+	cefRequest_SetUrl(m.Instance(), url)
 }
 
 // SetMethod 设置请求方式
 func (m *ICefRequest) SetMethod(method string) {
-	cefRequest_SetMethod(uintptr(m.instance), method)
+	cefRequest_SetMethod(m.Instance(), method)
 }
 
 // SetReferrer 设置来源策略
 func (m *ICefRequest) SetReferrer(referrerUrl string, policy TCefReferrerPolicy) {
-	cefRequest_SetReferrer(uintptr(m.instance), referrerUrl, policy)
+	cefRequest_SetReferrer(m.Instance(), referrerUrl, policy)
 }
 
 // SetFlags 设置请求标记
 func (m *ICefRequest) SetFlags(flags TCefUrlRequestFlags) {
-	cefRequest_SetFlags(uintptr(m.instance), flags)
+	cefRequest_SetFlags(m.Instance(), flags)
 }
 
 // SetFirstPartyForCookies
 func (m *ICefRequest) SetFirstPartyForCookies(url string) {
-	cefRequest_SetFirstPartyForCookies(uintptr(m.instance), url)
+	cefRequest_SetFirstPartyForCookies(m.Instance(), url)
 }
 
 // GetHeaderByName
 func (m *ICefRequest) GetHeaderByName(name string) string {
-	return api.GoStr(cefRequest_GetHeaderByName(uintptr(m.instance), name))
+	return api.GoStr(cefRequest_GetHeaderByName(m.Instance(), name))
 }
 
 // SetHeaderByName
 func (m *ICefRequest) SetHeaderByName(name, value string, overwrite bool) {
-	cefRequest_SetHeaderByName(uintptr(m.instance), name, value, overwrite)
+	cefRequest_SetHeaderByName(m.Instance(), name, value, overwrite)
 }
 
 // GetHeaderMap
 func (m *ICefRequest) GetHeaderMap() *ICefStringMultiMap {
 	headerMap := &ICefStringMultiMap{}
-	headerMap.instance = cefRequest_GetHeaderMap(uintptr(m.instance))
+	headerMap.instance = cefRequest_GetHeaderMap(m.Instance())
 	headerMap.ptr = unsafe.Pointer(headerMap.instance)
 	return headerMap
 }
 
 func (m *ICefRequest) SetHeaderMap(headerMap *ICefStringMultiMap) {
-	cefRequest_SetHeaderMap(uintptr(m.instance), headerMap.instance)
+	cefRequest_SetHeaderMap(m.Instance(), headerMap.instance)
 }
 
 // request

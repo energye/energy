@@ -88,30 +88,29 @@ type IBrowserWindow interface {
 	IsClosing() bool                                             //返回窗口是否正在关闭/或已关闭 true正在或已关闭
 	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow //转换为ViewsFramework窗口接口, 失败返回nil
 	AsLCLBrowserWindow() ILCLBrowserWindow                       //转换为LCL窗口接口, 失败返回nil
-	Frames() TCEFFrame                                           //窗口内的所有Frame
-	addFrame(frame *ICefFrame)                                   //
-	setBrowser(browser *ICefBrowser)                             //
-	EnableAllDefaultEvent()                                      //启用所有默认事件
-	SetTitle(title string)                                       //设置窗口标题栏标题
-	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口，失败返回false
-	IsLCL() bool                                                 //是否为 ILCLBrowserWindow 窗口，失败返回false
-	WindowProperty() *WindowProperty                             //窗口常用属性
-	SetWidth(value int32)                                        //设置窗口宽
-	SetHeight(value int32)                                       //设置窗口高
-	Point() *TCefPoint                                           //窗口坐标
-	Size() *TCefSize                                             //窗口宽高
-	Bounds() *TCefRect                                           //窗口坐标和宽高
-	SetPoint(x, y int32)                                         //设置窗口坐标
-	SetSize(width, height int32)                                 //设置窗口宽高
-	SetBounds(x, y, width, height int32)                         //设置窗口坐标和宽高
-	SetCenterWindow(value bool)                                  //设置窗口居中
-	ShowTitle()                                                  //显示窗口标题栏
-	HideTitle()                                                  //隐藏窗口标题栏
-	SetDefaultInTaskBar()                                        //默认窗口在任务栏上显示按钮
-	SetShowInTaskBar()                                           //强制窗口在任务栏上显示按钮
-	SetNotInTaskBar()                                            //强制窗口不在任务栏上显示按钮
-	NewCefTray(width, height int32, url string) ITray            //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
-	NewSysTray() ITray                                           //systray系统原生
+	//Frames() TCEFFrame                                           //窗口内的所有Frame
+	//addFrame(frame *ICefFrame)                                   //
+	EnableAllDefaultEvent()                           //启用所有默认事件
+	SetTitle(title string)                            //设置窗口标题栏标题
+	IsViewsFramework() bool                           //是否为 IViewsFrameworkBrowserWindow 窗口，失败返回false
+	IsLCL() bool                                      //是否为 ILCLBrowserWindow 窗口，失败返回false
+	WindowProperty() *WindowProperty                  //窗口常用属性
+	SetWidth(value int32)                             //设置窗口宽
+	SetHeight(value int32)                            //设置窗口高
+	Point() *TCefPoint                                //窗口坐标
+	Size() *TCefSize                                  //窗口宽高
+	Bounds() *TCefRect                                //窗口坐标和宽高
+	SetPoint(x, y int32)                              //设置窗口坐标
+	SetSize(width, height int32)                      //设置窗口宽高
+	SetBounds(x, y, width, height int32)              //设置窗口坐标和宽高
+	SetCenterWindow(value bool)                       //设置窗口居中
+	ShowTitle()                                       //显示窗口标题栏
+	HideTitle()                                       //隐藏窗口标题栏
+	SetDefaultInTaskBar()                             //默认窗口在任务栏上显示按钮
+	SetShowInTaskBar()                                //强制窗口在任务栏上显示按钮
+	SetNotInTaskBar()                                 //强制窗口不在任务栏上显示按钮
+	NewCefTray(width, height int32, url string) ITray //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
+	NewSysTray() ITray                                //systray系统原生
 }
 
 // ILCLBrowserWindow

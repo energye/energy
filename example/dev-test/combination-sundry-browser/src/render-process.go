@@ -60,20 +60,20 @@ func AppRenderInit() *cef.TCEFApplication {
 	})
 	//上下文回调
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
-		fmt.Println("======================OnContextCreated 渲染进程启动 Args.IsMain:", frame.IsMain(), "browserId:", browser.Identifier(), "frameId:", frame.Id, "frameName:", frame.Name, "frameUrl:", frame.Url)
+		fmt.Println("SetOnContextCreated browserId:", browser.Identifier())
 		//判断url地址 运行IPC 和 变量绑定
-		if strings.LastIndex(strings.ToLower(frame.Url), ".pdf") > 0 || strings.Index(frame.Url, "about:blank") != -1 {
+		if strings.LastIndex(strings.ToLower(frame.Url()), ".pdf") > 0 || strings.Index(frame.Url(), "about:blank") != -1 {
 			return true //返回 true 时，不运行IPC 和 变量绑定
 		}
 		return false //返回 false 时，运行IPC 和 变量绑定
 	})
 	//渲染进程的消息处理
 	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *ipc.ICefProcessMessage) bool {
-		fmt.Println("======================渲染进程 OnProcessMessageReceived IPC browserId:", browser.Identifier(), "frameId:", frame.Id, "sourceProcess:", sourceProcess, "processMessage.Name:", message.Name)
+		fmt.Println("======================渲染进程 OnProcessMessageReceived IPC browserId:", browser.Identifier(), "frameId:", frame.Identifier(), "sourceProcess:", sourceProcess, "processMessage.Name:", message.Name)
 		fmt.Println("\t|--Args:", common.Args.ProcessType(), "message:", message.ArgumentList.GetString(0))
 		message = ipc.NewProcessMessage("test")
 		message.ArgumentList.SetString(0, "渲染进程发送数据")
-		frame.SendProcessMessageByIPC(consts.PID_BROWSER, message)
+		//frame.SendProcessMessageByIPC(consts.PID_BROWSER, message)
 		message.ArgumentList.Clear()
 		return false
 	})

@@ -245,7 +245,6 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		BrowserWindow.putBrowserFrame(browser, frame)
 		if bwEvent.onFrameCreated != nil {
 			bwEvent.onFrameCreated(sender, browser, frame)
 		}
@@ -452,30 +451,12 @@ func (m *ViewsFrameworkBrowserWindow) createAuxTools() {
 
 // Browser 返回browser
 func (m *ViewsFrameworkBrowserWindow) Browser() *ICefBrowser {
-	return m.browser
+	return m.Chromium().Browser()
 }
 
 // Frames 获取Frames
 func (m *ViewsFrameworkBrowserWindow) Frames() TCEFFrame {
 	return m.frames
-}
-
-// createFrames 创建TCEFFrame
-func (m *ViewsFrameworkBrowserWindow) createFrames() {
-	if m.frames == nil {
-		m.frames = make(TCEFFrame)
-	}
-}
-
-// setBrowser
-func (m *ViewsFrameworkBrowserWindow) setBrowser(browser *ICefBrowser) {
-	m.browser = browser
-}
-
-// addFrame
-func (m *ViewsFrameworkBrowserWindow) addFrame(frame *ICefFrame) {
-	m.createFrames()
-	m.frames[frame.Id] = frame
 }
 
 // Chromium 返回 chromium

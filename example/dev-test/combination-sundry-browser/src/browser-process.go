@@ -21,6 +21,7 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
+	"time"
 )
 
 func AppBrowserInit() {
@@ -259,19 +260,27 @@ func AppBrowserInit() {
 		window.BrowserWindow().SetOnResize(func(sender lcl.IObject) bool {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 			if browserWindow.Browser() != nil {
-				var target = &cef.EmitTarget{
-					BrowseId: browserWindow.Browser().Identifier(),
-					FrameId:  browserWindow.Browser().MainFrame().Id,
+				for {
+					if window.Chromium().Initialized() {
+						fmt.Println("Initialized", window.Chromium().Initialized())
+						break
+					}
+					fmt.Println("Initialized", window.Chromium().Initialized())
+					time.Sleep(time.Second)
 				}
-				var argumentList = ipc.NewArgumentList()
-				argumentList.SetInt32(0, window.BrowserWindow().Left())
-				argumentList.SetInt32(1, window.BrowserWindow().Top())
-				argumentList.SetInt32(2, window.BrowserWindow().Width())
-				argumentList.SetInt32(3, window.BrowserWindow().Height())
-				browserWindow.Chromium().Emit("window-resize", argumentList, target)
-				browserWindow.Chromium().EmitAndCallback("window-resize", argumentList, target, func(context ipc.IIPCContext) {
-					fmt.Println("EmitAndCallback AddOnResize")
-				})
+				fmt.Println("Identifier", browserWindow.Chromium().Browser().Identifier())
+				fmt.Println("SetOnConstrainedResize Identifier", browserWindow.Browser().Identifier())
+				fmt.Println("SetOnConstrainedResize MainFrame", browserWindow.Browser().MainFrame())
+				fmt.Println("SetOnConstrainedResize MainFrame", browserWindow.Browser().MainFrame())
+				//var argumentList = ipc.NewArgumentList()
+				//argumentList.SetInt32(0, window.BrowserWindow().Left())
+				//argumentList.SetInt32(1, window.BrowserWindow().Top())
+				//argumentList.SetInt32(2, window.BrowserWindow().Width())
+				//argumentList.SetInt32(3, window.BrowserWindow().Height())
+				//browserWindow.Chromium().Emit("window-resize", argumentList, target)
+				//browserWindow.Chromium().EmitAndCallback("window-resize", argumentList, target, func(context ipc.IIPCContext) {
+				//	fmt.Println("EmitAndCallback AddOnResize")
+				//})
 				//使用EmitAndReturn函数会锁死
 				//ctx, _ := browserWindow.Chromium.EmitAndReturn("window-resize", argumentList, target)
 				//fmt.Println("EmitAndReturn AddOnResize", ctx)
@@ -282,16 +291,18 @@ func AppBrowserInit() {
 		window.BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 			if browserWindow.Browser() != nil {
-				var target = &cef.EmitTarget{
-					BrowseId: browserWindow.Browser().Identifier(),
-					FrameId:  browserWindow.Browser().MainFrame().Id,
-				}
-				var argumentList = ipc.NewArgumentList()
-				argumentList.SetInt32(0, window.BrowserWindow().Left())
-				argumentList.SetInt32(1, window.BrowserWindow().Top())
-				argumentList.SetInt32(2, window.BrowserWindow().Width())
-				argumentList.SetInt32(3, window.BrowserWindow().Height())
-				browserWindow.Chromium().Emit("window-resize", argumentList, target)
+				//var target = &cef.EmitTarget{
+				//	BrowseId: browserWindow.Browser().Identifier(),
+				//	FrameId:  browserWindow.Browser().MainFrame().Id,
+				//}
+				fmt.Println("SetOnConstrainedResize Identifier", browserWindow.Browser().Identifier())
+				fmt.Println("SetOnConstrainedResize MainFrame", browserWindow.Browser().MainFrame())
+				//var argumentList = ipc.NewArgumentList()
+				//argumentList.SetInt32(0, window.BrowserWindow().Left())
+				//argumentList.SetInt32(1, window.BrowserWindow().Top())
+				//argumentList.SetInt32(2, window.BrowserWindow().Width())
+				//argumentList.SetInt32(3, window.BrowserWindow().Height())
+				//browserWindow.Chromium().Emit("window-resize", argumentList, target)
 				//使用EmitAndReturn函数会锁死
 				//	browserWindow.Chromium.EmitAndCallback("window-resize", argumentList, target, func(context cef.IIPCContext) {
 				//		fmt.Println("EmitAndCallback OnConstrainedResize")
@@ -343,7 +354,7 @@ func AppBrowserInit() {
 				if popupWindow.Browser() != nil {
 					var target = &cef.EmitTarget{
 						BrowseId: popupWindow.Browser().Identifier(),
-						FrameId:  popupWindow.Browser().MainFrame().Id,
+						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
 					}
 					var argumentList = ipc.NewArgumentList()
 					argumentList.SetInt32(0, window.Left())
@@ -360,7 +371,7 @@ func AppBrowserInit() {
 				if popupWindow.Browser() != nil {
 					var target = &cef.EmitTarget{
 						BrowseId: popupWindow.Browser().Identifier(),
-						FrameId:  popupWindow.Browser().MainFrame().Id,
+						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
 					}
 					var argumentList = ipc.NewArgumentList()
 					argumentList.SetInt32(0, window.Left())
@@ -374,17 +385,17 @@ func AppBrowserInit() {
 		})
 		//加载页面之前
 		var isSendEmit bool
-		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame) {
-			fmt.Println("OnLoadStart:", frame.Url)
+		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
+			fmt.Println("OnLoadStart:", frame.Url())
 			//判断一下哪些页面不发送emit消息
-			if strings.LastIndex(strings.ToLower(frame.Url), ".pdf") > 0 || strings.Index(frame.Url, "about:blank") != -1 {
+			if strings.LastIndex(strings.ToLower(frame.Url()), ".pdf") > 0 || strings.Index(frame.Url(), "about:blank") != -1 {
 				isSendEmit = false
 			} else {
 				isSendEmit = true
 			}
 		})
 		event.SetOnFrameCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame) {
-			fmt.Println("OnFrameCreated:", frame.Url)
+			fmt.Println("OnFrameCreated:", frame.Url())
 		})
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息 将会失败
@@ -393,7 +404,7 @@ func AppBrowserInit() {
 				info := cef.BrowserWindow.GetWindowInfo(browser.Identifier())
 				var target = &cef.EmitTarget{
 					BrowseId: browser.Identifier(),
-					FrameId:  browser.MainFrame().Id,
+					FrameId:  browser.MainFrame().Identifier(),
 				}
 				fmt.Println("browseEmitJsOnEvent 1 browseId:", browser.Identifier(), "info-browserId:", info.Chromium().BrowserId(), "GetFrameById:", browser.GetFrameById(target.FrameId))
 				var argumentList = ipc.NewArgumentList()
@@ -410,11 +421,11 @@ func AppBrowserInit() {
 			if isSendEmit {
 				var target = &cef.EmitTarget{
 					BrowseId: browser.Identifier(),
-					FrameId:  browser.MainFrame().Id,
+					FrameId:  browser.MainFrame().Identifier(),
 				}
 				var argumentList = ipc.NewArgumentList()
 				argumentList.SetFloat64(0, progress)
-				fmt.Println("OnLoadingProgressChange-Emit:", browserWindow.Chromium().Emit("OnLoadingProgressChange", argumentList, target), " frame:", cef.BrowserWindow.GetFrames(browser.Identifier()))
+				fmt.Println("OnLoadingProgressChange-Emit:", browserWindow.Chromium().Emit("OnLoadingProgressChange", argumentList, target))
 			}
 		})
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {

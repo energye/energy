@@ -194,56 +194,6 @@ func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
 	return nil
 }
 
-// putBrowserFrame
-func (m *browser) putBrowserFrame(browser *ICefBrowser, frame *ICefFrame) {
-	if winInfo, ok := m.windowInfo[browser.Identifier()]; ok {
-		winInfo.setBrowser(browser)
-		winInfo.addFrame(frame)
-	}
-}
-
-// GetFrames
-func (m *browser) GetFrames(browseId int32) map[int64]*ICefFrame {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames()
-	}
-	return nil
-}
-
-// GetFrame
-func (m *browser) GetFrame(browseId int32, frameId int64) *ICefFrame {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		return winInfo.Frames()[frameId]
-	}
-	return nil
-}
-
-// RemoveFrame
-func (m *browser) RemoveFrame(browseId int32, frameId int64) {
-	if winInfo, ok := m.windowInfo[browseId]; ok {
-		delete(winInfo.Frames(), frameId)
-	}
-}
-
-// IsSameFrame
-func (m *browser) IsSameFrame(browseId int32, frameId int64) bool {
-	if frame := m.GetFrame(browseId, frameId); frame != nil {
-		return true
-	}
-	return false
-}
-
-// removeNoValidFrames 移除无效的frames
-func (m *browser) removeNoValidFrames() {
-	for _, winInfo := range m.windowInfo {
-		for _, frm := range winInfo.Frames() {
-			if !frm.IsValid() {
-				delete(winInfo.Frames(), frm.Id)
-			}
-		}
-	}
-}
-
 // BrowserEvent.SetOnAfterCreated
 func (m *BrowserEvent) SetOnAfterCreated(event ChromiumEventOnAfterCreated) {
 	if Args.IsMain() {

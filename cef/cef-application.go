@@ -199,56 +199,26 @@ func init() {
 		}
 		switch fn.(type) {
 		case GlobalCEFAppEventOnBrowserDestroyed:
-			fn.(GlobalCEFAppEventOnBrowserDestroyed)(&ICefBrowser{browseId: int32(getVal(0))})
+			fn.(GlobalCEFAppEventOnBrowserDestroyed)(&ICefBrowser{instance: getPtr(0)})
 		case GlobalCEFAppEventOnRenderLoadStart:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browser, frame, TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browser, frame, int32(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadError:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadingStateChange:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case RenderProcessMessageReceived:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{getPtr(1)}
 			cefProcMsg := (*ipc.CefProcessMessagePtr)(getPtr(3))
 			args := ipc.NewArgumentList()
 			args.UnPackageBytePtr(cefProcMsg.Data, int32(cefProcMsg.DataLen))
@@ -265,27 +235,16 @@ func init() {
 			cefProcMsg = nil
 			args = nil
 		case GlobalCEFAppEventOnContextCreated:
-			browser := &ICefBrowser{browseId: int32(getVal(0))}
-			tempFrame := (*cefFrame)(getPtr(1))
-			frame := &ICefFrame{
-				Browser: browser,
-				Name:    api.GoStr(tempFrame.Name),
-				Url:     api.GoStr(tempFrame.Url),
-				Id:      common.StrToInt64(api.GoStr(tempFrame.Identifier)),
-			}
-			if strings.Index(frame.Url, "devtools://") == 0 {
+			browser := &ICefBrowser{instance: getPtr(0)}
+			frame := &ICefFrame{instance: getPtr(1)}
+			if strings.Index(frame.Url(), "devtools://") == 0 {
 				processName = common.PT_DEVTOOLS
 				return true
 			} else {
 				processName = common.Args.ProcessType()
 			}
-			v8ctx := (*iCefV8ContextPtr)(getPtr(2))
-			ctx := &ICefV8Context{
-				instance: unsafe.Pointer(v8ctx.V8Context),
-				//Browser:  browser,
-				//Frame:    frame,
-				//Global:   &ICefV8Value{instance: unsafe.Pointer(v8ctx.Global)},
-			}
+			ctx := &ICefV8Context{instance: getPtr(2)}
+			browser.Identifier()
 			var status = (*bool)(getPtr(3))
 			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)

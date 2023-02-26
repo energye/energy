@@ -33,6 +33,11 @@ type IChromiumProc interface {
 	Emit(eventName string, args ipc.IArgumentList, target IEmitTarget) ProcessMessageError
 	EmitAndCallback(eventName string, args ipc.IArgumentList, target IEmitTarget, callback ipc.IPCCallback) ProcessMessageError
 	EmitAndReturn(eventName string, args ipc.IArgumentList, target IEmitTarget) (ipc.IIPCContext, ProcessMessageError)
+	Browser() *ICefBrowser
+	BrowserById(id int32) *ICefBrowser
+	BrowserIdByIndex(index int32) int32
+	BrowserCount() int32
+	BrowserId() int32
 	SetDefaultURL(defaultURL string)
 	SetEnableMultiBrowserMode(enableMultiBrowserMode bool)
 	LoadUrl(url string)
@@ -46,7 +51,6 @@ type IChromiumProc interface {
 	CreateBrowser(window ITCefWindowParent) bool
 	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool
 	Initialized() bool
-	BrowserId() int32
 	IsSameBrowser(browser *ICefBrowser) bool
 	PrintToPDF(saveFilePath string)
 	Print()
@@ -68,7 +72,7 @@ type IChromiumProc interface {
 		sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32)
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
-	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *DictionaryValue)
+	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
 	SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
@@ -190,6 +194,33 @@ func (m *TCEFChromium) ToString() string {
 	return api.GoStr(r1)
 }
 
+func (m *TCEFChromium) Browser() *ICefBrowser {
+	var result uintptr
+	imports.Proc(internale_CEFChromium_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{instance: unsafe.Pointer(result)}
+}
+
+func (m *TCEFChromium) BrowserById(id int32) *ICefBrowser {
+	var result uintptr
+	imports.Proc(internale_CEFChromium_BrowserById).Call(m.Instance(), uintptr(id), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{instance: unsafe.Pointer(result)}
+}
+
+func (m *TCEFChromium) BrowserIdByIndex(index int32) int32 {
+	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserIdByIndex).Call(m.Instance(), uintptr(index))
+	return int32(r1)
+}
+
+func (m *TCEFChromium) BrowserCount() int32 {
+	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserCount).Call(m.Instance())
+	return int32(r1)
+}
+
+func (m *TCEFChromium) BrowserId() int32 {
+	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserId).Call(m.Instance())
+	return int32(r1)
+}
+
 // SetDefaultURL 设置默认地址
 func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
 	if IsLinux() || IsDarwin() {
@@ -261,18 +292,8 @@ func (m *TCEFChromium) Initialized() bool {
 	return _CEFChromium_Initialized(m.Instance())
 }
 
-func (m *TCEFChromium) BrowserId() int32 {
-	return _CEFChromium_GetBrowserId(m.Instance())
-}
-
-func (m *TCEFChromium) Browser() *ICefBrowser {
-	return &ICefBrowser{
-		browseId: m.BrowserId(),
-	}
-}
-
 func (m *TCEFChromium) IsSameBrowser(browser *ICefBrowser) bool {
-	return _CEFChromium_IsSameBrowser(m.Instance(), uintptr(browser.browseId))
+	return _CEFChromium_IsSameBrowser(m.Instance(), browser.Instance())
 }
 
 func (m *TCEFChromium) PrintToPDF(saveFilePath string) {
@@ -369,20 +390,23 @@ func (m *TCEFChromium) UpdatePreferences() {
 	_CEFChromium_UpdatePreferences(m.Instance())
 }
 
-func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *DictionaryValue) {
+func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+	if dictionaryValue == nil {
+		dictionaryValue = DictionaryValueRef.New()
+	}
 	_CEFChromium_ExecuteDevToolsMethod(m.Instance(), messageId, method, dictionaryValue)
 }
 
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) int {
-	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || ipc.InternalIPCNameCheck(processMessage.Name) {
-		return -3
-	}
-	//var browser = Browsers.MainBrowser()
-	var browser = BrowserWindow.GetBrowser(1)
-	data := processMessage.ArgumentList.Package()
-
-	r1 := _CEFFrame_SendProcessMessageByIPC(1, browser.MainFrame().Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
-	return int(r1)
+	//if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil || ipc.InternalIPCNameCheck(processMessage.Name) {
+	//	return -3
+	//}
+	//var browser = BrowserWindow.GetBrowser(1)
+	//data := processMessage.ArgumentList.Package()
+	//
+	//r1 := _CEFFrame_SendProcessMessageByIPC(1, browser.MainFrame().Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
+	//return int(r1)
+	return 1 //TODO dev
 }
 
 func (m *TCEFChromium) CreateClientHandler(client *ICefClient, alsOSR bool) bool {
@@ -730,7 +754,7 @@ func _CEFChromium_SetDefaultURL(instance uintptr, url string) {
 	imports.Proc(internale_CEFChromium_SetDefaultURL).Call(instance, api.PascalStr(url))
 }
 
-// TCEFChromium _CEFChromium_SetDefaultURL
+// TCEFChromium _CEFChromium_SetMultiBrowserMode
 func _CEFChromium_SetMultiBrowserMode(instance uintptr, url bool) {
 	imports.Proc(internale_CEFChromium_SetMultiBrowserMode).Call(instance, api.PascalBool(url))
 }
@@ -797,12 +821,6 @@ func _CEFChromium_CreateBrowserByBrowserViewComponent(instance, homePage, browse
 func _CEFChromium_Initialized(instance uintptr) bool {
 	r1, _, _ := imports.Proc(internale_CEFChromium_Initialized).Call(instance)
 	return api.GoBool(r1)
-}
-
-// TCEFChromium _CEFChromium_GetBrowserId
-func _CEFChromium_GetBrowserId(instance uintptr) int32 {
-	r1, _, _ := imports.Proc(internale_CEFChromium_GetBrowserId).Call(instance)
-	return int32(r1)
 }
 
 // TCEFChromium _CEFChromium_IsSameBrowser
@@ -936,26 +954,8 @@ func _CEFChromium_UpdatePreferences(instance uintptr) {
 }
 
 // TCEFChromium  _CEFChromium_ExecuteDevToolsMethod
-func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, method string, dictionaryValue *DictionaryValue) {
-	var data = []byte{}
-	var dataPtr unsafe.Pointer
-	var dataLen int32 = 0
-	var argsLen int32 = 0
-	if dictionaryValue != nil && dictionaryValue.dataLen > 0 {
-		defer func() {
-			dictionaryValue.Clear()
-			dictionaryValue = nil
-			data = nil
-			dataPtr = nil
-		}()
-		data = dictionaryValue.Package()
-		argsLen = int32(dictionaryValue.dataLen)
-		dataPtr = unsafe.Pointer(&data[0])
-		dataLen = int32(len(data) - 1)
-	} else {
-		dataPtr = unsafe.Pointer(&data)
-	}
-	imports.Proc(internale_CEFChromium_ExecuteDevToolsMethod).Call(instance, uintptr(messageId), api.PascalStr(method), uintptr(argsLen), uintptr(dataPtr), uintptr(dataLen))
+func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+	imports.Proc(internale_CEFChromium_ExecuteDevToolsMethod).Call(instance, uintptr(messageId), api.PascalStr(method), dictionaryValue.Instance())
 }
 
 // TCEFChromium _CEFChromium_CreateClientHandler
