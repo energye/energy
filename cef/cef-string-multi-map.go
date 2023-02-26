@@ -19,69 +19,54 @@ import (
 
 // ICefStringMultiMap 实例
 type ICefStringMultiMap struct {
-	instance uintptr
-	ptr      unsafe.Pointer
+	instance unsafe.Pointer
+}
+
+// Instance 实例
+func (m *ICefStringMultiMap) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
 }
 
 // GetSize 大小
-func (m *ICefStringMultiMap) GetSize() int {
-	return cefHeaderMap_GetSize(m.instance)
+func (m *ICefStringMultiMap) GetSize() int32 {
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetSize).Call(m.Instance())
+	return int32(r1)
 }
 
 // FindCount key值数量
-func (m *ICefStringMultiMap) FindCount(key string) int {
-	return cefHeaderMap_FindCount(m.instance, key)
+func (m *ICefStringMultiMap) FindCount(key string) int32 {
+	r1, _, _ := imports.Proc(internale_StringMultimap_FindCount).Call(m.Instance(), api.PascalStr(key))
+	return int32(r1)
 }
 
-// GetEnumerate 根据key & index获取枚举
-func (m *ICefStringMultiMap) GetEnumerate(key string, valueIndex int) string {
-	return api.GoStr(cefHeaderMap_GetEnumerate(m.instance, key, valueIndex))
+// GetEnumerate 根据 key and index 获取
+func (m *ICefStringMultiMap) GetEnumerate(key string, valueIndex int32) string {
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(valueIndex))
+	return api.GoStr(r1)
 }
 
 // GetKey 根据 index 获取key
-func (m *ICefStringMultiMap) GetKey(index int) string {
-	return api.GoStr(cefHeaderMap_GetKey(m.instance, index))
+func (m *ICefStringMultiMap) GetKey(index int32) string {
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetKey).Call(m.Instance(), uintptr(index))
+	return api.GoStr(r1)
 }
 
 // GetValue 根据 index 获取value
-func (m *ICefStringMultiMap) GetValue(index int) string {
-	return api.GoStr(cefHeaderMap_GetValue(m.instance, index))
+func (m *ICefStringMultiMap) GetValue(index int32) string {
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
+	return api.GoStr(r1)
 }
 
 // Append 给key追加值
 func (m *ICefStringMultiMap) Append(key, value string) bool {
-	return api.GoBool(cefHeaderMap_Append(m.instance, key, value))
+	r1, _, _ := imports.Proc(internale_StringMultimap_Append).Call(m.Instance(), api.PascalStr(key), api.PascalStr(value))
+	return api.GoBool(r1)
 }
 
 // Clear 清空
 func (m *ICefStringMultiMap) Clear() {
-	cefHeaderMap_Clear(m.instance)
-}
-
-func cefHeaderMap_GetSize(instance uintptr) int {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetSize).Call(instance)
-	return int(r1)
-}
-func cefHeaderMap_FindCount(instance uintptr, key string) int {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_FindCount).Call(instance, api.PascalStr(key))
-	return int(r1)
-}
-func cefHeaderMap_GetEnumerate(instance uintptr, key string, valueIndex int) uintptr {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetEnumerate).Call(instance, api.PascalStr(key), uintptr(valueIndex))
-	return r1
-}
-func cefHeaderMap_GetKey(instance uintptr, index int) uintptr {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetKey).Call(instance, uintptr(index))
-	return r1
-}
-func cefHeaderMap_GetValue(instance uintptr, index int) uintptr {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_GetValue).Call(instance, uintptr(index))
-	return r1
-}
-func cefHeaderMap_Append(instance uintptr, key, value string) uintptr {
-	r1, _, _ := imports.Proc(internale_cefHeaderMap_Append).Call(instance, api.PascalStr(key), api.PascalStr(value))
-	return r1
-}
-func cefHeaderMap_Clear(instance uintptr) {
-	imports.Proc(internale_cefHeaderMap_Clear).Call(instance)
+	imports.Proc(internale_StringMultimap_Clear).Call(m.Instance())
 }

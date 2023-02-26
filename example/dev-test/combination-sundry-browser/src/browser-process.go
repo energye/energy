@@ -429,13 +429,12 @@ func AppBrowserInit() {
 			}
 		})
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
-			//fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
-			//headerMap := request.GetHeaderMap()
-			//fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
-			//for i := 0; i < headerMap.GetSize(); i++ {
-			//	fmt.Println("\tkey:", headerMap.GetKey(i), "value:", headerMap.GetValue(i))
-			//}
-
+			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			headerMap := request.GetHeaderMap()
+			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
+			for i := 0; i < int(headerMap.GetSize()); i++ {
+				fmt.Println("\tkey:", headerMap.GetKey(int32(i)), "value:", headerMap.GetValue(int32(i)))
+			}
 		})
 	})
 	//添加子窗口初始化

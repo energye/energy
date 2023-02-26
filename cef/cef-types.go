@@ -246,6 +246,11 @@ type ICefResponse struct {
 	URL        string
 }
 
+// ICefPostData
+type ICefPostData struct {
+	instance unsafe.Pointer
+}
+
 // ICefView
 type ICefView struct {
 	instance unsafe.Pointer
@@ -296,6 +301,7 @@ type ICefV8ArrayBufferReleaseCallback struct {
 	instance unsafe.Pointer
 }
 
+// Exception 异常返回信息
 type Exception struct {
 	message string
 }

@@ -420,16 +420,18 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowInfoAsWindowless", 0),
 		dllimports.NewEnergyImport("CEFJSRegisterExtension", 0),
 		//ICefRequest
-		dllimports.NewEnergyImport("cefRequest_IsReadOnly", 0),
-		dllimports.NewEnergyImport("cefRequest_SetUrl", 0),
-		dllimports.NewEnergyImport("cefRequest_SetMethod", 0),
-		dllimports.NewEnergyImport("cefRequest_SetReferrer", 0),
-		dllimports.NewEnergyImport("cefRequest_SetFlags", 0),
-		dllimports.NewEnergyImport("cefRequest_SetFirstPartyForCookies", 0),
-		dllimports.NewEnergyImport("cefRequest_GetHeaderByName", 0),
-		dllimports.NewEnergyImport("cefRequest_SetHeaderByName", 0),
-		dllimports.NewEnergyImport("cefRequest_GetHeaderMap", 0),
-		dllimports.NewEnergyImport("cefRequest_SetHeaderMap", 0),
+		dllimports.NewEnergyImport("CefRequest_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefRequest_SetUrl", 0),
+		dllimports.NewEnergyImport("CefRequest_SetMethod", 0),
+		dllimports.NewEnergyImport("CefRequest_SetReferrer", 0),
+		dllimports.NewEnergyImport("CefRequest_SetFlags", 0),
+		dllimports.NewEnergyImport("CefRequest_SetFirstPartyForCookies", 0),
+		dllimports.NewEnergyImport("CefRequest_GetHeaderByName", 0),
+		dllimports.NewEnergyImport("CefRequest_SetHeaderByName", 0),
+		dllimports.NewEnergyImport("CefRequest_GetHeaderMap", 0),
+		dllimports.NewEnergyImport("CefRequest_SetHeaderMap", 0),
+		dllimports.NewEnergyImport("CefRequest_GetPostData", 0),
+		dllimports.NewEnergyImport("CefRequest_SetPostData", 0),
 		//ICefResponse
 		dllimports.NewEnergyImport("cefResponse_IsReadOnly", 0),
 		dllimports.NewEnergyImport("cefResponse_SetError", 0),
@@ -442,13 +444,13 @@ func init() {
 		dllimports.NewEnergyImport("cefResponse_SetURL", 0),
 		dllimports.NewEnergyImport("cefResponse_GetHeaderMap", 0),
 		//ICefStringMultiMap
-		dllimports.NewEnergyImport("cefHeaderMap_GetSize", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_FindCount", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_GetEnumerate", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_GetKey", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_GetValue", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_Append", 0),
-		dllimports.NewEnergyImport("cefHeaderMap_Clear", 0),
+		dllimports.NewEnergyImport("StringMultimap_GetSize", 0),
+		dllimports.NewEnergyImport("StringMultimap_FindCount", 0),
+		dllimports.NewEnergyImport("StringMultimap_GetEnumerate", 0),
+		dllimports.NewEnergyImport("StringMultimap_GetKey", 0),
+		dllimports.NewEnergyImport("StringMultimap_GetValue", 0),
+		dllimports.NewEnergyImport("StringMultimap_Append", 0),
+		dllimports.NewEnergyImport("StringMultimap_Clear", 0),
 		//ICefImage
 		dllimports.NewEnergyImport("CEFImage_New", 0),
 		dllimports.NewEnergyImport("CEFImage_AddPng", 0),
@@ -1181,16 +1183,18 @@ const (
 	internale_CEFWindowInfoAsWindowless
 	internale_CEFJSRegisterExtension
 	//ICefRequest
-	internale_cefRequest_IsReadOnly
-	internale_cefRequest_SetUrl
-	internale_cefRequest_SetMethod
-	internale_cefRequest_SetReferrer
-	internale_cefRequest_SetFlags
-	internale_cefRequest_SetFirstPartyForCookies
-	internale_cefRequest_GetHeaderByName
-	internale_cefRequest_SetHeaderByName
-	internale_cefRequest_GetHeaderMap
-	internale_cefRequest_SetHeaderMap
+	internale_CefRequest_IsReadOnly
+	internale_CefRequest_SetUrl
+	internale_CefRequest_SetMethod
+	internale_CefRequest_SetReferrer
+	internale_CefRequest_SetFlags
+	internale_CefRequest_SetFirstPartyForCookies
+	internale_CefRequest_GetHeaderByName
+	internale_CefRequest_SetHeaderByName
+	internale_CefRequest_GetHeaderMap
+	internale_CefRequest_SetHeaderMap
+	internale_CefRequest_GetPostData
+	internale_CefRequest_SetPostData
 	//ICefResponse
 	internale_cefResponse_IsReadOnly
 	internale_cefResponse_SetError
@@ -1203,13 +1207,13 @@ const (
 	internale_cefResponse_SetURL
 	internale_cefResponse_GetHeaderMap
 	//ICefStringMultiMap
-	internale_cefHeaderMap_GetSize
-	internale_cefHeaderMap_FindCount
-	internale_cefHeaderMap_GetEnumerate
-	internale_cefHeaderMap_GetKey
-	internale_cefHeaderMap_GetValue
-	internale_cefHeaderMap_Append
-	internale_cefHeaderMap_Clear
+	internale_StringMultimap_GetSize
+	internale_StringMultimap_FindCount
+	internale_StringMultimap_GetEnumerate
+	internale_StringMultimap_GetKey
+	internale_StringMultimap_GetValue
+	internale_StringMultimap_Append
+	internale_StringMultimap_Clear
 	//ICefImage
 	internale_CEFImage_New
 	internale_CEFImage_AddPng

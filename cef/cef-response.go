@@ -15,7 +15,6 @@ import (
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl/api"
-	"unsafe"
 )
 
 // IsReadOnly 是否只读
@@ -65,10 +64,11 @@ func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
 
 // GetHeaderMap
 func (m *ICefResponse) GetHeaderMap() *ICefStringMultiMap {
-	headerMap := &ICefStringMultiMap{}
-	headerMap.instance = cefResponse_GetHeaderMap(uintptr(m.instance))
-	headerMap.ptr = unsafe.Pointer(headerMap.instance)
-	return headerMap
+	//headerMap := &ICefStringMultiMap{}
+	//headerMap.instance = cefResponse_GetHeaderMap(uintptr(m.instance))
+	//headerMap.ptr = unsafe.Pointer(headerMap.instance)
+	//return headerMap
+	return nil // TODO dev
 }
 
 func cefResponse_IsReadOnly(instance uintptr) uintptr {
