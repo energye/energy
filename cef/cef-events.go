@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -412,7 +413,8 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			regionsCount := *(*uint64)(getPtr(3))
+			regionsCount := int32(getVal(3))
+			fmt.Println("regionsCount", regionsCount)
 			regions := NewCefDraggableRegions()
 			var region TCefDraggableRegion
 			for i := 0; i < int(regionsCount); i++ {
