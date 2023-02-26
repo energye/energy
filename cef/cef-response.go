@@ -18,28 +18,6 @@ import (
 	"unsafe"
 )
 
-// ICefResponse 实例
-type ICefResponse struct {
-	instance   unsafe.Pointer
-	Status     int32
-	StatusText string
-	MimeType   string
-	Charset    string
-	Error      TCefErrorCode
-	URL        string
-}
-
-// ICefResponse 指针实例
-type iCefResponse struct {
-	Instance   uintptr
-	Status     uintptr //int32
-	StatusText uintptr //string
-	MimeType   uintptr //string
-	Charset    uintptr //string
-	Error      uintptr //int32
-	URL        uintptr //string
-}
-
 // IsReadOnly 是否只读
 func (m *ICefResponse) IsReadOnly() bool {
 	return api.GoBool(cefResponse_IsReadOnly(uintptr(m.instance)))

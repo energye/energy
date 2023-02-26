@@ -33,7 +33,7 @@ func init() {
 		senderPtr := getPtr(0)
 		browser = &ICefBrowser{instance: getPtr(1)}
 		frame = &ICefFrame{instance: getPtr(2)}
-		cefRequest := (*rICefRequest)(getPtr(3))
+		cefRequest := (*iCefRequestPtr)(getPtr(3))
 		request = &ICefRequest{
 			instance:             common.GetInstancePtr(cefRequest.Instance),
 			Url:                  api.GoStr(cefRequest.Url),
@@ -47,7 +47,7 @@ func init() {
 			Identifier:           *(*uint64)(common.GetParamPtr(cefRequest.Identifier, 0)),
 		}
 		if resp {
-			cefResponse := (*iCefResponse)(getPtr(4))
+			cefResponse := (*iCefResponsePtr)(getPtr(4))
 			instance = common.GetInstancePtr(cefResponse.Instance)
 			response = &ICefResponse{
 				instance:   instance,
@@ -62,11 +62,6 @@ func init() {
 		return lcl.AsObject(senderPtr), browser, frame, request, response
 	}
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		//defer func() {
-		//	if err := recover(); err != nil {
-		//		logger.Error("CEF Events Error:", err)
-		//	}
-		//}()
 		var (
 			instance unsafe.Pointer
 		)

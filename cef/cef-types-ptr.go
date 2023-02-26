@@ -17,11 +17,29 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-type iCefV8ContextPtr struct {
-	V8Context uintptr //ptr
-	Browse    uintptr //ptr
-	Frame     uintptr //ptr
-	Global    uintptr //ptr
+// ICefRequest 指针实例
+type iCefRequestPtr struct {
+	Instance             uintptr
+	Url                  uintptr //string
+	Method               uintptr //string
+	ReferrerUrl          uintptr //string
+	ReferrerPolicy       uintptr //int32
+	Flags                uintptr //int32
+	FirstPartyForCookies uintptr //string
+	ResourceType         uintptr //int32
+	TransitionType       uintptr //int32
+	Identifier           uintptr //uint64
+}
+
+// ICefResponse 指针实例
+type iCefResponsePtr struct {
+	Instance   uintptr
+	Status     uintptr //int32
+	StatusText uintptr //string
+	MimeType   uintptr //string
+	Charset    uintptr //string
+	Error      uintptr //int32
+	URL        uintptr //string
 }
 
 type iCefCookiePtr struct {

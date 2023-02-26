@@ -18,34 +18,6 @@ import (
 	"unsafe"
 )
 
-// ICefRequest 实例
-type ICefRequest struct {
-	instance             unsafe.Pointer
-	Url                  string
-	Method               string
-	ReferrerUrl          string
-	ReferrerPolicy       TCefReferrerPolicy
-	Flags                TCefUrlRequestFlags
-	FirstPartyForCookies string
-	ResourceType         TCefResourceType
-	TransitionType       TCefTransitionType
-	Identifier           uint64
-}
-
-// ICefRequest 指针实例
-type rICefRequest struct {
-	Instance             uintptr
-	Url                  uintptr //string
-	Method               uintptr //string
-	ReferrerUrl          uintptr //string
-	ReferrerPolicy       uintptr //int32
-	Flags                uintptr //int32
-	FirstPartyForCookies uintptr //string
-	ResourceType         uintptr //int32
-	TransitionType       uintptr //int32
-	Identifier           uintptr //uint64
-}
-
 func (m *ICefRequest) Instance() uintptr {
 	return uintptr(m.instance)
 }

@@ -221,6 +221,31 @@ type ICefWindow struct {
 	instance unsafe.Pointer
 }
 
+// ICefRequest
+type ICefRequest struct {
+	instance             unsafe.Pointer
+	Url                  string
+	Method               string
+	ReferrerUrl          string
+	ReferrerPolicy       TCefReferrerPolicy
+	Flags                TCefUrlRequestFlags
+	FirstPartyForCookies string
+	ResourceType         TCefResourceType
+	TransitionType       TCefTransitionType
+	Identifier           uint64
+}
+
+// ICefResponse 实例
+type ICefResponse struct {
+	instance   unsafe.Pointer
+	Status     int32
+	StatusText string
+	MimeType   string
+	Charset    string
+	Error      TCefErrorCode
+	URL        string
+}
+
 // ICefView
 type ICefView struct {
 	instance unsafe.Pointer
@@ -244,9 +269,6 @@ type ICefV8Exception struct {
 // ICefV8Context
 type ICefV8Context struct {
 	instance unsafe.Pointer
-	//Browser  *ICefBrowser
-	//Frame    *ICefFrame
-	//Global   *ICefV8Value
 }
 
 // ICefV8Value
