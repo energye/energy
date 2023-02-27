@@ -435,6 +435,10 @@ func AppBrowserInit() {
 			for i := 0; i < int(headerMap.GetSize()); i++ {
 				fmt.Println("\tkey:", headerMap.GetKey(int32(i)), "value:", headerMap.GetValue(int32(i)))
 			}
+			multiMap := cef.StringMultiMapRef.New()
+			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
+			multiMap.Append("key1", "value1")
+			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
 		})
 	})
 	//添加子窗口初始化

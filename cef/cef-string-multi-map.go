@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-// CEF 多值MAP类型
+// CEF 多值MAP类型 StringMultiMapRef.New
 package cef
 
 import (
@@ -17,9 +17,17 @@ import (
 	"unsafe"
 )
 
-// ICefStringMultiMap 实例
-type ICefStringMultiMap struct {
-	instance unsafe.Pointer
+// StringMultiMapRef -> ICefStringMultiMap
+var StringMultiMapRef stringMultiMap
+
+// stringMultiMap
+type stringMultiMap uintptr
+
+// New 创建一个新的 StringMultiMap
+func (m *stringMultiMap) New() *ICefStringMultiMap {
+	var result uintptr
+	imports.Proc(internale_StringMultimapRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	return &ICefStringMultiMap{instance: unsafe.Pointer(result)}
 }
 
 // Instance 实例

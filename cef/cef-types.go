@@ -246,6 +246,11 @@ type ICefResponse struct {
 	URL        string
 }
 
+// ICefStringMultiMap 实例
+type ICefStringMultiMap struct {
+	instance unsafe.Pointer
+}
+
 // ICefPostData
 type ICefPostData struct {
 	instance unsafe.Pointer

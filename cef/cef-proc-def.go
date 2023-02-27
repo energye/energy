@@ -433,17 +433,19 @@ func init() {
 		dllimports.NewEnergyImport("CefRequest_GetPostData", 0),
 		dllimports.NewEnergyImport("CefRequest_SetPostData", 0),
 		//ICefResponse
-		dllimports.NewEnergyImport("cefResponse_IsReadOnly", 0),
-		dllimports.NewEnergyImport("cefResponse_SetError", 0),
-		dllimports.NewEnergyImport("cefResponse_SetStatus", 0),
-		dllimports.NewEnergyImport("cefResponse_SetStatusText", 0),
-		dllimports.NewEnergyImport("cefResponse_SetMimeType", 0),
-		dllimports.NewEnergyImport("cefResponse_SetCharset", 0),
-		dllimports.NewEnergyImport("cefResponse_GetHeaderByName", 0),
-		dllimports.NewEnergyImport("cefResponse_SetHeaderByName", 0),
-		dllimports.NewEnergyImport("cefResponse_SetURL", 0),
-		dllimports.NewEnergyImport("cefResponse_GetHeaderMap", 0),
+		dllimports.NewEnergyImport("CefResponse_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefResponse_SetError", 0),
+		dllimports.NewEnergyImport("CefResponse_SetStatus", 0),
+		dllimports.NewEnergyImport("CefResponse_SetStatusText", 0),
+		dllimports.NewEnergyImport("CefResponse_SetMimeType", 0),
+		dllimports.NewEnergyImport("CefResponse_SetCharset", 0),
+		dllimports.NewEnergyImport("CefResponse_GetHeaderByName", 0),
+		dllimports.NewEnergyImport("CefResponse_SetHeaderByName", 0),
+		dllimports.NewEnergyImport("CefResponse_SetURL", 0),
+		dllimports.NewEnergyImport("CefResponse_GetHeaderMap", 0),
+		dllimports.NewEnergyImport("CefResponse_SetHeaderMap", 0),
 		//ICefStringMultiMap
+		dllimports.NewEnergyImport("StringMultimapRef_Create", 0),
 		dllimports.NewEnergyImport("StringMultimap_GetSize", 0),
 		dllimports.NewEnergyImport("StringMultimap_FindCount", 0),
 		dllimports.NewEnergyImport("StringMultimap_GetEnumerate", 0),
@@ -1196,17 +1198,19 @@ const (
 	internale_CefRequest_GetPostData
 	internale_CefRequest_SetPostData
 	//ICefResponse
-	internale_cefResponse_IsReadOnly
-	internale_cefResponse_SetError
-	internale_cefResponse_SetStatus
-	internale_cefResponse_SetStatusText
-	internale_cefResponse_SetMimeType
-	internale_cefResponse_SetCharset
-	internale_cefResponse_GetHeaderByName
-	internale_cefResponse_SetHeaderByName
-	internale_cefResponse_SetURL
-	internale_cefResponse_GetHeaderMap
+	internale_CefResponse_IsReadOnly
+	internale_CefResponse_SetError
+	internale_CefResponse_SetStatus
+	internale_CefResponse_SetStatusText
+	internale_CefResponse_SetMimeType
+	internale_CefResponse_SetCharset
+	internale_CefResponse_GetHeaderByName
+	internale_CefResponse_SetHeaderByName
+	internale_CefResponse_SetURL
+	internale_CefResponse_GetHeaderMap
+	internale_CefResponse_SetHeaderMap
 	//ICefStringMultiMap
+	internale_StringMultimapRef_Create
 	internale_StringMultimap_GetSize
 	internale_StringMultimap_FindCount
 	internale_StringMultimap_GetEnumerate
