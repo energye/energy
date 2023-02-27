@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/bind/src"
+	"github.com/energye/golcl/lcl"
 )
 
 //go:embed resources
@@ -151,6 +152,46 @@ func main() {
 		fmt.Println("ArrayBuffer IsValid", buffer.IsValid())
 		context.Global().SetValueByKey("arrBuf", buffer, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 		return false
+	})
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
+			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			headerMap := request.GetHeaderMap()
+			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
+			for i := 0; i < int(headerMap.GetSize()); i++ {
+				fmt.Println("\tkey:", headerMap.GetKey(int32(i)), "value:", headerMap.GetValue(int32(i)))
+			}
+			multiMap := cef.StringMultiMapRef.New()
+			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
+			multiMap.Append("key1", "value1")
+			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
+			//postData := cef.PostDataRef.New()
+			//postData.
+			fmt.Println("GetPostData().GetElementCount", request.GetPostData().IsValid())
+			if !request.GetPostData().IsValid() {
+				data := cef.PostDataRef.New()
+				postDataElement := cef.PostDataElementRef.New()
+				//postDataElement.SetToFile("7e9fac0f30c829738cc3ad8a69da97ba.txt")
+				data.AddElement(postDataElement)
+				postDataElement = cef.PostDataElementRef.New()
+				bytes := make([]byte, 256, 256)
+				for i := 0; i < len(bytes); i++ {
+					bytes[i] = byte(i)
+				}
+				fmt.Println("postDataElement.SetToBytes", bytes)
+				postDataElement.SetToBytes(bytes)
+				data.AddElement(postDataElement)
+				request.SetPostData(data)
+				fmt.Println("\tGetPostData GetElementCount:", request.GetPostData().IsValid(), request.GetPostData().GetElementCount(), data.IsReadOnly())
+				fmt.Println("\tGetElements Size:", request.GetPostData().GetElements().Size())
+				fmt.Println("\tGetElements GetFile:", request.GetPostData().GetElements().Get(0).GetFile())
+				fmt.Println("\tGetElements GetBytesCount:", request.GetPostData().GetElements().Get(0).GetBytesCount())
+				postDataElement = request.GetPostData().GetElements().Get(1)
+				fmt.Println("\tGetElements GetBytesCount:", postDataElement.GetBytesCount())
+				bytes, count := postDataElement.GetBytes()
+				fmt.Println("\tGetElements bytes,count:", bytes, count)
+			}
+		})
 	})
 
 	//运行应用
