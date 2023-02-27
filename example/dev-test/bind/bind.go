@@ -159,7 +159,7 @@ func main() {
 			headerMap := request.GetHeaderMap()
 			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
 			for i := 0; i < int(headerMap.GetSize()); i++ {
-				fmt.Println("\tkey:", headerMap.GetKey(int32(i)), "value:", headerMap.GetValue(int32(i)))
+				fmt.Println("\tkey:", headerMap.GetKey(uint32(i)), "value:", headerMap.GetValue(uint32(i)))
 			}
 			multiMap := cef.StringMultiMapRef.New()
 			fmt.Println("multiMap.GetSize()", multiMap.GetSize())

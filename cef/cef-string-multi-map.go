@@ -46,33 +46,35 @@ func (m *ICefStringMultiMap) IsValid() bool {
 }
 
 // GetSize 大小
-func (m *ICefStringMultiMap) GetSize() int32 {
+func (m *ICefStringMultiMap) GetSize() uint32 {
 	r1, _, _ := imports.Proc(internale_StringMultimap_GetSize).Call(m.Instance())
-	return int32(r1)
+	return uint32(r1)
 }
 
 // FindCount key值数量
-func (m *ICefStringMultiMap) FindCount(key string) int32 {
+func (m *ICefStringMultiMap) FindCount(key string) uint32 {
 	r1, _, _ := imports.Proc(internale_StringMultimap_FindCount).Call(m.Instance(), api.PascalStr(key))
-	return int32(r1)
+	return uint32(r1)
 }
 
 // GetEnumerate 根据 key and index 获取
-func (m *ICefStringMultiMap) GetEnumerate(key string, valueIndex int32) string {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(valueIndex))
+func (m *ICefStringMultiMap) GetEnumerate(key string, index uint32) string {
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(index))
 	return api.GoStr(r1)
 }
 
 // GetKey 根据 index 获取key
-func (m *ICefStringMultiMap) GetKey(index int32) string {
+func (m *ICefStringMultiMap) GetKey(index uint32) string {
 	r1, _, _ := imports.Proc(internale_StringMultimap_GetKey).Call(m.Instance(), uintptr(index))
 	return api.GoStr(r1)
 }
 
 // GetValue 根据 index 获取value
-func (m *ICefStringMultiMap) GetValue(index int32) string {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
-	return api.GoStr(r1)
+func (m *ICefStringMultiMap) GetValue(index uint32) string {
+	var result uintptr
+	imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
+	resultString := (*StringHeader)(unsafe.Pointer(result))
+	return resultString.GoStr()
 }
 
 // Append 给key追加值
