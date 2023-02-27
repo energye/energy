@@ -256,6 +256,18 @@ type ICefPostData struct {
 	instance unsafe.Pointer
 }
 
+// ICefPostDataElement
+type ICefPostDataElement struct {
+	instance unsafe.Pointer
+}
+
+// TCefPostDataElementArray
+type TCefPostDataElementArray struct {
+	instance              unsafe.Pointer
+	postDataElement       uintptr
+	postDataElementLength uint32
+}
+
 // ICefView
 type ICefView struct {
 	instance unsafe.Pointer
@@ -284,6 +296,13 @@ type ICefV8Context struct {
 // ICefV8Value
 type ICefV8Value struct {
 	instance unsafe.Pointer
+}
+
+// TCefV8ValueArray ICefV8Value 数组的替代结构
+type TCefV8ValueArray struct {
+	instance        unsafe.Pointer
+	arguments       uintptr
+	argumentsLength int
 }
 
 // ICefV8Handler

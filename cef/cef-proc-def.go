@@ -777,6 +777,25 @@ func init() {
 		dllimports.NewEnergyImport("CefDictionaryValue_SetBinary", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_SetDictionary", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_SetList", 0),
+		//ICefPostData
+		dllimports.NewEnergyImport("CefPostDataRef_Create", 0),
+		dllimports.NewEnergyImport("CefPostData_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefPostData_HasExcludedElements", 0),
+		dllimports.NewEnergyImport("CefPostData_GetElementCount", 0),
+		dllimports.NewEnergyImport("CefPostData_GetElements", 0),
+		dllimports.NewEnergyImport("CefPostData_RemoveElement", 0),
+		dllimports.NewEnergyImport("CefPostData_AddElement", 0),
+		dllimports.NewEnergyImport("CefPostData_RemoveElements", 0),
+		//ICefPostDataElement
+		dllimports.NewEnergyImport("PostDataElementRef_Create", 0),
+		dllimports.NewEnergyImport("PostDataElement_IsReadOnly", 0),
+		dllimports.NewEnergyImport("PostDataElement_SetToEmpty", 0),
+		dllimports.NewEnergyImport("PostDataElement_SetToFile", 0),
+		dllimports.NewEnergyImport("PostDataElement_SetToBytes", 0),
+		dllimports.NewEnergyImport("PostDataElement_GetType", 0),
+		dllimports.NewEnergyImport("PostDataElement_GetFile", 0),
+		dllimports.NewEnergyImport("PostDataElement_GetBytesCount", 0),
+		dllimports.NewEnergyImport("PostDataElement_GetBytes", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1542,4 +1561,23 @@ const (
 	internale_CefDictionaryValue_SetBinary
 	internale_CefDictionaryValue_SetDictionary
 	internale_CefDictionaryValue_SetList
+	//ICefPostData
+	internale_CefPostDataRef_Create
+	internale_CefPostData_IsReadOnly
+	internale_CefPostData_HasExcludedElements
+	internale_CefPostData_GetElementCount
+	internale_CefPostData_GetElements
+	internale_CefPostData_RemoveElement
+	internale_CefPostData_AddElement
+	internale_CefPostData_RemoveElements
+	//ICefPostDataElement
+	internale_PostDataElementRef_Create
+	internale_PostDataElement_IsReadOnly
+	internale_PostDataElement_SetToEmpty
+	internale_PostDataElement_SetToFile
+	internale_PostDataElement_SetToBytes
+	internale_PostDataElement_GetType
+	internale_PostDataElement_GetFile
+	internale_PostDataElement_GetBytesCount
+	internale_PostDataElement_GetBytes
 )

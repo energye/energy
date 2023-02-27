@@ -439,6 +439,31 @@ func AppBrowserInit() {
 			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
 			multiMap.Append("key1", "value1")
 			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
+			//postData := cef.PostDataRef.New()
+			//postData.
+			fmt.Println("GetPostData().GetElementCount", request.GetPostData().IsValid())
+			if !request.GetPostData().IsValid() {
+				data := cef.PostDataRef.New()
+				postDataElement := cef.PostDataElementRef.New()
+				postDataElement.SetToFile("D:\\360Downloads\\7e9fac0f30c829738cc3ad8a69da97ba.txt")
+				data.AddElement(postDataElement)
+				postDataElement = cef.PostDataElementRef.New()
+				bytes := make([]byte, 256, 256)
+				for i := 0; i < len(bytes); i++ {
+					bytes[i] = byte(i)
+				}
+				fmt.Println("postDataElement.SetToBytes", bytes)
+				postDataElement.SetToBytes(bytes)
+				data.AddElement(postDataElement)
+				request.SetPostData(data)
+				fmt.Println("\tGetPostData().GetElementCount", request.GetPostData().IsValid(), request.GetPostData().GetElementCount())
+				fmt.Println("\tGetElements:", request.GetPostData().GetElements().Size())
+				fmt.Println("\tGetElements:", request.GetPostData().GetElements().Get(0).GetFile())
+				postDataElement = request.GetPostData().GetElements().Get(1)
+				fmt.Println("\tGetElements GetBytesCount:", postDataElement.GetBytesCount())
+				bytes, count := postDataElement.GetBytes()
+				fmt.Println("\tGetElements bytes,count:", bytes, count)
+			}
 		})
 	})
 	//添加子窗口初始化

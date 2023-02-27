@@ -38,6 +38,13 @@ func (m *ICefStringMultiMap) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
+func (m *ICefStringMultiMap) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return true
+}
+
 // GetSize 大小
 func (m *ICefStringMultiMap) GetSize() int32 {
 	r1, _, _ := imports.Proc(internale_StringMultimap_GetSize).Call(m.Instance())

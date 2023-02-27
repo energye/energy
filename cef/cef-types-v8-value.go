@@ -311,12 +311,6 @@ func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
 	m.v8value = v8value
 }
 
-// TCefV8ValueArray ICefV8Value 数组的替代结构
-type TCefV8ValueArray struct {
-	arguments       uintptr
-	argumentsLength int
-}
-
 // Get 根据下标获取 ICefV8Value
 func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	if index < m.argumentsLength {

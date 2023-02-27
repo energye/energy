@@ -745,3 +745,12 @@ const (
 	VTYPE_DICTIONARY
 	VTYPE_LIST
 )
+
+// /include/internal/cef_types.h (cef_postdataelement_type_t)
+type TCefPostDataElementType = types.Int32
+
+const (
+	PDE_TYPE_EMPTY TCefPostDataElementType = iota
+	PDE_TYPE_BYTES
+	PDE_TYPE_FILE
+)
