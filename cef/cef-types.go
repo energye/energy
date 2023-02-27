@@ -330,18 +330,6 @@ type Exception struct {
 	message string
 }
 
-type StringHeader struct {
-	value  uintptr
-	length uintptr
-}
-
-func (m *StringHeader) GoStr() string {
-	if m == nil || m.length <= 0 {
-		return ""
-	}
-	return *(*string)(unsafe.Pointer(m))
-}
-
 func (m *Exception) SetMessage(message string) {
 	m.message = message
 }

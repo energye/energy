@@ -638,3 +638,14 @@ func GoroutineID() (id uint64) {
 	}
 	return id
 }
+
+func GoStr(ptr uintptr) string {
+	if ptr == 0 {
+		return ""
+	}
+	resultString := (*reflect.StringHeader)(unsafe.Pointer(ptr))
+	if resultString == nil || resultString.Len <= 0 {
+		return ""
+	}
+	return *(*string)(unsafe.Pointer(resultString))
+}
