@@ -39,21 +39,21 @@ func main() {
 			//获得当前窗口信息
 			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			//字典对象
-			var dict = cef.NewCefDictionaryValue()
+			var dict = cef.DictionaryValueRef.New() // cef.NewCefDictionaryValue()
 			//根据chromium字典设置
 			dict.SetInt("width", 500)
 			dict.SetInt("height", 768)
 			dict.SetInt("x", 100)
 			dict.SetInt("y", 100)
-			dict.SetBoolean("mobile", true)
+			dict.SetBool("mobile", true)
 			dict.SetDouble("deviceScaleFactor", 1)
-			TempDict := cef.NewCefDictionaryValue()
+			TempDict := cef.DictionaryValueRef.New()
 			TempDict.SetString("type", "portraitPrimary")
 			TempDict.SetInt("angle", 0)
 			dict.SetDictionary("screenOrientation", TempDict)
 			info.Chromium().ExecuteDevToolsMethod(0, "Emulation.setDeviceMetricsOverride", dict)
 			//设置浏览器 userAgent
-			dict = cef.NewCefDictionaryValue()
+			dict = cef.DictionaryValueRef.New()
 			dict.SetString("userAgent", "Mozilla/5.0 (Linux; Android 11; M2102K1G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Mobile Safari/537.36")
 			info.Chromium().ExecuteDevToolsMethod(0, "Emulation.setUserAgentOverride", dict)
 		})

@@ -95,6 +95,24 @@ type tCefBrowserSettingsPtr struct {
 	ChromeStatusBubble         uintptr //TCefState
 }
 
+type downloadItemPtr struct {
+	Id                 uintptr //int32
+	CurrentSpeed       uintptr //int64
+	PercentComplete    uintptr //int32
+	TotalBytes         uintptr //int64
+	ReceivedBytes      uintptr //int64
+	StartTime          uintptr //TDateTime
+	EndTime            uintptr //TDateTime
+	FullPath           uintptr //string
+	Url                uintptr //string
+	OriginalUrl        uintptr //string
+	SuggestedFileName  uintptr //string
+	ContentDisposition uintptr //string
+	MimeType           uintptr //string
+	IsValid            uintptr //bool
+	State              uintptr //int32
+}
+
 // ToPtr 转换为指针
 func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
 	return &tCefBrowserSettingsPtr{

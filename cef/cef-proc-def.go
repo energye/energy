@@ -276,9 +276,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_IsSameBrowser", 0),
 		dllimports.NewEnergyImport("CEFChromium_PrintToPDF", 0),
 		dllimports.NewEnergyImport("CEFChromium_Print", 0),
-		dllimports.NewEnergyImport("CEFChromium_BrowserDownloadCancel", 0),
-		dllimports.NewEnergyImport("CEFChromium_BrowserDownloadPause", 0),
-		dllimports.NewEnergyImport("CEFChromium_DownloadResume", 0),
 		dllimports.NewEnergyImport("CEFChromium_BrowserZoom", 0),
 		dllimports.NewEnergyImport("CEFChromium_GoBackForward", 0),
 		dllimports.NewEnergyImport("CEFChromium_NotifyMoveOrResizeStarted", 0),
@@ -365,8 +362,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendProcessMessage", 0),
-		//ICefBeforeDownloadCallback
-		dllimports.NewEnergyImport("CEFChromium_SetDownloadPath", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),
@@ -796,6 +791,28 @@ func init() {
 		dllimports.NewEnergyImport("PostDataElement_GetFile", 0),
 		dllimports.NewEnergyImport("PostDataElement_GetBytesCount", 0),
 		dllimports.NewEnergyImport("PostDataElement_GetBytes", 0),
+		//ICefDownloadItem
+		dllimports.NewEnergyImport("CefDownloadItem_IsValid", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_IsInProgress", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_IsComplete", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_IsCanceled", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_CurrentSpeed", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_PercentComplete", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_TotalBytes", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_ReceivedBytes", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_StartTime", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_EndTime", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_FullPath", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_Id", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_Url", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_OriginalUrl", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_SuggestedFileName", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_ContentDisposition", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_MimeType", 0),
+		dllimports.NewEnergyImport("CefBeforeDownloadCallback_Cont", 0),
+		dllimports.NewEnergyImport("CefDownloadItemCallback_Pause", 0),
+		dllimports.NewEnergyImport("CefDownloadItemCallback_Cancel", 0),
+		dllimports.NewEnergyImport("CefDownloadItemCallback_Resume", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1060,9 +1077,6 @@ const (
 	internale_CEFChromium_IsSameBrowser
 	internale_CEFChromium_PrintToPDF
 	internale_CEFChromium_Print
-	internale_CEFChromium_BrowserDownloadCancel
-	internale_CEFChromium_BrowserDownloadPause
-	internale_CEFChromium_DownloadResume
 	internale_CEFChromium_BrowserZoom
 	internale_CEFChromium_GoBackForward
 	internale_CEFChromium_NotifyMoveOrResizeStarted
@@ -1149,8 +1163,6 @@ const (
 	internale_CEFChromium_SetDefaultEncoding
 	internale_CEFChromium_GetDefaultEncoding
 	internale_CEFChromium_SendProcessMessage
-	//ICefBeforeDownloadCallback
-	internale_CEFChromium_SetDownloadPath
 	//ICefFrame
 	internale_CEFFrame_Undo
 	internale_CEFFrame_Redo
@@ -1580,4 +1592,26 @@ const (
 	internale_PostDataElement_GetFile
 	internale_PostDataElement_GetBytesCount
 	internale_PostDataElement_GetBytes
+	//ICefDownloadItem
+	internale_CefDownloadItem_IsValid
+	internale_CefDownloadItem_IsInProgress
+	internale_CefDownloadItem_IsComplete
+	internale_CefDownloadItem_IsCanceled
+	internale_CefDownloadItem_CurrentSpeed
+	internale_CefDownloadItem_PercentComplete
+	internale_CefDownloadItem_TotalBytes
+	internale_CefDownloadItem_ReceivedBytes
+	internale_CefDownloadItem_StartTime
+	internale_CefDownloadItem_EndTime
+	internale_CefDownloadItem_FullPath
+	internale_CefDownloadItem_Id
+	internale_CefDownloadItem_Url
+	internale_CefDownloadItem_OriginalUrl
+	internale_CefDownloadItem_SuggestedFileName
+	internale_CefDownloadItem_ContentDisposition
+	internale_CefDownloadItem_MimeType
+	internale_CefBeforeDownloadCallback_Cont
+	internale_CefDownloadItemCallback_Pause
+	internale_CefDownloadItemCallback_Cancel
+	internale_CefDownloadItemCallback_Resume
 )

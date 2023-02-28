@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -72,9 +71,8 @@ func (m *ICefStringMultiMap) GetKey(index uint32) string {
 
 // GetValue 根据 index 获取value
 func (m *ICefStringMultiMap) GetValue(index uint32) string {
-	var result uintptr
-	imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
-	return common.GoStr(result)
+	r1, _, _ := imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
+	return api.GoStr(r1)
 }
 
 // Append 给key追加值

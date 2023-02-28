@@ -316,7 +316,7 @@ func AppBrowserInit() {
 		//自己调用系统的保存对话框获得保存路径
 		dlSave := lcl.NewSaveDialog(window.BrowserWindow())
 		dlSave.SetTitle("保存对话框标题")
-		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.DownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
+		event.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, beforeDownloadItem *cef.ICefDownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
 			fmt.Println("OnBeforeDownload:", beforeDownloadItem, suggestedName)
 			//linux下 需要这样使用 Sync
 			if common.IsLinux() {
@@ -331,7 +331,7 @@ func AppBrowserInit() {
 				callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 			}
 		})
-		event.SetOnDownloadUpdated(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.DownloadItem, callback *cef.ICefDownloadItemCallback) {
+		event.SetOnDownloadUpdated(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.ICefDownloadItem, callback *cef.ICefDownloadItemCallback) {
 			fmt.Println("OnDownloadUpdated:", downloadItem)
 		})
 
@@ -431,9 +431,10 @@ func AppBrowserInit() {
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
 			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
-			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
+			fmt.Println("\t", request.GetHeaderByName("energy"), "size:", headerMap.GetSize())
 			for i := 0; i < int(headerMap.GetSize()); i++ {
-				fmt.Println("\tkey:", headerMap.GetKey(uint32(i)), "value:", headerMap.GetValue(uint32(i)))
+				fmt.Println("\tkey:", headerMap.GetKey(uint32(i)))
+				fmt.Println("\tvalue:", headerMap.GetValue(uint32(i)))
 			}
 			multiMap := cef.StringMultiMapRef.New()
 			fmt.Println("multiMap.GetSize()", multiMap.GetSize())

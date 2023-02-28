@@ -284,59 +284,15 @@ func init() {
 		case ChromiumEventOnBeforeDownload: //下载之前
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
-			item := (*downloadItem)(getPtr(2))
-			downItem := &DownloadItem{
-				Id:                 int32(item.Id),
-				CurrentSpeed:       int64(item.CurrentSpeed),
-				PercentComplete:    int32(item.PercentComplete),
-				TotalBytes:         int64(item.TotalBytes),
-				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.StartTime, 0))),
-				EndTime:            common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.EndTime, 0))),
-				FullPath:           api.GoStr(item.FullPath),
-				Url:                api.GoStr(item.Url),
-				OriginalUrl:        api.GoStr(item.OriginalUrl),
-				SuggestedFileName:  api.GoStr(item.SuggestedFileName),
-				ContentDisposition: api.GoStr(item.ContentDisposition),
-				MimeType:           api.GoStr(item.MimeType),
-				IsValid:            *(*bool)(unsafe.Pointer(item.IsValid)),
-				State:              int32(item.State),
-			}
+			downItem := &ICefDownloadItem{instance: getPtr(2)}
 			suggestedName := api.GoStr(getVal(3))
-			instance = getInstance(getVal(4))
-			callback := &ICefBeforeDownloadCallback{
-				instance: instance,
-				browseId: browser.Identifier(),
-				downId:   downItem.Id,
-			}
+			callback := &ICefBeforeDownloadCallback{instance: getPtr(4)}
 			fn.(ChromiumEventOnBeforeDownload)(lcl.AsObject(sender), browser, downItem, suggestedName, callback)
 		case ChromiumEventOnDownloadUpdated: //下载更新
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
-			item := *(*downloadItem)(getPtr(2))
-			downItem := &DownloadItem{
-				Id:                 int32(item.Id),
-				CurrentSpeed:       int64(item.CurrentSpeed),
-				PercentComplete:    int32(item.PercentComplete),
-				TotalBytes:         int64(item.TotalBytes),
-				ReceivedBytes:      int64(item.ReceivedBytes),
-				StartTime:          common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.StartTime, 0))),
-				EndTime:            common.DDateTimeToGoDateTime(*(*float64)(common.GetParamPtr(item.EndTime, 0))),
-				FullPath:           api.GoStr(item.FullPath),
-				Url:                api.GoStr(item.Url),
-				OriginalUrl:        api.GoStr(item.OriginalUrl),
-				SuggestedFileName:  api.GoStr(item.SuggestedFileName),
-				ContentDisposition: api.GoStr(item.ContentDisposition),
-				MimeType:           api.GoStr(item.MimeType),
-				IsValid:            *(*bool)(unsafe.Pointer(item.IsValid)),
-				State:              int32(item.State),
-			}
-			instance = getInstance(getVal(3))
-			callback := &ICefDownloadItemCallback{
-				instance: instance,
-				browseId: browser.Identifier(),
-				downId:   downItem.Id,
-			}
+			downItem := &ICefDownloadItem{instance: getPtr(2)}
+			callback := &ICefDownloadItemCallback{instance: getPtr(3)}
 			fn.(ChromiumEventOnDownloadUpdated)(lcl.AsObject(sender), browser, downItem, callback)
 		//frame
 		case ChromiumEventOnFrameAttached:

@@ -806,7 +806,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	//事件可以被覆盖
-	m.chromium.SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *DownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
+	m.chromium.SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
 		if bwEvent.onBeforeDownload != nil {
 			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback)
 		} else {

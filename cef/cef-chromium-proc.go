@@ -54,8 +54,6 @@ type IChromiumProc interface {
 	IsSameBrowser(browser *ICefBrowser) bool
 	PrintToPDF(saveFilePath string)
 	Print()
-	BrowserDownloadCancel(browseId, downloadId int32)
-	BrowserDownloadPause(browseId, downloadId int32)
 	BrowserZoom(zoom ZOOM)
 	GoBack()
 	GoForward()
@@ -302,14 +300,6 @@ func (m *TCEFChromium) PrintToPDF(saveFilePath string) {
 
 func (m *TCEFChromium) Print() {
 	_CEFChromium_Print(m.Instance())
-}
-
-func (m *TCEFChromium) BrowserDownloadCancel(browseId, downloadId int32) {
-	_CEFChromium_BrowserDownloadCancel(uintptr(browseId), uintptr(downloadId))
-}
-
-func (m *TCEFChromium) BrowserDownloadPause(browseId, downloadId int32) {
-	_CEFChromium_BrowserDownloadPause(uintptr(browseId), uintptr(downloadId))
 }
 
 func (m *TCEFChromium) BrowserZoom(zoom ZOOM) {
@@ -830,21 +820,6 @@ func _CEFChromium_PrintToPDF(instance uintptr, saveFilePath string) {
 // TCEFChromium _CEFChromium_Print
 func _CEFChromium_Print(instance uintptr) {
 	imports.Proc(internale_CEFChromium_Print).Call(instance)
-}
-
-// TCEFChromium _CEFChromium_BrowserDownloadCancel
-func _CEFChromium_BrowserDownloadCancel(browseId, downloadId uintptr) {
-	imports.Proc(internale_CEFChromium_BrowserDownloadCancel).Call(browseId, downloadId)
-}
-
-// TCEFChromium _CEFChromium_BrowserDownloadPause
-func _CEFChromium_BrowserDownloadPause(browseId, downloadId uintptr) {
-	imports.Proc(internale_CEFChromium_BrowserDownloadPause).Call(browseId, downloadId)
-}
-
-// TCEFChromium _CEFChromium_DownloadResume
-func _CEFChromium_DownloadResume(browseId, downloadId uintptr) {
-	imports.Proc(internale_CEFChromium_DownloadResume).Call(browseId, downloadId)
 }
 
 // TCEFChromium _CEFChromium_BrowserZoom

@@ -325,6 +325,40 @@ type ICefV8ArrayBufferReleaseCallback struct {
 	instance unsafe.Pointer
 }
 
+// ICefDownloadItem 下载项
+type ICefDownloadItem struct {
+	instance unsafe.Pointer
+	//Id                 int32
+	//CurrentSpeed       int64
+	//PercentComplete    int32
+	//TotalBytes         int64
+	//ReceivedBytes      int64
+	//StartTime          time.Time
+	//EndTime            time.Time
+	//FullPath           string
+	//Url                string
+	//OriginalUrl        string
+	//SuggestedFileName  string
+	//ContentDisposition string
+	//MimeType           string
+	//IsValid            bool
+	//State int32 //下载状态 -1:下载之前 0:下载中 1:下载取消 2:下载完成
+}
+
+// ICefDownloadItemCallback
+//
+// 下载中回调
+type ICefDownloadItemCallback struct {
+	instance unsafe.Pointer
+}
+
+// ICefBeforeDownloadCallback
+//
+// 下载之前回调
+type ICefBeforeDownloadCallback struct {
+	instance unsafe.Pointer
+}
+
 // Exception 异常返回信息
 type Exception struct {
 	message string

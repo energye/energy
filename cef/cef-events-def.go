@@ -73,8 +73,8 @@ type ChromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefB
 type ChromiumEventOnFullScreenModeChange func(sender lcl.IObject, browser *ICefBrowser, fullscreen bool)
 
 // ChromiumEvent 下载
-type ChromiumEventOnBeforeDownload func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *DownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback)
-type ChromiumEventOnDownloadUpdated func(sender lcl.IObject, browser *ICefBrowser, downloadItem *DownloadItem, callback *ICefDownloadItemCallback)
+type ChromiumEventOnBeforeDownload func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback)
+type ChromiumEventOnDownloadUpdated func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, callback *ICefDownloadItemCallback)
 
 // ChromiumEvent 键盘
 type ChromiumEventOnKeyEvent func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, result *bool)
