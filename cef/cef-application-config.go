@@ -8,12 +8,10 @@
 //
 //----------------------------------------
 
-// 应用程序的配置
-// 提供部分应用程序配置
+// 应用程序的属性配置
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -62,8 +60,8 @@ func (m *TCEFApplication) initDefaultProperties() {
 	m.SetDisableSafeBrowsing(true)
 	m.SetCheckCEFFiles(false)
 	// 以下条件判断根据不同平台, 启动不同的窗口组件
-	// ViewsFrameworkBrowserWindow 窗口组件,同时支持 Windows/Linux/MacOSX
-	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本>=107.xx时默认开启GTK3且不支持GTK2和LCL提供的各种组件
+	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
+	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
 	if common.IsLinux() { // (VF)View Framework 窗口
 		// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
 		// 强制使用GTK3方式，但又无法正常创建lcl组件到窗口中，该框架只对浏览器应用做封装
@@ -76,8 +74,9 @@ func (m *TCEFApplication) initDefaultProperties() {
 		m.SetDisableZygote(true)
 	} else if common.IsDarwin() { // LCL窗口
 		m.AddCrDelegate()
-		// MacOSX 在使用LCL窗口组件必须将ExternalMessagePump=true和MultiThreadedMessageLoop=false
-		// 或同Linux一样使用ViewsFrameworkBrowserWindow窗口组件
+		// MacOSX 在使用LCL窗口组件必须将 ExternalMessagePump=true 和 MultiThreadedMessageLoop=false
+		// 或
+		// 同 Linux 一样使用 ViewsFrameworkBrowserWindow 窗口组件
 		m.SetExternalMessagePump(true)
 		m.SetMultiThreadedMessageLoop(false)
 	} else { // LCL窗口
@@ -112,7 +111,8 @@ func libPath() string {
 	return ""
 }
 
-// 设置 TCefSettings (cef_settings_t) 属性
+/*** 设置 TCefSettings (cef_settings_t) 属性 ***/
+
 func (m *TCEFApplication) NoSandbox() bool {
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_NoSandbox).Call()
 	return api.GoBool(r1)
@@ -169,7 +169,6 @@ func (m *TCEFApplication) SetMultiThreadedMessageLoop(value bool) {
 
 func (m *TCEFApplication) ExternalMessagePump() bool {
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_ExternalMessagePump).Call()
-	fmt.Println("ExternalMessagePump:", r1)
 	return api.GoBool(r1)
 }
 
@@ -386,7 +385,8 @@ func (m *TCEFApplication) SetCookieableSchemesExcludeDefaults(value bool) {
 	imports.Proc(internale_CEFAppConfig_SetCookieableSchemesExcludeDefaults).Call(api.PascalBool(value))
 }
 
-// 设置常用的命令行参数属性
+/*** 设置常用的命令行参数属性 ***/
+
 func (m *TCEFApplication) SingleProcess() bool {
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_SingleProcess).Call()
 	SingleProcess = api.GoBool(r1)
@@ -922,13 +922,11 @@ func (m *TCEFApplication) SetNetLogFile(value string) {
 }
 
 func (m *TCEFApplication) NetLogCaptureMode() TCefNetLogCaptureMode {
-	// type = TCefNetLogCaptureMode
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_NetLogCaptureMode).Call()
 	return TCefNetLogCaptureMode(r1)
 }
 
 func (m *TCEFApplication) SetNetLogCaptureMode(value TCefNetLogCaptureMode) {
-	// type = TCefNetLogCaptureMode
 	imports.Proc(internale_CEFAppConfig_SetNetLogCaptureMode).Call(value.ToPtr())
 }
 
@@ -946,7 +944,8 @@ func (m *TCEFApplication) SetEnableHighDPISupport(value bool) {
 	}
 }
 
-// 自定义属性
+/*** 自定义属性 ***/
+
 func (m *TCEFApplication) DeleteCache() bool {
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_DeleteCache).Call()
 	return api.GoBool(r1)
@@ -1084,9 +1083,32 @@ func (m *TCEFApplication) SetLocalesRequired(value string) {
 }
 
 func (m *TCEFApplication) ProcessType() TCefProcessType {
-	// type = TCefProcessType = ptBrowser, ptRenderer, ptZygote, ptGPU, ptUtility, ptBroker, ptCrashpad, ptOther
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_ProcessType).Call()
 	return TCefProcessType(r1)
+}
+
+func (m *TCEFApplication) ProcessTypeValue() (processTypeValue TCefProcessTypeValue) {
+	switch m.ProcessType() {
+	case PtBrowser:
+		processTypeValue = PtvBrowser
+	case PtRenderer:
+		processTypeValue = PtvRenderer
+	case PtZygote:
+		processTypeValue = PtvZygote
+	case PtGPU:
+		processTypeValue = PtvGPU
+	case PtUtility:
+		processTypeValue = PtvUtility
+	case PtBroker:
+		processTypeValue = PtvBroker
+	case PtCrashpad:
+		processTypeValue = PtvCrashpad
+	case PtOther:
+		processTypeValue = PtvOther
+	default:
+		processTypeValue = ""
+	}
+	return
 }
 
 func (m *TCEFApplication) MustCreateResourceBundleHandler() bool {

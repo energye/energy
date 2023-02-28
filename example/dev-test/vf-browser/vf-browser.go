@@ -39,7 +39,6 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		return
 		//window.DisableResize()
 		window.SetCenterWindow(true)
 		window.SetTitle("这里改变了窗口标题")

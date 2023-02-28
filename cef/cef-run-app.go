@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -55,32 +54,29 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 // Run
 // 运行应用
 //
-// 多进程方式，启动主进程然后启动子进程，在MacOS下，需要单独调用启动子进程函数，单进程只启动主进程
-//
-// 主进程启动成功之后，将创建主窗口 mainBrowserWindow 是一个默认的主窗口
-//
-// externalMessagePump和multiThreadedMessageLoop是false时启用 ViewsFrameworkBrowserWindow 窗口
-//
 // 在这里启动浏览器的主进程和子进程
-func Run(cefApp *TCEFApplication) {
+func Run(app *TCEFApplication) {
 	defer func() {
 		logger.Debug("application process [", common.Args.ProcessType(), "] run end")
 		api.EnergyLibRelease()
 	}()
+	//MacOSX 多进程时，需要调用StartSubProcess来启动子进程
 	if common.IsDarwin() && !consts.SingleProcess && !common.Args.IsMain() {
 		// mac os 启动子进程
-		cefApp.StartSubProcess()
-		cefApp.Free()
+		app.StartSubProcess()
+		app.Free()
 	} else {
-		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时启用CEF views framework (ViewsFrameworkBrowserWindow) 窗口
-		emp := cefApp.ExternalMessagePump()
-		mtml := cefApp.MultiThreadedMessageLoop()
+		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时, 启用 VF (ViewsFrameworkBrowserWindow) 窗口组件
+		emp := app.ExternalMessagePump()
+		mtml := app.MultiThreadedMessageLoop()
 		consts.IsMessageLoop = !emp && !mtml
-		fmt.Println("consts.IsMessageLoop", consts.IsMessageLoop, "em:", emp, mtml)
 		if consts.IsMessageLoop {
-			BrowserWindow.appContextInitialized(cefApp)
+			//启用VF窗口组件
+			BrowserWindow.appContextInitialized(app)
 		}
-		success := cefApp.StartMainProcess()
+		//启动主进程
+		success := app.StartMainProcess()
+		//主进程启动成功之后回调
 		if browserProcessStartAfterCallback != nil {
 			browserProcessStartAfterCallback(success)
 		}
@@ -89,8 +85,10 @@ func Run(cefApp *TCEFApplication) {
 			ipc.IPC.StartBrowserIPC()
 			bindGoToJS(nil, nil)
 			if consts.IsMessageLoop {
-				cefApp.RunMessageLoop()
+				//VF窗口消息轮询
+				app.RunMessageLoop()
 			} else {
+				//LCL窗口组件
 				if BrowserWindow.mainBrowserWindow == nil {
 					BrowserWindow.mainBrowserWindow = &browserWindow{}
 				}
