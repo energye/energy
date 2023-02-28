@@ -131,21 +131,21 @@ func (m *ICefDownloadItemCallback) Instance() uintptr {
 }
 
 /*
-Cancel 取消下载
+Cancel 取消下载 仅在回调函数中使用
 */
 func (m *ICefDownloadItemCallback) Cancel() {
 	imports.Proc(internale_CefDownloadItemCallback_Cancel).Call(m.Instance())
 }
 
 /*
-Pause 暂停
+Pause 暂停 仅在回调函数中使用
 */
 func (m *ICefDownloadItemCallback) Pause() {
 	imports.Proc(internale_CefDownloadItemCallback_Pause).Call(m.Instance())
 }
 
 /*
-Resume 恢复下载
+Resume 恢复下载 仅在回调函数中使用
 */
 func (m *ICefDownloadItemCallback) Resume() {
 	imports.Proc(internale_CefDownloadItemCallback_Resume).Call(m.Instance())
@@ -156,7 +156,7 @@ func (m *ICefBeforeDownloadCallback) Instance() uintptr {
 }
 
 // Cont
-// 设置下载目录
+// 设置下载目录 仅在回调函数中使用
 //
 // downloadPath 设置完整的下载目录, 包含文件名
 //

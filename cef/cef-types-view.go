@@ -11,4 +11,10 @@
 // TODO cef view
 package cef
 
-//ICefView
+// Instance 实例
+func (m *ICefView) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
+}
