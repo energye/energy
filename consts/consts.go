@@ -95,17 +95,17 @@ const (
 )
 
 // 日志等级
-type LOG = types.UInt32
+type LogSeverity = types.UInt32
 
 const (
-	LOGSEVERITY_DEFAULT LOG = 0
-	LOGSEVERITY_VERBOSE LOG = 1
-	LOGSEVERITY_DEBUG   LOG = LOGSEVERITY_VERBOSE
-	LOGSEVERITY_INFO    LOG = 2
-	LOGSEVERITY_WARNING LOG = 3
-	LOGSEVERITY_ERROR   LOG = 4
-	LOGSEVERITY_FATAL   LOG = 5
-	LOGSEVERITY_DISABLE LOG = 99
+	LOGSEVERITY_DEFAULT LogSeverity = 0
+	LOGSEVERITY_VERBOSE LogSeverity = 1
+	LOGSEVERITY_DEBUG   LogSeverity = LOGSEVERITY_VERBOSE
+	LOGSEVERITY_INFO    LogSeverity = 2
+	LOGSEVERITY_WARNING LogSeverity = 3
+	LOGSEVERITY_ERROR   LogSeverity = 4
+	LOGSEVERITY_FATAL   LogSeverity = 5
+	LOGSEVERITY_DISABLE LogSeverity = 99
 )
 
 type LANGUAGE = types.String
@@ -310,19 +310,6 @@ const (
 	PMT_JS_CODE = PROCESS_MESSAGE_TYPE(iota) //执行JS代码消息
 	PMT_TEXT                                 //文本传递消息
 	PMT_BINARY                               //二进制消息
-)
-
-type TCefProcessType = types.Int8
-
-const (
-	PtBrowser = TCefProcessType(iota)
-	PtRender
-	PtZygote
-	PtGPU
-	PtUtility
-	PtBroker
-	PtCrashpad
-	PtOther
 )
 
 type TDateTime = types.Float64
@@ -753,4 +740,49 @@ const (
 	PDE_TYPE_EMPTY TCefPostDataElementType = iota
 	PDE_TYPE_BYTES
 	PDE_TYPE_FILE
+)
+
+type TCefAutoplayPolicy = types.Int32
+
+const (
+	AppDefault TCefAutoplayPolicy = iota
+	AppDocumentUserActivationRequired
+	AppNoUserGestureRequired
+	AppUserGestureRequired
+)
+
+type TCefNetLogCaptureMode = types.Int32
+
+const (
+	NlcmDefault TCefNetLogCaptureMode = iota
+	NlcmIncludeSensitive
+	NlcmEverything
+)
+
+type TCefProcessType = types.Int32
+
+const (
+	PtBrowser TCefProcessType = iota
+	PtRenderer
+	PtZygote
+	PtGPU
+	PtUtility
+	PtBroker
+	PtCrashpad
+	PtOther
+)
+
+type TCefApplicationStatus = types.Int32
+
+const (
+	AsLoading TCefApplicationStatus = iota
+	AsLoaded
+	AsInitialized
+	AsShuttingDown
+	AsUnloaded
+	AsErrorMissingFiles
+	AsErrorDLLVersion
+	AsErrorLoadingLibrary
+	AsErrorInitializingLibrary
+	AsErrorExecutingProcess
 )

@@ -25,10 +25,9 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	fmt.Println("main", common.Args.ProcessType())
 
-	config := cef.NewApplicationConfig()
-	config.SetMultiThreadedMessageLoop(false)
-	config.SetExternalMessagePump(false)
-	application := cef.NewCEFApplication(config)
+	application := cef.NewApplication()
+	application.SetMultiThreadedMessageLoop(false)
+	application.SetExternalMessagePump(false)
 	application.SetOnContextInitialized(func() {
 		fmt.Println("OnContextInitialized()")
 		component := lcl.NewComponent(nil)

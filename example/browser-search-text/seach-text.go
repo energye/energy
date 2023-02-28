@@ -16,11 +16,11 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	cef.BrowserWindow.Config.Title = "Energy 打印PFD预览"
+	cef.BrowserWindow.Config.Title = "Energy 搜索页面中文本"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源

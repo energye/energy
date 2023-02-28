@@ -19,7 +19,7 @@ func main() {
 	//全局配置初始化
 	cef.GlobalInit(nil, nil)
 	//创建Cef应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//主进程和子进程的变量绑定函数定义
 	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
 	//IPC通信

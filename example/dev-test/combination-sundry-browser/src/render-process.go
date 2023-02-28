@@ -21,25 +21,15 @@ import (
 
 func AppRenderInit() *cef.TCEFApplication {
 	//Cef应用的配置
-	cfg := cef.NewApplicationConfig()
 	var env = common.Args.Args("env")
 	if common.IsWindows() {
 		//SetFrameworkDirPath 或 配置环境变量 ENERGY_HOME
 	} else if common.IsLinux() {
 		//cfg.SetFrameworkDirPath("/home/sxm/app/swt/energy/chromium")  或 配置环境变量 ENERGY_HOME
 	}
-	//cfg.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
-	//cfg.SetLogSeverity(consts.LOGSEVERITY_DISABLE)
-	cfg.SetLanguage(consts.LANGUAGE_zh_CN)
-	cfg.SetEnableGPU(false)
-	cfg.SetSingleProcess(false)
-	//cfg.SetDisableZygote(true)
-	//cfg.SetNoSandbox(true)
-	cfg.SetRemoteDebuggingPort(0)
-	cfg.SetCommonRootName("v8obj")
-	//cef.AddCrDelegate()
 	//创建Cef应用
-	cefApp := cef.NewApplication(cfg)
+	cefApp := cef.NewApplication()
+	cefApp.SetCommonRootName("v8obj")
 	//fmt.Printf("cefApp:%+v %s\n", cefApp, runtime.GOOS)
 	if common.Args.IsMain() {
 		//cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {

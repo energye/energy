@@ -42,7 +42,6 @@ func main() {
 	//CEF全局初始化
 	cef.GlobalInit(nil, &resources)
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
-	cfg := cef.NewApplicationConfig()
 	//子进程执行程序如果在 chromium 目录中可不配置
 	wd, _ := os.Getwd()
 	var subExePath string
@@ -56,10 +55,10 @@ func main() {
 	}
 	//subExePath = path.Join(wd, "sub-process.exe")
 	println("subExePath", subExePath)
-	cfg.SetBrowseSubprocessPath(subExePath)
-	cfg.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
 	//创建Cef应用
-	cefApp := cef.NewApplication(cfg)
+	cefApp := cef.NewApplication()
+	//cefApp.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
+	cefApp.SetBrowserSubprocessPath(subExePath)
 	//主进程和子进程的变量绑定函数定义
 	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
 	//主进程初始化

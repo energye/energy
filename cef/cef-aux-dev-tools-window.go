@@ -79,9 +79,9 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 		devToolsWindow.Show()
 		imports.Proc(internale_CEFBrowser_ShowDevTools).Call(m.Instance(), devToolsWindow.chromium.Instance(), devToolsWindow.windowParent.Instance(), api.PascalStr(dev_tools_name))
 	} else if browserWindow.IsViewsFramework() {
-		if application.cfg.remoteDebuggingPort > 1024 && application.cfg.remoteDebuggingPort < 65535 {
+		if application.RemoteDebuggingPort() > 1024 && application.RemoteDebuggingPort() < 65535 {
 			wp := NewWindowProperty()
-			wp.Url = fmt.Sprintf("http://127.0.0.1:%d", application.cfg.remoteDebuggingPort)
+			wp.Url = fmt.Sprintf("http://127.0.0.1:%d", application.RemoteDebuggingPort())
 			wp.Title = dev_tools_name
 			wp.IconFS = BrowserWindow.Config.IconFS
 			wp.Icon = BrowserWindow.Config.Icon

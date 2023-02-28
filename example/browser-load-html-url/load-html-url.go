@@ -10,7 +10,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	wd, _ := os.Getwd()
 	indexHtmlPath := path.Join(wd, "example", "browser-load-html-url", "resources", "index.html")
 	println("indexHtmlPath", indexHtmlPath)

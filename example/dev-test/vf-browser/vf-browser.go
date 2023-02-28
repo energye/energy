@@ -30,16 +30,16 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	config := cef.NewApplicationConfig()
-	config.SetMultiThreadedMessageLoop(false)
-	config.SetExternalMessagePump(false)
-	config.SetRemoteDebuggingPort(33333)
-	cefApp := cef.NewApplication(config)
+	cefApp := cef.NewApplication()
+	cefApp.SetMultiThreadedMessageLoop(false)
+	cefApp.SetExternalMessagePump(false)
+	//cefApp.SetRemoteDebuggingPort(33333)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		return
 		//window.DisableResize()
 		window.SetCenterWindow(true)
 		window.SetTitle("这里改变了窗口标题")

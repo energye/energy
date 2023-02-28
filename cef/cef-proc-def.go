@@ -50,6 +50,7 @@ func init() {
 		dllimports.NewEnergyImport("cefCallback_Cont", 0),
 		dllimports.NewEnergyImport("cefCallback_Cancel", 0),
 		//process
+		dllimports.NewEnergyImport("CEF_AddCrDelegate", 0),
 		dllimports.NewEnergyImport("SetMacOSXCommandLine", 0),
 		dllimports.NewEnergyImport("CEFStartMainProcess", 0),
 		dllimports.NewEnergyImport("CEFStartSubProcess", 0),
@@ -61,7 +62,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
 		dllimports.NewEnergyImport("CEFApplication_StopScheduler", 0),
-		dllimports.NewEnergyImport("CEFApplication_ExecuteJS", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetCommonRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_SetObjectRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_CommonValueBindInfo", 0),
@@ -91,6 +91,242 @@ func init() {
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadStart", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadEnd", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadError", 0),
+		// 设置 TCefSettings (cef_settings_t) 属性,
+		dllimports.NewEnergyImport("CEFAppConfig_NoSandbox", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetNoSandbox", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_BrowserSubprocessPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetBrowserSubprocessPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_FrameworkDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetFrameworkDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MainBundlePath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMainBundlePath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeRuntime", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetChromeRuntime", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MultiThreadedMessageLoop", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMultiThreadedMessageLoop", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ExternalMessagePump", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetExternalMessagePump", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_WindowlessRenderingEnabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetWindowlessRenderingEnabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_CommandLineArgsDisabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCommandLineArgsDisabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_Cache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_RootCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetRootCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UserDataPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUserDataPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_PersistSessionCookies", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetPersistSessionCookies", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_PersistUserPreferences", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetPersistUserPreferences", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UserAgent", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUserAgent", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UserAgentProduct", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUserAgentProduct", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_Locale", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLocale", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LogSeverity", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLogSeverity", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_JavaScriptFlags", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetJavaScriptFlags", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ResourcesDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetResourcesDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LocalesDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLocalesDirPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_PackLoadingDisabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetPackLoadingDisabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_RemoteDebuggingPort", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetRemoteDebuggingPort", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UncaughtExceptionStackSize", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUncaughtExceptionStackSize", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_IgnoreCertificateErrors", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetIgnoreCertificateErrors", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_BackgroundColor", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetBackgroundColor", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AcceptLanguageList", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAcceptLanguageList", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_CookieableSchemesList", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCookieableSchemesList", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_CookieableSchemesExcludeDefaults", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCookieableSchemesExcludeDefaults", 0),
+		// 设置常用的命令行参数属性
+		dllimports.NewEnergyImport("CEFAppConfig_SingleProcess", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetSingleProcess", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableMediaStream", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableMediaStream", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableSpeechInput", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableSpeechInput", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UseFakeUIForMediaStream", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUseFakeUIForMediaStream", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableUsermediaScreenCapturing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableUsermediaScreenCapturing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableGPU", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableGPU", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableBlinkFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableBlinkFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableBlinkFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableBlinkFeatures", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_BlinkSettings", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetBlinkSettings", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ForceFieldTrials", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetForceFieldTrials", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ForceFieldTrialParams", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetForceFieldTrialParams", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SmoothScrolling", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetSmoothScrolling", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_FastUnload", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetFastUnload", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableSafeBrowsing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableSafeBrowsing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MuteAudio", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMuteAudio", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SitePerProcess", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetSitePerProcess", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableWebSecurity", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableWebSecurity", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisablePDFExtension", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisablePDFExtension", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableSiteIsolationTrials", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableSiteIsolationTrials", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableChromeLoginPrompt", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableChromeLoginPrompt", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableExtensions", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableExtensions", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AutoplayPolicy", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAutoplayPolicy", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableBackgroundNetworking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableBackgroundNetworking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MetricsRecordingOnly", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMetricsRecordingOnly", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AllowFileAccessFromFiles", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAllowFileAccessFromFiles", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AllowRunningInsecureContent", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAllowRunningInsecureContent", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnablePrintPreview", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnablePrintPreview", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DefaultEncoding", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDefaultEncoding", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableJavascript", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableJavascript", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableJavascriptCloseWindows", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableJavascriptCloseWindows", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableJavascriptAccessClipboard", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableJavascriptAccessClipboard", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableJavascriptDomPaste", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableJavascriptDomPaste", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AllowUniversalAccessFromFileUrls", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAllowUniversalAccessFromFileUrls", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableImageLoading", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableImageLoading", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ImageShrinkStandaloneToFit", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetImageShrinkStandaloneToFit", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableTextAreaResize", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableTextAreaResize", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableTabToLinks", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableTabToLinks", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableProfanityFilter", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableProfanityFilter", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableSpellChecking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableSpellChecking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_OverrideSpellCheckLang", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetOverrideSpellCheckLang", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_TouchEvents", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetTouchEvents", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableReadingFromCanvas", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableReadingFromCanvas", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_HyperlinkAuditing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetHyperlinkAuditing", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableNewBrowserInfoTimeout", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableNewBrowserInfoTimeout", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DevToolsProtocolLogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDevToolsProtocolLogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ForcedDeviceScaleFactor", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetForcedDeviceScaleFactor", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableZygote", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableZygote", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UseMockKeyChain", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetUseMockKeyChain", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableRequestHandlingForTesting", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableRequestHandlingForTesting", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisablePopupBlocking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisablePopupBlocking", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableBackForwardCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableBackForwardCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DisableComponentUpdate", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDisableComponentUpdate", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AllowInsecureLocalhost", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetAllowInsecureLocalhost", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_KioskPrinting", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetKioskPrinting", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_TreatInsecureOriginAsSecure", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetTreatInsecureOriginAsSecure", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_NetLogEnabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetNetLogEnabled", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_NetLogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetNetLogFile", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_NetLogCaptureMode", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetNetLogCaptureMode", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_EnableHighDPISupport", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetEnableHighDPISupport", 0),
+		// 自定义属性
+		dllimports.NewEnergyImport("CEFAppConfig_DeleteCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DeleteCookies", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_CheckCEFFiles", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ShowMessageDlg", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MissingBinariesException", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCurrentDir", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_GlobalContextInitialized", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeMajorVer", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeMinorVer", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeRelease", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeBuild", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeVersion", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LibCefVersion", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LibCefPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromeElfPath", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LibLoaded", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LogProcessInfo", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ReRaiseExceptions", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_DeviceScaleFactor", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LocalesRequired", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ProcessType", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MustCreateResourceBundleHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MustCreateBrowserProcessHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MustCreateRenderProcessHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MustCreateLoadHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_Status", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MissingLibFiles", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_MustFreeLibrary", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChildProcessesCount", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UsedMemory", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_TotalSystemMemory", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AvailableSystemMemory", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SystemMemoryLoad", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ApiHashUniversal", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ApiHashPlatform", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ApiHashCommit", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_LastErrorMessage", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDeleteCache", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetDeleteCookies", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetCheckCEFFiles", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetShowMessageDlg", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMissingBinariesException", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetSetCurrentDir", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLogProcessInfo", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetReRaiseExceptions", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetLocalesRequired", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateResourceBundleHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateBrowserProcessHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateRenderProcessHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateLoadHandler", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_SetMustFreeLibrary", 0),
 		//CEFParentWindow
 		dllimports.NewEnergyImport("CEFWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetHandle", 0),
@@ -850,6 +1086,7 @@ const (
 	internale_cefCallback_Cont
 	internale_cefCallback_Cancel
 	//process
+	internale_CEF_AddCrDelegate
 	internale_SetMacOSXCommandLine
 	internale_CEFStartMainProcess
 	internale_CEFStartSubProcess
@@ -861,7 +1098,6 @@ const (
 	internale_CEFApplication_Destroy
 	internale_CEFApplication_Free
 	internale_CEFApplication_StopScheduler
-	internale_CEFApplication_ExecuteJS
 	internale_CEFV8ValueRef_SetCommonRootName
 	internale_CEFV8ValueRef_SetObjectRootName
 	internale_CEFV8ValueRef_CommonValueBindInfo
@@ -891,6 +1127,242 @@ const (
 	internale_CEFGlobalApp_SetOnLoadStart
 	internale_CEFGlobalApp_SetOnLoadEnd
 	internale_CEFGlobalApp_SetOnLoadError
+	// 设置 TCefSettings (cef_settings_t) 属性
+	internale_CEFAppConfig_NoSandbox
+	internale_CEFAppConfig_SetNoSandbox
+	internale_CEFAppConfig_BrowserSubprocessPath
+	internale_CEFAppConfig_SetBrowserSubprocessPath
+	internale_CEFAppConfig_FrameworkDirPath
+	internale_CEFAppConfig_SetFrameworkDirPath
+	internale_CEFAppConfig_MainBundlePath
+	internale_CEFAppConfig_SetMainBundlePath
+	internale_CEFAppConfig_ChromeRuntime
+	internale_CEFAppConfig_SetChromeRuntime
+	internale_CEFAppConfig_MultiThreadedMessageLoop
+	internale_CEFAppConfig_SetMultiThreadedMessageLoop
+	internale_CEFAppConfig_ExternalMessagePump
+	internale_CEFAppConfig_SetExternalMessagePump
+	internale_CEFAppConfig_WindowlessRenderingEnabled
+	internale_CEFAppConfig_SetWindowlessRenderingEnabled
+	internale_CEFAppConfig_CommandLineArgsDisabled
+	internale_CEFAppConfig_SetCommandLineArgsDisabled
+	internale_CEFAppConfig_Cache
+	internale_CEFAppConfig_SetCache
+	internale_CEFAppConfig_RootCache
+	internale_CEFAppConfig_SetRootCache
+	internale_CEFAppConfig_UserDataPath
+	internale_CEFAppConfig_SetUserDataPath
+	internale_CEFAppConfig_PersistSessionCookies
+	internale_CEFAppConfig_SetPersistSessionCookies
+	internale_CEFAppConfig_PersistUserPreferences
+	internale_CEFAppConfig_SetPersistUserPreferences
+	internale_CEFAppConfig_UserAgent
+	internale_CEFAppConfig_SetUserAgent
+	internale_CEFAppConfig_UserAgentProduct
+	internale_CEFAppConfig_SetUserAgentProduct
+	internale_CEFAppConfig_Locale
+	internale_CEFAppConfig_SetLocale
+	internale_CEFAppConfig_LogFile
+	internale_CEFAppConfig_SetLogFile
+	internale_CEFAppConfig_LogSeverity
+	internale_CEFAppConfig_SetLogSeverity
+	internale_CEFAppConfig_JavaScriptFlags
+	internale_CEFAppConfig_SetJavaScriptFlags
+	internale_CEFAppConfig_ResourcesDirPath
+	internale_CEFAppConfig_SetResourcesDirPath
+	internale_CEFAppConfig_LocalesDirPath
+	internale_CEFAppConfig_SetLocalesDirPath
+	internale_CEFAppConfig_PackLoadingDisabled
+	internale_CEFAppConfig_SetPackLoadingDisabled
+	internale_CEFAppConfig_RemoteDebuggingPort
+	internale_CEFAppConfig_SetRemoteDebuggingPort
+	internale_CEFAppConfig_UncaughtExceptionStackSize
+	internale_CEFAppConfig_SetUncaughtExceptionStackSize
+	internale_CEFAppConfig_IgnoreCertificateErrors
+	internale_CEFAppConfig_SetIgnoreCertificateErrors
+	internale_CEFAppConfig_BackgroundColor
+	internale_CEFAppConfig_SetBackgroundColor
+	internale_CEFAppConfig_AcceptLanguageList
+	internale_CEFAppConfig_SetAcceptLanguageList
+	internale_CEFAppConfig_CookieableSchemesList
+	internale_CEFAppConfig_SetCookieableSchemesList
+	internale_CEFAppConfig_CookieableSchemesExcludeDefaults
+	internale_CEFAppConfig_SetCookieableSchemesExcludeDefaults
+	// 设置常用的命令行参数属性
+	internale_CEFAppConfig_SingleProcess
+	internale_CEFAppConfig_SetSingleProcess
+	internale_CEFAppConfig_EnableMediaStream
+	internale_CEFAppConfig_SetEnableMediaStream
+	internale_CEFAppConfig_EnableSpeechInput
+	internale_CEFAppConfig_SetEnableSpeechInput
+	internale_CEFAppConfig_UseFakeUIForMediaStream
+	internale_CEFAppConfig_SetUseFakeUIForMediaStream
+	internale_CEFAppConfig_EnableUsermediaScreenCapturing
+	internale_CEFAppConfig_SetEnableUsermediaScreenCapturing
+	internale_CEFAppConfig_EnableGPU
+	internale_CEFAppConfig_SetEnableGPU
+	internale_CEFAppConfig_EnableFeatures
+	internale_CEFAppConfig_SetEnableFeatures
+	internale_CEFAppConfig_DisableFeatures
+	internale_CEFAppConfig_SetDisableFeatures
+	internale_CEFAppConfig_EnableBlinkFeatures
+	internale_CEFAppConfig_SetEnableBlinkFeatures
+	internale_CEFAppConfig_DisableBlinkFeatures
+	internale_CEFAppConfig_SetDisableBlinkFeatures
+	internale_CEFAppConfig_BlinkSettings
+	internale_CEFAppConfig_SetBlinkSettings
+	internale_CEFAppConfig_ForceFieldTrials
+	internale_CEFAppConfig_SetForceFieldTrials
+	internale_CEFAppConfig_ForceFieldTrialParams
+	internale_CEFAppConfig_SetForceFieldTrialParams
+	internale_CEFAppConfig_SmoothScrolling
+	internale_CEFAppConfig_SetSmoothScrolling
+	internale_CEFAppConfig_FastUnload
+	internale_CEFAppConfig_SetFastUnload
+	internale_CEFAppConfig_DisableSafeBrowsing
+	internale_CEFAppConfig_SetDisableSafeBrowsing
+	internale_CEFAppConfig_MuteAudio
+	internale_CEFAppConfig_SetMuteAudio
+	internale_CEFAppConfig_SitePerProcess
+	internale_CEFAppConfig_SetSitePerProcess
+	internale_CEFAppConfig_DisableWebSecurity
+	internale_CEFAppConfig_SetDisableWebSecurity
+	internale_CEFAppConfig_DisablePDFExtension
+	internale_CEFAppConfig_SetDisablePDFExtension
+	internale_CEFAppConfig_DisableSiteIsolationTrials
+	internale_CEFAppConfig_SetDisableSiteIsolationTrials
+	internale_CEFAppConfig_DisableChromeLoginPrompt
+	internale_CEFAppConfig_SetDisableChromeLoginPrompt
+	internale_CEFAppConfig_DisableExtensions
+	internale_CEFAppConfig_SetDisableExtensions
+	internale_CEFAppConfig_AutoplayPolicy
+	internale_CEFAppConfig_SetAutoplayPolicy
+	internale_CEFAppConfig_DisableBackgroundNetworking
+	internale_CEFAppConfig_SetDisableBackgroundNetworking
+	internale_CEFAppConfig_MetricsRecordingOnly
+	internale_CEFAppConfig_SetMetricsRecordingOnly
+	internale_CEFAppConfig_AllowFileAccessFromFiles
+	internale_CEFAppConfig_SetAllowFileAccessFromFiles
+	internale_CEFAppConfig_AllowRunningInsecureContent
+	internale_CEFAppConfig_SetAllowRunningInsecureContent
+	internale_CEFAppConfig_EnablePrintPreview
+	internale_CEFAppConfig_SetEnablePrintPreview
+	internale_CEFAppConfig_DefaultEncoding
+	internale_CEFAppConfig_SetDefaultEncoding
+	internale_CEFAppConfig_DisableJavascript
+	internale_CEFAppConfig_SetDisableJavascript
+	internale_CEFAppConfig_DisableJavascriptCloseWindows
+	internale_CEFAppConfig_SetDisableJavascriptCloseWindows
+	internale_CEFAppConfig_DisableJavascriptAccessClipboard
+	internale_CEFAppConfig_SetDisableJavascriptAccessClipboard
+	internale_CEFAppConfig_DisableJavascriptDomPaste
+	internale_CEFAppConfig_SetDisableJavascriptDomPaste
+	internale_CEFAppConfig_AllowUniversalAccessFromFileUrls
+	internale_CEFAppConfig_SetAllowUniversalAccessFromFileUrls
+	internale_CEFAppConfig_DisableImageLoading
+	internale_CEFAppConfig_SetDisableImageLoading
+	internale_CEFAppConfig_ImageShrinkStandaloneToFit
+	internale_CEFAppConfig_SetImageShrinkStandaloneToFit
+	internale_CEFAppConfig_DisableTextAreaResize
+	internale_CEFAppConfig_SetDisableTextAreaResize
+	internale_CEFAppConfig_DisableTabToLinks
+	internale_CEFAppConfig_SetDisableTabToLinks
+	internale_CEFAppConfig_EnableProfanityFilter
+	internale_CEFAppConfig_SetEnableProfanityFilter
+	internale_CEFAppConfig_DisableSpellChecking
+	internale_CEFAppConfig_SetDisableSpellChecking
+	internale_CEFAppConfig_OverrideSpellCheckLang
+	internale_CEFAppConfig_SetOverrideSpellCheckLang
+	internale_CEFAppConfig_TouchEvents
+	internale_CEFAppConfig_SetTouchEvents
+	internale_CEFAppConfig_DisableReadingFromCanvas
+	internale_CEFAppConfig_SetDisableReadingFromCanvas
+	internale_CEFAppConfig_HyperlinkAuditing
+	internale_CEFAppConfig_SetHyperlinkAuditing
+	internale_CEFAppConfig_DisableNewBrowserInfoTimeout
+	internale_CEFAppConfig_SetDisableNewBrowserInfoTimeout
+	internale_CEFAppConfig_DevToolsProtocolLogFile
+	internale_CEFAppConfig_SetDevToolsProtocolLogFile
+	internale_CEFAppConfig_ForcedDeviceScaleFactor
+	internale_CEFAppConfig_SetForcedDeviceScaleFactor
+	internale_CEFAppConfig_DisableZygote
+	internale_CEFAppConfig_SetDisableZygote
+	internale_CEFAppConfig_UseMockKeyChain
+	internale_CEFAppConfig_SetUseMockKeyChain
+	internale_CEFAppConfig_DisableRequestHandlingForTesting
+	internale_CEFAppConfig_SetDisableRequestHandlingForTesting
+	internale_CEFAppConfig_DisablePopupBlocking
+	internale_CEFAppConfig_SetDisablePopupBlocking
+	internale_CEFAppConfig_DisableBackForwardCache
+	internale_CEFAppConfig_SetDisableBackForwardCache
+	internale_CEFAppConfig_DisableComponentUpdate
+	internale_CEFAppConfig_SetDisableComponentUpdate
+	internale_CEFAppConfig_AllowInsecureLocalhost
+	internale_CEFAppConfig_SetAllowInsecureLocalhost
+	internale_CEFAppConfig_KioskPrinting
+	internale_CEFAppConfig_SetKioskPrinting
+	internale_CEFAppConfig_TreatInsecureOriginAsSecure
+	internale_CEFAppConfig_SetTreatInsecureOriginAsSecure
+	internale_CEFAppConfig_NetLogEnabled
+	internale_CEFAppConfig_SetNetLogEnabled
+	internale_CEFAppConfig_NetLogFile
+	internale_CEFAppConfig_SetNetLogFile
+	internale_CEFAppConfig_NetLogCaptureMode
+	internale_CEFAppConfig_SetNetLogCaptureMode
+	internale_CEFAppConfig_EnableHighDPISupport
+	internale_CEFAppConfig_SetEnableHighDPISupport
+	// 自定义属性
+	internale_CEFAppConfig_DeleteCache
+	internale_CEFAppConfig_DeleteCookies
+	internale_CEFAppConfig_CheckCEFFiles
+	internale_CEFAppConfig_ShowMessageDlg
+	internale_CEFAppConfig_MissingBinariesException
+	internale_CEFAppConfig_SetCurrentDir
+	internale_CEFAppConfig_GlobalContextInitialized
+	internale_CEFAppConfig_ChromeMajorVer
+	internale_CEFAppConfig_ChromeMinorVer
+	internale_CEFAppConfig_ChromeRelease
+	internale_CEFAppConfig_ChromeBuild
+	internale_CEFAppConfig_ChromeVersion
+	internale_CEFAppConfig_LibCefVersion
+	internale_CEFAppConfig_LibCefPath
+	internale_CEFAppConfig_ChromeElfPath
+	internale_CEFAppConfig_LibLoaded
+	internale_CEFAppConfig_LogProcessInfo
+	internale_CEFAppConfig_ReRaiseExceptions
+	internale_CEFAppConfig_DeviceScaleFactor
+	internale_CEFAppConfig_LocalesRequired
+	internale_CEFAppConfig_ProcessType
+	internale_CEFAppConfig_MustCreateResourceBundleHandler
+	internale_CEFAppConfig_MustCreateBrowserProcessHandler
+	internale_CEFAppConfig_MustCreateRenderProcessHandler
+	internale_CEFAppConfig_MustCreateLoadHandler
+	internale_CEFAppConfig_Status
+	internale_CEFAppConfig_MissingLibFiles
+	internale_CEFAppConfig_MustFreeLibrary
+	internale_CEFAppConfig_ChildProcessesCount
+	internale_CEFAppConfig_UsedMemory
+	internale_CEFAppConfig_TotalSystemMemory
+	internale_CEFAppConfig_AvailableSystemMemory
+	internale_CEFAppConfig_SystemMemoryLoad
+	internale_CEFAppConfig_ApiHashUniversal
+	internale_CEFAppConfig_ApiHashPlatform
+	internale_CEFAppConfig_ApiHashCommit
+	internale_CEFAppConfig_LastErrorMessage
+	internale_CEFAppConfig_SetDeleteCache
+	internale_CEFAppConfig_SetDeleteCookies
+	internale_CEFAppConfig_SetCheckCEFFiles
+	internale_CEFAppConfig_SetShowMessageDlg
+	internale_CEFAppConfig_SetMissingBinariesException
+	internale_CEFAppConfig_SetSetCurrentDir
+	internale_CEFAppConfig_SetLogProcessInfo
+	internale_CEFAppConfig_SetReRaiseExceptions
+	internale_CEFAppConfig_SetLocalesRequired
+	internale_CEFAppConfig_SetMustCreateResourceBundleHandler
+	internale_CEFAppConfig_SetMustCreateBrowserProcessHandler
+	internale_CEFAppConfig_SetMustCreateRenderProcessHandler
+	internale_CEFAppConfig_SetMustCreateLoadHandler
+	internale_CEFAppConfig_SetMustFreeLibrary
 	//CEFParentWindow
 	internale_CEFWindow_Create
 	internale_CEFWindow_GetHandle

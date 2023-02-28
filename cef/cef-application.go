@@ -26,45 +26,40 @@ import (
 
 var application *TCEFApplication
 
-// CEF应用对象
+// TCEFApplication CEF应用对象
 type TCEFApplication struct {
 	instance unsafe.Pointer
-	cfg      *tCefApplicationConfig
 }
 
-// 创建CEF应用程序
-func NewCEFApplication(cfg *tCefApplicationConfig) *TCEFApplication {
-	if application != nil {
-		return application
+// NewApplication 创建CEF应用
+//
+// 参数: disableRegisDefaultEvent = true 时不会注册默认事件
+func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
+	if application == nil {
+		var result uintptr
+		imports.Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
+		application = &TCEFApplication{instance: unsafe.Pointer(result)}
+		if len(disableRegisDefaultEvent) == 0 || !disableRegisDefaultEvent[0] {
+			application.registerDefaultEvent()
+		}
+		application.initDefaultProperties()
 	}
-	if cfg == nil {
-		cfg = NewApplicationConfig()
-	}
-	cfg.framework()
-	application = new(TCEFApplication)
-	r1, _, _ := imports.Proc(internale_CEFApplication_Create).Call(uintptr(unsafe.Pointer(cfg)))
-	application.instance = unsafe.Pointer(r1)
-	application.cfg = cfg
-
 	return application
 }
 
-// 创建应用程序
-//
-// 带有默认的应用事件
-func NewApplication(cfg *tCefApplicationConfig) *TCEFApplication {
-	cefApp := NewCEFApplication(cfg)
-	cefApp.registerDefaultEvent()
-	return cefApp
+// AddCrDelegate MacOSX Delegate
+func (m *TCEFApplication) AddCrDelegate() {
+	imports.Proc(internale_CEF_AddCrDelegate).Call()
 }
 
+//registerDefaultEvent 注册默认事件
 func (m *TCEFApplication) registerDefaultEvent() {
-	//register default function
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
 	m.defaultSetOnBeforeChildProcessLaunch()
 }
 
+// Instance 实例
 func (m *TCEFApplication) Instance() uintptr {
 	return uintptr(m.instance)
 }
@@ -79,7 +74,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 	return false
 }
 
-// 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
+// StartSubProcess 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nullptr {
 		logger.Debug("application multiple exe,", common.Args.ProcessType(), "process start")
@@ -89,6 +84,7 @@ func (m *TCEFApplication) StartSubProcess() (result bool) {
 	return false
 }
 
+// RunMessageLoop 消息轮询
 func (m *TCEFApplication) RunMessageLoop() {
 	defer func() {
 		logger.Debug("application run message loop end")
@@ -98,6 +94,7 @@ func (m *TCEFApplication) RunMessageLoop() {
 	imports.Proc(internale_CEFApplication_RunMessageLoop).Call()
 }
 
+// QuitMessageLoop 退出消息轮询
 func (m *TCEFApplication) QuitMessageLoop() {
 	logger.Debug("application quit message loop")
 	imports.Proc(internale_CEFApplication_QuitMessageLoop).Call()
@@ -116,10 +113,6 @@ func (m *TCEFApplication) Free() {
 		imports.Proc(internale_CEFApplication_Free).Call()
 		m.instance = nullptr
 	}
-}
-
-func (m *TCEFApplication) ExecuteJS(browserId int32, code string) {
-	imports.Proc(internale_CEFApplication_ExecuteJS).Call()
 }
 
 // 上下文件创建回调
@@ -164,6 +157,7 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
 	imports.Proc(internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
+
 func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
 	m.SetOnBeforeChildProcessLaunch(func(commandLine *TCefCommandLine) {})
 }

@@ -26,11 +26,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	config := cef.NewApplicationConfig()
-	//config.SetMultiThreadedMessageLoop(false)
-	//config.SetExternalMessagePump(false)
-	//config.SetRemoteDebuggingPort(9999)
-	cefApp := cef.NewApplication(config)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

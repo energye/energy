@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -72,7 +73,10 @@ func Run(cefApp *TCEFApplication) {
 		cefApp.Free()
 	} else {
 		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时启用CEF views framework (ViewsFrameworkBrowserWindow) 窗口
-		consts.IsMessageLoop = !api.GoBool(cefApp.cfg.externalMessagePump) && !api.GoBool(cefApp.cfg.multiThreadedMessageLoop)
+		emp := cefApp.ExternalMessagePump()
+		mtml := cefApp.MultiThreadedMessageLoop()
+		consts.IsMessageLoop = !emp && !mtml
+		fmt.Println("consts.IsMessageLoop", consts.IsMessageLoop, "em:", emp, mtml)
 		if consts.IsMessageLoop {
 			BrowserWindow.appContextInitialized(cefApp)
 		}
