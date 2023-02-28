@@ -268,6 +268,11 @@ type TCefPostDataElementArray struct {
 	postDataElementLength uint32
 }
 
+// ICefBrowserView
+type ICefBrowserView struct {
+	instance unsafe.Pointer
+}
+
 // ICefView
 type ICefView struct {
 	instance unsafe.Pointer

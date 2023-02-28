@@ -606,14 +606,14 @@ const (
 type TCefDragOperations = types.Cardinal
 
 const (
-	DRAG_OPERATION_NONE    = TCefDragOperations(0)
-	DRAG_OPERATION_COPY    = TCefDragOperations(1)
-	DRAG_OPERATION_LINK    = TCefDragOperations(2)
-	DRAG_OPERATION_GENERIC = TCefDragOperations(4)
-	DRAG_OPERATION_PRIVATE = TCefDragOperations(8)
-	DRAG_OPERATION_MOVE    = TCefDragOperations(16)
-	DRAG_OPERATION_DELETE  = TCefDragOperations(32)
-	DRAG_OPERATION_EVERY   = TCefDragOperations(math.MaxUint32)
+	DRAG_OPERATION_NONE    TCefDragOperations = 0
+	DRAG_OPERATION_COPY    TCefDragOperations = 1 << 0
+	DRAG_OPERATION_LINK    TCefDragOperations = 1 << 1
+	DRAG_OPERATION_GENERIC TCefDragOperations = 1 << 2
+	DRAG_OPERATION_PRIVATE TCefDragOperations = 1 << 3
+	DRAG_OPERATION_MOVE    TCefDragOperations = 1 << 4
+	DRAG_OPERATION_DELETE  TCefDragOperations = 1 << 5
+	DRAG_OPERATION_EVERY   TCefDragOperations = math.MaxUint32
 )
 
 type TrayType int8

@@ -14,7 +14,6 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -30,9 +29,7 @@ type TCEFBrowserViewComponent struct {
 func NewBrowserViewComponent(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
 	var result uintptr
 	imports.Proc(internale_CEFBrowserViewComponent_Create).Call(lcl.CheckPtr(AOwner), uintptr(unsafe.Pointer(&result)))
-	return &TCEFBrowserViewComponent{
-		instance: unsafe.Pointer(result),
-	}
+	return &TCEFBrowserViewComponent{instance: unsafe.Pointer(result)}
 }
 
 // CreateBrowserView
@@ -69,9 +66,7 @@ func (m *TCEFBrowserViewComponent) RequestFocus() {
 func (m *TCEFBrowserViewComponent) Browser() *ICefBrowser {
 	var result uintptr
 	imports.Proc(internale_CEFBrowserViewComponent_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefBrowser{
-		instance: unsafe.Pointer(result),
-	}
+	return &ICefBrowser{instance: unsafe.Pointer(result)}
 }
 
 //func (m *TCEFBrowserViewComponent) BrowserView() {
@@ -105,47 +100,28 @@ func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewCompo
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		defer func() {
-			if err := recover(); err != nil {
-				logger.Error("TCEFBrowserViewComponent Error:", err)
-			}
-		}()
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
 		case BrowserViewComponentOnBrowserCreated:
-			browserView := &ICefBrowserView{
-				instance: getPtr(1),
-			}
+			browserView := &ICefBrowserView{instance: getPtr(1)}
 			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnBrowserDestroyed:
-			browserView := &ICefBrowserView{
-				instance: getPtr(1),
-			}
+			browserView := &ICefBrowserView{instance: getPtr(1)}
 			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnGetDelegateForPopupBrowserView:
-			browserView := &ICefBrowserView{
-				instance: getPtr(1),
-			}
+			browserView := &ICefBrowserView{instance: getPtr(1)}
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
 			browserSettings := browserSettingsPtr.Convert()
-			client := &ICefClient{
-				instance: getPtr(3),
-			}
-			result := &ICefBrowserViewDelegate{
-				instance: getPtr(5),
-			}
+			client := &ICefClient{instance: getPtr(3)}
+			result := &ICefBrowserViewDelegate{instance: getPtr(5)}
 			fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)), result)
 		case BrowserViewComponentOnPopupBrowserViewCreated:
-			browserView := &ICefBrowserView{
-				instance: getPtr(1),
-			}
-			popupBrowserView := &ICefBrowserView{
-				instance: getPtr(2),
-			}
+			browserView := &ICefBrowserView{instance: getPtr(1)}
+			popupBrowserView := &ICefBrowserView{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnPopupBrowserViewCreated)(lcl.AsObject(getPtr(0)), browserView, popupBrowserView, api.GoBool(getVal(3)), (*bool)(getPtr(4)))
 		case BrowserViewComponentOnGetChromeToolbarType:
 			fn.(BrowserViewComponentOnGetChromeToolbarType)(lcl.AsObject(getPtr(0)), (*consts.TCefChromeToolbarType)(getPtr(1)))

@@ -71,6 +71,9 @@ func main() {
 		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
 			fmt.Println("SetOnWindowActivationChanged", active)
 		})
+		window.AsViewsFrameworkBrowserWindow().BrowserViewComponent().SetOnBrowserCreated(func(sender lcl.IObject, browserView *cef.ICefBrowserView, browser *cef.ICefBrowser) {
+			fmt.Println("BrowserViewComponent OnBrowserCreated Instance", browser.Identifier(), "Instance Identifier", browserView.Browser().Identifier())
+		})
 		window.Show()
 		fmt.Println("SetBrowserInit 结束")
 	})

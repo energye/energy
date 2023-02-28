@@ -1049,6 +1049,10 @@ func init() {
 		dllimports.NewEnergyImport("CefDownloadItemCallback_Pause", 0),
 		dllimports.NewEnergyImport("CefDownloadItemCallback_Cancel", 0),
 		dllimports.NewEnergyImport("CefDownloadItemCallback_Resume", 0),
+		//ICefBrowserView
+		dllimports.NewEnergyImport("CefBrowserView_Browser", 0),
+		dllimports.NewEnergyImport("CefBrowserView_ChromeToolbar", 0),
+		dllimports.NewEnergyImport("CefBrowserView_SetPreferAccelerators", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -2086,4 +2090,8 @@ const (
 	internale_CefDownloadItemCallback_Pause
 	internale_CefDownloadItemCallback_Cancel
 	internale_CefDownloadItemCallback_Resume
+	//ICefBrowserView
+	internale_CefBrowserView_Browser
+	internale_CefBrowserView_ChromeToolbar
+	internale_CefBrowserView_SetPreferAccelerators
 )
