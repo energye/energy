@@ -104,19 +104,19 @@ func main() {
 			return true
 		})
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
-			fmt.Println("handler", arguments.Size(), arguments.Get(3))
+			fmt.Println("handler.Execute", arguments.Size(), arguments.Get(3))
 			fmt.Println(arguments.Get(0).IsValid(), arguments.Get(0).GetStringValue())
 			fmt.Println(arguments.Get(1).IsValid(), arguments.Get(1).GetIntValue())
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
-			val, ex, ok := context.Eval("fntest();", "", 0)
-			fmt.Println("Execute eval fntest:", val, ex, ok)
+			val, ex, ok := cef.V8ContextRef.Current().Eval("fntest()", "", 0)
+			fmt.Println("? = Execute eval fntest:", val, ex, ok)
 			if ok {
-				fmt.Println("Execute eval fntest-return-value:", val.GetStringValue())
-
+				fmt.Println("OK = Execute eval fntest-return-value:", val.GetStringValue())
 			}
-			val, ex, ok = context.Eval("errtest();", "", 0)
-			fmt.Println("Execute errtest:", val, ex, ok)
-			fmt.Println("Execute errtest-error:", ex.Message(), ex.LineNumber())
+
+			val, ex, ok = cef.V8ContextRef.Current().Eval("errtest();", "", 0)
+			fmt.Println("? = Execute errtest:", val, ex, ok)
+			fmt.Println("OK = Execute errtest-error:", ex.Message(), ex.LineNumber())
 			fmt.Println("V8ContextRef.Current()", cef.V8ContextRef.Current().Global().GetValueByKey("arrBuf").IsArrayBuffer())
 			fmt.Println("V8ContextRef.Entered()", cef.V8ContextRef.Entered().Global().GetValueByKey("arrBuf").IsArrayBuffer())
 			return true

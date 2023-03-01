@@ -4,6 +4,20 @@
     <meta charset="UTF-8">
     <title>bind</title>
     <script type="application/javascript">
+
+        function fntest() {
+            console.log('fntest')
+            return "返回fntest";
+        }
+
+        function errtest() {
+            console.log('errtest')
+            let s = 1 / 0;
+            throw {
+                code: -1,
+                msg: '类型错误'
+            }
+        }
         window.onload = function () {
             let doc = document.getElementById("test");
 
@@ -35,18 +49,6 @@
             }
             test(bufdata);
             console.log(arrBufa)
-        }
-
-        function fntest() {
-            return "返回fntest";
-        }
-
-        function errtest() {
-            let s = 1 / 0;
-            throw {
-                code: -1,
-                msg: '类型错误'
-            }
         }
     </script>
 </head>

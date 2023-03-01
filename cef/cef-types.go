@@ -300,6 +300,12 @@ type ICefV8Exception struct {
 }
 
 // ICefV8Context
+//
+// v8上下文对象
+//
+// 生命周期
+//   1. 在回调函数中有效
+//   2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
 type ICefV8Context struct {
 	instance unsafe.Pointer
 }
