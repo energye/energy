@@ -1068,9 +1068,10 @@ func (m *TCEFApplication) SetReRaiseExceptions(value bool) {
 	imports.Proc(internale_CEFAppConfig_SetReRaiseExceptions).Call(api.PascalBool(value))
 }
 
-func (m *TCEFApplication) DeviceScaleFactor() types.Single {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DeviceScaleFactor).Call()
-	return types.Single(r1)
+func (m *TCEFApplication) DeviceScaleFactor() float32 {
+	var result uintptr
+	imports.Proc(internale_CEFAppConfig_DeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
+	return *(*float32)(unsafe.Pointer(result))
 }
 
 func (m *TCEFApplication) LocalesRequired() string {

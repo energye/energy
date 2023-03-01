@@ -174,6 +174,11 @@ type TCefPoint struct {
 	Y int32
 }
 
+// ICefImage
+type ICefImage struct {
+	instance unsafe.Pointer
+}
+
 // TCefDraggableRegions 拖拽区域集合
 type TCefDraggableRegions struct {
 	regions      []TCefDraggableRegion

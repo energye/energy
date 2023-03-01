@@ -185,19 +185,19 @@ func (m *ICefWindow) SetWindowIconFS(scaleFactor float32, filename string) error
 
 // WindowIcon 获取窗口图标
 func (m *ICefWindow) WindowIcon() *ICefImage {
-	var ret uintptr
-	imports.Proc(internale_ICEFWindow_GetWindowIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
+	var result uintptr
+	imports.Proc(internale_ICEFWindow_GetWindowIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&result)))
 	return &ICefImage{
-		instance: unsafe.Pointer(ret),
+		instance: unsafe.Pointer(result),
 	}
 }
 
 // WindowAppIcon 获取窗口应用图标
 func (m *ICefWindow) WindowAppIcon() *ICefImage {
-	var ret uintptr
-	imports.Proc(internale_ICEFWindow_GetWindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&ret)))
+	var result uintptr
+	imports.Proc(internale_ICEFWindow_GetWindowAppIcon).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&result)))
 	return &ICefImage{
-		instance: unsafe.Pointer(ret),
+		instance: unsafe.Pointer(result),
 	}
 }
 

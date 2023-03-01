@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
+	"os"
 )
 
 //go:embed resources
@@ -36,7 +37,7 @@ func main() {
 	//cefApp.SetRemoteDebuggingPort(33333)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.DisableResize()
@@ -45,6 +46,14 @@ func main() {
 		window.SetSize(1024, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
+		window.AsViewsFrameworkBrowserWindow().SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
+			fmt.Println("WindowCreated.window", window.WindowAppIcon().Width(), window.WindowAppIcon().Height())
+			image := cef.ImageRef.New()
+			byt, err := os.ReadFile("E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\dev-test\\vf-browser\\resources\\icon.png")
+			fmt.Println("image icon.png", len(byt), err)
+			image.AddPng(1.2, byt)
+			fmt.Println("image", image.Width(), image.Height())
+		})
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
 			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Identifier(), frame.Url())
 		})
@@ -58,11 +67,11 @@ func main() {
 			popupWindow.SetSize(800, 600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
-				fmt.Println("popupWindow.SetOnWindowCreated", window)
+				fmt.Println("popupWindow.SetOnWindowCreated", window.WindowAppIcon())
 			})
-			browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
-				fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
-			})
+			//browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
+			//	fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
+			//})
 			//browserWindow.BrowserWindow().CreateTopLevelWindow()
 			//browserWindow.BrowserWindow().HideTitle()
 			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())

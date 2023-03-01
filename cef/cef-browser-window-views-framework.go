@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
@@ -80,11 +81,15 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 			}
 			if windowProperty.IconFS != "" {
 				if emfs.IsExist(windowProperty.IconFS) {
-					_ = m.windowComponent.SetWindowAppIconFS(1, windowProperty.IconFS)
+					if err := m.windowComponent.SetWindowAppIconByFSFile(1, windowProperty.IconFS); err != nil {
+						logger.Error("set window application icon error:", err.Error())
+					}
 				}
 			} else if windowProperty.Icon != "" {
 				if tools.IsExist(windowProperty.Icon) {
-					_ = m.windowComponent.SetWindowAppIcon(1, windowProperty.Icon)
+					if err := m.windowComponent.SetWindowAppIconByFile(1, windowProperty.Icon); err != nil {
+						logger.Error("set window application icon error:", err.Error())
+					}
 				}
 			}
 			m.browserViewComponent.RequestFocus()

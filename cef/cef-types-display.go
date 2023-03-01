@@ -13,7 +13,6 @@ package cef
 
 import (
 	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/types"
 	"unsafe"
 )
 
@@ -22,9 +21,10 @@ func (m *ICefDisplay) ID() (result int64) {
 	return
 }
 
-func (m *ICefDisplay) DeviceScaleFactor() (result types.Single) {
+func (m *ICefDisplay) DeviceScaleFactor() float32 {
+	var result uintptr
 	imports.Proc(internale_CEFDisplay_DeviceScaleFactor).Call(uintptr(m.instance), uintptr(unsafe.Pointer(&result)))
-	return
+	return *(*float32)(unsafe.Pointer(result))
 }
 
 func (m *ICefDisplay) Rotation() int32 {

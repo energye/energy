@@ -1032,3 +1032,20 @@ const (
 	ERR_DNS_SORT_ERROR                                CEF_NET_ERROR = -806
 	ERR_DNS_HTTP_FAILED                               CEF_NET_ERROR = -807
 )
+
+// /include/internal/cef_types.h (cef_color_type_t)
+type TCefColorType = types.Int32
+
+const (
+	CEF_COLOR_TYPE_RGBA_8888 TCefColorType = iota
+	CEF_COLOR_TYPE_BGRA_8888
+)
+
+// /include/internal/cef_types.h (cef_alpha_type_t)
+type TCefAlphaType = types.Int32
+
+const (
+	CEF_ALPHA_TYPE_OPAQUE TCefAlphaType = iota
+	CEF_ALPHA_TYPE_PREMULTIPLIED
+	CEF_ALPHA_TYPE_POSTMULTIPLIED
+)
