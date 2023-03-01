@@ -193,7 +193,8 @@ type TCefDraggableRegion struct {
 
 // ICefProcessMessage
 type ICefProcessMessage struct {
-	instance unsafe.Pointer
+	instance     unsafe.Pointer
+	argumentList *ICefListValue
 }
 
 // ICefValue -> ArgumentList

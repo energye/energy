@@ -193,9 +193,12 @@ func (m *TCEFChromium) ToString() string {
 }
 
 func (m *TCEFChromium) Browser() *ICefBrowser {
-	var result uintptr
-	imports.Proc(internale_CEFChromium_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefBrowser{instance: unsafe.Pointer(result)}
+	if m.browser == nil {
+		var result uintptr
+		imports.Proc(internale_CEFChromium_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		return &ICefBrowser{instance: unsafe.Pointer(result)}
+	}
+	return m.browser
 }
 
 func (m *TCEFChromium) BrowserById(id int32) *ICefBrowser {

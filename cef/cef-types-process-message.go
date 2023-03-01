@@ -38,11 +38,14 @@ func (m *ICefProcessMessage) Instance() uintptr {
 }
 
 func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
-	var result uintptr
-	imports.Proc(internale_CefProcessMessage_ArgumentList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefListValue{
-		instance: unsafe.Pointer(result),
+	if m.argumentList == nil {
+		var result uintptr
+		imports.Proc(internale_CefProcessMessage_ArgumentList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		m.argumentList = &ICefListValue{
+			instance: unsafe.Pointer(result),
+		}
 	}
+	return m.argumentList
 }
 
 func (m *ICefProcessMessage) IsValid() bool {

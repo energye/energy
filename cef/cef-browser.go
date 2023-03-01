@@ -23,7 +23,8 @@ import (
 
 // type ICefBrowser
 type ICefBrowser struct {
-	instance unsafe.Pointer
+	instance  unsafe.Pointer
+	mainFrame *ICefFrame
 }
 
 type frameNamesPtr struct {
@@ -118,9 +119,12 @@ func (m *ICefBrowser) MainFrame() *ICefFrame {
 	if m == nil {
 		return nil
 	}
-	var result uintptr
-	imports.Proc(internale_CEFBrowser_GetMainFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefFrame{instance: unsafe.Pointer(result)}
+	if m.mainFrame == nil {
+		var result uintptr
+		imports.Proc(internale_CEFBrowser_GetMainFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		m.mainFrame = &ICefFrame{instance: unsafe.Pointer(result)}
+	}
+	return m.mainFrame
 }
 
 // GetFocusedFrame 获取当前窗口有焦点的Frame

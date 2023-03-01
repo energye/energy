@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
 	"github.com/energye/golcl/lcl"
+	"time"
 )
 
 //go:embed resources
@@ -33,6 +34,18 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
+		go func() {
+			for {
+				time.Sleep(time.Second)
+				fmt.Println("GetWindowInfos:", len(cef.BrowserWindow.GetWindowInfos()), cefApp.ProcessTypeValue())
+				browser := cef.BrowserWindow.GetWindowInfo(1).Browser()
+				frame := browser.MainFrame()
+				fmt.Println("browser", browser.Identifier(), frame.Instance())
+				sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
+				sendBrowserProcessMsg.ArgumentList().SetString(0, fmt.Sprintf("发送给渲染进程, 测试值 %d", time.Now().Second()))
+				frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
+			}
+		}()
 	})
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		handler := cef.V8HandlerRef.New()
@@ -81,7 +94,7 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
-			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().GetString(0))
+			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().GetString(0), frame.Instance())
 			//测试 - 给 render 进程发送消息
 			sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
 			sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给渲染进程, 测试值")
@@ -90,7 +103,7 @@ func main() {
 		})
 	})
 	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
-		fmt.Println("render 进程接收消息", message.Name(), message.ArgumentList().GetString(0))
+		fmt.Println("render 进程接收消息", message.Name(), message.ArgumentList().GetString(0), frame.Instance())
 		return false
 	})
 	//运行应用

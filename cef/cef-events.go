@@ -78,7 +78,7 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			processMessage := &ICefProcessMessage{getPtr(4)}
+			processMessage := &ICefProcessMessage{instance: getPtr(4)}
 			var result = (*bool)(getPtr(5))
 			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, consts.CefProcessId(getVal(3)), processMessage)
 		case ChromiumEventOnResourceLoadComplete:

@@ -44,6 +44,7 @@ type TCEFChromium struct {
 	*lcl.TComponent
 	instance      unsafe.Pointer
 	cfg           *tCefChromiumConfig
+	browser       *ICefBrowser
 	emitLock      *sync.Mutex
 	browserHandle types.HWND
 	widgetHandle  types.HWND
