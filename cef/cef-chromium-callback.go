@@ -8,14 +8,12 @@
 //
 //----------------------------------------
 
-// Chromium默认事件实现
+// chromium event 默认事件实现
 package cef
 
 import (
-	"fmt"
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -46,27 +44,15 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 	}
 }
 
-// chromiumOnBeforeClose - chromium 关闭  - 默认实现
+// chromiumOnBeforeClose - chromium 关闭之前
 func chromiumOnBeforeClose(browser *ICefBrowser) {
-	if ipc.IPC.Render() != nil && !SingleProcess && processName != PT_DEVTOOLS {
-		ipc.IPC.Render().Close()
-	}
+	//if ipc.IPC.Render() != nil && !SingleProcess && processName != PT_DEVTOOLS {
+	//	ipc.IPC.Render().Close()
+	//}
 }
 
 // chromiumOnFrameDetached
 func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
-}
-
-// cefAppContextCreated 应用创建 - 默认实现
-func cefAppContextCreated(browser *ICefBrowser, frame *ICefFrame) {
-	//BrowserWindow.removeNoValidFrames()
-	fmt.Println("cefAppContextCreated-ProcessType:", Args.ProcessType(), "objectTI.isBind:", objectTI.isBind)
-	if !objectTI.isBind {
-		__idReset()
-		clearValueBind()
-		bindGoToJS(browser, frame)
-	}
-	ipc.IPC.CreateRenderIPC(browser.Identifier(), frame.Identifier())
 }
 
 var (

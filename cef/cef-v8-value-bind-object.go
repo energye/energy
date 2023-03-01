@@ -339,8 +339,6 @@ func (m *objectTypeInfo) bind(value JSValue) {
 //直接绑定 -> 到CEF
 func (m *objectTypeInfo) bindToCEF() {
 	fmt.Println("ProcessType:", common.Args.ProcessType())
-	fmt.Println("\tFunctionInfos", len(m.FunctionInfos))
-	fmt.Println("\tFieldInfos", len(m.FieldInfos))
 	tmpObjectInfo := &objectInfo{
 		isCreateJSValue: true, //已创建完 JSValue
 		FullObjName:     "",   //FullObjName & ObjName 值一样，绑定到根对象

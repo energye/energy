@@ -612,7 +612,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsValid", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsMain", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
-		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageByIPC", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
 		dllimports.NewEnergyImport("CEFFrame_LoadRequest", 0),
 		dllimports.NewEnergyImport("CEFFrame_Browser", 0),
@@ -1653,7 +1652,6 @@ const (
 	internale_CEFFrame_IsValid
 	internale_CEFFrame_IsMain
 	internale_CEFFrame_IsFocused
-	internale_CEFFrame_SendProcessMessageByIPC
 	internale_CEFFrame_SendProcessMessage
 	internale_CEFFrame_LoadRequest
 	internale_CEFFrame_Browser

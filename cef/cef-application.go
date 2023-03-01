@@ -20,7 +20,6 @@ import (
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
-	"strings"
 	"unsafe"
 )
 
@@ -219,22 +218,10 @@ func init() {
 		case GlobalCEFAppEventOnContextCreated:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			if strings.Index(frame.Url(), "devtools://") == 0 {
-				processName = common.PT_DEVTOOLS
-				return true
-			} else {
-				processName = common.Args.ProcessType()
-			}
 			ctx := &ICefV8Context{instance: getPtr(2)}
-			browser.Identifier()
-			var status = (*bool)(getPtr(3))
-			//用户定义返回 false 创建 render IPC 及 变量绑定
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)
 			if !result {
-				cefAppContextCreated(browser, frame)
-				*status = true
-			} else {
-				*status = false
+				appOnContextCreated(browser, frame)
 			}
 		case GlobalCEFAppEventOnWebKitInitialized:
 			fn.(GlobalCEFAppEventOnWebKitInitialized)()
