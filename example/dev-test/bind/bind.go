@@ -110,9 +110,9 @@ func main() {
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
 			val, ex, ok := context.Eval("fntest();", "", 0)
 			fmt.Println("Execute eval fntest:", val, ex, ok)
-			fmt.Println("Execute eval fntest-return-value:", val.GetStringValue())
 			if ok {
-				fmt.Println(val.GetStringValue())
+				fmt.Println("Execute eval fntest-return-value:", val.GetStringValue())
+
 			}
 			val, ex, ok = context.Eval("errtest();", "", 0)
 			fmt.Println("Execute errtest:", val, ex, ok)

@@ -355,22 +355,27 @@ type ICefBeforeDownloadCallback struct {
 	instance unsafe.Pointer
 }
 
+// ICefPdfPrintCallback
+type ICefPdfPrintCallback struct {
+	instance unsafe.Pointer
+}
+
 type CefPdfPrintSettings struct {
-	landscape           Int32                  // Integer
-	printBackground     Int32                  // Integer
-	scale               Float64                // double
-	paperWidth          Float64                // double
-	paperHeight         Float64                // double
-	preferCssPageSize   Int32                  // Integer
-	marginType          TCefPdfPrintMarginType // TCefPdfPrintMarginType
-	marginTop           Float64                // double
-	marginRight         Float64                // double
-	marginBottom        Float64                // double
-	marginLeft          Float64                // double
-	pageRanges          String                 // TCefString
-	displayHeaderFooter Int32                  // Integer
-	headerTemplate      String                 // TCefString
-	footerTemplate      String                 // TCefString
+	Landscape           int32                  // Integer
+	PrintBackground     int32                  // Integer
+	Scale               float64                // double
+	PaperWidth          float64                // double
+	PaperHeight         float64                // double
+	PreferCssPageSize   int32                  // Integer
+	MarginType          TCefPdfPrintMarginType // TCefPdfPrintMarginType
+	MarginTop           float64                // double
+	MarginRight         float64                // double
+	MarginBottom        float64                // double
+	MarginLeft          float64                // double
+	PageRanges          string                 // TCefString
+	DisplayHeaderFooter int32                  // Integer
+	HeaderTemplate      string                 // TCefString
+	FooterTemplate      string                 // TCefString
 }
 
 // Exception 异常返回信息

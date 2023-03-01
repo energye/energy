@@ -158,9 +158,18 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 }
 
 // PrintToPdf
-func (m *ICefBrowser) PrintToPdf(path string, settings *CefPdfPrintSettings, chromium IChromium) {
-	settingsPtr := settings.ToPtr()
-	imports.Proc(internale_CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), uintptr(unsafe.Pointer(settingsPtr)), chromium.Instance())
+func (m *ICefBrowser) PrintToPdf(path string, settings *CefPdfPrintSettings, callback *ICefPdfPrintCallback) {
+	var settingsPtr uintptr = 0
+	var setPtr *cefPdfPrintSettingsPtr
+	if callback == nil {
+		callback = PdfPrintCallbackRef.New()
+	}
+	if settings == nil {
+		settings = &CefPdfPrintSettings{}
+	}
+	setPtr = settings.ToPtr()
+	settingsPtr = uintptr(unsafe.Pointer(setPtr))
+	imports.Proc(internale_CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), settingsPtr, callback.Instance())
 }
 
 // ExecuteDevToolsMethod 执行开发者工具方法

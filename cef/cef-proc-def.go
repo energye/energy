@@ -1053,6 +1053,9 @@ func init() {
 		dllimports.NewEnergyImport("CefBrowserView_Browser", 0),
 		dllimports.NewEnergyImport("CefBrowserView_ChromeToolbar", 0),
 		dllimports.NewEnergyImport("CefBrowserView_SetPreferAccelerators", 0),
+		//ICefPdfPrintCallback
+		dllimports.NewEnergyImport("CefPdfPrintCallback_Create", 0),
+		dllimports.NewEnergyImport("CefPdfPrintCallback_OnPdfPrintFinished", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -2094,4 +2097,7 @@ const (
 	internale_CefBrowserView_Browser
 	internale_CefBrowserView_ChromeToolbar
 	internale_CefBrowserView_SetPreferAccelerators
+	//ICefPdfPrintCallback
+	internale_CefPdfPrintCallback_Create
+	internale_CefPdfPrintCallback_OnPdfPrintFinished
 )

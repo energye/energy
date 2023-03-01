@@ -15,6 +15,7 @@ import (
 	. "github.com/energye/energy/consts"
 	. "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
 
 // ICefRequest 指针实例
@@ -238,20 +239,20 @@ func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
 		return nil
 	}
 	return &cefPdfPrintSettingsPtr{
-		landscape:           m.landscape.ToPtr(),
-		printBackground:     m.printBackground.ToPtr(),
-		scale:               m.scale.ToPtr(),
-		paperWidth:          m.paperWidth.ToPtr(),
-		paperHeight:         m.paperHeight.ToPtr(),
-		preferCssPageSize:   m.preferCssPageSize.ToPtr(),
-		marginType:          m.marginType.ToPtr(),
-		marginTop:           m.marginTop.ToPtr(),
-		marginRight:         m.marginRight.ToPtr(),
-		marginBottom:        m.marginBottom.ToPtr(),
-		marginLeft:          m.marginLeft.ToPtr(),
-		pageRanges:          m.pageRanges.ToPtr(),
-		displayHeaderFooter: m.displayHeaderFooter.ToPtr(),
-		headerTemplate:      m.headerTemplate.ToPtr(),
-		footerTemplate:      m.footerTemplate.ToPtr(),
+		landscape:           uintptr(m.Landscape),
+		printBackground:     uintptr(m.PrintBackground),
+		scale:               uintptr(unsafe.Pointer(&m.Scale)),
+		paperWidth:          uintptr(unsafe.Pointer(&m.PaperWidth)),
+		paperHeight:         uintptr(unsafe.Pointer(&m.PaperHeight)),
+		preferCssPageSize:   uintptr(m.PreferCssPageSize),
+		marginType:          uintptr(m.MarginType),
+		marginTop:           uintptr(unsafe.Pointer(&m.MarginTop)), //m.MarginTop,
+		marginRight:         uintptr(unsafe.Pointer(&m.MarginRight)),
+		marginBottom:        uintptr(unsafe.Pointer(&m.MarginBottom)),
+		marginLeft:          uintptr(unsafe.Pointer(&m.MarginLeft)),
+		pageRanges:          api.PascalStr(m.PageRanges),
+		displayHeaderFooter: uintptr(m.DisplayHeaderFooter),
+		headerTemplate:      api.PascalStr(m.HeaderTemplate),
+		footerTemplate:      api.PascalStr(m.FooterTemplate),
 	}
 }
