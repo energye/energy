@@ -47,6 +47,22 @@ func main() {
 			}
 		}()
 	})
+	cefApp.SetOnWebKitInitialized(func() {
+		fmt.Println("SetOnWebKitInitialized")
+		v8Handler := cef.V8HandlerRef.New()
+		v8Handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+			fmt.Println("v8Handler.Execute", name)
+			return true
+		})
+		//注册js
+		var jsCode = `
+	let codeobj = {};
+	codeobj.test = function(){
+		document.getElementById("test").style.color="red";
+	}
+`
+		cef.RegisterExtension("v8/codeobj", jsCode, v8Handler)
+	})
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		handler := cef.V8HandlerRef.New()
 		fmt.Println("handler:", handler)

@@ -31,7 +31,7 @@ func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string)
 	imports.Proc(internale_CEFWindowInfoAsWindowless).Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
-// CEFJSRegisterExtension 注册JS扩展
-func CEFJSRegisterExtension(name, code string, handler *ICefV8Handler) {
+// RegisterExtension 注册JS扩展
+func RegisterExtension(name, code string, handler *ICefV8Handler) {
 	imports.Proc(internale_CEFJSRegisterExtension).Call(api.PascalStr(name), api.PascalStr(code), handler.Instance())
 }
