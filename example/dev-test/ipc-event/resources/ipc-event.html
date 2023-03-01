@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>process-message</title>
+    <script type="application/javascript">
+        window.onload = function () {
+            let msgHtml = document.getElementById("msgHtml");
+            function msg(...vvv) {
+                let str = msgHtml.innerHTML;
+                for (let i = 0; i < vvv.length; i++) {
+                    str = str + "  " + vvv[i];
+                }
+                str += "<br>";
+                msgHtml.innerHTML = str;
+            }
+            msg("页面加载完成...");
+        }
+
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;">
+<p>
+<h3>process-message</h3></p>
+<p><a target="_blank" href="ipc-event.html">open</a></p>
+<p id="msgHtml"></p>
+</body>
+</html>
