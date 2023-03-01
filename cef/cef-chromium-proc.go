@@ -196,7 +196,7 @@ func (m *TCEFChromium) Browser() *ICefBrowser {
 	if m.browser == nil {
 		var result uintptr
 		imports.Proc(internale_CEFChromium_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-		return &ICefBrowser{instance: unsafe.Pointer(result)}
+		m.browser = &ICefBrowser{instance: unsafe.Pointer(result)}
 	}
 	return m.browser
 }
