@@ -409,6 +409,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_StartDownload", 0),
 		dllimports.NewEnergyImport("CEFBrowser_DownloadImage", 0),
 		dllimports.NewEnergyImport("CEFBrowser_Print", 0),
+		dllimports.NewEnergyImport("CEFBrowser_PrintToPdf", 0),
 		dllimports.NewEnergyImport("CEFBrowser_ExecuteDevToolsMethod", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SendKeyEvent", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SetAudioMuted", 0),
@@ -1449,6 +1450,7 @@ const (
 	internale_CEFBrowser_StartDownload
 	internale_CEFBrowser_DownloadImage
 	internale_CEFBrowser_Print
+	internale_CEFBrowser_PrintToPdf
 	internale_CEFBrowser_ExecuteDevToolsMethod
 	internale_CEFBrowser_SendKeyEvent
 	internale_CEFBrowser_SetAudioMuted

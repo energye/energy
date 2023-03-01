@@ -157,10 +157,11 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 	return &ICefFrame{instance: unsafe.Pointer(result)}
 }
 
-//PrintToPdf
-//func (m *ICefBrowser) PrintToPdf(path string) {
-//	imports.Proc(internale_CEFBrowser_PrintToPdf).Call(uintptr(m.browseId), api.PascalStr(path))
-//}
+// PrintToPdf
+func (m *ICefBrowser) PrintToPdf(path string, settings *CefPdfPrintSettings, chromium IChromium) {
+	settingsPtr := settings.ToPtr()
+	imports.Proc(internale_CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), uintptr(unsafe.Pointer(settingsPtr)), chromium.Instance())
+}
 
 // ExecuteDevToolsMethod 执行开发者工具方法
 func (m *ICefBrowser) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {

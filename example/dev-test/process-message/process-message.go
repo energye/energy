@@ -35,17 +35,29 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 		go func() {
+			var i = 0
 			for {
 				time.Sleep(time.Second)
 				fmt.Println("GetWindowInfos:", len(cef.BrowserWindow.GetWindowInfos()), cefApp.ProcessTypeValue())
-				browser := cef.BrowserWindow.GetWindowInfo(1).Browser()
+				gwi := cef.BrowserWindow.GetWindowInfo(1)
+				if gwi == nil {
+					continue
+				}
+				browser := gwi.Browser()
+				if browser == nil {
+					continue
+				}
 				frame := browser.MainFrame()
+				if frame == nil {
+					continue
+				}
 				fmt.Println("browser", browser.Identifier(), frame.Instance())
 				sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
-				sendBrowserProcessMsg.ArgumentList().SetString(0, fmt.Sprintf("发送给渲染进程, 测试值 %d", time.Now().Second()))
+				sendBrowserProcessMsg.ArgumentList().SetString(0, fmt.Sprintf("发送给渲染进程, 测试值 %d ==== %d", time.Now().Second(), i))
 				frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
 				//主进程, 执行指定窗口的JS
 				cef.BrowserWindow.GetWindowInfo(1).Chromium().ExecuteJavaScript("console.log('1111111');", "", 0)
+				i++
 			}
 		}()
 	})
@@ -67,7 +79,7 @@ func main() {
 	})
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		handler := cef.V8HandlerRef.New()
-		fmt.Println("handler:", handler)
+		fmt.Println("handler:", handler, "frameId:", frame.Identifier())
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
 			fmt.Println("handler.Execute", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
@@ -99,9 +111,12 @@ func main() {
 			fmt.Println("DictionaryValueRef IsValid", dictionaryValue.IsValid(), dictionaryValue.GetSize(), dictionaryValue.GetDouble("doubledicttest"))
 			//list.SetDictionary()
 			//测试 - 给 browser 程发送消息
+			fmt.Println("Execute.frameId", cef.V8ContextRef.Current().Frame().Identifier())
 			sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
 			sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给主进程, 测试值")
-			frame.SendProcessMessage(consts.PID_BROWSER, sendBrowserProcessMsg)
+			//Execute 函数实际已脱离上下文，不能直接使用上下文传入的frame.
+			//通过V8Context获取当前Frame, 或 browser.MainFrame()
+			cef.V8ContextRef.Current().Frame().SendProcessMessage(consts.PID_BROWSER, sendBrowserProcessMsg)
 			return true
 		})
 		object := cef.V8ValueRef.NewObject(nil)
@@ -114,14 +129,24 @@ func main() {
 		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
 			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().GetString(0), frame.Instance())
 			//测试 - 给 render 进程发送消息
-			sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
-			sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给渲染进程, 测试值")
-			frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
+			//sendBrowserProcessMsg := cef.ProcessMessageRef.New("rnderTestName")
+			//sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给渲染进程, 测试值")
+			//frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
+			//sendBrowserProcessMsg.Free()
 			return false
 		})
+		//go func() {
+		//	time.Sleep(time.Second * 2)
+		//	fmt.Println("打印pdf")
+		//	window.Chromium().Browser().PrintToPdf("D:\\360Downloads\\test.pdf", nil, nil)
+		//}()
 	})
 	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
 		fmt.Println("render 进程接收消息", message.Name(), message.ArgumentList().GetString(0), frame.Instance())
+		sendBrowserProcessMsg := cef.ProcessMessageRef.New("browserTestName")
+		sendBrowserProcessMsg.ArgumentList().SetString(0, "发送给主进程, 测试值")
+		frame.SendProcessMessage(consts.PID_BROWSER, sendBrowserProcessMsg)
+		sendBrowserProcessMsg.Free()
 		return false
 	})
 	//运行应用

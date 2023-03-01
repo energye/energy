@@ -28,6 +28,7 @@ import (
 // Chromium 功能函数接口
 type IChromiumProc interface {
 	lcl.IObject
+	Instance() uintptr
 	On(name string, eventCallback ipc.EventCallback)
 	ExecuteJavaScript(code, scriptURL string, startLine int32) //单纯的执行js，没有返回值
 	Emit(eventName string, args ipc.IArgumentList, target IEmitTarget) ProcessMessageError

@@ -115,6 +115,9 @@ type downloadItemPtr struct {
 
 // ToPtr 转换为指针
 func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
+	if m == nil {
+		return nil
+	}
 	return &tCefBrowserSettingsPtr{
 		Size:                       m.Size.ToPtr(),
 		WindowlessFrameRate:        m.WindowlessFrameRate.ToPtr(),
@@ -210,4 +213,45 @@ type tCefRectPtr struct {
 type tCustomHeader struct {
 	CustomHeaderName  uintptr //string
 	CustomHeaderValue uintptr //string
+}
+
+type cefPdfPrintSettingsPtr struct {
+	landscape           uintptr //Integer
+	printBackground     uintptr //Integer
+	scale               uintptr //double
+	paperWidth          uintptr //double
+	paperHeight         uintptr //double
+	preferCssPageSize   uintptr //Integer
+	marginType          uintptr //TCefPdfPrintMarginType
+	marginTop           uintptr //double
+	marginRight         uintptr //double
+	marginBottom        uintptr //double
+	marginLeft          uintptr //double
+	pageRanges          uintptr //TCefString
+	displayHeaderFooter uintptr //Integer
+	headerTemplate      uintptr //TCefString
+	footerTemplate      uintptr //TCefString
+}
+
+func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
+	if m == nil {
+		return nil
+	}
+	return &cefPdfPrintSettingsPtr{
+		landscape:           m.landscape.ToPtr(),
+		printBackground:     m.printBackground.ToPtr(),
+		scale:               m.scale.ToPtr(),
+		paperWidth:          m.paperWidth.ToPtr(),
+		paperHeight:         m.paperHeight.ToPtr(),
+		preferCssPageSize:   m.preferCssPageSize.ToPtr(),
+		marginType:          m.marginType.ToPtr(),
+		marginTop:           m.marginTop.ToPtr(),
+		marginRight:         m.marginRight.ToPtr(),
+		marginBottom:        m.marginBottom.ToPtr(),
+		marginLeft:          m.marginLeft.ToPtr(),
+		pageRanges:          m.pageRanges.ToPtr(),
+		displayHeaderFooter: m.displayHeaderFooter.ToPtr(),
+		headerTemplate:      m.headerTemplate.ToPtr(),
+		footerTemplate:      m.footerTemplate.ToPtr(),
+	}
 }

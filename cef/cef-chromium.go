@@ -75,6 +75,9 @@ func (m *TCEFChromium) initDefault() {
 
 // Instance 组件实例指针
 func (m *TCEFChromium) Instance() uintptr {
+	if m == nil || m.instance == nil {
+		return 0
+	}
 	return uintptr(m.instance)
 }
 
