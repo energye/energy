@@ -44,6 +44,8 @@ func main() {
 				sendBrowserProcessMsg := cef.ProcessMessageRef.New("testName")
 				sendBrowserProcessMsg.ArgumentList().SetString(0, fmt.Sprintf("发送给渲染进程, 测试值 %d", time.Now().Second()))
 				frame.SendProcessMessage(consts.PID_RENDER, sendBrowserProcessMsg)
+				//主进程, 执行指定窗口的JS
+				cef.BrowserWindow.GetWindowInfo(1).Chromium().ExecuteJavaScript("console.log('1111111');", "", 0)
 			}
 		}()
 	})
