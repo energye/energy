@@ -44,6 +44,17 @@ func main() {
 		fmt.Println("render 进程接收消息", message.Name())
 		return false
 	})
+	cef.VariableBind.Bind("funcName", func() string {
+		return ""
+	})
+	var stringField = "stringField"
+	cef.VariableBind.Bind("stringField", &stringField)
+	var intField = 100
+	cef.VariableBind.Bind("intField", &intField)
+	var doubleField = 900.001
+	cef.VariableBind.Bind("doubleField", &doubleField)
+	var boolField = true
+	cef.VariableBind.Bind("boolField", &boolField)
 	//运行应用
 	cef.Run(cefApp)
 }

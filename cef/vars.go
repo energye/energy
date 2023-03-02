@@ -25,55 +25,65 @@ var (
 	nullptr                        unsafe.Pointer = nil      //
 	commonRootName                                = "gocobj" //V8Value 通用类型变量属性的所属默认对象名称
 	objectRootName                                = "goobj"  //V8Value 对象类型变量属性的所属默认对象名称
-	DownloadsDir                   string                    //下载目录
-	enableGPU                      = false                   //启用GPU true启用 false不启用
 	isMainProcess, isRenderProcess bool                      //
 )
 
 type initBindVariableCallback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)
 
-// 变量绑定
-var VariableBind = &variableBind{valuesBind: make(map[string]JSValue)}
+// VariableBind 变量绑定
+var VariableBind IProvisionalBindStorage
 
 type IProvisionalBindStorage interface {
-	NewString(name, value string) *JSString
-	NewInteger(name string, value int32) *JSInteger
-	NewDouble(name string, value float64) *JSDouble
-	NewBoolean(name string, value bool) *JSBoolean
-	NewNull(name string) *JSNull
-	NewUndefined(name string) *JSUndefined
-	NewFunction(name string, fn interface{}) error
-	NewObjects(objects ...interface{})
-	Bind(name string, bind interface{}) error
+	VariableCreateCallback(callback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage))
+	NewString(name, value string) *JSString                  //通用类型 - 默认: string
+	NewInteger(name string, value int32) *JSInteger          //通用类型 - 默认: integer
+	NewDouble(name string, value float64) *JSDouble          //通用类型 - 默认: double
+	NewBoolean(name string, value bool) *JSBoolean           //通用类型 - 默认: boolean
+	NewNull(name string) *JSNull                             //通用类型 - 默认: null
+	NewUndefined(name string) *JSUndefined                   //通用类型 - 默认: undefined
+	NewFunction(name string, fn interface{}) error           //固定类型 - function
+	NewObjects(objects ...interface{})                       //固定类型 - object - struct
+	Bind(name string, bind interface{}) error                //固定类型 - 所有支持类型
+	bindValue(fullName string) (JSValue, bool)               //
+	binds() map[string]JSValue                               //
+	callVariableBind(browser *ICefBrowser, frame *ICefFrame) //
+	addBind(fullName string, value JSValue)                  //
 }
 
 type variableBind struct {
 	initBindVariableCallback initBindVariableCallback //
-	valuesBind               map[string]JSValue       //所有绑定变量属性或函数集合
+	bindMapping              map[string]JSValue       //所有绑定变量属性或函数集合
+	lock                     sync.Mutex               //add bind, remove bind lock
 }
 
 func init() {
 	isMainProcess = common.Args.IsMain()
 	isRenderProcess = common.Args.IsRender()
+	VariableBind = &variableBind{bindMapping: make(map[string]JSValue)}
+	fmt.Println("isMainProcess:", isMainProcess, "isRenderProcess:", isRenderProcess)
 }
 
-func (m *variableBind) putValueBind(fullName string, value JSValue) {
-	if _, ok := m.valuesBind[fullName]; !ok {
-		m.valuesBind[fullName] = value
+func (m *variableBind) addBind(fullName string, value JSValue) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	if _, ok := m.bindMapping[fullName]; !ok {
+		m.bindMapping[fullName] = value
 	}
 }
 
-func (m *variableBind) ValueBindCount() int {
-	return len(m.valuesBind)
+func (m *variableBind) removeBind(fullName string) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	delete(m.bindMapping, fullName)
 }
 
-func (m *variableBind) GetValueBind(fullName string) (JSValue, bool) {
-	value, ok := m.valuesBind[fullName]
+func (m *variableBind) bindValue(fullName string) (JSValue, bool) {
+	value, ok := m.bindMapping[fullName]
 	return value, ok
 }
 
-func clearValueBind() {
-	//valuesBind = make(map[uintptr]JSValue)
+func (m *variableBind) binds() map[string]JSValue {
+	return m.bindMapping
 }
 
 // VariableCreateCallback
@@ -105,7 +115,7 @@ func (m *variableBind) NewString(name, value string) *JSString {
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_STRING
 	jsValueBind.valueType.Gov = GO_VALUE_STRING
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -118,7 +128,7 @@ func (m *variableBind) NewInteger(name string, value int32) *JSInteger {
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_INT
 	jsValueBind.valueType.Gov = GO_VALUE_INT32
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -131,7 +141,7 @@ func (m *variableBind) NewDouble(name string, value float64) *JSDouble {
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_DOUBLE
 	jsValueBind.valueType.Gov = GO_VALUE_FLOAT64
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -144,7 +154,7 @@ func (m *variableBind) NewBoolean(name string, value bool) *JSBoolean {
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_BOOLEAN
 	jsValueBind.valueType.Gov = GO_VALUE_BOOL
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -157,7 +167,7 @@ func (m *variableBind) NewNull(name string) *JSNull {
 	jsValueBind.value = "null"
 	jsValueBind.valueType.Jsv = V8_VALUE_NULL
 	jsValueBind.valueType.Gov = GO_VALUE_NIL
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -170,7 +180,7 @@ func (m *variableBind) NewUndefined(name string) *JSUndefined {
 	jsValueBind.value = "undefined"
 	jsValueBind.valueType.Jsv = V8_VALUE_UNDEFINED
 	jsValueBind.valueType.Gov = GO_VALUE_STRING
-	m.valueHandle(jsValueBind)
+	m.bindValueHandle(jsValueBind)
 	return jsValueBind
 }
 
@@ -188,7 +198,7 @@ func (m *variableBind) NewFunction(name string, fn interface{}) error {
 			jsValueBind.valueType.Jsv = V8_VALUE_FUNCTION
 			jsValueBind.valueType.Gov = GO_VALUE_FUNC
 			jsValueBind.funcInfo = info
-			m.valueHandle(jsValueBind)
+			m.bindValueHandle(jsValueBind)
 			return nil
 		} else {
 			return err
@@ -197,13 +207,13 @@ func (m *variableBind) NewFunction(name string, fn interface{}) error {
 	return errors.New("创建的函数不是函数类型")
 }
 
-// V8Value valueHandle
-func (m *variableBind) valueHandle(jsValue JSValue) {
+// V8Value bindValueHandle
+func (m *variableBind) bindValueHandle(jsValue JSValue) {
 	jsValue.setPtr(unsafe.Pointer(&jsValue))
 	jsValue.setInstance(uintptr(jsValue.Ptr()))
 	jsValue.setEventId(uintptr(__bind_id()))
 	jsValue.setThat(jsValue)
-	m.putValueBind(jsValue.Name(), jsValue)
+	m.addBind(jsValue.Name(), jsValue)
 }
 
 // NewObjects V8Value
@@ -215,18 +225,15 @@ func (m *variableBind) NewObjects(objects ...interface{}) {
 
 // Bind V8Value
 //
-// 变量和函数绑定, 在Go中定义字段绑定到JS字段中, 在Go中定义的函数导出到JS
+// 变量和函数绑定, 在Go中定义绑定到JS中
 //
 // 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, ObjectInfos = struct | map,  Array = Slice
-//
-// 主进程和子进程
 //
 // 返回nil表示绑定成功
 func (m *variableBind) Bind(name string, bind interface{}) error {
 	if isMainProcess || isRenderProcess {
 		typ := reflect.TypeOf(bind)
 		kind := typ.Kind()
-		//直接绑定变量地址
 		if kind != reflect.Ptr && kind != reflect.Func {
 			return errors.New(fmt.Sprintf("绑定字段 %s: 应传递绑定变量指针", name))
 		}
@@ -234,13 +241,14 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			gov GO_VALUE_TYPE
 			jsv V8_JS_VALUE_TYPE
 		)
+
 		if kind == reflect.Func {
 			gov = GO_VALUE_FUNC
 			jsv = V8_VALUE_FUNCTION
 		} else {
 			gov, jsv = common.FieldReflectType(typ.Elem())
 		}
-		fmt.Println("value-type:", gov, jsv)
+		fmt.Println("FieldReflectType:", gov, jsv)
 		if gov == -1 || jsv == -1 {
 			return errors.New("类型错误, 支持类型: string, int32, float64, bool, func, struct, map, slice")
 		}
@@ -254,6 +262,7 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			isCommonObject: IS_OBJECT,
 			eventId:        uintptr(__bind_id()),
 		}
+		//分解类型
 		if jsv == V8_VALUE_FUNCTION { //function
 			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_OBJECT); err == nil {
 				value.funcInfo = info
@@ -262,9 +271,9 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 				return err
 			}
 		} else if jsv == V8_VALUE_OBJECT { //object
-			if gov == GO_VALUE_STRUCT {
+			if gov == GO_VALUE_STRUCT { // object - struct
 
-			} else if gov == GO_VALUE_MAP {
+			} else if gov == GO_VALUE_MAP { // object - map
 
 			}
 		} else if jsv == V8_VALUE_ARRAY { //array
@@ -307,14 +316,14 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			case V8_VALUE_BOOLEAN:
 				value.ptr = unsafe.Pointer(bind.(*bool))
 			default:
-				return errors.New("字段 " + name + ": 不支持的绑定类型")
+				return errors.New(name + ": 不支持的绑定类型")
 			}
 		}
 		value.instance = uintptr(value.ptr)
 		value.value = bind
 		value.that = value
-		m.putValueBind(name, value)
-		objectTI.bind(value)
+		m.addBind(name, value)
+		//objectTI.bind(value)
 	}
 	return nil
 }

@@ -412,7 +412,7 @@ func newV8Value(eventId uintptr, fullParentName, name string, value interface{},
 	jsValueBind.sfi = sfi
 	jsValueBind.valueType = valueType
 	jsValueBind.isCommonObject = isCommonObject
-	VariableBind.putValueBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
+	VariableBind.addBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
 	return jsValueBind
 }
 

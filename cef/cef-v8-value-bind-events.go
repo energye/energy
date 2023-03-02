@@ -242,7 +242,7 @@ func v8BindFuncCallbackHandler(eventType BIND_EVENT, fullNamePtr uintptr, args u
 	}
 	fullName := api.GoStr(fullNamePtr)
 	exceptionPrt = (*uintptr)(getPtr(1))
-	var jsValue, ok = VariableBind.GetValueBind(fullName)
+	var jsValue, ok = VariableBind.bindValue(fullName)
 	var fnInfo *funcInfo
 	if !ok {
 		errorMessage = cefErrorMessage(CVE_ERROR_NOT_FOUND_FUNC)

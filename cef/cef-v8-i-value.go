@@ -14,7 +14,6 @@ package cef
 import (
 	"bytes"
 	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"strconv"
@@ -78,8 +77,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	//通过直接绑定到CEF
 	objectTI.bindToCEF()
 	var valueBindInfos []*valueBindInfo
-	logger.Debug("Total number of bindings：", VariableBind.ValueBindCount())
-	for _, value := range VariableBind.valuesBind {
+	for _, value := range VariableBind.binds() {
 		if !value.isCommon() {
 			continue
 		}

@@ -177,7 +177,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			if bindType == IS_OBJECT {
 				name = name[len(objectRootName)+1:]
 			}
-			if jsValue, ok := VariableBind.GetValueBind(name); ok {
+			if jsValue, ok := VariableBind.bindValue(name); ok {
 				jsValue.Lock()
 				defer jsValue.UnLock()
 				if jsValue.ValueType().Jsv == V8_VALUE_FUNCTION { //func
@@ -310,7 +310,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 			fullName = strings.Join(fnArr, ".")
 			return IS_COMMON, fullName, V8_VALUE_ROOT_OBJECT, 0, CVE_ERROR_OK
 		} else if fnArrLen == 2 {
-			if jsValue, ok := VariableBind.GetValueBind(fnArr[1]); ok { //通用类型 fnArr[1] 1是因为 obj.field ,这个field 就是1
+			if jsValue, ok := VariableBind.bindValue(fnArr[1]); ok { //通用类型 fnArr[1] 1是因为 obj.field ,这个field 就是1
 				return IS_COMMON, jsValue.Name(), jsValue.ValueType().Jsv, int32(jsValue.getEventId()), CVE_ERROR_OK
 			} else {
 				//不存在
@@ -408,7 +408,7 @@ func internalBrowserIPCOnEventInit() {
 			args := context.Arguments()
 			defer args.Clear()
 			fullName := args.GetString(0)
-			var jsValue, ok = VariableBind.GetValueBind(fullName)
+			var jsValue, ok = VariableBind.bindValue(fullName)
 			buf := &bytes.Buffer{}
 			defer buf.Reset()
 			if ok {
@@ -430,7 +430,7 @@ func internalBrowserIPCOnEventInit() {
 			fullName := args.GetString(0)
 			item := args.Item(1)
 			newValueType := item.VTypeToJS()
-			jsValue, ok := VariableBind.GetValueBind(fullName)
+			jsValue, ok := VariableBind.bindValue(fullName)
 			isSuccess := false
 			retArgs := ipc.NewArgumentList()
 			defer retArgs.Clear()
@@ -461,7 +461,7 @@ func internalBrowserIPCOnEventInit() {
 			dataItems := args.RangeItems(0, args.Size()-1)
 			var inArgument = ipc.NewArgumentList()
 			inArgument.SetItems(dataItems)
-			var jsValue, ok = VariableBind.GetValueBind(fullName)
+			var jsValue, ok = VariableBind.bindValue(fullName)
 			var (
 				outParams []reflect.Value
 				isSuccess bool
