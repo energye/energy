@@ -44,7 +44,7 @@ func main() {
 			set := &cef.CefPdfPrintSettings{}
 			fmt.Println(set)
 			set.Scale = 2
-			browser.PrintToPdf("D:\\360Downloads\\test.pdf", set, nil)
+			browser.PrintToPdf("D:\\360Downloads\\test.pdf", set, callback)
 			//window.Chromium().PrintToPDF("D:\\360Downloads\\test.pdf")
 		})
 		event.SetOnPdfPrintFinished(func(sender lcl.IObject, aResultOK bool) {

@@ -96,11 +96,12 @@ func main() {
 		accessor := cef.V8AccessorRef.New()
 		fmt.Println("handler-accessor:", handler, accessor)
 		accessor.Get(func(name string, object *cef.ICefV8Value, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+			fmt.Println("accessor get name", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("这能返回？"))
 			return true
 		})
 		accessor.Set(func(name string, object *cef.ICefV8Value, value *cef.ICefV8Value, exception *cef.Exception) bool {
-			fmt.Println("name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
+			fmt.Println("accessor set name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
 			return true
 		})
 		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
@@ -113,7 +114,6 @@ func main() {
 			if ok {
 				fmt.Println("OK = Execute eval fntest-return-value:", val.GetStringValue())
 			}
-
 			val, ex, ok = cef.V8ContextRef.Current().Eval("errtest();", "", 0)
 			fmt.Println("? = Execute errtest:", val, ex, ok)
 			fmt.Println("OK = Execute errtest-error:", ex.Message(), ex.LineNumber())
