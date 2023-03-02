@@ -17,12 +17,23 @@
             msg("ipc-event: 页面加载完成...");
         }
 
+        function ipcEmit() {
+            ipc.emit("emitName");
+        }
+        function ipcOn() {
+            ipc.on('onName');
+        }
+
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
 <p>
 <h3>process-message</h3></p>
 <p><a target="_blank" href="ipc-event.html">open</a></p>
+<p>
+    <button onclick="ipcEmit()">ipcEmit</button>
+    <button onclick="ipcOn()">ipcOn</button>
+</p>
 <p id="msgHtml"></p>
 </body>
 </html>
