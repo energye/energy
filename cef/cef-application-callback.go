@@ -24,8 +24,25 @@ const (
 )
 
 var (
-	internalObjectRootName = "energy" // GO 和 V8Value 绑定根对象名
+	internalObjectRootName = "energy"     // GO 和 V8Value 绑定根对象名
+	ctx                    *contextCreate //
+	mRun                   *mainRun       //
 )
+
+type contextCreate struct {
+	make bool
+}
+
+type mainRun struct {
+}
+
+func init() {
+	if common.Args.IsMain() {
+		mRun = &mainRun{}
+	} else if common.Args.IsRender() {
+		ctx = &contextCreate{}
+	}
+}
 
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
@@ -41,18 +58,8 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	for name, value := range binds {
 		fmt.Println("\t", name, value.ValueType())
 	}
-	emitHandler := V8HandlerRef.New()
-	emitHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
-		return false
-	})
-	onHandler := V8HandlerRef.New()
-	onHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
-		return false
-	})
-	ipc := V8ValueRef.NewObject(nil)
-	ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, emitHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, onHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	context.Global().setValueByKey(internalIPCKey, ipc, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	ctx.makeIPC(context)
+	ctx.makeBind(context)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
@@ -63,6 +70,37 @@ func appMainRunCallback() {
 	//indGoToJS(nil, nil)
 }
 
-func init() {
+// makeIPC ipc
+func (m *contextCreate) makeIPC(context *ICefV8Context) {
+	//ipc emit
+	emitHandler := V8HandlerRef.New()
+	emitHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
+		return false
+	})
+	// ipc on
+	onHandler := V8HandlerRef.New()
+	onHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
+		return false
+	})
+	//ipc object
+	ipc := V8ValueRef.NewObject(nil)
+	ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, emitHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, onHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	context.Global().setValueByKey(internalIPCKey, ipc, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+}
 
+// makeBind bind object accessor
+func (m *contextCreate) makeBind(context *ICefV8Context) {
+	objectAccessor := V8AccessorRef.New()
+	objectAccessor.Get(func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool {
+		return false
+	})
+	objectAccessor.Set(func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
+		return false
+	})
+
+	//bind object
+	object := V8ValueRef.NewObject(objectAccessor)
+
+	context.Global().setValueByKey(internalObjectRootName, object, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 }
