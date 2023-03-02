@@ -3,27 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>ipc-event</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
     <script type="application/javascript">
-        window.onload = function () {
-            let msgHtml = document.getElementById("msgHtml");
-            function msg(...vvv) {
-                let str = msgHtml.innerHTML;
-                for (let i = 0; i < vvv.length; i++) {
-                    str = str + "  " + vvv[i];
-                }
-                str += "<br>";
-                msgHtml.innerHTML = str;
-            }
-            msg("ipc-event: 页面加载完成...");
-        }
-
         function ipcEmit() {
-            ipc.emit("emitName");
-        }
-        function ipcOn() {
-            ipc.on('onName');
+            ipc.emit("emitName", [], function (result) {
+
+            });
         }
 
+        function ipcOn() {
+            ipc.on('onName', function (param1, param2, param3) {
+
+            });
+        }
+
+        function bindFunc() {
+            energy.funcName();
+        }
+
+        function bindField() {
+            clearMsg();
+            msg('stringField', energy.stringField);
+            msg('intField', energy.intField);
+            msg('doubleField', energy.doubleField);
+            msg('boolField', energy.boolField);
+        }
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
@@ -33,7 +41,28 @@
 <p>
     <button onclick="ipcEmit()">ipcEmit</button>
     <button onclick="ipcOn()">ipcOn</button>
+    <br>
+    <button onclick="bindFunc()">bindFunc</button>
+    <button onclick="bindField()">bindField</button>
 </p>
 <p id="msgHtml"></p>
 </body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+
+    msg("ipc-event: 页面加载完成...");
+</script>
 </html>

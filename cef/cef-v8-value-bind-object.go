@@ -91,10 +91,10 @@ type cefObject struct {
 	Funcs       uintptr //array
 }
 
-func (m *VT) ToValueTypeString() string {
+func (m *VT) ToString() string {
 	gov := common.FuncParamGoTypeStr(m.Gov)
 	jsv := common.FuncParamJsTypeStr(m.Jsv)
-	return fmt.Sprintf("GO=%s,JS:=%s", gov, jsv)
+	return fmt.Sprintf("GO=%s JS=%s", gov, jsv)
 }
 
 // IsGoIntAuto 判断Go 所有 int 类型

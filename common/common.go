@@ -385,11 +385,17 @@ func FuncParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {
 	case V8_VALUE_STRING:
 		return "string"
 	case V8_VALUE_INT:
-		return "int"
+		return "integer"
 	case V8_VALUE_DOUBLE:
 		return "double"
 	case V8_VALUE_BOOLEAN:
 		return "boolean"
+	case V8_VALUE_OBJECT:
+		return "object"
+	case V8_VALUE_ARRAY:
+		return "array"
+	case V8_VALUE_FUNCTION:
+		return "function"
 	case V8_VALUE_EXCEPTION:
 		return "EefError"
 	default:
@@ -411,12 +417,32 @@ func FuncParamGoTypeStr(jsValue GO_VALUE_TYPE) string {
 		return "int32"
 	case GO_VALUE_INT64:
 		return "int64"
+	case GO_VALUE_UINT:
+		return "uint"
+	case GO_VALUE_UINT8:
+		return "uint8"
+	case GO_VALUE_UINT16:
+		return "uint16"
+	case GO_VALUE_UINT32:
+		return "uint32"
+	case GO_VALUE_UINT64:
+		return "uint64"
+	case GO_VALUE_UINTPTR:
+		return "uintptr"
 	case GO_VALUE_FLOAT32:
 		return "float32"
 	case GO_VALUE_FLOAT64:
 		return "float64"
 	case GO_VALUE_BOOL:
 		return "bool"
+	case GO_VALUE_FUNC:
+		return "func"
+	case GO_VALUE_MAP:
+		return "map"
+	case GO_VALUE_SLICE:
+		return "slice"
+	case GO_VALUE_STRUCT:
+		return "struct"
 	case GO_VALUE_EXCEPTION:
 		return "EefError"
 	default:
