@@ -84,6 +84,49 @@ func (m *contextCreate) makeIPC(context *ICefV8Context) {
 // ipcEmitExecute ipc.emit 执行
 func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
 	fmt.Println("emit handler name:", name, "arguments-size:", arguments.Size())
+	if name != internalEmit {
+		return false
+	}
+	if arguments.Size() >= 1 { // 1 ~ 3 个参数
+		var (
+			emitName     *ICefV8Value //事件名
+			emitArgs     *ICefV8Value //事件参数
+			emitCallback *ICefV8Value //事件回调函数
+		)
+		emitName = arguments.Get(0)
+		if !emitName.IsString() {
+			exception.SetMessage("ipc emit event parameter error. Parameter 1 can only be the event name")
+			return false
+		}
+		if arguments.Size() == 2 {
+			args2 := arguments.Get(1)
+			if args2.IsArray() {
+				emitArgs = args2
+			} else if args2.IsFunction() {
+				emitCallback = args2
+			} else {
+				exception.SetMessage("ipc emit event parameter error. Parameter 2 can only be an input parameter or callback function")
+				return false
+			}
+		} else if arguments.Size() == 3 {
+			emitArgs = arguments.Get(1)
+			emitCallback = arguments.Get(2)
+			if !emitArgs.IsArray() || !emitCallback.IsFunction() {
+				exception.SetMessage("ipc emit event parameter error. Parameter 2 can only be an input parameter, Parameter 3 can only be a callback function")
+				return false
+			}
+		}
+		//带有回调函数
+		if emitCallback != nil {
+			//回调函数临时存放到缓存中 list 队列
+		}
+		if emitArgs != nil {
+			argsLen := emitArgs.GetArrayLength()
+			for i := 0; i < argsLen; i++ {
+				fmt.Println("\temitArgs:", i, emitArgs.GetValueByIndex(i), emitArgs.GetValueByIndex(i).IsString())
+			}
+		}
+	}
 	for i := 0; i < arguments.Size(); i++ {
 		fmt.Println("\t", i, arguments.Get(i).IsString(), arguments.Get(i).IsArray(), arguments.Get(i).IsFunction(), arguments.Get(i).Instance(), arguments.Get(i).Instance())
 	}

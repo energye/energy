@@ -10,7 +10,7 @@
     </style>
     <script type="application/javascript">
         function ipcEmit() {
-            ipc.emit("emitName", [], function (result) {
+            ipc.emit("emitName", ["stringValue", 100, true, 1999.66, "字符串？", 29999.66], function (result) {
 
             });
         }

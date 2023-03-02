@@ -43,68 +43,185 @@ func (m *ICefV8Value) IsValid() bool {
 }
 
 func (m *ICefV8Value) IsUndefined() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsUndefined).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtUndefined {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsUndefined).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtUndefined
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsNull() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsNull).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtNull {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsNull).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtNull
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsBool() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsBool).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtBool {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsBool).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtBool
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsInt() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsInt).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtInt {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsInt).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtInt
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsUInt() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsUInt).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtUInt {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsUInt).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtUInt
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsDouble() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsDouble).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtDouble {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsDouble).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtDouble
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsDate() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsDate).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtDate {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsDate).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtDate
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsString() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsString).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtString {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsString).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtString
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsObject() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsObject).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtObject {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsObject).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtObject
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsArray() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsArray).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtArray {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsArray).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtArray
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsArrayBuffer() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsArrayBuffer).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtArrayBuffer {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsArrayBuffer).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtArrayBuffer
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsFunction() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsFunction).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtFunction {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsFunction).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtFunction
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsPromise() bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_IsPromise).Call(m.Instance())
-	return api.GoBool(r1)
+	if m.valueType == consts.V8vtPromise {
+		return true
+	}
+	if m.valueType == consts.V8vtInvalid {
+		r1, _, _ := imports.Proc(internale_CefV8Value_IsPromise).Call(m.Instance())
+		if api.GoBool(r1) {
+			m.valueType = consts.V8vtPromise
+			return true
+		}
+	}
+	return false
 }
 
 func (m *ICefV8Value) IsSame() bool {
@@ -218,12 +335,34 @@ func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
 	return m.getValueByKey(key)
 }
 
-func (m *ICefV8Value) GetValueByIndex(index int32) *ICefV8Value {
-	var result uintptr
-	imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+// GetValueByIndex 当前是数组时，通过下标取值V8Value
+func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
+	if !m.IsArray() {
+		return nil
 	}
+	valLen := m.GetArrayLength()
+	if m.valueArrays == nil {
+		m.valueArrays = make([]*ICefV8Value, valLen)
+	}
+	if index < valLen {
+		if len(m.valueArrays) < valLen {
+			// 扩大 valueArrays = valLen
+			valueArrays := m.valueArrays
+			m.valueArrays = make([]*ICefV8Value, valLen)
+			copy(m.valueArrays, valueArrays)
+		}
+		value := m.valueArrays[index]
+		if value == nil {
+			var result uintptr
+			imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
+			value = &ICefV8Value{
+				instance: unsafe.Pointer(result),
+			}
+			m.valueArrays[index] = value
+		}
+		return value
+	}
+	return nil
 }
 
 // setValueByKey internal
@@ -287,9 +426,9 @@ func (m *ICefV8Value) AdjustExternallyAllocatedMemory(changeInBytes int32) int32
 	return int32(r1)
 }
 
-func (m *ICefV8Value) GetArrayLength() int32 {
+func (m *ICefV8Value) GetArrayLength() int {
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetArrayLength).Call(m.Instance())
-	return int32(r1)
+	return int(int32(r1))
 }
 
 //func (m *ICefV8Value) GetArrayBufferReleaseCallback() {
@@ -389,7 +528,8 @@ func (*cefV8Value) NewUndefined() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewUndefined).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtUndefined,
 	}
 }
 
@@ -397,7 +537,8 @@ func (*cefV8Value) NewNull() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewNull).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtNull,
 	}
 }
 
@@ -405,14 +546,16 @@ func (*cefV8Value) NewBool(value bool) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewBool).Call(api.PascalBool(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtBool,
 	}
 }
 func (*cefV8Value) NewInt(value int32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewInt).Call(uintptr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtInt,
 	}
 }
 
@@ -420,7 +563,8 @@ func (*cefV8Value) NewUInt(value uint32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewUInt).Call(uintptr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtUInt,
 	}
 }
 
@@ -428,7 +572,8 @@ func (*cefV8Value) NewDouble(value float64) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewDouble).Call(uintptr(unsafe.Pointer(&value)), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtDouble,
 	}
 }
 
@@ -437,7 +582,8 @@ func (*cefV8Value) NewDate(value time.Time) *ICefV8Value {
 	val := common.GoDateTimeToDDateTime(value)
 	imports.Proc(internale_CefV8ValueRef_NewDate).Call(uintptr(unsafe.Pointer(&val)), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtDate,
 	}
 }
 
@@ -445,7 +591,8 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewString).Call(api.PascalStr(value), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtString,
 	}
 }
 
@@ -454,7 +601,8 @@ func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtObject,
 	}
 }
 
@@ -462,7 +610,8 @@ func (*cefV8Value) NewArray(len int32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewArray).Call(uintptr(len), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtArray,
 	}
 }
 
@@ -477,7 +626,8 @@ func (*cefV8Value) NewArrayBuffer(buffer []byte, callback *ICefV8ArrayBufferRele
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewArrayBuffer).Call(uintptr(unsafe.Pointer(&buffer[0])), uintptr(int32(bufLen)), callback.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtArrayBuffer,
 	}
 }
 
@@ -486,7 +636,8 @@ func (*cefV8Value) newFunction(name string, handler *ICefV8Handler) *ICefV8Value
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewFunction).Call(api.PascalStr(name), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtFunction,
 	}
 }
 
@@ -502,6 +653,7 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewPromise).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+		instance:  unsafe.Pointer(result),
+		valueType: consts.V8vtPromise,
 	}
 }

@@ -1057,3 +1057,23 @@ const (
 	PDF_PRINT_MARGIN_NONE
 	PDF_PRINT_MARGIN_CUSTOM
 )
+
+// V8ValueType ICefV8Value ValueType
+type V8ValueType = types.Int32
+
+const (
+	V8vtInvalid V8ValueType = iota
+	V8vtUndefined
+	V8vtNull
+	V8vtBool
+	V8vtInt
+	V8vtUInt
+	V8vtDouble
+	V8vtDate
+	V8vtString
+	V8vtObject
+	V8vtArray
+	V8vtArrayBuffer
+	V8vtFunction
+	V8vtPromise
+)
