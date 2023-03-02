@@ -320,9 +320,10 @@ type ICefV8Value struct {
 
 // TCefV8ValueArray ICefV8Value 数组的替代结构
 type TCefV8ValueArray struct {
-	instance        unsafe.Pointer
-	arguments       uintptr
-	argumentsLength int
+	instance         unsafe.Pointer
+	arguments        uintptr
+	argumentsLength  int
+	argumentsCollect []*ICefV8Value
 }
 
 // ICefV8Handler

@@ -70,7 +70,7 @@ func init() {
 			object := &ICefV8Value{instance: getPtr(1)}
 			argumentsPtr := getVal(2)
 			argumentsLength := int32(getVal(3))
-			arguments := &TCefV8ValueArray{instance: unsafe.Pointer(argumentsPtr), arguments: argumentsPtr, argumentsLength: int(argumentsLength)}
+			arguments := &TCefV8ValueArray{instance: unsafe.Pointer(argumentsPtr), arguments: argumentsPtr, argumentsLength: int(argumentsLength), argumentsCollect: make([]*ICefV8Value, int(argumentsLength))}
 			retValPtr := (*uintptr)(getPtr(4))
 			retVal := &ResultV8Value{}
 			exceptionPtr := (*uintptr)(getPtr(5))
@@ -86,7 +86,7 @@ func init() {
 				*exceptionPtr = 0
 			}
 			*resultPtr = result
-			arguments.instance = nil
+			arguments.Free()
 			object.Free()
 		default:
 			return false

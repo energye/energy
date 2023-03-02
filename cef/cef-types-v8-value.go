@@ -357,7 +357,12 @@ func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
 // Get 根据下标获取 ICefV8Value
 func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	if index < m.argumentsLength {
-		return &ICefV8Value{instance: unsafe.Pointer(common.GetParamOf(index, m.arguments))}
+		value := m.argumentsCollect[index]
+		if value == nil {
+			value = &ICefV8Value{instance: unsafe.Pointer(common.GetParamOf(index, m.arguments))}
+			m.argumentsCollect[index] = value
+		}
+		return value
 	}
 	return nil
 }
@@ -365,6 +370,13 @@ func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 // Size 返回 ICefV8Value 数组长度
 func (m *TCefV8ValueArray) Size() int {
 	return m.argumentsLength
+}
+
+func (m *TCefV8ValueArray) Free() {
+	m.instance = nil
+	m.argumentsCollect = nil
+	m.arguments = 0
+	m.argumentsLength = 0
 }
 
 // V8ValueRef -> ICefV8Value

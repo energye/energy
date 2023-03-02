@@ -85,7 +85,7 @@ func (m *contextCreate) makeIPC(context *ICefV8Context) {
 func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
 	fmt.Println("emit handler name:", name, "arguments-size:", arguments.Size())
 	for i := 0; i < arguments.Size(); i++ {
-		fmt.Println("\t", arguments.Get(i))
+		fmt.Println("\t", i, arguments.Get(i).IsString(), arguments.Get(i).IsArray(), arguments.Get(i).IsFunction(), arguments.Get(i).Instance(), arguments.Get(i).Instance())
 	}
 	return false
 }
