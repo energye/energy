@@ -221,7 +221,7 @@ func init() {
 			ctx := &ICefV8Context{instance: getPtr(2)}
 			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)
 			if !result {
-				appOnContextCreated(browser, frame)
+				appOnContextCreated(browser, frame, ctx)
 			}
 		case GlobalCEFAppEventOnWebKitInitialized:
 			fn.(GlobalCEFAppEventOnWebKitInitialized)()

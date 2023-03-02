@@ -20,6 +20,13 @@ import (
 	"unsafe"
 )
 
+// isInternalKey 内部key不允许使用
+func isInternalKey(key string) bool {
+	return key == internalIPCKey ||
+		key == internalEmit ||
+		key == internalOn
+}
+
 func (m *ICefV8Value) Instance() uintptr {
 	if m == nil {
 		return 0
@@ -175,9 +182,18 @@ func (m *ICefV8Value) HasValueByIndex(index int32) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefV8Value) DeleteValueByKey(key string) bool {
+// deleteValueByKey internal
+func (m *ICefV8Value) deleteValueByKey(key string) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_DeleteValueByKey).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
+}
+
+// DeleteValueByKey export
+func (m *ICefV8Value) DeleteValueByKey(key string) bool {
+	if isInternalKey(key) {
+		return false
+	}
+	return m.deleteValueByKey(key)
 }
 
 func (m *ICefV8Value) DeleteValueByIndex(index int32) bool {
@@ -185,12 +201,21 @@ func (m *ICefV8Value) DeleteValueByIndex(index int32) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
+// getValueByKey internal
+func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+// GetValueByKey export
+func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
+	if key == internalIPCKey {
+		return nil
+	}
+	return m.getValueByKey(key)
 }
 
 func (m *ICefV8Value) GetValueByIndex(index int32) *ICefV8Value {
@@ -201,9 +226,18 @@ func (m *ICefV8Value) GetValueByIndex(index int32) *ICefV8Value {
 	}
 }
 
-func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
+// setValueByKey internal
+func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByKey).Call(m.Instance(), api.PascalStr(key), value.Instance(), attribute.ToPtr())
 	return api.GoBool(r1)
+}
+
+// SetValueByKey export
+func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
+	if isInternalKey(key) {
+		return false
+	}
+	return m.setValueByKey(key, value, attribute)
 }
 
 func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
@@ -211,9 +245,18 @@ func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+// SetValueByAccessor internal
+func (m *ICefV8Value) setValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByAccessor).Call(m.Instance(), api.PascalStr(key), settings.ToPtr(), attribute.ToPtr())
 	return api.GoBool(r1)
+}
+
+// SetValueByAccessor export
+func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+	if isInternalKey(key) {
+		return false
+	}
+	return m.setValueByAccessor(key, settings, attribute)
 }
 
 //func (m *ICefV8Value) GetKeys(keys *lcl.TStrings) int32 {
@@ -426,12 +469,21 @@ func (*cefV8Value) NewArrayBuffer(buffer []byte, callback *ICefV8ArrayBufferRele
 	}
 }
 
-func (*cefV8Value) NewFunction(name string, handler *ICefV8Handler) *ICefV8Value {
+// newFunction internal
+func (*cefV8Value) newFunction(name string, handler *ICefV8Handler) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewFunction).Call(api.PascalStr(name), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+// NewFunction export
+func (m *cefV8Value) NewFunction(name string, handler *ICefV8Handler) *ICefV8Value {
+	if isInternalKey(name) {
+		return nil
+	}
+	return m.newFunction(name, handler)
 }
 
 func (*cefV8Value) NewPromise() *ICefV8Value {

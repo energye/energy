@@ -308,6 +308,9 @@ type ICefV8Exception struct {
 //   2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
 type ICefV8Context struct {
 	instance unsafe.Pointer
+	browser  *ICefBrowser
+	frame    *ICefFrame
+	global   *ICefV8Value
 }
 
 // ICefV8Value

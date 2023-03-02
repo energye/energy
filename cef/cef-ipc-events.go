@@ -175,7 +175,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			result.set(api.PascalStr(name), uintptr(vType), 0, uintptr(bindType), uintptr(CVE_ERROR_OK))
 		} else {
 			if bindType == IS_OBJECT {
-				name = name[len(objectRootName)+1:]
+				name = name[len(internalObjectRootName)+1:]
 			}
 			if jsValue, ok := VariableBind.bindValue(name); ok {
 				jsValue.Lock()
@@ -305,7 +305,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 		return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD
 	}
 	//对象类型
-	if fnArr[0] == commonRootName {
+	/*if fnArr[0] == internalCommonRootName {
 		if fnArrLen == 1 { //commonRootObject 对象
 			fullName = strings.Join(fnArr, ".")
 			return IS_COMMON, fullName, V8_VALUE_ROOT_OBJECT, 0, CVE_ERROR_OK
@@ -320,7 +320,7 @@ func searchBindV8Value(fullName string) (IS_CO, string, V8_JS_VALUE_TYPE, int32,
 			//不正确的变量名或不存在
 			return 0, "", 0, 0, CVE_ERROR_NOT_FOUND_FIELD
 		}
-	} else if fnArr[0] == objectRootName {
+	} else*/if fnArr[0] == internalObjectRootName {
 		if fnArrLen == 1 {
 			//objectRootObject对象
 			fullName = strings.Join(fnArr, ".")

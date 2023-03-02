@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -22,6 +23,7 @@ func main() {
 	cefApp = cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
+	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
 	cef.BrowserWindow.Config.Title = "Energy - ipc-event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//内置http服务链接安全配置
@@ -44,6 +46,8 @@ func main() {
 		fmt.Println("render 进程接收消息", message.Name())
 		return false
 	})
+	//cefApp.SetSingleProcess(true)
+	cefApp.SetEnableGPU(true)
 	cef.VariableBind.Bind("funcName", func() string {
 		return ""
 	})
@@ -55,6 +59,7 @@ func main() {
 	cef.VariableBind.Bind("doubleField", &doubleField)
 	var boolField = true
 	cef.VariableBind.Bind("boolField", &boolField)
+	cef.VariableBind.Bind("structField", src.StructField)
 	//运行应用
 	cef.Run(cefApp)
 }

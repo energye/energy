@@ -59,27 +59,36 @@ func (m *ICefV8Context) IsSame(that *ICefV8Context) bool {
 }
 
 func (m *ICefV8Context) Browser() *ICefBrowser {
-	var result uintptr
-	imports.Proc(internale_CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefBrowser{
-		instance: unsafe.Pointer(result),
+	if m.browser == nil {
+		var result uintptr
+		imports.Proc(internale_CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		m.browser = &ICefBrowser{
+			instance: unsafe.Pointer(result),
+		}
 	}
+	return m.browser
 }
 
 func (m *ICefV8Context) Frame() *ICefFrame {
-	var result uintptr
-	imports.Proc(internale_CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefFrame{
-		instance: unsafe.Pointer(result),
+	if m.frame == nil {
+		var result uintptr
+		imports.Proc(internale_CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		m.frame = &ICefFrame{
+			instance: unsafe.Pointer(result),
+		}
 	}
+	return m.frame
 }
 
 func (m *ICefV8Context) Global() *ICefV8Value {
-	var result uintptr
-	imports.Proc(internale_CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+	if m.global == nil {
+		var result uintptr
+		imports.Proc(internale_CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		m.global = &ICefV8Value{
+			instance: unsafe.Pointer(result),
+		}
 	}
+	return m.global
 }
 
 func (m *cefV8ContextRef) Current() *ICefV8Context {

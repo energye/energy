@@ -22,10 +22,8 @@ import (
 )
 
 var (
-	nullptr                        unsafe.Pointer = nil      //
-	commonRootName                                = "gocobj" //V8Value 通用类型变量属性的所属默认对象名称
-	objectRootName                                = "goobj"  //V8Value 对象类型变量属性的所属默认对象名称
-	isMainProcess, isRenderProcess bool                      //
+	nullptr                        unsafe.Pointer = nil //
+	isMainProcess, isRenderProcess bool                 //
 )
 
 type initBindVariableCallback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)
@@ -46,6 +44,7 @@ type IProvisionalBindStorage interface {
 	Bind(name string, bind interface{}) error                //固定类型 - 所有支持类型
 	bindValue(fullName string) (JSValue, bool)               //
 	binds() map[string]JSValue                               //
+	bindCount() int                                          //
 	callVariableBind(browser *ICefBrowser, frame *ICefFrame) //
 	addBind(fullName string, value JSValue)                  //
 }
@@ -84,6 +83,10 @@ func (m *variableBind) bindValue(fullName string) (JSValue, bool) {
 
 func (m *variableBind) binds() map[string]JSValue {
 	return m.bindMapping
+}
+
+func (m *variableBind) bindCount() int {
+	return len(m.bindMapping)
 }
 
 // VariableCreateCallback
@@ -238,10 +241,10 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			return errors.New(fmt.Sprintf("绑定字段 %s: 应传递绑定变量指针", name))
 		}
 		var (
-			gov GO_VALUE_TYPE
-			jsv V8_JS_VALUE_TYPE
+			gov   GO_VALUE_TYPE
+			jsv   V8_JS_VALUE_TYPE
+			value *V8Value
 		)
-
 		if kind == reflect.Func {
 			gov = GO_VALUE_FUNC
 			jsv = V8_VALUE_FUNCTION
@@ -252,18 +255,18 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 		if gov == -1 || jsv == -1 {
 			return errors.New("类型错误, 支持类型: string, int32, float64, bool, func, struct, map, slice")
 		}
-		value := &V8Value{
+		value = &V8Value{
 			name:   name,
 			rwLock: new(sync.Mutex),
 			valueType: &VT{
 				Jsv: jsv,
 				Gov: gov,
 			},
-			isCommonObject: IS_OBJECT,
-			eventId:        uintptr(__bind_id()),
+			//isCommonObject: IS_OBJECT,
+			//eventId:        uintptr(__bind_id()),
 		}
 		//分解类型
-		if jsv == V8_VALUE_FUNCTION { //function
+		if jsv == V8_VALUE_FUNCTION && isMainProcess { //function
 			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_OBJECT); err == nil {
 				value.funcInfo = info
 				value.ptr = unsafe.Pointer(&bind)
@@ -278,7 +281,7 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			}
 		} else if jsv == V8_VALUE_ARRAY { //array
 
-		} else { //field
+		} else if isMainProcess { //field
 			switch jsv {
 			case V8_VALUE_STRING:
 				value.ptr = unsafe.Pointer(bind.(*string))
@@ -319,11 +322,12 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 				return errors.New(name + ": 不支持的绑定类型")
 			}
 		}
-		value.instance = uintptr(value.ptr)
-		value.value = bind
-		value.that = value
+		if isMainProcess {
+			value.instance = uintptr(value.ptr)
+			value.value = bind
+			value.that = value
+		}
 		m.addBind(name, value)
-		//objectTI.bind(value)
 	}
 	return nil
 }

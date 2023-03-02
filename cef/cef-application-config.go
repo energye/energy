@@ -22,28 +22,18 @@ import (
 	"unsafe"
 )
 
-// GO绑定JS通用类型所属对象名定义
+// SetObjectRootName
 //
-// 默认值  gocobj
-func (m *TCEFApplication) SetCommonRootName(name string) {
-	if name == "" {
-		name = commonRootName
-	} else {
-		commonRootName = name
-	}
-	imports.Proc(internale_CEFV8ValueRef_SetCommonRootName).Call(api.PascalStr(commonRootName))
-}
-
 // GO绑定JS对象类型所属对象名定义
-//
-// 默认值 goobj
 func (m *TCEFApplication) SetObjectRootName(name string) {
 	if name == "" {
-		name = objectRootName
+		//默认值
+		name = internalObjectRootName
 	} else {
-		objectRootName = name
+		//自定义
+		internalObjectRootName = name
 	}
-	imports.Proc(internale_CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(objectRootName))
+	//imports.Proc(internale_CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
 }
 
 //initDefaultProperties 初始默认属性

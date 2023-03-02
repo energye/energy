@@ -2,7 +2,7 @@ package src
 
 import "fmt"
 
-var JSStructVarDemo *StructVarDemo
+var StructField *StructVarDemo
 
 //定义结构类型的变量
 //结构类型将属性和函数导出为JS可调用类型
@@ -13,6 +13,14 @@ type StructVarDemo struct {
 	BoolField     bool
 	FloatField    float64
 	noExportField string //小写字母无法绑定到js
+	SubStructObj  *SubStructObj
+}
+
+type SubStructObj struct {
+	StringField string
+	IntField    int32
+	BoolField   bool
+	FloatField  float64
 }
 
 //结构类型的函数导出
