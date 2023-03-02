@@ -35,21 +35,6 @@ func main() {
 		go server.StartHttpServer()
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
-			fmt.Println("httpStatusCode", httpStatusCode)
-			callback := cef.PdfPrintCallbackRef.New()
-			callback.OnPdfPrintFinished(func(path string, ok bool) {
-				fmt.Println("OnPdfPrintFinished", path, ok)
-			})
-			set := &cef.CefPdfPrintSettings{}
-			fmt.Println(set)
-			set.Scale = 2
-			browser.PrintToPdf("D:\\360Downloads\\test.pdf", set, callback)
-			//window.Chromium().PrintToPDF("D:\\360Downloads\\test.pdf")
-		})
-		event.SetOnPdfPrintFinished(func(sender lcl.IObject, aResultOK bool) {
-			fmt.Println("SetOnPdfPrintFinished", aResultOK)
-		})
 		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
 			fmt.Println("browser 进程接收消息", message.Name())
 			return false

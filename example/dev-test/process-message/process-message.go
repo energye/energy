@@ -135,11 +135,6 @@ func main() {
 			//sendBrowserProcessMsg.Free()
 			return false
 		})
-		//go func() {
-		//	time.Sleep(time.Second * 2)
-		//	fmt.Println("打印pdf")
-		//	window.Chromium().Browser().PrintToPdf("D:\\360Downloads\\test.pdf", nil, nil)
-		//}()
 	})
 	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
 		fmt.Println("render 进程接收消息", message.Name(), message.ArgumentList().GetString(0), frame.Instance())

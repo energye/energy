@@ -14,7 +14,6 @@ package cef
 import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -81,9 +80,7 @@ func Run(app *TCEFApplication) {
 			browserProcessStartAfterCallback(success)
 		}
 		if success {
-			internalBrowserIPCOnEventInit()
-			ipc.IPC.StartBrowserIPC()
-			bindGoToJS(nil, nil)
+			appMainRunCallback()
 			if consts.IsMessageLoop {
 				//VF窗口消息轮询
 				app.RunMessageLoop()
