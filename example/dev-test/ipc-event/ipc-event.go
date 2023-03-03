@@ -5,9 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
-	"github.com/energye/golcl/lcl"
 )
 
 //go:embed resources
@@ -36,18 +34,8 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
-			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().Size())
-			return false
-		})
-	})
-	cefApp.SetOnProcessMessageReceived(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
-		fmt.Println("render 进程接收消息", message.Name())
-		return false
-	})
 	//cefApp.SetSingleProcess(true)
-	cefApp.SetEnableGPU(true)
+	//cefApp.SetEnableGPU(true)
 	cef.VariableBind.Bind("funcName", func() string {
 		return ""
 	})

@@ -23,9 +23,8 @@ import (
 
 // isInternalKey 内部key不允许使用
 func isInternalKey(key string) bool {
-	return key == internalIPCKey ||
-		key == internalEmit ||
-		key == internalOn
+	return key == internalIPCKey || key == internalEmit || key == internalOn ||
+		key == internalProcessMessageIPCEmit || key == internalProcessMessageIPCOn
 }
 
 func (m *ICefV8Value) Instance() uintptr {

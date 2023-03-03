@@ -57,14 +57,6 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	ctx.makeCtx(context)
 }
 
-// appMainRunCallback 应用运行 - 默认实现
-func appMainRunCallback() {
-	fmt.Println("appMainRunCallback-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue())
-	//internalBrowserIPCOnEventInit()
-	//ipc.IPC.StartBrowserIPC()
-	//indGoToJS(nil, nil)
-}
-
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 	fmt.Println("renderProcessMessageReceived", message.Name(), message.ArgumentList().Size())
@@ -138,7 +130,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		//入参
 		if emitArgs != nil {
-			ipcEmitMessage := ProcessMessageRef.New(internalProcessMessageIPCEmit)
+			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			if err := m.buildProcessMessageByV8ValueArray(0, ipcEmitMessage.ArgumentList(), emitArgs); err != nil {
 				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
 				return false
@@ -147,9 +139,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 			ipcEmitMessage.Free()
 		}
-	}
-	for i := 0; i < arguments.Size(); i++ {
-		fmt.Println("\t", i, arguments.Get(i).IsString(), arguments.Get(i).IsArray(), arguments.Get(i).IsFunction(), arguments.Get(i).Instance(), arguments.Get(i).Instance())
+		return true
 	}
 	return false
 }

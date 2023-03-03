@@ -22,9 +22,26 @@ import (
 	"github.com/energye/golcl/lcl/types/messages"
 )
 
+func init() {
+
+}
+
+// appMainRunCallback 应用运行 - 默认实现
+func appMainRunCallback() {
+	fmt.Println("appMainRunCallback-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue())
+	//internalBrowserIPCOnEventInit()
+	//ipc.IPC.StartBrowserIPC()
+	//indGoToJS(nil, nil)
+}
+
 // browserProcessMessageReceived 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 	fmt.Println("browserProcessMessageReceived", message.Name(), message.ArgumentList().Size())
+	if message.Name() == internalProcessMessageIPCEmit {
+
+	} else if message.Name() == internalProcessMessageIPCOn {
+
+	}
 	return false
 }
 

@@ -23,21 +23,38 @@ var ProcessMessageRef processMessage
 // processMessage
 type processMessage uintptr
 
-// New 创建一个进程消息类型
+// new 创建一个进程消息类型 - internal
 //
 // 参数: name 消息名
-func (*processMessage) New(name string) *ICefProcessMessage {
+func (*processMessage) new(name string) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(internale_CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{
+		name:     name,
 		instance: unsafe.Pointer(result),
 	}
 }
+
+// New 创建一个进程消息类型 - export
+//
+// 参数: name 消息名
+func (m *processMessage) New(name string) *ICefProcessMessage {
+	if isInternalKey(name) {
+		return nil
+	}
+	return m.new(name)
+}
+
+// Instance 实例
 func (m *ICefProcessMessage) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
+// ArgumentList 参数列表
 func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
+	if m.name == "" {
+		return nil
+	}
 	if m.argumentList == nil {
 		var result uintptr
 		imports.Proc(internale_CefProcessMessage_ArgumentList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -65,8 +82,11 @@ func (m *ICefProcessMessage) Copy() *ICefProcessMessage {
 }
 
 func (m *ICefProcessMessage) Name() string {
-	r1, _, _ := imports.Proc(internale_CefProcessMessage_Name).Call(m.Instance())
-	return api.GoStr(r1)
+	if m.name == "" {
+		r1, _, _ := imports.Proc(internale_CefProcessMessage_Name).Call(m.Instance())
+		m.name = api.GoStr(r1)
+	}
+	return m.name
 }
 
 func (m *ICefProcessMessage) Free() {
