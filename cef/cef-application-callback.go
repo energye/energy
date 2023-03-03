@@ -12,15 +12,21 @@
 package cef
 
 import (
+	"errors"
 	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/types"
 )
 
 const (
 	internalIPCKey = "ipc"  // JavaScript -> ipc 事件驱动, 根对象名
 	internalEmit   = "emit" // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名
 	internalOn     = "on"   // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
+)
+const (
+	internalProcessMessageIPCEmit = "ipcEmit" // 进程消息 ipcEmit
+	internalProcessMessageIPCOn   = "ipcOn"   // 进程消息 ipcOn
 )
 
 var (
@@ -85,7 +91,9 @@ func (m *contextCreate) makeIPC(context *ICefV8Context) {
 func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
 	fmt.Println("emit handler name:", name, "arguments-size:", arguments.Size())
 	keyList := object.GetKeys()
-	fmt.Println("\tkeys:", keyList, keyList.Count(), keyList.Get(0), keyList.Get(1))
+	for i := 0; i < keyList.Count(); i++ {
+		fmt.Println("\tkey:", i, keyList.Get(i))
+	}
 	if name != internalEmit {
 		return false
 	}
@@ -118,22 +126,98 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 				return false
 			}
 		}
-		//带有回调函数
+		//回调函数
 		if emitCallback != nil {
 			//回调函数临时存放到缓存中 list 队列
 		}
+		//入参
 		if emitArgs != nil {
-			argsLen := emitArgs.GetArrayLength()
-			for i := 0; i < argsLen; i++ {
-				//emitArgs.GetValueByKey()
-				fmt.Println("\temitArgs:", i, emitArgs.GetValueByIndex(i), emitArgs.GetValueByIndex(i).IsString())
+			ipcEmitMessage := ProcessMessageRef.New(internalProcessMessageIPCEmit)
+			if err := m.buildProcessMessageByV8ValueArray(0, ipcEmitMessage.ArgumentList(), emitArgs); err != nil {
+				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
+				return false
 			}
+			frame := V8ContextRef.Current().Frame()
+			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
+			ipcEmitMessage.Free()
 		}
 	}
 	for i := 0; i < arguments.Size(); i++ {
 		fmt.Println("\t", i, arguments.Get(i).IsString(), arguments.Get(i).IsArray(), arguments.Get(i).IsFunction(), arguments.Get(i).Instance(), arguments.Get(i).Instance())
 	}
 	return false
+}
+
+//buildProcessMessageByV8ValueArray 使V8ValueArray构建进程消息
+func (m *contextCreate) buildProcessMessageByV8ValueArray(offset int, argumentList *ICefListValue, v8valueArray *ICefV8Value) error {
+	if !v8valueArray.IsArray() {
+		return errors.New("build process message error. Please pass in the array type")
+	}
+	argsLen := v8valueArray.GetArrayLength()
+	for i := 0; i < argsLen; i++ {
+		args := v8valueArray.GetValueByIndex(i)
+		if args.IsString() {
+			argumentList.SetString(types.NativeUInt(i+offset), args.GetStringValue())
+		} else if args.IsInt() {
+			argumentList.SetInt(types.NativeUInt(i+offset), args.GetIntValue())
+		} else if args.IsUInt() {
+			argumentList.SetInt(types.NativeUInt(i+offset), int32(args.GetUIntValue()))
+		} else if args.IsDouble() {
+			argumentList.SetDouble(types.NativeUInt(i+offset), args.GetDoubleValue())
+		} else if args.IsBool() {
+			argumentList.SetBool(types.NativeUInt(i+offset), args.GetBoolValue())
+		} else if args.IsNull() || args.IsUndefined() {
+			argumentList.SetNull(types.NativeUInt(i + offset))
+		} else if args.IsArray() {
+			arrayValue := ListValueRef.New()
+			m.buildProcessMessageByV8ValueArray(0, arrayValue, args)
+			argumentList.SetList(types.NativeUInt(i+offset), arrayValue)
+		} else if args.IsObject() {
+			objectValue := DictionaryValueRef.New()
+			m.buildProcessMessageByV8ValueObject(objectValue, args)
+			argumentList.SetDictionary(types.NativeUInt(i+offset), objectValue)
+		} else {
+			argumentList.SetNull(types.NativeUInt(i + offset))
+		}
+	}
+	return nil
+}
+
+//buildProcessMessageByV8ValueObject 使V8ValueObject构建进程消息
+func (m *contextCreate) buildProcessMessageByV8ValueObject(object *ICefDictionaryValue, v8valueObject *ICefV8Value) error {
+	if !v8valueObject.IsObject() {
+		return errors.New("build process message error. Please pass in the object type")
+	}
+	keys := v8valueObject.GetKeys()
+	for i := 0; i < keys.Count(); i++ {
+		key := keys.Get(i)
+		args := v8valueObject.GetValueByKey(key)
+		if args.IsString() {
+			object.SetString(key, args.GetStringValue())
+		} else if args.IsInt() {
+			object.SetInt(key, args.GetIntValue())
+		} else if args.IsUInt() {
+			object.SetInt(key, int32(args.GetUIntValue()))
+		} else if args.IsDouble() {
+			object.SetDouble(key, args.GetDoubleValue())
+		} else if args.IsBool() {
+			object.SetBool(key, args.GetBoolValue())
+		} else if args.IsNull() || args.IsUndefined() {
+			object.SetNull(key)
+		} else if args.IsArray() {
+			arrayValue := ListValueRef.New()
+			m.buildProcessMessageByV8ValueArray(0, arrayValue, args)
+			object.SetList(key, arrayValue)
+		} else if args.IsObject() {
+			objectValue := DictionaryValueRef.New()
+			m.buildProcessMessageByV8ValueObject(objectValue, args)
+			object.SetDictionary(key, objectValue)
+		} else {
+			object.SetNull(key)
+			continue
+		}
+	}
+	return nil
 }
 
 // ipcEmitExecute ipc.on 执行

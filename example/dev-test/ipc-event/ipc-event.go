@@ -38,7 +38,7 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		event.SetOnBrowseProcessMessageReceived(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, sourceProcess consts.CefProcessId, message *cef.ICefProcessMessage) bool {
-			fmt.Println("browser 进程接收消息", message.Name())
+			fmt.Println("browser 进程接收消息", message.Name(), message.ArgumentList().Size())
 			return false
 		})
 	})

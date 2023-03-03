@@ -321,16 +321,27 @@ func (m *ICefV8Value) DeleteValueByIndex(index int32) bool {
 
 // getValueByKey internal
 func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
-	var result uintptr
-	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
-		instance: unsafe.Pointer(result),
+	if !m.IsObject() {
+		return nil
+	}
+	if m.valueByKeyMap == nil {
+		m.valueByKeyMap = make(map[string]*ICefV8Value)
+	}
+	if value, ok := m.valueByKeyMap[key]; ok && value != nil {
+		return value
+	} else {
+		var result uintptr
+		imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+		value = &ICefV8Value{
+			instance: unsafe.Pointer(result),
+		}
+		m.valueByKeyMap[key] = value
+		return value
 	}
 }
 
 // GetValueByKey export
 func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
-	// TODO 优化
 	if key == internalIPCKey {
 		return nil
 	}
@@ -343,24 +354,24 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 		return nil
 	}
 	valLen := m.GetArrayLength()
-	if m.valueArrays == nil {
-		m.valueArrays = make([]*ICefV8Value, valLen)
+	if m.valueByIndexArray == nil {
+		m.valueByIndexArray = make([]*ICefV8Value, valLen)
 	}
 	if index < valLen {
-		if len(m.valueArrays) < valLen {
-			// 扩大 valueArrays = valLen
-			valueArrays := m.valueArrays
-			m.valueArrays = make([]*ICefV8Value, valLen)
-			copy(m.valueArrays, valueArrays)
+		if len(m.valueByIndexArray) < valLen {
+			// 扩大 valueByIndexArray = valLen
+			valueArrays := m.valueByIndexArray
+			m.valueByIndexArray = make([]*ICefV8Value, valLen)
+			copy(m.valueByIndexArray, valueArrays)
 		}
-		value := m.valueArrays[index]
+		value := m.valueByIndexArray[index]
 		if value == nil {
 			var result uintptr
 			imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
 			value = &ICefV8Value{
 				instance: unsafe.Pointer(result),
 			}
-			m.valueArrays[index] = value
+			m.valueByIndexArray[index] = value
 		}
 		return value
 	}
@@ -484,6 +495,12 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 
 func (m *ICefV8Value) Free() {
 	m.instance = nil
+	if m.valueByKeyMap != nil {
+		m.valueByKeyMap = nil
+	}
+	if m.valueByIndexArray != nil {
+		m.valueByIndexArray = nil
+	}
 }
 
 // ResultV8Value 返回 ICefV8Value 的替代结构
@@ -673,7 +690,20 @@ func (m *ICefV8ValueKeys) Get(index int) string {
 		return ""
 	}
 	if index < m.Count() {
-		return m.keys.Strings(int32(index))
+		if m.keyArray == nil {
+			m.keyArray = make([]string, m.Count())
+		}
+		if len(m.keyArray) < m.Count() {
+			keyArray := m.keyArray
+			m.keyArray = make([]string, m.Count())
+			copy(m.keyArray, keyArray)
+		}
+		value := m.keyArray[index]
+		if value == "" {
+			value = m.keys.Strings(int32(index))
+			m.keyArray[index] = value
+		}
+		return value
 	}
 	return ""
 }

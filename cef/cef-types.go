@@ -316,16 +316,17 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
-	instance    unsafe.Pointer
-	valueType   V8ValueType
-	valueArrays []*ICefV8Value
-	valueMaps   map[int]*ICefV8Value
+	instance          unsafe.Pointer
+	valueType         V8ValueType
+	valueByIndexArray []*ICefV8Value
+	valueByKeyMap     map[string]*ICefV8Value
 }
 
 // ICefV8ValueKeys
 type ICefV8ValueKeys struct {
-	keys  *lcl.TStrings
-	count int
+	keys     *lcl.TStrings
+	count    int
+	keyArray []string
 }
 
 // TCefV8ValueArray ICefV8Value 数组的替代结构

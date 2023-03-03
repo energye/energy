@@ -69,7 +69,7 @@ func (m *ICefListValue) SetSize(size types.NativeUInt) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) GetSize() uint32 {
+func (m *ICefListValue) Size() uint32 {
 	r1, _, _ := imports.Proc(internale_CefListValue_GetSize).Call(m.Instance())
 	return uint32(r1)
 }
