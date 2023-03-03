@@ -198,15 +198,15 @@ func (m *ICefV8Value) IsArrayBuffer() bool {
 
 func (m *ICefV8Value) IsFunction() bool {
 	if m.valueType == consts.V8vtFunction {
+		//return true
+	}
+	//if m.valueType == consts.V8vtInvalid {
+	r1, _, _ := imports.Proc(internale_CefV8Value_IsFunction).Call(m.Instance())
+	if api.GoBool(r1) {
+		m.valueType = consts.V8vtFunction
 		return true
 	}
-	if m.valueType == consts.V8vtInvalid {
-		r1, _, _ := imports.Proc(internale_CefV8Value_IsFunction).Call(m.Instance())
-		if api.GoBool(r1) {
-			m.valueType = consts.V8vtFunction
-			return true
-		}
-	}
+	//}
 	return false
 }
 
@@ -476,7 +476,7 @@ func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments []*ICefV8Value
 
 func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments []*ICefV8Value) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(arguments[0])), uintptr(int32(len(arguments))))
+	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)) /*, uintptr(unsafe.Pointer(arguments[0]))*/)
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}

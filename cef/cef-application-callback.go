@@ -12,12 +12,15 @@
 package cef
 
 import (
+	"container/list"
 	"errors"
 	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/types"
+	"strconv"
+	"unsafe"
 )
 
 const (
@@ -37,8 +40,14 @@ var (
 )
 
 type contextCreate struct {
-	ipc  *ICefV8Value
-	bind *ICefV8Value
+	ipc             *ICefV8Value
+	bind            *ICefV8Value
+	ipcCallbackList *list.List
+}
+
+type ipcCallback struct {
+	context  *ICefV8Context
+	function *ICefV8Value
 }
 
 type mainRun struct {
@@ -48,7 +57,7 @@ func init() {
 	if common.Args.IsMain() {
 		mRun = &mainRun{}
 	} else if common.Args.IsRender() {
-		ctx = &contextCreate{}
+		ctx = &contextCreate{ipcCallbackList: list.New()}
 	}
 }
 
@@ -61,6 +70,19 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 	fmt.Println("renderProcessMessageReceived", message.Name(), message.ArgumentList().Size())
+	messageId := message.ArgumentList().GetString(0)
+	fmt.Println("messageId", messageId)
+	if v, err := strconv.Atoi(messageId); err == nil {
+		callback := ctx.getIPCCallback(uintptr(v))
+
+		fmt.Println("callback Enter", callback.context.Enter())
+		fmt.Println("callback function IsValid", callback.function.IsValid())
+		fmt.Println("callback function IsFunction", callback.function.IsFunction())
+		args := make([]*ICefV8Value, 1)
+		args[0] = V8ValueRef.NewString("结果")
+		callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
+		fmt.Println("callback Exit", callback, callback.context.Exit())
+	}
 	return false
 }
 
@@ -86,17 +108,19 @@ func mainProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourcePr
 func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 	fmt.Println("ipcEmitMessage browserId:", browser.Identifier(), frame.Identifier(), "name:", message.Name(), message.ArgumentList().Size())
 	argument := message.ArgumentList()
+	messageId := argument.GetString(0)
 	emitName := argument.GetString(1)
 	callback := ipc.CheckOnEvent(emitName)
 	if callback == nil {
 		return false
 	}
-	messageId := argument.GetInt(0)
-	isCallback := argument.GetBool(2)
-	args := argument.GetList(3)
+	args := argument.GetList(2)
 	frame.Identifier()
 	callback(ipc.NewContext(browser.Identifier(), frame.Identifier(), args))
-	fmt.Println("\t", messageId, emitName, isCallback)
+	fmt.Println("\t", messageId, emitName)
+	if messageId != "0" {
+		frame.SendProcessMessage(consts.PID_RENDER, message)
+	}
 	return true
 }
 
@@ -169,27 +193,39 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 				return false
 			}
 		}
-		//回调函数
-		if emitCallback != nil {
-			//回调函数临时存放到缓存中 list 队列
-		}
 		//入参
 		if emitArgs != nil {
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
 			args := ListValueRef.New()
 			defer func() {
-				ipcEmitMessage.Free()
+				//ipcEmitMessage.Free()
 			}()
 			if err := m.buildProcessMessageByV8ValueArray(args, emitArgs); err != nil {
 				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
 				return false
 			}
-			argument.SetInt(0, 1)                    //0 消息id
-			argument.SetString(1, emitNameValue)     //1 事件名
-			argument.SetBool(2, emitCallback != nil) //2 回调函数
-			argument.SetList(3, args)                //args
-			frame := V8ContextRef.Current().Frame()
+			v8ctx := V8ContextRef.Current()
+			var msgId uintptr = 0
+			//回调函数
+			if emitCallback != nil {
+				test := V8HandlerRef.New()
+				test.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
+					return false
+				})
+				emitCallback.GetFunctionHandler()
+				//回调函数临时存放到缓存中 list 队列
+				msgId = ctx.addIPCCallback(&ipcCallback{
+					context:  v8ctx,
+					function: V8ValueRef.newFunction("test", test),
+				})
+
+				//fmt.Println("emitCallback.IsFunction()", V8ValueRef.newFunction("test1", test).IsFunction())
+			}
+			argument.SetString(0, strconv.Itoa(int(msgId))) // 消息id
+			argument.SetString(1, emitNameValue)            // 事件名
+			argument.SetList(2, args)                       // args
+			frame := v8ctx.Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 		}
 		return true
@@ -368,4 +404,16 @@ func (m *contextCreate) bindGet(name string, object *ICefV8Value, retVal *Result
 func (m *contextCreate) bindSet(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
 	fmt.Println("bindSet accessor name:", name)
 	return false
+}
+
+func (m *contextCreate) addIPCCallback(callback *ipcCallback) uintptr {
+	return uintptr(unsafe.Pointer(m.ipcCallbackList.PushBack(callback)))
+}
+
+func (m *contextCreate) removeIPCCallback(ptr uintptr) {
+	m.ipcCallbackList.Remove((*list.Element)(unsafe.Pointer(ptr)))
+}
+
+func (m *contextCreate) getIPCCallback(ptr uintptr) *ipcCallback {
+	return (*list.Element)(unsafe.Pointer(ptr)).Value.(*ipcCallback)
 }
