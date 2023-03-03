@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -100,6 +101,10 @@ func (m *ICefDictionaryValue) GetValue(key string) *ICefValue {
 	}
 }
 
+func (m *ICefDictionaryValue) GetIValue(key string) ipc.IValue {
+	return m.GetValue(key)
+}
+
 func (m *ICefDictionaryValue) GetBool(key string) bool {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetBool).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
@@ -128,6 +133,10 @@ func (m *ICefDictionaryValue) GetBinary(key string) *ICefBinaryValue {
 	}
 }
 
+func (m *ICefDictionaryValue) GetIBinary(key string) ipc.IBinaryValue {
+	return m.GetBinary(key)
+}
+
 func (m *ICefDictionaryValue) GetDictionary(key string) *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_CefDictionaryValue_GetDictionary).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
@@ -136,12 +145,20 @@ func (m *ICefDictionaryValue) GetDictionary(key string) *ICefDictionaryValue {
 	}
 }
 
+func (m *ICefDictionaryValue) GetIObject(key string) ipc.IObjectValue {
+	return m.GetDictionary(key)
+}
+
 func (m *ICefDictionaryValue) GetList(key string) *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_CefDictionaryValue_GetList).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+func (m *ICefDictionaryValue) GetIArray(key string) ipc.IArrayValue {
+	return m.GetList(key)
 }
 
 func (m *ICefDictionaryValue) SetValue(key string, value *ICefValue) bool {

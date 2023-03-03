@@ -5,7 +5,10 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
+	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/types"
 )
 
 //go:embed resources
@@ -33,6 +36,30 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
+	})
+	ipc.On("testEmitName", func(context ipc.IContext) {
+		argument := context.ArgumentList()
+		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
+		for i := 0; i < int(argument.Size()); i++ {
+			value := argument.GetIValue(types.NativeUInt(i))
+			fmt.Println("\tGetType:", i, value.GetType())
+			switch value.GetType() {
+			case consts.VTYPE_NULL:
+				//null
+			case consts.VTYPE_BOOL:
+				value.GetBool()
+			case consts.VTYPE_INT:
+				value.GetInt()
+			case consts.VTYPE_DOUBLE:
+				value.GetDouble()
+			case consts.VTYPE_STRING:
+				value.GetString()
+			case consts.VTYPE_DICTIONARY: // object
+				value.GetIObject()
+			case consts.VTYPE_LIST: // array
+				value.GetIArray()
+			}
+		}
 	})
 
 	//cefApp.SetSingleProcess(true)

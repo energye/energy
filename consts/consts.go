@@ -729,8 +729,8 @@ const (
 	VTYPE_DOUBLE
 	VTYPE_STRING
 	VTYPE_BINARY
-	VTYPE_DICTIONARY
-	VTYPE_LIST
+	VTYPE_DICTIONARY // Object
+	VTYPE_LIST       // Array
 )
 
 // /include/internal/cef_types.h (cef_postdataelement_type_t)

@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/types"
 )
 
@@ -85,33 +86,18 @@ func mainProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourcePr
 func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 	fmt.Println("ipcEmitMessage browserId:", browser.Identifier(), frame.Identifier(), "name:", message.Name(), message.ArgumentList().Size())
 	argument := message.ArgumentList()
-	size := int(argument.Size())
-	messageId := argument.GetInt(0)
 	emitName := argument.GetString(1)
-	isCallback := argument.GetBool(2)
-	offset := int(argument.GetInt(3))
-	fmt.Println("\t", messageId, emitName, isCallback, offset, "size", size)
-	for i := offset; i < size; i++ {
-		value := argument.GetValue(types.NativeUInt(i))
-		fmt.Println("\tGetType:", value.GetType())
-		switch value.GetType() {
-		case consts.VTYPE_NULL:
-			//null
-		case consts.VTYPE_BOOL:
-			value.GetBool()
-		case consts.VTYPE_INT:
-			value.GetInt()
-		case consts.VTYPE_DOUBLE:
-			value.GetDouble()
-		case consts.VTYPE_STRING:
-			value.GetString()
-		case consts.VTYPE_DICTIONARY: // object
-			value.GetDictionary()
-		case consts.VTYPE_LIST: // array
-			value.GetList()
-		}
+	callback := ipc.CheckOnEvent(emitName)
+	if callback == nil {
+		return false
 	}
-	return false
+	messageId := argument.GetInt(0)
+	isCallback := argument.GetBool(2)
+	args := argument.GetList(3)
+	frame.Identifier()
+	callback(ipc.NewContext(browser.Identifier(), frame.Identifier(), args))
+	fmt.Println("\t", messageId, emitName, isCallback)
+	return true
 }
 
 // ipcOnMessage 监听事件
@@ -189,25 +175,20 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		//入参
 		if emitArgs != nil {
-			var offset = 0
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
+			args := ListValueRef.New()
 			defer func() {
 				ipcEmitMessage.Free()
 			}()
-			argument.SetInt(types.NativeUInt(offset), 1) //0 消息id
-			offset++
-			argument.SetString(types.NativeUInt(offset), emitNameValue) //1 事件名
-			offset++
-			argument.SetBool(types.NativeUInt(offset), emitCallback != nil) //2 回调函数
-			offset++
-			argument.SetInt(types.NativeUInt(offset), int32(offset+1)) //3 offset
-			offset++
-			// offset >= 3 入参
-			if err := m.buildProcessMessageByV8ValueArray(offset, argument, emitArgs); err != nil {
+			if err := m.buildProcessMessageByV8ValueArray(args, emitArgs); err != nil {
 				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
 				return false
 			}
+			argument.SetInt(0, 1)                    //0 消息id
+			argument.SetString(1, emitNameValue)     //1 事件名
+			argument.SetBool(2, emitCallback != nil) //2 回调函数
+			argument.SetList(3, args)                //args
 			frame := V8ContextRef.Current().Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 		}
@@ -217,7 +198,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 }
 
 //buildProcessMessageByV8ValueArray 使V8ValueArray构建进程消息
-func (m *contextCreate) buildProcessMessageByV8ValueArray(offset int, argumentList *ICefListValue, v8valueArray *ICefV8Value) error {
+func (m *contextCreate) buildProcessMessageByV8ValueArray(argumentList *ICefListValue, v8valueArray *ICefV8Value) error {
 	if !v8valueArray.IsArray() {
 		return errors.New("build process message error. Please pass in the array type")
 	}
@@ -225,27 +206,27 @@ func (m *contextCreate) buildProcessMessageByV8ValueArray(offset int, argumentLi
 	for i := 0; i < argsLen; i++ {
 		args := v8valueArray.GetValueByIndex(i)
 		if args.IsString() {
-			argumentList.SetString(types.NativeUInt(i+offset), args.GetStringValue())
+			argumentList.SetString(types.NativeUInt(i), args.GetStringValue())
 		} else if args.IsInt() {
-			argumentList.SetInt(types.NativeUInt(i+offset), args.GetIntValue())
+			argumentList.SetInt(types.NativeUInt(i), args.GetIntValue())
 		} else if args.IsUInt() {
-			argumentList.SetInt(types.NativeUInt(i+offset), int32(args.GetUIntValue()))
+			argumentList.SetInt(types.NativeUInt(i), int32(args.GetUIntValue()))
 		} else if args.IsDouble() {
-			argumentList.SetDouble(types.NativeUInt(i+offset), args.GetDoubleValue())
+			argumentList.SetDouble(types.NativeUInt(i), args.GetDoubleValue())
 		} else if args.IsBool() {
-			argumentList.SetBool(types.NativeUInt(i+offset), args.GetBoolValue())
+			argumentList.SetBool(types.NativeUInt(i), args.GetBoolValue())
 		} else if args.IsNull() || args.IsUndefined() {
-			argumentList.SetNull(types.NativeUInt(i + offset))
+			argumentList.SetNull(types.NativeUInt(i))
 		} else if args.IsArray() {
 			arrayValue := ListValueRef.New()
-			m.buildProcessMessageByV8ValueArray(0, arrayValue, args)
-			argumentList.SetList(types.NativeUInt(i+offset), arrayValue)
+			m.buildProcessMessageByV8ValueArray(arrayValue, args)
+			argumentList.SetList(types.NativeUInt(i), arrayValue)
 		} else if args.IsObject() {
 			objectValue := DictionaryValueRef.New()
 			m.buildProcessMessageByV8ValueObject(objectValue, args)
-			argumentList.SetDictionary(types.NativeUInt(i+offset), objectValue)
+			argumentList.SetDictionary(types.NativeUInt(i), objectValue)
 		} else {
-			argumentList.SetNull(types.NativeUInt(i + offset))
+			argumentList.SetNull(types.NativeUInt(i))
 		}
 	}
 	return nil
@@ -274,7 +255,7 @@ func (m *contextCreate) buildProcessMessageByV8ValueObject(object *ICefDictionar
 			object.SetNull(key)
 		} else if args.IsArray() {
 			arrayValue := ListValueRef.New()
-			m.buildProcessMessageByV8ValueArray(0, arrayValue, args)
+			m.buildProcessMessageByV8ValueArray(arrayValue, args)
 			object.SetList(key, arrayValue)
 		} else if args.IsObject() {
 			objectValue := DictionaryValueRef.New()

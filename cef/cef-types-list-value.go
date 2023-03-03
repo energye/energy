@@ -14,6 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -97,6 +98,10 @@ func (m *ICefListValue) GetValue(index types.NativeUInt) *ICefValue {
 	}
 }
 
+func (m *ICefListValue) GetIValue(index types.NativeUInt) ipc.IValue {
+	return m.GetValue(index)
+}
+
 func (m *ICefListValue) GetBool(index types.NativeUInt) bool {
 	r1, _, _ := imports.Proc(internale_CefListValue_GetBool).Call(m.Instance(), index.ToPtr())
 	return api.GoBool(r1)
@@ -125,6 +130,10 @@ func (m *ICefListValue) GetBinary(index types.NativeUInt) *ICefBinaryValue {
 	}
 }
 
+func (m *ICefListValue) GetIBinary(index types.NativeUInt) ipc.IBinaryValue {
+	return m.GetBinary(index)
+}
+
 func (m *ICefListValue) GetDictionary(index types.NativeUInt) *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_CefListValue_GetDictionary).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
@@ -133,12 +142,20 @@ func (m *ICefListValue) GetDictionary(index types.NativeUInt) *ICefDictionaryVal
 	}
 }
 
+func (m *ICefListValue) GetIObject(index types.NativeUInt) ipc.IObjectValue {
+	return m.GetDictionary(index)
+}
+
 func (m *ICefListValue) GetList(index types.NativeUInt) *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_CefListValue_GetList).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+func (m *ICefListValue) GetIArray(index types.NativeUInt) ipc.IArrayValue {
+	return m.GetList(index)
 }
 
 func (m *ICefListValue) SetValue(index types.NativeUInt, value *ICefValue) bool {

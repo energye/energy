@@ -14,6 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -96,6 +97,10 @@ func (m *ICefValue) GetBinary() *ICefBinaryValue {
 	}
 }
 
+func (m *ICefValue) GetIBinary() ipc.IBinaryValue {
+	return m.GetBinary()
+}
+
 func (m *ICefValue) GetDictionary() *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_CefValue_GetDictionary).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -104,12 +109,20 @@ func (m *ICefValue) GetDictionary() *ICefDictionaryValue {
 	}
 }
 
+func (m *ICefValue) GetIObject() ipc.IObjectValue {
+	return m.GetDictionary()
+}
+
 func (m *ICefValue) GetList() *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_CefValue_GetList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+func (m *ICefValue) GetIArray() ipc.IArrayValue {
+	return m.GetList()
 }
 
 func (m *ICefValue) SetNull() bool {
