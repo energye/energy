@@ -29,7 +29,6 @@ func AppRenderInit() *cef.TCEFApplication {
 	}
 	//创建Cef应用
 	cefApp := cef.NewApplication()
-	cefApp.SetCommonRootName("v8obj")
 	//fmt.Printf("cefApp:%+v %s\n", cefApp, runtime.GOOS)
 	if common.Args.IsMain() {
 		//cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {

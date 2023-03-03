@@ -34,6 +34,7 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
+
 	//cefApp.SetSingleProcess(true)
 	//cefApp.SetEnableGPU(true)
 	cef.VariableBind.Bind("funcName", func() string {

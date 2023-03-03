@@ -47,7 +47,6 @@ type LCLBrowserWindow struct {
 	onActivateAfter  lcl.TNotifyEvent     //
 	isFormCreate     bool                 //是否创建完成 WindowForm
 	isChromiumCreate bool                 //是否创建完成 Chromium
-	frames           TCEFFrame            //当前浏览器下的所有frame
 	auxTools         *auxTools            //辅助工具
 	tray             ITray                //托盘
 	hWnd             types.HWND           //

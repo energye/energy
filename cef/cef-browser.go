@@ -21,12 +21,6 @@ import (
 	"unsafe"
 )
 
-// type ICefBrowser
-type ICefBrowser struct {
-	instance  unsafe.Pointer
-	mainFrame *ICefFrame
-}
-
 type frameNamesPtr struct {
 	Name  uintptr
 	Value uintptr

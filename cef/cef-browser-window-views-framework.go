@@ -37,7 +37,6 @@ type ViewsFrameworkBrowserWindow struct {
 	windowComponent      *TCEFWindowComponent              //
 	browserViewComponent *TCEFBrowserViewComponent         //
 	windowProperty       *WindowProperty                   //窗口属性
-	frames               TCEFFrame                         //当前浏览器下的所有frame
 	auxTools             *auxTools                         //辅助工具
 	tray                 ITray                             //托盘
 	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
@@ -455,11 +454,6 @@ func (m *ViewsFrameworkBrowserWindow) createAuxTools() {
 // Browser 返回browser
 func (m *ViewsFrameworkBrowserWindow) Browser() *ICefBrowser {
 	return m.Chromium().Browser()
-}
-
-// Frames 获取Frames
-func (m *ViewsFrameworkBrowserWindow) Frames() TCEFFrame {
-	return m.frames
 }
 
 // Chromium 返回 chromium

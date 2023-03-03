@@ -175,6 +175,18 @@ type TCefPoint struct {
 	Y int32
 }
 
+// ICefBrowser main
+type ICefBrowser struct {
+	instance  unsafe.Pointer
+	mainFrame *ICefFrame
+}
+
+// ICefFrame
+// Html <iframe></iframe>
+type ICefFrame struct {
+	instance unsafe.Pointer
+}
+
 // ICefImage
 type ICefImage struct {
 	instance unsafe.Pointer

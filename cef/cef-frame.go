@@ -18,30 +18,6 @@ import (
 	"unsafe"
 )
 
-// ICefFrame
-// Html <iframe></iframe>
-type ICefFrame struct {
-	instance unsafe.Pointer
-}
-
-//type cefFrame struct {
-//	Name       uintptr
-//	Url        uintptr
-//	Identifier uintptr
-//}
-
-// TCEFFrame Frame 集合
-type TCEFFrame map[int64]*ICefFrame
-
-func (m TCEFFrame) GetByFrameId(frameId int64) *ICefFrame {
-	if m != nil {
-		if frame, ok := m[frameId]; ok {
-			return frame
-		}
-	}
-	return nil
-}
-
 // Instance 实例
 func (m *ICefFrame) Instance() uintptr {
 	return uintptr(m.instance)

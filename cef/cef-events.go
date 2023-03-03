@@ -83,7 +83,7 @@ func init() {
 			var result = (*bool)(getPtr(5))
 			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, processId, message)
 			if !*result {
-				*result = browserProcessMessageReceived(browser, frame, processId, message)
+				*result = mainProcessMessageReceived(browser, frame, processId, message)
 			}
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)

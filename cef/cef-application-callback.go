@@ -63,6 +63,63 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	return false
 }
 
+// appMainRunCallback 应用运行 - 默认实现
+func appMainRunCallback() {
+	fmt.Println("appMainRunCallback-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue())
+	//internalBrowserIPCOnEventInit()
+	//ipc.IPC.StartBrowserIPC()
+	//indGoToJS(nil, nil)
+}
+
+// mainProcessMessageReceived 主进程消息 - 默认实现
+func mainProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	if message.Name() == internalProcessMessageIPCEmit {
+		return mRun.ipcEmitMessage(browser, frame, sourceProcess, message)
+	} else if message.Name() == internalProcessMessageIPCOn {
+		mRun.ipcOnMessage(browser, frame, sourceProcess, message)
+	}
+	return false
+}
+
+// ipcEmitMessage 触发事件
+func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	fmt.Println("ipcEmitMessage browserId:", browser.Identifier(), frame.Identifier(), "name:", message.Name(), message.ArgumentList().Size())
+	argument := message.ArgumentList()
+	size := int(argument.Size())
+	messageId := argument.GetInt(0)
+	emitName := argument.GetString(1)
+	isCallback := argument.GetBool(2)
+	offset := int(argument.GetInt(3))
+	fmt.Println("\t", messageId, emitName, isCallback, offset, "size", size)
+	for i := offset; i < size; i++ {
+		value := argument.GetValue(types.NativeUInt(i))
+		fmt.Println("\tGetType:", value.GetType())
+		switch value.GetType() {
+		case consts.VTYPE_NULL:
+			//null
+		case consts.VTYPE_BOOL:
+			value.GetBool()
+		case consts.VTYPE_INT:
+			value.GetInt()
+		case consts.VTYPE_DOUBLE:
+			value.GetDouble()
+		case consts.VTYPE_STRING:
+			value.GetString()
+		case consts.VTYPE_DICTIONARY: // object
+			value.GetDictionary()
+		case consts.VTYPE_LIST: // array
+			value.GetList()
+		}
+	}
+	return false
+}
+
+// ipcOnMessage 监听事件
+func (m *mainRun) ipcOnMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	fmt.Println("ipcOnMessage", message.Name(), message.ArgumentList().Size())
+	return false
+}
+
 // makeCtx ipc 和 bind
 func (m *contextCreate) makeCtx(context *ICefV8Context) {
 	ctx.makeIPC(context)
@@ -97,15 +154,17 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 	}
 	if arguments.Size() >= 1 { // 1 ~ 3 个参数
 		var (
-			emitName     *ICefV8Value //事件名
-			emitArgs     *ICefV8Value //事件参数
-			emitCallback *ICefV8Value //事件回调函数
+			emitName      *ICefV8Value //事件名
+			emitNameValue string       //
+			emitArgs      *ICefV8Value //事件参数
+			emitCallback  *ICefV8Value //事件回调函数
 		)
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
 			exception.SetMessage("ipc emit event parameter error. Parameter 1 can only be the event name")
 			return false
 		}
+		emitNameValue = emitName.GetStringValue()
 		if arguments.Size() == 2 {
 			args2 := arguments.Get(1)
 			if args2.IsArray() {
@@ -130,14 +189,27 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		//入参
 		if emitArgs != nil {
+			var offset = 0
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
-			if err := m.buildProcessMessageByV8ValueArray(0, ipcEmitMessage.ArgumentList(), emitArgs); err != nil {
+			argument := ipcEmitMessage.ArgumentList()
+			defer func() {
+				ipcEmitMessage.Free()
+			}()
+			argument.SetInt(types.NativeUInt(offset), 1) //0 消息id
+			offset++
+			argument.SetString(types.NativeUInt(offset), emitNameValue) //1 事件名
+			offset++
+			argument.SetBool(types.NativeUInt(offset), emitCallback != nil) //2 回调函数
+			offset++
+			argument.SetInt(types.NativeUInt(offset), int32(offset+1)) //3 offset
+			offset++
+			// offset >= 3 入参
+			if err := m.buildProcessMessageByV8ValueArray(offset, argument, emitArgs); err != nil {
 				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
 				return false
 			}
 			frame := V8ContextRef.Current().Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
-			ipcEmitMessage.Free()
 		}
 		return true
 	}
