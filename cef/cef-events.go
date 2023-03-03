@@ -78,9 +78,13 @@ func init() {
 			sender := getPtr(0)
 			browser := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			processMessage := &ICefProcessMessage{instance: getPtr(4)}
+			processId := consts.CefProcessId(getVal(3))
+			message := &ICefProcessMessage{instance: getPtr(4)}
 			var result = (*bool)(getPtr(5))
-			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, consts.CefProcessId(getVal(3)), processMessage)
+			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, processId, message)
+			if !*result {
+				*result = browserProcessMessageReceived(browser, frame, processId, message)
+			}
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))

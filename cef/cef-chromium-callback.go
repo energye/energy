@@ -12,8 +12,9 @@
 package cef
 
 import (
-	. "github.com/energye/energy/common"
-	. "github.com/energye/energy/consts"
+	"fmt"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -21,9 +22,15 @@ import (
 	"github.com/energye/golcl/lcl/types/messages"
 )
 
+// browserProcessMessageReceived 主进程消息 - 默认实现
+func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	fmt.Println("browserProcessMessageReceived", message.Name(), message.ArgumentList().Size())
+	return false
+}
+
 // chromiumOnAfterCreate 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(browser *ICefBrowser) bool {
-	if IsWindows() {
+	if common.IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
 	}
 	return false
@@ -37,7 +44,7 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 		}
 	}
 	BrowserWindow.setOrIncNextWindowNum(browser.Identifier() + 1)
-	if !IsMessageLoop {
+	if !consts.IsMessageLoop {
 		QueueAsyncCall(func(id int) {
 			BrowserWindow.createNextLCLPopupWindow()
 		})
@@ -56,11 +63,11 @@ func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
 }
 
 var (
-	refreshId, forcedRefreshId                                 MenuId
-	devToolsId, viewSourceId, closeBrowserId                   MenuId
-	backId, forwardId, printId                                 MenuId
-	undoId, redoId, cutId, copyId, pasteId, delId, selectAllId MenuId
-	imageUrlId, copyImageId, imageSaveId, aUrlId               MenuId
+	refreshId, forcedRefreshId                                 consts.MenuId
+	devToolsId, viewSourceId, closeBrowserId                   consts.MenuId
+	backId, forwardId, printId                                 consts.MenuId
+	undoId, redoId, cutId, copyId, pasteId, delId, selectAllId consts.MenuId
+	imageUrlId, copyImageId, imageSaveId, aUrlId               consts.MenuId
 )
 
 // chromiumOnBeforeContextMenu 右键菜单 - 默认实现
@@ -71,36 +78,36 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	}
 	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 		//开发者工具和显示源代码不展示自定义默认菜单
-		if winInfo.WindowType() == WT_DEV_TOOLS || winInfo.WindowType() == WT_VIEW_SOURCE {
+		if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
 			return
 		}
 	}
-	undoVisible, undoEnabled := model.IsVisible(MENU_ID_UNDO), model.IsEnabled(MENU_ID_UNDO)
-	redoVisible, redoEnabled := model.IsVisible(MENU_ID_REDO), model.IsEnabled(MENU_ID_REDO)
-	cutVisible, cutEnabled := model.IsVisible(MENU_ID_CUT), model.IsEnabled(MENU_ID_CUT)
-	copyVisible, copyEnabled := model.IsVisible(MENU_ID_COPY), model.IsEnabled(MENU_ID_COPY)
-	pasteVisible, pasteEnabled := model.IsVisible(MENU_ID_PASTE), model.IsEnabled(MENU_ID_PASTE)
-	selectAllVisible, selectAllEnabled := model.IsVisible(MENU_ID_SELECT_ALL), model.IsEnabled(MENU_ID_SELECT_ALL)
+	undoVisible, undoEnabled := model.IsVisible(consts.MENU_ID_UNDO), model.IsEnabled(consts.MENU_ID_UNDO)
+	redoVisible, redoEnabled := model.IsVisible(consts.MENU_ID_REDO), model.IsEnabled(consts.MENU_ID_REDO)
+	cutVisible, cutEnabled := model.IsVisible(consts.MENU_ID_CUT), model.IsEnabled(consts.MENU_ID_CUT)
+	copyVisible, copyEnabled := model.IsVisible(consts.MENU_ID_COPY), model.IsEnabled(consts.MENU_ID_COPY)
+	pasteVisible, pasteEnabled := model.IsVisible(consts.MENU_ID_PASTE), model.IsEnabled(consts.MENU_ID_PASTE)
+	selectAllVisible, selectAllEnabled := model.IsVisible(consts.MENU_ID_SELECT_ALL), model.IsEnabled(consts.MENU_ID_SELECT_ALL)
 	model.Clear()
 	if undoVisible {
-		undoId = MENU_ID_UNDO //model.CefMis.NextCommandId()
+		undoId = consts.MENU_ID_UNDO //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   undoId,
 			Text:        "撤销",
 			Accelerator: "ctrl+z",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Undo()
 			},
 		})
 		model.SetEnabled(undoId, undoEnabled)
 	}
 	if redoVisible {
-		redoId = MENU_ID_REDO //model.CefMis.NextCommandId()
+		redoId = consts.MENU_ID_REDO //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   redoId,
 			Text:        "恢复",
 			Accelerator: "ctrl+shift+z",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Redo()
 			},
 		})
@@ -110,48 +117,48 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		model.AddSeparator()
 	}
 	if cutVisible {
-		cutId = MENU_ID_CUT //model.CefMis.NextCommandId()
+		cutId = consts.MENU_ID_CUT //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   cutId,
 			Text:        "剪切",
 			Accelerator: "ctrl+x",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Cut()
 			},
 		})
 		model.SetEnabled(cutId, cutEnabled)
 	}
 	if copyVisible {
-		copyId = MENU_ID_COPY //model.CefMis.NextCommandId()
+		copyId = consts.MENU_ID_COPY //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   copyId,
 			Text:        "复制",
 			Accelerator: "ctrl+c",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Copy()
 			},
 		})
 		model.SetEnabled(copyId, copyEnabled)
 	}
 	if pasteVisible {
-		pasteId = MENU_ID_PASTE //model.CefMis.NextCommandId()
+		pasteId = consts.MENU_ID_PASTE //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   pasteId,
 			Text:        "粘贴",
 			Accelerator: "ctrl+v",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Paste()
 			},
 		})
 		model.SetEnabled(pasteId, pasteEnabled)
 	}
 	if selectAllVisible {
-		selectAllId = MENU_ID_SELECT_ALL //model.CefMis.NextCommandId()
+		selectAllId = consts.MENU_ID_SELECT_ALL //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   selectAllId,
 			Text:        "全选",
 			Accelerator: "ctrl+a",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().SelectAll()
 			},
 		})
@@ -161,11 +168,11 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		model.AddSeparator()
 	}
 	//A标签和图片 链接
-	if params.TypeFlags == 5 && params.MediaType == CM_MEDIATYPE_NONE { //a=5
+	if params.TypeFlags == 5 && params.MediaType == consts.CM_MEDIATYPE_NONE { //a=5
 		aUrlId = model.CefMis.NextCommandId()
 		model.AddItem(aUrlId, "复制链接")
 	}
-	if params.TypeFlags == 9 && params.MediaType == CM_MEDIATYPE_IMAGE { // image=9
+	if params.TypeFlags == 9 && params.MediaType == consts.CM_MEDIATYPE_IMAGE { // image=9
 		//copyImageId = model.CefMis.NextCommandId()
 		//model.AddItem(copyImageId, "复制图片")
 		imageUrlId = model.CefMis.NextCommandId()
@@ -173,7 +180,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		imageSaveId = model.CefMis.NextCommandId()
 		model.AddItem(imageSaveId, "图片另存为")
 	}
-	if (params.TypeFlags == 5 && params.MediaType == CM_MEDIATYPE_NONE) || params.TypeFlags == 9 && params.MediaType == CM_MEDIATYPE_IMAGE {
+	if (params.TypeFlags == 5 && params.MediaType == consts.CM_MEDIATYPE_NONE) || params.TypeFlags == 9 && params.MediaType == consts.CM_MEDIATYPE_IMAGE {
 		model.AddSeparator()
 	}
 	//A标签和图片 链接
@@ -182,7 +189,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		CommandId:   backId,
 		Text:        "返回",
 		Accelerator: "alt+" + string(rune(37)),
-		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+		Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
 				browser.GoBack()
 			}
@@ -193,7 +200,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		CommandId:   forwardId,
 		Text:        "前进",
 		Accelerator: "alt+" + string(rune(39)),
-		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+		Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
 				browser.GoForward()
 			}
@@ -205,7 +212,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		CommandId:   printId,
 		Text:        "打印",
 		Accelerator: "ctrl+p",
-		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+		Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.Print()
 		},
 	})
@@ -218,7 +225,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		CommandId:   refreshId,
 		Text:        "刷新",
 		Accelerator: "ctrl+r",
-		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+		Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.Reload()
 		},
 	})
@@ -227,7 +234,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		CommandId:   forcedRefreshId,
 		Text:        "强制刷新",
 		Accelerator: "shift+ctrl+r",
-		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+		Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.ReloadIgnoreCache()
 		},
 	})
@@ -238,7 +245,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			CommandId:   viewSourceId,
 			Text:        "查看网面源代码",
 			Accelerator: "ctrl+u",
-			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
+			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.ViewSource()
 			},
 		})
@@ -260,7 +267,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 }
 
 // chromiumOnContextMenuCommand 右键菜单 - 默认实现
-func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId MenuId, eventFlags uint32, result *bool) {
+func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("OnContextMenuCommand Error:", err)

@@ -65,6 +65,12 @@ func appMainRunCallback() {
 	//indGoToJS(nil, nil)
 }
 
+// renderProcessMessageReceived 渲染进程消息 - 默认实现
+func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	fmt.Println("renderProcessMessageReceived", message.Name(), message.ArgumentList().Size())
+	return false
+}
+
 // makeCtx ipc 和 bind
 func (m *contextCreate) makeCtx(context *ICefV8Context) {
 	ctx.makeIPC(context)

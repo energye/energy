@@ -17,12 +17,14 @@
                 "stringField": "stringFieldValue",
                 "intField": 1000,
                 "arrayField": objectValueArray,
+                "doubleField": 999991.102,
+                "boolean:Field": true,
             }
             let arrayValue = [
-                100, 200, "数组里的字符串", 66996.99, objectValue
+                100, 200, "数组里的字符串", 66996.99, objectValue, true, false
             ]
             try {
-                ipc.emit("emitName", ["stringValue", 100, true, 1999.66, "字符串？", 29999.66, objectValue, arrayValue], function (result) {
+                ipc.emit("emitName", ["stringValue", 100, true, 1999.66, "字符串？", 29999.66, objectValue, arrayValue, 8888888], function (result) {
 
                 });
             } catch (e) {
