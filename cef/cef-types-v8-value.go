@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"time"
 	"unsafe"
@@ -329,6 +330,7 @@ func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 
 // GetValueByKey export
 func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
+	// TODO 优化
 	if key == internalIPCKey {
 		return nil
 	}
@@ -398,10 +400,11 @@ func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8Acces
 	return m.setValueByAccessor(key, settings, attribute)
 }
 
-//func (m *ICefV8Value) GetKeys(keys *lcl.TStrings) int32 {
-//	r1, _, _ := imports.Proc(internale_CefV8Value_GetKeys).Call(m.Instance(), keys.Instance())
-//	return int32(r1)
-//}
+func (m *ICefV8Value) GetKeys() *ICefV8ValueKeys {
+	var result uintptr
+	r1, _, _ := imports.Proc(internale_CefV8Value_GetKeys).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8ValueKeys{keys: lcl.AsStrings(result), count: int(int32(r1))}
+}
 
 func (m *ICefV8Value) SetUserData(data *ICefV8Value) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetUserData).Call(m.Instance(), data.Instance())
@@ -656,4 +659,21 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 		instance:  unsafe.Pointer(result),
 		valueType: consts.V8vtPromise,
 	}
+}
+
+func (m *ICefV8ValueKeys) Count() int {
+	if m == nil || m.keys == nil {
+		return 0
+	}
+	return m.count
+}
+
+func (m *ICefV8ValueKeys) Get(index int) string {
+	if m == nil || m.keys == nil {
+		return ""
+	}
+	if index < m.Count() {
+		return m.keys.Strings(int32(index))
+	}
+	return ""
 }

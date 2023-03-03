@@ -84,6 +84,8 @@ func (m *contextCreate) makeIPC(context *ICefV8Context) {
 // ipcEmitExecute ipc.emit 执行
 func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
 	fmt.Println("emit handler name:", name, "arguments-size:", arguments.Size())
+	keyList := object.GetKeys()
+	fmt.Println("\tkeys:", keyList, keyList.Count(), keyList.Get(0), keyList.Get(1))
 	if name != internalEmit {
 		return false
 	}
@@ -123,6 +125,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		if emitArgs != nil {
 			argsLen := emitArgs.GetArrayLength()
 			for i := 0; i < argsLen; i++ {
+				//emitArgs.GetValueByKey()
 				fmt.Println("\temitArgs:", i, emitArgs.GetValueByIndex(i), emitArgs.GetValueByIndex(i).IsString())
 			}
 		}

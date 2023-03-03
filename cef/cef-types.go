@@ -14,6 +14,7 @@ package cef
 import (
 	. "github.com/energye/energy/consts"
 	. "github.com/energye/energy/types"
+	"github.com/energye/golcl/lcl"
 	"time"
 	"unsafe"
 )
@@ -319,6 +320,12 @@ type ICefV8Value struct {
 	valueType   V8ValueType
 	valueArrays []*ICefV8Value
 	valueMaps   map[int]*ICefV8Value
+}
+
+// ICefV8ValueKeys
+type ICefV8ValueKeys struct {
+	keys  *lcl.TStrings
+	count int
 }
 
 // TCefV8ValueArray ICefV8Value 数组的替代结构
