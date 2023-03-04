@@ -34,15 +34,17 @@ const (
 )
 
 var (
-	internalObjectRootName = "energy"     // GO 和 V8Value 绑定根对象名, 可修改
+	internalObjectRootName = "energy"     // GO 和 V8Value 绑定根对象名
 	ctx                    *contextCreate //
 	mRun                   *mainRun       //
 )
 
 type contextCreate struct {
 	ipc             *ICefV8Value
-	bind            *ICefV8Value
+	ipcEmitHandler  *ICefV8Handler
+	ipcOnHandler    *ICefV8Handler
 	ipcCallbackList *list.List
+	bind            *ICefV8Value
 }
 
 type ipcCallback struct {
@@ -135,22 +137,22 @@ func (m *mainRun) ipcOnMessage(browser *ICefBrowser, frame *ICefFrame, sourcePro
 
 // makeCtx ipc 和 bind
 func (m *contextCreate) makeCtx(context *ICefV8Context) {
-	ctx.makeIPC(context)
-	ctx.makeBind(context)
+	m.makeIPC(context)
+	m.makeBind(context)
 }
 
 // makeIPC ipc
 func (m *contextCreate) makeIPC(context *ICefV8Context) {
 	// ipc emit
-	emitHandler := V8HandlerRef.New()
-	emitHandler.Execute(m.ipcEmitExecute)
+	m.ipcEmitHandler = V8HandlerRef.New()
+	m.ipcEmitHandler.Execute(m.ipcEmitExecute)
 	// ipc on
-	onHandler := V8HandlerRef.New()
-	onHandler.Execute(m.ipcOnExecute)
+	m.ipcOnHandler = V8HandlerRef.New()
+	m.ipcOnHandler.Execute(m.ipcOnExecute)
 	// ipc object
 	m.ipc = V8ValueRef.NewObject(nil)
-	m.ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, emitHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, onHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.ipcEmitHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.ipcOnHandler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	// global to v8 ipc key
 	context.Global().setValueByKey(internalIPCKey, m.ipc, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }
