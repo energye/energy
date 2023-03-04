@@ -29,6 +29,13 @@ func (m *postData) New() *ICefPostData {
 	return &ICefPostData{instance: unsafe.Pointer(result)}
 }
 
+func (m *postData) UnWrap(data *ICefPostData) *ICefPostData {
+	var result uintptr
+	imports.Proc(internale_CefPostDataRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefPostData) Instance() uintptr {
 	if m == nil {

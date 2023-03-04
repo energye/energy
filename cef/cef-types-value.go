@@ -33,6 +33,13 @@ func (*cefValue) New() *ICefValue {
 	}
 }
 
+func (*cefValue) UnWrap(data *ICefValue) *ICefValue {
+	var result uintptr
+	imports.Proc(internale_CefValueRef_UnWrap).Call(uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefValue) Instance() uintptr {
 	if m == nil {

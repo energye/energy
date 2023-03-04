@@ -19,6 +19,19 @@ import (
 	"unsafe"
 )
 
+// DownloadItemRef -> ICefDownloadItem
+var DownloadItemRef downloadItem
+
+// downloadItem
+type downloadItem uintptr
+
+func (*downloadItem) UnWrap(data *ICefDownloadItem) *ICefDownloadItem {
+	var result uintptr
+	imports.Proc(internale_CefDownloadItemRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 func (m *ICefDownloadItem) Instance() uintptr {
 	return uintptr(m.instance)
 }

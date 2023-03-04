@@ -163,5 +163,6 @@ type frameRef uintptr
 func (m *frameRef) UnWrap(data *ICefFrame) *ICefFrame {
 	var result uintptr
 	imports.Proc(internale_CEFFrameRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefFrame{instance: unsafe.Pointer(result)}
+	data.instance = unsafe.Pointer(result)
+	return data
 }

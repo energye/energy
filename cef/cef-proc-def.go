@@ -653,6 +653,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowInfoAsWindowless", 0),
 		dllimports.NewEnergyImport("CEFJSRegisterExtension", 0),
 		//ICefRequest
+		dllimports.NewEnergyImport("CefRequestRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefRequest_IsReadOnly", 0),
 		dllimports.NewEnergyImport("CefRequest_SetUrl", 0),
 		dllimports.NewEnergyImport("CefRequest_SetMethod", 0),
@@ -666,6 +667,7 @@ func init() {
 		dllimports.NewEnergyImport("CefRequest_GetPostData", 0),
 		dllimports.NewEnergyImport("CefRequest_SetPostData", 0),
 		//ICefResponse
+		dllimports.NewEnergyImport("CefResponseRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefResponse_IsReadOnly", 0),
 		dllimports.NewEnergyImport("CefResponse_SetError", 0),
 		dllimports.NewEnergyImport("CefResponse_SetStatus", 0),
@@ -921,12 +923,14 @@ func init() {
 		dllimports.NewEnergyImport("CefV8ArrayBufferReleaseCallback_ReleaseBuffer", 0),
 		//ICefProcessMessage
 		dllimports.NewEnergyImport("CefProcessMessageRef_New", 0),
+		dllimports.NewEnergyImport("CefProcessMessageRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_ArgumentList", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_IsValid", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Copy", 0),
 		dllimports.NewEnergyImport("CefProcessMessage_Name", 0),
 		//ICefListValue
-		dllimports.NewEnergyImport("CefListValue_New", 0),
+		dllimports.NewEnergyImport("CefListValueRef_New", 0),
+		dllimports.NewEnergyImport("CefListValueRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefListValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefListValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefListValue_IsReadOnly", 0),
@@ -955,6 +959,7 @@ func init() {
 		dllimports.NewEnergyImport("CefListValue_SetList", 0),
 		//ICefValue
 		dllimports.NewEnergyImport("CefValueRef_New", 0),
+		dllimports.NewEnergyImport("CefValueRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefValue_IsReadOnly", 0),
@@ -1016,6 +1021,7 @@ func init() {
 		dllimports.NewEnergyImport("CefDictionaryValue_SetList", 0),
 		//ICefPostData
 		dllimports.NewEnergyImport("CefPostDataRef_Create", 0),
+		dllimports.NewEnergyImport("CefPostDataRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefPostData_IsReadOnly", 0),
 		dllimports.NewEnergyImport("CefPostData_HasExcludedElements", 0),
 		dllimports.NewEnergyImport("CefPostData_GetElementCount", 0),
@@ -1025,6 +1031,7 @@ func init() {
 		dllimports.NewEnergyImport("CefPostData_RemoveElements", 0),
 		//ICefPostDataElement
 		dllimports.NewEnergyImport("PostDataElementRef_Create", 0),
+		dllimports.NewEnergyImport("PostDataElementRef_UnWrap", 0),
 		dllimports.NewEnergyImport("PostDataElement_IsReadOnly", 0),
 		dllimports.NewEnergyImport("PostDataElement_SetToEmpty", 0),
 		dllimports.NewEnergyImport("PostDataElement_SetToFile", 0),
@@ -1034,6 +1041,7 @@ func init() {
 		dllimports.NewEnergyImport("PostDataElement_GetBytesCount", 0),
 		dllimports.NewEnergyImport("PostDataElement_GetBytes", 0),
 		//ICefDownloadItem
+		dllimports.NewEnergyImport("CefDownloadItemRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_IsValid", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_IsInProgress", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_IsComplete", 0),
@@ -1703,6 +1711,7 @@ const (
 	internale_CEFWindowInfoAsWindowless
 	internale_CEFJSRegisterExtension
 	//ICefRequest
+	internale_CefRequestRef_UnWrap
 	internale_CefRequest_IsReadOnly
 	internale_CefRequest_SetUrl
 	internale_CefRequest_SetMethod
@@ -1716,6 +1725,7 @@ const (
 	internale_CefRequest_GetPostData
 	internale_CefRequest_SetPostData
 	//ICefResponse
+	internale_CefResponseRef_UnWrap
 	internale_CefResponse_IsReadOnly
 	internale_CefResponse_SetError
 	internale_CefResponse_SetStatus
@@ -1971,12 +1981,14 @@ const (
 	internale_CefV8ArrayBufferReleaseCallback_ReleaseBuffer
 	//ICefProcessMessage
 	internale_CefProcessMessageRef_New
+	internale_CefProcessMessageRef_UnWrap
 	internale_CefProcessMessage_ArgumentList
 	internale_CefProcessMessage_IsValid
 	internale_CefProcessMessage_Copy
 	internale_CefProcessMessage_Name
 	//ICefListValue
-	internale_CefListValue_New
+	internale_CefListValueRef_New
+	internale_CefListValueRef_UnWrap
 	internale_CefListValue_IsValid
 	internale_CefListValue_IsOwned
 	internale_CefListValue_IsReadOnly
@@ -2005,6 +2017,7 @@ const (
 	internale_CefListValue_SetList
 	//ICefValue
 	internale_CefValueRef_New
+	internale_CefValueRef_UnWrap
 	internale_CefValue_IsValid
 	internale_CefValue_IsOwned
 	internale_CefValue_IsReadOnly
@@ -2066,6 +2079,7 @@ const (
 	internale_CefDictionaryValue_SetList
 	//ICefPostData
 	internale_CefPostDataRef_Create
+	internale_CefPostDataRef_UnWrap
 	internale_CefPostData_IsReadOnly
 	internale_CefPostData_HasExcludedElements
 	internale_CefPostData_GetElementCount
@@ -2075,6 +2089,7 @@ const (
 	internale_CefPostData_RemoveElements
 	//ICefPostDataElement
 	internale_PostDataElementRef_Create
+	internale_PostDataElementRef_UnWrap
 	internale_PostDataElement_IsReadOnly
 	internale_PostDataElement_SetToEmpty
 	internale_PostDataElement_SetToFile
@@ -2084,6 +2099,7 @@ const (
 	internale_PostDataElement_GetBytesCount
 	internale_PostDataElement_GetBytes
 	//ICefDownloadItem
+	internale_CefDownloadItemRef_UnWrap
 	internale_CefDownloadItem_IsValid
 	internale_CefDownloadItem_IsInProgress
 	internale_CefDownloadItem_IsComplete

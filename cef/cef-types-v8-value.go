@@ -706,13 +706,11 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 }
 
 // UnWrap 指针包裹引用
-func (*cefV8Value) UnWrap(value *ICefV8Value) *ICefV8Value {
+func (*cefV8Value) UnWrap(data *ICefV8Value) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8ValueRef_UnWrap).Call(value.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
-		instance:  unsafe.Pointer(result),
-		valueType: value.valueType,
-	}
+	imports.Proc(internale_CefV8ValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
 }
 
 func (m *ICefV8ValueKeys) Count() int {

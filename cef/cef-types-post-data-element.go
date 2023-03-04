@@ -31,6 +31,13 @@ func (m *postDataElement) New() *ICefPostDataElement {
 	return &ICefPostDataElement{instance: unsafe.Pointer(result)}
 }
 
+func (m *postDataElement) UnWrap(data *ICefPostDataElement) *ICefPostDataElement {
+	var result uintptr
+	imports.Proc(internale_PostDataElementRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefPostDataElement) Instance() uintptr {
 	if m == nil {

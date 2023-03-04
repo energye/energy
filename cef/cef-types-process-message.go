@@ -45,6 +45,13 @@ func (m *processMessage) New(name string) *ICefProcessMessage {
 	return m.new(name)
 }
 
+func (m *processMessage) UnWrap(data *ICefProcessMessage) *ICefProcessMessage {
+	var result uintptr
+	imports.Proc(internale_CefProcessMessageRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefProcessMessage) Instance() uintptr {
 	return uintptr(m.instance)

@@ -18,6 +18,19 @@ import (
 	"unsafe"
 )
 
+// ResponseRef -> ICefResponse
+var ResponseRef response
+
+// request
+type response uintptr
+
+func (*response) UnWrap(data *ICefResponse) *ICefResponse {
+	var result uintptr
+	imports.Proc(internale_CefResponseRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefResponse) Instance() uintptr {
 	if m == nil {

@@ -348,5 +348,6 @@ type browser uintptr
 func (*browser) UnWrap(data *ICefBrowser) *ICefBrowser {
 	var result uintptr
 	imports.Proc(internale_CEFBrowserRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefBrowser{instance: unsafe.Pointer(result)}
+	data.instance = unsafe.Pointer(result)
+	return data
 }

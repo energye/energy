@@ -38,9 +38,8 @@ func (*cefDictionaryValue) New() *ICefDictionaryValue {
 func (*cefDictionaryValue) UnWrap(data *ICefDictionaryValue) *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_CefDictionaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefDictionaryValue{
-		instance: unsafe.Pointer(result),
-	}
+	data.instance = unsafe.Pointer(result)
+	return data
 }
 
 // Instance 实例

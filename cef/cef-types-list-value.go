@@ -21,18 +21,25 @@ import (
 )
 
 // ListValueRef -> ICefListValue
-var ListValueRef cefListValue
+var ListValueRef listValue
 
 //cefListValue
-type cefListValue uintptr
+type listValue uintptr
 
 // New 创建一个集合类型
-func (*cefListValue) New() *ICefListValue {
+func (*listValue) New() *ICefListValue {
 	var result uintptr
-	imports.Proc(internale_CefListValue_New).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefListValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
+}
+
+func (*listValue) UnWrap(data *ICefListValue) *ICefListValue {
+	var result uintptr
+	imports.Proc(internale_CefListValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.instance = unsafe.Pointer(result)
+	return data
 }
 
 func (m *ICefListValue) Instance() uintptr {
