@@ -77,6 +77,10 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 		if callback.context.Enter() {
 			args := V8ValueArrayRef.New()
 			args.Add(V8ValueRef.NewString("结果"))
+			args.Add(V8ValueRef.NewDouble(10000.999))
+			args.Add(V8ValueRef.NewString("结果"))
+			args.Add(V8ValueRef.NewBool(true))
+			fmt.Println("返回结果", args.Size())
 			callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
 			callback.context.Exit()
 		}

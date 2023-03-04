@@ -473,7 +473,11 @@ func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
 
 func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), arguments.Instance())
+	var args = make([]uintptr, arguments.Size(), arguments.Size())
+	for i, a := range arguments.argumentsCollect {
+		args[i] = a.Instance()
+	}
+	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&args[0])), uintptr(int32(arguments.Size())))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
@@ -481,7 +485,11 @@ func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueAr
 
 func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), arguments.Instance())
+	var args = make([]uintptr, arguments.Size(), arguments.Size())
+	for i, a := range arguments.argumentsCollect {
+		args[i] = a.Instance()
+	}
+	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&args[0])), uintptr(int32(arguments.Size())))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
@@ -561,7 +569,7 @@ func (m *TCefV8ValueArray) Free() {
 func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
 	m.argumentsCollect = append(m.argumentsCollect, value)
 	m.argumentsLength++
-	m.instance = unsafe.Pointer(m.argumentsCollect[0])
+	m.instance = unsafe.Pointer(m.argumentsCollect[0].Instance())
 	m.arguments = uintptr(m.instance)
 }
 
