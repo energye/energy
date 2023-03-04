@@ -34,12 +34,13 @@ type IBinaryValue interface {
 }
 
 type IObjectValue interface {
-	GetSize() uint32
+	Size() uint32
 	GetType(key string) consts.TCefValueType
 	GetBool(key string) bool
 	GetInt(key string) int32
 	GetDouble(key string) (result float64)
 	GetString(key string) string
+	GetIKeys() IV8ValueKeys
 	GetIValue(key string) IValue
 	GetIBinary(key string) IBinaryValue
 	GetIObject(key string) IObjectValue
@@ -55,4 +56,9 @@ type IValue interface {
 	GetIBinary() IBinaryValue
 	GetIObject() IObjectValue
 	GetIArray() IArrayValue
+}
+
+type IV8ValueKeys interface {
+	Count() int
+	Get(index int) string
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -28,6 +29,15 @@ type cefDictionaryValue uintptr
 func (*cefDictionaryValue) New() *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_CefDictionaryValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
+	return &ICefDictionaryValue{
+		instance: unsafe.Pointer(result),
+	}
+}
+
+// data
+func (*cefDictionaryValue) UnWrap(data *ICefDictionaryValue) *ICefDictionaryValue {
+	var result uintptr
+	imports.Proc(internale_CefDictionaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -64,7 +74,7 @@ func (m *ICefDictionaryValue) Copy(excludeEmptyChildren bool) *ICefDictionaryVal
 	}
 }
 
-func (m *ICefDictionaryValue) GetSize() uint32 {
+func (m *ICefDictionaryValue) Size() uint32 {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetSize).Call(m.Instance())
 	return uint32(r1)
 }
@@ -79,9 +89,15 @@ func (m *ICefDictionaryValue) HasKey(key string) bool {
 	return api.GoBool(r1)
 }
 
-//func (m *ICefDictionaryValue) GetKeys() bool {
-//
-//}
+func (m *ICefDictionaryValue) GetKeys() *ICefV8ValueKeys {
+	var result uintptr
+	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetKeys).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8ValueKeys{keys: lcl.AsStrings(result), count: int(int32(r1))}
+}
+
+func (m *ICefDictionaryValue) GetIKeys() ipc.IV8ValueKeys {
+	return m.GetKeys()
+}
 
 func (m *ICefDictionaryValue) Remove(key string) bool {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_Remove).Call(m.Instance(), api.PascalStr(key))

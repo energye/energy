@@ -48,6 +48,15 @@ func (*cefBinaryValue) Create() *ICefBinaryValue {
 	}
 }
 
+// UnWrap
+func (*cefBinaryValue) UnWrap(data *ICefBinaryValue) *ICefBinaryValue {
+	var result uintptr
+	imports.Proc(internale_CefBinaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBinaryValue{
+		instance: unsafe.Pointer(result),
+	}
+}
+
 // Instance 实例
 func (m *ICefBinaryValue) Instance() uintptr {
 	if m == nil {

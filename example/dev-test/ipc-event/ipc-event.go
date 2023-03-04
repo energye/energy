@@ -55,7 +55,8 @@ func main() {
 			case consts.VTYPE_STRING:
 				value.GetString()
 			case consts.VTYPE_DICTIONARY: // object
-				value.GetIObject()
+				object := value.GetIObject()
+				fmt.Println("object", object.GetIKeys().Count())
 			case consts.VTYPE_LIST: // array
 				value.GetIArray()
 			}

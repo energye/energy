@@ -74,14 +74,13 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	fmt.Println("messageId", messageId)
 	if v, err := strconv.Atoi(messageId); err == nil {
 		callback := ctx.getIPCCallback(uintptr(v))
-
-		fmt.Println("callback Enter", callback.context.Enter())
-		fmt.Println("callback function IsValid", callback.function.IsValid())
-		fmt.Println("callback function IsFunction", callback.function.IsFunction())
-		args := make([]*ICefV8Value, 1)
-		args[0] = V8ValueRef.NewString("结果")
-		callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
-		fmt.Println("callback Exit", callback, callback.context.Exit())
+		if callback.context.Enter() {
+			args := V8ValueArrayRef.New()
+			args.Add(V8ValueRef.NewString("结果"))
+			callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
+			callback.context.Exit()
+		}
+		ctx.removeIPCCallback(uintptr(v))
 	}
 	return false
 }
@@ -209,18 +208,11 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			var msgId uintptr = 0
 			//回调函数
 			if emitCallback != nil {
-				test := V8HandlerRef.New()
-				test.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
-					return false
-				})
-				emitCallback.GetFunctionHandler()
 				//回调函数临时存放到缓存中 list 队列
 				msgId = ctx.addIPCCallback(&ipcCallback{
 					context:  v8ctx,
-					function: V8ValueRef.newFunction("test", test),
+					function: V8ValueRef.UnWrap(emitCallback),
 				})
-
-				//fmt.Println("emitCallback.IsFunction()", V8ValueRef.newFunction("test1", test).IsFunction())
 			}
 			argument.SetString(0, strconv.Itoa(int(msgId))) // 消息id
 			argument.SetString(1, emitNameValue)            // 事件名

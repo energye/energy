@@ -25,7 +25,7 @@
             ]
             try {
                 ipc.emit("testEmitName", ["stringValue", 100, true, 1999.66, "字符串？", 29999.66, objectValue, arrayValue, 8888888, null, undefined], function (result) {
-                    msg('testEmitName 回调函数执行了');
+                    msg('testEmitName 回调函数执行了',result);
                 });
             } catch (e) {
                 msg(e);

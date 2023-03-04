@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"time"
@@ -416,6 +417,10 @@ func (m *ICefV8Value) GetKeys() *ICefV8ValueKeys {
 	return &ICefV8ValueKeys{keys: lcl.AsStrings(result), count: int(int32(r1))}
 }
 
+func (m *ICefV8Value) GetIKeys() ipc.IV8ValueKeys {
+	return m.GetKeys()
+}
+
 func (m *ICefV8Value) SetUserData(data *ICefV8Value) bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetUserData).Call(m.Instance(), data.Instance())
 	return api.GoBool(r1)
@@ -466,17 +471,17 @@ func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
 	}
 }
 
-func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments []*ICefV8Value) *ICefV8Value {
+func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(arguments[0])), uintptr(int32(len(arguments))))
+	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), arguments.Instance())
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
 }
 
-func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments []*ICefV8Value) *ICefV8Value {
+func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)) /*, uintptr(unsafe.Pointer(arguments[0]))*/)
+	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), arguments.Instance())
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
@@ -512,6 +517,22 @@ func (m *ResultV8Value) SetResult(v8value *ICefV8Value) {
 	m.v8value = v8value
 }
 
+// V8ValueArrayRef -> TCefV8ValueArray
+var V8ValueArrayRef v8ValueArray
+
+// v8ValueArray
+type v8ValueArray uintptr
+
+func (*v8ValueArray) New() *TCefV8ValueArray {
+	return &TCefV8ValueArray{
+		argumentsCollect: []*ICefV8Value{},
+	}
+}
+
+func (m *TCefV8ValueArray) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
 // Get 根据下标获取 ICefV8Value
 func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	if index < m.argumentsLength {
@@ -535,6 +556,13 @@ func (m *TCefV8ValueArray) Free() {
 	m.argumentsCollect = nil
 	m.arguments = 0
 	m.argumentsLength = 0
+}
+
+func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
+	m.argumentsCollect = append(m.argumentsCollect, value)
+	m.argumentsLength++
+	m.instance = unsafe.Pointer(m.argumentsCollect[0])
+	m.arguments = uintptr(m.instance)
 }
 
 // V8ValueRef -> ICefV8Value
@@ -674,6 +702,16 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 	return &ICefV8Value{
 		instance:  unsafe.Pointer(result),
 		valueType: consts.V8vtPromise,
+	}
+}
+
+// UnWrap 指针包裹引用
+func (*cefV8Value) UnWrap(value *ICefV8Value) *ICefV8Value {
+	var result uintptr
+	imports.Proc(internale_CefV8ValueRef_UnWrap).Call(value.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{
+		instance:  unsafe.Pointer(result),
+		valueType: value.valueType,
 	}
 }
 

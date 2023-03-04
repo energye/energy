@@ -153,3 +153,15 @@ func (m *ICefFrame) Parent() *ICefFrame {
 	imports.Proc(internale_CEFFrame_Parent).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefFrame{instance: unsafe.Pointer(result)}
 }
+
+// FrameRef -> *ICefFrame
+var FrameRef frameRef
+
+// frameRef
+type frameRef uintptr
+
+func (m *frameRef) UnWrap(data *ICefFrame) *ICefFrame {
+	var result uintptr
+	imports.Proc(internale_CEFFrameRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefFrame{instance: unsafe.Pointer(result)}
+}

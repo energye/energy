@@ -338,3 +338,15 @@ func (m *ICefBrowser) Find(searchText string, forward, matchCase, findNext bool)
 func (m *ICefBrowser) StopFinding(clearSelection bool) {
 	imports.Proc(internale_CEFBrowser_StopFinding).Call(m.Instance(), api.PascalBool(clearSelection))
 }
+
+// BrowserRef -> ICefBrowser
+var BrowserRef browser
+
+// browser
+type browser uintptr
+
+func (*browser) UnWrap(data *ICefBrowser) *ICefBrowser {
+	var result uintptr
+	imports.Proc(internale_CEFBrowserRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowser{instance: unsafe.Pointer(result)}
+}

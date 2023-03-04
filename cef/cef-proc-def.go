@@ -435,6 +435,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_GetFrameNames", 0),
 		dllimports.NewEnergyImport("CEFBrowser_Find", 0),
 		dllimports.NewEnergyImport("CEFBrowser_StopFinding", 0),
+		dllimports.NewEnergyImport("CEFBrowserRef_UnWrap", 0),
 		//TCEFChromium - event
 		dllimports.NewEnergyImport("CEFChromium_SetOnAfterCreated", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnBeforeClose", 0),
@@ -621,6 +622,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_Name", 0),
 		dllimports.NewEnergyImport("CEFFrame_Url", 0),
 		dllimports.NewEnergyImport("CEFFrame_Parent", 0),
+		dllimports.NewEnergyImport("CEFFrameRef_UnWrap", 0),
 		//ICefMenuModel
 		dllimports.NewEnergyImport("cefMenuModel_AddSeparator", 0),
 		dllimports.NewEnergyImport("cefMenuModel_Clear", 0),
@@ -877,6 +879,7 @@ func init() {
 		dllimports.NewEnergyImport("CefV8ValueRef_NewArrayBuffer", 0),
 		dllimports.NewEnergyImport("CefV8ValueRef_NewFunction", 0),
 		dllimports.NewEnergyImport("CefV8ValueRef_NewPromise", 0),
+		dllimports.NewEnergyImport("CefV8ValueRef_UnWrap", 0),
 		//ICefV8Accessor
 		dllimports.NewEnergyImport("CefV8Accessor_Create", 0),
 		dllimports.NewEnergyImport("CefV8Accessor_Get", 0),
@@ -903,6 +906,7 @@ func init() {
 		dllimports.NewEnergyImport("CefV8Context_Global", 0),
 		dllimports.NewEnergyImport("CefV8ContextRef_Current", 0),
 		dllimports.NewEnergyImport("CefV8ContextRef_Entered", 0),
+		dllimports.NewEnergyImport("CefV8ContextRef_UnWrap", 0),
 		//ICefV8Exception
 		dllimports.NewEnergyImport("CefV8Exception_Message", 0),
 		dllimports.NewEnergyImport("CefV8Exception_SourceLine", 0),
@@ -974,6 +978,7 @@ func init() {
 		//ICefBinaryValue
 		dllimports.NewEnergyImport("CefBinaryValueRef_New", 0),
 		dllimports.NewEnergyImport("CefBinaryValueRef_Create", 0),
+		dllimports.NewEnergyImport("CefBinaryValueRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefBinaryValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefBinaryValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefBinaryValue_Copy", 0),
@@ -981,6 +986,7 @@ func init() {
 		dllimports.NewEnergyImport("CefBinaryValue_GetData", 0),
 		//ICefDictionaryValue
 		dllimports.NewEnergyImport("CefDictionaryValueRef_New", 0),
+		dllimports.NewEnergyImport("CefDictionaryValueRef_UnWrap", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_IsValid", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_IsOwned", 0),
 		dllimports.NewEnergyImport("CefDictionaryValue_IsReadOnly", 0),
@@ -1479,6 +1485,7 @@ const (
 	internale_CEFBrowser_GetFrameNames
 	internale_CEFBrowser_Find
 	internale_CEFBrowser_StopFinding
+	internale_CEFBrowserRef_UnWrap
 	//TCEFChromium - event
 	internale_CEFChromium_SetOnAfterCreated
 	internale_CEFChromium_SetOnBeforeClose
@@ -1665,6 +1672,7 @@ const (
 	internale_CEFFrame_Name
 	internale_CEFFrame_Url
 	internale_CEFFrame_Parent
+	internale_CEFFrameRef_UnWrap
 	//ICefMenuModel
 	internale_cefMenuModel_AddSeparator
 	internale_cefMenuModel_Clear
@@ -1921,6 +1929,7 @@ const (
 	internale_CefV8ValueRef_NewArrayBuffer
 	internale_CefV8ValueRef_NewFunction
 	internale_CefV8ValueRef_NewPromise
+	internale_CefV8ValueRef_UnWrap
 	//ICefV8Accessor
 	internale_CefV8Accessor_Create
 	internale_CefV8Accessor_Get
@@ -1947,6 +1956,7 @@ const (
 	internale_CefV8Context_Global
 	internale_CefV8ContextRef_Current
 	internale_CefV8ContextRef_Entered
+	internale_CefV8ContextRef_UnWrap
 	//ICefV8Exception
 	internale_CefV8Exception_Message
 	internale_CefV8Exception_SourceLine
@@ -2018,6 +2028,7 @@ const (
 	//ICefBinaryValue
 	internale_CefBinaryValueRef_New
 	internale_CefBinaryValueRef_Create
+	internale_CefBinaryValueRef_UnWrap
 	internale_CefBinaryValue_IsValid
 	internale_CefBinaryValue_IsOwned
 	internale_CefBinaryValue_Copy
@@ -2025,6 +2036,7 @@ const (
 	internale_CefBinaryValue_GetData
 	//ICefDictionaryValue
 	internale_CefDictionaryValueRef_New
+	internale_CefDictionaryValueRef_UnWrap
 	internale_CefDictionaryValue_IsValid
 	internale_CefDictionaryValue_IsOwned
 	internale_CefDictionaryValue_IsReadOnly

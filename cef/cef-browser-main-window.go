@@ -19,8 +19,8 @@ import (
 )
 
 // 浏览器包装结构体
-type browser struct {
-	mainBrowserWindow   *browserWindow               //LCL 主浏览器窗口
+type browserWindow struct {
+	mainBrowserWindow   *lclBrowserWindow            //LCL 主浏览器窗口
 	mainVFBrowserWindow *ViewsFrameworkBrowserWindow //Views Frameworks 主浏览器窗口
 	popupWindow         IBrowserWindow               //弹出的子窗口
 	browserEvent        *BrowserEvent                //浏览器全局事件
@@ -56,13 +56,13 @@ type BrowserEvent struct {
 }
 
 // LCLBrowserWindow
-type browserWindow struct {
+type lclBrowserWindow struct {
 	LCLBrowserWindow
 	isFirstActivate bool
 }
 
 // OnFormCreate LCL窗口组件窗口创建回调
-func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
+func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.windowProperty = &BrowserWindow.Config.WindowProperty
 	m.SetWindowType(WT_MAIN_BROWSER)
 	m.FormCreate()
@@ -102,7 +102,7 @@ func (m *browserWindow) OnFormCreate(sender lcl.IObject) {
 // # Window和MacOS平台默认LCL窗口组件
 //
 // Linux平台默认VF窗口组件
-func (m *browser) MainWindow() IBrowserWindow {
+func (m *browserWindow) MainWindow() IBrowserWindow {
 	if m.mainVFBrowserWindow != nil {
 		return m.mainVFBrowserWindow
 	} else if m.mainBrowserWindow != nil {
@@ -117,7 +117,7 @@ func (m *browser) MainWindow() IBrowserWindow {
 // event 			浏览器事件
 //
 // browserWindow 	窗口信息对象
-func (m *browser) SetBrowserInit(fn browserWindowOnEventCallback) {
+func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
 
@@ -126,12 +126,12 @@ func (m *browser) SetBrowserInit(fn browserWindowOnEventCallback) {
 // 在这里可以对主窗体属性设置、添加子窗口、带有browser的窗口和子组件创建
 //
 // mainBrowserWindow 窗口信息对象
-func (m *browser) SetBrowserInitAfter(fn browserWindowAfterOnEventCallback) {
+func (m *browserWindow) SetBrowserInitAfter(fn browserWindowAfterOnEventCallback) {
 	m.Config.setBrowserWindowInitAfterOnEvent(fn)
 }
 
 // setOrIncNextWindowNum 设置或增加一个窗口序号
-func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
+func (m *browserWindow) setOrIncNextWindowNum(browserId ...int32) int32 {
 	if len(browserId) > 0 {
 		m.windowSerial = browserId[0]
 	} else {
@@ -142,7 +142,7 @@ func (m *browser) setOrIncNextWindowNum(browserId ...int32) int32 {
 }
 
 // setOrDecNextWindowNum 设置或减少一个窗口序号
-func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
+func (m *browserWindow) setOrDecNextWindowNum(browserId ...int32) int32 {
 	if len(browserId) > 0 {
 		m.windowSerial = browserId[0]
 	} else {
@@ -152,18 +152,18 @@ func (m *browser) setOrDecNextWindowNum(browserId ...int32) int32 {
 }
 
 // GetNextWindowNum 获得窗口序号
-func (m *browser) GetNextWindowNum() int32 {
+func (m *browserWindow) GetNextWindowNum() int32 {
 	return m.windowSerial
 }
 
 // createNextLCLPopupWindow 创建下一个弹出的子窗口
-func (m *browser) createNextLCLPopupWindow() {
+func (m *browserWindow) createNextLCLPopupWindow() {
 	m.popupWindow = NewLCLWindow(m.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
 	m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 }
 
 // GetWindowInfo 根据浏览器窗口ID获取窗口信息
-func (m *browser) GetWindowInfo(browserId int32) IBrowserWindow {
+func (m *browserWindow) GetWindowInfo(browserId int32) IBrowserWindow {
 	if winInfo, ok := m.windowInfo[browserId]; ok {
 		return winInfo
 	}
@@ -171,23 +171,23 @@ func (m *browser) GetWindowInfo(browserId int32) IBrowserWindow {
 }
 
 // GetWindowInfos 获得所有窗口信息
-func (m *browser) GetWindowInfos() map[int32]IBrowserWindow {
+func (m *browserWindow) GetWindowInfos() map[int32]IBrowserWindow {
 	return m.windowInfo
 }
 
 // putWindowInfo 创建一个窗口这后会添加到windowInfo中
-func (m *browser) putWindowInfo(browserId int32, windowInfo IBrowserWindow) {
+func (m *browserWindow) putWindowInfo(browserId int32, windowInfo IBrowserWindow) {
 	m.windowInfo[browserId] = windowInfo
 }
 
 // removeWindowInfo 窗口关闭会从windowInfo移除
-func (m *browser) removeWindowInfo(browseId int32) {
+func (m *browserWindow) removeWindowInfo(browseId int32) {
 	delete(m.windowInfo, browseId)
 	RemoveGoForm(browseId)
 }
 
 // GetBrowser 获取窗口Browser
-func (m *browser) GetBrowser(browseId int32) *ICefBrowser {
+func (m *browserWindow) GetBrowser(browseId int32) *ICefBrowser {
 	if winInfo, ok := m.windowInfo[browseId]; ok {
 		return winInfo.Browser()
 	}

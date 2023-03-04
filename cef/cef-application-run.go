@@ -28,7 +28,7 @@ var (
 	//
 	//VF窗口组件默认在Linux平台自动开启
 	//LCL窗口组件默认在Windows、MacOSX平台自动开启
-	BrowserWindow = &browser{
+	BrowserWindow = &browserWindow{
 		browserEvent: &BrowserEvent{},
 		Config: &browserConfig{
 			WindowProperty: NewWindowProperty(),
@@ -87,7 +87,7 @@ func Run(app *TCEFApplication) {
 			} else {
 				//LCL窗口组件
 				if BrowserWindow.mainBrowserWindow == nil {
-					BrowserWindow.mainBrowserWindow = &browserWindow{}
+					BrowserWindow.mainBrowserWindow = &lclBrowserWindow{}
 				}
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
 			}

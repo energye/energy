@@ -102,7 +102,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 }
 
 // ViewsFrameworkBrowserWindow 主窗口初始化
-func (m *browser) appContextInitialized(app *TCEFApplication) {
+func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 	if !common.Args.IsMain() {
 		return
 	}
