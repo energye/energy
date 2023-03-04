@@ -213,12 +213,13 @@ func init() {
 			browser := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{getPtr(1)}
 			processId := CefProcessId(getVal(2))
-			processMessage := &ICefProcessMessage{instance: getPtr(3)}
+			message := &ICefProcessMessage{instance: getPtr(3)}
 			var result = (*bool)(getPtr(4))
-			*result = fn.(RenderProcessMessageReceived)(browser, frame, processId, processMessage)
+			*result = fn.(RenderProcessMessageReceived)(browser, frame, processId, message)
 			if !*result {
-				*result = renderProcessMessageReceived(browser, frame, processId, processMessage)
+				*result = renderProcessMessageReceived(browser, frame, processId, message)
 			}
+			message.Free()
 		case GlobalCEFAppEventOnContextCreated:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}

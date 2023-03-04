@@ -29,8 +29,9 @@ const (
 	internalOn     = "on"   // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
 const (
-	internalProcessMessageIPCEmit = "ipcEmit" // 进程消息 ipcEmit
-	internalProcessMessageIPCOn   = "ipcOn"   // 进程消息 ipcOn
+	internalProcessMessageIPCEmit      = "ipcEmit"      // 进程消息 ipcEmit
+	internalProcessMessageIPCEmitReply = "ipcEmitReply" // 进程消息 ipcEmitReply
+	internalProcessMessageIPCOn        = "ipcOn"        // 进程消息 ipcOn
 )
 
 var (
@@ -63,6 +64,12 @@ func init() {
 	}
 }
 
+// isInternalKey 内部key不允许使用
+func isInternalKey(key string) bool {
+	return key == internalIPCKey || key == internalEmit || key == internalOn ||
+		key == internalProcessMessageIPCEmit || key == internalProcessMessageIPCOn || key == internalProcessMessageIPCEmitReply
+}
+
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
 	fmt.Println("appOnContextCreated-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue(), "browserId:", browser.Identifier(), "frameId:", frame.Identifier())
@@ -70,25 +77,28 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
-func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
-	fmt.Println("renderProcessMessageReceived", message.Name(), message.ArgumentList().Size())
-	messageId := message.ArgumentList().GetString(0)
-	fmt.Println("messageId", messageId)
-	if v, err := strconv.Atoi(messageId); err == nil {
-		callback := ctx.getIPCCallback(uintptr(v))
-		if callback.context.Enter() {
-			args := V8ValueArrayRef.New()
-			args.Add(V8ValueRef.NewString("结果"))
-			args.Add(V8ValueRef.NewDouble(10000.999))
-			args.Add(V8ValueRef.NewString("结果"))
-			args.Add(V8ValueRef.NewBool(true))
-			fmt.Println("返回结果", args.Size())
-			callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
-			callback.context.Exit()
+func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	result = true
+	if message.Name() == internalProcessMessageIPCEmitReply {
+		messageId := message.ArgumentList().GetString(0)
+		fmt.Println("messageId", messageId)
+		if v, err := strconv.Atoi(messageId); err == nil {
+			callback := ctx.getIPCCallback(uintptr(v))
+			if callback.context.Enter() {
+				args := V8ValueArrayRef.New()
+				args.Add(V8ValueRef.NewString("结果"))
+				args.Add(V8ValueRef.NewDouble(10000.999))
+				args.Add(V8ValueRef.NewString("结果"))
+				args.Add(V8ValueRef.NewBool(true))
+				fmt.Println("返回结果", args.Size())
+				callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
+				callback.context.Exit()
+			}
+			ctx.removeIPCCallback(uintptr(v))
 		}
-		ctx.removeIPCCallback(uintptr(v))
+
 	}
-	return false
+	return
 }
 
 // appMainRunCallback 应用运行 - 默认实现
@@ -110,23 +120,25 @@ func mainProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourcePr
 }
 
 // ipcEmitMessage 触发事件
-func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
-	fmt.Println("ipcEmitMessage browserId:", browser.Identifier(), frame.Identifier(), "name:", message.Name(), message.ArgumentList().Size())
+func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	result = true
 	argument := message.ArgumentList()
 	messageId := argument.GetString(0)
 	emitName := argument.GetString(1)
 	callback := ipc.CheckOnEvent(emitName)
 	if callback == nil {
-		return false
+		return
 	}
 	args := argument.GetList(2)
-	frame.Identifier()
-	callback(ipc.NewContext(browser.Identifier(), frame.Identifier(), args))
-	fmt.Println("\t", messageId, emitName)
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args)
+	callback(ipcContext)
 	if messageId != "0" {
-		frame.SendProcessMessage(consts.PID_RENDER, message)
+		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
+		replyMessage.ArgumentList().SetString(0, messageId)
+		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
+		replyMessage.Free()
 	}
-	return true
+	return
 }
 
 // ipcOnMessage 监听事件
@@ -158,14 +170,11 @@ func (m *contextCreate) makeIPC(context *ICefV8Context) {
 }
 
 // ipcEmitExecute ipc.emit 执行
-func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
-	fmt.Println("emit handler name:", name, "arguments-size:", arguments.Size())
-	keyList := object.GetKeys()
-	for i := 0; i < keyList.Count(); i++ {
-		fmt.Println("\tkey:", i, keyList.Get(i))
-	}
+func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) (result bool) {
+	result = true
+	retVal.SetResult(V8ValueRef.NewBool(false))
 	if name != internalEmit {
-		return false
+		return
 	}
 	if arguments.Size() >= 1 { // 1 ~ 3 个参数
 		var (
@@ -176,8 +185,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		)
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
-			exception.SetMessage("ipc emit event parameter error. Parameter 1 can only be the event name")
-			return false
+			return
 		}
 		emitNameValue = emitName.GetStringValue()
 		if arguments.Size() == 2 {
@@ -187,15 +195,13 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			} else if args2.IsFunction() {
 				emitCallback = args2
 			} else {
-				exception.SetMessage("ipc emit event parameter error. Parameter 2 can only be an input parameter or callback function")
-				return false
+				return
 			}
 		} else if arguments.Size() == 3 {
 			emitArgs = arguments.Get(1)
 			emitCallback = arguments.Get(2)
 			if !emitArgs.IsArray() || !emitCallback.IsFunction() {
-				exception.SetMessage("ipc emit event parameter error. Parameter 2 can only be an input parameter, Parameter 3 can only be a callback function")
-				return false
+				return
 			}
 		}
 		//入参
@@ -207,8 +213,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 				ipcEmitMessage.Free()
 			}()
 			if err := m.buildProcessMessageByV8ValueArray(args, emitArgs); err != nil {
-				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
-				return false
+				return
 			}
 			v8ctx := V8ContextRef.Current()
 			var msgId uintptr = 0
@@ -226,10 +231,10 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			frame := v8ctx.Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 		}
-		return true
+		retVal.SetResult(V8ValueRef.NewBool(true))
+		return
 	}
-	exception.SetMessage("ipc emit event parameter error. Parameter 1 can only be the event name")
-	return false
+	return
 }
 
 //buildProcessMessageByV8ValueArray 使V8ValueArray构建进程消息
