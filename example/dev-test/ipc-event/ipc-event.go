@@ -56,7 +56,10 @@ func main() {
 				value.GetString()
 			case consts.VTYPE_DICTIONARY: // object
 				object := value.GetIObject()
-				fmt.Println("object", object.GetIKeys().Count())
+				fmt.Println("object keys", object.GetIKeys().Count())
+				for i := 0; i < object.GetIKeys().Count(); i++ {
+					fmt.Println("\tkey-value:", object.GetIKeys().Get(i))
+				}
 			case consts.VTYPE_LIST: // array
 				value.GetIArray()
 			}

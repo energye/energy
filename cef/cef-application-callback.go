@@ -34,7 +34,7 @@ const (
 )
 
 var (
-	internalObjectRootName = "energy"     // GO 和 V8Value 绑定根对象名
+	internalObjectRootName = "energy"     // GO 和 V8Value 绑定根对象名, 可修改
 	ctx                    *contextCreate //
 	mRun                   *mainRun       //
 )
@@ -198,7 +198,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			argument := ipcEmitMessage.ArgumentList()
 			args := ListValueRef.New()
 			defer func() {
-				//ipcEmitMessage.Free()
+				ipcEmitMessage.Free()
 			}()
 			if err := m.buildProcessMessageByV8ValueArray(args, emitArgs); err != nil {
 				exception.SetMessage(fmt.Sprintf("ipc emit event parameter error.\n%v", err.Error()))
@@ -222,6 +222,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		return true
 	}
+	exception.SetMessage("ipc emit event parameter error. Parameter 1 can only be the event name")
 	return false
 }
 
@@ -374,13 +375,13 @@ func (m *contextCreate) bindFuncExecute(name string, object *ICefV8Value, argume
 	return false
 }
 
-// bindObjectGet 绑定对象取值
+// bindSubObjectGet 绑定对象取值
 func (m *contextCreate) bindSubObjectGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool {
 	fmt.Println("bindSubObjectGet accessor name:", name)
 	return false
 }
 
-// bindObjectSet 绑定对象赋值
+// bindSubObjectSet 绑定对象赋值
 func (m *contextCreate) bindSubObjectSet(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
 	fmt.Println("bindSubObjectSet accessor name:", name)
 	return false
@@ -398,14 +399,17 @@ func (m *contextCreate) bindSet(name string, object *ICefV8Value, value *ICefV8V
 	return false
 }
 
+// addIPCCallback
 func (m *contextCreate) addIPCCallback(callback *ipcCallback) uintptr {
 	return uintptr(unsafe.Pointer(m.ipcCallbackList.PushBack(callback)))
 }
 
+// removeIPCCallback
 func (m *contextCreate) removeIPCCallback(ptr uintptr) {
 	m.ipcCallbackList.Remove((*list.Element)(unsafe.Pointer(ptr)))
 }
 
+// getIPCCallback
 func (m *contextCreate) getIPCCallback(ptr uintptr) *ipcCallback {
 	return (*list.Element)(unsafe.Pointer(ptr)).Value.(*ipcCallback)
 }
