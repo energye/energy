@@ -125,14 +125,17 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	argument := message.ArgumentList()
 	messageId := argument.GetString(0)
 	emitName := argument.GetString(1)
-	callback := ipc.CheckOnEvent(emitName)
-	if callback == nil {
+	eventCallback := ipc.CheckOnEvent(emitName)
+	if eventCallback == nil {
 		return
 	}
+	isCallback := messageId != "0"
 	args := argument.GetList(2)
-	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args)
-	callback(ipcContext)
-	if messageId != "0" {
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args, isCallback)
+	eventCallback(ipcContext)
+	if isCallback {
+		result := ipcContext.Replay().Result()
+		fmt.Println("result:", result)
 		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 		replyMessage.ArgumentList().SetString(0, messageId)
 		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)

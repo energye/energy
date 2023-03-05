@@ -64,6 +64,7 @@ func main() {
 				value.GetIArray()
 			}
 		}
+		context.Result("asdfsadf", 123123, true)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
