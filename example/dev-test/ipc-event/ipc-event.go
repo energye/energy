@@ -27,7 +27,6 @@ func main() {
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
 	cef.BrowserWindow.Config.Title = "Energy - ipc-event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	cef.BrowserWindow.Config.ChromiumConfig().SetEnableDevTools(false)
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

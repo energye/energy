@@ -41,7 +41,7 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 		if len(disableRegisDefaultEvent) == 0 || !disableRegisDefaultEvent[0] {
 			application.registerDefaultEvent()
 		}
-		application.initDefaultProperties()
+		application.initDefaultSettings()
 	}
 	return application
 }

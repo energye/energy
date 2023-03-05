@@ -36,8 +36,8 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 	//imports.Proc(internale_CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
 }
 
-//initDefaultProperties 初始默认属性
-func (m *TCEFApplication) initDefaultProperties() {
+//initDefaultSettings 初始 energy 默认设置
+func (m *TCEFApplication) initDefaultSettings() {
 	m.SetFrameworkDirPath(libPath())
 	m.SetAcceptLanguageList(string(LANGUAGE_zh_CN))
 	m.SetLocale(string(LANGUAGE_zh_CN))
