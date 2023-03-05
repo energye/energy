@@ -36,8 +36,7 @@ type valueBindInfo struct {
 // V8Value 绑定到JS的字段
 type V8Value struct {
 	eventId        uintptr        //事件ID
-	instance       uintptr        //
-	ptr            unsafe.Pointer //
+	instance       unsafe.Pointer //
 	name           string         //用于字段或函数名
 	value          interface{}    //值
 	valueType      *VT            //字段类型，go 和 js
@@ -45,7 +44,7 @@ type V8Value struct {
 	sfi            *functionInfo  //对象函数信息
 	isCommonObject IS_CO          //通用类型或对象类型 默认通用类型
 	that           JSValue        //
-	rwLock         *sync.Mutex    //字段|函数独有锁
+	rwLock         sync.Mutex     //字段|函数独有锁
 }
 
 // CEFv8BindRoot 导出给JavaScript window的根对象名
@@ -56,16 +55,16 @@ type CEFv8BindRoot struct {
 
 // checkFunc 检查函数是否导出, 返回：函数描述信息
 func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
-	numIn := fnOf.NumIn() - int(fnType)
+	numIn := fnOf.NumIn() - int(fnType) // 结构函数的参数-1后才是入参
 	numOut := fnOf.NumOut()
-	if numOut > BIND_FUNC_OUT_MAX_SUM {
-		//出参个数超出
-		return nil, errors.New(fmt.Sprintf("WindowBind function parameter error: the maximum number of function parameters is %d, but the actual number is %d", BIND_FUNC_OUT_MAX_SUM, numOut))
-	}
-	if numIn > BIND_FUNC_IN_MAX_SUM {
-		//入参个数超出
-		return nil, errors.New(fmt.Sprintf("WindowBind function parameter error: up to %d function input parameters, actually %d", BIND_FUNC_IN_MAX_SUM, numIn))
-	}
+	//if numOut > BIND_FUNC_OUT_MAX_SUM {
+	//	//出参个数超出
+	//	return nil, errors.New(fmt.Sprintf("WindowBind function parameter error: the maximum number of function parameters is %d, but the actual number is %d", BIND_FUNC_OUT_MAX_SUM, numOut))
+	//}
+	//if numIn > BIND_FUNC_IN_MAX_SUM {
+	//	//入参个数超出
+	//	return nil, errors.New(fmt.Sprintf("WindowBind function parameter error: up to %d function input parameters, actually %d", BIND_FUNC_IN_MAX_SUM, numIn))
+	//}
 	if numIn < 0 {
 		numIn = 0
 	}
@@ -78,24 +77,22 @@ func checkFunc(fnOf reflect.Type, fnType FN_TYPE) (*funcInfo, error) {
 	for i := 0; i < numIn; i++ {
 		idx = i + int(fnType)
 		inTyp := fnOf.In(idx).Kind()
-		if gov, jsv := common.FieldReflectType(inTyp); jsv == -1 && gov == -1 {
-			//入参参数类型不正确
-			return nil, errors.New("WindowBind function parameter error: input parameter type can only be [string int float bool]")
+		if gov, jsv := common.FieldReflectType(inTyp); jsv == -1 || gov == -1 {
+			//入参参数类型不支持
+			return nil, errors.New("input parameter type mismatch")
 		} else {
 			r.InParam[i] = &VT{Jsv: jsv, Gov: gov}
 		}
 	}
-	if numOut > 0 && numOut < 3 {
-		r.OutParam = make([]*VT, numOut, numOut)
-		for i := 0; i < numOut; i++ {
-			outTyp := fnOf.Out(i)
-			if gov, jsv := common.FieldReflectType(outTyp.Kind()); jsv == -1 && gov == -1 {
-				//出参参数类型不正确
-				return nil, errors.New("WindowBind function parameter error: output parameter type can only be [string int float bool]")
-			} else {
-				r.OutParam[i] = &VT{Jsv: jsv, Gov: gov}
-				r.OutParamIdx = int32(i)
-			}
+	r.OutParam = make([]*VT, numOut, numOut)
+	for i := 0; i < numOut; i++ {
+		outTyp := fnOf.Out(i)
+		if gov, jsv := common.FieldReflectType(outTyp.Kind()); jsv == -1 || gov == -1 {
+			//出参参数类型不支持
+			return nil, errors.New("out parameter type mismatch")
+		} else {
+			r.OutParam[i] = &VT{Jsv: jsv, Gov: gov}
+			r.OutParamIdx = int32(i)
 		}
 	}
 	return r, nil
@@ -224,11 +221,7 @@ func (m *V8Value) getFuncInfo() *funcInfo {
 }
 
 func (m *V8Value) Instance() uintptr {
-	return m.instance
-}
-
-func (m *V8Value) Ptr() unsafe.Pointer {
-	return m.ptr
+	return uintptr(m.instance)
 }
 
 func (m *V8Value) Name() string {
@@ -251,11 +244,7 @@ func (m *V8Value) ValueType() *VT {
 	return m.valueType
 }
 
-func (m *V8Value) setPtr(ptr unsafe.Pointer) {
-	m.ptr = ptr
-}
-
-func (m *V8Value) setInstance(instance uintptr) {
+func (m *V8Value) setInstance(instance unsafe.Pointer) {
 	m.instance = instance
 }
 
@@ -400,9 +389,7 @@ func (m *V8Value) invoke(inParams []reflect.Value) (outParams []reflect.Value, s
 func newV8Value(eventId uintptr, fullParentName, name string, value interface{}, sfi *functionInfo, valueType *VT, isCommonObject IS_CO) JSValue {
 	jsValueBind := new(V8Value)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
-	jsValueBind.ptr = unsafe.Pointer(&jsValueBind)
-	jsValueBind.instance = uintptr(jsValueBind.ptr)
+	jsValueBind.instance = unsafe.Pointer(&jsValueBind)
 	jsValueBind.eventId = eventId
 	jsValueBind.name = name
 	jsValueBind.value = value
@@ -414,10 +401,6 @@ func newV8Value(eventId uintptr, fullParentName, name string, value interface{},
 	jsValueBind.isCommonObject = isCommonObject
 	VariableBind.addBind(fmt.Sprintf("%s.%s", fullParentName, name), jsValueBind)
 	return jsValueBind
-}
-
-func (m *V8Value) Pointer() unsafe.Pointer {
-	return m.ptr
 }
 
 func (m *V8Value) setEventId(eventId uintptr) {

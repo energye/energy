@@ -130,11 +130,13 @@ func (m *TCEFApplication) SetFrameworkDirPath(value string) {
 	imports.Proc(internale_CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
 }
 
+// MainBundlePath 仅用于macOS
 func (m *TCEFApplication) MainBundlePath() string {
 	r1, _, _ := imports.Proc(internale_CEFAppConfig_MainBundlePath).Call()
 	return api.GoStr(r1)
 }
 
+// SetMainBundlePath 仅用于macOS
 func (m *TCEFApplication) SetMainBundlePath(value string) {
 	imports.Proc(internale_CEFAppConfig_SetMainBundlePath).Call(api.PascalStr(value))
 }
@@ -180,6 +182,7 @@ func (m *TCEFApplication) CommandLineArgsDisabled() bool {
 	return api.GoBool(r1)
 }
 
+// SetCommandLineArgsDisabled 开启/禁用设置命令行参数
 func (m *TCEFApplication) SetCommandLineArgsDisabled(value bool) {
 	imports.Proc(internale_CEFAppConfig_SetCommandLineArgsDisabled).Call(api.PascalBool(value))
 }

@@ -113,7 +113,6 @@ func (m *variableBind) callVariableBind(browser *ICefBrowser, frame *ICefFrame) 
 func (m *variableBind) NewString(name, value string) *JSString {
 	jsValueBind := new(JSString)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_STRING
@@ -126,7 +125,6 @@ func (m *variableBind) NewString(name, value string) *JSString {
 func (m *variableBind) NewInteger(name string, value int32) *JSInteger {
 	jsValueBind := new(JSInteger)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_INT
@@ -139,7 +137,6 @@ func (m *variableBind) NewInteger(name string, value int32) *JSInteger {
 func (m *variableBind) NewDouble(name string, value float64) *JSDouble {
 	jsValueBind := new(JSDouble)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_DOUBLE
@@ -152,7 +149,6 @@ func (m *variableBind) NewDouble(name string, value float64) *JSDouble {
 func (m *variableBind) NewBoolean(name string, value bool) *JSBoolean {
 	jsValueBind := new(JSBoolean)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = value
 	jsValueBind.valueType.Jsv = V8_VALUE_BOOLEAN
@@ -165,7 +161,6 @@ func (m *variableBind) NewBoolean(name string, value bool) *JSBoolean {
 func (m *variableBind) NewNull(name string) *JSNull {
 	jsValueBind := new(JSNull)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = "null"
 	jsValueBind.valueType.Jsv = V8_VALUE_NULL
@@ -178,7 +173,6 @@ func (m *variableBind) NewNull(name string) *JSNull {
 func (m *variableBind) NewUndefined(name string) *JSUndefined {
 	jsValueBind := new(JSUndefined)
 	jsValueBind.valueType = new(VT)
-	jsValueBind.rwLock = new(sync.Mutex)
 	jsValueBind.name = name
 	jsValueBind.value = "undefined"
 	jsValueBind.valueType.Jsv = V8_VALUE_UNDEFINED
@@ -195,7 +189,6 @@ func (m *variableBind) NewFunction(name string, fn interface{}) error {
 		if info, err := checkFunc(reflect.TypeOf(fn), FN_TYPE_COMMON); err == nil {
 			jsValueBind := new(JSFunction)
 			jsValueBind.valueType = new(VT)
-			jsValueBind.rwLock = new(sync.Mutex)
 			jsValueBind.name = name
 			jsValueBind.value = fn
 			jsValueBind.valueType.Jsv = V8_VALUE_FUNCTION
@@ -212,8 +205,7 @@ func (m *variableBind) NewFunction(name string, fn interface{}) error {
 
 // V8Value bindValueHandle
 func (m *variableBind) bindValueHandle(jsValue JSValue) {
-	jsValue.setPtr(unsafe.Pointer(&jsValue))
-	jsValue.setInstance(uintptr(jsValue.Ptr()))
+	jsValue.setInstance(unsafe.Pointer(&jsValue))
 	jsValue.setEventId(uintptr(__bind_id()))
 	jsValue.setThat(jsValue)
 	m.addBind(jsValue.Name(), jsValue)
@@ -228,17 +220,13 @@ func (m *variableBind) NewObjects(objects ...interface{}) {
 
 // Bind V8Value
 //
-// 变量和函数绑定, 在Go中定义绑定到JS中
-//
-// 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, ObjectInfos = struct | map,  Array = Slice
-//
-// 返回nil表示绑定成功
+// 变量和函数绑定
 func (m *variableBind) Bind(name string, bind interface{}) error {
 	if isMainProcess || isRenderProcess {
 		typ := reflect.TypeOf(bind)
 		kind := typ.Kind()
 		if kind != reflect.Ptr && kind != reflect.Func {
-			return errors.New(fmt.Sprintf("绑定字段 %s: 应传递绑定变量指针", name))
+			return errors.New(fmt.Sprintf("bind parameter %s needs to pass pointer", name))
 		}
 		var (
 			gov   GO_VALUE_TYPE
@@ -246,30 +234,26 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			value *V8Value
 		)
 		if kind == reflect.Func {
-			gov = GO_VALUE_FUNC
-			jsv = V8_VALUE_FUNCTION
+			gov, jsv = GO_VALUE_FUNC, V8_VALUE_FUNCTION
 		} else {
 			gov, jsv = common.FieldReflectType(typ.Elem())
 		}
 		fmt.Println("FieldReflectType:", gov, jsv)
 		if gov == -1 || jsv == -1 {
-			return errors.New("类型错误, 支持类型: string, int32, float64, bool, func, struct, map, slice")
+			return errors.New("parameter type mismatch")
 		}
 		value = &V8Value{
-			name:   name,
-			rwLock: new(sync.Mutex),
-			valueType: &VT{
-				Jsv: jsv,
-				Gov: gov,
-			},
+			name:      name,
+			valueType: &VT{Jsv: jsv, Gov: gov},
 			//isCommonObject: IS_OBJECT,
 			//eventId:        uintptr(__bind_id()),
 		}
-		//分解类型
+		//类型信息
 		if jsv == V8_VALUE_FUNCTION && isMainProcess { //function
-			if info, err := checkFunc(reflect.TypeOf(bind), FN_TYPE_OBJECT); err == nil {
+			if info, err := checkFunc(typ, FN_TYPE_OBJECT); err == nil {
 				value.funcInfo = info
-				value.ptr = unsafe.Pointer(&bind)
+				value.instance = unsafe.Pointer(&bind)
+				value.value = reflect.ValueOf(bind)
 			} else {
 				return err
 			}
@@ -284,47 +268,46 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 		} else if isMainProcess { //field
 			switch jsv {
 			case V8_VALUE_STRING:
-				value.ptr = unsafe.Pointer(bind.(*string))
+				value.instance = unsafe.Pointer(bind.(*string))
 			case V8_VALUE_INT:
 				switch gov {
 				case GO_VALUE_INT:
-					value.ptr = unsafe.Pointer(bind.(*int))
+					value.instance = unsafe.Pointer(bind.(*int))
 				case GO_VALUE_INT8:
-					value.ptr = unsafe.Pointer(bind.(*int8))
+					value.instance = unsafe.Pointer(bind.(*int8))
 				case GO_VALUE_INT16:
-					value.ptr = unsafe.Pointer(bind.(*int16))
+					value.instance = unsafe.Pointer(bind.(*int16))
 				case GO_VALUE_INT32:
-					value.ptr = unsafe.Pointer(bind.(*int32))
+					value.instance = unsafe.Pointer(bind.(*int32))
 				case GO_VALUE_INT64:
-					value.ptr = unsafe.Pointer(bind.(*int64))
+					value.instance = unsafe.Pointer(bind.(*int64))
 				case GO_VALUE_UINT:
-					value.ptr = unsafe.Pointer(bind.(*uint))
+					value.instance = unsafe.Pointer(bind.(*uint))
 				case GO_VALUE_UINT8:
-					value.ptr = unsafe.Pointer(bind.(*uint8))
+					value.instance = unsafe.Pointer(bind.(*uint8))
 				case GO_VALUE_UINT16:
-					value.ptr = unsafe.Pointer(bind.(*uint16))
+					value.instance = unsafe.Pointer(bind.(*uint16))
 				case GO_VALUE_UINT32:
-					value.ptr = unsafe.Pointer(bind.(*uint32))
+					value.instance = unsafe.Pointer(bind.(*uint32))
 				case GO_VALUE_UINT64:
-					value.ptr = unsafe.Pointer(bind.(*uint64))
+					value.instance = unsafe.Pointer(bind.(*uint64))
 				case GO_VALUE_UINTPTR:
-					value.ptr = unsafe.Pointer(bind.(*uintptr))
+					value.instance = unsafe.Pointer(bind.(*uintptr))
 				}
 			case V8_VALUE_DOUBLE:
 				if gov == GO_VALUE_FLOAT32 {
-					value.ptr = unsafe.Pointer(bind.(*float32))
+					value.instance = unsafe.Pointer(bind.(*float32))
 				} else {
-					value.ptr = unsafe.Pointer(bind.(*float64))
+					value.instance = unsafe.Pointer(bind.(*float64))
 				}
 			case V8_VALUE_BOOLEAN:
-				value.ptr = unsafe.Pointer(bind.(*bool))
+				value.instance = unsafe.Pointer(bind.(*bool))
 			default:
-				return errors.New(name + ": 不支持的绑定类型")
+				return errors.New("parameter type mismatch")
 			}
+			value.value = bind
 		}
 		if isMainProcess {
-			value.instance = uintptr(value.ptr)
-			value.value = bind
 			value.that = value
 		}
 		m.addBind(name, value)

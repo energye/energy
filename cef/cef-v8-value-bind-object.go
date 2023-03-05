@@ -38,7 +38,7 @@ type funcInfo struct {
 	FnType         FN_TYPE `json:"fnType"`         //函数类型, 直接定义函数或对象函数
 }
 
-// VT 值类型
+// VT 字段类型
 type VT struct {
 	Jsv V8_JS_VALUE_TYPE `json:"jsv"`
 	Gov GO_VALUE_TYPE    `json:"gov"`

@@ -155,7 +155,7 @@ func FieldReflectType(v interface{}) (GO_VALUE_TYPE, V8_JS_VALUE_TYPE) {
 	case reflect.Map:
 		return GO_VALUE_MAP, V8_VALUE_OBJECT
 	default:
-		return -1, -1
+		return GO_VALUE_INVALID, V8_VALUE_INVALID
 	}
 }
 

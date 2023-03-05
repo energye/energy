@@ -27,6 +27,7 @@ func main() {
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
 	cef.BrowserWindow.Config.Title = "Energy - ipc-event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	cef.BrowserWindow.Config.ChromiumConfig().SetEnableDevTools(false)
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
@@ -68,8 +69,8 @@ func main() {
 
 	//cefApp.SetSingleProcess(true)
 	//cefApp.SetEnableGPU(true)
-	cef.VariableBind.Bind("funcName", func() string {
-		return ""
+	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
+		return "StringValue", 100000111, true
 	})
 	var stringField = "stringField"
 	cef.VariableBind.Bind("stringField", &stringField)

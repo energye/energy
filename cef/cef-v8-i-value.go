@@ -45,7 +45,6 @@ type JSValue interface {
 	AsArray() *JSArray                   //转换为 Array 失败返回 nil
 	AsFunction() *JSFunction             //转换为 Function 失败返回 nil
 	Instance() uintptr                   //当前变量指针
-	Ptr() unsafe.Pointer                 //当前变量指针
 	Name() string                        //当前变量绑定的名称
 	ValueType() *VT                      //变量类型
 	Bytes() []byte                       //变量值转换为字节
@@ -53,8 +52,7 @@ type JSValue interface {
 	Lock()                               //变量自有锁-加锁
 	UnLock()                             //变量自有锁-释放锁
 	invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool)
-	setPtr(ptr unsafe.Pointer)
-	setInstance(instance uintptr)
+	setInstance(instance unsafe.Pointer)
 	setName(name string)
 	getValue() interface{}
 	setValue(value interface{})
