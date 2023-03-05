@@ -177,7 +177,7 @@ func ipcJSEmitGo(eventParam *rIPCEventParam, result *rGoResult, args uintptr) {
 			if bindType == IS_OBJECT {
 				name = name[len(internalObjectRootName)+1:]
 			}
-			if jsValue, ok := VariableBind.bindValue(name); ok {
+			if jsValue, ok := VariableBind.getBindValue(name); ok {
 				jsValue.Lock()
 				defer jsValue.UnLock()
 				if jsValue.ValueType().Jsv == V8_VALUE_FUNCTION { //func
@@ -408,7 +408,7 @@ func internalBrowserIPCOnEventInit() {
 			args := context.Arguments()
 			defer args.Clear()
 			fullName := args.GetString(0)
-			var jsValue, ok = VariableBind.bindValue(fullName)
+			var jsValue, ok = VariableBind.getBindValue(fullName)
 			buf := &bytes.Buffer{}
 			defer buf.Reset()
 			if ok {
@@ -430,7 +430,7 @@ func internalBrowserIPCOnEventInit() {
 			fullName := args.GetString(0)
 			item := args.Item(1)
 			newValueType := item.VTypeToJS()
-			jsValue, ok := VariableBind.bindValue(fullName)
+			jsValue, ok := VariableBind.getBindValue(fullName)
 			isSuccess := false
 			retArgs := ipc.NewArgumentList()
 			defer retArgs.Clear()
@@ -461,7 +461,7 @@ func internalBrowserIPCOnEventInit() {
 			dataItems := args.RangeItems(0, args.Size()-1)
 			var inArgument = ipc.NewArgumentList()
 			inArgument.SetItems(dataItems)
-			var jsValue, ok = VariableBind.bindValue(fullName)
+			var jsValue, ok = VariableBind.getBindValue(fullName)
 			var (
 				outParams []reflect.Value
 				isSuccess bool

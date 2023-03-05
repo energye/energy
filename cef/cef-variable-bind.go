@@ -42,7 +42,7 @@ type IProvisionalBindStorage interface {
 	NewFunction(name string, fn interface{}) error           //固定类型 - function
 	NewObjects(objects ...interface{})                       //固定类型 - object - struct
 	Bind(name string, bind interface{}) error                //固定类型 - 所有支持类型
-	bindValue(fullName string) (JSValue, bool)               //
+	getBindValue(fullName string) (JSValue, bool)            //
 	binds() map[string]JSValue                               //
 	bindCount() int                                          //
 	callVariableBind(browser *ICefBrowser, frame *ICefFrame) //
@@ -76,7 +76,9 @@ func (m *variableBind) removeBind(fullName string) {
 	delete(m.bindMapping, fullName)
 }
 
-func (m *variableBind) bindValue(fullName string) (JSValue, bool) {
+func (m *variableBind) getBindValue(fullName string) (JSValue, bool) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
 	value, ok := m.bindMapping[fullName]
 	return value, ok
 }
@@ -248,66 +250,66 @@ func (m *variableBind) Bind(name string, bind interface{}) error {
 			//isCommonObject: IS_OBJECT,
 			//eventId:        uintptr(__bind_id()),
 		}
-		//类型信息
-		if jsv == V8_VALUE_FUNCTION && isMainProcess { //function
-			if info, err := checkFunc(typ, FN_TYPE_OBJECT); err == nil {
-				value.funcInfo = info
-				value.instance = unsafe.Pointer(&bind)
-				value.value = reflect.ValueOf(bind)
-			} else {
-				return err
-			}
-		} else if jsv == V8_VALUE_OBJECT { //object
-			if gov == GO_VALUE_STRUCT { // object - struct
-
-			} else if gov == GO_VALUE_MAP { // object - map
-
-			}
-		} else if jsv == V8_VALUE_ARRAY { //array
-
-		} else if isMainProcess { //field
-			switch jsv {
-			case V8_VALUE_STRING:
-				value.instance = unsafe.Pointer(bind.(*string))
-			case V8_VALUE_INT:
-				switch gov {
-				case GO_VALUE_INT:
-					value.instance = unsafe.Pointer(bind.(*int))
-				case GO_VALUE_INT8:
-					value.instance = unsafe.Pointer(bind.(*int8))
-				case GO_VALUE_INT16:
-					value.instance = unsafe.Pointer(bind.(*int16))
-				case GO_VALUE_INT32:
-					value.instance = unsafe.Pointer(bind.(*int32))
-				case GO_VALUE_INT64:
-					value.instance = unsafe.Pointer(bind.(*int64))
-				case GO_VALUE_UINT:
-					value.instance = unsafe.Pointer(bind.(*uint))
-				case GO_VALUE_UINT8:
-					value.instance = unsafe.Pointer(bind.(*uint8))
-				case GO_VALUE_UINT16:
-					value.instance = unsafe.Pointer(bind.(*uint16))
-				case GO_VALUE_UINT32:
-					value.instance = unsafe.Pointer(bind.(*uint32))
-				case GO_VALUE_UINT64:
-					value.instance = unsafe.Pointer(bind.(*uint64))
-				case GO_VALUE_UINTPTR:
-					value.instance = unsafe.Pointer(bind.(*uintptr))
-				}
-			case V8_VALUE_DOUBLE:
-				if gov == GO_VALUE_FLOAT32 {
-					value.instance = unsafe.Pointer(bind.(*float32))
-				} else {
-					value.instance = unsafe.Pointer(bind.(*float64))
-				}
-			case V8_VALUE_BOOLEAN:
-				value.instance = unsafe.Pointer(bind.(*bool))
-			default:
-				return errors.New("parameter type mismatch")
-			}
-			value.value = bind
-		}
 		if isMainProcess {
+			//类型信息
+			if jsv == V8_VALUE_FUNCTION { //function
+				if info, err := checkFunc(typ, FN_TYPE_OBJECT); err == nil {
+					value.funcInfo = info
+					value.instance = unsafe.Pointer(&bind)
+					value.value = reflect.ValueOf(bind)
+				} else {
+					return err
+				}
+			} else if jsv == V8_VALUE_OBJECT { //object
+				if gov == GO_VALUE_STRUCT { // object - struct
+
+				} else if gov == GO_VALUE_MAP { // object - map
+
+				}
+			} else if jsv == V8_VALUE_ARRAY { //array
+
+			} else { //field
+				switch jsv {
+				case V8_VALUE_STRING:
+					value.instance = unsafe.Pointer(bind.(*string))
+				case V8_VALUE_INT:
+					switch gov {
+					case GO_VALUE_INT:
+						value.instance = unsafe.Pointer(bind.(*int))
+					case GO_VALUE_INT8:
+						value.instance = unsafe.Pointer(bind.(*int8))
+					case GO_VALUE_INT16:
+						value.instance = unsafe.Pointer(bind.(*int16))
+					case GO_VALUE_INT32:
+						value.instance = unsafe.Pointer(bind.(*int32))
+					case GO_VALUE_INT64:
+						value.instance = unsafe.Pointer(bind.(*int64))
+					case GO_VALUE_UINT:
+						value.instance = unsafe.Pointer(bind.(*uint))
+					case GO_VALUE_UINT8:
+						value.instance = unsafe.Pointer(bind.(*uint8))
+					case GO_VALUE_UINT16:
+						value.instance = unsafe.Pointer(bind.(*uint16))
+					case GO_VALUE_UINT32:
+						value.instance = unsafe.Pointer(bind.(*uint32))
+					case GO_VALUE_UINT64:
+						value.instance = unsafe.Pointer(bind.(*uint64))
+					case GO_VALUE_UINTPTR:
+						value.instance = unsafe.Pointer(bind.(*uintptr))
+					}
+				case V8_VALUE_DOUBLE:
+					if gov == GO_VALUE_FLOAT32 {
+						value.instance = unsafe.Pointer(bind.(*float32))
+					} else {
+						value.instance = unsafe.Pointer(bind.(*float64))
+					}
+				case V8_VALUE_BOOLEAN:
+					value.instance = unsafe.Pointer(bind.(*bool))
+				default:
+					return errors.New("parameter type mismatch")
+				}
+				value.value = bind
+			}
 			value.that = value
 		}
 		m.addBind(name, value)
