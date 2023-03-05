@@ -65,22 +65,14 @@ func init() {
 func (m *variableBind) addBind(fullName string, value JSValue) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
-	if _, ok := m.bindMapping[fullName]; !ok {
-		m.bindMapping[fullName] = value
-	}
+	m.bindMapping[fullName] = value
 }
 
-func (m *variableBind) removeBind(fullName string) {
+func (m *variableBind) getBindValue(fullName string) (value JSValue, ok bool) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
-	delete(m.bindMapping, fullName)
-}
-
-func (m *variableBind) getBindValue(fullName string) (JSValue, bool) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-	value, ok := m.bindMapping[fullName]
-	return value, ok
+	value, ok = m.bindMapping[fullName]
+	return
 }
 
 func (m *variableBind) binds() map[string]JSValue {
@@ -96,8 +88,6 @@ func (m *variableBind) bindCount() int {
 // # Go 和 javaScript 的函数或变量绑定声明初始函数
 //
 // 在 javaScript 中调用Go中的（函数,变量）需要在此回调函数中绑定
-//
-// 主进程和子进程
 func (m *variableBind) VariableCreateCallback(callback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)) {
 	m.initBindVariableCallback = callback
 }
@@ -111,7 +101,7 @@ func (m *variableBind) callVariableBind(browser *ICefBrowser, frame *ICefFrame) 
 	}
 }
 
-// NewString V8Value
+// NewString V8Value 通用类型, 默认 string
 func (m *variableBind) NewString(name, value string) *JSString {
 	jsValueBind := new(JSString)
 	jsValueBind.valueType = new(VT)
@@ -123,7 +113,7 @@ func (m *variableBind) NewString(name, value string) *JSString {
 	return jsValueBind
 }
 
-// NewInteger V8Value
+// NewInteger V8Value 通用类型, 默认 integer
 func (m *variableBind) NewInteger(name string, value int32) *JSInteger {
 	jsValueBind := new(JSInteger)
 	jsValueBind.valueType = new(VT)
@@ -135,7 +125,7 @@ func (m *variableBind) NewInteger(name string, value int32) *JSInteger {
 	return jsValueBind
 }
 
-// NewDouble V8Value
+// NewDouble V8Value 通用类型, 默认 double
 func (m *variableBind) NewDouble(name string, value float64) *JSDouble {
 	jsValueBind := new(JSDouble)
 	jsValueBind.valueType = new(VT)
@@ -147,7 +137,7 @@ func (m *variableBind) NewDouble(name string, value float64) *JSDouble {
 	return jsValueBind
 }
 
-// NewBool V8Value
+// NewBoolean V8Value 通用类型, 默认 boolean
 func (m *variableBind) NewBoolean(name string, value bool) *JSBoolean {
 	jsValueBind := new(JSBoolean)
 	jsValueBind.valueType = new(VT)
@@ -159,7 +149,7 @@ func (m *variableBind) NewBoolean(name string, value bool) *JSBoolean {
 	return jsValueBind
 }
 
-// NewNull V8Value
+// NewNull V8Value 通用类型, 默认 null
 func (m *variableBind) NewNull(name string) *JSNull {
 	jsValueBind := new(JSNull)
 	jsValueBind.valueType = new(VT)
@@ -171,7 +161,7 @@ func (m *variableBind) NewNull(name string) *JSNull {
 	return jsValueBind
 }
 
-// NewUndefined V8Value
+// NewUndefined V8Value 通用类型, 默认 undefined
 func (m *variableBind) NewUndefined(name string) *JSUndefined {
 	jsValueBind := new(JSUndefined)
 	jsValueBind.valueType = new(VT)
@@ -184,8 +174,6 @@ func (m *variableBind) NewUndefined(name string) *JSUndefined {
 }
 
 // NewFunction V8Value
-//
-// 绑定 定义的普通函数 prefix default struct name
 func (m *variableBind) NewFunction(name string, fn interface{}) error {
 	if gov, _ := common.FieldReflectType(fn); gov == GO_VALUE_FUNC {
 		if info, err := checkFunc(reflect.TypeOf(fn), FN_TYPE_COMMON); err == nil {
@@ -208,7 +196,7 @@ func (m *variableBind) NewFunction(name string, fn interface{}) error {
 // V8Value bindValueHandle
 func (m *variableBind) bindValueHandle(jsValue JSValue) {
 	jsValue.setInstance(unsafe.Pointer(&jsValue))
-	jsValue.setEventId(uintptr(__bind_id()))
+	jsValue.setEventId(jsValue.Instance())
 	jsValue.setThat(jsValue)
 	m.addBind(jsValue.Name(), jsValue)
 }

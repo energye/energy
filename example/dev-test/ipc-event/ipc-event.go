@@ -66,8 +66,6 @@ func main() {
 		}
 	})
 
-	//cefApp.SetSingleProcess(true)
-	//cefApp.SetEnableGPU(true)
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
 		return "StringValue", 100000111, true
 	})
