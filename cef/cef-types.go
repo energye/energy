@@ -15,6 +15,7 @@ import (
 	. "github.com/energye/energy/consts"
 	. "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"time"
 	"unsafe"
 )
@@ -60,13 +61,13 @@ type TCefRequestContextSettings struct {
 
 func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 	return &tCefRequestContextSettingsPtr{
-		Size:                             m.Size.ToPtr(),
-		CachePath:                        m.CachePath.ToPtr(),
-		PersistSessionCookies:            m.PersistSessionCookies.ToPtr(),
-		PersistUserPreferences:           m.PersistUserPreferences.ToPtr(),
-		AcceptLanguageList:               m.AcceptLanguageList.ToPtr(),
-		CookieableSchemesList:            m.CookieableSchemesList.ToPtr(),
-		CookieableSchemesExcludeDefaults: m.CookieableSchemesExcludeDefaults.ToPtr(),
+		Size:                             uintptr(m.Size),
+		CachePath:                        api.PascalStr(string(m.CachePath)),
+		PersistSessionCookies:            uintptr(m.PersistSessionCookies),
+		PersistUserPreferences:           uintptr(m.PersistUserPreferences),
+		AcceptLanguageList:               api.PascalStr(string(m.AcceptLanguageList)),
+		CookieableSchemesList:            api.PascalStr(string(m.CookieableSchemesList)),
+		CookieableSchemesExcludeDefaults: uintptr(m.CookieableSchemesExcludeDefaults),
 	}
 }
 

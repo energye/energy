@@ -1,0 +1,264 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+//ValueConvert 值转换
+// 进程消息、V8Value、Go类型
+package cef
+
+import (
+	"errors"
+	"fmt"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/types"
+	"reflect"
+)
+
+//goValueToListValue GoValue 转换 ICefListValue
+func goValueToListValue(data []interface{}) (*ICefListValue, error) {
+	if data == nil {
+		return nil, errors.New("build process message error. Parameter null")
+	}
+	result := ListValueRef.New()
+	for i, value := range data {
+		var kind reflect.Kind
+		switch value.(type) {
+		case reflect.Type:
+			kind = value.(reflect.Type).Kind()
+		case reflect.Kind:
+			kind = value.(reflect.Kind)
+		default:
+			kind = reflect.TypeOf(value).Kind()
+		}
+		switch kind {
+		case reflect.String:
+			result.SetString(types.NativeUInt(i), value.(string))
+		case reflect.Int:
+			result.SetInt(types.NativeUInt(i), int32(value.(int)))
+		case reflect.Int8:
+			result.SetInt(types.NativeUInt(i), int32(value.(int8)))
+		case reflect.Int16:
+			result.SetInt(types.NativeUInt(i), int32(value.(int16)))
+		case reflect.Int32:
+			result.SetInt(types.NativeUInt(i), value.(int32))
+		case reflect.Int64:
+			result.SetString(types.NativeUInt(i), fmt.Sprintf("%d", value.(int64)))
+		case reflect.Uint:
+			result.SetInt(types.NativeUInt(i), value.(int32))
+		case reflect.Uint8:
+			result.SetInt(types.NativeUInt(i), int32(value.(uint8)))
+		case reflect.Uint16:
+			result.SetInt(types.NativeUInt(i), int32(value.(uint16)))
+		case reflect.Uint32:
+			result.SetInt(types.NativeUInt(i), int32(value.(uint32)))
+		case reflect.Uint64:
+			result.SetString(types.NativeUInt(i), fmt.Sprintf("%d", value.(uint64)))
+		case reflect.Float32:
+			result.SetDouble(types.NativeUInt(i), float64(value.(float32)))
+		case reflect.Float64:
+			result.SetDouble(types.NativeUInt(i), value.(float64))
+		case reflect.Bool:
+			result.SetBool(types.NativeUInt(i), value.(bool))
+		case reflect.Struct: // object
+		case reflect.Slice: // array
+		case reflect.Map: // object
+		default:
+			result.SetNull(types.NativeUInt(i))
+		}
+	}
+	return result, nil
+}
+
+//listValueToV8Value ICefListValue 转换 ICefV8Value
+func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
+	if list == nil {
+		return nil, errors.New("build v8 value error. Parameter null")
+	}
+	size := int(list.Size())
+	result := V8ValueRef.NewArray(int32(size))
+	for i := 0; i < size; i++ {
+		value := list.GetValue(types.NativeUInt(i))
+		var newValue *ICefV8Value
+		switch value.GetType() {
+		case consts.VTYPE_NULL:
+			newValue = V8ValueRef.NewNull()
+		case consts.VTYPE_BOOL:
+			newValue = V8ValueRef.NewBool(value.GetBool())
+		case consts.VTYPE_INT:
+			newValue = V8ValueRef.NewInt(value.GetInt())
+		case consts.VTYPE_DOUBLE:
+			newValue = V8ValueRef.NewDouble(value.GetDouble())
+		case consts.VTYPE_STRING:
+			newValue = V8ValueRef.NewString(value.GetString())
+		case consts.VTYPE_BINARY: // []byte
+		case consts.VTYPE_DICTIONARY: // Object
+			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
+				newValue = v
+			}
+		case consts.VTYPE_LIST: // Array
+			if v, err := listValueToV8Value(value.GetList()); err == nil {
+				newValue = v
+			}
+		}
+		if newValue != nil {
+			result.SetValueByIndex(int32(i), newValue)
+		}
+	}
+	return result, nil
+}
+
+//dictionaryValueToV8Value ICefDictionaryValue 转换 ICefV8Value
+func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, error) {
+	if dictionary == nil {
+		return nil, errors.New("build v8 value error. Parameter null")
+	}
+	keys := dictionary.GetKeys()
+	//bindSubObjectAccessor := V8AccessorRef.New()
+	//bindSubObjectAccessor.Get(ctx.bindSubObjectGet)
+	//bindSubObjectAccessor.Set(ctx.bindSubObjectSet)
+	result := V8ValueRef.NewObject(nil)
+	for i := 0; i < keys.Count(); i++ {
+		key := keys.Get(i)
+		value := dictionary.GetValue(key)
+		var newValue *ICefV8Value
+		switch value.GetType() {
+		case consts.VTYPE_NULL:
+			newValue = V8ValueRef.NewNull()
+		case consts.VTYPE_BOOL:
+			newValue = V8ValueRef.NewBool(value.GetBool())
+		case consts.VTYPE_INT:
+			newValue = V8ValueRef.NewInt(value.GetInt())
+		case consts.VTYPE_DOUBLE:
+			newValue = V8ValueRef.NewDouble(value.GetDouble())
+		case consts.VTYPE_STRING:
+			newValue = V8ValueRef.NewString(value.GetString())
+		case consts.VTYPE_BINARY: // []byte
+		case consts.VTYPE_DICTIONARY: // Object
+			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
+				newValue = v
+			}
+		case consts.VTYPE_LIST: // Array
+			if v, err := listValueToV8Value(value.GetList()); err == nil {
+				newValue = v
+			}
+		}
+		if newValue != nil {
+			result.setValueByAccessor(key, consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			result.setValueByKey(key, newValue, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		}
+	}
+	return result, nil
+}
+
+// v8ValueToProcessMessage ICefV8Value 转换 ICefListValue
+func v8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
+	if v8value == nil {
+		return nil, errors.New("build process message error. Parameter null")
+	}
+	if v8value.IsArray() {
+		return v8valueArrayEncode(v8value)
+	} else if v8value.IsObject() {
+		if v, err := v8valueObjectEncode(v8value); err == nil {
+			arrayValue := ListValueRef.New()
+			arrayValue.SetDictionary(types.NativeUInt(0), v)
+			return arrayValue, nil
+		} else {
+			return nil, err
+		}
+	} else {
+		arrayValue := ListValueRef.New()
+		if v8value.IsString() {
+			arrayValue.SetString(types.NativeUInt(0), v8value.GetStringValue())
+		} else if v8value.IsInt() {
+			arrayValue.SetInt(types.NativeUInt(0), v8value.GetIntValue())
+		} else if v8value.IsUInt() {
+			arrayValue.SetInt(types.NativeUInt(0), int32(v8value.GetUIntValue()))
+		} else if v8value.IsDouble() {
+			arrayValue.SetDouble(types.NativeUInt(0), v8value.GetDoubleValue())
+		} else if v8value.IsBool() {
+			arrayValue.SetBool(types.NativeUInt(0), v8value.GetBoolValue())
+		} else {
+			arrayValue.SetNull(types.NativeUInt(0))
+		}
+		return arrayValue, nil
+	}
+}
+
+// v8valueArrayEncode ICefV8Value 转换 ICefListValue
+func v8valueArrayEncode(v8value *ICefV8Value) (*ICefListValue, error) {
+	if !v8value.IsArray() {
+		return nil, errors.New("build process message error. Please pass in the array type")
+	}
+	arrayValue := ListValueRef.New()
+	argsLen := v8value.GetArrayLength()
+	for i := 0; i < argsLen; i++ {
+		args := v8value.GetValueByIndex(i)
+		if args.IsString() {
+			arrayValue.SetString(types.NativeUInt(i), args.GetStringValue())
+		} else if args.IsInt() {
+			arrayValue.SetInt(types.NativeUInt(i), args.GetIntValue())
+		} else if args.IsUInt() {
+			arrayValue.SetInt(types.NativeUInt(i), int32(args.GetUIntValue()))
+		} else if args.IsDouble() {
+			arrayValue.SetDouble(types.NativeUInt(i), args.GetDoubleValue())
+		} else if args.IsBool() {
+			arrayValue.SetBool(types.NativeUInt(i), args.GetBoolValue())
+		} else if args.IsNull() || args.IsUndefined() {
+			arrayValue.SetNull(types.NativeUInt(i))
+		} else if args.IsArray() {
+			if v, err := v8valueArrayEncode(args); err == nil {
+				arrayValue.SetList(types.NativeUInt(i), v)
+			}
+		} else if args.IsObject() {
+			if v, err := v8valueObjectEncode(args); err == nil {
+				arrayValue.SetDictionary(types.NativeUInt(i), v)
+			}
+		} else {
+			arrayValue.SetNull(types.NativeUInt(i))
+		}
+	}
+	return arrayValue, nil
+}
+
+// v8valueObjectEncode ICefV8Value 转换 ICefDictionaryValue
+func v8valueObjectEncode(v8value *ICefV8Value) (*ICefDictionaryValue, error) {
+	if !v8value.IsObject() {
+		return nil, errors.New("build process message error. Please pass in the object type")
+	}
+	dictionaryValue := DictionaryValueRef.New()
+	keys := v8value.GetKeys()
+	for i := 0; i < keys.Count(); i++ {
+		key := keys.Get(i)
+		args := v8value.GetValueByKey(key)
+		if args.IsString() {
+			dictionaryValue.SetString(key, args.GetStringValue())
+		} else if args.IsInt() {
+			dictionaryValue.SetInt(key, args.GetIntValue())
+		} else if args.IsUInt() {
+			dictionaryValue.SetInt(key, int32(args.GetUIntValue()))
+		} else if args.IsDouble() {
+			dictionaryValue.SetDouble(key, args.GetDoubleValue())
+		} else if args.IsBool() {
+			dictionaryValue.SetBool(key, args.GetBoolValue())
+		} else if args.IsNull() || args.IsUndefined() {
+			dictionaryValue.SetNull(key)
+		} else if args.IsArray() {
+			if v, err := v8valueArrayEncode(args); err == nil {
+				dictionaryValue.SetList(key, v)
+			}
+		} else if args.IsObject() {
+			if v, err := v8valueObjectEncode(args); err == nil {
+				dictionaryValue.SetDictionary(key, v)
+			}
+		} else {
+			dictionaryValue.SetNull(key)
+		}
+	}
+	return dictionaryValue, nil
+}

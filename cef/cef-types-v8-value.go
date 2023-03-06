@@ -567,6 +567,13 @@ func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
 	m.arguments = uintptr(m.instance)
 }
 
+func (m *TCefV8ValueArray) Set(value []*ICefV8Value) {
+	m.argumentsCollect = value
+	m.argumentsLength = len(value)
+	m.instance = unsafe.Pointer(m.argumentsCollect[0].Instance())
+	m.arguments = uintptr(m.instance)
+}
+
 // V8ValueRef -> ICefV8Value
 var V8ValueRef cefV8Value
 

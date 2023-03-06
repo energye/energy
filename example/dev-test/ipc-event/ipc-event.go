@@ -64,7 +64,7 @@ func main() {
 				value.GetIArray()
 			}
 		}
-		context.Result("asdfsadf", 123123, true)
+		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

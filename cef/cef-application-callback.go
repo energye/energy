@@ -81,22 +81,21 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	result = true
 	if message.Name() == internalProcessMessageIPCEmitReply {
 		messageId := message.ArgumentList().GetString(0)
-		fmt.Println("messageId", messageId)
 		if v, err := strconv.Atoi(messageId); err == nil {
 			callback := ctx.getIPCCallback(uintptr(v))
 			if callback.context.Enter() {
-				args := V8ValueArrayRef.New()
-				args.Add(V8ValueRef.NewString("结果"))
-				args.Add(V8ValueRef.NewDouble(10000.999))
-				args.Add(V8ValueRef.NewString("结果"))
-				args.Add(V8ValueRef.NewBool(true))
-				fmt.Println("返回结果", args.Size())
-				callback.function.ExecuteFunctionWithContext(callback.context, nil, args)
+				if v, err := listValueToV8Value(message.ArgumentList().GetList(1)); err == nil {
+					resultArgs := V8ValueArrayRef.New()
+					for i := 0; i < v.GetArrayLength(); i++ {
+						resultArgs.Add(v.GetValueByIndex(i))
+					}
+					callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
+					resultArgs.Free()
+				}
 				callback.context.Exit()
 			}
 			ctx.removeIPCCallback(uintptr(v))
 		}
-
 	}
 	return
 }
@@ -134,10 +133,14 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args, isCallback)
 	eventCallback(ipcContext)
 	if isCallback {
-		result := ipcContext.Replay().Result()
-		fmt.Println("result:", result)
+		replay := ipcContext.Replay()
 		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 		replyMessage.ArgumentList().SetString(0, messageId)
+		if argsList, err := goValueToListValue(replay.Result()); err == nil {
+			replyMessage.ArgumentList().SetList(1, argsList)
+		} else {
+			replyMessage.ArgumentList().SetList(1, ListValueRef.New())
+		}
 		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
 		replyMessage.Free()
 	}
@@ -211,11 +214,11 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		if emitArgs != nil {
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
-			args := ListValueRef.New()
 			defer func() {
 				ipcEmitMessage.Free()
 			}()
-			if err := m.buildProcessMessageByV8ValueArray(args, emitArgs); err != nil {
+			args, err := v8ValueToProcessMessage(emitArgs)
+			if err != nil {
 				return
 			}
 			v8ctx := V8ContextRef.Current()
@@ -240,8 +243,8 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 	return
 }
 
-//buildProcessMessageByV8ValueArray 使V8ValueArray构建进程消息
-func (m *contextCreate) buildProcessMessageByV8ValueArray(argumentList *ICefListValue, v8valueArray *ICefV8Value) error {
+//buildV8ArrayValueToListValue V8Value 转换 ListValue
+func (m *contextCreate) buildV8ArrayValueToListValue(argumentList *ICefListValue, v8valueArray *ICefV8Value) error {
 	if !v8valueArray.IsArray() {
 		return errors.New("build process message error. Please pass in the array type")
 	}
@@ -262,11 +265,11 @@ func (m *contextCreate) buildProcessMessageByV8ValueArray(argumentList *ICefList
 			argumentList.SetNull(types.NativeUInt(i))
 		} else if args.IsArray() {
 			arrayValue := ListValueRef.New()
-			m.buildProcessMessageByV8ValueArray(arrayValue, args)
+			_ = m.buildV8ArrayValueToListValue(arrayValue, args)
 			argumentList.SetList(types.NativeUInt(i), arrayValue)
 		} else if args.IsObject() {
 			objectValue := DictionaryValueRef.New()
-			m.buildProcessMessageByV8ValueObject(objectValue, args)
+			_ = m.buildV8ObjectValueToDictionaryValue(objectValue, args)
 			argumentList.SetDictionary(types.NativeUInt(i), objectValue)
 		} else {
 			argumentList.SetNull(types.NativeUInt(i))
@@ -275,8 +278,8 @@ func (m *contextCreate) buildProcessMessageByV8ValueArray(argumentList *ICefList
 	return nil
 }
 
-//buildProcessMessageByV8ValueObject 使V8ValueObject构建进程消息
-func (m *contextCreate) buildProcessMessageByV8ValueObject(object *ICefDictionaryValue, v8valueObject *ICefV8Value) error {
+//buildV8ObjectValueToDictionaryValue V8Value 转换 DictionaryValue
+func (m *contextCreate) buildV8ObjectValueToDictionaryValue(object *ICefDictionaryValue, v8valueObject *ICefV8Value) error {
 	if !v8valueObject.IsObject() {
 		return errors.New("build process message error. Please pass in the object type")
 	}
@@ -298,11 +301,11 @@ func (m *contextCreate) buildProcessMessageByV8ValueObject(object *ICefDictionar
 			object.SetNull(key)
 		} else if args.IsArray() {
 			arrayValue := ListValueRef.New()
-			m.buildProcessMessageByV8ValueArray(arrayValue, args)
+			_ = m.buildV8ArrayValueToListValue(arrayValue, args)
 			object.SetList(key, arrayValue)
 		} else if args.IsObject() {
 			objectValue := DictionaryValueRef.New()
-			m.buildProcessMessageByV8ValueObject(objectValue, args)
+			_ = m.buildV8ObjectValueToDictionaryValue(objectValue, args)
 			object.SetDictionary(key, objectValue)
 		} else {
 			object.SetNull(key)
