@@ -467,11 +467,15 @@ func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
 
 func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	var args = make([]uintptr, arguments.Size(), arguments.Size())
-	for i, a := range arguments.argumentsCollect {
-		args[i] = a.Instance()
+	var ptr uintptr
+	if arguments.Size() > 0 {
+		var args = make([]uintptr, arguments.Size(), arguments.Size())
+		for i, a := range arguments.argumentsCollect {
+			args[i] = a.Instance()
+		}
+		ptr = uintptr(unsafe.Pointer(&args[0]))
 	}
-	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&args[0])), uintptr(int32(arguments.Size())))
+	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), ptr, uintptr(int32(arguments.Size())))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
@@ -479,11 +483,15 @@ func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueAr
 
 func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
 	var result uintptr
-	var args = make([]uintptr, arguments.Size(), arguments.Size())
-	for i, a := range arguments.argumentsCollect {
-		args[i] = a.Instance()
+	var ptr uintptr
+	if arguments.Size() > 0 {
+		var args = make([]uintptr, arguments.Size(), arguments.Size())
+		for i, a := range arguments.argumentsCollect {
+			args[i] = a.Instance()
+		}
+		ptr = uintptr(unsafe.Pointer(&args[0]))
 	}
-	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&args[0])), uintptr(int32(arguments.Size())))
+	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), ptr, uintptr(int32(arguments.Size())))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}

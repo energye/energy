@@ -64,7 +64,10 @@ func main() {
 				value.GetIArray()
 			}
 		}
-		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669)
+		var bytArr = make([]byte, 1024, 1024)
+		var strarr = make([]*src.StructVarDemo, 1024, 1024)
+		var strarr2 = make([]src.StructVarDemo, 1024, 1024)
+		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669, bytArr, strarr, strarr2)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
