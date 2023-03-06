@@ -16,11 +16,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/types"
 	"reflect"
 )
 
-func goValueConvert(result *ICefListValue, i types.NativeUInt, value interface{}) {
+func goValueConvert(result *ICefListValue, i uint32, value interface{}) {
 	switch value.(type) {
 	case bool:
 		result.SetBool(i, value.(bool))
@@ -63,125 +62,147 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 	var result = ListValueRef.New()
 
 	for i, value := range data {
+		if value == nil {
+			result.SetNull(uint32(i))
+			continue
+		}
 		var typeOf = reflect.TypeOf(value)
 		switch typeOf.Kind() {
-		case reflect.Struct: // object
-			fmt.Println("goValueToListValue Struct")
 		case reflect.Slice: // array
 			fmt.Println("goValueToListValue Slice")
 			switch value.(type) {
 			case []bool:
 				var list = ListValueRef.New()
 				for i, v := range value.([]bool) {
-					list.SetBool(types.NativeUInt(i), v)
+					list.SetBool(uint32(i), v)
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []float32:
 				var list = ListValueRef.New()
 				for i, v := range value.([]float32) {
-					list.SetDouble(types.NativeUInt(i), float64(v))
+					list.SetDouble(uint32(i), float64(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []float64:
 				var list = ListValueRef.New()
 				for i, v := range value.([]float64) {
-					list.SetDouble(types.NativeUInt(i), v)
+					list.SetDouble(uint32(i), v)
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []string:
 				var list = ListValueRef.New()
 				for i, v := range value.([]string) {
-					list.SetString(types.NativeUInt(i), v)
+					list.SetString(uint32(i), v)
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []int:
 				var list = ListValueRef.New()
 				for i, v := range value.([]int) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []int8:
 				var list = ListValueRef.New()
 				for i, v := range value.([]int8) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []int16:
 				var list = ListValueRef.New()
 				for i, v := range value.([]int16) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []int32:
 				var list = ListValueRef.New()
 				for i, v := range value.([]int32) {
-					list.SetInt(types.NativeUInt(i), v)
+					list.SetInt(uint32(i), v)
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []int64:
 				var list = ListValueRef.New()
 				for i, v := range value.([]int64) {
-					list.SetString(types.NativeUInt(i), fmt.Sprintf("%d", v))
+					list.SetString(uint32(i), fmt.Sprintf("%d", v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []uint:
 				var list = ListValueRef.New()
 				for i, v := range value.([]uint) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []uint8:
 				BinaryValueRef.New(value.([]byte))
-				result.SetBinary(types.NativeUInt(i), BinaryValueRef.New(value.([]byte)))
+				result.SetBinary(uint32(i), BinaryValueRef.New(value.([]byte)))
 			case []uint16:
 				var list = ListValueRef.New()
 				for i, v := range value.([]uint16) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []uint32:
 				var list = ListValueRef.New()
 				for i, v := range value.([]uint32) {
-					list.SetInt(types.NativeUInt(i), int32(v))
+					list.SetInt(uint32(i), int32(v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []uint64:
 				var list = ListValueRef.New()
 				for i, v := range value.([]uint64) {
-					list.SetString(types.NativeUInt(i), fmt.Sprintf("%d", v))
+					list.SetString(uint32(i), fmt.Sprintf("%d", v))
 				}
-				result.SetList(types.NativeUInt(i), list)
+				result.SetList(uint32(i), list)
 			case []interface{}:
 				if v, err := goValueToListValue(value.([]interface{})); err == nil {
-					result.SetList(types.NativeUInt(i), v)
+					result.SetList(uint32(i), v)
 				} else {
-					result.SetList(types.NativeUInt(i), ListValueRef.New())
+					result.SetList(uint32(i), ListValueRef.New())
 				}
 			default:
-				fmt.Println("goValueToListValue []struct")
+				sliceTypeOf := typeOf.Elem()
+				sliceKind := sliceTypeOf.Kind()
+				fmt.Println("sliceTypeOf", sliceTypeOf.Kind())
+				if sliceKind == reflect.Ptr {
+					sliceTypeOf = sliceTypeOf.Elem()
+				}
+				fmt.Println("\t", sliceTypeOf.Kind())
+				rv := reflect.ValueOf(value)
+				if sliceTypeOf.Kind() == reflect.Struct {
+					sliceListValue := ListValueRef.New()
+					for i := 0; i < rv.Len(); i++ {
+						sliceListValue.SetDictionary(uint32(i), goStructValueToDictionaryValue(rv.Index(i)))
+					}
+					fmt.Println("\t\tStruct len:", rv.Len())
+					result.SetList(uint32(i), sliceListValue)
+				} else if sliceTypeOf.Kind() == reflect.Map {
+					fmt.Println("\t\tMap len:", rv.Len())
+				} else {
+					result.SetList(uint32(i), ListValueRef.New())
+				}
 			}
 		case reflect.Map: // object
 			fmt.Println("goValueToListValue Map")
+		case reflect.Struct: // object
+			fmt.Println("goValueToListValue Struct")
 		default:
 			fmt.Println("goValueToListValue default", value)
-			goValueConvert(result, types.NativeUInt(i), value)
+			goValueConvert(result, uint32(i), value)
 		}
 	}
 	return result, nil
 }
 
-//goSliceValueToListValue GoStructValue 转换 ICefDictionaryValue
-func goSliceValueToListValue(data []interface{}) *ICefListValue {
-	result := ListValueRef.New()
-	for i, value := range data {
-		goValueConvert(result, types.NativeUInt(i), value)
+// goStructValueToDictionaryValue Go结构转字典
+func goStructValueToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
+	rt := rv.Type()
+	if rt.Kind() == reflect.Ptr {
+		rt = rt.Elem()
 	}
-	return result
-}
+	result := DictionaryValueRef.New()
+	nf := rt.NumField()
+	fmt.Println("nf", nf)
 
-//goStructValueToListValue GoStructValue 转换 ICefDictionaryValue
-func goStructValueToListValue(data []interface{}) (*ICefDictionaryValue, error) {
-	return nil, nil
+	return result
 }
 
 //listValueToV8Value ICefListValue 转换 ICefV8Value
@@ -192,7 +213,7 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	size := int(list.Size())
 	result := V8ValueRef.NewArray(int32(size))
 	for i := 0; i < size; i++ {
-		value := list.GetValue(types.NativeUInt(i))
+		value := list.GetValue(uint32(i))
 		var newValue *ICefV8Value
 		switch value.GetType() {
 		case consts.VTYPE_NULL:
@@ -276,7 +297,7 @@ func v8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 	} else if v8value.IsObject() {
 		if v, err := v8valueObjectEncode(v8value); err == nil {
 			arrayValue := ListValueRef.New()
-			arrayValue.SetDictionary(types.NativeUInt(0), v)
+			arrayValue.SetDictionary(uint32(0), v)
 			return arrayValue, nil
 		} else {
 			return nil, err
@@ -284,17 +305,17 @@ func v8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 	} else {
 		arrayValue := ListValueRef.New()
 		if v8value.IsString() {
-			arrayValue.SetString(types.NativeUInt(0), v8value.GetStringValue())
+			arrayValue.SetString(uint32(0), v8value.GetStringValue())
 		} else if v8value.IsInt() {
-			arrayValue.SetInt(types.NativeUInt(0), v8value.GetIntValue())
+			arrayValue.SetInt(uint32(0), v8value.GetIntValue())
 		} else if v8value.IsUInt() {
-			arrayValue.SetInt(types.NativeUInt(0), int32(v8value.GetUIntValue()))
+			arrayValue.SetInt(uint32(0), int32(v8value.GetUIntValue()))
 		} else if v8value.IsDouble() {
-			arrayValue.SetDouble(types.NativeUInt(0), v8value.GetDoubleValue())
+			arrayValue.SetDouble(uint32(0), v8value.GetDoubleValue())
 		} else if v8value.IsBool() {
-			arrayValue.SetBool(types.NativeUInt(0), v8value.GetBoolValue())
+			arrayValue.SetBool(uint32(0), v8value.GetBoolValue())
 		} else {
-			arrayValue.SetNull(types.NativeUInt(0))
+			arrayValue.SetNull(uint32(0))
 		}
 		return arrayValue, nil
 	}
@@ -310,27 +331,27 @@ func v8valueArrayEncode(v8value *ICefV8Value) (*ICefListValue, error) {
 	for i := 0; i < argsLen; i++ {
 		args := v8value.GetValueByIndex(i)
 		if args.IsString() {
-			arrayValue.SetString(types.NativeUInt(i), args.GetStringValue())
+			arrayValue.SetString(uint32(i), args.GetStringValue())
 		} else if args.IsInt() {
-			arrayValue.SetInt(types.NativeUInt(i), args.GetIntValue())
+			arrayValue.SetInt(uint32(i), args.GetIntValue())
 		} else if args.IsUInt() {
-			arrayValue.SetInt(types.NativeUInt(i), int32(args.GetUIntValue()))
+			arrayValue.SetInt(uint32(i), int32(args.GetUIntValue()))
 		} else if args.IsDouble() {
-			arrayValue.SetDouble(types.NativeUInt(i), args.GetDoubleValue())
+			arrayValue.SetDouble(uint32(i), args.GetDoubleValue())
 		} else if args.IsBool() {
-			arrayValue.SetBool(types.NativeUInt(i), args.GetBoolValue())
+			arrayValue.SetBool(uint32(i), args.GetBoolValue())
 		} else if args.IsNull() || args.IsUndefined() {
-			arrayValue.SetNull(types.NativeUInt(i))
+			arrayValue.SetNull(uint32(i))
 		} else if args.IsArray() {
 			if v, err := v8valueArrayEncode(args); err == nil {
-				arrayValue.SetList(types.NativeUInt(i), v)
+				arrayValue.SetList(uint32(i), v)
 			}
 		} else if args.IsObject() {
 			if v, err := v8valueObjectEncode(args); err == nil {
-				arrayValue.SetDictionary(types.NativeUInt(i), v)
+				arrayValue.SetDictionary(uint32(i), v)
 			}
 		} else {
-			arrayValue.SetNull(types.NativeUInt(i))
+			arrayValue.SetNull(uint32(i))
 		}
 	}
 	return arrayValue, nil

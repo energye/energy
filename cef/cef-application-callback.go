@@ -18,7 +18,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/types"
 	"strconv"
 	"unsafe"
 )
@@ -252,27 +251,27 @@ func (m *contextCreate) buildV8ArrayValueToListValue(argumentList *ICefListValue
 	for i := 0; i < argsLen; i++ {
 		args := v8valueArray.GetValueByIndex(i)
 		if args.IsString() {
-			argumentList.SetString(types.NativeUInt(i), args.GetStringValue())
+			argumentList.SetString(uint32(i), args.GetStringValue())
 		} else if args.IsInt() {
-			argumentList.SetInt(types.NativeUInt(i), args.GetIntValue())
+			argumentList.SetInt(uint32(i), args.GetIntValue())
 		} else if args.IsUInt() {
-			argumentList.SetInt(types.NativeUInt(i), int32(args.GetUIntValue()))
+			argumentList.SetInt(uint32(i), int32(args.GetUIntValue()))
 		} else if args.IsDouble() {
-			argumentList.SetDouble(types.NativeUInt(i), args.GetDoubleValue())
+			argumentList.SetDouble(uint32(i), args.GetDoubleValue())
 		} else if args.IsBool() {
-			argumentList.SetBool(types.NativeUInt(i), args.GetBoolValue())
+			argumentList.SetBool(uint32(i), args.GetBoolValue())
 		} else if args.IsNull() || args.IsUndefined() {
-			argumentList.SetNull(types.NativeUInt(i))
+			argumentList.SetNull(uint32(i))
 		} else if args.IsArray() {
 			arrayValue := ListValueRef.New()
 			_ = m.buildV8ArrayValueToListValue(arrayValue, args)
-			argumentList.SetList(types.NativeUInt(i), arrayValue)
+			argumentList.SetList(uint32(i), arrayValue)
 		} else if args.IsObject() {
 			objectValue := DictionaryValueRef.New()
 			_ = m.buildV8ObjectValueToDictionaryValue(objectValue, args)
-			argumentList.SetDictionary(types.NativeUInt(i), objectValue)
+			argumentList.SetDictionary(uint32(i), objectValue)
 		} else {
-			argumentList.SetNull(types.NativeUInt(i))
+			argumentList.SetNull(uint32(i))
 		}
 	}
 	return nil

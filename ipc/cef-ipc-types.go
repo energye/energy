@@ -12,25 +12,24 @@ package ipc
 
 import (
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/types"
 )
 
 type IArrayValue interface {
 	Size() uint32
-	GetType(index types.NativeUInt) consts.TCefValueType
-	GetBool(index types.NativeUInt) bool
-	GetInt(index types.NativeUInt) int32
-	GetDouble(index types.NativeUInt) (result float64)
-	GetString(index types.NativeUInt) string
-	GetIValue(index types.NativeUInt) IValue
-	GetIBinary(index types.NativeUInt) IBinaryValue
-	GetIObject(index types.NativeUInt) IObjectValue
-	GetIArray(index types.NativeUInt) IArrayValue
+	GetType(index uint32) consts.TCefValueType
+	GetBool(index uint32) bool
+	GetInt(index uint32) int32
+	GetDouble(index uint32) (result float64)
+	GetString(index uint32) string
+	GetIValue(index uint32) IValue
+	GetIBinary(index uint32) IBinaryValue
+	GetIObject(index uint32) IObjectValue
+	GetIArray(index uint32) IArrayValue
 }
 
 type IBinaryValue interface {
 	GetSize() uint32
-	GetData(buffer []byte, dataOffset types.NativeUInt) uint32
+	GetData(buffer []byte, dataOffset uint32) uint32
 }
 
 type IObjectValue interface {

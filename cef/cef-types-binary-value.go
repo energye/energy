@@ -19,7 +19,6 @@ package cef
 
 import (
 	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -87,7 +86,7 @@ func (m *ICefBinaryValue) GetSize() uint32 {
 	return uint32(r1)
 }
 
-func (m *ICefBinaryValue) GetData(buffer []byte, dataOffset types.NativeUInt) uint32 {
-	r1, _, _ := imports.Proc(internale_CefBinaryValue_GetData).Call(m.Instance(), uintptr(unsafe.Pointer(&buffer[0])), uintptr(uint32(len(buffer))), dataOffset.ToPtr())
+func (m *ICefBinaryValue) GetData(buffer []byte, dataOffset uint32) uint32 {
+	r1, _, _ := imports.Proc(internale_CefBinaryValue_GetData).Call(m.Instance(), uintptr(unsafe.Pointer(&buffer[0])), uintptr(uint32(len(buffer))), uintptr(dataOffset))
 	return uint32(r1)
 }

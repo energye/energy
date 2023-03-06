@@ -15,7 +15,6 @@ import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -72,8 +71,8 @@ func (m *ICefListValue) Copy() *ICefListValue {
 	}
 }
 
-func (m *ICefListValue) SetSize(size types.NativeUInt) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetSize).Call(m.Instance(), size.ToPtr())
+func (m *ICefListValue) SetSize(size uint32) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetSize).Call(m.Instance(), uintptr(size))
 	return api.GoBool(r1)
 }
 
@@ -87,126 +86,126 @@ func (m *ICefListValue) Clear() bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) Remove(index types.NativeUInt) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_Remove).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) Remove(index uint32) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_Remove).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) GetType(index types.NativeUInt) consts.TCefValueType {
-	r1, _, _ := imports.Proc(internale_CefListValue_GetType).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) GetType(index uint32) consts.TCefValueType {
+	r1, _, _ := imports.Proc(internale_CefListValue_GetType).Call(m.Instance(), uintptr(index))
 	return consts.TCefValueType(r1)
 }
 
-func (m *ICefListValue) GetValue(index types.NativeUInt) *ICefValue {
+func (m *ICefListValue) GetValue(index uint32) *ICefValue {
 	var result uintptr
-	imports.Proc(internale_CefListValue_GetValue).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefListValue_GetValue).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return &ICefValue{
 		instance: unsafe.Pointer(result),
 	}
 }
 
-func (m *ICefListValue) GetIValue(index types.NativeUInt) ipc.IValue {
+func (m *ICefListValue) GetIValue(index uint32) ipc.IValue {
 	return m.GetValue(index)
 }
 
-func (m *ICefListValue) GetBool(index types.NativeUInt) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_GetBool).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) GetBool(index uint32) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_GetBool).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) GetInt(index types.NativeUInt) int32 {
-	r1, _, _ := imports.Proc(internale_CefListValue_GetInt).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) GetInt(index uint32) int32 {
+	r1, _, _ := imports.Proc(internale_CefListValue_GetInt).Call(m.Instance(), uintptr(index))
 	return int32(r1)
 }
 
-func (m *ICefListValue) GetDouble(index types.NativeUInt) (result float64) {
-	imports.Proc(internale_CefListValue_GetDouble).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
+func (m *ICefListValue) GetDouble(index uint32) (result float64) {
+	imports.Proc(internale_CefListValue_GetDouble).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
-func (m *ICefListValue) GetString(index types.NativeUInt) string {
-	r1, _, _ := imports.Proc(internale_CefListValue_GetString).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) GetString(index uint32) string {
+	r1, _, _ := imports.Proc(internale_CefListValue_GetString).Call(m.Instance(), uintptr(index))
 	return api.GoStr(r1)
 }
 
-func (m *ICefListValue) GetBinary(index types.NativeUInt) *ICefBinaryValue {
+func (m *ICefListValue) GetBinary(index uint32) *ICefBinaryValue {
 	var result uintptr
-	imports.Proc(internale_CefListValue_GetBinary).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefListValue_GetBinary).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
 		instance: unsafe.Pointer(result),
 	}
 }
 
-func (m *ICefListValue) GetIBinary(index types.NativeUInt) ipc.IBinaryValue {
+func (m *ICefListValue) GetIBinary(index uint32) ipc.IBinaryValue {
 	return m.GetBinary(index)
 }
 
-func (m *ICefListValue) GetDictionary(index types.NativeUInt) *ICefDictionaryValue {
+func (m *ICefListValue) GetDictionary(index uint32) *ICefDictionaryValue {
 	var result uintptr
-	imports.Proc(internale_CefListValue_GetDictionary).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefListValue_GetDictionary).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
 		instance: unsafe.Pointer(result),
 	}
 }
 
-func (m *ICefListValue) GetIObject(index types.NativeUInt) ipc.IObjectValue {
+func (m *ICefListValue) GetIObject(index uint32) ipc.IObjectValue {
 	return m.GetDictionary(index)
 }
 
-func (m *ICefListValue) GetList(index types.NativeUInt) *ICefListValue {
+func (m *ICefListValue) GetList(index uint32) *ICefListValue {
 	var result uintptr
-	imports.Proc(internale_CefListValue_GetList).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefListValue_GetList).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
 }
 
-func (m *ICefListValue) GetIArray(index types.NativeUInt) ipc.IArrayValue {
+func (m *ICefListValue) GetIArray(index uint32) ipc.IArrayValue {
 	return m.GetList(index)
 }
 
-func (m *ICefListValue) SetValue(index types.NativeUInt, value *ICefValue) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetValue).Call(m.Instance(), index.ToPtr(), value.Instance())
+func (m *ICefListValue) SetValue(index uint32, value *ICefValue) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetValue).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetNull(index types.NativeUInt) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetNull).Call(m.Instance(), index.ToPtr())
+func (m *ICefListValue) SetNull(index uint32) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetNull).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetBool(index types.NativeUInt, value bool) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetBool).Call(m.Instance(), index.ToPtr(), api.PascalBool(value))
+func (m *ICefListValue) SetBool(index uint32, value bool) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetBool).Call(m.Instance(), uintptr(index), api.PascalBool(value))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetInt(index types.NativeUInt, value int32) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetInt).Call(m.Instance(), index.ToPtr(), uintptr(value))
+func (m *ICefListValue) SetInt(index uint32, value int32) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetInt).Call(m.Instance(), uintptr(index), uintptr(value))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetDouble(index types.NativeUInt, value float64) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetDouble).Call(m.Instance(), index.ToPtr(), uintptr(unsafe.Pointer(&value)))
+func (m *ICefListValue) SetDouble(index uint32, value float64) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetDouble).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&value)))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetString(index types.NativeUInt, value string) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetString).Call(m.Instance(), index.ToPtr(), api.PascalStr(value))
+func (m *ICefListValue) SetString(index uint32, value string) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetString).Call(m.Instance(), uintptr(index), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetBinary(index types.NativeUInt, value *ICefBinaryValue) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetBinary).Call(m.Instance(), index.ToPtr(), value.Instance())
+func (m *ICefListValue) SetBinary(index uint32, value *ICefBinaryValue) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetBinary).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetDictionary(index types.NativeUInt, value *ICefDictionaryValue) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetDictionary).Call(m.Instance(), index.ToPtr(), value.Instance())
+func (m *ICefListValue) SetDictionary(index uint32, value *ICefDictionaryValue) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetDictionary).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetList(index types.NativeUInt, value *ICefListValue) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetList).Call(m.Instance(), index.ToPtr(), value.Instance())
+func (m *ICefListValue) SetList(index uint32, value *ICefListValue) bool {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetList).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
 }
 

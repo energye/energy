@@ -8,7 +8,6 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/types"
 )
 
 //go:embed resources
@@ -41,7 +40,7 @@ func main() {
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
 		for i := 0; i < int(argument.Size()); i++ {
-			value := argument.GetIValue(types.NativeUInt(i))
+			value := argument.GetIValue(uint32(i))
 			fmt.Println("\tGetType:", i, value.GetType())
 			switch value.GetType() {
 			case consts.VTYPE_NULL:
@@ -64,10 +63,25 @@ func main() {
 				value.GetIArray()
 			}
 		}
-		var bytArr = make([]byte, 1024, 1024)
-		var strarr = make([]*src.StructVarDemo, 1024, 1024)
-		var strarr2 = make([]src.StructVarDemo, 1024, 1024)
-		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669, bytArr, strarr, strarr2)
+		var bytArr = make([]byte, 4, 4)
+		var strArr = make([]string, 3, 3)
+		strArr[0] = "数组值1"
+		strArr[1] = "数组值2"
+		strArr[2] = "数组值3"
+		var objArr = make([]*src.StructVarDemo, 4, 4)
+		var objArr2 = make([]src.StructVarDemo, 4, 4)
+		var objMap = map[string]interface{}{}
+		objMap["objArr"] = objArr
+		objMap["objArr2"] = objArr2
+		objMap["strValue"] = "stringValue"
+		objMap["intValue"] = 50000
+		objMap["strArr"] = strArr
+		var objMapArr = make([]map[string]interface{}, 3)
+		objMapArr[0] = objMap
+		objMapArr[1] = objMap
+		objMapArr[2] = objMap
+
+		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669, bytArr, objArr, objArr2, strArr, objMap, objMapArr)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
