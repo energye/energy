@@ -221,29 +221,37 @@ func goStructValueToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
 			ptr := unsafe.Pointer(fieldRt.Offset + ptrOffset)
 			switch fieldRt.Type.Kind() {
 			case reflect.String:
-				if valuePtr := (*string)(ptr); valuePtr != nil {
-					result.SetString(name, *valuePtr)
-				}
+				result.SetString(name, *(*string)(ptr))
 			case reflect.Bool:
+				result.SetBool(name, *(*bool)(ptr))
 			case reflect.Int:
-				if valuePtr := (*int)(ptr); valuePtr != nil {
-					result.SetInt(name, int32(*valuePtr))
-				}
+				result.SetInt(name, int32(*(*int)(ptr)))
 			case reflect.Int8:
+				result.SetInt(name, int32(*(*int8)(ptr)))
 			case reflect.Int16:
+				result.SetInt(name, int32(*(*int16)(ptr)))
 			case reflect.Int32:
-				if valuePtr := (*int32)(ptr); valuePtr != nil {
-					result.SetInt(name, *valuePtr)
-				}
+				result.SetInt(name, *(*int32)(ptr))
 			case reflect.Int64:
+				result.SetInt(name, int32(*(*int64)(ptr)))
 			case reflect.Uint:
+				result.SetInt(name, int32(*(*uint)(ptr)))
 			case reflect.Uint8:
+				result.SetInt(name, int32(*(*uint8)(ptr)))
 			case reflect.Uint16:
+				result.SetInt(name, int32(*(*uint16)(ptr)))
 			case reflect.Uint32:
+				result.SetInt(name, int32(*(*uint32)(ptr)))
 			case reflect.Uint64:
+				result.SetInt(name, int32(*(*uint64)(ptr)))
 			case reflect.Uintptr:
+				result.SetInt(name, int32(*(*uintptr)(ptr)))
 			case reflect.Float32:
+				result.SetDouble(name, float64(*(*float32)(ptr)))
 			case reflect.Float64:
+				result.SetDouble(name, *(*float64)(ptr))
+			default:
+				result.SetNull(name)
 			}
 		} else {
 			result.SetNull(name)
