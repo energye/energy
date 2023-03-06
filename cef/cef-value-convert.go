@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/consts"
 	"reflect"
+	"unsafe"
 )
 
 func goValueConvert(result *ICefListValue, i uint32, value interface{}) {
@@ -169,8 +170,12 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 				rv := reflect.ValueOf(value)
 				if sliceTypeOf.Kind() == reflect.Struct {
 					sliceListValue := ListValueRef.New()
-					for i := 0; i < rv.Len(); i++ {
-						sliceListValue.SetDictionary(uint32(i), goStructValueToDictionaryValue(rv.Index(i)))
+					for j := 0; j < rv.Len(); j++ {
+						if v := goStructValueToDictionaryValue(rv.Index(j)); v != nil {
+							sliceListValue.SetDictionary(uint32(j), v)
+						} else {
+							sliceListValue.SetNull(uint32(j))
+						}
 					}
 					fmt.Println("\t\tStruct len:", rv.Len())
 					result.SetList(uint32(i), sliceListValue)
@@ -192,16 +197,58 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 	return result, nil
 }
 
+type emptyInterface struct {
+	typ  *struct{}
+	word unsafe.Pointer
+}
+
 // goStructValueToDictionaryValue Go结构转字典
 func goStructValueToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
-	rt := rv.Type()
-	if rt.Kind() == reflect.Ptr {
-		rt = rt.Elem()
+	fmt.Println("goStructValueToDictionaryValue", rv.Kind())
+	//只能为指针，且不为空
+	if rv.Kind() != reflect.Ptr || rv.IsNil() {
+		return nil
 	}
+	var rt = rv.Type().Elem()
 	result := DictionaryValueRef.New()
 	nf := rt.NumField()
-	fmt.Println("nf", nf)
-
+	ei := rv.Interface()
+	ptrOffset := uintptr((*emptyInterface)(unsafe.Pointer(&ei)).word)
+	for i := 0; i < nf; i++ {
+		fieldRt := rt.Field(i)
+		name := fieldRt.Name
+		if fieldRt.IsExported() { //导出的字段
+			ptr := unsafe.Pointer(fieldRt.Offset + ptrOffset)
+			switch fieldRt.Type.Kind() {
+			case reflect.String:
+				if valuePtr := (*string)(ptr); valuePtr != nil {
+					result.SetString(name, *valuePtr)
+				}
+			case reflect.Bool:
+			case reflect.Int:
+				if valuePtr := (*int)(ptr); valuePtr != nil {
+					result.SetInt(name, int32(*valuePtr))
+				}
+			case reflect.Int8:
+			case reflect.Int16:
+			case reflect.Int32:
+				if valuePtr := (*int32)(ptr); valuePtr != nil {
+					result.SetInt(name, *valuePtr)
+				}
+			case reflect.Int64:
+			case reflect.Uint:
+			case reflect.Uint8:
+			case reflect.Uint16:
+			case reflect.Uint32:
+			case reflect.Uint64:
+			case reflect.Uintptr:
+			case reflect.Float32:
+			case reflect.Float64:
+			}
+		} else {
+			result.SetNull(name)
+		}
+	}
 	return result
 }
 

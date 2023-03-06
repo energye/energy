@@ -27,6 +27,9 @@
             let ok = ipc.emit("testEmitName", ["stringValue", 100+idx, true, 1999.66+idx, "字符串？", 29999.66+idx, objectValue, arrayValue, 8888888+idx, null, undefined],
                 function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10) {
                 msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10);
+                msg('testEmitName result6',  JSON.stringify( result6));
+                msg('testEmitName result7',  JSON.stringify( result7));
+                msg('testEmitName result8',  JSON.stringify( result8));
             });
             msg('ipc.emit ok?', ok);
 

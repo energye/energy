@@ -69,13 +69,18 @@ func main() {
 		strArr[1] = "数组值2"
 		strArr[2] = "数组值3"
 		var objArr = make([]*src.StructVarDemo, 4, 4)
+		objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
+		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99}
 		var objArr2 = make([]src.StructVarDemo, 4, 4)
+		objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
+		objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
 		var objMap = map[string]interface{}{}
 		objMap["objArr"] = objArr
-		objMap["objArr2"] = objArr2
+		//objMap["objArr2"] = objArr2
 		objMap["strValue"] = "stringValue"
 		objMap["intValue"] = 50000
 		objMap["strArr"] = strArr
+		objMap["bytArr"] = bytArr
 		var objMapArr = make([]map[string]interface{}, 3)
 		objMapArr[0] = objMap
 		objMapArr[1] = objMap
