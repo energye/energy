@@ -35,7 +35,8 @@ func init() {
 
 type IReplay interface {
 	Result() []interface{}
-	SetResult(data ...interface{})
+	SetResult(data []interface{})
+	Clear()
 }
 
 type Replay struct {
@@ -149,7 +150,7 @@ func (m *Context) Replay() IReplay {
 
 func (m *Context) Result(data ...interface{}) {
 	if m.replay != nil {
-		m.replay.SetResult(data...)
+		m.replay.SetResult(data)
 	}
 }
 
@@ -160,8 +161,15 @@ func (m *Replay) Result() []interface{} {
 	return m.data
 }
 
-func (m *Replay) SetResult(data ...interface{}) {
+func (m *Replay) SetResult(data []interface{}) {
 	if m != nil {
 		m.data = data
 	}
+}
+
+func (m *Replay) Clear() {
+	if m == nil {
+		return
+	}
+	m.data = nil
 }

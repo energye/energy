@@ -86,7 +86,7 @@ func main() {
 		objMap["boolValue"] = true
 		objMap["floatValue"] = 5555555.99999
 		objMap["strArr"] = strArr
-		objMap["bytArr"] = bytArr
+		//objMap["bytArr"] = bytArr
 		var objMapArr = make([]map[string]interface{}, 3)
 		objMapArr[0] = objMap
 		objMapArr[1] = objMap

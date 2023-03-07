@@ -369,6 +369,15 @@ func resultToBytesProcessMessage(data []interface{}) (*ICefBinaryValue, error) {
 	return BinaryValueRef.New(byt), nil
 }
 
+func argsBytesValueToV8Value(dataBuf []byte) (*ICefV8Value, error) {
+	var data []interface{}
+	if err := json.Unmarshal(dataBuf, &data); err != nil {
+		return nil, err
+	}
+	fmt.Println("argsBytesValueToV8Value", len(data))
+	return nil, nil
+}
+
 //listValueToV8Value ICefListValue 转换 ICefV8Value
 func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	if list == nil {

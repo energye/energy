@@ -88,11 +88,12 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 				size := binaryValue.GetSize()
 				dataBuf := make([]byte, size)
 				count := binaryValue.GetData(dataBuf, 0)
-				fmt.Println("binaryValue:", count, string(dataBuf))
 				if count > 0 {
 					if callback.context.Enter() {
+						//argsBytesValueToV8Value(dataBuf)
 						resultArgs := V8ValueArrayRef.New()
 						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
+						callback.function.Free()
 						resultArgs.Free()
 					}
 					callback.context.Exit()
@@ -152,6 +153,7 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args, isCallback)
 	eventCallback(ipcContext)
 	if isCallback {
+		//处理回复消息
 		replay := ipcContext.Replay()
 		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 		replyMessage.ArgumentList().SetString(0, messageId)
@@ -165,6 +167,7 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 		} else {
 			replyMessage.ArgumentList().SetInt(1, 0) //无返回值
 		}
+		replay.Clear()
 		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
 		replyMessage.Free()
 	}

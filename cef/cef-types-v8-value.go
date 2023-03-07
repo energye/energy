@@ -544,11 +544,17 @@ func (*v8ValueArray) New() *TCefV8ValueArray {
 }
 
 func (m *TCefV8ValueArray) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
 	return uintptr(m.instance)
 }
 
 // Get 根据下标获取 ICefV8Value
 func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
+	if m == nil {
+		return nil
+	}
 	if index < m.argumentsLength {
 		value := m.argumentsCollect[index]
 		if value == nil {
@@ -562,10 +568,16 @@ func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 
 // Size 返回 ICefV8Value 数组长度
 func (m *TCefV8ValueArray) Size() int {
+	if m == nil {
+		return 0
+	}
 	return m.argumentsLength
 }
 
 func (m *TCefV8ValueArray) Free() {
+	if m == nil {
+		return
+	}
 	m.instance = nil
 	m.argumentsCollect = nil
 	m.arguments = 0

@@ -10,6 +10,16 @@
     </style>
     <script type="application/javascript">
         let idx = 0;
+        let si = null;
+
+        function autoIpcEmit() {
+            if (si != null) {
+                clearInterval(si)
+                si = null
+                return
+            }
+            si = setInterval(ipcEmit, 1)
+        }
 
         function ipcEmit() {
             let objectValueArray = [
@@ -47,25 +57,25 @@
                     // msg('result11：', JSON.stringify(result11));
                     // msg('result12：', JSON.stringify(result12));
                     // msg('result13：', JSON.stringify(result13));
-                    console.log('result1：', result1)
-                    console.log('result2：', result2)
-                    console.log('result3：', result3)
-                    console.log('result4：', result4)
-                    console.log('result5：', result5)
-                    console.log('result6：', result6)
-                    console.log('result7：', result7)
-                    console.log('result8：', result8)
-                    console.log('result9：', result9)
-                    console.log('result10：', result10)
-                    console.log('result11：', result11)
-                    console.log('result12：', result12)
-                    console.log('result13：', result13)
-                });
-            msg('ipc.emit ok?', ok);
 
-            let ok1 = ipc.emit([]);
-            msg('ipc.emit ok?', ok1);
-            idx++;
+                    // console.log('result1：', result1)
+                    // console.log('result2：', result2)
+                    // console.log('result3：', result3)
+                    // console.log('result4：', result4)
+                    // console.log('result5：', result5)
+                    // console.log('result6：', result6)
+                    // console.log('result7：', result7)
+                    // console.log('result8：', result8)
+                    // console.log('result9：', result9)
+                    // console.log('result10：', result10)
+                    // console.log('result11：', result11)
+                    // console.log('result12：', result12)
+                    // console.log('result13：', result13)
+                });
+            //msg('ipc.emit ok?', ok);
+
+            //let ok1 = ipc.emit([]);
+           // msg('ipc.emit ok?', ok1);
         }
 
         ipc.on('onTestName1', function (param1, param2, param3) {
@@ -94,6 +104,7 @@
 <p><a target="_blank" href="ipc-event.html">open</a></p>
 <p>
     <button onclick="ipcEmit()">ipcEmit</button>
+    <button onclick="autoIpcEmit()">自动-ipcEmit</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>
