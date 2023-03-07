@@ -63,7 +63,7 @@ func main() {
 				value.GetIArray()
 			}
 		}
-		var bytArr = make([]byte, 4, 4)
+		var bytArr = []byte("这是一串中文的字节数组")
 		var strArr = make([]string, 3, 3)
 		strArr[0] = "数组值1"
 		strArr[1] = "数组值2"
@@ -85,8 +85,8 @@ func main() {
 		objMapArr[0] = objMap
 		objMapArr[1] = objMap
 		objMapArr[2] = objMap
-
-		context.Result("asdfsadf", 123123, true, "返回值返回值返回值", 6666.6669, bytArr, objArr, objArr2, strArr, objMap, objMapArr)
+		var strPtrValue = "strPtrValue"
+		context.Result("asdfsadf" /* 123123, true, "返回值返回值返回值", 6666.6669,*/, bytArr, &strPtrValue, objArr[0], objArr, objArr2 /*, strArr, objMap, objMapArr*/)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

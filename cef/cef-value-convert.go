@@ -20,7 +20,8 @@ import (
 	"unsafe"
 )
 
-func goValueConvert(result *ICefListValue, i uint32, value interface{}) {
+//go 基本类型值转换
+func goValueConvert(result *ICefListValue, i uint32, value interface{}) bool {
 	switch value.(type) {
 	case bool:
 		result.SetBool(i, value.(bool))
@@ -51,8 +52,105 @@ func goValueConvert(result *ICefListValue, i uint32, value interface{}) {
 	case uint64:
 		result.SetString(i, fmt.Sprintf("%d", value.(uint64)))
 	default:
-		result.SetNull(i)
+		return false
 	}
+	return true
+}
+
+//go 数组基本类型值转换
+func goArrayValueConvert(result *ICefListValue, i uint32, value interface{}) bool {
+	switch value.(type) {
+	case []bool:
+		var list = ListValueRef.New()
+		for j, v := range value.([]bool) {
+			list.SetBool(uint32(j), v)
+		}
+		result.SetList(i, list)
+	case []float32:
+		var list = ListValueRef.New()
+		for j, v := range value.([]float32) {
+			list.SetDouble(uint32(j), float64(v))
+		}
+		result.SetList(i, list)
+	case []float64:
+		var list = ListValueRef.New()
+		for j, v := range value.([]float64) {
+			list.SetDouble(uint32(j), v)
+		}
+		result.SetList(i, list)
+	case []string:
+		var list = ListValueRef.New()
+		for j, v := range value.([]string) {
+			list.SetString(uint32(j), v)
+		}
+		result.SetList(i, list)
+	case []int:
+		var list = ListValueRef.New()
+		for j, v := range value.([]int) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []int8:
+		var list = ListValueRef.New()
+		for j, v := range value.([]int8) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []int16:
+		var list = ListValueRef.New()
+		for j, v := range value.([]int16) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []int32:
+		var list = ListValueRef.New()
+		for j, v := range value.([]int32) {
+			list.SetInt(uint32(j), v)
+		}
+		result.SetList(i, list)
+	case []int64:
+		var list = ListValueRef.New()
+		for j, v := range value.([]int64) {
+			list.SetString(uint32(j), fmt.Sprintf("%d", v))
+		}
+		result.SetList(i, list)
+	case []uint:
+		var list = ListValueRef.New()
+		for j, v := range value.([]uint) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []uint8:
+		BinaryValueRef.New(value.([]byte))
+		result.SetBinary(i, BinaryValueRef.New(value.([]byte)))
+	case []uint16:
+		var list = ListValueRef.New()
+		for j, v := range value.([]uint16) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []uint32:
+		var list = ListValueRef.New()
+		for j, v := range value.([]uint32) {
+			list.SetInt(uint32(j), int32(v))
+		}
+		result.SetList(i, list)
+	case []uint64:
+		var list = ListValueRef.New()
+		for j, v := range value.([]uint64) {
+			list.SetString(uint32(j), fmt.Sprintf("%d", v))
+		}
+		result.SetList(i, list)
+	case []interface{}:
+		if v, err := goValueToListValue(value.([]interface{})); err == nil {
+			result.SetList(i, v)
+		} else {
+			result.SetList(i, ListValueRef.New())
+		}
+	default:
+		return false
+	}
+	return true
 }
 
 //goValueToListValue GoValue 转换 ICefListValue
@@ -67,108 +165,43 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 			result.SetNull(uint32(i))
 			continue
 		}
-		var typeOf = reflect.TypeOf(value)
-		switch typeOf.Kind() {
-		case reflect.Slice: // array
-			fmt.Println("goValueToListValue Slice")
-			switch value.(type) {
-			case []bool:
-				var list = ListValueRef.New()
-				for i, v := range value.([]bool) {
-					list.SetBool(uint32(i), v)
+		var rv = reflect.ValueOf(value)
+		kind := rv.Kind()
+		switch kind {
+		case reflect.Ptr: //单指针, 不允许(切片 | 数组)指针, 包含基本类型、结构、Map
+			if rv.IsNil() {
+				result.SetNull(uint32(i))
+				continue
+			}
+			//基本类型
+			if ok := goValueConvert(result, uint32(i), rv.Elem().Interface()); !ok {
+				//非基本类型
+				switch rv.Elem().Kind() {
+				case reflect.Struct:
+					if v := goStructValueToDictionaryValue(rv); v != nil {
+						result.SetDictionary(uint32(i), v)
+					} else {
+						result.SetNull(uint32(i))
+					}
+				case reflect.Map:
+				default:
+					result.SetNull(uint32(i))
 				}
-				result.SetList(uint32(i), list)
-			case []float32:
-				var list = ListValueRef.New()
-				for i, v := range value.([]float32) {
-					list.SetDouble(uint32(i), float64(v))
+			}
+		case reflect.Slice, reflect.Array: //切片 | 数组, 包含基本类型、结构、Map
+			//基本类型
+			if ok := goArrayValueConvert(result, uint32(i), value); !ok {
+				//非基本类型
+				var sliceType = rv.Type().Elem()
+				fmt.Println("sliceType 1", sliceType, sliceType.Kind())
+				if sliceType.Kind() == reflect.Ptr {
+					//result.SetList(uint32(i), ListValueRef.New())
+					//continue
+					sliceType = sliceType.Elem()
 				}
-				result.SetList(uint32(i), list)
-			case []float64:
-				var list = ListValueRef.New()
-				for i, v := range value.([]float64) {
-					list.SetDouble(uint32(i), v)
-				}
-				result.SetList(uint32(i), list)
-			case []string:
-				var list = ListValueRef.New()
-				for i, v := range value.([]string) {
-					list.SetString(uint32(i), v)
-				}
-				result.SetList(uint32(i), list)
-			case []int:
-				var list = ListValueRef.New()
-				for i, v := range value.([]int) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []int8:
-				var list = ListValueRef.New()
-				for i, v := range value.([]int8) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []int16:
-				var list = ListValueRef.New()
-				for i, v := range value.([]int16) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []int32:
-				var list = ListValueRef.New()
-				for i, v := range value.([]int32) {
-					list.SetInt(uint32(i), v)
-				}
-				result.SetList(uint32(i), list)
-			case []int64:
-				var list = ListValueRef.New()
-				for i, v := range value.([]int64) {
-					list.SetString(uint32(i), fmt.Sprintf("%d", v))
-				}
-				result.SetList(uint32(i), list)
-			case []uint:
-				var list = ListValueRef.New()
-				for i, v := range value.([]uint) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []uint8:
-				BinaryValueRef.New(value.([]byte))
-				result.SetBinary(uint32(i), BinaryValueRef.New(value.([]byte)))
-			case []uint16:
-				var list = ListValueRef.New()
-				for i, v := range value.([]uint16) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []uint32:
-				var list = ListValueRef.New()
-				for i, v := range value.([]uint32) {
-					list.SetInt(uint32(i), int32(v))
-				}
-				result.SetList(uint32(i), list)
-			case []uint64:
-				var list = ListValueRef.New()
-				for i, v := range value.([]uint64) {
-					list.SetString(uint32(i), fmt.Sprintf("%d", v))
-				}
-				result.SetList(uint32(i), list)
-			case []interface{}:
-				if v, err := goValueToListValue(value.([]interface{})); err == nil {
-					result.SetList(uint32(i), v)
-				} else {
-					result.SetList(uint32(i), ListValueRef.New())
-				}
-			default:
-				sliceTypeOf := typeOf.Elem()
-				sliceKind := sliceTypeOf.Kind()
-				fmt.Println("sliceTypeOf", sliceTypeOf.Kind())
-				if sliceKind == reflect.Ptr {
-					sliceTypeOf = sliceTypeOf.Elem()
-				}
-				fmt.Println("\t", sliceTypeOf.Kind())
-				rv := reflect.ValueOf(value)
-				if sliceTypeOf.Kind() == reflect.Struct {
+				fmt.Println("sliceType 2", sliceType, sliceType.Kind())
+				switch sliceType.Kind() {
+				case reflect.Struct:
 					sliceListValue := ListValueRef.New()
 					for j := 0; j < rv.Len(); j++ {
 						if v := goStructValueToDictionaryValue(rv.Index(j)); v != nil {
@@ -177,22 +210,21 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 							sliceListValue.SetNull(uint32(j))
 						}
 					}
-					fmt.Println("\t\tStruct len:", rv.Len())
 					result.SetList(uint32(i), sliceListValue)
-				} else if sliceTypeOf.Kind() == reflect.Map {
-					fmt.Println("\t\tMap len:", rv.Len())
-				} else {
+				case reflect.Map:
+				default:
 					result.SetList(uint32(i), ListValueRef.New())
 				}
+
 			}
-		case reflect.Map: // object
+		case reflect.Map: // 单Map
 			fmt.Println("goValueToListValue Map")
-		case reflect.Struct: // object
-			fmt.Println("goValueToListValue Struct")
-		default:
-			fmt.Println("goValueToListValue default", value)
-			goValueConvert(result, uint32(i), value)
+		default: //默认 基本类型
+			if ok := goValueConvert(result, uint32(i), value); !ok {
+				result.SetNull(uint32(i))
+			}
 		}
+
 	}
 	return result, nil
 }
@@ -204,12 +236,15 @@ type emptyInterface struct {
 
 // goStructValueToDictionaryValue Go结构转字典
 func goStructValueToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
-	fmt.Println("goStructValueToDictionaryValue", rv.Kind())
-	//只能为指针，且不为空
-	if rv.Kind() != reflect.Ptr || rv.IsNil() {
-		return nil
+	var rt reflect.Type
+	if rv.Kind() == reflect.Ptr {
+		if rv.IsNil() {
+			return nil
+		}
+		rt = rv.Type().Elem()
+	} else {
+		rt = rv.Type()
 	}
-	var rt = rv.Type().Elem()
 	result := DictionaryValueRef.New()
 	nf := rt.NumField()
 	ei := rv.Interface()
