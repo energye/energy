@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/energye/energy/consts"
@@ -358,6 +359,14 @@ func resultToProcessMessage(data []interface{}) (*ICefListValue, error) {
 
 	}
 	return result, nil
+}
+
+func resultToBytesProcessMessage(data []interface{}) (*ICefBinaryValue, error) {
+	byt, err := json.Marshal(&data)
+	if err != nil {
+		return nil, err
+	}
+	return BinaryValueRef.New(byt), nil
 }
 
 //listValueToV8Value ICefListValue 转换 ICefV8Value

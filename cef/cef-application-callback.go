@@ -82,16 +82,36 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 		messageId := message.ArgumentList().GetString(0)
 		if v, err := strconv.Atoi(messageId); err == nil {
 			callback := ctx.getIPCCallback(uintptr(v))
-			if callback.context.Enter() {
-				if v, err := listValueToV8Value(message.ArgumentList().GetList(1)); err == nil {
-					resultArgs := V8ValueArrayRef.New()
-					for i := 0; i < v.GetArrayLength(); i++ {
-						resultArgs.Add(v.GetValueByIndex(i))
+			argsType := message.ArgumentList().GetInt(1)
+			if argsType == 1 { //[]byte
+				binaryValue := message.ArgumentList().GetBinary(2)
+				size := binaryValue.GetSize()
+				dataBuf := make([]byte, size)
+				count := binaryValue.GetData(dataBuf, 0)
+				fmt.Println("binaryValue:", count, string(dataBuf))
+				if count > 0 {
+					if callback.context.Enter() {
+						resultArgs := V8ValueArrayRef.New()
+						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
+						resultArgs.Free()
 					}
-					callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
-					resultArgs.Free()
+					callback.context.Exit()
 				}
-				callback.context.Exit()
+				dataBuf = nil
+			} else if argsType == 2 { //ListValue
+				if callback.context.Enter() {
+					if v, err := listValueToV8Value(message.ArgumentList().GetList(2)); err == nil {
+						resultArgs := V8ValueArrayRef.New()
+						for i := 0; i < v.GetArrayLength(); i++ {
+							resultArgs.Add(v.GetValueByIndex(i))
+						}
+						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
+						resultArgs.Free()
+					}
+					callback.context.Exit()
+				}
+			} else { //无返回值
+
 			}
 			ctx.removeIPCCallback(uintptr(v))
 		}
@@ -136,10 +156,14 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 		replyMessage.ArgumentList().SetString(0, messageId)
 		//将Go返回值转换进程消息
-		if argsList, err := resultToProcessMessage(replay.Result()); err == nil {
-			replyMessage.ArgumentList().SetList(1, argsList)
+		if v, err := resultToBytesProcessMessage(replay.Result()); err == nil {
+			replyMessage.ArgumentList().SetInt(1, 1) // []byte
+			replyMessage.ArgumentList().SetBinary(2, v)
+		} else if v, err := resultToProcessMessage(replay.Result()); err == nil {
+			replyMessage.ArgumentList().SetInt(1, 2) // ListValue
+			replyMessage.ArgumentList().SetList(2, v)
 		} else {
-			replyMessage.ArgumentList().SetList(1, ListValueRef.New())
+			replyMessage.ArgumentList().SetInt(1, 0) //无返回值
 		}
 		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
 		replyMessage.Free()
