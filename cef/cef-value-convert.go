@@ -193,13 +193,9 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 			if ok := goArrayValueConvert(result, uint32(i), value); !ok {
 				//非基本类型
 				var sliceType = rv.Type().Elem()
-				fmt.Println("sliceType 1", sliceType, sliceType.Kind())
 				if sliceType.Kind() == reflect.Ptr {
-					//result.SetList(uint32(i), ListValueRef.New())
-					//continue
 					sliceType = sliceType.Elem()
 				}
-				fmt.Println("sliceType 2", sliceType, sliceType.Kind())
 				switch sliceType.Kind() {
 				case reflect.Struct:
 					sliceListValue := ListValueRef.New()
@@ -368,6 +364,14 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 		case consts.VTYPE_STRING:
 			newValue = V8ValueRef.NewString(value.GetString())
 		case consts.VTYPE_BINARY: // []byte
+			binaryValue := value.GetBinary()
+			byteSize := binaryValue.GetSize()
+			if byteSize > 0 {
+				dataByte := make([]byte, binaryValue.GetSize())
+				if c := binaryValue.GetData(dataByte, 0); c > 0 {
+					newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+				}
+			}
 		case consts.VTYPE_DICTIONARY: // Object
 			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
@@ -412,6 +416,8 @@ func v8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 			arrayValue.SetDouble(uint32(0), v8value.GetDoubleValue())
 		} else if v8value.IsBool() {
 			arrayValue.SetBool(uint32(0), v8value.GetBoolValue())
+		} else if v8value.IsArrayBuffer() {
+			//arrayValue.SetBinary()
 		} else {
 			arrayValue.SetNull(uint32(0))
 		}
@@ -448,6 +454,8 @@ func v8valueArrayEncode(v8value *ICefV8Value) (*ICefListValue, error) {
 			if v, err := v8valueObjectEncode(args); err == nil {
 				arrayValue.SetDictionary(uint32(i), v)
 			}
+		} else if args.IsArrayBuffer() {
+			//arrayValue.SetBinary()
 		} else {
 			arrayValue.SetNull(uint32(i))
 		}

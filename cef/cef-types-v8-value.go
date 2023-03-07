@@ -443,9 +443,13 @@ func (m *ICefV8Value) GetArrayLength() int {
 	return int(int32(r1))
 }
 
-//func (m *ICefV8Value) GetArrayBufferReleaseCallback() {
-//
-//}
+func (m *ICefV8Value) GetArrayBufferReleaseCallback() *ICefV8ArrayBufferReleaseCallback {
+	var result uintptr
+	imports.Proc(internale_CefV8Value_GetArrayBufferReleaseCallback).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8ArrayBufferReleaseCallback{
+		instance: unsafe.Pointer(result),
+	}
+}
 
 func (m *ICefV8Value) NeuterArrayBuffer() bool {
 	r1, _, _ := imports.Proc(internale_CefV8Value_NeuterArrayBuffer).Call(m.Instance())
