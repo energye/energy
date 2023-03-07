@@ -176,6 +176,14 @@ type TCefPoint struct {
 	Y int32
 }
 
+// TCEFBaseRefCountedOwn
+type TCEFBaseRefCountedOwn struct {
+}
+
+// TCEFBaseRefCountedRef
+type TCEFBaseRefCountedRef struct {
+}
+
 // ICefBrowser main
 type ICefBrowser struct {
 	instance  unsafe.Pointer
@@ -330,6 +338,7 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
+	TCEFBaseRefCountedRef
 	instance          unsafe.Pointer
 	valueType         V8ValueType
 	valueByIndexArray []*ICefV8Value

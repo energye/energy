@@ -14,6 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
 
 var (
@@ -55,4 +56,38 @@ func AddGoForm(windowId int32, instance uintptr) {
 // RemoveGoForm
 func RemoveGoForm(windowId int32) {
 	imports.Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
+}
+
+// TCEFBaseRefCountedOwn
+func (m *TCEFBaseRefCountedOwn) Destroy(data uintptr) {
+	imports.Proc(internale_CefBaseRefCountedOwn_Destroy).Call(data)
+}
+
+func (m *TCEFBaseRefCountedOwn) DestroyOtherRefs(data uintptr) {
+	imports.Proc(internale_CefBaseRefCountedOwn_DestroyOtherRefs).Call(data)
+}
+
+func (m *TCEFBaseRefCountedOwn) Wrap(data uintptr) unsafe.Pointer {
+	var result uintptr
+	imports.Proc(internale_CefBaseRefCountedOwn_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
+	return unsafe.Pointer(result)
+}
+
+func (m *TCEFBaseRefCountedOwn) Free(data uintptr) {
+	imports.Proc(internale_CefBaseRefCountedOwn_Free).Call(data)
+}
+
+// TCEFBaseRefCountedRef
+func (m *TCEFBaseRefCountedRef) Destroy(data uintptr) {
+	imports.Proc(internale_CefBaseRefCountedRef_Destroy).Call(data)
+}
+
+func (m *TCEFBaseRefCountedRef) Wrap(data uintptr) unsafe.Pointer {
+	var result uintptr
+	imports.Proc(internale_CefBaseRefCountedRef_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
+	return unsafe.Pointer(result)
+}
+
+func (m *TCEFBaseRefCountedRef) Free(data uintptr) {
+	imports.Proc(internale_CefBaseRefCountedRef_Free).Call(data)
 }

@@ -38,6 +38,15 @@ func init() {
 		dllimports.NewEnergyImport("CEF_Win_SetCursor", 0),
 		dllimports.NewEnergyImport("CEF_Win_LoadCursor", 0),
 		dllimports.NewEnergyImport("CEF_Win_OnPaint", 0),
+		//TCEFBaseRefCountedOwn
+		dllimports.NewEnergyImport("CefBaseRefCountedOwn_Destroy", 0),
+		dllimports.NewEnergyImport("CefBaseRefCountedOwn_DestroyOtherRefs", 0),
+		dllimports.NewEnergyImport("CefBaseRefCountedOwn_Wrap", 0),
+		dllimports.NewEnergyImport("CefBaseRefCountedOwn_Free", 0),
+		//TCEFBaseRefCountedRef
+		dllimports.NewEnergyImport("CefBaseRefCountedRef_Destroy", 0),
+		dllimports.NewEnergyImport("CefBaseRefCountedRef_Wrap", 0),
+		dllimports.NewEnergyImport("CefBaseRefCountedRef_Free", 0),
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
@@ -1095,6 +1104,15 @@ const (
 	internale_CEF_Win_SetCursor
 	internale_CEF_Win_LoadCursor
 	internale_CEF_Win_OnPaint
+	//TCEFBaseRefCountedOwn
+	internale_CefBaseRefCountedOwn_Destroy
+	internale_CefBaseRefCountedOwn_DestroyOtherRefs
+	internale_CefBaseRefCountedOwn_Wrap
+	internale_CefBaseRefCountedOwn_Free
+	//TCEFBaseRefCountedRef
+	internale_CefBaseRefCountedRef_Destroy
+	internale_CefBaseRefCountedRef_Wrap
+	internale_CefBaseRefCountedRef_Free
 	//ApplicationQueueAsyncCallFunc
 	internale_SetApplicationQueueAsyncCallFunc
 	internale_CEFApplication_QueueAsyncCall
