@@ -21,7 +21,7 @@ import (
 )
 
 //go 基本类型值转换
-func goValueConvert(result *ICefListValue, i uint32, value interface{}) bool {
+func goValueConvertListValue(result *ICefListValue, i uint32, value interface{}) bool {
 	switch value.(type) {
 	case bool:
 		result.SetBool(i, value.(bool))
@@ -58,7 +58,7 @@ func goValueConvert(result *ICefListValue, i uint32, value interface{}) bool {
 }
 
 //go 数组基本类型值转换
-func goArrayValueConvert(result *ICefListValue, i uint32, value interface{}) bool {
+func goArrayValueConvertListValue(result *ICefListValue, i uint32, value interface{}) bool {
 	switch value.(type) {
 	case []bool:
 		var list = ListValueRef.New()
@@ -174,7 +174,7 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 				continue
 			}
 			//基本类型
-			if ok := goValueConvert(result, uint32(i), rv.Elem().Interface()); !ok {
+			if ok := goValueConvertListValue(result, uint32(i), rv.Elem().Interface()); !ok {
 				//非基本类型
 				switch rv.Elem().Kind() {
 				case reflect.Struct:
@@ -184,13 +184,16 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 						result.SetNull(uint32(i))
 					}
 				case reflect.Map:
+					if v := goMapToDictionaryValue(rv); v != nil {
+						result.SetDictionary(uint32(i), v)
+					}
 				default:
 					result.SetNull(uint32(i))
 				}
 			}
 		case reflect.Slice, reflect.Array: //切片 | 数组, 包含基本类型、结构、Map
 			//基本类型
-			if ok := goArrayValueConvert(result, uint32(i), value); !ok {
+			if ok := goArrayValueConvertListValue(result, uint32(i), value); !ok {
 				//非基本类型
 				var sliceType = rv.Type().Elem()
 				if sliceType.Kind() == reflect.Ptr {
@@ -208,6 +211,16 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 					}
 					result.SetList(uint32(i), sliceListValue)
 				case reflect.Map:
+					fmt.Println("goValueToListValue []Map")
+					sliceListValue := ListValueRef.New()
+					for j := 0; j < rv.Len(); j++ {
+						if v := goMapToDictionaryValue(rv.Index(j)); v != nil {
+							sliceListValue.SetDictionary(uint32(j), v)
+						} else {
+							sliceListValue.SetNull(uint32(j))
+						}
+					}
+					result.SetList(uint32(i), sliceListValue)
 				default:
 					result.SetList(uint32(i), ListValueRef.New())
 				}
@@ -215,14 +228,38 @@ func goValueToListValue(data []interface{}) (*ICefListValue, error) {
 			}
 		case reflect.Map: // 单Map
 			fmt.Println("goValueToListValue Map")
+			if v := goMapToDictionaryValue(rv); v != nil {
+				result.SetDictionary(uint32(i), v)
+			}
 		default: //默认 基本类型
-			if ok := goValueConvert(result, uint32(i), value); !ok {
+			if ok := goValueConvertListValue(result, uint32(i), value); !ok {
 				result.SetNull(uint32(i))
 			}
 		}
 
 	}
 	return result, nil
+}
+
+// goMapToDictionaryValue Go Map转字典
+func goMapToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
+	var rt reflect.Type
+	if rv.Kind() == reflect.Ptr {
+		if rv.IsNil() {
+			return nil
+		}
+		rt = rv.Type().Elem()
+	} else {
+		rt = rv.Type()
+	}
+	fmt.Println("DictionaryValue:", rv.Len(), rt)
+	keys := rv.MapKeys()
+	for i := 0; i < len(keys); i++ {
+		key := keys[i]
+		value := rv.MapIndex(key)
+		fmt.Println("\t", key, value)
+	}
+	return nil
 }
 
 type emptyInterface struct {
@@ -281,11 +318,24 @@ func goStructValueToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
 				result.SetDouble(name, float64(*(*float32)(ptr)))
 			case reflect.Float64:
 				result.SetDouble(name, *(*float64)(ptr))
+			case reflect.Ptr, reflect.Struct:
+				var structFieldRv reflect.Value
+				if rv.Kind() == reflect.Ptr {
+					structFieldRv = rv.Elem().Field(i)
+				} else {
+					structFieldRv = rv.Field(i)
+				}
+				if v := goStructValueToDictionaryValue(structFieldRv); v != nil {
+					result.SetDictionary(name, v)
+				}
+			case reflect.Map:
+				fmt.Println("goValueToListValue Map")
+				if v := goMapToDictionaryValue(rv); v != nil {
+					result.SetDictionary(name, v)
+				}
 			default:
 				result.SetNull(name)
 			}
-		} else {
-			result.SetNull(name)
 		}
 	}
 	return result

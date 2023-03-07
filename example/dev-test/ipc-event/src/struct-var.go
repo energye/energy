@@ -14,6 +14,7 @@ type StructVarDemo struct {
 	FloatField    float64
 	noExportField string //小写字母无法绑定到js
 	SubStructObj  *SubStructObj
+	SubStructObj2 SubStructObj
 }
 
 type SubStructObj struct {

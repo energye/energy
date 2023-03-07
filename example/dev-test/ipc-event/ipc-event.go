@@ -70,7 +70,7 @@ func main() {
 		strArr[2] = "数组值3"
 		var objArr = make([]*src.StructVarDemo, 4, 4)
 		objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
-		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99}
+		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值"}}
 		var objArr2 = make([]src.StructVarDemo, 4, 4)
 		objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
 		objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
@@ -85,8 +85,8 @@ func main() {
 		objMapArr[0] = objMap
 		objMapArr[1] = objMap
 		objMapArr[2] = objMap
-		var strPtrValue = "strPtrValue"
-		context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[0], objArr, objArr2 /*, strArr, objMap, objMapArr*/)
+		//var strPtrValue = "strPtrValue"
+		context.Result( /*"asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr,*/ objMap, objMapArr)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
