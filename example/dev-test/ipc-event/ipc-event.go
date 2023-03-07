@@ -70,23 +70,29 @@ func main() {
 		strArr[2] = "数组值3"
 		var objArr = make([]*src.StructVarDemo, 4, 4)
 		objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
-		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值"}}
+		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了"}}}
 		var objArr2 = make([]src.StructVarDemo, 4, 4)
 		objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
 		objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
+		var stringMap = map[string]string{}
+		stringMap["strkey1"] = "value1"
+		stringMap["strkey2"] = "value2"
 		var objMap = map[string]interface{}{}
 		objMap["objArr"] = objArr
-		//objMap["objArr2"] = objArr2
+		objMap["objectPtr"] = objArr[1]
+		objMap["object"] = objArr2[1]
 		objMap["strValue"] = "stringValue"
 		objMap["intValue"] = 50000
+		objMap["boolValue"] = true
+		objMap["floatValue"] = 5555555.99999
 		objMap["strArr"] = strArr
 		objMap["bytArr"] = bytArr
 		var objMapArr = make([]map[string]interface{}, 3)
 		objMapArr[0] = objMap
 		objMapArr[1] = objMap
 		objMapArr[2] = objMap
-		//var strPtrValue = "strPtrValue"
-		context.Result( /*"asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr,*/ objMap, objMapArr)
+		var strPtrValue = "strPtrValue"
+		context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr, objMap, objMapArr, stringMap)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

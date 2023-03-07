@@ -18,10 +18,11 @@ type StructVarDemo struct {
 }
 
 type SubStructObj struct {
-	StringField string
-	IntField    int32
-	BoolField   bool
-	FloatField  float64
+	StringField   string
+	IntField      int32
+	BoolField     bool
+	FloatField    float64
+	StructVarDemo *StructVarDemo
 }
 
 //结构类型的函数导出

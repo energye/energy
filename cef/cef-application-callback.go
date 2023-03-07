@@ -135,7 +135,8 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 		replay := ipcContext.Replay()
 		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 		replyMessage.ArgumentList().SetString(0, messageId)
-		if argsList, err := goValueToListValue(replay.Result()); err == nil {
+		//将Go返回值转换进程消息
+		if argsList, err := resultToProcessMessage(replay.Result()); err == nil {
 			replyMessage.ArgumentList().SetList(1, argsList)
 		} else {
 			replyMessage.ArgumentList().SetList(1, ListValueRef.New())
@@ -216,7 +217,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			defer func() {
 				ipcEmitMessage.Free()
 			}()
-			args, err := v8ValueToProcessMessage(emitArgs)
+			args, err := convertV8ValueToProcessMessage(emitArgs)
 			if err != nil {
 				return
 			}
