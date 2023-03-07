@@ -10,6 +10,7 @@
     </style>
     <script type="application/javascript">
         let idx = 0;
+
         function ipcEmit() {
             let objectValueArray = [
                 100, 200, "数组里的字符串", 66996.99,
@@ -24,22 +25,29 @@
             let arrayValue = [
                 100, 200, "数组里的字符串", 66996.99, objectValue, true, false
             ]
-            let ok = ipc.emit("testEmitName", ["stringValue", 100+idx, true, 1999.66+idx, "字符串？", 29999.66+idx, objectValue, arrayValue, 8888888+idx, null, undefined],
-                function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12) {
-                //msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);
-                msg('testEmitName result1',  JSON.stringify( result1));
-                msg('testEmitName result2',  JSON.stringify( result2));
-                msg('testEmitName result3',  JSON.stringify( result3));
-                msg('testEmitName result4',  JSON.stringify( result4));
-                msg('testEmitName result5',  JSON.stringify( result5));
-                msg('testEmitName result6',  JSON.stringify( result6));
-                msg('testEmitName result7',  JSON.stringify( result7));
-                msg('testEmitName result8',  JSON.stringify( result8));
-                msg('testEmitName result9',  JSON.stringify( result9));
-                msg('testEmitName result10',  JSON.stringify( result10));
-                msg('testEmitName result11',  JSON.stringify( result11));
-                msg('testEmitName result12',  JSON.stringify( result12));
-            });
+            let ok = ipc.emit("testEmitName", ["stringValue", 100 + idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888 + idx, null, undefined],
+                function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13) {
+                    //msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);
+
+                    //第2个返回值是 ArrayBuffer 类型，字节数组
+                    let result2ArrayBuffer = new Uint8Array(result2);
+                    let result2Decode = new TextDecoder()//中文转码，不乱码
+                    let decodedString = result2Decode.decode(result2ArrayBuffer);
+
+                    msg('result1：', JSON.stringify(result1));
+                    msg('result2： 字符串-字节数组：', decodedString);
+                    msg('result3：', JSON.stringify(result3));
+                    msg('result4：', JSON.stringify(result4));
+                    msg('result5：', JSON.stringify(result5));
+                    msg('result6：', JSON.stringify(result6));
+                    msg('result7：', JSON.stringify(result7));
+                    msg('result8：', JSON.stringify(result8));
+                    msg('result9：', JSON.stringify(result9));
+                    msg('result10：', JSON.stringify(result10));
+                    msg('result11：', JSON.stringify(result11));
+                    msg('result12：', JSON.stringify(result12));
+                    msg('result13：', JSON.stringify(result13));
+                });
             msg('ipc.emit ok?', ok);
 
             let ok1 = ipc.emit([]);

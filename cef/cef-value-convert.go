@@ -317,7 +317,14 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 		case consts.VTYPE_STRING:
 			newValue = V8ValueRef.NewString(value.GetString())
 		case consts.VTYPE_BINARY: // []byte
-			//newValue = V8ValueRef.NewArrayBuffer(value.GetBinary())
+			binaryValue := value.GetBinary()
+			byteSize := binaryValue.GetSize()
+			if byteSize > 0 {
+				dataByte := make([]byte, binaryValue.GetSize())
+				if c := binaryValue.GetData(dataByte, 0); c > 0 {
+					newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+				}
+			}
 		case consts.VTYPE_DICTIONARY: // Object
 			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
@@ -327,9 +334,10 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 				newValue = v
 			}
 		}
-		if newValue != nil {
-			result.SetValueByIndex(int32(i), newValue)
+		if newValue == nil {
+			newValue = V8ValueRef.NewNull()
 		}
+		result.SetValueByIndex(int32(i), newValue)
 	}
 	return result, nil
 }

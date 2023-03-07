@@ -86,7 +86,7 @@ func main() {
 		objMapArr[1] = objMap
 		objMapArr[2] = objMap
 		var strPtrValue = "strPtrValue"
-		context.Result("asdfsadf" /* 123123, true, "返回值返回值返回值", 6666.6669,*/, bytArr, &strPtrValue, objArr[0], objArr, objArr2 /*, strArr, objMap, objMapArr*/)
+		context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[0], objArr, objArr2 /*, strArr, objMap, objMapArr*/)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
