@@ -14,7 +14,6 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
-	"unsafe"
 )
 
 var (
@@ -56,15 +55,4 @@ func AddGoForm(windowId int32, instance uintptr) {
 // RemoveGoForm
 func RemoveGoForm(windowId int32) {
 	imports.Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
-}
-
-// ICefBaseRefCounted
-func (m *ICefBaseRefCounted) Wrap(data uintptr) unsafe.Pointer {
-	var result uintptr
-	imports.Proc(internale_CefBaseRefCounted_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
-	return unsafe.Pointer(result)
-}
-
-func (m *ICefBaseRefCounted) Free(data uintptr) {
-	imports.Proc(internale_CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
 }
