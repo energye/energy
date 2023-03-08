@@ -43,6 +43,7 @@ type contextCreate struct {
 	ipc             *ICefV8Value
 	ipcEmitHandler  *ICefV8Handler
 	ipcOnHandler    *ICefV8Handler
+	ipcEmitMessage  *ICefProcessMessage
 	ipcCallbackList *list.List
 	bind            *ICefV8Value
 }
@@ -239,11 +240,11 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		//入参
 		if emitArgs != nil {
-			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
-			argument := ipcEmitMessage.ArgumentList()
-			defer func() {
-				ipcEmitMessage.Free()
-			}()
+			if m.ipcEmitMessage == nil {
+				m.ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
+			}
+			argument := m.ipcEmitMessage.ArgumentList()
+			argument.Clear()
 			args, err := convertV8ValueToProcessMessage(emitArgs)
 			if err != nil {
 				return
@@ -262,7 +263,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			argument.SetString(1, emitNameValue)            // 事件名
 			argument.SetList(2, args)                       // args
 			frame := v8ctx.Frame()
-			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
+			frame.SendProcessMessage(consts.PID_BROWSER, m.ipcEmitMessage)
 		}
 		retVal.SetResult(V8ValueRef.NewBool(true))
 		return

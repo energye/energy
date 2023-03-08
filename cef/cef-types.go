@@ -176,12 +176,9 @@ type TCefPoint struct {
 	Y int32
 }
 
-// TCEFBaseRefCountedOwn
-type TCEFBaseRefCountedOwn struct {
-}
-
-// TCEFBaseRefCountedRef
-type TCEFBaseRefCountedRef struct {
+// ICefBaseRefCounted
+type ICefBaseRefCounted struct {
+	instance unsafe.Pointer
 }
 
 // ICefBrowser main
@@ -330,6 +327,7 @@ type ICefV8Exception struct {
 //   1. 在回调函数中有效
 //   2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
 type ICefV8Context struct {
+	base     ICefBaseRefCounted
 	instance unsafe.Pointer
 	browser  *ICefBrowser
 	frame    *ICefFrame
@@ -338,7 +336,7 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
-	TCEFBaseRefCountedRef
+	base              ICefBaseRefCounted
 	instance          unsafe.Pointer
 	valueType         V8ValueType
 	valueByIndexArray []*ICefV8Value

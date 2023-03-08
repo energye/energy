@@ -58,36 +58,13 @@ func RemoveGoForm(windowId int32) {
 	imports.Proc(internale_CEF_RemoveGoForm).Call(uintptr(windowId))
 }
 
-// TCEFBaseRefCountedOwn
-func (m *TCEFBaseRefCountedOwn) Destroy(data uintptr) {
-	imports.Proc(internale_CefBaseRefCountedOwn_Destroy).Call(data)
-}
-
-func (m *TCEFBaseRefCountedOwn) DestroyOtherRefs(data uintptr) {
-	imports.Proc(internale_CefBaseRefCountedOwn_DestroyOtherRefs).Call(data)
-}
-
-func (m *TCEFBaseRefCountedOwn) Wrap(data uintptr) unsafe.Pointer {
+// ICefBaseRefCounted
+func (m *ICefBaseRefCounted) Wrap(data uintptr) unsafe.Pointer {
 	var result uintptr
-	imports.Proc(internale_CefBaseRefCountedOwn_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
+	imports.Proc(internale_CefBaseRefCounted_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
 	return unsafe.Pointer(result)
 }
 
-func (m *TCEFBaseRefCountedOwn) Free(data uintptr) {
-	imports.Proc(internale_CefBaseRefCountedOwn_Free).Call(data)
-}
-
-// TCEFBaseRefCountedRef
-func (m *TCEFBaseRefCountedRef) Destroy(data uintptr) {
-	imports.Proc(internale_CefBaseRefCountedRef_Destroy).Call(data)
-}
-
-func (m *TCEFBaseRefCountedRef) Wrap(data uintptr) unsafe.Pointer {
-	var result uintptr
-	imports.Proc(internale_CefBaseRefCountedRef_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
-	return unsafe.Pointer(result)
-}
-
-func (m *TCEFBaseRefCountedRef) Free(data uintptr) {
-	imports.Proc(internale_CefBaseRefCountedRef_Free).Call(data)
+func (m *ICefBaseRefCounted) Free(data uintptr) {
+	imports.Proc(internale_CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
 }

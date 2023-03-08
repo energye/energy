@@ -308,8 +308,8 @@ func (m *ICefV8Value) DeleteValueByKey(key string) bool {
 	return m.deleteValueByKey(key)
 }
 
-func (m *ICefV8Value) DeleteValueByIndex(index int32) bool {
-	r1, _, _ := imports.Proc(internale_CefV8Value_DeleteValueByIndex).Call(m.Instance(), uintptr(index))
+func (m *ICefV8Value) DeleteValueByIndex(index int) bool {
+	r1, _, _ := imports.Proc(internale_CefV8Value_DeleteValueByIndex).Call(m.Instance(), uintptr(int32(index)))
 	return api.GoBool(r1)
 }
 
@@ -512,6 +512,7 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 }
 
 func (m *ICefV8Value) Free() {
+	m.base.Free(m.Instance())
 	m.instance = nil
 	if m.valueByKeyMap != nil {
 		m.valueByKeyMap = nil
@@ -579,8 +580,8 @@ func (m *TCefV8ValueArray) Free() {
 		return
 	}
 	m.instance = nil
-	m.argumentsCollect = nil
 	m.arguments = 0
+	m.argumentsCollect = nil
 	m.argumentsLength = 0
 }
 
