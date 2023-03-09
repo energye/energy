@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
 )
@@ -40,59 +39,61 @@ func main() {
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
 		for i := 0; i < int(argument.Size()); i++ {
-			value := argument.GetIValue(uint32(i))
-			fmt.Println("\tGetType:", i, value.GetType())
-			switch value.GetType() {
-			case consts.VTYPE_NULL:
-				//null
-			case consts.VTYPE_BOOL:
-				value.GetBool()
-			case consts.VTYPE_INT:
-				value.GetInt()
-			case consts.VTYPE_DOUBLE:
-				value.GetDouble()
-			case consts.VTYPE_STRING:
-				value.GetString()
-			case consts.VTYPE_DICTIONARY: // object
-				object := value.GetIObject()
-				fmt.Println("object keys", object.GetIKeys().Count())
-				for i := 0; i < object.GetIKeys().Count(); i++ {
-					fmt.Println("\tkey-value:", object.GetIKeys().Get(i))
-				}
-			case consts.VTYPE_LIST: // array
-				value.GetIArray()
-			}
+			//value := argument.GetIValue(uint32(i))
+			//fmt.Println("\tGetType:", i, value.GetType())
+			//switch value.GetType() {
+			//case consts.VTYPE_NULL:
+			//	//null
+			//case consts.VTYPE_BOOL:
+			//	value.GetBool()
+			//case consts.VTYPE_INT:
+			//	value.GetInt()
+			//case consts.VTYPE_DOUBLE:
+			//	value.GetDouble()
+			//case consts.VTYPE_STRING:
+			//	value.GetString()
+			//case consts.VTYPE_DICTIONARY: // object
+			//	object := value.GetIObject()
+			//	fmt.Println("object keys", object.GetIKeys().Count())
+			//	for i := 0; i < object.GetIKeys().Count(); i++ {
+			//		fmt.Println("\t\tkey-value:", object.GetIKeys().Get(i))
+			//	}
+			//	object.Free()
+			//case consts.VTYPE_LIST: // array
+			//	value.GetIArray().Free()
+			//}
+			//value.Free()
 		}
-		var bytArr = []byte("这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组")
-		var strArr = make([]string, 3, 3)
-		strArr[0] = "数组值1"
-		strArr[1] = "数组值2"
-		strArr[2] = "数组值3"
-		var objArr = make([]*src.StructVarDemo, 4, 4)
-		objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
-		objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了"}}}
-		var objArr2 = make([]src.StructVarDemo, 4, 4)
-		objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
-		objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
-		var stringMap = map[string]string{}
-		stringMap["strkey1"] = "value1"
-		stringMap["strkey2"] = "value2"
-		var objMap = map[string]interface{}{}
-		objMap["objArr"] = objArr
-		objMap["objectPtr"] = objArr[1]
-		objMap["object"] = objArr2[1]
-		objMap["strValue"] = "stringValue"
-		objMap["intValue"] = 50000
-		objMap["boolValue"] = true
-		objMap["floatValue"] = 5555555.99999
-		objMap["strArr"] = strArr
-		//objMap["bytArr"] = bytArr
-		var objMapArr = make([]map[string]interface{}, 3)
-		objMapArr[0] = objMap
-		objMapArr[1] = objMap
-		objMapArr[2] = objMap
-		var strPtrValue = "strPtrValue"
-		context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr, objMap, objMapArr, stringMap)
+		//var bytArr = []byte("这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组")
+		//var strArr = make([]string, 3, 3)
+		//strArr[0] = "数组值1"
+		//strArr[1] = "数组值2"
+		//strArr[2] = "数组值3"
+		//var objArr = make([]*src.StructVarDemo, 4, 4)
+		//objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
+		//objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了"}}}
+		//var objArr2 = make([]src.StructVarDemo, 4, 4)
+		//objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
+		//objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
+		//var stringMap = map[string]string{}
+		//stringMap["strkey1"] = "value1"
+		//stringMap["strkey2"] = "value2"
+		//var objMap = map[string]interface{}{}
+		//objMap["objArr"] = objArr
+		//objMap["objectPtr"] = objArr[1]
+		//objMap["object"] = objArr2[1]
+		//objMap["strValue"] = "stringValue"
+		//objMap["intValue"] = 50000
+		//objMap["boolValue"] = true
+		//objMap["floatValue"] = 5555555.99999
+		//objMap["strArr"] = strArr
+		////objMap["bytArr"] = bytArr
+		//var objMapArr = make([]map[string]interface{}, 3)
+		//objMapArr[0] = objMap
+		//objMapArr[1] = objMap
+		//objMapArr[2] = objMap
+		//var strPtrValue = "strPtrValue"
+		//context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr, objMap, objMapArr, stringMap)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

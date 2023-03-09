@@ -100,7 +100,7 @@ func init() {
 				*exceptionPtr = 0
 			}
 			*resultPtr = result
-			object.Free()
+			//object.Free()
 		case V8AccessorSet:
 			name := api.GoStr(getVal(0))
 			object := &ICefV8Value{instance: getPtr(1)}
@@ -115,8 +115,8 @@ func init() {
 				*exceptionPtr = 0
 			}
 			*resultPtr = result
-			object.Free()
-			value.Free()
+			//object.Free()
+			//value.Free()
 		default:
 			return false
 		}

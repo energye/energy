@@ -157,21 +157,55 @@ func (m *ICefValue) SetString(value string) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefValue) SetBinary(value *ICefBinaryValue) bool {
+func (m *ICefValue) SetBinary(value *ICefBinaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefValue_SetBinary).Call(m.Instance(), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.binaryValue != nil && m.binaryValue.instance != nil {
+			m.binaryValue.Free()
+		}
+		m.binaryValue = value
+	}
+	return
 }
 
-func (m *ICefValue) SetDictionary(value *ICefDictionaryValue) bool {
+func (m *ICefValue) SetDictionary(value *ICefDictionaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefValue_SetDictionary).Call(m.Instance(), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.dictionaryValue != nil && m.dictionaryValue.instance != nil {
+			m.dictionaryValue.Free()
+		}
+		m.dictionaryValue = value
+	}
+	return
 }
 
-func (m *ICefValue) SetList(value *ICefListValue) bool {
+func (m *ICefValue) SetList(value *ICefListValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefValue_SetList).Call(m.Instance(), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.listValue != nil && m.listValue.instance != nil {
+			m.listValue.Free()
+		}
+		m.listValue = value
+	}
+	return
 }
 
 func (m *ICefValue) Free() {
+	if m.binaryValue != nil && m.binaryValue.instance != nil {
+		m.binaryValue.Free()
+		m.binaryValue = nil
+	}
+	if m.dictionaryValue != nil && m.dictionaryValue.instance != nil {
+		m.dictionaryValue.Free()
+		m.dictionaryValue = nil
+	}
+	if m.listValue != nil && m.listValue.instance != nil {
+		m.listValue.Free()
+		m.listValue = nil
+	}
+	m.base.Free(m.Instance())
 	m.instance = nil
 }

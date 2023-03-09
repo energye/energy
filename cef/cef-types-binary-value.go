@@ -90,3 +90,8 @@ func (m *ICefBinaryValue) GetData(buffer []byte, dataOffset uint32) uint32 {
 	r1, _, _ := imports.Proc(internale_CefBinaryValue_GetData).Call(m.Instance(), uintptr(unsafe.Pointer(&buffer[0])), uintptr(uint32(len(buffer))), uintptr(dataOffset))
 	return uint32(r1)
 }
+
+func (m *ICefBinaryValue) Free() {
+	m.base.Free(m.Instance())
+	m.instance = nil
+}

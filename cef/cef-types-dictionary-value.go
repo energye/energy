@@ -78,9 +78,42 @@ func (m *ICefDictionaryValue) Size() uint32 {
 	return uint32(r1)
 }
 
-func (m *ICefDictionaryValue) Clear() bool {
+func (m *ICefDictionaryValue) Clear() (result bool) {
+	if m.values != nil {
+		for _, v := range m.values {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.values = nil
+	}
+	if m.binaryValues != nil {
+		for _, v := range m.binaryValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.binaryValues = nil
+	}
+	if m.dictionaryValues != nil {
+		for _, v := range m.dictionaryValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.dictionaryValues = nil
+	}
+	if m.listValues != nil {
+		for _, v := range m.listValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.listValues = nil
+	}
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_Clear).Call(m.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	return
 }
 
 func (m *ICefDictionaryValue) HasKey(key string) bool {
@@ -176,11 +209,6 @@ func (m *ICefDictionaryValue) GetIArray(key string) ipc.IArrayValue {
 	return m.GetList(key)
 }
 
-func (m *ICefDictionaryValue) SetValue(key string, value *ICefValue) bool {
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetValue).Call(m.Instance(), api.PascalStr(key), value.Instance())
-	return api.GoBool(r1)
-}
-
 func (m *ICefDictionaryValue) SetNull(key string) bool {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetNull).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
@@ -206,22 +234,68 @@ func (m *ICefDictionaryValue) SetString(key string, value string) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefDictionaryValue) SetBinary(key string, value *ICefBinaryValue) bool {
+func (m *ICefDictionaryValue) SetValue(key string, value *ICefValue) (result bool) {
+	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetValue).Call(m.Instance(), api.PascalStr(key), value.Instance())
+	result = api.GoBool(r1)
+	if result {
+		if m.values == nil {
+			m.values = make(map[string]*ICefValue)
+		}
+		if v, ok := m.values[key]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.values[key] = value
+	}
+	return
+}
+
+func (m *ICefDictionaryValue) SetBinary(key string, value *ICefBinaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetBinary).Call(m.Instance(), api.PascalStr(key), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.binaryValues == nil {
+			m.binaryValues = make(map[string]*ICefBinaryValue)
+		}
+		if v, ok := m.binaryValues[key]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.binaryValues[key] = value
+	}
+	return
 }
 
-func (m *ICefDictionaryValue) SetDictionary(key string, value *ICefDictionaryValue) bool {
+func (m *ICefDictionaryValue) SetDictionary(key string, value *ICefDictionaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetDictionary).Call(m.Instance(), api.PascalStr(key), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.dictionaryValues == nil {
+			m.dictionaryValues = make(map[string]*ICefDictionaryValue)
+		}
+		if v, ok := m.dictionaryValues[key]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.dictionaryValues[key] = value
+	}
+	return
 }
 
-func (m *ICefDictionaryValue) SetList(key string, value *ICefListValue) bool {
+func (m *ICefDictionaryValue) SetList(key string, value *ICefListValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetList).Call(m.Instance(), api.PascalStr(key), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.listValues == nil {
+			m.listValues = make(map[string]*ICefListValue)
+		}
+		if v, ok := m.listValues[key]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.listValues[key] = value
+	}
+	return
 }
 
 func (m *ICefDictionaryValue) Free() {
 	m.Clear()
+	m.base.Free(m.Instance())
 	m.instance = nil
 }

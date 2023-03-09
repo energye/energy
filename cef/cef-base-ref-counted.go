@@ -24,4 +24,5 @@ func (m *ICefBaseRefCounted) Wrap(data uintptr) unsafe.Pointer {
 
 func (m *ICefBaseRefCounted) Free(data uintptr) {
 	imports.Proc(internale_CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
+	m.instance = nil
 }

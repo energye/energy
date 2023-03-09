@@ -81,9 +81,42 @@ func (m *ICefListValue) Size() uint32 {
 	return uint32(r1)
 }
 
-func (m *ICefListValue) Clear() bool {
+func (m *ICefListValue) Clear() (result bool) {
+	if m.values != nil {
+		for _, v := range m.values {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.values = nil
+	}
+	if m.binaryValues != nil {
+		for _, v := range m.binaryValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.binaryValues = nil
+	}
+	if m.dictionaryValues != nil {
+		for _, v := range m.dictionaryValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.dictionaryValues = nil
+	}
+	if m.listValues != nil {
+		for _, v := range m.listValues {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+		m.listValues = nil
+	}
 	r1, _, _ := imports.Proc(internale_CefListValue_Clear).Call(m.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	return
 }
 
 func (m *ICefListValue) Remove(index uint32) bool {
@@ -164,11 +197,6 @@ func (m *ICefListValue) GetIArray(index uint32) ipc.IArrayValue {
 	return m.GetList(index)
 }
 
-func (m *ICefListValue) SetValue(index uint32, value *ICefValue) bool {
-	r1, _, _ := imports.Proc(internale_CefListValue_SetValue).Call(m.Instance(), uintptr(index), value.Instance())
-	return api.GoBool(r1)
-}
-
 func (m *ICefListValue) SetNull(index uint32) bool {
 	r1, _, _ := imports.Proc(internale_CefListValue_SetNull).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
@@ -194,22 +222,68 @@ func (m *ICefListValue) SetString(index uint32, value string) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefListValue) SetBinary(index uint32, value *ICefBinaryValue) bool {
+func (m *ICefListValue) SetValue(index uint32, value *ICefValue) (result bool) {
+	r1, _, _ := imports.Proc(internale_CefListValue_SetValue).Call(m.Instance(), uintptr(index), value.Instance())
+	result = api.GoBool(r1)
+	if result {
+		if m.values == nil {
+			m.values = make(map[int]*ICefValue)
+		}
+		if v, ok := m.values[int(index)]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.values[int(index)] = value
+	}
+	return
+}
+
+func (m *ICefListValue) SetBinary(index uint32, value *ICefBinaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefListValue_SetBinary).Call(m.Instance(), uintptr(index), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.binaryValues == nil {
+			m.binaryValues = make(map[int]*ICefBinaryValue)
+		}
+		if v, ok := m.binaryValues[int(index)]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.binaryValues[int(index)] = value
+	}
+	return
 }
 
-func (m *ICefListValue) SetDictionary(index uint32, value *ICefDictionaryValue) bool {
+func (m *ICefListValue) SetDictionary(index uint32, value *ICefDictionaryValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefListValue_SetDictionary).Call(m.Instance(), uintptr(index), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.dictionaryValues == nil {
+			m.dictionaryValues = make(map[int]*ICefDictionaryValue)
+		}
+		if v, ok := m.dictionaryValues[int(index)]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.dictionaryValues[int(index)] = value
+	}
+	return
 }
 
-func (m *ICefListValue) SetList(index uint32, value *ICefListValue) bool {
+func (m *ICefListValue) SetList(index uint32, value *ICefListValue) (result bool) {
 	r1, _, _ := imports.Proc(internale_CefListValue_SetList).Call(m.Instance(), uintptr(index), value.Instance())
-	return api.GoBool(r1)
+	result = api.GoBool(r1)
+	if result {
+		if m.listValues == nil {
+			m.listValues = make(map[int]*ICefListValue)
+		}
+		if v, ok := m.listValues[int(index)]; ok && v != nil && v.instance != nil {
+			v.Free()
+		}
+		m.listValues[int(index)] = value
+	}
+	return
 }
 
 func (m *ICefListValue) Free() {
 	m.Clear()
+	m.base.Free(m.Instance())
 	m.instance = nil
 }

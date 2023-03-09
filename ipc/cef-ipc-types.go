@@ -25,6 +25,7 @@ type IArrayValue interface {
 	GetIBinary(index uint32) IBinaryValue
 	GetIObject(index uint32) IObjectValue
 	GetIArray(index uint32) IArrayValue
+	Free()
 }
 
 type IBinaryValue interface {
@@ -44,6 +45,7 @@ type IObjectValue interface {
 	GetIBinary(key string) IBinaryValue
 	GetIObject(key string) IObjectValue
 	GetIArray(key string) IArrayValue
+	Free()
 }
 
 type IValue interface {
@@ -55,9 +57,11 @@ type IValue interface {
 	GetIBinary() IBinaryValue
 	GetIObject() IObjectValue
 	GetIArray() IArrayValue
+	Free()
 }
 
 type IV8ValueKeys interface {
 	Count() int
 	Get(index int) string
+	Free()
 }

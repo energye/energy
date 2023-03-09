@@ -91,6 +91,11 @@ func (m *ICefV8Context) Global() *ICefV8Value {
 	return m.global
 }
 
+func (m *ICefV8Context) Free() {
+	m.base.Free(m.Instance())
+	m.instance = nil
+}
+
 func (m *cefV8ContextRef) Current() *ICefV8Context {
 	var result uintptr
 	imports.Proc(internale_CefV8ContextRef_Current).Call(uintptr(unsafe.Pointer(&result)))

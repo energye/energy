@@ -26,6 +26,23 @@ type emptyInterface struct {
 	word unsafe.Pointer
 }
 
+//type data []any
+//
+//func packData(t consts.GO_VALUE_TYPE, v any) *data {
+//	return &data{t, v}
+//}
+//
+//func unData(data []byte) (result []data) {
+//	if err := json.Unmarshal(data, &result); err != nil {
+//		result = nil
+//	}
+//	return
+//}
+//
+//func (m data) IsString() bool {
+//	return consts.GO_VALUE_TYPE(m[0].(int32)) == consts.GO_VALUE_STRING
+//}
+
 //convertStructToDictionaryValue 结构转DictionaryValue
 func convertStructToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
 	var rt reflect.Type
@@ -256,7 +273,7 @@ func convertSliceToListValue(rv reflect.Value) *ICefListValue {
 }
 
 //resultToProcessMessage 返回值转换进程消息
-func resultToProcessMessage(data []interface{}) (*ICefListValue, error) {
+func resultToProcessMessage(data []any) (*ICefListValue, error) {
 	if data == nil {
 		return nil, errors.New("build process message error. Parameter null")
 	}
@@ -361,7 +378,7 @@ func resultToProcessMessage(data []interface{}) (*ICefListValue, error) {
 	return result, nil
 }
 
-func resultToBytesProcessMessage(data []interface{}) (*ICefBinaryValue, error) {
+func resultToBytesProcessMessage(data []any) (*ICefBinaryValue, error) {
 	byt, err := json.Marshal(&data)
 	if err != nil {
 		return nil, err
@@ -476,6 +493,16 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 	return result, nil
 }
 
+// convertV8ValueToProcessMessage ICefV8Value 转换 []byte 进程消息
+func convertV8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
+	if result, err := convertV8valueArrayToSlice(v8value); err == nil {
+		if v, err := json.Marshal(result); err == nil {
+			return v
+		}
+	}
+	return nil
+}
+
 // convertV8ValueToProcessMessage ICefV8Value 转换 进程消息
 func convertV8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 	if v8value == nil {
@@ -512,6 +539,47 @@ func convertV8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error
 	}
 }
 
+// convertV8valueArrayToListValue ICefV8Value 转换 Slice
+func convertV8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
+	if !v8value.IsArray() {
+		return nil, errors.New("convert list value error. Please pass in the array type")
+	}
+	argsLen := v8value.GetArrayLength()
+	result := make([]any, argsLen)
+	for i := 0; i < argsLen; i++ {
+		args := v8value.GetValueByIndex(i)
+		if args.IsString() {
+			result[i] = args.GetStringValue()
+		} else if args.IsInt() {
+			result[i] = int(args.GetIntValue())
+		} else if args.IsUInt() {
+			result[i] = uint(args.GetUIntValue())
+		} else if args.IsDouble() {
+			result[i] = args.GetDoubleValue()
+		} else if args.IsBool() {
+			result[i] = args.GetBoolValue()
+		} else if args.IsNull() {
+			result[i] = "null"
+		} else if args.IsUndefined() {
+			result[i] = "undefined"
+		} else if args.IsArray() {
+			if v, err := convertV8valueArrayToSlice(args); err == nil {
+				result[i] = v
+			}
+		} else if args.IsObject() {
+			if v, err := convertV8valueArrayToMap(args); err == nil {
+				result[i] = v
+			}
+		} else if args.IsArrayBuffer() {
+			result[i] = ""
+		} else {
+			result[i] = ""
+		}
+		args.Free()
+	}
+	return result, nil
+}
+
 // convertV8valueArrayToListValue ICefV8Value 转换 ICefListValue
 func convertV8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error) {
 	if !v8value.IsArray() {
@@ -546,8 +614,53 @@ func convertV8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error
 		} else {
 			arrayValue.SetNull(uint32(i))
 		}
+		args.Free()
 	}
 	return arrayValue, nil
+}
+
+// convertV8valueArrayToListValue ICefV8Value 转换 Maps
+func convertV8valueArrayToMap(v8value *ICefV8Value) (map[string]any, error) {
+	if !v8value.IsObject() {
+		return nil, errors.New("convert dictionary value error. Please pass in the object type")
+	}
+	keys := v8value.GetKeys()
+	result := make(map[string]any, keys.Count())
+	for i := 0; i < keys.Count(); i++ {
+		key := keys.Get(i)
+		args := v8value.GetValueByKey(key)
+		if args.IsString() {
+			result[key] = args.GetStringValue()
+		} else if args.IsInt() {
+			result[key] = int(args.GetIntValue())
+		} else if args.IsUInt() {
+			result[key] = uint(args.GetUIntValue())
+		} else if args.IsDouble() {
+			result[key] = args.GetDoubleValue()
+		} else if args.IsBool() {
+			result[key] = args.GetBoolValue()
+		} else if args.IsNull() {
+			result[key] = "null"
+		} else if args.IsUndefined() {
+			result[key] = "undefined"
+		} else if args.IsArray() {
+			if v, err := convertV8valueArrayToSlice(args); err == nil {
+				result[key] = v
+			}
+		} else if args.IsObject() {
+			if v, err := convertV8valueArrayToMap(args); err == nil {
+				result[key] = v
+			}
+		} else if args.IsArrayBuffer() {
+			//arrayValue.SetBinary()
+			result[key] = ""
+		} else {
+			result[key] = ""
+		}
+		args.Free()
+	}
+	keys.Free()
+	return result, nil
 }
 
 // convertV8valueObjectToDictionaryValue ICefV8Value 转换 ICefDictionaryValue
@@ -583,6 +696,8 @@ func convertV8valueObjectToDictionaryValue(v8value *ICefV8Value) (*ICefDictionar
 		} else {
 			dictionaryValue.SetNull(key)
 		}
+		args.Free()
 	}
+	keys.Free()
 	return dictionaryValue, nil
 }

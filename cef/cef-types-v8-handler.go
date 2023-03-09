@@ -85,7 +85,6 @@ func init() {
 			} else {
 				*exceptionPtr = 0
 			}
-			retVal.v8value = nil
 			*resultPtr = result
 			arguments.Free()
 			object.Free()

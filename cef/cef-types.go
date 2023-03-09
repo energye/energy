@@ -217,24 +217,39 @@ type ICefProcessMessage struct {
 	name         string
 }
 
+// ICefBinaryValue -> ArgumentList
+type ICefBinaryValue struct {
+	base     ICefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ICefValue -> ArgumentList
 type ICefValue struct {
-	instance unsafe.Pointer
+	base            ICefBaseRefCounted
+	instance        unsafe.Pointer
+	binaryValue     *ICefBinaryValue
+	dictionaryValue *ICefDictionaryValue
+	listValue       *ICefListValue
 }
 
 // ICefListValue -> ArgumentList
 type ICefListValue struct {
-	instance unsafe.Pointer
-}
-
-// ICefBinaryValue -> ArgumentList
-type ICefBinaryValue struct {
-	instance unsafe.Pointer
+	base             ICefBaseRefCounted
+	instance         unsafe.Pointer
+	values           map[int]*ICefValue
+	binaryValues     map[int]*ICefBinaryValue
+	dictionaryValues map[int]*ICefDictionaryValue
+	listValues       map[int]*ICefListValue
 }
 
 // ICefDictionaryValue -> ArgumentList
 type ICefDictionaryValue struct {
-	instance unsafe.Pointer
+	base             ICefBaseRefCounted
+	instance         unsafe.Pointer
+	values           map[string]*ICefValue
+	binaryValues     map[string]*ICefBinaryValue
+	dictionaryValues map[string]*ICefDictionaryValue
+	listValues       map[string]*ICefListValue
 }
 
 // ICefDisplay

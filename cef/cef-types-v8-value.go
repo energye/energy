@@ -318,19 +318,26 @@ func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 	if !m.IsObject() {
 		return nil
 	}
-	if m.valueByKeyMap == nil {
-		m.valueByKeyMap = make(map[string]*ICefV8Value)
-	}
-	if value, ok := m.valueByKeyMap[key]; ok && value != nil {
-		return value
-	} else {
-		var result uintptr
-		imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
-		value = &ICefV8Value{
-			instance: unsafe.Pointer(result),
-		}
-		m.valueByKeyMap[key] = value
-		return value
+	//if m.valueByKeyMap == nil {
+	//	m.valueByKeyMap = make(map[string]*ICefV8Value)
+	//}
+	//if value, ok := m.valueByKeyMap[key]; ok && value != nil {
+	//	return value
+	//} else {
+	//	var result uintptr
+	//	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	//	value = &ICefV8Value{
+	//		instance: unsafe.Pointer(result),
+	//	}
+	//	m.valueByKeyMap[key] = value
+	//	return  &ICefV8Value{
+	//		instance: unsafe.Pointer(result),
+	//	}
+	//}
+	var result uintptr
+	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{
+		instance: unsafe.Pointer(result),
 	}
 }
 
@@ -347,29 +354,33 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 	if !m.IsArray() {
 		return nil
 	}
-	valLen := m.GetArrayLength()
-	if m.valueByIndexArray == nil {
-		m.valueByIndexArray = make([]*ICefV8Value, valLen)
+	//valLen := m.GetArrayLength()
+	//if m.valueByIndexArray == nil {
+	//	m.valueByIndexArray = make([]*ICefV8Value, valLen)
+	//}
+	//if index < valLen {
+	//	if len(m.valueByIndexArray) < valLen {
+	//		// 扩大 valueByIndexArray = valLen
+	//		valueArrays := m.valueByIndexArray
+	//		m.valueByIndexArray = make([]*ICefV8Value, valLen)
+	//		copy(m.valueByIndexArray, valueArrays)
+	//	}
+	//	value := m.valueByIndexArray[index]
+	//	if value == nil {
+	//		var result uintptr
+	//		imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
+	//		value = &ICefV8Value{
+	//			instance: unsafe.Pointer(result),
+	//		}
+	//		m.valueByIndexArray[index] = value
+	//	}
+	//	return value
+	//}
+	var result uintptr
+	imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{
+		instance: unsafe.Pointer(result),
 	}
-	if index < valLen {
-		if len(m.valueByIndexArray) < valLen {
-			// 扩大 valueByIndexArray = valLen
-			valueArrays := m.valueByIndexArray
-			m.valueByIndexArray = make([]*ICefV8Value, valLen)
-			copy(m.valueByIndexArray, valueArrays)
-		}
-		value := m.valueByIndexArray[index]
-		if value == nil {
-			var result uintptr
-			imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
-			value = &ICefV8Value{
-				instance: unsafe.Pointer(result),
-			}
-			m.valueByIndexArray[index] = value
-		}
-		return value
-	}
-	return nil
 }
 
 // setValueByKey internal
@@ -579,6 +590,13 @@ func (m *TCefV8ValueArray) Free() {
 	if m == nil {
 		return
 	}
+	if m.argumentsCollect != nil {
+		for _, v := range m.argumentsCollect {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+	}
 	m.instance = nil
 	m.arguments = 0
 	m.argumentsCollect = nil
@@ -593,6 +611,13 @@ func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
 }
 
 func (m *TCefV8ValueArray) Set(value []*ICefV8Value) {
+	if m.argumentsCollect != nil {
+		for _, v := range m.argumentsCollect {
+			if v != nil && v.instance != nil {
+				v.Free()
+			}
+		}
+	}
 	m.argumentsCollect = value
 	m.argumentsLength = len(value)
 	m.instance = unsafe.Pointer(m.argumentsCollect[0].Instance())
@@ -758,13 +783,14 @@ func (m *ICefV8ValueKeys) Get(index int) string {
 	if m == nil || m.keys == nil {
 		return ""
 	}
-	if index < m.Count() {
+	count := m.Count()
+	if index < count {
 		if m.keyArray == nil {
-			m.keyArray = make([]string, m.Count())
+			m.keyArray = make([]string, count)
 		}
-		if len(m.keyArray) < m.Count() {
+		if len(m.keyArray) < count {
 			keyArray := m.keyArray
-			m.keyArray = make([]string, m.Count())
+			m.keyArray = make([]string, count)
 			copy(m.keyArray, keyArray)
 		}
 		value := m.keyArray[index]
@@ -775,4 +801,13 @@ func (m *ICefV8ValueKeys) Get(index int) string {
 		return value
 	}
 	return ""
+}
+
+func (m *ICefV8ValueKeys) Free() {
+	if m == nil || m.keys == nil {
+		return
+	}
+	m.keyArray = nil
+	m.keys.Free()
+	m.keys = nil
 }
