@@ -13,10 +13,10 @@
 package cef
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/energye/energy/consts"
+	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"unsafe"
 )
@@ -31,23 +31,6 @@ type emptyInterface struct {
 	typ  *struct{}
 	word unsafe.Pointer
 }
-
-//type data []any
-//
-//func packData(t consts.GO_VALUE_TYPE, v any) *data {
-//	return &data{t, v}
-//}
-//
-//func unData(data []byte) (result []data) {
-//	if err := json.Unmarshal(data, &result); err != nil {
-//		result = nil
-//	}
-//	return
-//}
-//
-//func (m data) IsString() bool {
-//	return consts.GO_VALUE_TYPE(m[0].(int32)) == consts.GO_VALUE_STRING
-//}
 
 //convertStructToDictionaryValue 结构转DictionaryValue
 func convertStructToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
@@ -385,7 +368,7 @@ func resultToProcessMessage(data []any) (*ICefListValue, error) {
 }
 
 func resultToBytesProcessMessage(data []any) (*ICefBinaryValue, error) {
-	byt, err := json.Marshal(&data)
+	byt, err := jsoniter.Marshal(&data)
 	if err != nil {
 		return nil, err
 	}
@@ -394,7 +377,7 @@ func resultToBytesProcessMessage(data []any) (*ICefBinaryValue, error) {
 
 func argsBytesValueToV8Value(dataBuf []byte) (*ICefV8Value, error) {
 	var data []interface{}
-	if err := json.Unmarshal(dataBuf, &data); err != nil {
+	if err := jsoniter.Unmarshal(dataBuf, &data); err != nil {
 		return nil, err
 	}
 	fmt.Println("argsBytesValueToV8Value", len(data))
@@ -502,7 +485,7 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 // V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
 	if result, err := m.V8valueArrayToSlice(v8value); err == nil {
-		if v, err := json.Marshal(result); err == nil {
+		if v, err := jsoniter.Marshal(result); err == nil {
 			return v
 		}
 	}

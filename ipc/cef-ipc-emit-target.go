@@ -8,8 +8,8 @@
 //
 //----------------------------------------
 
-// IPC-事件 Emit 到 Target
-package cef
+// IPC-事件 Emit 到 指定浏览器
+package ipc
 
 // IEmitTarget 触发事件目标接口
 type IEmitTarget interface {

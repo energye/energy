@@ -176,14 +176,14 @@ type TCefPoint struct {
 	Y int32
 }
 
-// ICefBaseRefCounted
-type ICefBaseRefCounted struct {
+// TCefBaseRefCounted
+type TCefBaseRefCounted struct {
 	instance unsafe.Pointer
 }
 
 // ICefBrowser main
 type ICefBrowser struct {
-	base      ICefBaseRefCounted
+	base      TCefBaseRefCounted
 	instance  unsafe.Pointer
 	mainFrame *ICefFrame
 }
@@ -191,7 +191,7 @@ type ICefBrowser struct {
 // ICefFrame
 // Html <iframe></iframe>
 type ICefFrame struct {
-	base     ICefBaseRefCounted
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -221,13 +221,13 @@ type ICefProcessMessage struct {
 
 // ICefBinaryValue -> ArgumentList
 type ICefBinaryValue struct {
-	base     ICefBaseRefCounted
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefValue -> ArgumentList
 type ICefValue struct {
-	base            ICefBaseRefCounted
+	base            TCefBaseRefCounted
 	instance        unsafe.Pointer
 	binaryValue     *ICefBinaryValue
 	dictionaryValue *ICefDictionaryValue
@@ -236,7 +236,7 @@ type ICefValue struct {
 
 // ICefListValue -> ArgumentList
 type ICefListValue struct {
-	base             ICefBaseRefCounted
+	base             TCefBaseRefCounted
 	instance         unsafe.Pointer
 	values           map[int]*ICefValue
 	binaryValues     map[int]*ICefBinaryValue
@@ -246,7 +246,7 @@ type ICefListValue struct {
 
 // ICefDictionaryValue -> ArgumentList
 type ICefDictionaryValue struct {
-	base             ICefBaseRefCounted
+	base             TCefBaseRefCounted
 	instance         unsafe.Pointer
 	values           map[string]*ICefValue
 	binaryValues     map[string]*ICefBinaryValue
@@ -344,7 +344,7 @@ type ICefV8Exception struct {
 //   1. 在回调函数中有效
 //   2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
 type ICefV8Context struct {
-	base     ICefBaseRefCounted
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 	browser  *ICefBrowser
 	frame    *ICefFrame
@@ -353,7 +353,7 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
-	base      ICefBaseRefCounted
+	base      TCefBaseRefCounted
 	instance  unsafe.Pointer
 	valueType V8ValueType
 }

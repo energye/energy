@@ -112,7 +112,7 @@ func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32
 // 触发JS监听的事件-异步执行
 //
 // EmitTarget 接收目标, nil:mainBrowser&mainFrame, 可传递browser和指定浏览器窗口，JS监听事件的接收
-func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target IEmitTarget) ProcessMessageError {
+func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -148,7 +148,7 @@ func (m *TCEFChromium) Emit(eventName string, args ipc.IArgumentList, target IEm
 // 触发JS监听的事件-异步执行-带回调
 //
 // EmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList, target IEmitTarget, callback ipc.IPCCallback) ProcessMessageError {
+func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget, callback ipc.IPCCallback) ProcessMessageError {
 	if eventName == "" {
 		return PMErr_NAME_IS_NULL
 	}
@@ -188,7 +188,7 @@ func (m *TCEFChromium) EmitAndCallback(eventName string, args ipc.IArgumentList,
 // 使用不当会造成 UI线程 锁死，一搬不在与JS监听中使用，与其它子进程通信时使用
 //
 // EmitTarget 接收目标, nil = mainBrowser mainFrame
-func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, target IEmitTarget) (ipc.IIPCContext, ProcessMessageError) {
+func (m *TCEFChromium) EmitAndReturn(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget) (ipc.IIPCContext, ProcessMessageError) {
 	if eventName == "" {
 		return nil, PMErr_NAME_IS_NULL
 	}

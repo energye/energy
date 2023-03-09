@@ -152,18 +152,13 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	args := argument.GetBinary(2)
 	size := args.GetSize()
 	argsBytes := make([]byte, size)
-	c := args.GetData(argsBytes, 0)
-	fmt.Println("ipcEmitMessage", isCallback, c, string(argsBytes))
-	//var data []any
-	//json.Unmarshal(argsBytes, &data)
-	//fmt.Println("ipcEmitMessage", isCallback, c, size, "argsBytes:", len(argsBytes), len(data))
-	//for i, v := range data {
-	//	fmt.Println("\t", i, v)
-	//}
-	argsBytes = nil
+	args.GetData(argsBytes, 0)
+
 	args.Free()
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes, isCallback)
+	argsBytes = nil
+	fmt.Println("ipcEmitMessage", isCallback, ipcContext)
 	return
-	//ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), args, isCallback)
 	//eventCallback(ipcContext)
 	//if isCallback {
 	//	//处理回复消息
@@ -227,15 +222,24 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 	}
 	if arguments.Size() >= 1 { // 1 ~ 3 个参数
 		var (
-			emitName      *ICefV8Value //事件名
-			emitNameValue string       //
-			emitArgs      *ICefV8Value //事件参数
-			emitCallback  *ICefV8Value //事件回调函数
+			emitName       *ICefV8Value //事件名
+			emitNameValue  string       //
+			emitArgs       *ICefV8Value //事件参数
+			emitCallback   *ICefV8Value //事件回调函数
+			ipcEmitMessage *ICefProcessMessage
+			binaryValue    *ICefBinaryValue
 		)
 		defer func() {
+			//释放掉这些指针，不然不会自动释放
 			freeV8Value(emitName)
 			freeV8Value(emitArgs)
 			freeV8Value(emitCallback)
+			if ipcEmitMessage != nil {
+				ipcEmitMessage.Free()
+			}
+			if binaryValue != nil {
+				binaryValue.Free()
+			}
 		}()
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
@@ -260,7 +264,7 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		}
 		//入参
 		if emitArgs != nil {
-			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
+			ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
 			//args, err := V8ValueToProcessMessage(emitArgs)
 			//if err != nil {
@@ -270,11 +274,6 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			if args == nil {
 				return
 			}
-			//释放v8value
-			freeV8Value(emitName)
-			freeV8Value(emitArgs)
-			freeV8Value(emitCallback)
-			//fmt.Println("ipcEmitExecute args", len(args), string(args))
 			v8ctx := V8ContextRef.Current()
 			var msgId uintptr = 0
 			//回调函数
@@ -285,16 +284,13 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 					function: V8ValueRef.UnWrap(emitCallback),
 				})
 			}
-			binaryValue := BinaryValueRef.New(args)
+			binaryValue = BinaryValueRef.New(args)
 			argument.SetString(0, strconv.Itoa(int(msgId))) // 消息id
 			argument.SetString(1, emitNameValue)            // 事件名
 			argument.SetBinary(2, binaryValue)              // args
 			frame := v8ctx.Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 			args = nil
-			//释放掉这些指针，不然不会自动释放
-			binaryValue.Free()
-			ipcEmitMessage.Free()
 			frame.Free()
 			v8ctx.Free()
 		}

@@ -1099,7 +1099,7 @@ const (
 	internale_CEF_Win_SetCursor
 	internale_CEF_Win_LoadCursor
 	internale_CEF_Win_OnPaint
-	//ICefBaseRefCounted
+	//TCefBaseRefCounted
 	internale_CefBaseRefCounted_Wrap
 	internale_CefBaseRefCounted_Free
 	//ApplicationQueueAsyncCallFunc

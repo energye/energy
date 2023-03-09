@@ -33,45 +33,6 @@ func init() {
 	}
 }
 
-type IReplay interface {
-	Result() []interface{}
-	SetResult(data []interface{})
-	Clear()
-}
-
-type Replay struct {
-	data []interface{}
-}
-
-// IContext 进程间IPC通信回调上下文
-type IContext interface {
-	ArgumentList() IArrayValue  //参数列表
-	BrowserId() int32           //事件所属 browser id
-	FrameId() int64             //事件所属 frame id
-	Replay() IReplay            //回复
-	Result(data ...interface{}) //返回结果
-}
-
-// Context IPC 事件上下文
-type Context struct {
-	browserId int32
-	frameId   int64
-	argument  IArrayValue
-	replay    IReplay
-}
-
-func NewContext(browserId int32, frameId int64, argument IArrayValue, isCallback bool) IContext {
-	ctx := &Context{
-		browserId: browserId,
-		frameId:   frameId,
-		argument:  argument,
-	}
-	if isCallback {
-		ctx.replay = &Replay{}
-	}
-	return ctx
-}
-
 //On
 // IPC GO 监听事件
 func On(name string, fn EmitCallback) {
@@ -129,47 +90,4 @@ func (m *browserIPC) emitOnEvent(name string, argumentList IArrayValue) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 
-}
-
-// ArgumentList 参数列表
-func (m *Context) ArgumentList() IArrayValue {
-	return m.argument
-}
-
-func (m *Context) BrowserId() int32 {
-	return m.browserId
-}
-
-func (m *Context) FrameId() int64 {
-	return m.frameId
-}
-
-func (m *Context) Replay() IReplay {
-	return m.replay
-}
-
-func (m *Context) Result(data ...interface{}) {
-	if m.replay != nil {
-		m.replay.SetResult(data)
-	}
-}
-
-func (m *Replay) Result() []interface{} {
-	if m == nil {
-		return nil
-	}
-	return m.data
-}
-
-func (m *Replay) SetResult(data []interface{}) {
-	if m != nil {
-		m.data = data
-	}
-}
-
-func (m *Replay) Clear() {
-	if m == nil {
-		return
-	}
-	m.data = nil
 }
