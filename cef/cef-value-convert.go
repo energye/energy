@@ -8,8 +8,8 @@
 //
 //----------------------------------------
 
-//ValueConvert 值转换
-// 进程消息、V8Value、Go类型
+// V8ValueConvert -> v8ValueProcessMessageConvert
+// ICefProcessMessage、ICefV8Value、Go类型
 package cef
 
 import (
@@ -20,6 +20,12 @@ import (
 	"reflect"
 	"unsafe"
 )
+
+// V8ValueConvert
+var V8ValueConvert v8ValueProcessMessageConvert
+
+// v8ValueProcessMessageConvert ICefV8Value 和 ICefProcessMessage 转换
+type v8ValueProcessMessageConvert uintptr
 
 type emptyInterface struct {
 	typ  *struct{}
@@ -493,9 +499,9 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 	return result, nil
 }
 
-// ConvertV8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
-func ConvertV8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
-	if result, err := ConvertV8valueArrayToSlice(v8value); err == nil {
+// V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
+func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
+	if result, err := m.V8valueArrayToSlice(v8value); err == nil {
 		if v, err := json.Marshal(result); err == nil {
 			return v
 		}
@@ -503,8 +509,8 @@ func ConvertV8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
 	return nil
 }
 
-// ConvertV8valueArrayToSlice ICefV8Value 转换 Slice
-func ConvertV8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
+// V8valueArrayToSlice ICefV8Value 转换 Slice
+func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
 	if !v8value.IsArray() {
 		return nil, errors.New("convert list value error. Please pass in the array type")
 	}
@@ -527,13 +533,13 @@ func ConvertV8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
 		} else if args.IsUndefined() {
 			result[i] = "undefined"
 		} else if args.IsArray() {
-			if v, err := ConvertV8valueArrayToSlice(args); err == nil {
+			if v, err := m.V8valueArrayToSlice(args); err == nil {
 				result[i] = v
 			} else {
 				result[i] = nil
 			}
 		} else if args.IsObject() {
-			if v, err := ConvertV8valueObjectToMap(args); err == nil {
+			if v, err := m.V8valueObjectToMap(args); err == nil {
 				result[i] = v
 			} else {
 				result[i] = nil
@@ -548,8 +554,8 @@ func ConvertV8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
 	return result, nil
 }
 
-// ConvertV8valueObjectToMap ICefV8Value 转换 Maps
-func ConvertV8valueObjectToMap(v8value *ICefV8Value) (map[string]any, error) {
+// V8valueObjectToMap ICefV8Value 转换 Maps
+func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) (map[string]any, error) {
 	if !v8value.IsObject() {
 		return nil, errors.New("convert dictionary value error. Please pass in the object type")
 	}
@@ -573,13 +579,13 @@ func ConvertV8valueObjectToMap(v8value *ICefV8Value) (map[string]any, error) {
 		} else if args.IsUndefined() {
 			result[key] = "undefined"
 		} else if args.IsArray() {
-			if v, err := ConvertV8valueArrayToSlice(args); err == nil {
+			if v, err := m.V8valueArrayToSlice(args); err == nil {
 				result[key] = v
 			} else {
 				result[key] = nil
 			}
 		} else if args.IsObject() {
-			if v, err := ConvertV8valueObjectToMap(args); err == nil {
+			if v, err := m.V8valueObjectToMap(args); err == nil {
 				result[key] = v
 			} else {
 				result[key] = nil
@@ -596,15 +602,15 @@ func ConvertV8valueObjectToMap(v8value *ICefV8Value) (map[string]any, error) {
 	return result, nil
 }
 
-// ConvertV8ValueToProcessMessage ICefV8Value 转换 进程消息
-func ConvertV8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
+// V8ValueToProcessMessage ICefV8Value 转换 进程消息
+func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 	if v8value == nil {
 		return nil, errors.New("build process message error. Parameter null")
 	}
 	if v8value.IsArray() {
-		return ConvertV8valueArrayToListValue(v8value)
+		return m.V8valueArrayToListValue(v8value)
 	} else if v8value.IsObject() {
-		if v, err := ConvertV8valueObjectToDictionaryValue(v8value); err == nil {
+		if v, err := m.V8valueObjectToDictionaryValue(v8value); err == nil {
 			arrayValue := ListValueRef.New()
 			arrayValue.SetDictionary(uint32(0), v)
 			return arrayValue, nil
@@ -632,8 +638,8 @@ func ConvertV8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error
 	}
 }
 
-// ConvertV8valueArrayToListValue ICefV8Value 转换 ICefListValue
-func ConvertV8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error) {
+// V8valueArrayToListValue ICefV8Value 转换 ICefListValue
+func (m *v8ValueProcessMessageConvert) V8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error) {
 	if !v8value.IsArray() {
 		return nil, errors.New("convert list value error. Please pass in the array type")
 	}
@@ -654,11 +660,11 @@ func ConvertV8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error
 		} else if args.IsNull() || args.IsUndefined() {
 			arrayValue.SetNull(uint32(i))
 		} else if args.IsArray() {
-			if v, err := ConvertV8valueArrayToListValue(args); err == nil {
+			if v, err := m.V8valueArrayToListValue(args); err == nil {
 				arrayValue.SetList(uint32(i), v)
 			}
 		} else if args.IsObject() {
-			if v, err := ConvertV8valueObjectToDictionaryValue(args); err == nil {
+			if v, err := m.V8valueObjectToDictionaryValue(args); err == nil {
 				arrayValue.SetDictionary(uint32(i), v)
 			}
 		} else if args.IsArrayBuffer() {
@@ -671,8 +677,8 @@ func ConvertV8valueArrayToListValue(v8value *ICefV8Value) (*ICefListValue, error
 	return arrayValue, nil
 }
 
-// ConvertV8valueObjectToDictionaryValue ICefV8Value 转换 ICefDictionaryValue
-func ConvertV8valueObjectToDictionaryValue(v8value *ICefV8Value) (*ICefDictionaryValue, error) {
+// V8valueObjectToDictionaryValue ICefV8Value 转换 ICefDictionaryValue
+func (m *v8ValueProcessMessageConvert) V8valueObjectToDictionaryValue(v8value *ICefV8Value) (*ICefDictionaryValue, error) {
 	if !v8value.IsObject() {
 		return nil, errors.New("convert dictionary value error. Please pass in the object type")
 	}
@@ -694,11 +700,11 @@ func ConvertV8valueObjectToDictionaryValue(v8value *ICefV8Value) (*ICefDictionar
 		} else if args.IsNull() || args.IsUndefined() {
 			dictionaryValue.SetNull(key)
 		} else if args.IsArray() {
-			if v, err := ConvertV8valueArrayToListValue(args); err == nil {
+			if v, err := m.V8valueArrayToListValue(args); err == nil {
 				dictionaryValue.SetList(key, v)
 			}
 		} else if args.IsObject() {
-			if v, err := ConvertV8valueObjectToDictionaryValue(args); err == nil {
+			if v, err := m.V8valueObjectToDictionaryValue(args); err == nil {
 				dictionaryValue.SetDictionary(key, v)
 			}
 		} else {

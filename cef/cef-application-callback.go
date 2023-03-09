@@ -262,11 +262,11 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		if emitArgs != nil {
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
-			//args, err := ConvertV8ValueToProcessMessage(emitArgs)
+			//args, err := V8ValueToProcessMessage(emitArgs)
 			//if err != nil {
 			//	return
 			//}
-			args := ConvertV8ValueToProcessMessageBytes(emitArgs)
+			args := V8ValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				return
 			}
