@@ -183,6 +183,7 @@ type ICefBaseRefCounted struct {
 
 // ICefBrowser main
 type ICefBrowser struct {
+	base      ICefBaseRefCounted
 	instance  unsafe.Pointer
 	mainFrame *ICefFrame
 }
@@ -190,6 +191,7 @@ type ICefBrowser struct {
 // ICefFrame
 // Html <iframe></iframe>
 type ICefFrame struct {
+	base     ICefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -351,11 +353,9 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
-	base              ICefBaseRefCounted
-	instance          unsafe.Pointer
-	valueType         V8ValueType
-	valueByIndexArray []*ICefV8Value
-	valueByKeyMap     map[string]*ICefV8Value
+	base      ICefBaseRefCounted
+	instance  unsafe.Pointer
+	valueType V8ValueType
 }
 
 // ICefV8ValueKeys

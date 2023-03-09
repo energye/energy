@@ -339,6 +339,11 @@ func (m *ICefBrowser) StopFinding(clearSelection bool) {
 	imports.Proc(internale_CEFBrowser_StopFinding).Call(m.Instance(), api.PascalBool(clearSelection))
 }
 
+func (m *ICefBrowser) Free() {
+	m.base.Free(m.Instance())
+	m.instance = nil
+}
+
 // BrowserRef -> ICefBrowser
 var BrowserRef browser
 

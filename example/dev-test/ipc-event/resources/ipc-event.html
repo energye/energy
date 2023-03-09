@@ -16,6 +16,7 @@
             if (si != null) {
                 clearInterval(si)
                 si = null
+                idx = 0
                 return
             }
             si = setInterval(ipcEmit, 1)
@@ -23,10 +24,13 @@
             //     ipcEmit();
             // }
             if (si != null) {
-                setTimeout(function () {
-                    clearInterval(si)
-                    si = null
-                }, 1000)
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(si)
+                        si = null
+                    }, time)
+                }
             }
         }
 
@@ -114,6 +118,7 @@
 <p>
     <button onclick="ipcEmit()">ipcEmit</button>
     <button onclick="autoIpcEmit()">自动-ipcEmit</button>
+    <input id="time" value="0">
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

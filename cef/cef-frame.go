@@ -154,6 +154,11 @@ func (m *ICefFrame) Parent() *ICefFrame {
 	return &ICefFrame{instance: unsafe.Pointer(result)}
 }
 
+func (m *ICefFrame) Free() {
+	m.base.Free(m.Instance())
+	m.instance = nil
+}
+
 // FrameRef -> *ICefFrame
 var FrameRef frameRef
 

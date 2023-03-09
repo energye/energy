@@ -318,22 +318,6 @@ func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 	if !m.IsObject() {
 		return nil
 	}
-	//if m.valueByKeyMap == nil {
-	//	m.valueByKeyMap = make(map[string]*ICefV8Value)
-	//}
-	//if value, ok := m.valueByKeyMap[key]; ok && value != nil {
-	//	return value
-	//} else {
-	//	var result uintptr
-	//	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
-	//	value = &ICefV8Value{
-	//		instance: unsafe.Pointer(result),
-	//	}
-	//	m.valueByKeyMap[key] = value
-	//	return  &ICefV8Value{
-	//		instance: unsafe.Pointer(result),
-	//	}
-	//}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -354,28 +338,6 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 	if !m.IsArray() {
 		return nil
 	}
-	//valLen := m.GetArrayLength()
-	//if m.valueByIndexArray == nil {
-	//	m.valueByIndexArray = make([]*ICefV8Value, valLen)
-	//}
-	//if index < valLen {
-	//	if len(m.valueByIndexArray) < valLen {
-	//		// 扩大 valueByIndexArray = valLen
-	//		valueArrays := m.valueByIndexArray
-	//		m.valueByIndexArray = make([]*ICefV8Value, valLen)
-	//		copy(m.valueByIndexArray, valueArrays)
-	//	}
-	//	value := m.valueByIndexArray[index]
-	//	if value == nil {
-	//		var result uintptr
-	//		imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
-	//		value = &ICefV8Value{
-	//			instance: unsafe.Pointer(result),
-	//		}
-	//		m.valueByIndexArray[index] = value
-	//	}
-	//	return value
-	//}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -525,12 +487,6 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 func (m *ICefV8Value) Free() {
 	m.base.Free(m.Instance())
 	m.instance = nil
-	if m.valueByKeyMap != nil {
-		m.valueByKeyMap = nil
-	}
-	if m.valueByIndexArray != nil {
-		m.valueByIndexArray = nil
-	}
 }
 
 // ResultV8Value 返回 ICefV8Value 的替代结构

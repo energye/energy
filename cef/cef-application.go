@@ -199,19 +199,19 @@ func init() {
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browser, frame, TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
 			browser := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{getPtr(1)}
+			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browser, frame, int32(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadError:
 			browser := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{getPtr(1)}
+			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadingStateChange:
 			browser := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{getPtr(1)}
+			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case RenderProcessMessageReceived:
 			browser := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{getPtr(1)}
+			frame := &ICefFrame{instance: getPtr(1)}
 			processId := CefProcessId(getVal(2))
 			message := &ICefProcessMessage{instance: getPtr(3)}
 			var result = (*bool)(getPtr(4))

@@ -262,14 +262,18 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		if emitArgs != nil {
 			ipcEmitMessage := ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
-			//args, err := convertV8ValueToProcessMessage(emitArgs)
+			//args, err := ConvertV8ValueToProcessMessage(emitArgs)
 			//if err != nil {
 			//	return
 			//}
-			args := convertV8ValueToProcessMessageBytes(emitArgs)
+			args := ConvertV8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				return
 			}
+			//释放v8value
+			freeV8Value(emitName)
+			freeV8Value(emitArgs)
+			freeV8Value(emitCallback)
 			//fmt.Println("ipcEmitExecute args", len(args), string(args))
 			v8ctx := V8ContextRef.Current()
 			var msgId uintptr = 0
@@ -284,13 +288,14 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			binaryValue := BinaryValueRef.New(args)
 			argument.SetString(0, strconv.Itoa(int(msgId))) // 消息id
 			argument.SetString(1, emitNameValue)            // 事件名
-			//argument.SetList(2, args)                       // args
-			argument.SetBinary(2, binaryValue) // args
+			argument.SetBinary(2, binaryValue)              // args
 			frame := v8ctx.Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 			args = nil
+			//释放掉这些指针，不然不会自动释放
 			binaryValue.Free()
 			ipcEmitMessage.Free()
+			frame.Free()
 			v8ctx.Free()
 		}
 		retVal.SetResult(V8ValueRef.NewBool(true))

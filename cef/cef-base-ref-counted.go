@@ -15,13 +15,14 @@ import (
 	"unsafe"
 )
 
-// ICefBaseRefCounted
+// Wrap 指针引用包裹
 func (m *ICefBaseRefCounted) Wrap(data uintptr) unsafe.Pointer {
 	var result uintptr
 	imports.Proc(internale_CefBaseRefCounted_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
 	return unsafe.Pointer(result)
 }
 
+// Free 释放底层指针
 func (m *ICefBaseRefCounted) Free(data uintptr) {
 	imports.Proc(internale_CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
 	m.instance = nil
