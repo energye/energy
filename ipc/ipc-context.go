@@ -26,18 +26,18 @@ type Replay struct {
 
 // IContext 进程间IPC通信回调上下文
 type IContext interface {
-	ArgumentList() json.IJSONArray //参数列表
-	BrowserId() int32              //事件所属 browser id
-	FrameId() int64                //事件所属 frame id
-	Replay() IReplay               //回复
-	Result(data ...interface{})    //返回结果
+	ArgumentList() json.JSONArray //参数列表
+	BrowserId() int32             //事件所属 browser id
+	FrameId() int64               //事件所属 frame id
+	Replay() IReplay              //回复
+	Result(data ...interface{})   //返回结果
 }
 
 // Context IPC 事件上下文
 type Context struct {
 	browserId int32
 	frameId   int64
-	argument  json.IJSONArray
+	argument  json.JSONArray
 	replay    IReplay
 }
 
@@ -55,7 +55,7 @@ func NewContext(browserId int32, frameId int64, data []byte, isCallback bool) IC
 }
 
 // ArgumentList 参数列表
-func (m *Context) ArgumentList() json.IJSONArray {
+func (m *Context) ArgumentList() json.JSONArray {
 	return m.argument
 }
 

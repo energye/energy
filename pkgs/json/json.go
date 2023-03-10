@@ -18,7 +18,7 @@ import (
 	"strconv"
 )
 
-type IBaseJSON interface {
+type BaseJSON interface {
 	Size() int
 	Type() GO_VALUE_TYPE
 	Data() any
@@ -28,63 +28,64 @@ type IBaseJSON interface {
 	Bytes() []byte
 	Float() float64
 	Bool() bool
-	Map() IJSONMap
-	Array() IJSONArray
+	Map() JSONObject
+	Array() JSONArray
 	IsString() bool
 	IsInt() bool
 	IsUInt() bool
 	IsBytes() bool
 	IsFloat() bool
 	IsBool() bool
-	IsMap() bool
+	IsObject() bool
 	IsArray() bool
+	Clear()
 }
 
-type IJSONArray interface {
-	IBaseJSON
+type JSONArray interface {
+	BaseJSON
 	Add(value any)
 	RemoveByIndex(index int)
-	StringByIndex(index int) string
-	IntByIndex(index int) int
-	UIntByIndex(index int) uint
-	BytesByIndex(index int) []byte
-	FloatByIndex(index int) float64
-	BoolByIndex(index int) bool
-	ArrayByIndex(index int) IJSONArray
-	MapByIndex(index int) IJSONMap
-	GetByIndex(index int) IJSON
+	GetStringByIndex(index int) string
+	GetIntByIndex(index int) int
+	GetUIntByIndex(index int) uint
+	GetBytesByIndex(index int) []byte
+	GetFloatByIndex(index int) float64
+	GetBoolByIndex(index int) bool
+	GetArrayByIndex(index int) JSONArray
+	GetObjectByIndex(index int) JSONObject
+	GetByIndex(index int) JSON
 }
 
-type IJSONMap interface {
-	IBaseJSON
+type JSONObject interface {
+	BaseJSON
 	Set(key, value string)
 	RemoveByKey(key string)
-	StringByKey(key string) string
-	IntByKey(key string) int
-	UIntByKey(key string) uint
-	BytesByKey(key string) []byte
-	FloatByKey(key string) float64
-	BoolByKey(key string) bool
-	ArrayByKey(key string) IJSONArray
-	MapByKey(key string) IJSONMap
-	GetByKey(key string) IJSON
+	GetStringByKey(key string) string
+	GetIntByKey(key string) int
+	GetUIntByKey(key string) uint
+	GetBytesByKey(key string) []byte
+	GetFloatByKey(key string) float64
+	GetBoolByKey(key string) bool
+	GetArrayByKey(key string) JSONArray
+	GetObjectByKey(key string) JSONObject
+	GetByKey(key string) JSON
 	Keys() []string
 }
 
-// IJSON IPC参数 数组形式
-type IJSON interface {
-	IJSONArray
-	IJSONMap
+// JSON Object
+type JSON interface {
+	JSONArray
+	JSONObject
 }
 
-type JSON struct {
+type jsonData struct {
 	T GO_VALUE_TYPE // type
 	S int           // size
 	V any           // value
 }
 
-// NewJSON 返回 JSON 对象，IJSONArray or IJSONMap
-func NewJSON(data []byte) IJSON {
+// NewJSON 返回 jsonData 对象，JSONArray or JSONObject
+func NewJSON(data []byte) JSON {
 	if data == nil {
 		return nil
 	}
@@ -94,19 +95,19 @@ func NewJSON(data []byte) IJSON {
 		switch rv.Kind() {
 		case reflect.Slice:
 			if v, ok := v.([]any); ok {
-				return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 			}
 		case reflect.Map:
 			if v, ok := v.(map[string]any); ok {
-				return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 			}
 		}
 	}
 	return nil
 }
 
-// NewJSONArray 字节JSONArray/数组/切片 转换
-func NewJSONArray(value any) IJSONArray {
+// NewJSONArray 字节JSONArray / 数组 / 切片 转换
+func NewJSONArray(value any) JSONArray {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONArray
 		switch value.(type) {
@@ -125,15 +126,15 @@ func NewJSONArray(value any) IJSONArray {
 		if byt, err := jsoniter.Marshal(value); err == nil {
 			var v []any
 			if err = jsoniter.Unmarshal(byt, &v); err == nil {
-				return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 			}
 		}
 	}
 	return nil
 }
 
-// NewJSONMap 字节JSONObject/结构/Map 转换
-func NewJSONMap(value any) IJSONMap {
+// NewJSONObject 字节JSONObject / 结构 / Map 转换
+func NewJSONObject(value any) JSONObject {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONObject
 		switch value.(type) {
@@ -153,33 +154,33 @@ func NewJSONMap(value any) IJSONMap {
 		if byt, err := jsoniter.Marshal(value); err == nil {
 			var v map[string]any
 			if err = jsoniter.Unmarshal(byt, &v); err == nil {
-				return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 			}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) Size() int {
+func (m *jsonData) Size() int {
 	return m.S
 }
 
-func (m *JSON) Type() GO_VALUE_TYPE {
+func (m *jsonData) Type() GO_VALUE_TYPE {
 	return m.T
 }
 
-func (m *JSON) Data() any {
+func (m *jsonData) Data() any {
 	return m.V
 }
 
-func (m *JSON) Add(value any) {
+func (m *jsonData) Add(value any) {
 	if m.IsArray() {
 		m.V = append(m.V.([]any), value)
 		m.S++
 	}
 }
 
-func (m *JSON) RemoveByIndex(index int) {
+func (m *jsonData) RemoveByIndex(index int) {
 	if m.IsArray() && index >= 0 && index < m.S {
 		v := m.V.([]any)
 		m.V = append(v[:index], v[index+1:]...)
@@ -187,7 +188,7 @@ func (m *JSON) RemoveByIndex(index int) {
 	}
 }
 
-func (m *JSON) StringByIndex(index int) string {
+func (m *jsonData) GetStringByIndex(index int) string {
 	if m.IsArray() && index < m.S {
 		if r, ok := m.V.([]any)[index].(string); ok {
 			return r
@@ -196,35 +197,35 @@ func (m *JSON) StringByIndex(index int) string {
 	return ""
 }
 
-func (m *JSON) IntByIndex(index int) int {
+func (m *jsonData) GetIntByIndex(index int) int {
 	if m.IsArray() && index < m.S {
 		return m.toInt(m.V.([]any)[index])
 	}
 	return 0
 }
 
-func (m *JSON) UIntByIndex(index int) uint {
+func (m *jsonData) GetUIntByIndex(index int) uint {
 	if m.IsArray() && index < m.S {
 		return m.toUInt(m.V.([]any)[index])
 	}
 	return 0
 }
 
-func (m *JSON) BytesByIndex(index int) []byte {
+func (m *jsonData) GetBytesByIndex(index int) []byte {
 	if m.IsArray() && index < m.S {
 		return m.toBytes(m.V.([]any)[index])
 	}
 	return nil
 }
 
-func (m *JSON) FloatByIndex(index int) float64 {
+func (m *jsonData) GetFloatByIndex(index int) float64 {
 	if m.IsArray() && index < m.S {
 		return m.toFloat64(m.V.([]any)[index])
 	}
 	return 0
 }
 
-func (m *JSON) BoolByIndex(index int) bool {
+func (m *jsonData) GetBoolByIndex(index int) bool {
 	if m.IsArray() && index < m.S {
 		s := m.V.([]any)[index]
 		switch s.(type) {
@@ -235,74 +236,74 @@ func (m *JSON) BoolByIndex(index int) bool {
 	return false
 }
 
-func (m *JSON) ArrayByIndex(index int) IJSONArray {
+func (m *jsonData) GetArrayByIndex(index int) JSONArray {
 	if m.IsArray() && index < m.S {
 		if v, ok := m.V.([]any)[index].([]any); ok {
-			return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+			return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) MapByIndex(index int) IJSONMap {
+func (m *jsonData) GetObjectByIndex(index int) JSONObject {
 	if m.IsArray() && index < m.S {
 		if v, ok := m.V.([]any)[index].(map[string]any); ok {
-			return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+			return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) GetByIndex(index int) IJSON {
+func (m *jsonData) GetByIndex(index int) JSON {
 	if m.IsArray() && index < m.S {
 		s := m.V.([]any)[index]
 		switch s.(type) {
 		case string:
 			if r, ok := s.(string); ok {
-				return &JSON{T: GO_VALUE_STRING, V: r, S: len(r)}
+				return &jsonData{T: GO_VALUE_STRING, V: r, S: len(r)}
 			}
 		case int, int8, int16, int32, int64:
-			if s := m.IntByIndex(index); s != 0 {
-				return &JSON{T: GO_VALUE_INT, V: s, S: strconv.IntSize}
+			if s := m.GetIntByIndex(index); s != 0 {
+				return &jsonData{T: GO_VALUE_INT, V: s, S: strconv.IntSize}
 			}
 		case uint, uint8, uint16, uint32, uint64:
-			if s := m.UIntByIndex(index); s != 0 {
-				return &JSON{T: GO_VALUE_UINT, V: s, S: strconv.IntSize}
+			if s := m.GetUIntByIndex(index); s != 0 {
+				return &jsonData{T: GO_VALUE_UINT, V: s, S: strconv.IntSize}
 			}
 		case []byte:
-			if s := m.BytesByIndex(index); s != nil {
-				return &JSON{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
+			if s := m.GetBytesByIndex(index); s != nil {
+				return &jsonData{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
 			}
 		case float32, float64:
-			if s := m.FloatByIndex(index); s != 0 {
-				return &JSON{T: GO_VALUE_FLOAT64, V: s, S: 8}
+			if s := m.GetFloatByIndex(index); s != 0 {
+				return &jsonData{T: GO_VALUE_FLOAT64, V: s, S: 8}
 			}
 		case bool:
-			return &JSON{T: GO_VALUE_BOOL, V: m.BoolByIndex(index), S: 1}
+			return &jsonData{T: GO_VALUE_BOOL, V: m.GetBoolByIndex(index), S: 1}
 		case []any:
 			if index < m.S {
 				if v, ok := m.V.([]any)[index].([]any); ok {
-					return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+					return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 				}
 			}
 		case map[string]any:
 			if v, ok := s.(map[string]any); ok {
-				return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 			}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) Set(key, value string) {
-	if m.IsMap() {
+func (m *jsonData) Set(key, value string) {
+	if m.IsObject() {
 		m.V.(map[string]any)[key] = value
 		m.S++
 	}
 }
 
-func (m *JSON) RemoveByKey(key string) {
-	if m.IsMap() {
+func (m *jsonData) RemoveByKey(key string) {
+	if m.IsObject() {
 		if _, ok := m.V.(map[string]any)[key]; ok {
 			delete(m.V.(map[string]any), key)
 			m.S--
@@ -310,8 +311,8 @@ func (m *JSON) RemoveByKey(key string) {
 	}
 }
 
-func (m *JSON) StringByKey(key string) string {
-	if m.IsMap() {
+func (m *jsonData) GetStringByKey(key string) string {
+	if m.IsObject() {
 		if r, ok := m.V.(map[string]any)[key].(string); ok {
 			return r
 		}
@@ -319,36 +320,36 @@ func (m *JSON) StringByKey(key string) string {
 	return ""
 }
 
-func (m *JSON) IntByKey(key string) int {
-	if m.IsMap() {
+func (m *jsonData) GetIntByKey(key string) int {
+	if m.IsObject() {
 		return m.toInt(m.V.(map[string]any)[key])
 	}
 	return 0
 }
 
-func (m *JSON) UIntByKey(key string) uint {
-	if m.IsMap() {
+func (m *jsonData) GetUIntByKey(key string) uint {
+	if m.IsObject() {
 		return m.toUInt(m.V.(map[string]any)[key])
 	}
 	return 0
 }
 
-func (m *JSON) BytesByKey(key string) []byte {
-	if m.IsMap() {
+func (m *jsonData) GetBytesByKey(key string) []byte {
+	if m.IsObject() {
 		return m.toBytes(m.V.(map[string]any)[key])
 	}
 	return nil
 }
 
-func (m *JSON) FloatByKey(key string) float64 {
-	if m.IsMap() {
+func (m *jsonData) GetFloatByKey(key string) float64 {
+	if m.IsObject() {
 		return m.toFloat64(m.V.(map[string]any)[key])
 	}
 	return 0
 }
 
-func (m *JSON) BoolByKey(key string) bool {
-	if m.IsMap() {
+func (m *jsonData) GetBoolByKey(key string) bool {
+	if m.IsObject() {
 		if s, ok := m.V.(map[string]any)[key].(bool); ok {
 			return s
 		}
@@ -356,111 +357,111 @@ func (m *JSON) BoolByKey(key string) bool {
 	return false
 }
 
-func (m *JSON) ArrayByKey(key string) IJSONArray {
-	if m.IsMap() {
+func (m *jsonData) GetArrayByKey(key string) JSONArray {
+	if m.IsObject() {
 		if v, ok := m.V.(map[string]any)[key].([]any); ok {
-			return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+			return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) MapByKey(key string) IJSONMap {
-	if m.IsMap() {
+func (m *jsonData) GetObjectByKey(key string) JSONObject {
+	if m.IsObject() {
 		if v, ok := m.V.(map[string]any)[key].(map[string]any); ok {
-			return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+			return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) GetByKey(key string) IJSON {
-	if m.IsMap() {
+func (m *jsonData) GetByKey(key string) JSON {
+	if m.IsObject() {
 		s := m.V.(map[string]any)[key]
 		switch s.(type) {
 		case string:
 			if r, ok := s.(string); ok {
-				return &JSON{T: GO_VALUE_STRING, V: r, S: len(r)}
+				return &jsonData{T: GO_VALUE_STRING, V: r, S: len(r)}
 			}
 		case int, int8, int16, int32, int64:
-			if s := m.IntByKey(key); s != 0 {
-				return &JSON{T: GO_VALUE_INT, V: s, S: strconv.IntSize}
+			if s := m.GetIntByKey(key); s != 0 {
+				return &jsonData{T: GO_VALUE_INT, V: s, S: strconv.IntSize}
 			}
 		case uint, uint8, uint16, uint32, uint64:
-			if s := m.UIntByKey(key); s != 0 {
-				return &JSON{T: GO_VALUE_UINT, V: s, S: strconv.IntSize}
+			if s := m.GetUIntByKey(key); s != 0 {
+				return &jsonData{T: GO_VALUE_UINT, V: s, S: strconv.IntSize}
 			}
 		case []byte:
-			if s := m.BytesByKey(key); s != nil {
-				return &JSON{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
+			if s := m.GetBytesByKey(key); s != nil {
+				return &jsonData{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
 			}
 		case float32, float64:
-			if s := m.FloatByKey(key); s != 0 {
-				return &JSON{T: GO_VALUE_FLOAT64, V: s, S: 8}
+			if s := m.GetFloatByKey(key); s != 0 {
+				return &jsonData{T: GO_VALUE_FLOAT64, V: s, S: 8}
 			}
 		case bool:
-			return &JSON{T: GO_VALUE_BOOL, V: m.BytesByKey(key), S: 1}
+			return &jsonData{T: GO_VALUE_BOOL, V: m.GetBytesByKey(key), S: 1}
 		case []any:
 			if v, ok := m.V.(map[string]any)[key].([]any); ok {
-				return &JSON{T: GO_VALUE_SLICE, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 			}
 		case map[string]any:
 			if v, ok := s.(map[string]any); ok {
-				return &JSON{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 			}
 		}
 	}
 	return nil
 }
 
-func (m *JSON) String() string {
+func (m *jsonData) String() string {
 	if m.IsString() {
 		return m.V.(string)
 	}
 	return ""
 }
 
-func (m *JSON) Int() int {
+func (m *jsonData) Int() int {
 	return m.toInt(m.V)
 }
 
-func (m *JSON) UInt() uint {
+func (m *jsonData) UInt() uint {
 	return m.toUInt(m.V)
 }
 
-func (m *JSON) Bytes() []byte {
+func (m *jsonData) Bytes() []byte {
 	if m.IsBytes() {
 		return m.V.([]byte)
 	}
 	return nil
 }
 
-func (m *JSON) Float() float64 {
+func (m *jsonData) Float() float64 {
 	return m.toFloat64(m.V)
 }
 
-func (m *JSON) Bool() bool {
+func (m *jsonData) Bool() bool {
 	if m.IsBool() {
 		return m.V.(bool)
 	}
 	return false
 }
 
-func (m *JSON) Map() IJSONMap {
-	if m.IsMap() {
+func (m *jsonData) Map() JSONObject {
+	if m.IsObject() {
 		return m
 	}
 	return nil
 }
 
-func (m *JSON) Array() IJSONArray {
+func (m *jsonData) Array() JSONArray {
 	if m.IsArray() {
 		return m
 	}
 	return nil
 }
 
-func (m *JSON) toBytes(s any) []byte {
+func (m *jsonData) toBytes(s any) []byte {
 	switch s.(type) {
 	case []byte:
 		return s.([]byte)
@@ -500,8 +501,8 @@ func (m *JSON) toBytes(s any) []byte {
 	return nil
 }
 
-func (m *JSON) Keys() []string {
-	if m.IsMap() {
+func (m *jsonData) Keys() []string {
+	if m.IsObject() {
 		var result []string
 		for key, _ := range m.V.(map[string]any) {
 			result = append(result, key)
@@ -511,39 +512,51 @@ func (m *JSON) Keys() []string {
 	return nil
 }
 
-func (m *JSON) IsString() bool {
+func (m *jsonData) IsString() bool {
 	return m.T == GO_VALUE_STRING
 }
 
-func (m *JSON) IsInt() bool {
+func (m *jsonData) IsInt() bool {
 	return m.T == GO_VALUE_INT
 }
 
-func (m *JSON) IsUInt() bool {
+func (m *jsonData) IsUInt() bool {
 	return m.T == GO_VALUE_UINT
 }
 
-func (m *JSON) IsBytes() bool {
+func (m *jsonData) IsBytes() bool {
 	return m.T == GO_VALUE_SLICE_BYTE
 }
 
-func (m *JSON) IsFloat() bool {
+func (m *jsonData) IsFloat() bool {
 	return m.T == GO_VALUE_FLOAT64
 }
 
-func (m *JSON) IsBool() bool {
+func (m *jsonData) IsBool() bool {
 	return m.T == GO_VALUE_BOOL
 }
 
-func (m *JSON) IsMap() bool {
+func (m *jsonData) IsObject() bool {
 	return m.T == GO_VALUE_MAP
 }
 
-func (m *JSON) IsArray() bool {
+func (m *jsonData) IsArray() bool {
 	return m.T == GO_VALUE_SLICE
 }
 
-func (m *JSON) toFloat64(s any) float64 {
+func (m *jsonData) Clear() {
+	if m.IsObject() {
+		m.V = make(map[string]any)
+	} else if m.IsArray() {
+		m.V = make([]any, 0)
+	} else {
+		m.V = nil
+	}
+	m.S = 0
+	m.T = GO_VALUE_INVALID
+}
+
+func (m *jsonData) toFloat64(s any) float64 {
 	switch s.(type) {
 	case float32:
 		return float64(s.(float32))
@@ -573,7 +586,7 @@ func (m *JSON) toFloat64(s any) float64 {
 	return 0
 }
 
-func (m *JSON) toInt(s any) int {
+func (m *jsonData) toInt(s any) int {
 	switch s.(type) {
 	case float32:
 		return int(s.(float32))
@@ -603,7 +616,7 @@ func (m *JSON) toInt(s any) int {
 	return 0
 }
 
-func (m *JSON) toUInt(s any) uint {
+func (m *jsonData) toUInt(s any) uint {
 	switch s.(type) {
 	case float32:
 		return uint(s.(float32))

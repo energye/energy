@@ -39,6 +39,8 @@ func main() {
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
 		for i := 0; i < argument.Size(); i++ {
+			value := argument.GetByIndex(i)
+			fmt.Println("type:", value.Type())
 			//value := argument.GetIValue(uint32(i))
 			//fmt.Println("\tGetType:", i, value.GetType())
 			//switch value.GetType() {
