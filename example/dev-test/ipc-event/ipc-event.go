@@ -38,9 +38,10 @@ func main() {
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
+		fmt.Println("data:", argument.Data())
 		for i := 0; i < argument.Size(); i++ {
 			value := argument.GetByIndex(i)
-			fmt.Println("type:", value.Type())
+			fmt.Println("type:", i, value.Type(), value.IsInt())
 			//value := argument.GetIValue(uint32(i))
 			//fmt.Println("\tGetType:", i, value.GetType())
 			//switch value.GetType() {

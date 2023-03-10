@@ -158,8 +158,8 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes, isCallback)
 	argsBytes = nil
 	fmt.Println("ipcEmitMessage", isCallback, ipcContext)
+	eventCallback(ipcContext)
 	return
-	//eventCallback(ipcContext)
 	//if isCallback {
 	//	//处理回复消息
 	//	replay := ipcContext.Replay()

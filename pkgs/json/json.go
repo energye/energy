@@ -11,11 +11,13 @@
 package json
 
 import (
+	"encoding/json"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 type BaseJSON interface {
@@ -258,6 +260,10 @@ func (m *jsonData) GetByIndex(index int) JSON {
 	if m.IsArray() && index < m.S {
 		s := m.V.([]any)[index]
 		switch s.(type) {
+		case json.Number:
+			if v, err := s.(json.Number).Int64(); err == nil {
+				return &jsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize}
+			}
 		case string:
 			if r, ok := s.(string); ok {
 				return &jsonData{T: GO_VALUE_STRING, V: r, S: len(r)}
@@ -275,8 +281,12 @@ func (m *jsonData) GetByIndex(index int) JSON {
 				return &jsonData{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
 			}
 		case float32, float64:
-			if s := m.GetFloatByIndex(index); s != 0 {
-				return &jsonData{T: GO_VALUE_FLOAT64, V: s, S: 8}
+			//不带有 . 转为 int 类型
+			sv := m.toFloat64(s)
+			if strings.Index(strconv.FormatFloat(sv, 'G', -1, 64), ".") != -1 {
+				return &jsonData{T: GO_VALUE_FLOAT64, V: sv, S: 8}
+			} else {
+				return &jsonData{T: GO_VALUE_INT, V: sv, S: strconv.IntSize}
 			}
 		case bool:
 			return &jsonData{T: GO_VALUE_BOOL, V: m.GetBoolByIndex(index), S: 1}
@@ -379,6 +389,10 @@ func (m *jsonData) GetByKey(key string) JSON {
 	if m.IsObject() {
 		s := m.V.(map[string]any)[key]
 		switch s.(type) {
+		case json.Number:
+			if v, err := s.(json.Number).Int64(); err == nil {
+				return &jsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize}
+			}
 		case string:
 			if r, ok := s.(string); ok {
 				return &jsonData{T: GO_VALUE_STRING, V: r, S: len(r)}
@@ -396,8 +410,12 @@ func (m *jsonData) GetByKey(key string) JSON {
 				return &jsonData{T: GO_VALUE_SLICE_BYTE, V: s, S: len(s)}
 			}
 		case float32, float64:
-			if s := m.GetFloatByKey(key); s != 0 {
-				return &jsonData{T: GO_VALUE_FLOAT64, V: s, S: 8}
+			//不带有 . 转为 int 类型
+			sv := m.toFloat64(s)
+			if strings.Index(strconv.FormatFloat(sv, 'G', -1, 64), ".") != -1 {
+				return &jsonData{T: GO_VALUE_FLOAT64, V: sv, S: 8}
+			} else {
+				return &jsonData{T: GO_VALUE_INT, V: int(sv), S: strconv.IntSize}
 			}
 		case bool:
 			return &jsonData{T: GO_VALUE_BOOL, V: m.GetBytesByKey(key), S: 1}

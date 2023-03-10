@@ -47,7 +47,7 @@ func NewContext(browserId int32, frameId int64, data []byte, isCallback bool) IC
 		frameId:   frameId,
 		argument:  json.NewJSONArray(data),
 	}
-
+	data = nil
 	if isCallback {
 		ctx.replay = &Replay{}
 	}
