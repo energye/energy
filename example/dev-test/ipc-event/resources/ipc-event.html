@@ -91,6 +91,25 @@
             // msg('ipc.emit ok?', ok1);
         }
 
+        function ipcEmitArgs() {
+            let map = {
+                "key1": "value1value1value1value1",
+                "key2": "value2value2value2vaaaaaaalue2",
+                "key3": "value3value3value3",
+                "key4": 1231,
+                "key5": 1231.33,
+                "key6": true,
+                "subObj":{
+                    "StringField":"StringFieldStringFieldStringField",
+                    "IntField":3333333,
+                    "BoolField":true,
+                    "FloatField":1006588.666,
+                }
+            }
+            let arr = ["adsfsadf", "fffffff"]
+            ipc.emit("testArgsEmitName", ["字符串参数", 123123, true, arr, map, map, {"structMap":map}]);
+        }
+
         ipc.on('onTestName1', function (param1, param2, param3) {
 
         });
@@ -119,6 +138,8 @@
     <button onclick="ipcEmit()">ipcEmit</button>
     <button onclick="autoIpcEmit()">自动-ipcEmit</button>
     <input id="time" value="0">
+    <br>
+    <button onclick="ipcEmitArgs()">ipcEmitArgs</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

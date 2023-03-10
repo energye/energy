@@ -4,6 +4,16 @@ import "fmt"
 
 var StructField *StructVarDemo
 
+type TestInArgs struct {
+	Key1   string        `json:"key1"`
+	Key2   string        `json:"key2"`
+	Key3   string        `json:"key3"`
+	Key4   int           `json:"key4"`
+	Key5   float64       `json:"key5"`
+	Key6   bool          `json:"key6"`
+	SubObj *SubStructObj `json:"subObj"`
+}
+
 //定义结构类型的变量
 //结构类型将属性和函数导出为JS可调用类型
 //大写字母开头
@@ -18,11 +28,11 @@ type StructVarDemo struct {
 }
 
 type SubStructObj struct {
-	StringField   string
-	IntField      int32
-	BoolField     bool
-	FloatField    float64
-	StructVarDemo *StructVarDemo
+	StringField string
+	IntField    int32
+	BoolField   bool
+	FloatField  float64
+	//StructVarDemo *StructVarDemo
 }
 
 //结构类型的函数导出

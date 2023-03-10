@@ -11,6 +11,7 @@
 package ipc
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"reflect"
@@ -85,11 +86,32 @@ func On(name string, fn EmitContextCallback) {
 	}
 }
 
-//OnArgument
-// IPC GO 监听事件, 自定义参数，仅支持对应 JavaScript 中的常用类型
+//OnArguments
+// IPC GO 监听事件, 自定义参数，仅支持对应 JavaScript 对应 Go 的常用类型
 //
-// 支持类型: int, bool, float, string, slice, map, struct
-func OnArgument(name string, fn EmitArgumentCallback) {
+// 入参 不限制个数
+//	 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//
+//   复杂类型: slice, map, struct
+//
+//   复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//
+//   slice: 只能是 any 或 interface{}
+//   map: key只能string类型, value 只能是 any 或 interface{}
+//   struct: 首字母大写, 字段类型匹配
+//     type ArgsStructDemo struct {
+//        Key1 string `json:"key1"`
+//		  Key2 string `json:"key2"`
+//		  Key3 string
+//		  Key4 int
+//		  Key5 float64
+//		  Key6 bool
+//     }
+//
+// 出参
+//
+//   与同入参相同
+func OnArguments(name string, fn EmitArgumentCallback) {
 	if browser != nil {
 		v := reflect.ValueOf(fn)
 		// f must be a function
@@ -101,13 +123,14 @@ func OnArgument(name string, fn EmitArgumentCallback) {
 		outArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumOut())
 		for i := 0; i < len(inArgumentType); i++ {
 			it := vt.In(i)
-			gv, _ := common.FieldReflectType(it)
-			inArgumentType[i] = gv
+			gvt, _ := common.FieldReflectType(it)
+			inArgumentType[i] = gvt
+			fmt.Println("gvt", gvt)
 		}
 		for i := 0; i < len(outArgumentType); i++ {
 			ot := vt.Out(i)
-			gv, _ := common.FieldReflectType(ot)
-			inArgumentType[i] = gv
+			gvt, _ := common.FieldReflectType(ot)
+			inArgumentType[i] = gvt
 		}
 		browser.addOnEvent(name, &callback{argument: &argumentCallback{callback: &v, inArgumentType: inArgumentType, outArgumentType: outArgumentType}})
 	}

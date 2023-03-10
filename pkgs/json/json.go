@@ -448,10 +448,7 @@ func (m *jsonData) UInt() uint {
 }
 
 func (m *jsonData) Bytes() []byte {
-	if m.IsBytes() {
-		return m.V.([]byte)
-	}
-	return nil
+	return m.toBytes(m.V)
 }
 
 func (m *jsonData) Float() float64 {
