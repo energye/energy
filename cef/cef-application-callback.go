@@ -158,7 +158,13 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes, isCallback)
 	argsBytes = nil
 	fmt.Println("ipcEmitMessage", isCallback, ipcContext)
-	eventCallback(ipcContext)
+	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
+		ctxCallback(ipcContext)
+	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
+		//rv := argsCallback.Callback()
+		//rv.Call()
+		ipcContext.ArgumentList()
+	}
 	return
 	//if isCallback {
 	//	//处理回复消息

@@ -35,6 +35,9 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
+	ipc.OnArgument("testArgsEmitName", func(s string, v int, b bool, sarr []string, smap map[string]string) (string, int, bool) {
+		return "", 0, false
+	})
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
