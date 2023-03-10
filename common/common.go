@@ -473,11 +473,37 @@ func IntToBytes(i int) []byte {
 	return nil
 }
 
+func UIntToBytes(i uint) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if IntSize == IntSize32 {
+		if err := binary.Write(buf, binary.BigEndian, uint32(i)); err == nil {
+			return buf.Bytes()
+		}
+	} else {
+		if err := binary.Write(buf, binary.BigEndian, uint64(i)); err == nil {
+			return buf.Bytes()
+		}
+	}
+	return nil
+}
+
 func Int8ToBytes(i int8) []byte {
 	return []byte{byte(i)}
 }
 
+func UInt8ToBytes(i uint8) []byte {
+	return []byte{byte(i)}
+}
+
 func Int16ToBytes(i int16) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
+func UInt16ToBytes(i uint16) []byte {
 	buf := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
 		return buf.Bytes()
@@ -493,7 +519,23 @@ func Int32ToBytes(i int32) []byte {
 	return nil
 }
 
+func UInt32ToBytes(i uint32) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
 func Int64ToBytes(i int64) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
+func UInt64ToBytes(i uint64) []byte {
 	buf := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
 		return buf.Bytes()
@@ -510,12 +552,34 @@ func BytesToInt(b []byte) int {
 	return int(i)
 }
 
+func BytesToUInt(b []byte) uint {
+	var i uint64
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return uint(i)
+}
+
 func ByteToInt8(b byte) int8 {
 	return int8(b)
 }
 
+func ByteToUInt8(b byte) uint8 {
+	return uint8(b)
+}
+
 func BytesToInt16(b []byte) int16 {
 	var i int16
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
+func BytesToUInt16(b []byte) uint16 {
+	var i uint16
 	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
 	if err != nil {
 		return 0
@@ -532,8 +596,26 @@ func BytesToInt32(b []byte) int32 {
 	return i
 }
 
+func BytesToUInt32(b []byte) uint32 {
+	var i uint32
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
 func BytesToInt64(b []byte) int64 {
 	var i int64
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
+func BytesToUInt64(b []byte) uint64 {
+	var i uint64
 	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
 	if err != nil {
 		return 0

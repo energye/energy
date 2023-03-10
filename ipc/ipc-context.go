@@ -10,7 +10,9 @@
 
 package ipc
 
-import jsoniter "github.com/json-iterator/go"
+import (
+	"github.com/energye/energy/pkgs/json"
+)
 
 type IReplay interface {
 	Result() []interface{}
@@ -24,41 +26,37 @@ type Replay struct {
 
 // IContext 进程间IPC通信回调上下文
 type IContext interface {
-	ArgumentList() IArrayValue  //参数列表
-	BrowserId() int32           //事件所属 browser id
-	FrameId() int64             //事件所属 frame id
-	Replay() IReplay            //回复
-	Result(data ...interface{}) //返回结果
+	ArgumentList() json.IJSONArray //参数列表
+	BrowserId() int32              //事件所属 browser id
+	FrameId() int64                //事件所属 frame id
+	Replay() IReplay               //回复
+	Result(data ...interface{})    //返回结果
 }
 
 // Context IPC 事件上下文
 type Context struct {
 	browserId int32
 	frameId   int64
-	argument  *Argument[int]
+	argument  json.IJSONArray
 	replay    IReplay
 }
 
 func NewContext(browserId int32, frameId int64, data []byte, isCallback bool) IContext {
-	var argument []any
-	if err := jsoniter.Unmarshal(data, argument); err == nil {
-		ctx := &Context{
-			browserId: browserId,
-			frameId:   frameId,
-			argument:  &Argument[int]{T: 0, V: argument},
-		}
-		if isCallback {
-			ctx.replay = &Replay{}
-		}
-		return ctx
+	ctx := &Context{
+		browserId: browserId,
+		frameId:   frameId,
+		argument:  json.NewJSONArray(data),
 	}
-	return nil
+
+	if isCallback {
+		ctx.replay = &Replay{}
+	}
+	return ctx
 }
 
 // ArgumentList 参数列表
-func (m *Context) ArgumentList() IArrayValue {
-	//return m.argument
-	return nil //TODO dev
+func (m *Context) ArgumentList() json.IJSONArray {
+	return m.argument
 }
 
 func (m *Context) BrowserId() int32 {
