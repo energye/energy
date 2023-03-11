@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"errors"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
@@ -35,12 +36,12 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.OnArguments("testResultArgs", func(args1 int) (r1 map[string]string) {
+	ipc.OnArguments("testResultArgs", func(args1 int) (r1 map[string]string, err error) {
 		fmt.Println("args1", args1)
 		r1 = make(map[string]string)
 		r1["key1"] = "value1"
 		r1["key2"] = "value2"
-		return r1
+		return r1, errors.New("错误返回值")
 	})
 
 	ipc.OnArguments("testInArgs", func(args1 string, args2 int, args3 bool, args4 []any, args5 map[string]any, args6 src.TestInArgs, args7 map[string]src.TestInArgs,
@@ -118,7 +119,8 @@ func main() {
 		//objMapArr[1] = objMap
 		//objMapArr[2] = objMap
 		//var strPtrValue = "strPtrValue"
-		//context.Result("asdfsadf", bytArr, 123123, true, "返回值返回值返回值", 6666.6669, &strPtrValue, objArr[1], objArr, objArr2, strArr, objMap, objMapArr, stringMap)
+		err := &MyError{error: "返回值"}
+		context.Result("asdfsadf", 123123, true, err)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
@@ -135,4 +137,12 @@ func main() {
 	cef.VariableBind.Bind("structField", src.StructField)
 	//运行应用
 	cef.Run(cefApp)
+}
+
+type MyError struct {
+	error string
+}
+
+func (m *MyError) Error() string {
+	return m.error
 }

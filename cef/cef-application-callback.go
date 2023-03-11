@@ -48,8 +48,9 @@ type contextCreate struct {
 }
 
 type ipcCallback struct {
-	context  *ICefV8Context
-	function *ICefV8Value
+	arguments *TCefV8ValueArray
+	context   *ICefV8Context
+	function  *ICefV8Value
 }
 
 type mainRun struct {
@@ -78,41 +79,39 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
-	if message.Name() == internalProcessMessageIPCEmitReply {
+	if message.Name() == internalProcessMessageIPCEmitReply { //接收回复消息
 		messageId := message.ArgumentList().GetString(0)
 		if v, err := strconv.Atoi(messageId); err == nil {
 			callback := ctx.getIPCCallback(uintptr(v))
-			argsType := message.ArgumentList().GetInt(1)
-			if argsType == 1 { //[]byte
+			isReturn := message.ArgumentList().GetBool(1)
+			if isReturn {
+				//[]byte
 				binaryValue := message.ArgumentList().GetBinary(2)
 				size := binaryValue.GetSize()
-				dataBuf := make([]byte, size)
-				count := binaryValue.GetData(dataBuf, 0)
+				resultArgsBytes := make([]byte, size)
+				count := binaryValue.GetData(resultArgsBytes, 0)
+				binaryValue.Free()
 				if count > 0 {
 					if callback.context.Enter() {
 						//argsBytesValueToV8Value(dataBuf)
+						fmt.Println("result-bytes:", string(resultArgsBytes))
 						resultArgs := V8ValueArrayRef.New()
-						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
-						callback.function.Free()
-						resultArgs.Free()
-					}
-					callback.context.Exit()
-				}
-				dataBuf = nil
-			} else if argsType == 2 { //ListValue
-				if callback.context.Enter() {
-					if v, err := listValueToV8Value(message.ArgumentList().GetList(2)); err == nil {
-						resultArgs := V8ValueArrayRef.New()
-						for i := 0; i < v.GetArrayLength(); i++ {
-							resultArgs.Add(v.GetValueByIndex(i))
-						}
 						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
 						resultArgs.Free()
 					}
 					callback.context.Exit()
 				}
+				resultArgsBytes = nil
 			} else { //无返回值
 
+			}
+			//移除这个回调函数引用
+			callback.context.Free()
+			if callback.function != nil {
+				callback.function.Free()
+			}
+			if callback.arguments != nil {
+				callback.arguments.Free()
 			}
 			ctx.removeIPCCallback(uintptr(v))
 		}
@@ -153,9 +152,8 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	size := args.GetSize()
 	argsBytes := make([]byte, size)
 	args.GetData(argsBytes, 0)
-
-	args.Free()
-	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes, isCallback)
+	args.Free() //立即释放掉
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes)
 	argsBytes = nil
 	fmt.Println("ipcEmitMessage", isCallback, ipcContext)
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
@@ -163,26 +161,29 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
 		argsCallback.Invoke(ipcContext)
 	}
+	if isCallback {
+		return
+		replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
+		replyMessage.ArgumentList().SetString(0, messageId)
+		//处理回复消息
+		replay := ipcContext.Replay()
+		if replay.Result() != nil && len(replay.Result()) > 0 {
+			switch replay.Result()[0].(type) {
+			case []byte:
+				binaryValue := BinaryValueRef.New((replay.Result()[0]).([]byte))
+				replyMessage.ArgumentList().SetBool(1, true)          //有返回值
+				replyMessage.ArgumentList().SetBinary(2, binaryValue) //result []byte
+			default:
+				replyMessage.ArgumentList().SetBool(1, false) //无返回值
+			}
+		} else {
+			replyMessage.ArgumentList().SetBool(1, false) //无返回值
+		}
+		frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
+		replay.Clear()
+		replyMessage.Free()
+	}
 	return
-	//if isCallback {
-	//	//处理回复消息
-	//	replay := ipcContext.Replay()
-	//	replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
-	//	replyMessage.ArgumentList().SetString(0, messageId)
-	//	//将Go返回值转换进程消息
-	//	if v, err := resultToBytesProcessMessage(replay.Result()); err == nil {
-	//		replyMessage.ArgumentList().SetInt(1, 1) // []byte
-	//		replyMessage.ArgumentList().SetBinary(2, v)
-	//	} else if v, err := resultToProcessMessage(replay.Result()); err == nil {
-	//		replyMessage.ArgumentList().SetInt(1, 2) // ListValue
-	//		replyMessage.ArgumentList().SetList(2, v)
-	//	} else {
-	//		replyMessage.ArgumentList().SetInt(1, 0) //无返回值
-	//	}
-	//	replay.Clear()
-	//	frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
-	//	replyMessage.Free()
-	//}
 }
 
 // ipcOnMessage 监听事件
@@ -237,7 +238,6 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 			//释放掉这些指针，不然不会自动释放
 			freeV8Value(emitName)
 			freeV8Value(emitArgs)
-			freeV8Value(emitCallback)
 			if ipcEmitMessage != nil {
 				ipcEmitMessage.Free()
 			}
@@ -270,33 +270,30 @@ func (m *contextCreate) ipcEmitExecute(name string, object *ICefV8Value, argumen
 		if emitArgs != nil {
 			ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
 			argument := ipcEmitMessage.ArgumentList()
-			//args, err := V8ValueToProcessMessage(emitArgs)
-			//if err != nil {
-			//	return
-			//}
+			//V8Value 转换
 			args := V8ValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				return
 			}
-			v8ctx := V8ContextRef.Current()
+			context := V8ContextRef.Current()
 			var msgId uintptr = 0
 			//回调函数
-			if emitCallback != nil && false {
+			if emitCallback != nil {
 				//回调函数临时存放到缓存中 list 队列
 				msgId = ctx.addIPCCallback(&ipcCallback{
-					context:  v8ctx,
-					function: V8ValueRef.UnWrap(emitCallback),
+					arguments: arguments,
+					context:   context,
+					function:  V8ValueRef.UnWrap(emitCallback),
 				})
 			}
 			binaryValue = BinaryValueRef.New(args)
 			argument.SetString(0, strconv.Itoa(int(msgId))) // 消息id
 			argument.SetString(1, emitNameValue)            // 事件名
 			argument.SetBinary(2, binaryValue)              // args
-			frame := v8ctx.Frame()
+			frame := context.Frame()
 			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 			args = nil
 			frame.Free()
-			v8ctx.Free()
 		}
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}

@@ -50,6 +50,9 @@
                 100, 200, "数组里的字符串", 66996.99, objectValue, true, false
             ]
             let ok = ipc.emit("testEmitName", ["stringValue", idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888888888 + idx, null, undefined],
+                function (r1, r2, r3) {
+                    
+                }
                 /*function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13) {
                     //msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);
 

@@ -11,7 +11,6 @@
 package ipc
 
 import (
-	"fmt"
 	"github.com/energye/energy/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
@@ -43,8 +42,27 @@ func (m *callback) ContextCallback() *contextCallback {
 	return m.context
 }
 
+// Invoke 调用函数
 func (m *contextCallback) Invoke(context IContext) {
+	// call
 	m.callback(context)
+	resultValues := context.Replay().Result()
+	if len(resultValues) > 0 {
+		// call result
+		resultArgument := json.NewJSONArray(nil)
+		for _, result := range resultValues {
+			switch result.(type) {
+			case error:
+				resultArgument.Add(result.(error).Error())
+			default:
+				resultArgument.Add(result)
+			}
+		}
+		// result bytes
+		context.Result(resultArgument.Bytes())
+		return
+	}
+	context.Result(nil)
 }
 
 // ArgumentCallback 参数回调
@@ -158,20 +176,22 @@ func (m *argumentCallback) Invoke(context IContext) {
 	}
 	// call
 	resultValues := m.callback.Call(inArgsValues)
-	// call result
-	fmt.Println("resultValues:", len(resultValues), resultValues)
-	resultArgument := json.NewJSONArray(nil)
-	for _, result := range resultValues {
-		if result.Type().Implements(errorType) {
-			if result.Interface() != nil {
-				resultArgument.Add(result.Interface().(error).Error())
-			} else {
-				resultArgument.Add("")
+	if len(resultValues) > 0 {
+		// call result
+		resultArgument := json.NewJSONArray(nil)
+		for _, result := range resultValues {
+			res := result.Interface()
+			switch res.(type) {
+			case error:
+				resultArgument.Add(res.(error).Error())
+			default:
+				resultArgument.Add(res)
 			}
-			continue
 		}
-		resultArgument.Add(result.Interface())
+		// result bytes
+		context.Result(resultArgument.Bytes())
+		return
 	}
-	fmt.Println("resultArgument:", resultArgument.ToJSONString())
-	context.Result(resultArgument.Bytes())
+	// result nil
+	context.Result(nil)
 }
