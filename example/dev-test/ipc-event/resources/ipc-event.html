@@ -91,7 +91,7 @@
             // msg('ipc.emit ok?', ok1);
         }
 
-        function ipcEmitArgs() {
+        function testInArgs() {
             let map = {
                 "key1": "value1value1value1value1",
                 "key2": "value2value2value2vaaaaaaalue2",
@@ -113,7 +113,13 @@
             }
             let arr = ["adsfsadf", "fffffff"]
             let args10 = [1111111.1111, 222222.222]
-            ipc.emit("testArgsEmitName", ["字符串参数", 123123, true, arr, map, map, {"structMap": map}, args8, 9999999.99999, args10]);
+            ipc.emit("testInArgs", ["字符串参数", 123123, true, arr, map, map, {"structMap": map}, args8, 9999999.99999, args10]);
+        }
+
+        function testResultArgs() {
+            ipc.emit("testResultArgs", [6666], function (r1) {
+                msg('r1', r1)
+            })
         }
 
         ipc.on('onTestName1', function (param1, param2, param3) {
@@ -145,7 +151,8 @@
     <button onclick="autoIpcEmit()">自动-ipcEmit</button>
     <input id="time" value="0">
     <br>
-    <button onclick="ipcEmitArgs()">ipcEmitArgs</button>
+    <button onclick="testInArgs()">testInArgs</button>
+    <button onclick="testResultArgs()">testResultArgs</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

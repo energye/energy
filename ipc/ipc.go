@@ -11,9 +11,7 @@
 package ipc
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"reflect"
 	"sync"
 )
@@ -56,15 +54,17 @@ func On(name string, fn EmitContextCallback) {
 //   复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
 //
 //   slice: 只能是 any 或 interface{}
-//   map: key只能string类型, value 只能是 any 或 interface{}
+//   map: key 只能 string 类型, value 基本类型+复杂类型
 //   struct: 首字母大写, 字段类型匹配
 //     type ArgsStructDemo struct {
-//        Key1 string `json:"key1"`
-//		  Key2 string `json:"key2"`
+//        Key1 string
+//		  Key2 string
 //		  Key3 string
 //		  Key4 int
 //		  Key5 float64
 //		  Key6 bool
+//		  Sub1  SubStructXXX
+//		  Sub2  *SubStructXXX
 //     }
 //
 // 出参
@@ -77,21 +77,22 @@ func OnArguments(name string, fn EmitArgumentCallback) {
 		if v.Kind() != reflect.Func {
 			return
 		}
-		vt := v.Type()
-		inArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumIn())
-		outArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumOut())
-		for i := 0; i < len(inArgumentType); i++ {
-			it := vt.In(i)
-			gvt, _ := common.FieldReflectType(it)
-			inArgumentType[i] = gvt
-			fmt.Println("gvt", gvt)
-		}
-		for i := 0; i < len(outArgumentType); i++ {
-			ot := vt.Out(i)
-			gvt, _ := common.FieldReflectType(ot)
-			inArgumentType[i] = gvt
-		}
-		browser.addOnEvent(name, &callback{argument: &argumentCallback{callback: &v, inArgumentType: inArgumentType, outArgumentType: outArgumentType}})
+		//vt := v.Type()
+		//inArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumIn())
+		//outArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumOut())
+		//for i := 0; i < len(inArgumentType); i++ {
+		//	it := vt.In(i)
+		//	gvt, _ := common.FieldReflectType(it)
+		//	inArgumentType[i] = gvt
+		//	fmt.Println(name, "in", gvt)
+		//}
+		//for i := 0; i < len(outArgumentType); i++ {
+		//	ot := vt.Out(i)
+		//	gvt, _ := common.FieldReflectType(ot)
+		//	inArgumentType[i] = gvt
+		//	fmt.Println(name, "out", gvt)
+		//}
+		browser.addOnEvent(name, &callback{argument: &argumentCallback{callback: &v}})
 	}
 }
 

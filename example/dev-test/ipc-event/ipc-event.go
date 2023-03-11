@@ -35,8 +35,15 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
+	ipc.OnArguments("testResultArgs", func(args1 int) (r1 map[string]string) {
+		fmt.Println("args1", args1)
+		r1 = make(map[string]string)
+		r1["key1"] = "value1"
+		r1["key2"] = "value2"
+		return r1
+	})
 
-	ipc.OnArguments("testArgsEmitName", func(args1 string, args2 int, args3 bool, args4 []any, args5 map[string]any, args6 src.TestInArgs, args7 map[string]src.TestInArgs,
+	ipc.OnArguments("testInArgs", func(args1 string, args2 int, args3 bool, args4 []any, args5 map[string]any, args6 src.TestInArgs, args7 map[string]src.TestInArgs,
 		args8 map[string]string, args9 float64, args10 []float64) (string, int, bool) {
 		fmt.Println("args1", args1)
 		fmt.Println("args2", args2)
@@ -48,7 +55,7 @@ func main() {
 		fmt.Println("args8", args8)
 		fmt.Println("args9", args9)
 		fmt.Println("args10", args10)
-		return "", 0, false
+		return "result testInArgs", 10, true
 	})
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		argument := context.ArgumentList()

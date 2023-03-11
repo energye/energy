@@ -12,7 +12,6 @@ package ipc
 
 import (
 	"fmt"
-	"github.com/energye/energy/consts"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )
@@ -30,9 +29,9 @@ type contextCallback struct {
 
 // argumentCallback 带参数的回调函数
 type argumentCallback struct {
-	callback        *reflect.Value         //回调函数
-	inArgumentType  []consts.GO_VALUE_TYPE //入参类型
-	outArgumentType []consts.GO_VALUE_TYPE //出参类型
+	callback *reflect.Value //回调函数
+	//inArgumentType  []consts.GO_VALUE_TYPE //入参类型
+	//outArgumentType []consts.GO_VALUE_TYPE //出参类型
 }
 
 // ContextCallback 返回上下文参数回调
@@ -55,109 +54,106 @@ func (m *callback) ArgumentCallback() *argumentCallback {
 func (m *argumentCallback) Invoke(context IContext) {
 	argsList := context.ArgumentList()
 	argsSize := argsList.Size()
-	rv := m.callback
-	var size = len(m.inArgumentType)
-	var inArgsValues = make([]reflect.Value, size)
-	for i := 0; i < size; i++ {
-		inType := m.inArgumentType[i]
+	rt := m.callback.Type()
+	inArgsCount := rt.NumIn()
+	var inArgsValues = make([]reflect.Value, inArgsCount)
+	for i := 0; i < inArgsCount; i++ {
+		inType := rt.In(i)
 		if i < argsSize {
 			argsValue := argsList.GetByIndex(i)
 			if argsValue == nil {
-				inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
+				inArgsValues[i] = reflect.New(inType).Elem()
 				continue
 			}
-			switch inType {
-			case consts.GO_VALUE_STRING:
+			switch inType.Kind() {
+			case reflect.String:
 				inArgsValues[i] = reflect.ValueOf(argsValue.String())
-			case consts.GO_VALUE_INT:
+			case reflect.Int:
 				inArgsValues[i] = reflect.ValueOf(argsValue.Int())
-			case consts.GO_VALUE_INT8:
+			case reflect.Int8:
 				inArgsValues[i] = reflect.ValueOf(int8(argsValue.Int()))
-			case consts.GO_VALUE_INT16:
+			case reflect.Int16:
 				inArgsValues[i] = reflect.ValueOf(int16(argsValue.Int()))
-			case consts.GO_VALUE_INT32:
+			case reflect.Int32:
 				inArgsValues[i] = reflect.ValueOf(int32(argsValue.Int()))
-			case consts.GO_VALUE_INT64:
+			case reflect.Int64:
 				inArgsValues[i] = reflect.ValueOf(int64(argsValue.Int()))
-			case consts.GO_VALUE_UINT:
+			case reflect.Uint:
 				inArgsValues[i] = reflect.ValueOf(uint(argsValue.Int()))
-			case consts.GO_VALUE_UINT8:
+			case reflect.Uint8:
 				inArgsValues[i] = reflect.ValueOf(uint8(argsValue.Int()))
-			case consts.GO_VALUE_UINT16:
+			case reflect.Uint16:
 				inArgsValues[i] = reflect.ValueOf(uint16(argsValue.Int()))
-			case consts.GO_VALUE_UINT32:
+			case reflect.Uint32:
 				inArgsValues[i] = reflect.ValueOf(uint32(argsValue.Int()))
-			case consts.GO_VALUE_UINT64:
+			case reflect.Uint64:
 				inArgsValues[i] = reflect.ValueOf(uint64(argsValue.Int()))
-			case consts.GO_VALUE_UINTPTR:
+			case reflect.Uintptr:
 				inArgsValues[i] = reflect.ValueOf(uintptr(argsValue.Int()))
-			case consts.GO_VALUE_FLOAT32:
+			case reflect.Float32:
 				inArgsValues[i] = reflect.ValueOf(float32(argsValue.Float()))
-			case consts.GO_VALUE_FLOAT64:
+			case reflect.Float64:
 				inArgsValues[i] = reflect.ValueOf(argsValue.Float())
-			case consts.GO_VALUE_BOOL:
+			case reflect.Bool:
 				inArgsValues[i] = reflect.ValueOf(argsValue.Bool())
-			case consts.GO_VALUE_STRUCT:
+			case reflect.Struct:
 				if argsValue.IsObject() {
 					// struct
 					if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-						v := reflect.New(rv.Type().In(i))
+						v := reflect.New(inType)
 						if err := jsoniter.Unmarshal(jsonBytes, v.Interface()); err == nil {
 							inArgsValues[i] = v.Elem()
 							continue
 						}
 					}
 				}
-				inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
-			case consts.GO_VALUE_MAP:
+				inArgsValues[i] = reflect.New(inType).Elem()
+			case reflect.Map:
 				if argsValue.IsObject() {
-					inArgsType := rv.Type().In(i)
 					// map key=string : value != interface
-					inArgsKind := inArgsType.Elem().Kind()
-					if inArgsKind != reflect.Interface {
+					if inType.Elem().Kind() != reflect.Interface {
 						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-							vv := reflect.New(rv.Type().In(i))
+							vv := reflect.New(inType)
 							if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
 								inArgsValues[i] = vv.Elem()
 								continue
 							}
 						}
-						inArgsValues[i] = reflect.New(inArgsType).Elem()
+						inArgsValues[i] = reflect.New(inType).Elem()
 					} else {
 						inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 					}
 				} else {
-					inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
+					inArgsValues[i] = reflect.New(inType).Elem()
 				}
-			case consts.GO_VALUE_SLICE:
+			case reflect.Slice:
 				if argsValue.IsArray() {
-					inArgsType := rv.Type().In(i)
 					// slick value != interface
-					inArgsKind := inArgsType.Elem().Kind()
-					if inArgsKind != reflect.Interface {
+					if inType.Elem().Kind() != reflect.Interface {
 						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-							vv := reflect.New(rv.Type().In(i))
+							vv := reflect.New(inType)
 							if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
 								inArgsValues[i] = vv.Elem()
 								continue
 							}
 						}
-						inArgsValues[i] = reflect.New(inArgsType).Elem()
+						inArgsValues[i] = reflect.New(inType).Elem()
 					} else {
 						inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 					}
 				} else {
-					inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
+					inArgsValues[i] = reflect.New(inType).Elem()
 				}
 			default:
-				inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
+				inArgsValues[i] = reflect.New(inType).Elem()
 			}
 		} else {
-			inArgsValues[i] = reflect.New(rv.Type().In(i)).Elem()
+			inArgsValues[i] = reflect.New(inType).Elem()
 		}
 	}
 	// call
-	resultValues := rv.Call(inArgsValues)
+	resultValues := m.callback.Call(inArgsValues)
 	// call result
 	fmt.Println("resultValues:", resultValues)
+	//context.Result()
 }
