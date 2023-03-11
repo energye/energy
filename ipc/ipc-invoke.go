@@ -30,8 +30,6 @@ type contextCallback struct {
 // argumentCallback 带参数的回调函数
 type argumentCallback struct {
 	callback *reflect.Value //回调函数
-	//inArgumentType  []consts.GO_VALUE_TYPE //入参类型
-	//outArgumentType []consts.GO_VALUE_TYPE //出参类型
 }
 
 // ContextCallback 返回上下文参数回调

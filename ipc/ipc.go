@@ -77,21 +77,6 @@ func OnArguments(name string, fn EmitArgumentCallback) {
 		if v.Kind() != reflect.Func {
 			return
 		}
-		//vt := v.Type()
-		//inArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumIn())
-		//outArgumentType := make([]consts.GO_VALUE_TYPE, vt.NumOut())
-		//for i := 0; i < len(inArgumentType); i++ {
-		//	it := vt.In(i)
-		//	gvt, _ := common.FieldReflectType(it)
-		//	inArgumentType[i] = gvt
-		//	fmt.Println(name, "in", gvt)
-		//}
-		//for i := 0; i < len(outArgumentType); i++ {
-		//	ot := vt.Out(i)
-		//	gvt, _ := common.FieldReflectType(ot)
-		//	inArgumentType[i] = gvt
-		//	fmt.Println(name, "out", gvt)
-		//}
 		browser.addOnEvent(name, &callback{argument: &argumentCallback{callback: &v}})
 	}
 }
