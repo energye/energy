@@ -12,9 +12,12 @@ package ipc
 
 import (
 	"fmt"
+	"github.com/energye/energy/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )
+
+var errorType = reflect.TypeOf((*error)(nil)).Elem()
 
 // callback IPC 监听回调函数
 type callback struct {
@@ -33,11 +36,15 @@ type argumentCallback struct {
 }
 
 // ContextCallback 返回上下文参数回调
-func (m *callback) ContextCallback() EmitContextCallback {
+func (m *callback) ContextCallback() *contextCallback {
 	if m.context == nil {
 		return nil
 	}
-	return m.context.callback
+	return m.context
+}
+
+func (m *contextCallback) Invoke(context IContext) {
+	m.callback(context)
 }
 
 // ArgumentCallback 参数回调
@@ -152,6 +159,19 @@ func (m *argumentCallback) Invoke(context IContext) {
 	// call
 	resultValues := m.callback.Call(inArgsValues)
 	// call result
-	fmt.Println("resultValues:", resultValues)
-	//context.Result()
+	fmt.Println("resultValues:", len(resultValues), resultValues)
+	resultArgument := json.NewJSONArray(nil)
+	for _, result := range resultValues {
+		if result.Type().Implements(errorType) {
+			if result.Interface() != nil {
+				resultArgument.Add(result.Interface().(error).Error())
+			} else {
+				resultArgument.Add("")
+			}
+			continue
+		}
+		resultArgument.Add(result.Interface())
+	}
+	fmt.Println("resultArgument:", resultArgument.ToJSONString())
+	context.Result(resultArgument.Bytes())
 }

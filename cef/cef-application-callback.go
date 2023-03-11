@@ -159,7 +159,7 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	argsBytes = nil
 	fmt.Println("ipcEmitMessage", isCallback, ipcContext)
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
-		ctxCallback(ipcContext)
+		ctxCallback.Invoke(ipcContext)
 	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
 		argsCallback.Invoke(ipcContext)
 	}
