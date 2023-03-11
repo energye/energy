@@ -63,7 +63,7 @@ func (m *V8Value) NewObjects(objects ...interface{}) {
 //
 // 变量和函数绑定, 在Go中定义的字段绑定到JS字段中, 在Go中定义的函数导出到JS
 //
-// 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, Objects = struct | map,  Array = Slice
+// 支持类型 String = string , Integer = int32 , Double = float64, Boolean = bool, Function = func, Objects = struct | map,  JSONArray = Slice
 //
 // 主进程和子进程
 func (m *V8Value) Bind(name string, bind interface{}) error {

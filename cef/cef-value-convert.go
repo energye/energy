@@ -275,7 +275,7 @@ func resultToProcessMessage(data []any) (*ICefListValue, error) {
 		}
 		var rv = reflect.ValueOf(value)
 		switch rv.Kind() {
-		case reflect.Ptr: //单指针 不允许(切片 | 数组)指针, 包含基本类型、结构、Map
+		case reflect.Ptr: //单指针 不允许(切片 | 数组)指针, 包含基本类型、结构、JSONObject
 			if rv.IsNil() {
 				result.SetNull(uint32(i))
 				continue
@@ -322,7 +322,7 @@ func resultToProcessMessage(data []any) (*ICefListValue, error) {
 					}
 				}
 			}
-		case reflect.Slice, reflect.Array: //切片 | 数组, 包含基本类型、结构、Map
+		case reflect.Slice, reflect.Array: //切片 | 数组, 包含基本类型、结构、JSONObject
 			if v := convertSliceToListValue(rv); v != nil {
 				result.SetList(uint32(i), v)
 			}
@@ -418,7 +418,7 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
 			}
-		case consts.VTYPE_LIST: // Array
+		case consts.VTYPE_LIST: // JSONArray
 			if v, err := listValueToV8Value(value.GetList()); err == nil {
 				newValue = v
 			}
@@ -469,7 +469,7 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
 			}
-		case consts.VTYPE_LIST: // Array
+		case consts.VTYPE_LIST: // JSONArray
 			if v, err := listValueToV8Value(value.GetList()); err == nil {
 				newValue = v
 			}

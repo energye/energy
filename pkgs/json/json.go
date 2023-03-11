@@ -30,8 +30,9 @@ type BaseJSON interface {
 	Bytes() []byte
 	Float() float64
 	Bool() bool
-	Map() JSONObject
-	Array() JSONArray
+	JSONObject() JSONObject
+	JSONArray() JSONArray
+	ToJSONString() string
 	IsString() bool
 	IsInt() bool
 	IsUInt() bool
@@ -45,7 +46,8 @@ type BaseJSON interface {
 
 type JSONArray interface {
 	BaseJSON
-	Add(value any)
+	Add(value ...any)
+	SetByIndex(index int, value any)
 	RemoveByIndex(index int)
 	GetStringByIndex(index int) string
 	GetIntByIndex(index int) int
@@ -115,7 +117,7 @@ func NewJSONArray(value any) JSONArray {
 		switch value.(type) {
 		case []byte:
 			if v := NewJSON(value.([]byte)); v != nil {
-				return v.Array()
+				return v.JSONArray()
 			} else {
 				return nil
 			}
@@ -132,17 +134,17 @@ func NewJSONArray(value any) JSONArray {
 			}
 		}
 	}
-	return nil
+	return &jsonData{T: GO_VALUE_SLICE, V: make([]any, 0), S: 0}
 }
 
-// NewJSONObject 字节JSONObject / 结构 / Map 转换
+// NewJSONObject 字节JSONObject / 结构 / JSONObject 转换
 func NewJSONObject(value any) JSONObject {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONObject
 		switch value.(type) {
 		case []byte:
 			if v := NewJSON(value.([]byte)); v != nil {
-				return v.Map()
+				return v.JSONObject()
 			} else {
 				return nil
 			}
@@ -160,7 +162,7 @@ func NewJSONObject(value any) JSONObject {
 			}
 		}
 	}
-	return nil
+	return &jsonData{T: GO_VALUE_MAP, V: make(map[string]any), S: 0}
 }
 
 func (m *jsonData) Size() int {
@@ -175,10 +177,25 @@ func (m *jsonData) Data() any {
 	return m.V
 }
 
-func (m *jsonData) Add(value any) {
+func (m *jsonData) Add(value ...any) {
 	if m.IsArray() {
-		m.V = append(m.V.([]any), value)
-		m.S++
+		m.V = append(m.V.([]any), value...)
+		m.S += len(value)
+	}
+}
+
+func (m *jsonData) SetByIndex(index int, value any) {
+	if m.IsArray() && index < m.S {
+		switch value.(type) {
+		case JSON:
+			m.V.([]any)[index] = value.(JSON).Data()
+		case JSONObject:
+			m.V.([]any)[index] = value.(JSONObject).Data()
+		case JSONArray:
+			m.V.([]any)[index] = value.(JSONArray).Data()
+		default:
+			m.V.([]any)[index] = value
+		}
 	}
 }
 
@@ -462,14 +479,14 @@ func (m *jsonData) Bool() bool {
 	return false
 }
 
-func (m *jsonData) Map() JSONObject {
+func (m *jsonData) JSONObject() JSONObject {
 	if m.IsObject() {
 		return m
 	}
 	return nil
 }
 
-func (m *jsonData) Array() JSONArray {
+func (m *jsonData) JSONArray() JSONArray {
 	if m.IsArray() {
 		return m
 	}
@@ -525,6 +542,10 @@ func (m *jsonData) Keys() []string {
 		return result
 	}
 	return nil
+}
+
+func (m *jsonData) ToJSONString() string {
+	return string(m.Bytes())
 }
 
 func (m *jsonData) IsString() bool {

@@ -733,7 +733,7 @@ const (
 	VTYPE_STRING
 	VTYPE_BINARY
 	VTYPE_DICTIONARY // Object
-	VTYPE_LIST       // Array
+	VTYPE_LIST       // JSONArray
 )
 
 // /include/internal/cef_types.h (cef_postdataelement_type_t)

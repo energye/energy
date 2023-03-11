@@ -32,7 +32,7 @@ type JSValue interface {
 	IsDouble() bool                      //是否 Double
 	IsString() bool                      //是否 String
 	IsBool() bool                        //是否 Bool
-	IsArray() bool                       //是否 Array
+	IsArray() bool                       //是否 JSONArray
 	IsObject() bool                      //是否 Object
 	IsFunction() bool                    //是否 Function
 	IsNull() bool                        //是否 Null
@@ -42,7 +42,7 @@ type JSValue interface {
 	AsDouble() *JSDouble                 //转换为 Double 失败返回 nil
 	AsString() *JSString                 //转换为 String 失败返回 nil
 	AsBoolean() *JSBoolean               //转换为 Boolean 失败返回 nil
-	AsArray() *JSArray                   //转换为 Array 失败返回 nil
+	AsArray() *JSArray                   //转换为 JSONArray 失败返回 nil
 	AsFunction() *JSFunction             //转换为 Function 失败返回 nil
 	Instance() uintptr                   //当前变量指针
 	Name() string                        //当前变量绑定的名称
