@@ -62,7 +62,7 @@ type JSONArray interface {
 
 type JSONObject interface {
 	BaseJSON
-	Set(key, value string)
+	Set(key string, value any)
 	RemoveByKey(key string)
 	GetStringByKey(key string) string
 	GetIntByKey(key string) int
@@ -179,7 +179,20 @@ func (m *jsonData) Data() any {
 
 func (m *jsonData) Add(value ...any) {
 	if m.IsArray() {
-		m.V = append(m.V.([]any), value...)
+		tmp := make([]any, len(value))
+		for i, v := range value {
+			switch v.(type) {
+			case JSON:
+				tmp[i] = v.(JSON).Data()
+			case JSONObject:
+				tmp[i] = v.(JSONObject).Data()
+			case JSONArray:
+				tmp[i] = v.(JSONArray).Data()
+			default:
+				tmp[i] = v
+			}
+		}
+		m.V = append(m.V.([]any), tmp...)
 		m.S += len(value)
 	}
 }
@@ -322,8 +335,16 @@ func (m *jsonData) GetByIndex(index int) JSON {
 	return nil
 }
 
-func (m *jsonData) Set(key, value string) {
+func (m *jsonData) Set(key string, value any) {
 	if m.IsObject() {
+		switch value.(type) {
+		case JSON:
+			value = value.(JSON).Data()
+		case JSONObject:
+			value = value.(JSONObject).Data()
+		case JSONArray:
+			value = value.(JSONArray).Data()
+		}
 		m.V.(map[string]any)[key] = value
 		m.S++
 	}
