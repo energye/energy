@@ -31,47 +31,6 @@ type browserIPC struct {
 	lock    sync.Mutex
 }
 
-type callback struct {
-	context  *contextCallback
-	argument *argumentCallback
-}
-
-type contextCallback struct {
-	callback EmitContextCallback //带上下文的回调函数
-}
-
-type argumentCallback struct {
-	callback        *reflect.Value         //带参数的回调函数
-	inArgumentType  []consts.GO_VALUE_TYPE //入参类型
-	outArgumentType []consts.GO_VALUE_TYPE //出参类型
-}
-
-func (m *callback) ContextCallback() EmitContextCallback {
-	if m.context == nil {
-		return nil
-	}
-	return m.context.callback
-}
-
-func (m *callback) ArgumentCallback() *argumentCallback {
-	if m.argument == nil {
-		return nil
-	}
-	return m.argument
-}
-
-func (m *argumentCallback) Callback() *reflect.Value {
-	return m.callback
-}
-
-func (m *argumentCallback) InArgumentType() []consts.GO_VALUE_TYPE {
-	return m.inArgumentType
-}
-
-func (m *argumentCallback) OutArgumentType() []consts.GO_VALUE_TYPE {
-	return m.outArgumentType
-}
-
 func init() {
 	if common.Args.IsMain() {
 		browser = &browserIPC{onEvent: make(map[string]*callback)}

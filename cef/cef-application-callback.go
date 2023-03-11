@@ -18,8 +18,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	jsoniter "github.com/json-iterator/go"
-	"reflect"
 	"strconv"
 	"unsafe"
 )
@@ -163,96 +161,7 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
 		ctxCallback(ipcContext)
 	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
-		argumentList := ipcContext.ArgumentList()
-		argsSize := argumentList.Size()
-		iat := argsCallback.InArgumentType()
-		rv := argsCallback.Callback()
-		var size = len(iat)
-		var inValues = make([]reflect.Value, size)
-		for i := 0; i < size; i++ {
-			inType := iat[i]
-			if i < argsSize {
-				argsValue := argumentList.GetByIndex(i)
-				if argsValue == nil {
-					inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-					continue
-				}
-				switch inType {
-				case consts.GO_VALUE_STRING:
-					inValues[i] = reflect.ValueOf(argsValue.String())
-				case consts.GO_VALUE_INT:
-					inValues[i] = reflect.ValueOf(argsValue.Int())
-				case consts.GO_VALUE_INT8:
-					inValues[i] = reflect.ValueOf(int8(argsValue.Int()))
-				case consts.GO_VALUE_INT16:
-					inValues[i] = reflect.ValueOf(int16(argsValue.Int()))
-				case consts.GO_VALUE_INT32:
-					inValues[i] = reflect.ValueOf(int32(argsValue.Int()))
-				case consts.GO_VALUE_INT64:
-					inValues[i] = reflect.ValueOf(int64(argsValue.Int()))
-				case consts.GO_VALUE_UINT:
-					inValues[i] = reflect.ValueOf(uint(argsValue.Int()))
-				case consts.GO_VALUE_UINT8:
-					inValues[i] = reflect.ValueOf(uint8(argsValue.Int()))
-				case consts.GO_VALUE_UINT16:
-					inValues[i] = reflect.ValueOf(uint16(argsValue.Int()))
-				case consts.GO_VALUE_UINT32:
-					inValues[i] = reflect.ValueOf(uint32(argsValue.Int()))
-				case consts.GO_VALUE_UINT64:
-					inValues[i] = reflect.ValueOf(uint64(argsValue.Int()))
-				case consts.GO_VALUE_UINTPTR:
-					inValues[i] = reflect.ValueOf(uintptr(argsValue.Int()))
-				case consts.GO_VALUE_FLOAT32:
-					inValues[i] = reflect.ValueOf(float32(argsValue.Float()))
-				case consts.GO_VALUE_FLOAT64:
-					inValues[i] = reflect.ValueOf(argsValue.Float())
-				case consts.GO_VALUE_BOOL:
-					inValues[i] = reflect.ValueOf(argsValue.Bool())
-				case consts.GO_VALUE_STRUCT:
-					if argsValue.IsObject() {
-						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-							v := reflect.New(rv.Type().In(i))
-							if err := jsoniter.Unmarshal(jsonBytes, v.Interface()); err == nil {
-								inValues[i] = v.Elem()
-								continue
-							}
-						}
-					}
-					inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-				case consts.GO_VALUE_MAP:
-					if argsValue.IsObject() {
-						inArgsType := rv.Type().In(i)
-						// map key=string : value=struct
-						inArgsKind := inArgsType.Elem().Kind()
-						if inArgsKind == reflect.Struct || inArgsKind == reflect.Ptr {
-							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-								vv := reflect.New(rv.Type().In(i))
-								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
-									inValues[i] = vv.Elem()
-									continue
-								}
-							}
-							inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-						} else {
-							inValues[i] = reflect.ValueOf(argsValue.Data())
-						}
-					} else {
-						inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-					}
-				case consts.GO_VALUE_SLICE:
-					if argsValue.IsArray() {
-						inValues[i] = reflect.ValueOf(argsValue.Data())
-					} else {
-						inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-					}
-				default:
-					inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-				}
-			} else {
-				inValues[i] = reflect.New(rv.Type().In(i)).Elem()
-			}
-		}
-		rv.Call(inValues)
+		argsCallback.Invoke(ipcContext)
 	}
 	return
 	//if isCallback {
