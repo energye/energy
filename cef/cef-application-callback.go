@@ -221,21 +221,15 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 					inValues[i] = reflect.New(rv.Type().In(i)).Elem()
 				case consts.GO_VALUE_MAP:
 					if argsValue.IsObject() {
-						argIn := rv.Type().In(i)
+						inArgsType := rv.Type().In(i)
 						// map key=string : value=struct
-						if argIn.Elem().Kind() == reflect.Struct {
+						inArgsKind := inArgsType.Elem().Kind()
+						if inArgsKind == reflect.Struct || inArgsKind == reflect.Ptr {
 							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-								rm := reflect.MakeMap(argIn)
-								fmt.Println("argIn.Elem()", argIn, reflect.ValueOf("string"), reflect.New(argIn.Elem()).Elem())
-								rm.SetMapIndex(reflect.ValueOf("structMap"), reflect.New(argIn.Elem()).Elem())
-								//rm.SetMapIndex()
-								v := rm.Interface()
-								if err := jsoniter.Unmarshal(jsonBytes, v); err == nil {
-									fmt.Println("Interface", v)
-									inValues[i] = reflect.ValueOf(v)
+								vv := reflect.New(rv.Type().In(i))
+								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
+									inValues[i] = vv.Elem()
 									continue
-								} else {
-									fmt.Println("Unmarshal ", err)
 								}
 							}
 							inValues[i] = reflect.New(rv.Type().In(i)).Elem()
