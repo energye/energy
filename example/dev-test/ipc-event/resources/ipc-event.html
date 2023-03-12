@@ -17,12 +17,11 @@
                 clearInterval(si)
                 si = null
                 idx = 0
+                msg("停止 auto ipc emit")
                 return
             }
+            msg("启动 auto ipc emit")
             si = setInterval(ipcEmit, 1)
-            // for(let i=0;i<100000;i++){
-            //     ipcEmit();
-            // }
             if (si != null) {
                 let time = document.getElementById("time").value - 0
                 if (time > 0) {

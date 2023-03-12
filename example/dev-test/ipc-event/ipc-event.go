@@ -8,6 +8,8 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
+	"net/http"
+	_ "net/http/pprof"
 )
 
 //go:embed resources
@@ -15,12 +17,17 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
+	go func() {
+		fmt.Println("pprof")
+		http.ListenAndServe(":9999", nil)
+	}()
 	//logger.SetEnable(true)
 	//logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp = cef.NewApplication()
+	//cefApp.SetSingleProcess(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
@@ -58,9 +65,12 @@ func main() {
 		fmt.Println("args10", args10)
 		return "result testInArgs", 10, true
 	})
+	var num = 0
 	ipc.On("testEmitName", func(context ipc.IContext) {
+		num++
 		argument := context.ArgumentList()
-		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId())
+		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
+		return
 		fmt.Println("data:", argument.Data())
 		for i := 0; i < argument.Size(); i++ {
 			value := argument.GetByIndex(i)

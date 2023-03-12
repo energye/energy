@@ -756,4 +756,14 @@ func GoStr(ptr uintptr) string {
 		return ""
 	}
 	return *(*string)(unsafe.Pointer(resultString))
+
+}
+func string2bytes1(s string) []byte {
+	stringHeader := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	var b []byte
+	pbytes := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	pbytes.Data = stringHeader.Data
+	pbytes.Len = stringHeader.Len
+	pbytes.Cap = stringHeader.Len
+	return b
 }
