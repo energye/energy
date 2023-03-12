@@ -486,9 +486,9 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 
 func (m *ICefV8Value) Free() {
 	if m.instance != nil {
-		var data = m.Instance()
-		imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
-		//m.base.Free(m.Instance())
+		//var data = m.Instance()
+		//imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
+		m.base.Free(m.Instance())
 		m.instance = nil
 	}
 }
