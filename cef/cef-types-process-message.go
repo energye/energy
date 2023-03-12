@@ -97,6 +97,9 @@ func (m *ICefProcessMessage) Name() string {
 }
 
 func (m *ICefProcessMessage) Free() {
-	m.ArgumentList().Free()
-	m.instance = nil
+	if m.instance != nil {
+		m.ArgumentList().Free()
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }

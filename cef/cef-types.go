@@ -214,6 +214,7 @@ type TCefDraggableRegion struct {
 
 // ICefProcessMessage
 type ICefProcessMessage struct {
+	base         TCefBaseRefCounted
 	instance     unsafe.Pointer
 	argumentList *ICefListValue
 	name         string

@@ -340,8 +340,10 @@ func (m *ICefBrowser) StopFinding(clearSelection bool) {
 }
 
 func (m *ICefBrowser) Free() {
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
 
 // BrowserRef -> ICefBrowser

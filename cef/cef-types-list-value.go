@@ -114,8 +114,10 @@ func (m *ICefListValue) Clear() (result bool) {
 		}
 		m.listValues = nil
 	}
-	r1, _, _ := imports.Proc(internale_CefListValue_Clear).Call(m.Instance())
-	result = api.GoBool(r1)
+	if m.instance != nil {
+		r1, _, _ := imports.Proc(internale_CefListValue_Clear).Call(m.Instance())
+		result = api.GoBool(r1)
+	}
 	return
 }
 
@@ -283,7 +285,9 @@ func (m *ICefListValue) SetList(index uint32, value *ICefListValue) (result bool
 }
 
 func (m *ICefListValue) Free() {
-	m.Clear()
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.Clear()
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }

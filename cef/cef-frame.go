@@ -155,8 +155,10 @@ func (m *ICefFrame) Parent() *ICefFrame {
 }
 
 func (m *ICefFrame) Free() {
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
 
 // FrameRef -> *ICefFrame
