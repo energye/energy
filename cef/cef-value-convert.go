@@ -481,7 +481,16 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byt
 		return nil, errors.New("parsing parameter failure")
 	}
 	resultArgs := V8ValueArrayRef.New()
+	size := jsonArray.Size()
+	for i := 0; i < size; i++ {
+		value := jsonArray.GetByIndex(i)
+		switch value.Type() {
+
+		}
+		fmt.Println("type:", value.Type())
+	}
 	fmt.Println("size:", jsonArray.Size())
+
 	return resultArgs, nil
 }
 
