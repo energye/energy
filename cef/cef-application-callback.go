@@ -95,11 +95,13 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 				if count > 0 {
 					//解析 '[]byte' 参数
 					if callback.context.Enter() {
-						//argsBytesValueToV8Value(dataBuf)
-						//fmt.Println("result-bytes:", string(resultArgsBytes))
-						resultArgs := V8ValueArrayRef.New()
-						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs).Free()
-						resultArgs.Free()
+						if args, err := V8ValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
+							callback.function.ExecuteFunctionWithContext(callback.context, nil, args).Free()
+							args.Free()
+						} else {
+							// parsing error
+							callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
+						}
 					}
 					callback.context.Exit()
 				}

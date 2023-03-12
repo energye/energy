@@ -16,6 +16,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"unsafe"
@@ -375,15 +376,6 @@ func resultToBytesProcessMessage(data []any) (*ICefBinaryValue, error) {
 	return BinaryValueRef.New(byt), nil
 }
 
-func argsBytesValueToV8Value(dataBuf []byte) (*ICefV8Value, error) {
-	var data []interface{}
-	if err := jsoniter.Unmarshal(dataBuf, &data); err != nil {
-		return nil, err
-	}
-	fmt.Println("argsBytesValueToV8Value", len(data))
-	return nil, nil
-}
-
 //listValueToV8Value ICefListValue 转换 ICefV8Value
 func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	if list == nil {
@@ -480,6 +472,17 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 		}
 	}
 	return result, nil
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byte) (*TCefV8ValueArray, error) {
+	fmt.Println("result-bytes:", string(resultArgsBytes))
+	jsonArray := json.NewJSONArray(resultArgsBytes)
+	if jsonArray == nil {
+		return nil, errors.New("parsing parameter failure")
+	}
+	resultArgs := V8ValueArrayRef.New()
+	fmt.Println("size:", jsonArray.Size())
+	return resultArgs, nil
 }
 
 // V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息

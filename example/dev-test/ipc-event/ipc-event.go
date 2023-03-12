@@ -70,67 +70,39 @@ func main() {
 		num++
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
-		return
-		fmt.Println("data:", argument.Data())
+		fmt.Println("data:", argument.ToJSONString())
 		for i := 0; i < argument.Size(); i++ {
 			value := argument.GetByIndex(i)
-			fmt.Println("type:", i, value.Type(), value.IsInt())
-			//value := argument.GetIValue(uint32(i))
-			//fmt.Println("\tGetType:", i, value.GetType())
-			//switch value.GetType() {
-			//case consts.VTYPE_NULL:
-			//	//null
-			//case consts.VTYPE_BOOL:
-			//	value.GetBool()
-			//case consts.VTYPE_INT:
-			//	value.GetInt()
-			//case consts.VTYPE_DOUBLE:
-			//	value.GetDouble()
-			//case consts.VTYPE_STRING:
-			//	value.GetString()
-			//case consts.VTYPE_DICTIONARY: // object
-			//	object := value.GetIObject()
-			//	fmt.Println("object keys", object.GetIKeys().Count())
-			//	for i := 0; i < object.GetIKeys().Count(); i++ {
-			//		fmt.Println("\t\tkey-value:", object.GetIKeys().Get(i))
-			//	}
-			//	object.Free()
-			//case consts.VTYPE_LIST: // array
-			//	value.GetIArray().Free()
-			//}
-			//value.Free()
+			fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
-		//var bytArr = []byte("这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组这是一串中文的字节数组")
-		//var strArr = make([]string, 3, 3)
-		//strArr[0] = "数组值1"
-		//strArr[1] = "数组值2"
-		//strArr[2] = "数组值3"
-		//var objArr = make([]*src.StructVarDemo, 4, 4)
-		//objArr[0] = &src.StructVarDemo{StringField: "StringField1"}
-		//objArr[1] = &src.StructVarDemo{StringField: "StringField2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了"}}}
-		//var objArr2 = make([]src.StructVarDemo, 4, 4)
-		//objArr2[0] = src.StructVarDemo{StringField: "==StringField1"}
-		//objArr2[1] = src.StructVarDemo{StringField: "==StringField2"}
-		//var stringMap = map[string]string{}
-		//stringMap["strkey1"] = "value1"
-		//stringMap["strkey2"] = "value2"
-		//var objMap = map[string]interface{}{}
-		//objMap["objArr"] = objArr
-		//objMap["objectPtr"] = objArr[1]
-		//objMap["object"] = objArr2[1]
-		//objMap["strValue"] = "stringValue"
-		//objMap["intValue"] = 50000
-		//objMap["boolValue"] = true
-		//objMap["floatValue"] = 5555555.99999
-		//objMap["strArr"] = strArr
-		////objMap["bytArr"] = bytArr
-		//var objMapArr = make([]map[string]interface{}, 3)
-		//objMapArr[0] = objMap
-		//objMapArr[1] = objMap
-		//objMapArr[2] = objMap
-		//var strPtrValue = "strPtrValue"
+		var r5 = make([]string, 3, 3)
+		r5[0] = "Array数组值1"
+		r5[1] = "Array数组值2"
+		r5[2] = "Array数组值3"
+		var r6 = make([]*src.StructVarDemo, 4, 4)
+		r6[0] = &src.StructVarDemo{StringField: "StringField1字符串1"}
+		r6[1] = &src.StructVarDemo{StringField: "StringField2字符串2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了嵌套了"}}}
+		var r7 = make([]src.StructVarDemo, 4, 4)
+		r7[0] = src.StructVarDemo{StringField: "r7参数字符串1"}
+		r7[1] = src.StructVarDemo{StringField: "r7参数字符串2"}
+		var r8 = map[string]string{}
+		r8["r8key1"] = "r8key1"
+		r8["r8key2"] = "r8key2"
+		var r9 = map[string]interface{}{}
+		r9["r9keyr6"] = r6
+		r9["r9keyr61"] = r6[1]
+		r9["r9keyr7"] = r7[1]
+		r9["r9keystrValue"] = "stringValue"
+		r9["r9keyintValue"] = 50000
+		r9["r9keyboolValue"] = true
+		r9["r9keyfloatValue"] = 5555555.99999
+		r9["r9keystrArrr5"] = r5
+		var objMapArr = make([]map[string]interface{}, 3)
+		objMapArr[0] = r9
+		objMapArr[1] = r9
+		objMapArr[2] = r9
 		err := &MyError{error: "返回值"}
-		context.Result("asdfsadf", 123123, true, err)
+		context.Result("asdfsadf", 123123, true, err /*, r5, r6, r7, r8, r9*/)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

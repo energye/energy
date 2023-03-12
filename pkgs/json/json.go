@@ -8,73 +8,83 @@
 //
 //----------------------------------------
 
+// 依赖于 json-iterator 或 encoding/json 的JSON字节数组序列化
 package json
 
 import (
 	"encoding/json"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
-	jsoniter "github.com/json-iterator/go"
+	jsoniter "github.com/json-iterator/go" //json-iterator
 	"reflect"
 	"strconv"
 	"strings"
 )
 
+// BaseJSON JSON基础对象
+//
+// 当前对象直接操作
 type BaseJSON interface {
-	Size() int
-	Type() GO_VALUE_TYPE
-	Data() any
-	String() string
-	Int() int
-	UInt() uint
-	Bytes() []byte
-	Float() float64
-	Bool() bool
-	JSONObject() JSONObject
-	JSONArray() JSONArray
-	ToJSONString() string
-	IsString() bool
-	IsInt() bool
-	IsUInt() bool
-	IsBytes() bool
-	IsFloat() bool
-	IsBool() bool
-	IsObject() bool
-	IsArray() bool
-	Clear()
-	Free()
+	Size() int              //返回数据数量
+	Type() GO_VALUE_TYPE    //当前对象数量类型
+	Data() any              //返回原始数据
+	String() string         //返回 string 类型值
+	Int() int               //返回 int 类型值
+	UInt() uint             //返回 uint 类型值
+	Bytes() []byte          //转换为 '[]byte' 并返回
+	Float() float64         //返回 float64 类型值
+	Bool() bool             //返回 bool 类型值
+	JSONObject() JSONObject //返回 JSONObject 对象类型
+	JSONArray() JSONArray   //返回 JSONArray 对象类型
+	ToJSONString() string   //转换为JSON字符串并返回
+	IsString() bool         //当前对象是否为 string
+	IsInt() bool            //当前对象是否为 int
+	IsUInt() bool           //当前对象是否为 uint
+	IsBytes() bool          //当前对象是否为 []byte
+	IsFloat() bool          //当前对象是否为 float64
+	IsBool() bool           //当前对象是否为 bool
+	IsObject() bool         //当前对象是否为 JSONObject
+	IsArray() bool          //当前对象是否为 JSONArray
+	Clear()                 //清空所有数据，保留原始数据类型
+	Free()                  //释放数据空间，且类型失效，当前对象不可用
 }
 
+// JSONArray 数组类型 index
+//
+// 根据下标操作元素，失败返回数据类型的默认值
 type JSONArray interface {
 	BaseJSON
-	Add(value ...any)
-	SetByIndex(index int, value any)
-	RemoveByIndex(index int)
-	GetStringByIndex(index int) string
-	GetIntByIndex(index int) int
-	GetUIntByIndex(index int) uint
-	GetBytesByIndex(index int) []byte
-	GetFloatByIndex(index int) float64
-	GetBoolByIndex(index int) bool
-	GetArrayByIndex(index int) JSONArray
-	GetObjectByIndex(index int) JSONObject
-	GetByIndex(index int) JSON
+	Add(value ...any)                      //添加任意类型数据
+	SetByIndex(index int, value any)       //设置指定下标位置任意类型数据
+	RemoveByIndex(index int)               //删除指定下标数据
+	GetStringByIndex(index int) string     //根据下标返回 string 类型值
+	GetIntByIndex(index int) int           //根据下标返回 int 类型值
+	GetUIntByIndex(index int) uint         //根据下标返回 uint 类型值
+	GetBytesByIndex(index int) []byte      //根据下标返回 []byte 类型值
+	GetFloatByIndex(index int) float64     //根据下标返回 float64 类型值
+	GetBoolByIndex(index int) bool         //根据下标返回 bool 类型值
+	GetArrayByIndex(index int) JSONArray   //根据下标返回 JSONArray 类型值
+	GetObjectByIndex(index int) JSONObject //根据下标返回 JSONObject 类型值
+	GetByIndex(index int) JSON             //根据下标返回 JSON 类型值
 }
 
+// JSONObject 对象类型 key=value
+//
+// 根据key操作元素，失败返回数据类型的默认值
 type JSONObject interface {
 	BaseJSON
-	Set(key string, value any)
-	RemoveByKey(key string)
-	GetStringByKey(key string) string
-	GetIntByKey(key string) int
-	GetUIntByKey(key string) uint
-	GetBytesByKey(key string) []byte
-	GetFloatByKey(key string) float64
-	GetBoolByKey(key string) bool
-	GetArrayByKey(key string) JSONArray
-	GetObjectByKey(key string) JSONObject
-	GetByKey(key string) JSON
-	Keys() []string
+	Set(key string, value any)            //设置或覆盖指定key，并设置新任意类型值
+	RemoveByKey(key string)               //删除指定key数据
+	GetStringByKey(key string) string     //根据 key 返回 string 类型值
+	GetIntByKey(key string) int           //根据 key 返回 int 类型值
+	GetUIntByKey(key string) uint         //根据 key 返回 uint 类型值
+	GetBytesByKey(key string) []byte      //根据 key 返回 []byte 类型值
+	GetFloatByKey(key string) float64     //根据 key 返回 float64 类型值
+	GetBoolByKey(key string) bool         //根据 key 返回 bool 类型值
+	GetArrayByKey(key string) JSONArray   //根据 key 返回 JSONArray 类型值
+	GetObjectByKey(key string) JSONObject //根据 key 返回 JSONObject 类型值
+	GetByKey(key string) JSON             //根据 key 返回 JSON 类型值
+	Keys() []string                       //返回当前对象所有 key
 }
 
 // JSON Object
@@ -83,6 +93,7 @@ type JSON interface {
 	JSONObject
 }
 
+// jsonData JSON 数据结构
 type jsonData struct {
 	T GO_VALUE_TYPE // type
 	S int           // size
