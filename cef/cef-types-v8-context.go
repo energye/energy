@@ -92,8 +92,10 @@ func (m *ICefV8Context) Global() *ICefV8Value {
 }
 
 func (m *ICefV8Context) Free() {
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
 
 func (m *cefV8ContextRef) Current() *ICefV8Context {

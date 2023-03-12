@@ -42,6 +42,7 @@ type BaseJSON interface {
 	IsObject() bool
 	IsArray() bool
 	Clear()
+	Free()
 }
 
 type JSONArray interface {
@@ -603,12 +604,17 @@ func (m *jsonData) IsArray() bool {
 
 func (m *jsonData) Clear() {
 	if m.IsObject() {
-		m.V = make(map[string]any)
+		m.V = make(map[string]any, 0)
 	} else if m.IsArray() {
 		m.V = make([]any, 0)
 	} else {
 		m.V = nil
 	}
+	m.S = 0
+}
+
+func (m *jsonData) Free() {
+	m.V = nil
 	m.S = 0
 	m.T = GO_VALUE_INVALID
 }

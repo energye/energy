@@ -84,31 +84,32 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 		messageId := message.ArgumentList().GetInt(0)
 		if callback := ctx.getIPCCallback(messageId); callback != nil {
 			//第二个参数 true 有返回参数
-			//if isReturn := message.ArgumentList().GetBool(1); isReturn {
-			//	//[]byte
-			//	binaryValue := message.ArgumentList().GetBinary(2)
-			//	size := binaryValue.GetSize()
-			//	resultArgsBytes := make([]byte, size)
-			//	count := binaryValue.GetData(resultArgsBytes, 0)
-			//	binaryValue.Free()
-			//	if count > 0 {
-			//		//解析 '[]byte' 参数
-			//		if callback.context.Enter() {
-			//			//argsBytesValueToV8Value(dataBuf)
-			//			//fmt.Println("result-bytes:", string(resultArgsBytes))
-			//			resultArgs := V8ValueArrayRef.New()
-			//			callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs)
-			//			resultArgs.Free()
-			//		}
-			//		callback.context.Exit()
-			//	}
-			//	resultArgsBytes = nil
-			//} else { //无返回参数
-			//	if callback.context.Enter() {
-			//		callback.function.ExecuteFunctionWithContext(callback.context, nil, nil)
-			//	}
-			//	callback.context.Exit()
-			//}
+			if isReturn := message.ArgumentList().GetBool(1); isReturn {
+				//[]byte
+				binaryValue := message.ArgumentList().GetBinary(2)
+				size := binaryValue.GetSize()
+				resultArgsBytes := make([]byte, size)
+				count := binaryValue.GetData(resultArgsBytes, 0)
+				binaryValue.Free()
+
+				if count > 0 {
+					//解析 '[]byte' 参数
+					if callback.context.Enter() {
+						//argsBytesValueToV8Value(dataBuf)
+						//fmt.Println("result-bytes:", string(resultArgsBytes))
+						resultArgs := V8ValueArrayRef.New()
+						callback.function.ExecuteFunctionWithContext(callback.context, nil, resultArgs).Free()
+						resultArgs.Free()
+					}
+					callback.context.Exit()
+				}
+				resultArgsBytes = nil
+			} else { //无返回参数
+				if callback.context.Enter() {
+					callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
+				}
+				callback.context.Exit()
+			}
 			//remove
 			callback.free()
 			ctx.removeIPCCallback(messageId)
@@ -181,6 +182,8 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 		replay.Clear()
 		replyMessage.Free()
 	}
+	ipcContext.ArgumentList().Free()
+	ipcContext.Result(nil)
 	frame.Free()
 	browser.Free()
 	return
@@ -498,7 +501,6 @@ func (m *contextCreate) removeIPCCallback(messageId int32) {
 	m.ipcCallbackLock.Lock()
 	defer m.ipcCallbackLock.Unlock()
 	delete(m.ipcCallbackList, messageId)
-	fmt.Println("callback size:", len(m.ipcCallbackList))
 }
 
 // getIPCCallback
@@ -510,10 +512,16 @@ func (m *contextCreate) getIPCCallback(messageId int32) *ipcCallback {
 }
 
 func (m *ipcCallback) free() {
-	m.context.Free()
-	m.function.Free()
-	m.arguments.Free()
-	m.context = nil
-	m.function = nil
-	m.arguments = nil
+	if m.context != nil {
+		m.context.Free()
+		m.context = nil
+	}
+	if m.function != nil {
+		m.function.Free()
+		m.function = nil
+	}
+	if m.arguments != nil {
+		m.arguments.Free()
+		m.arguments = nil
+	}
 }

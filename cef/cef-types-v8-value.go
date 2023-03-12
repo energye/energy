@@ -485,8 +485,12 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 }
 
 func (m *ICefV8Value) Free() {
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		var data = m.Instance()
+		imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
+		//m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
 
 // ResultV8Value 返回 ICefV8Value 的替代结构
@@ -546,17 +550,19 @@ func (m *TCefV8ValueArray) Free() {
 	if m == nil {
 		return
 	}
-	if m.argumentsCollect != nil {
-		for _, v := range m.argumentsCollect {
-			if v != nil && v.instance != nil {
-				v.Free()
+	if m.instance != nil {
+		if m.argumentsCollect != nil {
+			for _, v := range m.argumentsCollect {
+				if v != nil && v.instance != nil {
+					v.Free()
+				}
 			}
 		}
+		m.instance = nil
+		m.arguments = 0
+		m.argumentsCollect = nil
+		m.argumentsLength = 0
 	}
-	m.instance = nil
-	m.arguments = 0
-	m.argumentsCollect = nil
-	m.argumentsLength = 0
 }
 
 func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
