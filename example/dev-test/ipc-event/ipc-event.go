@@ -149,13 +149,15 @@ func main() {
 	cef.VariableBind.Bind("structField", src.StructField)
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
-			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
-			if window.AsLCLBrowserWindow().Browser() != nil {
-				fmt.Println("SetOnConstrainedResize Identifier", window.AsLCLBrowserWindow().Browser().Identifier())
-				fmt.Println("SetOnConstrainedResize MainFrame", window.AsLCLBrowserWindow().Browser().MainFrame())
-			}
-		})
+		if window.IsLCL() {
+			window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
+				if window.AsLCLBrowserWindow().Browser() != nil {
+					fmt.Println("SetOnConstrainedResize Identifier", window.AsLCLBrowserWindow().Browser().Identifier())
+					fmt.Println("SetOnConstrainedResize MainFrame", window.AsLCLBrowserWindow().Browser().MainFrame())
+				}
+			})
+		}
 	})
 	//运行应用
 	cef.Run(cefApp)
