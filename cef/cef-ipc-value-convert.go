@@ -8,8 +8,9 @@
 //
 //----------------------------------------
 
-// V8ValueConvert -> v8ValueProcessMessageConvert
-// ICefProcessMessage、ICefV8Value、Go类型
+// ipcValueConvert -> v8ValueProcessMessageConvert
+//
+// IPC 和 ICefV8Value 数据序列化转换
 package cef
 
 import (
@@ -22,8 +23,8 @@ import (
 	"unsafe"
 )
 
-// V8ValueConvert
-var V8ValueConvert v8ValueProcessMessageConvert
+// ipcValueConvert
+var ipcValueConvert v8ValueProcessMessageConvert
 
 // v8ValueProcessMessageConvert ICefV8Value 和 ICefProcessMessage 转换
 type v8ValueProcessMessageConvert uintptr

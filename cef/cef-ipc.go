@@ -57,7 +57,8 @@ type ipcCallback struct {
 
 // ipcInit 初始化
 func ipcInit() {
-	if application.SingleProcess() {
+	isSingleProcess := application.SingleProcess()
+	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
 			ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},

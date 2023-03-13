@@ -164,9 +164,9 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 		//入参
 		if emitArgs != nil {
 			//V8Value 转换
-			args := V8ValueConvert.V8ValueToProcessMessageBytes(emitArgs)
+			args := ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
-				exception.SetMessage("ipc.emit convert parameter to message value error.")
+				exception.SetMessage("ipc.emit convert parameter to message value error")
 				isFree = true
 				return
 			}
@@ -215,7 +215,7 @@ func (m *ipcRenderProcess) ipcEmitMessageReply(browser *ICefBrowser, frame *ICef
 			if count > 0 {
 				//解析 '[]byte' 参数
 				if callback.context.Enter() {
-					if args, err := V8ValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
+					if args, err := ipcValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
 						callback.function.ExecuteFunctionWithContext(callback.context, nil, args).Free()
 						args.Free()
 					} else {
