@@ -55,14 +55,23 @@ type ipcCallback struct {
 	function  *ICefV8Value
 }
 
-func init() {
-	if common.Args.IsMain() {
-	} else if common.Args.IsRender() {
-	}
-	ipcBrowser = &ipcBrowserProcess{}
-	ipcRender = &ipcRenderProcess{
-		ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback, 256)},
-		ipcOn:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+// ipcInit 初始化
+func ipcInit() {
+	if application.SingleProcess() {
+		ipcBrowser = &ipcBrowserProcess{}
+		ipcRender = &ipcRenderProcess{
+			ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+			ipcOn:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+		}
+	} else {
+		if common.Args.IsMain() {
+			ipcBrowser = &ipcBrowserProcess{}
+		} else if common.Args.IsRender() {
+			ipcRender = &ipcRenderProcess{
+				ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+				ipcOn:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+			}
+		}
 	}
 }
 
