@@ -264,6 +264,7 @@ type ICefDictionaryValue struct {
 
 // ICefDisplay
 type ICefDisplay struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -414,6 +415,7 @@ type ICefV8ArrayBufferReleaseCallback struct {
 
 // ICefDownloadItem 下载项
 type ICefDownloadItem struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -421,6 +423,7 @@ type ICefDownloadItem struct {
 //
 // 下载中回调
 type ICefDownloadItemCallback struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -428,11 +431,13 @@ type ICefDownloadItemCallback struct {
 //
 // 下载之前回调
 type ICefBeforeDownloadCallback struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefPdfPrintCallback
 type ICefPdfPrintCallback struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 

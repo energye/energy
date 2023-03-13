@@ -139,6 +139,23 @@ func (m *ICefDownloadItem) State() int32 {
 	}
 }
 
+func (m *ICefDownloadItem) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
+var DownloadItemCallbackRef downloadItemCallback
+
+type downloadItemCallback uintptr
+
+func (*downloadItemCallback) UnWrap(data *ICefDownloadItemCallback) *ICefDownloadItemCallback {
+	var result uintptr
+	imports.Proc(internale_CefDownloadItemCallbackRef_Pause).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefDownloadItemCallback{instance: unsafe.Pointer(result)}
+}
+
 func (m *ICefDownloadItemCallback) Instance() uintptr {
 	return uintptr(m.instance)
 }
@@ -164,6 +181,13 @@ func (m *ICefDownloadItemCallback) Resume() {
 	imports.Proc(internale_CefDownloadItemCallback_Resume).Call(m.Instance())
 }
 
+func (m *ICefDownloadItemCallback) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
 func (m *ICefBeforeDownloadCallback) Instance() uintptr {
 	return uintptr(m.instance)
 }
@@ -176,4 +200,11 @@ func (m *ICefBeforeDownloadCallback) Instance() uintptr {
 // showDialog 弹出保存目录窗口
 func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) {
 	imports.Proc(internale_CefBeforeDownloadCallback_Cont).Call(m.Instance(), api.PascalStr(downloadPath), api.PascalBool(showDialog))
+}
+
+func (m *ICefBeforeDownloadCallback) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }

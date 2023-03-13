@@ -43,6 +43,13 @@ func (m *ICefPdfPrintCallback) OnPdfPrintFinished(fn OnPdfPrintFinished) {
 	imports.Proc(internale_CefPdfPrintCallback_OnPdfPrintFinished).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *ICefPdfPrintCallback) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		switch fn.(type) {
