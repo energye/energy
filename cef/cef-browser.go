@@ -113,7 +113,7 @@ func (m *ICefBrowser) MainFrame() *ICefFrame {
 	if m == nil {
 		return nil
 	}
-	if m.mainFrame == nil {
+	if m.mainFrame == nil || m.mainFrame.instance == nil {
 		var result uintptr
 		imports.Proc(internale_CEFBrowser_GetMainFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.mainFrame = &ICefFrame{instance: unsafe.Pointer(result)}

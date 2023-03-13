@@ -19,6 +19,7 @@ import (
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
 	"os"
+	"path"
 	"unsafe"
 )
 
@@ -38,17 +39,16 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 
 //initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
-	m.SetFrameworkDirPath(libPath())
+	lp := libPath()
+	if lp != "" {
+		m.SetFrameworkDirPath(lp)
+		m.SetResourcesDirPath(lp)
+		m.SetLocalesDirPath(path.Join(lp, "locales"))
+	}
 	m.SetAcceptLanguageList(string(LANGUAGE_zh_CN))
 	m.SetLocale(string(LANGUAGE_zh_CN))
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
-	m.SetSingleProcess(false)
-	m.SetUseMockKeyChain(false)
 	m.SetNoSandbox(true)
-	m.SetRemoteDebuggingPort(0)
-	m.SetDisableComponentUpdate(true)
-	m.SetDisableSafeBrowsing(true)
-	m.SetCheckCEFFiles(false)
 	// 以下条件判断根据不同平台, 启动不同的窗口组件
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件

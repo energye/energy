@@ -281,7 +281,6 @@ func init() {
 			//browse.Free()
 		case ChromiumEventOnAfterCreated: //创建浏览器之后
 			sender := getPtr(0)
-			//事件处理函数返回true将不继续执行
 			browse := &ICefBrowser{instance: getPtr(1)}
 			fn.(ChromiumEventOnAfterCreated)(lcl.AsObject(sender), browse)
 			//browse.Free()
