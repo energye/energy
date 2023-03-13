@@ -352,7 +352,7 @@ func AppBrowserInit() {
 			window.SetOnResize(func(sender lcl.IObject) bool {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var target = &cef.EmitTarget{
+					var target = &ipc.EmitTarget{
 						BrowseId: popupWindow.Browser().Identifier(),
 						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
 					}
@@ -369,7 +369,7 @@ func AppBrowserInit() {
 			window.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var target = &cef.EmitTarget{
+					var target = &ipc.EmitTarget{
 						BrowseId: popupWindow.Browser().Identifier(),
 						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
 					}
@@ -402,7 +402,7 @@ func AppBrowserInit() {
 			fmt.Println("OnLoadingStateChange-ProcessType:", common.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
 			if isSendEmit {
 				info := cef.BrowserWindow.GetWindowInfo(browser.Identifier())
-				var target = &cef.EmitTarget{
+				var target = &ipc.EmitTarget{
 					BrowseId: browser.Identifier(),
 					FrameId:  browser.MainFrame().Identifier(),
 				}
@@ -419,7 +419,7 @@ func AppBrowserInit() {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息
 			fmt.Println("OnLoadingProgressChange-ProcessType:", common.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
 			if isSendEmit {
-				var target = &cef.EmitTarget{
+				var target = &ipc.EmitTarget{
 					BrowseId: browser.Identifier(),
 					FrameId:  browser.MainFrame().Identifier(),
 				}

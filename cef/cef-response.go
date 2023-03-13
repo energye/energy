@@ -137,3 +137,10 @@ func (m *ICefResponse) SetHeaderMap(headerMap *ICefStringMultiMap) {
 	}
 	imports.Proc(internale_CefResponse_SetHeaderMap).Call(m.Instance(), headerMap.Instance())
 }
+
+func (m *ICefResponse) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}

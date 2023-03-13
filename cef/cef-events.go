@@ -72,43 +72,59 @@ func init() {
 		switch fn.(type) {
 		case ChromiumEventOnFindResult:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnFindResult)(lcl.AsObject(sender), browser, int32(getVal(2)), int32(getVal(3)), (*TCefRect)(getPtr(4)), int32(getVal(5)), api.GoBool(getVal(6)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnFindResult)(lcl.AsObject(sender), browse, int32(getVal(2)), int32(getVal(3)), (*TCefRect)(getPtr(4)), int32(getVal(5)), api.GoBool(getVal(6)))
+			//browse.Free()
 		case BrowseProcessMessageReceived:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			processId := consts.CefProcessId(getVal(3))
 			message := &ICefProcessMessage{instance: getPtr(4)}
 			var result = (*bool)(getPtr(5))
-			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browser, frame, processId, message)
+			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browse, frame, processId, message)
 			if !*result {
-				*result = mainProcessMessageReceived(browser, frame, processId, message)
+				*result = mainProcessMessageReceived(browse, frame, processId, message)
 			}
-			frame.Free()
-			browser.Free()
+			//frame.Free()
+			//browse.Free()
 			message.Free()
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
+			//frame.Free()
+			//browse.Free()
+			//request.Free()
+			//response.Free()
 		case ChromiumEventOnResourceRedirect:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			var newStr = new(t.TString)
 			var newStrPtr = (*uintptr)(getPtr(5))
 			fn.(ChromiumEventOnResourceRedirect)(sender, browse, frame, request, response, newStr)
 			*newStrPtr = newStr.ToPtr()
+			//frame.Free()
+			//browse.Free()
+			//request.Free()
+			//response.Free()
 		case ChromiumEventOnResourceResponse:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))
+			//frame.Free()
+			//browse.Free()
+			//request.Free()
+			//response.Free()
 		case ChromiumEventOnBeforeResourceLoad:
 			sender, browse, frame, request, _ := resourceEventGet(fn, getVal, false)
 			instance = getInstance(getVal(4))
 			callback := &ICefCallback{instance: instance}
 			fn.(ChromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*consts.TCefReturnValue)(getPtr(5)))
+			//frame.Free()
+			//browse.Free()
+			//request.Free()
 		//menu begin
 		case ChromiumEventOnBeforeContextMenu:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			cefParams := (*iCefContextMenuParams)(getPtr(3))
 			params := &ICefContextMenuParams{
@@ -127,13 +143,15 @@ func init() {
 				SelectionText:     api.GoStr(cefParams.SelectionText),
 				EditStateFlags:    consts.TCefContextMenuEditStateFlags(cefParams.EditStateFlags),
 			}
-			//instance = getInstance(getVal(5))
 			KeyAccelerator.clear()
 			model := &ICefMenuModel{instance: getPtr(4), CefMis: KeyAccelerator}
-			fn.(ChromiumEventOnBeforeContextMenu)(lcl.AsObject(sender), browser, frame, params, model)
+			fn.(ChromiumEventOnBeforeContextMenu)(lcl.AsObject(sender), browse, frame, params, model)
+			//frame.Free()
+			//browse.Free()
+			//model.Free()
 		case ChromiumEventOnContextMenuCommand:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			cefParams := (*iCefContextMenuParams)(getPtr(3))
 			params := &ICefContextMenuParams{
@@ -155,14 +173,18 @@ func init() {
 			commandId := consts.MenuId(getVal(4))
 			eventFlags := uint32(getVal(5))
 			result := (*bool)(getPtr(6))
-			if !KeyAccelerator.commandIdEventCallback(browser, commandId, params, eventFlags, result) {
-				fn.(ChromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browser, frame, params, commandId, eventFlags, result)
+			if !KeyAccelerator.commandIdEventCallback(browse, commandId, params, eventFlags, result) {
+				fn.(ChromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browse, frame, params, commandId, eventFlags, result)
 			}
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnContextMenuDismissed:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnContextMenuDismissed)(lcl.AsObject(sender), browser, frame)
+			fn.(ChromiumEventOnContextMenuDismissed)(lcl.AsObject(sender), browse, frame)
+			//frame.Free()
+			//browse.Free()
 		//menu end
 		//---
 		//cookie begin
@@ -209,124 +231,156 @@ func init() {
 		//--- other
 		case ChromiumEventOnScrollOffsetChanged:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnScrollOffsetChanged)(lcl.AsObject(sender), browser, float64(getVal(2)), float64(getVal(3)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnScrollOffsetChanged)(lcl.AsObject(sender), browse, float64(getVal(2)), float64(getVal(3)))
+			//browse.Free()
 		case ChromiumEventOnRenderProcessTerminated:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browser, consts.TCefTerminationStatus(getVal(2)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browse, consts.TCefTerminationStatus(getVal(2)))
+			//browse.Free()
 		case ChromiumEventOnCompMsg:
 			message := (*types.TMessage)(getPtr(1))
 			lResultPtr := (*types.LRESULT)(getPtr(2))
 			fn.(ChromiumEventOnCompMsg)(lcl.AsObject(getVal(0)), message, lResultPtr, (*bool)(getPtr(3)))
 		case ChromiumEventOnCefBrowser:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnCefBrowser)(lcl.AsObject(sender), browser)
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnCefBrowser)(lcl.AsObject(sender), browse)
+			//browse.Free()
 		case ChromiumEventOnTitleChange:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnTitleChange)(lcl.AsObject(sender), browser, api.GoStr(getVal(2)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnTitleChange)(lcl.AsObject(sender), browse, api.GoStr(getVal(2)))
+			//browse.Free()
 		case ChromiumEventOnKeyEvent:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
-			fn.(ChromiumEventOnKeyEvent)(lcl.AsObject(sender), browser, keyEvent, (*bool)(getPtr(3)))
+			fn.(ChromiumEventOnKeyEvent)(lcl.AsObject(sender), browse, keyEvent, (*bool)(getPtr(3)))
+			//browse.Free()
 		case ChromiumEventOnFullScreenModeChange:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnFullScreenModeChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnFullScreenModeChange)(lcl.AsObject(sender), browse, api.GoBool(getVal(2)))
+			//browse.Free()
 		case ChromiumEventOnBeforeBrowser: //创建浏览器之前
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			var result = (*bool)(getPtr(3))
-			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browser, frame)
+			*result = fn.(ChromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browse, frame)
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnAddressChange: //创建浏览器之前
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnAddressChange)(lcl.AsObject(sender), browser, frame, api.GoStr(getVal(3)))
+			fn.(ChromiumEventOnAddressChange)(lcl.AsObject(sender), browse, frame, api.GoStr(getVal(3)))
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnAfterCreated: //创建浏览器之后
 			sender := getPtr(0)
 			//事件处理函数返回true将不继续执行
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnAfterCreated)(lcl.AsObject(sender), browser)
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnAfterCreated)(lcl.AsObject(sender), browse)
+			//browse.Free()
 		case ChromiumEventOnBeforeClose: //关闭浏览器之前
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnBeforeClose)(lcl.AsObject(sender), browser)
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnBeforeClose)(lcl.AsObject(sender), browse)
+			//browse.Free()
 		case ChromiumEventOnClose:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnClose)(lcl.AsObject(sender), browser, (*TCefCloseBrowsesAction)(getPtr(2)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnClose)(lcl.AsObject(sender), browse, (*TCefCloseBrowsesAction)(getPtr(2)))
+			//browse.Free()
 		case ChromiumEventOnResult: //通用Result bool事件
 			fn.(ChromiumEventOnResult)(lcl.AsObject(getVal(0)), api.GoBool(getVal(1)))
 		case ChromiumEventOnResultFloat: //通用Result float事件
 			fn.(ChromiumEventOnResultFloat)(lcl.AsObject(getVal(0)), *(*float64)(getPtr(1)))
 		case ChromiumEventOnLoadStart:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			transitionType := consts.TCefTransitionType(getVal(3))
-			fn.(ChromiumEventOnLoadStart)(lcl.AsObject(sender), browser, frame, transitionType)
+			fn.(ChromiumEventOnLoadStart)(lcl.AsObject(sender), browse, frame, transitionType)
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnLoadingStateChange:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnLoadingStateChange)(lcl.AsObject(sender), browser, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnLoadingStateChange)(lcl.AsObject(sender), browse, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
+			//browse.Free()
 		case ChromiumEventOnLoadingProgressChange:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
-			fn.(ChromiumEventOnLoadingProgressChange)(lcl.AsObject(sender), browser, *(*float64)(getPtr(2)))
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(ChromiumEventOnLoadingProgressChange)(lcl.AsObject(sender), browse, *(*float64)(getPtr(2)))
+			//browse.Free()
 		case ChromiumEventOnLoadError:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnLoadError)(lcl.AsObject(sender), browser, frame, consts.CEF_NET_ERROR(getVal(3)), api.GoStr(getVal(4)), api.GoStr(getVal(5)))
+			fn.(ChromiumEventOnLoadError)(lcl.AsObject(sender), browse, frame, consts.CEF_NET_ERROR(getVal(3)), api.GoStr(getVal(4)), api.GoStr(getVal(5)))
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnLoadEnd:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnLoadEnd)(lcl.AsObject(sender), browser, frame, int32(getVal(3)))
+			fn.(ChromiumEventOnLoadEnd)(lcl.AsObject(sender), browse, frame, int32(getVal(3)))
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnBeforeDownload: //下载之前
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			downItem := &ICefDownloadItem{instance: getPtr(2)}
 			suggestedName := api.GoStr(getVal(3))
 			callback := &ICefBeforeDownloadCallback{instance: getPtr(4)}
-			fn.(ChromiumEventOnBeforeDownload)(lcl.AsObject(sender), browser, downItem, suggestedName, callback)
+			fn.(ChromiumEventOnBeforeDownload)(lcl.AsObject(sender), browse, downItem, suggestedName, callback)
+			//browse.Free()
 		case ChromiumEventOnDownloadUpdated: //下载更新
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			downItem := &ICefDownloadItem{instance: getPtr(2)}
 			callback := &ICefDownloadItemCallback{instance: getPtr(3)}
-			fn.(ChromiumEventOnDownloadUpdated)(lcl.AsObject(sender), browser, downItem, callback)
+			fn.(ChromiumEventOnDownloadUpdated)(lcl.AsObject(sender), browse, downItem, callback)
+			//browse.Free()
 		//frame
 		case ChromiumEventOnFrameAttached:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnFrameAttached)(lcl.AsObject(sender), browser, frame, api.GoBool(getVal(3)))
+			fn.(ChromiumEventOnFrameAttached)(lcl.AsObject(sender), browse, frame, api.GoBool(getVal(3)))
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnFrameCreated:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnFrameCreated)(lcl.AsObject(sender), browser, frame)
+			fn.(ChromiumEventOnFrameCreated)(lcl.AsObject(sender), browse, frame)
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnFrameDetached:
 			sender := getVal(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			fn.(ChromiumEventOnFrameDetached)(lcl.AsObject(sender), browser, frame)
+			fn.(ChromiumEventOnFrameDetached)(lcl.AsObject(sender), browse, frame)
+			//frame.Free()
+			//browse.Free()
 		case ChromiumEventOnMainFrameChanged:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			oldFrame := &ICefFrame{instance: getPtr(2)}
 			newFrame := &ICefFrame{instance: getPtr(3)}
-			fn.(ChromiumEventOnMainFrameChanged)(lcl.AsObject(sender), browser, oldFrame, newFrame)
+			fn.(ChromiumEventOnMainFrameChanged)(lcl.AsObject(sender), browse, oldFrame, newFrame)
+			//oldFrame.Free()
+			//newFrame.Free()
+			//browse.Free()
 		//windowParent popup
 		case ChromiumEventOnBeforePopup:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
 			beforePInfo := &BeforePopupInfo{
@@ -342,20 +396,23 @@ func init() {
 				result             = (*bool)(getPtr(7))
 			)
 			//callback
-			*result = fn.(ChromiumEventOnBeforePopup)(lcl.AsObject(sender), browser, frame, beforePInfo, client, noJavascriptAccess)
+			*result = fn.(ChromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePInfo, client, noJavascriptAccess)
+			//frame.Free()
+			//browse.Free()
 		//windowParent open url from tab
 		case ChromiumEventOnOpenUrlFromTab:
 			//no impl
 		case ChromiumEventOnDragEnter:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			dragData := &ICefDragData{instance: getPtr(2)}
 			mask := consts.TCefDragOperations(getVal(3))
 			result := (*bool)(getPtr(4))
-			fn.(ChromiumEventOnDragEnter)(lcl.AsObject(sender), browser, dragData, mask, result)
+			fn.(ChromiumEventOnDragEnter)(lcl.AsObject(sender), browse, dragData, mask, result)
+			//browse.Free()
 		case ChromiumEventOnDraggableRegionsChanged:
 			sender := getPtr(0)
-			browser := &ICefBrowser{instance: getPtr(1)}
+			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			regionsCount := int32(getVal(3))
 			regions := NewCefDraggableRegions()
@@ -364,7 +421,9 @@ func init() {
 				region = *(*TCefDraggableRegion)(common.GetParamPtr(getVal(4), i*int(unsafe.Sizeof(TCefDraggableRegion{}))))
 				regions.Append(region)
 			}
-			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browser, frame, regions)
+			fn.(ChromiumEventOnDraggableRegionsChanged)(lcl.AsObject(sender), browse, frame, regions)
+			//frame.Free()
+			//browse.Free()
 		default:
 			return false
 		}

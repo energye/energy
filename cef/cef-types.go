@@ -267,6 +267,7 @@ type ICefWindow struct {
 
 // ICefRequest
 type ICefRequest struct {
+	base                 TCefBaseRefCounted
 	instance             unsafe.Pointer
 	Url                  string
 	Method               string
@@ -281,6 +282,7 @@ type ICefRequest struct {
 
 // ICefResponse 实例
 type ICefResponse struct {
+	base       TCefBaseRefCounted
 	instance   unsafe.Pointer
 	Status     int32
 	StatusText string
@@ -288,6 +290,13 @@ type ICefResponse struct {
 	Charset    string
 	Error      TCefErrorCode
 	URL        string
+}
+
+// ICefMenuModel 菜单
+type ICefMenuModel struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	CefMis   *keyEventAccelerator
 }
 
 // ICefStringMultiMap 实例

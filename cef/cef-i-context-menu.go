@@ -74,12 +74,6 @@ type ICefContextMenuParams struct {
 	EditStateFlags    TCefContextMenuEditStateFlags
 }
 
-// ICefMenuModel 菜单
-type ICefMenuModel struct {
-	instance unsafe.Pointer
-	CefMis   *keyEventAccelerator
-}
-
 // MenuItem 菜单项
 type MenuItem struct {
 	CommandId   MenuId // >= 26500 and <= 28500
@@ -328,6 +322,17 @@ func (m *ICefMenuModel) SetLabel(commandId MenuId, text string) bool {
 // GetIndexOf 获取下标
 func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
 	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
+}
+
+func (m *ICefMenuModel) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
+func (m *ICefMenuModel) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
 
 // ------------------------------------ PROC

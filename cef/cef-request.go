@@ -141,3 +141,10 @@ func (m *ICefRequest) SetPostData(value *ICefPostData) {
 	}
 	imports.Proc(internale_CefRequest_SetPostData).Call(m.Instance(), value.Instance())
 }
+
+func (m *ICefRequest) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
