@@ -476,7 +476,6 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 
 // BytesToV8ArrayValue JSONArray 字节数组转换 TCefV8ValueArray
 func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byte) (*TCefV8ValueArray, error) {
-	fmt.Println("result-bytes:", string(resultArgsBytes))
 	//只能是 JSONArray 对象类型
 	jsonArray := json.NewJSONArray(resultArgsBytes)
 	if jsonArray == nil {
@@ -510,10 +509,7 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byt
 				resultArgs.Add(V8ValueRef.NewNull())
 			}
 		}
-		fmt.Println("type:", value.Type())
 	}
-	fmt.Println("size:", jsonArray.Size())
-
 	return resultArgs, nil
 }
 

@@ -17,7 +17,7 @@
                 clearInterval(si)
                 si = null
                 idx = 0
-                msg("停止 auto ipc emit")
+                msg("停止 auto ipc emit idx",idx)
                 return
             }
             msg("启动 auto ipc emit")
@@ -57,46 +57,11 @@
                     msg("r3", r3);
                     msg("r4", r4);
                     msg("r5", r5);
-                    msg("r6", r6);
-                    msg("r7", r7);
-                    msg("r8", r8);
-                    msg("r9", r9);
-                }
-                /*function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13) {
-                    //msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);
-
-                    //第2个返回值是 ArrayBuffer 类型，字节数组
-                    let result2ArrayBuffer = new Uint8Array(result2);
-                    let result2Decode = new TextDecoder()//中文转码，不乱码
-                    let decodedString = result2Decode.decode(result2ArrayBuffer);
-
-                    // msg('result1：', JSON.stringify(result1));
-                    // msg('result2： 字符串-字节数组：', decodedString);
-                    // msg('result3：', JSON.stringify(result3));
-                    // msg('result4：', JSON.stringify(result4));
-                    // msg('result5：', JSON.stringify(result5));
-                    // msg('result6：', JSON.stringify(result6));
-                    // msg('result7：', JSON.stringify(result7));
-                    // msg('result8：', JSON.stringify(result8));
-                    // msg('result9：', JSON.stringify(result9));
-                    // msg('result10：', JSON.stringify(result10));
-                    // msg('result11：', JSON.stringify(result11));
-                    // msg('result12：', JSON.stringify(result12));
-                    // msg('result13：', JSON.stringify(result13));
-                    console.log('result1：', result1)
-                    console.log('result2：', result2)
-                    console.log('result3：', result3)
-                    console.log('result4：', result4)
-                    console.log('result5：', result5)
-                    console.log('result6：', result6)
-                    console.log('result7：', result7)
-                    console.log('result8：', result8)
-                    console.log('result9：', result9)
-                    console.log('result10：', result10)
-                    console.log('result11：', result11)
-                    console.log('result12：', result12)
-                    console.log('result13：', result13)
-                }*/);
+                    msg("r6", r6, JSON.stringify(r6));
+                    msg("r7", r7, JSON.stringify(r7));
+                    msg("r8", r8, JSON.stringify(r8));
+                    msg("r9", r9, JSON.stringify(r9));
+                });
             //msg('ipc.emit ok?', ok);
 
             //let ok1 = ipc.emit([]);
@@ -104,6 +69,7 @@
         }
 
         function testInArgs() {
+            clearMsg()
             let map = {
                 "key1": "value1value1value1value1",
                 "key2": "value2value2value2vaaaaaaalue2",
@@ -129,6 +95,7 @@
         }
 
         function testResultArgs() {
+            clearMsg()
             ipc.emit("testResultArgs", [6666], function (r1) {
                 msg('r1', r1)
             })

@@ -69,7 +69,7 @@ func main() {
 		num++
 		argument := context.ArgumentList()
 		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
-		fmt.Println("data:", argument.ToJSONString())
+		fmt.Println("data:", argument.GetByIndex(1).Data())
 		for i := 0; i < argument.Size(); i++ {
 			value := argument.GetByIndex(i)
 			fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
