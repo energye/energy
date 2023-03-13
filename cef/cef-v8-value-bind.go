@@ -56,7 +56,7 @@ func (m *V8Value) NewFunction(name string, fn interface{}) error {
 //
 // Go结构类型变量和Go结构函数绑定
 func (m *V8Value) NewObjects(objects ...interface{}) {
-	bindObject(objects...)
+	VariableBind.NewObjects(objects...)
 }
 
 // Bind V8Value

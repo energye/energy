@@ -13,12 +13,7 @@ package cef
 
 import (
 	"github.com/energye/energy/common/imports"
-	"unsafe"
 )
-
-type ICefCallback struct {
-	instance unsafe.Pointer
-}
 
 // Cont 继续执行
 func (m *ICefCallback) Cont() {

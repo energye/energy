@@ -12,11 +12,9 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -237,8 +235,6 @@ func init() {
 		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
 			commands := (*uintptr)(getPtr(0))
 			commandLine := &TCefCommandLine{commandLines: make(map[string]string)}
-			ipc.IPC.SetPort()
-			commandLine.AppendSwitch(MAINARGS_NETIPCPORT, fmt.Sprintf("%d", ipc.IPC.Port()))
 			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(commandLine)
 			*commands = api.PascalStr(commandLine.toString())
 		case GlobalCEFAppEventOnGetDefaultClient:

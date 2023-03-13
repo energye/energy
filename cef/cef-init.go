@@ -14,8 +14,6 @@ package cef
 import (
 	"embed"
 	. "github.com/energye/energy/common"
-	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
@@ -51,21 +49,9 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 		macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(energyEnv))
 	}
 	inits.Init(libs, resources)
-	if Args.IsRender() {
-		netIpcPort := Args.Args(MAINARGS_NETIPCPORT)
-		if netIpcPort != Empty {
-			ipc.IPC.SetPort(int(StrToInt32(netIpcPort)))
-		}
-	}
-	//IPC通道选择初始化, 在不支持unix的系统中将选择net socket
-	ipc.IPCChannelChooseInit()
 	//macos的命令行设置
 	setMacOSXCommandLine(api.PascalStr(Args.CommandLine()))
 	applicationQueueAsyncCallInit()
-	//对于go绑定到v8引擎js的事件处理函数
-	cefV8WindowBindFuncEventsInit()
-	//ipc事件初始化
-	cefIPCInit()
 	//应用低层出错异常捕获
 	lcl.Application.SetOnException(func(sender lcl.IObject, e *lcl.Exception) {
 		if exceptionCallback != nil {

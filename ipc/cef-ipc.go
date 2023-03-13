@@ -127,6 +127,7 @@ type ipcChannel struct {
 func (m *ipcChannel) Port() int {
 	return m.port
 }
+
 func (m *ipcChannel) SetPort(port ...int) {
 	if len(port) > 0 {
 		m.port = port[0]

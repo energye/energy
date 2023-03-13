@@ -27,10 +27,9 @@ var (
 )
 
 const (
-	Empty               = ""
-	MAINARGS_NETIPCPORT = "net-ipc-port"
-	ENERGY_HOME_KEY     = "ENERGY_HOME"
-	MemoryNetwork       = "unix"
+	Empty           = ""
+	ENERGY_HOME_KEY = "ENERGY_HOME"
+	MemoryNetwork   = "unix"
 )
 
 func init() {

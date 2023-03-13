@@ -55,6 +55,30 @@ type variableBind struct {
 	lock                     sync.Mutex               //add bind, remove bind lock
 }
 
+// VT 字段类型
+type VT struct {
+	Jsv V8_JS_VALUE_TYPE `json:"jsv"`
+	Gov GO_VALUE_TYPE    `json:"gov"`
+}
+
+// 函数详情 1.参数个数 2.每个参数类型 3.返回参数类型
+type funcInfo struct {
+	InNum          int32   `json:"inNum"`          //入参个数
+	InParam        []*VT   `json:"inParam"`        //入参类型
+	OutNum         int32   `json:"outNum"`         //出参个数
+	OutParam       []*VT   `json:"outParam"`       //出参类型
+	OutParamErrIdx int32   `json:"outParamErrIdx"` //出参错误位置
+	OutParamIdx    int32   `json:"outParamIdx"`    //出参位置
+	FnType         FN_TYPE `json:"fnType"`         //函数类型, 直接定义函数或对象函数
+}
+
+// functionInfo 结构的函数描述
+type functionInfo struct {
+	EventId uintptr `json:"event_id"`
+	*funcInfo
+	Method reflect.Value `json:"-"`
+}
+
 func init() {
 	isMainProcess = common.Args.IsMain()
 	isRenderProcess = common.Args.IsRender()
@@ -205,7 +229,7 @@ func (m *variableBind) bindValueHandle(jsValue JSValue) {
 //
 // 对象类型变量和对象函数绑定
 func (m *variableBind) NewObjects(objects ...interface{}) {
-	bindObject(objects...)
+
 }
 
 // Bind V8Value

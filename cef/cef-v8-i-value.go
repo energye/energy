@@ -69,11 +69,9 @@ type JSValue interface {
 //
 // 潜在问题，如果函数名包含数字可能会引起函数冲突，入参或出参类型不正确，导致调用失败
 func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
-	objectTI.isBind = true //设置为已绑定
 	//通过回调函数绑定到CEF
 	VariableBind.callVariableBind(browser, frame)
 	//通过直接绑定到CEF
-	objectTI.bindToCEF()
 	var valueBindInfos []*valueBindInfo
 	for _, value := range VariableBind.binds() {
 		if !value.isCommon() {
