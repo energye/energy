@@ -302,7 +302,7 @@ func (m *ICefV8Value) deleteValueByKey(key string) bool {
 
 // DeleteValueByKey export
 func (m *ICefV8Value) DeleteValueByKey(key string) bool {
-	if isInternalKey(key) {
+	if isIPCInternalKey(key) {
 		return false
 	}
 	return m.deleteValueByKey(key)
@@ -359,7 +359,7 @@ func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute co
 
 // SetValueByKey export
 func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
-	if isInternalKey(key) {
+	if isIPCInternalKey(key) {
 		return false
 	}
 	return m.setValueByKey(key, value, attribute)
@@ -381,7 +381,7 @@ func (m *ICefV8Value) setValueByAccessor(key string, settings consts.TCefV8Acces
 
 // SetValueByAccessor export
 func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
-	if isInternalKey(key) {
+	if isIPCInternalKey(key) {
 		return false
 	}
 	return m.setValueByAccessor(key, settings, attribute)
@@ -738,7 +738,7 @@ func (*cefV8Value) newFunction(name string, handler *ICefV8Handler) *ICefV8Value
 
 // NewFunction export
 func (m *cefV8Value) NewFunction(name string, handler *ICefV8Handler) *ICefV8Value {
-	if isInternalKey(name) {
+	if isIPCInternalKey(name) {
 		return nil
 	}
 	return m.newFunction(name, handler)

@@ -84,7 +84,7 @@ func init() {
 			var result = (*bool)(getPtr(5))
 			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browse, frame, processId, message)
 			if !*result {
-				*result = mainProcessMessageReceived(browse, frame, processId, message)
+				*result = browserProcessMessageReceived(browse, frame, processId, message)
 			}
 			frame.Free()
 			browse.Free()

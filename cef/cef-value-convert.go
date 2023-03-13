@@ -430,8 +430,8 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 	}
 	keys := dictionary.GetKeys()
 	//bindSubObjectAccessor := V8AccessorRef.New()
-	//bindSubObjectAccessor.Get(ctx.bindSubObjectGet)
-	//bindSubObjectAccessor.Set(ctx.bindSubObjectSet)
+	//bindSubObjectAccessor.Get(ipcRender.bindSubObjectGet)
+	//bindSubObjectAccessor.Set(ipcRender.bindSubObjectSet)
 	result := V8ValueRef.NewObject(nil)
 	for i := 0; i < keys.Count(); i++ {
 		key := keys.Get(i)

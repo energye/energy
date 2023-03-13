@@ -39,7 +39,7 @@ func (*processMessage) new(name string) *ICefProcessMessage {
 //
 // 参数: name 消息名
 func (m *processMessage) New(name string) *ICefProcessMessage {
-	if isInternalKey(name) {
+	if isIPCInternalKey(name) {
 		return nil
 	}
 	return m.new(name)
