@@ -17,7 +17,7 @@
                 clearInterval(si)
                 si = null
                 idx = 0
-                msg("停止 auto ipc emit idx",idx)
+                msg("停止 auto ipc emit idx", idx)
                 return
             }
             msg("启动 auto ipc emit")
@@ -50,17 +50,19 @@
             ]
             let args1 = "中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中string 文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文"
             let ok = ipc.emit("testEmitName", [args1, idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888888888 + idx, null, undefined],
-                function (r1, r2, r3, r4, r5, r6, r7, r8, r9) {
+                function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
                     clearMsg()
-                    msg("r1", r1);
-                    msg("r2", r2);
-                    msg("r3", r3);
-                    msg("r4", r4);
-                    msg("r5", r5);
-                    msg("r6", r6, JSON.stringify(r6));
-                    msg("r7", r7, JSON.stringify(r7));
-                    msg("r8", r8, JSON.stringify(r8));
-                    msg("r9", r9, JSON.stringify(r9));
+                    msg("R0：", r0);
+                    msg("R1：", r1);
+                    msg("R2：", r2);
+                    msg("R3：", r3);
+                    msg("R4：", r4);
+                    msg("R5：", r5);
+                    msg("R6：", r6, JSON.stringify(r6));
+                    msg("R7：", r7, JSON.stringify(r7));
+                    msg("R8：", r8, JSON.stringify(r8));
+                    msg("R9：", r9, JSON.stringify(r9));
+                    msg("R10：", r10, JSON.stringify(r10));
                 });
             //msg('ipc.emit ok?', ok);
 
@@ -70,7 +72,18 @@
 
         function testInArgs() {
             clearMsg()
-            let map = {
+            let in1 = "字符串参数"
+            let in2 = 888888
+            let in3 = 9999999.0111
+            let in4 = true
+            let in5 = ["value1", "字符串2", "字符串3"]
+            let in6 = [1111111.1111, 222222.222, "这个数组需要使用 []any 类型接收"]
+            let in7 = {
+                "key1": "value1value1value1value1",
+                "key2": "value2value2value2v2",
+                "key3": "value3value3value3"
+            }
+            let in8 = {
                 "key1": "value1value1value1value1",
                 "key2": "value2value2value2vaaaaaaalue2",
                 "key3": "value3value3value3",
@@ -84,20 +97,26 @@
                     "FloatField": 1006588.666
                 }
             }
-            let args8 = {
-                "key1": "value1value1value1value1",
-                "key2": "value2value2value2vaaaaaaalue2",
-                "key3": "value3value3value3"
+            let in9 = {
+                "in9key": in8
             }
-            let arr = ["adsfsadf", "fffffff"]
-            let args10 = [1111111.1111, 222222.222]
-            ipc.emit("testInArgs", ["字符串参数", 123123, true, arr, map, map, {"structMap": map}, args8, 9999999.99999, args10]);
+            ipc.emit("testInArgs", [in1, in2, in3, in4, in5, in6, in7, in8, in9]);
         }
 
         function testResultArgs() {
             clearMsg()
-            ipc.emit("testResultArgs", [6666], function (r1) {
-                msg('r1', r1)
+            ipc.emit("testResultArgs", [6666], function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
+                msg("R0：", r0);
+                msg("R1：", r1);
+                msg("R2：", r2);
+                msg("R3：", r3);
+                msg("R4：", r4);
+                msg("R5：", r5);
+                msg("R6：", r6, JSON.stringify(r6));
+                msg("R7：", r7, JSON.stringify(r7));
+                msg("R8：", r8, JSON.stringify(r8));
+                msg("R9：", r9, JSON.stringify(r9));
+                msg("R10：", r10, JSON.stringify(r10));
             })
         }
 

@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+// energy ipc 事件驱动监听
+//
+// 事件监听、事件触发
 package ipc
 
 import (
@@ -20,7 +23,10 @@ var (
 	browser *browserIPC
 )
 
+// EmitContextCallback IPC 上下文件回调函数
 type EmitContextCallback func(context IContext)
+
+// EmitArgumentCallback 带有参数回调函数
 type EmitArgumentCallback any
 
 // browserIPC 主进程 IPC

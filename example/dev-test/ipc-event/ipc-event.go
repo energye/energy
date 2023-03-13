@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"errors"
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
@@ -42,38 +41,14 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.OnArguments("testResultArgs", func(args1 int) (r1 map[string]string, err error) {
-		fmt.Println("args1", args1)
-		r1 = make(map[string]string)
-		r1["key1"] = "value1"
-		r1["key2"] = "value2"
-		return r1, errors.New("错误返回值")
-	})
 
-	ipc.OnArguments("testInArgs", func(args1 string, args2 int, args3 bool, args4 []any, args5 map[string]any, args6 src.TestInArgs, args7 map[string]src.TestInArgs,
-		args8 map[string]string, args9 float64, args10 []float64) (string, int, bool) {
+	ipc.OnArguments("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		fmt.Println("args1", args1)
-		fmt.Println("args2", args2)
-		fmt.Println("args3", args3)
-		fmt.Println("args4", args4)
-		fmt.Println("args5", args5)
-		fmt.Println("args6", args6, args6.SubObj)
-		fmt.Println("args7", args7)
-		fmt.Println("args8", args8)
-		fmt.Println("args9", args9)
-		fmt.Println("args10", args10)
-		return "result testInArgs", 10, true
-	})
-	var num = 0
-	ipc.On("testEmitName", func(context ipc.IContext) {
-		num++
-		argument := context.ArgumentList()
-		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
-		fmt.Println("data:", argument.GetByIndex(1).Data())
-		for i := 0; i < argument.Size(); i++ {
-			value := argument.GetByIndex(i)
-			fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
-		}
+		var r0 = "字符串{}{}{}字符串[][]字符串"
+		var r1 = 1000011
+		var r2 = 66666611.0123
+		var r3 = true
+		var r4 = &MyError{error: "返回值"}
 		var r5 = make([]string, 3, 3)
 		r5[0] = "Array数组值1"
 		r5[1] = "Array数组值2"
@@ -96,12 +71,67 @@ func main() {
 		r9["r9keyboolValue"] = true
 		r9["r9keyfloatValue"] = 5555555.99999
 		r9["r9keystrArrr5"] = r5
-		var objMapArr = make([]map[string]interface{}, 3)
-		objMapArr[0] = r9
-		objMapArr[1] = r9
-		objMapArr[2] = r9
-		err := &MyError{error: "返回值"}
-		context.Result("asdfsadf", 123123, true, err, r5, r6, r7, r8, r9)
+		var r10 = make([]map[string]interface{}, 3)
+		r10[0] = r9
+		r10[1] = r9
+		r10[2] = r9
+		return r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10
+	})
+
+	ipc.OnArguments("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
+		fmt.Println("in1: ", in1)
+		fmt.Println("in2: ", in2)
+		fmt.Println("in3: ", in3)
+		fmt.Println("in4: ", in4)
+		fmt.Println("in5: ", in5)
+		fmt.Println("in6: ", in6)
+		fmt.Println("in7: ", in7)
+		fmt.Println("in8: ", in8, "in8.SubObj: ", in8.SubObj)
+		fmt.Println("in9: ", in9)
+		return "result testInArgs", 10, true //没有回调函数这些参数不会返回
+	})
+	var num = 0
+	ipc.On("testEmitName", func(context ipc.IContext) {
+		num++
+		argument := context.ArgumentList()
+		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
+		fmt.Println("data:", argument.GetByIndex(1).Data())
+		for i := 0; i < argument.Size(); i++ {
+			value := argument.GetByIndex(i)
+			fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
+		}
+		var r0 = "字符串{}{}{}字符串[][]字符串"
+		var r1 = 1000011
+		var r2 = 66666611.0123
+		var r3 = true
+		var r4 = &MyError{error: "返回值"}
+		var r5 = make([]string, 3, 3)
+		r5[0] = "Array数组值1"
+		r5[1] = "Array数组值2"
+		r5[2] = "Array数组值3"
+		var r6 = make([]*src.StructVarDemo, 4, 4)
+		r6[0] = &src.StructVarDemo{StringField: "StringField1字符串1"}
+		r6[1] = &src.StructVarDemo{StringField: "StringField2字符串2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了嵌套了"}}}
+		var r7 = make([]src.StructVarDemo, 4, 4)
+		r7[0] = src.StructVarDemo{StringField: "r7参数字符串1"}
+		r7[1] = src.StructVarDemo{StringField: "r7参数字符串2"}
+		var r8 = map[string]string{}
+		r8["r8key1"] = "r8key1"
+		r8["r8key2"] = "r8key2"
+		var r9 = map[string]interface{}{}
+		r9["r9keyr6"] = r6
+		r9["r9keyr61"] = r6[1]
+		r9["r9keyr7"] = r7[1]
+		r9["r9keystrValue"] = "stringValue"
+		r9["r9keyintValue"] = 50000
+		r9["r9keyboolValue"] = true
+		r9["r9keyfloatValue"] = 5555555.99999
+		r9["r9keystrArrr5"] = r5
+		var r10 = make([]map[string]interface{}, 3)
+		r10[0] = r9
+		r10[1] = r9
+		r10[2] = r9
+		context.Result(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
