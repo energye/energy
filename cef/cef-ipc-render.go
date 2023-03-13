@@ -18,10 +18,24 @@ import (
 
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
-	ipc     *ICefV8Value    // ipc object
-	ipcEmit *ipcEmitHandler // ipc.emit handler
-	ipcOn   *ipcOnHandler   // ipc.on handler
-	bind    *ICefV8Value    // go bind
+	bind        *ICefV8Value    // go bind
+	ipc         *ICefV8Value    // ipc object
+	emitHandler *ipcEmitHandler // ipc.emit handler
+	onHandler   *ipcOnHandler   // ipc.on handler
+}
+
+func (m *ipcRenderProcess) clear() {
+	if m.bind != nil {
+		m.bind.Free()
+		m.bind = nil
+	}
+	if m.ipc != nil {
+		m.ipc.Free()
+		m.ipc = nil
+	}
+	if m.onHandler != nil {
+		m.onHandler.clear()
+	}
 }
 
 // makeCtx ipc 和 bind
@@ -33,15 +47,15 @@ func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
 // makeIPC ipc
 func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	// ipc emit
-	m.ipcEmit.handler = V8HandlerRef.New()
-	m.ipcEmit.handler.Execute(m.ipcEmitExecute)
+	m.emitHandler.handler = V8HandlerRef.New()
+	m.emitHandler.handler.Execute(m.ipcEmitExecute)
 	// ipc on
-	m.ipcOn.handler = V8HandlerRef.New()
-	m.ipcOn.handler.Execute(m.ipcOnExecute)
+	m.onHandler.handler = V8HandlerRef.New()
+	m.onHandler.handler.Execute(m.ipcOnExecute)
 	// ipc object
 	m.ipc = V8ValueRef.NewObject(nil)
-	m.ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.ipcEmit.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.ipcOn.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipc.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	// global to v8 ipc key
 	context.Global().setValueByKey(internalIPCKey, m.ipc, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }
@@ -78,11 +92,9 @@ func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, argume
 		return
 	}
 	onNameValue = onName.GetStringValue()
-	if callback := m.ipcOn.getCallback(onNameValue); callback != nil {
-		callback.free()
-	}
+
 	//ipc on
-	m.ipcOn.addCallback(onNameValue, &ipcCallback{arguments: arguments, context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
+	m.onHandler.addCallback(onNameValue, &ipcCallback{arguments: arguments, context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
 
 	fmt.Println("on handler name:", name, "arguments-size:", arguments.Size())
 	frame := V8ContextRef.Current().Frame()
@@ -175,7 +187,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 			//回调函数
 			if emitCallback != nil {
 				//回调函数临时存放到缓存中
-				messageId = ipcRender.ipcEmit.addCallback(&ipcCallback{
+				messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
 					arguments: arguments,
 					context:   context,
 					function:  V8ValueRef.UnWrap(emitCallback),
@@ -202,7 +214,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 func (m *ipcRenderProcess) ipcEmitMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	messageId := message.ArgumentList().GetInt(0)
-	if callback := ipcRender.ipcEmit.getCallback(messageId); callback != nil {
+	if callback := ipcRender.emitHandler.getCallback(messageId); callback != nil {
 		//第二个参数 true 有返回参数
 		if isReturn := message.ArgumentList().GetBool(1); isReturn {
 			//[]byte
@@ -234,7 +246,7 @@ func (m *ipcRenderProcess) ipcEmitMessageReply(browser *ICefBrowser, frame *ICef
 		}
 		//remove
 		callback.free()
-		ipcRender.ipcEmit.removeCallback(messageId)
+		ipcRender.emitHandler.removeCallback(messageId)
 	}
 	return
 }

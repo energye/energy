@@ -178,6 +178,11 @@ type TCefPoint struct {
 	Y int32
 }
 
+// TCefSchemeRegistrarRef
+type TCefSchemeRegistrarRef struct {
+	instance unsafe.Pointer
+}
+
 // ICefCallback
 type ICefCallback struct {
 	instance unsafe.Pointer
@@ -437,6 +442,12 @@ type ICefBeforeDownloadCallback struct {
 
 // ICefPdfPrintCallback
 type ICefPdfPrintCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// ICefCommandLine
+type ICefCommandLine struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }

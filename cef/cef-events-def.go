@@ -87,6 +87,7 @@ type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefB
 
 // GlobalCEFAppEvent
 type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
+type GlobalCEFAppEventOnRegCustomSchemes func(registrar TCefSchemeRegistrarRef)
 type GlobalCEFAppEventOnWebKitInitialized func()
 type GlobalCEFAppEventOnContextInitialized func()
 type GlobalCEFAppEventOnBeforeChildProcessLaunch func(commandLine *TCefCommandLine)
@@ -96,6 +97,7 @@ type GlobalCEFAppEventOnRenderLoadEnd func(browser *ICefBrowser, frame *ICefFram
 type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode consts.TCefErrorCode, errorText, failedUrl string)
 type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
 type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
+type GlobalCEFAppEventOnGetLocalizedString func(stringId int32, stringVal string, aResult bool)
 
 // Browser & Rneder 进程消息接收
 type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool

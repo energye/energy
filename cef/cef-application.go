@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -54,6 +55,9 @@ func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
 	m.defaultSetOnBeforeChildProcessLaunch()
+	m.SetOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
+		fmt.Println("SetOnLoadStart")
+	})
 }
 
 // Instance 实例
@@ -127,6 +131,10 @@ func (m *TCEFApplication) defaultSetOnContextCreated() {
 	})
 }
 
+func (m *TCEFApplication) SetOnRegCustomSchemes(fn GlobalCEFAppEventOnRegCustomSchemes) {
+	imports.Proc(internale_CEFGlobalApp_SetOnRegCustomSchemes).Call(api.MakeEventDataPtr(fn))
+}
+
 func (m *TCEFApplication) SetOnContextInitialized(fn GlobalCEFAppEventOnContextInitialized) {
 	imports.Proc(internale_CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
 }
@@ -159,28 +167,36 @@ func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
 	m.SetOnBeforeChildProcessLaunch(func(commandLine *TCefCommandLine) {})
 }
 
+//func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn ) {
+//	imports.Proc(internale_CEFGlobalApp_SetOnScheduleMessagePumpWork).Call(api.MakeEventDataPtr(fn))
+//}
+
+func (m *TCEFApplication) SetOnGetDefaultClient(fn GlobalCEFAppEventOnGetDefaultClient) {
+	imports.Proc(internale_CEFGlobalApp_SetOnGetDefaultClient).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) SetOnGetLocalizedString(fn GlobalCEFAppEventOnGetLocalizedString) {
+	imports.Proc(internale_CEFGlobalApp_SetOnGetLocalizedString).Call(api.MakeEventDataPtr(fn))
+}
+
 func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDestroyed) {
 	imports.Proc(internale_CEFGlobalApp_SetOnBrowserDestroyed).Call(api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFApplication) SetOnLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-	imports.Proc(internale_CEFGlobalApp_SetOnLoadStart).Call(api.MakeEventDataPtr(fn))
+func (m *TCEFApplication) SetOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
+	imports.Proc(internale_CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFApplication) SetOnLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
-	imports.Proc(internale_CEFGlobalApp_SetOnLoadEnd).Call(api.MakeEventDataPtr(fn))
+func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
+	imports.Proc(internale_CEFGlobalApp_SetOnRenderLoadEnd).Call(api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFApplication) SetOnLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
-	imports.Proc(internale_CEFGlobalApp_SetOnLoadError).Call(api.MakeEventDataPtr(fn))
+func (m *TCEFApplication) SetOnRenderLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
+	imports.Proc(internale_CEFGlobalApp_SetOnRenderLoadError).Call(api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFApplication) SetOnLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
-	imports.Proc(internale_CEFGlobalApp_SetOnLoadingStateChange).Call(api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFApplication) SetOnGetDefaultClient(fn GlobalCEFAppEventOnGetDefaultClient) {
-	imports.Proc(internale_CEFGlobalApp_SetOnGetDefaultClient).Call(api.MakeEventDataPtr(fn))
+func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
+	imports.Proc(internale_CEFGlobalApp_SetOnRenderLoadingStateChange).Call(api.MakeEventDataPtr(fn))
 }
 
 func init() {
@@ -192,6 +208,7 @@ func init() {
 		case GlobalCEFAppEventOnBrowserDestroyed:
 			fn.(GlobalCEFAppEventOnBrowserDestroyed)(&ICefBrowser{instance: getPtr(0)})
 		case GlobalCEFAppEventOnRenderLoadStart:
+			ipcRender.clear()
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, TCefTransitionType(getVal(2)))

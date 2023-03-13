@@ -94,11 +94,11 @@ func main() {
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		num++
 		argument := context.ArgumentList()
-		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
-		fmt.Println("data:", argument.GetByIndex(1).Data())
+		//fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
+		//fmt.Println("data:", argument.GetByIndex(1).Data())
 		for i := 0; i < argument.Size(); i++ {
-			value := argument.GetByIndex(i)
-			fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
+			argument.GetByIndex(i)
+			//fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
 		var r0 = "字符串{}{}{}字符串[][]字符串"
 		var r1 = 1000011

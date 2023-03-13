@@ -1079,3 +1079,26 @@ const (
 	V8vtFunction
 	V8vtPromise
 )
+
+type TCefPreferencesType = types.Int32
+
+const (
+	CEF_PREFERENCES_TYPE_GLOBAL TCefPreferencesType = iota
+	CEF_PREFERENCES_TYPE_REQUEST_CONTEXT
+)
+
+type TCefScaleFactor = types.Int32
+
+// /include/internal/cef_types.h (cef_scale_factor_t)
+const (
+	SCALE_FACTOR_NONE TCefScaleFactor = iota
+	SCALE_FACTOR_100P
+	SCALE_FACTOR_125P
+	SCALE_FACTOR_133P
+	SCALE_FACTOR_140P
+	SCALE_FACTOR_150P
+	SCALE_FACTOR_180P
+	SCALE_FACTOR_200P
+	SCALE_FACTOR_250P
+	SCALE_FACTOR_300P
+)

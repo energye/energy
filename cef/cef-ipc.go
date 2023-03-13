@@ -21,9 +21,9 @@ const (
 	internalOn     = "on"   // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
 const (
-	internalProcessMessageIPCEmit      = "ipcEmit"      // 进程消息 ipcEmit
+	internalProcessMessageIPCEmit      = "emitHandler"  // 进程消息 emitHandler
 	internalProcessMessageIPCEmitReply = "ipcEmitReply" // 进程消息 ipcEmitReply
-	internalProcessMessageIPCOn        = "ipcOn"        // 进程消息 ipcOn
+	internalProcessMessageIPCOn        = "onHandler"    // 进程消息 onHandler
 )
 
 var (
@@ -61,16 +61,16 @@ func ipcInit() {
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
-			ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-			ipcOn:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 		}
 	} else {
 		if common.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
 		} else if common.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
-				ipcEmit: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-				ipcOn:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}
 		}
 	}
@@ -112,6 +112,13 @@ func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 	return m.callbackList[messageId]
 }
 
+func (m *ipcEmitHandler) clear() {
+	for _, v := range m.callbackList {
+		v.free()
+	}
+	m.callbackList = make(map[int32]*ipcCallback)
+}
+
 // addCallback
 func (m *ipcOnHandler) addCallback(eventName string, callback *ipcCallback) int32 {
 	//return uintptr(unsafe.Pointer(m.callbackList.PushBack(callback)))
@@ -135,6 +142,13 @@ func (m *ipcOnHandler) getCallback(eventName string) *ipcCallback {
 	m.callbackLock.Lock()
 	defer m.callbackLock.Unlock()
 	return m.callbackList[eventName]
+}
+
+func (m *ipcOnHandler) clear() {
+	for _, v := range m.callbackList {
+		v.free()
+	}
+	m.callbackList = make(map[string]*ipcCallback)
 }
 
 func (m *ipcCallback) free() {
