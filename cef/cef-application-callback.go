@@ -186,8 +186,6 @@ func (m *mainRun) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceP
 	}
 	ipcContext.ArgumentList().Free()
 	ipcContext.Result(nil)
-	frame.Free()
-	browser.Free()
 	return
 }
 

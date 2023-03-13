@@ -194,39 +194,41 @@ func init() {
 		case GlobalCEFAppEventOnBrowserDestroyed:
 			fn.(GlobalCEFAppEventOnBrowserDestroyed)(&ICefBrowser{instance: getPtr(0)})
 		case GlobalCEFAppEventOnRenderLoadStart:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadStart)(browser, frame, TCefTransitionType(getVal(2)))
+			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browser, frame, int32(getVal(2)))
+			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browse, frame, int32(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadError:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadError)(browser, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
+			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadingStateChange:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browser, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
+			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browse, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case RenderProcessMessageReceived:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			processId := CefProcessId(getVal(2))
 			message := &ICefProcessMessage{instance: getPtr(3)}
 			var result = (*bool)(getPtr(4))
-			*result = fn.(RenderProcessMessageReceived)(browser, frame, processId, message)
+			*result = fn.(RenderProcessMessageReceived)(browse, frame, processId, message)
 			if !*result {
-				*result = renderProcessMessageReceived(browser, frame, processId, message)
+				*result = renderProcessMessageReceived(browse, frame, processId, message)
 			}
+			frame.Free()
+			browse.Free()
 			message.Free()
 		case GlobalCEFAppEventOnContextCreated:
-			browser := &ICefBrowser{instance: getPtr(0)}
+			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			ctx := &ICefV8Context{instance: getPtr(2)}
-			var result = fn.(GlobalCEFAppEventOnContextCreated)(browser, frame, ctx)
+			var result = fn.(GlobalCEFAppEventOnContextCreated)(browse, frame, ctx)
 			if !result {
-				appOnContextCreated(browser, frame, ctx)
+				appOnContextCreated(browse, frame, ctx)
 			}
 		case GlobalCEFAppEventOnWebKitInitialized:
 			fn.(GlobalCEFAppEventOnWebKitInitialized)()

@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/golcl/lcl"
 	//_ "net/http/pprof"
 )
 
@@ -146,6 +147,16 @@ func main() {
 	var boolField = true
 	cef.VariableBind.Bind("boolField", &boolField)
 	cef.VariableBind.Bind("structField", src.StructField)
+
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+			//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
+			if window.AsLCLBrowserWindow().Browser() != nil {
+				fmt.Println("SetOnConstrainedResize Identifier", window.AsLCLBrowserWindow().Browser().Identifier())
+				fmt.Println("SetOnConstrainedResize MainFrame", window.AsLCLBrowserWindow().Browser().MainFrame())
+			}
+		})
+	})
 	//运行应用
 	cef.Run(cefApp)
 }
