@@ -507,7 +507,14 @@ func (m *jsonData) Float() float64 {
 
 func (m *jsonData) Bool() bool {
 	if m.IsBool() {
-		return m.V.(bool)
+		switch m.V.(type) {
+		case bool:
+			return m.V.(bool)
+		case []uint8:
+			if v := m.V.([]uint8); len(v) > 0 {
+				return v[0] != 0
+			}
+		}
 	}
 	return false
 }

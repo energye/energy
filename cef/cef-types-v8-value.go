@@ -347,6 +347,12 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 
 // setValueByKey internal
 func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
+	if m.valueByKeys != nil {
+		if v, ok := m.valueByKeys[key]; ok {
+			v.Free()
+		}
+		m.valueByKeys[key] = value
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByKey).Call(m.Instance(), api.PascalStr(key), value.Instance(), attribute.ToPtr())
 	return api.GoBool(r1)
 }
@@ -360,6 +366,9 @@ func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute co
 }
 
 func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
+	if m.valueByIndex != nil {
+		m.valueByIndex = append(m.valueByIndex, value)
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByIndex).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
 }
@@ -486,6 +495,22 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 
 func (m *ICefV8Value) Free() {
 	if m.instance != nil {
+		if m.valueByIndex != nil {
+			for _, v := range m.valueByIndex {
+				if v != nil && v.instance != nil {
+					v.Free()
+				}
+			}
+			m.valueByIndex = nil
+		}
+		if m.valueByKeys != nil {
+			for _, v := range m.valueByKeys {
+				if v != nil && v.instance != nil {
+					v.Free()
+				}
+			}
+			m.valueByKeys = nil
+		}
 		//var data = m.Instance()
 		//imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
 		m.base.Free(m.Instance())
@@ -669,8 +694,9 @@ func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance:  unsafe.Pointer(result),
-		valueType: consts.V8vtObject,
+		instance:    unsafe.Pointer(result),
+		valueType:   consts.V8vtObject,
+		valueByKeys: make(map[string]*ICefV8Value),
 	}
 }
 
@@ -678,8 +704,9 @@ func (*cefV8Value) NewArray(len int32) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_NewArray).Call(uintptr(len), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
-		instance:  unsafe.Pointer(result),
-		valueType: consts.V8vtArray,
+		instance:     unsafe.Pointer(result),
+		valueType:    consts.V8vtArray,
+		valueByIndex: make([]*ICefV8Value, len),
 	}
 }
 

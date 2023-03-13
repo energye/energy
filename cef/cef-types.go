@@ -354,9 +354,11 @@ type ICefV8Context struct {
 
 // ICefV8Value
 type ICefV8Value struct {
-	base      TCefBaseRefCounted
-	instance  unsafe.Pointer
-	valueType V8ValueType
+	base         TCefBaseRefCounted
+	instance     unsafe.Pointer
+	valueType    V8ValueType
+	valueByIndex []*ICefV8Value
+	valueByKeys  map[string]*ICefV8Value
 }
 
 // ICefV8ValueKeys

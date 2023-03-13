@@ -50,8 +50,17 @@
             ]
             let args1 = "中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中string 文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文"
             let ok = ipc.emit("testEmitName", [args1, idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888888888 + idx, null, undefined],
-                function (r1, r2, r3) {
-
+                function (r1, r2, r3, r4, r5, r6, r7, r8, r9) {
+                    clearMsg()
+                    msg("r1", r1);
+                    msg("r2", r2);
+                    msg("r3", r3);
+                    msg("r4", r4);
+                    msg("r5", r5);
+                    msg("r6", r6);
+                    msg("r7", r7);
+                    msg("r8", r8);
+                    msg("r9", r9);
                 }
                 /*function (result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12, result13) {
                     //msg('testEmitName 回调函数执行了', result1, result2, result3, result4, result5, result6, result7, result8, result9, result10, result11, result12);

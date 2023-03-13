@@ -8,8 +8,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
-	"net/http"
-	_ "net/http/pprof"
+	//_ "net/http/pprof"
 )
 
 //go:embed resources
@@ -17,10 +16,10 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
-	go func() {
-		fmt.Println("pprof")
-		http.ListenAndServe(":9999", nil)
-	}()
+	//go func() {
+	//	fmt.Println("pprof")
+	//	http.ListenAndServe(":9999", nil)
+	//}()
 	//logger.SetEnable(true)
 	//logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
@@ -102,7 +101,7 @@ func main() {
 		objMapArr[1] = r9
 		objMapArr[2] = r9
 		err := &MyError{error: "返回值"}
-		context.Result("asdfsadf", 123123, true, err /*, r5, r6, r7, r8, r9*/)
+		context.Result("asdfsadf", 123123, true, err, r5, r6, r7, r8, r9)
 	})
 
 	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

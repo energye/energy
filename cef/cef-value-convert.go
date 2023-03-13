@@ -474,8 +474,10 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 	return result, nil
 }
 
+// BytesToV8ArrayValue JSONArray 字节数组转换 TCefV8ValueArray
 func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byte) (*TCefV8ValueArray, error) {
 	fmt.Println("result-bytes:", string(resultArgsBytes))
+	//只能是 JSONArray 对象类型
 	jsonArray := json.NewJSONArray(resultArgsBytes)
 	if jsonArray == nil {
 		return nil, errors.New("parsing parameter failure")
@@ -485,13 +487,122 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byt
 	for i := 0; i < size; i++ {
 		value := jsonArray.GetByIndex(i)
 		switch value.Type() {
-
+		case consts.GO_VALUE_STRING:
+			resultArgs.Add(V8ValueRef.NewString(value.String()))
+		case consts.GO_VALUE_INT:
+			resultArgs.Add(V8ValueRef.NewInt(int32(value.Int())))
+		case consts.GO_VALUE_UINT:
+			resultArgs.Add(V8ValueRef.NewUInt(uint32(value.UInt())))
+		case consts.GO_VALUE_FLOAT64:
+			resultArgs.Add(V8ValueRef.NewDouble(value.Float()))
+		case consts.GO_VALUE_BOOL:
+			resultArgs.Add(V8ValueRef.NewBool(value.Bool()))
+		case consts.GO_VALUE_SLICE:
+			if v := m.JSONArrayToV8Value(value.JSONArray()); v != nil {
+				resultArgs.Add(v)
+			} else {
+				resultArgs.Add(V8ValueRef.NewNull())
+			}
+		case consts.GO_VALUE_MAP:
+			if v := m.JSONObjectToV8Value(value.JSONObject()); v != nil {
+				resultArgs.Add(v)
+			} else {
+				resultArgs.Add(V8ValueRef.NewNull())
+			}
 		}
 		fmt.Println("type:", value.Type())
 	}
 	fmt.Println("size:", jsonArray.Size())
 
 	return resultArgs, nil
+}
+
+// JSONArrayToV8Value JSONArray 转 ICefV8Value
+func (m *v8ValueProcessMessageConvert) JSONArrayToV8Value(array json.JSONArray) *ICefV8Value {
+	if array == nil || !array.IsArray() {
+		return nil
+	}
+	size := array.Size()
+	result := V8ValueRef.NewArray(int32(size))
+	for i := 0; i < size; i++ {
+		value := array.GetByIndex(i)
+		if value == nil {
+			result.SetValueByIndex(int32(i), V8ValueRef.NewNull())
+			continue
+		}
+		switch value.Type() {
+		case consts.GO_VALUE_STRING:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewString(value.String()))
+		case consts.GO_VALUE_INT:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewInt(int32(value.Int())))
+		case consts.GO_VALUE_UINT:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewUInt(uint32(value.UInt())))
+		case consts.GO_VALUE_FLOAT64:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewDouble(value.Float()))
+		case consts.GO_VALUE_BOOL:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewBool(value.Bool()))
+		case consts.GO_VALUE_SLICE:
+			if v := m.JSONArrayToV8Value(value); v != nil {
+				result.SetValueByIndex(int32(i), v)
+			} else {
+				result.SetValueByIndex(int32(i), V8ValueRef.NewNull())
+			}
+		case consts.GO_VALUE_MAP:
+			if v := m.JSONObjectToV8Value(value.JSONObject()); v != nil {
+				result.SetValueByIndex(int32(i), v)
+			} else {
+				result.SetValueByIndex(int32(i), V8ValueRef.NewNull())
+			}
+		default:
+			result.SetValueByIndex(int32(i), V8ValueRef.NewNull())
+		}
+	}
+	return result
+}
+
+// JSONObjectToV8Value JSONObject 转 ICefV8Value
+func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObject) *ICefV8Value {
+	if object == nil || !object.IsObject() {
+		return nil
+	}
+	size := object.Size()
+	result := V8ValueRef.NewObject(nil)
+	keys := object.Keys()
+	for i := 0; i < size; i++ {
+		key := keys[i]
+		value := object.GetByKey(key)
+		if value == nil {
+			result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			continue
+		}
+		switch value.Type() {
+		case consts.GO_VALUE_STRING:
+			result.setValueByKey(key, V8ValueRef.NewString(value.String()), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		case consts.GO_VALUE_INT:
+			result.setValueByKey(key, V8ValueRef.NewInt(int32(value.Int())), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		case consts.GO_VALUE_UINT:
+			result.setValueByKey(key, V8ValueRef.NewUInt(uint32(value.UInt())), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		case consts.GO_VALUE_FLOAT64:
+			result.setValueByKey(key, V8ValueRef.NewDouble(value.Float()), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		case consts.GO_VALUE_BOOL:
+			result.setValueByKey(key, V8ValueRef.NewBool(value.Bool()), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		case consts.GO_VALUE_SLICE:
+			if v := m.JSONArrayToV8Value(value.JSONArray()); v != nil {
+				result.setValueByKey(key, v, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			} else {
+				result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			}
+		case consts.GO_VALUE_MAP:
+			if v := m.JSONObjectToV8Value(value); v != nil {
+				result.setValueByKey(key, v, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			} else {
+				result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+			}
+		default:
+			result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		}
+	}
+	return result
 }
 
 // V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
