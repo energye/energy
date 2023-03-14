@@ -9,6 +9,8 @@
 //----------------------------------------
 
 // CEF v8 value V8所有类型
+//
+// ICefV8Value 创建和使用一搬在 v8context 上下文中使用
 package cef
 
 import (

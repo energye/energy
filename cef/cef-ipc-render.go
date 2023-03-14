@@ -114,15 +114,16 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			count = args.GetData(argsBytes, 0)
 			args.Free()
 		}
-		if count > 0 {
-			argsV8ValueArray, _ = ipcValueConvert.BytesToV8ArrayValue(argsBytes)
-		}
 		if callback.context.Enter() {
-			callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
+			if count > 0 {
+				argsV8ValueArray, _ = ipcValueConvert.BytesToV8ArrayValue(argsBytes)
+			}
+			ret := callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
+			if argsV8ValueArray != nil {
+				argsV8ValueArray.Free()
+			}
+			ret.Free()
 			callback.context.Exit()
-		}
-		if argsV8ValueArray != nil {
-			argsV8ValueArray.Free()
 		}
 		if messageId != 0 { // callback
 

@@ -120,8 +120,20 @@
             })
         }
 
-        ipc.on('onTestName1', function (param1, param2, param3) {
-            msg("onTestName1", param1, param2, param3);
+        ipc.on('onTestName1', function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
+            clearMsg()
+            msg("onTestName1");
+            msg("R0：", r0);
+            msg("R1：", r1);
+            msg("R2：", r2);
+            msg("R3：", r3);
+            msg("R4：", r4);
+            msg("R5：", r5);
+            msg("R6：", r6, JSON.stringify(r6));
+            msg("R7：", r7, JSON.stringify(r7));
+            msg("R8：", r8, JSON.stringify(r8));
+            msg("R9：", r9, JSON.stringify(r9));
+            msg("R10：", r10, JSON.stringify(r10));
         });
         ipc.on('onTestName2', function (param1, param2, param3) {
 

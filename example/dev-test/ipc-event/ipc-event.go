@@ -42,45 +42,58 @@ func main() {
 		go server.StartHttpServer()
 	})
 
+	// 测试用的入参 和 出参
+	var r0 = "字符串{}{}{}字符串[][]字符串"
+	var r1 = 1000011
+	var r2 = 66666611.0123
+	var r3 = true
+	var r4 = &MyError{error: "返回值"}
+	var r5 = make([]string, 3, 3)
+	r5[0] = "Array数组值1"
+	r5[1] = "Array数组值2"
+	r5[2] = "Array数组值3"
+	var r6 = make([]*src.StructVarDemo, 4, 4)
+	r6[0] = &src.StructVarDemo{StringField: "StringField1字符串1"}
+	r6[1] = &src.StructVarDemo{StringField: "StringField2字符串2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了嵌套了"}}}
+	var r7 = make([]src.StructVarDemo, 4, 4)
+	r7[0] = src.StructVarDemo{StringField: "r7参数字符串1"}
+	r7[1] = src.StructVarDemo{StringField: "r7参数字符串2"}
+	var r8 = map[string]string{}
+	r8["r8key1"] = "r8key1"
+	r8["r8key2"] = "r8key2"
+	var r9 = map[string]interface{}{}
+	r9["r9keyr6"] = r6
+	r9["r9keyr61"] = r6[1]
+	r9["r9keyr7"] = r7[1]
+	r9["r9keystrValue"] = "stringValue"
+	r9["r9keyintValue"] = 50000
+	r9["r9keyboolValue"] = true
+	r9["r9keyfloatValue"] = 5555555.99999
+	r9["r9keystrArrr5"] = r5
+	var r10 = make([]map[string]interface{}, 3)
+	r10[0] = r9
+	r10[1] = r9
+	r10[2] = r9
+
 	ipc.On("testGoEmit", func(context ipc.IContext) {
 		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
-		ipc.Emit("onTestName1", "aaa", "bbb")
+		//触发JS监听的函数，并传入参数
+		ipc.Emit("onTestName1", r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		//ipc.EmitAndCallback("", func() {}, "aaaa")
+	})
+
+	ipc.On("testGoEmitAndCallback", func(context ipc.IContext) {
+		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
+		//触发JS监听的函数，并传入参数
+		ipc.EmitAndCallback("onTestName1", []any{r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func() {
+
+		})
 		//ipc.EmitAndCallback("", func() {}, "aaaa")
 	})
 
 	ipc.OnArguments("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		fmt.Println("args1", args1)
-		var r0 = "字符串{}{}{}字符串[][]字符串"
-		var r1 = 1000011
-		var r2 = 66666611.0123
-		var r3 = true
-		var r4 = &MyError{error: "返回值"}
-		var r5 = make([]string, 3, 3)
-		r5[0] = "Array数组值1"
-		r5[1] = "Array数组值2"
-		r5[2] = "Array数组值3"
-		var r6 = make([]*src.StructVarDemo, 4, 4)
-		r6[0] = &src.StructVarDemo{StringField: "StringField1字符串1"}
-		r6[1] = &src.StructVarDemo{StringField: "StringField2字符串2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了嵌套了"}}}
-		var r7 = make([]src.StructVarDemo, 4, 4)
-		r7[0] = src.StructVarDemo{StringField: "r7参数字符串1"}
-		r7[1] = src.StructVarDemo{StringField: "r7参数字符串2"}
-		var r8 = map[string]string{}
-		r8["r8key1"] = "r8key1"
-		r8["r8key2"] = "r8key2"
-		var r9 = map[string]interface{}{}
-		r9["r9keyr6"] = r6
-		r9["r9keyr61"] = r6[1]
-		r9["r9keyr7"] = r7[1]
-		r9["r9keystrValue"] = "stringValue"
-		r9["r9keyintValue"] = 50000
-		r9["r9keyboolValue"] = true
-		r9["r9keyfloatValue"] = 5555555.99999
-		r9["r9keystrArrr5"] = r5
-		var r10 = make([]map[string]interface{}, 3)
-		r10[0] = r9
-		r10[1] = r9
-		r10[2] = r9
+
 		return r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10
 	})
 
@@ -106,37 +119,7 @@ func main() {
 			argument.GetByIndex(i)
 			//fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
-		var r0 = "字符串{}{}{}字符串[][]字符串"
-		var r1 = 1000011
-		var r2 = 66666611.0123
-		var r3 = true
-		var r4 = &MyError{error: "返回值"}
-		var r5 = make([]string, 3, 3)
-		r5[0] = "Array数组值1"
-		r5[1] = "Array数组值2"
-		r5[2] = "Array数组值3"
-		var r6 = make([]*src.StructVarDemo, 4, 4)
-		r6[0] = &src.StructVarDemo{StringField: "StringField1字符串1"}
-		r6[1] = &src.StructVarDemo{StringField: "StringField2字符串2", IntField: 111, BoolField: true, FloatField: 999.99, SubStructObj: &src.SubStructObj{StringField: "子对象String值", StructVarDemo: &src.StructVarDemo{StringField: "嵌套了嵌套了"}}}
-		var r7 = make([]src.StructVarDemo, 4, 4)
-		r7[0] = src.StructVarDemo{StringField: "r7参数字符串1"}
-		r7[1] = src.StructVarDemo{StringField: "r7参数字符串2"}
-		var r8 = map[string]string{}
-		r8["r8key1"] = "r8key1"
-		r8["r8key2"] = "r8key2"
-		var r9 = map[string]interface{}{}
-		r9["r9keyr6"] = r6
-		r9["r9keyr61"] = r6[1]
-		r9["r9keyr7"] = r7[1]
-		r9["r9keystrValue"] = "stringValue"
-		r9["r9keyintValue"] = 50000
-		r9["r9keyboolValue"] = true
-		r9["r9keyfloatValue"] = 5555555.99999
-		r9["r9keystrArrr5"] = r5
-		var r10 = make([]map[string]interface{}, 3)
-		r10[0] = r9
-		r10[1] = r9
-		r10[2] = r9
+
 		context.Result(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 

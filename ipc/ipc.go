@@ -119,7 +119,7 @@ func Emit(name string, argument ...any) {
 
 //EmitAndCallback
 // IPC GO 中触发 JS 监听的事件
-func EmitAndCallback(name string, callback any, argument ...any) {
+func EmitAndCallback(name string, argument []any, callback any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
@@ -138,7 +138,7 @@ func EmitTarget(name string, target ITarget, argument ...any) {
 
 //EmitTargetAndCallback
 // IPC GO 中触发指定目标 JS 监听的事件
-func EmitTargetAndCallback(name string, target ITarget, callback any, argument ...any) {
+func EmitTargetAndCallback(name string, target ITarget, argument []any, callback any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
