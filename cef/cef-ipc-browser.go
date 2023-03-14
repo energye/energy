@@ -24,8 +24,8 @@ type ipcBrowserProcess struct {
 	onHandler   *ipcOnHandler   // ipc.on handler
 }
 
-// ipcEmitMessage emit message
-func (m *ipcBrowserProcess) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+// ipcGoExecuteMethodMessage 执行 Go 监听函数
+func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	argument := message.ArgumentList()
 	messageId := argument.GetInt(0)
@@ -45,6 +45,7 @@ func (m *ipcBrowserProcess) ipcEmitMessage(browser *ICefBrowser, frame *ICefFram
 	}
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes)
 	argsBytes = nil
+	//调用监听函数
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
 		ctxCallback.Invoke(ipcContext)
 	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {

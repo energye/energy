@@ -727,6 +727,9 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *I
 func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
 	if target == nil || (target.GetBrowserId() <= 0 && target.GetFrameId() <= 0) {
 		message := ProcessMessageRef.new(internalProcessMessageIPCOn)
+		argument := message.ArgumentList()
+		argument.SetInt(0, messageId)
+		argument.SetString(1, name)
 		if data != nil && len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
 			for _, result := range data {
@@ -737,9 +740,6 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, ta
 					argumentJSONArray.Add(result)
 				}
 			}
-			argument := message.ArgumentList()
-			argument.SetInt(0, messageId)
-			argument.SetString(1, name)
 			binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
 			argument.SetBinary(2, binaryValue)
 		}
@@ -749,7 +749,7 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, ta
 		if browse.IsValid() {
 			frame := browse.GetFrameById(target.GetFrameId())
 			if frame.IsValid() {
-				frame.SendProcessMessageForIPC(messageId, name, targetProcess, target, data...)
+				frame.SendProcessMessageForIPC(messageId, name, targetProcess, target, data)
 			}
 		}
 	}

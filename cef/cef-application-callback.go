@@ -30,9 +30,9 @@ func appMainRunCallback() {
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	if message.Name() == internalProcessMessageIPCEmitReply { //接收回复消息
+	if message.Name() == internalProcessMessageIPCEmitReply {
 		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
-	} else if message.Name() == internalProcessMessageIPCOn { // Go触发JS监听事件
+	} else if message.Name() == internalProcessMessageIPCOn {
 		result = ipcRender.ipcGoExecuteJSEvent(browser, frame, sourceProcess, message)
 	}
 	return
@@ -41,7 +41,7 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 // browserProcessMessageReceived 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalProcessMessageIPCEmit {
-		result = ipcBrowser.ipcEmitMessage(browser, frame, sourceProcess, message)
+		result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
 	} else if message.Name() == internalProcessMessageIPCOn {
 		result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
 	}

@@ -98,10 +98,38 @@ func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, argume
 	return
 }
 
-// ipcGoExecuteJSEvent Go ipc.emit JS事件
+// ipcGoExecuteJSEvent Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	argument := message.ArgumentList()
+	name := argument.GetString(1)
+	if callback := ipcRender.onHandler.getCallback(name); callback != nil {
+		messageId := argument.GetInt(0)
+		args := argument.GetBinary(2)
+		var argsBytes []byte
+		var count uint32
+		var argsV8ValueArray *TCefV8ValueArray
+		if args.IsValid() {
+			size := args.GetSize()
+			argsBytes = make([]byte, size)
+			count = args.GetData(argsBytes, 0)
+			args.Free()
+		}
+		if count > 0 {
+			argsV8ValueArray, _ = ipcValueConvert.BytesToV8ArrayValue(argsBytes)
+		}
+		if callback.context.Enter() {
+			callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
+			callback.context.Exit()
+		}
+		if argsV8ValueArray != nil {
+			argsV8ValueArray.Free()
+		}
+		if messageId != 0 { // callback
 
-	return true
+		}
+		result = true
+	}
+	return
 }
 
 // ipcJSExecuteGoEvent JS ipc.emit 执行Go事件
@@ -216,11 +244,14 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		if isReturn := message.ArgumentList().GetBool(1); isReturn {
 			//[]byte
 			binaryValue := message.ArgumentList().GetBinary(2)
-			size := binaryValue.GetSize()
-			resultArgsBytes := make([]byte, size)
-			count := binaryValue.GetData(resultArgsBytes, 0)
-			binaryValue.Free()
-
+			var count uint32
+			var resultArgsBytes []byte
+			if binaryValue.IsValid() {
+				size := binaryValue.GetSize()
+				resultArgsBytes = make([]byte, size)
+				count = binaryValue.GetData(resultArgsBytes, 0)
+				binaryValue.Free()
+			}
 			if count > 0 {
 				//解析 '[]byte' 参数
 				if callback.context.Enter() {
