@@ -34,12 +34,15 @@ func (m *ipcBrowserProcess) ipcEmitMessage(browser *ICefBrowser, frame *ICefFram
 	if eventCallback == nil {
 		return
 	}
+	var argsBytes []byte
 	//参数 字节数组
 	args := argument.GetBinary(2)
-	size := args.GetSize()
-	argsBytes := make([]byte, size)
-	args.GetData(argsBytes, 0)
-	args.Free() //立即释放掉
+	if args.IsValid() {
+		size := args.GetSize()
+		argsBytes = make([]byte, size)
+		args.GetData(argsBytes, 0)
+		args.Free() //立即释放掉
+	}
 	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes)
 	argsBytes = nil
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
@@ -68,7 +71,9 @@ func (m *ipcBrowserProcess) ipcEmitMessage(browser *ICefBrowser, frame *ICefFram
 		replay.Clear()
 		replyMessage.Free()
 	}
-	ipcContext.ArgumentList().Free()
+	if ipcContext.ArgumentList() != nil {
+		ipcContext.ArgumentList().Free()
+	}
 	ipcContext.Result(nil)
 	return
 }

@@ -64,6 +64,9 @@ func (m *ICefBinaryValue) Instance() uintptr {
 }
 
 func (m *ICefBinaryValue) IsValid() bool {
+	if m.instance == nil {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefBinaryValue_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }

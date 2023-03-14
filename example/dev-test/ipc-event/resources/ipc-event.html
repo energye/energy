@@ -127,6 +127,10 @@
 
         });
 
+        function testGoEmit() {
+            ipc.emit("testGoEmit");
+        }
+
         function bindFunc() {
             energy.funcName();
         }
@@ -138,6 +142,7 @@
             msg('doubleField', energy.doubleField);
             msg('boolField', energy.boolField);
         }
+
     </script>
 </head>
 <body style="margin: 0px;padding: 0px;">
@@ -151,6 +156,8 @@
     <br>
     <button onclick="testInArgs()">testInArgs</button>
     <button onclick="testResultArgs()">testResultArgs</button>
+    <br>
+    <button onclick="testGoEmit()">testGoEmit</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

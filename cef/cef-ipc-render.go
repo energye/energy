@@ -174,29 +174,28 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 				isFree = true
 				return
 			}
-			context := V8ContextRef.Current()
-			var messageId int32 = 0
-			//回调函数
-			if emitCallback != nil {
-				//回调函数临时存放到缓存中
-				messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
-					arguments: arguments,
-					context:   context,
-					function:  V8ValueRef.UnWrap(emitCallback),
-				})
-			}
-			ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
-			argument := ipcEmitMessage.ArgumentList()
 			binaryValue = BinaryValueRef.New(args)
-			argument.SetInt(0, messageId)        // 消息id
-			argument.SetString(1, emitNameValue) // 事件名
-			argument.SetBinary(2, binaryValue)   // args
-			frame := context.Frame()
-			frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
 			args = nil
-			frame.Free()
-			//context.Free()
 		}
+		context := V8ContextRef.Current()
+		var messageId int32 = 0
+		//回调函数
+		if emitCallback != nil {
+			//回调函数临时存放到缓存中
+			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
+				arguments: arguments,
+				context:   context,
+				function:  V8ValueRef.UnWrap(emitCallback),
+			})
+		}
+		ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
+		argument := ipcEmitMessage.ArgumentList()
+		argument.SetInt(0, messageId)        // 消息id
+		argument.SetString(1, emitNameValue) // 事件名
+		argument.SetBinary(2, binaryValue)   // args
+		frame := context.Frame()
+		frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
+		frame.Free()
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return

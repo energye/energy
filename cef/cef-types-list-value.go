@@ -240,6 +240,9 @@ func (m *ICefListValue) SetValue(index uint32, value *ICefValue) (result bool) {
 }
 
 func (m *ICefListValue) SetBinary(index uint32, value *ICefBinaryValue) (result bool) {
+	if value == nil || value.instance == nil {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefListValue_SetBinary).Call(m.Instance(), uintptr(index), value.Instance())
 	result = api.GoBool(r1)
 	if result {

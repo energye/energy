@@ -42,8 +42,11 @@ func main() {
 		go server.StartHttpServer()
 	})
 
-	ipc.Emit("", "aaa", "bbb")
-	ipc.EmitAndCallback("", func() {}, "aaaa")
+	ipc.On("testGoEmit", func(context ipc.IContext) {
+		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
+		//ipc.Emit("", "aaa", "bbb")
+		//ipc.EmitAndCallback("", func() {}, "aaaa")
+	})
 
 	ipc.OnArguments("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		fmt.Println("args1", args1)

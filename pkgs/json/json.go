@@ -632,6 +632,9 @@ func (m *jsonData) Clear() {
 }
 
 func (m *jsonData) Free() {
+	if m == nil {
+		return
+	}
 	m.V = nil
 	m.S = 0
 	m.T = GO_VALUE_INVALID
