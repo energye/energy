@@ -72,3 +72,10 @@ func (m *ICefImage) Height() int32 {
 	r1, _, _ := imports.Proc(internale_CEFImage_GetHeight).Call(m.Instance())
 	return int32(r1)
 }
+
+func (m *ICefImage) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}

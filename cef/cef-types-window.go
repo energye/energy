@@ -24,6 +24,17 @@ import (
 	"unsafe"
 )
 
+func (m *ICefWindow) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
+func (m *ICefWindow) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
 // Show 显示窗口
 func (m *ICefWindow) Show() {
 	imports.Proc(internale_ICEFWindow_Show).Call(uintptr(m.instance))

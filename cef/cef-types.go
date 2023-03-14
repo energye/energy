@@ -215,6 +215,7 @@ type ICefFrame struct {
 
 // ICefImage
 type ICefImage struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -281,6 +282,7 @@ type ICefDisplay struct {
 
 // ICefWindow
 type ICefWindow struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 

@@ -123,18 +123,18 @@ func main() {
 		context.Result(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
-	cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
-		return "StringValue", 100000111, true
-	})
-	var stringField = "stringField"
-	cef.VariableBind.Bind("stringField", &stringField)
-	var intField = 100
-	cef.VariableBind.Bind("intField", &intField)
-	var doubleField = 900.001
-	cef.VariableBind.Bind("doubleField", &doubleField)
-	var boolField = true
-	cef.VariableBind.Bind("boolField", &boolField)
-	cef.VariableBind.Bind("structField", src.StructField)
+	//cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
+	//	return "StringValue", 100000111, true
+	//})
+	//var stringField = "stringField"
+	//cef.VariableBind.Bind("stringField", &stringField)
+	//var intField = 100
+	//cef.VariableBind.Bind("intField", &intField)
+	//var doubleField = 900.001
+	//cef.VariableBind.Bind("doubleField", &doubleField)
+	//var boolField = true
+	//cef.VariableBind.Bind("boolField", &boolField)
+	//cef.VariableBind.Bind("structField", src.StructField)
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
