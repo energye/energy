@@ -139,6 +139,17 @@
 
         });
 
+        let tgesi = null
+
+        function autotestGoEmit() {
+            if (tgesi != null) {
+                clearInterval(tgesi)
+                tgesi = null
+                return
+            }
+            tgesi = setInterval(testGoEmit, 1)
+        }
+
         function testGoEmit() {
             ipc.emit("testGoEmit");
         }
@@ -170,6 +181,7 @@
     <button onclick="testResultArgs()">testResultArgs</button>
     <br>
     <button onclick="testGoEmit()">testGoEmit</button>
+    <button onclick="autotestGoEmit()">自动testGoEmit</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

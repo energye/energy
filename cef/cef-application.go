@@ -353,8 +353,8 @@ func init() {
 			if !*result {
 				*result = renderProcessMessageReceived(browse, frame, processId, message)
 			}
-			frame.Free()
-			browse.Free()
+			//frame.Free()
+			//browse.Free()
 			message.Free()
 		default:
 			return false
