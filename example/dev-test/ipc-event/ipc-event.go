@@ -43,6 +43,7 @@ func main() {
 	})
 
 	// 测试用的入参 和 出参
+	var count = 0
 	var r0 = "字符串{}{}{}字符串[][]字符串"
 	var r1 = 1000011
 	var r2 = 66666611.0123
@@ -76,16 +77,17 @@ func main() {
 	r10[2] = r9
 
 	ipc.On("testGoEmit", func(context ipc.IContext) {
+		count++
 		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
 		//触发JS监听的函数，并传入参数
-		ipc.Emit("onTestName1", r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 		//ipc.EmitAndCallback("", func() {}, "aaaa")
 	})
 
 	ipc.On("testGoEmitAndCallback", func(context ipc.IContext) {
 		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
 		//触发JS监听的函数，并传入参数
-		ipc.EmitAndCallback("onTestName1", []any{r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func() {
+		ipc.EmitAndCallback("onTestName1", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func() {
 
 		})
 		//ipc.EmitAndCallback("", func() {}, "aaaa")
@@ -94,7 +96,7 @@ func main() {
 	ipc.OnArguments("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		fmt.Println("args1", args1)
 
-		return r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10
+		return r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10
 	})
 
 	ipc.OnArguments("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
@@ -120,7 +122,7 @@ func main() {
 			//fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
 
-		context.Result(r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		context.Result(r0, r1+count+num, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
 	//cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {

@@ -125,6 +125,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			ret.Free()
 			callback.context.Exit()
 		}
+		argsBytes = nil
 		if messageId != 0 { // callback
 
 		}

@@ -195,7 +195,7 @@ func (m *V8Value) ValueToPtr() (unsafe.Pointer, error) {
 }
 
 // SetAnyValue 设置多类型值
-func (m *V8Value) SetAnyValue(value interface{}) error {
+func (m *V8Value) SetAnyValue(value any) error {
 	switch common.JSValueAssertType(value) {
 	case V8_VALUE_STRING:
 		m.valueType.Jsv = V8_VALUE_STRING
@@ -210,7 +210,7 @@ func (m *V8Value) SetAnyValue(value interface{}) error {
 		m.valueType.Jsv = V8_VALUE_BOOLEAN
 		m.valueType.Gov = GO_VALUE_BOOL
 	default:
-		return errors.New(cefErrorMessage(CVE_ERROR_TYPE_NOT_SUPPORTED))
+		return errors.New("invalid type")
 	}
 	m.setValue(value)
 	return nil

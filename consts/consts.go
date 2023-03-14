@@ -237,56 +237,6 @@ const (
 	GO_VALUE_MAP
 	GO_VALUE_EXCEPTION
 	GO_VALUE_SLICE_BYTE
-	GO_VALUE_INVALID_TYPE //无效类型
-	GO_VALUE_ARGUMENT     //argument
-	GO_VALUE_DICTVALUE    //dictValue
-)
-
-// JS交互绑定的事件类型
-type BIND_EVENT = types.Int32
-
-const (
-	BE_SET = BIND_EVENT(iota)
-	BE_GET
-	BE_FUNC
-	BE_CTX_CRT_BIND
-)
-
-// 异常信息
-type CEF_V8_EXCEPTION = types.Int32
-
-const (
-	CVE_ERROR_OK                             = CEF_V8_EXCEPTION(iota) //操作成功
-	CVE_ERROR_NOT_FOUND_FIELD                                         //未找到字段 或字段未定义
-	CVE_ERROR_NOT_FOUND_FUNC                                          //未找到函数 或函数未定义
-	CVE_ERROR_TYPE_NOT_SUPPORTED                                      //不支持的变量类型 变量类型只支持[string int double bool null undefined]
-	CVE_ERROR_TYPE_CANNOT_CHANGE                                      //字段为普通类型不能变更为 array、object、function
-	CVE_ERROR_TYPE_INVALID                                            //类型无效
-	CVE_ERROR_GET_STRING_FAIL                                         //获取string类型失败
-	CVE_ERROR_GET_INT_FAIL                                            //获取int类型失败
-	CVE_ERROR_GET_DOUBLE_FAIL                                         //获取double类型失败
-	CVE_ERROR_GET_BOOL_FAIL                                           //获取bool类型失败
-	CVE_ERROR_GET_NULL_FAIL                                           //获取null类型失败
-	CVE_ERROR_GET_UNDEFINED_FAIL                                      //获取undefined类型失败
-	CVE_ERROR_FUNC_INVALID_P_L_9                                      //该函数非法 类型不正确 或参数个数大于9个
-	CVE_ERROR_FUNC_IN_PAM                                             //入参类型不正确 只能为string int double boolean
-	CVE_ERROR_FUNC_OUT_PAM                                            //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
-	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                             //入参获取string类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                                //入参获取int类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                             //入参获取double类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                            //入参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                            //出参获取string类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                               //出参获取int类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                            //出参获取double类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                           //出参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                          //出参获取CefError值失败
-	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                           //IPC获取绑定值失败
-	CVE_ERROR_UNKNOWN_ERROR                                           //未知错误
-)
-
-const (
-	BIND_FUNC_IN_MAX_SUM  = 9 //函数最大入参数
-	BIND_FUNC_OUT_MAX_SUM = 1 //函数最大出参数
 )
 
 // 函数类型

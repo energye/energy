@@ -29,10 +29,10 @@ type BaseJSON interface {
 	Type() GO_VALUE_TYPE    //当前对象数量类型
 	Data() any              //返回原始数据
 	String() string         //返回 string 类型值
-	Int() int               //返回 int 类型值
-	UInt() uint             //返回 uint 类型值
-	Bytes() []byte          //转换为 '[]byte' 并返回
-	Float() float64         //返回 float64 类型值
+	Int() int               //返回 int 类型值, 把所有数字类型都转换 int 返回
+	UInt() uint             //返回 uint 类型值, 把所有数字类型都转换 uint 返回
+	Bytes() []byte          //转换为 '[]byte' 并返回, 任意类型都将转换
+	Float() float64         //返回 float64 类型值 把所有数字类型都转换 float64 返回
 	Bool() bool             //返回 bool 类型值
 	JSONObject() JSONObject //返回 JSONObject 对象类型
 	JSONArray() JSONArray   //返回 JSONArray 对象类型
@@ -51,7 +51,7 @@ type BaseJSON interface {
 
 // JSONArray 数组类型 index
 //
-// 根据下标操作元素，失败返回数据类型的默认值
+// 根据下标操作数据，失败返回数据类型的默认值
 type JSONArray interface {
 	BaseJSON
 	Add(value ...any)                      //添加任意类型数据
@@ -70,7 +70,7 @@ type JSONArray interface {
 
 // JSONObject 对象类型 key=value
 //
-// 根据key操作元素，失败返回数据类型的默认值
+// 根据key操作数据，失败返回数据类型的默认值
 type JSONObject interface {
 	BaseJSON
 	Set(key string, value any)            //设置或覆盖指定key，并设置新任意类型值
@@ -533,46 +533,6 @@ func (m *jsonData) JSONArray() JSONArray {
 	return nil
 }
 
-func (m *jsonData) toBytes(s any) []byte {
-	switch s.(type) {
-	case []byte:
-		return s.([]byte)
-	case string:
-		return []byte(s.(string))
-	case bool:
-		return []byte{common.BoolToByte(s.(bool))}
-	case float32:
-		return common.Float32ToBytes(s.(float32))
-	case float64:
-		return common.Float64ToBytes(s.(float64))
-	case int:
-		return common.IntToBytes(s.(int))
-	case int8:
-		return common.Int8ToBytes(s.(int8))
-	case int16:
-		return common.Int16ToBytes(s.(int16))
-	case int32:
-		return common.Int32ToBytes(s.(int32))
-	case int64:
-		return common.Int64ToBytes(s.(int64))
-	case uint:
-		return common.UIntToBytes(s.(uint))
-	case uint8:
-		return common.UInt8ToBytes(s.(uint8))
-	case uint16:
-		return common.UInt16ToBytes(s.(uint16))
-	case uint32:
-		return common.UInt32ToBytes(s.(uint32))
-	case uint64:
-		return common.UInt64ToBytes(s.(uint64))
-	default: // slice or map or other
-		if r, err := jsoniter.Marshal(s); err == nil {
-			return r
-		}
-	}
-	return nil
-}
-
 func (m *jsonData) Keys() []string {
 	if m.IsObject() {
 		var result []string
@@ -638,6 +598,46 @@ func (m *jsonData) Free() {
 	m.V = nil
 	m.S = 0
 	m.T = GO_VALUE_INVALID
+}
+
+func (m *jsonData) toBytes(s any) []byte {
+	switch s.(type) {
+	case []byte:
+		return s.([]byte)
+	case string:
+		return []byte(s.(string))
+	case bool:
+		return []byte{common.BoolToByte(s.(bool))}
+	case float32:
+		return common.Float32ToBytes(s.(float32))
+	case float64:
+		return common.Float64ToBytes(s.(float64))
+	case int:
+		return common.IntToBytes(s.(int))
+	case int8:
+		return common.Int8ToBytes(s.(int8))
+	case int16:
+		return common.Int16ToBytes(s.(int16))
+	case int32:
+		return common.Int32ToBytes(s.(int32))
+	case int64:
+		return common.Int64ToBytes(s.(int64))
+	case uint:
+		return common.UIntToBytes(s.(uint))
+	case uint8:
+		return common.UInt8ToBytes(s.(uint8))
+	case uint16:
+		return common.UInt16ToBytes(s.(uint16))
+	case uint32:
+		return common.UInt32ToBytes(s.(uint32))
+	case uint64:
+		return common.UInt64ToBytes(s.(uint64))
+	default: // slice or map or other
+		if r, err := jsoniter.Marshal(s); err == nil {
+			return r
+		}
+	}
+	return nil
 }
 
 func (m *jsonData) toFloat64(s any) float64 {
