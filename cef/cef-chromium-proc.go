@@ -722,10 +722,11 @@ func (m *TCEFChromium) DefaultEncoding() string {
 // SendProcessMessage 发送进程消息
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
 	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+	message.Free()
 }
 
 func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
-	if target == nil || (target.GetBrowserId() <= 0 && target.GetFrameId() <= 0) {
+	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
 		message := ProcessMessageRef.new(internalProcessMessageIPCOn)
 		argument := message.ArgumentList()
 		argument.SetInt(0, messageId)
@@ -742,6 +743,7 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, ta
 			}
 			binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
 			argument.SetBinary(2, binaryValue)
+			argumentJSONArray.Free()
 		}
 		m.SendProcessMessage(targetProcess, message)
 	} else {

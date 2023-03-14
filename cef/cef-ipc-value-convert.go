@@ -160,6 +160,7 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byt
 			}
 		}
 	}
+	jsonArray.Free()
 	return resultArgs, nil
 }
 

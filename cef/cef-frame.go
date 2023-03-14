@@ -139,6 +139,7 @@ func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, name string, targe
 		argument.SetString(1, name)
 		binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
 		argument.SetBinary(2, binaryValue)
+		argumentJSONArray.Free()
 	}
 	m.SendProcessMessage(targetProcess, message)
 }
