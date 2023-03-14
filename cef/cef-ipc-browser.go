@@ -19,6 +19,9 @@ import (
 
 // ipcBrowserProcess 主进程
 type ipcBrowserProcess struct {
+	ipc         *ICefV8Value    // ipc object
+	emitHandler *ipcEmitHandler // ipc.emit handler
+	onHandler   *ipcOnHandler   // ipc.on handler
 }
 
 // ipcEmitMessage emit message

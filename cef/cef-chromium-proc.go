@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/pkgs/json"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -720,11 +721,38 @@ func (m *TCEFChromium) DefaultEncoding() string {
 
 // SendProcessMessage 发送进程消息
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
-	m.SendProcessMessageForIPC(targetProcess, message)
+	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 }
 
-func (m *TCEFChromium) SendProcessMessageForIPC(targetProcess CefProcessId, message ipc.ICefProcessMessageIPC) {
-	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+	if target == nil || (target.GetBrowserId() <= 0 && target.GetFrameId() <= 0) {
+		message := ProcessMessageRef.new(internalProcessMessageIPCOn)
+		if data != nil && len(data) > 0 {
+			argumentJSONArray := json.NewJSONArray(nil)
+			for _, result := range data {
+				switch result.(type) {
+				case error:
+					argumentJSONArray.Add(result.(error).Error())
+				default:
+					argumentJSONArray.Add(result)
+				}
+			}
+			argument := message.ArgumentList()
+			argument.SetInt(0, messageId)
+			argument.SetString(1, name)
+			binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
+			argument.SetBinary(2, binaryValue)
+		}
+		m.SendProcessMessage(targetProcess, message)
+	} else {
+		browse := m.BrowserById(target.GetBrowserId())
+		if browse.IsValid() {
+			frame := browse.GetFrameById(target.GetFrameId())
+			if frame.IsValid() {
+				frame.SendProcessMessageForIPC(messageId, name, targetProcess, target, data...)
+			}
+		}
+	}
 }
 
 //--------TCEFChromium proc begin--------

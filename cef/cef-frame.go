@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/pkgs/json"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -76,6 +77,9 @@ func (m *ICefFrame) ExecuteJavaScript(code, scriptUrl string, startLine int32) {
 
 // IsValid 该Frame是否有效
 func (m *ICefFrame) IsValid() bool {
+	if m.instance == nil {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFFrame_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
@@ -111,11 +115,32 @@ func (m *ICefFrame) IsFocused() bool {
 
 // SendProcessMessage 发送进程消息
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
-	m.SendProcessMessageForIPC(targetProcess, message)
+	imports.Proc(internale_CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+	message.Free()
 }
 
-func (m *ICefFrame) SendProcessMessageForIPC(targetProcess CefProcessId, message ipc.ICefProcessMessageIPC) {
-	imports.Proc(internale_CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+// SendProcessMessageForIPC IPC 发送进程 消息
+//
+// messageId != 0 是带有回调函数消息
+func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+	message := ProcessMessageRef.new(internalProcessMessageIPCOn)
+	if data != nil && len(data) > 0 {
+		argumentJSONArray := json.NewJSONArray(nil)
+		for _, result := range data {
+			switch result.(type) {
+			case error:
+				argumentJSONArray.Add(result.(error).Error())
+			default:
+				argumentJSONArray.Add(result)
+			}
+		}
+		argument := message.ArgumentList()
+		argument.SetInt(0, messageId)
+		argument.SetString(1, name)
+		binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
+		argument.SetBinary(2, binaryValue)
+	}
+	m.SendProcessMessage(targetProcess, message)
 }
 
 func (m *ICefFrame) LoadRequest(request *ICefRequest) {

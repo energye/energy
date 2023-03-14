@@ -14,6 +14,7 @@ package cef
 import (
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/logger"
 	"github.com/energye/golcl/lcl"
 )
@@ -92,6 +93,8 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.cwcap = &customWindowCaption{
 		bw: &m.LCLBrowserWindow,
 	}
+	//设置 CEF Chromium IPC
+	ipc.SetProcessMessage(m.chromium.(*TCEFChromium))
 }
 
 // MainWindow

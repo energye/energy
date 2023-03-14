@@ -59,7 +59,7 @@ type ipcCallback struct {
 func ipcInit() {
 	isSingleProcess := application.SingleProcess()
 	if isSingleProcess {
-		ipcBrowser = &ipcBrowserProcess{}
+		ipcBrowser = &ipcBrowserProcess{emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)}}
 		ipcRender = &ipcRenderProcess{
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},

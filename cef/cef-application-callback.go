@@ -32,6 +32,8 @@ func appMainRunCallback() {
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalProcessMessageIPCEmitReply { //接收回复消息
 		result = ipcRender.ipcEmitMessageReply(browser, frame, sourceProcess, message)
+	} else if message.Name() == internalProcessMessageIPCOn {
+
 	}
 	return
 }

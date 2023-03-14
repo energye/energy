@@ -71,5 +71,5 @@ type ICefProcessMessageIPC interface {
 }
 
 type IProcessMessage interface {
-	SendProcessMessageForIPC(targetProcess consts.CefProcessId, message ICefProcessMessageIPC)
+	SendProcessMessageForIPC(messageId int32, name string, targetProcess consts.CefProcessId, target ITarget, data ...any)
 }

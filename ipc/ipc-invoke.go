@@ -26,7 +26,7 @@ type callback struct {
 
 // contextCallback 带上下文的回调函数
 type contextCallback struct {
-	callback EmitContextCallback
+	callback emitContextCallback
 }
 
 // argumentCallback 带参数的回调函数

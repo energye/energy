@@ -15,12 +15,9 @@ package cef
 
 import (
 	"errors"
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
-	"reflect"
-	"unsafe"
 )
 
 // ipcValueConvert
@@ -29,356 +26,8 @@ var ipcValueConvert v8ValueProcessMessageConvert
 // v8ValueProcessMessageConvert ICefV8Value 和 ICefProcessMessage 转换
 type v8ValueProcessMessageConvert uintptr
 
-type emptyInterface struct {
-	typ  *struct{}
-	word unsafe.Pointer
-}
-
-//convertStructToDictionaryValue 结构转DictionaryValue
-func convertStructToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
-	var rt reflect.Type
-	if rv.Kind() == reflect.Ptr {
-		if rv.IsNil() {
-			return nil
-		}
-		rt = rv.Type().Elem()
-	} else {
-		rt = rv.Type()
-	}
-	if rt.Kind() != reflect.Struct {
-		return nil
-	}
-	result := DictionaryValueRef.New()
-	nf := rt.NumField()
-	ei := rv.Interface()
-	ptrOffset := uintptr((*emptyInterface)(unsafe.Pointer(&ei)).word)
-	for i := 0; i < nf; i++ {
-		fieldRt := rt.Field(i)
-		name := fieldRt.Name
-		if fieldRt.IsExported() {
-			ptr := unsafe.Pointer(fieldRt.Offset + ptrOffset)
-			switch fieldRt.Type.Kind() {
-			case reflect.String:
-				result.SetString(name, *(*string)(ptr))
-			case reflect.Bool:
-				result.SetBool(name, *(*bool)(ptr))
-			case reflect.Int:
-				result.SetInt(name, int32(*(*int)(ptr)))
-			case reflect.Int8:
-				result.SetInt(name, int32(*(*int8)(ptr)))
-			case reflect.Int16:
-				result.SetInt(name, int32(*(*int16)(ptr)))
-			case reflect.Int32:
-				result.SetInt(name, *(*int32)(ptr))
-			case reflect.Int64:
-				result.SetInt(name, int32(*(*int64)(ptr)))
-			case reflect.Uint:
-				result.SetInt(name, int32(*(*uint)(ptr)))
-			case reflect.Uint8:
-				result.SetInt(name, int32(*(*uint8)(ptr)))
-			case reflect.Uint16:
-				result.SetInt(name, int32(*(*uint16)(ptr)))
-			case reflect.Uint32:
-				result.SetInt(name, int32(*(*uint32)(ptr)))
-			case reflect.Uint64:
-				result.SetInt(name, int32(*(*uint64)(ptr)))
-			case reflect.Uintptr:
-				result.SetInt(name, int32(*(*uintptr)(ptr)))
-			case reflect.Float32:
-				result.SetDouble(name, float64(*(*float32)(ptr)))
-			case reflect.Float64:
-				result.SetDouble(name, *(*float64)(ptr))
-			case reflect.Slice, reflect.Array:
-				var value reflect.Value
-				if rv.Kind() == reflect.Ptr {
-					value = rv.Elem().Field(i)
-				} else {
-					value = rv.Field(i)
-				}
-				if v := convertSliceToListValue(value); v != nil {
-					result.SetList(name, v)
-				}
-			case reflect.Ptr, reflect.Struct:
-				var value reflect.Value
-				if rv.Kind() == reflect.Ptr {
-					value = rv.Elem().Field(i)
-				} else {
-					value = rv.Field(i)
-				}
-				if v := convertStructToDictionaryValue(value); v != nil {
-					result.SetDictionary(name, v)
-				}
-			case reflect.Map:
-				if v := convertMapToDictionaryValue(rv); v != nil {
-					result.SetDictionary(name, v)
-				}
-			default:
-				result.SetNull(name)
-			}
-		}
-	}
-	return result
-}
-
-//convertMapToDictionaryValue Map转DictionaryValue
-func convertMapToDictionaryValue(rv reflect.Value) *ICefDictionaryValue {
-	var rt reflect.Type
-	if rv.Kind() == reflect.Ptr {
-		if rv.IsNil() {
-			return nil
-		}
-		rt = rv.Type().Elem()
-	} else {
-		rt = rv.Type()
-	}
-	if rt.Kind() != reflect.Map {
-		return nil
-	}
-	result := DictionaryValueRef.New()
-	keys := rv.MapKeys()
-	for i := 0; i < len(keys); i++ {
-		key := keys[i]
-		value := rv.MapIndex(key)
-		name := key.String()
-		if value.Kind() == reflect.Interface {
-			value = value.Elem()
-		}
-		switch value.Kind() {
-		case reflect.String:
-			result.SetString(name, value.Interface().(string))
-		case reflect.Bool:
-			result.SetBool(name, value.Interface().(bool))
-		case reflect.Int:
-			result.SetInt(name, int32(value.Interface().(int)))
-		case reflect.Int8:
-			result.SetInt(name, int32(value.Interface().(int8)))
-		case reflect.Int16:
-			result.SetInt(name, int32(value.Interface().(int16)))
-		case reflect.Int32:
-			result.SetInt(name, value.Interface().(int32))
-		case reflect.Int64:
-			result.SetString(name, fmt.Sprintf("%d", value.Interface().(int64)))
-		case reflect.Uint:
-			result.SetInt(name, int32(value.Interface().(uint)))
-		case reflect.Uint8:
-			result.SetInt(name, int32(value.Interface().(uint8)))
-		case reflect.Uint16:
-			result.SetInt(name, int32(value.Interface().(uint16)))
-		case reflect.Uint32:
-			result.SetInt(name, int32(value.Interface().(uint32)))
-		case reflect.Uint64:
-			result.SetString(name, fmt.Sprintf("%d", value.Interface().(uint64)))
-		case reflect.Uintptr:
-			result.SetInt(name, int32(value.Interface().(uintptr)))
-		case reflect.Float32:
-			result.SetDouble(name, float64(value.Interface().(float32)))
-		case reflect.Float64:
-			result.SetDouble(name, value.Interface().(float64))
-		case reflect.Slice, reflect.Array:
-			if v := convertSliceToListValue(value); v != nil {
-				result.SetList(name, v)
-			}
-		case reflect.Ptr, reflect.Struct:
-			if v := convertStructToDictionaryValue(value); v != nil {
-				result.SetDictionary(name, v)
-			}
-		case reflect.Map:
-			if v := convertMapToDictionaryValue(value); v != nil {
-				result.SetDictionary(name, v)
-			}
-		default:
-			result.SetNull(name)
-		}
-	}
-	return result
-}
-
-//convertSliceToListValue 切片或数组转ListValue
-func convertSliceToListValue(rv reflect.Value) *ICefListValue {
-	var rt reflect.Type
-	if rv.Kind() == reflect.Ptr {
-		if rv.IsNil() {
-			return nil
-		}
-		rt = rv.Type().Elem()
-	} else {
-		rt = rv.Type()
-	}
-	if rt.Kind() != reflect.Slice && rt.Kind() != reflect.Array {
-		return nil
-	}
-	result := ListValueRef.New()
-	for i := 0; i < rv.Len(); i++ {
-		value := rv.Index(i)
-		if value.Kind() == reflect.Interface {
-			value = value.Elem()
-		}
-		switch value.Kind() {
-		case reflect.String:
-			result.SetString(uint32(i), value.Interface().(string))
-		case reflect.Bool:
-			result.SetBool(uint32(i), value.Interface().(bool))
-		case reflect.Int:
-			result.SetInt(uint32(i), int32(value.Interface().(int)))
-		case reflect.Int8:
-			result.SetInt(uint32(i), int32(value.Interface().(int8)))
-		case reflect.Int16:
-			result.SetInt(uint32(i), int32(value.Interface().(int16)))
-		case reflect.Int32:
-			result.SetInt(uint32(i), value.Interface().(int32))
-		case reflect.Int64:
-			result.SetString(uint32(i), fmt.Sprintf("%d", value.Interface().(int64)))
-		case reflect.Uint:
-			result.SetInt(uint32(i), int32(value.Interface().(uint)))
-		case reflect.Uint8:
-			result.SetInt(uint32(i), int32(value.Interface().(uint8)))
-		case reflect.Uint16:
-			result.SetInt(uint32(i), int32(value.Interface().(uint16)))
-		case reflect.Uint32:
-			result.SetInt(uint32(i), int32(value.Interface().(uint32)))
-		case reflect.Uint64:
-			result.SetString(uint32(i), fmt.Sprintf("%d", value.Interface().(uint64)))
-		case reflect.Uintptr:
-			result.SetInt(uint32(i), int32(value.Interface().(uintptr)))
-		case reflect.Float32:
-			result.SetDouble(uint32(i), float64(value.Interface().(float32)))
-		case reflect.Float64:
-			result.SetDouble(uint32(i), value.Interface().(float64))
-		case reflect.Slice, reflect.Array:
-			if v := convertSliceToListValue(value); v != nil {
-				result.SetList(uint32(i), v)
-			}
-		case reflect.Ptr, reflect.Struct:
-			if v := convertStructToDictionaryValue(value); v != nil {
-				result.SetDictionary(uint32(i), v)
-			}
-		case reflect.Map:
-			if v := convertMapToDictionaryValue(value); v != nil {
-				result.SetDictionary(uint32(i), v)
-			}
-		default:
-			result.SetNull(uint32(i))
-		}
-	}
-	return result
-}
-
-//resultToProcessMessage 返回值转换进程消息
-func resultToProcessMessage(data []any) (*ICefListValue, error) {
-	if data == nil {
-		return nil, errors.New("build process value error. Parameter null")
-	}
-	var result = ListValueRef.New()
-
-	for i, value := range data {
-		if value == nil {
-			result.SetNull(uint32(i))
-			continue
-		}
-		var rv = reflect.ValueOf(value)
-		switch rv.Kind() {
-		case reflect.Ptr: //单指针 不允许(切片 | 数组)指针, 包含基本类型、结构、JSONObject
-			if rv.IsNil() {
-				result.SetNull(uint32(i))
-				continue
-			}
-			switch rv.Elem().Interface().(type) {
-			case bool:
-				result.SetBool(uint32(i), *(value.(*bool)))
-			case float32:
-				result.SetDouble(uint32(i), float64(*(value.(*float32))))
-			case float64:
-				result.SetDouble(uint32(i), *(value.(*float64)))
-			case string:
-				result.SetString(uint32(i), *(value.(*string)))
-			case int:
-				result.SetInt(uint32(i), int32(*(value.(*int))))
-			case int8:
-				result.SetInt(uint32(i), int32(*(value.(*int8))))
-			case int16:
-				result.SetInt(uint32(i), int32(*(value.(*int16))))
-			case int32:
-				result.SetInt(uint32(i), *(value.(*int32)))
-			case int64:
-				result.SetString(uint32(i), fmt.Sprintf("%d", *(value.(*int64))))
-			case uint:
-				result.SetInt(uint32(i), int32(*(value.(*uint))))
-			case uint8:
-				result.SetInt(uint32(i), int32(*(value.(*uint8))))
-			case uint16:
-				result.SetInt(uint32(i), int32(*(value.(*uint16))))
-			case uint32:
-				result.SetInt(uint32(i), int32(*(value.(*uint32))))
-			case uint64:
-				result.SetString(uint32(i), fmt.Sprintf("%d", *(value.(*uint64))))
-			default:
-				//非基本类型
-				switch rv.Elem().Kind() {
-				case reflect.Struct:
-					if v := convertStructToDictionaryValue(rv); v != nil {
-						result.SetDictionary(uint32(i), v)
-					}
-				case reflect.Map:
-					if v := convertMapToDictionaryValue(rv); v != nil {
-						result.SetDictionary(uint32(i), v)
-					}
-				}
-			}
-		case reflect.Slice, reflect.Array: //切片 | 数组, 包含基本类型、结构、JSONObject
-			if v := convertSliceToListValue(rv); v != nil {
-				result.SetList(uint32(i), v)
-			}
-		case reflect.Map: // 单Map
-			if v := convertMapToDictionaryValue(rv); v != nil {
-				result.SetDictionary(uint32(i), v)
-			}
-		default: //默认 基本类型
-			switch value.(type) {
-			case bool:
-				result.SetBool(uint32(i), value.(bool))
-			case float32:
-				result.SetDouble(uint32(i), float64(value.(float32)))
-			case float64:
-				result.SetDouble(uint32(i), value.(float64))
-			case string:
-				result.SetString(uint32(i), value.(string))
-			case int:
-				result.SetInt(uint32(i), int32(value.(int)))
-			case int8:
-				result.SetInt(uint32(i), int32(value.(int8)))
-			case int16:
-				result.SetInt(uint32(i), int32(value.(int16)))
-			case int32:
-				result.SetInt(uint32(i), value.(int32))
-			case int64:
-				result.SetString(uint32(i), fmt.Sprintf("%d", value.(int64)))
-			case uint:
-				result.SetInt(uint32(i), int32(value.(uint)))
-			case uint8:
-				result.SetInt(uint32(i), int32(value.(uint8)))
-			case uint16:
-				result.SetInt(uint32(i), int32(value.(uint16)))
-			case uint32:
-				result.SetInt(uint32(i), int32(value.(uint32)))
-			case uint64:
-				result.SetString(uint32(i), fmt.Sprintf("%d", value.(uint64)))
-			}
-		}
-
-	}
-	return result, nil
-}
-
-func resultToBytesProcessMessage(data []any) (*ICefBinaryValue, error) {
-	byt, err := jsoniter.Marshal(&data)
-	if err != nil {
-		return nil, err
-	}
-	return BinaryValueRef.New(byt), nil
-}
-
-//listValueToV8Value ICefListValue 转换 ICefV8Value
-func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
+//ListValueToV8Value ICefListValue 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) ListValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	if list == nil {
 		return nil, errors.New("build v8 value error. Parameter null")
 	}
@@ -408,11 +57,11 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 				}
 			}
 		case consts.VTYPE_DICTIONARY: // Object
-			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
+			if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
 			}
 		case consts.VTYPE_LIST: // JSONArray
-			if v, err := listValueToV8Value(value.GetList()); err == nil {
+			if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
 				newValue = v
 			}
 		}
@@ -424,8 +73,8 @@ func listValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	return result, nil
 }
 
-//dictionaryValueToV8Value ICefDictionaryValue 转换 ICefV8Value
-func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, error) {
+//DictionaryValueToV8Value ICefDictionaryValue 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) DictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, error) {
 	if dictionary == nil {
 		return nil, errors.New("build v8 value error. Parameter null")
 	}
@@ -459,11 +108,11 @@ func dictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, er
 				}
 			}
 		case consts.VTYPE_DICTIONARY: // Object
-			if v, err := dictionaryValueToV8Value(value.GetDictionary()); err == nil {
+			if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
 				newValue = v
 			}
 		case consts.VTYPE_LIST: // JSONArray
-			if v, err := listValueToV8Value(value.GetList()); err == nil {
+			if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
 				newValue = v
 			}
 		}

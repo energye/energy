@@ -38,6 +38,9 @@ func (m *ICefBrowser) Instance() uintptr {
 	}
 	return uintptr(m.instance)
 }
+func (m *ICefBrowser) IsValid() bool {
+	return m.instance != nil
+}
 
 // GetBrowserId 获取浏览器ID 每一个窗口唯一ID
 func (m *ICefBrowser) GetBrowserId() int32 {
