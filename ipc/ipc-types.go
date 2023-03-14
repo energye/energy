@@ -65,3 +65,11 @@ type IV8ValueKeys interface {
 	Get(index int) string
 	Free()
 }
+
+type ICefProcessMessageIPC interface {
+	Instance() uintptr
+}
+
+type IProcessMessage interface {
+	SendProcessMessageForIPC(targetProcess consts.CefProcessId, message ICefProcessMessageIPC)
+}

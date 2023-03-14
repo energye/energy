@@ -21,7 +21,7 @@ import (
 type ipcBrowserProcess struct {
 }
 
-// ipcEmitMessage 触发事件
+// ipcEmitMessage emit message
 func (m *ipcBrowserProcess) ipcEmitMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	argument := message.ArgumentList()

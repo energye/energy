@@ -8,35 +8,35 @@
 //
 //----------------------------------------
 
-// IPC-事件 Emit 到 指定浏览器
+// IPC-事件 到 指定浏览器
 package ipc
 
-// IEmitTarget 触发事件目标接口
-type IEmitTarget interface {
+// ITarget 指定目标
+type ITarget interface {
 	GetBrowserId() int32
 	GetFrameId() int64
 }
 
-// EmitTarget GoEmit相关事件的接收目标
-type EmitTarget struct {
+// Target Go IPC 事件的接收目标
+type Target struct {
 	BrowseId int32
 	FrameId  int64
 }
 
-// NewEmitTarget 创建一个新的Emit目标
-func NewEmitTarget(browserId int32, frameId int64) *EmitTarget {
-	return &EmitTarget{
+// NewTarget 创建一个新的Emit目标
+func NewTarget(browserId int32, frameId int64) *Target {
+	return &Target{
 		BrowseId: browserId,
 		FrameId:  frameId,
 	}
 }
 
 // GetBrowserId 返回BrowserId
-func (m *EmitTarget) GetBrowserId() int32 {
+func (m *Target) GetBrowserId() int32 {
 	return m.BrowseId
 }
 
 // GetFrameId 返回FrameId
-func (m *EmitTarget) GetFrameId() int64 {
+func (m *Target) GetFrameId() int64 {
 	return m.FrameId
 }

@@ -29,11 +29,6 @@ import (
 type IChromiumProc interface {
 	lcl.IObject
 	Instance() uintptr
-	On(name string, eventCallback ipc.EventCallback)
-	ExecuteJavaScript(code, scriptURL string, startLine int32) //单纯的执行js，没有返回值
-	Emit(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget) ProcessMessageError
-	EmitAndCallback(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget, callback ipc.IPCCallback) ProcessMessageError
-	EmitAndReturn(eventName string, args ipc.IArgumentList, target ipc.IEmitTarget) (ipc.IIPCContext, ProcessMessageError)
 	Browser() *ICefBrowser
 	BrowserById(id int32) *ICefBrowser
 	BrowserIdByIndex(index int32) int32
@@ -725,6 +720,10 @@ func (m *TCEFChromium) DefaultEncoding() string {
 
 // SendProcessMessage 发送进程消息
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
+	m.SendProcessMessageForIPC(targetProcess, message)
+}
+
+func (m *TCEFChromium) SendProcessMessageForIPC(targetProcess CefProcessId, message ipc.ICefProcessMessageIPC) {
 	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 }
 

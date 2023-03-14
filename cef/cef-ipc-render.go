@@ -62,7 +62,6 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 
 // ipcEmitExecute ipc.on 执行
 func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
-	result = true
 	if name != internalOn {
 		retVal.SetResult(V8ValueRef.NewBool(false))
 		return
@@ -95,14 +94,7 @@ func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, argume
 
 	//ipc on
 	m.onHandler.addCallback(onNameValue, &ipcCallback{arguments: arguments, context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
-
-	fmt.Println("on handler name:", name, "arguments-size:", arguments.Size())
-	frame := V8ContextRef.Current().Frame()
-	fmt.Println("frame", frame.Identifier())
-	sendBrowserProcessMsg := ProcessMessageRef.New("ipcOnExecute")
-	sendBrowserProcessMsg.ArgumentList().SetString(0, "ipcOnExecute测试值")
-	frame.SendProcessMessage(consts.PID_BROWSER, sendBrowserProcessMsg)
-	sendBrowserProcessMsg.Free()
+	result = true
 	return
 }
 

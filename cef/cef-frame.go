@@ -14,6 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -110,6 +111,10 @@ func (m *ICefFrame) IsFocused() bool {
 
 // SendProcessMessage 发送进程消息
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
+	m.SendProcessMessageForIPC(targetProcess, message)
+}
+
+func (m *ICefFrame) SendProcessMessageForIPC(targetProcess CefProcessId, message ipc.ICefProcessMessageIPC) {
 	imports.Proc(internale_CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 }
 
