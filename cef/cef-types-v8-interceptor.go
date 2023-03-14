@@ -22,16 +22,16 @@ import (
 )
 
 // V8InterceptorGetByName 拦截函数 根据name获取一个值
-type V8InterceptorGetByName func(name string, object, retVal *ICefV8Value, exception *Exception)
+type V8InterceptorGetByName func(name string, object, retVal *ICefV8Value, exception *ResultString)
 
 // V8InterceptorGetByIndex 拦截函数 根据index获取一个值
-type V8InterceptorGetByIndex func(index int32, object, retVal *ICefV8Value, exception *Exception)
+type V8InterceptorGetByIndex func(index int32, object, retVal *ICefV8Value, exception *ResultString)
 
 // V8InterceptorSetByName 拦截函数 根据name设置一个值
-type V8InterceptorSetByName func(name string, object, value *ICefV8Value, exception *Exception)
+type V8InterceptorSetByName func(name string, object, value *ICefV8Value, exception *ResultString)
 
 // V8InterceptorSetByIndex 拦截函数 根据index设置一个值
-type V8InterceptorSetByIndex func(index int32, object, value *ICefV8Value, exception *Exception)
+type V8InterceptorSetByIndex func(index int32, object, value *ICefV8Value, exception *ResultString)
 
 //V8InterceptorRef -> ICefV8Interceptor
 var V8InterceptorRef cefV8Interceptor

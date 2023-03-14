@@ -266,7 +266,7 @@ func convertSliceToListValue(rv reflect.Value) *ICefListValue {
 //resultToProcessMessage 返回值转换进程消息
 func resultToProcessMessage(data []any) (*ICefListValue, error) {
 	if data == nil {
-		return nil, errors.New("build process message error. Parameter null")
+		return nil, errors.New("build process value error. Parameter null")
 	}
 	var result = ListValueRef.New()
 
@@ -708,7 +708,7 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 // V8ValueToProcessMessage ICefV8Value 转换 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
 	if v8value == nil {
-		return nil, errors.New("build process message error. Parameter null")
+		return nil, errors.New("build process value error. Parameter null")
 	}
 	if v8value.IsArray() {
 		return m.V8valueArrayToListValue(v8value)

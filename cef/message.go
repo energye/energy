@@ -592,7 +592,7 @@ const (
 //--------------------------- lcl 消息------------------------------
 
 const (
-	/* lcl control Message IDs */
+	/* lcl control Value IDs */
 
 	CM_BASE = 0xB000
 	//CM_CLROFFSET                   = 0x100  CRL

@@ -61,14 +61,14 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 }
 
 // ipcEmitExecute ipc.on 执行
-func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) (result bool) {
+func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	result = true
 	if name != internalOn {
 		retVal.SetResult(V8ValueRef.NewBool(false))
 		return
 	} else if arguments.Size() != 2 { //必须是2个参数
 		retVal.SetResult(V8ValueRef.NewBool(false))
-		exception.SetMessage("ipc.on parameter should be 2 quantity")
+		exception.SetValue("ipc.on parameter should be 2 quantity")
 		arguments.Free()
 		return
 	}
@@ -81,14 +81,14 @@ func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, argume
 	//事件名 第一个参数必须是字符串
 	if !onName.IsString() {
 		retVal.SetResult(V8ValueRef.NewBool(false))
-		exception.SetMessage("ipc.on event name should be a string")
+		exception.SetValue("ipc.on event name should be a string")
 		return
 	}
 	onCallback = arguments.Get(1)
 	//第二个参数必须是函数
 	if !onCallback.IsFunction() {
 		retVal.SetResult(V8ValueRef.NewBool(false))
-		exception.SetMessage("ipc.on event callback should be a function")
+		exception.SetValue("ipc.on event callback should be a function")
 		return
 	}
 	onNameValue = onName.GetStringValue()
@@ -107,7 +107,7 @@ func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, argume
 }
 
 // ipcEmitExecute ipc.emit 执行
-func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) (result bool) {
+func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	var (
 		emitName       *ICefV8Value //事件名
 		emitNameValue  string       //事件名
@@ -148,7 +148,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 		}()
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
-			exception.SetMessage("ipc.emit event name should be a string")
+			exception.SetValue("ipc.emit event name should be a string")
 			isFree = true
 			return
 		}
@@ -159,7 +159,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 			} else if args2.IsFunction() {
 				emitCallback = args2
 			} else {
-				exception.SetMessage("ipc.emit second argument can only be a parameter or callback function")
+				exception.SetValue("ipc.emit second argument can only be a parameter or callback function")
 				isFree = true
 				return
 			}
@@ -167,7 +167,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 			emitArgs = arguments.Get(1)
 			emitCallback = arguments.Get(2)
 			if !emitArgs.IsArray() || !emitCallback.IsFunction() {
-				exception.SetMessage("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
+				exception.SetValue("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
 				isFree = true
 				return
 			}
@@ -178,7 +178,7 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 			//V8Value 转换
 			args := ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
-				exception.SetMessage("ipc.emit convert parameter to message value error")
+				exception.SetValue("ipc.emit convert parameter to value value error")
 				isFree = true
 				return
 			}
@@ -311,31 +311,31 @@ func (m *ipcRenderProcess) makeBind(context *ICefV8Context) {
 }
 
 // bindFuncExecute 绑定函数执行
-func (m *ipcRenderProcess) bindFuncExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool {
+func (m *ipcRenderProcess) bindFuncExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 	fmt.Println("bindFuncExecute handler name:", name)
 	return false
 }
 
 // bindSubObjectGet 绑定对象取值
-func (m *ipcRenderProcess) bindSubObjectGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool {
+func (m *ipcRenderProcess) bindSubObjectGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool {
 	fmt.Println("bindSubObjectGet accessor name:", name)
 	return false
 }
 
 // bindSubObjectSet 绑定对象赋值
-func (m *ipcRenderProcess) bindSubObjectSet(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
+func (m *ipcRenderProcess) bindSubObjectSet(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool {
 	fmt.Println("bindSubObjectSet accessor name:", name)
 	return false
 }
 
 // bindGet 绑定字段取值
-func (m *ipcRenderProcess) bindGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool {
+func (m *ipcRenderProcess) bindGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool {
 	fmt.Println("bindGet accessor name:", name)
 	return false
 }
 
 // bindSet 绑定字段赋值
-func (m *ipcRenderProcess) bindSet(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool {
+func (m *ipcRenderProcess) bindSet(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool {
 	fmt.Println("bindSet accessor name:", name)
 	return false
 }

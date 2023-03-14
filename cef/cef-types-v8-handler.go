@@ -25,7 +25,7 @@ import (
 // retVal 函数执行完返回结果
 // exception 返回的异常信息
 // return true 执行成功-返回值有效
-type V8HandlerExecute func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *Exception) bool
+type V8HandlerExecute func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool
 
 //V8HandlerRef -> ICefV8Handler
 var V8HandlerRef cefV8Handler
@@ -74,14 +74,14 @@ func init() {
 			retValPtr := (*uintptr)(getPtr(4))
 			retVal := &ResultV8Value{}
 			exceptionPtr := (*uintptr)(getPtr(5))
-			exception := &Exception{}
+			exception := &ResultString{}
 			resultPtr := (*bool)(getPtr(6))
 			result := fn.(V8HandlerExecute)(name, object, arguments, retVal, exception)
 			if retVal.v8value != nil {
 				*retValPtr = retVal.v8value.Instance()
 			}
-			if exception.Message() != "" {
-				*exceptionPtr = api.PascalStr(exception.Message())
+			if exception.Value() != "" {
+				*exceptionPtr = api.PascalStr(exception.Value())
 			} else {
 				*exceptionPtr = 0
 			}

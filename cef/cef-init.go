@@ -57,7 +57,7 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 		if exceptionCallback != nil {
 			exceptionCallback(sender, e)
 		} else {
-			logger.Error("Exception:", e.Message())
+			logger.Error("ResultString:", e.Message())
 		}
 	})
 }

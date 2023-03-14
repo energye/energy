@@ -110,6 +110,12 @@ type TCefCommandLine struct {
 	commandLines map[string]string
 }
 
+// ICefCommandLine
+type ICefCommandLine struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // TCefProxy 代理配置
 type TCefProxy struct {
 	ProxyType              TCefProxyType
@@ -446,9 +452,20 @@ type ICefPdfPrintCallback struct {
 	instance unsafe.Pointer
 }
 
-// ICefCommandLine
-type ICefCommandLine struct {
+// ICefV8StackTrace
+type ICefV8StackTrace struct {
 	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// ICefDomNode
+type ICefDomNode struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// TCefPreferenceRegistrarRef
+type TCefPreferenceRegistrarRef struct {
 	instance unsafe.Pointer
 }
 
@@ -470,17 +487,43 @@ type CefPdfPrintSettings struct {
 	FooterTemplate      string                 // TCefString
 }
 
-// Exception 异常返回信息
-type Exception struct {
-	message string
+// ResultString 字符串返回值
+type ResultString struct {
+	value string
 }
 
-func (m *Exception) SetMessage(message string) {
-	m.message = message
+func (m *ResultString) SetValue(value string) {
+	m.value = value
 }
 
-func (m *Exception) Message() string {
-	return m.message
+func (m *ResultString) Value() string {
+	return m.value
+}
+
+// ResultBool  bool返回值
+type ResultBool struct {
+	value bool
+}
+
+func (m *ResultBool) SetValue(value bool) {
+	m.value = value
+}
+
+func (m *ResultBool) Value() bool {
+	return m.value
+}
+
+// ResultBytes  []byte返回值
+type ResultBytes struct {
+	value []byte
+}
+
+func (m *ResultBytes) SetValue(value []byte) {
+	m.value = value
+}
+
+func (m *ResultBytes) Value() []byte {
+	return m.value
 }
 
 // NewCefRect

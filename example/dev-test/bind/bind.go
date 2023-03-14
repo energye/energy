@@ -95,16 +95,16 @@ func main() {
 		handler := cef.V8HandlerRef.New()
 		accessor := cef.V8AccessorRef.New()
 		fmt.Println("handler-accessor:", handler, accessor)
-		accessor.Get(func(name string, object *cef.ICefV8Value, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+		accessor.Get(func(name string, object *cef.ICefV8Value, retVal *cef.ResultV8Value, exception *cef.ResultString) bool {
 			fmt.Println("accessor get name", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("这能返回？"))
 			return true
 		})
-		accessor.Set(func(name string, object *cef.ICefV8Value, value *cef.ICefV8Value, exception *cef.Exception) bool {
+		accessor.Set(func(name string, object *cef.ICefV8Value, value *cef.ICefV8Value, exception *cef.ResultString) bool {
 			fmt.Println("accessor set name", name, "object.IsValid", object.IsValid(), object.IsObject(), object.IsString(), "value.IsValid", value.IsValid(), value.IsString(), value.IsObject())
 			return true
 		})
-		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.ResultString) bool {
 			fmt.Println("handler.Execute", arguments.Size(), arguments.Get(3))
 			fmt.Println(arguments.Get(0).IsValid(), arguments.Get(0).GetStringValue())
 			fmt.Println(arguments.Get(1).IsValid(), arguments.Get(1).GetIntValue())

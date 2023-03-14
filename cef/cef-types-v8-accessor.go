@@ -25,14 +25,14 @@ import (
 // retVal 读取返回的值
 // exception 返回的异常信息
 // return true 读取成功-返回值有效
-type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *Exception) bool
+type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool
 
 // V8AccessorSet 写入时函数
 // name 字段或对象名
 // value 将要写入的新值
 // exception 返回的异常信息
 // return true 写入成功
-type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *Exception) bool
+type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool
 
 //V8AccessorRef -> ICefV8Accessor
 var V8AccessorRef cefV8Accessor
@@ -88,14 +88,14 @@ func init() {
 			retValPtr := (*uintptr)(getPtr(2))
 			retVal := &ResultV8Value{}
 			exceptionPtr := (*uintptr)(getPtr(3))
-			exception := &Exception{}
+			exception := &ResultString{}
 			resultPtr := (*bool)(getPtr(4))
 			result := fn.(V8AccessorGet)(name, object, retVal, exception)
 			if retVal.v8value != nil {
 				*retValPtr = retVal.v8value.Instance()
 			}
-			if exception.Message() != "" {
-				*exceptionPtr = api.PascalStr(exception.Message())
+			if exception.Value() != "" {
+				*exceptionPtr = api.PascalStr(exception.Value())
 			} else {
 				*exceptionPtr = 0
 			}
@@ -106,11 +106,11 @@ func init() {
 			object := &ICefV8Value{instance: getPtr(1)}
 			value := &ICefV8Value{instance: getPtr(2)}
 			exceptionPtr := (*uintptr)(getPtr(3))
-			exception := &Exception{}
+			exception := &ResultString{}
 			resultPtr := (*bool)(getPtr(4))
 			result := fn.(V8AccessorSet)(name, object, value, exception)
-			if exception.Message() != "" {
-				*exceptionPtr = api.PascalStr(exception.Message())
+			if exception.Value() != "" {
+				*exceptionPtr = api.PascalStr(exception.Value())
 			} else {
 				*exceptionPtr = 0
 			}

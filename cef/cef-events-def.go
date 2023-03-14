@@ -36,7 +36,7 @@ type ChromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, t
 // ChromiumEvent Render Process Terminated
 type ChromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
 
-// ChromiumEvent Windows Comp Message
+// ChromiumEvent Windows Comp Value
 type ChromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 
 // ChromiumEvent CefBrowser
@@ -86,18 +86,25 @@ type ChromiumEventOnResourceRedirect func(sender lcl.IObject, browser *ICefBrows
 type ChromiumEventOnResourceLoadComplete func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, status consts.TCefUrlRequestStatus, receivedContentLength int64)
 
 // GlobalCEFAppEvent
-type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
-type GlobalCEFAppEventOnRegCustomSchemes func(registrar TCefSchemeRegistrarRef)
-type GlobalCEFAppEventOnWebKitInitialized func()
+type GlobalCEFAppEventOnRegCustomSchemes func(registrar *TCefSchemeRegistrarRef)
+type GlobalCEFAppEventOnRegisterCustomPreferences func(type_ consts.TCefPreferencesType, registrar *TCefPreferenceRegistrarRef)
 type GlobalCEFAppEventOnContextInitialized func()
-type GlobalCEFAppEventOnBeforeChildProcessLaunch func(commandLine *TCefCommandLine)
+type GlobalCEFAppEventOnBeforeChildProcessLaunch func( /*commandLine *TCefCommandLine,*/ commandLine *ICefCommandLine)
+type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
+type GlobalCEFAppEventOnGetLocalizedString func(stringId int32, stringVal *ResultString, aResult *ResultBool)
+type GlobalCEFAppEventOnGetDataResource func(resourceId int32, data *ResultBytes, aResult *ResultBool)
+type GlobalCEFAppEventOnGetDataResourceForScale func(resourceId int32, scaleFactor consts.TCefScaleFactor, data *ResultBytes, aResult *ResultBool)
+type GlobalCEFAppEventOnWebKitInitialized func()
+type GlobalCEFAppEventOnBrowserCreated func(browser *ICefBrowser, extraInfo *ICefDictionaryValue)
 type GlobalCEFAppEventOnBrowserDestroyed func(browser *ICefBrowser)
+type GlobalCEFAppEventOnContextCreated func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool
+type GlobalCEFAppEventOnContextReleased func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context)
+type GlobalCEFAppEventOnUncaughtException func(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context, exception *ICefV8Exception, stackTrace *ICefV8StackTrace)
+type GlobalCEFAppEventOnFocusedNodeChanged func(browser *ICefBrowser, frame *ICefFrame, node *ICefDomNode)
+type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
 type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType)
 type GlobalCEFAppEventOnRenderLoadEnd func(browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
 type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode consts.TCefErrorCode, errorText, failedUrl string)
-type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, frame *ICefFrame, isLoading, canGoBack, canGoForward bool)
-type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
-type GlobalCEFAppEventOnGetLocalizedString func(stringId int32, stringVal string, aResult bool)
 
 // Browser & Rneder 进程消息接收
 type RenderProcessMessageReceived func(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool

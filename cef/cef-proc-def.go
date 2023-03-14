@@ -70,30 +70,27 @@ func init() {
 		dllimports.NewEnergyImport("CEFV8ValueRef_CommonValueBindInfo", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_ObjectValueBindInfo", 0),
 		//application - event
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextCreated", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegCustomSchemes", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegisterCustomPreferences", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextInitialized", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnWebKitInitialized", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBeforeChildProcessLaunch", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnScheduleMessagePumpWork", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDefaultClient", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetLocalizedString", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDataResource", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDataResourceForScale", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnProcessMessageReceived", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBrowserDestroyed", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadStart", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadEnd", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadError", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadingStateChange", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnWebKitInitialized", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBrowserCreated", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBrowserDestroyed", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextCreated", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextReleased", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnUncaughtException", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnFocusedNodeChanged", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadingStateChange", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadStart", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadEnd", 0),
-		dllimports.NewEnergyImport("CEFGlobalApp_SetOnLoadError", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnProcessMessageReceived", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadingStateChange", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadStart", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadEnd", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRenderLoadError", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnScheduleMessagePumpWork", 0),
 		// 设置 TCefSettings (cef_settings_t) 属性,
 		dllimports.NewEnergyImport("CEFAppConfig_NoSandbox", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetNoSandbox", 0),
@@ -1075,6 +1072,31 @@ func init() {
 		//ICefPdfPrintCallback
 		dllimports.NewEnergyImport("CefPdfPrintCallback_Create", 0),
 		dllimports.NewEnergyImport("CefPdfPrintCallback_OnPdfPrintFinished", 0),
+		//ICefCommandLine
+		dllimports.NewEnergyImport("CefCommandLineRef_New", 0),
+		dllimports.NewEnergyImport("CefCommandLineRef_UnWrap", 0),
+		dllimports.NewEnergyImport("CefCommandLineRef_Global", 0),
+		dllimports.NewEnergyImport("CefCommandLine_IsValid", 0),
+		dllimports.NewEnergyImport("CefCommandLine_IsReadOnly", 0),
+		dllimports.NewEnergyImport("CefCommandLine_Copy", 0),
+		dllimports.NewEnergyImport("CefCommandLine_InitFromArgv", 0),
+		dllimports.NewEnergyImport("CefCommandLine_InitFromString", 0),
+		dllimports.NewEnergyImport("CefCommandLine_Reset", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetCommandLineString", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetArgv", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetProgram", 0),
+		dllimports.NewEnergyImport("CefCommandLine_SetProgram", 0),
+		dllimports.NewEnergyImport("CefCommandLine_HasSwitches", 0),
+		dllimports.NewEnergyImport("CefCommandLine_HasSwitch", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetSwitchValue", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetSwitches", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetSwitchesList", 0),
+		dllimports.NewEnergyImport("CefCommandLine_AppendSwitch", 0),
+		dllimports.NewEnergyImport("CefCommandLine_AppendSwitchWithValue", 0),
+		dllimports.NewEnergyImport("CefCommandLine_HasArguments", 0),
+		dllimports.NewEnergyImport("CefCommandLine_GetArguments", 0),
+		dllimports.NewEnergyImport("CefCommandLine_AppendArgument", 0),
+		dllimports.NewEnergyImport("CefCommandLine_PrependWrapper", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1132,30 +1154,27 @@ const (
 	internale_CEFV8ValueRef_CommonValueBindInfo
 	internale_CEFV8ValueRef_ObjectValueBindInfo
 	//application - event
-	internale_CEFGlobalApp_SetOnContextCreated
 	internale_CEFGlobalApp_SetOnRegCustomSchemes
+	internale_CEFGlobalApp_SetOnRegisterCustomPreferences
 	internale_CEFGlobalApp_SetOnContextInitialized
-	internale_CEFGlobalApp_SetOnWebKitInitialized
 	internale_CEFGlobalApp_SetOnBeforeChildProcessLaunch
-	internale_CEFGlobalApp_SetOnScheduleMessagePumpWork
 	internale_CEFGlobalApp_SetOnGetDefaultClient
 	internale_CEFGlobalApp_SetOnGetLocalizedString
 	internale_CEFGlobalApp_SetOnGetDataResource
 	internale_CEFGlobalApp_SetOnGetDataResourceForScale
-	internale_CEFGlobalApp_SetOnProcessMessageReceived
-	internale_CEFGlobalApp_SetOnBrowserDestroyed
-	internale_CEFGlobalApp_SetOnRenderLoadStart
-	internale_CEFGlobalApp_SetOnRenderLoadEnd
-	internale_CEFGlobalApp_SetOnRenderLoadError
-	internale_CEFGlobalApp_SetOnRenderLoadingStateChange
+	internale_CEFGlobalApp_SetOnWebKitInitialized
 	internale_CEFGlobalApp_SetOnBrowserCreated
+	internale_CEFGlobalApp_SetOnBrowserDestroyed
+	internale_CEFGlobalApp_SetOnContextCreated
 	internale_CEFGlobalApp_SetOnContextReleased
 	internale_CEFGlobalApp_SetOnUncaughtException
 	internale_CEFGlobalApp_SetOnFocusedNodeChanged
-	internale_CEFGlobalApp_SetOnLoadingStateChange
-	internale_CEFGlobalApp_SetOnLoadStart
-	internale_CEFGlobalApp_SetOnLoadEnd
-	internale_CEFGlobalApp_SetOnLoadError
+	internale_CEFGlobalApp_SetOnProcessMessageReceived
+	internale_CEFGlobalApp_SetOnRenderLoadingStateChange
+	internale_CEFGlobalApp_SetOnRenderLoadStart
+	internale_CEFGlobalApp_SetOnRenderLoadEnd
+	internale_CEFGlobalApp_SetOnRenderLoadError
+	internale_CEFGlobalApp_SetOnScheduleMessagePumpWork
 	// 设置 TCefSettings (cef_settings_t) 属性
 	internale_CEFAppConfig_NoSandbox
 	internale_CEFAppConfig_SetNoSandbox
@@ -2138,4 +2157,29 @@ const (
 	//ICefPdfPrintCallback
 	internale_CefPdfPrintCallback_Create
 	internale_CefPdfPrintCallback_OnPdfPrintFinished
+	//ICefCommandLine
+	internale_CefCommandLineRef_New
+	internale_CefCommandLineRef_UnWrap
+	internale_CefCommandLineRef_Global
+	internale_CefCommandLine_IsValid
+	internale_CefCommandLine_IsReadOnly
+	internale_CefCommandLine_Copy
+	internale_CefCommandLine_InitFromArgv
+	internale_CefCommandLine_InitFromString
+	internale_CefCommandLine_Reset
+	internale_CefCommandLine_GetCommandLineString
+	internale_CefCommandLine_GetArgv
+	internale_CefCommandLine_GetProgram
+	internale_CefCommandLine_SetProgram
+	internale_CefCommandLine_HasSwitches
+	internale_CefCommandLine_HasSwitch
+	internale_CefCommandLine_GetSwitchValue
+	internale_CefCommandLine_GetSwitches
+	internale_CefCommandLine_GetSwitchesList
+	internale_CefCommandLine_AppendSwitch
+	internale_CefCommandLine_AppendSwitchWithValue
+	internale_CefCommandLine_HasArguments
+	internale_CefCommandLine_GetArguments
+	internale_CefCommandLine_AppendArgument
+	internale_CefCommandLine_PrependWrapper
 )

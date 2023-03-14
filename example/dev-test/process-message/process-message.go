@@ -64,7 +64,7 @@ func main() {
 	cefApp.SetOnWebKitInitialized(func() {
 		fmt.Println("SetOnWebKitInitialized")
 		v8Handler := cef.V8HandlerRef.New()
-		v8Handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+		v8Handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.ResultString) bool {
 			fmt.Println("v8Handler.Execute", name)
 			return true
 		})
@@ -80,7 +80,7 @@ func main() {
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		handler := cef.V8HandlerRef.New()
 		fmt.Println("handler:", handler, "frameId:", frame.Identifier())
-		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.Exception) bool {
+		handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.ResultString) bool {
 			fmt.Println("handler.Execute", name)
 			retVal.SetResult(cef.V8ValueRef.NewString("函数返回值？"))
 			message := cef.ProcessMessageRef.New("testname")
