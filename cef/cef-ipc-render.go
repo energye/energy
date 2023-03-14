@@ -48,10 +48,10 @@ func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
 func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
-	m.emitHandler.handler.Execute(m.ipcEmitExecute)
+	m.emitHandler.handler.Execute(m.ipcJSExecuteGoEvent)
 	// ipc on
 	m.onHandler.handler = V8HandlerRef.New()
-	m.onHandler.handler.Execute(m.ipcOnExecute)
+	m.onHandler.handler.Execute(m.ipcJSOnEvent)
 	// ipc object
 	m.ipc = V8ValueRef.NewObject(nil)
 	m.ipc.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
@@ -60,8 +60,8 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	context.Global().setValueByKey(internalIPCKey, m.ipc, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }
 
-// ipcEmitExecute ipc.on 执行
-func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+// ipcJSOnEvent JS ipc.on 监听事件
+func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	if name != internalOn {
 		retVal.SetResult(V8ValueRef.NewBool(false))
 		return
@@ -98,8 +98,14 @@ func (m *ipcRenderProcess) ipcOnExecute(name string, object *ICefV8Value, argume
 	return
 }
 
-// ipcEmitExecute ipc.emit 执行
-func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+// ipcGoExecuteJSEvent Go ipc.emit JS事件
+func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+
+	return true
+}
+
+// ipcJSExecuteGoEvent JS ipc.emit 执行Go事件
+func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	var (
 		emitName       *ICefV8Value //事件名
 		emitNameValue  string       //事件名
@@ -201,8 +207,8 @@ func (m *ipcRenderProcess) ipcEmitExecute(name string, object *ICefV8Value, argu
 	return
 }
 
-// ipcEmitMessageReply 触发事件回复
-func (m *ipcRenderProcess) ipcEmitMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+// ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
+func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	messageId := message.ArgumentList().GetInt(0)
 	if callback := ipcRender.emitHandler.getCallback(messageId); callback != nil {

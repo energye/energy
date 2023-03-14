@@ -44,7 +44,7 @@ func main() {
 
 	ipc.On("testGoEmit", func(context ipc.IContext) {
 		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
-		//ipc.Emit("", "aaa", "bbb")
+		ipc.Emit("onTestName1", "aaa", "bbb")
 		//ipc.EmitAndCallback("", func() {}, "aaaa")
 	})
 
