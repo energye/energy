@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -54,10 +53,8 @@ func (m *TCEFApplication) AddCrDelegate() {
 func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
+	m.defaultSetOnRenderLoadStart()
 	//m.defaultSetOnBeforeChildProcessLaunch()
-	m.SetOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
-		fmt.Println("SetOnLoadStart")
-	})
 }
 
 // Instance 实例
@@ -218,6 +215,12 @@ func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRe
 
 func (m *TCEFApplication) SetOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
 	imports.Proc(internale_CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) defaultSetOnRenderLoadStart() {
+	m.SetOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
+
+	})
 }
 
 func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
