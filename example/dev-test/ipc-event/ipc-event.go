@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
+	"time"
 	//_ "net/http/pprof"
 )
 
@@ -75,10 +76,20 @@ func main() {
 	r10[0] = r9
 	r10[1] = r9
 	r10[2] = r9
-
+	var tm = time.Now().Second()
+	var cha = 0
 	ipc.On("testGoEmit", func(context ipc.IContext) {
 		count++
-		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
+		args := context.ArgumentList().JSONArray()
+		if tm > 58 {
+			tm = time.Now().Second()
+		}
+		if time.Now().Second() >= tm+1 {
+			cha = args.GetIntByIndex(0) - cha
+			fmt.Println("testGoEmit", args.GetIntByIndex(0), cha)
+			cha = args.GetIntByIndex(0)
+			tm = time.Now().Second()
+		}
 		//触发JS监听的函数，并传入参数
 		ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 		//ipc.EmitAndCallback("", func() {}, "aaaa")

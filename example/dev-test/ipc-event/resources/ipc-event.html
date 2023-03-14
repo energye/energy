@@ -145,13 +145,26 @@
             if (tgesi != null) {
                 clearInterval(tgesi)
                 tgesi = null
+                idx = 0;
                 return
             }
             tgesi = setInterval(testGoEmit, 1)
+            if (tgesi != null) {
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(tgesi)
+                        msg(idx)
+                        tgesi = null
+                        idx = 0;
+                    }, time)
+                }
+            }
         }
 
         function testGoEmit() {
-            ipc.emit("testGoEmit");
+            idx++
+            ipc.emit("testGoEmit", [idx]);
         }
 
         function bindFunc() {
