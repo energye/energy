@@ -24,6 +24,41 @@ type ipcBrowserProcess struct {
 	onHandler   *ipcOnHandler   // ipc.on handler
 }
 
+func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	messageId := message.ArgumentList().GetInt(0)
+	if callback := ipc.CheckEmitCallback(messageId); callback != nil {
+		//第二个参数 true 有返回参数
+		if isReturn := message.ArgumentList().GetBool(1); isReturn {
+			//[]byte
+			binaryValue := message.ArgumentList().GetBinary(2)
+			var (
+				count           uint32
+				resultArgsBytes []byte
+			)
+			if binaryValue.IsValid() {
+				size := binaryValue.GetSize()
+				resultArgsBytes = make([]byte, size)
+				count = binaryValue.GetData(resultArgsBytes, 0)
+				binaryValue.Free()
+			}
+			if count > 0 {
+				ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), false, resultArgsBytes)
+				if ctxCallback := callback.ContextCallback(); ctxCallback != nil {
+					ctxCallback.Invoke(ipcContext)
+				} else if argsCallback := callback.ArgumentCallback(); argsCallback != nil {
+					argsCallback.Invoke(ipcContext)
+				}
+				if ipcContext.ArgumentList() != nil {
+					ipcContext.ArgumentList().Free()
+				}
+				ipcContext.Result(nil)
+			}
+			resultArgsBytes = nil
+		}
+	}
+	return
+}
+
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
 func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
@@ -43,7 +78,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 		args.GetData(argsBytes, 0)
 		args.Free() //立即释放掉
 	}
-	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), argsBytes)
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argsBytes)
 	argsBytes = nil
 	//调用监听函数
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {

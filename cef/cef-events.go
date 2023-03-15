@@ -86,7 +86,7 @@ func init() {
 			if !*result {
 				*result = browserProcessMessageReceived(browse, frame, processId, message)
 			}
-			//frame.Free()
+			frame.Free()
 			//browse.Free()
 			message.Free()
 		case ChromiumEventOnResourceLoadComplete:

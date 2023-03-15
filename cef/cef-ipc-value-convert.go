@@ -252,9 +252,43 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 	return result
 }
 
-// V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
+// V8ValueToProcessMessageBytes ICefV8Value 转换 [[]byte] 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
-	if result, err := m.V8valueArrayToSlice(v8value); err == nil {
+	if v8value.IsArray() {
+		if result, err := m.V8valueArrayToSlice(v8value); err == nil {
+			if v, err := jsoniter.Marshal(result); err == nil {
+				return v
+			}
+		}
+	} else if v8value.IsObject() {
+		if result, err := m.V8valueObjectToMap(v8value); err == nil {
+			if v, err := jsoniter.Marshal(result); err == nil {
+				return v
+			}
+		}
+	} else {
+		result := make([]any, 1)
+		if v8value.IsString() {
+			result[0] = v8value.GetStringValue()
+		} else if v8value.IsInt() {
+			result[0] = int(v8value.GetIntValue())
+		} else if v8value.IsUInt() {
+			result[0] = uint(v8value.GetUIntValue())
+		} else if v8value.IsDouble() {
+			result[0] = v8value.GetDoubleValue()
+		} else if v8value.IsBool() {
+			result[0] = v8value.GetBoolValue()
+		} else if v8value.IsDate() {
+			result[0] = v8value.GetDateValue()
+		} else if v8value.IsNull() {
+			result[0] = "null"
+		} else if v8value.IsUndefined() {
+			result[0] = "undefined"
+		} else if v8value.IsArrayBuffer() {
+			result[0] = ""
+		} else {
+			result[0] = "" // function/byte/buffer
+		}
 		if v, err := jsoniter.Marshal(result); err == nil {
 			return v
 		}
@@ -281,6 +315,8 @@ func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value)
 			result[i] = args.GetDoubleValue()
 		} else if args.IsBool() {
 			result[i] = args.GetBoolValue()
+		} else if v8value.IsDate() {
+			result[i] = v8value.GetDateValue()
 		} else if args.IsNull() {
 			result[i] = "null"
 		} else if args.IsUndefined() {
@@ -327,6 +363,8 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 			result[key] = args.GetDoubleValue()
 		} else if args.IsBool() {
 			result[key] = args.GetBoolValue()
+		} else if v8value.IsDate() {
+			result[key] = v8value.GetDateValue()
 		} else if args.IsNull() {
 			result[key] = "null"
 		} else if args.IsUndefined() {

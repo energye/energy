@@ -72,9 +72,9 @@ func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, argume
 		return
 	}
 	var (
-		onName      *ICefV8Value //事件名
+		onName      *ICefV8Value // 事件名
 		onNameValue string       // 事件名
-		onCallback  *ICefV8Value //事件回调函数
+		onCallback  *ICefV8Value // 事件回调函数
 	)
 	onName = arguments.Get(0)
 	//事件名 第一个参数必须是字符串
@@ -105,9 +105,12 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	if callback := ipcRender.onHandler.getCallback(name); callback != nil {
 		messageId := argument.GetInt(0)
 		args := argument.GetBinary(2)
-		var argsBytes []byte
-		var count uint32
-		var argsV8ValueArray *TCefV8ValueArray
+		var (
+			argsBytes        []byte
+			count            uint32
+			argsV8ValueArray *TCefV8ValueArray
+			resultData       []byte
+		)
 		if args.IsValid() {
 			size := args.GetSize()
 			argsBytes = make([]byte, size)
@@ -122,12 +125,25 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			if argsV8ValueArray != nil {
 				argsV8ValueArray.Free()
 			}
+			if ret.IsUndefined() && ret.IsNull() {
+				resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+			}
 			ret.Free()
 			callback.context.Exit()
 		}
 		argsBytes = nil
 		if messageId != 0 { // callback
-
+			replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
+			replyMessage.ArgumentList().SetInt(0, messageId)
+			if resultData != nil {
+				replyMessage.ArgumentList().SetBool(1, true) //有返回值
+				binaryValue := BinaryValueRef.New(resultData)
+				replyMessage.ArgumentList().SetBinary(2, binaryValue) //result []byte
+			} else {
+				replyMessage.ArgumentList().SetBool(1, false) //无返回值
+			}
+			frame.SendProcessMessage(consts.PID_BROWSER, replyMessage)
+			replyMessage.Free()
 		}
 		result = true
 	}
@@ -246,8 +262,10 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		if isReturn := message.ArgumentList().GetBool(1); isReturn {
 			//[]byte
 			binaryValue := message.ArgumentList().GetBinary(2)
-			var count uint32
-			var resultArgsBytes []byte
+			var (
+				count           uint32
+				resultArgsBytes []byte
+			)
 			if binaryValue.IsValid() {
 				size := binaryValue.GetSize()
 				resultArgsBytes = make([]byte, size)
@@ -276,7 +294,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		}
 		//remove
 		callback.free()
-		ipcRender.emitHandler.removeCallback(messageId)
 	}
 	return
 }

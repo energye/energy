@@ -16,14 +16,15 @@ import (
 )
 
 const (
-	internalIPCKey = "ipc"  // JavaScript -> ipc 事件驱动, 根对象名
-	internalEmit   = "emit" // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名
-	internalOn     = "on"   // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
+	internalIPCKey   = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
+	internalEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
+	internalEmitSync = "emitSync" // JavaScript -> ipc.emitSync 在 JavaScript 触发 GO 监听事件函数名, 同步
+	internalOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
 const (
-	internalProcessMessageIPCEmit      = "emitHandler"  // 进程消息 emitHandler
-	internalProcessMessageIPCEmitReply = "ipcEmitReply" // 进程消息 ipcEmitReply
-	internalProcessMessageIPCOn        = "onHandler"    // 进程消息 onHandler
+	internalProcessMessageIPCEmit      = "emitHandler" // 进程消息 emit事件处理
+	internalProcessMessageIPCEmitReply = "emitReply"   // 进程消息 emit事件回复消息
+	internalProcessMessageIPCOn        = "onHandler"   // 进程消息 on监听事件处理
 )
 
 var (
@@ -79,7 +80,8 @@ func ipcInit() {
 // isIPCInternalKey IPC 内部 key 不允许使用
 func isIPCInternalKey(key string) bool {
 	return key == internalIPCKey || key == internalEmit || key == internalOn ||
-		key == internalProcessMessageIPCEmit || key == internalProcessMessageIPCOn || key == internalProcessMessageIPCEmitReply
+		key == internalProcessMessageIPCEmit || key == internalProcessMessageIPCOn || key == internalProcessMessageIPCEmitReply ||
+		key == internalEmitSync
 }
 
 // addCallback
@@ -96,20 +98,16 @@ func (m *ipcEmitHandler) addCallback(callback *ipcCallback) int32 {
 	return m.callbackMessageId
 }
 
-// removeCallback
-func (m *ipcEmitHandler) removeCallback(messageId int32) {
-	//m.callbackList.Remove((*list.Element)(unsafe.Pointer(ptr)))
-	m.callbackLock.Lock()
-	defer m.callbackLock.Unlock()
-	delete(m.callbackList, messageId)
-}
-
 // getCallback
 func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 	//return (*list.Element)(unsafe.Pointer(ptr)).Value.(*ipcCallback)
 	m.callbackLock.Lock()
 	defer m.callbackLock.Unlock()
-	return m.callbackList[messageId]
+	if callback, ok := m.callbackList[messageId]; ok {
+		delete(m.callbackList, messageId)
+		return callback
+	}
+	return nil
 }
 
 func (m *ipcEmitHandler) clear() {

@@ -78,6 +78,8 @@ func main() {
 	r10[2] = r9
 	var tm = time.Now().Second()
 	var cha = 0
+
+	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
 		count++
 		args := context.ArgumentList().JSONArray()
@@ -90,27 +92,26 @@ func main() {
 			cha = args.GetIntByIndex(0)
 			tm = time.Now().Second()
 		}
-		//触发JS监听的函数，并传入参数
+		//触发JS监听的事件，并传入参数
 		ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-		//ipc.EmitAndCallback("", func() {}, "aaaa")
 	})
 
-	ipc.On("testGoEmitAndCallback", func(context ipc.IContext) {
-		fmt.Println("testGoEmit", context.BrowserId(), context.FrameId())
+	ipc.On("testGoEmitAndCallback", func() {
+		fmt.Println("testGoEmitAndCallback")
 		//触发JS监听的函数，并传入参数
-		ipc.EmitAndCallback("onTestName1", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func() {
-
+		ipc.EmitAndCallback("onTestName2", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
+			fmt.Println("onTestName2 r1: ", r1)
 		})
 		//ipc.EmitAndCallback("", func() {}, "aaaa")
 	})
 
-	ipc.OnArguments("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
+	ipc.On("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		fmt.Println("args1", args1)
 
 		return r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10
 	})
 
-	ipc.OnArguments("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
+	ipc.On("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
 		fmt.Println("in1: ", in1)
 		fmt.Println("in2: ", in2)
 		fmt.Println("in3: ", in3)

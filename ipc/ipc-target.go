@@ -12,6 +12,8 @@
 package ipc
 
 // ITarget 指定目标
+//
+// ipc.NewTarget() *Target
 type ITarget interface {
 	GetBrowserId() int32
 	GetFrameId() int64

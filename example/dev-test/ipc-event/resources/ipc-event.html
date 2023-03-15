@@ -135,8 +135,10 @@
             msg("R9：", r9, JSON.stringify(r9));
             msg("R10：", r10, JSON.stringify(r10));
         });
-        ipc.on('onTestName2', function (param1, param2, param3) {
-
+        ipc.on('onTestName2', function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
+            clearMsg()
+            msg("onTestName2");
+            return ["返回值", 111111, 2222.22, true]
         });
 
         let tgesi = null
@@ -167,6 +169,34 @@
             ipc.emit("testGoEmit", [idx]);
         }
 
+
+        let tgesic = null
+
+        function autotestGoEmitAndCallback() {
+            if (tgesic != null) {
+                clearInterval(tgesic)
+                tgesic = null
+                idx = 0;
+                return
+            }
+            tgesic = setInterval(testGoEmitAndCallback, 1)
+            if (tgesic != null) {
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(tgesic)
+                        msg(idx)
+                        tgesic = null
+                        idx = 0;
+                    }, time)
+                }
+            }
+        }
+        function testGoEmitAndCallback() {
+            ipc.emit("testGoEmitAndCallback");
+        }
+
+
         function bindFunc() {
             energy.funcName();
         }
@@ -195,6 +225,9 @@
     <br>
     <button onclick="testGoEmit()">testGoEmit</button>
     <button onclick="autotestGoEmit()">自动testGoEmit</button>
+    <br>
+    <button onclick="testGoEmitAndCallback()">testGoEmitAndCallback</button>
+    <button onclick="autotestGoEmitAndCallback()">自动testGoEmitAndCallback</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

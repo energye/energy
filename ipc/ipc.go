@@ -24,16 +24,13 @@ var (
 	browser *browserIPC
 )
 
-// emitContextCallback IPC 上下文件回调函数
-type emitContextCallback func(context IContext)
-
-// emitArgumentCallback 带有参数回调函数
-type emitArgumentCallback any
+// EmitContextCallback IPC 上下文件回调函数
+type EmitContextCallback func(context IContext)
 
 // browserIPC 主进程 IPC
 type browserIPC struct {
 	onEvent               map[string]*callback
-	emitCallback          map[int32]*reflect.Value
+	emitCallback          map[int32]*callback
 	emitCallbackMessageId int32
 	onLock                sync.Mutex
 	emitLock              sync.Mutex
@@ -42,7 +39,21 @@ type browserIPC struct {
 
 func init() {
 	if common.Args.IsMain() {
-		browser = &browserIPC{onEvent: make(map[string]*callback), emitCallback: make(map[int32]*reflect.Value)}
+		browser = &browserIPC{onEvent: make(map[string]*callback), emitCallback: make(map[int32]*callback)}
+	}
+}
+
+func createCallback(fn any) *callback {
+	switch fn.(type) {
+	case func(context IContext):
+		return &callback{context: &contextCallback{callback: fn.(func(context IContext))}}
+	default:
+		v := reflect.ValueOf(fn)
+		// f must be a function
+		if v.Kind() != reflect.Func {
+			return nil
+		}
+		return &callback{argument: &argumentCallback{callback: &v}}
 	}
 }
 
@@ -54,12 +65,9 @@ func SetProcessMessage(pm IProcessMessage) {
 }
 
 //On
-// IPC GO 监听事件, 上下文参数
-func On(name string, fn emitContextCallback) {
-	browser.addOnEvent(name, &callback{context: &contextCallback{callback: fn}})
-}
-
-//OnArguments
+//
+// 参数 回调函数fn: EmitContextCallback 或 func
+//
 // IPC GO 监听事件, 自定义参数，仅支持对应 JavaScript 对应 Go 的常用类型
 //
 // 入参 不限制个数
@@ -85,15 +93,10 @@ func On(name string, fn emitContextCallback) {
 //
 // 出参
 //
-//   与同入参相同
-func OnArguments(name string, fn emitArgumentCallback) {
-	if browser != nil {
-		v := reflect.ValueOf(fn)
-		// f must be a function
-		if v.Kind() != reflect.Func {
-			return
-		}
-		browser.addOnEvent(name, &callback{argument: &argumentCallback{callback: &v}})
+//   与入参相同
+func On(name string, fn any) {
+	if callbackFN := createCallback(fn); callbackFN != nil {
+		browser.addOnEvent(name, callbackFN)
 	}
 }
 
@@ -110,6 +113,12 @@ func RemoveOn(name string) {
 
 //Emit
 // IPC GO 中触发 JS 监听的事件
+//
+// 参数
+//	name: JS 监听的事件名
+//  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//                  复杂类型: slice, map, struct
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
 func Emit(name string, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -119,6 +128,13 @@ func Emit(name string, argument ...any) {
 
 //EmitAndCallback
 // IPC GO 中触发 JS 监听的事件
+//
+// 参数
+//	name: JS 监听的事件名
+//  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//                  复杂类型: slice, map, struct
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) {}
 func EmitAndCallback(name string, argument []any, callback any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -129,6 +145,13 @@ func EmitAndCallback(name string, argument []any, callback any) {
 
 //EmitTarget
 // IPC GO 中触发指定目标 JS 监听的事件
+//
+// 参数
+//	name: JS 监听的事件名
+//	target: 接收事件的目标
+//  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//                  复杂类型: slice, map, struct
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
 func EmitTarget(name string, target ITarget, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -138,6 +161,14 @@ func EmitTarget(name string, target ITarget, argument ...any) {
 
 //EmitTargetAndCallback
 // IPC GO 中触发指定目标 JS 监听的事件
+//
+// 参数
+//	name: JS 监听的事件名
+//	target: 接收事件的目标
+//  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//                  复杂类型: slice, map, struct
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) {}
 func EmitTargetAndCallback(name string, target ITarget, argument []any, callback any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -162,15 +193,15 @@ func CheckOnEvent(name string) *callback {
 
 //CheckEmitCallback
 // IPC 检查 GO Emit 回调函数是否存在，并返回回调函数
-func CheckEmitCallback(id int32) *reflect.Value {
+func CheckEmitCallback(id int32) *callback {
 	if browser == nil {
 		return nil
 	}
 	browser.emitLock.Lock()
 	defer browser.emitLock.Unlock()
 	if fn, ok := browser.emitCallback[id]; ok {
-		delete(browser.emitCallback, id) //移除这个回调函数
-		return fn                        //返回
+		delete(browser.emitCallback, id)
+		return fn
 	}
 	return nil
 }
@@ -206,11 +237,14 @@ func (m *browserIPC) addEmitCallback(fn any) int32 {
 	}
 	m.emitLock.Lock()
 	defer m.emitLock.Unlock()
-	if m.emitCallbackMessageId == -1 {
-		m.emitCallbackMessageId = 1
-	} else {
-		m.emitCallbackMessageId++
+	if callbackFN := createCallback(fn); callbackFN != nil {
+		if m.emitCallbackMessageId == -1 {
+			m.emitCallbackMessageId = 1
+		} else {
+			m.emitCallbackMessageId++
+		}
+		m.emitCallback[m.emitCallbackMessageId] = callbackFN
+		return m.emitCallbackMessageId
 	}
-	m.emitCallback[m.emitCallbackMessageId] = &rv
-	return m.emitCallbackMessageId
+	return 0
 }

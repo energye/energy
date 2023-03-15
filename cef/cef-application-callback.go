@@ -44,6 +44,8 @@ func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourc
 		result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
 	} else if message.Name() == internalProcessMessageIPCOn {
 		result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
+	} else if message.Name() == internalProcessMessageIPCEmitReply {
+		result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
 	}
 	return
 }
