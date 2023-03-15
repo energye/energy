@@ -125,9 +125,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			if argsV8ValueArray != nil {
 				argsV8ValueArray.Free()
 			}
-			if ret.IsUndefined() && ret.IsNull() {
-				resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
-			}
+			resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
 			ret.Free()
 			callback.context.Exit()
 		}
