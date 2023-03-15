@@ -254,6 +254,9 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 
 // V8ValueToProcessMessageBytes ICefV8Value 转换 [[]byte] 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
+	if !v8value.IsValid() {
+		return nil
+	}
 	if v8value.IsArray() {
 		if result, err := m.V8valueArrayToSlice(v8value); err == nil {
 			if v, err := jsoniter.Marshal(result); err == nil {

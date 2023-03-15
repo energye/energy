@@ -236,6 +236,7 @@ func (m *TCEFApplication) SetOnRenderLoadError(fn GlobalCEFAppEventOnRenderLoadE
 }
 
 func init() {
+	//var renderLock sync.Mutex
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
@@ -350,6 +351,7 @@ func init() {
 			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case RenderProcessMessageReceived:
+			//renderLock.Lock()
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			processId := CefProcessId(getVal(2))
@@ -360,8 +362,9 @@ func init() {
 				*result = renderProcessMessageReceived(browse, frame, processId, message)
 			}
 			frame.Free()
-			//browse.Free()
+			browse.Free()
 			message.Free()
+			//renderLock.Unlock()
 		default:
 			return false
 		}

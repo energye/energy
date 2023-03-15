@@ -369,7 +369,7 @@ func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute co
 
 func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
 	if m.valueByIndex != nil {
-		m.valueByIndex = append(m.valueByIndex, value)
+		m.valueByIndex[index] = value
 	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByIndex).Call(m.Instance(), uintptr(index), value.Instance())
 	return api.GoBool(r1)
