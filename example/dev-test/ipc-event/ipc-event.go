@@ -44,7 +44,6 @@ func main() {
 	})
 
 	// 测试用的入参 和 出参
-	var count = 0
 	var r0 = "字符串{}{}{}字符串[][]字符串"
 	var r1 = 1000011
 	var r2 = 66666611.0123
@@ -77,36 +76,37 @@ func main() {
 	r10[1] = r9
 	r10[2] = r9
 	var tm = time.Now().Second()
-	var cha = 0
+	var testGoEmit = 0
+	var testGoEmitAndCallback = 0
+	var testEmitName = 0
+	var testResultArgs = 0
 
 	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
-		count++
+		testGoEmit++
 		args := context.ArgumentList().JSONArray()
 		if tm > 58 {
 			tm = time.Now().Second()
 		}
 		if time.Now().Second() >= tm+1 {
-			cha = args.GetIntByIndex(0) - cha
-			fmt.Println("testGoEmit", args.GetIntByIndex(0), cha)
-			cha = args.GetIntByIndex(0)
+			fmt.Println("testGoEmit", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testResultArgs:", testResultArgs)
 			tm = time.Now().Second()
 		}
 		//触发JS监听的事件，并传入参数
-		ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		//ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
-
 	ipc.On("testGoEmitAndCallback", func() {
+		testGoEmitAndCallback++
+		//fmt.Println("testGoEmitAndCallback")
 		//触发JS监听的函数，并传入参数
-		ipc.EmitAndCallback("onTestName2", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
-			fmt.Println("onTestName2 r1: ", r1)
-		})
+		//ipc.EmitAndCallback("onTestName2", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
+		//	//fmt.Println("onTestName2 r1: ", r1)
+		//})
 	})
 
 	ipc.On("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
-		fmt.Println("args1", args1)
-
-		return r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10
+		testResultArgs++
+		return r0, r1 + testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10
 	})
 
 	ipc.On("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
@@ -121,9 +121,8 @@ func main() {
 		fmt.Println("in9: ", in9)
 		return "result testInArgs", 10, true //没有回调函数这些参数不会返回
 	})
-	var num = 0
 	ipc.On("testEmitName", func(context ipc.IContext) {
-		num++
+		testEmitName++
 		argument := context.ArgumentList()
 		//fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
 		//fmt.Println("data:", argument.GetByIndex(1).Data())
@@ -132,7 +131,7 @@ func main() {
 			//fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
 
-		context.Result(r0, r1+count+num, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		context.Result(r0, r1+testGoEmit+testResultArgs, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
 	//cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
