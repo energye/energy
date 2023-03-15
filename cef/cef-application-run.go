@@ -59,8 +59,6 @@ func Run(app *TCEFApplication) {
 		logger.Debug("application process [", common.Args.ProcessType(), "] run end")
 		api.EnergyLibRelease()
 	}()
-	//ipc初始化
-	ipcInit()
 	//MacOSX 多进程时，需要调用StartSubProcess来启动子进程
 	if common.IsDarwin() && !consts.SingleProcess && !common.Args.IsMain() {
 		// 启动子进程

@@ -27,40 +27,37 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/cookie.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		//监听获取cookie事件
-		event.On("VisitCookie", func(context ipc.IIPCContext) {
-			fmt.Println("VisitCookie")
-			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			info.Chromium().VisitURLCookies("https://www.baidu.com", true, 1)
-			info.Chromium().VisitAllCookies(1)
-			context.Result().SetString("执行成功，结果将在 SetOnCookiesVisited 事件中获得")
-		})
-		//监听删除cookie
-		event.On("DeleteCookie", func(context ipc.IIPCContext) {
-			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			info.Chromium().DeleteCookies("", "", false)
-			context.Result().SetString("执行成功，结果将在 SetOnCookiesDeleted 事件中获得")
-		})
-		//监听设置cookie
-		event.On("SetCookie", func(context ipc.IIPCContext) {
-			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			info.Chromium().SetCookie("https://www.example.com", "example_cookie_name", "1234", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)
-			info.Chromium().SetCookie("https://www.example.com", "example_cookie_name2", "123422", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)
-			info.Chromium().SetCookie("https://www.baidu.com", "demo_name", "4321", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_NO_RESTRICTION, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 1)
-			context.Result().SetString("执行成功，结果将在 SetOnCookieSet 事件中获得")
-		})
+	//监听获取cookie事件
+	ipc.On("VisitCookie", func(context ipc.IContext) {
+		fmt.Println("VisitCookie")
+		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		info.Chromium().VisitURLCookies("https://www.baidu.com", true, 1)
+		info.Chromium().VisitAllCookies(1)
+		context.Result("执行成功，结果将在 SetOnCookiesVisited 事件中获得")
 	})
+	//监听删除cookie
+	ipc.On("DeleteCookie", func(context ipc.IContext) {
+		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		info.Chromium().DeleteCookies("", "", false)
+		context.Result("执行成功，结果将在 SetOnCookiesDeleted 事件中获得")
+	})
+	//监听设置cookie
+	ipc.On("SetCookie", func(context ipc.IContext) {
+		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		info.Chromium().SetCookie("https://www.example.com", "example_cookie_name", "1234", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)
+		info.Chromium().SetCookie("https://www.example.com", "example_cookie_name2", "123422", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)
+		info.Chromium().SetCookie("https://www.baidu.com", "demo_name", "4321", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_NO_RESTRICTION, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 1)
+		context.Result("执行成功，结果将在 SetOnCookieSet 事件中获得")
+	})
+
 	//在SetBrowserInit中设置cookie事件,这些事件将返回操作后的结果
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		//获取cookie时触发
 		event.SetOnCookiesVisited(func(sender lcl.IObject, cookie *cef.ICefCookie) {
 			fmt.Printf("SetOnCookiesVisited: %+v\n", cookie)
 			//将结果返回到html中
-			args := ipc.NewArgumentList()
 			data, _ := json.Marshal(cookie)
-			args.SetString(0, string(data), true)
-			browserWindow.Chromium().Emit("VisitCookieResult", args, nil)
+			ipc.Emit("VisitCookieResult", string(data))
 		})
 		//删除cookie时触发
 		event.SetOnCookiesDeleted(func(sender lcl.IObject, numDeleted int32) {

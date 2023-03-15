@@ -56,6 +56,7 @@ type IChromiumProc interface {
 	GoForward()
 	NotifyMoveOrResizeStarted()
 	CloseBrowser(forceClose bool)
+	ExecuteJavaScript(code, scriptURL string, startLine int32)
 	ShowDevTools(window ITCefWindowParent)
 	CloseDevTools(window ITCefWindowParent)
 	VisitAllCookies(id int32)

@@ -36,29 +36,28 @@ func main() {
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
 	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		//监听窗口状态事件
-		event.On("window-state", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			state := context.Arguments().GetInt32(0)
-			if state == 0 {
-				fmt.Println("窗口最小化")
-				bw.Minimize()
-			} else if state == 1 {
-				fmt.Println("窗口最大化/还原")
-				bw.Maximize()
-			}
-		})
-		//监听窗口关闭事件
-		event.On("window-close", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.CloseBrowserWindow()
-		})
-		event.On("os-info", func(context ipc.IIPCContext) {
-			fmt.Println("系统信息", version.OSVersion.ToString())
-			context.Result().SetString(version.OSVersion.ToString())
-		})
+	//监听窗口状态事件
+	ipc.On("window-state", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		state := context.ArgumentList().GetIntByIndex(0)
+		if state == 0 {
+			fmt.Println("窗口最小化")
+			bw.Minimize()
+		} else if state == 1 {
+			fmt.Println("窗口最大化/还原")
+			bw.Maximize()
+		}
 	})
+	//监听窗口关闭事件
+	ipc.On("window-close", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.CloseBrowserWindow()
+	})
+	ipc.On("os-info", func(context ipc.IContext) {
+		fmt.Println("系统信息", version.OSVersion.ToString())
+		context.Result(version.OSVersion.ToString())
+	})
+
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//
 	})

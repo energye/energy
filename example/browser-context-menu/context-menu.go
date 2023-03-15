@@ -123,13 +123,12 @@ func main() {
 			fmt.Printf("params: %+v\n", params)
 			fmt.Println("menuId: ", menuId, eventFlags, *result)
 			//在这里处理某个菜单项的点击事件所触发的命令，这里的命令对应着一个菜单项的ID
-			var argumentList = ipc.NewArgumentList()
-			argumentList.SetInt32(0, int32(menuId))
+			var clickMenuId = 0
 			switch menuId {
 			case menuId01:
-				argumentList.SetInt32(0, 1)
+				clickMenuId = 1
 			case menuId02:
-				argumentList.SetInt32(0, 2)
+				clickMenuId = 2
 			case menuIdEnable:
 				isMenuIdEnable = !isMenuIdEnable
 			case menuIdCheck:
@@ -141,8 +140,7 @@ func main() {
 			case menuIdRadio201, menuIdRadio202, menuIdRadio203:
 				radioDefault2Check = menuId
 			}
-			argumentList.SetString(1, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数需要设置一下 isDStr=true 不然中文乱码  后面这个小点会丢失 .", menuId), true)
-			window.Chromium().Emit("menu", argumentList, browser)
+			ipc.Emit("menu", clickMenuId, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数需要设置一下 isDStr=true 不然中文乱码  后面这个小点会丢失 .", menuId))
 			//*result = true
 		})
 	})

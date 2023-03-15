@@ -30,22 +30,20 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		event.On("zoom-inc", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_INC)
-			fmt.Println("zoom-inc")
-		})
-		event.On("zoom-dec", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
-			fmt.Println("zoom-dec")
-		})
-		event.On("zoom-reset", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
-			fmt.Println("zoom-reset")
-		})
+	ipc.On("zoom-inc", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_INC)
+		fmt.Println("zoom-inc")
+	})
+	ipc.On("zoom-dec", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
+		fmt.Println("zoom-dec")
+	})
+	ipc.On("zoom-reset", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
+		fmt.Println("zoom-reset")
 	})
 	//运行应用
 	cef.Run(cefApp)

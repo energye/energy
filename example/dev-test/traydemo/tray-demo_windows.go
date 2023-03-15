@@ -27,13 +27,13 @@ func LCLCefTrayDemo(browserWindow cef.IBrowserWindow) {
 	tray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
-	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-balloon", func(context ipc.IContext) {
 		fmt.Println("tray-show-balloon")
 		cefTray.Notice("气泡标题", "气泡内容", 2000)
 		cefTray.Hide()
 		fmt.Println("tray-show-balloon end")
 	})
-	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-main-window", func(context ipc.IContext) {
 		vb := !lclBw.Visible()
 		lclBw.SetVisible(vb)
 		if vb {
@@ -44,10 +44,10 @@ func LCLCefTrayDemo(browserWindow cef.IBrowserWindow) {
 		}
 		cefTray.Hide()
 	})
-	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
+	ipc.On("tray-close-main-window", func(context ipc.IContext) {
 		browserWindow.CloseBrowserWindow()
 	})
-	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-message-box", func(context ipc.IContext) {
 		cef.QueueAsyncCall(func(id int) {
 			lcl.ShowMessage("tray-show-message-box 提示消息")
 		})
@@ -72,14 +72,14 @@ func LCLVFTrayDemo(browserWindow cef.IBrowserWindow) {
 	tray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
 	})
-	ipc.IPC.Browser().On("tray-show-balloon", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-balloon", func(context ipc.IContext) {
 		fmt.Println("tray-show-balloon")
 		vfTray.Notice("气泡标题", "气泡内容", 2000)
 		vfTray.Hide()
 		fmt.Println("tray-show-balloon end")
 	})
 	var vfBwVisible = true
-	ipc.IPC.Browser().On("tray-show-main-window", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-main-window", func(context ipc.IContext) {
 		if vfBwVisible {
 			vfBw.Hide()
 			vfBwVisible = false
@@ -90,10 +90,10 @@ func LCLVFTrayDemo(browserWindow cef.IBrowserWindow) {
 
 		vfTray.Hide()
 	})
-	ipc.IPC.Browser().On("tray-close-main-window", func(context ipc.IIPCContext) {
+	ipc.On("tray-close-main-window", func(context ipc.IContext) {
 		browserWindow.CloseBrowserWindow()
 	})
-	ipc.IPC.Browser().On("tray-show-message-box", func(context ipc.IIPCContext) {
+	ipc.On("tray-show-message-box", func(context ipc.IContext) {
 		//在VF窗口组件中无法使用LCL组件
 		//cef.QueueAsyncCall(func(id int) {
 		//	lcl.ShowMessage("tray-show-message-box 提示消息")

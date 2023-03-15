@@ -36,15 +36,13 @@ func main() {
 			fmt.Println("OnFindResult:", identifier, count, selectionRect, activeMatchOrdinal, finalUpdate)
 		})
 	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		//监听事件
-		event.On("search-text", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			fmt.Println("搜索文本", bw)
-			text := context.Arguments().GetString(0)
-			fmt.Println("搜索内容", text)
-			bw.Browser().Find(text, false, false, true)
-		})
+	//监听事件
+	ipc.On("search-text", func(context ipc.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		fmt.Println("搜索文本", bw)
+		text := context.ArgumentList().GetStringByIndex(0)
+		fmt.Println("搜索内容", text)
+		bw.Browser().Find(text, false, false, true)
 	})
 	//运行应用
 	cef.Run(cefApp)
