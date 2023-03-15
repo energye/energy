@@ -29,7 +29,7 @@ type IContext interface {
 	ArgumentList() json.JSONArray //参数列表
 	BrowserId() int32             //事件所属 browser id
 	FrameId() int64               //事件所属 frame id
-	Replay() IReplay              //回复
+	Replay() IReplay              //回复, 触发事件返回结果是 IContext 时,该字段为nil
 	Result(data ...interface{})   //返回结果
 }
 

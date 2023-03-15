@@ -57,6 +57,7 @@ func createCallback(fn any) *callback {
 	}
 }
 
+// SetProcessMessage 设置进程消息对象, 不需要手动调用
 func SetProcessMessage(pm IProcessMessage) {
 	if browser == nil || pm == nil {
 		return
@@ -178,7 +179,7 @@ func EmitTargetAndCallback(name string, target ITarget, argument []any, fn any) 
 }
 
 //CheckOnEvent
-// IPC 检查 GO 中监听的事件是否存在, 并返回回调函数
+// IPC 检查 GO 中监听的事件是否存在,同时返回函数并移除
 func CheckOnEvent(name string) *callback {
 	if browser == nil || name == "" {
 		return nil
@@ -192,7 +193,7 @@ func CheckOnEvent(name string) *callback {
 }
 
 //CheckEmitCallback
-// IPC 检查 GO Emit 回调函数是否存在，并返回回调函数
+// IPC 检查 GO Emit 回调函数是否存在,同时返回函数并移除
 func CheckEmitCallback(id int32) *callback {
 	if browser == nil {
 		return nil
