@@ -13,7 +13,6 @@ package cef
 
 import (
 	"bytes"
-	"github.com/energye/energy/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"reflect"
 	"strconv"
@@ -110,7 +109,7 @@ func bindGoToJS(browser *ICefBrowser, frame *ICefFrame) {
 	}
 	if len(valueBindInfos) > 0 {
 		for i := 0; i < len(valueBindInfos); i++ {
-			imports.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
+			//imports.Proc(internale_CEFV8ValueRef_CommonValueBindInfo).Call(uintptr(unsafe.Pointer(valueBindInfos[i])))
 		}
 	}
 }

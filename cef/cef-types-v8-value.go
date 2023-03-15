@@ -237,7 +237,7 @@ func (m *ICefV8Value) GetIntValue() int32 {
 }
 
 func (m *ICefV8Value) GetUIntValue() uint32 {
-	r1, _, _ := imports.Proc(internale_CefV8Value_GetIntValue).Call(m.Instance())
+	r1, _, _ := imports.Proc(internale_CefV8Value_GetUIntValue).Call(m.Instance())
 	return uint32(r1)
 }
 

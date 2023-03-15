@@ -49,7 +49,7 @@ func (m *TCEFBrowserViewComponent) Instance() uintptr {
 
 // GetForBrowser
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {
-	imports.Proc(internale_CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), browser.Instance())
+	imports.Proc(internale_CEFBrowserViewComponent_GetForBrowser).Call(m.Instance(), browser.Instance())
 }
 
 // SetPreferAccelerators

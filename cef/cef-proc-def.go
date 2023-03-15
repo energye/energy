@@ -65,8 +65,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
 		dllimports.NewEnergyImport("CEFApplication_StopScheduler", 0),
-		dllimports.NewEnergyImport("CEFV8ValueRef_SetCommonRootName", 0),
-		dllimports.NewEnergyImport("CEFV8ValueRef_SetObjectRootName", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_CommonValueBindInfo", 0),
 		dllimports.NewEnergyImport("CEFV8ValueRef_ObjectValueBindInfo", 0),
 		//application - event
@@ -1149,8 +1147,6 @@ const (
 	internale_CEFApplication_Destroy
 	internale_CEFApplication_Free
 	internale_CEFApplication_StopScheduler
-	internale_CEFV8ValueRef_SetCommonRootName
-	internale_CEFV8ValueRef_SetObjectRootName
 	internale_CEFV8ValueRef_CommonValueBindInfo
 	internale_CEFV8ValueRef_ObjectValueBindInfo
 	//application - event
@@ -1442,7 +1438,6 @@ const (
 	internale_CEFWindow_UpdateSize
 	internale_CEFWindow_OnEnter
 	internale_CEFWindow_OnExit
-	//internale_CEFWindow_SetChromium
 	//CEFLinkedParentWindow
 	internale_CEFLinkedWindow_Create
 	internale_CEFLinkedWindow_GetHandle
