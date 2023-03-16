@@ -33,15 +33,15 @@ func (m *ipcRenderProcess) clear() {
 		m.ipc.Free()
 		m.ipc = nil
 	}
-	if m.onHandler != nil {
-		m.onHandler.clear()
-	}
+	//if m.onHandler != nil {
+	//	m.onHandler.clear()
+	//}
 }
 
 // makeCtx ipc 和 bind
 func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
 	m.makeIPC(context)
-	m.makeBind(context)
+	//m.makeBind(context)
 }
 
 // makeIPC ipc
@@ -110,28 +110,39 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			count            uint32
 			argsV8ValueArray *TCefV8ValueArray
 			resultData       []byte
+			ret              *ICefV8Value
+			replyMessage     *ICefProcessMessage
 		)
+		defer func() {
+			if argsBytes != nil {
+				args.Free()
+				argsBytes = nil
+			}
+			if argsV8ValueArray != nil {
+				argsV8ValueArray.Free()
+			}
+			if ret != nil {
+				ret.Free()
+			}
+			if replyMessage != nil {
+				replyMessage.Free()
+			}
+		}()
 		if args.IsValid() {
 			size := args.GetSize()
 			argsBytes = make([]byte, size)
 			count = args.GetData(argsBytes, 0)
-			args.Free()
 		}
 		if callback.context.Enter() {
 			if count > 0 {
 				argsV8ValueArray, _ = ipcValueConvert.BytesToV8ArrayValue(argsBytes)
 			}
-			ret := callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
+			ret = callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
 			resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
-			ret.Free()
 			callback.context.Exit()
 		}
-		if argsV8ValueArray != nil {
-			argsV8ValueArray.Free()
-		}
-		argsBytes = nil
 		if messageId != 0 { // callback
-			replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
+			replyMessage = ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
 			replyMessage.ArgumentList().SetInt(0, messageId)
 			if resultData != nil {
 				replyMessage.ArgumentList().SetBool(1, true) //有返回值
@@ -141,7 +152,6 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 				replyMessage.ArgumentList().SetBool(1, false) //无返回值
 			}
 			frame.SendProcessMessage(consts.PID_BROWSER, replyMessage)
-			replyMessage.Free()
 		}
 		result = true
 	}

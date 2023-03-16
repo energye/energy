@@ -88,8 +88,8 @@ func init() {
 			if !*result {
 				*result = browserProcessMessageReceived(browse, frame, processId, message)
 			}
-			frame.Free()
-			browse.Free()
+			//frame.Free()
+			//browse.Free()
 			message.Free()
 			//browserLock.Unlock()
 		case ChromiumEventOnResourceLoadComplete:
