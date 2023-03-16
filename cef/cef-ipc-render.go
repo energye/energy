@@ -121,9 +121,6 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			if argsV8ValueArray != nil {
 				argsV8ValueArray.Free()
 			}
-			if ret != nil {
-				ret.Free()
-			}
 			if replyMessage != nil {
 				replyMessage.Free()
 			}
@@ -139,6 +136,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			}
 			ret = callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
 			resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+			ret.Free()
 			callback.context.Exit()
 		}
 		if messageId != 0 { // callback

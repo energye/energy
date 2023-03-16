@@ -30,6 +30,7 @@ func appMainRunCallback() {
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	return
 	if message.Name() == internalProcessMessageIPCEmitReply {
 		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
 	} else if message.Name() == internalProcessMessageIPCOn {

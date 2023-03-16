@@ -298,6 +298,12 @@ func (m *ICefV8Value) HasValueByIndex(index int32) bool {
 
 // deleteValueByKey internal
 func (m *ICefV8Value) deleteValueByKey(key string) bool {
+	if m.valueByKeys != nil {
+		if v, ok := m.valueByKeys[key]; ok {
+			v.Free()
+			delete(m.valueByKeys, key)
+		}
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_DeleteValueByKey).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
@@ -311,6 +317,12 @@ func (m *ICefV8Value) DeleteValueByKey(key string) bool {
 }
 
 func (m *ICefV8Value) DeleteValueByIndex(index int) bool {
+	if m.valueByIndex != nil {
+		if v := m.valueByIndex[index]; v != nil {
+			v.Free()
+			m.valueByIndex[index] = nil
+		}
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_DeleteValueByIndex).Call(m.Instance(), uintptr(int32(index)))
 	return api.GoBool(r1)
 }
@@ -320,11 +332,19 @@ func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 	if !m.IsObject() {
 		return nil
 	}
+	if m.valueByKeys == nil {
+		m.valueByKeys = make(map[string]*ICefV8Value)
+	}
+	if v, ok := m.valueByKeys[key]; ok {
+		v.Free()
+	}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetValueByKey).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
+	v := &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
+	m.valueByKeys[key] = v
+	return v
 }
 
 // GetValueByKey export
@@ -340,18 +360,28 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 	if !m.IsArray() {
 		return nil
 	}
+	if m.valueByIndex == nil {
+		m.valueByIndex = make([]*ICefV8Value, m.GetArrayLength())
+	}
+	if v := m.valueByIndex[index]; v != nil {
+		v.Free()
+	}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetValueByIndex).Call(m.Instance(), uintptr(int32(index)), uintptr(unsafe.Pointer(&result)))
-	return &ICefV8Value{
+	v := &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
+	m.valueByIndex[index] = v
+	return v
 }
 
 // setValueByKey internal
 func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
 	if m.valueByKeys != nil {
 		if v, ok := m.valueByKeys[key]; ok {
-			v.Free()
+			if v != value {
+				v.Free()
+			}
 		}
 		m.valueByKeys[key] = value
 	}
@@ -369,6 +399,11 @@ func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute co
 
 func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
 	if m.valueByIndex != nil {
+		if v := m.valueByIndex[index]; v != nil {
+			if v != value {
+				v.Free()
+			}
+		}
 		m.valueByIndex[index] = value
 	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByIndex).Call(m.Instance(), uintptr(index), value.Instance())

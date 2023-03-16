@@ -59,7 +59,7 @@ func (m *ICefProcessMessage) Instance() uintptr {
 
 // ArgumentList 参数列表
 func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
-	if m.name == "" {
+	if m.Name() == "" {
 		return nil
 	}
 	if m.argumentList == nil {
@@ -97,7 +97,7 @@ func (m *ICefProcessMessage) Name() string {
 }
 
 func (m *ICefProcessMessage) Free() {
-	if m.instance != nil {
+	if m != nil && m.instance != nil {
 		m.ArgumentList().Free()
 		m.base.Free(m.Instance())
 		m.instance = nil

@@ -726,12 +726,44 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *I
 	message.Free()
 }
 
-func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message json.JSONObject) {
+	if !m.initialized {
+		m.initialized = m.Initialized()
+		return
+	}
+	var data = message.Bytes()
+	imports.Proc(internale_CEFChromium_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(name), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
+	message.Free()
+}
+
+func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+	if !m.initialized {
+		m.initialized = m.Initialized()
+		return
+	}
+	message := json.NewJSONObject(nil)
+	message.Set("id", messageId)
+	message.Set("event", eventName)
+
+	argumentJSONArray := json.NewJSONArray(nil)
+	for _, result := range data {
+		switch result.(type) {
+		case error:
+			argumentJSONArray.Add(result.(error).Error())
+		default:
+			argumentJSONArray.Add(result)
+		}
+	}
+	message.Set("argumentList", argumentJSONArray)
+	m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, targetProcess, message)
+
+	return
+
 	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
 		message := ProcessMessageRef.new(internalProcessMessageIPCOn)
 		argument := message.ArgumentList()
 		argument.SetInt(0, messageId)
-		argument.SetString(1, name)
+		argument.SetString(1, eventName)
 		if data != nil && len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
 			for _, result := range data {
@@ -752,7 +784,7 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, ta
 		if browse.IsValid() {
 			frame := browse.GetFrameById(target.GetFrameId())
 			if frame.IsValid() {
-				frame.SendProcessMessageForIPC(messageId, name, targetProcess, target, data)
+				frame.SendProcessMessageForIPC(messageId, eventName, targetProcess, target, data)
 			}
 		}
 	}

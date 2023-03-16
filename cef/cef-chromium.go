@@ -35,6 +35,7 @@ type TCEFChromium struct {
 	browserHandle types.HWND
 	widgetHandle  types.HWND
 	renderHandle  types.HWND
+	initialized   bool
 }
 
 // NewChromium 创建一个新的 TCEFChromium

@@ -288,7 +288,7 @@ func (m *ICefListValue) SetList(index uint32, value *ICefListValue) (result bool
 }
 
 func (m *ICefListValue) Free() {
-	if m.instance != nil {
+	if m != nil && m.instance != nil {
 		m.Clear()
 		m.base.Free(m.Instance())
 		m.instance = nil

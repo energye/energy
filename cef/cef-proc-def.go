@@ -598,6 +598,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendProcessMessage", 0),
+		dllimports.NewEnergyImport("CEFChromium_SendProcessMessageForJSONBytes", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),
@@ -1680,6 +1681,7 @@ const (
 	internale_CEFChromium_SetDefaultEncoding
 	internale_CEFChromium_GetDefaultEncoding
 	internale_CEFChromium_SendProcessMessage
+	internale_CEFChromium_SendProcessMessageForJSONBytes
 	//ICefFrame
 	internale_CEFFrame_Undo
 	internale_CEFFrame_Redo

@@ -35,7 +35,6 @@ func main() {
 
 	// 测试用的入参 和 出参
 	var r0 = "字符串{}{}{}字符串[][]字符串"
-	var r1 = 1000011
 	var r2 = 66666611.0123
 	var r3 = true
 	var r4 = &MyError{error: "返回值"}
@@ -71,6 +70,14 @@ func main() {
 	var testEmitName = 0
 	var testResultArgs = 0
 	var onTestName1Emit = 0
+	var ii = 0
+
+	var printSecond = func() {
+		for {
+			time.Sleep(time.Second)
+			fmt.Println("ii:", ii)
+		}
+	}
 
 	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
@@ -97,7 +104,7 @@ func main() {
 
 	ipc.On("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
 		testResultArgs++
-		return r0, r1 + testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10
+		return r0, testResultArgs, r2, r3, r4, r5, r6, r7, r8, r9, r10
 	})
 
 	ipc.On("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
@@ -122,7 +129,7 @@ func main() {
 			//fmt.Println(i, "type:", value.Type(), "isInt:", value.IsInt())
 		}
 
-		context.Result(r0, r1+testGoEmit+testResultArgs, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		context.Result(r0, testEmitName, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
 	//cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
@@ -158,12 +165,20 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
+		go printSecond()
 		go func() {
 			//for {
 			//	time.Sleep(time.Second / 1000)
 			//	onTestName1Emit++
 			//	ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 			//}
+
+			for {
+				time.Sleep(time.Millisecond)
+				ii++
+				//time.Sleep(time.Second)
+				ipc.Emit("onTestName1", r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+			}
 		}()
 	})
 	//运行应用
