@@ -159,11 +159,11 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 		go func() {
-			for {
-				time.Sleep(time.Second / 1000)
-				onTestName1Emit++
-				ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-			}
+			//for {
+			//	time.Sleep(time.Second / 1000)
+			//	onTestName1Emit++
+			//	ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+			//}
 		}()
 	})
 	//运行应用

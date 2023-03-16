@@ -389,6 +389,7 @@ type ICefV8Value struct {
 	valueType    V8ValueType
 	valueByIndex []*ICefV8Value
 	valueByKeys  map[string]*ICefV8Value
+	cantFree     bool
 }
 
 // ICefV8ValueKeys

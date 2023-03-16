@@ -90,10 +90,10 @@ func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, argume
 		exception.SetValue("ipc.on event callback should be a function")
 		return
 	}
+	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
-
 	//ipc on
-	m.onHandler.addCallback(onNameValue, &ipcCallback{arguments: arguments, context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
+	m.onHandler.addCallback(onNameValue, &ipcCallback{ /*arguments: arguments, */ context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
 	result = true
 	return
 }
@@ -242,10 +242,11 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		//回调函数
 		if emitCallback != nil {
 			//回调函数临时存放到缓存中
+			emitCallback.SetCanNotFree(true)
 			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
-				arguments: arguments,
-				context:   context,
-				function:  V8ValueRef.UnWrap(emitCallback),
+				//arguments: arguments,
+				context:  context,
+				function: V8ValueRef.UnWrap(emitCallback),
 			})
 		}
 		ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)

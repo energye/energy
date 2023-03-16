@@ -93,8 +93,15 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.cwcap = &customWindowCaption{
 		bw: &m.LCLBrowserWindow,
 	}
-	//设置 CEF Chromium IPC
-	ipc.SetProcessMessage(m.chromium.(*TCEFChromium))
+	go func() {
+		for true {
+			if m.chromium.Initialized() {
+				//设置 CEF Chromium IPC
+				ipc.SetProcessMessage(m.chromium.(*TCEFChromium))
+				break
+			}
+		}
+	}()
 }
 
 // MainWindow

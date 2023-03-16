@@ -495,11 +495,15 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 	return api.GoBool(r1)
 }
 
+func (m *ICefV8Value) SetCanNotFree(v bool) {
+	m.cantFree = v
+}
+
 func (m *ICefV8Value) Free() {
 	if m.instance != nil {
 		if m.valueByIndex != nil {
 			for _, v := range m.valueByIndex {
-				if v != nil && v.instance != nil {
+				if v != nil {
 					v.Free()
 				}
 			}
@@ -507,7 +511,7 @@ func (m *ICefV8Value) Free() {
 		}
 		if m.valueByKeys != nil {
 			for _, v := range m.valueByKeys {
-				if v != nil && v.instance != nil {
+				if v != nil {
 					v.Free()
 				}
 			}
@@ -515,8 +519,10 @@ func (m *ICefV8Value) Free() {
 		}
 		//var data = m.Instance()
 		//imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
-		m.base.Free(m.Instance())
-		m.instance = nil
+		if !m.cantFree {
+			m.base.Free(m.Instance())
+			m.instance = nil
+		}
 	}
 }
 
@@ -577,19 +583,17 @@ func (m *TCefV8ValueArray) Free() {
 	if m == nil {
 		return
 	}
-	if m.instance != nil {
-		if m.argumentsCollect != nil {
-			for _, v := range m.argumentsCollect {
-				if v != nil && v.instance != nil {
-					v.Free()
-				}
+	if m.argumentsCollect != nil {
+		for _, v := range m.argumentsCollect {
+			if v != nil && v.instance != nil {
+				v.Free()
 			}
 		}
-		m.instance = nil
-		m.arguments = 0
 		m.argumentsCollect = nil
-		m.argumentsLength = 0
 	}
+	m.instance = nil
+	m.arguments = 0
+	m.argumentsLength = 0
 }
 
 func (m *TCefV8ValueArray) Add(value *ICefV8Value) {
@@ -759,6 +763,7 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 func (*cefV8Value) UnWrap(data *ICefV8Value) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_CefV8ValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.base.Free(data.Instance())
 	data.instance = unsafe.Pointer(result)
 	return data
 }

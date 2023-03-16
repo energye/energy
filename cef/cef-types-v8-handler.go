@@ -86,7 +86,7 @@ func init() {
 				*exceptionPtr = 0
 			}
 			*resultPtr = result
-			//arguments.Free()
+			arguments.Free()
 			object.Free()
 		default:
 			return false
