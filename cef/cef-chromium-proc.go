@@ -727,6 +727,10 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *I
 }
 
 func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+	if m.isSending {
+		return
+	}
+	m.isSending = true
 	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
 		message := ProcessMessageRef.new(internalProcessMessageIPCOn)
 		argument := message.ArgumentList()
@@ -756,6 +760,7 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, name string, ta
 			}
 		}
 	}
+	m.isSending = false
 }
 
 //--------TCEFChromium proc begin--------

@@ -295,7 +295,9 @@ func (m *ICefDictionaryValue) SetList(key string, value *ICefListValue) (result 
 }
 
 func (m *ICefDictionaryValue) Free() {
-	m.Clear()
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.Clear()
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }

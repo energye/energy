@@ -32,16 +32,6 @@ func main() {
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
 	cef.BrowserWindow.Config.Title = "Energy - ipc-event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	//内置http服务链接安全配置
-	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
-		fmt.Println("主进程启动 创建一个内置http服务")
-		//通过内置http服务加载资源
-		server := assetserve.NewAssetsHttpServer()
-		server.PORT = 22022
-		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
-		go server.StartHttpServer()
-	})
 
 	// 测试用的入参 和 出参
 	var r0 = "字符串{}{}{}字符串[][]字符串"
@@ -80,6 +70,7 @@ func main() {
 	var testGoEmitAndCallback = 0
 	var testEmitName = 0
 	var testResultArgs = 0
+	var onTestName1Emit = 0
 
 	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
@@ -89,11 +80,11 @@ func main() {
 			tm = time.Now().Second()
 		}
 		if time.Now().Second() >= tm+1 {
-			fmt.Println("testGoEmit", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testResultArgs:", testResultArgs)
+			fmt.Println("GetIntByIndex", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testResultArgs:", testResultArgs, "onTestName1Emit:", onTestName1Emit)
 			tm = time.Now().Second()
 		}
 		//触发JS监听的事件，并传入参数
-		//ipc.Emit("onTestName1", r0, r1+count, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		//ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 	ipc.On("testGoEmitAndCallback", func() {
 		testGoEmitAndCallback++
@@ -157,6 +148,23 @@ func main() {
 				}
 			})
 		}
+	})
+	//内置http服务链接安全配置
+	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
+		fmt.Println("主进程启动 创建一个内置http服务")
+		//通过内置http服务加载资源
+		server := assetserve.NewAssetsHttpServer()
+		server.PORT = 22022
+		server.AssetsFSName = "resources" //必须设置目录名
+		server.Assets = &resources
+		go server.StartHttpServer()
+		go func() {
+			for {
+				time.Sleep(time.Second / 1000)
+				onTestName1Emit++
+				ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+			}
+		}()
 	})
 	//运行应用
 	cef.Run(cefApp)

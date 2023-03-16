@@ -194,18 +194,20 @@ func (m *ICefValue) SetList(value *ICefListValue) (result bool) {
 }
 
 func (m *ICefValue) Free() {
-	if m.binaryValue != nil && m.binaryValue.instance != nil {
-		m.binaryValue.Free()
-		m.binaryValue = nil
+	if m.instance != nil {
+		if m.binaryValue != nil {
+			m.binaryValue.Free()
+			m.binaryValue = nil
+		}
+		if m.dictionaryValue != nil {
+			m.dictionaryValue.Free()
+			m.dictionaryValue = nil
+		}
+		if m.listValue != nil {
+			m.listValue.Free()
+			m.listValue = nil
+		}
+		m.base.Free(m.Instance())
+		m.instance = nil
 	}
-	if m.dictionaryValue != nil && m.dictionaryValue.instance != nil {
-		m.dictionaryValue.Free()
-		m.dictionaryValue = nil
-	}
-	if m.listValue != nil && m.listValue.instance != nil {
-		m.listValue.Free()
-		m.listValue = nil
-	}
-	m.base.Free(m.Instance())
-	m.instance = nil
 }

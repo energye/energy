@@ -95,6 +95,8 @@ func (m *ICefBinaryValue) GetData(buffer []byte, dataOffset uint32) uint32 {
 }
 
 func (m *ICefBinaryValue) Free() {
-	m.base.Free(m.Instance())
-	m.instance = nil
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
