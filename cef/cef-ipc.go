@@ -27,6 +27,12 @@ const (
 	internalProcessMessageIPCOn        = "onHandler"   // 进程消息 on监听事件处理
 )
 
+const (
+	ipc_id           = "id"
+	ipc_event        = "event"
+	ipc_argumentList = "argumentList"
+)
+
 var (
 	internalObjectRootName = "energy"         // GO 和 V8Value 绑定根对象名
 	ipcRender              *ipcRenderProcess  //渲染进程 IPC

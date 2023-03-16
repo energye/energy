@@ -614,6 +614,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsMain", 0),
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
+		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageForJSONBytes", 0),
 		dllimports.NewEnergyImport("CEFFrame_LoadRequest", 0),
 		dllimports.NewEnergyImport("CEFFrame_Browser", 0),
 		dllimports.NewEnergyImport("CEFFrame_GetV8Context", 0),
@@ -1096,6 +1097,13 @@ func init() {
 		dllimports.NewEnergyImport("CefCommandLine_GetArguments", 0),
 		dllimports.NewEnergyImport("CefCommandLine_AppendArgument", 0),
 		dllimports.NewEnergyImport("CefCommandLine_PrependWrapper", 0),
+		//TValueConvert
+		dllimports.NewEnergyImport("ValueConvert_BytesToProcessMessage", 0),
+		dllimports.NewEnergyImport("ValueConvert_BytesToListValue", 0),
+		dllimports.NewEnergyImport("ValueConvert_BytesToDictionaryValue", 0),
+		dllimports.NewEnergyImport("ValueConvert_BytesToV8ValueArray", 0),
+		dllimports.NewEnergyImport("ValueConvert_BytesToV8Array", 0),
+		dllimports.NewEnergyImport("ValueConvert_BytesToV8Object", 0),
 	}
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
@@ -1697,6 +1705,7 @@ const (
 	internale_CEFFrame_IsMain
 	internale_CEFFrame_IsFocused
 	internale_CEFFrame_SendProcessMessage
+	internale_CEFFrame_SendProcessMessageForJSONBytes
 	internale_CEFFrame_LoadRequest
 	internale_CEFFrame_Browser
 	internale_CEFFrame_GetV8Context
@@ -2179,4 +2188,11 @@ const (
 	internale_CefCommandLine_GetArguments
 	internale_CefCommandLine_AppendArgument
 	internale_CefCommandLine_PrependWrapper
+	//TValueConvert
+	internale_ValueConvert_BytesToProcessMessage
+	internale_ValueConvert_BytesToListValue
+	internale_ValueConvert_BytesToDictionaryValue
+	internale_ValueConvert_BytesToV8ValueArray
+	internale_ValueConvert_BytesToV8Array
+	internale_ValueConvert_BytesToV8Object
 )

@@ -96,52 +96,57 @@ func (m *ICefFrame) IsFocused() bool {
 	return api.GoBool(r1)
 }
 
-//// SendProcessMessageByIPC 发送进程消息
-//func (m *ICefFrame) SendProcessMessageByIPC(targetProcess CefProcessId, processMessage *ipc.ICefProcessMessage) ProcessMessageError {
-//	if processMessage == nil || processMessage.Name == "" || processMessage.ArgumentList == nil {
-//		return PMErr_REQUIRED_PARAMS_IS_NULL
-//	} else if ipc.InternalIPCNameCheck(processMessage.Name) {
-//		return PMErr_NAME_CANNOT_USED
-//	}
-//	data := processMessage.ArgumentList.Package()
-//	r1 := _CEFFrame_SendProcessMessageByIPC(m.Browser.Identifier(), m.Id, processMessage.Name, targetProcess, int32(processMessage.ArgumentList.Size()), uintptr(unsafe.Pointer(&data[0])), uintptr(len(data)))
-//	return ProcessMessageError(r1)
-//}
-//
-//func _CEFFrame_SendProcessMessageByIPC(browseId int32, frameId int64, name string, targetProcess CefProcessId, itemLength int32, data, dataLen uintptr) uintptr {
-//	r1, _, _ := imports.Proc(internale_CEFFrame_SendProcessMessageByIPC).Call(uintptr(browseId), uintptr(unsafe.Pointer(&frameId)), api.PascalStr(name), uintptr(targetProcess), uintptr(itemLength), data, dataLen)
-//	return r1
-//}
-
 // SendProcessMessage 发送进程消息
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
 	imports.Proc(internale_CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 	message.Free()
 }
 
+// SendProcessMessageForJSONBytes 发送进程消息
+func (m *ICefFrame) SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message json.JSONObject) {
+	var data = message.Bytes()
+	imports.Proc(internale_CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(name), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
+	message.Free()
+}
+
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, name string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
-	message := ProcessMessageRef.new(internalProcessMessageIPCOn)
-	if data != nil && len(data) > 0 {
-		argumentJSONArray := json.NewJSONArray(nil)
-		for _, result := range data {
-			switch result.(type) {
-			case error:
-				argumentJSONArray.Add(result.(error).Error())
-			default:
-				argumentJSONArray.Add(result)
-			}
+func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+	message := json.NewJSONObject(nil)
+	message.Set(ipc_id, messageId)
+	message.Set(ipc_event, eventName)
+	argumentJSONArray := json.NewJSONArray(nil)
+	for _, result := range data {
+		switch result.(type) {
+		case error:
+			argumentJSONArray.Add(result.(error).Error())
+		default:
+			argumentJSONArray.Add(result)
 		}
-		argument := message.ArgumentList()
-		argument.SetInt(0, messageId)
-		argument.SetString(1, name)
-		binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
-		argument.SetBinary(2, binaryValue)
-		argumentJSONArray.Free()
 	}
-	m.SendProcessMessage(targetProcess, message)
+	message.Set(ipc_argumentList, argumentJSONArray)
+	m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, targetProcess, message)
+	//return
+	//message := ProcessMessageRef.new(internalProcessMessageIPCOn)
+	//if data != nil && len(data) > 0 {
+	//	argumentJSONArray := json.NewJSONArray(nil)
+	//	for _, result := range data {
+	//		switch result.(type) {
+	//		case error:
+	//			argumentJSONArray.Add(result.(error).Error())
+	//		default:
+	//			argumentJSONArray.Add(result)
+	//		}
+	//	}
+	//	argument := message.ArgumentList()
+	//	argument.SetInt(0, messageId)
+	//	argument.SetString(1, name)
+	//	binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
+	//	argument.SetBinary(2, binaryValue)
+	//	argumentJSONArray.Free()
+	//}
+	//m.SendProcessMessage(targetProcess, message)
 }
 
 func (m *ICefFrame) LoadRequest(request *ICefRequest) {
