@@ -15,9 +15,12 @@ package cef
 
 import (
 	"errors"
+	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/golcl/lcl/api"
 	jsoniter "github.com/json-iterator/go"
+	"unsafe"
 )
 
 // ipcValueConvert
@@ -508,4 +511,64 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToDictionaryValue(v8value *I
 	}
 	keys.Free()
 	return dictionaryValue, nil
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToProcessMessage(name string, array json.JSONArray) *ICefProcessMessage {
+	if array == nil || !array.IsArray() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToProcessMessage).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &ICefProcessMessage{instance: unsafe.Pointer(result)}
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToListValue(array json.JSONArray) *ICefListValue {
+	if array == nil || !array.IsArray() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToListValue).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &ICefListValue{instance: unsafe.Pointer(result)}
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToDictionaryValue(array json.JSONObject) *ICefDictionaryValue {
+	if array == nil || !array.IsObject() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToDictionaryValue).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &ICefDictionaryValue{instance: unsafe.Pointer(result)}
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToV8ValueArray(array json.JSONArray) *TCefV8ValueArray {
+	if array == nil || !array.IsArray() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToV8ValueArray).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &TCefV8ValueArray{instance: unsafe.Pointer(result)} //
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToV8Array(array json.JSONArray) *ICefV8Value {
+	if array == nil || !array.IsArray() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToV8Array).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{instance: unsafe.Pointer(result)}
+}
+
+func (m *v8ValueProcessMessageConvert) BytesToV8Object(array json.JSONObject) *ICefV8Value {
+	if array == nil || !array.IsObject() {
+		return nil
+	}
+	var data = array.Bytes()
+	var result uintptr
+	imports.Proc(internale_ValueConvert_BytesToV8Object).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	return &ICefV8Value{instance: unsafe.Pointer(result)}
 }
