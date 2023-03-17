@@ -101,56 +101,66 @@ func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, argume
 
 // ipcGoExecuteJSEvent Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	argument := message.ArgumentList()
-	name := argument.GetString(1)
-	if callback := ipcRender.onHandler.getCallback(name); callback != nil {
-		messageId := argument.GetInt(0)
-		args := argument.GetBinary(2)
+	//argument := message.ArgumentList()
+	argumentListBytes := message.ArgumentList().GetBinary(0)
+	var messageDataBytes []byte
+	if argumentListBytes.IsValid() {
+		size := argumentListBytes.GetSize()
+		messageDataBytes = make([]byte, size)
+		c := argumentListBytes.GetData(messageDataBytes, 0)
+		argumentListBytes.Free() //立即释放掉
+		if c == 0 {
+			result = false
+			return
+		}
+	}
+	var messageId int32
+	var emitName string
+	var argument json.JSON
+	var argumentList json.JSONArray
+	if messageDataBytes != nil {
+		argument = json.NewJSON(messageDataBytes)
+		messageId = int32(argument.GetIntByKey(ipc_id))
+		emitName = argument.GetStringByKey(ipc_event)
+		argumentList = argument.GetArrayByKey(ipc_argumentList)
+		messageDataBytes = nil
+	}
+	defer func() {
+		if argument != nil {
+			argument.Free()
+		}
+	}()
+
+	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
 		var (
-			argsBytes        []byte
-			count            uint32
-			argsV8ValueArray *TCefV8ValueArray
-			resultData       []byte
-			ret              *ICefV8Value
-			replyMessage     *ICefProcessMessage
+			resultData   []byte
+			ret          *ICefV8Value
+			replyMessage *ICefProcessMessage
 		)
 		defer func() {
-			if argsBytes != nil {
-				args.Free()
-				argsBytes = nil
-			}
-			if argsV8ValueArray != nil {
-				argsV8ValueArray.Free()
-			}
 			if replyMessage != nil {
 				replyMessage.Free()
 			}
-		}()
-		if args.IsValid() {
-			size := args.GetSize()
-			argsBytes = make([]byte, size)
-			count = args.GetData(argsBytes, 0)
-		}
-		if callback.context.Enter() {
-			if count > 0 {
-				argsV8ValueArray = ipcValueConvert.BytesToV8ValueArray(argsBytes)
+			if argumentList != nil {
+				argumentList.Free()
 			}
-			ret = callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
-			resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+		}()
+		if callback.context.Enter() {
+			ret = callback.function.ExecuteFunctionWithContextForArgsBytes(callback.context, nil, argumentList.Bytes())
+			if messageId != 0 { // callback
+				resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+				returnArgs := json.NewJSONArray(nil)
+				returnArgs.Add(messageId) //0 消息ID
+				returnArgs.Add(false)     //1 是否有返回值
+				if resultData != nil {
+					returnArgs.SetByIndex(1, true) //1 有返回值
+					returnArgs.Add(resultData)     //2 result []byte
+				}
+				frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmitReply, consts.PID_BROWSER, returnArgs.Bytes())
+				returnArgs.Free()
+			}
 			ret.Free()
 			callback.context.Exit()
-		}
-		if messageId != 0 { // callback
-			replyMessage = ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
-			replyMessage.ArgumentList().SetInt(0, messageId)
-			if resultData != nil {
-				replyMessage.ArgumentList().SetBool(1, true) //有返回值
-				binaryValue := BinaryValueRef.New(resultData)
-				replyMessage.ArgumentList().SetBinary(2, binaryValue) //result []byte
-			} else {
-				replyMessage.ArgumentList().SetBool(1, false) //无返回值
-			}
-			frame.SendProcessMessage(consts.PID_BROWSER, replyMessage)
 		}
 		result = true
 	}

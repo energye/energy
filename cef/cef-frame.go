@@ -110,7 +110,7 @@ func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetPro
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, messageName, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+func (m *ICefFrame) EmitRender(messageId int32, eventName string, target ipc.ITarget, data ...any) {
 	message := json.NewJSONObject(nil)
 	message.Set(ipc_id, messageId)
 	message.Set(ipc_event, eventName)
@@ -124,28 +124,8 @@ func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, messageName, event
 		}
 	}
 	message.Set(ipc_argumentList, argumentJSONArray)
-	m.SendProcessMessageForJSONBytes(messageName, targetProcess, message.Bytes())
+	m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, PID_RENDER, message.Bytes())
 	message.Free()
-	//return
-	//message := ProcessMessageRef.new(internalProcessMessageIPCOn)
-	//if data != nil && len(data) > 0 {
-	//	argumentJSONArray := json.NewJSONArray(nil)
-	//	for _, result := range data {
-	//		switch result.(type) {
-	//		case error:
-	//			argumentJSONArray.Add(result.(error).Error())
-	//		default:
-	//			argumentJSONArray.Add(result)
-	//		}
-	//	}
-	//	argument := message.ArgumentList()
-	//	argument.SetInt(0, messageId)
-	//	argument.SetString(1, name)
-	//	binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
-	//	argument.SetBinary(2, binaryValue)
-	//	argumentJSONArray.Free()
-	//}
-	//m.SendProcessMessage(targetProcess, message)
 }
 
 func (m *ICefFrame) LoadRequest(request *ICefRequest) {

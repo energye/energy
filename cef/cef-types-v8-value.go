@@ -651,10 +651,6 @@ func (m *TCefV8ValueArray) Free() {
 		}
 		m.argumentsCollect = nil
 	}
-	if m.instance != nil {
-		//var ptr = m.Instance()
-		//imports.Proc(internale_ValueConvert_BytesToV8ValueArrayFree).Call(uintptr(unsafe.Pointer(&ptr)))
-	}
 	m.instance = nil
 	m.arguments = 0
 	m.argumentsLength = 0

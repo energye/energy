@@ -15,7 +15,6 @@ package ipc
 
 import (
 	"github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
 	"reflect"
 	"sync"
 )
@@ -124,7 +123,7 @@ func Emit(name string, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
-	browser.processMessage.SendProcessMessageForIPC(0, "", name, consts.PID_RENDER, nil, argument...)
+	browser.processMessage.EmitRender(0, name, nil, argument...)
 }
 
 //EmitAndCallback
@@ -141,7 +140,7 @@ func EmitAndCallback(name string, argument []any, fn any) {
 		return
 	}
 	messageId := browser.addEmitCallback(fn)
-	browser.processMessage.SendProcessMessageForIPC(messageId, "", name, consts.PID_RENDER, nil, argument...)
+	browser.processMessage.EmitRender(messageId, name, nil, argument...)
 }
 
 //EmitTarget
@@ -157,7 +156,7 @@ func EmitTarget(name string, target ITarget, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
-	browser.processMessage.SendProcessMessageForIPC(0, "", name, consts.PID_RENDER, target, argument...)
+	browser.processMessage.EmitRender(0, name, target, argument...)
 }
 
 //EmitTargetAndCallback
@@ -175,7 +174,7 @@ func EmitTargetAndCallback(name string, target ITarget, argument []any, fn any) 
 		return
 	}
 	messageId := browser.addEmitCallback(fn)
-	browser.processMessage.SendProcessMessageForIPC(messageId, "", name, consts.PID_RENDER, target, argument...)
+	browser.processMessage.EmitRender(messageId, name, target, argument...)
 }
 
 //CheckOnEvent

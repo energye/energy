@@ -69,7 +69,8 @@ type IChromiumProc interface {
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
-	SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
+	//SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
+	SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message json.JSONObject)
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
 	SendCaptureLostEvent()
@@ -740,7 +741,7 @@ func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, messageName, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.ITarget, data ...any) {
 	if !m.initialized {
 		m.initialized = m.Initialized()
 		return
@@ -759,48 +760,17 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, messageName, ev
 			}
 		}
 		message.Set(ipc_argumentList, argumentJSONArray)
-		m.SendProcessMessageForJSONBytes(messageName, targetProcess, message)
+		m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, PID_RENDER, message)
 
 	} else {
 		browse := m.BrowserById(target.GetBrowserId())
 		if browse.IsValid() {
 			frame := browse.GetFrameById(target.GetFrameId())
 			if frame.IsValid() {
-				frame.SendProcessMessageForIPC(messageId, messageName, eventName, targetProcess, target, data)
+				frame.EmitRender(messageId, eventName, target, data)
 			}
 		}
 	}
-
-	//return
-	//if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
-	//	message := ProcessMessageRef.new(internalProcessMessageIPCOn)
-	//	argument := message.ArgumentList()
-	//	argument.SetInt(0, messageId)
-	//	argument.SetString(1, eventName)
-	//	if data != nil && len(data) > 0 {
-	//		argumentJSONArray := json.NewJSONArray(nil)
-	//		for _, result := range data {
-	//			switch result.(type) {
-	//			case error:
-	//				argumentJSONArray.Add(result.(error).Error())
-	//			default:
-	//				argumentJSONArray.Add(result)
-	//			}
-	//		}
-	//		binaryValue := BinaryValueRef.New(argumentJSONArray.Bytes())
-	//		argument.SetBinary(2, binaryValue)
-	//		argumentJSONArray.Free()
-	//	}
-	//	m.SendProcessMessage(targetProcess, message)
-	//} else {
-	//	browse := m.BrowserById(target.GetBrowserId())
-	//	if browse.IsValid() {
-	//		frame := browse.GetFrameById(target.GetFrameId())
-	//		if frame.IsValid() {
-	//			frame.SendProcessMessageForIPC(messageId, eventName, targetProcess, target, data)
-	//		}
-	//	}
-	//}
 }
 
 //--------TCEFChromium proc begin--------

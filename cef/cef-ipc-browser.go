@@ -26,6 +26,7 @@ type ipcBrowserProcess struct {
 }
 
 func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	fmt.Println(message.Name())
 	//messageId := message.ArgumentList().GetInt(0)
 	//if callback := ipc.CheckEmitCallback(messageId); callback != nil {
 	//	//第二个参数 true 有返回参数

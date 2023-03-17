@@ -1103,7 +1103,6 @@ func init() {
 		dllimports.NewEnergyImport("ValueConvert_BytesToListValue", 0),
 		dllimports.NewEnergyImport("ValueConvert_BytesToDictionaryValue", 0),
 		dllimports.NewEnergyImport("ValueConvert_BytesToV8ValueArray", 0),
-		dllimports.NewEnergyImport("ValueConvert_BytesToV8ValueArrayFree", 0),
 		dllimports.NewEnergyImport("ValueConvert_BytesToV8Array", 0),
 		dllimports.NewEnergyImport("ValueConvert_BytesToV8Object", 0),
 	}
@@ -2196,7 +2195,6 @@ const (
 	internale_ValueConvert_BytesToListValue
 	internale_ValueConvert_BytesToDictionaryValue
 	internale_ValueConvert_BytesToV8ValueArray
-	internale_ValueConvert_BytesToV8ValueArrayFree
 	internale_ValueConvert_BytesToV8Array
 	internale_ValueConvert_BytesToV8Object
 )
