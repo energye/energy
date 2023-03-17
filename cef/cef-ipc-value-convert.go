@@ -15,6 +15,7 @@ package cef
 
 import (
 	"errors"
+	"fmt"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
@@ -563,10 +564,15 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ValueArray(data []byte) *TCefV8V
 	var result uintptr
 	var resultLength uintptr
 	imports.Proc(internale_ValueConvert_BytesToV8ValueArray).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultLength)))
+	fmt.Println("result", result, resultLength)
 	if result == 0 || resultLength == 0 {
 		return nil
 	}
-	return &TCefV8ValueArray{instance: unsafe.Pointer(result), argumentsLength: int(resultLength)}
+	v := &TCefV8ValueArray{instance: unsafe.Pointer(result), arguments: result, argumentsLength: int(resultLength) /*, argumentsCollect: make([]*ICefV8Value, int(resultLength))*/}
+	//for i := 0; i < v.argumentsLength; i++ {
+	//	v.Get(i)
+	//}
+	return v
 }
 
 // JSONArrayToV8ValueArray 转换 TCefV8ValueArray

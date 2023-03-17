@@ -84,13 +84,14 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 		messageId = int32(argument.GetIntByKey(ipc_id))
 		emitName = argument.GetStringByKey(ipc_event)
 		argumentList = argument.GetArrayByKey(ipc_argumentList)
+		messageDataBytes = nil
 	}
 	defer func() {
-		if argument != nil {
-			argument.Free()
-		}
 		if argumentList != nil {
 			argumentList.Free()
+		}
+		if argument != nil {
+			argument.Free()
 		}
 	}()
 	argumentListBytes = nil
@@ -106,8 +107,6 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 		argsCallback.Invoke(ipcContext)
 	}
 	if messageId != 0 { // 回调函数处理
-		//replyMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
-		//replyMessage.ArgumentList().SetInt(0, messageId)
 		replyMessage := json.NewJSONArray(nil)
 		replyMessage.Add(messageId)
 		replyMessage.Add(false)
@@ -116,27 +115,19 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 		if replay.Result() != nil && len(replay.Result()) > 0 {
 			switch replay.Result()[0].(type) {
 			case []byte:
-				//binaryValue := BinaryValueRef.New((replay.Result()[0]).([]byte))
-				//replyMessage.ArgumentList().SetBool(1, true)          //有返回值
-				//replyMessage.ArgumentList().SetBinary(2, binaryValue) //result []byte
 				replyMessage.SetByIndex(1, true)
 				replyMessage.Add((replay.Result()[0]).([]byte))
-			default:
-				//replyMessage.ArgumentList().SetBool(1, false) //无返回值
 			}
-		} else {
-			//replyMessage.ArgumentList().SetBool(1, false) //无返回值
 		}
-		//frame.SendProcessMessage(consts.PID_RENDER, replyMessage)
 		frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmitReply, consts.PID_RENDER, replyMessage.Bytes())
 		replyMessage.Free()
 		replay.Clear()
-		//replyMessage.Free()
 	}
 	if ipcContext.ArgumentList() != nil {
 		ipcContext.ArgumentList().Free()
 	}
 	ipcContext.Result(nil)
+
 	return
 }
 

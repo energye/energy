@@ -232,7 +232,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		context := V8ContextRef.Current()
 		var messageId int32 = 0
 		//回调函数
-		if emitCallback != nil && false {
+		if emitCallback != nil {
 			//回调函数临时存放到缓存中
 			emitCallback.SetCanNotFree(true)
 			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
@@ -247,10 +247,11 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		message.Set(ipc_id, messageId)
 		message.Set(ipc_event, emitNameValue)
 		message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-		//frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmit, consts.PID_BROWSER, message.Bytes())
+		frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmit, consts.PID_BROWSER, message.Bytes())
 		message.Free()
 		frame.Free()
-		context.Free() // TODO dev
+		args = nil
+		//context.Free() // TODO dev
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return
@@ -259,7 +260,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 // ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
 func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
-	//messageId := message.ArgumentList().GetInt(0)
 	argumentListBytes := message.ArgumentList().GetBinary(0)
 	var messageDataBytes []byte
 	if argumentListBytes.IsValid() {
@@ -272,34 +272,35 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			return
 		}
 	}
-	var messageId int32
-	var isReturnArgs bool
-	var argumentList json.JSONArray
+	var (
+		messageId    int32
+		isReturnArgs bool
+		argumentList json.JSONArray
+	)
 	if messageDataBytes != nil {
 		argumentList = json.NewJSONArray(messageDataBytes)
 		messageId = int32(argumentList.GetIntByIndex(0))
 		isReturnArgs = argumentList.GetBoolByIndex(1)
+		messageDataBytes = nil
 	}
-	defer func() {}()
+	defer func() {
+		if argumentList != nil {
+			argumentList.Free()
+		}
+	}()
 
-	fmt.Println("messageId", messageId, isReturnArgs)
 	if callback := ipcRender.emitHandler.getCallback(messageId); callback != nil {
+		callback.function.SetCanNotFree(false)
 		//第二个参数 true 有返回参数
 		if isReturnArgs {
 			//[]byte
-			//returnArgs := argumentList.GetArrayByIndex(2)
-			//fmt.Println("returnArgs", argumentList.GetArrayByIndex(2).ToJSONString())
+			returnArgs := argumentList.GetArrayByIndex(2)
 			//解析 '[]byte' 参数
-			//if callback.context.Enter() {
-			//	if args, err := ipcValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
-			//		callback.function.ExecuteFunctionWithContext(callback.context, nil, args).Free()
-			//		args.Free()
-			//	} else {
-			//		// parsing error
-			//		callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
-			//	}
-			//}
-			//callback.context.Exit()
+			if callback.context.Enter() {
+				callback.function.ExecuteFunctionWithContextForArgsBytes(callback.context, nil, returnArgs.Bytes()).Free()
+				callback.context.Exit()
+			}
+			returnArgs.Free()
 		} else { //无返回参数
 			if callback.context.Enter() {
 				callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
