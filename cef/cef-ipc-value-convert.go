@@ -255,7 +255,7 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 	return result
 }
 
-// V8ValueToProcessMessageBytes ICefV8Value 转换 [[]byte] 进程消息
+// V8ValueToProcessMessageBytes ICefV8Value 转换 []byte 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICefV8Value) []byte {
 	if !v8value.IsValid() {
 		return nil
@@ -513,62 +513,96 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToDictionaryValue(v8value *I
 	return dictionaryValue, nil
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToProcessMessage(name string, array json.JSONArray) *ICefProcessMessage {
-	if array == nil || !array.IsArray() {
-		return nil
-	}
-	var data = array.Bytes()
+// BytesToProcessMessage JSONArray []byte 转换 进程消息 ICefProcessMessage
+func (m *v8ValueProcessMessageConvert) BytesToProcessMessage(name string, data []byte) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(internale_ValueConvert_BytesToProcessMessage).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{instance: unsafe.Pointer(result)}
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToListValue(array json.JSONArray) *ICefListValue {
+// JSONArrayToProcessMessage 转换 进程消息 ICefProcessMessage
+func (m *v8ValueProcessMessageConvert) JSONArrayToProcessMessage(name string, array json.JSONArray) *ICefProcessMessage {
 	if array == nil || !array.IsArray() {
 		return nil
 	}
-	var data = array.Bytes()
+	return m.BytesToProcessMessage(name, array.Bytes())
+}
+
+// BytesToListValue []byte 转换 ICefListValue
+func (m *v8ValueProcessMessageConvert) BytesToListValue(data []byte) *ICefListValue {
 	var result uintptr
 	imports.Proc(internale_ValueConvert_BytesToListValue).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{instance: unsafe.Pointer(result)}
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToDictionaryValue(array json.JSONObject) *ICefDictionaryValue {
-	if array == nil || !array.IsObject() {
+// JSONArrayToListValue 转换 ICefListValue
+func (m *v8ValueProcessMessageConvert) JSONArrayToListValue(array json.JSONArray) *ICefListValue {
+	if array == nil || !array.IsArray() {
 		return nil
 	}
-	var data = array.Bytes()
+	return m.BytesToListValue(array.Bytes())
+}
+
+// BytesToDictionaryValue 转换 ICefDictionaryValue
+func (m *v8ValueProcessMessageConvert) BytesToDictionaryValue(data []byte) *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(internale_ValueConvert_BytesToDictionaryValue).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{instance: unsafe.Pointer(result)}
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToV8ValueArray(array json.JSONArray) *TCefV8ValueArray {
-	if array == nil || !array.IsArray() {
+// JSONObjectToDictionaryValue 转换 ICefDictionaryValue
+func (m *v8ValueProcessMessageConvert) JSONObjectToDictionaryValue(object json.JSONObject) *ICefDictionaryValue {
+	if object == nil || !object.IsObject() {
 		return nil
 	}
-	var data = array.Bytes()
-	var result uintptr
-	imports.Proc(internale_ValueConvert_BytesToV8ValueArray).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
-	return &TCefV8ValueArray{instance: unsafe.Pointer(result)} //
+	return m.BytesToDictionaryValue(object.Bytes())
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToV8Array(array json.JSONArray) *ICefV8Value {
+// BytesToV8ValueArray 转换 TCefV8ValueArray
+func (m *v8ValueProcessMessageConvert) BytesToV8ValueArray(data []byte) *TCefV8ValueArray {
+	var result uintptr
+	var resultLength uintptr
+	imports.Proc(internale_ValueConvert_BytesToV8ValueArray).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultLength)))
+	if result == 0 || resultLength == 0 {
+		return nil
+	}
+	return &TCefV8ValueArray{instance: unsafe.Pointer(result), argumentsLength: int(resultLength)}
+}
+
+// JSONArrayToV8ValueArray 转换 TCefV8ValueArray
+func (m *v8ValueProcessMessageConvert) JSONArrayToV8ValueArray(array json.JSONArray) *TCefV8ValueArray {
 	if array == nil || !array.IsArray() {
 		return nil
 	}
-	var data = array.Bytes()
+	return m.BytesToV8ValueArray(array.Bytes())
+}
+
+// BytesToV8Array 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) BytesToV8Array(data []byte) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_ValueConvert_BytesToV8Array).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{instance: unsafe.Pointer(result)}
 }
 
-func (m *v8ValueProcessMessageConvert) BytesToV8Object(array json.JSONObject) *ICefV8Value {
-	if array == nil || !array.IsObject() {
+// JSONArrayToV8Array 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) JSONArrayToV8Array(array json.JSONArray) *ICefV8Value {
+	if array == nil || !array.IsArray() {
 		return nil
 	}
-	var data = array.Bytes()
+	return m.BytesToV8Array(array.Bytes())
+}
+
+// BytesToV8Object 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) BytesToV8Object(data []byte) *ICefV8Value {
 	var result uintptr
 	imports.Proc(internale_ValueConvert_BytesToV8Object).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{instance: unsafe.Pointer(result)}
+}
+
+// JSONObjectToV8Object 转换 ICefV8Value
+func (m *v8ValueProcessMessageConvert) JSONObjectToV8Object(object json.JSONObject) *ICefV8Value {
+	if object == nil || !object.IsObject() {
+		return nil
+	}
+	return m.BytesToV8Object(object.Bytes())
 }

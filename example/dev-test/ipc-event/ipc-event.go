@@ -70,14 +70,6 @@ func main() {
 	var testEmitName = 0
 	var testResultArgs = 0
 	var onTestName1Emit = 0
-	var ii = 0
-
-	var printSecond = func() {
-		for {
-			time.Sleep(time.Second)
-			fmt.Println("ii:", ii)
-		}
-	}
 
 	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
@@ -122,7 +114,7 @@ func main() {
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		testEmitName++
 		argument := context.ArgumentList()
-		//fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), num)
+		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), testEmitName)
 		//fmt.Println("data:", argument.GetByIndex(1).Data())
 		for i := 0; i < argument.Size(); i++ {
 			argument.GetByIndex(i)
@@ -165,21 +157,13 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
-		go printSecond()
-		go func() {
-			//for {
-			//	time.Sleep(time.Second / 1000)
-			//	onTestName1Emit++
-			//	ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-			//}
-
-			for {
-				time.Sleep(time.Millisecond)
-				ii++
-				//time.Sleep(time.Second)
-				ipc.Emit("onTestName1", r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-			}
-		}()
+		//go func() {
+		//	var i = 0
+		//	for true {
+		//		time.Sleep(time.Second / 1000)
+		//		ipc.Emit("onTestName1", r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		//	}
+		//}()
 	})
 	//运行应用
 	cef.Run(cefApp)

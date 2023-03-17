@@ -14,6 +14,7 @@ package cef
 import (
 	"fmt"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/json"
 )
 
 // ipcRenderProcess 渲染进程
@@ -132,7 +133,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		}
 		if callback.context.Enter() {
 			if count > 0 {
-				argsV8ValueArray, _ = ipcValueConvert.BytesToV8ArrayValue(argsBytes)
+				argsV8ValueArray = ipcValueConvert.BytesToV8ValueArray(argsBytes)
 			}
 			ret = callback.function.ExecuteFunctionWithContext(callback.context, nil, argsV8ValueArray)
 			resultData = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
@@ -159,13 +160,12 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 // ipcJSExecuteGoEvent JS ipc.emit 执行Go事件
 func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	var (
-		emitName       *ICefV8Value //事件名
-		emitNameValue  string       //事件名
-		emitArgs       *ICefV8Value //事件参数
-		emitCallback   *ICefV8Value //事件回调函数
-		ipcEmitMessage *ICefProcessMessage
-		binaryValue    *ICefBinaryValue
-		freeV8Value    = func(value *ICefV8Value) {
+		emitName      *ICefV8Value //事件名
+		emitNameValue string       //事件名
+		emitArgs      *ICefV8Value //事件参数
+		emitCallback  *ICefV8Value //事件回调函数
+		args          []byte
+		freeV8Value   = func(value *ICefV8Value) {
 			if value != nil {
 				value.Free()
 			}
@@ -176,7 +176,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 	defer func() {
 		if isFree { //失败时释放掉
 			result = false
-			arguments.Free()
 			freeV8Value(emitCallback)
 		}
 	}()
@@ -189,11 +188,8 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 			//释放掉这些指针，不然不会自动释放
 			freeV8Value(emitName)
 			freeV8Value(emitArgs)
-			if ipcEmitMessage != nil {
-				ipcEmitMessage.Free()
-			}
-			if binaryValue != nil {
-				binaryValue.Free()
+			if args != nil {
+				args = nil
 			}
 		}()
 		emitName = arguments.Get(0)
@@ -226,19 +222,17 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		//入参
 		if emitArgs != nil {
 			//V8Value 转换
-			args := ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
+			args = ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				exception.SetValue("ipc.emit convert parameter to value value error")
 				isFree = true
 				return
 			}
-			binaryValue = BinaryValueRef.New(args)
-			args = nil
 		}
 		context := V8ContextRef.Current()
 		var messageId int32 = 0
 		//回调函数
-		if emitCallback != nil {
+		if emitCallback != nil && false {
 			//回调函数临时存放到缓存中
 			emitCallback.SetCanNotFree(true)
 			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
@@ -247,14 +241,16 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 				function: V8ValueRef.UnWrap(emitCallback),
 			})
 		}
-		ipcEmitMessage = ProcessMessageRef.new(internalProcessMessageIPCEmit)
-		argument := ipcEmitMessage.ArgumentList()
-		argument.SetInt(0, messageId)        // 消息id
-		argument.SetString(1, emitNameValue) // 事件名
-		argument.SetBinary(2, binaryValue)   // args
+
 		frame := context.Frame()
-		frame.SendProcessMessage(consts.PID_BROWSER, ipcEmitMessage)
+		message := json.NewJSONObject(nil)
+		message.Set(ipc_id, messageId)
+		message.Set(ipc_event, emitNameValue)
+		message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		//frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmit, consts.PID_BROWSER, message.Bytes())
+		message.Free()
 		frame.Free()
+		context.Free() // TODO dev
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return
@@ -263,36 +259,47 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 // ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
 func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
-	messageId := message.ArgumentList().GetInt(0)
+	//messageId := message.ArgumentList().GetInt(0)
+	argumentListBytes := message.ArgumentList().GetBinary(0)
+	var messageDataBytes []byte
+	if argumentListBytes.IsValid() {
+		size := argumentListBytes.GetSize()
+		messageDataBytes = make([]byte, size)
+		c := argumentListBytes.GetData(messageDataBytes, 0)
+		argumentListBytes.Free() //立即释放掉
+		if c == 0 {
+			result = false
+			return
+		}
+	}
+	var messageId int32
+	var isReturnArgs bool
+	var argumentList json.JSONArray
+	if messageDataBytes != nil {
+		argumentList = json.NewJSONArray(messageDataBytes)
+		messageId = int32(argumentList.GetIntByIndex(0))
+		isReturnArgs = argumentList.GetBoolByIndex(1)
+	}
+	defer func() {}()
+
+	fmt.Println("messageId", messageId, isReturnArgs)
 	if callback := ipcRender.emitHandler.getCallback(messageId); callback != nil {
 		//第二个参数 true 有返回参数
-		if isReturn := message.ArgumentList().GetBool(1); isReturn {
+		if isReturnArgs {
 			//[]byte
-			binaryValue := message.ArgumentList().GetBinary(2)
-			var (
-				count           uint32
-				resultArgsBytes []byte
-			)
-			if binaryValue.IsValid() {
-				size := binaryValue.GetSize()
-				resultArgsBytes = make([]byte, size)
-				count = binaryValue.GetData(resultArgsBytes, 0)
-				binaryValue.Free()
-			}
-			if count > 0 {
-				//解析 '[]byte' 参数
-				if callback.context.Enter() {
-					if args, err := ipcValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
-						callback.function.ExecuteFunctionWithContext(callback.context, nil, args).Free()
-						args.Free()
-					} else {
-						// parsing error
-						callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
-					}
-				}
-				callback.context.Exit()
-			}
-			resultArgsBytes = nil
+			//returnArgs := argumentList.GetArrayByIndex(2)
+			//fmt.Println("returnArgs", argumentList.GetArrayByIndex(2).ToJSONString())
+			//解析 '[]byte' 参数
+			//if callback.context.Enter() {
+			//	if args, err := ipcValueConvert.BytesToV8ArrayValue(resultArgsBytes); err == nil {
+			//		callback.function.ExecuteFunctionWithContext(callback.context, nil, args).Free()
+			//		args.Free()
+			//	} else {
+			//		// parsing error
+			//		callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
+			//	}
+			//}
+			//callback.context.Exit()
 		} else { //无返回参数
 			if callback.context.Enter() {
 				callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()

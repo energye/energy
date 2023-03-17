@@ -740,7 +740,7 @@ func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, messageName, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
 	if !m.initialized {
 		m.initialized = m.Initialized()
 		return
@@ -759,14 +759,14 @@ func (m *TCEFChromium) SendProcessMessageForIPC(messageId int32, eventName strin
 			}
 		}
 		message.Set(ipc_argumentList, argumentJSONArray)
-		m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, targetProcess, message)
+		m.SendProcessMessageForJSONBytes(messageName, targetProcess, message)
 
 	} else {
 		browse := m.BrowserById(target.GetBrowserId())
 		if browse.IsValid() {
 			frame := browse.GetFrameById(target.GetFrameId())
 			if frame.IsValid() {
-				frame.SendProcessMessageForIPC(messageId, eventName, targetProcess, target, data)
+				frame.SendProcessMessageForIPC(messageId, messageName, eventName, targetProcess, target, data)
 			}
 		}
 	}

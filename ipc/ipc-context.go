@@ -41,16 +41,15 @@ type Context struct {
 	replay    IReplay
 }
 
-func NewContext(browserId int32, frameId int64, isReplay bool, data []byte) IContext {
+func NewContext(browserId int32, frameId int64, isReplay bool, argument json.JSONArray) IContext {
 	ctx := &Context{
 		browserId: browserId,
 		frameId:   frameId,
-		argument:  json.NewJSONArray(data),
+		argument:  argument,
 	}
 	if isReplay {
 		ctx.replay = new(Replay)
 	}
-	data = nil
 	return ctx
 }
 

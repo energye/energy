@@ -124,7 +124,7 @@ func Emit(name string, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
-	browser.processMessage.SendProcessMessageForIPC(0, name, consts.PID_RENDER, nil, argument...)
+	browser.processMessage.SendProcessMessageForIPC(0, "", name, consts.PID_RENDER, nil, argument...)
 }
 
 //EmitAndCallback
@@ -141,7 +141,7 @@ func EmitAndCallback(name string, argument []any, fn any) {
 		return
 	}
 	messageId := browser.addEmitCallback(fn)
-	browser.processMessage.SendProcessMessageForIPC(messageId, name, consts.PID_RENDER, nil, argument...)
+	browser.processMessage.SendProcessMessageForIPC(messageId, "", name, consts.PID_RENDER, nil, argument...)
 }
 
 //EmitTarget
@@ -157,7 +157,7 @@ func EmitTarget(name string, target ITarget, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
 	}
-	browser.processMessage.SendProcessMessageForIPC(0, name, consts.PID_RENDER, target, argument...)
+	browser.processMessage.SendProcessMessageForIPC(0, "", name, consts.PID_RENDER, target, argument...)
 }
 
 //EmitTargetAndCallback
@@ -175,7 +175,7 @@ func EmitTargetAndCallback(name string, target ITarget, argument []any, fn any) 
 		return
 	}
 	messageId := browser.addEmitCallback(fn)
-	browser.processMessage.SendProcessMessageForIPC(messageId, name, consts.PID_RENDER, target, argument...)
+	browser.processMessage.SendProcessMessageForIPC(messageId, "", name, consts.PID_RENDER, target, argument...)
 }
 
 //CheckOnEvent

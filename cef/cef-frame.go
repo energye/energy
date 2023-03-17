@@ -103,16 +103,14 @@ func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICef
 }
 
 // SendProcessMessageForJSONBytes 发送进程消息
-func (m *ICefFrame) SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message json.JSONObject) {
-	var data = message.Bytes()
-	imports.Proc(internale_CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(name), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
-	message.Free()
+func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetProcess CefProcessId, data []byte) {
+	imports.Proc(internale_CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
 }
 
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
+func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, messageName, eventName string, targetProcess CefProcessId, target ipc.ITarget, data ...any) {
 	message := json.NewJSONObject(nil)
 	message.Set(ipc_id, messageId)
 	message.Set(ipc_event, eventName)
@@ -126,7 +124,8 @@ func (m *ICefFrame) SendProcessMessageForIPC(messageId int32, eventName string, 
 		}
 	}
 	message.Set(ipc_argumentList, argumentJSONArray)
-	m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, targetProcess, message)
+	m.SendProcessMessageForJSONBytes(messageName, targetProcess, message.Bytes())
+	message.Free()
 	//return
 	//message := ProcessMessageRef.new(internalProcessMessageIPCOn)
 	//if data != nil && len(data) > 0 {

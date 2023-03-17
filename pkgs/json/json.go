@@ -194,6 +194,12 @@ func (m *jsonData) Add(value ...any) {
 		tmp := make([]any, len(value))
 		for i, v := range value {
 			switch v.(type) {
+			case []byte:
+				if vv := NewJSON(v.([]byte)); v != nil {
+					tmp[i] = vv.Data()
+				} else {
+					tmp[i] = value
+				}
 			case JSON:
 				tmp[i] = v.(JSON).Data()
 			case JSONObject:
@@ -209,9 +215,19 @@ func (m *jsonData) Add(value ...any) {
 	}
 }
 
+func (m *jsonData) SetSize(index int, value any) {
+
+}
+
 func (m *jsonData) SetByIndex(index int, value any) {
 	if m.IsArray() && index < m.S {
 		switch value.(type) {
+		case []byte:
+			if vv := NewJSON(value.([]byte)); vv != nil {
+				m.V.([]any)[index] = vv.Data()
+			} else {
+				m.V.([]any)[index] = value
+			}
 		case JSON:
 			m.V.([]any)[index] = value.(JSON).Data()
 		case JSONObject:
@@ -350,6 +366,10 @@ func (m *jsonData) GetByIndex(index int) JSON {
 func (m *jsonData) Set(key string, value any) {
 	if m.IsObject() {
 		switch value.(type) {
+		case []byte:
+			if vv := NewJSON(value.([]byte)); vv != nil {
+				value = vv.Data()
+			}
 		case JSON:
 			value = value.(JSON).Data()
 		case JSONObject:
