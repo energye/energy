@@ -188,9 +188,9 @@ func (m *browserChannel) ipcReadHandler(conn net.Conn) {
 			logger.Error("IPC Server Accept Recover:", err)
 		}
 	}()
-	var id int64 //render channel key_channelId
+	var channelId int64
 	defer func() {
-		m.removeChannel(id)
+		m.removeChannel(channelId)
 	}()
 	var readHandler = &ipcReadHandler{
 		ct:      Ct_Server,
@@ -199,7 +199,7 @@ func (m *browserChannel) ipcReadHandler(conn net.Conn) {
 		handler: func(context IIPCContext) {
 			if context.Message().Type() == mt_connection {
 				message := json.NewJSONObject(context.Message().Data())
-				id = int64(message.GetIntByKey(key_channelId))
+				channelId = int64(message.GetIntByKey(key_channelId))
 				m.onConnect(context)
 			} else {
 				if m.handler != nil {
