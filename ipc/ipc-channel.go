@@ -27,11 +27,12 @@ import (
 )
 
 var (
-	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}   //协议头
-	protocolHeaderLength = int32(len(protocolHeader))                               //协议头长度
-	messageType          = int32(1)                                                 //消息类型 int8
-	dataByteLength       = int32(4)                                                 //数据长度 int32
-	headerLength         = int(protocolHeaderLength + messageType + dataByteLength) //协议头长度
+	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                           //协议头
+	protocolHeaderLength = int32(len(protocolHeader))                                                       //协议头长度
+	messageTypeLength    = int32(1)                                                                         //消息类型 int8
+	channelIdLength      = int32(8)                                                                         //通道Id int64
+	dataByteLength       = int32(4)                                                                         //数据长度 int32
+	headerLength         = int(protocolHeaderLength + messageTypeLength + channelIdLength + dataByteLength) //协议头长度
 )
 
 var (
@@ -47,6 +48,7 @@ var (
 			mutex: sync.Mutex{},
 		},
 	}
+	ipcWriteBuf = new(bytes.Buffer)
 )
 
 //消息类型
@@ -58,7 +60,7 @@ const (
 )
 
 const (
-	channelId = "channelId"
+	key_channelId = "key_channelId"
 )
 
 func init() {
@@ -125,14 +127,14 @@ type messageCallback func(context IMessage)
 // 进程间IPC通信回调上下文
 type IIPCContext interface {
 	Connect() net.Conn //IPC 链接
-	ChannelId() int64  //render channel channelId
+	ChannelId() int64  //render channel key_channelId
 	Message() IMessage //
 	Free()             //
 }
 
 type IMessage interface {
 	Type() mt
-	Length() int32
+	Length() uint32
 	Data() []byte
 	JSON() json.JSON
 	clear()
@@ -147,7 +149,7 @@ type ipcReadHandler struct {
 
 type ipcMessage struct {
 	t mt
-	s int32
+	s uint32
 	v []byte
 }
 
@@ -202,7 +204,7 @@ func (m *ipcMessage) Data() []byte {
 	return m.v
 }
 
-func (m *ipcMessage) Length() int32 {
+func (m *ipcMessage) Length() uint32 {
 	return m.s
 }
 
@@ -215,7 +217,7 @@ func (m *ipcMessage) clear() {
 	m.s = 0
 }
 
-func ipcWrite(messageType mt, data []byte, conn net.Conn) (n int, err error) {
+func ipcWrite(messageType mt, channelId int64, data []byte, conn net.Conn) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -225,14 +227,14 @@ func ipcWrite(messageType mt, data []byte, conn net.Conn) (n int, err error) {
 	var (
 		dataByteLen = len(data)
 	)
-	if dataByteLen > math.MaxInt32 {
+	if dataByteLen > math.MaxUint32 {
 		return 0, errors.New("超出最大消息长度")
 	}
-	var ipcWriteBuf = new(bytes.Buffer)
-	binary.Write(ipcWriteBuf, binary.BigEndian, protocolHeader)     //协议头
-	binary.Write(ipcWriteBuf, binary.BigEndian, int8(messageType))  //消息类型
-	binary.Write(ipcWriteBuf, binary.BigEndian, int32(dataByteLen)) //数据长度
-	binary.Write(ipcWriteBuf, binary.BigEndian, data)               //数据
+	binary.Write(ipcWriteBuf, binary.BigEndian, protocolHeader)      //协议头
+	binary.Write(ipcWriteBuf, binary.BigEndian, int8(messageType))   //消息类型
+	binary.Write(ipcWriteBuf, binary.BigEndian, channelId)           //通道Id
+	binary.Write(ipcWriteBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
+	binary.Write(ipcWriteBuf, binary.BigEndian, data)                //数据
 	n, err = conn.Write(ipcWriteBuf.Bytes())
 	ipcWriteBuf.Reset()
 	return n, err
@@ -271,14 +273,23 @@ func ipcRead(handler *ipcReadHandler) {
 				}
 			}
 			var (
-				t         int8  //消息类型
-				dataLen   int32 //数据长度
-				low, high int32 //
+				t         int8 //消息类型
+				channelId int64
+				dataLen   uint32 //数据长度
+				low, high int32  //
 			)
 			//消息类型
 			low = protocolHeaderLength
-			high = protocolHeaderLength + messageType
+			high = protocolHeaderLength + messageTypeLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &t)
+			if err != nil {
+				logger.Debug("binary.Read.length: ", err)
+				return
+			}
+			//通道ID
+			low = high
+			high = high + channelIdLength
+			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
 			if err != nil {
 				logger.Debug("binary.Read.length: ", err)
 				return
@@ -302,8 +313,9 @@ func ipcRead(handler *ipcReadHandler) {
 				return
 			}
 			handler.handler(&IPCContext{
-				ipcType: handler.ipcType,
-				connect: handler.connect,
+				channelId: channelId,
+				ipcType:   handler.ipcType,
+				connect:   handler.connect,
 				message: &ipcMessage{
 					t: mt(t),
 					s: dataLen,

@@ -62,7 +62,7 @@ func (m *ipcChannel) NewRenderChannel(channelId int64, memoryAddresses ...string
 
 func (m *renderChannel) onConnection() {
 	message := json.NewJSONObject(nil)
-	message.Set(channelId, m.channelId)
+	message.Set(key_channelId, m.channelId)
 	m.sendMessage(mt_connection, message.Bytes())
 	message.Free()
 }
@@ -74,7 +74,7 @@ func (m *renderChannel) Send(data []byte) {
 func (m *renderChannel) sendMessage(messageType mt, data []byte) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	_, _ = ipcWrite(messageType, data, m.conn())
+	_, _ = ipcWrite(messageType, m.channelId, data, m.conn())
 }
 
 func (m *renderChannel) Handler(handler IPCCallback) {

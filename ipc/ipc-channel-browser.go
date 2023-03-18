@@ -110,7 +110,7 @@ func (m *browserChannel) Close() {
 }
 
 func (m *browserChannel) onConnect(context IIPCContext) {
-	logger.Info("IPC browser on connect channelId:", context.ChannelId())
+	logger.Info("IPC browser on connect key_channelId:", context.ChannelId())
 	if chn := m.Channel(context.ChannelId()); chn != nil {
 		chn.IPCType = m.ipcType
 		chn.Conn = context.Connect()
@@ -123,7 +123,7 @@ func (m *browserChannel) onConnect(context IIPCContext) {
 }
 
 func (m *browserChannel) removeChannel(id int64) {
-	logger.Debug("IPC browser channel remove channelId:", id)
+	logger.Debug("IPC browser channel remove key_channelId:", id)
 	m.channel.Delete(id)
 }
 
@@ -154,7 +154,7 @@ func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byt
 		channelId = id
 	}
 	if chn := m.Channel(channelId); chn != nil {
-		_, _ = ipcWrite(messageType, data, chn.conn())
+		_, _ = ipcWrite(messageType, channelId, data, chn.conn())
 	}
 }
 
@@ -188,7 +188,7 @@ func (m *browserChannel) ipcReadHandler(conn net.Conn) {
 			logger.Error("IPC Server Accept Recover:", err)
 		}
 	}()
-	var id int64 //render channel channelId
+	var id int64 //render channel key_channelId
 	defer func() {
 		m.removeChannel(id)
 	}()
@@ -199,7 +199,7 @@ func (m *browserChannel) ipcReadHandler(conn net.Conn) {
 		handler: func(context IIPCContext) {
 			if context.Message().Type() == mt_connection {
 				message := json.NewJSONObject(context.Message().Data())
-				id = int64(message.GetIntByKey(channelId))
+				id = int64(message.GetIntByKey(key_channelId))
 				m.onConnect(context)
 			} else {
 				if m.handler != nil {
