@@ -37,9 +37,9 @@ var (
 
 var (
 	memoryAddress    = "energy.sock"
-	useNetIPCChannel = false
 	ipcSock          string
-	IPCChannel       = &ipcChannel{
+	useNetIPCChannel = false
+	Channel          = &ipcChannel{
 		browser: &browserChannel{
 			channel: sync.Map{},
 			mutex:   sync.Mutex{},
@@ -55,13 +55,16 @@ var (
 type mt int8
 
 const (
-	mt_connection mt = iota //建立链接消息
-	mt_common               //普通消息
+	mt_invalid    mt = iota - 1 //无效类型
+	mt_connection               //建立链接消息
+	mt_common                   //普通消息
 )
 
 const (
 	key_channelId = "key_channelId"
 )
+
+type IPCCallback func(context IIPCContext)
 
 func init() {
 	ipcSock = filepath.Join(os.TempDir(), memoryAddress)
@@ -73,6 +76,40 @@ type ipcChannel struct {
 	render  *renderChannel
 }
 
+type channel struct {
+	IPCType IPC_TYPE
+	Conn    net.Conn
+}
+
+func removeMemory() {
+	os.Remove(ipcSock)
+}
+
+func UseNetIPCChannel() bool {
+	return useNetIPCChannel
+}
+
+func MemoryAddress() string {
+	return memoryAddress
+}
+
+func isUseNetIPC() bool {
+	if common.IsDarwin() || common.IsLinux() {
+		return false
+	}
+	ov := version.OSVersion
+	if (ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063) {
+		return false
+	}
+	return true
+}
+
+// conn 返回通道链接
+func (m *channel) conn() net.Conn {
+	return m.Conn
+}
+
+// Port 获取并返回net socket端口
 func (m *ipcChannel) Port() int {
 	if m.port != 0 {
 		return m.port
@@ -93,43 +130,32 @@ func (m *ipcChannel) Port() int {
 	return m.port
 }
 
-func isUseNetIPC() bool {
-	if common.IsDarwin() || common.IsLinux() {
-		return false
-	}
-	ov := version.OSVersion
-	if (ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063) {
-		return false
-	}
-	return true
-}
-
+// Browser 返回 browser 通道
 func (m *ipcChannel) Browser() *browserChannel {
 	return m.browser
 }
 
+// Render 返回 render 通道
 func (m *ipcChannel) Render() *renderChannel {
 	return m.render
 }
 
-// 主进程事件emit
+// IIPCChannel browser
 type IIPCChannel interface {
 	Close()
 	Channel(channelId int64) *channel //IPC 获取指定的通道
 	ChannelIds() (result []int64)     //IPC 获取所有通道
 }
 
-type IPCCallback func(context IIPCContext)
-type messageCallback func(context IMessage)
-
-// 进程间IPC通信回调上下文
+// IIPCContext IPC通信回调上下文
 type IIPCContext interface {
-	Connect() net.Conn //IPC 链接
-	ChannelId() int64  //render channel key_channelId
-	Message() IMessage //
+	Connect() net.Conn // IPC 通道链接
+	ChannelId() int64  // 通道ID
+	Message() IMessage // 消息
 	Free()             //
 }
 
+// IMessage 消息内容接口
 type IMessage interface {
 	Type() mt
 	Length() uint32
@@ -138,6 +164,7 @@ type IMessage interface {
 	clear()
 }
 
+// ipcReadHandler ipc 消息读取处理
 type ipcReadHandler struct {
 	ipcType IPC_TYPE
 	ct      ChannelType
@@ -145,13 +172,14 @@ type ipcReadHandler struct {
 	handler IPCCallback
 }
 
+// ipcMessage 消息内容
 type ipcMessage struct {
 	t mt
 	s uint32
 	v []byte
 }
 
-// IPC 上下文
+// IPCContext IPC 上下文
 type IPCContext struct {
 	channelId int64    //render channelId
 	ipcType   IPC_TYPE //
@@ -159,6 +187,7 @@ type IPCContext struct {
 	message   IMessage //
 }
 
+// Close 关闭当前ipc通道链接
 func (m *ipcReadHandler) Close() {
 	if m.connect != nil {
 		m.connect.Close()
@@ -166,6 +195,7 @@ func (m *ipcReadHandler) Close() {
 	}
 }
 
+// Read 读取内容
 func (m *ipcReadHandler) Read(b []byte) (n int, err error) {
 	if m.ipcType == IPCT_NET {
 		return m.connect.Read(b)
@@ -175,6 +205,7 @@ func (m *ipcReadHandler) Read(b []byte) (n int, err error) {
 	}
 }
 
+// Free 释放消息内存空间
 func (m *IPCContext) Free() {
 	if m.message != nil {
 		m.message.clear()
@@ -182,39 +213,49 @@ func (m *IPCContext) Free() {
 	}
 }
 
+// ChannelId 返回通道ID
 func (m *IPCContext) ChannelId() int64 {
 	return m.channelId
 }
 
+// Message 返回消息内容
 func (m *IPCContext) Message() IMessage {
 	return m.message
 }
 
+// Connect 返回当前通道链接
 func (m *IPCContext) Connect() net.Conn {
 	return m.connect
 }
 
+// Type 消息类型
 func (m *ipcMessage) Type() mt {
 	return m.t
 }
 
+// Data 消息[]byte数据
 func (m *ipcMessage) Data() []byte {
 	return m.v
 }
 
+// Length 消息[]byte长度
 func (m *ipcMessage) Length() uint32 {
 	return m.s
 }
 
+// JSON 消息转为JSON对象
 func (m *ipcMessage) JSON() json.JSON {
 	return json.NewJSON(m.v)
 }
 
+// clear 清空内容
 func (m *ipcMessage) clear() {
+	m.t = mt_invalid
 	m.v = nil
 	m.s = 0
 }
 
+// ipcWrite 写入消息
 func ipcWrite(messageType mt, channelId int64, data []byte, conn net.Conn) (n int, err error) {
 	defer func() {
 		data = nil
@@ -238,6 +279,7 @@ func ipcWrite(messageType mt, channelId int64, data []byte, conn net.Conn) (n in
 	return n, err
 }
 
+// ipcRead 读取消息
 func ipcRead(handler *ipcReadHandler) {
 	var ipcType, chnType string
 	if handler.ipcType == IPCT_NET {

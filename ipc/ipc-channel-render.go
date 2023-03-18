@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// ipc 通道 render 进程(或客户端)
 package ipc
 
 import (
@@ -19,6 +20,7 @@ import (
 	"sync"
 )
 
+// renderChannel 渲染进程
 type renderChannel struct {
 	channelId int64
 	ipcType   IPC_TYPE
@@ -28,10 +30,13 @@ type renderChannel struct {
 	handler   IPCCallback
 }
 
-func (m *ipcChannel) NewRenderChannel(channelId int64, memoryAddresses ...string) *renderChannel {
+// NewRender 创建渲染进程通道
+//
+// channelId 唯一通道ID标识
+func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *renderChannel {
 	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPCChannel.Port())
+		address := fmt.Sprintf("localhost:%d", Channel.Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
@@ -61,6 +66,7 @@ func (m *ipcChannel) NewRenderChannel(channelId int64, memoryAddresses ...string
 	return m.render
 }
 
+// onConnection 建立链接
 func (m *renderChannel) onConnection() {
 	message := json.NewJSONObject(nil)
 	message.Set(key_channelId, m.channelId)
@@ -68,20 +74,24 @@ func (m *renderChannel) onConnection() {
 	message.Free()
 }
 
+// Send 发送数据
 func (m *renderChannel) Send(data []byte) {
 	m.sendMessage(mt_common, data)
 }
 
+// sendMessage 发送消息
 func (m *renderChannel) sendMessage(messageType mt, data []byte) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
 	_, _ = ipcWrite(messageType, m.channelId, data, m.conn())
 }
 
+// Handler 设置自定义处理回调函数
 func (m *renderChannel) Handler(handler IPCCallback) {
 	m.handler = handler
 }
 
+// Close 关闭通道链接
 func (m *renderChannel) Close() {
 	if m.connect != nil {
 		m.connect.Close()
@@ -89,10 +99,12 @@ func (m *renderChannel) Close() {
 	}
 }
 
+// conn 返回通道链接
 func (m *renderChannel) conn() net.Conn {
 	return m.connect
 }
 
+// receive 接收数据
 func (m *renderChannel) receive() {
 	defer func() {
 		if err := recover(); err != nil {

@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// ipc 通道 browser 进程(或服务端)
 package ipc
 
 import (
@@ -16,10 +17,10 @@ import (
 	"github.com/energye/energy/logger"
 	"github.com/energye/energy/pkgs/json"
 	"net"
-	"os"
 	"sync"
 )
 
+// browserChannel browser进程
 type browserChannel struct {
 	ipcType      IPC_TYPE
 	unixAddr     *net.UnixAddr
@@ -30,28 +31,11 @@ type browserChannel struct {
 	handler      IPCCallback
 }
 
-type channel struct {
-	IPCType IPC_TYPE
-	Conn    net.Conn
-}
-
-func removeMemory() {
-	os.Remove(ipcSock)
-}
-
-func UseNetIPCChannel() bool {
-	return useNetIPCChannel
-}
-
-func MemoryAddress() string {
-	return memoryAddress
-}
-
-// NewBrowserChannel 主进程
-func (m *ipcChannel) NewBrowserChannel(memoryAddresses ...string) *browserChannel {
+// NewBrowser 创建主进程通道
+func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
 	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPCChannel.Port())
+		address := fmt.Sprintf("localhost:%d", Channel.Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
@@ -82,10 +66,7 @@ func (m *ipcChannel) NewBrowserChannel(memoryAddresses ...string) *browserChanne
 	return m.browser
 }
 
-func (m *channel) conn() net.Conn {
-	return m.Conn
-}
-
+// Channel 返回指定通道链接
 func (m *browserChannel) Channel(channelId int64) *channel {
 	if value, ok := m.channel.Load(channelId); ok {
 		return value.(*channel)
@@ -93,6 +74,7 @@ func (m *browserChannel) Channel(channelId int64) *channel {
 	return nil
 }
 
+// ChannelIds 返回所有已链接通道ID
 func (m *browserChannel) ChannelIds() (result []int64) {
 	m.channel.Range(func(key, value any) bool {
 		result = append(result, key.(int64))
@@ -101,16 +83,22 @@ func (m *browserChannel) ChannelIds() (result []int64) {
 	return
 }
 
-func (m *browserChannel) putChannel(channelId int64, value *channel) {
-	m.channel.Store(channelId, value)
-}
-
+// Close 关闭通道链接
 func (m *browserChannel) Close() {
 	if m.unixListener != nil {
 		m.unixListener.Close()
 	}
+	if m.netListener != nil {
+		m.netListener.Close()
+	}
 }
 
+// putChannel 添加一个通道链接
+func (m *browserChannel) putChannel(channelId int64, value *channel) {
+	m.channel.Store(channelId, value)
+}
+
+// onConnect 建立链接
 func (m *browserChannel) onConnect(context IIPCContext) {
 	logger.Info("IPC browser on connect key_channelId:", context.ChannelId())
 	if chn := m.Channel(context.ChannelId()); chn != nil {
@@ -124,12 +112,13 @@ func (m *browserChannel) onConnect(context IIPCContext) {
 	}
 }
 
+// removeChannel 删除指定通道
 func (m *browserChannel) removeChannel(id int64) {
 	logger.Debug("IPC browser channel remove key_channelId:", id)
 	m.channel.Delete(id)
 }
 
-// 单进程进程通道获取
+// singleProcessChannelId 单进程进程通道获取
 func (m *browserChannel) singleProcessChannelId() (int64, bool) {
 	if SingleProcess {
 		var channelId int64 = 0
@@ -145,10 +134,12 @@ func (m *browserChannel) singleProcessChannelId() (int64, bool) {
 	return 0, false
 }
 
+// Send 指定通道发送数据
 func (m *browserChannel) Send(channelId int64, data []byte) {
 	m.sendMessage(mt_common, channelId, data)
 }
 
+// Send 指定通道发送消息
 func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byte) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
@@ -160,10 +151,12 @@ func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byt
 	}
 }
 
+// Handler 设置自定义处理回调函数
 func (m *browserChannel) Handler(handler IPCCallback) {
 	m.handler = handler
 }
 
+// accept 接收链接的链接
 func (m *browserChannel) accept() {
 	logger.Info("IPC Server Accept")
 	for {
@@ -180,11 +173,12 @@ func (m *browserChannel) accept() {
 			logger.Info("browser channel accept Error:", err.Error())
 			continue
 		}
-		go m.ipcReadHandler(conn)
+		go m.readHandler(conn)
 	}
 }
 
-func (m *browserChannel) ipcReadHandler(conn net.Conn) {
+// readHandler 读取数据
+func (m *browserChannel) readHandler(conn net.Conn) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("IPC Server Accept Recover:", err)
