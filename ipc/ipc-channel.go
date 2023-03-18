@@ -126,7 +126,6 @@ type messageCallback func(context IMessage)
 type IIPCContext interface {
 	Connect() net.Conn //IPC 链接
 	ChannelId() int64  //render channel channelId
-	BrowserId() int32  //render channel browserId
 	Message() IMessage //
 	Free()             //
 }
@@ -154,8 +153,7 @@ type ipcMessage struct {
 
 // IPC 上下文
 type IPCContext struct {
-	browserId int32    //render channel browserId
-	frameId   int64    //render channel frameId
+	channelId int64    //render channelId
 	ipcType   IPC_TYPE //
 	connect   net.Conn //
 	message   IMessage //
@@ -185,11 +183,7 @@ func (m *IPCContext) Free() {
 }
 
 func (m *IPCContext) ChannelId() int64 {
-	return m.frameId
-}
-
-func (m *IPCContext) BrowserId() int32 {
-	return m.browserId
+	return m.channelId
 }
 
 func (m *IPCContext) Message() IMessage {

@@ -109,7 +109,7 @@ func (m *browserChannel) Close() {
 	}
 }
 
-func (m *browserChannel) onConnect(context IPCContext) {
+func (m *browserChannel) onConnect(context IIPCContext) {
 	logger.Info("IPC browser on connect channelId:", context.ChannelId())
 	if chn := m.Channel(context.ChannelId()); chn != nil {
 		chn.IPCType = m.ipcType
@@ -200,6 +200,7 @@ func (m *browserChannel) ipcReadHandler(conn net.Conn) {
 			if context.Message().Type() == mt_connection {
 				message := json.NewJSONObject(context.Message().Data())
 				id = int64(message.GetIntByKey(channelId))
+				m.onConnect(context)
 			} else {
 				if m.handler != nil {
 					m.handler(context)

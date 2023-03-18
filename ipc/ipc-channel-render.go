@@ -20,7 +20,6 @@ import (
 )
 
 type renderChannel struct {
-	browserId int32
 	channelId int64
 	ipcType   IPC_TYPE
 	connect   net.Conn
@@ -29,7 +28,7 @@ type renderChannel struct {
 	handler   IPCCallback
 }
 
-func (m *ipcChannel) NewRenderChannel(browserId int32, channelId int64, memoryAddresses ...string) *renderChannel {
+func (m *ipcChannel) NewRenderChannel(channelId int64, memoryAddresses ...string) *renderChannel {
 	if useNetIPCChannel {
 		address := fmt.Sprintf("localhost:%d", IPC.Port())
 		conn, err := net.Dial("tcp", address)
@@ -55,7 +54,6 @@ func (m *ipcChannel) NewRenderChannel(browserId int32, channelId int64, memoryAd
 		m.render.ipcType = IPCT_UNIX
 		m.render.connect = unixConn
 	}
-	m.render.browserId = browserId
 	m.render.channelId = channelId
 	go m.render.receive()
 	m.render.onConnection()
