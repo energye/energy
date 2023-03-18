@@ -39,7 +39,7 @@ var (
 	memoryAddress    = "energy.sock"
 	useNetIPCChannel = false
 	ipcSock          string
-	IPC              = &ipcChannel{
+	IPCChannel       = &ipcChannel{
 		browser: &browserChannel{
 			channel: sync.Map{},
 			mutex:   sync.Mutex{},
@@ -64,7 +64,6 @@ const (
 )
 
 func init() {
-	//useNetIPCChannel = isUseNetIPC()
 	ipcSock = filepath.Join(os.TempDir(), memoryAddress)
 }
 
@@ -100,7 +99,6 @@ func isUseNetIPC() bool {
 	}
 	ov := version.OSVersion
 	if (ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063) {
-		//不支持UnixSocket
 		return false
 	}
 	return true

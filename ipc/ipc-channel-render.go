@@ -29,8 +29,9 @@ type renderChannel struct {
 }
 
 func (m *ipcChannel) NewRenderChannel(channelId int64, memoryAddresses ...string) *renderChannel {
+	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPC.Port())
+		address := fmt.Sprintf("localhost:%d", IPCChannel.Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())

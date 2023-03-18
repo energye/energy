@@ -47,9 +47,11 @@ func MemoryAddress() string {
 	return memoryAddress
 }
 
-func (m *ipcChannel) NewBrowseChannel(memoryAddresses ...string) *browserChannel {
+// NewBrowserChannel 主进程
+func (m *ipcChannel) NewBrowserChannel(memoryAddresses ...string) *browserChannel {
+	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", IPC.Port())
+		address := fmt.Sprintf("localhost:%d", IPCChannel.Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
