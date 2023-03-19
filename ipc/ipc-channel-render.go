@@ -23,7 +23,7 @@ import (
 
 // renderChannel 渲染进程
 type renderChannel struct {
-	connect   *connect
+	connect   *channel
 	mutex     sync.Mutex
 	isConnect bool
 	handler   IPCCallback
@@ -31,16 +31,16 @@ type renderChannel struct {
 
 // NewRender 创建渲染进程通道
 //
-// channelId 唯一通道ID标识
+// 参数: channelId 唯一通道ID标识
 func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *renderChannel {
 	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
 		address := fmt.Sprintf("localhost:%d", Channel.Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
-			panic("Client failed to connect to IPC service Error: " + err.Error())
+			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.connect = &connect{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, ct: Ct_Client}
+		m.render.connect = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
 	} else {
 		memoryAddr := ipcSock
 		logger.Debug("new render channel for IPC Sock", memoryAddr)
@@ -49,13 +49,13 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		}
 		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, memoryAddr)
 		if err != nil {
-			panic("Client failed to connect to IPC service Error: " + err.Error())
+			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
 		unixConn, err := net.DialUnix(MemoryNetwork, nil, unixAddr)
 		if err != nil {
-			panic("Client failed to connect to IPC service Error: " + err.Error())
+			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.connect = &connect{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, ct: Ct_Client}
+		m.render.connect = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
 	}
 	go m.render.receive()
 	m.render.onConnection()

@@ -68,9 +68,9 @@ func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
 }
 
 // Channel 返回指定通道链接
-func (m *browserChannel) Channel(channelId int64) *connect {
+func (m *browserChannel) Channel(channelId int64) *channel {
 	if value, ok := m.channel.Load(channelId); ok {
-		return value.(*connect)
+		return value.(*channel)
 	}
 	return nil
 }
@@ -95,8 +95,8 @@ func (m *browserChannel) Close() {
 }
 
 // onConnect 建立链接
-func (m *browserChannel) onConnect(conn *connect) {
-	logger.Info("IPC browser on connect key_channelId:", conn.channelId)
+func (m *browserChannel) onConnect(conn *channel) {
+	logger.Info("IPC browser on channel key_channelId:", conn.channelId)
 	m.channel.Store(conn.channelId, conn)
 }
 
@@ -172,7 +172,7 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 			logger.Error("IPC Server Accept Recover:", err)
 		}
 	}()
-	var newConn *connect
+	var newConn *channel
 	defer func() {
 		if newConn != nil {
 			m.removeChannel(newConn.channelId)
@@ -181,11 +181,11 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 			newConn.writeBuf = nil
 		}
 	}()
-	newConn = &connect{
-		writeBuf: new(bytes.Buffer),
-		ct:       Ct_Server,
-		ipcType:  m.ipcType,
-		conn:     conn,
+	newConn = &channel{
+		writeBuf:    new(bytes.Buffer),
+		channelType: Ct_Server,
+		ipcType:     m.ipcType,
+		conn:        conn,
 	}
 	newConn.handler = func(context IIPCContext) {
 		if context.Message().Type() == mt_connection {

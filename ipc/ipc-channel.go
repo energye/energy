@@ -50,7 +50,7 @@ var (
 	}
 )
 
-//消息类型
+//mt 消息类型
 type mt int8
 
 const (
@@ -59,6 +59,7 @@ const (
 	mt_common                   //普通消息
 )
 
+// channel key
 const (
 	key_channelId = "key_channelId"
 )
@@ -73,11 +74,6 @@ type ipcChannel struct {
 	port    int
 	browser *browserChannel
 	render  *renderChannel
-}
-
-type channel struct {
-	IPCType IPC_TYPE
-	Conn    net.Conn
 }
 
 func removeMemory() {
@@ -101,11 +97,6 @@ func isUseNetIPC() bool {
 		return false
 	}
 	return true
-}
-
-// conn 返回通道链接
-func (m *channel) conn() net.Conn {
-	return m.Conn
 }
 
 // Port 获取并返回net socket端口
@@ -139,13 +130,6 @@ func (m *ipcChannel) Render() *renderChannel {
 	return m.render
 }
 
-// IIPCChannel browser
-type IIPCChannel interface {
-	Close()
-	Channel(channelId int64) *channel //IPC 获取指定的通道
-	ChannelIds() (result []int64)     //IPC 获取所有通道
-}
-
 // IIPCContext IPC通信回调上下文
 type IIPCContext interface {
 	Connect() net.Conn // IPC 通道链接
@@ -163,27 +147,19 @@ type IMessage interface {
 	clear()
 }
 
-// ipcReadHandler ipc 消息读取处理
-//type ipcReadHandler struct {
-//	ipcType IPC_TYPE
-//	ct      ChannelType
-//	connect net.Conn
-//	handler IPCCallback
-//}
-
 // ipcMessage 消息内容
 type ipcMessage struct {
-	t mt
-	s uint32
-	v []byte
+	t mt     // type
+	s uint32 // size
+	v []byte // data
 }
 
 // IPCContext IPC 上下文
 type IPCContext struct {
 	channelId int64    //render channelId
-	ipcType   IPC_TYPE //
-	connect   net.Conn //
-	message   IMessage //
+	ipcType   IPC_TYPE // ipcType
+	connect   net.Conn // connect
+	message   IMessage // message
 }
 
 // Free 释放消息内存空间
@@ -236,17 +212,18 @@ func (m *ipcMessage) clear() {
 	m.s = 0
 }
 
-type connect struct {
-	writeBuf  *bytes.Buffer //
-	channelId int64         //通道ID
-	conn      net.Conn      //通道链接
-	ipcType   IPC_TYPE      //IPC类型
-	ct        ChannelType   //链接通道类型
-	handler   IPCCallback   //
+// channel 通道
+type channel struct {
+	writeBuf    *bytes.Buffer //
+	channelId   int64         //通道ID
+	conn        net.Conn      //通道链接 net or unix
+	ipcType     IPC_TYPE      //IPC类型
+	channelType ChannelType   //链接通道类型
+	handler     IPCCallback   //
 }
 
 // Close 关闭当前ipc通道链接
-func (m *connect) Close() {
+func (m *channel) Close() {
 	if m.conn != nil {
 		m.conn.Close()
 		m.conn = nil
@@ -254,7 +231,7 @@ func (m *connect) Close() {
 }
 
 // Read 读取内容
-func (m *connect) Read(b []byte) (n int, err error) {
+func (m *channel) Read(b []byte) (n int, err error) {
 	if m.ipcType == IPCT_NET {
 		return m.conn.Read(b)
 	} else {
@@ -264,7 +241,7 @@ func (m *connect) Read(b []byte) (n int, err error) {
 }
 
 // ipcWrite 写入消息
-func (m *connect) ipcWrite(messageType mt, channelId int64, data []byte) (n int, err error) {
+func (m *channel) ipcWrite(messageType mt, channelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -277,25 +254,25 @@ func (m *connect) ipcWrite(messageType mt, channelId int64, data []byte) (n int,
 	if dataByteLen > math.MaxUint32 {
 		return 0, errors.New("超出最大消息长度")
 	}
-	binary.Write(m.writeBuf, binary.BigEndian, protocolHeader)      //协议头
-	binary.Write(m.writeBuf, binary.BigEndian, int8(messageType))   //消息类型
-	binary.Write(m.writeBuf, binary.BigEndian, channelId)           //通道Id
-	binary.Write(m.writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
-	binary.Write(m.writeBuf, binary.BigEndian, data)                //数据
+	_ = binary.Write(m.writeBuf, binary.BigEndian, protocolHeader)      //协议头
+	_ = binary.Write(m.writeBuf, binary.BigEndian, int8(messageType))   //消息类型
+	_ = binary.Write(m.writeBuf, binary.BigEndian, channelId)           //通道Id
+	_ = binary.Write(m.writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
+	_ = binary.Write(m.writeBuf, binary.BigEndian, data)                //数据
 	n, err = m.conn.Write(m.writeBuf.Bytes())
 	m.writeBuf.Reset()
 	return n, err
 }
 
 // ipcRead 读取消息
-func (m *connect) ipcRead() {
+func (m *channel) ipcRead() {
 	var ipcType, chnType string
 	if m.ipcType == IPCT_NET {
 		ipcType = "[net]"
 	} else {
 		ipcType = "[unix]"
 	}
-	if m.ct == Ct_Server {
+	if m.channelType == Ct_Server {
 		chnType = "[server]"
 	} else {
 		chnType = "[client]"
