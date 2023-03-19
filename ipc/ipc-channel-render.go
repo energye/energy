@@ -23,10 +23,9 @@ import (
 
 // renderChannel 渲染进程
 type renderChannel struct {
-	connect   *channel
-	mutex     sync.Mutex
-	isConnect bool
-	handler   IPCCallback
+	channel *channel
+	mutex   sync.Mutex
+	handler IPCCallback
 }
 
 // NewRender 创建渲染进程通道
@@ -40,7 +39,7 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.connect = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
+		m.render.channel = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
 	} else {
 		memoryAddr := ipcSock
 		logger.Debug("new render channel for IPC Sock", memoryAddr)
@@ -55,31 +54,35 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.connect = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
+		m.render.channel = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
 	}
 	go m.render.receive()
 	m.render.onConnection()
 	return m.render
 }
 
+func (m *renderChannel) Channel() IChannel {
+	return m.channel
+}
+
 // onConnection 建立链接
 func (m *renderChannel) onConnection() {
 	message := json.NewJSONObject(nil)
-	message.Set(key_channelId, m.connect.channelId)
+	message.Set(key_channelId, m.channel.channelId)
 	m.sendMessage(mt_connection, message.Bytes())
 	message.Free()
 }
 
 // Send 发送数据
 func (m *renderChannel) Send(data []byte) {
-	m.sendMessage(mt_common, data)
+	if m.channel != nil && m.channel.IsConnect() {
+		m.sendMessage(mt_common, data)
+	}
 }
 
 // sendMessage 发送消息
 func (m *renderChannel) sendMessage(messageType mt, data []byte) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	_, _ = m.connect.ipcWrite(messageType, m.connect.channelId, data)
+	_, _ = m.channel.write(messageType, m.channel.channelId, data)
 }
 
 // Handler 设置自定义处理回调函数
@@ -89,9 +92,9 @@ func (m *renderChannel) Handler(handler IPCCallback) {
 
 // Close 关闭通道链接
 func (m *renderChannel) Close() {
-	if m.connect != nil {
-		m.connect.Close()
-		m.connect = nil
+	if m.channel != nil {
+		m.channel.Close()
+		m.channel = nil
 	}
 }
 
@@ -101,12 +104,18 @@ func (m *renderChannel) receive() {
 		if err := recover(); err != nil {
 			logger.Error("IPC Render Channel Recover:", err)
 		}
+		fmt.Println("close")
+		m.channel.isConnect = false
 		m.Close()
 	}()
-	m.connect.handler = func(context IIPCContext) {
-		if m.handler != nil {
-			m.handler(context)
+	m.channel.handler = func(context IIPCContext) {
+		if context.Message().Type() == mt_connectd {
+			m.channel.isConnect = true
+		} else {
+			if m.handler != nil {
+				m.handler(context)
+			}
 		}
 	}
-	m.connect.ipcRead()
+	m.channel.ipcRead()
 }

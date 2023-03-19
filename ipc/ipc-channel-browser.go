@@ -68,7 +68,7 @@ func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
 }
 
 // Channel 返回指定通道链接
-func (m *browserChannel) Channel(channelId int64) *channel {
+func (m *browserChannel) Channel(channelId int64) IChannel {
 	if value, ok := m.channel.Load(channelId); ok {
 		return value.(*channel)
 	}
@@ -129,13 +129,11 @@ func (m *browserChannel) Send(channelId int64, data []byte) {
 
 // Send 指定通道发送消息
 func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byte) {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
 	if id, ok := m.singleProcessChannelId(); ok {
 		channelId = id
 	}
 	if chn := m.Channel(channelId); chn != nil {
-		_, _ = chn.ipcWrite(messageType, channelId, data)
+		_, _ = chn.write(messageType, channelId, data)
 	}
 }
 
@@ -172,32 +170,35 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 			logger.Error("IPC Server Accept Recover:", err)
 		}
 	}()
-	var newConn *channel
+	var newChannel *channel
 	defer func() {
-		if newConn != nil {
-			m.removeChannel(newConn.channelId)
-			newConn.conn = nil
-			newConn.writeBuf.Reset()
-			newConn.writeBuf = nil
+		if newChannel != nil {
+			m.removeChannel(newChannel.channelId)
+			newChannel.conn = nil
+			newChannel.writeBuf.Reset()
+			newChannel.writeBuf = nil
+			newChannel.isConnect = false
 		}
 	}()
-	newConn = &channel{
+	newChannel = &channel{
 		writeBuf:    new(bytes.Buffer),
 		channelType: Ct_Server,
 		ipcType:     m.ipcType,
 		conn:        conn,
 	}
-	newConn.handler = func(context IIPCContext) {
+	newChannel.handler = func(context IIPCContext) {
 		if context.Message().Type() == mt_connection {
 			message := json.NewJSONObject(context.Message().Data())
-			newConn.channelId = int64(message.GetIntByKey(key_channelId))
+			newChannel.channelId = int64(message.GetIntByKey(key_channelId))
 			message.Free()
-			m.onConnect(newConn)
+			m.onConnect(newChannel)
+			m.sendMessage(mt_connectd, context.ChannelId(), []byte{1})
+			newChannel.isConnect = true
 		} else {
 			if m.handler != nil {
 				m.handler(context)
 			}
 		}
 	}
-	newConn.ipcRead()
+	newChannel.ipcRead()
 }

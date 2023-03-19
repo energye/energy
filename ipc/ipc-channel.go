@@ -56,6 +56,7 @@ type mt int8
 const (
 	mt_invalid    mt = iota - 1 //无效类型
 	mt_connection               //建立链接消息
+	mt_connectd                 //已链接
 	mt_common                   //普通消息
 )
 
@@ -148,6 +149,14 @@ type IMessage interface {
 	clear()          //
 }
 
+// IChannel 通道链接
+type IChannel interface {
+	IsConnect() bool
+	Close()
+	read(b []byte) (n int, err error)
+	write(messageType mt, channelId int64, data []byte) (n int, err error)
+}
+
 // ipcMessage 消息内容
 type ipcMessage struct {
 	t mt     // type
@@ -217,10 +226,18 @@ func (m *ipcMessage) clear() {
 type channel struct {
 	writeBuf    *bytes.Buffer //
 	channelId   int64         //通道ID
+	isConnect   bool          //是否已链接
 	conn        net.Conn      //通道链接 net or unix
 	ipcType     IPC_TYPE      //IPC类型
 	channelType ChannelType   //链接通道类型
 	handler     IPCCallback   //
+}
+
+func (m *channel) IsConnect() bool {
+	if m == nil {
+		return false
+	}
+	return m.isConnect
 }
 
 // Close 关闭当前ipc通道链接
@@ -231,8 +248,8 @@ func (m *channel) Close() {
 	}
 }
 
-// Read 读取内容
-func (m *channel) Read(b []byte) (n int, err error) {
+// read 读取 net or unix 内容
+func (m *channel) read(b []byte) (n int, err error) {
 	if m.ipcType == IPCT_NET {
 		return m.conn.Read(b)
 	} else {
@@ -242,7 +259,7 @@ func (m *channel) Read(b []byte) (n int, err error) {
 }
 
 // ipcWrite 写入消息
-func (m *channel) ipcWrite(messageType mt, channelId int64, data []byte) (n int, err error) {
+func (m *channel) write(messageType mt, channelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -265,7 +282,7 @@ func (m *channel) ipcWrite(messageType mt, channelId int64, data []byte) (n int,
 	return n, err
 }
 
-// ipcRead 读取消息
+// ipcRead 读取通道消息
 func (m *channel) ipcRead() {
 	var ipcType, chnType string
 	if m.ipcType == IPCT_NET {
@@ -284,7 +301,7 @@ func (m *channel) ipcRead() {
 	}()
 	for {
 		header := make([]byte, headerLength)
-		size, err := m.Read(header)
+		size, err := m.read(header)
 		if err != nil {
 			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "Error:", err)
 			return
@@ -332,7 +349,7 @@ func (m *channel) ipcRead() {
 			//数据
 			dataByte := make([]byte, dataLen)
 			if dataLen > 0 {
-				size, err = m.Read(dataByte)
+				size, err = m.read(dataByte)
 			}
 			if err != nil {
 				logger.Debug("binary.Read.data: ", err)
