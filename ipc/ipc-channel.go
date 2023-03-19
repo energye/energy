@@ -64,6 +64,7 @@ const (
 	key_channelId = "key_channelId"
 )
 
+// IPCCallback 回调
 type IPCCallback func(context IIPCContext)
 
 func init() {
@@ -140,11 +141,11 @@ type IIPCContext interface {
 
 // IMessage 消息内容接口
 type IMessage interface {
-	Type() mt
-	Length() uint32
-	Data() []byte
-	JSON() json.JSON
-	clear()
+	Type() mt        //
+	Length() uint32  //
+	Data() []byte    //
+	JSON() json.JSON //
+	clear()          //
 }
 
 // ipcMessage 消息内容
