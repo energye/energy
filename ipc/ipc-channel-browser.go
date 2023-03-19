@@ -176,6 +176,9 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 	defer func() {
 		if newConn != nil {
 			m.removeChannel(newConn.channelId)
+			newConn.conn = nil
+			newConn.writeBuf.Reset()
+			newConn.writeBuf = nil
 		}
 	}()
 	newConn = &connect{
