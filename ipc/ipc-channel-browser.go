@@ -12,6 +12,7 @@
 package ipc
 
 import (
+	"bytes"
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -67,9 +68,9 @@ func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
 }
 
 // Channel 返回指定通道链接
-func (m *browserChannel) Channel(channelId int64) *channel {
+func (m *browserChannel) Channel(channelId int64) *connect {
 	if value, ok := m.channel.Load(channelId); ok {
-		return value.(*channel)
+		return value.(*connect)
 	}
 	return nil
 }
@@ -93,23 +94,10 @@ func (m *browserChannel) Close() {
 	}
 }
 
-// putChannel 添加一个通道链接
-func (m *browserChannel) putChannel(channelId int64, value *channel) {
-	m.channel.Store(channelId, value)
-}
-
 // onConnect 建立链接
-func (m *browserChannel) onConnect(context IIPCContext) {
-	logger.Info("IPC browser on connect key_channelId:", context.ChannelId())
-	if chn := m.Channel(context.ChannelId()); chn != nil {
-		chn.IPCType = m.ipcType
-		chn.Conn = context.Connect()
-	} else {
-		m.putChannel(context.ChannelId(), &channel{
-			IPCType: m.ipcType,
-			Conn:    context.Connect(),
-		})
-	}
+func (m *browserChannel) onConnect(conn *connect) {
+	logger.Info("IPC browser on connect key_channelId:", conn.channelId)
+	m.channel.Store(conn.channelId, conn)
 }
 
 // removeChannel 删除指定通道
@@ -147,7 +135,7 @@ func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byt
 		channelId = id
 	}
 	if chn := m.Channel(channelId); chn != nil {
-		_, _ = ipcWrite(messageType, channelId, data, chn.conn())
+		_, _ = chn.ipcWrite(messageType, channelId, data)
 	}
 }
 
@@ -173,36 +161,40 @@ func (m *browserChannel) accept() {
 			logger.Info("browser channel accept Error:", err.Error())
 			continue
 		}
-		go m.readHandler(conn)
+		go m.newConnection(conn)
 	}
 }
 
-// readHandler 读取数据
-func (m *browserChannel) readHandler(conn net.Conn) {
+// newConnection 新链接
+func (m *browserChannel) newConnection(conn net.Conn) {
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("IPC Server Accept Recover:", err)
 		}
 	}()
-	var channelId int64
+	var newConn *connect
 	defer func() {
-		m.removeChannel(channelId)
+		if newConn != nil {
+			m.removeChannel(newConn.channelId)
+		}
 	}()
-	var readHandler = &ipcReadHandler{
-		ct:      Ct_Server,
-		ipcType: m.ipcType,
-		connect: conn,
-		handler: func(context IIPCContext) {
-			if context.Message().Type() == mt_connection {
-				message := json.NewJSONObject(context.Message().Data())
-				channelId = int64(message.GetIntByKey(key_channelId))
-				m.onConnect(context)
-			} else {
-				if m.handler != nil {
-					m.handler(context)
-				}
-			}
-		},
+	newConn = &connect{
+		writeBuf: new(bytes.Buffer),
+		ct:       Ct_Server,
+		ipcType:  m.ipcType,
+		conn:     conn,
 	}
-	ipcRead(readHandler)
+	newConn.handler = func(context IIPCContext) {
+		if context.Message().Type() == mt_connection {
+			message := json.NewJSONObject(context.Message().Data())
+			newConn.channelId = int64(message.GetIntByKey(key_channelId))
+			message.Free()
+			m.onConnect(newConn)
+		} else {
+			if m.handler != nil {
+				m.handler(context)
+			}
+		}
+	}
+	newConn.ipcRead()
 }

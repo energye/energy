@@ -48,7 +48,6 @@ var (
 			mutex: sync.Mutex{},
 		},
 	}
-	ipcWriteBuf = new(bytes.Buffer)
 )
 
 //消息类型
@@ -165,12 +164,12 @@ type IMessage interface {
 }
 
 // ipcReadHandler ipc 消息读取处理
-type ipcReadHandler struct {
-	ipcType IPC_TYPE
-	ct      ChannelType
-	connect net.Conn
-	handler IPCCallback
-}
+//type ipcReadHandler struct {
+//	ipcType IPC_TYPE
+//	ct      ChannelType
+//	connect net.Conn
+//	handler IPCCallback
+//}
 
 // ipcMessage 消息内容
 type ipcMessage struct {
@@ -185,24 +184,6 @@ type IPCContext struct {
 	ipcType   IPC_TYPE //
 	connect   net.Conn //
 	message   IMessage //
-}
-
-// Close 关闭当前ipc通道链接
-func (m *ipcReadHandler) Close() {
-	if m.connect != nil {
-		m.connect.Close()
-		m.connect = nil
-	}
-}
-
-// Read 读取内容
-func (m *ipcReadHandler) Read(b []byte) (n int, err error) {
-	if m.ipcType == IPCT_NET {
-		return m.connect.Read(b)
-	} else {
-		n, _, err := m.connect.(*net.UnixConn).ReadFromUnix(b)
-		return n, err
-	}
 }
 
 // Free 释放消息内存空间
@@ -255,13 +236,40 @@ func (m *ipcMessage) clear() {
 	m.s = 0
 }
 
+type connect struct {
+	writeBuf  *bytes.Buffer //
+	channelId int64         //通道ID
+	conn      net.Conn      //通道链接
+	ipcType   IPC_TYPE      //IPC类型
+	ct        ChannelType   //链接通道类型
+	handler   IPCCallback   //
+}
+
+// Close 关闭当前ipc通道链接
+func (m *connect) Close() {
+	if m.conn != nil {
+		m.conn.Close()
+		m.conn = nil
+	}
+}
+
+// Read 读取内容
+func (m *connect) Read(b []byte) (n int, err error) {
+	if m.ipcType == IPCT_NET {
+		return m.conn.Read(b)
+	} else {
+		n, _, err := m.conn.(*net.UnixConn).ReadFromUnix(b)
+		return n, err
+	}
+}
+
 // ipcWrite 写入消息
-func ipcWrite(messageType mt, channelId int64, data []byte, conn net.Conn) (n int, err error) {
+func (m *connect) ipcWrite(messageType mt, channelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
-	if conn == nil {
-		return 0, errors.New("链接未建立成功")
+	if m.conn == nil {
+		return 0, errors.New("通道链接未建立成功")
 	}
 	var (
 		dataByteLen = len(data)
@@ -269,36 +277,36 @@ func ipcWrite(messageType mt, channelId int64, data []byte, conn net.Conn) (n in
 	if dataByteLen > math.MaxUint32 {
 		return 0, errors.New("超出最大消息长度")
 	}
-	binary.Write(ipcWriteBuf, binary.BigEndian, protocolHeader)      //协议头
-	binary.Write(ipcWriteBuf, binary.BigEndian, int8(messageType))   //消息类型
-	binary.Write(ipcWriteBuf, binary.BigEndian, channelId)           //通道Id
-	binary.Write(ipcWriteBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
-	binary.Write(ipcWriteBuf, binary.BigEndian, data)                //数据
-	n, err = conn.Write(ipcWriteBuf.Bytes())
-	ipcWriteBuf.Reset()
+	binary.Write(m.writeBuf, binary.BigEndian, protocolHeader)      //协议头
+	binary.Write(m.writeBuf, binary.BigEndian, int8(messageType))   //消息类型
+	binary.Write(m.writeBuf, binary.BigEndian, channelId)           //通道Id
+	binary.Write(m.writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
+	binary.Write(m.writeBuf, binary.BigEndian, data)                //数据
+	n, err = m.conn.Write(m.writeBuf.Bytes())
+	m.writeBuf.Reset()
 	return n, err
 }
 
 // ipcRead 读取消息
-func ipcRead(handler *ipcReadHandler) {
+func (m *connect) ipcRead() {
 	var ipcType, chnType string
-	if handler.ipcType == IPCT_NET {
+	if m.ipcType == IPCT_NET {
 		ipcType = "[net]"
 	} else {
 		ipcType = "[unix]"
 	}
-	if handler.ct == Ct_Server {
+	if m.ct == Ct_Server {
 		chnType = "[server]"
 	} else {
 		chnType = "[client]"
 	}
 	defer func() {
 		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "processType:", common.Args.ProcessType())
-		handler.Close()
+		m.Close()
 	}()
 	for {
 		header := make([]byte, headerLength)
-		size, err := handler.Read(header)
+		size, err := m.Read(header)
 		if err != nil {
 			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "Error:", err)
 			return
@@ -346,16 +354,16 @@ func ipcRead(handler *ipcReadHandler) {
 			//数据
 			dataByte := make([]byte, dataLen)
 			if dataLen > 0 {
-				size, err = handler.Read(dataByte)
+				size, err = m.Read(dataByte)
 			}
 			if err != nil {
 				logger.Debug("binary.Read.data: ", err)
 				return
 			}
-			handler.handler(&IPCContext{
+			m.handler(&IPCContext{
 				channelId: channelId,
-				ipcType:   handler.ipcType,
-				connect:   handler.connect,
+				ipcType:   m.ipcType,
+				connect:   m.conn,
 				message: &ipcMessage{
 					t: mt(t),
 					s: dataLen,

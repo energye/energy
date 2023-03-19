@@ -12,6 +12,7 @@
 package ipc
 
 import (
+	"bytes"
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -22,9 +23,7 @@ import (
 
 // renderChannel 渲染进程
 type renderChannel struct {
-	channelId int64
-	ipcType   IPC_TYPE
-	connect   net.Conn
+	connect   *connect
 	mutex     sync.Mutex
 	isConnect bool
 	handler   IPCCallback
@@ -41,8 +40,7 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
-		m.render.ipcType = IPCT_NET
-		m.render.connect = conn
+		m.render.connect = &connect{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, ct: Ct_Client}
 	} else {
 		memoryAddr := ipcSock
 		logger.Debug("new render channel for IPC Sock", memoryAddr)
@@ -57,10 +55,8 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		if err != nil {
 			panic("Client failed to connect to IPC service Error: " + err.Error())
 		}
-		m.render.ipcType = IPCT_UNIX
-		m.render.connect = unixConn
+		m.render.connect = &connect{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, ct: Ct_Client}
 	}
-	m.render.channelId = channelId
 	go m.render.receive()
 	m.render.onConnection()
 	return m.render
@@ -69,7 +65,7 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 // onConnection 建立链接
 func (m *renderChannel) onConnection() {
 	message := json.NewJSONObject(nil)
-	message.Set(key_channelId, m.channelId)
+	message.Set(key_channelId, m.connect.channelId)
 	m.sendMessage(mt_connection, message.Bytes())
 	message.Free()
 }
@@ -83,7 +79,7 @@ func (m *renderChannel) Send(data []byte) {
 func (m *renderChannel) sendMessage(messageType mt, data []byte) {
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	_, _ = ipcWrite(messageType, m.channelId, data, m.conn())
+	_, _ = m.connect.ipcWrite(messageType, m.connect.channelId, data)
 }
 
 // Handler 设置自定义处理回调函数
@@ -99,11 +95,6 @@ func (m *renderChannel) Close() {
 	}
 }
 
-// conn 返回通道链接
-func (m *renderChannel) conn() net.Conn {
-	return m.connect
-}
-
 // receive 接收数据
 func (m *renderChannel) receive() {
 	defer func() {
@@ -112,15 +103,10 @@ func (m *renderChannel) receive() {
 		}
 		m.Close()
 	}()
-	var readHandler = &ipcReadHandler{
-		ct:      Ct_Client,
-		ipcType: m.ipcType,
-		connect: m.connect,
-		handler: func(context IIPCContext) {
-			if m.handler != nil {
-				m.handler(context)
-			}
-		},
+	m.connect.handler = func(context IIPCContext) {
+		if m.handler != nil {
+			m.handler(context)
+		}
 	}
-	ipcRead(readHandler)
+	m.connect.ipcRead()
 }
