@@ -93,16 +93,16 @@ func (m *browserChannel) Close() {
 	}
 }
 
-// onConnect 建立链接
-func (m *browserChannel) onConnect(conn *channel) {
+// onChannelConnect 建立通道链接
+func (m *browserChannel) onChannelConnect(conn *channel) {
 	logger.Info("IPC browser on channel key_channelId:", conn.channelId)
 	m.channel.Store(conn.channelId, conn)
 }
 
 // removeChannel 删除指定通道
-func (m *browserChannel) removeChannel(id int64) {
-	logger.Debug("IPC browser channel remove key_channelId:", id)
-	m.channel.Delete(id)
+func (m *browserChannel) removeChannel(channelId int64) {
+	logger.Debug("IPC browser channel remove channelId:", channelId)
+	m.channel.Delete(channelId)
 }
 
 // singleProcessChannelId 单进程进程通道获取
@@ -188,7 +188,7 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 	newChannel.handler = func(context IIPCContext) {
 		if context.Message().Type() == mt_connection {
 			newChannel.channelId = context.ChannelId()
-			m.onConnect(newChannel)
+			m.onChannelConnect(newChannel)
 			m.sendMessage(mt_connectd, context.ChannelId(), context.ToChannelId(), []byte{uint8(mt_connectd)})
 			newChannel.isConnect = true
 		} else if context.Message().Type() == mt_relay {

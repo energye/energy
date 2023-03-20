@@ -242,6 +242,7 @@ type channel struct {
 	handler     IPCCallback   //
 }
 
+// IsConnect 返回是否已链接
 func (m *channel) IsConnect() bool {
 	if m == nil {
 		return false
@@ -267,7 +268,7 @@ func (m *channel) read(b []byte) (n int, err error) {
 	}
 }
 
-// ipcWrite 写入消息
+// write 写入消息
 func (m *channel) write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
@@ -336,7 +337,7 @@ func (m *channel) ipcRead() {
 			high = protocolHeaderLength + messageTypeLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &t)
 			if err != nil {
-				logger.Debug("binary.Read.length: ", err)
+				logger.Debug("binary.Read.t: ", err)
 				return
 			}
 			//发送通道ID
@@ -344,7 +345,7 @@ func (m *channel) ipcRead() {
 			high = high + channelIdLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
 			if err != nil {
-				logger.Debug("binary.Read.length: ", err)
+				logger.Debug("binary.Read.channelId: ", err)
 				return
 			}
 
@@ -353,7 +354,7 @@ func (m *channel) ipcRead() {
 			high = high + toChannelIdLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &toChannelId)
 			if err != nil {
-				logger.Debug("binary.Read.length: ", err)
+				logger.Debug("binary.Read.toChannelId: ", err)
 				return
 			}
 
@@ -362,7 +363,7 @@ func (m *channel) ipcRead() {
 			high = high + dataByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &dataLen)
 			if err != nil {
-				logger.Debug("binary.Read.length: ", err)
+				logger.Debug("binary.Read.dataLen: ", err)
 				return
 			}
 			//数据
@@ -371,7 +372,7 @@ func (m *channel) ipcRead() {
 				size, err = m.read(dataByte)
 			}
 			if err != nil {
-				logger.Debug("binary.Read.data: ", err)
+				logger.Debug("binary.Read.dataByte: ", err)
 				return
 			}
 			m.handler(&IPCContext{

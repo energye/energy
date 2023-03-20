@@ -56,7 +56,7 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		m.render.channel = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
 	}
 	go m.render.receive()
-	m.render.onConnection()
+	m.render.onChannelConnect()
 	return m.render
 }
 
@@ -64,8 +64,8 @@ func (m *renderChannel) Channel() IChannel {
 	return m.channel
 }
 
-// onConnection 建立链接
-func (m *renderChannel) onConnection() {
+// onChannelConnect 建立通道链接
+func (m *renderChannel) onChannelConnect() {
 	m.sendMessage(mt_connection, m.channel.channelId, m.channel.channelId, []byte{uint8(mt_connection)})
 }
 
