@@ -27,12 +27,13 @@ import (
 )
 
 var (
-	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                           //协议头
-	protocolHeaderLength = int32(len(protocolHeader))                                                       //协议头长度
-	messageTypeLength    = int32(1)                                                                         //消息类型 int8
-	channelIdLength      = int32(8)                                                                         //通道Id int64
-	dataByteLength       = int32(4)                                                                         //数据长度 int32
-	headerLength         = int(protocolHeaderLength + messageTypeLength + channelIdLength + dataByteLength) //协议头长度
+	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                                               //协议头
+	protocolHeaderLength = int32(len(protocolHeader))                                                                           //协议头长度
+	messageTypeLength    = int32(1)                                                                                             //消息类型 int8
+	channelIdLength      = int32(8)                                                                                             //发送通道 int64
+	toChannelIdLength    = int32(8)                                                                                             //接收通道 int64
+	dataByteLength       = int32(4)                                                                                             //数据长度 int32
+	headerLength         = int(protocolHeaderLength + messageTypeLength + channelIdLength + toChannelIdLength + dataByteLength) //协议头长度
 )
 
 var (
@@ -54,10 +55,11 @@ var (
 type mt int8
 
 const (
-	mt_invalid    mt = iota - 1 //无效类型
-	mt_connection               //建立链接消息
-	mt_connectd                 //已链接
-	mt_common                   //普通消息
+	mt_invalid    mt = iota - 1 // 无效类型
+	mt_connection               // 建立链接消息
+	mt_connectd                 // 已链接
+	mt_common                   // 普通消息
+	mt_relay                    // 转发消息
 )
 
 // channel key
@@ -134,19 +136,20 @@ func (m *ipcChannel) Render() *renderChannel {
 
 // IIPCContext IPC通信回调上下文
 type IIPCContext interface {
-	Connect() net.Conn // IPC 通道链接
-	ChannelId() int64  // 通道ID
-	Message() IMessage // 消息
-	Free()             //
+	Connect() net.Conn  // IPC 通道链接
+	ChannelId() int64   // 返回 发送通道ID
+	ToChannelId() int64 // 返回 接收发送通道ID
+	Message() IMessage  // 消息
+	Free()              //
 }
 
 // IMessage 消息内容接口
 type IMessage interface {
-	Type() mt        //
-	Length() uint32  //
-	Data() []byte    //
-	JSON() json.JSON //
-	clear()          //
+	Type() mt        // 消息类型
+	Length() uint32  // 数据长度
+	Data() []byte    // 数据
+	JSON() json.JSON // 转为 JSON 对象并返回
+	clear()          // 清空
 }
 
 // IChannel 通道链接
@@ -154,7 +157,7 @@ type IChannel interface {
 	IsConnect() bool
 	Close()
 	read(b []byte) (n int, err error)
-	write(messageType mt, channelId int64, data []byte) (n int, err error)
+	write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error)
 }
 
 // ipcMessage 消息内容
@@ -166,10 +169,11 @@ type ipcMessage struct {
 
 // IPCContext IPC 上下文
 type IPCContext struct {
-	channelId int64    //render channelId
-	ipcType   IPC_TYPE // ipcType
-	connect   net.Conn // connect
-	message   IMessage // message
+	channelId   int64    //render channelId
+	toChannelId int64    //
+	ipcType     IPC_TYPE // ipcType
+	connect     net.Conn // connect
+	message     IMessage // message
 }
 
 // Free 释放消息内存空间
@@ -180,9 +184,14 @@ func (m *IPCContext) Free() {
 	}
 }
 
-// ChannelId 返回通道ID
+// ChannelId 返回发送通道ID
 func (m *IPCContext) ChannelId() int64 {
 	return m.channelId
+}
+
+// ToChannelId 返回接收通道ID
+func (m *IPCContext) ToChannelId() int64 {
+	return m.toChannelId
 }
 
 // Message 返回消息内容
@@ -259,7 +268,7 @@ func (m *channel) read(b []byte) (n int, err error) {
 }
 
 // ipcWrite 写入消息
-func (m *channel) write(messageType mt, channelId int64, data []byte) (n int, err error) {
+func (m *channel) write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -275,6 +284,7 @@ func (m *channel) write(messageType mt, channelId int64, data []byte) (n int, er
 	_ = binary.Write(m.writeBuf, binary.BigEndian, protocolHeader)      //协议头
 	_ = binary.Write(m.writeBuf, binary.BigEndian, int8(messageType))   //消息类型
 	_ = binary.Write(m.writeBuf, binary.BigEndian, channelId)           //通道Id
+	_ = binary.Write(m.writeBuf, binary.BigEndian, toChannelId)         //通道Id
 	_ = binary.Write(m.writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
 	_ = binary.Write(m.writeBuf, binary.BigEndian, data)                //数据
 	n, err = m.conn.Write(m.writeBuf.Bytes())
@@ -316,10 +326,10 @@ func (m *channel) ipcRead() {
 				}
 			}
 			var (
-				t         int8 //消息类型
-				channelId int64
-				dataLen   uint32 //数据长度
-				low, high int32  //
+				t                      int8   //消息类型
+				channelId, toChannelId int64  //
+				dataLen                uint32 //数据长度
+				low, high              int32  //
 			)
 			//消息类型
 			low = protocolHeaderLength
@@ -329,10 +339,19 @@ func (m *channel) ipcRead() {
 				logger.Debug("binary.Read.length: ", err)
 				return
 			}
-			//通道ID
+			//发送通道ID
 			low = high
 			high = high + channelIdLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
+			if err != nil {
+				logger.Debug("binary.Read.length: ", err)
+				return
+			}
+
+			//接收通道ID
+			low = high
+			high = high + toChannelIdLength
+			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &toChannelId)
 			if err != nil {
 				logger.Debug("binary.Read.length: ", err)
 				return
@@ -356,9 +375,10 @@ func (m *channel) ipcRead() {
 				return
 			}
 			m.handler(&IPCContext{
-				channelId: channelId,
-				ipcType:   m.ipcType,
-				connect:   m.conn,
+				channelId:   channelId,
+				toChannelId: toChannelId,
+				ipcType:     m.ipcType,
+				connect:     m.conn,
 				message: &ipcMessage{
 					t: mt(t),
 					s: dataLen,

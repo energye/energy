@@ -16,7 +16,6 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
-	"github.com/energye/energy/pkgs/json"
 	"net"
 	"sync"
 )
@@ -124,16 +123,16 @@ func (m *browserChannel) singleProcessChannelId() (int64, bool) {
 
 // Send 指定通道发送数据
 func (m *browserChannel) Send(channelId int64, data []byte) {
-	m.sendMessage(mt_common, channelId, data)
+	m.sendMessage(mt_common, channelId, channelId, data)
 }
 
 // Send 指定通道发送消息
-func (m *browserChannel) sendMessage(messageType mt, channelId int64, data []byte) {
+func (m *browserChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
 	if id, ok := m.singleProcessChannelId(); ok {
 		channelId = id
 	}
-	if chn := m.Channel(channelId); chn != nil {
-		_, _ = chn.write(messageType, channelId, data)
+	if chn := m.Channel(toChannelId); chn != nil {
+		_, _ = chn.write(messageType, channelId, toChannelId, data)
 	}
 }
 
@@ -142,7 +141,7 @@ func (m *browserChannel) Handler(handler IPCCallback) {
 	m.handler = handler
 }
 
-// accept 接收链接的链接
+// accept 接收新链接
 func (m *browserChannel) accept() {
 	logger.Info("IPC Server Accept")
 	for {
@@ -188,17 +187,18 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 	}
 	newChannel.handler = func(context IIPCContext) {
 		if context.Message().Type() == mt_connection {
-			message := json.NewJSONObject(context.Message().Data())
-			newChannel.channelId = int64(message.GetIntByKey(key_channelId))
-			message.Free()
+			newChannel.channelId = context.ChannelId()
 			m.onConnect(newChannel)
-			m.sendMessage(mt_connectd, context.ChannelId(), []byte{1})
+			m.sendMessage(mt_connectd, context.ChannelId(), context.ToChannelId(), []byte{uint8(mt_connectd)})
 			newChannel.isConnect = true
+		} else if context.Message().Type() == mt_relay {
+			m.sendMessage(mt_common, context.ChannelId(), context.ToChannelId(), context.Message().Data())
 		} else {
 			if m.handler != nil {
 				m.handler(context)
 			}
 		}
+		context.Free()
 	}
 	newChannel.ipcRead()
 }

@@ -16,7 +16,6 @@ import (
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
-	"github.com/energye/energy/pkgs/json"
 	"net"
 	"sync"
 )
@@ -67,22 +66,26 @@ func (m *renderChannel) Channel() IChannel {
 
 // onConnection 建立链接
 func (m *renderChannel) onConnection() {
-	message := json.NewJSONObject(nil)
-	message.Set(key_channelId, m.channel.channelId)
-	m.sendMessage(mt_connection, message.Bytes())
-	message.Free()
+	m.sendMessage(mt_connection, m.channel.channelId, m.channel.channelId, []byte{uint8(mt_connection)})
 }
 
 // Send 发送数据
 func (m *renderChannel) Send(data []byte) {
 	if m.channel != nil && m.channel.IsConnect() {
-		m.sendMessage(mt_common, data)
+		m.sendMessage(mt_common, m.channel.channelId, m.channel.channelId, data)
+	}
+}
+
+// SendToChannel 发送到指定通道
+func (m *renderChannel) SendToChannel(toChannelId int64, data []byte) {
+	if m.channel != nil && m.channel.IsConnect() {
+		m.sendMessage(mt_relay, m.channel.channelId, toChannelId, data)
 	}
 }
 
 // sendMessage 发送消息
-func (m *renderChannel) sendMessage(messageType mt, data []byte) {
-	_, _ = m.channel.write(messageType, m.channel.channelId, data)
+func (m *renderChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
+	_, _ = m.channel.write(messageType, channelId, toChannelId, data)
 }
 
 // Handler 设置自定义处理回调函数
