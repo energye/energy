@@ -546,21 +546,6 @@ func (m *ICefV8Value) SetCanNotFree(v bool) {
 
 func (m *ICefV8Value) Free() {
 	if m.instance != nil {
-		//if m.IsArray() {
-		//	for i := 0; i < m.GetArrayLength(); i++ {
-		//		if v := m.GetValueByIndex(i); v != nil {
-		//			v.Free()
-		//		}
-		//	}
-		//}
-		//if m.IsObject() {
-		//	keys := m.GetKeys()
-		//	for i := 0; i < keys.Count(); i++ {
-		//		if v := m.getValueByKey(keys.Get(i)); v != nil {
-		//			v.Free()
-		//		}
-		//	}
-		//}
 		if m.valueByIndex != nil {
 			for _, v := range m.valueByIndex {
 				if v != nil {
@@ -577,10 +562,9 @@ func (m *ICefV8Value) Free() {
 			}
 			m.valueByKeys = nil
 		}
-		//var data = m.Instance()
-		//imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&data)))
 		if !m.cantFree {
-			m.base.Free(m.Instance())
+			var ptr = m.Instance()
+			imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&ptr)))
 			m.instance = nil
 		}
 	}

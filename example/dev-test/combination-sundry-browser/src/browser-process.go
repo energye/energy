@@ -18,6 +18,7 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
@@ -56,7 +57,7 @@ func AppBrowserInit() {
 	//主进程 IPC事件
 	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
 		fmt.Println("主进程IPC事件注册")
-		event.On("ZoomPct", func(context ipc.IIPCContext) {
+		event.On("ZoomPct", func(context channel.IIPCContext) {
 			fmt.Println("ZoomPct")
 			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			bw.Chromium().SetZoomPct(150.2)
@@ -64,13 +65,13 @@ func AppBrowserInit() {
 			bw.Chromium().SetDefaultEncoding("UTF-8")
 			fmt.Println(bw.Chromium().DefaultEncoding())
 		})
-		event.On("ZoomLevel", func(context ipc.IIPCContext) {
+		event.On("ZoomLevel", func(context channel.IIPCContext) {
 			fmt.Println("ZoomLevel")
 			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			bw.Chromium().SetZoomLevel(150.2)
 			fmt.Println(bw.Chromium().ZoomLevel())
 		})
-		event.On("SetZoomStep", func(context ipc.IIPCContext) {
+		event.On("SetZoomStep", func(context channel.IIPCContext) {
 			fmt.Println("SetZoomStep")
 			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			bw.Chromium().SetZoomStep(1)
@@ -78,7 +79,7 @@ func AppBrowserInit() {
 		})
 		//这个事件监听演示了几个示例
 		//1.
-		event.On("subWindowIPCOn", func(context ipc.IIPCContext) {
+		event.On("subWindowIPCOn", func(context channel.IIPCContext) {
 			//函数内的 context 返回给调用方
 			//取入参
 			fmt.Println("browser renderOnEventSubWindowIPCOn:", context.Arguments().GetString(0), "channelId:", context.ChannelId())
@@ -88,7 +89,7 @@ func AppBrowserInit() {
 			fmt.Println("\t|-- 111")
 
 			//调用指定渲染进程监听 回调的方式
-			ipc.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context ipc.IIPCContext) {
+			ipc.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context channel.IIPCContext) {
 				fmt.Println("browser renderOnEventSubWindowIPCOn 回调的方式:", string(context.Message().Data()))
 				//在这里 不能使用 context 返回给页面
 				//函数内的 context 返回给调用方
@@ -101,25 +102,25 @@ func AppBrowserInit() {
 			//返回给页面数据
 			//context.Result().SetString("成功返回 ")
 		})
-		event.On("close", func(context ipc.IIPCContext) {
+		event.On("close", func(context channel.IIPCContext) {
 			fmt.Println("close browserId:", context.BrowserId())
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.CloseBrowserWindow()
 		})
-		event.On("minWindow", func(context ipc.IIPCContext) {
+		event.On("minWindow", func(context channel.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Minimize()
 		})
-		event.On("maxWindow", func(context ipc.IIPCContext) {
+		event.On("maxWindow", func(context channel.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Maximize()
 		})
-		event.On("closeWindow", func(context ipc.IIPCContext) {
+		event.On("closeWindow", func(context channel.IIPCContext) {
 			fmt.Println("closeWindow", context.BrowserId())
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.CloseBrowserWindow()
 		})
-		event.On("window-list", func(context ipc.IIPCContext) {
+		event.On("window-list", func(context channel.IIPCContext) {
 			var ids []int32
 			for id, _ := range cef.BrowserWindow.GetWindowInfos() {
 				ids = append(ids, id)
@@ -128,18 +129,18 @@ func AppBrowserInit() {
 			fmt.Println("获得window-id-list", ids, idsStr, err)
 			context.Result().SetString(string(idsStr))
 		})
-		event.On("find", func(context ipc.IIPCContext) {
+		event.On("find", func(context channel.IIPCContext) {
 			args := context.Arguments().GetString(0)
 			fmt.Println("find-args:", args)
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Browser().Find(args, false, false, true)
 		})
-		event.On("find-stop", func(context ipc.IIPCContext) {
+		event.On("find-stop", func(context channel.IIPCContext) {
 			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			winInfo.Browser().StopFinding(true)
 		})
 		var newForm *cef.LCLBrowserWindow
-		event.On("js-new-window", func(context ipc.IIPCContext) {
+		event.On("js-new-window", func(context channel.IIPCContext) {
 			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
 			if newForm == nil {
 				newForm = cef.NewLCLWindow(cef.NewWindowProperty())
@@ -168,7 +169,7 @@ func AppBrowserInit() {
 			})
 		})
 		var browserWindow *cef.LCLBrowserWindow
-		event.On("js-new-browser-window", func(context ipc.IIPCContext) {
+		event.On("js-new-browser-window", func(context channel.IIPCContext) {
 			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
 
 			if browserWindow == nil || browserWindow.IsClosing() {
@@ -194,7 +195,7 @@ func AppBrowserInit() {
 				}
 			})
 		})
-		event.On("go-call-js-code", func(context ipc.IIPCContext) {
+		event.On("go-call-js-code", func(context channel.IIPCContext) {
 			fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", common.Args.ProcessType())
 			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 			info.Chromium().ExecuteJavaScript("jsCode('值值值')", "", 0)
@@ -205,7 +206,7 @@ func AppBrowserInit() {
 			info.Chromium().Emit("js-ipc-on", list, nil)
 			list.SetFloat64(1, 8888888111.0121212)
 			//触发js ipc.on 的函数，通过回调函数接收返回值
-			info.Chromium().EmitAndCallback("js-ipc-on", list, nil, func(context ipc.IIPCContext) {
+			info.Chromium().EmitAndCallback("js-ipc-on", list, nil, func(context channel.IIPCContext) {
 				fmt.Println("回调函数方式返回值:", context.Arguments().GetString(0))
 			})
 			//这个方式不适合于ui线程

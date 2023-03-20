@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // ipc 通道 browser 进程(或服务端)
-package ipc
+package channel
 
 import (
 	"bytes"
@@ -32,16 +32,16 @@ type browserChannel struct {
 }
 
 // NewBrowser 创建主进程通道
-func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
+func NewBrowser(memoryAddresses ...string) IBrowserChannel {
 	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", Channel.Port())
+		address := fmt.Sprintf("localhost:%d", Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
 		}
-		m.browser.ipcType = IPCT_NET
-		m.browser.netListener = listener
+		browser.ipcType = IPCT_NET
+		browser.netListener = listener
 	} else {
 		removeMemory()
 		memoryAddr := ipcSock
@@ -58,12 +58,12 @@ func (m *ipcChannel) NewBrowser(memoryAddresses ...string) *browserChannel {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
 		}
 		unixListener.SetUnlinkOnClose(true)
-		m.browser.ipcType = IPCT_UNIX
-		m.browser.unixAddr = unixAddr
-		m.browser.unixListener = unixListener
+		browser.ipcType = IPCT_UNIX
+		browser.unixAddr = unixAddr
+		browser.unixListener = unixListener
 	}
-	go m.browser.accept()
-	return m.browser
+	go browser.accept()
+	return browser
 }
 
 // Channel 返回指定通道链接

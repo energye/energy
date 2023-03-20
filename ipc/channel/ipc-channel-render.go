@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // ipc 通道 render 进程(或客户端)
-package ipc
+package channel
 
 import (
 	"bytes"
@@ -30,15 +30,15 @@ type renderChannel struct {
 // NewRender 创建渲染进程通道
 //
 // 参数: channelId 唯一通道ID标识
-func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *renderChannel {
+func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 	useNetIPCChannel = isUseNetIPC()
 	if useNetIPCChannel {
-		address := fmt.Sprintf("localhost:%d", Channel.Port())
+		address := fmt.Sprintf("localhost:%d", Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.channel = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
+		render.channel = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
 	} else {
 		memoryAddr := ipcSock
 		logger.Debug("new render channel for IPC Sock", memoryAddr)
@@ -53,11 +53,11 @@ func (m *ipcChannel) NewRender(channelId int64, memoryAddresses ...string) *rend
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		m.render.channel = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
+		render.channel = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
 	}
-	go m.render.receive()
-	m.render.onChannelConnect()
-	return m.render
+	go render.receive()
+	render.onChannelConnect()
+	return render
 }
 
 func (m *renderChannel) Channel() IChannel {

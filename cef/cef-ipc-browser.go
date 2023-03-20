@@ -15,18 +15,34 @@ import (
 	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
 )
 
 // ipcBrowserProcess 主进程
 type ipcBrowserProcess struct {
-	ipc         *ICefV8Value    // ipc object
+	ipcObject   *ICefV8Value    // ipc object
 	emitHandler *ipcEmitHandler // ipc.emit handler
 	onHandler   *ipcOnHandler   // ipc.on handler
+	ipcChannel  channel.IBrowserChannel
+}
+
+func (m *ipcBrowserProcess) ipcBrowser() {
+	if m.ipcChannel == nil {
+		m.ipcChannel = channel.NewBrowser()
+		m.ipcChannel.Handler(func(context channel.IIPCContext) {
+			jsn := context.Message().JSON()
+			//fmt.Println("context", context.ChannelId(), "data", len(jsn.GetStringByKey("key1")))
+			m.ipcChannel.Send(context.ChannelId(), jsn.Bytes())
+			jsn.Free()
+			context.Free()
+		})
+	}
 }
 
 func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	fmt.Println(message.Name())
+	fmt.Println("unlock")
+	//fmt.Println("ipcGoExecuteMethodMessageReply", message.Name())
 	//messageId := message.ArgumentList().GetInt(0)
 	//if callback := ipc.CheckEmitCallback(messageId); callback != nil {
 	//	//第二个参数 true 有返回参数
@@ -120,7 +136,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 				replyMessage.Add((replay.Result()[0]).([]byte))
 			}
 		}
-		frame.SendProcessMessageForJSONBytes(internalProcessMessageIPCEmitReply, consts.PID_RENDER, replyMessage.Bytes())
+		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 		replyMessage.Free()
 		replay.Clear()
 	}

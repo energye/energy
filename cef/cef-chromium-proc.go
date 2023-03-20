@@ -738,6 +738,11 @@ func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess
 	message.Free()
 }
 
+// SendProcessMessageForV8Value 发送进程消息
+func (m *TCEFChromium) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
+	imports.Proc(internale_CEFChromium_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
+}
+
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息

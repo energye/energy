@@ -107,6 +107,11 @@ func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetPro
 	imports.Proc(internale_CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
 }
 
+// SendProcessMessageForV8Value 发送进程消息
+func (m *ICefFrame) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
+	imports.Proc(internale_CEFFrame_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
+}
+
 // SendProcessMessageForIPC IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息

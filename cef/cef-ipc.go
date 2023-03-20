@@ -22,6 +22,8 @@ const (
 	internalOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
 const (
+	internalIPCJSExecuteGoEvent        = "JSEmitGo"
+	internalIPCJSExecuteGoEventReplay  = "JSEmitGoReplay"
 	internalProcessMessageIPCEmit      = "emitHandler" // 进程消息 emit事件处理
 	internalProcessMessageIPCEmitReply = "emitReply"   // 进程消息 emit事件回复消息
 	internalProcessMessageIPCOn        = "onHandler"   // 进程消息 on监听事件处理
@@ -35,9 +37,16 @@ const (
 
 var (
 	internalObjectRootName = "energy"         // GO 和 V8Value 绑定根对象名
-	ipcRender              *ipcRenderProcess  //渲染进程 IPC
-	ipcBrowser             *ipcBrowserProcess //主进程 IPC
+	ipcRender              *ipcRenderProcess  // 渲染进程 IPC
+	ipcBrowser             *ipcBrowserProcess // 主进程 IPC
 )
+
+// ipcData
+type ipcData struct {
+	browserId int32
+	frameId   int64
+	v         []byte // data
+}
 
 // ipcEmitHandler
 type ipcEmitHandler struct {

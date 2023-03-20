@@ -124,19 +124,6 @@ func main() {
 		context.Result(r0, testEmitName, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 
-	//cef.VariableBind.Bind("funcName", func(intVar int, stringVar string, doubleVar float64) (string, int, bool) {
-	//	return "StringValue", 100000111, true
-	//})
-	//var stringField = "stringField"
-	//cef.VariableBind.Bind("stringField", &stringField)
-	//var intField = 100
-	//cef.VariableBind.Bind("intField", &intField)
-	//var doubleField = 900.001
-	//cef.VariableBind.Bind("doubleField", &doubleField)
-	//var boolField = true
-	//cef.VariableBind.Bind("boolField", &boolField)
-	//cef.VariableBind.Bind("structField", src.StructField)
-
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
 			window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
@@ -157,17 +144,19 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
-		go func() {
-			var i = 0
-			for true {
-				i++
-				time.Sleep(time.Second)
-				//ipc.Emit("onTestName1", r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-				ipc.EmitAndCallback("onTestName2", []any{r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
-					fmt.Println("onTestName2 r1: ", r1)
-				})
-			}
-		}()
+		//go func() {
+		//	var i = 0
+		//	time.Sleep(time.Second * 5)
+		//	fmt.Println("5000")
+		//	for true {
+		//		i++
+		//		time.Sleep(time.Second / 1000)
+		//		//ipc.Emit("onTestName1", r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		//		ipc.EmitAndCallback("onTestName2", []any{r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
+		//			fmt.Println("onTestName2 r1: ", r1)
+		//		})
+		//	}
+		//}()
 	})
 	//运行应用
 	cef.Run(cefApp)

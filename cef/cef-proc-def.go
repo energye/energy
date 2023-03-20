@@ -599,6 +599,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_GetDefaultEncoding", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendProcessMessage", 0),
 		dllimports.NewEnergyImport("CEFChromium_SendProcessMessageForJSONBytes", 0),
+		dllimports.NewEnergyImport("CEFChromium_SendProcessMessageForV8Value", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),
@@ -615,6 +616,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFFrame_IsFocused", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessage", 0),
 		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageForJSONBytes", 0),
+		dllimports.NewEnergyImport("CEFFrame_SendProcessMessageForV8Value", 0),
 		dllimports.NewEnergyImport("CEFFrame_LoadRequest", 0),
 		dllimports.NewEnergyImport("CEFFrame_Browser", 0),
 		dllimports.NewEnergyImport("CEFFrame_GetV8Context", 0),
@@ -1691,6 +1693,7 @@ const (
 	internale_CEFChromium_GetDefaultEncoding
 	internale_CEFChromium_SendProcessMessage
 	internale_CEFChromium_SendProcessMessageForJSONBytes
+	internale_CEFChromium_SendProcessMessageForV8Value
 	//ICefFrame
 	internale_CEFFrame_Undo
 	internale_CEFFrame_Redo
@@ -1707,6 +1710,7 @@ const (
 	internale_CEFFrame_IsFocused
 	internale_CEFFrame_SendProcessMessage
 	internale_CEFFrame_SendProcessMessageForJSONBytes
+	internale_CEFFrame_SendProcessMessageForV8Value
 	internale_CEFFrame_LoadRequest
 	internale_CEFFrame_Browser
 	internale_CEFFrame_GetV8Context

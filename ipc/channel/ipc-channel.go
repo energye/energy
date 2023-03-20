@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package ipc
+package channel
 
 import (
 	"bytes"
@@ -37,17 +37,16 @@ var (
 )
 
 var (
-	memoryAddress    = "energy.sock"
-	ipcSock          string
-	useNetIPCChannel = false
-	Channel          = &ipcChannel{
-		browser: &browserChannel{
-			channel: sync.Map{},
-			mutex:   sync.Mutex{},
-		},
-		render: &renderChannel{
-			mutex: sync.Mutex{},
-		},
+	memoryAddress    = "energy.sock" //
+	ipcSock          string          // sock path
+	useNetIPCChannel = false         //
+	port             int             // net ipc
+	browser          = &browserChannel{
+		channel: sync.Map{},
+		mutex:   sync.Mutex{},
+	}
+	render = &renderChannel{
+		mutex: sync.Mutex{},
 	}
 )
 
@@ -62,22 +61,11 @@ const (
 	mt_relay                    // 转发消息
 )
 
-// channel key
-const (
-	key_channelId = "key_channelId"
-)
-
 // IPCCallback 回调
 type IPCCallback func(context IIPCContext)
 
 func init() {
 	ipcSock = filepath.Join(os.TempDir(), memoryAddress)
-}
-
-type ipcChannel struct {
-	port    int
-	browser *browserChannel
-	render  *renderChannel
 }
 
 func removeMemory() {
@@ -104,9 +92,9 @@ func isUseNetIPC() bool {
 }
 
 // Port 获取并返回net socket端口
-func (m *ipcChannel) Port() int {
-	if m.port != 0 {
-		return m.port
+func Port() int {
+	if port != 0 {
+		return port
 	}
 	//主进程获取端口号
 	if common.Args.IsMain() {
@@ -119,19 +107,19 @@ func (m *ipcChannel) Port() int {
 			panic("Failed to Get unused Port number Error: " + err.Error())
 		}
 		defer listen.Close()
-		m.port = listen.Addr().(*net.TCPAddr).Port
+		port = listen.Addr().(*net.TCPAddr).Port
 	}
-	return m.port
+	return port
 }
 
 // Browser 返回 browser 通道
-func (m *ipcChannel) Browser() *browserChannel {
-	return m.browser
+func Browser() IBrowserChannel {
+	return browser
 }
 
 // Render 返回 render 通道
-func (m *ipcChannel) Render() *renderChannel {
-	return m.render
+func Render() IRenderChannel {
+	return render
 }
 
 // IIPCContext IPC通信回调上下文
@@ -158,6 +146,22 @@ type IChannel interface {
 	Close()
 	read(b []byte) (n int, err error)
 	write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error)
+}
+
+type IBrowserChannel interface {
+	Channel(channelId int64) IChannel
+	ChannelIds() (result []int64)
+	Send(channelId int64, data []byte)
+	Handler(handler IPCCallback)
+	Close()
+}
+
+type IRenderChannel interface {
+	Channel() IChannel
+	Send(data []byte)
+	SendToChannel(toChannelId int64, data []byte)
+	Handler(handler IPCCallback)
+	Close()
 }
 
 // ipcMessage 消息内容
