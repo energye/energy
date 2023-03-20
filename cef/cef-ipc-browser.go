@@ -33,14 +33,15 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 		m.ipcChannel = channel.NewBrowser()
 		m.ipcChannel.Handler(func(context channel.IIPCContext) {
 			var data ipcChannelMessage
-			err := jsoniter.Unmarshal(context.Message().Data(), &data)
-			//messageId := message.GetUIntByKey(ipc_id)
-			//name := message.GetStringByKey(ipc_name)
-			//message.Set(ipc_event, emitNameValue)
-			//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-			fmt.Println("ipcChannelBrowser", err)
-			json.NewJSONArray(data.Data)
-			fmt.Println("data", data.Name, data.EventName, data.Data)
+			if err := jsoniter.Unmarshal(context.Message().Data(), &data); err == nil {
+				//messageId := message.GetUIntByKey(ipc_id)
+				//name := message.GetStringByKey(ipc_name)
+				//message.Set(ipc_event, emitNameValue)
+				//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+				fmt.Println("ipcChannelBrowser", err)
+
+				fmt.Println("data", data.Name, data.EventName, json.NewJSONArray(data.Data).GetIntByIndex(1))
+			}
 			context.Free()
 		})
 	}

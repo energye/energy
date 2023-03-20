@@ -14,7 +14,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -320,18 +319,16 @@ func (m *channel) ipcRead() {
 		header := make([]byte, headerLength)
 		size, err := m.read(header)
 		if err != nil {
-			fmt.Println("1")
 			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "Error:", err)
 			return
 		} else if size == 0 {
-			fmt.Println("2")
 			logger.Debug("IPC Read【Size == 0】IPCType:", ipcType, "ChannelType:", chnType, "header:", header, "Error:", err)
 			return
 		}
 		if size == headerLength {
 			for i, protocol := range protocolHeader {
 				if header[i] != protocol {
-					logger.Debug("ipc read header protocol error", i, header[i], protocol)
+					logger.Debug("check header protocol error", i, header[i], protocol)
 					return
 				}
 			}

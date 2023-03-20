@@ -282,8 +282,9 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		}
 		context := V8ContextRef.Current()
 		var messageId int32 = 0
+		var isDev = false // TODO dev
 		//回调函数
-		if emitCallback != nil {
+		if emitCallback != nil && isDev {
 			//回调函数临时存放到缓存中
 			emitCallback.SetCanNotFree(true)
 			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
@@ -291,15 +292,10 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 				context:  context,
 				function: V8ValueRef.UnWrap(emitCallback),
 			})
+		} else if !isDev {
+			emitCallback.Free() // TODO dev
+			context.Free()      // TODO dev
 		}
-
-		//frame := context.Frame()
-		//message := json.NewJSONObject(nil)
-		//message.Set(ipc_id, messageId)
-		//message.Set(ipc_name, internalIPCJSExecuteGoEvent)
-		//message.Set(ipc_event, emitNameValue)
-		//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-		//frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
 		data := &ipcChannelMessage{
 			MessageId: messageId,
 			BrowserId: m.browserId,
@@ -310,11 +306,11 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		}
 		if sendData, err := jsoniter.Marshal(data); err == nil {
 			m.ipcChannel.Send(sendData)
+			sendData = nil
+		} else {
+			emitCallback.SetCanNotFree(false)
 		}
-		//message.Free()
-		//frame.Free()
 		args = nil
-		//context.Free() // TODO dev
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return

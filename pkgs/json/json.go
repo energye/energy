@@ -142,12 +142,17 @@ func NewJSONArray(value any) JSONArray {
 		if kind != reflect.Slice && kind != reflect.Array {
 			return nil
 		}
-		//目的是为了转为any类型
-		if byt, err := jsoniter.Marshal(value); err == nil {
-			var v []any
-			if err = jsoniter.Unmarshal(byt, &v); err == nil {
-				return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+		switch value.(type) {
+		case []byte:
+			//目的是为了转为any类型
+			if byt, err := jsoniter.Marshal(value); err == nil {
+				var v []any
+				if err = jsoniter.Unmarshal(byt, &v); err == nil {
+					return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+				}
 			}
+		default:
+			return &jsonData{T: GO_VALUE_SLICE, V: rv.Interface().([]any), S: len(rv.Interface().([]any))}
 		}
 	}
 	return &jsonData{T: GO_VALUE_SLICE, V: make([]any, 0), S: 0}
