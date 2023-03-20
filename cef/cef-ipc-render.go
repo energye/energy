@@ -12,20 +12,25 @@
 package cef
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
+	jsoniter "github.com/json-iterator/go"
 	"sync"
 )
 
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
-	bind        *ICefV8Value    // go bind
-	ipcObject   *ICefV8Value    // ipc object
-	emitHandler *ipcEmitHandler // ipc.emit handler
-	onHandler   *ipcOnHandler   // ipc.on handler
-	ipcChannel  channel.IRenderChannel
+	bind        *ICefV8Value           // go bind
+	ipcObject   *ICefV8Value           // ipc object
+	emitHandler *ipcEmitHandler        // ipc.emit handler
+	onHandler   *ipcOnHandler          // ipc.on handler
+	ipcChannel  channel.IRenderChannel //channel
+	browserId   int32
+	frameId     int64
+	buffer      *bytes.Buffer
 	lock        sync.Mutex
 }
 
@@ -43,17 +48,21 @@ func (m *ipcRenderProcess) clear() {
 	//}
 }
 
-func (m *ipcRenderProcess) ipcRender(browser *ICefBrowser, frame *ICefFrame) {
+func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
 	if m.ipcChannel == nil {
-		var (
-			browserId = browser.Identifier()
-			frameId   = frame.Identifier()
-		)
-		m.ipcChannel = channel.NewRender(frameId)
+		m.browserId = browser.Identifier()
+		m.frameId = frame.Identifier()
+		m.ipcChannel = channel.NewRender(m.frameId)
 		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			fmt.Println("ipcRender", browserId, context.Message().JSON().Size(), context.ChannelId(), context.ToChannelId())
+			fmt.Println("ipcRender", m.browserId, context.Message().JSON().Size(), context.ChannelId(), context.ToChannelId())
 			context.Free()
 		})
+		//go func() {
+		//	for true {
+		//		time.Sleep(time.Second)
+		//		m.ipcChannel.Send([]byte("aaa"))
+		//	}
+		//}()
 	}
 }
 
@@ -206,7 +215,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		emitNameValue string       //事件名
 		emitArgs      *ICefV8Value //事件参数
 		emitCallback  *ICefV8Value //事件回调函数
-		args          []byte
+		args          any
 		freeV8Value   = func(value *ICefV8Value) {
 			if value != nil {
 				value.Free()
@@ -264,7 +273,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		//入参
 		if emitArgs != nil {
 			//V8Value 转换
-			args = ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
+			args = ipcValueConvert.V8ValueToProcessMessageArray(emitArgs)
 			if args == nil {
 				exception.SetValue("ipc.emit convert parameter to value value error")
 				isFree = true
@@ -284,13 +293,25 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 			})
 		}
 
-		frame := context.Frame()
-		message := json.NewJSONObject(nil)
-		message.Set(ipc_id, messageId)
-		message.Set(ipc_event, emitNameValue)
-		message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
-		message.Free()
+		//frame := context.Frame()
+		//message := json.NewJSONObject(nil)
+		//message.Set(ipc_id, messageId)
+		//message.Set(ipc_name, internalIPCJSExecuteGoEvent)
+		//message.Set(ipc_event, emitNameValue)
+		//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		//frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
+		data := &ipcChannelMessage{
+			MessageId: messageId,
+			BrowserId: m.browserId,
+			FrameId:   m.frameId,
+			Name:      internalIPCJSExecuteGoEvent,
+			EventName: emitNameValue,
+			Data:      args,
+		}
+		if sendData, err := jsoniter.Marshal(data); err == nil {
+			m.ipcChannel.Send(sendData)
+		}
+		//message.Free()
 		//frame.Free()
 		args = nil
 		//context.Free() // TODO dev

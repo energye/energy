@@ -20,12 +20,14 @@ import (
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
 	fmt.Println("appOnContextCreated-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue(), "browserId:", browser.Identifier(), "frameId:", frame.Identifier())
+	ipcRender.ipcChannelRender(browser, frame)
 	ipcRender.makeCtx(context)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
 func appMainRunCallback() {
 	fmt.Println("appMainRunCallback-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue())
+	ipcBrowser.ipcChannelBrowser()
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

@@ -261,17 +261,26 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICe
 	if !v8value.IsValid() {
 		return nil
 	}
+	if v := m.V8ValueToProcessMessageArray(v8value); v != nil {
+		if v, err := jsoniter.Marshal(v); err == nil {
+			return v
+		}
+	}
+	return nil
+}
+
+// V8ValueToProcessMessageArray 转换 []byte 进程消息
+func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageArray(v8value *ICefV8Value) any {
+	if !v8value.IsValid() {
+		return nil
+	}
 	if v8value.IsArray() {
 		if result, err := m.V8valueArrayToSlice(v8value); err == nil {
-			if v, err := jsoniter.Marshal(result); err == nil {
-				return v
-			}
+			return result
 		}
 	} else if v8value.IsObject() {
 		if result, err := m.V8valueObjectToMap(v8value); err == nil {
-			if v, err := jsoniter.Marshal(result); err == nil {
-				return v
-			}
+			return result
 		}
 	} else {
 		result := make([]any, 1)
@@ -296,9 +305,7 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICe
 		} else {
 			result[0] = "" // function/byte/buffer
 		}
-		if v, err := jsoniter.Marshal(result); err == nil {
-			return v
-		}
+		return result
 	}
 	return nil
 }

@@ -17,6 +17,7 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
+	jsoniter "github.com/json-iterator/go"
 )
 
 // ipcBrowserProcess 主进程
@@ -27,14 +28,19 @@ type ipcBrowserProcess struct {
 	ipcChannel  channel.IBrowserChannel
 }
 
-func (m *ipcBrowserProcess) ipcBrowser() {
+func (m *ipcBrowserProcess) ipcChannelBrowser() {
 	if m.ipcChannel == nil {
 		m.ipcChannel = channel.NewBrowser()
 		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			jsn := context.Message().JSON()
-			//fmt.Println("context", context.ChannelId(), "data", len(jsn.GetStringByKey("key1")))
-			m.ipcChannel.Send(context.ChannelId(), jsn.Bytes())
-			jsn.Free()
+			var data ipcChannelMessage
+			err := jsoniter.Unmarshal(context.Message().Data(), &data)
+			//messageId := message.GetUIntByKey(ipc_id)
+			//name := message.GetStringByKey(ipc_name)
+			//message.Set(ipc_event, emitNameValue)
+			//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+			fmt.Println("ipcChannelBrowser", err)
+			json.NewJSONArray(data.Data)
+			fmt.Println("data", data.Name, data.EventName, data.Data)
 			context.Free()
 		})
 	}

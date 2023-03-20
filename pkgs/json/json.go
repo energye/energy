@@ -135,7 +135,11 @@ func NewJSONArray(value any) JSONArray {
 			}
 		}
 		rv := reflect.ValueOf(value)
-		if rv.Kind() != reflect.Slice && rv.Kind() != reflect.Array {
+		kind := rv.Kind()
+		if kind == reflect.Ptr {
+			kind = rv.Elem().Kind()
+		}
+		if kind != reflect.Slice && kind != reflect.Array {
 			return nil
 		}
 		//目的是为了转为any类型
@@ -163,6 +167,9 @@ func NewJSONObject(value any) JSONObject {
 		}
 		rv := reflect.ValueOf(value)
 		kind := rv.Kind()
+		if kind == reflect.Ptr {
+			kind = rv.Elem().Kind()
+		}
 		if kind != reflect.Map && kind != reflect.Struct {
 			return nil
 		}

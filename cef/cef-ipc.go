@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"bytes"
 	"github.com/energye/energy/common"
 	"sync"
 )
@@ -31,6 +32,7 @@ const (
 
 const (
 	ipc_id           = "id"
+	ipc_name         = "name"
 	ipc_event        = "event"
 	ipc_argumentList = "argumentList"
 )
@@ -41,11 +43,14 @@ var (
 	ipcBrowser             *ipcBrowserProcess // 主进程 IPC
 )
 
-// ipcData
-type ipcData struct {
-	browserId int32
-	frameId   int64
-	v         []byte // data
+// ipcChannelData
+type ipcChannelMessage struct {
+	MessageId int32  `json:"mi"`
+	BrowserId int32  `json:"bi"`
+	FrameId   int64  `json:"fi"`
+	Name      string `json:"n"`
+	EventName string `json:"en"`
+	Data      any    `json:"d"`
 }
 
 // ipcEmitHandler
@@ -79,12 +84,14 @@ func ipcInit() {
 		ipcRender = &ipcRenderProcess{
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+			buffer:      new(bytes.Buffer),
 		}
 	} else {
 		if common.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
 		} else if common.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
+				buffer:      new(bytes.Buffer),
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}

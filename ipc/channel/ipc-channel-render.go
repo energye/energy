@@ -12,7 +12,6 @@
 package channel
 
 import (
-	"bytes"
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -38,7 +37,7 @@ func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		render.channel = &channel{writeBuf: new(bytes.Buffer), conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
+		render.channel = &channel{conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
 	} else {
 		memoryAddr := ipcSock
 		logger.Debug("new render channel for IPC Sock", memoryAddr)
@@ -53,7 +52,7 @@ func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}
-		render.channel = &channel{writeBuf: new(bytes.Buffer), conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
+		render.channel = &channel{conn: unixConn, channelId: channelId, ipcType: IPCT_UNIX, channelType: Ct_Client}
 	}
 	go render.receive()
 	render.onChannelConnect()
@@ -116,7 +115,7 @@ func (m *renderChannel) receive() {
 			m.channel.isConnect = true
 		} else {
 			if m.handler != nil {
-				m.handler(context)
+				go m.handler(context)
 			}
 		}
 	}

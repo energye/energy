@@ -14,6 +14,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -237,13 +238,12 @@ func (m *ipcMessage) clear() {
 
 // channel 通道
 type channel struct {
-	writeBuf    *bytes.Buffer //
-	channelId   int64         //通道ID
-	isConnect   bool          //是否已链接
-	conn        net.Conn      //通道链接 net or unix
-	ipcType     IPC_TYPE      //IPC类型
-	channelType ChannelType   //链接通道类型
-	handler     IPCCallback   //
+	channelId   int64       //通道ID
+	isConnect   bool        //是否已链接
+	conn        net.Conn    //通道链接 net or unix
+	ipcType     IPC_TYPE    //IPC类型
+	channelType ChannelType //链接通道类型
+	handler     IPCCallback //
 }
 
 // IsConnect 返回是否已链接
@@ -286,14 +286,16 @@ func (m *channel) write(messageType mt, channelId, toChannelId int64, data []byt
 	if dataByteLen > math.MaxUint32 {
 		return 0, errors.New("超出最大消息长度")
 	}
-	_ = binary.Write(m.writeBuf, binary.BigEndian, protocolHeader)      //协议头
-	_ = binary.Write(m.writeBuf, binary.BigEndian, int8(messageType))   //消息类型
-	_ = binary.Write(m.writeBuf, binary.BigEndian, channelId)           //通道Id
-	_ = binary.Write(m.writeBuf, binary.BigEndian, toChannelId)         //通道Id
-	_ = binary.Write(m.writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
-	_ = binary.Write(m.writeBuf, binary.BigEndian, data)                //数据
-	n, err = m.conn.Write(m.writeBuf.Bytes())
-	m.writeBuf.Reset()
+	var writeBuf = new(bytes.Buffer)
+	_ = binary.Write(writeBuf, binary.BigEndian, protocolHeader)      //协议头
+	_ = binary.Write(writeBuf, binary.BigEndian, int8(messageType))   //消息类型
+	_ = binary.Write(writeBuf, binary.BigEndian, channelId)           //通道Id
+	_ = binary.Write(writeBuf, binary.BigEndian, toChannelId)         //通道Id
+	_ = binary.Write(writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
+	_ = binary.Write(writeBuf, binary.BigEndian, data)                //数据
+	n, err = m.conn.Write(writeBuf.Bytes())
+	writeBuf.Reset()
+	writeBuf = nil
 	return n, err
 }
 
@@ -318,15 +320,18 @@ func (m *channel) ipcRead() {
 		header := make([]byte, headerLength)
 		size, err := m.read(header)
 		if err != nil {
+			fmt.Println("1")
 			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "Error:", err)
 			return
 		} else if size == 0 {
+			fmt.Println("2")
 			logger.Debug("IPC Read【Size == 0】IPCType:", ipcType, "ChannelType:", chnType, "header:", header, "Error:", err)
 			return
 		}
 		if size == headerLength {
 			for i, protocol := range protocolHeader {
 				if header[i] != protocol {
+					logger.Debug("ipc read header protocol error", i, header[i], protocol)
 					return
 				}
 			}

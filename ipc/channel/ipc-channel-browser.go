@@ -12,7 +12,6 @@
 package channel
 
 import (
-	"bytes"
 	"fmt"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -174,13 +173,10 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 		if newChannel != nil {
 			m.removeChannel(newChannel.channelId)
 			newChannel.conn = nil
-			newChannel.writeBuf.Reset()
-			newChannel.writeBuf = nil
 			newChannel.isConnect = false
 		}
 	}()
 	newChannel = &channel{
-		writeBuf:    new(bytes.Buffer),
 		channelType: Ct_Server,
 		ipcType:     m.ipcType,
 		conn:        conn,
@@ -195,10 +191,9 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 			m.sendMessage(mt_common, context.ChannelId(), context.ToChannelId(), context.Message().Data())
 		} else {
 			if m.handler != nil {
-				m.handler(context)
+				go m.handler(context)
 			}
 		}
-		context.Free()
 	}
 	newChannel.ipcRead()
 }
