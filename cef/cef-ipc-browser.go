@@ -39,53 +39,22 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 				//message.Set(ipc_event, emitNameValue)
 				//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
 				fmt.Println("ipcChannelBrowser", err)
-
 				fmt.Println("data", data.Name, data.EventName, json.NewJSONArray(data.Data).GetIntByIndex(1))
+				if data.Name == internalIPCJSExecuteGoEvent {
+					//result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
+				} else if data.Name == internalProcessMessageIPCOn {
+					//result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
+				} else if data.Name == internalProcessMessageIPCEmitReply {
+					//result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
+				}
 			}
 			context.Free()
 		})
 	}
 }
 
-func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	fmt.Println("unlock")
-	//fmt.Println("ipcGoExecuteMethodMessageReply", message.Name())
-	//messageId := message.ArgumentList().GetInt(0)
-	//if callback := ipc.CheckEmitCallback(messageId); callback != nil {
-	//	//第二个参数 true 有返回参数
-	//	if isReturn := message.ArgumentList().GetBool(1); isReturn {
-	//		//[]byte
-	//		binaryValue := message.ArgumentList().GetBinary(2)
-	//		var (
-	//			count           uint32
-	//			resultArgsBytes []byte
-	//		)
-	//		if binaryValue.IsValid() {
-	//			size := binaryValue.GetSize()
-	//			resultArgsBytes = make([]byte, size)
-	//			count = binaryValue.GetData(resultArgsBytes, 0)
-	//			binaryValue.Free()
-	//		}
-	//		if count > 0 {
-	//			ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), false, resultArgsBytes)
-	//			if ctxCallback := callback.ContextCallback(); ctxCallback != nil {
-	//				ctxCallback.Invoke(ipcContext)
-	//			} else if argsCallback := callback.ArgumentCallback(); argsCallback != nil {
-	//				argsCallback.Invoke(ipcContext)
-	//			}
-	//			if ipcContext.ArgumentList() != nil {
-	//				ipcContext.ArgumentList().Free()
-	//			}
-	//			ipcContext.Result(nil)
-	//		}
-	//		resultArgsBytes = nil
-	//	}
-	//}
-	return
-}
-
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
-func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browserId int32, frameId int64, message *ICefProcessMessage) (result bool) {
 	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
 	var messageDataBytes []byte
@@ -123,7 +92,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 	if eventCallback == nil {
 		return
 	}
-	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argumentList)
+	ipcContext := ipc.NewContext(browserId, frameId, true, argumentList)
 	//调用监听函数
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
 		ctxCallback.Invoke(ipcContext)
@@ -143,7 +112,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 				replyMessage.Add((replay.Result()[0]).([]byte))
 			}
 		}
-		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+		//frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 		replyMessage.Free()
 		replay.Clear()
 	}
@@ -152,6 +121,42 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browser *ICefBrowser, fram
 	}
 	ipcContext.Result(nil)
 
+	return
+}
+
+func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	//fmt.Println("ipcGoExecuteMethodMessageReply", message.Name())
+	//messageId := message.ArgumentList().GetInt(0)
+	//if callback := ipc.CheckEmitCallback(messageId); callback != nil {
+	//	//第二个参数 true 有返回参数
+	//	if isReturn := message.ArgumentList().GetBool(1); isReturn {
+	//		//[]byte
+	//		binaryValue := message.ArgumentList().GetBinary(2)
+	//		var (
+	//			count           uint32
+	//			resultArgsBytes []byte
+	//		)
+	//		if binaryValue.IsValid() {
+	//			size := binaryValue.GetSize()
+	//			resultArgsBytes = make([]byte, size)
+	//			count = binaryValue.GetData(resultArgsBytes, 0)
+	//			binaryValue.Free()
+	//		}
+	//		if count > 0 {
+	//			ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), false, resultArgsBytes)
+	//			if ctxCallback := callback.ContextCallback(); ctxCallback != nil {
+	//				ctxCallback.Invoke(ipcContext)
+	//			} else if argsCallback := callback.ArgumentCallback(); argsCallback != nil {
+	//				argsCallback.Invoke(ipcContext)
+	//			}
+	//			if ipcContext.ArgumentList() != nil {
+	//				ipcContext.ArgumentList().Free()
+	//			}
+	//			ipcContext.Result(nil)
+	//		}
+	//		resultArgsBytes = nil
+	//	}
+	//}
 	return
 }
 

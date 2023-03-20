@@ -118,6 +118,8 @@ func NewJSON(data []byte) JSON {
 				return &jsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
 			}
 		}
+	} else {
+		println("NewJSON error:", err.Error())
 	}
 	return nil
 }
@@ -133,6 +135,12 @@ func NewJSONArray(value any) JSONArray {
 			} else {
 				return nil
 			}
+		case string:
+			if v := NewJSON([]byte(value.(string))); v != nil {
+				return v.JSONArray()
+			} else {
+				return nil
+			}
 		}
 		rv := reflect.ValueOf(value)
 		kind := rv.Kind()
@@ -142,17 +150,12 @@ func NewJSONArray(value any) JSONArray {
 		if kind != reflect.Slice && kind != reflect.Array {
 			return nil
 		}
-		switch value.(type) {
-		case []byte:
-			//目的是为了转为any类型
-			if byt, err := jsoniter.Marshal(value); err == nil {
-				var v []any
-				if err = jsoniter.Unmarshal(byt, &v); err == nil {
-					return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
-				}
+		//转为[]any类型
+		if byt, err := jsoniter.Marshal(value); err == nil {
+			var v []any
+			if err = jsoniter.Unmarshal(byt, &v); err == nil {
+				return &jsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
 			}
-		default:
-			return &jsonData{T: GO_VALUE_SLICE, V: rv.Interface().([]any), S: len(rv.Interface().([]any))}
 		}
 	}
 	return &jsonData{T: GO_VALUE_SLICE, V: make([]any, 0), S: 0}
@@ -169,6 +172,12 @@ func NewJSONObject(value any) JSONObject {
 			} else {
 				return nil
 			}
+		case string:
+			if v := NewJSON([]byte(value.(string))); v != nil {
+				return v.JSONObject()
+			} else {
+				return nil
+			}
 		}
 		rv := reflect.ValueOf(value)
 		kind := rv.Kind()
@@ -178,7 +187,7 @@ func NewJSONObject(value any) JSONObject {
 		if kind != reflect.Map && kind != reflect.Struct {
 			return nil
 		}
-		//目的是为了转为any类型
+		//转为map[string]any类型
 		if byt, err := jsoniter.Marshal(value); err == nil {
 			var v map[string]any
 			if err = jsoniter.Unmarshal(byt, &v); err == nil {
@@ -225,10 +234,6 @@ func (m *jsonData) Add(value ...any) {
 		m.V = append(m.V.([]any), tmp...)
 		m.S += len(value)
 	}
-}
-
-func (m *jsonData) SetSize(index int, value any) {
-
 }
 
 func (m *jsonData) SetByIndex(index int, value any) {
