@@ -157,8 +157,8 @@ func main() {
 		//		i++
 		//		time.Sleep(time.Second / 1000)
 		//		//ipc.Emit("onTestName1", r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10)
-		//		ipc.EmitAndCallback("onTestName2", []any{r0, i, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
-		//			fmt.Println("onTestName2 r1: ", r1)
+		//		ipc.EmitAndCallback("onTestName2", []interface{}{r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string, r2 int, r3 float64, r4 bool) {
+		//			fmt.Println("onTestName1 callback", r1, r2, r3, r4)
 		//		})
 		//	}
 		//}()
