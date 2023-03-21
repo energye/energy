@@ -33,6 +33,7 @@ type ipcRenderProcess struct {
 }
 
 func (m *ipcRenderProcess) clear() {
+	fmt.Println(m.bind, m.ipcObject, m.v8Context)
 	if m.bind != nil {
 		m.bind.Free()
 		m.bind = nil
@@ -44,6 +45,10 @@ func (m *ipcRenderProcess) clear() {
 	//if m.onHandler != nil {
 	//	m.onHandler.clear()
 	//}
+	if m.v8Context != nil {
+		m.v8Context.Free()
+		m.v8Context = nil
+	}
 }
 
 func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
@@ -132,30 +137,30 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		if argument != nil {
 			argument.Free()
 		}
+		if argumentList != nil {
+			argumentList.Free()
+		}
 	}()
 
 	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
 		var callbackArgsBytes []byte
 		if m.v8Context.Enter() {
-			if m.v8Context.Enter() {
-				var ret *ICefV8Value
-				var argsArray *TCefV8ValueArray
-				argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
-				if argsArray != nil {
-					ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
-					argsArray.Free()
-				} else {
-					ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
-				}
-				if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
-					callbackArgsBytes = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
-					ret.Free()
-				} else if ret != nil {
-					ret.Free()
-				}
-				m.v8Context.Exit()
+			var ret *ICefV8Value
+			var argsArray *TCefV8ValueArray
+			argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+			if argsArray != nil {
+				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
+				argsArray.Free()
+			} else {
+				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
 			}
-			argumentList.Free()
+			if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
+				callbackArgsBytes = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+				ret.Free()
+			} else if ret != nil {
+				ret.Free()
+			}
+			m.v8Context.Exit()
 		}
 		if messageId != 0 { //callback func
 			callbackMessage := json.NewJSONObject(nil)
@@ -165,7 +170,9 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			} else {
 				callbackMessage.Set(ipc_argumentList, nil)
 			}
-			m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
+			if m.v8Context.Frame() != nil {
+				m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
+			}
 		}
 		result = true
 	}

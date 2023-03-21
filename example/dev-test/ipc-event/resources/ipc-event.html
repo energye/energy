@@ -163,7 +163,7 @@
             msg("R8：", r8, JSON.stringify(r8));
             msg("R9：", r9, JSON.stringify(r9));
             msg("R10：", r10, JSON.stringify(r10));
-            return ["返回值", onTestName2Idx, 2222.22, true]
+            return ["返回值" + onTestName2Idx, onTestName2Idx, 2222.22 + onTestName2Idx, onTestName2Idx % 2 === 0]
         });
 
         let tgesi = null
@@ -217,6 +217,7 @@
                 }
             }
         }
+
         function testGoEmitAndCallback() {
             ipc.emit("testGoEmitAndCallback");
         }

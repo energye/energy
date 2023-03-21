@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
@@ -26,6 +27,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp = cef.NewApplication()
+	cefApp.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	//cefApp.SetSingleProcess(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
