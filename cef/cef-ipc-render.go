@@ -147,7 +147,10 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		if m.v8Context.Enter() {
 			var ret *ICefV8Value
 			var argsArray *TCefV8ValueArray
-			argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+			var err error
+			argsArray, err = ValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+			fmt.Println("argumentList err", err)
+			fmt.Println("argumentList", string(argumentList.Bytes()))
 			if argsArray != nil {
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
 				argsArray.Free()
@@ -155,7 +158,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
 			}
 			if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
-				callbackArgsBytes = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+				callbackArgsBytes = ValueConvert.V8ValueToProcessMessageBytes(ret)
 				ret.Free()
 			} else if ret != nil {
 				ret.Free()
@@ -230,7 +233,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		//入参
 		if emitArgs != nil {
 			//V8Value 转换
-			args = ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
+			args = ValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				exception.SetValue("ipc.emit convert parameter to value value error")
 				return
@@ -318,7 +321,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			//解析 '[]byte' 参数
 			if m.v8Context.Enter() {
 				var argsArray *TCefV8ValueArray
-				argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+				argsArray, _ = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
 				if argsArray != nil {
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
 					argsArray.Free()

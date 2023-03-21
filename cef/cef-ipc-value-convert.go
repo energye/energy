@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-// ipcValueConvert -> v8ValueProcessMessageConvert
+// ValueConvert -> v8ValueProcessMessageConvert
 //
 // IPC 和 ICefV8Value 数据序列化转换
 package cef
@@ -23,8 +23,8 @@ import (
 	"unsafe"
 )
 
-// ipcValueConvert
-var ipcValueConvert v8ValueProcessMessageConvert
+// ValueConvert
+var ValueConvert v8ValueProcessMessageConvert
 
 // v8ValueProcessMessageConvert ICefV8Value 和 ICefProcessMessage 转换
 type v8ValueProcessMessageConvert uintptr
@@ -36,42 +36,48 @@ func (m *v8ValueProcessMessageConvert) ListValueToV8Value(list *ICefListValue) (
 	}
 	size := int(list.Size())
 	result := V8ValueRef.NewArray(int32(size))
+	if !result.IsValid() {
+		return nil, errors.New("create v8 array error")
+	}
 	for i := 0; i < size; i++ {
-		value := list.GetValue(uint32(i))
 		var newValue *ICefV8Value
-		switch value.GetType() {
-		case consts.VTYPE_NULL:
-			newValue = V8ValueRef.NewNull()
-		case consts.VTYPE_BOOL:
-			newValue = V8ValueRef.NewBool(value.GetBool())
-		case consts.VTYPE_INT:
-			newValue = V8ValueRef.NewInt(value.GetInt())
-		case consts.VTYPE_DOUBLE:
-			newValue = V8ValueRef.NewDouble(value.GetDouble())
-		case consts.VTYPE_STRING:
-			newValue = V8ValueRef.NewString(value.GetString())
-		case consts.VTYPE_BINARY: // []byte
-			binaryValue := value.GetBinary()
-			byteSize := binaryValue.GetSize()
-			if byteSize > 0 {
-				dataByte := make([]byte, binaryValue.GetSize())
-				if c := binaryValue.GetData(dataByte, 0); c > 0 {
-					newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+		value := list.GetValue(uint32(i))
+		if value.IsValid() {
+			switch value.GetType() {
+			case consts.VTYPE_NULL:
+				newValue = V8ValueRef.NewNull()
+			case consts.VTYPE_BOOL:
+				newValue = V8ValueRef.NewBool(value.GetBool())
+			case consts.VTYPE_INT:
+				newValue = V8ValueRef.NewInt(value.GetInt())
+			case consts.VTYPE_DOUBLE:
+				newValue = V8ValueRef.NewDouble(value.GetDouble())
+			case consts.VTYPE_STRING:
+				newValue = V8ValueRef.NewString(value.GetString())
+			case consts.VTYPE_BINARY: // []byte
+				binaryValue := value.GetBinary()
+				byteSize := binaryValue.GetSize()
+				if byteSize > 0 {
+					dataByte := make([]byte, binaryValue.GetSize())
+					if c := binaryValue.GetData(dataByte, 0); c > 0 {
+						newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+					}
 				}
-			}
-		case consts.VTYPE_DICTIONARY: // Object
-			if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
-				newValue = v
-			}
-		case consts.VTYPE_LIST: // JSONArray
-			if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
-				newValue = v
+			case consts.VTYPE_DICTIONARY: // Object
+				if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
+					newValue = v
+				}
+			case consts.VTYPE_LIST: // JSONArray
+				if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
+					newValue = v
+				}
 			}
 		}
 		if newValue == nil {
 			newValue = V8ValueRef.NewNull()
 		}
 		result.SetValueByIndex(int32(i), newValue)
+
 	}
 	return result, nil
 }
@@ -82,47 +88,56 @@ func (m *v8ValueProcessMessageConvert) DictionaryValueToV8Value(dictionary *ICef
 		return nil, errors.New("build v8 value error. Parameter null")
 	}
 	keys := dictionary.GetKeys()
+	if keys == nil || keys.keys == nil || !keys.keys.IsValid() || keys.Count() == 0 {
+		return nil, errors.New("get dict keys error")
+	}
 	//bindSubObjectAccessor := V8AccessorRef.New()
 	//bindSubObjectAccessor.Get(ipcRender.bindSubObjectGet)
 	//bindSubObjectAccessor.Set(ipcRender.bindSubObjectSet)
 	result := V8ValueRef.NewObject(nil)
+	if !result.IsValid() {
+		return nil, errors.New("create v8 object error")
+	}
 	for i := 0; i < keys.Count(); i++ {
+		var newValue *ICefV8Value
 		key := keys.Get(i)
 		value := dictionary.GetValue(key)
-		var newValue *ICefV8Value
-		switch value.GetType() {
-		case consts.VTYPE_NULL:
-			newValue = V8ValueRef.NewNull()
-		case consts.VTYPE_BOOL:
-			newValue = V8ValueRef.NewBool(value.GetBool())
-		case consts.VTYPE_INT:
-			newValue = V8ValueRef.NewInt(value.GetInt())
-		case consts.VTYPE_DOUBLE:
-			newValue = V8ValueRef.NewDouble(value.GetDouble())
-		case consts.VTYPE_STRING:
-			newValue = V8ValueRef.NewString(value.GetString())
-		case consts.VTYPE_BINARY: // []byte
-			binaryValue := value.GetBinary()
-			byteSize := binaryValue.GetSize()
-			if byteSize > 0 {
-				dataByte := make([]byte, binaryValue.GetSize())
-				if c := binaryValue.GetData(dataByte, 0); c > 0 {
-					newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+		if value.IsValid() {
+			switch value.GetType() {
+			case consts.VTYPE_NULL:
+				newValue = V8ValueRef.NewNull()
+			case consts.VTYPE_BOOL:
+				newValue = V8ValueRef.NewBool(value.GetBool())
+			case consts.VTYPE_INT:
+				newValue = V8ValueRef.NewInt(value.GetInt())
+			case consts.VTYPE_DOUBLE:
+				newValue = V8ValueRef.NewDouble(value.GetDouble())
+			case consts.VTYPE_STRING:
+				newValue = V8ValueRef.NewString(value.GetString())
+			case consts.VTYPE_BINARY: // []byte
+				binaryValue := value.GetBinary()
+				byteSize := binaryValue.GetSize()
+				if byteSize > 0 {
+					dataByte := make([]byte, binaryValue.GetSize())
+					if c := binaryValue.GetData(dataByte, 0); c > 0 {
+						newValue = V8ValueRef.NewArrayBuffer(dataByte, nil)
+					}
+				}
+			case consts.VTYPE_DICTIONARY: // Object
+				if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
+					newValue = v
+				}
+			case consts.VTYPE_LIST: // JSONArray
+				if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
+					newValue = v
 				}
 			}
-		case consts.VTYPE_DICTIONARY: // Object
-			if v, err := m.DictionaryValueToV8Value(value.GetDictionary()); err == nil {
-				newValue = v
-			}
-		case consts.VTYPE_LIST: // JSONArray
-			if v, err := m.ListValueToV8Value(value.GetList()); err == nil {
-				newValue = v
-			}
 		}
-		if newValue != nil {
-			result.setValueByAccessor(key, consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-			result.setValueByKey(key, newValue, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		if newValue == nil {
+			newValue = V8ValueRef.NewNull()
 		}
+		result.setValueByAccessor(key, consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		result.setValueByKey(key, newValue, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 	}
 	return result, nil
 }
@@ -134,10 +149,17 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ArrayValue(resultArgsBytes []byt
 	if jsonArray == nil {
 		return nil, errors.New("parsing parameter failure")
 	}
-	resultArgs := V8ValueArrayRef.New()
 	size := jsonArray.Size()
+	resultArgs := V8ValueArrayRef.New()
+	if resultArgs == nil {
+		return nil, errors.New("create v8 value array error")
+	}
 	for i := 0; i < size; i++ {
 		value := jsonArray.GetByIndex(i)
+		if value == nil {
+			resultArgs.Add(V8ValueRef.NewNull())
+			continue
+		}
 		switch value.Type() {
 		case consts.GO_VALUE_STRING:
 			resultArgs.Add(V8ValueRef.NewString(value.String()))
@@ -174,6 +196,9 @@ func (m *v8ValueProcessMessageConvert) JSONArrayToV8Value(array json.JSONArray) 
 	}
 	size := array.Size()
 	result := V8ValueRef.NewArray(int32(size))
+	if !result.IsValid() {
+		return nil
+	}
 	for i := 0; i < size; i++ {
 		value := array.GetByIndex(i)
 		if value == nil {
@@ -369,6 +394,9 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 		return nil, errors.New("convert dictionary value error. Please pass in the object type")
 	}
 	keys := v8value.GetKeys()
+	if keys == nil || keys.keys == nil || !keys.keys.IsValid() || keys.Count() == 0 {
+		return nil, errors.New("get dict keys error")
+	}
 	result := make(map[string]any, keys.Count())
 	for i := 0; i < keys.Count(); i++ {
 		key := keys.Get(i)
@@ -419,7 +447,7 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 
 // V8ValueToProcessMessage ICefV8Value 转换 进程消息
 func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessage(v8value *ICefV8Value) (*ICefListValue, error) {
-	if v8value == nil {
+	if v8value == nil || !v8value.IsValid() {
 		return nil, errors.New("build process value error. Parameter null")
 	}
 	if v8value.IsArray() {
@@ -459,9 +487,16 @@ func (m *v8ValueProcessMessageConvert) V8valueArrayToListValue(v8value *ICefV8Va
 		return nil, errors.New("convert list value error. Please pass in the array type")
 	}
 	arrayValue := ListValueRef.New()
+	if !arrayValue.IsValid() {
+		return nil, errors.New("create list value error")
+	}
 	argsLen := v8value.GetArrayLength()
 	for i := 0; i < argsLen; i++ {
 		args := v8value.GetValueByIndex(i)
+		if !args.IsValid() {
+			arrayValue.SetNull(uint32(i))
+			continue
+		}
 		if args.IsString() {
 			arrayValue.SetString(uint32(i), args.GetStringValue())
 		} else if args.IsInt() {
@@ -497,11 +532,21 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToDictionaryValue(v8value *I
 	if !v8value.IsObject() {
 		return nil, errors.New("convert dictionary value error. Please pass in the object type")
 	}
-	dictionaryValue := DictionaryValueRef.New()
 	keys := v8value.GetKeys()
+	if keys == nil || keys.keys == nil || !keys.keys.IsValid() || keys.Count() == 0 {
+		return nil, errors.New("get dict keys error")
+	}
+	dictionaryValue := DictionaryValueRef.New()
+	if !dictionaryValue.IsValid() {
+		return nil, errors.New("create dict value error")
+	}
 	for i := 0; i < keys.Count(); i++ {
-		key := keys.Get(i)
+		key := (keys.Get(i))
 		args := v8value.getValueByKey(key)
+		if !args.IsValid() {
+			dictionaryValue.SetNull(key)
+			continue
+		}
 		if args.IsString() {
 			dictionaryValue.SetString(key, args.GetStringValue())
 		} else if args.IsInt() {
