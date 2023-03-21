@@ -167,22 +167,28 @@
         });
 
         let tgesi = null
+        let tgesi1 = null
 
         function autotestGoEmit() {
             if (tgesi != null) {
                 clearInterval(tgesi)
+                clearInterval(tgesi1)
                 tgesi = null
+                tgesi1 = null
                 idx = 0;
                 return
             }
             tgesi = setInterval(testGoEmit, 1)
+            tgesi1 = setInterval(testGoEmit, 1)
             if (tgesi != null) {
                 let time = document.getElementById("time").value - 0
                 if (time > 0) {
                     setTimeout(function () {
                         clearInterval(tgesi)
+                        clearInterval(tgesi1)
                         msg(idx)
                         tgesi = null
+                        tgesi1 = null
                         idx = 0;
                     }, time)
                 }

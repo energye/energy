@@ -215,8 +215,11 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 	if object == nil || !object.IsObject() {
 		return nil
 	}
-	size := object.Size()
 	result := V8ValueRef.NewObject(nil)
+	if !result.IsValid() {
+		return nil
+	}
+	size := object.Size()
 	keys := object.Keys()
 	for i := 0; i < size; i++ {
 		key := keys[i]

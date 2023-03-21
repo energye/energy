@@ -705,7 +705,7 @@ func (m *ICefV8Value) SetCanNotFree(v bool) {
 }
 
 func (m *ICefV8Value) Free() {
-	if m.instance != nil {
+	if m != nil && m.instance != nil {
 		if m.valueByIndex != nil {
 			for _, v := range m.valueByIndex {
 				if v != nil {
@@ -903,7 +903,11 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 //func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
 func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 	var result uintptr
-	imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
+	if accessor == nil || accessor.instance == nil {
+		imports.Proc(internale_CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(0), uintptr(unsafe.Pointer(&result)))
+	} else {
+		imports.Proc(internale_CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
+	}
 	return &ICefV8Value{
 		instance:    unsafe.Pointer(result),
 		valueType:   consts.V8vtObject,
