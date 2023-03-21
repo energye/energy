@@ -149,12 +149,11 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			var argsArray *TCefV8ValueArray
 			var err error
 			argsArray, err = ValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
-			fmt.Println("argumentList err", err)
-			fmt.Println("argumentList", string(argumentList.Bytes()))
-			if argsArray != nil {
+			if argsArray != nil && err == nil {
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
 				argsArray.Free()
 			} else {
+				fmt.Println("BytesToV8ArrayValue err", err)
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
 			}
 			if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
@@ -321,11 +320,13 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			//解析 '[]byte' 参数
 			if m.v8Context.Enter() {
 				var argsArray *TCefV8ValueArray
-				argsArray, _ = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
-				if argsArray != nil {
+				var err error
+				argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+				if argsArray != nil && err == nil {
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
 					argsArray.Free()
 				} else {
+					fmt.Println("BytesToV8ArrayValue err", err)
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
 				}
 				m.v8Context.Exit()
