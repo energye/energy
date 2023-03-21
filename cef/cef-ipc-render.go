@@ -99,28 +99,21 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 	return
 }
 
-var s bool
-
 // ipcGoExecuteJSEvent Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	//argument := message.ArgumentList()
-	if s {
-		fmt.Println("ipcGoExecuteJSEvent s", s)
-	}
-	s = true
-	defer func() {
-		s = false
-	}()
 	argumentListBytes := message.ArgumentList().GetBinary(0)
+	if argumentListBytes == nil {
+		return
+	}
+	result = true
 	var messageDataBytes []byte
 	if argumentListBytes.IsValid() {
 		size := argumentListBytes.GetSize()
 		messageDataBytes = make([]byte, size)
 		c := argumentListBytes.GetData(messageDataBytes, 0)
-		argumentListBytes.Free() //立即释放掉
+		argumentListBytes.Free()
 		message.Free()
 		if c == 0 {
-			result = false
 			return
 		}
 	}
@@ -253,7 +246,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				function: V8ValueRef.UnWrap(emitCallback),
 			})
 		}
-		//messageId = 1 // TODO dev
 		message := json.NewJSONObject(nil)
 		message.Set(ipc_id, messageId)
 		message.Set(ipc_event, emitNameValue)
@@ -270,7 +262,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			emitCallback.Free()
 		}
 		message.Free()
-		//retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return
 }

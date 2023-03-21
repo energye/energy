@@ -83,7 +83,7 @@ func main() {
 			tm = time.Now().Second()
 		}
 		//触发JS监听的事件，并传入参数
-		//ipc.Emit("onTestName1", r0, r1+testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		ipc.Emit("onTestName1", r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
 	ipc.On("testGoEmitAndCallback", func() {
 		testGoEmitAndCallback++

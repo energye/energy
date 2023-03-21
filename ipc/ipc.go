@@ -42,6 +42,7 @@ func init() {
 	}
 }
 
+// callback 添加并返回一个回调
 func createCallback(fn any) *callback {
 	switch fn.(type) {
 	case func(context IContext):

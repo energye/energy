@@ -34,7 +34,7 @@ func appMainRunCallback() {
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEventReplay {
 		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
-	} else if message.Name() == internalProcessMessageIPCOn {
+	} else if message.Name() == internalIPCGoExecuteJSEvent {
 		result = ipcRender.ipcGoExecuteJSEvent(browser, frame, sourceProcess, message)
 	}
 	return

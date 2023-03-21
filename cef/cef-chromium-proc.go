@@ -743,7 +743,7 @@ func (m *TCEFChromium) SendProcessMessageForV8Value(messageName string, targetPr
 	imports.Proc(internale_CEFChromium_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
 }
 
-// SendProcessMessageForIPC IPC 发送进程 消息
+// EmitRender IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
 func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.ITarget, data ...any) {
@@ -755,18 +755,21 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.
 		message := json.NewJSONObject(nil)
 		message.Set(ipc_id, messageId)
 		message.Set(ipc_event, eventName)
-		argumentJSONArray := json.NewJSONArray(nil)
-		for _, result := range data {
-			switch result.(type) {
-			case error:
-				argumentJSONArray.Add(result.(error).Error())
-			default:
-				argumentJSONArray.Add(result)
+		if len(data) > 0 {
+			argumentJSONArray := json.NewJSONArray(nil)
+			for _, result := range data {
+				switch result.(type) {
+				case error:
+					argumentJSONArray.Add(result.(error).Error())
+				default:
+					argumentJSONArray.Add(result)
+				}
 			}
+			message.Set(ipc_argumentList, argumentJSONArray.Data())
+		} else {
+			message.Set(ipc_argumentList, nil)
 		}
-		message.Set(ipc_argumentList, argumentJSONArray)
-		m.SendProcessMessageForJSONBytes(internalProcessMessageIPCOn, PID_RENDER, message)
-
+		m.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEvent, PID_RENDER, message)
 	} else {
 		browse := m.BrowserById(target.GetBrowserId())
 		if browse.IsValid() {

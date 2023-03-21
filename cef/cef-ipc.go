@@ -24,6 +24,7 @@ const (
 const (
 	internalIPCJSExecuteGoEvent        = "JSEmitGo"
 	internalIPCJSExecuteGoEventReplay  = "JSEmitGoReplay"
+	internalIPCGoExecuteJSEvent        = "GoEmitJS"    // 进程消息 on监听事件处理
 	internalProcessMessageIPCEmit      = "emitHandler" // 进程消息 emit事件处理
 	internalProcessMessageIPCEmitReply = "emitReply"   // 进程消息 emit事件回复消息
 	internalProcessMessageIPCOn        = "onHandler"   // 进程消息 on监听事件处理
