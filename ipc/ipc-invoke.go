@@ -59,9 +59,9 @@ func (m *contextCallback) Invoke(context IContext) {
 		// result
 		context.Result(resultArgument.Bytes())
 		resultArgument.Free()
-		return
+	} else {
+		context.Result(nil)
 	}
-	context.Result(nil)
 }
 
 // ArgumentCallback 参数回调
@@ -90,104 +90,80 @@ func (m *argumentCallback) Invoke(context IContext) {
 		inType := rt.In(i)
 		if i < argsSize {
 			argsValue := argsList.GetByIndex(i)
-			if argsValue == nil {
-				inArgsValues[i] = reflect.New(inType).Elem()
-				continue
-			}
-			switch inType.Kind() {
-			case reflect.String:
-				inArgsValues[i] = reflect.ValueOf(argsValue.String())
-			case reflect.Int:
-				inArgsValues[i] = reflect.ValueOf(argsValue.Int())
-			case reflect.Int8:
-				inArgsValues[i] = reflect.ValueOf(int8(argsValue.Int()))
-			case reflect.Int16:
-				inArgsValues[i] = reflect.ValueOf(int16(argsValue.Int()))
-			case reflect.Int32:
-				inArgsValues[i] = reflect.ValueOf(int32(argsValue.Int()))
-			case reflect.Int64:
-				inArgsValues[i] = reflect.ValueOf(int64(argsValue.Int()))
-			case reflect.Uint:
-				inArgsValues[i] = reflect.ValueOf(uint(argsValue.Int()))
-			case reflect.Uint8:
-				inArgsValues[i] = reflect.ValueOf(uint8(argsValue.Int()))
-			case reflect.Uint16:
-				inArgsValues[i] = reflect.ValueOf(uint16(argsValue.Int()))
-			case reflect.Uint32:
-				inArgsValues[i] = reflect.ValueOf(uint32(argsValue.Int()))
-			case reflect.Uint64:
-				inArgsValues[i] = reflect.ValueOf(uint64(argsValue.Int()))
-			case reflect.Uintptr:
-				inArgsValues[i] = reflect.ValueOf(uintptr(argsValue.Int()))
-			case reflect.Float32:
-				inArgsValues[i] = reflect.ValueOf(float32(argsValue.Float()))
-			case reflect.Float64:
-				inArgsValues[i] = reflect.ValueOf(argsValue.Float())
-			case reflect.Bool:
-				inArgsValues[i] = reflect.ValueOf(argsValue.Bool())
-			case reflect.Struct:
-				if argsValue.IsObject() {
-					// struct
-					if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-						v := reflect.New(inType)
-						if err := jsoniter.Unmarshal(jsonBytes, v.Interface()); err == nil {
-							inArgsValues[i] = v.Elem()
-							continue
-						} else {
-							inArgsValues[i] = reflect.New(inType).Elem()
-						}
-					} else {
-						inArgsValues[i] = reflect.New(inType).Elem()
-					}
-				} else {
-					inArgsValues[i] = reflect.New(inType).Elem()
-				}
-			case reflect.Map:
-				if argsValue.IsObject() {
-					// map key=string : value != interface
-					if inType.Elem().Kind() != reflect.Interface {
+			if argsValue != nil {
+				switch inType.Kind() {
+				case reflect.String:
+					inArgsValues[i] = reflect.ValueOf(argsValue.String())
+				case reflect.Int:
+					inArgsValues[i] = reflect.ValueOf(argsValue.Int())
+				case reflect.Int8:
+					inArgsValues[i] = reflect.ValueOf(int8(argsValue.Int()))
+				case reflect.Int16:
+					inArgsValues[i] = reflect.ValueOf(int16(argsValue.Int()))
+				case reflect.Int32:
+					inArgsValues[i] = reflect.ValueOf(int32(argsValue.Int()))
+				case reflect.Int64:
+					inArgsValues[i] = reflect.ValueOf(int64(argsValue.Int()))
+				case reflect.Uint:
+					inArgsValues[i] = reflect.ValueOf(uint(argsValue.Int()))
+				case reflect.Uint8:
+					inArgsValues[i] = reflect.ValueOf(uint8(argsValue.Int()))
+				case reflect.Uint16:
+					inArgsValues[i] = reflect.ValueOf(uint16(argsValue.Int()))
+				case reflect.Uint32:
+					inArgsValues[i] = reflect.ValueOf(uint32(argsValue.Int()))
+				case reflect.Uint64:
+					inArgsValues[i] = reflect.ValueOf(uint64(argsValue.Int()))
+				case reflect.Uintptr:
+					inArgsValues[i] = reflect.ValueOf(uintptr(argsValue.Int()))
+				case reflect.Float32:
+					inArgsValues[i] = reflect.ValueOf(float32(argsValue.Float()))
+				case reflect.Float64:
+					inArgsValues[i] = reflect.ValueOf(argsValue.Float())
+				case reflect.Bool:
+					inArgsValues[i] = reflect.ValueOf(argsValue.Bool())
+				case reflect.Struct:
+					if argsValue.IsObject() {
+						// struct
 						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-							vv := reflect.New(inType)
-							if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
-								inArgsValues[i] = vv.Elem()
-								continue
-							} else {
-								inArgsValues[i] = reflect.New(inType).Elem()
+							v := reflect.New(inType)
+							if err := jsoniter.Unmarshal(jsonBytes, v.Interface()); err == nil {
+								inArgsValues[i] = v.Elem()
+							}
+						}
+					}
+				case reflect.Map:
+					if argsValue.IsObject() {
+						// map key=string : value != interface
+						if inType.Elem().Kind() != reflect.Interface {
+							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
+								vv := reflect.New(inType)
+								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
+									inArgsValues[i] = vv.Elem()
+								}
 							}
 						} else {
-							inArgsValues[i] = reflect.New(inType).Elem()
+							inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 						}
-					} else {
-						inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 					}
-				} else {
-					inArgsValues[i] = reflect.New(inType).Elem()
-				}
-			case reflect.Slice:
-				if argsValue.IsArray() {
-					// slick value != interface
-					if inType.Elem().Kind() != reflect.Interface {
-						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
-							vv := reflect.New(inType)
-							if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
-								inArgsValues[i] = vv.Elem()
-								continue
-							} else {
-								inArgsValues[i] = reflect.New(inType).Elem()
+				case reflect.Slice:
+					if argsValue.IsArray() {
+						// slice value != interface
+						if inType.Elem().Kind() != reflect.Interface {
+							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
+								vv := reflect.New(inType)
+								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
+									inArgsValues[i] = vv.Elem()
+								}
 							}
 						} else {
-							inArgsValues[i] = reflect.New(inType).Elem()
+							inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 						}
-					} else {
-						inArgsValues[i] = reflect.ValueOf(argsValue.Data())
 					}
-				} else {
-					inArgsValues[i] = reflect.New(inType).Elem()
 				}
-			default:
-				inArgsValues[i] = reflect.New(inType).Elem()
 			}
-		} else {
+		}
+		if !inArgsValues[i].IsValid() {
 			inArgsValues[i] = reflect.New(inType).Elem()
 		}
 	}
@@ -208,8 +184,8 @@ func (m *argumentCallback) Invoke(context IContext) {
 		// result
 		context.Result(resultArgument.Bytes())
 		resultArgument.Free()
-		return
+	} else {
+		// result nil
+		context.Result(nil)
 	}
-	// result nil
-	context.Result(nil)
 }

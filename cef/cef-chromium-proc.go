@@ -731,7 +731,9 @@ func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *I
 func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message json.JSONObject) {
 	if !m.initialized {
 		m.initialized = m.Initialized()
-		return
+		if !m.initialized {
+			return
+		}
 	}
 	var data = message.Bytes()
 	imports.Proc(internale_CEFChromium_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(name), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))

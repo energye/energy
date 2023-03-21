@@ -67,7 +67,9 @@ func SetProcessMessage(pm IProcessMessage) {
 
 //On
 //
-// 参数 回调函数fn: EmitContextCallback 或 func(...) {}
+// 参数
+//	 name: 事件名称
+//   fn : 事件回调函数 EmitContextCallback 或 func(...) [result...] {}
 //
 // IPC GO 监听事件, 自定义参数，仅支持对应 JavaScript 对应 Go 的常用类型
 //
@@ -76,7 +78,7 @@ func SetProcessMessage(pm IProcessMessage) {
 //
 //   复杂类型: slice, map, struct
 //
-//   复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//   复杂类型限制示例: slice: []interface{}, map: map[string]interface{}, struct: array or object
 //
 //   slice: 只能是 any 或 interface{}
 //   map: key 只能 string 类型, value 基本类型+复杂类型
@@ -93,8 +95,7 @@ func SetProcessMessage(pm IProcessMessage) {
 //     }
 //
 // 出参
-//
-//   与入参相同
+//   fn回调函数的出参与入参使用方式相同
 func On(name string, fn any) {
 	if callbackFN := createCallback(fn); callbackFN != nil {
 		browser.addOnEvent(name, callbackFN)
@@ -119,7 +120,7 @@ func RemoveOn(name string) {
 //	name: JS 监听的事件名
 //  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //                  复杂类型: slice, map, struct
-//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}, struct: array or object
 func Emit(name string, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -134,8 +135,8 @@ func Emit(name string, argument ...any) {
 //	name: JS 监听的事件名
 //  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //                  复杂类型: slice, map, struct
-//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
-//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) {}
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}, struct: array or object
+//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) [result...] {}
 func EmitAndCallback(name string, argument []any, fn any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -148,11 +149,11 @@ func EmitAndCallback(name string, argument []any, fn any) {
 // IPC GO 中触发指定目标 JS 监听的事件
 //
 // 参数
-//	name: JS 监听的事件名
+//	name: JS监听的事件名
 //	target: 接收事件的目标
 //  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //                  复杂类型: slice, map, struct
-//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}, struct: array or object
 func EmitTarget(name string, target ITarget, argument ...any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
@@ -168,8 +169,8 @@ func EmitTarget(name string, target ITarget, argument ...any) {
 //	target: 接收事件的目标
 //  []argument: 入参 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //                  复杂类型: slice, map, struct
-//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}
-//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) {}
+//					复杂类型限制示例: slice: []interface{}, map: map[string]interface{}, struct: array or object
+//  callback: 无返回值的回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) [result...] {}
 func EmitTargetAndCallback(name string, target ITarget, argument []any, fn any) {
 	if browser == nil || name == "" || browser.processMessage == nil {
 		return
