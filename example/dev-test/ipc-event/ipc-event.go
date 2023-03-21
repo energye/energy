@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +26,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp = cef.NewApplication()
-	cefApp.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
+	//cefApp.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	//cefApp.SetSingleProcess(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
@@ -73,14 +72,15 @@ func main() {
 	var testResultArgs = 0
 	var onTestName1Emit = 0
 
+	var ctime = 5
 	//监听事件，js触发，之后再触发js监听的事件
 	ipc.On("testGoEmit", func(context ipc.IContext) {
 		testGoEmit++
 		args := context.ArgumentList().JSONArray()
-		if tm > 58 {
+		if tm >= 59-ctime {
 			tm = time.Now().Second()
 		}
-		if time.Now().Second() >= tm+5 {
+		if time.Now().Second() >= tm+ctime {
 			fmt.Println("GetIntByIndex", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testResultArgs:", testResultArgs, "onTestName1Emit:", onTestName1Emit)
 			tm = time.Now().Second()
 		}
