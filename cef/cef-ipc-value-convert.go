@@ -319,6 +319,11 @@ func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value)
 	result := make([]any, argsLen)
 	for i := 0; i < argsLen; i++ {
 		args := v8value.GetValueByIndex(i)
+		if !args.IsValid() {
+			fmt.Println("slice IsValid:", i)
+			result[i] = "null"
+			continue
+		}
 		if args.IsString() {
 			result[i] = args.GetStringValue()
 		} else if args.IsInt() {
@@ -367,6 +372,11 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 	for i := 0; i < keys.Count(); i++ {
 		key := keys.Get(i)
 		args := v8value.getValueByKey(key)
+		if !args.IsValid() {
+			fmt.Println("map IsValid:", i, key)
+			result[key] = "null"
+			continue
+		}
 		if args.IsString() {
 			result[key] = args.GetStringValue()
 		} else if args.IsInt() {
@@ -571,15 +581,10 @@ func (m *v8ValueProcessMessageConvert) BytesToV8ValueArray(data []byte) *TCefV8V
 	var result uintptr
 	var resultLength uintptr
 	imports.Proc(internale_ValueConvert_BytesToV8ValueArray).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultLength)))
-	fmt.Println("result", result, resultLength)
 	if result == 0 || resultLength == 0 {
 		return nil
 	}
-	v := &TCefV8ValueArray{instance: unsafe.Pointer(result), arguments: result, argumentsLength: int(resultLength) /*, argumentsCollect: make([]*ICefV8Value, int(resultLength))*/}
-	//for i := 0; i < v.argumentsLength; i++ {
-	//	v.Get(i)
-	//}
-	return v
+	return &TCefV8ValueArray{instance: unsafe.Pointer(result), arguments: result, argumentsLength: int(resultLength) /*, argumentsCollect: make([]*ICefV8Value, int(resultLength))*/}
 }
 
 // JSONArrayToV8ValueArray 转换 TCefV8ValueArray

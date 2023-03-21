@@ -54,9 +54,12 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 }
 
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
-func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browserId int32, frameId int64, message *ICefProcessMessage) (result bool) {
-	result = true
+func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	argumentListBytes := message.ArgumentList().GetBinary(0)
+	if argumentListBytes == nil {
+		return
+	}
+	result = true
 	var messageDataBytes []byte
 	if argumentListBytes.IsValid() {
 		size := argumentListBytes.GetSize()
@@ -92,7 +95,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browserId int32, frameId i
 	if eventCallback == nil {
 		return
 	}
-	ipcContext := ipc.NewContext(browserId, frameId, true, argumentList)
+	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argumentList)
 	//调用监听函数
 	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
 		ctxCallback.Invoke(ipcContext)
@@ -112,9 +115,8 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessage(browserId int32, frameId i
 				replyMessage.Add((replay.Result()[0]).([]byte))
 			}
 		}
-		//frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 		replyMessage.Free()
-		replay.Clear()
 	}
 	if ipcContext.ArgumentList() != nil {
 		ipcContext.ArgumentList().Free()
@@ -161,7 +163,7 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser,
 }
 
 // ipcOnMessage 监听事件
-func (m *ipcBrowserProcess) ipcOnMessage(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+func (m *ipcBrowserProcess) ipcOnMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) bool {
 	fmt.Println("ipcOnMessage", message.Name(), message.ArgumentList().Size())
 	return false
 }

@@ -351,7 +351,6 @@ func init() {
 			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case RenderProcessMessageReceived:
-			//renderLock.Lock()
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			processId := CefProcessId(getVal(2))
@@ -361,10 +360,9 @@ func init() {
 			if !*result {
 				*result = renderProcessMessageReceived(browse, frame, processId, message)
 			}
-			//frame.Free()
-			//browse.Free()
+			frame.Free()
+			browse.Free()
 			message.Free()
-			//renderLock.Unlock()
 		default:
 			return false
 		}

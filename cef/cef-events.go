@@ -22,7 +22,6 @@ import (
 )
 
 func init() {
-	//var browserLock sync.Mutex
 	var resourceEventGet = func(fn interface{}, getVal func(idx int) uintptr, resp bool) (sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) {
 		var (
 			instance unsafe.Pointer
@@ -77,7 +76,6 @@ func init() {
 			fn.(ChromiumEventOnFindResult)(lcl.AsObject(sender), browse, int32(getVal(2)), int32(getVal(3)), (*TCefRect)(getPtr(4)), int32(getVal(5)), api.GoBool(getVal(6)))
 			//browse.Free()
 		case BrowseProcessMessageReceived:
-			//browserLock.Lock()
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
@@ -86,12 +84,11 @@ func init() {
 			var result = (*bool)(getPtr(5))
 			*result = fn.(BrowseProcessMessageReceived)(lcl.AsObject(sender), browse, frame, processId, message)
 			if !*result {
-				*result = browserProcessMessageReceived(browse, frame, processId, message)
+				*result = browserProcessMessageReceived(browse, frame, message)
 			}
 			//frame.Free()
 			//browse.Free()
 			message.Free()
-			//browserLock.Unlock()
 		case ChromiumEventOnResourceLoadComplete:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(ChromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))

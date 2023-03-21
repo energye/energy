@@ -114,7 +114,7 @@ func main() {
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		testEmitName++
 		argument := context.ArgumentList()
-		//fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), testEmitName)
+		fmt.Println("testEmitName", argument.Size(), context.BrowserId(), context.FrameId(), testEmitName)
 		//fmt.Println("data:", argument.GetByIndex(1).Data())
 		for i := 0; i < argument.Size(); i++ {
 			argument.GetByIndex(i)

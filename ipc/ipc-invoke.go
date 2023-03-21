@@ -56,7 +56,7 @@ func (m *contextCallback) Invoke(context IContext) {
 				resultArgument.Add(result)
 			}
 		}
-		// result bytes
+		// result
 		context.Result(resultArgument.Bytes())
 		resultArgument.Free()
 		return
@@ -194,7 +194,7 @@ func (m *argumentCallback) Invoke(context IContext) {
 				resultArgument.Add(res)
 			}
 		}
-		// result bytes
+		// result
 		context.Result(resultArgument.Bytes())
 		resultArgument.Free()
 		return

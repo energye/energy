@@ -164,6 +164,9 @@ func (m *ICefListValue) GetString(index uint32) string {
 }
 
 func (m *ICefListValue) GetBinary(index uint32) *ICefBinaryValue {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(internale_CefListValue_GetBinary).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{

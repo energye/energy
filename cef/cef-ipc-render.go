@@ -12,12 +12,10 @@
 package cef
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
-	jsoniter "github.com/json-iterator/go"
 	"sync"
 )
 
@@ -30,8 +28,8 @@ type ipcRenderProcess struct {
 	ipcChannel  channel.IRenderChannel //channel
 	browserId   int32
 	frameId     int64
-	buffer      *bytes.Buffer
 	lock        sync.Mutex
+	v8Context   *ICefV8Context
 }
 
 func (m *ipcRenderProcess) clear() {
@@ -57,39 +55,11 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 			fmt.Println("ipcRender", m.browserId, context.Message().JSON().Size(), context.ChannelId(), context.ToChannelId())
 			context.Free()
 		})
-		//go func() {
-		//	for true {
-		//		time.Sleep(time.Second)
-		//		m.ipcChannel.Send([]byte("aaa"))
-		//	}
-		//}()
 	}
 }
 
-// makeCtx ipc 和 bind
-func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
-	m.makeIPC(context)
-	//m.makeBind(context)
-}
-
-// makeIPC ipc
-func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
-	// ipc emit
-	m.emitHandler.handler = V8HandlerRef.New()
-	m.emitHandler.handler.Execute(m.ipcJSExecuteGoEvent)
-	// ipc on
-	m.onHandler.handler = V8HandlerRef.New()
-	m.onHandler.handler.Execute(m.ipcJSOnEvent)
-	// ipc object
-	m.ipcObject = V8ValueRef.NewObject(nil)
-	m.ipcObject.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipcObject.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	// global to v8 ipc key
-	context.Global().setValueByKey(internalIPCKey, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-}
-
-// ipcJSOnEvent JS ipc.on 监听事件
-func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+// jsOnEvent JS ipc.on 监听事件
+func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	if name != internalOn {
 		retVal.SetResult(V8ValueRef.NewBool(false))
 		return
@@ -120,8 +90,11 @@ func (m *ipcRenderProcess) ipcJSOnEvent(name string, object *ICefV8Value, argume
 	}
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
+	if m.v8Context == nil {
+		m.v8Context = V8ContextRef.Current()
+	}
 	//ipc on
-	m.onHandler.addCallback(onNameValue, &ipcCallback{ /*arguments: arguments, */ context: V8ContextRef.Current(), function: V8ValueRef.UnWrap(onCallback)})
+	m.onHandler.addCallback(onNameValue, &ipcCallback{ /*arguments: arguments, context: V8ContextRef.Current(),*/ function: V8ValueRef.UnWrap(onCallback)})
 	result = true
 	return
 }
@@ -178,7 +151,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		//argumentArrayValue.Free()
 		//2
 		argumentArrayValue := ipcValueConvert.BytesToV8ValueArray(argumentList.Bytes())
-		ret := callback.function.ExecuteFunctionWithContext(callback.context, nil, argumentArrayValue)
+		ret := callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argumentArrayValue)
 		argumentArrayValue.Free()
 		//3
 		//ret := callback.function.ExecuteFunctionWithContextForArgsBytes(callback.context, nil, argumentList.Bytes())
@@ -200,7 +173,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		//retMessage.Free()
 		//}
 		//ret.Free()
-		callback.context.Exit()
+		//m.v8Context.Exit()
 		//frame.SendProcessMessageForV8Value(internalProcessMessageIPCEmitReply, consts.PID_BROWSER, ret)
 		//}
 		result = true
@@ -208,14 +181,14 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	return
 }
 
-// ipcJSExecuteGoEvent JS ipc.emit 执行Go事件
-func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+// jsExecuteGoEvent JS ipc.emit 执行Go事件
+func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	var (
 		emitName      *ICefV8Value //事件名
 		emitNameValue string       //事件名
 		emitArgs      *ICefV8Value //事件参数
 		emitCallback  *ICefV8Value //事件回调函数
-		args          any
+		args          []byte
 		freeV8Value   = func(value *ICefV8Value) {
 			if value != nil {
 				value.Free()
@@ -223,30 +196,18 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		}
 	)
 	result = true
-	isFree := false
 	defer func() {
-		if isFree { //失败时释放掉
-			result = false
-			freeV8Value(emitCallback)
-		}
+		freeV8Value(emitCallback)
+		freeV8Value(emitArgs)
+		freeV8Value(emitName)
 	}()
 	if name != internalEmit {
-		isFree = true
 		return
 	}
 	if arguments.Size() >= 1 { // 1 ~ 3 个参数
-		defer func() {
-			//释放掉这些指针，不然不会自动释放
-			freeV8Value(emitName)
-			freeV8Value(emitArgs)
-			if args != nil {
-				args = nil
-			}
-		}()
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
 			exception.SetValue("ipc.emit event name should be a string")
-			isFree = true
 			return
 		}
 		if arguments.Size() == 2 {
@@ -257,7 +218,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 				emitCallback = args2
 			} else {
 				exception.SetValue("ipc.emit second argument can only be a parameter or callback function")
-				isFree = true
 				return
 			}
 		} else if arguments.Size() == 3 {
@@ -265,7 +225,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 			emitCallback = arguments.Get(2)
 			if !emitArgs.IsArray() || !emitCallback.IsFunction() {
 				exception.SetValue("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
-				isFree = true
 				return
 			}
 		}
@@ -273,64 +232,64 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEvent(name string, object *ICefV8Value,
 		//入参
 		if emitArgs != nil {
 			//V8Value 转换
-			args = ipcValueConvert.V8ValueToProcessMessageArray(emitArgs)
+			args = ipcValueConvert.V8ValueToProcessMessageBytes(emitArgs)
 			if args == nil {
 				exception.SetValue("ipc.emit convert parameter to value value error")
-				isFree = true
 				return
 			}
 		}
-		context := V8ContextRef.Current()
+		if m.v8Context == nil {
+			m.v8Context = V8ContextRef.Current()
+		}
 		var messageId int32 = 0
 		var isDev = false // TODO dev
 		//回调函数
-		if emitCallback != nil && isDev {
+		if emitCallback != nil && !isDev {
 			//回调函数临时存放到缓存中
 			emitCallback.SetCanNotFree(true)
-			messageId = ipcRender.emitHandler.addCallback(&ipcCallback{
+			messageId = m.emitHandler.addCallback(&ipcCallback{
 				//arguments: arguments,
-				context:  context,
+				//context:  m.v8Context,
 				function: V8ValueRef.UnWrap(emitCallback),
 			})
-		} else if !isDev {
-			emitCallback.Free() // TODO dev
-			context.Free()      // TODO dev
 		}
-		data := &ipcChannelMessage{
-			MessageId: messageId,
-			BrowserId: m.browserId,
-			FrameId:   m.frameId,
-			Name:      internalIPCJSExecuteGoEvent,
-			EventName: emitNameValue,
-			Data:      args,
-		}
-		if sendData, err := jsoniter.Marshal(data); err == nil {
-			m.ipcChannel.Send(sendData)
-			sendData = nil
+		//messageId = 1 // TODO dev
+		message := json.NewJSONObject(nil)
+		message.Set(ipc_id, messageId)
+		message.Set(ipc_event, emitNameValue)
+		message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		if m.v8Context.Frame() != nil {
+			m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
+			args = nil
 		} else {
 			emitCallback.SetCanNotFree(false)
+			emitCallback.Free()
 		}
-		args = nil
-		retVal.SetResult(V8ValueRef.NewBool(true))
+		message.Free()
+		//retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return
 }
 
 // ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
 func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
+	if argumentListBytes == nil {
+		return
+	}
+	result = true
 	var messageDataBytes []byte
 	if argumentListBytes.IsValid() {
 		size := argumentListBytes.GetSize()
 		messageDataBytes = make([]byte, size)
 		c := argumentListBytes.GetData(messageDataBytes, 0)
-		argumentListBytes.Free() //立即释放掉
+		argumentListBytes.Free()
 		if c == 0 {
 			result = false
 			return
 		}
 	}
+	//fmt.Println("messageDataBytes", string(messageDataBytes))
 	var (
 		messageId    int32
 		isReturnArgs bool
@@ -347,24 +306,37 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			argumentList.Free()
 		}
 	}()
-
-	if callback := ipcRender.emitHandler.getCallback(messageId); callback != nil {
+	if m.v8Context == nil {
+		return
+	}
+	if callback := m.emitHandler.getCallback(messageId); callback != nil {
 		callback.function.SetCanNotFree(false)
 		//第二个参数 true 有返回参数
 		if isReturnArgs {
 			//[]byte
 			returnArgs := argumentList.GetArrayByIndex(2)
 			//解析 '[]byte' 参数
-			if callback.context.Enter() {
-				callback.function.ExecuteFunctionWithContextForArgsBytes(callback.context, nil, returnArgs.Bytes()).Free()
-				callback.context.Exit()
+			if m.v8Context.Enter() {
+				var argsArray *TCefV8ValueArray
+				//argsArray = ipcValueConvert.BytesToV8ValueArray(returnArgs.Bytes())
+				//fmt.Println("json:", returnArgs.ToJSONString())
+				argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+				if argsArray != nil {
+					//callback.function.ExecuteFunctionWithContextForArgsBytes(m.v8Context, nil, returnArgs.Bytes()).Free()
+					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
+					argsArray.Free()
+				} else {
+					//callback.function.ExecuteFunctionWithContextForArgsBytes(m.v8Context, nil, returnArgs.Bytes()).Free()
+					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+				}
+				m.v8Context.Exit()
 			}
 			returnArgs.Free()
 		} else { //无返回参数
-			if callback.context.Enter() {
-				callback.function.ExecuteFunctionWithContext(callback.context, nil, nil).Free()
+			if m.v8Context.Enter() {
+				callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+				m.v8Context.Exit()
 			}
-			callback.context.Exit()
 		}
 		//remove
 		callback.free()
@@ -459,4 +431,26 @@ func (m *ipcRenderProcess) bindGet(name string, object *ICefV8Value, retVal *Res
 func (m *ipcRenderProcess) bindSet(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool {
 	fmt.Println("bindSet accessor name:", name)
 	return false
+}
+
+// makeCtx ipc 和 bind
+func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
+	m.makeIPC(context)
+	//m.makeBind(context)
+}
+
+// makeIPC ipc
+func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
+	// ipc emit
+	m.emitHandler.handler = V8HandlerRef.New()
+	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
+	// ipc on
+	m.onHandler.handler = V8HandlerRef.New()
+	m.onHandler.handler.Execute(m.jsOnEvent)
+	// ipc object
+	m.ipcObject = V8ValueRef.NewObject(nil)
+	m.ipcObject.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	// global to v8 ipc key
+	context.Global().setValueByKey(internalIPCKey, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }

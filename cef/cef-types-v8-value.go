@@ -40,6 +40,9 @@ func (m *ICefV8Value) IsValid() bool {
 }
 
 func (m *ICefV8Value) IsUndefined() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtUndefined {
 		return true
 	}
@@ -54,6 +57,9 @@ func (m *ICefV8Value) IsUndefined() bool {
 }
 
 func (m *ICefV8Value) IsNull() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtNull {
 		return true
 	}
@@ -68,6 +74,9 @@ func (m *ICefV8Value) IsNull() bool {
 }
 
 func (m *ICefV8Value) IsBool() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtBool {
 		return true
 	}
@@ -82,6 +91,9 @@ func (m *ICefV8Value) IsBool() bool {
 }
 
 func (m *ICefV8Value) IsInt() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtInt {
 		return true
 	}
@@ -96,6 +108,9 @@ func (m *ICefV8Value) IsInt() bool {
 }
 
 func (m *ICefV8Value) IsUInt() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtUInt {
 		return true
 	}
@@ -110,6 +125,9 @@ func (m *ICefV8Value) IsUInt() bool {
 }
 
 func (m *ICefV8Value) IsDouble() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtDouble {
 		return true
 	}
@@ -124,6 +142,9 @@ func (m *ICefV8Value) IsDouble() bool {
 }
 
 func (m *ICefV8Value) IsDate() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtDate {
 		return true
 	}
@@ -138,6 +159,9 @@ func (m *ICefV8Value) IsDate() bool {
 }
 
 func (m *ICefV8Value) IsString() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtString {
 		return true
 	}
@@ -152,6 +176,9 @@ func (m *ICefV8Value) IsString() bool {
 }
 
 func (m *ICefV8Value) IsObject() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtObject {
 		return true
 	}
@@ -166,6 +193,9 @@ func (m *ICefV8Value) IsObject() bool {
 }
 
 func (m *ICefV8Value) IsArray() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtArray {
 		return true
 	}
@@ -180,6 +210,9 @@ func (m *ICefV8Value) IsArray() bool {
 }
 
 func (m *ICefV8Value) IsArrayBuffer() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtArrayBuffer {
 		return true
 	}
@@ -194,6 +227,9 @@ func (m *ICefV8Value) IsArrayBuffer() bool {
 }
 
 func (m *ICefV8Value) IsFunction() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtFunction {
 		//return true
 	}
@@ -208,6 +244,9 @@ func (m *ICefV8Value) IsFunction() bool {
 }
 
 func (m *ICefV8Value) IsPromise() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueType == consts.V8vtPromise {
 		return true
 	}
@@ -222,42 +261,66 @@ func (m *ICefV8Value) IsPromise() bool {
 }
 
 func (m *ICefV8Value) IsSame() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_IsSame).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) GetBoolValue() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetBoolValue).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) GetIntValue() int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetIntValue).Call(m.Instance())
 	return int32(r1)
 }
 
 func (m *ICefV8Value) GetUIntValue() uint32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetUIntValue).Call(m.Instance())
 	return uint32(r1)
 }
 
 func (m *ICefV8Value) GetDoubleValue() (result float64) {
+	if !m.IsValid() {
+		return 0.0
+	}
 	imports.Proc(internale_CefV8Value_GetDoubleValue).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
 func (m *ICefV8Value) GetDateValue() time.Time {
+	if !m.IsValid() {
+		return time.Time{}
+	}
 	var result float64
 	imports.Proc(internale_CefV8Value_GetDateValue).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return common.DDateTimeToGoDateTime(result)
 }
 
 func (m *ICefV8Value) GetStringValue() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetStringValue).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 func (m *ICefV8Value) IsUserCreated() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_IsUserCreated).Call(m.Instance())
 	return api.GoBool(r1)
 }
@@ -272,32 +335,50 @@ func (m *ICefV8Value) IsUserCreated() bool {
 //}
 
 func (m *ICefV8Value) ClearException() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_ClearException).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) WillRethrowExceptions() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_WillRethrowExceptions).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) SetRethrowExceptions(reThrow bool) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetRethrowExceptions).Call(m.Instance(), api.PascalBool(reThrow))
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) HasValueByKey(key string) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_HasValueByKey).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) HasValueByIndex(index int32) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_HasValueByIndex).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
 }
 
 // deleteValueByKey internal
 func (m *ICefV8Value) deleteValueByKey(key string) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueByKeys != nil {
 		if v, ok := m.valueByKeys[key]; ok {
 			v.Free()
@@ -310,6 +391,9 @@ func (m *ICefV8Value) deleteValueByKey(key string) bool {
 
 // DeleteValueByKey export
 func (m *ICefV8Value) DeleteValueByKey(key string) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if isIPCInternalKey(key) {
 		return false
 	}
@@ -317,6 +401,9 @@ func (m *ICefV8Value) DeleteValueByKey(key string) bool {
 }
 
 func (m *ICefV8Value) DeleteValueByIndex(index int) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueByIndex != nil {
 		if v := m.valueByIndex[index]; v != nil {
 			v.Free()
@@ -329,6 +416,9 @@ func (m *ICefV8Value) DeleteValueByIndex(index int) bool {
 
 // getValueByKey internal
 func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	if !m.IsObject() {
 		return nil
 	}
@@ -349,6 +439,9 @@ func (m *ICefV8Value) getValueByKey(key string) *ICefV8Value {
 
 // GetValueByKey export
 func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	if key == internalIPCKey {
 		return nil
 	}
@@ -357,6 +450,9 @@ func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
 
 // GetValueByIndex 当前是数组时，通过下标取值V8Value
 func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	if !m.IsArray() {
 		return nil
 	}
@@ -377,6 +473,9 @@ func (m *ICefV8Value) GetValueByIndex(index int) *ICefV8Value {
 
 // setValueByKey internal
 func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueByKeys != nil {
 		if v, ok := m.valueByKeys[key]; ok {
 			if v != value {
@@ -391,6 +490,9 @@ func (m *ICefV8Value) setValueByKey(key string, value *ICefV8Value, attribute co
 
 // SetValueByKey export
 func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute consts.TCefV8PropertyAttributes) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if isIPCInternalKey(key) {
 		return false
 	}
@@ -398,6 +500,9 @@ func (m *ICefV8Value) SetValueByKey(key string, value *ICefV8Value, attribute co
 }
 
 func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.valueByIndex != nil {
 		if v := m.valueByIndex[index]; v != nil {
 			if v != value {
@@ -412,12 +517,18 @@ func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
 
 // SetValueByAccessor internal
 func (m *ICefV8Value) setValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetValueByAccessor).Call(m.Instance(), api.PascalStr(key), settings.ToPtr(), attribute.ToPtr())
 	return api.GoBool(r1)
 }
 
 // SetValueByAccessor export
 func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if isIPCInternalKey(key) {
 		return false
 	}
@@ -425,21 +536,33 @@ func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8Acces
 }
 
 func (m *ICefV8Value) GetKeys() *ICefV8ValueKeys {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetKeys).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8ValueKeys{keys: lcl.AsStrings(result), count: int(int32(r1))}
 }
 
 func (m *ICefV8Value) GetIKeys() ipc.IV8ValueKeys {
+	if !m.IsValid() {
+		return nil
+	}
 	return m.GetKeys()
 }
 
 func (m *ICefV8Value) SetUserData(data *ICefV8Value) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_SetUserData).Call(m.Instance(), data.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) GetUserData() *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetUserData).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
@@ -448,21 +571,33 @@ func (m *ICefV8Value) GetUserData() *ICefV8Value {
 }
 
 func (m *ICefV8Value) GetExternallyAllocatedMemory() int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetExternallyAllocatedMemory).Call(m.Instance())
 	return int32(r1)
 }
 
 func (m *ICefV8Value) AdjustExternallyAllocatedMemory(changeInBytes int32) int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_AdjustExternallyAllocatedMemory).Call(m.Instance(), uintptr(changeInBytes))
 	return int32(r1)
 }
 
 func (m *ICefV8Value) GetArrayLength() int {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetArrayLength).Call(m.Instance())
 	return int(int32(r1))
 }
 
 func (m *ICefV8Value) GetArrayBufferReleaseCallback() *ICefV8ArrayBufferReleaseCallback {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetArrayBufferReleaseCallback).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8ArrayBufferReleaseCallback{
@@ -471,16 +606,25 @@ func (m *ICefV8Value) GetArrayBufferReleaseCallback() *ICefV8ArrayBufferReleaseC
 }
 
 func (m *ICefV8Value) NeuterArrayBuffer() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_NeuterArrayBuffer).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) GetFunctionName() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_GetFunctionName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(internale_CefV8Value_GetFunctionHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Handler{
@@ -489,6 +633,9 @@ func (m *ICefV8Value) GetFunctionHandler() *ICefV8Handler {
 }
 
 func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	var argumentsPtr = arguments.Instance()
 	if arguments.Size() > 0 /*&& arguments.argumentsCollect != nil*/ {
@@ -505,6 +652,9 @@ func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueAr
 }
 
 func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *ICefV8Value, arguments *TCefV8ValueArray) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	var argumentsPtr = arguments.Instance()
 	if arguments.Size() > 0 && arguments.argumentsCollect != nil {
@@ -514,13 +664,17 @@ func (m *ICefV8Value) ExecuteFunctionWithContext(v8Context *ICefV8Context, obj *
 		}
 		argumentsPtr = uintptr(unsafe.Pointer(&args[0]))
 	}
-	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), argumentsPtr, uintptr(int32(arguments.Size())))
+	//argumentsPtr = uintptr(unsafe.Pointer(&argumentsPtr))
+	imports.Proc(internale_CefV8Value_ExecuteFunctionWithContext).Call(m.Instance(), v8Context.Instance(), obj.Instance(), argumentsPtr, uintptr(int32(arguments.Size())), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
 }
 
 func (m *ICefV8Value) ExecuteFunctionWithContextForArgsBytes(v8Context *ICefV8Context, obj *ICefV8Value, arguments []byte) *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	var argumentsPtr = uintptr(unsafe.Pointer(&arguments[0]))
 	var argumentsLength = uintptr(uint32(len(arguments)))
@@ -531,11 +685,17 @@ func (m *ICefV8Value) ExecuteFunctionWithContextForArgsBytes(v8Context *ICefV8Co
 }
 
 func (m *ICefV8Value) ResolvePromise(arg *ICefV8Value) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_ResolvePromise).Call(m.Instance(), arg.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Value_RejectPromise).Call(m.Instance(), api.PascalStr(errorMsg))
 	return api.GoBool(r1)
 }
@@ -563,8 +723,9 @@ func (m *ICefV8Value) Free() {
 			m.valueByKeys = nil
 		}
 		if !m.cantFree {
-			var ptr = m.Instance()
-			imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&ptr)))
+			//var ptr = m.Instance()
+			//imports.Proc(internale_CefV8Value_Free).Call(uintptr(unsafe.Pointer(&ptr)))
+			m.base.Free(m.Instance())
 			m.instance = nil
 		}
 	}

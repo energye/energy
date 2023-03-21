@@ -20,14 +20,14 @@ import (
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
 	fmt.Println("appOnContextCreated-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue(), "browserId:", browser.Identifier(), "frameId:", frame.Identifier())
-	ipcRender.ipcChannelRender(browser, frame)
+	//ipcRender.ipcChannelRender(browser, frame)
 	ipcRender.makeCtx(context)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
 func appMainRunCallback() {
 	fmt.Println("appMainRunCallback-ProcessTypeValue:", common.Args.ProcessType(), application.ProcessTypeValue())
-	ipcBrowser.ipcChannelBrowser()
+	//ipcBrowser.ipcChannelBrowser()
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
@@ -41,11 +41,11 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 }
 
 // browserProcessMessageReceived 主进程消息 - 默认实现
-func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEvent {
-		result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
+		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
 	} else if message.Name() == internalProcessMessageIPCOn {
-		result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
+		result = ipcBrowser.ipcOnMessage(browser, frame, message)
 	} else if message.Name() == internalProcessMessageIPCEmitReply {
 		//result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
 	}

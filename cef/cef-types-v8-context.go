@@ -29,6 +29,9 @@ func (m *ICefV8Context) Instance() uintptr {
 }
 
 func (m *ICefV8Context) Eval(code, scriptUrl string, startLine int32) (value *ICefV8Value, exception *ICefV8Exception, ok bool) {
+	if !m.IsValid() {
+		return
+	}
 	var returnValuePtr uintptr
 	var returnExceptionPtr uintptr
 	r1, _, _ := imports.Proc(internale_CefV8Context_Eval).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine), uintptr(unsafe.Pointer(&returnValuePtr)), uintptr(unsafe.Pointer(&returnExceptionPtr)))
@@ -43,22 +46,41 @@ func (m *ICefV8Context) Eval(code, scriptUrl string, startLine int32) (value *IC
 
 // Enter 进入上下文
 func (m *ICefV8Context) Enter() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Context_Enter).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // Exit 退出上下文
 func (m *ICefV8Context) Exit() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Context_Exit).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
+func (m *ICefV8Context) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return true
+}
+
 func (m *ICefV8Context) IsSame(that *ICefV8Context) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CefV8Context_IsSame).Call(m.Instance(), that.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefV8Context) Browser() *ICefBrowser {
+	if !m.IsValid() {
+		return nil
+	}
 	if m.browser == nil {
 		var result uintptr
 		imports.Proc(internale_CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -70,6 +92,9 @@ func (m *ICefV8Context) Browser() *ICefBrowser {
 }
 
 func (m *ICefV8Context) Frame() *ICefFrame {
+	if !m.IsValid() {
+		return nil
+	}
 	if m.frame == nil {
 		var result uintptr
 		imports.Proc(internale_CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -81,6 +106,9 @@ func (m *ICefV8Context) Frame() *ICefFrame {
 }
 
 func (m *ICefV8Context) Global() *ICefV8Value {
+	if !m.IsValid() {
+		return nil
+	}
 	if m.global == nil {
 		var result uintptr
 		imports.Proc(internale_CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -93,6 +121,18 @@ func (m *ICefV8Context) Global() *ICefV8Value {
 
 func (m *ICefV8Context) Free() {
 	if m.instance != nil {
+		if m.frame != nil {
+			m.frame.Free()
+			m.frame = nil
+		}
+		if m.browser != nil {
+			m.browser.Free()
+			m.browser = nil
+		}
+		if m.global != nil {
+			m.global.Free()
+			m.global = nil
+		}
 		m.base.Free(m.Instance())
 		m.instance = nil
 	}

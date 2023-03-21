@@ -11,7 +11,6 @@
 package cef
 
 import (
-	"bytes"
 	"github.com/energye/energy/common"
 	"sync"
 )
@@ -71,9 +70,9 @@ type ipcOnHandler struct {
 
 // ipcCallback
 type ipcCallback struct {
-	arguments *TCefV8ValueArray
-	context   *ICefV8Context
-	function  *ICefV8Value
+	//arguments *TCefV8ValueArray
+	//context   *ICefV8Context
+	function *ICefV8Value
 }
 
 // ipcInit 初始化
@@ -84,14 +83,12 @@ func ipcInit() {
 		ipcRender = &ipcRenderProcess{
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
-			buffer:      new(bytes.Buffer),
 		}
 	} else {
 		if common.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
 		} else if common.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
-				buffer:      new(bytes.Buffer),
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}
@@ -172,16 +169,16 @@ func (m *ipcOnHandler) clear() {
 }
 
 func (m *ipcCallback) free() {
-	if m.context != nil {
-		m.context.Free()
-		m.context = nil
-	}
+	//if m.context != nil {
+	//	m.context.Free()
+	//	m.context = nil
+	//}
 	if m.function != nil {
 		m.function.Free()
 		m.function = nil
 	}
-	if m.arguments != nil {
-		m.arguments.Free()
-		m.arguments = nil
-	}
+	//if m.arguments != nil {
+	//	m.arguments.Free()
+	//	m.arguments = nil
+	//}
 }

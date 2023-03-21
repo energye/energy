@@ -59,7 +59,7 @@ func (m *ICefProcessMessage) Instance() uintptr {
 
 // ArgumentList 参数列表
 func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
-	if m.Name() == "" {
+	if m.Name() == "" || !m.IsValid() {
 		return nil
 	}
 	if m.argumentList == nil {

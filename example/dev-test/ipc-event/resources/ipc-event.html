@@ -11,23 +11,35 @@
     <script type="application/javascript">
         let idx = 0;
         let si = null;
+        let si1 = null;
+        let si2 = null;
 
         function autoIpcEmit() {
             if (si != null) {
                 clearInterval(si)
+                clearInterval(si1)
+                clearInterval(si2)
                 si = null
+                si1 = null
+                si2 = null
                 idx = 0
                 msg("停止 auto ipc emit idx", idx)
                 return
             }
             msg("启动 auto ipc emit")
             si = setInterval(ipcEmit, 1)
+            si1 = setInterval(ipcEmit, 1)
+            //si2 = setInterval(ipcEmit, 1)
             if (si != null) {
                 let time = document.getElementById("time").value - 0
                 if (time > 0) {
                     setTimeout(function () {
                         clearInterval(si)
+                        clearInterval(si1)
+                        clearInterval(si2)
                         si = null
+                        si1 = null
+                        si2 = null
                     }, time)
                 }
             }
