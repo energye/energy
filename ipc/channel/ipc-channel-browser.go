@@ -142,7 +142,6 @@ func (m *browserChannel) Handler(handler IPCCallback) {
 
 // accept 接收新链接
 func (m *browserChannel) accept() {
-	logger.Info("IPC Server Accept")
 	for {
 		var (
 			err  error
