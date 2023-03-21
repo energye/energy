@@ -15,7 +15,6 @@ package cef
 
 import (
 	"errors"
-	"fmt"
 	"github.com/energye/energy/common/imports"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
@@ -320,7 +319,6 @@ func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value)
 	for i := 0; i < argsLen; i++ {
 		args := v8value.GetValueByIndex(i)
 		if !args.IsValid() {
-			fmt.Println("slice IsValid:", i)
 			result[i] = "null"
 			continue
 		}
@@ -373,7 +371,6 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 		key := keys.Get(i)
 		args := v8value.getValueByKey(key)
 		if !args.IsValid() {
-			fmt.Println("map IsValid:", i, key)
 			result[key] = "null"
 			continue
 		}

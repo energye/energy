@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
-	jsoniter "github.com/json-iterator/go"
 )
 
 // ipcBrowserProcess 主进程
@@ -28,30 +27,30 @@ type ipcBrowserProcess struct {
 	ipcChannel  channel.IBrowserChannel
 }
 
-func (m *ipcBrowserProcess) ipcChannelBrowser() {
-	if m.ipcChannel == nil {
-		m.ipcChannel = channel.NewBrowser()
-		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			var data ipcChannelMessage
-			if err := jsoniter.Unmarshal(context.Message().Data(), &data); err == nil {
-				//messageId := message.GetUIntByKey(ipc_id)
-				//name := message.GetStringByKey(ipc_name)
-				//message.Set(ipc_event, emitNameValue)
-				//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-				fmt.Println("ipcChannelBrowser", err)
-				fmt.Println("data", data.Name, data.EventName, json.NewJSONArray(data.Data).GetIntByIndex(1))
-				if data.Name == internalIPCJSExecuteGoEvent {
-					//result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
-				} else if data.Name == internalProcessMessageIPCOn {
-					//result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
-				} else if data.Name == internalProcessMessageIPCEmitReply {
-					//result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
-				}
-			}
-			context.Free()
-		})
-	}
-}
+//func (m *ipcBrowserProcess) ipcChannelBrowser() {
+//	if m.ipcChannel == nil {
+//		m.ipcChannel = channel.NewBrowser()
+//		m.ipcChannel.Handler(func(context channel.IIPCContext) {
+//			var data ipcChannelMessage
+//			if err := jsoniter.Unmarshal(context.Message().Data(), &data); err == nil {
+//				//messageId := message.GetUIntByKey(ipc_id)
+//				//name := message.GetStringByKey(ipc_name)
+//				//message.Set(ipc_event, emitNameValue)
+//				//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+//				fmt.Println("ipcChannelBrowser", err)
+//				fmt.Println("data", data.Name, data.EventName, json.NewJSONArray(data.Data).GetIntByIndex(1))
+//				if data.Name == internalIPCJSExecuteGoEvent {
+//					//result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
+//				} else if data.Name == internalProcessMessageIPCOn {
+//					//result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
+//				} else if data.Name == internalProcessMessageIPCEmitReply {
+//					//result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
+//				}
+//			}
+//			context.Free()
+//		})
+//	}
+//}
 
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
 func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
@@ -126,39 +125,49 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 	return
 }
 
-func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	//fmt.Println("ipcGoExecuteMethodMessageReply", message.Name())
-	//messageId := message.ArgumentList().GetInt(0)
-	//if callback := ipc.CheckEmitCallback(messageId); callback != nil {
-	//	//第二个参数 true 有返回参数
-	//	if isReturn := message.ArgumentList().GetBool(1); isReturn {
-	//		//[]byte
-	//		binaryValue := message.ArgumentList().GetBinary(2)
-	//		var (
-	//			count           uint32
-	//			resultArgsBytes []byte
-	//		)
-	//		if binaryValue.IsValid() {
-	//			size := binaryValue.GetSize()
-	//			resultArgsBytes = make([]byte, size)
-	//			count = binaryValue.GetData(resultArgsBytes, 0)
-	//			binaryValue.Free()
-	//		}
-	//		if count > 0 {
-	//			ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), false, resultArgsBytes)
-	//			if ctxCallback := callback.ContextCallback(); ctxCallback != nil {
-	//				ctxCallback.Invoke(ipcContext)
-	//			} else if argsCallback := callback.ArgumentCallback(); argsCallback != nil {
-	//				argsCallback.Invoke(ipcContext)
-	//			}
-	//			if ipcContext.ArgumentList() != nil {
-	//				ipcContext.ArgumentList().Free()
-	//			}
-	//			ipcContext.Result(nil)
-	//		}
-	//		resultArgsBytes = nil
-	//	}
-	//}
+func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
+	argumentListBytes := message.ArgumentList().GetBinary(0)
+	if argumentListBytes == nil {
+		return
+	}
+	result = true
+	var messageDataBytes []byte
+	if argumentListBytes.IsValid() {
+		size := argumentListBytes.GetSize()
+		messageDataBytes = make([]byte, size)
+		c := argumentListBytes.GetData(messageDataBytes, 0)
+		argumentListBytes.Free()
+		message.Free()
+		if c == 0 {
+			return
+		}
+	}
+	var messageId int32
+	var argument json.JSON
+	var argumentList json.JSONArray
+	if messageDataBytes != nil {
+		argument = json.NewJSON(messageDataBytes)
+		messageId = int32(argument.GetIntByKey(ipc_id))
+		argumentList = argument.GetArrayByKey(ipc_argumentList)
+		messageDataBytes = nil
+	}
+	defer func() {
+		if argument != nil {
+			argument.Free()
+		}
+	}()
+	if callback := ipc.CheckEmitCallback(messageId); callback != nil {
+		ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), false, argumentList)
+		if ctxCallback := callback.ContextCallback(); ctxCallback != nil {
+			ctxCallback.Invoke(ipcContext)
+		} else if argsCallback := callback.ArgumentCallback(); argsCallback != nil {
+			argsCallback.Invoke(ipcContext)
+		}
+		if ipcContext.ArgumentList() != nil {
+			ipcContext.ArgumentList().Free()
+		}
+		ipcContext.Result(nil)
+	}
 	return
 }
 

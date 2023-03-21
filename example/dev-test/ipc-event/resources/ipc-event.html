@@ -147,10 +147,23 @@
             msg("R9：", r9, JSON.stringify(r9));
             msg("R10：", r10, JSON.stringify(r10));
         });
+        let onTestName2Idx = 0;
         ipc.on('onTestName2', function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
+            onTestName2Idx++;
             clearMsg()
             msg("onTestName2");
-            return ["返回值", 111111, 2222.22, true]
+            msg("R0：", r0);
+            msg("R1：", r1);
+            msg("R2：", r2);
+            msg("R3：", r3);
+            msg("R4：", r4);
+            msg("R5：", r5);
+            msg("R6：", r6, JSON.stringify(r6));
+            msg("R7：", r7, JSON.stringify(r7));
+            msg("R8：", r8, JSON.stringify(r8));
+            msg("R9：", r9, JSON.stringify(r9));
+            msg("R10：", r10, JSON.stringify(r10));
+            return ["返回值", onTestName2Idx, 2222.22, true]
         });
 
         let tgesi = null

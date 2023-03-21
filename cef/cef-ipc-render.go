@@ -135,40 +135,38 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	}()
 
 	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
-		//if callback.context.Enter() {
-		fmt.Println("messageId:", messageId)
-		//1
-		//argumentArrayValue, _ := ipcValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
-		//fmt.Println("messageId", messageId, "err", err, argumentArrayValue)
-		//ret := callback.function.ExecuteFunctionWithContext(callback.context, nil, argumentArrayValue)
-		//argumentArrayValue.Free()
-		//2
-		argumentArrayValue := ipcValueConvert.BytesToV8ValueArray(argumentList.Bytes())
-		ret := callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argumentArrayValue)
-		argumentArrayValue.Free()
-		//3
-		//ret := callback.function.ExecuteFunctionWithContextForArgsBytes(callback.context, nil, argumentList.Bytes())
-		argumentList.Free()
-		//fmt.Println("messageId", messageId, "ret", ret)
-		//if messageId != 0 { // callback
-		//ipcValueConvert.V8ValueToProcessMessage(ret)
-		//ret := V8ValueRef.NewString("字符串")
-		frame.SendProcessMessageForV8Value(internalProcessMessageIPCEmitReply, consts.PID_BROWSER, ret)
-
-		//var retBytes []byte
-		//retBytes = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
-		//retMessage := ProcessMessageRef.new(internalProcessMessageIPCEmitReply)
-		//if len(retBytes) > 0 {
-		//	retMessage.ArgumentList().SetBinary(0, BinaryValueRef.New(retBytes))
-		//	retBytes = nil
-		//}
-		//frame.SendProcessMessage(consts.PID_BROWSER, retMessage)
-		//retMessage.Free()
-		//}
-		//ret.Free()
-		//m.v8Context.Exit()
-		//frame.SendProcessMessageForV8Value(internalProcessMessageIPCEmitReply, consts.PID_BROWSER, ret)
-		//}
+		var callbackArgsBytes []byte
+		if m.v8Context.Enter() {
+			if m.v8Context.Enter() {
+				var ret *ICefV8Value
+				var argsArray *TCefV8ValueArray
+				argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+				if argsArray != nil {
+					ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
+					argsArray.Free()
+				} else {
+					ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
+				}
+				if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
+					callbackArgsBytes = ipcValueConvert.V8ValueToProcessMessageBytes(ret)
+					ret.Free()
+				} else if ret != nil {
+					ret.Free()
+				}
+				m.v8Context.Exit()
+			}
+			argumentList.Free()
+		}
+		if messageId != 0 { //callback func
+			callbackMessage := json.NewJSONObject(nil)
+			callbackMessage.Set(ipc_id, messageId)
+			if callbackArgsBytes != nil {
+				callbackMessage.Set(ipc_argumentList, json.NewJSONArray(callbackArgsBytes).Data())
+			} else {
+				callbackMessage.Set(ipc_argumentList, nil)
+			}
+			m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
+		}
 		result = true
 	}
 	return
@@ -313,15 +311,11 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			//解析 '[]byte' 参数
 			if m.v8Context.Enter() {
 				var argsArray *TCefV8ValueArray
-				//argsArray = ipcValueConvert.BytesToV8ValueArray(returnArgs.Bytes())
-				//fmt.Println("json:", returnArgs.ToJSONString())
 				argsArray, _ = ipcValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
 				if argsArray != nil {
-					//callback.function.ExecuteFunctionWithContextForArgsBytes(m.v8Context, nil, returnArgs.Bytes()).Free()
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
 					argsArray.Free()
 				} else {
-					//callback.function.ExecuteFunctionWithContextForArgsBytes(m.v8Context, nil, returnArgs.Bytes()).Free()
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
 				}
 				m.v8Context.Exit()

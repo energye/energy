@@ -749,7 +749,9 @@ func (m *TCEFChromium) SendProcessMessageForV8Value(messageName string, targetPr
 func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.ITarget, data ...any) {
 	if !m.initialized {
 		m.initialized = m.Initialized()
-		return
+		if !m.initialized {
+			return
+		}
 	}
 	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
 		message := json.NewJSONObject(nil)
