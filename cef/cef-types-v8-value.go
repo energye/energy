@@ -638,14 +638,14 @@ func (m *ICefV8Value) ExecuteFunction(obj *ICefV8Value, arguments *TCefV8ValueAr
 	}
 	var result uintptr
 	var argumentsPtr = arguments.Instance()
-	if arguments.Size() > 0 /*&& arguments.argumentsCollect != nil*/ {
+	if arguments.Size() > 0 && arguments.argumentsCollect != nil {
 		var args = make([]uintptr, arguments.Size(), arguments.Size())
 		for i, a := range arguments.argumentsCollect {
 			args[i] = a.Instance()
 		}
 		argumentsPtr = uintptr(unsafe.Pointer(&args[0]))
 	}
-	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), uintptr(unsafe.Pointer(&result)), argumentsPtr, uintptr(int32(arguments.Size())))
+	imports.Proc(internale_CefV8Value_ExecuteFunction).Call(m.Instance(), obj.Instance(), argumentsPtr, uintptr(int32(arguments.Size())), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Value{
 		instance: unsafe.Pointer(result),
 	}
