@@ -257,7 +257,11 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		message := json.NewJSONObject(nil)
 		message.Set(ipc_id, messageId)
 		message.Set(ipc_event, emitNameValue)
-		message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		if args != nil {
+			message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		} else {
+			message.Set(ipc_argumentList, nil)
+		}
 		if m.v8Context.Frame() != nil {
 			m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
 			args = nil

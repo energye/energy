@@ -87,7 +87,7 @@ func main() {
 	})
 	ipc.On("testGoEmitAndCallback", func() {
 		testGoEmitAndCallback++
-		//fmt.Println("testGoEmitAndCallback")
+		fmt.Println("testGoEmitAndCallback")
 		//触发JS监听的函数，并传入参数
 		//ipc.EmitAndCallback("onTestName2", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
 		//	//fmt.Println("onTestName2 r1: ", r1)
