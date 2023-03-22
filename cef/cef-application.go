@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -56,7 +57,32 @@ func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnRenderLoadStart()
 	//m.defaultSetOnBeforeChildProcessLaunch()
 	m.SetOnWebKitInitialized(func() {
-
+		fmt.Println("SetOnWebKitInitialized")
+		v8Handler := V8HandlerRef.New()
+		v8Handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
+			fmt.Println("v8Handler.Execute", name)
+			return true
+		})
+		//注册js
+		var jsCode = `
+            let bind;
+            if (!bind) {
+                bind = {};
+            }
+            (function () {
+				Object.defineProperty(bind, 'myparam', {
+					get(){
+						native function GetMyParam();
+						return GetMyParam();
+					},
+					set(v){
+                    	native function SetMyParam();
+						SetMyParam(v);
+					}
+				});
+            })();
+`
+		RegisterExtension("v8/bind", jsCode, v8Handler)
 	})
 }
 

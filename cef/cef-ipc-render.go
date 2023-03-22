@@ -96,7 +96,7 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
 	//ipc on
-	m.onHandler.addCallback(onNameValue, &ipcCallback{ /*arguments: arguments, context: V8ContextRef.Current(),*/ function: V8ValueRef.UnWrap(onCallback)})
+	m.onHandler.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback)})
 	result = true
 	return
 }
@@ -461,6 +461,7 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
 	m.ipcObject.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalEmitSync, V8ValueRef.newFunction(internalEmitSync, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	// global to v8 ipc key
 	context.Global().setValueByKey(internalIPCKey, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)

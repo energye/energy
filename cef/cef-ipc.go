@@ -15,25 +15,27 @@ import (
 	"sync"
 )
 
+// ipc bind event name
 const (
 	internalIPCKey   = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
 	internalEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
 	internalEmitSync = "emitSync" // JavaScript -> ipc.emitSync 在 JavaScript 触发 GO 监听事件函数名, 同步
 	internalOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
+
+// ipc message name
 const (
-	internalIPCJSExecuteGoEvent        = "JSEmitGo"
-	internalIPCJSExecuteGoEventReplay  = "JSEmitGoReplay"
-	internalIPCGoExecuteJSEvent        = "GoEmitJS"
-	internalIPCGoExecuteJSEventReplay  = "GoEmitJSReplay"
-	internalProcessMessageIPCEmit      = "emitHandler" // 进程消息 emit事件处理
-	internalProcessMessageIPCEmitReply = "emitReply"   // 进程消息 emit事件回复消息
-	internalProcessMessageIPCOn        = "onHandler"   // 进程消息 on监听事件处理
+	internalIPCJSExecuteGoEvent           = "JSEmitGo"           // JS 触发 GO事件异步
+	internalIPCJSExecuteGoEventReplay     = "JSEmitGoReplay"     // JS 触发 GO事件异步 - 返回结果
+	internalIPCJSExecuteGoSyncEvent       = "JSEmitSyncGo"       // JS 触发 GO事件同步
+	internalIPCJSExecuteGoSyncEventReplay = "JSEmitSyncGoReplay" // JS 触发 GO事件同步 - 返回结果
+	internalIPCGoExecuteJSEvent           = "GoEmitJS"           // GO 触发 JS事件
+	internalIPCGoExecuteJSEventReplay     = "GoEmitJSReplay"     // GO 触发 JS事件 - 返回结果
 )
 
+// ipc process message key
 const (
 	ipc_id           = "id"
-	ipc_name         = "name"
 	ipc_event        = "event"
 	ipc_argumentList = "argumentList"
 )
@@ -43,16 +45,6 @@ var (
 	ipcRender              *ipcRenderProcess  // 渲染进程 IPC
 	ipcBrowser             *ipcBrowserProcess // 主进程 IPC
 )
-
-// ipcChannelData
-type ipcChannelMessage struct {
-	MessageId int32  `json:"mi"`
-	BrowserId int32  `json:"bi"`
-	FrameId   int64  `json:"fi"`
-	Name      string `json:"n"`
-	EventName string `json:"en"`
-	Data      any    `json:"d"`
-}
 
 // ipcEmitHandler
 type ipcEmitHandler struct {
@@ -75,6 +67,14 @@ type ipcCallback struct {
 	function *ICefV8Value
 }
 
+// isIPCInternalKey IPC 内部 key 不允许使用
+func isIPCInternalKey(key string) bool {
+	return key == internalIPCKey || key == internalEmit || key == internalOn || key == internalEmitSync ||
+		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
+		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay
+
+}
+
 // ipcInit 初始化
 func ipcInit() {
 	isSingleProcess := application.SingleProcess()
@@ -94,13 +94,6 @@ func ipcInit() {
 			}
 		}
 	}
-}
-
-// isIPCInternalKey IPC 内部 key 不允许使用
-func isIPCInternalKey(key string) bool {
-	return key == internalIPCKey || key == internalEmit || key == internalOn ||
-		key == internalProcessMessageIPCEmit || key == internalProcessMessageIPCOn || key == internalProcessMessageIPCEmitReply ||
-		key == internalEmitSync
 }
 
 // addCallback

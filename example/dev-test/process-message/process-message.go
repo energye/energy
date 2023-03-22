@@ -70,12 +70,22 @@ func main() {
 		})
 		//注册js
 		var jsCode = `
-	let codeobj = {};
-	codeobj.test = function(){
-		document.getElementById("test").style.color="red";
-	}
+            let test;
+            if (!test) {
+                test = {};
+            }
+            (function () {
+                test.__defineGetter__('myparam', function () {
+                    native function GetMyParam();
+                    return GetMyParam();
+                });
+                test.__defineSetter__('myparam', function (b) {
+                    native function SetMyParam();
+                    if (b) SetMyParam(b);
+                });
+            })();
 `
-		cef.RegisterExtension("v8/codeobj", jsCode, v8Handler)
+		cef.RegisterExtension("v8/test", jsCode, v8Handler)
 	})
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		handler := cef.V8HandlerRef.New()

@@ -44,8 +44,6 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEvent {
 		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
-	} else if message.Name() == internalProcessMessageIPCOn {
-		result = ipcBrowser.ipcOnMessage(browser, frame, message)
 	} else if message.Name() == internalIPCGoExecuteJSEventReplay {
 		result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, message)
 	}

@@ -7,7 +7,7 @@
         window.onload = function () {
             let doc = document.getElementById("test");
 
-            function test(...vvv) {
+            function msg(...vvv) {
                 let str = doc.innerHTML;
                 for (let i = 0; i < vvv.length; i++) {
                     str = str + "  " + vvv[i];
@@ -16,10 +16,9 @@
                 doc.innerHTML = str;
             }
 
-            test(window.testset.testfn("字符串", 333))
-            codeobj.test()
+            msg(window.testset.testfn("字符串", 333))
+            msg("GetMyParam",test.myparam);
         }
-
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;">
