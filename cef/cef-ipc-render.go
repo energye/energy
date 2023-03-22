@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
@@ -355,103 +354,8 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 	return
 }
 
-// makeBind bind object accessor
-func (m *ipcRenderProcess) makeBind(context *ICefV8Context) {
-	var (
-		bindRootObjectAccessor *ICefV8Accessor // bind accessor
-		bindSubObjectAccessor  *ICefV8Accessor // bind sub object accessor
-		bindFuncHandler        *ICefV8Handler  // bind func handler
-	)
-	bindRootObjectAccessor = V8AccessorRef.New()
-	bindRootObjectAccessor.Get(m.bindGet)
-	bindRootObjectAccessor.Set(m.bindSet)
-	// bind object
-	m.bind = V8ValueRef.NewObject(bindRootObjectAccessor)
-
-	fmt.Println("\tbindCount", VariableBind.bindCount())
-	binds := VariableBind.binds()
-	for name, value := range binds {
-		fmt.Println("\t", name, "\t", value.ValueType().ToString())
-		var v8value *ICefV8Value
-		if value.IsFunction() {
-			if bindFuncHandler == nil {
-				bindFuncHandler = V8HandlerRef.New()
-				bindFuncHandler.Execute(m.bindFuncExecute)
-			}
-			v8value = V8ValueRef.newFunction(name, bindFuncHandler)
-			m.bind.setValueByKey(name, v8value, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-		} else {
-			if value.IsString() {
-				v8value = V8ValueRef.NewString("")
-			} else if value.IsInteger() {
-				v8value = V8ValueRef.NewInt(0)
-			} else if value.IsDouble() {
-				v8value = V8ValueRef.NewDouble(0.0)
-			} else if value.IsBool() {
-				v8value = V8ValueRef.NewBool(false)
-			} else if value.IsNull() {
-				v8value = V8ValueRef.NewNull()
-			} else if value.IsUndefined() {
-				v8value = V8ValueRef.NewUndefined()
-			} else if value.IsObject() {
-				if bindSubObjectAccessor == nil {
-					bindSubObjectAccessor = V8AccessorRef.New()
-					bindSubObjectAccessor.Get(m.bindSubObjectGet)
-					bindSubObjectAccessor.Set(m.bindSubObjectSet)
-				}
-				v8value = V8ValueRef.NewObject(bindSubObjectAccessor)
-			} else if value.IsArray() {
-				v8value = V8ValueRef.NewArray(0)
-			}
-			if v8value != nil {
-				m.bind.setValueByAccessor(name, consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-				m.bind.setValueByKey(name, v8value, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-			}
-		}
-	}
-
-	// global to v8 bind objectRootName
-	context.Global().setValueByKey(internalObjectRootName, m.bind, consts.V8_PROPERTY_ATTRIBUTE_NONE)
-}
-
-// bindFuncExecute 绑定函数执行
-func (m *ipcRenderProcess) bindFuncExecute(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-	fmt.Println("bindFuncExecute handler name:", name)
-	return false
-}
-
-// bindSubObjectGet 绑定对象取值
-func (m *ipcRenderProcess) bindSubObjectGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool {
-	fmt.Println("bindSubObjectGet accessor name:", name)
-	return false
-}
-
-// bindSubObjectSet 绑定对象赋值
-func (m *ipcRenderProcess) bindSubObjectSet(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool {
-	fmt.Println("bindSubObjectSet accessor name:", name)
-	return false
-}
-
-// bindGet 绑定字段取值
-func (m *ipcRenderProcess) bindGet(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool {
-	fmt.Println("bindGet accessor name:", name)
-	return false
-}
-
-// bindSet 绑定字段赋值
-func (m *ipcRenderProcess) bindSet(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool {
-	fmt.Println("bindSet accessor name:", name)
-	return false
-}
-
-// makeCtx ipc 和 bind
-func (m *ipcRenderProcess) makeCtx(context *ICefV8Context) {
-	m.makeIPC(context)
-	//m.makeBind(context)
-}
-
 // makeIPC ipc
-func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
+func (m *ipcRenderProcess) makeIPC(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
@@ -466,6 +370,6 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCEmitSync, V8ValueRef.newFunction(internalIPCEmitSync, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	// global to v8 ipc key
+	// ipc key to v8 global
 	context.Global().setValueByKey(internalIPC, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }
