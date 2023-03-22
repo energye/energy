@@ -253,17 +253,10 @@
         }
 
 
-        function bindFunc() {
-            energy.funcName();
+        function testEmitSync() {
+            ipc.emitSync("testEmitSync")
         }
 
-        function bindField() {
-            clearMsg();
-            msg('stringField', energy.stringField);
-            msg('intField', energy.intField);
-            msg('doubleField', energy.doubleField);
-            msg('boolField', energy.boolField);
-        }
 
     </script>
 </head>
@@ -291,8 +284,8 @@
     <button onclick="testGoEmitAndCallback()">testGoEmitAndCallback</button>
     <button onclick="autotestGoEmitAndCallback()">自动-testGoEmitAndCallback</button>
     <br>
-    <button onclick="bindFunc()">bindFunc</button>
-    <button onclick="bindField()">bindField</button>
+    <button onclick="testEmitSync()">testEmitSync</button>
+
 </p>
 <p id="msgHtml"></p>
 </body>

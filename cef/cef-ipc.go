@@ -17,10 +17,10 @@ import (
 
 // ipc bind event name
 const (
-	internalIPCKey   = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
-	internalEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
-	internalEmitSync = "emitSync" // JavaScript -> ipc.emitSync 在 JavaScript 触发 GO 监听事件函数名, 同步
-	internalOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
+	internalIPC         = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
+	internalIPCEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
+	internalIPCEmitSync = "emitSync" // JavaScript -> ipc.emitSync 在 JavaScript 触发 GO 监听事件函数名, 同步
+	internalIPCOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 )
 
 // ipc message name
@@ -70,7 +70,7 @@ type ipcCallback struct {
 
 // isIPCInternalKey IPC 内部 key 不允许使用
 func isIPCInternalKey(key string) bool {
-	return key == internalIPCKey || key == internalEmit || key == internalOn || key == internalEmitSync ||
+	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCEmitSync ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
 		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
 		key == internalIPCJSExecuteGoSyncEvent || key == internalIPCJSExecuteGoSyncEventReplay

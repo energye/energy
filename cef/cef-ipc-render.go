@@ -67,14 +67,14 @@ func (m *ipcRenderProcess) initEventGlobal() {
 
 // jsOnEvent JS ipc.on 监听事件
 func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
-	m.initEventGlobal()
-	if name != internalOn {
+	if name != internalIPCOn {
 		return
 	} else if arguments.Size() != 2 { //必须是2个参数
 		exception.SetValue("ipc.on parameter should be 2 quantity")
 		arguments.Free()
 		return
 	}
+	m.initEventGlobal()
 	var (
 		onName      *ICefV8Value // 事件名
 		onNameValue string       // 事件名
@@ -190,6 +190,9 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 
 // jsExecuteGoEvent JS ipc.emit 执行Go事件
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+	if name != internalIPCEmit && name != internalIPCEmitSync {
+		return
+	}
 	m.initEventGlobal()
 	var (
 		emitName      *ICefV8Value //事件名
@@ -209,9 +212,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		freeV8Value(emitArgs)
 		freeV8Value(emitName)
 	}()
-	if name != internalEmit {
-		return
-	}
 	if arguments.Size() >= 1 { // 1 ~ 3 个参数
 		emitName = arguments.Get(0)
 		if !emitName.IsString() {
@@ -273,12 +273,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		message.Free()
 		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
-	return
-}
-
-// jsExecuteGoSyncEvent JS ipc.emitSync 执行Go事件
-func (m *ipcRenderProcess) jsExecuteGoSyncEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
-
 	return
 }
 
@@ -462,16 +456,16 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
 	// ipc emit sync
-	m.emitHandler.handlerSync = V8HandlerRef.New()
-	m.emitHandler.handlerSync.Execute(m.jsExecuteGoSyncEvent)
+	m.emitHandler.handler = V8HandlerRef.New()
+	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
 	// ipc on
 	m.onHandler.handler = V8HandlerRef.New()
 	m.onHandler.handler.Execute(m.jsOnEvent)
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
-	m.ipcObject.setValueByKey(internalEmit, V8ValueRef.newFunction(internalEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipcObject.setValueByKey(internalEmitSync, V8ValueRef.newFunction(internalEmitSync, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipcObject.setValueByKey(internalOn, V8ValueRef.newFunction(internalOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalIPCEmitSync, V8ValueRef.newFunction(internalIPCEmitSync, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	// global to v8 ipc key
-	context.Global().setValueByKey(internalIPCKey, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	context.Global().setValueByKey(internalIPC, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }

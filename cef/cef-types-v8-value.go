@@ -442,7 +442,7 @@ func (m *ICefV8Value) GetValueByKey(key string) *ICefV8Value {
 	if !m.IsValid() {
 		return nil
 	}
-	if key == internalIPCKey {
+	if key == internalIPC {
 		return nil
 	}
 	return m.getValueByKey(key)
