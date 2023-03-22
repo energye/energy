@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/pkgs/json"
 	"github.com/energye/golcl/lcl"
 	"time"
 	//_ "net/http/pprof"
@@ -85,7 +86,7 @@ func main() {
 			tm = time.Now().Second()
 		}
 		//触发JS监听的事件，并传入参数
-		//ipc.Emit("onTestName1", r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+		ipc.Emit("onTestName1", r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 		ipc.EmitAndCallback("onTestName2", []interface{}{r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string, r2 int, r3 float64, r4 bool) {
 			fmt.Println("onTestName1 callback", r1, r2, r3, r4)
 		})
@@ -94,9 +95,9 @@ func main() {
 		testGoEmitAndCallback++
 		//fmt.Println("testGoEmitAndCallback")
 		//触发JS监听的函数，并传入参数
-		//ipc.EmitAndCallback("onTestName2", []any{r0, r1 + count, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string) {
-		//	//fmt.Println("onTestName2 r1: ", r1)
-		//})
+		ipc.EmitAndCallback("onTestName2", []interface{}{r0, testGoEmit, r2, r3, r4, r5, r6, r7, r8, r9, r10}, func(r1 string, r2 int, r3 float64, r4 bool) {
+			fmt.Println("onTestName1 callback", r1, r2, r3, r4)
+		})
 	})
 
 	ipc.On("testResultArgs", func(args1 int) (string, int, float64, bool, *MyError, []string, []*src.StructVarDemo, []src.StructVarDemo, map[string]string, map[string]interface{}, []map[string]interface{}) {
@@ -105,17 +106,21 @@ func main() {
 	})
 
 	ipc.On("testInArgs", func(in1 string, in2 int, in3 float64, in4 bool, in5 []string, in6 []any, in7 map[string]any, in8 src.TestInArgs, in9 map[string]src.TestInArgs) (string, int, bool) {
-		fmt.Println("in1: ", in1)
-		fmt.Println("in2: ", in2)
-		fmt.Println("in3: ", in3)
-		fmt.Println("in4: ", in4)
-		fmt.Println("in5: ", in5)
-		fmt.Println("in6: ", in6)
-		fmt.Println("in7: ", in7)
-		fmt.Println("in8: ", in8, "in8.SubObj: ", in8.SubObj)
-		fmt.Println("in9: ", in9)
-		return "result testInArgs", 10, true //没有回调函数这些参数不会返回
+		fmt.Println("testInArgs in1: ", in1)
+		fmt.Println("testInArgs in2: ", in2)
+		fmt.Println("testInArgs in3: ", in3)
+		fmt.Println("testInArgs in4: ", in4)
+		fmt.Println("testInArgs in5: ", in5)
+		fmt.Println("testInArgs in6: ", in6)
+		fmt.Println("testInArgs in7: ", json.NewJSONObject(in7).ToJSONString())
+		fmt.Println("testInArgs in8: ", json.NewJSONObject(in8).ToJSONString())
+		fmt.Println("testInArgs in9: ", json.NewJSONObject(in9).ToJSONString())
+		return "result testInArgs", 10, true //JS 没有回调函数这些参数不会返回
 	})
+	ipc.On("testNotInArgs", func() {
+		fmt.Println("无入参，无出参")
+	})
+
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		testEmitName++
 		argument := context.ArgumentList()
@@ -127,6 +132,10 @@ func main() {
 		}
 
 		context.Result(r0, testEmitName, r2, r3, r4, r5, r6, r7, r8, r9, r10)
+	})
+	ipc.On("testGoToJSEvent", func() {
+		fmt.Println("testGoToJSEvent")
+		ipc.Emit("notInArgs")
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {

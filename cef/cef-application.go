@@ -55,6 +55,9 @@ func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnProcessMessageReceived()
 	m.defaultSetOnRenderLoadStart()
 	//m.defaultSetOnBeforeChildProcessLaunch()
+	m.SetOnWebKitInitialized(func() {
+
+	})
 }
 
 // Instance 实例

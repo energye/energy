@@ -115,6 +115,21 @@
             ipc.emit("testInArgs", [in1, in2, in3, in4, in5, in6, in7, in8, in9]);
         }
 
+        function testNotInArgs() {
+            ipc.emit("testNotInArgs")
+        }
+
+        function testNotInArgsRev() {
+            ipc.emit("testNotInArgs",['parame1这个参数没有接收'])
+        }
+
+        function testNotInArgsCallback() {
+            ipc.emit("testNotInArgs",function (p1) {
+                clearMsg()
+                msg("有回调函数， 无返回值.", p1);
+            })
+        }
+
         function testResultArgs() {
             clearMsg()
             ipc.emit("testResultArgs", [6666], function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
@@ -164,6 +179,14 @@
             msg("R9：", r9, JSON.stringify(r9));
             msg("R10：", r10, JSON.stringify(r10));
             return ["返回值" + onTestName2Idx, onTestName2Idx, 2222.22 + onTestName2Idx, onTestName2Idx % 2 === 0]
+        });
+
+        function testGoToJSEvent() {
+            ipc.emit("testGoToJSEvent")
+        }
+
+        ipc.on('notInArgs',function () {
+            msg("notInArgs");
         });
 
         let tgesi = null
@@ -252,8 +275,13 @@
     <button onclick="autoIpcEmit()">自动-ipcEmit</button>
     <input id="time" value="0">
     <br>
-    <button onclick="testInArgs()">testInArgs</button>
-    <button onclick="testResultArgs()">testResultArgs</button>
+    <button onclick="testInArgs()">只入参testInArgs</button>
+    <button onclick="testResultArgs()">出参testResultArgs</button>
+    <button onclick="testNotInArgs()">无入参/无出参testNotInArgs</button>
+    <button onclick="testNotInArgsRev()">未接收参数/testNotInArgsRev</button>
+    <button onclick="testNotInArgsCallback()">有回调函数无返回值/testNotInArgsCallback</button>
+    <br>
+    <button onclick="testGoToJSEvent()">testGoToJSEvent</button>
     <br>
     <button onclick="testGoEmit()">testGoEmit</button>
     <button onclick="autotestGoEmit()">自动testGoEmit</button>

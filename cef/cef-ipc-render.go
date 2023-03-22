@@ -33,7 +33,6 @@ type ipcRenderProcess struct {
 }
 
 func (m *ipcRenderProcess) clear() {
-	fmt.Println(m.bind, m.ipcObject, m.v8Context)
 	if m.bind != nil {
 		m.bind.Free()
 		m.bind = nil
@@ -51,17 +50,16 @@ func (m *ipcRenderProcess) clear() {
 	}
 }
 
-func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
-	if m.ipcChannel == nil {
-		m.browserId = browser.Identifier()
-		m.frameId = frame.Identifier()
-		m.ipcChannel = channel.NewRender(m.frameId)
-		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			fmt.Println("ipcRender", m.browserId, context.Message().JSON().Size(), context.ChannelId(), context.ToChannelId())
-			context.Free()
-		})
-	}
-}
+//func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
+//	if m.ipcChannel == nil {
+//		m.browserId = browser.Identifier()
+//		m.frameId = frame.Identifier()
+//		m.ipcChannel = channel.NewRender(m.frameId)
+//		m.ipcChannel.Handler(func(context channel.IIPCContext) {
+//			context.Free()
+//		})
+//	}
+//}
 
 // jsOnEvent JS ipc.on 监听事件
 func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
@@ -107,6 +105,7 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 // ipcGoExecuteJSEvent Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	argumentListBytes := message.ArgumentList().GetBinary(0)
+	//接收二进制数据失败
 	if argumentListBytes == nil {
 		return
 	}
@@ -144,27 +143,34 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 
 	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
 		var callbackArgsBytes []byte
+		//enter v8context
 		if m.v8Context.Enter() {
 			var ret *ICefV8Value
 			var argsArray *TCefV8ValueArray
 			var err error
-			argsArray, err = ValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+			if argumentList != nil {
+				//bytes to v8array value
+				argsArray, err = ValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
+			}
 			if argsArray != nil && err == nil {
+				// parse v8array success
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
 				argsArray.Free()
 			} else {
-				fmt.Println("BytesToV8ArrayValue err", err)
+				// parse v8array fail
 				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
 			}
-			if ret != nil && ret.IsValid() && messageId != 0 { //callback func args
+			if ret != nil && ret.IsValid() && messageId != 0 { // messageId != 0 callback func args
+				// v8value to process message bytes
 				callbackArgsBytes = ValueConvert.V8ValueToProcessMessageBytes(ret)
 				ret.Free()
 			} else if ret != nil {
 				ret.Free()
 			}
+			//exit v8context
 			m.v8Context.Exit()
 		}
-		if messageId != 0 { //callback func
+		if messageId != 0 { //messageId != 0 callback func
 			callbackMessage := json.NewJSONObject(nil)
 			callbackMessage.Set(ipc_id, messageId)
 			if callbackArgsBytes != nil {
@@ -172,7 +178,9 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			} else {
 				callbackMessage.Set(ipc_argumentList, nil)
 			}
+			// frame v8context send ipc message
 			if m.v8Context.Frame() != nil {
+				// send bytes data to browser ipc
 				m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
 			}
 		}
@@ -291,7 +299,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			return
 		}
 	}
-	//fmt.Println("messageDataBytes", string(messageDataBytes))
 	var (
 		messageId    int32
 		isReturnArgs bool
@@ -313,25 +320,34 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 	}
 	if callback := m.emitHandler.getCallback(messageId); callback != nil {
 		callback.function.SetCanNotFree(false)
-		//第二个参数 true 有返回参数
-		if isReturnArgs {
+		if isReturnArgs { //有返回参数
+			var returnArgs json.JSONArray
+			defer func() {
+				if returnArgs != nil {
+					returnArgs.Free()
+				}
+			}()
 			//[]byte
-			returnArgs := argumentList.GetArrayByIndex(2)
-			//解析 '[]byte' 参数
+			returnArgs = argumentList.GetArrayByIndex(2)
+			//enter v8context
 			if m.v8Context.Enter() {
 				var argsArray *TCefV8ValueArray
 				var err error
-				argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+				if returnArgs != nil {
+					//bytes to v8array value
+					argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+				}
 				if argsArray != nil && err == nil {
+					// parse v8array success
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
 					argsArray.Free()
 				} else {
-					fmt.Println("BytesToV8ArrayValue err", err)
+					// parse v8array fail
 					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
 				}
+				//exit v8context
 				m.v8Context.Exit()
 			}
-			returnArgs.Free()
 		} else { //无返回参数
 			if m.v8Context.Enter() {
 				callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
