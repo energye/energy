@@ -49,6 +49,7 @@ var (
 // ipcEmitHandler
 type ipcEmitHandler struct {
 	handler           *ICefV8Handler         // ipc.emit handler
+	handlerSync       *ICefV8Handler         // ipc.emitSync handler
 	callbackList      map[int32]*ipcCallback // ipc.emit callbackList *list.List
 	callbackMessageId int32                  // ipc.emit messageId
 	callbackLock      sync.Mutex             // ipc.emit lock
@@ -71,7 +72,8 @@ type ipcCallback struct {
 func isIPCInternalKey(key string) bool {
 	return key == internalIPCKey || key == internalEmit || key == internalOn || key == internalEmitSync ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
-		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay
+		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
+		key == internalIPCJSExecuteGoSyncEvent || key == internalIPCJSExecuteGoSyncEventReplay
 
 }
 
@@ -162,16 +164,8 @@ func (m *ipcOnHandler) clear() {
 }
 
 func (m *ipcCallback) free() {
-	//if m.context != nil {
-	//	m.context.Free()
-	//	m.context = nil
-	//}
 	if m.function != nil {
 		m.function.Free()
 		m.function = nil
 	}
-	//if m.arguments != nil {
-	//	m.arguments.Free()
-	//	m.arguments = nil
-	//}
 }

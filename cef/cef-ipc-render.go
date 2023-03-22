@@ -276,6 +276,12 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 	return
 }
 
+// jsExecuteGoSyncEvent JS ipc.emitSync 执行Go事件
+func (m *ipcRenderProcess) jsExecuteGoSyncEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+
+	return
+}
+
 // ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
 func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	argumentListBytes := message.ArgumentList().GetBinary(0)
@@ -455,6 +461,9 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
+	// ipc emit sync
+	m.emitHandler.handlerSync = V8HandlerRef.New()
+	m.emitHandler.handlerSync.Execute(m.jsExecuteGoSyncEvent)
 	// ipc on
 	m.onHandler.handler = V8HandlerRef.New()
 	m.onHandler.handler.Execute(m.jsOnEvent)

@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
 	"github.com/energye/energy/ipc/channel"
@@ -169,10 +168,4 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser,
 		ipcContext.Result(nil)
 	}
 	return
-}
-
-// ipcOnMessage 监听事件
-func (m *ipcBrowserProcess) ipcOnMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) bool {
-	fmt.Println("ipcOnMessage", message.Name(), message.ArgumentList().Size())
-	return false
 }
