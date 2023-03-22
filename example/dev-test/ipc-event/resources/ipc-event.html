@@ -27,9 +27,9 @@
                 return
             }
             msg("启动 auto ipc emit")
-            si = setInterval(ipcEmit, 1)
-            si1 = setInterval(ipcEmit, 1)
-            //si2 = setInterval(ipcEmit, 1)
+            si = setInterval(testEmitName, 1)
+            si1 = setInterval(testEmitName, 1)
+            //si2 = setInterval(testEmitName, 1)
             if (si != null) {
                 let time = document.getElementById("time").value - 0
                 if (time > 0) {
@@ -45,7 +45,7 @@
             }
         }
 
-        function ipcEmit() {
+        function testEmitName() {
             idx++;
             let objectValueArray = [
                 100, 200, "数组里的字符串", 66996.99,
@@ -76,7 +76,7 @@
                     msg("R9：", r9, JSON.stringify(r9));
                     msg("R10：", r10, JSON.stringify(r10));
                 });
-            //msg('ipc.emit ok?', ok);
+            msg('ipc.emit testEmitName ok?', ok);
 
             //let ok1 = ipc.emit([]);
             // msg('ipc.emit ok?', ok1);
@@ -272,9 +272,10 @@
 <h3 style="-webkit-app-region: drag;">process-message</h3></p>
 <p><a target="_blank" href="ipc-event.html">open</a></p>
 <p>
-    <button onclick="ipcEmit()">ipcEmit</button>
-    <button onclick="autoIpcEmit()">自动-ipcEmit</button>
-    <input id="time" value="0">
+    自动执行时间/毫秒: <input id="time" value="0">
+    <br>
+    <button onclick="testEmitName()">testEmitName</button>
+    <button onclick="autoIpcEmit()">自动-testEmitName</button>
     <br>
     <button onclick="testInArgs()">只入参testInArgs</button>
     <button onclick="testResultArgs()">出参testResultArgs</button>
@@ -282,13 +283,13 @@
     <button onclick="testNotInArgsRev()">未接收参数/testNotInArgsRev</button>
     <button onclick="testNotInArgsCallback()">有回调函数无返回值/testNotInArgsCallback</button>
     <br>
-    <button onclick="testGoToJSEvent()">testGoToJSEvent</button>
+    <button onclick="testGoToJSEvent()">GO/testGoToJSEvent</button>
     <br>
     <button onclick="testGoEmit()">testGoEmit</button>
-    <button onclick="autotestGoEmit()">自动testGoEmit</button>
+    <button onclick="autotestGoEmit()">自动-testGoEmit</button>
     <br>
     <button onclick="testGoEmitAndCallback()">testGoEmitAndCallback</button>
-    <button onclick="autotestGoEmitAndCallback()">自动testGoEmitAndCallback</button>
+    <button onclick="autotestGoEmitAndCallback()">自动-testGoEmitAndCallback</button>
     <br>
     <button onclick="bindFunc()">bindFunc</button>
     <button onclick="bindField()">bindField</button>

@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
-	"sync"
 )
 
 // ipcRenderProcess 渲染进程
@@ -28,7 +27,6 @@ type ipcRenderProcess struct {
 	ipcChannel  channel.IRenderChannel //channel
 	browserId   int32
 	frameId     int64
-	lock        sync.Mutex
 	v8Context   *ICefV8Context
 }
 
@@ -61,13 +59,18 @@ func (m *ipcRenderProcess) clear() {
 //	}
 //}
 
+func (m *ipcRenderProcess) initEventGlobal() {
+	if m.v8Context == nil {
+		m.v8Context = V8ContextRef.Current()
+	}
+}
+
 // jsOnEvent JS ipc.on 监听事件
 func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+	m.initEventGlobal()
 	if name != internalOn {
-		retVal.SetResult(V8ValueRef.NewBool(false))
 		return
 	} else if arguments.Size() != 2 { //必须是2个参数
-		retVal.SetResult(V8ValueRef.NewBool(false))
 		exception.SetValue("ipc.on parameter should be 2 quantity")
 		arguments.Free()
 		return
@@ -80,22 +83,18 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 	onName = arguments.Get(0)
 	//事件名 第一个参数必须是字符串
 	if !onName.IsString() {
-		retVal.SetResult(V8ValueRef.NewBool(false))
 		exception.SetValue("ipc.on event name should be a string")
 		return
 	}
 	onCallback = arguments.Get(1)
 	//第二个参数必须是函数
 	if !onCallback.IsFunction() {
-		retVal.SetResult(V8ValueRef.NewBool(false))
 		exception.SetValue("ipc.on event callback should be a function")
 		return
 	}
+	retVal.SetResult(V8ValueRef.NewBool(true))
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
-	if m.v8Context == nil {
-		m.v8Context = V8ContextRef.Current()
-	}
 	//ipc on
 	m.onHandler.addCallback(onNameValue, &ipcCallback{ /*arguments: arguments, context: V8ContextRef.Current(),*/ function: V8ValueRef.UnWrap(onCallback)})
 	result = true
@@ -191,6 +190,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 
 // jsExecuteGoEvent JS ipc.emit 执行Go事件
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+	m.initEventGlobal()
 	var (
 		emitName      *ICefV8Value //事件名
 		emitNameValue string       //事件名
@@ -246,18 +246,12 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				return
 			}
 		}
-		if m.v8Context == nil {
-			m.v8Context = V8ContextRef.Current()
-		}
 		var messageId int32 = 0
-		var isDev = false // TODO dev
 		//回调函数
-		if emitCallback != nil && !isDev {
+		if emitCallback != nil {
 			//回调函数临时存放到缓存中
 			emitCallback.SetCanNotFree(true)
 			messageId = m.emitHandler.addCallback(&ipcCallback{
-				//arguments: arguments,
-				//context:  m.v8Context,
 				function: V8ValueRef.UnWrap(emitCallback),
 			})
 		}
@@ -277,6 +271,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			emitCallback.Free()
 		}
 		message.Free()
+		retVal.SetResult(V8ValueRef.NewBool(true))
 	}
 	return
 }

@@ -72,8 +72,6 @@ type ipcOnHandler struct {
 
 // ipcCallback
 type ipcCallback struct {
-	//arguments *TCefV8ValueArray
-	//context   *ICefV8Context
 	function *ICefV8Value
 }
 
