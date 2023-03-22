@@ -136,6 +136,13 @@ func main() {
 	ipc.On("testGoToJSEvent", func() {
 		fmt.Println("testGoToJSEvent")
 		ipc.Emit("notInArgs")
+		ipc.Emit("notInArgs", "param1", "param2", 6666, "这些参数没接收")
+		ipc.EmitAndCallback("notInArgs", []any{"param1", "param2", 6666, "这些参数没接收"}, func() {
+			fmt.Println("有回调函数，但没有返回值")
+		})
+		ipc.EmitAndCallback("notInArgs", []any{"param1", "param2", 6666, "这些参数没接收"}, func(in1 int, in2 float64) {
+			fmt.Println("有回调函数，有1个返回值 in1:", in1, "in2:", in2)
+		})
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
