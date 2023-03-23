@@ -59,7 +59,9 @@ type JSONArray interface {
 	RemoveByIndex(index int)               //删除指定下标数据
 	GetStringByIndex(index int) string     //根据下标返回 string 类型值
 	GetIntByIndex(index int) int           //根据下标返回 int 类型值
+	GetInt64ByIndex(index int) int64       //根据下标返回 int64 类型值
 	GetUIntByIndex(index int) uint         //根据下标返回 uint 类型值
+	GetUInt64ByIndex(index int) uint64     //根据下标返回 uint64 类型值
 	GetBytesByIndex(index int) []byte      //根据下标返回 []byte 类型值
 	GetFloatByIndex(index int) float64     //根据下标返回 float64 类型值
 	GetBoolByIndex(index int) bool         //根据下标返回 bool 类型值
@@ -77,7 +79,9 @@ type JSONObject interface {
 	RemoveByKey(key string)               //删除指定key数据
 	GetStringByKey(key string) string     //根据 key 返回 string 类型值
 	GetIntByKey(key string) int           //根据 key 返回 int 类型值
+	GetInt64ByKey(key string) int64       //根据 key 返回 int64 类型值
 	GetUIntByKey(key string) uint         //根据 key 返回 uint 类型值
+	GetUInt64ByKey(key string) uint64     //根据 key 返回 uint64 类型值
 	GetBytesByKey(key string) []byte      //根据 key 返回 []byte 类型值
 	GetFloatByKey(key string) float64     //根据 key 返回 float64 类型值
 	GetBoolByKey(key string) bool         //根据 key 返回 bool 类型值
@@ -281,9 +285,23 @@ func (m *jsonData) GetIntByIndex(index int) int {
 	return 0
 }
 
+func (m *jsonData) GetInt64ByIndex(index int) int64 {
+	if m.IsArray() && index < m.S {
+		return m.toInt64(m.V.([]any)[index])
+	}
+	return 0
+}
+
 func (m *jsonData) GetUIntByIndex(index int) uint {
 	if m.IsArray() && index < m.S {
 		return m.toUInt(m.V.([]any)[index])
+	}
+	return 0
+}
+
+func (m *jsonData) GetUInt64ByIndex(index int) uint64 {
+	if m.IsArray() && index < m.S {
+		return m.toUInt64(m.V.([]any)[index])
 	}
 	return 0
 }
@@ -424,9 +442,23 @@ func (m *jsonData) GetIntByKey(key string) int {
 	return 0
 }
 
+func (m *jsonData) GetInt64ByKey(key string) int64 {
+	if m.IsObject() {
+		return m.toInt64(m.V.(map[string]any)[key])
+	}
+	return 0
+}
+
 func (m *jsonData) GetUIntByKey(key string) uint {
 	if m.IsObject() {
 		return m.toUInt(m.V.(map[string]any)[key])
+	}
+	return 0
+}
+
+func (m *jsonData) GetUInt64ByKey(key string) uint64 {
+	if m.IsObject() {
+		return m.toUInt64(m.V.(map[string]any)[key])
 	}
 	return 0
 }
@@ -763,6 +795,66 @@ func (m *jsonData) toUInt(s any) uint {
 		return uint(s.(uint32))
 	case uint64:
 		return uint(s.(uint64))
+	}
+	return 0
+}
+
+func (m *jsonData) toUInt64(s any) uint64 {
+	switch s.(type) {
+	case float32:
+		return uint64(s.(float32))
+	case float64:
+		return uint64(s.(float64))
+	case int:
+		return uint64(s.(int))
+	case int8:
+		return uint64(s.(int8))
+	case int16:
+		return uint64(s.(int16))
+	case int32:
+		return uint64(s.(int32))
+	case int64:
+		return uint64(s.(int64))
+	case uint:
+		return uint64(s.(uint))
+	case uint8:
+		return uint64(s.(uint8))
+	case uint16:
+		return uint64(s.(uint16))
+	case uint32:
+		return uint64(s.(uint32))
+	case uint64:
+		return s.(uint64)
+	}
+	return 0
+}
+
+func (m *jsonData) toInt64(s any) int64 {
+	switch s.(type) {
+	case float32:
+		return int64(s.(float32))
+	case float64:
+		return int64(s.(float64))
+	case int:
+		return int64(s.(int))
+	case int8:
+		return int64(s.(int8))
+	case int16:
+		return int64(s.(int16))
+	case int32:
+		return int64(s.(int32))
+	case int64:
+		return s.(int64)
+	case uint:
+		return int64(s.(uint))
+	case uint8:
+		return int64(s.(uint8))
+	case uint16:
+		return int64(s.(uint16))
+	case uint32:
+		return int64(s.(uint32))
+	case uint64:
+		return int64(s.(uint64))
 	}
 	return 0
 }

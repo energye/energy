@@ -236,7 +236,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		//单进程只有同步
 		if consts.SingleProcess {
 			//不通过进程消息
-			callback := &ipcCallback{isSync: true}
+			callback := &ipcCallback{}
 			if emitCallback != nil { //callback function
 				callback.resultType = rt_function
 				callback.function = emitCallback
@@ -254,17 +254,18 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				retVal.SetResult(V8ValueRef.NewBool(true))
 			}
 		} else { //多进程
+			var messageId int32 = 0
 			// 同步
 			if isSync {
-				callback := &ipcCallback{isSync: true}
+				callback := &ipcCallback{isSync: true, resultSyncChan: make(chan []byte)}
 				if emitCallback != nil {
 					callback.resultType = rt_function
 					callback.function = emitCallback
 				} else {
 					callback.resultType = rt_variable
 				}
-				m.emitHandler.addCallback(callback)
-				m.multiProcessSync(callback, isSync, emitNameValue, args)
+				messageId = m.emitHandler.addCallback(callback)
+				m.multiProcessSync(messageId, emitNameValue, callback, args)
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
 						retVal.SetResult(callback.variable)
@@ -277,13 +278,12 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				return
 			} else {
 				//异步
-				var messageId int32 = 0
 				if emitCallback != nil {
 					emitCallback.SetCanNotFree(true)
 					callback := &ipcCallback{resultType: rt_function, function: V8ValueRef.UnWrap(emitCallback)}
 					messageId = m.emitHandler.addCallback(callback)
 				}
-				if success := m.multiProcessAsync(m.v8Context.Frame(), messageId, isSync, emitNameValue, args); !success {
+				if success := m.multiProcessAsync(m.v8Context.Frame(), messageId, emitNameValue, args); !success {
 					//失败，释放回调函数
 					emitCallback.SetCanNotFree(false)
 				}
@@ -315,27 +315,28 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 	m.executeCallbackFunction(false, callback, nil)
 }
 
-// multiProcessSync 多进程同步消息
-func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback, isSync bool, emitName string, data []byte) {
-	fmt.Println("data", string(data))
+// multiProcessSync 多进程消息 - 同步
+func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data []byte) {
 	message := json.NewJSONObject(nil)
-	message.Set(ipc_id, 1)
-	message.Set(ipc_type, isSync)
+	message.Set(ipc_id, messageId)
 	message.Set(ipc_event, emitName)
+	message.Set(ipc_name, internalIPCJSExecuteGoSyncEvent)
+	message.Set(ipc_browser_id, m.ipcChannel.browserId)
 	if data != nil {
 		message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
 	} else {
 		message.Set(ipc_argumentList, nil)
 	}
 	m.ipcChannel.ipc.Send(message.Bytes())
+	dataBytes := <-callback.resultSyncChan
+	fmt.Println("resultSyncChan", dataBytes)
 }
 
-// multiProcessAsync 多进程异步消息
-func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, isSync bool, emitName string, data []byte) bool {
+// multiProcessAsync 多进程消息 - 异步
+func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, emitName string, data []byte) bool {
 	if frame != nil {
 		message := json.NewJSONObject(nil)
 		message.Set(ipc_id, messageId)
-		message.Set(ipc_type, isSync)
 		message.Set(ipc_event, emitName)
 		if data != nil {
 			message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
@@ -395,22 +396,16 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		}()
 		//[]byte
 		returnArgs = argumentList.GetArrayByIndex(2)
-		if callback.isSync { // 同步
-			if returnArgs != nil {
-			} else {
-			}
-		} else { //异步
-			if callback.function != nil {
-				//设置允许释放
-				callback.function.SetCanNotFree(false)
-			}
-			if returnArgs != nil {
-				m.executeCallbackFunction(isReturnArgs, callback, returnArgs.Bytes())
-			} else {
-				m.executeCallbackFunction(isReturnArgs, callback, nil)
-			}
-			callback.free()
+		if callback.function != nil {
+			//设置允许释放
+			callback.function.SetCanNotFree(false)
 		}
+		if returnArgs != nil {
+			m.executeCallbackFunction(isReturnArgs, callback, returnArgs.Bytes())
+		} else {
+			m.executeCallbackFunction(isReturnArgs, callback, nil)
+		}
+		callback.free()
 	}
 	return
 }

@@ -30,8 +30,6 @@ func appMainRunCallback() {
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEventReplay {
 		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
-	} else if message.Name() == internalIPCJSExecuteGoSyncEventReplay {
-
 	} else if message.Name() == internalIPCGoExecuteJSEvent {
 		result = ipcRender.ipcGoExecuteJSEvent(browser, frame, sourceProcess, message)
 	}
@@ -42,8 +40,6 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEvent {
 		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
-	} else if message.Name() == internalIPCJSExecuteGoSyncEvent {
-
 	} else if message.Name() == internalIPCGoExecuteJSEventReplay {
 		result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, message)
 	}

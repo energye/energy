@@ -45,13 +45,11 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 	}
 	var messageId int32
 	var emitName string
-	var isSync bool
 	var argument json.JSON
 	var argumentList json.JSONArray
 	if messageDataBytes != nil {
 		argument = json.NewJSON(messageDataBytes)
 		messageId = int32(argument.GetIntByKey(ipc_id))
-		isSync = argument.GetBoolByKey(ipc_type)
 		emitName = argument.GetStringByKey(ipc_event)
 		argumentList = argument.GetArrayByKey(ipc_argumentList)
 		messageDataBytes = nil
@@ -66,17 +64,7 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 	}()
 	argumentListBytes = nil
 	var ipcContext = m.jsExecuteGoMethod(browser.Identifier(), frame.Identifier(), emitName, argumentList)
-	//eventCallback := ipc.CheckOnEvent(emitName)
-	//if eventCallback != nil {
-	//	ipcContext = ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argumentList)
-	//	//调用监听函数
-	//	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
-	//		ctxCallback.Invoke(ipcContext)
-	//	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
-	//		argsCallback.Invoke(ipcContext)
-	//	}
-	//}
-	if messageId != 0 || isSync { // 异步回调函数处理
+	if messageId != 0 { // 异步回调函数处理
 		replyMessage := json.NewJSONArray(nil)
 		replyMessage.Add(messageId)
 		replyMessage.Add(false)

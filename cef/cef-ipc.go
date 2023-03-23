@@ -35,10 +35,11 @@ const (
 
 // ipc process message key
 const (
-	ipc_id           = "id"
-	ipc_type         = "type"
-	ipc_event        = "event"
-	ipc_argumentList = "argumentList"
+	ipc_id           = "id"           // 消息ID
+	ipc_event        = "event"        // 事件名
+	ipc_name         = "name"         // 消息名
+	ipc_browser_id   = "browserId"    //
+	ipc_argumentList = "argumentList" //
 )
 
 // js execute go 返回类型
@@ -73,10 +74,11 @@ type ipcOnHandler struct {
 
 // ipcCallback ipc.emit 回调结果
 type ipcCallback struct {
-	isSync     bool         //是否异步
-	resultType result_type  //返回值类型 0:function 1:variable 默认:0
-	variable   *ICefV8Value //回调函数, 根据 resultType
-	function   *ICefV8Value //回调函数, 根据 resultType
+	isSync         bool         //同否同步 true:同步 false:异步, 默认false
+	resultSyncChan chan []byte  //接收同步chan, 默认 nil
+	resultType     result_type  //返回值类型 0:function 1:variable 默认:0
+	variable       *ICefV8Value //回调函数, 根据 resultType
+	function       *ICefV8Value //回调函数, 根据 resultType
 }
 
 // isIPCInternalKey IPC 内部定义使用 key 不允许使用
@@ -178,6 +180,11 @@ func (m *ipcOnHandler) clear() {
 		v.free()
 	}
 	m.callbackList = make(map[string]*ipcCallback)
+}
+
+// delayWaiting 同步消息, 延迟
+func (m *ipcCallback) delayWaiting() {
+
 }
 
 //free 清空所有回调函数
