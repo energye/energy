@@ -32,11 +32,11 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 		m.ipcChannel.ipc = channel.NewRender(m.ipcChannel.frameId)
 		m.ipcChannel.ipc.Handler(func(context channel.IIPCContext) {
 			messageJSON := context.Message().JSON().JSONObject()
-			messageId := messageJSON.GetIntByKey(ipc_id)
+			//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
 			name := messageJSON.GetStringByKey(ipc_name)
 			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
 			if name == internalIPCJSExecuteGoSyncEventReplay {
-				m.ipcJSExecuteGoSyncEventMessageReply(int32(messageId), argumentList)
+				m.ipcJSExecuteGoSyncEventMessageReply(argumentList)
 			}
 			context.Free()
 		})
@@ -44,7 +44,7 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 }
 
 // ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
-func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, argumentList json.JSONArray) {
+func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(argumentList json.JSONArray) {
 	if argumentList != nil {
 		m.syncChan.resultSyncChan <- argumentList
 	} else {

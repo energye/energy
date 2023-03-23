@@ -285,8 +285,9 @@
 
 
         function testEmitSync() {
-            //let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
-            //msg("testEmitSync", result);
+            let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
+            clearMsg()
+            msg("testEmitSync", result);
             ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result) {
                 msg("testEmitSync-callback", result);
             })
