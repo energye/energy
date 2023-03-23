@@ -541,7 +541,7 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToDictionaryValue(v8value *I
 		return nil, errors.New("create dict value error")
 	}
 	for i := 0; i < keys.Count(); i++ {
-		key := (keys.Get(i))
+		key := keys.Get(i)
 		args := v8value.getValueByKey(key)
 		if !args.IsValid() {
 			dictionaryValue.SetNull(key)

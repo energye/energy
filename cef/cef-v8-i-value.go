@@ -48,8 +48,6 @@ type JSValue interface {
 	ValueType() *VT                      //变量类型
 	Bytes() []byte                       //变量值转换为字节
 	ValueToPtr() (unsafe.Pointer, error) //值转为指针
-	Lock()                               //变量自有锁-加锁
-	UnLock()                             //变量自有锁-释放锁
 	invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool)
 	setInstance(instance unsafe.Pointer)
 	setName(name string)
