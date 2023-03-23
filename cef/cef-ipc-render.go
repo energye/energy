@@ -15,6 +15,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
+	"sync"
+	"time"
 )
 
 // ipcRenderProcess 渲染进程
@@ -24,7 +26,43 @@ type ipcRenderProcess struct {
 	emitHandler *ipcEmitHandler // ipc.emit handler
 	onHandler   *ipcOnHandler   // ipc.on handler
 	ipcChannel  *renderIPCChan  // channel
+	syncChan    *ipcSyncChan
 	v8Context   *ICefV8Context
+}
+
+type ipcSyncChan struct {
+	lock           sync.Mutex
+	isClose        bool
+	timer          *time.Timer
+	resultSyncChan chan []byte //接收同步chan, 默认 nil
+}
+
+func (m *ipcSyncChan) stop() {
+	if m.timer != nil {
+		m.isClose = true
+		m.timer.Stop()
+	}
+}
+
+// delayWaiting 同步消息, 延迟, 默认 5 秒
+func (m *ipcSyncChan) delayWaiting() {
+	m.lock.Lock()
+	defer m.lock.Unlock()
+	m.isClose = false
+	if m.resultSyncChan == nil {
+		m.resultSyncChan = make(chan []byte)
+	}
+	var d = 1 * time.Second
+	if m.timer == nil {
+		m.timer = time.AfterFunc(d, func() {
+			if !m.isClose {
+				m.isClose = true
+				m.resultSyncChan <- nil
+			}
+		})
+	} else {
+		m.timer.Reset(d)
+	}
 }
 
 func (m *ipcRenderProcess) clear() {
@@ -257,7 +295,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			var messageId int32 = 0
 			// 同步
 			if isSync {
-				callback := &ipcCallback{isSync: true, resultSyncChan: make(chan []byte)}
+				callback := &ipcCallback{isSync: true}
 				if emitCallback != nil {
 					callback.resultType = rt_function
 					callback.function = emitCallback
@@ -317,6 +355,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 
 // multiProcessSync 多进程消息 - 同步
 func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data []byte) {
+	m.syncChan.delayWaiting()
 	message := json.NewJSONObject(nil)
 	message.Set(ipc_id, messageId)
 	message.Set(ipc_event, emitName)
@@ -328,8 +367,11 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 		message.Set(ipc_argumentList, nil)
 	}
 	m.ipcChannel.ipc.Send(message.Bytes())
-	dataBytes := <-callback.resultSyncChan
+	dataBytes := <-m.syncChan.resultSyncChan
+	m.syncChan.stop()
+
 	fmt.Println("resultSyncChan", dataBytes)
+
 }
 
 // multiProcessAsync 多进程消息 - 异步

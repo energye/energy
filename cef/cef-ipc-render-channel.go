@@ -48,9 +48,9 @@ func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, 
 	if callback := m.emitHandler.getCallback(messageId); callback != nil {
 		if callback.isSync {
 			if argumentList != nil {
-				callback.resultSyncChan <- argumentList.Bytes()
+				m.syncChan.resultSyncChan <- argumentList.Bytes()
 			} else {
-				callback.resultSyncChan <- nil
+				m.syncChan.resultSyncChan <- nil
 			}
 		}
 		callback.free()

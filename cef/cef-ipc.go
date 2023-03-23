@@ -74,11 +74,10 @@ type ipcOnHandler struct {
 
 // ipcCallback ipc.emit 回调结果
 type ipcCallback struct {
-	isSync         bool         //同否同步 true:同步 false:异步, 默认false
-	resultSyncChan chan []byte  //接收同步chan, 默认 nil
-	resultType     result_type  //返回值类型 0:function 1:variable 默认:0
-	variable       *ICefV8Value //回调函数, 根据 resultType
-	function       *ICefV8Value //回调函数, 根据 resultType
+	isSync     bool         //同否同步 true:同步 false:异步, 默认false
+	resultType result_type  //返回值类型 0:function 1:variable 默认:0
+	variable   *ICefV8Value //回调函数, 根据 resultType
+	function   *ICefV8Value //回调函数, 根据 resultType
 }
 
 // isIPCInternalKey IPC 内部定义使用 key 不允许使用
@@ -96,6 +95,7 @@ func ipcInit() {
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)}}
 		ipcRender = &ipcRenderProcess{
+			syncChan:    &ipcSyncChan{},
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 		}
@@ -104,6 +104,7 @@ func ipcInit() {
 			ipcBrowser = &ipcBrowserProcess{}
 		} else if common.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
+				syncChan:    &ipcSyncChan{},
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}
@@ -180,11 +181,6 @@ func (m *ipcOnHandler) clear() {
 		v.free()
 	}
 	m.callbackList = make(map[string]*ipcCallback)
-}
-
-// delayWaiting 同步消息, 延迟
-func (m *ipcCallback) delayWaiting() {
-
 }
 
 //free 清空所有回调函数
