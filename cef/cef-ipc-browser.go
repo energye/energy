@@ -26,30 +26,14 @@ type ipcBrowserProcess struct {
 	ipcChannel  channel.IBrowserChannel
 }
 
-//func (m *ipcBrowserProcess) ipcChannelBrowser() {
-//	if m.ipcChannel == nil {
-//		m.ipcChannel = channel.NewBrowser()
-//		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-//			var data ipcChannelMessage
-//			if err := jsoniter.Unmarshal(context.Message().Data(), &data); err == nil {
-//				//messageId := message.GetUIntByKey(ipc_id)
-//				//name := message.GetStringByKey(ipc_name)
-//				//message.Set(ipc_event, emitNameValue)
-//				//message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
-//				fmt.Println("ipcChannelBrowser", err)
-//				fmt.Println("data", data.Name, data.EventName, json.NewJSONArray(data.Data).GetIntByIndex(1))
-//				if data.Name == internalIPCJSExecuteGoEvent {
-//					//result = ipcBrowser.ipcGoExecuteMethodMessage(browser, frame, sourceProcess, message)
-//				} else if data.Name == internalProcessMessageIPCOn {
-//					//result = ipcBrowser.ipcOnMessage(browser, frame, sourceProcess, message)
-//				} else if data.Name == internalProcessMessageIPCEmitReply {
-//					//result = ipcBrowser.ipcGoExecuteMethodMessageReply(browser, frame, sourceProcess, message)
-//				}
-//			}
-//			context.Free()
-//		})
-//	}
-//}
+func (m *ipcBrowserProcess) ipcChannelBrowser() {
+	if m.ipcChannel == nil {
+		m.ipcChannel = channel.NewBrowser()
+		m.ipcChannel.Handler(func(context channel.IIPCContext) {
+			context.Free()
+		})
+	}
+}
 
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
 func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
@@ -71,11 +55,13 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 	}
 	var messageId int32
 	var emitName string
+	var isSync bool
 	var argument json.JSON
 	var argumentList json.JSONArray
 	if messageDataBytes != nil {
 		argument = json.NewJSON(messageDataBytes)
 		messageId = int32(argument.GetIntByKey(ipc_id))
+		isSync = argument.GetBoolByKey(ipc_type)
 		emitName = argument.GetStringByKey(ipc_event)
 		argumentList = argument.GetArrayByKey(ipc_argumentList)
 		messageDataBytes = nil
@@ -89,41 +75,61 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		}
 	}()
 	argumentListBytes = nil
-	eventCallback := ipc.CheckOnEvent(emitName)
-	if eventCallback == nil {
-		return
-	}
-	ipcContext := ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argumentList)
-	//调用监听函数
-	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
-		ctxCallback.Invoke(ipcContext)
-	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
-		argsCallback.Invoke(ipcContext)
-	}
-	if messageId != 0 { // 回调函数处理
+	var ipcContext = m.jsExecuteGoMethod(browser.Identifier(), frame.Identifier(), emitName, argumentList)
+	//eventCallback := ipc.CheckOnEvent(emitName)
+	//if eventCallback != nil {
+	//	ipcContext = ipc.NewContext(browser.Identifier(), frame.Identifier(), true, argumentList)
+	//	//调用监听函数
+	//	if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
+	//		ctxCallback.Invoke(ipcContext)
+	//	} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
+	//		argsCallback.Invoke(ipcContext)
+	//	}
+	//}
+	if messageId != 0 || isSync { // 异步回调函数处理
 		replyMessage := json.NewJSONArray(nil)
 		replyMessage.Add(messageId)
 		replyMessage.Add(false)
-		//处理回复消息
-		replay := ipcContext.Replay()
-		if replay.Result() != nil && len(replay.Result()) > 0 {
-			switch replay.Result()[0].(type) {
-			case []byte:
-				replyMessage.SetByIndex(1, true)
-				replyMessage.Add((replay.Result()[0]).([]byte))
+		if ipcContext != nil {
+			//处理回复消息
+			replay := ipcContext.Replay()
+			if replay.Result() != nil && len(replay.Result()) > 0 {
+				switch replay.Result()[0].(type) {
+				case []byte:
+					replyMessage.SetByIndex(1, true)
+					replyMessage.Add((replay.Result()[0]).([]byte))
+				}
 			}
 		}
 		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 		replyMessage.Free()
 	}
-	if ipcContext.ArgumentList() != nil {
-		ipcContext.ArgumentList().Free()
+	if ipcContext != nil {
+		if ipcContext.ArgumentList() != nil {
+			ipcContext.ArgumentList().Free()
+		}
+		ipcContext.Result(nil)
 	}
-	ipcContext.Result(nil)
-
 	return
 }
 
+// jsExecuteGoMethod 执行Go函数
+func (m *ipcBrowserProcess) jsExecuteGoMethod(browserId int32, frameId int64, emitName string, argumentList json.JSONArray) ipc.IContext {
+	eventCallback := ipc.CheckOnEvent(emitName)
+	var ipcContext ipc.IContext
+	if eventCallback != nil {
+		ipcContext = ipc.NewContext(browserId, frameId, true, argumentList)
+		//调用监听函数
+		if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
+			ctxCallback.Invoke(ipcContext)
+		} else if argsCallback := eventCallback.ArgumentCallback(); argsCallback != nil {
+			argsCallback.Invoke(ipcContext)
+		}
+	}
+	return ipcContext
+}
+
+// ipcGoExecuteMethodMessageReply 执行Go函数回复结果
 func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	argumentListBytes := message.ArgumentList().GetBinary(0)
 	if argumentListBytes == nil {

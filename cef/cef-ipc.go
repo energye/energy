@@ -36,6 +36,7 @@ const (
 // ipc process message key
 const (
 	ipc_id           = "id"
+	ipc_type         = "type"
 	ipc_event        = "event"
 	ipc_argumentList = "argumentList"
 )
@@ -65,6 +66,8 @@ type ipcOnHandler struct {
 
 // ipcCallback
 type ipcCallback struct {
+	isSync   bool
+	result   chan []byte
 	function *ICefV8Value
 }
 
@@ -103,12 +106,16 @@ func (m *ipcEmitHandler) addCallback(callback *ipcCallback) int32 {
 	//return uintptr(unsafe.Pointer(m.callbackList.PushBack(callback)))
 	m.callbackLock.Lock()
 	defer m.callbackLock.Unlock()
+	m.callbackList[m.nextMessageId()] = callback
+	return m.callbackMessageId
+}
+
+// 获取下一个消息ID
+func (m *ipcEmitHandler) nextMessageId() int32 {
+	m.callbackMessageId++
 	if m.callbackMessageId == -1 {
 		m.callbackMessageId = 1
-	} else {
-		m.callbackMessageId++
 	}
-	m.callbackList[m.callbackMessageId] = callback
 	return m.callbackMessageId
 }
 

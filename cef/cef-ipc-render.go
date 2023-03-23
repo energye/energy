@@ -12,9 +12,11 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc/channel"
 	"github.com/energye/energy/pkgs/json"
+	"time"
 )
 
 // ipcRenderProcess 渲染进程
@@ -47,16 +49,16 @@ func (m *ipcRenderProcess) clear() {
 	}
 }
 
-//func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
-//	if m.ipcChannel == nil {
-//		m.browserId = browser.Identifier()
-//		m.frameId = frame.Identifier()
-//		m.ipcChannel = channel.NewRender(m.frameId)
-//		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-//			context.Free()
-//		})
-//	}
-//}
+func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
+	if m.ipcChannel == nil {
+		m.browserId = browser.Identifier()
+		m.frameId = frame.Identifier()
+		m.ipcChannel = channel.NewRender(m.frameId)
+		m.ipcChannel.Handler(func(context channel.IIPCContext) {
+			context.Free()
+		})
+	}
+}
 
 func (m *ipcRenderProcess) initEventGlobal() {
 	if m.v8Context == nil {
@@ -245,34 +247,102 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				return
 			}
 		}
-		var messageId int32 = 0
-		//回调函数
-		if emitCallback != nil {
-			//回调函数临时存放到缓存中
-			emitCallback.SetCanNotFree(true)
-			messageId = m.emitHandler.addCallback(&ipcCallback{
-				function: V8ValueRef.UnWrap(emitCallback),
-			})
+		var isSync = name == internalIPCEmitSync //同步
+		fmt.Println("consts.SingleProcess", consts.SingleProcess)
+		//单进程不通过进程消息
+		if consts.SingleProcess {
+			m.singleProcess(emitNameValue, emitCallback, args)
+			retVal.SetResult(V8ValueRef.NewBool(true))
+		} else {
+			var (
+				messageId int32 = 0
+				callback  *ipcCallback
+				success   bool
+			)
+			//多进程以区分同步和异步
+			if emitCallback != nil || isSync {
+				//回调函数临时存放到缓存中
+				if isSync {
+					callback = &ipcCallback{isSync: true, result: make(chan []byte)}
+				} else {
+					emitCallback.SetCanNotFree(true)
+					callback = &ipcCallback{function: V8ValueRef.UnWrap(emitCallback)}
+				}
+				messageId = m.emitHandler.addCallback(callback)
+			}
+
+			if success = m.multiProcessAsync(m.v8Context.Frame(), messageId, isSync, emitNameValue, args); !success {
+				emitCallback.SetCanNotFree(false)
+			}
+			fmt.Println("isSync && sendSuccess && callback != nil", isSync && success && callback != nil)
+			if isSync && success && callback != nil { //同步
+				m.waitResult(callback, retVal)
+				return
+			}
+			retVal.SetResult(V8ValueRef.NewBool(true))
 		}
+		args = nil
+	}
+	return
+}
+
+// singleProcess 单进程
+func (m *ipcRenderProcess) singleProcess(emitName string, emitCallback *ICefV8Value, data []byte) {
+	if ipcBrowser == nil {
+		return
+	}
+	var ipcContext = ipcBrowser.jsExecuteGoMethod(m.v8Context.Browser().Identifier(), m.v8Context.Frame().Identifier(), emitName, json.NewJSONArray(data))
+	if ipcContext != nil && emitCallback != nil {
+		//处理回复消息
+		replay := ipcContext.Replay()
+		if replay.Result() != nil && len(replay.Result()) > 0 {
+			switch replay.Result()[0].(type) {
+			case []byte:
+				m.executeCallbackFunction(true, emitCallback, replay.Result()[0].([]byte))
+				return
+			}
+		}
+	}
+	m.executeCallbackFunction(false, emitCallback, nil)
+}
+
+// multiProcess 多进程
+func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, isSync bool, emitName string, data []byte) bool {
+	if frame != nil {
 		message := json.NewJSONObject(nil)
 		message.Set(ipc_id, messageId)
-		message.Set(ipc_event, emitNameValue)
-		if args != nil {
-			message.Set(ipc_argumentList, json.NewJSONArray(args).Data())
+		message.Set(ipc_type, isSync)
+		message.Set(ipc_event, emitName)
+		if data != nil {
+			message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
 		} else {
 			message.Set(ipc_argumentList, nil)
 		}
-		if m.v8Context.Frame() != nil {
-			m.v8Context.Frame().SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
-			args = nil
-		} else {
-			emitCallback.SetCanNotFree(false)
-			emitCallback.Free()
-		}
+		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
 		message.Free()
-		retVal.SetResult(V8ValueRef.NewBool(true))
+		return true
 	}
-	return
+	return false
+}
+
+// waitResult 同步等待结果
+func (m *ipcRenderProcess) waitResult(callback *ipcCallback, retVal *ResultV8Value) {
+	var isClose = false
+	var closeResultChan = func() {
+		if !isClose {
+			close(callback.result)
+			isClose = true
+		}
+	}
+	fmt.Println("等待结果 1")
+	delayedWait := time.AfterFunc(2*time.Second, closeResultChan)
+	fmt.Println("等待结果 2")
+	data, isOpen := <-callback.result
+	fmt.Println("结果:", isOpen, string(data))
+	if isOpen {
+		delayedWait.Stop()
+		closeResultChan()
+	}
 }
 
 // ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
@@ -313,45 +383,88 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		return
 	}
 	if callback := m.emitHandler.getCallback(messageId); callback != nil {
-		callback.function.SetCanNotFree(false)
-		if isReturnArgs { //有返回参数
-			var returnArgs json.JSONArray
-			defer func() {
-				if returnArgs != nil {
-					returnArgs.Free()
-				}
-			}()
-			//[]byte
-			returnArgs = argumentList.GetArrayByIndex(2)
-			//enter v8context
-			if m.v8Context.Enter() {
-				var argsArray *TCefV8ValueArray
-				var err error
-				if returnArgs != nil {
-					//bytes to v8array value
-					argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
-				}
-				if argsArray != nil && err == nil {
-					// parse v8array success
-					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
-					argsArray.Free()
-				} else {
-					// parse v8array fail
-					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
-				}
-				//exit v8context
-				m.v8Context.Exit()
+		var returnArgs json.JSONArray
+		defer func() {
+			if returnArgs != nil {
+				returnArgs.Free()
 			}
-		} else { //无返回参数
-			if m.v8Context.Enter() {
-				callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
-				m.v8Context.Exit()
+		}()
+		//[]byte
+		returnArgs = argumentList.GetArrayByIndex(2)
+		fmt.Println("callback.isSync", callback.isSync)
+		if callback.isSync {
+			if returnArgs != nil {
+				callback.result <- returnArgs.Bytes()
+			} else {
+				callback.result <- nil
 			}
+		} else {
+			if callback.function != nil {
+				//设置允许释放
+				callback.function.SetCanNotFree(false)
+			}
+			m.executeCallbackFunction(isReturnArgs, callback.function, returnArgs.Bytes())
+			//if isReturnArgs { //有返回参数
+			//	//enter v8context
+			//	if m.v8Context.Enter() {
+			//		var argsArray *TCefV8ValueArray
+			//		var err error
+			//		if returnArgs != nil {
+			//			//bytes to v8array value
+			//			argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs.Bytes())
+			//		}
+			//		if argsArray != nil && err == nil {
+			//			// parse v8array success
+			//			callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
+			//			argsArray.Free()
+			//		} else {
+			//			// parse v8array fail
+			//			callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+			//		}
+			//		//exit v8context
+			//		m.v8Context.Exit()
+			//	}
+			//} else { //无返回参数
+			//	if m.v8Context.Enter() {
+			//		callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+			//		m.v8Context.Exit()
+			//	}
+			//}
+			//remove
+			callback.free()
 		}
-		//remove
-		callback.free()
 	}
 	return
+}
+
+// executeCallbackFunction 执行 v8 function 回调函数
+func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, function *ICefV8Value, returnArgs []byte) {
+	if isReturnArgs { //有返回参数
+		//enter v8context
+		if m.v8Context.Enter() {
+			var argsArray *TCefV8ValueArray
+			var err error
+			if returnArgs != nil {
+				//bytes to v8array value
+				argsArray, err = ValueConvert.BytesToV8ArrayValue(returnArgs)
+			}
+			if argsArray != nil && err == nil {
+				// parse v8array success
+				function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
+				argsArray.Free()
+			} else {
+				// parse v8array fail
+				function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+			}
+			//exit v8context
+			m.v8Context.Exit()
+		}
+	} else { //无返回参数
+		if m.v8Context.Enter() {
+			function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+			m.v8Context.Exit()
+		}
+	}
 }
 
 // makeIPC ipc
@@ -360,8 +473,8 @@ func (m *ipcRenderProcess) makeIPC(browser *ICefBrowser, frame *ICefFrame, conte
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
 	// ipc emit sync
-	m.emitHandler.handler = V8HandlerRef.New()
-	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
+	m.emitHandler.handlerSync = V8HandlerRef.New()
+	m.emitHandler.handlerSync.Execute(m.jsExecuteGoEvent)
 	// ipc on
 	m.onHandler.handler = V8HandlerRef.New()
 	m.onHandler.handler.Execute(m.jsOnEvent)
