@@ -14,20 +14,17 @@ package cef
 import (
 	"fmt"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 	"time"
 )
 
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
-	bind        *ICefV8Value           // go bind
-	ipcObject   *ICefV8Value           // ipc object
-	emitHandler *ipcEmitHandler        // ipc.emit handler
-	onHandler   *ipcOnHandler          // ipc.on handler
-	ipcChannel  channel.IRenderChannel //channel
-	browserId   int32
-	frameId     int64
+	bind        *ICefV8Value    // go bind
+	ipcObject   *ICefV8Value    // ipc object
+	emitHandler *ipcEmitHandler // ipc.emit handler
+	onHandler   *ipcOnHandler   // ipc.on handler
+	ipcChannel  *renderIPCChan  // channel
 	v8Context   *ICefV8Context
 }
 
@@ -46,17 +43,6 @@ func (m *ipcRenderProcess) clear() {
 	if m.v8Context != nil {
 		m.v8Context.Free()
 		m.v8Context = nil
-	}
-}
-
-func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
-	if m.ipcChannel == nil {
-		m.browserId = browser.Identifier()
-		m.frameId = frame.Identifier()
-		m.ipcChannel = channel.NewRender(m.frameId)
-		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			context.Free()
-		})
 	}
 }
 

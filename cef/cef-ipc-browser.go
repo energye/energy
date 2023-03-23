@@ -14,7 +14,6 @@ package cef
 import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 )
 
@@ -23,16 +22,7 @@ type ipcBrowserProcess struct {
 	ipcObject   *ICefV8Value    // ipc object
 	emitHandler *ipcEmitHandler // ipc.emit handler
 	onHandler   *ipcOnHandler   // ipc.on handler
-	ipcChannel  channel.IBrowserChannel
-}
-
-func (m *ipcBrowserProcess) ipcChannelBrowser() {
-	if m.ipcChannel == nil {
-		m.ipcChannel = channel.NewBrowser()
-		m.ipcChannel.Handler(func(context channel.IIPCContext) {
-			context.Free()
-		})
-	}
+	ipcChannel  *browserIPCChan // channel
 }
 
 // ipcGoExecuteMethodMessage 执行 Go 监听函数

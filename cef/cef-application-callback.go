@@ -17,11 +17,13 @@ import (
 
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
+	ipcRender.ipcChannelRender(browser, frame)
 	ipcRender.makeIPC(browser, frame, context)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
 func appMainRunCallback() {
+	ipcBrowser.ipcChannelBrowser()
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
