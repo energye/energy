@@ -28,7 +28,7 @@ func main() {
 	//创建应用
 	cefApp = cef.NewApplication()
 	//cefApp.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
-	cefApp.SetSingleProcess(true)
+	//cefApp.SetSingleProcess(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"

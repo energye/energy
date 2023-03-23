@@ -45,14 +45,9 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 
 // ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
 func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, argumentList json.JSONArray) {
-	if callback := m.emitHandler.getCallback(messageId); callback != nil {
-		if callback.isSync {
-			if argumentList != nil {
-				m.syncChan.resultSyncChan <- argumentList
-			} else {
-				m.syncChan.resultSyncChan <- nil
-			}
-		}
-		callback.free()
+	if argumentList != nil {
+		m.syncChan.resultSyncChan <- argumentList
+	} else {
+		m.syncChan.resultSyncChan <- nil
 	}
 }

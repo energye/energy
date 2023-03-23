@@ -295,7 +295,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				retVal.SetResult(V8ValueRef.NewBool(true))
 			}
 		} else { //多进程
-			var messageId int32 = 0
 			// 同步
 			if isSync {
 				callback := &ipcCallback{isSync: true}
@@ -305,8 +304,8 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				} else { //variable
 					callback.resultType = rt_variable
 				}
-				messageId = m.emitHandler.addCallback(callback)
-				m.multiProcessSync(messageId, emitNameValue, callback, args)
+				m.emitHandler.addCallback(callback)
+				m.multiProcessSync(1, emitNameValue, callback, args)
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
 						retVal.SetResult(callback.variable)
@@ -317,6 +316,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					retVal.SetResult(V8ValueRef.NewBool(true))
 				}
 			} else {
+				var messageId int32 = 0
 				//异步
 				if emitCallback != nil {
 					emitCallback.SetCanNotFree(true)
