@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -56,34 +55,7 @@ func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnProcessMessageReceived()
 	m.defaultSetOnRenderLoadStart()
 	//m.defaultSetOnBeforeChildProcessLaunch()
-	m.SetOnWebKitInitialized(func() {
-		fmt.Println("SetOnWebKitInitialized")
-		v8Handler := V8HandlerRef.New()
-		v8Handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-			fmt.Println("v8Handler.Execute", name)
-			return true
-		})
-		//注册js
-		var jsCode = `
-            let bind;
-            if (!bind) {
-                bind = {};
-            }
-            (function () {
-				Object.defineProperty(bind, 'myparam', {
-					get(){
-						native function GetMyParam();
-						return ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]]);
-					},
-					set(v){
-                    	native function SetMyParam();
-						SetMyParam(v);
-					}
-				});
-            })();
-`
-		RegisterExtension("v8/bind", jsCode, v8Handler)
-	})
+	m.defaultSetOnWebKitInitialized()
 }
 
 // Instance 实例
@@ -183,9 +155,12 @@ func (m *TCEFApplication) SetOnGetDataResourceForScale(fn GlobalCEFAppEventOnGet
 	imports.Proc(internale_CEFGlobalApp_SetOnGetDataResourceForScale).Call(api.MakeEventDataPtr(fn))
 }
 
-// 初始化设置全局回调
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
 	imports.Proc(internale_CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) defaultSetOnWebKitInitialized() {
+	m.SetOnWebKitInitialized(func() {})
 }
 
 func (m *TCEFApplication) SetOnBrowserCreated(fn GlobalCEFAppEventOnBrowserCreated) {
@@ -196,11 +171,6 @@ func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDes
 	imports.Proc(internale_CEFGlobalApp_SetOnBrowserDestroyed).Call(api.MakeEventDataPtr(fn))
 }
 
-// 上下文件创建回调
-//
-// 返回值 false 将会创建 render进程的IPC和GO绑定变量
-//
-// 对于一些不想GO绑定变量的URL地址，实现该函数，通过 frame.Url
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
 	imports.Proc(internale_CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
 }
@@ -331,6 +301,7 @@ func init() {
 			}
 		case GlobalCEFAppEventOnWebKitInitialized:
 			fn.(GlobalCEFAppEventOnWebKitInitialized)()
+			appWebKitInitialized()
 		case GlobalCEFAppEventOnBrowserCreated:
 			fn.(GlobalCEFAppEventOnBrowserCreated)(&ICefBrowser{instance: getPtr(0)}, &ICefDictionaryValue{instance: getPtr(1)})
 		case GlobalCEFAppEventOnBrowserDestroyed:
