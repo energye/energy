@@ -415,7 +415,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		}()
 		//[]byte
 		returnArgs = argumentList.GetArrayByIndex(2)
-		fmt.Println("callback.isSync", callback.isSync)
 		if callback.isSync {
 			if returnArgs != nil {
 				callback.result <- returnArgs.Bytes()
