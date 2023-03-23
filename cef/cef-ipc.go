@@ -41,6 +41,14 @@ const (
 	ipc_argumentList = "argumentList"
 )
 
+// js execute go 返回类型
+type result_type int8
+
+const (
+	rt_function result_type = iota //回调函数
+	rt_variable                    //变量接收
+)
+
 var (
 	internalObjectRootName = "energy"         // GO 和 V8Value 绑定根对象名
 	ipcRender              *ipcRenderProcess  // 渲染进程 IPC
@@ -66,9 +74,11 @@ type ipcOnHandler struct {
 
 // ipcCallback
 type ipcCallback struct {
-	isSync   bool
-	result   chan []byte
-	function *ICefV8Value
+	isSync     bool         //是否异步
+	result     chan []byte  //
+	resultType result_type  //返回值类型 0:function 1:variable 默认:0
+	variable   *ICefV8Value //回调函数, 根据 resultType
+	function   *ICefV8Value //回调函数, 根据 resultType
 }
 
 // isIPCInternalKey IPC 内部 key 不允许使用

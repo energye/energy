@@ -224,6 +224,36 @@
             ipc.emit("testGoEmit", [idx]);
         }
 
+        let atia = null
+
+        function autovariabletestInArgs() {
+            if (atia != null) {
+                clearInterval(atia)
+                atia = null
+                idx = 0;
+                return
+            }
+            atia = setInterval(variabletestInArgs, 1)
+            if (atia != null) {
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(atia)
+                        msg(idx)
+                        atia = null
+                        idx = 0;
+                    }, time)
+                }
+            }
+        }
+        function variabletestInArgs() {
+            idx++
+            let vara = ipc.emit("testResultArgs", [idx]);
+            clearMsg()
+            msg("variabletestInArgs", vara);
+            msg("variabletestInArgs", JSON.stringify( vara));
+        }
+
 
         let tgesic = null
 
@@ -280,6 +310,9 @@
     <br>
     <button onclick="testGoEmit()">testGoEmit</button>
     <button onclick="autotestGoEmit()">自动-testGoEmit</button>
+    <br>
+    <button onclick="variabletestInArgs()">variabletestInArgs</button>
+    <button onclick="autovariabletestInArgs()">自动autovariabletestInArgs</button>
     <br>
     <button onclick="testGoEmitAndCallback()">testGoEmitAndCallback</button>
     <button onclick="autotestGoEmitAndCallback()">自动-testGoEmitAndCallback</button>

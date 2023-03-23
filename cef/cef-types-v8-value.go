@@ -701,6 +701,9 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 }
 
 func (m *ICefV8Value) SetCanNotFree(v bool) {
+	if !m.IsValid() {
+		return
+	}
 	m.cantFree = v
 }
 

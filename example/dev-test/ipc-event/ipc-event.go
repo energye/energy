@@ -120,6 +120,9 @@ func main() {
 	ipc.On("testNotInArgs", func() {
 		fmt.Println("无入参，无出参")
 	})
+	ipc.On("testEmitSync", func() {
+		fmt.Println("同步")
+	})
 
 	ipc.On("testEmitName", func(context ipc.IContext) {
 		testEmitName++
