@@ -16,7 +16,7 @@ import (
 	"errors"
 	"fmt"
 	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/decimal"
+	"github.com/energye/energy/pkgs/decimal"
 	"math"
 	"reflect"
 	"runtime"

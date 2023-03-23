@@ -43,13 +43,6 @@ var (
 	ipcSock          string          // sock path
 	useNetIPCChannel = false         //
 	port             = 19878         // net ipc default: 19878
-	//browser          = &browserChannel{
-	//	channel: sync.Map{},
-	//	mutex:   sync.Mutex{},
-	//}
-	//render = &renderChannel{
-	//	mutex: sync.Mutex{},
-	//}
 )
 
 //mt 消息类型

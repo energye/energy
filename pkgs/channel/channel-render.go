@@ -61,6 +61,7 @@ func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 	return render
 }
 
+// Channel 返回当前通道
 func (m *renderChannel) Channel() IChannel {
 	return m.channel
 }
