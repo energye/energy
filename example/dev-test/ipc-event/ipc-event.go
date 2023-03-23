@@ -28,7 +28,7 @@ func main() {
 	//创建应用
 	cefApp = cef.NewApplication()
 	//cefApp.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
-	//cefApp.SetSingleProcess(true)
+	cefApp.SetSingleProcess(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/ipc-event.html"
 	//cef.BrowserWindow.Config.Url = "https://map.baidu.com/"
@@ -120,8 +120,9 @@ func main() {
 	ipc.On("testNotInArgs", func() {
 		fmt.Println("无入参，无出参")
 	})
-	ipc.On("testEmitSync", func() {
+	ipc.On("testEmitSync", func() (string, []string) {
 		fmt.Println("同步")
+		return "同步返回结果", []string{"值1", "值2"}
 	})
 
 	ipc.On("testEmitName", func(context ipc.IContext) {

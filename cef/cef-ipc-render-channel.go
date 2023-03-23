@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 )
@@ -24,6 +23,7 @@ type renderIPCChan struct {
 	ipc       channel.IRenderChannel //channel
 }
 
+// ipcChannelRender Go IPC 渲染进程监听
 func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
 	if m.ipcChannel == nil {
 		m.ipcChannel = new(renderIPCChan)
@@ -35,7 +35,6 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 			messageId := messageJSON.GetIntByKey(ipc_id)
 			name := messageJSON.GetStringByKey(ipc_name)
 			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
-			fmt.Println(messageId, name, argumentList)
 			if name == internalIPCJSExecuteGoSyncEventReplay {
 				m.ipcJSExecuteGoSyncEventMessageReply(int32(messageId), argumentList)
 			}
@@ -44,11 +43,12 @@ func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFra
 	}
 }
 
+// ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
 func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, argumentList json.JSONArray) {
 	if callback := m.emitHandler.getCallback(messageId); callback != nil {
 		if callback.isSync {
 			if argumentList != nil {
-				m.syncChan.resultSyncChan <- argumentList.Bytes()
+				m.syncChan.resultSyncChan <- argumentList
 			} else {
 				m.syncChan.resultSyncChan <- nil
 			}

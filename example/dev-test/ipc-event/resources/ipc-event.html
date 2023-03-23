@@ -120,11 +120,11 @@
         }
 
         function testNotInArgsRev() {
-            ipc.emit("testNotInArgs",['parame1这个参数没有接收'])
+            ipc.emit("testNotInArgs", ['parame1这个参数没有接收'])
         }
 
         function testNotInArgsCallback() {
-            ipc.emit("testNotInArgs",function (p1) {
+            ipc.emit("testNotInArgs", function (p1) {
                 clearMsg()
                 msg("有回调函数， 无返回值.", p1);
             })
@@ -185,7 +185,7 @@
             ipc.emit("testGoToJSEvent")
         }
 
-        ipc.on('notInArgs',function () {
+        ipc.on('notInArgs', function () {
             msg("notInArgs");
             return 1
         });
@@ -246,12 +246,13 @@
                 }
             }
         }
+
         function variabletestInArgs() {
             idx++
             let vara = ipc.emit("testResultArgs", [idx]);
             clearMsg()
             msg("variabletestInArgs", vara);
-            msg("variabletestInArgs", JSON.stringify( vara));
+            msg("variabletestInArgs", JSON.stringify(vara));
         }
 
 
@@ -284,7 +285,11 @@
 
 
         function testEmitSync() {
-            ipc.emitSync("testEmitSync",["同步参数",1,2,3,["aaaa","bbb",6666]])
+            //let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
+            //msg("testEmitSync", result);
+            ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result) {
+                msg("testEmitSync-callback", result);
+            })
         }
 
 
@@ -340,6 +345,6 @@
 
     msg("ipc-event: 页面加载完成...");
     msg("GetMyParam", bind.myparam);
-    bind.myparam="aaaa"
+    bind.myparam = "aaaa"
 </script>
 </html>

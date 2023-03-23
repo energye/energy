@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	"sync"
@@ -30,17 +29,21 @@ type ipcRenderProcess struct {
 	v8Context   *ICefV8Context
 }
 
+// ipcSyncChan IPC 同步接收数据通道
 type ipcSyncChan struct {
-	lock           sync.Mutex
-	isClose        bool
-	timer          *time.Timer
-	resultSyncChan chan []byte //接收同步chan, 默认 nil
+	lock           sync.Mutex          //
+	isClose        bool                //是否已关闭
+	timer          *time.Timer         //
+	resultSyncChan chan json.JSONArray //接收同步chan, 默认 nil
 }
 
+// stop 停止延迟
 func (m *ipcSyncChan) stop() {
 	if m.timer != nil {
+		if !m.isClose {
+			m.timer.Stop()
+		}
 		m.isClose = true
-		m.timer.Stop()
 	}
 }
 
@@ -50,9 +53,9 @@ func (m *ipcSyncChan) delayWaiting() {
 	defer m.lock.Unlock()
 	m.isClose = false
 	if m.resultSyncChan == nil {
-		m.resultSyncChan = make(chan []byte)
+		m.resultSyncChan = make(chan json.JSONArray)
 	}
-	var d = 1 * time.Second
+	var d = 5 * time.Second
 	if m.timer == nil {
 		m.timer = time.AfterFunc(d, func() {
 			if !m.isClose {
@@ -271,9 +274,9 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			}
 		}
 		var isSync = name == internalIPCEmitSync //同步
-		//单进程只有同步
+		//单进程
 		if consts.SingleProcess {
-			//不通过进程消息
+			//不通过进程消息, 所有全是同步操作
 			callback := &ipcCallback{}
 			if emitCallback != nil { //callback function
 				callback.resultType = rt_function
@@ -296,10 +299,10 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			// 同步
 			if isSync {
 				callback := &ipcCallback{isSync: true}
-				if emitCallback != nil {
+				if emitCallback != nil { //callback function
 					callback.resultType = rt_function
 					callback.function = emitCallback
-				} else {
+				} else { //variable
 					callback.resultType = rt_variable
 				}
 				messageId = m.emitHandler.addCallback(callback)
@@ -313,7 +316,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				} else {
 					retVal.SetResult(V8ValueRef.NewBool(true))
 				}
-				return
 			} else {
 				//异步
 				if emitCallback != nil {
@@ -325,8 +327,8 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					//失败，释放回调函数
 					emitCallback.SetCanNotFree(false)
 				}
+				retVal.SetResult(V8ValueRef.NewBool(true))
 			}
-			retVal.SetResult(V8ValueRef.NewBool(true))
 		}
 		args = nil
 	}
@@ -355,6 +357,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 
 // multiProcessSync 多进程消息 - 同步
 func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data []byte) {
+	//延迟等待接收结果，默认5秒
 	m.syncChan.delayWaiting()
 	message := json.NewJSONObject(nil)
 	message.Set(ipc_id, messageId)
@@ -366,12 +369,17 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 	} else {
 		message.Set(ipc_argumentList, nil)
 	}
+	//发送数据到主进程
 	m.ipcChannel.ipc.Send(message.Bytes())
-	dataBytes := <-m.syncChan.resultSyncChan
+	//同步等待结果 delayWaiting 秒后自动结束
+	argumentList := <-m.syncChan.resultSyncChan
+	//接收成功，停止
 	m.syncChan.stop()
-
-	fmt.Println("resultSyncChan", dataBytes)
-
+	if argumentList != nil {
+		m.executeCallbackFunction(true, callback, argumentList.Bytes())
+	} else {
+		m.executeCallbackFunction(false, callback, nil)
+	}
 }
 
 // multiProcessAsync 多进程消息 - 异步
@@ -487,9 +495,13 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 			m.v8Context.Exit()
 		}
 	} else { //无返回参数
-		if m.v8Context.Enter() {
-			callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
-			m.v8Context.Exit()
+		if callback.resultType == rt_function {
+			if m.v8Context.Enter() {
+				callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+				m.v8Context.Exit()
+			}
+		} else if callback.resultType == rt_variable {
+			// null
 		}
 	}
 }

@@ -21,6 +21,7 @@ type browserIPCChan struct {
 	ipc channel.IBrowserChannel
 }
 
+// ipcChannelBrowser Go IPC 主进程监听
 func (m *ipcBrowserProcess) ipcChannelBrowser() {
 	if m.ipcChannel == nil {
 		m.ipcChannel = new(browserIPCChan)
@@ -40,6 +41,7 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 	}
 }
 
+// jsExecuteGoSyncMethodMessage JS执行Go事件 - 同步消息处理
 func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(messageId, browserId int32, frameId int64, emitName string, argumentList json.JSONArray) {
 	var ipcContext = m.jsExecuteGoMethod(browserId, frameId, emitName, argumentList)
 	if messageId != 0 { // 同步回调函数处理
@@ -57,6 +59,7 @@ func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(messageId, browserId in
 				}
 			}
 		}
+		//回复结果消息
 		m.ipcChannel.ipc.Send(frameId, message.Bytes())
 		message.Free()
 	}
