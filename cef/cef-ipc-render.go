@@ -14,7 +14,7 @@ package cef
 import (
 	"fmt"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc/channel"
+	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 	"time"
 )
@@ -248,7 +248,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			}
 		}
 		var isSync = name == internalIPCEmitSync //同步
-		fmt.Println("consts.SingleProcess", consts.SingleProcess)
 		//单进程只有同步
 		if consts.SingleProcess {
 			//不通过进程消息
@@ -273,8 +272,23 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			// 同步
 			if isSync {
 				callback := &ipcCallback{isSync: true, result: make(chan []byte)}
+				if emitCallback != nil {
+					callback.resultType = rt_function
+					callback.function = emitCallback
+				} else {
+					callback.resultType = rt_variable
+				}
 				m.emitHandler.addCallback(callback)
-				m.multiProcessSync(callback, retVal)
+				m.multiProcessSync(callback)
+				if callback.resultType == rt_variable {
+					if callback.variable != nil {
+						retVal.SetResult(callback.variable)
+					} else {
+						retVal.SetResult(V8ValueRef.NewBool(true))
+					}
+				} else {
+					retVal.SetResult(V8ValueRef.NewBool(true))
+				}
 				return
 			} else {
 				//异步
@@ -317,7 +331,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 }
 
 // multiProcessSync 多进程同步消息
-func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback, retVal *ResultV8Value) {
+func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback) {
 	var isClose = false
 	var closeResultChan = func() {
 		if !isClose {
@@ -329,7 +343,7 @@ func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback, retVal *Resul
 	delayedWait := time.AfterFunc(2*time.Second, closeResultChan)
 	fmt.Println("等待结果 2")
 	data, isOpen := <-callback.result
-	fmt.Println("结果:", isOpen, string(data))
+	fmt.Println("结果 isOpen:", isOpen, "data:", string(data))
 	if isOpen {
 		delayedWait.Stop()
 		closeResultChan()

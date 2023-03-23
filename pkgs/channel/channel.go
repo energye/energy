@@ -9,6 +9,8 @@
 //----------------------------------------
 
 // IPC 通道
+//
+// GO 多进程之间通信
 package channel
 
 import (
@@ -24,7 +26,6 @@ import (
 	"net"
 	"os"
 	"path/filepath"
-	"sync"
 )
 
 var (
@@ -41,14 +42,14 @@ var (
 	memoryAddress    = "energy.sock" //
 	ipcSock          string          // sock path
 	useNetIPCChannel = false         //
-	port             int             // net ipc
-	browser          = &browserChannel{
-		channel: sync.Map{},
-		mutex:   sync.Mutex{},
-	}
-	render = &renderChannel{
-		mutex: sync.Mutex{},
-	}
+	port             = 19878         // net ipc
+	//browser          = &browserChannel{
+	//	channel: sync.Map{},
+	//	mutex:   sync.Mutex{},
+	//}
+	//render = &renderChannel{
+	//	mutex: sync.Mutex{},
+	//}
 )
 
 //mt 消息类型
@@ -92,6 +93,18 @@ func isUseNetIPC() bool {
 	return true
 }
 
+// SetPort 设置 net socket 端口号, 如v非指定范围内端口则获取随机未使用端口号
+//
+// v 1024 ~ 65535
+func SetPort(v int) {
+	if v >= 1024 && v < 65535 {
+		port = v
+	} else {
+		port = 0
+		port = Port()
+	}
+}
+
 // Port 获取并返回net socket端口
 func Port() int {
 	if port != 0 {
@@ -111,16 +124,6 @@ func Port() int {
 		port = listen.Addr().(*net.TCPAddr).Port
 	}
 	return port
-}
-
-// Browser 返回 browser 通道
-func Browser() IBrowserChannel {
-	return browser
-}
-
-// Render 返回 render 通道
-func Render() IRenderChannel {
-	return render
 }
 
 // IIPCContext IPC通信回调上下文

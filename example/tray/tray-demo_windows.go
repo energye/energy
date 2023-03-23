@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/ipc/channel"
+	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

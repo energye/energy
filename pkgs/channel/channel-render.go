@@ -31,6 +31,9 @@ type renderChannel struct {
 // 参数: channelId 唯一通道ID标识
 func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 	useNetIPCChannel = isUseNetIPC()
+	render := &renderChannel{
+		mutex: sync.Mutex{},
+	}
 	if useNetIPCChannel {
 		address := fmt.Sprintf("localhost:%d", Port())
 		conn, err := net.Dial("tcp", address)
@@ -39,12 +42,11 @@ func NewRender(channelId int64, memoryAddresses ...string) IRenderChannel {
 		}
 		render.channel = &channel{conn: conn, channelId: channelId, ipcType: IPCT_NET, channelType: Ct_Client}
 	} else {
-		memoryAddr := ipcSock
-		logger.Debug("new render channel for IPC Sock", memoryAddr)
 		if len(memoryAddresses) > 0 {
-			memoryAddr = memoryAddresses[0]
+			ipcSock = memoryAddresses[0]
 		}
-		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, memoryAddr)
+		logger.Debug("new render channel for IPC Sock", ipcSock)
+		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, ipcSock)
 		if err != nil {
 			panic("Client failed to channel to IPC service Error: " + err.Error())
 		}

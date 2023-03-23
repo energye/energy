@@ -14,7 +14,7 @@ package cef
 import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/ipc/channel"
+	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 )
 

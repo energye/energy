@@ -33,6 +33,10 @@ type browserChannel struct {
 // NewBrowser 创建主进程通道
 func NewBrowser(memoryAddresses ...string) IBrowserChannel {
 	useNetIPCChannel = isUseNetIPC()
+	browser := &browserChannel{
+		channel: sync.Map{},
+		mutex:   sync.Mutex{},
+	}
 	if useNetIPCChannel {
 		address := fmt.Sprintf("localhost:%d", Port())
 		listener, err := net.Listen("tcp", address)
@@ -42,13 +46,12 @@ func NewBrowser(memoryAddresses ...string) IBrowserChannel {
 		browser.ipcType = IPCT_NET
 		browser.netListener = listener
 	} else {
-		removeMemory()
-		memoryAddr := ipcSock
-		logger.Debug("new browser channel for IPC Sock", memoryAddr)
 		if len(memoryAddresses) > 0 {
-			memoryAddr = memoryAddresses[0]
+			ipcSock = memoryAddresses[0]
 		}
-		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, memoryAddr)
+		removeMemory()
+		logger.Debug("new browser channel for IPC Sock", ipcSock)
+		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, ipcSock)
 		if err != nil {
 			panic("Description Failed to create the IPC service Error: " + err.Error())
 		}
