@@ -11,7 +11,10 @@
 // GO browser IPC通道
 package cef
 
-import "github.com/energye/energy/pkgs/channel"
+import (
+	"fmt"
+	"github.com/energye/energy/pkgs/channel"
+)
 
 // browserIPCChan
 type browserIPCChan struct {
@@ -23,6 +26,7 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 		m.ipcChannel = new(browserIPCChan)
 		m.ipcChannel.ipc = channel.NewBrowser()
 		m.ipcChannel.ipc.Handler(func(context channel.IIPCContext) {
+			fmt.Println("data:", context.Message().JSON().ToJSONString())
 			context.Free()
 		})
 	}

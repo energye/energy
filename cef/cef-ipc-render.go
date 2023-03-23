@@ -15,7 +15,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
-	"time"
 )
 
 // ipcRenderProcess 渲染进程
@@ -257,7 +256,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 		} else { //多进程
 			// 同步
 			if isSync {
-				callback := &ipcCallback{isSync: true, result: make(chan []byte)}
+				callback := &ipcCallback{isSync: true}
 				if emitCallback != nil {
 					callback.resultType = rt_function
 					callback.function = emitCallback
@@ -265,7 +264,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					callback.resultType = rt_variable
 				}
 				m.emitHandler.addCallback(callback)
-				m.multiProcessSync(callback)
+				m.multiProcessSync(callback, isSync, emitNameValue, args)
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
 						retVal.SetResult(callback.variable)
@@ -317,23 +316,18 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 }
 
 // multiProcessSync 多进程同步消息
-func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback) {
-	var isClose = false
-	var closeResultChan = func() {
-		if !isClose {
-			close(callback.result)
-			isClose = true
-		}
+func (m *ipcRenderProcess) multiProcessSync(callback *ipcCallback, isSync bool, emitName string, data []byte) {
+	fmt.Println("data", string(data))
+	message := json.NewJSONObject(nil)
+	message.Set(ipc_id, 1)
+	message.Set(ipc_type, isSync)
+	message.Set(ipc_event, emitName)
+	if data != nil {
+		message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
+	} else {
+		message.Set(ipc_argumentList, nil)
 	}
-	fmt.Println("等待结果 1")
-	delayedWait := time.AfterFunc(2*time.Second, closeResultChan)
-	fmt.Println("等待结果 2")
-	data, isOpen := <-callback.result
-	fmt.Println("结果 isOpen:", isOpen, "data:", string(data))
-	if isOpen {
-		delayedWait.Stop()
-		closeResultChan()
-	}
+	m.ipcChannel.ipc.Send(message.Bytes())
 }
 
 // multiProcessAsync 多进程异步消息
@@ -401,13 +395,11 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		}()
 		//[]byte
 		returnArgs = argumentList.GetArrayByIndex(2)
-		if callback.isSync {
+		if callback.isSync { // 同步
 			if returnArgs != nil {
-				callback.result <- returnArgs.Bytes()
 			} else {
-				callback.result <- nil
 			}
-		} else {
+		} else { //异步
 			if callback.function != nil {
 				//设置允许释放
 				callback.function.SetCanNotFree(false)
