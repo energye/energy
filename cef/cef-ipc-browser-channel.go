@@ -36,6 +36,7 @@ func (m *ipcBrowserProcess) ipcChannelBrowser() {
 			if name == internalIPCJSExecuteGoSyncEvent {
 				m.jsExecuteGoSyncMethodMessage(int32(browserId), context.ChannelId(), emitName, argumentList)
 			}
+			argumentList.Free()
 			context.Free()
 		})
 	}

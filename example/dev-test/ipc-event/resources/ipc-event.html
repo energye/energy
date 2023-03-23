@@ -283,10 +283,33 @@
             ipc.emit("testGoEmitAndCallback");
         }
 
+        let tessi = null
+
+        function autoTestEmitSync() {
+            if (tessi != null) {
+                clearInterval(tessi)
+                tessi = null
+                idx = 0;
+                return
+            }
+            tessi = setInterval(testEmitSync, 1)
+            if (tessi != null) {
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(tessi)
+                        msg(idx)
+                        tessi = null
+                        idx = 0;
+                    }, time)
+                }
+            }
+        }
 
         function testEmitSync() {
-            let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
             clearMsg()
+            let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
+            msg("GetMyParam", bind.myparam);
             msg("testEmitSync", result);
             ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result) {
                 msg("testEmitSync-callback", result);
@@ -324,6 +347,7 @@
     <button onclick="autotestGoEmitAndCallback()">自动-testGoEmitAndCallback</button>
     <br>
     <button onclick="testEmitSync()">testEmitSync</button>
+    <button onclick="autoTestEmitSync()">自动-testEmitSync</button>
 
 </p>
 <p id="msgHtml"></p>
@@ -345,7 +369,5 @@
     }
 
     msg("ipc-event: 页面加载完成...");
-    msg("GetMyParam", bind.myparam);
-    bind.myparam = "aaaa"
 </script>
 </html>

@@ -304,7 +304,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				} else { //variable
 					callback.resultType = rt_variable
 				}
-				m.emitHandler.addCallback(callback)
 				m.multiProcessSync(1, emitNameValue, callback, args)
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
@@ -371,12 +370,14 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 	}
 	//发送数据到主进程
 	m.ipcChannel.ipc.Send(message.Bytes())
+	message.Free()
 	//同步等待结果 delayWaiting 秒后自动结束
 	argumentList := <-m.syncChan.resultSyncChan
 	//接收成功，停止
 	m.syncChan.stop()
 	if argumentList != nil {
 		m.executeCallbackFunction(true, callback, argumentList.Bytes())
+		argumentList.Free()
 	} else {
 		m.executeCallbackFunction(false, callback, nil)
 	}

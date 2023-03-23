@@ -72,6 +72,7 @@ func main() {
 	var testEmitName = 0
 	var testResultArgs = 0
 	var onTestName1Emit = 0
+	var testEmitSync = 0
 
 	var ctime = 5
 	//监听事件，js触发，之后再触发js监听的事件
@@ -82,7 +83,7 @@ func main() {
 			tm = time.Now().Second()
 		}
 		if time.Now().Second() >= tm+ctime {
-			fmt.Println("GetIntByIndex", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testResultArgs:", testResultArgs, "onTestName1Emit:", onTestName1Emit)
+			fmt.Println("GetIntByIndex", args.GetIntByIndex(0), "testGoEmit:", testGoEmit, "testGoEmitAndCallback:", testGoEmitAndCallback, "testEmitName:", testEmitName, "testEmitSync:", testEmitSync, "testResultArgs:", testResultArgs, "onTestName1Emit:", onTestName1Emit)
 			tm = time.Now().Second()
 		}
 		//触发JS监听的事件，并传入参数
@@ -121,7 +122,7 @@ func main() {
 		fmt.Println("无入参，无出参")
 	})
 	ipc.On("testEmitSync", func() (string, []string) {
-		fmt.Println("同步")
+		testEmitSync++
 		return "同步返回结果", []string{"值1", "值2"}
 	})
 

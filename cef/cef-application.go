@@ -73,7 +73,7 @@ func (m *TCEFApplication) registerDefaultEvent() {
 				Object.defineProperty(bind, 'myparam', {
 					get(){
 						native function GetMyParam();
-						return GetMyParam();
+						return ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]]);
 					},
 					set(v){
                     	native function SetMyParam();
