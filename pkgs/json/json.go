@@ -105,6 +105,9 @@ type jsonData struct {
 }
 
 // NewJSON 返回 jsonData 对象，JSONArray or JSONObject
+//
+//    []byte("{...}")
+//    []byte("[...]")
 func NewJSON(data []byte) JSON {
 	if data == nil {
 		return nil
@@ -129,6 +132,9 @@ func NewJSON(data []byte) JSON {
 }
 
 // NewJSONArray 字节JSONArray / 数组 / 切片 转换
+//
+//    []byte("[...]")
+//    []slice
 func NewJSONArray(value any) JSONArray {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONArray
@@ -166,6 +172,10 @@ func NewJSONArray(value any) JSONArray {
 }
 
 // NewJSONObject 字节JSONObject / 结构 / JSONObject 转换
+//
+//    []byte("{...}")
+//    struct
+//    map[string][type]
 func NewJSONObject(value any) JSONObject {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONObject
