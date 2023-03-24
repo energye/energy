@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/energye/energy/pkgs/json"
+	"strings"
 	"text/template"
 )
 
@@ -67,33 +68,28 @@ if (!bind) {
 	});
 })();
 `
+	fmt.Println("jsCode", jsCode)
 	var buf = &bytes.Buffer{}
 	buf.WriteString(fmt.Sprintf(`let %s=null;if(%s===null){%s={};}`, internalBind, internalBind, internalBind))
-	buf.WriteString(`(function(){`)
-	buf.WriteString(`})();`)
-	fmt.Println(buf.String())
 	var tempText = `
-	{{range $i, $v := $.fields}}
-	Object.defineProperty({{$.bind}}, "{{$v}}", {
-		get(){
-			native function getMyParam();
-			{{getter ($v) }}
-			return getMyParam();
-		},
-		set(v){
-			native function setMyParam();
-			setMyParam(v);
-		}
-	});
-	{{end}}
-	`
+{{range $i, $v := $.fields}}
+Object.defineProperty({{$.bind}}, "{{$v}}", {
+	get(){
+		native function {{getter ($v)}}();
+		return {{getter ($v) }}();
+	},
+	set(v){
+		native function {{setter ($v)}}();
+		{{setter ($v) }}(v);
+	}
+});
+{{end}}`
 	var funcs = make(template.FuncMap)
 	funcs["getter"] = func(v string) string {
-		fmt.Println("getter", v)
-		return v
+		return "get" + strings.ToUpper(string(v[0])) + v[1:]
 	}
 	funcs["setter"] = func(v string) string {
-		return ""
+		return "set" + strings.ToUpper(string(v[0])) + v[1:]
 	}
 	temp, err := template.New("v8bind").Funcs(funcs).Parse(tempText)
 	if err != nil {
@@ -108,6 +104,9 @@ if (!bind) {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("tempResult:", tempResult.String())
-	registerExtension(fmt.Sprintf("%s/%s", internalV8Bind, internalBind), jsCode, m.handler)
+	buf.WriteString("(function(){")
+	buf.Write(tempResult.Bytes())
+	buf.WriteString("})();")
+	fmt.Println("tempResult:", buf.String())
+	registerExtension(fmt.Sprintf("%s/%s", internalV8Bind, internalBind), buf.String(), m.handler)
 }
