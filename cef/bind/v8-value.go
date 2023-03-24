@@ -30,6 +30,7 @@ import (
 )
 
 // JSValue
+//
 // GO和JS变量类型接口
 type JSValue interface {
 	SetAnyValue(value interface{}) error //多类型值设置

@@ -22,8 +22,7 @@ import (
 )
 
 var (
-	nullptr                        unsafe.Pointer = nil //
-	isMainProcess, isRenderProcess bool                 //
+	isMainProcess, isRenderProcess bool //
 )
 
 // VariableBind 变量绑定
