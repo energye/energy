@@ -14,11 +14,13 @@ package cef
 import "github.com/energye/energy/common"
 
 const (
-	internalBind = "v8/bind"
+	internalBind   = "bind"
+	internalV8Bind = "v8"
 )
 
+// isInternalBind 内部使用字段不能使用
 func isInternalBind(name string) bool {
-	return name == internalBind
+	return name == internalBind || name == internalV8Bind
 }
 
 // bindInit 初始化

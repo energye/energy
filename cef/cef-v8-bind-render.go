@@ -12,8 +12,10 @@
 package cef
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/energye/energy/pkgs/json"
+	"text/template"
 )
 
 var bindRender *bindRenderProcess
@@ -48,22 +50,64 @@ func (m *bindRenderProcess) makeBind() {
 	})
 	//注册js
 	var jsCode = `
-            let bind;
-            if (!bind) {
-                bind = {};
-            }
-            (function () {
-				Object.defineProperty(bind, 'myparam', {
-					get(){
-						native function GetMyParam();
-						return GetMyParam();
-					},
-					set(v){
-                    	native function SetMyParam();
-						SetMyParam(v);
-					}
-				});
-            })();
+let bind;
+if (!bind) {
+	bind = {};
+}
+(function () {
+	Object.defineProperty(bind, 'myparam', {
+		get(){
+			native function getMyParam();
+			return getMyParam();
+		},
+		set(v){
+			native function setMyParam();
+			setMyParam(v);
+		}
+	});
+})();
 `
-	registerExtension(internalBind, jsCode, m.handler)
+	var buf = &bytes.Buffer{}
+	buf.WriteString(fmt.Sprintf(`let %s=null;if(%s===null){%s={};}`, internalBind, internalBind, internalBind))
+	buf.WriteString(`(function(){`)
+	buf.WriteString(`})();`)
+	fmt.Println(buf.String())
+	var tempText = `
+	{{range $i, $v := $.fields}}
+	Object.defineProperty({{$.bind}}, "{{$v}}", {
+		get(){
+			native function getMyParam();
+			{{getter ($v) }}
+			return getMyParam();
+		},
+		set(v){
+			native function setMyParam();
+			setMyParam(v);
+		}
+	});
+	{{end}}
+	`
+	var funcs = make(template.FuncMap)
+	funcs["getter"] = func(v string) string {
+		fmt.Println("getter", v)
+		return v
+	}
+	funcs["setter"] = func(v string) string {
+		return ""
+	}
+	temp, err := template.New("v8bind").Funcs(funcs).Parse(tempText)
+	if err != nil {
+		panic(err)
+	}
+	var data = map[string]any{}
+	data["bind"] = internalBind
+	var field = []string{"myparam", "myparam1"}
+	data["fields"] = field
+	var tempResult = &bytes.Buffer{}
+	err = temp.Execute(tempResult, data)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("tempResult:", tempResult.String())
+	registerExtension(fmt.Sprintf("%s/%s", internalV8Bind, internalBind), jsCode, m.handler)
 }
