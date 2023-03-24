@@ -50,25 +50,25 @@ func (m *bindRenderProcess) makeBind() {
 		return false
 	})
 	//注册js
-	var jsCode = `
-let bind;
-if (!bind) {
-	bind = {};
-}
-(function () {
-	Object.defineProperty(bind, 'myparam', {
-		get(){
-			native function getMyParam();
-			return getMyParam();
-		},
-		set(v){
-			native function setMyParam();
-			setMyParam(v);
-		}
-	});
-})();
-`
-	fmt.Println("jsCode", jsCode)
+	//	var jsCode = `
+	//let bind;
+	//if (!bind) {
+	//	bind = {};
+	//}
+	//(function () {
+	//	Object.defineProperty(bind, 'myparam', {
+	//		get(){
+	//			native function getMyParam();
+	//			return getMyParam();
+	//		},
+	//		set(v){
+	//			native function setMyParam();
+	//			setMyParam(v);
+	//		}
+	//	});
+	//})();
+	//`
+	//	fmt.Println("jsCode", jsCode)
 	var buf = &bytes.Buffer{}
 	buf.WriteString(fmt.Sprintf(`let %s=null;if(%s===null){%s={};}`, internalBind, internalBind, internalBind))
 	var tempText = `

@@ -11,11 +11,6 @@
 // V8 JSValue JSDouble 类型实现
 package bind
 
-import (
-	"fmt"
-	"github.com/energye/energy/consts"
-)
-
 type JSDouble struct {
 	V8Value
 }
@@ -25,21 +20,9 @@ func (m *JSDouble) AsDouble() *JSDouble {
 }
 
 func (m *JSDouble) Value() float64 {
-	if val, err := m.DoubleValue(); err == nil {
-		return val
-	} else {
-		return 0.0
-	}
+	return m.DoubleValue()
 }
 
 func (m *JSDouble) SetValue(value float64) {
-	m.valueType.Jsv = consts.V8_VALUE_DOUBLE
-	m.valueType.Gov = consts.GO_VALUE_FLOAT64
-	m.value = value
-}
-func (m *JSDouble) ToString() string {
-	if val, err := m.DoubleValue(); err == nil {
-		return fmt.Sprintf("%v", val)
-	}
-	return ""
+
 }
