@@ -16,57 +16,34 @@ import (
 	"github.com/energye/energy/pkgs/json"
 )
 
+// 主进程IPC
+var browserIPC *browserIPCChan
+
 // browserIPCChan
 type browserIPCChan struct {
-	ipc channel.IBrowserChannel
+	ipc      channel.IBrowserChannel                      //channel
+	callback []func(channelId int64, data json.JSON) bool //实现回调函数
 }
 
-// ipcChannelBrowser Go IPC 主进程监听
-func (m *ipcBrowserProcess) ipcChannelBrowser() {
-	if m.ipcChannel == nil {
-		m.ipcChannel = new(browserIPCChan)
-		m.ipcChannel.ipc = channel.NewBrowser()
-		m.ipcChannel.ipc.Handler(func(context channel.IIPCContext) {
-			messageJSON := context.Message().JSON().JSONObject()
-			//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
-			emitName := messageJSON.GetStringByKey(ipc_event)
-			name := messageJSON.GetStringByKey(ipc_name)
-			browserId := messageJSON.GetIntByKey(ipc_browser_id)
-			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
-			if name == internalIPCJSExecuteGoSyncEvent {
-				m.jsExecuteGoSyncMethodMessage(int32(browserId), context.ChannelId(), emitName, argumentList)
+// browserIPCCreate 主进程IPC创建
+func browserIPCCreate() {
+	if browserIPC == nil {
+		browserIPC = new(browserIPCChan)
+		browserIPC.ipc = channel.NewBrowser()
+		browserIPC.ipc.Handler(func(context channel.IIPCContext) {
+			data := context.Message().JSON()
+			//callback 返回 true ipc 停止遍历,否则继续遍历,直到最后一个
+			for _, call := range browserIPC.callback {
+				if call(context.ChannelId(), data) {
+					break
+				}
 			}
-			argumentList.Free()
 			context.Free()
 		})
 	}
 }
 
-// jsExecuteGoSyncMethodMessage JS执行Go事件 - 同步消息处理
-func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameId int64, emitName string, argumentList json.JSONArray) {
-	var ipcContext = m.jsExecuteGoMethod(browserId, frameId, emitName, argumentList)
-	message := json.NewJSONObject(nil)
-	message.Set(ipc_id, 1)
-	message.Set(ipc_name, internalIPCJSExecuteGoSyncEventReplay)
-	message.Set(ipc_argumentList, nil)
-	// 同步回调函数处理
-	if ipcContext != nil {
-		//处理回复消息
-		replay := ipcContext.Replay()
-		if replay.Result() != nil && len(replay.Result()) > 0 {
-			switch replay.Result()[0].(type) {
-			case []byte:
-				message.Set(ipc_argumentList, json.NewJSONArray((replay.Result()[0]).([]byte)).Data())
-			}
-		}
-	}
-	//回复结果消息
-	m.ipcChannel.ipc.Send(frameId, message.Bytes())
-	message.Free()
-	if ipcContext != nil {
-		if ipcContext.ArgumentList() != nil {
-			ipcContext.ArgumentList().Free()
-		}
-		ipcContext.Result(nil)
-	}
+// addCallback 添加回调函数, callback 返回 true ipc 停止遍历,否则继续遍历,直到最后一个
+func (m *browserIPCChan) addCallback(callback func(channelId int64, data json.JSON) bool) {
+	m.callback = append(m.callback, callback)
 }

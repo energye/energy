@@ -9,6 +9,7 @@ import (
 	"github.com/energye/energy/example/dev-test/ipc-event/src"
 	"github.com/energye/energy/pkgs/json"
 	"github.com/energye/golcl/lcl"
+	"strconv"
 	"time"
 	//_ "net/http/pprof"
 )
@@ -123,7 +124,7 @@ func main() {
 	})
 	ipc.On("testEmitSync", func() (string, []string) {
 		testEmitSync++
-		return "同步返回结果", []string{"值1", "值2"}
+		return "同步返回结果" + strconv.Itoa(testEmitSync), []string{"值1", "值2"}
 	})
 
 	ipc.On("testEmitName", func(context ipc.IContext) {

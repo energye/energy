@@ -12,50 +12,26 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 )
 
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
-	ipcRender.ipcChannelRender(browser, frame)
+	renderIPCCreate(browser, frame)
+	ipcRender.initRenderIPC()
 	ipcRender.makeIPC(browser, frame, context)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
 func appMainRunCallback() {
-	ipcBrowser.ipcChannelBrowser()
+	browserIPCCreate()
+	ipcBrowser.initBrowserIPC()
 }
 
-// appWebKitInitialized
+// appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	fmt.Println("SetOnWebKitInitialized")
-	v8Handler := V8HandlerRef.New()
-	v8Handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		fmt.Println("v8Handler.Execute", name)
-		return true
-	})
-	//注册js
-	var jsCode = `
-            let bind;
-            if (!bind) {
-                bind = {};
-            }
-            (function () {
-				Object.defineProperty(bind, 'myparam', {
-					get(){
-						native function GetMyParam();
-						//return ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]]);
-						return GetMyParam();
-					},
-					set(v){
-                    	native function SetMyParam();
-						SetMyParam(v);
-					}
-				});
-            })();
-`
-	RegisterExtension("v8/bind", jsCode, v8Handler)
+	//browserIPCCreate()
+	v8bind.makeBind()
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

@@ -16,38 +16,38 @@ import (
 	"github.com/energye/energy/pkgs/json"
 )
 
+// 渲染(子)进程IPC
+var renderIPC *renderIPCChan
+
 // renderIPCChan
 type renderIPCChan struct {
-	browserId int32
-	frameId   int64
-	ipc       channel.IRenderChannel //channel
+	browserId int32                                        //浏览器ID
+	channelId int64                                        //通道ID 使用FrameId
+	ipc       channel.IRenderChannel                       //channel
+	callback  []func(channelId int64, data json.JSON) bool //实现回调函数
 }
 
-// ipcChannelRender Go IPC 渲染进程监听
-func (m *ipcRenderProcess) ipcChannelRender(browser *ICefBrowser, frame *ICefFrame) {
-	if m.ipcChannel == nil {
-		m.ipcChannel = new(renderIPCChan)
-		m.ipcChannel.browserId = browser.Identifier()
-		m.ipcChannel.frameId = frame.Identifier()
-		m.ipcChannel.ipc = channel.NewRender(m.ipcChannel.frameId)
-		m.ipcChannel.ipc.Handler(func(context channel.IIPCContext) {
-			messageJSON := context.Message().JSON().JSONObject()
-			//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
-			name := messageJSON.GetStringByKey(ipc_name)
-			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
-			if name == internalIPCJSExecuteGoSyncEventReplay {
-				m.ipcJSExecuteGoSyncEventMessageReply(argumentList)
+// renderIPCCreate 渲染进程IPC创建
+func renderIPCCreate(browser *ICefBrowser, frame *ICefFrame) {
+	if renderIPC == nil {
+		renderIPC = new(renderIPCChan)
+		renderIPC.browserId = browser.Identifier()
+		renderIPC.channelId = frame.Identifier()
+		renderIPC.ipc = channel.NewRender(renderIPC.channelId)
+		renderIPC.ipc.Handler(func(context channel.IIPCContext) {
+			data := context.Message().JSON()
+			//callback 返回 true ipc 停止遍历,否则继续遍历,直到最后一个
+			for _, call := range renderIPC.callback {
+				if call(context.ChannelId(), data) {
+					break
+				}
 			}
 			context.Free()
 		})
 	}
 }
 
-// ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
-func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(argumentList json.JSONArray) {
-	if argumentList != nil {
-		m.syncChan.resultSyncChan <- argumentList
-	} else {
-		m.syncChan.resultSyncChan <- nil
-	}
+// addCallback 添加回调函数, callback 返回 true ipc 停止遍历,否则继续遍历,直到最后一个
+func (m *renderIPCChan) addCallback(callback func(channelId int64, data json.JSON) bool) {
+	m.callback = append(m.callback, callback)
 }
