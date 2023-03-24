@@ -12,12 +12,15 @@
 package cef
 
 import (
+	"fmt"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 )
 
 // appOnContextCreated 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
-	renderIPCCreate(browser, frame)
+	fmt.Println("appOnContextCreated", common.Args.ProcessType())
+	renderIPCCreate(browser.Identifier(), frame.Identifier())
 	ipcRender.initRenderIPC()
 	ipcRender.makeIPC(browser, frame, context)
 }
@@ -30,8 +33,8 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	//browserIPCCreate()
-	v8bind.makeBind()
+	fmt.Println("appWebKitInitialized", common.Args.ProcessType())
+	bindRender.makeBind()
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

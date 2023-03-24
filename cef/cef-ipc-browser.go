@@ -19,10 +19,6 @@ import (
 
 // ipcBrowserProcess 主进程
 type ipcBrowserProcess struct {
-	ipcObject   *ICefV8Value    // ipc object
-	emitHandler *ipcEmitHandler // ipc.emit handler
-	onHandler   *ipcOnHandler   // ipc.on handler
-	ipcChannel  *browserIPCChan // channel
 }
 
 // ipcGoExecuteMethodMessage 执行 Go 监听函数
@@ -156,24 +152,22 @@ func (m *ipcBrowserProcess) ipcGoExecuteMethodMessageReply(browser *ICefBrowser,
 
 // ipcChannelBrowser Go IPC 主进程监听
 func (m *ipcBrowserProcess) initBrowserIPC() {
-	if m.ipcChannel == nil {
-		m.ipcChannel = browserIPC
-		m.ipcChannel.addCallback(func(channelId int64, data json.JSON) bool {
-			if data != nil && data.IsObject() {
-				messageJSON := data.JSONObject()
-				//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
-				emitName := messageJSON.GetStringByKey(ipc_event)
-				name := messageJSON.GetStringByKey(ipc_name)
-				browserId := messageJSON.GetIntByKey(ipc_browser_id)
-				argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
-				if name == internalIPCJSExecuteGoSyncEvent {
-					m.jsExecuteGoSyncMethodMessage(int32(browserId), channelId, emitName, argumentList)
-					return true
-				}
+	browserIPC.addCallback(func(channelId int64, data json.JSON) bool {
+		if data != nil && data.IsObject() {
+			messageJSON := data.JSONObject()
+			//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
+			emitName := messageJSON.GetStringByKey(ipc_event)
+			name := messageJSON.GetStringByKey(ipc_name)
+			browserId := messageJSON.GetIntByKey(ipc_browser_id)
+			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
+			if name == internalIPCJSExecuteGoSyncEvent {
+				m.jsExecuteGoSyncMethodMessage(int32(browserId), channelId, emitName, argumentList)
+				return true
 			}
-			return false
-		})
-	}
+		}
+		return false
+	})
+
 }
 
 // jsExecuteGoSyncMethodMessage JS执行Go事件 - 同步消息处理
@@ -195,7 +189,7 @@ func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameI
 		}
 	}
 	//回复结果消息
-	m.ipcChannel.ipc.Send(frameId, message.Bytes())
+	browserIPC.ipc.Send(frameId, message.Bytes())
 	message.Free()
 	if ipcContext != nil {
 		if ipcContext.ArgumentList() != nil {

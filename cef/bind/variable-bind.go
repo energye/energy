@@ -77,7 +77,6 @@ func init() {
 	isMainProcess = common.Args.IsMain()
 	isRenderProcess = common.Args.IsRender()
 	VariableBind = &variableBind{bindMapping: make(map[string]JSValue)}
-	fmt.Println("isMainProcess:", isMainProcess, "isRenderProcess:", isRenderProcess)
 }
 
 func (m *VT) ToString() string {

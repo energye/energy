@@ -93,7 +93,7 @@ func isIPCInternalKey(key string) bool {
 func ipcInit() {
 	isSingleProcess := application.SingleProcess()
 	if isSingleProcess {
-		ipcBrowser = &ipcBrowserProcess{emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)}}
+		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
 			syncChan:    &ipcSyncChan{},
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},

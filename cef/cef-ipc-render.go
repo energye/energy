@@ -20,11 +20,9 @@ import (
 
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
-	bind        *ICefV8Value    // go bind
 	ipcObject   *ICefV8Value    // ipc object
 	emitHandler *ipcEmitHandler // ipc.emit handler
 	onHandler   *ipcOnHandler   // ipc.on handler
-	ipcChannel  *renderIPCChan  // channel
 	syncChan    *ipcSyncChan
 	v8Context   *ICefV8Context
 }
@@ -69,10 +67,6 @@ func (m *ipcSyncChan) delayWaiting() {
 }
 
 func (m *ipcRenderProcess) clear() {
-	if m.bind != nil {
-		m.bind.Free()
-		m.bind = nil
-	}
 	if m.ipcObject != nil {
 		m.ipcObject.Free()
 		m.ipcObject = nil
@@ -362,14 +356,14 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 	message.Set(ipc_id, messageId)
 	message.Set(ipc_event, emitName)
 	message.Set(ipc_name, internalIPCJSExecuteGoSyncEvent)
-	message.Set(ipc_browser_id, m.ipcChannel.browserId)
+	message.Set(ipc_browser_id, renderIPC.browserId)
 	if data != nil {
 		message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
 	} else {
 		message.Set(ipc_argumentList, nil)
 	}
 	//发送数据到主进程
-	m.ipcChannel.ipc.Send(message.Bytes())
+	renderIPC.ipc.Send(message.Bytes())
 	message.Free()
 	//同步等待结果 delayWaiting 秒后自动结束
 	argumentList := <-m.syncChan.resultSyncChan
@@ -509,22 +503,20 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 
 // initRenderIPC Go IPC 渲染进程监听
 func (m *ipcRenderProcess) initRenderIPC() {
-	if m.ipcChannel == nil {
-		m.ipcChannel = renderIPC
-		m.ipcChannel.addCallback(func(channelId int64, data json.JSON) bool {
-			if data != nil {
-				messageJSON := data.JSONObject()
-				//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
-				name := messageJSON.GetStringByKey(ipc_name)
-				argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
-				if name == internalIPCJSExecuteGoSyncEventReplay {
-					m.ipcJSExecuteGoSyncEventMessageReply(argumentList)
-					return true
-				}
+	renderIPC.addCallback(func(channelId int64, data json.JSON) bool {
+		if data != nil {
+			messageJSON := data.JSONObject()
+			//messageId := messageJSON.GetIntByKey(ipc_id)// messageId: 同步永远是1
+			name := messageJSON.GetStringByKey(ipc_name)
+			argumentList := messageJSON.GetArrayByKey(ipc_argumentList)
+			if name == internalIPCJSExecuteGoSyncEventReplay {
+				m.ipcJSExecuteGoSyncEventMessageReply(argumentList)
+				return true
 			}
-			return false
-		})
-	}
+		}
+		return false
+	})
+
 }
 
 // ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
