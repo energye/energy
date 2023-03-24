@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/cef/ipc"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
 	"github.com/energye/golcl/lcl"
 	"time"
 )

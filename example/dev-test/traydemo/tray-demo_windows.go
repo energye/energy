@@ -6,7 +6,7 @@ package traydemo
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/cef/ipc"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

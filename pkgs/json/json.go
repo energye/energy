@@ -15,7 +15,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
-	jsoniter "github.com/json-iterator/go" //json-iterator
+	jsoniter "github.com/json-iterator/go" //json-iterator or encoding/json
 	"reflect"
 	"strconv"
 	"strings"

@@ -3,8 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/example/sub-process/vars"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/cef/ipc"
 	"github.com/energye/energy/logger"
 )
 
@@ -21,7 +20,7 @@ func main() {
 	//创建Cef应用
 	cefApp := cef.NewApplication()
 	//主进程和子进程的变量绑定函数定义
-	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
+	//cef.VariableBind.VariableCreateCallback(vars.VariableBind)
 	//IPC通信
 	IPCInit()
 	//启动子进程

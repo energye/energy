@@ -4,8 +4,8 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/cef/ipc"
 	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/ipc"
 )
 
 //资源目录，内置到执行程序中

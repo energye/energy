@@ -13,10 +13,9 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/cef/ipc"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/pkgs/channel"
 	"strings"
 )
 
@@ -42,10 +41,10 @@ func AppRenderInit() *cef.TCEFApplication {
 
 		fmt.Println("ipc-port", common.Args.Args("net-ipc-port"), common.Args.ProcessType())
 	}
-	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
+	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
 		//主进程 自定义参数
 		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", common.Args.ProcessType())
-		commandLine.AppendSwitch("env", env)
+		commandLine.AppendSwitchWithValue("env", env)
 		commandLine.AppendArgument("--test")
 	})
 	//上下文回调
@@ -63,16 +62,12 @@ func AppRenderInit() *cef.TCEFApplication {
 
 		return false
 	})
-
 	//渲染进程 IPC事件
-	ipc.IPC.Render().SetOnEvent(func(event ipc.IEventOn) {
-		fmt.Println("渲染进程IPC事件注册")
-		//渲染进程监听的事件
-		event.On("renderOnEventSubWindowIPCOn", func(context channel.IIPCContext) {
-			fmt.Println("渲染进程监听事件-执行 renderOnEventSubWindowIPCOn", common.Args.ProcessType())
-			//渲染进程处理程序....
-			context.Response([]byte("返回了,可以关闭"))
-		})
+	ipc.On("renderOnEventSubWindowIPCOn", func(context ipc.IContext) {
+		fmt.Println("渲染进程监听事件-执行 renderOnEventSubWindowIPCOn", common.Args.ProcessType())
+		//渲染进程处理程序....
+		context.Result("返回了,可以关闭")
 	})
+	//渲染进程 IPC事件
 	return cefApp
 }
