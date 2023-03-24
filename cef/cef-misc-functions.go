@@ -33,5 +33,12 @@ func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string)
 
 // RegisterExtension 注册JS扩展
 func RegisterExtension(name, code string, handler *ICefV8Handler) {
+	if isInternalBind(name) {
+		return
+	}
+	registerExtension(name, code, handler)
+}
+
+func registerExtension(name, code string, handler *ICefV8Handler) {
 	imports.Proc(internale_CEFJSRegisterExtension).Call(api.PascalStr(name), api.PascalStr(code), handler.Instance())
 }

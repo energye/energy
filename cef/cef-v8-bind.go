@@ -14,8 +14,12 @@ package cef
 import "github.com/energye/energy/common"
 
 const (
-	internalBind = "bind"
+	internalBind = "v8/bind"
 )
+
+func isInternalBind(name string) bool {
+	return name == internalBind
+}
 
 // bindInit 初始化
 func bindInit() {

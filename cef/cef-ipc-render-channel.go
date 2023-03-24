@@ -12,7 +12,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/energy/pkgs/json"
 )
@@ -30,7 +29,6 @@ type renderIPCChan struct {
 
 // renderIPCCreate 渲染进程IPC创建
 func renderIPCCreate(browserId int32, channelId int64) {
-	fmt.Println("renderIPCCreate", browserId, channelId)
 	if renderIPC == nil {
 		renderIPC = new(renderIPCChan)
 		renderIPC.browserId = browserId
