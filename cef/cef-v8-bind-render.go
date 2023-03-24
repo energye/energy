@@ -22,10 +22,15 @@ import (
 var bindRender *bindRenderProcess
 
 type bindRenderProcess struct {
-	handler *ICefV8Handler
+	isInitBindIPC bool
+	handler       *ICefV8Handler
 }
 
 func (m *bindRenderProcess) initBindIPC() {
+	if m.isInitBindIPC {
+		return
+	}
+	m.isInitBindIPC = true
 	renderIPC.addCallback(func(channelId int64, data json.JSON) bool {
 		if data != nil {
 			//messageJSON := data.JSONObject()

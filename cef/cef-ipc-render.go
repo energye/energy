@@ -20,11 +20,12 @@ import (
 
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
-	ipcObject   *ICefV8Value    // ipc object
-	emitHandler *ipcEmitHandler // ipc.emit handler
-	onHandler   *ipcOnHandler   // ipc.on handler
-	syncChan    *ipcSyncChan
-	v8Context   *ICefV8Context
+	isInitRenderIPC bool
+	ipcObject       *ICefV8Value    // ipc object
+	emitHandler     *ipcEmitHandler // ipc.emit handler
+	onHandler       *ipcOnHandler   // ipc.on handler
+	syncChan        *ipcSyncChan
+	v8Context       *ICefV8Context
 }
 
 // ipcSyncChan IPC 同步接收数据通道
@@ -503,6 +504,10 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 
 // initRenderIPC Go IPC 渲染进程监听
 func (m *ipcRenderProcess) initRenderIPC() {
+	if m.isInitRenderIPC {
+		return
+	}
+	m.isInitRenderIPC = true
 	renderIPC.addCallback(func(channelId int64, data json.JSON) bool {
 		if data != nil {
 			messageJSON := data.JSONObject()

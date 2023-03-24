@@ -102,9 +102,12 @@ type JSON interface {
 
 // JsonData JSON 数据结构
 type JsonData struct {
-	T GO_VALUE_TYPE // type
-	S int           // size
-	V any           // value
+	T      GO_VALUE_TYPE // type
+	S      int           // size
+	V      any           // value
+	pKey   string        //
+	pIndex int           //
+	P      *JsonData     // parent
 }
 
 // NewJSON 返回 JsonData 对象，JSONArray or JSONObject
@@ -347,7 +350,7 @@ func (m *JsonData) GetBoolByIndex(index int) bool {
 func (m *JsonData) GetArrayByIndex(index int) JSONArray {
 	if m.IsArray() && index < m.S {
 		if v, ok := m.V.([]any)[index].([]any); ok {
-			return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+			return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v), P: m, pIndex: index}
 		}
 	}
 	return nil
@@ -356,7 +359,7 @@ func (m *JsonData) GetArrayByIndex(index int) JSONArray {
 func (m *JsonData) GetObjectByIndex(index int) JSONObject {
 	if m.IsArray() && index < m.S {
 		if v, ok := m.V.([]any)[index].(map[string]any); ok {
-			return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
+			return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v), P: m, pIndex: index}
 		}
 	}
 	return nil
@@ -368,43 +371,42 @@ func (m *JsonData) GetByIndex(index int) JSON {
 		switch value.(type) {
 		case json.Number:
 			if v, err := value.(json.Number).Int64(); err == nil {
-				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize, P: m, pIndex: index}
 			}
 		case string:
-			if v, ok := value.(string); ok {
-				return &JsonData{T: GO_VALUE_STRING, V: v, S: len(v)}
-			}
+			v := value.(string)
+			return &JsonData{T: GO_VALUE_STRING, V: v, S: len(v), P: m, pIndex: index}
 		case int, int8, int16, int32, int64:
 			if v := m.GetIntByIndex(index); v != 0 {
-				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize, P: m, pIndex: index}
 			}
 		case uint, uint8, uint16, uint32, uint64:
 			if v := m.GetUIntByIndex(index); v != 0 {
-				return &JsonData{T: GO_VALUE_UINT, V: v, S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_UINT, V: v, S: strconv.IntSize, P: m, pIndex: index}
 			}
 		case []byte:
 			if v := m.GetBytesByIndex(index); v != nil {
-				return &JsonData{T: GO_VALUE_SLICE_BYTE, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_SLICE_BYTE, V: v, S: len(v), P: m, pIndex: index}
 			}
 		case float32, float64:
 			//不带有 . 转为 int 类型
 			v := m.toFloat64(value)
 			if strings.Index(strconv.FormatFloat(v, 'G', -1, 64), ".") != -1 {
-				return &JsonData{T: GO_VALUE_FLOAT64, V: v, S: 8}
+				return &JsonData{T: GO_VALUE_FLOAT64, V: v, S: 8, P: m, pIndex: index}
 			} else {
-				return &JsonData{T: GO_VALUE_INT, V: int(v), S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_INT, V: int(v), S: strconv.IntSize, P: m, pIndex: index}
 			}
 		case bool:
-			return &JsonData{T: GO_VALUE_BOOL, V: m.GetBoolByIndex(index), S: 1}
+			return &JsonData{T: GO_VALUE_BOOL, V: m.GetBoolByIndex(index), S: 1, P: m, pIndex: index}
 		case []any:
 			if index < m.S {
 				if v, ok := m.V.([]any)[index].([]any); ok {
-					return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+					return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v), P: m, pIndex: index}
 				}
 			}
 		case map[string]any:
 			if v, ok := value.(map[string]any); ok {
-				return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v), P: m, pIndex: index}
 			}
 		}
 	}
@@ -430,6 +432,16 @@ func (m *JsonData) Set(key string, value any) {
 	}
 }
 
+func (m *JsonData) modifyParentValue() {
+	if m.P != nil {
+		if m.P.IsArray() {
+			m.P.SetByIndex(m.pIndex, m.V)
+		} else if m.P.IsObject() {
+			m.P.Set(m.pKey, m.V)
+		}
+	}
+}
+
 func (m *JsonData) SetValue(value any) {
 	switch value.(type) {
 	case json.Number:
@@ -437,55 +449,63 @@ func (m *JsonData) SetValue(value any) {
 			m.T = GO_VALUE_INT
 			m.V = v
 			m.S = 8
+			m.modifyParentValue()
 		}
 	case string:
-		if v, ok := value.(string); ok {
-			m.T = GO_VALUE_STRING
-			m.V = v
-			m.S = len(v)
-		}
+		v := value.(string)
+		m.T = GO_VALUE_STRING
+		m.V = v
+		m.S = len(v)
+		m.modifyParentValue()
 	case int, int8, int16, int32, int64:
-		if v := m.toInt(m.V); v != 0 {
-			m.T = GO_VALUE_INT
-			m.V = v
-			m.S = strconv.IntSize
-		}
+		v := m.toInt(value)
+		m.T = GO_VALUE_INT
+		m.V = v
+		m.S = strconv.IntSize
+		m.modifyParentValue()
 	case uint, uint8, uint16, uint32, uint64:
-		if v := m.toUInt(m.V); v != 0 {
-			m.T = GO_VALUE_UINT
-			m.V = v
-			m.S = strconv.IntSize
-		}
+		v := m.toUInt(value)
+		m.T = GO_VALUE_UINT
+		m.V = v
+		m.S = strconv.IntSize
+		m.modifyParentValue()
 	case []byte:
 		m.T = GO_VALUE_SLICE_BYTE
 		m.V = value.([]byte)
 		m.S = len(value.([]byte))
+		m.modifyParentValue()
 	case float32, float64:
 		sv := m.toFloat64(value)
 		m.T = GO_VALUE_FLOAT64
 		m.V = sv
 		m.S = 8
+		m.modifyParentValue()
 	case bool:
 		m.T = GO_VALUE_BOOL
 		m.V = value
 		m.S = 1
+		m.modifyParentValue()
 	case []any:
 		m.T = GO_VALUE_SLICE
 		m.V = value
 		m.S = len(value.([]any))
+		m.modifyParentValue()
 	case map[string]any:
 		m.T = GO_VALUE_MAP
 		m.V = value
 		m.S = len(value.(map[string]any))
+		m.modifyParentValue()
 	default:
 		if v := NewJSONArray(value); v != nil {
 			m.T = v.Type()
 			m.V = v.Data()
 			m.S = v.Size()
+			m.modifyParentValue()
 		} else if v := NewJSONObject(value); v != nil {
 			m.T = v.Type()
 			m.V = v.Data()
 			m.S = v.Size()
+			m.modifyParentValue()
 		}
 	}
 }
@@ -562,7 +582,7 @@ func (m *JsonData) GetBoolByKey(key string) bool {
 func (m *JsonData) GetArrayByKey(key string) JSONArray {
 	if m.IsObject() {
 		if v, ok := m.V.(map[string]any)[key].([]any); ok {
-			return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+			return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v), P: m, pKey: key}
 		}
 	}
 	return nil
@@ -571,7 +591,7 @@ func (m *JsonData) GetArrayByKey(key string) JSONArray {
 func (m *JsonData) GetObjectByKey(key string) JSONObject {
 	if m.IsObject() {
 		if v, ok := m.V.(map[string]any)[key].(map[string]any); ok {
-			return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
+			return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v), P: m, pKey: key}
 		}
 	}
 	return nil
@@ -583,41 +603,41 @@ func (m *JsonData) GetByKey(key string) JSON {
 		switch value.(type) {
 		case json.Number:
 			if v, err := value.(json.Number).Int64(); err == nil {
-				return &JsonData{T: GO_VALUE_INT, V: v, S: 8}
+				return &JsonData{T: GO_VALUE_INT, V: v, S: 8, P: m, pKey: key}
 			}
 		case string:
 			if v, ok := value.(string); ok {
-				return &JsonData{T: GO_VALUE_STRING, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_STRING, V: v, S: len(v), P: m, pKey: key}
 			}
 		case int, int8, int16, int32, int64:
 			if v := m.GetIntByKey(key); v != 0 {
-				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_INT, V: v, S: strconv.IntSize, P: m, pKey: key}
 			}
 		case uint, uint8, uint16, uint32, uint64:
 			if v := m.GetUIntByKey(key); v != 0 {
-				return &JsonData{T: GO_VALUE_UINT, V: v, S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_UINT, V: v, S: strconv.IntSize, P: m, pKey: key}
 			}
 		case []byte:
 			if v := m.GetBytesByKey(key); v != nil {
-				return &JsonData{T: GO_VALUE_SLICE_BYTE, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_SLICE_BYTE, V: v, S: len(v), P: m, pKey: key}
 			}
 		case float32, float64:
 			//不带有 . 转为 int 类型
 			sv := m.toFloat64(value)
 			if strings.Index(strconv.FormatFloat(sv, 'G', -1, 64), ".") != -1 {
-				return &JsonData{T: GO_VALUE_FLOAT64, V: sv, S: 8}
+				return &JsonData{T: GO_VALUE_FLOAT64, V: sv, S: 8, P: m, pKey: key}
 			} else {
-				return &JsonData{T: GO_VALUE_INT, V: int(sv), S: strconv.IntSize}
+				return &JsonData{T: GO_VALUE_INT, V: int(sv), S: strconv.IntSize, P: m, pKey: key}
 			}
 		case bool:
-			return &JsonData{T: GO_VALUE_BOOL, V: m.GetBytesByKey(key), S: 1}
+			return &JsonData{T: GO_VALUE_BOOL, V: m.GetBytesByKey(key), S: 1, P: m, pKey: key}
 		case []any:
 			if v, ok := value.([]any); ok {
-				return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_SLICE, V: v, S: len(v), P: m, pKey: key}
 			}
 		case map[string]any:
 			if v, ok := value.(map[string]any); ok {
-				return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v)}
+				return &JsonData{T: GO_VALUE_MAP, V: v, S: len(v), P: m, pKey: key}
 			}
 		}
 	}
