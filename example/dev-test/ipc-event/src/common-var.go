@@ -2,15 +2,15 @@ package src
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/cef/bind"
 	"time"
 )
 
 var (
-	JSString *cef.JSString
-	JSInt    *cef.JSInteger
-	JSBool   *cef.JSBoolean
-	JSDouble *cef.JSDouble
+	JSString *bind.JSString
+	JSInt    *bind.JSInteger
+	JSBool   *bind.JSBoolean
+	JSDouble *bind.JSDouble
 )
 
 func JSFunc(p1 string) string {

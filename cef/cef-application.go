@@ -65,7 +65,7 @@ func (m *TCEFApplication) Instance() uintptr {
 
 // 启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
-	if m.instance != nullptr {
+	if m.instance != nil {
 		//ipc初始化
 		ipcInit()
 		logger.Debug("application single exe,", common.Args.ProcessType(), "process start")
@@ -77,7 +77,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 
 // StartSubProcess 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() (result bool) {
-	if m.instance != nullptr {
+	if m.instance != nil {
 		//ipc初始化
 		ipcInit()
 		logger.Debug("application multiple exe,", common.Args.ProcessType(), "process start")
@@ -112,9 +112,9 @@ func (m *TCEFApplication) Destroy() {
 }
 
 func (m *TCEFApplication) Free() {
-	if m.instance != nullptr {
+	if m.instance != nil {
 		imports.Proc(internale_CEFApplication_Free).Call()
-		m.instance = nullptr
+		m.instance = nil
 	}
 }
 

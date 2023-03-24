@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // V8 JSValue JSObject 实现
-package cef
+package bind
 
 // 先保留 未添加
 type JSObject struct {

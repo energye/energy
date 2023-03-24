@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // V8 JSValue JSNull 实现
-package cef
+package bind
 
 type JSNull struct {
 	V8Value

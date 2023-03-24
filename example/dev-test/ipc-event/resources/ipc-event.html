@@ -185,8 +185,8 @@
             ipc.emit("testGoToJSEvent")
         }
 
-        ipc.on('notInArgs', function () {
-            msg("notInArgs");
+        ipc.on('notInArgs', function (r1) {
+            msg("notInArgs", r1);
             return 1
         });
 

@@ -8,10 +8,9 @@
 //
 //----------------------------------------
 
-// V8 JSValue JSArray 类型实现
-package cef
+// V8 JSValue JSFunction 类型实现
+package bind
 
-// JSArray 类型 先保留 未添加
-type JSArray struct {
+type JSFunction struct {
 	V8Value
 }

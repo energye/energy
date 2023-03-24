@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // energy 变量相关
-package cef
+package bind
 
 import (
 	"errors"
@@ -26,33 +26,28 @@ var (
 	isMainProcess, isRenderProcess bool                 //
 )
 
-type initBindVariableCallback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)
-
 // VariableBind 变量绑定
 var VariableBind IProvisionalBindStorage
 
 type IProvisionalBindStorage interface {
-	VariableCreateCallback(callback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage))
-	NewString(name, value string) *JSString                  //通用类型 - 默认: string
-	NewInteger(name string, value int32) *JSInteger          //通用类型 - 默认: integer
-	NewDouble(name string, value float64) *JSDouble          //通用类型 - 默认: double
-	NewBoolean(name string, value bool) *JSBoolean           //通用类型 - 默认: boolean
-	NewNull(name string) *JSNull                             //通用类型 - 默认: null
-	NewUndefined(name string) *JSUndefined                   //通用类型 - 默认: undefined
-	NewFunction(name string, fn interface{}) error           //固定类型 - function
-	NewObjects(objects ...interface{})                       //固定类型 - object - struct
-	Bind(name string, bind interface{}) error                //固定类型 - 所有支持类型
-	getBindValue(fullName string) (JSValue, bool)            //
-	binds() map[string]JSValue                               //
-	bindCount() int                                          //
-	callVariableBind(browser *ICefBrowser, frame *ICefFrame) //
-	addBind(fullName string, value JSValue)                  //
+	NewString(name, value string) *JSString         //通用类型 - 默认: string
+	NewInteger(name string, value int32) *JSInteger //通用类型 - 默认: integer
+	NewDouble(name string, value float64) *JSDouble //通用类型 - 默认: double
+	NewBoolean(name string, value bool) *JSBoolean  //通用类型 - 默认: boolean
+	NewNull(name string) *JSNull                    //通用类型 - 默认: null
+	NewUndefined(name string) *JSUndefined          //通用类型 - 默认: undefined
+	NewFunction(name string, fn interface{}) error  //固定类型 - function
+	NewObjects(objects ...interface{})              //固定类型 - object - struct
+	Bind(name string, bind interface{}) error       //固定类型 - 所有支持类型
+	getBindValue(fullName string) (JSValue, bool)   //
+	binds() map[string]JSValue                      //
+	bindCount() int                                 //
+	addBind(fullName string, value JSValue)         //
 }
 
 type variableBind struct {
-	initBindVariableCallback initBindVariableCallback //
-	bindMapping              map[string]JSValue       //所有绑定变量属性或函数集合
-	lock                     sync.Mutex               //add bind, remove bind lock
+	bindMapping map[string]JSValue //所有绑定变量属性或函数集合
+	lock        sync.Mutex         //add bind, remove bind lock
 }
 
 // VT 字段类型
@@ -86,6 +81,30 @@ func init() {
 	fmt.Println("isMainProcess:", isMainProcess, "isRenderProcess:", isRenderProcess)
 }
 
+func (m *VT) ToString() string {
+	gov := common.FuncParamGoTypeStr(m.Gov)
+	jsv := common.FuncParamJsTypeStr(m.Jsv)
+	return fmt.Sprintf("GO=%s JS=%s", gov, jsv)
+}
+
+// IsGoIntAuto 判断Go 所有 int 类型
+func (m *VT) IsGoIntAuto() bool {
+	switch m.Gov {
+	case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64:
+		return true
+	}
+	return false
+}
+
+// IsGoFloatAuto 判断Go 所有 float 类型
+func (m *VT) IsGoFloatAuto() bool {
+	switch m.Gov {
+	case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
+		return true
+	}
+	return false
+}
+
 func (m *variableBind) addBind(fullName string, value JSValue) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
@@ -105,24 +124,6 @@ func (m *variableBind) binds() map[string]JSValue {
 
 func (m *variableBind) bindCount() int {
 	return len(m.bindMapping)
-}
-
-// VariableCreateCallback
-//
-// # Go 和 javaScript 的函数或变量绑定声明初始函数
-//
-// 在 javaScript 中调用Go中的（函数,变量）需要在此回调函数中绑定
-func (m *variableBind) VariableCreateCallback(callback func(browser *ICefBrowser, frame *ICefFrame, bind IProvisionalBindStorage)) {
-	m.initBindVariableCallback = callback
-}
-
-// 调用变量绑定回调函数
-//
-// 在主进程和渲染进程创建时调用
-func (m *variableBind) callVariableBind(browser *ICefBrowser, frame *ICefFrame) {
-	if m.initBindVariableCallback != nil {
-		m.initBindVariableCallback(browser, frame, m)
-	}
 }
 
 // NewString V8Value 通用类型, 默认 string

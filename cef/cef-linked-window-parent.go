@@ -86,7 +86,7 @@ func (m *TCEFLinkedWindowParent) SetOnExit(fn lcl.TNotifyEvent) {
 func (m *TCEFLinkedWindowParent) Free() {
 	if m.IsValid() {
 		imports.Proc(internale_CEFLinkedWindow_Free).Call(m.Instance())
-		m.instance = nullptr
+		m.instance = nil
 	}
 }
 

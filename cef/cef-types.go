@@ -12,8 +12,6 @@
 package cef
 
 import (
-	"fmt"
-	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	. "github.com/energye/energy/types"
 	"github.com/energye/golcl/lcl"
@@ -565,28 +563,4 @@ func (m *TCefKeyEvent) KeyDown() bool {
 
 func (m *TCefKeyEvent) KeyUp() bool {
 	return m.Kind == KEYEVENT_KEYUP
-}
-
-func (m *VT) ToString() string {
-	gov := common.FuncParamGoTypeStr(m.Gov)
-	jsv := common.FuncParamJsTypeStr(m.Jsv)
-	return fmt.Sprintf("GO=%s JS=%s", gov, jsv)
-}
-
-// IsGoIntAuto 判断Go 所有 int 类型
-func (m *VT) IsGoIntAuto() bool {
-	switch m.Gov {
-	case GO_VALUE_INT, GO_VALUE_INT8, GO_VALUE_INT16, GO_VALUE_INT32, GO_VALUE_INT64, GO_VALUE_UINT, GO_VALUE_UINT8, GO_VALUE_UINT16, GO_VALUE_UINT32, GO_VALUE_UINT64:
-		return true
-	}
-	return false
-}
-
-// IsGoFloatAuto 判断Go 所有 float 类型
-func (m *VT) IsGoFloatAuto() bool {
-	switch m.Gov {
-	case GO_VALUE_FLOAT32, GO_VALUE_FLOAT64:
-		return true
-	}
-	return false
 }

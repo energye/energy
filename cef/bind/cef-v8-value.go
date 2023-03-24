@@ -15,7 +15,7 @@
 // # Go中针对几种基本类型增加了可变类型实现
 //
 // 绑定 定义的普通函数 前缀-默认是结构名称
-package cef
+package bind
 
 import (
 	"errors"
@@ -29,6 +29,46 @@ import (
 	"unsafe"
 )
 
+// JSValue
+// GO和JS变量类型接口
+type JSValue interface {
+	SetAnyValue(value interface{}) error //多类型值设置
+	IntegerValue() (int32, error)        //返回 Integer 类型值, 成功 error = nil
+	DoubleValue() (float64, error)       //返回 Double 类型值, 成功 error = nil
+	StringValue() (string, error)        //返回 String 类型值, 成功 error = nil
+	BooleanValue() (bool, error)         //返回 Boolean 类型值, 成功 error = nil
+	IsInteger() bool                     //是否 Integer
+	IsDouble() bool                      //是否 Double
+	IsString() bool                      //是否 String
+	IsBool() bool                        //是否 Bool
+	IsArray() bool                       //是否 JSONArray
+	IsObject() bool                      //是否 Object
+	IsFunction() bool                    //是否 Function
+	IsNull() bool                        //是否 Null
+	IsUndefined() bool                   //是否 Undefined
+	AsV8Value() *V8Value                 //转换为 V8Value
+	AsInteger() *JSInteger               //转换为 Integer 失败返回 nil
+	AsDouble() *JSDouble                 //转换为 Double 失败返回 nil
+	AsString() *JSString                 //转换为 String 失败返回 nil
+	AsBoolean() *JSBoolean               //转换为 Boolean 失败返回 nil
+	AsArray() *JSArray                   //转换为 JSONArray 失败返回 nil
+	AsFunction() *JSFunction             //转换为 Function 失败返回 nil
+	Instance() uintptr                   //当前变量指针
+	Name() string                        //当前变量绑定的名称
+	ValueType() *VT                      //变量类型
+	Bytes() []byte                       //变量值转换为字节
+	ValueToPtr() (unsafe.Pointer, error) //值转为指针
+	invoke(inParams []reflect.Value) (outParams []reflect.Value, success bool)
+	setInstance(instance unsafe.Pointer)
+	setName(name string)
+	getValue() interface{}
+	setValue(value interface{})
+	getFuncInfo() *funcInfo
+	setEventId(eventId uintptr)
+	getEventId() uintptr
+	isCommon() bool
+	setThat(that JSValue)
+}
 type valueBindInfo struct {
 	Name           uintptr //string 字段名称
 	EventId        uintptr //

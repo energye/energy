@@ -9,7 +9,7 @@
 //----------------------------------------
 
 // V8 JSValue JSUndefined 实现
-package cef
+package bind
 
 type JSUndefined struct {
 	V8Value
