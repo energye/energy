@@ -26,22 +26,6 @@ import (
 )
 
 func AppBrowserInit() {
-	/*
-		通用类型变量和对象类型变量创建的回调函数
-		该回调函数-在主进程和渲染进程创建时调用
-	*/
-	//ar integer cef.JSValue
-	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
-		ObjDemoVar = &ObjDemo{SubObjDemoField: &SubObjDemo{}}
-		fmt.Println("GO变量和函数绑定回调", common.Args.ProcessType())
-		bind.NewString("stringv", "这是一个字符串变量")
-		bind.NewInteger("integerv", 1211111)
-		bind.NewDouble("doublev", 11.0505)
-		bind.NewBoolean("booleanv", true)
-		bind.NewNull("nullv")
-		bind.NewUndefined("undefinedv")
-		bind.NewObjects(ObjDemoVar)
-	})
 
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)

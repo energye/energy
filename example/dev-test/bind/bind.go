@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/consts"
-	"github.com/energye/energy/example/dev-test/bind/src"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -36,49 +35,7 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	//变量创建回调-这个函数在主进程(browser)和子进程(render)中执行
-	//变量的值绑定到主进程
-	cef.VariableBind.VariableCreateCallback(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, bind cef.IProvisionalBindStorage) {
-		//初始化要绑定的变量
-		//结构类型
-		//src.JSStructVarDemo = &src.StructVarDemo{}
-		//src.JSStructVarDemo.StringField = "初始的字符串值"
-		//bind.NewObjects(src.JSStructVarDemo)
-		////通用类型
-		//src.JSString = bind.NewString("JSString", "初始的字符串值")
-		//src.JSInt = bind.NewInteger("JSInt", 0)
-		//src.JSBool = bind.NewBoolean("JSBool", false)
-		src.JSDouble = bind.NewDouble("JSDouble", 0.0)
-		bind.NewFunction("JSFunc", src.JSFunc)
-		//cef.VariableBind.Bind("varStr", &varStr)
-		bind.NewObjects()
-		cef.VariableBind.Bind("TestFunc", TestFunc)
-	})
 	fmt.Println("main-ProcessType:", common.Args.ProcessType())
-	//fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc), "ProcessType", common.Args.ProcessType(), common.Args.IsMain() || common.Args.IsRender())
-
-	//fmt.Println("TestFunc", cef.VariableBind.Bind("TestFunc", TestFunc))
-	//var err error
-	//err = cef.VariableBind.Bind("bindStr", "直接传字符串")
-	//fmt.Println("bindStr:", err)
-	//err = cef.VariableBind.Bind("varStr", &varStr)
-	//fmt.Println("varStr:", err)
-	//err = cef.VariableBind.Bind("varInt", &varInt)
-	//fmt.Println("varInt:", err)
-	//err = cef.VariableBind.Bind("varInt8", &varInt8)
-	//fmt.Println("varInt8:", err)
-	//err = cef.VariableBind.Bind("varFloat64", &varFloat64)
-	//fmt.Println("varFloat64:", err)
-	//err = cef.VariableBind.Bind("varFloat32", &varFloat32)
-	//fmt.Println("varFloat32:", err)
-	//err = cef.VariableBind.Bind("varBool", &varBool)
-	//fmt.Println("varBool:", err)
-
-	//Test(&varStr)
-	//fmt.Println(varStr)
-	//varStr = "asdfadsf"
-	//Test(&varStr)
-	//fmt.Println(varStr)
 
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		fmt.Println("iCefV8ContextPtr", context, "Global.IsValid:", context.Global().IsValid(), context.Global().IsUndefined(), context.Global().GetDateValue())

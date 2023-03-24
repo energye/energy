@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>bind-event</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+
+
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">bind</h3></p>
+<p><a target="_blank" href="bind-event.html">open</a></p>
+<p>
+    自动执行时间/毫秒: <input id="time" value="0">
+    <br>
+    <button onclick="testEmitName()">testEmitName</button>
+    <button onclick="autoIpcEmit()">自动-testEmitName</button>
+
+</p>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+
+    msg("ipc-event: 页面加载完成...");
+</script>
+</html>
