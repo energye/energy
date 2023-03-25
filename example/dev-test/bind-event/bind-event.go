@@ -42,6 +42,7 @@ func main() {
 	fmt.Println("nullKey", nullKey.Value())
 	undefinedKey := bind.NewUndefined("undefinedKey")
 	fmt.Println("undefinedKey", undefinedKey.Value())
+	bind.Bind("", "")
 
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {

@@ -10,12 +10,18 @@
 
 package bind
 
+import "sync"
+
 var bind = &v8bind{fieldCollection: make(map[string]JSValue)}
 
 type v8bind struct {
 	fieldCollection map[string]JSValue
+	lock            sync.Mutex
 }
 
-func (m *v8bind) Add(name string, value JSValue) {
+// set 添加或修改
+func (m *v8bind) set(name string, value JSValue) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
 	m.fieldCollection[name] = value
 }
