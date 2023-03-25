@@ -11,9 +11,12 @@
 // V8 JSValue 动态类型实现
 //
 // 动态类型是可变类型，对于JS语言可以动态赋任意类型的值
+//
+// 字段值仅主进程有效, 非主进程字段值为默认值
 package bind
 
 import (
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 )
@@ -21,6 +24,10 @@ import (
 const (
 	null      = "null"
 	undefined = "Undefined"
+)
+
+var (
+	isMainProcess = false
 )
 
 // JSValue
@@ -57,6 +64,10 @@ type V8Value struct {
 	value json.JSON
 }
 
+func init() {
+	isMainProcess = common.Args.IsMain()
+}
+
 // Bytes 值转换为字节
 func (m *V8Value) Bytes() []byte {
 	return m.value.Bytes()
@@ -64,7 +75,9 @@ func (m *V8Value) Bytes() []byte {
 
 // SetValue 设置值
 func (m *V8Value) SetValue(value any) {
-
+	if isMainProcess {
+		m.value.SetValue(value)
+	}
 }
 
 func (m *V8Value) Name() string {
@@ -232,6 +245,9 @@ func NewInteger(name string, value int) JSInteger {
 	if name == "" {
 		return nil
 	}
+	if !isMainProcess {
+		value = 0
+	}
 	v := new(jsInteger)
 	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: value, S: 4}
@@ -243,6 +259,9 @@ func NewInteger(name string, value int) JSInteger {
 func NewString(name, value string) JSString {
 	if name == "" {
 		return nil
+	}
+	if !isMainProcess {
+		value = ""
 	}
 	v := new(jsString)
 	v.name = name
@@ -256,6 +275,9 @@ func NewDouble(name string, value float64) JSDouble {
 	if name == "" {
 		return nil
 	}
+	if !isMainProcess {
+		value = 0
+	}
 	v := new(jsDouble)
 	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: value, S: 8}
@@ -267,6 +289,9 @@ func NewDouble(name string, value float64) JSDouble {
 func NewBoolean(name string, value bool) JSBoolean {
 	if name == "" {
 		return nil
+	}
+	if !isMainProcess {
+		value = false
 	}
 	v := new(jsBoolean)
 	v.name = name
@@ -304,6 +329,9 @@ func NewFunction(name string, fn any) JSFunction {
 	if name == "" {
 		return nil
 	}
+	if !isMainProcess {
+		fn = nil
+	}
 	v := new(jsFunction)
 	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: fn, S: 0}
@@ -315,6 +343,9 @@ func NewFunction(name string, fn any) JSFunction {
 func NewObject(name string, object any) JSObject {
 	if name == "" {
 		return nil
+	}
+	if !isMainProcess {
+		object = nil
 	}
 	if vv := json.NewJSONObject(object); vv != nil {
 		v := new(jsObject)
@@ -330,6 +361,9 @@ func NewObject(name string, object any) JSObject {
 func NewArray(name string, array any) JSArray {
 	if name == "" {
 		return nil
+	}
+	if !isMainProcess {
+		array = nil
 	}
 	if vv := json.NewJSONArray(array); vv != nil {
 		v := new(jsArray)

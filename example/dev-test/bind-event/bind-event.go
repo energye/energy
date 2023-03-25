@@ -31,7 +31,9 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 
 	stringKey := bind.NewString("stringKey", "字符串值")
-	fmt.Println("stringKey", stringKey)
+	fmt.Println("stringKey", stringKey, stringKey.IsString())
+	stringKey.SetValue(9999)
+	fmt.Println("stringKey", stringKey, stringKey.IsString(), stringKey.IsInteger())
 	integerKey := bind.NewInteger("integerKey", 1000)
 	fmt.Println("integerKey", integerKey)
 	doubleKey := bind.NewDouble("doubleKey", 1000.001)
@@ -41,8 +43,7 @@ func main() {
 	nullKey := bind.NewNull("nullKey")
 	fmt.Println("nullKey", nullKey.Value())
 	undefinedKey := bind.NewUndefined("undefinedKey")
-	fmt.Println("undefinedKey", undefinedKey.Value())
-	bind.Bind("", "")
+	fmt.Println("undefinedKey", undefinedKey.Value(), undefinedKey.IsUndefined())
 
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
