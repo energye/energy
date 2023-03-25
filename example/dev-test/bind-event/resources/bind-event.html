@@ -9,8 +9,45 @@
         }
     </style>
     <script type="application/javascript">
+        let testObjectDefine = {};
+        (function () {
+            Object.defineProperties(testObjectDefine, {
+                key1: {
+                    get() {
+                        msg('key1 get');
+                        return 'key1Value';
+                    },
+                    set(v) {
+                        msg('key1 set', v);
+                    }
+                },
+                key2: {
+                    get() {
+                        msg('key2 get');
+                        return 'key2Value';
+                    },
+                    set(v) {
+                        msg('key2 set', v);
+                    }
+                }
+            });
 
+            Object.defineProperty(testObjectDefine, "myparam", {
+                get() {
+                    msg('get myparam');
+                    return 'myparamValue';
+                },
+                set(v) {
+                    msg('set myparam');
+                }
+            });
+        })();
 
+        function testDefine() {
+            msg(testObjectDefine.myparam)
+            msg(testObjectDefine.key1)
+            msg(testObjectDefine.key2)
+        }
     </script>
 </head>
 <body style="margin: 0px;padding: 0px;">
@@ -20,8 +57,7 @@
 <p>
     自动执行时间/毫秒: <input id="time" value="0">
     <br>
-    <button onclick="testEmitName()">testEmitName</button>
-    <button onclick="autoIpcEmit()">自动-testEmitName</button>
+    <button onclick="testDefine()">testDefine</button>
 
 </p>
 <p id="msgHtml"></p>

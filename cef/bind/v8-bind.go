@@ -8,23 +8,14 @@
 //
 //----------------------------------------
 
-// V8 JSValue JSFunction 类型实现
 package bind
 
-type JSFunction interface {
-	JSValue
-	AsFunction() JSFunction
-	Value() JSFunction
+var bind = &v8bind{fieldCollection: make(map[string]JSValue)}
+
+type v8bind struct {
+	fieldCollection map[string]JSValue
 }
 
-type jsFunction struct {
-	V8Value
-}
-
-func (m *jsFunction) AsFunction() JSFunction {
-	return m
-}
-
-func (m *jsFunction) Value() JSFunction {
-	return nil
+func (m *v8bind) Add(name string, value JSValue) {
+	m.fieldCollection[name] = value
 }

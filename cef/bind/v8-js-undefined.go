@@ -11,10 +11,20 @@
 // V8 JSValue JSUndefined 实现
 package bind
 
-type JSUndefined struct {
+type JSUndefined interface {
+	JSValue
+	AsUndefined() JSUndefined
+	Value() string
+}
+
+type jsUndefined struct {
 	V8Value
 }
 
-func (m *JSUndefined) ToString() string {
-	return "undefined"
+func (m *jsUndefined) AsUndefined() JSUndefined {
+	return m
+}
+
+func (m *jsUndefined) Value() string {
+	return m.value.String()
 }

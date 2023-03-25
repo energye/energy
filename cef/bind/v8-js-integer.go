@@ -11,17 +11,20 @@
 // V8 JSValue JSInteger 类型实现
 package bind
 
-type JSInteger struct {
+type JSInteger interface {
+	JSValue
+	AsInteger() JSInteger
+	Value() int32
+}
+
+type jsInteger struct {
 	V8Value
 }
 
-func (m *JSInteger) AsInteger() *JSInteger {
+func (m *jsInteger) AsInteger() JSInteger {
 	return m
 }
 
-func (m *JSInteger) Value() int32 {
-	return m.IntegerValue()
-}
-func (m *JSInteger) SetValue(value int32) {
-
+func (m *jsInteger) Value() int32 {
+	return int32(m.value.Int())
 }

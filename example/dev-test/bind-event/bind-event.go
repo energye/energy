@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
+	"github.com/energye/energy/cef/bind"
 	"github.com/energye/energy/common/assetserve"
 	//_ "net/http/pprof"
 )
@@ -28,6 +29,19 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/bind-event.html"
 	cef.BrowserWindow.Config.Title = "Energy - bind-event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+
+	stringKey := bind.NewString("stringKey", "字符串值")
+	fmt.Println("stringKey", stringKey)
+	integerKey := bind.NewInteger("integerKey", 1000)
+	fmt.Println("integerKey", integerKey)
+	doubleKey := bind.NewDouble("doubleKey", 1000.001)
+	fmt.Println("doubleKey", doubleKey)
+	booleanKey := bind.NewBoolean("booleanKey", true)
+	fmt.Println("booleanKey", booleanKey.Value())
+	nullKey := bind.NewNull("nullKey")
+	fmt.Println("nullKey", nullKey.Value())
+	undefinedKey := bind.NewUndefined("undefinedKey")
+	fmt.Println("undefinedKey", undefinedKey.Value())
 
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {

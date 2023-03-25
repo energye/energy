@@ -11,18 +11,20 @@
 // V8 JSValue JSString 实现
 package bind
 
-type JSString struct {
+type JSString interface {
+	JSValue
+	AsString() JSString
+	Value() string
+}
+
+type jsString struct {
 	V8Value
 }
 
-func (m *JSString) AsString() *JSString {
+func (m *jsString) AsString() JSString {
 	return m
 }
 
-func (m *JSString) Value() string {
-	return m.StringValue()
-}
-
-func (m *JSString) SetValue(value string) {
-
+func (m *jsString) Value() string {
+	return m.value.String()
 }

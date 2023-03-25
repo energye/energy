@@ -11,7 +11,23 @@
 // V8 JSValue JSArray 类型实现
 package bind
 
+import "github.com/energye/energy/pkgs/json"
+
+type JSArray interface {
+	JSValue
+	AsArray() JSArray
+	Value() json.JSONArray
+}
+
 // JSArray 类型 先保留 未添加
-type JSArray struct {
+type jsArray struct {
 	V8Value
+}
+
+func (m *jsArray) AsArray() JSArray {
+	return m
+}
+
+func (m *jsArray) Value() json.JSONArray {
+	return m.value.JSONArray()
 }

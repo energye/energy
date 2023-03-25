@@ -11,18 +11,20 @@
 // V8 JSValue JSDouble 类型实现
 package bind
 
-type JSDouble struct {
+type JSDouble interface {
+	JSValue
+	AsDouble() JSDouble
+	Value() float64
+}
+
+type jsDouble struct {
 	V8Value
 }
 
-func (m *JSDouble) AsDouble() *JSDouble {
+func (m *jsDouble) AsDouble() JSDouble {
 	return m
 }
 
-func (m *JSDouble) Value() float64 {
-	return m.DoubleValue()
-}
-
-func (m *JSDouble) SetValue(value float64) {
-
+func (m *jsDouble) Value() float64 {
+	return m.value.Float()
 }

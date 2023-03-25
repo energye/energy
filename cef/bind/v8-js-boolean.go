@@ -11,17 +11,20 @@
 // V8 JSValue JSBoolean 类型实现
 package bind
 
-type JSBoolean struct {
+type JSBoolean interface {
+	JSValue
+	AsBoolean() JSBoolean
+	Value() bool
+}
+
+type jsBoolean struct {
 	V8Value
 }
 
-func (m *JSBoolean) AsBoolean() *JSBoolean {
+func (m *jsBoolean) AsBoolean() JSBoolean {
 	return m
 }
 
-func (m *JSBoolean) Value() bool {
-	return m.BooleanValue()
-}
-
-func (m *JSBoolean) SetValue(value bool) {
+func (m *jsBoolean) Value() bool {
+	return m.value.Bool()
 }

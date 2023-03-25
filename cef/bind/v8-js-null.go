@@ -11,10 +11,20 @@
 // V8 JSValue JSNull 实现
 package bind
 
-type JSNull struct {
+type JSNull interface {
+	JSValue
+	AsNull() JSNull
+	Value() string
+}
+
+type jsNull struct {
 	V8Value
 }
 
-func (m *JSNull) ToString() string {
-	return "null"
+func (m *jsNull) AsNull() JSNull {
+	return m
+}
+
+func (m *jsNull) Value() string {
+	return m.value.String()
 }
