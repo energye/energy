@@ -61,3 +61,11 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 		}
 	})
 }
+
+// v8init v8初始化
+func v8init() {
+	//ipc初始化
+	ipcInit()
+	//bind初始化
+	bindInit()
+}

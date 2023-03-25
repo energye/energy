@@ -66,8 +66,7 @@ func (m *TCEFApplication) Instance() uintptr {
 // 启动主进程
 func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nil {
-		//ipc初始化
-		ipcInit()
+		v8init()
 		logger.Debug("application single exe,", common.Args.ProcessType(), "process start")
 		r1, _, _ := imports.Proc(internale_CEFStartMainProcess).Call(m.Instance())
 		return api.GoBool(r1)
@@ -78,8 +77,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 // StartSubProcess 启动子进程, 如果指定了子进程执行程序, 将执行指定的子进程程序
 func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nil {
-		//ipc初始化
-		ipcInit()
+		v8init()
 		logger.Debug("application multiple exe,", common.Args.ProcessType(), "process start")
 		r1, _, _ := imports.Proc(internale_CEFStartSubProcess).Call(m.Instance())
 		result = api.GoBool(r1)

@@ -14,7 +14,7 @@ package cef
 import "github.com/energye/energy/common"
 
 const (
-	internalBind   = "bind"
+	internalBind   = "energy"
 	internalV8Bind = "v8"
 )
 

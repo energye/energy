@@ -110,8 +110,6 @@ func ipcInit() {
 			}
 		}
 	}
-	//bind初始化
-	bindInit()
 }
 
 // addCallback

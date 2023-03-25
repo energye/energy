@@ -309,7 +309,8 @@
         function testEmitSync() {
             clearMsg()
             let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
-            msg("GetMyParam", bind.myparam);
+            msg("GetMyParam", energy.myparam, energy.myparam1);
+            energy.myparam1="aaaa"
             msg("testEmitSync", result);
             ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result) {
                 msg("testEmitSync-callback", result);
