@@ -14,12 +14,14 @@ import (
 	"github.com/energye/energy/pkgs/json"
 )
 
+// IReplay IPC 回复
 type IReplay interface {
 	Result() []interface{}
 	SetResult(data []interface{})
 	Clear()
 }
 
+// Replay 回复内容
 type Replay struct {
 	data []interface{}
 }
@@ -41,6 +43,7 @@ type Context struct {
 	replay    IReplay
 }
 
+// NewContext 创建IPC消息接收上下文
 func NewContext(browserId int32, frameId int64, isReplay bool, argument json.JSONArray) IContext {
 	ctx := &Context{
 		browserId: browserId,
