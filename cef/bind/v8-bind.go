@@ -25,3 +25,7 @@ func (m *v8bind) set(name string, value JSValue) {
 	defer m.lock.Unlock()
 	m.fieldCollection[name] = value
 }
+
+func GetBindCallback(fn func(binds map[string]JSValue)) {
+	fn(bind.fieldCollection)
+}
