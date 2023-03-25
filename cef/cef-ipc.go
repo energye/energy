@@ -12,6 +12,7 @@ package cef
 
 import (
 	"github.com/energye/energy/common"
+	"github.com/energye/energy/pkgs/json"
 	"sync"
 )
 
@@ -41,6 +42,34 @@ const (
 	ipc_browser_id   = "browserId"    //
 	ipc_argumentList = "argumentList" //
 )
+
+// NewIPCProcessMessage 创建IPC进程消息
+//
+// 参数:
+//  messageId: 消息ID
+//	browserId: 消息所属浏览器ID, 非必传
+//		 name: 消息名称, 非必传
+//	eventName: 事件名称, 非必传
+//		 data: JSONArray类型的[]byte, 非必传
+func NewIPCProcessMessage(messageId, browserId int32, name, eventName string, data []byte) json.JSONObject {
+	message := json.NewJSONObject(nil)
+	message.Set(ipc_id, messageId)
+	if browserId > 0 {
+		message.Set(ipc_browser_id, browserId)
+	}
+	if name != "" {
+		message.Set(ipc_name, name)
+	}
+	if eventName != "" {
+		message.Set(ipc_event, eventName)
+	}
+	if data != nil {
+		message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
+	} else {
+		message.Set(ipc_argumentList, nil)
+	}
+	return message
+}
 
 // js execute go 返回类型
 type result_type int8

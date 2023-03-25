@@ -20,7 +20,7 @@ const (
 
 // isInternalBind 内部使用字段不能使用
 func isInternalBind(name string) bool {
-	return name == internalBind || name == internalV8Bind
+	return name == internalBind
 }
 
 // bindInit 初始化

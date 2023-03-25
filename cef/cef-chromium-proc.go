@@ -756,9 +756,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.
 		}
 	}
 	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
-		message := json.NewJSONObject(nil)
-		message.Set(ipc_id, messageId)
-		message.Set(ipc_event, eventName)
+		message := NewIPCProcessMessage(messageId, 0, "", eventName, nil)
 		if len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
 			for _, result := range data {

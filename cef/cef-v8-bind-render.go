@@ -50,7 +50,7 @@ func (m *bindRenderProcess) makeBind() {
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 		fmt.Println("v8Handler.Execute", name, renderIPC)
 		if renderIPC != nil {
-
+			//renderIPC.ipc.Send()
 		}
 		return false
 	})

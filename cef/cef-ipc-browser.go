@@ -173,10 +173,7 @@ func (m *ipcBrowserProcess) initBrowserIPC() {
 // jsExecuteGoSyncMethodMessage JS执行Go事件 - 同步消息处理
 func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameId int64, emitName string, argumentList json.JSONArray) {
 	var ipcContext = m.jsExecuteGoMethod(browserId, frameId, emitName, argumentList)
-	message := json.NewJSONObject(nil)
-	message.Set(ipc_id, 1)
-	message.Set(ipc_name, internalIPCJSExecuteGoSyncEventReplay)
-	message.Set(ipc_argumentList, nil)
+	message := NewIPCProcessMessage(1, 0, internalIPCJSExecuteGoSyncEventReplay, "", nil)
 	// 同步回调函数处理
 	if ipcContext != nil {
 		//处理回复消息

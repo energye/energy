@@ -192,8 +192,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			m.v8Context.Exit()
 		}
 		if messageId != 0 { //messageId != 0 callback func
-			callbackMessage := json.NewJSONObject(nil)
-			callbackMessage.Set(ipc_id, messageId)
+			callbackMessage := NewIPCProcessMessage(messageId, 0, "", "", nil)
 			if callbackArgsBytes != nil {
 				callbackMessage.Set(ipc_argumentList, json.NewJSONArray(callbackArgsBytes).Data())
 			} else {
@@ -353,16 +352,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data []byte) {
 	//延迟等待接收结果，默认5秒
 	m.syncChan.delayWaiting()
-	message := json.NewJSONObject(nil)
-	message.Set(ipc_id, messageId)
-	message.Set(ipc_event, emitName)
-	message.Set(ipc_name, internalIPCJSExecuteGoSyncEvent)
-	message.Set(ipc_browser_id, renderIPC.browserId)
-	if data != nil {
-		message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
-	} else {
-		message.Set(ipc_argumentList, nil)
-	}
+	message := NewIPCProcessMessage(messageId, renderIPC.browserId, internalIPCJSExecuteGoSyncEvent, emitName, data)
 	//发送数据到主进程
 	renderIPC.ipc.Send(message.Bytes())
 	message.Free()
@@ -381,14 +371,7 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 // multiProcessAsync 多进程消息 - 异步
 func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, emitName string, data []byte) bool {
 	if frame != nil {
-		message := json.NewJSONObject(nil)
-		message.Set(ipc_id, messageId)
-		message.Set(ipc_event, emitName)
-		if data != nil {
-			message.Set(ipc_argumentList, json.NewJSONArray(data).Data())
-		} else {
-			message.Set(ipc_argumentList, nil)
-		}
+		message := NewIPCProcessMessage(messageId, 0, "", emitName, data)
 		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
 		message.Free()
 		return true

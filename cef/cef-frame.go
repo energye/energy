@@ -167,9 +167,7 @@ func (m *ICefFrame) EmitRender(messageId int32, eventName string, target ipc.ITa
 	if !m.IsValid() {
 		return
 	}
-	message := json.NewJSONObject(nil)
-	message.Set(ipc_id, messageId)
-	message.Set(ipc_event, eventName)
+	message := NewIPCProcessMessage(messageId, 0, "", eventName, nil)
 	if len(data) > 0 {
 		argumentJSONArray := json.NewJSONArray(nil)
 		for _, result := range data {
