@@ -755,7 +755,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.
 			return
 		}
 	}
-	if target == nil || target.GetBrowserId() <= 0 || target.GetFrameId() <= 0 {
+	if target == nil || target.BrowserId() <= 0 || target.FrameId() <= 0 {
 		message := NewIPCProcessMessage(messageId, 0, "", eventName, nil)
 		if len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
@@ -773,9 +773,9 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target ipc.
 		}
 		m.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEvent, PID_RENDER, message)
 	} else {
-		browse := m.BrowserById(target.GetBrowserId())
+		browse := m.BrowserById(target.BrowserId())
 		if browse.IsValid() {
-			frame := browse.GetFrameById(target.GetFrameId())
+			frame := browse.GetFrameById(target.FrameId())
 			if frame.IsValid() {
 				frame.EmitRender(messageId, eventName, target, data)
 			}

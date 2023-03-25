@@ -15,30 +15,30 @@ package ipc
 //
 // ipc.NewTarget() *Target
 type ITarget interface {
-	GetBrowserId() int32
-	GetFrameId() int64
+	BrowserId() int32
+	FrameId() int64
 }
 
 // Target Go IPC 事件的接收目标
 type Target struct {
-	BrowseId int32
-	FrameId  int64
+	browseId int32
+	frameId  int64
 }
 
 // NewTarget 创建一个新的Emit目标
-func NewTarget(browserId int32, frameId int64) *Target {
+func NewTarget(browserId int32, frameId int64) ITarget {
 	return &Target{
-		BrowseId: browserId,
-		FrameId:  frameId,
+		browseId: browserId,
+		frameId:  frameId,
 	}
 }
 
-// GetBrowserId 返回BrowserId
-func (m *Target) GetBrowserId() int32 {
-	return m.BrowseId
+// BrowserId 返回BrowserId
+func (m *Target) BrowserId() int32 {
+	return m.browseId
 }
 
-// GetFrameId 返回FrameId
-func (m *Target) GetFrameId() int64 {
-	return m.FrameId
+// FrameId 返回FrameId
+func (m *Target) FrameId() int64 {
+	return m.frameId
 }

@@ -32,7 +32,7 @@ func (m *bindRenderProcess) initBindIPC() {
 		return
 	}
 	m.isInitBindIPC = true
-	bind.GetBindCallback(func(binds map[string]bind.JSValue) {
+	bind.GetBinds(func(binds map[string]bind.JSValue) {
 		fmt.Println("binds", len(binds))
 	})
 	renderIPC.addCallback(func(channelId int64, data json.JSON) bool {

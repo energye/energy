@@ -10,7 +10,9 @@
 
 package bind
 
-import "sync"
+import (
+	"sync"
+)
 
 var bind = &v8bind{fieldCollection: make(map[string]JSValue)}
 
@@ -19,13 +21,17 @@ type v8bind struct {
 	lock            sync.Mutex
 }
 
-// set 添加或修改
-func (m *v8bind) set(name string, value JSValue) {
+// Set 添加或修改
+func (m *v8bind) Set(name string, value JSValue) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	m.fieldCollection[name] = value
 }
 
-func GetBindCallback(fn func(binds map[string]JSValue)) {
+func (m *v8bind) Binds() map[string]JSValue {
+	return m.fieldCollection
+}
+
+func GetBinds(fn func(binds map[string]JSValue)) {
 	fn(bind.fieldCollection)
 }

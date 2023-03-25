@@ -42,13 +42,13 @@ func (m *ICefBrowser) IsValid() bool {
 	return m.instance != nil
 }
 
-// GetBrowserId 获取浏览器ID 每一个窗口唯一ID
-func (m *ICefBrowser) GetBrowserId() int32 {
+// BrowserId 获取浏览器ID 每一个窗口唯一ID
+func (m *ICefBrowser) BrowserId() int32 {
 	return m.Identifier()
 }
 
-// GetFrameId 获取FrameID 一个窗口中可以有多Frame
-func (m *ICefBrowser) GetFrameId() int64 {
+// FrameId 获取FrameID 一个窗口中可以有多Frame
+func (m *ICefBrowser) FrameId() int64 {
 	return m.MainFrame().Identifier()
 }
 
