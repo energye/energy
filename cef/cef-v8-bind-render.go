@@ -52,7 +52,7 @@ func (m *bindRenderProcess) initBindIPC() {
 func (m *bindRenderProcess) makeBind() {
 	m.handler = V8HandlerRef.New()
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		fmt.Println("v8Handler.Execute", name, renderIPC)
+		fmt.Println("v8Handler.Execute", name, renderIPC, arguments.Size(), arguments.Get(0).GetIntValue())
 		if renderIPC != nil {
 			//renderIPC.ipc.Send()
 		}
@@ -84,12 +84,12 @@ func (m *bindRenderProcess) makeBind() {
 {{range $i, $v := $.fields}}
 Object.defineProperty({{$.bind}}, "{{$v}}", {
 	get(){
-		native function {{getter ($v)}}();
-		return {{getter ($v) }}();
+		native function {{getter ($v)}}(v);
+		return {{getter ($v) }}(33333);
 	},
 	set(v){
 		native function {{setter ($v)}}();
-		{{setter ($v) }}(v);
+		{{setter ($v) }}(33333,v);
 	}
 });
 {{end}}`

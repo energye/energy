@@ -13,8 +13,9 @@
         (function () {
             Object.defineProperties(testObjectDefine, {
                 key1: {
+                    id: 333333,
                     get() {
-                        msg('key1 get');
+                        msg('key1 get',this.id);
                         return 'key1Value';
                     },
                     set(v) {
@@ -22,12 +23,26 @@
                     }
                 },
                 key2: {
+                    id: 111111,
                     get() {
-                        msg('key2 get');
+                        msg('key2 get',this.id);
                         return 'key2Value';
                     },
                     set(v) {
                         msg('key2 set', v);
+                    }
+                },
+                key3: {
+                    id: 2222222,
+                    get() {
+                        msg('key3 get',this.id);
+                        return function () {
+                            msg('function')
+                            return "函数返回值"
+                        };
+                    },
+                    set(v) {
+                        msg('key3 set', v);
                     }
                 }
             });
@@ -44,9 +59,10 @@
         })();
 
         function testDefine() {
-            msg(testObjectDefine.myparam)
+            msg(energy.myparam)
             msg(testObjectDefine.key1)
             msg(testObjectDefine.key2)
+            msg(testObjectDefine.key3())
         }
     </script>
 </head>

@@ -50,7 +50,7 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 
 - [![golcl](https://img.shields.io/badge/Golcl-green)](https://github.com/energye/golcl)
 - [![golcl](https://img.shields.io/badge/Liblcl-green)](https://github.com/energye/liblcl)
-- [![CEFDelphi](https://img.shields.io/badge/CEFDelphi4-green)](https://github.com/salvadordf/CEF4Delphi)
+- [![CEF4Delphi](https://img.shields.io/badge/CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 - [![CEF](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)-green)](https://bitbucket.org/chromiumembedded/cef)
 
 ### [Development environment](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
