@@ -56,10 +56,12 @@ type JSValue interface {
 	AsUndefined() JSUndefined //转换为 Undefined 失败返回 nil
 	AsFunction() JSFunction   //转换为 Function 失败返回 nil
 	AsV8Value() JSValue       //转换为 JSValue
+	setId(id uintptr)
 }
 
 // V8Value 绑定到JS的字段
 type V8Value struct {
+	id    uintptr
 	name  string
 	value json.JSON
 }
@@ -78,6 +80,10 @@ func (m *V8Value) SetValue(value any) {
 	if isMainProcess {
 		m.value.SetValue(value)
 	}
+}
+
+func (m *V8Value) setId(id uintptr) {
+	m.id = id
 }
 
 func (m *V8Value) Name() string {
