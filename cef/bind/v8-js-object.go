@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	"reflect"
-	"strings"
 	"unsafe"
 )
 
@@ -30,7 +29,6 @@ type JSObject interface {
 
 type jsObject struct {
 	V8Value
-	pName string
 }
 
 func (m *jsObject) AsObject() JSObject {
@@ -60,17 +58,76 @@ func (m *jsObject) Get(fieldName string) JSValue {
 		fmt.Println("get kind", kind)
 		switch kind {
 		case reflect.String:
+			v := new(jsString)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			v := new(jsInteger)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			v := new(jsInteger)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_UINT, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Float32, reflect.Float64:
+			v := new(jsDouble)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Bool:
+			v := new(jsBoolean)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Struct:
 			v := new(jsObject)
 			v.name = fieldName
 			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: rv.Interface(), S: 0}
+			v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: rv.Interface(), S: 0}
 			v.rv = &rv
-			var build strings.Builder
-			build.WriteString(v.pName)
-			build.WriteString(".")
-			build.WriteString(v.name)
-			bind.Set(build.String(), v)
-			build.Reset()
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Map:
+			v := new(jsObject)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Slice:
+			v := new(jsArray)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: rv.Interface(), S: rv.Len()}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
+			return v
+		case reflect.Func:
+			v := new(jsFunction)
+			v.name = fieldName
+			v.pName = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: rv.Interface(), S: 0}
+			v.rv = &rv
+			bind.Set(v.nameKey(), v)
 			return v
 		}
 	}
@@ -125,13 +182,13 @@ func (m *jsObject) Set(fieldName string, value any) {
 			if v, ok := value.(uint64); ok {
 				*(*uint64)(unsafe.Pointer(field.Addr().Pointer())) = v
 			}
-		case reflect.Float64:
-			if v, ok := value.(float64); ok {
-				*(*float64)(unsafe.Pointer(field.Addr().Pointer())) = v
-			}
 		case reflect.Float32:
 			if v, ok := value.(float32); ok {
 				*(*float32)(unsafe.Pointer(field.Addr().Pointer())) = v
+			}
+		case reflect.Float64:
+			if v, ok := value.(float64); ok {
+				*(*float64)(unsafe.Pointer(field.Addr().Pointer())) = v
 			}
 		case reflect.Bool:
 			if v, ok := value.(bool); ok {

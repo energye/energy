@@ -20,6 +20,7 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	"reflect"
+	"strings"
 )
 
 const (
@@ -66,6 +67,7 @@ type JSValue interface {
 // V8Value 绑定到JS的字段
 type V8Value struct {
 	id    uintptr
+	pName string
 	name  string
 	rv    *reflect.Value
 	value json.JSON
@@ -73,6 +75,16 @@ type V8Value struct {
 
 func init() {
 	isMainProcess = common.Args.IsMain() //TODO dev
+}
+
+func (m *V8Value) nameKey() string {
+	var build strings.Builder
+	build.WriteString(m.pName)
+	build.WriteString(".")
+	build.WriteString(m.name)
+	m.name = build.String()
+	build.Reset()
+	return m.name
 }
 
 // Bytes 值转换为字节
@@ -95,23 +107,18 @@ func (m *V8Value) SetValue(value any) {
 		}
 		switch kind {
 		case reflect.Struct:
-			v := new(jsObject)
-			v.name = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: value, S: 0}
-			v.rv = &rv
-			bind.Set(m.name, v)
+			m.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: value, S: 0}
+		case reflect.Map:
+			m.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: value, S: rv.Len()}
 		case reflect.Slice:
+			m.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: value, S: rv.Len()}
 		case reflect.Func:
-			v := new(jsFunction)
-			v.name = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: value, S: 0}
-			v.rv = &rv
-			bind.Set(m.name, v)
+			m.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: value, S: 0}
 		default:
-			if m.rv != nil {
-				m.rv.Set(rv)
-			}
 			m.value.SetValue(value)
+		}
+		if m.rv != nil {
+			m.rv.Set(rv)
 		}
 	}
 }
