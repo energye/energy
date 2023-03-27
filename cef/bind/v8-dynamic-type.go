@@ -97,7 +97,6 @@ func (m *V8Value) JSONString() string {
 }
 
 // SetValue 设置值
-//  函数不能设置值
 func (m *V8Value) SetValue(value any) {
 	if isMainProcess {
 		rv := reflect.ValueOf(value)
@@ -115,10 +114,15 @@ func (m *V8Value) SetValue(value any) {
 		case reflect.Func:
 			m.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: value, S: 0}
 		default:
+			//基本类型
 			m.value.SetValue(value)
+			m.rv = nil
+			return
 		}
 		if m.rv != nil {
 			m.rv.Set(rv)
+		} else {
+			m.rv = &rv
 		}
 	}
 }

@@ -110,6 +110,10 @@ func Test() {
 	inArgument.Add("字符串参数")
 	funcKey.Invoke(inArgument)
 
+	funcKey.SetValue("函数变字符串")
+	funcToString := funcKey.AsString()
+	fmt.Println("funcToString:", funcToString.Value())
+
 	// 对象
 	type objectDemo1 struct {
 		Key1 string
@@ -162,8 +166,16 @@ func Test() {
 	objectKey8 := objectKey.Get("Key8")
 	fmt.Println("objectKey8:", objectKey8.JSONString())
 	objectKey8.AsArray()
-	//end
+	//object end
 	fmt.Println("objectKey:", objectKey.JSONString())
+	//object to string
+	objectKey.SetValue("对象变成字符串")
+	objectToString := objectKey.AsString()
+	fmt.Println("objectToString:", objectToString.Value())
+	fmt.Println("objectKey:", objectKey.JSONString())
+	objectKey.SetValue(testObj)
+	fmt.Println("objectKey:", objectKey.JSONString())
+
 	// 数组
 }
 
