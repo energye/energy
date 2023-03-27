@@ -11,12 +11,10 @@
 // V8 JSValue JSArray 类型实现
 package bind
 
-import "github.com/energye/energy/pkgs/json"
-
 type JSArray interface {
 	JSValue
 	AsArray() JSArray
-	Value() json.JSONArray
+	Value() any
 }
 
 // JSArray 类型 先保留 未添加
@@ -31,6 +29,9 @@ func (m *jsArray) AsArray() JSArray {
 	return nil
 }
 
-func (m *jsArray) Value() json.JSONArray {
-	return m.value.JSONArray()
+func (m *jsArray) Value() any {
+	if m.IsArray() {
+		return m.value.Data()
+	}
+	return nil
 }

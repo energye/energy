@@ -94,6 +94,7 @@ func Test() {
 	integerKey.SetValue("变成字符串")
 	fmt.Println("integerKey", integerKey.AsString().Value())
 	integerKey.SetValue(true)
+	fmt.Println("integerKey", integerKey.AsBoolean().Value())
 	boolField := integerKey.AsBoolean()
 	fmt.Println("boolField", boolField.Value())
 	fmt.Println("boolField", bind.GetJSValue(boolField.Id()).AsBoolean().Value())
