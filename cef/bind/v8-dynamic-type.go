@@ -413,8 +413,8 @@ func NewObject(object any) JSObject {
 }
 
 // NewArray GO&JS 数组类型
-func NewArray(name string, array any) JSArray {
-	if name == "" {
+func NewArray(name string, array []any) JSArray {
+	if name == "" || array == nil {
 		return nil
 	}
 	if !isMainProcess {

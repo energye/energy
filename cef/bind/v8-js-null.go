@@ -22,7 +22,10 @@ type jsNull struct {
 }
 
 func (m *jsNull) AsNull() JSNull {
-	return m
+	if m.IsNull() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsNull) Value() string {

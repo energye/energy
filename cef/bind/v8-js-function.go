@@ -31,7 +31,10 @@ type jsFunction struct {
 }
 
 func (m *jsFunction) AsFunction() JSFunction {
-	return m
+	if m.IsFunction() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsFunction) Invoke(argumentList json.JSONArray) (resultArgument json.JSONArray) {

@@ -22,7 +22,10 @@ type jsUndefined struct {
 }
 
 func (m *jsUndefined) AsUndefined() JSUndefined {
-	return m
+	if m.IsUndefined() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsUndefined) Value() string {

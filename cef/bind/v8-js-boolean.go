@@ -22,7 +22,10 @@ type jsBoolean struct {
 }
 
 func (m *jsBoolean) AsBoolean() JSBoolean {
-	return m
+	if m.IsBoolean() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsBoolean) Value() bool {

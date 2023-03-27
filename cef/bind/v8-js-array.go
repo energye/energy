@@ -25,7 +25,10 @@ type jsArray struct {
 }
 
 func (m *jsArray) AsArray() JSArray {
-	return m
+	if m.IsArray() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsArray) Value() json.JSONArray {

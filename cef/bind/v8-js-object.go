@@ -12,7 +12,6 @@
 package bind
 
 import (
-	"fmt"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	"reflect"
@@ -32,7 +31,10 @@ type jsObject struct {
 }
 
 func (m *jsObject) AsObject() JSObject {
-	return m
+	if m.IsObject() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsObject) Value() any {
@@ -55,7 +57,6 @@ func (m *jsObject) Get(fieldName string) JSValue {
 		if kind == reflect.Ptr {
 			kind = rv.Elem().Kind()
 		}
-		fmt.Println("get kind", kind)
 		switch kind {
 		case reflect.String:
 			v := new(jsString)
@@ -194,7 +195,7 @@ func (m *jsObject) Set(fieldName string, value any) {
 			if v, ok := value.(bool); ok {
 				*(*bool)(unsafe.Pointer(field.Addr().Pointer())) = v
 			}
-		case reflect.Ptr:
+		case reflect.Ptr: //指针仅支持 struct slice map
 			valRv := reflect.ValueOf(value)
 			fieldType := field.Type().Elem()
 			valRvKind := valRv.Kind()
@@ -217,8 +218,6 @@ func (m *jsObject) Set(fieldName string, value any) {
 		case reflect.Map:
 			valRv := reflect.ValueOf(value)
 			field.Set(valRv)
-		default:
-
 		}
 	}
 }

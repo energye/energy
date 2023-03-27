@@ -22,7 +22,10 @@ type jsInteger struct {
 }
 
 func (m *jsInteger) AsInteger() JSInteger {
-	return m
+	if m.IsInteger() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsInteger) Value() int {

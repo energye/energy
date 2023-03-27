@@ -109,7 +109,7 @@ func Test() {
 	inArgument.Add("字符串参数")
 	funcKey.Invoke(inArgument)
 
-	//对象
+	// 对象
 	type objectDemo1 struct {
 		Key1 string
 		Key2 string
@@ -127,6 +127,7 @@ func Test() {
 		Key5 bool
 		Key6 *objectDemo1
 		Key7 objectDemo2
+		Key8 []string
 	}
 	var testObj = &object{
 		Key1: "value1",
@@ -138,7 +139,7 @@ func Test() {
 	}
 
 	objectKey := NewObject(testObj)
-	fmt.Println(objectKey.JSONString())
+	fmt.Println("objectKey:", objectKey.JSONString())
 	objectKey.Set("Key1", "值1")
 	objectKey.Set("Key2", "值2")
 	objectKey.Set("Key3", 4444)
@@ -148,7 +149,7 @@ func Test() {
 	objectKey.Set("Key7", objectDemo2{Key1: "值值"})
 	fmt.Println("objectKey:", objectKey.JSONString())
 	objectKey1 := objectKey.Get("Key1")
-	fmt.Println(objectKey1.Name())
+	fmt.Println("objectKey1Name:", objectKey1.Name())
 	objectKey1.SetValue("objectKey1设置新值 ")
 	fmt.Println("objectKey1:", objectKey1.JSONString())
 	objectKey6 := objectKey.Get("Key6")
@@ -156,4 +157,15 @@ func Test() {
 	objectKey6.SetValue(&objectDemo1{Key1: "objectKey6Key1"})
 	fmt.Println("objectKey6:", objectKey6.JSONString())
 	fmt.Println("objectKey:", objectKey.JSONString())
+	objectKey.Set("Key8", []string{"v1", "v2"})
+	objectKey8 := objectKey.Get("Key8")
+	fmt.Println("objectKey8:", objectKey8.JSONString())
+	objectKey8.AsArray()
+	//end
+	fmt.Println("objectKey:", objectKey.JSONString())
+	// 数组
+}
+
+func TestBind() {
+
 }

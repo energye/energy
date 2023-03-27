@@ -22,7 +22,10 @@ type jsDouble struct {
 }
 
 func (m *jsDouble) AsDouble() JSDouble {
-	return m
+	if m.IsDouble() {
+		return m
+	}
+	return nil
 }
 
 func (m *jsDouble) Value() float64 {
