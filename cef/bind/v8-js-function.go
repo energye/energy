@@ -20,8 +20,12 @@ import (
 type JSFunction interface {
 	JSValue
 	AsFunction() JSFunction
-	// Invoke 调用函数，入参: 以参数列表形式传入参数, 出参: 以参数列表形式返回参数
-	//	如果参数类型或数量不匹配这些参数将以类型的默认值传入
+	// Invoke 调用函数
+	//	入参: 以参数列表形式传入参数
+	//		入参如果参数类型或数量不匹配这些参数将以类型的默认值传入
+	//		nil 无入参
+	//	出参: 以参数列表形式返回参数
+	//		无返回值返回nil
 	Invoke(argumentList json.JSONArray) (resultArgument json.JSONArray)
 }
 
@@ -40,10 +44,6 @@ func (m *jsFunction) AsFunction() JSFunction {
 func (m *jsFunction) Invoke(argumentList json.JSONArray) (resultArgument json.JSONArray) {
 	resultArgument = nil
 	if m.IsFunction() {
-		rv, ok := m.value.Data().(*reflect.Value)
-		if !ok {
-			return
-		}
 		var (
 			argsSize     int
 			inArgsValues []reflect.Value
@@ -51,7 +51,7 @@ func (m *jsFunction) Invoke(argumentList json.JSONArray) (resultArgument json.JS
 		if argumentList != nil {
 			argsSize = argumentList.Size()
 		}
-		rt := rv.Type()
+		rt := m.rv.Type()
 		inArgsCount := rt.NumIn()
 		inArgsValues = make([]reflect.Value, inArgsCount)
 		for i := 0; i < inArgsCount; i++ {
@@ -136,7 +136,7 @@ func (m *jsFunction) Invoke(argumentList json.JSONArray) (resultArgument json.JS
 			}
 		}
 		// call
-		resultValues := rv.Call(inArgsValues)
+		resultValues := m.rv.Call(inArgsValues)
 		if len(resultValues) > 0 {
 			// call result
 			resultArgument = json.NewJSONArray(nil)

@@ -32,6 +32,8 @@ type v8bind struct {
 //		 name: 唯一字段名, 重复将被覆盖
 //		value: 值
 func (m *v8bind) Set(name string, value JSValue) {
+	m.lock.Lock()
+	defer m.lock.Unlock()
 	if id, ok := m.hasFieldCollection[name]; ok {
 		old := m.Remove(id)
 		id = m.Add(value)
@@ -73,11 +75,6 @@ func (m *v8bind) Remove(id uintptr) any {
 	return nil
 }
 
-func (m *v8bind) Binds() map[string]JSValue {
-	//return m.fieldCollection
-	return nil
-}
-
 func GetBinds(fn func(binds map[string]JSValue)) {
 	//fn(bind.fieldCollection)
 }
@@ -104,7 +101,7 @@ func Test() {
 
 	//函数
 	funcKey := NewFunction("funcKey", func(in1 string) {
-		fmt.Println(in1)
+		fmt.Println("funcKey:", in1)
 	})
 	inArgument := json.NewJSONArray(nil)
 	inArgument.Add("字符串参数")
@@ -115,6 +112,7 @@ func Test() {
 	fmt.Println("funcToString:", funcToString.Value())
 
 	// 对象
+	fmt.Println("--------------")
 	type objectDemo1 struct {
 		Key1 string
 		Key2 string
@@ -175,10 +173,31 @@ func Test() {
 	fmt.Println("objectKey:", objectKey.JSONString())
 	objectKey.SetValue(testObj)
 	fmt.Println("objectKey:", objectKey.JSONString())
+	bindObjectKey := bind.GetJSValue(objectKey.Id())
+	fmt.Println("bindObjectKey", bindObjectKey.JSONString())
+
+	objectKey.SetValue([]any{"字符串", 100001, 22222.333, true, testObj})
+	fmt.Println("objectKey-to-array:", objectKey.JSONString())
 
 	// 数组
-	arrayKey := NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
+	var arrayFunc = func() string {
+		fmt.Println("arrayFunc")
+		return "调用函数 arrayFunc返回"
+	}
+	fmt.Println("arrayFunc", arrayFunc)
+	arrayKey := NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj, arrayFunc)
 	fmt.Println("arrayKey", arrayKey.JSONString())
+	fmt.Println("arrayKey index 1:", arrayKey.Get(1).AsInteger().Value())
+	fmt.Println("arrayKey index 2:", arrayKey.Get(2).AsDouble().Value())
+	fmt.Println("arrayKey index 4:", arrayKey.Get(4).AsObject().JSONString())
+	fmt.Println("arrayKey index 5:", arrayKey.Get(5).AsFunction().Invoke(nil).Size())
+	arrayKey.Set(1, "数字变字符串")
+	fmt.Println("arrayKey index 1:", arrayKey.Get(1).AsString().Value())
+	arrayIndex1 := arrayKey.Get(1)
+	fmt.Println("arrayKey index 1:", arrayIndex1.AsString().Value())
+	arrayIndex1 = bind.GetJSValue(arrayIndex1.Id())
+	fmt.Println("arrayKey index 1:", arrayIndex1.AsString().Value())
+	arrayKey.Add("添加一个字符串")
 }
 
 func TestBind() {

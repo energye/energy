@@ -115,15 +115,17 @@ func (m *V8Value) SetValue(value any) {
 			m.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: value, S: 0}
 		default:
 			//基本类型
+			if m.IsObject() || m.IsArray() || m.IsFunction() {
+				m.rv = &rv
+			} else if m.rv != nil {
+				m.rv.Set(rv)
+			}
 			m.value.SetValue(value)
-			m.rv = nil
+			bind.Set(m.name, m)
 			return
 		}
-		if m.rv != nil {
-			m.rv.Set(rv)
-		} else {
-			m.rv = &rv
-		}
+		m.rv = &rv
+		bind.Set(m.name, m)
 	}
 }
 
@@ -385,6 +387,7 @@ func NewFunction(name string, fn any) JSFunction {
 	v := new(jsFunction)
 	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: &rv, S: 0}
+	v.rv = &rv
 	bind.Set(name, v)
 	return v
 }
@@ -417,19 +420,25 @@ func NewObject(object any) JSObject {
 }
 
 // NewArray GO&JS 数组类型
-func NewArray(name string, array ...any) JSArray {
-	if name == "" || array == nil {
+func NewArray(name string, values ...any) JSArray {
+	if name == "" || values == nil {
 		return nil
 	}
 	if !isMainProcess {
-		array = nil
+		values = nil
 	}
 	v := new(jsArray)
 	v.name = name
-	for _, value := range array {
-		v.Add(value)
+	vs := make([]any, 0)
+	for _, value := range values {
+		s := v.Add(value)
+		if s.IsFunction() {
+			vs = append(vs, "func")
+		} else {
+			vs = append(vs, value)
+		}
 	}
-	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: array, S: len(v.Data())}
+	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: vs, S: len(values)}
 	bind.Set(v.name, v)
 	return v
 }

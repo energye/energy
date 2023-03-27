@@ -23,8 +23,8 @@ type JSArray interface {
 	AsArray() JSArray
 	Data() []JSValue
 	Get(index int) JSValue
-	Add(value any)
-	Set(index int, value any)
+	Add(value any) JSValue
+	Set(index int, value any) JSValue
 	Clear()
 }
 
@@ -52,8 +52,26 @@ func (m *jsArray) Get(index int) JSValue {
 	return nil
 }
 
-func (m *jsArray) Add(value any) {
-	m.items = append(m.items, m.createItem(len(m.items), value))
+func (m *jsArray) Add(value any) JSValue {
+	item := m.createItem(len(m.items), value)
+	m.items = append(m.items, item)
+	return item
+}
+
+func (m *jsArray) Set(index int, value any) JSValue {
+	if index >= 0 && index < len(m.items) {
+		if value == nil {
+			m.items[index] = nil
+		} else {
+			m.items[index] = m.createItem(index, value)
+		}
+		return m.items[index]
+	}
+	return nil
+}
+
+func (m *jsArray) Clear() {
+	m.items = make([]JSValue, 0, 0)
 }
 
 func (m *jsArray) createItem(index int, value any) JSValue {
@@ -142,18 +160,4 @@ func (m *jsArray) createItem(index int, value any) JSValue {
 		}
 	}
 	return nil
-}
-
-func (m *jsArray) Set(index int, value any) {
-	if index >= 0 && index < len(m.items) {
-		if value == nil {
-			m.items[index] = nil
-		} else {
-			m.items[index] = m.createItem(index, value)
-		}
-	}
-}
-
-func (m *jsArray) Clear() {
-	m.items = make([]JSValue, 0, 0)
 }
