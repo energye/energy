@@ -187,7 +187,7 @@ func Test() {
 	}
 	fmt.Println("arrayFunc", arrayFunc)
 	arrayKey := NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj, arrayFunc)
-	fmt.Println("arrayKey", arrayKey.JSONString())
+	fmt.Println("arrayKey JSONString:", arrayKey.JSONString())
 	fmt.Println("arrayKey index 1:", arrayKey.Get(1).AsInteger().Value())
 	fmt.Println("arrayKey index 2:", arrayKey.Get(2).AsDouble().Value())
 	fmt.Println("arrayKey index 4:", arrayKey.Get(4).AsObject().JSONString())

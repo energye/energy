@@ -437,16 +437,10 @@ func NewArray(name string, values ...any) JSArray {
 	}
 	v := new(jsArray)
 	v.name = name
-	vs := make([]any, 0)
 	for _, value := range values {
-		s := v.Add(value)
-		if s.IsFunction() {
-			vs = append(vs, "func")
-		} else {
-			vs = append(vs, value)
-		}
+		v.Add(value)
 	}
-	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: vs, S: len(values)}
+	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: values, S: len(values)}
 	bind.Set(v.name, v)
 	return v
 }
