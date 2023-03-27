@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
+	"reflect"
 )
 
 const (
@@ -36,6 +37,7 @@ var (
 type JSValue interface {
 	Name() string             //当前变量绑定的名称
 	Bytes() []byte            //变量值转换为字节
+	JSONString() string       //变量值转换为JSON String
 	SetValue(value any)       //设置新值
 	IsInteger() bool          //是否 Integer
 	IsDouble() bool           //是否 Double
@@ -57,17 +59,20 @@ type JSValue interface {
 	AsFunction() JSFunction   //转换为 Function 失败返回 nil
 	AsV8Value() JSValue       //转换为 JSValue
 	setId(id uintptr)
+	Id() uintptr
+	free()
 }
 
 // V8Value 绑定到JS的字段
 type V8Value struct {
 	id    uintptr
 	name  string
+	rv    *reflect.Value
 	value json.JSON
 }
 
 func init() {
-	isMainProcess = common.Args.IsMain()
+	isMainProcess = common.Args.IsMain() //TODO dev
 }
 
 // Bytes 值转换为字节
@@ -75,15 +80,47 @@ func (m *V8Value) Bytes() []byte {
 	return m.value.Bytes()
 }
 
+func (m *V8Value) JSONString() string {
+	return string(m.Bytes())
+}
+
 // SetValue 设置值
+//  函数不能设置值
 func (m *V8Value) SetValue(value any) {
 	if isMainProcess {
-		m.value.SetValue(value)
+		rv := reflect.ValueOf(value)
+		kind := rv.Kind()
+		if kind == reflect.Ptr {
+			kind = rv.Elem().Kind()
+		}
+		switch kind {
+		case reflect.Struct:
+			v := new(jsObject)
+			v.name = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: value, S: 0}
+			v.rv = &rv
+			bind.Set(m.name, v)
+		case reflect.Slice:
+		case reflect.Func:
+			v := new(jsFunction)
+			v.name = m.name
+			v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: value, S: 0}
+			v.rv = &rv
+			bind.Set(m.name, v)
+		default:
+			if m.rv != nil {
+				m.rv.Set(rv)
+			}
+			m.value.SetValue(value)
+		}
 	}
 }
 
 func (m *V8Value) setId(id uintptr) {
 	m.id = id
+}
+func (m *V8Value) Id() uintptr {
+	return m.id
 }
 
 func (m *V8Value) Name() string {
@@ -111,7 +148,7 @@ func (m *V8Value) IsArray() bool {
 }
 
 func (m *V8Value) IsObject() bool {
-	return m.value.IsObject()
+	return m.value.Type() == consts.GO_VALUE_STRUCT
 }
 
 func (m *V8Value) IsFunction() bool {
@@ -132,7 +169,6 @@ func (m *V8Value) AsString() JSString {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -144,7 +180,6 @@ func (m *V8Value) AsInteger() JSInteger {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -156,7 +191,6 @@ func (m *V8Value) AsDouble() JSDouble {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -168,7 +202,6 @@ func (m *V8Value) AsBoolean() JSBoolean {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -180,7 +213,6 @@ func (m *V8Value) AsNull() JSNull {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -192,7 +224,6 @@ func (m *V8Value) AsUndefined() JSUndefined {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -204,7 +235,6 @@ func (m *V8Value) AsFunction() JSFunction {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -216,7 +246,6 @@ func (m *V8Value) AsObject() JSObject {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -228,7 +257,6 @@ func (m *V8Value) AsArray() JSArray {
 		v.name = m.name
 		v.value = m.value.JsonData()
 		bind.Set(m.name, v)
-		m.free()
 		return v
 	}
 	return nil // default
@@ -240,6 +268,7 @@ func (m *V8Value) AsV8Value() JSValue {
 
 func (m *V8Value) free() {
 	if m.value != nil {
+		m.id = 0
 		m.name = ""
 		m.value.Free()
 		m.value = nil
@@ -338,29 +367,42 @@ func NewFunction(name string, fn any) JSFunction {
 	if !isMainProcess {
 		fn = nil
 	}
+	rv := reflect.ValueOf(fn)
+	if rv.Kind() != reflect.Func {
+		return nil
+	}
 	v := new(jsFunction)
 	v.name = name
-	v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: fn, S: 0}
+	v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: &rv, S: 0}
 	bind.Set(name, v)
 	return v
 }
 
-// NewObject GO&JS 对象类型
-func NewObject(name string, object any) JSObject {
-	if name == "" {
+// NewObject GO&JS 对象类型 &struct{} 仅结构
+func NewObject(object any) JSObject {
+	if object == nil {
 		return nil
 	}
 	if !isMainProcess {
 		object = nil
 	}
-	if vv := json.NewJSONObject(object); vv != nil {
-		v := new(jsObject)
-		v.name = name
-		v.value = vv.JsonData()
-		bind.Set(name, v)
-		return v
+	rv := reflect.ValueOf(object)
+	kind := rv.Kind()
+	//必须是指针
+	if kind != reflect.Ptr {
+		return nil
 	}
-	return nil
+	kind = rv.Elem().Kind()
+	//必须是结构
+	if kind != reflect.Struct {
+		return nil
+	}
+	v := new(jsObject)
+	v.name = rv.Type().Elem().Name()
+	v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: object, S: 0}
+	v.rv = &rv
+	bind.Set(v.name, v)
+	return v
 }
 
 // NewArray GO&JS 数组类型

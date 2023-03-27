@@ -21,10 +21,6 @@ type jsString struct {
 	V8Value
 }
 
-func (m *jsString) AsString() JSString {
-	return m
-}
-
 func (m *jsString) Value() string {
 	return m.value.String()
 }

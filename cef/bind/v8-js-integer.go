@@ -14,7 +14,7 @@ package bind
 type JSInteger interface {
 	JSValue
 	AsInteger() JSInteger
-	Value() int32
+	Value() int
 }
 
 type jsInteger struct {
@@ -25,6 +25,6 @@ func (m *jsInteger) AsInteger() JSInteger {
 	return m
 }
 
-func (m *jsInteger) Value() int32 {
-	return int32(m.value.Int())
+func (m *jsInteger) Value() int {
+	return m.value.Int()
 }

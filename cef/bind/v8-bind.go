@@ -13,6 +13,7 @@ package bind
 import (
 	"container/list"
 	"fmt"
+	"github.com/energye/energy/pkgs/json"
 	"sync"
 	"unsafe"
 )
@@ -32,10 +33,14 @@ type v8bind struct {
 //		value: 值
 func (m *v8bind) Set(name string, value JSValue) {
 	if id, ok := m.hasFieldCollection[name]; ok {
-		m.Remove(id)
+		old := m.Remove(id)
 		id = m.Add(value)
 		value.setId(id)
 		m.hasFieldCollection[name] = id
+		switch old.(type) {
+		case JSValue:
+			old.(JSValue).setId(id)
+		}
 	} else {
 		id = m.Add(value)
 		value.setId(id)
@@ -59,10 +64,13 @@ func (m *v8bind) Get(id uintptr) *list.Element {
 	return (*list.Element)(unsafe.Pointer(id))
 }
 
-func (m *v8bind) Remove(id uintptr) {
+func (m *v8bind) Remove(id uintptr) any {
 	if v := m.Get(id); v != nil {
-		m.fieldCollection.Remove(v)
+		r := m.fieldCollection.Remove(v)
+		v.Value = nil
+		return r
 	}
+	return nil
 }
 
 func (m *v8bind) Binds() map[string]JSValue {
@@ -75,7 +83,73 @@ func GetBinds(fn func(binds map[string]JSValue)) {
 }
 
 func Test() {
-	stringKey := NewString("stringKey", "字符串值")
-	fmt.Println("stringKey", stringKey, stringKey.IsString())
-	stringKey = NewString("stringKey", "字符串值")
+	//字段
+	stringKey0 := NewString("stringKey", "字符串值0")
+	fmt.Println("stringKey", stringKey0, stringKey0.Value())
+	stringKey1 := NewString("stringKey", "字符串值1")
+	integerKey := NewInteger("integerKey", 1000)
+	fmt.Println("stringKey", stringKey0)
+	fmt.Println("stringKey", stringKey1, stringKey1.Value())
+	fmt.Println("integerKey", integerKey.Value())
+	integerKey.SetValue("变成字符串")
+	fmt.Println("integerKey", integerKey.AsString().Value())
+	integerKey.SetValue(true)
+	boolField := integerKey.AsBoolean()
+	fmt.Println("boolField", boolField.Value())
+	fmt.Println("boolField", bind.GetJSValue(boolField.Id()).AsBoolean().Value())
+	boolField.SetValue(false)
+	fmt.Println("boolField", bind.GetJSValue(boolField.Id()).AsBoolean().Value())
+	fmt.Println(bind.fieldCollection.Len())
+
+	//函数
+	funcKey := NewFunction("funcKey", func(in1 string) {
+		fmt.Println(in1)
+	})
+	inArgument := json.NewJSONArray(nil)
+	inArgument.Add("字符串参数")
+	funcKey.Invoke(inArgument)
+
+	//对象
+	type objectDemo1 struct {
+		Key1 string
+		Key2 string
+	}
+	type objectDemo2 struct {
+		Key1 string
+		Key2 string
+		Key3 int
+	}
+	type object struct {
+		Key1 string
+		Key2 string
+		Key3 int
+		Key4 float64
+		Key5 bool
+		Key6 *objectDemo1
+		Key7 objectDemo2
+	}
+	var testObj = &object{
+		Key1: "value1",
+		Key2: "value2",
+		Key3: 333,
+		Key4: 555.3,
+		Key5: true,
+		//Key6: &objectDemo1{},
+	}
+
+	objectKey := NewObject(testObj)
+	fmt.Println(objectKey.JSONString())
+	objectKey.Set("Key1", "值1")
+	objectKey.Set("Key2", "值2")
+	objectKey.Set("Key3", 4444)
+	objectKey.Set("Key4", 9999.99)
+	objectKey.Set("Key5", false)
+	objectKey.Set("Key6", &objectDemo1{})
+	objectKey.Set("Key7", objectDemo2{Key1: "值值"})
+	fmt.Println(objectKey.JSONString())
+	objectKey1 := objectKey.Get("Key1")
+	fmt.Println(objectKey1.Name())
+	objectKey1.SetValue("objectKey1设置新值 ")
+	objectKey.Get("Key6")
+	fmt.Println(objectKey.JSONString())
 }
