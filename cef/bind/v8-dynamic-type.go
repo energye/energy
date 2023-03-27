@@ -353,7 +353,7 @@ func NewNull(name string) JSNull {
 	}
 	v := new(jsNull)
 	v.name = name
-	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: null, S: len(null)}
+	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: null, S: 0}
 	bind.Set(name, v)
 	return v
 }
@@ -365,7 +365,7 @@ func NewUndefined(name string) JSUndefined {
 	}
 	v := new(jsUndefined)
 	v.name = name
-	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: undefined, S: len(undefined)}
+	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: undefined, S: 0}
 	bind.Set(name, v)
 	return v
 }
@@ -417,19 +417,19 @@ func NewObject(object any) JSObject {
 }
 
 // NewArray GO&JS 数组类型
-func NewArray(name string, array []any) JSArray {
+func NewArray(name string, array ...any) JSArray {
 	if name == "" || array == nil {
 		return nil
 	}
 	if !isMainProcess {
 		array = nil
 	}
-	if vv := json.NewJSONArray(array); vv != nil {
-		v := new(jsArray)
-		v.name = name
-		v.value = vv.JsonData()
-		bind.Set(name, v)
-		return v
+	v := new(jsArray)
+	v.name = name
+	for _, value := range array {
+		v.Add(value)
 	}
-	return nil
+	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: array, S: len(v.Data())}
+	bind.Set(v.name, v)
+	return v
 }

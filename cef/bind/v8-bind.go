@@ -177,6 +177,8 @@ func Test() {
 	fmt.Println("objectKey:", objectKey.JSONString())
 
 	// 数组
+	arrayKey := NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
+	fmt.Println("arrayKey", arrayKey.JSONString())
 }
 
 func TestBind() {

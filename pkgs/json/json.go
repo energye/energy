@@ -106,8 +106,8 @@ type JsonData struct {
 	T      GO_VALUE_TYPE // type
 	S      int           // size
 	V      any           // value
-	pKey   string        //
-	pIndex int           //
+	pKey   string        // object parent key
+	pIndex int           // array parent index
 	p      *JsonData     // parent
 }
 
