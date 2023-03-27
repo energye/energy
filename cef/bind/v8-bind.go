@@ -178,6 +178,7 @@ func Test() {
 
 	objectKey.SetValue([]any{"字符串", 100001, 22222.333, true, testObj})
 	fmt.Println("objectKey-to-array:", objectKey.JSONString())
+	fmt.Println("objectKey-to-array:", objectKey.IsArray())
 
 	// 数组
 	var arrayFunc = func() string {
@@ -198,6 +199,14 @@ func Test() {
 	arrayIndex1 = bind.GetJSValue(arrayIndex1.Id())
 	fmt.Println("arrayKey index 1:", arrayIndex1.AsString().Value())
 	arrayKey.Add("添加一个字符串")
+
+	//end
+	fmt.Println("fieldCollection.Len():", bind.fieldCollection.Len(), len(bind.hasFieldCollection))
+	for k, v := range bind.hasFieldCollection {
+		jsv := bind.GetJSValue(v)
+		fmt.Println("k:", k, "v:", v, "jsv:", jsv.Type())
+	}
+
 }
 
 func TestBind() {

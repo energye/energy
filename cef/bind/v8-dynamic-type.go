@@ -36,31 +36,32 @@ var (
 //
 // GO和JS动态变量类型
 type JSValue interface {
-	Name() string             //当前变量绑定的名称
-	Bytes() []byte            //变量值转换为字节
-	JSONString() string       //变量值转换为JSON String
-	SetValue(value any)       //设置新值
-	IsInteger() bool          //是否 Integer
-	IsDouble() bool           //是否 Double
-	IsString() bool           //是否 String
-	IsBoolean() bool          //是否 Boolean
-	IsObject() bool           //是否 Object
-	IsArray() bool            //是否 Array
-	IsNull() bool             //是否 Null
-	IsUndefined() bool        //是否 Undefined
-	IsFunction() bool         //是否 Function
-	AsInteger() JSInteger     //转换为 Integer 失败返回 nil
-	AsDouble() JSDouble       //转换为 Double 失败返回 nil
-	AsString() JSString       //转换为 String 失败返回 nil
-	AsBoolean() JSBoolean     //转换为 Boolean 失败返回 nil
-	AsObject() JSObject       //转换为 Object 失败返回 nil
-	AsArray() JSArray         //转换为 Array 失败返回 nil
-	AsNull() JSNull           //转换为 Null 失败返回 nil
-	AsUndefined() JSUndefined //转换为 Undefined 失败返回 nil
-	AsFunction() JSFunction   //转换为 Function 失败返回 nil
-	AsV8Value() JSValue       //转换为 JSValue
+	Name() string               //当前变量绑定的名称
+	Bytes() []byte              //变量值转换为字节
+	JSONString() string         //变量值转换为JSON String
+	SetValue(value any)         //设置新值
+	IsInteger() bool            //是否 Integer
+	IsDouble() bool             //是否 Double
+	IsString() bool             //是否 String
+	IsBoolean() bool            //是否 Boolean
+	IsObject() bool             //是否 Object
+	IsArray() bool              //是否 Array
+	IsNull() bool               //是否 Null
+	IsUndefined() bool          //是否 Undefined
+	IsFunction() bool           //是否 Function
+	AsInteger() JSInteger       //转换为 Integer 失败返回 nil
+	AsDouble() JSDouble         //转换为 Double 失败返回 nil
+	AsString() JSString         //转换为 String 失败返回 nil
+	AsBoolean() JSBoolean       //转换为 Boolean 失败返回 nil
+	AsObject() JSObject         //转换为 Object 失败返回 nil
+	AsArray() JSArray           //转换为 Array 失败返回 nil
+	AsNull() JSNull             //转换为 Null 失败返回 nil
+	AsUndefined() JSUndefined   //转换为 Undefined 失败返回 nil
+	AsFunction() JSFunction     //转换为 Function 失败返回 nil
+	AsV8Value() JSValue         //转换为 JSValue
+	Id() uintptr                //指针ID
+	Type() consts.GO_VALUE_TYPE //类型
 	setId(id uintptr)
-	Id() uintptr
 	free()
 }
 
@@ -106,7 +107,7 @@ func (m *V8Value) SetValue(value any) {
 		}
 		switch kind {
 		case reflect.Struct:
-			m.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: value, S: 0}
+			m.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: value, S: 0}
 		case reflect.Map:
 			m.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: value, S: rv.Len()}
 		case reflect.Slice:
@@ -161,7 +162,7 @@ func (m *V8Value) IsArray() bool {
 }
 
 func (m *V8Value) IsObject() bool {
-	return m.value.Type() == consts.GO_VALUE_STRUCT
+	return m.value.IsObject()
 }
 
 func (m *V8Value) IsFunction() bool {
@@ -277,6 +278,13 @@ func (m *V8Value) AsArray() JSArray {
 
 func (m *V8Value) AsV8Value() JSValue {
 	return m
+}
+
+func (m *V8Value) Type() consts.GO_VALUE_TYPE {
+	if m == nil {
+		return consts.GO_VALUE_INVALID
+	}
+	return m.value.Type()
 }
 
 func (m *V8Value) free() {
@@ -413,7 +421,7 @@ func NewObject(object any) JSObject {
 	}
 	v := new(jsObject)
 	v.name = rv.Type().Elem().Name()
-	v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: object, S: 0}
+	v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: object, S: 0}
 	v.rv = &rv
 	bind.Set(v.name, v)
 	return v

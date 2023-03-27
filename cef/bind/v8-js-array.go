@@ -129,7 +129,7 @@ func (m *jsArray) createItem(index int, value any) JSValue {
 			v := new(jsObject)
 			v.pName = m.name
 			v.name = strconv.Itoa(index)
-			v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: rv.Interface(), S: 0}
+			v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: 0}
 			v.rv = &rv
 			bind.Set(v.nameKey(), v)
 			return v
