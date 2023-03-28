@@ -55,7 +55,8 @@ func (m *bindRenderProcess) webKitMakeBind() {
 		for item := fields.Front(); item != nil; item = item.Next() {
 			jsv := bind.ElementToJSValue(item)
 			names := strings.Split(jsv.Name(), ".")
-			fmt.Println("object ElementToJSValue Object:", jsv.Name())
+			fmt.Println("object ElementToJSValue Object:", jsv.Name(), jsv.Type())
+			//fmt.Println("object:", object.ToJSONString())
 			if len(names) == 1 {
 				if jsv.IsObject() {
 					object.Set(jsv.Name(), json.NewJSONObject(nil))
@@ -65,29 +66,30 @@ func (m *bindRenderProcess) webKitMakeBind() {
 					object.Set(jsv.Name(), jsv.JSON().Data())
 				}
 			} else {
-				//for _, name := range jsv.Name()[:len(jsv.Name())-1] {
-				//
-				//}
-				//if jsv.IsObject() || jsv.IsArray() {
-				//	fmt.Println("object ElementToJSValue Object:", strings.Join(jsv.Name(), "."), jsv.JSON().ToJSONString())
-				//	for _, name := range jsv.Name() {
-				//		if pObject := object.GetByKey(name); pObject != nil {
-				//			if jsv.IsObject() {
-				//				object.Set(strings.Join(jsv.Name(), "."), json.NewJSONObject(nil))
-				//			} else if jsv.IsArray() {
-				//				object.Set(strings.Join(jsv.Name(), "."), json.NewJSONArray(nil))
-				//			}
-				//		}
-				//	}
-				//	if jsv.IsObject() {
-				//		object.Set(strings.Join(jsv.Name(), "."), json.NewJSONObject(nil))
-				//	} else if jsv.IsArray() {
-				//		object.Set(strings.Join(jsv.Name(), "."), json.NewJSONArray(nil))
-				//	}
-				//} else {
-				//	fmt.Println("object ElementToJSValue:", strings.Join(jsv.Name(), "."), jsv.JSON().ToJSONString())
-				//	//object.Set(strings.Join(jsv.Name(), "."), jsv.JSON().Data())
-				//}
+				name := names[len(names)-1]
+				var pObject = object
+				for i := 0; i < len(names)-1; i++ {
+					pObject = pObject.GetByKey(names[i])
+				}
+				if jsv.IsObject() {
+					if pObject.IsArray() {
+						pObject.JSONArray().Add(json.NewJSONObject(nil))
+					} else {
+						pObject.Set(name, json.NewJSONObject(nil))
+					}
+				} else if jsv.IsArray() {
+					if pObject.IsObject() {
+						pObject.Set(name, json.NewJSONArray(nil))
+					} else {
+						pObject.JSONArray().Add(json.NewJSONArray(nil))
+					}
+				} else {
+					if pObject.IsObject() {
+						pObject.Set(name, nil)
+					} else if pObject.IsArray() {
+						pObject.JSONArray().Add(nil)
+					}
+				}
 			}
 
 		}

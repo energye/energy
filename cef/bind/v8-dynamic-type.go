@@ -26,7 +26,7 @@ import (
 
 const (
 	null      = "null"
-	undefined = "Undefined"
+	undefined = "undefined"
 )
 
 var (

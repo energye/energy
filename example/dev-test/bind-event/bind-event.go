@@ -44,7 +44,7 @@ func main() {
 	fmt.Println("nullKey", nullKey.Value())
 	undefinedKey := bind.NewUndefined("undefinedKey")
 	fmt.Println("undefinedKey", undefinedKey.Value(), undefinedKey.IsUndefined())
-	funcKey := bind.NewFunction("funcKey", func() {
+	funcKey := bind.NewFunction("funcKey", func(i1 int) {
 
 	})
 	fmt.Println("funcKey", funcKey)
@@ -79,7 +79,14 @@ func main() {
 		//Key4: 555.3,
 		//Key5: true,
 		//Key6: &objectDemo1{},
-		Key7: objectDemo2{Key4: &objectDemo1{}},
+		Key7: objectDemo2{
+			Key4: &objectDemo1{},
+		},
+		Key8: make([]string, 0),
+		Key9: make([]objectDemo2, 0),
+		Key10: &objectDemo2{
+			Key5: make([]*objectDemo1, 0),
+		},
 	}
 	bind.NewObject(testObj)
 	bind.NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)

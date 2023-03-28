@@ -260,6 +260,7 @@ func (m *JsonData) Add(value ...any) {
 		}
 		m.V = append(m.V.([]any), tmp...)
 		m.S += len(value)
+		m.modifyParentValue()
 	}
 }
 
@@ -281,6 +282,7 @@ func (m *JsonData) SetByIndex(index int, value any) {
 		default:
 			m.V.([]any)[index] = value
 		}
+		m.modifyParentValue()
 	}
 }
 
@@ -289,6 +291,7 @@ func (m *JsonData) RemoveByIndex(index int) {
 		v := m.V.([]any)
 		m.V = append(v[:index], v[index+1:]...)
 		m.S--
+		m.modifyParentValue()
 	}
 }
 
@@ -534,6 +537,7 @@ func (m *JsonData) RemoveByKey(key string) {
 		if _, ok := m.V.(map[string]any)[key]; ok {
 			delete(m.V.(map[string]any), key)
 			m.S--
+			m.modifyParentValue()
 		}
 	}
 }
