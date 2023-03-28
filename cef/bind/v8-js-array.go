@@ -12,8 +12,6 @@
 package bind
 
 import (
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/json"
 	"reflect"
 	"strconv"
 )
@@ -21,7 +19,7 @@ import (
 type JSArray interface {
 	JSValue
 	AsArray() JSArray
-	Data() []JSValue
+	Items() []JSValue
 	Get(index int) JSValue
 	Add(value any) JSValue
 	Set(index int, value any) JSValue
@@ -41,7 +39,7 @@ func (m *jsArray) AsArray() JSArray {
 	return nil
 }
 
-func (m *jsArray) Data() []JSValue {
+func (m *jsArray) Items() []JSValue {
 	return m.items
 }
 
@@ -75,89 +73,6 @@ func (m *jsArray) Clear() {
 }
 
 func (m *jsArray) createItem(index int, value any) JSValue {
-	switch value.(type) {
-	case string:
-		v := new(jsString)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: value.(string), S: len(value.(string))}
-		bind.Set(v.nameKey(), v)
-		return v
-	case int, int8, int32, int64:
-		v := new(jsInteger)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: value, S: strconv.IntSize}
-		bind.Set(v.nameKey(), v)
-		return v
-	case uint, uint8, uint32, uint64:
-		v := new(jsInteger)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_UINT, V: value, S: strconv.IntSize}
-		bind.Set(v.nameKey(), v)
-		return v
-	case float32, float64:
-		v := new(jsDouble)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: value, S: 8}
-		bind.Set(v.nameKey(), v)
-		return v
-	case bool:
-		v := new(jsBoolean)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: value, S: 1}
-		bind.Set(v.nameKey(), v)
-		return v
-	case nil:
-		v := new(jsNull)
-		v.pName = m.name
-		v.name = strconv.Itoa(index)
-		v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: null, S: 0}
-		bind.Set(v.nameKey(), v)
-		return v
-	default:
-		rv := reflect.ValueOf(value)
-		kind := rv.Kind()
-		if kind == reflect.Ptr {
-			kind = rv.Elem().Kind()
-		}
-		switch kind {
-		case reflect.Struct:
-			v := new(jsObject)
-			v.pName = m.name
-			v.name = strconv.Itoa(index)
-			v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: 0}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Map:
-			v := new(jsObject)
-			v.pName = m.name
-			v.name = strconv.Itoa(index)
-			v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Slice:
-			v := new(jsArray)
-			v.pName = m.name
-			v.name = strconv.Itoa(index)
-			v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Func:
-			v := new(jsFunction)
-			v.pName = m.name
-			v.name = strconv.Itoa(index)
-			v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: rv.Interface(), S: 0}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		}
-	}
-	return nil
+	rv := reflect.ValueOf(value)
+	return m.createJSValue(strconv.Itoa(index), &rv)
 }

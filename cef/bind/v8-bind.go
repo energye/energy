@@ -35,13 +35,15 @@ func (m *v8bind) Set(name string, value JSValue) {
 	m.lock.Lock()
 	defer m.lock.Unlock()
 	if id, ok := m.hasFieldCollection[name]; ok {
-		old := m.Remove(id)
-		id = m.Add(value)
-		value.setId(id)
-		m.hasFieldCollection[name] = id
-		switch old.(type) {
-		case JSValue:
-			old.(JSValue).setId(id)
+		if value.Id() != id {
+			old := m.Remove(id)
+			id = m.Add(value)
+			value.setId(id)
+			m.hasFieldCollection[name] = id
+			switch old.(type) {
+			case JSValue:
+				old.(JSValue).setId(id)
+			}
 		}
 	} else {
 		id = m.Add(value)
@@ -191,7 +193,7 @@ func Test() {
 	fmt.Println("arrayKey index 1:", arrayKey.Get(1).AsInteger().Value())
 	fmt.Println("arrayKey index 2:", arrayKey.Get(2).AsDouble().Value())
 	fmt.Println("arrayKey index 4:", arrayKey.Get(4).AsObject().JSONString())
-	fmt.Println("arrayKey index 5:", arrayKey.Get(5).AsFunction().Invoke(nil).Size())
+	fmt.Println("arrayKey index 5:", arrayKey.Get(5).AsFunction().Invoke(nil).GetStringByIndex(0))
 	arrayKey.Set(1, "数字变字符串")
 	fmt.Println("arrayKey index 1:", arrayKey.Get(1).AsString().Value())
 	arrayIndex1 := arrayKey.Get(1)
@@ -204,7 +206,7 @@ func Test() {
 	fmt.Println("fieldCollection.Len():", bind.fieldCollection.Len(), len(bind.hasFieldCollection))
 	for k, v := range bind.hasFieldCollection {
 		jsv := bind.GetJSValue(v)
-		fmt.Println("k:", k, "v:", v, "jsv:", jsv.Type())
+		fmt.Println("k:", k, "v:", v, "jsv:", jsv.Type(), v == jsv.Id())
 	}
 
 }

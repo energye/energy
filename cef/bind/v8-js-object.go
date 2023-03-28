@@ -12,8 +12,6 @@
 package bind
 
 import (
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/json"
 	"reflect"
 	"unsafe"
 )
@@ -50,87 +48,7 @@ func (m *jsObject) Get(fieldName string) JSValue {
 	}
 	if m.IsObject() {
 		rv := m.rv.Elem().FieldByName(fieldName)
-		if rv.IsZero() {
-			return nil
-		}
-		kind := rv.Kind()
-		if kind == reflect.Ptr {
-			kind = rv.Elem().Kind()
-		}
-		switch kind {
-		case reflect.String:
-			v := new(jsString)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
-			v := new(jsInteger)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-			v := new(jsInteger)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_UINT, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Float32, reflect.Float64:
-			v := new(jsDouble)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Bool:
-			v := new(jsBoolean)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Struct:
-			v := new(jsObject)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_STRUCT, V: rv.Interface(), S: 0}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Map:
-			v := new(jsObject)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Slice:
-			v := new(jsArray)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: rv.Interface(), S: rv.Len()}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		case reflect.Func:
-			v := new(jsFunction)
-			v.name = fieldName
-			v.pName = m.name
-			v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: rv.Interface(), S: 0}
-			v.rv = &rv
-			bind.Set(v.nameKey(), v)
-			return v
-		}
+		return m.createJSValue(fieldName, &rv)
 	}
 	return nil
 }

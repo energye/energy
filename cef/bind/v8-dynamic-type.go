@@ -20,6 +20,7 @@ import (
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/pkgs/json"
 	"reflect"
+	"strconv"
 	"strings"
 )
 
@@ -61,8 +62,8 @@ type JSValue interface {
 	AsV8Value() JSValue         //转换为 JSValue
 	Id() uintptr                //指针ID
 	Type() consts.GO_VALUE_TYPE //类型
+	fieldToBind()
 	setId(id uintptr)
-	free()
 }
 
 // V8Value 绑定到JS的字段
@@ -78,6 +79,44 @@ func init() {
 	isMainProcess = common.Args.IsMain() //TODO dev
 }
 
+// fieldToBind 对象字段绑定
+func (m *V8Value) fieldToBind() {
+	if m.IsObject() {
+		rv := *m.rv
+		if rv.Kind() == reflect.Ptr {
+			rv = rv.Elem()
+		}
+		num := rv.NumField()
+		rt := rv.Type()
+		if rv.Kind() == reflect.Ptr {
+			rt = rt.Elem()
+		}
+		for i := 0; i < num; i++ {
+			field := rv.Field(i)
+			fieldKind := field.Kind()
+			if fieldKind == reflect.Ptr {
+				fieldKind = field.Elem().Kind()
+			}
+			value := m.createJSValue(rt.Field(i).Name, &field)
+			if value.IsObject() {
+				value.fieldToBind()
+			} else if value.IsArray() {
+				for _, item := range value.AsArray().Items() {
+					if item.IsObject() {
+						item.fieldToBind()
+					}
+				}
+			}
+		}
+	} else if m.IsArray() {
+		for _, item := range m.AsArray().Items() {
+			if item.IsObject() {
+				item.fieldToBind()
+			}
+		}
+	}
+}
+
 func (m *V8Value) nameKey() string {
 	var build strings.Builder
 	build.WriteString(m.pName)
@@ -86,6 +125,95 @@ func (m *V8Value) nameKey() string {
 	m.name = build.String()
 	build.Reset()
 	return m.name
+}
+
+func (m *V8Value) createJSValue(name string, rv *reflect.Value) JSValue {
+	kind := rv.Kind()
+	if kind == reflect.Ptr {
+		kind = rv.Elem().Kind()
+	}
+	switch kind {
+	case reflect.String:
+		v := new(jsString)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: rv.Interface(), S: rv.Len()}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		v := new(jsInteger)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: rv.Interface(), S: strconv.IntSize}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		v := new(jsInteger)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_UINT, V: rv.Interface(), S: strconv.IntSize}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Float32, reflect.Float64:
+		v := new(jsDouble)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: rv.Interface(), S: 8}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Bool:
+		v := new(jsBoolean)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: rv.Interface(), S: 1}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Struct:
+		v := new(jsObject)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: 0}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Map:
+		v := new(jsObject)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: rv.Len()}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Slice:
+		v := new(jsArray)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: rv.Interface(), S: rv.Len()}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	case reflect.Func:
+		v := new(jsFunction)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: rv.Interface(), S: 0}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	default:
+		v := new(jsNull)
+		v.name = name
+		v.pName = m.name
+		v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: null, S: 0}
+		v.rv = rv
+		bind.Set(v.nameKey(), v)
+		return v
+	}
 }
 
 // Bytes 值转换为字节
@@ -127,6 +255,7 @@ func (m *V8Value) SetValue(value any) {
 		}
 		m.rv = &rv
 		bind.Set(m.name, m)
+		m.fieldToBind()
 	}
 }
 
@@ -287,15 +416,6 @@ func (m *V8Value) Type() consts.GO_VALUE_TYPE {
 	return m.value.Type()
 }
 
-func (m *V8Value) free() {
-	if m.value != nil {
-		m.id = 0
-		m.name = ""
-		m.value.Free()
-		m.value = nil
-	}
-}
-
 // NewInteger GO&JS 数字类型
 func NewInteger(name string, value int) JSInteger {
 	if name == "" {
@@ -424,6 +544,7 @@ func NewObject(object any) JSObject {
 	v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: object, S: 0}
 	v.rv = &rv
 	bind.Set(v.name, v)
+	v.fieldToBind()
 	return v
 }
 
