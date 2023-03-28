@@ -24,6 +24,7 @@ type JSArray interface {
 	Add(value any) JSValue
 	Set(index int, value any) JSValue
 	Clear()
+	Remove(index int)
 }
 
 // JSArray 类型 先保留 未添加
@@ -69,7 +70,17 @@ func (m *jsArray) Set(index int, value any) JSValue {
 }
 
 func (m *jsArray) Clear() {
+	for _, v := range m.items {
+		v.free()
+	}
 	m.items = make([]JSValue, 0, 0)
+}
+
+func (m *jsArray) Remove(index int) {
+	if v := m.Get(index); v != nil {
+		v.free()
+		m.items = append(m.items[:index], m.items[index+1:]...)
+	}
 }
 
 func (m *jsArray) createItem(index int, value any) JSValue {

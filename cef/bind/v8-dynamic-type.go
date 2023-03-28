@@ -64,6 +64,7 @@ type JSValue interface {
 	Type() consts.GO_VALUE_TYPE //类型
 	fieldToBind()
 	setId(id uintptr)
+	free()
 }
 
 // V8Value 绑定到JS的字段
@@ -77,6 +78,15 @@ type V8Value struct {
 
 func init() {
 	isMainProcess = common.Args.IsMain() //TODO dev
+}
+
+func (m *V8Value) free() {
+	bind.Remove(m.Id())
+	m.id = 0
+	m.pName = ""
+	m.name = ""
+	m.rv = nil
+	m.value.Free()
 }
 
 // fieldToBind 对象字段绑定

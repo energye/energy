@@ -21,9 +21,9 @@ import (
 var bind = &v8bind{hasFieldCollection: make(map[string]uintptr), fieldCollection: list.New()}
 
 type v8bind struct {
-	hasFieldCollection map[string]uintptr
-	fieldCollection    *list.List
-	lock               sync.Mutex
+	hasFieldCollection  map[string]uintptr
+	fieldCollection     *list.List
+	setLock, removeLock sync.Mutex
 }
 
 // Set 添加或修改
@@ -32,8 +32,8 @@ type v8bind struct {
 //		 name: 唯一字段名, 重复将被覆盖
 //		value: 值
 func (m *v8bind) Set(name string, value JSValue) {
-	m.lock.Lock()
-	defer m.lock.Unlock()
+	m.setLock.Lock()
+	defer m.setLock.Unlock()
 	if id, ok := m.hasFieldCollection[name]; ok {
 		if value.Id() != id {
 			// remove old id
@@ -77,6 +77,8 @@ func (m *v8bind) Get(id uintptr) *list.Element {
 
 // Remove 删除
 func (m *v8bind) Remove(id uintptr) any {
+	m.removeLock.Lock()
+	defer m.removeLock.Unlock()
 	if v := m.Get(id); v != nil {
 		r := m.fieldCollection.Remove(v)
 		v.Value = nil
