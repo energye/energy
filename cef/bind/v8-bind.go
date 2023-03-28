@@ -36,23 +36,28 @@ func (m *v8bind) Set(name string, value JSValue) {
 	defer m.lock.Unlock()
 	if id, ok := m.hasFieldCollection[name]; ok {
 		if value.Id() != id {
+			// remove old id
 			old := m.Remove(id)
+			// gen add value and return new id
 			id = m.Add(value)
 			value.setId(id)
+			//update name id
 			m.hasFieldCollection[name] = id
 			switch old.(type) {
 			case JSValue:
+				//old value set new id
 				old.(JSValue).setId(id)
 			}
 		}
 	} else {
+		// create set new value and return new id
 		id = m.Add(value)
 		value.setId(id)
 		m.hasFieldCollection[name] = id
 	}
-	//m.fieldCollection[name] = value
 }
 
+// GetJSValue 返回 JSValue
 func (m *v8bind) GetJSValue(id uintptr) JSValue {
 	if v := m.Get(id); v != nil {
 		return v.Value.(JSValue)
@@ -60,14 +65,17 @@ func (m *v8bind) GetJSValue(id uintptr) JSValue {
 	return nil
 }
 
+// Add 添加 JSValue 并返回 id
 func (m *v8bind) Add(value JSValue) uintptr {
 	return uintptr(unsafe.Pointer(m.fieldCollection.PushBack(value)))
 }
 
+// Get list element
 func (m *v8bind) Get(id uintptr) *list.Element {
 	return (*list.Element)(unsafe.Pointer(id))
 }
 
+// Remove 删除
 func (m *v8bind) Remove(id uintptr) any {
 	if v := m.Get(id); v != nil {
 		r := m.fieldCollection.Remove(v)
