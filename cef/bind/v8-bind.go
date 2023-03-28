@@ -20,6 +20,7 @@ import (
 
 var bind = &v8bind{hasFieldCollection: make(map[string]uintptr), fieldCollection: list.New()}
 
+// v8bind
 type v8bind struct {
 	hasFieldCollection  map[string]uintptr
 	fieldCollection     *list.List
