@@ -9,13 +9,42 @@
         }
     </style>
     <script type="application/javascript">
-        let testObjectDefine = {object:{}};
+
+
+        let testObjectDefine = {object: {}};
         (function () {
+            const obj = {
+                name: "_island",
+                age: 18,
+                subobj: {
+                    objName: "sssss",
+                    fff: 123
+                },
+                cccc:["aaa","fff",123],
+            };
+
+            const objProxy = new Proxy(obj, {
+                // 获取值时的捕获器
+                get: function (target, key) {
+                    console.log(`监听到了${key}被获取值`);
+                    return target[key];
+                },
+                // 设置值时的捕获器
+                set: function (target, key, newValue) {
+                    console.log(`监听到了${key}被设置值`);
+                    target[key] = newValue;
+                }
+            });
+
+            console.log(objProxy.subobj.objName);
+            console.log(objProxy.cccc[0]);
+
+
             Object.defineProperties(testObjectDefine, {
                 key1: {
                     id: 333333,
                     get() {
-                        msg('key1 get',this.id);
+                        msg('key1 get', this.id);
                         return 'key1Value';
                     },
                     set(v) {
@@ -25,7 +54,7 @@
                 key2: {
                     id: 111111,
                     get() {
-                        msg('key2 get',this.id);
+                        msg('key2 get', this.id);
                         return 'key2Value';
                     },
                     set(v) {
@@ -35,7 +64,7 @@
                 key3: {
                     id: 2222222,
                     get() {
-                        msg('key3 get',this.id);
+                        msg('key3 get', this.id);
                         return function () {
                             msg('function')
                             return "函数返回值"
@@ -56,9 +85,21 @@
                 }
             });
         })();
+        const energya = new Proxy(energy, {
+            // 获取值时的捕获器
+            get: function (target, key) {
+                console.log(`监听到了${key}被获取值`);
+                return target[key];
+            },
+            // 设置值时的捕获器
+            set: function (target, key, newValue) {
+                console.log(`监听到了${key}被设置值`);
+                target[key] = newValue;
+            }
+        });
 
         function testDefine() {
-            //msg(energy.myparam)
+            //msg(energya.myparam)
             msg(testObjectDefine.key1)
             msg(testObjectDefine.key2)
             msg(testObjectDefine.key3())
