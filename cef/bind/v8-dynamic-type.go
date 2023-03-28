@@ -117,6 +117,7 @@ func (m *V8Value) fieldToBind() {
 	}
 }
 
+// nameKey
 func (m *V8Value) nameKey() string {
 	var build strings.Builder
 	build.WriteString(m.pName)
