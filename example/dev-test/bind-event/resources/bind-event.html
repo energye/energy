@@ -9,7 +9,7 @@
         }
     </style>
     <script type="application/javascript">
-        let testObjectDefine = {};
+        let testObjectDefine = {object:{}};
         (function () {
             Object.defineProperties(testObjectDefine, {
                 key1: {
@@ -46,8 +46,7 @@
                     }
                 }
             });
-
-            Object.defineProperty(testObjectDefine, "myparam", {
+            Object.defineProperty(testObjectDefine.object, "myparam", {
                 get() {
                     msg('get myparam');
                     return 'myparamValue';
@@ -59,10 +58,11 @@
         })();
 
         function testDefine() {
-            msg(energy.myparam)
+            //msg(energy.myparam)
             msg(testObjectDefine.key1)
             msg(testObjectDefine.key2)
             msg(testObjectDefine.key3())
+            msg(testObjectDefine.object.myparam)
         }
     </script>
 </head>

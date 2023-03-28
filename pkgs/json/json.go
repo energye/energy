@@ -79,6 +79,7 @@ type JSONArray interface {
 // 根据key操作数据，失败返回数据类型的默认值
 type JSONObject interface {
 	BaseJSON
+	HasKey(key string) bool               //key是否存在
 	Set(key string, value any)            //设置或覆盖指定key，并设置新任意类型值
 	RemoveByKey(key string)               //删除指定key数据
 	GetStringByKey(key string) string     //根据 key 返回 string 类型值
@@ -419,6 +420,14 @@ func (m *JsonData) GetByIndex(index int) JSON {
 	return nil
 }
 
+func (m *JsonData) HasKey(key string) bool {
+	if m.IsObject() {
+		_, ok := m.V.(map[string]any)[key]
+		return ok
+	}
+	return false
+}
+
 func (m *JsonData) Set(key string, value any) {
 	if m.IsObject() {
 		switch value.(type) {
@@ -605,7 +614,10 @@ func (m *JsonData) GetObjectByKey(key string) JSONObject {
 
 func (m *JsonData) GetByKey(key string) JSON {
 	if m.IsObject() {
-		value := m.V.(map[string]any)[key]
+		value, ok := m.V.(map[string]any)[key]
+		if !ok {
+			return nil
+		}
 		switch value.(type) {
 		case json.Number:
 			if v, err := value.(json.Number).Int64(); err == nil {

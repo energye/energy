@@ -47,13 +47,24 @@ func (m *bindRenderProcess) initBindIPC() {
 }
 
 func (m *bindRenderProcess) webKitMakeBind() {
-	bind.GetBinds(func(bind *bind.V8bind) {
-		//fmt.Println("binds", len(hasFieldCollection))
-		//fmt.Println("\t", hasFieldCollection)
-		for _, id := range bind.HasFieldCollection() {
-			v := bind.GetJSValue(id)
-			fmt.Println("webKitMakeBind name:", v.Name(), v.Type())
+	var object = json.NewJSONObject(nil)
+	var bindObject = func(value bind.JSValue) {
+		fmt.Println("webKitMakeBind:", value.Id(), value.Name())
+		name := value.Name()[len(value.Name())-1]
+		if value.IsObject() {
+			object.Set(name, json.NewJSONObject(nil))
+		} else if value.IsArray() {
+			object.Set(name, json.NewJSONArray(nil))
+		} else {
+			object.Set(name, nil)
 		}
+	}
+	bind.GetBinds(func(bind *bind.V8bind) {
+		fields := bind.FieldCollection()
+		for item := fields.Front(); item != nil; item = item.Next() {
+			bindObject(bind.ElementToJSValue(item))
+		}
+		fmt.Println("object:", object.ToJSONString())
 	})
 	m.handler = V8HandlerRef.New()
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {

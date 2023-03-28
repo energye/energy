@@ -83,6 +83,15 @@ func (m *V8bind) GetJSValue(id uintptr) JSValue {
 	}
 	return nil
 }
+func (m *V8bind) ElementToJSValue(item *list.Element) JSValue {
+	if item != nil {
+		r, ok := item.Value.(JSValue)
+		if ok {
+			return r
+		}
+	}
+	return nil
+}
 
 // Add 添加 JSValue 并返回 id
 func (m *V8bind) Add(value JSValue) uintptr {

@@ -551,13 +551,10 @@ func NewArray(name string, values ...any) JSArray {
 	}
 	v := new(jsArray)
 	v.name = []string{name}
+	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: values, S: len(values)}
+	bind.Set(v.name, v)
 	for _, value := range values {
 		v.Add(value)
 	}
-	if !isMainProcess {
-		values = nil
-	}
-	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: values, S: len(values)}
-	bind.Set(v.name, v)
 	return v
 }
