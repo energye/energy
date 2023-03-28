@@ -90,20 +90,13 @@ func (m *V8Value) free() {
 func (m *V8Value) fieldToBind() {
 	if m.IsObject() {
 		rv := *m.rv
-		if rv.Kind() == reflect.Ptr {
-			rv = rv.Elem()
-		}
-		num := rv.NumField()
 		rt := rv.Type()
 		if rv.Kind() == reflect.Ptr {
+			rv = rv.Elem()
 			rt = rt.Elem()
 		}
-		for i := 0; i < num; i++ {
+		for i := 0; i < rv.NumField(); i++ {
 			field := rv.Field(i)
-			fieldKind := field.Kind()
-			if fieldKind == reflect.Ptr {
-				fieldKind = field.Elem().Kind()
-			}
 			value := m.createJSValue(rt.Field(i).Name, &field)
 			if value.IsObject() {
 				value.fieldToBind()
@@ -501,9 +494,6 @@ func NewFunction(name string, fn any) JSFunction {
 	if name == "" {
 		return nil
 	}
-	if !isMainProcess {
-		fn = nil
-	}
 	rv := reflect.ValueOf(fn)
 	if rv.Kind() != reflect.Func {
 		return nil
@@ -531,9 +521,6 @@ func NewObject(object any) JSObject {
 	//必须是结构
 	if kind != reflect.Struct {
 		return nil
-	}
-	if !isMainProcess {
-		object = nil
 	}
 	v := new(jsObject)
 	v.name = []string{rv.Type().Elem().Name()}

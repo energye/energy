@@ -44,20 +44,41 @@ func main() {
 	fmt.Println("nullKey", nullKey.Value())
 	undefinedKey := bind.NewUndefined("undefinedKey")
 	fmt.Println("undefinedKey", undefinedKey.Value(), undefinedKey.IsUndefined())
-	type object struct {
+	funcKey := bind.NewFunction("funcKey", func() {
+
+	})
+	fmt.Println("funcKey", funcKey)
+
+	type objectDemo1 struct {
 		Key1 string
 		Key2 string
-		Key3 int
-		Key4 float64
-		Key5 bool
-		Key8 []string
+	}
+	type objectDemo2 struct {
+		//Key1 string
+		//Key2 string
+		//Key3 int
+		Key4 *objectDemo1
+		Key5 []*objectDemo1
+	}
+	type object struct {
+		//Key1 string
+		//Key2 string
+		//Key3 int
+		//Key4 float64
+		//Key5 bool
+		//Key6 *objectDemo1
+		Key7  objectDemo2
+		Key8  []string
+		Key9  []objectDemo2
+		Key10 *objectDemo2
 	}
 	var testObj = &object{
-		Key1: "value1",
-		Key2: "value2",
-		Key3: 333,
-		Key4: 555.3,
-		Key5: true,
+		//Key1: "value1",
+		//Key2: "value2",
+		//Key3: 333,
+		//Key4: 555.3,
+		//Key5: true,
+		//Key6: &objectDemo1{},
 	}
 	bind.NewObject(testObj)
 	bind.NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)

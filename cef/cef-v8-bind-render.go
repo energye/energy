@@ -48,23 +48,20 @@ func (m *bindRenderProcess) initBindIPC() {
 
 func (m *bindRenderProcess) webKitMakeBind() {
 	var object = json.NewJSONObject(nil)
-	var bindObject = func(value bind.JSValue) {
-		fmt.Println("webKitMakeBind:", value.Id(), value.Name())
-		name := value.Name()[len(value.Name())-1]
-		if value.IsObject() {
-			object.Set(name, json.NewJSONObject(nil))
-		} else if value.IsArray() {
-			object.Set(name, json.NewJSONArray(nil))
-		} else {
-			object.Set(name, nil)
-		}
-	}
+	//var nameBuild = &strings.Builder{}
+
 	bind.GetBinds(func(bind *bind.V8bind) {
 		fields := bind.FieldCollection()
 		for item := fields.Front(); item != nil; item = item.Next() {
-			bindObject(bind.ElementToJSValue(item))
+			jsv := bind.ElementToJSValue(item)
+			if jsv.IsObject() || jsv.IsArray() {
+				fmt.Println("object ElementToJSValue:", jsv.Name(), jsv.JSONString())
+			} else {
+				fmt.Println("object ElementToJSValue:", jsv.Name())
+			}
 		}
 		fmt.Println("object:", object.ToJSONString())
+		fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())
 	})
 	m.handler = V8HandlerRef.New()
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
