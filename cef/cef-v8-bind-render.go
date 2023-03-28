@@ -54,14 +54,15 @@ func (m *bindRenderProcess) webKitMakeBind() {
 		fields := bind.FieldCollection()
 		for item := fields.Front(); item != nil; item = item.Next() {
 			jsv := bind.ElementToJSValue(item)
-			fmt.Println("object ElementToJSValue Object:", strings.Join(jsv.Name(), "."))
-			if len(jsv.Name()) == 1 {
+			names := strings.Split(jsv.Name(), ".")
+			fmt.Println("object ElementToJSValue Object:", jsv.Name())
+			if len(names) == 1 {
 				if jsv.IsObject() {
-					object.Set(jsv.Name()[0], json.NewJSONObject(nil))
+					object.Set(jsv.Name(), json.NewJSONObject(nil))
 				} else if jsv.IsArray() {
-					object.Set(jsv.Name()[0], json.NewJSONArray(nil))
+					object.Set(jsv.Name(), json.NewJSONArray(nil))
 				} else {
-					object.Set(jsv.Name()[0], jsv.JSON().Data())
+					object.Set(jsv.Name(), jsv.JSON().Data())
 				}
 			} else {
 				//for _, name := range jsv.Name()[:len(jsv.Name())-1] {

@@ -57,11 +57,11 @@ func (m *V8bind) Set(value JSValue) {
 			old := m.Remove(id)
 			// gen add value and return new id
 			value.setId(m.Add(value))
-			//update name id
+			// update name id
 			m.hasFieldCollection[value.Name()] = value.Id()
 			switch old.(type) {
 			case JSValue:
-				//old value set new id
+				// old value set new id
 				old.(JSValue).setId(value.Id())
 			}
 		}
