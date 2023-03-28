@@ -13,6 +13,7 @@ package cef
 
 import (
 	"bytes"
+	"container/list"
 	"fmt"
 	"github.com/energye/energy/cef/bind"
 	"github.com/energye/energy/pkgs/json"
@@ -32,8 +33,8 @@ func (m *bindRenderProcess) initBindIPC() {
 		return
 	}
 	m.isInitBindIPC = true
-	bind.GetBinds(func(binds map[string]bind.JSValue) {
-		fmt.Println("binds", len(binds))
+	bind.GetBinds(func(hasFieldCollection map[string]uintptr, fieldCollection *list.List) {
+		fmt.Println("binds", len(hasFieldCollection))
 	})
 	renderIPC.addCallback(func(channelId int64, data json.JSON) bool {
 		if data != nil {

@@ -14,6 +14,7 @@ import (
 	"container/list"
 	"fmt"
 	"github.com/energye/energy/pkgs/json"
+	"strings"
 	"sync"
 	"unsafe"
 )
@@ -32,10 +33,11 @@ type v8bind struct {
 //	参数
 //		 name: 唯一字段名, 重复将被覆盖
 //		value: 值
-func (m *v8bind) Set(name string, value JSValue) {
+func (m *v8bind) Set(name []string, value JSValue) {
 	m.setLock.Lock()
 	defer m.setLock.Unlock()
-	if id, ok := m.hasFieldCollection[name]; ok {
+	n := strings.Join(name, ".")
+	if id, ok := m.hasFieldCollection[n]; ok {
 		if value.Id() != id {
 			// remove old id
 			old := m.Remove(id)
@@ -43,7 +45,7 @@ func (m *v8bind) Set(name string, value JSValue) {
 			id = m.Add(value)
 			value.setId(id)
 			//update name id
-			m.hasFieldCollection[name] = id
+			m.hasFieldCollection[n] = id
 			switch old.(type) {
 			case JSValue:
 				//old value set new id
@@ -54,7 +56,7 @@ func (m *v8bind) Set(name string, value JSValue) {
 		// create set new value and return new id
 		id = m.Add(value)
 		value.setId(id)
-		m.hasFieldCollection[name] = id
+		m.hasFieldCollection[n] = id
 	}
 }
 
@@ -88,8 +90,9 @@ func (m *v8bind) Remove(id uintptr) any {
 	return nil
 }
 
-func GetBinds(fn func(binds map[string]JSValue)) {
-	//fn(bind.fieldCollection)
+// GetBinds 获取绑定的字段
+func GetBinds(fn func(hasFieldCollection map[string]uintptr, fieldCollection *list.List)) {
+	fn(bind.hasFieldCollection, bind.fieldCollection)
 }
 
 func Test() {
@@ -217,7 +220,7 @@ func Test() {
 	fmt.Println("fieldCollection.Len():", bind.fieldCollection.Len(), len(bind.hasFieldCollection))
 	for k, v := range bind.hasFieldCollection {
 		jsv := bind.GetJSValue(v)
-		fmt.Println("k:", k, "v:", v, "jsv:", jsv.Type(), v == jsv.Id())
+		fmt.Println("k:", k, "v:", v, "jsv:", jsv.Type(), v == jsv.Id(), "name:", jsv.Name())
 	}
 
 }

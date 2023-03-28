@@ -16,10 +16,9 @@
 package bind
 
 // Bind 绑定Go类型
-//
-// 变量和函数绑定, 在Go中定义的字段绑定到JS中, 在Go中定义的函数导出到JS
-//
-// 支持类型 String = string , Integer = (int8 ~ uint64) , Double = (float32, float64), Boolean = bool, Function = func, Object = struct | map,  Array = Slice
+//  变量和函数绑定, 在Go中定义的字段绑定到JS中, 在Go中定义的函数导出到JS
+//	不可改变类型
+//  支持类型 String = string , Integer = (int8 ~ uint64) , Double = (float32, float64), Boolean = bool, Function = func, Object = struct | map,  Array = Slice
 func Bind(name string, bind any) error {
 	return nil
 }
