@@ -49,6 +49,14 @@ const (
 	isZos       = runtime.GOOS == "zos"       //not support
 )
 
+// Concat 字符串拼接
+func Concat(str ...string) string {
+	var c = strings.Builder{}
+	for _, v := range str {
+		c.WriteString(v)
+	}
+	return c.String()
+}
 func IsWindows() bool {
 	return isWindows
 }
