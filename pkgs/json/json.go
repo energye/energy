@@ -435,6 +435,10 @@ func (m *JsonData) Set(key string, value any) {
 			if vv := NewJSON(value.([]byte)); vv != nil {
 				value = vv.Data()
 			}
+		case JsonData:
+			value = value.(JsonData).V
+		case *JsonData:
+			value = value.(*JsonData).V
 		case JSON:
 			value = value.(JSON).Data()
 		case JSONObject:

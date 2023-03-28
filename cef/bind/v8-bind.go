@@ -14,7 +14,6 @@ import (
 	"container/list"
 	"fmt"
 	"github.com/energye/energy/pkgs/json"
-	"strings"
 	"sync"
 	"unsafe"
 )
@@ -49,30 +48,27 @@ func (m *V8bind) FieldCollection() *list.List {
 //	参数
 //		 name: 唯一字段名, 重复将被覆盖
 //		value: 值
-func (m *V8bind) Set(name []string, value JSValue) {
+func (m *V8bind) Set(value JSValue) {
 	m.setLock.Lock()
 	defer m.setLock.Unlock()
-	n := strings.Join(name, ".")
-	if id, ok := m.hasFieldCollection[n]; ok {
+	if id, ok := m.hasFieldCollection[value.Name()]; ok {
 		if value.Id() != id {
 			// remove old id
 			old := m.Remove(id)
 			// gen add value and return new id
-			id = m.Add(value)
-			value.setId(id)
+			value.setId(m.Add(value))
 			//update name id
-			m.hasFieldCollection[n] = id
+			m.hasFieldCollection[value.Name()] = value.Id()
 			switch old.(type) {
 			case JSValue:
 				//old value set new id
-				old.(JSValue).setId(id)
+				old.(JSValue).setId(value.Id())
 			}
 		}
 	} else {
 		// create set new value and return new id
-		id = m.Add(value)
-		value.setId(id)
-		m.hasFieldCollection[n] = id
+		value.setId(m.Add(value))
+		m.hasFieldCollection[value.Name()] = value.Id()
 	}
 }
 
@@ -157,11 +153,12 @@ func Test() {
 
 	type objectDemo1 struct {
 		Key1 string
-		Key2 string
+		Key2 int
+		Key3 string
 	}
 	type objectDemo2 struct {
-		//Key1 string
-		//Key2 string
+		Key1 string
+		Key2 string
 		//Key3 int
 		Key4 *objectDemo1
 		Key5 []*objectDemo1
@@ -188,10 +185,16 @@ func Test() {
 		//Key6: &objectDemo1{},
 		Key7: objectDemo2{Key4: &objectDemo1{}},
 	}
-	objectKey := NewObject(testObj)
-	fmt.Println("objectKey:", objectKey.JSONString())
-	fmt.Println("testObj:", json.NewJSONObject(bind.hasFieldCollection).ToJSONString())
-
+	NewObject(testObj)
+	//NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
+	fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())
+	fields := bind.FieldCollection()
+	item := fields.Front()
+	for ; item != nil; item = item.Next() {
+		jsv := bind.ElementToJSValue(item)
+		fmt.Println("item:", jsv.Id(), jsv.Name(), " - ", bind.GetJSValue(jsv.Id()).Name())
+		bind.GetJSValue(jsv.Id()).Name()
+	}
 	//objectKey.Set("Key1", "值1")
 	//objectKey.Set("Key2", "值2")
 	//objectKey.Set("Key3", 4444)

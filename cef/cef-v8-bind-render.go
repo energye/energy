@@ -47,18 +47,48 @@ func (m *bindRenderProcess) initBindIPC() {
 }
 
 func (m *bindRenderProcess) webKitMakeBind() {
-	var object = json.NewJSONObject(nil)
 	//var nameBuild = &strings.Builder{}
 
 	bind.GetBinds(func(bind *bind.V8bind) {
+		var object = json.NewJSONObject(nil)
 		fields := bind.FieldCollection()
 		for item := fields.Front(); item != nil; item = item.Next() {
 			jsv := bind.ElementToJSValue(item)
-			if jsv.IsObject() || jsv.IsArray() {
-				fmt.Println("object ElementToJSValue:", jsv.Name(), jsv.JSONString())
+			fmt.Println("object ElementToJSValue Object:", strings.Join(jsv.Name(), "."))
+			if len(jsv.Name()) == 1 {
+				if jsv.IsObject() {
+					object.Set(jsv.Name()[0], json.NewJSONObject(nil))
+				} else if jsv.IsArray() {
+					object.Set(jsv.Name()[0], json.NewJSONArray(nil))
+				} else {
+					object.Set(jsv.Name()[0], jsv.JSON().Data())
+				}
 			} else {
-				fmt.Println("object ElementToJSValue:", jsv.Name())
+				//for _, name := range jsv.Name()[:len(jsv.Name())-1] {
+				//
+				//}
+				//if jsv.IsObject() || jsv.IsArray() {
+				//	fmt.Println("object ElementToJSValue Object:", strings.Join(jsv.Name(), "."), jsv.JSON().ToJSONString())
+				//	for _, name := range jsv.Name() {
+				//		if pObject := object.GetByKey(name); pObject != nil {
+				//			if jsv.IsObject() {
+				//				object.Set(strings.Join(jsv.Name(), "."), json.NewJSONObject(nil))
+				//			} else if jsv.IsArray() {
+				//				object.Set(strings.Join(jsv.Name(), "."), json.NewJSONArray(nil))
+				//			}
+				//		}
+				//	}
+				//	if jsv.IsObject() {
+				//		object.Set(strings.Join(jsv.Name(), "."), json.NewJSONObject(nil))
+				//	} else if jsv.IsArray() {
+				//		object.Set(strings.Join(jsv.Name(), "."), json.NewJSONArray(nil))
+				//	}
+				//} else {
+				//	fmt.Println("object ElementToJSValue:", strings.Join(jsv.Name(), "."), jsv.JSON().ToJSONString())
+				//	//object.Set(strings.Join(jsv.Name(), "."), jsv.JSON().Data())
+				//}
 			}
+
 		}
 		fmt.Println("object:", object.ToJSONString())
 		fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())

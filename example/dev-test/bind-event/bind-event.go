@@ -79,6 +79,7 @@ func main() {
 		//Key4: 555.3,
 		//Key5: true,
 		//Key6: &objectDemo1{},
+		Key7: objectDemo2{Key4: &objectDemo1{}},
 	}
 	bind.NewObject(testObj)
 	bind.NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)

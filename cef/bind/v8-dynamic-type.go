@@ -21,6 +21,7 @@ import (
 	"github.com/energye/energy/pkgs/json"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -36,9 +37,8 @@ var (
 //
 // GO和JS动态变量类型
 type JSValue interface {
-	Name() []string             //当前变量绑定的名称
-	Bytes() []byte              //变量值转换为字节
-	JSONString() string         //变量值转换为JSON String
+	Name() string               //当前变量绑定的名称
+	JSON() json.JSON            //
 	SetValue(value any)         //设置新值
 	IsInteger() bool            //是否 Integer
 	IsDouble() bool             //是否 Double
@@ -69,7 +69,7 @@ type JSValue interface {
 // V8Value 绑定到JS的字段
 type V8Value struct {
 	id    uintptr
-	name  []string
+	name  string
 	rv    *reflect.Value
 	value json.JSON
 }
@@ -81,7 +81,7 @@ func init() {
 func (m *V8Value) free() {
 	bind.Remove(m.Id())
 	m.id = 0
-	m.name = nil
+	m.name = ""
 	m.rv = nil
 	m.value.Free()
 }
@@ -97,7 +97,8 @@ func (m *V8Value) fieldToBind() {
 		}
 		for i := 0; i < rv.NumField(); i++ {
 			field := rv.Field(i)
-			value := m.createJSValue(rt.Field(i).Name, &field)
+			name := rt.Field(i).Name
+			value := m.createJSValue(name, &field)
 			if value.IsObject() {
 				value.fieldToBind()
 			} else if value.IsArray() {
@@ -118,9 +119,12 @@ func (m *V8Value) fieldToBind() {
 }
 
 // nameKey
-func (m *V8Value) nameKey(name string) []string {
-	m.name = append(m.name, name)
-	return m.name
+func (m *V8Value) nameKey(pName, name string) {
+	var concat = strings.Builder{}
+	concat.WriteString(pName)
+	concat.WriteString(".")
+	concat.WriteString(name)
+	m.name = concat.String()
 }
 
 // createJSValue 创建 JSValue
@@ -132,85 +136,79 @@ func (m *V8Value) createJSValue(name string, rv *reflect.Value) JSValue {
 	switch kind {
 	case reflect.String:
 		v := new(jsString)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: rv.Interface(), S: rv.Len()}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 		v := new(jsInteger)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: rv.Interface(), S: strconv.IntSize}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		v := new(jsInteger)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_UINT, V: rv.Interface(), S: strconv.IntSize}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Float32, reflect.Float64:
 		v := new(jsDouble)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: rv.Interface(), S: 8}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Bool:
 		v := new(jsBoolean)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: rv.Interface(), S: 1}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Struct:
 		v := new(jsObject)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: 0}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Map:
 		v := new(jsObject)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: rv.Interface(), S: rv.Len()}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Slice:
 		v := new(jsArray)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: rv.Interface(), S: rv.Len()}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	case reflect.Func:
 		v := new(jsFunction)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: rv.Interface(), S: 0}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	default:
 		v := new(jsNull)
-		v.name = m.name
+		v.nameKey(m.name, name)
 		v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: null, S: 0}
 		v.rv = rv
-		bind.Set(v.nameKey(name), v)
+		bind.Set(v)
 		return v
 	}
 }
 
-// Bytes 值转换为字节
-func (m *V8Value) Bytes() []byte {
-	return m.value.Bytes()
-}
-
-// JSONString 返回 JSONString
-func (m *V8Value) JSONString() string {
-	return string(m.Bytes())
+func (m *V8Value) JSON() json.JSON {
+	return m.value
 }
 
 // SetValue 设置值
@@ -238,11 +236,11 @@ func (m *V8Value) SetValue(value any) {
 				m.rv.Set(rv)
 			}
 			m.value.SetValue(value)
-			bind.Set(m.name, m)
+			bind.Set(m)
 			return
 		}
 		m.rv = &rv
-		bind.Set(m.name, m)
+		bind.Set(m)
 		m.fieldToBind()
 	}
 }
@@ -255,7 +253,7 @@ func (m *V8Value) Id() uintptr {
 	return m.id
 }
 
-func (m *V8Value) Name() []string {
+func (m *V8Value) Name() string {
 	return m.name
 }
 
@@ -300,7 +298,7 @@ func (m *V8Value) AsString() JSString {
 		v := new(jsString)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -311,7 +309,7 @@ func (m *V8Value) AsInteger() JSInteger {
 		v := new(jsInteger)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -322,7 +320,7 @@ func (m *V8Value) AsDouble() JSDouble {
 		v := new(jsDouble)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -333,7 +331,7 @@ func (m *V8Value) AsBoolean() JSBoolean {
 		v := new(jsBoolean)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -344,7 +342,7 @@ func (m *V8Value) AsNull() JSNull {
 		v := new(jsNull)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -355,7 +353,7 @@ func (m *V8Value) AsUndefined() JSUndefined {
 		v := new(jsUndefined)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -366,7 +364,7 @@ func (m *V8Value) AsFunction() JSFunction {
 		v := new(jsFunction)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -377,7 +375,7 @@ func (m *V8Value) AsObject() JSObject {
 		v := new(jsObject)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -388,7 +386,7 @@ func (m *V8Value) AsArray() JSArray {
 		v := new(jsArray)
 		v.name = m.name
 		v.value = m.value.JsonData()
-		bind.Set(m.name, v)
+		bind.Set(v)
 		return v
 	}
 	return nil // default
@@ -414,9 +412,9 @@ func NewInteger(name string, value int) JSInteger {
 		value = 0
 	}
 	v := new(jsInteger)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_INT, V: value, S: 4}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -429,9 +427,9 @@ func NewString(name, value string) JSString {
 		value = ""
 	}
 	v := new(jsString)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_STRING, V: value, S: len(value)}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -444,9 +442,9 @@ func NewDouble(name string, value float64) JSDouble {
 		value = 0
 	}
 	v := new(jsDouble)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_FLOAT64, V: value, S: 8}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -459,9 +457,9 @@ func NewBoolean(name string, value bool) JSBoolean {
 		value = false
 	}
 	v := new(jsBoolean)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_BOOL, V: value, S: 1}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -471,9 +469,9 @@ func NewNull(name string) JSNull {
 		return nil
 	}
 	v := new(jsNull)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: null, S: 0}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -483,9 +481,9 @@ func NewUndefined(name string) JSUndefined {
 		return nil
 	}
 	v := new(jsUndefined)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_NIL, V: undefined, S: 0}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -499,10 +497,10 @@ func NewFunction(name string, fn any) JSFunction {
 		return nil
 	}
 	v := new(jsFunction)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_FUNC, V: &rv, S: 0}
 	v.rv = &rv
-	bind.Set(v.name, v)
+	bind.Set(v)
 	return v
 }
 
@@ -523,10 +521,10 @@ func NewObject(object any) JSObject {
 		return nil
 	}
 	v := new(jsObject)
-	v.name = []string{rv.Type().Elem().Name()}
+	v.name = rv.Type().Elem().Name()
 	v.value = &json.JsonData{T: consts.GO_VALUE_MAP, V: object, S: 0}
 	v.rv = &rv
-	bind.Set(v.name, v)
+	bind.Set(v)
 	v.fieldToBind()
 	return v
 }
@@ -537,9 +535,9 @@ func NewArray(name string, values ...any) JSArray {
 		return nil
 	}
 	v := new(jsArray)
-	v.name = []string{name}
+	v.name = name
 	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: values, S: len(values)}
-	bind.Set(v.name, v)
+	bind.Set(v)
 	for _, value := range values {
 		v.Add(value)
 	}
