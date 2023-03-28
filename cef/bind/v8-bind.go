@@ -19,13 +19,29 @@ import (
 	"unsafe"
 )
 
-var bind = &v8bind{hasFieldCollection: make(map[string]uintptr), fieldCollection: list.New()}
+var bind = &V8bind{hasFieldCollection: make(map[string]uintptr), fieldCollection: list.New()}
 
-// v8bind
-type v8bind struct {
+// V8bind
+type V8bind struct {
 	hasFieldCollection  map[string]uintptr
 	fieldCollection     *list.List
 	setLock, removeLock sync.Mutex
+}
+
+func (m *V8bind) HasSize() int {
+	return len(m.hasFieldCollection)
+}
+
+func (m *V8bind) Size() int {
+	return m.fieldCollection.Len()
+}
+
+func (m *V8bind) HasFieldCollection() map[string]uintptr {
+	return m.hasFieldCollection
+}
+
+func (m *V8bind) FieldCollection() *list.List {
+	return m.fieldCollection
 }
 
 // Set 添加或修改
@@ -33,7 +49,7 @@ type v8bind struct {
 //	参数
 //		 name: 唯一字段名, 重复将被覆盖
 //		value: 值
-func (m *v8bind) Set(name []string, value JSValue) {
+func (m *V8bind) Set(name []string, value JSValue) {
 	m.setLock.Lock()
 	defer m.setLock.Unlock()
 	n := strings.Join(name, ".")
@@ -61,7 +77,7 @@ func (m *v8bind) Set(name []string, value JSValue) {
 }
 
 // GetJSValue 返回 JSValue
-func (m *v8bind) GetJSValue(id uintptr) JSValue {
+func (m *V8bind) GetJSValue(id uintptr) JSValue {
 	if v := m.Get(id); v != nil {
 		return v.Value.(JSValue)
 	}
@@ -69,17 +85,17 @@ func (m *v8bind) GetJSValue(id uintptr) JSValue {
 }
 
 // Add 添加 JSValue 并返回 id
-func (m *v8bind) Add(value JSValue) uintptr {
+func (m *V8bind) Add(value JSValue) uintptr {
 	return uintptr(unsafe.Pointer(m.fieldCollection.PushBack(value)))
 }
 
 // Get list element
-func (m *v8bind) Get(id uintptr) *list.Element {
+func (m *V8bind) Get(id uintptr) *list.Element {
 	return (*list.Element)(unsafe.Pointer(id))
 }
 
 // Remove 删除
-func (m *v8bind) Remove(id uintptr) any {
+func (m *V8bind) Remove(id uintptr) any {
 	m.removeLock.Lock()
 	defer m.removeLock.Unlock()
 	if v := m.Get(id); v != nil {
@@ -91,8 +107,8 @@ func (m *v8bind) Remove(id uintptr) any {
 }
 
 // GetBinds 获取绑定的字段
-func GetBinds(fn func(hasFieldCollection map[string]uintptr, fieldCollection *list.List)) {
-	fn(bind.hasFieldCollection, bind.fieldCollection)
+func GetBinds(fn func(bind *V8bind)) {
+	fn(bind)
 }
 
 func Test() {

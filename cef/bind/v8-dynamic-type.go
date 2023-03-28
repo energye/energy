@@ -521,9 +521,6 @@ func NewObject(object any) JSObject {
 	if object == nil {
 		return nil
 	}
-	if !isMainProcess {
-		object = nil
-	}
 	rv := reflect.ValueOf(object)
 	kind := rv.Kind()
 	//必须是指针
@@ -534,6 +531,9 @@ func NewObject(object any) JSObject {
 	//必须是结构
 	if kind != reflect.Struct {
 		return nil
+	}
+	if !isMainProcess {
+		object = nil
 	}
 	v := new(jsObject)
 	v.name = []string{rv.Type().Elem().Name()}
@@ -549,13 +549,13 @@ func NewArray(name string, values ...any) JSArray {
 	if name == "" || values == nil {
 		return nil
 	}
-	if !isMainProcess {
-		values = nil
-	}
 	v := new(jsArray)
 	v.name = []string{name}
 	for _, value := range values {
 		v.Add(value)
+	}
+	if !isMainProcess {
+		values = nil
 	}
 	v.value = &json.JsonData{T: consts.GO_VALUE_SLICE, V: values, S: len(values)}
 	bind.Set(v.name, v)

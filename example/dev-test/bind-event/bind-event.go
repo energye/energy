@@ -44,6 +44,23 @@ func main() {
 	fmt.Println("nullKey", nullKey.Value())
 	undefinedKey := bind.NewUndefined("undefinedKey")
 	fmt.Println("undefinedKey", undefinedKey.Value(), undefinedKey.IsUndefined())
+	type object struct {
+		Key1 string
+		Key2 string
+		Key3 int
+		Key4 float64
+		Key5 bool
+		Key8 []string
+	}
+	var testObj = &object{
+		Key1: "value1",
+		Key2: "value2",
+		Key3: 333,
+		Key4: 555.3,
+		Key5: true,
+	}
+	bind.NewObject(testObj)
+	bind.NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
 
 	//内置http服务链接安全配置
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {

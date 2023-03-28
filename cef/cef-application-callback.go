@@ -32,7 +32,7 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	bindRender.makeBind() // render bind make
+	bindRender.webKitMakeBind() // render webkit bind make
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现
