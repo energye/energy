@@ -20,7 +20,7 @@
                     objName: "sssss",
                     fff: 123
                 },
-                cccc:["aaa","fff",123],
+                cccc: ["aaa", "fff", 123],
             };
 
             const objProxy = new Proxy(obj, {
@@ -36,6 +36,8 @@
                 }
             });
 
+            console.log(objProxy.subobj.objName);
+            objProxy.subobj.objName = "杨杨杨"
             console.log(objProxy.subobj.objName);
             console.log(objProxy.cccc[0]);
 
@@ -85,25 +87,52 @@
                 }
             });
         })();
-        const energya = new Proxy(energy, {
-            // 获取值时的捕获器
-            get: function (target, key) {
-                console.log(`监听到了${key}被获取值`);
-                return target[key];
-            },
-            // 设置值时的捕获器
-            set: function (target, key, newValue) {
-                console.log(`监听到了${key}被设置值`);
-                target[key] = newValue;
+        const testObject = {
+            myparam: {
+                ccc: "aaaa",
+                bbbb: function () {
+                    return "bbbba"
+                }
             }
-        });
+        }
+        //
+        const handler = {
+            get(target, key, recevier) {
+                if (typeof target[key] === 'object') {
+                    console.log(Object.prototype.toString.call(target[key]))
+                    if (Object.prototype.toString.call(target[key]) !== "[object proxy]") {
+                        target[key] = addSubProxy(target[key])
+                    }
+                }
+                console.log(`监听到了${key}被获取值`, target[key]);
+                return Reflect.get(target, key, recevier)
+            },
+            set: function (target, key, value) {
+                console.log(`监听到了${key}被设置值`, target[key]);
+                Reflect.set(target, key, value)
+            }
+        }
+
+        function createProxy(obj) {
+            return addSubProxy(obj)
+        }
+
+        function addSubProxy(subObj) {
+            return new Proxy(subObj, handler)
+        }
+
+        const energya = createProxy(testObject)
+
 
         function testDefine() {
-            //msg(energya.myparam)
-            msg(testObjectDefine.key1)
-            msg(testObjectDefine.key2)
-            msg(testObjectDefine.key3())
-            msg(testObjectDefine.object.myparam)
+            // msg(energya.myparam.ccc)
+            //msg(energya.myparam.bbbb())
+            energya.myparam.ccc = "ffff"
+            msg(energya.myparam.ccc)
+            // msg(testObjectDefine.key1)
+            // msg(testObjectDefine.key2)
+            // msg(testObjectDefine.key3())
+            // msg(testObjectDefine.object.myparam)
         }
     </script>
 </head>

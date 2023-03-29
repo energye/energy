@@ -49,49 +49,57 @@ func (m *bindRenderProcess) initBindIPC() {
 func (m *bindRenderProcess) webKitMakeBind() {
 	//var nameBuild = &strings.Builder{}
 
+	var objectFieldBind = func(bind *bind.V8bind, object json.JSONObject, jsv bind.JSValue) {
+		names := strings.Split(jsv.Name(), ".")
+		fmt.Println("object ElementToJSValue Object:", jsv.Name(), jsv.Type())
+		//fmt.Println("object:", object.ToJSONString())
+		if len(names) == 1 {
+			if jsv.IsObject() {
+				object.Set(jsv.Name(), json.NewJSONObject(nil))
+			} else if jsv.IsArray() {
+				object.Set(jsv.Name(), json.NewJSONArray(nil))
+			} else {
+				object.Set(jsv.Name(), jsv.Id())
+			}
+		} else {
+			name := names[len(names)-1]
+			var pObject = object
+			for i := 0; i < len(names)-1; i++ {
+				pObject = pObject.GetByKey(names[i])
+			}
+			if jsv.IsObject() {
+				if pObject.IsArray() {
+					subObject := json.NewJSONObject(nil)
+					subObject.Set("_id", jsv.Id())
+					pObject.JSONArray().Add(subObject)
+				} else {
+					subObject := json.NewJSONObject(nil)
+					subObject.Set("_id", jsv.Id())
+					pObject.Set(name, subObject)
+				}
+			} else if jsv.IsArray() {
+				if pObject.IsObject() {
+					subArray := json.NewJSONArray(jsv.Id())
+					pObject.Set(name, subArray)
+				} else {
+					subArray := json.NewJSONArray(jsv.Id())
+					pObject.JSONArray().Add(subArray)
+				}
+			} else {
+				if pObject.IsObject() {
+					pObject.Set(name, jsv.Id())
+				} else if pObject.IsArray() {
+					pObject.JSONArray().Add(jsv.Id())
+				}
+			}
+		}
+	}
 	bind.GetBinds(func(bind *bind.V8bind) {
 		var object = json.NewJSONObject(nil)
 		fields := bind.FieldCollection()
 		for item := fields.Front(); item != nil; item = item.Next() {
 			jsv := bind.ElementToJSValue(item)
-			names := strings.Split(jsv.Name(), ".")
-			fmt.Println("object ElementToJSValue Object:", jsv.Name(), jsv.Type())
-			//fmt.Println("object:", object.ToJSONString())
-			if len(names) == 1 {
-				if jsv.IsObject() {
-					object.Set(jsv.Name(), json.NewJSONObject(nil))
-				} else if jsv.IsArray() {
-					object.Set(jsv.Name(), json.NewJSONArray(nil))
-				} else {
-					object.Set(jsv.Name(), jsv.JSON().Data())
-				}
-			} else {
-				name := names[len(names)-1]
-				var pObject = object
-				for i := 0; i < len(names)-1; i++ {
-					pObject = pObject.GetByKey(names[i])
-				}
-				if jsv.IsObject() {
-					if pObject.IsArray() {
-						pObject.JSONArray().Add(json.NewJSONObject(nil))
-					} else {
-						pObject.Set(name, json.NewJSONObject(nil))
-					}
-				} else if jsv.IsArray() {
-					if pObject.IsObject() {
-						pObject.Set(name, json.NewJSONArray(nil))
-					} else {
-						pObject.JSONArray().Add(json.NewJSONArray(nil))
-					}
-				} else {
-					if pObject.IsObject() {
-						pObject.Set(name, nil)
-					} else if pObject.IsArray() {
-						pObject.JSONArray().Add(nil)
-					}
-				}
-			}
-
+			objectFieldBind(bind, object, jsv)
 		}
 		fmt.Println("object:", object.ToJSONString())
 		fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())
