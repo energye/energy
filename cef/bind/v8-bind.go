@@ -15,70 +15,60 @@ import (
 	"fmt"
 	"github.com/energye/energy/pkgs/json"
 	"sync"
-	"unsafe"
 )
 
-var bind = &V8bind{hasFieldCollection: make(map[string]uintptr), fieldCollection: list.New()}
+var bind = &V8bind{root: &bindValue{value: &V8Value{name: []string{"root"}}, child: make(map[string]*bindValue)}}
 
 // V8bind
 type V8bind struct {
-	hasFieldCollection  map[string]uintptr
-	fieldCollection     *list.List
+	root                *bindValue
 	setLock, removeLock sync.Mutex
 }
 
-func (m *V8bind) HasSize() int {
-	return len(m.hasFieldCollection)
+type bindValue struct {
+	value JSValue
+	child map[string]*bindValue
 }
 
-func (m *V8bind) Size() int {
-	return m.fieldCollection.Len()
+func (m *bindValue) Value() JSValue {
+	return m.value
 }
 
-func (m *V8bind) HasFieldCollection() map[string]uintptr {
-	return m.hasFieldCollection
+func (m *bindValue) Child() map[string]*bindValue {
+	return m.child
 }
 
-func (m *V8bind) FieldCollection() *list.List {
-	return m.fieldCollection
+// name.name1.name2
+func (m *V8bind) findParent(pName []string) *bindValue {
+	var fc = m.root
+	for _, name := range pName[:len(pName)-1] {
+		if bv, ok := fc.child[name]; ok {
+			fc = bv
+		}
+	}
+	return fc
 }
 
 // Set 添加或修改
 //
 //	参数
-//		 name: 唯一字段名, 重复将被覆盖
-//		value: 值
+//		value: JSValue
 func (m *V8bind) Set(value JSValue) {
 	m.setLock.Lock()
 	defer m.setLock.Unlock()
-	if id, ok := m.hasFieldCollection[value.Name()]; ok {
-		if value.Id() != id {
-			// remove old id
-			old := m.Remove(id)
-			// gen add value and return new id
-			value.setId(m.Add(value))
-			// update name id
-			m.hasFieldCollection[value.Name()] = value.Id()
-			switch old.(type) {
-			case JSValue:
-				// old value set new id
-				old.(JSValue).setId(value.Id())
-			}
+	if p := m.findParent(value.Name()); p != nil {
+		if p.child == nil {
+			p.child = make(map[string]*bindValue)
 		}
-	} else {
-		// create set new value and return new id
-		value.setId(m.Add(value))
-		m.hasFieldCollection[value.Name()] = value.Id()
+		name := value.Name()[len(value.Name())-1]
+		if v, ok := p.child[name]; ok {
+			v.value = value
+		}
+		p.child[name] = &bindValue{value: value}
 	}
+
 }
 
-// GetJSValue 返回 JSValue
-func (m *V8bind) GetJSValue(id uintptr) JSValue {
-	if v := m.Get(id); v != nil {
-		return v.Value.(JSValue)
-	}
-	return nil
-}
 func (m *V8bind) ElementToJSValue(item *list.Element) JSValue {
 	if item != nil {
 		r, ok := item.Value.(JSValue)
@@ -89,26 +79,9 @@ func (m *V8bind) ElementToJSValue(item *list.Element) JSValue {
 	return nil
 }
 
-// Add 添加 JSValue 并返回 id
-func (m *V8bind) Add(value JSValue) uintptr {
-	return uintptr(unsafe.Pointer(m.fieldCollection.PushBack(value)))
-}
-
-// Get list element
-func (m *V8bind) Get(id uintptr) *list.Element {
-	return (*list.Element)(unsafe.Pointer(id))
-}
-
-// Remove 删除
-func (m *V8bind) Remove(id uintptr) any {
-	m.removeLock.Lock()
-	defer m.removeLock.Unlock()
-	if v := m.Get(id); v != nil {
-		r := m.fieldCollection.Remove(v)
-		v.Value = nil
-		return r
-	}
-	return nil
+// Get
+func (m *V8bind) Get(name string) *bindValue {
+	return m.root.child[name]
 }
 
 // GetBinds 获取绑定的字段
@@ -131,10 +104,9 @@ func Test() {
 	fmt.Println("integerKey", integerKey.AsBoolean().Value())
 	boolField := integerKey.AsBoolean()
 	fmt.Println("boolField", boolField.Value())
-	fmt.Println("boolField", bind.GetJSValue(boolField.Id()).AsBoolean().Value())
+	//fmt.Println("boolField", bind.Get(boolField.Name()).AsBoolean().Value())
 	boolField.SetValue(false)
-	fmt.Println("boolField", bind.GetJSValue(boolField.Id()).AsBoolean().Value())
-	fmt.Println(bind.fieldCollection.Len())
+	//fmt.Println("boolField", bind.Get(boolField.Name()).AsBoolean().Value())
 
 	//函数
 	funcKey := NewFunction("funcKey", func(in1 string) {
@@ -186,15 +158,10 @@ func Test() {
 		Key7: objectDemo2{Key4: &objectDemo1{}},
 	}
 	NewObject(testObj)
-	//NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
-	fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())
-	fields := bind.FieldCollection()
-	item := fields.Front()
-	for ; item != nil; item = item.Next() {
-		jsv := bind.ElementToJSValue(item)
-		fmt.Println("item:", jsv.Id(), jsv.Name(), " - ", bind.GetJSValue(jsv.Id()).Name())
-		bind.GetJSValue(jsv.Id()).Name()
-	}
+	NewArray("arrayKey", "字符串", 100001, 22222.333, true, testObj)
+	fmt.Println(bind.root)
+
+	foreach(bind.root.child)
 	//objectKey.Set("Key1", "值1")
 	//objectKey.Set("Key2", "值2")
 	//objectKey.Set("Key3", 4444)
@@ -261,6 +228,11 @@ func Test() {
 
 }
 
-func TestBind() {
-
+func foreach(child map[string]*bindValue) {
+	for k, v := range child {
+		fmt.Println("key", k, v.value.Name())
+		if v.child != nil {
+			foreach(v.child)
+		}
+	}
 }

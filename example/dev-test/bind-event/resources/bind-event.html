@@ -36,10 +36,10 @@
                 }
             });
 
-            console.log(objProxy.subobj.objName);
-            objProxy.subobj.objName = "杨杨杨"
-            console.log(objProxy.subobj.objName);
-            console.log(objProxy.cccc[0]);
+            // console.log(objProxy.subobj.objName);
+            // objProxy.subobj.objName = "杨杨杨"
+            // console.log(objProxy.subobj.objName);
+            // console.log(objProxy.cccc[0]);
 
 
             Object.defineProperties(testObjectDefine, {
@@ -88,28 +88,114 @@
             });
         })();
         const testObject = {
-            myparam: {
-                ccc: "aaaa",
-                bbbb: function () {
-                    return "bbbba"
+            "nullKey": {"t": 15, "p": 824635236688},
+            "funcKey": {"p": 824635236832, "t": 18},
+            "object": {
+                "p": 824635236976,
+                "Key2": {"t": 0, "p": 824635237168},
+                "Key4": {"p": 824635237360, "t": 13},
+                "Key5": {"p": 824635237456, "t": 14},
+                "Key6": {
+                    "Key1": {"p": 824635237648, "t": 0},
+                    "Key2": {"p": 824635237744, "t": 0},
+                    "p": 824635237552,
+                    "t": 20
+                },
+                "Key7": {
+                    "t": 20,
+                    "Key1": {"p": 824635237936, "t": 0},
+                    "Key2": {"p": 824635238032, "t": 0},
+                    "Key3": {"p": 824635238128, "t": 1},
+                    "Key4": {
+                        "p": 824635238224,
+                        "t": 20,
+                        "Key1": {"p": 824635238320, "t": 0},
+                        "Key2": {"p": 824635238416, "t": 0}
+                    },
+                    "Key5": {"t": 17, "p": 824635238464},
+                    "p": 824635237840
+                },
+                "Key8": {"p": 824635238512, "t": 17},
+                "Key9": {"p": 824635238560, "t": 17},
+                "t": 20,
+                "Key1": {"t": 0, "p": 824635237072},
+                "Key3": {"p": 824635237264, "t": 1},
+                "Key10": {
+                    "Key1": {"p": 824635238752, "t": 0},
+                    "Key2": {"p": 824635238848, "t": 0},
+                    "Key3": {"p": 824635238944, "t": 1},
+                    "Key4": {"p": 824635239040, "t": 15},
+                    "Key5": {"p": 824635239088, "t": 17},
+                    "p": 824635238656,
+                    "t": 20
                 }
+            },
+            "arrayKey": [{"p": 824635239232, "t": 0}, {"p": 824635239328, "t": 1}, {
+                "p": 824635239424,
+                "t": 13
+            }, {"p": 824635239520, "t": 14}, {"p": 824635239616, "t": 20}],
+            "stringKey": {"p": 824635178544, "t": 0},
+            "integerKey": {"p": 824635178832, "t": 1},
+            "doubleKey": {"p": 824635236400, "t": 13},
+            "booleanKey": {"p": 824635236592, "t": 14},
+            "undefinedKey": {"p": 824635236784, "t": 15}
+        }
+        const __energy = {
+            util: {
+                isObject: function (value) {
+                    return value.t === 20
+                },
+                isArray: function (value) {
+                    return Array.isArray(value);
+                },
+                isFunction: function (value) {
+                    return value.t === 18
+                }
+            },
+            consts: {
+                isProxyKey: "isProxyKey",
             }
         }
         //
         const handler = {
-            get(target, key, recevier) {
-                if (typeof target[key] === 'object') {
-                    console.log(Object.prototype.toString.call(target[key]))
-                    if (Object.prototype.toString.call(target[key]) !== "[object proxy]") {
-                        target[key] = addSubProxy(target[key])
+            get(target, key, receiver) {
+                let ret = target[key]
+                console.log("ret key:", key, "p:", ret.p)
+                if (__energy.util.isObject(ret)) {
+                    console.log("\tget object:", ret);
+                    if (!ret[__energy.consts.isProxyKey]) {
+                        ret = addSubProxy(ret)
+                        ret[__energy.consts.isProxyKey] = true
                     }
+                } else if (__energy.util.isFunction(ret)) {
+                    console.log("\tget func:", ret);
+                    return function () {
+                        console.log("\tcall func:", arguments);
+                    }
+                } else if (__energy.util.isArray(ret)) {
+                    console.log("\tget array:", ret);
+                    ret = addSubProxy(ret)
+                } else {
+
                 }
-                console.log(`监听到了${key}被获取值`, target[key]);
-                return Reflect.get(target, key, recevier)
+                return ret
             },
-            set: function (target, key, value) {
-                console.log(`监听到了${key}被设置值`, target[key]);
-                Reflect.set(target, key, value)
+            set: function (target, key, value, receiver) {
+                if (key === __energy.consts.isProxyKey) {
+                    target[key] = value
+                    return true
+                }
+                console.log(`set ${key}`, target[key], value);
+                return true
+            },
+            deleteProperty: function (target, key) {
+                console.log(`deleteProperty: ${key}`, target[key]);
+                throw new Error(`绑定对象不允许删除 ${target} - "${key}" `);
+                return false
+            },
+            isExtensible: function (target) {
+                console.log(`isExtensible:`, target);
+                return false
             }
         }
 
@@ -127,8 +213,15 @@
         function testDefine() {
             // msg(energya.myparam.ccc)
             //msg(energya.myparam.bbbb())
-            energya.myparam.ccc = "ffff"
-            msg(energya.myparam.ccc)
+            //energya.object.Key1 = "3333"
+            // energya.funcKey(1, 2, 3, 4)
+            console.log(energya.arrayKey[0])
+            // console.log(energya.object.Key1)
+            // energya.aaaa = "ffff"
+            // msg('testFunc:', energya.testFunc(1, 23))
+            //delete energya.integerKey
+            // console.log( Object.isExtensible(testObject))
+            // msg(Object.isExtensible(energya))
             // msg(testObjectDefine.key1)
             // msg(testObjectDefine.key2)
             // msg(testObjectDefine.key3())

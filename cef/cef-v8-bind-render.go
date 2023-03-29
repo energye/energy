@@ -44,67 +44,76 @@ func (m *bindRenderProcess) initBindIPC() {
 		}
 		return false
 	})
+	renderIPC.ipc.Send(nil)
 }
 
 func (m *bindRenderProcess) webKitMakeBind() {
 	//var nameBuild = &strings.Builder{}
-
-	var objectFieldBind = func(bind *bind.V8bind, object json.JSONObject, jsv bind.JSValue) {
-		names := strings.Split(jsv.Name(), ".")
-		fmt.Println("object ElementToJSValue Object:", jsv.Name(), jsv.Type())
-		//fmt.Println("object:", object.ToJSONString())
-		if len(names) == 1 {
-			if jsv.IsObject() {
-				object.Set(jsv.Name(), json.NewJSONObject(nil))
-			} else if jsv.IsArray() {
-				object.Set(jsv.Name(), json.NewJSONArray(nil))
-			} else {
-				object.Set(jsv.Name(), jsv.Id())
-			}
-		} else {
-			name := names[len(names)-1]
-			var pObject = object
-			for i := 0; i < len(names)-1; i++ {
-				pObject = pObject.GetByKey(names[i])
-			}
-			if jsv.IsObject() {
-				if pObject.IsArray() {
-					subObject := json.NewJSONObject(nil)
-					subObject.Set("__id__", jsv.Id())
-					pObject.JSONArray().Add(subObject)
-				} else {
-					subObject := json.NewJSONObject(nil)
-					subObject.Set("__id__", jsv.Id())
-					pObject.Set(name, subObject)
-				}
-			} else if jsv.IsArray() {
-				if pObject.IsObject() {
-					subArray := json.NewJSONArray(nil)
-					subArray.Add(jsv.Id())
-					pObject.Set(name, subArray)
-				} else {
-					subArray := json.NewJSONArray(nil)
-					subArray.Add(jsv.Id())
-					pObject.JSONArray().Add(subArray)
-				}
-			} else {
-				if pObject.IsObject() {
-					pObject.Set(name, jsv.Id())
-				} else if pObject.IsArray() {
-					pObject.JSONArray().Add(jsv.Id())
-				}
-			}
-		}
-	}
+	//var id = "p"
+	//var typ = "t"
+	//var objectFieldBind = func(bind *bind.V8bind, object json.JSONObject, jsv bind.JSValue) {
+	//	names := strings.Split(jsv.Name(), ".")
+	//	fmt.Println("object ElementToJSValue Object:", jsv.Name(), jsv.Type())
+	//	//fmt.Println("object:", object.ToJSONString())
+	//	if len(names) == 1 {
+	//		if jsv.IsObject() {
+	//			field := json.NewJSONObject(nil)
+	//			field.Set(id, jsv.Id())
+	//			field.Set(typ, jsv.Type())
+	//			object.Set(jsv.Name(), field)
+	//		} else if jsv.IsArray() {
+	//			object.Set(jsv.Name(), json.NewJSONArray(nil))
+	//		} else {
+	//			field := json.NewJSONObject(nil)
+	//			field.Set(id, jsv.Id())
+	//			field.Set(typ, jsv.Type())
+	//			object.Set(jsv.Name(), field)
+	//		}
+	//	} else {
+	//		name := names[len(names)-1]
+	//		var pObject = object
+	//		for i := 0; i < len(names)-1; i++ {
+	//			pObject = pObject.GetByKey(names[i])
+	//		}
+	//		field := json.NewJSONObject(nil)
+	//		field.Set(id, jsv.Id())
+	//		field.Set(typ, jsv.Type())
+	//		if jsv.IsObject() {
+	//			if pObject.IsArray() {
+	//				pObject.JSONArray().Add(field)
+	//			} else {
+	//				pObject.Set(name, field)
+	//			}
+	//		} else if jsv.IsArray() {
+	//			if pObject.IsObject() {
+	//				pObject.Set(name, field)
+	//			} else {
+	//				pObject.JSONArray().Add(field)
+	//			}
+	//		} else if jsv.IsFunction() {
+	//			if pObject.IsObject() {
+	//				pObject.Set(name, field)
+	//			} else {
+	//				pObject.JSONArray().Add(field)
+	//			}
+	//		} else {
+	//			if pObject.IsObject() {
+	//				pObject.Set(name, field)
+	//			} else if pObject.IsArray() {
+	//				pObject.JSONArray().Add(field)
+	//			}
+	//		}
+	//	}
+	//}
 	bind.GetBinds(func(bind *bind.V8bind) {
 		var object = json.NewJSONObject(nil)
-		fields := bind.FieldCollection()
-		for item := fields.Front(); item != nil; item = item.Next() {
-			jsv := bind.ElementToJSValue(item)
-			objectFieldBind(bind, object, jsv)
-		}
+		//fields := bind.FieldCollection()
+		//for item := fields.Front(); item != nil; item = item.Next() {
+		//	jsv := bind.ElementToJSValue(item)
+		//	objectFieldBind(bind, object, jsv)
+		//}
 		fmt.Println("object:", object.ToJSONString())
-		fmt.Println("HasFieldCollection:", json.NewJSONObject(bind.HasFieldCollection()).ToJSONString())
+		fmt.Println("FieldCollection:", bind.FieldCollection())
 	})
 	m.handler = V8HandlerRef.New()
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
