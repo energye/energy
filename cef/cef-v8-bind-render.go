@@ -70,19 +70,21 @@ func (m *bindRenderProcess) webKitMakeBind() {
 			if jsv.IsObject() {
 				if pObject.IsArray() {
 					subObject := json.NewJSONObject(nil)
-					subObject.Set("_id", jsv.Id())
+					subObject.Set("__id__", jsv.Id())
 					pObject.JSONArray().Add(subObject)
 				} else {
 					subObject := json.NewJSONObject(nil)
-					subObject.Set("_id", jsv.Id())
+					subObject.Set("__id__", jsv.Id())
 					pObject.Set(name, subObject)
 				}
 			} else if jsv.IsArray() {
 				if pObject.IsObject() {
-					subArray := json.NewJSONArray(jsv.Id())
+					subArray := json.NewJSONArray(nil)
+					subArray.Add(jsv.Id())
 					pObject.Set(name, subArray)
 				} else {
-					subArray := json.NewJSONArray(jsv.Id())
+					subArray := json.NewJSONArray(nil)
+					subArray.Add(jsv.Id())
 					pObject.JSONArray().Add(subArray)
 				}
 			} else {
