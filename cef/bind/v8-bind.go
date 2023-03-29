@@ -22,6 +22,7 @@ var bind = &V8bind{root: &bindValue{value: &V8Value{name: []string{"root"}}, chi
 // V8bind
 type V8bind struct {
 	root                *bindValue
+	object              json.JSONObject
 	setLock, removeLock sync.Mutex
 }
 
@@ -230,7 +231,7 @@ func Test() {
 
 func foreach(child map[string]*bindValue) {
 	for k, v := range child {
-		fmt.Println("key", k, v.value.Name())
+		fmt.Println("key", k, v.value.Name(), v.value.Type())
 		if v.child != nil {
 			foreach(v.child)
 		}

@@ -113,7 +113,7 @@ func (m *bindRenderProcess) webKitMakeBind() {
 		//	objectFieldBind(bind, object, jsv)
 		//}
 		fmt.Println("object:", object.ToJSONString())
-		fmt.Println("FieldCollection:", bind.FieldCollection())
+		fmt.Println("FieldCollection:", bind)
 	})
 	m.handler = V8HandlerRef.New()
 	m.handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
