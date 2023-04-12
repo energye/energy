@@ -35,7 +35,7 @@
             for (var i = 0; i < 100000; i++) {
                 strData += "[" + i + "]";
             }
-            ipc.emit('go-on-event-demo-return', ['传递的数据:' + strData, 99999, false, 9999.999], function (data) {
+            ipc.emit('go-on-event-demo-return', ['传递的数据:' + strData, 99999, false, 9999.999,"参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5"], function (data) {
                 writeMessage("data-length: " + data.length)
                 writeMessage("data: " + data)
             })

@@ -16,8 +16,8 @@
         //ipc.on函数有2个参数
         //参数1 事件名        必填    string类型
         //参数2 回调函数      非必填   function类型, go传递的参数
-        ipc.on('js-on-event-demo', function (p1, p2) {
-            writeMessage("js-on-event-demo Go传递过来的数据: " + p1 + " p2: " + p2)
+        ipc.on('js-on-event-demo', function (p1, p2, p3) {
+            writeMessage("js-on-event-demo Go传递过来的数据: " + p1 + " p2: " + p2 + " p3: " + p3)
         })
         //带有返回值
         ipc.on('js-on-event-demo-return', function (p1, p2) {

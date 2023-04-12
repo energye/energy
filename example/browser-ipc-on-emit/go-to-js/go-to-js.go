@@ -47,14 +47,16 @@ func main() {
 			p2 := arguments.GetInt32(1)
 			p3 := arguments.GetBool(2)
 			p4 := arguments.GetFloat64(3)
-			fmt.Println("\t参数1-length:", len(p1))
+			p5 := arguments.GetString(4)
+			fmt.Println("\t参数1-length:", len(p1), p1)
 			//fmt.Println("\t参数1:", p1)
 			fmt.Println("\t参数2:", p2)
 			fmt.Println("\t参数3:", p3)
 			fmt.Println("\t参数4:", p4)
+			fmt.Println("\t参数5:", p5)
 			//返回给JS数据, 通过 context.Result()
 			var buf = bytes.Buffer{}
-			for i := 0; i < 100000; i++ {
+			for i := 0; i < 10000; i++ {
 				buf.WriteString(fmt.Sprintf("[%d]-", i))
 			}
 			var data = "这是在GO中监听事件返回给JS的数据:" + buf.String()

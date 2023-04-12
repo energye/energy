@@ -52,8 +52,9 @@ func timeTask() {
 		//虽然 Arguments 结构支持多个数据类型，但在js和go的对应中，只保留了 string, integer, double, boolean 的对应关系，其它类型在 go 和 js数据传递时不支持
 		args := ipc.NewArgumentList()
 		//在给js发送数据时，string类型的，需要设置第3个参数为true, 底层在处理字符串时需要
-		args.SetString(0, fmt.Sprintf("Go发送的数据: %d", param0), true)
-		args.SetFloat64(1, float64(param0+10))
+		args.SetString(0, fmt.Sprintf("Go发送的数据-参数一: %d", param0), true)
+		args.SetString(1, fmt.Sprintf("Go发送的数据-参数二: %d", param0), true)
+		args.SetFloat64(2, float64(param0+10))
 		//将数据发送出去
 		info.Chromium().Emit("js-on-event-demo", args, info.Browser())
 		//触发js监听函数，这个函数带有返回值到go中
