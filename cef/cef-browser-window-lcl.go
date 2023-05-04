@@ -54,6 +54,8 @@ type LCLBrowserWindow struct {
 	tray             ITray                //托盘
 	hWnd             types.HWND           //
 	cwcap            *customWindowCaption //自定义窗口标题栏
+	createTimer      *lcl.TTimer          // loop check and create chromium browser
+	isCreated        bool                 // chromium browser is created
 }
 
 // 创建一个 LCL 带有 chromium 窗口
@@ -458,6 +460,9 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl
 		}
 		m.chromium.SendCaptureLostEvent()
 	})
+	m.createTimer = lcl.NewTimer(m)
+	m.createTimer.SetInterval(200)
+	m.createTimer.SetOnTimer(m.checkAndCreateBrowser)
 }
 
 // WindowProperty 部分提供部分窗口属性设置
@@ -723,6 +728,29 @@ func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 		ret = m.onShow(sender)
 	}
 	if !ret {
+		if m.chromium != nil && !m.isCreated {
+			if m.WindowProperty().WindowType != consts.WT_DEV_TOOLS {
+				m.checkAndCreateBrowser(nil)
+			}
+		}
+	}
+}
+
+func (m *LCLBrowserWindow) checkAndCreateBrowser(sender lcl.IObject) {
+	if m.chromium == nil || m.createTimer == nil {
+		return
+	}
+	m.createTimer.SetEnabled(false)
+	if m.isCreated { // 成功创建 释放定时器
+		m.createTimer.Free()
+		m.createTimer = nil
+		return
+	}
+	m.chromium.Initialized()
+	m.isCreated = m.chromium.CreateBrowser(m.windowParent)
+	if !m.isCreated {
+		m.createTimer.SetEnabled(true)
+	} else {
 		if m.windowParent != nil {
 			QueueAsyncCall(func(id int) {
 				m.windowParent.UpdateSize()
