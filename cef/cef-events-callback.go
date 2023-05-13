@@ -12,6 +12,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/cef/i18n"
 	. "github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/ipc"
@@ -101,7 +102,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		undoId = MENU_ID_UNDO //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   undoId,
-			Text:        "撤销",
+			Text:        i18n.Resource("undo"),
 			Accelerator: "ctrl+z",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Undo()
@@ -113,7 +114,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		redoId = MENU_ID_REDO //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   redoId,
-			Text:        "恢复",
+			Text:        i18n.Resource("redo"),
 			Accelerator: "ctrl+shift+z",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Redo()
@@ -128,7 +129,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		cutId = MENU_ID_CUT //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   cutId,
-			Text:        "剪切",
+			Text:        i18n.Resource("cut"),
 			Accelerator: "ctrl+x",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Cut()
@@ -140,7 +141,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		copyId = MENU_ID_COPY //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   copyId,
-			Text:        "复制",
+			Text:        i18n.Resource("copy"),
 			Accelerator: "ctrl+c",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Copy()
@@ -152,7 +153,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		pasteId = MENU_ID_PASTE //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   pasteId,
-			Text:        "粘贴",
+			Text:        i18n.Resource("paste"),
 			Accelerator: "ctrl+v",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().Paste()
@@ -164,7 +165,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		selectAllId = MENU_ID_SELECT_ALL //model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   selectAllId,
-			Text:        "全选",
+			Text:        i18n.Resource("selectAll"),
 			Accelerator: "ctrl+a",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.GetFocusedFrame().SelectAll()
@@ -178,24 +179,23 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	//A标签和图片 链接
 	if params.TypeFlags == 5 && params.MediaType == CM_MEDIATYPE_NONE { //a=5
 		aUrlId = model.CefMis.NextCommandId()
-		model.AddItem(aUrlId, "复制链接")
+		model.AddItem(aUrlId, i18n.Resource("copyLink"))
 	}
 	if params.TypeFlags == 9 && params.MediaType == CM_MEDIATYPE_IMAGE { // image=9
 		//copyImageId = model.CefMis.NextCommandId()
 		//model.AddItem(copyImageId, "复制图片")
 		imageUrlId = model.CefMis.NextCommandId()
-		model.AddItem(imageUrlId, "复制图片链接")
+		model.AddItem(imageUrlId, i18n.Resource("copyImageLink"))
 		imageSaveId = model.CefMis.NextCommandId()
-		model.AddItem(imageSaveId, "图片另存为")
+		model.AddItem(imageSaveId, i18n.Resource("imageSaveAs"))
 	}
 	if (params.TypeFlags == 5 && params.MediaType == CM_MEDIATYPE_NONE) || params.TypeFlags == 9 && params.MediaType == CM_MEDIATYPE_IMAGE {
 		model.AddSeparator()
 	}
-	//A标签和图片 链接
 	backId = model.CefMis.NextCommandId()
 	model.AddMenuItem(&MenuItem{
 		CommandId:   backId,
-		Text:        "返回",
+		Text:        i18n.Resource("back"),
 		Accelerator: "alt+" + string(rune(37)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoBack() {
@@ -212,7 +212,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	forwardId = model.CefMis.NextCommandId()
 	model.AddMenuItem(&MenuItem{
 		CommandId:   forwardId,
-		Text:        "前进",
+		Text:        i18n.Resource("forward"),
 		Accelerator: "alt+" + string(rune(39)),
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			if browser.CanGoForward() {
@@ -230,7 +230,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	printId = model.CefMis.NextCommandId()
 	model.AddMenuItem(&MenuItem{
 		CommandId:   printId,
-		Text:        "打印",
+		Text:        i18n.Resource("print"),
 		Accelerator: "ctrl+p",
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.Print()
@@ -238,12 +238,12 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	})
 	model.AddSeparator()
 	closeBrowserId = model.CefMis.NextCommandId()
-	model.AddItem(closeBrowserId, "关闭页面")
+	model.AddItem(closeBrowserId, i18n.Resource("closeBrowser"))
 	model.AddSeparator()
 	refreshId = model.CefMis.NextCommandId()
 	model.AddMenuItem(&MenuItem{
 		CommandId:   refreshId,
-		Text:        "刷新",
+		Text:        i18n.Resource("refresh"),
 		Accelerator: "ctrl+r",
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.Reload()
@@ -252,7 +252,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	forcedRefreshId = model.CefMis.NextCommandId()
 	model.AddMenuItem(&MenuItem{
 		CommandId:   forcedRefreshId,
-		Text:        "强制刷新",
+		Text:        i18n.Resource("forcedRefresh"),
 		Accelerator: "shift+ctrl+r",
 		Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 			browser.ReloadIgnoreCache()
@@ -263,7 +263,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
-			Text:        "查看网面源代码",
+			Text:        i18n.Resource("viewPageSource"),
 			Accelerator: "ctrl+u",
 			Callback: func(browser *ICefBrowser, commandId MenuId, params *ICefContextMenuParams, menuType TCefContextMenuType, eventFlags uint32, result *bool) {
 				browser.ViewSource(frame)
@@ -272,7 +272,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 	}
 	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 		devToolsId = model.CefMis.NextCommandId()
-		model.AddItem(devToolsId, "开发者工具(F12)")
+		model.AddItem(devToolsId, i18n.Resource("devTools"))
 	}
 	if browser.CanGoBack() {
 		model.SetEnabled(backId, true)

@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/cef/i18n"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/common/imports"
 	. "github.com/energye/energy/consts"
@@ -164,6 +165,7 @@ func (m *tCefApplicationConfig) SetCheckCEFFiles(s bool) *tCefApplicationConfig 
 
 // 设置语言
 func (m *tCefApplicationConfig) SetLanguage(s LANGUAGE) *tCefApplicationConfig {
+	i18n.Switch(s)
 	m.language = api.PascalStr(string(s))
 	return m
 }
