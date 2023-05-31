@@ -240,7 +240,7 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		if window.IsLCL() {
+		if window.IsLCL() && common.IsWindows() {
 			window.AsLCLBrowserWindow().BrowserWindow().SetOnShow(func(sender lcl.IObject) bool {
 				fmt.Println("窗口 显示/隐藏")
 				return false
