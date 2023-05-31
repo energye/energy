@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/cef/ipc/context"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/logger"
 )
 
 /*

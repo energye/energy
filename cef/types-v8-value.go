@@ -14,10 +14,10 @@
 package cef
 
 import (
-	"github.com/energye/energy/cef/ipc/types"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/cef/ipc/types"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"time"

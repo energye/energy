@@ -15,7 +15,7 @@ package process
 import (
 	"bytes"
 	"fmt"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/logger"
 	"os"
 	"strings"
 )

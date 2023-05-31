@@ -17,8 +17,8 @@
 package bind
 
 import (
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/json"
 	"reflect"
 	"strconv"
 	"strings"

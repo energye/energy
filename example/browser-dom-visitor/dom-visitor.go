@@ -3,13 +3,13 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/cef/ipc/callback"
-	"github.com/energye/energy/cef/ipc/types"
-	"github.com/energye/energy/cef/process"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/assetserve"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/callback"
+	"github.com/energye/energy/v2/cef/ipc/types"
+	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	//_ "net/http/pprof"
 )
 

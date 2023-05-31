@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/v2/cef"
 	"os"
 	"path"
 )

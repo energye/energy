@@ -13,8 +13,8 @@
 package cef
 
 import (
-	"github.com/energye/energy/pkgs/notice"
-	"github.com/energye/energy/pkgs/systray"
+	"github.com/energye/energy/v2/pkgs/notice"
+	"github.com/energye/energy/v2/pkgs/systray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"sync"

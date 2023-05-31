@@ -4,7 +4,7 @@
 package traydemo
 
 import (
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/v2/cef"
 )
 
 // 仅适用windows

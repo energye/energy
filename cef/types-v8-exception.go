@@ -12,7 +12,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/common/imports"
+	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 )
 

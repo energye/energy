@@ -13,10 +13,10 @@
 package cef
 
 import (
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/notice"
-	"github.com/energye/energy/pkgs/systray"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/notice"
+	"github.com/energye/energy/v2/pkgs/systray"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"

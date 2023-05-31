@@ -13,7 +13,7 @@
 
 package consts
 
-import "github.com/energye/energy/types"
+import "github.com/energye/energy/v2/types"
 
 type TCefMenuAccelerator = types.Int32
 

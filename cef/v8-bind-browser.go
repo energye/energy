@@ -13,11 +13,11 @@ package cef
 
 import (
 	"fmt"
-	iterBind "github.com/energye/energy/cef/internal/bind"
-	"github.com/energye/energy/cef/internal/ipc"
-	"github.com/energye/energy/cef/ipc/argument"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/pkgs/json"
+	iterBind "github.com/energye/energy/v2/cef/internal/bind"
+	"github.com/energye/energy/v2/cef/internal/ipc"
+	"github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/pkgs/json"
 	"reflect"
 	"strings"
 	"sync"

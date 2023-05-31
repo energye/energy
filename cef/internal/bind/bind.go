@@ -2,7 +2,7 @@ package bind
 
 import (
 	"container/list"
-	"github.com/energye/energy/cef/process"
+	"github.com/energye/energy/v2/cef/process"
 	"reflect"
 	"sync"
 	"unsafe"

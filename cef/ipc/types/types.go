@@ -11,8 +11,8 @@
 package types
 
 import (
-	"github.com/energye/energy/cef/ipc/target"
-	"github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/consts"
 )
 
 type IArrayValue interface {

@@ -16,9 +16,9 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl/api"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"

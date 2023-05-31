@@ -11,7 +11,7 @@
 package ipc
 
 import (
-	"github.com/energye/energy/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/argument"
 )
 
 // emitSendToChannel

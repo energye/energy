@@ -10,7 +10,7 @@
 
 package cef
 
-import "github.com/energye/energy/common/imports"
+import "github.com/energye/energy/v2/common/imports"
 
 // Instance 实例
 func (m *ICefGetExtensionResourceCallback) Instance() uintptr {

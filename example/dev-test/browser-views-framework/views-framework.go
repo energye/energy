@@ -13,8 +13,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/process"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/golcl/lcl"
 )
 

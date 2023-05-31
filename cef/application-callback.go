@@ -13,9 +13,9 @@
 package cef
 
 import (
-	"github.com/energye/energy/cef/internal/ipc"
-	"github.com/energye/energy/cef/internal/process"
-	"github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/cef/internal/ipc"
+	"github.com/energye/energy/v2/cef/internal/process"
+	"github.com/energye/energy/v2/consts"
 )
 
 // appOnContextCreated 创建应用上下文 - 默认实现

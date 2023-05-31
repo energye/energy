@@ -11,11 +11,11 @@
 package ipc
 
 import (
-	"github.com/energye/energy/cef/ipc/argument"
-	"github.com/energye/energy/cef/ipc/context"
-	"github.com/energye/energy/cef/process"
-	"github.com/energye/energy/pkgs/channel"
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/pkgs/channel"
+	"github.com/energye/energy/v2/pkgs/json"
 )
 
 func (m *browserIPCChan) listen(context channel.IIPCContext, argument argument.IList) bool {

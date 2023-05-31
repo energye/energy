@@ -13,9 +13,9 @@
 package cef
 
 import (
-	"github.com/energye/energy/cef/internal/ipc"
-	. "github.com/energye/energy/cef/process"
-	. "github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/cef/internal/ipc"
+	. "github.com/energye/energy/v2/cef/process"
+	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 )
 

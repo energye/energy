@@ -11,7 +11,7 @@
 package consts
 
 import (
-	"github.com/energye/energy/types"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/energy/homedir"
 	"math"
 	"os"

@@ -13,11 +13,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/cef/ipc/context"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/pkgs/assetserve"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl/rtl/version"
 )
 

@@ -15,7 +15,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl/types"
 )
 

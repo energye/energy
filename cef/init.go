@@ -14,9 +14,9 @@ package cef
 
 import (
 	"embed"
-	. "github.com/energye/energy/cef/process"
-	. "github.com/energye/energy/common"
-	"github.com/energye/energy/logger"
+	. "github.com/energye/energy/v2/cef/process"
+	. "github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"

@@ -1,7 +1,7 @@
 package ide
 
 import (
-	"github.com/energye/energy/pkgs/ext"
+	"github.com/energye/energy/v2/pkgs/ext"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"

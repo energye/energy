@@ -11,8 +11,8 @@
 package callback
 
 import (
-	"github.com/energye/energy/cef/ipc/context"
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )

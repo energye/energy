@@ -14,11 +14,11 @@ package cef
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef/internal/window"
-	. "github.com/energye/energy/common"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/logger"
-	"github.com/energye/energy/pkgs/assetserve"
+	"github.com/energye/energy/v2/cef/internal/window"
+	. "github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/logger"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"

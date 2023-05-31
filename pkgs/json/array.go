@@ -16,7 +16,7 @@ package json
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/consts"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strconv"

@@ -13,7 +13,7 @@
 package bind
 
 import (
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/pkgs/json"
 	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )

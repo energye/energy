@@ -12,7 +12,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/v2/cef"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

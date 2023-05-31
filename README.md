@@ -9,7 +9,7 @@ English
 
 ---
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
-[![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
+[![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/v2/releases)
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ![repo](https://img.shields.io/github/repo-size/energye/energy.svg?logo=github&logoColor=green&label=repo-size)
 
@@ -99,7 +99,7 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 package main
 
 import (
-	"github.com/energye/energy/cef"
+	"github.com/energye/energy/v2/cef"
 )
 
 func main() {

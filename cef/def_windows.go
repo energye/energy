@@ -16,9 +16,9 @@
 package cef
 
 import (
-	"github.com/energye/energy/common/imports"
-	"github.com/energye/energy/consts"
-	t "github.com/energye/energy/types"
+	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
+	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"unsafe"

@@ -13,7 +13,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/cef/process"
+	"github.com/energye/energy/v2/cef/process"
 )
 
 type browserWindowOnEventCallback func(event *BrowserEvent, window IBrowserWindow)

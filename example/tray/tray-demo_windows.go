@@ -5,9 +5,9 @@ package traydemo
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/pkgs/channel"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/pkgs/channel"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

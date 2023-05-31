@@ -10,7 +10,7 @@
 
 package process
 
-import "github.com/energye/energy/cef/internal/process"
+import "github.com/energye/energy/v2/cef/internal/process"
 
 // BrowserId
 //  renderer process create success

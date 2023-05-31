@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/process"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
 )
 
 func main() {

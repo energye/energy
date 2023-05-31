@@ -2,9 +2,9 @@ package src
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/cef/process"
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

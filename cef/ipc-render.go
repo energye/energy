@@ -14,11 +14,11 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/cef/internal/ipc"
-	ipcArgument "github.com/energye/energy/cef/ipc/argument"
-	"github.com/energye/energy/cef/ipc/context"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/pkgs/json"
+	"github.com/energye/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/json"
 )
 
 // ipcRenderProcess 渲染进程
