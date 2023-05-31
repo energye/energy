@@ -106,7 +106,7 @@ func main() {
 	//Global initialization must be called by every application
 	cef.GlobalInit(nil, nil)
 	//Create application
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//Set URL
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	//Run App
