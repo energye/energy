@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dom-visitor</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        // 触发主进程事件
+        function domVisitor() {
+            ipc.emit("dom-visitor")
+        }
+
+        // 触发渲染进程事件
+        function renderDomVisitor() {
+            // 通过配置的规则触发当前子进程监听的事件
+            ipc.emit({
+                name: "render-dom-visitor",                 //事件名
+                arguments: ["energy"],          //参数
+                callback: function (r1) {               //回调函数
+                    msg("callback render-dom-visitor r1:", r1)
+                },
+                mode: 0, // int 0:async or 1:sync, default 0:async  触发模式、异步和同步
+                target: 1, // int 0:main 1:current 2:other  触发目标, 主进程、当前进程、其它进程(需要主进程)
+            })
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">dom-visitor</h3></p>
+<p>
+    <a href="https://www.baidu.com">百度</a>
+    <button onclick="domVisitor()" id="domVisitor">domVisitor</button>
+    <button onclick="renderDomVisitor()"> renderDomVisitor</button>
+</p>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+
+    msg("process browserId", process.browserId)
+    msg("process frameId", process.frameId)
+</script>
+</html>

@@ -8,7 +8,8 @@
 //
 //----------------------------------------
 
-// ipc 通道 browser 进程(或服务端)
+// ipc Channel browser process (or server)
+
 package channel
 
 import (
@@ -19,45 +20,43 @@ import (
 	"sync"
 )
 
-// browserChannel browser进程
+// browserChannel main(browser) process
 type browserChannel struct {
 	ipcType      IPC_TYPE
 	unixAddr     *net.UnixAddr
 	unixListener *net.UnixListener
 	netListener  net.Listener
-	mutex        sync.Mutex
 	channel      sync.Map
 	handler      IPCCallback
 }
 
-// NewBrowser 创建主进程通道
-func NewBrowser(memoryAddresses ...string) IBrowserChannel {
+// NewBrowser Create main(browser) process channel
+func NewBrowser(addresses ...string) IBrowserChannel {
 	useNetIPCChannel = isUseNetIPC()
 	browser := &browserChannel{
 		channel: sync.Map{},
-		mutex:   sync.Mutex{},
 	}
 	if useNetIPCChannel {
 		address := fmt.Sprintf("localhost:%d", Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
-			panic("Description Failed to create the IPC service Error: " + err.Error())
+			panic("NewBrowser IPC channel Error: " + err.Error())
 		}
 		browser.ipcType = IPCT_NET
 		browser.netListener = listener
 	} else {
-		if len(memoryAddresses) > 0 {
-			ipcSock = memoryAddresses[0]
+		if len(addresses) > 0 {
+			ipcSock = addresses[0]
 		}
 		removeMemory()
 		logger.Debug("new browser channel for IPC Sock", ipcSock)
 		unixAddr, err := net.ResolveUnixAddr(MemoryNetwork, ipcSock)
 		if err != nil {
-			panic("Description Failed to create the IPC service Error: " + err.Error())
+			panic("NewBrowser IPC channel Error: " + err.Error())
 		}
 		unixListener, err := net.ListenUnix(MemoryNetwork, unixAddr)
 		if err != nil {
-			panic("Description Failed to create the IPC service Error: " + err.Error())
+			panic("NewBrowser IPC channel Error: " + err.Error())
 		}
 		unixListener.SetUnlinkOnClose(true)
 		browser.ipcType = IPCT_UNIX
@@ -68,7 +67,7 @@ func NewBrowser(memoryAddresses ...string) IBrowserChannel {
 	return browser
 }
 
-// Channel 返回指定通道链接
+// Channel Return to the specified channel connection
 func (m *browserChannel) Channel(channelId int64) IChannel {
 	if value, ok := m.channel.Load(channelId); ok {
 		return value.(*channel)
@@ -76,7 +75,7 @@ func (m *browserChannel) Channel(channelId int64) IChannel {
 	return nil
 }
 
-// ChannelIds 返回所有已链接通道ID
+// ChannelIds Return all connected channel IDs
 func (m *browserChannel) ChannelIds() (result []int64) {
 	m.channel.Range(func(key, value any) bool {
 		result = append(result, key.(int64))
@@ -85,7 +84,7 @@ func (m *browserChannel) ChannelIds() (result []int64) {
 	return
 }
 
-// Close 关闭通道链接
+// Close Close channel connection
 func (m *browserChannel) Close() {
 	if m.unixListener != nil {
 		m.unixListener.Close()
@@ -95,55 +94,39 @@ func (m *browserChannel) Close() {
 	}
 }
 
-// onChannelConnect 建立通道链接
+// onChannelConnect Establishing channel connection
 func (m *browserChannel) onChannelConnect(conn *channel) {
-	logger.Info("IPC browser on channel key_channelId:", conn.channelId)
+	logger.Info("IPC browser on channel channelId:", conn.channelId)
 	m.channel.Store(conn.channelId, conn)
 }
 
-// removeChannel 删除指定通道
+// removeChannel Delete specified channel
+//	When the channel is closed
 func (m *browserChannel) removeChannel(channelId int64) {
 	logger.Debug("IPC browser channel remove channelId:", channelId)
 	m.channel.Delete(channelId)
 }
 
-// singleProcessChannelId 单进程进程通道获取
-func (m *browserChannel) singleProcessChannelId() (int64, bool) {
-	if SingleProcess {
-		var channelId int64 = 0
-		//单进程，只有一个IPC连接，直接取出来就好
-		m.channel.Range(func(key, value any) bool {
-			channelId = key.(int64)
-			return false
-		})
-		if channelId != 0 {
-			return channelId, true
-		}
-	}
-	return 0, false
-}
-
-// Send 指定通道发送数据
+// Send Specify channel to send data
 func (m *browserChannel) Send(channelId int64, data []byte) {
 	m.sendMessage(mt_common, channelId, channelId, data)
 }
 
-// Send 指定通道发送消息
+// Send Specify the channel to send messages
 func (m *browserChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
-	if id, ok := m.singleProcessChannelId(); ok {
-		channelId = id
-	}
 	if chn := m.Channel(toChannelId); chn != nil {
 		_, _ = chn.write(messageType, channelId, toChannelId, data)
 	}
 }
 
-// Handler 设置自定义处理回调函数
+// Handler
+//	Set custom processing callback function
 func (m *browserChannel) Handler(handler IPCCallback) {
 	m.handler = handler
 }
 
-// accept 接收新链接
+// accept
+//	Receive new connection
 func (m *browserChannel) accept() {
 	for {
 		var (
@@ -163,7 +146,8 @@ func (m *browserChannel) accept() {
 	}
 }
 
-// newConnection 新链接
+// newConnection
+//	new connection
 func (m *browserChannel) newConnection(conn net.Conn) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -178,22 +162,35 @@ func (m *browserChannel) newConnection(conn net.Conn) {
 			newChannel.isConnect = false
 		}
 	}()
+	// create channel
 	newChannel = &channel{
 		channelType: Ct_Server,
 		ipcType:     m.ipcType,
 		conn:        conn,
 	}
+	// handler
 	newChannel.handler = func(context IIPCContext) {
-		if context.Message().Type() == mt_connection {
+		if context.Message().Type() == mt_connection { // new connection
 			newChannel.channelId = context.ChannelId()
 			m.onChannelConnect(newChannel)
 			m.sendMessage(mt_connectd, context.ChannelId(), context.ToChannelId(), []byte{uint8(mt_connectd)})
 			newChannel.isConnect = true
-		} else if context.Message().Type() == mt_relay {
+		} else if context.Message().Type() == mt_update_channel_id { //update channel id
+			var (
+				oldChannelId = context.ChannelId()   // old channel id
+				newChannelId = context.ToChannelId() // new channel id
+			)
+			if oldChannelId != newChannelId {
+				newChannel.channelId = newChannelId // set new channel id
+				m.onChannelConnect(newChannel)      // add new channel id
+				m.removeChannel(oldChannelId)       // delete old channel id
+			}
+		} else if context.Message().Type() == mt_relay { // relay
 			m.sendMessage(mt_common, context.ChannelId(), context.ToChannelId(), context.Message().Data())
 		} else {
+			// default handler
 			if m.handler != nil {
-				go m.handler(context)
+				m.handler(context)
 			}
 		}
 	}

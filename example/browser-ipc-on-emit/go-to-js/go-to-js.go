@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/pkgs/assetserve"
 	"strings"
 )
 
@@ -23,8 +24,9 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - go on event - js emit event"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 
-	//在go中监听一个事件
-	ipc.On("go-on-event-demo", func(context ipc.IContext) {
+	//在go中监听一个事件, 不带返回值
+	//使用上下文获取参数
+	ipc.On("go-on-event-demo", func(context context.IContext) {
 		fmt.Println("go-on-event-demo event run")
 		//js 中传递的数据
 		//虽然 Arguments 结构支持多个数据类型，但在js和go的对应中，只保留了 string, integer, double, boolean 的对应关系，其它类型在 go 和 js数据传递时不支持
@@ -34,8 +36,10 @@ func main() {
 		p1 := arguments.GetStringByIndex(0)
 		fmt.Println("参数1:", p1)
 	})
+
 	//带有返回值的事件
-	ipc.On("go-on-event-demo-return", func(context ipc.IContext) {
+	//使用上下文获取参数
+	ipc.On("go-on-event-demo-return", func(context context.IContext) {
 		fmt.Println("go-on-event-demo-return event run")
 		//js 中传递的数据
 		//虽然 Arguments 结构支持多个数据类型，但在js和go的对应中，只保留了 string, integer, double, boolean 的对应关系，其它类型在 go 和 js数据传递时不支持
@@ -46,11 +50,13 @@ func main() {
 		p2 := arguments.GetIntByIndex(1)
 		p3 := arguments.GetBoolByIndex(2)
 		p4 := arguments.GetFloatByIndex(3)
-		fmt.Println("\t参数1-length:", len(p1))
+		p5 := arguments.GetStringByIndex(4)
+		fmt.Println("\t参数1-length:", len(p1), p1)
 		//fmt.Println("\t参数1:", p1)
 		fmt.Println("\t参数2:", p2)
 		fmt.Println("\t参数3:", p3)
 		fmt.Println("\t参数4:", p4)
+		fmt.Println("\t参数5:", p5)
 		//返回给JS数据, 通过 context.Result()
 		var buf = bytes.Buffer{}
 		for i := 0; i < 100000; i++ {
@@ -59,6 +65,30 @@ func main() {
 		var data = "这是在GO中监听事件返回给JS的数据:" + buf.String()
 		fmt.Println("返回给JS数据 - length:", strings.Count(data, "")-1)
 		context.Result(data)
+	})
+
+	// 在Go中监听一个事件, 不带返回值
+	// 使用形参接收参数
+	// 在JS中入参类型必须相同
+	ipc.On("go-on-event-demo-argument", func(param1 int, param2 string, param3 float64, param4 bool, param5 string) {
+		fmt.Println("param1:", param1)
+		fmt.Println("param2:", param2)
+		fmt.Println("param3:", param3)
+		fmt.Println("param4:", param4)
+		fmt.Println("param5:", param5)
+	})
+
+	// 在Go中监听一个事件, 带返回值
+	// 使用形参接收参数
+	// 在JS中入参类型必须相同
+	// 返回参数可以同时返回多个, 在JS接收时同样使用回调函数方式以多个入参形式接收
+	ipc.On("go-on-event-demo-argument-return", func(param1 int, param2 string, param3 float64, param4 bool, param5 string) string {
+		fmt.Println("param1:", param1)
+		fmt.Println("param2:", param2)
+		fmt.Println("param3:", param3)
+		fmt.Println("param4:", param4)
+		fmt.Println("param5:", param5)
+		return fmt.Sprintf("%d-%v-%v-%v-%v", param1, param2, param3, param4, param5)
 	})
 
 	//内置http服务链接安全配置

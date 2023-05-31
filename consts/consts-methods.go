@@ -73,3 +73,15 @@ func (m *TCefProcessType) IsPtCrashpad() bool {
 func (m *TCefProcessType) IsPtOther() bool {
 	return *m == PtOther
 }
+
+func (m *TCefReturnValue) Cancel() {
+	*m = RV_CANCEL
+}
+
+func (m *TCefReturnValue) Continue() {
+	*m = RV_CONTINUE
+}
+
+func (m *TCefReturnValue) ContinueAsync() {
+	*m = RV_CONTINUE_ASYNC
+}

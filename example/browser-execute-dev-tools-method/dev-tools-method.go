@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 )
 
 //资源目录，内置到执行程序中
@@ -17,15 +19,16 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
+	cefApp.SetTouchEvents(consts.STATE_ENABLED)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/execute-dev-tool-method.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//chromium配置
-	config := cef.NewChromiumConfig()
-	config.SetEnableMenu(true)     //启用右键菜单
-	config.SetEnableDevTools(true) //启用开发者工具
-	cef.BrowserWindow.Config.SetChromiumConfig(config)
+	//config := cef.NewChromiumConfig()
+	//config.SetEnableMenu(true)     //启用右键菜单
+	//config.SetEnableDevTools(true) //启用开发者工具
+	//cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//这里演示使用ipc通信实现js和go互相调用，在go监听事件中执行开发者工具方法
 	//使用内置http服务和自定义页面
 	//这里执行的方法是仿真移动端
@@ -35,16 +38,16 @@ func main() {
 	//4. 使用字典对象传递方法参数
 	//5. 点击Note链接
 
-	ipc.On("execute-dev-method", func(context ipc.IContext) {
+	ipc.On("execute-dev-method", func(context context.IContext) {
 		//获得当前窗口信息
 		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		//字典对象
 		var dict = cef.DictionaryValueRef.New() // cef.NewCefDictionaryValue()
 		//根据chromium字典设置
-		dict.SetInt("width", 500)
-		dict.SetInt("height", 768)
-		dict.SetInt("x", 100)
-		dict.SetInt("y", 100)
+		//dict.SetInt("width", 500)
+		//dict.SetInt("height", 768)
+		//dict.SetInt("x", 100)
+		//dict.SetInt("y", 100)
 		dict.SetBool("mobile", true)
 		dict.SetDouble("deviceScaleFactor", 1)
 		TempDict := cef.DictionaryValueRef.New()

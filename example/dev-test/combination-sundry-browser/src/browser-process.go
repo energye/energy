@@ -15,10 +15,12 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/cef/ipc/target"
+	"github.com/energye/energy/cef/process"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"github.com/energye/energy/example/dev-test/traydemo"
-	"github.com/energye/energy/pkgs/channel"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
@@ -39,171 +41,155 @@ func AppBrowserInit() {
 	//cef.BrowserWindow.Config.EnableResize = false
 	//cef.BrowserWindow.Config.EnableCenterWindow = false
 	//主进程 IPC事件
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		fmt.Println("主进程IPC事件注册")
-		event.On("ZoomPct", func(context channel.IIPCContext) {
-			fmt.Println("ZoomPct")
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().SetZoomPct(150.2)
-			fmt.Println(bw.Chromium().ZoomPct())
-			bw.Chromium().SetDefaultEncoding("UTF-8")
-			fmt.Println(bw.Chromium().DefaultEncoding())
+	fmt.Println("主进程IPC事件注册")
+	ipc.On("ZoomPct", func(context context.IContext) {
+		fmt.Println("ZoomPct")
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().SetZoomPct(150.2)
+		fmt.Println(bw.Chromium().ZoomPct())
+		bw.Chromium().SetDefaultEncoding("UTF-8")
+		fmt.Println(bw.Chromium().DefaultEncoding())
+	})
+	ipc.On("ZoomLevel", func(context context.IContext) {
+		fmt.Println("ZoomLevel")
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().SetZoomLevel(150.2)
+		fmt.Println(bw.Chromium().ZoomLevel())
+	})
+	ipc.On("SetZoomStep", func(context context.IContext) {
+		fmt.Println("SetZoomStep")
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().SetZoomStep(1)
+		fmt.Println(bw.Chromium().ZoomStep())
+	})
+	//这个事件监听演示了几个示例
+	//1.
+	//ipc.On("subWindowIPCOn", func(context context.IContext) {
+	//	//函数内的 context 返回给调用方
+	//	//取入参
+	//	fmt.Println("browser renderOnEventSubWindowIPCOn:", context.ArgumentList().GetStringByIndex(0), "channelId:", context.FrameId())
+	//	fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowInfos()))
+	//	//调用指定渲染进程监听
+	//	ipc.EmitTarget("renderOnEventSubWindowIPCOn", context.FrameId(), nil)
+	//	fmt.Println("\t|-- 111")
+	//
+	//	//调用指定渲染进程监听 回调的方式
+	//	ipc.EmitTargetAndCallback("renderOnEventSubWindowIPCOn", context.FrameId(), nil, func(context context.IContext) {
+	//		fmt.Println("browser renderOnEventSubWindowIPCOn 回调的方式:", string(context.Message().Data()))
+	//		//在这里 不能使用 context 返回给页面
+	//		//函数内的 context 返回给调用方
+	//	})
+	//	fmt.Println("\t|-- 222")
+	//})
+	ipc.On("close", func(context context.IContext) {
+		fmt.Println("close browserId:", context.BrowserId())
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.CloseBrowserWindow()
+	})
+	ipc.On("minWindow", func(context context.IContext) {
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.Minimize()
+	})
+	ipc.On("maxWindow", func(context context.IContext) {
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.Maximize()
+	})
+	ipc.On("closeWindow", func(context context.IContext) {
+		fmt.Println("closeWindow", context.BrowserId())
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.CloseBrowserWindow()
+	})
+	ipc.On("window-list", func(context context.IContext) {
+		var ids []int32
+		for id, _ := range cef.BrowserWindow.GetWindowInfos() {
+			ids = append(ids, id)
+		}
+		idsStr, err := json.Marshal(ids)
+		fmt.Println("获得window-id-list", ids, idsStr, err)
+		context.Result(string(idsStr))
+	})
+	ipc.On("find", func(context context.IContext) {
+		args := context.ArgumentList().GetStringByIndex(0)
+		fmt.Println("find-args:", args)
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.Browser().Find(args, false, false, true)
+	})
+	ipc.On("find-stop", func(context context.IContext) {
+		winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		winInfo.Browser().StopFinding(true)
+	})
+	var newForm *cef.LCLBrowserWindow
+	ipc.On("js-new-window", func(context context.IContext) {
+		fmt.Println("创建新窗口 ProcessType:", process.Args.ProcessType())
+		if newForm == nil {
+			newForm = cef.NewLCLWindow(cef.NewWindowProperty())
+			newForm.SetTitle("新窗口标题")
+			newForm.HideTitle()
+			btn := lcl.NewButton(newForm)
+			btn.SetParent(newForm)
+			btn.SetCaption("点击我有提示")
+			btn.SetWidth(100)
+			btn.SetOnClick(func(sender lcl.IObject) {
+				lcl.ShowMessage("新窗口的按钮事件提示")
+			})
+		}
+		//linux 下必须使用 QueueAsyncCall
+		//windows 也可以这样使用
+		//macos 也可以这样使用
+		//窗口设置或控制时需要在UI线程中操作
+		cef.QueueAsyncCall(func(id int) {
+			if newForm.Visible() {
+				fmt.Println("隐藏")
+				newForm.Hide()
+			} else {
+				fmt.Println("显示")
+				newForm.Show()
+			}
 		})
-		event.On("ZoomLevel", func(context channel.IIPCContext) {
-			fmt.Println("ZoomLevel")
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().SetZoomLevel(150.2)
-			fmt.Println(bw.Chromium().ZoomLevel())
-		})
-		event.On("SetZoomStep", func(context channel.IIPCContext) {
-			fmt.Println("SetZoomStep")
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().SetZoomStep(1)
-			fmt.Println(bw.Chromium().ZoomStep())
-		})
-		//这个事件监听演示了几个示例
-		//1.
-		event.On("subWindowIPCOn", func(context channel.IIPCContext) {
-			//函数内的 context 返回给调用方
-			//取入参
-			fmt.Println("browser renderOnEventSubWindowIPCOn:", context.Arguments().GetString(0), "channelId:", context.ChannelId())
-			fmt.Println("\t|--", len(cef.BrowserWindow.GetWindowInfos()))
-			//调用指定渲染进程监听
-			ipc.IPC.Browser().EmitChannelId("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
-			fmt.Println("\t|-- 111")
+	})
+	var browserWindow *cef.LCLBrowserWindow
+	ipc.On("js-new-browser-window", func(context context.IContext) {
+		fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", process.Args.ProcessType())
 
-			//调用指定渲染进程监听 回调的方式
-			ipc.IPC.Browser().EmitChannelIdAndCallback("renderOnEventSubWindowIPCOn", context.ChannelId(), nil, func(context channel.IIPCContext) {
-				fmt.Println("browser renderOnEventSubWindowIPCOn 回调的方式:", string(context.Message().Data()))
-				//在这里 不能使用 context 返回给页面
-				//函数内的 context 返回给调用方
+		if browserWindow == nil || browserWindow.IsClosing() {
+			wp := cef.NewWindowProperty()
+			wp.Url = "https://www.baidu.com"
+			wp.Title = "Browser新窗口标题"
+			browserWindow = cef.NewLCLBrowserWindow(nil, wp)
+			browserWindow.SetWidth(800)
+			browserWindow.SetHeight(600)
+			browserWindow.HideTitle()
+			browserWindow.SetShowInTaskBar()
+			browserWindow.EnableDefaultCloseEvent()
+			browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
+				fmt.Println("SetOnTitleChange", wp.Title, title)
 			})
-			fmt.Println("\t|-- 222")
-			//调用指定渲染进程监听 同步的方式
-			ctx := ipc.IPC.Browser().EmitChannelIdAndReturn("renderOnEventSubWindowIPCOn", context.ChannelId(), nil)
-			context.Result().SetString("成功返回, " + string(ctx.Message().Data()))
-			fmt.Println("\t|-- 333")
-			//返回给页面数据
-			//context.Result().SetString("成功返回 ")
-		})
-		event.On("close", func(context channel.IIPCContext) {
-			fmt.Println("close browserId:", context.BrowserId())
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.CloseBrowserWindow()
-		})
-		event.On("minWindow", func(context channel.IIPCContext) {
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.Minimize()
-		})
-		event.On("maxWindow", func(context channel.IIPCContext) {
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.Maximize()
-		})
-		event.On("closeWindow", func(context channel.IIPCContext) {
-			fmt.Println("closeWindow", context.BrowserId())
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.CloseBrowserWindow()
-		})
-		event.On("window-list", func(context channel.IIPCContext) {
-			var ids []int32
-			for id, _ := range cef.BrowserWindow.GetWindowInfos() {
-				ids = append(ids, id)
+		}
+		fmt.Println("\t|--", browserWindow.IsClosing())
+		cef.QueueAsyncCall(func(id int) {
+			if browserWindow.Visible() {
+				browserWindow.Hide()
+			} else {
+				browserWindow.Show()
 			}
-			idsStr, err := json.Marshal(ids)
-			fmt.Println("获得window-id-list", ids, idsStr, err)
-			context.Result().SetString(string(idsStr))
 		})
-		event.On("find", func(context channel.IIPCContext) {
-			args := context.Arguments().GetString(0)
-			fmt.Println("find-args:", args)
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.Browser().Find(args, false, false, true)
-		})
-		event.On("find-stop", func(context channel.IIPCContext) {
-			winInfo := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			winInfo.Browser().StopFinding(true)
-		})
-		var newForm *cef.LCLBrowserWindow
-		event.On("js-new-window", func(context channel.IIPCContext) {
-			fmt.Println("创建新窗口 ProcessType:", common.Args.ProcessType())
-			if newForm == nil {
-				newForm = cef.NewLCLWindow(cef.NewWindowProperty())
-				newForm.SetTitle("新窗口标题")
-				newForm.HideTitle()
-				btn := lcl.NewButton(newForm)
-				btn.SetParent(newForm)
-				btn.SetCaption("点击我有提示")
-				btn.SetWidth(100)
-				btn.SetOnClick(func(sender lcl.IObject) {
-					lcl.ShowMessage("新窗口的按钮事件提示")
-				})
-			}
-			//linux 下必须使用 QueueAsyncCall
-			//windows 也可以这样使用
-			//macos 也可以这样使用
-			//窗口设置或控制时需要在UI线程中操作
-			cef.QueueAsyncCall(func(id int) {
-				if newForm.Visible() {
-					fmt.Println("隐藏")
-					newForm.Hide()
-				} else {
-					fmt.Println("显示")
-					newForm.Show()
-				}
-			})
-		})
-		var browserWindow *cef.LCLBrowserWindow
-		event.On("js-new-browser-window", func(context channel.IIPCContext) {
-			fmt.Println("通过 js ipc emit 事件创建新Browser窗口 ProcessType:", common.Args.ProcessType())
-
-			if browserWindow == nil || browserWindow.IsClosing() {
-				wp := cef.NewWindowProperty()
-				wp.Url = "https://www.baidu.com"
-				wp.Title = "Browser新窗口标题"
-				browserWindow = cef.NewLCLBrowserWindow(nil, wp)
-				browserWindow.SetWidth(800)
-				browserWindow.SetHeight(600)
-				browserWindow.HideTitle()
-				browserWindow.SetShowInTaskBar()
-				browserWindow.EnableDefaultCloseEvent()
-				browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
-					fmt.Println("SetOnTitleChange", wp.Title, title)
-				})
-			}
-			fmt.Println("\t|--", browserWindow.IsClosing())
-			cef.QueueAsyncCall(func(id int) {
-				if browserWindow.Visible() {
-					browserWindow.Hide()
-				} else {
-					browserWindow.Show()
-				}
-			})
-		})
-		event.On("go-call-js-code", func(context channel.IIPCContext) {
-			fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", common.Args.ProcessType())
-			info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			info.Chromium().ExecuteJavaScript("jsCode('值值值')", "", 0)
-			list := ipc.NewArgumentList()
-			list.SetString(0, "js-ipc-on参数", true)
-			list.SetFloat64(1, 99999111.0121212)
-			//只触发js ipc.on 的函数，忽略返回值
-			info.Chromium().Emit("js-ipc-on", list, nil)
-			list.SetFloat64(1, 8888888111.0121212)
-			//触发js ipc.on 的函数，通过回调函数接收返回值
-			info.Chromium().EmitAndCallback("js-ipc-on", list, nil, func(context channel.IIPCContext) {
-				fmt.Println("回调函数方式返回值:", context.Arguments().GetString(0))
-			})
-			//这个方式不适合于ui线程
-			//ctx, err := info.Chromium().EmitAndReturn("js-ipc-on", list, nil)
-			//if err != consts.PME_OK {
-			//
-			//}
-			//fmt.Println("等待阻塞的方式返回值:", ctx.Arguments().GetString(0))
-		})
+	})
+	ipc.On("go-call-js-code", func(context context.IContext) {
+		fmt.Println("通过 js ipc emit go-call-js-code ProcessType:", process.Args.ProcessType())
+		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		info.Chromium().ExecuteJavaScript("jsCode('值值值')", "", 0)
+		//触发js ipc.on 的函数，通过回调函数接收返回值
+		//这个方式不适合于ui线程
+		//ctx, err := info.Chromium().EmitAndReturn("js-ipc-on", list, nil)
+		//if err != consts.PME_OK {
+		//
+		//}
+		//fmt.Println("等待阻塞的方式返回值:", ctx.Arguments().GetString(0))
 	})
 
 	//主窗口初始化回调函数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
+		return
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
@@ -337,16 +323,8 @@ func AppBrowserInit() {
 			window.SetOnResize(func(sender lcl.IObject) bool {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var target = &ipc.EmitTarget{
-						BrowseId: popupWindow.Browser().Identifier(),
-						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
-					}
-					var argumentList = ipc.NewArgumentList()
-					argumentList.SetInt32(0, window.Left())
-					argumentList.SetInt32(1, window.Top())
-					argumentList.SetInt32(2, window.Width())
-					argumentList.SetInt32(3, window.Height())
-					popupWindow.Chromium().Emit("window-resize", argumentList, target)
+					var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
+					ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
 				}
 				return false
 			})
@@ -354,16 +332,8 @@ func AppBrowserInit() {
 			window.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var target = &ipc.EmitTarget{
-						BrowseId: popupWindow.Browser().Identifier(),
-						FrameId:  popupWindow.Browser().MainFrame().Identifier(),
-					}
-					var argumentList = ipc.NewArgumentList()
-					argumentList.SetInt32(0, window.Left())
-					argumentList.SetInt32(1, window.Top())
-					argumentList.SetInt32(2, window.Width())
-					argumentList.SetInt32(3, window.Height())
-					popupWindow.Chromium().Emit("window-resize", argumentList, target)
+					var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
+					ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
 				}
 			})
 			return false
@@ -384,37 +354,23 @@ func AppBrowserInit() {
 		})
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息 将会失败
-			fmt.Println("OnLoadingStateChange-ProcessType:", common.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
+			fmt.Println("OnLoadingStateChange-ProcessType:", process.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
 			if isSendEmit {
-				info := cef.BrowserWindow.GetWindowInfo(browser.Identifier())
-				var target = &ipc.EmitTarget{
-					BrowseId: browser.Identifier(),
-					FrameId:  browser.MainFrame().Identifier(),
-				}
-				fmt.Println("browseEmitJsOnEvent 1 browseId:", browser.Identifier(), "info-browserId:", info.Chromium().BrowserId(), "GetFrameById:", browser.GetFrameById(target.FrameId))
-				var argumentList = ipc.NewArgumentList()
-				argumentList.SetBool(0, isLoading)
-				argumentList.SetBool(1, canGoBack)
-				argumentList.SetBool(2, canGoForward)
+				var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
 				//加載时的状态，对于非html 例如 image pdf 在线预览 需要自行处理
-				fmt.Println("OnLoadingStateChange-Emit:", browserWindow.Chromium().Emit("OnLoadingStateChange", argumentList, target))
+				ipc.EmitTarget("OnLoadingStateChange", tag, isLoading, canGoBack, canGoForward)
 			}
 		})
 		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息
-			fmt.Println("OnLoadingProgressChange-ProcessType:", common.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
+			fmt.Println("OnLoadingProgressChange-ProcessType:", process.Args.ProcessType(), "browserId:", browser.Identifier(), "progress:", progress)
 			if isSendEmit {
-				var target = &ipc.EmitTarget{
-					BrowseId: browser.Identifier(),
-					FrameId:  browser.MainFrame().Identifier(),
-				}
-				var argumentList = ipc.NewArgumentList()
-				argumentList.SetFloat64(0, progress)
-				fmt.Println("OnLoadingProgressChange-Emit:", browserWindow.Chromium().Emit("OnLoadingProgressChange", argumentList, target))
+				var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
+				ipc.EmitTarget("OnLoadingProgressChange", tag, progress)
 			}
 		})
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
-			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			fmt.Println("SetOnBeforeResourceLoad:", request.URL(), request.Method(), "headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
 			fmt.Println("\t", request.GetHeaderByName("energy"), "size:", headerMap.GetSize())
 			for i := 0; i < int(headerMap.GetSize()); i++ {
@@ -452,9 +408,6 @@ func AppBrowserInit() {
 				fmt.Println("\tGetElements bytes,count:", bytes, count)
 			}
 		})
-	})
-	//添加子窗口初始化
-	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//在这里创建 一些子窗口 子组件 等
 		if window.IsLCL() {
 			if common.IsLinux() {
@@ -479,6 +432,7 @@ func AppBrowserInit() {
 		}
 		println("browser init after end")
 	})
+
 }
 
 // 自定义组件

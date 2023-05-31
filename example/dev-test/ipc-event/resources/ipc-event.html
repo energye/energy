@@ -61,7 +61,8 @@
                 100, 200, "数组里的字符串", 66996.99, objectValue, true, false
             ]
             let args1 = "中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文string 中文中文中文中文中文中文中文中文中文中文中文中文中string 文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文中文"
-            let ok = ipc.emit("testEmitName", [args1, idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888888888 + idx, null, undefined],
+            let args2 = "第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数第二个参数"
+            let ok = ipc.emit("testEmitName", [args1, args2, idx, true, 1999.66 + idx, "字符串？", 29999.66 + idx, objectValue, arrayValue, 8888888888888 + idx, null, undefined],
                 function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
                     clearMsg()
                     msg("R0：", r0);
@@ -156,28 +157,29 @@
             msg("R3：", r3);
             msg("R4：", r4);
             msg("R5：", r5);
-            msg("R6：", r6, JSON.stringify(r6));
-            msg("R7：", r7, JSON.stringify(r7));
-            msg("R8：", r8, JSON.stringify(r8));
-            msg("R9：", r9, JSON.stringify(r9));
-            msg("R10：", r10, JSON.stringify(r10));
+            msg("R6：", JSON.stringify(r6));
+            msg("R7：", JSON.stringify(r7));
+            msg("R8：", JSON.stringify(r8));
+            msg("R9：", JSON.stringify(r9));
+            msg("R10：", JSON.stringify(r10));
         });
+
         let onTestName2Idx = 0;
         ipc.on('onTestName2', function (r0, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10) {
-            onTestName2Idx++;
             clearMsg()
-            msg("onTestName2");
+            onTestName2Idx++;
+            msg("onTestName2--------------------------------");
             msg("R0：", r0);
             msg("R1：", r1);
             msg("R2：", r2);
             msg("R3：", r3);
             msg("R4：", r4);
             msg("R5：", r5);
-            msg("R6：", r6, JSON.stringify(r6));
-            msg("R7：", r7, JSON.stringify(r7));
-            msg("R8：", r8, JSON.stringify(r8));
-            msg("R9：", r9, JSON.stringify(r9));
-            msg("R10：", r10, JSON.stringify(r10));
+            msg("R6：", JSON.stringify(r6));
+            msg("R7：", JSON.stringify(r7));
+            msg("R8：", JSON.stringify(r8));
+            msg("R9：", JSON.stringify(r9));
+            msg("R10：", JSON.stringify(r10));
             return ["返回值" + onTestName2Idx, onTestName2Idx, 2222.22 + onTestName2Idx, onTestName2Idx % 2 === 0]
         });
 
@@ -226,14 +228,14 @@
 
         let atia = null
 
-        function autovariabletestInArgs() {
+        function autoVariableTestInArgs() {
             if (atia != null) {
                 clearInterval(atia)
                 atia = null
                 idx = 0;
                 return
             }
-            atia = setInterval(variabletestInArgs, 1)
+            atia = setInterval(variableTestInArgs, 1)
             if (atia != null) {
                 let time = document.getElementById("time").value - 0
                 if (time > 0) {
@@ -247,12 +249,11 @@
             }
         }
 
-        function variabletestInArgs() {
+        function variableTestInArgs() {
             idx++
             let vara = ipc.emit("testResultArgs", [idx]);
             clearMsg()
-            msg("variabletestInArgs", vara);
-            msg("variabletestInArgs", JSON.stringify(vara));
+            msg("variableTestInArgs, 返回true", vara);
         }
 
 
@@ -280,6 +281,7 @@
         }
 
         function testGoEmitAndCallback() {
+            clearMsg()
             ipc.emit("testGoEmitAndCallback");
         }
 
@@ -309,21 +311,91 @@
         function testEmitSync() {
             clearMsg()
             let result = ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]])
-            msg("GetMyParam", energy.myparam, energy.myparam1);
-            energy.myparam1="aaaa"
-            msg("testEmitSync", result);
-            ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result) {
-                msg("testEmitSync-callback", result);
+            msg("testEmitSync", JSON.stringify(result));
+            // console.log("result:",result)
+            ipc.emitSync("testEmitSync", ["同步参数", 1, 2, 3, ["aaaa", "bbb", 6666]], function (result1, result2) {
+                msg("testEmitSync-callback result1:", result1, "result2:", result2);
             })
+        }
+
+        function testSendTargetGo() {
+            let channelId = document.getElementById("channelId").value;
+            ipc.emit("testSendTargetGo", [123456, "参数1", channelId, "多于的"])
+        }
+
+        // emit 选项配置
+        function testEmitRule() {
+            ipc.emit({
+                name: "testOnTargetGo",                 //事件名
+                arguments: [666666, process.frameId],   //参数, 获取当前进程 frameId
+                callback: function (r1) {               //回调函数
+                    msg("callback testEmitRule r1:", r1)
+                },
+                mode: 0, // int 0:async or 1:sync, default 0:async  触发模式、异步和同步
+                target: 1, // int 0:main 1:current 2:other  触发目标, 主进程、当前进程、其它进程(需要主进程)
+            })
+        }
+
+        let checki = null
+
+        function autoCheckParam() {
+            if (checki != null) {
+                clearInterval(checki)
+                checki = null
+                return
+            }
+            checki = setInterval(check, 1)
+            if (checki != null) {
+                let time = document.getElementById("time").value - 0
+                if (time > 0) {
+                    setTimeout(function () {
+                        clearInterval(checki)
+                        checki = null
+                    }, time)
+                }
+            }
+        }
+
+        let chkCount = 0;
+        let pstr1 = "参数一1验证字符串参数一1验证字符串参数一1验证字符串参数一1验证字符串"
+        let pint2 = 1212222
+        let pint3 = 44444444
+        let pfloat4 = 8888888
+        let pany5 = 666666
+        let pstr6 = "参数六6验证字符串参数验证字符串参数验证字符串参数验证字符串参数验证字符串参数"
+        let pmap7 = {"key1": "key1StringValue", "key2": "888888", "key3": "999999.88"}
+        let pstrarr8 = ["下标0参数", "下标1参数", "下标2参数", "下标3参数", "下标4参数"]
+        let pintarr9 = [111111, 222222, 33333]
+        let pbool10 = true
+
+        function check() {
+            chkCount++;
+            clearMsg()
+            msg("check-param", chkCount)
+            ipc.emit("check-param", [pstr1, pint2, pint3, pfloat4, pany5, pstr6, pmap7, pstrarr8, pintarr9, pbool10])
+            ipc.emit("check-param", [pstr1, pint2, pint3, pfloat4, pany5, pstr6, pmap7, pstrarr8, pintarr9, pbool10])
+        }
+        
+        function reload() {
+            ipc.emit("reload")
         }
     </script>
 </head>
 <body style="margin: 0px;padding: 0px;">
 <p>
 <h3 style="-webkit-app-region: drag;">process-message</h3></p>
-<p><a target="_blank" href="ipc-event.html">open</a></p>
 <p>
-    自动执行时间/毫秒: <input id="time" value="0">
+    <a target="_blank" href="ipc-event.html">open</a>
+    <a href="https://www.baidu.com">百度</a>
+    <img src="icon.ico" width="50" height="50">
+</p>
+<p>
+    自动执行时间/毫秒: <input id="time" value="0"><br>
+    通道ID:<input id="channelId" value="">
+    <br>
+    <button onclick="reload()">reload</button>
+    <button onclick="check()">checkParam</button>
+    <button onclick="autoCheckParam()">autoCheckParam</button>
     <br>
     <button onclick="testEmitName()">testEmitName</button>
     <button onclick="autoIpcEmit()">自动-testEmitName</button>
@@ -339,15 +411,18 @@
     <button onclick="testGoEmit()">testGoEmit</button>
     <button onclick="autotestGoEmit()">自动-testGoEmit</button>
     <br>
-    <button onclick="variabletestInArgs()">variabletestInArgs</button>
-    <button onclick="autovariabletestInArgs()">自动autovariabletestInArgs</button>
+    <button onclick="variableTestInArgs()">variableTestInArgs</button>
+    <button onclick="autoVariableTestInArgs()">自动variableTestInArgs</button>
     <br>
     <button onclick="testGoEmitAndCallback()">testGoEmitAndCallback</button>
     <button onclick="autotestGoEmitAndCallback()">自动-testGoEmitAndCallback</button>
     <br>
     <button onclick="testEmitSync()">testEmitSync</button>
     <button onclick="autoTestEmitSync()">自动-testEmitSync</button>
-
+    <br>
+    <button onclick="testSendTargetGo()">testSendTargetGo</button>
+    <br>
+    <button onclick="testEmitRule()">testEmitRule</button>
 </p>
 <p id="msgHtml"></p>
 </body>
@@ -368,5 +443,8 @@
     }
 
     msg("ipc-event: 页面加载完成...");
+
+    msg("process browserId", process.browserId)
+    msg("process frameId", process.frameId)
 </script>
 </html>

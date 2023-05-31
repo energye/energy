@@ -4,7 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"strings"
 )

@@ -20,6 +20,7 @@ func main() {
 	cef.GlobalInit(&libs, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
+	cefApp.SetEnableGPU(true)
 	//主进程窗口
 	src.MainBrowserWindow()
 

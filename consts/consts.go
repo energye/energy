@@ -16,13 +16,13 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"reflect"
 )
 
 var (
 	ExePath       string                       //执行文件目录
 	HomeDir, _    = homedir.Dir()              //系统用户目录
 	Separator     = string(filepath.Separator) //系统目录分隔符
-	SingleProcess = false                      //进程启动方式, true 单进程 false 多进程
 	IsMessageLoop = false                      //CEF应用的窗口, true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件, 其实是窗口消息轮询使用方式.
 )
 
@@ -75,7 +75,9 @@ const (
 	ZOOM_DEC
 )
 
-// 进程结束的状态
+// TCefTerminationStatus
+//  进程结束的状态
+//  /include/internal/cef_types.h (cef_termination_status_t)
 type TCefTerminationStatus = types.Int32
 
 const (
@@ -173,10 +175,10 @@ const (
 // cbaDelay  : 暂时停止关闭浏览器
 //
 //	: 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
-type CBS = types.Int32
+type TCefCloseBrowserAction = types.Int32
 
 const (
-	CbaClose = CBS(iota)
+	CbaClose = TCefCloseBrowserAction(iota)
 	CbaDelay
 	CbaCancel
 )
@@ -189,54 +191,11 @@ const (
 	PID_RENDER
 )
 
-// 支持的JS类型
-type V8_JS_VALUE_TYPE = types.Int32
-
+// Go Kind 扩展常量
 const (
-	V8_VALUE_INVALID V8_JS_VALUE_TYPE = iota - 1
-	V8_VALUE_STRING
-	V8_VALUE_INT
-	V8_VALUE_DOUBLE
-	V8_VALUE_BOOLEAN
-	V8_VALUE_NULL
-	V8_VALUE_UNDEFINED
-	V8_VALUE_OBJECT
-	V8_VALUE_ARRAY
-	V8_VALUE_FUNCTION
-	V8_VALUE_PTR
-	V8_VALUE_EXCEPTION
-	V8_VALUE_ROOT_OBJECT
-	V8_NO_OUT_VALUE
-)
-
-// 支持的GO类型
-type GO_VALUE_TYPE = types.Int32
-
-const (
-	GO_VALUE_INVALID GO_VALUE_TYPE = iota - 1
-	GO_VALUE_STRING
-	GO_VALUE_INT
-	GO_VALUE_INT8
-	GO_VALUE_INT16
-	GO_VALUE_INT32
-	GO_VALUE_INT64
-	GO_VALUE_UINT
-	GO_VALUE_UINT8
-	GO_VALUE_UINT16
-	GO_VALUE_UINT32
-	GO_VALUE_UINT64
-	GO_VALUE_UINTPTR
-	GO_VALUE_FLOAT32
-	GO_VALUE_FLOAT64
-	GO_VALUE_BOOL
-	GO_VALUE_NIL
-	GO_VALUE_STRUCT
-	GO_VALUE_SLICE
-	GO_VALUE_FUNC
-	GO_VALUE_PTR
-	GO_VALUE_MAP
-	GO_VALUE_EXCEPTION
-	GO_VALUE_SLICE_BYTE
+	SLICE_BYTE reflect.Kind = iota + 30 // []byte
+	JD                                  // JsonData
+	NIL                                 // nil
 )
 
 // 函数类型
@@ -266,6 +225,7 @@ const (
 
 type TDateTime = types.Float64
 
+// /include/internal/cef_types.h (cef_cookie_same_site_t)
 type TCefCookieSameSite = types.Int32
 
 const (
@@ -275,6 +235,7 @@ const (
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
+// /include/internal/cef_types.h (cef_cookie_priority_t)
 type TCefCookiePriority = types.Int32
 
 const (
@@ -286,11 +247,11 @@ const (
 type TCefProxyType = types.Int32
 
 const (
-	PtDirect = TCefProxyType(iota)
-	PtAutodetect
-	PtSystem
-	PtFixedServers
-	PtPACScript
+	PtDirect       = TCefProxyType(iota) // mode dict => direct
+	PtAutodetect                         // mode dict => auto_detect
+	PtSystem                             // mode dict => system
+	PtFixedServers                       // mode dict => fixed_servers
+	PtPACScript                          // mode dict => pac_script
 )
 
 type TCefProxyScheme = types.Int32
@@ -309,6 +270,7 @@ const (
 	CMT_RADIO
 )
 
+// /include/internal/cef_types.h (cef_context_menu_media_type_t)
 type TCefContextMenuMediaType = types.Int32
 
 const (
@@ -353,6 +315,7 @@ const (
 	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
+// /include/internal/cef_types.h (cef_menu_color_type_t)
 type TCefMenuColorType = types.Int32
 
 const (
@@ -367,6 +330,7 @@ const (
 
 type ARGB = types.UInt32
 
+// /include/internal/cef_types.h (cef_key_event_type_t)
 type TCefKeyEventType = types.Int32
 
 const (
@@ -376,10 +340,14 @@ const (
 	KEYEVENT_CHAR
 )
 
+// /include/internal/cef_types.h (cef_event_flags_t)
 type TCefEventFlags = types.UInt32
 
 type TCefWindowHandleType = types.Int8
 
+// /include/internal/cef_types_win.h (cef_window_handle_t)
+// /include/internal/cef_types_mac.h (cef_window_handle_t)
+// /include/internal/cef_types_linux.h (cef_window_handle_t)
 type TCefWindowHandle = types.UIntptr
 
 const (
@@ -387,7 +355,8 @@ const (
 	Wht_LinkedWindowParent
 )
 
-type TCefReturnValue = types.Int32
+// /include/internal/cef_types.h (cef_return_value_t)
+type TCefReturnValue int32
 
 const (
 	RV_CANCEL = TCefReturnValue(iota)
@@ -395,6 +364,7 @@ const (
 	RV_CONTINUE_ASYNC
 )
 
+// /include/internal/cef_types.h (cef_referrer_policy_t)
 type TCefReferrerPolicy = types.Int32
 
 const (
@@ -408,10 +378,13 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
+// /include/internal/cef_types.h (cef_urlrequest_flags_t)
 type TCefUrlRequestFlags = types.Int
 
+// /include/internal/cef_types.h (cef_errorcode_t)
 type TCefErrorCode = types.Int32
 
+// /include/internal/cef_types.h (cef_resource_type_t)
 type TCefResourceType = types.Int32
 
 const (
@@ -438,8 +411,10 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME
 )
 
+// /include/internal/cef_types.h (cef_transition_type_t)
 type TCefTransitionType = types.Int
 
+// /include/internal/cef_types.h (cef_urlrequest_status_t)
 type TCefUrlRequestStatus = types.Int32
 
 const (
@@ -450,6 +425,7 @@ const (
 	UR_FAILED
 )
 
+// /include/internal/cef_types.h (cef_state_t)
 type TCefState = types.Int32
 
 const (
@@ -458,6 +434,7 @@ const (
 	STATE_DISABLED
 )
 
+// /include/internal/cef_types.h (cef_touch_event_type_t)
 type TCefTouchEeventType = types.Int32
 
 const (
@@ -467,6 +444,7 @@ const (
 	CEF_TET_CANCELLED
 )
 
+// /include/internal/cef_types.h (cef_pointer_type_t)
 type TCefPointerType = types.Int32
 
 const (
@@ -477,6 +455,7 @@ const (
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
+// /include/internal/cef_types.h (cef_mouse_button_type_t)
 type TCefMouseButtonType = types.Int32
 
 const (
@@ -498,6 +477,7 @@ const (
 	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
+// /include/internal/cef_types.h (cef_window_open_disposition_t)
 type TCefWindowOpenDisposition = types.Int32
 
 const (
@@ -525,10 +505,16 @@ const (
 	WT_VIEW_SOURCE
 )
 
+// /include/internal/cef_types.h (cef_context_menu_type_flags_t)
 type TCefContextMenuTypeFlags = types.UInt32
+
+// /include/internal/cef_types.h (cef_context_menu_media_state_flags_t)
 type TCefContextMenuMediaStateFlags = types.UInt32
+
+// /include/internal/cef_types.h (cef_context_menu_edit_state_flags_t)
 type TCefContextMenuEditStateFlags = types.UInt32
 
+// /include/internal/cef_types.h (cef_menu_anchor_position_t)
 type TCefMenuAnchorPosition = types.Int32
 
 const (
@@ -537,6 +523,7 @@ const (
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
+// /include/internal/cef_types.h (cef_show_state_t)4
 type TCefShowState = types.Int32
 
 const (
@@ -546,6 +533,7 @@ const (
 	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
 )
 
+// /include/internal/cef_types.h (cef_chrome_toolbar_type_t)
 type TCefChromeToolbarType = types.Int32
 
 const (
@@ -567,6 +555,9 @@ const (
 	DRAG_OPERATION_DELETE  TCefDragOperations = 1 << 5
 	DRAG_OPERATION_EVERY   TCefDragOperations = math.MaxUint32
 )
+
+// /include/internal/cef_types.h (cef_drag_operations_mask_t)
+type TCefDragOperation = TCefDragOperations
 
 type TrayType int8
 
@@ -671,6 +662,7 @@ const (
 	V8_PROPERTY_ATTRIBUTE_DONTDELETE TCefV8PropertyAttributes = 1 << 2
 )
 
+// /include/internal/cef_types.h (cef_value_type_t)
 type TCefValueType = types.Int32
 
 const (
@@ -703,6 +695,10 @@ const (
 	AppUserGestureRequired
 )
 
+// Values used by the --net-log-capture-mode command line switch.
+// Sets the granularity of events to capture in the network log.
+// https://source.chromium.org/chromium/chromium/src/+/main:content/browser/network_service_instance_impl.cc
+// https://source.chromium.org/chromium/chromium/src/+/main:net/log/net_log_capture_mode.h
 type TCefNetLogCaptureMode = types.Int32
 
 const (
@@ -1002,6 +998,7 @@ const (
 	CEF_ALPHA_TYPE_POSTMULTIPLIED
 )
 
+// /include/internal/cef_types.h (cef_pdf_print_margin_type_t)
 type TCefPdfPrintMarginType = types.Int32
 
 const (
@@ -1030,6 +1027,7 @@ const (
 	V8vtPromise
 )
 
+// /include/internal/cef_types.h (cef_preferences_type_t)
 type TCefPreferencesType = types.Int32
 
 const (
@@ -1051,4 +1049,285 @@ const (
 	SCALE_FACTOR_200P
 	SCALE_FACTOR_250P
 	SCALE_FACTOR_300P
+)
+
+// /include/internal/cef_types.h (cef_channel_layout_t)
+type TCefChannelLayout = types.Int32
+
+const (
+	CEF_CHANNEL_LAYOUT_NONE TCefChannelLayout = iota
+	CEF_CHANNEL_LAYOUT_UNSUPPORTED
+	CEF_CHANNEL_LAYOUT_MONO
+	CEF_CHANNEL_LAYOUT_STEREO
+	CEF_CHANNEL_LAYOUT_2_1
+	CEF_CHANNEL_LAYOUT_SURROUND
+	CEF_CHANNEL_LAYOUT_4_0
+	CEF_CHANNEL_LAYOUT_2_2
+	CEF_CHANNEL_LAYOUT_QUAD
+	CEF_CHANNEL_LAYOUT_5_0
+	CEF_CHANNEL_LAYOUT_5_1
+	CEF_CHANNEL_LAYOUT_5_0_BACK
+	CEF_CHANNEL_LAYOUT_5_1_BACK
+	CEF_CHANNEL_LAYOUT_7_0
+	CEF_CHANNEL_LAYOUT_7_1
+	CEF_CHANNEL_LAYOUT_7_1_WIDE
+	CEF_CHANNEL_LAYOUT_STEREO_DOWNMIX
+	CEF_CHANNEL_LAYOUT_2POINT1
+	CEF_CHANNEL_LAYOUT_3_1
+	CEF_CHANNEL_LAYOUT_4_1
+	CEF_CHANNEL_LAYOUT_6_0
+	CEF_CHANNEL_LAYOUT_6_0_FRONT
+	CEF_CHANNEL_LAYOUT_HEXAGONAL
+	CEF_CHANNEL_LAYOUT_6_1
+	CEF_CHANNEL_LAYOUT_6_1_BACK
+	CEF_CHANNEL_LAYOUT_6_1_FRONT
+	CEF_CHANNEL_LAYOUT_7_0_FRONT
+	CEF_CHANNEL_LAYOUT_7_1_WIDE_BACK
+	CEF_CHANNEL_LAYOUT_OCTAGONAL
+	CEF_CHANNEL_LAYOUT_DISCRETE
+	CEF_CHANNEL_LAYOUT_STEREO_AND_KEYBOARD_MIC
+	CEF_CHANNEL_LAYOUT_4_1_QUAD_SIDE
+	CEF_CHANNEL_LAYOUT_BITSTREAM
+	CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX // CEF_CHANNEL_LAYOUT_MAX = CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX
+)
+
+// CefClientType
+//	CtTClient 自定义客户端处理器事件
+//	CtChromium 使用 IChromium 定义事件, 不允许获取处理器事件
+type CefClientType = types.Int8
+
+const (
+	CtTClient CefClientType = iota
+	CtChromium
+)
+
+// /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)
+type TCefQuickMenuEditStateFlags = types.Int32
+
+// /include/internal/cef_types.h (cef_file_dialog_mode_t)
+type TCefFileDialogMode = types.Cardinal
+
+// /include/internal/cef_types.h (cef_log_severity_t)
+type TCefLogSeverity = types.Cardinal
+
+// TCefCursorHandle
+//  /include/internal/cef_types_win.h (cef_cursor_handle_t)
+//  /include/internal/cef_types_mac.h (cef_cursor_handle_t)
+//  /include/internal/cef_types_linux.h (cef_cursor_handle_t)
+type TCefCursorHandle uintptr
+
+// /include/internal/cef_types.h (cef_cursor_type_t)
+type TCefCursorType = types.Int32
+
+const (
+	CT_POINTER TCefCursorType = iota
+	CT_CROSS
+	CT_HAND
+	CT_IBEAM
+	CT_WAIT
+	CT_HELP
+	CT_EASTRESIZE
+	CT_NORTHRESIZE
+	CT_NORTHEASTRESIZE
+	CT_NORTHWESTRESIZE
+	CT_SOUTHRESIZE
+	CT_SOUTHEASTRESIZE
+	CT_SOUTHWESTRESIZE
+	CT_WESTRESIZE
+	CT_NORTHSOUTHRESIZE
+	CT_EASTWESTRESIZE
+	CT_NORTHEASTSOUTHWESTRESIZE
+	CT_NORTHWESTSOUTHEASTRESIZE
+	CT_COLUMNRESIZE
+	CT_ROWRESIZE
+	CT_MIDDLEPANNING
+	CT_EASTPANNING
+	CT_NORTHPANNING
+	CT_NORTHEASTPANNING
+	CT_NORTHWESTPANNING
+	CT_SOUTHPANNING
+	CT_SOUTHEASTPANNING
+	CT_SOUTHWESTPANNING
+	CT_WESTPANNING
+	CT_MOVE
+	CT_VERTICALTEXT
+	CT_CELL
+	CT_CONTEXTMENU
+	CT_ALIAS
+	CT_PROGRESS
+	CT_NODROP
+	CT_COPY
+	CT_NONE
+	CT_NOTALLOWED
+	CT_ZOOMIN
+	CT_ZOOMOUT
+	CT_GRAB
+	CT_GRABBING
+	CT_MIDDLE_PANNING_VERTICAL
+	CT_MIDDLE_PANNING_HORIZONTAL
+	CT_CUSTOM
+	CT_DND_NONE
+	CT_DND_MOVE
+	CT_DND_COPY
+	CT_DND_LIN
+)
+
+// /include/internal/cef_types.h (cef_focus_source_t)
+type TCefFocusSource = types.Int32
+
+const (
+	FOCUS_SOURCE_NAVIGATION TCefFocusSource = iota
+	FOCUS_SOURCE_SYSTEM
+)
+
+// /include/internal/cef_types.h (cef_permission_request_result_t)
+type TCefPermissionRequestResult = types.Int32
+
+const (
+	CEF_PERMISSION_RESULT_ACCEPT TCefPermissionRequestResult = iota
+	CEF_PERMISSION_RESULT_DENY
+	CEF_PERMISSION_RESULT_DISMISS
+	CEF_PERMISSION_RESULT_IGNORE
+)
+
+// /include/internal/cef_types.h (cef_media_access_permission_types_t)
+type TCefMediaAccessPermissionTypes = types.Int32
+
+// /include/internal/cef_types.h (cef_jsdialog_type_t)
+type TCefJsDialogType = types.Int32
+
+const (
+	JSDIALOGTYPE_ALERT TCefJsDialogType = iota
+	JSDIALOGTYPE_CONFIRM
+	JSDIALOGTYPE_PROMPT
+)
+
+// TCefDuplexMode
+//  /include/internal/cef_types.h (cef_duplex_mode_t)
+type TCefDuplexMode = types.Int32
+
+// /include/internal/cef_types.h (cef_color_model_t)
+type TCefColorModel = types.Int32
+
+const (
+	COLOR_MODEL_UNKNOWN TCefColorModel = iota
+	COLOR_MODEL_GRAY
+	COLOR_MODEL_COLOR
+	COLOR_MODEL_CMYK
+	COLOR_MODEL_CMY
+	COLOR_MODEL_KCMY
+	COLOR_MODEL_CMY_K
+	COLOR_MODEL_BLACK
+	COLOR_MODEL_GRAYSCALE
+	COLOR_MODEL_RGB
+	COLOR_MODEL_RGB16
+	COLOR_MODEL_RGBA
+	COLOR_MODEL_COLORMODE_COLOR
+	COLOR_MODEL_COLORMODE_MONOCHROME
+	COLOR_MODEL_HP_COLOR_COLOR
+	COLOR_MODEL_HP_COLOR_BLACK
+	COLOR_MODEL_PRINTOUTMODE_NORMAL
+	COLOR_MODEL_PRINTOUTMODE_NORMAL_GRAY
+	COLOR_MODEL_PROCESSCOLORMODEL_CMYK
+	COLOR_MODEL_PROCESSCOLORMODEL_GREYSCALE
+	COLOR_MODEL_PROCESSCOLORMODEL_RGB
+)
+
+// /include/internal/cef_types.h (cef_scheme_options_t)
+type CefSchemeOption = types.Int32
+
+const (
+	CEF_SCHEME_OPTION_NONE             CefSchemeOption = 0
+	CEF_SCHEME_OPTION_STANDARD                         = 1 << 0
+	CEF_SCHEME_OPTION_LOCAL                            = 1 << 1
+	CEF_SCHEME_OPTION_DISPLAY_ISOLATED                 = 1 << 2
+	CEF_SCHEME_OPTION_SECURE                           = 1 << 3
+	CEF_SCHEME_OPTION_CORS_ENABLED                     = 1 << 4
+	CEF_SCHEME_OPTION_CSP_BYPASSING                    = 1 << 5
+	CEF_SCHEME_OPTION_FETCH_ENABLED                    = 1 << 6
+)
+
+// TCefResponseFilterStatus
+//  /include/internal/cef_types.h (cef_response_filter_status_t)
+type TCefResponseFilterStatus = types.Int32
+
+const (
+	RESPONSE_FILTER_NEED_MORE_DATA TCefResponseFilterStatus = iota
+	RESPONSE_FILTER_DONE
+	RESPONSE_FILTER_ERROR
+)
+
+// /include/internal/cef_types.h (cef_paint_element_type_t)
+type TCefPaintElementType = types.Int32
+
+const (
+	PET_VIEW TCefPaintElementType = iota
+	PET_POPUP
+)
+
+// /include/internal/cef_types.h (cef_horizontal_alignment_t)
+type TCefHorizontalAlignment = types.Int32
+
+const (
+	CEF_HORIZONTAL_ALIGNMENT_LEFT TCefHorizontalAlignment = iota
+	CEF_HORIZONTAL_ALIGNMENT_CENTER
+	CEF_HORIZONTAL_ALIGNMENT_RIGHT
+)
+
+// /include/internal/cef_types.h (cef_text_input_mode_t)
+type TCefTextInputMode = types.Int32
+
+const (
+	CEF_TEXT_INPUT_MODE_DEFAULT TCefTextInputMode = iota
+	CEF_TEXT_INPUT_MODE_NONE
+	CEF_TEXT_INPUT_MODE_TEXT
+	CEF_TEXT_INPUT_MODE_TEL
+	CEF_TEXT_INPUT_MODE_URL
+	CEF_TEXT_INPUT_MODE_EMAIL
+	CEF_TEXT_INPUT_MODE_NUMERIC
+	CEF_TEXT_INPUT_MODE_DECIMAL
+	CEF_TEXT_INPUT_MODE_SEARCH // CEF_TEXT_INPUT_MODE_MAX = CEF_TEXT_INPUT_MODE_SEARCH
+)
+
+// /include/internal/cef_types.h (cef_cert_status_t)
+type TCefCertStatus = types.Int32
+
+// /include/internal/cef_types.h (cef_media_route_create_result_t)
+type TCefMediaRouterCreateResult = types.Int32
+
+// /include/internal/cef_types.h (cef_media_route_connection_state_t)
+type TCefMediaRouteConnectionState = types.Int32
+
+const (
+	CEF_MRCS_UNKNOWN TCefMediaRouteConnectionState = iota
+	CEF_MRCS_CONNECTING
+	CEF_MRCS_CONNECTED
+	CEF_MRCS_CLOSED
+	CEF_MRCS_TERMINATED
+)
+
+// /include/internal/cef_types.h (cef_dom_document_type_t)
+type TCefDomDocumentType = types.Int32
+
+const (
+	DOM_DOCUMENT_TYPE_UNKNOWN TCefDomDocumentType = iota
+	DOM_DOCUMENT_TYPE_HTML
+	DOM_DOCUMENT_TYPE_XHTML
+	DOM_DOCUMENT_TYPE_PLUGIN
+)
+
+// /include/internal/cef_types.h (cef_dom_node_type_t)
+type TCefDomNodeType = types.Int32
+
+const (
+	DOM_NODE_TYPE_UNSUPPORTED TCefDomNodeType = iota
+	DOM_NODE_TYPE_ELEMENT
+	DOM_NODE_TYPE_ATTRIBUTE
+	DOM_NODE_TYPE_TEXT
+	DOM_NODE_TYPE_CDATA_SECTION
+	DOM_NODE_TYPE_PROCESSING_INSTRUCTIONS
+	DOM_NODE_TYPE_COMMENT
+	DOM_NODE_TYPE_DOCUMENT
+	DOM_NODE_TYPE_DOCUMENT_TYPE
+	DOM_NODE_TYPE_DOCUMENT_FRAGMENT
 )

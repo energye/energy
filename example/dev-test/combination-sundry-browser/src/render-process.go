@@ -14,6 +14,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/cef/process"
 	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
 	"strings"
@@ -21,7 +23,7 @@ import (
 
 func AppRenderInit() *cef.TCEFApplication {
 	//Cef应用的配置
-	var env = common.Args.Args("env")
+	var env = process.Args.Args("env")
 	if common.IsWindows() {
 		//SetFrameworkDirPath 或 配置环境变量 ENERGY_HOME
 	} else if common.IsLinux() {
@@ -30,20 +32,20 @@ func AppRenderInit() *cef.TCEFApplication {
 	//创建Cef应用
 	cefApp := cef.NewApplication()
 	//fmt.Printf("cefApp:%+v %s\n", cefApp, runtime.GOOS)
-	if common.Args.IsMain() {
+	if process.Args.IsMain() {
 		//cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.TCefCommandLine) {
 		//	//主进程 自定义参数
 		//	fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", cef.Args.ProcessType())
 		//	commandLine.AppendSwitch("env", env)
 		//})
-	} else if common.Args.IsRender() {
+	} else if process.Args.IsRender() {
 		//取出主进程 自定义参数
 
-		fmt.Println("ipc-port", common.Args.Args("net-ipc-port"), common.Args.ProcessType())
+		fmt.Println("ipc-port", process.Args.Args("net-ipc-port"), process.Args.ProcessType())
 	}
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
 		//主进程 自定义参数
-		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", common.Args.ProcessType())
+		fmt.Println("======================OnBeforeChildProcessLaunch 定义进程参数: ", process.Args.ProcessType())
 		commandLine.AppendSwitchWithValue("env", env)
 		commandLine.AppendArgument("--test")
 	})
@@ -63,8 +65,8 @@ func AppRenderInit() *cef.TCEFApplication {
 		return false
 	})
 	//渲染进程 IPC事件
-	ipc.On("renderOnEventSubWindowIPCOn", func(context ipc.IContext) {
-		fmt.Println("渲染进程监听事件-执行 renderOnEventSubWindowIPCOn", common.Args.ProcessType())
+	ipc.On("renderOnEventSubWindowIPCOn", func(context context.IContext) {
+		fmt.Println("渲染进程监听事件-执行 renderOnEventSubWindowIPCOn", process.Args.ProcessType())
 		//渲染进程处理程序....
 		context.Result("返回了,可以关闭")
 	})

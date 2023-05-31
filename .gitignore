@@ -118,3 +118,5 @@ rsrc
 /exe/app.ico
 /resources/manifest.xml
 /app_windows_amd64.syso
+*.zip
+*.rar

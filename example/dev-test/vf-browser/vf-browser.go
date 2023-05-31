@@ -15,11 +15,12 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/assetserve"
 	"github.com/energye/energy/example/dev-test/traydemo"
 	"github.com/energye/energy/logger"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"os"
+	"path"
 )
 
 //go:embed resources
@@ -50,7 +51,9 @@ func main() {
 		window.AsViewsFrameworkBrowserWindow().SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
 			fmt.Println("WindowCreated.window", window.WindowAppIcon().Width(), window.WindowAppIcon().Height())
 			image := cef.ImageRef.New()
-			byt, err := os.ReadFile("E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\example\\dev-test\\vf-browser\\resources\\icon.png")
+			cw, _ := os.Getwd()
+			cw = path.Join(cw, "example", "dev-test", "vf-browser", "resources", "icon.png")
+			byt, err := os.ReadFile(cw)
 			fmt.Println("image icon.png", len(byt), err)
 			image.AddPng(1.2, byt)
 			fmt.Println("image", image.Width(), image.Height())
@@ -86,19 +89,16 @@ func main() {
 		})
 		window.Show()
 		fmt.Println("SetBrowserInit 结束")
-	})
-	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		if common.IsLinux() || common.IsDarwin() {
 			//在VF窗口组件中, 推荐linux和macosx中使用
 			traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用,
 		} else {
 			//不支持windows VF窗口组件中无法创建或使用LCL组件
-			traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+			//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
 			//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
 			//支持windows
-			//traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
+			traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
 		}
-		println("browser init after end")
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
+	"github.com/energye/energy/cef/ipc/context"
 	"github.com/energye/energy/logger"
 )
 
@@ -32,7 +33,7 @@ func main() {
 func IPCInit() {
 	fmt.Println("渲染进程IPC事件注册")
 	//渲染进程监听的事件
-	ipc.On("sub-process-on-event", func(context ipc.IContext) {
+	ipc.On("sub-process-on-event", func(context context.IContext) {
 		fmt.Println("sub-process-on-event")
 		//渲染进程处理程序....
 		context.Result("返回结果")

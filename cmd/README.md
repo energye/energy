@@ -1,5 +1,5 @@
 # Energy 命令行工具
-## 自动配置环境
+## 自动配置开发环境
 ## 使用方式
 > 一、使用预编译
 > 
@@ -44,5 +44,6 @@
 >> 2. energy install --path=/app/energyFramework --version=v1.1.0
 >>
 ----
-### 授权
-### [![License GPL 3.0](https://img.shields.io/badge/License%20GPL3.0-green)](https://opensource.org/licenses/GPL-3.0)
+### Public License
+
+[![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=green)](http://www.apache.org/licenses/LICENSE-2.0)

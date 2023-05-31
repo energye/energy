@@ -4,7 +4,8 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/pkgs/assetserve"
+	"github.com/energye/golcl/lcl"
 	"time"
 )
 
@@ -32,7 +33,16 @@ func main() {
 		//定时执行web js
 		go timeTask()
 	})
-
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+			var jsCode = `
+(function(){
+	console.log("执行");
+})();
+`
+			window.Chromium().ExecuteJavaScript(jsCode, "", 0)
+		})
+	})
 	//运行应用
 	cef.Run(cefApp)
 }

@@ -4,9 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/process"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -35,7 +35,7 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	fmt.Println("main-ProcessType:", common.Args.ProcessType())
+	fmt.Println("main-ProcessType:", process.Args.ProcessType())
 
 	cefApp.SetOnContextCreated(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, context *cef.ICefV8Context) bool {
 		fmt.Println("iCefV8ContextPtr", context, "Global.IsValid:", context.Global().IsValid(), context.Global().IsUndefined(), context.Global().GetDateValue())
@@ -111,8 +111,9 @@ func main() {
 		return false
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
-			fmt.Println("SetOnBeforeResourceLoad:", request.Url, request.Method, "headerMap:", request.GetHeaderMap().GetSize())
+			fmt.Println("SetOnBeforeResourceLoad:", request.URL(), request.Method(), "headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
 			fmt.Println("\t", request.GetHeaderByName("energy"), headerMap.GetEnumerate("energy", 1), "size:", headerMap.GetSize())
 			for i := 0; i < int(headerMap.GetSize()); i++ {
@@ -153,29 +154,4 @@ func main() {
 
 	//运行应用
 	cef.Run(cefApp)
-}
-
-var (
-	varStr             = "字符串变量"
-	varInt     int64   = 21
-	varInt8    int8    = 21
-	varFloat64         = 333.55
-	varFloat32 float32 = 222.11
-	varBool            = true
-)
-
-func TestFunc() string {
-	fmt.Println("TestFunc")
-	return "test" + "afdasdfsadf: "
-}
-
-type TestStruct struct {
-	Name string
-	Age  int
-}
-
-func Test(bind interface{}) {
-	var s = bind.(*string)
-	println("====", *s)
-	*s = "123"
 }

@@ -4,7 +4,8 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -22,8 +23,12 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
-		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, result *bool) {
-			fmt.Printf("%s  %+v\n", string(rune(event.Character)), event)
+		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
+			fmt.Printf("%s  KeyEvent:%+v osEvent:%+v\n", string(rune(event.Character)), event, osEvent)
+		})
+		browserWindow.Chromium().SetOnPreKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent *consts.TCefEventHandle) (isKeyboardShortcut, result bool) {
+			fmt.Printf("%s  PreKeyEvent:%+v osEvent:%+v\n", string(rune(event.Character)), event, osEvent)
+			return false, false
 		})
 	})
 	//内置http服务链接安全配置

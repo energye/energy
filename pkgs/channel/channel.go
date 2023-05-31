@@ -8,15 +8,16 @@
 //
 //----------------------------------------
 
-// IPC 通道
-//
-// GO 多进程之间通信
+// IPC Channel
+// Communication between multiple processes
+
 package channel
 
 import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"github.com/energye/energy/cef/process"
 	"github.com/energye/energy/common"
 	. "github.com/energye/energy/consts"
 	"github.com/energye/energy/logger"
@@ -29,13 +30,14 @@ import (
 )
 
 var (
-	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                                               //协议头
-	protocolHeaderLength = int32(len(protocolHeader))                                                                           //协议头长度
-	messageTypeLength    = int32(1)                                                                                             //消息类型 int8
-	channelIdLength      = int32(8)                                                                                             //发送通道 int64
-	toChannelIdLength    = int32(8)                                                                                             //接收通道 int64
-	dataByteLength       = int32(4)                                                                                             //数据长度 int32
-	headerLength         = int(protocolHeaderLength + messageTypeLength + channelIdLength + toChannelIdLength + dataByteLength) //协议头长度
+	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                                                                 // 协议头
+	protocolHeaderLength = int32(len(protocolHeader))                                                                                             // 协议头长度
+	messageTypeLength    = int32(1)                                                                                                               // 消息类型 int8
+	processIdLength      = int32(1)                                                                                                               // 消息来源 int8
+	channelIdLength      = int32(8)                                                                                                               // 发送通道 int64
+	toChannelIdLength    = int32(8)                                                                                                               // 接收通道 int64
+	dataByteLength       = int32(4)                                                                                                               // 数据长度 int32
+	headerLength         = int(protocolHeaderLength + messageTypeLength + processIdLength + channelIdLength + toChannelIdLength + dataByteLength) // 协议头长度
 )
 
 var (
@@ -49,11 +51,12 @@ var (
 type mt int8
 
 const (
-	mt_invalid    mt = iota - 1 // 无效类型
-	mt_connection               // 建立链接消息
-	mt_connectd                 // 已链接
-	mt_common                   // 普通消息
-	mt_relay                    // 转发消息
+	mt_invalid           mt = iota - 1 // 无效类型
+	mt_connection                      // 建立链接消息
+	mt_connectd                        // 已链接消息
+	mt_update_channel_id               // 更新通道ID消息
+	mt_common                          // 普通消息
+	mt_relay                           // 转发消息
 )
 
 // IPCCallback 回调
@@ -86,7 +89,7 @@ func isUseNetIPC() bool {
 	return true
 }
 
-// SetPort 设置 net socket 端口号, 如v非指定范围内端口则获取随机未使用端口号
+// SetPort 设置 net socket 端口号, 如参数 "v" 非指定范围内端口则获取随机未使用端口号
 //
 // v 1024 ~ 65535
 func SetPort(v int) {
@@ -104,7 +107,7 @@ func Port() int {
 		return port
 	}
 	//主进程获取端口号
-	if common.Args.IsMain() {
+	if process.Args.IsMain() {
 		addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
 		if err != nil {
 			panic("Failed to Get unused Port number Error: " + err.Error())
@@ -121,17 +124,19 @@ func Port() int {
 
 // IIPCContext IPC通信回调上下文
 type IIPCContext interface {
-	Connect() net.Conn  // IPC 通道链接
-	ChannelId() int64   // 返回 发送通道ID
-	ToChannelId() int64 // 返回 接收发送通道ID
-	Message() IMessage  // 消息
-	Free()              //
+	Connect() net.Conn        // IPC 通道链接
+	ChannelId() int64         // 返回 发送通道ID
+	ToChannelId() int64       // 返回 接收发送通道ID
+	ChannelType() ChannelType // 返回 当前通道类型
+	ProcessId() CefProcessId  // 返回 通道消息来源
+	Message() IMessage        // 消息
+	Free()                    //
 }
 
 // IMessage 消息内容接口
 type IMessage interface {
 	Type() mt        // 消息类型
-	Length() uint32  // 数据长度
+	Length() int32   // 数据长度
 	Data() []byte    // 数据
 	JSON() json.JSON // 转为 JSON 对象并返回
 	clear()          // 清空
@@ -157,6 +162,7 @@ type IRenderChannel interface {
 	Channel() IChannel
 	Send(data []byte)
 	SendToChannel(toChannelId int64, data []byte)
+	UpdateChannelId(toChannelId int64)
 	Handler(handler IPCCallback)
 	Close()
 }
@@ -164,17 +170,19 @@ type IRenderChannel interface {
 // ipcMessage 消息内容
 type ipcMessage struct {
 	t mt     // type
-	s uint32 // size
+	s int32  // size
 	v []byte // data
 }
 
 // IPCContext IPC 上下文
 type IPCContext struct {
-	channelId   int64    //render channelId
-	toChannelId int64    //
-	ipcType     IPC_TYPE // ipcType
-	connect     net.Conn // connect
-	message     IMessage // message
+	channelId   int64        //render channelId
+	toChannelId int64        //
+	ipcType     IPC_TYPE     // ipc type
+	channelType ChannelType  // ipc channel type
+	processId   CefProcessId // ipc msg source, browser or render
+	connect     net.Conn     // connect
+	message     IMessage     // message
 }
 
 // Free 释放消息内存空间
@@ -193,6 +201,15 @@ func (m *IPCContext) ChannelId() int64 {
 // ToChannelId 返回接收通道ID
 func (m *IPCContext) ToChannelId() int64 {
 	return m.toChannelId
+}
+
+// ChannelType 返回当前通道类型
+func (m *IPCContext) ChannelType() ChannelType {
+	return m.channelType
+}
+
+func (m *IPCContext) ProcessId() CefProcessId {
+	return m.processId
 }
 
 // Message 返回消息内容
@@ -216,7 +233,7 @@ func (m *ipcMessage) Data() []byte {
 }
 
 // Length 消息[]byte长度
-func (m *ipcMessage) Length() uint32 {
+func (m *ipcMessage) Length() int32 {
 	return m.s
 }
 
@@ -234,15 +251,15 @@ func (m *ipcMessage) clear() {
 
 // channel 通道
 type channel struct {
-	channelId   int64       //通道ID
-	isConnect   bool        //是否已链接
-	conn        net.Conn    //通道链接 net or unix
-	ipcType     IPC_TYPE    //IPC类型
-	channelType ChannelType //链接通道类型
-	handler     IPCCallback //
+	channelId   int64
+	isConnect   bool
+	conn        net.Conn
+	ipcType     IPC_TYPE
+	channelType ChannelType
+	handler     IPCCallback
 }
 
-// IsConnect 返回是否已链接
+// IsConnect return is connect success
 func (m *channel) IsConnect() bool {
 	if m == nil {
 		return false
@@ -250,7 +267,7 @@ func (m *channel) IsConnect() bool {
 	return m.isConnect
 }
 
-// Close 关闭当前ipc通道链接
+// Close the current IPC channel connect
 func (m *channel) Close() {
 	if m.conn != nil {
 		m.conn.Close()
@@ -258,7 +275,7 @@ func (m *channel) Close() {
 	}
 }
 
-// read 读取 net or unix 内容
+// read data
 func (m *channel) read(b []byte) (n int, err error) {
 	if m.ipcType == IPCT_NET {
 		return m.conn.Read(b)
@@ -268,34 +285,41 @@ func (m *channel) read(b []byte) (n int, err error) {
 	}
 }
 
-// write 写入消息
+// write data
 func (m *channel) write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
 	if m.conn == nil {
-		return 0, errors.New("通道链接未建立成功")
+		return 0, errors.New("channel link not established successfully")
 	}
 	var (
 		dataByteLen = len(data)
 	)
-	if dataByteLen > math.MaxUint32 {
-		return 0, errors.New("超出最大消息长度")
+	if dataByteLen > math.MaxInt32 {
+		return 0, errors.New("exceeded maximum message length")
+	}
+	var processId CefProcessId
+	if m.channelType == Ct_Server {
+		processId = PID_BROWSER
+	} else {
+		processId = PID_RENDER
 	}
 	var writeBuf = new(bytes.Buffer)
-	_ = binary.Write(writeBuf, binary.BigEndian, protocolHeader)      //协议头
-	_ = binary.Write(writeBuf, binary.BigEndian, int8(messageType))   //消息类型
-	_ = binary.Write(writeBuf, binary.BigEndian, channelId)           //通道Id
-	_ = binary.Write(writeBuf, binary.BigEndian, toChannelId)         //通道Id
-	_ = binary.Write(writeBuf, binary.BigEndian, uint32(dataByteLen)) //数据长度
-	_ = binary.Write(writeBuf, binary.BigEndian, data)                //数据
+	_ = binary.Write(writeBuf, binary.BigEndian, protocolHeader)     //protocol header
+	_ = binary.Write(writeBuf, binary.BigEndian, int8(messageType))  //message type
+	_ = binary.Write(writeBuf, binary.BigEndian, int8(processId))    //source of information
+	_ = binary.Write(writeBuf, binary.BigEndian, channelId)          //source channel Id
+	_ = binary.Write(writeBuf, binary.BigEndian, toChannelId)        //to     channel Id
+	_ = binary.Write(writeBuf, binary.BigEndian, int32(dataByteLen)) //data length
+	_ = binary.Write(writeBuf, binary.BigEndian, data)               //data bytes
 	n, err = m.conn.Write(writeBuf.Bytes())
 	writeBuf.Reset()
 	writeBuf = nil
 	return n, err
 }
 
-// ipcRead 读取通道消息
+// ipcRead Read channel messages
 func (m *channel) ipcRead() {
 	var ipcType, chnType string
 	if m.ipcType == IPCT_NET {
@@ -309,17 +333,17 @@ func (m *channel) ipcRead() {
 		chnType = "[client]"
 	}
 	defer func() {
-		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "processType:", common.Args.ProcessType())
+		logger.Debug("IPC Read Disconnect type:", ipcType, "ChannelType:", chnType, "processType:", process.Args.ProcessType())
 		m.Close()
 	}()
 	for {
 		header := make([]byte, headerLength)
 		size, err := m.read(header)
 		if err != nil {
-			logger.Debug("IPC Read【Error】IPCType:", ipcType, "ChannelType:", chnType, "Error:", err)
+			logger.Debug("IPC Read [Error] type:", ipcType, "ChannelType:", chnType, "Error:", err)
 			return
 		} else if size == 0 {
-			logger.Debug("IPC Read【Size == 0】IPCType:", ipcType, "ChannelType:", chnType, "header:", header, "Error:", err)
+			logger.Debug("IPC Read [Size == 0] type:", ipcType, "ChannelType:", chnType, "header:", header, "Error:", err)
 			return
 		}
 		if size == headerLength {
@@ -330,12 +354,12 @@ func (m *channel) ipcRead() {
 				}
 			}
 			var (
-				t                      int8   //消息类型
-				channelId, toChannelId int64  //
-				dataLen                uint32 //数据长度
-				low, high              int32  //
+				t, proId               int8  //
+				channelId, toChannelId int64 //
+				dataLen                int32 //数据长度
+				low, high              int32 //
 			)
-			//消息类型
+			//message type
 			low = protocolHeaderLength
 			high = protocolHeaderLength + messageTypeLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &t)
@@ -343,7 +367,15 @@ func (m *channel) ipcRead() {
 				logger.Debug("binary.Read.t: ", err)
 				return
 			}
-			//发送通道ID
+			//message source
+			low = high
+			high = high + processIdLength
+			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &proId)
+			if err != nil {
+				logger.Debug("binary.Read.t: ", err)
+				return
+			}
+			//send channel id
 			low = high
 			high = high + channelIdLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &channelId)
@@ -352,7 +384,7 @@ func (m *channel) ipcRead() {
 				return
 			}
 
-			//接收通道ID
+			//receive channel id
 			low = high
 			high = high + toChannelIdLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &toChannelId)
@@ -361,7 +393,7 @@ func (m *channel) ipcRead() {
 				return
 			}
 
-			//数据长度
+			//data length
 			low = high
 			high = high + dataByteLength
 			err = binary.Read(bytes.NewReader(header[low:high]), binary.BigEndian, &dataLen)
@@ -369,7 +401,7 @@ func (m *channel) ipcRead() {
 				logger.Debug("binary.Read.dataLen: ", err)
 				return
 			}
-			//数据
+			//data
 			dataByte := make([]byte, dataLen)
 			if dataLen > 0 {
 				size, err = m.read(dataByte)
@@ -378,19 +410,22 @@ func (m *channel) ipcRead() {
 				logger.Debug("binary.Read.dataByte: ", err)
 				return
 			}
+			// call handler
 			m.handler(&IPCContext{
 				channelId:   channelId,
 				toChannelId: toChannelId,
 				ipcType:     m.ipcType,
 				connect:     m.conn,
-				message: &ipcMessage{
+				channelType: m.channelType,
+				processId:   CefProcessId(proId),
+				message: &ipcMessage{ // message data
 					t: mt(t),
 					s: dataLen,
 					v: dataByte,
 				},
 			})
 		} else {
-			logger.Debug("无效的 != headerLength")
+			logger.Debug("invalid != headerLength")
 			break
 		}
 	}

@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -37,7 +38,7 @@ func main() {
 		})
 	})
 	//监听事件
-	ipc.On("search-text", func(context ipc.IContext) {
+	ipc.On("search-text", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		fmt.Println("搜索文本", bw)
 		text := context.ArgumentList().GetStringByIndex(0)

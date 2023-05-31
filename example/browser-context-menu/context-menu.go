@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -20,7 +21,11 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 	//主进程启动成功之后回调
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
@@ -81,7 +86,7 @@ func main() {
 			menuIdEnable = model.CefMis.NextCommandId()
 			if isMenuIdEnable {
 				model.AddItem(menuIdEnable, "菜单-已启用")
-				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, cef.NewCefARGB(255, 111, 12, 200))
+				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 111, 12, 200))
 			} else {
 				model.AddItem(menuIdEnable, "菜单-已禁用")
 			}
@@ -91,7 +96,7 @@ func main() {
 			//为什么要用Visible而不是不创建这个菜单? 因为菜单项的ID是动态的啊。
 			model.SetVisible(menuIdEnableCtl, !isMenuIdEnable)
 			if !isMenuIdEnable {
-				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, cef.NewCefARGB(255, 222, 111, 0))
+				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 222, 111, 0))
 			}
 			model.AddSeparator()
 			//radio 1组
@@ -140,7 +145,7 @@ func main() {
 			case menuIdRadio201, menuIdRadio202, menuIdRadio203:
 				radioDefault2Check = menuId
 			}
-			ipc.Emit("menu", clickMenuId, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数需要设置一下 isDStr=true 不然中文乱码  后面这个小点会丢失 .", menuId))
+			ipc.Emit("menu", clickMenuId, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数.", menuId))
 			//*result = true
 		})
 	})

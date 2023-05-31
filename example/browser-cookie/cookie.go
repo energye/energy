@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/common"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
@@ -25,10 +27,14 @@ func main() {
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/cookie.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 
 	//监听获取cookie事件
-	ipc.On("VisitCookie", func(context ipc.IContext) {
+	ipc.On("VisitCookie", func(context context.IContext) {
 		fmt.Println("VisitCookie")
 		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		info.Chromium().VisitURLCookies("https://www.baidu.com", true, 1)
@@ -36,13 +42,13 @@ func main() {
 		context.Result("执行成功，结果将在 SetOnCookiesVisited 事件中获得")
 	})
 	//监听删除cookie
-	ipc.On("DeleteCookie", func(context ipc.IContext) {
+	ipc.On("DeleteCookie", func(context context.IContext) {
 		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		info.Chromium().DeleteCookies("", "", false)
 		context.Result("执行成功，结果将在 SetOnCookiesDeleted 事件中获得")
 	})
 	//监听设置cookie
-	ipc.On("SetCookie", func(context ipc.IContext) {
+	ipc.On("SetCookie", func(context context.IContext) {
 		info := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		info.Chromium().SetCookie("https://www.example.com", "example_cookie_name", "1234", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)
 		info.Chromium().SetCookie("https://www.example.com", "example_cookie_name2", "123422", "", "/", true, true, false, time.Now(), time.Now(), time.Now(), consts.Ccss_CEF_COOKIE_SAME_SITE_UNSPECIFIED, consts.CEF_COOKIE_PRIORITY_MEDIUM, false, 0)

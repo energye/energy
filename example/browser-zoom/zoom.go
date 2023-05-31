@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
 	"github.com/energye/energy/consts"
+	"github.com/energye/energy/pkgs/assetserve"
 )
 
 //go:embed resources
@@ -30,17 +31,17 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.On("zoom-inc", func(context ipc.IContext) {
+	ipc.On("zoom-inc", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		bw.Chromium().BrowserZoom(consts.ZOOM_INC)
 		fmt.Println("zoom-inc")
 	})
-	ipc.On("zoom-dec", func(context ipc.IContext) {
+	ipc.On("zoom-dec", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
 		fmt.Println("zoom-dec")
 	})
-	ipc.On("zoom-reset", func(context ipc.IContext) {
+	ipc.On("zoom-reset", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
 		fmt.Println("zoom-reset")

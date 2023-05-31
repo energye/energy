@@ -42,6 +42,13 @@ type Cardinal = UInt32
 type LongBool = Boolean
 type DWORD = UInt32
 type HWND = UIntptr
+type WPARAM = UIntptr
+type LPARAM = UIntptr
+
+type Point struct {
+	X int32
+	Y int32
+}
 
 type TString struct {
 	value string

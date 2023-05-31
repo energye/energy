@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/pkgs/assetserve"
+	"github.com/energye/golcl/lcl"
 	"os"
 	"path"
 )
@@ -33,11 +35,16 @@ func main() {
 	})
 	wd, _ := os.Getwd()
 	//监听事件
-	ipc.On("print-pdf", func(context ipc.IContext) {
+	ipc.On("print-pdf", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		savePath := path.Join(wd, "example", "browser-print-pdf", "test.pdf")
 		fmt.Println("当前页面保存为PDF", savePath)
 		bw.Chromium().PrintToPDF(savePath)
+	})
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.Chromium().SetOnPdfPrintFinished(func(sender lcl.IObject, ok bool) {
+			fmt.Println("OnPdfPrintFinished:", ok)
+		})
 	})
 	//运行应用
 	cef.Run(cefApp)

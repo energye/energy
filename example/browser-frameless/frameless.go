@@ -15,7 +15,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/cef"
 	"github.com/energye/energy/cef/ipc"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/cef/ipc/context"
+	"github.com/energye/energy/common"
+	"github.com/energye/energy/pkgs/assetserve"
 	"github.com/energye/golcl/lcl/rtl/version"
 )
 
@@ -29,15 +31,21 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	cef.BrowserWindow.Config.EnableHideCaption = true
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
+	if !common.IsDarwin() { // mac 下有些问题
+		cef.BrowserWindow.Config.EnableHideCaption = true
+	}
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
 	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
 	//监听窗口状态事件
-	ipc.On("window-state", func(context ipc.IContext) {
+	ipc.On("window-state", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		state := context.ArgumentList().GetIntByIndex(0)
 		if state == 0 {
@@ -49,11 +57,11 @@ func main() {
 		}
 	})
 	//监听窗口关闭事件
-	ipc.On("window-close", func(context ipc.IContext) {
+	ipc.On("window-close", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		bw.CloseBrowserWindow()
 	})
-	ipc.On("os-info", func(context ipc.IContext) {
+	ipc.On("os-info", func(context context.IContext) {
 		fmt.Println("系统信息", version.OSVersion.ToString())
 		context.Result(version.OSVersion.ToString())
 	})
