@@ -1,1 +1,0 @@
-在Go中绑定通用类型变量或结构类型变量到JS中使用,变量类型只支持 string,int,float64,boolean

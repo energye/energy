@@ -2,8 +2,7 @@ package src
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -13,10 +12,7 @@ func MainBrowserInit() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.Title = "ENERGY 区分主/子进程执行文件"
-	//主进程 IPC事件
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		fmt.Println("主进程IPC事件注册")
-	})
+
 	//主窗口初始化回调函数
 	//在这个函数里，主进程浏览初始化之前创建窗口之后
 	//在这里可以设置窗口的属性和事件监听

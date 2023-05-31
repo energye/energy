@@ -3,9 +3,10 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -16,11 +17,11 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	cef.BrowserWindow.Config.Title = "Energy 打印PFD预览"
+	cef.BrowserWindow.Config.Title = "Energy 搜索页面中文本"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
@@ -36,15 +37,13 @@ func main() {
 			fmt.Println("OnFindResult:", identifier, count, selectionRect, activeMatchOrdinal, finalUpdate)
 		})
 	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		//监听事件
-		event.On("search-text", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			fmt.Println("搜索文本", bw)
-			text := context.Arguments().GetString(0)
-			fmt.Println("搜索内容", text)
-			bw.Browser().Find(text, false, false, true)
-		})
+	//监听事件
+	ipc.On("search-text", func(context context.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		fmt.Println("搜索文本", bw)
+		text := context.ArgumentList().GetStringByIndex(0)
+		fmt.Println("搜索内容", text)
+		bw.Browser().Find(text, false, false, true)
 	})
 	//运行应用
 	cef.Run(cefApp)

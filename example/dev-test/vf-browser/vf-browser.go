@@ -13,12 +13,14 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/example/dev-test/traydemo"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/example/dev-test/traydemo"
+	"github.com/energye/energy/v2/logger"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
+	"os"
+	"path"
 )
 
 //go:embed resources
@@ -30,11 +32,11 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	config := cef.NewApplicationConfig()
-	config.SetMultiThreadedMessageLoop(false)
-	config.SetExternalMessagePump(false)
-	config.SetRemoteDebuggingPort(33333)
-	cefApp := cef.NewApplication(config)
+	cefApp := cef.NewApplication()
+	cefApp.SetMultiThreadedMessageLoop(false)
+	cefApp.SetExternalMessagePump(false)
+	fmt.Println("TotalSystemMemory", cefApp.TotalSystemMemory(), cefApp.UsedMemory())
+	cefApp.SetRemoteDebuggingPort(33333)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
@@ -46,8 +48,18 @@ func main() {
 		window.SetSize(1024, 900)
 		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
 		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
+		window.AsViewsFrameworkBrowserWindow().SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
+			fmt.Println("WindowCreated.window", window.WindowAppIcon().Width(), window.WindowAppIcon().Height())
+			image := cef.ImageRef.New()
+			cw, _ := os.Getwd()
+			cw = path.Join(cw, "example", "dev-test", "vf-browser", "resources", "icon.png")
+			byt, err := os.ReadFile(cw)
+			fmt.Println("image icon.png", len(byt), err)
+			image.AddPng(1.2, byt)
+			fmt.Println("image", image.Width(), image.Height())
+		})
 		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
-			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Id, frame.Url)
+			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Identifier(), frame.Url())
 		})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
@@ -59,11 +71,11 @@ func main() {
 			popupWindow.SetSize(800, 600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
 			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
-				fmt.Println("popupWindow.SetOnWindowCreated", window)
+				fmt.Println("popupWindow.SetOnWindowCreated", window.WindowAppIcon())
 			})
-			browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
-				fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
-			})
+			//browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
+			//	fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
+			//})
 			//browserWindow.BrowserWindow().CreateTopLevelWindow()
 			//browserWindow.BrowserWindow().HideTitle()
 			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
@@ -72,21 +84,21 @@ func main() {
 		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
 			fmt.Println("SetOnWindowActivationChanged", active)
 		})
+		window.AsViewsFrameworkBrowserWindow().BrowserViewComponent().SetOnBrowserCreated(func(sender lcl.IObject, browserView *cef.ICefBrowserView, browser *cef.ICefBrowser) {
+			fmt.Println("BrowserViewComponent OnBrowserCreated Instance", browser.Identifier(), "Instance Identifier", browserView.Browser().Identifier())
+		})
 		window.Show()
 		fmt.Println("SetBrowserInit 结束")
-	})
-	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		if common.IsLinux() || common.IsDarwin() {
 			//在VF窗口组件中, 推荐linux和macosx中使用
 			traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用,
 		} else {
 			//不支持windows VF窗口组件中无法创建或使用LCL组件
-			traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+			//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
 			//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
 			//支持windows
-			//traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
+			traydemo.LCLVFTrayDemo(window) //对于LCL+VF web端技术托盘实现
 		}
-		println("browser init after end")
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

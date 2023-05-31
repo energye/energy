@@ -3,9 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/golcl/lcl"
 	"os"
 	"path"
 )
@@ -17,7 +19,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
@@ -31,14 +33,17 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		wd, _ := os.Getwd()
-		//监听事件
-		event.On("print-pdf", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			savePath := path.Join(wd, "example", "browser-print-pdf", "test.pdf")
-			fmt.Println("当前页面保存为PDF", savePath)
-			bw.Chromium().PrintToPDF(savePath)
+	wd, _ := os.Getwd()
+	//监听事件
+	ipc.On("print-pdf", func(context context.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		savePath := path.Join(wd, "example", "browser-print-pdf", "test.pdf")
+		fmt.Println("当前页面保存为PDF", savePath)
+		bw.Chromium().PrintToPDF(savePath)
+	})
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.Chromium().SetOnPdfPrintFinished(func(sender lcl.IObject, ok bool) {
+			fmt.Println("OnPdfPrintFinished:", ok)
 		})
 	})
 	//运行应用

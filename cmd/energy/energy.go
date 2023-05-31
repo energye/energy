@@ -12,7 +12,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/cmd/internal"
+	"github.com/energye/energy/v2/cmd/internal"
 	"github.com/jessevdk/go-flags"
 	"os"
 )

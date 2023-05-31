@@ -3,9 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -20,7 +20,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/download.html"
@@ -32,20 +32,13 @@ func main() {
 		//2. downloadItem 下载项
 		//3. callback 下载状态的控制, 下载暂停，开始、取消
 		//4. 将下载进度通过事件机制发送到html中展示
-		event.SetOnDownloadUpdated(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.DownloadItem, callback *cef.ICefDownloadItemCallback) {
+		event.SetOnDownloadUpdated(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.ICefDownloadItem, callback *cef.ICefDownloadItemCallback) {
 			//传递数据参数到html中
 			//这些参数按下标顺序对应到js函数参数位置
 			//演示只传递了几个参数
-			var argumentList = ipc.NewArgumentList()
-			//第1个参数下载的ID
-			argumentList.SetInt32(0, downloadItem.Id)
-			//第2个参数文件名
-			argumentList.SetString(1, downloadItem.FullPath, true)
-			//第3个参数 接收的字节数 - 这里需要注意的是，IPC消息 数字类型只支持32位的，如果大于32位，需要转换成string类型发送, 否则直接使用int64类型会导致消息接收不到
-			argumentList.SetInt32(2, int32(downloadItem.ReceivedBytes))
-			//第4个参数 文件总大小字节数 - 例如: int64转成string做为参数
-			argumentList.SetString(3, fmt.Sprintf("%d", downloadItem.TotalBytes), true)
-			browserWindow.Chromium().Emit("downloadUpdateDemo", argumentList, browser)
+			fmt.Println("DownloadUpdated frameId", browser.MainFrame().Identifier(), "BeforeDownload Id:", downloadItem.Id(), "originalUrl:", downloadItem.OriginalUrl(), "url:", downloadItem.Url())
+			fmt.Println("\t", downloadItem.State(), downloadItem.TotalBytes(), "/", downloadItem.ReceivedBytes(), "speed:", downloadItem.CurrentSpeed(), "fullPath", downloadItem.FullPath())
+			ipc.Emit("downloadUpdateDemo", downloadItem.Id(), downloadItem.FullPath(), downloadItem.ReceivedBytes(), downloadItem.TotalBytes())
 		})
 	})
 	//在主进程启动成功之后执行

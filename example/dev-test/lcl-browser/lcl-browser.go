@@ -13,12 +13,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/example/dev-test/traydemo"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/example/dev-test/traydemo"
+	"github.com/energye/energy/v2/logger"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -30,10 +29,8 @@ func main() {
 	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
-	cfg := cef.NewApplicationConfig()
-	cfg.SetLanguage(consts.LANGUAGE_en_US)
 	//创建应用
-	cefApp := cef.NewApplication(cfg)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
@@ -82,15 +79,13 @@ func main() {
 		//		})
 		//	}
 		//}()
-	})
-	cef.BrowserWindow.SetBrowserInitAfter(func(window cef.IBrowserWindow) {
 		//linux系统，默认使用 VF
 		if window.IsLCL() {
 			if common.IsWindows() {
 				//支持 windows
 				//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
-				//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
-				traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用, 推荐linux中使用
+				traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+				//traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用, 推荐linux中使用
 			} else {
 				traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用, 推荐linux中使用
 				//LCL窗口中,托盘组件支持 windows or macosx

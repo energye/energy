@@ -3,10 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -17,10 +18,14 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 	//主进程启动成功之后回调
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
@@ -81,7 +86,7 @@ func main() {
 			menuIdEnable = model.CefMis.NextCommandId()
 			if isMenuIdEnable {
 				model.AddItem(menuIdEnable, "菜单-已启用")
-				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, cef.NewCefARGB(255, 111, 12, 200))
+				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 111, 12, 200))
 			} else {
 				model.AddItem(menuIdEnable, "菜单-已禁用")
 			}
@@ -91,7 +96,7 @@ func main() {
 			//为什么要用Visible而不是不创建这个菜单? 因为菜单项的ID是动态的啊。
 			model.SetVisible(menuIdEnableCtl, !isMenuIdEnable)
 			if !isMenuIdEnable {
-				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, cef.NewCefARGB(255, 222, 111, 0))
+				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 222, 111, 0))
 			}
 			model.AddSeparator()
 			//radio 1组
@@ -123,12 +128,12 @@ func main() {
 			fmt.Printf("params: %+v\n", params)
 			fmt.Println("menuId: ", menuId, eventFlags, *result)
 			//在这里处理某个菜单项的点击事件所触发的命令，这里的命令对应着一个菜单项的ID
-			var argumentList = ipc.NewArgumentList()
+			var clickMenuId = 0
 			switch menuId {
 			case menuId01:
-				argumentList.SetInt32(0, 1)
+				clickMenuId = 1
 			case menuId02:
-				argumentList.SetInt32(0, 2)
+				clickMenuId = 2
 			case menuIdEnable:
 				isMenuIdEnable = !isMenuIdEnable
 			case menuIdCheck:
@@ -139,12 +144,9 @@ func main() {
 				radioDefault1Check = menuId
 			case menuIdRadio201, menuIdRadio202, menuIdRadio203:
 				radioDefault2Check = menuId
-			default:
-				argumentList.SetInt32(0, int32(menuId))
 			}
-			argumentList.SetString(1, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数需要设置一下 isDStr=true 不然中文乱码  后面这个小点会丢失 .", menuId), true)
-			window.Chromium().Emit("menu", argumentList, browser)
-			*result = true
+			ipc.Emit("menu", clickMenuId, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数.", menuId))
+			//*result = true
 		})
 	})
 	//运行应用

@@ -11,26 +11,25 @@
 package consts
 
 import (
-	"github.com/energye/energy/types"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/energy/homedir"
 	"math"
 	"os"
 	"path/filepath"
+	"reflect"
 )
 
 var (
 	ExePath       string                       //执行文件目录
 	HomeDir, _    = homedir.Dir()              //系统用户目录
 	Separator     = string(filepath.Separator) //系统目录分隔符
-	SingleProcess = false                      //进程启动方式, true单进程 false多进程
-	IsMessageLoop = false                      //CEF应用的窗口, 使用views framework为true, 使用LCL为false, 其实是窗口消息轮询使用方式
+	IsMessageLoop = false                      //CEF应用的窗口, true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件, 其实是窗口消息轮询使用方式.
 )
 
 const (
-	Empty               = ""
-	MAINARGS_NETIPCPORT = "net-ipc-port"
-	ENERGY_HOME_KEY     = "ENERGY_HOME"
-	MemoryNetwork       = "unix"
+	Empty           = ""
+	ENERGY_HOME_KEY = "ENERGY_HOME"
+	MemoryNetwork   = "unix"
 )
 
 func init() {
@@ -76,7 +75,9 @@ const (
 	ZOOM_DEC
 )
 
-// 进程结束的状态
+// TCefTerminationStatus
+//  进程结束的状态
+//  /include/internal/cef_types.h (cef_termination_status_t)
 type TCefTerminationStatus = types.Int32
 
 const (
@@ -95,17 +96,17 @@ const (
 )
 
 // 日志等级
-type LOG = types.UInt32
+type LogSeverity = types.UInt32
 
 const (
-	LOGSEVERITY_DEFAULT LOG = 0
-	LOGSEVERITY_VERBOSE LOG = 1
-	LOGSEVERITY_DEBUG   LOG = LOGSEVERITY_VERBOSE
-	LOGSEVERITY_INFO    LOG = 2
-	LOGSEVERITY_WARNING LOG = 3
-	LOGSEVERITY_ERROR   LOG = 4
-	LOGSEVERITY_FATAL   LOG = 5
-	LOGSEVERITY_DISABLE LOG = 99
+	LOGSEVERITY_DEFAULT LogSeverity = 0
+	LOGSEVERITY_VERBOSE LogSeverity = 1
+	LOGSEVERITY_DEBUG   LogSeverity = LOGSEVERITY_VERBOSE
+	LOGSEVERITY_INFO    LogSeverity = 2
+	LOGSEVERITY_WARNING LogSeverity = 3
+	LOGSEVERITY_ERROR   LogSeverity = 4
+	LOGSEVERITY_FATAL   LogSeverity = 5
+	LOGSEVERITY_DISABLE LogSeverity = 99
 )
 
 type LANGUAGE = types.String
@@ -174,10 +175,10 @@ const (
 // cbaDelay  : 暂时停止关闭浏览器
 //
 //	: 当应用程序需要在关闭浏览器之前执行一些自定义进程时使用。在关闭浏览器之前，通常需要在主线程中销毁TCEFWindowParent。
-type CBS = types.Int32
+type TCefCloseBrowserAction = types.Int32
 
 const (
-	CbaClose = CBS(iota)
+	CbaClose = TCefCloseBrowserAction(iota)
 	CbaDelay
 	CbaCancel
 )
@@ -190,108 +191,11 @@ const (
 	PID_RENDER
 )
 
-// 支持的JS类型
-type V8_JS_VALUE_TYPE = types.Int32
-
+// Go Kind 扩展常量
 const (
-	V8_VALUE_STRING = V8_JS_VALUE_TYPE(iota)
-	V8_VALUE_INT
-	V8_VALUE_DOUBLE
-	V8_VALUE_BOOLEAN
-	V8_VALUE_NULL
-	V8_VALUE_UNDEFINED
-	V8_VALUE_OBJECT
-	V8_VALUE_ARRAY
-	V8_VALUE_FUNCTION
-	V8_VALUE_EXCEPTION
-	V8_VALUE_ROOT_OBJECT
-	V8_NO_OUT_VALUE
-)
-
-// 支持的GO类型
-type GO_VALUE_TYPE = types.Int32
-
-const (
-	GO_VALUE_STRING = GO_VALUE_TYPE(iota)
-	GO_VALUE_INT
-	GO_VALUE_INT8
-	GO_VALUE_INT16
-	GO_VALUE_INT32
-	GO_VALUE_INT64
-	GO_VALUE_UINT
-	GO_VALUE_UINT8
-	GO_VALUE_UINT16
-	GO_VALUE_UINT32
-	GO_VALUE_UINT64
-	GO_VALUE_UINTPTR
-	GO_VALUE_FLOAT32
-	GO_VALUE_FLOAT64
-	GO_VALUE_BOOL
-	GO_VALUE_NIL
-	GO_VALUE_STRUCT
-	GO_VALUE_SLICE
-	GO_VALUE_FUNC
-	GO_VALUE_PTR
-	GO_VALUE_EXCEPTION
-	GO_VALUE_INVALID_TYPE //无效类型
-	GO_VALUE_ARGUMENT     //argument
-	GO_VALUE_DICTVALUE    //dictValue
-)
-
-// JS属性
-type V8_PROPERTY_ATTRIBUTE = types.Int32
-
-const (
-	V8_PROPERTY_ATTRIBUTE_NONE       V8_PROPERTY_ATTRIBUTE = 0
-	V8_PROPERTY_ATTRIBUTE_READONLY   V8_PROPERTY_ATTRIBUTE = 1 << 0
-	V8_PROPERTY_ATTRIBUTE_DONTENUM   V8_PROPERTY_ATTRIBUTE = 1 << 1
-	V8_PROPERTY_ATTRIBUTE_DONTDELETE V8_PROPERTY_ATTRIBUTE = 1 << 2
-)
-
-// JS交互绑定的事件类型
-type BIND_EVENT = types.Int32
-
-const (
-	BE_SET = BIND_EVENT(iota)
-	BE_GET
-	BE_FUNC
-)
-
-// 异常信息
-type CEF_V8_EXCEPTION = types.Int32
-
-const (
-	CVE_ERROR_OK                             = CEF_V8_EXCEPTION(iota) //操作成功
-	CVE_ERROR_NOT_FOUND_FIELD                                         //未找到字段 或字段未定义
-	CVE_ERROR_NOT_FOUND_FUNC                                          //未找到函数 或函数未定义
-	CVE_ERROR_TYPE_NOT_SUPPORTED                                      //不支持的变量类型 变量类型只支持[string int double bool null undefined]
-	CVE_ERROR_TYPE_CANNOT_CHANGE                                      //字段为普通类型不能变更为 array、object、function
-	CVE_ERROR_TYPE_INVALID                                            //类型无效
-	CVE_ERROR_GET_STRING_FAIL                                         //获取string类型失败
-	CVE_ERROR_GET_INT_FAIL                                            //获取int类型失败
-	CVE_ERROR_GET_DOUBLE_FAIL                                         //获取double类型失败
-	CVE_ERROR_GET_BOOL_FAIL                                           //获取bool类型失败
-	CVE_ERROR_GET_NULL_FAIL                                           //获取null类型失败
-	CVE_ERROR_GET_UNDEFINED_FAIL                                      //获取undefined类型失败
-	CVE_ERROR_FUNC_INVALID_P_L_9                                      //该函数非法 类型不正确 或参数个数大于9个
-	CVE_ERROR_FUNC_IN_PAM                                             //入参类型不正确 只能为string int double boolean
-	CVE_ERROR_FUNC_OUT_PAM                                            //出参类型不正确 只能为EefError 或 可选的[string int double boolean]
-	CVE_ERROR_FUNC_GET_IN_PAM_STRING_FAIL                             //入参获取string类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_INT_FAIL                                //入参获取int类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_DOUBLE_FAIL                             //入参获取double类型值失败
-	CVE_ERROR_FUNC_GET_IN_PAM_BOOLEAN_FAIL                            //入参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_STRING_FAIL                            //出参获取string类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_INT_FAIL                               //出参获取int类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_DOUBLE_FAIL                            //出参获取double类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_BOOLEAN_FAIL                           //出参获取boolean类型值失败
-	CVE_ERROR_FUNC_GET_OUT_PAM_CEFERROR_FAIL                          //出参获取CefError值失败
-	CVE_ERROR_IPC_GET_BIND_FIELD_VALUE_FAIL                           //IPC获取绑定值失败
-	CVE_ERROR_UNKNOWN_ERROR                                           //未知错误
-)
-
-const (
-	BIND_FUNC_IN_MAX_SUM  = 9 //函数最大入参数
-	BIND_FUNC_OUT_MAX_SUM = 1 //函数最大出参数
+	SLICE_BYTE reflect.Kind = iota + 30 // []byte
+	JD                                  // JsonData
+	NIL                                 // nil
 )
 
 // 函数类型
@@ -319,21 +223,9 @@ const (
 	PMT_BINARY                               //二进制消息
 )
 
-type TCefProcessType = types.Int8
-
-const (
-	PtBrowser = TCefProcessType(iota)
-	PtRender
-	PtZygote
-	PtGPU
-	PtUtility
-	PtBroker
-	PtCrashpad
-	PtOther
-)
-
 type TDateTime = types.Float64
 
+// /include/internal/cef_types.h (cef_cookie_same_site_t)
 type TCefCookieSameSite = types.Int32
 
 const (
@@ -343,6 +235,7 @@ const (
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
+// /include/internal/cef_types.h (cef_cookie_priority_t)
 type TCefCookiePriority = types.Int32
 
 const (
@@ -354,11 +247,11 @@ const (
 type TCefProxyType = types.Int32
 
 const (
-	PtDirect = TCefProxyType(iota)
-	PtAutodetect
-	PtSystem
-	PtFixedServers
-	PtPACScript
+	PtDirect       = TCefProxyType(iota) // mode dict => direct
+	PtAutodetect                         // mode dict => auto_detect
+	PtSystem                             // mode dict => system
+	PtFixedServers                       // mode dict => fixed_servers
+	PtPACScript                          // mode dict => pac_script
 )
 
 type TCefProxyScheme = types.Int32
@@ -377,6 +270,7 @@ const (
 	CMT_RADIO
 )
 
+// /include/internal/cef_types.h (cef_context_menu_media_type_t)
 type TCefContextMenuMediaType = types.Int32
 
 const (
@@ -421,6 +315,7 @@ const (
 	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
+// /include/internal/cef_types.h (cef_menu_color_type_t)
 type TCefMenuColorType = types.Int32
 
 const (
@@ -435,6 +330,7 @@ const (
 
 type ARGB = types.UInt32
 
+// /include/internal/cef_types.h (cef_key_event_type_t)
 type TCefKeyEventType = types.Int32
 
 const (
@@ -444,10 +340,14 @@ const (
 	KEYEVENT_CHAR
 )
 
+// /include/internal/cef_types.h (cef_event_flags_t)
 type TCefEventFlags = types.UInt32
 
 type TCefWindowHandleType = types.Int8
 
+// /include/internal/cef_types_win.h (cef_window_handle_t)
+// /include/internal/cef_types_mac.h (cef_window_handle_t)
+// /include/internal/cef_types_linux.h (cef_window_handle_t)
 type TCefWindowHandle = types.UIntptr
 
 const (
@@ -455,7 +355,8 @@ const (
 	Wht_LinkedWindowParent
 )
 
-type TCefReturnValue = types.Int32
+// /include/internal/cef_types.h (cef_return_value_t)
+type TCefReturnValue int32
 
 const (
 	RV_CANCEL = TCefReturnValue(iota)
@@ -463,6 +364,7 @@ const (
 	RV_CONTINUE_ASYNC
 )
 
+// /include/internal/cef_types.h (cef_referrer_policy_t)
 type TCefReferrerPolicy = types.Int32
 
 const (
@@ -476,10 +378,13 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
+// /include/internal/cef_types.h (cef_urlrequest_flags_t)
 type TCefUrlRequestFlags = types.Int
 
+// /include/internal/cef_types.h (cef_errorcode_t)
 type TCefErrorCode = types.Int32
 
+// /include/internal/cef_types.h (cef_resource_type_t)
 type TCefResourceType = types.Int32
 
 const (
@@ -506,8 +411,10 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME
 )
 
+// /include/internal/cef_types.h (cef_transition_type_t)
 type TCefTransitionType = types.Int
 
+// /include/internal/cef_types.h (cef_urlrequest_status_t)
 type TCefUrlRequestStatus = types.Int32
 
 const (
@@ -518,6 +425,7 @@ const (
 	UR_FAILED
 )
 
+// /include/internal/cef_types.h (cef_state_t)
 type TCefState = types.Int32
 
 const (
@@ -526,6 +434,7 @@ const (
 	STATE_DISABLED
 )
 
+// /include/internal/cef_types.h (cef_touch_event_type_t)
 type TCefTouchEeventType = types.Int32
 
 const (
@@ -535,6 +444,7 @@ const (
 	CEF_TET_CANCELLED
 )
 
+// /include/internal/cef_types.h (cef_pointer_type_t)
 type TCefPointerType = types.Int32
 
 const (
@@ -545,6 +455,7 @@ const (
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
+// /include/internal/cef_types.h (cef_mouse_button_type_t)
 type TCefMouseButtonType = types.Int32
 
 const (
@@ -566,6 +477,7 @@ const (
 	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
+// /include/internal/cef_types.h (cef_window_open_disposition_t)
 type TCefWindowOpenDisposition = types.Int32
 
 const (
@@ -593,10 +505,16 @@ const (
 	WT_VIEW_SOURCE
 )
 
+// /include/internal/cef_types.h (cef_context_menu_type_flags_t)
 type TCefContextMenuTypeFlags = types.UInt32
+
+// /include/internal/cef_types.h (cef_context_menu_media_state_flags_t)
 type TCefContextMenuMediaStateFlags = types.UInt32
+
+// /include/internal/cef_types.h (cef_context_menu_edit_state_flags_t)
 type TCefContextMenuEditStateFlags = types.UInt32
 
+// /include/internal/cef_types.h (cef_menu_anchor_position_t)
 type TCefMenuAnchorPosition = types.Int32
 
 const (
@@ -605,6 +523,7 @@ const (
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
+// /include/internal/cef_types.h (cef_show_state_t)4
 type TCefShowState = types.Int32
 
 const (
@@ -614,6 +533,7 @@ const (
 	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
 )
 
+// /include/internal/cef_types.h (cef_chrome_toolbar_type_t)
 type TCefChromeToolbarType = types.Int32
 
 const (
@@ -626,15 +546,18 @@ const (
 type TCefDragOperations = types.Cardinal
 
 const (
-	DRAG_OPERATION_NONE    = TCefDragOperations(0)
-	DRAG_OPERATION_COPY    = TCefDragOperations(1)
-	DRAG_OPERATION_LINK    = TCefDragOperations(2)
-	DRAG_OPERATION_GENERIC = TCefDragOperations(4)
-	DRAG_OPERATION_PRIVATE = TCefDragOperations(8)
-	DRAG_OPERATION_MOVE    = TCefDragOperations(16)
-	DRAG_OPERATION_DELETE  = TCefDragOperations(32)
-	DRAG_OPERATION_EVERY   = TCefDragOperations(math.MaxUint32)
+	DRAG_OPERATION_NONE    TCefDragOperations = 0
+	DRAG_OPERATION_COPY    TCefDragOperations = 1 << 0
+	DRAG_OPERATION_LINK    TCefDragOperations = 1 << 1
+	DRAG_OPERATION_GENERIC TCefDragOperations = 1 << 2
+	DRAG_OPERATION_PRIVATE TCefDragOperations = 1 << 3
+	DRAG_OPERATION_MOVE    TCefDragOperations = 1 << 4
+	DRAG_OPERATION_DELETE  TCefDragOperations = 1 << 5
+	DRAG_OPERATION_EVERY   TCefDragOperations = math.MaxUint32
 )
+
+// /include/internal/cef_types.h (cef_drag_operations_mask_t)
+type TCefDragOperation = TCefDragOperations
 
 type TrayType int8
 
@@ -698,23 +621,713 @@ type ZoomStep = byte
 
 const (
 	ZOOM_STEP_25  ZoomStep = 0
-	ZOOM_STEP_33           = 1
-	ZOOM_STEP_50           = 2
-	ZOOM_STEP_67           = 3
-	ZOOM_STEP_75           = 4
-	ZOOM_STEP_90           = 5
-	ZOOM_STEP_100          = 6
-	ZOOM_STEP_110          = 7
-	ZOOM_STEP_125          = 8
-	ZOOM_STEP_150          = 9
-	ZOOM_STEP_175          = 10
-	ZOOM_STEP_200          = 11
-	ZOOM_STEP_250          = 12
-	ZOOM_STEP_300          = 13
-	ZOOM_STEP_400          = 14
-	ZOOM_STEP_500          = 15
-	ZOOM_STEP_UNK          = 16
-	ZOOM_STEP_MIN          = ZOOM_STEP_25
-	ZOOM_STEP_MAX          = ZOOM_STEP_500
-	ZOOM_STEP_DEF          = ZOOM_STEP_100
+	ZOOM_STEP_33  ZoomStep = 1
+	ZOOM_STEP_50  ZoomStep = 2
+	ZOOM_STEP_67  ZoomStep = 3
+	ZOOM_STEP_75  ZoomStep = 4
+	ZOOM_STEP_90  ZoomStep = 5
+	ZOOM_STEP_100 ZoomStep = 6
+	ZOOM_STEP_110 ZoomStep = 7
+	ZOOM_STEP_125 ZoomStep = 8
+	ZOOM_STEP_150 ZoomStep = 9
+	ZOOM_STEP_175 ZoomStep = 10
+	ZOOM_STEP_200 ZoomStep = 11
+	ZOOM_STEP_250 ZoomStep = 12
+	ZOOM_STEP_300 ZoomStep = 13
+	ZOOM_STEP_400 ZoomStep = 14
+	ZOOM_STEP_500 ZoomStep = 15
+	ZOOM_STEP_UNK ZoomStep = 16
+	ZOOM_STEP_MIN ZoomStep = ZOOM_STEP_25
+	ZOOM_STEP_MAX ZoomStep = ZOOM_STEP_500
+	ZOOM_STEP_DEF ZoomStep = ZOOM_STEP_100
+)
+
+// /include/internal/cef_types.h (cef_v8_accesscontrol_t)
+type TCefV8AccessControls = types.Cardinal
+
+const (
+	V8_ACCESS_CONTROL_DEFAULT               TCefV8AccessControls = 0
+	V8_ACCESS_CONTROL_ALL_CAN_READ          TCefV8AccessControls = 1 << 0
+	V8_ACCESS_CONTROL_ALL_CAN_WRITE         TCefV8AccessControls = 1 << 1
+	V8_ACCESS_CONTROL_PROHIBITS_OVERWRITING TCefV8AccessControls = 1 << 2
+)
+
+// /include/internal/cef_types.h (cef_v8_propertyattribute_t)
+type TCefV8PropertyAttributes = types.Cardinal
+
+const (
+	V8_PROPERTY_ATTRIBUTE_NONE       TCefV8PropertyAttributes = 0
+	V8_PROPERTY_ATTRIBUTE_READONLY   TCefV8PropertyAttributes = 1 << 0
+	V8_PROPERTY_ATTRIBUTE_DONTENUM   TCefV8PropertyAttributes = 1 << 1
+	V8_PROPERTY_ATTRIBUTE_DONTDELETE TCefV8PropertyAttributes = 1 << 2
+)
+
+// /include/internal/cef_types.h (cef_value_type_t)
+type TCefValueType = types.Int32
+
+const (
+	VTYPE_INVALID TCefValueType = iota
+	VTYPE_NULL
+	VTYPE_BOOL
+	VTYPE_INT
+	VTYPE_DOUBLE
+	VTYPE_STRING
+	VTYPE_BINARY
+	VTYPE_DICTIONARY // Object
+	VTYPE_LIST       // JSONArray
+)
+
+// /include/internal/cef_types.h (cef_postdataelement_type_t)
+type TCefPostDataElementType = types.Int32
+
+const (
+	PDE_TYPE_EMPTY TCefPostDataElementType = iota
+	PDE_TYPE_BYTES
+	PDE_TYPE_FILE
+)
+
+type TCefAutoplayPolicy = types.Int32
+
+const (
+	AppDefault TCefAutoplayPolicy = iota
+	AppDocumentUserActivationRequired
+	AppNoUserGestureRequired
+	AppUserGestureRequired
+)
+
+// Values used by the --net-log-capture-mode command line switch.
+// Sets the granularity of events to capture in the network log.
+// https://source.chromium.org/chromium/chromium/src/+/main:content/browser/network_service_instance_impl.cc
+// https://source.chromium.org/chromium/chromium/src/+/main:net/log/net_log_capture_mode.h
+type TCefNetLogCaptureMode = types.Int32
+
+const (
+	NlcmDefault TCefNetLogCaptureMode = iota
+	NlcmIncludeSensitive
+	NlcmEverything
+)
+
+type TCefProcessType types.Int32
+
+const (
+	PtBrowser TCefProcessType = iota
+	PtRenderer
+	PtZygote
+	PtGPU
+	PtUtility
+	PtBroker
+	PtCrashpad
+	PtOther
+)
+
+type TCefProcessTypeValue types.String
+
+const (
+	PtvBrowser  TCefProcessTypeValue = "browser"
+	PtvRenderer TCefProcessTypeValue = "renderer"
+	PtvZygote   TCefProcessTypeValue = "zygote"
+	PtvGPU      TCefProcessTypeValue = "GPU"
+	PtvUtility  TCefProcessTypeValue = "utility"
+	PtvBroker   TCefProcessTypeValue = "broker"
+	PtvCrashpad TCefProcessTypeValue = "crashpad"
+	PtvOther    TCefProcessTypeValue = "other"
+)
+
+type TCefApplicationStatus = types.Int32
+
+const (
+	AsLoading TCefApplicationStatus = iota
+	AsLoaded
+	AsInitialized
+	AsShuttingDown
+	AsUnloaded
+	AsErrorMissingFiles
+	AsErrorDLLVersion
+	AsErrorLoadingLibrary
+	AsErrorInitializingLibrary
+	AsErrorExecutingProcess
+)
+
+// net error
+type CEF_NET_ERROR = types.Int32
+
+const (
+	ERR_NONE                                          CEF_NET_ERROR = 0
+	ERR_IO_PENDING                                    CEF_NET_ERROR = -1
+	ERR_FAILED                                        CEF_NET_ERROR = -2
+	ERR_ABORTED                                       CEF_NET_ERROR = -3
+	ERR_INVALID_ARGUMENT                              CEF_NET_ERROR = -4
+	ERR_INVALID_HANDLE                                CEF_NET_ERROR = -5
+	ERR_FILE_NOT_FOUND                                CEF_NET_ERROR = -6
+	ERR_TIMED_OUT                                     CEF_NET_ERROR = -7
+	ERR_FILE_TOO_BIG                                  CEF_NET_ERROR = -8
+	ERR_UNEXPECTED                                    CEF_NET_ERROR = -9
+	ERR_ACCESS_DENIED                                 CEF_NET_ERROR = -10
+	ERR_NOT_IMPLEMENTED                               CEF_NET_ERROR = -11
+	ERR_INSUFFICIENT_RESOURCES                        CEF_NET_ERROR = -12
+	ERR_OUT_OF_MEMORY                                 CEF_NET_ERROR = -13
+	ERR_UPLOAD_FILE_CHANGED                           CEF_NET_ERROR = -14
+	ERR_SOCKET_NOT_CONNECTED                          CEF_NET_ERROR = -15
+	ERR_FILE_EXISTS                                   CEF_NET_ERROR = -16
+	ERR_FILE_PATH_TOO_LONG                            CEF_NET_ERROR = -17
+	ERR_FILE_NO_SPACE                                 CEF_NET_ERROR = -18
+	ERR_FILE_VIRUS_INFECTED                           CEF_NET_ERROR = -19
+	ERR_BLOCKED_BY_CLIENT                             CEF_NET_ERROR = -20
+	ERR_NETWORK_CHANGED                               CEF_NET_ERROR = -21
+	ERR_BLOCKED_BY_ADMINISTRATOR                      CEF_NET_ERROR = -22
+	ERR_SOCKET_IS_CONNECTED                           CEF_NET_ERROR = -23
+	ERR_BLOCKED_ENROLLMENT_CHECK_PENDING              CEF_NET_ERROR = -24
+	ERR_UPLOAD_STREAM_REWIND_NOT_SUPPORTED            CEF_NET_ERROR = -25
+	ERR_CONTEXT_SHUT_DOWN                             CEF_NET_ERROR = -26
+	ERR_BLOCKED_BY_RESPONSE                           CEF_NET_ERROR = -27
+	ERR_BLOCKED_BY_XSS_AUDITOR                        CEF_NET_ERROR = -28
+	ERR_CLEARTEXT_NOT_PERMITTED                       CEF_NET_ERROR = -29
+	ERR_CONNECTION_CLOSED                             CEF_NET_ERROR = -100
+	ERR_CONNECTION_RESET                              CEF_NET_ERROR = -101
+	ERR_CONNECTION_REFUSED                            CEF_NET_ERROR = -102
+	ERR_CONNECTION_ABORTED                            CEF_NET_ERROR = -103
+	ERR_CONNECTION_FAILED                             CEF_NET_ERROR = -104
+	ERR_NAME_NOT_RESOLVED                             CEF_NET_ERROR = -105
+	ERR_INTERNET_DISCONNECTED                         CEF_NET_ERROR = -106
+	ERR_SSL_PROTOCOL_ERROR                            CEF_NET_ERROR = -107
+	ERR_ADDRESS_INVALID                               CEF_NET_ERROR = -108
+	ERR_ADDRESS_UNREACHABLE                           CEF_NET_ERROR = -109
+	ERR_SSL_CLIENT_AUTH_CERT_NEEDED                   CEF_NET_ERROR = -110
+	ERR_TUNNEL_CONNECTION_FAILED                      CEF_NET_ERROR = -111
+	ERR_NO_SSL_VERSIONS_ENABLED                       CEF_NET_ERROR = -112
+	ERR_SSL_VERSION_OR_CIPHER_MISMATCH                CEF_NET_ERROR = -113
+	ERR_SSL_RENEGOTIATION_REQUESTED                   CEF_NET_ERROR = -114
+	ERR_PROXY_AUTH_UNSUPPORTED                        CEF_NET_ERROR = -115
+	ERR_CERT_ERROR_IN_SSL_RENEGOTIATION               CEF_NET_ERROR = -116
+	ERR_BAD_SSL_CLIENT_AUTH_CERT                      CEF_NET_ERROR = -117
+	ERR_CONNECTION_TIMED_OUT                          CEF_NET_ERROR = -118
+	ERR_HOST_RESOLVER_QUEUE_TOO_LARGE                 CEF_NET_ERROR = -119
+	ERR_SOCKS_CONNECTION_FAILED                       CEF_NET_ERROR = -120
+	ERR_SOCKS_CONNECTION_HOST_UNREACHABLE             CEF_NET_ERROR = -121
+	ERR_ALPN_NEGOTIATION_FAILED                       CEF_NET_ERROR = -122
+	ERR_SSL_NO_RENEGOTIATION                          CEF_NET_ERROR = -123
+	ERR_WINSOCK_UNEXPECTED_WRITTEN_BYTES              CEF_NET_ERROR = -124
+	ERR_SSL_DECOMPRESSION_FAILURE_ALERT               CEF_NET_ERROR = -125
+	ERR_SSL_BAD_RECORD_MAC_ALERT                      CEF_NET_ERROR = -126
+	ERR_PROXY_AUTH_REQUESTED                          CEF_NET_ERROR = -127
+	ERR_SSL_WEAK_SERVER_EPHEMERAL_DH_KEY              CEF_NET_ERROR = -129
+	ERR_PROXY_CONNECTION_FAILED                       CEF_NET_ERROR = -130
+	ERR_MANDATORY_PROXY_CONFIGURATION_FAILED          CEF_NET_ERROR = -131
+	ERR_PRECONNECT_MAX_SOCKET_LIMIT                   CEF_NET_ERROR = -133
+	ERR_SSL_CLIENT_AUTH_PRIVATE_KEY_ACCESS_DENIED     CEF_NET_ERROR = -134
+	ERR_SSL_CLIENT_AUTH_CERT_NO_PRIVATE_KEY           CEF_NET_ERROR = -135
+	ERR_PROXY_CERTIFICATE_INVALID                     CEF_NET_ERROR = -136
+	ERR_NAME_RESOLUTION_FAILED                        CEF_NET_ERROR = -137
+	ERR_NETWORK_ACCESS_DENIED                         CEF_NET_ERROR = -138
+	ERR_TEMPORARILY_THROTTLED                         CEF_NET_ERROR = -139
+	ERR_HTTPS_PROXY_TUNNEL_RESPONSE_REDIRECT          CEF_NET_ERROR = -140
+	ERR_SSL_CLIENT_AUTH_SIGNATURE_FAILED              CEF_NET_ERROR = -141
+	ERR_MSG_TOO_BIG                                   CEF_NET_ERROR = -142
+	ERR_SPDY_SESSION_ALREADY_EXISTS                   CEF_NET_ERROR = -143
+	ERR_WS_PROTOCOL_ERROR                             CEF_NET_ERROR = -145
+	ERR_ADDRESS_IN_USE                                CEF_NET_ERROR = -147
+	ERR_SSL_HANDSHAKE_NOT_COMPLETED                   CEF_NET_ERROR = -148
+	ERR_SSL_BAD_PEER_PUBLIC_KEY                       CEF_NET_ERROR = -149
+	ERR_SSL_PINNED_KEY_NOT_IN_CERT_CHAIN              CEF_NET_ERROR = -150
+	ERR_CLIENT_AUTH_CERT_TYPE_UNSUPPORTED             CEF_NET_ERROR = -151
+	ERR_ORIGIN_BOUND_CERT_GENERATION_TYPE_MISMATCH    CEF_NET_ERROR = -152
+	ERR_SSL_DECRYPT_ERROR_ALERT                       CEF_NET_ERROR = -153
+	ERR_WS_THROTTLE_QUEUE_TOO_LARGE                   CEF_NET_ERROR = -154
+	ERR_SSL_SERVER_CERT_CHANGED                       CEF_NET_ERROR = -156
+	ERR_SSL_UNRECOGNIZED_NAME_ALERT                   CEF_NET_ERROR = -159
+	ERR_SOCKET_SET_RECEIVE_BUFFER_SIZE_ERROR          CEF_NET_ERROR = -160
+	ERR_SOCKET_SET_SEND_BUFFER_SIZE_ERROR             CEF_NET_ERROR = -161
+	ERR_SOCKET_RECEIVE_BUFFER_SIZE_UNCHANGEABLE       CEF_NET_ERROR = -162
+	ERR_SOCKET_SEND_BUFFER_SIZE_UNCHANGEABLE          CEF_NET_ERROR = -163
+	ERR_SSL_CLIENT_AUTH_CERT_BAD_FORMAT               CEF_NET_ERROR = -164
+	ERR_ICANN_NAME_COLLISION                          CEF_NET_ERROR = -166
+	ERR_SSL_SERVER_CERT_BAD_FORMAT                    CEF_NET_ERROR = -167
+	ERR_CT_STH_PARSING_FAILED                         CEF_NET_ERROR = -168
+	ERR_CT_STH_INCOMPLETE                             CEF_NET_ERROR = -169
+	ERR_UNABLE_TO_REUSE_CONNECTION_FOR_PROXY_AUTH     CEF_NET_ERROR = -170
+	ERR_CT_CONSISTENCY_PROOF_PARSING_FAILED           CEF_NET_ERROR = -171
+	ERR_SSL_OBSOLETE_CIPHER                           CEF_NET_ERROR = -172
+	ERR_WS_UPGRADE                                    CEF_NET_ERROR = -173
+	ERR_READ_IF_READY_NOT_IMPLEMENTED                 CEF_NET_ERROR = -174
+	ERR_SSL_VERSION_INTERFERENCE                      CEF_NET_ERROR = -175
+	ERR_NO_BUFFER_SPACE                               CEF_NET_ERROR = -176
+	ERR_SSL_CLIENT_AUTH_NO_COMMON_ALGORITHMS          CEF_NET_ERROR = -177
+	ERR_EARLY_DATA_REJECTED                           CEF_NET_ERROR = -178
+	ERR_WRONG_VERSION_ON_EARLY_DATA                   CEF_NET_ERROR = -179
+	ERR_TLS13_DOWNGRADE_DETECTED                      CEF_NET_ERROR = -180
+	ERR_SSL_KEY_USAGE_INCOMPATIBLE                    CEF_NET_ERROR = -181
+	ERR_CERT_COMMON_NAME_INVALID                      CEF_NET_ERROR = -200
+	ERR_CERT_DATE_INVALID                             CEF_NET_ERROR = -201
+	ERR_CERT_AUTHORITY_INVALID                        CEF_NET_ERROR = -202
+	ERR_CERT_CONTAINS_ERRORS                          CEF_NET_ERROR = -203
+	ERR_CERT_NO_REVOCATION_MECHANISM                  CEF_NET_ERROR = -204
+	ERR_CERT_UNABLE_TO_CHECK_REVOCATION               CEF_NET_ERROR = -205
+	ERR_CERT_REVOKED                                  CEF_NET_ERROR = -206
+	ERR_CERT_INVALID                                  CEF_NET_ERROR = -207
+	ERR_CERT_WEAK_SIGNATURE_ALGORITHM                 CEF_NET_ERROR = -208
+	ERR_CERT_NON_UNIQUE_NAME                          CEF_NET_ERROR = -210
+	ERR_CERT_WEAK_KEY                                 CEF_NET_ERROR = -211
+	ERR_CERT_NAME_CONSTRAINT_VIOLATION                CEF_NET_ERROR = -212
+	ERR_CERT_VALIDITY_TOO_LONG                        CEF_NET_ERROR = -213
+	ERR_CERTIFICATE_TRANSPARENCY_REQUIRED             CEF_NET_ERROR = -214
+	ERR_CERT_SYMANTEC_LEGACY                          CEF_NET_ERROR = -215
+	ERR_CERT_END                                      CEF_NET_ERROR = -216
+	ERR_INVALID_URL                                   CEF_NET_ERROR = -300
+	ERR_DISALLOWED_URL_SCHEME                         CEF_NET_ERROR = -301
+	ERR_UNKNOWN_URL_SCHEME                            CEF_NET_ERROR = -302
+	ERR_INVALID_REDIRECT                              CEF_NET_ERROR = -303
+	ERR_TOO_MANY_REDIRECTS                            CEF_NET_ERROR = -310
+	ERR_UNSAFE_REDIRECT                               CEF_NET_ERROR = -311
+	ERR_UNSAFE_PORT                                   CEF_NET_ERROR = -312
+	ERR_INVALID_RESPONSE                              CEF_NET_ERROR = -320
+	ERR_INVALID_CHUNKED_ENCODING                      CEF_NET_ERROR = -321
+	ERR_METHOD_NOT_SUPPORTED                          CEF_NET_ERROR = -322
+	ERR_UNEXPECTED_PROXY_AUTH                         CEF_NET_ERROR = -323
+	ERR_EMPTY_RESPONSE                                CEF_NET_ERROR = -324
+	ERR_RESPONSE_HEADERS_TOO_BIG                      CEF_NET_ERROR = -325
+	ERR_PAC_STATUS_NOT_OK                             CEF_NET_ERROR = -326
+	ERR_PAC_SCRIPT_FAILED                             CEF_NET_ERROR = -327
+	ERR_REQUEST_RANGE_NOT_SATISFIABLE                 CEF_NET_ERROR = -328
+	ERR_MALFORMED_IDENTITY                            CEF_NET_ERROR = -329
+	ERR_CONTENT_DECODING_FAILED                       CEF_NET_ERROR = -330
+	ERR_NETWORK_IO_SUSPENDED                          CEF_NET_ERROR = -331
+	ERR_SYN_REPLY_NOT_RECEIVED                        CEF_NET_ERROR = -332
+	ERR_ENCODING_CONVERSION_FAILED                    CEF_NET_ERROR = -333
+	ERR_UNRECOGNIZED_FTP_DIRECTORY_LISTING_FORMAT     CEF_NET_ERROR = -334
+	ERR_NO_SUPPORTED_PROXIES                          CEF_NET_ERROR = -336
+	ERR_SPDY_PROTOCOL_ERROR                           CEF_NET_ERROR = -337
+	ERR_INVALID_AUTH_CREDENTIALS                      CEF_NET_ERROR = -338
+	ERR_UNSUPPORTED_AUTH_SCHEME                       CEF_NET_ERROR = -339
+	ERR_ENCODING_DETECTION_FAILED                     CEF_NET_ERROR = -340
+	ERR_MISSING_AUTH_CREDENTIALS                      CEF_NET_ERROR = -341
+	ERR_UNEXPECTED_SECURITY_LIBRARY_STATUS            CEF_NET_ERROR = -342
+	ERR_MISCONFIGURED_AUTH_ENVIRONMENT                CEF_NET_ERROR = -343
+	ERR_UNDOCUMENTED_SECURITY_LIBRARY_STATUS          CEF_NET_ERROR = -344
+	ERR_RESPONSE_BODY_TOO_BIG_TO_DRAIN                CEF_NET_ERROR = -345
+	ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_LENGTH      CEF_NET_ERROR = -346
+	ERR_INCOMPLETE_SPDY_HEADERS                       CEF_NET_ERROR = -347
+	ERR_PAC_NOT_IN_DHCP                               CEF_NET_ERROR = -348
+	ERR_RESPONSE_HEADERS_MULTIPLE_CONTENT_DISPOSITION CEF_NET_ERROR = -349
+	ERR_RESPONSE_HEADERS_MULTIPLE_LOCATION            CEF_NET_ERROR = -350
+	ERR_SPDY_SERVER_REFUSED_STREAM                    CEF_NET_ERROR = -351
+	ERR_SPDY_PING_FAILED                              CEF_NET_ERROR = -352
+	ERR_CONTENT_LENGTH_MISMATCH                       CEF_NET_ERROR = -354
+	ERR_INCOMPLETE_CHUNKED_ENCODING                   CEF_NET_ERROR = -355
+	ERR_QUIC_PROTOCOL_ERROR                           CEF_NET_ERROR = -356
+	ERR_RESPONSE_HEADERS_TRUNCATED                    CEF_NET_ERROR = -357
+	ERR_QUIC_HANDSHAKE_FAILED                         CEF_NET_ERROR = -358
+	ERR_SPDY_INADEQUATE_TRANSPORT_SECURITY            CEF_NET_ERROR = -360
+	ERR_SPDY_FLOW_CONTROL_ERROR                       CEF_NET_ERROR = -361
+	ERR_SPDY_FRAME_SIZE_ERROR                         CEF_NET_ERROR = -362
+	ERR_SPDY_COMPRESSION_ERROR                        CEF_NET_ERROR = -363
+	ERR_PROXY_AUTH_REQUESTED_WITH_NO_CONNECTION       CEF_NET_ERROR = -364
+	ERR_HTTP_1_1_REQUIRED                             CEF_NET_ERROR = -365
+	ERR_PROXY_HTTP_1_1_REQUIRED                       CEF_NET_ERROR = -366
+	ERR_PAC_SCRIPT_TERMINATED                         CEF_NET_ERROR = -367
+	ERR_INVALID_HTTP_RESPONSE                         CEF_NET_ERROR = -370
+	ERR_CONTENT_DECODING_INIT_FAILED                  CEF_NET_ERROR = -371
+	ERR_SPDY_RST_STREAM_NO_ERROR_RECEIVED             CEF_NET_ERROR = -372
+	ERR_SPDY_PUSHED_STREAM_NOT_AVAILABLE              CEF_NET_ERROR = -373
+	ERR_SPDY_CLAIMED_PUSHED_STREAM_RESET_BY_SERVER    CEF_NET_ERROR = -374
+	ERR_TOO_MANY_RETRIES                              CEF_NET_ERROR = -375
+	ERR_SPDY_STREAM_CLOSED                            CEF_NET_ERROR = -376
+	ERR_SPDY_CLIENT_REFUSED_STREAM                    CEF_NET_ERROR = -377
+	ERR_SPDY_PUSHED_RESPONSE_DOES_NOT_MATCH           CEF_NET_ERROR = -378
+	ERR_CACHE_MISS                                    CEF_NET_ERROR = -400
+	ERR_CACHE_READ_FAILURE                            CEF_NET_ERROR = -401
+	ERR_CACHE_WRITE_FAILURE                           CEF_NET_ERROR = -402
+	ERR_CACHE_OPERATION_NOT_SUPPORTED                 CEF_NET_ERROR = -403
+	ERR_CACHE_OPEN_FAILURE                            CEF_NET_ERROR = -404
+	ERR_CACHE_CREATE_FAILURE                          CEF_NET_ERROR = -405
+	ERR_CACHE_RACE                                    CEF_NET_ERROR = -406
+	ERR_CACHE_CHECKSUM_READ_FAILURE                   CEF_NET_ERROR = -407
+	ERR_CACHE_CHECKSUM_MISMATCH                       CEF_NET_ERROR = -408
+	ERR_CACHE_LOCK_TIMEOUT                            CEF_NET_ERROR = -409
+	ERR_CACHE_AUTH_FAILURE_AFTER_READ                 CEF_NET_ERROR = -410
+	ERR_CACHE_ENTRY_NOT_SUITABLE                      CEF_NET_ERROR = -411
+	ERR_CACHE_DOOM_FAILURE                            CEF_NET_ERROR = -412
+	ERR_CACHE_OPEN_OR_CREATE_FAILURE                  CEF_NET_ERROR = -413
+	ERR_INSECURE_RESPONSE                             CEF_NET_ERROR = -501
+	ERR_NO_PRIVATE_KEY_FOR_CERT                       CEF_NET_ERROR = -502
+	ERR_ADD_USER_CERT_FAILED                          CEF_NET_ERROR = -503
+	ERR_INVALID_SIGNED_EXCHANGE                       CEF_NET_ERROR = -504
+	ERR_FTP_FAILED                                    CEF_NET_ERROR = -601
+	ERR_FTP_SERVICE_UNAVAILABLE                       CEF_NET_ERROR = -602
+	ERR_FTP_TRANSFER_ABORTED                          CEF_NET_ERROR = -603
+	ERR_FTP_FILE_BUSY                                 CEF_NET_ERROR = -604
+	ERR_FTP_SYNTAX_ERROR                              CEF_NET_ERROR = -605
+	ERR_FTP_COMMAND_NOT_SUPPORTED                     CEF_NET_ERROR = -606
+	ERR_FTP_BAD_COMMAND_SEQUENCE                      CEF_NET_ERROR = -607
+	ERR_PKCS12_IMPORT_BAD_PASSWORD                    CEF_NET_ERROR = -701
+	ERR_PKCS12_IMPORT_FAILED                          CEF_NET_ERROR = -702
+	ERR_IMPORT_CA_CERT_NOT_CA                         CEF_NET_ERROR = -703
+	ERR_IMPORT_CERT_ALREADY_EXISTS                    CEF_NET_ERROR = -704
+	ERR_IMPORT_CA_CERT_FAILED                         CEF_NET_ERROR = -705
+	ERR_IMPORT_SERVER_CERT_FAILED                     CEF_NET_ERROR = -706
+	ERR_PKCS12_IMPORT_INVALID_MAC                     CEF_NET_ERROR = -707
+	ERR_PKCS12_IMPORT_INVALID_FILE                    CEF_NET_ERROR = -708
+	ERR_PKCS12_IMPORT_UNSUPPORTED                     CEF_NET_ERROR = -709
+	ERR_KEY_GENERATION_FAILED                         CEF_NET_ERROR = -710
+	ERR_PRIVATE_KEY_EXPORT_FAILED                     CEF_NET_ERROR = -712
+	ERR_SELF_SIGNED_CERT_GENERATION_FAILED            CEF_NET_ERROR = -713
+	ERR_CERT_DATABASE_CHANGED                         CEF_NET_ERROR = -714
+	ERR_DNS_MALFORMED_RESPONSE                        CEF_NET_ERROR = -800
+	ERR_DNS_SERVER_REQUIRES_TCP                       CEF_NET_ERROR = -801
+	ERR_DNS_SERVER_FAILED                             CEF_NET_ERROR = -802
+	ERR_DNS_TIMED_OUT                                 CEF_NET_ERROR = -803
+	ERR_NS_CACHE_MISS                                 CEF_NET_ERROR = -804
+	ERR_DNS_SEARCH_EMPTY                              CEF_NET_ERROR = -805
+	ERR_DNS_SORT_ERROR                                CEF_NET_ERROR = -806
+	ERR_DNS_HTTP_FAILED                               CEF_NET_ERROR = -807
+)
+
+// /include/internal/cef_types.h (cef_color_type_t)
+type TCefColorType = types.Int32
+
+const (
+	CEF_COLOR_TYPE_RGBA_8888 TCefColorType = iota
+	CEF_COLOR_TYPE_BGRA_8888
+)
+
+// /include/internal/cef_types.h (cef_alpha_type_t)
+type TCefAlphaType = types.Int32
+
+const (
+	CEF_ALPHA_TYPE_OPAQUE TCefAlphaType = iota
+	CEF_ALPHA_TYPE_PREMULTIPLIED
+	CEF_ALPHA_TYPE_POSTMULTIPLIED
+)
+
+// /include/internal/cef_types.h (cef_pdf_print_margin_type_t)
+type TCefPdfPrintMarginType = types.Int32
+
+const (
+	PDF_PRINT_MARGIN_DEFAULT TCefPdfPrintMarginType = iota
+	PDF_PRINT_MARGIN_NONE
+	PDF_PRINT_MARGIN_CUSTOM
+)
+
+// V8ValueType ICefV8Value ValueType
+type V8ValueType = types.Int32
+
+const (
+	V8vtInvalid V8ValueType = iota
+	V8vtUndefined
+	V8vtNull
+	V8vtBool
+	V8vtInt
+	V8vtUInt
+	V8vtDouble
+	V8vtDate
+	V8vtString
+	V8vtObject
+	V8vtArray
+	V8vtArrayBuffer
+	V8vtFunction
+	V8vtPromise
+)
+
+// /include/internal/cef_types.h (cef_preferences_type_t)
+type TCefPreferencesType = types.Int32
+
+const (
+	CEF_PREFERENCES_TYPE_GLOBAL TCefPreferencesType = iota
+	CEF_PREFERENCES_TYPE_REQUEST_CONTEXT
+)
+
+type TCefScaleFactor = types.Int32
+
+// /include/internal/cef_types.h (cef_scale_factor_t)
+const (
+	SCALE_FACTOR_NONE TCefScaleFactor = iota
+	SCALE_FACTOR_100P
+	SCALE_FACTOR_125P
+	SCALE_FACTOR_133P
+	SCALE_FACTOR_140P
+	SCALE_FACTOR_150P
+	SCALE_FACTOR_180P
+	SCALE_FACTOR_200P
+	SCALE_FACTOR_250P
+	SCALE_FACTOR_300P
+)
+
+// /include/internal/cef_types.h (cef_channel_layout_t)
+type TCefChannelLayout = types.Int32
+
+const (
+	CEF_CHANNEL_LAYOUT_NONE TCefChannelLayout = iota
+	CEF_CHANNEL_LAYOUT_UNSUPPORTED
+	CEF_CHANNEL_LAYOUT_MONO
+	CEF_CHANNEL_LAYOUT_STEREO
+	CEF_CHANNEL_LAYOUT_2_1
+	CEF_CHANNEL_LAYOUT_SURROUND
+	CEF_CHANNEL_LAYOUT_4_0
+	CEF_CHANNEL_LAYOUT_2_2
+	CEF_CHANNEL_LAYOUT_QUAD
+	CEF_CHANNEL_LAYOUT_5_0
+	CEF_CHANNEL_LAYOUT_5_1
+	CEF_CHANNEL_LAYOUT_5_0_BACK
+	CEF_CHANNEL_LAYOUT_5_1_BACK
+	CEF_CHANNEL_LAYOUT_7_0
+	CEF_CHANNEL_LAYOUT_7_1
+	CEF_CHANNEL_LAYOUT_7_1_WIDE
+	CEF_CHANNEL_LAYOUT_STEREO_DOWNMIX
+	CEF_CHANNEL_LAYOUT_2POINT1
+	CEF_CHANNEL_LAYOUT_3_1
+	CEF_CHANNEL_LAYOUT_4_1
+	CEF_CHANNEL_LAYOUT_6_0
+	CEF_CHANNEL_LAYOUT_6_0_FRONT
+	CEF_CHANNEL_LAYOUT_HEXAGONAL
+	CEF_CHANNEL_LAYOUT_6_1
+	CEF_CHANNEL_LAYOUT_6_1_BACK
+	CEF_CHANNEL_LAYOUT_6_1_FRONT
+	CEF_CHANNEL_LAYOUT_7_0_FRONT
+	CEF_CHANNEL_LAYOUT_7_1_WIDE_BACK
+	CEF_CHANNEL_LAYOUT_OCTAGONAL
+	CEF_CHANNEL_LAYOUT_DISCRETE
+	CEF_CHANNEL_LAYOUT_STEREO_AND_KEYBOARD_MIC
+	CEF_CHANNEL_LAYOUT_4_1_QUAD_SIDE
+	CEF_CHANNEL_LAYOUT_BITSTREAM
+	CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX // CEF_CHANNEL_LAYOUT_MAX = CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX
+)
+
+// CefClientType
+//	CtTClient 自定义客户端处理器事件
+//	CtChromium 使用 IChromium 定义事件, 不允许获取处理器事件
+type CefClientType = types.Int8
+
+const (
+	CtTClient CefClientType = iota
+	CtChromium
+)
+
+// /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)
+type TCefQuickMenuEditStateFlags = types.Int32
+
+// /include/internal/cef_types.h (cef_file_dialog_mode_t)
+type TCefFileDialogMode = types.Cardinal
+
+// /include/internal/cef_types.h (cef_log_severity_t)
+type TCefLogSeverity = types.Cardinal
+
+// TCefCursorHandle
+//  /include/internal/cef_types_win.h (cef_cursor_handle_t)
+//  /include/internal/cef_types_mac.h (cef_cursor_handle_t)
+//  /include/internal/cef_types_linux.h (cef_cursor_handle_t)
+type TCefCursorHandle uintptr
+
+// /include/internal/cef_types.h (cef_cursor_type_t)
+type TCefCursorType = types.Int32
+
+const (
+	CT_POINTER TCefCursorType = iota
+	CT_CROSS
+	CT_HAND
+	CT_IBEAM
+	CT_WAIT
+	CT_HELP
+	CT_EASTRESIZE
+	CT_NORTHRESIZE
+	CT_NORTHEASTRESIZE
+	CT_NORTHWESTRESIZE
+	CT_SOUTHRESIZE
+	CT_SOUTHEASTRESIZE
+	CT_SOUTHWESTRESIZE
+	CT_WESTRESIZE
+	CT_NORTHSOUTHRESIZE
+	CT_EASTWESTRESIZE
+	CT_NORTHEASTSOUTHWESTRESIZE
+	CT_NORTHWESTSOUTHEASTRESIZE
+	CT_COLUMNRESIZE
+	CT_ROWRESIZE
+	CT_MIDDLEPANNING
+	CT_EASTPANNING
+	CT_NORTHPANNING
+	CT_NORTHEASTPANNING
+	CT_NORTHWESTPANNING
+	CT_SOUTHPANNING
+	CT_SOUTHEASTPANNING
+	CT_SOUTHWESTPANNING
+	CT_WESTPANNING
+	CT_MOVE
+	CT_VERTICALTEXT
+	CT_CELL
+	CT_CONTEXTMENU
+	CT_ALIAS
+	CT_PROGRESS
+	CT_NODROP
+	CT_COPY
+	CT_NONE
+	CT_NOTALLOWED
+	CT_ZOOMIN
+	CT_ZOOMOUT
+	CT_GRAB
+	CT_GRABBING
+	CT_MIDDLE_PANNING_VERTICAL
+	CT_MIDDLE_PANNING_HORIZONTAL
+	CT_CUSTOM
+	CT_DND_NONE
+	CT_DND_MOVE
+	CT_DND_COPY
+	CT_DND_LIN
+)
+
+// /include/internal/cef_types.h (cef_focus_source_t)
+type TCefFocusSource = types.Int32
+
+const (
+	FOCUS_SOURCE_NAVIGATION TCefFocusSource = iota
+	FOCUS_SOURCE_SYSTEM
+)
+
+// /include/internal/cef_types.h (cef_permission_request_result_t)
+type TCefPermissionRequestResult = types.Int32
+
+const (
+	CEF_PERMISSION_RESULT_ACCEPT TCefPermissionRequestResult = iota
+	CEF_PERMISSION_RESULT_DENY
+	CEF_PERMISSION_RESULT_DISMISS
+	CEF_PERMISSION_RESULT_IGNORE
+)
+
+// /include/internal/cef_types.h (cef_media_access_permission_types_t)
+type TCefMediaAccessPermissionTypes = types.Int32
+
+// /include/internal/cef_types.h (cef_jsdialog_type_t)
+type TCefJsDialogType = types.Int32
+
+const (
+	JSDIALOGTYPE_ALERT TCefJsDialogType = iota
+	JSDIALOGTYPE_CONFIRM
+	JSDIALOGTYPE_PROMPT
+)
+
+// TCefDuplexMode
+//  /include/internal/cef_types.h (cef_duplex_mode_t)
+type TCefDuplexMode = types.Int32
+
+// /include/internal/cef_types.h (cef_color_model_t)
+type TCefColorModel = types.Int32
+
+const (
+	COLOR_MODEL_UNKNOWN TCefColorModel = iota
+	COLOR_MODEL_GRAY
+	COLOR_MODEL_COLOR
+	COLOR_MODEL_CMYK
+	COLOR_MODEL_CMY
+	COLOR_MODEL_KCMY
+	COLOR_MODEL_CMY_K
+	COLOR_MODEL_BLACK
+	COLOR_MODEL_GRAYSCALE
+	COLOR_MODEL_RGB
+	COLOR_MODEL_RGB16
+	COLOR_MODEL_RGBA
+	COLOR_MODEL_COLORMODE_COLOR
+	COLOR_MODEL_COLORMODE_MONOCHROME
+	COLOR_MODEL_HP_COLOR_COLOR
+	COLOR_MODEL_HP_COLOR_BLACK
+	COLOR_MODEL_PRINTOUTMODE_NORMAL
+	COLOR_MODEL_PRINTOUTMODE_NORMAL_GRAY
+	COLOR_MODEL_PROCESSCOLORMODEL_CMYK
+	COLOR_MODEL_PROCESSCOLORMODEL_GREYSCALE
+	COLOR_MODEL_PROCESSCOLORMODEL_RGB
+)
+
+// /include/internal/cef_types.h (cef_scheme_options_t)
+type CefSchemeOption = types.Int32
+
+const (
+	CEF_SCHEME_OPTION_NONE             CefSchemeOption = 0
+	CEF_SCHEME_OPTION_STANDARD                         = 1 << 0
+	CEF_SCHEME_OPTION_LOCAL                            = 1 << 1
+	CEF_SCHEME_OPTION_DISPLAY_ISOLATED                 = 1 << 2
+	CEF_SCHEME_OPTION_SECURE                           = 1 << 3
+	CEF_SCHEME_OPTION_CORS_ENABLED                     = 1 << 4
+	CEF_SCHEME_OPTION_CSP_BYPASSING                    = 1 << 5
+	CEF_SCHEME_OPTION_FETCH_ENABLED                    = 1 << 6
+)
+
+// TCefResponseFilterStatus
+//  /include/internal/cef_types.h (cef_response_filter_status_t)
+type TCefResponseFilterStatus = types.Int32
+
+const (
+	RESPONSE_FILTER_NEED_MORE_DATA TCefResponseFilterStatus = iota
+	RESPONSE_FILTER_DONE
+	RESPONSE_FILTER_ERROR
+)
+
+// /include/internal/cef_types.h (cef_paint_element_type_t)
+type TCefPaintElementType = types.Int32
+
+const (
+	PET_VIEW TCefPaintElementType = iota
+	PET_POPUP
+)
+
+// /include/internal/cef_types.h (cef_horizontal_alignment_t)
+type TCefHorizontalAlignment = types.Int32
+
+const (
+	CEF_HORIZONTAL_ALIGNMENT_LEFT TCefHorizontalAlignment = iota
+	CEF_HORIZONTAL_ALIGNMENT_CENTER
+	CEF_HORIZONTAL_ALIGNMENT_RIGHT
+)
+
+// /include/internal/cef_types.h (cef_text_input_mode_t)
+type TCefTextInputMode = types.Int32
+
+const (
+	CEF_TEXT_INPUT_MODE_DEFAULT TCefTextInputMode = iota
+	CEF_TEXT_INPUT_MODE_NONE
+	CEF_TEXT_INPUT_MODE_TEXT
+	CEF_TEXT_INPUT_MODE_TEL
+	CEF_TEXT_INPUT_MODE_URL
+	CEF_TEXT_INPUT_MODE_EMAIL
+	CEF_TEXT_INPUT_MODE_NUMERIC
+	CEF_TEXT_INPUT_MODE_DECIMAL
+	CEF_TEXT_INPUT_MODE_SEARCH // CEF_TEXT_INPUT_MODE_MAX = CEF_TEXT_INPUT_MODE_SEARCH
+)
+
+// /include/internal/cef_types.h (cef_cert_status_t)
+type TCefCertStatus = types.Int32
+
+// /include/internal/cef_types.h (cef_media_route_create_result_t)
+type TCefMediaRouterCreateResult = types.Int32
+
+// /include/internal/cef_types.h (cef_media_route_connection_state_t)
+type TCefMediaRouteConnectionState = types.Int32
+
+const (
+	CEF_MRCS_UNKNOWN TCefMediaRouteConnectionState = iota
+	CEF_MRCS_CONNECTING
+	CEF_MRCS_CONNECTED
+	CEF_MRCS_CLOSED
+	CEF_MRCS_TERMINATED
+)
+
+// /include/internal/cef_types.h (cef_dom_document_type_t)
+type TCefDomDocumentType = types.Int32
+
+const (
+	DOM_DOCUMENT_TYPE_UNKNOWN TCefDomDocumentType = iota
+	DOM_DOCUMENT_TYPE_HTML
+	DOM_DOCUMENT_TYPE_XHTML
+	DOM_DOCUMENT_TYPE_PLUGIN
+)
+
+// /include/internal/cef_types.h (cef_dom_node_type_t)
+type TCefDomNodeType = types.Int32
+
+const (
+	DOM_NODE_TYPE_UNSUPPORTED TCefDomNodeType = iota
+	DOM_NODE_TYPE_ELEMENT
+	DOM_NODE_TYPE_ATTRIBUTE
+	DOM_NODE_TYPE_TEXT
+	DOM_NODE_TYPE_CDATA_SECTION
+	DOM_NODE_TYPE_PROCESSING_INSTRUCTIONS
+	DOM_NODE_TYPE_COMMENT
+	DOM_NODE_TYPE_DOCUMENT
+	DOM_NODE_TYPE_DOCUMENT_TYPE
+	DOM_NODE_TYPE_DOCUMENT_FRAGMENT
 )

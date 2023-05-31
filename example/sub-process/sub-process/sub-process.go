@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/example/sub-process/vars"
-	"github.com/energye/energy/ipc"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/logger"
 )
 
 /*
@@ -19,23 +19,23 @@ func main() {
 	//全局配置初始化
 	cef.GlobalInit(nil, nil)
 	//创建Cef应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//主进程和子进程的变量绑定函数定义
-	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
+	//cef.VariableBind.VariableCreateCallback(vars.VariableBind)
 	//IPC通信
-	ipc.IPC.Render().SetOnEvent(IPCInit)
+	IPCInit()
 	//启动子进程
 	cefApp.StartSubProcess()
 	cefApp.Free()
 }
 
 // 渲染进程 IPC事件
-func IPCInit(event ipc.IEventOn) {
+func IPCInit() {
 	fmt.Println("渲染进程IPC事件注册")
 	//渲染进程监听的事件
-	event.On("sub-process-on-event", func(context ipc.IIPCContext) {
+	ipc.On("sub-process-on-event", func(context context.IContext) {
 		fmt.Println("sub-process-on-event")
 		//渲染进程处理程序....
-		context.Response([]byte("返回结果"))
+		context.Result("返回结果")
 	})
 }

@@ -13,10 +13,8 @@ package common
 import (
 	"bytes"
 	"encoding/binary"
-	"errors"
 	"fmt"
-	. "github.com/energye/energy/consts"
-	"github.com/energye/energy/decimal"
+	"github.com/energye/energy/v2/pkgs/decimal"
 	"math"
 	"reflect"
 	"runtime"
@@ -49,6 +47,14 @@ const (
 	isZos       = runtime.GOOS == "zos"       //not support
 )
 
+// Concat 字符串拼接
+func Concat(str ...string) string {
+	var c = strings.Builder{}
+	for _, v := range str {
+		c.WriteString(v)
+	}
+	return c.String()
+}
 func IsWindows() bool {
 	return isWindows
 }
@@ -84,476 +90,147 @@ func StrToFloat32(value string) float32 {
 	return float32(v)
 }
 
+// InterfaceToString 接口转 string
 func InterfaceToString(value interface{}) string {
 	return fmt.Sprintf("%v", value)
 }
 
-// 获取参数指针
+// GetParamOf 获取参数指针
 func GetParamOf(index int, ptr uintptr) uintptr {
 	return *(*uintptr)(unsafe.Pointer(ptr + uintptr(index)*unsafe.Sizeof(ptr)))
 }
 
-// 根据指定指针位置开始 偏移获取指针
+// GetParamPtr 根据指定指针位置开始 偏移获取指针
 func GetParamPtr(ptr uintptr, offset int) unsafe.Pointer {
 	return unsafe.Pointer(ptr + uintptr(offset))
 }
 
-func GOValueReflectType(v interface{}) GO_VALUE_TYPE {
-	if v == nil {
-		return GO_VALUE_NIL
-	}
-	vType := reflect.TypeOf(v).Kind()
-	switch vType {
-	case reflect.String:
-		return GO_VALUE_STRING
-	case reflect.Int:
-		return GO_VALUE_INT
-	case reflect.Int8:
-		return GO_VALUE_INT8
-	case reflect.Int16:
-		return GO_VALUE_INT16
-	case reflect.Int32:
-		return GO_VALUE_INT32
-	case reflect.Int64:
-		return GO_VALUE_INT64
-	case reflect.Uint:
-		return GO_VALUE_UINT
-	case reflect.Uint8:
-		return GO_VALUE_UINT8
-	case reflect.Uint16:
-		return GO_VALUE_UINT16
-	case reflect.Uint32:
-		return GO_VALUE_UINT32
-	case reflect.Uint64:
-		return GO_VALUE_UINT64
-	case reflect.Uintptr:
-		return GO_VALUE_UINTPTR
-	case reflect.Float32:
-		return GO_VALUE_FLOAT32
-	case reflect.Float64:
-		return GO_VALUE_FLOAT64
-	case reflect.Bool:
-		return GO_VALUE_BOOL
-	case reflect.Struct:
-		return GO_VALUE_STRUCT
-	case reflect.Slice:
-		return GO_VALUE_SLICE
-	case reflect.Func:
-		return GO_VALUE_FUNC
-	case reflect.Ptr:
-		return GO_VALUE_PTR
-	default:
-		return GO_VALUE_EXCEPTION
-	}
-}
-
-func GOValueType(v string) GO_VALUE_TYPE {
-	if v == "nil" {
-		return GO_VALUE_NIL
-	}
-	switch v {
-	case "string":
-		return GO_VALUE_STRING
-	case "int":
-		return GO_VALUE_INT
-	case "int8":
-		return GO_VALUE_INT8
-	case "int16":
-		return GO_VALUE_INT16
-	case "int32":
-		return GO_VALUE_INT32
-	case "int64":
-		return GO_VALUE_INT64
-	case "uint":
-		return GO_VALUE_UINT
-	case "uint8":
-		return GO_VALUE_UINT8
-	case "uint16":
-		return GO_VALUE_UINT16
-	case "uint32":
-		return GO_VALUE_UINT32
-	case "uint64":
-		return GO_VALUE_UINT64
-	case "uintptr":
-		return GO_VALUE_UINTPTR
-	case "float32":
-		return GO_VALUE_FLOAT32
-	case "float64":
-		return GO_VALUE_FLOAT64
-	case "bool":
-		return GO_VALUE_BOOL
-	case "struct":
-		return GO_VALUE_STRUCT
-	case "slice":
-		return GO_VALUE_SLICE
-	case "func":
-		return GO_VALUE_FUNC
-	case "ptr":
-		return GO_VALUE_PTR
-	default:
-		return GO_VALUE_EXCEPTION
-	}
-}
-
-func GOValueAssertType(v interface{}) GO_VALUE_TYPE {
-	if v == nil {
-		return GO_VALUE_NIL
+// ValueToBool bool
+func ValueToBool(v interface{}) bool {
+	switch v.(type) {
+	case []byte:
+		bv := v.([]byte)
+		if len(bv) == 1 {
+			return ByteToInt8(bv[0]) > 0
+		} else if len(bv) == 2 {
+			return BytesToInt16(bv) > 0
+		} else if len(bv) == 4 {
+			return BytesToInt32(bv) > 0
+		} else if len(bv) == 8 {
+			return BytesToInt64(bv) > 0
+		}
+		return len(bv) > 0
 	}
 	switch v.(type) {
 	case string:
-		return GO_VALUE_STRING
-	case int:
-		return GO_VALUE_INT
-	case int8:
-		return GO_VALUE_INT8
-	case int16:
-		return GO_VALUE_INT16
-	case int32:
-		return GO_VALUE_INT32
-	case int64:
-		return GO_VALUE_INT64
-	case uint:
-		return GO_VALUE_UINT
-	case uint8:
-		return GO_VALUE_UINT8
-	case uint16:
-		return GO_VALUE_UINT16
-	case uint32:
-		return GO_VALUE_UINT32
-	case uint64:
-		return GO_VALUE_UINT64
-	case uintptr:
-		return GO_VALUE_UINTPTR
+		return len(v.(string)) > 0
 	case float32:
-		return GO_VALUE_FLOAT32
+		return v.(float32) > 0
 	case float64:
-		return GO_VALUE_FLOAT64
+		return v.(float64) > 0
 	case bool:
-		return GO_VALUE_BOOL
+		return v.(bool)
+	case int:
+		return v.(int) > 0
+	case int8:
+		return v.(int8) > 0
+	case int16:
+		return v.(int16) > 0
+	case int32:
+		return v.(int32) > 0
+	case int64:
+		return v.(int64) > 0
+	case uintptr:
+		return v.(uintptr) > 0
 	default:
-		return GO_VALUE_EXCEPTION
+		return false
 	}
 }
 
-func JSValueAssertType(v interface{}) V8_JS_VALUE_TYPE {
+func ValueToFloat64(v interface{}) float64 {
+	switch v.(type) {
+	case []byte:
+		bv := v.([]byte)
+		if len(bv) == 4 {
+			return float64(BytesToFloat32(bv))
+		} else if len(bv) == 8 {
+			return BytesToFloat64(bv)
+		}
+		return 0.0
+	}
 	switch v.(type) {
 	case string:
-		return V8_VALUE_STRING
-	case int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr:
-		return V8_VALUE_INT
-	case float32, float64:
-		return V8_VALUE_DOUBLE
+		return StrToFloat64(v.(string))
+	case float32:
+		return float64(v.(float32))
+	case float64:
+		return v.(float64)
 	case bool:
-		return V8_VALUE_BOOLEAN
+		if v.(bool) {
+			return 1
+		} else {
+			return 0
+		}
+	case int:
+		return float64(v.(int))
+	case int8:
+		return float64(v.(int8))
+	case int16:
+		return float64(v.(int16))
+	case int32:
+		return float64(v.(int32))
+	case int64:
+		return float64(v.(int64))
+	case uintptr:
+		return float64(v.(uintptr))
 	default:
-		return V8_VALUE_EXCEPTION
+		return 0
 	}
 }
 
-func JSValueType(v string) V8_JS_VALUE_TYPE {
-	if v == "nil" {
-		return V8_VALUE_NULL
-	}
-	switch v {
-	case "string":
-		return V8_VALUE_STRING
-	case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64", "uintptr":
-		return V8_VALUE_INT
-	case "float32", "float64":
-		return V8_VALUE_DOUBLE
-	case "bool":
-		return V8_VALUE_BOOLEAN
-	case "struct":
-		return V8_VALUE_OBJECT
-	case "slice":
-		return V8_VALUE_ARRAY
-	case "func":
-		return V8_VALUE_FUNCTION
-	default:
-		return V8_VALUE_EXCEPTION
-	}
-}
-func ValueToBool(v interface{}) (bool, error) {
+func ValueToInt(v interface{}) int {
 	switch v.(type) {
 	case []byte:
-		return ByteToBool(v.([]byte)[0]), nil
-	case byte:
-		return ByteToBool(v.(byte)), nil
+		bv := v.([]byte)
+		if len(bv) == 1 {
+			return int(ByteToInt8(bv[0]))
+		} else if len(bv) == 2 {
+			return int(BytesToInt16(bv))
+		} else if len(bv) == 4 {
+			return int(BytesToInt32(bv))
+		} else if len(bv) == 8 {
+			return int(BytesToInt64(bv))
+		}
+		return 0
 	}
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT:
-		v := StrToInt32(InterfaceToString(v))
-		if v == 0 {
-			return false, nil
-		} else {
-			return true, nil
-		}
-	case V8_VALUE_DOUBLE:
-		v := StrToFloat64(InterfaceToString(v))
-		if v == 0 {
-			return false, nil
-		} else {
-			return true, nil
-		}
-	case V8_VALUE_STRING:
-		v := v.(string)
-		if v == "" {
-			return false, nil
-		} else {
-			return true, nil
-		}
-	case V8_VALUE_BOOLEAN:
-		return v.(bool), nil
-	default:
-		return false, errors.New("转换bool类型失败")
-	}
-}
-
-func ValueToFloat32(v interface{}) (float32, error) {
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT:
-		return StrToFloat32(InterfaceToString(v)), nil
-	case V8_VALUE_DOUBLE:
-		return StrToFloat32(InterfaceToString(v)), nil
-	case V8_VALUE_STRING:
-		return StrToFloat32(v.(string)), nil
-	case V8_VALUE_BOOLEAN:
-		v := v.(bool)
-		if v {
-			return 1, nil
-		} else {
-			return 0, nil
-		}
-	default:
-		return 0, errors.New("转换float32类型失败")
-	}
-}
-
-func ValueToFloat64(v interface{}) (float64, error) {
 	switch v.(type) {
-	case []byte:
-		return BytesToFloat64(v.([]byte)), nil
-	}
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT:
-		return StrToFloat64(InterfaceToString(v)), nil
-	case V8_VALUE_DOUBLE:
-		return StrToFloat64(InterfaceToString(v)), nil
-	case V8_VALUE_STRING:
-		return StrToFloat64(v.(string)), nil
-	case V8_VALUE_BOOLEAN:
-		v := v.(bool)
-		if v {
-			return 1, nil
+	case string:
+		return int(StrToInt64(v.(string)))
+	case float32:
+		return int(math.Round(float64(StrToFloat32(v.(string)))))
+	case float64:
+		return int(math.Round(StrToFloat64(v.(string))))
+	case bool:
+		if v.(bool) {
+			return 1
 		} else {
-			return 0, nil
+			return 0
 		}
+	case int:
+		return v.(int)
+	case int8:
+		return int(v.(int8))
+	case int16:
+		return int(v.(int16))
+	case int32:
+		return int(v.(int32))
+	case int64:
+		return int(v.(int64))
+	case uintptr:
+		return int(v.(uintptr))
 	default:
-		return 0, errors.New("转换float64类型失败")
+		return 0
 	}
-}
-
-func ValueToInt32(v interface{}) (int32, error) {
-	switch v.(type) {
-	case []byte:
-		return BytesToInt32(v.([]byte)), nil
-	}
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT:
-		return StrToInt32(InterfaceToString(v)), nil
-	case V8_VALUE_DOUBLE:
-		return int32(math.Round(StrToFloat64(InterfaceToString(v)))), nil
-	case V8_VALUE_STRING:
-		return StrToInt32(v.(string)), nil
-	case V8_VALUE_BOOLEAN:
-		v := v.(bool)
-		if v {
-			return 1, nil
-		} else {
-			return 0, nil
-		}
-	default:
-		return 0, errors.New("转换int32类型失败")
-	}
-}
-
-func ValueToInt64(v interface{}) (int64, error) {
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT:
-		return StrToInt64(InterfaceToString(v)), nil
-	case V8_VALUE_DOUBLE:
-		return int64(math.Round(StrToFloat64(InterfaceToString(v)))), nil
-	case V8_VALUE_STRING:
-		return StrToInt64(v.(string)), nil
-	case V8_VALUE_BOOLEAN:
-		v := v.(bool)
-		if v {
-			return 1, nil
-		} else {
-			return 0, nil
-		}
-	default:
-		return 0, errors.New("转换int64类型失败")
-	}
-}
-
-func NumberUintPtrToInt(value uintptr, gov GO_VALUE_TYPE) interface{} {
-	switch gov {
-	case GO_VALUE_INT:
-		return int(value)
-	case GO_VALUE_INT8:
-		return int8(value)
-	case GO_VALUE_INT16:
-		return int16(value)
-	case GO_VALUE_INT32:
-		return int32(value)
-	case GO_VALUE_INT64:
-		return int64(value)
-	case GO_VALUE_UINT:
-		return uint(value)
-	case GO_VALUE_UINT8:
-		return uint8(value)
-	case GO_VALUE_UINT16:
-		return uint16(value)
-	case GO_VALUE_UINT32:
-		return uint32(value)
-	case GO_VALUE_UINT64:
-		return uint64(value)
-	case GO_VALUE_UINTPTR:
-		return value
-	default:
-		return nil
-	}
-}
-
-func NumberPtrToFloat(value unsafe.Pointer, gov GO_VALUE_TYPE) interface{} {
-	switch gov {
-	case GO_VALUE_FLOAT32:
-		return *(*float64)(value)
-	case GO_VALUE_FLOAT64:
-		return *(*float64)(value)
-	default:
-		return nil
-	}
-}
-
-func ValueToString(v interface{}) (string, error) {
-	switch v.(type) {
-	case []byte:
-		return BytesToString(v.([]byte)), nil
-	}
-	vType := JSValueAssertType(v)
-	switch vType {
-	case V8_VALUE_INT, V8_VALUE_DOUBLE:
-		return fmt.Sprintf("%v", vType), nil
-	case V8_VALUE_STRING, V8_VALUE_NULL, V8_VALUE_UNDEFINED:
-		return v.(string), nil
-	case V8_VALUE_BOOLEAN:
-		v := v.(bool)
-		if v {
-			return "true", nil
-		} else {
-			return "false", nil
-		}
-	default:
-		return "", errors.New("转换string类型失败")
-	}
-}
-
-func ValueToBytes(v interface{}) []byte {
-	switch v.(type) {
-	case []byte:
-		return v.([]byte)
-	case byte:
-		return []byte{v.(byte)}
-
-	}
-	return nil
-}
-
-func ParamType(t string) (V8_JS_VALUE_TYPE, GO_VALUE_TYPE) {
-	switch t {
-	case "string":
-		return V8_VALUE_STRING, GO_VALUE_STRING
-	case "int":
-		return V8_VALUE_INT, GO_VALUE_INT
-	case "int8":
-		return V8_VALUE_INT, GO_VALUE_INT8
-	case "int16":
-		return V8_VALUE_INT, GO_VALUE_INT16
-	case "int32":
-		return V8_VALUE_INT, GO_VALUE_INT32
-	case "int64":
-		return V8_VALUE_INT, GO_VALUE_INT64
-	case "float32":
-		return V8_VALUE_DOUBLE, GO_VALUE_FLOAT32
-	case "float64":
-		return V8_VALUE_DOUBLE, GO_VALUE_FLOAT64
-	case "bool":
-		return V8_VALUE_BOOLEAN, GO_VALUE_BOOL
-	case "EefError":
-		return V8_VALUE_EXCEPTION, GO_VALUE_EXCEPTION
-	default:
-		return -1, -1
-	}
-}
-
-func FuncParamJsTypeStr(jsValue V8_JS_VALUE_TYPE) string {
-	switch jsValue {
-	case V8_VALUE_STRING:
-		return "string"
-	case V8_VALUE_INT:
-		return "int"
-	case V8_VALUE_DOUBLE:
-		return "double"
-	case V8_VALUE_BOOLEAN:
-		return "boolean"
-	case V8_VALUE_EXCEPTION:
-		return "EefError"
-	default:
-		return ""
-	}
-}
-
-func FuncParamGoTypeStr(jsValue GO_VALUE_TYPE) string {
-	switch jsValue {
-	case GO_VALUE_STRING:
-		return "string"
-	case GO_VALUE_INT:
-		return "int"
-	case GO_VALUE_INT8:
-		return "int8"
-	case GO_VALUE_INT16:
-		return "int16"
-	case GO_VALUE_INT32:
-		return "int32"
-	case GO_VALUE_INT64:
-		return "int64"
-	case GO_VALUE_FLOAT32:
-		return "float32"
-	case GO_VALUE_FLOAT64:
-		return "float64"
-	case GO_VALUE_BOOL:
-		return "bool"
-	case GO_VALUE_EXCEPTION:
-		return "EefError"
-	default:
-		return ""
-	}
-}
-
-func CopyBytePtr(bytePtr uintptr, low, high int) []byte {
-	var size = high - low
-	var data = make([]byte, size, size)
-	for i := low; i < high; i++ {
-		data[i-low] = *(*byte)(unsafe.Pointer(bytePtr + (uintptr(i))))
-	}
-	return data
 }
 
 func IntToBytes(i int) []byte {
@@ -570,11 +247,37 @@ func IntToBytes(i int) []byte {
 	return nil
 }
 
+func UIntToBytes(i uint) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if IntSize == IntSize32 {
+		if err := binary.Write(buf, binary.BigEndian, uint32(i)); err == nil {
+			return buf.Bytes()
+		}
+	} else {
+		if err := binary.Write(buf, binary.BigEndian, uint64(i)); err == nil {
+			return buf.Bytes()
+		}
+	}
+	return nil
+}
+
 func Int8ToBytes(i int8) []byte {
 	return []byte{byte(i)}
 }
 
+func UInt8ToBytes(i uint8) []byte {
+	return []byte{byte(i)}
+}
+
 func Int16ToBytes(i int16) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
+func UInt16ToBytes(i uint16) []byte {
 	buf := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
 		return buf.Bytes()
@@ -590,7 +293,23 @@ func Int32ToBytes(i int32) []byte {
 	return nil
 }
 
+func UInt32ToBytes(i uint32) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
 func Int64ToBytes(i int64) []byte {
+	buf := bytes.NewBuffer([]byte{})
+	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
+		return buf.Bytes()
+	}
+	return nil
+}
+
+func UInt64ToBytes(i uint64) []byte {
 	buf := bytes.NewBuffer([]byte{})
 	if err := binary.Write(buf, binary.BigEndian, i); err == nil {
 		return buf.Bytes()
@@ -607,12 +326,34 @@ func BytesToInt(b []byte) int {
 	return int(i)
 }
 
+func BytesToUInt(b []byte) uint {
+	var i uint64
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return uint(i)
+}
+
 func ByteToInt8(b byte) int8 {
 	return int8(b)
 }
 
+func ByteToUInt8(b byte) uint8 {
+	return uint8(b)
+}
+
 func BytesToInt16(b []byte) int16 {
 	var i int16
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
+func BytesToUInt16(b []byte) uint16 {
+	var i uint16
 	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
 	if err != nil {
 		return 0
@@ -629,8 +370,26 @@ func BytesToInt32(b []byte) int32 {
 	return i
 }
 
+func BytesToUInt32(b []byte) uint32 {
+	var i uint32
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
 func BytesToInt64(b []byte) int64 {
 	var i int64
+	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
+	if err != nil {
+		return 0
+	}
+	return i
+}
+
+func BytesToUInt64(b []byte) uint64 {
+	var i uint64
 	err := binary.Read(bytes.NewReader(b), binary.BigEndian, &i)
 	if err != nil {
 		return 0
@@ -746,7 +505,7 @@ func ArrayIndexOf[T any](array []T, a interface{}) int {
 	return -1
 }
 
-// 获取指针的指针的地址
+// GetInstancePtr 获取指针的指针的地址
 func GetInstancePtr(ptr uintptr) unsafe.Pointer {
 	ptr = *(*uintptr)(unsafe.Pointer(ptr))
 	return unsafe.Pointer(ptr)
@@ -760,4 +519,25 @@ func GoroutineID() (id uint64) {
 		id = id*10 + uint64(buf[i]&15)
 	}
 	return id
+}
+
+func GoStr(ptr uintptr) string {
+	if ptr == 0 {
+		return ""
+	}
+	resultString := (*reflect.StringHeader)(unsafe.Pointer(ptr))
+	if resultString == nil || resultString.Len <= 0 {
+		return ""
+	}
+	return *(*string)(unsafe.Pointer(resultString))
+
+}
+func string2bytes1(s string) []byte {
+	stringHeader := (*reflect.StringHeader)(unsafe.Pointer(&s))
+	var b []byte
+	pbytes := (*reflect.SliceHeader)(unsafe.Pointer(&b))
+	pbytes.Data = stringHeader.Data
+	pbytes.Len = stringHeader.Len
+	pbytes.Cap = stringHeader.Len
+	return b
 }

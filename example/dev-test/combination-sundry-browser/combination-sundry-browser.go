@@ -13,10 +13,10 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/example/dev-test/combination-sundry-browser/src"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/example/dev-test/combination-sundry-browser/src"
+	"github.com/energye/energy/v2/logger"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
 //go:embed libs

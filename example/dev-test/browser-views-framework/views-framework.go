@@ -13,8 +13,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -23,12 +23,11 @@ var resources embed.FS
 
 func main() {
 	cef.GlobalInit(nil, &resources)
-	fmt.Println("main", common.Args.ProcessType())
+	fmt.Println("main", process.Args.ProcessType())
 
-	config := cef.NewApplicationConfig()
-	config.SetMultiThreadedMessageLoop(false)
-	config.SetExternalMessagePump(false)
-	application := cef.NewCEFApplication(config)
+	application := cef.NewApplication()
+	application.SetMultiThreadedMessageLoop(false)
+	application.SetExternalMessagePump(false)
 	application.SetOnContextInitialized(func() {
 		fmt.Println("OnContextInitialized()")
 		component := lcl.NewComponent(nil)
@@ -69,15 +68,15 @@ func main() {
 	//application.SetOnGetDefaultClient(func(client *cef.ICefClient) {
 	//	fmt.Println("OnGetDefaultClient")
 	//})
-	var process bool
-	if !common.Args.IsMain() {
-		process = application.StartSubProcess()
+	var processType bool
+	if !process.Args.IsMain() {
+		processType = application.StartSubProcess()
 	} else {
-		process = application.StartMainProcess()
+		processType = application.StartMainProcess()
 		application.RunMessageLoop()
 	}
-	fmt.Println("application.StartMainProcess()", process)
-	if process {
+	fmt.Println("application.StartMainProcess()", processType)
+	if processType {
 		fmt.Println("application.RunMessageLoop()")
 	}
 }

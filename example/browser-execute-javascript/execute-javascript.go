@@ -3,8 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/golcl/lcl"
 	"time"
 )
 
@@ -15,7 +16,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/execute-javascript.html"
 	cef.BrowserWindow.Config.Title = "Energy - execute-javascript"
@@ -32,7 +33,16 @@ func main() {
 		//定时执行web js
 		go timeTask()
 	})
-
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		window.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+			var jsCode = `
+(function(){
+	console.log("执行");
+})();
+`
+			window.Chromium().ExecuteJavaScript(jsCode, "", 0)
+		})
+	})
 	//运行应用
 	cef.Run(cefApp)
 }

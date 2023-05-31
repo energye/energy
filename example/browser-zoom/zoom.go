@@ -3,10 +3,11 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/consts"
-	"github.com/energye/energy/ipc"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
 //go:embed resources
@@ -16,7 +17,7 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication(nil)
+	cefApp := cef.NewApplication()
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -30,22 +31,20 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	ipc.IPC.Browser().SetOnEvent(func(event ipc.IEventOn) {
-		event.On("zoom-inc", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_INC)
-			fmt.Println("zoom-inc")
-		})
-		event.On("zoom-dec", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
-			fmt.Println("zoom-dec")
-		})
-		event.On("zoom-reset", func(context ipc.IIPCContext) {
-			bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
-			bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
-			fmt.Println("zoom-reset")
-		})
+	ipc.On("zoom-inc", func(context context.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_INC)
+		fmt.Println("zoom-inc")
+	})
+	ipc.On("zoom-dec", func(context context.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_DEC)
+		fmt.Println("zoom-dec")
+	})
+	ipc.On("zoom-reset", func(context context.IContext) {
+		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
+		bw.Chromium().BrowserZoom(consts.ZOOM_RESET)
+		fmt.Println("zoom-reset")
 	})
 	//运行应用
 	cef.Run(cefApp)

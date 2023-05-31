@@ -35,10 +35,26 @@
             for (var i = 0; i < 100000; i++) {
                 strData += "[" + i + "]";
             }
-            ipc.emit('go-on-event-demo-return', ['传递的数据:' + strData, 99999, false, 9999.999,"参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5参数5"], function (data) {
+            ipc.emit('go-on-event-demo-return', ['传递的数据:' + strData, 99999, false, 9999.999, "这是第五个参数"], function (data) {
                 writeMessage("data-length: " + data.length)
                 writeMessage("data: " + data)
             })
+        }
+
+        // 在Go中监听一个事件, 不带返回值
+        // 使用形参接收参数
+        // 在JS中入参类型必须相同
+        function goOnEventDemoArgument() {
+            ipc.emit('go-on-event-demo-argument', [100, '字符串-Energy', 1000.001, true, "字符串"]);
+        }
+
+        // 在Go中监听一个事件, 带返回值
+        // 使用形参接收参数
+        // 在JS中入参类型必须相同
+        function goOnEventDemoArgumentReturn() {
+            ipc.emit('go-on-event-demo-argument-return', [100, '字符串-Energy', 1000.001, true, "字符串"], function (result) {
+                writeMessage("result: " + result)
+            });
         }
     </script>
 </head>
@@ -46,6 +62,8 @@
 Go中监听事件，JS中调用<br>
 <button onclick="goOnEventDemo()">go-on-event-demo</button>
 <button onclick="goOnEventDemoReturn()">go-on-event-demo-return</button>
+<button onclick="goOnEventDemoArgument()">go-on-event-demo-argument</button>
+<button onclick="goOnEventDemoArgumentReturn()">go-on-event-demo-argument-return</button>
 <div id="message"></div>
 </body>
 </html>

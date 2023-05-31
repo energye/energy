@@ -17,7 +17,7 @@ package i18n
 import (
 	"embed"
 	"encoding/json"
-	"github.com/energye/energy/consts"
+	"github.com/energye/energy/v2/consts"
 	"io/ioutil"
 	"path/filepath"
 	"strings"

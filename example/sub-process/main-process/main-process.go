@@ -3,12 +3,12 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/cef"
-	"github.com/energye/energy/common"
-	"github.com/energye/energy/common/assetserve"
-	"github.com/energye/energy/example/sub-process/main-process/src"
-	"github.com/energye/energy/example/sub-process/vars"
-	"github.com/energye/energy/logger"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/example/sub-process/main-process/src"
+	"github.com/energye/energy/v2/logger"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/pkgs/macapp"
 	"os"
 	"path"
@@ -34,17 +34,17 @@ func main() {
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
 	//MacOS配置要在 GlobalInit 它之前
 	//特别说明MacOS：子进程不需要配置
+	wd, _ := os.Getwd()
 	if common.IsDarwin() {
 		//主进程中 主子进程方式，在这里指定子进程的执行文件
-		macapp.MacApp.SetBrowseSubprocessPath("/Users/zhangli/go/src/github.com/energye/energy/demos/demo-sub-process/sub-process/sub-process")
+		subExePath := path.Join(wd, "example", "sub-process", "sub-process", "sub-process")
+		macapp.MacApp.SetBrowseSubprocessPath(subExePath)
 	}
-	common.Args.ProcessType()
+	process.Args.ProcessType()
 	//CEF全局初始化
 	cef.GlobalInit(nil, &resources)
 	//Cef应用的配置 执行程序如果在 chromium 目录中可不配置
-	cfg := cef.NewApplicationConfig()
 	//子进程执行程序如果在 chromium 目录中可不配置
-	wd, _ := os.Getwd()
 	var subExePath string
 	if common.IsWindows() {
 		subExePath = path.Join(wd, "example", "sub-process", "sub-process", "sub-process.exe")
@@ -56,12 +56,10 @@ func main() {
 	}
 	//subExePath = path.Join(wd, "sub-process.exe")
 	println("subExePath", subExePath)
-	cfg.SetBrowseSubprocessPath(subExePath)
-	cfg.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
 	//创建Cef应用
-	cefApp := cef.NewApplication(cfg)
-	//主进程和子进程的变量绑定函数定义
-	cef.VariableBind.VariableCreateCallback(vars.VariableBind)
+	cefApp := cef.NewApplication()
+	//cefApp.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
+	cefApp.SetBrowserSubprocessPath(subExePath)
 	//主进程初始化
 	src.MainBrowserInit()
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
