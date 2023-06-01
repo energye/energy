@@ -7,7 +7,6 @@
 //
 //----------------------------------------
 
-//  CEF 字典类型 DictionaryValueRef.New()
 package cef
 
 import (

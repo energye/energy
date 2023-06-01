@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Package process Current process
 package process
 
 import "github.com/energye/energy/v2/cef/internal/process"

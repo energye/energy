@@ -8,6 +8,7 @@
 //
 //----------------------------------------
 
+// Package consts CEF const
 package consts
 
 import (

@@ -8,11 +8,11 @@
 //
 //----------------------------------------
 
-// CEF + Energy 应用程序
-
+// Package cef All CEF implementations of Energy in Go
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/cef"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
@@ -41,6 +41,8 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 			application.registerDefaultEvent()
 		}
 		application.initDefaultSettings()
+		// 将应用设置到内部实现
+		cef.SetApplication(application)
 	}
 	return application
 }

@@ -68,6 +68,7 @@ func main() {
 		cef.V8ContextRef.Current().Frame().VisitDom(visitor)
 		fmt.Println("visitor-browserId:", cef.V8ContextRef.Current().Browser().Identifier())
 		fmt.Println("visitor-frameId:", cef.V8ContextRef.Current().Frame().Identifier())
+		fmt.Println("visitor-frameId:", process.FrameId())
 
 		return process.FrameId()
 		// OtSub 仅子进程监听该事件

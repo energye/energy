@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>i18n</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        function switchZHCN() {
+            ipc.emit("switch", [1],function (result){
+                clearMsg()
+                msg("当前:", result)
+            })
+        }
+        function switchENUS() {
+            ipc.emit("switch", [2], function (result) {
+                clearMsg()
+                msg("current:", result)
+            })
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">i18n</h3></p>
+<button onclick="switchZHCN()">切换中文</button>
+<button onclick="switchENUS()">switchEN</button>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+</script>
+</html>

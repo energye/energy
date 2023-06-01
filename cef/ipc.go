@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/process"
 	"sync"
+	"time"
 )
 
 // ipc bind event name
@@ -93,15 +94,19 @@ func ipcInit() {
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 		}
+		ipc.CreateBrowserIPC()                         // Go IPC browser
+		ipc.CreateRenderIPC(0, time.Now().UnixMicro()) // Go IPC render
 	} else {
 		if process.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
+			ipc.CreateBrowserIPC() // Go IPC browser
 		} else if process.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
 				syncChan:    &ipc.SyncChan{},
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}
+			ipc.CreateRenderIPC(0, time.Now().UnixMicro()) // Go IPC render
 		}
 	}
 }

@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-//CEF PostDataElement PostDataElementRef.New
 package cef
 
 import (

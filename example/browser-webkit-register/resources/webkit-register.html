@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webkit-register</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        function SetMyParam() {
+            test.myparam = document.getElementById("newvalue").value;
+        }
+
+        function GetMyParam() {
+            msg("GetMyParam", test.myparam);
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">webkit-register</h3>
+</p>
+<input id="newvalue" value="new value"/>
+<button onclick="SetMyParam()">Set myparam value</button>
+<button onclick="GetMyParam()">Get myparam value</button>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+</script>
+</html>

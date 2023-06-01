@@ -9,6 +9,7 @@
 //----------------------------------------
 
 // Windows 消息
+
 package consts
 
 // WM_NCHITTEST constants

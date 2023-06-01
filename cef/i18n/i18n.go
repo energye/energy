@@ -8,10 +8,9 @@
 //
 //----------------------------------------
 
-// Package i18n 多语言资源
-//  资源使用文件加载
-//  文件名格式 locale.[lang].json | locale.[lang].ini => locale.en-US.json | locale.zh-CN.ini
-//  默认 zh_CN
+// Package i18n Multilingual resources
+//  Resource usage file loading
+//  File name format: locale.[lang].json | locale.[lang].ini => locale.en-US.json | locale.zh-CN.ini
 package i18n
 
 import (
@@ -22,8 +21,6 @@ import (
 	"path/filepath"
 	"strings"
 )
-
-type ResType int8 // 资源加载方式
 
 var (
 	currentLang  consts.LANGUAGE
@@ -53,6 +50,10 @@ func SetLocalFS(localFS *embed.FS, localFSPath string) {
 //  切换语言
 //	默认先在内置FS中加载
 func Switch(lang consts.LANGUAGE) {
+	if currentLang == lang {
+		// 如果当前语言和切换语言一样
+		return
+	}
 	currentLang = lang
 	resources = make(map[string]string, 0)
 	if lang == consts.LANGUAGE_zh_CN {

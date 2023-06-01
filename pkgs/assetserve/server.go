@@ -15,6 +15,7 @@
 //		2. 编译时 使用 -ldflags "-s -w" 去除调试信息和符号
 //		3. 使用 upx 工具压缩执行文件
 //	最好是 2 和 3 配合使用
+
 package assetserve
 
 import (

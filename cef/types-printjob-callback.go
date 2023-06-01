@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-// PDF 打印回调 PdfPrintCallbackRef.New
 package cef
 
 import (

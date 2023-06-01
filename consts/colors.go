@@ -9,6 +9,7 @@
 //----------------------------------------
 
 // CEF & LCL Color
+
 package consts
 
 import (

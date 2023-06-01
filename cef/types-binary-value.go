@@ -15,6 +15,7 @@
 //  Go: 创建并绑定 ICefBinaryValue 对象名称: myobj
 //  JavaScript: let obj = new Uint8Array(window.myobj);
 //  		    console.log(obj)
+
 package cef
 
 import (

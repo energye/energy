@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-// CEF 集合类型 ListValueRef.New
 package cef
 
 import (

@@ -15,6 +15,7 @@
 package ipc
 
 import (
+	"github.com/energye/energy/v2/cef/internal/cef"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/cef/ipc/target"
@@ -95,7 +96,7 @@ func On(name string, fn any, options ...types.OnOptions) {
 		return
 	}
 	var isOn = false
-	if options != nil && len(options) > 0 {
+	if options != nil && len(options) > 0 && !cef.Application().SingleProcess() {
 		option := options[0]
 		if option.OnType == types.OtAll {
 			isOn = true

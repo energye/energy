@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -42,10 +41,7 @@ func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string)
 //		code: js code
 //		handler: 处理器, 根据本地函数名回调该处理器
 func RegisterExtension(name, code string, handler *ICefV8Handler) {
-	if isInternalBind(name) {
-		return
-	}
-	registerExtension(fmt.Sprintf("%s/%s", internalV8Bind, name), code, handler)
+	registerExtension(name, code, handler)
 }
 
 func registerExtension(name, code string, handler *ICefV8Handler) {

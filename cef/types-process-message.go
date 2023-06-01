@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-// CEF 进程消息 ProcessMessageRef.New()
 package cef
 
 import (

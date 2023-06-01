@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-// CEF Image ImageRef.New
 package cef
 
 import (

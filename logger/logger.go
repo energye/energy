@@ -8,8 +8,7 @@
 //
 //----------------------------------------
 
-//简单的日志输出
-
+// Package logger Simple log output
 package logger
 
 import (

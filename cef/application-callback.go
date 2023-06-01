@@ -24,9 +24,9 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	process.Current.SetFrameId(frame.Identifier())                               // 当前进程 frameId
 	ipc.RenderChan().SetRealityChannel(browser.Identifier(), frame.Identifier()) // 设置并更新真实的通道ID
 	ipcRender.registerGoSyncReplayEvent()                                        // render ipc
-	bindRender.registerContextEvent()                                            // TODO render bind
-	ipcRender.makeIPC(context)                                                   // render ipc make
-	makeProcess(browser, frame, context)                                         // process make
+	//bindRender.registerContextEvent()                                            // TODO render bind
+	ipcRender.makeIPC(context)           // render ipc make
+	makeProcess(browser, frame, context) // process make
 }
 
 // appMainRunCallback 应用运行 - 默认实现

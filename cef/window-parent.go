@@ -8,8 +8,6 @@
 //
 //----------------------------------------
 
-// CEFWindowParent组件
-// Windows
 package cef
 
 import (

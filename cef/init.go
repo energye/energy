@@ -66,6 +66,6 @@ func v8init() {
 		//ipc初始化
 		ipcInit()
 		//bind初始化
-		bindInit()
+		//bindInit()
 	}
 }

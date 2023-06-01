@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+// Package imports Dynamic Library Import Based on LCL
+// You can also import and add custom dynamic libraries here
 package imports
 
 import (
