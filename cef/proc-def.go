@@ -645,6 +645,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_VisitURLCookies", 0),
 		dllimports.NewEnergyImport("CEFChromium_DeleteCookies", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetCookie", 0),
+		dllimports.NewEnergyImport("CEFChromium_FlushCookieStore", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetProxy", 0),
 		dllimports.NewEnergyImport("CEFChromium_UpdatePreferences", 0),
 		dllimports.NewEnergyImport("CEFChromium_ExecuteDevToolsMethod", 0),

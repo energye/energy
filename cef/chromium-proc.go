@@ -70,6 +70,7 @@ type IChromiumProc interface {
 		secure, httponly, hasExpires bool,
 		creation, lastAccess, expires time.Time,
 		sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32)
+	FlushCookieStore(flushImmediately bool) bool // flushImmediately = true
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
@@ -402,6 +403,10 @@ func (m *TCEFChromium) SetCookie(url, name, value, domain, path string,
 	creation, lastAccess, expires time.Time,
 	sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32) {
 	_CEFChromium_SetCookie(m.Instance(), url, name, value, domain, path, secure, httponly, hasExpires, creation, lastAccess, expires, sameSite, priority, aSetImmediately, aID)
+}
+
+func (m *TCEFChromium) FlushCookieStore(flushImmediately bool) bool {
+	return _CEFChromium_FlushCookieStore(m.Instance(), flushImmediately)
 }
 
 func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
@@ -1027,6 +1032,12 @@ func _CEFChromium_SetCookie(instance uintptr, url, name, value, domain, path str
 	}
 	imports.Proc(internale_CEFChromium_SetCookie).Call(instance, uintptr(unsafe.Pointer(cCookie)))
 	cCookie = nil
+}
+
+// TCEFChromium  _CEFChromium_FlushCookieStore
+func _CEFChromium_FlushCookieStore(instance uintptr, flushImmediately bool) bool {
+	r1, _, _ := imports.Proc(internale_CEFChromium_FlushCookieStore).Call(instance, api.PascalBool(flushImmediately))
+	return api.GoBool(r1)
 }
 
 // TCEFChromium  _CEFChromium_SetProxy

@@ -1332,3 +1332,18 @@ const (
 	DOM_NODE_TYPE_DOCUMENT_TYPE
 	DOM_NODE_TYPE_DOCUMENT_FRAGMENT
 )
+
+type TCefClearDataStorageTypes = types.Int32
+
+const (
+	CdstAppCache TCefClearDataStorageTypes = iota
+	CdstCookies
+	CdstFileSystems
+	CdstIndexeddb
+	CdstLocalStorage
+	CdstShaderCache
+	CdstWebsql
+	CdstServiceWorkers
+	CdstCacheStorage
+	CdstAll // default
+)

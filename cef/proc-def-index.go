@@ -645,6 +645,7 @@ const (
 	internale_CEFChromium_VisitURLCookies
 	internale_CEFChromium_DeleteCookies
 	internale_CEFChromium_SetCookie
+	internale_CEFChromium_FlushCookieStore
 	internale_CEFChromium_SetProxy
 	internale_CEFChromium_UpdatePreferences
 	internale_CEFChromium_ExecuteDevToolsMethod

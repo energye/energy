@@ -64,7 +64,7 @@ func (m *ICefCookieVisitor) SetOnVisit(fn cookieOnVisit) {
 
 // ************************** events ************************** //
 
-type cookieOnVisit func(cookie *ICefCookie) bool
+type cookieOnVisit func(cookie *ICefCookie) (deleteCookie, result bool)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -74,6 +74,8 @@ func init() {
 			creation := *(*float64)(common.GetParamPtr(cookie.creation, 0))
 			lastAccess := *(*float64)(common.GetParamPtr(cookie.lastAccess, 0))
 			expires := *(*float64)(common.GetParamPtr(cookie.expires, 0))
+			deleteCookiePtr := (*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0))
+			var deleteCookie bool
 			iCookie := &ICefCookie{
 				Url:          api.GoStr(cookie.url),
 				Name:         api.GoStr(cookie.name),
@@ -93,7 +95,8 @@ func init() {
 				DeleteCookie: *(*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0)),
 			}
 			result := (*bool)(getInstance(getVal(1)))
-			*result = fn.(cookieOnVisit)(iCookie)
+			deleteCookie, *result = fn.(cookieOnVisit)(iCookie)
+			*deleteCookiePtr = deleteCookie
 		default:
 			return false
 		}
