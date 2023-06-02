@@ -116,7 +116,7 @@ func (m *ICefPrintSettings) SetPageRanges(ranges []TCefRange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintSettings_SetPageRanges).Call(m.Instance(), uintptr(unsafe.Pointer(&ranges[0])), uintptr(int32(len(ranges))))
+	imports.Proc(internale_CefPrintSettings_SetPageRanges).Call(m.Instance(), uintptr(unsafe.Pointer(&ranges)), uintptr(int32(len(ranges))))
 }
 
 func (m *ICefPrintSettings) GetPageRangesCount() uint32 {
