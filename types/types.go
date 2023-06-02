@@ -33,7 +33,7 @@ type Float32 float32
 type Float64 float64
 type Single = Float32
 type PChar = String
-type TCefColor = UInt16
+type TCefColor = UInt32
 type Integer = Int32
 type LongInt = Int32
 type NativeUInt = UInt32
