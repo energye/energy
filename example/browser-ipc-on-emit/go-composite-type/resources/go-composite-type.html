@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>go-composite-type</title>
+    <script type="application/javascript">
+        function getUserInfoStruct() {
+            ipc.emit('userInfo-struct', function (result1, result2) {
+                clearMsg();
+                writeMsg("result1-struct:", JSON.stringify(result1));
+                writeMsg("<br>");
+                writeMsg("result2-struct:", JSON.stringify(result2));
+            })
+        }
+        function getUserInfoMap() {
+            ipc.emit('userInfo-map', function (result) {
+                clearMsg();
+                writeMsg("result-map:", JSON.stringify(result));
+            })
+        }
+        function getUserInfoSlice() {
+            ipc.emit('userInfo-slice', function (result1, result2) {
+                clearMsg();
+                writeMsg("result1-slice:", JSON.stringify(result1));
+                writeMsg("<br>");
+                writeMsg("result2-slice:", JSON.stringify(result2));
+            })
+        }
+
+        function setUserInfo() {
+            //测试1, 如果未传递参数, 接收参数为当前类型的默认值
+            ipc.emit('setUserInfo', [])
+
+            //测试2, 传递参数
+            // map 的key必须为string类型, value 不允许为指针, 否则参数接收失败
+            // 结构类型不允许为指针, 否则参数接收失败
+            let user = {"UserInfo":{"Phone":"888-999-000","Addr":"银河系-猎户座旋臂(离中心远,离边缘近)-太阳系第三环总体位置,离银棒(中心)","HeadPicture":"https://www.demo.com/head.png","Height":800,"Weight":800},"Name":"张三","Age":66,"Income":99988.0009,"Sex":true}
+            let info = {"Height":800,"Weight":800,"Phone":"888-999-000","Addr":"银河系-猎户座旋臂(离中心远,离边缘近)-太阳系第三环总体位置,离银棒(中心)","HeadPicture":"https://www.demo.com/head.png"}
+            let userMap = {"zhangsan-1":{"Name":"张三1","Age":66,"Income":99988.0009,"Sex":true,"UserInfo":{"Addr":"银河系-猎户座旋臂(离中心远,离边缘近)-太阳系第三环总体位置,离银棒(中心)","HeadPicture":"https://www.demo.com/head.png","Height":800,"Weight":800,"Phone":"888-999-000"}},"zhangsan-2":{"Sex":true,"UserInfo":{"HeadPicture":"https://www.demo.com/head.png","Height":800,"Weight":800,"Phone":"888-999-000","Addr":"银河系-猎户座旋臂(离中心远,离边缘近)-太阳系第三环总体位置,离银棒(中心)"},"Name":"张三2","Age":66,"Income":99988.0009},"zhangsan-3":{"Sex":true,"UserInfo":{"Addr":"银河系-猎户座旋臂(离中心远,离边缘近)-太阳系第三环总体位置,离银棒(中心)","HeadPicture":"https://www.demo.com/head.png","Height":800,"Weight":800,"Phone":"888-999-000"},"Name":"张三3","Age":66,"Income":99988.0009}}
+            ipc.emit('setUserInfo', [user, info, userMap])
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+在这个示例中演示了复合类型参数<br>
+包含 struct slice map<br>
+返回值 可以返回多个参数<br>
+map-json 字段无序需要注意
+<br><br>
+<button onclick="getUserInfoStruct()">getUserInfoStruct</button>
+<button onclick="getUserInfoMap()">getUserInfoMap</button>
+<button onclick="getUserInfoSlice()">getUserInfoSlice</button>
+<br>
+<br>
+<button onclick="setUserInfo()">setUserInfo</button>
+
+<div id="message"></div>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("message");
+
+    function writeMsg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+
+</script>
+</html>
