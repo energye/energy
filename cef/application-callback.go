@@ -24,21 +24,17 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	process.Current.SetFrameId(frame.Identifier())                               // 当前进程 frameId
 	ipc.RenderChan().SetRealityChannel(browser.Identifier(), frame.Identifier()) // 设置并更新真实的通道ID
 	ipcRender.registerGoSyncReplayEvent()                                        // render ipc
-	//bindRender.registerContextEvent()                                            // TODO render bind
-	ipcRender.makeIPC(context)           // render ipc make
-	makeProcess(browser, frame, context) // process make
+	ipcRender.makeIPC(context)                                                   // render ipc make
+	makeProcess(browser, frame, context)                                         // process make
 }
 
 // appMainRunCallback 应用运行 - 默认实现
 func appMainRunCallback() {
 	ipcBrowser.registerEvent() // browser ipc
-	// bindBrowser.registerFieldBindEvent() // TODO browser bind
 }
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	// TODO VF 窗口还有问题
-	//bindRender.registerFieldBindResultEvent() // render webkit get binds
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

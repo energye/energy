@@ -12,14 +12,15 @@
 package autoupdate
 
 var (
-	isCheckUpdate = true
+	// 检查更新开关, 默认关闭
+	isCheckUpdate = false
 )
 
 // CheckUpdate
 //	检查更新, isCheckUpdate 为true时
 func CheckUpdate() {
 	if isCheckUpdate {
-
+		go check()
 	}
 }
 
@@ -31,6 +32,10 @@ func IsCheckUpdate(v bool) {
 
 func UpdateLog() []string {
 	return nil
+}
+
+func check() {
+
 }
 
 func updatePrompt() {
