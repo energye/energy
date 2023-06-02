@@ -13,31 +13,32 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/version"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 )
 
-var (
-	cef_version       string
-	lib_build_version string
-)
+// defInit
+//	GlobalInit
+func defInit() {
+	// Set pascal lib build version
+	r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
+	version.SetLibBuildVersion(api.GoStr(r1))
+}
+
+// EnergyVersion 返回 Energy 版本
+func EnergyVersion() string {
+	return version.Version()
+}
 
 // CEFVersion 返回CEF版本
 func CEFVersion() string {
-	if cef_version == "" {
-		r1, _, _ := imports.Proc(internale_CEFVersion).Call()
-		cef_version = api.GoStr(r1)
-	}
-	return cef_version
+	return version.CEFVersion()
 }
 
 // LibBuildVersion 返回lib-lcl构建版本
 func LibBuildVersion() string {
-	if lib_build_version == "" {
-		r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
-		lib_build_version = api.GoStr(r1)
-	}
-	return lib_build_version
+	return version.LibBuildVersion()
 }
 
 // setMacOSXCommandLine

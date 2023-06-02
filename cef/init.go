@@ -46,9 +46,13 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	if energyEnv != "" {
 		macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(energyEnv))
 	}
+	// golcl
 	inits.Init(libs, resources)
-	//macos的命令行设置
+	// def
+	defInit()
+	// macos command line
 	setMacOSXCommandLine(api.PascalStr(Args.CommandLine()))
+	// main thread run call
 	applicationQueueAsyncCallInit()
 	//应用低层出错异常捕获
 	lcl.Application.SetOnException(func(sender lcl.IObject, e *lcl.Exception) {
