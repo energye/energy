@@ -13,10 +13,9 @@ package version
 
 // Current Branch Version
 var (
-	version         = "2.0.1-beta" // energy
-	libVersion      = "2.0.1"      // lib-lcl
-	cefVersion      = "1.109.18"   // cef framework
-	libBuildVersion = ""           // pascal lib build
+	version         = "2.0.1-beta" // golang energy
+	libVersion      = ""           // pascal lib-lcl
+	libBuildVersion = ""           // pascal lib-lcl build
 )
 
 // Version return energy version
@@ -29,9 +28,9 @@ func LibVersion() string {
 	return libVersion
 }
 
-// CEFVersion return cef framework version
-func CEFVersion() string {
-	return cefVersion
+// SetLibVersion Set pascal lib-lcl version
+func SetLibVersion(version string) {
+	libVersion = version
 }
 
 // LibBuildVersion return pascal lib build version

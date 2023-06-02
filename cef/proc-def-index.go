@@ -25,7 +25,7 @@ const (
 	//null nil
 	internale_null_nil = iota
 	// CEF
-	internale_CEFVersion
+	internale_LibVersion
 	internale_LibBuildVersion
 	internale_CEF_Win_CreateRectRgn
 	internale_CEF_Win_SetRectRgn

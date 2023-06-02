@@ -21,24 +21,16 @@ import (
 // defInit
 //	GlobalInit
 func defInit() {
-	// Set pascal lib build version
-	r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
-	version.SetLibBuildVersion(api.GoStr(r1))
-}
-
-// EnergyVersion 返回 Energy 版本
-func EnergyVersion() string {
-	return version.Version()
-}
-
-// CEFVersion 返回CEF版本
-func CEFVersion() string {
-	return version.CEFVersion()
-}
-
-// LibBuildVersion 返回lib-lcl构建版本
-func LibBuildVersion() string {
-	return version.LibBuildVersion()
+	{
+		// Set pascal lib-lcl version
+		r1, _, _ := imports.Proc(internale_LibVersion).Call()
+		version.SetLibVersion(api.GoStr(r1))
+	}
+	{
+		// Set pascal lib-lcl build version
+		r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
+		version.SetLibBuildVersion(api.GoStr(r1))
+	}
 }
 
 // setMacOSXCommandLine

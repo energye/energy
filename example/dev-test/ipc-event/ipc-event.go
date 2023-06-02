@@ -38,6 +38,9 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp = cef.NewApplication()
+	fmt.Println("TotalSystemMemory", cefApp.TotalSystemMemory(), cefApp.UsedMemory(), cefApp.SystemMemoryLoad())
+	fmt.Println("CEFVersion", cefApp.LibCefVersion(), cefApp.ChromeVersion(), cefApp.ApiHashUniversal())
+	fmt.Println("LibVersion:", cefApp.LibVersion(), "LibBuildVersion:", cefApp.LibBuildVersion())
 	i18n.SetLocalFS(&resources, "resources")
 	i18n.Switch(consts.LANGUAGE_zh_CN)
 	//cefApp.SetEnableGPU(true)
