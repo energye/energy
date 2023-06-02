@@ -22,7 +22,7 @@ func main() {
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		event.ChromiumEvent().SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
 			fmt.Println("OnLoadEnd")
 			var (
 				underlines                       []*cef.TCefCompositionUnderline
@@ -46,6 +46,7 @@ func main() {
 			replacementRange = &cef.TCefRange{From: 50, To: 50}
 			selectionRange = &cef.TCefRange{From: 150, To: 150}
 			window.Chromium().IMESetComposition("文本", underlines, replacementRange, selectionRange)
+			//window.Chromium().IMECommitText()
 		})
 	})
 	//运行应用

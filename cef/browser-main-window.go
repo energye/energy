@@ -278,6 +278,10 @@ func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
 	}
 }
 
+func (m *BrowserEvent) ChromiumEvent() IChromiumEvent {
+	return m.chromium
+}
+
 // BrowserEvent.SetOnWidgetCompMsg windows
 func (m *BrowserEvent) SetOnWidgetCompMsg(event chromiumEventOnCompMsg) {
 	if Args.IsMain() {
