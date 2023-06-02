@@ -17,12 +17,12 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
-	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	// 在主窗口初始化时做一些事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		// 使用右键菜单切换需要代理的 url s
+		// 使用右键菜单切换需要代理的 url
 		var (
 			loadEnergyUrl consts.MenuId
 			loadBaiduUrl  consts.MenuId
