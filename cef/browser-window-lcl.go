@@ -714,9 +714,9 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 		}
 		if m.chromiumBrowser != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
-		}
-		if m.chromiumBrowser.WindowParent() != nil {
-			m.chromiumBrowser.WindowParent().UpdateSize()
+			if m.chromiumBrowser.WindowParent() != nil {
+				m.chromiumBrowser.WindowParent().UpdateSize()
+			}
 		}
 	}
 }
