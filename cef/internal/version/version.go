@@ -30,7 +30,11 @@ func LibVersion() string {
 
 // SetLibVersion Set pascal lib-lcl version
 func SetLibVersion(version string) {
-	libVersion = version
+	if version == "" {
+		libVersion = "0.0.0"
+	} else {
+		libVersion = version
+	}
 }
 
 // LibBuildVersion return pascal lib build version
@@ -40,5 +44,9 @@ func LibBuildVersion() string {
 
 // SetLibBuildVersion Set pascal lib build version
 func SetLibBuildVersion(version string) {
-	libBuildVersion = version
+	if version == "" {
+		libBuildVersion = "0.0.0"
+	} else {
+		libBuildVersion = version
+	}
 }
