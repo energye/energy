@@ -70,22 +70,12 @@ type tCefBrowserSettingsPtr struct {
 	ChromeStatusBubble         uintptr //TCefState
 }
 
-type downloadItemPtr struct {
-	Id                 uintptr //int32
-	CurrentSpeed       uintptr //int64
-	PercentComplete    uintptr //int32
-	TotalBytes         uintptr //int64
-	ReceivedBytes      uintptr //int64
-	StartTime          uintptr //TDateTime
-	EndTime            uintptr //TDateTime
-	FullPath           uintptr //string
-	Url                uintptr //string
-	OriginalUrl        uintptr //string
-	SuggestedFileName  uintptr //string
-	ContentDisposition uintptr //string
-	MimeType           uintptr //string
-	IsValid            uintptr //bool
-	State              uintptr //int32
+type tCefCompositionUnderlinePtr struct {
+	Range           uintptr //*TCefRange
+	Color           uintptr //TCefColor
+	BackgroundColor uintptr // TCefColor
+	Thick           uintptr //int32
+	Style           uintptr //TCefCompositionUnderlineStyle
 }
 
 // ToPtr 转换为指针

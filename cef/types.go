@@ -964,6 +964,15 @@ type TCefPopupFeatures struct {
 	ScrollbarsVisible int32
 }
 
+// /include/internal/cef_types.h (cef_composition_underline_t)
+type TCefCompositionUnderline struct {
+	Range           TCefRange
+	Color           Cardinal
+	BackgroundColor Cardinal
+	Thick           int32
+	Style           TCefCompositionUnderlineStyle
+}
+
 // ResultString 字符串返回值
 type ResultString struct {
 	value string

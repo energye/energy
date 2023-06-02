@@ -1347,3 +1347,13 @@ const (
 	CdstCacheStorage
 	CdstAll // default
 )
+
+// /include/internal/cef_types.h (cef_composition_underline_style_t)
+type TCefCompositionUnderlineStyle int32
+
+const (
+	CEF_CUS_SOLID TCefCompositionUnderlineStyle = iota
+	CEF_CUS_DOT
+	CEF_CUS_DASH
+	CEF_CUS_NONE
+)

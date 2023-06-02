@@ -146,6 +146,41 @@ type IChromiumProc interface {
 	ZoomLevel() float64
 	SetDefaultEncoding(value string)
 	DefaultEncoding() string
+	SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value)
+	SimulateMouseWheel(deltaX, deltaY int32)
+	CloseAllConnections(closeImmediately bool) bool
+	RetrieveHTMLByFrameName(frameName string)
+	RetrieveHTMLByFrame(frame *ICefFrame)
+	RetrieveHTMLByFrameIdentifier(frameIdentifier int64)
+	RetrieveTextByFrameName(frameName string)
+	RetrieveTextByFrame(frame *ICefFrame)
+	RetrieveTextByFrameIdentifier(frameIdentifier int64)
+	ResolveHost(url string)
+	SetUserAgentOverride(userAgent, acceptLanguage, platform string)
+	ClearDataForOrigin(origin string, storageTypes ...TCefClearDataStorageTypes)
+	ClearCache()
+	ToggleAudioMuted()
+	ClipboardCopy()
+	ClipboardPaste()
+	ClipboardCut()
+	ClipboardUndo()
+	ClipboardRedo()
+	ClipboardDel()
+	SelectAll()
+	IncZoomStep()
+	DecZoomStep()
+	IncZoomPct()
+	DecZoomPct()
+	ResetZoomStep()
+	ResetZoomPct()
+	ReadZoom()
+	WasResized()
+	WasHidden(hidden bool)
+	NotifyScreenInfoChanged()
+	IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange *TCefRange)
+	IMECommitText(text string, replacementRange *TCefRange, relativeCursorPos int32)
+	IMEFinishComposingText(keepSelection bool)
+	IMECancelComposition()
 }
 
 // IsValid 实例有效
@@ -211,6 +246,9 @@ func (m *TCEFChromium) ChromiumConfig() *tCefChromiumConfig {
 }
 
 func (m *TCEFChromium) Browser() *ICefBrowser {
+	if !m.IsValid() {
+		return nil
+	}
 	if m.browser != nil && m.browser.instance != nil && m.browser.IsValid() {
 		return m.browser
 	}
@@ -221,6 +259,9 @@ func (m *TCEFChromium) Browser() *ICefBrowser {
 }
 
 func (m *TCEFChromium) BrowserById(id int32) *ICefBrowser {
+	if !m.IsValid() {
+		return nil
+	}
 	if m.idBrowsers == nil {
 		m.idBrowsers = make(map[int32]*ICefBrowser)
 	}
@@ -241,22 +282,34 @@ func (m *TCEFChromium) BrowserById(id int32) *ICefBrowser {
 }
 
 func (m *TCEFChromium) BrowserIdByIndex(index int32) int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserIdByIndex).Call(m.Instance(), uintptr(index))
 	return int32(r1)
 }
 
 func (m *TCEFChromium) BrowserCount() int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserCount).Call(m.Instance())
 	return int32(r1)
 }
 
 func (m *TCEFChromium) BrowserId() int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_BrowserId).Call(m.Instance())
 	return int32(r1)
 }
 
 // SetDefaultURL 设置默认地址
 func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
+	if !m.IsValid() {
+		return
+	}
 	if IsLinux() || IsDarwin() {
 		httpIdx := strings.Index(defaultURL, "http")
 		if httpIdx != 0 {
@@ -270,50 +323,83 @@ func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
 
 // SetEnableMultiBrowserMode 设置启用多浏览器模式
 func (m *TCEFChromium) SetEnableMultiBrowserMode(enableMultiBrowserMode bool) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_SetMultiBrowserMode(m.Instance(), enableMultiBrowserMode)
 }
 
 // LoadUrl 加载一个URL地址
 func (m *TCEFChromium) LoadUrl(url string) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_LoadURL(m.Instance(), url)
 }
 
 // LoadHtml 加载HTML
 func (m *TCEFChromium) LoadHtml(html string) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_LoadString(m.Instance(), html)
 }
 
 // StartDownload 开始下载
 func (m *TCEFChromium) StartDownload(url string) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_StartDownload(m.Instance(), url)
 }
 
 // DownloadImage 开始下载图片
 func (m *TCEFChromium) DownloadImage(imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_DownloadImage(m.Instance(), imageUrl, isFavicon, maxImageSize, bypassCache)
 }
 
 func (m *TCEFChromium) Reload() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_Reload(m.Instance())
 }
 
 func (m *TCEFChromium) ReloadIgnoreCache() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_ReloadIgnoreCache(m.Instance())
 }
 
 func (m *TCEFChromium) StopLoad() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_StopLoad(m.Instance())
 }
 
 func (m *TCEFChromium) ResetZoomLevel() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_ResetZoomLevel(m.Instance())
 }
 
 func (m *TCEFChromium) CloseAllBrowsers() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_CloseAllBrowses(m.Instance())
 }
 
 func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent) bool {
+	if !m.IsValid() {
+		return false
+	}
 	if window.Type() == Wht_WindowParent {
 		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
 	} else if window.Type() == Wht_LinkedWindowParent {
@@ -323,10 +409,16 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent) bool {
 }
 
 func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {
+	if !m.IsValid() {
+		return false
+	}
 	return _CEFChromium_CreateBrowserByBrowserViewComponent(m.Instance(), api.PascalStr(homePage), browserViewComponent.Instance())
 }
 
 func (m *TCEFChromium) Initialized() bool {
+	if !m.IsValid() {
+		return false
+	}
 	if m.initialized {
 		return true
 	}
@@ -335,38 +427,65 @@ func (m *TCEFChromium) Initialized() bool {
 }
 
 func (m *TCEFChromium) IsSameBrowser(browser *ICefBrowser) bool {
+	if !m.IsValid() {
+		return false
+	}
 	return _CEFChromium_IsSameBrowser(m.Instance(), browser.Instance())
 }
 
 func (m *TCEFChromium) PrintToPDF(saveFilePath string) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_PrintToPDF(m.Instance(), saveFilePath)
 }
 
 func (m *TCEFChromium) Print() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_Print(m.Instance())
 }
 
 func (m *TCEFChromium) BrowserZoom(zoom ZOOM) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_BrowserZoom(m.Instance(), zoom)
 }
 
 func (m *TCEFChromium) GoBack() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_GoBackForward(m.Instance(), BF_GOBACK)
 }
 
 func (m *TCEFChromium) GoForward() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_GoBackForward(m.Instance(), BF_GOFORWARD)
 }
 
 func (m *TCEFChromium) NotifyMoveOrResizeStarted() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_NotifyMoveOrResizeStarted(m.Instance())
 }
 
 func (m *TCEFChromium) CloseBrowser(forceClose bool) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_CloseBrowser(m.Instance(), api.PascalBool(forceClose))
 }
 
 func (m *TCEFChromium) ShowDevTools(window ICEFWindowParent) {
+	if !m.IsValid() {
+		return
+	}
 	if window == nil {
 		_CEFChromium_ShowDevTools(m.Instance())
 	} else {
@@ -375,6 +494,9 @@ func (m *TCEFChromium) ShowDevTools(window ICEFWindowParent) {
 }
 
 func (m *TCEFChromium) CloseDevTools(window ICEFWindowParent) {
+	if !m.IsValid() {
+		return
+	}
 	if window == nil {
 		_CEFChromium_CloseDevTools(m.Instance())
 	} else {
@@ -384,17 +506,26 @@ func (m *TCEFChromium) CloseDevTools(window ICEFWindowParent) {
 
 // 查看所有cookie,该函数触发 OnCookiesVisited 事件返回结果
 func (m *TCEFChromium) VisitAllCookies(id int32) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_VisitAllCookies(m.Instance(), id)
 }
 
 // 查看指针URL cookie,该函数触发 OnCookiesVisited 事件返回结果
 // url https://www.demo.com
 func (m *TCEFChromium) VisitURLCookies(url string, includeHttpOnly bool, id int32) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_VisitURLCookies(m.Instance(), url, includeHttpOnly, id)
 }
 
 // 删除所有cookie
 func (m *TCEFChromium) DeleteCookies(url, cookieName string, deleteImmediately bool) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_DeleteCookies(m.Instance(), url, cookieName, deleteImmediately)
 }
 
@@ -402,14 +533,23 @@ func (m *TCEFChromium) SetCookie(url, name, value, domain, path string,
 	secure, httponly, hasExpires bool,
 	creation, lastAccess, expires time.Time,
 	sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_SetCookie(m.Instance(), url, name, value, domain, path, secure, httponly, hasExpires, creation, lastAccess, expires, sameSite, priority, aSetImmediately, aID)
 }
 
 func (m *TCEFChromium) FlushCookieStore(flushImmediately bool) bool {
+	if !m.IsValid() {
+		return false
+	}
 	return _CEFChromium_FlushCookieStore(m.Instance(), flushImmediately)
 }
 
 func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
+	if !m.IsValid() {
+		return
+	}
 	proxy := &tCefProxyPtr{
 		ProxyType:              uintptr(cefProxy.ProxyType),
 		ProxyScheme:            uintptr(cefProxy.ProxyScheme),
@@ -425,10 +565,16 @@ func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
 }
 
 func (m *TCEFChromium) UpdatePreferences() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_UpdatePreferences(m.Instance())
 }
 
 func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+	if !m.IsValid() {
+		return
+	}
 	if dictionaryValue == nil {
 		dictionaryValue = DictionaryValueRef.New()
 	}
@@ -436,26 +582,44 @@ func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dic
 }
 
 func (m *TCEFChromium) CreateClientHandler(client *ICefClient, alsOSR bool) bool {
+	if !m.IsValid() {
+		return false
+	}
 	return api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), client.Instance(), api.PascalBool(alsOSR)))
 }
 
 func (m *TCEFChromium) SetFocus(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_SetFocus(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) SendCaptureLostEvent() {
+	if !m.IsValid() {
+		return
+	}
 	_CEFChromium_SendCaptureLostEvent(m.Instance())
 }
 
 func (m *TCEFChromium) FrameIsFocused() bool {
+	if !m.IsValid() {
+		return false
+	}
 	return api.GoBool(_CEFChromium_FrameIsFocused(m.Instance()))
 }
 
 func (m *TCEFChromium) TryCloseBrowser() bool {
+	if !m.IsValid() {
+		return false
+	}
 	return api.GoBool(_CEFChromium_TryCloseBrowser(m.Instance()))
 }
 
 func (m *TCEFChromium) BrowserHandle() types.HWND {
+	if !m.IsValid() {
+		return 0
+	}
 	if m.browserHandle == 0 {
 		m.browserHandle = types.HWND(_CEFChromium_BrowserHandle(m.Instance()))
 	}
@@ -463,6 +627,9 @@ func (m *TCEFChromium) BrowserHandle() types.HWND {
 }
 
 func (m *TCEFChromium) WidgetHandle() types.HWND {
+	if !m.IsValid() {
+		return 0
+	}
 	if m.widgetHandle == 0 {
 		m.widgetHandle = types.HWND(_CEFChromium_WidgetHandle(m.Instance()))
 	}
@@ -470,6 +637,9 @@ func (m *TCEFChromium) WidgetHandle() types.HWND {
 }
 
 func (m *TCEFChromium) RenderHandle() types.HWND {
+	if !m.IsValid() {
+		return 0
+	}
 	if m.renderHandle == 0 {
 		m.renderHandle = types.HWND(_CEFChromium_RenderHandle(m.Instance()))
 	}
@@ -477,6 +647,9 @@ func (m *TCEFChromium) RenderHandle() types.HWND {
 }
 
 func (m *TCEFChromium) SetCustomHeader(customHeader *TCustomHeader) {
+	if !m.IsValid() {
+		return
+	}
 	ptrCustomHeader := &tCustomHeader{
 		CustomHeaderName:  api.PascalStr(customHeader.CustomHeaderName),
 		CustomHeaderValue: api.PascalStr(customHeader.CustomHeaderValue),
@@ -485,6 +658,9 @@ func (m *TCEFChromium) SetCustomHeader(customHeader *TCustomHeader) {
 }
 
 func (m *TCEFChromium) CustomHeader() *TCustomHeader {
+	if !m.IsValid() {
+		return nil
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetCustomHeader).Call(m.Instance())
 	ptrCustomHeader := (*tCustomHeader)(unsafe.Pointer(r1))
 	return &TCustomHeader{
@@ -494,287 +670,470 @@ func (m *TCEFChromium) CustomHeader() *TCustomHeader {
 }
 
 func (m *TCEFChromium) SetJavascriptEnabled(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetJavascriptEnabled).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) JavascriptEnabled() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetJavascriptEnabled).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetWebRTCIPHandlingPolicy(value TCefWebRTCHandlingPolicy) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetWebRTCIPHandlingPolicy).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) WebRTCIPHandlingPolicy() TCefWebRTCHandlingPolicy {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetWebRTCIPHandlingPolicy).Call(m.Instance())
 	return TCefWebRTCHandlingPolicy(r1)
 }
 
 func (m *TCEFChromium) SetWebRTCMultipleRoutes(value TCefState) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetWebRTCMultipleRoutes).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) WebRTCMultipleRoutes() TCefState {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetWebRTCMultipleRoutes).Call(m.Instance())
 	return TCefState(r1)
 }
 
 func (m *TCEFChromium) SetWebRTCNonproxiedUDP(value TCefState) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetWebRTCNonproxiedUDP).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) WebRTCNonproxiedUDP() TCefState {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetWebRTCNonproxiedUDP).Call(m.Instance())
 	return TCefState(r1)
 }
 
 func (m *TCEFChromium) SetBatterySaverModeState(value TCefBatterySaverModeState) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetBatterySaverModeState).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) BatterySaverModeState() TCefBatterySaverModeState {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetBatterySaverModeState).Call(m.Instance())
 	return TCefBatterySaverModeState(r1)
 }
 
 func (m *TCEFChromium) SetHighEfficiencyMode(value TCefState) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetHighEfficiencyMode).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) HighEfficiencyMode() TCefState {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetHighEfficiencyMode).Call(m.Instance())
 	return TCefState(r1)
 }
 
 func (m *TCEFChromium) SetLoadImagesAutomatically(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetLoadImagesAutomatically).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) LoadImagesAutomatically() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetLoadImagesAutomatically).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetQuicAllowed(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetQuicAllowed).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) QuicAllowed() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetQuicAllowed).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetOffline(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetOffline).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) Offline() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetOffline).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetDefaultWindowInfoExStyle(exStyle types.DWORD) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetDefaultWindowInfoExStyle).Call(m.Instance(), uintptr(exStyle))
 }
 
 func (m *TCEFChromium) DefaultWindowInfoExStyle() types.DWORD {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDefaultWindowInfoExStyle).Call(m.Instance())
 	return types.DWORD(r1)
 }
 
 func (m *TCEFChromium) SetBlock3rdPartyCookies(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetBlock3rdPartyCookies).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) Block3rdPartyCookies() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetBlock3rdPartyCookies).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetAcceptCookies(cp TCefCookiePref) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAcceptCookies).Call(m.Instance(), cp.ToPtr())
 }
 
 func (m *TCEFChromium) AcceptCookies() TCefCookiePref {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAcceptCookies).Call(m.Instance())
 	return TCefCookiePref(r1)
 }
 
 func (m *TCEFChromium) SetAcceptLanguageList(languageList string) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAcceptLanguageList).Call(m.Instance(), api.PascalStr(languageList))
 }
 
 func (m *TCEFChromium) AcceptLanguageList() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAcceptLanguageList).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 func (m *TCEFChromium) SetPrintingEnabled(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetPrintingEnabled).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) PrintingEnabled() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetPrintingEnabled).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetYouTubeRestrict(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetYouTubeRestrict).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) YouTubeRestrict() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetYouTubeRestrict).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetSafeSearch(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetSafeSearch).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) SafeSearch() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetSafeSearch).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetAudioMuted(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAudioMuted).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) AudioMuted() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAudioMuted).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetDragOperations(value TCefDragOperations) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetDragOperations).Call(m.Instance(), value.ToPtr())
 }
 
 func (m *TCEFChromium) DragOperations() TCefDragOperations {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDragOperations).Call(m.Instance())
 	return TCefDragOperations(r1)
 }
 
 func (m *TCEFChromium) FrameCount() uint32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetFrameCount).Call(m.Instance())
 	return uint32(r1)
 }
 
 func (m *TCEFChromium) SetSpellCheckerDicts(value string) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetSpellCheckerDicts).Call(m.Instance(), api.PascalStr(value))
 }
 
 func (m *TCEFChromium) SpellCheckerDicts() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetSpellCheckerDicts).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 func (m *TCEFChromium) SetSpellChecking(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetSpellChecking).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) SpellChecking() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetSpellChecking).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetAlwaysOpenPDFExternally(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAlwaysOpenPDFExternally).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) AlwaysOpenPDFExternally() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAlwaysOpenPDFExternally).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetAlwaysAuthorizePlugins(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAlwaysAuthorizePlugins).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) AlwaysAuthorizePlugins() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAlwaysAuthorizePlugins).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetAllowOutdatedPlugins(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetAllowOutdatedPlugins).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) AllowOutdatedPlugins() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetAllowOutdatedPlugins).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetSendReferrer(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetSendReferrer).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) SendReferrer() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetSendReferrer).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) SetDoNotTrack(value bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetDoNotTrack).Call(m.Instance(), api.PascalBool(value))
 }
 
 func (m *TCEFChromium) DoNotTrack() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDoNotTrack).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // SetZoomStep 设置缩放步 0~255
 func (m *TCEFChromium) SetZoomStep(value int8) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetZoomStep).Call(m.Instance(), uintptr(value))
 }
 
 // ZoomStep 获取缩放步 0~255
 func (m *TCEFChromium) ZoomStep() int8 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetZoomStep).Call(m.Instance())
 	return int8(r1)
 }
 
 // SetZoomPct 设置缩放百分比
 func (m *TCEFChromium) SetZoomPct(value float64) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
 // ZoomPct 获取缩放百分比
 func (m *TCEFChromium) ZoomPct() (result float64) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_GetZoomPct).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // SetZoomLevel 设置缩放级别
 func (m *TCEFChromium) SetZoomLevel(value float64) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
 // ZoomLevel 获取缩放级别
 func (m *TCEFChromium) ZoomLevel() (result float64) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_GetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // SetDefaultEncoding 设置默认编码
 func (m *TCEFChromium) SetDefaultEncoding(value string) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SetDefaultEncoding).Call(m.Instance(), api.PascalStr(value))
 }
 
 // DefaultEncoding 获取默认编码
 func (m *TCEFChromium) DefaultEncoding() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(internale_CEFChromium_GetDefaultEncoding).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 // SendProcessMessage 发送进程消息
 func (m *TCEFChromium) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
 	message.Free()
 }
 
 // SendProcessMessageForJSONBytes 发送进程消息
 func (m *TCEFChromium) SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message argument.IList) {
+	if !m.IsValid() {
+		return
+	}
 	if !m.initialized {
 		m.initialized = m.Initialized()
 		if !m.initialized {
@@ -800,7 +1159,266 @@ func (m *TCEFChromium) CefClient() *ICefClient {
 
 // SendProcessMessageForV8Value 发送进程消息
 func (m *TCEFChromium) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(internale_CEFChromium_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
+}
+
+func (m *TCEFChromium) SimulateMouseWheel(deltaX, deltaY int32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_SimulateMouseWheel).Call(m.Instance(), uintptr(deltaX), uintptr(deltaY))
+}
+
+func (m *TCEFChromium) CloseAllConnections(closeImmediately bool) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(internale_CEFChromium_CloseAllConnections).Call(m.Instance(), api.PascalBool(closeImmediately))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) RetrieveHTMLByFrameName(frameName string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveHTMLByFrameName).Call(m.Instance(), api.PascalStr(frameName))
+}
+
+func (m *TCEFChromium) RetrieveHTMLByFrame(frame *ICefFrame) {
+	if !m.IsValid() || !frame.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveHTMLByFrame).Call(m.Instance(), frame.Instance())
+}
+
+func (m *TCEFChromium) RetrieveHTMLByFrameIdentifier(frameIdentifier int64) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveHTMLByFrameIdentifier).Call(m.Instance(), uintptr(unsafe.Pointer(&frameIdentifier)))
+}
+
+func (m *TCEFChromium) RetrieveTextByFrameName(frameName string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveTextByFrameName).Call(m.Instance(), api.PascalStr(frameName))
+}
+
+func (m *TCEFChromium) RetrieveTextByFrame(frame *ICefFrame) {
+	if !m.IsValid() || !frame.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveTextByFrame).Call(m.Instance(), frame.Instance())
+}
+
+func (m *TCEFChromium) RetrieveTextByFrameIdentifier(frameIdentifier int64) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_RetrieveTextByFrameIdentifier).Call(m.Instance(), uintptr(unsafe.Pointer(&frameIdentifier)))
+}
+
+func (m *TCEFChromium) ResolveHost(url string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ResolveHost).Call(m.Instance(), api.PascalStr(url))
+}
+
+func (m *TCEFChromium) SetUserAgentOverride(userAgent, acceptLanguage, platform string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_SetUserAgentOverride).Call(m.Instance(), api.PascalStr(userAgent), api.PascalStr(acceptLanguage), api.PascalStr(platform))
+}
+
+func (m *TCEFChromium) ClearDataForOrigin(origin string, storageTypes ...TCefClearDataStorageTypes) {
+	if !m.IsValid() {
+		return
+	}
+	var st = CdstAll // default
+	if len(storageTypes) > 0 {
+		st = storageTypes[0]
+	}
+	imports.Proc(internale_CEFChromium_ClearDataForOrigin).Call(m.Instance(), api.PascalStr(origin), st.ToPtr())
+}
+
+func (m *TCEFChromium) ClearCache() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClearCache).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ToggleAudioMuted() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ToggleAudioMuted).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardCopy() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardCopy).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardPaste() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardPaste).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardCut() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardCut).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardUndo() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardUndo).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardRedo() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardRedo).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ClipboardDel() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ClipboardDel).Call(m.Instance())
+}
+
+func (m *TCEFChromium) SelectAll() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_SelectAll).Call(m.Instance())
+}
+
+func (m *TCEFChromium) IncZoomStep() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_IncZoomStep).Call(m.Instance())
+}
+
+func (m *TCEFChromium) DecZoomStep() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_DecZoomStep).Call(m.Instance())
+}
+
+func (m *TCEFChromium) IncZoomPct() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_IncZoomPct).Call(m.Instance())
+}
+
+func (m *TCEFChromium) DecZoomPct() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_DecZoomPct).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ResetZoomStep() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ResetZoomStep).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ResetZoomPct() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ResetZoomPct).Call(m.Instance())
+}
+
+func (m *TCEFChromium) ReadZoom() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_ReadZoom).Call(m.Instance())
+}
+
+func (m *TCEFChromium) WasResized() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_WasResized).Call(m.Instance())
+}
+
+func (m *TCEFChromium) WasHidden(hidden bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_WasHidden).Call(m.Instance(), api.PascalBool(hidden))
+}
+
+func (m *TCEFChromium) NotifyScreenInfoChanged() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_NotifyScreenInfoChanged).Call(m.Instance())
+}
+
+func (m *TCEFChromium) IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange *TCefRange) {
+	if !m.IsValid() {
+		return
+	}
+	var size = len(underlines)
+	// 在这里使用结构指针的方式将复合类型传递过去
+	underlinesPtr := make([]tCefCompositionUnderlinePtr, size, size)
+	for i := 0; i < size; i++ {
+		underlinesPtr[i] = tCefCompositionUnderlinePtr{
+			Range:           uintptr(unsafe.Pointer(&underlines[i].Range)),
+			Color:           uintptr(underlines[i].Color),
+			BackgroundColor: uintptr(underlines[i].BackgroundColor),
+			Thick:           uintptr(underlines[i].Thick),
+			Style:           uintptr(underlines[i].Style),
+		}
+	}
+	imports.Proc(internale_CEFChromium_IMESetComposition).Call(m.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(replacementRange)), uintptr(unsafe.Pointer(selectionRange)),
+		uintptr(unsafe.Pointer(&underlinesPtr[0])), uintptr(int32(size)))
+}
+
+func (m *TCEFChromium) IMECommitText(text string, replacementRange *TCefRange, relativeCursorPos int32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_IMECommitText).Call(m.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(replacementRange)), uintptr(relativeCursorPos))
+}
+
+func (m *TCEFChromium) IMEFinishComposingText(keepSelection bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_IMEFinishComposingText).Call(m.Instance(), api.PascalBool(keepSelection))
+}
+
+func (m *TCEFChromium) IMECancelComposition() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(internale_CEFChromium_IMECancelComposition).Call(m.Instance())
 }
 
 // EmitRender IPC 发送进程 消息
