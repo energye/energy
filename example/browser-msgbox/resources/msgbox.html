@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>msgbox</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        function showmsgbox() {
+            ipc.emit("showmsgbox")
+        }
+        function showmsgboxConfirm() {
+            ipc.emit("showmsgbox-confirm")
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">msgbox</h3></p>
+<p>
+    <button onclick="showmsgbox()">show msgbox</button>
+    <button onclick="showmsgboxConfirm()">show msgbox-confirm</button>
+</p>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+</script>
+</html>
