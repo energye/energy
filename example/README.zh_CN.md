@@ -1,6 +1,6 @@
 ## Energy 示例
 ### 在 Energy 中 CEF 结合 LCL 可以做出各种各样的应用
-> CEF: Html + JS + CSS 
+> CEF: HTML + JS + CSS 
 > 
 > LCL: 各种系统原生UI组件
 
