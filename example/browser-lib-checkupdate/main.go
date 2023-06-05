@@ -203,14 +203,16 @@ func main() {
 			cancelBtn.SetTop(290)
 			cancelBtn.SetHint(i18n.Resource("cancel"))
 			cancelBtn.SetOnClick(func(lcl.IObject) {
-				fmt.Println("cancel")
+				//m.Close()
 			})
 
 			//
 			updateBtn := lcl.NewImageButton(m)
 			updateBtn.SetParent(m)
 			updateBtn.SetImageCount(3)
-			updateBtn.SetAutoSize(true)
+			//updateBtn.SetAutoSize(true)
+			updateBtn.SetWidth(80)
+			updateBtn.SetHeight(50)
 			updateBtn.SetCursor(types.CrHandPoint)
 			updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
 			updateBtn.SetLeft(400)
