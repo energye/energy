@@ -6,7 +6,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef/autoupdate"
+	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/browser-lib-checkupdate/form"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
@@ -40,6 +42,9 @@ func main() {
 	imports.SetEnergyImportDefs(version)
 	// 初始化golcl
 	inits.Init(nil, &resources)
+	i18n.SetLocalFS(&resources, "resources")
+	//i18n.Switch(consts.LANGUAGE_en_US)
+	i18n.Switch(consts.LANGUAGE_zh_CN)
 	// 开启自动更新检查
 	autoupdate.IsCheckUpdate(true)
 	// 如果 liblcl 有更新该函数将被回调
@@ -60,14 +65,15 @@ func main() {
 			m.SetDoubleBuffered(true)
 			m.EnabledMinimize(false)
 			m.EnabledMaximize(false)
+			m.SetShowHint(true)
 			//m.SetFormStyle(types.FsSystemStayOnTop)
 			m.SetPosition(types.PoDesktopCenter)
 			//m.SetBorderStyle(types.BsSingle)
 			m.SetBorderStyle(types.BsNone)
 			//m.SetShowInTaskBar(types.StNever)
-			m.SetWidth(290)
+			m.SetWidth(590)
 			m.SetHeight(390)
-			m.SetCaption("lib-lcl 更新") // 自定义窗口标题
+			m.SetCaption(i18n.Resource("title")) // 自定义窗口标题
 
 			// 自定义窗口标题栏
 			m.TitlePanel = m.NewPanel()
@@ -98,26 +104,29 @@ func main() {
 			titleClose.SetAutoSize(true)
 			titleClose.SetCursor(types.CrHandPoint)
 			titleClose.Picture().LoadFromFSFile("resources/btn_close.png")
-			titleClose.SetLeft(250)
-			titleClose.SetHint("关闭")
+			titleClose.SetLeft(m.Width() - 40) //关闭按钮位置 left = 窗口宽 - 按钮图片宽
+			titleClose.SetHint(i18n.Resource("close"))
 			titleClose.SetOnClick(func(lcl.IObject) {
 				m.Close()
 			})
 
+			// 更新提醒 panel
 			m.UpdatePromptPanel = m.NewPanel()
 			m.UpdatePromptPanel.SetTop(m.TitlePanel.Height())
 			m.UpdatePromptPanel.SetWidth(m.Width())
 			m.UpdatePromptPanel.SetHeight(m.Height() - m.TitlePanel.Height())
 
-			//m.UpdateProgressPanel = m.NewPanel()
-			//m.UpdateProgressPanel.SetVisible(false)
+			// 更新进度 panel
+			m.UpdateProgressPanel = m.NewPanel()
+			m.UpdateProgressPanel.SetVisible(false)
 
 			// background
 			bgImage := lcl.NewImage(m.UpdatePromptPanel)
 			bgImage.SetParent(m.UpdatePromptPanel)
-			bgImage.SetWidth(277)
-			bgImage.SetHeight(156)
-			bgImage.Picture().LoadFromFSFile("resources/icon.png")
+			bgImage.SetWidth(271)
+			bgImage.SetHeight(60)
+			bgImage.SetLeft((m.Width() - bgImage.Width()) / 2) // 设置以窗口居中
+			bgImage.Picture().LoadFromFSFile("resources/bg.png")
 
 			// title
 			//lcl.NewImage(m.UpdateProgressPanel)
