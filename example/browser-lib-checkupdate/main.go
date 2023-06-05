@@ -193,22 +193,31 @@ func main() {
 			updateContent.Lines().Add(downUrl)
 
 			//
-			ok := lcl.NewButton(m.UpdatePromptPanel)
-			ok.SetParent(m.UpdatePromptPanel)
-			ok.SetCaption("提示")
-			ok.SetOnClick(func(sender lcl.IObject) {
-				fmt.Println("提示")
-				m.UpdatePromptPanel.SetVisible(false)
-				m.UpdateProgressPanel.SetVisible(true)
+			cancelBtn := lcl.NewImageButton(m)
+			cancelBtn.SetParent(m)
+			cancelBtn.SetImageCount(3)
+			cancelBtn.SetAutoSize(true)
+			cancelBtn.SetCursor(types.CrHandPoint)
+			cancelBtn.Picture().LoadFromFSFile("resources/btn-cancel.png")
+			cancelBtn.SetLeft(300)
+			cancelBtn.SetTop(290)
+			cancelBtn.SetHint(i18n.Resource("cancel"))
+			cancelBtn.SetOnClick(func(lcl.IObject) {
+				fmt.Println("cancel")
 			})
 
-			process := lcl.NewButton(m.UpdateProgressPanel)
-			process.SetParent(m.UpdateProgressPanel)
-			process.SetCaption("进度")
-			process.SetOnClick(func(sender lcl.IObject) {
-				fmt.Println("进度")
-				m.UpdatePromptPanel.SetVisible(true)
-				m.UpdateProgressPanel.SetVisible(false)
+			//
+			updateBtn := lcl.NewImageButton(m)
+			updateBtn.SetParent(m)
+			updateBtn.SetImageCount(3)
+			updateBtn.SetAutoSize(true)
+			updateBtn.SetCursor(types.CrHandPoint)
+			updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
+			updateBtn.SetLeft(400)
+			updateBtn.SetTop(290)
+			updateBtn.SetHint(i18n.Resource("update"))
+			updateBtn.SetOnClick(func(lcl.IObject) {
+				fmt.Println("update")
 			})
 		}
 		// run and create update form

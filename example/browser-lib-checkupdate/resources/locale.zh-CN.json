@@ -1,6 +1,8 @@
 {
   "title": "liblcl更新",
   "close": "关闭",
+  "cancel": "取消",
+  "update": "更新",
   "updateContent": "更新内容",
   "downloadURL": "更新地址"
 }
