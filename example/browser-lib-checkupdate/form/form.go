@@ -1,5 +1,3 @@
-package internal
-
 //----------------------------------------
 //
 // Copyright © yanghy. All Rights Reserved.
@@ -10,10 +8,13 @@ package internal
 //
 //----------------------------------------
 
+package form
+
 import (
 	"fmt"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/types/colors"
 )
 
 type callback func(m *UpdateForm)
@@ -23,6 +24,9 @@ var OnCreate callback
 
 type UpdateForm struct {
 	*lcl.TForm
+	TitlePanel          *lcl.TPanel
+	UpdatePromptPanel   *lcl.TPanel
+	UpdateProgressPanel *lcl.TPanel
 }
 
 func (m *UpdateForm) OnFormCreate(sender lcl.IObject) {
@@ -35,17 +39,19 @@ func (m *UpdateForm) OnFormCreate(sender lcl.IObject) {
 			OnAfter()
 		}
 	})
-	m.EnabledMinimize(false)
-	m.EnabledMaximize(false)
-	m.SetFormStyle(types.FsSystemStayOnTop)
-	m.SetPosition(types.PoDesktopCenter)
-	//m.SetBorderStyle(types.BsSingle)
-	m.SetBorderStyle(types.BsNone)
-	//m.SetShowInTaskBar(types.StNever)
-	m.SetWidth(450)
-	m.SetHeight(230)
 	if OnCreate != nil {
 		OnCreate(m)
 	}
 
+}
+
+func (m *UpdateForm) NewPanel() *lcl.TPanel {
+	var result = lcl.NewPanel(m)
+	result.SetParent(m)
+	result.SetColor(colors.ClWhite)
+	result.SetBevelInner(types.BvNone)
+	result.SetBevelOuter(types.BvNone)
+	result.SetBorderStyle(types.BsNone)
+	result.SetColor(colors.ClWhite)
+	return result
 }

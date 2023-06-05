@@ -8,14 +8,12 @@
 //
 //----------------------------------------
 
-// Package autoupdate Energy check auto update
+// Package autoupdate Energy lib-lcl check auto update
 package autoupdate
 
 import (
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
-	"github.com/energye/energy/v2/cef/autoupdate/internal"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"io/ioutil"
@@ -24,6 +22,8 @@ import (
 	"strings"
 	"time"
 )
+
+const checkURL = "https://energy.yanghy.cn/autoconfig/update.json"
 
 type LiblclCallback func(model *Model, level int)
 
@@ -79,7 +79,7 @@ func check() {
 	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}}
-	request, err := http.NewRequest("GET", internal.CheckURL, nil)
+	request, err := http.NewRequest("GET", checkURL, nil)
 	if err != nil {
 		println("energy check update http.NewRequest error:", err.Error())
 		return
@@ -126,8 +126,6 @@ func compare(current, origin string) (bool, int) {
 	}
 	cmajor, cminor, crevision := versionConvert(current)
 	omajor, ominor, orevision := versionConvert(origin)
-	fmt.Println(cmajor, cminor, crevision)
-	fmt.Println(omajor, ominor, orevision)
 	if omajor > cmajor {
 		return true, 1 // major
 	} else if ominor > cminor {
@@ -152,12 +150,4 @@ func versionConvert(ver string) (major, minor, revision int) {
 		major, _ = strconv.Atoi(vers[0])
 	}
 	return
-}
-
-func updatePrompt() {
-
-}
-
-func updateDownload() {
-
 }
