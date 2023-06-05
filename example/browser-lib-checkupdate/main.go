@@ -155,17 +155,18 @@ func main() {
 			bgImage.SetLeft((m.Width() - bgImage.Width()) / 2) // 设置以窗口居中
 			bgImage.Picture().LoadFromFSFile("resources/bg.png")
 
+			var updatePanelHeight int32 = 180
 			// 更新提醒 panel
 			m.UpdatePromptPanel = m.NewPanel()
 			m.UpdatePromptPanel.SetTop(bgImage.Top() + bgImage.Height())
 			m.UpdatePromptPanel.SetWidth(m.Width())
-			m.UpdatePromptPanel.SetHeight(m.Height() - m.UpdatePromptPanel.Top())
+			m.UpdatePromptPanel.SetHeight(updatePanelHeight)
 
 			// 更新进度 panel
 			m.UpdateProgressPanel = m.NewPanel()
 			m.UpdateProgressPanel.SetTop(bgImage.Top() + bgImage.Height())
 			m.UpdateProgressPanel.SetWidth(m.Width())
-			m.UpdateProgressPanel.SetHeight(m.Height() - m.UpdateProgressPanel.Top())
+			m.UpdateProgressPanel.SetHeight(updatePanelHeight)
 			m.UpdateProgressPanel.SetVisible(false)
 
 			// 更新内容
@@ -174,7 +175,7 @@ func main() {
 			ucw := m.Width() / 4
 			updateContent.SetWidth(ucw * 3)
 			updateContent.SetLeft((m.Width() - updateContent.Width()) / 2)
-			updateContent.SetHeight(180)
+			updateContent.SetHeight(updatePanelHeight)
 			updateContent.SetReadOnly(true)
 			updateContent.SetColor(colors.ClWhite)
 			updateContent.SetScrollBars(types.SsAutoBoth)
@@ -182,11 +183,11 @@ func main() {
 			for i, content := range updateVersion.Content {
 				updateContent.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
 			}
+			// 下载版本URL
 			liblclZipName, _ := energyLiblcl()
 			downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1)
 			downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)
 			downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)
-			fmt.Println("downUrl", downUrl)
 			updateContent.Lines().Add("")
 			updateContent.Lines().Add(i18n.Resource("downloadURL"))
 			updateContent.Lines().Add(downUrl)
