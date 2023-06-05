@@ -57,8 +57,9 @@ type Download struct {
 
 // 版本信息
 type VersionInfo struct {
-	Content []string `json:"content"` // 更新内容
-	Forced  bool     `json:"forced"`  // 强制更新, 适用当前版本的启作用
+	Content       []string `json:"content"`       // 更新内容
+	Forced        bool     `json:"forced"`        // 是否强制更新, 适用当前版本时才启作用
+	EnergyVersion string   `json:"energyVersion"` // 所属 energy 版本
 }
 
 // CheckUpdate

@@ -45,6 +45,7 @@
     "latest": "version.1",
     "versions": {
       "version.1": {
+        "energyVersion": "version.1",
         "content": [
           "update log 1",
           "update log 2"
@@ -52,6 +53,7 @@
         "forced": false
       },
       "version.0": {
+        "energyVersion": "",
         "content": [
           ""
         ],
