@@ -1,4 +1,6 @@
 {
   "title": "liblcl Update",
-  "close": "close"
+  "close": "close",
+  "updateContent": "Update Content",
+  "downloadURL": "Update URL"
 }

@@ -48,7 +48,6 @@ func (m *UpdateForm) OnFormCreate(sender lcl.IObject) {
 func (m *UpdateForm) NewPanel() *lcl.TPanel {
 	var result = lcl.NewPanel(m)
 	result.SetParent(m)
-	result.SetColor(colors.ClWhite)
 	result.SetBevelInner(types.BvNone)
 	result.SetBevelOuter(types.BvNone)
 	result.SetBorderStyle(types.BsNone)
