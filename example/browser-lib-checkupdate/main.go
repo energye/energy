@@ -3,6 +3,7 @@
 package main
 
 import (
+	"archive/zip"
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef/autoupdate"
@@ -20,6 +21,7 @@ import (
 	"github.com/energye/golcl/pkgs/libname"
 	"io"
 	"io/fs"
+	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -53,15 +55,9 @@ func main() {
 		os.Mkdir(energyPath, fs.ModePerm)
 	}
 	var (
-		libPath    string
+		libPath    = libname.LibPath()
 		dstLibPath = filepath.Join(energyPath, libname.GetDLLName())
 	)
-	if runtime.GOOS == "darwin" {
-		//MacOSX从Frameworks加载
-		libPath = "@executable_path/../Frameworks/" + libname.GetDLLName()
-	} else {
-		libPath = libname.LibPath()
-	}
 	if tools.IsExist(dstLibPath) {
 		os.Remove(dstLibPath)
 	}
@@ -241,19 +237,30 @@ func main() {
 			updateContentMemo.Lines().Add(downUrl)
 
 			// 取消按钮
-			cancelBtn := lcl.NewImageButton(m)
-			cancelBtn.SetParent(m)
-			cancelBtn.SetImageCount(3)
-			cancelBtn.SetAutoSize(true)
-			cancelBtn.SetCursor(types.CrHandPoint)
-			cancelBtn.Picture().LoadFromFSFile("resources/btn-cancel.png")
-			cancelBtn.SetLeft(300)
-			cancelBtn.SetTop(290)
-			cancelBtn.SetHint(i18n.Resource("cancel"))
-			cancelBtn.SetOnClick(func(lcl.IObject) {
-				//m.Close()
-			})
+			//cancelBtn := lcl.NewImageButton(m)
+			//cancelBtn.SetParent(m)
+			//cancelBtn.SetImageCount(3)
+			//cancelBtn.SetAutoSize(true)
+			//cancelBtn.SetCursor(types.CrHandPoint)
+			//cancelBtn.Picture().LoadFromFSFile("resources/btn-cancel.png")
+			//cancelBtn.SetLeft(300)
+			//cancelBtn.SetTop(290)
+			//cancelBtn.SetHint(i18n.Resource("cancel"))
+			//cancelBtn.SetOnClick(func(lcl.IObject) {
+			//	//m.Close()
+			//})
 
+			// 下载
+			var isNotDownload = true
+			// 更新下载进度条
+			updateProgressBar := lcl.NewProgressBar(m)
+			updateProgressBar.SetParent(m)
+			updateProgressBar.SetTop(275)
+			updateProgressBar.SetLeft(updateContentMemo.Left())
+			updateProgressBar.SetMin(0)
+			updateProgressBar.SetMax(100)
+			updateProgressBar.SetWidth(updateContentMemo.Width())
+			updateProgressBar.SetVisible(false)
 			// 更新按钮
 			updateBtn := lcl.NewImageButton(m)
 			updateBtn.SetParent(m)
@@ -267,7 +274,51 @@ func main() {
 			updateBtn.SetTop(290)
 			updateBtn.SetHint(i18n.Resource("update"))
 			updateBtn.SetOnClick(func(lcl.IObject) {
-				fmt.Println("update")
+				if isNotDownload {
+					updateProgressBar.SetPosition(0)
+					updateProgressBar.SetVisible(isNotDownload)
+					isNotDownload = false
+					updateBtn.SetEnabled(isNotDownload)
+
+					var savePath, _ = filepath.Split(libPath)
+					var fileName, _ = energyLiblcl()
+					var saveFilePath = filepath.Join(savePath, fileName) + ".zip" // zip
+
+					updateContentMemo.Lines().Add(i18n.Resource("beginDownload"))
+					updateContentMemo.Lines().Add("  " + i18n.Resource("downloadURL") + ": " + downUrl)
+					updateContentMemo.Lines().Add("  " + i18n.Resource("savePath") + ": " + saveFilePath)
+					go func() {
+						// 下载地址, 保存目录, 回调更新进程函数
+						downloadFile(downUrl, saveFilePath, func(totalLength, processLength int64) {
+							var process = int32((float64(processLength) / float64(totalLength)) * 100)
+							lcl.ThreadSync(func() {
+								updateProgressBar.SetPosition(process)
+								if process >= 100 {
+									isNotDownload = true
+									updateBtn.SetEnabled(isNotDownload)
+									updateContentMemo.Lines().Add(i18n.Resource("endDownload"))
+								}
+							})
+						})
+						updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": " + filepath.Join(savePath, libname.GetDLLName()))
+						extractUnZip(saveFilePath, savePath, func(totalLength, processLength int64) {
+							var process = int32((float64(processLength) / float64(totalLength)) * 100)
+							lcl.ThreadSync(func() {
+								//updateProgressBar.SetPosition(process)
+								//if process >= 100 {
+								//	isNotDownload = true
+								//	updateBtn.SetEnabled(isNotDownload)
+								//	updateContentMemo.Lines().Add(i18n.Resource("endDownload"))
+								//}
+								if process >= 100 {
+									updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + " success")
+								}
+							})
+							//bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+						}, libname.GetDLLName())
+
+					}()
+				}
 			})
 
 			// 下载进度
@@ -277,4 +328,128 @@ func main() {
 	}
 	// 检查 liblcl 库是否有更新
 	autoupdate.CheckUpdate()
+}
+
+// 下载文件
+func downloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
+	var (
+		fsize   int64
+		buf     = make([]byte, 1024*10)
+		written int64
+	)
+	tmpFilePath := localPath + ".download"
+	client := new(http.Client)
+	resp, err := client.Get(url)
+	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
+		return err
+	}
+	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
+	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
+		return err
+	}
+	println("Save path: [", localPath, "] file size:", fsize)
+	file, err := os.Create(tmpFilePath)
+	if err != nil {
+		fmt.Printf("download-error=[%v]\n", err)
+		os.Exit(1)
+		return err
+	}
+	defer file.Close()
+	if resp.Body == nil {
+		fmt.Printf("Download-error=[body is null]\n")
+		os.Exit(1)
+		return nil
+	}
+	defer resp.Body.Close()
+	for {
+		nr, er := resp.Body.Read(buf)
+		if nr > 0 {
+			nw, err := file.Write(buf[0:nr])
+			if nw > 0 {
+				written += int64(nw)
+			}
+			callback(fsize, written)
+			if err != nil {
+				break
+			}
+			if nr != nw {
+				err = io.ErrShortWrite
+				break
+			}
+		}
+		if er != nil {
+			if er != io.EOF {
+				err = er
+			}
+			break
+		}
+	}
+	if err == nil {
+		file.Sync()
+		file.Close()
+		err = os.Rename(tmpFilePath, localPath)
+		if err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLength, processLength int64)) {
+	buf := make([]byte, 1024*10)
+	var written int64
+	for {
+		nr, err := r.Read(buf)
+		if nr > 0 {
+			nw, err := w.Write(buf[0:nr])
+			if nw > 0 {
+				written += int64(nw)
+			}
+			callback(totalLength, written)
+			if err != nil {
+				break
+			}
+			if nr != nw {
+				err = io.ErrShortWrite
+				break
+			}
+		}
+		if err != nil {
+			break
+		}
+	}
+}
+
+func extractUnZip(filePath, targetPath string, callback func(totalLength, processLength int64), files ...interface{}) {
+	if rc, err := zip.OpenReader(filePath); err == nil {
+		defer rc.Close()
+		for i := 0; i < len(files); i++ {
+			if f, err := rc.Open(files[i].(string)); err == nil {
+				defer f.Close()
+				st, _ := f.Stat()
+				targetFileName := filepath.Join(targetPath, st.Name())
+				if st.IsDir() {
+					os.MkdirAll(targetFileName, st.Mode())
+					continue
+				}
+				if targetFile, err := os.Create(targetFileName); err == nil {
+					writeFile(f, targetFile, st.Size(), callback)
+					targetFile.Close()
+				}
+			} else {
+				fmt.Printf("error: cannot open file, error=[%v]\n", err)
+				os.Exit(1)
+				return
+			}
+		}
+	} else {
+		if err != nil {
+			fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
+			os.Exit(1)
+		}
+	}
 }

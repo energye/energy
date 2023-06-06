@@ -4,5 +4,9 @@
   "cancel": "取消",
   "update": "更新",
   "updateContent": "更新内容",
-  "downloadURL": "更新地址"
+  "downloadURL": "更新地址",
+  "beginDownload": "开始下载",
+  "endDownload": "下载完成",
+  "savePath": "保存目录",
+  "extractUnZip": "释放 UNZIP"
 }

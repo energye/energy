@@ -4,5 +4,9 @@
   "cancel": "cancel",
   "update": "update",
   "updateContent": "Update Content",
-  "downloadURL": "Update URL"
+  "downloadURL": "Update URL",
+  "beginDownload": "begin download",
+  "endDownload": "end download",
+  "savePath": "save path",
+  "extractUnZip": "extract UNZIP"
 }
