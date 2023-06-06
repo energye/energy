@@ -12,10 +12,16 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/browser-lib-checkupdate/form"
 	"github.com/energye/golcl/energy/inits"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api/dllimports"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
+	"github.com/energye/golcl/pkgs/libname"
+	"io"
+	"io/fs"
+	"os"
+	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
@@ -41,7 +47,48 @@ var (
 )
 
 func main() {
-	// 注入到 imports
+	// 针对 liblcl
+	energyPath := filepath.Join(os.TempDir(), "energy")
+	if !tools.IsExist(energyPath) {
+		os.Mkdir(energyPath, fs.ModePerm)
+	}
+	var (
+		libPath    string
+		dstLibPath = filepath.Join(energyPath, libname.GetDLLName())
+	)
+	if runtime.GOOS == "darwin" {
+		//MacOSX从Frameworks加载
+		libPath = "@executable_path/../Frameworks/" + libname.GetDLLName()
+	} else {
+		libPath = libname.LibPath()
+	}
+	if tools.IsExist(dstLibPath) {
+		os.Remove(dstLibPath)
+	}
+
+	// 在初始化之前 先把 liblcl 复制一份到临时目录中
+	// 然后我们加载临时目录中的 liblcl
+	// 之后升级时使用升级新文件替换实际的 liblcl
+	// 可以在程度内直接替换
+	src, err := os.Open(libPath)
+	if err != nil {
+		panic(err)
+	}
+	dst, err := os.OpenFile(dstLibPath, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0644)
+	if err != nil {
+		panic(err)
+	}
+	// 复制一份
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		panic(err)
+	}
+	dst.Close()
+	src.Close()
+	libname.LibName = dstLibPath // 设置临时目录的 liblcl
+	defer os.Remove(dstLibPath)
+
+	// proc 注入到 imports
 	imports.SetEnergyImportDefs(version)
 	// 初始化golcl
 	inits.Init(nil, &resources)
@@ -69,8 +116,9 @@ func main() {
 			return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 		}
 
-		// 这里使用 窗口形式展示更新
+		// 这里使用窗口形式展示更新
 		// 运行应用后窗口创建时回调
+		// 通过代码设计窗口上的UI组件
 		form.OnCreate = func(m *form.UpdateForm) {
 			// 应用图标
 			if runtime.GOOS == "windows" {
@@ -170,29 +218,29 @@ func main() {
 			m.UpdateProgressPanel.SetVisible(false)
 
 			// 更新内容
-			updateContent := lcl.NewMemo(m.UpdatePromptPanel)
-			updateContent.SetParent(m.UpdatePromptPanel)
+			updateContentMemo := lcl.NewMemo(m.UpdatePromptPanel)
+			updateContentMemo.SetParent(m.UpdatePromptPanel)
 			ucw := m.Width() / 4
-			updateContent.SetWidth(ucw * 3)
-			updateContent.SetLeft((m.Width() - updateContent.Width()) / 2)
-			updateContent.SetHeight(updatePanelHeight)
-			updateContent.SetReadOnly(true)
-			updateContent.SetColor(colors.ClWhite)
-			updateContent.SetScrollBars(types.SsAutoBoth)
-			updateContent.Lines().Add(i18n.Resource("updateContent") + " " + model.Latest)
+			updateContentMemo.SetWidth(ucw * 3)
+			updateContentMemo.SetLeft((m.Width() - updateContentMemo.Width()) / 2)
+			updateContentMemo.SetHeight(updatePanelHeight)
+			updateContentMemo.SetReadOnly(true)
+			updateContentMemo.SetColor(colors.ClWhite)
+			updateContentMemo.SetScrollBars(types.SsAutoBoth)
+			updateContentMemo.Lines().Add(i18n.Resource("updateContentMemo") + " " + model.Latest)
 			for i, content := range updateVersion.Content {
-				updateContent.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
+				updateContentMemo.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
 			}
-			// 下载版本URL
+			// liblcl 下载版本URL
 			liblclZipName, _ := energyLiblcl()
-			downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1)
-			downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)
-			downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)
-			updateContent.Lines().Add("")
-			updateContent.Lines().Add(i18n.Resource("downloadURL"))
-			updateContent.Lines().Add(downUrl)
+			downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1) // 使用配置的下载源
+			downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)                                // liblcl 所属的 enregy 版本
+			downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)                                               // 根据系统架构获取对应的文件名
+			updateContentMemo.Lines().Add("")
+			updateContentMemo.Lines().Add(i18n.Resource("downloadURL"))
+			updateContentMemo.Lines().Add(downUrl)
 
-			//
+			// 取消按钮
 			cancelBtn := lcl.NewImageButton(m)
 			cancelBtn.SetParent(m)
 			cancelBtn.SetImageCount(3)
@@ -206,7 +254,7 @@ func main() {
 				//m.Close()
 			})
 
-			//
+			// 更新按钮
 			updateBtn := lcl.NewImageButton(m)
 			updateBtn.SetParent(m)
 			updateBtn.SetImageCount(3)
@@ -221,6 +269,8 @@ func main() {
 			updateBtn.SetOnClick(func(lcl.IObject) {
 				fmt.Println("update")
 			})
+
+			// 下载进度
 		}
 		// run and create update form
 		lcl.RunApp(&updateForm)
