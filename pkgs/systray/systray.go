@@ -250,6 +250,14 @@ func (item *MenuItem) Hide() {
 	hideMenuItem(item)
 }
 
+// Remove removes a menu item
+func (item *MenuItem) Remove() {
+	removeMenuItem(item)
+	menuItemsLock.Lock()
+	delete(menuItems, item.id)
+	menuItemsLock.Unlock()
+}
+
 // Show shows a previously hidden menu item
 func (item *MenuItem) Show() {
 	showMenuItem(item)

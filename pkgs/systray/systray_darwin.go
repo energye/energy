@@ -188,6 +188,12 @@ func showMenuItem(item *MenuItem) {
 	)
 }
 
+func removeMenuItem(item *MenuItem) {
+	C.remove_menu_item(
+		C.int(item.id),
+	)
+}
+
 func resetMenu() {
 	C.reset_menu()
 }

@@ -179,6 +179,13 @@ func (m *SysMenuItem) Show() {
 	}
 }
 
+// Remove 移除
+func (m *SysMenuItem) Remove() {
+	if m.menuItem != nil {
+		m.menuItem.Remove()
+	}
+}
+
 // Hide 隐藏
 func (m *SysMenuItem) Hide() {
 	if m.menuItem != nil {

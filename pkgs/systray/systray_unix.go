@@ -71,12 +71,8 @@ func SetIcon(iconBytes []byte) {
 		return
 	}
 
-	dbusErr := props.Set("org.kde.StatusNotifierItem", "IconPixmap",
-		dbus.MakeVariant([]PX{convertToPixels(iconBytes)}))
-	if dbusErr != nil {
-		log.Printf("systray error: failed to set IconPixmap prop: %s\n", dbusErr)
-		return
-	}
+	props.SetMust("org.kde.StatusNotifierItem", "IconPixmap",
+		[]PX{convertToPixels(iconBytes)})
 	if conn == nil {
 		return
 	}
@@ -258,14 +254,19 @@ func nativeStart() {
 	if systrayReady != nil {
 		systrayReady()
 	}
-	conn, _ := dbus.ConnectSessionBus()
-	err := notifier.ExportStatusNotifierItem(conn, path, usni)
+	conn, err := dbus.SessionBus()
 	if err != nil {
-		log.Printf("systray error: failed to export status notifier item: %s\n", err)
+		log.Printf("systray error: failed to connect to DBus: %v\n", err)
+		return
+	}
+	err = notifier.ExportStatusNotifierItem(conn, path, &notifier.UnimplementedStatusNotifierItem{})
+	if err != nil {
+		log.Printf("systray error: failed to export status notifier item: %v\n", err)
 	}
 	err = menu.ExportDbusmenu(conn, menuPath, instance)
 	if err != nil {
-		log.Printf("systray error: failed to export status notifier item: %s\n", err)
+		log.Printf("systray error: failed to export status notifier menu: %v\n", err)
+		return
 	}
 
 	name := fmt.Sprintf("org.kde.StatusNotifierItem-%d-1", os.Getpid()) // register id 1 for this process
