@@ -113,11 +113,8 @@ func main() {
 		// 通过代码设计窗口上的UI组件
 		form.OnCreate = func(m *form.UpdateForm) {
 			// 应用图标
-			if runtime.GOOS == "windows" {
-				lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
-			} else {
-				lcl.Application.Icon().LoadFromFSFile("resources/icon.png")
-			}
+			lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
+
 			// 窗口一些属性配置
 			m.SetDoubleBuffered(true)
 			m.EnabledMinimize(false)
@@ -125,71 +122,75 @@ func main() {
 			m.SetShowHint(true)
 			//m.SetFormStyle(types.FsSystemStayOnTop)
 			m.SetPosition(types.PoDesktopCenter)
-			//m.SetBorderStyle(types.BsSingle)
-			m.SetBorderStyle(types.BsNone)
+			m.SetBorderStyle(types.BsSingle)
+			//m.SetBorderStyle(types.BsNone)
 			//m.SetShowInTaskBar(types.StNever)
 			m.SetColor(colors.ClWhite)
 			m.SetWidth(590)
 			m.SetHeight(390)
 			m.SetCaption(i18n.Resource("title")) // 自定义窗口标题
+			var titleHeight int32 = 0
+			if runtime.GOOS == "windows" {
+				m.SetBorderStyle(types.BsNone)
+				titleHeight = 32
+				// 自定义窗口标题栏
+				m.TitlePanel = m.NewPanel()
+				m.TitlePanel.SetColor(colors.ClTeal)
+				m.TitlePanel.SetHeight(titleHeight) // icon 的高
+				m.TitlePanel.SetWidth(m.Width())
+				// 模拟标题栏移动窗口
+				var (
+					isDown bool
+					dx, dy int32
+				)
+				m.TitlePanel.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+					isDown = true
+					dx, dy = x, y
+				})
+				m.TitlePanel.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+					isDown = false
+				})
+				m.TitlePanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
+					if isDown { //鼠标按下时计算移动坐标
+						m.SetLeft(m.Left() - (dx - x))
+						m.SetTop(m.Top() - (dy - y))
+					}
+				})
 
-			// 自定义窗口标题栏
-			m.TitlePanel = m.NewPanel()
-			m.TitlePanel.SetColor(colors.ClTeal)
-			m.TitlePanel.SetHeight(32) // icon 的高
-			m.TitlePanel.SetWidth(m.Width())
-			// 模拟标题栏移动窗口
-			var (
-				isDown bool
-				dx, dy int32
-			)
-			m.TitlePanel.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
-				isDown = true
-				dx, dy = x, y
-			})
-			m.TitlePanel.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
-				isDown = false
-			})
-			m.TitlePanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
-				if isDown { //鼠标按下时计算移动坐标
-					m.SetLeft(m.Left() - (dx - x))
-					m.SetTop(m.Top() - (dy - y))
-				}
-			})
+				// title -> icon
+				titleIcon := lcl.NewImage(m.TitlePanel)
+				titleIcon.SetParent(m.TitlePanel)
+				titleIcon.SetWidth(32)  // icon 的宽
+				titleIcon.SetHeight(32) // icon 的高
+				titleIcon.Picture().LoadFromFSFile("resources/icon.png")
 
-			// title -> icon
-			titleIcon := lcl.NewImage(m.TitlePanel)
-			titleIcon.SetParent(m.TitlePanel)
-			titleIcon.SetWidth(32)  // icon 的宽
-			titleIcon.SetHeight(32) // icon 的高
-			titleIcon.Picture().LoadFromFSFile("resources/icon.png")
+				// title -> text
+				titleText := lcl.NewLabel(m.TitlePanel)
+				titleText.SetParent(m.TitlePanel)
+				titleText.SetTop(3)
+				titleText.SetLeft(40)
+				titleText.Font().SetSize(12)
+				titleText.Font().SetColor(colors.ClWhite)
+				titleText.SetCaption(m.Caption())
 
-			// title -> text
-			titleText := lcl.NewLabel(m.TitlePanel)
-			titleText.SetParent(m.TitlePanel)
-			titleText.SetTop(3)
-			titleText.SetLeft(40)
-			titleText.Font().SetSize(12)
-			titleText.Font().SetColor(colors.ClWhite)
-			titleText.SetCaption(m.Caption())
-
-			// title -> close button
-			titleClose := lcl.NewImageButton(m.TitlePanel)
-			titleClose.SetParent(m.TitlePanel)
-			titleClose.SetImageCount(4)
-			titleClose.SetAutoSize(true)
-			titleClose.SetCursor(types.CrHandPoint)
-			titleClose.Picture().LoadFromFSFile("resources/btn_close.png")
-			titleClose.SetLeft(m.Width() - 40) //关闭按钮位置 left = 窗口宽 - 按钮图片宽
-			titleClose.SetHint(i18n.Resource("close"))
-			titleClose.SetOnClick(func(lcl.IObject) {
-				m.Close() // 关闭窗口
-			})
+				// title -> close button
+				titleClose := lcl.NewImageButton(m.TitlePanel)
+				titleClose.SetParent(m.TitlePanel)
+				titleClose.SetImageCount(4)
+				titleClose.SetAutoSize(true)
+				titleClose.SetCursor(types.CrHandPoint)
+				titleClose.Picture().LoadFromFSFile("resources/btn_close.png")
+				titleClose.SetLeft(m.Width() - 40) //关闭按钮位置 left = 窗口宽 - 按钮图片宽
+				titleClose.SetHint(i18n.Resource("close"))
+				titleClose.SetOnClick(func(lcl.IObject) {
+					m.Close() // 关闭窗口
+				})
+			}
 
 			// background
 			bgImage := lcl.NewImage(m)
 			bgImage.SetParent(m)
-			bgImage.SetTop(m.TitlePanel.Height() + 10)
+			bgImage.SetTop(titleHeight + 10)
 			bgImage.SetWidth(271)                              // 图片宽
 			bgImage.SetHeight(60)                              // 图片高
 			bgImage.SetLeft((m.Width() - bgImage.Width()) / 2) // 设置以窗口居中
@@ -265,7 +266,7 @@ func main() {
 				updateBtn.SetCursor(types.CrHandPoint)
 				updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
 				updateBtn.SetLeft(400)
-				updateBtn.SetTop(335)
+				updateBtn.SetTop(330)
 				updateBtn.SetHint(i18n.Resource("update"))
 				updateBtn.SetOnClick(func(lcl.IObject) {
 					if isNotDownload {
