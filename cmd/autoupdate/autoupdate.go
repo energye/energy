@@ -25,12 +25,12 @@ import (
 
 const checkURL = "https://energy.yanghy.cn/autoconfig/update.json"
 
-type LiblclCallback func(model *Model, level int)
+type LiblclCallback func(model *Model, level int, canUpdate bool)
 
 var (
 	// 检查更新开关, 默认关闭
 	isCheckUpdate   = false
-	CanUpdateLiblcl LiblclCallback
+	CanUpdateLiblcl LiblclCallback // 参数 model: 更新模块, Level: 更新版本级别, canUpdate: 是否有更新
 )
 
 // Update 更新模块
@@ -42,10 +42,11 @@ type Update struct {
 
 // Model 模块
 type Model struct {
-	Latest   string                 `json:"latest"`   // 最新版本
-	Download Download               `json:"download"` // 下载源
-	Enable   bool                   `json:"enable"`   // 是否开启该模块更新
-	Versions map[string]VersionInfo `json:"versions"` // 当前模块所有版本集合 key=版本, value=版本信息
+	CurrentVersion string                 `json:"-"`
+	Latest         string                 `json:"latest"`   // 最新版本
+	Download       Download               `json:"download"` // 下载源
+	Enable         bool                   `json:"enable"`   // 是否开启该模块更新
+	Versions       map[string]VersionInfo `json:"versions"` // 当前模块所有版本集合 key=版本, value=版本信息
 }
 
 // 更新下载源
@@ -109,22 +110,22 @@ func liblcl(model *Model) {
 		r1, _, _ := imports.Proc(1).Call()
 		currentLib := api.GoStr(r1)
 		originLib := model.Latest
-		if c, v := compare(currentLib, originLib); c {
-			if CanUpdateLiblcl != nil {
-				CanUpdateLiblcl(model, v)
-			}
+		if currentLib == "" {
+			currentLib = "0.0.0"
+		}
+		if originLib == "" {
+			originLib = "0.0.0"
+		}
+		model.CurrentVersion = currentLib
+		can, level := compare(currentLib, originLib)
+		if CanUpdateLiblcl != nil {
+			CanUpdateLiblcl(model, level, can)
 		}
 	}
 }
 
 // Version comparison, returns true if the current version is smaller than the remote version
 func compare(current, origin string) (bool, int) {
-	if current == "" {
-		current = "0.0.0"
-	}
-	if origin == "" {
-		origin = "0.0.0"
-	}
 	cmajor, cminor, crevision := versionConvert(current)
 	omajor, ominor, orevision := versionConvert(origin)
 	if omajor > cmajor {
