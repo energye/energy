@@ -255,6 +255,7 @@ func main() {
 				updateProgressBar.SetMin(0)
 				updateProgressBar.SetMax(100)
 				updateProgressBar.SetWidth(m.UpdateContentMemo.Width())
+				updateProgressBar.SetHeight(10)
 				updateProgressBar.SetVisible(false)
 				// 更新按钮
 				updateBtn := lcl.NewImageButton(m)
@@ -266,7 +267,7 @@ func main() {
 				updateBtn.SetCursor(types.CrHandPoint)
 				updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
 				updateBtn.SetLeft(400)
-				updateBtn.SetTop(330)
+				updateBtn.SetTop(325)
 				updateBtn.SetHint(i18n.Resource("update"))
 				updateBtn.SetOnClick(func(lcl.IObject) {
 					if isNotDownload {
