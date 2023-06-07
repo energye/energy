@@ -6,8 +6,8 @@ import (
 	"archive/zip"
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef/autoupdate"
 	"github.com/energye/energy/v2/cef/i18n"
+	"github.com/energye/energy/v2/cmd/autoupdate"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -93,13 +93,9 @@ func main() {
 	i18n.Switch(consts.LANGUAGE_zh_CN)
 	// 开启自动更新检查
 	autoupdate.IsCheckUpdate(true)
-	// 如果 liblcl 有更新该函数将被回调
-	autoupdate.CanUpdateLiblcl = func(model *autoupdate.Model, level int) {
-		fmt.Println(*model)
+	// 如果 liblcl 有更新该函数将被回调,并创建更新窗口
+	autoupdate.CanUpdateLiblcl = func(model *autoupdate.Model, level int, canUpdate bool) {
 		updateVersion := model.Versions[model.Latest]
-		fmt.Println(model.Versions[model.Latest])
-		fmt.Println(level)
-
 		var energyLiblcl = func() (string, bool) {
 			if common.IsWindows() {
 				return fmt.Sprintf("Windows %d bits", strconv.IntSize), true
@@ -207,110 +203,125 @@ func main() {
 			m.UpdatePromptPanel.SetHeight(updatePanelHeight)
 
 			// 更新内容
-			updateContentMemo := lcl.NewMemo(m.UpdatePromptPanel)
-			updateContentMemo.SetParent(m.UpdatePromptPanel)
+			m.UpdateContentMemo = lcl.NewMemo(m.UpdatePromptPanel)
+			m.UpdateContentMemo.SetParent(m.UpdatePromptPanel)
 			ucw := m.Width() / 4
-			updateContentMemo.SetWidth(ucw * 3)
-			updateContentMemo.SetLeft((m.Width() - updateContentMemo.Width()) / 2)
-			updateContentMemo.SetHeight(updatePanelHeight)
-			updateContentMemo.SetReadOnly(true)
-			updateContentMemo.SetColor(colors.ClWhite)
-			updateContentMemo.SetScrollBars(types.SsAutoBoth)
-			updateContentMemo.Lines().Add(i18n.Resource("updateContent") + " " + model.Latest)
-			for i, content := range updateVersion.Content {
-				updateContentMemo.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
-			}
-			// liblcl 下载版本URL
-			liblclZipName, _ := energyLiblcl()
-			downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1) // 使用配置的下载源
-			downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)                                // liblcl 所属的 enregy 版本
-			downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)                                               // 根据系统架构获取对应的文件名
-			updateContentMemo.Lines().Add("")
-			updateContentMemo.Lines().Add(i18n.Resource("downloadURL"))
-			updateContentMemo.Lines().Add(downUrl)
-
-			// 取消按钮
-			//cancelBtn := lcl.NewImageButton(m)
-			//cancelBtn.SetParent(m)
-			//cancelBtn.SetImageCount(3)
-			//cancelBtn.SetAutoSize(true)
-			//cancelBtn.SetCursor(types.CrHandPoint)
-			//cancelBtn.Picture().LoadFromFSFile("resources/btn-cancel.png")
-			//cancelBtn.SetLeft(300)
-			//cancelBtn.SetTop(290)
-			//cancelBtn.SetHint(i18n.Resource("cancel"))
-			//cancelBtn.SetOnClick(func(lcl.IObject) {
-			//	//m.Close()
-			//})
-
-			// 下载
-			var isNotDownload = true
-			// 更新下载进度条
-			updateProgressBar := lcl.NewProgressBar(m)
-			updateProgressBar.SetParent(m)
-			updateProgressBar.SetTop(updatePanelHeight + m.UpdatePromptPanel.Top() + 5)
-			updateProgressBar.SetLeft(updateContentMemo.Left())
-			updateProgressBar.SetMin(0)
-			updateProgressBar.SetMax(100)
-			updateProgressBar.SetWidth(updateContentMemo.Width())
-			updateProgressBar.SetVisible(false)
-			// 更新按钮
-			updateBtn := lcl.NewImageButton(m)
-			updateBtn.SetParent(m)
-			updateBtn.SetImageCount(3)
-			//updateBtn.SetAutoSize(true)
-			updateBtn.SetWidth(80)
-			updateBtn.SetHeight(50)
-			updateBtn.SetCursor(types.CrHandPoint)
-			updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
-			updateBtn.SetLeft(400)
-			updateBtn.SetTop(330)
-			updateBtn.SetHint(i18n.Resource("update"))
-			updateBtn.SetOnClick(func(lcl.IObject) {
-				if isNotDownload {
-					updateProgressBar.SetPosition(0)
-					updateProgressBar.SetVisible(isNotDownload)
-					isNotDownload = false
-					updateBtn.SetEnabled(isNotDownload)
-
-					var savePath, _ = filepath.Split(libPath)
-					var fileName, _ = energyLiblcl()
-					var saveFilePath = filepath.Join(savePath, fileName) + ".zip" // zip
-
-					updateContentMemo.Lines().Add(i18n.Resource("beginDownload"))
-					updateContentMemo.Lines().Add("  " + i18n.Resource("downloadURL") + ": " + downUrl)
-					updateContentMemo.Lines().Add("  " + i18n.Resource("savePath") + ": " + saveFilePath)
-					go func() {
-						// 下载地址, 保存目录, 回调更新进程函数
-						downloadFile(downUrl, saveFilePath, func(totalLength, processLength int64) {
-							var process = int32((float64(processLength) / float64(totalLength)) * 100)
-							lcl.ThreadSync(func() {
-								updateProgressBar.SetPosition(process)
-								if process >= 100 {
-									isNotDownload = true
-									updateBtn.SetEnabled(isNotDownload)
-									updateContentMemo.Lines().Add(i18n.Resource("endDownload"))
-								}
-							})
-						})
-						updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": " + filepath.Join(savePath, libname.GetDLLName()))
-						extractUnZip(saveFilePath, savePath, func(totalLength, processLength int64, err error) {
-							var process = int32((float64(processLength) / float64(totalLength)) * 100)
-							lcl.ThreadSync(func() {
-								if err != nil {
-									updateContentMemo.Lines().Add(i18n.Resource("updateError") + ":\n  " + err.Error())
-								}
-								if process >= 100 {
-									updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": success")
-									updateContentMemo.Lines().Add(i18n.Resource("updateSuccess"))
-								}
-							})
-						}, libname.GetDLLName())
-					}()
+			m.UpdateContentMemo.SetWidth(ucw * 3)
+			m.UpdateContentMemo.SetLeft((m.Width() - m.UpdateContentMemo.Width()) / 2)
+			m.UpdateContentMemo.SetHeight(updatePanelHeight)
+			m.UpdateContentMemo.SetReadOnly(true)
+			m.UpdateContentMemo.SetColor(colors.ClWhite)
+			if !canUpdate {
+				m.UpdateContentMemo.Lines().Add(i18n.Resource("currentVersion") + ": " + model.CurrentVersion)
+				m.UpdateContentMemo.Lines().Add(i18n.Resource("latestVersion") + ": " + model.Latest)
+				m.UpdateContentMemo.SetEnabled(false)
+			} else if canUpdate { // 有更新
+				m.UpdateContentMemo.SetScrollBars(types.SsAutoBoth)
+				m.UpdateContentMemo.Lines().Add(i18n.Resource("updateContent") + " " + model.Latest)
+				for i, content := range updateVersion.Content {
+					m.UpdateContentMemo.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
 				}
-			})
+				// liblcl 下载版本URL
+				liblclZipName, _ := energyLiblcl()
+				downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1) // 使用配置的下载源
+				downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)                                // liblcl 所属的 enregy 版本
+				downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)                                               // 根据系统架构获取对应的文件名
+				m.UpdateContentMemo.Lines().Add("")
+				m.UpdateContentMemo.Lines().Add(i18n.Resource("downloadURL"))
+				m.UpdateContentMemo.Lines().Add(downUrl)
 
-			// 下载进度
+				// 取消按钮
+				//cancelBtn := lcl.NewImageButton(m)
+				//cancelBtn.SetParent(m)
+				//cancelBtn.SetImageCount(3)
+				//cancelBtn.SetAutoSize(true)
+				//cancelBtn.SetCursor(types.CrHandPoint)
+				//cancelBtn.Picture().LoadFromFSFile("resources/btn-cancel.png")
+				//cancelBtn.SetLeft(300)
+				//cancelBtn.SetTop(290)
+				//cancelBtn.SetHint(i18n.Resource("cancel"))
+				//cancelBtn.SetOnClick(func(lcl.IObject) {
+				//	//m.Close()
+				//})
+
+				// 下载
+				var isNotDownload = true
+				// 更新下载进度条
+				updateProgressBar := lcl.NewProgressBar(m)
+				updateProgressBar.SetParent(m)
+				updateProgressBar.SetTop(updatePanelHeight + m.UpdatePromptPanel.Top() + 5)
+				updateProgressBar.SetLeft(m.UpdateContentMemo.Left())
+				updateProgressBar.SetMin(0)
+				updateProgressBar.SetMax(100)
+				updateProgressBar.SetWidth(m.UpdateContentMemo.Width())
+				updateProgressBar.SetVisible(false)
+				// 更新按钮
+				updateBtn := lcl.NewImageButton(m)
+				updateBtn.SetParent(m)
+				updateBtn.SetImageCount(3)
+				//updateBtn.SetAutoSize(true)
+				updateBtn.SetWidth(80)
+				updateBtn.SetHeight(50)
+				updateBtn.SetCursor(types.CrHandPoint)
+				updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
+				updateBtn.SetLeft(400)
+				updateBtn.SetTop(335)
+				updateBtn.SetHint(i18n.Resource("update"))
+				updateBtn.SetOnClick(func(lcl.IObject) {
+					if isNotDownload {
+						updateProgressBar.SetPosition(0)
+						updateProgressBar.SetVisible(isNotDownload)
+						isNotDownload = false
+						updateBtn.SetEnabled(isNotDownload)
+
+						var savePath, _ = filepath.Split(libPath)
+						var fileName, _ = energyLiblcl()
+						var saveFilePath = filepath.Join(savePath, fileName) + ".zip" // zip
+						m.UpdateContentMemo.Lines().Add("---------------------------------------------------------------")
+						m.UpdateContentMemo.Lines().Add(i18n.Resource("beginDownload"))
+						m.UpdateContentMemo.Lines().Add("  " + i18n.Resource("downloadURL") + ": " + downUrl)
+						m.UpdateContentMemo.Lines().Add("  " + i18n.Resource("savePath") + ": " + saveFilePath)
+						go func() {
+							// 下载地址, 保存目录, 回调更新进程函数
+							downloadFile(downUrl, saveFilePath, func(totalLength, processLength int64, err error) {
+								var process = int32((float64(processLength) / float64(totalLength)) * 100)
+								lcl.ThreadSync(func() {
+									if err != nil {
+										m.UpdateContentMemo.Lines().Add(i18n.Resource("downloadError") + ":\n  " + err.Error())
+										m.UpdateContentMemo.Lines().Add(i18n.Resource("downloadAgain"))
+									} else {
+										updateProgressBar.SetPosition(process)
+										if process >= 100 {
+											m.UpdateContentMemo.Lines().Add(i18n.Resource("endDownload") + " -> 100")
+										}
+									}
+								})
+							})
+							m.UpdateContentMemo.Lines().Add("---------------------------------------------------------------")
+							updateProgressBar.SetPosition(0)
+							m.UpdateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": " + filepath.Join(savePath, libname.GetDLLName()))
+							// 解压释放文件
+							extractUnZip(saveFilePath, savePath, func(totalLength, processLength int64, err error) {
+								var process = int32((float64(processLength) / float64(totalLength)) * 100)
+								lcl.ThreadSync(func() {
+									if err != nil {
+										m.UpdateContentMemo.Lines().Add(i18n.Resource("updateError") + ":\n  " + err.Error())
+										m.UpdateContentMemo.Lines().Add(i18n.Resource("updateAgain"))
+									} else {
+										updateProgressBar.SetPosition(process)
+										if process >= 100 {
+											m.UpdateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": success -> 100")
+											m.UpdateContentMemo.Lines().Add(i18n.Resource("updateSuccess"))
+										}
+									}
+								})
+							}, libname.GetDLLName())
+							isNotDownload = true
+							updateBtn.SetEnabled(isNotDownload)
+						}()
+					}
+				})
+			}
 		}
 		// run and create update form
 		lcl.RunApp(&updateForm)
@@ -320,7 +331,7 @@ func main() {
 }
 
 // 下载文件
-func downloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
+func downloadFile(url string, localPath string, callback func(totalLength, processLength int64, err error)) error {
 	var (
 		fsize   int64
 		buf     = make([]byte, 1024*10)
@@ -330,27 +341,23 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	client := new(http.Client)
 	resp, err := client.Get(url)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
+		callback(0, 0, err)
 		return err
 	}
 	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
+		callback(0, 0, err)
 		return err
 	}
 	println("Save path: [", localPath, "] file size:", fsize)
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
+		callback(0, 0, err)
 		return err
 	}
 	defer file.Close()
 	if resp.Body == nil {
-		fmt.Printf("Download-error=[body is null]\n")
-		os.Exit(1)
+		callback(0, 0, err)
 		return nil
 	}
 	defer resp.Body.Close()
@@ -361,7 +368,7 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 			if nw > 0 {
 				written += int64(nw)
 			}
-			callback(fsize, written)
+			callback(fsize, written, err)
 			if err != nil {
 				break
 			}
@@ -432,13 +439,13 @@ func extractUnZip(filePath, targetPath string, callback func(totalLength, proces
 					callback(0, 0, err)
 				}
 			} else {
-				fmt.Printf("error: cannot open file, error=[%v]\n", err)
+				callback(0, 0, err)
 				return
 			}
 		}
 	} else {
 		if err != nil {
-			fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
+			callback(0, 0, err)
 		}
 	}
 }

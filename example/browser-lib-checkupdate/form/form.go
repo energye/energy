@@ -11,7 +11,6 @@
 package form
 
 import (
-	"fmt"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
@@ -24,17 +23,15 @@ var OnCreate callback
 
 type UpdateForm struct {
 	*lcl.TForm
-	TitlePanel          *lcl.TPanel
-	UpdatePromptPanel   *lcl.TPanel
-	UpdateProgressPanel *lcl.TPanel
+	TitlePanel        *lcl.TPanel
+	UpdatePromptPanel *lcl.TPanel
+	UpdateContentMemo *lcl.TMemo
 }
 
 func (m *UpdateForm) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("OnFormCreate")
 	var after = true
 	m.SetOnActivate(func(sender lcl.IObject) {
 		if OnAfter != nil && after {
-			fmt.Println("SetOnActivate")
 			after = false
 			OnAfter()
 		}
