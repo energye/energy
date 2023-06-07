@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	//_ "net/http/pprof"
@@ -24,7 +25,11 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/dom-visitor.html"
 	cef.BrowserWindow.Config.Title = "Energy - dom-visitor"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 
 	// DomVisitor 必须在渲染进程中执行
 	// 示例

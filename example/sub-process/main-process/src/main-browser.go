@@ -3,6 +3,7 @@ package src
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -10,8 +11,12 @@ import (
 func MainBrowserInit() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.Title = "ENERGY 区分主/子进程执行文件"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 
 	//主窗口初始化回调函数
 	//在这个函数里，主进程浏览初始化之前创建窗口之后

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 )
 
 func main() {
@@ -27,6 +28,11 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 	//运行应用
 	cef.Run(cefApp)
 }
