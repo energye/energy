@@ -193,25 +193,18 @@ func main() {
 			// background
 			bgImage := lcl.NewImage(m)
 			bgImage.SetParent(m)
-			bgImage.SetTop(m.TitlePanel.Height())
+			bgImage.SetTop(m.TitlePanel.Height() + 10)
 			bgImage.SetWidth(271)                              // 图片宽
 			bgImage.SetHeight(60)                              // 图片高
 			bgImage.SetLeft((m.Width() - bgImage.Width()) / 2) // 设置以窗口居中
 			bgImage.Picture().LoadFromFSFile("resources/bg.png")
 
-			var updatePanelHeight int32 = 180
+			var updatePanelHeight int32 = 200
 			// 更新提醒 panel
 			m.UpdatePromptPanel = m.NewPanel()
-			m.UpdatePromptPanel.SetTop(bgImage.Top() + bgImage.Height())
+			m.UpdatePromptPanel.SetTop(bgImage.Top() + bgImage.Height() + 20)
 			m.UpdatePromptPanel.SetWidth(m.Width())
 			m.UpdatePromptPanel.SetHeight(updatePanelHeight)
-
-			// 更新进度 panel
-			m.UpdateProgressPanel = m.NewPanel()
-			m.UpdateProgressPanel.SetTop(bgImage.Top() + bgImage.Height())
-			m.UpdateProgressPanel.SetWidth(m.Width())
-			m.UpdateProgressPanel.SetHeight(updatePanelHeight)
-			m.UpdateProgressPanel.SetVisible(false)
 
 			// 更新内容
 			updateContentMemo := lcl.NewMemo(m.UpdatePromptPanel)
@@ -223,7 +216,7 @@ func main() {
 			updateContentMemo.SetReadOnly(true)
 			updateContentMemo.SetColor(colors.ClWhite)
 			updateContentMemo.SetScrollBars(types.SsAutoBoth)
-			updateContentMemo.Lines().Add(i18n.Resource("updateContentMemo") + " " + model.Latest)
+			updateContentMemo.Lines().Add(i18n.Resource("updateContent") + " " + model.Latest)
 			for i, content := range updateVersion.Content {
 				updateContentMemo.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
 			}
@@ -255,7 +248,7 @@ func main() {
 			// 更新下载进度条
 			updateProgressBar := lcl.NewProgressBar(m)
 			updateProgressBar.SetParent(m)
-			updateProgressBar.SetTop(275)
+			updateProgressBar.SetTop(updatePanelHeight + m.UpdatePromptPanel.Top() + 5)
 			updateProgressBar.SetLeft(updateContentMemo.Left())
 			updateProgressBar.SetMin(0)
 			updateProgressBar.SetMax(100)
@@ -271,7 +264,7 @@ func main() {
 			updateBtn.SetCursor(types.CrHandPoint)
 			updateBtn.Picture().LoadFromFSFile("resources/btn-update.png")
 			updateBtn.SetLeft(400)
-			updateBtn.SetTop(290)
+			updateBtn.SetTop(330)
 			updateBtn.SetHint(i18n.Resource("update"))
 			updateBtn.SetOnClick(func(lcl.IObject) {
 				if isNotDownload {
@@ -301,22 +294,18 @@ func main() {
 							})
 						})
 						updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": " + filepath.Join(savePath, libname.GetDLLName()))
-						extractUnZip(saveFilePath, savePath, func(totalLength, processLength int64) {
+						extractUnZip(saveFilePath, savePath, func(totalLength, processLength int64, err error) {
 							var process = int32((float64(processLength) / float64(totalLength)) * 100)
 							lcl.ThreadSync(func() {
-								//updateProgressBar.SetPosition(process)
-								//if process >= 100 {
-								//	isNotDownload = true
-								//	updateBtn.SetEnabled(isNotDownload)
-								//	updateContentMemo.Lines().Add(i18n.Resource("endDownload"))
-								//}
+								if err != nil {
+									updateContentMemo.Lines().Add(i18n.Resource("updateError") + ":\n  " + err.Error())
+								}
 								if process >= 100 {
-									updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + " success")
+									updateContentMemo.Lines().Add(i18n.Resource("extractUnZip") + ": success")
+									updateContentMemo.Lines().Add(i18n.Resource("updateSuccess"))
 								}
 							})
-							//bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 						}, libname.GetDLLName())
-
 					}()
 				}
 			})
@@ -399,7 +388,7 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	return err
 }
 
-func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLength, processLength int64)) {
+func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLength, processLength int64, err error)) {
 	buf := make([]byte, 1024*10)
 	var written int64
 	for {
@@ -409,7 +398,7 @@ func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLe
 			if nw > 0 {
 				written += int64(nw)
 			}
-			callback(totalLength, written)
+			callback(totalLength, written, err)
 			if err != nil {
 				break
 			}
@@ -424,7 +413,7 @@ func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLe
 	}
 }
 
-func extractUnZip(filePath, targetPath string, callback func(totalLength, processLength int64), files ...interface{}) {
+func extractUnZip(filePath, targetPath string, callback func(totalLength, processLength int64, err error), files ...interface{}) {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		for i := 0; i < len(files); i++ {
@@ -439,17 +428,17 @@ func extractUnZip(filePath, targetPath string, callback func(totalLength, proces
 				if targetFile, err := os.Create(targetFileName); err == nil {
 					writeFile(f, targetFile, st.Size(), callback)
 					targetFile.Close()
+				} else {
+					callback(0, 0, err)
 				}
 			} else {
 				fmt.Printf("error: cannot open file, error=[%v]\n", err)
-				os.Exit(1)
 				return
 			}
 		}
 	} else {
 		if err != nil {
 			fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
-			os.Exit(1)
 		}
 	}
 }

@@ -5,6 +5,8 @@
   "update": "更新",
   "updateContent": "更新内容",
   "downloadURL": "更新地址",
+  "updateSuccess": "更新成功",
+  "updateError": "更新失败",
   "beginDownload": "开始下载",
   "endDownload": "下载完成",
   "savePath": "保存目录",
