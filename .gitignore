@@ -120,3 +120,6 @@ rsrc
 /app_windows_amd64.syso
 *.zip
 *.rar
+bytes.txt
+*.icns
+icons.iconset/

@@ -1,1 +1,0 @@
-windows 应用程序图标生成, 未提供 linux 和 macOSX图标配置
