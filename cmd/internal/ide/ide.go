@@ -1,4 +1,4 @@
-package main
+package ide
 
 import (
 	"embed"
@@ -7,10 +7,7 @@ import (
 	"github.com/energye/golcl/lcl"
 )
 
-//go:embed resources
-var resources embed.FS
-
-func main() {
-	inits.Init(nil, &resources)
+func Run(resources *embed.FS) {
+	inits.Init(nil, resources)
 	lcl.RunApp(&internal.Ide)
 }
