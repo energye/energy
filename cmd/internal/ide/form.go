@@ -1,4 +1,4 @@
-package internal
+package ide
 
 import (
 	"github.com/energye/golcl/lcl"

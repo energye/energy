@@ -1,4 +1,4 @@
-package internal
+package ide
 
 import (
 	"github.com/energye/energy/v2/pkgs/ext"
