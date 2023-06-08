@@ -249,6 +249,16 @@ func main() {
 				return false
 			})
 
+			ipc.On("SendMouseWheelEvent", func() {
+				browser := window.Chromium().Browser()
+				// 滚轮
+				browser.SendMouseWheelEvent(&cef.TCefMouseEvent{X: 100, Y: 100}, 200, 200)
+				// 左键 按下
+				browser.SendMouseClickEvent(&cef.TCefMouseEvent{X: 15, Y: 106}, 0, false, 1)
+				// 左键 抬起
+				browser.SendMouseClickEvent(&cef.TCefMouseEvent{X: 15, Y: 106}, 0, true, 1)
+			})
+
 			//window.Chromium().SetProxy(&cef.TCefProxy{
 			//	ProxyType:              consts.PtAutodetect,
 			//	ProxyScheme:            consts.PsSOCKS4,

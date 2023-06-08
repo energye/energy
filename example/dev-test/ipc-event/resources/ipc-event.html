@@ -379,6 +379,10 @@
         function reload() {
             ipc.emit("reload")
         }
+
+        function SendMouseWheelEvent() {
+            ipc.emit('SendMouseWheelEvent');
+        }
     </script>
 </head>
 <body style="margin: 0px;padding: 0px;">
@@ -423,6 +427,7 @@
     <button onclick="testSendTargetGo()">testSendTargetGo</button>
     <br>
     <button onclick="testEmitRule()">testEmitRule</button>
+    <button onclick="SendMouseWheelEvent()">SendMouseWheelEvent</button>
 </p>
 <p id="msgHtml"></p>
 </body>
