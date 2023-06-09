@@ -8,10 +8,7 @@
 //
 //----------------------------------------
 
-//go:build windows
-// +build windows
-
-// energy 扩展定义-windows
+// energy - lcl window api
 
 package cef
 
@@ -78,6 +75,35 @@ const (
 
 type HRGN struct {
 	instance unsafe.Pointer
+}
+
+type (
+	BOOL    int32
+	HRESULT int32
+)
+
+func LOBYTE(w uint16) byte {
+	return byte(w)
+}
+
+func HIBYTE(w uint16) byte {
+	return byte(w >> 8 & 0xff)
+}
+
+func LOWORD(dw uint32) uint16 {
+	return uint16(dw & 0xFFFF)
+}
+
+func HIWORD(dw uint32) uint16 {
+	return uint16(dw >> 16 & 0xffff)
+}
+
+func GET_X_LPARAM(lp uintptr) int32 {
+	return int32(int16(LOWORD(uint32(lp))))
+}
+
+func GET_Y_LPARAM(lp uintptr) int32 {
+	return int32(int16(HIWORD(uint32(lp))))
 }
 
 func (m *HRGN) Free() {
@@ -187,33 +213,4 @@ func WinSetDraggableRegions(aRGN *HRGN, regions []TCefDraggableRegion) {
 		fmt.Println("Check PtInRegion：", WinPtInRegion(draggableRegion, 50, 50))
 	*/
 	imports.Proc(internale_CEF_Win_SetDraggableRegions).Call(uintptr(aRGN.instance), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
-}
-
-type (
-	BOOL    int32
-	HRESULT int32
-)
-
-func LOBYTE(w uint16) byte {
-	return byte(w)
-}
-
-func HIBYTE(w uint16) byte {
-	return byte(w >> 8 & 0xff)
-}
-
-func LOWORD(dw uint32) uint16 {
-	return uint16(dw & 0xFFFF)
-}
-
-func HIWORD(dw uint32) uint16 {
-	return uint16(dw >> 16 & 0xffff)
-}
-
-func GET_X_LPARAM(lp uintptr) int32 {
-	return int32(int16(LOWORD(uint32(lp))))
-}
-
-func GET_Y_LPARAM(lp uintptr) int32 {
-	return int32(int16(HIWORD(uint32(lp))))
 }

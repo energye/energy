@@ -44,6 +44,7 @@ type DWORD = UInt32
 type HWND = UIntptr
 type WPARAM = UIntptr
 type LPARAM = UIntptr
+type HDC = UIntptr
 
 type Point struct {
 	X int32
