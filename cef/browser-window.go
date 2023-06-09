@@ -123,7 +123,7 @@ type ILCLBrowserWindow interface {
 	EnableDefaultCloseEvent()         //启用默认关闭事件
 	WindowParent() ICEFWindowParent   //浏览器父窗口组件
 	DisableTransparent()              //禁用窗口透明
-	EnableTransparent(value uint8)    //用用并设置窗口透明
+	EnableTransparent(value uint8)    //启用并设置窗口透明
 	DisableSystemMenu()               //禁用标题栏系统菜单
 	DisableHelp()                     //禁用标题栏帮助
 	EnableSystemMenu()                //启用标题栏系统菜单
