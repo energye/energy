@@ -17,6 +17,8 @@
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
+给项目点个 Star 吧，这对我很重要！
+
 ### [项目简介](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
 
 > [energy](https://github.com/energye/energy) 是 Go 基于 CEF(Chromium Embedded Framework)

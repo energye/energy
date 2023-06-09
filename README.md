@@ -16,6 +16,8 @@ English
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
+Give the project a Star, it's very important to me!
+
 ### [Project Introduction](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
 Energy is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 > [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
