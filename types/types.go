@@ -94,10 +94,6 @@ const (
 	MDT_DEFAULT                        = MDT_EFFECTIVE_DPI
 )
 
-type FontEnumProc func(ELogFont TagEnumLogFontA, Metric TNewTextMetric, FontType LongInt, Data LPARAM) LongInt
-type FontEnumExProc func(ELogFont TagEnumLogFontExA, Metric TNewTextMetricEx, FontType LongInt, Data LPARAM) LongInt
-type MonitorEnumProc func(hMonitor HMONITOR, hdcMonitor HDC, lprcMonitor Rect, dwData LPARAM) LongBool
-
 type HRGN struct {
 	instance unsafe.Pointer
 }

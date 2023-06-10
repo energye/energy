@@ -80,6 +80,9 @@ const (
 	internale_CEF_Win_EnumDisplayMonitors
 	internale_CEF_Win_EnumFontFamilies
 	internale_CEF_Win_EnumFontFamiliesEx
+	internale_CEF_Win_EnumDisplayMonitorsCallbackFree
+	internale_CEF_Win_EnumFontFamiliesCallbackFree
+	internale_CEF_Win_EnumFontFamiliesExCallbackFree
 	internale_CEF_Win_Ellipse
 	internale_CEF_Win_EqualRgn
 	internale_CEF_Win_ExcludeClipRect
