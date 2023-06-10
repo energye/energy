@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type schemeHandlerFactory uintptr
 
 func (*schemeHandlerFactory) New() *ICefSchemeHandlerFactory {
 	var result uintptr
-	imports.Proc(internale_SchemeHandlerFactoryRef_Create).Call(uintptr(0), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.SchemeHandlerFactoryRef_Create).Call(uintptr(0), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefSchemeHandlerFactory{instance: unsafe.Pointer(result)}
 	}
@@ -61,7 +62,7 @@ func (m *ICefSchemeHandlerFactory) SetNew(fn schemeHandlerFactoryNew) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_SchemeHandlerFactory_New).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.SchemeHandlerFactory_New).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

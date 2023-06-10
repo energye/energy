@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type downloadHandler uintptr
 
 func (*downloadHandler) New() *ICefDownloadHandler {
 	var result uintptr
-	imports.Proc(internale_CefDownloadHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDownloadHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDownloadHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,21 +62,21 @@ func (m *ICefDownloadHandler) SetCanDownload(fn canDownload) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadHandler_CanDownload).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDownloadHandler_CanDownload).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDownloadHandler) SetOnBeforeDownload(fn onBeforeDownload) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadHandler_OnBeforeDownload).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDownloadHandler_OnBeforeDownload).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDownloadHandler) SetOnDownloadUpdated(fn onDownloadUpdated) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadHandler_OnDownloadUpdated).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDownloadHandler_OnDownloadUpdated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

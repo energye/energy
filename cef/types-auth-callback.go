@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -36,12 +37,12 @@ func (m *ICefAuthCallback) IsValid() bool {
 
 func (m *ICefAuthCallback) Cont(username, password string) {
 	if m.instance != nil {
-		imports.Proc(internale_CefAuthCallback_Cont).Call(m.Instance(), api.PascalStr(username), api.PascalStr(password))
+		imports.Proc(def.CefAuthCallback_Cont).Call(m.Instance(), api.PascalStr(username), api.PascalStr(password))
 	}
 }
 
 func (m *ICefAuthCallback) Cancel() {
 	if m.instance != nil {
-		imports.Proc(internale_CefAuthCallback_Cancel).Call(m.Instance())
+		imports.Proc(def.CefAuthCallback_Cancel).Call(m.Instance())
 	}
 }

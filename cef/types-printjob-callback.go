@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 )
 
@@ -40,5 +41,5 @@ func (m *ICefPrintJobCallback) Cont() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintJobCallback_Cont).Call(m.Instance())
+	imports.Proc(def.CefPrintJobCallback_Cont).Call(m.Instance())
 }

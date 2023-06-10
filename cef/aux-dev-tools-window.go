@@ -14,6 +14,7 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -77,7 +78,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 		})
 		devToolsWindow.chromiumBrowser.CreateBrowser()
 		devToolsWindow.Show()
-		imports.Proc(internale_CEFBrowser_ShowDevTools).Call(m.Instance(), devToolsWindow.Chromium().Instance(), devToolsWindow.WindowParent().Instance(), api.PascalStr(dev_tools_name))
+		imports.Proc(def.CEFBrowser_ShowDevTools).Call(m.Instance(), devToolsWindow.Chromium().Instance(), devToolsWindow.WindowParent().Instance(), api.PascalStr(dev_tools_name))
 	} else if browserWindow.IsViewsFramework() {
 		if application.RemoteDebuggingPort() > 1024 && application.RemoteDebuggingPort() < 65535 {
 			wp := NewWindowProperty()

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -42,7 +43,7 @@ func (m *ICefExtension) GetIdentifier() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetIdentifier).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetIdentifier).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -50,7 +51,7 @@ func (m *ICefExtension) GetPath() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetPath).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetPath).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -59,7 +60,7 @@ func (m *ICefExtension) GetManifest() *ICefDictionaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefExtension_GetManifest).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefExtension_GetManifest).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDictionaryValue{instance: unsafe.Pointer(result)}
 	}
@@ -70,7 +71,7 @@ func (m *ICefExtension) IsSame(that *ICefExtension) bool {
 	if !m.IsValid() || !that.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_IsSame).Call(m.Instance(), that.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_IsSame).Call(m.Instance(), that.Instance())
 	return api.GoBool(r1)
 }
 
@@ -79,7 +80,7 @@ func (m *ICefExtension) GetHandler() *ICefExtensionHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefExtension_GetHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefExtension_GetHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefExtensionHandler{instance: unsafe.Pointer(result)}
 	}
@@ -91,7 +92,7 @@ func (m *ICefExtension) GetLoaderContext() *ICefRequestContext {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefExtension_GetLoaderContext).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefExtension_GetLoaderContext).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestContext{instance: unsafe.Pointer(result)}
 	}
@@ -102,7 +103,7 @@ func (m *ICefExtension) IsLoaded() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_IsLoaded).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_IsLoaded).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -110,14 +111,14 @@ func (m *ICefExtension) unload() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtension_unload).Call(m.Instance())
+	imports.Proc(def.CefExtension_unload).Call(m.Instance())
 }
 
 func (m *ICefExtension) GetBrowserActionPopup() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetBrowserActionPopup).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetBrowserActionPopup).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -125,7 +126,7 @@ func (m *ICefExtension) GetBrowserActionIcon() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetBrowserActionIcon).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetBrowserActionIcon).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -133,7 +134,7 @@ func (m *ICefExtension) GetPageActionPopup() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetPageActionPopup).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetPageActionPopup).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -141,7 +142,7 @@ func (m *ICefExtension) GetPageActionIcon() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetPageActionIcon).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetPageActionIcon).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -149,7 +150,7 @@ func (m *ICefExtension) GetOptionsPage() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetOptionsPage).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetOptionsPage).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -157,7 +158,7 @@ func (m *ICefExtension) GetOptionsUIPage() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetOptionsUIPage).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetOptionsUIPage).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -165,7 +166,7 @@ func (m *ICefExtension) GetBackgroundPage() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetBackgroundPage).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetBackgroundPage).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -173,6 +174,6 @@ func (m *ICefExtension) GetURL() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefExtension_GetURL).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefExtension_GetURL).Call(m.Instance())
 	return api.GoStr(r1)
 }

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type findHandler uintptr
 
 func (*findHandler) New() *ICefFindHandler {
 	var result uintptr
-	imports.Proc(internale_CefFindHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefFindHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFindHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,7 +62,7 @@ func (m *ICefFindHandler) SetOnFindResult(fn onFindResult) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFindHandler_OnFindResult).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFindHandler_OnFindResult).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

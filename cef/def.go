@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/internal/version"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
@@ -23,12 +24,12 @@ import (
 func defInit() {
 	{
 		// Set pascal lib-lcl version
-		r1, _, _ := imports.Proc(internale_LibVersion).Call()
+		r1, _, _ := imports.Proc(def.LibVersion).Call()
 		version.SetLibVersion(api.GoStr(r1))
 	}
 	{
 		// Set pascal lib-lcl build version
-		r1, _, _ := imports.Proc(internale_LibBuildVersion).Call()
+		r1, _, _ := imports.Proc(def.LibBuildVersion).Call()
 		version.SetLibBuildVersion(api.GoStr(r1))
 	}
 }
@@ -38,5 +39,5 @@ func defInit() {
 //
 // 没找到什么好的方式，只能这样设置
 func setMacOSXCommandLine(commandLine uintptr) {
-	imports.Proc(internale_SetMacOSXCommandLine).Call(commandLine)
+	imports.Proc(def.SetMacOSXCommandLine).Call(commandLine)
 }

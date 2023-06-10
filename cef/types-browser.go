@@ -14,6 +14,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
@@ -70,7 +71,7 @@ func (m *ICefBrowser) Identifier() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_GetIdentifier).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_GetIdentifier).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -79,7 +80,7 @@ func (m *ICefBrowser) HostWindowHandle() types.HWND {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_GetHostWindowHandle).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_GetHostWindowHandle).Call(m.Instance())
 	return r1
 }
 
@@ -88,7 +89,7 @@ func (m *ICefBrowser) CloseBrowser(forceClose bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_CloseBrowser).Call(m.Instance(), api.PascalBool(forceClose))
+	imports.Proc(def.CEFBrowser_CloseBrowser).Call(m.Instance(), api.PascalBool(forceClose))
 }
 
 // TryCloseBrowser 尝试关闭浏览器，同时尝试关闭窗口
@@ -96,7 +97,7 @@ func (m *ICefBrowser) TryCloseBrowser() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_TryCloseBrowser).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_TryCloseBrowser).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -105,7 +106,7 @@ func (m *ICefBrowser) SetFocus(focus bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SetFocus).Call(m.Instance(), api.PascalBool(focus))
+	imports.Proc(def.CEFBrowser_SetFocus).Call(m.Instance(), api.PascalBool(focus))
 }
 
 // GetZoomLevel 获取缩放级别
@@ -113,7 +114,7 @@ func (m *ICefBrowser) GetZoomLevel() (result float64) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_GetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
@@ -122,7 +123,7 @@ func (m *ICefBrowser) SetZoomLevel(zoomLevel float64) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&zoomLevel)))
+	imports.Proc(def.CEFBrowser_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&zoomLevel)))
 }
 
 // RunFileDialog 运行文件选择窗口, 可配合在下载文件事件中使用
@@ -130,7 +131,7 @@ func (m *ICefBrowser) RunFileDialog(mode int32, title, defaultFilePath string, a
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFilters.Instance())
+	imports.Proc(def.CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFilters.Instance())
 }
 
 // StartDownload 开始下载
@@ -138,7 +139,7 @@ func (m *ICefBrowser) StartDownload(url string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_StartDownload).Call(m.Instance(), api.PascalStr(url))
+	imports.Proc(def.CEFBrowser_StartDownload).Call(m.Instance(), api.PascalStr(url))
 }
 
 // DownloadImage 开始下载图片
@@ -146,7 +147,7 @@ func (m *ICefBrowser) DownloadImage(imageUrl string, isFavicon bool, maxImageSiz
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_DownloadImage).Call(m.Instance(), api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache))
+	imports.Proc(def.CEFBrowser_DownloadImage).Call(m.Instance(), api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache))
 }
 
 // Print
@@ -154,7 +155,7 @@ func (m *ICefBrowser) Print() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_Print).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_Print).Call(m.Instance())
 }
 
 // MainFrame 获取当前窗口的主Frame
@@ -164,7 +165,7 @@ func (m *ICefBrowser) MainFrame() *ICefFrame {
 	}
 	if m.mainFrame == nil || m.mainFrame.instance == nil || !m.mainFrame.IsValid() {
 		var result uintptr
-		imports.Proc(internale_CEFBrowser_GetMainFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CEFBrowser_GetMainFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.mainFrame = &ICefFrame{instance: unsafe.Pointer(result)}
 	}
 	return m.mainFrame
@@ -176,7 +177,7 @@ func (m *ICefBrowser) GetFocusedFrame() *ICefFrame {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CEFBrowser_GetFocusedFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetFocusedFrame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFrame{instance: unsafe.Pointer(result)}
 	}
@@ -198,7 +199,7 @@ func (m *ICefBrowser) GetFrameById(frameId int64) *ICefFrame {
 		delete(m.idFrames, frameId)
 	}
 	var result uintptr
-	imports.Proc(internale_CEFBrowser_GetFrameById).Call(m.Instance(), uintptr(unsafe.Pointer(&frameId)), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetFrameById).Call(m.Instance(), uintptr(unsafe.Pointer(&frameId)), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		frame := &ICefFrame{instance: unsafe.Pointer(result)}
 		m.idFrames[frameId] = frame
@@ -222,7 +223,7 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 		delete(m.nameFrames, frameName)
 	}
 	var result uintptr
-	imports.Proc(internale_CEFBrowser_GetFrameByName).Call(m.Instance(), api.PascalStr(frameName), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetFrameByName).Call(m.Instance(), api.PascalStr(frameName), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		frame := &ICefFrame{instance: unsafe.Pointer(result)}
 		m.nameFrames[frameName] = frame
@@ -246,7 +247,7 @@ func (m *ICefBrowser) PrintToPdf(path string, settings *CefPdfPrintSettings, cal
 	}
 	setPtr = settings.ToPtr()
 	settingsPtr = uintptr(unsafe.Pointer(setPtr))
-	imports.Proc(internale_CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), settingsPtr, callback.Instance())
+	imports.Proc(def.CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), settingsPtr, callback.Instance())
 }
 
 // SendDevToolsMessage 发送开发者工具消息
@@ -254,7 +255,7 @@ func (m *ICefBrowser) SendDevToolsMessage(message string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendDevToolsMessage).Call(m.Instance(), api.PascalStr(message))
+	imports.Proc(def.CEFBrowser_SendDevToolsMessage).Call(m.Instance(), api.PascalStr(message))
 }
 
 // ExecuteDevToolsMethod 执行开发者工具方法
@@ -262,7 +263,7 @@ func (m *ICefBrowser) ExecuteDevToolsMethod(messageId int32, method string, dict
 	if !m.IsValid() || dictionaryValue == nil {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_ExecuteDevToolsMethod).Call(m.Instance(), uintptr(messageId), api.PascalStr(method), dictionaryValue.Instance())
+	imports.Proc(def.CEFBrowser_ExecuteDevToolsMethod).Call(m.Instance(), uintptr(messageId), api.PascalStr(method), dictionaryValue.Instance())
 }
 
 // SendKeyEvent 发送模拟键盘事件
@@ -270,7 +271,7 @@ func (m *ICefBrowser) SendKeyEvent(event *TCefKeyEvent) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendKeyEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
+	imports.Proc(def.CEFBrowser_SendKeyEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
 }
 
 // SetAudioMuted
@@ -278,7 +279,7 @@ func (m *ICefBrowser) SetAudioMuted(mute bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SetAudioMuted).Call(m.Instance(), api.PascalBool(mute))
+	imports.Proc(def.CEFBrowser_SetAudioMuted).Call(m.Instance(), api.PascalBool(mute))
 }
 
 // IsAudioMuted
@@ -286,7 +287,7 @@ func (m *ICefBrowser) IsAudioMuted() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_IsAudioMuted).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_IsAudioMuted).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -295,7 +296,7 @@ func (m *ICefBrowser) SetAutoResizeEnabled(enabled bool, minSize, maxSize *TCefS
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SetAutoResizeEnabled).Call(m.Instance(), api.PascalBool(enabled), uintptr(unsafe.Pointer(minSize)), uintptr(unsafe.Pointer(maxSize)))
+	imports.Proc(def.CEFBrowser_SetAutoResizeEnabled).Call(m.Instance(), api.PascalBool(enabled), uintptr(unsafe.Pointer(minSize)), uintptr(unsafe.Pointer(maxSize)))
 }
 
 // SetAccessibilityState 设置可访问性状态
@@ -303,7 +304,7 @@ func (m *ICefBrowser) SetAccessibilityState(accessibilityState TCefState) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SetAccessibilityState).Call(m.Instance(), uintptr(accessibilityState))
+	imports.Proc(def.CEFBrowser_SetAccessibilityState).Call(m.Instance(), uintptr(accessibilityState))
 }
 
 // NotifyMoveOrResizeStarted 通用移动或大小开始
@@ -311,7 +312,7 @@ func (m *ICefBrowser) NotifyMoveOrResizeStarted() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_NotifyMoveOrResizeStarted).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_NotifyMoveOrResizeStarted).Call(m.Instance())
 }
 
 // NotifyScreenInfoChanged 通知屏幕改变
@@ -319,7 +320,7 @@ func (m *ICefBrowser) NotifyScreenInfoChanged() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_NotifyScreenInfoChanged).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_NotifyScreenInfoChanged).Call(m.Instance())
 }
 
 // SendCaptureLostEvent 发送失去标题事件
@@ -327,7 +328,7 @@ func (m *ICefBrowser) SendCaptureLostEvent() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendCaptureLostEvent).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_SendCaptureLostEvent).Call(m.Instance())
 }
 
 // SendTouchEvent 发送触摸事件
@@ -335,7 +336,7 @@ func (m *ICefBrowser) SendTouchEvent(event *TCefTouchEvent) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendTouchEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
+	imports.Proc(def.CEFBrowser_SendTouchEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
 }
 
 // SendMouseWheelEvent 发送鼠标滚轮事件
@@ -343,7 +344,7 @@ func (m *ICefBrowser) SendMouseWheelEvent(event *TCefMouseEvent, deltaX, deltaY 
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendMouseWheelEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(deltaX), uintptr(deltaY))
+	imports.Proc(def.CEFBrowser_SendMouseWheelEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(deltaX), uintptr(deltaY))
 }
 
 // SendMouseMoveEvent 发送鼠标移动事件
@@ -351,7 +352,7 @@ func (m *ICefBrowser) SendMouseMoveEvent(event *TCefMouseEvent, mouseLeave bool)
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendMouseMoveEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), api.PascalBool(mouseLeave))
+	imports.Proc(def.CEFBrowser_SendMouseMoveEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), api.PascalBool(mouseLeave))
 }
 
 // SendMouseClickEvent 发送鼠标点击事件
@@ -359,7 +360,7 @@ func (m *ICefBrowser) SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouse
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_SendMouseClickEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(type_), api.PascalBool(mouseUp), uintptr(clickCount))
+	imports.Proc(def.CEFBrowser_SendMouseClickEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(type_), api.PascalBool(mouseUp), uintptr(clickCount))
 }
 
 // ViewSource 显示网页源码
@@ -385,7 +386,7 @@ func (m *ICefBrowser) CloseDevTools() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_CloseDevTools).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_CloseDevTools).Call(m.Instance())
 }
 
 // HasDevTools
@@ -393,7 +394,7 @@ func (m *ICefBrowser) HasView() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_HasView).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_HasView).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -402,7 +403,7 @@ func (m *ICefBrowser) HasDevTools() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_HasDevTools).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_HasDevTools).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -411,7 +412,7 @@ func (m *ICefBrowser) CanGoBack() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_CanGoBack).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_CanGoBack).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -421,7 +422,7 @@ func (m *ICefBrowser) GoBack() {
 		return
 	}
 	if m.CanGoBack() {
-		imports.Proc(internale_CEFBrowser_GoBack).Call(m.Instance())
+		imports.Proc(def.CEFBrowser_GoBack).Call(m.Instance())
 	}
 }
 
@@ -430,7 +431,7 @@ func (m *ICefBrowser) CanGoForward() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_CanGoForward).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_CanGoForward).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -440,7 +441,7 @@ func (m *ICefBrowser) GoForward() {
 		return
 	}
 	if m.CanGoForward() {
-		imports.Proc(internale_CEFBrowser_GoForward).Call(m.Instance())
+		imports.Proc(def.CEFBrowser_GoForward).Call(m.Instance())
 	}
 }
 
@@ -449,7 +450,7 @@ func (m *ICefBrowser) IsLoading() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_IsLoading).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_IsLoading).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -458,7 +459,7 @@ func (m *ICefBrowser) Reload() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_Reload).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_Reload).Call(m.Instance())
 }
 
 // ReloadIgnoreCache 重新加载忽略缓存
@@ -466,7 +467,7 @@ func (m *ICefBrowser) ReloadIgnoreCache() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_ReloadIgnoreCache).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_ReloadIgnoreCache).Call(m.Instance())
 }
 
 // StopLoad 停止加载
@@ -474,7 +475,7 @@ func (m *ICefBrowser) StopLoad() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_StopLoad).Call(m.Instance())
+	imports.Proc(def.CEFBrowser_StopLoad).Call(m.Instance())
 }
 
 // FrameCount 获取当前窗口Frame数量
@@ -482,7 +483,7 @@ func (m *ICefBrowser) FrameCount() int {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFBrowser_FrameCount).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFBrowser_FrameCount).Call(m.Instance())
 	return int(r1)
 }
 
@@ -493,7 +494,7 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	}
 	var result uintptr
 	var resultSize int32
-	imports.Proc(internale_CEFBrowser_GetFrameNames).Call(m.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultSize)))
+	imports.Proc(def.CEFBrowser_GetFrameNames).Call(m.Instance(), uintptr(unsafe.Pointer(&result)), uintptr(unsafe.Pointer(&resultSize)))
 	frameNames := make([]*FrameNames, resultSize, resultSize)
 	for i := 0; i < int(resultSize); i++ {
 		fnsPtr := (*frameNamesPtr)(unsafe.Pointer(common.GetParamOf(i, result)))
@@ -522,7 +523,7 @@ func (m *ICefBrowser) Find(searchText string, forward, matchCase, findNext bool)
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_Find).Call(m.Instance(), api.PascalStr(searchText), api.PascalBool(forward), api.PascalBool(matchCase), api.PascalBool(findNext))
+	imports.Proc(def.CEFBrowser_Find).Call(m.Instance(), api.PascalStr(searchText), api.PascalBool(forward), api.PascalBool(matchCase), api.PascalBool(findNext))
 }
 
 // StopFinding 停止加载
@@ -530,7 +531,7 @@ func (m *ICefBrowser) StopFinding(clearSelection bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFBrowser_StopFinding).Call(m.Instance(), api.PascalBool(clearSelection))
+	imports.Proc(def.CEFBrowser_StopFinding).Call(m.Instance(), api.PascalBool(clearSelection))
 }
 
 // GetRequestContext -> ICefBrowserHost -> ICefRequestContext
@@ -542,7 +543,7 @@ func (m *ICefBrowser) GetRequestContext() *ICefRequestContext {
 		return m.requestContext
 	}
 	var result uintptr
-	imports.Proc(internale_CEFBrowser_GetRequestContext).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetRequestContext).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		m.requestContext = &ICefRequestContext{instance: unsafe.Pointer(result)}
 		return m.requestContext
@@ -584,7 +585,7 @@ type browser uintptr
 
 func (*browser) UnWrap(data *ICefBrowser) *ICefBrowser {
 	var result uintptr
-	imports.Proc(internale_CEFBrowserRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowserRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }

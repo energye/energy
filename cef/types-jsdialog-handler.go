@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type jsDialogHandler uintptr
 
 func (*jsDialogHandler) New() *ICefJsDialogHandler {
 	var result uintptr
-	imports.Proc(internale_CefJsDialogHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefJsDialogHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefJsDialogHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,28 +63,28 @@ func (m *ICefJsDialogHandler) OnJsDialog(fn onJsDialog) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefJsDialogHandler_OnJsdialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefJsDialogHandler_OnJsdialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefJsDialogHandler) OnBeforeUnloadDialog(fn onBeforeUnloadDialog) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefJsDialogHandler_OnBeforeUnloadDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefJsDialogHandler_OnBeforeUnloadDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefJsDialogHandler) OnResetDialogState(fn onResetDialogState) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefJsDialogHandler_OnResetDialogState).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefJsDialogHandler_OnResetDialogState).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefJsDialogHandler) OnDialogClosed(fn onDialogClosed) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefJsDialogHandler_OnDialogClosed).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefJsDialogHandler_OnDialogClosed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

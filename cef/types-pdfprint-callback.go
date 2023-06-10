@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -24,7 +25,7 @@ type pdfPrintCallback uintptr
 
 func (*pdfPrintCallback) New() *ICefPdfPrintCallback {
 	var result uintptr
-	imports.Proc(internale_CefPdfPrintCallback_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefPdfPrintCallback_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefPdfPrintCallback{instance: unsafe.Pointer(result)}
 }
 
@@ -51,7 +52,7 @@ func (m *ICefPdfPrintCallback) IsValid() bool {
 }
 
 func (m *ICefPdfPrintCallback) OnPdfPrintFinished(fn OnPdfPrintFinished) {
-	imports.Proc(internale_CefPdfPrintCallback_OnPdfPrintFinished).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPdfPrintCallback_OnPdfPrintFinished).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type OnPdfPrintFinished func(path string, ok bool)

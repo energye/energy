@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -26,13 +27,13 @@ type postDataElement uintptr
 
 func (m *postDataElement) New() *ICefPostDataElement {
 	var result uintptr
-	imports.Proc(internale_PostDataElementRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.PostDataElementRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefPostDataElement{instance: unsafe.Pointer(result)}
 }
 
 func (m *postDataElement) UnWrap(data *ICefPostDataElement) *ICefPostDataElement {
 	var result uintptr
-	imports.Proc(internale_PostDataElementRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.PostDataElementRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -56,7 +57,7 @@ func (m *ICefPostDataElement) IsReadOnly() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_PostDataElement_IsReadOnly).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.PostDataElement_IsReadOnly).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -64,28 +65,28 @@ func (m *ICefPostDataElement) SetToEmpty() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_PostDataElement_SetToEmpty).Call(m.Instance())
+	imports.Proc(def.PostDataElement_SetToEmpty).Call(m.Instance())
 }
 
 func (m *ICefPostDataElement) SetToFile(fileName string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_PostDataElement_SetToFile).Call(m.Instance(), api.PascalStr(fileName))
+	imports.Proc(def.PostDataElement_SetToFile).Call(m.Instance(), api.PascalStr(fileName))
 }
 
 func (m *ICefPostDataElement) SetToBytes(bytes []byte) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_PostDataElement_SetToBytes).Call(m.Instance(), uintptr(uint32(len(bytes))), uintptr(unsafe.Pointer(&bytes[0])))
+	imports.Proc(def.PostDataElement_SetToBytes).Call(m.Instance(), uintptr(uint32(len(bytes))), uintptr(unsafe.Pointer(&bytes[0])))
 }
 
 func (m *ICefPostDataElement) GetType() consts.TCefPostDataElementType {
 	if !m.IsValid() {
 		return -1
 	}
-	r1, _, _ := imports.Proc(internale_PostDataElement_GetType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.PostDataElement_GetType).Call(m.Instance())
 	return consts.TCefPostDataElementType(r1)
 }
 
@@ -93,7 +94,7 @@ func (m *ICefPostDataElement) GetFile() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_PostDataElement_GetFile).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.PostDataElement_GetFile).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -101,7 +102,7 @@ func (m *ICefPostDataElement) GetBytesCount() uint32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_PostDataElement_GetBytesCount).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.PostDataElement_GetBytesCount).Call(m.Instance())
 	return uint32(r1)
 }
 
@@ -114,7 +115,7 @@ func (m *ICefPostDataElement) GetBytes() (result []byte, count uint32) {
 		return nil, 0
 	}
 	result = make([]byte, size)
-	r1, _, _ := imports.Proc(internale_PostDataElement_GetBytes).Call(m.Instance(), uintptr(size), uintptr(unsafe.Pointer(&result)))
+	r1, _, _ := imports.Proc(def.PostDataElement_GetBytes).Call(m.Instance(), uintptr(size), uintptr(unsafe.Pointer(&result)))
 	count = uint32(r1)
 	return result, count
 }

@@ -15,6 +15,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -44,7 +45,7 @@ type cefV8Accessor uintptr
 // New 创建一个v8对象访问器
 func (*cefV8Accessor) New() *ICefV8Accessor {
 	var result uintptr
-	imports.Proc(internale_CefV8Accessor_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8Accessor_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Accessor{
 		instance: unsafe.Pointer(result),
 	}
@@ -60,16 +61,16 @@ func (m *ICefV8Accessor) Instance() uintptr {
 
 //Get 读取函数
 func (m *ICefV8Accessor) Get(fn V8AccessorGet) {
-	imports.Proc(internale_CefV8Accessor_Get).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Accessor_Get).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 //Set 写入访问函数
 func (m *ICefV8Accessor) Set(fn V8AccessorSet) {
-	imports.Proc(internale_CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefV8Accessor) Destroy() {
-	imports.Proc(internale_CefV8Accessor_Destroy).Call(m.Instance())
+	imports.Proc(def.CefV8Accessor_Destroy).Call(m.Instance())
 }
 
 func (m *ICefV8Accessor) Free() {

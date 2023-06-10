@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type frameHandler uintptr
 
 func (*frameHandler) New() *ICefFrameHandler {
 	var result uintptr
-	imports.Proc(internale_CefFrameHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefFrameHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFrameHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,28 +62,28 @@ func (m *ICefFrameHandler) SetOnFrameCreated(fn onFrameCreated) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFrameHandler_OnFrameCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFrameHandler_OnFrameCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefFrameHandler) SetOnFrameAttached(fn onFrameAttached) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFrameHandler_OnFrameAttached).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFrameHandler_OnFrameAttached).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefFrameHandler) SetOnFrameDetached(fn onFrameDetached) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFrameHandler_OnFrameDetached).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFrameHandler_OnFrameDetached).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefFrameHandler) SetOnMainFrameChanged(fn onMainFrameChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFrameHandler_OnMainFrameChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFrameHandler_OnMainFrameChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

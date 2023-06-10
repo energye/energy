@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -28,7 +29,7 @@ type cookieAccessFilter uintptr
 
 func (*cookieAccessFilter) New() *ICefCookieAccessFilter {
 	var result uintptr
-	imports.Proc(internale_CookieAccessFilterRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CookieAccessFilterRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefCookieAccessFilter{instance: unsafe.Pointer(result)}
 	}
@@ -37,7 +38,7 @@ func (*cookieAccessFilter) New() *ICefCookieAccessFilter {
 
 func (*cookieAccessFilter) NewForChromium(chromium IChromium) *ICefCookieAccessFilter {
 	var result uintptr
-	imports.Proc(internale_CookieAccessFilterRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CookieAccessFilterRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefCookieAccessFilter{instance: unsafe.Pointer(result)}
 	}
@@ -80,14 +81,14 @@ func (m *ICefCookieAccessFilter) SetCanSendCookie(fn canSendCookie) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_CookieAccessFilter_CanSendCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CookieAccessFilter_CanSendCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefCookieAccessFilter) SetCanSaveCookie(fn canSaveCookie) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_CookieAccessFilter_CanSaveCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CookieAccessFilter_CanSaveCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

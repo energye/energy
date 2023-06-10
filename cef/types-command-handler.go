@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type commandHandler uintptr
 
 func (*commandHandler) New() *ICefCommandHandler {
 	var result uintptr
-	imports.Proc(internale_CefCommandHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefCommandHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefCommandHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,7 +63,7 @@ func (m *ICefCommandHandler) SetOnChromeCommand(fn onChromeCommand) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefCommandHandler_OnChromeCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefCommandHandler_OnChromeCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

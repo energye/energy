@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type responseFilter uintptr
 
 func (*responseFilter) New() *ICefResponseFilter {
 	var result uintptr
-	imports.Proc(internale_CefResponseFilterRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefResponseFilterRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefResponseFilter{instance: unsafe.Pointer(result)}
 	}
@@ -62,14 +63,14 @@ func (m *ICefResponseFilter) InitFilter(fn responseFilterInitFilter) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponseFilter_InitFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefResponseFilter_InitFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResponseFilter) Filter(fn responseFilterFilter) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponseFilter_Filter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefResponseFilter_Filter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type focusHandler uintptr
 
 func (*focusHandler) New() *ICefFocusHandler {
 	var result uintptr
-	imports.Proc(internale_CefFocusHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefFocusHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFocusHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,21 +63,21 @@ func (m *ICefFocusHandler) SetOnTakeFocus(fn onTakeFocus) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFocusHandler_OnTakeFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFocusHandler_OnTakeFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefFocusHandler) SetOnSetFocus(fn onSetFocus) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFocusHandler_OnSetFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFocusHandler_OnSetFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefFocusHandler) SetOnGotFocus(fn onGotFocus) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefFocusHandler_OnGotFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefFocusHandler_OnGotFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

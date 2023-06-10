@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type contextMenuHandler uintptr
 
 func (*contextMenuHandler) New() *ICefContextMenuHandler {
 	var result uintptr
-	imports.Proc(internale_CefContextMenuHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefContextMenuHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefContextMenuHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,49 +63,49 @@ func (m *ICefContextMenuHandler) SetOnBeforeContextMenu(fn onBeforeContextMenu) 
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_OnBeforeContextMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_OnBeforeContextMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetRunContextMenu(fn runContextMenu) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_RunContextMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_RunContextMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetOnContextMenuCommand(fn onContextMenuCommand) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_OnContextMenuCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_OnContextMenuCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetOnContextMenuDismissed(fn onContextMenuDismissed) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_OnContextMenuDismissed).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_OnContextMenuDismissed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetRunQuickMenu(fn runQuickMenu) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_RunQuickMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_RunQuickMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetOnQuickMenuCommand(fn onQuickMenuCommand) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_OnQuickMenuCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_OnQuickMenuCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefContextMenuHandler) SetOnQuickMenuDismissed(fn onQuickMenuDismissed) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefContextMenuHandler_OnQuickMenuDismissed).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefContextMenuHandler_OnQuickMenuDismissed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

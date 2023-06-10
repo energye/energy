@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type requestContextHandler uintptr
 
 func (*requestContextHandler) New() *ICefRequestContextHandler {
 	var result uintptr
-	imports.Proc(internale_RequestContextHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.RequestContextHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestContextHandler{instance: unsafe.Pointer(result), ct: consts.CtTClient}
 	}
@@ -39,7 +40,7 @@ func (*requestContextHandler) NewForChromium(chromium IChromium) *ICefRequestCon
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_RequestContextHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.RequestContextHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestContextHandler{instance: unsafe.Pointer(result), ct: consts.CtChromium}
 	}
@@ -82,14 +83,14 @@ func (m *ICefRequestContextHandler) SetOnRequestContextInitialized(fn onRequestC
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_RequestContextHandler_OnRequestContextInitialized).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.RequestContextHandler_OnRequestContextInitialized).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestContextHandler) SetGetResourceRequestHandler(fn getResourceRequestHandler) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_RequestContextHandler_GetResourceRequestHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.RequestContextHandler_GetResourceRequestHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type onRequestContextInitialized func(requestContext *ICefRequestContext)

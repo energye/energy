@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -49,7 +50,7 @@ func (m *ICefX509Certificate) GetSubject() *ICefX509CertPrincipal {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetSubject).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetSubject).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefX509CertPrincipal{instance: unsafe.Pointer(result)}
 	}
@@ -61,7 +62,7 @@ func (m *ICefX509Certificate) GetIssuer() *ICefX509CertPrincipal {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetIssuer).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetIssuer).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefX509CertPrincipal{instance: unsafe.Pointer(result)}
 	}
@@ -73,7 +74,7 @@ func (m *ICefX509Certificate) GetSerialNumber() *ICefBinaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetSerialNumber).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetSerialNumber).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefBinaryValue{instance: unsafe.Pointer(result)}
 	}
@@ -84,7 +85,7 @@ func (m *ICefX509Certificate) GetValidStart() (result int64) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefX509Certificate_GetValidStart).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetValidStart).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
@@ -92,7 +93,7 @@ func (m *ICefX509Certificate) GetValidExpiry() (result int64) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefX509Certificate_GetValidExpiry).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetValidExpiry).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
@@ -101,7 +102,7 @@ func (m *ICefX509Certificate) GetValidStartAsDateTime() time.Time {
 		return time.Time{}
 	}
 	var result float64
-	imports.Proc(internale_CefX509Certificate_GetValidStartAsDateTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetValidStartAsDateTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return common.DDateTimeToGoDateTime(result)
 	}
@@ -113,7 +114,7 @@ func (m *ICefX509Certificate) GetValidExpiryAsDateTime() time.Time {
 		return time.Time{}
 	}
 	var result float64
-	imports.Proc(internale_CefX509Certificate_GetValidExpiryAsDateTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetValidExpiryAsDateTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return common.DDateTimeToGoDateTime(result)
 	}
@@ -125,7 +126,7 @@ func (m *ICefX509Certificate) GetDerEncoded() *ICefBinaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetDerEncoded).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetDerEncoded).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefBinaryValue{instance: unsafe.Pointer(result)}
 	}
@@ -137,7 +138,7 @@ func (m *ICefX509Certificate) GetPemEncoded() *ICefBinaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetPemEncoded).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetPemEncoded).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefBinaryValue{instance: unsafe.Pointer(result)}
 	}
@@ -148,7 +149,7 @@ func (m *ICefX509Certificate) GetIssuerChainSize() uint32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefX509Certificate_GetIssuerChainSize).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509Certificate_GetIssuerChainSize).Call(m.Instance())
 	return uint32(r1)
 }
 
@@ -157,7 +158,7 @@ func (m *ICefX509Certificate) GetDEREncodedIssuerChain(chainCount uint32) *TCefB
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetDEREncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetDEREncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &TCefBinaryValueArray{count: chainCount, instance: unsafe.Pointer(result)}
 	}
@@ -169,7 +170,7 @@ func (m *ICefX509Certificate) GetPEMEncodedIssuerChain(chainCount uint32) *TCefB
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefX509Certificate_GetPEMEncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetPEMEncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &TCefBinaryValueArray{count: chainCount, instance: unsafe.Pointer(result)}
 	}
@@ -184,7 +185,7 @@ func (m *TCefX509CertificateArray) Get(index uint32) *ICefX509Certificate {
 			m.certificates = make([]*ICefX509Certificate, m.count, m.count)
 		}
 		var result uintptr
-		imports.Proc(internale_CefX509CertificateArray_Get).Call(uintptr(m.instance), uintptr(index), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefX509CertificateArray_Get).Call(uintptr(m.instance), uintptr(index), uintptr(unsafe.Pointer(&result)))
 		if result != 0 {
 			m.certificates[index] = &ICefX509Certificate{instance: unsafe.Pointer(result)}
 			return m.certificates[index]
@@ -238,7 +239,7 @@ func (m *ICefX509CertPrincipal) GetDisplayName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefX509CertPrincipal_GetDisplayName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509CertPrincipal_GetDisplayName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -246,7 +247,7 @@ func (m *ICefX509CertPrincipal) GetCommonName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefX509CertPrincipal_GetCommonName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509CertPrincipal_GetCommonName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -254,7 +255,7 @@ func (m *ICefX509CertPrincipal) GetLocalityName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefX509CertPrincipal_GetLocalityName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509CertPrincipal_GetLocalityName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -262,7 +263,7 @@ func (m *ICefX509CertPrincipal) GetStateOrProvinceName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefX509CertPrincipal_GetStateOrProvinceName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509CertPrincipal_GetStateOrProvinceName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -270,7 +271,7 @@ func (m *ICefX509CertPrincipal) GetCountryName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefX509CertPrincipal_GetCountryName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefX509CertPrincipal_GetCountryName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -279,7 +280,7 @@ func (m *ICefX509CertPrincipal) GetStreetAddresses() *lcl.TStrings {
 		return nil
 	}
 	addresses := lcl.NewStrings()
-	imports.Proc(internale_CefX509CertPrincipal_GetStreetAddresses).Call(m.Instance(), addresses.Instance())
+	imports.Proc(def.CefX509CertPrincipal_GetStreetAddresses).Call(m.Instance(), addresses.Instance())
 	return addresses
 }
 
@@ -288,7 +289,7 @@ func (m *ICefX509CertPrincipal) GetOrganizationNames() *lcl.TStrings {
 		return nil
 	}
 	addresses := lcl.NewStrings()
-	imports.Proc(internale_CefX509CertPrincipal_GetOrganizationNames).Call(m.Instance(), addresses.Instance())
+	imports.Proc(def.CefX509CertPrincipal_GetOrganizationNames).Call(m.Instance(), addresses.Instance())
 	return addresses
 }
 
@@ -297,7 +298,7 @@ func (m *ICefX509CertPrincipal) GetOrganizationUnitNames() *lcl.TStrings {
 		return nil
 	}
 	addresses := lcl.NewStrings()
-	imports.Proc(internale_CefX509CertPrincipal_GetOrganizationUnitNames).Call(m.Instance(), addresses.Instance())
+	imports.Proc(def.CefX509CertPrincipal_GetOrganizationUnitNames).Call(m.Instance(), addresses.Instance())
 	return addresses
 }
 
@@ -306,7 +307,7 @@ func (m *ICefX509CertPrincipal) GetDomainComponents() *lcl.TStrings {
 		return nil
 	}
 	addresses := lcl.NewStrings()
-	imports.Proc(internale_CefX509CertPrincipal_GetDomainComponents).Call(m.Instance(), addresses.Instance())
+	imports.Proc(def.CefX509CertPrincipal_GetDomainComponents).Call(m.Instance(), addresses.Instance())
 	return addresses
 }
 
@@ -338,7 +339,7 @@ func (m *ICefSelectClientCertificateCallback) Select(cert *ICefX509Certificate) 
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefSelectClientCertificateCallback_Select).Call(m.Instance(), cert.Instance())
+	imports.Proc(def.CefSelectClientCertificateCallback_Select).Call(m.Instance(), cert.Instance())
 }
 
 // ************************** ICefSslInfo ************************** //
@@ -369,7 +370,7 @@ func (m *ICefSslInfo) GetCertStatus() consts.TCefCertStatus {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefSslInfo_GetCertStatus).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefSslInfo_GetCertStatus).Call(m.Instance())
 	return consts.TCefCertStatus(r1)
 }
 
@@ -378,7 +379,7 @@ func (m *ICefSslInfo) GetX509Certificate() *ICefX509Certificate {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefSslInfo_GetX509Certificate).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefSslInfo_GetX509Certificate).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefX509Certificate{instance: unsafe.Pointer(result)}
 	}

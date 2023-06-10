@@ -11,9 +11,10 @@
 // energy - lcl window api - callback
 // TODO : All functions of this API have not been fully tested yet
 
-package cef
+package winapi
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
@@ -49,7 +50,7 @@ func (m *EnumDisplayMonitorsCallback) Callback(fn enumDisplayMonitorsProc) {
 func (m *EnumDisplayMonitorsCallback) Free() {
 	if m.instance != 0 {
 		api.RemoveEventElement(m.instance)
-		imports.Proc(internale_CEF_Win_EnumDisplayMonitorsCallbackFree).Call()
+		imports.Proc(def.CEF_Win_EnumDisplayMonitorsCallbackFree).Call()
 	}
 }
 
@@ -67,7 +68,7 @@ func (m *EnumFontFamiliesCallback) Callback(fn enumFontFamiliesProc) {
 func (m *EnumFontFamiliesCallback) Free() {
 	if m.instance != 0 {
 		api.RemoveEventElement(m.instance)
-		imports.Proc(internale_CEF_Win_EnumFontFamiliesCallbackFree).Call()
+		imports.Proc(def.CEF_Win_EnumFontFamiliesCallbackFree).Call()
 	}
 }
 
@@ -78,7 +79,7 @@ func NewEnumFontFamiliesExCallback() *EnumFontFamiliesExCallback {
 func (m *EnumFontFamiliesExCallback) Callback(fn enumFontFamiliesExProc) {
 	if m.instance == 0 {
 		m.instance = api.MakeEventDataPtr(fn)
-		imports.Proc(internale_CEF_Win_EnumFontFamiliesExCallbackFree).Call()
+		imports.Proc(def.CEF_Win_EnumFontFamiliesExCallbackFree).Call()
 	}
 }
 

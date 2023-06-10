@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type downloadItem uintptr
 
 func (*downloadItem) UnWrap(data *ICefDownloadItem) *ICefDownloadItem {
 	var result uintptr
-	imports.Proc(internale_CefDownloadItemRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDownloadItemRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -39,7 +40,7 @@ func (m *ICefDownloadItem) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_IsValid).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -47,7 +48,7 @@ func (m *ICefDownloadItem) IsInProgress() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_IsInProgress).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_IsInProgress).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -55,7 +56,7 @@ func (m *ICefDownloadItem) IsComplete() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_IsComplete).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_IsComplete).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -63,7 +64,7 @@ func (m *ICefDownloadItem) IsCanceled() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_IsCanceled).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_IsCanceled).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -71,7 +72,7 @@ func (m *ICefDownloadItem) CurrentSpeed() int64 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_CurrentSpeed).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_CurrentSpeed).Call(m.Instance())
 	return int64(r1)
 }
 
@@ -79,7 +80,7 @@ func (m *ICefDownloadItem) PercentComplete() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_PercentComplete).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_PercentComplete).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -87,7 +88,7 @@ func (m *ICefDownloadItem) TotalBytes() int64 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_TotalBytes).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_TotalBytes).Call(m.Instance())
 	return int64(r1)
 }
 
@@ -95,7 +96,7 @@ func (m *ICefDownloadItem) ReceivedBytes() int64 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_ReceivedBytes).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_ReceivedBytes).Call(m.Instance())
 	return int64(r1)
 }
 
@@ -104,7 +105,7 @@ func (m *ICefDownloadItem) StartTime() time.Time {
 		return time.Time{}
 	}
 	var result uintptr
-	imports.Proc(internale_CefDownloadItem_StartTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDownloadItem_StartTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return common.DDateTimeToGoDateTime(*(*float64)(unsafe.Pointer(result)))
 }
 
@@ -113,7 +114,7 @@ func (m *ICefDownloadItem) EndTime() time.Time {
 		return time.Time{}
 	}
 	var result uintptr
-	imports.Proc(internale_CefDownloadItem_EndTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDownloadItem_EndTime).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return common.DDateTimeToGoDateTime(*(*float64)(unsafe.Pointer(result)))
 }
 
@@ -121,7 +122,7 @@ func (m *ICefDownloadItem) FullPath() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_FullPath).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_FullPath).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -129,7 +130,7 @@ func (m *ICefDownloadItem) Id() uint32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_Id).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_Id).Call(m.Instance())
 	return uint32(r1)
 }
 
@@ -137,7 +138,7 @@ func (m *ICefDownloadItem) Url() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_Url).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_Url).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -145,7 +146,7 @@ func (m *ICefDownloadItem) OriginalUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_OriginalUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_OriginalUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -153,7 +154,7 @@ func (m *ICefDownloadItem) SuggestedFileName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_SuggestedFileName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_SuggestedFileName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -161,7 +162,7 @@ func (m *ICefDownloadItem) ContentDisposition() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_ContentDisposition).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_ContentDisposition).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -169,7 +170,7 @@ func (m *ICefDownloadItem) MimeType() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDownloadItem_MimeType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDownloadItem_MimeType).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -203,7 +204,7 @@ type downloadItemCallback uintptr
 
 func (*downloadItemCallback) UnWrap(data *ICefDownloadItemCallback) *ICefDownloadItemCallback {
 	var result uintptr
-	imports.Proc(internale_CefDownloadItemCallbackRef_Pause).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDownloadItemCallbackRef_Pause).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefDownloadItemCallback{instance: unsafe.Pointer(result)}
 }
 
@@ -225,7 +226,7 @@ func (m *ICefDownloadItemCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadItemCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.CefDownloadItemCallback_Cancel).Call(m.Instance())
 }
 
 /*
@@ -235,7 +236,7 @@ func (m *ICefDownloadItemCallback) Pause() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadItemCallback_Pause).Call(m.Instance())
+	imports.Proc(def.CefDownloadItemCallback_Pause).Call(m.Instance())
 }
 
 /*
@@ -245,7 +246,7 @@ func (m *ICefDownloadItemCallback) Resume() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDownloadItemCallback_Resume).Call(m.Instance())
+	imports.Proc(def.CefDownloadItemCallback_Resume).Call(m.Instance())
 }
 
 func (m *ICefDownloadItemCallback) Free() {
@@ -276,7 +277,7 @@ func (m *ICefBeforeDownloadCallback) Cont(downloadPath string, showDialog bool) 
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefBeforeDownloadCallback_Cont).Call(m.Instance(), api.PascalStr(downloadPath), api.PascalBool(showDialog))
+	imports.Proc(def.CefBeforeDownloadCallback_Cont).Call(m.Instance(), api.PascalStr(downloadPath), api.PascalBool(showDialog))
 }
 
 func (m *ICefBeforeDownloadCallback) Free() {

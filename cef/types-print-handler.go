@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type printSpanHandler uintptr
 
 func (*printSpanHandler) New() *ICefPrintHandler {
 	var result uintptr
-	imports.Proc(internale_CefPrintHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefPrintHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefPrintHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,42 +62,42 @@ func (m *ICefPrintHandler) SetOnPrintStart(fn onPrintStart) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_OnPrintStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_OnPrintStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPrintHandler) SetOnPrintSettings(fn onPrintSettings) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_OnPrintSettings).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_OnPrintSettings).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPrintHandler) SetOnPrintDialog(fn onPrintDialog) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_OnPrintDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_OnPrintDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPrintHandler) SetOnPrintJob(fn onPrintJob) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_OnPrintJob).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_OnPrintJob).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPrintHandler) SetOnPrintReset(fn onPrintReset) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_OnPrintReset).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_OnPrintReset).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPrintHandler) SetGetPDFPaperSize(fn getPDFPaperSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintHandler_GetPDFPaperSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPrintHandler_GetPDFPaperSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

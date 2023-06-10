@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 )
@@ -41,5 +42,5 @@ func (m *ICefPermissionPromptCallback) Cont(result consts.TCefPermissionRequestR
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPermissionPromptCallback_Cont).Call(m.Instance(), result.ToPtr())
+	imports.Proc(def.CefPermissionPromptCallback_Cont).Call(m.Instance(), result.ToPtr())
 }

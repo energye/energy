@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type resourceHandler uintptr
 
 func (*resourceHandler) New(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
 	var result uintptr
-	imports.Proc(internale_ResourceHandlerRef_Create).Call(browser.Instance(), frame.Instance(), api.PascalStr(schemeName), request.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ResourceHandlerRef_Create).Call(browser.Instance(), frame.Instance(), api.PascalStr(schemeName), request.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefResourceHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,28 +62,28 @@ func (m *ICefResourceHandler) Open(fn resourceHandlerOpen) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_Open).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_Open).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceHandler) GetResponseHeaders(fn resourceHandlerGetResponseHeaders) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_GetResponseHeaders).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_GetResponseHeaders).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceHandler) Skip(fn resourceHandlerSkip) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_Skip).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_Skip).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceHandler) Read(fn resourceHandlerRead) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_Read).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_Read).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ProcessRequest
@@ -91,7 +92,7 @@ func (m *ICefResourceHandler) ProcessRequest(fn resourceHandlerProcessRequest) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_ProcessRequest).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_ProcessRequest).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ReadResponse
@@ -100,14 +101,14 @@ func (m *ICefResourceHandler) ReadResponse(fn resourceHandlerReadResponse) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_ReadResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_ReadResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceHandler) Cancel(fn resourceHandlerCancel) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_ResourceHandler_Cancel).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceHandler_Cancel).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

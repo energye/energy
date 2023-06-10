@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -41,5 +42,5 @@ func (m *ICefJsDialogCallback) Cont(success bool, userInput string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefJsDialogCallback_Cont).Call(m.Instance(), api.PascalBool(success), api.PascalStr(userInput))
+	imports.Proc(def.CefJsDialogCallback_Cont).Call(m.Instance(), api.PascalBool(success), api.PascalStr(userInput))
 }

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
@@ -41,6 +42,6 @@ func (m *TCefSchemeRegistrarRef) AddCustomScheme(schemeName string, options cons
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_SchemeRegistrarRef_AddCustomScheme).Call(m.Instance(), api.PascalStr(schemeName), uintptr(options))
+	r1, _, _ := imports.Proc(def.SchemeRegistrarRef_AddCustomScheme).Call(m.Instance(), api.PascalStr(schemeName), uintptr(options))
 	return api.GoBool(r1)
 }

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -24,7 +25,7 @@ type accessibilityHandler uintptr
 
 func (*accessibilityHandler) New() *ICefAccessibilityHandler {
 	var result uintptr
-	imports.Proc(internale_CefAccessibilityHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefAccessibilityHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefAccessibilityHandler{instance: unsafe.Pointer(result)}
 	}
@@ -57,14 +58,14 @@ func (m *ICefAccessibilityHandler) SetOnAccessibilityTreeChange(fn onAccessibili
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAccessibilityHandler_OnAccessibilityTreeChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAccessibilityHandler_OnAccessibilityTreeChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefAccessibilityHandler) SetOnAccessibilityLocationChange(fn onAccessibilityLocationChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAccessibilityHandler_OnAccessibilityLocationChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAccessibilityHandler_OnAccessibilityLocationChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type onAccessibilityTreeChange func(value *ICefValue)

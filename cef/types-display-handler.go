@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type displayHandler uintptr
 
 func (*displayHandler) New() *ICefDisplayHandler {
 	var result uintptr
-	imports.Proc(internale_CefDisplayHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDisplayHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDisplayHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,77 +63,77 @@ func (m *ICefDisplayHandler) SetOnAddressChange(fn onAddressChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnAddressChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnAddressChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnTitleChange(fn onTitleChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnTitleChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnTitleChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnFaviconUrlChange(fn onFaviconUrlChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnFaviconUrlChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnFaviconUrlChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnFullScreenModeChange(fn onFullScreenModeChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnFullScreenModeChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnFullScreenModeChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnTooltip(fn onTooltip) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnTooltip).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnTooltip).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnStatusMessage(fn onStatusMessage) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnStatusMessage).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnStatusMessage).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnConsoleMessage(fn onConsoleMessage) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnConsoleMessage).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnConsoleMessage).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnAutoResize(fn onAutoResize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnAutoResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnAutoResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnLoadingProgressChange(fn onLoadingProgressChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnLoadingProgressChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnLoadingProgressChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnCursorChange(fn onCursorChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnCursorChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnCursorChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDisplayHandler) SetOnMediaAccessChange(fn onMediaAccessChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDisplayHandler_OnMediaAccessChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDisplayHandler_OnMediaAccessChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

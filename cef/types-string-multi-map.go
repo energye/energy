@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -27,7 +28,7 @@ type stringMultiMap uintptr
 // New 创建一个新的 StringMultiMap
 func (m *stringMultiMap) New() *ICefStringMultiMap {
 	var result uintptr
-	imports.Proc(internale_StringMultimapRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.StringMultimapRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefStringMultiMap{instance: unsafe.Pointer(result)}
 }
 
@@ -48,41 +49,41 @@ func (m *ICefStringMultiMap) IsValid() bool {
 
 // GetSize 大小
 func (m *ICefStringMultiMap) GetSize() uint32 {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetSize).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.StringMultimap_GetSize).Call(m.Instance())
 	return uint32(r1)
 }
 
 // FindCount key值数量
 func (m *ICefStringMultiMap) FindCount(key string) uint32 {
-	r1, _, _ := imports.Proc(internale_StringMultimap_FindCount).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.StringMultimap_FindCount).Call(m.Instance(), api.PascalStr(key))
 	return uint32(r1)
 }
 
 // GetEnumerate 根据 key and index 获取
 func (m *ICefStringMultiMap) GetEnumerate(key string, index uint32) string {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(index))
+	r1, _, _ := imports.Proc(def.StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(index))
 	return api.GoStr(r1)
 }
 
 // GetKey 根据 index 获取key
 func (m *ICefStringMultiMap) GetKey(index uint32) string {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetKey).Call(m.Instance(), uintptr(index))
+	r1, _, _ := imports.Proc(def.StringMultimap_GetKey).Call(m.Instance(), uintptr(index))
 	return api.GoStr(r1)
 }
 
 // GetValue 根据 index 获取value
 func (m *ICefStringMultiMap) GetValue(index uint32) string {
-	r1, _, _ := imports.Proc(internale_StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
+	r1, _, _ := imports.Proc(def.StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
 	return api.GoStr(r1)
 }
 
 // Append 给key追加值
 func (m *ICefStringMultiMap) Append(key, value string) bool {
-	r1, _, _ := imports.Proc(internale_StringMultimap_Append).Call(m.Instance(), api.PascalStr(key), api.PascalStr(value))
+	r1, _, _ := imports.Proc(def.StringMultimap_Append).Call(m.Instance(), api.PascalStr(key), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
 // Clear 清空
 func (m *ICefStringMultiMap) Clear() {
-	imports.Proc(internale_StringMultimap_Clear).Call(m.Instance())
+	imports.Proc(def.StringMultimap_Clear).Call(m.Instance())
 }

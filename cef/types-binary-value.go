@@ -19,6 +19,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -33,7 +34,7 @@ type cefBinaryValue uintptr
 // New 创建一个带有数据的二进对象
 func (*cefBinaryValue) New(data []byte) *ICefBinaryValue {
 	var result uintptr
-	imports.Proc(internale_CefBinaryValueRef_New).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBinaryValueRef_New).Call(uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -42,7 +43,7 @@ func (*cefBinaryValue) New(data []byte) *ICefBinaryValue {
 // Create 创建一个二进对象
 func (*cefBinaryValue) Create() *ICefBinaryValue {
 	var result uintptr
-	imports.Proc(internale_CefBinaryValueRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBinaryValueRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -51,7 +52,7 @@ func (*cefBinaryValue) Create() *ICefBinaryValue {
 // UnWrap
 func (*cefBinaryValue) UnWrap(data *ICefBinaryValue) *ICefBinaryValue {
 	var result uintptr
-	imports.Proc(internale_CefBinaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBinaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -68,30 +69,30 @@ func (m *ICefBinaryValue) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefBinaryValue_IsValid).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefBinaryValue_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefBinaryValue) IsOwned() bool {
-	r1, _, _ := imports.Proc(internale_CefBinaryValue_IsOwned).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefBinaryValue_IsOwned).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefBinaryValue) Copy() *ICefBinaryValue {
 	var result uintptr
-	imports.Proc(internale_CefBinaryValue_Copy).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBinaryValue_Copy).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
 		instance: unsafe.Pointer(result),
 	}
 }
 
 func (m *ICefBinaryValue) GetSize() uint32 {
-	r1, _, _ := imports.Proc(internale_CefBinaryValue_GetSize).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefBinaryValue_GetSize).Call(m.Instance())
 	return uint32(r1)
 }
 
 func (m *ICefBinaryValue) GetData(buffer []byte, dataOffset uint32) uint32 {
-	r1, _, _ := imports.Proc(internale_CefBinaryValue_GetData).Call(m.Instance(), uintptr(unsafe.Pointer(&buffer[0])), uintptr(uint32(len(buffer))), uintptr(dataOffset))
+	r1, _, _ := imports.Proc(def.CefBinaryValue_GetData).Call(m.Instance(), uintptr(unsafe.Pointer(&buffer[0])), uintptr(uint32(len(buffer))), uintptr(dataOffset))
 	return uint32(r1)
 }
 
@@ -110,7 +111,7 @@ func (m *TCefBinaryValueArray) Get(index uint32) *ICefBinaryValue {
 			m.binaryValues = make([]*ICefBinaryValue, m.count, m.count)
 		}
 		var result uintptr
-		imports.Proc(internale_CefBinaryValueArray_Get).Call(uintptr(m.instance), uintptr(index), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefBinaryValueArray_Get).Call(uintptr(m.instance), uintptr(index), uintptr(unsafe.Pointer(&result)))
 		if result != 0 {
 			m.binaryValues[index] = &ICefBinaryValue{instance: unsafe.Pointer(result)}
 			return m.binaryValues[index]

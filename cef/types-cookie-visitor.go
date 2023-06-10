@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -26,7 +27,7 @@ type cookieVisitor uintptr
 
 func (*cookieVisitor) New() *ICefCookieVisitor {
 	var result uintptr
-	imports.Proc(internale_CefCookieVisitorRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefCookieVisitorRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefCookieVisitor{instance: unsafe.Pointer(result)}
 	}
@@ -59,7 +60,7 @@ func (m *ICefCookieVisitor) SetOnVisit(fn cookieOnVisit) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefCookieVisitor_OnVisit).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefCookieVisitor_OnVisit).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

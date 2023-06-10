@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -28,7 +29,7 @@ type renderSpanHandler uintptr
 
 func (*renderSpanHandler) New() *ICefRenderHandler {
 	var result uintptr
-	imports.Proc(internale_CefRenderHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefRenderHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRenderHandler{instance: unsafe.Pointer(result)}
 	}
@@ -63,103 +64,103 @@ func (m *ICefRenderHandler) SetGetAccessibilityHandler(fn renderHandlerGetAccess
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetAccessibilityHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetAccessibilityHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetGetRootScreenRect(fn renderHandlerGetRootScreenRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetRootScreenRect).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetRootScreenRect).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetGetViewRect(fn renderHandlerGetViewRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetViewRect).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetViewRect).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetGetScreenPoint(fn renderHandlerGetScreenPoint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetScreenPoint).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetScreenPoint).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetGetScreenInfo(fn renderHandlerGetScreenInfo) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetScreenInfo).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetScreenInfo).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnPopupShow(fn renderHandlerOnPopupShow) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnPopupShow).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnPopupShow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnPopupSize(fn renderHandlerOnPopupSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnPopupSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnPopupSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnPaint(fn renderHandlerOnPaint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnPaint).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnPaint).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnAcceleratedPaint(fn renderHandlerOnAcceleratedPaint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnAcceleratedPaint).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnAcceleratedPaint).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetGetTouchHandleSize(fn renderHandlerGetTouchHandleSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_GetTouchHandleSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_GetTouchHandleSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnTouchHandleStateChanged(fn renderHandlerOnTouchHandleStateChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnTouchHandleStateChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnTouchHandleStateChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnStartDragging(fn renderHandlerOnStartDragging) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnStartDragging).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnStartDragging).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnUpdateDragCursor(fn renderHandlerOnUpdateDragCursor) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnUpdateDragCursor).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnUpdateDragCursor).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnScrollOffsetChanged(fn renderHandlerOnScrollOffsetChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnScrollOffsetChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnScrollOffsetChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnIMECompositionRangeChanged(fn renderHandlerOnIMECompositionRangeChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnIMECompositionRangeChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnIMECompositionRangeChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnTextSelectionChanged(fn renderHandlerOnTextSelectionChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnTextSelectionChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnTextSelectionChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 func (m *ICefRenderHandler) SetOnVirtualKeyboardRequested(fn renderHandlerOnVirtualKeyboardRequested) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRenderHandler_OnVirtualKeyboardRequested).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRenderHandler_OnVirtualKeyboardRequested).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

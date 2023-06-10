@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type permissionHandler uintptr
 
 func (*permissionHandler) New() *ICefPermissionHandler {
 	var result uintptr
-	imports.Proc(internale_CefPermissionHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefPermissionHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefPermissionHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,21 +63,21 @@ func (m *ICefPermissionHandler) OnRequestMediaAccessPermission(fn onRequestMedia
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPermissionHandler_OnRequestMediaAccessPermission).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPermissionHandler_OnRequestMediaAccessPermission).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPermissionHandler) OnShowPermissionPrompt(fn onShowPermissionPrompt) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPermissionHandler_OnShowPermissionPrompt).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPermissionHandler_OnShowPermissionPrompt).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefPermissionHandler) OnDismissPermissionPrompt(fn onDismissPermissionPrompt) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPermissionHandler_OnDismissPermissionPrompt).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefPermissionHandler_OnDismissPermissionPrompt).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

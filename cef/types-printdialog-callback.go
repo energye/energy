@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 )
 
@@ -40,12 +41,12 @@ func (m *ICefPrintDialogCallback) Cont(settings *ICefPrintSettings) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintDialogCallback_Cont).Call(m.Instance(), settings.Instance())
+	imports.Proc(def.CefPrintDialogCallback_Cont).Call(m.Instance(), settings.Instance())
 }
 
 func (m *ICefPrintDialogCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefPrintDialogCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.CefPrintDialogCallback_Cancel).Call(m.Instance())
 }

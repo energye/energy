@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -24,7 +25,7 @@ type completionCallback uintptr
 
 func (*completionCallback) New() *ICefCompletionCallback {
 	var result uintptr
-	imports.Proc(internale_CefCompletionCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefCompletionCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefCompletionCallback{instance: unsafe.Pointer(result)}
 }
 
@@ -54,7 +55,7 @@ func (m *ICefCompletionCallback) SetOnComplete(fn CompletionOnComplete) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefCompletionCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefCompletionCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type CompletionOnComplete func()

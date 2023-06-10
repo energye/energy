@@ -10,7 +10,10 @@
 
 package cef
 
-import "github.com/energye/energy/v2/common/imports"
+import (
+	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/common/imports"
+)
 
 // Instance 实例
 func (m *ICefGetExtensionResourceCallback) Instance() uintptr {
@@ -38,12 +41,12 @@ func (m *ICefGetExtensionResourceCallback) Cont(stream *ICefStreamReader) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefGetExtensionResourceCallback_Cont).Call(m.Instance(), stream.Instance())
+	imports.Proc(def.CefGetExtensionResourceCallback_Cont).Call(m.Instance(), stream.Instance())
 }
 
 func (m *ICefGetExtensionResourceCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefGetExtensionResourceCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.CefGetExtensionResourceCallback_Cancel).Call(m.Instance())
 }

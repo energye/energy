@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -37,7 +38,7 @@ type cefV8Handler uintptr
 //New 创建v8执行函数拦截
 func (*cefV8Handler) New() *ICefV8Handler {
 	var result uintptr
-	imports.Proc(internale_CefV8Handler_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8Handler_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Handler{
 		instance: unsafe.Pointer(result),
 	}
@@ -53,11 +54,11 @@ func (m *ICefV8Handler) Instance() uintptr {
 
 //Execute 执行拦截函数
 func (m *ICefV8Handler) Execute(fn V8HandlerExecute) {
-	imports.Proc(internale_CefV8Handler_Execute).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Handler_Execute).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefV8Handler) Destroy() {
-	imports.Proc(internale_CefV8Handler_Destroy).Call(m.Instance())
+	imports.Proc(def.CefV8Handler_Destroy).Call(m.Instance())
 }
 
 func init() {

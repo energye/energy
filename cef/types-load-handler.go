@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type loadHandler uintptr
 
 func (*loadHandler) New() *ICefLoadHandler {
 	var result uintptr
-	imports.Proc(internale_CefLoadHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefLoadHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefLoadHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,28 +63,28 @@ func (m *ICefLoadHandler) SetOnLoadingStateChange(fn onLoadingStateChange) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLoadHandler_OnLoadingStateChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLoadHandler_OnLoadingStateChange).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLoadHandler) SetOnLoadStart(fn onLoadStart) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLoadHandler_OnLoadStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLoadHandler_OnLoadStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLoadHandler) SetOnLoadEnd(fn onLoadEnd) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLoadHandler_OnLoadEnd).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLoadHandler_OnLoadEnd).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLoadHandler) SetOnLoadError(fn onLoadError) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLoadHandler_OnLoadError).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLoadHandler_OnLoadError).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

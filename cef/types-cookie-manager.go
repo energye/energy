@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -45,14 +46,14 @@ func (m *ICefCookieManager) VisitAllCookies(visitor *ICefCookieVisitor) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefCookieManager_VisitAllCookies).Call(m.Instance(), visitor.Instance())
+	imports.Proc(def.CefCookieManager_VisitAllCookies).Call(m.Instance(), visitor.Instance())
 }
 
 func (m *ICefCookieManager) VisitUrlCookies(url string, includeHttpOnly bool, visitor *ICefCookieVisitor) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefCookieManager_VisitUrlCookies).Call(m.Instance(), api.PascalStr(url), api.PascalBool(includeHttpOnly), visitor.Instance())
+	r1, _, _ := imports.Proc(def.CefCookieManager_VisitUrlCookies).Call(m.Instance(), api.PascalStr(url), api.PascalBool(includeHttpOnly), visitor.Instance())
 	return api.GoBool(r1)
 }
 
@@ -86,7 +87,7 @@ func (m *ICefCookieManager) SetCookie(url, name, value, domain, path string,
 		count:           uintptr(0),
 		total:           uintptr(0),
 	}
-	r1, _, _ := imports.Proc(internale_CefCookieManager_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cCookie)), callback.Instance())
+	r1, _, _ := imports.Proc(def.CefCookieManager_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cCookie)), callback.Instance())
 	return api.GoBool(r1)
 }
 
@@ -94,7 +95,7 @@ func (m *ICefCookieManager) DeleteCookies(url, cookieName string, callback *ICef
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefCookieManager_DeleteCookies).Call(m.Instance(), api.PascalStr(url), api.PascalStr(cookieName), callback.Instance())
+	r1, _, _ := imports.Proc(def.CefCookieManager_DeleteCookies).Call(m.Instance(), api.PascalStr(url), api.PascalStr(cookieName), callback.Instance())
 	return api.GoBool(r1)
 }
 
@@ -102,6 +103,6 @@ func (m *ICefCookieManager) FlushStore(callback *ICefCompletionCallback) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefCookieManager_FlushStore).Call(m.Instance(), callback.Instance())
+	r1, _, _ := imports.Proc(def.CefCookieManager_FlushStore).Call(m.Instance(), callback.Instance())
 	return api.GoBool(r1)
 }

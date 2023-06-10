@@ -17,6 +17,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -42,7 +43,7 @@ type cefV8Interceptor uintptr
 
 func (*cefV8Interceptor) New() *ICefV8Interceptor {
 	var result uintptr
-	imports.Proc(internale_CefV8InterceptorRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8InterceptorRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Interceptor{
 		instance: unsafe.Pointer(result),
 	}
@@ -58,27 +59,27 @@ func (m *ICefV8Interceptor) Instance() uintptr {
 
 // GetByName 拦截函数 根据name获取一个值
 func (m *ICefV8Interceptor) GetByName(fn V8InterceptorGetByName) {
-	imports.Proc(internale_CefV8Interceptor_GetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Interceptor_GetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // GetByIndex 拦截函数 根据index获取一个值
 func (m *ICefV8Interceptor) GetByIndex(fn V8InterceptorGetByIndex) {
-	imports.Proc(internale_CefV8Interceptor_GetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Interceptor_GetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetByName 拦截函数 根据name设置一个值
 func (m *ICefV8Interceptor) SetByName(fn V8InterceptorSetByName) {
-	imports.Proc(internale_CefV8Interceptor_SetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Interceptor_SetByName).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetByIndex 拦截函数 根据index设置一个值
 func (m *ICefV8Interceptor) SetByIndex(fn V8InterceptorSetByIndex) {
-	imports.Proc(internale_CefV8Interceptor_SetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8Interceptor_SetByIndex).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // Destroy 销毁这个拦截器
 func (m *ICefV8Interceptor) Destroy() {
-	imports.Proc(internale_CefV8Interceptor_Destroy).Call(m.Instance())
+	imports.Proc(def.CefV8Interceptor_Destroy).Call(m.Instance())
 }
 
 //func init() {

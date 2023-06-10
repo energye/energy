@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -27,16 +28,16 @@ func (m *ICefBrowserView) Instance() uintptr {
 
 func (m *ICefBrowserView) Browser() *ICefBrowser {
 	var result uintptr
-	imports.Proc(internale_CefBrowserView_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBrowserView_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefBrowser{instance: unsafe.Pointer(result)}
 }
 
 func (m *ICefBrowserView) ChromeToolbar() *ICefView {
 	var result uintptr
-	imports.Proc(internale_CefBrowserView_ChromeToolbar).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBrowserView_ChromeToolbar).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefView{instance: unsafe.Pointer(result)}
 }
 
 func (m *ICefBrowserView) SetPreferAccelerators(preferAccelerators bool) {
-	imports.Proc(internale_CefBrowserView_SetPreferAccelerators).Call(m.Instance(), api.PascalBool(preferAccelerators))
+	imports.Proc(def.CefBrowserView_SetPreferAccelerators).Call(m.Instance(), api.PascalBool(preferAccelerators))
 }

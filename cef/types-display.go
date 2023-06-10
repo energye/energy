@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"unsafe"
 )
@@ -19,7 +20,7 @@ func (m *ICefDisplay) ID() (result int64) {
 	if !m.IsValid() {
 		return 0
 	}
-	imports.Proc(internale_CEFDisplay_ID).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_ID).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
@@ -28,7 +29,7 @@ func (m *ICefDisplay) DeviceScaleFactor() float32 {
 		return 0
 	}
 	var result uintptr
-	imports.Proc(internale_CEFDisplay_DeviceScaleFactor).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_DeviceScaleFactor).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return *(*float32)(unsafe.Pointer(result))
 }
 
@@ -36,7 +37,7 @@ func (m *ICefDisplay) Rotation() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFDisplay_Rotation).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFDisplay_Rotation).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -44,7 +45,7 @@ func (m *ICefDisplay) Bounds() (result TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFDisplay_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
@@ -52,7 +53,7 @@ func (m *ICefDisplay) WorkArea() (result TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CEFDisplay_WorkArea).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_WorkArea).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 

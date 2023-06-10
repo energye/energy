@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl/api"
@@ -25,7 +26,7 @@ type image uintptr
 
 func (m *image) New() *ICefImage {
 	var result uintptr
-	imports.Proc(internale_CEFImage_New).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFImage_New).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefImage{
 		instance: unsafe.Pointer(result),
 	}
@@ -58,7 +59,7 @@ func (m *ICefImage) AddPng(scaleFactor float32, png []byte) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFImage_AddPng).Call(m.Instance(), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&png[0])), uintptr(uint32(len(png))))
+	r1, _, _ := imports.Proc(def.CEFImage_AddPng).Call(m.Instance(), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&png[0])), uintptr(uint32(len(png))))
 	return api.GoBool(r1)
 }
 
@@ -77,7 +78,7 @@ func (m *ICefImage) AddJpeg(scaleFactor float32, jpeg []byte) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CEFImage_AddJpeg).Call(m.Instance(), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&jpeg[0])), uintptr(uint32(len(jpeg))))
+	r1, _, _ := imports.Proc(def.CEFImage_AddJpeg).Call(m.Instance(), uintptr(unsafe.Pointer(&scaleFactor)), uintptr(unsafe.Pointer(&jpeg[0])), uintptr(uint32(len(jpeg))))
 	return api.GoBool(r1)
 }
 
@@ -85,7 +86,7 @@ func (m *ICefImage) Width() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFImage_GetWidth).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFImage_GetWidth).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -93,7 +94,7 @@ func (m *ICefImage) Height() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CEFImage_GetHeight).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFImage_GetHeight).Call(m.Instance())
 	return int32(r1)
 }
 

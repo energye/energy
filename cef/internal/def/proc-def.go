@@ -10,7 +10,7 @@
 
 // cef -> energy 导入函数定义
 
-package cef
+package def
 
 import (
 	"github.com/energye/energy/v2/common/imports"

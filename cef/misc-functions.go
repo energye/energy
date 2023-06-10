@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -20,17 +21,17 @@ import (
 
 // WindowInfoAsChild BrowserWindow 设置到指定窗口做为子窗口
 func WindowInfoAsChild(windowInfo, windowHandle uintptr, windowName string) {
-	imports.Proc(internale_Misc_WindowInfoAsChild).Call(windowInfo, windowHandle, api.PascalStr(windowName))
+	imports.Proc(def.Misc_WindowInfoAsChild).Call(windowInfo, windowHandle, api.PascalStr(windowName))
 }
 
 // WindowInfoAsPopUp BrowserWindow 设置到做为弹出窗口
 func WindowInfoAsPopUp(windowInfo, windowParent uintptr, windowName string) {
-	imports.Proc(internale_Misc_WindowInfoAsPopUp).Call(windowInfo, windowParent, api.PascalStr(windowName))
+	imports.Proc(def.Misc_WindowInfoAsPopUp).Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
 // WindowInfoAsWindowless BrowserWindow 设置到做为无窗口
 func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string) {
-	imports.Proc(internale_Misc_WindowInfoAsWindowless).Call(windowInfo, windowParent, api.PascalStr(windowName))
+	imports.Proc(def.Misc_WindowInfoAsWindowless).Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
 // RegisterExtension 注册JS扩展
@@ -45,12 +46,12 @@ func RegisterExtension(name, code string, handler *ICefV8Handler) {
 }
 
 func registerExtension(name, code string, handler *ICefV8Handler) {
-	imports.Proc(internale_Misc_CefRegisterExtension).Call(api.PascalStr(name), api.PascalStr(code), handler.Instance())
+	imports.Proc(def.Misc_CefRegisterExtension).Call(api.PascalStr(name), api.PascalStr(code), handler.Instance())
 }
 
 func CheckSubprocessPath(subprocessPath string) (missingFiles string, result bool) {
 	var missingFilesPtr uintptr
-	r1, _, _ := imports.Proc(internale_Misc_CheckSubprocessPath).Call(api.PascalStr(subprocessPath), uintptr(unsafe.Pointer(&missingFiles)))
+	r1, _, _ := imports.Proc(def.Misc_CheckSubprocessPath).Call(api.PascalStr(subprocessPath), uintptr(unsafe.Pointer(&missingFiles)))
 	missingFiles = api.GoStr(missingFilesPtr)
 	result = api.GoBool(r1)
 	return
@@ -58,7 +59,7 @@ func CheckSubprocessPath(subprocessPath string) (missingFiles string, result boo
 
 func CheckLocales(localesDirPath, localesRequired string) (missingFiles string, result bool) {
 	var missingFilesPtr uintptr
-	r1, _, _ := imports.Proc(internale_Misc_CheckLocales).Call(api.PascalStr(localesDirPath), uintptr(unsafe.Pointer(&missingFiles)), api.PascalStr(localesRequired))
+	r1, _, _ := imports.Proc(def.Misc_CheckLocales).Call(api.PascalStr(localesDirPath), uintptr(unsafe.Pointer(&missingFiles)), api.PascalStr(localesRequired))
 	missingFiles = api.GoStr(missingFilesPtr)
 	result = api.GoBool(r1)
 	return
@@ -66,7 +67,7 @@ func CheckLocales(localesDirPath, localesRequired string) (missingFiles string, 
 
 func CheckResources(resourcesDirPath string) (missingFiles string, result bool) {
 	var missingFilesPtr uintptr
-	r1, _, _ := imports.Proc(internale_Misc_CheckResources).Call(api.PascalStr(resourcesDirPath), uintptr(unsafe.Pointer(&missingFiles)))
+	r1, _, _ := imports.Proc(def.Misc_CheckResources).Call(api.PascalStr(resourcesDirPath), uintptr(unsafe.Pointer(&missingFiles)))
 	missingFiles = api.GoStr(missingFilesPtr)
 	result = api.GoBool(r1)
 	return
@@ -74,23 +75,23 @@ func CheckResources(resourcesDirPath string) (missingFiles string, result bool) 
 
 func CheckDLLs(frameworkDirPath string) (missingFiles string, result bool) {
 	var missingFilesPtr uintptr
-	r1, _, _ := imports.Proc(internale_Misc_CheckDLLs).Call(api.PascalStr(frameworkDirPath), uintptr(unsafe.Pointer(&missingFiles)))
+	r1, _, _ := imports.Proc(def.Misc_CheckDLLs).Call(api.PascalStr(frameworkDirPath), uintptr(unsafe.Pointer(&missingFiles)))
 	missingFiles = api.GoStr(missingFilesPtr)
 	result = api.GoBool(r1)
 	return
 }
 
 func RegisterSchemeHandlerFactory(schemeName, domainName string, handler TCefResourceHandlerClass) bool {
-	r1, _, _ := imports.Proc(internale_Misc_CefRegisterSchemeHandlerFactory).Call(api.PascalStr(schemeName), api.PascalStr(domainName), uintptr(handler))
+	r1, _, _ := imports.Proc(def.Misc_CefRegisterSchemeHandlerFactory).Call(api.PascalStr(schemeName), api.PascalStr(domainName), uintptr(handler))
 	return api.GoBool(r1)
 }
 
 func ClearSchemeHandlerFactories() bool {
-	r1, _, _ := imports.Proc(internale_Misc_CefClearSchemeHandlerFactories).Call()
+	r1, _, _ := imports.Proc(def.Misc_CefClearSchemeHandlerFactories).Call()
 	return api.GoBool(r1)
 }
 
 func GetMimeType(extension string) string {
-	r1, _, _ := imports.Proc(internale_Misc_CefGetMimeType).Call(api.PascalStr(extension))
+	r1, _, _ := imports.Proc(def.Misc_CefGetMimeType).Call(api.PascalStr(extension))
 	return api.GoStr(r1)
 }

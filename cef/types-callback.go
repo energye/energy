@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 )
 
@@ -43,7 +44,7 @@ func (m *ICefCallback) Cont() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_cefCallback_Cont).Call(uintptr(m.instance))
+	imports.Proc(def.CEFCallback_Cont).Call(uintptr(m.instance))
 }
 
 // Cancel 取消执行
@@ -51,5 +52,5 @@ func (m *ICefCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_cefCallback_Cancel).Call(uintptr(m.instance))
+	imports.Proc(def.CEFCallback_Cancel).Call(uintptr(m.instance))
 }

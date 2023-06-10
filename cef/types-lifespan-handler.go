@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type lifeSpanHandler uintptr
 
 func (*lifeSpanHandler) New() *ICefLifeSpanHandler {
 	var result uintptr
-	imports.Proc(internale_CefLifeSpanHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefLifeSpanHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefLifeSpanHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,28 +63,28 @@ func (m *ICefLifeSpanHandler) SetOnBeforePopup(fn onBeforePopup) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLifeSpanHandler_OnBeforePopup).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLifeSpanHandler_OnBeforePopup).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLifeSpanHandler) SetOnAfterCreated(fn onAfterCreated) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLifeSpanHandler_OnAfterCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLifeSpanHandler_OnAfterCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLifeSpanHandler) SetDoClose(fn doClose) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLifeSpanHandler_DoClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLifeSpanHandler_DoClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefLifeSpanHandler) SetOnBeforeClose(fn onBeforeClose) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefLifeSpanHandler_OnBeforeClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefLifeSpanHandler_OnBeforeClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

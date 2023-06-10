@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -44,7 +45,7 @@ func (m *ICefContextMenuParams) XCoord() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_XCoord).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_XCoord).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -53,7 +54,7 @@ func (m *ICefContextMenuParams) YCoord() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_YCoord).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_YCoord).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -62,7 +63,7 @@ func (m *ICefContextMenuParams) TypeFlags() consts.TCefContextMenuTypeFlags {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_TypeFlags).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_TypeFlags).Call(m.Instance())
 	return consts.TCefContextMenuTypeFlags(r1)
 }
 
@@ -71,7 +72,7 @@ func (m *ICefContextMenuParams) LinkUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_LinkUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_LinkUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -80,7 +81,7 @@ func (m *ICefContextMenuParams) UnfilteredLinkUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_UnfilteredLinkUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_UnfilteredLinkUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -89,7 +90,7 @@ func (m *ICefContextMenuParams) SourceUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_SourceUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_SourceUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -98,7 +99,7 @@ func (m *ICefContextMenuParams) HasImageContents() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_HasImageContents).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_HasImageContents).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -107,7 +108,7 @@ func (m *ICefContextMenuParams) TitleText() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_TitleText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_TitleText).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -116,7 +117,7 @@ func (m *ICefContextMenuParams) PageUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_PageUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_PageUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -125,7 +126,7 @@ func (m *ICefContextMenuParams) FrameUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_FrameUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_FrameUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -134,7 +135,7 @@ func (m *ICefContextMenuParams) FrameCharset() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_FrameCharset).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_FrameCharset).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -143,7 +144,7 @@ func (m *ICefContextMenuParams) MediaType() consts.TCefContextMenuMediaType {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_MediaType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_MediaType).Call(m.Instance())
 	return consts.TCefContextMenuMediaType(r1)
 }
 
@@ -152,7 +153,7 @@ func (m *ICefContextMenuParams) MediaStateFlags() consts.TCefContextMenuMediaSta
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_MediaStateFlags).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_MediaStateFlags).Call(m.Instance())
 	return consts.TCefContextMenuMediaStateFlags(r1)
 }
 
@@ -161,7 +162,7 @@ func (m *ICefContextMenuParams) SelectionText() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_SelectionText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_SelectionText).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -170,7 +171,7 @@ func (m *ICefContextMenuParams) MisspelledWord() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_MisspelledWord).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_MisspelledWord).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -183,7 +184,7 @@ func (m *ICefContextMenuParams) DictionarySuggestions(suggestions []string) bool
 	for _, s := range suggestions {
 		slist.Add(s)
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_DictionarySuggestions).Call(m.Instance(), slist.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_DictionarySuggestions).Call(m.Instance(), slist.Instance())
 	slist.Free()
 	return api.GoBool(r1)
 }
@@ -193,7 +194,7 @@ func (m *ICefContextMenuParams) IsEditable() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_IsEditable).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_IsEditable).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -202,7 +203,7 @@ func (m *ICefContextMenuParams) IsSpellCheckEnabled() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_IsSpellCheckEnabled).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_IsSpellCheckEnabled).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -211,7 +212,7 @@ func (m *ICefContextMenuParams) EditStateFlags() consts.TCefContextMenuEditState
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_EditStateFlags).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_EditStateFlags).Call(m.Instance())
 	return consts.TCefContextMenuEditStateFlags(r1)
 }
 
@@ -220,6 +221,6 @@ func (m *ICefContextMenuParams) IsCustomMenu() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_ContextMenuParams_IsCustomMenu).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.ContextMenuParams_IsCustomMenu).Call(m.Instance())
 	return api.GoBool(r1)
 }

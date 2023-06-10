@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -30,7 +31,7 @@ func (*deleteCookiesHandler) NewForChromium(chromium IChromium) *ICefDeleteCooki
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDeleteCookiesCallbackRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDeleteCookiesCallbackRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDeleteCookiesCallback{instance: unsafe.Pointer(result), ct: consts.CtChromium}
 	}
@@ -39,7 +40,7 @@ func (*deleteCookiesHandler) NewForChromium(chromium IChromium) *ICefDeleteCooki
 
 func (*deleteCookiesHandler) New() *ICefDeleteCookiesCallback {
 	var result uintptr
-	imports.Proc(internale_CefDeleteCookiesCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDeleteCookiesCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDeleteCookiesCallback{instance: unsafe.Pointer(result), ct: consts.CtTClient}
 	}
@@ -79,7 +80,7 @@ func (m *ICefDeleteCookiesCallback) SetOnComplete(fn deleteCookiesOnComplete) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_CefDeleteCookiesCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDeleteCookiesCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** ICefSetCookieCallback ************************** //
@@ -94,7 +95,7 @@ func (*setCookieHandler) NewForChromium(chromium IChromium, id int32) *ICefSetCo
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefSetCookieCallbackRef_CreateForChromium).Call(chromium.Instance(), uintptr(id), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefSetCookieCallbackRef_CreateForChromium).Call(chromium.Instance(), uintptr(id), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefSetCookieCallback{instance: unsafe.Pointer(result), ct: consts.CtChromium}
 	}
@@ -103,7 +104,7 @@ func (*setCookieHandler) NewForChromium(chromium IChromium, id int32) *ICefSetCo
 
 func (*setCookieHandler) New() *ICefSetCookieCallback {
 	var result uintptr
-	imports.Proc(internale_CefSetCookieCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefSetCookieCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefSetCookieCallback{instance: unsafe.Pointer(result), ct: consts.CtTClient}
 	}
@@ -144,7 +145,7 @@ func (m *ICefSetCookieCallback) SetOnComplete(fn setCookieOnComplete) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_CefSetCookieCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefSetCookieCallback_OnComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** event ************************** //

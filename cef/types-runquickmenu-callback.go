@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 )
@@ -41,12 +42,12 @@ func (m *ICefRunQuickMenuCallback) Cont(commandId int32, eventFlags consts.TCefE
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_RunContextMenuCallback_Cont).Call(m.Instance(), uintptr(commandId), eventFlags.ToPtr())
+	imports.Proc(def.RunContextMenuCallback_Cont).Call(m.Instance(), uintptr(commandId), eventFlags.ToPtr())
 }
 
 func (m *ICefRunQuickMenuCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_RunContextMenuCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.RunContextMenuCallback_Cancel).Call(m.Instance())
 }

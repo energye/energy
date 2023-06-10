@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 )
@@ -45,7 +46,7 @@ func (m *ICefFileDialogCallback) Cont(filePaths []string) {
 	for _, fp := range filePaths {
 		fps.Add(fp)
 	}
-	imports.Proc(internale_FileDialogCallback_Cont).Call(m.Instance(), fps.Instance())
+	imports.Proc(def.FileDialogCallback_Cont).Call(m.Instance(), fps.Instance())
 	fps.Free()
 }
 
@@ -53,5 +54,5 @@ func (m *ICefFileDialogCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_FileDialogCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.FileDialogCallback_Cancel).Call(m.Instance())
 }

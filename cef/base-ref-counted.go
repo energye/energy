@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"unsafe"
 )
@@ -27,13 +28,13 @@ func NewBaseRefCounted(instance uintptr) *TCefBaseRefCounted {
 // Wrap 指针引用包裹
 func (m *TCefBaseRefCounted) Wrap(data uintptr) unsafe.Pointer {
 	var result uintptr
-	imports.Proc(internale_CefBaseRefCounted_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefBaseRefCounted_Wrap).Call(data, uintptr(unsafe.Pointer(&result)))
 	return unsafe.Pointer(result)
 }
 
 // Free 释放底层指针
 func (m *TCefBaseRefCounted) Free(data uintptr) {
-	imports.Proc(internale_CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
+	imports.Proc(def.CefBaseRefCounted_Free).Call(uintptr(unsafe.Pointer(&data)))
 	m.instance = nil
 }
 

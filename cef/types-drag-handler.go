@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -28,7 +29,7 @@ type dragHandler uintptr
 
 func (*dragHandler) New() *ICefDragHandler {
 	var result uintptr
-	imports.Proc(internale_CefDragHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDragHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDragHandler{instance: unsafe.Pointer(result)}
 	}
@@ -63,14 +64,14 @@ func (m *ICefDragHandler) SetOnDragEnter(fn onDragEnter) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDragHandler_OnDragEnter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDragHandler_OnDragEnter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefDragHandler) SetOnDraggableRegionsChanged(fn onDraggableRegionsChanged) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDragHandler_OnDraggableRegionsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDragHandler_OnDraggableRegionsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

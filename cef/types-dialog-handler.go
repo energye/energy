@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type dialogHandler uintptr
 
 func (*dialogHandler) New() *ICefDialogHandler {
 	var result uintptr
-	imports.Proc(internale_CefDialogHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDialogHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDialogHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,7 +63,7 @@ func (m *ICefDialogHandler) SetOnFileDialog(fn onFileDialog) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDialogHandler_OnFileDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefDialogHandler_OnFileDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

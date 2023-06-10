@@ -49,24 +49,24 @@ func init() {
 
 const (
 	//null nil
-	internale_null_nil = iota
+	null_nil = iota
 	//LCL  Extend
-	internale_Ext_Panel_GetBevelColor
-	internale_Ext_Panel_SetBevelColor
-	internale_Ext_ReadStringProperty
+	Ext_Panel_GetBevelColor
+	Ext_Panel_SetBevelColor
+	Ext_ReadStringProperty
 )
 
 func PanelBevelColor(panel *lcl.TPanel) types.TColor {
-	r1, _, _ := imports.ExtProc(internale_Ext_Panel_GetBevelColor).Call(panel.Instance())
+	r1, _, _ := imports.ExtProc(Ext_Panel_GetBevelColor).Call(panel.Instance())
 	return types.TColor(r1)
 }
 
 func SetPanelBevelColor(panel *lcl.TPanel, colors types.TColor) {
-	imports.ExtProc(internale_Ext_Panel_SetBevelColor).Call(panel.Instance(), uintptr(colors))
+	imports.ExtProc(Ext_Panel_SetBevelColor).Call(panel.Instance(), uintptr(colors))
 }
 
 func readObjectStringProperty(sender lcl.IObject) string {
-	r1, _, _ := imports.ExtProc(internale_Ext_ReadStringProperty).Call(lcl.CheckPtr(sender))
+	r1, _, _ := imports.ExtProc(Ext_ReadStringProperty).Call(lcl.CheckPtr(sender))
 	return api.GoStr(r1)
 }
 

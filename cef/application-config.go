@@ -14,6 +14,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/i18n"
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/internal/version"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
@@ -37,7 +38,7 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 		//自定义
 		internalObjectRootName = name
 	}
-	//imports.Proc(internale_CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
+	//imports.Proc(CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
 }
 
 //initDefaultSettings 初始 energy 默认设置
@@ -104,827 +105,827 @@ func libPath() string {
 /*** 设置 TCefSettings (cef_settings_t) 属性 ***/
 
 func (m *TCEFApplication) NoSandbox() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_NoSandbox).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_NoSandbox).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetNoSandbox(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetNoSandbox).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetNoSandbox).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) BrowserSubprocessPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_BrowserSubprocessPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_BrowserSubprocessPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetBrowserSubprocessPath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetBrowserSubprocessPath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetBrowserSubprocessPath).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) FrameworkDirPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_FrameworkDirPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_FrameworkDirPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetFrameworkDirPath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
 }
 
 // MainBundlePath 仅用于macOS
 func (m *TCEFApplication) MainBundlePath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MainBundlePath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MainBundlePath).Call()
 	return api.GoStr(r1)
 }
 
 // SetMainBundlePath 仅用于macOS
 func (m *TCEFApplication) SetMainBundlePath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetMainBundlePath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetMainBundlePath).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ChromeRuntime() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeRuntime).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeRuntime).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetChromeRuntime(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetChromeRuntime).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetChromeRuntime).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MultiThreadedMessageLoop() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MultiThreadedMessageLoop).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MultiThreadedMessageLoop).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMultiThreadedMessageLoop(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMultiThreadedMessageLoop).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMultiThreadedMessageLoop).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) ExternalMessagePump() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ExternalMessagePump).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ExternalMessagePump).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetExternalMessagePump(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) WindowlessRenderingEnabled() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_WindowlessRenderingEnabled).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_WindowlessRenderingEnabled).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetWindowlessRenderingEnabled(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetWindowlessRenderingEnabled).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetWindowlessRenderingEnabled).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) CommandLineArgsDisabled() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_CommandLineArgsDisabled).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_CommandLineArgsDisabled).Call()
 	return api.GoBool(r1)
 }
 
 // SetCommandLineArgsDisabled 开启/禁用设置命令行参数
 func (m *TCEFApplication) SetCommandLineArgsDisabled(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetCommandLineArgsDisabled).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetCommandLineArgsDisabled).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) Cache() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_Cache).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_Cache).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetCache(value string) {
-	imports.Proc(internale_CEFAppConfig_SetCache).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetCache).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) RootCache() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_RootCache).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_RootCache).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetRootCache(value string) {
-	imports.Proc(internale_CEFAppConfig_SetRootCache).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetRootCache).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) UserDataPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UserDataPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UserDataPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetUserDataPath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetUserDataPath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetUserDataPath).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) PersistSessionCookies() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_PersistSessionCookies).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_PersistSessionCookies).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetPersistSessionCookies(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetPersistSessionCookies).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetPersistSessionCookies).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) PersistUserPreferences() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_PersistUserPreferences).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_PersistUserPreferences).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetPersistUserPreferences(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetPersistUserPreferences).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetPersistUserPreferences).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) UserAgent() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UserAgent).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UserAgent).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetUserAgent(value string) {
-	imports.Proc(internale_CEFAppConfig_SetUserAgent).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetUserAgent).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) UserAgentProduct() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UserAgentProduct).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UserAgentProduct).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetUserAgentProduct(value string) {
-	imports.Proc(internale_CEFAppConfig_SetUserAgentProduct).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetUserAgentProduct).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) Locale() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_Locale).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_Locale).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetLocale(value LANGUAGE) {
 	i18n.Switch(value)
-	imports.Proc(internale_CEFAppConfig_SetLocale).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetLocale).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) LogFile() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LogFile).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LogFile).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetLogFile(value string) {
-	imports.Proc(internale_CEFAppConfig_SetLogFile).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetLogFile).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) LogSeverity() LogSeverity {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LogSeverity).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LogSeverity).Call()
 	return LogSeverity(r1)
 }
 
 func (m *TCEFApplication) SetLogSeverity(value LogSeverity) {
-	imports.Proc(internale_CEFAppConfig_SetLogSeverity).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetLogSeverity).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) JavaScriptFlags() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_JavaScriptFlags).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_JavaScriptFlags).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetJavaScriptFlags(value string) {
-	imports.Proc(internale_CEFAppConfig_SetJavaScriptFlags).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetJavaScriptFlags).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ResourcesDirPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ResourcesDirPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ResourcesDirPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetResourcesDirPath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetResourcesDirPath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetResourcesDirPath).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) LocalesDirPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LocalesDirPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LocalesDirPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetLocalesDirPath(value string) {
-	imports.Proc(internale_CEFAppConfig_SetLocalesDirPath).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetLocalesDirPath).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) PackLoadingDisabled() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_PackLoadingDisabled).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_PackLoadingDisabled).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetPackLoadingDisabled(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetPackLoadingDisabled).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetPackLoadingDisabled).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) RemoteDebuggingPort() int32 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_RemoteDebuggingPort).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_RemoteDebuggingPort).Call()
 	return int32(r1)
 }
 
 func (m *TCEFApplication) SetRemoteDebuggingPort(value int32) {
 	if value > 1024 && value < 65535 {
-		imports.Proc(internale_CEFAppConfig_SetRemoteDebuggingPort).Call(uintptr(value))
+		imports.Proc(def.CEFAppConfig_SetRemoteDebuggingPort).Call(uintptr(value))
 	}
 }
 
 func (m *TCEFApplication) UncaughtExceptionStackSize() int32 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UncaughtExceptionStackSize).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UncaughtExceptionStackSize).Call()
 	return int32(r1)
 }
 
 func (m *TCEFApplication) SetUncaughtExceptionStackSize(value int32) {
-	imports.Proc(internale_CEFAppConfig_SetUncaughtExceptionStackSize).Call(uintptr(value))
+	imports.Proc(def.CEFAppConfig_SetUncaughtExceptionStackSize).Call(uintptr(value))
 }
 
 func (m *TCEFApplication) IgnoreCertificateErrors() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_IgnoreCertificateErrors).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_IgnoreCertificateErrors).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetIgnoreCertificateErrors(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetIgnoreCertificateErrors).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetIgnoreCertificateErrors).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) BackgroundColor() types.TCefColor {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_BackgroundColor).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_BackgroundColor).Call()
 	return types.TCefColor(r1)
 }
 
 func (m *TCEFApplication) SetBackgroundColor(value types.TCefColor) {
-	imports.Proc(internale_CEFAppConfig_SetBackgroundColor).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetBackgroundColor).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) AcceptLanguageList() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AcceptLanguageList).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AcceptLanguageList).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetAcceptLanguageList(value string) {
-	imports.Proc(internale_CEFAppConfig_SetAcceptLanguageList).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetAcceptLanguageList).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) CookieableSchemesList() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_CookieableSchemesList).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_CookieableSchemesList).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetCookieableSchemesList(value string) {
-	imports.Proc(internale_CEFAppConfig_SetCookieableSchemesList).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetCookieableSchemesList).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) CookieableSchemesExcludeDefaults() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_CookieableSchemesExcludeDefaults).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_CookieableSchemesExcludeDefaults).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetCookieableSchemesExcludeDefaults(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetCookieableSchemesExcludeDefaults).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetCookieableSchemesExcludeDefaults).Call(api.PascalBool(value))
 }
 
 /*** 设置常用的命令行参数属性 ***/
 
 func (m *TCEFApplication) SingleProcess() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_SingleProcess).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_SingleProcess).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetSingleProcess(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetSingleProcess).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetSingleProcess).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableMediaStream() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableMediaStream).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableMediaStream).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnableMediaStream(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnableMediaStream).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnableMediaStream).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableSpeechInput() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableSpeechInput).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableSpeechInput).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnableSpeechInput(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnableSpeechInput).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnableSpeechInput).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) UseFakeUIForMediaStream() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UseFakeUIForMediaStream).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UseFakeUIForMediaStream).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetUseFakeUIForMediaStream(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetUseFakeUIForMediaStream).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetUseFakeUIForMediaStream).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableUsermediaScreenCapturing() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableUsermediaScreenCapturing).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableUsermediaScreenCapturing).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnableUsermediaScreenCapturing(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnableUsermediaScreenCapturing).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnableUsermediaScreenCapturing).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableGPU() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableGPU).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableGPU).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnableGPU(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnableGPU).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnableGPU).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableFeatures() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableFeatures).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableFeatures).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetEnableFeatures(value string) {
-	imports.Proc(internale_CEFAppConfig_SetEnableFeatures).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetEnableFeatures).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) DisableFeatures() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableFeatures).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableFeatures).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetDisableFeatures(value string) {
-	imports.Proc(internale_CEFAppConfig_SetDisableFeatures).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetDisableFeatures).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) EnableBlinkFeatures() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableBlinkFeatures).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableBlinkFeatures).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetEnableBlinkFeatures(value string) {
-	imports.Proc(internale_CEFAppConfig_SetEnableBlinkFeatures).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetEnableBlinkFeatures).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) DisableBlinkFeatures() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableBlinkFeatures).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableBlinkFeatures).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetDisableBlinkFeatures(value string) {
-	imports.Proc(internale_CEFAppConfig_SetDisableBlinkFeatures).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetDisableBlinkFeatures).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) BlinkSettings() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_BlinkSettings).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_BlinkSettings).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetBlinkSettings(value string) {
-	imports.Proc(internale_CEFAppConfig_SetBlinkSettings).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetBlinkSettings).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ForceFieldTrials() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ForceFieldTrials).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ForceFieldTrials).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetForceFieldTrials(value string) {
-	imports.Proc(internale_CEFAppConfig_SetForceFieldTrials).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetForceFieldTrials).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ForceFieldTrialParams() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ForceFieldTrialParams).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ForceFieldTrialParams).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetForceFieldTrialParams(value string) {
-	imports.Proc(internale_CEFAppConfig_SetForceFieldTrialParams).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetForceFieldTrialParams).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) SmoothScrolling() TCefState {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_SmoothScrolling).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_SmoothScrolling).Call()
 	return TCefState(r1)
 }
 
 func (m *TCEFApplication) SetSmoothScrolling(value TCefState) {
-	imports.Proc(internale_CEFAppConfig_SetSmoothScrolling).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetSmoothScrolling).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) FastUnload() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_FastUnload).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_FastUnload).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetFastUnload(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetFastUnload).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetFastUnload).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableSafeBrowsing() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableSafeBrowsing).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableSafeBrowsing).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableSafeBrowsing(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableSafeBrowsing).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableSafeBrowsing).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MuteAudio() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MuteAudio).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MuteAudio).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMuteAudio(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMuteAudio).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMuteAudio).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) SitePerProcess() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_SitePerProcess).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_SitePerProcess).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetSitePerProcess(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetSitePerProcess).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetSitePerProcess).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableWebSecurity() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableWebSecurity).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableWebSecurity).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableWebSecurity(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableWebSecurity).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableWebSecurity).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisablePDFExtension() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisablePDFExtension).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisablePDFExtension).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisablePDFExtension(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisablePDFExtension).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisablePDFExtension).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableSiteIsolationTrials() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableSiteIsolationTrials).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableSiteIsolationTrials).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableSiteIsolationTrials(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableSiteIsolationTrials).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableSiteIsolationTrials).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableChromeLoginPrompt() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableChromeLoginPrompt).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableChromeLoginPrompt).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableChromeLoginPrompt(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableChromeLoginPrompt).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableChromeLoginPrompt).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableExtensions() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableExtensions).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableExtensions).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableExtensions(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableExtensions).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableExtensions).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) AutoplayPolicy() TCefAutoplayPolicy {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AutoplayPolicy).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AutoplayPolicy).Call()
 	return TCefAutoplayPolicy(r1)
 }
 
 func (m *TCEFApplication) SetAutoplayPolicy(value TCefAutoplayPolicy) {
-	imports.Proc(internale_CEFAppConfig_SetAutoplayPolicy).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetAutoplayPolicy).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) DisableBackgroundNetworking() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableBackgroundNetworking).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableBackgroundNetworking).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableBackgroundNetworking(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableBackgroundNetworking).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableBackgroundNetworking).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MetricsRecordingOnly() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MetricsRecordingOnly).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MetricsRecordingOnly).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMetricsRecordingOnly(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMetricsRecordingOnly).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMetricsRecordingOnly).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) AllowFileAccessFromFiles() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AllowFileAccessFromFiles).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AllowFileAccessFromFiles).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetAllowFileAccessFromFiles(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetAllowFileAccessFromFiles).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetAllowFileAccessFromFiles).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) AllowRunningInsecureContent() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AllowRunningInsecureContent).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AllowRunningInsecureContent).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetAllowRunningInsecureContent(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetAllowRunningInsecureContent).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetAllowRunningInsecureContent).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnablePrintPreview() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnablePrintPreview).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnablePrintPreview).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnablePrintPreview(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnablePrintPreview).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnablePrintPreview).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DefaultEncoding() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DefaultEncoding).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DefaultEncoding).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetDefaultEncoding(value string) {
-	imports.Proc(internale_CEFAppConfig_SetDefaultEncoding).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetDefaultEncoding).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) DisableJavascript() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableJavascript).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableJavascript).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableJavascript(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableJavascript).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableJavascript).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableJavascriptCloseWindows() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableJavascriptCloseWindows).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableJavascriptCloseWindows).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableJavascriptCloseWindows(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableJavascriptCloseWindows).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableJavascriptCloseWindows).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableJavascriptAccessClipboard() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableJavascriptAccessClipboard).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableJavascriptAccessClipboard).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableJavascriptAccessClipboard(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableJavascriptAccessClipboard).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableJavascriptAccessClipboard).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableJavascriptDomPaste() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableJavascriptDomPaste).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableJavascriptDomPaste).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableJavascriptDomPaste(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableJavascriptDomPaste).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableJavascriptDomPaste).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) AllowUniversalAccessFromFileUrls() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AllowUniversalAccessFromFileUrls).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AllowUniversalAccessFromFileUrls).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetAllowUniversalAccessFromFileUrls(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetAllowUniversalAccessFromFileUrls).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetAllowUniversalAccessFromFileUrls).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableImageLoading() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableImageLoading).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableImageLoading).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableImageLoading(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableImageLoading).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableImageLoading).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) ImageShrinkStandaloneToFit() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ImageShrinkStandaloneToFit).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ImageShrinkStandaloneToFit).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetImageShrinkStandaloneToFit(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetImageShrinkStandaloneToFit).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetImageShrinkStandaloneToFit).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableTextAreaResize() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableTextAreaResize).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableTextAreaResize).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableTextAreaResize(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableTextAreaResize).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableTextAreaResize).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableTabToLinks() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableTabToLinks).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableTabToLinks).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableTabToLinks(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableTabToLinks).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableTabToLinks).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) EnableProfanityFilter() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableProfanityFilter).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_EnableProfanityFilter).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetEnableProfanityFilter(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetEnableProfanityFilter).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetEnableProfanityFilter).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableSpellChecking() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableSpellChecking).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableSpellChecking).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableSpellChecking(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableSpellChecking).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableSpellChecking).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) OverrideSpellCheckLang() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_OverrideSpellCheckLang).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_OverrideSpellCheckLang).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetOverrideSpellCheckLang(value string) {
-	imports.Proc(internale_CEFAppConfig_SetOverrideSpellCheckLang).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetOverrideSpellCheckLang).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) TouchEvents() TCefState {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_TouchEvents).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_TouchEvents).Call()
 	return TCefState(r1)
 }
 
 func (m *TCEFApplication) SetTouchEvents(value TCefState) {
-	imports.Proc(internale_CEFAppConfig_SetTouchEvents).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetTouchEvents).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) DisableReadingFromCanvas() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableReadingFromCanvas).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableReadingFromCanvas).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableReadingFromCanvas(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableReadingFromCanvas).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableReadingFromCanvas).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) HyperlinkAuditing() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_HyperlinkAuditing).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_HyperlinkAuditing).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetHyperlinkAuditing(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetHyperlinkAuditing).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetHyperlinkAuditing).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableNewBrowserInfoTimeout() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableNewBrowserInfoTimeout).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableNewBrowserInfoTimeout).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableNewBrowserInfoTimeout(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableNewBrowserInfoTimeout).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableNewBrowserInfoTimeout).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DevToolsProtocolLogFile() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DevToolsProtocolLogFile).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DevToolsProtocolLogFile).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetDevToolsProtocolLogFile(value string) {
-	imports.Proc(internale_CEFAppConfig_SetDevToolsProtocolLogFile).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetDevToolsProtocolLogFile).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ForcedDeviceScaleFactor() float32 { //single
 	var result uintptr
-	imports.Proc(internale_CEFAppConfig_ForcedDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFAppConfig_ForcedDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
 	return *(*float32)(unsafe.Pointer(result))
 }
 
 func (m *TCEFApplication) SetForcedDeviceScaleFactor(value float32) { //single
-	imports.Proc(internale_CEFAppConfig_SetForcedDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&value)))
+	imports.Proc(def.CEFAppConfig_SetForcedDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&value)))
 }
 
 func (m *TCEFApplication) DisableZygote() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableZygote).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableZygote).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableZygote(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableZygote).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableZygote).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) UseMockKeyChain() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UseMockKeyChain).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UseMockKeyChain).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetUseMockKeyChain(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetUseMockKeyChain).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetUseMockKeyChain).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableRequestHandlingForTesting() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableRequestHandlingForTesting).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableRequestHandlingForTesting).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableRequestHandlingForTesting(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableRequestHandlingForTesting).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableRequestHandlingForTesting).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisablePopupBlocking() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisablePopupBlocking).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisablePopupBlocking).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisablePopupBlocking(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisablePopupBlocking).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisablePopupBlocking).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableBackForwardCache() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableBackForwardCache).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableBackForwardCache).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableBackForwardCache(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableBackForwardCache).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableBackForwardCache).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DisableComponentUpdate() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DisableComponentUpdate).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DisableComponentUpdate).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDisableComponentUpdate(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDisableComponentUpdate).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDisableComponentUpdate).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) AllowInsecureLocalhost() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AllowInsecureLocalhost).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AllowInsecureLocalhost).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetAllowInsecureLocalhost(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetAllowInsecureLocalhost).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetAllowInsecureLocalhost).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) KioskPrinting() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_KioskPrinting).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_KioskPrinting).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetKioskPrinting(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetKioskPrinting).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetKioskPrinting).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) TreatInsecureOriginAsSecure() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_TreatInsecureOriginAsSecure).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_TreatInsecureOriginAsSecure).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetTreatInsecureOriginAsSecure(value string) {
-	imports.Proc(internale_CEFAppConfig_SetTreatInsecureOriginAsSecure).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetTreatInsecureOriginAsSecure).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) NetLogEnabled() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_NetLogEnabled).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_NetLogEnabled).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetNetLogEnabled(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetNetLogEnabled).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetNetLogEnabled).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) NetLogFile() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_NetLogFile).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_NetLogFile).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetNetLogFile(value string) {
-	imports.Proc(internale_CEFAppConfig_SetNetLogFile).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetNetLogFile).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) NetLogCaptureMode() TCefNetLogCaptureMode {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_NetLogCaptureMode).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_NetLogCaptureMode).Call()
 	return TCefNetLogCaptureMode(r1)
 }
 
 func (m *TCEFApplication) SetNetLogCaptureMode(value TCefNetLogCaptureMode) {
-	imports.Proc(internale_CEFAppConfig_SetNetLogCaptureMode).Call(value.ToPtr())
+	imports.Proc(def.CEFAppConfig_SetNetLogCaptureMode).Call(value.ToPtr())
 }
 
 func (m *TCEFApplication) EnableHighDPISupport() bool {
 	if common.IsWindows() {
-		r1, _, _ := imports.Proc(internale_CEFAppConfig_EnableHighDPISupport).Call()
+		r1, _, _ := imports.Proc(def.CEFAppConfig_EnableHighDPISupport).Call()
 		return api.GoBool(r1)
 	}
 	return false
@@ -932,98 +933,98 @@ func (m *TCEFApplication) EnableHighDPISupport() bool {
 
 func (m *TCEFApplication) SetEnableHighDPISupport(value bool) {
 	if common.IsWindows() {
-		imports.Proc(internale_CEFAppConfig_SetEnableHighDPISupport).Call(api.PascalBool(value))
+		imports.Proc(def.CEFAppConfig_SetEnableHighDPISupport).Call(api.PascalBool(value))
 	}
 }
 
 /*** 自定义属性 ***/
 
 func (m *TCEFApplication) DeleteCache() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DeleteCache).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DeleteCache).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDeleteCache(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDeleteCache).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDeleteCache).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DeleteCookies() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_DeleteCookies).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_DeleteCookies).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetDeleteCookies(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetDeleteCookies).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetDeleteCookies).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) CheckCEFFiles() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_CheckCEFFiles).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_CheckCEFFiles).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetCheckCEFFiles(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetCheckCEFFiles).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetCheckCEFFiles).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) ShowMessageDlg() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ShowMessageDlg).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ShowMessageDlg).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetShowMessageDlg(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetShowMessageDlg).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetShowMessageDlg).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MissingBinariesException() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MissingBinariesException).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MissingBinariesException).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMissingBinariesException(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMissingBinariesException).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMissingBinariesException).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) SetCurrentDir() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_SetCurrentDir).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_SetCurrentDir).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetSetCurrentDir(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetSetCurrentDir).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetSetCurrentDir).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) GlobalContextInitialized() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_GlobalContextInitialized).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_GlobalContextInitialized).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) ChromeMajorVer() uint16 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeMajorVer).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeMajorVer).Call()
 	return uint16(r1)
 }
 
 func (m *TCEFApplication) ChromeMinorVer() uint16 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeMinorVer).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeMinorVer).Call()
 	return uint16(r1)
 }
 
 func (m *TCEFApplication) ChromeRelease() uint16 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeRelease).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeRelease).Call()
 	return uint16(r1)
 }
 
 func (m *TCEFApplication) ChromeBuild() uint16 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeBuild).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeBuild).Call()
 	return uint16(r1)
 }
 
 func (m *TCEFApplication) ChromeVersion() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeVersion).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeVersion).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) LibCefVersion() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LibCefVersion).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LibCefVersion).Call()
 	return api.GoStr(r1)
 }
 
@@ -1043,55 +1044,55 @@ func (m *TCEFApplication) LibBuildVersion() string {
 }
 
 func (m *TCEFApplication) LibCefPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LibCefPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LibCefPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) ChromeElfPath() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChromeElfPath).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromeElfPath).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) LibLoaded() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LibLoaded).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LibLoaded).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) LogProcessInfo() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LogProcessInfo).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LogProcessInfo).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetLogProcessInfo(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetLogProcessInfo).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetLogProcessInfo).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) ReRaiseExceptions() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ReRaiseExceptions).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ReRaiseExceptions).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetReRaiseExceptions(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetReRaiseExceptions).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetReRaiseExceptions).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) DeviceScaleFactor() float32 {
 	var result uintptr
-	imports.Proc(internale_CEFAppConfig_DeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFAppConfig_DeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
 	return *(*float32)(unsafe.Pointer(result))
 }
 
 func (m *TCEFApplication) LocalesRequired() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LocalesRequired).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LocalesRequired).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) SetLocalesRequired(value string) {
-	imports.Proc(internale_CEFAppConfig_SetLocalesRequired).Call(api.PascalStr(value))
+	imports.Proc(def.CEFAppConfig_SetLocalesRequired).Call(api.PascalStr(value))
 }
 
 func (m *TCEFApplication) ProcessType() TCefProcessType {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ProcessType).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ProcessType).Call()
 	return TCefProcessType(r1)
 }
 
@@ -1120,102 +1121,102 @@ func (m *TCEFApplication) ProcessTypeValue() (processTypeValue TCefProcessTypeVa
 }
 
 func (m *TCEFApplication) MustCreateResourceBundleHandler() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MustCreateResourceBundleHandler).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MustCreateResourceBundleHandler).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMustCreateResourceBundleHandler(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMustCreateResourceBundleHandler).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMustCreateResourceBundleHandler).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MustCreateBrowserProcessHandler() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MustCreateBrowserProcessHandler).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MustCreateBrowserProcessHandler).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMustCreateBrowserProcessHandler(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMustCreateBrowserProcessHandler).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMustCreateBrowserProcessHandler).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MustCreateRenderProcessHandler() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MustCreateRenderProcessHandler).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MustCreateRenderProcessHandler).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMustCreateRenderProcessHandler(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMustCreateRenderProcessHandler).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMustCreateRenderProcessHandler).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) MustCreateLoadHandler() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MustCreateLoadHandler).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MustCreateLoadHandler).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMustCreateLoadHandler(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMustCreateLoadHandler).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMustCreateLoadHandler).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) Status() TCefApplicationStatus {
 	// type = TCefAplicationStatus = asLoading asLoaded asInitialized asShuttingDown asUnloaded asErrorMissingFiles asErrorDLLVersion asErrorLoadingLibrary asErrorInitializingLibrary asErrorExecutingProcess
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_Status).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_Status).Call()
 	return TCefApplicationStatus(r1)
 }
 
 func (m *TCEFApplication) MissingLibFiles() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MissingLibFiles).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MissingLibFiles).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) MustFreeLibrary() bool {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_MustFreeLibrary).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_MustFreeLibrary).Call()
 	return api.GoBool(r1)
 }
 
 func (m *TCEFApplication) SetMustFreeLibrary(value bool) {
-	imports.Proc(internale_CEFAppConfig_SetMustFreeLibrary).Call(api.PascalBool(value))
+	imports.Proc(def.CEFAppConfig_SetMustFreeLibrary).Call(api.PascalBool(value))
 }
 
 func (m *TCEFApplication) ChildProcessesCount() int32 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ChildProcessesCount).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChildProcessesCount).Call()
 	return int32(r1)
 }
 
 func (m *TCEFApplication) UsedMemory() uint64 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_UsedMemory).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UsedMemory).Call()
 	return uint64(r1)
 }
 
 func (m *TCEFApplication) TotalSystemMemory() uint64 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_TotalSystemMemory).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_TotalSystemMemory).Call()
 	return uint64(r1)
 }
 
 func (m *TCEFApplication) AvailableSystemMemory() uint64 {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_AvailableSystemMemory).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AvailableSystemMemory).Call()
 	return uint64(r1)
 }
 
 func (m *TCEFApplication) SystemMemoryLoad() types.Cardinal {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_SystemMemoryLoad).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_SystemMemoryLoad).Call()
 	return types.Cardinal(r1)
 }
 
 func (m *TCEFApplication) ApiHashUniversal() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ApiHashUniversal).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ApiHashUniversal).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) ApiHashPlatform() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ApiHashPlatform).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ApiHashPlatform).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) ApiHashCommit() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_ApiHashCommit).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ApiHashCommit).Call()
 	return api.GoStr(r1)
 }
 
 func (m *TCEFApplication) LastErrorMessage() string {
-	r1, _, _ := imports.Proc(internale_CEFAppConfig_LastErrorMessage).Call()
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LastErrorMessage).Call()
 	return api.GoStr(r1)
 }

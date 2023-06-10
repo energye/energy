@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -33,7 +34,7 @@ func (m *ICefV8Context) Eval(code, scriptUrl string, startLine int32) (value *IC
 	}
 	var returnValuePtr uintptr
 	var returnExceptionPtr uintptr
-	r1, _, _ := imports.Proc(internale_CefV8Context_Eval).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine), uintptr(unsafe.Pointer(&returnValuePtr)), uintptr(unsafe.Pointer(&returnExceptionPtr)))
+	r1, _, _ := imports.Proc(def.CefV8Context_Eval).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptUrl), uintptr(startLine), uintptr(unsafe.Pointer(&returnValuePtr)), uintptr(unsafe.Pointer(&returnExceptionPtr)))
 	ok = api.GoBool(r1)
 	if ok {
 		value = &ICefV8Value{instance: unsafe.Pointer(returnValuePtr)}
@@ -48,7 +49,7 @@ func (m *ICefV8Context) Enter() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefV8Context_Enter).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefV8Context_Enter).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -57,7 +58,7 @@ func (m *ICefV8Context) Exit() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefV8Context_Exit).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefV8Context_Exit).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -72,7 +73,7 @@ func (m *ICefV8Context) IsSame(that *ICefV8Context) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefV8Context_IsSame).Call(m.Instance(), that.Instance())
+	r1, _, _ := imports.Proc(def.CefV8Context_IsSame).Call(m.Instance(), that.Instance())
 	return api.GoBool(r1)
 }
 
@@ -82,7 +83,7 @@ func (m *ICefV8Context) Browser() *ICefBrowser {
 	}
 	if m.browser == nil {
 		var result uintptr
-		imports.Proc(internale_CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefV8Context_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.browser = &ICefBrowser{
 			instance: unsafe.Pointer(result),
 		}
@@ -96,7 +97,7 @@ func (m *ICefV8Context) Frame() *ICefFrame {
 	}
 	if m.frame == nil {
 		var result uintptr
-		imports.Proc(internale_CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefV8Context_Frame).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.frame = &ICefFrame{
 			instance: unsafe.Pointer(result),
 		}
@@ -110,7 +111,7 @@ func (m *ICefV8Context) Global() *ICefV8Value {
 	}
 	if m.global == nil {
 		var result uintptr
-		imports.Proc(internale_CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefV8Context_Global).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.global = &ICefV8Value{
 			instance: unsafe.Pointer(result),
 		}
@@ -139,7 +140,7 @@ func (m *ICefV8Context) Free() {
 
 func (m *cefV8ContextRef) Current() *ICefV8Context {
 	var result uintptr
-	imports.Proc(internale_CefV8ContextRef_Current).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8ContextRef_Current).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Context{
 		instance: unsafe.Pointer(result),
 	}
@@ -147,7 +148,7 @@ func (m *cefV8ContextRef) Current() *ICefV8Context {
 
 func (m *cefV8ContextRef) Entered() *ICefV8Context {
 	var result uintptr
-	imports.Proc(internale_CefV8ContextRef_Entered).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8ContextRef_Entered).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8Context{
 		instance: unsafe.Pointer(result),
 	}
@@ -155,7 +156,7 @@ func (m *cefV8ContextRef) Entered() *ICefV8Context {
 
 func (m *cefV8ContextRef) UnWrap(data *ICefV8Context) *ICefV8Context {
 	var result uintptr
-	imports.Proc(internale_CefV8ContextRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8ContextRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }

@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type requestHandler uintptr
 
 func (*requestHandler) New() *ICefRequestHandler {
 	var result uintptr
-	imports.Proc(internale_CefRequestHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefRequestHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,63 +63,63 @@ func (m *ICefRequestHandler) SetOnBeforeBrowse(fn requestHandlerOnBeforeBrowse) 
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnBeforeBrowse).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnBeforeBrowse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnOpenUrlFromTab(fn requestHandlerOnOpenUrlFromTab) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnOpenUrlFromTab).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnOpenUrlFromTab).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetGetResourceRequestHandler(fn requestHandlerGetResourceRequestHandler) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_GetResourceRequestHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_GetResourceRequestHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetGetAuthCredentials(fn requestHandlerGetAuthCredentials) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_GetAuthCredentials).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_GetAuthCredentials).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnCertificateError(fn requestHandlerOnCertificateError) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnCertificateError).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnCertificateError).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnSelectClientCertificate(fn requestHandlerOnSelectClientCertificate) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnSelectClientCertificate).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnSelectClientCertificate).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnRenderViewReady(fn requestHandlerOnRenderViewReady) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnRenderViewReady).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnRenderViewReady).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnRenderProcessTerminated(fn requestHandlerOnRenderProcessTerminated) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnRenderProcessTerminated).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnRenderProcessTerminated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestHandler) SetOnDocumentAvailableInMainFrame(fn requestHandlerOnDocumentAvailableInMainFrame) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefRequestHandler_OnDocumentAvailableInMainFrame).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefRequestHandler_OnDocumentAvailableInMainFrame).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

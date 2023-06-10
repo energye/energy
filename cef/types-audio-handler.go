@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,7 +27,7 @@ type audioHandler uintptr
 
 func (*audioHandler) New() *ICefAudioHandler {
 	var result uintptr
-	imports.Proc(internale_CefAudioHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefAudioHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefAudioHandler{instance: unsafe.Pointer(result)}
 	}
@@ -61,35 +62,35 @@ func (m *ICefAudioHandler) SetOnGetAudioParameters(fn onGetAudioParameters) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAudioHandler_OnGetAudioParameters).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAudioHandler_OnGetAudioParameters).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefAudioHandler) SetOnAudioStreamStarted(fn onAudioStreamStarted) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAudioHandler_OnAudioStreamStarted).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAudioHandler_OnAudioStreamStarted).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefAudioHandler) SetOnAudioStreamPacket(fn onAudioStreamPacket) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAudioHandler_OnAudioStreamPacket).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAudioHandler_OnAudioStreamPacket).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefAudioHandler) SetOnAudioStreamStopped(fn onAudioStreamStopped) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAudioHandler_OnAudioStreamStopped).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAudioHandler_OnAudioStreamStopped).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefAudioHandler) SetOnAudioStreamError(fn onAudioStreamError) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefAudioHandler_OnAudioStreamError).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefAudioHandler_OnAudioStreamError).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

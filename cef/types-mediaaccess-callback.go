@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 )
@@ -41,12 +42,12 @@ func (m *ICefMediaAccessCallback) Cont(allowedPermissions consts.TCefMediaAccess
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefMediaAccessCallback_Cont).Call(m.Instance(), allowedPermissions.ToPtr())
+	imports.Proc(def.CefMediaAccessCallback_Cont).Call(m.Instance(), allowedPermissions.ToPtr())
 }
 
 func (m *ICefMediaAccessCallback) Cancel() {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefMediaAccessCallback_Cancel).Call(m.Instance())
+	imports.Proc(def.CefMediaAccessCallback_Cancel).Call(m.Instance())
 }

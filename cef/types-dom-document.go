@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
@@ -43,7 +44,7 @@ func (m *ICefDomDocument) GetDocType() consts.TCefDomDocumentType {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetDocType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetDocType).Call(m.Instance())
 	return consts.TCefDomDocumentType(r1)
 }
 
@@ -52,7 +53,7 @@ func (m *ICefDomDocument) GetDocument() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomDocument_GetDocument).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomDocument_GetDocument).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -64,7 +65,7 @@ func (m *ICefDomDocument) GetBody() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomDocument_GetBody).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomDocument_GetBody).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -76,7 +77,7 @@ func (m *ICefDomDocument) GetHead() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomDocument_GetHead).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomDocument_GetHead).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -87,7 +88,7 @@ func (m *ICefDomDocument) GetTitle() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetTitle).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetTitle).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -96,7 +97,7 @@ func (m *ICefDomDocument) GetElementById(id string) *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomDocument_GetElementById).Call(m.Instance(), api.PascalStr(id), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomDocument_GetElementById).Call(m.Instance(), api.PascalStr(id), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -108,7 +109,7 @@ func (m *ICefDomDocument) GetFocusedNode() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomDocument_GetFocusedNode).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomDocument_GetFocusedNode).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -119,7 +120,7 @@ func (m *ICefDomDocument) HasSelection() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_HasSelection).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_HasSelection).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -127,7 +128,7 @@ func (m *ICefDomDocument) GetSelectionStartOffset() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetSelectionStartOffset).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetSelectionStartOffset).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -135,7 +136,7 @@ func (m *ICefDomDocument) GetSelectionEndOffset() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetSelectionEndOffset).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetSelectionEndOffset).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -143,7 +144,7 @@ func (m *ICefDomDocument) GetSelectionAsMarkup() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetSelectionAsMarkup).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetSelectionAsMarkup).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -151,7 +152,7 @@ func (m *ICefDomDocument) GetSelectionAsText() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetSelectionAsText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetSelectionAsText).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -159,7 +160,7 @@ func (m *ICefDomDocument) GetBaseUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetBaseUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetBaseUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -167,6 +168,6 @@ func (m *ICefDomDocument) GetCompleteUrl() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomDocument_GetCompleteUrl).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomDocument_GetCompleteUrl).Call(m.Instance())
 	return api.GoStr(r1)
 }

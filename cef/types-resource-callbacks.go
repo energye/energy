@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"unsafe"
 )
@@ -43,7 +44,7 @@ func (m *ICefResourceReadCallback) Cont(bytesSkipped int64) {
 	if m == nil || m.instance == nil {
 		return
 	}
-	imports.Proc(internale_ResourceSkipCallback_Cont).Call(m.Instance(), uintptr(unsafe.Pointer(&bytesSkipped)))
+	imports.Proc(def.ResourceSkipCallback_Cont).Call(m.Instance(), uintptr(unsafe.Pointer(&bytesSkipped)))
 }
 
 // ************************** ICefResourceSkipCallback ************************** //
@@ -74,5 +75,5 @@ func (m *ICefResourceSkipCallback) Cont(bytesRead int64) {
 	if m == nil || m.instance == nil {
 		return
 	}
-	imports.Proc(internale_ResourceReadCallback_Cont).Call(m.Instance(), uintptr(unsafe.Pointer(&bytesRead)))
+	imports.Proc(def.ResourceReadCallback_Cont).Call(m.Instance(), uintptr(unsafe.Pointer(&bytesRead)))
 }

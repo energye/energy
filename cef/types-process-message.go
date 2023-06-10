@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -27,7 +28,7 @@ type processMessage uintptr
 // 参数: name 消息名
 func (*processMessage) new(name string) *ICefProcessMessage {
 	var result uintptr
-	imports.Proc(internale_CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefProcessMessageRef_New).Call(api.PascalStr(name), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{
 		name:     name,
 		instance: unsafe.Pointer(result),
@@ -46,7 +47,7 @@ func (m *processMessage) New(name string) *ICefProcessMessage {
 
 func (m *processMessage) UnWrap(data *ICefProcessMessage) *ICefProcessMessage {
 	var result uintptr
-	imports.Proc(internale_CefProcessMessageRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefProcessMessageRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -71,7 +72,7 @@ func (m *ICefProcessMessage) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefProcessMessage_IsValid).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefProcessMessage_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -82,7 +83,7 @@ func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
 	}
 	if m.argumentList == nil {
 		var result uintptr
-		imports.Proc(internale_CefProcessMessage_ArgumentList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+		imports.Proc(def.CefProcessMessage_ArgumentList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 		m.argumentList = &ICefListValue{
 			instance: unsafe.Pointer(result),
 		}
@@ -92,7 +93,7 @@ func (m *ICefProcessMessage) ArgumentList() *ICefListValue {
 
 func (m *ICefProcessMessage) Copy() *ICefProcessMessage {
 	var result uintptr
-	imports.Proc(internale_CefProcessMessage_Copy).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefProcessMessage_Copy).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefProcessMessage{
 		instance: unsafe.Pointer(result),
 	}
@@ -100,7 +101,7 @@ func (m *ICefProcessMessage) Copy() *ICefProcessMessage {
 
 func (m *ICefProcessMessage) Name() string {
 	if m.name == "" {
-		r1, _, _ := imports.Proc(internale_CefProcessMessage_Name).Call(m.Instance())
+		r1, _, _ := imports.Proc(def.CefProcessMessage_Name).Call(m.Instance())
 		m.name = api.GoStr(r1)
 	}
 	return m.name

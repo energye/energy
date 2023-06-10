@@ -10,6 +10,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -27,7 +28,7 @@ type cefDictionaryValue uintptr
 // New 创建一个字典类型
 func (*cefDictionaryValue) New() *ICefDictionaryValue {
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -36,7 +37,7 @@ func (*cefDictionaryValue) New() *ICefDictionaryValue {
 // data
 func (*cefDictionaryValue) UnWrap(data *ICefDictionaryValue) *ICefDictionaryValue {
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -53,7 +54,7 @@ func (m *ICefDictionaryValue) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_IsValid).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -61,7 +62,7 @@ func (m *ICefDictionaryValue) IsOwned() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_IsOwned).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_IsOwned).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -69,7 +70,7 @@ func (m *ICefDictionaryValue) IsReadOnly() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_IsReadOnly).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_IsReadOnly).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -78,7 +79,7 @@ func (m *ICefDictionaryValue) Copy(excludeEmptyChildren bool) *ICefDictionaryVal
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValue_Copy).Call(m.Instance(), api.PascalBool(excludeEmptyChildren), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_Copy).Call(m.Instance(), api.PascalBool(excludeEmptyChildren), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -88,7 +89,7 @@ func (m *ICefDictionaryValue) Size() uint32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetSize).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetSize).Call(m.Instance())
 	return uint32(r1)
 }
 
@@ -128,7 +129,7 @@ func (m *ICefDictionaryValue) Clear() (result bool) {
 		}
 		m.listValues = nil
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_Clear).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_Clear).Call(m.Instance())
 	result = api.GoBool(r1)
 	return
 }
@@ -137,7 +138,7 @@ func (m *ICefDictionaryValue) HasKey(key string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_HasKey).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_HasKey).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
 
@@ -146,7 +147,7 @@ func (m *ICefDictionaryValue) GetKeys() *ICefV8ValueKeys {
 		return nil
 	}
 	var result uintptr
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetKeys).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetKeys).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefV8ValueKeys{keys: lcl.AsStrings(result), count: int(int32(r1))}
 }
 
@@ -161,7 +162,7 @@ func (m *ICefDictionaryValue) Remove(key string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_Remove).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_Remove).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
 
@@ -169,7 +170,7 @@ func (m *ICefDictionaryValue) GetType(key string) consts.TCefValueType {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetType).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetType).Call(m.Instance(), api.PascalStr(key))
 	return consts.TCefValueType(r1)
 }
 
@@ -178,7 +179,7 @@ func (m *ICefDictionaryValue) GetValue(key string) *ICefValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValue_GetValue).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_GetValue).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -195,7 +196,7 @@ func (m *ICefDictionaryValue) GetBool(key string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetBool).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetBool).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
 
@@ -203,7 +204,7 @@ func (m *ICefDictionaryValue) GetInt(key string) int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetInt).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetInt).Call(m.Instance(), api.PascalStr(key))
 	return int32(r1)
 }
 
@@ -211,7 +212,7 @@ func (m *ICefDictionaryValue) GetDouble(key string) (result float64) {
 	if !m.IsValid() {
 		return 0
 	}
-	imports.Proc(internale_CefDictionaryValue_GetDouble).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_GetDouble).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
@@ -219,7 +220,7 @@ func (m *ICefDictionaryValue) GetString(key string) string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_GetString).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetString).Call(m.Instance(), api.PascalStr(key))
 	return api.GoStr(r1)
 }
 
@@ -228,7 +229,7 @@ func (m *ICefDictionaryValue) GetBinary(key string) *ICefBinaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValue_GetBinary).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_GetBinary).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -246,7 +247,7 @@ func (m *ICefDictionaryValue) GetDictionary(key string) *ICefDictionaryValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValue_GetDictionary).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_GetDictionary).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -264,7 +265,7 @@ func (m *ICefDictionaryValue) GetList(key string) *ICefListValue {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDictionaryValue_GetList).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDictionaryValue_GetList).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -281,7 +282,7 @@ func (m *ICefDictionaryValue) SetNull(key string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetNull).Call(m.Instance(), api.PascalStr(key))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetNull).Call(m.Instance(), api.PascalStr(key))
 	return api.GoBool(r1)
 }
 
@@ -289,7 +290,7 @@ func (m *ICefDictionaryValue) SetBool(key string, value bool) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetBool).Call(m.Instance(), api.PascalStr(key), api.PascalBool(value))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetBool).Call(m.Instance(), api.PascalStr(key), api.PascalBool(value))
 	return api.GoBool(r1)
 }
 
@@ -297,7 +298,7 @@ func (m *ICefDictionaryValue) SetInt(key string, value int32) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetInt).Call(m.Instance(), api.PascalStr(key), uintptr(value))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetInt).Call(m.Instance(), api.PascalStr(key), uintptr(value))
 	return api.GoBool(r1)
 }
 
@@ -305,7 +306,7 @@ func (m *ICefDictionaryValue) SetDouble(key string, value float64) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetDouble).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&value)))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetDouble).Call(m.Instance(), api.PascalStr(key), uintptr(unsafe.Pointer(&value)))
 	return api.GoBool(r1)
 }
 
@@ -313,7 +314,7 @@ func (m *ICefDictionaryValue) SetString(key string, value string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetString).Call(m.Instance(), api.PascalStr(key), api.PascalStr(value))
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetString).Call(m.Instance(), api.PascalStr(key), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
@@ -321,7 +322,7 @@ func (m *ICefDictionaryValue) SetValue(key string, value *ICefValue) (result boo
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetValue).Call(m.Instance(), api.PascalStr(key), value.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetValue).Call(m.Instance(), api.PascalStr(key), value.Instance())
 	result = api.GoBool(r1)
 	if result {
 		if m.values == nil {
@@ -339,7 +340,7 @@ func (m *ICefDictionaryValue) SetBinary(key string, value *ICefBinaryValue) (res
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetBinary).Call(m.Instance(), api.PascalStr(key), value.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetBinary).Call(m.Instance(), api.PascalStr(key), value.Instance())
 	result = api.GoBool(r1)
 	if result {
 		if m.binaryValues == nil {
@@ -357,7 +358,7 @@ func (m *ICefDictionaryValue) SetDictionary(key string, value *ICefDictionaryVal
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetDictionary).Call(m.Instance(), api.PascalStr(key), value.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetDictionary).Call(m.Instance(), api.PascalStr(key), value.Instance())
 	result = api.GoBool(r1)
 	if result {
 		if m.dictionaryValues == nil {
@@ -375,7 +376,7 @@ func (m *ICefDictionaryValue) SetList(key string, value *ICefListValue) (result 
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDictionaryValue_SetList).Call(m.Instance(), api.PascalStr(key), value.Instance())
+	r1, _, _ := imports.Proc(def.CefDictionaryValue_SetList).Call(m.Instance(), api.PascalStr(key), value.Instance())
 	result = api.GoBool(r1)
 	if result {
 		if m.listValues == nil {

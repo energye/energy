@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type resourceRequestHandler uintptr
 
 func (*resourceRequestHandler) New() *ICefResourceRequestHandler {
 	var result uintptr
-	imports.Proc(internale_ResourceRequestHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ResourceRequestHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result), ct: consts.CtTClient}
 	}
@@ -36,7 +37,7 @@ func (*resourceRequestHandler) New() *ICefResourceRequestHandler {
 
 func (*resourceRequestHandler) NewForChromium(chromium IChromium) *ICefResourceRequestHandler {
 	var result uintptr
-	imports.Proc(internale_ResourceRequestHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ResourceRequestHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result), ct: consts.CtChromium}
 	}
@@ -79,56 +80,56 @@ func (m *ICefResourceRequestHandler) SetGetCookieAccessFilter(fn getCookieAccess
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_GetCookieAccessFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_GetCookieAccessFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnBeforeResourceLoad(fn onBeforeResourceLoad) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_OnBeforeResourceLoad).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_OnBeforeResourceLoad).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetGetResourceHandler(fn getResourceHandler) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_GetResourceHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_GetResourceHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceRedirect(fn onResourceRedirect) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_OnResourceRedirect).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_OnResourceRedirect).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceResponse(fn onResourceResponse) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_OnResourceResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_OnResourceResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetGetResourceResponseFilter(fn getResourceResponseFilter) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_GetResourceResponseFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_GetResourceResponseFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceLoadComplete(fn onResourceLoadComplete) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_OnResourceLoadComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_OnResourceLoadComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnProtocolExecution(fn onProtocolExecution) {
 	if !m.IsValid() || m.IsChromiumEvent() {
 		return
 	}
-	imports.Proc(internale_ResourceRequestHandler_OnProtocolExecution).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.ResourceRequestHandler_OnProtocolExecution).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

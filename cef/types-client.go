@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
@@ -27,7 +28,7 @@ type cefClient uintptr
 //	自定义处理器事件
 func (*cefClient) New() *ICefClient {
 	var result uintptr
-	imports.Proc(internale_CefClientRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClientRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefClient{instance: unsafe.Pointer(result), ct: consts.CtTClient}
 	}
@@ -42,7 +43,7 @@ func (*cefClient) NewForChromium(chromium IChromium, aDevToolsClient bool) *ICef
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClientRef_CreateForChromium).Call(chromium.Instance(), api.PascalBool(aDevToolsClient), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClientRef_CreateForChromium).Call(chromium.Instance(), api.PascalBool(aDevToolsClient), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefClient{instance: unsafe.Pointer(result), ct: consts.CtChromium}
 	}
@@ -88,7 +89,7 @@ func (m *ICefClient) GetAudioHandler() *ICefAudioHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetAudioHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetAudioHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefAudioHandler{instance: unsafe.Pointer(result)}
 	}
@@ -100,7 +101,7 @@ func (m *ICefClient) GetCommandHandler() *ICefCommandHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetCommandHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetCommandHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefCommandHandler{instance: unsafe.Pointer(result)}
 	}
@@ -112,7 +113,7 @@ func (m *ICefClient) GetContextMenuHandler() *ICefContextMenuHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetContextMenuHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetContextMenuHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefContextMenuHandler{instance: unsafe.Pointer(result)}
 	}
@@ -124,7 +125,7 @@ func (m *ICefClient) GetDialogHandler() *ICefDialogHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetDialogHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetDialogHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDialogHandler{instance: unsafe.Pointer(result)}
 	}
@@ -136,7 +137,7 @@ func (m *ICefClient) GetDisplayHandler() *ICefDisplayHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetDisplayHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetDisplayHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDisplayHandler{instance: unsafe.Pointer(result)}
 	}
@@ -148,7 +149,7 @@ func (m *ICefClient) GetDownloadHandler() *ICefDownloadHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetDownloadHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetDownloadHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDownloadHandler{instance: unsafe.Pointer(result)}
 	}
@@ -160,7 +161,7 @@ func (m *ICefClient) GetDragHandler() *ICefDragHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetDragHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetDragHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDragHandler{instance: unsafe.Pointer(result)}
 	}
@@ -172,7 +173,7 @@ func (m *ICefClient) GetFindHandler() *ICefFindHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetFindHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetFindHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFindHandler{instance: unsafe.Pointer(result)}
 	}
@@ -184,7 +185,7 @@ func (m *ICefClient) GetFocusHandler() *ICefFocusHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetFocusHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetFocusHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFocusHandler{instance: unsafe.Pointer(result)}
 	}
@@ -196,7 +197,7 @@ func (m *ICefClient) GetFrameHandler() *ICefFrameHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetFrameHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetFrameHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefFrameHandler{instance: unsafe.Pointer(result)}
 	}
@@ -208,7 +209,7 @@ func (m *ICefClient) GetPermissionHandler() *ICefPermissionHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetPermissionHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetPermissionHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefPermissionHandler{instance: unsafe.Pointer(result)}
 	}
@@ -220,7 +221,7 @@ func (m *ICefClient) GetJsdialogHandler() *ICefJsDialogHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetJsdialogHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetJsdialogHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefJsDialogHandler{instance: unsafe.Pointer(result)}
 	}
@@ -232,7 +233,7 @@ func (m *ICefClient) GetKeyboardHandler() *ICefKeyboardHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetKeyboardHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetKeyboardHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefKeyboardHandler{instance: unsafe.Pointer(result)}
 	}
@@ -244,7 +245,7 @@ func (m *ICefClient) GetLifeSpanHandler() *ICefLifeSpanHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetLifeSpanHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetLifeSpanHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefLifeSpanHandler{instance: unsafe.Pointer(result)}
 	}
@@ -256,7 +257,7 @@ func (m *ICefClient) GetLoadHandler() *ICefLoadHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetLoadHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetLoadHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefLoadHandler{instance: unsafe.Pointer(result)}
 	}
@@ -268,7 +269,7 @@ func (m *ICefClient) GetPrintHandler() *ICefPrintHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetPrintHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetPrintHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefPrintHandler{instance: unsafe.Pointer(result)}
 	}
@@ -280,7 +281,7 @@ func (m *ICefClient) GetRenderHandler() *ICefRenderHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetRenderHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetRenderHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRenderHandler{instance: unsafe.Pointer(result)}
 	}
@@ -292,7 +293,7 @@ func (m *ICefClient) GetRequestHandler() *ICefRequestHandler {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefClient_GetRequestHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefClient_GetRequestHandler).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestHandler{instance: unsafe.Pointer(result)}
 	}

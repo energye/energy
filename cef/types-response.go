@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
@@ -27,7 +28,7 @@ type response uintptr
 
 func (*response) New() *ICefResponse {
 	var result uintptr
-	imports.Proc(internale_CefResponseRef_New).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefResponseRef_New).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefResponse{instance: unsafe.Pointer(result)}
 	}
@@ -36,7 +37,7 @@ func (*response) New() *ICefResponse {
 
 func (*response) UnWrap(data *ICefResponse) *ICefResponse {
 	var result uintptr
-	imports.Proc(internale_CefResponseRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefResponseRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
 	data.instance = unsafe.Pointer(result)
 	return data
 }
@@ -61,7 +62,7 @@ func (m *ICefResponse) IsReadOnly() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_IsReadOnly).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_IsReadOnly).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -69,7 +70,7 @@ func (m *ICefResponse) URL() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetURL).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetURL).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -78,14 +79,14 @@ func (m *ICefResponse) SetURL(url string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetURL).Call(m.Instance(), api.PascalStr(url))
+	imports.Proc(def.CefResponse_SetURL).Call(m.Instance(), api.PascalStr(url))
 }
 
 func (m *ICefResponse) Error() TCefErrorCode {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetError).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetError).Call(m.Instance())
 	return TCefErrorCode(r1)
 }
 
@@ -94,14 +95,14 @@ func (m *ICefResponse) SetError(error TCefErrorCode) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetError).Call(m.Instance(), error.ToPtr())
+	imports.Proc(def.CefResponse_SetError).Call(m.Instance(), error.ToPtr())
 }
 
 func (m *ICefResponse) Status() int32 {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetStatus).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetStatus).Call(m.Instance())
 	return int32(r1)
 }
 
@@ -110,14 +111,14 @@ func (m *ICefResponse) SetStatus(status int32) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetStatus).Call(m.Instance(), uintptr(status))
+	imports.Proc(def.CefResponse_SetStatus).Call(m.Instance(), uintptr(status))
 }
 
 func (m *ICefResponse) StatusText() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetStatusText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetStatusText).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -126,14 +127,14 @@ func (m *ICefResponse) SetStatusText(statusText string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetStatusText).Call(m.Instance(), api.PascalStr(statusText))
+	imports.Proc(def.CefResponse_SetStatusText).Call(m.Instance(), api.PascalStr(statusText))
 }
 
 func (m *ICefResponse) MimeType() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetMimeType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetMimeType).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -142,14 +143,14 @@ func (m *ICefResponse) SetMimeType(mimetype string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetMimeType).Call(m.Instance(), api.PascalStr(mimetype))
+	imports.Proc(def.CefResponse_SetMimeType).Call(m.Instance(), api.PascalStr(mimetype))
 }
 
 func (m *ICefResponse) Charset() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetCharset).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefResponse_GetCharset).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -158,7 +159,7 @@ func (m *ICefResponse) SetCharset(charset string) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetCharset).Call(m.Instance(), api.PascalStr(charset))
+	imports.Proc(def.CefResponse_SetCharset).Call(m.Instance(), api.PascalStr(charset))
 }
 
 // GetHeaderByName
@@ -166,7 +167,7 @@ func (m *ICefResponse) GetHeaderByName(name string) string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefResponse_GetHeaderByName).Call(m.Instance(), api.PascalStr(name))
+	r1, _, _ := imports.Proc(def.CefResponse_GetHeaderByName).Call(m.Instance(), api.PascalStr(name))
 	return api.GoStr(r1)
 }
 
@@ -175,7 +176,7 @@ func (m *ICefResponse) SetHeaderByName(name, value string, overwrite bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetHeaderByName).Call(m.Instance(), api.PascalStr(name), api.PascalStr(value), api.PascalBool(overwrite))
+	imports.Proc(def.CefResponse_SetHeaderByName).Call(m.Instance(), api.PascalStr(name), api.PascalStr(value), api.PascalBool(overwrite))
 }
 
 // GetHeaderMap
@@ -184,7 +185,7 @@ func (m *ICefResponse) GetHeaderMap() *ICefStringMultiMap {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefResponse_GetHeaderMap).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefResponse_GetHeaderMap).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefStringMultiMap{instance: unsafe.Pointer(result)}
 }
 
@@ -193,7 +194,7 @@ func (m *ICefResponse) SetHeaderMap(headerMap *ICefStringMultiMap) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefResponse_SetHeaderMap).Call(m.Instance(), headerMap.Instance())
+	imports.Proc(def.CefResponse_SetHeaderMap).Call(m.Instance(), headerMap.Instance())
 }
 
 func (m *ICefResponse) Free() {

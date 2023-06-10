@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -28,7 +29,7 @@ func (*extensionHandler) NewForChromium(chromium IChromium) *TCustomExtensionHan
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefExtensionHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefExtensionHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &TCustomExtensionHandler{instance: unsafe.Pointer(result)}
 	}
@@ -37,7 +38,7 @@ func (*extensionHandler) NewForChromium(chromium IChromium) *TCustomExtensionHan
 
 func (*extensionHandler) New() *ICefExtensionHandler {
 	var result uintptr
-	imports.Proc(internale_CefExtensionHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefExtensionHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefExtensionHandler{instance: unsafe.Pointer(result)}
 	}
@@ -90,56 +91,56 @@ func (m *ICefExtensionHandler) SetOnExtensionLoadFailed(fn onExtensionLoadFailed
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_OnExtensionLoadFailed).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_OnExtensionLoadFailed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetOnExtensionLoaded(fn onExtensionLoaded) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_OnExtensionLoaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_OnExtensionLoaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetOnExtensionUnloaded(fn onExtensionUnloaded) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_OnExtensionUnloaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_OnExtensionUnloaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetOnBeforeBackgroundBrowser(fn onBeforeBackgroundBrowser) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_OnBeforeBackgroundBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_OnBeforeBackgroundBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetOnBeforeBrowser(fn onBeforeBrowser) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_OnBeforeBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_OnBeforeBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetGetActiveBrowser(fn getActiveBrowser) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_GetActiveBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_GetActiveBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetCanAccessBrowser(fn canAccessBrowser) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_CanAccessBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_CanAccessBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefExtensionHandler) SetGetExtensionResource(fn getExtensionResource) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefExtensionHandler_GetExtensionResource).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefExtensionHandler_GetExtensionResource).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type onExtensionLoadFailed func(result consts.TCefErrorCode)

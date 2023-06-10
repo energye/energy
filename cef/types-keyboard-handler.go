@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -27,7 +28,7 @@ type keyboardHandler uintptr
 
 func (*keyboardHandler) New() *ICefKeyboardHandler {
 	var result uintptr
-	imports.Proc(internale_CefKeyboardHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefKeyboardHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefKeyboardHandler{instance: unsafe.Pointer(result)}
 	}
@@ -62,14 +63,14 @@ func (m *ICefKeyboardHandler) SetOnPreKeyEvent(fn onPreKeyEvent) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefKeyboardHandler_OnPreKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefKeyboardHandler_OnPreKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefKeyboardHandler) SetOnKeyEvent(fn onKeyEvent) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefKeyboardHandler_OnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefKeyboardHandler_OnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // ************************** events ************************** //

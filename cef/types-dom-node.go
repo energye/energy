@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -44,7 +45,7 @@ func (m *ICefDomNode) GetNodeType() consts.TCefDomNodeType {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetNodeType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetNodeType).Call(m.Instance())
 	return consts.TCefDomNodeType(r1)
 }
 
@@ -52,7 +53,7 @@ func (m *ICefDomNode) IsText() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_IsText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_IsText).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -60,7 +61,7 @@ func (m *ICefDomNode) IsElement() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_IsElement).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_IsElement).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -68,7 +69,7 @@ func (m *ICefDomNode) IsEditable() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_IsEditable).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_IsEditable).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -76,7 +77,7 @@ func (m *ICefDomNode) IsFormControlElement() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_IsFormControlElement).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_IsFormControlElement).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -84,7 +85,7 @@ func (m *ICefDomNode) GetFormControlElementType() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetFormControlElementType).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetFormControlElementType).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -92,7 +93,7 @@ func (m *ICefDomNode) IsSame() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_IsSame).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_IsSame).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -100,7 +101,7 @@ func (m *ICefDomNode) GetName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -108,7 +109,7 @@ func (m *ICefDomNode) GetValue() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetValue).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetValue).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -116,7 +117,7 @@ func (m *ICefDomNode) SetValue(value string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_SetValue).Call(m.Instance(), api.PascalStr(value))
+	r1, _, _ := imports.Proc(def.CefDomNode_SetValue).Call(m.Instance(), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
@@ -124,7 +125,7 @@ func (m *ICefDomNode) GetAsMarkup() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetAsMarkup).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetAsMarkup).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -133,7 +134,7 @@ func (m *ICefDomNode) GetDocument() *ICefDomDocument {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetDocument).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetDocument).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomDocument{instance: unsafe.Pointer(result)}
 	}
@@ -145,7 +146,7 @@ func (m *ICefDomNode) GetParent() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetParent).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetParent).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -157,7 +158,7 @@ func (m *ICefDomNode) GetPreviousSibling() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetPreviousSibling).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetPreviousSibling).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -169,7 +170,7 @@ func (m *ICefDomNode) GetNextSibling() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetNextSibling).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetNextSibling).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -180,7 +181,7 @@ func (m *ICefDomNode) HasChildren() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_HasChildren).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_HasChildren).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -189,7 +190,7 @@ func (m *ICefDomNode) GetFirstChild() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetFirstChild).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetFirstChild).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -201,7 +202,7 @@ func (m *ICefDomNode) GetLastChild() *ICefDomNode {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetLastChild).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetLastChild).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDomNode{instance: unsafe.Pointer(result)}
 	}
@@ -212,7 +213,7 @@ func (m *ICefDomNode) GetElementTagName() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetElementTagName).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetElementTagName).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -220,7 +221,7 @@ func (m *ICefDomNode) HasElementAttributes() bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_HasElementAttributes).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_HasElementAttributes).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
@@ -228,7 +229,7 @@ func (m *ICefDomNode) HasElementAttribute(attrName string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_HasElementAttribute).Call(m.Instance(), api.PascalStr(attrName))
+	r1, _, _ := imports.Proc(def.CefDomNode_HasElementAttribute).Call(m.Instance(), api.PascalStr(attrName))
 	return api.GoBool(r1)
 }
 
@@ -236,7 +237,7 @@ func (m *ICefDomNode) GetElementAttribute(attrName string) string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetElementAttribute).Call(m.Instance(), api.PascalStr(attrName))
+	r1, _, _ := imports.Proc(def.CefDomNode_GetElementAttribute).Call(m.Instance(), api.PascalStr(attrName))
 	return api.GoStr(r1)
 }
 
@@ -245,7 +246,7 @@ func (m *ICefDomNode) GetElementAttributes() []string {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(internale_CefDomNode_GetElementAttributes).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetElementAttributes).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	attrs := lcl.AsStrings(result)
 	if attrs != nil && attrs.IsValid() {
 		var attrList = make([]string, attrs.Count())
@@ -261,7 +262,7 @@ func (m *ICefDomNode) SetElementAttribute(attrName, value string) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_SetElementAttribute).Call(m.Instance(), api.PascalStr(attrName), api.PascalStr(value))
+	r1, _, _ := imports.Proc(def.CefDomNode_SetElementAttribute).Call(m.Instance(), api.PascalStr(attrName), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
@@ -269,7 +270,7 @@ func (m *ICefDomNode) GetElementInnerText() string {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(internale_CefDomNode_GetElementInnerText).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefDomNode_GetElementInnerText).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
@@ -277,6 +278,6 @@ func (m *ICefDomNode) GetElementBounds() (result TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(internale_CefDomNode_GetElementBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefDomNode_GetElementBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }

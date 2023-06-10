@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -35,7 +36,7 @@ type cefV8ArrayBufferReleaseCallback uintptr
 // 默认自动释放 buffer
 func (*cefV8ArrayBufferReleaseCallback) New() *ICefV8ArrayBufferReleaseCallback {
 	var result uintptr
-	imports.Proc(internale_CefV8ArrayBufferReleaseCallback_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefV8ArrayBufferReleaseCallback_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &ICefV8ArrayBufferReleaseCallback{
 		instance: unsafe.Pointer(result),
 	}
@@ -55,7 +56,7 @@ func (m *ICefV8ArrayBufferReleaseCallback) Instance() uintptr {
 //
 // 返回 true:释放buffer, false:不释放buffer
 func (m *ICefV8ArrayBufferReleaseCallback) ReleaseBuffer(fn V8ArrayBufferReleaseCallback) {
-	imports.Proc(internale_CefV8ArrayBufferReleaseCallback_ReleaseBuffer).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.CefV8ArrayBufferReleaseCallback_ReleaseBuffer).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func init() {
