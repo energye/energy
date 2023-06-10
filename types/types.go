@@ -76,6 +76,7 @@ type HCURSOR = HICON
 type TGraphicsColor = Int32
 type Smallint = Int16
 type HFONT = UIntptr
+type HRESULT = Int32
 
 type TGraphicsFillStyle = Int32
 
@@ -92,6 +93,27 @@ const (
 	MDT_RAW_DPI                        = 2
 	MDT_DEFAULT                        = MDT_EFFECTIVE_DPI
 )
+
+type FontEnumProc func(ELogFont TagEnumLogFontA, Metric TNewTextMetric, FontType LongInt, Data LPARAM) LongInt
+type FontEnumExProc func(ELogFont TagEnumLogFontExA, Metric TNewTextMetricEx, FontType LongInt, Data LPARAM) LongInt
+type MonitorEnumProc func(hMonitor HMONITOR, hdcMonitor HDC, lprcMonitor Rect, dwData LPARAM) LongBool
+
+type HRGN struct {
+	instance unsafe.Pointer
+}
+
+type TagEnumLogFontA struct {
+	ElfLogFont  LogFontA
+	ElfFullName []AnsiChar
+	ElfStyle    []AnsiChar
+}
+
+type TagEnumLogFontExA struct {
+	ElfLogFont  LogFontA
+	ElfFullName []AnsiChar
+	ElfStyle    []AnsiChar
+	ElfScript   []AnsiChar
+}
 
 type Point struct {
 	X int32
@@ -112,6 +134,43 @@ type Rect struct {
 
 type TString struct {
 	value string
+}
+
+type TNewTextMetricEx struct {
+	Ntmentm           TNewTextMetric
+	NtmeFontSignature TFontSignature
+}
+
+type TFontSignature struct {
+	FsUsb []DWORD
+	FsCsb []DWORD
+}
+
+type TNewTextMetric struct {
+	TmHeight           LongInt
+	TmAscent           LongInt
+	TmDescent          LongInt
+	TmInternalLeading  LongInt
+	TmExternalLeading  LongInt
+	TmAveCharWidth     LongInt
+	TmMaxCharWidth     LongInt
+	TmWeight           LongInt
+	TmOverhang         LongInt
+	TmDigitizedAspectX LongInt
+	TmDigitizedAspectY LongInt
+	TmFirstChar        AnsiChar
+	TmLastChar         AnsiChar
+	TmDefaultChar      AnsiChar
+	TmBreakChar        AnsiChar
+	TmItalic           byte
+	TmUnderlined       byte
+	TmStruckOut        byte
+	TmPitchAndFamily   byte
+	TmCharSet          byte
+	NtmFlags           DWORD
+	NtmSizeEM          UINT
+	NtmCellHeight      UINT
+	NtmAvgWidth        UINT
 }
 
 type TagTextMetricA struct {
@@ -334,4 +393,16 @@ func (m Float32) ToPtr() uintptr {
 
 func (m Float64) ToPtr() uintptr {
 	return uintptr(unsafe.Pointer(&m))
+}
+
+func NewHRGN(instance uintptr) *HRGN {
+	return &HRGN{instance: unsafe.Pointer(instance)}
+}
+
+func (m *HRGN) Free() {
+	m.instance = nil
+}
+
+func (m *HRGN) Instance() uintptr {
+	return uintptr(m.instance)
 }

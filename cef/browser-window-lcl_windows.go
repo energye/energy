@@ -16,6 +16,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/consts"
+	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
@@ -38,7 +39,7 @@ type customWindowCaption struct {
 	borderHT, borderWMSZ int                   //borderHT: 鼠标所在边框位置, borderWMSZ: 窗口改变大小边框方向 borderMD:
 	borderMD             bool                  //borderMD: 鼠标调整窗口大小，已按下后，再次接收到132消息应该忽略该消息
 	regions              *TCefDraggableRegions //窗口内html拖拽区域
-	rgn                  *HRGN                 //
+	rgn                  *et.HRGN              //
 }
 
 // ShowTitle 显示标题栏
@@ -187,9 +188,9 @@ func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 // 鼠标是否在标题栏区域
 //
 // 如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
-func (m *customWindowCaption) isCaption(hWND types.HWND, message *types.TMessage) (int32, int32, bool) {
+func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
-	p := &types.TPoint{
+	p := &et.Point{
 		X: dx,
 		Y: dy,
 	}
@@ -238,7 +239,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			return
 		}
 		//鼠标坐标是否在标题区域
-		x, y, caption := m.cwcap.isCaption(m.Handle(), message)
+		x, y, caption := m.cwcap.isCaption(et.HWND(m.Handle()), message)
 		if caption { //窗口标题栏
 			*lResult = consts.HTCAPTION
 			*aHandled = true
