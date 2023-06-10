@@ -4,8 +4,9 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/pkgs/assetserve"
-	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/types/colors"
 	"github.com/energye/golcl/lcl/win"
 )
@@ -30,7 +31,7 @@ func main() {
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
-		WindowTransparent(browserWindow.Handle())
+		WindowTransparent(types.HWND(browserWindow.Handle()))
 		//browserWindow.EnableTransparent(255) //窗口透明
 	})
 	cef.Run(cefApp)
@@ -41,10 +42,10 @@ func WindowTransparent(hWnd types.HWND) {
 	//SetWindowLong（Handle， GWL_EXSTYLE， GetWindowLong（Handle， GWL_EXSTYLE） or WS_EX_LAYERED）
 	//SetLayeredWindowAttributes（Handle，clWhite，255，LWA_COLORKEY）;
 
-	exStyle := win.GetWindowLong(hWnd, win.GWL_EXSTYLE)
+	exStyle := winapi.WinGetWindowLong(hWnd, win.GWL_EXSTYLE)
 	exStyle = exStyle | win.WS_EX_LAYERED //win.WS_EX_LAYERED&^win.WS_EX_TRANSPARENT // or WS_EX_TRANSPARENT;
-	win.SetWindowLong(hWnd, win.GWL_EXSTYLE, uintptr(exStyle))
-	win.SetLayeredWindowAttributes(hWnd, //指定分层窗口句柄
+	winapi.WinSetWindowLong(hWnd, win.GWL_EXSTYLE, exStyle)
+	win.SetLayeredWindowAttributes(hWnd.ToPtr(), //指定分层窗口句柄
 		colors.ClWhite,   //crKey指定需要透明的背景颜色值，可用RGB()宏  0-255
 		255,              //bAlpha设置透明度，0表示完全透明，255表示不透明
 		win.LWA_COLORKEY) //LWA_ALPHA: crKey无效，bAlpha有效；
