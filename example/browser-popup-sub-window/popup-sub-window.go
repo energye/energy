@@ -4,8 +4,10 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"strings"
 )
@@ -26,6 +28,16 @@ func main() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		var elliptic = func(window cef.IBrowserWindow) {
+			hRegion := winapi.WinCreateEllipticRgn(1, 1, 200, 200)
+			winapi.WinSetWindowRgn(types.HWND(window.Handle()), hRegion, true)
+		}
+		var transparent = func(window cef.IBrowserWindow) {
+			if window.IsLCL() {
+				browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
+				browserWindow.EnableTransparent(100) //窗口透明
+			}
+		}
 		//弹出子窗口
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("beforePopupInfo-TargetUrl", beforePopupInfo.TargetUrl, strings.Index(beforePopupInfo.TargetUrl, "popup_1"), strings.Index(beforePopupInfo.TargetUrl, "popup_2"))
@@ -34,6 +46,14 @@ func main() {
 				popupWindow.HideTitle()
 			} else if strings.Index(beforePopupInfo.TargetUrl, "popup_2") > 0 {
 				popupWindow.SetSize(300, 300)
+			} else if strings.Index(beforePopupInfo.TargetUrl, "elliptic") > 0 {
+				popupWindow.SetSize(200, 200)
+				popupWindow.HideTitle()
+				elliptic(popupWindow)
+			} else if strings.Index(beforePopupInfo.TargetUrl, "transparent") > 0 {
+				popupWindow.SetSize(200, 200)
+				popupWindow.HideTitle()
+				transparent(popupWindow)
 			}
 			return false
 		})
