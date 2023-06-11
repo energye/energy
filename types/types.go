@@ -99,16 +99,31 @@ type HRGN struct {
 }
 
 type TagEnumLogFontA struct {
-	ElfLogFont  LogFontA
-	ElfFullName []AnsiChar
-	ElfStyle    []AnsiChar
+	ElfLogFont  *LogFontA
+	ElfFullName string // len = 64
+	ElfStyle    string // len = 32
+}
+
+type TagEnumLogFontAPtr struct {
+	ElfLogFont  uintptr //*LogFontA
+	LfFaceName  uintptr //string // len = 32
+	ElfFullName uintptr //string // len = 64
+	ElfStyle    uintptr //string // len = 32
 }
 
 type TagEnumLogFontExA struct {
-	ElfLogFont  LogFontA
-	ElfFullName []AnsiChar
-	ElfStyle    []AnsiChar
-	ElfScript   []AnsiChar
+	ElfLogFont  *LogFontA
+	ElfFullName []AnsiChar // len = 64
+	ElfStyle    []AnsiChar // len = 32
+	ElfScript   []AnsiChar // len = 32
+}
+
+type TagEnumLogFontExAPtr struct {
+	ElfLogFont  uintptr //*LogFontA
+	LfFaceName  uintptr //[]AnsiChar // len = 32
+	ElfFullName uintptr //[]AnsiChar // len = 64
+	ElfStyle    uintptr //[]AnsiChar // len = 32
+	ElfScript   uintptr //[]AnsiChar // len = 32
 }
 
 type Point struct {
@@ -137,9 +152,14 @@ type TNewTextMetricEx struct {
 	NtmeFontSignature TFontSignature
 }
 
+type TNewTextMetricExPtr struct {
+	Ntmentm           uintptr //TNewTextMetric
+	NtmeFontSignature uintptr //TFontSignature
+}
+
 type TFontSignature struct {
-	FsUsb []DWORD
-	FsCsb []DWORD
+	FsUsb []DWORD // len = 4
+	FsCsb []DWORD // len = 4
 }
 
 type TNewTextMetric struct {
@@ -316,7 +336,7 @@ type LogFontA struct {
 	LfClipPrecision  byte
 	LfQuality        byte
 	LfPitchAndFamily byte
-	LfFaceName       []Char
+	LfFaceName       string //len=32
 }
 
 func (m *TString) SetValue(v string) {

@@ -14,6 +14,7 @@
 package winapi
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/types"
@@ -23,8 +24,8 @@ import (
 )
 
 type enumDisplayMonitorsProc func(hMonitor types.HMONITOR, hdcMonitor types.HDC, lprcMonitor types.Rect, dwData types.LPARAM) types.LongBool
-type enumFontFamiliesProc func(ELogFont types.TagEnumLogFontA, Metric types.TNewTextMetric, FontType types.LongInt, Data types.LPARAM) types.LongInt
-type enumFontFamiliesExProc func(ELogFont types.TagEnumLogFontExA, Metric types.TNewTextMetricEx, FontType types.LongInt, Data types.LPARAM) types.LongInt
+type enumFontFamiliesProc func(ELogFont *types.TagEnumLogFontA, Metric *types.TNewTextMetric, FontType types.LongInt, Data types.LPARAM) types.LongInt
+type enumFontFamiliesExProc func(ELogFont *types.TagEnumLogFontExA, Metric *types.TNewTextMetricEx, FontType types.LongInt, Data types.LPARAM) types.LongInt
 
 type EnumDisplayMonitorsCallback struct {
 	instance uintptr
@@ -109,21 +110,30 @@ func init() {
 			*resultPtr = fn.(enumDisplayMonitorsProc)(hMonitor, hdcMonitor, lprcMonitor, dwData)
 		case enumFontFamiliesProc:
 			var (
-				ELogFont  = *(*types.TagEnumLogFontA)(getPtr(0))
-				Metric    = *(*types.TNewTextMetric)(getPtr(1))
-				FontType  = types.LongInt(getVal(2))
-				Data      = types.LPARAM(getVal(3))
-				resultPtr = (*types.LongInt)(getPtr(4))
+				ELogFontPtr = (*types.TagEnumLogFontAPtr)(getPtr(0))
+				Metric      = (*types.TNewTextMetric)(getPtr(1))
+				FontType    = types.LongInt(getVal(2))
+				Data        = types.LPARAM(getVal(3))
+				resultPtr   = (*types.LongInt)(getPtr(4))
 			)
+			ELogFont := &types.TagEnumLogFontA{
+				ElfLogFont:  (*types.LogFontA)(unsafe.Pointer(ELogFontPtr.ElfLogFont)),
+				ElfFullName: api.GoStr(ELogFontPtr.ElfFullName),
+				ElfStyle:    api.GoStr(ELogFontPtr.ElfStyle),
+			}
+			ELogFont.ElfLogFont.LfFaceName = api.GoStr(ELogFontPtr.LfFaceName)
 			*resultPtr = fn.(enumFontFamiliesProc)(ELogFont, Metric, FontType, Data)
 		case enumFontFamiliesExProc:
 			var (
-				ELogFont  = *(*types.TagEnumLogFontExA)(getPtr(0))
-				Metric    = *(*types.TNewTextMetricEx)(getPtr(1))
-				FontType  = types.LongInt(getVal(2))
-				Data      = types.LPARAM(getVal(3))
-				resultPtr = (*types.LongInt)(getPtr(4))
+				ELogFontPtr = (*types.TagEnumLogFontExAPtr)(getPtr(0))
+				Metric      = (*types.TNewTextMetricEx)(getPtr(1))
+				FontType    = types.LongInt(getVal(2))
+				Data        = types.LPARAM(getVal(3))
+				resultPtr   = (*types.LongInt)(getPtr(4))
 			)
+			ELogFont := &types.TagEnumLogFontExA{}
+			fmt.Println("ELogFontPtr", ELogFontPtr)
+			fmt.Println("Metric", Metric)
 			*resultPtr = fn.(enumFontFamiliesExProc)(ELogFont, Metric, FontType, Data)
 		default:
 			return false
