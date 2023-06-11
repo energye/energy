@@ -162,6 +162,11 @@ type TFontSignature struct {
 	FsCsb []DWORD // len = 4
 }
 
+type TFontSignaturePtr struct {
+	FsUsb uintptr // []DWORD // len = 4
+	FsCsb uintptr // []DWORD // len = 2
+}
+
 type TNewTextMetric struct {
 	TmHeight           LongInt
 	TmAscent           LongInt

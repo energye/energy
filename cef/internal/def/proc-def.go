@@ -76,12 +76,12 @@ func init() {
 		dllimports.NewEnergyImport("CEF_Win_EnableScrollBar", 0),
 		dllimports.NewEnergyImport("CEF_Win_EnableWindow", 0),
 		dllimports.NewEnergyImport("CEF_Win_EnterCriticalSection", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumDisplayMonitors", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumFontFamilies", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesEx", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumDisplayMonitorsCallbackFree", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesCallbackFree", 0),
-		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesExCallbackFree", 0),
+		dllimports.NewEnergyImport("CEF_Win_EnumDisplayMonitors", 0),             // no impl
+		dllimports.NewEnergyImport("CEF_Win_EnumFontFamilies", 0),                // no impl
+		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesEx", 0),              // no impl
+		dllimports.NewEnergyImport("CEF_Win_EnumDisplayMonitorsCallbackFree", 0), // no impl
+		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesCallbackFree", 0),    // no impl
+		dllimports.NewEnergyImport("CEF_Win_EnumFontFamiliesExCallbackFree", 0),  // no impl
 		dllimports.NewEnergyImport("CEF_Win_Ellipse", 0),
 		dllimports.NewEnergyImport("CEF_Win_EqualRgn", 0),
 		dllimports.NewEnergyImport("CEF_Win_ExcludeClipRect", 0),

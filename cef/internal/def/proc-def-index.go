@@ -77,12 +77,12 @@ const (
 	CEF_Win_EnableScrollBar
 	CEF_Win_EnableWindow
 	CEF_Win_EnterCriticalSection
-	CEF_Win_EnumDisplayMonitors
-	CEF_Win_EnumFontFamilies
-	CEF_Win_EnumFontFamiliesEx
-	CEF_Win_EnumDisplayMonitorsCallbackFree
-	CEF_Win_EnumFontFamiliesCallbackFree
-	CEF_Win_EnumFontFamiliesExCallbackFree
+	CEF_Win_EnumDisplayMonitors             // no impl
+	CEF_Win_EnumFontFamilies                // no impl
+	CEF_Win_EnumFontFamiliesEx              // no impl
+	CEF_Win_EnumDisplayMonitorsCallbackFree // no impl
+	CEF_Win_EnumFontFamiliesCallbackFree    // no impl
+	CEF_Win_EnumFontFamiliesExCallbackFree  // no impl
 	CEF_Win_Ellipse
 	CEF_Win_EqualRgn
 	CEF_Win_ExcludeClipRect
