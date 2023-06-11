@@ -17,7 +17,9 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/types"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
 
 type enumDisplayMonitorsProc func(hMonitor types.HMONITOR, hdcMonitor types.HDC, lprcMonitor types.Rect, dwData types.LPARAM) types.LongBool
@@ -88,4 +90,44 @@ func (m *EnumFontFamiliesExCallback) Free() {
 	if m.instance != 0 {
 		api.RemoveEventElement(m.instance)
 	}
+}
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case enumDisplayMonitorsProc:
+			var (
+				hMonitor    = types.HMONITOR(getVal(0))
+				hdcMonitor  = types.HDC(getVal(1))
+				lprcMonitor = *(*types.Rect)(getPtr(2))
+				dwData      = types.LPARAM(getVal(3))
+				resultPtr   = (*types.LongBool)(getPtr(4))
+			)
+			*resultPtr = fn.(enumDisplayMonitorsProc)(hMonitor, hdcMonitor, lprcMonitor, dwData)
+		case enumFontFamiliesProc:
+			var (
+				ELogFont  = *(*types.TagEnumLogFontA)(getPtr(0))
+				Metric    = *(*types.TNewTextMetric)(getPtr(1))
+				FontType  = types.LongInt(getVal(2))
+				Data      = types.LPARAM(getVal(3))
+				resultPtr = (*types.LongInt)(getPtr(4))
+			)
+			*resultPtr = fn.(enumFontFamiliesProc)(ELogFont, Metric, FontType, Data)
+		case enumFontFamiliesExProc:
+			var (
+				ELogFont  = *(*types.TagEnumLogFontExA)(getPtr(0))
+				Metric    = *(*types.TNewTextMetricEx)(getPtr(1))
+				FontType  = types.LongInt(getVal(2))
+				Data      = types.LPARAM(getVal(3))
+				resultPtr = (*types.LongInt)(getPtr(4))
+			)
+			*resultPtr = fn.(enumFontFamiliesExProc)(ELogFont, Metric, FontType, Data)
+		default:
+			return false
+		}
+		return true
+	})
 }

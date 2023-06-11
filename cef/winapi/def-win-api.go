@@ -373,8 +373,8 @@ func WinEnterCriticalSection(CritSection types.TCriticalSection) {
 	imports.Proc(def.CEF_Win_EnterCriticalSection).Call(CritSection.ToPtr())
 }
 
-func WinEnumDisplayMonitors(hdc types.HDC, lprcClip types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_EnumDisplayMonitors).Call(uintptr(hdc), uintptr(unsafe.Pointer(&lprcClip)), callback.instance, uintptr(dwData))
+func WinEnumDisplayMonitors(hdc types.HDC, lprcClip *types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) types.LongBool {
+	r1, _, _ := imports.Proc(def.CEF_Win_EnumDisplayMonitors).Call(uintptr(hdc), uintptr(unsafe.Pointer(lprcClip)), callback.instance, uintptr(dwData))
 	return types.LongBool(api.GoBool(r1))
 }
 
