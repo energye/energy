@@ -372,20 +372,20 @@ func WinEnterCriticalSection(CritSection types.TCriticalSection) {
 	imports.Proc(def.CEF_Win_EnterCriticalSection).Call(CritSection.ToPtr())
 }
 
-//func WinEnumDisplayMonitors(hdc types.HDC, lprcClip *types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) types.LongBool {
-//	r1, _, _ := imports.Proc(def.CEF_Win_EnumDisplayMonitors).Call(uintptr(hdc), uintptr(unsafe.Pointer(lprcClip)), callback.instance, uintptr(dwData))
-//	return types.LongBool(api.GoBool(r1))
-//}
-//
-//func WinEnumFontFamilies(DC types.HDC, Family types.PChar, callback *EnumFontFamiliesCallback, LParam types.LPARAM) types.LongInt {
-//	r1, _, _ := imports.Proc(def.CEF_Win_EnumFontFamilies).Call(uintptr(DC), Family.ToPtr(), callback.instance, uintptr(LParam))
-//	return types.LongInt(r1)
-//}
-//
-//func WinEnumFontFamiliesEx(DC types.HDC, lpLogFont types.LogFontA, callback *EnumFontFamiliesExCallback, LParam types.LPARAM, Flags types.DWORD) types.LongInt {
-//	r1, _, _ := imports.Proc(def.CEF_Win_EnumFontFamiliesEx).Call(uintptr(DC), uintptr(unsafe.Pointer(&lpLogFont)), callback.instance, uintptr(LParam), uintptr(Flags))
-//	return types.LongInt(r1)
-//}
+func WinEnumDisplayMonitors(hdc types.HDC, lprcClip *types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) types.LongBool {
+	r1, _, _ := imports.Proc(def.CEF_Win_EnumDisplayMonitors).Call(uintptr(hdc), uintptr(unsafe.Pointer(lprcClip)), callback.instance, uintptr(dwData))
+	return types.LongBool(api.GoBool(r1))
+}
+
+func WinEnumFontFamilies(DC types.HDC, Family types.PChar, callback *EnumFontFamiliesCallback, LParam types.LPARAM) types.LongInt {
+	r1, _, _ := imports.Proc(def.CEF_Win_EnumFontFamilies).Call(uintptr(DC), Family.ToPtr(), callback.instance, uintptr(LParam))
+	return types.LongInt(r1)
+}
+
+func WinEnumFontFamiliesEx(DC types.HDC, lpLogFont types.LogFontA, callback *EnumFontFamiliesExCallback, LParam types.LPARAM, Flags types.DWORD) types.LongInt {
+	r1, _, _ := imports.Proc(def.CEF_Win_EnumFontFamiliesEx).Call(uintptr(DC), uintptr(unsafe.Pointer(&lpLogFont)), callback.instance, uintptr(LParam), uintptr(Flags))
+	return types.LongInt(r1)
+}
 
 func WinEllipse(DC types.HDC, x1, y1, x2, y2 types.Integer) types.LongBool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Ellipse).Call(uintptr(DC), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2))

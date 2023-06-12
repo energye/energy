@@ -100,8 +100,8 @@ type HRGN struct {
 
 type TagEnumLogFontA struct {
 	ElfLogFont  *LogFontA
-	ElfFullName string // len = 64
-	ElfStyle    string // len = 32
+	ElfFullName []AnsiChar // len = 64
+	ElfStyle    []AnsiChar // len = 32
 }
 
 type TagEnumLogFontAPtr struct {
@@ -159,7 +159,7 @@ type TNewTextMetricExPtr struct {
 
 type TFontSignature struct {
 	FsUsb []DWORD // len = 4
-	FsCsb []DWORD // len = 4
+	FsCsb []DWORD // len = 2
 }
 
 type TFontSignaturePtr struct {
@@ -341,7 +341,7 @@ type LogFontA struct {
 	LfClipPrecision  byte
 	LfQuality        byte
 	LfPitchAndFamily byte
-	LfFaceName       string //len=32
+	LfFaceName       []AnsiChar // len = 32
 }
 
 func (m *TString) SetValue(v string) {
