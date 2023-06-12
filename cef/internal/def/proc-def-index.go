@@ -236,13 +236,16 @@ const (
 	CEFStartMainProcess
 	CEFStartSubProcess
 	AddCustomCommandLine
+	// CEFWorkScheduler
+	CEFWorkScheduler_Stop
+	CEFWorkScheduler_Create
+	CEFWorkScheduler_Destroy
 	// application
 	CEFApplication_RunMessageLoop
 	CEFApplication_QuitMessageLoop
 	CEFApplication_Create
 	CEFApplication_Destroy
 	CEFApplication_Free
-	CEFApplication_StopScheduler
 	// application - event
 	CEFGlobalApp_SetOnRegCustomSchemes
 	CEFGlobalApp_SetOnRegisterCustomPreferences
@@ -264,7 +267,7 @@ const (
 	CEFGlobalApp_SetOnRenderLoadStart
 	CEFGlobalApp_SetOnRenderLoadEnd
 	CEFGlobalApp_SetOnRenderLoadError
-	CEFGlobalApp_SetOnScheduleMessagePumpWork // no export
+	CEFGlobalApp_SetOnScheduleMessagePumpWork
 	// 设置 TCefSettings (cef_settings_t) 属性
 	CEFAppConfig_NoSandbox
 	CEFAppConfig_SetNoSandbox

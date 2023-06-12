@@ -183,6 +183,7 @@ type GlobalCEFAppEventOnRenderLoadingStateChange func(browser *ICefBrowser, fram
 type GlobalCEFAppEventOnRenderLoadStart func(browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType)
 type GlobalCEFAppEventOnRenderLoadEnd func(browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32)
 type GlobalCEFAppEventOnRenderLoadError func(browser *ICefBrowser, frame *ICefFrame, errorCode consts.TCefErrorCode, errorText, failedUrl string)
+type GlobalCEFAppEventOnScheduleMessagePumpWork func(delayMS int64)
 
 /************* LCL Window event *************/
 

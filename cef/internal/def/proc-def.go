@@ -235,13 +235,16 @@ func init() {
 		dllimports.NewEnergyImport("CEFStartMainProcess", 0),
 		dllimports.NewEnergyImport("CEFStartSubProcess", 0),
 		dllimports.NewEnergyImport("AddCustomCommandLine", 0),
+		// CEFWorkScheduler
+		dllimports.NewEnergyImport("CEFWorkScheduler_Stop", 0),
+		dllimports.NewEnergyImport("CEFWorkScheduler_Create", 0),
+		dllimports.NewEnergyImport("CEFWorkScheduler_Destroy", 0),
 		//application
 		dllimports.NewEnergyImport("CEFApplication_RunMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_QuitMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_Create", 0),
 		dllimports.NewEnergyImport("CEFApplication_Destroy", 0),
 		dllimports.NewEnergyImport("CEFApplication_Free", 0),
-		dllimports.NewEnergyImport("CEFApplication_StopScheduler", 0),
 		//application - event
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegCustomSchemes", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegisterCustomPreferences", 0),

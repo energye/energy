@@ -106,11 +106,12 @@ func (m *TCEFApplication) QuitMessageLoop() {
 }
 
 func (m *TCEFApplication) StopScheduler() {
-	imports.Proc(def.CEFApplication_StopScheduler).Call()
+	GlobalWorkSchedulerStop()
 }
 
 func (m *TCEFApplication) Destroy() {
 	imports.Proc(def.CEFApplication_Destroy).Call()
+	GlobalWorkSchedulerDestroy()
 }
 
 func (m *TCEFApplication) Free() {
@@ -235,6 +236,14 @@ func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd
 
 func (m *TCEFApplication) SetOnRenderLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadError).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnRenderLoadError) {
+	var callback uintptr
+	if fn != nil {
+		callback = api.MakeEventDataPtr(fn)
+	}
+	imports.Proc(def.CEFGlobalApp_SetOnScheduleMessagePumpWork).Call(callback)
 }
 
 func init() {
@@ -366,6 +375,8 @@ func init() {
 			frame.Free()
 			browse.Free()
 			message.Free()
+		case GlobalCEFAppEventOnScheduleMessagePumpWork:
+			fn.(GlobalCEFAppEventOnScheduleMessagePumpWork)(*(*int64)(getPtr(0)))
 		default:
 			return false
 		}

@@ -55,7 +55,7 @@ func (m *TCEFApplication) initDefaultSettings() {
 	// 以下条件判断根据不同平台, 启动不同的窗口组件
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
-	if common.IsLinux() { // (VF)View Framework 窗口
+	if common.IsLinux() { // Linux => (VF)View Framework 窗口
 		// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
 		// Linux平台默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
 		m.SetExternalMessagePump(false)
@@ -63,15 +63,16 @@ func (m *TCEFApplication) initDefaultSettings() {
 		// 这是一个解决“GPU不可用错误”问题的方法 linux
 		// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
 		m.SetDisableZygote(true)
-	} else if common.IsDarwin() { // LCL窗口
+	} else if common.IsDarwin() { // Darwin => LCL窗口
 		m.AddCrDelegate()
+		GlobalWorkSchedulerCreate(nil)
+		m.SetOnScheduleMessagePumpWork(nil)
 		// MacOSX 在使用LCL窗口组件必须将 ExternalMessagePump=true 和 MultiThreadedMessageLoop=false
 		// 或
 		// 同 Linux 一样使用 ViewsFrameworkBrowserWindow 窗口组件
 		m.SetExternalMessagePump(true)
 		m.SetMultiThreadedMessageLoop(false)
-	} else { // LCL窗口
-		//Windows
+	} else { // Windows => LCL窗口
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
 	}
