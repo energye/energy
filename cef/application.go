@@ -111,7 +111,6 @@ func (m *TCEFApplication) StopScheduler() {
 
 func (m *TCEFApplication) Destroy() {
 	imports.Proc(def.CEFApplication_Destroy).Call()
-	GlobalWorkSchedulerDestroy()
 }
 
 func (m *TCEFApplication) Free() {
@@ -238,7 +237,7 @@ func (m *TCEFApplication) SetOnRenderLoadError(fn GlobalCEFAppEventOnRenderLoadE
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadError).Call(api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnRenderLoadError) {
+func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnScheduleMessagePumpWork) {
 	var callback uintptr
 	if fn != nil {
 		callback = api.MakeEventDataPtr(fn)
