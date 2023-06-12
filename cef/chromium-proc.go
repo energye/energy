@@ -401,35 +401,35 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string,
 	if !m.IsValid() {
 		return false
 	}
-	var (
-		windowParent  uintptr
-		windowNamePtr uintptr
-		contextPtr    uintptr
-		extraInfoPtr  uintptr
-	)
-	if window != nil {
-		windowParent = m.Instance()
-	}
-	if windowName != "" {
-		windowNamePtr = api.PascalStr(windowName)
-	}
-	if context != nil && context.IsValid() {
-		contextPtr = context.Instance()
-	}
-	if extraInfo != nil && extraInfo.IsValid() {
-		extraInfoPtr = extraInfo.Instance()
-	}
-	return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
-	//if window == nil {
-	//	return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
-	//} else {
-	//	if window.Type() == Wht_WindowParent {
-	//		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
-	//	} else if window.Type() == Wht_LinkedWindowParent {
-	//		return _CEFChromium_CreateBrowseByLinkedWindow(m.Instance(), window.Instance())
-	//	}
+	//var (
+	//	windowParent  uintptr
+	//	windowNamePtr uintptr
+	//	contextPtr    uintptr
+	//	extraInfoPtr  uintptr
+	//)
+	//if window != nil {
+	//	windowParent = m.Instance()
 	//}
-	//return false
+	//if windowName != "" {
+	//	windowNamePtr = api.PascalStr(windowName)
+	//}
+	//if context != nil && context.IsValid() {
+	//	contextPtr = context.Instance()
+	//}
+	//if extraInfo != nil && extraInfo.IsValid() {
+	//	extraInfoPtr = extraInfo.Instance()
+	//}
+	//return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
+	//if window == nil {
+	//return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
+	//} else {
+	if window.Type() == Wht_WindowParent {
+		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
+	} else if window.Type() == Wht_LinkedWindowParent {
+		return _CEFChromium_CreateBrowseByLinkedWindow(m.Instance(), window.Instance())
+	}
+	//}
+	return false
 }
 
 func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {

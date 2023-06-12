@@ -38,6 +38,7 @@ type AnsiChar = Char
 type TCefColor = UInt32
 type Integer = Int32
 type LongInt = Int32
+type LongPtr = UIntptr
 type LongWord = UInt32
 type NativeUInt = UInt32
 type TCefString = String

@@ -216,6 +216,15 @@ const (
 	CEF_Win_TextOut
 	CEF_Win_UpdateWindow
 	CEF_Win_WindowFromPoint
+	CEF_Win_GetWindowLongPtr
+	CEF_Win_SetWindowLongPtr
+	CEF_Win_GetClassLongPtr
+	CEF_Win_SetClassLongPtr
+	CEF_Win_FindWindow
+	CEF_Win_FindWindowEx
+	CEF_Win_SetWindowText
+	CEF_Win_GetWindowText
+	CEF_Win_GetWindowTextLength
 	// TCefBaseRefCounted
 	CefBaseRefCounted_Wrap
 	CefBaseRefCounted_Free
