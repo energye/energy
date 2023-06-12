@@ -639,7 +639,6 @@ func init() {
 		dllimports.NewEnergyImport("RequestContext_GetHandler", 0),
 		dllimports.NewEnergyImport("RequestContext_GetCachePath", 0),
 		dllimports.NewEnergyImport("RequestContext_GetCookieManager", 0),
-		//dllimports.NewEnergyImport("RequestContext_GetCookieManagerProc", 0),
 		dllimports.NewEnergyImport("RequestContext_RegisterSchemeHandlerFactory", 0),
 		dllimports.NewEnergyImport("RequestContext_ClearSchemeHandlerFactories", 0),
 		dllimports.NewEnergyImport("RequestContext_ClearCertificateExceptions", 0),
