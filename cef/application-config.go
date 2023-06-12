@@ -1177,6 +1177,10 @@ func (m *TCEFApplication) SetMustFreeLibrary(value bool) {
 	imports.Proc(def.CEFAppConfig_SetMustFreeLibrary).Call(api.PascalBool(value))
 }
 
+func (m *TCEFApplication) UpdateDeviceScaleFactor() {
+	imports.Proc(def.CEFAppConfig_UpdateDeviceScaleFactor).Call()
+}
+
 func (m *TCEFApplication) ChildProcessesCount() int32 {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_ChildProcessesCount).Call()
 	return int32(r1)

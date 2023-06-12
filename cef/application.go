@@ -35,9 +35,7 @@ type TCEFApplication struct {
 // 参数: disableRegisDefaultEvent = true 时不会注册默认事件
 func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 	if application == nil {
-		var result uintptr
-		imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
-		application = &TCEFApplication{instance: unsafe.Pointer(result)}
+		application = CreateApplication()
 		if len(disableRegisDefaultEvent) == 0 || !disableRegisDefaultEvent[0] {
 			application.registerDefaultEvent()
 		}
@@ -46,6 +44,12 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 		cef.SetApplication(application)
 	}
 	return application
+}
+
+func CreateApplication() *TCEFApplication {
+	var result uintptr
+	imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
+	return &TCEFApplication{instance: unsafe.Pointer(result)}
 }
 
 // AddCrDelegate MacOSX Delegate

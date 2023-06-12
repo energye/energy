@@ -239,6 +239,8 @@ const (
 	// CEFWorkScheduler
 	CEFWorkScheduler_Stop
 	CEFWorkScheduler_Create
+	CEFWorkScheduler_CreateDelayed
+	CEFWorkScheduler_CreateThread
 	CEFWorkScheduler_Destroy
 	// application
 	CEFApplication_RunMessageLoop
@@ -504,6 +506,7 @@ const (
 	CEFAppConfig_SetMustCreateRenderProcessHandler
 	CEFAppConfig_SetMustCreateLoadHandler
 	CEFAppConfig_SetMustFreeLibrary
+	CEFAppConfig_UpdateDeviceScaleFactor
 	// TCEFWindowParent
 	CEFWindow_Create
 	CEFWindow_GetHandle
@@ -802,6 +805,7 @@ const (
 	CEFChromium_StopLoad
 	CEFChromium_ResetZoomLevel
 	CEFChromium_CloseAllBrowsers
+	CEFChromium_CreateBrowser
 	CEFChromium_CreateBrowserByWindow
 	CEFChromium_CreateBrowserByLinkedWindow
 	CEFChromium_CreateBrowserByBrowserViewComponent
@@ -1901,4 +1905,7 @@ const (
 	CefDomNode_SetElementAttribute
 	CefDomNode_GetElementInnerText
 	CefDomNode_GetElementBounds
+	// gtk3
+	GTK3_CustomWidgetSetInitialization
+	GTK3_CustomWidgetSetFinalization
 ) //end

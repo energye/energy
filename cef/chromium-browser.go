@@ -58,7 +58,7 @@ func (m *TCEFChromiumBrowser) checkAndCreateBrowser(sender lcl.IObject) {
 		return
 	}
 	m.chromium.Initialized()
-	m.isCreated = m.chromium.CreateBrowser(m.windowParent)
+	m.isCreated = m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
 	if !m.isCreated {
 		m.createTimer.SetEnabled(true)
 	} else {

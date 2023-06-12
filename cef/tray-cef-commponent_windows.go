@@ -189,7 +189,7 @@ func (m *CEFTray) createTrayWindow() {
 	m.TForm.SetBounds(-(m.w * 2), -(m.h * 2), m.w, m.h)
 	m.TForm.SetOnActivate(func(sender lcl.IObject) {
 		m.chromium.Initialized()
-		m.chromium.CreateBrowser(m.windowParent)
+		m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
 	})
 	m.TForm.SetOnWndProc(func(msg *types.TMessage) {
 		m.TForm.InheritedWndProc(msg)

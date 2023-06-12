@@ -238,6 +238,8 @@ func init() {
 		// CEFWorkScheduler
 		dllimports.NewEnergyImport("CEFWorkScheduler_Stop", 0),
 		dllimports.NewEnergyImport("CEFWorkScheduler_Create", 0),
+		dllimports.NewEnergyImport("CEFWorkScheduler_CreateDelayed", 0),
+		dllimports.NewEnergyImport("CEFWorkScheduler_CreateThread", 0),
 		dllimports.NewEnergyImport("CEFWorkScheduler_Destroy", 0),
 		//application
 		dllimports.NewEnergyImport("CEFApplication_RunMessageLoop", 0),
@@ -503,6 +505,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateRenderProcessHandler", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetMustCreateLoadHandler", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetMustFreeLibrary", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UpdateDeviceScaleFactor", 0),
 		//CEFParentWindow
 		dllimports.NewEnergyImport("CEFWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetHandle", 0),
@@ -802,6 +805,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_StopLoad", 0),
 		dllimports.NewEnergyImport("CEFChromium_ResetZoomLevel", 0),
 		dllimports.NewEnergyImport("CEFChromium_CloseAllBrowsers", 0),
+		dllimports.NewEnergyImport("CEFChromium_CreateBrowser", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByWindow", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByLinkedWindow", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateBrowserByBrowserViewComponent", 0),
@@ -1901,6 +1905,9 @@ func init() {
 		dllimports.NewEnergyImport("CefDomNode_SetElementAttribute", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementInnerText", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementBounds", 0),
+		// gtk3
+		dllimports.NewEnergyImport("GTK3_CustomWidgetSetInitialization", 0),
+		dllimports.NewEnergyImport("GTK3_CustomWidgetSetFinalization", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

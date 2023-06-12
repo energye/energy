@@ -53,6 +53,19 @@ func GlobalWorkSchedulerCreate(owner lcl.IComponent) *TCEFWorkScheduler {
 	return nil
 }
 
+func GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
+	var result uintptr
+	imports.Proc(def.CEFWorkScheduler_CreateDelayed).Call(uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &TCEFWorkScheduler{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+func GlobalWorkSchedulerCreateThread() {
+	imports.Proc(def.CEFWorkScheduler_CreateThread).Call()
+}
+
 func GlobalWorkSchedulerDestroy() {
 	imports.Proc(def.CEFWorkScheduler_Destroy).Call()
 }

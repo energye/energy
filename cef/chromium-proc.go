@@ -50,7 +50,7 @@ type IChromiumProc interface {
 	StopLoad()
 	ResetZoomLevel()
 	CloseAllBrowsers()
-	CreateBrowser(window ICEFWindowParent) bool
+	CreateBrowser(window ICEFWindowParent, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
 	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool
 	Initialized() bool
 	IsSameBrowser(browser *ICefBrowser) bool
@@ -397,16 +397,39 @@ func (m *TCEFChromium) CloseAllBrowsers() {
 	_CEFChromium_CloseAllBrowses(m.Instance())
 }
 
-func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent) bool {
+func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool {
 	if !m.IsValid() {
 		return false
 	}
-	if window.Type() == Wht_WindowParent {
-		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
-	} else if window.Type() == Wht_LinkedWindowParent {
-		return _CEFChromium_CreateBrowseByLinkedWindow(m.Instance(), window.Instance())
+	var (
+		windowParent  uintptr
+		windowNamePtr uintptr
+		contextPtr    uintptr
+		extraInfoPtr  uintptr
+	)
+	if window != nil {
+		windowParent = m.Instance()
 	}
-	return false
+	if windowName != "" {
+		windowNamePtr = api.PascalStr(windowName)
+	}
+	if context != nil && context.IsValid() {
+		contextPtr = context.Instance()
+	}
+	if extraInfo != nil && extraInfo.IsValid() {
+		extraInfoPtr = extraInfo.Instance()
+	}
+	return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
+	//if window == nil {
+	//	return _CEFChromium_CreateBrowse(m.Instance(), windowParent, windowNamePtr, contextPtr, extraInfoPtr)
+	//} else {
+	//	if window.Type() == Wht_WindowParent {
+	//		return _CEFChromium_CreateBrowseByWindow(m.Instance(), window.Instance())
+	//	} else if window.Type() == Wht_LinkedWindowParent {
+	//		return _CEFChromium_CreateBrowseByLinkedWindow(m.Instance(), window.Instance())
+	//	}
+	//}
+	//return false
 }
 
 func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {
@@ -1523,6 +1546,12 @@ func _CEFChromium_ResetZoomLevel(instance uintptr) {
 // TCEFChromium _CEFChromium_CloseAllBrowses
 func _CEFChromium_CloseAllBrowses(instance uintptr) {
 	imports.Proc(def.CEFChromium_CloseAllBrowsers).Call(instance)
+}
+
+// TCEFChromium _CEFChromium_CreateBrowse
+func _CEFChromium_CreateBrowse(instance, window, windowName, context, extraInfo uintptr) bool {
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowser).Call(instance, window, windowName, context, extraInfo)
+	return api.GoBool(r1)
 }
 
 // TCEFChromium _CEFChromium_CreateBrowseByWindow
