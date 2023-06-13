@@ -545,9 +545,8 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 	)
 	if messageDataBytes != nil {
 		argumentList = ipcArgument.UnList(messageDataBytes)
-		//argumentList = json.NewJSONArray(messageDataBytes)
 		messageId = argumentList.MessageId()
-		isReturnArgs = argumentList.JSON() != nil // argumentList.GetBoolByIndex(1)
+		isReturnArgs = argumentList.JSON() != nil
 		messageDataBytes = nil
 	}
 	defer func() {
@@ -569,8 +568,10 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			//设置允许释放
 			callback.function.SetCanNotFree(false)
 		}
-		//[]byte
-		returnArgs = argumentList.JSON().JSONArray()
+		if isReturnArgs {
+			//[]byte
+			returnArgs = argumentList.JSON().JSONArray()
+		}
 		if returnArgs != nil {
 			m.executeCallbackFunction(isReturnArgs, callback, returnArgs)
 		} else {

@@ -748,15 +748,16 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 			bw := next.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
 			bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
-			bw.defaultChromiumEvent()
-			bw.registerWindowsCompMsgEvent()
-			bw.setProperty()
 			var result = false
 			if bwEvent.onBeforePopup != nil {
 				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
 			}
 			if !result { // true 表示用户自行处理
-				QueueAsyncCall(func(id int) {
+				bw.defaultWindowCloseEvent()
+				bw.defaultChromiumEvent()
+				bw.registerWindowsCompMsgEvent()
+				bw.setProperty()
+				QueueAsyncCall(func(id int) { // show window, run in main thread
 					if bw.WindowProperty().IsShowModel {
 						bw.ShowModal()
 						return
@@ -850,25 +851,25 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			return
 		}
 		if bwEvent.onKeyEvent != nil {
-			bwEvent.onKeyEvent(sender, browser, event, osEvent, result)
+			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
 		}
 	})
 	m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
 		if bwEvent.onBeforeBrowser != nil {
-			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect)
+			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
 		}
 		return false
 	})
 	m.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
 		updateBrowserDevTools(browser, title)
 		if bwEvent.onTitleChange != nil {
-			bwEvent.onTitleChange(sender, browser, title)
+			bwEvent.onTitleChange(sender, browser, title, m)
 		}
 	})
 	m.Chromium().SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
 		*result = !m.WindowProperty().EnableDragFile
 		if bwEvent.onDragEnter != nil {
-			bwEvent.onDragEnter(sender, browser, dragData, mask, result)
+			bwEvent.onDragEnter(sender, browser, dragData, mask, m, result)
 		}
 	})
 	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
@@ -879,7 +880,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	if m.WindowProperty().EnableWebkitAppRegion {
 		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if bwEvent.onDraggableRegionsChanged != nil {
-				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)
 			}
 			m.cwcap.regions = regions
 			m.setDraggableRegions()
@@ -920,18 +921,13 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 				//sub window close
 				*close = m.canClose
 			}
-			if !m.isClosing {
-				m.isClosing = true
-				m.Hide()
-				m.Chromium().CloseBrowser(true)
-			}
 		} else {
 			*close = m.canClose
-			if !m.isClosing {
-				m.isClosing = true
-				m.Hide()
-				m.Chromium().CloseBrowser(true)
-			}
+		}
+		if !m.isClosing {
+			m.isClosing = true
+			m.Hide()
+			m.Chromium().CloseBrowser(true)
 		}
 	}
 }
@@ -956,9 +952,9 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 				logger.Debug("chromium.onClose => windowParent.Free")
 			})
 		}
-		m.cwcap.free()
+		m.cwcap.free() //释放自定义标题栏 rgn
 		if bwEvent.onClose != nil {
-			bwEvent.onClose(sender, browser, aAction)
+			bwEvent.onClose(sender, browser, aAction, m)
 		}
 	})
 	m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
@@ -979,9 +975,8 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					m.auxTools.devToolsWindow = nil
 				}
 			}
-			BrowserWindow.removeWindowInfo(m.windowId)
 			//主窗口关闭
-			if m.WindowType() == consts.WT_MAIN_BROWSER {
+			if m.WindowType() == consts.WT_MAIN_BROWSER || m.WindowType() == consts.WT_POPUP_SUB_BROWSER {
 				if IsWindows() {
 					rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
 				} else {
@@ -995,7 +990,9 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 			closeWindow()
 		})
 		if bwEvent.onBeforeClose != nil {
-			bwEvent.onBeforeClose(sender, browser)
+			bwEvent.onBeforeClose(sender, browser, m)
 		}
+		// 最后再移除
+		BrowserWindow.removeWindowInfo(m.windowId)
 	})
 }

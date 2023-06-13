@@ -263,7 +263,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	})
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
 		if bwEvent.onKeyEvent != nil {
-			bwEvent.onKeyEvent(sender, browser, event, osEvent, result)
+			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
 		} else {
 			if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
 				if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
@@ -285,19 +285,19 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
 		if bwEvent.onBeforeBrowser != nil {
-			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect)
+			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
 		}
 		return false
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
 		if bwEvent.onTitleChange != nil {
-			bwEvent.onTitleChange(sender, browser, title)
+			bwEvent.onTitleChange(sender, browser, title, m)
 		}
 	})
 	m.chromium.SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
 		*result = !m.WindowProperty().EnableDragFile
 		if bwEvent.onDragEnter != nil {
-			bwEvent.onDragEnter(sender, browser, dragData, mask, result)
+			bwEvent.onDragEnter(sender, browser, dragData, mask, m, result)
 		}
 	})
 	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
@@ -308,7 +308,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	if m.WindowProperty().EnableWebkitAppRegion {
 		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if bwEvent.onDraggableRegionsChanged != nil {
-				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions)
+				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)
 			}
 			m.regions = regions
 			m.windowComponent.SetDraggableRegions(regions.Regions())

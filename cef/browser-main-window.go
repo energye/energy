@@ -30,27 +30,28 @@ type browserWindow struct {
 }
 
 // BrowserEvent 浏览器全局事件监听-已被默认实现事件
+//  该结构中的对象属性, 是已被默认实现的
 type BrowserEvent struct {
-	chromium                  IChromiumEvent                          //chromium event
-	onBeforePopup             chromiumEventOnBeforePopupForWindowInfo //default
-	onDragEnter               chromiumEventOnDragEnter                //default
-	onDraggableRegionsChanged chromiumEventOnDraggableRegionsChanged  //default
-	onLoadEnd                 chromiumEventOnLoadEnd                  //default
-	onAfterCreated            chromiumEventOnAfterCreated             //default
-	onBeforeBrowser           chromiumEventOnBeforeBrowser            //default
-	onBeforeClose             chromiumEventOnBeforeClose              //default
-	onClose                   chromiumEventOnClose                    //default
-	onFrameCreated            chromiumEventOnFrameCreated             //default
-	onFrameDetached           chromiumEventOnFrameDetached            //default
-	onMainFrameChanged        chromiumEventOnMainFrameChanged         //default
-	onBeforeDownload          chromiumEventOnBeforeDownload           //default can cover
-	onKeyEvent                chromiumEventOnKeyEvent                 //default can cover
-	onProcessMessageReceived  BrowseProcessMessageReceived            //default
-	onTitleChange             chromiumEventOnTitleChange              //default
-	onContextMenuCommand      chromiumEventOnContextMenuCommand       //default can cover
-	onBeforeContextMenu       chromiumEventOnBeforeContextMenu        //default can cover
-	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoad       //default
-	onRenderCompMsg           chromiumEventOnCompMsg                  //default windows
+	chromium                  IChromiumEvent                           //chromium event
+	onBeforePopup             chromiumEventOnBeforePopupEx             //default
+	onDragEnter               chromiumEventOnDragEnterEx               //default
+	onDraggableRegionsChanged chromiumEventOnDraggableRegionsChangedEx //default
+	onLoadEnd                 chromiumEventOnLoadEnd                   //default
+	onAfterCreated            chromiumEventOnAfterCreated              //default
+	onBeforeBrowser           chromiumEventOnBeforeBrowserEx           //default
+	onBeforeClose             chromiumEventOnBeforeCloseEx             //default
+	onClose                   chromiumEventOnCloseEx                   //default
+	onFrameCreated            chromiumEventOnFrameCreated              //default
+	onFrameDetached           chromiumEventOnFrameDetached             //default
+	onMainFrameChanged        chromiumEventOnMainFrameChangedEx        //default
+	onBeforeDownload          chromiumEventOnBeforeDownload            //default can cover
+	onKeyEvent                chromiumEventOnKeyEventEx                //default can cover
+	onProcessMessageReceived  BrowseProcessMessageReceived             //default
+	onTitleChange             chromiumEventOnTitleChangeEx             //default
+	onContextMenuCommand      chromiumEventOnContextMenuCommand        //default can cover
+	onBeforeContextMenu       chromiumEventOnBeforeContextMenu         //default can cover
+	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoad        //default
+	onRenderCompMsg           chromiumEventOnCompMsg                   //default windows
 }
 
 // LCLBrowserWindow
@@ -110,7 +111,6 @@ func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
 		m.popupWindow = NewLCLWindow(m.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
-		m.popupWindow.AsLCLBrowserWindow().BrowserWindow().defaultWindowCloseEvent()
 	}
 }
 
@@ -152,126 +152,126 @@ func (m *browserWindow) GetBrowser(browseId int32) *ICefBrowser {
 	return nil
 }
 
-// BrowserEvent.SetOnAfterCreated
+// SetOnAfterCreated
 func (m *BrowserEvent) SetOnAfterCreated(event chromiumEventOnAfterCreated) {
 	if Args.IsMain() {
 		m.onAfterCreated = event
 	}
 }
 
-// BrowserEvent.SetOnBeforeBrowser
-func (m *BrowserEvent) SetOnBeforeBrowser(event chromiumEventOnBeforeBrowser) {
+// SetOnBeforeBrowser
+func (m *BrowserEvent) SetOnBeforeBrowser(event chromiumEventOnBeforeBrowserEx) {
 	if Args.IsMain() {
 		m.onBeforeBrowser = event
 	}
 }
 
-// BrowserEvent.SetOnAddressChange
+// SetOnAddressChange
 func (m *BrowserEvent) SetOnAddressChange(event chromiumEventOnAddressChange) {
 	if Args.IsMain() {
 		m.chromium.SetOnAddressChange(event)
 	}
 }
 
-// BrowserEvent.SetOnBeforeClose
-func (m *BrowserEvent) SetOnBeforeClose(event chromiumEventOnBeforeClose) {
+// SetOnBeforeClose
+func (m *BrowserEvent) SetOnBeforeClose(event chromiumEventOnBeforeCloseEx) {
 	if Args.IsMain() {
 		m.onBeforeClose = event
 	}
 }
 
-// BrowserEvent.SetOnClose
-func (m *BrowserEvent) SetOnClose(event chromiumEventOnClose) {
+// SetOnClose
+func (m *BrowserEvent) SetOnClose(event chromiumEventOnCloseEx) {
 	if Args.IsMain() {
 		m.onClose = event
 	}
 }
 
-// BrowserEvent.SetOnPdfPrintFinished
+// SetOnPdfPrintFinished
 func (m *BrowserEvent) SetOnPdfPrintFinished(event chromiumEventOnPdfPrintFinished) {
 	if Args.IsMain() {
 		m.chromium.SetOnPdfPrintFinished(event)
 	}
 }
 
-// BrowserEvent.SetOnZoomPctAvailable
+// SetOnZoomPctAvailable
 func (m *BrowserEvent) SetOnZoomPctAvailable(event chromiumEventOnResultFloat) {
 	if Args.IsMain() {
 		m.chromium.SetOnZoomPctAvailable(event)
 	}
 }
 
-// BrowserEvent.SetOnLoadStart
+// SetOnLoadStart
 func (m *BrowserEvent) SetOnLoadStart(event chromiumEventOnLoadStart) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadStart(event)
 	}
 }
 
-// BrowserEvent.SetOnLoadingStateChange
+// SetOnLoadingStateChange
 func (m *BrowserEvent) SetOnLoadingStateChange(event chromiumEventOnLoadingStateChange) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadingStateChange(event)
 	}
 }
 
-// BrowserEvent.SetOnLoadingProgressChange
+// SetOnLoadingProgressChange
 func (m *BrowserEvent) SetOnLoadingProgressChange(event chromiumEventOnLoadingProgressChange) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadingProgressChange(event)
 	}
 }
 
-// BrowserEvent.SetOnLoadError
+// SetOnLoadError
 func (m *BrowserEvent) SetOnLoadError(event chromiumEventOnLoadError) {
 	if Args.IsMain() {
 		m.chromium.SetOnLoadError(event)
 	}
 }
 
-// BrowserEvent.SetOnLoadEnd
+// SetOnLoadEnd
 func (m *BrowserEvent) SetOnLoadEnd(event chromiumEventOnLoadEnd) {
 	if Args.IsMain() {
 		m.onLoadEnd = event
 	}
 }
 
-// BrowserEvent.SetOnBeforeDownload
+// SetOnBeforeDownload
 func (m *BrowserEvent) SetOnBeforeDownload(event chromiumEventOnBeforeDownload) {
 	if Args.IsMain() {
 		m.onBeforeDownload = event
 	}
 }
 
-// BrowserEvent.SetOnDownloadUpdated
+// SetOnDownloadUpdated
 func (m *BrowserEvent) SetOnDownloadUpdated(event chromiumEventOnDownloadUpdated) {
 	if Args.IsMain() {
 		m.chromium.SetOnDownloadUpdated(event)
 	}
 }
 
-// BrowserEvent.SetOnFullScreenModeChange
+// SetOnFullScreenModeChange
 func (m *BrowserEvent) SetOnFullScreenModeChange(event chromiumEventOnFullScreenModeChange) {
 	if Args.IsMain() {
 		m.chromium.SetOnFullScreenModeChange(event)
 	}
 }
 
-// BrowserEvent.SetOnKeyEvent
-func (m *BrowserEvent) SetOnKeyEvent(event chromiumEventOnKeyEvent) {
+// SetOnKeyEvent
+func (m *BrowserEvent) SetOnKeyEvent(event chromiumEventOnKeyEventEx) {
 	if Args.IsMain() {
 		m.onKeyEvent = event
 	}
 }
 
-// BrowserEvent.SetOnTitleChange
-func (m *BrowserEvent) SetOnTitleChange(event chromiumEventOnTitleChange) {
+// SetOnTitleChange
+func (m *BrowserEvent) SetOnTitleChange(event chromiumEventOnTitleChangeEx) {
 	if Args.IsMain() {
 		m.onTitleChange = event
 	}
 }
 
-// BrowserEvent.SetOnRenderCompMsg windows
+// SetOnRenderCompMsg windows
 func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.onRenderCompMsg = event
@@ -282,190 +282,194 @@ func (m *BrowserEvent) ChromiumEvent() IChromiumEvent {
 	return m.chromium
 }
 
-// BrowserEvent.SetOnWidgetCompMsg windows
+// SetOnWidgetCompMsg windows
 func (m *BrowserEvent) SetOnWidgetCompMsg(event chromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.chromium.SetOnWidgetCompMsg(event)
 	}
 }
 
-// BrowserEvent.SetOnBrowserCompMsg windows
+// SetOnBrowserCompMsg windows
 func (m *BrowserEvent) SetOnBrowserCompMsg(event chromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.chromium.SetOnBrowserCompMsg(event)
 	}
 }
 
-// BrowserEvent.SetOnRenderProcessTerminated
+// SetOnRenderProcessTerminated
 func (m *BrowserEvent) SetOnRenderProcessTerminated(event chromiumEventOnRenderProcessTerminated) {
 	if Args.IsMain() {
 		m.chromium.SetOnRenderProcessTerminated(event)
 	}
 }
 
-// BrowserEvent.SetOnRenderViewReady
+// SetOnRenderViewReady
 func (m *BrowserEvent) SetOnRenderViewReady(event chromiumEventOnRenderViewReady) {
 	if Args.IsMain() {
 		m.chromium.SetOnRenderViewReady(event)
 	}
 }
 
-// BrowserEvent.SetOnScrollOffsetChanged
+// SetOnScrollOffsetChanged
 func (m *BrowserEvent) SetOnScrollOffsetChanged(event chromiumEventOnScrollOffsetChanged) {
 	if Args.IsMain() {
 		m.chromium.SetOnScrollOffsetChanged(event)
 	}
 }
 
-// BrowserEvent.SetOnBrowseProcessMessageReceived
+// SetOnBrowseProcessMessageReceived
 func (m *BrowserEvent) SetOnBrowseProcessMessageReceived(event BrowseProcessMessageReceived) {
 	if Args.IsMain() {
 		m.onProcessMessageReceived = event
 	}
 }
 
-// BrowserEvent.SetOnBeforeResourceLoad
+// SetOnBeforeResourceLoad
 func (m *BrowserEvent) SetOnBeforeResourceLoad(event chromiumEventOnBeforeResourceLoad) {
 	if Args.IsMain() {
 		m.onBeforeResourceLoad = event
 	}
 }
 
-// BrowserEvent.SetOnResourceResponse
+// SetOnResourceResponse
 func (m *BrowserEvent) SetOnResourceResponse(event chromiumEventOnResourceResponse) {
 	if Args.IsMain() {
 		m.chromium.SetOnResourceResponse(event)
 	}
 }
 
-// BrowserEvent.SetOnResourceRedirect
+// SetOnResourceRedirect
 func (m *BrowserEvent) SetOnResourceRedirect(event chromiumEventOnResourceRedirect) {
 	if Args.IsMain() {
 		m.chromium.SetOnResourceRedirect(event)
 	}
 }
 
-// BrowserEvent.SetOnResourceLoadComplete
+// SetOnResourceLoadComplete
 func (m *BrowserEvent) SetOnResourceLoadComplete(event chromiumEventOnResourceLoadComplete) {
 	if Args.IsMain() {
 		m.chromium.SetOnResourceLoadComplete(event)
 	}
 }
 
-// BrowserEvent.SetOnCookieSet
+// SetOnCookieSet
 func (m *BrowserEvent) SetOnCookieSet(event chromiumEventOnCookieSet) {
 	if Args.IsMain() {
 		m.chromium.SetOnCookieSet(event)
 	}
 }
 
-// BrowserEvent.SetOnCookiesDeleted
+// SetOnCookiesDeleted
 func (m *BrowserEvent) SetOnCookiesDeleted(event chromiumEventOnCookiesDeleted) {
 	if Args.IsMain() {
 		m.chromium.SetOnCookiesDeleted(event)
 	}
 }
 
-// BrowserEvent.SetOnCookiesFlushed
+// SetOnCookiesFlushed
 func (m *BrowserEvent) SetOnCookiesFlushed(event chromiumEventOnCookiesFlushed) {
 	if Args.IsMain() {
 		m.chromium.SetOnCookiesFlushed(event)
 	}
 }
 
-// BrowserEvent.SetOnCookiesVisited
+// SetOnCookiesVisited
 func (m *BrowserEvent) SetOnCookiesVisited(event chromiumEventOnCookiesVisited) {
 	if Args.IsMain() {
 		m.chromium.SetOnCookiesVisited(event)
 	}
 }
 
-// BrowserEvent.SetOnCookieVisitorDestroyed
+// SetOnCookieVisitorDestroyed
 func (m *BrowserEvent) SetOnCookieVisitorDestroyed(event chromiumEventOnCookieVisitorDestroyed) {
 	if Args.IsMain() {
 		m.chromium.SetOnCookieVisitorDestroyed(event)
 	}
 }
 
-// BrowserEvent.SetOnBeforeContextMenu
+// SetOnBeforeContextMenu
 func (m *BrowserEvent) SetOnBeforeContextMenu(event chromiumEventOnBeforeContextMenu) {
 	if Args.IsMain() {
 		m.onBeforeContextMenu = event
 	}
 }
 
-// BrowserEvent.SetOnContextMenuCommand
+// SetOnContextMenuCommand
 func (m *BrowserEvent) SetOnContextMenuCommand(event chromiumEventOnContextMenuCommand) {
 	if Args.IsMain() {
 		m.onContextMenuCommand = event
 	}
 }
 
-// BrowserEvent.SetOnContextMenuDismissed
+// SetOnContextMenuDismissed
 func (m *BrowserEvent) SetOnContextMenuDismissed(event chromiumEventOnContextMenuDismissed) {
 	if Args.IsMain() {
 		m.chromium.SetOnContextMenuDismissed(event)
 	}
 }
 
-// BrowserEvent.SetOnFrameAttached
+// SetOnFrameAttached
 func (m *BrowserEvent) SetOnFrameAttached(event chromiumEventOnFrameAttached) {
 	if Args.IsMain() {
 		m.chromium.SetOnFrameAttached(event)
 	}
 }
 
-// BrowserEvent.SetOnFrameCreated
+// SetOnFrameCreated
 func (m *BrowserEvent) SetOnFrameCreated(event chromiumEventOnFrameCreated) {
 	if Args.IsMain() {
 		m.onFrameCreated = event
 	}
 }
 
-// BrowserEvent.SetOnFrameDetached
+// SetOnFrameDetached
 func (m *BrowserEvent) SetOnFrameDetached(event chromiumEventOnFrameDetached) {
 	if Args.IsMain() {
 		m.onFrameDetached = event
 	}
 }
 
-// BrowserEvent.SetOnMainFrameChanged
-func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChanged) {
+// SetOnMainFrameChanged
+func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChangedEx) {
 	if Args.IsMain() {
 		m.onMainFrameChanged = event
 	}
 }
 
-// BrowserEvent.SetOnBeforePopup
-func (m *BrowserEvent) SetOnBeforePopup(event chromiumEventOnBeforePopupForWindowInfo) {
+// SetOnBeforePopup
+//  弹出窗口, 已被默认实现的函数
+//  函数返回值
+//    false: 窗口会以默认行为管理
+//    true: 需要你自己管理窗口行为
+func (m *BrowserEvent) SetOnBeforePopup(event chromiumEventOnBeforePopupEx) {
 	if Args.IsMain() {
 		m.onBeforePopup = event
 	}
 }
 
-// BrowserEvent.SetOnOpenUrlFromTab
+// SetOnOpenUrlFromTab
 //func (m *BrowserEvent) SetOnOpenUrlFromTab(event chromiumEventOnOpenUrlFromTab) {
 //	if Args.IsMain() {
 //		m.chromium.SetOnOpenUrlFromTab(event)
 //	}
 //}
 
-// BrowserEvent.SetOnFindResult
+// SetOnFindResult
 func (m *BrowserEvent) SetOnFindResult(event chromiumEventOnFindResult) {
 	if Args.IsMain() {
 		m.chromium.SetOnFindResult(event)
 	}
 }
 
-// BrowserEvent.SetOnDragEnter
-func (m *BrowserEvent) SetOnDragEnter(event chromiumEventOnDragEnter) {
+// SetOnDragEnter
+func (m *BrowserEvent) SetOnDragEnter(event chromiumEventOnDragEnterEx) {
 	if Args.IsMain() {
 		m.onDragEnter = event
 	}
 }
 
-// BrowserEvent.SetOnDraggableRegionsChanged
-func (m *BrowserEvent) SetOnDraggableRegionsChanged(event chromiumEventOnDraggableRegionsChanged) {
+// SetOnDraggableRegionsChanged
+func (m *BrowserEvent) SetOnDraggableRegionsChanged(event chromiumEventOnDraggableRegionsChangedEx) {
 	if Args.IsMain() {
 		m.onDraggableRegionsChanged = event
 	}
