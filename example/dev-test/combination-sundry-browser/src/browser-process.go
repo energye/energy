@@ -223,7 +223,7 @@ func AppBrowserInit() {
 			fmt.Println("添加onclose事件")
 			return false
 		})
-		event.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
+		event.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string, window cef.IBrowserWindow) {
 			fmt.Println("SetOnTitleChange", title)
 		})
 

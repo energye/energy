@@ -46,14 +46,23 @@ func main() {
 				popupWindow.HideTitle()
 			} else if strings.Index(beforePopupInfo.TargetUrl, "popup_2") > 0 {
 				popupWindow.SetSize(300, 300)
+				popupWindow.HideTitle()
 			} else if strings.Index(beforePopupInfo.TargetUrl, "elliptic") > 0 {
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
-				elliptic(popupWindow)
+				cef.QueueAsyncCall(func(id int) {
+					// 如果使用winapi方式改变窗口，需要在主线程中运行
+					elliptic(popupWindow)
+				})
 			} else if strings.Index(beforePopupInfo.TargetUrl, "transparent") > 0 {
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
 				transparent(popupWindow)
+			} else if strings.Index(beforePopupInfo.TargetUrl, "model_window") > 0 {
+				popupWindow.SetSize(200, 200)
+				popupWindow.HideTitle()
+				//popupWindow.AsLCLBrowserWindow().BrowserWindow().EnableTransparent(100)
+				popupWindow.WindowProperty().IsShowModel = true
 			}
 			return false
 		})

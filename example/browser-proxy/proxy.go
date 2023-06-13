@@ -49,7 +49,7 @@ func main() {
 			fmt.Println("load-end:", frame.Url())
 		})
 		// 在 on before browser 配置代理
-		event.SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
+		event.SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool, window cef.IBrowserWindow) bool {
 			requestContext := browser.GetRequestContext()
 			if strings.Index(request.URL(), "www.baidu.com") != -1 {
 				// 需要配置代理的 url

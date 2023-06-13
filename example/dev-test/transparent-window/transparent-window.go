@@ -30,9 +30,7 @@ func main() {
 		go server.StartHttpServer()
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		browserWindow := window.AsLCLBrowserWindow().BrowserWindow()
-		WindowTransparent(types.HWND(browserWindow.Handle()))
-		//browserWindow.EnableTransparent(255) //窗口透明
+
 	})
 	cef.Run(cefApp)
 }

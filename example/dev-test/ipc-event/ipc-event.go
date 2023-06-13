@@ -271,7 +271,7 @@ func main() {
 			//	MaxConnectionsPerProxy: 100,
 			//})
 			//window.Chromium().UpdatePreferences()
-			event.SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
+			event.SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool, window cef.IBrowserWindow) bool {
 
 				//settings := cef.PrintSettingsRef.New()
 				//fmt.Println("settings-Instance:", settings.Instance())

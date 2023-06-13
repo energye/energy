@@ -51,7 +51,7 @@ func main() {
 
 		//browserWindow.BorderIcons().Exclude(types.BiHelp, types.BiMinimize, types.BiMaximize, types.BiSystemMenu)
 		//browserWindow.SetBorderStyle(types.BsSizeable)
-		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
+		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions, window cef.IBrowserWindow) {
 			fmt.Println("RegionsCount:", regions.RegionsCount(), regions.Regions())
 			for i := 0; i < regions.RegionsCount(); i++ {
 				fmt.Printf("i: %+v region: %+v\n", i, regions.Regions()[i])
