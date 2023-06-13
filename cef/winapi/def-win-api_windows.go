@@ -39,31 +39,31 @@ func WinGetClassLongPtr(hWnd types.HWND, nIndex types.LongInt) types.LongPtr {
 }
 
 func WinSetClassLongPtr(hWnd types.HWND, nIndex types.LongInt, dwNewLong types.LongPtr) types.LongPtr {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(uintptr(hWnd), uintptr(nIndex), uintptr(dwNewLong))
+	r1, _, _ := imports.Proc(def.CEF_Win_SetClassLongPtr).Call(uintptr(hWnd), uintptr(nIndex), uintptr(dwNewLong))
 	return types.LongPtr(r1)
 }
 
 func WinFindWindow(lpClassName string, lpWindowName string) types.HWND {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(api.PascalStr(lpClassName), api.PascalStr(lpWindowName))
+	r1, _, _ := imports.Proc(def.CEF_Win_FindWindow).Call(api.PascalStr(lpClassName), api.PascalStr(lpWindowName))
 	return types.HWND(r1)
 }
 
 func WinFindWindowEx(_para1 types.HWND, _para2 types.HWND, _para3 string, _para4 string) types.HWND {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(uintptr(_para1), uintptr(_para2), api.PascalStr(_para3), api.PascalStr(_para4))
+	r1, _, _ := imports.Proc(def.CEF_Win_FindWindowEx).Call(uintptr(_para1), uintptr(_para2), api.PascalStr(_para3), api.PascalStr(_para4))
 	return types.HWND(r1)
 }
 
 func WinSetWindowText(hWnd types.HWND, lpString string) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(uintptr(hWnd), api.PascalStr(lpString))
+	r1, _, _ := imports.Proc(def.CEF_Win_SetWindowText).Call(uintptr(hWnd), api.PascalStr(lpString))
 	return types.LongBool(api.GoBool(r1))
 }
 
 func WinGetWindowText(hWnd types.HWND, lpString string, nMaxCount types.LongInt) types.LongInt {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(uintptr(hWnd), api.PascalStr(lpString), uintptr(nMaxCount))
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowText).Call(uintptr(hWnd), api.PascalStr(lpString), uintptr(nMaxCount))
 	return types.LongInt(r1)
 }
 
 func WinGetWindowTextLength(hWnd types.HWND) types.LongInt {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClassLongPtr).Call(uintptr(hWnd))
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowTextLength).Call(uintptr(hWnd))
 	return types.LongInt(r1)
 }
