@@ -21,17 +21,8 @@ import (
 
 // auxTools 辅助工具
 type auxTools struct {
-	devToolsWindow   IBrowserWindow //devTools
-	devToolsX        int32          //上次改变的窗体位置，宽度
-	devToolsY        int32          //
-	devToolsWidth    int32          //
-	devToolsHeight   int32          //
-	viewSourceWindow IBrowserWindow //viewSource
-	viewSourceUrl    string         //
-	viewSourceX      int32          //上次改变的窗体位置，宽度
-	viewSourceY      int32          //
-	viewSourceWidth  int32          //
-	viewSourceHeight int32          //
+	devToolsWindow   *devToolsWindow //devTools
+	viewSourceWindow IBrowserWindow  //viewSource
 }
 
 // WindowProperty

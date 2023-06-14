@@ -26,12 +26,17 @@ const (
 	dev_tools_name = "dev-tools"
 )
 
+type devToolsWindow struct {
+	*lcl.TForm
+	parent ICEFWindowParent
+}
+
 func updateBrowserDevTools(browser *ICefBrowser, title string) {
 	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil {
 		if browserWinInfo.IsLCL() {
 			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
 			if window.getAuxTools() != nil && window.getAuxTools().devToolsWindow != nil {
-				window.getAuxTools().devToolsWindow.SetTitle(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url()))
+				window.getAuxTools().devToolsWindow.SetCaption(fmt.Sprintf("%s - %s", dev_tools_name, browser.MainFrame().Url()))
 			}
 		}
 	}
@@ -40,45 +45,11 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 	if browserWindow.IsLCL() {
 		window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
-		window.createAuxTools()
-		if window.getAuxTools().devToolsWindow != nil {
-			dtw := window.getAuxTools().devToolsWindow.AsLCLBrowserWindow().BrowserWindow()
-			QueueAsyncCall(func(id int) {
-				if dtw.WindowState() == types.WsMinimized {
-					dtw.SetWindowState(types.WsNormal)
-				}
-				dtw.Show()
-				dtw.Active()
-				dtw.Focused()
-			})
-			return
-		}
-		wp := NewWindowProperty()
-		wp.Url = m.MainFrame().Url()
-		wp.Title = fmt.Sprintf("%s - %s", dev_tools_name, m.MainFrame().Url())
-		wp.WindowType = WT_DEV_TOOLS
-		devToolsWindow := NewLCLBrowserWindow(nil, wp)
-		devToolsWindow.SetWidth(1024)
-		devToolsWindow.SetHeight(768)
-		window.auxTools.devToolsWindow = devToolsWindow
-		devToolsWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
-			if devToolsWindow.isClosing {
-				return false
-			}
-			*action = types.CaFree
-			return true
+		QueueAsyncCall(func(id int) { // show window, run is main ui thread
+			window.getAuxTools().devToolsWindow.Show()
+			window.getAuxTools().devToolsWindow.parent.UpdateSize() // 更新CEFWindow大小到当前窗口大小
 		})
-		devToolsWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
-			if devToolsWindow.isClosing {
-				return true
-			}
-			devToolsWindow.isClosing = true
-			window.auxTools.devToolsWindow = nil
-			return true
-		})
-		devToolsWindow.chromiumBrowser.CreateBrowser()
-		devToolsWindow.Show()
-		imports.Proc(def.CEFBrowser_ShowDevTools).Call(m.Instance(), devToolsWindow.Chromium().Instance(), devToolsWindow.WindowParent().Instance(), api.PascalStr(dev_tools_name))
+		imports.Proc(def.CEFBrowser_ShowDevTools).Call(m.Instance(), browserWindow.Chromium().Instance(), window.getAuxTools().devToolsWindow.parent.Instance(), api.PascalStr(dev_tools_name))
 	} else if browserWindow.IsViewsFramework() {
 		if application.RemoteDebuggingPort() > 1024 && application.RemoteDebuggingPort() < 65535 {
 			wp := NewWindowProperty()
@@ -87,9 +58,52 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 			wp.IconFS = BrowserWindow.Config.IconFS
 			wp.Icon = BrowserWindow.Config.Icon
 			wp.WindowType = WT_DEV_TOOLS
-			devToolsWindow := NewViewsFrameworkBrowserWindow(nil, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
-			devToolsWindow.ResetWindowPropertyForEvent()
-			devToolsWindow.CreateTopLevelWindow()
+			window := NewViewsFrameworkBrowserWindow(nil, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+			window.ResetWindowPropertyForEvent()
+			window.CreateTopLevelWindow()
 		}
 	}
+}
+
+// 创建开发者工具窗口，在 UI 线程中创建
+// 在显示开发者工具时，需要在显示的窗口中初始化 CEFWindow
+// 步骤
+//  1. 创建窗口, 设置窗口宽高为0, 展示位置在屏幕之外
+//	2. 创建 CEFWindow
+//  3. show & hide, 先显示窗口让CEF初始化CEFWindow, 紧跟着隐藏掉
+//  4. 设置默认的窗口宽高、居中显示在桌面并显示在任务栏
+func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
+	window := &devToolsWindow{}
+	window.TForm = lcl.NewForm(owner)
+	window.SetCaption(dev_tools_name)
+	window.SetIcon(owner.Icon())
+	window.SetWidth(0)
+	window.SetWidth(0)
+	window.SetLeft(-500)
+	window.SetTop(-500)
+	parent := NewCEFWindow(window)
+	parent.SetParent(window)
+	parent.SetAlign(types.AlClient)
+	window.parent = parent
+	window.Show()
+	window.Hide()
+	window.SetWidth(1024)
+	window.SetHeight(768)
+	parent.SetAlign(types.AlClient)
+	window.ScreenCenter()
+	window.SetShowInTaskBar(types.StAlways)
+	// 关闭流程
+	//  1. 当前浏览器窗口关闭后触发 closeQuery 事件, 调用父窗口的chromium.CloseDevTools 关闭开发者工具
+	//  2. 默认 aAanClose = true, 然后触发  OnClose 事件, 如果关闭的是开发者工具窗口，我们什么都不做,默认隐藏
+	//	3. 如果关闭的是浏览器窗口, 释放掉当前窗口并且释放CEFWindow
+	window.TForm.SetOnCloseQuery(func(sender lcl.IObject, aAanClose *bool) {
+		owner.Chromium().CloseDevTools(window.parent) // close devtools
+	})
+	window.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
+		if owner.isClosing {
+			parent.Free()
+			*action = types.CaFree
+		}
+	})
+	return window
 }

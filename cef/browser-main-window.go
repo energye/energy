@@ -83,6 +83,11 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	}
 	//设置 CEF Chromium IPC
 	ipc.SetProcessMessage(m.Chromium().(*TCEFChromium))
+	// 如果开启了开发者工具，需要在这里初始化开发者工具窗口
+	if m.Chromium().ChromiumConfig().EnableDevTools() {
+		m.createAuxTools()
+		m.getAuxTools().devToolsWindow = createDevtoolsWindow(&m.LCLBrowserWindow)
+	}
 }
 
 // MainWindow 获取主浏窗口

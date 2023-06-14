@@ -124,9 +124,9 @@ type chromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *IC
 type chromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 type chromiumEventOnAfterCreated func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnBeforeClose func(sender lcl.IObject, browser *ICefBrowser)
-type chromiumEventOnBeforeCloseEx func(sender lcl.IObject, browser *ICefBrowser, window IBrowserWindow)
+type chromiumEventOnBeforeCloseEx func(sender lcl.IObject, browser *ICefBrowser, window IBrowserWindow) bool
 type chromiumEventOnClose func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction)
-type chromiumEventOnCloseEx func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction, window IBrowserWindow)
+type chromiumEventOnCloseEx func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction, window IBrowserWindow) bool
 type chromiumEventOnScrollOffsetChanged func(sender lcl.IObject, browser *ICefBrowser, x, y float64)
 type chromiumEventOnLoadStart func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType)
 type chromiumEventOnLoadingStateChange func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool)

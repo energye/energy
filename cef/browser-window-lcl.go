@@ -530,34 +530,6 @@ func (m *LCLBrowserWindow) Restore() {
 	m.SetWindowState(types.WsNormal)
 }
 
-// CloseBrowserWindow 关闭带有浏览器的窗口
-func (m *LCLBrowserWindow) CloseBrowserWindow() {
-	if m.TForm == nil {
-		return
-	}
-	QueueAsyncCall(func(id int) {
-		if m == nil {
-			logger.Error("关闭浏览器 WindowInfo 为空")
-			return
-		}
-		if IsDarwin() {
-			//main window close
-			if m.WindowType() == consts.WT_MAIN_BROWSER {
-				m.Close()
-			} else {
-				//sub window close
-				m.isClosing = true
-				m.Hide()
-				m.Chromium().CloseBrowser(true)
-			}
-		} else {
-			m.isClosing = true
-			m.Hide()
-			m.Chromium().CloseBrowser(true)
-		}
-	})
-}
-
 // DisableTransparent 禁用口透明
 func (m *LCLBrowserWindow) DisableTransparent() {
 	if m.TForm == nil {
@@ -737,41 +709,6 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 	}
 }
 
-// registerPopupEvent 注册弹出子窗口事件
-func (m *LCLBrowserWindow) registerPopupEvent() {
-	var bwEvent = BrowserWindow.browserEvent
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !api.GoBool(BrowserWindow.Config.ChromiumConfig().enableWindowPopup) {
-			return true
-		}
-		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
-			bw := next.AsLCLBrowserWindow().BrowserWindow()
-			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-			bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
-			var result = false
-			if bwEvent.onBeforePopup != nil {
-				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
-			}
-			if !result { // true 表示用户自行处理
-				bw.defaultWindowCloseEvent()
-				bw.defaultChromiumEvent()
-				bw.registerWindowsCompMsgEvent()
-				bw.setProperty()
-				QueueAsyncCall(func(id int) { // show window, run in main thread
-					if bw.WindowProperty().IsShowModel {
-						bw.ShowModal()
-						return
-					}
-					bw.Show()
-				})
-				result = true
-			}
-			return result
-		}
-		return true
-	})
-}
-
 // registerDefaultEvent 注册默认事件 部分事件允许被覆盖
 func (m *LCLBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
@@ -888,6 +825,74 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	}
 }
 
+// registerPopupEvent 注册弹出子窗口事件
+func (m *LCLBrowserWindow) registerPopupEvent() {
+	var bwEvent = BrowserWindow.browserEvent
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
+		if !api.GoBool(BrowserWindow.Config.ChromiumConfig().enableWindowPopup) {
+			return true
+		}
+		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
+			bw := next.AsLCLBrowserWindow().BrowserWindow()
+			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+			bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
+			var result = false
+			if bwEvent.onBeforePopup != nil {
+				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
+			}
+			if !result { // true 表示用户自行处理
+				bw.defaultWindowCloseEvent()
+				bw.defaultChromiumEvent()
+				bw.registerWindowsCompMsgEvent()
+				bw.setProperty()
+				QueueAsyncCall(func(id int) { // show window, run in main thread
+					// 如果开启开发者工具, 需要在IU线程中创建window
+					if bw.Chromium().ChromiumConfig().EnableDevTools() {
+						bw.createAuxTools()
+						bw.getAuxTools().devToolsWindow = createDevtoolsWindow(bw)
+					}
+					if bw.WindowProperty().IsShowModel {
+						bw.ShowModal()
+						return
+					}
+					bw.Show()
+				})
+				result = true
+			}
+			return result
+		}
+		return true
+	})
+}
+
+// CloseBrowserWindow 关闭带有浏览器的窗口
+func (m *LCLBrowserWindow) CloseBrowserWindow() {
+	if m.TForm == nil {
+		return
+	}
+	QueueAsyncCall(func(id int) {
+		if m == nil {
+			logger.Error("close browser WindowInfo is nil")
+			return
+		}
+		if IsDarwin() {
+			//main window close
+			if m.WindowType() == consts.WT_MAIN_BROWSER {
+				m.Close()
+			} else {
+				//sub window close
+				m.isClosing = true
+				m.Hide()
+				m.Chromium().CloseBrowser(true)
+			}
+		} else {
+			m.isClosing = true
+			m.Hide()
+			m.Chromium().CloseBrowser(true)
+		}
+	})
+}
+
 // close 内部调用
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	var ret bool
@@ -924,11 +929,13 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 		} else {
 			*close = m.canClose
 		}
-		if !m.isClosing {
-			m.isClosing = true
-			m.Hide()
-			m.Chromium().CloseBrowser(true)
-		}
+		QueueAsyncCall(func(id int) {
+			if !m.isClosing {
+				m.isClosing = true
+				m.Hide()
+				m.Chromium().CloseBrowser(true)
+			}
+		})
 	}
 }
 
@@ -937,62 +944,64 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
 		logger.Debug("chromium.onClose")
-		if IsDarwin() { //MacOSX
-			desChildWind := m.WindowParent().DestroyChildWindow()
-			logger.Debug("chromium.onClose => windowParent.DestroyChildWindow:", desChildWind)
-			*aAction = consts.CbaClose
-		} else if IsLinux() {
-			*aAction = consts.CbaClose
-		} else if IsWindows() {
-			*aAction = consts.CbaDelay
-		}
-		if !IsDarwin() {
-			QueueAsyncCall(func(id int) { //main thread run
-				m.WindowParent().Free()
-				logger.Debug("chromium.onClose => windowParent.Free")
-			})
-		}
-		m.cwcap.free() //释放自定义标题栏 rgn
+		var flag = false
 		if bwEvent.onClose != nil {
-			bwEvent.onClose(sender, browser, aAction, m)
+			flag = bwEvent.onClose(sender, browser, aAction, m)
+		}
+		if !flag {
+			if IsDarwin() { //MacOSX
+				desChildWind := m.WindowParent().DestroyChildWindow()
+				logger.Debug("chromium.onClose => windowParent.DestroyChildWindow:", desChildWind)
+				*aAction = consts.CbaClose
+			} else if IsLinux() {
+				*aAction = consts.CbaClose
+			} else if IsWindows() {
+				*aAction = consts.CbaDelay
+			}
+			if !IsDarwin() {
+				QueueAsyncCall(func(id int) { //run in main thread
+					m.WindowParent().Free()
+					logger.Debug("chromium.onClose => windowParent.Free")
+				})
+			}
+			m.cwcap.free() //释放自定义标题栏 rgn
 		}
 	})
 	m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 		logger.Debug("chromium.onBeforeClose")
-		chromiumOnBeforeClose(browser)
-		m.canClose = true
-		var closeWindow = func() {
-			defer func() {
-				if err := recover(); err != nil {
-					logger.Error("chromium.OnBeforeClose Error:", err)
+		var flag = false
+		if bwEvent.onBeforeClose != nil {
+			flag = bwEvent.onBeforeClose(sender, browser, m)
+		}
+		if !flag {
+			m.canClose = true
+			var closeWindow = func() {
+				defer func() {
+					if err := recover(); err != nil {
+						logger.Error("chromium.OnBeforeClose Error:", err)
+					}
+				}()
+				if m.getAuxTools() != nil {
+					m.getAuxTools().viewSourceWindow = nil
 				}
-			}()
-			if m.auxTools != nil {
-				if m.auxTools.viewSourceWindow != nil {
-					m.auxTools.viewSourceWindow = nil
-				}
-				if m.auxTools.devToolsWindow != nil {
-					m.auxTools.devToolsWindow = nil
-				}
-			}
-			//主窗口关闭
-			if m.WindowType() == consts.WT_MAIN_BROWSER || m.WindowType() == consts.WT_POPUP_SUB_BROWSER {
-				if IsWindows() {
-					rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
-				} else {
+
+				// LCLBrowserWindow 关闭
+				if m.WindowType() == consts.WT_MAIN_BROWSER || m.WindowType() == consts.WT_POPUP_SUB_BROWSER || m.WindowType() == consts.WT_VIEW_SOURCE {
+					if IsWindows() {
+						rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
+					} else {
+						m.Close()
+					}
+				} else if IsDarwin() {
 					m.Close()
 				}
-			} else if IsDarwin() {
-				m.Close()
 			}
+			QueueAsyncCall(func(id int) { // main thread run
+				closeWindow()
+			})
+			// 最后再移除
+			BrowserWindow.removeWindowInfo(m.windowId)
+			//chromiumOnBeforeClose(browser)
 		}
-		QueueAsyncCall(func(id int) { // main thread run
-			closeWindow()
-		})
-		if bwEvent.onBeforeClose != nil {
-			bwEvent.onBeforeClose(sender, browser, m)
-		}
-		// 最后再移除
-		BrowserWindow.removeWindowInfo(m.windowId)
 	})
 }
