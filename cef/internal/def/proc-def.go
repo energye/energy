@@ -945,6 +945,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_IMECommitText", 0),
 		dllimports.NewEnergyImport("CEFChromium_IMEFinishComposingText", 0),
 		dllimports.NewEnergyImport("CEFChromium_IMECancelComposition", 0),
+		dllimports.NewEnergyImport("CEFChromium_HasDevTools", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),

@@ -182,6 +182,7 @@ type IChromiumProc interface {
 	IMECommitText(text string, replacementRange *TCefRange, relativeCursorPos int32)
 	IMEFinishComposingText(keepSelection bool)
 	IMECancelComposition()
+	HasDevTools() bool
 }
 
 // IsValid 实例有效
@@ -1415,6 +1416,14 @@ func (m *TCEFChromium) IMECancelComposition() {
 		return
 	}
 	imports.Proc(def.CEFChromium_IMECancelComposition).Call(m.Instance())
+}
+
+func (m *TCEFChromium) HasDevTools() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_HasDevTools).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
 // EmitRender IPC 发送进程 消息

@@ -945,6 +945,7 @@ const (
 	CEFChromium_IMECommitText
 	CEFChromium_IMEFinishComposingText
 	CEFChromium_IMECancelComposition
+	CEFChromium_HasDevTools
 	// ICefFrame
 	CEFFrame_Undo
 	CEFFrame_Redo
