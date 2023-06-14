@@ -143,11 +143,23 @@ func main() {
 
 ---
 
+### 鸣谢 Jetbrains
+
+<p align="center">
+    <a href="https://www.jetbrains.com?from=energy">
+        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains Logo (Main) logo.">
+    </a>
+</p>
+
+---
+
 ### QQ交流群
 
 [![QQGroup](https://img.shields.io/badge/QQ-541258627-green.svg?logo=tencentqq&logoColor=blue)](https://jq.qq.com/?_wv=1027&k=YgFjCGJX)
 
-<img src="https://assets.yanghy.cn/energy-doc/qq-group.jpg" width="300">
+<p align="center">
+    <img src="https://assets.yanghy.cn/energy-doc/qq-group.jpg" width="250">
+</p>
 
 ---
 
