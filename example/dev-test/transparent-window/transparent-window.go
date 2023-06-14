@@ -30,7 +30,7 @@ func main() {
 		go server.StartHttpServer()
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-
+		WindowTransparent(types.HWND(window.Handle()))
 	})
 	cef.Run(cefApp)
 }

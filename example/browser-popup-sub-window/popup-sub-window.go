@@ -61,7 +61,6 @@ func main() {
 			} else if strings.Index(beforePopupInfo.TargetUrl, "model_window") > 0 {
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
-				//popupWindow.AsLCLBrowserWindow().BrowserWindow().EnableTransparent(100)
 				popupWindow.WindowProperty().IsShowModel = true
 			}
 			return false
