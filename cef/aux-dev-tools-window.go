@@ -95,13 +95,12 @@ func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
 	// 关闭流程
 	//  1. 当前浏览器窗口关闭后触发 closeQuery 事件, 调用父窗口的chromium.CloseDevTools 关闭开发者工具
 	//  2. 默认 aAanClose = true, 然后触发  OnClose 事件, 如果关闭的是开发者工具窗口，我们什么都不做,默认隐藏
-	//	3. 如果关闭的是浏览器窗口, 释放掉当前窗口并且释放CEFWindow
 	window.TForm.SetOnCloseQuery(func(sender lcl.IObject, aAanClose *bool) {
 		owner.Chromium().CloseDevTools(window.parent) // close devtools
 	})
+	//	3. 如果关闭的是浏览器窗口 CaFree
 	window.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 		if owner.isClosing {
-			parent.Free()
 			*action = types.CaFree
 		}
 	})
