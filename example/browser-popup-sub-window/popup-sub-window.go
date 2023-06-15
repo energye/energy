@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
@@ -16,6 +17,8 @@ import (
 var resources embed.FS
 
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	//创建应用

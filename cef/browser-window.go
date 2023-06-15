@@ -138,6 +138,13 @@ type IViewsFrameworkBrowserWindow interface {
 	SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) //设置窗口初始bounds
 }
 
+type IAuxTools interface {
+	SetDevTools(devToolsWindow *devToolsWindow)
+	SetViewSource(viewSourceWindow IBrowserWindow)
+	DevTools() *devToolsWindow
+	ViewSource() IBrowserWindow
+}
+
 // NewWindowProperty
 // 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
@@ -156,4 +163,20 @@ func NewWindowProperty() WindowProperty {
 		Width:                     1024,
 		Height:                    768,
 	}
+}
+
+func (m *auxTools) SetDevTools(devToolsWindow *devToolsWindow) {
+	m.devToolsWindow = devToolsWindow
+}
+
+func (m *auxTools) SetViewSource(viewSourceWindow IBrowserWindow) {
+	m.viewSourceWindow = viewSourceWindow
+}
+
+func (m *auxTools) DevTools() *devToolsWindow {
+	return m.devToolsWindow
+}
+
+func (m *auxTools) ViewSource() IBrowserWindow {
+	return m.viewSourceWindow
 }

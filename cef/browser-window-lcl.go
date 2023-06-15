@@ -47,7 +47,7 @@ type LCLBrowserWindow struct {
 	onClose         TCloseEvent          //扩展事件
 	onCloseQuery    TCloseQueryEvent     //扩展事件
 	onActivateAfter lcl.TNotifyEvent     //扩展事件
-	auxTools        *auxTools            //辅助工具
+	auxTools        IAuxTools            //辅助工具
 	tray            ITray                //托盘
 	hWnd            types.HWND           //
 	cwcap           *customWindowCaption //自定义窗口标题栏
@@ -276,8 +276,8 @@ func (m *LCLBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.TForm.SetBounds(x, y, width, height)
 }
 
-// getAuxTools
-func (m *LCLBrowserWindow) getAuxTools() *auxTools {
+// GetAuxTools
+func (m *LCLBrowserWindow) GetAuxTools() IAuxTools {
 	return m.auxTools
 }
 
@@ -849,7 +849,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 					// 如果开启开发者工具, 需要在IU线程中创建window
 					if bw.Chromium().ChromiumConfig().EnableDevTools() {
 						bw.createAuxTools()
-						bw.getAuxTools().devToolsWindow = createDevtoolsWindow(bw)
+						bw.GetAuxTools().SetDevTools(createDevtoolsWindow(bw))
 					}
 					if bw.WindowProperty().IsShowModel {
 						bw.ShowModal()
@@ -981,8 +981,9 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 						logger.Error("chromium.OnBeforeClose Error:", err)
 					}
 				}()
-				if m.getAuxTools() != nil {
-					m.getAuxTools().viewSourceWindow = nil
+				if m.GetAuxTools() != nil {
+					m.GetAuxTools().SetViewSource(nil)
+					m.GetAuxTools().SetDevTools(nil)
 				}
 
 				// LCLBrowserWindow 关闭

@@ -86,7 +86,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	// 如果开启了开发者工具，需要在这里初始化开发者工具窗口
 	if m.Chromium().ChromiumConfig().EnableDevTools() {
 		m.createAuxTools()
-		m.getAuxTools().devToolsWindow = createDevtoolsWindow(&m.LCLBrowserWindow)
+		m.GetAuxTools().SetDevTools(createDevtoolsWindow(&m.LCLBrowserWindow))
 	}
 }
 

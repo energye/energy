@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	view_source_name = "view-source"
+	viewSourceName = "view-source"
 )
 
 func (m *ICefBrowser) createBrowserViewSource() {
@@ -31,7 +31,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 			var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url())
 			wp := NewWindowProperty()
 			wp.Url = viewSourceUrl
-			wp.Title = fmt.Sprintf("%s - %s", view_source_name, frame.Url())
+			wp.Title = fmt.Sprintf("%s - %s", viewSourceName, frame.Url())
 			wp.WindowType = WT_VIEW_SOURCE
 			viewSourceWindow := NewLCLBrowserWindow(nil, wp)
 			viewSourceWindow.SetWidth(800)
