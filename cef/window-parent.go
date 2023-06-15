@@ -228,6 +228,15 @@ func (m *TCEFWindowParent) SetBoundsRect(value types.TRect) {
 	imports.Proc(def.CEFWindow_SetBoundsRect).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
+func (m *TCEFWindowParent) SetTag(tag int) {
+	imports.Proc(def.CEFWindow_SetTag).Call(m.Instance(), uintptr(int32(tag)))
+}
+
+func (m *TCEFWindowParent) Tag() int {
+	r1, _, _ := imports.Proc(def.CEFWindow_GetTag).Call(m.Instance())
+	return int(int32(r1))
+}
+
 func (m *TCEFWindowParent) point() (x, y int32) {
 	return m.x, m.y
 }

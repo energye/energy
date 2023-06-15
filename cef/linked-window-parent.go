@@ -232,6 +232,15 @@ func (m *TCEFLinkedWindowParent) SetBoundsRect(value types.TRect) {
 	imports.Proc(def.CEFLinkedWindow_SetBoundsRect).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 }
 
+func (m *TCEFLinkedWindowParent) SetTag(tag int) {
+	imports.Proc(def.CEFLinkedWindow_SetTag).Call(m.Instance(), uintptr(int32(tag)))
+}
+
+func (m *TCEFLinkedWindowParent) Tag() int {
+	r1, _, _ := imports.Proc(def.CEFLinkedWindow_GetTag).Call(m.Instance())
+	return int(int32(r1))
+}
+
 func (m *TCEFLinkedWindowParent) point() (x, y int32) {
 	return m.x, m.y
 }

@@ -546,6 +546,8 @@ const (
 	CEFWindow_UpdateSize
 	CEFWindow_OnEnter
 	CEFWindow_OnExit
+	CEFWindow_SetTag
+	CEFWindow_GetTag
 	// TCEFLinkedWindowParent
 	CEFLinkedWindow_Create
 	CEFLinkedWindow_GetHandle
@@ -578,6 +580,8 @@ const (
 	CEFLinkedWindow_OnEnter
 	CEFLinkedWindow_OnExit
 	CEFLinkedWindow_SetChromium
+	CEFLinkedWindow_SetTag
+	CEFLinkedWindow_GetTag
 	// ICefBrowser
 	CEFBrowser_ShowDevTools
 	CEFBrowser_CloseDevTools
