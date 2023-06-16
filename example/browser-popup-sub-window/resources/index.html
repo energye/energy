@@ -6,7 +6,12 @@
     <style>
     </style>
     <script type="application/javascript">
-
+        function openWindow() {
+            ipc.emit("openWindow")
+        }
+        function openBrowserWindow() {
+            ipc.emit("openBrowserWindow",["https://www.baidu.com","百度一下",600,400])
+        }
     </script>
 </head>
 <body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
@@ -15,5 +20,8 @@
 <a href="elliptic.html" target="_blank">圆形窗口</a>
 <a href="transparent.html" target="_blank">透明窗口</a>
 <a href="model_window.html" target="_blank">模态窗口</a>
+<br>
+<button onclick="openWindow()">IPC创建窗口</button>
+<button onclick="openBrowserWindow()">IPC创建浏览器窗口</button>
 </body>
 </html>
