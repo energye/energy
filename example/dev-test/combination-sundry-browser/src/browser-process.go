@@ -124,7 +124,9 @@ func AppBrowserInit() {
 		if newForm == nil {
 			newForm = cef.NewLCLWindow(cef.NewWindowProperty())
 			newForm.SetTitle("新窗口标题")
-			newForm.HideTitle()
+			newForm.SetWidth(600)
+			newForm.SetHeight(400)
+			//newForm.HideTitle()
 			btn := lcl.NewButton(newForm)
 			btn.SetParent(newForm)
 			btn.SetCaption("点击我有提示")
@@ -143,7 +145,7 @@ func AppBrowserInit() {
 				newForm.Hide()
 			} else {
 				fmt.Println("显示")
-				newForm.Show()
+				newForm.ShowModal()
 			}
 		})
 	})
@@ -158,7 +160,7 @@ func AppBrowserInit() {
 			browserWindow = cef.NewLCLBrowserWindow(nil, wp)
 			browserWindow.SetWidth(800)
 			browserWindow.SetHeight(600)
-			browserWindow.HideTitle()
+			//browserWindow.HideTitle()
 			browserWindow.SetShowInTaskBar()
 			browserWindow.EnableDefaultCloseEvent()
 			browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
@@ -170,7 +172,7 @@ func AppBrowserInit() {
 			if browserWindow.Visible() {
 				browserWindow.Hide()
 			} else {
-				browserWindow.Show()
+				browserWindow.ShowModal()
 			}
 		})
 	})
@@ -189,7 +191,7 @@ func AppBrowserInit() {
 
 	//主窗口初始化回调函数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
-		return
+		//return
 		lcl.Application.SetOnMinimize(func(sender lcl.IObject) {
 			fmt.Println("minimize")
 		})
@@ -323,8 +325,8 @@ func AppBrowserInit() {
 			window.SetOnResize(func(sender lcl.IObject) bool {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
-					ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
+					//var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
+					//ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
 				}
 				return false
 			})
@@ -332,8 +334,8 @@ func AppBrowserInit() {
 			window.SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
 				//Browser是在chromium加载完之后创建, 窗口创建时该对象还不存在
 				if popupWindow.Browser() != nil {
-					var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
-					ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
+					//var tag = target.NewTarget(browser.Identifier(), browser.MainFrame().Identifier())
+					//ipc.EmitTarget("window-resize", tag, window.Left(), window.Top(), window.Width(), window.Height())
 				}
 			})
 			return false
@@ -370,13 +372,18 @@ func AppBrowserInit() {
 			}
 		})
 		event.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
-			fmt.Println("SetOnBeforeResourceLoad:", request.URL(), request.Method(), "headerMap:", request.GetHeaderMap().GetSize())
+			fmt.Println("SetOnBeforeResourceLoad")
+			fmt.Println("SetOnBeforeResourceLoad:", request.Method())
+			fmt.Println("SetOnBeforeResourceLoad:", request.URL())
+			fmt.Println("headerMap:", request.GetHeaderMap().GetSize())
 			headerMap := request.GetHeaderMap()
 			fmt.Println("\t", request.GetHeaderByName("energy"), "size:", headerMap.GetSize())
 			for i := 0; i < int(headerMap.GetSize()); i++ {
+				fmt.Println("\ti", i)
 				fmt.Println("\tkey:", headerMap.GetKey(uint32(i)))
 				fmt.Println("\tvalue:", headerMap.GetValue(uint32(i)))
 			}
+			return
 			multiMap := cef.StringMultiMapRef.New()
 			fmt.Println("multiMap.GetSize()", multiMap.GetSize())
 			multiMap.Append("key1", "value1")
@@ -387,7 +394,7 @@ func AppBrowserInit() {
 			if !request.GetPostData().IsValid() {
 				data := cef.PostDataRef.New()
 				postDataElement := cef.PostDataElementRef.New()
-				postDataElement.SetToFile("D:\\360Downloads\\7e9fac0f30c829738cc3ad8a69da97ba.txt")
+				postDataElement.SetToFile("/Users/zhangli/energy.log")
 				data.AddElement(postDataElement)
 				postDataElement = cef.PostDataElementRef.New()
 				bytes := make([]byte, 256, 256)
@@ -414,9 +421,9 @@ func AppBrowserInit() {
 				traydemo.SysTrayDemo(window) //系统原生托盘，在windows下不如lcl组件的好用, 推荐linux中使用
 			} else {
 				//支持 windows
-				traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
+				//traydemo.LCLCefTrayDemo(window) //对于LCL+CEF web端技术托盘实现无法在VF中使用
 				//支持 windows or macosx
-				//traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
+				traydemo.LCLTrayDemo(window) //LCL托盘, VF窗口组件中无法创建或使用LCL组件
 			}
 		} else if window.IsViewsFramework() {
 			if common.IsLinux() || common.IsDarwin() {

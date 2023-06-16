@@ -41,7 +41,9 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
+	cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		return
 		//window.DisableResize()
 		window.SetCenterWindow(true)
 		window.SetTitle("这里改变了窗口标题")
@@ -57,9 +59,6 @@ func main() {
 			fmt.Println("image icon.png", len(byt), err)
 			image.AddPng(1.2, byt)
 			fmt.Println("image", image.Width(), image.Height())
-		})
-		event.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
-			fmt.Println("SetOnDraggableRegionsChanged", regions.RegionsCount(), "frame:", frame.Identifier(), frame.Url())
 		})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
