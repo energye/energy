@@ -15,7 +15,6 @@ package cef
 import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
-	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -672,18 +671,18 @@ func init() {
 			fn.(chromiumEventOnResourceLoadComplete)(sender, browse, frame, request, response, *(*consts.TCefUrlRequestStatus)(getPtr(5)), *(*int64)(getPtr(6)))
 		case chromiumEventOnResourceRedirect:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
-			var newStr = new(t.TString)
+			var newStr = new(string)
 			var newStrPtr = (*uintptr)(getPtr(5))
 			fn.(chromiumEventOnResourceRedirect)(sender, browse, frame, request, response, newStr)
-			*newStrPtr = newStr.ToPtr()
+			*newStrPtr = api.PascalStr(*newStr)
 		case chromiumEventOnResourceResponse:
 			sender, browse, frame, request, response := resourceEventGet(fn, getVal, true)
 			fn.(chromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))
 		case chromiumEventOnBeforeResourceLoad:
-			sender, browse, frame, request, _ := resourceEventGet(fn, getVal, false)
+			sender, browse, frame, req, _ := resourceEventGet(fn, getVal, false)
 			instance = getInstance(getVal(4))
 			callback := &ICefCallback{instance: instance}
-			fn.(chromiumEventOnBeforeResourceLoad)(sender, browse, frame, request, callback, (*consts.TCefReturnValue)(getPtr(5)))
+			fn.(chromiumEventOnBeforeResourceLoad)(sender, browse, frame, req, callback, (*consts.TCefReturnValue)(getPtr(5)))
 		case chromiumEventOnBeforeContextMenu:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}

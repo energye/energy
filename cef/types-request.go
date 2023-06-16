@@ -63,12 +63,15 @@ func (m *ICefRequest) IsReadOnly() bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefRequest) URL() string {
+func (m *ICefRequest) URL() (r string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefRequest_GetUrl).Call(m.Instance())
-	return api.GoStr(r1)
+	value := NewTString()
+	imports.Proc(def.CefRequest_GetUrl).Call(m.Instance(), value.Instance())
+	r = value.Value()
+	value.Free()
+	return
 }
 
 // SetURL 设置URL
@@ -79,13 +82,15 @@ func (m *ICefRequest) SetURL(url string) {
 	imports.Proc(def.CefRequest_SetUrl).Call(m.Instance(), api.PascalStr(url))
 }
 
-func (m *ICefRequest) Method() string {
+func (m *ICefRequest) Method() (r string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefRequest_GetMethod).Call(m.Instance())
-	return api.GoStr(r1)
-
+	value := NewTString()
+	imports.Proc(def.CefRequest_GetMethod).Call(m.Instance(), value.Instance())
+	r = value.Value()
+	value.Free()
+	return
 }
 
 // SetMethod 设置请求方式
@@ -96,12 +101,15 @@ func (m *ICefRequest) SetMethod(method string) {
 	imports.Proc(def.CefRequest_SetMethod).Call(m.Instance(), api.PascalStr(method))
 }
 
-func (m *ICefRequest) ReferrerUrl() string {
+func (m *ICefRequest) ReferrerUrl() (r string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefRequest_GetReferrerUrl).Call(m.Instance())
-	return api.GoStr(r1)
+	value := NewTString()
+	imports.Proc(def.CefRequest_GetReferrerUrl).Call(m.Instance(), value.Instance())
+	r = value.Value()
+	value.Free()
+	return r
 }
 
 // SetReferrer 设置来源策略
@@ -153,12 +161,15 @@ func (m *ICefRequest) SetFirstPartyForCookies(url string) {
 }
 
 // GetHeaderByName
-func (m *ICefRequest) GetHeaderByName(name string) string {
+func (m *ICefRequest) GetHeaderByName(name string) (r string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefRequest_GetHeaderByName).Call(m.Instance(), api.PascalStr(name))
-	return api.GoStr(r1)
+	value := NewTString()
+	imports.Proc(def.CefRequest_GetHeaderByName).Call(m.Instance(), api.PascalStr(name), value.Instance())
+	r = value.Value()
+	value.Free()
+	return r
 }
 
 // SetHeaderByName

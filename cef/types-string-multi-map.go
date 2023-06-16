@@ -60,21 +60,30 @@ func (m *ICefStringMultiMap) FindCount(key string) uint32 {
 }
 
 // GetEnumerate 根据 key and index 获取
-func (m *ICefStringMultiMap) GetEnumerate(key string, index uint32) string {
-	r1, _, _ := imports.Proc(def.StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(index))
-	return api.GoStr(r1)
+func (m *ICefStringMultiMap) GetEnumerate(key string, index uint32) (r string) {
+	value := NewTString()
+	imports.Proc(def.StringMultimap_GetEnumerate).Call(m.Instance(), api.PascalStr(key), uintptr(index), value.Instance())
+	r = value.Value()
+	value.Free()
+	return
 }
 
 // GetKey 根据 index 获取key
-func (m *ICefStringMultiMap) GetKey(index uint32) string {
-	r1, _, _ := imports.Proc(def.StringMultimap_GetKey).Call(m.Instance(), uintptr(index))
-	return api.GoStr(r1)
+func (m *ICefStringMultiMap) GetKey(index uint32) (r string) {
+	value := NewTString()
+	imports.Proc(def.StringMultimap_GetKey).Call(m.Instance(), uintptr(index), value.Instance())
+	r = value.Value()
+	value.Free()
+	return r
 }
 
 // GetValue 根据 index 获取value
-func (m *ICefStringMultiMap) GetValue(index uint32) string {
-	r1, _, _ := imports.Proc(def.StringMultimap_GetValue).Call(m.Instance(), uintptr(index))
-	return api.GoStr(r1)
+func (m *ICefStringMultiMap) GetValue(index uint32) (r string) {
+	value := NewTString()
+	imports.Proc(def.StringMultimap_GetValue).Call(m.Instance(), uintptr(index), value.Instance())
+	r = value.Value()
+	value.Free()
+	return
 }
 
 // Append 给key追加值

@@ -1918,6 +1918,11 @@ const (
 	CefDomNode_SetElementAttribute
 	CefDomNode_GetElementInnerText
 	CefDomNode_GetElementBounds
+	// TString
+	TString_Create
+	TString_Free
+	TString_SetValue // def no impl
+	TString_GetValue
 	// gtk3
 	GTK3_CustomWidgetSetInitialization
 	GTK3_CustomWidgetSetFinalization

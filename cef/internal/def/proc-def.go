@@ -1918,6 +1918,11 @@ func init() {
 		dllimports.NewEnergyImport("CefDomNode_SetElementAttribute", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementInnerText", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementBounds", 0),
+		// TString
+		dllimports.NewEnergyImport("TString_Create", 0),
+		dllimports.NewEnergyImport("TString_Free", 0),
+		dllimports.NewEnergyImport("TString_SetValue", 0),
+		dllimports.NewEnergyImport("TString_GetValue", 0),
 		// gtk3
 		dllimports.NewEnergyImport("GTK3_CustomWidgetSetInitialization", 0),
 		dllimports.NewEnergyImport("GTK3_CustomWidgetSetFinalization", 0),

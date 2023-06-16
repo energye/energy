@@ -144,10 +144,6 @@ type Rect struct {
 	Bottom int32
 }
 
-type TString struct {
-	value string
-}
-
 type TNewTextMetricEx struct {
 	Ntmentm           TNewTextMetric
 	NtmeFontSignature TFontSignature
@@ -343,18 +339,6 @@ type LogFontA struct {
 	LfQuality        byte
 	LfPitchAndFamily byte
 	LfFaceName       []AnsiChar // len = 32
-}
-
-func (m *TString) SetValue(v string) {
-	m.value = v
-}
-
-func (m *TString) GetValue() string {
-	return m.value
-}
-
-func (m *TString) ToPtr() uintptr {
-	return api.PascalStr(m.value)
 }
 
 func (m Int8) ToPtr() uintptr {
