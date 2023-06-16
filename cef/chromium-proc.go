@@ -402,7 +402,11 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string,
 	if !m.IsValid() {
 		return false
 	}
-	return _CEFChromium_CreateBrowse(m.Instance(), window.Instance(), api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
+	var windowPtr uintptr
+	if window != nil {
+		windowPtr = window.Instance()
+	}
+	return _CEFChromium_CreateBrowse(m.Instance(), windowPtr, api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
 }
 
 func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {
