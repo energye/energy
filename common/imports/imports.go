@@ -36,6 +36,11 @@ func Proc(index int) dllimports.ProcAddr {
 	return api.ImportDefFunc(energyImportDefs, index)
 }
 
+func SysCallN(index int, args ...uintptr) uintptr {
+	r1, _, _ := Proc(index).Call(args...)
+	return r1
+}
+
 func ExtProc(index int) dllimports.ProcAddr {
 	return api.ImportDefFunc(lclExtImportDefs, index)
 }
