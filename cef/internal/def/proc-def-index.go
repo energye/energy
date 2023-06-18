@@ -2168,6 +2168,14 @@ const (
 	BufferPanel_OrigPopupBufferHeight
 	BufferPanel_OrigPopupBufferBits
 	BufferPanel_OrigPopupScanlineSize
+	BufferPanel_SetOnIMECancelComposition
+	BufferPanel_SetOnIMECommitText
+	BufferPanel_SetOnIMESetComposition
+	BufferPanel_SetOnCustomTouch
+	BufferPanel_SetOnPointerDown
+	BufferPanel_SetOnPointerUp
+	BufferPanel_SetOnPointerUpdate
+	BufferPanel_SetOnPaintParentBkg
 	// TString
 	TString_Create
 	TString_Free

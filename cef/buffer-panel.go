@@ -1871,3 +1871,7 @@ func (m *TBufferPanel) OrigPopupBufferBits() unsafe.Pointer {
 func (m *TBufferPanel) OrigPopupScanlineSize() int32 {
 	return int32(imports.SysCallN(def.BufferPanel_OrigPopupScanlineSize, m.Instance()))
 }
+
+func (m *TBufferPanel) SetOnPaintParentBkg(fn lcl.TNotifyEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnPaintParentBkg, m.Instance(), api.MakeEventDataPtr(fn))
+}
