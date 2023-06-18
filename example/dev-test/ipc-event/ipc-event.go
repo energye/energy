@@ -248,7 +248,6 @@ func main() {
 				fmt.Println("窗口 显示/隐藏")
 				return false
 			})
-
 			ipc.On("SendMouseWheelEvent", func() {
 				browser := window.Chromium().Browser()
 				// 滚轮
