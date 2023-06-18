@@ -52,8 +52,8 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 		go server.StartHttpServer()
 	})
 	fmt.Println("OnFormCreate")
-	m.SetWidth(600)
-	m.SetHeight(400)
+	m.SetWidth(800)
+	m.SetHeight(600)
 	m.ScreenCenter()
 	chromium := cef.NewChromium(m, nil)
 
@@ -62,7 +62,7 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	bufferPanel.SetColor(colors.ClAqua)
 	bufferPanel.SetWidth(800)
 	bufferPanel.SetHeight(600)
-	bufferPanel.SetAlign(types.AlClient)
+	//bufferPanel.SetAlign(types.AlClient)
 	bufferPanel.SetOnClick(func(sender lcl.IObject) {
 		fmt.Println("SetOnClick")
 	})
@@ -123,28 +123,32 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 				tempWidth = bufferPanel.BufferWidth()
 				tempHeight = bufferPanel.BufferHeight()
 			}
+			fmt.Println("tempWidth:", tempWidth, "tempHeight:", tempHeight)
 			//byteBufPtr := (*byte)(unsafe.Pointer(buffer))
 			rgbSizeOf := int(unsafe.Sizeof(cef.TRGBQuad{}))
-			srcStride := int(width) + rgbSizeOf
+			fmt.Println("SizeOf(TRGBQuad):", rgbSizeOf)
+			srcStride := int(width) * rgbSizeOf
 			fmt.Println("srcStride:", srcStride)
 			for i := 0; i < dirtyRects.Count(); i++ {
 				rect := dirtyRects.Get(i)
-				tempLineSize = int(math.Min(float64(rect.Width), float64(tempWidth-rect.X))) * rgbSizeOf
-				fmt.Println("tempLineSize:tempLineSize", tempLineSize)
-				if tempLineSize > 0 {
-					tempSrcOffset = int((rect.Y*width)+rect.X) * rgbSizeOf
-					tempDstOffset = int(rect.X) * rgbSizeOf
-					//src := @pbyte(buffer)[TempSrcOffset];
-					src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针
-					fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
-					j := int(math.Min(float64(rect.Height), float64(tempHeight-rect.Y)))
-					fmt.Println("j:", j)
-					for ii := 0; ii < j; ii++ {
-						tempBufferBits := tempBitMap.ScanLine(rect.Y + int32(i))
-						dst = uintptr(common.GetParamPtr(tempBufferBits, tempDstOffset)) //拿到dst指针
-						fmt.Println("dst:", dst)
-						rtl.Move(src, dst, tempLineSize)
-						src = src + uintptr(srcStride)
+				if rect.X >= 0 && rect.Y >= 0 {
+					tempLineSize = int(math.Min(float64(rect.Width), float64(tempWidth-rect.X))) * rgbSizeOf
+					fmt.Println("tempLineSize:tempLineSize", tempLineSize)
+					if tempLineSize > 0 {
+						tempSrcOffset = int((rect.Y*width)+rect.X) * rgbSizeOf
+						tempDstOffset = int(rect.X) * rgbSizeOf
+						//src := @pbyte(buffer)[TempSrcOffset];
+						src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针
+						fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
+						j := int(math.Min(float64(rect.Height), float64(tempHeight-rect.Y)))
+						fmt.Println("j:", j)
+						for ii := 0; ii < j; ii++ {
+							tempBufferBits := tempBitMap.ScanLine(rect.Y + int32(ii))
+							dst = uintptr(common.GetParamPtr(tempBufferBits, tempDstOffset)) //拿到dst指针
+							fmt.Println("dst:", dst)
+							rtl.Move(src, dst, tempLineSize)
+							src = src + uintptr(srcStride)
+						}
 					}
 				}
 			}
@@ -163,9 +167,7 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 			ha := m.HandleAllocated()
 			fmt.Println("ha:", ha)
 			if ha {
-				cef.QueueAsyncCall(func(id int) {
-					bufferPanel.Invalidate()
-				})
+				bufferPanel.Invalidate()
 			}
 		}
 		fmt.Println("SetOnPaint", browser.Identifier(), kind, dirtyRects.Count(), dirtyRects.Get(0), buffer, width, height)
