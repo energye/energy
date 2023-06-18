@@ -26,12 +26,9 @@ type TBufferPanel struct {
 	instance unsafe.Pointer
 }
 
-// NewPanel
-//
-// 创建一个新的对象。
-//
-// Create a new object.
-func NewPanel(owner lcl.IComponent) *TBufferPanel {
+// NewBufferPanel
+//  创建一个新的对象。
+func NewBufferPanel(owner lcl.IComponent) *TBufferPanel {
 	m := new(TBufferPanel)
 	var result uintptr
 	imports.SysCallN(def.BufferPanel_Create, owner.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -39,12 +36,12 @@ func NewPanel(owner lcl.IComponent) *TBufferPanel {
 	return m
 }
 
-// AsPanel
+// AsBufferPanel
 //
 // 动态转换一个已存在的对象实例。
 //
 // Dynamically convert an existing object instance.
-func AsPanel(obj interface{}) *TBufferPanel {
+func AsBufferPanel(obj interface{}) *TBufferPanel {
 	instance := getInstance(obj)
 	if instance == nil {
 		return nil
@@ -1788,7 +1785,7 @@ func (m *TBufferPanel) CreateIMEHandler() {
 }
 
 func (m *TBufferPanel) ChangeCompositionRange(selectionRange TCefRange, characterBounds []TCefRect) {
-	imports.SysCallN(def.BufferPanel_ChangeCompositionRange, m.Instance(), uintptr(unsafe.Pointer(&selectionRange)), uintptr(unsafe.Pointer(&characterBounds)))
+	imports.SysCallN(def.BufferPanel_ChangeCompositionRange, m.Instance(), uintptr(unsafe.Pointer(&selectionRange)), uintptr(unsafe.Pointer(&characterBounds[0])), uintptr(int32(len(characterBounds)-1)))
 }
 
 func (m *TBufferPanel) DrawOrigPopupBuffer(srcRect, dstRect types.TRect) {
