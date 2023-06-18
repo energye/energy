@@ -828,6 +828,7 @@ const (
 	CEFChromium_BrowserZoom
 	CEFChromium_GoBackForward
 	CEFChromium_NotifyMoveOrResizeStarted
+	CEFChromium_Invalidate
 	CEFChromium_CloseBrowser
 	CEFChromium_ExecuteJavaScript
 	CEFChromium_ShowDevTools
@@ -950,6 +951,7 @@ const (
 	CEFChromium_IMEFinishComposingText
 	CEFChromium_IMECancelComposition
 	CEFChromium_HasDevTools
+	CEFChromium_InitializeDragAndDrop
 	// ICefFrame
 	CEFFrame_Undo
 	CEFFrame_Redo
@@ -1012,6 +1014,13 @@ const (
 	Misc_CefRegisterSchemeHandlerFactory
 	Misc_CefClearSchemeHandlerFactories
 	Misc_CefGetMimeType
+	Misc_DeviceToLogicalInt32
+	Misc_DeviceToLogicalFloat32
+	Misc_DeviceToLogicalMouse
+	Misc_DeviceToLogicalTouch
+	Misc_DeviceToLogicalPoint
+	Misc_LogicalToDeviceInt32
+	Misc_LogicalToDeviceRect
 	// ICefRequest
 	CefRequestRef_New
 	CefRequestRef_UnWrap

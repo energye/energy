@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+//go:build windows
+
 // CEF TBufferPanel
 
 package cef

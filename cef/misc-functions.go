@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	t "github.com/energye/golcl/lcl/types"
 	"unsafe"
 )
 
@@ -94,4 +95,35 @@ func ClearSchemeHandlerFactories() bool {
 func GetMimeType(extension string) string {
 	r1, _, _ := imports.Proc(def.Misc_CefGetMimeType).Call(api.PascalStr(extension))
 	return api.GoStr(r1)
+}
+
+func DeviceToLogicalInt32(value int32, deviceScaleFactor float64) int32 {
+	r1, _, _ := imports.Proc(def.Misc_DeviceToLogicalInt32).Call(uintptr(value), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+	return int32(r1)
+}
+
+func DeviceToLogicalFloat32(value float32, deviceScaleFactor float64) (result float32) {
+	imports.Proc(def.Misc_DeviceToLogicalFloat32).Call(uintptr(unsafe.Pointer(&value)), uintptr(unsafe.Pointer(&deviceScaleFactor)), uintptr(unsafe.Pointer(&result)))
+	return
+}
+
+func DeviceToLogicalMouse(event *TCefMouseEvent, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_DeviceToLogicalMouse).Call(uintptr(unsafe.Pointer(event)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+}
+
+func DeviceToLogicalTouch(event *TCefTouchEvent, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_DeviceToLogicalTouch).Call(uintptr(unsafe.Pointer(event)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+}
+
+func DeviceToLogicalPoint(point *t.TPoint, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_DeviceToLogicalPoint).Call(uintptr(unsafe.Pointer(point)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+}
+
+func LogicalToDeviceInt32(value int32, deviceScaleFactor float64) int32 {
+	r1, _, _ := imports.Proc(def.Misc_LogicalToDeviceInt32).Call(uintptr(value), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+	return int32(r1)
+}
+
+func LogicalToDeviceRect(rect *TCefRect, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_LogicalToDeviceRect).Call(uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
 }

@@ -60,6 +60,7 @@ type IChromiumProc interface {
 	GoBack()
 	GoForward()
 	NotifyMoveOrResizeStarted()
+	Invalidate(type_ TCefPaintElementType)
 	CloseBrowser(forceClose bool)
 	ExecuteJavaScript(code, scriptURL string, startLine int32)
 	ShowDevTools(window ICEFWindowParent)
@@ -183,6 +184,7 @@ type IChromiumProc interface {
 	IMEFinishComposingText(keepSelection bool)
 	IMECancelComposition()
 	HasDevTools() bool
+	InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl)
 }
 
 // IsValid 实例有效
@@ -474,6 +476,13 @@ func (m *TCEFChromium) NotifyMoveOrResizeStarted() {
 		return
 	}
 	_CEFChromium_NotifyMoveOrResizeStarted(m.Instance())
+}
+
+func (m *TCEFChromium) Invalidate(type_ TCefPaintElementType) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_Invalidate).Call(m.Instance(), uintptr(type_))
 }
 
 func (m *TCEFChromium) CloseBrowser(forceClose bool) {
@@ -1428,6 +1437,15 @@ func (m *TCEFChromium) HasDevTools() bool {
 	}
 	r1, _, _ := imports.Proc(def.CEFChromium_HasDevTools).Call(m.Instance())
 	return api.GoBool(r1)
+}
+
+// InitializeDragAndDrop
+//	By Windows
+func (m *TCEFChromium) InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_InitializeDragAndDrop).Call(m.Instance(), lcl.CheckPtr(dropTargetCtrl))
 }
 
 // EmitRender IPC 发送进程 消息

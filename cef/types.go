@@ -178,6 +178,13 @@ type TCefRectArray struct {
 	count  uint32
 }
 
+type TRGBQuad struct {
+	RgbBlue     byte
+	RgbGreen    byte
+	RgbRed      byte
+	RgbReserved byte
+}
+
 // NewTCefRectArray
 //  TCefRect 动态数组结构, 通过指针引用取值
 func NewTCefRectArray(ptr uintptr, count uint32) *TCefRectArray {
@@ -188,8 +195,8 @@ func NewTCefRectArray(ptr uintptr, count uint32) *TCefRectArray {
 	}
 }
 
-func (m *TCefRectArray) Count() uint32 {
-	return m.count
+func (m *TCefRectArray) Count() int {
+	return int(m.count)
 }
 
 func (m *TCefRectArray) Get(index int) *TCefRect {
