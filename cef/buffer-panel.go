@@ -601,7 +601,7 @@ func (m *TBufferPanel) SetCanvas(value *lcl.TCanvas) {
 // SetOnPaint
 //
 // 设置绘画事件。
-func (m *TBufferPanel) SetOnPaint(fn TNotifyEvent) {
+func (m *TBufferPanel) SetOnPaint(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnPaint, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
@@ -1097,7 +1097,7 @@ func (m *TBufferPanel) SetOnAlignPosition(fn lcl.TAlignPositionEvent) {
 // 设置控件单击事件。
 //
 // Set control click event.
-func (m *TBufferPanel) SetOnClick(fn TNotifyEvent) {
+func (m *TBufferPanel) SetOnClick(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnClick, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
@@ -1117,7 +1117,7 @@ func (m *TBufferPanel) SetOnDockDrop(fn lcl.TDockDropEvent) {
 // SetOnDblClick
 //
 // 设置双击事件。
-func (m *TBufferPanel) SetOnDblClick(fn TNotifyEvent) {
+func (m *TBufferPanel) SetOnDblClick(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnDblClick, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
