@@ -12,7 +12,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -172,8 +171,8 @@ type renderHandlerGetScreenPoint func(browser *ICefBrowser, viewX, viewY int32) 
 type renderHandlerGetScreenInfo func(browser *ICefBrowser) (screenInfo *TCefScreenInfo, result bool)
 type renderHandlerOnPopupShow func(browser *ICefBrowser, show bool)
 type renderHandlerOnPopupSize func(browser *ICefBrowser, rect *TCefRect)
-type renderHandlerOnPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRectsCount uint32, dirtyRects []*TCefRect, buffer uintptr, width, height int32)
-type renderHandlerOnAcceleratedPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRectsCount uint32, dirtyRects []*TCefRect, sharedHandle uintptr)
+type renderHandlerOnPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, buffer uintptr, width, height int32)
+type renderHandlerOnAcceleratedPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, sharedHandle uintptr)
 type renderHandlerGetTouchHandleSize func(browser *ICefBrowser, orientation consts.TCefHorizontalAlignment) *TCefSize
 type renderHandlerOnTouchHandleStateChanged func(browser *ICefBrowser, state *TCefTouchHandleState)
 type renderHandlerOnStartDragging func(browser *ICefBrowser, dragData *ICefDragData, allowedOps consts.TCefDragOperations, x, y int32) bool
@@ -236,33 +235,16 @@ func init() {
 			kind := consts.TCefPaintElementType(getVal(1))
 			dirtyRectsCount := uint32(getVal(2))
 			dirtyRectsPtr := getVal(3)
-			var dirtyRects []*TCefRect
-			if dirtyRectsCount > 0 {
-				var rectSize = unsafe.Sizeof(TCefRect{})
-				dirtyRects = make([]*TCefRect, dirtyRectsCount, dirtyRectsCount)
-				for i := 0; i < int(dirtyRectsCount); i++ {
-					dirtyRects[i] = (*TCefRect)(common.GetParamPtr(dirtyRectsPtr, i*int(rectSize)))
-				}
-			}
 			buffer := getVal(4)
 			width, height := int32(getVal(5)), int32(getVal(6))
-			fn.(renderHandlerOnPaint)(browser, kind, dirtyRectsCount, dirtyRects, buffer, width, height)
+			fn.(renderHandlerOnPaint)(browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), buffer, width, height)
 		case renderHandlerOnAcceleratedPaint:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			kind := consts.TCefPaintElementType(getVal(1))
 			dirtyRectsCount := uint32(getVal(2))
 			dirtyRectsPtr := getVal(3)
-			var dirtyRects []*TCefRect
-			if dirtyRectsCount > 0 {
-				var rect TCefRect
-				var rectSize = unsafe.Sizeof(rect)
-				dirtyRects = make([]*TCefRect, dirtyRectsCount, dirtyRectsCount)
-				for i := 0; i < int(dirtyRectsCount); i++ {
-					dirtyRects[i] = (*TCefRect)(common.GetParamPtr(dirtyRectsPtr, i*int(rectSize)))
-				}
-			}
 			sharedHandle := getVal(4)
-			fn.(renderHandlerOnAcceleratedPaint)(browser, kind, dirtyRectsCount, dirtyRects, sharedHandle)
+			fn.(renderHandlerOnAcceleratedPaint)(browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), sharedHandle)
 		case renderHandlerGetTouchHandleSize:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			orientation := consts.TCefHorizontalAlignment(getVal(1))

@@ -15,6 +15,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/common"
 	. "github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
@@ -169,6 +170,33 @@ type TCefRect struct {
 	Y      int32
 	Width  int32
 	Height int32
+}
+
+type TCefRectArray struct {
+	ptr    uintptr
+	sizeOf uintptr
+	count  uint32
+}
+
+// NewTCefRectArray
+//  TCefRect 动态数组结构, 通过指针引用取值
+func NewTCefRectArray(ptr uintptr, count uint32) *TCefRectArray {
+	return &TCefRectArray{
+		ptr:    ptr,
+		sizeOf: unsafe.Sizeof(TCefRect{}),
+		count:  count,
+	}
+}
+
+func (m *TCefRectArray) Count() uint32 {
+	return m.count
+}
+
+func (m *TCefRectArray) Get(index int) *TCefRect {
+	if m.count == 0 || index < 0 || index >= int(m.count) {
+		return nil
+	}
+	return (*TCefRect)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
 }
 
 // TCefSize

@@ -49,17 +49,8 @@ func init() {
 			kind := consts.TCefPaintElementType(getVal(2))
 			dirtyRectsCount := uint32(getVal(3))
 			dirtyRectsPtr := getVal(4)
-			var dirtyRects []*TCefRect
-			if dirtyRectsCount > 0 {
-				var rect TCefRect
-				var rectSize = unsafe.Sizeof(rect)
-				dirtyRects = make([]*TCefRect, dirtyRectsCount, dirtyRectsCount)
-				for i := 0; i < int(dirtyRectsCount); i++ {
-					dirtyRects[i] = (*TCefRect)(common.GetParamPtr(dirtyRectsPtr, i*int(rectSize)))
-				}
-			}
 			sharedHandle := getVal(5)
-			fn.(chromiumEventOnAcceleratedPaint)(lcl.AsObject(getPtr(0)), browser, kind, dirtyRectsCount, dirtyRects, sharedHandle)
+			fn.(chromiumEventOnAcceleratedPaint)(lcl.AsObject(getPtr(0)), browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), sharedHandle)
 		case chromiumEventOnAllConnectionsClosed:
 			fn.(chromiumEventOnAllConnectionsClosed)(lcl.AsObject(getPtr(0)))
 		case chromiumEventOnAudioStreamError:
@@ -475,18 +466,9 @@ func init() {
 			kind := consts.TCefPaintElementType(getVal(2))
 			dirtyRectsCount := uint32(getVal(3))
 			dirtyRectsPtr := getVal(4)
-			var dirtyRects []*TCefRect
-			if dirtyRectsCount > 0 {
-				var rect TCefRect
-				var rectSize = unsafe.Sizeof(rect)
-				dirtyRects = make([]*TCefRect, dirtyRectsCount, dirtyRectsCount)
-				for i := 0; i < int(dirtyRectsCount); i++ {
-					dirtyRects[i] = (*TCefRect)(common.GetParamPtr(dirtyRectsPtr, i*int(rectSize)))
-				}
-			}
 			buffer := getVal(5)
 			width, height := int32(getVal(6)), int32(getVal(7))
-			fn.(chromiumEventOnPaint)(lcl.AsObject(getPtr(0)), browser, kind, dirtyRectsCount, dirtyRects, buffer, width, height)
+			fn.(chromiumEventOnPaint)(lcl.AsObject(getPtr(0)), browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), buffer, width, height)
 		case chromiumEventOnPdfPrintFinished:
 			fn.(chromiumEventOnPdfPrintFinished)(lcl.AsObject(getPtr(0)), api.GoBool(getVal(1)))
 		case chromiumEventOnPopupShow:

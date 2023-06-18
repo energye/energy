@@ -23,7 +23,7 @@ import (
 type chromiumEventOnResult func(sender lcl.IObject, aResultOK bool)      // 通用Result bool
 type chromiumEventOnResultFloat func(sender lcl.IObject, result float64) // 通用Result float
 
-type chromiumEventOnAcceleratedPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRectsCount uint32, dirtyRects []*TCefRect, sharedHandle uintptr)
+type chromiumEventOnAcceleratedPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, sharedHandle uintptr)
 type chromiumEventOnAllConnectionsClosed func(sender lcl.IObject)
 type chromiumEventOnAudioStreamError func(sender lcl.IObject, browser *ICefBrowser, message string)
 type chromiumEventOnAudioStreamPacket func(sender lcl.IObject, browser *ICefBrowser, data *uintptr, frames int32, pts int64)
@@ -81,7 +81,7 @@ type chromiumEventOnMediaAccessChange func(sender lcl.IObject, browser *ICefBrow
 type chromiumEventOnMediaRouteCreateFinished func(sender lcl.IObject, result consts.TCefMediaRouterCreateResult, error string, route *ICefMediaRoute) // TODO ICefMediaRoute
 type chromiumEventOnMediaSinkDeviceInfo func(sender lcl.IObject, ipAddress string, port int32, modelName string)
 type chromiumEventOnNavigationVisitorResultAvailable func(sender lcl.IObject, entry *ICefNavigationEntry, current bool, index, total int32) bool // TODO ICefNavigationEntry
-type chromiumEventOnPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRectsCount uint32, dirtyRects []*TCefRect, buffer uintptr, width, height int32)
+type chromiumEventOnPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, buffer uintptr, width, height int32)
 type chromiumEventOnPdfPrintFinished func(sender lcl.IObject, ok bool)
 type chromiumEventOnPopupShow func(sender lcl.IObject, browser *ICefBrowser, show bool)
 type chromiumEventOnPopupSize func(sender lcl.IObject, browser *ICefBrowser, rect *TCefRect)
