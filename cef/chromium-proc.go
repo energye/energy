@@ -33,7 +33,8 @@ import (
 type IChromiumProc interface {
 	lcl.IObject
 	Instance() uintptr
-	ChromiumConfig() *tCefChromiumConfig
+	Options() IChromiumOptions
+	Config() *TCefChromiumConfig
 	Browser() *ICefBrowser
 	BrowserById(id int32) *ICefBrowser
 	BrowserIdByIndex(index int32) int32
@@ -245,8 +246,12 @@ func (m *TCEFChromium) ToString() string {
 	return api.GoStr(r1)
 }
 
-func (m *TCEFChromium) ChromiumConfig() *tCefChromiumConfig {
-	return m.cfg
+func (m *TCEFChromium) Options() IChromiumOptions {
+	return m.options
+}
+
+func (m *TCEFChromium) Config() *TCefChromiumConfig {
+	return m.config
 }
 
 func (m *TCEFChromium) Browser() *ICefBrowser {
@@ -1491,8 +1496,8 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 //--------TCEFChromium proc begin--------
 
 // TCEFChromium _CEFChromium_Create
-func _CEFChromium_Create(owner, config uintptr) uintptr {
-	r1, _, _ := imports.Proc(def.CEFChromium_Create).Call(owner, config)
+func _CEFChromium_Create(owner uintptr) uintptr {
+	r1, _, _ := imports.Proc(def.CEFChromium_Create).Call(owner)
 	return r1
 }
 

@@ -22,7 +22,6 @@ import (
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"time"
@@ -55,7 +54,7 @@ type LCLBrowserWindow struct {
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
 //  该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewLCLBrowserWindow(config *tCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
+func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
 	var browseWindow = NewLCLWindow(windowProperty, owner...)
 	browseWindow.ChromiumCreate(config, windowProperty.Url)
 	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
@@ -399,7 +398,7 @@ func (m *LCLBrowserWindow) WindowType() consts.WINDOW_TYPE {
 // ChromiumCreate
 //  创建window浏览器组件
 //  不带有默认事件的chromium
-func (m *LCLBrowserWindow) ChromiumCreate(config *tCefChromiumConfig, defaultUrl string) {
+func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl string) {
 	if m.chromiumBrowser != nil {
 		return
 	}
@@ -771,7 +770,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	})
 	//事件可以被覆盖
 	m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
-		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+		if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
 			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 				if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
 					return
@@ -829,7 +828,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 func (m *LCLBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !api.GoBool(BrowserWindow.Config.ChromiumConfig().enableWindowPopup) {
+		if !BrowserWindow.Config.ChromiumConfig().EnableWindowPopup() {
 			return true
 		}
 		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
@@ -847,7 +846,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 				bw.setProperty()
 				QueueAsyncCall(func(id int) { // show window, run in main thread
 					// 如果开启开发者工具, 需要在IU线程中创建window
-					if bw.Chromium().ChromiumConfig().EnableDevTools() {
+					if bw.Chromium().Config().EnableDevTools() {
 						bw.createAuxTools()
 						bw.GetAuxTools().SetDevTools(createDevtoolsWindow(bw))
 					}

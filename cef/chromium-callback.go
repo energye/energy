@@ -19,7 +19,6 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/messages"
@@ -90,7 +89,7 @@ var (
 
 // chromiumOnBeforeContextMenu 右键菜单 - 默认实现
 func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-	if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableMenu) {
+	if !BrowserWindow.Config.ChromiumConfig().EnableMenu() {
 		model.Clear()
 		return
 	}
@@ -256,7 +255,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		},
 	})
 	model.AddSeparator()
-	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+	if BrowserWindow.Config.ChromiumConfig().EnableViewSource() {
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
@@ -267,7 +266,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			},
 		})
 	}
-	if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+	if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, i18n.Resource("devTools"))
 	}
@@ -306,11 +305,11 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 	} else if commandId == forcedRefreshId {
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
-		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableViewSource) {
+		if BrowserWindow.Config.ChromiumConfig().EnableViewSource() {
 			browser.ViewSource()
 		}
 	} else if commandId == devToolsId {
-		if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+		if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {

@@ -16,7 +16,6 @@ import (
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"sync"
 	"unsafe"
 )
 
@@ -30,10 +29,10 @@ type IChromium interface {
 type TCEFChromium struct {
 	*lcl.TComponent
 	instance      unsafe.Pointer
-	cfg           *tCefChromiumConfig
+	options       IChromiumOptions
+	config        *TCefChromiumConfig
 	browser       *ICefBrowser
 	idBrowsers    map[int32]*ICefBrowser
-	emitLock      *sync.Mutex
 	browserHandle types.HWND
 	widgetHandle  types.HWND
 	renderHandle  types.HWND
@@ -41,16 +40,16 @@ type TCEFChromium struct {
 }
 
 // NewChromium 创建一个新的 TCEFChromium
-func NewChromium(owner lcl.IComponent, config *tCefChromiumConfig) IChromium {
+func NewChromium(owner lcl.IComponent, config *TCefChromiumConfig) IChromium {
 	m := new(TCEFChromium)
 	if config != nil {
-		m.cfg = config
+		m.config = config
 	} else {
-		m.cfg = NewChromiumConfig()
+		m.config = NewChromiumConfig()
 	}
-	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner), uintptr(unsafe.Pointer(m.cfg))))
-	m.emitLock = new(sync.Mutex)
+	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner)))
 	m.initDefault()
+	m.options = NewChromiumOptions(m)
 	return m
 }
 

@@ -12,94 +12,92 @@
 
 package cef
 
-import "github.com/energye/golcl/lcl/api"
-
-// tCefChromiumConfig Chromium的基础配置
-type tCefChromiumConfig struct {
-	enableMenu        uintptr //bool 启用右键菜单
-	enableViewSource  uintptr //bool 启用查看源代码
-	enableDevTools    uintptr //bool 启用开发者工具
-	enableWindowPopup uintptr //bool 启用弹出新窗口
-	enableOpenUrlTab  uintptr //bool 启用tab签打开新窗口(需自定义实现)
-	enabledJavascript uintptr //bool 启用Javascript
+// TCefChromiumConfig Chromium的基础配置
+type TCefChromiumConfig struct {
+	enableMenu        bool //启用右键菜单
+	enableViewSource  bool //启用查看源代码
+	enableDevTools    bool //启用开发者工具
+	enableWindowPopup bool //启用弹出新窗口
+	enableOpenUrlTab  bool //启用tab签打开新窗口(需自定义实现)
+	enabledJavascript bool //启用Javascript
 }
 
-// NewChromiumConfig 创建默认禁用相关功能
-func NewChromiumConfig() *tCefChromiumConfig {
-	return &tCefChromiumConfig{
-		enableMenu:        api.PascalBool(true),
-		enableViewSource:  api.PascalBool(true),
-		enableDevTools:    api.PascalBool(true),
-		enableWindowPopup: api.PascalBool(true),
-		enableOpenUrlTab:  api.PascalBool(false),
-		enabledJavascript: api.PascalBool(false),
+// NewChromiumConfig 创建默认启用相关功能
+func NewChromiumConfig() *TCefChromiumConfig {
+	return &TCefChromiumConfig{
+		enableMenu:        true,
+		enableViewSource:  true,
+		enableDevTools:    true,
+		enableWindowPopup: true,
+		enableOpenUrlTab:  false,
+		enabledJavascript: false,
 	}
 }
 
 // SetEnableMenu 设置启用右键菜单
-func (m *tCefChromiumConfig) SetEnableMenu(value bool) *tCefChromiumConfig {
-	m.enableMenu = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnableMenu(value bool) *TCefChromiumConfig {
+	m.enableMenu = value
 	return m
 }
 
-func (m *tCefChromiumConfig) EnableMenu() bool {
-	return api.GoBool(m.enableMenu)
+func (m *TCefChromiumConfig) EnableMenu() bool {
+	return m.enableMenu
 }
 
 // SetEnableViewSource 设置启用查看源文件
-func (m *tCefChromiumConfig) SetEnableViewSource(value bool) *tCefChromiumConfig {
-	m.enableViewSource = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnableViewSource(value bool) *TCefChromiumConfig {
+	m.enableViewSource = value
 	return m
 }
 
-func (m *tCefChromiumConfig) EnableViewSource() bool {
-	return api.GoBool(m.enableViewSource)
+func (m *TCefChromiumConfig) EnableViewSource() bool {
+	return m.enableViewSource
 }
 
 // SetEnableDevTools 设置启用开发者工具
-func (m *tCefChromiumConfig) SetEnableDevTools(value bool) *tCefChromiumConfig {
-	m.enableDevTools = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnableDevTools(value bool) *TCefChromiumConfig {
+	m.enableDevTools = value
 	return m
 }
 
-func (m *tCefChromiumConfig) EnableDevTools() bool {
-	return api.GoBool(m.enableDevTools)
+func (m *TCefChromiumConfig) EnableDevTools() bool {
+	return m.enableDevTools
 }
 
 // SetEnableWindowPopup 设置启用弹出新窗口
 //	与tab互斥
-func (m *tCefChromiumConfig) SetEnableWindowPopup(value bool) *tCefChromiumConfig {
-	m.enableWindowPopup = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnableWindowPopup(value bool) *TCefChromiumConfig {
+	m.enableWindowPopup = value
 	if value {
 		m.SetEnableOpenUrlTab(false)
 	}
 	return m
 }
 
-func (m *tCefChromiumConfig) EnableWindowPopup() bool {
-	return api.GoBool(m.enableWindowPopup)
+func (m *TCefChromiumConfig) EnableWindowPopup() bool {
+	return m.enableWindowPopup
 }
 
 // SetEnableOpenUrlTab 设置启用打开新tab
 //	与popup互斥
-func (m *tCefChromiumConfig) SetEnableOpenUrlTab(value bool) *tCefChromiumConfig {
-	m.enableOpenUrlTab = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnableOpenUrlTab(value bool) *TCefChromiumConfig {
+	m.enableOpenUrlTab = value
 	if value {
 		m.SetEnableWindowPopup(false)
 	}
 	return m
 }
 
-func (m *tCefChromiumConfig) EnableOpenUrlTab() bool {
-	return api.GoBool(m.enableOpenUrlTab)
+func (m *TCefChromiumConfig) EnableOpenUrlTab() bool {
+	return m.enableOpenUrlTab
 }
 
 // SetEnabledJavascript 设置启用Javascript
-func (m *tCefChromiumConfig) SetEnabledJavascript(value bool) *tCefChromiumConfig {
-	m.enabledJavascript = api.PascalBool(value)
+func (m *TCefChromiumConfig) SetEnabledJavascript(value bool) *TCefChromiumConfig {
+	m.enabledJavascript = value
 	return m
 }
 
-func (m *tCefChromiumConfig) EnabledJavascript() bool {
-	return api.GoBool(m.enabledJavascript)
+func (m *TCefChromiumConfig) EnabledJavascript() bool {
+	return m.enabledJavascript
 }

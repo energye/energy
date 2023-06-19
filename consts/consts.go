@@ -457,6 +457,22 @@ const (
 	STATE_DISABLED
 )
 
+// Default values for the Windowsless framerate setting in TChromiumOptions
+// The values are frames per second.
+
+const CEF_OSR_FRAMERATE_DEFAULT = 30                 // Used when the shared textures are disabled.
+const CEF_OSR_SHARED_TEXTURES_FRAMERATE_DEFAULT = 60 // Used when the shared textures are enabled.
+
+const CEF_TIMER_MINIMUM = 0x0000000A
+
+const CEF_TIMER_MAXIMUM = 0x7FFFFFFF
+
+const CEF_TIMER_MAXDELAY = 1000 / CEF_OSR_FRAMERATE_DEFAULT
+
+const CEF_TIMER_DEPLETEWORK_CYCLES = 10
+
+const CEF_TIMER_DEPLETEWORK_DELAY = 50
+
 // /include/internal/cef_types.h (cef_touch_event_type_t)
 type TCefTouchEeventType = types.Int32
 

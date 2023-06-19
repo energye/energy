@@ -15,6 +15,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
 	t "github.com/energye/golcl/lcl/types"
 	"unsafe"
@@ -126,4 +127,62 @@ func LogicalToDeviceInt32(value int32, deviceScaleFactor float64) int32 {
 
 func LogicalToDeviceRect(rect *TCefRect, deviceScaleFactor float64) {
 	imports.Proc(def.Misc_LogicalToDeviceRect).Call(uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+}
+
+func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor) {
+	switch cefCursor {
+	case consts.CT_POINTER:
+		result = t.CrArrow
+	case consts.CT_CROSS:
+		result = t.CrCross
+	case consts.CT_HAND:
+		result = t.CrHandPoint
+	case consts.CT_IBEAM:
+		result = t.CrIBeam
+	case consts.CT_WAIT:
+		result = t.CrHourGlass
+	case consts.CT_HELP:
+		result = t.CrHelp
+	case consts.CT_EASTRESIZE:
+		result = t.CrSizeWE
+	case consts.CT_NORTHRESIZE:
+		result = t.CrSizeNS
+	case consts.CT_NORTHEASTRESIZE:
+		result = t.CrSizeNESW
+	case consts.CT_NORTHWESTRESIZE:
+		result = t.CrSizeNWSE
+	case consts.CT_SOUTHRESIZE:
+		result = t.CrSizeNS
+	case consts.CT_SOUTHEASTRESIZE:
+		result = t.CrSizeNWSE
+	case consts.CT_SOUTHWESTRESIZE:
+		result = t.CrSizeNESW
+	case consts.CT_WESTRESIZE:
+		result = t.CrSizeWE
+	case consts.CT_NORTHSOUTHRESIZE:
+		result = t.CrSizeNS
+	case consts.CT_EASTWESTRESIZE:
+		result = t.CrSizeWE
+	case consts.CT_NORTHEASTSOUTHWESTRESIZE:
+		result = t.CrSizeNESW
+	case consts.CT_NORTHWESTSOUTHEASTRESIZE:
+		result = t.CrSizeNWSE
+	case consts.CT_COLUMNRESIZE:
+		result = t.CrHSplit
+	case consts.CT_ROWRESIZE:
+		result = t.CrVSplit
+	case consts.CT_MOVE:
+		result = t.CrSizeAll
+	case consts.CT_PROGRESS:
+		result = t.CrAppStart
+	case consts.CT_NONE:
+		result = t.CrNone
+	case consts.CT_NODROP, consts.CT_NOTALLOWED:
+		result = t.CrNo
+	case consts.CT_GRAB, consts.CT_GRABBING:
+		result = t.CrDrag
+	default:
+		result = t.CrDefault
+	}
+	return
 }

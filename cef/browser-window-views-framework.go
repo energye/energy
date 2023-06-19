@@ -22,7 +22,6 @@ import (
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 )
 
@@ -48,13 +47,13 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
-	if chromiumConfig == nil {
-		chromiumConfig = NewChromiumConfig()
-		chromiumConfig.SetEnableViewSource(false)
-		chromiumConfig.SetEnableDevTools(false)
-		chromiumConfig.SetEnableMenu(false)
-		chromiumConfig.SetEnableWindowPopup(false)
+func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
+	if config == nil {
+		config = NewChromiumConfig()
+		config.SetEnableViewSource(false)
+		config.SetEnableDevTools(false)
+		config.SetEnableMenu(false)
+		config.SetEnableWindowPopup(false)
 	}
 
 	var component lcl.IComponent
@@ -66,7 +65,7 @@ func NewViewsFrameworkBrowserWindow(chromiumConfig *tCefChromiumConfig, windowPr
 	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       &windowProperty,
 		component:            component,
-		chromium:             NewChromium(component, chromiumConfig),
+		chromium:             NewChromium(component, config),
 		windowComponent:      NewWindowComponent(component),
 		browserViewComponent: NewBrowserViewComponent(component),
 	}
@@ -143,7 +142,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		chromiumOnBeforeClose(browser)
 	})
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !api.GoBool(BrowserWindow.Config.chromiumConfig.enableWindowPopup) {
+		if !BrowserWindow.Config.ChromiumConfig().EnableWindowPopup() {
 			return true
 		}
 		wp := BrowserWindow.Config.WindowProperty
@@ -265,7 +264,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		if bwEvent.onKeyEvent != nil {
 			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
 		} else {
-			if api.GoBool(BrowserWindow.Config.chromiumConfig.enableDevTools) {
+			if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
 				if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
 					if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
 						return

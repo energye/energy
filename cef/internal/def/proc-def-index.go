@@ -952,6 +952,22 @@ const (
 	CEFChromium_IMECancelComposition
 	CEFChromium_HasDevTools
 	CEFChromium_InitializeDragAndDrop
+	// ChromiumOptions
+	ChromiumOptions_SetJavascript
+	ChromiumOptions_SetJavascriptCloseWindows
+	ChromiumOptions_SetJavascriptAccessClipboard
+	ChromiumOptions_SetJavascriptDomPaste
+	ChromiumOptions_SetImageLoading
+	ChromiumOptions_SetImageShrinkStandaloneToFit
+	ChromiumOptions_SetTextAreaResize
+	ChromiumOptions_SetTabToLinks
+	ChromiumOptions_SetLocalStorage
+	ChromiumOptions_SetDatabases
+	ChromiumOptions_SetWebgl
+	ChromiumOptions_SetBackgroundColor
+	ChromiumOptions_SetAcceptLanguageList
+	ChromiumOptions_SetWindowlessFrameRate
+	ChromiumOptions_SetChromeStatusBubble
 	// ICefFrame
 	CEFFrame_Undo
 	CEFFrame_Redo

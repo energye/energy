@@ -21,24 +21,24 @@ type browserWindowOnEventCallback func(event *BrowserEvent, window IBrowserWindo
 // 创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
 	WindowProperty
-	chromiumConfig               *tCefChromiumConfig          //主窗体浏览器配置
+	config                       *TCefChromiumConfig          //主窗体浏览器配置
 	browserWindowOnEventCallback browserWindowOnEventCallback //主窗口初始化回调
 }
 
-// SetChromiumConfig 设置chromium配置
-func (m *browserConfig) SetChromiumConfig(chromiumConfig *tCefChromiumConfig) {
-	if chromiumConfig != nil && process.Args.IsMain() {
-		m.chromiumConfig = chromiumConfig
+// SetChromiumConfig 设置 chromium 配置
+func (m *browserConfig) SetChromiumConfig(config *TCefChromiumConfig) {
+	if config != nil && process.Args.IsMain() {
+		m.config = config
 	}
 }
 
 // ChromiumConfig 扩展配置
-//  获取/创建 CEF Chromium Config
-func (m *browserConfig) ChromiumConfig() *tCefChromiumConfig {
-	if m.chromiumConfig == nil {
-		m.chromiumConfig = NewChromiumConfig()
+//  获取/创建 CEF Chromium Options
+func (m *browserConfig) ChromiumConfig() *TCefChromiumConfig {
+	if m.config == nil {
+		m.config = NewChromiumConfig()
 	}
-	return m.chromiumConfig
+	return m.config
 }
 
 // 主窗口初始化回调

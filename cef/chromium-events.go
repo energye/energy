@@ -409,7 +409,7 @@ func (m *TCEFChromium) SetOnContextMenuCommand(fn chromiumEventOnContextMenuComm
 	if !m.IsValid() {
 		return
 	}
-	if api.GoBool(m.cfg.enableMenu) {
+	if m.Config().EnableMenu() {
 		_CEFChromium_SetOnContextMenuCommand(m.Instance(), fn)
 	}
 }
@@ -418,7 +418,7 @@ func (m *TCEFChromium) SetOnContextMenuDismissed(fn chromiumEventOnContextMenuDi
 	if !m.IsValid() {
 		return
 	}
-	if api.GoBool(m.cfg.enableMenu) {
+	if m.Config().EnableMenu() {
 		_CEFChromium_SetOnContextMenuDismissed(m.Instance(), fn)
 	}
 }

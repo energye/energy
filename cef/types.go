@@ -1013,6 +1013,25 @@ type ResultString struct {
 	value string
 }
 
+type TChromiumOptions struct {
+	Chromium                   IChromium
+	javascript                 TCefState
+	javascriptCloseWindows     TCefState
+	javascriptAccessClipboard  TCefState
+	javascriptDomPaste         TCefState
+	imageLoading               TCefState
+	imageShrinkStandaloneToFit TCefState
+	textAreaResize             TCefState
+	tabToLinks                 TCefState
+	localStorage               TCefState
+	databases                  TCefState
+	webgl                      TCefState
+	backgroundColor            TCefColor
+	acceptLanguageList         String
+	windowlessFrameRate        Integer
+	chromeStatusBubble         TCefState
+}
+
 func (m *ResultString) SetValue(value string) {
 	m.value = value
 }

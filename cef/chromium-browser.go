@@ -32,7 +32,7 @@ type TCEFChromiumBrowser struct {
 
 // NewChromiumBrowser
 //	初始创建一个 chromium 浏览器
-func NewChromiumBrowser(owner lcl.IWinControl, config *tCefChromiumConfig) ICEFChromiumBrowser {
+func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFChromiumBrowser {
 	var m = new(TCEFChromiumBrowser)
 	m.chromium = NewChromium(owner, config)
 	m.windowParent = NewCEFWindow(owner)
