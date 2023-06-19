@@ -188,6 +188,22 @@ func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor
 	return
 }
 
+func CefColorGetA(color types.TCefColor) uint8 {
+	return uint8(color>>24) & 0xFF
+}
+
+func CefColorGetR(color types.TCefColor) uint8 {
+	return uint8(color>>16) & 0xFF
+}
+
+func CefColorGetG(color types.TCefColor) uint8 {
+	return uint8(color>>8) & 0xFF
+}
+
+func CefColorGetB(color types.TCefColor) uint8 {
+	return uint8(color) & 0xFF
+}
+
 func CefColorSetARGB(a, r, g, b byte) types.TCefColor {
-	return types.TCefColor((a >> 24) | (r >> 16) | (g >> 8) | b)
+	return types.TCefColor((uint32(a) << 24) | (uint32(r) << 16) | (uint32(g) << 8) | (uint32(b)))
 }
