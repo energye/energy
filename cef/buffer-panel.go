@@ -1218,14 +1218,14 @@ func (m *TBufferPanel) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 // 设置鼠标抬起事件。
 //
 // Set Mouse lift event.
-func (m *TBufferPanel) SetOnMouseUp(fn TMouseEvent) {
+func (m *TBufferPanel) SetOnMouseUp(fn lcl.TMouseEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnMouseUp, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnResize
 //
 // 设置大小被改变事件。
-func (m *TBufferPanel) SetOnResize(fn TNotifyEvent) {
+func (m *TBufferPanel) SetOnResize(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnResize, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
@@ -1874,4 +1874,8 @@ func (m *TBufferPanel) OrigPopupScanlineSize() int32 {
 
 func (m *TBufferPanel) SetOnPaintParentBkg(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnPaintParentBkg, m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TBufferPanel) SetOnMouseWheel(fn lcl.TMouseWheelEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnMouseWheel, m.Instance(), api.MakeEventDataPtr(fn))
 }

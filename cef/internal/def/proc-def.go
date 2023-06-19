@@ -2207,6 +2207,7 @@ func init() {
 		dllimports.NewEnergyImport("BufferPanel_SetOnPointerUp", 0),
 		dllimports.NewEnergyImport("BufferPanel_SetOnPointerUpdate", 0),
 		dllimports.NewEnergyImport("BufferPanel_SetOnPaintParentBkg", 0),
+		dllimports.NewEnergyImport("BufferPanel_SetOnMouseWheel", 0),
 		// TString
 		dllimports.NewEnergyImport("TString_Create", 0),
 		dllimports.NewEnergyImport("TString_Free", 0),

@@ -2207,6 +2207,7 @@ const (
 	BufferPanel_SetOnPointerUp
 	BufferPanel_SetOnPointerUpdate
 	BufferPanel_SetOnPaintParentBkg
+	BufferPanel_SetOnMouseWheel
 	// TString
 	TString_Create
 	TString_Free
