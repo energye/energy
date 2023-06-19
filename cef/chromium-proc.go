@@ -82,6 +82,12 @@ type IChromiumProc interface {
 	SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message argument.IList)
 	CreateClientHandler(client *ICefClient, alsOSR bool) bool
 	SetFocus(value bool)
+	SendExternalBeginFrame()
+	SendKeyEvent(event *TCefKeyEvent)
+	SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouseButtonType, mouseUp bool, clickCount int32)
+	SendMouseMoveEvent(event *TCefMouseEvent, mouseLeave bool)
+	SendMouseWheelEvent(event *TCefMouseEvent, deltaX, deltaY int32)
+	SendTouchEvent(event *TCefTouchEvent)
 	SendCaptureLostEvent()
 	FrameIsFocused() bool
 	TryCloseBrowser() bool
@@ -608,6 +614,48 @@ func (m *TCEFChromium) SetFocus(value bool) {
 		return
 	}
 	_CEFChromium_SetFocus(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TCEFChromium) SendExternalBeginFrame() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendExternalBeginFrame).Call(m.Instance())
+}
+
+func (m *TCEFChromium) SendKeyEvent(event *TCefKeyEvent) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendKeyEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
+}
+
+func (m *TCEFChromium) SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouseButtonType, mouseUp bool, clickCount int32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendMouseClickEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(type_), api.PascalBool(mouseUp), uintptr(clickCount))
+}
+
+func (m *TCEFChromium) SendMouseMoveEvent(event *TCefMouseEvent, mouseLeave bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendMouseMoveEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), api.PascalBool(mouseLeave))
+}
+
+func (m *TCEFChromium) SendMouseWheelEvent(event *TCefMouseEvent, deltaX, deltaY int32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendMouseWheelEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)), uintptr(deltaX), uintptr(deltaY))
+}
+
+func (m *TCEFChromium) SendTouchEvent(event *TCefTouchEvent) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SendTouchEvent).Call(m.Instance(), uintptr(unsafe.Pointer(event)))
 }
 
 func (m *TCEFChromium) SendCaptureLostEvent() {

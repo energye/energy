@@ -38,6 +38,8 @@ func main() {
 
 type WindowDemo struct {
 	*lcl.TForm
+	bufferPanel *cef.TBufferPanel
+	chromium    cef.IChromium
 }
 
 func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
@@ -55,25 +57,29 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	m.SetWidth(800)
 	m.SetHeight(600)
 	m.ScreenCenter()
-	chromium := cef.NewChromium(m, nil)
+	m.chromium = cef.NewChromium(m, nil)
 
-	bufferPanel := cef.NewBufferPanel(m)
-	bufferPanel.SetParent(m)
-	bufferPanel.SetColor(colors.ClAqua)
-	bufferPanel.SetWidth(800)
-	bufferPanel.SetHeight(600)
+	m.bufferPanel = cef.NewBufferPanel(m)
+	m.bufferPanel.SetParent(m)
+	m.bufferPanel.SetColor(colors.ClAqua)
+	m.bufferPanel.SetWidth(800)
+	m.bufferPanel.SetHeight(600)
 	//bufferPanel.SetAlign(types.AlClient)
-	bufferPanel.SetOnClick(func(sender lcl.IObject) {
-		fmt.Println("SetOnClick")
+	m.bufferPanelEvent()
+	m.chromiumEvent()
+	m.SetOnShow(func(sender lcl.IObject) {
+		b := m.chromium.Initialized()
+		fmt.Println("init:", b)
+		cb := m.chromium.CreateBrowser(nil, "", nil, nil)
+		fmt.Println("CreateBrowser:", cb)
+		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0, 0, 0xff, 0xff))
+		m.bufferPanel.CreateIMEHandler()
+		m.chromium.InitializeDragAndDrop(m.bufferPanel)
+		m.chromium.LoadUrl("https://www.baidu.com")
 	})
 
-	m.SetOnShow(func(sender lcl.IObject) {
-		chromium.Initialized()
-		cb := chromium.CreateBrowser(nil, "", nil, nil)
-		fmt.Println("CreateBrowser:", cb)
-		chromium.InitializeDragAndDrop(bufferPanel)
-		chromium.LoadUrl("https://www.baidu.com")
-	})
+}
+func (m *WindowDemo) chromiumEvent() {
 
 	var (
 		popUpBitmap                  *lcl.TBitmap
@@ -84,24 +90,31 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 		tempSrcOffset, tempDstOffset int
 		src, dst                     uintptr
 	)
-	chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-		fmt.Println("SetOnAfterCreated")
-		chromium.LoadUrl("https://www.baidu.com")
+	m.chromium.SetOnCursorChange(func(sender lcl.IObject, browser *cef.ICefBrowser, cursor consts.TCefCursorHandle, cursorType consts.TCefCursorType, customCursorInfo *cef.TCefCursorInfo) bool {
+		fmt.Println("SetOnCursorChange")
+		m.bufferPanel.SetCursor(cef.CefCursorToWindowsCursor(cursorType))
+		return true
 	})
-	chromium.SetOnPopupShow(func(sender lcl.IObject, browser *cef.ICefBrowser, show bool) {
+	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
+		fmt.Println("SetOnAfterCreated")
+		m.chromium.LoadUrl("https://www.baidu.com")
+	})
+	m.chromium.SetOnPopupShow(func(sender lcl.IObject, browser *cef.ICefBrowser, show bool) {
 		fmt.Println("PopupShow - show:", show)
-		if chromium != nil {
-			chromium.Invalidate(consts.PET_VIEW)
+		if m.chromium != nil {
+			m.chromium.Invalidate(consts.PET_VIEW)
 		}
 	})
-	chromium.SetOnPopupSize(func(sender lcl.IObject, browser *cef.ICefBrowser, rect *cef.TCefRect) {
-		screenScale := bufferPanel.ScreenScale()
+	m.chromium.SetOnPopupSize(func(sender lcl.IObject, browser *cef.ICefBrowser, rect *cef.TCefRect) {
+		screenScale := m.bufferPanel.ScreenScale()
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 		cef.LogicalToDeviceRect(rect, float64(screenScale))
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 	})
-	chromium.SetOnPaint(func(sender lcl.IObject, browser *cef.ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *cef.TCefRectArray, buffer uintptr, width, height int32) {
-		if bufferPanel.BeginBufferDraw() {
+
+	// 在Paint内展示内容到窗口中
+	m.chromium.SetOnPaint(func(sender lcl.IObject, browser *cef.ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *cef.TCefRectArray, buffer uintptr, width, height int32) {
+		if m.bufferPanel.BeginBufferDraw() {
 			if kind == consts.PET_POPUP {
 				if popUpBitmap == nil || popUpBitmap.Width() != width || popUpBitmap.Height() != height {
 					if popUpBitmap != nil {
@@ -117,11 +130,11 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 				tempBitMap.BeginUpdate(false)
 				tempWidth, tempHeight = popUpBitmap.Width(), popUpBitmap.Height()
 			} else {
-				tempForcedResize = bufferPanel.UpdateBufferDimensions(width, height) || bufferPanel.BufferIsResized(false)
-				tempBitMap = bufferPanel.Buffer()
+				tempForcedResize = m.bufferPanel.UpdateBufferDimensions(width, height) || m.bufferPanel.BufferIsResized(false)
+				tempBitMap = m.bufferPanel.Buffer()
 				tempBitMap.BeginUpdate(false)
-				tempWidth = bufferPanel.BufferWidth()
-				tempHeight = bufferPanel.BufferHeight()
+				tempWidth = m.bufferPanel.BufferWidth()
+				tempHeight = m.bufferPanel.BufferHeight()
 			}
 			fmt.Println("tempWidth:", tempWidth, "tempHeight:", tempHeight)
 			//byteBufPtr := (*byte)(unsafe.Pointer(buffer))
@@ -138,14 +151,14 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 						tempSrcOffset = int((rect.Y*width)+rect.X) * rgbSizeOf
 						tempDstOffset = int(rect.X) * rgbSizeOf
 						//src := @pbyte(buffer)[TempSrcOffset];
-						src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针
+						src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针, 实际是 byte 指针
 						fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
 						j := int(math.Min(float64(rect.Height), float64(tempHeight-rect.Y)))
-						fmt.Println("j:", j)
+						//fmt.Println("j:", j)
 						for ii := 0; ii < j; ii++ {
 							tempBufferBits := tempBitMap.ScanLine(rect.Y + int32(ii))
-							dst = uintptr(common.GetParamPtr(tempBufferBits, tempDstOffset)) //拿到dst指针
-							fmt.Println("dst:", dst)
+							dst = uintptr(common.GetParamPtr(tempBufferBits, tempDstOffset)) //拿到dst指针, 实际是 byte 指针
+							//fmt.Println("dst:", dst)
 							rtl.Move(src, dst, tempLineSize)
 							src = src + uintptr(srcStride)
 						}
@@ -163,14 +176,65 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 
 			}
 
-			bufferPanel.EndBufferDraw()
+			m.bufferPanel.EndBufferDraw()
 			ha := m.HandleAllocated()
 			fmt.Println("ha:", ha)
 			if ha {
-				bufferPanel.Invalidate()
+				m.bufferPanel.Invalidate()
 			}
 		}
 		fmt.Println("SetOnPaint", browser.Identifier(), kind, dirtyRects.Count(), dirtyRects.Get(0), buffer, width, height)
 		fmt.Println(tempWidth, tempHeight, tempForcedResize)
+	})
+}
+func getModifiers(shift types.TShiftState) consts.TCefEventFlags {
+	var result = consts.EVENTFLAG_NONE
+	if shift.In(types.SsShift) {
+		result = result | consts.EVENTFLAG_SHIFT_DOWN
+	} else if shift.In(types.SsAlt) {
+		result = result | consts.EVENTFLAG_ALT_DOWN
+	} else if shift.In(types.SsCtrl) {
+		result = result | consts.EVENTFLAG_CONTROL_DOWN
+	} else if shift.In(types.SsLeft) {
+		result = result | consts.EVENTFLAG_LEFT_MOUSE_BUTTON
+	} else if shift.In(types.SsRight) {
+		result = result | consts.EVENTFLAG_RIGHT_MOUSE_BUTTON
+	} else if shift.In(types.SsMiddle) {
+		result = result | consts.EVENTFLAG_MIDDLE_MOUSE_BUTTON
+	}
+	return result
+}
+func GetButton(Button types.TMouseButton) (result consts.TCefMouseButtonType) {
+	switch Button {
+	case types.MbRight:
+		result = consts.MBT_RIGHT
+	case types.MbMiddle:
+		result = consts.MBT_MIDDLE
+	default:
+		result = consts.MBT_LEFT
+	}
+	return
+}
+
+func (m *WindowDemo) bufferPanelEvent() {
+	m.bufferPanel.SetOnClick(func(sender lcl.IObject) {
+		fmt.Println("SetOnClick")
+	})
+	m.bufferPanel.SetOnEnter(func(sender lcl.IObject) {
+		fmt.Println("SetOnEnter")
+		m.chromium.SetFocus(true)
+	})
+	m.bufferPanel.SetOnExit(func(sender lcl.IObject) {
+		fmt.Println("SetOnExit")
+		m.chromium.SetFocus(false)
+	})
+	m.bufferPanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
+		fmt.Println("SetOnMouseMove", shift, x, y)
+		mouseEvent := &cef.TCefMouseEvent{}
+		mouseEvent.X = x
+		mouseEvent.Y = y
+		mouseEvent.Modifiers = getModifiers(shift)
+		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
+		m.chromium.SendMouseMoveEvent(mouseEvent, false)
 	})
 }

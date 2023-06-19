@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	t "github.com/energye/golcl/lcl/types"
 	"unsafe"
@@ -185,4 +186,8 @@ func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor
 		result = t.CrDefault
 	}
 	return
+}
+
+func CefColorSetARGB(a, r, g, b byte) types.TCefColor {
+	return types.TCefColor((a >> 24) | (r >> 16) | (g >> 8) | b)
 }

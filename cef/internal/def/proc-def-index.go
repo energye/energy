@@ -845,6 +845,12 @@ const (
 	CEFChromium_ExecuteDevToolsMethod
 	CEFChromium_CreateClientHandler
 	CEFChromium_SetFocus
+	CEFChromium_SendExternalBeginFrame
+	CEFChromium_SendKeyEvent
+	CEFChromium_SendMouseClickEvent
+	CEFChromium_SendMouseMoveEvent
+	CEFChromium_SendMouseWheelEvent
+	CEFChromium_SendTouchEvent
 	CEFChromium_SendCaptureLostEvent
 	CEFChromium_FrameIsFocused
 	CEFChromium_TryCloseBrowser
