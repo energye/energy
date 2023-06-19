@@ -13,6 +13,7 @@
         let si = null;
         let si1 = null;
         let si2 = null;
+        console.log('window.chrome.webview:', window.chrome.webview)
 
         function autoIpcEmit() {
             if (si != null) {
@@ -375,7 +376,7 @@
             ipc.emit("check-param", [pstr1, pint2, pint3, pfloat4, pany5, pstr6, pmap7, pstrarr8, pintarr9, pbool10])
             ipc.emit("check-param", [pstr1, pint2, pint3, pfloat4, pany5, pstr6, pmap7, pstrarr8, pintarr9, pbool10])
         }
-        
+
         function reload() {
             ipc.emit("reload")
         }
@@ -383,11 +384,21 @@
         function SendMouseWheelEvent() {
             ipc.emit('SendMouseWheelEvent');
         }
+
+        window.addEventListener("mousedown", e => {
+            var v = window.getComputedStyle(e.target).getPropertyValue('--webkit-app-region');
+            console.log("mousedown v:", v, "e:", e)
+        });
     </script>
 </head>
 <body style="margin: 0px;padding: 0px;">
 <p>
 <h3 style="-webkit-app-region: drag;">process-message</h3></p>
+<h3 style="color:red; --webkit-app-region: drag;">-customer</h3></p>
+<div style="--webkit-app-region: drag;width: 100px;height: 100px;background-color: #702929">
+    <div style="--webkit-app-region: no-drag;width: 30px;height: 30px;background-color: aliceblue"></div>
+</div>
+
 <p>
     <a target="_blank" href="ipc-event.html">open</a>
     <a href="https://www.baidu.com">百度</a>

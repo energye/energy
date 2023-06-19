@@ -71,16 +71,16 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 		b := m.chromium.Initialized()
 		fmt.Println("init:", b)
 		cb := m.chromium.CreateBrowser(nil, "", nil, nil)
-		fmt.Println("CreateBrowser:", cb)
-		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0, 0, 0xff, 0xff))
+		fmt.Println("CreateBrowser:", cb, cef.CefColorSetARGB(0x00, 0x00, 0xFF, 0xFF), 0xFF)
+		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0x00, 0x00, 0xff, 0xff))
 		m.bufferPanel.CreateIMEHandler()
 		m.chromium.InitializeDragAndDrop(m.bufferPanel)
 		m.chromium.LoadUrl("https://www.baidu.com")
 	})
 
 }
-func (m *WindowDemo) chromiumEvent() {
 
+func (m *WindowDemo) chromiumEvent() {
 	var (
 		popUpBitmap                  *lcl.TBitmap
 		tempBitMap                   *lcl.TBitmap
@@ -136,23 +136,23 @@ func (m *WindowDemo) chromiumEvent() {
 				tempWidth = m.bufferPanel.BufferWidth()
 				tempHeight = m.bufferPanel.BufferHeight()
 			}
-			fmt.Println("tempWidth:", tempWidth, "tempHeight:", tempHeight)
+			//fmt.Println("tempWidth:", tempWidth, "tempHeight:", tempHeight)
 			//byteBufPtr := (*byte)(unsafe.Pointer(buffer))
 			rgbSizeOf := int(unsafe.Sizeof(cef.TRGBQuad{}))
-			fmt.Println("SizeOf(TRGBQuad):", rgbSizeOf)
+			//fmt.Println("SizeOf(TRGBQuad):", rgbSizeOf)
 			srcStride := int(width) * rgbSizeOf
-			fmt.Println("srcStride:", srcStride)
+			//fmt.Println("srcStride:", srcStride)
 			for i := 0; i < dirtyRects.Count(); i++ {
 				rect := dirtyRects.Get(i)
 				if rect.X >= 0 && rect.Y >= 0 {
 					tempLineSize = int(math.Min(float64(rect.Width), float64(tempWidth-rect.X))) * rgbSizeOf
-					fmt.Println("tempLineSize:tempLineSize", tempLineSize)
+					//fmt.Println("tempLineSize:tempLineSize", tempLineSize)
 					if tempLineSize > 0 {
 						tempSrcOffset = int((rect.Y*width)+rect.X) * rgbSizeOf
 						tempDstOffset = int(rect.X) * rgbSizeOf
 						//src := @pbyte(buffer)[TempSrcOffset];
 						src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针, 实际是 byte 指针
-						fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
+						//fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
 						j := int(math.Min(float64(rect.Height), float64(tempHeight-rect.Y)))
 						//fmt.Println("j:", j)
 						for ii := 0; ii < j; ii++ {
@@ -187,6 +187,59 @@ func (m *WindowDemo) chromiumEvent() {
 		fmt.Println(tempWidth, tempHeight, tempForcedResize)
 	})
 }
+
+func (m *WindowDemo) bufferPanelEvent() {
+	m.bufferPanel.SetOnClick(func(sender lcl.IObject) {
+		fmt.Println("SetOnClick")
+		m.bufferPanel.SetFocus()
+	})
+	m.bufferPanel.SetOnEnter(func(sender lcl.IObject) {
+		fmt.Println("SetOnEnter")
+		m.chromium.SetFocus(true)
+	})
+	m.bufferPanel.SetOnExit(func(sender lcl.IObject) {
+		fmt.Println("SetOnExit")
+		m.chromium.SetFocus(false)
+	})
+	m.bufferPanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
+		//fmt.Println("SetOnMouseMove", shift, x, y)
+		mouseEvent := &cef.TCefMouseEvent{}
+		mouseEvent.X = x
+		mouseEvent.Y = y
+		mouseEvent.Modifiers = getModifiers(shift)
+		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
+		m.chromium.SendMouseMoveEvent(mouseEvent, false)
+	})
+	var clickTime int
+	m.bufferPanel.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+		fmt.Println("OnMouseDown:", clickTime, button, shift, x, y)
+		mouseEvent := &cef.TCefMouseEvent{}
+		mouseEvent.X = x
+		mouseEvent.Y = y
+		mouseEvent.Modifiers = getModifiers(shift)
+		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
+		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), false, 2)
+	})
+	m.bufferPanel.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
+		fmt.Println("SetOnMouseUp:", clickTime, button, shift, x, y)
+		mouseEvent := &cef.TCefMouseEvent{}
+		mouseEvent.X = x
+		mouseEvent.Y = y
+		mouseEvent.Modifiers = getModifiers(shift)
+		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
+		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), true, 2)
+	})
+	m.bufferPanel.SetOnMouseWheel(func(sender lcl.IObject, shift types.TShiftState, wheelDelta, x, y int32, handled *bool) {
+		fmt.Println("SetOnMouseWheel:", shift, wheelDelta, x, y)
+		mouseEvent := &cef.TCefMouseEvent{}
+		mouseEvent.X = x
+		mouseEvent.Y = y
+		mouseEvent.Modifiers = getModifiers(shift)
+		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
+		m.chromium.SendMouseWheelEvent(mouseEvent, 0, wheelDelta)
+	})
+}
+
 func getModifiers(shift types.TShiftState) consts.TCefEventFlags {
 	var result = consts.EVENTFLAG_NONE
 	if shift.In(types.SsShift) {
@@ -204,7 +257,8 @@ func getModifiers(shift types.TShiftState) consts.TCefEventFlags {
 	}
 	return result
 }
-func GetButton(Button types.TMouseButton) (result consts.TCefMouseButtonType) {
+
+func getButton(Button types.TMouseButton) (result consts.TCefMouseButtonType) {
 	switch Button {
 	case types.MbRight:
 		result = consts.MBT_RIGHT
@@ -214,27 +268,4 @@ func GetButton(Button types.TMouseButton) (result consts.TCefMouseButtonType) {
 		result = consts.MBT_LEFT
 	}
 	return
-}
-
-func (m *WindowDemo) bufferPanelEvent() {
-	m.bufferPanel.SetOnClick(func(sender lcl.IObject) {
-		fmt.Println("SetOnClick")
-	})
-	m.bufferPanel.SetOnEnter(func(sender lcl.IObject) {
-		fmt.Println("SetOnEnter")
-		m.chromium.SetFocus(true)
-	})
-	m.bufferPanel.SetOnExit(func(sender lcl.IObject) {
-		fmt.Println("SetOnExit")
-		m.chromium.SetFocus(false)
-	})
-	m.bufferPanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
-		fmt.Println("SetOnMouseMove", shift, x, y)
-		mouseEvent := &cef.TCefMouseEvent{}
-		mouseEvent.X = x
-		mouseEvent.Y = y
-		mouseEvent.Modifiers = getModifiers(shift)
-		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
-		m.chromium.SendMouseMoveEvent(mouseEvent, false)
-	})
 }
