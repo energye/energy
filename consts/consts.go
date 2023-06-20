@@ -1440,3 +1440,15 @@ const (
 	MB_MODEMASK = 0x00003000
 	MB_MISCMASK = 0x0000C000
 )
+
+type TThreadPriority = types.Int32
+
+const (
+	TpIdle TThreadPriority = iota
+	TpLowest
+	TpLower
+	TpNormal
+	TpHigher
+	TpHighest
+	TpTimeCritical
+)

@@ -15,21 +15,27 @@ import (
 	"unsafe"
 )
 
+// 该示例未使用energy封装好的窗体, 而是完全使用energy框架底层创建
+// 其实在非OSR模式中也同样可以直接使用底层自己实现
+// 该示例演示了windows的OSR模式示例
+
 func main() {
 	cef.GlobalInit(nil, nil)
 	var window = &WindowForm{}
 	//创建应用
 	cefApp := cef.NewApplication(true)
-	//
+	// OSR 离屏渲染
 	cefApp.SetWindowlessRenderingEnabled(true)
+	// 指定消息模式
 	cefApp.SetExternalMessagePump(true)
 	cefApp.SetMultiThreadedMessageLoop(false)
-	// work
-	cef.GlobalWorkSchedulerCreate(nil)
+	// create work schedule
+	global := cef.GlobalWorkSchedulerCreate(nil)
+	global.SetDefaultInterval(10)
 	cefApp.SetOnScheduleMessagePumpWork(nil)
-
-	//指定一个URL地址，或本地html文件目录
+	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
 	cefApp.StartMainProcess()
+	// 运行应用, 传入窗口
 	lcl.RunApp(&window)
 }
 

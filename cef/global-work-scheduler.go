@@ -13,9 +13,13 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
+
+var GlobalWorkScheduler *TCEFWorkScheduler
 
 type TCEFWorkScheduler struct {
 	instance unsafe.Pointer
@@ -35,12 +39,10 @@ func (m *TCEFWorkScheduler) IsValid() bool {
 	}
 	return m.instance != nil
 }
-
-func GlobalWorkSchedulerStop() {
-	imports.Proc(def.CEFWorkScheduler_Stop).Call()
-}
-
 func GlobalWorkSchedulerCreate(owner lcl.IComponent) *TCEFWorkScheduler {
+	if GlobalWorkScheduler != nil {
+		return GlobalWorkScheduler
+	}
 	var aOwner uintptr
 	if owner != nil {
 		aOwner = owner.Instance()
@@ -48,12 +50,16 @@ func GlobalWorkSchedulerCreate(owner lcl.IComponent) *TCEFWorkScheduler {
 	var result uintptr
 	imports.Proc(def.CEFWorkScheduler_Create).Call(aOwner, uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &TCEFWorkScheduler{instance: unsafe.Pointer(result)}
+		GlobalWorkScheduler = &TCEFWorkScheduler{instance: unsafe.Pointer(result)}
 	}
-	return nil
+	return GlobalWorkScheduler
 }
 
-func GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
+func (m *TCEFWorkScheduler) GlobalWorkSchedulerStop() {
+	imports.Proc(def.CEFWorkScheduler_StopScheduler).Call()
+}
+
+func (m *TCEFWorkScheduler) GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
 	var result uintptr
 	imports.Proc(def.CEFWorkScheduler_CreateDelayed).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
@@ -62,10 +68,57 @@ func GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
 	return nil
 }
 
-func GlobalWorkSchedulerCreateThread() {
+func (m *TCEFWorkScheduler) GlobalWorkSchedulerCreateThread() {
 	imports.Proc(def.CEFWorkScheduler_CreateThread).Call()
 }
 
-func GlobalWorkSchedulerDestroy() {
+func (m *TCEFWorkScheduler) GlobalWorkSchedulerDestroy() {
 	imports.Proc(def.CEFWorkScheduler_Destroy).Call()
+}
+
+// GetPriority Windows
+func (m *TCEFWorkScheduler) GetPriority() consts.TThreadPriority {
+	r := imports.SysCallN(def.CEFWorkScheduler_GetPriority)
+	return consts.TThreadPriority(r)
+}
+
+// GetPriority Windows
+func (m *TCEFWorkScheduler) SetPriority(value consts.TThreadPriority) {
+	imports.SysCallN(def.CEFWorkScheduler_SetPriority, uintptr(value))
+}
+
+func (m *TCEFWorkScheduler) GetDefaultInterval() int32 {
+	r := imports.SysCallN(def.CEFWorkScheduler_GetDefaultInterval)
+	return int32(r)
+}
+
+func (m *TCEFWorkScheduler) GetDepleteWorkCycles() uint32 {
+	r := imports.SysCallN(def.CEFWorkScheduler_GetDepleteWorkCycles)
+	return uint32(r)
+}
+
+func (m *TCEFWorkScheduler) GetDepleteWorkDelay() uint32 {
+	r := imports.SysCallN(def.CEFWorkScheduler_GetDepleteWorkDelay)
+	return uint32(r)
+}
+
+func (m *TCEFWorkScheduler) GetUseQueueThread() bool {
+	r := imports.SysCallN(def.CEFWorkScheduler_GetUseQueueThread)
+	return api.GoBool(r)
+}
+
+func (m *TCEFWorkScheduler) SetDefaultInterval(value int32) {
+	imports.SysCallN(def.CEFWorkScheduler_SetDefaultInterval, uintptr(value))
+}
+
+func (m *TCEFWorkScheduler) SetDepleteWorkCycles(value uint32) {
+	imports.SysCallN(def.CEFWorkScheduler_SetDepleteWorkCycles, uintptr(value))
+}
+
+func (m *TCEFWorkScheduler) SetDepleteWorkDelay(value uint32) {
+	imports.SysCallN(def.CEFWorkScheduler_SetDepleteWorkDelay, uintptr(value))
+}
+
+func (m *TCEFWorkScheduler) SetUseQueueThread(value bool) {
+	imports.SysCallN(def.CEFWorkScheduler_SetUseQueueThread, api.PascalBool(value))
 }

@@ -245,11 +245,21 @@ const (
 	CEFStartSubProcess
 	AddCustomCommandLine
 	// CEFWorkScheduler
-	CEFWorkScheduler_Stop
+	CEFWorkScheduler_StopScheduler
 	CEFWorkScheduler_Create
 	CEFWorkScheduler_CreateDelayed
 	CEFWorkScheduler_CreateThread
 	CEFWorkScheduler_Destroy
+	CEFWorkScheduler_GetPriority
+	CEFWorkScheduler_SetPriority
+	CEFWorkScheduler_GetDefaultInterval
+	CEFWorkScheduler_GetDepleteWorkCycles
+	CEFWorkScheduler_GetDepleteWorkDelay
+	CEFWorkScheduler_GetUseQueueThread
+	CEFWorkScheduler_SetDefaultInterval
+	CEFWorkScheduler_SetDepleteWorkCycles
+	CEFWorkScheduler_SetDepleteWorkDelay
+	CEFWorkScheduler_SetUseQueueThread
 	// application
 	CEFApplication_RunMessageLoop
 	CEFApplication_QuitMessageLoop
