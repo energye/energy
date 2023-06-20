@@ -13,6 +13,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
 	"math"
+	"time"
 	"unsafe"
 )
 
@@ -65,9 +66,10 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	m.bufferPanel.SetColor(colors.ClAqua)
 	m.bufferPanel.SetTop(50)
 	m.bufferPanel.SetLeft(50)
-	m.bufferPanel.SetWidth(600)
-	m.bufferPanel.SetHeight(400)
-	//bufferPanel.SetAlign(types.AlClient)
+	// 这里设置的宽高还未生效，chromium.SetOnGetViewRect 函数里设置生效
+	//m.bufferPanel.SetWidth(600)
+	//m.bufferPanel.SetHeight(400)
+	m.bufferPanel.SetAlign(types.AlClient) // 同步和客户端一样大小
 	m.bufferPanelEvent()
 	m.chromiumEvent()
 	m.SetOnShow(func(sender lcl.IObject) {
@@ -165,6 +167,7 @@ func (m *WindowDemo) chromiumEvent() {
 		fmt.Println("SetOnIMECompositionRangeChanged", *selectedRange, characterBoundsCount, *characterBounds)
 	})
 	// 在Paint内展示内容到窗口中
+	// 使用 bitmap
 	m.chromium.SetOnPaint(func(sender lcl.IObject, browser *cef.ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *cef.TCefRectArray, buffer uintptr, width, height int32) {
 		if m.bufferPanel.BeginBufferDraw() {
 			if kind == consts.PET_POPUP {
@@ -189,30 +192,23 @@ func (m *WindowDemo) chromiumEvent() {
 				tempWidth = m.bufferPanel.BufferWidth()
 				tempHeight = m.bufferPanel.BufferHeight()
 			}
-			//fmt.Println("tempWidth:", tempWidth, "tempHeight:", tempHeight)
 			//byteBufPtr := (*byte)(unsafe.Pointer(buffer))
 			rgbSizeOf := int(unsafe.Sizeof(cef.TRGBQuad{}))
-			//fmt.Println("SizeOf(TRGBQuad):", rgbSizeOf)
 			srcStride := int(width) * rgbSizeOf
-			//fmt.Println("srcStride:", srcStride)
 			for i := 0; i < dirtyRects.Count(); i++ {
 				rect := dirtyRects.Get(i)
 				if rect.X >= 0 && rect.Y >= 0 {
 					tempLineSize = int(math.Min(float64(rect.Width), float64(tempWidth-rect.X))) * rgbSizeOf
-					//fmt.Println("tempLineSize:tempLineSize", tempLineSize)
 					if tempLineSize > 0 {
 						tempSrcOffset = int((rect.Y*width)+rect.X) * rgbSizeOf
 						tempDstOffset = int(rect.X) * rgbSizeOf
 						//src := @pbyte(buffer)[TempSrcOffset];
 						src = uintptr(common.GetParamPtr(buffer, tempSrcOffset)) // 拿到src指针, 实际是 byte 指针
-						//fmt.Println("src-dst-offset:", tempSrcOffset, tempDstOffset, src)
 						j := int(math.Min(float64(rect.Height), float64(tempHeight-rect.Y)))
-						//fmt.Println("j:", j)
 						for ii := 0; ii < j; ii++ {
 							tempBufferBits := tempBitMap.ScanLine(rect.Y + int32(ii))
 							dst = uintptr(common.GetParamPtr(tempBufferBits, tempDstOffset)) //拿到dst指针, 实际是 byte 指针
-							//fmt.Println("dst:", dst)
-							rtl.Move(src, dst, tempLineSize)
+							rtl.Move(src, dst, tempLineSize)                                 //  也可以自己实现字节复制
 							src = src + uintptr(srcStride)
 						}
 					}
@@ -243,19 +239,22 @@ func (m *WindowDemo) chromiumEvent() {
 
 func (m *WindowDemo) bufferPanelEvent() {
 	m.bufferPanel.SetOnClick(func(sender lcl.IObject) {
-		fmt.Println("SetOnClick")
 		m.bufferPanel.SetFocus()
 	})
 	m.bufferPanel.SetOnEnter(func(sender lcl.IObject) {
-		fmt.Println("SetOnEnter")
 		m.chromium.SetFocus(true)
 	})
 	m.bufferPanel.SetOnExit(func(sender lcl.IObject) {
-		fmt.Println("SetOnExit")
 		m.chromium.SetFocus(false)
 	})
+	m.bufferPanel.SetOnResize(func(sender lcl.IObject) {
+		if m.bufferPanel.BufferIsResized(false) {
+			m.chromium.Invalidate(consts.PET_VIEW)
+		} else {
+			m.chromium.WasResized()
+		}
+	})
 	m.bufferPanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
-		//fmt.Println("SetOnMouseMove", shift, x, y)
 		mouseEvent := &cef.TCefMouseEvent{}
 		mouseEvent.X = x
 		mouseEvent.Y = y
@@ -263,15 +262,29 @@ func (m *WindowDemo) bufferPanelEvent() {
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
 		m.chromium.SendMouseMoveEvent(mouseEvent, false)
 	})
-	//var clickTime int
+	var (
+		// 自己简单处理一下单击·双击·时间和点击次数控制
+		// 一搬使用系统的消息时间
+		clickTime  int64 = 300 // N 毫秒内连续点击 = 双击
+		preTime    int64 = 0
+		clickCount int32
+	)
 	m.bufferPanel.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		//fmt.Println("OnMouseDown:", clickTime, button, shift, x, y)
+		if (time.Now().UnixMilli() - preTime) > clickTime {
+			clickCount = 1
+		} else if clickCount == 2 {
+			clickCount = 1 //连续双击 > 恢复单击
+		} else {
+			clickCount = 2
+		}
+		preTime = time.Now().UnixMilli()
 		mouseEvent := &cef.TCefMouseEvent{}
 		mouseEvent.X = x
 		mouseEvent.Y = y
 		mouseEvent.Modifiers = getModifiers(shift)
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
-		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), false, 2)
+		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), false, clickCount)
 	})
 	m.bufferPanel.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		//fmt.Println("SetOnMouseUp:", clickTime, button, shift, x, y)
@@ -280,10 +293,10 @@ func (m *WindowDemo) bufferPanelEvent() {
 		mouseEvent.Y = y
 		mouseEvent.Modifiers = getModifiers(shift)
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
-		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), true, 2)
+		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), true, clickCount)
 	})
 	m.bufferPanel.SetOnMouseWheel(func(sender lcl.IObject, shift types.TShiftState, wheelDelta, x, y int32, handled *bool) {
-		fmt.Println("SetOnMouseWheel:", shift, wheelDelta, x, y)
+		//fmt.Println("SetOnMouseWheel:", shift, wheelDelta, x, y)
 		mouseEvent := &cef.TCefMouseEvent{}
 		mouseEvent.X = x
 		mouseEvent.Y = y
@@ -292,39 +305,39 @@ func (m *WindowDemo) bufferPanelEvent() {
 		m.chromium.SendMouseWheelEvent(mouseEvent, 0, wheelDelta)
 	})
 	m.bufferPanel.SetOnOnKeyDown(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
-		fmt.Println("SetOnOnKeyDown", *key, shift)
+		//fmt.Println("SetOnOnKeyDown", *key, shift)
 		keyEvent := &cef.TCefKeyEvent{}
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_RAW_KEYDOWN
 			keyEvent.Modifiers = getModifiers(shift)
 			keyEvent.WindowsKeyCode = t.Int32(*key)
 			keyEvent.NativeKeyCode = 0
-			keyEvent.IsSystemKey = 0
-			keyEvent.Character = '0'
-			keyEvent.UnmodifiedCharacter = '0'
-			keyEvent.FocusOnEditableField = 0
+			keyEvent.IsSystemKey = 0           // 0=false, 1=true
+			keyEvent.Character = '0'           // #0
+			keyEvent.UnmodifiedCharacter = '0' // '#0`
+			keyEvent.FocusOnEditableField = 0  // 0=false, 1=true
 			m.chromium.SendKeyEvent(keyEvent)
-			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key := 0;
+			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key = 0;
 		}
 	})
 	m.bufferPanel.SetOnOnKeyUp(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
-		fmt.Println("SetOnOnKeyUp", *key, shift)
+		//fmt.Println("SetOnOnKeyUp", *key, shift)
 		keyEvent := &cef.TCefKeyEvent{}
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_KEYUP
 			keyEvent.Modifiers = getModifiers(shift)
 			keyEvent.WindowsKeyCode = t.Int32(*key)
 			keyEvent.NativeKeyCode = 0
-			keyEvent.IsSystemKey = 0
-			keyEvent.Character = '0'
-			keyEvent.UnmodifiedCharacter = '0'
-			keyEvent.FocusOnEditableField = 0
+			keyEvent.IsSystemKey = 0           // 0=false, 1=true
+			keyEvent.Character = '0'           // #0
+			keyEvent.UnmodifiedCharacter = '0' // #0
+			keyEvent.FocusOnEditableField = 0  // 0=false, 1=true
 			m.chromium.SendKeyEvent(keyEvent)
-			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key := 0;
+			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key = 0;
 		}
 	})
 	m.bufferPanel.SetOnUTF8KeyPress(func(sender lcl.IObject, utf8key *types.TUTF8Char) {
-		fmt.Println("SetOnUTF8KeyPress", utf8key.ToString(), m.bufferPanel.Focused())
+		//fmt.Println("SetOnUTF8KeyPress", utf8key.ToString(), m.bufferPanel.Focused())
 		if m.bufferPanel.Focused() {
 			if utf8key.Len > 0 {
 				var asciiCode int
