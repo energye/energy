@@ -40,8 +40,9 @@ func main() {
 
 type WindowDemo struct {
 	*lcl.TForm
-	bufferPanel *cef.TBufferPanel
-	chromium    cef.IChromium
+	controlPanel *lcl.TPanel
+	bufferPanel  *cef.TBufferPanel
+	chromium     cef.IChromium
 }
 
 func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
@@ -60,6 +61,14 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	m.SetHeight(600)
 	m.ScreenCenter()
 	m.chromium = cef.NewChromium(m, nil)
+
+	m.controlPanel = lcl.NewPanel(m)
+	m.controlPanel.SetParent(m)
+	m.controlPanel.SetAlign(types.AlTop)
+	m.controlPanel.SetHeight(25)
+	m.controlPanel.SetBevelOuter(types.BvNone)
+	m.controlPanel.SetBevelInner(types.BvNone)
+	m.controlPanelWidget()
 
 	m.bufferPanel = cef.NewBufferPanel(m)
 	m.bufferPanel.SetParent(m)
@@ -83,6 +92,45 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 		//m.chromium.LoadUrl("https://www.baidu.com")
 	})
 
+}
+
+func (m *WindowDemo) controlPanelWidget() {
+	saveDialog := lcl.NewSaveDialog(m)
+	saveDialog.SetTitle("OSR Save Page")
+	saveDialog.SetFilter("Bitmap files (*.bmp)|*.BMP|Png files (*.png)|*.PNG")
+
+	combox := lcl.NewComboBox(m)
+	combox.SetParent(m.controlPanel)
+	combox.SetText("https://energy.yanghy.cn")
+	items := lcl.NewStringList()
+	items.Add("https://energy.yanghy.cn")
+	items.Add("https://www.baidu.com")
+	combox.SetItems(items)
+	combox.SetAlign(types.AlClient)
+
+	btnPanel := lcl.NewPanel(m)
+	btnPanel.SetParent(m.controlPanel)
+	btnPanel.SetAlign(types.AlRight)
+	btnPanel.SetBevelOuter(types.BvNone)
+	btnPanel.SetBevelInner(types.BvNone)
+
+	goBtn := lcl.NewButton(m)
+	goBtn.SetParent(btnPanel)
+	goBtn.SetCaption("GO")
+	goBtn.SetAlign(types.AlLeft)
+	goBtn.SetOnClick(func(sender lcl.IObject) {
+		m.chromium.LoadUrl(combox.Text())
+	})
+
+	saveBtn := lcl.NewButton(m)
+	saveBtn.SetParent(btnPanel)
+	saveBtn.SetCaption("SavePage")
+	saveBtn.SetAlign(types.AlRight)
+	saveBtn.SetOnClick(func(sender lcl.IObject) {
+		if saveDialog.Execute() {
+			m.bufferPanel.SaveToFile(saveDialog.FileName())
+		}
+	})
 }
 
 func (m *WindowDemo) chromiumEvent() {
