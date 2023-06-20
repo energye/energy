@@ -616,9 +616,11 @@ func init() {
 		case chromiumEventOnTooltip:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			textPtr := (*uintptr)(getPtr(2))
+			var text = new(string)
+			*text = api.GoStr(*textPtr)
 			result := (*bool)(getPtr(3))
-			text, ok := fn.(chromiumEventOnTooltip)(lcl.AsObject(getPtr(0)), browse)
-			*textPtr = api.PascalStr(text)
+			ok := fn.(chromiumEventOnTooltip)(lcl.AsObject(getPtr(0)), browse, text)
+			*textPtr = api.PascalStr(*text)
 			*result = ok
 		case chromiumEventOnTouchHandleStateChanged:
 			browser := &ICefBrowser{instance: getPtr(1)}

@@ -110,7 +110,7 @@ type chromiumEventOnStatusMessage func(sender lcl.IObject, browser *ICefBrowser,
 type chromiumEventOnTakeFocus func(sender lcl.IObject, browser *ICefBrowser, next bool)
 type chromiumEventOnTextResultAvailable func(sender lcl.IObject, text string)
 type chromiumEventOnTextSelectionChanged func(sender lcl.IObject, browser *ICefBrowser, selectedText string, selectedRange *TCefRange)
-type chromiumEventOnTooltip func(sender lcl.IObject, browser *ICefBrowser) (text string, result bool)
+type chromiumEventOnTooltip func(sender lcl.IObject, browser *ICefBrowser, text *string) (result bool)
 type chromiumEventOnTouchHandleStateChanged func(sender lcl.IObject, browser *ICefBrowser, state *TCefTouchHandleState)
 type chromiumEventOnUpdateDragCursor func(sender lcl.IObject, browser *ICefBrowser, operation consts.TCefDragOperation)
 type chromiumEventOnVirtualKeyboardRequested func(sender lcl.IObject, browser *ICefBrowser, inputMode consts.TCefTextInputMode)
