@@ -410,7 +410,7 @@ type ICefDomDocument struct {
 // TCefScreenInfo
 //  /include/internal/cef_types.h (cef_screen_info_t)
 type TCefScreenInfo struct {
-	DeviceScaleFactor int16
+	DeviceScaleFactor Single
 	Depth             int32
 	DepthPerComponent int32
 	IsMonochrome      int32
