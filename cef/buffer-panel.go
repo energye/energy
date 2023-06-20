@@ -1879,3 +1879,19 @@ func (m *TBufferPanel) SetOnPaintParentBkg(fn lcl.TNotifyEvent) {
 func (m *TBufferPanel) SetOnMouseWheel(fn lcl.TMouseWheelEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnMouseWheel, m.Instance(), api.MakeEventDataPtr(fn))
 }
+
+func (m *TBufferPanel) SetOnOnKeyDown(fn lcl.TKeyEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnKeyDown, m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TBufferPanel) SetOnOnKeyUp(fn lcl.TKeyEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnKeyUp, m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TBufferPanel) SetOnKeyPress(fn lcl.TKeyPressEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnKeyPress, m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TBufferPanel) SetOnUTF8KeyPress(fn lcl.TUTF8KeyPressEvent) {
+	imports.SysCallN(def.BufferPanel_SetOnUTF8KeyPress, m.Instance(), api.MakeEventDataPtr(fn))
+}

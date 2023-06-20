@@ -2208,6 +2208,10 @@ const (
 	BufferPanel_SetOnPointerUpdate
 	BufferPanel_SetOnPaintParentBkg
 	BufferPanel_SetOnMouseWheel
+	BufferPanel_SetOnKeyDown
+	BufferPanel_SetOnKeyUp
+	BufferPanel_SetOnKeyPress
+	BufferPanel_SetOnUTF8KeyPress
 	// TString
 	TString_Create
 	TString_Free
