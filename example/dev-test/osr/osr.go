@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
@@ -62,8 +63,10 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	m.bufferPanel = cef.NewBufferPanel(m)
 	m.bufferPanel.SetParent(m)
 	m.bufferPanel.SetColor(colors.ClAqua)
-	m.bufferPanel.SetWidth(800)
-	m.bufferPanel.SetHeight(600)
+	m.bufferPanel.SetTop(50)
+	m.bufferPanel.SetLeft(50)
+	m.bufferPanel.SetWidth(600)
+	m.bufferPanel.SetHeight(400)
 	//bufferPanel.SetAlign(types.AlClient)
 	m.bufferPanelEvent()
 	m.chromiumEvent()
@@ -71,11 +74,11 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 		b := m.chromium.Initialized()
 		fmt.Println("init:", b)
 		cb := m.chromium.CreateBrowser(nil, "", nil, nil)
-		fmt.Println("CreateBrowser:", cb, cef.CefColorSetARGB(0x00, 0x00, 0xFF, 0xFF), 0xFF)
+		fmt.Println("CreateBrowser:", cb)
 		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0x00, 0x00, 0xff, 0xff))
 		m.bufferPanel.CreateIMEHandler()
 		m.chromium.InitializeDragAndDrop(m.bufferPanel)
-		m.chromium.LoadUrl("https://www.baidu.com")
+		//m.chromium.LoadUrl("https://www.baidu.com")
 	})
 
 }
@@ -90,10 +93,58 @@ func (m *WindowDemo) chromiumEvent() {
 		tempSrcOffset, tempDstOffset int
 		src, dst                     uintptr
 	)
+	m.chromium.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
+		fmt.Println("SetOnLoadStart", frame.Url())
+	})
+	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		fmt.Println("SetOnLoadEnd", frame.Url())
+	})
 	m.chromium.SetOnCursorChange(func(sender lcl.IObject, browser *cef.ICefBrowser, cursor consts.TCefCursorHandle, cursorType consts.TCefCursorType, customCursorInfo *cef.TCefCursorInfo) bool {
 		fmt.Println("SetOnCursorChange")
 		m.bufferPanel.SetCursor(cef.CefCursorToWindowsCursor(cursorType))
 		return true
+	})
+	// 得到显示大小, 这样bufferPanel就显示实际大小
+	m.chromium.SetOnGetViewRect(func(sender lcl.IObject, browser *cef.ICefBrowser) *cef.TCefRect {
+		fmt.Println("SetOnGetViewRect")
+		var scale = float64(m.bufferPanel.ScreenScale())
+		var rect = &cef.TCefRect{}
+		rect.X = 0
+		rect.Y = 0
+		rect.Width = cef.DeviceToLogicalInt32(m.bufferPanel.Width(), scale)
+		rect.Height = cef.DeviceToLogicalInt32(m.bufferPanel.Height(), scale)
+		return rect
+	})
+	// 获取设置屏幕信息
+	m.chromium.SetOnGetScreenInfo(func(sender lcl.IObject, browser *cef.ICefBrowser) (screenInfo *cef.TCefScreenInfo, result bool) {
+		fmt.Println("SetOnGetScreenInfo")
+		var scale = float64(m.bufferPanel.ScreenScale())
+		var rect = &cef.TCefRect{}
+		screenInfo = new(cef.TCefScreenInfo)
+		rect.Width = cef.DeviceToLogicalInt32(m.bufferPanel.Width(), scale)
+		rect.Height = cef.DeviceToLogicalInt32(m.bufferPanel.Height(), scale)
+		screenInfo.DeviceScaleFactor = t.Single(scale)
+		screenInfo.Depth = 0
+		screenInfo.DepthPerComponent = 0
+		screenInfo.IsMonochrome = 0
+		screenInfo.Rect = *rect
+		screenInfo.AvailableRect = *rect
+		result = true
+		return
+	})
+	// 获取设置屏幕点
+	m.chromium.SetOnGetScreenPoint(func(sender lcl.IObject, browser *cef.ICefBrowser, viewX, viewY int32) (screenX, screenY int32, result bool) {
+		fmt.Println("SetOnGetScreenPoint")
+		var scale = float64(m.bufferPanel.ScreenScale())
+		var viewPoint = types.TPoint{}
+		viewPoint.X = cef.LogicalToDeviceInt32(viewX, scale)
+		viewPoint.Y = cef.LogicalToDeviceInt32(viewY, scale)
+		var screenPoint = m.bufferPanel.ClientToScreen(viewPoint)
+		result = true
+		screenX = screenPoint.X
+		screenY = screenPoint.Y
+		fmt.Println("SetOnGetScreenPoint result:", screenX, screenY)
+		return
 	})
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
 		fmt.Println("SetOnAfterCreated")
