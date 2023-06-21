@@ -44,11 +44,5 @@ func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
 	window.TForm.SetOnCloseQuery(func(sender lcl.IObject, aAanClose *bool) {
 		owner.Chromium().CloseDevTools(window.WindowParent()) // close devtools
 	})
-	//	3. 如果关闭的是浏览器窗口 CaFree
-	//window.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
-	//	if owner.isClosing {
-	//		*action = types.CaFree
-	//	}
-	//})
 	return window
 }
