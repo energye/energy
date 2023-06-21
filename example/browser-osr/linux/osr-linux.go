@@ -1,13 +1,11 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/gtk"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/assetserve"
 	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
@@ -18,31 +16,34 @@ import (
 	"unsafe"
 )
 
-//go:embed resources
-var resources embed.FS
+// 该示例未使用energy封装好的窗体, 而是完全使用energy框架底层创建
+// 其实在非OSR模式中也同样可以直接使用底层自己实现
+// 该示例演示了windows的OSR模式示例
 
 func main() {
 	cef.GlobalInit(nil, nil)
-	var window = &WindowDemo{}
+	var window = &WindowForm{}
 	//创建应用
 	cefApp := cef.NewApplication(true)
-	//
+	// OSR 离屏渲染
 	cefApp.SetWindowlessRenderingEnabled(true)
+	// 指定消息模式
 	cefApp.SetExternalMessagePump(true)
 	cefApp.SetMultiThreadedMessageLoop(false)
-	// work
-	delayed := cef.GlobalWorkSchedulerCreate(nil)
+	// create work schedule
+	global := cef.GlobalWorkSchedulerCreate(nil)
+	global.SetDefaultInterval(10)
 	cefApp.SetOnScheduleMessagePumpWork(nil)
-
-	//指定一个URL地址，或本地html文件目录
+	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
 	cefApp.StartMainProcess()
-
-	delayed.CreateThread()
+	global.CreateThread()
 	gtk.CustomWidgetSetInitializationGtk3()
+	// 运行应用, 传入窗口
 	lcl.RunApp(&window)
 }
 
-type WindowDemo struct {
+// 窗口
+type WindowForm struct {
 	*lcl.TForm
 	focusWorkaround *lcl.TEdit // linux 焦点获取替代
 	controlPanel    *lcl.TPanel
@@ -50,31 +51,26 @@ type WindowDemo struct {
 	chromium        cef.IChromium
 }
 
-func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
+// 窗口创建时回调事件
+func (m *WindowForm) OnFormCreate(sender lcl.IObject) {
 	m.SetCaption("Energy - OSR")
-	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
-		fmt.Println("主进程启动 创建一个内置http服务")
-		//通过内置http服务加载资源
-		server := assetserve.NewAssetsHttpServer()
-		server.PORT = 22022
-		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
-		go server.StartHttpServer()
-	})
-	fmt.Println("OnFormCreate")
 	m.SetWidth(1400)
 	m.SetHeight(900)
 	m.ScreenCenter()
+	// 创建 chromium
 	m.chromium = cef.NewChromium(m, nil)
+	m.chromiumEvent() //注册 chromium 事件
 
+	// 创建 地址栏 panel
 	m.controlPanel = lcl.NewPanel(m)
 	m.controlPanel.SetParent(m)
 	m.controlPanel.SetAlign(types.AlTop)
 	m.controlPanel.SetHeight(25)
 	m.controlPanel.SetBevelOuter(types.BvNone)
 	m.controlPanel.SetBevelInner(types.BvNone)
-	m.controlPanelWidget()
+	m.controlPanelWidget() // 创建地址栏组件
 
+	// 创建 bufferPanel
 	m.bufferPanel = cef.NewBufferPanel(m)
 	m.bufferPanel.SetParent(m)
 	m.bufferPanel.SetColor(colors.ClAqua)
@@ -83,62 +79,23 @@ func (m *WindowDemo) OnFormCreate(sender lcl.IObject) {
 	// 这里设置的宽高还未生效，chromium.SetOnGetViewRect 函数里设置生效
 	//m.bufferPanel.SetWidth(600)
 	//m.bufferPanel.SetHeight(400)
-	m.bufferPanel.SetAlign(types.AlClient) // 同步和客户端一样大小
-	m.bufferPanelEvent()
-	m.chromiumEvent()
-	m.SetOnShow(func(sender lcl.IObject) {
-		b := m.chromium.Initialized()
-		fmt.Println("init:", b)
-		cb := m.chromium.CreateBrowser(nil, "", nil, nil)
-		fmt.Println("CreateBrowser:", cb)
-		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0x00, 0x00, 0xff, 0xff))
+	m.bufferPanel.SetAlign(types.AlClient) // 宽高同步和主窗口一样大小
+	m.bufferPanelEvent()                   //注册 bufferPanel 事件
+	m.SetOnShow(func(sender lcl.IObject) { //显示窗口时回调
+		// 在这里创建初始化和创建chromium
+		m.chromium.Initialized()
+		m.chromium.CreateBrowser(nil, "", nil, nil)
+		m.chromium.Options().SetBackgroundColor(cef.CefColorSetARGB(0x00, 0x00, 0xff, 0xff)) // 可选, 随便设置个背景色
+		// CreateIMEHandler 当Panel1具有有效句柄时
+		// 需要在创建浏览器之前创建IME处理程序。
+		// 如果用户不需要“输入法编辑器”，则可以跳过此操作
 		m.bufferPanel.CreateIMEHandler()
 		m.chromium.InitializeDragAndDrop(m.bufferPanel)
-		//m.chromium.LoadUrl("https://www.baidu.com")
 	})
 
 }
 
-func (m *WindowDemo) controlPanelWidget() {
-	saveDialog := lcl.NewSaveDialog(m)
-	saveDialog.SetTitle("OSR Save Page")
-	saveDialog.SetFilter("Bitmap files (*.bmp)|*.BMP|Png files (*.png)|*.PNG")
-
-	combox := lcl.NewComboBox(m)
-	combox.SetParent(m.controlPanel)
-	combox.SetText("https://energy.yanghy.cn")
-	items := lcl.NewStringList()
-	items.Add("https://energy.yanghy.cn")
-	items.Add("https://www.baidu.com")
-	combox.SetItems(items)
-	combox.SetAlign(types.AlClient)
-
-	btnPanel := lcl.NewPanel(m)
-	btnPanel.SetParent(m.controlPanel)
-	btnPanel.SetAlign(types.AlRight)
-	btnPanel.SetBevelOuter(types.BvNone)
-	btnPanel.SetBevelInner(types.BvNone)
-
-	goBtn := lcl.NewButton(m)
-	goBtn.SetParent(btnPanel)
-	goBtn.SetCaption("GO")
-	goBtn.SetAlign(types.AlLeft)
-	goBtn.SetOnClick(func(sender lcl.IObject) {
-		m.chromium.LoadUrl(combox.Text())
-	})
-
-	saveBtn := lcl.NewButton(m)
-	saveBtn.SetParent(btnPanel)
-	saveBtn.SetCaption("SavePage")
-	saveBtn.SetAlign(types.AlRight)
-	saveBtn.SetOnClick(func(sender lcl.IObject) {
-		if saveDialog.Execute() {
-			m.bufferPanel.SaveToFile(saveDialog.FileName())
-		}
-	})
-}
-
-func (m *WindowDemo) chromiumEvent() {
+func (m *WindowForm) chromiumEvent() {
 	var (
 		popUpBitmap                  *lcl.TBitmap
 		tempBitMap                   *lcl.TBitmap
@@ -154,16 +111,21 @@ func (m *WindowDemo) chromiumEvent() {
 		fmt.Println("SetOnLoadEnd", frame.Url())
 	})
 	m.chromium.SetOnCursorChange(func(sender lcl.IObject, browser *cef.ICefBrowser, cursor consts.TCefCursorHandle, cursorType consts.TCefCursorType, customCursorInfo *cef.TCefCursorInfo) bool {
-		fmt.Println("SetOnCursorChange")
 		m.bufferPanel.SetCursor(cef.CefCursorToWindowsCursor(cursorType))
 		return true
 	})
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
 		return true // 阻止弹出窗口
 	})
+	m.chromium.SetOnTooltip(func(sender lcl.IObject, browser *cef.ICefBrowser, text *string) (result bool) {
+		fmt.Println("SetOnTooltip", *text)
+		result = true
+		m.bufferPanel.SetHint(*text)
+		m.bufferPanel.SetShowHint(len(*text) > 0)
+		return
+	})
 	// 得到显示大小, 这样bufferPanel就显示实际大小
 	m.chromium.SetOnGetViewRect(func(sender lcl.IObject, browser *cef.ICefBrowser) *cef.TCefRect {
-		//fmt.Println("SetOnGetViewRect")
 		var scale = float64(m.bufferPanel.ScreenScale())
 		var rect = &cef.TCefRect{}
 		rect.X = 0
@@ -174,7 +136,6 @@ func (m *WindowDemo) chromiumEvent() {
 	})
 	// 获取设置屏幕信息
 	m.chromium.SetOnGetScreenInfo(func(sender lcl.IObject, browser *cef.ICefBrowser) (screenInfo *cef.TCefScreenInfo, result bool) {
-		//fmt.Println("SetOnGetScreenInfo")
 		var scale = float64(m.bufferPanel.ScreenScale())
 		var rect = &cef.TCefRect{}
 		screenInfo = new(cef.TCefScreenInfo)
@@ -191,7 +152,6 @@ func (m *WindowDemo) chromiumEvent() {
 	})
 	// 获取设置屏幕点
 	m.chromium.SetOnGetScreenPoint(func(sender lcl.IObject, browser *cef.ICefBrowser, viewX, viewY int32) (screenX, screenY int32, result bool) {
-		//fmt.Println("SetOnGetScreenPoint")
 		var scale = float64(m.bufferPanel.ScreenScale())
 		var viewPoint = types.TPoint{}
 		viewPoint.X = cef.LogicalToDeviceInt32(viewX, scale)
@@ -200,15 +160,12 @@ func (m *WindowDemo) chromiumEvent() {
 		result = true
 		screenX = screenPoint.X
 		screenY = screenPoint.Y
-		//fmt.Println("SetOnGetScreenPoint result:", screenX, screenY)
 		return
 	})
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-		fmt.Println("SetOnAfterCreated")
 		m.chromium.LoadUrl("https://www.baidu.com")
 	})
 	m.chromium.SetOnPopupShow(func(sender lcl.IObject, browser *cef.ICefBrowser, show bool) {
-		fmt.Println("PopupShow - show:", show)
 		if m.chromium != nil {
 			m.chromium.Invalidate(consts.PET_VIEW)
 		}
@@ -219,6 +176,7 @@ func (m *WindowDemo) chromiumEvent() {
 		cef.LogicalToDeviceRect(rect, float64(screenScale))
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 	})
+	// windows IME
 	m.chromium.SetOnIMECompositionRangeChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, selectedRange *cef.TCefRange, characterBoundsCount uint32, characterBounds *cef.TCefRect) {
 		fmt.Println("SetOnIMECompositionRangeChanged", *selectedRange, characterBoundsCount, *characterBounds)
 	})
@@ -248,7 +206,6 @@ func (m *WindowDemo) chromiumEvent() {
 				tempWidth = m.bufferPanel.BufferWidth()
 				tempHeight = m.bufferPanel.BufferHeight()
 			}
-			//byteBufPtr := (*byte)(unsafe.Pointer(buffer))
 			rgbSizeOf := int(unsafe.Sizeof(cef.TRGBQuad{}))
 			srcStride := int(width) * rgbSizeOf
 			for i := 0; i < dirtyRects.Count(); i++ {
@@ -282,18 +239,14 @@ func (m *WindowDemo) chromiumEvent() {
 			}
 
 			m.bufferPanel.EndBufferDraw()
-			ha := m.HandleAllocated()
-			//fmt.Println("ha:", ha)
-			if ha {
+			if m.HandleAllocated() {
 				m.bufferPanel.Invalidate()
 			}
 		}
-		//fmt.Println("SetOnPaint", browser.Identifier(), kind, dirtyRects.Count(), dirtyRects.Get(0), buffer, width, height)
-		//fmt.Println(tempWidth, tempHeight, tempForcedResize)
 	})
 }
 
-func (m *WindowDemo) bufferPanelEvent() {
+func (m *WindowForm) bufferPanelEvent() {
 	m.focusWorkaround = lcl.NewEdit(m)
 	m.focusWorkaround.SetParent(m.bufferPanel)
 	m.focusWorkaround.SetAutoSize(true)
@@ -337,6 +290,10 @@ func (m *WindowDemo) bufferPanelEvent() {
 			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key = 0;
 		}
 	})
+	// 中文输入不知到砸搞。
+	// PGtkWidget
+	//  g_signal_connect_data(aWidget, 'key-press-event', TGCallback(@GTKKeyPress), nil, nil, 0)
+	//  g_signal_connect_data(aWidget, 'key-release-event', TGCallback(@GTKKeyPress), nil, nil, 0)
 	m.focusWorkaround.SetOnKeyPress(func(sender lcl.IObject, key *types.Char) {
 		fmt.Println("key:", *key, m.focusWorkaround.Focused())
 		//aCefEvent = TCEFKEYEVENT (KIND = KEYEVENT_RAWKEYDOWN;
@@ -374,7 +331,7 @@ func (m *WindowDemo) bufferPanelEvent() {
 
 	m.bufferPanel.SetOnClick(func(sender lcl.IObject) {
 		m.bufferPanel.SetFocus()
-		m.focusWorkaround.SetFocus()
+		m.focusWorkaround.SetFocus() // 焦点获取替代
 	})
 	m.bufferPanel.SetOnEnter(func(sender lcl.IObject) {
 		m.chromium.SetFocus(true)
@@ -382,6 +339,8 @@ func (m *WindowDemo) bufferPanelEvent() {
 	m.bufferPanel.SetOnExit(func(sender lcl.IObject) {
 		m.chromium.SetFocus(false)
 	})
+	// panel Align 设置为 client 时， 如果调整窗口大小
+	// 该函数被回调, 需要调用 WasResized 调整页面同步和主窗口一样
 	m.bufferPanel.SetOnResize(func(sender lcl.IObject) {
 		if m.bufferPanel.BufferIsResized(false) {
 			m.chromium.Invalidate(consts.PET_VIEW)
@@ -389,6 +348,7 @@ func (m *WindowDemo) bufferPanelEvent() {
 			m.chromium.WasResized()
 		}
 	})
+	// 鼠标移动
 	m.bufferPanel.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
 		mouseEvent := &cef.TCefMouseEvent{}
 		mouseEvent.X = x
@@ -404,6 +364,7 @@ func (m *WindowDemo) bufferPanelEvent() {
 		preTime    int64 = 0
 		clickCount int32
 	)
+	// 鼠标事件 点击按下
 	m.bufferPanel.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		//fmt.Println("OnMouseDown:", clickTime, button, shift, x, y)
 		if (time.Now().UnixMilli() - preTime) > clickTime {
@@ -421,6 +382,7 @@ func (m *WindowDemo) bufferPanelEvent() {
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
 		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), false, clickCount)
 	})
+	// 鼠标事件 点击抬起
 	m.bufferPanel.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		//fmt.Println("SetOnMouseUp:", clickTime, button, shift, x, y)
 		mouseEvent := &cef.TCefMouseEvent{}
@@ -430,6 +392,7 @@ func (m *WindowDemo) bufferPanelEvent() {
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
 		m.chromium.SendMouseClickEvent(mouseEvent, getButton(button), true, clickCount)
 	})
+	// 鼠标滚轮事件
 	m.bufferPanel.SetOnMouseWheel(func(sender lcl.IObject, shift types.TShiftState, wheelDelta, x, y int32, handled *bool) {
 		//fmt.Println("SetOnMouseWheel:", shift, wheelDelta, x, y)
 		mouseEvent := &cef.TCefMouseEvent{}
@@ -439,56 +402,43 @@ func (m *WindowDemo) bufferPanelEvent() {
 		cef.DeviceToLogicalMouse(mouseEvent, float64(m.bufferPanel.ScreenScale()))
 		m.chromium.SendMouseWheelEvent(mouseEvent, 0, wheelDelta)
 	})
-	m.bufferPanel.SetOnOnKeyDown(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
-		//fmt.Println("SetOnOnKeyDown", *key, shift)
-		keyEvent := &cef.TCefKeyEvent{}
-		if *key != 0 {
-			keyEvent.Kind = consts.KEYEVENT_RAW_KEYDOWN
-			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
-			keyEvent.NativeKeyCode = 0
-			keyEvent.IsSystemKey = 0           // 0=false, 1=true
-			keyEvent.Character = '0'           // #0
-			keyEvent.UnmodifiedCharacter = '0' // '#0`
-			keyEvent.FocusOnEditableField = 0  // 0=false, 1=true
-			m.chromium.SendKeyEvent(keyEvent)
-			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key = 0;
-		}
+}
+
+func (m *WindowForm) controlPanelWidget() {
+	saveDialog := lcl.NewSaveDialog(m)
+	saveDialog.SetTitle("OSR Save Page")
+	saveDialog.SetFilter("Bitmap files (*.bmp)|*.BMP|Png files (*.png)|*.PNG")
+
+	combox := lcl.NewComboBox(m)
+	combox.SetParent(m.controlPanel)
+	combox.SetText("https://energy.yanghy.cn")
+	items := lcl.NewStringList()
+	items.Add("https://energy.yanghy.cn")
+	items.Add("https://www.baidu.com")
+	combox.SetItems(items)
+	combox.SetAlign(types.AlClient)
+
+	btnPanel := lcl.NewPanel(m)
+	btnPanel.SetParent(m.controlPanel)
+	btnPanel.SetAlign(types.AlRight)
+	btnPanel.SetBevelOuter(types.BvNone)
+	btnPanel.SetBevelInner(types.BvNone)
+
+	goBtn := lcl.NewButton(m)
+	goBtn.SetParent(btnPanel)
+	goBtn.SetCaption("GO")
+	goBtn.SetAlign(types.AlLeft)
+	goBtn.SetOnClick(func(sender lcl.IObject) {
+		m.chromium.LoadUrl(combox.Text())
 	})
-	m.bufferPanel.SetOnOnKeyUp(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
-		//fmt.Println("SetOnOnKeyUp", *key, shift)
-		keyEvent := &cef.TCefKeyEvent{}
-		if *key != 0 {
-			keyEvent.Kind = consts.KEYEVENT_KEYUP
-			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
-			keyEvent.NativeKeyCode = 0
-			keyEvent.IsSystemKey = 0           // 0=false, 1=true
-			keyEvent.Character = '0'           // #0
-			keyEvent.UnmodifiedCharacter = '0' // #0
-			keyEvent.FocusOnEditableField = 0  // 0=false, 1=true
-			m.chromium.SendKeyEvent(keyEvent)
-			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key = 0;
-		}
-	})
-	m.bufferPanel.SetOnUTF8KeyPress(func(sender lcl.IObject, utf8key *types.TUTF8Char) {
-		//fmt.Println("SetOnUTF8KeyPress", utf8key.ToString(), m.bufferPanel.Focused())
-		if m.bufferPanel.Focused() {
-			if utf8key.Len > 0 {
-				var asciiCode int
-				fmt.Sscanf(utf8key.ToString(), "%c", &asciiCode)
-				keyEvent := &cef.TCefKeyEvent{}
-				keyEvent.Kind = consts.KEYEVENT_CHAR
-				//keyEvent.Modifiers = cef.GetCefKeyboardModifiers(t.WPARAM(asciiCode), 0) // windows
-				keyEvent.WindowsKeyCode = t.Int32(asciiCode)
-				keyEvent.NativeKeyCode = 0
-				keyEvent.IsSystemKey = 0
-				keyEvent.Character = '0'
-				keyEvent.UnmodifiedCharacter = '0'
-				keyEvent.FocusOnEditableField = 0
-				m.chromium.SendKeyEvent(keyEvent)
-				//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key := 0;
-			}
+
+	saveBtn := lcl.NewButton(m)
+	saveBtn.SetParent(btnPanel)
+	saveBtn.SetCaption("SavePage")
+	saveBtn.SetAlign(types.AlRight)
+	saveBtn.SetOnClick(func(sender lcl.IObject) {
+		if saveDialog.Execute() {
+			m.bufferPanel.SaveToFile(saveDialog.FileName())
 		}
 	})
 }
