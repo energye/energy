@@ -1959,6 +1959,18 @@ func init() {
 		dllimports.NewEnergyImport("CefDomNode_SetElementAttribute", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementInnerText", 0),
 		dllimports.NewEnergyImport("CefDomNode_GetElementBounds", 0),
+		// TCEFBitmapBitBuffer
+		dllimports.NewEnergyImport("BitmapBitBuffer_Create", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_Free", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_UpdateSize", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_Width", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_Height", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_BufferLength", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_Empty", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_Scanline", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_ScanlineSize", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_BufferScanlineSize", 0),
+		dllimports.NewEnergyImport("BitmapBitBuffer_BufferBits", 0),
 		// TBufferPanel
 		dllimports.NewEnergyImport("BufferPanel_Create", 0),
 		dllimports.NewEnergyImport("BufferPanel_Free", 0),

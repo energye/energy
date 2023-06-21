@@ -1959,6 +1959,18 @@ const (
 	CefDomNode_SetElementAttribute
 	CefDomNode_GetElementInnerText
 	CefDomNode_GetElementBounds
+	// TCEFBitmapBitBuffer
+	BitmapBitBuffer_Create
+	BitmapBitBuffer_Free
+	BitmapBitBuffer_UpdateSize
+	BitmapBitBuffer_Width
+	BitmapBitBuffer_Height
+	BitmapBitBuffer_BufferLength
+	BitmapBitBuffer_Empty
+	BitmapBitBuffer_Scanline
+	BitmapBitBuffer_ScanlineSize
+	BitmapBitBuffer_BufferScanlineSize
+	BitmapBitBuffer_BufferBits
 	// TBufferPanel
 	BufferPanel_Create
 	BufferPanel_Free
