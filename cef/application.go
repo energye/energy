@@ -110,7 +110,7 @@ func (m *TCEFApplication) QuitMessageLoop() {
 }
 
 func (m *TCEFApplication) StopScheduler() {
-	GlobalWorkScheduler.GlobalWorkSchedulerStop()
+	GlobalWorkScheduler.StopScheduler()
 }
 
 func (m *TCEFApplication) Destroy() {

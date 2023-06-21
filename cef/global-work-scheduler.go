@@ -39,6 +39,7 @@ func (m *TCEFWorkScheduler) IsValid() bool {
 	}
 	return m.instance != nil
 }
+
 func GlobalWorkSchedulerCreate(owner lcl.IComponent) *TCEFWorkScheduler {
 	if GlobalWorkScheduler != nil {
 		return GlobalWorkScheduler
@@ -55,24 +56,27 @@ func GlobalWorkSchedulerCreate(owner lcl.IComponent) *TCEFWorkScheduler {
 	return GlobalWorkScheduler
 }
 
-func (m *TCEFWorkScheduler) GlobalWorkSchedulerStop() {
-	imports.Proc(def.CEFWorkScheduler_StopScheduler).Call()
-}
-
-func (m *TCEFWorkScheduler) GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
+func GlobalWorkSchedulerCreateDelayed() *TCEFWorkScheduler {
+	if GlobalWorkScheduler != nil {
+		return GlobalWorkScheduler
+	}
 	var result uintptr
 	imports.Proc(def.CEFWorkScheduler_CreateDelayed).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &TCEFWorkScheduler{instance: unsafe.Pointer(result)}
+		GlobalWorkScheduler = &TCEFWorkScheduler{instance: unsafe.Pointer(result)}
 	}
-	return nil
+	return GlobalWorkScheduler
 }
 
-func (m *TCEFWorkScheduler) GlobalWorkSchedulerCreateThread() {
+func (m *TCEFWorkScheduler) StopScheduler() {
+	imports.Proc(def.CEFWorkScheduler_StopScheduler).Call()
+}
+
+func (m *TCEFWorkScheduler) CreateThread() {
 	imports.Proc(def.CEFWorkScheduler_CreateThread).Call()
 }
 
-func (m *TCEFWorkScheduler) GlobalWorkSchedulerDestroy() {
+func (m *TCEFWorkScheduler) Destroy() {
 	imports.Proc(def.CEFWorkScheduler_Destroy).Call()
 }
 
