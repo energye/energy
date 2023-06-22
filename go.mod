@@ -3,7 +3,7 @@ module github.com/energye/energy/v2
 go 1.18
 
 require (
-	github.com/energye/golcl v0.0.0-20230607072628-c317d3f83490
+	github.com/energye/golcl v1.0.1
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/json-iterator/go v1.1.12

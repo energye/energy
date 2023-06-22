@@ -43,11 +43,11 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 
 //initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
-	lp := libPath()
-	if lp != "" {
-		m.SetFrameworkDirPath(lp)
-		m.SetResourcesDirPath(lp)
-		m.SetLocalesDirPath(path.Join(lp, "locales"))
+	if m.FrameworkDirPath() == "" {
+		lp := libPath()
+		if lp != "" {
+			m.SetFrameworkDirPath(lp)
+		}
 	}
 	m.SetLocale(LANGUAGE_zh_CN)
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
@@ -130,6 +130,9 @@ func (m *TCEFApplication) FrameworkDirPath() string {
 
 func (m *TCEFApplication) SetFrameworkDirPath(value string) {
 	imports.Proc(def.CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
+	// 默认 resources 和 locals 在同一目录
+	m.SetResourcesDirPath(value)
+	m.SetLocalesDirPath(path.Join(value, "locales"))
 }
 
 // MainBundlePath 仅用于macOS
