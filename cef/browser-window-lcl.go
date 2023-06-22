@@ -845,11 +845,6 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 				bw.registerWindowsCompMsgEvent()
 				bw.setProperty()
 				QueueAsyncCall(func(id int) { // show window, run in main thread
-					// 如果开启开发者工具, 需要在IU线程中创建window
-					if bw.Chromium().Config().EnableDevTools() {
-						bw.createAuxTools()
-						bw.GetAuxTools().SetDevTools(createDevtoolsWindow(bw))
-					}
 					if bw.WindowProperty().IsShowModel {
 						bw.ShowModal()
 						return

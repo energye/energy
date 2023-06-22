@@ -38,11 +38,14 @@ func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
 	window.SetHeight(768)
 	window.ScreenCenter()
 	window.SetShowInTaskBar(types.StAlways)
-	// 关闭流程
-	//  1. 当前浏览器窗口关闭后触发 closeQuery 事件, 调用父窗口的chromium.CloseDevTools 关闭开发者工具
-	//  2. 默认 aAanClose = true, 然后触发  OnClose 事件, 如果关闭的是开发者工具窗口，我们什么都不做,默认隐藏
-	window.TForm.SetOnCloseQuery(func(sender lcl.IObject, aAanClose *bool) {
+	window.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
+		*action = types.CaFree
 		owner.Chromium().CloseDevTools(window.WindowParent()) // close devtools
+		window.Free()
+		owner.GetAuxTools().SetDevTools(nil)
+	})
+	window.TForm.SetOnShow(func(sender lcl.IObject) {
+		owner.Chromium().ShowDevTools(window.WindowParent())
 	})
 	return window
 }

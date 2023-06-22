@@ -41,10 +41,13 @@ func updateBrowserDevTools(browser *ICefBrowser, title string) {
 func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 	if browserWindow.IsLCL() {
 		if common.IsWindows() {
-			window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
+			// 如果开启开发者工具, 需要在IU线程中创建window
+			if browserWindow.Chromium().Config().EnableDevTools() {
+				browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
+				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
+			}
 			QueueAsyncCall(func(id int) { // show window, run is main ui thread
-				window.GetAuxTools().DevTools().Show()
-				browserWindow.Chromium().ShowDevTools(window.GetAuxTools().DevTools().WindowParent())
+				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().Show()
 			})
 		} else {
 			browserWindow.Chromium().ShowDevTools(nil)
