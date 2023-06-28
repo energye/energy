@@ -2239,7 +2239,7 @@ const (
 	TString_Free
 	TString_SetValue // def no impl
 	TString_GetValue
-	// gtk3
-	GTK3_CustomWidgetSetInitialization
-	GTK3_CustomWidgetSetFinalization
+	// CustomWidgetInterface for Linux
+	Interface_CustomWidgetSetInitialization
+	Interface_CustomWidgetSetFinalization
 ) //end

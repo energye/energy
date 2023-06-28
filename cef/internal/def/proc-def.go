@@ -2239,9 +2239,9 @@ func init() {
 		dllimports.NewEnergyImport("TString_Free", 0),
 		dllimports.NewEnergyImport("TString_SetValue", 0),
 		dllimports.NewEnergyImport("TString_GetValue", 0),
-		// gtk3
-		dllimports.NewEnergyImport("GTK3_CustomWidgetSetInitialization", 0),
-		dllimports.NewEnergyImport("GTK3_CustomWidgetSetFinalization", 0),
+		// CustomWidgetInterface for Linux
+		dllimports.NewEnergyImport("Interface_CustomWidgetSetInitialization", 0),
+		dllimports.NewEnergyImport("Interface_CustomWidgetSetFinalization", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
