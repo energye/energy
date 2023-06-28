@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/gtk"
+	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	t "github.com/energye/energy/v2/types"
@@ -37,7 +37,7 @@ func main() {
 	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
 	cefApp.StartMainProcess()
 	global.CreateThread()
-	gtk.CustomWidgetSetInitializationGtk3()
+	lclwidget.CustomWidgetSetInitialization()
 	// 运行应用, 传入窗口
 	lcl.RunApp(&window)
 }
