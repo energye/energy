@@ -35,17 +35,6 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 > - event driven: High performance event driven, IPC based communication, Go and Web side is very convenient function call and data interaction
 
 
-### Go interacts with the Web
-
-> The Go and Web technologies are based on IPC communication.  Data and event triggering can be exchanged between Go and Web without using the http interface, which is as simple as calling the functions of the language itself
->
-> Define JS binding type variables in Go and provide them to JS on the Web side to realize data synchronization of Go variables or structural objects
->
-> Listen for events in JS and trigger JS events in Go to achieve Go calling JS functions and passing parameter
->
-> Listen for events in Go and trigger Go events in JS to achieve JS calling Go functions and passing parameters
->
-
 ### Built-in dependency&integration
 
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
@@ -61,24 +50,29 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 > 
 > Use the energy command line tool to automatically install the development environment
 >
-> Get [energy](https://github.com/energye/energy)
-> project, or use the precompiled command line tool directly [Download address](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
-> 1. go get github.com/energye/energy
+> Get [energy](https://github.com/energye/energy) project, or use the precompiled command line tool directly [Download address](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+> 
+> <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
+> 
+> `go get github.com/energye/energy`
 >
 > Enter the  [energy](https://github.com/energye/energy) command line directory
-> 2. cd energy/cmd/energy
+> 
+> `cd energy/cmd/energy`
 >
 > Install command line tools
-> 3. go install
+> 
+> `go install`
 >
 > Execute the installation command
-> 4. energy install .
+> 
+> `energy install .`
 
 ### Getting Started Guide - [Transfer gate](https://energy.yanghy.cn)
 
-* [course](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-* [example](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
-* [document](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
+* [Course](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+* [Example](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
+* [Document](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
 
 ### Quick Get Start
 > Use [energy](https://github.com/energye/energy) Command line tool automatic installation environment dependency `energy install .`
@@ -106,23 +100,37 @@ func main() {
 	//Create application
 	cefApp := cef.NewApplication()
 	//Set URL
-	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+	cef.BrowserWindow.Config.Url = "https://www.yanghy.cn"
 	//Run App
 	cef.Run(cefApp)
 }
 ```
 ---
 
+### Run app
+- Windows、Linux
+> `go run simple.go`
+- MacOS
+> `go run simple.go energy_env=dev`
+
+
 ### Pack Project [reference](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/636e397ba749ba01d04ff595)
-1. Compile: Go program compilation `go build xxx. go` If you use resource built-in (HTML, CSS, JavaScript, Image, etc.), the resource will be compiled into the execution file
+1. Compile: Go program compilation `go build simple.go` If you use resource built-in (HTML, CSS, JavaScript, Image, etc.), the resource will be compiled into the execution file
 2. Copy: copy the execution file to the CEF directory of the ENERGY environment
 3. Packaging: use the installation package tool to make it as an installation package, Or refer to the production of installation package for each system platform
 4. Finally: the compiled program or installation package and CEF directory no longer need to configure the environment, and can be run directly in the CEF root directory
 
 #### Go Compile Command
-1. Compress and hide the cmd window `go build -ldflags "-H windowsgui -s -w"`, Note: Windows needs to hide the CMD window
-2. Compress `go build -ldflags "-s -w"`
-2. Uncompressed `go build`
+- `go build -ldflags "-H windowsgui -s -w"`
+> `-ldflags`
+>
+>> `-H windowsgui` optional: windows hide cmd black window
+>>
+>> `-w` optional: Removing debugging information can reduce the size of the execution file
+>>
+>> `-s` optional: Removing Symbol table information can reduce the size of the execution file
+
+---
 
 ---
 
