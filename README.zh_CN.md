@@ -126,16 +126,17 @@ func main() {
 ### 系统支持
 
 ![Windows](https://img.shields.io/badge/windows-supported-success.svg?logo=Windows&logoColor=blue)
-![MacOSX](https://img.shields.io/badge/MacOSX-supported-success.svg?logo=MacOS)
+![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
 
-|           | 32位                                                                             | 64位                                                                                        | 测试系统版本                               |
-|-----------|---------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------|
-| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue)     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10                 |
-| MacOSX    | ![MacOSX](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)             | ![MacOSX](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                   | MacOSX 10.15                         |
-| Linux     | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)     | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux) | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107              |
+|             | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
+|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10               |
+| MacOS       | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/需调试编译-inactive.svg?logo=MacOS)                       | --                                 |
+| Linux       | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
+| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107                 |
 
 ---
 
@@ -148,7 +149,7 @@ func main() {
 </p>
 
 
-给项目点个 Star, 或三连
+感谢给项目点个Star, 或三连
 
 ---
 
