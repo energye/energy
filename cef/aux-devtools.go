@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	devToolsName = "dev-tools"
+	devToolsName = "DevTools"
 )
 
 type devToolsWindow struct {
@@ -42,10 +42,9 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 	if browserWindow.IsLCL() {
 		if common.IsWindows() {
 			// 如果开启开发者工具, 需要在IU线程中创建window
-			if browserWindow.Chromium().Config().EnableDevTools() {
-				browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
-				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
-			}
+			browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
+			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
+			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
 			QueueAsyncCall(func(id int) { // show window, run is main ui thread
 				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().Show()
 			})

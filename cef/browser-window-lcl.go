@@ -895,7 +895,11 @@ func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction)
 	}
 	if !ret {
 		logger.Debug("window.onClose")
-		*action = types.CaFree
+		if m.WindowType() == consts.WT_MAIN_BROWSER || !IsWindows() { // 主窗口 或 非windows
+			*action = types.CaFree
+		} else if IsWindows() { // 子窗口
+			*action = types.CaHide
+		}
 	}
 }
 
@@ -985,13 +989,9 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 				}
 
 				// LCLBrowserWindow 关闭
-				if m.WindowType() == consts.WT_MAIN_BROWSER || m.WindowType() == consts.WT_POPUP_SUB_BROWSER || m.WindowType() == consts.WT_VIEW_SOURCE {
-					if IsWindows() {
-						rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
-					} else {
-						m.Close()
-					}
-				} else if IsDarwin() {
+				if IsWindows() {
+					rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
+				} else if IsDarwin() || IsLinux() {
 					m.Close()
 				}
 			}
