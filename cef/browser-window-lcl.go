@@ -897,7 +897,7 @@ func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction)
 		logger.Debug("window.onClose")
 		if m.WindowType() == consts.WT_MAIN_BROWSER || !IsWindows() { // 主窗口 或 非windows
 			*action = types.CaFree
-		} else if IsWindows() { // 子窗口
+		} else if IsWindows() { // windows 子窗口
 			*action = types.CaHide
 		}
 	}

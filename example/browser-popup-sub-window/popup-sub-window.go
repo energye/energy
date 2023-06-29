@@ -108,7 +108,7 @@ func main() {
 			} else if strings.Index(beforePopupInfo.TargetUrl, "model_window") > 0 {
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
-				popupWindow.WindowProperty().IsShowModel = true // 模态窗口 mac，打开开发者工具，关闭时有些问题,
+				popupWindow.WindowProperty().IsShowModel = true
 			}
 			return false
 		})
