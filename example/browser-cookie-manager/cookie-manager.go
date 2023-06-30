@@ -6,6 +6,8 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
+	"os"
+	"path/filepath"
 	//_ "net/http/pprof"
 )
 
@@ -25,6 +27,17 @@ func main() {
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
+	envPath := os.Getenv("ENERGY_HOME")
+	if envPath == "" {
+		// 未配置 ENERGY_HOME 环境变量， 在当前目录保存cache
+		envPath, _ = os.Getwd()
+		envPath = filepath.Join(envPath, "cache")
+	} else {
+		envPath = filepath.Join(envPath, "cache")
+	}
+	println("cache-path:", envPath)
+	// 设置cache目录, 持久化 localStorage 和 cookie
+	app.SetCache(envPath)
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		window.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
 			manager := browser.GetRequestContext().GetCookieManager(nil)
