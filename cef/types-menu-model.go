@@ -17,6 +17,7 @@ import (
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"strings"
 	"unsafe"
@@ -178,6 +179,42 @@ func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 	return true
 }
 
+// MenuModelRef -> ICefMenuModel
+var MenuModelRef menuModel
+
+type menuModel uintptr
+
+func (*menuModel) New(delegate *ICefMenuModelDelegate) *ICefMenuModel {
+	var result uintptr
+	imports.Proc(def.CefMenuModelRef_New).Call(delegate.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+// Instance 实例
+func (m *ICefMenuModel) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
+}
+
+func (m *ICefMenuModel) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
+func (m *ICefMenuModel) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return m.instance != nil
+}
+
 // AddSeparator 添加一个分隔线
 func (m *ICefMenuModel) AddSeparator() bool {
 	return cefMenuModel_AddSeparator(uintptr(m.instance))
@@ -291,15 +328,37 @@ func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
 	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
 }
 
-func (m *ICefMenuModel) Instance() uintptr {
-	return uintptr(m.instance)
+func (m *ICefMenuModel) GetType(commandId MenuId) TCefMenuItemType {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetType).Call(m.Instance(), uintptr(commandId))
+	return TCefMenuItemType(r1)
 }
 
-func (m *ICefMenuModel) Free() {
-	if m.instance != nil {
-		m.base.Free(m.Instance())
-		m.instance = nil
+func (m *ICefMenuModel) GetLabel(commandId MenuId) string {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetLabel).Call(m.Instance(), uintptr(commandId))
+	return api.GoStr(r1)
+}
+
+func (m *ICefMenuModel) GetGroupId(commandId MenuId) int32 {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetGroupId).Call(m.Instance(), uintptr(commandId))
+	return int32(r1)
+}
+
+func (m *ICefMenuModel) SetGroupId(commandId MenuId, groupId int32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetGroupId).Call(m.Instance(), uintptr(commandId), uintptr(groupId))
+	return api.GoBool(r1)
+}
+
+func (m *ICefMenuModel) GetSubMenu(commandId MenuId) *ICefMenuModel {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetSubMenu).Call(m.Instance(), uintptr(commandId))
+	if r1 != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(r1)}
 	}
+	return nil
+}
+
+func (m *ICefMenuModel) GetColor(commandId MenuId, colorType TCefMenuColorType) (color types.TCefColor, result bool) {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetColor).Call(m.Instance(), uintptr(commandId), uintptr(colorType), uintptr(unsafe.Pointer(&color)))
+	return color, api.GoBool(r1)
 }
 
 // ------------------------------------ PROC

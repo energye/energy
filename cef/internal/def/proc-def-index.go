@@ -1011,6 +1011,7 @@ const (
 	CEFFrame_Parent
 	CEFFrameRef_UnWrap
 	// ICefMenuModel
+	CefMenuModelRef_New
 	CEFMenuModel_AddSeparator
 	CEFMenuModel_Clear
 	CEFMenuModel_IsSubMenu
@@ -1034,6 +1035,12 @@ const (
 	CEFMenuModel_SetEnabled
 	CEFMenuModel_SetLabel
 	CEFMenuModel_GetIndexOf
+	CefMenuModel_GetType
+	CefMenuModel_GetLabel
+	CefMenuModel_GetGroupId
+	CefMenuModel_SetGroupId
+	CefMenuModel_GetSubMenu
+	CefMenuModel_GetColor
 	// Misc Functions
 	Misc_WindowInfoAsChild
 	Misc_WindowInfoAsPopUp

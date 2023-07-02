@@ -445,6 +445,13 @@ type ICefMenuModel struct {
 	CefMis   *keyEventAccelerator
 }
 
+// ICefMenuModelDelegate
+// /include/capi/cef_menu_model_delegate_capi.h (cef_menu_model_delegate_t)
+type ICefMenuModelDelegate struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ICefStringMultiMap 实例
 type ICefStringMultiMap struct {
 	instance unsafe.Pointer

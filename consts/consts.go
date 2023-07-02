@@ -1462,3 +1462,15 @@ const (
 	FILE_DIALOG_OPEN_FOLDER                  = 0x00000002
 	FILE_DIALOG_SAVE                         = 0x00000003
 )
+
+// /include/internal/cef_types.h (cef_menu_item_type_t)
+type TCefMenuItemType = types.Int32
+
+const (
+	MENUITEMTYPE_NONE TCefMenuItemType = iota
+	MENUITEMTYPE_COMMAND
+	MENUITEMTYPE_CHECK
+	MENUITEMTYPE_RADIO
+	MENUITEMTYPE_SEPARATOR
+	MENUITEMTYPE_SUBMENU
+)
