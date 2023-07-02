@@ -279,9 +279,9 @@ func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, 
 	return cefMenuModel_SetColor(uintptr(m.instance), commandId, colorType, color)
 }
 
-//	func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
-//		return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
-//	}
+func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
+	return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
+}
 
 // HasAccelerator 是否有快捷键
 func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
