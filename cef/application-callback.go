@@ -35,6 +35,45 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
+	//	var myparamValue string
+	//	v8Handler := V8HandlerRef.New()
+	//	v8Handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
+	//		fmt.Println("v8Handler.Execute", name)
+	//		var result bool
+	//		if name == "GetMyParam" {
+	//			result = true
+	//			retVal.SetResult(V8ValueRef.NewString(myparamValue))
+	//		} else if name == "SetMyParam" {
+	//			if arguments.Size() > 0 {
+	//				newValue := arguments.Get(0)
+	//				fmt.Println("value is string:", newValue.IsString())
+	//				fmt.Println("value:", newValue.GetStringValue())
+	//				myparamValue = newValue.GetStringValue()
+	//				newValue.Free()
+	//			}
+	//			result = true
+	//		}
+	//		return result
+	//	})
+	//	//注册js
+	//	var jsCode = `
+	//            let energyExtension;
+	//            if (!energyExtension) {
+	//                energyExtension = {};
+	//            }
+	//            (function () {
+	//                test.__defineGetter__('mouseover', function (e) {
+	//                    native function mouseover();
+	//                    return mouseover(e);
+	//                });
+	//                test.__defineSetter__('mousemove', function (e) {
+	//                    native function mousemove();
+	//                    mousemove(e);
+	//                });
+	//            })();
+	//`
+	//	// 注册JS 和v8处理器
+	//	RegisterExtension("v8/test", jsCode, v8Handler)
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

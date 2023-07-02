@@ -11,7 +11,7 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/example/browser-lib-checkupdate/form"
+	"github.com/energye/energy/v2/example/lib-checkupdate/form"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"

@@ -3,7 +3,7 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/example/browser-control/src"
+	"github.com/energye/energy/v2/example/control/src"
 )
 
 //go:embed resources

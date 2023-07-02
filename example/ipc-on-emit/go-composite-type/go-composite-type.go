@@ -6,7 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/example/browser-ipc-on-emit/go-composite-type/src"
+	"github.com/energye/energy/v2/example/ipc-on-emit/go-composite-type/src"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"strconv"
 )
