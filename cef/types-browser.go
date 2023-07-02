@@ -152,11 +152,11 @@ func (m *ICefBrowser) StartDownload(url string) {
 }
 
 // DownloadImage 开始下载图片
-func (m *ICefBrowser) DownloadImage(imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool) {
+func (m *ICefBrowser) DownloadImage(imageUrl string, isFavicon bool, maxImageSize int32, bypassCache bool, callback *ICefDownloadImageCallback) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFBrowser_DownloadImage).Call(m.Instance(), api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache))
+	imports.Proc(def.CEFBrowser_DownloadImage).Call(m.Instance(), api.PascalStr(imageUrl), api.PascalBool(isFavicon), uintptr(maxImageSize), api.PascalBool(bypassCache), callback.Instance())
 }
 
 // Print

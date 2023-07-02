@@ -20,16 +20,16 @@ import (
 
 // ************************** creates ************************** //
 
-// RunFileDialogCallbackRef -> ICefRunFileDialogCallback
-var RunFileDialogCallbackRef runFileDialogCallback
+// DownloadImageCallbackRef -> ICefDownloadImageCallback
+var DownloadImageCallbackRef downloadImageCallback
 
-type runFileDialogCallback uintptr
+type downloadImageCallback uintptr
 
-func (*runFileDialogCallback) New() *ICefRunFileDialogCallback {
+func (*downloadImageCallback) New() *ICefDownloadImageCallback {
 	var result uintptr
-	imports.Proc(def.RunFileDialogCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.DownloadImageCallbackRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefRunFileDialogCallback{instance: unsafe.Pointer(result)}
+		return &ICefDownloadImageCallback{instance: unsafe.Pointer(result)}
 	}
 	return nil
 }
@@ -37,35 +37,35 @@ func (*runFileDialogCallback) New() *ICefRunFileDialogCallback {
 // ************************** impl ************************** //
 
 // Instance 实例
-func (m *ICefRunFileDialogCallback) Instance() uintptr {
+func (m *ICefDownloadImageCallback) Instance() uintptr {
 	if m == nil {
 		return 0
 	}
 	return uintptr(m.instance)
 }
 
-func (m *ICefRunFileDialogCallback) Free() {
+func (m *ICefDownloadImageCallback) Free() {
 	if m.instance != nil {
 		m.base.Free(m.Instance())
 		m.instance = nil
 	}
 }
 
-func (m *ICefRunFileDialogCallback) IsValid() bool {
+func (m *ICefDownloadImageCallback) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
 	}
 	return m.instance != nil
 }
 
-func (m *ICefRunFileDialogCallback) SetOnFileDialogDismissed(fn onFileDialogDismissed) {
+func (m *ICefDownloadImageCallback) SetOnDownloadImageFinished(fn onDownloadImageFinished) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.RunFileDialogCallback_OnFileDialogDismissed).Call(m.Instance(), api.MakeEventDataPtr(fn))
+	imports.Proc(def.DownloadImageCallback_OnDownloadImageFinished).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type onFileDialogDismissed func(filePaths *lcl.TStrings)
+type onDownloadImageFinished func(imageUrl string, httpStatusCode int32, image *ICefImage)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -73,8 +73,8 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case onFileDialogDismissed:
-			fn.(onFileDialogDismissed)(lcl.AsStrings(getPtr(0)))
+		case onDownloadImageFinished:
+			fn.(onDownloadImageFinished)(api.GoStr(getVal(0)), int32(getVal(1)), &ICefImage{instance: getPtr(2)})
 		default:
 			return false
 		}

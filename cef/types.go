@@ -874,6 +874,13 @@ type ICefRunFileDialogCallback struct {
 	instance unsafe.Pointer
 }
 
+// TCefDownloadImageCallback
+// /include/capi/cef_browser_capi.h (cef_download_image_callback_t)
+type ICefDownloadImageCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ICefMediaAccessCallback
 //  This interface is declared twice with almost identical parameters. "allowed_permissions" is defined as int and uint32.
 //  /include/capi/cef_media_access_handler_capi.h (cef_media_access_callback_t)

@@ -2242,6 +2242,9 @@ const (
 	// ICefRunFileDialogCallback
 	RunFileDialogCallbackRef_Create
 	RunFileDialogCallback_OnFileDialogDismissed
+	// ICefDownloadImageCallback
+	DownloadImageCallbackRef_Create
+	DownloadImageCallback_OnDownloadImageFinished
 	// CustomWidgetInterface for Linux
 	Interface_CustomWidgetSetInitialization
 	Interface_CustomWidgetSetFinalization

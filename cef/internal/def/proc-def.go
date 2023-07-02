@@ -2242,6 +2242,9 @@ func init() {
 		// ICefRunFileDialogCallback
 		dllimports.NewEnergyImport("RunFileDialogCallbackRef_Create", 0),
 		dllimports.NewEnergyImport("RunFileDialogCallback_OnFileDialogDismissed", 0),
+		// ICefDownloadImageCallback
+		dllimports.NewEnergyImport("DownloadImageCallbackRef_Create", 0),
+		dllimports.NewEnergyImport("DownloadImageCallback_OnDownloadImageFinished", 0),
 		// CustomWidgetInterface for Linux
 		dllimports.NewEnergyImport("Interface_CustomWidgetSetInitialization", 0),
 		dllimports.NewEnergyImport("Interface_CustomWidgetSetFinalization", 0),
