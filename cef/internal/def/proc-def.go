@@ -2239,6 +2239,9 @@ func init() {
 		dllimports.NewEnergyImport("TString_Free", 0),
 		dllimports.NewEnergyImport("TString_SetValue", 0),
 		dllimports.NewEnergyImport("TString_GetValue", 0),
+		// ICefRunFileDialogCallback
+		dllimports.NewEnergyImport("RunFileDialogCallbackRef_Create", 0),
+		dllimports.NewEnergyImport("RunFileDialogCallback_OnFileDialogDismissed", 0),
 		// CustomWidgetInterface for Linux
 		dllimports.NewEnergyImport("Interface_CustomWidgetSetInitialization", 0),
 		dllimports.NewEnergyImport("Interface_CustomWidgetSetFinalization", 0),

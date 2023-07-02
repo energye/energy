@@ -2239,6 +2239,9 @@ const (
 	TString_Free
 	TString_SetValue // def no impl
 	TString_GetValue
+	// ICefRunFileDialogCallback
+	RunFileDialogCallbackRef_Create
+	RunFileDialogCallback_OnFileDialogDismissed
 	// CustomWidgetInterface for Linux
 	Interface_CustomWidgetSetInitialization
 	Interface_CustomWidgetSetFinalization

@@ -126,12 +126,21 @@ func (m *ICefBrowser) SetZoomLevel(zoomLevel float64) {
 	imports.Proc(def.CEFBrowser_SetZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&zoomLevel)))
 }
 
-// RunFileDialog 运行文件选择窗口, 可配合在下载文件事件中使用
-func (m *ICefBrowser) RunFileDialog(mode int32, title, defaultFilePath string, acceptFilters *lcl.TStrings) {
+// RunFileDialog FileDialog
+//  打开文件、文件夹、多选文件、保存
+//	在回调函数中获取最终选择结果
+//	如果回调函数为 nil 不会弹出窗口
+func (m *ICefBrowser) RunFileDialog(mode FileDialogMode, title, defaultFilePath string, acceptFilters lcl.IStrings, callback *ICefRunFileDialogCallback) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFilters.Instance())
+	var (
+		acceptFiltersPtr uintptr = 0
+	)
+	if acceptFilters != nil {
+		acceptFiltersPtr = acceptFilters.Instance()
+	}
+	imports.Proc(def.CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFiltersPtr, callback.Instance())
 }
 
 // StartDownload 开始下载

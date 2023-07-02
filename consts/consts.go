@@ -1452,3 +1452,13 @@ const (
 	TpHighest
 	TpTimeCritical
 )
+
+// /include/internal/cef_types.h (cef_file_dialog_mode_t)
+type FileDialogMode = types.Int32
+
+const (
+	FILE_DIALOG_OPEN          FileDialogMode = 0x00000000
+	FILE_DIALOG_OPEN_MULTIPLE                = 0x00000001
+	FILE_DIALOG_OPEN_FOLDER                  = 0x00000002
+	FILE_DIALOG_SAVE                         = 0x00000003
+)
