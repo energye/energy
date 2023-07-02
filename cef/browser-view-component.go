@@ -107,23 +107,23 @@ func init() {
 		}
 		switch fn.(type) {
 		case BrowserViewComponentOnBrowserCreated:
-			browserView := &ICefBrowserView{instance: getPtr(1)}
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnBrowserDestroyed:
-			browserView := &ICefBrowserView{instance: getPtr(1)}
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browser := &ICefBrowser{instance: getPtr(2)}
 			fn.(BrowserViewComponentOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
 		case BrowserViewComponentOnGetDelegateForPopupBrowserView:
-			browserView := &ICefBrowserView{instance: getPtr(1)}
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
 			browserSettings := browserSettingsPtr.Convert()
 			client := &ICefClient{instance: getPtr(3)}
 			result := &ICefBrowserViewDelegate{instance: getPtr(5)}
 			fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)), result)
 		case BrowserViewComponentOnPopupBrowserViewCreated:
-			browserView := &ICefBrowserView{instance: getPtr(1)}
-			popupBrowserView := &ICefBrowserView{instance: getPtr(2)}
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
+			popupBrowserView := &ICefBrowserView{&ICefView{instance: getPtr(2)}}
 			fn.(BrowserViewComponentOnPopupBrowserViewCreated)(lcl.AsObject(getPtr(0)), browserView, popupBrowserView, api.GoBool(getVal(3)), (*bool)(getPtr(4)))
 		case BrowserViewComponentOnGetChromeToolbarType:
 			fn.(BrowserViewComponentOnGetChromeToolbarType)(lcl.AsObject(getPtr(0)), (*consts.TCefChromeToolbarType)(getPtr(1)))

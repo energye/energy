@@ -19,11 +19,28 @@ import (
 	"unsafe"
 )
 
-func (m *ICefBrowserView) Instance() uintptr {
-	if m == nil {
-		return 0
+// BrowserViewRef -> ICefBrowserView
+var BrowserViewRef browserView
+
+type browserView uintptr
+
+func (*browserView) New(client *ICefClient, url string, browserSettings *TCefBrowserSettings, extraInfo *ICefDictionaryValue, requestContext *ICefRequestContext, delegate *ICefBrowserViewDelegate) *ICefBrowserView {
+	var browserSettingsPtr = browserSettings.ToPtr()
+	var result uintptr
+	imports.Proc(def.CefBrowserViewRef_Create).Call(client.Instance(), api.PascalStr(url), uintptr(unsafe.Pointer(&browserSettingsPtr)), extraInfo.Instance(), requestContext.Instance(), delegate.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefBrowserView{&ICefView{instance: unsafe.Pointer(result)}}
 	}
-	return uintptr(m.instance)
+	return nil
+}
+
+func (*browserView) GetForBrowser(browser *ICefBrowser) *ICefBrowserView {
+	var result uintptr
+	imports.Proc(def.CefBrowserViewRef_GetForBrowser).Call(browser.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefBrowserView{&ICefView{instance: unsafe.Pointer(result)}}
+	}
+	return nil
 }
 
 func (m *ICefBrowserView) Browser() *ICefBrowser {

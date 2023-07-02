@@ -642,6 +642,10 @@ const (
 	CEFBrowser_GetRequestContext
 	CEFBrowserRef_UnWrap
 	// ICefRequestContext
+	RequestContextRef_Global
+	RequestContextRef_New
+	RequestContextRef_NewTwo
+	RequestContextRef_Shared
 	RequestContext_HasPreference
 	RequestContext_GetPreference
 	RequestContext_GetAllPreferences
@@ -1503,6 +1507,8 @@ const (
 	CefDownloadItemCallback_Resume
 	CefDownloadItemCallbackRef_Pause
 	// ICefBrowserView
+	CefBrowserViewRef_Create
+	CefBrowserViewRef_GetForBrowser
 	CefBrowserView_Browser
 	CefBrowserView_ChromeToolbar
 	CefBrowserView_SetPreferAccelerators

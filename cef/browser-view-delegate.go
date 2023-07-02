@@ -14,5 +14,28 @@ import "unsafe"
 
 // ICefBrowserViewDelegate TODO 未实现
 type ICefBrowserViewDelegate struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
+}
+
+// Instance 实例
+func (m *ICefBrowserViewDelegate) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
+}
+
+func (m *ICefBrowserViewDelegate) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return m.instance != nil
+}
+
+func (m *ICefBrowserViewDelegate) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }

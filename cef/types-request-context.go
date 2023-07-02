@@ -18,6 +18,47 @@ import (
 	"unsafe"
 )
 
+var RequestContextRef requestContext
+
+type requestContext uintptr
+
+func (*requestContext) Global() *ICefRequestContext {
+	var result uintptr
+	imports.Proc(def.RequestContextRef_Global).Call(uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefRequestContext{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, handler *ICefRequestContextHandler) *ICefRequestContext {
+	requestContextSettingsPtr := requestContextSettings.ToPtr()
+	var result uintptr
+	imports.Proc(def.RequestContextRef_New).Call(uintptr(unsafe.Pointer(&requestContextSettingsPtr)), handler.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefRequestContext{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList string, cookieableSchemesExcludeDefaults, persistSessionCookies, persistUserPreferences bool, handler *ICefRequestContextHandler) *ICefRequestContext {
+	var result uintptr
+	imports.Proc(def.RequestContextRef_NewTwo).Call(api.PascalStr(cache), api.PascalStr(acceptLanguageList), api.PascalStr(cookieableSchemesList), api.PascalBool(cookieableSchemesExcludeDefaults), api.PascalBool(persistSessionCookies), api.PascalBool(persistUserPreferences), handler.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefRequestContext{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (*requestContext) Shared(other *ICefRequestContext, handler *ICefRequestContextHandler) *ICefRequestContext {
+	var result uintptr
+	imports.Proc(def.RequestContextRef_Shared).Call(other.Instance(), handler.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefRequestContext{instance: getInstance(result)}
+	}
+	return nil
+}
+
 // Instance 实例
 func (m *ICefRequestContext) Instance() uintptr {
 	if m == nil {

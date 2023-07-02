@@ -642,6 +642,10 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_GetRequestContext", 0),
 		dllimports.NewEnergyImport("CEFBrowserRef_UnWrap", 0),
 		// ICefRequestContext
+		dllimports.NewEnergyImport("RequestContextRef_Global", 0),
+		dllimports.NewEnergyImport("RequestContextRef_New", 0),
+		dllimports.NewEnergyImport("RequestContextRef_NewTwo", 0),
+		dllimports.NewEnergyImport("RequestContextRef_Shared", 0),
 		dllimports.NewEnergyImport("RequestContext_HasPreference", 0),
 		dllimports.NewEnergyImport("RequestContext_GetPreference", 0),
 		dllimports.NewEnergyImport("RequestContext_GetAllPreferences", 0),
@@ -1503,6 +1507,8 @@ func init() {
 		dllimports.NewEnergyImport("CefDownloadItemCallback_Resume", 0),
 		dllimports.NewEnergyImport("CefDownloadItemCallbackRef_Pause", 0),
 		//ICefBrowserView
+		dllimports.NewEnergyImport("CefBrowserViewRef_Create", 0),
+		dllimports.NewEnergyImport("CefBrowserViewRef_GetForBrowser", 0),
 		dllimports.NewEnergyImport("CefBrowserView_Browser", 0),
 		dllimports.NewEnergyImport("CefBrowserView_ChromeToolbar", 0),
 		dllimports.NewEnergyImport("CefBrowserView_SetPreferAccelerators", 0),
