@@ -2264,4 +2264,55 @@ const (
 	// CustomWidgetInterface for Linux
 	Interface_CustomWidgetSetInitialization
 	Interface_CustomWidgetSetFinalization
+	// ICefView
+	View_AsBrowserView
+	View_AsButton
+	View_AsPanel
+	View_AsScrollView
+	View_AsTextfield
+	View_GetTypeString
+	View_ToStringEx
+	View_IsValid
+	View_IsAttached
+	View_IsSame
+	View_GetDelegate
+	View_GetWindow
+	View_GetID
+	View_SetID
+	View_GetGroupID
+	View_SetGroupID
+	View_GetParentView
+	View_GetViewForID
+	View_SetBounds
+	View_GetBounds
+	View_GetBoundsInScreen
+	View_SetSize
+	View_GetSize
+	View_SetPosition
+	View_GetPosition
+	View_SetInsets
+	View_GetInsets
+	View_GetPreferredSize
+	View_SizeToPreferredSize
+	View_GetMinimumSize
+	View_GetMaximumSize
+	View_GetHeightForWidth
+	View_InvalidateLayout
+	View_SetVisible
+	View_IsVisible
+	View_IsDrawn
+	View_SetEnabled
+	View_IsEnabled
+	View_SetFocusable
+	View_IsFocusable
+	View_IsAccessibilityFocusable
+	View_RequestFocus
+	View_SetBackgroundColor
+	View_GetBackgroundColor
+	View_ConvertPointToScreen
+	View_ConvertPointFromScreen
+	View_ConvertPointToWindow
+	View_ConvertPointFromWindow
+	View_ConvertPointToView
+	View_ConvertPointFromView
 ) //end

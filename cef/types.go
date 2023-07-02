@@ -475,12 +475,46 @@ type TCefPostDataElementArray struct {
 }
 
 // ICefBrowserView
+// /include/capi/views/cef_browser_view_capi.h (cef_browser_view_t)
 type ICefBrowserView struct {
-	instance unsafe.Pointer
+	*ICefView
+}
+
+// ICefButton
+// /include/capi/views/cef_button_capi.h (cef_button_t)
+type ICefButton struct {
+	*ICefView
+}
+
+// ICefPanel
+// /include/capi/views/cef_panel_capi.h (cef_panel_t)
+type ICefPanel struct {
+	*ICefView
+}
+
+// ICefScrollView
+// /include/capi/views/cef_scroll_view_capi.h (cef_scroll_view_t)
+type ICefScrollView struct {
+	*ICefView
+}
+
+// ICefTextfield
+// /include/capi/views/cef_textfield_capi.h (cef_textfield_t)
+type ICefTextfield struct {
+	*ICefView
 }
 
 // ICefView
+// /include/capi/views/cef_view_capi.h (cef_view_t)
 type ICefView struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// ICefViewDelegate
+// /include/capi/views/cef_view_delegate_capi.h (cef_view_delegate_t)
+type ICefViewDelegate struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
@@ -976,6 +1010,14 @@ type TCefPreferenceRegistrarRef struct {
 type TCefRange struct {
 	From int32
 	To   int32
+}
+
+// /include/internal/cef_types_geometry.h (cef_insets_t)
+type TCefInsets struct {
+	Top    int32
+	Left   int32
+	Bottom int32
+	Right  int32
 }
 
 // TCefAudioParameters
