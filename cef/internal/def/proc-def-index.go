@@ -1041,6 +1041,15 @@ const (
 	CefMenuModel_SetGroupId
 	CefMenuModel_GetSubMenu
 	CefMenuModel_GetColor
+	// ICefMenuModelDelegate
+	MenuModelDelegateRef_Create
+	MenuModelDelegate_ExecuteCommand
+	MenuModelDelegate_MouseOutsideMenu
+	MenuModelDelegate_UnhandledOpenSubmenu
+	MenuModelDelegate_UnhandledCloseSubmenu
+	MenuModelDelegate_MenuWillShow
+	MenuModelDelegate_MenuClosed
+	MenuModelDelegate_FormatLabel
 	// Misc Functions
 	Misc_WindowInfoAsChild
 	Misc_WindowInfoAsPopUp

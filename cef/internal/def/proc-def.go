@@ -1041,6 +1041,15 @@ func init() {
 		dllimports.NewEnergyImport("CefMenuModel_SetGroupId", 0),
 		dllimports.NewEnergyImport("CefMenuModel_GetSubMenu", 0),
 		dllimports.NewEnergyImport("CefMenuModel_GetColor", 0),
+		// ICefMenuModelDelegate
+		dllimports.NewEnergyImport("MenuModelDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_ExecuteCommand", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_MouseOutsideMenu", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_UnhandledOpenSubmenu", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_UnhandledCloseSubmenu", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_MenuWillShow", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_MenuClosed", 0),
+		dllimports.NewEnergyImport("MenuModelDelegate_FormatLabel", 0),
 		// Misc CEFWindowInfo
 		dllimports.NewEnergyImport("Misc_WindowInfoAsChild", 0),
 		dllimports.NewEnergyImport("Misc_WindowInfoAsPopUp", 0),
