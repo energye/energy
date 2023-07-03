@@ -2415,4 +2415,16 @@ const (
 	BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView
 	BrowserViewDelegate_SetOnPopupBrowserViewCreated
 	BrowserViewDelegate_GetChromeToolbarType
+	// ICefButton
+	Button_AsLabelButton
+	Button_SetState
+	Button_GetState
+	Button_SetInkDropEnabled
+	Button_SetTooltipText
+	Button_SetAccessibleName
+	// ICefButtonDelegate
+	ButtonDelegateRef_Create
+	ButtonDelegateRef_CreateForCustom
+	ButtonDelegate_SetOnButtonPressed
+	ButtonDelegate_SetOnButtonStateChanged
 ) //end

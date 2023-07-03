@@ -163,45 +163,45 @@ func init() {
 		}
 		switch fn.(type) {
 		case onGetPreferredSize:
-			view := &ICefView{instance: getPtr(1)}
-			resultSize := (*TCefSize)(getPtr(2))
+			view := &ICefView{instance: getPtr(0)}
+			resultSize := (*TCefSize)(getPtr(1))
 			fn.(onGetPreferredSize)(view, resultSize)
 		case onGetMinimumSize:
-			view := &ICefView{instance: getPtr(1)}
-			resultSize := (*TCefSize)(getPtr(2))
+			view := &ICefView{instance: getPtr(0)}
+			resultSize := (*TCefSize)(getPtr(1))
 			fn.(onGetMinimumSize)(view, resultSize)
 		case onGetMaximumSize:
-			view := &ICefView{instance: getPtr(1)}
-			resultSize := (*TCefSize)(getPtr(2))
+			view := &ICefView{instance: getPtr(0)}
+			resultSize := (*TCefSize)(getPtr(1))
 			fn.(onGetMaximumSize)(view, resultSize)
 		case onGetHeightForWidth:
-			view := &ICefView{instance: getPtr(1)}
-			width := int32(getVal(2))
-			resultPtr := (*int32)(getPtr(3))
+			view := &ICefView{instance: getPtr(0)}
+			width := int32(getVal(1))
+			resultPtr := (*int32)(getPtr(2))
 			*resultPtr = fn.(onGetHeightForWidth)(view, width)
 		case onParentViewChanged:
-			view := &ICefView{instance: getPtr(1)}
-			added := api.GoBool(getVal(2))
-			parent := &ICefView{instance: getPtr(3)}
+			view := &ICefView{instance: getPtr(0)}
+			added := api.GoBool(getVal(1))
+			parent := &ICefView{instance: getPtr(2)}
 			fn.(onParentViewChanged)(view, added, parent)
 		case onChildViewChanged:
-			view := &ICefView{instance: getPtr(1)}
-			added := api.GoBool(getVal(2))
-			child := &ICefView{instance: getPtr(3)}
+			view := &ICefView{instance: getPtr(0)}
+			added := api.GoBool(getVal(1))
+			child := &ICefView{instance: getPtr(2)}
 			fn.(onChildViewChanged)(view, added, child)
 		case onWindowChanged:
-			view := &ICefView{instance: getPtr(1)}
-			added := api.GoBool(getVal(2))
+			view := &ICefView{instance: getPtr(0)}
+			added := api.GoBool(getVal(1))
 			fn.(onWindowChanged)(view, added)
 		case onLayoutChanged:
-			view := &ICefView{instance: getPtr(1)}
-			newBounds := (*TCefRect)(getPtr(2))
+			view := &ICefView{instance: getPtr(0)}
+			newBounds := (*TCefRect)(getPtr(1))
 			fn.(onLayoutChanged)(view, newBounds)
 		case onFocus:
-			view := &ICefView{instance: getPtr(1)}
+			view := &ICefView{instance: getPtr(0)}
 			fn.(onFocus)(view)
 		case onBlur:
-			view := &ICefView{instance: getPtr(1)}
+			view := &ICefView{instance: getPtr(0)}
 			fn.(onBlur)(view)
 		default:
 			return false

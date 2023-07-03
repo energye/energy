@@ -531,6 +531,11 @@ type ICefBrowserViewDelegate struct {
 	*ICefViewDelegate
 }
 
+// ICefButtonDelegate
+type ICefButtonDelegate struct {
+	*ICefViewDelegate
+}
+
 // TCEFViewComponent
 type TCEFViewComponent struct {
 	instance unsafe.Pointer

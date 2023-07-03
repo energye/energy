@@ -95,8 +95,8 @@ func (m *TCEFButtonComponent) SetOnButtonStateChanged(fn onButtonStateChanged) {
 	imports.Proc(def.ButtonComponent_SetOnButtonStateChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type onButtonPressed func(sender lcl.IObject, button *ICefButton)
-type onButtonStateChanged func(sender lcl.IObject, button *ICefButton)
+type onButtonPressed func(button *ICefButton)
+type onButtonStateChanged func(button *ICefButton)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -105,11 +105,11 @@ func init() {
 		}
 		switch fn.(type) {
 		case onButtonPressed:
-			button := (*ICefButton)(getPtr(1))
-			fn.(onButtonPressed)(lcl.AsObject(getPtr(0)), button)
+			button := (*ICefButton)(getPtr(0))
+			fn.(onButtonPressed)(button)
 		case onButtonStateChanged:
-			button := (*ICefButton)(getPtr(1))
-			fn.(onButtonStateChanged)(lcl.AsObject(getPtr(0)), button)
+			button := (*ICefButton)(getPtr(0))
+			fn.(onButtonStateChanged)(button)
 		default:
 			return false
 		}

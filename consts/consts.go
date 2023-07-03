@@ -1132,12 +1132,12 @@ const (
 
 // CefCreateType
 //	CtSelfOwn 自己处理事件
-//	CtOther   使用其他处理事件
+//	CtOther   使用其他组件处理事件
 type CefCreateType = types.Int8
 
 const (
 	CtSelfOwn CefCreateType = iota // CtSelfOwn 自己处理事件
-	CtOther                        // CtOther   使用其他处理事件
+	CtOther                        // CtOther   使用其他组件处理事件
 )
 
 // /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)

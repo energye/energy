@@ -2415,6 +2415,18 @@ func init() {
 		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView", 0),
 		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnPopupBrowserViewCreated", 0),
 		dllimports.NewEnergyImport("BrowserViewDelegate_GetChromeToolbarType", 0),
+		// ICefButton
+		dllimports.NewEnergyImport("Button_AsLabelButton", 0),
+		dllimports.NewEnergyImport("Button_SetState", 0),
+		dllimports.NewEnergyImport("Button_GetState", 0),
+		dllimports.NewEnergyImport("Button_SetInkDropEnabled", 0),
+		dllimports.NewEnergyImport("Button_SetTooltipText", 0),
+		dllimports.NewEnergyImport("Button_SetAccessibleName", 0),
+		// ICefButtonDelegate
+		dllimports.NewEnergyImport("ButtonDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("ButtonDelegateRef_CreateForCustom", 0),
+		dllimports.NewEnergyImport("ButtonDelegate_SetOnButtonPressed", 0),
+		dllimports.NewEnergyImport("ButtonDelegate_SetOnButtonStateChanged", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
