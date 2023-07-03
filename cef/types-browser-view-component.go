@@ -64,52 +64,84 @@ func (m *TCEFBrowserViewComponent) Free() {
 
 // GetForBrowser
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_GetForBrowser).Call(m.Instance(), browser.Instance())
 }
 
 // SetPreferAccelerators
 func (m *TCEFBrowserViewComponent) SetPreferAccelerators(preferAccelerators bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetPreferAccelerators).Call(m.Instance(), api.PascalBool(preferAccelerators))
 }
 
 // RequestFocus
 func (m *TCEFBrowserViewComponent) RequestFocus() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_RequestFocus).Call(m.Instance())
 }
 
 // Browser
 func (m *TCEFBrowserViewComponent) Browser() *ICefBrowser {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CEFBrowserViewComponent_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefBrowser{instance: unsafe.Pointer(result)}
 }
 
-//func (m *TCEFBrowserViewComponent) BrowserView() {
-// Proc(CEFBrowserViewComponent_BrowserView).Call(m.Instance())
-//}
+func (m *TCEFBrowserViewComponent) BrowserView() *ICefBrowserView {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CEFBrowserViewComponent_BrowserView).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefBrowserView{&ICefView{instance: unsafe.Pointer(result)}}
+}
 
 // SetOnBrowserCreated
 func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn BrowserViewComponentOnBrowserCreated) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetOnBrowserCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnBrowserDestroyed
 func (m *TCEFBrowserViewComponent) SetOnBrowserDestroyed(fn BrowserViewComponentOnBrowserDestroyed) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetOnBrowserDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetDelegateForPopupBrowserView
 func (m *TCEFBrowserViewComponent) SetOnGetDelegateForPopupBrowserView(fn BrowserViewComponentOnGetDelegateForPopupBrowserView) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnPopupBrowserViewCreated
 func (m *TCEFBrowserViewComponent) SetOnPopupBrowserViewCreated(fn BrowserViewComponentOnPopupBrowserViewCreated) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetOnPopupBrowserViewCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetChromeToolbarType
 func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewComponentOnGetChromeToolbarType) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFBrowserViewComponent_SetOnGetChromeToolbarType).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 

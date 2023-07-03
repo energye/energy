@@ -68,35 +68,35 @@ func (m *ICefBrowserViewDelegate) Free() {
 }
 
 func (m *ICefBrowserViewDelegate) SetOnBrowserCreated(fn onBrowserCreated) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.BrowserViewDelegate_SetOnBrowserCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefBrowserViewDelegate) SetOnBrowserDestroyed(fn onBrowserDestroyed) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.BrowserViewDelegate_SetOnBrowserDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefBrowserViewDelegate) SetOnGetDelegateForPopupBrowserView(fn onGetDelegateForPopupBrowserView) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefBrowserViewDelegate) SetOnPopupBrowserViewCreated(fn onPopupBrowserViewCreated) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.BrowserViewDelegate_SetOnPopupBrowserViewCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefBrowserViewDelegate) GetChromeToolbarType() consts.TCefChromeToolbarType {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return 0
 	}
 	r1, _, _ := imports.Proc(def.BrowserViewDelegate_GetChromeToolbarType).Call(m.Instance())
