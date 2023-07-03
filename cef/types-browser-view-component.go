@@ -49,6 +49,19 @@ func (m *TCEFBrowserViewComponent) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
+func (m *TCEFBrowserViewComponent) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return m.instance != nil
+}
+
+func (m *TCEFBrowserViewComponent) Free() {
+	if m.instance != nil {
+		m.instance = nil
+	}
+}
+
 // GetForBrowser
 func (m *TCEFBrowserViewComponent) GetForBrowser(browser *ICefBrowser) {
 	imports.Proc(def.CEFBrowserViewComponent_GetForBrowser).Call(m.Instance(), browser.Instance())
@@ -119,8 +132,11 @@ func init() {
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
 			browserSettings := browserSettingsPtr.Convert()
 			client := &ICefClient{instance: getPtr(3)}
-			result := &ICefBrowserViewDelegate{&ICefViewDelegate{instance: getPtr(5)}}
-			fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)), result)
+			resultPtr := (*uintptr)(getPtr(5))
+			result := fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)))
+			if result != nil {
+				*resultPtr = result.Instance()
+			}
 		case BrowserViewComponentOnPopupBrowserViewCreated:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			popupBrowserView := &ICefBrowserView{&ICefView{instance: getPtr(2)}}

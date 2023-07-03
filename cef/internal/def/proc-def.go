@@ -2407,6 +2407,14 @@ func init() {
 		dllimports.NewEnergyImport("ViewDelegate_SetOnLayoutChanged", 0),
 		dllimports.NewEnergyImport("ViewDelegate_SetOnFocus", 0),
 		dllimports.NewEnergyImport("ViewDelegate_SetOnBlur", 0),
+		// ICefBrowserViewDelegate
+		dllimports.NewEnergyImport("BrowserViewDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegateRef_CreateForCustom", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnBrowserCreated", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnBrowserDestroyed", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegate_SetOnPopupBrowserViewCreated", 0),
+		dllimports.NewEnergyImport("BrowserViewDelegate_GetChromeToolbarType", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

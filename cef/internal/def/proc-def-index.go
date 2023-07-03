@@ -2407,4 +2407,12 @@ const (
 	ViewDelegate_SetOnLayoutChanged
 	ViewDelegate_SetOnFocus
 	ViewDelegate_SetOnBlur
+	// ICefBrowserViewDelegate
+	BrowserViewDelegateRef_Create
+	BrowserViewDelegateRef_CreateForCustom
+	BrowserViewDelegate_SetOnBrowserCreated
+	BrowserViewDelegate_SetOnBrowserDestroyed
+	BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView
+	BrowserViewDelegate_SetOnPopupBrowserViewCreated
+	BrowserViewDelegate_GetChromeToolbarType
 ) //end
