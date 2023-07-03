@@ -518,6 +518,11 @@ type ICefViewDelegate struct {
 	instance unsafe.Pointer
 }
 
+// TCEFViewComponent
+type TCEFViewComponent struct {
+	instance unsafe.Pointer
+}
+
 // TCefX509CertificateArray
 // []ICefX509Certificate
 type TCefX509CertificateArray struct {

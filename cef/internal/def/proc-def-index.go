@@ -2321,4 +2321,57 @@ const (
 	View_ConvertPointFromWindow
 	View_ConvertPointToView
 	View_ConvertPointFromView
+	// TCEFViewComponent
+	ViewComponent_Create
+	ViewComponent_Free
+	ViewComponent_ToStringEx
+	ViewComponent_IsSame
+	ViewComponent_SizeToPreferredSize
+	ViewComponent_InvalidateLayout
+	ViewComponent_RequestFocus
+	ViewComponent_ConvertPointToScreen
+	ViewComponent_ConvertPointFromScreen
+	ViewComponent_ConvertPointToWindow
+	ViewComponent_ConvertPointFromWindow
+	ViewComponent_ConvertPointToView
+	ViewComponent_ConvertPointFromView
+	ViewComponent_GetInitialized
+	ViewComponent_GetAsView
+	ViewComponent_GetAsBrowserView
+	ViewComponent_GetAsButton
+	ViewComponent_GetAsPanel
+	ViewComponent_GetAsScrollView
+	ViewComponent_GetAsTextfield
+	ViewComponent_GetViewForID
+	ViewComponent_GetValid
+	ViewComponent_GetAttached
+	ViewComponent_GetDelegate
+	ViewComponent_GetWindow
+	ViewComponent_GetParentView
+	ViewComponent_GetBoundsInScreen
+	ViewComponent_GetPreferredSize
+	ViewComponent_GetMinimumSize
+	ViewComponent_GetMaximumSize
+	ViewComponent_GetVisible
+	ViewComponent_SetVisible
+	ViewComponent_GetDrawn
+	ViewComponent_GetEnabled
+	ViewComponent_SetEnabled
+	ViewComponent_GetFocusable
+	ViewComponent_SetFocusable
+	ViewComponent_GetAccessibilityFocusable
+	ViewComponent_GetBackgroundColor
+	ViewComponent_SetBackgroundColor
+	ViewComponent_GetID
+	ViewComponent_SetID
+	ViewComponent_GetGroupID
+	ViewComponent_SetGroupID
+	ViewComponent_GetBounds
+	ViewComponent_SetBounds
+	ViewComponent_GetSize
+	ViewComponent_SetSize
+	ViewComponent_GetPosition
+	ViewComponent_SetPosition
+	ViewComponent_GetTypeString
+	ViewComponent_GetHeightForWidth
 ) //end
