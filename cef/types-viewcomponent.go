@@ -435,3 +435,138 @@ func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 	r1, _, _ := imports.Proc(def.ViewComponent_GetHeightForWidth).Call(m.Instance(), uintptr(width))
 	return int32(r1)
 }
+
+func (m *TCEFViewComponent) SetOnGetPreferredSize(fn onGetPreferredSize) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnGetMinimumSize(fn onGetMinimumSize) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnGetMaximumSize(fn onGetMaximumSize) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnParentViewChanged(fn onParentViewChanged) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnChildViewChanged(fn onChildViewChanged) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnWindowChanged(fn onWindowChanged) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnLayoutChanged(fn onLayoutChanged) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnFocus(fn onFocus) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnBlur(fn onBlur) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ViewComponent_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type onGetPreferredSize func(sender lcl.IObject, view *ICefView, result *TCefSize)
+type onGetMinimumSize func(sender lcl.IObject, view *ICefView, result *TCefSize)
+type onGetMaximumSize func(sender lcl.IObject, view *ICefView, result *TCefSize)
+type onGetHeightForWidth func(sender lcl.IObject, view *ICefView, width int32) int32
+type onParentViewChanged func(sender lcl.IObject, view *ICefView, added bool, parent *ICefView)
+type onChildViewChanged func(sender lcl.IObject, view *ICefView, added bool, child *ICefView)
+type onWindowChanged func(sender lcl.IObject, view *ICefView, added bool)
+type onLayoutChanged func(sender lcl.IObject, view *ICefView, newBounds *TCefRect)
+type onFocus func(sender lcl.IObject, view *ICefView)
+type onBlur func(sender lcl.IObject, view *ICefView)
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case onGetPreferredSize:
+			view := &ICefView{instance: getPtr(1)}
+			resultSize := (*TCefSize)(getPtr(2))
+			fn.(onGetPreferredSize)(lcl.AsObject(getPtr(0)), view, resultSize)
+		case onGetMinimumSize:
+			view := &ICefView{instance: getPtr(1)}
+			resultSize := (*TCefSize)(getPtr(2))
+			fn.(onGetMinimumSize)(lcl.AsObject(getPtr(0)), view, resultSize)
+		case onGetMaximumSize:
+			view := &ICefView{instance: getPtr(1)}
+			resultSize := (*TCefSize)(getPtr(2))
+			fn.(onGetMaximumSize)(lcl.AsObject(getPtr(0)), view, resultSize)
+		case onGetHeightForWidth:
+			view := &ICefView{instance: getPtr(1)}
+			width := int32(getVal(2))
+			resultPtr := (*int32)(getPtr(3))
+			*resultPtr = fn.(onGetHeightForWidth)(lcl.AsObject(getPtr(0)), view, width)
+		case onParentViewChanged:
+			view := &ICefView{instance: getPtr(1)}
+			added := api.GoBool(getVal(2))
+			parent := &ICefView{instance: getPtr(3)}
+			fn.(onParentViewChanged)(lcl.AsObject(getPtr(0)), view, added, parent)
+		case onChildViewChanged:
+			view := &ICefView{instance: getPtr(1)}
+			added := api.GoBool(getVal(2))
+			child := &ICefView{instance: getPtr(3)}
+			fn.(onChildViewChanged)(lcl.AsObject(getPtr(0)), view, added, child)
+		case onWindowChanged:
+			view := &ICefView{instance: getPtr(1)}
+			added := api.GoBool(getVal(2))
+			fn.(onWindowChanged)(lcl.AsObject(getPtr(0)), view, added)
+		case onLayoutChanged:
+			view := &ICefView{instance: getPtr(1)}
+			newBounds := (*TCefRect)(getPtr(2))
+			fn.(onLayoutChanged)(lcl.AsObject(getPtr(0)), view, newBounds)
+		case onFocus:
+			view := &ICefView{instance: getPtr(1)}
+			fn.(onFocus)(lcl.AsObject(getPtr(0)), view)
+		case onBlur:
+			view := &ICefView{instance: getPtr(1)}
+			fn.(onBlur)(lcl.AsObject(getPtr(0)), view)
+		default:
+			return false
+		}
+		return true
+	})
+}

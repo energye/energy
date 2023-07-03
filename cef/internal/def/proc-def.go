@@ -2374,6 +2374,16 @@ func init() {
 		dllimports.NewEnergyImport("ViewComponent_SetPosition", 0),
 		dllimports.NewEnergyImport("ViewComponent_GetTypeString", 0),
 		dllimports.NewEnergyImport("ViewComponent_GetHeightForWidth", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnGetPreferredSize", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnGetMinimumSize", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnGetMaximumSize", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnGetHeightForWidth", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnParentViewChanged", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnChildViewChanged", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnWindowChanged", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnLayoutChanged", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnFocus", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnBlur", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

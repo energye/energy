@@ -2374,4 +2374,14 @@ const (
 	ViewComponent_SetPosition
 	ViewComponent_GetTypeString
 	ViewComponent_GetHeightForWidth
+	ViewComponent_SetOnGetPreferredSize
+	ViewComponent_SetOnGetMinimumSize
+	ViewComponent_SetOnGetMaximumSize
+	ViewComponent_SetOnGetHeightForWidth
+	ViewComponent_SetOnParentViewChanged
+	ViewComponent_SetOnChildViewChanged
+	ViewComponent_SetOnWindowChanged
+	ViewComponent_SetOnLayoutChanged
+	ViewComponent_SetOnFocus
+	ViewComponent_SetOnBlur
 ) //end
