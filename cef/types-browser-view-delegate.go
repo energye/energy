@@ -10,6 +10,10 @@
 
 package cef
 
+import (
+	"github.com/energye/energy/v2/consts"
+)
+
 // Instance 实例
 func (m *ICefBrowserViewDelegate) Instance() uintptr {
 	if m == nil {
@@ -31,3 +35,9 @@ func (m *ICefBrowserViewDelegate) Free() {
 		m.instance = nil
 	}
 }
+
+type onBrowserCreated func(browserView *ICefBrowserView, browser *ICefBrowser)
+type onBrowserDestroyed func(browserView *ICefBrowserView, browser *ICefBrowser)
+type onGetDelegateForPopupBrowserView func(browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool, aResult *ICefBrowserViewDelegate)
+type onPopupBrowserViewCreated func(browserView, popupBrowserView *ICefBrowserView, isDevtools bool, aResult *bool)
+type onGetChromeToolbarType func(aResult *consts.TCefChromeToolbarType)
