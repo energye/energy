@@ -2394,4 +2394,17 @@ const (
 	ButtonComponent_SetState
 	ButtonComponent_SetOnButtonPressed
 	ButtonComponent_SetOnButtonStateChanged
+	// ICefViewDelegate
+	ViewDelegateRef_Create
+	ViewDelegateRef_CreateForCustom
+	ViewDelegate_SetOnGetPreferredSize
+	ViewDelegate_SetOnGetMinimumSize
+	ViewDelegate_SetOnGetMaximumSize
+	ViewDelegate_SetOnGetHeightForWidth
+	ViewDelegate_SetOnParentViewChanged
+	ViewDelegate_SetOnChildViewChanged
+	ViewDelegate_SetOnWindowChanged
+	ViewDelegate_SetOnLayoutChanged
+	ViewDelegate_SetOnFocus
+	ViewDelegate_SetOnBlur
 ) //end

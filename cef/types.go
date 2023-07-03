@@ -365,6 +365,7 @@ type ICefExtensionHandler struct {
 type TCustomExtensionHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
+	ct       CefCreateType
 }
 
 // ICefExtension
@@ -435,7 +436,7 @@ type TCefTouchHandleState struct {
 type ICefRequestContextHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefMenuModel 菜单
@@ -522,6 +523,12 @@ type ICefView struct {
 type ICefViewDelegate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
+	ct       CefCreateType
+}
+
+// ICefBrowserViewDelegate
+type ICefBrowserViewDelegate struct {
+	*ICefViewDelegate
 }
 
 // TCEFViewComponent
@@ -567,7 +574,7 @@ type ICefSslInfo struct {
 type ICefClient struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefAudioHandler
@@ -696,7 +703,7 @@ type ICefAccessibilityHandler struct {
 type ICefResourceRequestHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefCookieAccessFilter
@@ -704,7 +711,7 @@ type ICefResourceRequestHandler struct {
 type ICefCookieAccessFilter struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefResourceHandler
@@ -830,14 +837,14 @@ type ICefResourceSkipCallback struct {
 type ICefDeleteCookiesCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefSetCookieCallback
 type ICefSetCookieCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefClientType // 0: TClientRef 1: IChromium
+	ct       CefCreateType
 }
 
 // ICefPrintDialogCallback

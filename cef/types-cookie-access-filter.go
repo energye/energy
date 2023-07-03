@@ -40,7 +40,7 @@ func (*cookieAccessFilter) NewForChromium(chromium IChromium) *ICefCookieAccessF
 	var result uintptr
 	imports.Proc(def.CookieAccessFilterRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefCookieAccessFilter{instance: unsafe.Pointer(result)}
+		return &ICefCookieAccessFilter{instance: unsafe.Pointer(result), ct: consts.CtOther}
 	}
 	return nil
 }
@@ -69,23 +69,23 @@ func (m *ICefCookieAccessFilter) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefCookieAccessFilter) IsTClientEvent() bool {
-	return m.ct == consts.CtTClient
+func (m *ICefCookieAccessFilter) IsSelfOwnEvent() bool {
+	return m.ct == consts.CtSelfOwn
 }
 
-func (m *ICefCookieAccessFilter) IsChromiumEvent() bool {
-	return m.ct == consts.CtChromium
+func (m *ICefCookieAccessFilter) IsOtherEvent() bool {
+	return m.ct == consts.CtOther
 }
 
 func (m *ICefCookieAccessFilter) SetCanSendCookie(fn canSendCookie) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.CookieAccessFilter_CanSendCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefCookieAccessFilter) SetCanSaveCookie(fn canSaveCookie) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.CookieAccessFilter_CanSaveCookie).Call(m.Instance(), api.MakeEventDataPtr(fn))

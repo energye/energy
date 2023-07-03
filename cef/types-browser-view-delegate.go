@@ -10,14 +10,6 @@
 
 package cef
 
-import "unsafe"
-
-// ICefBrowserViewDelegate TODO 未实现
-type ICefBrowserViewDelegate struct {
-	base     TCefBaseRefCounted
-	instance unsafe.Pointer
-}
-
 // Instance 实例
 func (m *ICefBrowserViewDelegate) Instance() uintptr {
 	if m == nil {

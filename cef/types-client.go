@@ -30,7 +30,7 @@ func (*cefClient) New() *ICefClient {
 	var result uintptr
 	imports.Proc(def.CefClientRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefClient{instance: unsafe.Pointer(result), ct: consts.CtTClient}
+		return &ICefClient{instance: unsafe.Pointer(result)}
 	}
 	return nil
 }
@@ -45,7 +45,7 @@ func (*cefClient) NewForChromium(chromium IChromium, aDevToolsClient bool) *ICef
 	var result uintptr
 	imports.Proc(def.CefClientRef_CreateForChromium).Call(chromium.Instance(), api.PascalBool(aDevToolsClient), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefClient{instance: unsafe.Pointer(result), ct: consts.CtChromium}
+		return &ICefClient{instance: unsafe.Pointer(result), ct: consts.CtOther}
 	}
 	return nil
 }
@@ -65,12 +65,12 @@ func (m *ICefClient) Free() {
 	}
 }
 
-func (m *ICefClient) IsTClientEvent() bool {
-	return m.ct == consts.CtTClient
+func (m *ICefClient) IsSelfEvent() bool {
+	return m.ct == consts.CtSelfOwn
 }
 
-func (m *ICefClient) IsChromiumEvent() bool {
-	return m.ct == consts.CtChromium
+func (m *ICefClient) IsOtherEvent() bool {
+	return m.ct == consts.CtOther
 }
 
 func (m *ICefClient) IsValid() bool {
@@ -85,7 +85,7 @@ func (m *ICefClient) SetClient(newClient *ICefClient) {
 }
 
 func (m *ICefClient) GetAudioHandler() *ICefAudioHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -97,7 +97,7 @@ func (m *ICefClient) GetAudioHandler() *ICefAudioHandler {
 }
 
 func (m *ICefClient) GetCommandHandler() *ICefCommandHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -109,7 +109,7 @@ func (m *ICefClient) GetCommandHandler() *ICefCommandHandler {
 }
 
 func (m *ICefClient) GetContextMenuHandler() *ICefContextMenuHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -121,7 +121,7 @@ func (m *ICefClient) GetContextMenuHandler() *ICefContextMenuHandler {
 }
 
 func (m *ICefClient) GetDialogHandler() *ICefDialogHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -133,7 +133,7 @@ func (m *ICefClient) GetDialogHandler() *ICefDialogHandler {
 }
 
 func (m *ICefClient) GetDisplayHandler() *ICefDisplayHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -145,7 +145,7 @@ func (m *ICefClient) GetDisplayHandler() *ICefDisplayHandler {
 }
 
 func (m *ICefClient) GetDownloadHandler() *ICefDownloadHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -157,7 +157,7 @@ func (m *ICefClient) GetDownloadHandler() *ICefDownloadHandler {
 }
 
 func (m *ICefClient) GetDragHandler() *ICefDragHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -169,7 +169,7 @@ func (m *ICefClient) GetDragHandler() *ICefDragHandler {
 }
 
 func (m *ICefClient) GetFindHandler() *ICefFindHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -181,7 +181,7 @@ func (m *ICefClient) GetFindHandler() *ICefFindHandler {
 }
 
 func (m *ICefClient) GetFocusHandler() *ICefFocusHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -193,7 +193,7 @@ func (m *ICefClient) GetFocusHandler() *ICefFocusHandler {
 }
 
 func (m *ICefClient) GetFrameHandler() *ICefFrameHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -205,7 +205,7 @@ func (m *ICefClient) GetFrameHandler() *ICefFrameHandler {
 }
 
 func (m *ICefClient) GetPermissionHandler() *ICefPermissionHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -217,7 +217,7 @@ func (m *ICefClient) GetPermissionHandler() *ICefPermissionHandler {
 }
 
 func (m *ICefClient) GetJsdialogHandler() *ICefJsDialogHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -229,7 +229,7 @@ func (m *ICefClient) GetJsdialogHandler() *ICefJsDialogHandler {
 }
 
 func (m *ICefClient) GetKeyboardHandler() *ICefKeyboardHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -241,7 +241,7 @@ func (m *ICefClient) GetKeyboardHandler() *ICefKeyboardHandler {
 }
 
 func (m *ICefClient) GetLifeSpanHandler() *ICefLifeSpanHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -253,7 +253,7 @@ func (m *ICefClient) GetLifeSpanHandler() *ICefLifeSpanHandler {
 }
 
 func (m *ICefClient) GetLoadHandler() *ICefLoadHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -265,7 +265,7 @@ func (m *ICefClient) GetLoadHandler() *ICefLoadHandler {
 }
 
 func (m *ICefClient) GetPrintHandler() *ICefPrintHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -277,7 +277,7 @@ func (m *ICefClient) GetPrintHandler() *ICefPrintHandler {
 }
 
 func (m *ICefClient) GetRenderHandler() *ICefRenderHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr
@@ -289,7 +289,7 @@ func (m *ICefClient) GetRenderHandler() *ICefRenderHandler {
 }
 
 func (m *ICefClient) GetRequestHandler() *ICefRequestHandler {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return nil
 	}
 	var result uintptr

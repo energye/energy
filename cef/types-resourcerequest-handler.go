@@ -30,7 +30,7 @@ func (*resourceRequestHandler) New() *ICefResourceRequestHandler {
 	var result uintptr
 	imports.Proc(def.ResourceRequestHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result), ct: consts.CtTClient}
+		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result)}
 	}
 	return nil
 }
@@ -39,7 +39,7 @@ func (*resourceRequestHandler) NewForChromium(chromium IChromium) *ICefResourceR
 	var result uintptr
 	imports.Proc(def.ResourceRequestHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result), ct: consts.CtChromium}
+		return &ICefResourceRequestHandler{instance: unsafe.Pointer(result), ct: consts.CtOther}
 	}
 	return nil
 }
@@ -68,65 +68,65 @@ func (m *ICefResourceRequestHandler) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefResourceRequestHandler) IsTClientEvent() bool {
-	return m.ct == consts.CtTClient
+func (m *ICefResourceRequestHandler) IsSelfOwnEvent() bool {
+	return m.ct == consts.CtSelfOwn
 }
 
-func (m *ICefResourceRequestHandler) IsChromiumEvent() bool {
-	return m.ct == consts.CtChromium
+func (m *ICefResourceRequestHandler) IsOtherEvent() bool {
+	return m.ct == consts.CtOther
 }
 
 func (m *ICefResourceRequestHandler) SetGetCookieAccessFilter(fn getCookieAccessFilter) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_GetCookieAccessFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnBeforeResourceLoad(fn onBeforeResourceLoad) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_OnBeforeResourceLoad).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetGetResourceHandler(fn getResourceHandler) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_GetResourceHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceRedirect(fn onResourceRedirect) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_OnResourceRedirect).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceResponse(fn onResourceResponse) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_OnResourceResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetGetResourceResponseFilter(fn getResourceResponseFilter) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_GetResourceResponseFilter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnResourceLoadComplete(fn onResourceLoadComplete) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_OnResourceLoadComplete).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefResourceRequestHandler) SetOnProtocolExecution(fn onProtocolExecution) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ResourceRequestHandler_OnProtocolExecution).Call(m.Instance(), api.MakeEventDataPtr(fn))

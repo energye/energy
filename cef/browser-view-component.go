@@ -119,7 +119,7 @@ func init() {
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
 			browserSettings := browserSettingsPtr.Convert()
 			client := &ICefClient{instance: getPtr(3)}
-			result := &ICefBrowserViewDelegate{instance: getPtr(5)}
+			result := &ICefBrowserViewDelegate{&ICefViewDelegate{instance: getPtr(5)}}
 			fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)), result)
 		case BrowserViewComponentOnPopupBrowserViewCreated:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}

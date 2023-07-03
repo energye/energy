@@ -31,7 +31,7 @@ func (*extensionHandler) NewForChromium(chromium IChromium) *TCustomExtensionHan
 	var result uintptr
 	imports.Proc(def.CefExtensionHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &TCustomExtensionHandler{instance: unsafe.Pointer(result)}
+		return &TCustomExtensionHandler{instance: unsafe.Pointer(result), ct: consts.CtOther}
 	}
 	return nil
 }
@@ -66,6 +66,14 @@ func (m *TCustomExtensionHandler) IsValid() bool {
 	return m.instance != nil
 }
 
+func (m *TCustomExtensionHandler) IsSelfOwnEvent() bool {
+	return m.ct == consts.CtSelfOwn
+}
+
+func (m *TCustomExtensionHandler) IsOtherEvent() bool {
+	return m.ct == consts.CtOther
+}
+
 // Instance 实例
 func (m *ICefExtensionHandler) Instance() uintptr {
 	if m == nil {
@@ -80,6 +88,7 @@ func (m *ICefExtensionHandler) Free() {
 		m.instance = nil
 	}
 }
+
 func (m *ICefExtensionHandler) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false

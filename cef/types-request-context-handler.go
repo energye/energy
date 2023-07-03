@@ -30,7 +30,7 @@ func (*requestContextHandler) New() *ICefRequestContextHandler {
 	var result uintptr
 	imports.Proc(def.RequestContextHandlerRef_Create).Call(uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefRequestContextHandler{instance: unsafe.Pointer(result), ct: consts.CtTClient}
+		return &ICefRequestContextHandler{instance: unsafe.Pointer(result)}
 	}
 	return nil
 }
@@ -42,7 +42,7 @@ func (*requestContextHandler) NewForChromium(chromium IChromium) *ICefRequestCon
 	var result uintptr
 	imports.Proc(def.RequestContextHandlerRef_CreateForChromium).Call(chromium.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefRequestContextHandler{instance: unsafe.Pointer(result), ct: consts.CtChromium}
+		return &ICefRequestContextHandler{instance: unsafe.Pointer(result), ct: consts.CtOther}
 	}
 	return nil
 }
@@ -71,23 +71,23 @@ func (m *ICefRequestContextHandler) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefRequestContextHandler) IsTClientEvent() bool {
-	return m.ct == consts.CtTClient
+func (m *ICefRequestContextHandler) IsSelfOwnEvent() bool {
+	return m.ct == consts.CtSelfOwn
 }
 
-func (m *ICefRequestContextHandler) IsChromiumEvent() bool {
-	return m.ct == consts.CtChromium
+func (m *ICefRequestContextHandler) IsOtherEvent() bool {
+	return m.ct == consts.CtOther
 }
 
 func (m *ICefRequestContextHandler) SetOnRequestContextInitialized(fn onRequestContextInitialized) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.RequestContextHandler_OnRequestContextInitialized).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefRequestContextHandler) SetGetResourceRequestHandler(fn getResourceRequestHandler) {
-	if !m.IsValid() || m.IsChromiumEvent() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.RequestContextHandler_GetResourceRequestHandler).Call(m.Instance(), api.MakeEventDataPtr(fn))

@@ -1130,14 +1130,14 @@ const (
 	CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX // CEF_CHANNEL_LAYOUT_MAX = CEF_CHANNEL_LAYOUT_5_1_4_DOWNMIX
 )
 
-// CefClientType
-//	CtTClient 自定义客户端处理器事件
-//	CtChromium 使用 IChromium 定义事件, 不允许获取处理器事件
-type CefClientType = types.Int8
+// CefCreateType
+//	CtSelfOwn 自己处理事件
+//	CtOther   使用其他处理事件
+type CefCreateType = types.Int8
 
 const (
-	CtTClient CefClientType = iota
-	CtChromium
+	CtSelfOwn CefCreateType = iota // CtSelfOwn 自己处理事件
+	CtOther                        // CtOther   使用其他处理事件
 )
 
 // /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)

@@ -2394,6 +2394,19 @@ func init() {
 		dllimports.NewEnergyImport("ButtonComponent_SetState", 0),
 		dllimports.NewEnergyImport("ButtonComponent_SetOnButtonPressed", 0),
 		dllimports.NewEnergyImport("ButtonComponent_SetOnButtonStateChanged", 0),
+		// ICefViewDelegate
+		dllimports.NewEnergyImport("ViewDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("ViewDelegateRef_CreateForCustom", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnGetPreferredSize", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnGetMinimumSize", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnGetMaximumSize", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnGetHeightForWidth", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnParentViewChanged", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnChildViewChanged", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnWindowChanged", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnLayoutChanged", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnFocus", 0),
+		dllimports.NewEnergyImport("ViewDelegate_SetOnBlur", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
