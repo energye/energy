@@ -33,9 +33,12 @@ func (*viewDelegate) New() *ICefViewDelegate {
 	return nil
 }
 
-func (*viewDelegate) NewForCustom() *ICefViewDelegate {
+func (*viewDelegate) NewForCustom(viewComponent *TCEFViewComponent) *ICefViewDelegate {
+	if !viewComponent.IsValid() {
+		return nil
+	}
 	var result uintptr
-	imports.Proc(def.ViewDelegateRef_CreateForCustom).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewDelegateRef_CreateForCustom).Call(viewComponent.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefViewDelegate{instance: getInstance(result), ct: consts.CtOther}
 	}
