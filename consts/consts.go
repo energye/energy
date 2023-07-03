@@ -1474,3 +1474,13 @@ const (
 	MENUITEMTYPE_SEPARATOR
 	MENUITEMTYPE_SUBMENU
 )
+
+// /include/internal/cef_types.h (cef_button_state_t)
+type TCefButtonState = types.Int32
+
+const (
+	CEF_BUTTON_STATE_NORMAL TCefButtonState = iota
+	CEF_BUTTON_STATE_HOVERED
+	CEF_BUTTON_STATE_PRESSED
+	CEF_BUTTON_STATE_DISABLED
+)

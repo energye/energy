@@ -486,6 +486,12 @@ type ICefButton struct {
 	*ICefView
 }
 
+// ICefLabelButton
+// /include/capi/views/cef_label_button_capi.h (cef_label_button_t)
+type ICefLabelButton struct {
+	*ICefButton
+}
+
 // ICefPanel
 // /include/capi/views/cef_panel_capi.h (cef_panel_t)
 type ICefPanel struct {
@@ -521,6 +527,11 @@ type ICefViewDelegate struct {
 // TCEFViewComponent
 type TCEFViewComponent struct {
 	instance unsafe.Pointer
+}
+
+// TCEFButtonComponent
+type TCEFButtonComponent struct {
+	*TCEFViewComponent
 }
 
 // TCefX509CertificateArray

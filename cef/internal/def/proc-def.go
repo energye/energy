@@ -2384,6 +2384,16 @@ func init() {
 		dllimports.NewEnergyImport("ViewComponent_SetOnLayoutChanged", 0),
 		dllimports.NewEnergyImport("ViewComponent_SetOnFocus", 0),
 		dllimports.NewEnergyImport("ViewComponent_SetOnBlur", 0),
+		// TCEFButtonComponent
+		dllimports.NewEnergyImport("ButtonComponent_Create", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetInkDropEnabled", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetTooltipText", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetAccessibleName", 0),
+		dllimports.NewEnergyImport("ButtonComponent_AsLabelButton", 0),
+		dllimports.NewEnergyImport("ButtonComponent_GetState", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetState", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetOnButtonPressed", 0),
+		dllimports.NewEnergyImport("ButtonComponent_SetOnButtonStateChanged", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

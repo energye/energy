@@ -2384,4 +2384,14 @@ const (
 	ViewComponent_SetOnLayoutChanged
 	ViewComponent_SetOnFocus
 	ViewComponent_SetOnBlur
+	// TCEFButtonComponent
+	ButtonComponent_Create
+	ButtonComponent_SetInkDropEnabled
+	ButtonComponent_SetTooltipText
+	ButtonComponent_SetAccessibleName
+	ButtonComponent_AsLabelButton
+	ButtonComponent_GetState
+	ButtonComponent_SetState
+	ButtonComponent_SetOnButtonPressed
+	ButtonComponent_SetOnButtonStateChanged
 ) //end
