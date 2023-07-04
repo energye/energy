@@ -2501,6 +2501,25 @@ func init() {
 		dllimports.NewEnergyImport("PanelComponent_GetChildViewCount", 0),
 		dllimports.NewEnergyImport("PanelComponent_GetChildViewAt", 0),
 		dllimports.NewEnergyImport("PanelComponent_AsWindow", 0),
+		// ICefScrollView
+		dllimports.NewEnergyImport("ScrollViewRef_NewCreateScrollView", 0),
+		dllimports.NewEnergyImport("ScrollView_SetContentView", 0),
+		dllimports.NewEnergyImport("ScrollView_GetContentView", 0),
+		dllimports.NewEnergyImport("ScrollView_GetVisibleContentRect", 0),
+		dllimports.NewEnergyImport("ScrollView_HasHorizontalScrollbar", 0),
+		dllimports.NewEnergyImport("ScrollView_GetHorizontalScrollbarHeight", 0),
+		dllimports.NewEnergyImport("ScrollView_HasVerticalScrollbar", 0),
+		dllimports.NewEnergyImport("ScrollView_GetVerticalScrollbarWidth", 0),
+		// TCEFScrollViewComponent
+		dllimports.NewEnergyImport("ScrollViewComponent_Create", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_CreateScrollView", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_GetContentView", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_SetContentView", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_VisibleContentRect", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_HorizontalScrollbarHeight", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_VerticalScrollbarWidth", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_HasHorizontalScrollbar", 0),
+		dllimports.NewEnergyImport("ScrollViewComponent_HasVerticalScrollbar", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

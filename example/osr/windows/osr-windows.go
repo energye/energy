@@ -371,7 +371,7 @@ func (m *WindowForm) bufferPanelEvent() {
 		}
 	})
 	m.bufferPanel.SetOnIMESetComposition(func(sender lcl.IObject, text string, underlines *cef.TCefCompositionUnderlineArray, replacementRange, selectionRange cef.TCefRange) {
-		fmt.Println("SetOnIMESetComposition", replacementRange, selectionRange)
+		fmt.Println("SetOnIMESetComposition", replacementRange, selectionRange, underlines.Count(), underlines.Get(0))
 	})
 }
 

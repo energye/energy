@@ -584,6 +584,11 @@ type TCEFViewComponent struct {
 	instance unsafe.Pointer
 }
 
+// TCEFScrollViewComponent
+type TCEFScrollViewComponent struct {
+	*TCEFViewComponent
+}
+
 // TCEFBrowserViewComponent
 type TCEFBrowserViewComponent struct {
 	*TCEFViewComponent
@@ -1178,17 +1183,6 @@ type TCefCompositionUnderlineArray struct {
 	sizeOf uintptr
 }
 
-func (m *TCefCompositionUnderlineArray) Count() int {
-	return m.count
-}
-
-func (m *TCefCompositionUnderlineArray) Get(index int) *TCefCompositionUnderline {
-	if index >= 0 && index < m.count {
-		return (*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
-	}
-	return nil
-}
-
 // /include/internal/cef_types.h (cef_box_layout_settings_t)
 type TCefBoxLayoutSettings struct {
 	Horizontal                    Integer
@@ -1224,6 +1218,17 @@ type TChromiumOptions struct {
 	acceptLanguageList         String
 	windowlessFrameRate        Integer
 	chromeStatusBubble         TCefState
+}
+
+func (m *TCefCompositionUnderlineArray) Count() int {
+	return m.count
+}
+
+func (m *TCefCompositionUnderlineArray) Get(index int) *TCefCompositionUnderline {
+	if index >= 0 && index < m.count {
+		return (*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+	}
+	return nil
 }
 
 func (m *ResultString) SetValue(value string) {

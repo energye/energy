@@ -2501,4 +2501,23 @@ const (
 	PanelComponent_GetChildViewCount
 	PanelComponent_GetChildViewAt
 	PanelComponent_AsWindow
+	// ICefScrollView
+	ScrollViewRef_NewCreateScrollView
+	ScrollView_SetContentView
+	ScrollView_GetContentView
+	ScrollView_GetVisibleContentRect
+	ScrollView_HasHorizontalScrollbar
+	ScrollView_GetHorizontalScrollbarHeight
+	ScrollView_HasVerticalScrollbar
+	ScrollView_GetVerticalScrollbarWidth
+	// TCEFScrollViewComponent
+	ScrollViewComponent_Create
+	ScrollViewComponent_CreateScrollView
+	ScrollViewComponent_GetContentView
+	ScrollViewComponent_SetContentView
+	ScrollViewComponent_VisibleContentRect
+	ScrollViewComponent_HorizontalScrollbarHeight
+	ScrollViewComponent_VerticalScrollbarWidth
+	ScrollViewComponent_HasHorizontalScrollbar
+	ScrollViewComponent_HasVerticalScrollbar
 ) //end
