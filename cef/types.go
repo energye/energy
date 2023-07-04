@@ -544,12 +544,18 @@ type ICefButtonDelegate struct {
 
 // TCEFViewComponent
 type TCEFViewComponent struct {
+	lcl.IComponent
 	instance unsafe.Pointer
 }
 
 // TCEFButtonComponent
 type TCEFButtonComponent struct {
 	*TCEFViewComponent
+}
+
+// TCEFLabelButtonComponent
+type TCEFLabelButtonComponent struct {
+	*TCEFButtonComponent
 }
 
 // TCefX509CertificateArray

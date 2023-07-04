@@ -2440,4 +2440,18 @@ const (
 	LabelButton_SetHorizontalAlignment
 	LabelButton_SetMinimumSize
 	LabelButton_SetMaximumSize
+	// TCEFLabelButtonComponent
+	LabelButtonComponent_Create
+	LabelButtonComponent_CreateLabelButton
+	LabelButtonComponent_SetTextColor
+	LabelButtonComponent_SetEnabledTextColors
+	LabelButtonComponent_SetFontList
+	LabelButtonComponent_SetHorizontalAlignment
+	LabelButtonComponent_SetMinimumSize
+	LabelButtonComponent_SetMaximumSize
+	LabelButtonComponent_GetText
+	LabelButtonComponent_SetText
+	LabelButtonComponent_GetImage
+	LabelButtonComponent_SetImage
+	LabelButtonComponent_AsMenuButton
 ) //end

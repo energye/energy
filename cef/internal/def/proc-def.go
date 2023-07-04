@@ -2440,6 +2440,20 @@ func init() {
 		dllimports.NewEnergyImport("LabelButton_SetHorizontalAlignment", 0),
 		dllimports.NewEnergyImport("LabelButton_SetMinimumSize", 0),
 		dllimports.NewEnergyImport("LabelButton_SetMaximumSize", 0),
+		// TCEFLabelButtonComponent
+		dllimports.NewEnergyImport("LabelButtonComponent_Create", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_CreateLabelButton", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetTextColor", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetEnabledTextColors", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetFontList", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetHorizontalAlignment", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetMinimumSize", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetMaximumSize", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_GetText", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetText", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_GetImage", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_SetImage", 0),
+		dllimports.NewEnergyImport("LabelButtonComponent_AsMenuButton", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
