@@ -24,7 +24,7 @@ import (
 )
 
 type onIMECommitTextEvent func(sender lcl.IObject, text string, replacementRange TCefRange, relativeCursorPos int32)
-type onIMESetCompositionEvent func(sender lcl.IObject, text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange TCefRange)
+type onIMESetCompositionEvent func(sender lcl.IObject, text string, underlines *TCefCompositionUnderlineArray, replacementRange, selectionRange TCefRange)
 type onHandledMessageEvent func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, handled *bool)
 
 func (m *TBufferPanel) SetOnIMECancelComposition(fn lcl.TNotifyEvent) {
@@ -63,14 +63,13 @@ func init() {
 		case onIMECommitTextEvent:
 			fn.(onIMECommitTextEvent)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), *(*TCefRange)(getPtr(2)), int32(getVal(3)))
 		case onIMESetCompositionEvent:
-			//underlinesPtr := getVal(2)
-			underlinesLen := int32(getVal(3))
-			underlines := make([]*TCefCompositionUnderline, underlinesLen)
+			underlines := &TCefCompositionUnderlineArray{
+				count:  int(int32(getVal(3))),
+				ptr:    *(*uintptr)(getPtr(2)),
+				sizeOf: unsafe.Sizeof(TCefCompositionUnderline{}),
+			}
 			replacementRange := *(*TCefRange)(getPtr(4))
 			selectionRange := *(*TCefRange)(getPtr(5))
-			for i := 0; i < int(underlinesLen); i++ {
-
-			}
 			fn.(onIMESetCompositionEvent)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), underlines, replacementRange, selectionRange)
 		case onHandledMessageEvent:
 			message := (*types.TMessage)(getPtr(1))

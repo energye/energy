@@ -1166,10 +1166,27 @@ type TCefPopupFeatures struct {
 // /include/internal/cef_types.h (cef_composition_underline_t)
 type TCefCompositionUnderline struct {
 	Range           TCefRange
-	Color           Cardinal
-	BackgroundColor Cardinal
+	Color           TCefColor
+	BackgroundColor TCefColor
 	Thick           int32
 	Style           TCefCompositionUnderlineStyle
+}
+
+type TCefCompositionUnderlineArray struct {
+	count  int
+	ptr    uintptr
+	sizeOf uintptr
+}
+
+func (m *TCefCompositionUnderlineArray) Count() int {
+	return m.count
+}
+
+func (m *TCefCompositionUnderlineArray) Get(index int) *TCefCompositionUnderline {
+	if index >= 0 && index < m.count {
+		return (*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+	}
+	return nil
 }
 
 // /include/internal/cef_types.h (cef_box_layout_settings_t)
