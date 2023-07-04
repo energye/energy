@@ -2454,6 +2454,20 @@ func init() {
 		dllimports.NewEnergyImport("LabelButtonComponent_GetImage", 0),
 		dllimports.NewEnergyImport("LabelButtonComponent_SetImage", 0),
 		dllimports.NewEnergyImport("LabelButtonComponent_AsMenuButton", 0),
+		// ICefMenuButton
+		dllimports.NewEnergyImport("MenuButtonRef_New", 0),
+		dllimports.NewEnergyImport("MenuButton_ShowMenu", 0),
+		dllimports.NewEnergyImport("MenuButton_TriggerMenu", 0),
+		// ICefMenuButtonDelegate
+		dllimports.NewEnergyImport("MenuButtonDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("MenuButtonDelegateRef_CreateForCustom", 0),
+		dllimports.NewEnergyImport("MenuButtonDelegate_SetOnMenuButtonPressed", 0),
+		//TCEFMenuButtonComponent
+		dllimports.NewEnergyImport("MenuButtonComponent_Create", 0),
+		dllimports.NewEnergyImport("MenuButtonComponent_CreateMenuButton", 0),
+		dllimports.NewEnergyImport("MenuButtonComponent_ShowMenu", 0),
+		dllimports.NewEnergyImport("MenuButtonComponent_TriggerMenu", 0),
+		dllimports.NewEnergyImport("MenuButtonComponent_SetOnMenuButtonPressed", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

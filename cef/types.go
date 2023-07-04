@@ -542,6 +542,10 @@ type ICefButtonDelegate struct {
 	*ICefViewDelegate
 }
 
+type ICefMenuButtonDelegate struct {
+	*ICefButtonDelegate
+}
+
 // TCEFViewComponent
 type TCEFViewComponent struct {
 	lcl.IComponent
@@ -556,6 +560,17 @@ type TCEFButtonComponent struct {
 // TCEFLabelButtonComponent
 type TCEFLabelButtonComponent struct {
 	*TCEFButtonComponent
+}
+
+// TCEFMenuButtonComponent
+type TCEFMenuButtonComponent struct {
+	*TCEFLabelButtonComponent
+}
+
+// ICefMenuButtonPressedLock
+// /include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_pressed_lock_t)
+type ICefMenuButtonPressedLock struct {
+	base TCefBaseRefCounted
 }
 
 // TCefX509CertificateArray

@@ -2454,4 +2454,18 @@ const (
 	LabelButtonComponent_GetImage
 	LabelButtonComponent_SetImage
 	LabelButtonComponent_AsMenuButton
+	// ICefMenuButton
+	MenuButtonRef_New
+	MenuButton_ShowMenu
+	MenuButton_TriggerMenu
+	// ICefMenuButtonDelegate
+	MenuButtonDelegateRef_Create
+	MenuButtonDelegateRef_CreateForCustom
+	MenuButtonDelegate_SetOnMenuButtonPressed
+	// TCEFMenuButtonComponent
+	MenuButtonComponent_Create
+	MenuButtonComponent_CreateMenuButton
+	MenuButtonComponent_ShowMenu
+	MenuButtonComponent_TriggerMenu
+	MenuButtonComponent_SetOnMenuButtonPressed
 ) //end
