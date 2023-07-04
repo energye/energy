@@ -1561,3 +1561,26 @@ const (
 	CEF_CROSS_AXIS_ALIGNMENT_CENTER
 	CEF_CROSS_AXIS_ALIGNMENT_END
 )
+
+// /include/internal/cef_types.h (cef_text_style_t)
+type TCefTextStyle = types.Int32
+
+const (
+	CEF_TEXT_STYLE_BOLD TCefTextStyle = iota
+	CEF_TEXT_STYLE_ITALIC
+	CEF_TEXT_STYLE_STRIKE
+	CEF_TEXT_STYLE_DIAGONAL_STRIKE
+	CEF_TEXT_STYLE_UNDERLINE
+)
+
+// /include/internal/cef_types.h (cef_text_field_commands_t)
+type TCefTextFieldCommands = types.Int32
+
+const (
+	CEF_TFC_CUT TCefTextFieldCommands = iota + 1
+	CEF_TFC_COPY
+	CEF_TFC_PASTE
+	CEF_TFC_UNDO
+	CEF_TFC_DELETE
+	CEF_TFC_SELECT_ALL
+)
