@@ -2469,6 +2469,20 @@ func init() {
 		dllimports.NewEnergyImport("MenuButtonComponent_ShowMenu", 0),
 		dllimports.NewEnergyImport("MenuButtonComponent_TriggerMenu", 0),
 		dllimports.NewEnergyImport("MenuButtonComponent_SetOnMenuButtonPressed", 0),
+		// ICefPanel
+		dllimports.NewEnergyImport("CEFPanelRef_New", 0),
+		dllimports.NewEnergyImport("CEFPanel_GetAsWindow", 0),
+		dllimports.NewEnergyImport("CEFPanel_SetToFillLayout", 0),
+		dllimports.NewEnergyImport("CEFPanel_SetToBoxLayout", 0),
+		dllimports.NewEnergyImport("CEFPanel_GetLayout", 0),
+		dllimports.NewEnergyImport("CEFPanel_Layout", 0),
+		dllimports.NewEnergyImport("CEFPanel_AddChildView", 0),
+		dllimports.NewEnergyImport("CEFPanel_AddChildViewAt", 0),
+		dllimports.NewEnergyImport("CEFPanel_ReorderChildView", 0),
+		dllimports.NewEnergyImport("CEFPanel_RemoveChildView", 0),
+		dllimports.NewEnergyImport("CEFPanel_RemoveAllChildViews", 0),
+		dllimports.NewEnergyImport("CEFPanel_GetChildViewCount", 0),
+		dllimports.NewEnergyImport("CEFPanel_GetChildViewAt", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

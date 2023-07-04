@@ -2469,4 +2469,18 @@ const (
 	MenuButtonComponent_ShowMenu
 	MenuButtonComponent_TriggerMenu
 	MenuButtonComponent_SetOnMenuButtonPressed
+	// ICefPanel
+	CEFPanelRef_New
+	CEFPanel_GetAsWindow
+	CEFPanel_SetToFillLayout
+	CEFPanel_SetToBoxLayout
+	CEFPanel_GetLayout
+	CEFPanel_Layout
+	CEFPanel_AddChildView
+	CEFPanel_AddChildViewAt
+	CEFPanel_ReorderChildView
+	CEFPanel_RemoveChildView
+	CEFPanel_RemoveAllChildViews
+	CEFPanel_GetChildViewCount
+	CEFPanel_GetChildViewAt
 ) //end

@@ -532,6 +532,32 @@ type ICefViewDelegate struct {
 	ct       CefCreateType
 }
 
+// ICefOverlayController TODO 未实现
+// /include/capi/views/cef_overlay_controller_capi.h (cef_overlay_controller_t)
+type ICefOverlayController struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// ICefLayout
+// /include/capi/views/cef_layout_capi.h (cef_layout_t)
+type ICefLayout struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// ICefFillLayout
+// /include/capi/views/cef_fill_layout_capi.h (cef_fill_layout_t)
+type ICefFillLayout struct {
+	*ICefLayout
+}
+
+// ICefBoxLayout
+// /include/capi/views/cef_box_layout_capi.h (cef_box_layout_t)
+type ICefBoxLayout struct {
+	*ICefLayout
+}
+
 // ICefBrowserViewDelegate
 type ICefBrowserViewDelegate struct {
 	*ICefViewDelegate
@@ -542,8 +568,14 @@ type ICefButtonDelegate struct {
 	*ICefViewDelegate
 }
 
+// ICefMenuButtonDelegate
 type ICefMenuButtonDelegate struct {
 	*ICefButtonDelegate
+}
+
+// ICefPanelDelegate
+type ICefPanelDelegate struct {
+	*ICefViewDelegate
 }
 
 // TCEFViewComponent
@@ -1138,6 +1170,19 @@ type TCefCompositionUnderline struct {
 	BackgroundColor Cardinal
 	Thick           int32
 	Style           TCefCompositionUnderlineStyle
+}
+
+// /include/internal/cef_types.h (cef_box_layout_settings_t)
+type TCefBoxLayoutSettings struct {
+	Horizontal                    Integer
+	InsideBorderHorizontalSpacing Integer
+	InsideBorderVerticalSpacing   Integer
+	InsideBorderInsets            TCefInsets
+	BetweenChildSpacing           Integer
+	MainAxisAlignment             TCefMainAxisAlignment
+	CrossAxisAlignment            TCefCrossAxisAlignment
+	MinimumCrossAxisSize          Integer
+	DefaultFlex                   Integer
 }
 
 // ResultString 字符串返回值

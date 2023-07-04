@@ -547,11 +547,58 @@ const (
 // /include/internal/cef_types.h (cef_context_menu_type_flags_t)
 type TCefContextMenuTypeFlags = types.UInt32
 
+const (
+	// No node is selected.
+	CM_TYPEFLAG_NONE TCefContextMenuTypeFlags = 0
+	// The top page is selected.
+	CM_TYPEFLAG_PAGE = 1 << 0
+	// A subframe page is selected.
+	CM_TYPEFLAG_FRAME = 1 << 1
+	// A link is selected.
+	CM_TYPEFLAG_LINK = 1 << 2
+	// A media node is selected.
+	CM_TYPEFLAG_MEDIA = 1 << 3
+	// There is a textual or mixed selection that is selected.
+	CM_TYPEFLAG_SELECTION = 1 << 4
+	// An editable element is selected.
+	CM_TYPEFLAG_EDITABLE = 1 << 5
+)
+
 // /include/internal/cef_types.h (cef_context_menu_media_state_flags_t)
 type TCefContextMenuMediaStateFlags = types.UInt32
 
+const (
+	CM_MEDIAFLAG_NONE                   TCefContextMenuMediaStateFlags = 0
+	CM_MEDIAFLAG_IN_ERROR                                              = 1 << 0
+	CM_MEDIAFLAG_PAUSED                                                = 1 << 1
+	CM_MEDIAFLAG_MUTED                                                 = 1 << 2
+	CM_MEDIAFLAG_LOOP                                                  = 1 << 3
+	CM_MEDIAFLAG_CAN_SAVE                                              = 1 << 4
+	CM_MEDIAFLAG_HAS_AUDIO                                             = 1 << 5
+	CM_MEDIAFLAG_CAN_TOGGLE_CONTROLS                                   = 1 << 6
+	CM_MEDIAFLAG_CONTROLS                                              = 1 << 7
+	CM_MEDIAFLAG_CAN_PRINT                                             = 1 << 8
+	CM_MEDIAFLAG_CAN_ROTATE                                            = 1 << 9
+	CM_MEDIAFLAG_CAN_PICTURE_IN_PICTURE                                = 1 << 10
+	CM_MEDIAFLAG_PICTURE_IN_PICTURE                                    = 1 << 11
+	CM_MEDIAFLAG_CAN_LOOP                                              = 1 << 12
+)
+
 // /include/internal/cef_types.h (cef_context_menu_edit_state_flags_t)
 type TCefContextMenuEditStateFlags = types.UInt32
+
+const (
+	CM_EDITFLAG_NONE            TCefContextMenuEditStateFlags = 0
+	CM_EDITFLAG_CAN_UNDO                                      = 1 << 0
+	CM_EDITFLAG_CAN_REDO                                      = 1 << 1
+	CM_EDITFLAG_CAN_CUT                                       = 1 << 2
+	CM_EDITFLAG_CAN_COPY                                      = 1 << 3
+	CM_EDITFLAG_CAN_PASTE                                     = 1 << 4
+	CM_EDITFLAG_CAN_DELETE                                    = 1 << 5
+	CM_EDITFLAG_CAN_SELECT_ALL                                = 1 << 6
+	CM_EDITFLAG_CAN_TRANSLATE                                 = 1 << 7
+	CM_EDITFLAG_CAN_EDIT_RICHLY                               = 1 << 8
+)
 
 // /include/internal/cef_types.h (cef_menu_anchor_position_t)
 type TCefMenuAnchorPosition = types.Int32
@@ -560,6 +607,17 @@ const (
 	CEF_MENU_ANCHOR_TOPLEFT = TCefMenuAnchorPosition(iota)
 	CEF_MENU_ANCHOR_TOPRIGHT
 	CEF_MENU_ANCHOR_BOTTOMCENTER
+)
+
+// /include/internal/cef_types.h (cef_docking_mode_t)
+type TCefDockingMode = types.Int32
+
+const (
+	CEF_DOCKING_MODE_TOP_LEFT TCefDockingMode = iota + 1
+	CEF_DOCKING_MODE_TOP_RIGHT
+	CEF_DOCKING_MODE_BOTTOM_LEFT
+	CEF_DOCKING_MODE_BOTTOM_RIGHT
+	CEF_DOCKING_MODE_CUSTOM
 )
 
 // /include/internal/cef_types.h (cef_show_state_t)4
@@ -1483,4 +1541,23 @@ const (
 	CEF_BUTTON_STATE_HOVERED
 	CEF_BUTTON_STATE_PRESSED
 	CEF_BUTTON_STATE_DISABLED
+)
+
+// /include/internal/cef_types.h (cef_main_axis_alignment_t)
+type TCefMainAxisAlignment = types.Int32
+
+const (
+	CEF_MAIN_AXIS_ALIGNMENT_START TCefMainAxisAlignment = iota
+	CEF_MAIN_AXIS_ALIGNMENT_CENTER
+	CEF_MAIN_AXIS_ALIGNMENT_END
+)
+
+// /include/internal/cef_types.h (cef_cross_axis_alignment_t)
+type TCefCrossAxisAlignment = types.Int32
+
+const (
+	CEF_CROSS_AXIS_ALIGNMENT_STRETCH TCefCrossAxisAlignment = iota
+	CEF_CROSS_AXIS_ALIGNMENT_START
+	CEF_CROSS_AXIS_ALIGNMENT_CENTER
+	CEF_CROSS_AXIS_ALIGNMENT_END
 )
