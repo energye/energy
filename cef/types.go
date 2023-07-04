@@ -578,6 +578,11 @@ type ICefPanelDelegate struct {
 	*ICefViewDelegate
 }
 
+// ICefTextfieldDelegate
+type ICefTextfieldDelegate struct {
+	*ICefViewDelegate
+}
+
 // TCEFViewComponent
 type TCEFViewComponent struct {
 	lcl.IComponent

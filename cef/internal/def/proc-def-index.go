@@ -2520,4 +2520,37 @@ const (
 	ScrollViewComponent_VerticalScrollbarWidth
 	ScrollViewComponent_HasHorizontalScrollbar
 	ScrollViewComponent_HasVerticalScrollbar
+	// ICefTextfield
+	TextfieldRef_CreateTextField
+	Textfield_SetPasswordInput
+	Textfield_IsPasswordInput
+	Textfield_SetReadOnly
+	Textfield_IsReadOnly
+	Textfield_GetText
+	Textfield_SetText
+	Textfield_AppendText
+	Textfield_InsertOrReplaceText
+	Textfield_HasSelection
+	Textfield_GetSelectedText
+	Textfield_SelectAll
+	Textfield_ClearSelection
+	Textfield_GetSelectedRange
+	Textfield_SelectRange
+	Textfield_GetCursorPosition
+	Textfield_SetTextColor
+	Textfield_GetTextColor
+	Textfield_SetSelectionTextColor
+	Textfield_GetSelectionTextColor
+	Textfield_SetSelectionBackgroundColor
+	Textfield_GetSelectionBackgroundColor
+	Textfield_SetFontList
+	Textfield_ApplyTextColor
+	Textfield_ApplyTextStyle
+	Textfield_IsCommandEnabled
+	Textfield_ExecuteCommand
+	Textfield_ClearEditHistory
+	Textfield_SetPlaceholderText
+	Textfield_GetPlaceholderText
+	Textfield_SetPlaceholderTextColor
+	Textfield_SetAccessibleName
 ) //end
