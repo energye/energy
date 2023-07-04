@@ -2483,6 +2483,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFPanel_RemoveAllChildViews", 0),
 		dllimports.NewEnergyImport("CEFPanel_GetChildViewCount", 0),
 		dllimports.NewEnergyImport("CEFPanel_GetChildViewAt", 0),
+		// ICefPanelDelegate
+		dllimports.NewEnergyImport("PanelDelegateRef_Create", 0),
+		dllimports.NewEnergyImport("PanelDelegateRef_CreateForCustom", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

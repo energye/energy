@@ -2483,4 +2483,7 @@ const (
 	CEFPanel_RemoveAllChildViews
 	CEFPanel_GetChildViewCount
 	CEFPanel_GetChildViewAt
+	// ICefPanelDelegate
+	PanelDelegateRef_Create
+	PanelDelegateRef_CreateForCustom
 ) //end
