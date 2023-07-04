@@ -38,6 +38,7 @@ func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
 	window.SetHeight(768)
 	window.ScreenCenter()
 	window.SetShowInTaskBar(types.StAlways)
+	window.SetVisible(false)
 	window.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 		*action = types.CaFree
 		owner.Chromium().CloseDevTools(window.WindowParent()) // close devtools
