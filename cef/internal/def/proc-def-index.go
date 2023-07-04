@@ -2486,4 +2486,19 @@ const (
 	// ICefPanelDelegate
 	PanelDelegateRef_Create
 	PanelDelegateRef_CreateForCustom
+	// TCEFPanelComponent
+	PanelComponent_Create
+	PanelComponent_CreatePanel
+	PanelComponent_SetToFillLayout
+	PanelComponent_SetToBoxLayout
+	PanelComponent_GetLayout
+	PanelComponent_Layout
+	PanelComponent_AddChildView
+	PanelComponent_AddChildViewAt
+	PanelComponent_ReorderChildView
+	PanelComponent_RemoveChildView
+	PanelComponent_RemoveAllChildViews
+	PanelComponent_GetChildViewCount
+	PanelComponent_GetChildViewAt
+	PanelComponent_AsWindow
 ) //end

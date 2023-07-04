@@ -2486,6 +2486,21 @@ func init() {
 		// ICefPanelDelegate
 		dllimports.NewEnergyImport("PanelDelegateRef_Create", 0),
 		dllimports.NewEnergyImport("PanelDelegateRef_CreateForCustom", 0),
+		// TCEFPanelComponent
+		dllimports.NewEnergyImport("PanelComponent_Create", 0),
+		dllimports.NewEnergyImport("PanelComponent_CreatePanel", 0),
+		dllimports.NewEnergyImport("PanelComponent_SetToFillLayout", 0),
+		dllimports.NewEnergyImport("PanelComponent_SetToBoxLayout", 0),
+		dllimports.NewEnergyImport("PanelComponent_GetLayout", 0),
+		dllimports.NewEnergyImport("PanelComponent_Layout", 0),
+		dllimports.NewEnergyImport("PanelComponent_AddChildView", 0),
+		dllimports.NewEnergyImport("PanelComponent_AddChildViewAt", 0),
+		dllimports.NewEnergyImport("PanelComponent_ReorderChildView", 0),
+		dllimports.NewEnergyImport("PanelComponent_RemoveChildView", 0),
+		dllimports.NewEnergyImport("PanelComponent_RemoveAllChildViews", 0),
+		dllimports.NewEnergyImport("PanelComponent_GetChildViewCount", 0),
+		dllimports.NewEnergyImport("PanelComponent_GetChildViewAt", 0),
+		dllimports.NewEnergyImport("PanelComponent_AsWindow", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }
