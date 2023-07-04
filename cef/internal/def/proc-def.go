@@ -1213,6 +1213,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFDisplay_Bounds", 0),
 		dllimports.NewEnergyImport("CEFDisplay_WorkArea", 0),
 		//ICefWindow
+		dllimports.NewEnergyImport("ICEFWindowRef_CreateTopLevel", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Show", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Hide", 0),
 		dllimports.NewEnergyImport("ICEFWindow_CenterWindow", 0),

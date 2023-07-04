@@ -21,17 +21,16 @@ import (
 	"unsafe"
 )
 
-// TCEFBrowserViewComponent
-type TCEFBrowserViewComponent struct {
-	lcl.IComponent
-	instance unsafe.Pointer
-}
+// BrowserViewComponentRef -> TCEFBrowserViewComponent
+var BrowserViewComponentRef browserViewComponent
 
-// NewBrowserViewComponent
-func NewBrowserViewComponent(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
+type browserViewComponent uintptr
+
+// New 创建BrowserViewComponent组件
+func (*browserViewComponent) New(AOwner lcl.IComponent) *TCEFBrowserViewComponent {
 	var result uintptr
 	imports.Proc(def.CEFBrowserViewComponent_Create).Call(lcl.CheckPtr(AOwner), uintptr(unsafe.Pointer(&result)))
-	return &TCEFBrowserViewComponent{instance: unsafe.Pointer(result)}
+	return &TCEFBrowserViewComponent{&TCEFViewComponent{instance: getInstance(result)}}
 }
 
 // CreateBrowserView

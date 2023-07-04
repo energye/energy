@@ -66,8 +66,8 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 		windowProperty:       &windowProperty,
 		component:            component,
 		chromium:             NewChromium(component, config),
-		windowComponent:      NewWindowComponent(component),
-		browserViewComponent: NewBrowserViewComponent(component),
+		windowComponent:      WindowComponentRef.New(component),
+		browserViewComponent: BrowserViewComponentRef.New(component),
 	}
 	m.SetWindowType(windowProperty.WindowType)
 	m.chromium.SetEnableMultiBrowserMode(true)

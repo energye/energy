@@ -552,6 +552,20 @@ type TCEFViewComponent struct {
 	instance unsafe.Pointer
 }
 
+// TCEFBrowserViewComponent
+type TCEFBrowserViewComponent struct {
+	*TCEFViewComponent
+}
+
+type TCEFPanelComponent struct {
+	*TCEFViewComponent
+}
+
+// TCEFWindowComponent 窗口组件
+type TCEFWindowComponent struct {
+	*TCEFPanelComponent
+}
+
 // TCEFButtonComponent
 type TCEFButtonComponent struct {
 	*TCEFViewComponent

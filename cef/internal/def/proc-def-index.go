@@ -1213,6 +1213,7 @@ const (
 	CEFDisplay_Bounds
 	CEFDisplay_WorkArea
 	// ICefWindow
+	ICEFWindowRef_CreateTopLevel
 	ICEFWindow_Show
 	ICEFWindow_Hide
 	ICEFWindow_CenterWindow

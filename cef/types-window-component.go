@@ -25,23 +25,17 @@ import (
 	"unsafe"
 )
 
-// TCEFWindowComponent 窗口组件
-type TCEFWindowComponent struct {
-	lcl.IComponent
-	instance unsafe.Pointer
-}
+// WindowComponentRef -> TCEFWindowComponent
+var WindowComponentRef windowComponent
 
-// NewWindowComponent 创建一个Window组件
-func NewWindowComponent(AOwner lcl.IComponent) *TCEFWindowComponent {
+type windowComponent uintptr
+
+// New 创建一个Window组件
+func (*windowComponent) New(AOwner lcl.IComponent) *TCEFWindowComponent {
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_Create).Call(lcl.CheckPtr(AOwner))
-	return &TCEFWindowComponent{
+	return &TCEFWindowComponent{&TCEFPanelComponent{&TCEFViewComponent{
 		instance: unsafe.Pointer(r1),
-	}
-}
-
-// Instance 实例
-func (m *TCEFWindowComponent) Instance() uintptr {
-	return uintptr(m.instance)
+	}}}
 }
 
 // CreateTopLevelWindow 创建顶层窗口
