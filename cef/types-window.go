@@ -124,7 +124,7 @@ func (m *ICefWindow) SetFullscreen(fullscreen bool) {
 }
 
 // SetBackgroundColor 设置背景色
-func (m *ICefWindow) SetBackgroundColor(rect *types.TCefColor) {
+func (m *ICefWindow) SetBackgroundColor(rect types.TCefColor) {
 	imports.Proc(def.ICEFWindow_SetBackgroundColor).Call(uintptr(m.instance), rect.ToPtr())
 }
 

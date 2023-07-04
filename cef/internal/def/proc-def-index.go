@@ -2427,4 +2427,17 @@ const (
 	ButtonDelegateRef_CreateForCustom
 	ButtonDelegate_SetOnButtonPressed
 	ButtonDelegate_SetOnButtonStateChanged
+	// ICefLabelButton
+	LabelButtonRef_CreateLabelButton
+	LabelButton_AsMenuButton
+	LabelButton_SetText
+	LabelButton_GetText
+	LabelButton_SetImage
+	LabelButton_GetImage
+	LabelButton_SetTextColor
+	LabelButton_SetEnabledTextColors
+	LabelButton_SetFontList
+	LabelButton_SetHorizontalAlignment
+	LabelButton_SetMinimumSize
+	LabelButton_SetMaximumSize
 ) //end

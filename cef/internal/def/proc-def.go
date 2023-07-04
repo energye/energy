@@ -2427,6 +2427,19 @@ func init() {
 		dllimports.NewEnergyImport("ButtonDelegateRef_CreateForCustom", 0),
 		dllimports.NewEnergyImport("ButtonDelegate_SetOnButtonPressed", 0),
 		dllimports.NewEnergyImport("ButtonDelegate_SetOnButtonStateChanged", 0),
+		// ICefLabelButton
+		dllimports.NewEnergyImport("LabelButtonRef_CreateLabelButton", 0),
+		dllimports.NewEnergyImport("LabelButton_AsMenuButton", 0),
+		dllimports.NewEnergyImport("LabelButton_SetText", 0),
+		dllimports.NewEnergyImport("LabelButton_GetText", 0),
+		dllimports.NewEnergyImport("LabelButton_SetImage", 0),
+		dllimports.NewEnergyImport("LabelButton_GetImage", 0),
+		dllimports.NewEnergyImport("LabelButton_SetTextColor", 0),
+		dllimports.NewEnergyImport("LabelButton_SetEnabledTextColors", 0),
+		dllimports.NewEnergyImport("LabelButton_SetFontList", 0),
+		dllimports.NewEnergyImport("LabelButton_SetHorizontalAlignment", 0),
+		dllimports.NewEnergyImport("LabelButton_SetMinimumSize", 0),
+		dllimports.NewEnergyImport("LabelButton_SetMaximumSize", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

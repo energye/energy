@@ -493,6 +493,12 @@ type ICefLabelButton struct {
 	*ICefButton
 }
 
+// ICefMenuButton
+// /include/capi/views/cef_menu_button_capi.h (cef_menu_button_t)
+type ICefMenuButton struct {
+	*ICefLabelButton
+}
+
 // ICefPanel
 // /include/capi/views/cef_panel_capi.h (cef_panel_t)
 type ICefPanel struct {
