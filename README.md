@@ -2,7 +2,11 @@
     <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
 </p>
 
-# Energy is the framework for Go to build desktop applications based on CEF
+<p align="center" style="font-size: 24px;">
+    <strong>
+        Energy is framework for Go to build desktop applications based on CEF
+    </strong>
+</p>
 
 [中文](README.zh_CN.md) |
 English
@@ -17,23 +21,31 @@ English
 ---
 
 ### [Project Introduction](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-Energy is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
-> [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
+
+Energy is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded
+with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
+> [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF(Chromium Embedded
+> Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 >
-> Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows, Linux and MacOS
+> Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows,
+> Linux and MacOS
 >
 > Knowledge of the front-end technology stack and some knowledge of the Go language is required
 
 ### Characteristic
 
-> - development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF binary framework that Energy depends on are needed
+> - development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF
+    binary framework that Energy depends on are needed
 > - cross-platform: A set of code can be packaged into Windows, domestic UOS, Deepin, Kylin, MacOS, Linux
 > - Language responsibilities
->> - Go: Go is responsible for window creation, CEF configuration and function implementation, creation of various UI components, low-level system calls, and functions that JS cannot handle, such as file stream, security encryption, high-performance processing, etc., which can be developed as a pure backend
->> - Web: HTML + CSS + JavaScript responsible for the function of the client interface, make any interface you want, can be used as a pure front-end development
+>> - Go: Go is responsible for window creation, CEF configuration and function implementation, creation of various UI
+     components, low-level system calls, and functions that JS cannot handle, such as file stream, security encryption,
+     high-performance processing, etc., which can be developed as a pure backend
+>> - Web: HTML + CSS + JavaScript responsible for the function of the client interface, make any interface you want, can
+     be used as a pure front-end development
 > - front-end technology: Support mainstream front-end frameworks, such as Vue, React, Angular or pure HTML+CSS
-> - event driven: High performance event driven, IPC based communication, Go and Web side is very convenient function call and data interaction
-
+> - event driven: High performance event driven, IPC based communication, Go and Web side is very convenient function
+    call and data interaction
 
 ### Built-in dependency&integration
 
@@ -43,29 +55,32 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 ### [Development environment](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
 
 > Install automatically using the energy command line tool
+
 #### Basic needs
+
 > - golang >= 1.18
 >
 > - energy development environment
-> 
+>
 > Use the energy command line tool to automatically install the development environment
 >
-> Get [energy](https://github.com/energye/energy) project, or use the precompiled command line tool directly [Download address](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
-> 
+> Get [energy](https://github.com/energye/energy) project, or use the precompiled command line tool
+> directly [Download address](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+>
 > <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
-> 
+>
 > `go get github.com/energye/energy`
 >
 > Enter the  [energy](https://github.com/energye/energy) command line directory
-> 
+>
 > `cd energy/cmd/energy`
 >
 > Install command line tools
-> 
+>
 > `go install`
 >
 > Execute the installation command
-> 
+>
 > `energy install .`
 
 ### Getting Started Guide - [Transfer gate](https://energy.yanghy.cn)
@@ -75,7 +90,9 @@ Energy is a framework developed by Golang based on CEF(Chromium Embedded Framewo
 * [Document](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
 
 ### Quick Get Start
-> Use [energy](https://github.com/energye/energy) Command line tool automatic installation environment dependency `energy install .`
+
+> Use [energy](https://github.com/energye/energy) Command line tool automatic installation environment
+> dependency `energy install .`
 >
 > Take example/simple as an example
 >
@@ -105,23 +122,33 @@ func main() {
 	cef.Run(cefApp)
 }
 ```
+
 ---
 
 ### Run app
+
 - Windows、Linux
+
 > `go run simple.go`
+
 - MacOS
+
 > `go run simple.go energy_env=dev`
 
-
 ### Pack Project [reference](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/636e397ba749ba01d04ff595)
-1. Compile: Go program compilation `go build simple.go` If you use resource built-in (HTML, CSS, JavaScript, Image, etc.), the resource will be compiled into the execution file
+
+1. Compile: Go program compilation `go build simple.go` If you use resource built-in (HTML, CSS, JavaScript, Image,
+   etc.), the resource will be compiled into the execution file
 2. Copy: copy the execution file to the CEF directory of the ENERGY environment
-3. Packaging: use the installation package tool to make it as an installation package, Or refer to the production of installation package for each system platform
-4. Finally: the compiled program or installation package and CEF directory no longer need to configure the environment, and can be run directly in the CEF root directory
+3. Packaging: use the installation package tool to make it as an installation package, Or refer to the production of
+   installation package for each system platform
+4. Finally: the compiled program or installation package and CEF directory no longer need to configure the environment,
+   and can be run directly in the CEF root directory
 
 #### Go Compile Command
+
 - `go build -ldflags "-H windowsgui -s -w"`
+
 > `-ldflags`
 >
 >> `-H windowsgui` optional: windows hide cmd black window
@@ -140,13 +167,12 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
-
-|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
-|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10               |
-| MacOS       | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
-| Linux       | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
+|           | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
+|-----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10               |
+| MacOS     | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| Linux     | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
+| Linux ARM | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
 
 ---
 
@@ -172,27 +198,33 @@ Thank please give this project a star
 ---
 
 ### Project screenshot
+
 ##### Windows-10
 
 <img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
+
 <img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png">
 <img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png">
 
 ##### Linux - Deepin
+
 <img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-20.8.png">
 <img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-hide-20.8.png">
 
 ##### Linux - Kylin ARM
+
 <img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-V10-SP1.png">
 <img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
+
 <img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png">
 <img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOSX
+
 <img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png">
 
 

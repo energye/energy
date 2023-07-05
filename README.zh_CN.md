@@ -2,7 +2,11 @@
     <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
 </p>
 
-# Energy 是Go基于CEF构建桌面应用的框架
+<p align="center" style="font-size: 24px;">
+    <strong>
+        Energy是Go基于CEF构建桌面应用的框架
+    </strong>
+</p>
 
 中文 |
 [English](README.md)
