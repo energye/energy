@@ -578,8 +578,8 @@ type ICefPanelDelegate struct {
 	*ICefViewDelegate
 }
 
-// ICefTextfieldDelegate
-type ICefTextfieldDelegate struct {
+// ICefTextFieldDelegate
+type ICefTextFieldDelegate struct {
 	*ICefViewDelegate
 }
 

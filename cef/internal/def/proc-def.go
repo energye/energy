@@ -2587,6 +2587,11 @@ func init() {
 		dllimports.NewEnergyImport("TextfieldComponent_HasSelection", 0),
 		dllimports.NewEnergyImport("TextfieldComponent_SetOnTextfieldKeyEvent", 0),
 		dllimports.NewEnergyImport("TextfieldComponent_SetOnAfterUserAction", 0),
+		// ICefTextFieldDelegate
+		dllimports.NewEnergyImport("TextfieldDelegate_Create", 0),
+		dllimports.NewEnergyImport("TextfieldDelegate_CreateForCustom", 0),
+		dllimports.NewEnergyImport("TextfieldDelegate_SetOnKeyEvent", 0),
+		dllimports.NewEnergyImport("TextfieldDelegate_SetOnAfterUserAction", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

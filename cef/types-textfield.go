@@ -24,7 +24,7 @@ var TextFieldRef textField
 
 type textField uintptr
 
-func (*textField) New(delegate *ICefTextfieldDelegate) *ICefTextfield {
+func (*textField) New(delegate *ICefTextFieldDelegate) *ICefTextfield {
 	var result uintptr
 	imports.Proc(def.TextfieldRef_CreateTextField).Call(delegate.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {

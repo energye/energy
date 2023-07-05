@@ -2587,4 +2587,9 @@ const (
 	TextfieldComponent_HasSelection
 	TextfieldComponent_SetOnTextfieldKeyEvent
 	TextfieldComponent_SetOnAfterUserAction
+	// ICefTextFieldDelegate
+	TextfieldDelegate_Create
+	TextfieldDelegate_CreateForCustom
+	TextfieldDelegate_SetOnKeyEvent
+	TextfieldDelegate_SetOnAfterUserAction
 ) //end
