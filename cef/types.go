@@ -613,6 +613,11 @@ type TCEFButtonComponent struct {
 	*TCEFViewComponent
 }
 
+// TCEFTextFieldComponent
+type TCEFTextFieldComponent struct {
+	*TCEFViewComponent
+}
+
 // TCEFLabelButtonComponent
 type TCEFLabelButtonComponent struct {
 	*TCEFButtonComponent

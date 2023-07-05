@@ -15,9 +15,11 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
+	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
 
+// TextFieldRef -> ICefTextfield
 var TextFieldRef textField
 
 type textField uintptr
@@ -34,126 +36,230 @@ func (*textField) New(delegate *ICefTextfieldDelegate) *ICefTextfield {
 }
 
 func (m *ICefTextfield) SetPasswordInput(passwordInput bool) {
-	AObj.SetPasswordInput(password_input)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetPasswordInput).Call(m.Instance(), api.PascalBool(passwordInput))
 }
 
 func (m *ICefTextfield) IsPasswordInput() bool {
-	Result = AObj.IsPasswordInput
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.Textfield_IsPasswordInput).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
 func (m *ICefTextfield) SetReadOnly(readOnly bool) {
-	AObj.SetReadOnly(read_only)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetReadOnly).Call(m.Instance(), api.PascalBool(readOnly))
 }
 
 func (m *ICefTextfield) IsReadOnly() bool {
-	Result = AObj.IsReadOnly
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.Textfield_IsReadOnly).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
 func (m *ICefTextfield) GetText() string {
-	Result = string(string(AObj.GetText))
+	if !m.IsValid() {
+		return ""
+	}
+	r1, _, _ := imports.Proc(def.Textfield_GetText).Call(m.Instance())
+	return api.GoStr(r1)
 }
 
 func (m *ICefTextfield) SetText(text string) {
-	AObj.SetText(stringToUStr(text_))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetText).Call(m.Instance(), api.PascalStr(text))
 }
 
 func (m *ICefTextfield) AppendText(text string) {
-	AObj.AppendText(stringToUStr(text_))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_AppendText).Call(m.Instance(), api.PascalStr(text))
 }
 
 func (m *ICefTextfield) InsertOrReplaceText(text string) {
-	AObj.InsertOrReplaceText(stringToUStr(text_))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_InsertOrReplaceText).Call(m.Instance(), api.PascalStr(text))
 }
 
 func (m *ICefTextfield) HasSelection() bool {
-	Result = AObj.HasSelection()
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.Textfield_HasSelection).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
 func (m *ICefTextfield) GetSelectedText() string {
-	Result = string(string(AObj.GetSelectedText))
+	if !m.IsValid() {
+		return ""
+	}
+	r1, _, _ := imports.Proc(def.Textfield_GetSelectedText).Call(m.Instance())
+	return api.GoStr(r1)
 }
 
 func (m *ICefTextfield) SelectAll(reversed bool) {
-	AObj.SelectAll(reversed)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SelectAll).Call(m.Instance(), api.PascalBool(reversed))
 }
 
 func (m *ICefTextfield) ClearSelection() {
-	AObj.ClearSelection
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_ClearSelection).Call(m.Instance())
 }
 
-func (m *ICefTextfield) GetSelectedRange() TCefRange {
-	Result = AObj.GetSelectedRange
+func (m *ICefTextfield) GetSelectedRange() (result TCefRange) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_GetSelectedRange).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return
 }
 
 func (m *ICefTextfield) SelectRange(range_ TCefRange) {
-	AObj.SelectRange(range)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SelectRange).Call(m.Instance(), uintptr(unsafe.Pointer(&range_)))
 }
 
-func (m *ICefTextfield) GetCursorPosition() types.NativeUInt {
-	Result = AObj.GetCursorPosition
+func (m *ICefTextfield) GetCursorPosition() uint32 {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.Textfield_GetCursorPosition).Call(m.Instance())
+	return uint32(r1)
 }
 
 func (m *ICefTextfield) SetTextColor(color types.TCefColor) {
-	AObj.SetTextColor(color)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetTextColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *ICefTextfield) GetTextColor() {
-	TCefColor
-	Result = AObj.GetTextColor
+func (m *ICefTextfield) GetTextColor() (color types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_GetTextColor).Call(m.Instance(), uintptr(unsafe.Pointer(&color)))
+	return
 }
 
 func (m *ICefTextfield) SetSelectionTextColor(color types.TCefColor) {
-	AObj.SetSelectionTextColor(color)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetSelectionTextColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *ICefTextfield) GetSelectionTextColor() types.TCefColor {
-	Result = AObj.GetSelectionTextColor
+func (m *ICefTextfield) GetSelectionTextColor() (color types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_GetSelectionTextColor).Call(m.Instance(), uintptr(unsafe.Pointer(&color)))
+	return
 }
 
 func (m *ICefTextfield) SetSelectionBackgroundColor(color types.TCefColor) {
-	AObj.SetSelectionBackgroundColor(color)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetSelectionBackgroundColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *ICefTextfield) GetSelectionBackgroundColor() types.TCefColor {
-	Result = AObj.GetSelectionBackgroundColor()
+func (m *ICefTextfield) GetSelectionBackgroundColor() (color types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_GetSelectionBackgroundColor).Call(m.Instance(), uintptr(unsafe.Pointer(&color)))
+	return
 }
 
 func (m *ICefTextfield) SetFontList(fontList string) {
-	AObj.SetFontList(stringToUStr(font_list))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetFontList).Call(m.Instance(), api.PascalStr(fontList))
 }
 
 func (m *ICefTextfield) ApplyTextColor(color types.TCefColor, range_ TCefRange) {
-	AObj.ApplyTextColor(color, range)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_ApplyTextColor).Call(m.Instance(), uintptr(color), uintptr(unsafe.Pointer(&range_)))
 }
 
 func (m *ICefTextfield) ApplyTextStyle(style consts.TCefTextStyle, add bool, range_ TCefRange) {
-	AObj.ApplyTextStyle(style, add, range)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_ApplyTextStyle).Call(m.Instance(), uintptr(style), api.PascalBool(add), uintptr(unsafe.Pointer(&range_)))
 }
 
 func (m *ICefTextfield) IsCommandEnabled(commandId consts.TCefTextFieldCommands) bool {
-	Result = AObj.IsCommandEnabled(command_id)
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.Textfield_IsCommandEnabled).Call(m.Instance(), uintptr(commandId))
+	return api.GoBool(r1)
 }
 
 func (m *ICefTextfield) ExecuteCommand(commandId consts.TCefTextFieldCommands) {
-	AObj.ExecuteCommand(command_id)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_ExecuteCommand).Call(m.Instance(), uintptr(commandId))
 }
 
 func (m *ICefTextfield) ClearEditHistory() {
-	AObj.ClearEditHistory
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_ClearEditHistory).Call(m.Instance())
 }
 
 func (m *ICefTextfield) SetPlaceholderText(text string) {
-	AObj.SetPlaceholderText(stringToUStr(text_))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetPlaceholderText).Call(m.Instance(), api.PascalStr(text))
 }
 
 func (m *ICefTextfield) GetPlaceholderText() string {
-	Result = string(string(AObj.GetPlaceholderText))
+	if !m.IsValid() {
+		return ""
+	}
+	r1, _, _ := imports.Proc(def.Textfield_GetPlaceholderText).Call(m.Instance())
+	return api.GoStr(r1)
 }
 
 func (m *ICefTextfield) SetPlaceholderTextColor(color types.TCefColor) {
-	AObj.SetPlaceholderTextColor(color)
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetPlaceholderTextColor).Call(m.Instance(), uintptr(color))
 }
 
 func (m *ICefTextfield) SetAccessibleName(name string) {
-	AObj.SetAccessibleName(stringToUStr(name))
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.Textfield_SetAccessibleName).Call(m.Instance(), api.PascalStr(name))
 }
