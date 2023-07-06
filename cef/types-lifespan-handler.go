@@ -112,8 +112,8 @@ func init() {
 			}
 			var (
 				//windowInfo = getPtr(3) // not use
-				resultClientPtr = (*uintptr)(getPtr(4))
-				client          = &ICefClient{}
+				//resultClientPtr = (*uintptr)(getPtr(4))
+				client = &ICefClient{instance: getPtr(4)}
 				//setting	=  getPtr(5)
 				//extra_info =  getPtr(6)
 				noJavascriptAccess = (*bool)(getPtr(7))
@@ -121,9 +121,9 @@ func init() {
 			)
 			//callback
 			*result = fn.(onBeforePopup)(browse, frame, beforePopupInfo, client, noJavascriptAccess)
-			if client.Instance() != 0 {
-				*resultClientPtr = client.Instance()
-			}
+			//if client.Instance() != 0 {
+			//	*resultClientPtr = client.Instance()
+			//}
 		case onAfterCreated:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			fn.(onAfterCreated)(browse)

@@ -80,10 +80,6 @@ func (m *ICefClient) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefClient) SetClient(newClient *ICefClient) {
-	m.instance = newClient.instance
-}
-
 func (m *ICefClient) GetAudioHandler() *ICefAudioHandler {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return nil

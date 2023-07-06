@@ -32,6 +32,9 @@ func (*requestContext) Global() *ICefRequestContext {
 }
 
 func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, handler *ICefRequestContextHandler) *ICefRequestContext {
+	if requestContextSettings == nil {
+		requestContextSettings = &TCefRequestContextSettings{}
+	}
 	requestContextSettingsPtr := requestContextSettings.ToPtr()
 	var result uintptr
 	imports.Proc(def.RequestContextRef_New).Call(uintptr(unsafe.Pointer(&requestContextSettingsPtr)), handler.Instance(), uintptr(unsafe.Pointer(&result)))

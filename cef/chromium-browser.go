@@ -10,15 +10,18 @@
 
 package cef
 
-import "github.com/energye/golcl/lcl"
+import (
+	"github.com/energye/golcl/lcl"
+)
 
 // ICEFChromiumBrowser
 //	CEFChromium浏览器接口
 type ICEFChromiumBrowser interface {
-	CreateBrowser()                 // 创建浏览器
-	Chromium() IChromium            // 返回 chromium
-	WindowParent() ICEFWindowParent // 返回 chromium window 组件
-	IsCreated() bool                // 创建浏览器是否成功
+	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //
+	CreateBrowser()                                                                                           // 创建浏览器
+	Chromium() IChromium                                                                                      // 返回 chromium
+	WindowParent() ICEFWindowParent                                                                           // 返回 chromium window 组件
+	IsCreated() bool                                                                                          // 创建浏览器是否成功
 }
 
 // TCEFChromiumBrowser
@@ -28,6 +31,9 @@ type TCEFChromiumBrowser struct {
 	windowParent ICEFWindowParent // chromium window 组件
 	isCreated    bool             // chromium browser is created
 	createTimer  *lcl.TTimer      // loop check and create chromium browser
+	windowName   string
+	context      *ICefRequestContext
+	extraInfo    *ICefDictionaryValue
 }
 
 // NewChromiumBrowser
@@ -58,12 +64,18 @@ func (m *TCEFChromiumBrowser) checkAndCreateBrowser(sender lcl.IObject) {
 		return
 	}
 	m.chromium.Initialized()
-	m.isCreated = m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
+	m.isCreated = m.chromium.CreateBrowser(m.windowParent, m.windowName, m.context, m.extraInfo)
 	if !m.isCreated {
 		m.createTimer.SetEnabled(true)
 	} else {
 		m.windowParent.UpdateSize()
 	}
+}
+
+func (m *TCEFChromiumBrowser) SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) {
+	m.windowName = windowName
+	m.context = context
+	m.extraInfo = extraInfo
 }
 
 // CreateBrowser

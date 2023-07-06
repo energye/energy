@@ -110,16 +110,17 @@ type IBrowserWindow interface {
 // 定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
-	EnableDefaultCloseEvent()         //启用默认关闭事件
-	WindowParent() ICEFWindowParent   //浏览器父窗口组件
-	DisableTransparent()              //禁用窗口透明
-	EnableTransparent(value uint8)    //启用并设置窗口透明
-	DisableSystemMenu()               //禁用标题栏系统菜单
-	DisableHelp()                     //禁用标题栏帮助
-	EnableSystemMenu()                //启用标题栏系统菜单
-	EnableHelp()                      //启用标题栏帮助
-	NewTray() ITray                   //创建LCL的系统托盘
+	BrowserWindow() *LCLBrowserWindow                                                                         //返回 LCLBrowserWindow 窗口结构
+	EnableDefaultCloseEvent()                                                                                 //启用默认关闭事件
+	WindowParent() ICEFWindowParent                                                                           //浏览器父窗口组件
+	DisableTransparent()                                                                                      //禁用窗口透明
+	EnableTransparent(value uint8)                                                                            //启用并设置窗口透明
+	DisableSystemMenu()                                                                                       //禁用标题栏系统菜单
+	DisableHelp()                                                                                             //禁用标题栏帮助
+	EnableSystemMenu()                                                                                        //启用标题栏系统菜单
+	EnableHelp()                                                                                              //启用标题栏帮助
+	NewTray() ITray                                                                                           //创建LCL的系统托盘
+	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
 }
 
 // IViewsFrameworkBrowserWindow

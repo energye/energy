@@ -668,6 +668,14 @@ func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	}
 }
 
+// SetCreateBrowserExtraInfo
+//  设置 Chromium 创建浏览器时设置的扩展信息
+func (m *LCLBrowserWindow) SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) {
+	if m.chromiumBrowser != nil {
+		m.chromiumBrowser.SetCreateBrowserExtraInfo(windowName, context, extraInfo)
+	}
+}
+
 // resize 内部调用
 func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	var ret bool
