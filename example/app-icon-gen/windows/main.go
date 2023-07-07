@@ -35,7 +35,7 @@ func rsrc() error {
 	// 设置 RSRC rvtf 执行文件 目录
 	rsrc.RSRCPath = "/rsrc/exe/path"
 	// 设置命令行执行目录, 该目录是要生成图标的应用根目录
-	rsrc.CMDDir = filepath.Join(wd(), "example", "browser-control")
+	rsrc.CMDDir = filepath.Join(wd(), "example", "control")
 	return rsrc.Gen()
 }
 
@@ -46,7 +46,7 @@ func syso() error {
 	syso := winRes.NewSYSO()
 	// 设置命令行执行目录, 该目录是要生成图标的应用根目录
 	// 资源在 resources 目录中读取
-	syso.CMDDir = filepath.Join(wd(), "example", "browser-lib-checkupdate")
+	syso.CMDDir = filepath.Join(wd(), "example", "lib-checkupdate")
 	syso.IconName = "icon.ico"
 	return syso.RC()
 }

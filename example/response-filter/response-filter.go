@@ -56,7 +56,7 @@ func main() {
 
 		// 要替换的图片
 		wd, _ := os.Getwd()
-		replaceImageBuf, err := ioutil.ReadFile(filepath.Join(wd, "example", "browser-response-filter", "resources", "jupiter.png"))
+		replaceImageBuf, err := ioutil.ReadFile(filepath.Join(wd, "example", "response-filter", "resources", "jupiter.png"))
 		fmt.Println("err:", err)
 		// 当前读取位置 和 图片总大小
 		var position, size = 0, len(replaceImageBuf)

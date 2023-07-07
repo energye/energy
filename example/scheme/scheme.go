@@ -77,7 +77,7 @@ func main() {
 						// 请求地址是我们预告定义好的地址
 						if strings.Index(request.URL(), "hello-scheme") != 0 {
 							wd, _ := os.Getwd()
-							filePath := filepath.Join(wd, "example", "browser-scheme", "resources", "hello-scheme.html")
+							filePath := filepath.Join(wd, "example", "scheme", "resources", "hello-scheme.html")
 							fmt.Println(filePath)
 							fileBytes, err = ioutil.ReadFile(filePath)
 							if err != nil {

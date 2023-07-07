@@ -17,7 +17,7 @@ func main() {
 	//创建应用
 	cefApp := cef.NewApplication()
 	wd, _ := os.Getwd()
-	indexHtmlPath := path.Join(wd, "example", "browser-load-html-url", "resources", "index.html")
+	indexHtmlPath := path.Join(wd, "example", "load-html-url", "resources", "index.html")
 	println("indexHtmlPath", indexHtmlPath)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = indexHtmlPath
