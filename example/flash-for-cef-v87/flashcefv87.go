@@ -48,11 +48,11 @@ func main() {
 		})
 		context := cef.RequestContextRef.New(nil, ch)
 		// 主窗口的扩展参数设置
-		window.AsLCLBrowserWindow().SetCreateBrowserExtraInfo("", context, nil)
+		window.SetCreateBrowserExtraInfo("", context, nil)
 		// 弹出窗口
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			// 弹出窗口的扩展参数设置
-			popupWindow.AsLCLBrowserWindow().SetCreateBrowserExtraInfo("", context, nil)
+			popupWindow.SetCreateBrowserExtraInfo("", context, nil)
 			return false
 		})
 	})

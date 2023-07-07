@@ -58,50 +58,51 @@ type WindowProperty struct {
 //
 // 定义了常用函数
 type IBrowserWindow interface {
-	Id() int32                                                   //窗口ID
-	Handle() types.HWND                                          //窗口句柄
-	Show()                                                       //显示窗口
-	Hide()                                                       //隐藏窗口
-	WindowState() types.TWindowState                             //返回窗口最小化、最大化、全屏状态
-	Maximize()                                                   //窗口最大化
-	Minimize()                                                   //窗口最小化
-	Restore()                                                    //窗口还原
-	Close()                                                      //关闭窗口 非browser窗口使用
-	CloseBrowserWindow()                                         //关闭浏览器窗口 带有browser窗口使用
-	WindowType() consts.WINDOW_TYPE                              //窗口类型
-	SetWindowType(windowType consts.WINDOW_TYPE)                 //设置窗口类型
-	Browser() *ICefBrowser                                       //窗口内的Browser对象
-	Chromium() IChromium                                         //窗口内的Chromium对象
-	DisableMaximize()                                            //禁用最大化
-	DisableMinimize()                                            //禁用最小化
-	DisableResize()                                              //禁用窗口大小调整
-	EnableMaximize()                                             //启用最大化
-	EnableMinimize()                                             //启用最小化
-	EnableResize()                                               //启用允许调整窗口大小
-	IsClosing() bool                                             //返回窗口是否正在关闭/或已关闭 true正在或已关闭
-	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow //转换为ViewsFramework窗口接口, 失败返回nil
-	AsLCLBrowserWindow() ILCLBrowserWindow                       //转换为LCL窗口接口, 失败返回nil
-	EnableAllDefaultEvent()                                      //启用所有默认事件
-	SetTitle(title string)                                       //设置窗口标题栏标题
-	IsViewsFramework() bool                                      //是否为 IViewsFrameworkBrowserWindow 窗口，失败返回false
-	IsLCL() bool                                                 //是否为 ILCLBrowserWindow 窗口，失败返回false
-	WindowProperty() *WindowProperty                             //窗口常用属性
-	SetWidth(value int32)                                        //设置窗口宽
-	SetHeight(value int32)                                       //设置窗口高
-	Point() *TCefPoint                                           //窗口坐标
-	Size() *TCefSize                                             //窗口宽高
-	Bounds() *TCefRect                                           //窗口坐标和宽高
-	SetPoint(x, y int32)                                         //设置窗口坐标
-	SetSize(width, height int32)                                 //设置窗口宽高
-	SetBounds(x, y, width, height int32)                         //设置窗口坐标和宽高
-	SetCenterWindow(value bool)                                  //设置窗口居中
-	ShowTitle()                                                  //显示窗口标题栏
-	HideTitle()                                                  //隐藏窗口标题栏
-	SetDefaultInTaskBar()                                        //默认窗口在任务栏上显示按钮
-	SetShowInTaskBar()                                           //强制窗口在任务栏上显示按钮
-	SetNotInTaskBar()                                            //强制窗口不在任务栏上显示按钮
-	NewCefTray(width, height int32, url string) ITray            //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
-	NewSysTray() ITray                                           //systray系统原生
+	Id() int32                                                                                                //窗口ID
+	Handle() types.HWND                                                                                       //窗口句柄
+	Show()                                                                                                    //显示窗口
+	Hide()                                                                                                    //隐藏窗口
+	WindowState() types.TWindowState                                                                          //返回窗口最小化、最大化、全屏状态
+	Maximize()                                                                                                //窗口最大化
+	Minimize()                                                                                                //窗口最小化
+	Restore()                                                                                                 //窗口还原
+	Close()                                                                                                   //关闭窗口 非browser窗口使用
+	CloseBrowserWindow()                                                                                      //关闭浏览器窗口 带有browser窗口使用
+	WindowType() consts.WINDOW_TYPE                                                                           //窗口类型
+	SetWindowType(windowType consts.WINDOW_TYPE)                                                              //设置窗口类型
+	Browser() *ICefBrowser                                                                                    //窗口内的Browser对象
+	Chromium() IChromium                                                                                      //窗口内的Chromium对象
+	DisableMaximize()                                                                                         //禁用最大化
+	DisableMinimize()                                                                                         //禁用最小化
+	DisableResize()                                                                                           //禁用窗口大小调整
+	EnableMaximize()                                                                                          //启用最大化
+	EnableMinimize()                                                                                          //启用最小化
+	EnableResize()                                                                                            //启用允许调整窗口大小
+	IsClosing() bool                                                                                          //返回窗口是否正在关闭/或已关闭 true正在或已关闭
+	AsViewsFrameworkBrowserWindow() IViewsFrameworkBrowserWindow                                              //转换为ViewsFramework窗口接口, 失败返回nil
+	AsLCLBrowserWindow() ILCLBrowserWindow                                                                    //转换为LCL窗口接口, 失败返回nil
+	EnableAllDefaultEvent()                                                                                   //启用所有默认事件
+	SetTitle(title string)                                                                                    //设置窗口标题栏标题
+	IsViewsFramework() bool                                                                                   //是否为 IViewsFrameworkBrowserWindow 窗口，失败返回false
+	IsLCL() bool                                                                                              //是否为 ILCLBrowserWindow 窗口，失败返回false
+	WindowProperty() *WindowProperty                                                                          //窗口常用属性
+	SetWidth(value int32)                                                                                     //设置窗口宽
+	SetHeight(value int32)                                                                                    //设置窗口高
+	Point() *TCefPoint                                                                                        //窗口坐标
+	Size() *TCefSize                                                                                          //窗口宽高
+	Bounds() *TCefRect                                                                                        //窗口坐标和宽高
+	SetPoint(x, y int32)                                                                                      //设置窗口坐标
+	SetSize(width, height int32)                                                                              //设置窗口宽高
+	SetBounds(x, y, width, height int32)                                                                      //设置窗口坐标和宽高
+	SetCenterWindow(value bool)                                                                               //设置窗口居中
+	ShowTitle()                                                                                               //显示窗口标题栏
+	HideTitle()                                                                                               //隐藏窗口标题栏
+	SetDefaultInTaskBar()                                                                                     //默认窗口在任务栏上显示按钮
+	SetShowInTaskBar()                                                                                        //强制窗口在任务栏上显示按钮
+	SetNotInTaskBar()                                                                                         //强制窗口不在任务栏上显示按钮
+	NewCefTray(width, height int32, url string) ITray                                                         //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
+	NewSysTray() ITray                                                                                        //systray系统原生
+	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
 }
 
 // ILCLBrowserWindow
@@ -110,17 +111,16 @@ type IBrowserWindow interface {
 // 定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *LCLBrowserWindow                                                                         //返回 LCLBrowserWindow 窗口结构
-	EnableDefaultCloseEvent()                                                                                 //启用默认关闭事件
-	WindowParent() ICEFWindowParent                                                                           //浏览器父窗口组件
-	DisableTransparent()                                                                                      //禁用窗口透明
-	EnableTransparent(value uint8)                                                                            //启用并设置窗口透明
-	DisableSystemMenu()                                                                                       //禁用标题栏系统菜单
-	DisableHelp()                                                                                             //禁用标题栏帮助
-	EnableSystemMenu()                                                                                        //启用标题栏系统菜单
-	EnableHelp()                                                                                              //启用标题栏帮助
-	NewTray() ITray                                                                                           //创建LCL的系统托盘
-	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
+	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
+	EnableDefaultCloseEvent()         //启用默认关闭事件
+	WindowParent() ICEFWindowParent   //浏览器父窗口组件
+	DisableTransparent()              //禁用窗口透明
+	EnableTransparent(value uint8)    //启用并设置窗口透明
+	DisableSystemMenu()               //禁用标题栏系统菜单
+	DisableHelp()                     //禁用标题栏帮助
+	EnableSystemMenu()                //启用标题栏系统菜单
+	EnableHelp()                      //启用标题栏帮助
+	NewTray() ITray                   //创建LCL的系统托盘
 }
 
 // IViewsFrameworkBrowserWindow

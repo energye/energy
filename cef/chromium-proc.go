@@ -52,7 +52,7 @@ type IChromiumProc interface {
 	ResetZoomLevel()
 	CloseAllBrowsers()
 	CreateBrowser(window ICEFWindowParent, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
-	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool
+	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
 	Initialized() bool
 	IsSameBrowser(browser *ICefBrowser) bool
 	PrintToPDF(saveFilePath string)
@@ -422,11 +422,12 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string,
 	return _CEFChromium_CreateBrowse(m.Instance(), windowPtr, api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
 }
 
-func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent) bool {
+func (m *TCEFChromium) CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool {
 	if !m.IsValid() {
 		return false
 	}
-	return _CEFChromium_CreateBrowserByBrowserViewComponent(m.Instance(), api.PascalStr(homePage), browserViewComponent.Instance())
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByBrowserViewComponent).Call(m.Instance(), api.PascalStr(homePage), browserViewComponent.Instance(), context.Instance(), extraInfo.Instance())
+	return api.GoBool(r1)
 }
 
 func (m *TCEFChromium) Initialized() bool {
@@ -1619,12 +1620,6 @@ func _CEFChromium_CreateBrowseByWindow(instance, window uintptr) bool {
 // TCEFChromium _CEFChromium_CreateBrowseByLinkedWindow
 func _CEFChromium_CreateBrowseByLinkedWindow(instance, window uintptr) bool {
 	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByLinkedWindow).Call(instance, window)
-	return api.GoBool(r1)
-}
-
-// TCEFChromium _CEFChromium_CreateBrowserByBrowserViewComponent
-func _CEFChromium_CreateBrowserByBrowserViewComponent(instance, homePage, browserViewComponent uintptr) bool {
-	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByBrowserViewComponent).Call(instance, homePage, browserViewComponent)
 	return api.GoBool(r1)
 }
 

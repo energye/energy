@@ -44,6 +44,8 @@ type ViewsFrameworkBrowserWindow struct {
 	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
 	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
+	context              *ICefRequestContext
+	extraInfo            *ICefDictionaryValue
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -72,7 +74,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 	m.SetWindowType(windowProperty.WindowType)
 	m.chromium.SetEnableMultiBrowserMode(true)
 	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent) {
+		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent, m.context, m.extraInfo) {
 			m.windowComponent.AddChildView(m.browserViewComponent)
 			if windowProperty.Title != "" {
 				m.windowComponent.SetTitle(windowProperty.Title)
@@ -329,6 +331,13 @@ func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated WindowC
 // SetOnGetInitialBounds 窗口初始坐标和大小
 func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) {
 	m.doOnGetInitialBounds = onGetInitialBounds
+}
+
+// SetCreateBrowserExtraInfo
+//  设置 Chromium 创建浏览器时设置的扩展信息
+func (m *ViewsFrameworkBrowserWindow) SetCreateBrowserExtraInfo(_ string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) {
+	m.context = context
+	m.extraInfo = extraInfo
 }
 
 // IsViewsFramework 返回是否VF窗口组件，这里返回true

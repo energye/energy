@@ -71,7 +71,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.setProperty()
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
-		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, &m.LCLBrowserWindow)
+		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
 		m.setProperty() //再次设置可能修改属性
 	}
 	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent

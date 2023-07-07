@@ -54,7 +54,7 @@ func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFC
 //	创建浏览器
 //	创建时如果未创建成功, 使用定时器创建直到成功
 func (m *TCEFChromiumBrowser) checkAndCreateBrowser(sender lcl.IObject) {
-	if m.chromium == nil || m.createTimer == nil {
+	if m.isCreated || m.chromium == nil || m.createTimer == nil {
 		return
 	}
 	m.createTimer.SetEnabled(false)

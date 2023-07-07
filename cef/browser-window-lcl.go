@@ -655,16 +655,8 @@ func (m *LCLBrowserWindow) IsLCL() bool {
 
 // show 内部调用
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
-	var ret bool
 	if m.onShow != nil {
-		ret = m.onShow(sender)
-	}
-	if !ret { //true表示用户自己处理, false继续执行默认实现
-		if m.chromiumBrowser != nil && !m.chromiumBrowser.IsCreated() {
-			if m.WindowProperty().WindowType != consts.WT_DEV_TOOLS {
-				m.chromiumBrowser.CreateBrowser()
-			}
-		}
+		m.onShow(sender)
 	}
 }
 
@@ -709,6 +701,11 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 	if !ret {
 		if m.isClosing {
 			return
+		}
+		if m.chromiumBrowser != nil && !m.chromiumBrowser.IsCreated() {
+			if m.WindowProperty().WindowType != consts.WT_DEV_TOOLS {
+				m.chromiumBrowser.CreateBrowser()
+			}
 		}
 	}
 	if m.onActivateAfter != nil {
