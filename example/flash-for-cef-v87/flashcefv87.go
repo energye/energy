@@ -8,7 +8,7 @@ import (
 )
 
 // 参考并查注释说明
-// 该示例运行在CEF版本号: 87.1.14
+// 该示例运行在CEF版本号87.1.14, liblcl branch 89.0.18
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
@@ -16,9 +16,16 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://www.ultrasounds.com" // flash 在线测试地址
-	// Energy CEF flash, CEF 87.1.14 版本
+	eh := os.Getenv("ENERGY_HOME")
+	if eh == "" {
+		eh, _ = os.Getwd()
+	}
+	// Energy CEF Flash Demo, 支持 CEF-87.1.14
 	// flash 下载地址: https://www.flash.cn/download-wins 选择Adobe Flash Player PPAPI版
 	// 在 SetOnBeforeChildProcessLaunch 设置命令行参数
+	cefApp.AddCustomCommandLine("ppapi-flash-path", filepath.Join(eh, "pepflashplayer64_34_0_0_289.dll")) // 设置ppapi flash目录
+	cefApp.AddCustomCommandLine("ppapi-flash-version", "34.0.0.289")                                      // 版本号和flash dll一样
+	cefApp.AddCustomCommandLine("allow-outdated-plugins", "allow")
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
 		eh := os.Getenv("ENERGY_HOME")
 		if eh == "" {
@@ -26,9 +33,6 @@ func main() {
 		}
 		commandLine.AppendSwitch("--allow-outdated-plugins")
 		commandLine.AppendSwitch("--disable-web-security")
-		commandLine.AppendSwitchWithValue("ppapi-flash-path", filepath.Join(eh, "pepflashplayer64_34_0_0_289.dll")) // 设置ppapi flash目录
-		commandLine.AppendSwitchWithValue("ppapi-flash-version", "34.0.0.289")                                      // 版本号和flash dll一样
-		commandLine.AppendSwitchWithValue("allow-outdated-plugins", "allow")
 	})
 	// 在浏览器窗口初始化时设置扩展参数
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
