@@ -56,6 +56,7 @@ func main() {
 				factory := cef.SchemeHandlerFactoryRef.New()
 				// 创建SchemeHandlerFactory的回调函数
 				factory.SetNew(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, schemeName string, request *cef.ICefRequest) *cef.ICefResourceHandler {
+					println("SetNew url:", request.URL())
 					// 创建资源处理器
 					handler := cef.ResourceHandlerRef.New(browser, frame, schemeName, request)
 					var (
@@ -70,6 +71,7 @@ func main() {
 					// 当加载指定的 scheme 后, 回调以下函数, 按step
 					// step 1, ProcessRequest , 处理请求, 在这里预先加载需要的资源和 step 2 需要的响应状态
 					handler.ProcessRequest(func(request *cef.ICefRequest, callback *cef.ICefCallback) bool {
+						println("ProcessRequest url:", request.URL())
 						// 默认404
 						status = 404
 						statusText = "ERROR"
@@ -99,6 +101,7 @@ func main() {
 					})
 					// step 2, 响应处理器, 将 step 1 的处理结果返回
 					handler.GetResponseHeaders(func(response *cef.ICefResponse) (responseLength int64, redirectUrl string) {
+						println("GetResponseHeaders")
 						if fileBytes != nil {
 							response.SetStatus(status)
 							response.SetStatusText(statusText)
@@ -109,6 +112,7 @@ func main() {
 					})
 					// step3, 读取响应内容
 					handler.ReadResponse(func(dataOut uintptr, bytesToRead int32, callback *cef.ICefCallback) (bytesRead int32, result bool) {
+						println("ReadResponse")
 						// 这个函数可能会被多次调用, 如果响应流大于 bytesToRead 时
 						// 我们是按块读取 每个块最大bytesToRead且小于实际的要响应的流字节数
 						// 从最新的读取位置fileBytesReadPosition把流返回到 dataOut

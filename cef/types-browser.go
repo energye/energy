@@ -134,13 +134,11 @@ func (m *ICefBrowser) RunFileDialog(mode FileDialogMode, title, defaultFilePath 
 	if !m.IsValid() {
 		return
 	}
-	var (
-		acceptFiltersPtr uintptr = 0
-	)
-	if acceptFilters != nil {
-		acceptFiltersPtr = acceptFilters.Instance()
+	if acceptFilters == nil {
+		acceptFilters = lcl.NewStringList()
+		defer acceptFilters.Free()
 	}
-	imports.Proc(def.CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFiltersPtr, callback.Instance())
+	imports.Proc(def.CEFBrowser_RunFileDialog).Call(m.Instance(), uintptr(mode), api.PascalStr(title), api.PascalStr(defaultFilePath), acceptFilters.Instance(), callback.Instance())
 }
 
 // StartDownload 开始下载
