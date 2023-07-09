@@ -118,14 +118,14 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 			if vFrameBrowserWindow.tray != nil {
 				vFrameBrowserWindow.tray.close()
 			}
+			app.QuitMessageLoop()
 		})
 		// 重置窗口属性, 注册默认实现事件
 		vFrameBrowserWindow.ResetWindowPropertyForEvent()
-		vFrameBrowserWindow.registerPopupEvent()
+		vFrameBrowserWindow.registerPopupEvent(true)
 		vFrameBrowserWindow.registerDefaultEvent()
 		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			*aResult = true
-			app.QuitMessageLoop()
+			*aResult = vFrameBrowserWindow.Chromium().TryCloseBrowser()
 		})
 		BrowserWindow.mainVFBrowserWindow = vFrameBrowserWindow
 		if m.Config.browserWindowOnEventCallback != nil {
@@ -138,11 +138,13 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 }
 
 // registerPopupEvent 注册弹出子窗口事件
-func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
+func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 	var bwEvent = BrowserWindow.browserEvent
-	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-		chromiumOnBeforeClose(browser)
-	})
+	if !isMain {
+		m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+			chromiumOnBeforeClose(browser)
+		})
+	}
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
 		if !BrowserWindow.Config.ChromiumConfig().EnableWindowPopup() {
 			return true
@@ -150,16 +152,16 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent() {
 		wp := BrowserWindow.Config.WindowProperty
 		wp.Url = beforePopupInfo.TargetUrl
 		wp.WindowType = consts.WT_POPUP_SUB_BROWSER
-		var vfbw = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vfbw, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vFrameBrowserWindow, noJavascriptAccess)
 		}
 		if !result {
-			vfbw.ResetWindowPropertyForEvent()
-			vfbw.registerPopupEvent()
-			vfbw.registerDefaultEvent()
-			vfbw.CreateTopLevelWindow()
+			vFrameBrowserWindow.ResetWindowPropertyForEvent()
+			vFrameBrowserWindow.registerPopupEvent(false)
+			vFrameBrowserWindow.registerDefaultEvent()
+			vFrameBrowserWindow.CreateTopLevelWindow()
 			result = true
 		}
 		return result
@@ -319,7 +321,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 
 // EnableAllDefaultEvent 启用所有默认事件行为
 func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
-	m.registerPopupEvent()
+	m.registerPopupEvent(false)
 	m.registerDefaultEvent()
 }
 
