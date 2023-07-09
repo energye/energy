@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
@@ -69,11 +70,15 @@ func Run(app *TCEFApplication) {
 		}
 		// 启动主进程
 		success := app.StartMainProcess()
-		// 主进程启动成功之后回调
-		if browserProcessStartAfterCallback != nil {
-			browserProcessStartAfterCallback(success)
-		}
 		if success {
+			if !consts.IsMessageLoop {
+				//LCL -> Linux 必须在主进程启动之后初始化组件
+				lclwidget.CustomWidgetSetInitialization()
+			}
+			// 主进程启动成功之后回调
+			if browserProcessStartAfterCallback != nil {
+				browserProcessStartAfterCallback(success)
+			}
 			appMainRunCallback()
 			if consts.IsMessageLoop {
 				// VF窗口消息轮询
@@ -85,6 +90,7 @@ func Run(app *TCEFApplication) {
 				}
 				// 运行主窗口
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
+				lclwidget.CustomWidgetSetFinalization()
 			}
 		}
 	}
