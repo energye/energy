@@ -195,6 +195,7 @@ Thank please give this project a star
 <p align="center">
     <img src="https://assets.yanghy.cn/energy-doc/qq-group.jpg" width="250">
 </p>
+
 ---
 
 ### Project screenshot
