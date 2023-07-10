@@ -140,6 +140,11 @@ func compare(current, origin string) (bool, int) {
 
 // Version number conversion=>Major version, minor version, revised version
 func versionConvert(ver string) (major, minor, revision int) {
+	ver = strings.ToLower(ver)
+	lastv := strings.LastIndex(ver, "v")
+	if lastv != -1 {
+		ver = ver[lastv+1:]
+	}
 	vers := strings.Split(strings.Split(ver, "-")[0], ".")
 	if len(vers) >= 3 {
 		major, _ = strconv.Atoi(vers[0])
