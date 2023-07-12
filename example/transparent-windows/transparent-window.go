@@ -20,6 +20,8 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.Config.AlwaysOnTop = true
+	cef.BrowserWindow.Config.Width = 400
+	cef.BrowserWindow.Config.Height = 450
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
