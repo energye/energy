@@ -45,8 +45,8 @@ func WindowTransparent(hWnd types.HWND) {
 	exStyle = exStyle | win.WS_EX_LAYERED //win.WS_EX_LAYERED&^win.WS_EX_TRANSPARENT // or WS_EX_TRANSPARENT;
 	winapi.WinSetWindowLong(hWnd, win.GWL_EXSTYLE, exStyle)
 	win.SetLayeredWindowAttributes(hWnd.ToPtr(), //指定分层窗口句柄
-		colors.ClWhite, //crKey指定需要透明的背景颜色值，可用RGB()宏  0-255
-		255,            //bAlpha设置透明度，0表示完全透明，255表示不透明
+		colors.ClWhite,   //crKey指定需要透明的背景颜色值，可用RGB()宏  0-255
+		255,              //bAlpha设置透明度，0表示完全透明，255表示不透明
 		win.LWA_COLORKEY) //LWA_ALPHA: crKey无效，bAlpha有效；
 	//win.LWA_ALPHA|win.LWA_COLORKEY) //LWA_ALPHA: crKey无效，bAlpha有效；
 	//LWA_COLORKEY：窗体中的所有颜色为crKey的地方全透明，bAlpha无效。
