@@ -56,6 +56,11 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 	//TODO no impl
 }
 
+// FramelessForLine 窗口四边框是一条细线
+func (m *LCLBrowserWindow) FramelessForLine() {
+	//TODO no impl
+}
+
 // for other platform maximize and restore
 func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
