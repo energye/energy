@@ -61,12 +61,12 @@ func (m *LCLBrowserWindow) HideTitle() {
 
 // FramelessForDefault 窗口四边框系统默认样式
 //  TODO 窗口顶部有条线
-func (m *LCLBrowserWindow) FramelessForDefault() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-
-}
+//func (m *LCLBrowserWindow) FramelessForDefault() {
+//	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+//	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
+//	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+//
+//}
 
 // FramelessForLine 窗口四边框是一条细线
 func (m *LCLBrowserWindow) FramelessForLine() {

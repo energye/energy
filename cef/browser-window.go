@@ -121,6 +121,7 @@ type ILCLBrowserWindow interface {
 	EnableSystemMenu()                //启用标题栏系统菜单
 	EnableHelp()                      //启用标题栏帮助
 	NewTray() ITray                   //创建LCL的系统托盘
+	FramelessForLine()                //无边框四边一条细线样式
 }
 
 // IViewsFrameworkBrowserWindow

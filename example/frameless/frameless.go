@@ -68,8 +68,7 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		//
-		window.AsLCLBrowserWindow().BrowserWindow().FramelessForBorderLine()
+		//window.AsLCLBrowserWindow().FramelessForLine()
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
