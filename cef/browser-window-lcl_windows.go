@@ -53,16 +53,33 @@ func (m *LCLBrowserWindow) ShowTitle() {
 	m.SetBorderStyle(types.BsSizeable)
 }
 
-// HideTitle 隐藏标题栏
+// HideTitle 隐藏标题栏 无边框样式
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
-	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)&^win.WS_CAPTION))
-	//win.SetWindowPos(m.Handle(), 0, 0, 0, m.Width(), m.Height()+500, win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED|win.SWP_DRAWFRAME)
-	//无标题栏情况会导致任务栏不能切换窗口，不知道为什么要这样设置一下
-	m.EnabledMaximize(false)
 	m.SetBorderStyle(types.BsNone)
+}
+
+// FramelessForDefault 窗口四边框系统默认样式
+//  TODO 窗口顶部有条线
+func (m *LCLBrowserWindow) FramelessForDefault() {
+	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
+	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 
 }
+
+// FramelessForLine 窗口四边框是一条细线
+func (m *LCLBrowserWindow) FramelessForLine() {
+	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME|win.WS_BORDER))
+	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+}
+
+//func (m *LCLBrowserWindow) Frameless() {
+//	var rect = &types.TRect{}
+//	win.GetWindowRect(m.Handle(), rect)
+//	win.SetWindowPos(m.Handle(), 0, rect.Left, rect.Top, rect.Right-rect.Left, rect.Bottom-rect.Top, win.SWP_FRAMECHANGED)
+//}
 
 // freeRgn
 func (m *customWindowCaption) freeRgn() {

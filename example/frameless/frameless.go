@@ -39,10 +39,11 @@ func main() {
 	if !common.IsDarwin() { // mac 下有些问题
 		cef.BrowserWindow.Config.EnableHideCaption = true
 	}
+	cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200
-	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
-	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
+	//chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
+	//chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
@@ -68,6 +69,7 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//
+		window.AsLCLBrowserWindow().BrowserWindow().FramelessForBorderLine()
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

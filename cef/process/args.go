@@ -60,7 +60,6 @@ func (m *_args) CommandLine() string {
 
 func (m *_args) Size() int {
 	return m.size
-
 }
 
 // ProcessType

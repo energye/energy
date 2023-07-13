@@ -49,10 +49,11 @@ func (m *LCLBrowserWindow) HideTitle() {
 
 // 默认事件注册 windows 消息事件
 func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
-
+	//TODO no impl
 }
 
 func (m *LCLBrowserWindow) setDraggableRegions() {
+	//TODO no impl
 }
 
 // for other platform maximize and restore
