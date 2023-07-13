@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        a, button {
+            margin: 15px;
+        }
+
+        body {
+            overflow: hidden;
+            height: 400px;
+        }
+    </style>
+    <script>
+        function trayShowMessageBox() {
+            ipc.emit("tray-show-message-box");
+        }
+
+        function trayShowBalloon() {
+            ipc.emit("tray-show-balloon");
+        }
+
+        function trayShowMainWindow() {
+            ipc.emit("tray-show-main-window");
+        }
+
+        function trayCloseMainWindow() {
+            ipc.emit("tray-close-main-window");
+        }
+    </script>
+</head>
+<body id="bodyId" style="border: 0; padding: 0;margin:0;overflow-x: hidden;overflow-y: hidden;">
+<button onclick="trayShowBalloon()">显示托盘汽泡</button>
+<br>
+<button onclick="trayShowMainWindow()">显示窗口</button>
+<br>
+<button onclick="trayCloseMainWindow()">退出</button>
+<button onclick="trayShowMessageBox()">显示消息弹窗</button>
+</body>
+</html>

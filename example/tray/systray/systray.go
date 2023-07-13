@@ -1,58 +1,30 @@
-package traydemo
+package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/golcl/lcl"
 	"time"
 )
 
-// LCL组件托盘, 适用windows和macosx, 不支持linux因GTK2和GTK3共存问题,
-func LCLTrayDemo(browserWindow cef.IBrowserWindow) {
-	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
-	//托盘 windows linux macos 系统托盘
-	newTray := window.NewTray()
-	newTray.SetTitle("任务管理器里显示的标题")
-	newTray.SetHint("这里是文字\n文字啊")
-	if common.IsLinux() {
-		newTray.SetIconFS("resources/icon.png")
-	} else {
-		newTray.SetIconFS("resources/icon.ico")
-	}
-	tray := newTray.AsLCLTray()
-	menu1 := tray.AddMenuItem("父菜单", nil)
-	//带图标的菜单
-	iconItem := tray.NewMenuItem("带个图标", nil)
-	iconItem.Bitmap().SetSize(32, 32)      //图标情况调整大小
-	iconItem.Bitmap().SetTransparent(true) //透明
-	icon := lcl.NewIcon()
-	icon.LoadFromFSFile("resources/icon_1.ico")
-	iconItem.Bitmap().Canvas().Draw(0, 0, icon) //画上去
-	tray.TrayMenu().Items().Add(iconItem)
+//go:embed resources
+var resources embed.FS
 
-	menu1.Add(tray.NewMenuItem("子菜单", func() {
-		lcl.ShowMessage("子菜单点击 提示消息")
-	}))
-	tray.AddMenuItem("显示气泡", func() {
-		tray.Notice("气泡标题", "气泡内容", 2000)
+func main() {
+	cef.GlobalInit(nil, &resources)
+	cefApp := cef.NewApplication()
+	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		trayDemo(window)
 	})
-	tray.AddMenuItem("显示/隐藏", func() {
-		vis := window.Visible()
-		cef.BrowserWindow.GetWindowInfo(1)
-		window.SetVisible(!vis)
-	})
-	tray.AddMenuItem("退出", func() {
-		browserWindow.CloseBrowserWindow()
-	})
-	//托盘 end
-	tray.Show()
+	cef.Run(cefApp)
 }
 
-//系统托盘 和LCL组件差不多,但不如LCL组件的好用，适用 windows,linux,macosx
+//系统托盘 和LCL组件差不多,但不如LCL组件的好用，适用 windows,linux, macosx
 //
-//推荐linux中使用
-func SysTrayDemo(browserWindow cef.IBrowserWindow) {
+//主要给linux提供的，推荐linux中使用, 非linux 使用 lcl 实现的它更好用
+func trayDemo(browserWindow cef.IBrowserWindow) {
 	sysTray := browserWindow.NewSysTray()
 	if common.IsLinux() {
 		sysTray.SetIconFS("resources/icon.png")
