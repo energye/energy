@@ -42,9 +42,11 @@ func (m *ICefFileDialogCallback) Cont(filePaths []string) {
 	if !m.IsValid() {
 		return
 	}
-	fps := lcl.NewStrings()
-	for _, fp := range filePaths {
-		fps.Add(fp)
+	fps := lcl.NewStringList()
+	if filePaths != nil {
+		for _, fp := range filePaths {
+			fps.Add(fp)
+		}
 	}
 	imports.Proc(def.FileDialogCallback_Cont).Call(m.Instance(), fps.Instance())
 	fps.Free()

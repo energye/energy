@@ -1201,9 +1201,6 @@ const (
 // /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)
 type TCefQuickMenuEditStateFlags = types.Int32
 
-// /include/internal/cef_types.h (cef_file_dialog_mode_t)
-type TCefFileDialogMode = types.Cardinal
-
 // /include/internal/cef_types.h (cef_log_severity_t)
 type TCefLogSeverity = types.Cardinal
 

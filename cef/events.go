@@ -310,22 +310,22 @@ func init() {
 			fn.(chromiumEventOnFavIconUrlChange)(lcl.AsObject(getPtr(0)), browse, iconUrls)
 		case chromiumEventOnFileDialog:
 			browse := &ICefBrowser{instance: getPtr(1)}
-			mode := consts.TCefFileDialogMode(getVal(2))
+			mode := consts.FileDialogMode(getVal(2))
 			title := api.GoStr(getVal(3))
 			defaultFilePath := api.GoStr(getVal(4))
 			acceptFiltersList := lcl.AsStrings(getVal(5))
 			callback := &ICefFileDialogCallback{instance: getPtr(6)}
 			result := (*bool)(getPtr(7))
-			var acceptFilters []string
-			if acceptFiltersList.IsValid() {
-				count := int(acceptFiltersList.Count())
-				acceptFilters = make([]string, count, count)
-				for i := 0; i < count; i++ {
-					acceptFilters[i] = acceptFiltersList.Strings(int32(i))
-				}
-				acceptFiltersList.Free()
-			}
-			*result = fn.(chromiumEventOnFileDialog)(lcl.AsObject(getPtr(0)), browse, mode, title, defaultFilePath, acceptFilters, callback)
+			//var acceptFilters []string
+			//if acceptFiltersList.IsValid() {
+			//	count := int(acceptFiltersList.Count())
+			//	acceptFilters = make([]string, count, count)
+			//	for i := 0; i < count; i++ {
+			//		acceptFilters[i] = acceptFiltersList.Strings(int32(i))
+			//	}
+			//	//acceptFiltersList.Free()
+			//}
+			*result = fn.(chromiumEventOnFileDialog)(lcl.AsObject(getPtr(0)), browse, mode, title, defaultFilePath, acceptFiltersList, callback)
 		case chromiumEventOnGetAccessibilityHandler:
 			accessibilityHandler := &ICefAccessibilityHandler{instance: getPtr(1)}
 			fn.(chromiumEventOnGetAccessibilityHandler)(lcl.AsObject(getPtr(0)), accessibilityHandler)

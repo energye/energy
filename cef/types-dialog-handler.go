@@ -68,7 +68,7 @@ func (m *ICefDialogHandler) SetOnFileDialog(fn onFileDialog) {
 
 // ************************** events ************************** //
 
-type onFileDialog func(browser *ICefBrowser, mode consts.TCefFileDialogMode, title, defaultFilePath string, acceptFilters []string, callback *ICefFileDialogCallback) bool
+type onFileDialog func(browser *ICefBrowser, mode consts.FileDialogMode, title, defaultFilePath string, acceptFilters *lcl.TStrings, callback *ICefFileDialogCallback) bool
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -78,22 +78,13 @@ func init() {
 		switch fn.(type) {
 		case onFileDialog:
 			browse := &ICefBrowser{instance: getPtr(0)}
-			mode := consts.TCefFileDialogMode(getVal(1))
+			mode := consts.FileDialogMode(getVal(1))
 			title := api.GoStr(getVal(2))
 			defaultFilePath := api.GoStr(getVal(3))
 			acceptFiltersList := lcl.AsStrings(getVal(4))
 			callback := &ICefFileDialogCallback{instance: getPtr(5)}
 			result := (*bool)(getPtr(6))
-			var acceptFilters []string
-			if acceptFiltersList.IsValid() {
-				count := int(acceptFiltersList.Count())
-				acceptFilters = make([]string, count, count)
-				for i := 0; i < count; i++ {
-					acceptFilters[i] = acceptFiltersList.Strings(int32(i))
-				}
-				acceptFiltersList.Free()
-			}
-			*result = fn.(onFileDialog)(browse, mode, title, defaultFilePath, acceptFilters, callback)
+			*result = fn.(onFileDialog)(browse, mode, title, defaultFilePath, acceptFiltersList, callback)
 		default:
 			return false
 		}

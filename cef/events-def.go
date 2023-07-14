@@ -61,7 +61,7 @@ type chromiumEventOnExtensionLoaded func(sender lcl.IObject, extension *ICefExte
 type chromiumEventOnExtensionLoadFailed func(sender lcl.IObject, result consts.TCefErrorCode)
 type chromiumEventOnExtensionUnloaded func(sender lcl.IObject, extension *ICefExtension)
 type chromiumEventOnFavIconUrlChange func(sender lcl.IObject, browser *ICefBrowser, iconUrls []string) // TStrings => []string
-type chromiumEventOnFileDialog func(sender lcl.IObject, browser *ICefBrowser, mode consts.TCefFileDialogMode, title, defaultFilePath string, acceptFilters []string, callback *ICefFileDialogCallback) bool
+type chromiumEventOnFileDialog func(sender lcl.IObject, browser *ICefBrowser, mode consts.FileDialogMode, title, defaultFilePath string, acceptFilters *lcl.TStrings, callback *ICefFileDialogCallback) bool
 type chromiumEventOnGetAccessibilityHandler func(sender lcl.IObject, accessibilityHandler *ICefAccessibilityHandler)
 type chromiumEventOnGetAudioParameters func(sender lcl.IObject, browser *ICefBrowser, params *TCefAudioParameters) bool
 type chromiumEventOnGetResourceHandler func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler)
