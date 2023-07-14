@@ -27,8 +27,8 @@ func main() {
 	//   1. LCL 有更多的方式, CEF 仅有限几种方式
 	//   2. LCL 仅适用于LCL窗口, CEF 适用LCL和VF窗口
 	// 以下通过 ExternalMessagePump 和 MultiThreadedMessageLoop 区分当前所使用的窗口类型
-	app.SetExternalMessagePump(false)
-	app.SetMultiThreadedMessageLoop(false)
+	//app.SetExternalMessagePump(false)
+	//app.SetMultiThreadedMessageLoop(false)
 	emp := app.ExternalMessagePump()
 	mtml := app.MultiThreadedMessageLoop()
 	if !emp && !mtml { // IsMessageLoop VF window
