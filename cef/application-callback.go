@@ -85,7 +85,7 @@ func appWebKitInitialized() {
                 if (energyExtension.drag.shouldDrag) {
                     energyExtension.drag.shouldDrag = false;
 					native function mouseMove();
-					mouseMove(e);
+					mouseMove();
                 }
             }
             energyExtension.drag.mouseUp = function (e) {
@@ -95,7 +95,7 @@ func appWebKitInitialized() {
                 energyExtension.drag.shouldDrag = false;
 				//document.body.style.cursor = "default";
 				native function mouseUp();
-				mouseUp(e);
+				mouseUp();
             }
             energyExtension.drag.mouseDown = function (e) {
                 if (!energyExtension.drag.enableDrag && ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
@@ -106,7 +106,7 @@ func appWebKitInitialized() {
                     e.preventDefault();
                     energyExtension.drag.shouldDrag = true;
                     native function mouseDown();
-                    mouseDown(e);
+                    mouseDown();
                 } else {
                     energyExtension.drag.shouldDrag = false;
                 }
