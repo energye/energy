@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -21,9 +22,23 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	var app = cef.NewApplication()
-	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/sysdialog.html"
-	cef.BrowserWindow.Config.Title = "Energy - sysdialog"
+	// 这是使用LCL dialog和CEF dialog示例
+	// 两者区别
+	//   1. LCL 有更多的方式, CEF 仅有限几种方式
+	//   2. LCL 仅适用于LCL窗口, CEF 适用LCL和VF窗口
+	// 以下通过 ExternalMessagePump 和 MultiThreadedMessageLoop 区分当前所使用的窗口类型
+	app.SetExternalMessagePump(false)
+	app.SetMultiThreadedMessageLoop(false)
+	emp := app.ExternalMessagePump()
+	mtml := app.MultiThreadedMessageLoop()
+	if !emp && !mtml { // IsMessageLoop VF window
+		// CEF dialog 示例
+		cef.BrowserWindow.Config.Url = "http://localhost:22022/sysdialog_cef.html"
+	} else {
+		// LCL dialog 示例
+		cef.BrowserWindow.Config.Url = "http://localhost:22022/sysdialog.html"
+	}
+	cef.BrowserWindow.Config.Title = "Energy - dialog"
 	if common.IsLinux() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
@@ -40,15 +55,13 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-
+	// 在浏览器窗口初始化回调中注册IPC事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// 系统消息提示框目前仅能在LCL窗口组件下使用
 		// LCL 各种系统组件需要在UI线程中执行, 但ipc.on非UI线程
 		// 所以需要使用 QueueAsyncCall 包裹在UI线程中执行
-		if window.IsLCL() {
-			// window from
+		if window.IsLCL() { // LCL window from
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
-
 			replaceDialog := lcl.NewReplaceDialog(bw)
 			replaceDialog.SetOnFind(func(sender lcl.IObject) {
 				fmt.Println("FindText:", replaceDialog.FindText(), ", Relpace: ", replaceDialog.ReplaceText())
@@ -214,6 +227,40 @@ func main() {
 						}
 					}
 				})
+			})
+		} else { // VF window
+			// 可配合 Chromium().SetOnFileDialog 回调函数使用
+			//window.Chromium().SetOnFileDialog(func(sender lcl.IObject, browser *cef.ICefBrowser, mode consts.FileDialogMode, title, defaultFilePath string, acceptFilters *lcl.TStrings, callback *cef.ICefFileDialogCallback) bool {
+			//	fmt.Println("Chromium SetOnFileDialog", mode, title, defaultFilePath, "acceptFilters:", acceptFilters.Count())
+			//	acceptFilters.Add(".png")
+			//	callback.Cont([]string{"/file/to/path/file.xx"}) // 设置选择的文件
+			//	return true
+			//})
+			// 定义 dialog 回调函数
+			callback := cef.RunFileDialogCallbackRef.New()
+			callback.SetOnFileDialogDismissed(func(filePaths *lcl.TStrings) {
+				for i := 0; i < int(filePaths.Count()); i++ {
+					path := filePaths.Strings(int32(i))
+					fmt.Println(path)
+				}
+			})
+			ipc.On("showDialog", func(t int) {
+				switch t {
+				case 1:
+					window.Chromium().Browser().RunFileDialog(consts.FILE_DIALOG_OPEN_FOLDER, "打开文件夹", "", nil, callback)
+				case 2:
+					acceptFilters := lcl.NewStringList()
+					acceptFilters.Add(".png")
+					window.Chromium().Browser().RunFileDialog(consts.FILE_DIALOG_SAVE, "保存图片", "", acceptFilters, callback)
+				case 3:
+					acceptFilters := lcl.NewStringList()
+					acceptFilters.Add(".png")
+					window.Chromium().Browser().RunFileDialog(consts.FILE_DIALOG_OPEN, "打开图片", "", acceptFilters, callback)
+				case 4:
+					window.Chromium().Browser().RunFileDialog(consts.FILE_DIALOG_SAVE, "打开", "", nil, callback)
+				case 5:
+					window.Chromium().Browser().RunFileDialog(consts.FILE_DIALOG_OPEN, "保存", "", nil, callback)
+				}
 			})
 		}
 	})

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dialog-cef</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        function showDialog(t) {
+            ipc.emit("showDialog", [t])
+        }
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">dialog-CEF</h3></p>
+<p>
+    <button onclick="showDialog(1)">Select Directory Dialog</button>
+    <br>
+    <button onclick="showDialog(2)">SavePic Dialog</button>
+    <br>
+    <button onclick="showDialog(3)">OpenPic Dialog</button>
+    <br>
+    <button onclick="showDialog(4)">Save Dialog</button>
+    <br>
+    <button onclick="showDialog(5)">Open Dialog</button>
+    <br>
+</p>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+</script>
+</html>
