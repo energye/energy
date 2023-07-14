@@ -13,8 +13,10 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/internal/process"
+	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/consts"
 )
 
@@ -26,6 +28,11 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	ipcRender.registerGoSyncReplayEvent()                                        // render ipc
 	ipcRender.makeIPC(context)                                                   // render ipc make
 	makeProcess(browser, frame, context)                                         // process make
+
+	// 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
+	// 在MacOS中LCL窗口没有有效的消息事件
+	var executeJS = `energyExtension.drag.setEnableDrag(true); energyExtension.drag.setup();`
+	frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
@@ -35,45 +42,89 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	//	var myparamValue string
-	//	v8Handler := V8HandlerRef.New()
-	//	v8Handler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-	//		fmt.Println("v8Handler.Execute", name)
-	//		var result bool
-	//		if name == "GetMyParam" {
-	//			result = true
-	//			retVal.SetResult(V8ValueRef.NewString(myparamValue))
-	//		} else if name == "SetMyParam" {
-	//			if arguments.Size() > 0 {
-	//				newValue := arguments.Get(0)
-	//				fmt.Println("value is string:", newValue.IsString())
-	//				fmt.Println("value:", newValue.GetStringValue())
-	//				myparamValue = newValue.GetStringValue()
-	//				newValue.Free()
-	//			}
-	//			result = true
-	//		}
-	//		return result
-	//	})
-	//	//注册js
-	//	var jsCode = `
-	//            let energyExtension;
-	//            if (!energyExtension) {
-	//                energyExtension = {};
-	//            }
-	//            (function () {
-	//                test.__defineGetter__('mouseover', function (e) {
-	//                    native function mouseover();
-	//                    return mouseover(e);
-	//                });
-	//                test.__defineSetter__('mousemove', function (e) {
-	//                    native function mousemove();
-	//                    mousemove(e);
-	//                });
-	//            })();
-	//`
-	//	// 注册JS 和v8处理器
-	//	RegisterExtension("v8/test", jsCode, v8Handler)
+	energyExtensionHandler := V8HandlerRef.New()
+	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
+		fmt.Println("Execute", name, consts.IsMessageLoop, application.SingleProcess())
+		message := &ipcArgument.List{
+			Id:   -1,
+			BId:  ipc.RenderChan().BrowserId(),
+			Name: internalIPCDRAG,
+		}
+		ipc.RenderChan().IPC().Send(message.Bytes())
+		return false
+	})
+	var code = `
+		let energyExtension;
+        if (!energyExtension) {
+            energyExtension = {
+                drag: {
+                    enableDrag: false,
+                    shouldDrag: false,
+                    cssDragProperty: "--webkit-app-region",
+                    cssDragValue: "drag",
+                    defaultCursor: null
+                },
+            };
+        }
+        (function () {
+            energyExtension.drag.war = function (e) {
+                let v = window.getComputedStyle(e.target).getPropertyValue(energyExtension.drag.cssDragProperty);
+                if (v) {
+                    v = v.trim();
+                    if (v !== energyExtension.drag.cssDragValue || e.buttons !== 1) {
+                        return false;
+                    }
+                    return e.detail === 1;
+                }
+                return false;
+            }
+            energyExtension.drag.mouseMove = function (e) {
+                if (!energyExtension.drag.enableDrag && !energyExtension.drag.shouldDrag) {
+                    return
+                }
+                if (energyExtension.drag.shouldDrag) {
+                    energyExtension.drag.shouldDrag = false;
+					native function mouseMove();
+					mouseMove(e);
+                }
+            }
+            energyExtension.drag.mouseUp = function (e) {
+                if (!energyExtension.drag.enableDrag) {
+                    return
+                }
+                energyExtension.drag.shouldDrag = false;
+				//document.body.style.cursor = "default";
+				native function mouseUp();
+				mouseUp(e);
+            }
+            energyExtension.drag.mouseDown = function (e) {
+                if (!energyExtension.drag.enableDrag && ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
+                    return
+                }
+                if (energyExtension.drag.war(e)) {
+					console.log('mouseDown');
+                    e.preventDefault();
+                    energyExtension.drag.shouldDrag = true;
+                    native function mouseDown();
+                    mouseDown(e);
+                } else {
+                    energyExtension.drag.shouldDrag = false;
+                }
+            }
+            energyExtension.drag.setEnableDrag = function (v) {
+				console.log('drag.setEnableDrag', v, energyExtension);
+                energyExtension.drag.enableDrag = v;
+            }
+            energyExtension.drag.setup = function () {
+				console.log('drag.setup', energyExtension);
+                window.addEventListener("mousemove", energyExtension.drag.mouseMove);
+                window.addEventListener("mousedown", energyExtension.drag.mouseDown);
+                window.addEventListener("mouseup", energyExtension.drag.mouseUp);
+            }
+        })();
+`
+	// 注册 EnergyExtension JS
+	RegisterExtension("energyExtension", code, energyExtensionHandler)
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

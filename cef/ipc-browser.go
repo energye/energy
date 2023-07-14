@@ -13,11 +13,13 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/energye/golcl/lcl/api"
 )
 
 // ipcBrowserProcess 主进程
@@ -140,7 +142,23 @@ func (m *ipcBrowserProcess) registerEvent() {
 		}
 		return false
 	})
-
+	// drag
+	ipc.BrowserChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
+		if argument != nil {
+			if argument.GetName() == internalIPCDRAG {
+				if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
+					if wi.IsLCL() {
+						wi.RunOnMainThread(func() {
+							fmt.Println("call-1-DMainThreadId:", api.DMainThreadId(), api.DCurrentThreadId())
+							wi.AsLCLBrowserWindow().BrowserWindow().drag()
+						})
+					}
+				}
+				return true
+			}
+		}
+		return false
+	})
 }
 
 // jsExecuteGoSyncMethodMessage JS执行Go事件 - 同步消息处理

@@ -357,3 +357,9 @@ func (m *LCLBrowserWindow) Maximize() {
 //		//LWA_ALPHA | LWA_COLORKEY: crKey的地方全透明，其它地方根据bAlpha确定透明度
 //		win.LWA_ALPHA|win.LWA_COLORKEY)
 //}
+
+func (m *LCLBrowserWindow) drag() {
+	if win.ReleaseCapture() {
+		win.PostMessage(m.Handle(), consts.WM_NCLBUTTONDOWN, consts.HTCAPTION, 0)
+	}
+}

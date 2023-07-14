@@ -22,8 +22,10 @@ import (
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
+	"runtime"
 	"time"
 )
 
@@ -130,6 +132,20 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 		m.hWnd = m.TForm.Handle()
 	}
 	return m.hWnd
+}
+
+// RunOnMainThread
+//	在主线程中运行
+func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	if api.DMainThreadId() == api.DCurrentThreadId() {
+		fn()
+	} else {
+		lcl.ThreadSync(func() {
+			fn()
+		})
+	}
 }
 
 // BrowserWindow 返回LCL窗口组件实例对象

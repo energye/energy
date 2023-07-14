@@ -80,8 +80,10 @@ func (m *ICefBrowser) HostWindowHandle() types.HWND {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(def.CEFBrowser_GetHostWindowHandle).Call(m.Instance())
-	return r1
+	if m.windowHandle == 0 {
+		m.windowHandle, _, _ = imports.Proc(def.CEFBrowser_GetHostWindowHandle).Call(m.Instance())
+	}
+	return m.windowHandle
 }
 
 // CloseBrowser 关闭浏览器，同时关闭窗口

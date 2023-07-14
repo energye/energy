@@ -81,6 +81,7 @@ func Run(app *TCEFApplication) {
 			}
 			appMainRunCallback()
 			if consts.IsMessageLoop {
+				lcl.Application.Initialize()
 				// VF窗口消息轮询
 				app.RunMessageLoop()
 			} else {

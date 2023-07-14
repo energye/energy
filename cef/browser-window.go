@@ -103,6 +103,7 @@ type IBrowserWindow interface {
 	NewCefTray(width, height int32, url string) ITray                                                         //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
 	NewSysTray() ITray                                                                                        //systray系统原生
 	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
+	RunOnMainThread(fn func())                                                                                //在主线程中运行
 }
 
 // ILCLBrowserWindow

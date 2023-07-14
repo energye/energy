@@ -22,7 +22,9 @@ import (
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
+	"runtime"
 )
 
 // ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
@@ -597,4 +599,18 @@ func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
 // BrowserViewComponent 返回浏览器显示组件
 func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
 	return m.browserViewComponent
+}
+
+// RunOnMainThread
+//	在主线程中运行
+func (m *ViewsFrameworkBrowserWindow) RunOnMainThread(fn func()) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	if api.DMainThreadId() == api.DCurrentThreadId() {
+		fn()
+	} else {
+		lcl.ThreadSync(func() {
+			fn()
+		})
+	}
 }

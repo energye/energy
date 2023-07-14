@@ -20,6 +20,7 @@ import (
 	. "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 	"time"
 	"unsafe"
 )
@@ -263,6 +264,7 @@ type ICefBrowser struct {
 	instance       unsafe.Pointer
 	mainFrame      *ICefFrame
 	requestContext *ICefRequestContext
+	windowHandle   types.HWND
 	idFrames       map[int64]*ICefFrame
 	nameFrames     map[string]*ICefFrame
 }
