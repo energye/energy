@@ -139,10 +139,12 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
+	fmt.Println("call-0-DMainThreadId:", api.DMainThreadId(), api.DCurrentThreadId())
 	if api.DMainThreadId() == api.DCurrentThreadId() {
 		fn()
 	} else {
-		lcl.ThreadSync(func() {
+		QueueAsyncCall(func(id int) {
+			//lcl.ThreadSync(func() {
 			fn()
 		})
 	}

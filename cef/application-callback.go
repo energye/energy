@@ -45,12 +45,15 @@ func appWebKitInitialized() {
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 		fmt.Println("Execute", name, consts.IsMessageLoop, application.SingleProcess())
-		message := &ipcArgument.List{
-			Id:   -1,
-			BId:  ipc.RenderChan().BrowserId(),
-			Name: internalIPCDRAG,
+		if name == "mouseMove" {
+			message := &ipcArgument.List{
+				Id:   -1,
+				BId:  ipc.RenderChan().BrowserId(),
+				Name: internalIPCDRAG,
+			}
+			ipc.RenderChan().IPC().Send(message.Bytes())
+			return true
 		}
-		ipc.RenderChan().IPC().Send(message.Bytes())
 		return false
 	})
 	var code = `
@@ -98,7 +101,7 @@ func appWebKitInitialized() {
 				mouseUp();
             }
             energyExtension.drag.mouseDown = function (e) {
-                if (!energyExtension.drag.enableDrag && ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
+                if (!energyExtension.drag.enableDrag || ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
                     return
                 }
                 if (energyExtension.drag.war(e)) {

@@ -9,6 +9,7 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"strings"
 	//_ "net/http/pprof"
@@ -163,7 +164,9 @@ func main() {
 			dlgOpen.SetTitle("打开")
 
 			ipc.On("showDialog", func(t int) {
-				cef.QueueAsyncCall(func(id int) {
+				window.RunOnMainThread(func() {
+					fmt.Println("call-1-DMainThreadId:", api.DMainThreadId(), api.DCurrentThreadId())
+					//cef.QueueAsyncCall(func(id int) {
 					switch t {
 					case 1: // InputComboEx
 						fmt.Println(lcl.InputComboEx("选择", "请选择一项："+strings.Repeat(" ", 50), []string{"第一项", "第二项", "第三项", "第四项"}, false))
