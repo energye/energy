@@ -69,7 +69,7 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 >
 > <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
 >
-> `go get github.com/energye/energy`
+> `go get github.com/energye/energy/v2`
 >
 > Enter the  [energy](https://github.com/energye/energy) command line directory
 >
