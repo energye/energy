@@ -31,8 +31,12 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 
 	// 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	// 在MacOS中LCL窗口没有有效的消息事件
-	//var executeJS = `energyExtension.drag.setEnableDrag(true); energyExtension.drag.setup();`
-	//frame.ExecuteJavaScript(executeJS, "", 0)
+	var executeJS = `
+energyExtension.drag.setGOOS('darwin');
+energyExtension.drag.setWindowType('LCL');
+energyExtension.drag.setEnableDrag(true);
+energyExtension.drag.setup();`
+	frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
@@ -42,11 +46,44 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	return
+	//return
+	var (
+		dx, dy int32
+		mx, my int32
+	)
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 		fmt.Println("Execute", name, application.IsMessageLoop(), application.SingleProcess())
-		if name == "mouseMove" {
+		if name == "mouseUp" {
+			dx = 0
+			dy = 0
+			mx = 0
+			my = 0
+		} else if name == "mouseDown" {
+			if arguments.Size() > 0 {
+				point := arguments.Get(0)
+				v8ValX := point.getValueByKey("x")
+				v8ValY := point.getValueByKey("y")
+				dx = v8ValX.GetIntValue()
+				dy = v8ValY.GetIntValue()
+				v8ValX.Free()
+				v8ValY.Free()
+				point.Free()
+			}
+			fmt.Println("down xy:", dx, dy)
+		} else if name == "mouseMove" {
+			if arguments.Size() > 0 {
+				point := arguments.Get(0)
+				v8ValX := point.getValueByKey("x")
+				v8ValY := point.getValueByKey("y")
+				mx = v8ValX.GetIntValue()
+				my = v8ValY.GetIntValue()
+				v8ValX.Free()
+				v8ValY.Free()
+				point.Free()
+			}
+			fmt.Println("move xy:", mx, my)
+
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
@@ -66,7 +103,9 @@ func appWebKitInitialized() {
                     shouldDrag: false,
                     cssDragProperty: "--webkit-app-region",
                     cssDragValue: "drag",
-                    defaultCursor: null
+                    defaultCursor: null,
+					goos: "windows", // windows, linux, darwin
+					windowType: "LCL", // LCL, VF
                 },
             };
         }
@@ -83,17 +122,18 @@ func appWebKitInitialized() {
                 return false;
             }
             energyExtension.drag.mouseMove = function (e) {
-                if (!energyExtension.drag.enableDrag && !energyExtension.drag.shouldDrag) {
+				//console.log('mouseMove:', e);
+                if (!energyExtension.drag.enableDrag || !energyExtension.drag.shouldDrag) {
                     return
                 }
-                if (energyExtension.drag.shouldDrag) {
-                    energyExtension.drag.shouldDrag = false;
-					native function mouseMove();
-					mouseMove();
-                }
+				if (energyExtension.drag.goos === "windows") {
+					energyExtension.drag.shouldDrag = false;
+				}
+				native function mouseMove();
+				mouseMove({x: e.clientX, y: e.clientY});
             }
             energyExtension.drag.mouseUp = function (e) {
-                if (!energyExtension.drag.enableDrag) {
+                if (!energyExtension.drag.enableDrag || (energyExtension.drag.goos === "darwin" && !energyExtension.drag.shouldDrag)) {
                     return
                 }
                 energyExtension.drag.shouldDrag = false;
@@ -106,21 +146,31 @@ func appWebKitInitialized() {
                     return
                 }
                 if (energyExtension.drag.war(e)) {
-					console.log('mouseDown');
                     e.preventDefault();
                     energyExtension.drag.shouldDrag = true;
                     native function mouseDown();
-                    mouseDown();
+					console.log(e);
+                    mouseDown({x:0, y:0});
                 } else {
                     energyExtension.drag.shouldDrag = false;
                 }
             }
             energyExtension.drag.setEnableDrag = function (v) {
-				console.log('drag.setEnableDrag', v, energyExtension);
-                energyExtension.drag.enableDrag = v;
+				// macos enable
+				if (energyExtension.drag.goos === "darwin"){
+                	energyExtension.drag.enableDrag = v;
+				}
+            }
+            energyExtension.drag.setGOOS = function (v) {
+                energyExtension.drag.goos = v;
+            }
+            energyExtension.drag.setWindowType = function (v) {
+                energyExtension.drag.windowType = v;
             }
             energyExtension.drag.setup = function () {
-				console.log('drag.setup', energyExtension);
+				if (!energyExtension.drag.enableDrag) {
+					return;
+				}
                 window.addEventListener("mousemove", energyExtension.drag.mouseMove);
                 window.addEventListener("mousedown", energyExtension.drag.mouseDown);
                 window.addEventListener("mouseup", energyExtension.drag.mouseUp);

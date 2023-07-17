@@ -113,5 +113,6 @@ func (m *LCLBrowserWindow) Maximize() {
 }
 
 func (m *LCLBrowserWindow) drag() {
+	// MacOS move window
 
 }
