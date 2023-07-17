@@ -121,19 +121,19 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 		case consts.HTBOTTOMRIGHT, consts.HTTOPLEFT: //右下 左上
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, winapi.IDC_SIZENWSE))
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENWSE))
 		case consts.HTRIGHT, consts.HTLEFT: //右 左
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, winapi.IDC_SIZEWE))
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZEWE))
 		case consts.HTTOPRIGHT, consts.HTBOTTOMLEFT: //右上 左下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, winapi.IDC_SIZENESW))
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENESW))
 		case consts.HTTOP, consts.HTBOTTOM: //上 下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, winapi.IDC_SIZENS))
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENS))
 		}
 	}
 }
@@ -141,35 +141,35 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 // onCanBorder 鼠标是否在边框
 func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
 	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
-		m.borderWMSZ = winapi.WMSZ_TOPRIGHT
+		m.borderWMSZ = consts.WMSZ_TOPRIGHT
 		m.borderHT = consts.HTTOPRIGHT
 		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= rect.Height() && y >= rect.Height()-angleRange; m.canBorder { // 右下
-		m.borderWMSZ = winapi.WMSZ_BOTTOMRIGHT
+		m.borderWMSZ = consts.WMSZ_BOTTOMRIGHT
 		m.borderHT = consts.HTBOTTOMRIGHT
 		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
-		m.borderWMSZ = winapi.WMSZ_TOPLEFT
+		m.borderWMSZ = consts.WMSZ_TOPLEFT
 		m.borderHT = consts.HTTOPLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y >= rect.Height()-angleRange; m.canBorder { //左下
-		m.borderWMSZ = winapi.WMSZ_BOTTOMLEFT
+		m.borderWMSZ = consts.WMSZ_BOTTOMLEFT
 		m.borderHT = consts.HTBOTTOMLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y <= borderRange; m.canBorder { //上
-		m.borderWMSZ = winapi.WMSZ_TOP
+		m.borderWMSZ = consts.WMSZ_TOP
 		m.borderHT = consts.HTTOP
 		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y >= rect.Height()-borderRange; m.canBorder { //下
-		m.borderWMSZ = winapi.WMSZ_BOTTOM
+		m.borderWMSZ = consts.WMSZ_BOTTOM
 		m.borderHT = consts.HTBOTTOM
 		return m.borderHT, true
 	} else if m.canBorder = x <= borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { //左
-		m.borderWMSZ = winapi.WMSZ_LEFT
+		m.borderWMSZ = consts.WMSZ_LEFT
 		m.borderHT = consts.HTLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { // 右
-		m.borderWMSZ = winapi.WMSZ_RIGHT
+		m.borderWMSZ = consts.WMSZ_RIGHT
 		m.borderHT = consts.HTRIGHT
 		return m.borderHT, true
 	}

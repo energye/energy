@@ -23,58 +23,6 @@ import (
 )
 
 const (
-	S_OK           = 0x00000000
-	S_FALSE        = 0x00000001
-	E_UNEXPECTED   = 0x8000FFFF
-	E_NOTIMPL      = 0x80004001
-	E_OUTOFMEMORY  = 0x8007000E
-	E_INVALIDARG   = 0x80070057
-	E_NOINTERFACE  = 0x80004002
-	E_POINTER      = 0x80004003
-	E_HANDLE       = 0x80070006
-	E_ABORT        = 0x80004004
-	E_FAIL         = 0x80004005
-	E_ACCESSDENIED = 0x80070005
-	E_PENDING      = 0x8000000A
-)
-
-// Win32 Predefined cursor constants
-const (
-	IDC_ARROW       = 32512
-	IDC_IBEAM       = 32513
-	IDC_WAIT        = 32514
-	IDC_CROSS       = 32515
-	IDC_UPARROW     = 32516
-	IDC_SIZENWSE    = 32642
-	IDC_SIZENESW    = 32643
-	IDC_SIZEWE      = 32644
-	IDC_SIZENS      = 32645
-	IDC_SIZEALL     = 32646
-	IDC_NO          = 32648
-	IDC_HAND        = 32649
-	IDC_APPSTARTING = 32650
-	IDC_HELP        = 32651
-	IDC_ICON        = 32641
-	IDC_SIZE        = 32640
-)
-
-const (
-	FALSE = 0
-	TRUE  = 1
-)
-
-const (
-	WMSZ_LEFT        = 1
-	WMSZ_RIGHT       = 2
-	WMSZ_TOP         = 3
-	WMSZ_TOPLEFT     = 4
-	WMSZ_TOPRIGHT    = 5
-	WMSZ_BOTTOM      = 6
-	WMSZ_BOTTOMLEFT  = 7
-	WMSZ_BOTTOMRIGHT = 8
-)
-
-const (
 	// Mouse message key states
 	MK_LBUTTON  = 1
 	MK_RBUTTON  = 2

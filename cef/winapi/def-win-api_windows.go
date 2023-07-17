@@ -23,38 +23,6 @@ import (
 	"github.com/energye/golcl/lcl/api"
 )
 
-// Window class styles
-const (
-	CS_VREDRAW         = 0x00000001
-	CS_HREDRAW         = 0x00000002
-	CS_KEYCVTWINDOW    = 0x00000004
-	CS_DBLCLKS         = 0x00000008
-	CS_OWNDC           = 0x00000020
-	CS_CLASSDC         = 0x00000040
-	CS_PARENTDC        = 0x00000080
-	CS_NOKEYCVT        = 0x00000100
-	CS_NOCLOSE         = 0x00000200
-	CS_SAVEBITS        = 0x00000800
-	CS_BYTEALIGNCLIENT = 0x00001000
-	CS_BYTEALIGNWINDOW = 0x00002000
-	CS_GLOBALCLASS     = 0x00004000
-	CS_IME             = 0x00010000
-	CS_DROPSHADOW      = 0x00020000
-)
-
-const (
-	GCL_CBCLSEXTRA    = -20
-	GCL_CBWNDEXTRA    = -18
-	GCL_HBRBACKGROUND = -10
-	GCL_HCURSOR       = -12
-	GCL_HICON         = -14
-	GCL_HICONSM       = -34
-	GCL_HMODULE       = -16
-	GCL_MENUNAME      = -8
-	GCL_STYLE         = -26
-	GCL_WNDPROC       = -24
-)
-
 func WinGetWindowLongPtr(hWnd types.HWND, nIndex types.LongInt) types.LongPtr {
 	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowLongPtr).Call(uintptr(hWnd), uintptr(nIndex))
 	return types.LongPtr(r1)

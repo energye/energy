@@ -31,8 +31,8 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 
 	// 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	// 在MacOS中LCL窗口没有有效的消息事件
-	var executeJS = `energyExtension.drag.setEnableDrag(true); energyExtension.drag.setup();`
-	frame.ExecuteJavaScript(executeJS, "", 0)
+	//var executeJS = `energyExtension.drag.setEnableDrag(true); energyExtension.drag.setup();`
+	//frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
 // appMainRunCallback 应用运行 - 默认实现
@@ -42,6 +42,7 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
+	return
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 		fmt.Println("Execute", name, consts.IsMessageLoop, application.SingleProcess())
