@@ -957,9 +957,8 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 				m.Chromium().CloseBrowser(true)
 				if IsDarwin() {
 					m.Show() // mac 主窗口未得到焦点时应用不退出, 所以show一下
-				} else {
-					m.Hide() // 更快的关闭效果, 先隐藏掉
 				}
+				m.Hide() // 更快的关闭效果, 先隐藏掉
 			}
 		})
 	}
