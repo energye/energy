@@ -58,7 +58,7 @@
 >
 > <p style="color:palevioletred;">如果使用预编译命令行工具以下步骤可跳过</p>
 > 
-> `go get github.com/energye/energy`
+> `go get github.com/energye/energy/v2`
 >
 > 进入 [energy](https://github.com/energye/energy) 命令行目录
 > 
