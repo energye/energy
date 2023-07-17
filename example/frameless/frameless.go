@@ -29,6 +29,10 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
+	// TODO 下面2个配置项用来切换使用VF或LCL窗口组件
+	// VF = (ExternalMessagePump = false && MultiThreadedMessageLoop = false)
+	//cefApp.SetExternalMessagePump(false)
+	//cefApp.SetMultiThreadedMessageLoop(false)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	if common.IsLinux() {
@@ -36,14 +40,16 @@ func main() {
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
-	if !common.IsDarwin() { // mac 下有些问题
+	if !common.IsDarwin() {
+		// LCL macos 隐藏标题栏后，不能调整大小
 		cef.BrowserWindow.Config.EnableHideCaption = true
+		// LCL macos 隐藏标题栏后，该选项不生效
+		cef.BrowserWindow.Config.EnableResize = true
 	}
-	cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200
-	//chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
-	//chromiumConfig.SetEnableMenu(false) //禁用右键菜单
+	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
+	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
