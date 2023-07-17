@@ -17,6 +17,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/window"
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/energy/emfs"
@@ -1013,7 +1014,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 
 				// LCLBrowserWindow 关闭
 				if IsWindows() {
-					rtl.PostMessage(m.Handle(), consts.WM_CLOSE, 0, 0)
+					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
 				} else if IsDarwin() || IsLinux() {
 					m.Close()
 				}

@@ -17,6 +17,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts/messages"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
@@ -118,22 +119,22 @@ func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *ty
 func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canBorder { //当前在边框
 		switch winapi.LOWORD(uint32(message.LParam)) {
-		case consts.HTBOTTOMRIGHT, consts.HTTOPLEFT: //右下 左上
+		case messages.HTBOTTOMRIGHT, messages.HTTOPLEFT: //右下 左上
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENWSE))
-		case consts.HTRIGHT, consts.HTLEFT: //右 左
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENWSE))
+		case messages.HTRIGHT, messages.HTLEFT: //右 左
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZEWE))
-		case consts.HTTOPRIGHT, consts.HTBOTTOMLEFT: //右上 左下
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZEWE))
+		case messages.HTTOPRIGHT, messages.HTBOTTOMLEFT: //右上 左下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENESW))
-		case consts.HTTOP, consts.HTBOTTOM: //上 下
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENESW))
+		case messages.HTTOP, messages.HTBOTTOM: //上 下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, consts.IDC_SIZENS))
+			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENS))
 		}
 	}
 }
@@ -141,36 +142,36 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 // onCanBorder 鼠标是否在边框
 func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
 	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
-		m.borderWMSZ = consts.WMSZ_TOPRIGHT
-		m.borderHT = consts.HTTOPRIGHT
+		m.borderWMSZ = messages.WMSZ_TOPRIGHT
+		m.borderHT = messages.HTTOPRIGHT
 		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= rect.Height() && y >= rect.Height()-angleRange; m.canBorder { // 右下
-		m.borderWMSZ = consts.WMSZ_BOTTOMRIGHT
-		m.borderHT = consts.HTBOTTOMRIGHT
+		m.borderWMSZ = messages.WMSZ_BOTTOMRIGHT
+		m.borderHT = messages.HTBOTTOMRIGHT
 		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
-		m.borderWMSZ = consts.WMSZ_TOPLEFT
-		m.borderHT = consts.HTTOPLEFT
+		m.borderWMSZ = messages.WMSZ_TOPLEFT
+		m.borderHT = messages.HTTOPLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x <= angleRange && y >= rect.Height()-angleRange; m.canBorder { //左下
-		m.borderWMSZ = consts.WMSZ_BOTTOMLEFT
-		m.borderHT = consts.HTBOTTOMLEFT
+		m.borderWMSZ = messages.WMSZ_BOTTOMLEFT
+		m.borderHT = messages.HTBOTTOMLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y <= borderRange; m.canBorder { //上
-		m.borderWMSZ = consts.WMSZ_TOP
-		m.borderHT = consts.HTTOP
+		m.borderWMSZ = messages.WMSZ_TOP
+		m.borderHT = messages.HTTOP
 		return m.borderHT, true
 	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y >= rect.Height()-borderRange; m.canBorder { //下
-		m.borderWMSZ = consts.WMSZ_BOTTOM
-		m.borderHT = consts.HTBOTTOM
+		m.borderWMSZ = messages.WMSZ_BOTTOM
+		m.borderHT = messages.HTBOTTOM
 		return m.borderHT, true
 	} else if m.canBorder = x <= borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { //左
-		m.borderWMSZ = consts.WMSZ_LEFT
-		m.borderHT = consts.HTLEFT
+		m.borderWMSZ = messages.WMSZ_LEFT
+		m.borderHT = messages.HTLEFT
 		return m.borderHT, true
 	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { // 右
-		m.borderWMSZ = consts.WMSZ_RIGHT
-		m.borderHT = consts.HTRIGHT
+		m.borderWMSZ = messages.WMSZ_RIGHT
+		m.borderHT = messages.HTRIGHT
 		return m.borderHT, true
 	}
 	return 0, false
@@ -180,18 +181,18 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
 		x, y := m.toPoint(message)
-		*lResult = consts.HTCAPTION
+		*lResult = messages.HTCAPTION
 		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, consts.WM_NCLBUTTONDOWN, consts.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
+		rtl.PostMessage(hWND, messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
 	} else if m.canBorder { // 边框
 		x, y := m.toPoint(message)
 		*lResult = types.LRESULT(m.borderHT)
 		m.borderMD = true
 		*aHandled = true
 		win.ReleaseCapture()
-		rtl.PostMessage(hWND, consts.WM_SYSCOMMAND, uintptr(consts.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
+		rtl.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
 		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), 0)
 	}
 }
@@ -225,32 +226,32 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 // doOnRenderCompMsg
 func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	switch message.Msg {
-	case consts.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
+	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
 		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk {
-			*lResult = consts.HTCAPTION
+			*lResult = messages.HTCAPTION
 			*aHandled = true
 			win.ReleaseCapture()
 			m.windowProperty.windowState = m.WindowState()
 			if m.windowProperty.windowState == types.WsNormal {
-				rtl.PostMessage(m.Handle(), consts.WM_SYSCOMMAND, consts.SC_MAXIMIZE, 0)
+				rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
 			} else {
-				rtl.PostMessage(m.Handle(), consts.WM_SYSCOMMAND, consts.SC_RESTORE, 0)
+				rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
 			}
-			rtl.SendMessage(m.Handle(), consts.WM_NCLBUTTONUP, consts.HTCAPTION, 0)
+			rtl.SendMessage(m.Handle(), messages.WM_NCLBUTTONUP, messages.HTCAPTION, 0)
 		}
-	case consts.WM_NCLBUTTONDOWN: // 161 nc left down
+	case messages.WM_NCLBUTTONDOWN: // 161 nc left down
 		m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
-	case consts.WM_NCLBUTTONUP: // 162 nc l up
+	case messages.WM_NCLBUTTONUP: // 162 nc l up
 		if m.cwcap.canCaption {
-			*lResult = consts.HTCAPTION
+			*lResult = messages.HTCAPTION
 			*aHandled = true
 		}
-	case consts.WM_NCMOUSEMOVE: // 160 nc mouse move
+	case messages.WM_NCMOUSEMOVE: // 160 nc mouse move
 		m.cwcap.onNCMouseMove(message, lResult, aHandled)
-	case consts.WM_SETCURSOR: // 32 设置鼠标图标样式
+	case messages.WM_SETCURSOR: // 32 设置鼠标图标样式
 		m.cwcap.onSetCursor(message, lResult, aHandled)
-	case consts.WM_NCHITTEST: // 132 NCHITTEST
+	case messages.WM_NCHITTEST: // 132 NCHITTEST
 		if m.cwcap.borderMD { //TODO 测试windows7, 161消息之后再次处理132消息导致消息错误
 			m.cwcap.borderMD = false
 			return
@@ -258,7 +259,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 		//鼠标坐标是否在标题区域
 		x, y, caption := m.cwcap.isCaption(et.HWND(m.Handle()), message)
 		if caption { //窗口标题栏
-			*lResult = consts.HTCAPTION
+			*lResult = messages.HTCAPTION
 			*aHandled = true
 		} else if m.WindowProperty().EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
 			rect := m.BoundsRect()
@@ -336,9 +337,9 @@ func (m *LCLBrowserWindow) Maximize() {
 		win.ReleaseCapture()
 		m.windowProperty.windowState = m.WindowState()
 		if m.windowProperty.windowState == types.WsNormal {
-			rtl.PostMessage(m.Handle(), consts.WM_SYSCOMMAND, consts.SC_MAXIMIZE, 0)
+			rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
 		} else {
-			rtl.SendMessage(m.Handle(), consts.WM_SYSCOMMAND, consts.SC_RESTORE, 0)
+			rtl.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
 		}
 	})
 }
@@ -360,6 +361,6 @@ func (m *LCLBrowserWindow) Maximize() {
 
 func (m *LCLBrowserWindow) drag() {
 	if win.ReleaseCapture() {
-		win.PostMessage(m.Handle(), consts.WM_NCLBUTTONDOWN, consts.HTCAPTION, 0)
+		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
 	}
 }
