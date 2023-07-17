@@ -45,7 +45,7 @@ func appWebKitInitialized() {
 	return
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		fmt.Println("Execute", name, consts.IsMessageLoop, application.SingleProcess())
+		fmt.Println("Execute", name, application.IsMessageLoop(), application.SingleProcess())
 		if name == "mouseMove" {
 			message := &ipcArgument.List{
 				Id:   -1,

@@ -62,7 +62,7 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 		}
 		BrowserWindow.putWindowInfo(browser.BrowserId(), bw)
 	}
-	if !consts.IsMessageLoop {
+	if !application.IsMessageLoop() {
 		QueueAsyncCall(func(id int) {
 			// lcl
 			BrowserWindow.createNextLCLPopupWindow()

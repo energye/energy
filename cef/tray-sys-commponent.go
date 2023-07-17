@@ -14,7 +14,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/notice"
 	"github.com/energye/energy/v2/pkgs/systray"
 	"github.com/energye/golcl/energy/emfs"
@@ -109,7 +108,7 @@ func (m *SysTray) Show() {
 		}
 		if common.IsDarwin() {
 			// view framework
-			if consts.IsMessageLoop {
+			if application.IsMessageLoop() {
 				runLoop()
 			} else {
 				//LCL

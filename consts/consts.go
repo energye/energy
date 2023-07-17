@@ -21,10 +21,9 @@ import (
 )
 
 var (
-	ExePath       string                       //执行文件目录
-	HomeDir, _    = homedir.Dir()              //系统用户目录
-	Separator     = string(filepath.Separator) //系统目录分隔符
-	IsMessageLoop = false                      //CEF应用的窗口, true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件, 其实是窗口消息轮询使用方式.
+	ExePath    string                       //执行文件目录
+	HomeDir, _ = homedir.Dir()              //系统用户目录
+	Separator  = string(filepath.Separator) //系统目录分隔符
 )
 
 const (

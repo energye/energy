@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
@@ -61,35 +60,32 @@ func Run(app *TCEFApplication) {
 		app.Free()
 	} else {
 		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时, 启用 VF (ViewsFrameworkBrowserWindow) 窗口组件
-		emp := app.ExternalMessagePump()
-		mtml := app.MultiThreadedMessageLoop()
-		consts.IsMessageLoop = !emp && !mtml
-		if consts.IsMessageLoop {
+		if app.IsMessageLoop() {
 			// 启用VF窗口组件
 			BrowserWindow.appContextInitialized(app)
 		}
 		// 启动主进程
 		success := app.StartMainProcess()
 		if success {
-			if !consts.IsMessageLoop {
-				//LCL -> Linux 必须在主进程启动之后初始化组件
-				lclwidget.CustomWidgetSetInitialization()
-			}
+			//if !consts.IsMessageLoop {
+			//LCL -> Linux 必须在主进程启动之后初始化组件
+			lclwidget.CustomWidgetSetInitialization()
+			//}
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
 			}
 			appMainRunCallback()
-			if consts.IsMessageLoop {
+			if app.IsMessageLoop() {
 				lcl.Application.Initialize()
-				// VF窗口消息轮询
+				// VF窗口
 				app.RunMessageLoop()
 			} else {
 				// 创建LCL窗口组件
 				if BrowserWindow.mainBrowserWindow == nil {
 					BrowserWindow.mainBrowserWindow = new(lclBrowserWindow)
 				}
-				// 运行主窗口
+				// LCL窗口
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
 				lclwidget.CustomWidgetSetFinalization()
 			}
