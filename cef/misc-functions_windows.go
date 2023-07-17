@@ -17,6 +17,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/energy/v2/types"
 )
 
@@ -30,19 +31,19 @@ func CefIsKeyToggled(wparam types.WPARAM) bool {
 
 func GetCefMouseModifiersByWPARAM(wparam types.WPARAM) (result consts.TCefEventFlags) {
 	result = consts.EVENTFLAG_NONE
-	if (wparam & consts.MK_CONTROL) != 0 {
+	if (wparam & messages.MK_CONTROL) != 0 {
 		result = result | consts.EVENTFLAG_CONTROL_DOWN
 	}
-	if (wparam & consts.MK_SHIFT) != 0 {
+	if (wparam & messages.MK_SHIFT) != 0 {
 		result = result | consts.EVENTFLAG_SHIFT_DOWN
 	}
-	if (wparam & consts.MK_LBUTTON) != 0 {
+	if (wparam & messages.MK_LBUTTON) != 0 {
 		result = result | consts.EVENTFLAG_LEFT_MOUSE_BUTTON
 	}
-	if (wparam & consts.MK_MBUTTON) != 0 {
+	if (wparam & messages.MK_MBUTTON) != 0 {
 		result = result | consts.EVENTFLAG_MIDDLE_MOUSE_BUTTON
 	}
-	if (wparam & consts.MK_RBUTTON) != 0 {
+	if (wparam & messages.MK_RBUTTON) != 0 {
 		result = result | consts.EVENTFLAG_RIGHT_MOUSE_BUTTON
 	}
 	if CefIsKeyDown(consts.VkMenu) {
@@ -59,19 +60,19 @@ func GetCefMouseModifiersByWPARAM(wparam types.WPARAM) (result consts.TCefEventF
 
 func GetCefMouseModifiers() (result consts.TCefEventFlags) {
 	result = consts.EVENTFLAG_NONE
-	if CefIsKeyDown(consts.MK_CONTROL) {
+	if CefIsKeyDown(messages.MK_CONTROL) {
 		result = result | consts.EVENTFLAG_CONTROL_DOWN
 	}
-	if CefIsKeyDown(consts.MK_SHIFT) {
+	if CefIsKeyDown(messages.MK_SHIFT) {
 		result = result | consts.EVENTFLAG_SHIFT_DOWN
 	}
-	if CefIsKeyDown(consts.MK_LBUTTON) {
+	if CefIsKeyDown(messages.MK_LBUTTON) {
 		result = result | consts.EVENTFLAG_LEFT_MOUSE_BUTTON
 	}
-	if CefIsKeyDown(consts.MK_MBUTTON) {
+	if CefIsKeyDown(messages.MK_MBUTTON) {
 		result = result | consts.EVENTFLAG_MIDDLE_MOUSE_BUTTON
 	}
-	if CefIsKeyDown(consts.MK_RBUTTON) {
+	if CefIsKeyDown(messages.MK_RBUTTON) {
 		result = result | consts.EVENTFLAG_RIGHT_MOUSE_BUTTON
 	}
 	if CefIsKeyDown(consts.VkMenu) {
