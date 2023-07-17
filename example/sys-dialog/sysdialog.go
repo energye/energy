@@ -28,11 +28,9 @@ func main() {
 	//   1. LCL 有更多的方式, CEF 仅有限几种方式
 	//   2. LCL 仅适用于LCL窗口, CEF 适用LCL和VF窗口
 	// 以下通过 ExternalMessagePump 和 MultiThreadedMessageLoop 区分当前所使用的窗口类型
-	//app.SetExternalMessagePump(false)
-	//app.SetMultiThreadedMessageLoop(false)
-	emp := app.ExternalMessagePump()
-	mtml := app.MultiThreadedMessageLoop()
-	if !emp && !mtml { // IsMessageLoop VF window
+	app.SetExternalMessagePump(false)
+	app.SetMultiThreadedMessageLoop(false)
+	if app.IsMessageLoop() { // IsMessageLoop VF window
 		// CEF dialog 示例
 		cef.BrowserWindow.Config.Url = "http://localhost:22022/sysdialog_cef.html"
 	} else {
@@ -143,9 +141,15 @@ func main() {
 
 			dlSelDirdlg := lcl.NewSelectDirectoryDialog(bw)
 
-			dlPicSave := lcl.NewSavePictureDialog(bw)
-
-			dlPicOpen := lcl.NewOpenPictureDialog(bw)
+			var (
+				dlPicSave *lcl.TSavePictureDialog
+				dlPicOpen *lcl.TOpenPictureDialog
+			)
+			// VF 窗口，在linux不能使用它，还不知道是什么原因...
+			if !common.IsLinux() && !app.IsMessageLoop() {
+				dlPicSave = lcl.NewSavePictureDialog(bw)
+				dlPicOpen = lcl.NewOpenPictureDialog(bw)
+			}
 
 			dlColor := lcl.NewColorDialog(bw)
 
@@ -205,11 +209,11 @@ func main() {
 							fmt.Println("Name: ", dlSelDirdlg.FileName())
 						}
 					case 13: // SavePic Dialog
-						if dlPicSave.Execute() {
+						if dlPicSave != nil && dlPicSave.Execute() {
 							fmt.Println("Name: ", dlPicSave.FileName())
 						}
 					case 14: // OpenPic Dialog
-						if dlPicOpen.Execute() {
+						if dlPicOpen != nil && dlPicOpen.Execute() {
 							fmt.Println("Name: ", dlPicOpen.FileName())
 						}
 					case 15: // Color Dialog
