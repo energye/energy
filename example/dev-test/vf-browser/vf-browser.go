@@ -40,10 +40,8 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
 	cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		return
 		//window.DisableResize()
 		window.SetCenterWindow(true)
 		window.SetTitle("这里改变了窗口标题")

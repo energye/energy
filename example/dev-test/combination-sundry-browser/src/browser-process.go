@@ -37,9 +37,6 @@ func AppBrowserInit() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//默认加载的URL 这个示例启动了一个内置http服务
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/demo-misc.html"
-	cef.BrowserWindow.Config.EnableWebkitAppRegion = true
-	//cef.BrowserWindow.Config.EnableResize = false
-	//cef.BrowserWindow.Config.EnableCenterWindow = false
 	//主进程 IPC事件
 	fmt.Println("主进程IPC事件注册")
 	ipc.On("ZoomPct", func(context context.IContext) {
