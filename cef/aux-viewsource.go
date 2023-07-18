@@ -46,6 +46,20 @@ func (m *ICefBrowser) createBrowserViewSource() {
 					request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 				})
 			}
+			viewSourceWindow.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
+				wp := NewWindowProperty()
+				wp.Url = beforePopupInfo.TargetUrl
+				wp.Title = beforePopupInfo.TargetUrl
+				wp.WindowType = WT_VIEW_SOURCE
+				bw := NewLCLBrowserWindow(nil, wp)
+				bw.SetWidth(800)
+				bw.SetHeight(600)
+				bw.EnableDefaultCloseEvent()
+				QueueAsyncCall(func(id int) { //main thread run
+					bw.Show()
+				})
+				return true
+			})
 			viewSourceWindow.EnableDefaultCloseEvent()
 			QueueAsyncCall(func(id int) { //main thread run
 				viewSourceWindow.Show()

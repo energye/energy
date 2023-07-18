@@ -148,9 +148,9 @@ func (m *ICefDragData) GetFileContents(writer *ICefStreamWriter) uint32 {
 	return uint32(r1)
 }
 
-func (m *ICefDragData) GetFileNames() ([]string, int32) {
+func (m *ICefDragData) GetFileNames() []string {
 	if !m.IsValid() {
-		return nil, 0
+		return nil
 	}
 	var result uintptr
 	r1, _, _ := imports.Proc(def.CefDragData_GetFileNames).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
@@ -163,10 +163,10 @@ func (m *ICefDragData) GetFileNames() ([]string, int32) {
 				fileNames[i] = fileNamesList.Strings(int32(i))
 			}
 			fileNamesList.Free()
-			return fileNames, int32(count)
+			return fileNames
 		}
 	}
-	return nil, 0
+	return nil
 }
 
 func (m *ICefDragData) SetLinkUrl(url string) {
