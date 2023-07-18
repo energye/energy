@@ -18,6 +18,8 @@ import (
 	"strconv"
 )
 
+// 窗口拖拽JS扩展
+// 在这里执行并启用JS拖拽
 func dragExtensionJS(frame *ICefFrame) {
 	// Windows2种方式,自定义+webkit 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	var executeJS = `
@@ -26,6 +28,10 @@ energyExtension.drag.setup();`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
+// 窗口拖拽JS扩展处理器
+//  1. 注册JS扩展到CEF, 注册鼠标事件，通过本地函数在Go里处理鼠标事件
+//  2. 通过IPC将鼠标消息发送到主进程，主进程监听到消息处理鼠标事件
+//  3. windows 使用win.api实现窗口拖拽
 func dragExtensionHandler() {
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
