@@ -12,7 +12,7 @@
 
 package cef
 
-func dragExtensionJS(browser *ICefBrowser, frame *ICefFrame) {
+func dragExtensionJS(frame *ICefFrame) {
 
 }
 

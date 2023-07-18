@@ -17,11 +17,11 @@ import (
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 )
 
-func dragExtensionJS(browser *ICefBrowser, frame *ICefFrame) {
+func dragExtensionJS(frame *ICefFrame) {
 	// MacOS只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	// 在MacOS中LCL窗口没有有效的消息事件
 	var executeJS = `
-energyExtension.drag.setEnableDrag(true);
+energyExtension.drag.setEnableDrag(` + strconv.FormatBool(application.EnableWebkitAppRegion()) + `);
 energyExtension.drag.setup();`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
@@ -36,7 +36,6 @@ func dragExtensionHandler() {
 				Name: internalIPCDRAG,
 				Data: &drag{T: dragUp},
 			}
-			//fmt.Println("up")
 			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
 		} else if name == mouseDown {
@@ -51,7 +50,6 @@ func dragExtensionHandler() {
 				v8ValY.Free()
 				point.Free()
 			}
-			//fmt.Println("down xy:", dx, dy)
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
@@ -72,7 +70,6 @@ func dragExtensionHandler() {
 				v8ValY.Free()
 				point.Free()
 			}
-			//fmt.Println("move xy:", mx, my)
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
@@ -117,7 +114,7 @@ func dragExtensionHandler() {
 				mouseMove({x: e.screenX, y: e.screenY});
             }
             energyExtension.drag.mouseUp = function (e) {
-                if (!energyExtension.drag.enableDrag || (energyExtension.drag.goos === "darwin" && !energyExtension.drag.shouldDrag)) {
+                if (!energyExtension.drag.enableDrag || !energyExtension.drag.shouldDrag) {
                     return
                 }
                 energyExtension.drag.shouldDrag = false;
@@ -151,7 +148,6 @@ func dragExtensionHandler() {
             }
         })();
 `
-	// 注册 EnergyExtension JS
 	RegisterExtension("energyExtension", code, energyExtensionHandler)
 }
 

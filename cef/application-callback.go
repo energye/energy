@@ -26,7 +26,7 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	ipcRender.registerGoSyncReplayEvent()                                        // render ipc
 	ipcRender.makeIPC(context)                                                   // render ipc make
 	makeProcess(browser, frame, context)                                         // process make
-	dragExtensionJS(browser, frame)                                              // drag extension
+	dragExtensionJS(frame)                                                       // drag extension
 }
 
 // appMainRunCallback 应用运行 - 默认实现

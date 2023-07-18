@@ -27,7 +27,9 @@ var application *TCEFApplication
 
 // TCEFApplication CEF应用对象
 type TCEFApplication struct {
-	instance unsafe.Pointer
+	instance                  unsafe.Pointer
+	enableWebkitAppRegion     bool
+	enableWebkitAppRegionDClk bool
 }
 
 // NewApplication 创建CEF应用

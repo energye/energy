@@ -30,27 +30,25 @@ type auxTools struct {
 //
 // 部分属性配置并不支持所有平台
 type WindowProperty struct {
-	IsShowModel               bool               //是否以模态窗口显示
-	windowState               types.TWindowState //窗口 状态
-	WindowType                consts.WINDOW_TYPE //窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
-	Title                     string             //窗口 标题
-	Url                       string             //默认打开URL
-	Icon                      string             //窗口图标 加载本地图标 local > /app/resources/icon.ico, linux使用png
-	IconFS                    string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico, linux使用png
-	EnableHideCaption         bool               //窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
-	EnableMinimize            bool               //窗口 是否启用最小化 default: true
-	EnableMaximize            bool               //窗口 是否启用最大化 default: true
-	EnableResize              bool               //窗口 是否允许调整大小 default: true
-	EnableClose               bool               //窗口 关闭时是否关闭窗口 default: true
-	EnableCenterWindow        bool               //窗口 居中显示 default: true
-	EnableDragFile            bool               //窗口 是否允许向窗口内拖拽文件
-	EnableWebkitAppRegion     bool               //窗口 html元素中设置css属性 -webkit-app-region: drag/no-drag 是否允许拖拽区域 default: true
-	EnableWebkitAppRegionDClk bool               //窗口 拖拽区域是否启用标题栏双击最大化和还原 default: true
-	AlwaysOnTop               bool               //窗口 窗口置顶
-	X                         int32              //窗口 EnableCenterWindow=false X坐标 default: 100
-	Y                         int32              //窗口 EnableCenterWindow=false Y坐标 default: 100
-	Width                     int32              //窗口 宽 default: 1024
-	Height                    int32              //窗口 高 default: 768
+	IsShowModel        bool               //是否以模态窗口显示
+	windowState        types.TWindowState //窗口 状态
+	WindowType         consts.WINDOW_TYPE //窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
+	Title              string             //窗口 标题
+	Url                string             //默认打开URL
+	Icon               string             //窗口图标 加载本地图标 local > /app/resources/icon.ico, linux使用png
+	IconFS             string             //窗口图标 加载emfs内置图标 emfs > resources/icon.ico, linux使用png
+	EnableHideCaption  bool               //窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
+	EnableMinimize     bool               //窗口 是否启用最小化 default: true
+	EnableMaximize     bool               //窗口 是否启用最大化 default: true
+	EnableResize       bool               //窗口 是否允许调整大小 default: true
+	EnableClose        bool               //窗口 关闭时是否关闭窗口 default: true
+	EnableCenterWindow bool               //窗口 居中显示 default: true
+	EnableDragFile     bool               //窗口 是否允许向窗口内拖拽文件
+	AlwaysOnTop        bool               //窗口 窗口置顶
+	X                  int32              //窗口 EnableCenterWindow=false X坐标 default: 100
+	Y                  int32              //窗口 EnableCenterWindow=false Y坐标 default: 100
+	Width              int32              //窗口 宽 default: 1024
+	Height             int32              //窗口 高 default: 768
 }
 
 // IBrowserWindow
@@ -152,19 +150,17 @@ type IAuxTools interface {
 // 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
 	return WindowProperty{
-		Title:                     "Energy",
-		Url:                       "about:blank",
-		EnableMinimize:            true,
-		EnableMaximize:            true,
-		EnableResize:              true,
-		EnableClose:               true,
-		EnableCenterWindow:        true,
-		EnableWebkitAppRegion:     true,
-		EnableWebkitAppRegionDClk: true,
-		X:                         100,
-		Y:                         100,
-		Width:                     1024,
-		Height:                    768,
+		Title:              "ENERGY",
+		Url:                "about:blank",
+		EnableMinimize:     true,
+		EnableMaximize:     true,
+		EnableResize:       true,
+		EnableClose:        true,
+		EnableCenterWindow: true,
+		X:                  100,
+		Y:                  100,
+		Width:              1024,
+		Height:             768,
 	}
 }
 

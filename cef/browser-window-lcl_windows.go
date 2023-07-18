@@ -184,16 +184,17 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 		*lResult = messages.HTCAPTION
 		m.borderMD = true
 		*aHandled = true
-		win.ReleaseCapture()
-		rtl.PostMessage(hWND, messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
+		if win.ReleaseCapture() {
+			win.PostMessage(hWND, messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
+		}
 	} else if m.canBorder { // 边框
 		x, y := m.toPoint(message)
 		*lResult = types.LRESULT(m.borderHT)
 		m.borderMD = true
 		*aHandled = true
-		win.ReleaseCapture()
-		rtl.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
-		//rtl.PostMessage(hWND, WM_SYSCOMMAND, uintptr(SC_SIZE|m.borderWMSZ), 0)
+		if win.ReleaseCapture() {
+			win.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
+		}
 	}
 }
 
@@ -215,7 +216,7 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 	winapi.WinScreenToClient(hWND, p)
 	p.X -= m.bw.WindowParent().Left()
 	p.Y -= m.bw.WindowParent().Top()
-	if m.bw.WindowProperty().EnableWebkitAppRegion && m.rgn != nil {
+	if application.EnableWebkitAppRegion() && m.rgn != nil {
 		m.canCaption = winapi.WinPtInRegion(m.rgn, p.X, p.Y)
 	} else {
 		m.canCaption = false
@@ -228,17 +229,18 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
-		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk {
+		if m.cwcap.canCaption && application.EnableWebkitAppRegionDClk() {
 			*lResult = messages.HTCAPTION
 			*aHandled = true
-			win.ReleaseCapture()
-			m.windowProperty.windowState = m.WindowState()
-			if m.windowProperty.windowState == types.WsNormal {
-				rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
-			} else {
-				rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+			if win.ReleaseCapture() {
+				m.windowProperty.windowState = m.WindowState()
+				if m.windowProperty.windowState == types.WsNormal {
+					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
+				} else {
+					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+				}
+				win.SendMessage(m.Handle(), messages.WM_NCLBUTTONUP, messages.HTCAPTION, 0)
 			}
-			rtl.SendMessage(m.Handle(), messages.WM_NCLBUTTONUP, messages.HTCAPTION, 0)
 		}
 	case messages.WM_NCLBUTTONDOWN: // 161 nc left down
 		m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
@@ -308,7 +310,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			m.doOnRenderCompMsg(message, lResult, aHandled)
 		}
 	})
-	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
+	if application.EnableWebkitAppRegion() && application.EnableWebkitAppRegionDClk() {
 		m.windowResize = func(sender lcl.IObject) bool {
 			if m.WindowState() == types.WsMaximized && (m.WindowProperty().EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 				var monitor = m.Monitor().WorkareaRect()
@@ -334,12 +336,13 @@ func (m *LCLBrowserWindow) Maximize() {
 		return
 	}
 	QueueAsyncCall(func(id int) {
-		win.ReleaseCapture()
-		m.windowProperty.windowState = m.WindowState()
-		if m.windowProperty.windowState == types.WsNormal {
-			rtl.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
-		} else {
-			rtl.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+		if win.ReleaseCapture() {
+			m.windowProperty.windowState = m.WindowState()
+			if m.windowProperty.windowState == types.WsNormal {
+				win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
+			} else {
+				win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+			}
 		}
 	})
 }
@@ -359,7 +362,7 @@ func (m *LCLBrowserWindow) Maximize() {
 //		win.LWA_ALPHA|win.LWA_COLORKEY)
 //}
 
-func (m *LCLBrowserWindow) doDrag(d *drag) {
+func (m *LCLBrowserWindow) doDrag() {
 	// Windows Drag Window
 	if win.ReleaseCapture() {
 		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)

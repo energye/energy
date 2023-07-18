@@ -12,10 +12,16 @@
 
 package cef
 
-func dragExtensionJS(browser *ICefBrowser, frame *ICefFrame) {
+import (
+	"github.com/energye/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
+	"strconv"
+)
+
+func dragExtensionJS(frame *ICefFrame) {
 	// Windows2种方式,自定义+webkit 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	var executeJS = `
-energyExtension.drag.setEnableDrag(true);
+energyExtension.drag.setEnableDrag(` + strconv.FormatBool(application.EnableWebkitAppRegion()) + `);
 energyExtension.drag.setup();`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
@@ -70,7 +76,7 @@ func dragExtensionHandler() {
 				mouseMove();
             }
             energyExtension.drag.mouseUp = function (e) {
-                if (!energyExtension.drag.enableDrag || (energyExtension.drag.goos === "darwin" && !energyExtension.drag.shouldDrag)) {
+                if (!energyExtension.drag.enableDrag || !energyExtension.drag.shouldDrag) {
                     return
                 }
                 energyExtension.drag.shouldDrag = false;
@@ -104,7 +110,6 @@ func dragExtensionHandler() {
             }
         })();
 `
-	// 注册 EnergyExtension JS
 	RegisterExtension("energyExtension", code, energyExtensionHandler)
 }
 
