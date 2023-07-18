@@ -15,6 +15,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
+	"strconv"
 )
 
 func dragExtensionJS(frame *ICefFrame) {
