@@ -20,6 +20,7 @@ func main() {
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
+	cef.BrowserWindow.Config.Title = "ENERGY - Custom Drag Window"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
