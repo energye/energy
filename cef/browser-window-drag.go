@@ -19,6 +19,10 @@ const (
 	dragMove  = 2
 )
 
+// drag
+//  custom window drag
+//  The second method, Implemented using JavaScript, currently suitable for LCL windows on Windows and Mac OS
+//  VF window is already implemented and supported by default
 type drag struct {
 	T      int8           // 0:up, 1:down, 2:move
 	X, Y   int32          // data mouse point
