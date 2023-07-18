@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
@@ -11,12 +12,14 @@ import (
 var resources embed.FS
 
 func main() {
-	cef.GlobalInit(nil, nil)
-	cefApp := cef.NewApplication()
-	//cefApp.SetExternalMessagePump(false)
-	//cefApp.SetMultiThreadedMessageLoop(false)
+	cef.GlobalInit(nil, &resources)
+	app := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	//cef.BrowserWindow.Config.EnableHideCaption = true
+	if common.IsLinux() {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
+	} else {
+		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
+	}
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
@@ -26,10 +29,5 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		if window.IsLCL() {
-			//window.AsLCLBrowserWindow().BrowserWindow().FramelessForDefault() //.FramelessForLine()
-		}
-	})
-	cef.Run(cefApp)
+	cef.Run(app)
 }
