@@ -23,22 +23,8 @@ energyExtension.drag.setup();`
 func dragExtensionHandler() {
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		//fmt.Println("Execute", name, application.IsMessageLoop(), application.SingleProcess())
-		if name == mouseUp {
-			message := &ipcArgument.List{
-				Id:   -1,
-				BId:  ipc.RenderChan().BrowserId(),
-				Name: internalIPCDRAG,
-				Data: &drag{T: dragUp},
-			}
-			ipc.RenderChan().IPC().Send(message.Bytes())
-		} else if name == mouseDown {
-			message := &ipcArgument.List{
-				Id:   -1,
-				BId:  ipc.RenderChan().BrowserId(),
-				Name: internalIPCDRAG,
-			}
-			ipc.RenderChan().IPC().Send(message.Bytes())
+		if name == mouseUp || name == mouseDown {
+			return true
 		} else if name == mouseMove {
 			message := &ipcArgument.List{
 				Id:   -1,

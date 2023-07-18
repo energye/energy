@@ -146,9 +146,9 @@ func (m *ipcBrowserProcess) registerEvent() {
 			if argument.GetName() == internalIPCDRAG {
 				if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
 					if wi.IsLCL() {
-						bw := wi.AsLCLBrowserWindow().BrowserWindow()
 						data := argument.JSON()
 						if data != nil {
+							bw := wi.AsLCLBrowserWindow().BrowserWindow()
 							if bw.drag == nil {
 								bw.drag = &drag{}
 							}
