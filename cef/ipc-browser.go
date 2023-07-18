@@ -146,9 +146,19 @@ func (m *ipcBrowserProcess) registerEvent() {
 			if argument.GetName() == internalIPCDRAG {
 				if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
 					if wi.IsLCL() {
+						bw := wi.AsLCLBrowserWindow().BrowserWindow()
+						data := argument.JSON()
+						if data != nil {
+							if bw.drag == nil {
+								bw.drag = &drag{}
+							}
+							bw.drag.T = int8(data.GetIntByKey("T"))
+							bw.drag.X = int32(data.GetIntByKey("X"))
+							bw.drag.Y = int32(data.GetIntByKey("Y"))
+							bw.drag.window = wi
+						}
 						wi.RunOnMainThread(func() {
-							//fmt.Println("call-1-DMainThreadId:", api.DMainThreadId(), api.DCurrentThreadId())
-							wi.AsLCLBrowserWindow().BrowserWindow().drag()
+							wi.AsLCLBrowserWindow().BrowserWindow().doDrag()
 						})
 					}
 				}

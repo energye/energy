@@ -112,7 +112,9 @@ func (m *LCLBrowserWindow) Maximize() {
 	})
 }
 
-func (m *LCLBrowserWindow) drag() {
-	// MacOS move window
-
+func (m *LCLBrowserWindow) doDrag() {
+	// MacOS/Linux Drag Window
+	if m.drag != nil {
+		m.drag.drag()
+	}
 }

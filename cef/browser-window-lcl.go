@@ -53,6 +53,7 @@ type LCLBrowserWindow struct {
 	tray            ITray                //托盘
 	hWnd            types.HWND           //
 	cwcap           *customWindowCaption //自定义窗口标题栏
+	drag            *drag                //自定义拖拽
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口

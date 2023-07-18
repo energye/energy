@@ -359,7 +359,8 @@ func (m *LCLBrowserWindow) Maximize() {
 //		win.LWA_ALPHA|win.LWA_COLORKEY)
 //}
 
-func (m *LCLBrowserWindow) drag() {
+func (m *LCLBrowserWindow) doDrag(d *drag) {
+	// Windows Drag Window
 	if win.ReleaseCapture() {
 		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
 	}
