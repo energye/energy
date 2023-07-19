@@ -68,6 +68,10 @@ func CheckAndReleaseDLL() (string, bool) {
 	// 设置到tempDllDir
 	// 使用tempdll将最优先从该目录加载
 	libname.SetTempDllDir(tempDLLDir)
+	// 如果不是自定义设置目录，在这里设置到DllSaveDir方便使用时获取
+	if TempDLL.DllSaveDirType() != TddCustom {
+		TempDLL.SetDllSaveDir(tempDLLDir)
+	}
 	tempDLLFileName := fmt.Sprintf("%s/%s", tempDLLDir, libname.GetDLLName())
 	// test crc32
 	if fileExists(tempDLLFileName) {
