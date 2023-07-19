@@ -23,6 +23,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/pkgs/macapp"
+	"runtime"
 )
 
 // ExceptionCallback 异常回调函数
@@ -51,7 +52,12 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	// 如果使用 liblclbinres 编译则通过该方式加载动态库
 	if dllPath, dllOk := tempdll.CheckAndReleaseDLL(); dllOk {
 		api.SetLoadUILibCallback(func() (path string, ok bool) {
-			libname.LibName = dllPath
+			if runtime.GOOS == "darwin" {
+				//MacOSX从Frameworks加载
+				libname.LibName = "@executable_path/../Frameworks/" + libname.GetDLLName()
+			} else {
+				libname.LibName = dllPath
+			}
 			path = dllPath
 			ok = dllOk
 			return

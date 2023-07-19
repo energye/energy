@@ -3,7 +3,7 @@ module github.com/energye/energy/v2
 go 1.18
 
 require (
-	github.com/energye/golcl v1.0.2
+	github.com/energye/golcl v1.0.3
 	github.com/energye/liblclbinres v2.2.1+incompatible
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
