@@ -11,7 +11,7 @@ import (
 //   windows: go build -ldflags "-H windowsgui -s -w" -tags="tempdll"
 //   linux: go build -ldflags "-s -w" -tags="tempdll"
 //   macos: go build -ldflags "-s -w" -tags="tempdll"
-//   也可通过 upx 工具压缩编译好的执行文件以减少体积
+//   也可通过 upx 工具, 压缩编译好的执行文件以减少体积
 
 func main() {
 	// SetDllSaveDirType 设置 liblcl 保存目录，默认系统临时目录
