@@ -243,6 +243,20 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		if window.IsLCL() {
+			// 方式一 这个可以动态控制
+			window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
+				*minWidth = 100
+				*minHeight = 100
+				*maxWidth = 1600
+				*maxHeight = 900
+			})
+			// 方式二 这个好用
+			window.AsLCLBrowserWindow().BrowserWindow().Constraints().SetMinWidth(100)
+			window.AsLCLBrowserWindow().BrowserWindow().Constraints().SetMinHeight(100)
+			window.AsLCLBrowserWindow().BrowserWindow().Constraints().SetMaxWidth(1600)
+			window.AsLCLBrowserWindow().BrowserWindow().Constraints().SetMaxHeight(900)
+		}
 		if window.IsLCL() && common.IsWindows() {
 			window.AsLCLBrowserWindow().BrowserWindow().SetOnShow(func(sender lcl.IObject) bool {
 				fmt.Println("窗口 显示/隐藏")
@@ -257,7 +271,6 @@ func main() {
 				// 左键 抬起
 				browser.SendMouseClickEvent(&cef.TCefMouseEvent{X: 15, Y: 106}, 0, true, 1)
 			})
-
 			//window.Chromium().SetProxy(&cef.TCefProxy{
 			//	ProxyType:              consts.PtAutodetect,
 			//	ProxyScheme:            consts.PsSOCKS4,

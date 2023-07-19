@@ -15,8 +15,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/decimal"
+	"github.com/energye/golcl/energy/tools"
 	"math"
+	"os"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -541,4 +544,29 @@ func string2bytes1(s string) []byte {
 	pbytes.Len = stringHeader.Len
 	pbytes.Cap = stringHeader.Len
 	return b
+}
+
+func libCef() string {
+	if IsWindows() {
+		return "libcef.dll"
+	} else if IsLinux() {
+		return "libcef.so"
+	}
+	return ""
+}
+
+func LibPath() string {
+	var lib = libCef()
+	if lib != "" {
+		//当前目录
+		if tools.IsExist(consts.ExePath + consts.Separator + lib) {
+			return consts.ExePath
+		}
+		//环境变量
+		var env = os.Getenv(consts.ENERGY_HOME_KEY)
+		if tools.IsExist(env + consts.Separator + lib) {
+			return env
+		}
+	}
+	return ""
 }

@@ -16,10 +16,12 @@ import (
 	"embed"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/common/imports/tempdll"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/pkgs/macapp"
 )
 
@@ -46,7 +48,16 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	if energyEnv != "" {
 		macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(energyEnv))
 	}
-	// golcl
+	// 如果使用 liblclbinres 编译则通过该方式加载动态库
+	if dllPath, dllOk := tempdll.CheckAndReleaseDLL(); dllOk {
+		api.SetLoadUILibCallback(func() (path string, ok bool) {
+			libname.LibName = dllPath
+			path = dllPath
+			ok = dllOk
+			return
+		})
+	}
+	// go lcl
 	inits.Init(libs, resources)
 	// def
 	defInit()

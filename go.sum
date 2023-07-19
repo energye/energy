@@ -1,8 +1,10 @@
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/energye/golcl v1.0.1 h1:qNrMuUJ+L2JFKMlSEZd1rjIsm/dflX7ITfWEGFumrdc=
-github.com/energye/golcl v1.0.1/go.mod h1:zMXHYLRCs4FbWMc7mK+ePsbrgvrsWzgnONk/Yjt/C1E=
+github.com/energye/golcl v1.0.2 h1:2FawmuEtrjHTrqp9sJa26Wt74jkSM8W8KS8Gb0XKKmQ=
+github.com/energye/golcl v1.0.2/go.mod h1:zMXHYLRCs4FbWMc7mK+ePsbrgvrsWzgnONk/Yjt/C1E=
+github.com/energye/liblclbinres v2.2.1+incompatible h1:/qkxqkB9FYuRVccFFWV6uE4rVodZfinSHJNONO5xcF0=
+github.com/energye/liblclbinres v2.2.1+incompatible/go.mod h1:4esGkxihviLFktu9VCkm7KUPS/6D9rMr0ObI5MbEp6I=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
 github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=

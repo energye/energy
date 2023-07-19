@@ -20,9 +20,7 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
-	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
-	"os"
 	"path"
 	"unsafe"
 )
@@ -44,7 +42,7 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 //initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
 	if m.FrameworkDirPath() == "" {
-		lp := libPath()
+		lp := common.LibPath()
 		if lp != "" {
 			m.SetFrameworkDirPath(lp)
 		}
@@ -78,31 +76,6 @@ func (m *TCEFApplication) initDefaultSettings() {
 	}
 	m.SetEnableWebkitAppRegion(true)
 	m.SetEnableWebkitAppRegionDClk(true)
-}
-
-func libCef() string {
-	if common.IsWindows() {
-		return "libcef.dll"
-	} else if common.IsLinux() {
-		return "libcef.so"
-	}
-	return ""
-}
-
-func libPath() string {
-	var lib = libCef()
-	if lib != "" {
-		//当前目录
-		if tools.IsExist(ExePath + Separator + lib) {
-			return ExePath
-		}
-		//环境变量
-		var env = os.Getenv(ENERGY_HOME_KEY)
-		if tools.IsExist(env + Separator + lib) {
-			return env
-		}
-	}
-	return ""
 }
 
 /*** 自定义属性 ***/

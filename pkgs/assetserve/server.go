@@ -36,14 +36,14 @@ import (
 
 var contentType = map[string]string{}
 
-//用于保证链接的安全的请求头(header)key名称
+// AssetsServerHeaderKeyName
+//  用于保证链接的安全的请求头(header)key名称
 var AssetsServerHeaderKeyName = "ASSETS_SERVER_KEY"
 
-//用于保证链接的安全的key值
-//
-//这里简单的在请求所有资源时增加请求头的判断
-//
-//不为空时生效
+// AssetsServerHeaderKeyValue
+//  用于保证链接的安全的key值
+//  这里简单的在请求所有资源时增加请求头的判断
+//  不为空时生效
 var AssetsServerHeaderKeyValue string
 
 type assetsHttpServer struct {
@@ -55,7 +55,7 @@ type assetsHttpServer struct {
 	SSL          *SSL      //设置后启动https
 }
 
-//证书配置，根据 Assets 或 LocalAssets 寻找证书文件位置
+// SSL 证书配置，根据 Assets 或 LocalAssets 寻找证书文件位置
 type SSL struct {
 	SSLCert string
 	SSLKey  string
@@ -166,7 +166,7 @@ func (m *assetsHttpServer) graceShutdown(server *http.Server) {
 	os.Exit(1)
 }
 
-//StartHttpServer 启动内置Http Server
+// StartHttpServer 启动内置Http Server
 func (m *assetsHttpServer) StartHttpServer() {
 	if m.LocalAssets != "" {
 		m.LocalAssets = strings.ReplaceAll(m.LocalAssets, "\\", "/")
