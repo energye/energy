@@ -2,3 +2,4 @@
 *.inc linguist-language=go
 *.h linguist-language=go
 *.html linguist-language=go
+*.m linguist-language=go
