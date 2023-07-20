@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/energye/golcl v1.0.3
-	github.com/energye/liblclbinres v2.2.1+incompatible
+	github.com/energye/liblclbinres v1.0.1
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/json-iterator/go v1.1.12
