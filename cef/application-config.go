@@ -22,6 +22,7 @@ import (
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"path"
+	"strings"
 	"unsafe"
 )
 
@@ -39,14 +40,54 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 	//imports.Proc(CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
 }
 
+func (m *TCEFApplication) IsUIWin32() bool {
+	return m.ui == UitWin32
+}
+
+func (m *TCEFApplication) IsUICocoa() bool {
+	return m.ui == UitCocoa
+}
+
+func (m *TCEFApplication) IsUIGtk2() bool {
+	return m.ui == UitGtk2
+}
+
+func (m *TCEFApplication) IsUIGtk3() bool {
+	return m.ui == UitGtk3
+}
+
 //initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
+	if common.IsWindows() {
+		m.ui = UitWin32
+	} else if common.IsDarwin() {
+		m.ui = UitCocoa
+	} else if common.IsLinux() {
+		cefVersion := strings.Split(m.LibCefVersion(), ".")
+		if len(cefVersion) > 0 {
+			major := common.StrToInt32(cefVersion[0])
+			// cef version <= 106.1.1 default use gtk2
+			if major <= 106 {
+				m.ui = UitGtk2
+			} else {
+				// cef version > 106.1.1 default use gtk3
+				m.ui = UitGtk3
+			}
+		} else {
+			// default use gtk3
+			m.ui = UitGtk3
+		}
+	} else {
+		panic("Unsupported system, currently only supports Windows, Mac OS, and Linux")
+	}
+
 	if m.FrameworkDirPath() == "" {
 		lp := common.LibPath()
 		if lp != "" {
 			m.SetFrameworkDirPath(lp)
 		}
 	}
+
 	m.SetLocale(LANGUAGE_zh_CN)
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
 	m.SetEnablePrintPreview(true)
@@ -54,10 +95,16 @@ func (m *TCEFApplication) initDefaultSettings() {
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
 	if common.IsLinux() { // Linux => (VF)View Framework 窗口
-		// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
-		// Linux平台默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
-		m.SetExternalMessagePump(false)
-		m.SetMultiThreadedMessageLoop(false)
+		if m.IsUIGtk3() {
+			// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
+			// Linux 默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
+			m.SetExternalMessagePump(false)
+			m.SetMultiThreadedMessageLoop(false)
+		} else if m.IsUIGtk2() {
+			// GTK2 默认支持LCL,但还未解决无法输入中文问题
+			m.SetExternalMessagePump(false)
+			m.SetMultiThreadedMessageLoop(true)
+		}
 		// 这是一个解决“GPU不可用错误”问题的方法 linux
 		// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
 		m.SetDisableZygote(true)

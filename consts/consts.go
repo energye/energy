@@ -1580,3 +1580,14 @@ const (
 	CEF_TFC_DELETE
 	CEF_TFC_SELECT_ALL
 )
+
+// UI tool classes used
+type UITool int8
+
+const (
+	UitInvalid UITool = iota - 1 // invalid
+	UitWin32                     // windows
+	UitGtk2                      // linux
+	UitGtk3                      // linux
+	UitCocoa                     // macos
+)

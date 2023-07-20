@@ -30,6 +30,7 @@ type TCEFApplication struct {
 	instance                  unsafe.Pointer
 	enableWebkitAppRegion     bool
 	enableWebkitAppRegionDClk bool
+	ui                        UITool
 }
 
 // NewApplication 创建CEF应用
