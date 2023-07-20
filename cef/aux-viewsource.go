@@ -36,7 +36,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 			viewSourceWindow := NewLCLBrowserWindow(nil, wp)
 			viewSourceWindow.SetWidth(800)
 			viewSourceWindow.SetHeight(600)
-			if common.IsDarwin() {
+			if common.IsDarwin() || common.IsLinux() {
 				viewSourceWindow.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 					viewSourceWindow.Chromium().LoadUrl(viewSourceUrl)
 				})
