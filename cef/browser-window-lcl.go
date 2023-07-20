@@ -38,26 +38,29 @@ import (
 //
 // 该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
 type LCLBrowserWindow struct {
-	*lcl.TForm                           //window form
-	isFormCreate    bool                 //是否创建完成 WindowForm
-	chromiumBrowser ICEFChromiumBrowser  //浏览器
-	windowProperty  *WindowProperty      //窗口属性
-	windowId        int32                //窗口ID
-	windowType      consts.WINDOW_TYPE   //窗口类型
-	isClosing       bool                 //
-	canClose        bool                 //
-	onResize        TNotifyEvent         //扩展事件
-	windowResize    TNotifyEvent         //扩展事件
-	onActivate      TNotifyEvent         //扩展事件
-	onShow          TNotifyEvent         //扩展事件
-	onClose         TCloseEvent          //扩展事件
-	onCloseQuery    TCloseQueryEvent     //扩展事件
-	onActivateAfter lcl.TNotifyEvent     //扩展事件
-	auxTools        IAuxTools            //辅助工具
-	tray            ITray                //托盘
-	hWnd            types.HWND           //
-	cwcap           *customWindowCaption //自定义窗口标题栏
-	drag            *drag                //自定义拖拽
+	*lcl.TForm                                     //window form
+	isFormCreate              bool                 //是否创建完成 WindowForm
+	chromiumBrowser           ICEFChromiumBrowser  //浏览器
+	windowProperty            *WindowProperty      //窗口属性
+	windowId                  int32                //窗口ID
+	windowType                consts.WINDOW_TYPE   //窗口类型
+	isClosing                 bool                 //
+	canClose                  bool                 //
+	onResize                  TNotifyEvent         //扩展事件
+	windowResize              TNotifyEvent         //扩展事件
+	onActivate                TNotifyEvent         //扩展事件
+	onShow                    TNotifyEvent         //扩展事件
+	onClose                   TCloseEvent          //扩展事件
+	onCloseQuery              TCloseQueryEvent     //扩展事件
+	onActivateAfter           lcl.TNotifyEvent     //扩展事件
+	auxTools                  IAuxTools            //辅助工具
+	tray                      ITray                //托盘
+	hWnd                      types.HWND           //
+	cwcap                     *customWindowCaption //自定义窗口标题栏
+	drag                      *drag                //自定义拖拽
+	wmMoveMessage             wmMove               //
+	wmSizeMessage             wmSize               //
+	wmWindowPosChangedMessage wmWindowPosChanged   //
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
@@ -478,6 +481,7 @@ func (m *LCLBrowserWindow) FormCreate() {
 	}
 	m.isFormCreate = true
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
+	m.onFormMessages()
 }
 
 // defaultWindowEvent 默认窗口活动/关闭处理事件
@@ -1032,6 +1036,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 	})
 }
 
+// wm message event
 type messageType int32
 
 const (
@@ -1044,16 +1049,55 @@ type wmMove func(message *t.TMove)
 type wmSize func(message *t.TSize)
 type wmWindowPosChanged func(message *t.TWindowPosChanged)
 
-func (m *LCLBrowserWindow) SetOnWMMove(fn wmMove) {
+func (m *LCLBrowserWindow) onFormMessages() {
+	m.setOnWMMove(func(message *t.TMove) {
+		if m.Chromium() != nil {
+			m.Chromium().NotifyMoveOrResizeStarted()
+		}
+		if m.wmMoveMessage != nil {
+			m.wmMoveMessage(message)
+		}
+	})
+	m.setOnWMSize(func(message *t.TSize) {
+		if m.Chromium() != nil {
+			m.Chromium().NotifyMoveOrResizeStarted()
+		}
+		if m.wmSizeMessage != nil {
+			m.wmSizeMessage(message)
+		}
+	})
+	m.setOnWMWindowPosChanged(func(message *t.TWindowPosChanged) {
+		if m.Chromium() != nil {
+			m.Chromium().NotifyMoveOrResizeStarted()
+		}
+		if m.wmWindowPosChangedMessage != nil {
+			m.wmWindowPosChangedMessage(message)
+		}
+	})
+}
+
+func (m *LCLBrowserWindow) setOnWMMove(fn wmMove) {
 	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtMove), api.MakeEventDataPtr(fn))
 }
 
-func (m *LCLBrowserWindow) SetOnWMSize(fn wmSize) {
+func (m *LCLBrowserWindow) setOnWMSize(fn wmSize) {
 	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtSize), api.MakeEventDataPtr(fn))
 }
 
-func (m *LCLBrowserWindow) SetOnWMWindowPosChanged(fn wmWindowPosChanged) {
+func (m *LCLBrowserWindow) setOnWMWindowPosChanged(fn wmWindowPosChanged) {
 	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtWindowPosChanged), api.MakeEventDataPtr(fn))
+}
+
+func (m *LCLBrowserWindow) SetOnWMMove(fn wmMove) {
+	m.wmMoveMessage = fn
+}
+
+func (m *LCLBrowserWindow) SetOnWMSize(fn wmSize) {
+	m.wmSizeMessage = fn
+}
+
+func (m *LCLBrowserWindow) SetOnWMWindowPosChanged(fn wmWindowPosChanged) {
+	m.wmWindowPosChangedMessage = fn
 }
 
 func init() {
