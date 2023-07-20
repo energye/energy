@@ -45,24 +45,22 @@ func main() {
 		// 系统消息提示框目前仅能在LCL窗口组件下使用
 		// LCL 各种系统组件需要在UI线程中执行, 但ipc.on非UI线程
 		// 所以需要使用 QueueAsyncCall 包裹在UI线程中执行
-		if window.IsLCL() {
-			ipc.On("showmsgbox", func() {
-				cef.QueueAsyncCall(func(id int) {
-					lcl.ShowMessage("消息提示框")
-				})
+		ipc.On("showmsgbox", func() {
+			fmt.Println("showmsgbox")
+			window.RunOnMainThread(func() {
+				fmt.Println("消息提示框")
+				lcl.ShowMessage("消息提示框")
 			})
-			ipc.On("showmsgbox-confirm", func() {
-				// lcl 各种系统组件需要在UI线程中执行, 但ipc.on非UI线程
-				// 所以需要使用 QueueAsyncCall 包裹在UI线程中执行
-				cef.QueueAsyncCall(func(id int) {
-					if lcl.Application.MessageBox("消息", "标题", win.MB_OKCANCEL+win.MB_ICONINFORMATION) == types.IdOK {
-						lcl.ShowMessage("你点击了“是")
-					}
-				})
+		})
+		ipc.On("showmsgbox-confirm", func() {
+			// lcl 各种系统组件需要在UI线程中执行, 但ipc.on非UI线程
+			// 所以需要使用 QueueAsyncCall 包裹在UI线程中执行
+			window.RunOnMainThread(func() {
+				if lcl.Application.MessageBox("消息", "标题", win.MB_OKCANCEL+win.MB_ICONINFORMATION) == types.IdOK {
+					lcl.ShowMessage("你点击了“是")
+				}
 			})
-			// 使用窗口模拟一个消息提示框
-
-		}
+		})
 	})
 
 	//运行应用
