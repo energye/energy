@@ -8,11 +8,11 @@ import (
 )
 
 //主进程浏览器初始化
-func MainBrowserInit() {
+func MainBrowserInit(app *cef.TCEFApplication) {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.Title = "ENERGY 区分主/子进程执行文件"
-	if common.IsLinux() {
+	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

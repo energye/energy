@@ -10,7 +10,7 @@ import (
 )
 
 //主浏览器窗口
-func MainBrowserWindow() {
+func MainBrowserWindow(app *cef.TCEFApplication) {
 	//只有启动主进程才会继续执行
 	if !process.Args.IsMain() {
 		return
@@ -23,7 +23,7 @@ func MainBrowserWindow() {
 	//窗口宽高
 	cef.BrowserWindow.Config.Width = 1024
 	cef.BrowserWindow.Config.Height = 768
-	if common.IsLinux() {
+	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
@@ -35,34 +35,34 @@ func MainBrowserWindow() {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		if window.IsLCL() {
-			//在窗体初始化时创建窗口内的组件
-			back, forward, stop, refresh, progressLabel, addr := controlUI(window.AsLCLBrowserWindow().BrowserWindow())
-			//页面加载处理进度
-			event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
-				//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
-				cef.QueueAsyncCall(func(id int) {
-					//参数-进度
-					progressLabel.SetCaption(fmt.Sprintf("%v", progress*100))
-				})
+		//if window.IsLCL() {
+		//在窗体初始化时创建窗口内的组件
+		back, forward, stop, refresh, progressLabel, addr := controlUI(window.AsLCLBrowserWindow().BrowserWindow())
+		//页面加载处理进度
+		event.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
+			//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
+			cef.QueueAsyncCall(func(id int) {
+				//参数-进度
+				progressLabel.SetCaption(fmt.Sprintf("%v", progress*100))
 			})
-			//页面加载状态，根据状态判断是否加载完成，和是否可前进后退
-			event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-				//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
-				cef.QueueAsyncCall(func(id int) {
-					//控制按钮状态
-					stop.SetEnabled(isLoading)
-					refresh.SetEnabled(!isLoading)
-					back.SetEnabled(canGoBack)
-					forward.SetEnabled(canGoForward)
-				})
+		})
+		//页面加载状态，根据状态判断是否加载完成，和是否可前进后退
+		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+			//linux 更新UI组件必须使用 QueueAsyncCall 主线程异步同步
+			cef.QueueAsyncCall(func(id int) {
+				//控制按钮状态
+				stop.SetEnabled(isLoading)
+				refresh.SetEnabled(!isLoading)
+				back.SetEnabled(canGoBack)
+				forward.SetEnabled(canGoForward)
 			})
-			event.SetOnAddressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, url string) {
-				cef.QueueAsyncCall(func(id int) {
-					addr.SetText(url)
-				})
+		})
+		event.SetOnAddressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, url string) {
+			cef.QueueAsyncCall(func(id int) {
+				addr.SetText(url)
 			})
-		}
+		})
+		//}
 	})
 }
 

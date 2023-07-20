@@ -19,11 +19,11 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(&libs, &resources)
 	//创建应用
-	cefApp := cef.NewApplication()
-	cefApp.SetEnableGPU(true)
+	app := cef.NewApplication()
+	app.SetEnableGPU(true)
 	//主进程窗口
-	src.MainBrowserWindow()
+	src.MainBrowserWindow(app)
 
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }

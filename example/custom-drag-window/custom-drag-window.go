@@ -15,7 +15,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	app := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	if common.IsLinux() {
+	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

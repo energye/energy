@@ -61,7 +61,7 @@ func main() {
 	//cefApp.SetSingleProcess(false) //单进程 或 多进程 ,单进程上面的子进程配置就不起作用了
 	cefApp.SetBrowserSubprocessPath(subExePath)
 	//主进程初始化
-	src.MainBrowserInit()
+	src.MainBrowserInit(cefApp)
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源

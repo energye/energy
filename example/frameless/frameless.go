@@ -35,7 +35,7 @@ func main() {
 	//cefApp.SetMultiThreadedMessageLoop(false)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	if common.IsLinux() {
+	if common.IsLinux() && cefApp.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

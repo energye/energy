@@ -22,7 +22,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = indexHtmlPath
 	cef.BrowserWindow.Config.Title = "Energy 本地加载html"
-	if common.IsLinux() {
+	if common.IsLinux() && cefApp.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

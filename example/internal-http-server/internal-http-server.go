@@ -20,7 +20,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//主窗口的配置
 	cef.BrowserWindow.Config.Title = "Energy - 内置资源和内置服务示例"
-	if common.IsLinux() {
+	if common.IsLinux() && cefApp.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

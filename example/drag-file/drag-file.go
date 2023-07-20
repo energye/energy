@@ -17,7 +17,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	app := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "http://chrome.360.cn/html5_labs/demos/dnd/"
-	if common.IsLinux() {
+	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

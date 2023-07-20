@@ -38,7 +38,7 @@ func main() {
 		cef.BrowserWindow.Config.Url = "http://localhost:22022/sysdialog.html"
 	}
 	cef.BrowserWindow.Config.Title = "Energy - dialog"
-	if common.IsLinux() {
+	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
