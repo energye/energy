@@ -115,7 +115,9 @@ func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 // createNextLCLPopupWindow 预创建下一个弹出的子窗口
 func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
-		m.popupWindow = NewLCLWindow(m.Config.WindowProperty, m.MainWindow().AsLCLBrowserWindow().BrowserWindow())
+		if mw := m.MainWindow(); mw != nil {
+			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, mw.AsLCLBrowserWindow().BrowserWindow())
+		}
 	}
 }
 
