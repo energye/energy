@@ -44,7 +44,7 @@ func main() {
 		// LCL macos 隐藏标题栏后，不能调整大小
 		cef.BrowserWindow.Config.EnableHideCaption = true
 		// LCL macos 隐藏标题栏后，该选项不生效
-		cef.BrowserWindow.Config.EnableResize = true
+		//cef.BrowserWindow.Config.EnableResize = true
 	}
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200

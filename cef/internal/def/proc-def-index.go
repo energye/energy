@@ -23,6 +23,8 @@ package def
 const (
 	//null nil
 	null_nil = iota
+	// TForm
+	Form_SetOnMessagesEvent
 	// CEF
 	LibVersion
 	LibBuildVersion
@@ -232,9 +234,6 @@ const (
 	CEFApplication_QueueAsyncCall
 	SetCEFWindowBindCallbackFunc // no impl
 	SetCEFIPCCallbackFunc        // no impl
-	// GoForm
-	CEF_AddGoForm    // no impl
-	CEF_RemoveGoForm // no impl
 	// ICefCallback
 	CEFCallback_Cont
 	CEFCallback_Cancel

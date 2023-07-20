@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/energy/v2/types"
 )
 
 //go:embed resources
@@ -29,6 +30,15 @@ func main() {
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
 		server.Assets = &resources
 		go server.StartHttpServer()
+	})
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		bw := window.AsLCLBrowserWindow().BrowserWindow()
+		bw.SetOnWMSize(func(message *types.TSize) {
+			fmt.Println("SetOnWMSize", message)
+		})
+		bw.SetOnWMMove(func(message *types.TMove) {
+			fmt.Println("SetOnWMMove", message)
+		})
 	})
 	cef.Run(app)
 }

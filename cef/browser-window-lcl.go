@@ -14,12 +14,15 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/internal/window"
 	. "github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
@@ -28,6 +31,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 	"runtime"
 	"time"
+	"unsafe"
 )
 
 // LCLBrowserWindow 基于CEF lcl 窗口组件
@@ -1025,5 +1029,48 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 			BrowserWindow.removeWindowInfo(m.windowId)
 			//chromiumOnBeforeClose(browser)
 		}
+	})
+}
+
+type messageType int32
+
+const (
+	mtMove messageType = iota + 1
+	mtSize
+	mtWindowPosChanged
+)
+
+type wmMove func(message *t.TMove)
+type wmSize func(message *t.TSize)
+type wmWindowPosChanged func(message *t.TWindowPosChanged)
+
+func (m *LCLBrowserWindow) SetOnWMMove(fn wmMove) {
+	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtMove), api.MakeEventDataPtr(fn))
+}
+
+func (m *LCLBrowserWindow) SetOnWMSize(fn wmSize) {
+	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtSize), api.MakeEventDataPtr(fn))
+}
+
+func (m *LCLBrowserWindow) SetOnWMWindowPosChanged(fn wmWindowPosChanged) {
+	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtWindowPosChanged), api.MakeEventDataPtr(fn))
+}
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case wmMove:
+			fn.(wmMove)((*t.TMove)(getPtr(0)))
+		case wmSize:
+			fn.(wmSize)((*t.TSize)(getPtr(0)))
+		case wmWindowPosChanged:
+			fn.(wmWindowPosChanged)((*t.TWindowPosChanged)(getPtr(0)))
+		default:
+			return false
+		}
+		return true
 	})
 }

@@ -67,10 +67,8 @@ func Run(app *TCEFApplication) {
 		// 启动主进程
 		success := app.StartMainProcess()
 		if success {
-			if app.IsUIGtk3() {
-				//LCL -> Linux 必须在主进程启动之后初始化组件
-				lclwidget.CustomWidgetSetInitialization()
-			}
+			//LCL -> Linux 必须在主进程启动之后初始化组件
+			lclwidget.CustomWidgetSetInitialization()
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
@@ -87,9 +85,7 @@ func Run(app *TCEFApplication) {
 				}
 				// LCL窗口
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
-				if app.IsUIGtk3() {
-					lclwidget.CustomWidgetSetFinalization()
-				}
+				lclwidget.CustomWidgetSetFinalization()
 			}
 		}
 	}

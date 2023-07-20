@@ -23,6 +23,8 @@ func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
+		// TForm
+		dllimports.NewEnergyImport("Form_SetOnMessagesEvent", 0),
 		//CEF
 		dllimports.NewEnergyImport("LibVersion", 0),
 		dllimports.NewEnergyImport("LibBuildVersion", 0),
@@ -232,9 +234,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
 		dllimports.NewEnergyImport("SetCEFWindowBindCallbackFunc", 0),
 		dllimports.NewEnergyImport("SetCEFIPCCallbackFunc", 0),
-		//GoForm
-		dllimports.NewEnergyImport("CEF_AddGoForm", 0),
-		dllimports.NewEnergyImport("CEF_RemoveGoForm", 0),
 		//ICefCallback
 		dllimports.NewEnergyImport("cefCallback_Cont", 0),
 		dllimports.NewEnergyImport("cefCallback_Cancel", 0),
