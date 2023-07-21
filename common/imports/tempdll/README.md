@@ -12,6 +12,9 @@
 >> 在运行配置中 `Go tool arguments` 中配置 `-tags="tempdll"`
 > 3. `TempDLL` 全局变量配置`liblcl.xx`动态库保存目录
 > 4. `TempDLL` 全局变量根据编译参数`-tags="tempdll"`动态初始化
+> 5. `Linux`: 需要额外增加编译选项 `gtk[2,3]` 取决于你使用的 energy 支持框架 
+>> 1. gtk3: `-tags="tempdll gtk3"`
+>> 2. gtk2: `-tags="tempdll gtk2"` 
 ```go
 // TempDllDIR
 //  DLL存放目录
