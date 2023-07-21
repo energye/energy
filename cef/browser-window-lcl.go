@@ -894,14 +894,10 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 
 // CloseBrowserWindow 关闭带有浏览器的窗口
 func (m *LCLBrowserWindow) CloseBrowserWindow() {
-	if m.TForm == nil {
+	if m == nil || m.TForm == nil {
 		return
 	}
-	QueueAsyncCall(func(id int) {
-		if m == nil {
-			logger.Error("close browser WindowInfo is nil")
-			return
-		}
+	m.RunOnMainThread(func() {
 		if IsDarwin() {
 			//main window close
 			if m.WindowType() == consts.WT_MAIN_BROWSER {
@@ -1125,6 +1121,8 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
+		case wmPaint:
+			fn.(wmPaint)((*t.TPaint)(getPtr(0)))
 		case wmMove:
 			fn.(wmMove)((*t.TMove)(getPtr(0)))
 		case wmSize:
