@@ -10,6 +10,13 @@
 
 package types
 
+type TRect struct {
+	Left   int32
+	Top    int32
+	Right  int32
+	Bottom int32
+}
+
 type WindowPos struct {
 	Hwnd            THandle
 	HwndInsertAfter THandle
@@ -18,4 +25,13 @@ type WindowPos struct {
 	Cx              Integer
 	Cy              Integer
 	Flags           Cardinal
+}
+
+type Paint struct {
+	Hdc         HDC
+	FErase      BOOL
+	RcPaint     TRect
+	FRestore    BOOL
+	FIncUpdate  BOOL
+	RgbReserved [32]uint8
 }

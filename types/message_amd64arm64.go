@@ -16,6 +16,14 @@ type TDWordFiller struct {
 	Filler [4]uint8
 }
 
+type TPaint struct {
+	Msg         Cardinal
+	_UnusedMsg  Cardinal
+	DC          HDC
+	PaintStruct Paint
+	Result      LResult
+}
+
 type TMove struct {
 	Msg        Cardinal
 	_UnusedMsg Cardinal

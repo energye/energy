@@ -58,6 +58,7 @@ type LCLBrowserWindow struct {
 	hWnd                      types.HWND           //
 	cwcap                     *customWindowCaption //自定义窗口标题栏
 	drag                      *drag                //自定义拖拽
+	wmPaintMessage            wmPaint              //
 	wmMoveMessage             wmMove               //
 	wmSizeMessage             wmSize               //
 	wmWindowPosChangedMessage wmWindowPosChanged   //
@@ -1043,13 +1044,23 @@ const (
 	mtMove messageType = iota + 1
 	mtSize
 	mtWindowPosChanged
+	mtPaint
 )
 
+type wmPaint func(message *t.TPaint)
 type wmMove func(message *t.TMove)
 type wmSize func(message *t.TSize)
 type wmWindowPosChanged func(message *t.TWindowPosChanged)
 
 func (m *LCLBrowserWindow) onFormMessages() {
+	m.setOnWMPaint(func(message *t.TPaint) {
+		if m.Chromium() != nil {
+			m.Chromium().NotifyMoveOrResizeStarted()
+		}
+		if m.wmPaintMessage != nil {
+			m.wmPaintMessage(message)
+		}
+	})
 	m.setOnWMMove(func(message *t.TMove) {
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
@@ -1076,6 +1087,10 @@ func (m *LCLBrowserWindow) onFormMessages() {
 	})
 }
 
+func (m *LCLBrowserWindow) setOnWMPaint(fn wmPaint) {
+	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtPaint), api.MakeEventDataPtr(fn))
+}
+
 func (m *LCLBrowserWindow) setOnWMMove(fn wmMove) {
 	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtMove), api.MakeEventDataPtr(fn))
 }
@@ -1086,6 +1101,10 @@ func (m *LCLBrowserWindow) setOnWMSize(fn wmSize) {
 
 func (m *LCLBrowserWindow) setOnWMWindowPosChanged(fn wmWindowPosChanged) {
 	imports.Proc(def.Form_SetOnMessagesEvent).Call(m.Instance(), uintptr(mtWindowPosChanged), api.MakeEventDataPtr(fn))
+}
+
+func (m *LCLBrowserWindow) SetOnWMPaint(fn wmPaint) {
+	m.wmPaintMessage = fn
 }
 
 func (m *LCLBrowserWindow) SetOnWMMove(fn wmMove) {

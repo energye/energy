@@ -12,6 +12,13 @@
 
 package types
 
+type TPaint struct {
+	Msg         Cardinal
+	DC          HDC
+	PaintStruct Paint
+	Result      LResult
+}
+
 type TMove struct {
 	Msg      Cardinal
 	MoveType PtrInt // 0 = update, 1 = force RequestAlign, 128 = Source is Interface (Widget has moved)
