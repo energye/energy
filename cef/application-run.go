@@ -85,7 +85,7 @@ func Run(app *TCEFApplication) {
 				}
 				// LCL窗口
 				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
-				lclwidget.CustomWidgetSetFinalization()
+				//lclwidget.CustomWidgetSetFinalization()
 			}
 		}
 	}
