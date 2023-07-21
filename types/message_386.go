@@ -12,16 +12,6 @@
 
 package types
 
-type WindowPos struct {
-	Hwnd            HWND
-	HwndInsertAfter HWND
-	X               Integer
-	Y               Integer
-	Cx              Integer
-	Cy              Integer
-	Flags           UINT
-}
-
 type TMove struct {
 	Msg      Cardinal
 	MoveType PtrInt // 0 = update, 1 = force RequestAlign, 128 = Source is Interface (Widget has moved)

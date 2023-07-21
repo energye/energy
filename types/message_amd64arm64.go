@@ -16,16 +16,6 @@ type TDWordFiller struct {
 	Filler [4]uint8
 }
 
-type WindowPos struct {
-	Hwnd            HWND
-	HwndInsertAfter HWND
-	X               Integer
-	Y               Integer
-	Cx              Integer
-	Cy              Integer
-	Flags           UINT
-}
-
 type TMove struct {
 	Msg        Cardinal
 	_UnusedMsg Cardinal
