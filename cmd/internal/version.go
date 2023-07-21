@@ -55,9 +55,13 @@ func runVersion(c *CommandConfig) error {
 			var version = keys[i]
 			var ver = versionList[version].(map[string]interface{})
 			if c.Version.All {
+				cef := ToRNilString(ver["cef"], "--")
+				cefgtk2 := ToRNilString(ver["cefgtk2"], "--")
+				energy := ToRNilString(ver["energy"], "--")
 				println("  ", version, fmt.Sprintf(`
+	ENERGY: %s
 	CEF: %s
-	ENERGY: %s`, ver["cef"].(string), ver["energy"].(string)))
+	CEF-GTK2: %s`, energy, cef, cefgtk2))
 			} else {
 				println("  ", version)
 			}

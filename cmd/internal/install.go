@@ -18,8 +18,7 @@ import (
 	"encoding/json"
 	"fmt"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/energy/homedir"
 	"github.com/energye/golcl/tools/command"
 	"io"
 	"io/fs"
@@ -65,9 +64,40 @@ func init() {
 	CmdInstall.Run = runInstall
 }
 
+const (
+	GTK3 = iota + 1
+	GTK2
+)
+
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 // 运行安装
 func runInstall(c *CommandConfig) error {
+	var (
+		gtk int
+	)
+	if isLinux { // linux, gtk2, gtk3 install
+		var gtksel = []string{"", "GTK3", "GTK2"}
+		println(`
+Your current installation environment is Linux and there are two GTK solutions available, namely GTK2 GTK3
+	GTK2: Supports LCL window and can use various LCL controls. The CEF<=106 version supports by default
+	GTK3: does not support LCL windows and most LCL controls, CEF>=107 version default support
+  Enter the number to select the installation support for different versions of GTK framework
+  Number Description
+	1: GTK3 
+	2: GTK2`)
+		// 输入选择GTK支持框架
+		for {
+			print("Please enter the number: ")
+			fmt.Scan(&gtk)
+			if gtk == GTK3 || gtk == GTK2 {
+				break
+			} else {
+				println("Number input error, please re-enter. Only 1: GTK3 or 2: GTK2 are supported")
+			}
+		}
+		println("Support framework selected:", gtksel[gtk])
+	}
+
 	if c.Install.Path == "" {
 		c.Install.Path = c.Wd
 	}
@@ -112,8 +142,19 @@ func runInstall(c *CommandConfig) error {
 		println("Invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
-	var versionCEF = version["cef"].(string)
-	var versionENERGY = version["energy"].(string)
+	var (
+		versionCEF, versionENERGY string
+	)
+	if isLinux {
+		if gtk == GTK3 {
+			versionCEF = ToRNilString(version["cef"], "")
+		} else {
+			versionCEF = ToRNilString(version["cefgtk2"], "")
+		}
+	} else {
+		versionCEF = ToString(version["cef"])
+	}
+	versionENERGY = version["energy"].(string)
 	var downloadURL map[string]interface{}
 	if c.Install.Download == "gitee" {
 		downloadURL = edv["gitee"].(map[string]interface{})
@@ -124,7 +165,7 @@ func runInstall(c *CommandConfig) error {
 		os.Exit(1)
 	}
 	libCEFOS, isSupport := cefOS()
-	libEnergyOS, isSupport := energyOS()
+	libEnergyOS, isSupport := energyOS(gtk)
 	var downloadCefURL = downloadURL["cefURL"].(string)
 	var downloadEnergyURL = downloadURL["energyURL"].(string)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", versionCEF)
@@ -194,8 +235,8 @@ func runInstall(c *CommandConfig) error {
 		println("Remove file", rmFile)
 		os.Remove(rmFile)
 	}
-	setEnergyHomeEnv(consts.ENERGY_HOME_KEY, installPathName)
-	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version)
+	setEnergyHomeEnv(ENERGY_HOME_KEY, installPathName)
+	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", versionENERGY)
 	return nil
 }
 
@@ -205,20 +246,21 @@ func setEnergyHomeEnv(key, value string) {
 	cmd.MessageCallback = func(s []byte, e error) {
 		fmt.Println("CMD", s, " error", e)
 	}
-	if common.IsWindows() {
+	if isWindows {
 		var args = []string{"/c", "setx", key, value}
 		cmd.Command("cmd.exe", args...)
 	} else {
 		var envFiles []string
 		var energyHomeKey = fmt.Sprintf("export %s", key)
 		var energyHome = fmt.Sprintf("export %s=%s", key, value)
-		if common.IsLinux() {
+		if isLinux {
 			envFiles = []string{".profile", ".zshrc", ".bashrc"}
-		} else if common.IsDarwin() {
+		} else if isDarwin {
 			envFiles = []string{".profile", ".zshrc", ".bash_profile"}
 		}
+		homeDir, _ := homedir.Dir()
 		for _, file := range envFiles {
-			var fp = path.Join(consts.HomeDir, file)
+			var fp = path.Join(homeDir, file)
 			cmd.Command("touch", fp)
 			f, err := os.OpenFile(fp, os.O_RDWR|os.O_APPEND, 0666)
 			if err == nil {
@@ -269,18 +311,18 @@ func setEnergyHomeEnv(key, value string) {
 }
 
 func cefOS() (string, bool) {
-	if common.IsWindows() { // windows arm for 64 bit, windows for 32/64 bit
+	if isWindows { // windows arm for 64 bit, windows for 32/64 bit
 		if runtime.GOARCH == "arm64" {
 			return "windowsarm64", true
 		}
 		return fmt.Sprintf("windows%d", strconv.IntSize), true
-	} else if common.IsLinux() { //linux for 64 bit
+	} else if isLinux { //linux for 64 bit
 		if runtime.GOARCH == "arm64" {
 			return "linuxarm64", true
 		} else if runtime.GOARCH == "amd64" {
 			return "linux64", true
 		}
-	} else if common.IsDarwin() { // macosx for 64 bit
+	} else if isDarwin { // macosx for 64 bit
 		if runtime.GOARCH == "arm64" {
 			return "macosarm64", true
 		} else if runtime.GOARCH == "amd64" {
@@ -291,12 +333,15 @@ func cefOS() (string, bool) {
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
-func energyOS() (string, bool) {
-	if common.IsWindows() {
+func energyOS(gtk int) (string, bool) {
+	if isWindows {
 		return fmt.Sprintf("Windows %d bits", strconv.IntSize), true
-	} else if common.IsLinux() {
-		return "Linux x86 64 bits", true
-	} else if common.IsDarwin() {
+	} else if isLinux {
+		if gtk == GTK3 {
+			return "Linux x86 64 bits", true
+		}
+		return "Linux GTK2 x86 64 bits", true
+	} else if isDarwin {
 		return "MacOSX x86 64 bits", true
 	}
 	//not support
