@@ -16,6 +16,7 @@ type CommandConfig struct {
 	Install Install `command:"install"`
 	Package Package `command:"package"`
 	Version Version `command:"version"`
+	Setenv  Setenv  `command:"setenv"`
 }
 
 type Install struct {
@@ -29,6 +30,10 @@ type Package struct {
 	Path string `short:"p" long:"path" description:"Package directory"`
 	Mode string `short:"m" long:"mode" description:"Use mode to set online or offline, offline by default." default:"offline"`
 	Out  string `short:"o" long:"out" description:"Output directory" default:"EnergyInstallPkg"`
+}
+
+type Setenv struct {
+	Path string `short:"p" long:"path" description:"Energy framework dir"`
 }
 
 type Version struct {
