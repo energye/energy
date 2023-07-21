@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 package main
 
 import (
@@ -60,37 +70,37 @@ func main() {
 		for _, ff := range zz.File {
 			//fmt.Println(ff.Name)
 			switch ff.Name {
-			//case "linux64-gtk2/liblcl.so":
-			//	genresByte(readZipData(ff), filepath.Join(libLCLBinResDir, "liblcl_linux_amd64.go"))
-			case "linux64-gtk3/liblcl.so":
-				genresByte(readZipData(ff), filepath.Join(libLCLBinResDir, "liblcl_linux_amd64.go"))
 			case "win32/liblcl.dll":
-				genresByte(readZipData(ff), filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
+				genresByte(readZipData(ff), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
 			case "win64/liblcl.dll":
-				genresByte(readZipData(ff), filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
+				genresByte(readZipData(ff), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
 			case "macos64-cocoa/liblcl.dylib":
-				genresByte(readZipData(ff), filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
+				genresByte(readZipData(ff), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
+			case "linux64-gtk3/liblcl.so":
+				genresByte(readZipData(ff), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
+			case "linux64-gtk2/liblcl.so":
+				genresByte(readZipData(ff), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
 			}
 		}
 	} else {
 		// windows 32
-		genresFile(filepath.Join(liblclPath, "win32", "liblcl.dll"), filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
+		genresFile(filepath.Join(liblclPath, "win32", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
 		// windows 64
-		genresFile(filepath.Join(liblclPath, "win64", "liblcl.dll"), filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
-		// linux 64 gtk2
-		//genresFile(filepath.Join(liblclPath, "linux64-gtk2", "liblcl.so"), filepath.Join(libLCLBinResDir, "liblcl_linux_amd64.go"))
-		// linux 64 gtk3
-		genresFile(filepath.Join(liblclPath, "linux64-gtk3", "liblcl.so"), filepath.Join(libLCLBinResDir, "liblcl_linux_amd64.go"))
+		genresFile(filepath.Join(liblclPath, "win64", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
 		// macos cocoa
-		genresFile(filepath.Join(liblclPath, "macos64-cocoa", "liblcl.dylib"), filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
+		genresFile(filepath.Join(liblclPath, "macos64-cocoa", "liblcl.dylib"), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
+		// linux 64 gtk3
+		genresFile(filepath.Join(liblclPath, "linux64-gtk3", "liblcl.so"), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
+		// linux 64 gtk2
+		genresFile(filepath.Join(liblclPath, "linux64-gtk2", "liblcl.so"), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
 	}
 }
 
 // 生成字节的单元
-func genresFile(fileName, newFileName string) {
+func genresFile(fileName, tags, newFileName string) {
 	bs, err := ioutil.ReadFile(fileName)
 	if err == nil {
-		genresByte(bs, newFileName)
+		genresByte(bs, tags, newFileName)
 	} else {
 		fmt.Println("生成字节Go文件:", newFileName, "Error:", err)
 	}
@@ -137,7 +147,7 @@ func zlibCompress(input []byte) ([]byte, error) {
 	return in.Bytes(), nil
 }
 
-func genresByte(input []byte, newFileName string) {
+func genresByte(input []byte, tags, newFileName string) {
 	fmt.Println("genFile: ", newFileName)
 	if len(input) == 0 {
 		fmt.Println("000000")
@@ -152,6 +162,9 @@ func genresByte(input []byte, newFileName string) {
 		panic(err)
 	}
 	code := bytes.NewBuffer(nil)
+	code.WriteString("//go:build ")
+	code.WriteString(tags)
+	code.WriteString("\r\n\r\n")
 	code.WriteString("package liblclbinres")
 	code.WriteString("\r\n\r\n")
 	code.WriteString(fmt.Sprintf("const CRC32Value uint32 = 0x%x\r\n\r\n", crc32Val))
