@@ -52,6 +52,7 @@ func setEnergyHomeEnv(key, value string) {
 	cmd.MessageCallback = func(s []byte, e error) {
 		fmt.Println("CMD", s, " error", e)
 	}
+	defer cmd.Close()
 	if isWindows {
 		var args = []string{"/c", "setx", key, value}
 		cmd.Command("cmd.exe", args...)
@@ -113,5 +114,4 @@ func setEnergyHomeEnv(key, value string) {
 			}
 		}
 	}
-	cmd.Close()
 }
