@@ -412,35 +412,3 @@ func (m *HRGN) Free() {
 func (m *HRGN) Instance() uintptr {
 	return uintptr(m.instance)
 }
-
-type WindowPos struct {
-	Hwnd            HWND
-	HwndInsertAfter HWND
-	X               Integer
-	Y               Integer
-	Cx              Integer
-	Cy              Integer
-	Flags           UINT
-}
-
-type TMove struct {
-	Msg      Cardinal
-	MoveType PtrInt // 0 = update, 1 = force RequestAlign, 128 = Source is Interface (Widget has moved)
-	Dummy    LPARAM // needed for64 bit alignment
-	Result   LResult
-}
-
-type TSize struct {
-	Msg      Cardinal
-	SizeType PtrInt // see LCLType.pp (e.g. Size_Restored)
-	Width    Word
-	Height   Word
-	Result   LResult
-}
-
-type TWindowPosChanged struct {
-	Msg       Cardinal
-	Unused    WPARAM
-	WindowPos WindowPos
-	Result    LPARAM
-}
