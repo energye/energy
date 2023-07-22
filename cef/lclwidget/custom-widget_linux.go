@@ -11,7 +11,7 @@
 //go:build linux
 
 // Linux
-// GTK3: Manually calling initialization
+// GTK2 & GTK3: Manually calling initialization
 // Other: Automatic initialization and destruction
 
 package lclwidget
