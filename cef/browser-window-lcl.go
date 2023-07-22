@@ -324,6 +324,9 @@ func (m *LCLBrowserWindow) Browser() *ICefBrowser {
 
 // Chromium 返回 chromium
 func (m *LCLBrowserWindow) Chromium() IChromium {
+	if m.chromiumBrowser == nil {
+		return nil
+	}
 	return m.chromiumBrowser.Chromium()
 }
 
@@ -769,58 +772,51 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+		var flag bool
 		if bwEvent.onBeforeContextMenu != nil {
-			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
-		} else {
-			chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
+			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+		}
+		if !flag {
+			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
 		}
 	})
 	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		} else {
-			chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
-	})
-	m.Chromium().SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		if bwEvent.onFrameCreated != nil {
-			bwEvent.onFrameCreated(sender, browser, frame)
-		}
-	})
-	m.Chromium().SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		chromiumOnFrameDetached(browser, frame)
-		if bwEvent.onFrameDetached != nil {
-			bwEvent.onFrameDetached(sender, browser, frame)
+		if !*result {
+			chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
 	m.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		if chromiumOnAfterCreate(browser) {
-			return
-		}
+		var flag bool
 		if bwEvent.onAfterCreated != nil {
-			bwEvent.onAfterCreated(sender, browser)
+			flag = bwEvent.onAfterCreated(sender, browser)
+		}
+		if !flag {
+			chromiumOnAfterCreate(browser)
 		}
 	})
 	//事件可以被覆盖
 	m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
-		if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
-			if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-				if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
-					return
-				}
-			}
-			if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-				browser.ShowDevTools()
-				*result = true
-			} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
-				*result = true
-			}
-		}
-		if KeyAccelerator.accelerator(browser, event, result) {
-			return
-		}
 		if bwEvent.onKeyEvent != nil {
 			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
+		}
+		if !*result {
+			if m.WindowType() == consts.WT_DEV_TOOLS || m.WindowType() == consts.WT_VIEW_SOURCE {
+				return
+			}
+			if m.Chromium().Config().EnableDevTools() {
+				if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
+					browser.ShowDevTools()
+					*result = true
+				} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
+					*result = true
+				}
+			}
+			if KeyAccelerator.accelerator(browser, event, result) {
+				return
+			}
 		}
 	})
 	m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
@@ -860,14 +856,21 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 // registerPopupEvent 注册弹出子窗口事件
 func (m *LCLBrowserWindow) registerPopupEvent() {
 	var bwEvent = BrowserWindow.browserEvent
+	m.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
+		if !m.Chromium().Config().EnableOpenUrlTab() {
+			return true
+		}
+		return false
+	})
 	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !BrowserWindow.Config.ChromiumConfig().EnableWindowPopup() {
+		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}
 		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
+			cloneChromiumConfig := *m.Chromium().Config() // clone
 			bw := next.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-			bw.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), beforePopupInfo.TargetUrl)
+			bw.ChromiumCreate(&cloneChromiumConfig, beforePopupInfo.TargetUrl)
 			var result = false
 			if bwEvent.onBeforePopup != nil {
 				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)

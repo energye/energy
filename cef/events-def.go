@@ -122,6 +122,7 @@ type chromiumEventOnTitleChangeEx func(sender lcl.IObject, browser *ICefBrowser,
 type chromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
 type chromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 type chromiumEventOnAfterCreated func(sender lcl.IObject, browser *ICefBrowser)
+type chromiumEventOnAfterCreatedEx func(sender lcl.IObject, browser *ICefBrowser) bool
 type chromiumEventOnBeforeClose func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnBeforeCloseEx func(sender lcl.IObject, browser *ICefBrowser, window IBrowserWindow) bool
 type chromiumEventOnClose func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction)
@@ -138,6 +139,7 @@ type chromiumEventOnCookiesFlushed func(sender lcl.IObject)
 type chromiumEventOnCookiesVisited func(sender lcl.IObject, cookie *ICefCookie)
 type chromiumEventOnCookieVisitorDestroyed func(sender lcl.IObject, ID int32)
 type chromiumEventOnBeforeContextMenu func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel)
+type chromiumEventOnBeforeContextMenuEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) bool
 type chromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool)
 type chromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type chromiumEventOnFullScreenModeChange func(sender lcl.IObject, browser *ICefBrowser, fullscreen bool)
@@ -157,7 +159,7 @@ type chromiumEventOnMainFrameChanged func(sender lcl.IObject, browser *ICefBrows
 type chromiumEventOnMainFrameChangedEx func(sender lcl.IObject, browser *ICefBrowser, oldFrame *ICefFrame, newFrame *ICefFrame, window IBrowserWindow)
 type chromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool
 type chromiumEventOnBeforePopupEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow IBrowserWindow, noJavascriptAccess *bool) bool
-type chromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool, result *bool)
+type chromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool
 type chromiumEventOnDragEnter func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool)
 type chromiumEventOnDragEnterEx func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, window IBrowserWindow, result *bool)
 type chromiumEventOnDraggableRegionsChanged func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions)

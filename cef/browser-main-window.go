@@ -24,7 +24,7 @@ type browserWindow struct {
 	mainBrowserWindow   *lclBrowserWindow            //LCL 主浏览器窗口
 	mainVFBrowserWindow *ViewsFrameworkBrowserWindow //Views Frameworks 主浏览器窗口
 	popupWindow         IBrowserWindow               //弹出的子窗口
-	browserEvent        *BrowserEvent                //浏览器全局事件
+	browserEvent        *BrowserEvent                //浏览器全局事件, 已默认实现事件
 	Config              *browserConfig               //浏览器和窗口配置
 	windowInfo          map[int32]IBrowserWindow     //窗口信息集合
 }
@@ -37,19 +37,17 @@ type BrowserEvent struct {
 	onDragEnter               chromiumEventOnDragEnterEx               //default
 	onDraggableRegionsChanged chromiumEventOnDraggableRegionsChangedEx //default
 	onLoadEnd                 chromiumEventOnLoadEnd                   //default
-	onAfterCreated            chromiumEventOnAfterCreated              //default
+	onAfterCreated            chromiumEventOnAfterCreatedEx            //default
 	onBeforeBrowser           chromiumEventOnBeforeBrowserEx           //default
 	onBeforeClose             chromiumEventOnBeforeCloseEx             //default
 	onClose                   chromiumEventOnCloseEx                   //default
-	onFrameCreated            chromiumEventOnFrameCreated              //default
-	onFrameDetached           chromiumEventOnFrameDetached             //default
 	onMainFrameChanged        chromiumEventOnMainFrameChangedEx        //default
 	onBeforeDownload          chromiumEventOnBeforeDownload            //default can cover
 	onKeyEvent                chromiumEventOnKeyEventEx                //default can cover
 	onProcessMessageReceived  BrowseProcessMessageReceived             //default
 	onTitleChange             chromiumEventOnTitleChangeEx             //default
 	onContextMenuCommand      chromiumEventOnContextMenuCommand        //default can cover
-	onBeforeContextMenu       chromiumEventOnBeforeContextMenu         //default can cover
+	onBeforeContextMenu       chromiumEventOnBeforeContextMenuEx       //default can cover
 	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoad        //default
 	onRenderCompMsg           chromiumEventOnCompMsg                   //default windows
 }
@@ -160,7 +158,7 @@ func (m *browserWindow) GetBrowser(browseId int32) *ICefBrowser {
 }
 
 // SetOnAfterCreated
-func (m *BrowserEvent) SetOnAfterCreated(event chromiumEventOnAfterCreated) {
+func (m *BrowserEvent) SetOnAfterCreated(event chromiumEventOnAfterCreatedEx) {
 	if Args.IsMain() {
 		m.onAfterCreated = event
 	}
@@ -395,7 +393,7 @@ func (m *BrowserEvent) SetOnCookieVisitorDestroyed(event chromiumEventOnCookieVi
 }
 
 // SetOnBeforeContextMenu
-func (m *BrowserEvent) SetOnBeforeContextMenu(event chromiumEventOnBeforeContextMenu) {
+func (m *BrowserEvent) SetOnBeforeContextMenu(event chromiumEventOnBeforeContextMenuEx) {
 	if Args.IsMain() {
 		m.onBeforeContextMenu = event
 	}
@@ -419,20 +417,6 @@ func (m *BrowserEvent) SetOnContextMenuDismissed(event chromiumEventOnContextMen
 func (m *BrowserEvent) SetOnFrameAttached(event chromiumEventOnFrameAttached) {
 	if Args.IsMain() {
 		m.chromium.SetOnFrameAttached(event)
-	}
-}
-
-// SetOnFrameCreated
-func (m *BrowserEvent) SetOnFrameCreated(event chromiumEventOnFrameCreated) {
-	if Args.IsMain() {
-		m.onFrameCreated = event
-	}
-}
-
-// SetOnFrameDetached
-func (m *BrowserEvent) SetOnFrameDetached(event chromiumEventOnFrameDetached) {
-	if Args.IsMain() {
-		m.onFrameDetached = event
 	}
 }
 

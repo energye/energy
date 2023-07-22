@@ -54,12 +54,7 @@ type ViewsFrameworkBrowserWindow struct {
 func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
 	if config == nil {
 		config = NewChromiumConfig()
-		config.SetEnableViewSource(false)
-		config.SetEnableDevTools(false)
-		config.SetEnableMenu(false)
-		config.SetEnableWindowPopup(false)
 	}
-
 	var component lcl.IComponent
 	if len(owner) > 0 {
 		component = lcl.NewComponent(owner[0])
@@ -109,33 +104,40 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 
 // ViewsFrameworkBrowserWindow 主窗口初始化
 func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
+	// 仅主进程初始化主窗口,
+	// 子进程也不会初始， 判断一下省着多调用函数了
 	if !process.Args.IsMain() {
 		return
 	}
+	// VF 主窗口在 application 上下文初始化时创建
 	app.SetOnContextInitialized(func() {
 		m.Config.WindowProperty.WindowType = consts.WT_MAIN_BROWSER
-		vFrameBrowserWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
-		vFrameBrowserWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+		// main window
+		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
+		// 主窗口关闭流程 before close
+		// OnCanClose如果阻止关闭，该函数不会执行
+		vfMainWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			chromiumOnBeforeClose(browser)
-			if vFrameBrowserWindow.tray != nil {
-				vFrameBrowserWindow.tray.close()
+			if vfMainWindow.tray != nil {
+				vfMainWindow.tray.close()
 			}
 			app.QuitMessageLoop()
 		})
 		// 重置窗口属性, 注册默认实现事件
-		vFrameBrowserWindow.ResetWindowPropertyForEvent()
-		vFrameBrowserWindow.registerPopupEvent(true)
-		vFrameBrowserWindow.registerDefaultEvent()
-		vFrameBrowserWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			*aResult = vFrameBrowserWindow.Chromium().TryCloseBrowser()
+		vfMainWindow.ResetWindowPropertyForEvent()
+		vfMainWindow.registerPopupEvent(true)
+		vfMainWindow.registerDefaultEvent()
+		vfMainWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+			*aResult = vfMainWindow.Chromium().TryCloseBrowser()
 		})
-		BrowserWindow.mainVFBrowserWindow = vFrameBrowserWindow
+		// 设置到 MainBrowser
+		BrowserWindow.mainVFBrowserWindow = vfMainWindow
 		if m.Config.browserWindowOnEventCallback != nil {
-			BrowserWindow.browserEvent.chromium = vFrameBrowserWindow.chromium
-			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vFrameBrowserWindow)
+			BrowserWindow.browserEvent.chromium = vfMainWindow.chromium
+			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vfMainWindow)
 		}
-		ipc.SetProcessMessage(vFrameBrowserWindow.Chromium().(*TCEFChromium))
-		vFrameBrowserWindow.CreateTopLevelWindow()
+		ipc.SetProcessMessage(vfMainWindow.Chromium().(*TCEFChromium))
+		vfMainWindow.CreateTopLevelWindow()
 	})
 }
 
@@ -143,18 +145,26 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 	var bwEvent = BrowserWindow.browserEvent
 	if !isMain {
+		// 子窗口关闭流程
 		m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			chromiumOnBeforeClose(browser)
 		})
 	}
-	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
-		if !BrowserWindow.Config.ChromiumConfig().EnableWindowPopup() {
+	m.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
+		if !m.Chromium().Config().EnableOpenUrlTab() {
 			return true
 		}
-		wp := BrowserWindow.Config.WindowProperty
+		return false
+	})
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
+		if !m.Chromium().Config().EnableWindowPopup() {
+			return true
+		}
+		wp := *m.windowProperty //clone
 		wp.Url = beforePopupInfo.TargetUrl
 		wp.WindowType = consts.WT_POPUP_SUB_BROWSER
-		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(BrowserWindow.Config.ChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+		cloneChromiumConfig := *m.Chromium().Config() // clone
+		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(&cloneChromiumConfig, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vFrameBrowserWindow, noJavascriptAccess)
@@ -234,48 +244,40 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+		var flag bool
 		if bwEvent.onBeforeContextMenu != nil {
 			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
-		} else {
-			chromiumOnBeforeContextMenu(sender, browser, frame, params, model)
+		}
+		if !flag {
+			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
 		}
 	})
 	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
 		if bwEvent.onContextMenuCommand != nil {
 			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
-		} else {
-			chromiumOnContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
 		}
-	})
-	m.chromium.SetOnFrameCreated(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		if bwEvent.onFrameCreated != nil {
-			bwEvent.onFrameCreated(sender, browser, frame)
-		}
-	})
-	m.chromium.SetOnFrameDetached(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame) {
-		chromiumOnFrameDetached(browser, frame)
-		if bwEvent.onFrameDetached != nil {
-			bwEvent.onFrameDetached(sender, browser, frame)
+		if !*result {
+			chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags, result)
 		}
 	})
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		if chromiumOnAfterCreate(browser) {
-			return
-		}
+		var flag bool
 		if bwEvent.onAfterCreated != nil {
-			bwEvent.onAfterCreated(sender, browser)
+			flag = bwEvent.onAfterCreated(sender, browser)
+		}
+		if !flag {
+			chromiumOnAfterCreate(browser)
 		}
 	})
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
 		if bwEvent.onKeyEvent != nil {
 			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
-		} else {
-			if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
-				if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-					if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
-						return
-					}
-				}
+		}
+		if !*result {
+			if m.WindowType() == consts.WT_DEV_TOOLS || m.WindowType() == consts.WT_VIEW_SOURCE {
+				return
+			}
+			if m.Chromium().Config().EnableDevTools() {
 				if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
 					browser.ShowDevTools()
 					*result = true

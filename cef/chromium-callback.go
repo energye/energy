@@ -75,10 +75,6 @@ func chromiumOnBeforeClose(browser *ICefBrowser) {
 	BrowserWindow.removeWindowInfo(browser.Identifier())
 }
 
-// chromiumOnFrameDetached
-func chromiumOnFrameDetached(browser *ICefBrowser, frame *ICefFrame) {
-}
-
 var (
 	refreshId, forcedRefreshId                                 consts.MenuId
 	devToolsId, viewSourceId, closeBrowserId                   consts.MenuId
@@ -88,8 +84,8 @@ var (
 )
 
 // chromiumOnBeforeContextMenu 右键菜单 - 默认实现
-func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-	if !BrowserWindow.Config.ChromiumConfig().EnableMenu() {
+func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+	if !window.Chromium().Config().EnableMenu() {
 		model.Clear()
 		return
 	}
@@ -255,7 +251,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 		},
 	})
 	model.AddSeparator()
-	if BrowserWindow.Config.ChromiumConfig().EnableViewSource() {
+	if window.Chromium().Config().EnableViewSource() {
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
@@ -266,7 +262,7 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 			},
 		})
 	}
-	if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
+	if window.Chromium().Config().EnableDevTools() {
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, i18n.Resource("devTools"))
 	}
@@ -283,7 +279,8 @@ func chromiumOnBeforeContextMenu(sender lcl.IObject, browser *ICefBrowser, frame
 }
 
 // chromiumOnContextMenuCommand 右键菜单 - 默认实现
-func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+	// TODO IBrowserWindow 全改成 当前窗口的
 	browserId := browser.Identifier()
 	defer func() {
 		if err := recover(); err != nil {
@@ -305,11 +302,11 @@ func chromiumOnContextMenuCommand(sender lcl.IObject, browser *ICefBrowser, fram
 	} else if commandId == forcedRefreshId {
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
-		if BrowserWindow.Config.ChromiumConfig().EnableViewSource() {
+		if window.Chromium().Config().EnableViewSource() {
 			browser.ViewSource()
 		}
 	} else if commandId == devToolsId {
-		if BrowserWindow.Config.ChromiumConfig().EnableDevTools() {
+		if window.Chromium().Config().EnableDevTools() {
 			browser.ShowDevTools()
 		}
 	} else if commandId == aUrlId {

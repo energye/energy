@@ -868,9 +868,14 @@ func init() {
 			//callback
 			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, client, noJavascriptAccess)
 		case chromiumEventOnOpenUrlFromTab:
-			//no impl
+			sender := getPtr(0)
+			browse := &ICefBrowser{instance: getPtr(1)}
+			frame := &ICefFrame{instance: getPtr(2)}
+			targetUrl := api.GoStr(getVal(3))
+			targetDisposition := consts.TCefWindowOpenDisposition(getVal(4))
+			userGesture := api.GoBool(getVal(5))
 			result := (*bool)(getPtr(6))
-			*result = true
+			*result = fn.(chromiumEventOnOpenUrlFromTab)(lcl.AsObject(sender), browse, frame, targetUrl, targetDisposition, userGesture)
 		case chromiumEventOnDragEnter:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
