@@ -89,11 +89,9 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 		model.Clear()
 		return
 	}
-	if winInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); winInfo != nil {
-		//开发者工具和显示源代码不展示自定义默认菜单
-		if winInfo.WindowType() == consts.WT_DEV_TOOLS || winInfo.WindowType() == consts.WT_VIEW_SOURCE {
-			return
-		}
+	//开发者工具和显示源代码不展示自定义默认菜单
+	if window.WindowType() == consts.WT_DEV_TOOLS || window.WindowType() == consts.WT_VIEW_SOURCE {
+		return
 	}
 	undoVisible, undoEnabled := model.IsVisible(consts.MENU_ID_UNDO), model.IsEnabled(consts.MENU_ID_UNDO)
 	redoVisible, redoEnabled := model.IsVisible(consts.MENU_ID_REDO), model.IsEnabled(consts.MENU_ID_REDO)
@@ -280,7 +278,6 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 
 // chromiumOnContextMenuCommand 右键菜单 - 默认实现
 func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
-	// TODO IBrowserWindow 全改成 当前窗口的
 	browserId := browser.Identifier()
 	defer func() {
 		if err := recover(); err != nil {
