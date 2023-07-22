@@ -42,9 +42,10 @@ var (
 	// form
 	updateForm *form.UpdateForm
 	version    = []*dllimports.ImportTable{
-		dllimports.NewEnergyImport("", 0),                //空导入
-		dllimports.NewEnergyImport("LibVersion", 0),      //获取lib库的版本号
-		dllimports.NewEnergyImport("LibBuildVersion", 0), //获取lib库的构建工具版本
+		dllimports.NewEnergyImport("", 0),                                        //空导入
+		dllimports.NewEnergyImport("LibVersion", 0),                              //获取lib库的版本号
+		dllimports.NewEnergyImport("LibBuildVersion", 0),                         //获取lib库的构建工具版本
+		dllimports.NewEnergyImport("Interface_CustomWidgetSetInitialization", 0), //linux lcl widget init
 	}
 )
 
@@ -88,6 +89,9 @@ func main() {
 	imports.SetEnergyImportDefs(version)
 	// 初始化golcl
 	inits.Init(nil, &resources)
+	// inits.Init 完成之后，初始化LCL控件
+	imports.Proc(3).Call()
+	// 注入资源
 	i18n.SetLocalFS(&resources, "resources")
 	//i18n.Switch(consts.LANGUAGE_en_US)
 	i18n.Switch(consts.LANGUAGE_zh_CN)
