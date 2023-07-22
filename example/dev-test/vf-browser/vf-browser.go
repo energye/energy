@@ -19,8 +19,6 @@ import (
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
-	"os"
-	"path"
 )
 
 //go:embed resources
@@ -44,40 +42,42 @@ func main() {
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.DisableResize()
 		window.SetCenterWindow(true)
-		window.SetTitle("这里改变了窗口标题")
-		window.SetSize(1024, 900)
-		fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
-		fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
-		window.AsViewsFrameworkBrowserWindow().SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
-			fmt.Println("WindowCreated.window", window.WindowAppIcon().Width(), window.WindowAppIcon().Height())
-			image := cef.ImageRef.New()
-			cw, _ := os.Getwd()
-			cw = path.Join(cw, "example", "dev-test", "vf-browser", "resources", "icon.png")
-			byt, err := os.ReadFile(cw)
-			fmt.Println("image icon.png", len(byt), err)
-			image.AddPng(1.2, byt)
-			fmt.Println("image", image.Width(), image.Height())
-		})
+		//window.SetTitle("这里改变了窗口标题")
+		//window.SetSize(1024, 900)
+		//fmt.Println("cef.BrowserWindow.SetViewFrameBrowserInit", window)
+		//fmt.Println("LCL", window.AsLCLBrowserWindow(), "VF", window.AsViewsFrameworkBrowserWindow())
+		//window.AsViewsFrameworkBrowserWindow().SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
+		//	fmt.Println("WindowCreated.window", window.WindowAppIcon().Width(), window.WindowAppIcon().Height())
+		//	image := cef.ImageRef.New()
+		//	cw, _ := os.Getwd()
+		//	cw = path.Join(cw, "example", "dev-test", "vf-browser", "resources", "icon.png")
+		//	byt, err := os.ReadFile(cw)
+		//	fmt.Println("image icon.png", len(byt), err)
+		//	image.AddPng(1.2, byt)
+		//	fmt.Println("image", image.Width(), image.Height())
+		//})
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("IsViewsFramework:", popupWindow.IsViewsFramework())
-			popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
-			popupWindow.EnableResize()
-			popupWindow.DisableMaximize()
-			popupWindow.DisableResize()
-			popupWindow.DisableMinimize()
+			//popupWindow.SetTitle("修改了标题: " + beforePopupInfo.TargetUrl)
+			//popupWindow.EnableResize()
+			//popupWindow.DisableMaximize()
+			//popupWindow.DisableResize()
+			//popupWindow.DisableMinimize()
 			popupWindow.SetSize(800, 600)
 			browserWindow := popupWindow.AsViewsFrameworkBrowserWindow()
-			browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
-				fmt.Println("popupWindow.SetOnWindowCreated", window.WindowAppIcon())
-			})
-			//browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
-			//	fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
+			browserWindow.Chromium().Config().SetEnableMenu(false)
+			//browserWindow.SetOnWindowCreated(func(sender lcl.IObject, window *cef.ICefWindow) {
+			//	fmt.Println("popupWindow.SetOnWindowCreated", window.WindowAppIcon())
 			//})
-			//browserWindow.BrowserWindow().CreateTopLevelWindow()
-			//browserWindow.BrowserWindow().HideTitle()
-			fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
+			////browserWindow.SetOnGetInitialBounds(func(sender lcl.IObject, window *cef.ICefWindow, aResult *cef.TCefRect) {
+			////	fmt.Println("popupWindow.SetOnGetInitialBounds", *aResult)
+			////})
+			////browserWindow.BrowserWindow().CreateTopLevelWindow()
+			browserWindow.BrowserWindow().HideTitle()
+			//fmt.Println("browserWindow:", browserWindow, browserWindow.WindowComponent().WindowHandle())
 			return false
 		})
+		return
 		window.AsViewsFrameworkBrowserWindow().WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *cef.ICefWindow, active bool) {
 			fmt.Println("SetOnWindowActivationChanged", active)
 		})

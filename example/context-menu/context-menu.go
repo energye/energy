@@ -59,7 +59,7 @@ func main() {
 			radioDefault2Check consts.MenuId
 		)
 		//右键弹出菜单
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) bool {
 			//既然是自定义，当然要去除之前事先定义好的
 			model.Clear()
 			//开始创建菜单，每个菜单项都有自己的ID, 所以要先定义一个能保存这些菜单项的ID的变量
@@ -122,6 +122,7 @@ func main() {
 				radioDefault2Check = menuIdRadio201
 			}
 			model.SetChecked(radioDefault2Check, true)
+			return true
 		})
 		//右键菜单项命令
 		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, menuId consts.MenuId, eventFlags uint32, result *bool) {

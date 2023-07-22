@@ -124,7 +124,13 @@ func (m *MainWindowDemo) OnFormCreate(sender lcl.IObject) {
 				model.Clear()
 			})
 			//禁止弹出新窗口
+			chromiumBrowser.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
+				fmt.Println("OnOpenUrlFromTab")
+				return true
+			})
+			//禁止弹出新窗口
 			chromiumBrowser.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
+				fmt.Println("OnBeforePopup")
 				return true
 			})
 
