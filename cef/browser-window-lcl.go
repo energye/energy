@@ -146,7 +146,7 @@ func (m *LCLBrowserWindow) setProperty() {
 			c.SetMinWidth(wp.MaxHeight)
 		}
 	}
-	// 只有隐藏窗口标题时才全屏 TODO 拖拽时的问题不还原窗口
+	// 只有隐藏窗口标题时才全屏
 	if wp.EnableHideCaption && wp.WindowInitState == types.WsFullScreen {
 		m.FullScreen()
 	} else {
@@ -157,24 +157,31 @@ func (m *LCLBrowserWindow) setProperty() {
 }
 
 // FullScreen 窗口全屏
-func (m *LCLBrowserWindow) FullScreen() bool {
+func (m *LCLBrowserWindow) FullScreen() {
 	if m.WindowProperty().EnableHideCaption {
-		m.WindowProperty().current.ws = types.WsFullScreen
-		m.setCurrentProperty()
-		m.SetBoundsRect(m.Monitor().BoundsRect())
-		return true
+		m.RunOnMainThread(func() {
+			m.WindowProperty().current.ws = types.WsFullScreen
+			m.setCurrentProperty()
+			m.SetBoundsRect(m.Monitor().BoundsRect())
+		})
 	}
-	return false
 }
 
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
 	wp := m.WindowProperty()
 	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
-		wp.current.ws = types.WsNormal
-		m.SetWindowState(types.WsNormal)
-		m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+		m.RunOnMainThread(func() {
+			wp.current.ws = types.WsNormal
+			m.SetWindowState(types.WsNormal)
+			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+		})
 	}
+}
+
+// IsFullScreen 是否全屏
+func (m *LCLBrowserWindow) IsFullScreen() bool {
+	return m.WindowProperty().current.ws == types.WsFullScreen
 }
 
 // Handle 窗口句柄
@@ -920,10 +927,9 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 			return true
 		}
 		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
-			cloneChromiumConfig := *m.Chromium().Config() // clone
 			bw := next.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-			bw.ChromiumCreate(&cloneChromiumConfig, beforePopupInfo.TargetUrl)
+			bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
 			var result = false
 			if bwEvent.onBeforePopup != nil {
 				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)

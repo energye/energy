@@ -183,8 +183,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 		wp := *m.windowProperty //clone
 		wp.Url = beforePopupInfo.TargetUrl
 		wp.WindowType = consts.WT_POPUP_SUB_BROWSER
-		cloneChromiumConfig := *m.Chromium().Config() // clone
-		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(&cloneChromiumConfig, wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(NewChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
 			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vFrameBrowserWindow, noJavascriptAccess)
