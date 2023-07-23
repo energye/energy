@@ -233,8 +233,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 			if win.ReleaseCapture() {
-				m.windowProperty.windowState = m.WindowState()
-				if m.windowProperty.windowState == types.WsNormal {
+				if m.WindowState() == types.WsNormal {
 					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
 				} else {
 					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
@@ -277,7 +276,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 // 每一次拖拽区域改变都需要重新设置
 func (m *LCLBrowserWindow) setDraggableRegions() {
 	//在主线程中运行
-	QueueAsyncCall(func(id int) {
+	m.RunOnMainThread(func() {
 		if m.cwcap.rgn == nil {
 			//第一次时创建RGN
 			m.cwcap.rgn = winapi.WinCreateRectRgn(0, 0, 0, 0)
@@ -335,10 +334,9 @@ func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
 	}
-	QueueAsyncCall(func(id int) {
+	m.RunOnMainThread(func() {
 		if win.ReleaseCapture() {
-			m.windowProperty.windowState = m.WindowState()
-			if m.windowProperty.windowState == types.WsNormal {
+			if m.WindowState() == types.WsNormal {
 				win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
 			} else {
 				win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)

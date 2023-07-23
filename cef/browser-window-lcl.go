@@ -101,38 +101,56 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 
 // 设置属性
 func (m *LCLBrowserWindow) setProperty() {
-	m.SetTitle(m.windowProperty.Title)
-	if m.windowProperty.IconFS != "" {
-		if emfs.IsExist(m.windowProperty.IconFS) {
-			_ = lcl.Application.Icon().LoadFromFSFile(m.windowProperty.IconFS)
+	wp := m.WindowProperty()
+	m.SetTitle(wp.Title)
+	if wp.IconFS != "" {
+		if emfs.IsExist(wp.IconFS) {
+			_ = lcl.Application.Icon().LoadFromFSFile(wp.IconFS)
 		}
-	} else if m.windowProperty.Icon != "" {
-		if tools.IsExist(m.windowProperty.Icon) {
-			lcl.Application.Icon().LoadFromFile(m.windowProperty.Icon)
+	} else if wp.Icon != "" {
+		if tools.IsExist(wp.Icon) {
+			lcl.Application.Icon().LoadFromFile(wp.Icon)
 		}
 	}
-	if m.windowProperty.EnableCenterWindow {
-		m.SetSize(m.windowProperty.Width, m.windowProperty.Height)
-		m.SetPosition(types.PoDesktopCenter)
+	if wp.EnableCenterWindow {
+		m.SetSize(wp.Width, wp.Height)
+		m.SetPosition(types.PoDesktopCenter) // TODO 多显示器时有bug
 	} else {
 		m.SetPosition(types.PoDesigned)
-		m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
+		m.SetBounds(wp.X, wp.Y, wp.Width, wp.Height)
 	}
-	if m.windowProperty.AlwaysOnTop {
+	if wp.AlwaysOnTop {
 		m.SetFormStyle(types.FsSystemStayOnTop)
 	}
-	if m.windowProperty.EnableHideCaption {
+	if wp.EnableHideCaption {
 		m.HideTitle()
 	} else {
-		if !m.windowProperty.EnableMinimize {
+		if !wp.EnableMinimize {
 			m.DisableMinimize()
 		}
-		if !m.windowProperty.EnableMaximize {
+		if !wp.EnableMaximize {
 			m.DisableMaximize()
 		}
-		if !m.windowProperty.EnableResize {
+		if !wp.EnableResize {
 			m.SetBorderStyle(types.BsSingle)
 		}
+	}
+	if wp.EnableResize {
+		c := m.Constraints()
+		if wp.MinWidth > 0 && wp.MinHeight > 0 {
+			c.SetMinWidth(wp.MinWidth)
+			c.SetMinWidth(wp.MinHeight)
+		}
+		if wp.MaxWidth > 0 && wp.MaxHeight > 0 {
+			c.SetMinWidth(wp.MaxWidth)
+			c.SetMinWidth(wp.MaxHeight)
+		}
+	}
+	// 只有隐藏窗口标题时才全屏 TODO 拖拽时的问题不还原窗口
+	if wp.EnableHideCaption && wp.WindowInitState == types.WsFullScreen {
+		m.SetBoundsRect(m.Monitor().BoundsRect())
+	} else {
+		m.SetWindowState(wp.WindowInitState)
 	}
 }
 
@@ -145,7 +163,7 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 }
 
 // RunOnMainThread
-//	在主线程中运行
+//	在UI主线程中运行
 func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
@@ -153,7 +171,6 @@ func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
 		fn()
 	} else {
 		QueueAsyncCall(func(id int) {
-			//lcl.ThreadSync(func() {
 			fn()
 		})
 	}
@@ -550,7 +567,7 @@ func (m *LCLBrowserWindow) Minimize() {
 	if m.TForm == nil {
 		return
 	}
-	QueueAsyncCall(func(id int) {
+	m.RunOnMainThread(func() {
 		m.SetWindowState(types.WsMinimized)
 	})
 }
@@ -880,7 +897,8 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 				bw.defaultChromiumEvent()
 				bw.registerWindowsCompMsgEvent()
 				bw.setProperty()
-				QueueAsyncCall(func(id int) { // show window, run in main thread
+				m.RunOnMainThread(func() {
+					// show window, run in main thread
 					if bw.WindowProperty().IsShowModel {
 						bw.ShowModal()
 						return
@@ -959,7 +977,7 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 		} else {
 			*close = m.canClose
 		}
-		QueueAsyncCall(func(id int) {
+		m.RunOnMainThread(func() {
 			if !m.isClosing {
 				m.isClosing = true
 				m.Chromium().CloseBrowser(true)
@@ -992,7 +1010,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 				*aAction = consts.CbaDelay
 			}
 			if !IsDarwin() {
-				QueueAsyncCall(func(id int) { //run in main thread
+				m.RunOnMainThread(func() { //run in main thread
 					m.WindowParent().Free()
 					logger.Debug("chromium.onClose => windowParent.Free")
 				})
@@ -1026,7 +1044,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					m.Close()
 				}
 			}
-			QueueAsyncCall(func(id int) { // main thread run
+			m.RunOnMainThread(func() { // main thread run
 				closeWindow()
 			})
 			// 最后再移除

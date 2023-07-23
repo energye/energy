@@ -138,7 +138,27 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		}
 		ipc.SetProcessMessage(vfMainWindow.Chromium().(*TCEFChromium))
 		vfMainWindow.CreateTopLevelWindow()
+		//创建完窗口之后设置窗口属性
+		vfMainWindow.createAfterWindowPropertyForEvent()
 	})
+}
+
+func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {
+	wp := m.WindowProperty()
+	if wp.EnableResize {
+		if wp.MinWidth > 0 && wp.MinHeight > 0 {
+			m.windowComponent.SetOnGetMinimumSize(func(view *ICefView, result *TCefSize) {
+				result.Width = int32(wp.MinWidth)
+				result.Height = int32(wp.MinHeight)
+			})
+		}
+		if wp.MaxWidth > 0 && wp.MaxHeight > 0 {
+			m.windowComponent.SetOnGetMaximumSize(func(view *ICefView, result *TCefSize) {
+				result.Width = int32(wp.MaxWidth)
+				result.Height = int32(wp.MaxHeight)
+			})
+		}
+	}
 }
 
 // registerPopupEvent 注册弹出子窗口事件
@@ -183,6 +203,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 // ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
+	m.windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
+		*aResult = consts.TCefShowState(wp.WindowInitState + 1) // CEF 要 + 1
+	})
 	m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
 		if wp.EnableCenterWindow {
 			m.windowComponent.CenterWindow(NewCefSize(wp.Width, wp.Height))
@@ -501,8 +524,7 @@ func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
 
 // Maximize 窗口最大化/还原
 func (m *ViewsFrameworkBrowserWindow) Maximize() {
-	m.windowProperty.windowState = m.WindowState()
-	if m.windowProperty.windowState == types.WsNormal {
+	if m.WindowState() == types.WsNormal {
 		m.WindowComponent().Maximize()
 	} else {
 		m.Restore()
