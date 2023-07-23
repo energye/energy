@@ -77,6 +77,7 @@
                         <span style="-webkit-app-region: no-drag;">Energy</span>
                     </el-dropdown>
                     <span style="-webkit-app-region: no-drag;text-align: right;">
+                        <el-button size="mini" round @click="fullScreen">全屏/退出全屏</el-button>
                         <el-button size="mini" round @click="minWindow">最小化</el-button>
                         <el-button size="mini" round @click="maxWindow">最大化</el-button>
                         <el-button size="mini" round @click="closeWindow">关闭</el-button>
@@ -137,6 +138,10 @@
                     address: '北京市通州区'
                 };
                 this.tableData = Array(20).fill(item)
+            },
+            fullScreen: function () {
+                console.log('全屏/退出全屏');
+                ipc.emit("window-state", [3])
             },
             minWindow: function () {
                 console.log('最小化窗口');

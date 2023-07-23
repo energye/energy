@@ -47,10 +47,11 @@ func main() {
 		//cef.BrowserWindow.Config.EnableResize = true
 	}
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
-	cef.BrowserWindow.Config.Width = 1200
+	cef.BrowserWindow.Config.Width = 1366
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
 	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
+	var isFullScreen bool
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
@@ -61,6 +62,14 @@ func main() {
 		} else if state == 1 {
 			fmt.Println("窗口最大化/还原")
 			bw.Maximize()
+		} else if state == 3 {
+			fmt.Println("窗口最大化/还原")
+			if isFullScreen {
+				bw.AsLCLBrowserWindow().BrowserWindow().ExitFullScreen()
+			} else {
+				bw.AsLCLBrowserWindow().BrowserWindow().FullScreen()
+			}
+			isFullScreen = !isFullScreen
 		}
 	})
 	//监听窗口关闭事件
