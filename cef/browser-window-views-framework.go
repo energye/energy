@@ -146,6 +146,8 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	if wp.EnableResize {
+		// VF MinimumSize & MaximumSize 在事件中设置
+		// 如果动态设置，需要自己实现该回调函数
 		if wp.MinWidth > 0 && wp.MinHeight > 0 {
 			m.windowComponent.SetOnGetMinimumSize(func(view *ICefView, result *TCefSize) {
 				result.Width = int32(wp.MinWidth)
@@ -528,6 +530,18 @@ func (m *ViewsFrameworkBrowserWindow) Maximize() {
 	} else {
 		m.Restore()
 	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) FullScreen() {
+	m.WindowComponent().SetFullscreen(true)
+}
+
+func (m *ViewsFrameworkBrowserWindow) ExitFullScreen() {
+	m.WindowComponent().SetFullscreen(false)
+}
+
+func (m *ViewsFrameworkBrowserWindow) IsFullScreen() bool {
+	return m.WindowComponent().IsFullscreen()
 }
 
 // Minimize 窗口最小化

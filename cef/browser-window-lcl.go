@@ -1075,7 +1075,6 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					}
 				}()
 				if m.GetAuxTools() != nil {
-					m.GetAuxTools().SetViewSource(nil)
 					m.GetAuxTools().SetDevTools(nil)
 				}
 

@@ -62,9 +62,8 @@ type WindowProperty struct {
 }
 
 // IBrowserWindow
-// 浏览器窗口基础接口
-//
-// 定义了常用函数
+//  浏览器窗口基础接口
+//  定义了常用函数, 更多窗口功能或属性在SetBrowserInit函数中使用
 type IBrowserWindow interface {
 	Id() int32                                                                                                //窗口ID
 	Handle() types.HWND                                                                                       //窗口句柄
@@ -74,6 +73,9 @@ type IBrowserWindow interface {
 	Maximize()                                                                                                //窗口最大化
 	Minimize()                                                                                                //窗口最小化
 	Restore()                                                                                                 //窗口还原
+	FullScreen()                                                                                              //全屏模式, 仅隐藏标题栏时有效
+	ExitFullScreen()                                                                                          //退出全屏模式
+	IsFullScreen() bool                                                                                       //是否全屏模式
 	Close()                                                                                                   //关闭窗口 非browser窗口使用
 	CloseBrowserWindow()                                                                                      //关闭浏览器窗口 带有browser窗口使用
 	WindowType() consts.WINDOW_TYPE                                                                           //窗口类型
@@ -111,7 +113,7 @@ type IBrowserWindow interface {
 	NewCefTray(width, height int32, url string) ITray                                                         //仅支持windows托盘LCL+[CEF|VF]（使用web端技术自定义实现,如使用LCL窗口组件该托盘实现是LCL+CEF,如使用VF窗口组件该托盘实现是LCL+VF）
 	NewSysTray() ITray                                                                                        //systray系统原生
 	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
-	RunOnMainThread(fn func())                                                                                //在主线程中运行
+	RunOnMainThread(fn func())                                                                                //在UI主线程中运行
 }
 
 // ILCLBrowserWindow
@@ -151,9 +153,7 @@ type IViewsFrameworkBrowserWindow interface {
 
 type IAuxTools interface {
 	SetDevTools(devToolsWindow *devToolsWindow)
-	SetViewSource(viewSourceWindow IBrowserWindow)
 	DevTools() *devToolsWindow
-	ViewSource() IBrowserWindow
 }
 
 // NewWindowProperty
@@ -178,14 +178,6 @@ func (m *auxTools) SetDevTools(devToolsWindow *devToolsWindow) {
 	m.devToolsWindow = devToolsWindow
 }
 
-func (m *auxTools) SetViewSource(viewSourceWindow IBrowserWindow) {
-	m.viewSourceWindow = viewSourceWindow
-}
-
 func (m *auxTools) DevTools() *devToolsWindow {
 	return m.devToolsWindow
-}
-
-func (m *auxTools) ViewSource() IBrowserWindow {
-	return m.viewSourceWindow
 }

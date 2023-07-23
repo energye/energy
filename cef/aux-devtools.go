@@ -45,7 +45,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 			browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
 			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
 			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
-			QueueAsyncCall(func(id int) { // show window, run is main ui thread
+			browserWindow.RunOnMainThread(func() { // show window, run is main ui thread
 				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().Show()
 			})
 		} else {
