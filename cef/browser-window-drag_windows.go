@@ -38,7 +38,16 @@ func dragExtensionHandler() {
 	}
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		if name == mouseUp || name == mouseDown {
+		if name == mouseDown {
+			return true
+		} else if name == mouseUp {
+			message := &ipcArgument.List{
+				Id:   -1,
+				BId:  ipc.RenderChan().BrowserId(),
+				Name: internalIPCDRAG,
+				Data: &drag{T: dragUp},
+			}
+			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
 		} else if name == mouseMove {
 			message := &ipcArgument.List{
@@ -85,13 +94,15 @@ func dragExtensionHandler() {
 				mouseMove();
             }
             energyExtension.drag.mouseUp = function (e) {
-                if (!energyExtension.drag.enableDrag || !energyExtension.drag.shouldDrag) {
+                if (!energyExtension.drag.enableDrag) {
                     return
                 }
                 energyExtension.drag.shouldDrag = false;
-				//document.body.style.cursor = "default";
-				native function mouseUp();
-				mouseUp();
+				if (energyExtension.drag.war(e)) {
+                    e.preventDefault();
+					native function mouseUp();
+					mouseUp();
+				}
             }
             energyExtension.drag.mouseDown = function (e) {
                 if (!energyExtension.drag.enableDrag || ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
@@ -123,5 +134,9 @@ func dragExtensionHandler() {
 }
 
 func (m *drag) drag() {
-
+	if m.T == dragUp {
+		if m.window.IsLCL() {
+			m.window.AsLCLBrowserWindow().BrowserWindow().cwcap.canCaption = false
+		}
+	}
 }

@@ -114,7 +114,7 @@ func (m *LCLBrowserWindow) setProperty() {
 	}
 	if wp.EnableCenterWindow {
 		m.SetSize(wp.Width, wp.Height)
-		m.SetPosition(types.PoDesktopCenter) // TODO 多显示器时有bug
+		m.SetCenterWindow(true)
 	} else {
 		m.SetPosition(types.PoDesigned)
 		m.SetBounds(wp.X, wp.Y, wp.Width, wp.Height)
@@ -148,9 +148,32 @@ func (m *LCLBrowserWindow) setProperty() {
 	}
 	// 只有隐藏窗口标题时才全屏 TODO 拖拽时的问题不还原窗口
 	if wp.EnableHideCaption && wp.WindowInitState == types.WsFullScreen {
-		m.SetBoundsRect(m.Monitor().BoundsRect())
+		m.FullScreen()
 	} else {
 		m.SetWindowState(wp.WindowInitState)
+	}
+	// 当前窗口状态
+	m.setCurrentProperty()
+}
+
+// FullScreen 窗口全屏
+func (m *LCLBrowserWindow) FullScreen() bool {
+	if m.WindowProperty().EnableHideCaption {
+		m.WindowProperty().current.ws = types.WsFullScreen
+		m.setCurrentProperty()
+		m.SetBoundsRect(m.Monitor().BoundsRect())
+		return true
+	}
+	return false
+}
+
+// ExitFullScreen 窗口退出全屏
+func (m *LCLBrowserWindow) ExitFullScreen() {
+	wp := m.WindowProperty()
+	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
+		wp.current.ws = types.WsNormal
+		m.SetWindowState(types.WsNormal)
+		m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
 	}
 }
 
@@ -191,7 +214,7 @@ func (m *LCLBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return m
 }
 
-// SetCenterWindow 窗口居中
+// SetCenterWindow 窗口居中 // TODO 多显示器时有bug
 func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	if m.TForm == nil {
 		return
@@ -728,6 +751,7 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 		if m.isClosing {
 			return
 		}
+		m.setCurrentProperty()
 		if m.windowResize != nil {
 			m.windowResize(sender)
 		}
@@ -738,6 +762,18 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 			}
 		}
 	}
+}
+
+// 在窗口坐标、大小、全屏时保存当前窗口属性
+func (m *LCLBrowserWindow) setCurrentProperty() {
+	if m.WindowProperty().current.ws == types.WsFullScreen {
+		return
+	}
+	boundRect := m.BoundsRect()
+	m.WindowProperty().current.x = boundRect.Left
+	m.WindowProperty().current.y = boundRect.Top
+	m.WindowProperty().current.w = boundRect.Width()
+	m.WindowProperty().current.h = boundRect.Height()
 }
 
 // activate 内部调用
@@ -1079,6 +1115,7 @@ func (m *LCLBrowserWindow) onFormMessages() {
 		}
 	})
 	m.setOnWMMove(func(message *t.TMove) {
+		m.setCurrentProperty()
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
 		}

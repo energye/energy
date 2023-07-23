@@ -25,6 +25,12 @@ type auxTools struct {
 	viewSourceWindow IBrowserWindow  //viewSource
 }
 
+// 窗口当前属性
+type windowCurrentProperty struct {
+	ws         types.TWindowState
+	x, y, w, h int32
+}
+
 // WindowProperty
 //  提供部分窗口属性配置，初始化时生效
 //  如需更多属性配置或自定义窗口行为请在`SetBrowserInit`回调函数中使用
@@ -52,6 +58,7 @@ type WindowProperty struct {
 	MinHeight          types.TConstraintSize // 窗口 最小高, EnableResize = true 与 MinWidth > 0 生效
 	MaxWidth           types.TConstraintSize // 窗口 最大宽, EnableResize = true 与 MaxHeight > 0 生效
 	MaxHeight          types.TConstraintSize // 窗口 最大高, EnableResize = true 与 MaxWidth > 0 生效
+	current            windowCurrentProperty // 窗口 当前属性
 }
 
 // IBrowserWindow

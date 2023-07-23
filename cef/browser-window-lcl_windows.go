@@ -180,18 +180,22 @@ func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, b
 // onNCLButtonDown NC 鼠标左键按下
 func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 标题栏
-		x, y := m.toPoint(message)
 		*lResult = messages.HTCAPTION
-		m.borderMD = true
 		*aHandled = true
+		//全屏时不能移动窗口
+		if m.bw.WindowProperty().current.ws == types.WsFullScreen {
+			return
+		}
+		x, y := m.toPoint(message)
+		m.borderMD = true
 		if win.ReleaseCapture() {
 			win.PostMessage(hWND, messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
 		}
 	} else if m.canBorder { // 边框
 		x, y := m.toPoint(message)
 		*lResult = types.LRESULT(m.borderHT)
-		m.borderMD = true
 		*aHandled = true
+		m.borderMD = true
 		if win.ReleaseCapture() {
 			win.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
 		}
@@ -263,6 +267,10 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 		} else if m.WindowProperty().EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
+			//全屏时不能调整窗口大小
+			if m.WindowProperty().current.ws == types.WsFullScreen {
+				return
+			}
 			rect := m.BoundsRect()
 			if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
 				*lResult = types.LRESULT(result)
@@ -362,7 +370,18 @@ func (m *LCLBrowserWindow) Maximize() {
 
 func (m *LCLBrowserWindow) doDrag() {
 	// Windows Drag Window
-	if win.ReleaseCapture() {
-		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+	// m.drag != nil 时，这里处理的是 up 事件, 给标题栏标记为false
+	if m.drag != nil {
+		m.drag.drag()
+	} else {
+		// 全屏时不能拖拽窗口
+		if m.WindowProperty().current.ws == types.WsFullScreen {
+			return
+		}
+		// 此时是 down 事件, 拖拽窗口
+		if win.ReleaseCapture() {
+			win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+			m.cwcap.canCaption = true
+		}
 	}
 }
