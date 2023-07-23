@@ -62,13 +62,11 @@ func main() {
 			fmt.Println("窗口最大化/还原")
 			bw.Maximize()
 		} else if state == 3 {
-			fmt.Println("窗口最大化/还原")
-			if bw.IsLCL() {
-				if bw.AsLCLBrowserWindow().BrowserWindow().IsFullScreen() {
-					bw.AsLCLBrowserWindow().BrowserWindow().ExitFullScreen()
-				} else {
-					bw.AsLCLBrowserWindow().BrowserWindow().FullScreen()
-				}
+			fmt.Println("全屏/退出全屏")
+			if bw.IsFullScreen() {
+				bw.ExitFullScreen()
+			} else {
+				bw.FullScreen()
 			}
 		}
 	})
