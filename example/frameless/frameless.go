@@ -29,7 +29,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
-	// TODO 下面2个配置项用来切换使用VF或LCL窗口组件
+	// 下面2个配置项用来切换使用VF或LCL窗口组件
 	// VF = (ExternalMessagePump = false && MultiThreadedMessageLoop = false)
 	//cefApp.SetExternalMessagePump(false)
 	//cefApp.SetMultiThreadedMessageLoop(false)
@@ -51,7 +51,6 @@ func main() {
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
 	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
 
-	var isFullScreen bool
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
@@ -64,12 +63,13 @@ func main() {
 			bw.Maximize()
 		} else if state == 3 {
 			fmt.Println("窗口最大化/还原")
-			if isFullScreen {
-				bw.AsLCLBrowserWindow().BrowserWindow().ExitFullScreen()
-			} else {
-				bw.AsLCLBrowserWindow().BrowserWindow().FullScreen()
+			if bw.IsLCL() {
+				if bw.AsLCLBrowserWindow().BrowserWindow().IsFullScreen() {
+					bw.AsLCLBrowserWindow().BrowserWindow().ExitFullScreen()
+				} else {
+					bw.AsLCLBrowserWindow().BrowserWindow().FullScreen()
+				}
 			}
-			isFullScreen = !isFullScreen
 		}
 	})
 	//监听窗口关闭事件
