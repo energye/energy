@@ -51,21 +51,33 @@ func (m *ICefValue) Instance() uintptr {
 }
 
 func (m *ICefValue) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_IsValid).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) IsOwned() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_IsOwned).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) IsReadOnly() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_IsReadOnly).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) Copy() *ICefValue {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CefValue_Copy).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefValue{
@@ -74,31 +86,52 @@ func (m *ICefValue) Copy() *ICefValue {
 }
 
 func (m *ICefValue) GetType() consts.TCefValueType {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(def.CefValue_GetType).Call(m.Instance())
 	return consts.TCefValueType(r1)
 }
 
 func (m *ICefValue) GetBool() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_GetBool).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) GetInt() int32 {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(def.CefValue_GetInt).Call(m.Instance())
 	return int32(r1)
 }
 
 func (m *ICefValue) GetDouble() (result float64) {
+	if !m.IsValid() {
+		return 0
+	}
 	imports.Proc(def.CefValue_GetDouble).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return result
 }
 
-func (m *ICefValue) GetString() string {
-	r1, _, _ := imports.Proc(def.CefValue_GetString).Call(m.Instance())
-	return api.GoStr(r1)
+func (m *ICefValue) GetString() (value string) {
+	if !m.IsValid() {
+		return ""
+	}
+	val := NewTString()
+	imports.Proc(def.CefValue_GetString).Call(m.Instance(), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
 func (m *ICefValue) GetBinary() *ICefBinaryValue {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CefValue_GetBinary).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefBinaryValue{
@@ -111,6 +144,9 @@ func (m *ICefValue) GetIBinary() types.IBinaryValue {
 }
 
 func (m *ICefValue) GetDictionary() *ICefDictionaryValue {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CefValue_GetDictionary).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefDictionaryValue{
@@ -119,10 +155,16 @@ func (m *ICefValue) GetDictionary() *ICefDictionaryValue {
 }
 
 func (m *ICefValue) GetIObject() types.IObjectValue {
+	if !m.IsValid() {
+		return nil
+	}
 	return m.GetDictionary()
 }
 
 func (m *ICefValue) GetList() *ICefListValue {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CefValue_GetList).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefListValue{
@@ -135,31 +177,49 @@ func (m *ICefValue) GetIArray() types.IArrayValue {
 }
 
 func (m *ICefValue) SetNull() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetNull).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) SetBool(value bool) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetBool).Call(m.Instance(), api.PascalBool(value))
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) SetInt(value int32) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetInt).Call(m.Instance(), uintptr(value))
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) SetDouble(value float64) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetDouble).Call(m.Instance(), uintptr(unsafe.Pointer(&value)))
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) SetString(value string) bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetString).Call(m.Instance(), api.PascalStr(value))
 	return api.GoBool(r1)
 }
 
 func (m *ICefValue) SetBinary(value *ICefBinaryValue) (result bool) {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetBinary).Call(m.Instance(), value.Instance())
 	result = api.GoBool(r1)
 	if result {
@@ -172,6 +232,9 @@ func (m *ICefValue) SetBinary(value *ICefBinaryValue) (result bool) {
 }
 
 func (m *ICefValue) SetDictionary(value *ICefDictionaryValue) (result bool) {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetDictionary).Call(m.Instance(), value.Instance())
 	result = api.GoBool(r1)
 	if result {
@@ -184,6 +247,9 @@ func (m *ICefValue) SetDictionary(value *ICefDictionaryValue) (result bool) {
 }
 
 func (m *ICefValue) SetList(value *ICefListValue) (result bool) {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CefValue_SetList).Call(m.Instance(), value.Instance())
 	result = api.GoBool(r1)
 	if result {

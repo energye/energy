@@ -191,12 +191,15 @@ func (m *ICefListValue) GetDouble(index uint32) (result float64) {
 	return result
 }
 
-func (m *ICefListValue) GetString(index uint32) string {
+func (m *ICefListValue) GetString(index uint32) (value string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefListValue_GetString).Call(m.Instance(), uintptr(index))
-	return api.GoStr(r1)
+	val := NewTString()
+	imports.Proc(def.CefListValue_GetString).Call(m.Instance(), uintptr(index), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
 func (m *ICefListValue) GetBinary(index uint32) *ICefBinaryValue {

@@ -216,12 +216,15 @@ func (m *ICefDictionaryValue) GetDouble(key string) (result float64) {
 	return result
 }
 
-func (m *ICefDictionaryValue) GetString(key string) string {
+func (m *ICefDictionaryValue) GetString(key string) (value string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefDictionaryValue_GetString).Call(m.Instance(), api.PascalStr(key))
-	return api.GoStr(r1)
+	val := NewTString()
+	imports.Proc(def.CefDictionaryValue_GetString).Call(m.Instance(), api.PascalStr(key), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
 func (m *ICefDictionaryValue) GetBinary(key string) *ICefBinaryValue {
