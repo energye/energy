@@ -311,12 +311,15 @@ func (m *ICefV8Value) GetDateValue() time.Time {
 	return common.DDateTimeToGoDateTime(result)
 }
 
-func (m *ICefV8Value) GetStringValue() string {
+func (m *ICefV8Value) GetStringValue() (value string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CefV8Value_GetStringValue).Call(m.Instance())
-	return api.GoStr(r1)
+	val := NewTString()
+	imports.Proc(def.CefV8Value_GetStringValue).Call(m.Instance(), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
 func (m *ICefV8Value) IsUserCreated() bool {
