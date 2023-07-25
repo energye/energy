@@ -35,6 +35,9 @@ func MainBrowserWindow(app *cef.TCEFApplication) {
 	cef.BrowserWindow.Config.SetChromiumConfig(config)
 	//创建窗口时的回调函数 对浏览器事件设置，和窗口属性组件等创建和修改
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		if window.IsViewsFramework() {
+			return
+		}
 		//if window.IsLCL() {
 		//在窗体初始化时创建窗口内的组件
 		back, forward, stop, refresh, progressLabel, addr := controlUI(window.AsLCLBrowserWindow().BrowserWindow())
