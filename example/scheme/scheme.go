@@ -40,7 +40,7 @@ func main() {
 		var idClear consts.MenuId
 		var idURL consts.MenuId
 		// 在右键菜单实现这个示例
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) bool {
 			model.AddSeparator()
 			idScheme = model.CefMis.NextCommandId()
 			model.AddItem(idScheme, "RegScheme")
@@ -48,6 +48,7 @@ func main() {
 			model.AddItem(idClear, "ClearScheme")
 			idURL = model.CefMis.NextCommandId()
 			model.AddItem(idURL, "URL")
+			return true
 		})
 		// 右键菜单命令
 		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
