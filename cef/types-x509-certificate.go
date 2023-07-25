@@ -158,7 +158,7 @@ func (m *ICefX509Certificate) GetDEREncodedIssuerChain(chainCount uint32) *TCefB
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.CefX509Certificate_GetDEREncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetDEREncodedIssuerChain).Call(m.Instance(), uintptr(chainCount), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &TCefBinaryValueArray{count: chainCount, instance: unsafe.Pointer(result)}
 	}
@@ -170,7 +170,7 @@ func (m *ICefX509Certificate) GetPEMEncodedIssuerChain(chainCount uint32) *TCefB
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.CefX509Certificate_GetPEMEncodedIssuerChain).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CefX509Certificate_GetPEMEncodedIssuerChain).Call(m.Instance(), uintptr(chainCount), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &TCefBinaryValueArray{count: chainCount, instance: unsafe.Pointer(result)}
 	}

@@ -345,6 +345,14 @@ type ICefDictionaryValue struct {
 	listValues       map[string]*ICefListValue
 }
 
+// ICefDisplayArray
+//  []ICefDisplayArray
+type ICefDisplayArray struct {
+	instance     unsafe.Pointer
+	binaryValues []*ICefDisplayArray
+	count        uint32
+}
+
 // ICefDisplay
 type ICefDisplay struct {
 	base     TCefBaseRefCounted

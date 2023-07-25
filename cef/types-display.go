@@ -13,8 +13,76 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
 	"unsafe"
 )
+
+// DisplayRef -> ICefDisplay
+var DisplayRef display
+
+type display uintptr
+
+func (m *display) Primary() *ICefDisplay {
+	var result uintptr
+	imports.Proc(def.CEFDisplayRef_Primary).Call(uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefDisplay{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *display) NearestPoint(point *TCefPoint, inputPixelCoords bool) *ICefDisplay {
+	var result uintptr
+	imports.Proc(def.CEFDisplayRef_NearestPoint).Call(uintptr(unsafe.Pointer(point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefDisplay{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *display) MatchingBounds(point *TCefRect, inputPixelCoords bool) *ICefDisplay {
+	var result uintptr
+	imports.Proc(def.CEFDisplayRef_MatchingBounds).Call(uintptr(unsafe.Pointer(point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefDisplay{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *display) GetCount() uint32 {
+	r1, _, _ := imports.Proc(def.CEFDisplayRef_GetCount).Call()
+	return uint32(r1)
+}
+
+func (m *display) GetAlls() *ICefDisplayArray {
+	var result uintptr
+	r1, _, _ := imports.Proc(def.CEFDisplayRef_GetAlls).Call(uintptr(unsafe.Pointer(&result)))
+	if r1 != 0 && result != 0 {
+		return &ICefDisplayArray{instance: getInstance(result), count: m.GetCount()}
+	}
+	return nil
+}
+
+func (m *display) ScreenPointToPixels(screenPoint *types.TPoint) (point types.TPoint) {
+	imports.Proc(def.CEFDisplayRef_ScreenPointToPixels).Call(uintptr(unsafe.Pointer(screenPoint)), uintptr(unsafe.Pointer(&point)))
+	return
+}
+
+func (m *display) ScreenPointFromPixels(pixelsPoint *types.TPoint) (point types.TPoint) {
+	imports.Proc(def.CEFDisplayRef_ScreenPointFromPixels).Call(uintptr(unsafe.Pointer(pixelsPoint)), uintptr(unsafe.Pointer(&point)))
+	return
+}
+
+func (m *display) ScreenRectToPixels(screenRect *types.TRect) (rect types.TRect) {
+	imports.Proc(def.CEFDisplayRef_ScreenRectToPixels).Call(uintptr(unsafe.Pointer(screenRect)), uintptr(unsafe.Pointer(&rect)))
+	return
+}
+
+func (m *display) ScreenRectFromPixels(pixelsRect *types.TRect) (rect types.TRect) {
+	imports.Proc(def.CEFDisplayRef_ScreenRectFromPixels).Call(uintptr(unsafe.Pointer(pixelsRect)), uintptr(unsafe.Pointer(&rect)))
+	return
+}
 
 func (m *ICefDisplay) ID() (result int64) {
 	if !m.IsValid() {
@@ -73,4 +141,42 @@ func (m *ICefDisplay) IsValid() bool {
 		return false
 	}
 	return m.instance != nil
+}
+
+func (m *ICefDisplayArray) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
+func (m *ICefDisplayArray) Free() {
+	if m.instance != nil {
+		m.instance = nil
+	}
+}
+
+func (m *ICefDisplayArray) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return m.instance != nil
+}
+
+func (m *ICefDisplayArray) Get(index uint32) *ICefDisplay {
+	if !m.IsValid() {
+		return nil
+	}
+	if index < m.count {
+		var result uintptr
+		r1, _, _ := imports.Proc(def.CEFDisplayRef_Get).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
+		if r1 != 0 && result != 0 {
+			return &ICefDisplay{instance: getInstance(result)}
+		}
+	}
+	return nil
+}
+
+func (m *ICefDisplayArray) Count() uint32 {
+	if !m.IsValid() {
+		return 0
+	}
+	return m.count
 }

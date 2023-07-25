@@ -1206,6 +1206,16 @@ const (
 	CEFBrowserViewComponent_SetOnPopupBrowserViewCreated
 	CEFBrowserViewComponent_SetOnGetChromeToolbarType
 	// ICefDisplay
+	CEFDisplayRef_Primary
+	CEFDisplayRef_NearestPoint
+	CEFDisplayRef_MatchingBounds
+	CEFDisplayRef_GetCount
+	CEFDisplayRef_GetAlls
+	CEFDisplayRef_Get
+	CEFDisplayRef_ScreenPointToPixels
+	CEFDisplayRef_ScreenPointFromPixels
+	CEFDisplayRef_ScreenRectToPixels
+	CEFDisplayRef_ScreenRectFromPixels
 	CEFDisplay_ID
 	CEFDisplay_DeviceScaleFactor
 	CEFDisplay_Rotation
