@@ -2,14 +2,220 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>popup1</title>
-    <style>
-    </style>
-    <script type="application/javascript">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>elliptic</title>
 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul,
+        ul>li {
+            list-style-type: none;
+        }
+
+        body {
+            background-color: #0c020b;
+        }
+
+        .clock {
+            width: 500px;
+            height: 500px;
+            position: absolute;
+            margin: auto;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .clock .mark {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            width: 100%;
+            height: 100%;
+        }
+
+        .clock .mark li {
+            position: absolute;
+            width: 6px;
+            height: 2px;
+            background: #fff;
+            transform-origin: 250px;
+            box-shadow: 0 0 10px #ffeab0;
+        }
+
+        .clock .mark li.bold {
+            width: 8px;
+            height: 4px;
+        }
+
+        .clock .numbers {
+            position: absolute;
+            left: 238px;
+            top: 238px;
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 1.5;
+            width: 24px;
+            height: 24px;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px #ffeab0;
+        }
+
+        .clock .center {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+            width: 24px;
+            height: 24px;
+            border-radius: 20px;
+            background: #ff1138;
+        }
+
+        .clock .hour-hand,
+        .clock .minute-hand,
+        .clock .second-hand {
+            box-shadow: 2px 2px 5px #ffeab0;
+        }
+
+        .clock .hour-hand {
+            position: absolute;
+            left: 247px;
+            top: 150px;
+            width: 6px;
+            height: 140px;
+            background: #fff;
+            transform-origin: 3px 100px;
+        }
+
+        .clock .minute-hand {
+            position: absolute;
+            left: 248px;
+            top: 70px;
+            width: 4px;
+            height: 220px;
+            background: #fff;
+            transform-origin: 2px 180px;
+        }
+
+        .clock .second-hand {
+            position: absolute;
+            left: 249px;
+            top: 40px;
+            width: 2px;
+            height: 280px;
+            background: #fff;
+            transform-origin: 1px 210px;
+        }
+
+        .clock .time {
+            padding: 10px;
+            position: absolute;
+            left: 260px;
+            top: 330px;
+            font-size: 12px;
+            font-weight: bold;
+            background: #110022;
+            color: #ff1138;
+        }
+    </style>
+
+    <script type="text/javascript">
+        function isInt(n) {
+            return parseInt(n) === n;
+        }
+
+        function rotate(x, y, angle) {
+            var A, R, rad;
+            rad = (angle == 0 ? 270 : angle) * Math.PI / 180;
+            A = Math.atan2(y, x) + rad;
+            R = Math.sqrt(x * x + y * y);
+            return {
+                x: Math.cos(A) * R,
+                y: Math.sin(A) * R
+            };
+        }
+
+        function rotateElement(el, deg) {
+            el.style.transform = `rotate(${deg}deg)`;
+        }
     </script>
 </head>
-<body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;background-color: #C4E3FD;">
-<h1 style="-webkit-app-region: drag;">圆形页面</h1>
+
+<body style="-webkit-app-region: drag;">
+
+<div class="clock" style="-webkit-app-region: drag;">
+    <ul class="mark">
+        <script>
+            {
+                let i = 0;
+                let html = '';
+                while (i < 60) {
+                    let n = i / 5 % 12;
+                    n = n === 0 ? 12 : n;
+                    let bold = isInt(n);
+                    html +=
+                        `<li class="${bold ? ' bold' : ''}" style="transform: translateY(250px) rotate(${i * 6}deg);"></li>`;
+                    i++;
+                }
+                document.write(html);
+            }
+        </script>
+    </ul>
+    <script>
+        {
+            let angle = 30,
+                x = 110,
+                y = -190,
+                i = 1,
+                html = '';
+            html += `<div class="numbers" style="transform: translate(${x}px, ${y}px);">${i}</div>`;
+            while (i++ < 12) {
+                let pos = rotate(x, y, angle);
+                x = pos.x;
+                y = pos.y;
+                html += `<div class="numbers" style="transform: translate(${x}px, ${y}px);">${i}</div>`;
+            }
+            document.write(html);
+        }
+    </script>
+
+    <div class="time">
+        <div id="date"></div>
+        <div id="now"></div>
+        <div id="day"></div>
+    </div>
+
+    <div class="hour-hand" id="h"></div>
+    <div class="minute-hand" id="m"></div>
+    <div class="second-hand" id="s"></div>
+    <div class="center"></div>
+
+</div>
+
+<script>
+        let f = (e, i) => (i != 0 && e < 10 ? '0' + e : e);
+        setInterval(() => {
+            let t = new Date();
+            rotateElement(h, t.getHours() * 30 + t.getMinutes() / 60 * 30);
+            rotateElement(m, t.getMinutes() * 6 + t.getSeconds() / 60 * 6);
+            rotateElement(s, t.getSeconds() * 6 + t.getMilliseconds() / 1000 * 6);
+            date.innerHTML = [t.getFullYear(), t.getMonth() + 1, t.getDate()].map(f).join('-');
+            day.innerHTML = '星期' + '日一二三四五六' [t.getDay()];
+            now.innerHTML = [t.getHours(), t.getMinutes(), t.getSeconds()].map(f).join(':');
+        }, 1000 / 60);
+</script>
 </body>
 </html>

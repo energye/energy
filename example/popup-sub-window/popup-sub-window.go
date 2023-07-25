@@ -76,7 +76,7 @@ func main() {
 		}
 
 		var elliptic = func(window cef.IBrowserWindow) {
-			hRegion := winapi.WinCreateEllipticRgn(1, 1, 200, 200)
+			hRegion := winapi.WinCreateEllipticRgn(0, 0, 550, 550)
 			winapi.WinSetWindowRgn(types.HWND(window.Handle()), hRegion, true)
 		}
 		var transparent = func(window cef.IBrowserWindow) {
@@ -95,17 +95,22 @@ func main() {
 				popupWindow.SetSize(300, 300)
 				popupWindow.HideTitle()
 			} else if strings.Index(beforePopupInfo.TargetUrl, "elliptic") > 0 {
-				popupWindow.SetSize(200, 200)
+				// windows和linux GTK2下有效果
+				popupWindow.WindowProperty().EnableWebkitAppRegionDClk = false
+				popupWindow.SetSize(550, 550)
 				popupWindow.HideTitle()
-				cef.QueueAsyncCall(func(id int) {
+				popupWindow.Chromium().Config().SetEnableMenu(false)
+				window.RunOnMainThread(func() {
 					// 如果使用winapi方式改变窗口，需要在主线程中运行
 					elliptic(popupWindow)
 				})
 			} else if strings.Index(beforePopupInfo.TargetUrl, "transparent") > 0 {
+				// windows和linux GTK2下有效果
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
 				transparent(popupWindow)
 			} else if strings.Index(beforePopupInfo.TargetUrl, "model_window") > 0 {
+				// windows和linux GTK2下有效果
 				popupWindow.SetSize(200, 200)
 				popupWindow.HideTitle()
 				popupWindow.WindowProperty().IsShowModel = true
