@@ -840,10 +840,9 @@ func (m *TCEFApplication) SetDevToolsProtocolLogFile(value string) {
 	imports.Proc(def.CEFAppConfig_SetDevToolsProtocolLogFile).Call(api.PascalStr(value))
 }
 
-func (m *TCEFApplication) ForcedDeviceScaleFactor() float32 { //single
-	var result uintptr
+func (m *TCEFApplication) ForcedDeviceScaleFactor() (result float32) { //single
 	imports.Proc(def.CEFAppConfig_ForcedDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
-	return *(*float32)(unsafe.Pointer(result))
+	return
 }
 
 func (m *TCEFApplication) SetForcedDeviceScaleFactor(value float32) { //single
@@ -1111,10 +1110,9 @@ func (m *TCEFApplication) SetReRaiseExceptions(value bool) {
 	imports.Proc(def.CEFAppConfig_SetReRaiseExceptions).Call(api.PascalBool(value))
 }
 
-func (m *TCEFApplication) DeviceScaleFactor() float32 {
-	var result uintptr
+func (m *TCEFApplication) DeviceScaleFactor() (result float32) {
 	imports.Proc(def.CEFAppConfig_DeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
-	return *(*float32)(unsafe.Pointer(result))
+	return
 }
 
 func (m *TCEFApplication) LocalesRequired() string {
