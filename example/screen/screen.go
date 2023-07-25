@@ -14,12 +14,12 @@ func main() {
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		screen := window.Screen()
-		fmt.Println("name:", screen.Name())
-		fmt.Println("default-monitor width:", screen.Width(), "height:", screen.Height())
-		fmt.Println("MonitorCount", screen.MonitorCount())
-		for i := 0; i < int(screen.MonitorCount()); i++ {
-			monitor := screen.Monitors(int32(i))
-			fmt.Println("\tmonitor", i, "workarea-rect:", monitor.WorkareaRect())
+		pr := screen.Primary()
+		fmt.Println("Primary:", pr)
+		fmt.Println("MonitorCount", screen.Count())
+		for i := 0; i < screen.Count(); i++ {
+			monitor := screen.Get(i)
+			fmt.Println("\tmonitor", i, "work-rect:", monitor)
 		}
 	})
 	//运行应用
