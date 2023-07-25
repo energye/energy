@@ -54,7 +54,7 @@ func (m *MainWindowDemo) OnFormCreate(sender lcl.IObject) {
 	m.SetCaption("主窗口")
 	m.SetWidth(1000)
 	m.SetHeight(900)
-	m.SetPosition(types.PoDesktopCenter)
+	m.ScreenCenter()
 
 	// 普通Panel
 	panel := lcl.NewPanel(m)

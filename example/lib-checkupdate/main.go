@@ -125,7 +125,6 @@ func main() {
 			m.EnabledMaximize(false)
 			m.SetShowHint(true)
 			//m.SetFormStyle(types.FsSystemStayOnTop)
-			m.SetPosition(types.PoDesktopCenter)
 			m.SetBorderStyle(types.BsSingle)
 			//m.SetBorderStyle(types.BsNone)
 			//m.SetShowInTaskBar(types.StNever)
@@ -328,6 +327,7 @@ func main() {
 					}
 				})
 			}
+			m.ScreenCenter()
 		}
 		// run and create update form
 		lcl.RunApp(&updateForm)

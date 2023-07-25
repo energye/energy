@@ -76,7 +76,6 @@ func (m *IDE) OnFormCreate(sender lcl.IObject) {
 	lcl.Application.Icon().LoadFromFSFile("resources/icon.ico")
 	m.forms = make([]*IDEForm, 0, 0)
 	m.SetCaption(fmt.Sprintf(Title, Version))
-	m.SetPosition(types.PoScreenCenter)
 	m.SetWidth(1200)
 	m.SetHeight(800)
 	m.SetDoubleBuffered(true)
@@ -157,6 +156,7 @@ func (m *IDE) OnFormCreate(sender lcl.IObject) {
 	install(m.CreateForm("安装程序-安装过程界面"))
 	install(m.CreateForm("安装程序-完成界面"))
 	install(m.CreateForm("安装程序-卸载界面"))
+	m.ScreenCenter()
 }
 
 func (m *IDE) addForm(form *IDEForm) int {
