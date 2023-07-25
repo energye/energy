@@ -121,35 +121,9 @@ func (m *TCEFApplication) initDefaultSettings() {
 		m.SetExternalMessagePump(false)
 		m.SetMultiThreadedMessageLoop(true)
 	}
-	m.SetEnableWebkitAppRegion(true)
-	m.SetEnableWebkitAppRegionDClk(true)
 }
 
 /*** 自定义属性 ***/
-
-// EnableWebkitAppRegion
-//  html元素中设置css属性 [-webkit-app-region | --webkit-app-region]: drag/no-drag 是否允许拖拽区域 default: true
-func (m *TCEFApplication) EnableWebkitAppRegion() bool {
-	return m.enableWebkitAppRegion
-}
-
-// SetEnableWebkitAppRegion
-//  设置html元素中设置css属性 [-webkit-app-region | --webkit-app-region]: drag/no-drag 是否允许拖拽区域 default: true
-func (m *TCEFApplication) SetEnableWebkitAppRegion(value bool) {
-	m.enableWebkitAppRegion = value
-}
-
-// EnableWebkitAppRegionDClk
-//  拖拽区域是否启用标题栏双击最大化和还原 default: true
-func (m *TCEFApplication) EnableWebkitAppRegionDClk() bool {
-	return m.enableWebkitAppRegionDClk
-}
-
-// SetEnableWebkitAppRegionDClk
-//  设置拖拽区域是否启用标题栏双击最大化和还原 default: true
-func (m *TCEFApplication) SetEnableWebkitAppRegionDClk(value bool) {
-	m.enableWebkitAppRegionDClk = value
-}
 
 /*** 设置 TCefSettings (cef_settings_t) 属性 ***/
 

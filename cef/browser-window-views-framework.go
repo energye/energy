@@ -336,7 +336,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
 		}
 	})
-	if application.EnableWebkitAppRegion() {
+	if m.WindowProperty().EnableWebkitAppRegion {
 		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if bwEvent.onDraggableRegionsChanged != nil {
 				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)

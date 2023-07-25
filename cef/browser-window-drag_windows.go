@@ -20,10 +20,10 @@ import (
 
 // 窗口拖拽JS扩展
 // 在这里执行并启用JS拖拽
-func dragExtensionJS(frame *ICefFrame) {
+func dragExtensionJS(frame *ICefFrame, drag bool) {
 	// Windows2种方式,自定义+webkit 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
 	var executeJS = `
-energyExtension.drag.setEnableDrag(` + strconv.FormatBool(application.EnableWebkitAppRegion()) + `);
+energyExtension.drag.setEnableDrag(` + strconv.FormatBool(drag) + `);
 energyExtension.drag.setup();`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
@@ -33,9 +33,6 @@ energyExtension.drag.setup();`
 //  2. 通过IPC将鼠标消息发送到主进程，主进程监听到消息处理鼠标事件
 //  3. windows 使用win.api实现窗口拖拽
 func dragExtensionHandler() {
-	if !application.EnableWebkitAppRegion() {
-		return
-	}
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 		if name == mouseDown {

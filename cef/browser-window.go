@@ -35,30 +35,32 @@ type windowCurrentProperty struct {
 //  提供部分窗口属性配置，初始化时生效
 //  如需更多属性配置或自定义窗口行为请在`SetBrowserInit`回调函数中使用
 type WindowProperty struct {
-	IsShowModel        bool                  // 是否以模态窗口显示
-	WindowInitState    types.TWindowState    // 窗口 初始状态: 最小化、最大化、全屏, 全屏时隐藏标题栏生效
-	WindowType         consts.WINDOW_TYPE    // 窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
-	Title              string                // 窗口 标题
-	Url                string                // 默认打开URL
-	Icon               string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
-	IconFS             string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
-	EnableHideCaption  bool                  // 窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
-	EnableMinimize     bool                  // 窗口 是否启用最小化 default: true
-	EnableMaximize     bool                  // 窗口 是否启用最大化 default: true
-	EnableResize       bool                  // 窗口 是否允许调整大小 default: true
-	EnableClose        bool                  // 窗口 关闭时是否关闭窗口 default: true
-	EnableCenterWindow bool                  // 窗口 居中显示 default: true
-	EnableDragFile     bool                  // 窗口 是否允许向窗口内拖拽文件
-	AlwaysOnTop        bool                  // 窗口 窗口置顶
-	X                  int32                 // 窗口 EnableCenterWindow=false X坐标 default: 100
-	Y                  int32                 // 窗口 EnableCenterWindow=false Y坐标 default: 100
-	Width              int32                 // 窗口 宽 default: 1024
-	Height             int32                 // 窗口 高 default: 768
-	MinWidth           types.TConstraintSize // 窗口 最小宽, EnableResize = true 与 MinHeight > 0 生效
-	MinHeight          types.TConstraintSize // 窗口 最小高, EnableResize = true 与 MinWidth > 0 生效
-	MaxWidth           types.TConstraintSize // 窗口 最大宽, EnableResize = true 与 MaxHeight > 0 生效
-	MaxHeight          types.TConstraintSize // 窗口 最大高, EnableResize = true 与 MaxWidth > 0 生效
-	current            windowCurrentProperty // 窗口 当前属性
+	IsShowModel               bool                  // 是否以模态窗口显示
+	WindowInitState           types.TWindowState    // 窗口 初始状态: 最小化、最大化、全屏, 全屏时隐藏标题栏生效
+	WindowType                consts.WINDOW_TYPE    // 窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
+	Title                     string                // 窗口 标题
+	Url                       string                // 默认打开URL
+	Icon                      string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
+	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
+	EnableWebkitAppRegion     bool                  //
+	EnableWebkitAppRegionDClk bool                  //
+	EnableHideCaption         bool                  // 窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
+	EnableMinimize            bool                  // 窗口 是否启用最小化 default: true
+	EnableMaximize            bool                  // 窗口 是否启用最大化 default: true
+	EnableResize              bool                  // 窗口 是否允许调整大小 default: true
+	EnableClose               bool                  // 窗口 关闭时是否关闭窗口 default: true
+	EnableCenterWindow        bool                  // 窗口 居中显示 default: true
+	EnableDragFile            bool                  // 窗口 是否允许向窗口内拖拽文件
+	AlwaysOnTop               bool                  // 窗口 窗口置顶
+	X                         int32                 // 窗口 EnableCenterWindow=false X坐标 default: 100
+	Y                         int32                 // 窗口 EnableCenterWindow=false Y坐标 default: 100
+	Width                     int32                 // 窗口 宽 default: 1024
+	Height                    int32                 // 窗口 高 default: 768
+	MinWidth                  types.TConstraintSize // 窗口 最小宽, EnableResize = true 与 MinHeight > 0 生效
+	MinHeight                 types.TConstraintSize // 窗口 最小高, EnableResize = true 与 MinWidth > 0 生效
+	MaxWidth                  types.TConstraintSize // 窗口 最大宽, EnableResize = true 与 MaxHeight > 0 生效
+	MaxHeight                 types.TConstraintSize // 窗口 最大高, EnableResize = true 与 MaxWidth > 0 生效
+	current                   windowCurrentProperty // 窗口 当前属性
 }
 
 // IBrowserWindow
@@ -160,17 +162,19 @@ type IAuxTools interface {
 // 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
 	return WindowProperty{
-		Title:              "ENERGY",
-		Url:                "about:blank",
-		EnableMinimize:     true,
-		EnableMaximize:     true,
-		EnableResize:       true,
-		EnableClose:        true,
-		EnableCenterWindow: true,
-		X:                  100,
-		Y:                  100,
-		Width:              1024,
-		Height:             768,
+		Title:                     "ENERGY",
+		Url:                       "about:blank",
+		EnableMinimize:            true,
+		EnableMaximize:            true,
+		EnableResize:              true,
+		EnableClose:               true,
+		EnableCenterWindow:        true,
+		EnableWebkitAppRegion:     true,
+		EnableWebkitAppRegionDClk: true,
+		X:                         100,
+		Y:                         100,
+		Width:                     1024,
+		Height:                    768,
 	}
 }
 

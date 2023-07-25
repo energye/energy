@@ -56,12 +56,18 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 			return
 		}
 		window.CurrentBrowseWindowCache = nil
+		// 辅助工具不具有浏览器窗口特性
 		if bw.WindowType() == consts.WT_DEV_TOOLS || bw.WindowType() == consts.WT_VIEW_SOURCE ||
 			bw.WindowProperty().WindowType == consts.WT_DEV_TOOLS || bw.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
 			return
 		}
 		BrowserWindow.putWindowInfo(browser.BrowserId(), bw)
+		// 只LCL窗口使用自定义的窗口拖拽
+		if bw.IsLCL() {
+			dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension
+		}
 	}
+	// 当前应用是LCL窗口预先创建下一个window
 	if !application.IsMessageLoop() {
 		QueueAsyncCall(func(id int) {
 			// lcl

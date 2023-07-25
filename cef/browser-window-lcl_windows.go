@@ -220,7 +220,7 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 	winapi.WinScreenToClient(hWND, p)
 	p.X -= m.bw.WindowParent().Left()
 	p.Y -= m.bw.WindowParent().Top()
-	if application.EnableWebkitAppRegion() && m.rgn != nil {
+	if m.bw.WindowProperty().EnableWebkitAppRegion && m.rgn != nil {
 		m.canCaption = winapi.WinPtInRegion(m.rgn, p.X, p.Y)
 	} else {
 		m.canCaption = false
@@ -233,7 +233,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
-		if m.cwcap.canCaption && application.EnableWebkitAppRegionDClk() {
+		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk {
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 			if win.ReleaseCapture() {
@@ -317,7 +317,7 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			m.doOnRenderCompMsg(message, lResult, aHandled)
 		}
 	})
-	if application.EnableWebkitAppRegion() && application.EnableWebkitAppRegionDClk() {
+	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
 		m.windowResize = func(sender lcl.IObject) bool {
 			if m.WindowState() == types.WsMaximized && (m.WindowProperty().EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
 				var monitor = m.Monitor().WorkareaRect()
