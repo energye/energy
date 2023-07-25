@@ -46,8 +46,9 @@ type ViewsFrameworkBrowserWindow struct {
 	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
 	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
-	context              *ICefRequestContext
-	extraInfo            *ICefDictionaryValue
+	context              *ICefRequestContext               //
+	extraInfo            *ICefDictionaryValue              //
+	screen               *lcl.TScreen                      //屏幕
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -636,6 +637,13 @@ func (m *ViewsFrameworkBrowserWindow) WindowComponent() *TCEFWindowComponent {
 // BrowserViewComponent 返回浏览器显示组件
 func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewComponent {
 	return m.browserViewComponent
+}
+
+func (m *ViewsFrameworkBrowserWindow) Screen() *lcl.TScreen {
+	if m.screen == nil && m.BrowserViewComponent() != nil {
+		m.screen = lcl.NewScreen(m.BrowserViewComponent())
+	}
+	return m.screen
 }
 
 // RunOnMainThread

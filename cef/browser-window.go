@@ -116,6 +116,7 @@ type IBrowserWindow interface {
 	NewSysTray() ITray                                                                                        //systray系统原生
 	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
 	RunOnMainThread(fn func())                                                                                //在UI主线程中运行
+	Screen() *lcl.TScreen                                                                                     //返回屏幕信息
 }
 
 // ILCLBrowserWindow

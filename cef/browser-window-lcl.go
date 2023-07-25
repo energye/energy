@@ -62,6 +62,7 @@ type LCLBrowserWindow struct {
 	wmMoveMessage             wmMove               //
 	wmSizeMessage             wmSize               //
 	wmWindowPosChangedMessage wmWindowPosChanged   //
+	screen                    *lcl.TScreen         //屏幕
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
@@ -221,13 +222,13 @@ func (m *LCLBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 	return m
 }
 
-// SetCenterWindow 窗口居中 // TODO 多显示器时有bug
+// SetCenterWindow 窗口居中
 func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	if m.TForm == nil {
 		return
 	}
 	if value {
-		m.SetPosition(types.PoDesktopCenter)
+		m.ScreenCenter()
 	} else {
 		m.SetPosition(types.PoDesigned)
 	}
@@ -1093,6 +1094,13 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 			//chromiumOnBeforeClose(browser)
 		}
 	})
+}
+
+func (m *LCLBrowserWindow) Screen() *lcl.TScreen {
+	if m.screen == nil {
+		m.screen = lcl.NewScreen(m)
+	}
+	return m.screen
 }
 
 // wm message event
