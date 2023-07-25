@@ -62,7 +62,7 @@ type LCLBrowserWindow struct {
 	wmMoveMessage             wmMove               //
 	wmSizeMessage             wmSize               //
 	wmWindowPosChangedMessage wmWindowPosChanged   //
-	screen                    *lcl.TScreen         //屏幕
+	screen                    IScreen              //屏幕
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
@@ -1096,9 +1096,9 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 	})
 }
 
-func (m *LCLBrowserWindow) Screen() *lcl.TScreen {
+func (m *LCLBrowserWindow) Screen() IScreen {
 	if m.screen == nil {
-		m.screen = lcl.NewScreen(m)
+		m.screen = &Screen{window: m}
 	}
 	return m.screen
 }

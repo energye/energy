@@ -48,7 +48,7 @@ type ViewsFrameworkBrowserWindow struct {
 	regions              *TCefDraggableRegions             //窗口内html拖拽区域
 	context              *ICefRequestContext               //
 	extraInfo            *ICefDictionaryValue              //
-	screen               *lcl.TScreen                      //屏幕
+	screen               IScreen                           //屏幕
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -639,9 +639,9 @@ func (m *ViewsFrameworkBrowserWindow) BrowserViewComponent() *TCEFBrowserViewCom
 	return m.browserViewComponent
 }
 
-func (m *ViewsFrameworkBrowserWindow) Screen() *lcl.TScreen {
+func (m *ViewsFrameworkBrowserWindow) Screen() IScreen {
 	if m.screen == nil && m.BrowserViewComponent() != nil {
-		m.screen = lcl.NewScreen(m.BrowserViewComponent())
+		m.screen = &Screen{window: m}
 	}
 	return m.screen
 }

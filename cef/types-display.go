@@ -21,7 +21,9 @@ import (
 // DisplayRef -> ICefDisplay
 var DisplayRef display
 
-type display uintptr
+type display struct {
+	alls *ICefDisplayArray
+}
 
 func (m *display) Primary() *ICefDisplay {
 	var result uintptr
@@ -56,12 +58,14 @@ func (m *display) GetCount() uint32 {
 }
 
 func (m *display) GetAlls() *ICefDisplayArray {
-	var result uintptr
-	r1, _, _ := imports.Proc(def.CEFDisplayRef_GetAlls).Call(uintptr(unsafe.Pointer(&result)))
-	if r1 != 0 && result != 0 {
-		return &ICefDisplayArray{instance: getInstance(result), count: m.GetCount()}
+	if m.alls == nil {
+		var result uintptr
+		r1, _, _ := imports.Proc(def.CEFDisplayRef_GetAlls).Call(uintptr(unsafe.Pointer(&result)))
+		if r1 != 0 && result != 0 {
+			m.alls = &ICefDisplayArray{instance: getInstance(result), count: m.GetCount()}
+		}
 	}
-	return nil
+	return m.alls
 }
 
 func (m *display) ScreenPointToPixels(screenPoint *types.TPoint) (point types.TPoint) {
@@ -92,13 +96,12 @@ func (m *ICefDisplay) ID() (result int64) {
 	return
 }
 
-func (m *ICefDisplay) DeviceScaleFactor() float32 {
+func (m *ICefDisplay) DeviceScaleFactor() (result float32) {
 	if !m.IsValid() {
 		return 0
 	}
-	var result uintptr
 	imports.Proc(def.CEFDisplay_DeviceScaleFactor).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return *(*float32)(unsafe.Pointer(result))
+	return
 }
 
 func (m *ICefDisplay) Rotation() int32 {
