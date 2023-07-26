@@ -57,7 +57,8 @@ func main() {
 			removeSyso(dir)
 			println()
 		} else {
-			println("not found:", dir)
+			println("error not found:", dir)
+			println()
 		}
 	}
 	println("build end.")
@@ -68,18 +69,21 @@ Input 1 IS: `)
 		var useUPX string
 		fmt.Scan(&useUPX)
 		if useUPX == "1" {
-			for _, example := range examples {
-				dir := filepath.Join(wd, "example", example)
-				if isExist(dir) {
-					cmd.Dir = dir
-					out := filepath.Join(dist, example+ext)
-					cmd.Command("upx", out) // upx 压缩
+			for i, example := range examples {
+				filePath := filepath.Join(dist, example+ext)
+				if isExist(filePath) {
+					println("upx compression", example, fmt.Sprintf("%d/%d", i+1, len(examples)), "\n\tpath:", filePath)
+					cmd.Command("upx", filePath) // upx 压缩
+					println()
+				} else {
+					println("error not found:", filePath)
 					println()
 				}
 			}
 		} else {
-			println("exit")
+			println("upx exit")
 		}
+		println("upx end.")
 	}
 	cmd.Close()
 }
