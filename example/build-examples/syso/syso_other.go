@@ -6,5 +6,5 @@ const (
 	Syso = false
 )
 
-var SysoBytesAMD64 []byte
+var SysoBytesx64 []byte
 var SysoBytes386 []byte

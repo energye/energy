@@ -34,6 +34,7 @@ func main() {
 	var (
 		ext     string
 		ldflags string
+		tags    = `-tags=tempdll`
 	)
 
 	if isWindows {
@@ -43,7 +44,19 @@ func main() {
 		ldflags = `-H windowsgui -s -w`
 	} else if isLinux || isDarwin {
 		examples = append(examples, "tray/lcltray", "tray/systray")
-		ldflags = `-s -w`
+		var gtk string
+		if isLinux {
+			print(`Linst: Please select the GTK version to build, default GTK3
+	1. GTK2
+	2. GTK3
+Input: `)
+			fmt.Scan(&gtk)
+			if gtk == "1" {
+				tags = `-tags=tempdll gtk2`
+			} else {
+				tags = `-tags=tempdll gtk3`
+			}
+		}
 	}
 	cmd := command.NewCMD()
 	for i, example := range examples {
@@ -53,7 +66,7 @@ func main() {
 			copySyso(dir)
 			out := filepath.Join(dist, example+ext)
 			println("build example", example, fmt.Sprintf("%d/%d", i+1, len(examples)), "\n\tbuild-dir:", dir, "\n\tout-dir:", out)
-			cmd.Command("go", "build", "-ldflags", ldflags, "-o", out, `-tags=tempdll`)
+			cmd.Command("go", "build", "-ldflags", ldflags, "-o", out, tags)
 			removeSyso(dir)
 			println()
 		} else {
@@ -86,10 +99,6 @@ Input 1 IS: `)
 		println("upx end.")
 	}
 	cmd.Close()
-}
-
-func upx() {
-
 }
 
 func isExist(path string) bool {
