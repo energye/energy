@@ -123,3 +123,5 @@ rsrc
 bytes.txt
 *.icns
 icons.iconset/
+
+dist

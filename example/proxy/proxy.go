@@ -27,12 +27,13 @@ func main() {
 			loadEnergyUrl consts.MenuId
 			loadBaiduUrl  consts.MenuId
 		)
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) bool {
 			model.AddSeparator()
 			loadEnergyUrl = model.CefMis.NextCommandId()
 			model.AddCheckItem(loadEnergyUrl, "load-energy")
 			loadBaiduUrl = model.CefMis.NextCommandId()
 			model.AddCheckItem(loadBaiduUrl, "load-baidu")
+			return false
 		})
 		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
 			if commandId == loadEnergyUrl {

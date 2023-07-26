@@ -46,7 +46,7 @@ func syso() error {
 	syso := winRes.NewSYSO()
 	// 设置命令行执行目录, 该目录是要生成图标的应用根目录
 	// 资源在 resources 目录中读取
-	syso.CMDDir = filepath.Join(wd(), "example", "lib-checkupdate")
+	syso.CMDDir = filepath.Join(wd(), "example", "control")
 	syso.IconName = "icon.ico"
 	return syso.RC()
 }
