@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+//go:build windows
+
 package cef
 
 import (
@@ -26,7 +28,7 @@ type TCEFWindowParent struct {
 	x, y, w, h int32
 }
 
-// NewCEFWindowParent 创建一个新的WindowParent组件
+// NewCEFWindowParent 创建一个新的 TCEFWindowParent 组件
 func NewCEFWindowParent(owner lcl.IComponent) *TCEFWindowParent {
 	m := new(TCEFWindowParent)
 	r1, _, _ := imports.Proc(def.CEFWindow_Create).Call(lcl.CheckPtr(owner))
@@ -243,4 +245,13 @@ func (m *TCEFWindowParent) point() (x, y int32) {
 
 func (m *TCEFWindowParent) size() (w, h int32) {
 	return m.w, m.h
+}
+
+func (m *TCEFWindowParent) SetFocus() {
+	imports.Proc(def.CEFLinkedWindow_SetFocus).Call(m.Instance())
+}
+
+func (m *TCEFWindowParent) CanFocus() bool {
+	r1, _, _ := imports.Proc(def.CEFLinkedWindow_CanFocus).Call(m.Instance())
+	return api.GoBool(r1)
 }

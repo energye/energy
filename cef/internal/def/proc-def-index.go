@@ -557,6 +557,8 @@ const (
 	CEFWindow_OnExit
 	CEFWindow_SetTag
 	CEFWindow_GetTag
+	CEFWindow_SetFocus
+	CEFWindow_CanFocus
 	// TCEFLinkedWindowParent
 	CEFLinkedWindow_Create
 	CEFLinkedWindow_GetHandle
@@ -591,6 +593,8 @@ const (
 	CEFLinkedWindow_SetChromium
 	CEFLinkedWindow_SetTag
 	CEFLinkedWindow_GetTag
+	CEFLinkedWindow_SetFocus
+	CEFLinkedWindow_CanFocus
 	// ICefBrowser
 	CEFBrowser_ShowDevTools
 	CEFBrowser_CloseDevTools

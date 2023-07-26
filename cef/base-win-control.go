@@ -25,7 +25,7 @@ type BaseWinControl struct {
 
 // IsValid 是否有效
 func (m *BaseWinControl) IsValid() bool {
-	return m.instance != nil
+	return m != nil && m.instance != nil
 }
 
 // Instance 当前实例

@@ -31,7 +31,7 @@ func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
 	window.TForm = lcl.NewForm(owner)
 	window.SetCaption(devToolsName)
 	window.SetIcon(owner.Icon())
-	window.SetWindowParent(NewCEFWindow(window))
+	window.SetWindowParent(NewCEFWindowParent(window))
 	window.WindowParent().SetParent(window)
 	window.WindowParent().SetAlign(types.AlClient)
 	window.SetWidth(1024)

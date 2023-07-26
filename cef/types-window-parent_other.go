@@ -8,6 +8,8 @@
 //
 //----------------------------------------
 
+//go:build !windows
+
 // CEFWindowParent组件
 // MacOSX, Linux
 
@@ -29,8 +31,8 @@ type TCEFLinkedWindowParent struct {
 	x, y, w, h int32
 }
 
-// NewCEFLinkedWindowParent 创建一个新的WindowParent组件
-func NewCEFLinkedWindowParent(owner lcl.IComponent) *TCEFLinkedWindowParent {
+// NewCEFWindowParent 创建一个新的 TCEFLinkedWindowParent 组件
+func NewCEFWindowParent(owner lcl.IComponent) *TCEFLinkedWindowParent {
 	m := new(TCEFLinkedWindowParent)
 	r1, _, _ := imports.Proc(def.CEFLinkedWindow_Create).Call(lcl.CheckPtr(owner))
 	m.instance = unsafe.Pointer(r1)
@@ -247,4 +249,13 @@ func (m *TCEFLinkedWindowParent) point() (x, y int32) {
 
 func (m *TCEFLinkedWindowParent) size() (w, h int32) {
 	return m.w, m.h
+}
+
+func (m *TCEFLinkedWindowParent) SetFocus() {
+	imports.Proc(def.CEFWindow_SetFocus).Call(m.Instance())
+}
+
+func (m *TCEFLinkedWindowParent) CanFocus() bool {
+	r1, _, _ := imports.Proc(def.CEFWindow_CanFocus).Call(m.Instance())
+	return api.GoBool(r1)
 }

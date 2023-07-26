@@ -504,6 +504,11 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 		}
 		m.Chromium().SendCaptureLostEvent()
 	})
+	m.Chromium().SetOnGotFocus(func(sender lcl.IObject, browser *ICefBrowser) {
+		if m.IsValid() {
+			m.WindowParent().SetFocus()
+		}
+	})
 	// 主窗口、子窗口chromium检测
 	if m.WindowProperty().WindowType != consts.WT_DEV_TOOLS {
 		window.CurrentBrowseWindowCache = m

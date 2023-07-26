@@ -41,7 +41,7 @@ type TCEFChromiumBrowser struct {
 func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFChromiumBrowser {
 	var m = new(TCEFChromiumBrowser)
 	m.chromium = NewChromium(owner, config)
-	m.windowParent = NewCEFWindow(owner)
+	m.windowParent = NewCEFWindowParent(owner)
 	m.windowParent.SetParent(owner)
 	m.windowParent.SetChromium(m.chromium, 0)
 	m.createTimer = lcl.NewTimer(owner)

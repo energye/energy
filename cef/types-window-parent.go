@@ -13,13 +13,14 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
 
 // ICEFWindowParent 接口定义
+//  Windows return TCEFWindowParent
+//  MacOSX, Linux return TCEFLinkedWindowParent
 type ICEFWindowParent interface {
 	lcl.IWinControl
 	Instance() uintptr
@@ -58,17 +59,6 @@ type ICEFWindowParent interface {
 	SetBoundsRect(value types.TRect)           // 设置矩形边界
 	point() (x, y int32)                       // 坐标点
 	size() (w, h int32)                        // 大小
-}
-
-// NewCEFWindow 创建CEFWindowParent
-//
-// # Windows return TCEFWindowParent
-//
-// MacOSX, Linux return TCEFLinkedWindowParent
-func NewCEFWindow(owner lcl.IComponent) ICEFWindowParent {
-	if common.IsWindows() {
-		return NewCEFWindowParent(owner)
-	} else {
-		return NewCEFLinkedWindowParent(owner)
-	}
+	SetFocus()                                 //
+	CanFocus() bool                            //
 }

@@ -231,7 +231,7 @@ func (m *CEFTray) createTrayWindow() {
 			})
 		}
 	})
-	m.windowParent = NewCEFWindow(m.TForm)
+	m.windowParent = NewCEFWindowParent(m.TForm)
 	m.windowParent.SetParent(m.TForm)
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))

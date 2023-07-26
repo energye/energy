@@ -557,6 +557,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindow_OnExit", 0),
 		dllimports.NewEnergyImport("CEFWindow_SetTag", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetTag", 0),
+		dllimports.NewEnergyImport("CEFWindow_SetFocus", 0),
+		dllimports.NewEnergyImport("CEFWindow_CanFocus", 0),
 		//CEFLinkedParentWindow
 		dllimports.NewEnergyImport("CEFLinkedWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_GetHandle", 0),
@@ -591,6 +593,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFLinkedWindow_SetChromium", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_SetTag", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_GetTag", 0),
+		dllimports.NewEnergyImport("CEFLinkedWindow_SetFocus", 0),
+		dllimports.NewEnergyImport("CEFLinkedWindow_CanFocus", 0),
 		//ICefBrowser
 		dllimports.NewEnergyImport("CEFBrowser_ShowDevTools", 0),
 		dllimports.NewEnergyImport("CEFBrowser_CloseDevTools", 0),
