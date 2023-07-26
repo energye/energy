@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/example/build-examples/syso"
 	"github.com/energye/golcl/tools/command"
 	"io/ioutil"
@@ -45,13 +46,13 @@ func main() {
 		ldflags = `-s -w`
 	}
 	cmd := command.NewCMD()
-	for _, example := range examples {
+	for i, example := range examples {
 		dir := filepath.Join(wd, "example", example)
 		if isExist(dir) {
 			cmd.Dir = dir
 			copySyso(dir)
 			out := filepath.Join(dist, example+ext)
-			println("build example", example, "\n\tbuild-dir:", dir, "\n\tout-dir:", out)
+			println("build example", example, fmt.Sprintf("%d/%d", i+1, len(examples)), "\n\tbuild-dir:", dir, "\n\tout-dir:", out)
 			cmd.Command("go", "build", "-ldflags", ldflags, "-o", out, `-tags=tempdll`)
 			removeSyso(dir)
 			println()
@@ -59,8 +60,32 @@ func main() {
 			println("not found:", dir)
 		}
 	}
-	cmd.Close()
 	println("build end.")
+	if isWindows {
+		print(`Build sample completed, do you want to use upx tool for compression
+	Need to install upx compression tool: https://github.com/upx/upx/releases
+Input 1 IS: `)
+		var useUPX string
+		fmt.Scan(&useUPX)
+		if useUPX == "1" {
+			for _, example := range examples {
+				dir := filepath.Join(wd, "example", example)
+				if isExist(dir) {
+					cmd.Dir = dir
+					out := filepath.Join(dist, example+ext)
+					cmd.Command("upx", out) // upx 压缩
+					println()
+				}
+			}
+		} else {
+			println("exit")
+		}
+	}
+	cmd.Close()
+}
+
+func upx() {
+
 }
 
 func isExist(path string) bool {
