@@ -1,18 +1,21 @@
 package main
 
 import (
+	"github.com/energye/energy/v2/example/build-examples/syso"
 	"github.com/energye/golcl/tools/command"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
 )
 
+const (
+	isWindows = runtime.GOOS == "windows" //support
+	isLinux   = runtime.GOOS == "linux"   //support
+	isDarwin  = runtime.GOOS == "darwin"  //support
+)
+
 func main() {
-	const (
-		isWindows = runtime.GOOS == "windows" //support
-		isLinux   = runtime.GOOS == "linux"   //support
-		isDarwin  = runtime.GOOS == "darwin"  //support
-	)
 	wd, _ := os.Getwd()
 	println("current:", wd)
 	dist := filepath.Join(wd, "example", "dist")
@@ -46,9 +49,11 @@ func main() {
 		dir := filepath.Join(wd, "example", example)
 		if isExist(dir) {
 			cmd.Dir = dir
+			copySyso(dir)
 			out := filepath.Join(dist, example+ext)
 			println("build example", example, "\n\tbuild-dir:", dir, "\n\tout-dir:", out)
 			cmd.Command("go", "build", "-ldflags", ldflags, "-o", out, `-tags=tempdll`)
+			removeSyso(dir)
 			println()
 		} else {
 			println("not found:", dir)
@@ -69,4 +74,41 @@ func isExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+func sysoname() string {
+	if runtime.GOARCH == "amd64" {
+		return "example_windows_amd64.syso"
+	} else if runtime.GOARCH == "386" {
+		return "example_windows_386.syso"
+	}
+	return ""
+}
+
+func copySyso(dir string) {
+	if !syso.Syso {
+		return
+	}
+	if sysoname() != "" {
+		out := filepath.Join(dir, sysoname())
+		if runtime.GOARCH == "amd64" {
+			ioutil.WriteFile(out, syso.SysoBytesx64, 0666)
+		} else if runtime.GOARCH == "386" {
+			ioutil.WriteFile(out, syso.SysoBytes386, 0666)
+		}
+	}
+}
+
+func removeSyso(dir string) {
+	if !syso.Syso {
+		return
+	}
+	if sysoname() != "" {
+		file := filepath.Join(dir, sysoname())
+		if runtime.GOARCH == "amd64" {
+			os.Remove(file)
+		} else if runtime.GOARCH == "386" {
+			os.Remove(file)
+		}
+	}
 }

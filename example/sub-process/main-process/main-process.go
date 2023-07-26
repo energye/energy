@@ -47,9 +47,9 @@ func main() {
 	//子进程执行程序如果在 chromium 目录中可不配置
 	var subExePath string
 	if common.IsWindows() {
-		subExePath = path.Join(wd, "example", "sub-process", "sub-process", "sub-process.exe")
+		subExePath = path.Join(wd, "sub-process.exe")
 	} else if common.IsLinux() {
-		subExePath = path.Join(wd, "example", "sub-process", "sub-process", "sub-process")
+		subExePath = path.Join(wd, "sub-process")
 	} else if common.IsDarwin() {
 		//MacOS SetBrowseSubprocessPath 将不起任何作用。
 		//独立的子程序包需要在 macapp.MacApp.SetBrowseSubprocessPath 配置
