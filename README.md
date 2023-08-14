@@ -20,7 +20,7 @@ English
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
-### [Project Introduction](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
 Energy is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded
 with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
@@ -52,7 +52,7 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [Development environment](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+### [Development environment](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
 
 > Install automatically using the energy command line tool
 
@@ -65,7 +65,7 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 > Use the energy command line tool to automatically install the development environment
 >
 > Get [energy](https://github.com/energye/energy) project, or use the precompiled command line tool
-> directly [Download address](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+> directly [Download address](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
 >
 > <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
 >
@@ -85,9 +85,9 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 
 ### Getting Started Guide - [Transfer gate](https://energy.yanghy.cn)
 
-* [Course](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-* [Example](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
-* [Document](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
+* [Course](https://energy.yanghy.cn/course/100/0)
+* [Example](https://energy.yanghy.cn/example/200/0)
+* [Document](https://energy.yanghy.cn/document/300/0)
 
 ### Quick Get Start
 
@@ -135,7 +135,7 @@ func main() {
 
 > `go run simple.go energy_env=dev`
 
-### Pack Project [reference](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/636e397ba749ba01d04ff595)
+### Pack Project [reference](https://energy.yanghy.cn/course/100/636e397ba749ba01d04ff595)
 
 1. Compile: Go program compilation `go build simple.go` If you use resource built-in (HTML, CSS, JavaScript, Image,
    etc.), the resource will be compiled into the execution file

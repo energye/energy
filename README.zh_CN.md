@@ -21,7 +21,7 @@
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
-### [项目简介](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
+### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
 > [energy](https://github.com/energye/energy) 是 Go 基于 CEF(Chromium Embedded Framework)
 > 开发的框架，内嵌 [CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
@@ -45,7 +45,7 @@
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [开发环境](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+### [开发环境](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
 
 #### 基本需求
 
@@ -54,7 +54,7 @@
 >
 > 使用 energy 命令行工具自动安装开发环境
 >
-> 获取 [energy](https://github.com/energye/energy) 项目，或直接使用预编译命令行工具 [下载地址](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/63511b14a749ba0318943f3a)
+> 获取 [energy](https://github.com/energye/energy) 项目，或直接使用预编译命令行工具 [下载地址](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
 >
 > <p style="color:palevioletred;">如果使用预编译命令行工具以下步骤可跳过</p>
 > 
@@ -74,9 +74,9 @@
 
 ### 入门指南 - [传送门](https://energy.yanghy.cn)
 
-* [教程](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/6350f94ca749ba0318943f25)
-* [示例](https://energy.yanghy.cn/#/example/6342d986401bfe4d0cdf6067/634d3bd5a749ba0318943eb6)
-* [文档](https://energy.yanghy.cn/#/document/6342d9a4401bfe4d0cdf6069/0)
+* [教程](https://energy.yanghy.cn/course/100/0)
+* [示例](https://energy.yanghy.cn/example/200/0)
+* [文档](https://energy.yanghy.cn/document/300/0)
 
 ### 快速入门
 
@@ -118,7 +118,7 @@ func main() {
 - MacOS
 > `go run simple.go energy_env=dev`
 
-### 项目打包 [参考](https://energy.yanghy.cn/#/course/6342d92c401bfe4d0cdf6065/636e397ba749ba01d04ff595)
+### 项目打包 [参考](https://energy.yanghy.cn/course/100/636e397ba749ba01d04ff595)
 1. 编译：Go 程序编译`go build simple.go` 如果使用资源内置(HTML、CSS、JavaScript、Image等等)会把资源编译到执行文件内
 2. 复制：把执行文件复制到ENERGY环境的CEF目录中即可
 3. 打包：使用制作安装包工具将其制作为安装包, 查阅各系统平台安装包制作
