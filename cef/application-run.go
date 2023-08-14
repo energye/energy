@@ -23,7 +23,7 @@ import (
 var (
 	//BrowserWindow 是基于LCL和VF窗口组件的浏览器主窗口
 	//  可以对窗口的属性设置和事件监听，Chromium的配置和事件监听.
-	//  该窗口是主窗体，因此初始化时必须第一个初始化完成，如果创建子窗口最好在 SetBrowserInitAfter 回调函数中创建
+	//  该窗口是主窗体，因此初始化时必须第一个初始化完成
 	//  VF 窗口组件默认在Linux平台
 	//  LCL窗口组件默认在Windows、MacOSX平台
 	BrowserWindow = &browserWindow{
