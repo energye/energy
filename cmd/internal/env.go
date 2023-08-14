@@ -28,7 +28,7 @@ func init() {
 }
 
 func runGetEnv(c *CommandConfig) error {
-	envPath := os.Getenv(ENERGY_HOME_KEY)
+	envPath := os.Getenv(EnergyHomeKey)
 	println("ENERGY_HOME_KEY", envPath)
 	return nil
 }

@@ -32,7 +32,7 @@ func init() {
 }
 
 func runVersion(c *CommandConfig) error {
-	downloadJSON, err := downloadConfig(download_version_config_url)
+	downloadJSON, err := downloadConfig(downloadVersionConfigUrl)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)

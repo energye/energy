@@ -13,12 +13,12 @@ package internal
 import "runtime"
 
 const (
-	cefKey                      = "cef"
-	energyKey                   = "energy"
-	download_version_config_url = "https://energy.yanghy.cn/autoconfig/edv.json"
-	download_extract_url        = "https://energy.yanghy.cn/autoconfig/extract.json"
-	frameworkCache              = "EnergyFrameworkDownloadCache"
-	ENERGY_HOME_KEY             = "ENERGY_HOME"
+	cefKey                   = "cef"
+	energyKey                = "energy"
+	downloadVersionConfigUrl = "https://energy.yanghy.cn/autoconfig/edv.json"
+	downloadExtractUrl       = "https://energy.yanghy.cn/autoconfig/extract.json"
+	frameworkCache           = "EnergyFrameworkDownloadCache"
+	EnergyHomeKey            = "ENERGY_HOME"
 )
 
 const (
