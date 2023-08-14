@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>clipbrd</title>
+    <style>
+    </style>
+    <script type="application/javascript">
+        function SetText() {
+            let time = new Date().getTime()
+            ipc.emit("setText", ["设置字符串-" + time]);
+        }
+
+        function GetText() {
+            ipc.emit("getText", function (r) {
+                let msg = document.getElementById("msg")
+                msg.innerHTML += "getText: " + r + "<br>"
+            });
+        }
+
+        function SetPic() {
+            ipc.emit("setPic", function (r) {
+                let msg = document.getElementById("msg")
+                msg.innerHTML += "setPic: "+r + "<br>"
+            });
+        }
+
+        function GetPic() {
+            ipc.emit("getPic", function (r) {
+                let msg = document.getElementById("msg")
+                msg.innerHTML += "getPic: " + r + "<br>"
+            });
+        }
+
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
+<div id="msg"></div>
+<button onclick="SetText()">SetText</button>
+<button onclick="GetText()">GetText</button>
+<button onclick="SetPic()">SetPic</button>
+<button onclick="GetPic()">GetPic</button>
+</body>
+</html>
