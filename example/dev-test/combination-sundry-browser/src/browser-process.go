@@ -348,9 +348,6 @@ func AppBrowserInit() {
 				isSendEmit = true
 			}
 		})
-		event.SetOnFrameCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame) {
-			fmt.Println("OnFrameCreated:", frame.Url())
-		})
 		event.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 			//当刷新的是一个完整的浏览器时，如果打开的新页面不是html dom，这里的 emit 消息 将会失败
 			fmt.Println("OnLoadingStateChange-ProcessType:", process.Args.ProcessType(), "sender.Instance:", sender.Instance(), "browserId:", browser.Identifier(), "isLoading:", isLoading, "canGoBack:", canGoBack, "canGoForward:", canGoForward)
