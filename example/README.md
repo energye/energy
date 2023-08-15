@@ -4,39 +4,52 @@
 >
 > LCL: Various system native UI components
 
-| Example Name             | Example Description                                                                                                                                             |
-|--------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| app-icon-syso windows    | Windows application icon generation, Linux and macOSX not provided                                                                                              |
-| context-menu             | Customize right-click menu                                                                                                                                      |
-| control                  | The state control of page control refresh, forward, backward, and stop refresh based on LCL components can be combined with various system components in Energy |
-| cookie                   | Setting, obtaining, and deleting cookies                                                                                                                        |
-| cookie-manager           | Cookie Management                                                                                                                                               |
-| dev-tools                | Developer Tools                                                                                                                                                 |
-| dom-visitor              | Document operation display                                                                                                                                      |
-| download                 | Download files                                                                                                                                                  |
-| execute-dev-tools-method | Execute Developer Tool Method                                                                                                                                   |
-| execute-javascript       | Executing JS code in the page in Go                                                                                                                             |
-| frameless                | Borderless Window                                                                                                                                               |
-| i18n                     | Local multilingual adaptation                                                                                                                                   |
-| internal-http-server     | Internal Services                                                                                                                                               |
-| ipc-on-emit              | Event monitoring and triggering for Go and JS                                                                                                                   |
-| key-event                | Keyboard events in HTML                                                                                                                                         |
-| load-html-url            | Display the loaded Html string or Url address on the page                                                                                                       |
-| msgbox                   | LCL based system prompts                                                                                                                                        |
-| popup-sub-window         | Pop up sub window                                                                                                                                               |
-| print-pdf                | Printing pages as PDF documents                                                                                                                                 |
-| process-type             | When there are multiple processes, the process type                                                                                                             |
-| proxy                    | Proxy configuration                                                                                                                                             |
-| response-filter          | Resource response filtering                                                                                                                                     |
-| scheme                   | Custom protocol topics, such as http instead of hello                                                                                                           |
-| bsearch-text             | Search page text                                                                                                                                                |
-| sysdialog                | Various modal functional Windows                                                                                                                                |
-| view-source              | Display page source code                                                                                                                                        |
-| vue                      | Example of html+vue                                                                                                                                             |
-| webkit-register          | webkit callback functions register local js examples                                                                                                            |
-| zoom                     | Zoom in and out of the page                                                                                                                                     |
-| simple                   | Simple application example                                                                                                                                      |
-| sub-process              | Multiprocess, starting the rendering process as a child process                                                                                                 |
-| tray                     | Tray - Custom and system tray                                                                                                                                   |
-| dev-test                 | examples of various tests at development time                                                                                                                   |
-| ...                      | ...                                                                                                                                                             |
+| Example Name                                         | Example Description                                                                                                                                             |
+|------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [app-icon-gen](app-icon-gen)                         | Windows application icon generation, Linux and macOSX not provided                                                                                              |
+| [audio-video](audio-video)                           | Music and Videos                                                                                                                                                |
+| [build-examples](build-examples)                     | build all example                                                                                                                                               |
+| [clipbrd](clipbrd)                                   | clipbrd                                                                                                                                                         |
+| [context-menu](context-menu)                         | Customize right-click menu                                                                                                                                      |
+| [control-widget](control-widget)                     | The state control of page control refresh, forward, backward, and stop refresh based on LCL components can be combined with various system components in Energy |
+| [cookie](cookie)                                     | Setting, obtaining, and deleting cookies                                                                                                                        |
+| [cookie-manager](cookie-manager)                     | Cookie Management                                                                                                                                               |
+| [custom-drag-window](custom-drag-window)             | custom-drag-window                                                                                                                                              |
+| [dev-tools](dev-tools)                               | Developer Tools                                                                                                                                                 |
+| [dom-visitor](dom-visitor)                           | Document operation display                                                                                                                                      |
+| [download](download)                                 | Download files                                                                                                                                                  |
+| [drag-file](drag-file)                               | Drag and drop the file into the browser window                                                                                                                  |
+| [execute-dev-tools-method](execute-dev-tools-method) | Execute Developer Tool Method                                                                                                                                   |
+| [execute-javascript](execute-javascript)             | Executing JS code in the page in Go                                                                                                                             |
+| [flash-for-cef-v87](flash-for-cef-v87)               | Borderless Window                                                                                                                                               |
+| [frameless](frameless)                               | Borderless Window                                                                                                                                               |
+| [i18n](i18n)                                         | Local multilingual adaptation                                                                                                                                   |
+| [internal-http-server](internal-http-server)         | Internal Services                                                                                                                                               |
+| [ipc-on-emit](ipc-on-emit)                           | Event monitoring and triggering for Go and JS                                                                                                                   |
+| [key-event](key-event)                               | Keyboard events in HTML                                                                                                                                         |
+| [lib-checkupdate](lib-checkupdate)                   | energy and liblcl update examples                                                                                                                               |
+| [load-html-url](load-html-url)                       | Display the loaded Html string or Url address on the page                                                                                                       |
+| [msgbox](msgbox)                                     | LCL based system prompts                                                                                                                                        |
+| [osr](osr)                                           | osr                                                                                                                                                             |
+| [popup-sub-window](popup-sub-window)                 | Pop up sub window                                                                                                                                               |
+| [print-pdf](print-pdf)                               | Printing pages as PDF documents                                                                                                                                 |
+| [process-type](process-type)                         | When there are multiple processes, the process type                                                                                                             |
+| [proxy](proxy)                                       | Proxy configuration                                                                                                                                             |
+| [response-filter](response-filter)                   | Resource response filtering                                                                                                                                     |
+| [scheme](scheme)                                     | Custom protocol topics, such as http instead of hello                                                                                                           |
+| [screen](screen)                                     | Search page text                                                                                                                                                |
+| [search-text](search-text)                           | screen                                                                                                                                                          |
+| [sys-dialog](sys-dialog)                             | Various modal functional Windows                                                                                                                                |
+| [sys-menu](sys-menu)                                 | System menu                                                                                                                                                     |
+| [tempdll](tempdll)                                   | underlying library is built into the execution file and released at run time                                                                                    |
+| [tray](tray)                                         | Tray - Custom and system tray                                                                                                                                   |
+| [view-source](view-source)                           | Display page source code                                                                                                                                        |
+| [vue](vue)                                           | Example of html+vue                                                                                                                                             |
+| [webkit-register](webkit-register)                   | webkit callback functions register local js examples                                                                                                            |
+| [window](window)                                     | Window operation management                                                                                                                                     |
+| [windows](windows)                                   | Examples that support windows only                                                                                                                              |
+| [zoom](zoom)                                         | Zoom in and out of the page                                                                                                                                     |
+| [simple](simple)                                     | Simple application example                                                                                                                                      |
+| [sub-process](sub-process)                           | Multiprocess, starting the rendering process as a child process                                                                                                 |
+| [dev-test](dev-test)                                 | examples of various tests at development time                                                                                                                   |
+| ...                                                  | ...                                                                                                                                                             |
