@@ -30,7 +30,7 @@ func main() {
 		"msgbox", "osr/linux", "osr/windows", "popup-sub-window", "print-pdf", "process-type", "proxy", "response-filter",
 		"scheme", "screen", "search-text", "simple", "sub-process/main-process", "sub-process/sub-process", "sys-dialog",
 		"sys-menu", "tempdll", "view-source", "vue",
-		"webkit-register", "zoom"}
+		"webkit-register", "zoom", "audio-video", "clipbrd", "default-hidden-window"}
 	var (
 		ext     string
 		ldflags string
