@@ -76,10 +76,15 @@ func (m *LCLBrowserWindow) FramelessForLine() {
 }
 
 // SetFocus 设置窗口焦点
+//  https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
+//  https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-setfocus
 func (m *LCLBrowserWindow) SetFocus() {
 	if m.TForm != nil {
+		//窗口\激活在Z序中的下个顶层窗口
 		m.Minimize()
+		//激活窗口出现在前景
 		m.Restore()
+		//窗口设置焦点
 		m.TForm.SetFocus()
 	}
 }
