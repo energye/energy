@@ -15,8 +15,9 @@ import "runtime"
 const (
 	cefKey                   = "cef"
 	energyKey                = "energy"
-	downloadVersionConfigUrl = "https://energy.yanghy.cn/autoconfig/edv.json"
-	downloadExtractUrl       = "https://energy.yanghy.cn/autoconfig/extract.json"
+	DownloadVersionConfigUrl = "https://energy.yanghy.cn/autoconfig/edv.json"
+	DownloadExtractUrl       = "https://energy.yanghy.cn/autoconfig/extract.json"
+	CheckUpgradeURL          = "https://energy.yanghy.cn/autoconfig/update.json"
 	frameworkCache           = "EnergyFrameworkDownloadCache"
 	EnergyHomeKey            = "ENERGY_HOME"
 )

@@ -14,6 +14,7 @@ package autoupdate
 import (
 	"crypto/tls"
 	"encoding/json"
+	"github.com/energye/energy/v2/cmd/internal"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"io/ioutil"
@@ -22,8 +23,6 @@ import (
 	"strings"
 	"time"
 )
-
-const checkURL = "https://energy.yanghy.cn/autoconfig/update.json"
 
 type LiblclCallback func(model *Model, level int, canUpdate bool)
 
@@ -81,7 +80,7 @@ func check() {
 	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}}
-	request, err := http.NewRequest("GET", checkURL, nil)
+	request, err := http.NewRequest("GET", internal.CheckUpgradeURL, nil)
 	if err != nil {
 		println("energy check update http.NewRequest error:", err.Error())
 		return

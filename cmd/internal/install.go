@@ -107,7 +107,7 @@ Your current installation environment is Linux and there are two GTK solutions a
 	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
-	downloadJSON, err := downloadConfig(downloadVersionConfigUrl)
+	downloadJSON, err := downloadConfig(DownloadVersionConfigUrl)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
@@ -171,7 +171,7 @@ Your current installation environment is Linux and there are two GTK solutions a
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
 
 	//提取文件配置
-	extractData, err := downloadConfig(downloadExtractUrl)
+	extractData, err := downloadConfig(DownloadExtractUrl)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
