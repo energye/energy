@@ -109,6 +109,13 @@ func (m *LCLBrowserWindow) Maximize() {
 	})
 }
 
+// SetFocus 设置窗口焦点
+func (m *LCLBrowserWindow) SetFocus() {
+	if m.TForm != nil {
+		m.TForm.SetFocus()
+	}
+}
+
 func (m *LCLBrowserWindow) doDrag() {
 	// MacOS/Linux Drag Window
 	if m.drag != nil {

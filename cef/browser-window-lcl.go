@@ -739,13 +739,6 @@ func (m *LCLBrowserWindow) IsLCL() bool {
 	return true
 }
 
-// SetFocus 设置窗口焦点
-func (m *LCLBrowserWindow) SetFocus() {
-	m.Minimize()
-	m.Restore()
-	m.TForm.SetFocus()
-}
-
 // show 内部调用
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	if m.onShow != nil {

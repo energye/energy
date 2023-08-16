@@ -75,6 +75,15 @@ func (m *LCLBrowserWindow) FramelessForLine() {
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
+// SetFocus 设置窗口焦点
+func (m *LCLBrowserWindow) SetFocus() {
+	if m.TForm != nil {
+		m.Minimize()
+		m.Restore()
+		m.TForm.SetFocus()
+	}
+}
+
 //func (m *LCLBrowserWindow) Frameless() {
 //	var rect = &types.TRect{}
 //	win.GetWindowRect(m.Handle(), rect)
