@@ -610,7 +610,9 @@ func (m *LCLBrowserWindow) Minimize() {
 
 // Restore
 func (m *LCLBrowserWindow) Restore() {
-	m.SetWindowState(types.WsNormal)
+	m.RunOnMainThread(func() {
+		m.SetWindowState(types.WsNormal)
+	})
 }
 
 // DisableTransparent 禁用口透明
@@ -735,6 +737,13 @@ func (m *LCLBrowserWindow) IsViewsFramework() bool {
 // IsLCL 返回是否LCL窗口组件，这里返回true
 func (m *LCLBrowserWindow) IsLCL() bool {
 	return true
+}
+
+// SetFocus 设置窗口焦点
+func (m *LCLBrowserWindow) SetFocus() {
+	m.Minimize()
+	m.Restore()
+	m.TForm.SetFocus()
 }
 
 // show 内部调用

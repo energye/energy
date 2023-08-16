@@ -39,21 +39,21 @@ type ObjectProperty struct {
 
 func init() {
 	var lclExtImportDefs = []*dllimports.ImportTable{
-		//LCL Extend
 		dllimports.NewEnergyImport("Ext_Panel_GetBevelColor", 0),
 		dllimports.NewEnergyImport("Ext_Panel_SetBevelColor", 0),
 		dllimports.NewEnergyImport("Ext_ReadStringProperty", 0),
+		dllimports.NewEnergyImport("Ext_Form_Activate", 0),
+		dllimports.NewEnergyImport("Ext_Form_Deactivate", 0),
 	}
 	imports.SetLClExtImportDefs(lclExtImportDefs)
 }
 
 const (
-	//null nil
-	null_nil = iota
-	//LCL  Extend
-	Ext_Panel_GetBevelColor
+	Ext_Panel_GetBevelColor = iota
 	Ext_Panel_SetBevelColor
 	Ext_ReadStringProperty
+	Ext_Form_Activate
+	Ext_Form_Deactivate
 )
 
 func PanelBevelColor(panel *lcl.TPanel) types.TColor {
@@ -68,6 +68,14 @@ func SetPanelBevelColor(panel *lcl.TPanel, colors types.TColor) {
 func readObjectStringProperty(sender lcl.IObject) string {
 	r1, _, _ := imports.ExtProc(Ext_ReadStringProperty).Call(lcl.CheckPtr(sender))
 	return api.GoStr(r1)
+}
+
+func FormActivate(form *lcl.TForm) {
+	imports.ExtProc(Ext_Form_Activate).Call(form.Instance())
+}
+
+func FormDeactivate(form *lcl.TForm) {
+	imports.ExtProc(Ext_Form_Deactivate).Call(form.Instance())
 }
 
 func ReadObjectStringProperty(sender lcl.IObject) map[string]ObjectProperty {

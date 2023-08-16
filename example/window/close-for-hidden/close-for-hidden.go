@@ -52,7 +52,8 @@ func main() {
 					println("LCL 窗口隐藏, 5秒后显示.")
 					time.Sleep(time.Second * 5)
 					window.RunOnMainThread(func() {
-						window.Show() //显示窗口
+						bw.Show()
+						bw.SetFocus()
 					})
 				}()
 				return true //跳过默认事件, 如果想关闭窗口，这里返回false
