@@ -55,6 +55,11 @@ func trayDemo(browserWindow cef.IBrowserWindow) {
 	})
 	tray.AddMenuItem("显示/隐藏", func() {
 		window.SetVisible(!window.Visible())
+		if window.Visible() { //之后的显示状态
+			window.RunOnMainThread(func() {
+				window.SetFocus()
+			})
+		}
 	})
 	tray.AddMenuItem("退出", func() {
 		browserWindow.CloseBrowserWindow()
