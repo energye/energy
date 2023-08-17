@@ -10,7 +10,11 @@
 
 package internal
 
-import "os"
+import (
+	"io/ioutil"
+	"net/http"
+	"os"
+)
 
 func ToString(v interface{}) string {
 	if v == nil {
@@ -37,4 +41,19 @@ func IsExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+// http 请求
+func httpRequestGET(url string) ([]byte, error) {
+	client := new(http.Client)
+	resp, err := client.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	ret, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	return ret, nil
 }

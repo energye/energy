@@ -20,7 +20,6 @@ import (
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"io"
 	"io/fs"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
@@ -107,7 +106,7 @@ Your current installation environment is Linux and there are two GTK solutions a
 	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
-	downloadJSON, err := downloadConfig(DownloadVersionURL)
+	downloadJSON, err := httpRequestGET(DownloadVersionURL)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
@@ -171,11 +170,13 @@ Your current installation environment is Linux and there are two GTK solutions a
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
 
 	//提取文件配置
-	extractData, err := downloadConfig(DownloadExtractURL)
+	extractData, err := httpRequestGET(DownloadExtractURL)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
 	}
+	// 获取安装环境信息
+
 	var extractConfig map[string]interface{}
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
@@ -482,21 +483,6 @@ func urlName(downloadUrl string) string {
 		u = u[strings.LastIndex(u, "/")+1:]
 		return u
 	}
-}
-
-// 下载文件配置
-func downloadConfig(url string) ([]byte, error) {
-	client := new(http.Client)
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	ret, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
 }
 
 func isFileExist(filename string, filesize int64) bool {

@@ -24,6 +24,7 @@ var commands = []*internal.Command{
 	internal.CmdVersion,
 	internal.CmdSetenv,
 	internal.CmdEnv,
+	internal.CmdCreate,
 }
 
 func main() {
@@ -49,6 +50,8 @@ func main() {
 			cc.Index = 4
 		case "env":
 			cc.Index = 5
+		case "create":
+			cc.Index = 6
 		}
 		command := commands[cc.Index]
 		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {
