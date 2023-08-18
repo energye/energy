@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 )
 
 var CmdVersion = &Command{
@@ -55,13 +56,19 @@ func runVersion(c *CommandConfig) error {
 			var version = keys[i]
 			var ver = versionList[version].(map[string]interface{})
 			if c.Version.All {
-				cef := ToRNilString(ver["cef"], "--")
-				cefgtk2 := ToRNilString(ver["cefgtk2"], "--")
-				energy := ToRNilString(ver["energy"], "--")
-				println("  ", version, fmt.Sprintf(`
-	ENERGY: %s
-	CEF: %s
-	CEF-GTK2: %s`, energy, cef, cefgtk2))
+				wrt := &bytes.Buffer{}
+				wrt.WriteString("  ")
+				wrt.WriteString(version)
+				wrt.WriteString("\r\n")
+				for key, value := range ver {
+					key = strings.ToUpper(key)
+					if key == "MODULES" {
+						continue
+					}
+					wrt.WriteString(fmt.Sprintf("\t%s: %s", strings.ToUpper(key), value))
+					wrt.WriteString("\r\n")
+				}
+				println(wrt.String())
 			} else {
 				println("  ", version)
 			}

@@ -30,13 +30,18 @@ import (
 )
 
 var CmdInstall = &Command{
-	UsageLine: "install -p [path] -v [version] -n [name] -d [download]",
+	UsageLine: "install -p [path] -v [version] -n [name] -d [download] -c [cef]",
 	Short:     "Automatically configure the CEF and Energy framework",
 	Long: `
 	-p Installation directory Default current directory
 	-v Specifying a version number,Default latest
 	-n Name of the frame after installation
 	-d Download Source, gitee or github, Default gitee
+	-c Install system supports CEF version, provide 4 options, default empty
+		default : Automatically select support for the latest version based on the current system.
+		windows7: CEF 109.1.18 is the last one to support Windows 7.
+		gtk2    : CEF 106.1.1 is the last default support for GTK2 in Linux.
+		flash   : CEF 87.1.14 is the last one to support Flash.
 	.  Execute default command
 
 Automatically configure the CEF and Energy framework.
@@ -64,35 +69,49 @@ const (
 	GTK3 = iota + 1
 	GTK2
 )
+const (
+	CefEmpty = ""
+	CefWin7  = "windows7"
+	CefGtk2  = "gtk2"
+	CefFlash = "flash"
+)
 
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 // 运行安装
 func runInstall(c *CommandConfig) error {
-	var (
-		gtk int
-	)
-	if isLinux { // linux, gtk2, gtk3 install
-		var gtksel = []string{"", "GTK3", "GTK2"}
-		println(`
-Your current installation environment is Linux and there are two GTK solutions available, namely GTK2 GTK3
-	GTK2: Supports LCL window and can use various LCL controls. The CEF<=106 version supports by default
-	GTK3: does not support LCL windows and most LCL controls, CEF>=107 version default support
-  Enter the number to select the installation support for different versions of GTK framework
-  Number Description
-	1: GTK3 
-	2: GTK2`)
-		// 输入选择GTK支持框架
-		for {
-			print("Please enter the number: ")
-			fmt.Scan(&gtk)
-			if gtk == GTK3 || gtk == GTK2 {
-				break
-			} else {
-				println("Number input error, please re-enter. Only 1: GTK3 or 2: GTK2 are supported")
-			}
-		}
-		println("Support framework selected:", gtksel[gtk])
-	}
+	//var (
+	//	gtk int
+	//)
+	//	if isLinux { // linux, gtk2, gtk3 install
+	//		var gtksel = []string{"", "GTK3", "GTK2"}
+	//		println(`
+	//Your current installation environment is Linux and there are two GTK solutions available, namely GTK2 GTK3
+	//	GTK2: Supports LCL window and can use various LCL controls. The CEF<=106 version supports by default
+	//	GTK3: does not support LCL windows and most LCL controls, CEF>=107 version default support
+	//  Enter the number to select the installation support for different versions of GTK framework
+	//  Number Description
+	//	1: GTK3
+	//	2: GTK2`)
+	//		// 输入选择GTK支持框架
+	//		for {
+	//			print("Please enter the number: ")
+	//			fmt.Scan(&gtk)
+	//			if gtk == GTK3 || gtk == GTK2 {
+	//				break
+	//			} else {
+	//				println("Number input error, please re-enter. Only 1: GTK3 or 2: GTK2 are supported")
+	//			}
+	//		}
+	//		println("Support framework selected:", gtksel[gtk])
+	//	}
+
+	// -c cef args value
+	//windows7, gtk2, flash
+	cef := strings.ToLower(c.Install.CEF)
+	//if cef != CefEmpty && cef != CefWin7 && cef != CefGtk2 && cef != CefFlash {
+	//	fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
+	//	os.Exit(1)
+	//}
 
 	if c.Install.Path == "" {
 		c.Install.Path = c.Wd
@@ -102,10 +121,12 @@ Your current installation environment is Linux and there are two GTK solutions a
 	if c.Install.Version == "" {
 		c.Install.Version = "latest"
 	}
+	// 创建安装目录
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
 	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
+	// 获取安装版本配置
 	downloadJSON, err := httpRequestGET(DownloadVersionURL)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
@@ -117,40 +138,72 @@ Your current installation environment is Linux and there are two GTK solutions a
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
+	// 拿到最新版本和版本列表
 	var latest = edv["latest"].(string)
 	var versionList = edv["versionList"].(map[string]interface{})
 
-	var version map[string]interface{}
-	if c.Install.Version == "latest" {
+	// 安装版本
+	var installVersion map[string]interface{}
+	if c.Install.Version == "latest" { // 默认最新版本
 		if v, ok := versionList[latest]; ok {
-			version = v.(map[string]interface{})
+			installVersion = v.(map[string]interface{})
 		}
-	} else {
-		if c.Install.Version[0] != 'v' {
-			c.Install.Version = string('v') + c.Install.Version
-		}
+	} else { // 自己选择版本
 		if v, ok := versionList[c.Install.Version]; ok {
-			version = v.(map[string]interface{})
+			installVersion = v.(map[string]interface{})
 		}
 	}
 	println("Check version")
-	if version == nil || len(version) == 0 {
+	if installVersion == nil || len(installVersion) == 0 {
 		println("Invalid version number:", c.Install.Version)
 		os.Exit(1)
 	}
+	// 当前版本 cef 和 liblcl 版本选择
 	var (
-		versionCEF, versionENERGY string
+		cefVersion, energyVersion string
+		cefModule, energyModule   string
 	)
-	if isLinux {
-		if gtk == GTK3 {
-			versionCEF = ToRNilString(version["cef"], "")
-		} else {
-			versionCEF = ToRNilString(version["cefgtk2"], "")
-		}
-	} else {
-		versionCEF = ToString(version["cef"])
+	// 使用提供的特定版本号
+	if cef == CefGtk2 {
+		cefModule = "cef-106"
+	} else if cef == CefWin7 {
+		cefModule = "cef-106"
+	} else if cef == CefFlash {
+		// cef 87 要和 liblcl 87 配对
+		cefModule = "cef-87"
+		energyModule = "liblcl-87"
 	}
-	versionENERGY = version["energy"].(string)
+	// 为空未指定CEF参数、或参数不正确，选择当前CEF模块最大的版本号
+	if cefModule == "" {
+		var cefDefault string
+		var number int
+		for module, _ := range installVersion {
+			if strings.Index(module, "cef") == 0 {
+				if s := strings.Split(module, "-"); len(s) == 2 {
+					n, _ := strconv.Atoi(s[1])
+					if n >= number {
+						number = n
+						cefDefault = module
+					}
+				} else {
+					cefDefault = module
+					break
+				}
+			}
+		}
+		cefModule = cefDefault
+	}
+	// liblcl
+	if energyModule == "" {
+		energyModule = "liblcl"
+	}
+	cefVersion = ToRNilString(installVersion[cefModule], "")
+	energyVersion = ToRNilString(installVersion[energyModule], "")
+	var modules map[string]any
+	if m, ok := installVersion["modules"]; ok {
+		modules = m.(map[string]any)
+	}
+	fmt.Println("log:", modules)
 	var downloadURL map[string]interface{}
 	if c.Install.Download == "gitee" {
 		downloadURL = edv["gitee"].(map[string]interface{})
@@ -161,12 +214,12 @@ Your current installation environment is Linux and there are two GTK solutions a
 		os.Exit(1)
 	}
 	libCEFOS, isSupport := cefOS()
-	libEnergyOS, isSupport := energyOS(gtk)
+	libEnergyOS, isSupport := energyOS(0)
 	var downloadCefURL = downloadURL["cefURL"].(string)
 	var downloadEnergyURL = downloadURL["energyURL"].(string)
-	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", versionCEF)
+	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", versionENERGY)
+	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", energyVersion)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
 
 	//提取文件配置
@@ -175,7 +228,7 @@ Your current installation environment is Linux and there are two GTK solutions a
 		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
 	}
-	// 获取安装环境信息
+	// 获取安装环境配置
 
 	var extractConfig map[string]interface{}
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
@@ -234,7 +287,7 @@ Your current installation environment is Linux and there are two GTK solutions a
 		os.Remove(rmFile)
 	}
 	setEnergyHomeEnv(EnergyHomeKey, installPathName)
-	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", versionENERGY)
+	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", energyVersion)
 	return nil
 }
 
