@@ -79,34 +79,21 @@ const (
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 // 运行安装
 func runInstall(c *CommandConfig) error {
-	//var (
-	//	gtk int
-	//)
-	//	if isLinux { // linux, gtk2, gtk3 install
-	//		var gtksel = []string{"", "GTK3", "GTK2"}
-	//		println(`
-	//Your current installation environment is Linux and there are two GTK solutions available, namely GTK2 GTK3
-	//	GTK2: Supports LCL window and can use various LCL controls. The CEF<=106 version supports by default
-	//	GTK3: does not support LCL windows and most LCL controls, CEF>=107 version default support
-	//  Enter the number to select the installation support for different versions of GTK framework
-	//  Number Description
-	//	1: GTK3
-	//	2: GTK2`)
-	//		// 输入选择GTK支持框架
-	//		for {
-	//			print("Please enter the number: ")
-	//			fmt.Scan(&gtk)
-	//			if gtk == GTK3 || gtk == GTK2 {
-	//				break
-	//			} else {
-	//				println("Number input error, please re-enter. Only 1: GTK3 or 2: GTK2 are supported")
-	//			}
-	//		}
-	//		println("Support framework selected:", gtksel[gtk])
-	//	}
+	// 获取提取文件配置
+	extractData, err := httpRequestGET(DownloadExtractURL)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error(), "\n")
+		os.Exit(1)
+	}
+	// 获取安装版本配置
+	downloadJSON, err := httpRequestGET(DownloadVersionURL)
+	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error()+"\n")
+		os.Exit(1)
+	}
 
 	// -c cef args value
-	//windows7, gtk2, flash
+	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
 	//if cef != CefEmpty && cef != CefWin7 && cef != CefGtk2 && cef != CefFlash {
 	//	fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
@@ -114,11 +101,13 @@ func runInstall(c *CommandConfig) error {
 	//}
 
 	if c.Install.Path == "" {
+		// current dir
 		c.Install.Path = c.Wd
 	}
 	installPathName := filepath.Join(c.Install.Path, c.Install.Name)
 	println("Install Path", installPathName)
 	if c.Install.Version == "" {
+		// latest
 		c.Install.Version = "latest"
 	}
 	// 创建安装目录
@@ -126,29 +115,24 @@ func runInstall(c *CommandConfig) error {
 	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
-	// 获取安装版本配置
-	downloadJSON, err := httpRequestGET(DownloadVersionURL)
-	if err != nil {
-		fmt.Fprint(os.Stderr, err.Error()+"\n")
-		os.Exit(1)
-	}
 	var edv map[string]interface{}
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	// 拿到最新版本和版本列表
-	var latest = edv["latest"].(string)
+	// 所有版本列表
 	var versionList = edv["versionList"].(map[string]interface{})
 
-	// 安装版本
+	// 当前安装版本
 	var installVersion map[string]interface{}
-	if c.Install.Version == "latest" { // 默认最新版本
-		if v, ok := versionList[latest]; ok {
+	if c.Install.Version == "latest" {
+		// 默认最新版本
+		if v, ok := versionList[edv["latest"].(string)]; ok {
 			installVersion = v.(map[string]interface{})
 		}
-	} else { // 自己选择版本
+	} else {
+		// 自己选择版本
 		if v, ok := versionList[c.Install.Version]; ok {
 			installVersion = v.(map[string]interface{})
 		}
@@ -160,49 +144,54 @@ func runInstall(c *CommandConfig) error {
 	}
 	// 当前版本 cef 和 liblcl 版本选择
 	var (
-		cefVersion, energyVersion string
-		cefModule, energyModule   string
+		cefVersion, energyVersion       string
+		cefModuleName, energyModuleName string
 	)
 	// 使用提供的特定版本号
 	if cef == CefGtk2 {
-		cefModule = "cef-106"
+		cefModuleName = "cef-106" // CEF 106.1.1
 	} else if cef == CefWin7 {
-		cefModule = "cef-106"
+		cefModuleName = "cef-109" // CEF 109.1.18
 	} else if cef == CefFlash {
 		// cef 87 要和 liblcl 87 配对
-		cefModule = "cef-87"
-		energyModule = "liblcl-87"
+		cefModuleName = "cef-87"       // CEF 87.1.14
+		energyModuleName = "liblcl-87" // liblcl 87
 	}
-	// 为空未指定CEF参数、或参数不正确，选择当前CEF模块最大的版本号
-	if cefModule == "" {
+	// 如未指定CEF参数、或参数不正确，选择当前CEF模块最（新）大的版本号
+	if cefModuleName == "" {
 		var cefDefault string
 		var number int
 		for module, _ := range installVersion {
 			if strings.Index(module, "cef") == 0 {
 				if s := strings.Split(module, "-"); len(s) == 2 {
+					// module = "cef-xxx"
 					n, _ := strconv.Atoi(s[1])
 					if n >= number {
 						number = n
 						cefDefault = module
 					}
 				} else {
+					// module = "cef"
 					cefDefault = module
 					break
 				}
 			}
 		}
-		cefModule = cefDefault
+		cefModuleName = cefDefault
 	}
-	// liblcl
-	if energyModule == "" {
-		energyModule = "liblcl"
+	// liblcl, 在未指定flash版本时，它是空 ""
+	if energyModuleName == "" {
+		energyModuleName = "liblcl"
 	}
-	cefVersion = ToRNilString(installVersion[cefModule], "")
-	energyVersion = ToRNilString(installVersion[energyModule], "")
+	// 根据模块名拿到版本号
+	cefVersion = ToRNilString(installVersion[cefModuleName], "")
+	energyVersion = ToRNilString(installVersion[energyModuleName], "")
+	// 当前安装版本的所有模块
 	var modules map[string]any
 	if m, ok := installVersion["modules"]; ok {
 		modules = m.(map[string]any)
 	}
+	// 根据模块名拿到对应的模块配置
 	fmt.Println("log:", modules)
 	var downloadURL map[string]interface{}
 	if c.Install.Download == "gitee" {
@@ -222,12 +211,6 @@ func runInstall(c *CommandConfig) error {
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", energyVersion)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
 
-	//提取文件配置
-	extractData, err := httpRequestGET(DownloadExtractURL)
-	if err != nil {
-		fmt.Fprint(os.Stderr, err.Error(), "\n")
-		os.Exit(1)
-	}
 	// 获取安装环境配置
 
 	var extractConfig map[string]interface{}
