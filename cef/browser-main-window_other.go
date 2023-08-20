@@ -17,7 +17,7 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
-func (m *lclBrowserWindow) wndProc() {
+func (m *lclBrowserWindow) mainFormNotInTaskBar() {
 
 }
 

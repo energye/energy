@@ -87,7 +87,9 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		m.createAuxTools()
 		m.GetAuxTools().SetDevTools(createDevtoolsWindow(&m.LCLBrowserWindow))
 	}
-	m.wndProc()
+	if !m.WindowProperty().MainFormOnTaskBar {
+		m.mainFormNotInTaskBar()
+	}
 }
 
 // MainWindow 获取主浏窗口

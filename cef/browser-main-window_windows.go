@@ -21,7 +21,7 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
-func (m *lclBrowserWindow) wndProc() {
+func (m *lclBrowserWindow) mainFormNotInTaskBar() {
 	m.TForm.SetOnWndProc(func(msg *types.TMessage) {
 		m.InheritedWndProc(msg)
 		if m.onMainFormWndProc != nil {
