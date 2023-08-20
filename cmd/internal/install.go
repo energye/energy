@@ -332,6 +332,9 @@ func cefOS(module map[string]any) (string, bool) {
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
+// 命名规则 OS+[ARCH]+BIT+[GTK2]
+//  ARCH: 非必需, ARM 时填写, AMD为空
+//  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
 func liblclOS(module map[string]any) (string, bool) {
 	buildSupportOSArch := ToString(module["buildSupportOSArch"])
 	mod := ToString(module["module"])
@@ -346,29 +349,29 @@ func liblclOS(module map[string]any) (string, bool) {
 	}
 	if isWindows {
 		if runtime.GOARCH == "arm64" {
-			return fmt.Sprintf("WindowsARM %d bits", strconv.IntSize), isSupport(WindowsARM64)
+			return fmt.Sprintf("WindowsARM%d", strconv.IntSize), isSupport(WindowsARM64)
 		}
 		if strconv.IntSize == 32 {
-			return fmt.Sprintf("Windows %d bits", strconv.IntSize), isSupport(Windows32)
+			return fmt.Sprintf("Windows%d", strconv.IntSize), isSupport(Windows32)
 		}
-		return fmt.Sprintf("Windows %d bits", strconv.IntSize), isSupport(Windows64)
+		return fmt.Sprintf("Windows%d", strconv.IntSize), isSupport(Windows64)
 	} else if isLinux {
 		if runtime.GOARCH == "arm64" {
 			if mod == Cef106 {
-				return "LinuxARM GTK2 x86 64 bits", isSupport(LinuxARM64GTK2)
+				return "LinuxARM64GTK2", isSupport(LinuxARM64GTK2)
 			}
-			return "LinuxARM x86 64 bits", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
+			return "LinuxARM64", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
 		} else if runtime.GOARCH == "amd64" {
 			if mod == Cef106 {
-				return "Linux GTK2 x86 64 bits", isSupport(LinuxARM64GTK2)
+				return "Linux64GTK2", isSupport(LinuxARM64GTK2)
 			}
-			return "Linux x86 64 bits", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
+			return "Linux64", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
 		}
 	} else if isDarwin {
 		if runtime.GOARCH == "arm64" {
-			return "MacOSXARM x86 64 bits", isSupport(MacOSARM64)
+			return "MacOSXARM64", isSupport(MacOSARM64)
 		} else if runtime.GOARCH == "amd64" {
-			return "MacOSX x86 64 bits", isSupport(MacOS64)
+			return "MacOSX64", isSupport(MacOS64)
 		}
 	}
 	//not support
