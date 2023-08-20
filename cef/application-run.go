@@ -84,7 +84,12 @@ func Run(app *TCEFApplication) {
 					BrowserWindow.mainBrowserWindow = new(lclBrowserWindow)
 				}
 				// LCL窗口
-				lcl.RunApp(&BrowserWindow.mainBrowserWindow)
+				//lcl.RunApp(&BrowserWindow.mainBrowserWindow)
+
+				lcl.Application.Initialize()
+				lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
+				lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow)
+				lcl.Application.Run()
 				//lclwidget.CustomWidgetSetFinalization()
 			}
 		}

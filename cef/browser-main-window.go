@@ -16,7 +16,9 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 // 浏览器包装结构体
@@ -54,6 +56,7 @@ type BrowserEvent struct {
 
 // LCLBrowserWindow
 type lclBrowserWindow struct {
+	onMainFormWndProc lcl.TWndProcEvent
 	LCLBrowserWindow
 }
 
@@ -85,6 +88,21 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	if m.Chromium().Config().EnableDevTools() {
 		m.createAuxTools()
 		m.GetAuxTools().SetDevTools(createDevtoolsWindow(&m.LCLBrowserWindow))
+	}
+	m.TForm.SetOnWndProc(m.onFormWndProc)
+}
+
+func (m *lclBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
+	m.onMainFormWndProc = fn
+}
+
+func (m *lclBrowserWindow) onFormWndProc(msg *types.TMessage) {
+	m.InheritedWndProc(msg)
+	if m.onMainFormWndProc != nil {
+		m.onMainFormWndProc(msg)
+	}
+	if !m.WindowProperty().MainFormOnTaskBar && msg.Msg == messages.WM_SHOWWINDOW {
+		m.Hide()
 	}
 }
 
