@@ -11,3 +11,20 @@
 // 构建编译 energy 项目
 
 package internal
+
+var CmdBuild = &Command{
+	UsageLine: "build",
+	Short:     "build energy project",
+	Long: `
+	Building energy project
+	.  Execute default command
+`,
+}
+
+func init() {
+	CmdBuild.Run = runBuild
+}
+
+func runBuild(c *CommandConfig) error {
+	return nil
+}

@@ -19,6 +19,12 @@ type CommandConfig struct {
 	Setenv  Setenv  `command:"setenv"`
 	Env     Env     `command:"env"`
 	Create  Create  `command:"create"`
+	Build   Build   `command:"build"`
+}
+
+type Command struct {
+	Run                    func(c *CommandConfig) error
+	UsageLine, Short, Long string
 }
 
 type Install struct {
@@ -46,10 +52,8 @@ type Version struct {
 	All bool `short:"a" long:"all" description:"show all"`
 }
 
-type Command struct {
-	Run                    func(c *CommandConfig) error
-	UsageLine, Short, Long string
+type Create struct {
 }
 
-type Create struct {
+type Build struct {
 }
