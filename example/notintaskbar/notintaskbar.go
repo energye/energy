@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/golcl/lcl"
 )
 
 func main() {
@@ -15,12 +14,6 @@ func main() {
 	// 不显示在任务栏后 窗口状态失效, 所以这里设置不能最大化
 	cef.BrowserWindow.Config.EnableResize = false
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
-	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		bw := window.AsLCLBrowserWindow().BrowserWindow()
-		bw.Constraints().SetOnChange(func(sender lcl.IObject) {
-			println("window change", bw.WindowState())
-		})
-	})
 	// 运行应用
 	cef.Run(cefApp)
 }
