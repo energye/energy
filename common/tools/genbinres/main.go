@@ -87,19 +87,19 @@ func main() {
 		genresFile(filepath.Join(liblclPath, "win32", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
 		// windows 64
 		genresFile(filepath.Join(liblclPath, "win64", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
-		// windows 64
+		// windows arm 64
 		//genresFile(filepath.Join(liblclPath, "winarm64", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_arm64.go"))
 		// macos cocoa
 		genresFile(filepath.Join(liblclPath, "macos64-cocoa", "liblcl.dylib"), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
-		// macos cocoa
+		// macos arm cocoa
 		//genresFile(filepath.Join(liblclPath, "macosarm64-cocoa", "liblcl.dylib"), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_arm64.go"))
 		// linux 64 gtk3
 		genresFile(filepath.Join(liblclPath, "linux64-gtk3", "liblcl.so"), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
 		// linux 64 gtk2
 		genresFile(filepath.Join(liblclPath, "linux64-gtk2", "liblcl.so"), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
-		// linux 64 gtk3
+		// linux arm 64 gtk3
 		//genresFile(filepath.Join(liblclPath, "linuxarm64-gtk3", "liblcl.so"), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_arm64.go"))
-		// linux 64 gtk2
+		// linux arm 64 gtk2
 		//genresFile(filepath.Join(liblclPath, "linuxarm64-gtk2", "liblcl.so"), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_arm64.go"))
 	}
 }
