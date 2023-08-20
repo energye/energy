@@ -23,7 +23,7 @@ const (
 )
 const (
 	cefKey         = "cef"
-	energyKey      = "energy"
+	liblclKey      = "liblcl"
 	frameworkCache = "EnergyFrameworkDownloadCache"
 	EnergyHomeKey  = "ENERGY_HOME"
 )
@@ -33,3 +33,43 @@ const (
 	isLinux   = runtime.GOOS == "linux"   //support
 	isDarwin  = runtime.GOOS == "darwin"  //support
 )
+
+const (
+	CefEmpty = ""
+	CefWin7  = "windows7" // CEF 109.1.18
+	Cef109   = "cef-109"  // CEF 109.1.18
+	CefGtk2  = "gtk2"     // CEF 106.1.1
+	Cef106   = "cef-106"  // CEF 106.1.1
+	CefFlash = "flash"    // CEF 87.1.14
+	Cef87    = "cef-87"   // CEF 87.1.14
+)
+
+const (
+	Windows64      = "Windows64"
+	Windows32      = "Windows32"
+	WindowsARM64   = "WindowsARM64"
+	MacOS64        = "MacOS64"
+	MacOSARM64     = "MacOSARM64"
+	Linux64        = "Linux64"
+	Linux64GTK2    = "Linux64GTK2"
+	Linux64GTK3    = "Linux64GTK3"
+	LinuxARM64     = "LinuxARM64"
+	LinuxARM64GTK2 = "LinuxARM64GTK2"
+	LinuxARM64GTK3 = "LinuxARM64GTK3"
+)
+
+var SupportOSArchList = []string{
+	Windows64,
+	Windows32,
+	WindowsARM64,
+	MacOS64,
+	MacOSARM64,
+	Linux64,
+	Linux64GTK2,
+	Linux64GTK3,
+	LinuxARM64,
+	LinuxARM64GTK2,
+	LinuxARM64GTK3,
+}
+
+const ()

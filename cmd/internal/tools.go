@@ -11,6 +11,7 @@
 package internal
 
 import (
+	"github.com/energye/energy/v2/common"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -21,6 +22,10 @@ func ToString(v interface{}) string {
 		return ""
 	}
 	return v.(string)
+}
+
+func ToInt(v interface{}) int {
+	return common.ValueToInt(v)
 }
 
 func ToRNilString(v interface{}, new string) string {

@@ -69,12 +69,6 @@ const (
 	GTK3 = iota + 1
 	GTK2
 )
-const (
-	CefEmpty = ""
-	CefWin7  = "windows7"
-	CefGtk2  = "gtk2"
-	CefFlash = "flash"
-)
 
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 // 运行安装
@@ -85,9 +79,23 @@ func runInstall(c *CommandConfig) error {
 		fmt.Fprint(os.Stderr, err.Error(), "\n")
 		os.Exit(1)
 	}
+	var extractConfig map[string]any
+	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
+	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
+		fmt.Fprint(os.Stderr, err.Error(), "\n")
+		os.Exit(1)
+	}
+	extractOSConfig := extractConfig[runtime.GOOS].(map[string]any)
+
 	// 获取安装版本配置
 	downloadJSON, err := httpRequestGET(DownloadVersionURL)
 	if err != nil {
+		fmt.Fprint(os.Stderr, err.Error()+"\n")
+		os.Exit(1)
+	}
+	var edv map[string]any
+	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
+	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
@@ -95,10 +103,10 @@ func runInstall(c *CommandConfig) error {
 	// -c cef args value
 	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
-	//if cef != CefEmpty && cef != CefWin7 && cef != CefGtk2 && cef != CefFlash {
-	//	fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
-	//	os.Exit(1)
-	//}
+	if cef != CefEmpty && cef != CefWin7 && cef != Cef109 && cef != CefGtk2 && cef != Cef106 && cef != CefFlash && cef != Cef87 {
+		fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
+		os.Exit(1)
+	}
 
 	if c.Install.Path == "" {
 		// current dir
@@ -115,26 +123,20 @@ func runInstall(c *CommandConfig) error {
 	os.MkdirAll(installPathName, fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, frameworkCache), fs.ModePerm)
 	println("Start downloading CEF and Energy dependency")
-	var edv map[string]interface{}
-	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
-	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
-		fmt.Fprint(os.Stderr, err.Error()+"\n")
-		os.Exit(1)
-	}
 	// 所有版本列表
-	var versionList = edv["versionList"].(map[string]interface{})
+	var versionList = edv["versionList"].(map[string]any)
 
 	// 当前安装版本
-	var installVersion map[string]interface{}
+	var installVersion map[string]any
 	if c.Install.Version == "latest" {
 		// 默认最新版本
 		if v, ok := versionList[edv["latest"].(string)]; ok {
-			installVersion = v.(map[string]interface{})
+			installVersion = v.(map[string]any)
 		}
 	} else {
 		// 自己选择版本
 		if v, ok := versionList[c.Install.Version]; ok {
-			installVersion = v.(map[string]interface{})
+			installVersion = v.(map[string]any)
 		}
 	}
 	println("Check version")
@@ -144,8 +146,7 @@ func runInstall(c *CommandConfig) error {
 	}
 	// 当前版本 cef 和 liblcl 版本选择
 	var (
-		cefVersion, energyVersion       string
-		cefModuleName, energyModuleName string
+		cefModuleName, liblclModuleName string
 	)
 	// 使用提供的特定版本号
 	if cef == CefGtk2 {
@@ -155,7 +156,7 @@ func runInstall(c *CommandConfig) error {
 	} else if cef == CefFlash {
 		// cef 87 要和 liblcl 87 配对
 		cefModuleName = "cef-87"       // CEF 87.1.14
-		energyModuleName = "liblcl-87" // liblcl 87
+		liblclModuleName = "liblcl-87" // liblcl 87
 	}
 	// 如未指定CEF参数、或参数不正确，选择当前CEF模块最（新）大的版本号
 	if cefModuleName == "" {
@@ -180,50 +181,64 @@ func runInstall(c *CommandConfig) error {
 		cefModuleName = cefDefault
 	}
 	// liblcl, 在未指定flash版本时，它是空 ""
-	if energyModuleName == "" {
-		energyModuleName = "liblcl"
+	if liblclModuleName == "" {
+		liblclModuleName = "liblcl"
 	}
-	// 根据模块名拿到版本号
-	cefVersion = ToRNilString(installVersion[cefModuleName], "")
-	energyVersion = ToRNilString(installVersion[energyModuleName], "")
 	// 当前安装版本的所有模块
 	var modules map[string]any
 	if m, ok := installVersion["modules"]; ok {
 		modules = m.(map[string]any)
 	}
 	// 根据模块名拿到对应的模块配置
-	fmt.Println("log:", modules)
-	var downloadURL map[string]interface{}
-	if c.Install.Download == "gitee" {
-		downloadURL = edv["gitee"].(map[string]interface{})
-	} else if c.Install.Download == "github" {
-		downloadURL = edv["github"].(map[string]interface{})
-	} else {
-		println("Invalid download source, only support github or gitee:", c.Install.Download)
+	var (
+		cefModule, liblclModule map[string]any
+	)
+	if module, ok := modules[cefModuleName]; ok {
+		cefModule = module.(map[string]any)
+	}
+	if module, ok := modules[liblclModuleName]; ok {
+		liblclModule = module.(map[string]any)
+	}
+	if cefModule == nil {
+		println("error: cef module", cefModuleName, "is not configured in the current version")
 		os.Exit(1)
 	}
-	libCEFOS, isSupport := cefOS()
-	libEnergyOS, isSupport := energyOS(0)
-	var downloadCefURL = downloadURL["cefURL"].(string)
-	var downloadEnergyURL = downloadURL["energyURL"].(string)
+	if liblclModule == nil {
+		println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+	}
+	var replaceSource = func(url, source string, sourceSelect int) string {
+		s := strings.Split(source, ",")
+		if len(s) > sourceSelect {
+			return strings.ReplaceAll(url, "{source}", s[sourceSelect])
+		}
+		return url
+	}
+	// 下载集合
+	var downloads = make(map[string]*downloadInfo)
+	// 根据模块名拿到版本号
+	cefVersion := ToRNilString(installVersion[cefModuleName], "")
+	// 当前模块版本支持系统，如果支持返回下载地址
+	libCEFOS, isSupport := cefOS(cefModule)
+	downloadCefURL := ToString(cefModule["downloadUrl"])
+	downloadCefURL = replaceSource(downloadCefURL, ToString(cefModule["downloadSource"]), ToInt(cefModule["downloadSourceSelect"]))
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", energyVersion)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
+	downloads[liblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
+
+	liblclVersion := ToRNilString(installVersion[liblclModuleName], "")
+	if liblclModule != nil {
+		libEnergyOS, isSupport := liblclOS(liblclModule)
+		downloadEnergyURL := ToString(liblclModule["downloadUrl"])
+		downloadEnergyURL = replaceSource(downloadEnergyURL, ToString(liblclModule["downloadSource"]), ToInt(liblclModule["downloadSourceSelect"]))
+		module := ToString(liblclModule["module"])
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", liblclVersion)
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", module)
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
+		downloads[liblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
+	}
 
 	// 获取安装环境配置
 
-	var extractConfig map[string]interface{}
-	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
-	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
-		fmt.Fprint(os.Stderr, err.Error(), "\n")
-		os.Exit(1)
-	}
-	extractOSConfig := extractConfig[runtime.GOOS].(map[string]interface{})
-
-	var downloads = make(map[string]*downloadInfo)
-	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
-	downloads[energyKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
 	for key, dl := range downloads {
 		fmt.Printf("Download %s: %s\n", key, dl.url)
 		if !dl.isSupport {
@@ -259,7 +274,7 @@ func runInstall(c *CommandConfig) error {
 				bar.PrintEnd()
 				ExtractFiles(key, tarName, di, extractOSConfig)
 				removeFileList = append(removeFileList, tarName)
-			} else if key == energyKey {
+			} else if key == liblclKey {
 				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 			}
 			println("Unpack file", key, "success\n")
@@ -270,62 +285,110 @@ func runInstall(c *CommandConfig) error {
 		os.Remove(rmFile)
 	}
 	setEnergyHomeEnv(EnergyHomeKey, installPathName)
-	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", energyVersion)
+	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", liblclVersion)
 	return nil
 }
 
-func cefOS() (string, bool) {
+func cefOS(module map[string]any) (string, bool) {
+	buildSupportOSArch := ToString(module["buildSupportOSArch"])
+	mod := ToString(module["module"])
+	archs := strings.Split(buildSupportOSArch, ",")
+	var isSupport = func(goarch string) bool {
+		for _, v := range archs {
+			if goarch == v {
+				return true
+			}
+		}
+		return false
+	}
 	if isWindows { // windows arm for 64 bit, windows for 32/64 bit
 		if runtime.GOARCH == "arm64" {
-			return "windowsarm64", true
+			return "windowsarm64", isSupport(WindowsARM64)
 		}
-		return fmt.Sprintf("windows%d", strconv.IntSize), true
+		if strconv.IntSize == 32 {
+			return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(Windows32)
+		}
+		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(Windows64)
 	} else if isLinux { //linux for 64 bit
 		if runtime.GOARCH == "arm64" {
-			return "linuxarm64", true
+			if mod == Cef106 {
+				return "linuxarm64", isSupport(LinuxARM64GTK2)
+			}
+			return "linuxarm64", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
 		} else if runtime.GOARCH == "amd64" {
-			return "linux64", true
+			if mod == Cef106 {
+				return "linuxarm64", isSupport(Linux64GTK2)
+			}
+			return "linux64", isSupport(Linux64) || isSupport(Linux64GTK3)
 		}
 	} else if isDarwin { // macosx for 64 bit
 		if runtime.GOARCH == "arm64" {
-			return "macosarm64", true
+			return "macosarm64", isSupport(MacOSARM64)
 		} else if runtime.GOARCH == "amd64" {
-			return "macosx64", true
+			return "macosx64", isSupport(MacOS64)
 		}
 	}
 	//not support
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
-func energyOS(gtk int) (string, bool) {
-	if isWindows {
-		return fmt.Sprintf("Windows %d bits", strconv.IntSize), true
-	} else if isLinux {
-		if gtk == GTK3 {
-			return "Linux x86 64 bits", true
+func liblclOS(module map[string]any) (string, bool) {
+	buildSupportOSArch := ToString(module["buildSupportOSArch"])
+	mod := ToString(module["module"])
+	archs := strings.Split(buildSupportOSArch, ",")
+	var isSupport = func(goarch string) bool {
+		for _, v := range archs {
+			if goarch == v {
+				return true
+			}
 		}
-		return "Linux GTK2 x86 64 bits", true
+		return false
+	}
+	if isWindows {
+		if runtime.GOARCH == "arm64" {
+			return fmt.Sprintf("WindowsARM %d bits", strconv.IntSize), isSupport(WindowsARM64)
+		}
+		if strconv.IntSize == 32 {
+			return fmt.Sprintf("Windows %d bits", strconv.IntSize), isSupport(Windows32)
+		}
+		return fmt.Sprintf("Windows %d bits", strconv.IntSize), isSupport(Windows64)
+	} else if isLinux {
+		if runtime.GOARCH == "arm64" {
+			if mod == Cef106 {
+				return "LinuxARM GTK2 x86 64 bits", isSupport(LinuxARM64GTK2)
+			}
+			return "LinuxARM x86 64 bits", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
+		} else if runtime.GOARCH == "amd64" {
+			if mod == Cef106 {
+				return "Linux GTK2 x86 64 bits", isSupport(LinuxARM64GTK2)
+			}
+			return "Linux x86 64 bits", isSupport(LinuxARM64) || isSupport(LinuxARM64GTK3)
+		}
 	} else if isDarwin {
-		return "MacOSX x86 64 bits", true
+		if runtime.GOARCH == "arm64" {
+			return "MacOSXARM x86 64 bits", isSupport(MacOSARM64)
+		} else if runtime.GOARCH == "amd64" {
+			return "MacOSX x86 64 bits", isSupport(MacOS64)
+		}
 	}
 	//not support
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
 // 提取文件
-func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]interface{}) {
+func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]any) {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
-	files := extractOSConfig[keyName].([]interface{})
+	files := extractOSConfig[keyName].([]any)
 	if keyName == cefKey {
 		//tar
 		ExtractUnTar(sourcePath, di.frameworkPath, files...)
-	} else if keyName == energyKey {
+	} else if keyName == liblclKey {
 		//zip
 		ExtractUnZip(sourcePath, di.frameworkPath, files...)
 	}
 }
 
-func filePathInclude(compressPath string, files ...interface{}) (string, bool) {
+func filePathInclude(compressPath string, files ...any) (string, bool) {
 	for _, file := range files {
 		f := file.(string)
 		tIdx := strings.LastIndex(f, "/*")
@@ -360,7 +423,7 @@ func dir(path string) string {
 	return path[:lastSep]
 }
 
-func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
+func ExtractUnTar(filePath, targetPath string, files ...any) {
 	reader, err := os.Open(filePath)
 	if err != nil {
 		fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
@@ -427,7 +490,7 @@ func ExtractUnTar(filePath, targetPath string, files ...interface{}) {
 	}
 }
 
-func ExtractUnZip(filePath, targetPath string, files ...interface{}) {
+func ExtractUnZip(filePath, targetPath string, files ...any) {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		for i := 0; i < len(files); i++ {
