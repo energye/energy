@@ -13,12 +13,17 @@
 package cef
 
 import (
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
 
-func (m *lclBrowserWindow) onFormWndProc(msg *types.TMessage) {
-	m.InheritedWndProc(msg)
-	if m.onMainFormWndProc != nil {
-		m.onMainFormWndProc(msg)
-	}
+func (m *lclBrowserWindow) wndProc() {
+
+}
+
+func (m *lclBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
+	m.TForm.SetOnWndProc(func(msg *types.TMessage) {
+		m.InheritedWndProc(msg)
+		fn(msg)
+	})
 }

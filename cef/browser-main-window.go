@@ -87,11 +87,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		m.createAuxTools()
 		m.GetAuxTools().SetDevTools(createDevtoolsWindow(&m.LCLBrowserWindow))
 	}
-	m.TForm.SetOnWndProc(m.onFormWndProc)
-}
-
-func (m *lclBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
-	m.onMainFormWndProc = fn
+	m.wndProc()
 }
 
 // MainWindow 获取主浏窗口
