@@ -44,7 +44,7 @@ type WindowProperty struct {
 	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
 	EnableWebkitAppRegion     bool                  //
 	EnableWebkitAppRegionDClk bool                  //
-	MainFormOnTaskBar         bool                  // 窗口 主窗口是否显示在任务栏上 default: true. false时可能有额外的问题需要自己控制
+	MainFormOnTaskBar         bool                  // 窗口 仅windows, 主窗口是否显示在任务栏上 default: true. false时可能有额外的问题需要自己控制
 	EnableHideCaption         bool                  // 窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
 	EnableMinimize            bool                  // 窗口 是否启用最小化 default: true
 	EnableMaximize            bool                  // 窗口 是否启用最大化 default: true

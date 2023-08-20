@@ -15,13 +15,8 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	. "github.com/energye/energy/v2/cef/process"
-	"github.com/energye/energy/v2/cef/winapi"
 	. "github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/consts/messages"
-	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/win"
 )
 
 // 浏览器包装结构体
@@ -97,17 +92,6 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 
 func (m *lclBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
 	m.onMainFormWndProc = fn
-}
-
-func (m *lclBrowserWindow) onFormWndProc(msg *types.TMessage) {
-	m.InheritedWndProc(msg)
-	if m.onMainFormWndProc != nil {
-		m.onMainFormWndProc(msg)
-	}
-	if !m.WindowProperty().MainFormOnTaskBar && msg.Msg == messages.WM_SHOWWINDOW {
-		m.Hide()
-		winapi.WinSetWindowLong(t.HWND(lcl.Application.Handle()), win.GWL_EXSTYLE, win.WS_EX_TOOLWINDOW)
-	}
 }
 
 // MainWindow 获取主浏窗口
