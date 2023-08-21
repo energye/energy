@@ -2,15 +2,15 @@ SET CGO_ENABLED=0
 
 set GOARCH=386
 set GOOS=windows
-go build -ldflags "-s -w" -o energy-win-32.exe energy.go
+go build -ldflags "-s -w" -o energy-windows-32.exe energy.go
 
 set GOARCH=amd64
 set GOOS=windows
-go build -ldflags "-s -w" -o energy-win-64.exe energy.go
+go build -ldflags "-s -w" -o energy-windows-64.exe energy.go
 
 set GOARCH=arm64
 set GOOS=windows
-go build -ldflags "-s -w" -o energy-winarm-64.exe energy.go
+go build -ldflags "-s -w" -o energy-windowsarm-64.exe energy.go
 
 set GOARCH=amd64
 set GOOS=darwin

@@ -59,6 +59,7 @@ type downloadInfo struct {
 	url           string
 	success       bool
 	isSupport     bool
+	module        string
 }
 
 func init() {
@@ -225,7 +226,7 @@ func runInstall(c *CommandConfig) error {
 	downloadCefURL = replaceSource(downloadCefURL, ToString(cefModule["downloadSource"]), ToInt(cefModule["downloadSourceSelect"]), "cef")
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
+	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 
 	// liblcl
 	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
@@ -239,14 +240,14 @@ func runInstall(c *CommandConfig) error {
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", liblclVersion)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", module)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-		downloads[liblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL}
+		downloads[liblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 	}
 
 	// 在线下载框架二进制包
 	for key, dl := range downloads {
 		fmt.Printf("Download %s: %s\n", key, dl.url)
 		if !dl.isSupport {
-			println("module is not built or configured 【", dl.fileName, "]")
+			println("Warn module is not built or configured 【", dl.module, "】")
 			continue
 		}
 		bar := progressbar.NewBar(100)
@@ -257,7 +258,8 @@ func runInstall(c *CommandConfig) error {
 		})
 		bar.PrintEnd("Download [" + dl.fileName + "] success")
 		if err != nil {
-			println("Download [", dl.fileName, "] error", err)
+			println("Download [", dl.fileName, "] error:", err.Error())
+			os.Exit(1)
 		}
 		dl.success = err == nil
 	}
@@ -266,7 +268,7 @@ func runInstall(c *CommandConfig) error {
 	var removeFileList = make([]string, 0, 0)
 	for key, di := range downloads {
 		if !di.isSupport {
-			println("energy command line does not support the system architecture.")
+			println("Warn module is not built or configured 【", di.module, "】")
 			continue
 		}
 		if di.success {
