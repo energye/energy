@@ -11,30 +11,16 @@
 // Package version Energy framework version config
 package version
 
+import "github.com/energye/liblclbinres"
+
 // Current Branch Version
 var (
-	version         = "2.0.1-beta" // golang energy
-	libVersion      = ""           // pascal lib-lcl
-	libBuildVersion = ""           // pascal lib-lcl build
+	libBuildVersion = "" // pascal lib-lcl build
 )
-
-// Version return energy version
-func Version() string {
-	return version
-}
 
 // LibVersion return lib-lcl version
 func LibVersion() string {
-	return libVersion
-}
-
-// SetLibVersion Set pascal lib-lcl version
-func SetLibVersion(version string) {
-	if version == "" {
-		libVersion = "0.0.0"
-	} else {
-		libVersion = version
-	}
+	return liblclbinres.LibVersion()
 }
 
 // LibBuildVersion return pascal lib build version

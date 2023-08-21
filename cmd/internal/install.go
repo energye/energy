@@ -233,7 +233,7 @@ func runInstall(c *CommandConfig) error {
 	// 最后根据模块名称来确定使用哪个liblcl
 	liblclVersion := ToRNilString(installVersion[liblclModuleName], "")
 	if liblclModule != nil {
-		libEnergyOS, isSupport := liblclOS(cef, liblclVersion, liblclModule)
+		libEnergyOS, isSupport := liblclOS(cef, liblclVersion, ToString(liblclModule["buildSupportOSArch"]))
 		downloadEnergyURL := ToString(liblclModule["downloadUrl"])
 		downloadEnergyURL = replaceSource(downloadEnergyURL, ToString(liblclModule["downloadSource"]), ToInt(liblclModule["downloadSourceSelect"]), "liblcl")
 		module := ToString(liblclModule["module"])
@@ -391,8 +391,7 @@ func liblclName(version, cef string) (string, bool) {
 // 命名规则 OS+[ARCH]+BIT+[GTK2]
 //  ARCH: 非必需, ARM 时填写, AMD为空
 //  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
-func liblclOS(cef, version string, module map[string]any) (string, bool) {
-	buildSupportOSArch := ToString(module["buildSupportOSArch"])
+func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
 	archs := strings.Split(buildSupportOSArch, ",")
 	noSuport := fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH)
 	var isSupport = func(goarch string) bool {
@@ -411,6 +410,11 @@ func liblclOS(cef, version string, module map[string]any) (string, bool) {
 	} else {
 		return name, isSupport(name)
 	}
+}
+
+// LibLCLName
+func LibLCLName(version, buildSupportOSArch string) (string, bool) {
+	return liblclOS("", version, buildSupportOSArch)
 }
 
 // 提取文件

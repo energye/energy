@@ -17,12 +17,14 @@ import (
 	"fmt"
 	"github.com/energye/golcl/energy/homedir"
 	"hash/crc32"
+	"io/fs"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
+
+const liblclVersion = "v2.2.4" // liblcl发布版本
 
 const (
 	liblclbinres = "/src/github.com/energye/liblclbinres"
@@ -54,64 +56,61 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	liblclPath := filepath.Join(dir, golcl)
+	liblclPath := filepath.Join(dir, golcl, "liblcl")
 	fmt.Println("用户目录:", dir)
-	if len(os.Args) > 1 {
-		zipFileName := os.Args[1]
-		fmt.Println("指定压缩文件目录:", zipFileName)
-		if strings.ToLower(path.Ext(zipFileName)) != ".zip" {
-			panic("输入正确的zip包，如：“liblcl-2.2.2.zip”")
-		}
-		zz, err := zip.OpenReader(zipFileName)
+	finfo, err := ioutil.ReadDir(liblclPath)
+	if err != nil {
+		panic(err)
+	}
+
+	for _, info := range finfo {
+		zipPath := filepath.Join(liblclPath, info.Name())
+		zz, err := zip.OpenReader(zipPath)
 		if err != nil {
 			panic(err)
 		}
 		defer zz.Close()
-		for _, ff := range zz.File {
-			//fmt.Println(ff.Name)
-			switch ff.Name {
-			case "win32/liblcl.dll":
-				genresByte(readZipData(ff), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
-			case "win64/liblcl.dll":
-				genresByte(readZipData(ff), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
-			case "macos64-cocoa/liblcl.dylib":
-				genresByte(readZipData(ff), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
-			case "linux64-gtk3/liblcl.so":
-				genresByte(readZipData(ff), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
-			case "linux64-gtk2/liblcl.so":
-				genresByte(readZipData(ff), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
-			}
+		var (
+			file fs.File
+		)
+		name := strings.ToLower(info.Name())
+		if strings.Contains(name, "windows") {
+			file, err = zz.Open("liblcl.dll")
+		} else if strings.Contains(name, "linux") {
+			file, err = zz.Open("liblcl.so")
+		} else if strings.Contains(name, "macos") {
+			file, err = zz.Open("liblcl.dylib")
 		}
-	} else {
-		// windows 32
-		genresFile(filepath.Join(liblclPath, "win32", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
-		// windows 64
-		genresFile(filepath.Join(liblclPath, "win64", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
-		// windows arm 64
-		//genresFile(filepath.Join(liblclPath, "winarm64", "liblcl.dll"), "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_arm64.go"))
-		// macos cocoa
-		genresFile(filepath.Join(liblclPath, "macos64-cocoa", "liblcl.dylib"), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
-		// macos arm cocoa
-		//genresFile(filepath.Join(liblclPath, "macosarm64-cocoa", "liblcl.dylib"), "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_arm64.go"))
-		// linux 64 gtk3
-		genresFile(filepath.Join(liblclPath, "linux64-gtk3", "liblcl.so"), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
-		// linux 64 gtk2
-		genresFile(filepath.Join(liblclPath, "linux64-gtk2", "liblcl.so"), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
-		// linux arm 64 gtk3
-		//genresFile(filepath.Join(liblclPath, "linuxarm64-gtk3", "liblcl.so"), "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_arm64.go"))
-		// linux arm 64 gtk2
-		//genresFile(filepath.Join(liblclPath, "linuxarm64-gtk2", "liblcl.so"), "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_arm64.go"))
-	}
-}
+		if err != nil {
+			panic(err)
+		}
+		defer file.Close()
+		data, err := ioutil.ReadAll(file)
+		if err != nil {
+			panic(err)
+		}
 
-// 生成字节的单元
-func genresFile(fileName, tags, newFileName string) {
-	bs, err := ioutil.ReadFile(fileName)
-	if err == nil {
-		genresByte(bs, tags, newFileName)
-	} else {
-		fmt.Println("生成字节Go文件:", newFileName, "Error:", err)
+		if strings.Contains(name, "windows32.zip") {
+			genresByte(data, "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_386.go"))
+		} else if strings.Contains(name, "windows64.zip") {
+			genresByte(data, "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_amd64.go"))
+		} else if strings.Contains(name, "windowsarm64.zip") {
+			genresByte(data, "windows", filepath.Join(libLCLBinResDir, "liblcl_windows_arm64.go"))
+		} else if strings.Contains(name, "linux64.zip") {
+			genresByte(data, "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_amd64.go"))
+		} else if strings.Contains(name, "linux64gtk2.zip") {
+			genresByte(data, "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_amd64.go"))
+		} else if strings.Contains(name, "linuxarm64.zip") {
+			genresByte(data, "linux && gtk3", filepath.Join(libLCLBinResDir, "liblcl_gtk3_linux_arm64.go"))
+		} else if strings.Contains(name, "linuxarm64gtk2.zip") {
+			genresByte(data, "linux && gtk2", filepath.Join(libLCLBinResDir, "liblcl_gtk2_linux_arm64.go"))
+		} else if strings.Contains(name, "macosarm64.zip") {
+			genresByte(data, "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_arm64.go"))
+		} else if strings.Contains(name, "macosx64.zip") {
+			genresByte(data, "darwin", filepath.Join(libLCLBinResDir, "liblcl_darwin_amd64.go"))
+		}
 	}
+	genresLiblclVersion(libLCLBinResDir, liblclVersion)
 }
 
 func fileExists(path string) bool {
@@ -123,18 +122,6 @@ func fileExists(path string) bool {
 		return false
 	}
 	return false
-}
-
-func readZipData(ff *zip.File) []byte {
-	if rr, err := ff.Open(); err == nil {
-		defer rr.Close()
-		bs, err := ioutil.ReadAll(rr)
-		if err != nil {
-			return nil
-		}
-		return bs
-	}
-	return nil
 }
 
 //  zlib压缩
@@ -161,9 +148,7 @@ func genresByte(input []byte, tags, newFileName string) {
 		fmt.Println("000000")
 		return
 	}
-
 	crc32Val := crc32.ChecksumIEEE(input)
-
 	//压缩
 	bs, err := zlibCompress(input)
 	if err != nil {
@@ -183,4 +168,17 @@ func genresByte(input []byte, tags, newFileName string) {
 	}
 	code.WriteString("\")\r\n")
 	ioutil.WriteFile(newFileName, code.Bytes(), 0666)
+}
+
+func genresLiblclVersion(libLCLBinResDir, version string) {
+	code := bytes.NewBuffer(nil)
+	code.WriteString("package liblclbinres")
+	code.WriteString("\r\n\r\n")
+	code.WriteString(`const version = "` + version + `"`)
+	code.WriteString("\r\n\r\n")
+	code.WriteString("func LibVersion() string {")
+	code.WriteString("\n\t")
+	code.WriteString("return version")
+	code.WriteString("\n}")
+	ioutil.WriteFile(filepath.Join(libLCLBinResDir, "liblcl.go"), code.Bytes(), 0666)
 }

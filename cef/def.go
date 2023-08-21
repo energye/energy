@@ -23,11 +23,6 @@ import (
 //	GlobalInit
 func defInit() {
 	{
-		// Set pascal lib-lcl version
-		r1, _, _ := imports.Proc(def.LibVersion).Call()
-		version.SetLibVersion(api.GoStr(r1))
-	}
-	{
 		// Set pascal lib-lcl build version
 		r1, _, _ := imports.Proc(def.LibBuildVersion).Call()
 		version.SetLibBuildVersion(api.GoStr(r1))

@@ -1062,11 +1062,6 @@ func (m *TCEFApplication) LibCefVersion() string {
 	return api.GoStr(r1)
 }
 
-// Version 返回 Energy 版本
-func (m *TCEFApplication) Version() string {
-	return version.Version()
-}
-
 // LibVersion 返回 lib-lcl 版本
 func (m *TCEFApplication) LibVersion() string {
 	return version.LibVersion()
