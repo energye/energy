@@ -48,7 +48,7 @@ const (
 	Windows64      = "Windows64"
 	Windows32      = "Windows32"
 	WindowsARM64   = "WindowsARM64"
-	MacOS64        = "MacOS64"
+	MacOSX64       = "MacOSX64"
 	MacOSARM64     = "MacOSARM64"
 	Linux64        = "Linux64"
 	Linux64GTK2    = "Linux64GTK2"
@@ -57,19 +57,3 @@ const (
 	LinuxARM64GTK2 = "LinuxARM64GTK2"
 	LinuxARM64GTK3 = "LinuxARM64GTK3"
 )
-
-var SupportOSArchList = []string{
-	Windows64,
-	Windows32,
-	WindowsARM64,
-	MacOS64,
-	MacOSARM64,
-	Linux64,
-	Linux64GTK2,
-	Linux64GTK3,
-	LinuxARM64,
-	LinuxARM64GTK2,
-	LinuxARM64GTK3,
-}
-
-const ()

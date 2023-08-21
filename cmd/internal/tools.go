@@ -15,6 +15,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 )
 
 func ToString(v interface{}) string {
@@ -61,4 +63,34 @@ func httpRequestGET(url string) ([]byte, error) {
 		return nil, err
 	}
 	return ret, nil
+}
+
+// Compare compare2 < compare1 = true
+func Compare(compare1, compare2 string) bool {
+	if compare1[0] == 'v' {
+		compare1 = compare1[1:]
+	}
+	if compare2[0] == 'v' {
+		compare2 = compare2[1:]
+	}
+	compare1 = strings.Split(compare1, "-")[0]
+	compare2 = strings.Split(compare2, "-")[0]
+	cv := strings.Split(compare1, ".")
+	ev := strings.Split(compare2, ".")
+	c0, _ := strconv.Atoi(cv[0])
+	c1, _ := strconv.Atoi(cv[1])
+	c2, _ := strconv.Atoi(cv[2])
+	e0, _ := strconv.Atoi(ev[0])
+	e1, _ := strconv.Atoi(ev[1])
+	e2, _ := strconv.Atoi(ev[2])
+	if e0 < c0 {
+		return true
+	}
+	if e1 < c1 {
+		return true
+	}
+	if e2 < c2 {
+		return true
+	}
+	return false
 }
