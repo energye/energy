@@ -13,8 +13,7 @@ package internal
 import "runtime"
 
 const (
-	//domain             = "https://energy.yanghy.cn"
-	domain             = "http://localhost:8080"
+	domain             = "https://energy.yanghy.cn"
 	DownloadVersionURL = domain + "/api/cmd/edv"
 	DownloadInstallURL = domain + "/api/cmd/install"
 	DownloadExtractURL = domain + "/api/cmd/extract"
