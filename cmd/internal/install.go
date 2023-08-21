@@ -36,7 +36,7 @@ var CmdInstall = &Command{
 	-p Installation directory Default current directory
 	-v Specifying a version number,Default latest
 	-n Name of the frame after installation
-	-d Download Source, gitee or github, Default gitee
+	-d Download Source, 0:gitee or 1:github, Default empty
 	-c Install system supports CEF version, provide 4 options, default empty
 		default : Automatically select support for the latest version based on the current system.
 		109 : CEF 109.1.18 is the last one to support Windows 7.
@@ -203,9 +203,6 @@ func runInstall(c *CommandConfig) error {
 		println("error: cef module", cefModuleName, "is not configured in the current version")
 		os.Exit(1)
 	}
-	if liblclModule == nil {
-		println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
-	}
 	var replaceSource = func(url, source string, sourceSelect int) string {
 		s := strings.Split(source, ",")
 		if len(s) > sourceSelect {
@@ -264,7 +261,7 @@ func runInstall(c *CommandConfig) error {
 	var removeFileList = make([]string, 0, 0)
 	for key, di := range downloads {
 		if !di.isSupport {
-			println("energy command line does not support the system architecture, continue.")
+			println("energy command line does not support the system architecture.")
 			continue
 		}
 		if di.success {
@@ -290,6 +287,9 @@ func runInstall(c *CommandConfig) error {
 	setEnergyHomeEnv(EnergyHomeKey, installPathName)
 	println()
 	println(CmdInstall.Short, "SUCCESS \nInstalled version:", c.Install.Version, liblclVersion)
+	if liblclModule == nil {
+		println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+	}
 	return nil
 }
 
