@@ -39,9 +39,9 @@ var CmdInstall = &Command{
 	-d Download Source, gitee or github, Default gitee
 	-c Install system supports CEF version, provide 4 options, default empty
 		default : Automatically select support for the latest version based on the current system.
-		windows7: CEF 109.1.18 is the last one to support Windows 7.
-		gtk2    : CEF 106.1.1 is the last default support for GTK2 in Linux.
-		flash   : CEF 87.1.14 is the last one to support Flash.
+		109 : CEF 109.1.18 is the last one to support Windows 7.
+		106 : CEF 106.1.1 is the last default support for GTK2 in Linux.
+		87  : CEF 87.1.14 is the last one to support Flash.
 	.  Execute default command
 
 Automatically configure the CEF and Energy framework.
@@ -103,7 +103,7 @@ func runInstall(c *CommandConfig) error {
 	// -c cef args value
 	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
-	if cef != CefEmpty && cef != CefWin7 && cef != Cef109 && cef != CefGtk2 && cef != Cef106 && cef != CefFlash && cef != Cef87 {
+	if cef != CefEmpty && cef != Cef109 && cef != Cef106 && cef != Cef87 {
 		fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
 		os.Exit(1)
 	}
@@ -149,11 +149,11 @@ func runInstall(c *CommandConfig) error {
 		cefModuleName, liblclModuleName string
 	)
 	// 使用提供的特定版本号
-	if cef == CefGtk2 {
+	if cef == Cef106 {
 		cefModuleName = "cef-106" // CEF 106.1.1
-	} else if cef == CefWin7 {
+	} else if cef == Cef109 {
 		cefModuleName = "cef-109" // CEF 109.1.18
-	} else if cef == CefFlash {
+	} else if cef == Cef87 {
 		// cef 87 要和 liblcl 87 配对
 		cefModuleName = "cef-87"       // CEF 87.1.14
 		liblclModuleName = "liblcl-87" // liblcl 87
@@ -225,9 +225,12 @@ func runInstall(c *CommandConfig) error {
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
 	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
 
+	// liblcl
+	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
+	// 最后根据模块名称来确定使用哪个liblcl
 	liblclVersion := ToRNilString(installVersion[liblclModuleName], "")
 	if liblclModule != nil {
-		libEnergyOS, isSupport := liblclOS(liblclVersion, liblclModule)
+		libEnergyOS, isSupport := liblclOS(cef, liblclVersion, liblclModule)
 		downloadEnergyURL := ToString(liblclModule["downloadUrl"])
 		downloadEnergyURL = replaceSource(downloadEnergyURL, ToString(liblclModule["downloadSource"]), ToInt(liblclModule["downloadSourceSelect"]))
 		module := ToString(liblclModule["module"])
@@ -241,7 +244,7 @@ func runInstall(c *CommandConfig) error {
 	for key, dl := range downloads {
 		fmt.Printf("Download %s: %s\n", key, dl.url)
 		if !dl.isSupport {
-			println("energy command line does not support the system architecture download 【", dl.fileName, "]")
+			println("module is not built or configured 【", dl.fileName, "]")
 			continue
 		}
 		bar := progressbar.NewBar(100)
@@ -350,17 +353,27 @@ var liblclFileNames = map[string]string{
 	"darwin64_old":    "MacOSX x86 64 bits",
 }
 
-func liblclName(version, gtk2 string) (string, bool) {
+func liblclName(version, cef string) (string, bool) {
 	var key string
 	var isOld bool
 	if runtime.GOARCH == "arm64" {
-		key = fmt.Sprintf("%sARM64%s", runtime.GOOS, gtk2)
+		if isLinux && cef == Cef106 { // 只linux区别liblcl gtk2
+			key = "linuxarm64gtk2"
+		} else {
+			key = fmt.Sprintf("%sarm64", runtime.GOOS)
+		}
 	} else if runtime.GOARCH == "amd64" {
-		key = fmt.Sprintf("%s%d%s", runtime.GOOS, strconv.IntSize, gtk2)
+		if isLinux && cef == Cef106 { // 只linux区别liblcl gtk2
+			key = "linux64gtk2"
+		} else {
+			key = fmt.Sprintf("%s%d", runtime.GOOS, strconv.IntSize)
+		}
 	}
-	if key != "" && Compare("2.2.4", version) {
-		key += "_old"
-		isOld = true
+	if Compare("2.2.4", version) {
+		if key != "" {
+			key += "_old"
+			isOld = true
+		}
 	}
 	if key != "" {
 		return liblclFileNames[key], isOld
@@ -371,9 +384,8 @@ func liblclName(version, gtk2 string) (string, bool) {
 // 命名规则 OS+[ARCH]+BIT+[GTK2]
 //  ARCH: 非必需, ARM 时填写, AMD为空
 //  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
-func liblclOS(version string, module map[string]any) (string, bool) {
+func liblclOS(cef, version string, module map[string]any) (string, bool) {
 	buildSupportOSArch := ToString(module["buildSupportOSArch"])
-	mod := ToString(module["module"])
 	archs := strings.Split(buildSupportOSArch, ",")
 	noSuport := fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH)
 	var isSupport = func(goarch string) bool {
@@ -384,23 +396,13 @@ func liblclOS(version string, module map[string]any) (string, bool) {
 		}
 		return false
 	}
-	if isLinux && mod == Cef106 {
-		if name, isOld := liblclName(version, "gtk2"); isOld {
-			if name == "" {
-				return noSuport, false
-			}
-			return name, true
+	if name, isOld := liblclName(version, cef); isOld {
+		if name == "" {
+			return noSuport, false
 		}
-		return noSuport, false
+		return name, true
 	} else {
-		if name, isOld := liblclName(version, ""); isOld {
-			if name == "" {
-				return noSuport, false
-			}
-			return name, true
-		} else {
-			return name, isSupport(name)
-		}
+		return name, isSupport(name)
 	}
 }
 

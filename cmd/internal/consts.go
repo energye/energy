@@ -35,12 +35,9 @@ const (
 
 const (
 	CefEmpty = ""
-	CefWin7  = "windows7" // CEF 109.1.18
-	Cef109   = "cef-109"  // CEF 109.1.18
-	CefGtk2  = "gtk2"     // CEF 106.1.1
-	Cef106   = "cef-106"  // CEF 106.1.1
-	CefFlash = "flash"    // CEF 87.1.14
-	Cef87    = "cef-87"   // CEF 87.1.14
+	Cef109   = "109" // CEF 109.1.18
+	Cef106   = "106" // CEF 106.1.1
+	Cef87    = "87"  // CEF 87.1.14
 )
 
 const (
