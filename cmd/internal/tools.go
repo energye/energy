@@ -11,8 +11,8 @@
 package internal
 
 import (
-	"github.com/energye/energy/v2/common"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -26,8 +26,49 @@ func ToString(v interface{}) string {
 	return v.(string)
 }
 
+func StrToInt64(value string) int64 {
+	v, _ := strconv.ParseInt(value, 10, 64)
+	return v
+}
+func StrToFloat64(value string) float64 {
+	v, _ := strconv.ParseFloat(value, 64)
+	return v
+}
+
+func StrToFloat32(value string) float32 {
+	v, _ := strconv.ParseFloat(value, 32)
+	return float32(v)
+}
+
 func ToInt(v interface{}) int {
-	return common.ValueToInt(v)
+	switch v.(type) {
+	case string:
+		return int(StrToInt64(v.(string)))
+	case float32:
+		return int(math.Round(float64(StrToFloat32(v.(string)))))
+	case float64:
+		return int(math.Round(StrToFloat64(v.(string))))
+	case bool:
+		if v.(bool) {
+			return 1
+		} else {
+			return 0
+		}
+	case int:
+		return v.(int)
+	case int8:
+		return int(v.(int8))
+	case int16:
+		return int(v.(int16))
+	case int32:
+		return int(v.(int32))
+	case int64:
+		return int(v.(int64))
+	case uintptr:
+		return int(v.(uintptr))
+	default:
+		return 0
+	}
 }
 
 func ToRNilString(v interface{}, new string) string {
