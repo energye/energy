@@ -5,10 +5,8 @@ package main
 import (
 	"archive/zip"
 	"embed"
-	"fmt"
 	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/cmd/autoupdate"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/lib-checkupdate/form"
@@ -42,9 +40,6 @@ var (
 	// form
 	updateForm *form.UpdateForm
 	version    = []*dllimports.ImportTable{
-		dllimports.NewEnergyImport("", 0),                                        //空导入
-		dllimports.NewEnergyImport("LibVersion", 0),                              //获取lib库的版本号
-		dllimports.NewEnergyImport("LibBuildVersion", 0),                         //获取lib库的构建工具版本
 		dllimports.NewEnergyImport("Interface_CustomWidgetSetInitialization", 0), //linux lcl widget init
 	}
 )
@@ -90,7 +85,7 @@ func main() {
 	// 初始化golcl
 	inits.Init(nil, &resources)
 	// inits.Init 完成之后，初始化LCL控件
-	imports.Proc(3).Call()
+	imports.Proc(0).Call()
 	// 注入资源
 	i18n.SetLocalFS(&resources, "resources")
 	//i18n.Switch(consts.LANGUAGE_en_US)
@@ -100,17 +95,6 @@ func main() {
 	// 如果 liblcl 有更新该函数将被回调,并创建更新窗口
 	autoupdate.CanUpdateLiblcl = func(model *autoupdate.Model, level int, canUpdate bool) {
 		updateVersion := model.Versions[model.Latest]
-		var energyLiblcl = func() (string, bool) {
-			if common.IsWindows() {
-				return fmt.Sprintf("Windows %d bits", strconv.IntSize), true
-			} else if common.IsLinux() {
-				return "Linux x86 64 bits", true
-			} else if common.IsDarwin() {
-				return "MacOSX x86 64 bits", true
-			}
-			//not support download
-			return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
-		}
 
 		// 这里使用窗口形式展示更新
 		// 运行应用后窗口创建时回调
@@ -219,17 +203,17 @@ func main() {
 				m.UpdateContentMemo.Lines().Add(i18n.Resource("currentVersion") + ": " + model.CurrentVersion)
 				m.UpdateContentMemo.Lines().Add(i18n.Resource("latestVersion") + ": " + model.Latest)
 				m.UpdateContentMemo.SetEnabled(false)
-			} else if canUpdate { // 有更新
+			} else { // 有更新
 				m.UpdateContentMemo.SetScrollBars(types.SsAutoBoth)
 				m.UpdateContentMemo.Lines().Add(i18n.Resource("updateContent") + " " + model.Latest)
-				for i, content := range updateVersion.Content {
-					m.UpdateContentMemo.Lines().Add("  " + strconv.Itoa(i+1) + ". " + content)
-				}
+				m.UpdateContentMemo.Lines().Add(updateVersion.Content)
 				// liblcl 下载版本URL
-				liblclZipName, _ := energyLiblcl()
-				downUrl := strings.Replace(model.Download.Url, "{url}", model.Download.Source[model.Download.SourceSelect], -1) // 使用配置的下载源
-				downUrl = strings.Replace(downUrl, "{version}", updateVersion.EnergyVersion, -1)                                // liblcl 所属的 enregy 版本
-				downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)                                               // 根据系统架构获取对应的文件名
+				liblclZipName, _ := autoupdate.LibLCLName(model.Latest, updateVersion.BuildSupportOSArch)
+				downSource := strings.Split(updateVersion.DownloadSource, ",")
+				downUrl := strings.Replace(updateVersion.DownloadUrl, "{source}", downSource[updateVersion.DownloadSourceSelect], -1) // 使用配置的下载源
+				downUrl = strings.Replace(downUrl, "{version}", updateVersion.Version, -1)                                            // liblcl 所属的 enregy 版本
+				downUrl = strings.Replace(downUrl, "{module}", updateVersion.Module, -1)                                              // 模块名
+				downUrl = strings.Replace(downUrl, "{OSARCH}", liblclZipName, -1)                                                     // 根据系统架构获取对应的文件名
 				m.UpdateContentMemo.Lines().Add("")
 				m.UpdateContentMemo.Lines().Add(i18n.Resource("downloadURL"))
 				m.UpdateContentMemo.Lines().Add(downUrl)
@@ -280,7 +264,7 @@ func main() {
 						updateBtn.SetEnabled(isNotDownload)
 
 						var savePath, _ = filepath.Split(libPath)
-						var fileName, _ = energyLiblcl()
+						var fileName, _ = autoupdate.LibLCLName(model.Latest, updateVersion.BuildSupportOSArch)
 						var saveFilePath = filepath.Join(savePath, fileName) + ".zip" // zip
 						m.UpdateContentMemo.Lines().Add("---------------------------------------------------------------")
 						m.UpdateContentMemo.Lines().Add(i18n.Resource("beginDownload"))
