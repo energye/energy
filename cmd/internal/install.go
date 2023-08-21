@@ -250,9 +250,9 @@ func runInstall(c *CommandConfig) error {
 		err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
 			bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 		})
-		bar.PrintEnd("Download " + dl.fileName + " success")
+		bar.PrintEnd("Download [" + dl.fileName + "] success")
 		if err != nil {
-			println("Download", dl.fileName, "error", err)
+			println("Download [", dl.fileName, "] error", err)
 		}
 		dl.success = err == nil
 	}
@@ -285,7 +285,8 @@ func runInstall(c *CommandConfig) error {
 		os.Remove(rmFile)
 	}
 	setEnergyHomeEnv(EnergyHomeKey, installPathName)
-	println("\n", CmdInstall.Short, "SUCCESS \nVersion:", c.Install.Version, "=>", liblclVersion)
+	println()
+	println(CmdInstall.Short, "SUCCESS \nInstalled version:", c.Install.Version, liblclVersion)
 	return nil
 }
 
@@ -646,6 +647,7 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 		return err
 	}
 	if isFileExist(localPath, fsize) {
+		println("File already exists")
 		return nil
 	}
 	println("Save path: [", localPath, "] file size:", fsize)

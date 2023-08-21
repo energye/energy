@@ -47,10 +47,10 @@ func runSetenv(c *CommandConfig) error {
 }
 
 func setEnergyHomeEnv(key, value string) {
-	println("\nSetting environment Variables to ", value)
+	println("\nSetting environment Variables [ENERGY_HOME] to", value)
 	cmd := command.NewCMD()
 	cmd.MessageCallback = func(s []byte, e error) {
-		fmt.Println("CMD", s, " error", e)
+		fmt.Println("CMD:", s, " error:", e)
 	}
 	defer cmd.Close()
 	if isWindows {
