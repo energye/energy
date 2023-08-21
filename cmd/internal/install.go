@@ -203,8 +203,13 @@ func runInstall(c *CommandConfig) error {
 		println("error: cef module", cefModuleName, "is not configured in the current version")
 		os.Exit(1)
 	}
-	var replaceSource = func(url, source string, sourceSelect int) string {
+	// 下载源选择
+	var replaceSource = func(url, source string, sourceSelect int, module string) string {
 		s := strings.Split(source, ",")
+		// liblcl 如果自己选择下载源
+		if module == "liblcl" && c.Install.Download != "" {
+			sourceSelect = ToInt(c.Install.Download)
+		}
 		if len(s) > sourceSelect {
 			return strings.ReplaceAll(url, "{source}", s[sourceSelect])
 		}
@@ -217,7 +222,7 @@ func runInstall(c *CommandConfig) error {
 	// 当前模块版本支持系统，如果支持返回下载地址
 	libCEFOS, isSupport := cefOS(cefModule)
 	downloadCefURL := ToString(cefModule["downloadUrl"])
-	downloadCefURL = replaceSource(downloadCefURL, ToString(cefModule["downloadSource"]), ToInt(cefModule["downloadSourceSelect"]))
+	downloadCefURL = replaceSource(downloadCefURL, ToString(cefModule["downloadSource"]), ToInt(cefModule["downloadSourceSelect"]), "cef")
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
 	downloads[cefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, frameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL}
@@ -229,7 +234,7 @@ func runInstall(c *CommandConfig) error {
 	if liblclModule != nil {
 		libEnergyOS, isSupport := liblclOS(cef, liblclVersion, liblclModule)
 		downloadEnergyURL := ToString(liblclModule["downloadUrl"])
-		downloadEnergyURL = replaceSource(downloadEnergyURL, ToString(liblclModule["downloadSource"]), ToInt(liblclModule["downloadSourceSelect"]))
+		downloadEnergyURL = replaceSource(downloadEnergyURL, ToString(liblclModule["downloadSource"]), ToInt(liblclModule["downloadSourceSelect"]), "liblcl")
 		module := ToString(liblclModule["module"])
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", liblclVersion)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", module)
