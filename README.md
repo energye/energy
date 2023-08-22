@@ -93,9 +93,10 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 ### Quick Get Start
 
 > Must: You need to install the Go development environment yourself [Golang Install](https://golang.google.cn/dl/)
-> 
-> Use [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) Command line tool automatic installation environment dependency
-> 
+>
+> Use [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) Command line tool automatic
+> installation environment dependency
+>
 > `energy install .`
 >
 > Take example/simple as an example
@@ -216,5 +217,7 @@ Thank you for ordering a Star for the project
 
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=green)](http://www.apache.org/licenses/LICENSE-2.0)
 
-
-
+### Contributors
+<a href="https://github.com/energye/energy/graphs/contributors">
+    <img src="https://opencollective.com/energy/contributors.svg?width=890&button=false" />
+</a>
