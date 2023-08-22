@@ -34,6 +34,7 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 
 ### Characteristic
 
+> - Rich CEF API and LCL system native widgets
 > - development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF
     binary framework that Energy depends on are needed
 > - cross-platform: A set of code can be packaged into Windows, domestic UOS, Deepin, Kylin, MacOS, Linux
@@ -69,7 +70,7 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 >
 > <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
 >
-> `go get github.com/energye/energy/v2`
+> `git clone https://github.com/energye/energy.git`
 >
 > Enter the  [energy](https://github.com/energye/energy) command line directory
 >
@@ -91,8 +92,11 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 
 ### Quick Get Start
 
-> Use [energy](https://github.com/energye/energy) Command line tool automatic installation environment
-> dependency `energy install .`
+> Must: You need to install the Go development environment yourself [Golang Install](https://golang.google.cn/dl/)
+> 
+> Use [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) Command line tool automatic installation environment dependency
+> 
+> `energy install .`
 >
 > Take example/simple as an example
 >
@@ -135,29 +139,6 @@ func main() {
 
 > `go run simple.go energy_env=dev`
 
-### Pack Project [reference](https://energy.yanghy.cn/course/100/636e397ba749ba01d04ff595)
-
-1. Compile: Go program compilation `go build simple.go` If you use resource built-in (HTML, CSS, JavaScript, Image,
-   etc.), the resource will be compiled into the execution file
-2. Copy: copy the execution file to the CEF directory of the ENERGY environment
-3. Packaging: use the installation package tool to make it as an installation package, Or refer to the production of
-   installation package for each system platform
-4. Finally: the compiled program or installation package and CEF directory no longer need to configure the environment,
-   and can be run directly in the CEF root directory
-
-#### Go Compile Command
-
-- `go build -ldflags "-H windowsgui -s -w"`
-
-> `-ldflags`
->
->> `-H windowsgui` optional: windows hide cmd black window
->>
->> `-w` optional: Removing debugging information can reduce the size of the execution file
->>
->> `-s` optional: Removing Symbol table information can reduce the size of the execution file
-
----
 
 ---
 
@@ -169,7 +150,7 @@ func main() {
 
 |           | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
 |-----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10               |
+| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
 | MacOS     | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
 | Linux     | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
 | Linux ARM | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
@@ -184,7 +165,7 @@ func main() {
     </a>
 </p>
 
-Thank please give this project a star
+Thank you for ordering a Star for the project
 
 ---
 

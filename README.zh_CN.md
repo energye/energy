@@ -32,6 +32,7 @@
 
 ### 特性
 
+> - 具有丰富的CEF API 和 LCL 系统原生小部件
 > - 开发环境简单,编译速度快,只需要Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
 > - 语言职责
@@ -58,9 +59,9 @@
 >
 > <p style="color:palevioletred;">如果使用预编译命令行工具以下步骤可跳过</p>
 > 
-> `go get github.com/energye/energy/v2`
+> `git clone https://github.com/energye/energy.git`
 >
-> 进入 [energy](https://github.com/energye/energy) 命令行目录
+> 进入 energy 命令行目录
 > 
 > `cd energy/cmd/energy`
 >
@@ -79,8 +80,11 @@
 * [文档](https://energy.yanghy.cn/document/300/0)
 
 ### 快速入门
-
-> 使用 [energy](https://github.com/energye/energy) 命令行工具自动安装环境依赖 `energy install .`
+> 必须: 你需要自己安装Go开发环境 [Golang安装包](https://golang.google.cn/dl/)
+> 
+> 使用 [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) 命令行工具自动安装开发环境依赖
+>
+> `energy install .`
 >
 > 以example/simple示例为例
 >
@@ -118,24 +122,6 @@ func main() {
 - MacOS
 > `go run simple.go energy_env=dev`
 
-### 项目打包 [参考](https://energy.yanghy.cn/course/100/636e397ba749ba01d04ff595)
-1. 编译：Go 程序编译`go build simple.go` 如果使用资源内置(HTML、CSS、JavaScript、Image等等)会把资源编译到执行文件内
-2. 复制：把执行文件复制到ENERGY环境的CEF目录中即可
-3. 打包：使用制作安装包工具将其制作为安装包, 查阅各系统平台安装包制作
-4. 最后：编译后的程序或安装包和CEF目录不再需要配置环境,在CEF根目录可直接运行
-
-#### Go编译命令
-- `go build -ldflags "-H windowsgui -s -w"`
-> `-ldflags`
-> 
->> `-H windowsgui` 可选: windows 隐藏cmd黑窗口
->> 
->> `-w` 可选: 去除调试信息, 可减小执行文件大小
->> 
->> `-s` 可选: 去除符号表信息, 可减小执行文件大小
-
----
-
 ### 系统支持
 
 ![Windows](https://img.shields.io/badge/windows-supported-success.svg?logo=Windows&logoColor=blue)
@@ -143,12 +129,12 @@ func main() {
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
 
-|             | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
-|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10               |
-| MacOS       | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
-| Linux       | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107                 |
+|           | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
+|-----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
+| MacOS     | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| Linux     | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
+| Linux ARM | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107                 |
 
 ---
 
@@ -161,7 +147,7 @@ func main() {
 </p>
 
 
-感谢给项目点个Star, 或三连
+感谢您给项目点个Star
 
 ---
 
