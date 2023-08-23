@@ -705,11 +705,13 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 	return api.GoBool(r1)
 }
 
+// SetCanNotFree
+//  设置是否允许释放, 可以管理对象的独立释放
+//	v=false 时允许释放
 func (m *ICefV8Value) SetCanNotFree(v bool) {
-	if !m.IsValid() {
-		return
+	if m != nil && m.instance != nil {
+		m.cantNotFree = v
 	}
-	m.cantFree = v
 }
 
 func (m *ICefV8Value) Free() {
@@ -730,7 +732,7 @@ func (m *ICefV8Value) Free() {
 			}
 			m.valueByKeys = nil
 		}
-		if !m.cantFree {
+		if !m.cantNotFree {
 			//var ptr = m.Instance()
 			//imports.Proc(CefV8Value_Free).Call(uintptr(unsafe.Pointer(&ptr)))
 			m.base.Free(m.Instance())

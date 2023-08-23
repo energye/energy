@@ -22,13 +22,19 @@ const (
 	internalProcessFrameId   = "frameId"
 )
 
+var _processObject *ICefV8Value
+
 // makeProcess 进程扩展变量
 func makeProcess(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
+	if _processObject != nil {
+		// 刷新时释放掉
+		_processObject.Free()
+	}
 	// process
-	process := V8ValueRef.NewObject(nil)
-	process.setValueByKey(internalProcessBrowserId, V8ValueRef.NewInt(browser.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	process.setValueByKey(internalProcessFrameId, V8ValueRef.NewString(fmt.Sprintf("%d", frame.Identifier())), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	_processObject = V8ValueRef.NewObject(nil)
+	_processObject.setValueByKey(internalProcessBrowserId, V8ValueRef.NewInt(browser.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	_processObject.setValueByKey(internalProcessFrameId, V8ValueRef.NewString(fmt.Sprintf("%d", frame.Identifier())), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 
 	// process key to v8 global
-	context.Global().setValueByKey(internalProcess, process, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	context.Global().setValueByKey(internalProcess, _processObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 }

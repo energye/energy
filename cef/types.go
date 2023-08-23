@@ -864,13 +864,14 @@ type ICefV8Context struct {
 }
 
 // ICefV8Value
+//  CEF V8 值类型, 对应到 JavaScrip 的类型, 使用该对象时需要合理的管理释放
 type ICefV8Value struct {
 	base         TCefBaseRefCounted
 	instance     unsafe.Pointer
-	valueType    V8ValueType
-	valueByIndex []*ICefV8Value
-	valueByKeys  map[string]*ICefV8Value
-	cantFree     bool
+	valueType    V8ValueType             // 值类型
+	valueByIndex []*ICefV8Value          // 当前对象的所有数组集合
+	valueByKeys  map[string]*ICefV8Value // 当前对象的所有key=value子集合
+	cantNotFree  bool                    // 是否允许释放, false时允许释放
 }
 
 // ICefV8ValueKeys

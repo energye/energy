@@ -35,8 +35,7 @@ func appMainRunCallback() {
 
 // appWebKitInitialized - webkit - 默认实现
 func appWebKitInitialized() {
-	//return
-	dragExtensionHandler() // drag extension handler
+	//dragExtensionHandler() // drag extension handler TODO free
 }
 
 // renderProcessMessageReceived 渲染进程消息 - 默认实现

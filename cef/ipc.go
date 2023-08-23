@@ -74,6 +74,7 @@ type ipcCallback struct {
 	resultType result_type  //返回值类型 0:function 1:variable 默认:0
 	variable   *ICefV8Value //回调函数, 根据 resultType
 	function   *ICefV8Value //回调函数, 根据 resultType
+	name       *ICefV8Value //事件名称
 }
 
 // isIPCInternalKey IPC 内部定义使用 key 不允许使用
@@ -145,7 +146,9 @@ func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 //clear 清空所有回调函数
 func (m *ipcEmitHandler) clear() {
 	for _, v := range m.callbackList {
-		v.free()
+		v.function.SetCanNotFree(false)
+		v.function.Free()
+		v.name.Free()
 	}
 	m.callbackMessageId = 0
 	m.callbackList = make(map[int32]*ipcCallback)
@@ -156,6 +159,12 @@ func (m *ipcOnHandler) addCallback(eventName string, callback *ipcCallback) {
 	//return uintptr(unsafe.Pointer(m.callbackList.PushBack(callback)))
 	m.callbackLock.Lock()
 	defer m.callbackLock.Unlock()
+	if callbk, ok := m.callbackList[eventName]; ok {
+		//如果重复将之前释放掉
+		callbk.function.SetCanNotFree(false)
+		callbk.function.Free()
+		callbk.name.Free()
+	}
 	m.callbackList[eventName] = callback
 }
 
@@ -178,15 +187,9 @@ func (m *ipcOnHandler) getCallback(eventName string) *ipcCallback {
 //clear 清空所有回调函数
 func (m *ipcOnHandler) clear() {
 	for _, v := range m.callbackList {
-		v.free()
+		v.function.SetCanNotFree(false)
+		v.function.Free()
+		v.name.Free()
 	}
 	m.callbackList = make(map[string]*ipcCallback)
-}
-
-//free 清空所有回调函数
-func (m *ipcCallback) free() {
-	if m.function != nil {
-		m.function.Free()
-		m.function = nil
-	}
 }

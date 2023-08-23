@@ -36,9 +36,9 @@ func (m *ipcRenderProcess) clear() {
 		m.ipcObject.Free()
 		m.ipcObject = nil
 	}
-	//if m.onHandler != nil {
-	//	m.onHandler.clear()
-	//}
+	if m.onHandler != nil {
+		m.onHandler.clear()
+	}
 	if m.v8Context != nil {
 		m.v8Context.Free()
 		m.v8Context = nil
@@ -67,22 +67,24 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 		onCallback  *ICefV8Value // 事件回调函数
 	)
 	onName = arguments.Get(0)
-	//事件名 第一个参数必须是字符串
+	//事件名，第一个参数必须是字符串
 	if !onName.IsString() {
 		exception.SetValue("ipc.on event name should be a string")
+		arguments.Free()
 		return
 	}
 	onCallback = arguments.Get(1)
-	//第二个参数必须是函数
+	//回调函数，第二个参数必须是函数
 	if !onCallback.IsFunction() {
 		exception.SetValue("ipc.on event callback should be a function")
+		arguments.Free()
 		return
 	}
 	retVal.SetResult(V8ValueRef.NewBool(true))
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
 	//ipc on
-	m.onHandler.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback)})
+	m.onHandler.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback), name: V8ValueRef.UnWrap(onName)})
 	result = true
 	return
 }
@@ -577,7 +579,8 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 		} else {
 			m.executeCallbackFunction(isReturnArgs, callback, nil)
 		}
-		callback.free()
+		callback.function.Free()
+		callback.name.Free()
 	}
 	return
 }
@@ -685,6 +688,10 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	m.onHandler.handler = V8HandlerRef.New()
 	m.onHandler.handler.Execute(m.jsOnEvent)
 
+	if m.ipcObject != nil {
+		// 刷新时释放掉
+		m.ipcObject.Free()
+	}
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
