@@ -163,8 +163,6 @@ func init() {
 					FsCsb: readDWORDOffset(NtmeFontSignaturePtr.FsCsb, 2),
 				},
 			}
-			//fmt.Println("ELogFontPtr", ELogFont.ElfLogFont)
-			//fmt.Println("Metric", Metric)
 			*resultPtr = fn.(enumFontFamiliesExProc)(ELogFont, Metric, FontType, Data)
 		default:
 			return false
