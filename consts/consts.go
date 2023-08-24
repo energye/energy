@@ -410,27 +410,27 @@ type TCefErrorCode = types.Int32
 type TCefResourceType = types.Int32
 
 const (
-	RT_MAIN_FRAME = TCefResourceType(iota)
-	RT_SUB_FRAME
-	RT_STYLESHEET
-	RT_SCRIPT
-	RT_IMAGE
-	RT_FONT_RESOURCE
-	RT_SUB_RESOURCE
-	RT_OBJECT
-	RT_MEDIA
-	RT_WORKER
-	RT_SHARED_WORKER
-	RT_PREFETCH
-	RT_FAVICON
-	RT_XHR
-	RT_PING
-	RT_SERVICE_WORKER
-	RT_CSP_REPORT
-	RT_PLUGIN_RESOURCE
-	RT_EMPTY_FILLER_TYPE_DO_NOT_USE  // This type doesn't exist in CEF and it's here just to fill this position.
-	RT_NAVIGATION_PRELOAD_MAIN_FRAME // This type must have a value of 19
-	RT_NAVIGATION_PRELOAD_SUB_FRAME
+	RT_MAIN_FRAME                    = TCefResourceType(iota) // Top level page.
+	RT_SUB_FRAME                                              // Frame or iframe.
+	RT_STYLESHEET                                             // CSS stylesheet.
+	RT_SCRIPT                                                 // External script.
+	RT_IMAGE                                                  // Image (jpg/gif/png/etc).
+	RT_FONT_RESOURCE                                          // Font.
+	RT_SUB_RESOURCE                                           // Some other subresource. This is the default type if the actual type is unknown
+	RT_OBJECT                                                 // Object (or embed) tag for a plugin, or a resource that a plugin requested.
+	RT_MEDIA                                                  // Media resource.
+	RT_WORKER                                                 // Main resource of a dedicated worker.
+	RT_SHARED_WORKER                                          // Main resource of a shared worker.
+	RT_PREFETCH                                               // Explicitly requested prefetch.
+	RT_FAVICON                                                // Favicon
+	RT_XHR                                                    // XMLHttpRequest
+	RT_PING                                                   // A request for a "<ping>".
+	RT_SERVICE_WORKER                                         // Main resource of a service worker.
+	RT_CSP_REPORT                                             // A report of Content Security Policy violations.
+	RT_PLUGIN_RESOURCE                                        // A resource that a plugin requested.
+	RT_EMPTY_FILLER_TYPE_DO_NOT_USE                           // This type doesn't exist in CEF and it's here just to fill this position.
+	RT_NAVIGATION_PRELOAD_MAIN_FRAME                          // A main-frame service worker navigation preload request.This type must have a value of 19
+	RT_NAVIGATION_PRELOAD_SUB_FRAME                           // A sub-frame service worker navigation preload request.
 )
 
 // /include/internal/cef_types.h (cef_transition_type_t)

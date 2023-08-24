@@ -12,7 +12,6 @@ package cef
 
 import (
 	"embed"
-	"fmt"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
@@ -28,7 +27,7 @@ const (
 	sff         = "://"
 )
 
-// LocalCustomerScheme 本地资源加载自定义协议
+// LocalCustomerScheme 本地资源加载自定义固定协议
 //  file, fs
 type LocalCustomerScheme string
 
@@ -97,12 +96,14 @@ func (m *LocalLoadResource) SetFS(v *embed.FS) {
 
 // SetEnableCache
 //  设置是否启用本地资源缓存到内存, 默认false: 未启用
+//  开启该配置会占用内存
 func (m *LocalLoadResource) SetEnableCache(v bool) {
 	m.enableCache = v
 }
 
 // SetEnable
 //  设置是否启用本地资源加载, 默认false: 未启用
+//  提示: 启用该功能, 目前无法加载本地媒体, 媒体资源可http方式加载
 func (m *LocalLoadResource) SetEnable(v bool) {
 	m.enable = v
 }
@@ -120,7 +121,7 @@ func (m *LocalLoadResource) SetDomain(domain string) {
 // SetScheme
 //  设置本地资源加载自定义协议
 func (m *LocalLoadResource) SetScheme(scheme LocalCustomerScheme) {
-	if scheme == "" {
+	if scheme == "" || (scheme != LocalCSFS && scheme != LocalCSFile) {
 		m.scheme = LocalCSFS
 		return
 	}
@@ -139,6 +140,7 @@ func (m *LocalLoadResource) getMimeType(extension string) string {
 	}
 }
 
+// return xxx.js = js, xxx.html = html
 func (m *LocalLoadResource) ext(path string) string {
 	for i := len(path) - 1; i >= 0 && !os.IsPathSeparator(path[i]); i-- {
 		if path[i] == '.' {
@@ -148,48 +150,54 @@ func (m *LocalLoadResource) ext(path string) string {
 	return ""
 }
 
+// 使用本地资源加载时,先验证每个请求的合法性
+//  所支持的scheme, domain
+//  URL格式, fs://energy/index.html, 文件路径必须包含扩展名
 func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	rt := request.ResourceType()
+	// 根据资源类型跳过哪些资源不被本地加载
+	// TODO: rt_media 类型应该在此去除
 	switch rt {
-	case consts.RT_XHR:
+	case consts.RT_XHR, consts.RT_MEDIA, consts.RT_PING, consts.RT_CSP_REPORT, consts.RT_PLUGIN_RESOURCE:
 		return nil, false
 	}
 	url := request.URL()
-	logger.Debug("URL:", url)
+	logger.Debug("URL:", url, rt)
 	idx := strings.Index(url, ":")
 	if idx != -1 {
 		scheme := url[:idx]
 		if scheme != string(m.scheme) {
-			logger.Error("Local load resource, scheme invalid should:", LocalCSFS, "or", LocalCSFile, "source url:", url)
+			logger.Error("Local load resource, scheme invalid should:", LocalCSFS, "or", LocalCSFile)
 			return nil, false
 		}
 		idx = strings.Index(url, "://")
 		if idx == -1 {
-			logger.Error("Incorrect protocol domain address should: [fs | file]://energy/index.html", "source url:", url)
+			logger.Error("Incorrect protocol domain address should: [fs | file]://energy/index.html")
 			return nil, false
 		}
 		domainPath := url[idx+3:]
 		idx = strings.Index(domainPath, "/")
 		if idx == -1 {
-			logger.Error("Incorrect protocol domain path should: [fs | file]://energy/index.html", "source url:", url)
+			logger.Error("Incorrect protocol domain path should: [fs | file]://energy/index.html")
 			return nil, false
 		}
 		domain := domainPath[:idx]
 		if domain != m.domain {
-			logger.Error("Incorrect protocol domain should: [fs | file]://energy/index.html", "source url:", url)
+			logger.Error("Incorrect protocol domain should: [fs | file]://energy/index.html")
 			return nil, false
 		}
 		idx = strings.Index(domainPath, "/")
 		if idx == -1 {
-			logger.Error("Incorrect protocol path should: [fs | file]://energy/index.html", "source url:", url)
+			logger.Error("Incorrect protocol path should: [fs | file]://energy/index.html")
 			return nil, false
 		}
 		path := domainPath[idx:]
 		ext := m.ext(path)
 		if ext == "" {
-			logger.Error("Incorrect resources should: file.[ext](MimeType)", "source url:", url)
+			logger.Error("Incorrect resources should: file.[ext](MimeType)")
 			return nil, false
 		}
+		// 如果开启缓存,直接在缓存拿指定地址的source
 		if m.enableCache {
 			if s, ok := m.sourceCache[path]; ok {
 				return s, true
@@ -204,9 +212,12 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	return nil, false
 }
 
+// 读取文件
 func (m *source) readFile() bool {
+	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
 	if localLoadResource.fileRoot != "" {
 		if localLoadResource.scheme == LocalCSFile {
+			// 在本地读取
 			data, err := ioutil.ReadFile(filepath.Join(localLoadResource.fileRoot, m.path))
 			if err == nil {
 				m.bytes = data
@@ -214,6 +225,7 @@ func (m *source) readFile() bool {
 			}
 			logger.Error("ReadFile:", err.Error())
 		} else if localLoadResource.scheme == LocalCSFS {
+			//在fs读取
 			data, err := localLoadResource.fs.ReadFile(localLoadResource.fileRoot + m.path)
 			if err == nil {
 				m.bytes = data
@@ -222,13 +234,17 @@ func (m *source) readFile() bool {
 			logger.Error("ReadFile:", err.Error())
 		}
 	}
+	//失败时,返回404,文件不存在
 	return false
 }
 
+// 打开资源
 func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleRequest, result bool) {
 	m.readPosition = 0
+	// 当前资源的响应设置默认值
 	m.status = 404
 	m.statusText = "Not Found"
+	// 如果开启缓存,直接在缓存取
 	if localLoadResource.enableCache {
 		if m.bytes == nil {
 			if !m.readFile() {
@@ -246,12 +262,12 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 		m.status = 200
 		m.statusText = "OK"
 	}
-	logger.Debug("open success", m.path)
+	callback.Cont()
 	return true, true
 }
 
+// 设置响应信息
 func (m *source) response(response *ICefResponse) (responseLength int64, redirectUrl string) {
-	fmt.Println("response")
 	response.SetStatus(m.status)
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
@@ -259,8 +275,8 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	return
 }
 
+// 读取bytes, 返回到dataOut
 func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
-	fmt.Println("read", dataOut, bytesToRead)
 	if m.bytes != nil && len(m.bytes) > 0 {
 		var i int32 = 0 // 默认 0
 		for i < bytesToRead && m.readPosition < len(m.bytes) {
@@ -268,6 +284,11 @@ func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResource
 			m.readPosition++
 			i++
 		}
+		// 读取到最后不缓存时,清空
+		if i == 0 && !localLoadResource.enableCache {
+			m.bytes = nil
+		}
+		callback.Cont(int64(i))
 		return i, i > 0
 	}
 	return
