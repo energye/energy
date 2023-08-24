@@ -15,9 +15,9 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
+	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"unsafe"
 )
 
@@ -159,55 +159,37 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	case consts.RT_XHR, consts.RT_MEDIA, consts.RT_PING, consts.RT_CSP_REPORT, consts.RT_PLUGIN_RESOURCE:
 		return nil, false
 	}
-	url := request.URL()
-	logger.Debug("URL:", url, rt)
-	idx := strings.Index(url, ":")
-	if idx != -1 {
-		scheme := url[:idx]
-		if scheme != string(m.scheme) {
-			logger.Error("Local load resource, scheme invalid should:", LocalCSFS, "or", LocalCSFile)
-			return nil, false
-		}
-		idx = strings.Index(url, "://")
-		if idx == -1 {
-			logger.Error("Incorrect protocol domain address should: [fs | file]://energy/index.html")
-			return nil, false
-		}
-		domainPath := url[idx+3:]
-		idx = strings.Index(domainPath, "/")
-		if idx == -1 {
-			logger.Error("Incorrect protocol domain path should: [fs | file]://energy/index.html")
-			return nil, false
-		}
-		domain := domainPath[:idx]
-		if domain != m.domain {
-			logger.Error("Incorrect protocol domain should: [fs | file]://energy/index.html")
-			return nil, false
-		}
-		idx = strings.Index(domainPath, "/")
-		if idx == -1 {
-			logger.Error("Incorrect protocol path should: [fs | file]://energy/index.html")
-			return nil, false
-		}
-		path := domainPath[idx:]
-		ext := m.ext(path)
-		if ext == "" {
-			logger.Error("Incorrect resources should: file.[ext](MimeType)")
-			return nil, false
-		}
-		// 如果开启缓存,直接在缓存拿指定地址的source
-		if m.enableCache {
-			if s, ok := m.sourceCache[path]; ok {
-				return s, true
-			} else {
-				s = &source{path: path, fileExt: ext, mimeType: m.getMimeType(ext), resourceType: rt}
-				m.sourceCache[path] = s
-				return s, true
-			}
-		}
-		return &source{path: path, fileExt: ext, mimeType: m.getMimeType(ext), resourceType: rt}, true
+	reqUrl, err := url.Parse(request.URL())
+	logger.Debug("LocalLoadResource URL:", reqUrl.String())
+	if err != nil {
+		logger.Error("LocalLoadResource, scheme invalid should:", LocalCSFS, "or", LocalCSFile)
+		return nil, false
 	}
-	return nil, false
+	if reqUrl.Scheme != string(m.scheme) {
+		logger.Error("LocalLoadResource, scheme invalid should:", LocalCSFS, "or", LocalCSFile, "current:", reqUrl.Scheme)
+		return nil, false
+	}
+	if reqUrl.Host != m.domain {
+		logger.Error("LocalLoadResource, Incorrect protocol domain should: [fs | file]://energy/index.html", "current:", reqUrl.Host)
+		return nil, false
+	}
+	path := reqUrl.Path
+	ext := m.ext(path)
+	if ext == "" {
+		logger.Error("LocalLoadResource Incorrect resources should: file.[ext](MimeType)")
+		return nil, false
+	}
+	// 如果开启缓存,直接在缓存拿指定地址的source
+	if m.enableCache {
+		if s, ok := m.sourceCache[path]; ok {
+			return s, true
+		} else {
+			s = &source{path: path, fileExt: ext, mimeType: m.getMimeType(ext), resourceType: rt}
+			m.sourceCache[path] = s
+			return s, true
+		}
+	}
+	return &source{path: path, fileExt: ext, mimeType: m.getMimeType(ext), resourceType: rt}, true
 }
 
 // 读取文件
