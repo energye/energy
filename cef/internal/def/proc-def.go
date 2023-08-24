@@ -1890,6 +1890,7 @@ func init() {
 		dllimports.NewEnergyImport("CefResponseFilterRef_Create", 0),
 		dllimports.NewEnergyImport("CefResponseFilter_InitFilter", 0),
 		dllimports.NewEnergyImport("CefResponseFilter_Filter", 0),
+		dllimports.NewEnergyImport("CefResponseFilter_UnWrap", 0),
 		// ICefRenderHandler
 		dllimports.NewEnergyImport("CefRenderHandlerRef_Create", 0),
 		dllimports.NewEnergyImport("CefRenderHandler_GetAccessibilityHandler", 0),

@@ -1890,6 +1890,7 @@ const (
 	CefResponseFilterRef_Create
 	CefResponseFilter_InitFilter
 	CefResponseFilter_Filter
+	CefResponseFilter_UnWrap
 	// ICefRenderHandler
 	CefRenderHandlerRef_Create
 	CefRenderHandler_GetAccessibilityHandler

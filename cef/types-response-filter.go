@@ -35,6 +35,15 @@ func (*responseFilter) New() *ICefResponseFilter {
 	return nil
 }
 
+// UnWrap 指针包裹引用
+func (*responseFilter) UnWrap(data *ICefResponseFilter) *ICefResponseFilter {
+	var result uintptr
+	imports.Proc(def.CefResponseFilter_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	data.base.Free(data.Instance())
+	data.instance = unsafe.Pointer(result)
+	return data
+}
+
 // ************************** impl ************************** //
 
 // Instance 实例
