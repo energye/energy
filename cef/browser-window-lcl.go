@@ -919,7 +919,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			m.setDraggableRegions()
 		})
 	}
-	if BrowserWindow.Config.LocalResource.enable {
+	if localLoadResource.enable {
 		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
 			var flag bool
 			if bwEvent.onGetResourceHandler != nil {
