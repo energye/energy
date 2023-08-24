@@ -22,9 +22,7 @@ import (
 )
 
 const (
-	localDomain = "energy" //
-	sf          = ":"
-	sff         = "://"
+	localDomain = "energy" // default energy
 )
 
 // LocalCustomerScheme 本地资源加载自定义固定协议
