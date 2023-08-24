@@ -76,7 +76,7 @@ func (m *ICefResourceRequestHandler) IsOtherEvent() bool {
 	return m.ct == consts.CtOther
 }
 
-func (m *ICefResourceRequestHandler) SetGetCookieAccessFilter(fn getCookieAccessFilter) {
+func (m *ICefResourceRequestHandler) SetGetCookieAccessFilter(fn onGetCookieAccessFilter) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
@@ -90,7 +90,7 @@ func (m *ICefResourceRequestHandler) SetOnBeforeResourceLoad(fn onBeforeResource
 	imports.Proc(def.ResourceRequestHandler_OnBeforeResourceLoad).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefResourceRequestHandler) SetGetResourceHandler(fn getResourceHandler) {
+func (m *ICefResourceRequestHandler) SetGetResourceHandler(fn onGetResourceHandler) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
@@ -111,7 +111,7 @@ func (m *ICefResourceRequestHandler) SetOnResourceResponse(fn onResourceResponse
 	imports.Proc(def.ResourceRequestHandler_OnResourceResponse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefResourceRequestHandler) SetGetResourceResponseFilter(fn getResourceResponseFilter) {
+func (m *ICefResourceRequestHandler) SetGetResourceResponseFilter(fn onGetResourceResponseFilter) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
@@ -134,12 +134,12 @@ func (m *ICefResourceRequestHandler) SetOnProtocolExecution(fn onProtocolExecuti
 
 // ************************** events ************************** //
 
-type getCookieAccessFilter func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (filter *ICefCookieAccessFilter)
+type onGetCookieAccessFilter func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (filter *ICefCookieAccessFilter)
 type onBeforeResourceLoad func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback) consts.TCefReturnValue
-type getResourceHandler func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler)
+type onGetResourceHandler func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler)
 type onResourceRedirect func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) (newUrl string)
 type onResourceResponse func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) bool
-type getResourceResponseFilter func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) (responseFilter *ICefResponseFilter)
+type onGetResourceResponseFilter func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse) (responseFilter *ICefResponseFilter)
 type onResourceLoadComplete func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, status consts.TCefUrlRequestStatus, receivedContentLength int64)
 type onProtocolExecution func(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (allowOsExecution bool)
 
@@ -149,12 +149,12 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case getCookieAccessFilter:
+		case onGetCookieAccessFilter:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			request := &ICefRequest{instance: getPtr(2)}
 			filterPtr := (*uintptr)(getPtr(3))
-			filter := fn.(getCookieAccessFilter)(browse, frame, request)
+			filter := fn.(onGetCookieAccessFilter)(browse, frame, request)
 			if filter != nil && filter.IsValid() {
 				*filterPtr = filter.Instance()
 			}
@@ -166,12 +166,12 @@ func init() {
 			returnValuePtr := (*consts.TCefReturnValue)(getPtr(4))
 			returnValue := fn.(onBeforeResourceLoad)(browse, frame, request, callback)
 			*returnValuePtr = returnValue
-		case getResourceHandler:
+		case onGetResourceHandler:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			request := &ICefRequest{instance: getPtr(2)}
 			resourceHandlerPtr := (*uintptr)(getPtr(3))
-			resourceHandler := fn.(getResourceHandler)(browse, frame, request)
+			resourceHandler := fn.(onGetResourceHandler)(browse, frame, request)
 			if resourceHandler != nil && resourceHandler.IsValid() {
 				*resourceHandlerPtr = resourceHandler.Instance()
 			} else {
@@ -192,13 +192,13 @@ func init() {
 			response := &ICefResponse{instance: getPtr(3)}
 			result := (*bool)(getPtr(4))
 			*result = fn.(onResourceResponse)(browse, frame, request, response)
-		case getResourceResponseFilter:
+		case onGetResourceResponseFilter:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			request := &ICefRequest{instance: getPtr(2)}
 			response := &ICefResponse{instance: getPtr(3)}
 			responseFilterPtr := (*uintptr)(getPtr(4))
-			responseFilter := fn.(getResourceResponseFilter)(browse, frame, request, response)
+			responseFilter := fn.(onGetResourceResponseFilter)(browse, frame, request, response)
 			if responseFilter != nil && responseFilter.IsValid() {
 				*responseFilterPtr = responseFilter.Instance()
 			} else {

@@ -50,6 +50,7 @@ type BrowserEvent struct {
 	onBeforeContextMenu       chromiumEventOnBeforeContextMenuEx       //default can cover
 	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoad        //default
 	onRenderCompMsg           chromiumEventOnCompMsg                   //default windows
+	onGetResourceHandler      chromiumEventOnGetResourceHandlerEx      //default
 }
 
 // LCLBrowserWindow
@@ -284,6 +285,22 @@ func (m *BrowserEvent) SetOnTitleChange(event chromiumEventOnTitleChangeEx) {
 func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
 	if Args.IsMain() {
 		m.onRenderCompMsg = event
+	}
+}
+
+// SetOnGetResourceHandler
+//  获取资源处理器，通过该函数自己处理资源获取
+//  返回 false 并且设置[本地|内置FS]资源加载时开启并继续执行默认实现
+func (m *BrowserEvent) SetOnGetResourceHandler(event chromiumEventOnGetResourceHandlerEx) {
+	if Args.IsMain() {
+		if BrowserWindow.Config.LocalResource.enable {
+			m.onGetResourceHandler = event
+		} else {
+			m.ChromiumEvent().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
+				resourceHandler, _ = event(sender, browser, frame, request)
+				return
+			})
+		}
 	}
 }
 

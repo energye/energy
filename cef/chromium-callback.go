@@ -328,3 +328,17 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, extraInfo *ICefDictionaryValue, noJavascriptAccess *bool, result *bool) {
 
 }
+
+// getResourceHandler
+//  资源处理器默认实现，使用本地资源加载时开启
+func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
+	if localLoadResource.enable {
+		if source, ok := localLoadResource.checkRequest(request); ok {
+			resourceHandler = ResourceHandlerRef.New(browser, frame, string(localLoadResource.scheme), request)
+			resourceHandler.Open(source.open)
+			resourceHandler.GetResponseHeaders(source.response)
+			resourceHandler.Read(source.read)
+		}
+	}
+	return
+}
