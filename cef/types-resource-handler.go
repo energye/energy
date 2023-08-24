@@ -87,7 +87,8 @@ func (m *ICefResourceHandler) Read(fn resourceHandlerRead) {
 }
 
 // ProcessRequest
-// deprecated
+//
+// Deprecated: Use Open instead.
 func (m *ICefResourceHandler) ProcessRequest(fn resourceHandlerProcessRequest) {
 	if !m.IsValid() {
 		return
@@ -96,7 +97,8 @@ func (m *ICefResourceHandler) ProcessRequest(fn resourceHandlerProcessRequest) {
 }
 
 // ReadResponse
-// deprecated
+//
+// Deprecated: Use Skip and Read instead.
 func (m *ICefResourceHandler) ReadResponse(fn resourceHandlerReadResponse) {
 	if !m.IsValid() {
 		return
