@@ -12,6 +12,7 @@ package cef
 
 import (
 	"bytes"
+	"crypto/tls"
 	"errors"
 	"fmt"
 	. "github.com/energye/energy/v2/consts"
@@ -65,10 +66,10 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		return nil, err
 	}
 	targetUrl := new(bytes.Buffer)
-	targetUrl.WriteString("http")
-	targetUrl.WriteString("://")
+	targetUrl.WriteString("http://")
 	targetUrl.WriteString(m.IP)
 	if m.Port > 0 {
+		targetUrl.WriteString(":")
 		targetUrl.WriteString(strconv.Itoa(m.Port))
 	}
 	targetUrl.WriteString(reqUrl.Path)
@@ -121,6 +122,12 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		}
 		header.Free()
 	}
+	//Host: energy.yanghy.cn
+	//Origin: https://energy.yanghy.cn
+	//Referer: https://energy.yanghy.cn/
+	httpRequest.Header.Add("Host", "energy.yanghy.cn")
+	httpRequest.Header.Add("Origin", "http://energy.yanghy.cn")
+	httpRequest.Header.Add("Referer", "http://energy.yanghy.cn/")
 	// 创建 client
 	cli := &http.Client{
 		Jar: jar,
@@ -156,8 +163,124 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 }
 
 func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
+	//cert, err := tls.LoadX509KeyPair(m.SSLCert, m.SSLKey)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//crt, err := ioutil.ReadFile("ca.crt")
+	//if err != nil {
+	//	return nil, err
+	//}
+	//certPool := x509.NewCertPool()
+	//certPool.AppendCertsFromPEM(crt)
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: true,
+			//Certificates:       []tls.Certificate{cert},
+			//RootCAs:            certPool,
+		},
+	}
+	// 创建 client
+	cli := &http.Client{
+		Jar:       jar,
+		Transport: tr,
+	}
+	reqUrl, err := url.Parse(request.URL())
+	if err != nil {
+		return nil, err
+	}
+	targetUrl := new(bytes.Buffer)
+	targetUrl.WriteString("https://")
+	targetUrl.WriteString(m.IP)
+	if m.Port > 0 {
+		targetUrl.WriteString(":")
+		targetUrl.WriteString(strconv.Itoa(m.Port))
+	}
+	targetUrl.WriteString(reqUrl.Path)
+	targetUrl.WriteString(reqUrl.RawQuery)
+	// 读取请求数据
+	requestData := new(bytes.Buffer)
+	postData := request.GetPostData()
+	if postData.IsValid() {
+		dataCount := int(postData.GetElementCount())
+		elements := postData.GetElements()
+		for i := 0; i < dataCount; i++ {
+			element := elements.Get(uint32(i))
+			fmt.Println("element-type:", element.GetType())
+			switch element.GetType() {
+			case PDE_TYPE_EMPTY:
+			case PDE_TYPE_BYTES:
+				if byt, c := element.GetBytes(); c > 0 {
+					requestData.Write(byt)
+				}
+			case PDE_TYPE_FILE:
+				if f := element.GetFile(); f != "" {
+					if byt, err := ioutil.ReadFile(f); err == nil {
+						requestData.Write(byt)
+					}
+				}
+			}
+			element.Free()
+		}
+		postData.Free()
+	}
+	logger.Debug("XHRProxy TargetURL:", targetUrl.String(), "method:", request.Method(), "dataLength:", len(requestData.Bytes()))
+	httpRequest, err := http.NewRequest(request.Method(), targetUrl.String(), requestData)
+	if err != nil {
+		return nil, err
+	}
+	// 设置请求头
+	header := request.GetHeaderMap()
+	if header.IsValid() {
+		size := header.GetSize()
+		for i := 0; i < int(size); i++ {
+			key := header.GetKey(uint32(i))
+			//value := header.GetValue(uint32(i))
+			//httpRequest.Header.Add(key, value)
+			c := header.FindCount(key)
+			for j := 0; j < int(c); j++ {
+				value := header.GetEnumerate(key, uint32(j))
+				httpRequest.Header.Add(key, value)
+				fmt.Println("XHRProxy Request header:", key, "=", value, "url:", targetUrl.String())
+			}
+		}
+		header.Free()
+	}
+	//Host: energy.yanghy.cn
+	//Origin: https://energy.yanghy.cn
+	//Referer: https://energy.yanghy.cn/
+	httpRequest.Header.Add("Host", "energy.yanghy.cn")
+	httpRequest.Header.Add("Origin", "https://energy.yanghy.cn")
+	httpRequest.Header.Add("Referer", "https://energy.yanghy.cn/")
 
-	return nil, errors.New("https unrealized")
+	httpResponse, err := cli.Do(httpRequest)
+	if err != nil {
+		return nil, err
+	}
+	defer httpResponse.Body.Close()
+	// 读取响应头
+	responseHeader := make(map[string][]string)
+	for key, value := range httpResponse.Header {
+		for _, vs := range value {
+			if header, ok := responseHeader[key]; ok {
+				responseHeader[key] = append(header, vs)
+			} else {
+				responseHeader[key] = []string{vs}
+			}
+			fmt.Println("XHRProxy response header:", key, "=", vs, "url:", targetUrl.String())
+		}
+	}
+	// 读取响应数据
+	buf := new(bytes.Buffer)
+	c, err := buf.ReadFrom(httpResponse.Body)
+	result := &XHRProxyResponse{
+		Data:       buf.Bytes(),
+		DataSize:   int(c),
+		StatusCode: int32(httpResponse.StatusCode),
+		Header:     responseHeader,
+	}
+	fmt.Println("XHRProxy response result:", result.DataSize, result.StatusCode, "url:", targetUrl.String())
+	return result, nil
 }
 
 func (m *XHRProxy) tcpListen() {
