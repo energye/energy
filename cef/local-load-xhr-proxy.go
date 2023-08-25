@@ -99,7 +99,7 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		}
 		postData.Free()
 	}
-	logger.Debug("XHRProxy TargetURL:", targetUrl.String(), "dataLength:", len(requestData.Bytes()))
+	logger.Debug("XHRProxy TargetURL:", targetUrl.String(), "method:", request.Method(), "dataLength:", len(requestData.Bytes()))
 	httpRequest, err := http.NewRequest(request.Method(), targetUrl.String(), requestData)
 	if err != nil {
 		return nil, err
@@ -116,7 +116,7 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 			for j := 0; j < int(c); j++ {
 				value := header.GetEnumerate(key, uint32(j))
 				httpRequest.Header.Add(key, value)
-				fmt.Println("XHRProxy header:", key, "=", value)
+				fmt.Println("XHRProxy Request header:", key, "=", value, "url:", targetUrl.String())
 			}
 		}
 		header.Free()
@@ -132,13 +132,14 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 	defer httpResponse.Body.Close()
 	// 读取响应头
 	responseHeader := make(map[string][]string)
-	for k, v := range httpResponse.Header {
-		for _, vs := range v {
-			if header, ok := responseHeader[k]; ok {
-				responseHeader[k] = append(header, vs)
+	for key, value := range httpResponse.Header {
+		for _, vs := range value {
+			if header, ok := responseHeader[key]; ok {
+				responseHeader[key] = append(header, vs)
 			} else {
-				responseHeader[k] = []string{vs}
+				responseHeader[key] = []string{vs}
 			}
+			fmt.Println("XHRProxy response header:", key, "=", vs, "url:", targetUrl.String())
 		}
 	}
 	// 读取响应数据
@@ -150,6 +151,7 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		StatusCode: int32(httpResponse.StatusCode),
 		Header:     responseHeader,
 	}
+	fmt.Println("XHRProxy response result:", result.DataSize, result.StatusCode, "url:", targetUrl.String())
 	return result, nil
 }
 

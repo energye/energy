@@ -12,13 +12,13 @@ package cef
 
 import (
 	"embed"
+	"fmt"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
-	"strings"
 	"unsafe"
 )
 
@@ -147,7 +147,7 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 		return nil, false
 	}
 	reqUrl, err := url.Parse(request.URL())
-	logger.Debug("LocalLoadResource URL:", reqUrl.String())
+	logger.Debug("LocalLoadResource URL:", reqUrl.String(), "RT:", rt)
 	if err != nil {
 		logger.Error("LocalLoadResource, scheme invalid should:", LocalCSFS, "or", LocalCSFile)
 		return nil, false
@@ -165,10 +165,10 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 		path = m.Home
 	}
 	ext := m.ext(path)
-	if ext == "" && rt != RT_XHR {
+	/*if ext == "" && rt != RT_XHR {
 		logger.Error("LocalLoadResource Incorrect resources should: file.[ext](MimeType)")
 		return nil, false
-	}
+	}*/
 	// 如果开启缓存,直接在缓存拿指定地址的source
 	if m.EnableCache {
 		if s, ok := m.sourceCache[path]; ok {
@@ -183,27 +183,23 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 }
 
 // 读取本地或内置资源
-func (m *source) readFile() bool {
+func (m *source) readFile() {
 	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
 	if localLoadRes.FileRoot != "" {
 		if localLoadRes.Scheme == LocalCSFile {
 			m.bytes, m.err = ioutil.ReadFile(filepath.Join(localLoadRes.FileRoot, m.path))
 			// 在本地读取
-			if m.err == nil {
-				return true
+			if m.err != nil {
+				logger.Error("ReadFile:", m.err.Error())
 			}
-			logger.Error("ReadFile:", m.err.Error())
 		} else if localLoadRes.Scheme == LocalCSFS && localLoadRes.FS != nil {
 			//在fs读取
 			m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.FileRoot + m.path)
-			if m.err == nil {
-				return true
+			if m.err != nil {
+				logger.Error("ReadFile:", m.err.Error())
 			}
-			logger.Error("ReadFile:", m.err.Error())
 		}
 	}
-	//失败时,返回404,文件不存在
-	return false
 }
 
 // checkRequest = true, 打开资源
@@ -220,7 +216,6 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 			m.bytes, m.err = result.Data, err
 			m.status = result.StatusCode
 			m.header = result.Header
-			return true, true
 		}
 	} else {
 		// 如果开启缓存,直接在缓存取
@@ -231,12 +226,27 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 		} else {
 			m.readFile()
 		}
-	}
-	if m.err == nil {
-		m.status = 200
-		m.statusText = "OK"
-	} else {
-		m.statusText = m.err.Error()
+		if m.err == nil {
+			m.status = 200
+			m.statusText = "OK"
+		} else {
+			// 尝试在代理服务请求资源
+			if result, err := localLoadRes.Proxy.Send(request); err == nil {
+				m.bytes, m.err = result.Data, err
+				m.status = result.StatusCode
+				m.header = result.Header
+				// TODO 需要验证 Content-Type 合法性
+				if ct, ok := result.Header["Content-Type"]; ok {
+					m.mimeType = ct[0]
+				} else {
+					m.mimeType = "text/html"
+				}
+			} else {
+				m.bytes = []byte("Invalid resource request")
+				m.mimeType = "application/json"
+				m.statusText = err.Error()
+			}
+		}
 	}
 	callback.Cont()
 	return true, true
@@ -249,8 +259,15 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	response.SetMimeType(m.mimeType)
 	responseLength = int64(len(m.bytes))
 	if m.header != nil {
-		for key, value := range m.header {
-			response.SetHeaderByName(key, strings.Join(value, ","), true)
+		header := StringMultiMapRef.New()
+		if header.IsValid() {
+			for key, value := range m.header {
+				for _, vs := range value {
+					header.Append(key, vs)
+					fmt.Println("source response header:", key, "=", vs)
+				}
+			}
+			response.SetHeaderMap(header)
 		}
 	}
 	return
