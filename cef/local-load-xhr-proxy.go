@@ -201,9 +201,11 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 	// 读取请求数据
 	requestData := new(bytes.Buffer)
 	postData := request.GetPostData()
+	fmt.Println("element- postData.IsValid():", postData.IsValid())
 	if postData.IsValid() {
 		dataCount := int(postData.GetElementCount())
 		elements := postData.GetElements()
+		fmt.Println("element-dataCount:", dataCount)
 		for i := 0; i < dataCount; i++ {
 			element := elements.Get(uint32(i))
 			fmt.Println("element-type:", element.GetType())

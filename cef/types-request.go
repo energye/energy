@@ -203,7 +203,10 @@ func (m *ICefRequest) GetPostData() *ICefPostData {
 	}
 	var result uintptr
 	imports.Proc(def.CefRequest_GetPostData).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefPostData{instance: unsafe.Pointer(result)}
+	if result != 0 {
+		return &ICefPostData{instance: unsafe.Pointer(result)}
+	}
+	return nil
 }
 
 func (m *ICefRequest) SetPostData(value *ICefPostData) {
