@@ -14,7 +14,6 @@ import (
 	"bytes"
 	"crypto/tls"
 	"errors"
-	"fmt"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
@@ -27,6 +26,8 @@ import (
 // cookies jar
 var jar, _ = cookiejar.New(nil)
 
+// IXHRProxy
+//  本地资源加载 XHR 请求代理接口
 type IXHRProxy interface {
 	Send(request *ICefRequest) (*XHRProxyResponse, error) // 发送请求，在浏览器进程同步执行
 }
@@ -84,7 +85,6 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		elements := postData.GetElements()
 		for i := 0; i < dataCount; i++ {
 			element := elements.Get(uint32(i))
-			fmt.Println("element-type:", element.GetType())
 			switch element.GetType() {
 			case PDE_TYPE_EMPTY:
 			case PDE_TYPE_BYTES:
@@ -113,23 +113,14 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		size := header.GetSize()
 		for i := 0; i < int(size); i++ {
 			key := header.GetKey(uint32(i))
-			//value := header.GetValue(uint32(i))
-			//httpRequest.Header.Add(key, value)
 			c := header.FindCount(key)
 			for j := 0; j < int(c); j++ {
 				value := header.GetEnumerate(key, uint32(j))
 				httpRequest.Header.Add(key, value)
-				fmt.Println("XHRProxy Request header:", key, "=", value, "url:", targetUrl.String())
 			}
 		}
 		header.Free()
 	}
-	//Host: energy.yanghy.cn
-	//Origin: https://energy.yanghy.cn
-	//Referer: https://energy.yanghy.cn/
-	httpRequest.Header.Add("Host", "energy.yanghy.cn")
-	httpRequest.Header.Add("Origin", "http://energy.yanghy.cn")
-	httpRequest.Header.Add("Referer", "http://energy.yanghy.cn/")
 	// 创建 client
 	cli := &http.Client{
 		Jar: jar,
@@ -148,7 +139,6 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 			} else {
 				responseHeader[key] = []string{vs}
 			}
-			fmt.Println("XHRProxy response header:", key, "=", vs, "url:", targetUrl.String())
 		}
 	}
 	// 读取响应数据
@@ -160,7 +150,6 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 		StatusCode: int32(httpResponse.StatusCode),
 		Header:     responseHeader,
 	}
-	fmt.Println("XHRProxy response result:", result.DataSize, result.StatusCode, "url:", targetUrl.String())
 	return result, nil
 }
 
@@ -203,14 +192,11 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 	// 读取请求数据
 	requestData := new(bytes.Buffer)
 	postData := request.GetPostData()
-	fmt.Println("element- postData.IsValid():", postData.IsValid())
 	if postData.IsValid() {
 		dataCount := int(postData.GetElementCount())
 		elements := postData.GetElements()
-		fmt.Println("element-dataCount:", dataCount)
 		for i := 0; i < dataCount; i++ {
 			element := elements.Get(uint32(i))
-			fmt.Println("element-type:", element.GetType())
 			switch element.GetType() {
 			case PDE_TYPE_EMPTY:
 			case PDE_TYPE_BYTES:
@@ -239,23 +225,17 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 		size := header.GetSize()
 		for i := 0; i < int(size); i++ {
 			key := header.GetKey(uint32(i))
-			//value := header.GetValue(uint32(i))
-			//httpRequest.Header.Add(key, value)
 			c := header.FindCount(key)
 			for j := 0; j < int(c); j++ {
 				value := header.GetEnumerate(key, uint32(j))
 				httpRequest.Header.Add(key, value)
-				fmt.Println("XHRProxy Request header:", key, "=", value, "url:", targetUrl.String())
 			}
 		}
 		header.Free()
 	}
-	//Host: energy.yanghy.cn
-	//Origin: https://energy.yanghy.cn
-	//Referer: https://energy.yanghy.cn/
-	httpRequest.Header.Add("Host", "energy.yanghy.cn")
-	httpRequest.Header.Add("Origin", "https://energy.yanghy.cn")
-	httpRequest.Header.Add("Referer", "https://energy.yanghy.cn/")
+	//httpRequest.Header.Add("Host", "energy.yanghy.cn")
+	//httpRequest.Header.Add("Origin", "https://energy.yanghy.cn")
+	//httpRequest.Header.Add("Referer", "https://energy.yanghy.cn/")
 
 	httpResponse, err := cli.Do(httpRequest)
 	if err != nil {
@@ -271,7 +251,6 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 			} else {
 				responseHeader[key] = []string{vs}
 			}
-			fmt.Println("XHRProxy response header:", key, "=", vs, "url:", targetUrl.String())
 		}
 	}
 	// 读取响应数据
@@ -283,7 +262,6 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 		StatusCode: int32(httpResponse.StatusCode),
 		Header:     responseHeader,
 	}
-	fmt.Println("XHRProxy response result:", result.DataSize, result.StatusCode, "url:", targetUrl.String())
 	return result, nil
 }
 

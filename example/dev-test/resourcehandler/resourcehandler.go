@@ -20,13 +20,15 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	var app = cef.NewApplication()
+	app.SetDisableBackForwardCache(true)
 	//app.SetDisableWebSecurity(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "fs://energy/index.html"
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Enable: true,
-		FS:     &resources,
+		Enable:   true,
+		FileRoot: "resources/dist",
+		FS:       &resources,
 		Proxy: &cef.XHRProxy{
 			Scheme: consts.LpsHttps,
 			IP:     "energy.yanghy.cn",

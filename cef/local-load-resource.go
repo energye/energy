@@ -12,7 +12,6 @@ package cef
 
 import (
 	"embed"
-	"fmt"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
@@ -44,7 +43,7 @@ type LocalLoadConfig struct {
 	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
 	Domain      string              // 必须设置的域
 	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
-	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为资源文件夹名, 默认:[resources or /current/path]
+	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为resources, 默认:[resources or /current/path]
 	FS          *embed.FS           // 内置加载资源对象, scheme是fs时必须填入
 	Proxy       IXHRProxy           // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
 	Home        string              // 默认首页: /index.html, /home.html, /other.html, default: /index.html
@@ -268,7 +267,6 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 			for key, value := range m.header {
 				for _, vs := range value {
 					header.Append(key, vs)
-					fmt.Println("source response header:", key, "=", vs)
 				}
 			}
 			response.SetHeaderMap(header)
