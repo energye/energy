@@ -48,6 +48,16 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	return
 }
 
+func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
+	if localLoadRes.enable() {
+		registrar.AddCustomScheme(string(localLoadRes.Scheme),
+			consts.CEF_SCHEME_OPTION_STANDARD|
+				consts.CEF_SCHEME_OPTION_CORS_ENABLED|
+				consts.CEF_SCHEME_OPTION_SECURE|
+				consts.CEF_SCHEME_OPTION_FETCH_ENABLED)
+	}
+}
+
 // browserProcessMessageReceived 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEvent {

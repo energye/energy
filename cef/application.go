@@ -18,7 +18,6 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -27,8 +26,12 @@ var application *TCEFApplication
 
 // TCEFApplication CEF应用对象
 type TCEFApplication struct {
-	instance unsafe.Pointer
-	ui       UITool
+	instance                 unsafe.Pointer
+	ui                       UITool
+	onContextCreated         GlobalCEFAppEventOnContextCreated
+	onProcessMessageReceived RenderProcessMessageReceived
+	onWebKitInitialized      GlobalCEFAppEventOnWebKitInitialized
+	onRegCustomSchemes       GlobalCEFAppEventOnRegCustomSchemes
 }
 
 // NewApplication 创建CEF应用
@@ -62,9 +65,8 @@ func (m *TCEFApplication) AddCrDelegate() {
 func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnContextCreated()
 	m.defaultSetOnProcessMessageReceived()
-	m.defaultSetOnRenderLoadStart()
-	//m.defaultSetOnBeforeChildProcessLaunch()
 	m.defaultSetOnWebKitInitialized()
+	m.defaultSetOnRegCustomSchemes()
 }
 
 // Instance 实例
@@ -130,7 +132,20 @@ func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 }
 
 func (m *TCEFApplication) SetOnRegCustomSchemes(fn GlobalCEFAppEventOnRegCustomSchemes) {
+	m.onRegCustomSchemes = fn
+}
+
+func (m *TCEFApplication) setOnRegCustomSchemes(fn GlobalCEFAppEventOnRegCustomSchemes) {
 	imports.Proc(def.CEFGlobalApp_SetOnRegCustomSchemes).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) defaultSetOnRegCustomSchemes() {
+	m.setOnRegCustomSchemes(func(registrar *TCefSchemeRegistrarRef) {
+		regCustomSchemes(registrar)
+		if m.onRegCustomSchemes != nil {
+			m.onRegCustomSchemes(registrar)
+		}
+	})
 }
 
 // TODO TCefPreferenceRegistrarRef
@@ -164,11 +179,20 @@ func (m *TCEFApplication) SetOnGetDataResourceForScale(fn GlobalCEFAppEventOnGet
 }
 
 func (m *TCEFApplication) SetOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
+	m.onWebKitInitialized = fn
+}
+
+func (m *TCEFApplication) setOnWebKitInitialized(fn GlobalCEFAppEventOnWebKitInitialized) {
 	imports.Proc(def.CEFGlobalApp_SetOnWebKitInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) defaultSetOnWebKitInitialized() {
-	m.SetOnWebKitInitialized(func() {})
+	m.setOnWebKitInitialized(func() {
+		appWebKitInitialized()
+		if m.onWebKitInitialized != nil {
+			m.onWebKitInitialized()
+		}
+	})
 }
 
 func (m *TCEFApplication) SetOnBrowserCreated(fn GlobalCEFAppEventOnBrowserCreated) {
@@ -180,11 +204,22 @@ func (m *TCEFApplication) SetOnBrowserDestroyed(fn GlobalCEFAppEventOnBrowserDes
 }
 
 func (m *TCEFApplication) SetOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
+	m.onContextCreated = fn
+}
+
+func (m *TCEFApplication) setOnContextCreated(fn GlobalCEFAppEventOnContextCreated) {
 	imports.Proc(def.CEFGlobalApp_SetOnContextCreated).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) defaultSetOnContextCreated() {
-	m.SetOnContextCreated(func(browse *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool {
+	m.setOnContextCreated(func(browse *ICefBrowser, frame *ICefFrame, context *ICefV8Context) bool {
+		var flag bool
+		if m.onContextCreated != nil {
+			flag = m.onContextCreated(browse, frame, context)
+		}
+		if !flag {
+			appOnContextCreated(browse, frame, context)
+		}
 		return false
 	})
 }
@@ -203,22 +238,22 @@ func (m *TCEFApplication) SetOnFocusedNodeChanged(fn GlobalCEFAppEventOnFocusedN
 
 // 进程间通信处理消息接收
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
+	m.onProcessMessageReceived = fn
+}
+
+func (m *TCEFApplication) setOnProcessMessageReceived(fn RenderProcessMessageReceived) {
 	imports.Proc(def.CEFGlobalApp_SetOnProcessMessageReceived).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
-	m.SetOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ICefProcessMessage) bool {
-		return false
+	m.setOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ICefProcessMessage) bool {
+		var result = renderProcessMessageReceived(browse, frame, sourceProcess, processMessage)
+		if m.onProcessMessageReceived != nil && !result {
+			result = m.onProcessMessageReceived(browse, frame, sourceProcess, processMessage)
+		}
+		return result
 	})
 }
-
-//func (m *TCEFApplication) defaultSetOnBeforeChildProcessLaunch() {
-//	m.SetOnBeforeChildProcessLaunch(func(commandLine *TCefCommandLine) {})
-//}
-
-//func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn ) {
-//	imports.Proc(CEFGlobalApp_SetOnScheduleMessagePumpWork).Call(api.MakeEventDataPtr(fn))
-//}
 
 func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRenderLoadingStateChange) {
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadingStateChange).Call(api.MakeEventDataPtr(fn))
@@ -226,12 +261,6 @@ func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRe
 
 func (m *TCEFApplication) SetOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFApplication) defaultSetOnRenderLoadStart() {
-	m.SetOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
-
-	})
 }
 
 func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
@@ -248,142 +277,4 @@ func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnSch
 		callback = api.MakeEventDataPtr(fn)
 	}
 	imports.Proc(def.CEFGlobalApp_SetOnScheduleMessagePumpWork).Call(callback)
-}
-
-func init() {
-	//var renderLock sync.Mutex
-	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
-		switch fn.(type) {
-		case GlobalCEFAppEventOnRegCustomSchemes:
-			fn.(GlobalCEFAppEventOnRegCustomSchemes)(&TCefSchemeRegistrarRef{instance: getPtr(0)})
-		case GlobalCEFAppEventOnRegisterCustomPreferences:
-			fn.(GlobalCEFAppEventOnRegisterCustomPreferences)(TCefPreferencesType(getVal(0)), &TCefPreferenceRegistrarRef{instance: getPtr(1)})
-		case GlobalCEFAppEventOnContextInitialized:
-			fn.(GlobalCEFAppEventOnContextInitialized)()
-		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
-			//commands := (*uintptr)(getPtr(0))
-			//commandLine := &TCefCommandLine{commandLines: make(map[string]string)}
-			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(&ICefCommandLine{instance: getPtr(0)})
-			//*commands = api.PascalStr(commandLine.toString())
-		case GlobalCEFAppEventOnGetDefaultClient:
-			client := (*uintptr)(getPtr(0))
-			getClient := &ICefClient{instance: unsafe.Pointer(client)}
-			fn.(GlobalCEFAppEventOnGetDefaultClient)(getClient)
-			*client = uintptr(getClient.instance)
-		case GlobalCEFAppEventOnGetLocalizedString:
-			stringVal := (*uintptr)(getPtr(1))
-			result := (*bool)(getPtr(2))
-			resultStringVal := &ResultString{}
-			resultBool := &ResultBool{}
-			fn.(GlobalCEFAppEventOnGetLocalizedString)(int32(getVal(0)), resultStringVal, resultBool)
-			if resultStringVal.Value() != "" {
-				*stringVal = api.PascalStr(resultStringVal.Value())
-			} else {
-				*stringVal = 0
-			}
-			*result = resultBool.Value()
-		case GlobalCEFAppEventOnGetDataResource:
-			resultBytes := &ResultBytes{}
-			resultData := (*uintptr)(getPtr(1))
-			resultDataSize := (*uint32)(getPtr(2))
-			result := (*bool)(getPtr(3))
-			resultBool := &ResultBool{}
-			fn.(GlobalCEFAppEventOnGetDataResource)(int32(getVal(0)), resultBytes, resultBool)
-			*result = resultBool.Value()
-			if resultBytes.Value() != nil {
-				*resultData = uintptr(unsafe.Pointer(&resultBytes.Value()[0]))
-				*resultDataSize = uint32(len(resultBytes.Value()))
-			} else {
-				*resultData = 0
-				*resultDataSize = 0
-			}
-		case GlobalCEFAppEventOnGetDataResourceForScale:
-			resultBytes := &ResultBytes{}
-			resultData := (*uintptr)(getPtr(2))
-			resultDataSize := (*uint32)(getPtr(3))
-			result := (*bool)(getPtr(4))
-			resultBool := &ResultBool{}
-			fn.(GlobalCEFAppEventOnGetDataResourceForScale)(int32(getVal(0)), TCefScaleFactor(getVal(1)), resultBytes, resultBool)
-			*result = resultBool.Value()
-			if resultBytes.Value() != nil {
-				*resultData = uintptr(unsafe.Pointer(&resultBytes.Value()[0]))
-				*resultDataSize = uint32(len(resultBytes.Value()))
-			} else {
-				*resultData = 0
-				*resultDataSize = 0
-			}
-		case GlobalCEFAppEventOnWebKitInitialized:
-			fn.(GlobalCEFAppEventOnWebKitInitialized)()
-			appWebKitInitialized()
-		case GlobalCEFAppEventOnBrowserCreated:
-			fn.(GlobalCEFAppEventOnBrowserCreated)(&ICefBrowser{instance: getPtr(0)}, &ICefDictionaryValue{instance: getPtr(1)})
-		case GlobalCEFAppEventOnBrowserDestroyed:
-			fn.(GlobalCEFAppEventOnBrowserDestroyed)(&ICefBrowser{instance: getPtr(0)})
-		case GlobalCEFAppEventOnContextCreated:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			ctx := &ICefV8Context{instance: getPtr(2)}
-			var result = fn.(GlobalCEFAppEventOnContextCreated)(browse, frame, ctx)
-			if !result {
-				appOnContextCreated(browse, frame, ctx)
-			}
-		case GlobalCEFAppEventOnContextReleased:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			ctx := &ICefV8Context{instance: getPtr(2)}
-			fn.(GlobalCEFAppEventOnContextReleased)(browse, frame, ctx)
-		case GlobalCEFAppEventOnUncaughtException:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			ctx := &ICefV8Context{instance: getPtr(2)}
-			v8Exception := &ICefV8Exception{instance: getPtr(3)}
-			v8StackTrace := &ICefV8StackTrace{instance: getPtr(3)}
-			fn.(GlobalCEFAppEventOnUncaughtException)(browse, frame, ctx, v8Exception, v8StackTrace)
-		case GlobalCEFAppEventOnFocusedNodeChanged:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			node := &ICefDomNode{instance: getPtr(2)}
-			fn.(GlobalCEFAppEventOnFocusedNodeChanged)(browse, frame, node)
-		case GlobalCEFAppEventOnRenderLoadingStateChange:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browse, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
-		case GlobalCEFAppEventOnRenderLoadStart:
-			if ipcRender != nil {
-				ipcRender.clear()
-			}
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, TCefTransitionType(getVal(2)))
-		case GlobalCEFAppEventOnRenderLoadEnd:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadEnd)(browse, frame, int32(getVal(2)))
-		case GlobalCEFAppEventOnRenderLoadError:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
-		case RenderProcessMessageReceived:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
-			processId := CefProcessId(getVal(2))
-			message := &ICefProcessMessage{instance: getPtr(3)}
-			var result = (*bool)(getPtr(4))
-			*result = renderProcessMessageReceived(browse, frame, processId, message)
-			if !*result {
-				*result = fn.(RenderProcessMessageReceived)(browse, frame, processId, message)
-			}
-			frame.Free()
-			browse.Free()
-			message.Free()
-		case GlobalCEFAppEventOnScheduleMessagePumpWork:
-			fn.(GlobalCEFAppEventOnScheduleMessagePumpWork)(*(*int64)(getPtr(0)))
-		default:
-			return false
-		}
-		return true
-	})
 }

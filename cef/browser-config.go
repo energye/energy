@@ -28,9 +28,7 @@ type browserConfig struct {
 // LocalResource
 //  本地资源加载配置
 func (m *browserConfig) LocalResource(config LocalLoadConfig) {
-	if process.Args.IsMain() {
-		localLoadResourceInit(config)
-	}
+	localLoadResourceInit(config)
 }
 
 // SetChromiumConfig 设置 chromium 配置
