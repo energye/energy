@@ -48,6 +48,7 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	return
 }
 
+// regCustomSchemes 注册自定义协议 - 默认实现
 func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 	if localLoadRes.enable() {
 		registrar.AddCustomScheme(string(localLoadRes.Scheme),

@@ -12,7 +12,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -30,7 +30,7 @@ func init() {
 			fn.(GlobalCEFAppEventOnRegCustomSchemes)(registrar)
 			registrar.Free()
 		case GlobalCEFAppEventOnRegisterCustomPreferences:
-			fn.(GlobalCEFAppEventOnRegisterCustomPreferences)(TCefPreferencesType(getVal(0)), &TCefPreferenceRegistrarRef{instance: getPtr(1)})
+			fn.(GlobalCEFAppEventOnRegisterCustomPreferences)(consts.TCefPreferencesType(getVal(0)), &TCefPreferenceRegistrarRef{instance: getPtr(1)})
 		case GlobalCEFAppEventOnContextInitialized:
 			fn.(GlobalCEFAppEventOnContextInitialized)()
 		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
@@ -73,7 +73,7 @@ func init() {
 			resultDataSize := (*uint32)(getPtr(3))
 			result := (*bool)(getPtr(4))
 			resultBool := &ResultBool{}
-			fn.(GlobalCEFAppEventOnGetDataResourceForScale)(int32(getVal(0)), TCefScaleFactor(getVal(1)), resultBytes, resultBool)
+			fn.(GlobalCEFAppEventOnGetDataResourceForScale)(int32(getVal(0)), consts.TCefScaleFactor(getVal(1)), resultBytes, resultBool)
 			*result = resultBool.Value()
 			if resultBytes.Value() != nil {
 				*resultData = uintptr(unsafe.Pointer(&resultBytes.Value()[0]))
@@ -120,7 +120,7 @@ func init() {
 			}
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, TCefTransitionType(getVal(2)))
+			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, consts.TCefTransitionType(getVal(2)))
 		case GlobalCEFAppEventOnRenderLoadEnd:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
@@ -128,11 +128,11 @@ func init() {
 		case GlobalCEFAppEventOnRenderLoadError:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
+			fn.(GlobalCEFAppEventOnRenderLoadError)(browse, frame, consts.TCefErrorCode(getVal(2)), api.GoStr(getVal(3)), api.GoStr(getVal(4)))
 		case RenderProcessMessageReceived:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			processId := CefProcessId(getVal(2))
+			processId := consts.CefProcessId(getVal(2))
 			message := &ICefProcessMessage{instance: getPtr(3)}
 			var result = (*bool)(getPtr(4))
 			*result = fn.(RenderProcessMessageReceived)(browse, frame, processId, message)
