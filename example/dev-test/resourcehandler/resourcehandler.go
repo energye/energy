@@ -25,10 +25,8 @@ func main() {
 	cef.BrowserWindow.Config.Url = "fs://energy/index.html"
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Enable:   true,
-		FS:       &resources,
-		FileRoot: "resources",
-		Home:     "index.html",
+		Enable: true,
+		FS:     &resources,
 		Proxy: &cef.XHRProxy{
 			Scheme: consts.LpsHttps,
 			IP:     "energy.yanghy.cn",

@@ -40,7 +40,7 @@ type LocalLoadResource struct {
 // LocalLoadConfig
 //  本地&内置资源加载配置
 type LocalLoadConfig struct {
-	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用, 提示: 启用该功能, 目前无法加载本地媒体, 媒体资源可http方式加载
+	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用
 	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
 	Domain      string              // 必须设置的域
 	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
@@ -102,6 +102,11 @@ func localLoadResourceInit(config LocalLoadConfig) {
 	//	}
 	//}
 	localLoadRes.LocalLoadConfig = config
+}
+
+func (m LocalLoadConfig) SetEnable(v bool) LocalLoadConfig {
+	m.Enable = v
+	return m
 }
 
 func (m *LocalLoadResource) enable() bool {
