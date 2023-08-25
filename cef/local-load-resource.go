@@ -12,26 +12,18 @@ package cef
 
 import (
 	"embed"
-	"github.com/energye/energy/v2/consts"
+	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"io/ioutil"
 	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"unsafe"
 )
 
 const (
 	localDomain = "energy" // default energy
-)
-
-// LocalCustomerScheme 本地资源加载自定义固定协议
-//  file, fs
-type LocalCustomerScheme string
-
-const (
-	LocalCSFile LocalCustomerScheme = "file" // 本地目录 file://energy/index.html
-	LocalCSFS   LocalCustomerScheme = "fs"   // 内置 fs://energy/index.html
 )
 
 // 本地加载资源
@@ -63,27 +55,22 @@ type LocalLoadConfig struct {
 	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
 	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为资源文件夹名
 	FS          *embed.FS           // 内置加载资源对象, scheme是fs时必须填入
-	Proxy       XHRProxy            // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发
-}
-
-// XHRProxy
-//  数据请求代理
-type XHRProxy struct {
-	IP   string
-	Port int
+	Proxy       IXHRProxy           // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可可以实现该 IXHRProxy 接口自己实现
+	Home        string              // 默认首页: /index.html, /home.html, /other.html, default: /index.html
 }
 
 // 请求和响应资源
 type source struct {
-	path         string                  // 资源路径, 根据请求URL地址
-	fileExt      string                  // 资源扩展名, 用于拿到 MimeType
-	bytes        []byte                  // 资源数据
-	err          error                   // 读取资源的错误
-	readPosition int                     // 读取资源时的地址偏移
-	status       int32                   // 响应状态码
-	statusText   string                  // 响应状态文本
-	mimeType     string                  // 响应的资源 MimeType
-	resourceType consts.TCefResourceType // 资源类型
+	path         string              // 资源路径, 根据请求URL地址
+	fileExt      string              // 资源扩展名, 用于拿到 MimeType
+	bytes        []byte              // 资源数据
+	err          error               // 获取资源时的错误
+	readPosition int                 // 读取资源时的地址偏移
+	status       int32               // 响应状态码
+	statusText   string              // 响应状态文本
+	mimeType     string              // 响应的资源 MimeType
+	header       map[string][]string // 响应头
+	resourceType TCefResourceType    // 资源类型
 }
 
 // 初始化本地加载配置对象
@@ -103,6 +90,18 @@ func localLoadResourceInit(config LocalLoadConfig) {
 	if config.Scheme != LocalCSFile && config.Scheme != LocalCSFS {
 		config.Scheme = LocalCSFS
 	}
+	if config.Home == "" {
+		config.Home = "/index.html"
+	} else if config.Home[0] != '/' {
+		config.Home = "/" + config.Home
+	}
+	//if config.Proxy != nil {
+	//	if proxy, ok := config.Proxy.(*XHRProxy); ok {
+	//		if proxy.Scheme == LpsTcp {
+	//			proxy.tcpListen()
+	//		}
+	//	}
+	//}
 	localLoadRes.LocalLoadConfig = config
 }
 
@@ -138,12 +137,13 @@ func (m *LocalLoadResource) ext(path string) string {
 // 使用本地资源加载时,先验证每个请求的合法性
 //  所支持的scheme, domain
 //  URL格式, fs://energy/index.html, 文件路径必须包含扩展名
+//  这里返回false后不会创建资源处理对象
 func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	rt := request.ResourceType()
 	// 根据资源类型跳过哪些资源不被本地加载
 	// TODO: rt_media 类型应该在此去除
 	switch rt {
-	case consts.RT_XHR, consts.RT_MEDIA, consts.RT_PING, consts.RT_CSP_REPORT, consts.RT_PLUGIN_RESOURCE:
+	case RT_MEDIA, RT_PING, RT_CSP_REPORT, RT_PLUGIN_RESOURCE:
 		return nil, false
 	}
 	reqUrl, err := url.Parse(request.URL())
@@ -161,8 +161,11 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 		return nil, false
 	}
 	path := reqUrl.Path
+	if path == "" || path == "/" {
+		path = m.Home
+	}
 	ext := m.ext(path)
-	if ext == "" {
+	if ext == "" && rt != RT_XHR {
 		logger.Error("LocalLoadResource Incorrect resources should: file.[ext](MimeType)")
 		return nil, false
 	}
@@ -179,70 +182,81 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	return &source{path: path, fileExt: ext, mimeType: m.getMimeType(ext), resourceType: rt}, true
 }
 
-// 读取文件
+// 读取本地或内置资源
 func (m *source) readFile() bool {
 	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
 	if localLoadRes.FileRoot != "" {
 		if localLoadRes.Scheme == LocalCSFile {
+			m.bytes, m.err = ioutil.ReadFile(filepath.Join(localLoadRes.FileRoot, m.path))
 			// 在本地读取
-			data, err := ioutil.ReadFile(filepath.Join(localLoadRes.FileRoot, m.path))
-			if err == nil {
-				m.bytes = data
+			if m.err == nil {
 				return true
 			}
-			logger.Error("ReadFile:", err.Error())
+			logger.Error("ReadFile:", m.err.Error())
 		} else if localLoadRes.Scheme == LocalCSFS && localLoadRes.FS != nil {
 			//在fs读取
-			data, err := localLoadRes.FS.ReadFile(localLoadRes.FileRoot + m.path)
-			if err == nil {
-				m.bytes = data
+			m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.FileRoot + m.path)
+			if m.err == nil {
 				return true
 			}
-			logger.Error("ReadFile:", err.Error())
+			logger.Error("ReadFile:", m.err.Error())
 		}
 	}
 	//失败时,返回404,文件不存在
 	return false
 }
 
-// 打开资源
+// checkRequest = true, 打开资源
 func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleRequest, result bool) {
 	m.readPosition = 0
 	// 当前资源的响应设置默认值
 	m.status = 404
 	m.statusText = "Not Found"
-	// 如果开启缓存,直接在缓存取
-	if localLoadRes.EnableCache {
-		if m.bytes == nil {
-			if !m.readFile() {
-				return true, true
-			}
-		}
-	} else {
-		if !m.readFile() {
+	m.err = nil
+	m.header = nil
+	// xhr 请求, 需要通过代理转发出去
+	if m.resourceType == RT_XHR && localLoadRes.Proxy != nil {
+		if result, err := localLoadRes.Proxy.Send(request); err == nil {
+			m.bytes, m.err = result.Data, err
+			m.status = result.StatusCode
+			m.header = result.Header
 			return true, true
 		}
-	}
-	if m.resourceType == consts.RT_MEDIA {
-		m.status = 206
 	} else {
+		// 如果开启缓存,直接在缓存取
+		if localLoadRes.EnableCache {
+			if m.bytes == nil {
+				m.readFile()
+			}
+		} else {
+			m.readFile()
+		}
+	}
+	if m.err == nil {
 		m.status = 200
 		m.statusText = "OK"
+	} else {
+		m.statusText = m.err.Error()
 	}
 	callback.Cont()
 	return true, true
 }
 
-// 设置响应信息
+// checkRequest = true, 设置响应信息
 func (m *source) response(response *ICefResponse) (responseLength int64, redirectUrl string) {
 	response.SetStatus(m.status)
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
 	responseLength = int64(len(m.bytes))
+	if m.header != nil {
+		for key, value := range m.header {
+			response.SetHeaderByName(key, strings.Join(value, ","), true)
+		}
+	}
 	return
 }
 
-// 读取bytes, 返回到dataOut
+// checkRequest = true, 读取bytes, 返回到dataOut
 func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
 	if m.bytes != nil && len(m.bytes) > 0 {
 		var i int32 = 0 // 默认 0

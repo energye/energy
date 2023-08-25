@@ -465,16 +465,19 @@ type ICefMenuModelDelegate struct {
 
 // ICefStringMultiMap 实例
 type ICefStringMultiMap struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefPostData
 type ICefPostData struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefPostDataElement
 type ICefPostDataElement struct {
+	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 

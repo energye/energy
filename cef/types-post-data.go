@@ -51,6 +51,13 @@ func (m *ICefPostData) IsValid() bool {
 	return true
 }
 
+func (m *ICefPostData) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
+
 func (m *ICefPostData) IsReadOnly() bool {
 	if !m.IsValid() {
 		return false

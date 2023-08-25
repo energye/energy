@@ -1591,3 +1591,23 @@ const (
 	UitGtk3                      // linux
 	UitCocoa                     // macos
 )
+
+// LocalCustomerScheme 本地资源加载自定义固定协议
+//  file, fs
+type LocalCustomerScheme string
+
+const (
+	LocalCSFile LocalCustomerScheme = "file" // 本地目录 file://energy/index.html
+	LocalCSFS   LocalCustomerScheme = "fs"   // 内置 fs://energy/index.html
+)
+
+// LocalProxyScheme
+//  本地加载资源，在浏览器发起xhr请求时的代理协议
+//  http, https, tcp
+type LocalProxyScheme int
+
+const (
+	LpsHttp  LocalProxyScheme = iota // http
+	LpsHttps                         // https
+	LpsTcp                           // tcp
+)

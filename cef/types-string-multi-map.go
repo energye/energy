@@ -96,3 +96,10 @@ func (m *ICefStringMultiMap) Append(key, value string) bool {
 func (m *ICefStringMultiMap) Clear() {
 	imports.Proc(def.StringMultimap_Clear).Call(m.Instance())
 }
+
+func (m *ICefStringMultiMap) Free() {
+	if m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
+}
