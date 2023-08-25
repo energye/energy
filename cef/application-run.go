@@ -29,7 +29,6 @@ var (
 	BrowserWindow = &browserWindow{
 		browserEvent: &BrowserEvent{},
 		Config: &browserConfig{
-			LocalResource:  localLoadResource,
 			WindowProperty: NewWindowProperty(),
 		},
 		windowInfo: make(map[int32]IBrowserWindow),

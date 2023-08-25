@@ -35,12 +35,7 @@ const (
 )
 
 // 本地加载资源
-var localLoadResource = &LocalLoadResource{
-	mimeType:    make(map[string]string),
-	sourceCache: make(map[string]*source),
-	domain:      localDomain,
-	scheme:      LocalCSFS,
-}
+var localLoadRes *LocalLoadResource
 
 // LocalLoadResource 初始化时设置
 //  本地或内置加载资源
@@ -49,81 +44,73 @@ var localLoadResource = &LocalLoadResource{
 //  fileRoot: 资源加载根目录, scheme是file时为本地目录(默认当前程序执行目录), scheme是fs时为资源文件夹名
 //  fs: 内置加载资源对象, scheme是fs时必须填入
 type LocalLoadResource struct {
-	enable      bool
-	enableCache bool
+	LocalLoadConfig
 	mimeType    map[string]string
 	sourceCache map[string]*source
-	domain      string
-	scheme      LocalCustomerScheme
-	fileRoot    string
-	fs          *embed.FS
 }
 
+// LocalLoadConfig
+//  本地资源加载配置
+//  domain: 自定义域名称，默认energy, 不能为空
+//  scheme: 自定义协议，默认fs, 可选[file: 在本地目录加载, fs: 在内置exe加载]
+//  fileRoot: 资源加载根目录, scheme是file时为本地目录(默认当前程序执行目录), scheme是fs时为资源文件夹名
+//  fs: 内置加载资源对象, scheme是fs时必须填入
+//  proxy: 数据请求代理
+type LocalLoadConfig struct {
+	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用, 提示: 启用该功能, 目前无法加载本地媒体, 媒体资源可http方式加载
+	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
+	Domain      string              // 必须设置的域
+	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
+	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为资源文件夹名
+	FS          *embed.FS           // 内置加载资源对象, scheme是fs时必须填入
+	Proxy       XHRProxy            // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发
+}
+
+// XHRProxy
+//  数据请求代理
+type XHRProxy struct {
+	IP   string
+	Port int
+}
+
+// 请求和响应资源
 type source struct {
-	path         string // file source path
-	fileExt      string // file ext
-	bytes        []byte // file source byte
-	err          error  // file source read byte error
-	readPosition int    // file source read byte position
-	status       int32  // response code status
-	statusText   string // response status text
-	mimeType     string // response source mime type
-	resourceType consts.TCefResourceType
+	path         string                  // 资源路径, 根据请求URL地址
+	fileExt      string                  // 资源扩展名, 用于拿到 MimeType
+	bytes        []byte                  // 资源数据
+	err          error                   // 读取资源的错误
+	readPosition int                     // 读取资源时的地址偏移
+	status       int32                   // 响应状态码
+	statusText   string                  // 响应状态文本
+	mimeType     string                  // 响应的资源 MimeType
+	resourceType consts.TCefResourceType // 资源类型
 }
 
-func init() {
-	if localLoadResource.enable {
-		wd, _ := os.Getwd()
-		localLoadResource.fileRoot = wd
-	}
-}
-
-// SetFileRoot
-//  设置资源加载根目录
-//  scheme是file时为本地目录(默认当前程序执行目录)
-//  scheme是fs时为资源文件夹名
-func (m *LocalLoadResource) SetFileRoot(v string) {
-	m.fileRoot = v
-}
-
-// SetFS
-//  设置内置加载资源对象, scheme是fs时必须填入
-func (m *LocalLoadResource) SetFS(v *embed.FS) {
-	m.fs = v
-}
-
-// SetEnableCache
-//  设置是否启用本地资源缓存到内存, 默认false: 未启用
-//  开启该配置会占用内存
-func (m *LocalLoadResource) SetEnableCache(v bool) {
-	m.enableCache = v
-}
-
-// SetEnable
-//  设置是否启用本地资源加载, 默认false: 未启用
-//  提示: 启用该功能, 目前无法加载本地媒体, 媒体资源可http方式加载
-func (m *LocalLoadResource) SetEnable(v bool) {
-	m.enable = v
-}
-
-// SetDomain
-//  设置本地资源加载自定义域
-func (m *LocalLoadResource) SetDomain(domain string) {
-	if domain == "" {
-		m.domain = localDomain
+// 初始化本地加载配置对象
+func localLoadResourceInit(config LocalLoadConfig) {
+	if localLoadRes != nil {
 		return
 	}
-	m.domain = domain
+	localLoadRes = &LocalLoadResource{
+		mimeType:    make(map[string]string),
+		sourceCache: make(map[string]*source),
+	}
+	// domain 必须设置
+	if config.Domain == "" {
+		config.Domain = localDomain
+	}
+	// scheme 必须是 file 或 fs
+	if config.Scheme != LocalCSFile && config.Scheme != LocalCSFS {
+		config.Scheme = LocalCSFS
+	}
+	localLoadRes.LocalLoadConfig = config
 }
 
-// SetScheme
-//  设置本地资源加载自定义协议
-func (m *LocalLoadResource) SetScheme(scheme LocalCustomerScheme) {
-	if scheme == "" || (scheme != LocalCSFS && scheme != LocalCSFile) {
-		m.scheme = LocalCSFS
-		return
+func (m *LocalLoadResource) enable() bool {
+	if m == nil {
+		return false
 	}
-	m.scheme = scheme
+	return m.LocalLoadConfig.Enable
 }
 
 // getMimeType
@@ -165,11 +152,11 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 		logger.Error("LocalLoadResource, scheme invalid should:", LocalCSFS, "or", LocalCSFile)
 		return nil, false
 	}
-	if reqUrl.Scheme != string(m.scheme) {
+	if reqUrl.Scheme != string(m.Scheme) {
 		logger.Error("LocalLoadResource, scheme invalid should:", LocalCSFS, "or", LocalCSFile, "current:", reqUrl.Scheme)
 		return nil, false
 	}
-	if reqUrl.Host != m.domain {
+	if reqUrl.Host != m.Domain {
 		logger.Error("LocalLoadResource, Incorrect protocol domain should: [fs | file]://energy/index.html", "current:", reqUrl.Host)
 		return nil, false
 	}
@@ -180,7 +167,7 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 		return nil, false
 	}
 	// 如果开启缓存,直接在缓存拿指定地址的source
-	if m.enableCache {
+	if m.EnableCache {
 		if s, ok := m.sourceCache[path]; ok {
 			return s, true
 		} else {
@@ -195,18 +182,18 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 // 读取文件
 func (m *source) readFile() bool {
 	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
-	if localLoadResource.fileRoot != "" {
-		if localLoadResource.scheme == LocalCSFile {
+	if localLoadRes.FileRoot != "" {
+		if localLoadRes.Scheme == LocalCSFile {
 			// 在本地读取
-			data, err := ioutil.ReadFile(filepath.Join(localLoadResource.fileRoot, m.path))
+			data, err := ioutil.ReadFile(filepath.Join(localLoadRes.FileRoot, m.path))
 			if err == nil {
 				m.bytes = data
 				return true
 			}
 			logger.Error("ReadFile:", err.Error())
-		} else if localLoadResource.scheme == LocalCSFS {
+		} else if localLoadRes.Scheme == LocalCSFS && localLoadRes.FS != nil {
 			//在fs读取
-			data, err := localLoadResource.fs.ReadFile(localLoadResource.fileRoot + m.path)
+			data, err := localLoadRes.FS.ReadFile(localLoadRes.FileRoot + m.path)
 			if err == nil {
 				m.bytes = data
 				return true
@@ -225,7 +212,7 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 	m.status = 404
 	m.statusText = "Not Found"
 	// 如果开启缓存,直接在缓存取
-	if localLoadResource.enableCache {
+	if localLoadRes.EnableCache {
 		if m.bytes == nil {
 			if !m.readFile() {
 				return true, true
@@ -265,7 +252,7 @@ func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResource
 			i++
 		}
 		// 读取到最后不缓存时,清空
-		if i == 0 && !localLoadResource.enableCache {
+		if i == 0 && !localLoadRes.EnableCache {
 			m.bytes = nil
 		}
 		callback.Cont(int64(i))

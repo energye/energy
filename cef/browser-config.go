@@ -20,10 +20,17 @@ type browserWindowOnEventCallback func(event *BrowserEvent, window IBrowserWindo
 
 // 创建主窗口指定的一些快捷配置属性
 type browserConfig struct {
-	WindowProperty               // 部分参数仅在窗口初始化期间生效
-	LocalResource                *LocalLoadResource
+	WindowProperty                                            // 部分参数仅在窗口初始化期间生效
 	config                       *TCefChromiumConfig          // 主窗体浏览器配置
 	browserWindowOnEventCallback browserWindowOnEventCallback // 主窗口初始化回调
+}
+
+// LocalResource
+//  本地资源加载配置
+func (m *browserConfig) LocalResource(config LocalLoadConfig) {
+	if process.Args.IsMain() {
+		localLoadResourceInit(config)
+	}
 }
 
 // SetChromiumConfig 设置 chromium 配置

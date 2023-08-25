@@ -293,7 +293,7 @@ func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
 //  返回 false 并且设置[本地|内置FS]资源加载时开启并继续执行默认实现
 func (m *BrowserEvent) SetOnGetResourceHandler(event chromiumEventOnGetResourceHandlerEx) {
 	if Args.IsMain() {
-		if localLoadResource.enable {
+		if localLoadRes.enable() {
 			m.onGetResourceHandler = event
 		} else {
 			m.ChromiumEvent().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {

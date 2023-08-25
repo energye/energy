@@ -332,9 +332,9 @@ func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICef
 // getResourceHandler
 //  资源处理器默认实现，使用本地资源加载时开启
 func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-	if localLoadResource.enable {
-		if source, ok := localLoadResource.checkRequest(request); ok {
-			resourceHandler = ResourceHandlerRef.New(browser, frame, string(localLoadResource.scheme), request)
+	if localLoadRes.enable() {
+		if source, ok := localLoadRes.checkRequest(request); ok {
+			resourceHandler = ResourceHandlerRef.New(browser, frame, string(localLoadRes.Scheme), request)
 			resourceHandler.Open(source.open)
 			resourceHandler.GetResponseHeaders(source.response)
 			resourceHandler.Read(source.read)
