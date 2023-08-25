@@ -30,11 +30,7 @@ const (
 var localLoadRes *LocalLoadResource
 
 // LocalLoadResource 初始化时设置
-//  本地或内置加载资源
-//  domain: 自定义域名称，默认energy, 不能为空
-//  scheme: 自定义协议，默认fs, 可选[file: 在本地目录加载, fs: 在内置exe加载]
-//  fileRoot: 资源加载根目录, scheme是file时为本地目录(默认当前程序执行目录), scheme是fs时为资源文件夹名
-//  fs: 内置加载资源对象, scheme是fs时必须填入
+//  本地&内置加载资源
 type LocalLoadResource struct {
 	LocalLoadConfig
 	mimeType    map[string]string
@@ -42,20 +38,15 @@ type LocalLoadResource struct {
 }
 
 // LocalLoadConfig
-//  本地资源加载配置
-//  domain: 自定义域名称，默认energy, 不能为空
-//  scheme: 自定义协议，默认fs, 可选[file: 在本地目录加载, fs: 在内置exe加载]
-//  fileRoot: 资源加载根目录, scheme是file时为本地目录(默认当前程序执行目录), scheme是fs时为资源文件夹名
-//  fs: 内置加载资源对象, scheme是fs时必须填入
-//  proxy: 数据请求代理
+//  本地&内置资源加载配置
 type LocalLoadConfig struct {
 	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用, 提示: 启用该功能, 目前无法加载本地媒体, 媒体资源可http方式加载
 	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
 	Domain      string              // 必须设置的域
 	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
-	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为资源文件夹名
+	FileRoot    string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为资源文件夹名, 默认:[resources or /current/path]
 	FS          *embed.FS           // 内置加载资源对象, scheme是fs时必须填入
-	Proxy       IXHRProxy           // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可可以实现该 IXHRProxy 接口自己实现
+	Proxy       IXHRProxy           // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
 	Home        string              // 默认首页: /index.html, /home.html, /other.html, default: /index.html
 }
 
@@ -75,7 +66,7 @@ type source struct {
 
 // 初始化本地加载配置对象
 func localLoadResourceInit(config LocalLoadConfig) {
-	if localLoadRes != nil {
+	if localLoadRes != nil || config.FS == nil {
 		return
 	}
 	localLoadRes = &LocalLoadResource{
@@ -94,6 +85,14 @@ func localLoadResourceInit(config LocalLoadConfig) {
 		config.Home = "/index.html"
 	} else if config.Home[0] != '/' {
 		config.Home = "/" + config.Home
+	}
+	if config.FileRoot == "" {
+		if config.Scheme == LocalCSFS {
+			config.FileRoot = "resources"
+		} else if config.Scheme == LocalCSFile {
+			wd, _ := os.Getwd()
+			config.FileRoot = wd
+		}
 	}
 	//if config.Proxy != nil {
 	//	if proxy, ok := config.Proxy.(*XHRProxy); ok {

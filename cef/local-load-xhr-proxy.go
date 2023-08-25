@@ -24,29 +24,31 @@ import (
 	"strconv"
 )
 
+// cookies jar
 var jar, _ = cookiejar.New(nil)
 
 type IXHRProxy interface {
-	Send(request *ICefRequest) (*XHRProxyResponse, error)
+	Send(request *ICefRequest) (*XHRProxyResponse, error) // 发送请求，在浏览器进程同步执行
 }
 
 // XHRProxy
 //  数据请求代理
 type XHRProxy struct {
-	Scheme  LocalProxyScheme // http/https/tcp default: http
-	IP      string           // default localhost
-	Port    int              // default 80
-	SSLCert string           // /to/path/cert.pem
-	SSLKey  string           // /to/path/key.pem
+	Scheme    LocalProxyScheme // http/https/tcp default: http
+	IP        string           // default: localhost
+	Port      int              // default: 80
+	SSLCert   string           // /to/path/cert.crt, https时， 该参数为空跳过检查
+	SSLKey    string           // /to/path/key.key, https时， 该参数为空跳过检查
+	SSLCARoot string           // /to/path/ca.crt， https时， 该参数为空跳过检查
 }
 
 // XHRProxyResponse
-
+//  代理响应数据
 type XHRProxyResponse struct {
-	Data       []byte
-	DataSize   int
-	StatusCode int32
-	Header     map[string][]string
+	Data       []byte              // 响应数据
+	DataSize   int                 // 响应数据大小
+	StatusCode int32               // 响应状态码
+	Header     map[string][]string // 响应头
 }
 
 func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
