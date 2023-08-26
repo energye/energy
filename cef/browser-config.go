@@ -27,6 +27,7 @@ type browserConfig struct {
 
 // LocalResource
 //  本地资源加载配置
+//  在浏览器进程初始化
 func (m *browserConfig) LocalResource(config *LocalLoadConfig) {
 	localLoadResourceInit(config)
 }

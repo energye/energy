@@ -188,10 +188,11 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 	if err != nil {
 		return nil, err
 	}
+	// 构造目标地址
 	targetUrl := new(bytes.Buffer)
 	targetUrl.WriteString(scheme)
 	targetUrl.WriteString(m.IP)
-	if m.Port > 0 {
+	if m.Port > 0 { // ip:port
 		targetUrl.WriteString(":")
 		targetUrl.WriteString(strconv.Itoa(m.Port))
 	}
@@ -199,10 +200,10 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 	targetUrl.WriteString(reqUrl.RawQuery)
 	// 读取请求数据
 	requestData := new(bytes.Buffer)
-	postData := request.GetPostData()
-	if postData.IsValid() {
-		dataCount := int(postData.GetElementCount())
-		elements := postData.GetElements()
+	data := request.GetPostData()
+	if data.IsValid() {
+		dataCount := int(data.GetElementCount())
+		elements := data.GetElements()
 		for i := 0; i < dataCount; i++ {
 			element := elements.Get(uint32(i))
 			switch element.GetType() {
@@ -220,10 +221,11 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 			}
 			element.Free()
 		}
-		postData.Free()
+		data.Free()
 	}
-	logger.Debug("XHRProxy TargetURL:", targetUrl.String(), "method:", request.Method(), "dataLength:", len(requestData.Bytes()))
-	httpRequest, err := http.NewRequest(request.Method(), targetUrl.String(), requestData)
+	tarUrl := targetUrl.String()
+	logger.Debug("XHRProxy URL:", tarUrl, "method:", request.Method(), "length:", requestData.Len())
+	httpRequest, err := http.NewRequest(request.Method(), tarUrl, requestData)
 	if err != nil {
 		return nil, err
 	}
@@ -241,11 +243,9 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 		}
 		header.Free()
 	}
-
-	//httpRequest.Header.Add("Host", "energy.yanghy.cn")
-	//httpRequest.Header.Add("Origin", "https://energy.yanghy.cn")
-	//httpRequest.Header.Add("Referer", "https://energy.yanghy.cn/")
-
+	//httpRequest.Header.Add("Host", "www.example.com")
+	//httpRequest.Header.Add("Origin", "https://www.example.com")
+	//httpRequest.Header.Add("Referer", "https://www.example.com/")
 	httpResponse, err := m.HttpClient.Client.Do(httpRequest)
 	if err != nil {
 		return nil, err

@@ -35,11 +35,15 @@ type windowCurrentProperty struct {
 //  提供部分窗口属性配置，初始化时生效
 //  如需更多属性配置或自定义窗口行为请在`SetBrowserInit`回调函数中使用
 type WindowProperty struct {
-	IsShowModel               bool                  // 是否以模态窗口显示
-	WindowInitState           types.TWindowState    // 窗口 初始状态: 最小化、最大化、全屏, 全屏时隐藏标题栏生效
-	WindowType                consts.WINDOW_TYPE    // 窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
-	Title                     string                // 窗口 标题
-	Url                       string                // 默认打开URL
+	IsShowModel     bool               // 是否以模态窗口显示
+	WindowInitState types.TWindowState // 窗口 初始状态: 最小化、最大化、全屏, 全屏时隐藏标题栏生效
+	WindowType      consts.WINDOW_TYPE // 窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
+	Title           string             // 窗口 标题
+	//Url  默认打开URL, 支持http和LocalLoad(本地资源)加载方式
+	//  http方式: http://www.example.com, LocalLoad方式: fs://energy/index.html, or file://energy/index.html
+	//  http: 需要web服务支持, LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理
+	//  LocalLoad: 通过 Config.LocalResource 配置实现
+	Url                       string
 	Icon                      string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
 	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
 	EnableWebkitAppRegion     bool                  //

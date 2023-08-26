@@ -77,6 +77,9 @@ func localLoadResourceInit(config *LocalLoadConfig) {
 	localLoadRes.LocalLoadConfig = *config
 }
 
+// Build
+//  构建本地资源加载配置
+//  初始化默认值和默认代理配置
 func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	if localLoadRes != nil && !process.Args.IsMain() {
 		return nil
