@@ -41,7 +41,7 @@ type LocalLoadResource struct {
 //  本地&内置资源加载配置
 //  然后使用 Build() 函数构建对象
 type LocalLoadConfig struct {
-	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用
+	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable
 	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
 	Domain      string              // 必须设置的域
 	Scheme      LocalCustomerScheme // 自定义协议, file: 本地磁盘目录加载, fs: 内置到执行程序加载
@@ -114,6 +114,13 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 		}
 	}
 	return config
+}
+
+// Disable
+//  如果不想启用该代理配置，需要主动调用该函数，仅在应用出始化时有效
+func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
+	m.Enable = false
+	return m
 }
 
 func (m *LocalLoadResource) enable() bool {
