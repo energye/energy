@@ -13,6 +13,7 @@ package cef
 import (
 	"bytes"
 	"crypto/tls"
+	"crypto/x509"
 	"embed"
 	"errors"
 	. "github.com/energye/energy/v2/consts"
@@ -21,41 +22,46 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 )
-
-// cookies jar
-var jar, _ = cookiejar.New(nil)
 
 // IXHRProxy
 //  本地资源加载 XHR 请求代理接口
 type IXHRProxy interface {
-	Send(request *ICefRequest) (*XHRProxyResponse, error) // 发送请求，在浏览器进程同步执行
+	Send(request *ICefRequest) (*XHRProxyResponse, error) // 被动调用，发送请求，在浏览器进程同步执行
 }
 
 // XHRProxy
 //  数据请求代理
 type XHRProxy struct {
-	Scheme LocalProxyScheme // http/https/tcp default: http
-	IP     string           // default: localhost
-	Port   int              // default: 80
-	SSL    XHRProxySSL
-	client *httpClient
+	Scheme     LocalProxyScheme // http/https/tcp default: http
+	IP         string           // default: localhost
+	Port       int              // default: 80
+	SSL        XHRProxySSL      // https 安全证书配置
+	HttpClient *HttpClient      // http/https 客户端, 可自定义配置
 }
 
 // XHRProxySSL
 //  https证书配置，如果其中某一配置为空，则跳过ssl检查, 如果证书配置错误则请求失败
 type XHRProxySSL struct {
-	FS        *embed.FS // 证书到内置执行文件时需要设置
-	RootDir   string    // 根目录, FS不为空时是内置资源目录名，否则是本地硬盘目录
-	SSLCert   string    // RootDir/to/path/cert.crt
-	SSLKey    string    // RootDir/to/path/key.key
-	SSLCARoot string    // RootDir/to/path/ca.crt
+	FS      *embed.FS // 证书到内置执行文件时需要设置
+	RootDir string    // 根目录 如果使用 FS 时目录名 root/path, 否则本地目录/to/root/path
+	Cert    string    // RootDir/to/path/cert.crt
+	Key     string    // RootDir/to/path/key.key
+	CARoots []string  // RootDir/to/path/ca.crt
 }
 
-type httpClient struct {
-	tr     *http.Transport
-	client http.Client
+// HttpClient
+//  http/https 客户端
+type HttpClient struct {
+	Transport *http.Transport
+	Client    *http.Client
+	Jar       *cookiejar.Jar
+	Timeout   time.Duration
 }
 
 // XHRProxyResponse
@@ -68,9 +74,11 @@ type XHRProxyResponse struct {
 }
 
 func (m *XHRProxySSL) skipVerify() bool {
-	return m.RootDir == "" || m.SSLCert == "" || m.SSLKey == "" || m.SSLCARoot == ""
+	return m.RootDir == "" || m.Cert == "" || m.Key == "" || len(m.CARoots) == 0
 }
 
+// Send
+//  被动调用，发送请求，在浏览器进程同步执行
 func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
 	if m.Scheme == LpsHttp {
 		return m.sendHttp(request)
@@ -82,144 +90,106 @@ func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
 	return nil, errors.New("incorrect scheme")
 }
 
-func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
-	reqUrl, err := url.Parse(request.URL())
-	if err != nil {
-		return nil, err
-	}
-	targetUrl := new(bytes.Buffer)
-	targetUrl.WriteString("http://")
-	targetUrl.WriteString(m.IP)
-	if m.Port > 0 {
-		targetUrl.WriteString(":")
-		targetUrl.WriteString(strconv.Itoa(m.Port))
-	}
-	targetUrl.WriteString(reqUrl.Path)
-	targetUrl.WriteString(reqUrl.RawQuery)
-	// 读取请求数据
-	requestData := new(bytes.Buffer)
-	postData := request.GetPostData()
-	if postData.IsValid() {
-		dataCount := int(postData.GetElementCount())
-		elements := postData.GetElements()
-		for i := 0; i < dataCount; i++ {
-			element := elements.Get(uint32(i))
-			switch element.GetType() {
-			case PDE_TYPE_EMPTY:
-			case PDE_TYPE_BYTES:
-				if byt, c := element.GetBytes(); c > 0 {
-					requestData.Write(byt)
+// XHR代理配置
+// 如果配置代理，并且是 XHRProxy 时调用
+// 否则你可以自己实现代理， 实现 IXHRProxy 接口，自定义代理请求
+func (m *XHRProxy) init() {
+	if m.Scheme == LpsHttp || m.Scheme == LpsHttps {
+		if m.HttpClient == nil {
+			m.HttpClient = new(HttpClient)
+		}
+		if m.Scheme == LpsHttps {
+			if m.SSL.skipVerify() {
+				if m.HttpClient.Transport == nil {
+					m.HttpClient.Transport = &http.Transport{
+						TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+					}
 				}
-			case PDE_TYPE_FILE:
-				if f := element.GetFile(); f != "" {
-					if byt, err := ioutil.ReadFile(f); err == nil {
-						requestData.Write(byt)
+			} else {
+				if m.HttpClient.Transport == nil {
+					var (
+						certPEMBlock, keyPEMBlock []byte
+						err                       error
+					)
+					var readFile = func(path string) (data []byte, err error) {
+						if m.SSL.FS != nil {
+							path = strings.ReplaceAll(filepath.Join(m.SSL.RootDir, path), "\\", "/")
+							data, err = m.SSL.FS.ReadFile(path)
+						} else {
+							path = filepath.Join(m.SSL.RootDir, path)
+							data, err = os.ReadFile(path)
+						}
+						return
+					}
+					certPEMBlock, err = readFile(m.SSL.Cert)
+					if err != nil {
+						println("[Error] XHRProxy SSL Read cert:", err.Error())
+						return
+					}
+					keyPEMBlock, err = readFile(m.SSL.Key)
+					if err != nil {
+						println("[Error] XHRProxy SSL Read key:", err.Error())
+						return
+					}
+					cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+					if err != nil {
+						println("[Error] XHRProxy SSL X509 Pair:", err.Error())
+						return
+					}
+					pool := x509.NewCertPool()
+					for _, path := range m.SSL.CARoots {
+						if ca, err := readFile(path); err == nil {
+							pool.AppendCertsFromPEM(ca)
+						} else {
+							println("[Error] XHRProxy SSL Read ca:", err.Error())
+						}
+					}
+					m.HttpClient.Transport = &http.Transport{
+						TLSClientConfig: &tls.Config{
+							Certificates: []tls.Certificate{cert},
+							RootCAs:      pool,
+						},
 					}
 				}
 			}
-			element.Free()
 		}
-		postData.Free()
-	}
-	logger.Debug("XHRProxy TargetURL:", targetUrl.String(), "method:", request.Method(), "dataLength:", len(requestData.Bytes()))
-	httpRequest, err := http.NewRequest(request.Method(), targetUrl.String(), requestData)
-	if err != nil {
-		return nil, err
-	}
-	// 设置请求头
-	header := request.GetHeaderMap()
-	if header.IsValid() {
-		size := header.GetSize()
-		for i := 0; i < int(size); i++ {
-			key := header.GetKey(uint32(i))
-			c := header.FindCount(key)
-			for j := 0; j < int(c); j++ {
-				value := header.GetEnumerate(key, uint32(j))
-				httpRequest.Header.Add(key, value)
-			}
-		}
-		header.Free()
-	}
-	// 创建 client
-	cli := &http.Client{
-		Jar: jar,
-	}
-	cli.CloseIdleConnections()
-	httpResponse, err := cli.Do(httpRequest)
-	if err != nil {
-		return nil, err
-	}
-	defer httpResponse.Body.Close()
-	// 读取响应头
-	responseHeader := make(map[string][]string)
-	for key, value := range httpResponse.Header {
-		for _, vs := range value {
-			if header, ok := responseHeader[key]; ok {
-				responseHeader[key] = append(header, vs)
+		if m.HttpClient.Jar == nil {
+			if jar, err := cookiejar.New(nil); err == nil {
+				m.HttpClient.Jar = jar
 			} else {
-				responseHeader[key] = []string{vs}
+				println("[Error] XHRProxy SSL New cookiejar:", err.Error())
 			}
 		}
+		if m.HttpClient.Client == nil {
+			if m.HttpClient.Timeout <= 0 {
+				m.HttpClient.Timeout = time.Second * 30
+			}
+			m.HttpClient.Client = &http.Client{
+				Jar:     m.HttpClient.Jar,
+				Timeout: m.HttpClient.Timeout,
+			}
+		}
+		if m.HttpClient.Client.Transport == nil && m.HttpClient.Transport != nil {
+			m.HttpClient.Client.Transport = m.HttpClient.Transport
+		}
 	}
-	// 读取响应数据
-	buf := new(bytes.Buffer)
-	c, err := buf.ReadFrom(httpResponse.Body)
-	result := &XHRProxyResponse{
-		Data:       buf.Bytes(),
-		DataSize:   int(c),
-		StatusCode: int32(httpResponse.StatusCode),
-		Header:     responseHeader,
-	}
-	return result, nil
+}
+
+func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
+	return m.send("http://", request)
 }
 
 func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
-	//cert, err := tls.LoadX509KeyPair(m.SSLCert, m.SSLKey)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//crt, err := ioutil.ReadFile("ca.crt")
-	//if err != nil {
-	//	return nil, err
-	//}
-	//certPool := x509.NewCertPool()
-	//certPool.AppendCertsFromPEM(crt)
-	//if m.client == nil {
-	//	m.client = &httpClient{}
-	//	var config *tls.Config
-	//	if m.SSL.skipVerify() {
-	//
-	//	} else {
-	//
-	//	}
-	//
-	//	m.client.tr = &http.Transport{
-	//		TLSClientConfig: &tls.Config{
-	//			InsecureSkipVerify: true,
-	//			//Certificates:       []tls.Certificate{cert},
-	//			//RootCAs:            certPool,
-	//		},
-	//	}
-	//}
+	return m.send("https://", request)
+}
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{
-			InsecureSkipVerify: true,
-			//Certificates:       []tls.Certificate{cert},
-			//RootCAs:            certPool,
-		},
-	}
-	// 创建 client
-	cli := &http.Client{
-		Jar:       jar,
-		Transport: tr,
-	}
+func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse, error) {
 	reqUrl, err := url.Parse(request.URL())
 	if err != nil {
 		return nil, err
 	}
 	targetUrl := new(bytes.Buffer)
-	targetUrl.WriteString("https://")
+	targetUrl.WriteString(scheme)
 	targetUrl.WriteString(m.IP)
 	if m.Port > 0 {
 		targetUrl.WriteString(":")
@@ -271,11 +241,12 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 		}
 		header.Free()
 	}
+
 	//httpRequest.Header.Add("Host", "energy.yanghy.cn")
 	//httpRequest.Header.Add("Origin", "https://energy.yanghy.cn")
 	//httpRequest.Header.Add("Referer", "https://energy.yanghy.cn/")
 
-	httpResponse, err := cli.Do(httpRequest)
+	httpResponse, err := m.HttpClient.Client.Do(httpRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -301,10 +272,6 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 		Header:     responseHeader,
 	}
 	return result, nil
-}
-
-func (m *XHRProxy) tcpListen() {
-
 }
 
 func (m *XHRProxy) sendTcp(request *ICefRequest) (*XHRProxyResponse, error) {

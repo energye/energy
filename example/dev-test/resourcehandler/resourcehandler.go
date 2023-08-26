@@ -26,12 +26,19 @@ func main() {
 	cef.BrowserWindow.Config.Url = "fs://energy/index.html"
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Enable:   true,
-		FileRoot: "resources/dist",
-		FS:       &resources,
+		Enable:     true,
+		ResRootDir: "resources/dist",
+		FS:         &resources,
 		Proxy: &cef.XHRProxy{
 			Scheme: consts.LpsHttps,
 			IP:     "energy.yanghy.cn",
+			SSL: cef.XHRProxySSL{
+				FS:      &resources,
+				RootDir: "resources/ssl",
+				Cert:    "demo.energy.pem",
+				Key:     "demo.energy.key",
+				CARoots: []string{"root.cer"},
+			},
 		},
 	}.Build())
 	if common.IsLinux() && app.IsUIGtk3() {
