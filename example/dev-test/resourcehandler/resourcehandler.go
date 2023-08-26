@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	//_ "net/http/pprof"
 )
@@ -13,8 +14,8 @@ import (
 var resources embed.FS
 
 func main() {
-	//logger.SetEnable(true)
-	//logger.SetLevel(logger.CefLog_Debug)
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
@@ -22,10 +23,14 @@ func main() {
 	app.SetDisableBackForwardCache(true)
 	//app.SetDisableWebSecurity(true)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "fs://energy/index.html"
+	cef.BrowserWindow.Config.Url = "fs://example.com/index.html"
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Enable:     true,
+		Enable: true,
+		//Scheme:     consts.LcsLocal,
+		//ResRootDir: "@/dist",
+		Scheme:     consts.LcsFS,
+		Domain:     "example.com",
 		ResRootDir: "resources/dist",
 		FS:         &resources,
 		Proxy: &cef.XHRProxy{
