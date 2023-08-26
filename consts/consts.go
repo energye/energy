@@ -1662,8 +1662,8 @@ const (
 type LocalCustomerScheme string
 
 const (
-	LocalCSFile LocalCustomerScheme = "file" // 本地目录 file://energy/index.html
-	LocalCSFS   LocalCustomerScheme = "fs"   // 内置 fs://energy/index.html
+	LcsLocal LocalCustomerScheme = "local" // 本地目录 local://energy/index.html
+	LcsFS    LocalCustomerScheme = "fs"    // 内置 fs://energy/index.html
 )
 
 // LocalProxyScheme
