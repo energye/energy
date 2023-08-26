@@ -41,13 +41,16 @@ type LocalLoadResource struct {
 //  本地&内置资源加载配置
 //  然后使用 Build() 函数构建对象
 type LocalLoadConfig struct {
-	Enable     bool                // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
-	Domain     string              // 必须设置的域
-	Scheme     LocalCustomerScheme // 自定义协议, local: 本地磁盘目录加载, fs: 内置到执行程序加载, 默认 fs
-	ResRootDir string              // 资源根目录, scheme是file时为本地目录(默认当前程序执行目录) scheme是fs时为resources, 默认:[resources or /current/path]
-	FS         *embed.FS           // 内置加载资源对象, scheme是fs时必须填入
-	Proxy      IXHRProxy           // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
-	Home       string              // 默认首页: /index.html, /home.html, /other.html, default: /index.html
+	Enable  bool                // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
+	Domain  string              // 必须设置的域, 格式为: xxx, xxx.xx, xxx.xxx.xxx， example, example.com
+	Scheme  LocalCustomerScheme // 自定义协议, local: 本地磁盘目录加载, fs: 内置到执行程序加载, 默认 fs
+	exePath string              // 执行文件当前目录
+	// 资源根目录, scheme是local时为本地目录(默认当前程序执行目录), scheme是fs时为默认值resources
+	// 规则 local: 空(""): 时当前目录, @: 当前目录开始(@/to/path)，或绝对目录
+	ResRootDir string
+	FS         *embed.FS // 内置加载资源对象, scheme是fs时必须填入
+	Proxy      IXHRProxy // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
+	Home       string    // 默认首页: /index.html, /home.html, /other.html, default: /index.html
 }
 
 // 请求和响应资源
@@ -98,13 +101,13 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	} else if config.Home[0] != '/' {
 		config.Home = "/" + config.Home
 	}
+	m.exePath, _ = os.Getwd()
 	// 默认的资源目录
 	if config.ResRootDir == "" {
 		if config.Scheme == LcsFS {
 			config.ResRootDir = "resources"
 		} else if config.Scheme == LcsLocal {
-			wd, _ := os.Getwd()
-			config.ResRootDir = wd
+			config.ResRootDir = m.exePath
 		}
 	}
 	if m.Proxy != nil {
@@ -188,19 +191,25 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 // 读取本地或内置资源
 func (m *source) readFile() {
 	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
-	if localLoadRes.ResRootDir != "" {
-		if localLoadRes.Scheme == LcsLocal {
-			m.bytes, m.err = ioutil.ReadFile(filepath.Join(localLoadRes.ResRootDir, m.path))
-			// 在本地读取
-			if m.err != nil {
-				logger.Error("ReadFile:", m.err.Error())
-			}
-		} else if localLoadRes.Scheme == LcsFS && localLoadRes.FS != nil {
-			//在fs读取
-			m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.ResRootDir + m.path)
-			if m.err != nil {
-				logger.Error("ReadFile:", m.err.Error())
-			}
+	if localLoadRes.Scheme == LcsLocal {
+		var path string
+		if localLoadRes.ResRootDir[0] == '@' {
+			//当前路径
+			path = filepath.Join(localLoadRes.exePath, localLoadRes.ResRootDir[1:])
+		} else {
+			//绝对路径
+			path = localLoadRes.ResRootDir
+		}
+		m.bytes, m.err = ioutil.ReadFile(filepath.Join(path, m.path))
+		// 在本地读取
+		if m.err != nil {
+			logger.Error("ReadFile:", m.err.Error())
+		}
+	} else if localLoadRes.Scheme == LcsFS && localLoadRes.FS != nil {
+		//在fs读取
+		m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.ResRootDir + m.path)
+		if m.err != nil {
+			logger.Error("ReadFile:", m.err.Error())
 		}
 	}
 }

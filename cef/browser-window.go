@@ -43,6 +43,7 @@ type WindowProperty struct {
 	//  http方式: http://www.example.com, LocalLoad方式: fs://energy/index.html, or file://energy/index.html
 	//  http: 需要web服务支持, LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理
 	//  LocalLoad: 通过 Config.LocalResource 配置实现
+	//  LocalLoad: 地址必须与配置的自定义协议和域相同, 格式 [scheme]://[domain]
 	Url                       string
 	Icon                      string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
 	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
