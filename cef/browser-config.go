@@ -27,7 +27,7 @@ type browserConfig struct {
 
 // LocalResource
 //  本地资源加载配置
-func (m *browserConfig) LocalResource(config LocalLoadConfig) {
+func (m *browserConfig) LocalResource(config *LocalLoadConfig) {
 	localLoadResourceInit(config)
 }
 

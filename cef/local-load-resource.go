@@ -38,6 +38,7 @@ type LocalLoadResource struct {
 
 // LocalLoadConfig
 //  本地&内置资源加载配置
+//  然后使用 Build() 函数构建对象
 type LocalLoadConfig struct {
 	Enable      bool                // 设置是否启用本地资源缓存到内存, 默认false: 未启用
 	EnableCache bool                // 启用缓存，将加载过的资源存储到内存中
@@ -64,14 +65,22 @@ type source struct {
 }
 
 // 初始化本地加载配置对象
-func localLoadResourceInit(config LocalLoadConfig) {
-	if localLoadRes != nil || config.FS == nil {
+func localLoadResourceInit(config *LocalLoadConfig) {
+	if config == nil {
 		return
 	}
 	localLoadRes = &LocalLoadResource{
 		mimeType:    make(map[string]string),
 		sourceCache: make(map[string]*source),
 	}
+	localLoadRes.LocalLoadConfig = *config
+}
+
+func (m LocalLoadConfig) Build() *LocalLoadConfig {
+	if localLoadRes != nil {
+		return nil
+	}
+	var config = &m
 	// domain 必须设置
 	if config.Domain == "" {
 		config.Domain = localDomain
@@ -80,11 +89,13 @@ func localLoadResourceInit(config LocalLoadConfig) {
 	if config.Scheme != LocalCSFile && config.Scheme != LocalCSFS {
 		config.Scheme = LocalCSFS
 	}
+	// 默认使用 /index.html
 	if config.Home == "" {
 		config.Home = "/index.html"
 	} else if config.Home[0] != '/' {
 		config.Home = "/" + config.Home
 	}
+	// 默认的资源目录配置
 	if config.FileRoot == "" {
 		if config.Scheme == LocalCSFS {
 			config.FileRoot = "resources"
@@ -93,19 +104,11 @@ func localLoadResourceInit(config LocalLoadConfig) {
 			config.FileRoot = wd
 		}
 	}
-	//if config.Proxy != nil {
-	//	if proxy, ok := config.Proxy.(*XHRProxy); ok {
-	//		if proxy.Scheme == LpsTcp {
-	//			proxy.tcpListen()
-	//		}
-	//	}
-	//}
-	localLoadRes.LocalLoadConfig = config
-}
+	// 代理配置
+	if config.Proxy == nil {
 
-func (m LocalLoadConfig) SetEnable(v bool) LocalLoadConfig {
-	m.Enable = v
-	return m
+	}
+	return config
 }
 
 func (m *LocalLoadResource) enable() bool {

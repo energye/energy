@@ -33,7 +33,7 @@ func main() {
 			Scheme: consts.LpsHttps,
 			IP:     "energy.yanghy.cn",
 		},
-	})
+	}.Build())
 	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {

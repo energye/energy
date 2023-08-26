@@ -13,6 +13,7 @@ package cef
 import (
 	"bytes"
 	"crypto/tls"
+	"embed"
 	"errors"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
@@ -35,12 +36,26 @@ type IXHRProxy interface {
 // XHRProxy
 //  数据请求代理
 type XHRProxy struct {
-	Scheme    LocalProxyScheme // http/https/tcp default: http
-	IP        string           // default: localhost
-	Port      int              // default: 80
-	SSLCert   string           // /to/path/cert.crt, https时， 该参数为空跳过检查
-	SSLKey    string           // /to/path/key.key, https时， 该参数为空跳过检查
-	SSLCARoot string           // /to/path/ca.crt， https时， 该参数为空跳过检查
+	Scheme LocalProxyScheme // http/https/tcp default: http
+	IP     string           // default: localhost
+	Port   int              // default: 80
+	SSL    XHRProxySSL
+	client *httpClient
+}
+
+// XHRProxySSL
+//  https证书配置，如果其中某一配置为空，则跳过ssl检查, 如果证书配置错误则请求失败
+type XHRProxySSL struct {
+	FS        *embed.FS // 证书到内置执行文件时需要设置
+	RootDir   string    // 根目录, FS不为空时是内置资源目录名，否则是本地硬盘目录
+	SSLCert   string    // RootDir/to/path/cert.crt
+	SSLKey    string    // RootDir/to/path/key.key
+	SSLCARoot string    // RootDir/to/path/ca.crt
+}
+
+type httpClient struct {
+	tr     *http.Transport
+	client http.Client
 }
 
 // XHRProxyResponse
@@ -50,6 +65,10 @@ type XHRProxyResponse struct {
 	DataSize   int                 // 响应数据大小
 	StatusCode int32               // 响应状态码
 	Header     map[string][]string // 响应头
+}
+
+func (m *XHRProxySSL) skipVerify() bool {
+	return m.RootDir == "" || m.SSLCert == "" || m.SSLKey == "" || m.SSLCARoot == ""
 }
 
 func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
@@ -125,6 +144,7 @@ func (m *XHRProxy) sendHttp(request *ICefRequest) (*XHRProxyResponse, error) {
 	cli := &http.Client{
 		Jar: jar,
 	}
+	cli.CloseIdleConnections()
 	httpResponse, err := cli.Do(httpRequest)
 	if err != nil {
 		return nil, err
@@ -164,6 +184,24 @@ func (m *XHRProxy) sendHttps(request *ICefRequest) (*XHRProxyResponse, error) {
 	//}
 	//certPool := x509.NewCertPool()
 	//certPool.AppendCertsFromPEM(crt)
+	//if m.client == nil {
+	//	m.client = &httpClient{}
+	//	var config *tls.Config
+	//	if m.SSL.skipVerify() {
+	//
+	//	} else {
+	//
+	//	}
+	//
+	//	m.client.tr = &http.Transport{
+	//		TLSClientConfig: &tls.Config{
+	//			InsecureSkipVerify: true,
+	//			//Certificates:       []tls.Certificate{cert},
+	//			//RootCAs:            certPool,
+	//		},
+	//	}
+	//}
+
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
