@@ -919,18 +919,19 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			m.setDraggableRegions()
 		})
 	}
-	if localLoadRes.enable() {
-		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-			var flag bool
-			if bwEvent.onGetResourceHandler != nil {
-				resourceHandler, flag = bwEvent.onGetResourceHandler(sender, browser, frame, request)
-			}
-			if !flag {
-				resourceHandler = getResourceHandler(browser, frame, request)
-			}
-			return
-		})
-	}
+	//if localLoadRes.enable() {
+	//	m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
+	//		fmt.Println("SetOnGetResourceHandler")
+	//		var flag bool
+	//		if bwEvent.onGetResourceHandler != nil {
+	//			resourceHandler, flag = bwEvent.onGetResourceHandler(sender, browser, frame, request)
+	//		}
+	//		if !flag {
+	//			resourceHandler = getResourceHandler(browser, frame, request)
+	//		}
+	//		return
+	//	})
+	//}
 }
 
 // registerPopupEvent 注册弹出子窗口事件

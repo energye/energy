@@ -49,7 +49,7 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 }
 
 // chromiumOnBeforeBrowser
-func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
+func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
 	if window.CurrentBrowseWindowCache != nil {
 		bw := window.CurrentBrowseWindowCache.(IBrowserWindow)
 		if bw.Id() != browser.Identifier() {
@@ -74,6 +74,8 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame) {
 			BrowserWindow.createNextLCLPopupWindow()
 		})
 	}
+	// 本地资源加载处理器
+	getResourceHandler(browser, frame, request)
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前
@@ -331,16 +333,24 @@ func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICef
 
 // getResourceHandler
 //  资源处理器默认实现，使用本地资源加载时开启
-func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
+func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
 	if localLoadRes.enable() {
-		if source, ok := localLoadRes.checkRequest(request); ok {
-			resourceHandler = ResourceHandlerRef.New(browser, frame, string(localLoadRes.Scheme), request)
-			//resourceHandler.Open(source.open)
-			resourceHandler.ProcessRequest(source.processRequest)
-			resourceHandler.GetResponseHeaders(source.response)
-			//resourceHandler.Read(source.read)
-			resourceHandler.ReadResponse(source.readResponse)
-		}
+		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
+		factory := SchemeHandlerFactoryRef.New()
+		factory.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
+			if source, ok := localLoadRes.checkRequest(request); ok {
+				handler := ResourceHandlerRef.New(browser, frame, string(localLoadRes.Scheme), request)
+				//resourceHandler.Open(source.open)
+				handler.ProcessRequest(source.processRequest)
+				handler.GetResponseHeaders(source.response)
+				//resourceHandler.Read(source.read)
+				handler.ReadResponse(source.readResponse)
+				return handler
+			}
+			return nil
+		})
+		browser.GetRequestContext().RegisterSchemeHandlerFactory(string(localLoadRes.Scheme), localLoadRes.Domain, factory)
+		//}
 	}
 	return
 }

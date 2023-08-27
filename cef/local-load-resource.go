@@ -312,7 +312,7 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	response.SetMimeType(m.mimeType)
 	responseLength = int64(len(m.bytes))
 	if m.header != nil {
-		header := StringMultiMapRef.New()
+		header := response.GetHeaderMap() //StringMultiMapRef.New()
 		if header.IsValid() {
 			for key, value := range m.header {
 				for _, vs := range value {
@@ -321,6 +321,7 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 			}
 			response.SetHeaderMap(header)
 		}
+		header.Free()
 	}
 	return
 }
@@ -333,7 +334,7 @@ func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResource
 			m.readPosition++
 			bytesRead++
 		}
-		callback.Cont(int64(bytesRead))
+		//callback.Cont(int64(bytesRead))
 		return bytesRead, bytesRead > 0
 	} else {
 		m.bytes = nil
@@ -348,7 +349,7 @@ func (m *source) readResponse(dataOut uintptr, bytesToRead int32, callback *ICef
 			m.readPosition++
 			bytesRead++
 		}
-		callback.Cont()
+		//callback.Cont()
 		return bytesRead, bytesRead > 0
 	} else {
 		m.bytes = nil

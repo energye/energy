@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
-	"github.com/energye/golcl/lcl"
 	//_ "net/http/pprof"
 )
 
@@ -20,40 +19,43 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	var app = cef.NewApplication()
-	app.SetDisableBackForwardCache(true)
 	//app.SetDisableWebSecurity(true)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "fs://example.com/index.html"
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
-	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Enable: true,
-		//Scheme:     consts.LcsLocal,
-		//ResRootDir: "@/dist",
-		Scheme:     consts.LcsFS,
-		Domain:     "example.com",
-		ResRootDir: "resources/dist",
-		FS:         &resources,
-		Proxy: &cef.XHRProxy{
-			Scheme: consts.LpsHttps,
-			IP:     "energy.yanghy.cn",
-			SSL: cef.XHRProxySSL{
-				FS:      &resources,
-				RootDir: "resources/ssl",
-				Cert:    "demo.energy.pem",
-				Key:     "demo.energy.key",
-				CARoots: []string{"root.cer"},
+	var e = true
+	if e {
+		cef.BrowserWindow.Config.Url = "fs://energy"
+		cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
+			Enable: true,
+			//Scheme:     consts.LcsLocal,
+			//ResRootDir: "@/dist",
+			Scheme:     consts.LcsFS,
+			Domain:     "energy",
+			ResRootDir: "resources/dist",
+			FS:         &resources,
+			Proxy: &cef.XHRProxy{
+				Scheme: consts.LpsHttp,
+				IP:     "localhost",
+				Port:   8082,
+				SSL: cef.XHRProxySSL{
+					FS:      &resources,
+					RootDir: "resources/ssl",
+					Cert:    "demo.energy.pem",
+					Key:     "demo.energy.key",
+					CARoots: []string{"root.cer"},
+				},
 			},
-		},
-	}.Build())
+		}.Build())
+	} else {
+		cef.BrowserWindow.Config.Url = "http://192.168.0.108:8080/"
+	}
 	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		window.Chromium().SetOnResourceLoadComplete(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, response *cef.ICefResponse, status consts.TCefUrlRequestStatus, receivedContentLength int64) {
-			//fmt.Println("SetOnResourceLoadComplete", request.URL(), status, receivedContentLength)
-		})
+
 	})
 	//运行应用
 	cef.Run(app)
