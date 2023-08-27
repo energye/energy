@@ -60,7 +60,7 @@ type source struct {
 	bytes        []byte              // 资源数据
 	err          error               // 获取资源时的错误
 	readPosition int                 // 读取资源时的地址偏移
-	status       int32               // 响应状态码
+	statusCode   int32               // 响应状态码
 	statusText   string              // 响应状态文本
 	mimeType     string              // 响应的资源 MimeType
 	header       map[string][]string // 响应头
@@ -215,10 +215,10 @@ func (m *source) readFile() {
 }
 
 // checkRequest = true, 打开资源
-func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleRequest, result bool) {
+func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleRequest, ok bool) {
 	m.readPosition = 0
 	// 当前资源的响应设置默认值
-	m.status = 404
+	m.statusCode = 404
 	m.statusText = "Not Found"
 	m.err = nil
 	m.header = nil
@@ -226,20 +226,22 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 	if m.resourceType == RT_XHR && localLoadRes.Proxy != nil {
 		if result, err := localLoadRes.Proxy.Send(request); err == nil {
 			m.bytes, m.err = result.Data, err
-			m.status = result.StatusCode
+			m.statusCode = result.StatusCode
+			m.statusText = result.Status
 			m.header = result.Header
 		}
 	} else {
 		// 如果开启缓存,直接在缓存取
 		m.readFile()
 		if m.err == nil {
-			m.status = 200
+			m.statusCode = 200
 			m.statusText = "OK"
 		} else {
 			// 尝试在代理服务请求资源
 			if result, err := localLoadRes.Proxy.Send(request); err == nil {
 				m.bytes, m.err = result.Data, err
-				m.status = result.StatusCode
+				m.statusCode = result.StatusCode
+				m.statusText = result.Status
 				m.header = result.Header
 				// TODO 需要验证 Content-Type 合法性
 				if ct, ok := result.Header["Content-Type"]; ok {
@@ -260,9 +262,11 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 
 // checkRequest = true, 设置响应信息
 func (m *source) response(response *ICefResponse) (responseLength int64, redirectUrl string) {
-	response.SetStatus(m.status)
+	response.SetStatus(m.statusCode)
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
+	response.SetCharset("UTF-8")
+	response.SetURL("fs://energy")
 	responseLength = int64(len(m.bytes))
 	if m.header != nil {
 		header := StringMultiMapRef.New()

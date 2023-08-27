@@ -38,6 +38,7 @@ func (m *TCefSchemeRegistrarRef) IsValid() bool {
 	return m.instance != nil
 }
 
+// AddCustomScheme 注册自定义方案。不应为内置的HTTP、HTTPS、FILE、FTP、ABOUT和DATA方案调用此函数。
 func (m *TCefSchemeRegistrarRef) AddCustomScheme(schemeName string, options consts.CefSchemeOption) bool {
 	if !m.IsValid() {
 		return false

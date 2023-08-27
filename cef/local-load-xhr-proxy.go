@@ -70,6 +70,7 @@ type XHRProxyResponse struct {
 	Data       []byte              // 响应数据
 	DataSize   int                 // 响应数据大小
 	StatusCode int32               // 响应状态码
+	Status     string              //
 	Header     map[string][]string // 响应头
 }
 
@@ -84,9 +85,9 @@ func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
 		return m.sendHttp(request)
 	} else if m.Scheme == LpsHttps {
 		return m.sendHttps(request)
-	} else if m.Scheme == LpsTcp {
+	} /* else if m.Scheme == LpsTcp {
 		return m.sendTcp(request)
-	}
+	}*/
 	return nil, errors.New("incorrect scheme")
 }
 
@@ -95,6 +96,9 @@ func (m *XHRProxy) Send(request *ICefRequest) (*XHRProxyResponse, error) {
 // 否则你可以自己实现代理， 实现 IXHRProxy 接口，自定义代理请求
 func (m *XHRProxy) init() {
 	if m.Scheme == LpsHttp || m.Scheme == LpsHttps {
+		if m.IP == "" {
+			m.IP = "localhost"
+		}
 		if m.HttpClient == nil {
 			m.HttpClient = new(HttpClient)
 		}
@@ -197,7 +201,10 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 		targetUrl.WriteString(strconv.Itoa(m.Port))
 	}
 	targetUrl.WriteString(reqUrl.Path)
-	targetUrl.WriteString(reqUrl.RawQuery)
+	if reqUrl.RawQuery != "" {
+		targetUrl.WriteString("?")
+		targetUrl.WriteString(reqUrl.RawQuery)
+	}
 	// 读取请求数据
 	requestData := new(bytes.Buffer)
 	data := request.GetPostData()
@@ -265,10 +272,20 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 	// 读取响应数据
 	buf := new(bytes.Buffer)
 	c, err := buf.ReadFrom(httpResponse.Body)
+	status := "OK"
+	if httpResponse.StatusCode != 200 {
+		rs := strings.Split(httpResponse.Status, " ")
+		if len(rs) > 1 {
+			status = rs[1]
+		} else {
+			status = httpResponse.Status
+		}
+	}
 	result := &XHRProxyResponse{
 		Data:       buf.Bytes(),
 		DataSize:   int(c),
 		StatusCode: int32(httpResponse.StatusCode),
+		Status:     status,
 		Header:     responseHeader,
 	}
 	return result, nil

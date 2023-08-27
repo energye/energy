@@ -1668,11 +1668,11 @@ const (
 
 // LocalProxyScheme
 //  本地加载资源，在浏览器发起xhr请求时的代理协议
-//  http, https, tcp
+//  http, https
 type LocalProxyScheme int
 
 const (
 	LpsHttp  LocalProxyScheme = iota // http
 	LpsHttps                         // https
-	LpsTcp                           // tcp
+	//LpsTcp                           // tcp
 )
