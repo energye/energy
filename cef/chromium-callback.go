@@ -335,9 +335,11 @@ func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefReq
 	if localLoadRes.enable() {
 		if source, ok := localLoadRes.checkRequest(request); ok {
 			resourceHandler = ResourceHandlerRef.New(browser, frame, string(localLoadRes.Scheme), request)
-			resourceHandler.Open(source.open)
+			//resourceHandler.Open(source.open)
+			resourceHandler.ProcessRequest(source.processRequest)
 			resourceHandler.GetResponseHeaders(source.response)
-			resourceHandler.Read(source.read)
+			//resourceHandler.Read(source.read)
+			resourceHandler.ReadResponse(source.readResponse)
 		}
 	}
 	return

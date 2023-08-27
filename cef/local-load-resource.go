@@ -260,13 +260,56 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 	return true, true
 }
 
+func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bool {
+	m.readPosition = 0
+	// 当前资源的响应设置默认值
+	m.statusCode = 404
+	m.statusText = "Not Found"
+	m.err = nil
+	m.header = nil
+	// xhr 请求, 需要通过代理转发出去
+	if m.resourceType == RT_XHR && localLoadRes.Proxy != nil {
+		if result, err := localLoadRes.Proxy.Send(request); err == nil {
+			m.bytes, m.err = result.Data, err
+			m.statusCode = result.StatusCode
+			m.statusText = result.Status
+			m.header = result.Header
+		}
+	} else {
+		// 如果开启缓存,直接在缓存取
+		m.readFile()
+		if m.err == nil {
+			m.statusCode = 200
+			m.statusText = "OK"
+		} else if localLoadRes.Proxy != nil {
+			// 尝试在代理服务请求资源
+			if result, err := localLoadRes.Proxy.Send(request); err == nil {
+				m.bytes, m.err = result.Data, err
+				m.statusCode = result.StatusCode
+				m.statusText = result.Status
+				m.header = result.Header
+				// TODO 需要验证 Content-Type 合法性
+				if ct, ok := result.Header["Content-Type"]; ok {
+					m.mimeType = ct[0]
+				} else {
+					m.mimeType = "text/html"
+				}
+			} else {
+				m.bytes = []byte("Invalid resource request")
+				m.mimeType = "application/json"
+				m.statusText = err.Error()
+			}
+		}
+	}
+	callback.Cont()
+	return true
+}
+
 // checkRequest = true, 设置响应信息
 func (m *source) response(response *ICefResponse) (responseLength int64, redirectUrl string) {
 	response.SetStatus(m.statusCode)
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
-	response.SetCharset("UTF-8")
-	response.SetURL("fs://energy")
 	responseLength = int64(len(m.bytes))
 	if m.header != nil {
 		header := StringMultiMapRef.New()
@@ -284,19 +327,31 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 
 // checkRequest = true, 读取bytes, 返回到dataOut
 func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
-	if m.bytes != nil && len(m.bytes) > 0 {
-		var i int32 = 0 // 默认 0
-		for i < bytesToRead && m.readPosition < len(m.bytes) {
-			*(*byte)(unsafe.Pointer(dataOut + uintptr(i))) = m.bytes[m.readPosition]
+	if m.bytes != nil {
+		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
+			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
 			m.readPosition++
-			i++
+			bytesRead++
 		}
-		// 读取到最后不缓存时,清空
-		if i == 0 {
-			m.bytes = nil
+		callback.Cont(int64(bytesRead))
+		return bytesRead, bytesRead > 0
+	} else {
+		m.bytes = nil
+	}
+	return
+}
+
+func (m *source) readResponse(dataOut uintptr, bytesToRead int32, callback *ICefCallback) (bytesRead int32, result bool) {
+	if m.bytes != nil {
+		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
+			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
+			m.readPosition++
+			bytesRead++
 		}
-		callback.Cont(int64(i))
-		return i, i > 0
+		callback.Cont()
+		return bytesRead, bytesRead > 0
+	} else {
+		m.bytes = nil
 	}
 	return
 }
