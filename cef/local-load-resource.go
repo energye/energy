@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"bytes"
 	"embed"
 	"github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/consts"
@@ -23,8 +24,9 @@ import (
 )
 
 const (
-	localDomain = "energy" // 默认本地资源加载域
-	localProto  = "http"   // 默认本地资源加载协议
+	localDomain = "energy"      // 默认本地资源加载域
+	localProto  = "http"        // 默认本地资源加载协议
+	localHome   = "/index.html" //
 )
 
 // 本地加载资源
@@ -44,7 +46,7 @@ type LocalLoadResource struct {
 type LocalLoadConfig struct {
 	Enable bool   // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
 	Domain string // 自定义域, 格式: xxx | xxx.xx | xxx.xxx.xxx， example, example.com, 默认: energy
-	Scheme string // 自定义协议, 不建议使用 HTTP、HTTPS、FILE、FTP、ABOUT和DATA. 但MacOS目前不能自定义而是使用默认的, 默认: http
+	Scheme string // 自定义协议, 不建议使用 HTTP、HTTPS、FILE、FTP、ABOUT和DATA 默认: http
 	// 资源根目录, fs为空时: 本地目录(默认当前程序执行目录), fs不为空时: 默认值resources, 使用内置加载
 	// 规则 空(""): 时当前目录, @: 当前目录开始(@/to/path)，或绝对目录
 	ResRootDir string
@@ -97,7 +99,7 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	}
 	// 默认使用 /index.html
 	if config.Home == "" {
-		config.Home = "/index.html"
+		config.Home = localHome
 	} else if config.Home[0] != '/' {
 		config.Home = "/" + config.Home
 	}
@@ -123,6 +125,63 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
 	m.Enable = false
 	return m
+}
+
+func (m *LocalLoadResource) loadDefaultURL(browser *ICefBrowser) {
+	if localLoadRes.enable() {
+		var homeURL string
+		if BrowserWindow.Config.Url != "" {
+			homeURL = BrowserWindow.Config.Url
+		} else {
+			defaultURL := new(bytes.Buffer)
+			defaultURL.WriteString(m.Scheme)
+			defaultURL.WriteString("://")
+			defaultURL.WriteString(m.Domain)
+			if m.Home != localHome {
+				defaultURL.WriteString(m.Home)
+			}
+			homeURL = defaultURL.String()
+			defaultURL = nil
+		}
+		if browser.IsValid() {
+			frame := browser.MainFrame()
+			if frame.IsValid() {
+				frame.LoadUrl(homeURL)
+			}
+		}
+	}
+}
+
+// getSchemeHandlerFactory
+//  方式二 资源处理器默认实现，使用本地资源加载时开启
+func (m *LocalLoadResource) getSchemeHandlerFactory(browser *ICefBrowser) {
+	if localLoadRes.enable() {
+		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
+		factory := SchemeHandlerFactoryRef.New()
+		factory.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
+			return m.getResourceHandler(browser, frame, request)
+		})
+		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, factory)
+		//}
+	}
+	return
+}
+
+// getResourceHandler
+//  方式一 资源处理器默认实现，使用本地资源加载时开启
+func (m *LocalLoadResource) getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
+	if localLoadRes.enable() {
+		if source, ok := localLoadRes.checkRequest(request); ok {
+			handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
+			//handler.Open(source.open)
+			handler.ProcessRequest(source.processRequest)
+			handler.GetResponseHeaders(source.response)
+			//handler.Read(source.read)
+			handler.ReadResponse(source.readResponse)
+			return handler
+		}
+	}
+	return nil
 }
 
 func (m *LocalLoadResource) enable() bool {
@@ -234,56 +293,6 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 			m.statusText = err.Error()
 		}
 	} else {
-		// 如果开启缓存,直接在缓存取
-		m.readFile()
-		if m.err == nil {
-			m.statusCode = 200
-			m.statusText = "OK"
-		} else {
-			// 尝试在代理服务请求资源
-			if result, err := localLoadRes.Proxy.Send(request); err == nil {
-				m.bytes, m.err = result.Data, err
-				m.statusCode = result.StatusCode
-				m.statusText = result.Status
-				m.header = result.Header
-				// TODO 需要验证 Content-Type 合法性
-				if ct, ok := result.Header["Content-Type"]; ok {
-					m.mimeType = ct[0]
-				} else {
-					m.mimeType = "text/html"
-				}
-			} else {
-				m.bytes = []byte("Invalid resource request")
-				m.mimeType = "application/json"
-				m.err = err
-				m.statusText = err.Error()
-			}
-		}
-	}
-	callback.Cont()
-	return true, true
-}
-
-func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bool {
-	m.readPosition = 0
-	// 当前资源的响应设置默认值
-	m.statusCode = 404
-	m.statusText = "Not Found"
-	m.err = nil
-	m.header = nil
-	// xhr 请求, 需要通过代理转发出去
-	if m.resourceType == RT_XHR && localLoadRes.Proxy != nil {
-		if result, err := localLoadRes.Proxy.Send(request); err == nil {
-			m.bytes, m.err = result.Data, err
-			m.statusCode = result.StatusCode
-			m.statusText = result.Status
-			m.header = result.Header
-		} else {
-			m.err = err
-			m.statusText = err.Error()
-		}
-	} else {
-		// 如果开启缓存,直接在缓存取
 		m.readFile()
 		if m.err == nil {
 			m.statusCode = 200
@@ -310,6 +319,11 @@ func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bo
 		}
 	}
 	callback.Cont()
+	return true, true
+}
+
+func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bool {
+	_, _ = m.open(request, callback)
 	return true
 }
 
@@ -334,33 +348,31 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	return
 }
 
-// checkRequest = true, 读取bytes, 返回到dataOut
-func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
+func (m *source) out(dataOut uintptr, bytesToRead int32) (bytesRead int32, result bool) {
 	if m.bytes != nil {
 		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
 			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
 			m.readPosition++
 			bytesRead++
 		}
-		//callback.Cont(int64(bytesRead))
 		return bytesRead, bytesRead > 0
-	} else {
-		m.bytes = nil
+	}
+	return
+}
+
+// checkRequest = true, 读取bytes, 返回到dataOut
+func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
+	bytesRead, result = m.out(dataOut, bytesToRead)
+	if result {
+		//callback.Cont(int64(bytesRead))
 	}
 	return
 }
 
 func (m *source) readResponse(dataOut uintptr, bytesToRead int32, callback *ICefCallback) (bytesRead int32, result bool) {
-	if m.bytes != nil {
-		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
-			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
-			m.readPosition++
-			bytesRead++
-		}
+	bytesRead, result = m.out(dataOut, bytesToRead)
+	if result {
 		//callback.Cont()
-		return bytesRead, bytesRead > 0
-	} else {
-		m.bytes = nil
 	}
 	return
 }

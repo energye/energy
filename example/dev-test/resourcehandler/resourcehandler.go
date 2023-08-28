@@ -24,10 +24,11 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	var e = true
 	if e {
-		cef.BrowserWindow.Config.Url = "http://energy"
+		cef.BrowserWindow.Config.Url = "fs://energy"
 		cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 			Enable: true,
 			//ResRootDir: "@/dist",
+			Scheme:     "fs",
 			Domain:     "energy",
 			ResRootDir: "resources/dist",
 			FS:         &resources,

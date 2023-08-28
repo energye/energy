@@ -348,13 +348,13 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	}
 	if localLoadRes.enable() {
 		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-			var flag bool
+			//var flag bool
 			if bwEvent.onGetResourceHandler != nil {
-				resourceHandler, flag = bwEvent.onGetResourceHandler(sender, browser, frame, request)
+				resourceHandler, _ = bwEvent.onGetResourceHandler(sender, browser, frame, request)
 			}
-			if !flag {
-				resourceHandler = getResourceHandler(browser, frame, request)
-			}
+			//if !flag {
+			//	resourceHandler = localLoadRes.getResourceHandler(browser, frame, request)
+			//}
 			return
 		})
 	}

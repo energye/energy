@@ -45,6 +45,7 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 			wp.UpdateSize()
 		}
 	}
+	localLoadRes.loadDefaultURL(browser)
 	return false
 }
 
@@ -75,7 +76,7 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame, request *IC
 		})
 	}
 	// 方式二 本地资源加载处理器
-	//getSchemeHandlerFactory(browser)
+	localLoadRes.getSchemeHandlerFactory(browser)
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前
@@ -329,45 +330,4 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 // chromiumOnBeforePopup 弹出窗口
 func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, extraInfo *ICefDictionaryValue, noJavascriptAccess *bool, result *bool) {
 
-}
-
-// getSchemeHandlerFactory
-//  方式二 资源处理器默认实现，使用本地资源加载时开启
-func getSchemeHandlerFactory(browser *ICefBrowser) {
-	if localLoadRes.enable() {
-		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
-		factory := SchemeHandlerFactoryRef.New()
-		factory.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
-			if source, ok := localLoadRes.checkRequest(request); ok {
-				handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
-				//resourceHandler.Open(source.open)
-				handler.ProcessRequest(source.processRequest)
-				handler.GetResponseHeaders(source.response)
-				//resourceHandler.Read(source.read)
-				handler.ReadResponse(source.readResponse)
-				return handler
-			}
-			return nil
-		})
-		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, factory)
-		//}
-	}
-	return
-}
-
-// getResourceHandler
-//  方式一 资源处理器默认实现，使用本地资源加载时开启
-func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
-	if localLoadRes.enable() {
-		if source, ok := localLoadRes.checkRequest(request); ok {
-			handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
-			//resourceHandler.Open(source.open)
-			handler.ProcessRequest(source.processRequest)
-			handler.GetResponseHeaders(source.response)
-			//resourceHandler.Read(source.read)
-			handler.ReadResponse(source.readResponse)
-			return handler
-		}
-	}
-	return nil
 }
