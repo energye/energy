@@ -67,15 +67,20 @@ func Run(app *TCEFApplication) {
 		// 启动主进程
 		success := app.StartMainProcess()
 		if success {
-			//LCL -> Linux 必须在主进程启动之后初始化组件
-			lclwidget.CustomWidgetSetInitialization()
+			if app.IsUIGtk2() {
+				//LCL -> Linux GTK2 必须在主进程启动之后初始化组件
+				lclwidget.CustomWidgetSetInitialization()
+			}
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
 			}
 			appMainRunCallback()
 			if app.IsMessageLoop() {
-				lcl.Application.Initialize()
+				if app.IsUIGtk2() {
+					//LCL -> Linux GTK2
+					lcl.Application.Initialize()
+				}
 				// VF窗口
 				app.RunMessageLoop()
 			} else {

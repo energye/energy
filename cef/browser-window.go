@@ -41,7 +41,7 @@ type WindowProperty struct {
 	Title           string             // 窗口 标题
 	//Url  默认打开URL, 支持http和LocalLoad(本地资源)加载方式
 	//  web服务方式: http's://www.example.com, LocalLoad方式: [scheme]://energy/index.html
-	//  LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理转发, 支持http https
+	//  LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理转发
 	//  LocalLoad: 通过 Config.LocalResource 配置实现
 	//  LocalLoad: 地址必须与配置的自定义协议和域相同, 格式 [scheme]://[custom domain]
 	Url                       string
