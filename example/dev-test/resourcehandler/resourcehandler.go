@@ -24,11 +24,10 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	var e = true
 	if e {
-		cef.BrowserWindow.Config.Url = "fs://energy"
+		cef.BrowserWindow.Config.Url = "http://energy"
 		cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 			Enable: true,
 			//ResRootDir: "@/dist",
-			Scheme:     "fs",
 			Domain:     "energy",
 			ResRootDir: "resources/dist",
 			FS:         &resources,
@@ -45,7 +44,7 @@ func main() {
 			},
 		}.Build())
 	} else {
-		cef.BrowserWindow.Config.Url = "http://192.168.0.108:8080/"
+		cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	}
 	if common.IsLinux() && app.IsUIGtk3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
