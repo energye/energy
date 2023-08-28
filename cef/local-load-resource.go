@@ -229,6 +229,9 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 			m.statusCode = result.StatusCode
 			m.statusText = result.Status
 			m.header = result.Header
+		} else {
+			m.err = err
+			m.statusText = err.Error()
 		}
 	} else {
 		// 如果开启缓存,直接在缓存取
@@ -252,6 +255,7 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 			} else {
 				m.bytes = []byte("Invalid resource request")
 				m.mimeType = "application/json"
+				m.err = err
 				m.statusText = err.Error()
 			}
 		}
@@ -274,6 +278,9 @@ func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bo
 			m.statusCode = result.StatusCode
 			m.statusText = result.Status
 			m.header = result.Header
+		} else {
+			m.err = err
+			m.statusText = err.Error()
 		}
 	} else {
 		// 如果开启缓存,直接在缓存取
@@ -297,6 +304,7 @@ func (m *source) processRequest(request *ICefRequest, callback *ICefCallback) bo
 			} else {
 				m.bytes = []byte("Invalid resource request")
 				m.mimeType = "application/json"
+				m.err = err
 				m.statusText = err.Error()
 			}
 		}

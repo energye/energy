@@ -127,17 +127,17 @@ func (m *XHRProxy) init() {
 					}
 					certPEMBlock, err = readFile(m.SSL.Cert)
 					if err != nil {
-						println("[Error] XHRProxy SSL Read cert:", err.Error())
+						panic(err)
 						return
 					}
 					keyPEMBlock, err = readFile(m.SSL.Key)
 					if err != nil {
-						println("[Error] XHRProxy SSL Read key:", err.Error())
+						panic(err)
 						return
 					}
 					cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
 					if err != nil {
-						println("[Error] XHRProxy SSL X509 Pair:", err.Error())
+						panic(err)
 						return
 					}
 					pool := x509.NewCertPool()
@@ -145,7 +145,7 @@ func (m *XHRProxy) init() {
 						if ca, err := readFile(path); err == nil {
 							pool.AppendCertsFromPEM(ca)
 						} else {
-							println("[Error] XHRProxy SSL Read ca:", err.Error())
+							panic(err)
 						}
 					}
 					m.HttpClient.Transport = &http.Transport{
@@ -231,7 +231,7 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 		data.Free()
 	}
 	tarUrl := targetUrl.String()
-	logger.Debug("XHRProxy URL:", tarUrl, "method:", request.Method(), "length:", requestData.Len())
+	logger.Debug("XHRProxy URL:", tarUrl, "method:", request.Method(), "data-size:", requestData.Len())
 	httpRequest, err := http.NewRequest(request.Method(), tarUrl, requestData)
 	if err != nil {
 		return nil, err
@@ -253,6 +253,9 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 	//httpRequest.Header.Add("Host", "www.example.com")
 	//httpRequest.Header.Add("Origin", "https://www.example.com")
 	//httpRequest.Header.Add("Referer", "https://www.example.com/")
+	if m.HttpClient.Client == nil {
+		return nil, errors.New("http client is nil")
+	}
 	httpResponse, err := m.HttpClient.Client.Do(httpRequest)
 	if err != nil {
 		return nil, err
@@ -272,6 +275,9 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 	// 读取响应数据
 	buf := new(bytes.Buffer)
 	c, err := buf.ReadFrom(httpResponse.Body)
+	if err != nil {
+		return nil, err
+	}
 	status := "OK"
 	if httpResponse.StatusCode != 200 {
 		rs := strings.Split(httpResponse.Status, " ")

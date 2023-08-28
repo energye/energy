@@ -24,23 +24,24 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy - Local load"
 	var e = true
 	if e {
-		cef.BrowserWindow.Config.Url = "http://energy"
+		cef.BrowserWindow.Config.Url = "fs://energy"
 		cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 			Enable: true,
 			//ResRootDir: "@/dist",
+			Scheme:     "fs",
 			Domain:     "energy",
 			ResRootDir: "resources/dist",
 			FS:         &resources,
 			Proxy: &cef.XHRProxy{
 				Scheme: consts.LpsHttps,
 				IP:     "energy.yanghy.cn",
-				SSL: cef.XHRProxySSL{
-					FS:      &resources,
-					RootDir: "resources/ssl",
-					Cert:    "demo.energy.pem",
-					Key:     "demo.energy.key",
-					CARoots: []string{"root.cer"},
-				},
+				//SSL: cef.XHRProxySSL{
+				//	FS:      &resources,
+				//	RootDir: "resources/ssl",
+				//	Cert:    "demo.energy.pem",
+				//	Key:     "demo.energy.key",
+				//	CARoots: []string{"root.cer"},
+				//},
 			},
 		}.Build())
 	} else {
