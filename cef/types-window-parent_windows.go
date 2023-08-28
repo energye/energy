@@ -248,10 +248,10 @@ func (m *TCEFWindowParent) size() (w, h int32) {
 }
 
 func (m *TCEFWindowParent) SetFocus() {
-	imports.Proc(def.CEFLinkedWindow_SetFocus).Call(m.Instance())
+	imports.Proc(def.CEFWindow_SetFocus).Call(m.Instance())
 }
 
 func (m *TCEFWindowParent) CanFocus() bool {
-	r1, _, _ := imports.Proc(def.CEFLinkedWindow_CanFocus).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CEFWindow_CanFocus).Call(m.Instance())
 	return api.GoBool(r1)
 }
