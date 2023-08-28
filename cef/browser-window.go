@@ -40,10 +40,10 @@ type WindowProperty struct {
 	WindowType      consts.WINDOW_TYPE // 窗口 类型 WINDOW_TYPE default: WT_MAIN_BROWSER
 	Title           string             // 窗口 标题
 	//Url  默认打开URL, 支持http和LocalLoad(本地资源)加载方式
-	//  http方式: http://www.example.com, LocalLoad方式: fs://energy/index.html, or file://energy/index.html
-	//  http: 需要web服务支持, LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理
+	//  web服务方式: http's://www.example.com, LocalLoad方式: [scheme]://energy/index.html
+	//  LocalLoad: 不需要web服务支持, 如果浏览器调用数据接口需要配置代理转发, 支持http https
 	//  LocalLoad: 通过 Config.LocalResource 配置实现
-	//  LocalLoad: 地址必须与配置的自定义协议和域相同, 格式 [scheme]://[domain]
+	//  LocalLoad: 地址必须与配置的自定义协议和域相同, 格式 [scheme]://[custom domain]
 	Url                       string
 	Icon                      string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
 	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png

@@ -23,7 +23,8 @@ import (
 )
 
 const (
-	localDomain = "energy" // default energy
+	localDomain = "energy" // 默认本地资源加载域
+	localProto  = "http"   // 默认本地资源加载协议
 )
 
 // 本地加载资源
@@ -41,16 +42,16 @@ type LocalLoadResource struct {
 //  本地&内置资源加载配置
 //  然后使用 Build() 函数构建对象
 type LocalLoadConfig struct {
-	Enable  bool                // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
-	Domain  string              // 必须设置的域, 格式为: xxx, xxx.xx, xxx.xxx.xxx， example, example.com
-	Scheme  LocalCustomerScheme // 自定义协议, local: 本地磁盘目录加载, fs: 内置到执行程序加载, 默认 fs
-	exePath string              // 执行文件当前目录
-	// 资源根目录, scheme是local时为本地目录(默认当前程序执行目录), scheme是fs时为默认值resources
-	// 规则 local: 空(""): 时当前目录, @: 当前目录开始(@/to/path)，或绝对目录
+	Enable bool   // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
+	Domain string // 自定义域, 格式: xxx | xxx.xx | xxx.xxx.xxx， example, example.com, 默认: energy
+	Scheme string // 自定义协议, 不建议使用 HTTP、HTTPS、FILE、FTP、ABOUT和DATA. 但MacOS目前不能自定义而是使用默认的, 默认: http
+	// 资源根目录, fs为空时: 本地目录(默认当前程序执行目录), fs不为空时: 默认值resources, 使用内置加载
+	// 规则 空(""): 时当前目录, @: 当前目录开始(@/to/path)，或绝对目录
 	ResRootDir string
-	FS         *embed.FS // 内置加载资源对象, scheme是fs时必须填入
+	FS         *embed.FS // 内置加载资源对象, 不为空时使用内置加载
 	Proxy      IXHRProxy // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
 	Home       string    // 默认首页: /index.html, /home.html, /other.html, default: /index.html
+	exePath    string    // 执行文件当前目录
 }
 
 // 请求和响应资源
@@ -91,9 +92,8 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	if config.Domain == "" {
 		config.Domain = localDomain
 	}
-	// scheme 必须是 file 或 fs
-	if config.Scheme != LcsLocal && config.Scheme != LcsFS {
-		config.Scheme = LcsFS
+	if config.Scheme == "" {
+		config.Scheme = localProto
 	}
 	// 默认使用 /index.html
 	if config.Home == "" {
@@ -104,9 +104,9 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	m.exePath, _ = os.Getwd()
 	// 默认的资源目录
 	if config.ResRootDir == "" {
-		if config.Scheme == LcsFS {
+		if config.FS != nil {
 			config.ResRootDir = "resources"
-		} else if config.Scheme == LcsLocal {
+		} else {
 			config.ResRootDir = m.exePath
 		}
 	}
@@ -169,11 +169,11 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	reqUrl, err := url.Parse(request.URL())
 	logger.Debug("LocalLoadResource URL:", reqUrl.String(), "RT:", rt)
 	if err != nil {
-		logger.Error("LocalLoadResource, scheme invalid should:", LcsFS, "or", LcsLocal)
+		logger.Error("LocalLoadResource, scheme invalid should file")
 		return nil, false
 	}
-	if reqUrl.Scheme != string(m.Scheme) {
-		logger.Error("LocalLoadResource, scheme invalid should:", LcsFS, "or", LcsLocal, "current:", reqUrl.Scheme)
+	if reqUrl.Scheme != m.Scheme {
+		logger.Error("LocalLoadResource, scheme invalid should file", "current:", reqUrl.Scheme)
 		return nil, false
 	}
 	if reqUrl.Host != m.Domain {
@@ -191,7 +191,7 @@ func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 // 读取本地或内置资源
 func (m *source) readFile() {
 	// 必须设置文件根目录, scheme是file时, fileRoot为本地文件目录, scheme是fs时, fileRoot为fs的目录名
-	if localLoadRes.Scheme == LcsLocal {
+	if localLoadRes.FS == nil {
 		var path string
 		if localLoadRes.ResRootDir[0] == '@' {
 			//当前路径
@@ -205,7 +205,7 @@ func (m *source) readFile() {
 		if m.err != nil {
 			logger.Error("ReadFile:", m.err.Error())
 		}
-	} else if localLoadRes.Scheme == LcsFS && localLoadRes.FS != nil {
+	} else {
 		//在fs读取
 		m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.ResRootDir + m.path)
 		if m.err != nil {

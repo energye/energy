@@ -346,18 +346,18 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			m.windowComponent.SetDraggableRegions(regions.Regions())
 		})
 	}
-	//if localLoadRes.enable() {
-	//	m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-	//		var flag bool
-	//		if bwEvent.onGetResourceHandler != nil {
-	//			resourceHandler, flag = bwEvent.onGetResourceHandler(sender, browser, frame, request)
-	//		}
-	//		if !flag {
-	//			resourceHandler = getResourceHandler(browser, frame, request)
-	//		}
-	//		return
-	//	})
-	//}
+	if localLoadRes.enable() {
+		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
+			var flag bool
+			if bwEvent.onGetResourceHandler != nil {
+				resourceHandler, flag = bwEvent.onGetResourceHandler(sender, browser, frame, request)
+			}
+			if !flag {
+				resourceHandler = getResourceHandler(browser, frame, request)
+			}
+			return
+		})
+	}
 }
 
 // EnableAllDefaultEvent 启用所有默认事件行为

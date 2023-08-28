@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/internal/process"
 	"github.com/energye/energy/v2/consts"
+	"strings"
 )
 
 // appOnContextCreated 创建应用上下文 - 默认实现
@@ -51,7 +52,12 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 // regCustomSchemes 注册自定义协议 - 默认实现
 func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 	if localLoadRes.enable() {
-		registrar.AddCustomScheme(string(localLoadRes.Scheme),
+		// 以下几种默认的协议不去注册
+		switch strings.ToUpper(localLoadRes.Scheme) {
+		case "HTTP", "HTTPS", "FILE", "FTP", "ABOUT", "DATA":
+			return
+		}
+		registrar.AddCustomScheme(localLoadRes.Scheme,
 			consts.CEF_SCHEME_OPTION_STANDARD|
 				consts.CEF_SCHEME_OPTION_CORS_ENABLED|
 				consts.CEF_SCHEME_OPTION_SECURE|

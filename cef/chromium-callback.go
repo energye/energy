@@ -74,8 +74,8 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame, request *IC
 			BrowserWindow.createNextLCLPopupWindow()
 		})
 	}
-	// 本地资源加载处理器
-	getResourceHandler(browser, frame, request)
+	// 方式二 本地资源加载处理器
+	//getSchemeHandlerFactory(browser)
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前
@@ -331,15 +331,15 @@ func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICef
 
 }
 
-// getResourceHandler
-//  资源处理器默认实现，使用本地资源加载时开启
-func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
+// getSchemeHandlerFactory
+//  方式二 资源处理器默认实现，使用本地资源加载时开启
+func getSchemeHandlerFactory(browser *ICefBrowser) {
 	if localLoadRes.enable() {
 		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
 		factory := SchemeHandlerFactoryRef.New()
 		factory.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
 			if source, ok := localLoadRes.checkRequest(request); ok {
-				handler := ResourceHandlerRef.New(browser, frame, string(localLoadRes.Scheme), request)
+				handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
 				//resourceHandler.Open(source.open)
 				handler.ProcessRequest(source.processRequest)
 				handler.GetResponseHeaders(source.response)
@@ -349,8 +349,25 @@ func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefReq
 			}
 			return nil
 		})
-		browser.GetRequestContext().RegisterSchemeHandlerFactory(string(localLoadRes.Scheme), localLoadRes.Domain, factory)
+		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, factory)
 		//}
 	}
 	return
+}
+
+// getResourceHandler
+//  方式一 资源处理器默认实现，使用本地资源加载时开启
+func getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
+	if localLoadRes.enable() {
+		if source, ok := localLoadRes.checkRequest(request); ok {
+			handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
+			//resourceHandler.Open(source.open)
+			handler.ProcessRequest(source.processRequest)
+			handler.GetResponseHeaders(source.response)
+			//resourceHandler.Read(source.read)
+			handler.ReadResponse(source.readResponse)
+			return handler
+		}
+	}
+	return nil
 }
