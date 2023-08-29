@@ -231,7 +231,9 @@ func (m *XHRProxy) send(scheme string, request *ICefRequest) (*XHRProxyResponse,
 		data.Free()
 	}
 	tarUrl := targetUrl.String()
-	logger.Debug("XHRProxy URL:", tarUrl, "method:", request.Method(), "data-size:", requestData.Len())
+	if logger.Enable() {
+		logger.Debug("XHRProxy URL:", tarUrl, "method:", request.Method(), "data-size:", requestData.Len())
+	}
 	httpRequest, err := http.NewRequest(request.Method(), tarUrl, requestData)
 	if err != nil {
 		return nil, err

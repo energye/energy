@@ -20,6 +20,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"reflect"
 	"unsafe"
 )
 
@@ -62,7 +63,7 @@ type source struct {
 	fileExt      string              // 资源扩展名, 用于拿到 MimeType
 	bytes        []byte              // 资源数据
 	err          error               // 获取资源时的错误
-	readPosition int                 // 读取资源时的地址偏移
+	start        int                 // 读取资源时的地址偏移
 	statusCode   int32               // 响应状态码
 	statusText   string              // 响应状态文本
 	mimeType     string              // 响应的资源 MimeType
@@ -130,7 +131,7 @@ func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
 func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefBrowser) {
 	if localLoadRes.enable() {
 		var homeURL string
-		if BrowserWindow.Config.Url != "" {
+		if BrowserWindow.Config.Url != defaultAboutBlank {
 			homeURL = BrowserWindow.Config.Url
 		} else {
 			defaultURL := new(bytes.Buffer)
@@ -141,7 +142,6 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 				defaultURL.WriteString(m.Home)
 			}
 			homeURL = defaultURL.String()
-			defaultURL = nil
 		}
 		window.Chromium().LoadUrl(homeURL)
 	}
@@ -270,7 +270,7 @@ func (m *source) readFile() {
 
 // checkRequest = true, 打开资源
 func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleRequest, ok bool) {
-	m.readPosition = 0
+	m.start = 0
 	// 当前资源的响应设置默认值
 	m.statusCode = 404
 	m.statusText = "Not Found"
@@ -343,13 +343,54 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	return
 }
 
+//func (m *source) out(dataOut uintptr, bytesToRead int32) (bytesRead int32, result bool) {
+//	if m.bytes != nil {
+//		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
+//			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
+//			m.readPosition++
+//			bytesRead++
+//		}
+//		return bytesRead, bytesRead > 0
+//	}
+//	return
+//}
+
 func (m *source) out(dataOut uintptr, bytesToRead int32) (bytesRead int32, result bool) {
-	if m.bytes != nil {
-		for bytesRead < bytesToRead && m.readPosition < len(m.bytes) {
-			*(*byte)(unsafe.Pointer(dataOut + uintptr(bytesRead))) = m.bytes[m.readPosition]
-			m.readPosition++
-			bytesRead++
+	dataSize := len(m.bytes)
+	// start 当前读取的开始位置
+	// bytes 是空(len=0)没有资源数据
+	// start大于dataSize资源读取完成
+	if m.start < dataSize {
+		var min = func(x, y int) int {
+			if x < y {
+				return x
+			}
+			return y
 		}
+		//把dataOut指针初始化Go类型的切片
+		//space切片长度和空间, 使用bytes长度和bytesToRead最小的值
+		space := min(dataSize, int(bytesToRead))
+		dataOutByteSlice := &reflect.SliceHeader{
+			Data: dataOut,
+			Len:  space,
+			Cap:  space,
+		}
+		dst := *(*[]byte)(unsafe.Pointer(dataOutByteSlice))
+		//end 计算当前读取资源数据的结束位置
+		end := m.start
+		//拿出最小的数据长度做为结束位置
+		//bytesToRead当前最大读取数量一搬最大值是固定
+		if dataSize < int(bytesToRead) {
+			end += dataSize
+		} else {
+			end += int(bytesToRead)
+		}
+		//如果结束位置大于bytes长度,我们使用bytes长度
+		end = min(end, dataSize)
+		//把每次分块读取的资源数据复制到dataOut
+		c := copy(dst, m.bytes[m.start:end])
+		m.start += c         //设置下次读取资源开始位置
+		bytesRead = int32(c) //读取资源读取字节个数
 		return bytesRead, bytesRead > 0
 	}
 	return
@@ -366,8 +407,8 @@ func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResource
 
 func (m *source) readResponse(dataOut uintptr, bytesToRead int32, callback *ICefCallback) (bytesRead int32, result bool) {
 	bytesRead, result = m.out(dataOut, bytesToRead)
-	if result {
-		//callback.Cont()
+	if !result {
+		callback.Cont()
 	}
 	return
 }

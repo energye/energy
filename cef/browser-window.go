@@ -19,6 +19,11 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+const (
+	defaultTitle      = "ENERGY"
+	defaultAboutBlank = "about:blank"
+)
+
 // auxTools 辅助工具
 type auxTools struct {
 	devToolsWindow   *devToolsWindow //devTools
@@ -169,8 +174,8 @@ type IAuxTools interface {
 // 创建一个属性配置器，带有窗口默认属性值
 func NewWindowProperty() WindowProperty {
 	return WindowProperty{
-		Title:                     "ENERGY",
-		Url:                       "about:blank",
+		Title:                     defaultTitle,
+		Url:                       defaultAboutBlank,
 		EnableMinimize:            true,
 		EnableMaximize:            true,
 		EnableResize:              true,
