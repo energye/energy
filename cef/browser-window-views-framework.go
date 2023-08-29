@@ -316,6 +316,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
+		chromiumOnBeforeBrowser(m, browser, frame, request) // default impl
 		if bwEvent.onBeforeBrowser != nil {
 			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
 		}

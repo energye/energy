@@ -49,7 +49,7 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 }
 
 // chromiumOnBeforeBrowser
-func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
+func chromiumOnBeforeBrowser(browserWindow IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
 	if window.CurrentBrowseWindowCache != nil {
 		bw := window.CurrentBrowseWindowCache.(IBrowserWindow)
 		if bw.Id() != browser.Identifier() {
@@ -75,7 +75,7 @@ func chromiumOnBeforeBrowser(browser *ICefBrowser, frame *ICefFrame, request *IC
 		})
 	}
 	// 方式二 本地资源加载处理器
-	localLoadRes.getSchemeHandlerFactory(browser)
+	localLoadRes.getSchemeHandlerFactory(browserWindow, browser)
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前

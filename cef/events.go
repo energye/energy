@@ -764,7 +764,6 @@ func init() {
 			frame := &ICefFrame{instance: getPtr(2)}
 			request := &ICefRequest{instance: getPtr(3)}
 			var result = (*bool)(getPtr(6))
-			chromiumOnBeforeBrowser(browse, frame, request) // default impl
 			*result = fn.(chromiumEventOnBeforeBrowser)(lcl.AsObject(sender), browse, frame, request, api.GoBool(getVal(4)), api.GoBool(getVal(5)))
 		case chromiumEventOnAddressChange:
 			sender := getPtr(0)

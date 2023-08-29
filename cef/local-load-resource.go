@@ -149,14 +149,15 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 
 // getSchemeHandlerFactory
 //  方式二 资源处理器默认实现，使用本地资源加载时开启
-func (m *LocalLoadResource) getSchemeHandlerFactory(browser *ICefBrowser) {
+func (m *LocalLoadResource) getSchemeHandlerFactory(browserWindow IBrowserWindow, browser *ICefBrowser) {
 	if localLoadRes.enable() {
 		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
-		factory := SchemeHandlerFactoryRef.New()
-		factory.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
+		handler := SchemeHandlerFactoryRef.New()
+		handler.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
 			return m.getResourceHandler(browser, frame, request)
 		})
-		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, factory)
+		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, handler)
+		//browserWindow.setSchemeHandlerFactory(handler) // TODO
 		//}
 	}
 	return
