@@ -27,13 +27,11 @@ type devToolsWindow struct {
 	parent ICEFWindowParent
 }
 
-func updateBrowserDevTools(browser *ICefBrowser, title string) {
-	if browserWinInfo := BrowserWindow.GetWindowInfo(browser.Identifier()); browserWinInfo != nil {
-		if browserWinInfo.IsLCL() {
-			window := browserWinInfo.AsLCLBrowserWindow().BrowserWindow()
-			if window.GetAuxTools() != nil && window.GetAuxTools().DevTools() != nil {
-				window.GetAuxTools().DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, browser.MainFrame().Url()))
-			}
+func updateBrowserDevTools(window IBrowserWindow, browser *ICefBrowser, title string) {
+	if window.IsLCL() {
+		window := window.AsLCLBrowserWindow().BrowserWindow()
+		if window.GetAuxTools() != nil && window.GetAuxTools().DevTools() != nil {
+			window.GetAuxTools().DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, browser.MainFrame().Url()))
 		}
 	}
 }

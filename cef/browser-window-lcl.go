@@ -486,8 +486,7 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 	m.chromiumBrowser = NewChromiumBrowser(m, config)
 	m.Chromium().SetEnableMultiBrowserMode(true)
 
-	//
-	if defaultUrl != "" && !localLoadRes.enable() {
+	if defaultUrl != "" {
 		m.Chromium().SetDefaultURL(defaultUrl)
 	}
 	//windowParent
@@ -859,7 +858,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			flag = bwEvent.onAfterCreated(sender, browser)
 		}
 		if !flag {
-			chromiumOnAfterCreate(browser)
+			chromiumOnAfterCreate(m, browser)
 		}
 	})
 	//事件可以被覆盖
@@ -891,7 +890,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		return false
 	})
 	m.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		updateBrowserDevTools(browser, title)
+		updateBrowserDevTools(m, browser, title)
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title, m)
 		}

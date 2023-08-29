@@ -291,7 +291,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			flag = bwEvent.onAfterCreated(sender, browser)
 		}
 		if !flag {
-			chromiumOnAfterCreate(browser)
+			chromiumOnAfterCreate(m, browser)
 		}
 	})
 	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {

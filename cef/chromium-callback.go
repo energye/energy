@@ -25,13 +25,12 @@ import (
 )
 
 // chromiumOnAfterCreate 事件处理函数返回true将不继续执行
-func chromiumOnAfterCreate(browser *ICefBrowser) bool {
+func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 	if common.IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
 	}
 	// 浏览器创建完之后
-	var isMainWindow = browser.Identifier() == BrowserWindow.MainWindow().Id()
-	if isMainWindow {
+	if browser.Identifier() == BrowserWindow.MainWindow().Id() {
 		// 主窗口
 		if BrowserWindow.MainWindow().IsLCL() {
 			//更新windowParent位置和大小
@@ -45,7 +44,7 @@ func chromiumOnAfterCreate(browser *ICefBrowser) bool {
 			wp.UpdateSize()
 		}
 	}
-	localLoadRes.loadDefaultURL(browser)
+	localLoadRes.loadDefaultURL(window, browser)
 	return false
 }
 
@@ -301,8 +300,7 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 	} else if commandId == printId {
 		browser.Print()
 	} else if commandId == closeBrowserId {
-		winInfo := BrowserWindow.GetWindowInfo(browserId)
-		winInfo.CloseBrowserWindow()
+		window.CloseBrowserWindow()
 	} else if commandId == refreshId {
 		browser.Reload()
 	} else if commandId == forcedRefreshId {

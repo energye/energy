@@ -127,7 +127,7 @@ func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
 	return m
 }
 
-func (m *LocalLoadResource) loadDefaultURL(browser *ICefBrowser) {
+func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefBrowser) {
 	if localLoadRes.enable() {
 		var homeURL string
 		if BrowserWindow.Config.Url != "" {
@@ -143,12 +143,7 @@ func (m *LocalLoadResource) loadDefaultURL(browser *ICefBrowser) {
 			homeURL = defaultURL.String()
 			defaultURL = nil
 		}
-		if browser.IsValid() {
-			frame := browser.MainFrame()
-			if frame.IsValid() {
-				frame.LoadUrl(homeURL)
-			}
-		}
+		window.Chromium().LoadUrl(homeURL)
 	}
 }
 
