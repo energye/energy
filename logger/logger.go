@@ -64,6 +64,10 @@ func SetEnable(enable bool) {
 	}
 }
 
+func Enable() bool {
+	return logger.enable
+}
+
 func Error(v ...interface{}) {
 	if logger.enable && logger.level >= CefLog_Error {
 		logger.logger.SetPrefix("[ENERGY-Error] ")
