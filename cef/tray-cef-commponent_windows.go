@@ -239,7 +239,11 @@ func (m *CEFTray) createTrayWindow() {
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		model.Clear()
 	})
+	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+		m.chromium.LoadUrl(m.url)
+	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
+		chromiumOnBeforeBrowser(nil, browser, frame, request) // default impl
 		return false
 	})
 	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
@@ -261,7 +265,11 @@ func (m *CEFTray) createTrayWindow() {
 		return false
 	})
 	m.windowParent.SetChromium(m.chromium, 0)
-	m.chromium.SetDefaultURL(m.url)
+	//m.chromium.SetDefaultURL(m.url)
+}
+
+func (m *CEFTray) Chromium() IChromium {
+	return m.chromium
 }
 
 // SetIconFS 设置托盘图标
