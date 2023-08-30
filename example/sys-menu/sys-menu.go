@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"
@@ -20,23 +19,18 @@ func main() {
 	//创建应用
 	cefApp := cef.NewApplication()
 	//主窗口的配置
-	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/sys-menu.html"
+	//
+	cef.BrowserWindow.Config.Url = "fs://energy"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	//内置http服务链接安全配置
-	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
-		fmt.Println("主进程启动 创建一个内置http服务")
-		//通过内置http服务加载资源
-		server := assetserve.NewAssetsHttpServer()
-		server.PORT = 22022
-		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
-		go server.StartHttpServer()
-	})
+	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
+		Scheme:     "fs",
+		Home:       "sys-menu.html",
+		ResRootDir: "resources",
+		FS:         &resources,
+	}.Build())
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// 在窗口初始化时重置窗口布局 默认仅有CEFWindowParent
 		// 在这里重新指定 CEFWindowParent 的父组件, 默认是主窗口
-
 		// 仅 lcl 窗口
 		if window.IsLCL() {
 			// 主窗口
