@@ -23,7 +23,6 @@ func main() {
 	cef.BrowserWindow.Config.Url = "fs://energy"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		Scheme:     "fs",
 		Home:       "sys-menu.html",
 		ResRootDir: "resources",
 		FS:         &resources,
