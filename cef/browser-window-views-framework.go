@@ -271,7 +271,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		var flag bool
 		if bwEvent.onBeforeContextMenu != nil {
-			bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
 		}
 		if !flag {
 			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
