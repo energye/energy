@@ -91,6 +91,7 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 		return nil
 	}
 	var config = &m
+	config.Enable = true
 	// domain 必须设置
 	if config.Domain == "" {
 		config.Domain = localDomain
