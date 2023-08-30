@@ -115,9 +115,6 @@ func init() {
 			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadingStateChange)(browse, frame, api.GoBool(getVal(2)), api.GoBool(getVal(3)), api.GoBool(getVal(4)))
 		case GlobalCEFAppEventOnRenderLoadStart:
-			if ipcRender != nil {
-				ipcRender.clear()
-			}
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			fn.(GlobalCEFAppEventOnRenderLoadStart)(browse, frame, consts.TCefTransitionType(getVal(2)))

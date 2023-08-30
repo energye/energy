@@ -32,6 +32,7 @@ type TCEFApplication struct {
 	onProcessMessageReceived RenderProcessMessageReceived
 	onWebKitInitialized      GlobalCEFAppEventOnWebKitInitialized
 	onRegCustomSchemes       GlobalCEFAppEventOnRegCustomSchemes
+	onRenderLoadStart        GlobalCEFAppEventOnRenderLoadStart
 }
 
 // NewApplication 创建CEF应用
@@ -67,6 +68,7 @@ func (m *TCEFApplication) registerDefaultEvent() {
 	m.defaultSetOnProcessMessageReceived()
 	m.defaultSetOnWebKitInitialized()
 	m.defaultSetOnRegCustomSchemes()
+	m.defaultSetOnRenderLoadStart()
 }
 
 // Instance 实例
@@ -260,7 +262,22 @@ func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRe
 }
 
 func (m *TCEFApplication) SetOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
+	m.onRenderLoadStart = fn
+}
+
+func (m *TCEFApplication) setOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFApplication) defaultSetOnRenderLoadStart() {
+	m.setOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
+		if ipcRender != nil {
+			ipcRender.clear()
+		}
+		if m.onRenderLoadStart != nil {
+			m.onRenderLoadStart(browser, frame, transitionType)
+		}
+	})
 }
 
 func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {

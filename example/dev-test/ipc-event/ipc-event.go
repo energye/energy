@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/dev-test/ipc-event/src"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl"
@@ -27,8 +28,8 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
-	//logger.SetEnable(true)
-	//logger.SetLevel(logger.CefLog_Debug)
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//go func() {
 	//	http.ListenAndServe(":10000", nil)
 	//}()
@@ -182,7 +183,7 @@ func main() {
 		if wi := cef.BrowserWindow.GetWindowInfo(context.BrowserId()); wi != nil {
 			wi.Id()
 		} else {
-			fmt.Println("为获取到 windowInfo:", context.BrowserId())
+			fmt.Println("未获取到 windowInfo:", context.BrowserId())
 		}
 		context.Result(r0, testEmitName, r2, r3, r4, r5, r6, r7, r8, r9, r10)
 	})
@@ -243,6 +244,7 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		return
 		if window.IsLCL() {
 			// 方式一 这个可以动态控制
 			window.AsLCLBrowserWindow().BrowserWindow().SetOnConstrainedResize(func(sender lcl.IObject, minWidth, minHeight, maxWidth, maxHeight *int32) {
