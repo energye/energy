@@ -43,11 +43,23 @@ func SetOnException(exception ExceptionCallback) {
 //    resources 内置到应用程序的资源文件
 //  MacOSX环境, goland、ide等开发环境需配置命令行参数[energy_env=dev]以保证应用正常运行
 func GlobalInit(libs *embed.FS, resources *embed.FS) {
-	macapp.MacApp.IsCEF(IsDarwin())
-	//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
-	energyEnv := Args.Args("energy_env")
-	if energyEnv != "" {
-		macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(energyEnv))
+	if IsDarwin() {
+		macapp.MacApp.IsCEF(true)
+		//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
+		var env = func() string {
+			energyEnv := Args.Args("energy_env")
+			env := Args.Args("env")
+			if energyEnv != "" {
+				return energyEnv
+			}
+			if env != "" {
+				return env
+			}
+			return ""
+		}()
+		if env != "" {
+			macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(env))
+		}
 	}
 	// 如果使用 liblclbinres 编译则通过该方式加载动态库
 	if dllPath, dllOk := tempdll.CheckAndReleaseDLL(); dllOk {
