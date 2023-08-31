@@ -36,10 +36,11 @@
 > - 开发环境简单,编译速度快,只需要Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
 > - 语言职责
->> - Go: Go负责窗口创建、CEF配置和功能实现、各种UI组件创建、系统低层调用，和JS处理不了的功能如: 文件流、安全加密、高性能处理等等，可作为纯后端开发
->> - Web: HTML + CSS + JavaScript 负责客户端界面的功能, 做出任意你想要的界面，可作为纯前端开发
+>> - Go: Go负责窗口创建、CEF配置和功能实现、各种UI组件创建、系统低层调用，和JS处理不了的功能如: 文件流、安全加密、高性能处理等等
+>> - Web: HTML + CSS + JavaScript 负责客户端界面的功能, 做出任意你想要的界面
 > - 前端技术: 支持主流前端框架例如：Vue、React、Angular, 或纯HTML+CSS等等
 > - 事件驱动: 高性能事件驱动, 基于IPC通信，实现Go和Web端很方便功能调用以及数据交互
+> - 资源加载: 支持本地或内置到执行文件, 不需要http服务支撑, 多种选择
 
 ### 内置依赖&集成
 
@@ -129,12 +130,13 @@ func main() {
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
 
-|           | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
-|-----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
-| MacOS     | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
-| Linux     | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107                 |
+|             | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
+|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
+| MacOSX      | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2, Rosetta2 AMD             |
+| Linux       | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
+| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | Kylin-V10-SP1-2107                 |
 
 ---
 

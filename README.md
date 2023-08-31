@@ -41,12 +41,12 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 > - Language responsibilities
 >> - Go: Go is responsible for window creation, CEF configuration and function implementation, creation of various UI
      components, low-level system calls, and functions that JS cannot handle, such as file stream, security encryption,
-     high-performance processing, etc., which can be developed as a pure backend
->> - Web: HTML + CSS + JavaScript responsible for the function of the client interface, make any interface you want, can
-     be used as a pure front-end development
+     high-performance processing, etc.
+>> - Web: HTML + CSS + JavaScript responsible for the function of the client interface, make any interface you want, Any front-end technology framework can be used
 > - front-end technology: Support mainstream front-end frameworks, such as Vue, React, Angular or pure HTML+CSS
 > - event driven: High performance event driven, IPC based communication, Go and Web side is very convenient function
     call and data interaction
+> - resource loading: supports local or built-in to executable files, http service support is not required, multiple choices.
 
 ### Built-in dependency&integration
 
@@ -149,12 +149,13 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
-|           | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
-|-----------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows   | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
-| MacOS     | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
-| Linux     | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
+|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
+|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
+| MacOSX      | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2, Rosetta2 AMD             |
+| Linux       | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
+| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
 
 ---
 
