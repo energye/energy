@@ -333,11 +333,13 @@ func cefOS(module map[string]any) (string, bool) {
 			return "linux64", isSupport(Linux64) || isSupport(Linux64GTK3)
 		}
 	} else if isDarwin { // macosx for 64 bit
-		if runtime.GOARCH == "arm64" {
-			return "macosarm64", isSupport(MacOSARM64)
-		} else if runtime.GOARCH == "amd64" {
-			return "macosx64", isSupport(MacOSX64)
-		}
+		//if runtime.GOARCH == "arm64" {
+		//	return "macosarm64", isSupport(MacOSARM64)
+		//} else if runtime.GOARCH == "amd64" {
+		//	return "macosx64", isSupport(MacOSX64)
+		//}
+		// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
+		return "macosx64", isSupport(MacOSX64)
 	}
 	//not support
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
@@ -367,7 +369,12 @@ func liblclName(version, cef string) (string, bool) {
 		if isLinux && cef == Cef106 { // 只linux区别liblcl gtk2
 			key = "linuxarm64gtk2"
 		} else {
-			key = fmt.Sprintf("%sarm64", runtime.GOOS)
+			if isDarwin {
+				// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
+				key = fmt.Sprintf("%samd64", runtime.GOOS)
+			} else {
+				key = fmt.Sprintf("%sarm64", runtime.GOOS)
+			}
 		}
 	} else if runtime.GOARCH == "amd64" {
 		if isLinux && cef == Cef106 { // 只linux区别liblcl gtk2
