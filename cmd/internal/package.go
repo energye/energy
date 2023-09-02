@@ -10,24 +10,25 @@
 
 package internal
 
-import "fmt"
+import (
+	"github.com/energye/energy/v2/cmd/internal/packager"
+)
 
 var CmdPackage = &Command{
-	UsageLine: "package -p [path] -m [model] -o [out]",
+	UsageLine: "package -p [path]",
 	Short:     "Making an Installation Package",
 	Long: `
-
-	-p Package directory
-	-m Use mode to set online or offline, offline by default
-	-o Output directory
+	-p project path, default current path.
 	.  Execute default command
 
 Making an Installation Package.
-
-	Set the package directory by specifying Path. The current directory is the default
-		Use mode to set online or offline, offline by default.
-		The framework is automatically downloaded when installed in online mode, installation package will be much smaller.
-		Offline mode makes the framework into the package,installation package will be large
+	Windows: 
+		Download: https://nsis.sourceforge.io/ 
+		Install and configure to Path environment variable, use the makensis.exe command.
+	Linux: 
+		Creating deb installation packages using dpkg
+	MacOS:
+		Generate app package for energy
 `,
 }
 
@@ -36,6 +37,12 @@ func init() {
 }
 
 func runPackage(c *CommandConfig) error {
-	fmt.Println("runPackage", "mode:", c.Package.Mode, "path:", c.Package.Path, "out:", c.Package.Out)
+	if project, err := packager.NewProject(c.Package.Path); err != nil {
+		return err
+	} else {
+		if err = packager.GeneraNSISInstaller(project); err != nil {
+			return err
+		}
+	}
 	return nil
 }

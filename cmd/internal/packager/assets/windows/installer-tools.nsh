@@ -39,48 +39,11 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
     !define ENERGY_LANGUAGE "English" # default
 !endif
 
-!ifdef ARG_ENERGY_AMD64_BINARY
-    !define SUPPORTS_AMD64
-!endif
-
-!ifdef ARG_ENERGY_ARM64_BINARY
-    !define SUPPORTS_ARM64
-!endif
-
-!ifdef ARG_ENERGY_CEF_FRAMEWORK
-    !define ENERGY_CEF_FRAMEWORK "${ARG_ENERGY_CEF_FRAMEWORK}"
-!endif
-
-!ifdef SUPPORTS_AMD64
-    !ifdef SUPPORTS_ARM64
-        !define ARCH "amd64_arm64"
-    !else
-        !define ARCH "amd64"
-    !endif
-!else
-    !ifdef SUPPORTS_ARM64
-        !define ARCH "arm64"
-    !else
-        !error "energy: Undefined ARCH, please provide at least one of ARG_ENERGY_AMD64_BINARY or ARG_ENERGY_ARM64_BINARY"
-    !endif
-!endif
-
 !macro energy.files
-    !ifdef SUPPORTS_AMD64
-        ${if} ${IsNativeAMD64}
-            File "/oname=${PRODUCT_EXECUTABLE}" "${ARG_ENERGY_AMD64_BINARY}"
-        ${EndIf}
-    !endif
 
-    !ifdef SUPPORTS_ARM64
-        ${if} ${IsNativeARM64}
-            File "/oname=${PRODUCT_EXECUTABLE}" "${ARG_ENERGY_ARM64_BINARY}"
-        ${EndIf}
-    !endif
+    File "/oname=${PRODUCT_EXECUTABLE}" "${ARG_ENERGY_BINARY}" ; energy app.exe path, ..\..\app.exe
+    ;File /r "${ARG_ENERGY_CEF_FRAMEWORK}" ; cef framework path, ENERGY_HOME=/to/cef/path
 
-    !ifdef ENERGY_CEF_FRAMEWORK
-        ;File /r "${ENERGY_CEF_FRAMEWORK}"
-    !endif
 !macroend
 
 !macro energy.writeUninstaller

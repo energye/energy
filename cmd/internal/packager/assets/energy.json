@@ -1,10 +1,9 @@
 {
   "name": "energyapp",
-  "path": "",
+  "projectPath": "",
   "buildAssetsDir": "assets",
   "outputFilename": "",
-  "platform": "",
-  "framework": "",
+  "frameworkPath": "",
   "info": {
     "icon": "icon.ico",
     "companyName": "",

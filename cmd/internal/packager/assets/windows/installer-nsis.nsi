@@ -27,7 +27,7 @@ VIAddVersionKey "ProductName"     "${INFO_PRODUCTNAME}"
 
 ; LICENSE Page
 !ifdef ARG_ENERGY_PAGE_LICENSE
-    !insertmacro MUI_PAGE_LICENSE "${ARG_ENERGY_PAGE_LICENSE}" # Adds a EULA page to the installer
+    !insertmacro MUI_PAGE_LICENSE "${ARG_ENERGY_PAGE_LICENSE}" # Add a LICENSE page to the installer
 !endif
 
 !insertmacro MUI_PAGE_DIRECTORY # In which folder install page.
@@ -43,7 +43,7 @@ VIAddVersionKey "ProductName"     "${INFO_PRODUCTNAME}"
 ;!finalize 'signtool --file "%1"'
 
 Name "${INFO_PRODUCTNAME}"
-OutFile ".\${INFO_PROJECTNAME}-${ARCH}-installer.exe" # Name of the installer's file.
+OutFile ".\${INFO_PROJECTNAME}-installer.exe" # Name of the installer's file.
 InstallDir "$PROGRAMFILES64\${INFO_COMPANYNAME}\${INFO_PRODUCTNAME}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 

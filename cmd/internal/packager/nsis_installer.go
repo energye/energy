@@ -26,7 +26,13 @@ const (
 func GeneraNSISInstaller(projectData *Project) error {
 	switch runtime.GOOS {
 	case "windows":
+		if !CommandExists("makensis") {
+			return errors.New("failed to create application installation program. Could not find the makensis command")
+		}
 		if err := windows(projectData); err != nil {
+			return err
+		}
+		if err := makeNSIS(projectData); err != nil {
 			return err
 		}
 	case "linux":
@@ -34,7 +40,6 @@ func GeneraNSISInstaller(projectData *Project) error {
 	default:
 		return errors.New("unsupported system")
 	}
-	makeNSIS(projectData)
 	return nil
 }
 
@@ -84,7 +89,15 @@ func makeNSIS(projectData *Project) error {
 		println("makensis:", string(bytes))
 	}
 	nsisScriptPath := filepath.Join(buildOutPath(projectData), windowsNsis)
-	args = append(args, "-DARG_ENERGY_AMD64_BINARY=E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\cmd\\internal\\test\\simple.exe")
+
+	var binary string
+	if runtime.GOOS == "windows" {
+		binary = filepath.Join(projectData.ProjectPath, projectData.Name+".exe")
+	} else {
+		binary = filepath.Join(projectData.ProjectPath, projectData.Name)
+	}
+
+	args = append(args, "-DARG_ENERGY_BINARY="+binary)
 	if projectData.Info.License != "" {
 		// 授权信息文本目录: ..\LICENSE.txt
 		args = append(args, "-DARG_ENERGY_PAGE_LICENSE="+projectData.Info.License)
@@ -94,7 +107,8 @@ func makeNSIS(projectData *Project) error {
 		// 可选多种语言: SimpChinese, 参考目录: NSIS\Contrib\Language files
 		args = append(args, "-DARG_ENERGY_LANGUAGE="+projectData.Info.Language)
 	}
-	args = append(args, "-DARG_ENERGY_CEF_FRAMEWORK="+projectData.Framework) //框架目录
+	//框架目录
+	args = append(args, "-DARG_ENERGY_CEF_FRAMEWORK="+projectData.FrameworkPath)
 	args = append(args, nsisScriptPath)
 	cmd.Command("makensis", args...)
 
