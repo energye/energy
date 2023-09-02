@@ -18,7 +18,7 @@ type CommandConfig struct {
 	Version Version `command:"version"`
 	Setenv  Setenv  `command:"setenv"`
 	Env     Env     `command:"env"`
-	Create  Create  `command:"create"`
+	Init    Init    `command:"init"`
 	Build   Build   `command:"build"`
 }
 
@@ -50,7 +50,8 @@ type Version struct {
 	All bool `short:"a" long:"all" description:"show all"`
 }
 
-type Create struct {
+type Init struct {
+	Name string `short:"n" long:"name" description:"Initialized project name"`
 }
 
 type Build struct {

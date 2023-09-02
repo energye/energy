@@ -24,7 +24,7 @@ var commands = []*internal.Command{
 	internal.CmdVersion,
 	internal.CmdSetenv,
 	internal.CmdEnv,
-	internal.CmdCreate,
+	internal.CmdInit,
 	internal.CmdBuild,
 }
 
@@ -51,7 +51,7 @@ func main() {
 			cc.Index = 4
 		case "env":
 			cc.Index = 5
-		case "create":
+		case "init":
 			cc.Index = 6
 		case "build":
 			cc.Index = 7
