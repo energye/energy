@@ -18,13 +18,13 @@ var CmdPackage = &Command{
 	UsageLine: "package -p [path]",
 	Short:     "Making an Installation Package",
 	Long: `
-	-p project path, default current path.
+	-p project path, default current path. Can be configured in energy.json
 	.  Execute default command
 
-Making an Installation Package.
+Making an Installation Package
 	Windows: 
 		Download: https://nsis.sourceforge.io/ 
-		Install and configure to Path environment variable, use the makensis.exe command.
+		Install and configure to Path environment variable
 	Linux: 
 		Creating deb installation packages using dpkg
 	MacOS:
