@@ -1,4 +1,4 @@
-# DO NOT EDIT - Generated automatically by `energy build`
+; DO NOT EDIT - Generated automatically by `energy build`
 
 !include "x64.nsh"
 !include "WinVer.nsh"
@@ -34,7 +34,7 @@
 RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
 
 !ifdef ARG_ENERGY_LANGUAGE
-    !define ENERGY_LANGUAGE "${ARG_ENERGY_LANGUAGE}" # customer 
+    !define ENERGY_LANGUAGE "${ARG_ENERGY_LANGUAGE}" # customer
 !else
     !define ENERGY_LANGUAGE "English" # default
 !endif
@@ -45,6 +45,10 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
 
 !ifdef ARG_ENERGY_ARM64_BINARY
     !define SUPPORTS_ARM64
+!endif
+
+!ifdef ARG_ENERGY_CEF_FRAMEWORK
+    !define ENERGY_CEF_FRAMEWORK "${ARG_ENERGY_CEF_FRAMEWORK}"
 !endif
 
 !ifdef SUPPORTS_AMD64
@@ -72,6 +76,10 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
         ${if} ${IsNativeARM64}
             File "/oname=${PRODUCT_EXECUTABLE}" "${ARG_ENERGY_ARM64_BINARY}"
         ${EndIf}
+    !endif
+
+    !ifdef ENERGY_CEF_FRAMEWORK
+        ;File /r "${ENERGY_CEF_FRAMEWORK}"
     !endif
 !macroend
 

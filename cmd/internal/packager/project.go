@@ -2,6 +2,7 @@ package packager
 
 import (
 	"encoding/json"
+	"github.com/energye/golcl/energy/tools"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -12,7 +13,8 @@ import (
 type Project struct {
 	Name           string `json:"name"`           // 应用名称
 	ProjectPath    string `json:"projectPath"`    // 项目目录
-	BuildAssetsDir string `json:"buildAssetsDir"` // 构建资源所在目录
+	Framework      string `json:"framework"`      // 框架目录 未指定时使用环境变量 ENERGY_HOME
+	BuildAssetsDir string `json:"buildAssetsDir"` // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
 	Platform       string `json:"platform"`       // windows, darwin, linux, 默认: 当前系统
 	Author         Author `json:"author"`         // 作者信息
@@ -28,6 +30,12 @@ func (m *Project) setDefaults() {
 	}
 	if m.OutputFilename == "" {
 		m.OutputFilename = m.Name
+	}
+	if m.Framework == "" {
+		m.Framework = os.Getenv("ENERGY_HOME")
+	}
+	if !tools.IsExist(m.Framework) {
+		panic("energy framework directory does not exist: " + m.Framework)
 	}
 	if m.BuildAssetsDir == "" {
 		m.BuildAssetsDir = "assets"

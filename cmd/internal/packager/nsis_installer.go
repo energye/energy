@@ -94,6 +94,7 @@ func makeNSIS(projectData *Project) error {
 		// 可选多种语言: SimpChinese, 参考目录: NSIS\Contrib\Language files
 		args = append(args, "-DARG_ENERGY_LANGUAGE="+projectData.Info.Language)
 	}
+	args = append(args, "-DARG_ENERGY_CEF_FRAMEWORK="+projectData.Framework) //框架目录
 	args = append(args, nsisScriptPath)
 	cmd.Command("makensis", args...)
 
