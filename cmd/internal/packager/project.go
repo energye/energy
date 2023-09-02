@@ -81,6 +81,8 @@ type Info struct {
 	ProductVersion string  `json:"productVersion"`
 	Copyright      *string `json:"copyright"`
 	Comments       *string `json:"comments"`
+	License        string  `json:"license"`
+	Language       string  `json:"language"`
 }
 
 //  APP项目配置转换到Project

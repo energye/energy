@@ -81,10 +81,19 @@ func makeNSIS(projectData *Project) error {
 	cmd := command.NewCMD()
 	cmd.Dir = projectData.ProjectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {
-
+		println("makensis:", string(bytes))
 	}
 	nsisScriptPath := filepath.Join(buildOutPath(projectData), windowsNsis)
 	args = append(args, "-DARG_ENERGY_AMD64_BINARY=E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\cmd\\internal\\test\\simple.exe")
+	if projectData.Info.License != "" {
+		// 授权信息文本目录: ..\LICENSE.txt
+		args = append(args, "-DARG_ENERGY_PAGE_LICENSE="+projectData.Info.License)
+	}
+	if projectData.Info.Language != "" {
+		// default English
+		// 可选多种语言: SimpChinese, 参考目录: NSIS\Contrib\Language files
+		args = append(args, "-DARG_ENERGY_LANGUAGE="+projectData.Info.Language)
+	}
 	args = append(args, nsisScriptPath)
 	cmd.Command("makensis", args...)
 

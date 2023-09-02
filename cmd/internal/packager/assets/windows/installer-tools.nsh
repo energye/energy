@@ -33,6 +33,12 @@
 
 RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}"
 
+!ifdef ARG_ENERGY_LANGUAGE
+    !define ENERGY_LANGUAGE "${ARG_ENERGY_LANGUAGE}" # customer 
+!else
+    !define ENERGY_LANGUAGE "English" # default
+!endif
+
 !ifdef ARG_ENERGY_AMD64_BINARY
     !define SUPPORTS_AMD64
 !endif
