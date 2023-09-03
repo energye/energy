@@ -13,13 +13,13 @@ package command
 type Config struct {
 	Index   int
 	Wd      string
-	Install Install `command:"install"`
-	Package Package `command:"package"`
-	Version Version `command:"version"`
-	Setenv  Setenv  `command:"setenv"`
-	Env     Env     `command:"env"`
-	Init    Init    `command:"init"`
-	Build   Build   `command:"build"`
+	Install Install `command:"install" description:"install energy development dependency environment"`
+	Package Package `command:"package" description:"energy application production and installation package"`
+	Version Version `command:"version" description:"list all release version numbers of energy"`
+	Setenv  Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
+	Env     Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
+	Init    Init    `command:"init" description:"initialize the energy application project"`
+	Build   Build   `command:"build" description:"building an energy project"`
 }
 
 type Command struct {

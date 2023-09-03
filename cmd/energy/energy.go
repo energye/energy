@@ -42,11 +42,11 @@ func main() {
 		os.Exit(1)
 	} else {
 		switch parser.Active.Name {
-		case "install", "i":
+		case "install":
 			cc.Index = 1
-		case "package", "p":
+		case "package":
 			cc.Index = 2
-		case "version", "v":
+		case "version":
 			cc.Index = 3
 		case "setenv":
 			cc.Index = 4
