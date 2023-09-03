@@ -11,6 +11,7 @@
 package tools
 
 import (
+	"bytes"
 	"io/ioutil"
 	"math"
 	"net/http"
@@ -18,6 +19,7 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
+	"text/template"
 )
 
 // CommandExists 命令是否存在
@@ -99,6 +101,18 @@ func IsExist(path string) bool {
 		return false
 	}
 	return true
+}
+
+func RenderTemplate(templateText string, data map[string]any) ([]byte, error) {
+	tmpl, err := template.New("").Parse(templateText)
+	if err != nil {
+		return nil, err
+	}
+	var out bytes.Buffer
+	if err = tmpl.Execute(&out, data); err != nil {
+		return nil, err
+	}
+	return out.Bytes(), nil
 }
 
 func HttpRequestGET(url string) ([]byte, error) {

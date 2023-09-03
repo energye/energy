@@ -51,7 +51,12 @@ type Version struct {
 }
 
 type Init struct {
-	Name string `short:"n" long:"name" description:"Initialized project name"`
+	Name    string `short:"n" long:"name" description:"Initialized project name"`
+	ResLoad string `short:"r" long:"resload" description:"Resource loading method, 1: HTTP, 2: Local Load, default 1 HTTP"`
+	IGo     bool
+	INSIS   bool
+	IEnv    bool
+	INpm    bool
 }
 
 type Build struct {

@@ -11,7 +11,6 @@
 package packager
 
 import (
-	"bytes"
 	"embed"
 	"errors"
 	"fmt"
@@ -22,7 +21,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"text/template"
 )
 
 //go:embed assets
@@ -72,18 +70,12 @@ func windows(projectData *project.Project) error {
 	if toolsData, err := readFile(projectData, windowsNsisTools); err != nil {
 		return err
 	} else {
-		tmpl, err := template.New("tools").Parse(string(toolsData))
-		if err != nil {
-			return err
-		}
 		data := make(map[string]any)
 		data["Name"] = projectData.Name
 		data["Info"] = projectData.Info
-		var out bytes.Buffer
-		if err = tmpl.Execute(&out, data); err != nil {
+		if content, err := tools.RenderTemplate(string(toolsData), data); err != nil {
 			return err
-		}
-		if err = writeFile(projectData, windowsNsisTools, out.Bytes()); err != nil {
+		} else if err = writeFile(projectData, windowsNsisTools, content); err != nil {
 			return err
 		}
 	}
