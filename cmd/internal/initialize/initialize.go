@@ -34,23 +34,19 @@ func InitEnergyProject(c *command.Config) error {
 	if err := generaProject(c); err != nil {
 		return err
 	}
-	generaReadme()
-	println("Successfully initialized the energy application project", c.Init.Name)
 	println()
-	println("Run Application: go run main.go")
-	println(`Building Applications:
+	println("Successfully initialized the energy application project:", c.Init.Name)
+	println()
+	println("  Run Application: go run main.go")
+	println(`  Building Applications:
 	Use GO: go build -ldflags "-s -w"
 	Use Energy: energy build .
 `)
-	println(`website:
+	println(`  website:
 	https://github.com/energye/energy
 	https://energy.yanghy.cn
 `)
 	return nil
-}
-
-func generaReadme() {
-
 }
 
 func generaProject(c *command.Config) error {
@@ -64,7 +60,7 @@ func generaProject(c *command.Config) error {
 		if strings.ToLower(s) != "y" {
 			return errors.New("Failed to initialize project " + c.Init.Name)
 		} else {
-			var deleteFiles = []string{"energy.json", "resources", "main.go", "go.mod", "go.sum", "resources/index.html"}
+			var deleteFiles = []string{"energy.json", "resources", "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
 			for _, f := range deleteFiles {
 				path := filepath.Join(projectPath, f)
 				if info, err := os.Lstat(path); err == nil {
@@ -136,6 +132,22 @@ func generaProject(c *command.Config) error {
 		} else {
 			path := filepath.Join(projectPath, "resources", "index.html")
 			if err = ioutil.WriteFile(path, indexText, 0666); err != nil {
+				return err
+			}
+		}
+	}
+
+	// 创建 README.md
+	if readmeText, err := assets.ReadFile("assets/README.md"); err != nil {
+		return err
+	} else {
+		data := make(map[string]any)
+		data["Name"] = c.Init.Name
+		if content, err := tools.RenderTemplate(string(readmeText), data); err != nil {
+			return err
+		} else {
+			path := filepath.Join(projectPath, "README.md")
+			if err = ioutil.WriteFile(path, content, 0666); err != nil {
 				return err
 			}
 		}

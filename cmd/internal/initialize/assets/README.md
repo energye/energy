@@ -1,4 +1,4 @@
-# {{.}} Project
+# {{.Name}} Project
 
 ## 目录说明 - Directory description
 > resources 
