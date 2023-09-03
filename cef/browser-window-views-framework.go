@@ -92,7 +92,15 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 						logger.Error("set window application icon error:", err.Error())
 					}
 				}
+			} else {
+				// 默认
+				// vf png
+				// lcl ico
+				icon := ImageRef.New()
+				icon.AddPng(1, defaultICONPng)
+				m.windowComponent.SetWindowAppIcon(icon)
 			}
+			freeDefaultICON()
 			m.browserViewComponent.RequestFocus()
 			m.windowComponent.Show()
 			if m.doOnWindowCreated != nil {

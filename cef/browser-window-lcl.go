@@ -112,7 +112,13 @@ func (m *LCLBrowserWindow) setProperty() {
 		if tools.IsExist(wp.Icon) {
 			lcl.Application.Icon().LoadFromFile(wp.Icon)
 		}
+	} else {
+		// 默认
+		// vf png
+		// lcl ico
+		lcl.Application.Icon().LoadFromBytes(defaultICONIco)
 	}
+	freeDefaultICON()
 	if wp.EnableCenterWindow {
 		m.SetSize(wp.Width, wp.Height)
 		m.SetCenterWindow(true)
