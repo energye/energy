@@ -11,10 +11,12 @@
 package internal
 
 import (
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/packager"
+	"github.com/energye/energy/v2/cmd/internal/project"
 )
 
-var CmdPackage = &Command{
+var CmdPackage = &command.Command{
 	UsageLine: "package -p [path]",
 	Short:     "Making an Installation Package",
 	Long: `
@@ -36,8 +38,8 @@ func init() {
 	CmdPackage.Run = runPackage
 }
 
-func runPackage(c *CommandConfig) error {
-	if project, err := packager.NewProject(c.Package.Path); err != nil {
+func runPackage(c *command.Config) error {
+	if project, err := project.NewProject(c.Package.Path); err != nil {
 		return err
 	} else {
 		if err = packager.GeneraNSISInstaller(project); err != nil {

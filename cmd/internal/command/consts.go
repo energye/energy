@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package internal
+package command
 
 import "runtime"
 
@@ -21,16 +21,16 @@ const (
 	CheckCreateURL     = domain + "/api/cmd/create"
 )
 const (
-	cefKey         = "cef"
-	liblclKey      = "liblcl"
-	frameworkCache = "EnergyFrameworkDownloadCache"
+	CefKey         = "cef"
+	LiblclKey      = "liblcl"
+	FrameworkCache = "EnergyFrameworkDownloadCache"
 	EnergyHomeKey  = "ENERGY_HOME"
 )
 
 const (
-	isWindows = runtime.GOOS == "windows" //support
-	isLinux   = runtime.GOOS == "linux"   //support
-	isDarwin  = runtime.GOOS == "darwin"  //support
+	IsWindows = runtime.GOOS == "windows" //support
+	IsLinux   = runtime.GOOS == "linux"   //support
+	IsDarwin  = runtime.GOOS == "darwin"  //support
 )
 
 const (

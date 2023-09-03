@@ -13,15 +13,17 @@ package internal
 import (
 	"errors"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/energy/homedir"
-	"github.com/energye/golcl/tools/command"
+	toolsCommand "github.com/energye/golcl/tools/command"
 	"io/ioutil"
 	"os"
 	"path"
 	"strings"
 )
 
-var CmdSetenv = &Command{
+var CmdSetenv = &command.Command{
 	UsageLine: "setenv -p [path]",
 	Short:     "Set energy framework development environment",
 	Long: `
@@ -34,35 +36,35 @@ func init() {
 	CmdSetenv.Run = runSetenv
 }
 
-func runSetenv(c *CommandConfig) error {
+func runSetenv(c *command.Config) error {
 	if c.Setenv.Path == "" {
 		return errors.New("ERROR: ENERGY environment variable, command line argument [-p] directory to empty")
 	}
-	if !IsExist(c.Setenv.Path) {
+	if !tools.IsExist(c.Setenv.Path) {
 		return errors.New("Directory [" + c.Setenv.Path + "] does not exist")
 	}
-	setEnergyHomeEnv(EnergyHomeKey, c.Setenv.Path)
+	setEnergyHomeEnv(command.EnergyHomeKey, c.Setenv.Path)
 	println("SUCCESS")
 	return nil
 }
 
 func setEnergyHomeEnv(key, value string) {
 	println("\nSetting environment Variables [ENERGY_HOME] to", value)
-	cmd := command.NewCMD()
+	cmd := toolsCommand.NewCMD()
 	cmd.MessageCallback = func(s []byte, e error) {
 		fmt.Println("CMD:", s, " error:", e)
 	}
 	defer cmd.Close()
-	if isWindows {
+	if command.IsWindows {
 		var args = []string{"/c", "setx", key, value}
 		cmd.Command("cmd.exe", args...)
 	} else {
 		var envFiles []string
 		var energyHomeKey = fmt.Sprintf("export %s", key)
 		var energyHome = fmt.Sprintf("export %s=%s", key, value)
-		if isLinux {
+		if command.IsLinux {
 			envFiles = []string{".profile", ".zshrc", ".bashrc"}
-		} else if isDarwin {
+		} else if command.IsDarwin {
 			envFiles = []string{".profile", ".zshrc", ".bash_profile"}
 		}
 		homeDir, _ := homedir.Dir()

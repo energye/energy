@@ -14,12 +14,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"os"
 	"sort"
 	"strings"
 )
 
-var CmdVersion = &Command{
+var CmdVersion = &command.Command{
 	UsageLine: "package -a [all]",
 	Short:     "Get version list",
 	Long: `
@@ -32,8 +34,8 @@ func init() {
 	CmdVersion.Run = runVersion
 }
 
-func runVersion(c *CommandConfig) error {
-	downloadJSON, err := httpRequestGET(DownloadVersionURL)
+func runVersion(c *command.Config) error {
+	downloadJSON, err := tools.HttpRequestGET(command.DownloadVersionURL)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)

@@ -11,10 +11,11 @@
 package internal
 
 import (
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"os"
 )
 
-var CmdEnv = &Command{
+var CmdEnv = &command.Command{
 	UsageLine: "env",
 	Short:     "Get energy framework development environment",
 	Long: `
@@ -27,8 +28,8 @@ func init() {
 	CmdEnv.Run = runGetEnv
 }
 
-func runGetEnv(c *CommandConfig) error {
-	envPath := os.Getenv(EnergyHomeKey)
+func runGetEnv(c *command.Config) error {
+	envPath := os.Getenv(command.EnergyHomeKey)
 	println("ENERGY_HOME_KEY", envPath)
 	return nil
 }

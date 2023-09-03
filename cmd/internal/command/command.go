@@ -8,9 +8,9 @@
 //
 //----------------------------------------
 
-package internal
+package command
 
-type CommandConfig struct {
+type Config struct {
 	Index   int
 	Wd      string
 	Install Install `command:"install"`
@@ -23,7 +23,7 @@ type CommandConfig struct {
 }
 
 type Command struct {
-	Run                    func(c *CommandConfig) error
+	Run                    func(c *Config) error
 	UsageLine, Short, Long string
 }
 

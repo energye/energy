@@ -16,11 +16,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/golcl/energy/tools"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/tools/command"
 	"io/fs"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"runtime"
 	"text/template"
@@ -37,7 +36,7 @@ const (
 func GeneraNSISInstaller(projectData *project.Project) error {
 	switch runtime.GOOS {
 	case "windows":
-		if !CommandExists("makensis") {
+		if !tools.CommandExists("makensis") {
 			return errors.New("failed to create application installation program. Could not find the makensis command")
 		}
 		if err := windows(projectData); err != nil {
@@ -124,15 +123,6 @@ func makeNSIS(projectData *project.Project) error {
 	cmd.Command("makensis", args...)
 
 	return nil
-}
-
-// CommandExists 命令是否存在
-func CommandExists(name string) bool {
-	_, err := exec.LookPath(name)
-	if err != nil {
-		return false
-	}
-	return true
 }
 
 // 返回根据配置的资源目录

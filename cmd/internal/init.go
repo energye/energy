@@ -12,9 +12,12 @@
 
 package internal
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/command"
+)
 
-var CmdInit = &Command{
+var CmdInit = &command.Command{
 	UsageLine: "init -n [name]",
 	Short:     "init energy project",
 	Long: `
@@ -28,7 +31,7 @@ func init() {
 	CmdInit.Run = runInit
 }
 
-func runInit(c *CommandConfig) error {
+func runInit(c *command.Config) error {
 	m := c.Init
 	if m.Name == "" {
 		println("initialize project name:")

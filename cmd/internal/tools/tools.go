@@ -8,16 +8,26 @@
 //
 //----------------------------------------
 
-package internal
+package tools
 
 import (
 	"io/ioutil"
 	"math"
 	"net/http"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 )
+
+// CommandExists 命令是否存在
+func CommandExists(name string) bool {
+	_, err := exec.LookPath(name)
+	if err != nil {
+		return false
+	}
+	return true
+}
 
 func ToString(v interface{}) string {
 	if v == nil {
@@ -91,8 +101,7 @@ func IsExist(path string) bool {
 	return true
 }
 
-// http 请求
-func httpRequestGET(url string) ([]byte, error) {
+func HttpRequestGET(url string) ([]byte, error) {
 	client := new(http.Client)
 	resp, err := client.Get(url)
 	if err != nil {

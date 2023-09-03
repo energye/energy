@@ -13,11 +13,12 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/jessevdk/go-flags"
 	"os"
 )
 
-var commands = []*internal.Command{
+var commands = []*command.Command{
 	nil,
 	internal.CmdInstall,
 	internal.CmdPackage,
@@ -30,7 +31,7 @@ var commands = []*internal.Command{
 
 func main() {
 	wd, _ := os.Getwd()
-	cc := &internal.CommandConfig{Wd: wd}
+	cc := &command.Config{Wd: wd}
 	parser := flags.NewParser(cc, flags.HelpFlag|flags.PassDoubleDash)
 	if len(os.Args) < 2 {
 		parser.WriteHelp(os.Stdout)
