@@ -34,7 +34,23 @@ func InitEnergyProject(c *command.Config) error {
 	if err := generaProject(c); err != nil {
 		return err
 	}
+	generaReadme()
+	println("Successfully initialized the energy application project", c.Init.Name)
+	println()
+	println("Run Application: go run main.go")
+	println(`Building Applications:
+	Use GO: go build -ldflags "-s -w"
+	Use Energy: energy build .
+`)
+	println(`website:
+	https://github.com/energye/energy
+	https://energy.yanghy.cn
+`)
 	return nil
+}
+
+func generaReadme() {
+
 }
 
 func generaProject(c *command.Config) error {
@@ -48,7 +64,7 @@ func generaProject(c *command.Config) error {
 		if strings.ToLower(s) != "y" {
 			return errors.New("Failed to initialize project " + c.Init.Name)
 		} else {
-			var deleteFiles = []string{"energy.json", "resources", "main.go", "go.mod", "go.sum"}
+			var deleteFiles = []string{"energy.json", "resources", "main.go", "go.mod", "go.sum", "resources/index.html"}
 			for _, f := range deleteFiles {
 				path := filepath.Join(projectPath, f)
 				if info, err := os.Lstat(path); err == nil {
@@ -111,6 +127,20 @@ func generaProject(c *command.Config) error {
 		}
 	}
 
+	// 创建 resources/index.html
+	if err := os.Mkdir(filepath.Join(projectPath, "resources"), fs.ModePerm); err != nil {
+		return err
+	} else {
+		if indexText, err := assets.ReadFile("assets/index.html"); err != nil {
+			return err
+		} else {
+			path := filepath.Join(projectPath, "resources", "index.html")
+			if err = ioutil.WriteFile(path, indexText, 0666); err != nil {
+				return err
+			}
+		}
+	}
+
 	// cmd
 	println("cmd run")
 	cmd := toolsCommand.NewCMD()
@@ -118,17 +148,20 @@ func generaProject(c *command.Config) error {
 	cmd.MessageCallback = func(bytes []byte, err error) {
 		fmt.Println("CMD:", bytes, " error:", err)
 	}
-	// cmd go env -w GO111MODULE=on
-	println("Enable Go mod management")
-	cmd.Command("go", []string{"env", "-w", "GO111MODULE=on"}...)
+	if c.Init.IGo {
+		// cmd go env -w GO111MODULE=on
+		println("Enable Go mod management")
+		cmd.Command("go", []string{"env", "-w", "GO111MODULE=on"}...)
 
-	// cmd go env -w GOPROXY=https://goproxy.io,direct
-	println("Configure mod agent")
-	cmd.Command("go", []string{"env", "-w", "GOPROXY=https://goproxy.io,direct"}...)
+		// cmd go env -w GOPROXY=https://goproxy.io,direct
+		println("Configure mod agent")
+		cmd.Command("go", []string{"env", "-w", "GOPROXY=https://goproxy.io,direct"}...)
 
-	// cmd go mod tidy
-	println("Update Energy dependencies, version:")
-	cmd.Command("go", []string{"mod", "tidy"}...)
+		// cmd go mod tidy
+		println("Update Energy dependencies, version:")
+		cmd.Command("go", []string{"mod", "tidy"}...)
+	}
+
 	cmd.Close()
 	return nil
 }
