@@ -154,11 +154,16 @@ func generaProject(c *command.Config) error {
 	}
 
 	// cmd
-	println("cmd run")
+	println("Run command-line")
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = projectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {
-		fmt.Println("CMD:", bytes, " error:", err)
+		s := string(bytes)
+		if s != "" {
+			println("\tCMD:", string(bytes))
+		} else if err != nil {
+			println("\tCMD-error:", err.Error())
+		}
 	}
 	if c.Init.IGo {
 		// cmd go env -w GO111MODULE=on
@@ -184,6 +189,25 @@ func checkEnv(init *command.Init) {
 	if !tools.CommandExists("go") {
 		println("Warning: Golang development environment not installed, Download-URL: https://golang.google.cn/dl/")
 	} else {
+		var version string
+		cmd := toolsCommand.NewCMD()
+		cmd.IsNotPrint = true
+		cmd.MessageCallback = func(bytes []byte, err error) {
+			data := string(bytes)
+			if strings.Index(data, "go version") != -1 {
+				d := strings.Split(data, " ")
+				if len(d) == 4 {
+					version = d[2][2:]
+				}
+			}
+		}
+		cmd.Command("go", "version")
+		cmd.Close()
+		if version != "" {
+			d := strings.Split(version, ".")
+			fmt.Println("d:", d)
+		}
+		fmt.Println("version:", version)
 		println("\tGolang OK")
 		init.IGo = true
 	}
