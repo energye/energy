@@ -15,6 +15,7 @@ import (
 	"embed"
 	"errors"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/tools/command"
 	"io/fs"
@@ -33,7 +34,7 @@ const (
 	windowsNsisTools = "windows/installer-tools.nsh"
 )
 
-func GeneraNSISInstaller(projectData *Project) error {
+func GeneraNSISInstaller(projectData *project.Project) error {
 	switch runtime.GOOS {
 	case "windows":
 		if !CommandExists("makensis") {
@@ -53,7 +54,7 @@ func GeneraNSISInstaller(projectData *Project) error {
 	return nil
 }
 
-func windows(projectData *Project) error {
+func windows(projectData *project.Project) error {
 	// 创建构建输出目录
 	buildOutDir := buildOutPath(projectData)
 	if !tools.IsExist(buildOutDir) {
@@ -91,7 +92,7 @@ func windows(projectData *Project) error {
 }
 
 // 使用nsis生成安装包
-func makeNSIS(projectData *Project) error {
+func makeNSIS(projectData *project.Project) error {
 	var args []string
 	cmd := command.NewCMD()
 	cmd.Dir = projectData.ProjectPath
@@ -135,18 +136,18 @@ func CommandExists(name string) bool {
 }
 
 // 返回根据配置的资源目录
-func assetsPath(projectData *Project, file string) string {
+func assetsPath(projectData *project.Project, file string) string {
 	return filepath.ToSlash(filepath.Join(projectData.BuildAssetsDir, file))
 }
 
 // 返回固定的构建输出目录 $current/build
-func buildOutPath(projectData *Project) string {
+func buildOutPath(projectData *project.Project) string {
 	return filepath.Join(projectData.ProjectPath, "build")
 }
 
 // ReadFile
 //  读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
-func readFile(projectData *Project, file string) ([]byte, error) {
+func readFile(projectData *project.Project, file string) ([]byte, error) {
 	localFilePath := assetsPath(projectData, file)
 	content, err := os.ReadFile(localFilePath)
 	if errors.Is(err, fs.ErrNotExist) {
@@ -164,7 +165,7 @@ func readFile(projectData *Project, file string) ([]byte, error) {
 }
 
 // 写文件
-func writeFile(projectData *Project, file string, content []byte) error {
+func writeFile(projectData *project.Project, file string, content []byte) error {
 	buildOutDir := buildOutPath(projectData)
 	if !tools.IsExist(buildOutDir) {
 		if err := os.MkdirAll(buildOutDir, 0755); err != nil {

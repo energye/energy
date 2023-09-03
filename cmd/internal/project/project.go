@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package packager
+package project
 
 import (
 	"encoding/json"
