@@ -56,7 +56,7 @@ func SetGoEnv(goRoot string) {
 	} else {
 
 	}
-	println("\nHint: reopen the cmd window for the Go command to take effect.")
+	println("\nHint: Reopen the cmd window for the Go command to take effect.")
 }
 
 func SetEnergyHomeEnv(homePath string) {
@@ -140,4 +140,5 @@ func SetEnergyHomeEnv(homePath string) {
 			}
 		}
 	}
+	println("\nHint: Reopen the cmd window to make the environment variables take effect.")
 }
