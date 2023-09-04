@@ -178,7 +178,6 @@ func generaProject(c *command.Config) error {
 		println("Update Energy dependencies, version:")
 		cmd.Command("go", []string{"mod", "tidy"}...)
 	}
-
 	cmd.Close()
 	return nil
 }
@@ -191,7 +190,7 @@ func checkEnv(init *command.Init) {
 	} else {
 		var version string
 		cmd := toolsCommand.NewCMD()
-		cmd.IsNotPrint = true
+		cmd.IsPrint = false
 		cmd.MessageCallback = func(bytes []byte, err error) {
 			data := string(bytes)
 			if strings.Index(data, "go version") != -1 {
