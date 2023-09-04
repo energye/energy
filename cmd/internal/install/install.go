@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----
+
 package install
 
 import (
@@ -5,6 +15,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"compress/bzip2"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
@@ -33,6 +44,108 @@ type downloadInfo struct {
 }
 
 func Install(c *command.Config) {
+	// 创建安装目录
+	initInstall(c)
+	// 检查Go开发环境
+	//if !tools.CommandExists("go") {
+	println("Golang development environment not installed!")
+	// 如未安装Go开发环境，自动安装Go环境
+	goRoot := installGolang(c)
+	//goRoot := "C:\\go"
+	//}
+	// 安装CEF二进制框架
+	installCEFFramework(c)
+	// 设置 energy 环境变量
+	env.SetEnergyHomeEnv(cefInstallPathName(c))
+	// 设置 go 环境变量
+	if goRoot != "" {
+		env.SetGoEnv(goRoot)
+	}
+}
+
+func cefInstallPathName(c *command.Config) string {
+	return filepath.Join(c.Install.Path, c.Install.Name)
+}
+
+func initInstall(c *command.Config) {
+	if c.Install.Path == "" {
+		// current dir
+		c.Install.Path = c.Wd
+	}
+	if c.Install.Version == "" {
+		// latest
+		c.Install.Version = "latest"
+	}
+	// 创建安装目录
+	os.MkdirAll(c.Install.Path, fs.ModePerm)
+	os.MkdirAll(cefInstallPathName(c), fs.ModePerm)
+	os.MkdirAll(filepath.Join(c.Install.Path, command.FrameworkCache), fs.ModePerm)
+}
+
+func installGolang(c *command.Config) string {
+	print("Do you want to install the Go development environment? Y/n: ")
+	var s string
+	fmt.Scanln(&s)
+	if strings.ToLower(s) == "y" {
+		s = c.Install.Path // 安装目录
+		exts := map[string]string{
+			"darwin":  "tar.gz",
+			"linux":   "tar.gz",
+			"windows": "zip",
+		}
+		// 开始下载并安装Go开发环境
+		version := command.GolangDefaultVersion
+		gos := runtime.GOOS
+		arch := runtime.GOARCH
+		gos = "darwin"
+		arch = "amd64"
+		ext := exts[gos]
+		if !tools.IsExist(s) {
+			println("Directory does not exist. Creating directory.", s)
+			if err := os.MkdirAll(s, fs.ModePerm); err != nil {
+				println("Failed to create goroot directory", err.Error())
+				return ""
+			}
+		}
+		fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
+		downloadUrl := fmt.Sprintf(command.GolangDownloadURL, fileName)
+		savePath := filepath.Join(s, command.FrameworkCache, fileName)
+		var err error
+		println("Golang Download URL:", downloadUrl)
+		println("Golang Save Path:", savePath)
+		if !tools.IsExist(savePath) {
+			// 已经存在不再下载
+			bar := progressbar.NewBar(100)
+			bar.SetNotice("\t")
+			bar.HideRatio()
+			err = downloadFile(downloadUrl, savePath, func(totalLength, processLength int64) {
+				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+			})
+			if err != nil {
+				bar.PrintEnd("Download [" + fileName + "] failed: " + err.Error())
+			} else {
+				bar.PrintEnd("Download [" + fileName + "] success")
+			}
+		}
+		if err == nil {
+			// 使用 go 名字做为 go 安装目录
+			targetPath := filepath.Join(s, "go")
+			// 释放文件
+			if !command.IsWindows {
+				//zip
+				ExtractUnZip(savePath, targetPath)
+			} else {
+				//tar
+				ExtractUnTar(savePath, targetPath)
+			}
+			return targetPath
+		}
+		return ""
+	}
+	return ""
+}
+
+func installCEFFramework(c *command.Config) {
 	// 获取提取文件配置
 	extractData, err := tools.HttpRequestGET(command.DownloadExtractURL)
 	if err != nil {
@@ -67,21 +180,9 @@ func Install(c *command.Config) {
 		fmt.Fprint(os.Stderr, "-c [cef] Incorrect args value\n")
 		os.Exit(1)
 	}
-
-	if c.Install.Path == "" {
-		// current dir
-		c.Install.Path = c.Wd
-	}
-	installPathName := filepath.Join(c.Install.Path, c.Install.Name)
+	installPathName := cefInstallPathName(c)
 	println("Install Path", installPathName)
-	if c.Install.Version == "" {
-		// latest
-		c.Install.Version = "latest"
-	}
-	// 创建安装目录
-	os.MkdirAll(c.Install.Path, fs.ModePerm)
-	os.MkdirAll(installPathName, fs.ModePerm)
-	os.MkdirAll(filepath.Join(c.Install.Path, command.FrameworkCache), fs.ModePerm)
+
 	println("Start downloading CEF and Energy dependency")
 	// 所有版本列表
 	var versionList = edv["versionList"].(map[string]any)
@@ -224,7 +325,6 @@ func Install(c *command.Config) {
 	}
 	// 解压文件, 并根据配置提取文件
 	println("Unpack files")
-	var removeFileList = make([]string, 0, 0)
 	for key, di := range downloads {
 		if !di.isSupport {
 			println("Warn module is not built or configured 【", di.module, "】")
@@ -239,20 +339,13 @@ func Install(c *command.Config) {
 				})
 				bar.PrintEnd()
 				ExtractFiles(key, tarName, di, extractOSConfig)
-				removeFileList = append(removeFileList, tarName)
 			} else if key == command.LiblclKey {
 				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 			}
 			println("Unpack file", key, "success\n")
 		}
 	}
-	for _, rmFile := range removeFileList {
-		println("Remove file", rmFile)
-		os.Remove(rmFile)
-	}
-	env.SetEnergyHomeEnv(command.EnergyHomeKey, installPathName)
-	println()
-	println("SUCCESS \nInstalled version:", c.Install.Version, liblclVersion)
+	println("\nSUCCESS \nInstalled version:", c.Install.Version, liblclVersion)
 	if liblclModule == nil {
 		println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
 	}
@@ -396,28 +489,32 @@ func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig 
 }
 
 func filePathInclude(compressPath string, files ...any) (string, bool) {
-	for _, file := range files {
-		f := file.(string)
-		tIdx := strings.LastIndex(f, "/*")
-		if tIdx != -1 {
-			f = f[:tIdx]
-			if f[0] == '/' {
-				if strings.Index(compressPath, f[1:]) == 0 {
-					return compressPath, true
+	if len(files) == 0 {
+		return compressPath, true
+	} else {
+		for _, file := range files {
+			f := file.(string)
+			tIdx := strings.LastIndex(f, "/*")
+			if tIdx != -1 {
+				f = f[:tIdx]
+				if f[0] == '/' {
+					if strings.Index(compressPath, f[1:]) == 0 {
+						return compressPath, true
+					}
 				}
-			}
-			if strings.Index(compressPath, f) == 0 {
-				return strings.Replace(compressPath, f, "", 1), true
-			}
-		} else {
-			if f[0] == '/' {
-				if compressPath == f[1:] {
+				if strings.Index(compressPath, f) == 0 {
+					return strings.Replace(compressPath, f, "", 1), true
+				}
+			} else {
+				if f[0] == '/' {
+					if compressPath == f[1:] {
+						return f, true
+					}
+				}
+				if compressPath == f {
+					f = f[strings.Index(f, "/")+1:]
 					return f, true
 				}
-			}
-			if compressPath == f {
-				f = f[strings.Index(f, "/")+1:]
-				return f, true
 			}
 		}
 	}
@@ -433,12 +530,28 @@ func dir(path string) string {
 func ExtractUnTar(filePath, targetPath string, files ...any) {
 	reader, err := os.Open(filePath)
 	if err != nil {
-		fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
+		fmt.Printf("error: cannot open file, error=[%v]\n", err)
 		return
 	}
 	defer reader.Close()
 
-	tarReader := tar.NewReader(reader)
+	var tarReader *tar.Reader
+
+	if filepath.Ext(filePath) == ".gz" {
+		gr, err := gzip.NewReader(reader)
+		if err != nil {
+			fmt.Printf("error: cannot open gzip file, error=[%v]\n", err)
+			return
+		}
+		defer gr.Close()
+		tarReader = tar.NewReader(gr)
+	} else {
+		tarReader = tar.NewReader(reader)
+	}
+
+	bar := progressbar.NewBar(100)
+	bar.SetNotice("\t")
+	bar.HideRatio()
 	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
@@ -448,14 +561,16 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 			os.Exit(1)
 			return
 		}
-		compressPath := header.Name[strings.Index(header.Name, "/")+1:]
+		// 去除压缩包内的一级目录
+		compressPath := filepath.Clean(header.Name[strings.Index(header.Name, "/")+1:])
+		//compressPath := filepath.Clean(header.Name[])
 		includePath, isInclude := filePathInclude(compressPath, files...)
 		if !isInclude {
 			continue
 		}
 		info := header.FileInfo()
 		targetFile := filepath.Join(targetPath, includePath)
-		fmt.Println("compressPath:", compressPath, "-> targetFile:", targetFile)
+		fmt.Println("compressPath:", compressPath)
 		if info.IsDir() {
 			if err = os.MkdirAll(targetFile, info.Mode()); err != nil {
 				fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
@@ -478,14 +593,12 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 				os.Exit(1)
 				return
 			}
-			defer file.Close()
-			bar := progressbar.NewBar(100)
-			bar.SetNotice("\t")
-			bar.HideRatio()
+			bar.SetCurrentValue(0)
 			writeFile(tarReader, file, header.Size, func(totalLength, processLength int64) {
 				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
 			})
 			file.Sync()
+			file.Close()
 			bar.PrintBar(100)
 			bar.PrintEnd()
 			if err != nil {
@@ -500,31 +613,47 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 func ExtractUnZip(filePath, targetPath string, files ...any) {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
-		for i := 0; i < len(files); i++ {
-			if f, err := rc.Open(files[i].(string)); err == nil {
-				defer f.Close()
-				st, _ := f.Stat()
-				targetFileName := filepath.Join(targetPath, st.Name())
-				if st.IsDir() {
-					os.MkdirAll(targetFileName, st.Mode())
-					continue
-				}
-				if targetFile, err := os.Create(targetFileName); err == nil {
-					fmt.Println("extract file: ", st.Name())
-					bar := progressbar.NewBar(100)
-					bar.SetNotice("\t")
-					bar.HideRatio()
-					writeFile(f, targetFile, st.Size(), func(totalLength, processLength int64) {
-						bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
-					})
-					bar.PrintBar(100)
-					bar.PrintEnd()
-					targetFile.Close()
-				}
-			} else {
-				fmt.Printf("error: cannot open file, error=[%v]\n", err)
-				os.Exit(1)
+		bar := progressbar.NewBar(100)
+		bar.SetNotice("\t")
+		bar.HideRatio()
+		var createWriteFile = func(info fs.FileInfo, path string, file io.Reader) {
+			targetFileName := filepath.Join(targetPath, path)
+			if info.IsDir() {
+				os.MkdirAll(targetFileName, info.Mode())
 				return
+			}
+			if targetFile, err := os.Create(targetFileName); err == nil {
+				fmt.Println("extract file: ", path)
+				bar.SetCurrentValue(0)
+				writeFile(file, targetFile, info.Size(), func(totalLength, processLength int64) {
+					bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+				})
+				bar.PrintBar(100)
+				bar.PrintEnd()
+				targetFile.Close()
+			}
+		}
+		// 所有文件
+		if len(files) == 0 {
+			zipFiles := rc.File
+			for _, f := range zipFiles {
+				r, _ := f.Open()
+				name := filepath.Clean(f.Name)
+				createWriteFile(f.FileInfo(), name, r.(io.Reader))
+				_ = r.Close()
+			}
+		} else {
+			// 指定名字的文件
+			for i := 0; i < len(files); i++ {
+				if f, err := rc.Open(files[i].(string)); err == nil {
+					info, _ := f.Stat()
+					createWriteFile(info, files[i].(string), f)
+					_ = f.Close()
+				} else {
+					fmt.Printf("error: cannot open file, error=[%v]\n", err)
+					os.Exit(1)
+					return
+				}
 			}
 		}
 	} else {
@@ -545,14 +674,18 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) st
 	defer fileBz2.Close()
 	dirName := fileBz2.Name()
 	dirName = dirName[:strings.LastIndex(dirName, ".")]
-	r := bzip2.NewReader(fileBz2)
-	w, err := os.Create(dirName)
-	if err != nil {
-		fmt.Errorf("%s", err.Error())
-		os.Exit(1)
+	if !tools.IsExist(dirName) {
+		r := bzip2.NewReader(fileBz2)
+		w, err := os.Create(dirName)
+		if err != nil {
+			fmt.Errorf("%s", err.Error())
+			os.Exit(1)
+		}
+		defer w.Close()
+		writeFile(r, w, 0, callback)
+	} else {
+		println("File already exists")
 	}
-	defer w.Close()
-	writeFile(r, w, 0, callback)
 	return dirName
 }
 

@@ -196,7 +196,7 @@ func checkEnv(init *command.Init) {
 			if strings.Index(data, "go version") != -1 {
 				d := strings.Split(data, " ")
 				if len(d) == 4 {
-					version = d[2][2:]
+					version = d[2][2:] // x.x.x
 				}
 			}
 		}
@@ -204,9 +204,12 @@ func checkEnv(init *command.Init) {
 		cmd.Close()
 		if version != "" {
 			d := strings.Split(version, ".")
-			fmt.Println("d:", d)
+			if len(d) == 3 {
+				if tools.ToInt(d[0]) < 1 || tools.ToInt(d[1]) < 18 {
+					println(`Warning: current installed Go version should be greater than 1.18. version:`, version)
+				}
+			}
 		}
-		fmt.Println("version:", version)
 		println("\tGolang OK")
 		init.IGo = true
 	}

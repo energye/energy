@@ -20,6 +20,20 @@ const (
 	CheckUpgradeURL    = domain + "/api/cmd/upgrade"
 	CheckCreateURL     = domain + "/api/cmd/create"
 )
+
+const (
+	// GolangDownloadURL 下载地址, 默认 1.18.10
+	// https://golang.google.cn/dl/go1.18.10.darwin-amd64.tar.gz
+	// https://golang.google.cn/dl/go1.18.10.darwin-arm64.tar.gz
+	// https://golang.google.cn/dl/go1.18.10.linux-amd64.tar.gz
+	// https://golang.google.cn/dl/go1.18.10.linux-arm64.tar.gz
+	// https://golang.google.cn/dl/go1.18.10.windows-386.zip
+	// https://golang.google.cn/dl/go1.18.10.windows-amd64.zip
+	// https://golang.google.cn/dl/go1.18.10.windows-arm64.zip
+	GolangDownloadURL    = "https://dl.google.com/go/%s"
+	GolangDefaultVersion = "1.18.10"
+)
+
 const (
 	CefKey         = "cef"
 	LiblclKey      = "liblcl"
