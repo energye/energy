@@ -97,8 +97,8 @@ func installGolang(c *command.Config) string {
 		version := command.GolangDefaultVersion
 		gos := runtime.GOOS
 		arch := runtime.GOARCH
-		gos = "darwin"
-		arch = "amd64"
+		//gos = "darwin"
+		//arch = "amd64"
 		ext := exts[gos]
 		if !tools.IsExist(s) {
 			println("Directory does not exist. Creating directory.", s)
@@ -131,7 +131,7 @@ func installGolang(c *command.Config) string {
 			// 使用 go 名字做为 go 安装目录
 			targetPath := filepath.Join(s, "go")
 			// 释放文件
-			if !command.IsWindows {
+			if command.IsWindows {
 				//zip
 				ExtractUnZip(savePath, targetPath)
 			} else {
