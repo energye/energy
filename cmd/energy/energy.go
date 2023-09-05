@@ -62,7 +62,7 @@ func main() {
 			fmt.Fprintf(os.Stderr, "%s\n%s", command.UsageLine, command.Long)
 			os.Exit(1)
 		}
-		fmt.Println("Energy executing:", command.Short)
+		fmt.Println(command.Short)
 		if err := command.Run(cc); err != nil {
 			fmt.Fprint(os.Stderr, err.Error()+"\n")
 			os.Exit(1)

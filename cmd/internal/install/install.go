@@ -25,6 +25,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -42,6 +43,7 @@ type downloadInfo struct {
 func Install(c *command.Config) {
 	// 初始配置和安装目录
 	initInstall(c)
+	willInstall := checkInstallEnv(c)
 	var (
 		goRoot                      string
 		goSuccessCallback           func()
@@ -50,6 +52,15 @@ func Install(c *command.Config) {
 		nsisRoot                    string
 		nsisSuccessCallback         func()
 	)
+	if len(willInstall) > 0 {
+		println("Following will be installed")
+		for _, name := range willInstall {
+			println("\t", name)
+		}
+		println("Press Enter to start installation")
+		var s string
+		fmt.Scanln(&s)
+	}
 	// 安装Go开发环境
 	goRoot, goSuccessCallback = installGolang(c)
 	// 安装CEF二进制框架
@@ -70,6 +81,7 @@ func Install(c *command.Config) {
 	if cefFrameworkRoot != "" {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
+	println("-----------------------------------------------------")
 	// success 输出
 	if nsisSuccessCallback != nil {
 		nsisSuccessCallback()
@@ -80,6 +92,17 @@ func Install(c *command.Config) {
 	if cefFrameworkSuccessCallback != nil {
 		cefFrameworkSuccessCallback()
 	}
+	// end
+	//if len(willInstall) > 0 {
+	//	print("was installed: ")
+	//	for i, name := range willInstall {
+	//		if i > 0 {
+	//			print("|")
+	//		}
+	//		print(name)
+	//	}
+	//	println()
+	//}
 }
 
 func cefInstallPathName(c *command.Config) string {
@@ -92,6 +115,59 @@ func goInstallPathName(c *command.Config) string {
 
 func nsisInstallPathName(c *command.Config) string {
 	return filepath.Join(c.Install.Path, "nsis")
+}
+
+func checkInstallEnv(c *command.Config) (result []string) {
+	skip := strings.ToLower(c.Install.All) == "y"
+	var check = func(chkInstall func() bool, name string, yes func()) {
+		if chkInstall() {
+			println(" ", name, "installed")
+		} else {
+			fmt.Printf("  %s: Not installed, install %s ? (Y/n): ", name, name)
+			var s string
+			if !skip {
+				fmt.Scanln(&s) // 跳过输入Y,
+			} else {
+				s = "y"
+			}
+			if strings.ToLower(s) == "y" {
+				result = append(result, name)
+				yes()
+			} else {
+				println(" ", name, "install skip")
+			}
+		}
+	}
+	// go
+	check(func() bool {
+		return tools.CommandExists("go")
+	}, "Golang", func() {
+		c.Install.IGolang = true
+	})
+	// nsis
+	check(func() bool {
+		if consts.IsWindows && runtime.GOARCH == "amd64" {
+			return tools.CommandExists("makensis")
+		} else {
+			println("  Non Windows amd64 skipping NSIS")
+			return false
+		}
+	}, "NSIS", func() {
+		c.Install.INSIS = true
+	})
+	// cef
+	check(func() bool {
+		return tools.CheckCEFDir()
+	}, "CEF Framework", func() {
+		c.Install.ICEF = true
+	})
+	// upx
+	check(func() bool {
+		return tools.CommandExists("upx")
+	}, "UPX", func() {
+		c.Install.IUPX = true
+	})
+	return
 }
 
 func initInstall(c *command.Config) {

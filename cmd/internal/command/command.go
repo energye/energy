@@ -34,6 +34,10 @@ type Install struct {
 	Download string `short:"d" long:"download" description:"Download Source, 0:gitee or 1:github, Default empty" default:""`
 	All      string `short:"a" long:"all" description:"Install all, skip installation prompts (Y/n), default empty:n" default:""`
 	CEF      string `short:"c" long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. default, windows7, gtk2, flash" default:""`
+	IGolang  bool
+	ICEF     bool
+	INSIS    bool
+	IUPX     bool
 }
 
 type Package struct {

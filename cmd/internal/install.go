@@ -17,7 +17,7 @@ import (
 
 var CmdInstall = &command.Command{
 	UsageLine: "install -p [path] -v [version] -n [name] -d [download] -a [all] -c [cef]",
-	Short:     "Automatically configure the CEF and Energy framework",
+	Short:     "Automatic installation and configuration of the energy framework complete development environment",
 	Long: `
 	-p Installation directory Default current directory
 	-v Specifying a version number,Default latest.\
@@ -31,7 +31,7 @@ var CmdInstall = &command.Command{
 		87  : CEF 87.1.14 is the last one to support Flash.
 	.  Execute default command
 
-Automatically install and configure the Energy development environment.
+Automatic installation and configuration of the energy framework complete development environment.
 Installation package is downloaded over the network during the installation process.
 According to the prompt (Y), install Golang、CEF(Chromium Embedded Framework)、NSIS, If installed, skip.
 `,

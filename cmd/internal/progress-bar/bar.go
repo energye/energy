@@ -49,7 +49,7 @@ func NewBar(totalVale int) *Bar {
 		totalValue:         totalVale,
 		currentValue:       0,
 		progressGraphTotal: defaultCount,
-		progressGraph:      "█",
+		progressGraph:      "=",
 		backGraph:          " ",
 		progressEnds:       Ends{Start: "[", End: "]"},
 		isShowPercent:      true,

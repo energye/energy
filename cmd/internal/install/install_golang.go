@@ -19,25 +19,14 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 )
 
 // 下载go并配置安装
 func installGolang(c *command.Config) (string, func()) {
-	if tools.CommandExists("go") {
-		println("Golang installed")
+	if !c.Install.IGolang {
 		return "", nil
 	}
-	print("Golang not installed, do you want to install Golang? Y/n: ")
-	var s string
-	if strings.ToLower(c.Install.All) != "y" {
-		fmt.Scanln(&s)
-		if strings.ToLower(s) != "y" {
-			println("Golang install exit")
-			return "", nil
-		}
-	}
-	s = c.Install.Path // 安装目录
+	s := c.Install.Path // 安装目录
 	exts := map[string]string{
 		"darwin":  "tar.gz",
 		"linux":   "tar.gz",
@@ -87,7 +76,7 @@ func installGolang(c *command.Config) (string, func()) {
 			ExtractUnTar(savePath, targetPath)
 		}
 		return targetPath, func() {
-			println("Golang Installed Successfully \nInstalled version:", version)
+			println("Golang Installed Successfully Version:", version)
 		}
 	}
 	return "", nil

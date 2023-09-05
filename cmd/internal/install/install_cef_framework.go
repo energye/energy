@@ -26,18 +26,8 @@ import (
 )
 
 func installCEFFramework(c *command.Config) (string, func()) {
-	if tools.CheckCEFDir() {
-		println("CEF Framework installed")
+	if !c.Install.ICEF {
 		return "", nil
-	}
-	print("CEF Framework is not installed. Determine whether to install CEF Framework? Y/n: ")
-	var s string
-	if strings.ToLower(c.Install.All) != "y" {
-		fmt.Scanln(&s)
-		if strings.ToLower(s) != "y" {
-			println("CEF Framework install exit")
-			return "", nil
-		}
 	}
 	// 获取提取文件配置
 	extractData, err := tools.HttpRequestGET(consts.DownloadExtractURL)
@@ -246,7 +236,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		}
 	}
 	return installPathName, func() {
-		println("\nCEF Installed Successfully \nInstalled version:", c.Install.Version, liblclVersion)
+		println("\nCEF Installed Successfully Version:", c.Install.Version, liblclVersion)
 		if liblclModule == nil {
 			println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
 		}
