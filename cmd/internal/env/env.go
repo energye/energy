@@ -59,42 +59,12 @@ func SetGoEnv(goRoot string) {
 		//export GOCACHE=$GOROOT/go-build
 		//export GOBIN=$GOROOT/bin
 		//export PATH=$PATH:$GOBIN
-		//var exGoRoot = fmt.Sprintf("export GOROOT=%s", goRoot)
-		//var exGoCache = "export GOCACHE==$GOROOT/go-build"
-		//var exGoBin = "export GOBIN=$GOROOT/bin"
-		//var exPath = "export PATH=$PATH:$GOBIN"
-		//var envFiles []string
-		//if command.IsLinux {
-		//	envFiles = []string{".profile", ".zshrc", ".bashrc"}
-		//} else if command.IsDarwin {
-		//	envFiles = []string{".profile", ".zshrc", ".bash_profile"}
-		//}
-		//homeDir, err := homedir.Dir()
-		//if err != nil {
-		//	println(err.Error())
-		//	return
-		//}
-		//for _, file := range envFiles {
-		//	var fp = path.Join(homeDir, file)
-		//	cmd.Command("touch", fp)
-		//	f, err := os.OpenFile(fp, os.O_RDWR|os.O_APPEND, 0666)
-		//	if err == nil {
-		//		var oldContent string
-		//		if contentBytes, err := ioutil.ReadAll(f); err == nil {
-		//			content := string(contentBytes)
-		//			oldContent = content
-		//			var lines = strings.Split(content, "\n")
-		//			var exist = false
-		//			for i := 0; i < len(lines); i++ {
-		//				line := lines[i]
-		//				if strings.Index(line, energyHomeKey) == 0 {
-		//					content = strings.ReplaceAll(content, line, energyHome)
-		//					exist = true
-		//				}
-		//			}
-		//		}
-		//	}
-		//}
+		var exGoRoot = fmt.Sprintf("export GOROOT=%s", goRoot)
+		var exGoCache = "export GOCACHE==$GOROOT/go-build"
+		var exGoBin = "export GOBIN=$GOROOT/bin"
+		var exPath = "export PATH=$PATH:$GOBIN"
+		var exs = []string{exGoRoot, exGoCache, exGoBin}
+		setEnv(exs, exPath, "$GOBIN")
 	}
 	println("\nHint: Reopen the cmd window for the Go command to take effect.")
 }
@@ -123,72 +93,14 @@ func SetEnergyHomeEnv(homePath string) {
 		var args = []string{"/c", "setx", command.EnergyHomeKey, homePath}
 		cmd.Command("cmd.exe", args...)
 	} else {
-		var envFiles []string
-		var energyHomeKey = fmt.Sprintf("export %s", command.EnergyHomeKey)
 		var energyHome = fmt.Sprintf("export %s=%s", command.EnergyHomeKey, homePath)
-		if command.IsLinux {
-			envFiles = []string{".profile", ".zshrc", ".bashrc"}
-		} else if command.IsDarwin {
-			envFiles = []string{".profile", ".zshrc", ".bash_profile"}
-		}
-		homeDir, err := homedir.Dir()
-		if err != nil {
-			println(err.Error())
-			return
-		}
-		for _, file := range envFiles {
-			var fp = path.Join(homeDir, file)
-			cmd.Command("touch", fp)
-			f, err := os.OpenFile(fp, os.O_RDWR|os.O_APPEND, 0666)
-			if err == nil {
-				var oldContent string
-				if contentBytes, err := ioutil.ReadAll(f); err == nil {
-					content := string(contentBytes)
-					oldContent = content
-					var lines = strings.Split(content, "\n")
-					var exist = false
-					for i := 0; i < len(lines); i++ {
-						line := lines[i]
-						if strings.Index(line, energyHomeKey) == 0 {
-							content = strings.ReplaceAll(content, line, energyHome)
-							exist = true
-						}
-					}
-					if exist {
-						if err := f.Close(); err == nil {
-							var oldWrite = func() {
-								if f, err = os.OpenFile(fp, os.O_RDWR, 0666); err == nil {
-									f.WriteString(oldContent)
-									f.Close()
-								}
-							}
-							if newOpenFile, err := os.OpenFile(fp, os.O_RDWR|os.O_TRUNC, 0666); err == nil {
-								if _, err := newOpenFile.WriteString(content); err == nil {
-									newOpenFile.Close()
-								} else {
-									newOpenFile.Close()
-									oldWrite()
-								}
-							} else {
-								oldWrite()
-							}
-						}
-					} else {
-						f.WriteString("\n")
-						f.WriteString(energyHome)
-						f.WriteString("\n")
-						f.Close()
-					}
-				} else {
-					f.Close()
-				}
-			}
-		}
+		exs := []string{energyHome}
+		setEnv(exs, "", "")
 	}
 	println("\nHint: Reopen the cmd window to make the environment variables take effect.")
 }
 
-func setEnv(exs []string, exGoBinPath, bin string) {
+func setEnv(exs []string, binPath, bin string) {
 	cmd := toolsCommand.NewCMD()
 	cmd.MessageCallback = func(s []byte, e error) {
 		fmt.Println("CMD:", string(s), " error:", e)
@@ -208,10 +120,12 @@ func setEnv(exs []string, exGoBinPath, bin string) {
 		println(err.Error())
 		return
 	}
+	var tempExts []string
 	var isExport = func(line string) (string, bool) {
-		for _, ex := range exs {
+		for i, ex := range tempExts {
 			exName := strings.Split(ex, "=")[0]
 			if strings.Index(line, exName) == 0 {
+				tempExts = append(tempExts[i+1:], tempExts[:i]...)
 				return ex, true
 			}
 		}
@@ -226,6 +140,7 @@ func setEnv(exs []string, exGoBinPath, bin string) {
 		return false
 	}
 	for _, file := range envFiles {
+		tempExts = exs[:]
 		var fp = path.Join(homeDir, file)
 		cmd.Command("touch", fp)
 		f, err := os.OpenFile(fp, os.O_RDWR|os.O_APPEND, 0666)
@@ -236,69 +151,56 @@ func setEnv(exs []string, exGoBinPath, bin string) {
 				oldContent = content
 				var newContent = new(bytes.Buffer)
 				var lines = strings.Split(content, "\n")
-				var exist = false
-				var gobin = false
+				var currentPath string
 				for i := 0; i < len(lines); i++ {
 					line := strings.TrimSpace(lines[i])
-					if line == "" {
-						continue
-					}
-					if exGoBinPath != "" && isExportPath(line) {
-						//是path，并且有gobin
-						newContent.WriteString(exGoBinPath)
-						gobin = true
+					// path里是否存在要设置的bin
+					if binPath != "" && isExportPath(line) {
+						currentPath = line
 					} else {
 						// 其它变量, 判断是否存在，如果存在替换, 否则将原来的添加进来
 						if ex, ok := isExport(line); ok {
 							newContent.WriteString(ex)
-							exist = true
 						} else {
 							newContent.WriteString(line)
 						}
 					}
-					newContent.WriteString("\n")
-				}
-				if exist {
-					// 如果path里没有gobin, 添加一个
-					if exGoBinPath != "" && !gobin {
-						newContent.WriteString(exGoBinPath)
+					if i < len(lines)-1 {
 						newContent.WriteString("\n")
 					}
-					// 有就覆盖掉之前的, 要先关闭掉文件
-					if err := f.Close(); err == nil {
-						// 如果关闭文件流成功, 重新写入覆盖文件
-						var oldWrite = func() {
-							if f, err = os.OpenFile(fp, os.O_RDWR, 0666); err == nil {
-								f.WriteString(oldContent)
-								f.Close()
-							}
+				}
+				for _, ext := range tempExts {
+					newContent.WriteString(ext)
+					newContent.WriteString("\n")
+				}
+				if currentPath != "" { // 不为空说明现有的path里已经存在 bin, 放到最后一行
+					newContent.WriteString(currentPath)
+				} else if binPath != "" { //不为空并且现有的path里没有bin时，自己设置一个带有bin 的 path, 放到最后一行
+					newContent.WriteString(binPath)
+				}
+				// 有就覆盖掉之前的, 要先关闭掉文件
+				if err = f.Close(); err == nil {
+					// 如果任何操作失败, 重新写入覆盖文件
+					var oldWrite = func() {
+						if f, err = os.OpenFile(fp, os.O_RDWR, 0666); err == nil {
+							f.WriteString(oldContent)
+							f.Close()
 						}
-						// 打开覆盖模式
-						if newOpenFile, err := os.OpenFile(fp, os.O_RDWR|os.O_TRUNC, 0666); err == nil {
-							// 写入，如果失败，把老的写入
-							if _, err := newOpenFile.Write(newContent.Bytes()); err == nil {
-								newOpenFile.Close()
-							} else {
-								newOpenFile.Close()
-								oldWrite()
-							}
+					}
+					// 打开文件覆盖模式
+					if newOpenFile, err := os.OpenFile(fp, os.O_RDWR|os.O_TRUNC, 0666); err == nil {
+						// 写入新的环境配置
+						if _, err := newOpenFile.Write(newContent.Bytes()); err == nil {
+							newOpenFile.Close()
 						} else {
+							//写入失败，把老的内容还原
+							newOpenFile.Close()
 							oldWrite()
 						}
+					} else {
+						//打开失败，把老的内容还原
+						oldWrite()
 					}
-				} else {
-					// 都没有全添加一次
-					for _, ex := range exs {
-						f.WriteString("\n")
-						f.WriteString(ex)
-						f.WriteString("\n")
-					}
-					// 如果path里没有gobin, 添加一个
-					if exGoBinPath != "" && !gobin {
-						f.WriteString(exGoBinPath)
-						f.WriteString("\n")
-					}
-					f.Close()
 				}
 			} else {
 				f.Close()
