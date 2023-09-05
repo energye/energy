@@ -31,10 +31,12 @@ func installCEFFramework(c *command.Config) string {
 	}
 	print("CEF Framework is not installed. Determine whether to install CEF Framework? Y/n: ")
 	var s string
-	fmt.Scanln(&s)
-	if strings.ToLower(s) != "y" {
-		println("CEF Framework install exit")
-		return ""
+	if strings.ToLower(c.Install.All) != "y" {
+		fmt.Scanln(&s)
+		if strings.ToLower(s) != "y" {
+			println("CEF Framework install exit")
+			return ""
+		}
 	}
 	// 获取提取文件配置
 	extractData, err := tools.HttpRequestGET(command.DownloadExtractURL)
@@ -377,7 +379,7 @@ func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig 
 		ExtractUnTar(sourcePath, di.frameworkPath, files...)
 	} else if keyName == command.LiblclKey {
 		//zip
-		ExtractUnZip(sourcePath, di.frameworkPath, files...)
+		ExtractUnZip(sourcePath, di.frameworkPath, false, files...)
 	}
 }
 

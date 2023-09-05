@@ -27,10 +27,12 @@ func installNSIS(c *command.Config) string {
 		}
 		print("NSIS is not installed. Do you want to install NSIS? Y/n: ")
 		var s string
-		fmt.Scanln(&s)
-		if strings.ToLower(s) != "y" {
-			println("NSIS install exit")
-			return ""
+		if strings.ToLower(c.Install.All) != "y" {
+			fmt.Scanln(&s)
+			if strings.ToLower(s) != "y" {
+				println("NSIS install exit")
+				return ""
+			}
 		}
 		// 下载并安装配置NSIS
 		s = c.Install.Path // 安装目录
@@ -59,7 +61,7 @@ func installNSIS(c *command.Config) string {
 			targetPath := filepath.Join(s, "NSIS")
 			// 释放文件
 			//zip
-			ExtractUnZip(savePath, targetPath)
+			ExtractUnZip(savePath, targetPath, true)
 			return targetPath
 		}
 	} else {

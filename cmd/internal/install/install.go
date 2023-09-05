@@ -41,12 +41,17 @@ type downloadInfo struct {
 func Install(c *command.Config) {
 	// 初始配置和安装目录
 	initInstall(c)
+	var (
+		goRoot           string
+		cefFrameworkRoot string
+		nsisRoot         string
+	)
 	// 安装Go开发环境
-	goRoot := installGolang(c)
+	goRoot = installGolang(c)
 	// 安装CEF二进制框架
-	cefFrameworkRoot := installCEFFramework(c)
+	cefFrameworkRoot = installCEFFramework(c)
 	// 安装nsis安装包制作工具, 仅windows - amd64
-	nsisRoot := installNSIS(c)
+	nsisRoot = installNSIS(c)
 	// 设置nsis环境变量
 	if nsisRoot != "" {
 		env.SetNSISEnv(nsisRoot)
@@ -55,6 +60,7 @@ func Install(c *command.Config) {
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
+	env.SetToPath()
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
@@ -63,6 +69,14 @@ func Install(c *command.Config) {
 
 func cefInstallPathName(c *command.Config) string {
 	return filepath.Join(c.Install.Path, c.Install.Name)
+}
+
+func goInstallPathName(c *command.Config) string {
+	return filepath.Join(c.Install.Path, "go")
+}
+
+func nsisInstallPathName(c *command.Config) string {
+	return filepath.Join(c.Install.Path, "nsis")
 }
 
 func initInstall(c *command.Config) {
@@ -77,6 +91,8 @@ func initInstall(c *command.Config) {
 	// 创建安装目录
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
 	os.MkdirAll(cefInstallPathName(c), fs.ModePerm)
+	os.MkdirAll(goInstallPathName(c), fs.ModePerm)
+	os.MkdirAll(nsisInstallPathName(c), fs.ModePerm)
 	os.MkdirAll(filepath.Join(c.Install.Path, command.FrameworkCache), fs.ModePerm)
 }
 
@@ -210,7 +226,7 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 	}
 }
 
-func ExtractUnZip(filePath, targetPath string, files ...any) {
+func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		bar := progressbar.NewBar(100)
@@ -222,6 +238,10 @@ func ExtractUnZip(filePath, targetPath string, files ...any) {
 				os.MkdirAll(targetFileName, info.Mode())
 				return
 			}
+			fDir := filepath.Dir(targetFileName)
+			if !tools.IsExist(fDir) {
+				os.MkdirAll(fDir, 0755)
+			}
 			if targetFile, err := os.Create(targetFileName); err == nil {
 				fmt.Println("extract file: ", path)
 				bar.SetCurrentValue(0)
@@ -231,6 +251,9 @@ func ExtractUnZip(filePath, targetPath string, files ...any) {
 				bar.PrintBar(100)
 				bar.PrintEnd()
 				targetFile.Close()
+			} else {
+				println("createWriteFile", err.Error())
+				os.Exit(1)
 			}
 		}
 		// 所有文件
@@ -238,7 +261,13 @@ func ExtractUnZip(filePath, targetPath string, files ...any) {
 			zipFiles := rc.File
 			for _, f := range zipFiles {
 				r, _ := f.Open()
-				name := filepath.Clean(f.Name)
+				var name string
+				if rmRootDir {
+					// 移除压缩包内的根文件夹名
+					name = filepath.Clean(f.Name[strings.Index(f.Name, "/")+1:])
+				} else {
+					name = filepath.Clean(f.Name)
+				}
 				createWriteFile(f.FileInfo(), name, r.(io.Reader))
 				_ = r.Close()
 			}

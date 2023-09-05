@@ -24,8 +24,69 @@ import (
 	"strings"
 )
 
-func SetNSISEnv(nsisRoot string) {
+var envPath *envToPath
 
+type envToPath struct {
+	path []string
+}
+
+func init() {
+	if command.IsWindows {
+		envPath = &envToPath{}
+	}
+}
+
+func (m *envToPath) add(value string) {
+	if m == nil {
+		return
+	}
+	m.path = append(m.path, value)
+}
+
+func (m *envToPath) toPath() string {
+	if m == nil {
+		return ""
+	}
+	return strings.Join(m.path, ";")
+}
+
+// SetToPath
+//  windows go 和 nsis 设置环境变量到path
+func SetToPath() {
+	if envPath == nil {
+		return
+	}
+	pathValue, _ := os.LookupEnv("path")
+	cmd := toolsCommand.NewCMD()
+	defer cmd.Close()
+	cmd.IsPrint = false
+	var args = []string{"path", fmt.Sprintf("%s;%s", pathValue, envPath.toPath())}
+	cmd.Command("setx", args...)
+}
+
+func SetNSISEnv(nsisRoot string) {
+	makensisbin := filepath.Join(nsisRoot, "makensis.exe")
+	if !tools.IsExist(makensisbin) {
+		println("\nError: Failed to set the NSIS environment variable, not a correct NSIS installation directory. ", nsisRoot)
+		return
+	}
+	println("\nSetting NSIS environment Variables to:", nsisRoot)
+	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
+	cmd.MessageCallback = func(s []byte, e error) {
+		msg := strings.TrimSpace(string(s))
+		if msg != "" {
+			fmt.Println("CMD:", msg)
+		}
+		if e != nil {
+			fmt.Println("CMD Error:", e)
+		}
+	}
+	defer cmd.Close()
+	var args = []string{"NSIS_HOME", nsisRoot}
+	cmd.Command("setx", args...)
+	envPath.add("%NSIS_HOME%")
+	println("\nHint: Reopen the cmd window for the makensis command to take effect.")
 }
 
 func SetGoEnv(goRoot string) {
@@ -38,10 +99,17 @@ func SetGoEnv(goRoot string) {
 		println("\nError: Failed to set the Golang environment variable, not a correct Golang installation directory. ", goRoot)
 		return
 	}
-	println("\nSetting Golang environment Variables")
+	println("\nSetting Golang environment Variables to:", goRoot)
 	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
-		fmt.Println("CMD:", string(s), " error:", e)
+		msg := strings.TrimSpace(string(s))
+		if msg != "" {
+			fmt.Println("CMD:", msg)
+		}
+		if e != nil {
+			fmt.Println("CMD Error:", e)
+		}
 	}
 	defer cmd.Close()
 	if command.IsWindows {
@@ -56,8 +124,7 @@ func SetGoEnv(goRoot string) {
 		args = []string{"GOBIN", "%GOROOT%\\bin"}
 		cmd.Command("setx", args...)
 		// PATH=%GOROOT%\bin
-		args = []string{"path", "%path%;%GOROOT%\\bin"}
-		cmd.Command("setx", args...)
+		envPath.add("%GOROOT%\\bin")
 	} else {
 		//export GOROOT=/home/yanghy/app/go
 		//export GOCACHE=$GOROOT/go-build
@@ -89,8 +156,15 @@ func SetEnergyHomeEnv(homePath string) {
 	}
 	println("\nSetting environment Variables [ENERGY_HOME] to", homePath)
 	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
-		fmt.Println("CMD:", s, " error:", e)
+		msg := strings.TrimSpace(string(s))
+		if msg != "" {
+			fmt.Println("CMD:", msg)
+		}
+		if e != nil {
+			fmt.Println("CMD Error:", e)
+		}
 	}
 	defer cmd.Close()
 	if command.IsWindows {
@@ -108,7 +182,13 @@ func setPosixEnv(exs []string, binPath, bin string) {
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
-		fmt.Println("CMD:", string(s), " error:", e)
+		msg := strings.TrimSpace(string(s))
+		if msg != "" {
+			fmt.Println("CMD:", msg)
+		}
+		if e != nil {
+			fmt.Println("CMD Error:", e)
+		}
 	}
 	defer cmd.Close()
 	var envFiles []string

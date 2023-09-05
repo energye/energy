@@ -29,10 +29,12 @@ func installGolang(c *command.Config) string {
 	}
 	print("Golang not installed, do you want to install Golang? Y/n: ")
 	var s string
-	fmt.Scanln(&s)
-	if strings.ToLower(s) != "y" {
-		println("Golang install exit")
-		return ""
+	if strings.ToLower(c.Install.All) != "y" {
+		fmt.Scanln(&s)
+		if strings.ToLower(s) != "y" {
+			println("Golang install exit")
+			return ""
+		}
 	}
 	s = c.Install.Path // 安装目录
 	exts := map[string]string{
@@ -78,7 +80,7 @@ func installGolang(c *command.Config) string {
 		// 释放文件
 		if command.IsWindows {
 			//zip
-			ExtractUnZip(savePath, targetPath)
+			ExtractUnZip(savePath, targetPath, true)
 		} else {
 			//tar
 			ExtractUnTar(savePath, targetPath)
