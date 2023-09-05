@@ -43,6 +43,7 @@ type downloadInfo struct {
 func Install(c *command.Config) {
 	// 初始配置和安装目录
 	initInstall(c)
+	// 检查环境
 	willInstall := checkInstallEnv(c)
 	var (
 		goRoot                      string
@@ -125,8 +126,8 @@ func checkInstallEnv(c *command.Config) (result []string) {
 		} else {
 			fmt.Printf("  %s: Not installed, install %s ? (Y/n): ", name, name)
 			var s string
-			if !skip {
-				fmt.Scanln(&s) // 跳过输入Y,
+			if !skip { // 跳过输入Y,
+				fmt.Scanln(&s)
 			} else {
 				s = "y"
 			}
