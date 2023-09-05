@@ -35,6 +35,13 @@ const (
 )
 
 const (
+	// NSISDownloadURL 下载地址，默认 3.09
+	// https://gitee.com/energye/assets/releases/download/environment/nsis.windows.386-3.09.zip
+	NSISDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
+	NSISDownloadVersion = "3.09"
+)
+
+const (
 	CefKey         = "cef"
 	LiblclKey      = "liblcl"
 	FrameworkCache = "EnergyFrameworkDownloadCache"

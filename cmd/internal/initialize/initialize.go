@@ -221,12 +221,10 @@ func checkEnv(init *command.Init) {
 		init.INSIS = true
 	}
 	// 检查ENERGY_HOME
-	if !cef() {
+	if !tools.CheckCEFDir() {
 		println(`Warning: Dependency framework CEF is not installed or configured to the ENERGY_HOME environment variable
 	There are several ways to install, configure, or check the environment
 		"energy install ." Installation and development environment
-		"energy env ." check ENERGY_HOME are correctly, 
-		"energy setenv -p /to/framework/path ." set ENERGY_HOME environment
 `)
 	} else {
 		println("\tCEF Framework OK")
@@ -239,21 +237,4 @@ func checkEnv(init *command.Init) {
 		println("\tNode npm OK")
 		init.INpm = true
 	}
-}
-
-func cef() bool {
-	var lib = func() string {
-		if command.IsWindows {
-			return "libcef.dll"
-		} else if command.IsLinux {
-			return "libcef.so"
-		} else if command.IsDarwin {
-			return "cef_sandbox.a"
-		}
-		return ""
-	}()
-	if lib != "" {
-		return tools.IsExist(filepath.Join(os.Getenv("ENERGY_HOME"), lib))
-	}
-	return false
 }

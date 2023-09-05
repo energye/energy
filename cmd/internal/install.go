@@ -20,8 +20,8 @@ var CmdInstall = &command.Command{
 	Short:     "Automatically configure the CEF and Energy framework",
 	Long: `
 	-p Installation directory Default current directory
-	-v Specifying a version number,Default latest
-	-n Name of the frame after installation
+	-v Specifying a version number,Default latest.\
+	-n Name of the framework directory after installation, Default EnergyFramework.\
 	-d Download Source, 0:gitee or 1:github, Default empty
 	-c Install system supports CEF version, provide 4 options, default empty
 		default : Automatically select support for the latest version based on the current system.

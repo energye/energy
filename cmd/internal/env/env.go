@@ -24,6 +24,10 @@ import (
 	"strings"
 )
 
+func SetNSISEnv(nsisRoot string) {
+
+}
+
 func SetGoEnv(goRoot string) {
 	var goexe = "go"
 	if command.IsWindows {
@@ -64,7 +68,7 @@ func SetGoEnv(goRoot string) {
 		var exGoBin = "export GOBIN=$GOROOT/bin"
 		var exPath = "export PATH=$PATH:$GOBIN"
 		var exs = []string{exGoRoot, exGoCache, exGoBin}
-		setEnv(exs, exPath, "$GOBIN")
+		setPosixEnv(exs, exPath, "$GOBIN")
 	}
 	println("\nHint: Reopen the cmd window for the Go command to take effect.")
 }
@@ -95,13 +99,14 @@ func SetEnergyHomeEnv(homePath string) {
 	} else {
 		var energyHome = fmt.Sprintf("export %s=%s", command.EnergyHomeKey, homePath)
 		exs := []string{energyHome}
-		setEnv(exs, "", "")
+		setPosixEnv(exs, "", "")
 	}
 	println("\nHint: Reopen the cmd window to make the environment variables take effect.")
 }
 
-func setEnv(exs []string, binPath, bin string) {
+func setPosixEnv(exs []string, binPath, bin string) {
 	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
 		fmt.Println("CMD:", string(s), " error:", e)
 	}
@@ -114,8 +119,8 @@ func setEnv(exs []string, binPath, bin string) {
 	}
 	homeDir, err := homedir.Dir()
 	// test
-	homeDir = "E:\\app"
-	envFiles = []string{".profile", ".zshrc", ".bashrc"}
+	//homeDir = "E:\\app"
+	//envFiles = []string{".profile", ".zshrc", ".bashrc"}
 	if err != nil {
 		println(err.Error())
 		return
@@ -153,7 +158,12 @@ func setEnv(exs []string, binPath, bin string) {
 				var lines = strings.Split(content, "\n")
 				var currentPath string
 				for i := 0; i < len(lines); i++ {
-					line := strings.TrimSpace(lines[i])
+					line := strings.TrimRightFunc(lines[i], func(r rune) bool {
+						if r == '\n' || r == '\r' {
+							return true
+						}
+						return false
+					})
 					// path里是否存在要设置的bin
 					if binPath != "" && isExportPath(line) {
 						currentPath = line
@@ -164,9 +174,9 @@ func setEnv(exs []string, binPath, bin string) {
 						} else {
 							newContent.WriteString(line)
 						}
-					}
-					if i < len(lines)-1 {
-						newContent.WriteString("\n")
+						if i < len(lines)-1 {
+							newContent.WriteString("\n")
+						}
 					}
 				}
 				for _, ext := range tempExts {
@@ -175,14 +185,17 @@ func setEnv(exs []string, binPath, bin string) {
 				}
 				if currentPath != "" { // 不为空说明现有的path里已经存在 bin, 放到最后一行
 					newContent.WriteString(currentPath)
+					newContent.WriteString("\n")
 				} else if binPath != "" { //不为空并且现有的path里没有bin时，自己设置一个带有bin 的 path, 放到最后一行
 					newContent.WriteString(binPath)
+					newContent.WriteString("\n")
 				}
 				// 有就覆盖掉之前的, 要先关闭掉文件
 				if err = f.Close(); err == nil {
 					// 如果任何操作失败, 重新写入覆盖文件
 					var oldWrite = func() {
 						if f, err = os.OpenFile(fp, os.O_RDWR, 0666); err == nil {
+							println("Restore files", file)
 							f.WriteString(oldContent)
 							f.Close()
 						}
@@ -191,6 +204,7 @@ func setEnv(exs []string, binPath, bin string) {
 					if newOpenFile, err := os.OpenFile(fp, os.O_RDWR|os.O_TRUNC, 0666); err == nil {
 						// 写入新的环境配置
 						if _, err := newOpenFile.Write(newContent.Bytes()); err == nil {
+							println("Write files success.", file)
 							newOpenFile.Close()
 						} else {
 							//写入失败，把老的内容还原

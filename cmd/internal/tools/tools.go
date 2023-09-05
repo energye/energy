@@ -12,11 +12,14 @@ package tools
 
 import (
 	"bytes"
+	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"
 	"math"
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"text/template"
@@ -155,6 +158,23 @@ func Compare(compare1, compare2 string) bool {
 	}
 	if e2 < c2 {
 		return true
+	}
+	return false
+}
+
+func CheckCEFDir() bool {
+	var lib = func() string {
+		if command.IsWindows {
+			return "libcef.dll"
+		} else if command.IsLinux {
+			return "libcef.so"
+		} else if command.IsDarwin {
+			return "cef_sandbox.a"
+		}
+		return ""
+	}()
+	if lib != "" {
+		return tools.IsExist(filepath.Join(os.Getenv("ENERGY_HOME"), lib))
 	}
 	return false
 }
