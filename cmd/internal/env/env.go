@@ -85,7 +85,7 @@ func SetNSISEnv(nsisRoot string) {
 	defer cmd.Close()
 	var args = []string{consts.NSISHomeKey, nsisRoot}
 	cmd.Command("setx", args...)
-	//envPath.add("%NSIS_HOME%")
+	envPath.add("%NSIS_HOME%")
 	println("\nHint: Reopen the cmd window for the makensis command to take effect.")
 }
 

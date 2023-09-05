@@ -25,10 +25,10 @@ import (
 	"strings"
 )
 
-func installCEFFramework(c *command.Config) string {
+func installCEFFramework(c *command.Config) (string, func()) {
 	if tools.CheckCEFDir() {
 		println("CEF Framework installed")
-		return ""
+		return "", nil
 	}
 	print("CEF Framework is not installed. Determine whether to install CEF Framework? Y/n: ")
 	var s string
@@ -36,7 +36,7 @@ func installCEFFramework(c *command.Config) string {
 		fmt.Scanln(&s)
 		if strings.ToLower(s) != "y" {
 			println("CEF Framework install exit")
-			return ""
+			return "", nil
 		}
 	}
 	// 获取提取文件配置
@@ -44,14 +44,14 @@ func installCEFFramework(c *command.Config) string {
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	var extractConfig map[string]any
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	extractOSConfig := extractConfig[runtime.GOOS].(map[string]any)
 
@@ -60,14 +60,14 @@ func installCEFFramework(c *command.Config) string {
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	var edv map[string]any
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 
 	// -c cef args value
@@ -76,7 +76,7 @@ func installCEFFramework(c *command.Config) string {
 	if cef != consts.CefEmpty && cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87 {
 		fmt.Println("Error:", "-c [cef] Incorrect args value")
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	installPathName := cefInstallPathName(c)
 	println("Install Path", installPathName)
@@ -102,7 +102,7 @@ func installCEFFramework(c *command.Config) string {
 	if installVersion == nil || len(installVersion) == 0 {
 		fmt.Println("Error:", "Invalid version number ", c.Install.Version)
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	// 当前版本 cef 和 liblcl 版本选择
 	var (
@@ -162,7 +162,7 @@ func installCEFFramework(c *command.Config) string {
 	if cefModule == nil {
 		fmt.Println("Error:", "CEF module", cefModuleName, "is not configured in the current version")
 		os.Exit(1)
-		return ""
+		return "", nil
 	}
 	// 下载源选择
 	var replaceSource = func(url, source string, sourceSelect int, module string) string {
@@ -245,11 +245,12 @@ func installCEFFramework(c *command.Config) string {
 			println("Unpack file", key, "success\n")
 		}
 	}
-	println("\nSUCCESS \nInstalled version:", c.Install.Version, liblclVersion)
-	if liblclModule == nil {
-		println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+	return installPathName, func() {
+		println("\nCEF Installed Successfully \nInstalled version:", c.Install.Version, liblclVersion)
+		if liblclModule == nil {
+			println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+		}
 	}
-	return installPathName
 }
 
 func cefOS(module map[string]any) (string, bool) {

@@ -15,18 +15,17 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 )
 
-func installNSIS(c *command.Config) string {
+func installNSIS(c *command.Config) (string, func()) {
 	if consts.IsWindows && runtime.GOARCH == "amd64" {
-		//if tools.CommandExists("makensis") {
-		if tools.IsExist(filepath.Join(os.Getenv(consts.NSISHomeKey), "makensis.exe")) {
+		if tools.CommandExists("makensis") {
+			//if tools.IsExist(filepath.Join(os.Getenv(consts.NSISHomeKey), "makensis.exe")) {
 			println("NSIS installed")
-			return ""
+			return "", nil
 		}
 		print("NSIS is not installed. Do you want to install NSIS? Y/n: ")
 		var s string
@@ -34,12 +33,13 @@ func installNSIS(c *command.Config) string {
 			fmt.Scanln(&s)
 			if strings.ToLower(s) != "y" {
 				println("NSIS install exit")
-				return ""
+				return "", nil
 			}
 		}
 		// 下载并安装配置NSIS
 		s = c.Install.Path // 安装目录
-		fileName := fmt.Sprintf("nsis.windows.386-%s.zip", consts.NSISDownloadVersion)
+		version := consts.NSISDownloadVersion
+		fileName := fmt.Sprintf("nsis.windows.386-%s.zip", version)
 		downloadUrl := fmt.Sprintf(consts.NSISDownloadURL, fileName)
 		savePath := filepath.Join(s, consts.FrameworkCache, fileName)
 		var err error
@@ -65,10 +65,12 @@ func installNSIS(c *command.Config) string {
 			// 释放文件
 			//zip
 			ExtractUnZip(savePath, targetPath, true)
-			return targetPath
+			return targetPath, func() {
+				println("NSIS Installed Successfully \nInstalled version:", version)
+			}
 		}
 	} else {
 		println("Non Windows amd64 skipping nsis")
 	}
-	return ""
+	return "", nil
 }

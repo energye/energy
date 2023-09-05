@@ -23,10 +23,10 @@ import (
 )
 
 // 下载go并配置安装
-func installGolang(c *command.Config) string {
+func installGolang(c *command.Config) (string, func()) {
 	if tools.CommandExists("go") {
 		println("Golang installed")
-		return ""
+		return "", nil
 	}
 	print("Golang not installed, do you want to install Golang? Y/n: ")
 	var s string
@@ -34,7 +34,7 @@ func installGolang(c *command.Config) string {
 		fmt.Scanln(&s)
 		if strings.ToLower(s) != "y" {
 			println("Golang install exit")
-			return ""
+			return "", nil
 		}
 	}
 	s = c.Install.Path // 安装目录
@@ -52,7 +52,7 @@ func installGolang(c *command.Config) string {
 		println("Directory does not exist. Creating directory.", s)
 		if err := os.MkdirAll(s, fs.ModePerm); err != nil {
 			println("Failed to create goroot directory", err.Error())
-			return ""
+			return "", nil
 		}
 	}
 	fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
@@ -86,7 +86,9 @@ func installGolang(c *command.Config) string {
 			//tar
 			ExtractUnTar(savePath, targetPath)
 		}
-		return targetPath
+		return targetPath, func() {
+			println("Golang Installed Successfully \nInstalled version:", version)
+		}
 	}
-	return ""
+	return "", nil
 }

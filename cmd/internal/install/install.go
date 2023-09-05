@@ -43,16 +43,19 @@ func Install(c *command.Config) {
 	// 初始配置和安装目录
 	initInstall(c)
 	var (
-		goRoot           string
-		cefFrameworkRoot string
-		nsisRoot         string
+		goRoot                      string
+		goSuccessCallback           func()
+		cefFrameworkRoot            string
+		cefFrameworkSuccessCallback func()
+		nsisRoot                    string
+		nsisSuccessCallback         func()
 	)
 	// 安装Go开发环境
-	goRoot = installGolang(c)
+	goRoot, goSuccessCallback = installGolang(c)
 	// 安装CEF二进制框架
-	cefFrameworkRoot = installCEFFramework(c)
+	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 安装nsis安装包制作工具, 仅windows - amd64
-	nsisRoot = installNSIS(c)
+	nsisRoot, nsisSuccessCallback = installNSIS(c)
 	// 设置nsis环境变量
 	if nsisRoot != "" {
 		env.SetNSISEnv(nsisRoot)
@@ -61,10 +64,21 @@ func Install(c *command.Config) {
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
+	// windows path 环境变量设置
 	env.SetToPath()
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
+	}
+	// success 输出
+	if nsisSuccessCallback != nil {
+		nsisSuccessCallback()
+	}
+	if goSuccessCallback != nil {
+		goSuccessCallback()
+	}
+	if cefFrameworkSuccessCallback != nil {
+		cefFrameworkSuccessCallback()
 	}
 }
 

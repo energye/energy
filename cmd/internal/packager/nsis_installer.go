@@ -86,6 +86,7 @@ func windows(projectData *project.Project) error {
 func makeNSIS(projectData *project.Project) error {
 	var args []string
 	cmd := command.NewCMD()
+	cmd.IsPrint = false
 	cmd.Dir = projectData.ProjectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {
 		println("makensis:", string(bytes))
