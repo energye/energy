@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"net/url"
@@ -39,7 +40,7 @@ func installCEFFramework(c *command.Config) string {
 		}
 	}
 	// 获取提取文件配置
-	extractData, err := tools.HttpRequestGET(command.DownloadExtractURL)
+	extractData, err := tools.HttpRequestGET(consts.DownloadExtractURL)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
@@ -55,7 +56,7 @@ func installCEFFramework(c *command.Config) string {
 	extractOSConfig := extractConfig[runtime.GOOS].(map[string]any)
 
 	// 获取安装版本配置
-	downloadJSON, err := tools.HttpRequestGET(command.DownloadVersionURL)
+	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
 		os.Exit(1)
@@ -72,7 +73,7 @@ func installCEFFramework(c *command.Config) string {
 	// -c cef args value
 	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
-	if cef != command.CefEmpty && cef != command.Cef109 && cef != command.Cef106 && cef != command.Cef87 {
+	if cef != consts.CefEmpty && cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87 {
 		fmt.Println("Error:", "-c [cef] Incorrect args value")
 		os.Exit(1)
 		return ""
@@ -108,11 +109,11 @@ func installCEFFramework(c *command.Config) string {
 		cefModuleName, liblclModuleName string
 	)
 	// 使用提供的特定版本号
-	if cef == command.Cef106 {
+	if cef == consts.Cef106 {
 		cefModuleName = "cef-106" // CEF 106.1.1
-	} else if cef == command.Cef109 {
+	} else if cef == consts.Cef109 {
 		cefModuleName = "cef-109" // CEF 109.1.18
-	} else if cef == command.Cef87 {
+	} else if cef == consts.Cef87 {
 		// cef 87 要和 liblcl 87 配对
 		cefModuleName = "cef-87"       // CEF 87.1.14
 		liblclModuleName = "liblcl-87" // liblcl 87
@@ -185,7 +186,7 @@ func installCEFFramework(c *command.Config) string {
 	downloadCefURL = replaceSource(downloadCefURL, tools.ToString(cefModule["downloadSource"]), tools.ToInt(cefModule["downloadSourceSelect"]), "cef")
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloads[command.CefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, command.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
+	downloads[consts.CefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 
 	// liblcl
 	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
@@ -199,7 +200,7 @@ func installCEFFramework(c *command.Config) string {
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", liblclVersion)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", module)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-		downloads[command.LiblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, command.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
+		downloads[consts.LiblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 	}
 
 	// 在线下载框架二进制包
@@ -230,7 +231,7 @@ func installCEFFramework(c *command.Config) string {
 			continue
 		}
 		if di.success {
-			if key == command.CefKey {
+			if key == consts.CefKey {
 				bar := progressbar.NewBar(0)
 				bar.SetNotice("Unpack file " + key + ": ")
 				tarName := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
@@ -238,7 +239,7 @@ func installCEFFramework(c *command.Config) string {
 				})
 				bar.PrintEnd()
 				ExtractFiles(key, tarName, di, extractOSConfig)
-			} else if key == command.LiblclKey {
+			} else if key == consts.LiblclKey {
 				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
 			}
 			println("Unpack file", key, "success\n")
@@ -263,49 +264,49 @@ func cefOS(module map[string]any) (string, bool) {
 		}
 		return false
 	}
-	if command.IsWindows { // windows arm for 64 bit, windows for 32/64 bit
+	if consts.IsWindows { // windows arm for 64 bit, windows for 32/64 bit
 		if runtime.GOARCH == "arm64" {
-			return "windowsarm64", isSupport(command.WindowsARM64)
+			return "windowsarm64", isSupport(consts.WindowsARM64)
 		}
 		if strconv.IntSize == 32 {
-			return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(command.Windows32)
+			return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows32)
 		}
-		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(command.Windows64)
-	} else if command.IsLinux { //linux for 64 bit
+		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows64)
+	} else if consts.IsLinux { //linux for 64 bit
 		if runtime.GOARCH == "arm64" {
-			if mod == command.Cef106 {
-				return "linuxarm64", isSupport(command.LinuxARM64GTK2)
+			if mod == consts.Cef106 {
+				return "linuxarm64", isSupport(consts.LinuxARM64GTK2)
 			}
-			return "linuxarm64", isSupport(command.LinuxARM64) || isSupport(command.LinuxARM64GTK3)
+			return "linuxarm64", isSupport(consts.LinuxARM64) || isSupport(consts.LinuxARM64GTK3)
 		} else if runtime.GOARCH == "amd64" {
-			if mod == command.Cef106 {
-				return "linux64", isSupport(command.Linux64GTK2)
+			if mod == consts.Cef106 {
+				return "linux64", isSupport(consts.Linux64GTK2)
 			}
-			return "linux64", isSupport(command.Linux64) || isSupport(command.Linux64GTK3)
+			return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
 		}
-	} else if command.IsDarwin { // macosx for 64 bit
+	} else if consts.IsDarwin { // macosx for 64 bit
 		//if runtime.GOARCH == "arm64" {
 		//	return "macosarm64", isSupport(MacOSARM64)
 		//} else if runtime.GOARCH == "amd64" {
 		//	return "macosx64", isSupport(MacOSX64)
 		//}
 		// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
-		return "macosx64", isSupport(command.MacOSX64)
+		return "macosx64", isSupport(consts.MacOSX64)
 	}
 	//not support
 	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
 }
 
 var liblclFileNames = map[string]string{
-	"windows32":       command.Windows32,
-	"windows64":       command.Windows64,
-	"windowsarm64":    command.WindowsARM64,
-	"linuxarm64":      command.LinuxARM64,
-	"linuxarm64gtk2":  command.LinuxARM64GTK2,
-	"linux64":         command.Linux64,
-	"linux64gtk2":     command.Linux64GTK2,
-	"darwin64":        command.MacOSX64,
-	"darwinarm64":     command.MacOSARM64,
+	"windows32":       consts.Windows32,
+	"windows64":       consts.Windows64,
+	"windowsarm64":    consts.WindowsARM64,
+	"linuxarm64":      consts.LinuxARM64,
+	"linuxarm64gtk2":  consts.LinuxARM64GTK2,
+	"linux64":         consts.Linux64,
+	"linux64gtk2":     consts.Linux64GTK2,
+	"darwin64":        consts.MacOSX64,
+	"darwinarm64":     consts.MacOSARM64,
 	"windows32_old":   "Windows 32 bits",
 	"windows64_old":   "Windows 64 bits",
 	"linux64gtk2_old": "Linux GTK2 x86 64 bits",
@@ -317,10 +318,10 @@ func liblclName(version, cef string) (string, bool) {
 	var key string
 	var isOld bool
 	if runtime.GOARCH == "arm64" {
-		if command.IsLinux && cef == command.Cef106 { // 只linux区别liblcl gtk2
+		if consts.IsLinux && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linuxarm64gtk2"
 		} else {
-			if command.IsDarwin {
+			if consts.IsDarwin {
 				// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
 				key = fmt.Sprintf("%samd64", runtime.GOOS)
 			} else {
@@ -328,7 +329,7 @@ func liblclName(version, cef string) (string, bool) {
 			}
 		}
 	} else if runtime.GOARCH == "amd64" {
-		if command.IsLinux && cef == command.Cef106 { // 只linux区别liblcl gtk2
+		if consts.IsLinux && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linux64gtk2"
 		} else {
 			key = fmt.Sprintf("%s%d", runtime.GOOS, strconv.IntSize)
@@ -374,10 +375,10 @@ func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
 func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]any) {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	files := extractOSConfig[keyName].([]any)
-	if keyName == command.CefKey {
+	if keyName == consts.CefKey {
 		//tar
 		ExtractUnTar(sourcePath, di.frameworkPath, files...)
-	} else if keyName == command.LiblclKey {
+	} else if keyName == consts.LiblclKey {
 		//zip
 		ExtractUnZip(sourcePath, di.frameworkPath, false, files...)
 	}

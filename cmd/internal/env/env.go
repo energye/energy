@@ -13,7 +13,7 @@ package env
 import (
 	"bytes"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/energy/homedir"
 	toolsCommand "github.com/energye/golcl/tools/command"
@@ -31,7 +31,7 @@ type envToPath struct {
 }
 
 func init() {
-	if command.IsWindows {
+	if consts.IsWindows {
 		envPath = &envToPath{}
 	}
 }
@@ -83,15 +83,15 @@ func SetNSISEnv(nsisRoot string) {
 		}
 	}
 	defer cmd.Close()
-	var args = []string{"NSIS_HOME", nsisRoot}
+	var args = []string{consts.NSISHomeKey, nsisRoot}
 	cmd.Command("setx", args...)
-	envPath.add("%NSIS_HOME%")
+	//envPath.add("%NSIS_HOME%")
 	println("\nHint: Reopen the cmd window for the makensis command to take effect.")
 }
 
 func SetGoEnv(goRoot string) {
 	var goexe = "go"
-	if command.IsWindows {
+	if consts.IsWindows {
 		goexe += ".exe"
 	}
 	gobin := filepath.Join(goRoot, "bin", goexe)
@@ -112,7 +112,7 @@ func SetGoEnv(goRoot string) {
 		}
 	}
 	defer cmd.Close()
-	if command.IsWindows {
+	if consts.IsWindows {
 		// setx
 		// GOROOT=/to/go/path
 		var args = []string{"GOROOT", goRoot}
@@ -142,11 +142,11 @@ func SetGoEnv(goRoot string) {
 
 func SetEnergyHomeEnv(homePath string) {
 	var cef string
-	if command.IsWindows {
+	if consts.IsWindows {
 		cef = "libcef.dll"
-	} else if command.IsLinux {
+	} else if consts.IsLinux {
 		cef = "libcef.so"
-	} else if command.IsDarwin {
+	} else if consts.IsDarwin {
 		cef = "cef_sandbox.a"
 	}
 	cefPath := filepath.Join(homePath, cef)
@@ -167,11 +167,11 @@ func SetEnergyHomeEnv(homePath string) {
 		}
 	}
 	defer cmd.Close()
-	if command.IsWindows {
-		var args = []string{"/c", "setx", command.EnergyHomeKey, homePath}
+	if consts.IsWindows {
+		var args = []string{"/c", "setx", consts.EnergyHomeKey, homePath}
 		cmd.Command("cmd.exe", args...)
 	} else {
-		var energyHome = fmt.Sprintf("export %s=%s", command.EnergyHomeKey, homePath)
+		var energyHome = fmt.Sprintf("export %s=%s", consts.EnergyHomeKey, homePath)
 		exs := []string{energyHome}
 		setPosixEnv(exs, "", "")
 	}
@@ -192,9 +192,9 @@ func setPosixEnv(exs []string, binPath, bin string) {
 	}
 	defer cmd.Close()
 	var envFiles []string
-	if command.IsLinux {
+	if consts.IsLinux {
 		envFiles = []string{".profile", ".zshrc", ".bashrc"}
-	} else if command.IsDarwin {
+	} else if consts.IsDarwin {
 		envFiles = []string{".profile", ".zshrc", ".bash_profile"}
 	}
 	homeDir, err := homedir.Dir()

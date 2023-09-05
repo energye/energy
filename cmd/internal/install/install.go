@@ -16,6 +16,7 @@ import (
 	"compress/gzip"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -93,7 +94,7 @@ func initInstall(c *command.Config) {
 	os.MkdirAll(cefInstallPathName(c), fs.ModePerm)
 	os.MkdirAll(goInstallPathName(c), fs.ModePerm)
 	os.MkdirAll(nsisInstallPathName(c), fs.ModePerm)
-	os.MkdirAll(filepath.Join(c.Install.Path, command.FrameworkCache), fs.ModePerm)
+	os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
 }
 
 func filePathInclude(compressPath string, files ...any) (string, bool) {

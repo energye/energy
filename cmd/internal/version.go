@@ -15,6 +15,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"os"
 	"sort"
@@ -35,7 +36,7 @@ func init() {
 }
 
 func runVersion(c *command.Config) error {
-	downloadJSON, err := tools.HttpRequestGET(command.DownloadVersionURL)
+	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
 	if err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)

@@ -12,16 +12,19 @@ package install
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 )
 
 func installNSIS(c *command.Config) string {
-	if command.IsWindows && runtime.GOARCH == "amd64" {
-		if tools.CommandExists("makensis") {
+	if consts.IsWindows && runtime.GOARCH == "amd64" {
+		//if tools.CommandExists("makensis") {
+		if tools.IsExist(filepath.Join(os.Getenv(consts.NSISHomeKey), "makensis.exe")) {
 			println("NSIS installed")
 			return ""
 		}
@@ -36,9 +39,9 @@ func installNSIS(c *command.Config) string {
 		}
 		// 下载并安装配置NSIS
 		s = c.Install.Path // 安装目录
-		fileName := fmt.Sprintf("nsis.windows.386-%s.zip", command.NSISDownloadVersion)
-		downloadUrl := fmt.Sprintf(command.NSISDownloadURL, fileName)
-		savePath := filepath.Join(s, command.FrameworkCache, fileName)
+		fileName := fmt.Sprintf("nsis.windows.386-%s.zip", consts.NSISDownloadVersion)
+		downloadUrl := fmt.Sprintf(consts.NSISDownloadURL, fileName)
+		savePath := filepath.Join(s, consts.FrameworkCache, fileName)
 		var err error
 		println("Golang Download URL:", downloadUrl)
 		println("Golang Save Path:", savePath)

@@ -12,6 +12,7 @@ package project
 
 import (
 	"encoding/json"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/golcl/energy/tools"
 	"os"
 	"path/filepath"
@@ -38,7 +39,7 @@ func (m *Project) setDefaults() {
 		m.ProjectPath, _ = os.Getwd()
 	}
 	if m.FrameworkPath == "" {
-		m.FrameworkPath = os.Getenv("ENERGY_HOME")
+		m.FrameworkPath = os.Getenv(consts.EnergyHomeKey)
 	}
 	if !tools.IsExist(m.FrameworkPath) {
 		panic("energy framework directory does not exist: " + m.FrameworkPath)

@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package command
+package consts
 
 import "runtime"
 
@@ -39,6 +39,7 @@ const (
 	// https://gitee.com/energye/assets/releases/download/environment/nsis.windows.386-3.09.zip
 	NSISDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
 	NSISDownloadVersion = "3.09"
+	NSISHomeKey         = "NSIS_HOME"
 )
 
 const (

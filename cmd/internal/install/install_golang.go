@@ -12,6 +12,7 @@ package install
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/fs"
@@ -43,7 +44,7 @@ func installGolang(c *command.Config) string {
 		"windows": "zip",
 	}
 	// 开始下载并安装Go开发环境
-	version := command.GolangDefaultVersion
+	version := consts.GolangDefaultVersion
 	gos := runtime.GOOS
 	arch := runtime.GOARCH
 	ext := exts[gos]
@@ -55,8 +56,8 @@ func installGolang(c *command.Config) string {
 		}
 	}
 	fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
-	downloadUrl := fmt.Sprintf(command.GolangDownloadURL, fileName)
-	savePath := filepath.Join(s, command.FrameworkCache, fileName)
+	downloadUrl := fmt.Sprintf(consts.GolangDownloadURL, fileName)
+	savePath := filepath.Join(s, consts.FrameworkCache, fileName)
 	var err error
 	println("Golang Download URL:", downloadUrl)
 	println("Golang Save Path:", savePath)
@@ -78,7 +79,7 @@ func installGolang(c *command.Config) string {
 		// 使用 go 名字做为 go 安装目录
 		targetPath := filepath.Join(s, "go")
 		// 释放文件
-		if command.IsWindows {
+		if consts.IsWindows {
 			//zip
 			ExtractUnZip(savePath, targetPath, true)
 		} else {

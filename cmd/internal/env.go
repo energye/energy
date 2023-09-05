@@ -12,6 +12,7 @@ package internal
 
 import (
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"os"
 )
 
@@ -29,7 +30,7 @@ func init() {
 }
 
 func runGetEnv(c *command.Config) error {
-	envPath := os.Getenv(command.EnergyHomeKey)
+	envPath := os.Getenv(consts.EnergyHomeKey)
 	println("ENERGY_HOME_KEY", envPath)
 	return nil
 }
