@@ -6,7 +6,10 @@
 //
 // https://www.apache.org/licenses/LICENSE-2.0
 //
-//----
+//----------------------------------------
+
+//go:build !windows
+// +build !windows
 
 package env
 
@@ -24,78 +27,13 @@ import (
 	"strings"
 )
 
-var envPath *envToPath
-
-type envToPath struct {
-	path []string
-}
-
-func init() {
-	if consts.IsWindows {
-		envPath = &envToPath{}
-	}
-}
-
-func (m *envToPath) add(value string) {
-	if m == nil {
-		return
-	}
-	m.path = append(m.path, value)
-}
-
-func (m *envToPath) toPath() string {
-	if m == nil {
-		return ""
-	}
-	return strings.Join(m.path, ";")
-}
-
-// SetToPath
-//  windows go 和 nsis 设置环境变量到path
-func SetToPath() {
-	if envPath == nil {
-		return
-	}
-	pathValue, _ := os.LookupEnv("path")
-	cmd := toolsCommand.NewCMD()
-	defer cmd.Close()
-	cmd.IsPrint = false
-	var args = []string{"path", fmt.Sprintf("%s;%s", pathValue, envPath.toPath())}
-	cmd.Command("setx", args...)
-}
-
 func SetNSISEnv(nsisRoot string) {
-	makensisbin := filepath.Join(nsisRoot, "makensis.exe")
-	if !tools.IsExist(makensisbin) {
-		println("\nError: Failed to set the NSIS environment variable, not a correct NSIS installation directory. ", nsisRoot)
-		return
-	}
-	println("\nSetting NSIS environment Variables to:", nsisRoot)
-	cmd := toolsCommand.NewCMD()
-	cmd.IsPrint = false
-	cmd.MessageCallback = func(s []byte, e error) {
-		msg := strings.TrimSpace(string(s))
-		if msg != "" {
-			fmt.Println("CMD:", msg)
-		}
-		if e != nil {
-			fmt.Println("CMD Error:", e)
-		}
-	}
-	defer cmd.Close()
-	var args = []string{consts.NSISHomeKey, nsisRoot}
-	cmd.Command("setx", args...)
-	envPath.add("%NSIS_HOME%")
-	println("\nHint: Reopen the cmd window for the makensis command to take effect.")
+
 }
 
 func SetGoEnv(goRoot string) {
-	var goexe = "go"
-	if consts.IsWindows {
-		goexe += ".exe"
-	}
-	gobin := filepath.Join(goRoot, "bin", goexe)
-	if !tools.IsExist(gobin) {
+	goBin := filepath.Join(goRoot, "bin", "go")
+	if !tools.IsExist(goBin) {
 		println("\nError: Failed to set the Golang environment variable, not a correct Golang installation directory. ", goRoot)
 		return
 	}
@@ -112,39 +50,22 @@ func SetGoEnv(goRoot string) {
 		}
 	}
 	defer cmd.Close()
-	if consts.IsWindows {
-		// setx
-		// GOROOT=/to/go/path
-		var args = []string{"GOROOT", goRoot}
-		cmd.Command("setx", args...)
-		// GOCACHE=%GOROOT%\go-build
-		args = []string{"GOCACHE", "%GOROOT%\\go-build"}
-		cmd.Command("setx", args...)
-		// GOBIN=%GOROOT%\bin
-		args = []string{"GOBIN", "%GOROOT%\\bin"}
-		cmd.Command("setx", args...)
-		// PATH=%GOROOT%\bin
-		envPath.add("%GOROOT%\\bin")
-	} else {
-		//export GOROOT=/home/yanghy/app/go
-		//export GOCACHE=$GOROOT/go-build
-		//export GOBIN=$GOROOT/bin
-		//export PATH=$PATH:$GOBIN
-		var exGoRoot = fmt.Sprintf("export GOROOT=%s", goRoot)
-		var exGoCache = "export GOCACHE==$GOROOT/go-build"
-		var exGoBin = "export GOBIN=$GOROOT/bin"
-		var exPath = "export PATH=$PATH:$GOBIN"
-		var exs = []string{exGoRoot, exGoCache, exGoBin}
-		setPosixEnv(exs, exPath, "$GOBIN")
-	}
+	//export GOROOT=/home/yanghy/app/go
+	//export GOCACHE=$GOROOT/go-build
+	//export GOBIN=$GOROOT/bin
+	//export PATH=$PATH:$GOBIN
+	var exGoRoot = fmt.Sprintf("export GOROOT=%s", goRoot)
+	var exGoCache = "export GOCACHE==$GOROOT/go-build"
+	var exGoBin = "export GOBIN=$GOROOT/bin"
+	var exPath = "export PATH=$PATH:$GOBIN"
+	var exs = []string{exGoRoot, exGoCache, exGoBin}
+	setPosixEnv(exs, exPath, "$GOBIN")
 	println("\nHint: Reopen the cmd window for the Go command to take effect.")
 }
 
 func SetEnergyHomeEnv(homePath string) {
 	var cef string
-	if consts.IsWindows {
-		cef = "libcef.dll"
-	} else if consts.IsLinux {
+	if consts.IsLinux {
 		cef = "libcef.so"
 	} else if consts.IsDarwin {
 		cef = "cef_sandbox.a"
@@ -167,14 +88,9 @@ func SetEnergyHomeEnv(homePath string) {
 		}
 	}
 	defer cmd.Close()
-	if consts.IsWindows {
-		var args = []string{"/c", "setx", consts.EnergyHomeKey, homePath}
-		cmd.Command("cmd.exe", args...)
-	} else {
-		var energyHome = fmt.Sprintf("export %s=%s", consts.EnergyHomeKey, homePath)
-		exs := []string{energyHome}
-		setPosixEnv(exs, "", "")
-	}
+	var energyHome = fmt.Sprintf("export %s=%s", consts.EnergyHomeKey, homePath)
+	exs := []string{energyHome}
+	setPosixEnv(exs, "", "")
 	println("\nHint: Reopen the cmd window to make the environment variables take effect.")
 }
 
@@ -198,9 +114,6 @@ func setPosixEnv(exs []string, binPath, bin string) {
 		envFiles = []string{".profile", ".zshrc", ".bash_profile"}
 	}
 	homeDir, err := homedir.Dir()
-	// test
-	//homeDir = "E:\\app"
-	//envFiles = []string{".profile", ".zshrc", ".bashrc"}
 	if err != nil {
 		println(err.Error())
 		return

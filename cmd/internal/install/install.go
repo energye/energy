@@ -58,7 +58,7 @@ func Install(c *command.Config) {
 		for _, name := range willInstall {
 			println("\t", name)
 		}
-		println("Press Enter to start installation")
+		println("Press Enter to start installation...")
 		var s string
 		fmt.Scanln(&s)
 	}
@@ -68,6 +68,7 @@ func Install(c *command.Config) {
 	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 安装nsis安装包制作工具, 仅windows - amd64
 	nsisRoot, nsisSuccessCallback = installNSIS(c)
+
 	// 设置nsis环境变量
 	if nsisRoot != "" {
 		env.SetNSISEnv(nsisRoot)
@@ -76,14 +77,14 @@ func Install(c *command.Config) {
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
-	// windows path 环境变量设置
-	env.SetToPath()
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
-	println("-----------------------------------------------------")
 	// success 输出
+	if nsisSuccessCallback != nil || goSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
+		println("-----------------------------------------------------")
+	}
 	if nsisSuccessCallback != nil {
 		nsisSuccessCallback()
 	}

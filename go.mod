@@ -9,7 +9,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c
-	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f
+	golang.org/x/sys v0.12.0
 )
 
 require (
