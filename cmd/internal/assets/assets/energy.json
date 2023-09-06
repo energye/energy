@@ -1,7 +1,7 @@
 {
   "name": "energyapp",
   "projectPath": "",
-  "buildAssetsDir": "assets",
+  "buildAssetsDir": "assets/packager",
   "outputFilename": "",
   "frameworkPath": "",
   "info": {

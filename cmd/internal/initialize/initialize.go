@@ -11,9 +11,9 @@
 package initialize
 
 import (
-	"embed"
 	"errors"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
@@ -23,9 +23,6 @@ import (
 	"path/filepath"
 	"strings"
 )
-
-//go:embed assets
-var assets embed.FS
 
 func InitEnergyProject(c *command.Config) error {
 	// 检查环境
@@ -96,7 +93,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 创建 main.go
-	if mainText, err := assets.ReadFile(fmt.Sprintf("assets/app_load_res.go.%s", c.Init.ResLoad)); err != nil {
+	if mainText, err := assets.ReadFile(fmt.Sprintf("assets/initialize/app_load_res.go.%s", c.Init.ResLoad)); err != nil {
 		return err
 	} else {
 		path := filepath.Join(projectPath, "main.go")
@@ -106,7 +103,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 创建 go.mod
-	if modText, err := assets.ReadFile("assets/go.mod.t"); err != nil {
+	if modText, err := assets.ReadFile("assets/initialize/go.mod.t"); err != nil {
 		return err
 	} else {
 		data := make(map[string]any)
@@ -127,7 +124,7 @@ func generaProject(c *command.Config) error {
 	if err := os.Mkdir(filepath.Join(projectPath, "resources"), fs.ModePerm); err != nil {
 		return err
 	} else {
-		if indexText, err := assets.ReadFile("assets/index.html"); err != nil {
+		if indexText, err := assets.ReadFile("assets/initialize/index.html"); err != nil {
 			return err
 		} else {
 			path := filepath.Join(projectPath, "resources", "index.html")
@@ -138,7 +135,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 创建 README.md
-	if readmeText, err := assets.ReadFile("assets/README.md"); err != nil {
+	if readmeText, err := assets.ReadFile("assets/initialize/README.md"); err != nil {
 		return err
 	} else {
 		data := make(map[string]any)

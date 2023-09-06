@@ -11,9 +11,9 @@
 package packager
 
 import (
-	"embed"
 	"errors"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/tools/command"
@@ -22,9 +22,6 @@ import (
 	"path/filepath"
 	"runtime"
 )
-
-//go:embed assets
-var assets embed.FS
 
 const (
 	windowsNsis      = "windows/installer-nsis.nsi"
@@ -134,7 +131,7 @@ func readFile(projectData *project.Project, file string) ([]byte, error) {
 	localFilePath := assetsPath(projectData, file)
 	content, err := os.ReadFile(localFilePath)
 	if errors.Is(err, fs.ErrNotExist) {
-		content, err = fs.ReadFile(assets, localFilePath)
+		content, err = assets.ReadFile(localFilePath)
 		if err != nil {
 			return nil, err
 		}
