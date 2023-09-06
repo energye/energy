@@ -14,6 +14,7 @@ import (
 	"archive/zip"
 	"compress/bzip2"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
@@ -64,25 +65,26 @@ func Install(c *command.Config) {
 	}
 	// 安装Go开发环境
 	goRoot, goSuccessCallback = installGolang(c)
-	// 安装CEF二进制框架
-	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
-	// 安装nsis安装包制作工具, 仅windows - amd64
-	nsisRoot, nsisSuccessCallback = installNSIS(c)
-
-	// 设置nsis环境变量
-	if nsisRoot != "" {
-		env.SetNSISEnv(nsisRoot)
-	}
 	// 设置 go 环境变量
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
+	// 安装nsis安装包制作工具, 仅windows - amd64
+	nsisRoot, nsisSuccessCallback = installNSIS(c)
+	// 设置nsis环境变量
+	if nsisRoot != "" {
+		env.SetNSISEnv(nsisRoot)
+	}
+	// 安装CEF二进制框架
+	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
+		println("-----------------------------------------------------\n-----------------------------------------------------")
+		println("Hint: Reopen the cmd window for command to take effect.")
 		println("-----------------------------------------------------\n-----------------------------------------------------")
 	}
 	if nsisSuccessCallback != nil {
@@ -108,19 +110,31 @@ func Install(c *command.Config) {
 }
 
 func cefInstallPathName(c *command.Config) string {
-	return filepath.Join(c.Install.Path, c.Install.Name)
+	return filepath.Join(c.Install.Path, consts.ENERGY, c.Install.Name)
 }
 
 func goInstallPathName(c *command.Config) string {
-	return filepath.Join(c.Install.Path, "go")
+	return filepath.Join(c.Install.Path, consts.ENERGY, "go")
 }
 
 func nsisInstallPathName(c *command.Config) string {
-	return filepath.Join(c.Install.Path, "nsis")
+	return filepath.Join(c.Install.Path, consts.ENERGY, "nsis")
+}
+
+func upxInstallPathName(c *command.Config) string {
+	return filepath.Join(c.Install.Path, consts.ENERGY, "upx")
+}
+
+func nsisIsInstall() bool {
+	return consts.IsWindows && runtime.GOARCH != "arm64"
+}
+
+func upxIsInstall() bool {
+	return consts.IsWindows
 }
 
 func checkInstallEnv(c *command.Config) (result []string) {
-	skip := strings.ToLower(c.Install.All) == "y"
+	skip := c.Install.All
 	var check = func(chkInstall func() bool, name string, yes func()) {
 		if chkInstall() {
 			println(" ", name, "installed")
@@ -148,11 +162,11 @@ func checkInstallEnv(c *command.Config) (result []string) {
 	})
 	// nsis
 	check(func() bool {
-		if consts.IsWindows && runtime.GOARCH != "arm64" {
+		if nsisIsInstall() {
 			return tools.CommandExists("makensis")
 		} else {
-			println("  Non Windows amd64 skipping NSIS")
-			return false
+			print("  Non Windows amd64 skipping NSIS.")
+			return true
 		}
 	}, "NSIS", func() {
 		c.Install.INSIS = true
@@ -165,7 +179,12 @@ func checkInstallEnv(c *command.Config) (result []string) {
 	})
 	// upx
 	check(func() bool {
-		return tools.CommandExists("upx")
+		if upxIsInstall() {
+			return tools.CommandExists("upx")
+		} else {
+			print("  Non Windows skipping UPX.")
+			return true
+		}
 	}, "UPX", func() {
 		c.Install.IUPX = true
 	})
@@ -185,7 +204,12 @@ func initInstall(c *command.Config) {
 	os.MkdirAll(c.Install.Path, fs.ModePerm)
 	os.MkdirAll(cefInstallPathName(c), fs.ModePerm)
 	os.MkdirAll(goInstallPathName(c), fs.ModePerm)
-	os.MkdirAll(nsisInstallPathName(c), fs.ModePerm)
+	if nsisIsInstall() {
+		os.MkdirAll(nsisInstallPathName(c), fs.ModePerm)
+	}
+	if upxIsInstall() {
+		os.MkdirAll(upxInstallPathName(c), fs.ModePerm)
+	}
 	os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
 }
 
@@ -228,35 +252,33 @@ func dir(path string) string {
 	return path[:lastSep]
 }
 
-func tarFileReader(filePath string) (*tar.Reader, func()) {
+func tarFileReader(filePath string) (*tar.Reader, func(), error) {
 	reader, err := os.Open(filePath)
 	if err != nil {
 		fmt.Printf("error: cannot open file, error=[%v]\n", err)
-		os.Exit(1)
-		return nil, nil
+		return nil, nil, err
 	}
 	if filepath.Ext(filePath) == ".gz" {
 		gr, err := gzip.NewReader(reader)
 		if err != nil {
 			fmt.Printf("error: cannot open gzip file, error=[%v]\n", err)
-			os.Exit(1)
-			return nil, nil
+			return nil, nil, err
 		}
 		return tar.NewReader(gr), func() {
 			gr.Close()
 			reader.Close()
-		}
+		}, nil
 	} else {
 		return tar.NewReader(reader), func() {
 			reader.Close()
-		}
+		}, nil
 	}
 }
 
-func ExtractUnTar(filePath, targetPath string, files ...any) {
-	tarReader, close := tarFileReader(filePath)
-	if tarReader == nil {
-		return
+func ExtractUnTar(filePath, targetPath string, files ...any) error {
+	tarReader, close, err := tarFileReader(filePath)
+	if err != nil {
+		return err
 	}
 	defer close()
 	bar := progressbar.NewBar(100)
@@ -268,8 +290,7 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 			break
 		} else if err != nil {
 			fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
-			os.Exit(1)
-			return
+			return err
 		}
 		// 去除压缩包内的一级目录
 		compressPath := filepath.Clean(header.Name[strings.Index(header.Name, "/")+1:])
@@ -283,8 +304,7 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 		if info.IsDir() {
 			if err = os.MkdirAll(targetFile, info.Mode()); err != nil {
 				fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
-				os.Exit(1)
-				return
+				return err
 			}
 		} else {
 			fDir := dir(targetFile)
@@ -292,15 +312,13 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 			if os.IsNotExist(err) {
 				if err = os.MkdirAll(fDir, info.Mode()); err != nil {
 					fmt.Printf("error: cannot file mkdir file, error=[%v]\n", err)
-					os.Exit(1)
-					return
+					return err
 				}
 			}
 			file, err := os.OpenFile(targetFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
 			if err != nil {
 				fmt.Printf("error: cannot open file, error=[%v]\n", err)
-				os.Exit(1)
-				return
+				return err
 			}
 			bar.SetCurrentValue(0)
 			writeFile(tarReader, file, header.Size, func(totalLength, processLength int64) {
@@ -312,24 +330,24 @@ func ExtractUnTar(filePath, targetPath string, files ...any) {
 			bar.PrintEnd()
 			if err != nil {
 				fmt.Printf("error: cannot write file, error=[%v]\n", err)
-				os.Exit(1)
-				return
+				return err
 			}
 		}
 	}
+	return nil
 }
 
-func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) {
+func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) error {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		bar := progressbar.NewBar(100)
 		bar.SetNotice("\t")
 		bar.HideRatio()
-		var createWriteFile = func(info fs.FileInfo, path string, file io.Reader) {
+		var createWriteFile = func(info fs.FileInfo, path string, file io.Reader) error {
 			targetFileName := filepath.Join(targetPath, path)
 			if info.IsDir() {
 				os.MkdirAll(targetFileName, info.Mode())
-				return
+				return nil
 			}
 			fDir := filepath.Dir(targetFileName)
 			if !tools.IsExist(fDir) {
@@ -344,9 +362,10 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) {
 				bar.PrintBar(100)
 				bar.PrintEnd()
 				targetFile.Close()
+				return nil
 			} else {
 				println("createWriteFile", err.Error())
-				os.Exit(1)
+				return err
 			}
 		}
 		// 所有文件
@@ -361,37 +380,39 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) {
 				} else {
 					name = filepath.Clean(f.Name)
 				}
-				createWriteFile(f.FileInfo(), name, r.(io.Reader))
+				if err := createWriteFile(f.FileInfo(), name, r.(io.Reader)); err != nil {
+					return err
+				}
 				_ = r.Close()
 			}
+			return nil
 		} else {
 			// 指定名字的文件
 			for i := 0; i < len(files); i++ {
 				if f, err := rc.Open(files[i].(string)); err == nil {
 					info, _ := f.Stat()
-					createWriteFile(info, files[i].(string), f)
+					if err := createWriteFile(info, files[i].(string), f); err != nil {
+						return err
+					}
 					_ = f.Close()
 				} else {
 					fmt.Printf("error: cannot open file, error=[%v]\n", err)
-					os.Exit(1)
-					return
+					return err
 				}
 			}
+			return nil
 		}
 	} else {
-		if err != nil {
-			fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
-			os.Exit(1)
-		}
+		fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
+		return err
 	}
 }
 
 // 释放bz2文件到tar
-func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) string {
+func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) (string, error) {
 	fileBz2, err := os.Open(name)
 	if err != nil {
-		fmt.Errorf("%s", err.Error())
-		os.Exit(1)
+		return "", err
 	}
 	defer fileBz2.Close()
 	dirName := fileBz2.Name()
@@ -400,15 +421,14 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) st
 		r := bzip2.NewReader(fileBz2)
 		w, err := os.Create(dirName)
 		if err != nil {
-			fmt.Errorf("%s", err.Error())
-			os.Exit(1)
+			return "", err
 		}
 		defer w.Close()
 		writeFile(r, w, 0, callback)
 	} else {
 		println("File already exists")
 	}
-	return dirName
+	return dirName, nil
 }
 
 func writeFile(r io.Reader, w *os.File, totalLength int64, callback func(totalLength, processLength int64)) {
@@ -460,13 +480,11 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	resp, err := client.Get(url)
 	if err != nil {
 		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
 		return err
 	}
 	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
 	if err != nil {
 		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
 		return err
 	}
 	if isFileExist(localPath, fsize) {
@@ -477,14 +495,12 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
 		fmt.Printf("download-error=[%v]\n", err)
-		os.Exit(1)
 		return err
 	}
 	defer file.Close()
 	if resp.Body == nil {
 		fmt.Printf("Download-error=[body is null]\n")
-		os.Exit(1)
-		return nil
+		return errors.New("body is null")
 	}
 	defer resp.Body.Close()
 	for {

@@ -12,13 +12,13 @@ package install
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"net/url"
-	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
@@ -33,14 +33,12 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	extractData, err := tools.HttpRequestGET(consts.DownloadExtractURL)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
-		os.Exit(1)
 		return "", nil
 	}
 	var extractConfig map[string]any
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
 		fmt.Println("Error:", err.Error())
-		os.Exit(1)
 		return "", nil
 	}
 	extractOSConfig := extractConfig[runtime.GOOS].(map[string]any)
@@ -49,14 +47,12 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
 	if err != nil {
 		fmt.Println("Error:", err.Error())
-		os.Exit(1)
 		return "", nil
 	}
 	var edv map[string]any
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Println("Error:", err.Error())
-		os.Exit(1)
 		return "", nil
 	}
 
@@ -65,7 +61,6 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	cef := strings.ToLower(c.Install.CEF)
 	if cef != consts.CefEmpty && cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87 {
 		fmt.Println("Error:", "-c [cef] Incorrect args value")
-		os.Exit(1)
 		return "", nil
 	}
 	installPathName := cefInstallPathName(c)
@@ -91,7 +86,6 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	println("Check version")
 	if installVersion == nil || len(installVersion) == 0 {
 		fmt.Println("Error:", "Invalid version number ", c.Install.Version)
-		os.Exit(1)
 		return "", nil
 	}
 	// 当前版本 cef 和 liblcl 版本选择
@@ -151,7 +145,6 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	}
 	if cefModule == nil {
 		fmt.Println("Error:", "CEF module", cefModuleName, "is not configured in the current version")
-		os.Exit(1)
 		return "", nil
 	}
 	// 下载源选择
@@ -209,7 +202,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		bar.PrintEnd("Download [" + dl.fileName + "] success")
 		if err != nil {
 			fmt.Println("Error:", "Download [", dl.fileName, "]", err.Error())
-			os.Exit(1)
+			return "", nil
 		}
 		dl.success = err == nil
 	}
@@ -224,13 +217,23 @@ func installCEFFramework(c *command.Config) (string, func()) {
 			if key == consts.CefKey {
 				bar := progressbar.NewBar(0)
 				bar.SetNotice("Unpack file " + key + ": ")
-				tarName := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
+				tarName, err := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
 					bar.PrintSizeBar(processLength)
 				})
+				if err != nil {
+					println(err.Error())
+					return "", nil
+				}
 				bar.PrintEnd()
-				ExtractFiles(key, tarName, di, extractOSConfig)
+				if err := ExtractFiles(key, tarName, di, extractOSConfig); err != nil {
+					println(err.Error())
+					return "", nil
+				}
 			} else if key == consts.LiblclKey {
-				ExtractFiles(key, di.downloadPath, di, extractOSConfig)
+				if err := ExtractFiles(key, di.downloadPath, di, extractOSConfig); err != nil {
+					println(err.Error())
+					return "", nil
+				}
 			}
 			println("Unpack file", key, "success\n")
 		}
@@ -369,16 +372,17 @@ func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
 }
 
 // 提取文件
-func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]any) {
+func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]any) error {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	files := extractOSConfig[keyName].([]any)
 	if keyName == consts.CefKey {
 		//tar
-		ExtractUnTar(sourcePath, di.frameworkPath, files...)
+		return ExtractUnTar(sourcePath, di.frameworkPath, files...)
 	} else if keyName == consts.LiblclKey {
 		//zip
-		ExtractUnZip(sourcePath, di.frameworkPath, false, files...)
+		return ExtractUnZip(sourcePath, di.frameworkPath, false, files...)
 	}
+	return errors.New("not module")
 }
 
 // url文件名

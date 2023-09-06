@@ -25,11 +25,11 @@ func installNSIS(c *command.Config) (string, func()) {
 	}
 	if consts.IsWindows && runtime.GOARCH != "arm64" {
 		// 下载并安装配置NSIS
-		s := c.Install.Path // 安装目录
+		s := nsisInstallPathName(c) // 安装目录
 		version := consts.NSISDownloadVersion
 		fileName := fmt.Sprintf("nsis.windows.386-%s.zip", version)
 		downloadUrl := fmt.Sprintf(consts.NSISDownloadURL, fileName)
-		savePath := filepath.Join(s, consts.FrameworkCache, fileName)
+		savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 		var err error
 		println("Golang Download URL:", downloadUrl)
 		println("Golang Save Path:", savePath)
@@ -48,11 +48,14 @@ func installNSIS(c *command.Config) (string, func()) {
 			}
 		}
 		if err == nil {
-			// 使用 go 名字做为 go 安装目录
-			targetPath := filepath.Join(s, "NSIS")
+			// 安装目录
+			targetPath := s
 			// 释放文件
 			//zip
-			ExtractUnZip(savePath, targetPath, true)
+			if err = ExtractUnZip(savePath, targetPath, true); err != nil {
+				println(err)
+				return "", nil
+			}
 			return targetPath, func() {
 				println("NSIS Installed Successfully Version:", version)
 			}

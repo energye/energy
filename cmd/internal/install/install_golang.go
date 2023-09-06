@@ -26,7 +26,7 @@ func installGolang(c *command.Config) (string, func()) {
 	if !c.Install.IGolang {
 		return "", nil
 	}
-	s := c.Install.Path // 安装目录
+	s := goInstallPathName(c) // 安装目录
 	exts := map[string]string{
 		"darwin":  "tar.gz",
 		"linux":   "tar.gz",
@@ -46,7 +46,7 @@ func installGolang(c *command.Config) (string, func()) {
 	}
 	fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
 	downloadUrl := fmt.Sprintf(consts.GolangDownloadURL, fileName)
-	savePath := filepath.Join(s, consts.FrameworkCache, fileName)
+	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
 	println("Golang Download URL:", downloadUrl)
 	println("Golang Save Path:", savePath)
@@ -65,15 +65,21 @@ func installGolang(c *command.Config) (string, func()) {
 		}
 	}
 	if err == nil {
-		// 使用 go 名字做为 go 安装目录
-		targetPath := filepath.Join(s, "go")
+		// 安装目录
+		targetPath := s
 		// 释放文件
 		if consts.IsWindows {
 			//zip
-			ExtractUnZip(savePath, targetPath, true)
+			if err = ExtractUnZip(savePath, targetPath, true); err != nil {
+				println(err.Error())
+				return "", nil
+			}
 		} else {
 			//tar
-			ExtractUnTar(savePath, targetPath)
+			if err = ExtractUnTar(savePath, targetPath); err != nil {
+				println(err.Error())
+				return "", nil
+			}
 		}
 		return targetPath, func() {
 			println("Golang Installed Successfully Version:", version)

@@ -13,6 +13,10 @@ package consts
 import "runtime"
 
 const (
+	ENERGY = "energy"
+)
+
+const (
 	domain             = "https://energy.yanghy.cn"
 	DownloadVersionURL = domain + "/api/cmd/edv"
 	DownloadInstallURL = domain + "/api/cmd/install"
