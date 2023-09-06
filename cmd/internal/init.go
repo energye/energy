@@ -21,9 +21,9 @@ import (
 
 var CmdInit = &command.Command{
 	UsageLine: "init -n [name]",
-	Short:     "init energy project",
+	Short:     "Initialized energy project",
 	Long: `
-	-n initialized project name
+	-n Initialized project name
 	Initialize energy golang project
 	.  Execute default command
 `,
@@ -44,7 +44,7 @@ func runInit(c *command.Config) error {
 	}
 	if strings.TrimSpace(m.ResLoad) == "" {
 		println("Resource loading method, default 1 HTTP")
-		print("1: HTTP, 2: Local Load, Number: ")
+		print("1: HTTP\n2: Local Load\n  Number: ")
 		fmt.Scan(&m.ResLoad)
 		println()
 	}

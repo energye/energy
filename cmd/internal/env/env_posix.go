@@ -55,10 +55,10 @@ func SetGoEnv(goRoot string) {
 	//export GOBIN=$GOROOT/bin
 	//export PATH=$PATH:$GOBIN
 	var exGoRoot = fmt.Sprintf("export GOROOT=%s", goRoot)
-	//var exGoCache = "export GOCACHE==$GOROOT/gocache"
+	var exGoCache = "export GOCACHE=$GOROOT/go-build"
 	var exGoBin = "export GOBIN=$GOROOT/bin"
 	var exPath = "export PATH=$PATH:$GOBIN"
-	var exs = []string{exGoRoot /*exGoCache,*/, exGoBin}
+	var exs = []string{exGoRoot, exGoCache, exGoBin}
 	setPosixEnv(exs, exPath, "$GOBIN")
 	println("\nHint: Reopen the cmd window for the Go command to take effect.")
 }

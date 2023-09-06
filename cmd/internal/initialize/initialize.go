@@ -53,7 +53,7 @@ func generaProject(c *command.Config) error {
 	projectPath := filepath.Join(c.Wd, c.Init.Name)
 	println("Create Project:", c.Init.Name)
 	if tools.IsExist(projectPath) {
-		fmt.Printf("project dir %s exist, Do you want to delete and recreate? Y/n:  ", c.Init.Name)
+		fmt.Printf("project dir %s exist, Delete and recreate? (Y/n):  ", c.Init.Name)
 		var s string
 		fmt.Scan(&s)
 		println()

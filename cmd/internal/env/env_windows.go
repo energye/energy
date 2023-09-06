@@ -93,6 +93,9 @@ func appendWindowsEnv(name, value string) {
 				values := strings.Split(val, "\\")
 				for i, vab := range values {
 					vab = strings.TrimSpace(vab)
+					if vab == "" || len(vab) <= 2 {
+						continue
+					}
 					if vab[0] == '%' && vab[len(vab)-1] == '%' {
 						vab = vab[1 : len(vab)-1]
 						if v, err := regCurUser.Read(vab); err == nil {
