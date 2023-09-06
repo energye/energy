@@ -42,7 +42,7 @@ func runPackage(c *command.Config) error {
 	if project, err := project.NewProject(c.Package.Path); err != nil {
 		return err
 	} else {
-		if err = packager.GeneraNSISInstaller(project); err != nil {
+		if err = packager.GeneraInstaller(project); err != nil {
 			return err
 		}
 	}

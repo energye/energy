@@ -28,7 +28,7 @@ const (
 	windowsNsisTools = "windows/installer-tools.nsh"
 )
 
-func GeneraNSISInstaller(projectData *project.Project) error {
+func GeneraInstaller(projectData *project.Project) error {
 	switch runtime.GOOS {
 	case "windows":
 		if !tools.CommandExists("makensis") {
