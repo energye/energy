@@ -319,7 +319,7 @@ func liblclName(version, cef string) (string, bool) {
 				key = fmt.Sprintf("%sarm64", runtime.GOOS)
 			}
 		}
-	} else if runtime.GOARCH == "amd64" {
+	} else {
 		if consts.IsLinux && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linux64gtk2"
 		} else {
@@ -343,7 +343,13 @@ func liblclName(version, cef string) (string, bool) {
 //  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
 func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
 	archs := strings.Split(buildSupportOSArch, ",")
-	noSuport := fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH)
+	var goarch string
+	if consts.IsWindows && runtime.GOARCH == "386" {
+		goarch = "32" // windows32 = > windows386
+	} else {
+		goarch = runtime.GOARCH
+	}
+	noSuport := fmt.Sprintf("%v %v", runtime.GOOS, goarch)
 	var isSupport = func(goarch string) bool {
 		for _, v := range archs {
 			if goarch == v {

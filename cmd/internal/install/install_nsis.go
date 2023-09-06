@@ -23,7 +23,7 @@ func installNSIS(c *command.Config) (string, func()) {
 	if !c.Install.INSIS {
 		return "", nil
 	}
-	if consts.IsWindows && runtime.GOARCH == "amd64" {
+	if consts.IsWindows && runtime.GOARCH != "arm64" {
 		// 下载并安装配置NSIS
 		s := c.Install.Path // 安装目录
 		version := consts.NSISDownloadVersion

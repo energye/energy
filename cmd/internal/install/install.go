@@ -83,7 +83,7 @@ func Install(c *command.Config) {
 	}
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
-		println("-----------------------------------------------------")
+		println("-----------------------------------------------------\n-----------------------------------------------------")
 	}
 	if nsisSuccessCallback != nil {
 		nsisSuccessCallback()
@@ -148,7 +148,7 @@ func checkInstallEnv(c *command.Config) (result []string) {
 	})
 	// nsis
 	check(func() bool {
-		if consts.IsWindows && runtime.GOARCH == "amd64" {
+		if consts.IsWindows && runtime.GOARCH != "arm64" {
 			return tools.CommandExists("makensis")
 		} else {
 			println("  Non Windows amd64 skipping NSIS")

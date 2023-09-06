@@ -22,8 +22,6 @@ import (
 	"strings"
 )
 
-var envkeys = make(map[string]string)
-
 func SetNSISEnv(nsisRoot string) {
 	makensis := filepath.Join(nsisRoot, "makensis.exe")
 	if !tools.IsExist(makensis) {
@@ -78,7 +76,6 @@ func SetEnergyHomeEnv(homePath string) {
 }
 
 func setWindowsEnv(name, value string) {
-	envkeys[name] = value
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.Command("setx", name, value)
