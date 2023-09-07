@@ -1,11 +1,12 @@
 {
   "name": "{{.Name}}",
   "projectPath": "{{.ProjectPath}}",
-  "buildAssetsDir": "assets/packager",
-  "outputFilename": "{{.OutputFilename}}",
   "frameworkPath": "{{.FrameworkPath}}",
+  "buildAssetsDir": "assets",
+  "outputFilename": "{{.OutputFilename}}",
   "info": {
     "icon": "icon.ico",
+    "installIcon": "icon.ico",
     "companyName": "",
     "productName": "",
     "filetVersion": "1.0.0",

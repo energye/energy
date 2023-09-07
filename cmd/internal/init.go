@@ -42,6 +42,7 @@ func runInit(c *command.Config) error {
 			println()
 		}
 	}
+	m.Name = strings.TrimSpace(m.Name)
 	if strings.TrimSpace(m.ResLoad) == "" {
 		println("Resource loading method, default 1 HTTP")
 		print("1: HTTP\n2: Local Load\n  Number: ")

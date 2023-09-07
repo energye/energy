@@ -12,7 +12,10 @@
 
 package internal
 
-import "github.com/energye/energy/v2/cmd/internal/command"
+import (
+	"github.com/energye/energy/v2/cmd/internal/build"
+	"github.com/energye/energy/v2/cmd/internal/command"
+)
 
 var CmdBuild = &command.Command{
 	UsageLine: "build",
@@ -28,5 +31,5 @@ func init() {
 }
 
 func runBuild(c *command.Config) error {
-	return nil
+	return build.Build(c)
 }

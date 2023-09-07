@@ -50,8 +50,8 @@ func generaProject(c *command.Config) error {
 	projectPath := filepath.Join(c.Wd, c.Init.Name)
 	println("Create Project:", c.Init.Name)
 	if tools.IsExist(projectPath) {
-		fmt.Printf("project dir %s exist, delete init files.", c.Init.Name)
-		var deleteFiles = []string{"energy.json" /*"resources", */, "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
+		fmt.Printf("project dir %s exist, delete init files.\n", c.Init.Name)
+		var deleteFiles = []string{consts.EnergyProjectConfig /*"resources", */, "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
 		for _, f := range deleteFiles {
 			path := filepath.Join(projectPath, f)
 			if info, err := os.Lstat(path); err == nil {
@@ -59,9 +59,6 @@ func generaProject(c *command.Config) error {
 					err = os.RemoveAll(path)
 				} else {
 					err = os.Remove(path)
-				}
-				if err == nil {
-					println("  Remove:", path)
 				}
 			}
 		}
@@ -72,18 +69,20 @@ func generaProject(c *command.Config) error {
 		}
 	}
 
+	// 读取assets内的文件
 	var createFile = func(readFilePath, outFilePath string, data map[string]any) error {
 		// 创建 energy.json template
-		if energyText, err := assets.ReadFile(readFilePath); err != nil {
+		if fileData, err := assets.ReadFile(readFilePath); err != nil {
 			return err
 		} else {
-			if content, err := tools.RenderTemplate(string(energyText), data); err != nil {
-				return err
-			} else {
-				path := filepath.Join(projectPath, outFilePath)
-				if err = ioutil.WriteFile(path, content, 0666); err != nil {
+			if data != nil {
+				if fileData, err = tools.RenderTemplate(string(fileData), data); err != nil {
 					return err
 				}
+			}
+			path := filepath.Join(projectPath, outFilePath)
+			if err = ioutil.WriteFile(path, fileData, 0666); err != nil {
+				return err
 			}
 		}
 		return nil
@@ -91,10 +90,10 @@ func generaProject(c *command.Config) error {
 	// 创建 energy.json template
 	data := make(map[string]any)
 	data["Name"] = c.Init.Name
-	data["ProjectPath"] = projectPath
+	data["ProjectPath"] = filepath.ToSlash(projectPath)
 	data["OutputFilename"] = c.Init.Name
-	data["FrameworkPath"] = os.Getenv(consts.EnergyHomeKey)
-	if err := createFile("assets/energy.json", "energy.json", data); err != nil {
+	data["FrameworkPath"] = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+	if err := createFile("assets/energy.json", consts.EnergyProjectConfig, data); err != nil {
 		return err
 	}
 
@@ -119,6 +118,12 @@ func generaProject(c *command.Config) error {
 	if err := createFile("assets/initialize/index.html", filepath.Join("resources", "index.html"), nil); err != nil {
 		return err
 	}
+	if err := createFile("assets/icon.ico", filepath.Join("resources", "icon.ico"), nil); err != nil {
+		return err
+	}
+	if err := createFile("assets/icon.png", filepath.Join("resources", "icon.png"), nil); err != nil {
+		return err
+	}
 
 	// 创建 README.md
 	data = make(map[string]any)
@@ -128,7 +133,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// cmd
-	println("Run command-line")
+	println("Run go command-line")
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = projectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {

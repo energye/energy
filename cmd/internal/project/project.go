@@ -27,8 +27,8 @@ type Project struct {
 	FrameworkPath  string `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
 	BuildAssetsDir string `json:"buildAssetsDir"` // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
-	Author         Author `json:"author"`         // 作者信息
 	Info           Info   `json:"info"`           // 应用信息
+	Author         Author `json:"author"`         // 作者信息
 }
 
 func (m *Project) setDefaults() {
@@ -90,15 +90,16 @@ type Author struct {
 }
 
 type Info struct {
-	Icon           string  `json:"icon"`
-	CompanyName    string  `json:"companyName"`
-	ProductName    string  `json:"productName"`
-	FiletVersion   string  `json:"filetVersion"`
-	ProductVersion string  `json:"productVersion"`
-	Copyright      *string `json:"copyright"`
-	Comments       *string `json:"comments"`
-	License        string  `json:"license"`
-	Language       string  `json:"language"`
+	Icon           string  `json:"icon"`           //应用图标
+	InstallIcon    string  `json:"installIcon"`    //应用包装图标
+	CompanyName    string  `json:"companyName"`    //公司名称
+	ProductName    string  `json:"productName"`    //产品名称
+	FiletVersion   string  `json:"filetVersion"`   //文件版本
+	ProductVersion string  `json:"productVersion"` //产品版本
+	Copyright      *string `json:"copyright"`      //版权
+	Comments       *string `json:"comments"`       //描述
+	License        string  `json:"license"`        //安装包授权信息,(license.txt)文件路径
+	Language       string  `json:"language"`       //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
 }
 
 //  APP项目配置转换到Project
@@ -117,7 +118,7 @@ func NewProject(projectPath string) (*Project, error) {
 	if projectPath == "" {
 		projectPath, _ = os.Getwd()
 	}
-	config := filepath.Join(projectPath, "energy.json")
+	config := filepath.Join(projectPath, consts.EnergyProjectConfig)
 	rawBytes, err := os.ReadFile(config)
 	if err != nil {
 		return nil, err

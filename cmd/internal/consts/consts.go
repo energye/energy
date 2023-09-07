@@ -47,10 +47,11 @@ const (
 )
 
 const (
-	CefKey         = "cef"
-	LiblclKey      = "liblcl"
-	FrameworkCache = "EnergyFrameworkDownloadCache"
-	EnergyHomeKey  = "ENERGY_HOME"
+	CefKey              = "cef"
+	LiblclKey           = "liblcl"
+	FrameworkCache      = "EnergyFrameworkDownloadCache"
+	EnergyHomeKey       = "ENERGY_HOME"
+	EnergyProjectConfig = "energy.json"
 )
 
 const (
