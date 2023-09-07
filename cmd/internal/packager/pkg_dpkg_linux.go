@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+//go:build linux
+// +build linux
+
 package packager
 
 import (

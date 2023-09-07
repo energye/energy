@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+//go:build linux
+// +build linux
+
 package build
 
 import "github.com/energye/energy/v2/cmd/internal/command"

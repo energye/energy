@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+//go:build darwin
+// +build darwin
+
 package build
 
 import "github.com/energye/energy/v2/cmd/internal/command"

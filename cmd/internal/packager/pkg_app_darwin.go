@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+//go:build darwin
+// +build darwin
+
 package packager
 
 import (

@@ -8,19 +8,22 @@
 //
 //----------------------------------------
 
+//go:build windows
+// +build windows
+
 package packager
 
 import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/tools/command"
 	"io/fs"
 	"os"
 	"path/filepath"
-	"runtime"
 )
 
 const (
@@ -84,7 +87,7 @@ func makeNSIS(projectData *project.Project) error {
 	nsisScriptPath := filepath.Join(buildOutPath(projectData), windowsNsis)
 
 	var binary string
-	if runtime.GOOS == "windows" {
+	if consts.IsWindows {
 		binary = filepath.Join(projectData.ProjectPath, projectData.Name+".exe")
 	} else {
 		binary = filepath.Join(projectData.ProjectPath, projectData.Name)
