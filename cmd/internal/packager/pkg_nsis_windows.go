@@ -29,21 +29,14 @@ const (
 )
 
 func GeneraInstaller(projectData *project.Project) error {
-	switch runtime.GOOS {
-	case "windows":
-		if !tools.CommandExists("makensis") {
-			return errors.New("failed to create application installation program. Could not find the makensis command")
-		}
-		if err := windows(projectData); err != nil {
-			return err
-		}
-		if err := makeNSIS(projectData); err != nil {
-			return err
-		}
-	case "linux":
-	case "darwin":
-	default:
-		return errors.New("unsupported system")
+	if !tools.CommandExists("makensis") {
+		return errors.New("failed to create application installation program. Could not find the makensis command")
+	}
+	if err := windows(projectData); err != nil {
+		return err
+	}
+	if err := makeNSIS(projectData); err != nil {
+		return err
 	}
 	return nil
 }

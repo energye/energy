@@ -11,10 +11,10 @@
 package initialize
 
 import (
-	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
 	"io/fs"
@@ -50,22 +50,18 @@ func generaProject(c *command.Config) error {
 	projectPath := filepath.Join(c.Wd, c.Init.Name)
 	println("Create Project:", c.Init.Name)
 	if tools.IsExist(projectPath) {
-		fmt.Printf("project dir %s exist, Delete and recreate? (Y/n):  ", c.Init.Name)
-		var s string
-		fmt.Scan(&s)
-		println()
-		if strings.ToLower(s) != "y" {
-			return errors.New("Failed to initialize project " + c.Init.Name)
-		} else {
-			var deleteFiles = []string{"energy.json", "resources", "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
-			for _, f := range deleteFiles {
-				path := filepath.Join(projectPath, f)
-				if info, err := os.Lstat(path); err == nil {
-					if info.IsDir() {
-						os.RemoveAll(path)
-					} else {
-						os.ReadFile(path)
-					}
+		fmt.Printf("project dir %s exist, delete init files.", c.Init.Name)
+		var deleteFiles = []string{"energy.json" /*"resources", */, "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
+		for _, f := range deleteFiles {
+			path := filepath.Join(projectPath, f)
+			if info, err := os.Lstat(path); err == nil {
+				if info.IsDir() {
+					err = os.RemoveAll(path)
+				} else {
+					err = os.Remove(path)
+				}
+				if err == nil {
+					println("  Remove:", path)
 				}
 			}
 		}
@@ -76,78 +72,59 @@ func generaProject(c *command.Config) error {
 		}
 	}
 
-	// 创建 energy.json template
-	if energyText, err := assets.ReadFile("assets/energy.json"); err != nil {
-		return err
-	} else {
-		data := make(map[string]any)
-		data["Name"] = c.Init.Name
-		if content, err := tools.RenderTemplate(string(energyText), data); err != nil {
+	var createFile = func(readFilePath, outFilePath string, data map[string]any) error {
+		// 创建 energy.json template
+		if energyText, err := assets.ReadFile(readFilePath); err != nil {
 			return err
 		} else {
-			path := filepath.Join(projectPath, "energy.json")
-			if err = ioutil.WriteFile(path, content, 0666); err != nil {
+			if content, err := tools.RenderTemplate(string(energyText), data); err != nil {
 				return err
+			} else {
+				path := filepath.Join(projectPath, outFilePath)
+				if err = ioutil.WriteFile(path, content, 0666); err != nil {
+					return err
+				}
 			}
 		}
+		return nil
+	}
+	// 创建 energy.json template
+	data := make(map[string]any)
+	data["Name"] = c.Init.Name
+	data["ProjectPath"] = projectPath
+	data["OutputFilename"] = c.Init.Name
+	data["FrameworkPath"] = os.Getenv(consts.EnergyHomeKey)
+	if err := createFile("assets/energy.json", "energy.json", data); err != nil {
+		return err
 	}
 
 	// 创建 main.go
-	if mainText, err := assets.ReadFile(fmt.Sprintf("assets/initialize/app_load_res.go.%s", c.Init.ResLoad)); err != nil {
+	if err := createFile(fmt.Sprintf("assets/initialize/main.go.%s", c.Init.ResLoad), "main.go", nil); err != nil {
 		return err
-	} else {
-		path := filepath.Join(projectPath, "main.go")
-		if err = ioutil.WriteFile(path, mainText, 0666); err != nil {
-			return err
-		}
 	}
 
 	// 创建 go.mod
-	if modText, err := assets.ReadFile("assets/initialize/go.mod.t"); err != nil {
+	data = make(map[string]any)
+	data["Name"] = c.Init.Name
+	data["GoVersion"] = "1.18"
+	data["EnergyVersion"] = "latest"
+	if err := createFile("assets/initialize/go.mod.t", "go.mod", data); err != nil {
 		return err
-	} else {
-		data := make(map[string]any)
-		data["Name"] = c.Init.Name
-		data["GoVersion"] = "1.18"
-		data["EnergyVersion"] = "latest"
-		if content, err := tools.RenderTemplate(string(modText), data); err != nil {
-			return err
-		} else {
-			path := filepath.Join(projectPath, "go.mod")
-			if err = ioutil.WriteFile(path, content, 0666); err != nil {
-				return err
-			}
-		}
 	}
 
 	// 创建 resources/index.html
-	if err := os.Mkdir(filepath.Join(projectPath, "resources"), fs.ModePerm); err != nil {
+	if err := os.MkdirAll(filepath.Join(projectPath, "resources"), fs.ModePerm); err != nil {
 		return err
-	} else {
-		if indexText, err := assets.ReadFile("assets/initialize/index.html"); err != nil {
-			return err
-		} else {
-			path := filepath.Join(projectPath, "resources", "index.html")
-			if err = ioutil.WriteFile(path, indexText, 0666); err != nil {
-				return err
-			}
-		}
+	}
+	if err := createFile("assets/initialize/index.html", filepath.Join("resources", "index.html"), nil); err != nil {
+		return err
 	}
 
 	// 创建 README.md
-	if readmeText, err := assets.ReadFile("assets/initialize/README.md"); err != nil {
+	data = make(map[string]any)
+	data["Name"] = c.Init.Name
+	if err := createFile("assets/initialize/README.md", "README.md", data); err != nil {
 		return err
-	} else {
-		data := make(map[string]any)
-		data["Name"] = c.Init.Name
-		if content, err := tools.RenderTemplate(string(readmeText), data); err != nil {
-			return err
-		} else {
-			path := filepath.Join(projectPath, "README.md")
-			if err = ioutil.WriteFile(path, content, 0666); err != nil {
-				return err
-			}
-		}
 	}
 
 	// cmd
