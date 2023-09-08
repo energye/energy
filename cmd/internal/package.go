@@ -40,10 +40,11 @@ func init() {
 }
 
 func runPackage(c *command.Config) error {
-	if project, err := project.NewProject(c.Package.Path); err != nil {
+	if proj, err := project.NewProject(c.Package.Path); err != nil {
 		return err
 	} else {
-		if err = packager.GeneraInstaller(project); err != nil {
+		proj.Clean = c.Package.Clean
+		if err = packager.GeneraInstaller(proj); err != nil {
 			return err
 		}
 	}

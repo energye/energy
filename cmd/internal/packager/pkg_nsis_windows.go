@@ -46,6 +46,7 @@ func GeneraInstaller(projectData *project.Project) error {
 func windows(projectData *project.Project) error {
 	// 创建构建输出目录
 	buildOutDir := buildOutPath(projectData)
+	buildOutDir = filepath.Join(buildOutDir, "windows")
 	if !tools.IsExist(buildOutDir) {
 		if err := os.MkdirAll(buildOutDir, 0755); err != nil {
 			return fmt.Errorf("unable to create directory: %w", err)
