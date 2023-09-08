@@ -71,7 +71,7 @@ func generaProject(c *command.Config) error {
 	// 读取assets内的文件
 	var createFile = func(readFilePath, outFilePath string, data map[string]any) error {
 		// 创建 energy.json template
-		if fileData, err := assets.ReadFile(readFilePath); err != nil {
+		if fileData, err := assets.ReadFile(nil, "", readFilePath); err != nil {
 			return err
 		} else {
 			if data != nil {

@@ -12,6 +12,10 @@ package build
 
 import "github.com/energye/energy/v2/cmd/internal/command"
 
+const (
+	assetsFSPath = "assets/build/"
+)
+
 func Build(c *command.Config) error {
 	return build(c)
 }
