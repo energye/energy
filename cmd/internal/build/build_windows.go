@@ -23,6 +23,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/winicon"
 	"github.com/energye/energy/v2/pkgs/winres"
 	"github.com/energye/energy/v2/pkgs/winres/version"
+	toolsCommand "github.com/energye/golcl/tools/command"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -61,12 +62,34 @@ func build(c *command.Config) error {
 		if syso, err = generaSYSO(iconPath, proj); err != nil {
 			return err
 		}
-
+		cmd := toolsCommand.NewCMD()
+		cmd.Dir = proj.ProjectPath
+		cmd.IsPrint = false
+		cmd.MessageCallback = func(msg []byte, e error) {
+			if e != nil {
+				fmt.Println("  build-error:", e.Error())
+				err = e
+			} else if len(msg) > 0 {
+				fmt.Println("  build:", msg)
+			}
+		}
+		println("Building", proj.OutputFilename)
+		var args = []string{"build", "-ldflags", "-H windowsgui -s -w", "-o", proj.OutputFilename}
+		cmd.Command("go", args...)
+		if tools.CommandExists("upx") {
+			println("Upx compression")
+			cmd.Command("upx", proj.OutputFilename)
+		}
+		cmd.Close()
+		if err == nil {
+			println("Build Successfully")
+		}
 	}
 
 	return nil
 }
 
+// 生成syso图标
 func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	rs := &winres.ResourceSet{}
 	iconFile, err := os.Open(iconPath)
@@ -130,6 +153,7 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	return targetFile, nil
 }
 
+// 生成应用图标，如果配置的是png图标，把png转换ico
 func generaICON(proj *project.Project) (string, error) {
 	iconPath := proj.Info.Icon
 	if !tools.IsExist(iconPath) {
