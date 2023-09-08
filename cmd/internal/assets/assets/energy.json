@@ -2,19 +2,24 @@
   "name": "{{.Name}}",
   "projectPath": "{{.ProjectPath}}",
   "frameworkPath": "{{.FrameworkPath}}",
-  "buildAssetsDir": "assets",
+  "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
   "info": {
-    "icon": "icon.ico",
-    "installIcon": "icon.ico",
-    "companyName": "",
-    "productName": "",
-    "filetVersion": "1.0.0",
+    "icon": "{{.ProjectPath}}/resources/icon.ico",
+    "companyName": "{{.CompanyName}}",
+    "productName": "{{.ProductName}}",
+    "fileVersion": "1.0.0",
     "productVersion": "1.0.0",
-    "copyright": "Copyright.........",
+    "copyright": "Copyright.....",
     "comments": "Built using ENERGY (https://github.com/energye/energy)",
-    "license": "",
-    "language": ""
+    "fileDescription": "Built using ENERGY (https://github.com/energye/energy)",
+    "installPack": {
+      "icon": "{{.ProjectPath}}/resources/icon.ico",
+      "unIcon": "{{.ProjectPath}}/resources/icon.ico",
+      "license": "",
+      "language": "english",
+      "requestExecutionLevel": "admin"
+    }
   },
   "author": {
     "name": "yanghy",

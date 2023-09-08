@@ -17,10 +17,11 @@ import (
 )
 
 var CmdPackage = &command.Command{
-	UsageLine: "package -p [path]",
+	UsageLine: "package -p [path] -c [clean]",
 	Short:     "Making an Installation Package",
 	Long: `
-	-p project path, default current path. Can be configured in energy.json
+	-p Project path, default current path. Can be configured in energy.json
+	-c Clear configuration and regenerate the default configuration
 	.  Execute default command
 
 Making an Installation Package

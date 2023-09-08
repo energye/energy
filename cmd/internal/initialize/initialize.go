@@ -33,15 +33,14 @@ func InitEnergyProject(c *command.Config) error {
 	}
 	println()
 	println("Successfully initialized the energy application project:", c.Init.Name)
-	println()
-	println("  Run Application: go run main.go")
-	println(`  Building Applications:
-	Use GO: go build -ldflags "-s -w"
-	Use Energy: energy build .
-`)
 	println(`  website:
 	https://github.com/energye/energy
 	https://energy.yanghy.cn
+`)
+	println("  Run Application: go run main.go")
+	println(`  Building Application:
+	Use GO: go build -ldflags "-s -w"
+	Use Energy: energy build .
 `)
 	return nil
 }
@@ -88,11 +87,14 @@ func generaProject(c *command.Config) error {
 		return nil
 	}
 	// 创建 energy.json template
+	// 默认配置
 	data := make(map[string]any)
 	data["Name"] = c.Init.Name
 	data["ProjectPath"] = filepath.ToSlash(projectPath)
-	data["OutputFilename"] = c.Init.Name
 	data["FrameworkPath"] = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+	data["OutputFilename"] = c.Init.Name
+	data["CompanyName"] = c.Init.Name
+	data["ProductName"] = c.Init.Name
 	if err := createFile("assets/energy.json", consts.EnergyProjectConfig, data); err != nil {
 		return err
 	}

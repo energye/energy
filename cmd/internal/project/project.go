@@ -22,10 +22,11 @@ import (
 
 // Project holds the data related to a ENERGY project
 type Project struct {
+	Clean          bool   `json:"-"`              // 清空配置重新生成
 	Name           string `json:"name"`           // 应用名称
 	ProjectPath    string `json:"projectPath"`    // 项目目录
 	FrameworkPath  string `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
-	BuildAssetsDir string `json:"buildAssetsDir"` // 构建配置所在目录 未指定使用田默认内置配置
+	AssetsDir      string `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
 	Info           Info   `json:"info"`           // 应用信息
 	Author         Author `json:"author"`         // 作者信息
@@ -44,8 +45,8 @@ func (m *Project) setDefaults() {
 	if !tools.IsExist(m.FrameworkPath) {
 		panic("energy framework directory does not exist: " + m.FrameworkPath)
 	}
-	if m.BuildAssetsDir == "" {
-		m.BuildAssetsDir = "assets"
+	if m.AssetsDir == "" {
+		m.AssetsDir = "assets"
 	}
 	if m.OutputFilename == "" {
 		m.OutputFilename = m.Name
@@ -69,9 +70,9 @@ func (m *Project) setDefaults() {
 		v := "Copyright........."
 		m.Info.Copyright = &v
 	}
-	if m.Info.Comments == nil {
+	if m.Info.FileDescription == nil {
 		v := "Built using ENERGY (https://github.com/energye/energy)"
-		m.Info.Comments = &v
+		m.Info.FileDescription = &v
 	}
 	switch runtime.GOOS {
 	case "windows":
@@ -84,22 +85,54 @@ func (m *Project) setDefaults() {
 
 }
 
+type Info struct {
+	Icon            string      `json:"icon"`            //应用图标
+	CompanyName     string      `json:"companyName"`     //公司名称
+	ProductName     string      `json:"productName"`     //产品名称
+	FileVersion     string      `json:"FileVersion"`     //文件版本
+	ProductVersion  string      `json:"productVersion"`  //产品版本
+	Copyright       *string     `json:"copyright"`       //版权
+	Comments        *string     `json:"comments"`        //exe详情描述
+	FileDescription *string     `json:"fileDescription"` //描述
+	InstallPack     InstallPack `json:"installPack"`     // windows nsis 安装包
+}
+
+func (m *Info) FromSlash() *Info {
+	m.Icon = filepath.FromSlash(m.Icon)
+	m.InstallPack = *m.InstallPack.FromSlash()
+	return m
+}
+
+func (m *Info) ToSlash() *Info {
+	m.Icon = filepath.ToSlash(m.Icon)
+	m.InstallPack = *m.InstallPack.ToSlash()
+	return m
+}
+
+func (m *InstallPack) FromSlash() *InstallPack {
+	m.Icon = filepath.FromSlash(m.Icon)
+	m.UnIcon = filepath.FromSlash(m.UnIcon)
+	return m
+}
+
+func (m *InstallPack) ToSlash() *InstallPack {
+	m.Icon = filepath.ToSlash(m.Icon)
+	m.UnIcon = filepath.ToSlash(m.UnIcon)
+	return m
+}
+
+// InstallPack windows NSIS
+type InstallPack struct {
+	Icon                  string `json:"icon"`                  //安装包图标
+	UnIcon                string `json:"unIcon"`                //安装包卸载图标
+	License               string `json:"license"`               //安装包授权信息,(license.txt)文件路径
+	Language              string `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
+	RequestExecutionLevel string `json:"requestExecutionLevel"` // admin or ""
+}
+
 type Author struct {
 	Name  string `json:"name"`
 	Email string `json:"email"`
-}
-
-type Info struct {
-	Icon           string  `json:"icon"`           //应用图标
-	InstallIcon    string  `json:"installIcon"`    //应用包装图标
-	CompanyName    string  `json:"companyName"`    //公司名称
-	ProductName    string  `json:"productName"`    //产品名称
-	FiletVersion   string  `json:"filetVersion"`   //文件版本
-	ProductVersion string  `json:"productVersion"` //产品版本
-	Copyright      *string `json:"copyright"`      //版权
-	Comments       *string `json:"comments"`       //描述
-	License        string  `json:"license"`        //安装包授权信息,(license.txt)文件路径
-	Language       string  `json:"language"`       //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
 }
 
 //  APP项目配置转换到Project
@@ -127,6 +160,9 @@ func NewProject(projectPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.ProjectPath = projectPath
+	if m.ProjectPath == "" {
+		m.ProjectPath = projectPath
+	}
+	m.ProjectPath = filepath.FromSlash(m.ProjectPath)
 	return m, nil
 }

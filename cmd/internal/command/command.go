@@ -41,7 +41,8 @@ type Install struct {
 }
 
 type Package struct {
-	Path string `short:"p" long:"path" description:"project path"`
+	Path  string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json"`
+	Clean bool   `short:"c" long:"clean" description:"Clear configuration and regenerate the default configuration"`
 }
 
 type Env struct {
