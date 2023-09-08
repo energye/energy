@@ -43,8 +43,7 @@ const (
 //  upx
 func build(c *command.Config) error {
 	// 读取项目配置文件 energy.json 在main函数目录
-	c.Package.Path = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\demo"
-	if proj, err := project.NewProject(c.Package.Path); err != nil {
+	if proj, err := project.NewProject(c.Build.Path); err != nil {
 		return err
 	} else {
 		var (
@@ -62,6 +61,7 @@ func build(c *command.Config) error {
 		if syso, err = generaSYSO(iconPath, proj); err != nil {
 			return err
 		}
+		// go build
 		cmd := toolsCommand.NewCMD()
 		cmd.Dir = proj.ProjectPath
 		cmd.IsPrint = false
@@ -70,15 +70,21 @@ func build(c *command.Config) error {
 				fmt.Println("  build-error:", e.Error())
 				err = e
 			} else if len(msg) > 0 {
-				fmt.Println("  build:", msg)
+				fmt.Println("  build:", string(msg))
 			}
 		}
 		println("Building", proj.OutputFilename)
 		var args = []string{"build", "-ldflags", "-H windowsgui -s -w", "-o", proj.OutputFilename}
 		cmd.Command("go", args...)
-		if tools.CommandExists("upx") {
+		// upx
+		if c.Build.Upx && tools.CommandExists("upx") {
 			println("Upx compression")
-			cmd.Command("upx", proj.OutputFilename)
+			args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
+			if c.Build.UpxFlag != "" {
+				args = strings.Split(c.Build.UpxFlag, " ")
+				args = append(args, proj.OutputFilename)
+			}
+			cmd.Command("upx", args...)
 		}
 		cmd.Close()
 		if err == nil {

@@ -41,7 +41,7 @@ type Install struct {
 }
 
 type Package struct {
-	Path  string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json"`
+	Path  string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
 	Clean bool   `short:"c" long:"clean" description:"Clear configuration and regenerate the default configuration"`
 }
 
@@ -66,4 +66,7 @@ type Init struct {
 }
 
 type Build struct {
+	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
+	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file. windows"`
+	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
 }
