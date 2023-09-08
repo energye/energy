@@ -53,6 +53,8 @@ func Install(c *command.Config) {
 		cefFrameworkSuccessCallback func()
 		nsisRoot                    string
 		nsisSuccessCallback         func()
+		upxRoot                     string
+		upxSuccessCallback          func()
 	)
 	if len(willInstall) > 0 {
 		println("Following will be installed")
@@ -75,6 +77,12 @@ func Install(c *command.Config) {
 	if nsisRoot != "" {
 		env.SetNSISEnv(nsisRoot)
 	}
+	// 安装upx, 内置, 仅windows, linux
+	upxRoot, upxSuccessCallback = installUPX(c)
+	// 设置upx环境变量
+	if upxRoot != "" {
+		env.SetUPXEnv(upxRoot)
+	}
 	// 安装CEF二进制框架
 	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 设置 energy cef 环境变量
@@ -82,7 +90,7 @@ func Install(c *command.Config) {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
 	// success 输出
-	if nsisSuccessCallback != nil || goSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
+	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
 		println("-----------------------------------------------------\n-----------------------------------------------------")
 		println("Hint: Reopen the cmd window for command to take effect.")
 		println("-----------------------------------------------------\n-----------------------------------------------------")
@@ -92,6 +100,9 @@ func Install(c *command.Config) {
 	}
 	if goSuccessCallback != nil {
 		goSuccessCallback()
+	}
+	if upxSuccessCallback != nil {
+		upxSuccessCallback()
 	}
 	if cefFrameworkSuccessCallback != nil {
 		cefFrameworkSuccessCallback()
@@ -130,9 +141,15 @@ func nsisIsInstall() bool {
 }
 
 func upxIsInstall() bool {
-	return consts.IsWindows
+	return (consts.IsWindows && runtime.GOARCH != "arm64") || (consts.IsLinux)
 }
 
+// 检查当前环境
+//  golang, nsis, cef, upx
+//  golang: all os
+//  nsis: windows
+//  cef: all os
+//  upx: windows amd64, 386, linux amd64, arm64
 func checkInstallEnv(c *command.Config) (result []string) {
 	skip := c.Install.All
 	var check = func(chkInstall func() bool, name string, yes func()) {
@@ -354,6 +371,7 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 				os.MkdirAll(fDir, 0755)
 			}
 			if targetFile, err := os.Create(targetFileName); err == nil {
+				defer targetFile.Close()
 				fmt.Println("extract file: ", path)
 				bar.SetCurrentValue(0)
 				writeFile(file, targetFile, info.Size(), func(totalLength, processLength int64) {
@@ -361,7 +379,6 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 				})
 				bar.PrintBar(100)
 				bar.PrintEnd()
-				targetFile.Close()
 				return nil
 			} else {
 				println("createWriteFile", err.Error())

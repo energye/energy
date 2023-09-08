@@ -22,6 +22,18 @@ import (
 	"strings"
 )
 
+func SetUPXEnv(upxRoot string) {
+	upx := filepath.Join(upxRoot, "upx.exe")
+	if !tools.IsExist(upx) {
+		println("\nError: Failed to set the UPX environment variable, not a correct UPX installation directory. ", upxRoot)
+		return
+	}
+	println("\nSetting UPX environment Variables to:", upxRoot)
+	setWindowsEnv(consts.UPXHomeKey, upxRoot)
+	appendWindowsEnv("Path", "%UPX_HOME%")
+	println("Hint: Reopen the cmd window for the upx command to take effect.")
+}
+
 func SetNSISEnv(nsisRoot string) {
 	makensis := filepath.Join(nsisRoot, "makensis.exe")
 	if !tools.IsExist(makensis) {

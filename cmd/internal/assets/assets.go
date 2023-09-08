@@ -24,6 +24,10 @@ import (
 //go:embed assets
 var assets embed.FS
 
+const (
+	UpxVersion = "4.1.0"
+)
+
 // AssetsPath 返回配置资源目录
 func AssetsPath(projectData *project.Project, file string) string {
 	return filepath.ToSlash(filepath.Join(projectData.AssetsDir, file))

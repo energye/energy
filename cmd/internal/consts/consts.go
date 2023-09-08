@@ -47,6 +47,10 @@ const (
 )
 
 const (
+	UPXHomeKey = "UPX_HOME"
+)
+
+const (
 	CefKey              = "cef"
 	LiblclKey           = "liblcl"
 	FrameworkCache      = "EnergyFrameworkDownloadCache"

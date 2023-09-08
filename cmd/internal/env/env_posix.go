@@ -27,6 +27,32 @@ import (
 	"strings"
 )
 
+func SetUPXEnv(upxRoot string) {
+	upx := filepath.Join(upxRoot, "upx")
+	if !tools.IsExist(upx) {
+		println("\nError: Failed to set the UPX environment variable, not a correct UPX installation directory. ", upxRoot)
+		return
+	}
+	println("\nSetting UPX environment Variables to:", upxRoot)
+	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
+	cmd.MessageCallback = func(s []byte, e error) {
+		msg := strings.TrimSpace(string(s))
+		if msg != "" {
+			fmt.Println("CMD:", msg)
+		}
+		if e != nil {
+			fmt.Println("CMD Error:", e)
+		}
+	}
+	defer cmd.Close()
+	var exUpxRoot = fmt.Sprintf("export UPX_HOME=%s", upxRoot)
+	var exPath = "export PATH=$PATH:$UPX_HOME"
+	var exs = []string{exUpxRoot, exPath}
+	setPosixEnv(exs, exPath, "$UPX_HOME")
+	println("Hint: Reopen the cmd window for the upx command to take effect.")
+}
+
 func SetNSISEnv(nsisRoot string) {
 
 }
