@@ -8,10 +8,6 @@ set GOARCH=amd64
 set GOOS=windows
 go build -ldflags "-s -w" -o energy-windows-64.exe energy.go
 
-set GOARCH=arm64
-set GOOS=windows
-go build -ldflags "-s -w" -o energy-windowsarm-64.exe energy.go
-
 set GOARCH=amd64
 set GOOS=darwin
 go build -ldflags "-s -w" -o energy-darwin-64 energy.go

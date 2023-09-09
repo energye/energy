@@ -62,6 +62,9 @@ const (
 	IsWindows = runtime.GOOS == "windows" //support
 	IsLinux   = runtime.GOOS == "linux"   //support
 	IsDarwin  = runtime.GOOS == "darwin"  //support
+	IsAMD64   = runtime.GOARCH == "amd64"
+	IsARM64   = runtime.GOARCH == "arm64"
+	Is386     = runtime.GOARCH == "386"
 )
 
 const (

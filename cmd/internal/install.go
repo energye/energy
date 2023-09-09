@@ -16,14 +16,16 @@ import (
 )
 
 var CmdInstall = &command.Command{
-	UsageLine: "install -p [path] -v [version] -n [name] -d [download] -a [all] -c [cef]",
+	UsageLine: "install -p [path] -v [version] -n [name] -d [download] -a [all] -c [cef] -os -arch",
 	Short:     "Automatic installation and configuration of the energy framework complete development environment",
 	Long: `
 	-p Installation directory Default current directory
 	-v Specifying a version number,Default latest.\
 	-n Name of the framework directory after installation, Default EnergyFramework.\
 	-d Download Source, 0:gitee or 1:github, Default empty
-	-a Install all, skip installation prompts (Y/n), default empty:n
+	-a Install all, skip installation prompts (Y/n), default empty:false
+	-os Specify install OS: [windows, linux, darwin], default current os
+	-arch Specify install ARCH: [amd64, arm64, 386], default current arch
 	-c Install system supports CEF version, provide 4 options, default empty
 		default : Automatically select support for the latest version based on the current system.
 		109 : CEF 109.1.18 is the last one to support Windows 7.

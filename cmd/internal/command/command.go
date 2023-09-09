@@ -10,6 +10,9 @@
 
 package command
 
+type OS string
+type Arch string
+
 type Config struct {
 	Index   int
 	Wd      string
@@ -33,11 +36,14 @@ type Install struct {
 	Name     string `short:"n" long:"name" description:"Name of the framework directory after installation" default:"EnergyFramework"`
 	Download string `short:"d" long:"download" description:"Download Source, 0:gitee or 1:github, Default empty" default:""`
 	All      bool   `short:"a" long:"all" description:"Install all, skip installation prompts (Y/n)"`
+	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current system: os"`
+	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm64], Default current system: architecture"`
 	CEF      string `short:"c" long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. default, windows7, gtk2, flash" default:""`
-	IGolang  bool
-	ICEF     bool
-	INSIS    bool
-	IUPX     bool
+	IGolang  bool   // 是否已安装Golang
+	ICEF     bool   // 是否已安装CEF
+	INSIS    bool   // 是否已安装nsis
+	IUPX     bool   // 是否已安装upx
+	IsSame   bool   // 安装的OS和Arch是否为当前系统架构, 默认当前系统架构
 }
 
 type Package struct {
@@ -69,4 +75,28 @@ type Build struct {
 	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
 	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file. windows"`
 	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
+}
+
+func (m OS) IsWindows() bool {
+	return m == "windows"
+}
+
+func (m OS) IsLinux() bool {
+	return m == "linux"
+}
+
+func (m OS) IsDarwin() bool {
+	return m == "darwin"
+}
+
+func (m Arch) Is386() bool {
+	return m == "386" || m == "32" // windows32
+}
+
+func (m Arch) IsAMD64() bool {
+	return m == "amd64"
+}
+
+func (m Arch) IsARM64() bool {
+	return m == "arm64"
 }

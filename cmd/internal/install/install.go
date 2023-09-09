@@ -86,7 +86,7 @@ func Install(c *command.Config) {
 	// 安装CEF二进制框架
 	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 设置 energy cef 环境变量
-	if cefFrameworkRoot != "" {
+	if cefFrameworkRoot != "" && c.Install.IsSame {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
 	// success 输出
@@ -121,7 +121,11 @@ func Install(c *command.Config) {
 }
 
 func cefInstallPathName(c *command.Config) string {
-	return filepath.Join(c.Install.Path, consts.ENERGY, c.Install.Name)
+	if c.Install.IsSame {
+		return filepath.Join(c.Install.Path, consts.ENERGY, c.Install.Name)
+	} else {
+		return filepath.Join(c.Install.Path, consts.ENERGY, fmt.Sprintf("%s_%s%s", c.Install.Name, c.Install.OS, c.Install.Arch))
+	}
 }
 
 func goInstallPathName(c *command.Config) string {
@@ -216,6 +220,15 @@ func initInstall(c *command.Config) {
 	if c.Install.Version == "" {
 		// latest
 		c.Install.Version = "latest"
+	}
+	if c.Install.OS == "" {
+		c.Install.OS = command.OS(runtime.GOOS)
+	}
+	if c.Install.Arch == "" {
+		c.Install.Arch = command.Arch(runtime.GOARCH)
+	}
+	if string(c.Install.OS) == runtime.GOOS && string(c.Install.Arch) == runtime.GOARCH {
+		c.Install.IsSame = true
 	}
 	// 创建安装目录
 	os.MkdirAll(c.Install.Path, fs.ModePerm)

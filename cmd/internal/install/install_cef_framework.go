@@ -20,7 +20,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"net/url"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 )
@@ -41,7 +40,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		fmt.Println("Error:", err.Error())
 		return "", nil
 	}
-	extractOSConfig := extractConfig[runtime.GOOS].(map[string]any)
+	extractOSConfig := extractConfig[string(c.Install.OS)].(map[string]any)
 
 	// 获取安装版本配置
 	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
@@ -164,7 +163,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// 根据模块名拿到版本号
 	cefVersion := tools.ToRNilString(installVersion[cefModuleName], "")
 	// 当前模块版本支持系统，如果支持返回下载地址
-	libCEFOS, isSupport := cefOS(cefModule)
+	libCEFOS, isSupport := cefOS(c, cefModule)
 	downloadCefURL := tools.ToString(cefModule["downloadUrl"])
 	downloadCefURL = replaceSource(downloadCefURL, tools.ToString(cefModule["downloadSource"]), tools.ToInt(cefModule["downloadSourceSelect"]), "cef")
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefVersion)
@@ -176,7 +175,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// 最后根据模块名称来确定使用哪个liblcl
 	liblclVersion := tools.ToRNilString(installVersion[liblclModuleName], "")
 	if liblclModule != nil {
-		libEnergyOS, isSupport := liblclOS(cef, liblclVersion, tools.ToString(liblclModule["buildSupportOSArch"]))
+		libEnergyOS, isSupport := liblclOS(c, cef, liblclVersion, tools.ToString(liblclModule["buildSupportOSArch"]))
 		downloadEnergyURL := tools.ToString(liblclModule["downloadUrl"])
 		downloadEnergyURL = replaceSource(downloadEnergyURL, tools.ToString(liblclModule["downloadSource"]), tools.ToInt(liblclModule["downloadSourceSelect"]), "liblcl")
 		module := tools.ToString(liblclModule["module"])
@@ -246,7 +245,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	}
 }
 
-func cefOS(module map[string]any) (string, bool) {
+func cefOS(c *command.Config, module map[string]any) (string, bool) {
 	buildSupportOSArch := tools.ToString(module["buildSupportOSArch"])
 	mod := tools.ToString(module["module"])
 	archs := strings.Split(buildSupportOSArch, ",")
@@ -258,27 +257,58 @@ func cefOS(module map[string]any) (string, bool) {
 		}
 		return false
 	}
-	if consts.IsWindows { // windows arm for 64 bit, windows for 32/64 bit
-		if runtime.GOARCH == "arm64" {
+
+	//if consts.IsWindows { // windows arm for 64 bit, windows for 32/64 bit
+	//	if consts.IsARM64 {
+	//		return "windowsarm64", isSupport(consts.WindowsARM64)
+	//	}
+	//	if strconv.IntSize == 32 {
+	//		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows32)
+	//	}
+	//	return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows64)
+	//} else if consts.IsLinux { //linux for 64 bit
+	//	if consts.IsARM64 {
+	//		if mod == consts.Cef106 {
+	//			return "linuxarm64", isSupport(consts.LinuxARM64GTK2)
+	//		}
+	//		return "linuxarm64", isSupport(consts.LinuxARM64) || isSupport(consts.LinuxARM64GTK3)
+	//	} else if consts.IsAMD64 {
+	//		if mod == consts.Cef106 {
+	//			return "linux64", isSupport(consts.Linux64GTK2)
+	//		}
+	//		return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
+	//	}
+	//} else if consts.IsDarwin { // macosx for 64 bit
+	//	//if runtime.GOARCH == "arm64" {
+	//	//	return "macosarm64", isSupport(MacOSARM64)
+	//	//} else if runtime.GOARCH == "amd64" {
+	//	//	return "macosx64", isSupport(MacOSX64)
+	//	//}
+	//	// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
+	//	return "macosx64", isSupport(consts.MacOSX64)
+	//}
+
+	if c.Install.OS.IsWindows() { // windows arm for 64 bit, windows for 32/64 bit
+		if c.Install.Arch.IsARM64() {
 			return "windowsarm64", isSupport(consts.WindowsARM64)
 		}
-		if strconv.IntSize == 32 {
-			return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows32)
+		if c.Install.Arch.Is386() {
+			return "windows32", isSupport(consts.Windows32)
 		}
-		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows64)
-	} else if consts.IsLinux { //linux for 64 bit
-		if runtime.GOARCH == "arm64" {
+		return "windows64", isSupport(consts.Windows64)
+	} else if c.Install.OS.IsLinux() { //linux for 64 bit
+		if c.Install.Arch.IsARM64() {
 			if mod == consts.Cef106 {
 				return "linuxarm64", isSupport(consts.LinuxARM64GTK2)
 			}
 			return "linuxarm64", isSupport(consts.LinuxARM64) || isSupport(consts.LinuxARM64GTK3)
-		} else if runtime.GOARCH == "amd64" {
+		} else if c.Install.Arch.IsAMD64() {
 			if mod == consts.Cef106 {
 				return "linux64", isSupport(consts.Linux64GTK2)
 			}
 			return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
 		}
-	} else if consts.IsDarwin { // macosx for 64 bit
+	} else if c.Install.OS.IsDarwin() { // macosx for 64 bit
 		//if runtime.GOARCH == "arm64" {
 		//	return "macosarm64", isSupport(MacOSARM64)
 		//} else if runtime.GOARCH == "amd64" {
@@ -288,7 +318,7 @@ func cefOS(module map[string]any) (string, bool) {
 		return "macosx64", isSupport(consts.MacOSX64)
 	}
 	//not support
-	return fmt.Sprintf("%v %v", runtime.GOOS, runtime.GOARCH), false
+	return fmt.Sprintf("%v %v", c.Install.OS, c.Install.Arch), false
 }
 
 var liblclFileNames = map[string]string{
@@ -308,25 +338,31 @@ var liblclFileNames = map[string]string{
 	"darwin64_old":    "MacOSX x86 64 bits",
 }
 
-func liblclName(version, cef string) (string, bool) {
+func liblclName(c *command.Config, version, cef string) (string, bool) {
 	var key string
 	var isOld bool
-	if runtime.GOARCH == "arm64" {
-		if consts.IsLinux && cef == consts.Cef106 { // 只linux区别liblcl gtk2
+	if c.Install.Arch.IsARM64() {
+		if c.Install.OS.IsLinux() && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linuxarm64gtk2"
 		} else {
-			if consts.IsDarwin {
+			if c.Install.OS.IsDarwin() {
 				// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
-				key = fmt.Sprintf("%samd64", runtime.GOOS)
+				key = fmt.Sprintf("%samd64", c.Install.OS)
 			} else {
-				key = fmt.Sprintf("%sarm64", runtime.GOOS)
+				key = fmt.Sprintf("%sarm64", c.Install.OS)
 			}
 		}
 	} else {
-		if consts.IsLinux && cef == consts.Cef106 { // 只linux区别liblcl gtk2
+		if c.Install.OS.IsLinux() && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linux64gtk2"
 		} else {
-			key = fmt.Sprintf("%s%d", runtime.GOOS, strconv.IntSize)
+			var arch command.Arch
+			if c.Install.Arch.Is386() {
+				arch = "32" // windows32
+			} else {
+				arch = c.Install.Arch
+			}
+			key = fmt.Sprintf("%s%s", c.Install.OS, arch)
 		}
 	}
 	if tools.Compare("2.2.4", version) {
@@ -344,15 +380,15 @@ func liblclName(version, cef string) (string, bool) {
 // 命名规则 OS+[ARCH]+BIT+[GTK2]
 //  ARCH: 非必需, ARM 时填写, AMD为空
 //  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
-func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
+func liblclOS(c *command.Config, cef, version, buildSupportOSArch string) (string, bool) {
 	archs := strings.Split(buildSupportOSArch, ",")
 	var goarch string
-	if consts.IsWindows && runtime.GOARCH == "386" {
+	if c.Install.OS.IsWindows() && c.Install.Arch.Is386() {
 		goarch = "32" // windows32 = > windows386
 	} else {
-		goarch = runtime.GOARCH
+		goarch = string(c.Install.Arch)
 	}
-	noSuport := fmt.Sprintf("%v %v", runtime.GOOS, goarch)
+	noSuport := fmt.Sprintf("%v %v", c.Install.OS, goarch)
 	var isSupport = func(goarch string) bool {
 		for _, v := range archs {
 			if goarch == v {
@@ -361,7 +397,7 @@ func liblclOS(cef, version, buildSupportOSArch string) (string, bool) {
 		}
 		return false
 	}
-	if name, isOld := liblclName(version, cef); isOld {
+	if name, isOld := liblclName(c, version, cef); isOld {
 		if name == "" {
 			return noSuport, false
 		}
