@@ -322,20 +322,20 @@ func cefOS(c *command.Config, module map[string]any) (string, bool) {
 }
 
 var liblclFileNames = map[string]string{
-	"windows32":       consts.Windows32,
-	"windows64":       consts.Windows64,
-	"windowsarm64":    consts.WindowsARM64,
-	"linuxarm64":      consts.LinuxARM64,
-	"linuxarm64gtk2":  consts.LinuxARM64GTK2,
-	"linux64":         consts.Linux64,
-	"linux64gtk2":     consts.Linux64GTK2,
-	"darwin64":        consts.MacOSX64,
-	"darwinarm64":     consts.MacOSARM64,
-	"windows32_old":   "Windows 32 bits",
-	"windows64_old":   "Windows 64 bits",
-	"linux64gtk2_old": "Linux GTK2 x86 64 bits",
-	"linux64_old":     "Linux x86 64 bits",
-	"darwin64_old":    "MacOSX x86 64 bits",
+	"windows386":         consts.Windows32,
+	"windowsamd64":       consts.Windows64,
+	"windowsarm64":       consts.WindowsARM64,
+	"linuxarm64":         consts.LinuxARM64,
+	"linuxarm64gtk2":     consts.LinuxARM64GTK2,
+	"linuxamd64":         consts.Linux64,
+	"linuxamd64gtk2":     consts.Linux64GTK2,
+	"darwinamd64":        consts.MacOSX64,
+	"darwinarm64":        consts.MacOSARM64,
+	"windows386_old":     "Windows 32 bits",
+	"windowsamd64_old":   "Windows 64 bits",
+	"linuxamd64gtk2_old": "Linux GTK2 x86 64 bits",
+	"linuxamd64_old":     "Linux x86 64 bits",
+	"darwinamd64_old":    "MacOSX x86 64 bits",
 }
 
 func liblclName(c *command.Config, version, cef string) (string, bool) {
@@ -354,15 +354,9 @@ func liblclName(c *command.Config, version, cef string) (string, bool) {
 		}
 	} else {
 		if c.Install.OS.IsLinux() && cef == consts.Cef106 { // 只linux区别liblcl gtk2
-			key = "linux64gtk2"
+			key = "linuxamd64gtk2"
 		} else {
-			var arch command.Arch
-			if c.Install.Arch.Is386() {
-				arch = "32" // windows32
-			} else {
-				arch = c.Install.Arch
-			}
-			key = fmt.Sprintf("%s%s", c.Install.OS, arch)
+			key = fmt.Sprintf("%s%s", c.Install.OS, c.Install.Arch)
 		}
 	}
 	if tools.Compare("2.2.4", version) {

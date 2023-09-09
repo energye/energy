@@ -175,12 +175,14 @@ func checkInstallEnv(c *command.Config) (result []string) {
 			}
 		}
 	}
+
 	// go
 	check(func() bool {
 		return tools.CommandExists("go")
 	}, "Golang", func() {
 		c.Install.IGolang = true
 	})
+
 	// nsis
 	check(func() bool {
 		if nsisIsInstall() {
@@ -192,12 +194,36 @@ func checkInstallEnv(c *command.Config) (result []string) {
 	}, "NSIS", func() {
 		c.Install.INSIS = true
 	})
+
 	// cef
+	var cefName = fmt.Sprintf("CEF Framework %s%s", c.Install.OS, c.Install.Arch)
 	check(func() bool {
-		return tools.CheckCEFDir()
-	}, "CEF Framework", func() {
+		if c.Install.IsSame {
+			// 检查环境变量是否配置
+			return tools.CheckCEFDir()
+		}
+		// 非当月系统架构时检查一下目标安装路径是否已经存在
+		var lib = func() string {
+			if c.Install.OS.IsWindows() {
+				return "libcef.dll"
+			} else if c.Install.OS.IsLinux() {
+				return "libcef.so"
+			} else if c.Install.OS.IsDarwin() {
+				return "cef_sandbox.a"
+			}
+			return ""
+		}()
+		if lib != "" {
+			s := filepath.Join(cefInstallPathName(c), lib)
+			return tools.IsExist(s)
+		} else {
+			print("Unsupported system architecture")
+			return true
+		}
+	}, cefName, func() {
 		c.Install.ICEF = true
 	})
+
 	// upx
 	check(func() bool {
 		if upxIsInstall() {
