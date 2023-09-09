@@ -16,14 +16,13 @@ import (
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"path/filepath"
-	"runtime"
 )
 
 func installNSIS(c *command.Config) (string, func()) {
 	if !c.Install.INSIS {
 		return "", nil
 	}
-	if consts.IsWindows && runtime.GOARCH != "arm64" {
+	if consts.IsWindows && !consts.IsARM64 {
 		// 下载并安装配置NSIS
 		s := nsisInstallPathName(c) // 安装目录
 		version := consts.NSISDownloadVersion

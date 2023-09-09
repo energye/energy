@@ -141,11 +141,11 @@ func upxInstallPathName(c *command.Config) string {
 }
 
 func nsisIsInstall() bool {
-	return consts.IsWindows && runtime.GOARCH != "arm64"
+	return consts.IsWindows && !consts.IsARM64
 }
 
 func upxIsInstall() bool {
-	return (consts.IsWindows && runtime.GOARCH != "arm64") || (consts.IsLinux)
+	return (consts.IsWindows && !consts.IsARM64) || (consts.IsLinux)
 }
 
 // 检查当前环境

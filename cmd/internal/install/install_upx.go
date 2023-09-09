@@ -19,14 +19,13 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"os"
 	"path/filepath"
-	"runtime"
 )
 
 func installUPX(c *command.Config) (string, func()) {
 	if !c.Install.IUPX {
 		return "", nil
 	}
-	if (consts.IsWindows && runtime.GOARCH != "arm64") || (consts.IsLinux) {
+	if (consts.IsWindows && !consts.IsARM64) || (consts.IsLinux) {
 		s := upxInstallPathName(c) // 安装目录
 		if !tools.IsExist(s) {
 			os.MkdirAll(s, 0755)

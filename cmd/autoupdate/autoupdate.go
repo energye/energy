@@ -14,7 +14,9 @@ package autoupdate
 import (
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v2/cmd/internal"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/liblclbinres"
 	"io/ioutil"
 	"net/http"
@@ -67,7 +69,7 @@ func check() {
 	client := &http.Client{Timeout: 5 * time.Second, Transport: &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}}
-	request, err := http.NewRequest("GET", internal.CheckUpgradeURL, nil)
+	request, err := http.NewRequest("GET", consts.CheckUpgradeURL, nil)
 	if err != nil {
 		println("energy check update http.NewRequest error:", err.Error())
 		return
@@ -109,6 +111,36 @@ func liblcl(model *Model) {
 
 func LibLCLName(version, buildSupportOSArch string) (string, bool) {
 	return internal.LibLCLName(version, buildSupportOSArch)
+}
+
+// 命名规则 OS+[ARCH]+BIT+[GTK2]
+//  ARCH: 非必需, ARM 时填写, AMD为空
+//  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
+func liblclOS(version, buildSupportOSArch string) (string, bool) {
+	archs := strings.Split(buildSupportOSArch, ",")
+	var goarch string
+	if c.Install.OS.IsWindows() && c.Install.Arch.Is386() {
+		goarch = "32" // windows32 = > windows386
+	} else {
+		goarch = string(c.Install.Arch)
+	}
+	noSuport := fmt.Sprintf("%v %v", c.Install.OS, goarch)
+	var isSupport = func(goarch string) bool {
+		for _, v := range archs {
+			if goarch == v {
+				return true
+			}
+		}
+		return false
+	}
+	if name, isOld := liblclName(c, version, cef); isOld {
+		if name == "" {
+			return noSuport, false
+		}
+		return name, true
+	} else {
+		return name, isSupport(name)
+	}
 }
 
 // Version comparison, returns true if the current version is smaller than the remote version
