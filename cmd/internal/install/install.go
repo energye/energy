@@ -20,7 +20,9 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/pterm/pterm"
 	"io"
 	"io/fs"
 	"net/http"
@@ -40,8 +42,14 @@ type downloadInfo struct {
 	isSupport     bool
 	module        string
 }
+type softEnf struct {
+	name      string
+	desc      string
+	installed bool
+	yes       func()
+}
 
-func Install(c *command.Config) {
+func Install(c *command.Config) error {
 	// 初始配置和安装目录
 	initInstall(c)
 	// 检查环境
@@ -57,13 +65,44 @@ func Install(c *command.Config) {
 		upxSuccessCallback          func()
 	)
 	if len(willInstall) > 0 {
-		println("Following will be installed")
-		for _, name := range willInstall {
-			println("\t", name)
+		// energy 依赖的软件框架
+		tableData := pterm.TableData{
+			{"Software", "Installed", "Support Platform Description"},
 		}
-		println("Press Enter to start installation...")
-		var s string
-		fmt.Scanln(&s)
+		var options []string
+		for _, se := range willInstall {
+			var installed string
+			if se.installed {
+				installed = "Yes"
+			} else {
+				installed = "No"
+				options = append(options, se.name)
+				//se.yes()
+			}
+			var data = []string{se.name, installed, se.desc}
+			tableData = append(tableData, data)
+		}
+		term.Section.Println("Energy Development Environment Framework Dependencies")
+		err := pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
+		if err != nil {
+			return err
+		}
+		// 选择
+		if len(options) > 0 {
+			printer := term.DefaultInteractiveMultiselect.WithOnInterruptFunc(func() {
+				fmt.Println("exit")
+				os.Exit(1)
+			}).WithOptions(options)
+			printer.Checkmark.Checked = "+"
+			printer.Checkmark.Unchecked = "-"
+			printer.DefaultText = "Optional Installation"
+			printer.Filter = false
+			selectedOptions, err := printer.Show()
+			if err != nil {
+				return err
+			}
+			pterm.Info.Printfln("Selected options: %s", pterm.Green(selectedOptions))
+		}
 	}
 	// 安装Go开发环境
 	goRoot, goSuccessCallback = installGolang(c)
@@ -91,9 +130,7 @@ func Install(c *command.Config) {
 	}
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
-		println("-----------------------------------------------------\n-----------------------------------------------------")
-		println("Hint: Reopen the cmd window for command to take effect.")
-		println("-----------------------------------------------------\n-----------------------------------------------------")
+		term.BoxPrintln("Hint: Reopen the cmd window for command to take effect.")
 	}
 	if nsisSuccessCallback != nil {
 		nsisSuccessCallback()
@@ -107,17 +144,7 @@ func Install(c *command.Config) {
 	if cefFrameworkSuccessCallback != nil {
 		cefFrameworkSuccessCallback()
 	}
-	// end
-	//if len(willInstall) > 0 {
-	//	print("was installed: ")
-	//	for i, name := range willInstall {
-	//		if i > 0 {
-	//			print("|")
-	//		}
-	//		print(name)
-	//	}
-	//	println()
-	//}
+	return nil
 }
 
 func cefInstallPathName(c *command.Config) string {
@@ -154,53 +181,29 @@ func upxIsInstall() bool {
 //  nsis: windows
 //  cef: all os
 //  upx: windows amd64, 386, linux amd64, arm64
-func checkInstallEnv(c *command.Config) (result []string) {
-	skip := c.Install.All
-	var check = func(chkInstall func() bool, name string, yes func()) {
-		if chkInstall() {
-			println(" ", name, "installed")
-		} else {
-			fmt.Printf("  %s: Not installed, install %s ? (Y/n): ", name, name)
-			var s string
-			if !skip { // 跳过输入Y,
-				fmt.Scanln(&s)
-			} else {
-				s = "y"
-			}
-			if strings.ToLower(s) == "y" {
-				result = append(result, name)
-				yes()
-			} else {
-				println(" ", name, "install skip")
-			}
-		}
+func checkInstallEnv(c *command.Config) (result []*softEnf) {
+	result = make([]*softEnf, 0)
+	var check = func(chkInstall func() (string, bool), name string, yes func()) {
+		desc, ok := chkInstall()
+		result = append(result, &softEnf{name: name, desc: desc, installed: ok, yes: yes})
 	}
 
 	// go
-	check(func() bool {
-		return tools.CommandExists("go")
+	check(func() (string, bool) {
+		return "All", tools.CommandExists("go")
 	}, "Golang", func() {
 		c.Install.IGolang = true
 	})
 
-	// nsis
-	check(func() bool {
-		if nsisIsInstall() {
-			return tools.CommandExists("makensis")
-		} else {
-			print("  Non Windows amd64 skipping NSIS.")
-			return true
-		}
-	}, "NSIS", func() {
-		c.Install.INSIS = true
-	})
-
 	// cef
-	var cefName = fmt.Sprintf("CEF Framework %s%s", c.Install.OS, c.Install.Arch)
-	check(func() bool {
+	var cefName = "CEF Framework"
+	if !c.Install.IsSame {
+		cefName = fmt.Sprintf("CEF Framework %s%s", c.Install.OS, c.Install.Arch)
+	}
+	check(func() (string, bool) {
 		if c.Install.IsSame {
 			// 检查环境变量是否配置
-			return tools.CheckCEFDir()
+			return "All", tools.CheckCEFDir()
 		}
 		// 非当月系统架构时检查一下目标安装路径是否已经存在
 		var lib = func() string {
@@ -215,26 +218,45 @@ func checkInstallEnv(c *command.Config) (result []string) {
 		}()
 		if lib != "" {
 			s := filepath.Join(cefInstallPathName(c), lib)
-			return tools.IsExist(s)
+			return "All", tools.IsExist(s)
 		} else {
-			print("Unsupported system architecture")
-			return true
+			return "Unsupported Platform", true
 		}
 	}, cefName, func() {
 		c.Install.ICEF = true
 	})
-
-	// upx
-	check(func() bool {
-		if upxIsInstall() {
-			return tools.CommandExists("upx")
-		} else {
-			print("  Non Windows skipping UPX.")
-			return true
-		}
-	}, "UPX", func() {
-		c.Install.IUPX = true
-	})
+	if consts.IsWindows {
+		// nsis
+		check(func() (string, bool) {
+			if nsisIsInstall() {
+				return "Windows AMD", tools.CommandExists("makensis")
+			} else {
+				return "Non Windows AMD skipping NSIS.", true
+			}
+		}, "NSIS", func() {
+			c.Install.INSIS = true
+		})
+	}
+	if !consts.IsDarwin {
+		// upx
+		check(func() (string, bool) {
+			if upxIsInstall() {
+				return "Windows AMD, Linux", tools.CommandExists("upx")
+			} else {
+				return "Non Windows and Linux skipping UPX.", true
+			}
+		}, "UPX", func() {
+			c.Install.IUPX = true
+		})
+	}
+	if consts.IsLinux {
+		// gtk2
+		// gtk3
+		// dpkg
+	}
+	if consts.IsDarwin {
+		//
+	}
 	return
 }
 

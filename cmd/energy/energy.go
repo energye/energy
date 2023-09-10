@@ -11,12 +11,14 @@
 package main
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cmd/internal"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/jessevdk/go-flags"
 	"os"
 )
+
+type TermExit chan int
 
 var commands = []*command.Command{
 	nil,
@@ -30,15 +32,24 @@ var commands = []*command.Command{
 }
 
 func main() {
+	term.GoENERGY()
+	termExit := make(TermExit)
+	termRun(termExit)
+	//<-termExit
+}
+
+func termRun(exit TermExit) {
 	wd, _ := os.Getwd()
 	cc := &command.Config{Wd: wd}
 	parser := flags.NewParser(cc, flags.HelpFlag|flags.PassDoubleDash)
 	if len(os.Args) < 2 {
-		parser.WriteHelp(os.Stdout)
+		parser.WriteHelp(term.TermOut)
+		//exit <- 1
 		os.Exit(1)
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
-		fmt.Fprint(os.Stderr, err.Error()+"\n")
+		println(err.Error())
+		//exit <- 1
 		os.Exit(1)
 	} else {
 		switch parser.Active.Name {
@@ -57,14 +68,16 @@ func main() {
 		case "build":
 			cc.Index = 7
 		}
-		command := commands[cc.Index]
+		cmd := commands[cc.Index]
 		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {
-			fmt.Fprintf(os.Stderr, "%s\n%s", command.UsageLine, command.Long)
+			println(cmd.UsageLine, "\n", cmd.Long)
+			//exit <- 1
 			os.Exit(1)
 		}
-		fmt.Println(command.Short)
-		if err := command.Run(cc); err != nil {
-			fmt.Fprint(os.Stderr, err.Error()+"\n")
+		term.Section.Println(cmd.Short)
+		if err := cmd.Run(cc); err != nil {
+			println(err.Error())
+			//exit <- 1
 			os.Exit(1)
 		}
 	}

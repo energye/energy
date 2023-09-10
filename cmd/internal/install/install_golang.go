@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/fs"
 	"os"
@@ -38,9 +39,9 @@ func installGolang(c *command.Config) (string, func()) {
 	arch := runtime.GOARCH
 	ext := exts[gos]
 	if !tools.IsExist(s) {
-		println("Directory does not exist. Creating directory.", s)
+		term.Section.Println("Directory does not exist. Creating directory.", s)
 		if err := os.MkdirAll(s, fs.ModePerm); err != nil {
-			println("Failed to create goroot directory", err.Error())
+			term.Section.Println("Failed to create goroot directory", err.Error())
 			return "", nil
 		}
 	}
@@ -48,8 +49,8 @@ func installGolang(c *command.Config) (string, func()) {
 	downloadUrl := fmt.Sprintf(consts.GolangDownloadURL, fileName)
 	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
-	println("Golang Download URL:", downloadUrl)
-	println("Golang Save Path:", savePath)
+	term.Section.Println("Golang Download URL:", downloadUrl)
+	term.Section.Println("Golang Save Path:", savePath)
 	if !tools.IsExist(savePath) {
 		// 已经存在不再下载
 		bar := progressbar.NewBar(100)

@@ -46,6 +46,5 @@ func init() {
 // https://cef-builds.spotifycdn.com/cef_binary_107.1.11%2Bg26c0b5e%2Bchromium-107.0.5304.110_windows64.tar.bz2
 // 运行安装
 func runInstall(c *command.Config) error {
-	install.Install(c)
-	return nil
+	return install.Install(c)
 }
