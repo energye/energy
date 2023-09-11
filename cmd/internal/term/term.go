@@ -22,6 +22,7 @@ const (
 var Logger *pterm.Logger
 var TermOut = new(Termout)
 var Section *pterm.SectionPrinter
+var IsWindows10 = true
 
 func init() {
 	// logger

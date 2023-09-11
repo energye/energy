@@ -24,5 +24,6 @@ func init() {
 	ov := version.OSVersion
 	if ov.Major < 10 {
 		pterm.DisableColor()
+		IsWindows10 = false
 	}
 }

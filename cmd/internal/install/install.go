@@ -91,15 +91,14 @@ func Install(c *command.Config) error {
 			printer := term.DefaultInteractiveMultiselect.WithOnInterruptFunc(func() {
 				os.Exit(1)
 			}).WithOptions(options)
-			printer.Checkmark.Checked = "+"
-			printer.Checkmark.Unchecked = "-"
+			printer.CheckmarkANSI()
 			printer.DefaultText = "Optional Installation"
 			printer.Filter = false
 			selectedOptions, err := printer.Show()
 			if err != nil {
 				return err
 			}
-			pterm.Info.Printfln("Selected options: %s", pterm.Green(selectedOptions))
+			pterm.Info.Printfln("Selected : %s", pterm.Green(selectedOptions))
 			for _, option := range selectedOptions {
 				for _, wi := range willInstall {
 					if option == wi.name {

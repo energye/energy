@@ -85,6 +85,13 @@ func (p InteractiveMultiselectPrinter) WithOptions(options []string) *Interactiv
 	return &p
 }
 
+func (p *InteractiveMultiselectPrinter) CheckmarkANSI() {
+	if !IsWindows10 {
+		p.Checkmark.Checked = "+"
+		p.Checkmark.Unchecked = "-"
+	}
+}
+
 // WithDefaultOptions sets the default options.
 func (p InteractiveMultiselectPrinter) WithDefaultOptions(options []string) *InteractiveMultiselectPrinter {
 	p.DefaultOptions = options

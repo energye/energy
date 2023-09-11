@@ -15,8 +15,10 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
+	"github.com/pterm/pterm"
 	"io/fs"
 	"io/ioutil"
 	"os"
@@ -31,25 +33,44 @@ func InitEnergyProject(c *command.Config) error {
 	if err := generaProject(c); err != nil {
 		return err
 	}
-	println()
-	println("Successfully initialized the energy application project:", c.Init.Name)
-	println(`  website:
-	https://github.com/energye/energy
-	https://energy.yanghy.cn
-`)
-	println("  Run Application: go run main.go")
-	println(`  Building Application:
-	Use GO: go build -ldflags "-s -w"
-	Use Energy: energy build .
-`)
+	pterm.Println()
+	term.Section.Println("Successfully initialized the energy application project:", c.Init.Name)
+	term.Logger.Info("Website", term.Logger.Args("Github", "https://github.com/energye/energy", "ENERGY", "https://energy.yanghy.cn"))
+	term.Section.Println("Run Application")
+	tableData := pterm.TableData{
+		{"command-line"}, {"go run main.go"},
+	}
+	err := pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
+	if err != nil {
+		return err
+	}
+	term.Section.Println("Building Application")
+	tableData = pterm.TableData{
+		{"cmd name", "command-line"},
+	}
+	tableData = append(tableData, []string{"go", `go build -ldflags "-s -w"`})
+	tableData = append(tableData, []string{"energy", `energy build .`})
+	err = pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
+	if err != nil {
+		return err
+	}
+	term.Section.Println("Make install package")
+	tableData = pterm.TableData{
+		{"command-line"}, {"energy package ."},
+	}
+	err = pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func generaProject(c *command.Config) error {
+	pterm.Println()
 	projectPath := filepath.Join(c.Wd, c.Init.Name)
-	println("Create Project:", c.Init.Name)
+	term.Logger.Info("Create Project", term.Logger.Args("Name", c.Init.Name))
 	if tools.IsExist(projectPath) {
-		fmt.Printf("project dir %s exist, delete init files.\n", c.Init.Name)
+		term.Logger.Warn(fmt.Sprintf("Project dir `%s` exist, delete init default files.", c.Init.Name))
 		var deleteFiles = []string{consts.EnergyProjectConfig /*"resources", */, "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
 		for _, f := range deleteFiles {
 			path := filepath.Join(projectPath, f)
@@ -135,28 +156,21 @@ func generaProject(c *command.Config) error {
 	}
 
 	// cmd
-	println("Run go command-line")
+	term.Logger.Info("Config Go Environment")
 	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
 	cmd.Dir = projectPath
-	cmd.MessageCallback = func(bytes []byte, err error) {
-		s := string(bytes)
-		if s != "" {
-			println("\tCMD:", string(bytes))
-		} else if err != nil {
-			println("\tCMD-error:", err.Error())
-		}
-	}
 	if c.Init.IGo {
 		// cmd go env -w GO111MODULE=on
-		println("Enable Go mod management")
+		term.Logger.Info("Enable Go mod management", term.Logger.Args("command-line", "go env -w GO111MODULE=on"))
 		cmd.Command("go", []string{"env", "-w", "GO111MODULE=on"}...)
 
 		// cmd go env -w GOPROXY=https://goproxy.io,direct
-		println("Configure mod agent")
+		term.Logger.Info("Configure mod proxy", term.Logger.Args("command-line", "go env -w GOPROXY=https://goproxy.io,direct"))
 		cmd.Command("go", []string{"env", "-w", "GOPROXY=https://goproxy.io,direct"}...)
 
 		// cmd go mod tidy
-		println("Update Energy dependencies, version:")
+		term.Logger.Info("Update Energy dependencies", term.Logger.Args("command-line", "go mod tidy", "version", "latest"))
 		cmd.Command("go", []string{"mod", "tidy"}...)
 	}
 	cmd.Close()
@@ -164,10 +178,10 @@ func generaProject(c *command.Config) error {
 }
 
 func checkEnv(init *command.Init) {
-	println("Check the current environment and follow the prompts if there are any warnings")
+	term.Logger.Info("Check the current environment and follow the prompts if there are any")
 	// 检查Go环境
 	if !tools.CommandExists("go") {
-		println("Warning: Golang development environment not installed, Download-URL: https://golang.google.cn/dl/")
+		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/"))
 	} else {
 		var version string
 		cmd := toolsCommand.NewCMD()
@@ -187,35 +201,34 @@ func checkEnv(init *command.Init) {
 			d := strings.Split(version, ".")
 			if len(d) == 3 {
 				if tools.ToInt(d[0]) < 1 || tools.ToInt(d[1]) < 18 {
-					println(`Warning: current installed Go version should be greater than 1.18. version:`, version)
+					term.Logger.Warn(`Current installed Go version should be greater than 1.18.`, term.Logger.Args("Version", version))
 				}
 			}
 		}
-		println("\tGolang OK")
+		term.Logger.Info("Golang OK")
 		init.IGo = true
 	}
 	// 检查nsis
 	if !tools.CommandExists("makensis") {
-		println(`Warning: NSIS not installed, Unable to create installation package through energy command line`)
+		term.Logger.Warn(`NSIS not installed, Unable to create installation package through energy command line.`)
 	} else {
-		println("\tNSIS OK")
+		term.Logger.Info(`NSIS OK`)
 		init.INSIS = true
 	}
 	// 检查ENERGY_HOME
 	if !tools.CheckCEFDir() {
-		println(`Warning: Dependency framework CEF is not installed or configured to the ENERGY_HOME environment variable
+		term.Logger.Warn(`Dependency framework CEF is not installed or configured to the ENERGY_HOME environment variable
 	There are several ways to install, configure, or check the environment
-		"energy install ." Installation and development environment
-`)
+		"energy install ." Installation and development environment`)
 	} else {
-		println("\tCEF Framework OK")
+		term.Logger.Info("CEF Framework OK")
 		init.IEnv = true
 	}
 	// 检查 node npm
 	if !tools.CommandExists("npm") {
-		println(`Warning: Installing node allows you to build the UI using, for example, a front-end framework (vue), Download URL: https://nodejs.org/`)
+		term.Logger.Warn(`Installing node allows you to build the UI using, for example, a front-end framework (vue)`, term.Logger.Args("Download URL", "https://nodejs.org/"))
 	} else {
-		println("\tNode npm OK")
+		term.Logger.Info("Node npm OK")
 		init.INpm = true
 	}
 }

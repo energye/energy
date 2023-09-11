@@ -16,6 +16,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/initialize"
+	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/pterm/pterm"
+	"os"
 	"strings"
 )
 
@@ -43,15 +46,24 @@ func runInit(c *command.Config) error {
 		}
 	}
 	m.Name = strings.TrimSpace(m.Name)
-	if strings.TrimSpace(m.ResLoad) == "" {
-		println("Resource loading method, default 1 HTTP")
-		print("1: HTTP\n2: Local Load\n  Number: ")
-		fmt.Scan(&m.ResLoad)
-		println()
+
+	options := []string{"HTTP", "Local Load"}
+	printer := term.DefaultInteractiveSelect.WithOnInterruptFunc(func() {
+		os.Exit(1)
+	}).WithOptions(options)
+	printer.CheckmarkANSI()
+	printer.DefaultText = "Resource Loading. Default HTTP"
+	printer.Filter = false
+	selectedOption, err := printer.Show()
+	if err != nil {
+		return err
 	}
-	m.ResLoad = strings.TrimSpace(m.ResLoad)
-	if m.ResLoad == "" || (m.ResLoad != "1" && m.ResLoad != "2") {
+	pterm.Info.Printfln("Selected: %s", pterm.Green(selectedOption))
+	if selectedOption == "" || selectedOption == "HTTP" {
 		m.ResLoad = "1"
+	} else if selectedOption == "Local Load" {
+		m.ResLoad = "2"
 	}
+
 	return initialize.InitEnergyProject(c)
 }
