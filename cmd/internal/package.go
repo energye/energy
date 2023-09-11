@@ -26,8 +26,7 @@ var CmdPackage = &command.Command{
 
 Making an Installation Package
 	Windows: 
-		Download: https://nsis.sourceforge.io/ 
-		Install and configure to Path environment variable
+		Creating an installation program using NSIS for Windows
 	Linux: 
 		Creating deb installation packages using dpkg
 	MacOS:
