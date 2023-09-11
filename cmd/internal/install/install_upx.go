@@ -40,13 +40,6 @@ func installUPX(c *command.Config) (string, func()) {
 			defer targetFile.Close()
 			term.Section.Println("extract file: ", upxName)
 
-			p, err := pterm.DefaultProgressbar.WithTotal(100).WithTitle("Write File " + upxName).Start()
-			if err != nil {
-				return "", nil
-			}
-			defer p.Stop()
-			var count int
-
 			fs, err := assets.UpxBytes()
 			if err != nil {
 				term.Logger.Error("UPX Installed Error: " + err.Error())
@@ -57,13 +50,28 @@ func installUPX(c *command.Config) (string, func()) {
 				term.Logger.Error("UPX Installed Error: " + err.Error())
 				return "", nil
 			}
+
+			var (
+				total = 100
+				count int
+				cn    int
+			)
+			p, err := pterm.DefaultProgressbar.WithTotal(total).WithTitle("Write File " + upxName).Start()
+			if err != nil {
+				return "", nil
+			}
 			writeFile(fs, targetFile, stat.Size(), func(totalLength, processLength int64) {
 				process := int((float64(processLength) / float64(totalLength)) * 100)
 				if process > count {
 					count = process
 					p.Add(1)
+					cn++
 				}
 			})
+			if cn < total {
+				p.Add(total - cn)
+			}
+			p.Stop()
 			return s, func() {
 				term.Logger.Info("UPX Installed Successfully ", term.Logger.Args("Version", assets.UpxVersion))
 			}

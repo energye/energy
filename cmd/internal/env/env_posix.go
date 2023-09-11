@@ -17,6 +17,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/energy/homedir"
 	toolsCommand "github.com/energye/golcl/tools/command"
@@ -30,19 +31,19 @@ import (
 func SetUPXEnv(upxRoot string) {
 	upx := filepath.Join(upxRoot, "upx")
 	if !tools.IsExist(upx) {
-		println("\nError: Failed to set the UPX environment variable, not a correct UPX installation directory. ", upxRoot)
+		term.Logger.Error("Failed to set the UPX environment variable, not a correct UPX installation directory. " + upxRoot)
 		return
 	}
-	println("\nSetting UPX environment Variables to:", upxRoot)
+	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args("UPX_HOME", upxRoot))
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
 		msg := strings.TrimSpace(string(s))
 		if msg != "" {
-			fmt.Println("CMD:", msg)
+			term.Logger.Info("CMD " + msg)
 		}
 		if e != nil {
-			fmt.Println("CMD Error:", e)
+			term.Logger.Error("CMD " + e.Error())
 		}
 	}
 	defer cmd.Close()
@@ -50,7 +51,7 @@ func SetUPXEnv(upxRoot string) {
 	var exPath = "export PATH=$PATH:$UPX_HOME"
 	var exs = []string{exUpxRoot, exPath}
 	setPosixEnv(exs, exPath, "$UPX_HOME")
-	println("Hint: Reopen the cmd window for the upx command to take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
 }
 
 func SetNSISEnv(nsisRoot string) {
@@ -60,19 +61,19 @@ func SetNSISEnv(nsisRoot string) {
 func SetGoEnv(goRoot string) {
 	goBin := filepath.Join(goRoot, "bin", "go")
 	if !tools.IsExist(goBin) {
-		println("\nError: Failed to set the Golang environment variable, not a correct Golang installation directory. ", goRoot)
+		term.Logger.Error("Error: Failed to set the Golang environment variable, not a correct Golang installation directory. " + goRoot)
 		return
 	}
-	println("\nSetting Golang environment Variables to:", goRoot)
+	term.Logger.Info("Setting Golang environment Variables: ", term.Logger.Args("GOROOT", goRoot, "GOCACHE", "%GOROOT%\\go-build", "GOBIN", "%GOROOT%\\bin"))
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
 		msg := strings.TrimSpace(string(s))
 		if msg != "" {
-			fmt.Println("CMD:", msg)
+			term.Logger.Info("CMD " + msg)
 		}
 		if e != nil {
-			fmt.Println("CMD Error:", e)
+			term.Logger.Error("CMD " + e.Error())
 		}
 	}
 	defer cmd.Close()
@@ -86,7 +87,7 @@ func SetGoEnv(goRoot string) {
 	var exPath = "export PATH=$PATH:$GOBIN"
 	var exs = []string{exGoRoot, exGoCache, exGoBin}
 	setPosixEnv(exs, exPath, "$GOBIN")
-	println("\nHint: Reopen the cmd window for the Go command to take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window for the Go command to take effect.")
 }
 
 func SetEnergyHomeEnv(homePath string) {
@@ -98,26 +99,26 @@ func SetEnergyHomeEnv(homePath string) {
 	}
 	cefPath := filepath.Join(homePath, cef)
 	if !tools.IsExist(cefPath) {
-		println("\nError: Setting the ENERGY_HOME environment variable failed and is not a correct CEF Framework installation directory. ", homePath)
+		term.Logger.Error("Error: Setting ENERGY_HOME environment variable failed and is not a correct CEF Framework installation directory. " + homePath)
 		return
 	}
-	println("\nSetting environment Variables [ENERGY_HOME] to", homePath)
+	term.Logger.Info("Setting ENERGY environment Variables [ENERGY_HOME] to " + homePath)
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.MessageCallback = func(s []byte, e error) {
 		msg := strings.TrimSpace(string(s))
 		if msg != "" {
-			fmt.Println("CMD:", msg)
+			term.Logger.Info("CMD " + msg)
 		}
 		if e != nil {
-			fmt.Println("CMD Error:", e)
+			term.Logger.Error("CMD " + e.Error())
 		}
 	}
 	defer cmd.Close()
 	var energyHome = fmt.Sprintf("export %s=%s", consts.EnergyHomeKey, homePath)
 	exs := []string{energyHome}
 	setPosixEnv(exs, "", "")
-	println("\nHint: Reopen the cmd window to make the environment variables take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window to make the environment variables take effect.")
 }
 
 func setPosixEnv(exs []string, binPath, bin string) {

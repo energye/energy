@@ -29,7 +29,7 @@ func SetUPXEnv(upxRoot string) {
 		term.Logger.Error("Failed to set the UPX environment variable, not a correct UPX installation directory. " + upxRoot)
 		return
 	}
-	term.Logger.Info("Setting UPX environment Variables to: " + upxRoot)
+	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args("UPX_HOME", upxRoot))
 	setWindowsEnv(consts.UPXHomeKey, upxRoot)
 	appendWindowsEnv("Path", "%UPX_HOME%")
 	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
@@ -41,7 +41,7 @@ func SetNSISEnv(nsisRoot string) {
 		term.Logger.Error("Error: Failed to set the NSIS environment variable, not a correct NSIS installation directory. " + nsisRoot)
 		return
 	}
-	term.Logger.Info("Setting NSIS environment Variables to: " + nsisRoot)
+	term.Logger.Info("Setting NSIS environment Variables: ", term.Logger.Args("NSIS_HOME", nsisRoot))
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set(consts.NSISHomeKey, nsisRoot)
@@ -58,7 +58,7 @@ func SetGoEnv(goRoot string) {
 		term.Logger.Error("Error: Failed to set the Golang environment variable, not a correct Golang installation directory. " + goRoot)
 		return
 	}
-	term.Logger.Info("Setting Golang environment Variables to: " + goRoot)
+	term.Logger.Info("Setting Golang environment Variables: ", term.Logger.Args("GOROOT", goRoot, "GOCACHE", "%GOROOT%\\go-build", "GOBIN", "%GOROOT%\\bin"))
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set("GOROOT", goRoot)

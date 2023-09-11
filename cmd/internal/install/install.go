@@ -431,9 +431,13 @@ func ExtractUnTar(filePath, targetPath string, files ...any) error {
 			if err != nil {
 				return err
 			}
-			var c int
+			var (
+				total = 100
+				c     int
+				cn    int
+			)
 			_, fileName := filepath.Split(targetFile)
-			wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(100).Start("Write File " + fileName)
+			wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(total).Start("Write File " + fileName)
 			if err != nil {
 				return err
 			}
@@ -442,9 +446,12 @@ func ExtractUnTar(filePath, targetPath string, files ...any) error {
 				if process > c {
 					c = process
 					wfpb.Add(process)
+					cn++
 				}
 			})
-			wfpb.WithCurrent(100).Add(0)
+			if cn < total {
+				wfpb.Add(total - cn)
+			}
 			wfpb.Stop()
 			file.Sync()
 			file.Close()
@@ -475,8 +482,12 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 			}
 			if targetFile, err := os.Create(targetFileName); err == nil {
 				defer targetFile.Close()
-				var c int
-				wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(100).Start("Write File " + name)
+				var (
+					total = 100
+					c     int
+					cn    int
+				)
+				wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(total).Start("Write File " + name)
 				if err != nil {
 					return err
 				}
@@ -485,8 +496,12 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 					if process > c {
 						c = process
 						wfpb.Add(process)
+						cn++
 					}
 				})
+				if cn < total {
+					wfpb.Add(total - cn)
+				}
 				wfpb.Stop()
 				return nil
 			} else {
@@ -634,16 +649,19 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 		return errors.New("body is null")
 	}
 	defer resp.Body.Close()
+	total := 100
 	_, fileName := filepath.Split(localPath)
-	p, err := pterm.DefaultProgressbar.WithTotal(100).WithTitle("Download " + fileName).Start()
+	p, err := pterm.DefaultProgressbar.WithTotal(total).WithTitle("Download " + fileName).Start()
 	if err != nil {
 		return err
 	}
 	defer func() {
-		p.WithCurrent(100).Add(0)
 		p.Stop()
 	}()
-	var count int
+	var (
+		count int
+		cn    int
+	)
 	var nw int
 	for {
 		nr, er := resp.Body.Read(buf)
@@ -659,6 +677,7 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 				if process > count {
 					count = process
 					p.Add(1)
+					cn++
 				}
 			}
 			if err != nil {
@@ -676,6 +695,10 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 			break
 		}
 	}
+	if cn < total {
+		p.Add(total - cn)
+	}
+	p.Stop()
 	if err == nil {
 		file.Sync()
 		file.Close()
