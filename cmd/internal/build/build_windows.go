@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/energy/v2/pkgs/winicon"
 	"github.com/energye/energy/v2/pkgs/winres"
@@ -65,20 +66,12 @@ func build(c *command.Config) error {
 		cmd := toolsCommand.NewCMD()
 		cmd.Dir = proj.ProjectPath
 		cmd.IsPrint = false
-		cmd.MessageCallback = func(msg []byte, e error) {
-			if e != nil {
-				fmt.Println("  build-error:", e.Error())
-				err = e
-			} else if len(msg) > 0 {
-				fmt.Println("  build:", string(msg))
-			}
-		}
-		println("Building", proj.OutputFilename)
+		term.Section.Println("Building", proj.OutputFilename)
 		var args = []string{"build", "-ldflags", "-H windowsgui -s -w", "-o", proj.OutputFilename}
 		cmd.Command("go", args...)
 		// upx
 		if c.Build.Upx && tools.CommandExists("upx") {
-			println("Upx compression")
+			term.Section.Println("Upx compression")
 			args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
 			if c.Build.UpxFlag != "" {
 				args = strings.Split(c.Build.UpxFlag, " ")
@@ -88,7 +81,7 @@ func build(c *command.Config) error {
 		}
 		cmd.Close()
 		if err == nil {
-			println("Build Successfully")
+			term.Section.Println("Build Successfully")
 		}
 	}
 
