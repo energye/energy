@@ -36,7 +36,8 @@ func installUPX(c *command.Config) (string, func()) {
 			upxName += ".exe"
 		}
 		targetFileName := filepath.Join(s, upxName) // 保存安装目录
-		if targetFile, err := os.Create(targetFileName); err == nil {
+
+		if targetFile, err := os.OpenFile(targetFileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, os.ModePerm); err == nil {
 			defer targetFile.Close()
 			term.Section.Println("extract file: ", upxName)
 

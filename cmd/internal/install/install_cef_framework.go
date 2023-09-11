@@ -189,7 +189,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 
 	// 在线下载框架二进制包
 	for key, dl := range downloads {
-		term.Section.Println("Download %s: %s\n", key, dl.url)
+		term.Section.Println("Download", key, ":", dl.url)
 		if !dl.isSupport {
 			term.Logger.Warn("Warn module is not built or configured [" + dl.module + "]")
 			continue
