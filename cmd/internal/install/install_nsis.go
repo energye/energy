@@ -13,8 +13,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/pterm/pterm"
 	"path/filepath"
 )
 
@@ -23,6 +24,7 @@ func installNSIS(c *command.Config) (string, func()) {
 		return "", nil
 	}
 	if consts.IsWindows && !consts.IsARM64 {
+		pterm.Println()
 		// 下载并安装配置NSIS
 		s := nsisInstallPathName(c) // 安装目录
 		version := consts.NSISDownloadVersion
@@ -30,20 +32,14 @@ func installNSIS(c *command.Config) (string, func()) {
 		downloadUrl := fmt.Sprintf(consts.NSISDownloadURL, fileName)
 		savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 		var err error
-		println("Golang Download URL:", downloadUrl)
-		println("Golang Save Path:", savePath)
+		term.Logger.Info("Golang Download URL: " + downloadUrl)
+		term.Logger.Info("Golang Save Path: " + savePath)
 		if !tools.IsExist(savePath) {
-			// 已经存在不再下载
-			bar := progressbar.NewBar(100)
-			bar.SetNotice("\t")
-			bar.HideRatio()
-			err = downloadFile(downloadUrl, savePath, func(totalLength, processLength int64) {
-				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
-			})
+			err = DownloadFile(downloadUrl, savePath, nil)
 			if err != nil {
-				bar.PrintEnd("Download [" + fileName + "] failed: " + err.Error())
+				term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 			} else {
-				bar.PrintEnd("Download [" + fileName + "] success")
+				term.Logger.Info("Download ["+fileName+"]", term.Logger.Args(fileName, "success"))
 			}
 		}
 		if err == nil {
@@ -52,11 +48,11 @@ func installNSIS(c *command.Config) (string, func()) {
 			// 释放文件
 			//zip
 			if err = ExtractUnZip(savePath, targetPath, true); err != nil {
-				println(err)
+				term.Logger.Error(err.Error())
 				return "", nil
 			}
 			return targetPath, func() {
-				println("NSIS Installed Successfully Version:", version)
+				term.Logger.Info("NSIS Installed Successfully", term.Logger.Args("Version", version))
 			}
 		}
 	}

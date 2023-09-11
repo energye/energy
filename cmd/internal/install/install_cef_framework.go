@@ -16,8 +16,9 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/pterm/pterm"
 	"net/url"
 	"path/filepath"
 	"strconv"
@@ -28,16 +29,17 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	if !c.Install.ICEF {
 		return "", nil
 	}
+	pterm.Println()
 	// 获取提取文件配置
 	extractData, err := tools.HttpRequestGET(consts.DownloadExtractURL)
 	if err != nil {
-		fmt.Println("Error:", err.Error())
+		term.Logger.Error(err.Error())
 		return "", nil
 	}
 	var extractConfig map[string]any
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
-		fmt.Println("Error:", err.Error())
+		term.Logger.Error(err.Error())
 		return "", nil
 	}
 	extractOSConfig := extractConfig[string(c.Install.OS)].(map[string]any)
@@ -45,13 +47,13 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// 获取安装版本配置
 	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
 	if err != nil {
-		fmt.Println("Error:", err.Error())
+		term.Logger.Error(err.Error())
 		return "", nil
 	}
 	var edv map[string]any
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
-		fmt.Println("Error:", err.Error())
+		term.Logger.Error(err.Error())
 		return "", nil
 	}
 
@@ -59,13 +61,13 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
 	if cef != consts.CefEmpty && cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87 {
-		fmt.Println("Error:", "-c [cef] Incorrect args value")
+		term.Logger.Error("-c [cef] Incorrect args value")
 		return "", nil
 	}
 	installPathName := cefInstallPathName(c)
-	println("Install Path", installPathName)
+	term.Section.Println("Install Path", installPathName)
 
-	println("Start downloading CEF and Energy dependency")
+	term.Section.Println("Start downloading CEF and Energy dependency")
 	// 所有版本列表
 	var versionList = edv["versionList"].(map[string]any)
 
@@ -82,9 +84,9 @@ func installCEFFramework(c *command.Config) (string, func()) {
 			installVersion = v.(map[string]any)
 		}
 	}
-	println("Check version")
+	term.Section.Println("Check version")
 	if installVersion == nil || len(installVersion) == 0 {
-		fmt.Println("Error:", "Invalid version number ", c.Install.Version)
+		term.Logger.Error("Invalid version number " + c.Install.Version)
 		return "", nil
 	}
 	// 当前版本 cef 和 liblcl 版本选择
@@ -143,7 +145,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		liblclModule = module.(map[string]any)
 	}
 	if cefModule == nil {
-		fmt.Println("Error:", "CEF module", cefModuleName, "is not configured in the current version")
+		term.Logger.Error("CEF module " + cefModuleName + " is not configured in the current version")
 		return "", nil
 	}
 	// 下载源选择
@@ -187,60 +189,57 @@ func installCEFFramework(c *command.Config) (string, func()) {
 
 	// 在线下载框架二进制包
 	for key, dl := range downloads {
-		fmt.Printf("Download %s: %s\n", key, dl.url)
+		term.Section.Println("Download %s: %s\n", key, dl.url)
 		if !dl.isSupport {
-			println("Warn module is not built or configured 【", dl.module, "】")
+			term.Logger.Warn("Warn module is not built or configured [" + dl.module + "]")
 			continue
 		}
-		bar := progressbar.NewBar(100)
-		bar.SetNotice("\t")
-		bar.HideRatio()
-		err = downloadFile(dl.url, dl.downloadPath, func(totalLength, processLength int64) {
-			bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
-		})
-		bar.PrintEnd("Download [" + dl.fileName + "] success")
+		err = DownloadFile(dl.url, dl.downloadPath, nil)
 		if err != nil {
-			fmt.Println("Error:", "Download [", dl.fileName, "]", err.Error())
+			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
 			return "", nil
 		}
 		dl.success = err == nil
 	}
 	// 解压文件, 并根据配置提取文件
-	println("Unpack files")
+	term.Logger.Info("Unpack files")
 	for key, di := range downloads {
 		if !di.isSupport {
-			println("Warn module is not built or configured 【", di.module, "】")
+			term.Logger.Warn("module is not built or configured [" + di.module + "]")
 			continue
 		}
 		if di.success {
 			if key == consts.CefKey {
-				bar := progressbar.NewBar(0)
-				bar.SetNotice("Unpack file " + key + ": ")
-				tarName, err := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
-					bar.PrintSizeBar(processLength)
-				})
+				processBar, err := pterm.DefaultProgressbar.WithShowCount(false).WithShowPercentage(false).WithMaxWidth(1).Start()
 				if err != nil {
-					println(err.Error())
+					term.Logger.Error(err.Error())
 					return "", nil
 				}
-				bar.PrintEnd()
+				tarName, err := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
+					processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
+				})
+				processBar.Stop()
+				if err != nil {
+					term.Logger.Error(err.Error())
+					return "", nil
+				}
 				if err := ExtractFiles(key, tarName, di, extractOSConfig); err != nil {
-					println(err.Error())
+					term.Logger.Error(err.Error())
 					return "", nil
 				}
 			} else if key == consts.LiblclKey {
 				if err := ExtractFiles(key, di.downloadPath, di, extractOSConfig); err != nil {
-					println(err.Error())
+					term.Logger.Error(err.Error())
 					return "", nil
 				}
 			}
-			println("Unpack file", key, "success\n")
+			term.Section.Println("Unpack file", key, "success")
 		}
 	}
 	return installPathName, func() {
-		println("CEF Installed Successfully Version:", c.Install.Version, liblclVersion)
+		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", c.Install.Version, "liblcl", liblclVersion))
 		if liblclModule == nil {
-			println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
 		}
 	}
 }
@@ -257,36 +256,6 @@ func cefOS(c *command.Config, module map[string]any) (string, bool) {
 		}
 		return false
 	}
-
-	//if consts.IsWindows { // windows arm for 64 bit, windows for 32/64 bit
-	//	if consts.IsARM64 {
-	//		return "windowsarm64", isSupport(consts.WindowsARM64)
-	//	}
-	//	if strconv.IntSize == 32 {
-	//		return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows32)
-	//	}
-	//	return fmt.Sprintf("windows%d", strconv.IntSize), isSupport(consts.Windows64)
-	//} else if consts.IsLinux { //linux for 64 bit
-	//	if consts.IsARM64 {
-	//		if mod == consts.Cef106 {
-	//			return "linuxarm64", isSupport(consts.LinuxARM64GTK2)
-	//		}
-	//		return "linuxarm64", isSupport(consts.LinuxARM64) || isSupport(consts.LinuxARM64GTK3)
-	//	} else if consts.IsAMD64 {
-	//		if mod == consts.Cef106 {
-	//			return "linux64", isSupport(consts.Linux64GTK2)
-	//		}
-	//		return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
-	//	}
-	//} else if consts.IsDarwin { // macosx for 64 bit
-	//	//if runtime.GOARCH == "arm64" {
-	//	//	return "macosarm64", isSupport(MacOSARM64)
-	//	//} else if runtime.GOARCH == "amd64" {
-	//	//	return "macosx64", isSupport(MacOSX64)
-	//	//}
-	//	// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
-	//	return "macosx64", isSupport(consts.MacOSX64)
-	//}
 
 	if c.Install.OS.IsWindows() { // windows arm for 64 bit, windows for 32/64 bit
 		if c.Install.Arch.IsARM64() {

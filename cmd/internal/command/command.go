@@ -14,15 +14,16 @@ type OS string
 type Arch string
 
 type Config struct {
-	Index   int
-	Wd      string
-	Install Install `command:"install" description:"install energy development dependency environment"`
-	Package Package `command:"package" description:"energy application production and installation package"`
-	Version Version `command:"version" description:"list all release version numbers of energy"`
-	Setenv  Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
-	Env     Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
-	Init    Init    `command:"init" description:"initialize the energy application project"`
-	Build   Build   `command:"build" description:"building an energy project"`
+	Index     int
+	Wd        string
+	EnergyCfg EnergyConfig
+	Install   Install `command:"install" description:"install energy development dependency environment"`
+	Package   Package `command:"package" description:"energy application production and installation package"`
+	Version   Version `command:"version" description:"list all release version numbers of energy"`
+	Setenv    Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
+	Env       Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
+	Init      Init    `command:"init" description:"initialize the energy application project"`
+	Build     Build   `command:"build" description:"building an energy project"`
 }
 
 type Command struct {
@@ -75,6 +76,15 @@ type Build struct {
 	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
 	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file. windows"`
 	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
+}
+
+type EnergyConfig struct {
+	Source DownloadSource `json:"source"`
+}
+
+type DownloadSource struct {
+	Golang string `json:"golang"`
+	CEF    string `json:"cef"`
 }
 
 func (m OS) IsWindows() bool {

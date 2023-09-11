@@ -19,7 +19,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
-	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
@@ -90,7 +89,6 @@ func Install(c *command.Config) error {
 		// 选择
 		if len(options) > 0 {
 			printer := term.DefaultInteractiveMultiselect.WithOnInterruptFunc(func() {
-				fmt.Println("exit")
 				os.Exit(1)
 			}).WithOptions(options)
 			printer.Checkmark.Checked = "+"
@@ -102,6 +100,14 @@ func Install(c *command.Config) error {
 				return err
 			}
 			pterm.Info.Printfln("Selected options: %s", pterm.Green(selectedOptions))
+			for _, option := range selectedOptions {
+				for _, wi := range willInstall {
+					if option == wi.name {
+						wi.yes()
+						break
+					}
+				}
+			}
 		}
 	}
 	// 安装Go开发环境
@@ -353,35 +359,64 @@ func tarFileReader(filePath string) (*tar.Reader, func(), error) {
 	}
 }
 
+func tarFileCount(filePath string) (int, error) {
+	tarReader, clos, err := tarFileReader(filePath)
+	if err != nil {
+		return 0, err
+	}
+	defer clos()
+	var count int
+	for {
+		_, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return 0, err
+		}
+		count++
+	}
+	return count, nil
+}
+
 func ExtractUnTar(filePath, targetPath string, files ...any) error {
-	tarReader, close, err := tarFileReader(filePath)
+	term.Logger.Info("Read Files Number")
+	fileCount, err := tarFileCount(filePath)
+	println(fileCount)
 	if err != nil {
 		return err
 	}
-	defer close()
-	bar := progressbar.NewBar(100)
-	bar.SetNotice("\t")
-	bar.HideRatio()
+	tarReader, clos, err := tarFileReader(filePath)
+	if err != nil {
+		return err
+	}
+	defer clos()
+	multi := pterm.DefaultMultiPrinter
+	defer multi.Stop()
+	fileTotalProcessBar := pterm.DefaultProgressbar.WithWriter(multi.NewWriter())
+	writeFileProcessBar := pterm.DefaultProgressbar.WithWriter(multi.NewWriter())
+	extractFilesProcessBar, err := fileTotalProcessBar.WithTotal(fileCount).Start("Extract File")
+	if err != nil {
+		return err
+	}
+	multi.Start()
 	for {
 		header, err := tarReader.Next()
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			fmt.Printf("error: cannot read tar file, error=[%v]\n", err)
 			return err
 		}
+		extractFilesProcessBar.Increment()
 		// 去除压缩包内的一级目录
 		compressPath := filepath.Clean(header.Name[strings.Index(header.Name, "/")+1:])
 		includePath, isInclude := filePathInclude(compressPath, files...)
 		if !isInclude {
 			continue
 		}
-		fmt.Println("compressPath:", compressPath)
 		info := header.FileInfo()
 		targetFile := filepath.Join(targetPath, includePath)
 		if info.IsDir() {
 			if err = os.MkdirAll(targetFile, info.Mode()); err != nil {
-				fmt.Printf("error: cannot mkdir file, error=[%v]\n", err)
 				return err
 			}
 		} else {
@@ -389,25 +424,31 @@ func ExtractUnTar(filePath, targetPath string, files ...any) error {
 			_, err = os.Stat(fDir)
 			if os.IsNotExist(err) {
 				if err = os.MkdirAll(fDir, info.Mode()); err != nil {
-					fmt.Printf("error: cannot file mkdir file, error=[%v]\n", err)
 					return err
 				}
 			}
 			file, err := os.OpenFile(targetFile, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
 			if err != nil {
-				fmt.Printf("error: cannot open file, error=[%v]\n", err)
 				return err
 			}
-			bar.SetCurrentValue(0)
+			var c int
+			_, fileName := filepath.Split(targetFile)
+			wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(100).Start("Write File " + fileName)
+			if err != nil {
+				return err
+			}
 			writeFile(tarReader, file, header.Size, func(totalLength, processLength int64) {
-				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+				process := int((float64(processLength) / float64(totalLength)) * 100)
+				if process > c {
+					c = process
+					wfpb.Add(process)
+				}
 			})
+			wfpb.WithCurrent(100).Add(0)
+			wfpb.Stop()
 			file.Sync()
 			file.Close()
-			bar.PrintBar(100)
-			bar.PrintEnd()
 			if err != nil {
-				fmt.Printf("error: cannot write file, error=[%v]\n", err)
 				return err
 			}
 		}
@@ -418,38 +459,50 @@ func ExtractUnTar(filePath, targetPath string, files ...any) error {
 func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) error {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
-		bar := progressbar.NewBar(100)
-		bar.SetNotice("\t")
-		bar.HideRatio()
+		multi := pterm.DefaultMultiPrinter
+		defer multi.Stop()
+		fileTotalProcessBar := pterm.DefaultProgressbar.WithWriter(multi.NewWriter())
+		writeFileProcessBar := pterm.DefaultProgressbar.WithWriter(multi.NewWriter())
 		var createWriteFile = func(info fs.FileInfo, path string, file io.Reader) error {
 			targetFileName := filepath.Join(targetPath, path)
 			if info.IsDir() {
 				os.MkdirAll(targetFileName, info.Mode())
 				return nil
 			}
-			fDir := filepath.Dir(targetFileName)
+			fDir, name := filepath.Split(targetFileName)
 			if !tools.IsExist(fDir) {
 				os.MkdirAll(fDir, 0755)
 			}
 			if targetFile, err := os.Create(targetFileName); err == nil {
 				defer targetFile.Close()
-				fmt.Println("extract file: ", path)
-				bar.SetCurrentValue(0)
+				var c int
+				wfpb, err := writeFileProcessBar.WithCurrent(0).WithTotal(100).Start("Write File " + name)
+				if err != nil {
+					return err
+				}
 				writeFile(file, targetFile, info.Size(), func(totalLength, processLength int64) {
-					bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+					process := int((float64(processLength) / float64(totalLength)) * 100)
+					if process > c {
+						c = process
+						wfpb.Add(process)
+					}
 				})
-				bar.PrintBar(100)
-				bar.PrintEnd()
+				wfpb.Stop()
 				return nil
 			} else {
-				println("createWriteFile", err.Error())
 				return err
 			}
 		}
 		// 所有文件
 		if len(files) == 0 {
 			zipFiles := rc.File
+			extractFilesProcessBar, err := fileTotalProcessBar.WithTotal(len(zipFiles)).Start("Extract File")
+			if err != nil {
+				return err
+			}
+			multi.Start()
 			for _, f := range zipFiles {
+				extractFilesProcessBar.Increment() // +1
 				r, _ := f.Open()
 				var name string
 				if rmRootDir {
@@ -465,8 +518,14 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 			}
 			return nil
 		} else {
+			extractFilesProcessBar, err := fileTotalProcessBar.WithTotal(len(files)).Start("Extract File")
+			if err != nil {
+				return err
+			}
+			multi.Start()
 			// 指定名字的文件
 			for i := 0; i < len(files); i++ {
+				extractFilesProcessBar.Increment() // +1
 				if f, err := rc.Open(files[i].(string)); err == nil {
 					info, _ := f.Stat()
 					if err := createWriteFile(info, files[i].(string), f); err != nil {
@@ -474,14 +533,12 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) err
 					}
 					_ = f.Close()
 				} else {
-					fmt.Printf("error: cannot open file, error=[%v]\n", err)
 					return err
 				}
 			}
 			return nil
 		}
 	} else {
-		fmt.Printf("error: cannot read zip file, error=[%v]\n", err)
 		return err
 	}
 }
@@ -504,7 +561,7 @@ func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) (s
 		defer w.Close()
 		writeFile(r, w, 0, callback)
 	} else {
-		println("File already exists")
+		term.Section.Println("File already exists")
 	}
 	return dirName, nil
 }
@@ -546,8 +603,9 @@ func isFileExist(filename string, filesize int64) bool {
 	return false
 }
 
-// 下载文件
-func downloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
+// DownloadFile 下载文件
+//  如果文件存在大小一样不再下载
+func DownloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
 	var (
 		fsize   int64
 		buf     = make([]byte, 1024*10)
@@ -557,38 +615,52 @@ func downloadFile(url string, localPath string, callback func(totalLength, proce
 	client := new(http.Client)
 	resp, err := client.Get(url)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
 		return err
 	}
 	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
 		return err
 	}
 	if isFileExist(localPath, fsize) {
-		println("File already exists")
+		term.Section.Println("File already exists")
 		return nil
 	}
-	println("Save path: [", localPath, "] file size:", fsize)
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
-		fmt.Printf("download-error=[%v]\n", err)
 		return err
 	}
 	defer file.Close()
 	if resp.Body == nil {
-		fmt.Printf("Download-error=[body is null]\n")
 		return errors.New("body is null")
 	}
 	defer resp.Body.Close()
+	_, fileName := filepath.Split(localPath)
+	p, err := pterm.DefaultProgressbar.WithTotal(100).WithTitle("Download " + fileName).Start()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		p.WithCurrent(100).Add(0)
+		p.Stop()
+	}()
+	var count int
+	var nw int
 	for {
 		nr, er := resp.Body.Read(buf)
 		if nr > 0 {
-			nw, err := file.Write(buf[0:nr])
+			nw, err = file.Write(buf[0:nr])
 			if nw > 0 {
 				written += int64(nw)
 			}
-			callback(fsize, written)
+			if callback != nil {
+				callback(fsize, written)
+			} else {
+				process := int((float64(written) / float64(fsize)) * 100)
+				if process > count {
+					count = process
+					p.Add(1)
+				}
+			}
 			if err != nil {
 				break
 			}

@@ -31,9 +31,9 @@ func init() {
 	Logger.ShowTime = false
 	Logger.ShowCaller = false
 
-	//
+	// Section
 	Section = &pterm.SectionPrinter{
-		Style:           &pterm.ThemeDefault.SectionStyle,
+		Style:           &pterm.Style{pterm.Bold, pterm.FgLightYellow},
 		Level:           1,
 		IndentCharacter: "$",
 	}
@@ -48,7 +48,7 @@ func (m *Termout) Write(p []byte) (n int, err error) {
 }
 
 func GoENERGY() {
-	pterm.Println(pterm.Blue("      GO\n") + pterm.Blue("    ENERGY"))
+	pterm.Println(pterm.LightBlue("      GO\n") + pterm.LightBlue("    ENERGY"))
 }
 
 func BoxPrintln(a ...any) {

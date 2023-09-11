@@ -11,12 +11,12 @@
 package install
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	progressbar "github.com/energye/energy/v2/cmd/internal/progress-bar"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/pterm/pterm"
 	"os"
 	"path/filepath"
 )
@@ -26,6 +26,7 @@ func installUPX(c *command.Config) (string, func()) {
 		return "", nil
 	}
 	if (consts.IsWindows && !consts.IsARM64) || (consts.IsLinux) {
+		pterm.Println()
 		s := upxInstallPathName(c) // 安装目录
 		if !tools.IsExist(s) {
 			os.MkdirAll(s, 0755)
@@ -37,30 +38,37 @@ func installUPX(c *command.Config) (string, func()) {
 		targetFileName := filepath.Join(s, upxName) // 保存安装目录
 		if targetFile, err := os.Create(targetFileName); err == nil {
 			defer targetFile.Close()
-			fmt.Println("extract file: ", upxName)
-			bar := progressbar.NewBar(100)
-			bar.SetNotice("\t")
-			bar.HideRatio()
+			term.Section.Println("extract file: ", upxName)
+
+			p, err := pterm.DefaultProgressbar.WithTotal(100).WithTitle("Write File " + upxName).Start()
+			if err != nil {
+				return "", nil
+			}
+			defer p.Stop()
+			var count int
+
 			fs, err := assets.UpxBytes()
 			if err != nil {
-				println("UPX Installed Error:", err.Error())
+				term.Logger.Error("UPX Installed Error: " + err.Error())
 				return "", nil
 			}
 			stat, err := fs.Stat()
 			if err != nil {
-				println("UPX Installed Error:", err.Error())
+				term.Logger.Error("UPX Installed Error: " + err.Error())
 				return "", nil
 			}
 			writeFile(fs, targetFile, stat.Size(), func(totalLength, processLength int64) {
-				bar.PrintBar(int((float64(processLength) / float64(totalLength)) * 100))
+				process := int((float64(processLength) / float64(totalLength)) * 100)
+				if process > count {
+					count = process
+					p.Add(1)
+				}
 			})
-			bar.PrintBar(100)
-			bar.PrintEnd()
 			return s, func() {
-				println("UPX Installed Successfully Version:", assets.UpxVersion)
+				term.Logger.Info("UPX Installed Successfully ", term.Logger.Args("Version", assets.UpxVersion))
 			}
 		} else {
-			println("createWriteFile", err.Error())
+			term.Logger.Error("CreateWriteFile: " + err.Error())
 			return "", nil
 		}
 	}

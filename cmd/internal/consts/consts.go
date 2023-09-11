@@ -34,7 +34,9 @@ const (
 	// https://golang.google.cn/dl/go1.18.10.windows-386.zip
 	// https://golang.google.cn/dl/go1.18.10.windows-amd64.zip
 	// https://golang.google.cn/dl/go1.18.10.windows-arm64.zip
-	GolangDownloadURL    = "https://dl.google.com/go/%s"
+	// https://golang.google.cn
+	GolangDownloadSource = "https://golang.google.cn"
+	GolangDownloadURL    = "%s/dl/%s"
 	GolangDefaultVersion = "1.18.10"
 )
 

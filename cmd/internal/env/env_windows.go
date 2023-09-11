@@ -16,6 +16,7 @@ package env
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
 	"path/filepath"
@@ -25,22 +26,22 @@ import (
 func SetUPXEnv(upxRoot string) {
 	upx := filepath.Join(upxRoot, "upx.exe")
 	if !tools.IsExist(upx) {
-		println("\nError: Failed to set the UPX environment variable, not a correct UPX installation directory. ", upxRoot)
+		term.Logger.Error("Failed to set the UPX environment variable, not a correct UPX installation directory. " + upxRoot)
 		return
 	}
-	println("\nSetting UPX environment Variables to:", upxRoot)
+	term.Logger.Info("Setting UPX environment Variables to: " + upxRoot)
 	setWindowsEnv(consts.UPXHomeKey, upxRoot)
 	appendWindowsEnv("Path", "%UPX_HOME%")
-	println("Hint: Reopen the cmd window for the upx command to take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
 }
 
 func SetNSISEnv(nsisRoot string) {
 	makensis := filepath.Join(nsisRoot, "makensis.exe")
 	if !tools.IsExist(makensis) {
-		println("\nError: Failed to set the NSIS environment variable, not a correct NSIS installation directory. ", nsisRoot)
+		term.Logger.Error("Error: Failed to set the NSIS environment variable, not a correct NSIS installation directory. " + nsisRoot)
 		return
 	}
-	println("\nSetting NSIS environment Variables to:", nsisRoot)
+	term.Logger.Info("Setting NSIS environment Variables to: " + nsisRoot)
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set(consts.NSISHomeKey, nsisRoot)
@@ -48,16 +49,16 @@ func SetNSISEnv(nsisRoot string) {
 	//cmd
 	setWindowsEnv(consts.NSISHomeKey, nsisRoot)
 	appendWindowsEnv("Path", "%NSIS_HOME%")
-	println("Hint: Reopen the cmd window for the makensis command to take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window for the makensis command to take effect.")
 }
 
 func SetGoEnv(goRoot string) {
 	goBin := filepath.Join(goRoot, "bin", "go.exe")
 	if !tools.IsExist(goBin) {
-		println("\nError: Failed to set the Golang environment variable, not a correct Golang installation directory. ", goRoot)
+		term.Logger.Error("Error: Failed to set the Golang environment variable, not a correct Golang installation directory. " + goRoot)
 		return
 	}
-	println("\nSetting Golang environment Variables to:", goRoot)
+	term.Logger.Info("Setting Golang environment Variables to: " + goRoot)
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set("GOROOT", goRoot)
@@ -69,22 +70,22 @@ func SetGoEnv(goRoot string) {
 	setWindowsEnv("GOCACHE", "%GOROOT%\\go-build")
 	setWindowsEnv("GOBIN", "%GOROOT%\\bin")
 	appendWindowsEnv("Path", "%GOROOT%\\bin")
-	println("Hint: Reopen the cmd window for the Go command to take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window for the Go command to take effect.")
 }
 
 func SetEnergyHomeEnv(homePath string) {
 	cefPath := filepath.Join(homePath, "libcef.dll")
 	if !tools.IsExist(cefPath) {
-		println("\nError: Setting ENERGY_HOME environment variable failed and is not a correct CEF Framework installation directory. ", homePath)
+		term.Logger.Error("Error: Setting ENERGY_HOME environment variable failed and is not a correct CEF Framework installation directory. " + homePath)
 		return
 	}
-	println("\nSetting ENERGY environment Variables [ENERGY_HOME] to", homePath)
+	term.Logger.Info("Setting ENERGY environment Variables [ENERGY_HOME] to " + homePath)
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set(consts.EnergyHomeKey, homePath)
 	//cmd
 	setWindowsEnv(consts.EnergyHomeKey, homePath)
-	println("Hint: Reopen the cmd window to make the environment variables take effect.")
+	term.BoxPrintln("Hint: Reopen the cmd window to make the environment variables take effect.")
 }
 
 func setWindowsEnv(name, value string) {
