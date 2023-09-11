@@ -68,6 +68,7 @@ type Init struct {
 	ResLoad string `short:"r" long:"resload" description:"Resource loading method, 1: HTTP, 2: Local Load, default 1 HTTP"`
 	IGo     bool
 	INSIS   bool
+	IUPX    bool
 	IEnv    bool
 	INpm    bool
 }

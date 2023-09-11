@@ -181,7 +181,7 @@ func checkEnv(init *command.Init) {
 	term.Logger.Info("Check the current environment and follow the prompts if there are any")
 	// 检查Go环境
 	if !tools.CommandExists("go") {
-		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/"))
+		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "energy-install", "energy install ."))
 	} else {
 		var version string
 		cmd := toolsCommand.NewCMD()
@@ -208,18 +208,28 @@ func checkEnv(init *command.Init) {
 		term.Logger.Info("Golang OK")
 		init.IGo = true
 	}
-	// 检查nsis
-	if !tools.CommandExists("makensis") {
-		term.Logger.Warn(`NSIS not installed, Unable to create installation package through energy command line.`)
-	} else {
-		term.Logger.Info(`NSIS OK`)
-		init.INSIS = true
+	if consts.IsWindows {
+		// 检查nsis
+		if !tools.CommandExists("makensis") {
+			term.Logger.Warn(`NSIS not installed, Unable to create installation package through energy command line.`)
+		} else {
+			term.Logger.Info(`NSIS OK`)
+			init.INSIS = true
+		}
+	}
+	if !consts.IsDarwin {
+		// 检查upx
+		if !tools.CommandExists("upx") {
+			term.Logger.Warn(`UPX not installed`)
+		} else {
+			term.Logger.Info(`UPX OK`)
+			init.IUPX = true
+		}
 	}
 	// 检查ENERGY_HOME
 	if !tools.CheckCEFDir() {
-		term.Logger.Warn(`Dependency framework CEF is not installed or configured to the ENERGY_HOME environment variable
-	There are several ways to install, configure, or check the environment
-		"energy install ." Installation and development environment`)
+		term.Logger.Warn(`Energy dependent CEF Framework is not installed
+	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install ."))
 	} else {
 		term.Logger.Info("CEF Framework OK")
 		init.IEnv = true
