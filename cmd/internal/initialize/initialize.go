@@ -156,7 +156,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// cmd
-	term.Logger.Info("Config Go Environment")
+	term.Section.Println("Config Go Environment")
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	cmd.Dir = projectPath
