@@ -112,22 +112,29 @@ func (m *Info) ToSlash() *Info {
 func (m *InstallPack) FromSlash() *InstallPack {
 	m.Icon = filepath.FromSlash(m.Icon)
 	m.UnIcon = filepath.FromSlash(m.UnIcon)
+	for i, as := range m.Assets {
+		m.Assets[i] = filepath.FromSlash(as)
+	}
 	return m
 }
 
 func (m *InstallPack) ToSlash() *InstallPack {
 	m.Icon = filepath.ToSlash(m.Icon)
 	m.UnIcon = filepath.ToSlash(m.UnIcon)
+	for i, as := range m.Assets {
+		m.Assets[i] = filepath.ToSlash(as)
+	}
 	return m
 }
 
 // InstallPack windows NSIS
 type InstallPack struct {
-	Icon                  string `json:"icon"`                  //安装包图标
-	UnIcon                string `json:"unIcon"`                //安装包卸载图标
-	License               string `json:"license"`               //安装包授权信息,(license.txt)文件路径
-	Language              string `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
-	RequestExecutionLevel string `json:"requestExecutionLevel"` // admin or ""
+	Icon                  string   `json:"icon"`                  //安装包图标
+	Assets                []string `json:"assets"`                //打包的资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	UnIcon                string   `json:"unIcon"`                //安装包卸载图标
+	License               string   `json:"license"`               //安装包授权信息,(license.txt)文件路径
+	Language              string   `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
+	RequestExecutionLevel string   `json:"requestExecutionLevel"` // admin or ""
 }
 
 type Author struct {

@@ -32,8 +32,10 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 !macro energy.files
 
     File "/oname=${PRODUCT_EXECUTABLE}" "{{.ProjectPath}}\{{.Name}}.exe" ; app.exe path, ..\..\app.exe
-    ;File /r "{{.FrameworkPath}}" ; cef framework path, ENERGY_HOME=/to/cef/path
-
+{{if .FrameworkPath}}
+    File /r "{{.FrameworkPath}}\*.*"{{end}}
+{{range $i,$path := .Info.InstallPack.Assets }}
+    File /r "{{$path}}"{{end}}
 !macroend
 
 !macro energy.writeUninstaller

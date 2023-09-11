@@ -14,6 +14,7 @@
     "comments": "Built using ENERGY (https://github.com/energye/energy)",
     "fileDescription": "Built using ENERGY (https://github.com/energye/energy)",
     "installPack": {
+      "assets": [],
       "icon": "{{.ProjectPath}}/resources/icon.ico",
       "unIcon": "{{.ProjectPath}}/resources/icon.ico",
       "license": "",
