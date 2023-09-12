@@ -38,6 +38,7 @@ const (
 	GolangDownloadSource = "https://golang.google.cn"
 	GolangDownloadURL    = "%s/dl/%s"
 	GolangDefaultVersion = "1.18.10"
+	GolanHomeKey         = "GOROOT"
 )
 
 const (

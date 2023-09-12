@@ -33,7 +33,7 @@ func init() {
 
 	// Section
 	Section = &pterm.SectionPrinter{
-		Style:           &pterm.Style{pterm.Bold, pterm.FgLightYellow},
+		Style:           &pterm.Style{pterm.Bold, pterm.FgGreen},
 		Level:           1,
 		IndentCharacter: "$",
 	}

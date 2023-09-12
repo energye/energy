@@ -13,14 +13,14 @@ package internal
 import (
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"os"
 )
 
 var CmdEnv = &command.Command{
 	UsageLine: "env",
-	Short:     "Get energy framework development environment",
+	Short:     "Get ENERGY Framework Development Environment",
 	Long: `
-	Get the Framework pointed to by the ENERGY_HOME development environment variable
 	.  Execute default command
 `,
 }
@@ -30,7 +30,14 @@ func init() {
 }
 
 func runGetEnv(c *command.Config) error {
-	envPath := os.Getenv(consts.EnergyHomeKey)
-	println("ENERGY_HOME_KEY", envPath)
+	term.Section.Println(consts.GolanHomeKey, os.Getenv(consts.GolanHomeKey))
+	term.Section.Println(consts.EnergyHomeKey, os.Getenv(consts.EnergyHomeKey))
+	if consts.IsWindows {
+		term.Section.Println(consts.NSISHomeKey, os.Getenv(consts.NSISHomeKey))
+		term.Section.Println(consts.Z7ZHomeKey, os.Getenv(consts.Z7ZHomeKey))
+	}
+	if !consts.IsDarwin {
+		term.Section.Println(consts.UPXHomeKey, os.Getenv(consts.UPXHomeKey))
+	}
 	return nil
 }

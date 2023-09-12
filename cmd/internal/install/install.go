@@ -100,7 +100,7 @@ func Install(c *command.Config) error {
 			if err != nil {
 				return err
 			}
-			pterm.Info.Printfln("Selected : %s", pterm.Green(selectedOptions))
+			term.Section.Printfln("Selected : %s", pterm.Green(selectedOptions))
 			for _, option := range selectedOptions {
 				for _, wi := range willInstall {
 					if option == wi.name {
@@ -166,7 +166,44 @@ func Install(c *command.Config) error {
 	if z7zSuccessCallback != nil {
 		z7zSuccessCallback()
 	}
+	copyEnergyCMD(goRoot)
 	return nil
+}
+
+func copyEnergyCMD(goRoot string) {
+	if goRoot == "" {
+		return
+	}
+	exe, err := os.Executable()
+	if err != nil {
+		term.Logger.Error(err.Error())
+		return
+	}
+	energyName := "energy"
+	if consts.IsWindows {
+		energyName += ".exe"
+	}
+	goBin := filepath.Join(goRoot, "bin", energyName)
+	if tools.IsExist(goBin) {
+		return
+	}
+	src, err := os.Open(exe)
+	if err != nil {
+		term.Logger.Error(err.Error())
+		return
+	}
+	defer src.Close()
+	dst, err := os.OpenFile(goBin, os.O_CREATE|os.O_WRONLY, fs.ModePerm)
+	if err != nil {
+		term.Logger.Error(err.Error())
+		return
+	}
+	defer dst.Close()
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		term.Logger.Error(err.Error())
+		return
+	}
 }
 
 func cefInstallPathName(c *command.Config) string {
