@@ -23,9 +23,9 @@
 >> en: go module dependency management, has an unchangeable file name.
 > 
 > main.go
->> cn: go应用启用入口文件
+>> cn: go energy应用启动入口文件
 >>
->> en: go application enables the entry file
+>> en: go energy application enables the entry file
 >
 > go.sum No need to change
 
