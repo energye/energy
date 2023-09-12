@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/tools/command"
 	"os"
@@ -29,48 +30,99 @@ const (
 	windowsNsisTools = "windows/installer-tools.nsh"
 )
 
-func GeneraInstaller(projectData *project.Project) error {
+func GeneraInstaller(proj *project.Project) error {
 	if !tools.CommandExists("makensis") {
 		return errors.New("failed to create application installation program. Could not find the makensis command")
 	}
-	if err := windows(projectData); err != nil {
-		return err
-	}
-	if err := makeNSIS(projectData); err != nil {
-		return err
-	}
-	return nil
-}
-
-func windows(projectData *project.Project) error {
+	var err error
 	// 创建构建输出目录
-	buildOutDir := assets.BuildOutPath(projectData)
+	buildOutDir := assets.BuildOutPath(proj)
 	buildOutDir = filepath.Join(buildOutDir, "windows")
 	if !tools.IsExist(buildOutDir) {
 		if err := os.MkdirAll(buildOutDir, 0755); err != nil {
 			return fmt.Errorf("unable to create directory: %w", err)
 		}
 	}
+	// 7za 压缩 CEF
+	if proj.Info.InstallPack.Compress == "7za" && tools.CommandExists("7za") {
+		proj.Info.InstallPack.UseCompress = true
+	}
+	if proj.Info.InstallPack.UseCompress {
+		if cef7zFile, err := compressCEF7za(proj); err != nil {
+			return err
+		} else {
+			proj.Info.InstallPack.CompressFile = cef7zFile
+		}
+	}
+
+	// 生成 nsis 脚本
+	if err = windows(proj); err != nil {
+		return err
+	}
+
+	// make
+	var outInstall string
+	if outInstall, err = makeNSIS(proj); err != nil {
+		return err
+	}
+	term.Section.Println("Success \n\tInstall package:", outInstall)
+	return nil
+}
+
+func compressCEF7za(proj *project.Project) (string, error) {
+	cef7zFile := "CEF.7z"
+	term.Logger.Info("7za compress " + cef7zFile + ", This may take some time")
+	buildWindowsPath := filepath.Join(assets.BuildOutPath(proj), "windows")
+	outFilePath := filepath.FromSlash(filepath.Join(buildWindowsPath, cef7zFile))
+	if proj.Clean {
+		os.Remove(outFilePath)
+	} else if tools.IsExist(outFilePath) {
+		term.Logger.Info(cef7zFile + " file exist")
+		return outFilePath, nil
+	}
+
+	wd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	defer func() {
+		os.Chdir(wd)
+	}()
+	err = os.Chdir(proj.FrameworkPath)
+	if err != nil {
+		return "", err
+	}
+
+	cmd := command.NewCMD()
+	cmd.IsPrint = false
+	var args = []string{"a", outFilePath, filepath.FromSlash(fmt.Sprintf("%s/*", proj.FrameworkPath))}
+	cmd.Command("7za", args...)
+	cmd.Close()
+	return outFilePath, nil
+}
+
+func windows(proj *project.Project) error {
+	term.Logger.Info("Generate NSIS script")
 	// 生成安装生成配置文件 nsis.nsi
-	if nsisData, err := assets.ReadFile(projectData, assetsFSPath, windowsNsis); err != nil {
+	if nsisData, err := assets.ReadFile(proj, assetsFSPath, windowsNsis); err != nil {
 		return err
 	} else {
-		if err = assets.WriteFile(projectData, windowsNsis, nsisData); err != nil {
+		if err = assets.WriteFile(proj, windowsNsis, nsisData); err != nil {
 			return err
 		}
 	}
 	// tools.nsh
-	if toolsData, err := assets.ReadFile(projectData, assetsFSPath, windowsNsisTools); err != nil {
+	if toolsData, err := assets.ReadFile(proj, assetsFSPath, windowsNsisTools); err != nil {
 		return err
 	} else {
 		data := make(map[string]any)
-		data["Name"] = projectData.Name
-		data["ProjectPath"] = filepath.FromSlash(projectData.ProjectPath)
-		data["FrameworkPath"] = filepath.FromSlash(projectData.FrameworkPath)
-		data["Info"] = projectData.Info.FromSlash()
+		data["Name"] = proj.Name
+		data["ProjectPath"] = filepath.FromSlash(proj.ProjectPath)
+		data["FrameworkPath"] = filepath.FromSlash(proj.FrameworkPath)
+		data["Info"] = proj.Info.FromSlash()
 		if content, err := tools.RenderTemplate(string(toolsData), data); err != nil {
 			return err
-		} else if err = assets.WriteFile(projectData, windowsNsisTools, content); err != nil {
+		} else if err = assets.WriteFile(proj, windowsNsisTools, content); err != nil {
 			return err
 		}
 	}
@@ -78,16 +130,18 @@ func windows(projectData *project.Project) error {
 }
 
 // 使用nsis生成安装包
-func makeNSIS(projectData *project.Project) error {
+func makeNSIS(proj *project.Project) (string, error) {
+	term.Logger.Info("NSIS Making Installation, Almost complete")
 	var args []string
 	cmd := command.NewCMD()
 	cmd.IsPrint = false
-	cmd.Dir = projectData.ProjectPath
+	cmd.Dir = proj.ProjectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {
 		println("makensis:", string(bytes))
 	}
-	nsisScriptPath := filepath.Join(assets.BuildOutPath(projectData), windowsNsis)
+	nsisScriptPath := filepath.Join(assets.BuildOutPath(proj), windowsNsis)
 	args = append(args, nsisScriptPath)
 	cmd.Command("makensis", args...)
-	return nil
+	outInstall := filepath.Join(filepath.Dir(nsisScriptPath), proj.Name+"-installer.exe")
+	return outInstall, nil
 }

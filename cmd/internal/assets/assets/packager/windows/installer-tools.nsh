@@ -32,10 +32,22 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 !macro energy.files
 
     File "/oname=${PRODUCT_EXECUTABLE}" "{{.ProjectPath}}\{{.Name}}.exe" ; app.exe path, ..\..\app.exe
-{{if .FrameworkPath}}
-    File /r "{{.FrameworkPath}}\*.*"{{end}}
+
+{{if .Info.InstallPack.CompressFile}}
+    File "{{.Info.InstallPack.CompressFile}}"
+{{else if .FrameworkPath}}
+    File /r "{{.FrameworkPath}}\*.*"
+{{end}}
+
 {{range $i,$path := .Info.InstallPack.Assets }}
     File /r "{{$path}}"{{end}}
+!macroend
+
+!macro energy.compressNsis7z
+{{if .Info.InstallPack.UseCompress}} ;CEF
+    Nsis7z::ExtractWithCallback "$INSTDIR\CEF.7z"
+    Delete "$OUTDIR\CEF.7z"
+{{end}}
 !macroend
 
 !macro energy.writeUninstaller

@@ -19,7 +19,8 @@
       "unIcon": "{{.ProjectPath}}/resources/icon.ico",
       "license": "",
       "language": "english",
-      "requestExecutionLevel": "admin"
+      "requestExecutionLevel": "admin",
+      "compress": "7za"
     }
   },
   "author": {

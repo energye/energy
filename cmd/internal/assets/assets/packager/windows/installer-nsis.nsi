@@ -48,30 +48,22 @@ OutFile ".\${INFO_ProjectName}-installer.exe" # Name of the installer's file.
 InstallDir "$PROGRAMFILES64\${INFO_CompanyName}\${INFO_ProductName}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 
-;SetCompress off ;7z
-
 Function .onInit
 FunctionEnd
 
 Section
     !insertmacro energy.setShellContext
 
-    ;SetCompress off ;7z
-
     SetOutPath $INSTDIR
     
     !insertmacro energy.files
 
-    ;File Test.7z ;7z
-
     CreateShortcut "$SMPROGRAMS\${INFO_ProductName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
     CreateShortCut "$DESKTOP\${INFO_ProductName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 
+    !insertmacro energy.compressNsis7z
+
     !insertmacro energy.writeUninstaller
-
-
-     ;Nsis7z::ExtractWithCallback "$INSTDIR\Test.7z" $R9 ;7z
-     ;Delete "$OUTDIR\Test.7z" ;7z
 SectionEnd
 
 Section "uninstall" 
