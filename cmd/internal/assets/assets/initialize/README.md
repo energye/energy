@@ -5,6 +5,11 @@
 >> cn: 资源存放目录, 可自定义目录名
 >>
 >> en: Resource storage directory, customizable directory name
+>
+>  build
+>> 自动生成目录: 用于编译、构建、生成安装包
+>>
+>> Automatically generate directory: used for compiling, building, and generating installation packages
 
 ## 文件说明 - File description
 > energy.json
