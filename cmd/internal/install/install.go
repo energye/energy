@@ -62,6 +62,8 @@ func Install(c *command.Config) error {
 		nsisSuccessCallback         func()
 		upxRoot                     string
 		upxSuccessCallback          func()
+		z7zRoot                     string
+		z7zSuccessCallback          func()
 	)
 	if len(willInstall) > 0 {
 		// energy 依赖的软件框架
@@ -115,30 +117,45 @@ func Install(c *command.Config) error {
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
-	// 安装nsis安装包制作工具, 仅windows - amd64
-	nsisRoot, nsisSuccessCallback = installNSIS(c)
-	// 设置nsis环境变量
-	if nsisRoot != "" {
-		env.SetNSISEnv(nsisRoot)
-	}
-	// 安装upx, 内置, 仅windows, linux
-	upxRoot, upxSuccessCallback = installUPX(c)
-	// 设置upx环境变量
-	if upxRoot != "" {
-		env.SetUPXEnv(upxRoot)
-	}
+
 	// 安装CEF二进制框架
 	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" && c.Install.IsSame {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
+
+	// 安装nsis安装包制作工具, 仅windows - amd64
+	nsisRoot, nsisSuccessCallback = installNSIS(c)
+	// 设置nsis环境变量
+	if nsisRoot != "" {
+		env.SetNSISEnv(nsisRoot)
+	}
+
+	// 安装upx, 内置, 仅windows, linux
+	upxRoot, upxSuccessCallback = installUPX(c)
+	// 设置upx环境变量
+	if upxRoot != "" {
+		env.SetUPXEnv(upxRoot)
+	}
+
+	// 安装7za
+	z7zRoot, z7zSuccessCallback = install7z(c)
+	// 设置7za环境变量
+	if z7zRoot != "" {
+		env.Set7zaEnv(z7zRoot)
+	}
+
 	// success 输出
-	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil {
+	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil || z7zSuccessCallback != nil {
 		term.BoxPrintln("Hint: Reopen the cmd window for command to take effect.")
 	}
+
 	if nsisSuccessCallback != nil {
 		nsisSuccessCallback()
+	}
+	if cefFrameworkSuccessCallback != nil {
+		cefFrameworkSuccessCallback()
 	}
 	if goSuccessCallback != nil {
 		goSuccessCallback()
@@ -146,8 +163,8 @@ func Install(c *command.Config) error {
 	if upxSuccessCallback != nil {
 		upxSuccessCallback()
 	}
-	if cefFrameworkSuccessCallback != nil {
-		cefFrameworkSuccessCallback()
+	if z7zSuccessCallback != nil {
+		z7zSuccessCallback()
 	}
 	return nil
 }
@@ -172,12 +189,20 @@ func upxInstallPathName(c *command.Config) string {
 	return filepath.Join(c.Install.Path, consts.ENERGY, "upx")
 }
 
-func nsisIsInstall() bool {
+func z7zInstallPathName(c *command.Config) string {
+	return filepath.Join(c.Install.Path, consts.ENERGY, "7za")
+}
+
+func nsisCanInstall() bool {
 	return consts.IsWindows && !consts.IsARM64
 }
 
-func upxIsInstall() bool {
+func upxCanInstall() bool {
 	return (consts.IsWindows && !consts.IsARM64) || (consts.IsLinux)
+}
+
+func z7zCanInstall() bool {
+	return consts.IsWindows && !consts.IsARM64
 }
 
 // 检查当前环境
@@ -197,7 +222,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	check(func() (string, bool) {
 		return "All", tools.CommandExists("go")
 	}, "Golang", func() {
-		c.Install.IGolang = true
+		c.Install.IGolang = true //yes callback
 	})
 
 	// cef
@@ -228,30 +253,42 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 			return "Unsupported Platform", true
 		}
 	}, cefName, func() {
-		c.Install.ICEF = true
+		c.Install.ICEF = true //yes callback
 	})
-	if consts.IsWindows {
+	if nsisCanInstall() {
 		// nsis
 		check(func() (string, bool) {
-			if nsisIsInstall() {
+			if nsisCanInstall() {
 				return "Windows AMD", tools.CommandExists("makensis")
 			} else {
 				return "Non Windows AMD skipping NSIS.", true
 			}
 		}, "NSIS", func() {
-			c.Install.INSIS = true
+			c.Install.INSIS = true //yes callback
 		})
 	}
-	if !consts.IsDarwin {
+	if upxCanInstall() {
 		// upx
 		check(func() (string, bool) {
-			if upxIsInstall() {
+			if upxCanInstall() {
 				return "Windows AMD, Linux", tools.CommandExists("upx")
 			} else {
 				return "Non Windows and Linux skipping UPX.", true
 			}
 		}, "UPX", func() {
-			c.Install.IUPX = true
+			c.Install.IUPX = true //yes callback
+		})
+	}
+	if z7zCanInstall() {
+		// 7za
+		check(func() (string, bool) {
+			if z7zCanInstall() {
+				return "Windows AMD", tools.CommandExists("7za")
+			} else {
+				return "Non Windows skipping UPX.", true
+			}
+		}, "7za", func() {
+			c.Install.I7za = true //yes callback
 		})
 	}
 	if consts.IsLinux {
@@ -284,15 +321,19 @@ func initInstall(c *command.Config) {
 		c.Install.IsSame = true
 	}
 	// 创建安装目录
-	os.MkdirAll(c.Install.Path, fs.ModePerm)
-	os.MkdirAll(cefInstallPathName(c), fs.ModePerm)
-	os.MkdirAll(goInstallPathName(c), fs.ModePerm)
-	if nsisIsInstall() {
-		os.MkdirAll(nsisInstallPathName(c), fs.ModePerm)
+	os.MkdirAll(c.Install.Path, fs.ModePerm)        // framework root
+	os.MkdirAll(cefInstallPathName(c), fs.ModePerm) //cef
+	os.MkdirAll(goInstallPathName(c), fs.ModePerm)  // go
+	if nsisCanInstall() {
+		os.MkdirAll(nsisInstallPathName(c), fs.ModePerm) // nsis
 	}
-	if upxIsInstall() {
-		os.MkdirAll(upxInstallPathName(c), fs.ModePerm)
+	if upxCanInstall() {
+		os.MkdirAll(upxInstallPathName(c), fs.ModePerm) //upx
 	}
+	if z7zCanInstall() {
+		os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
+	}
+	// framework download cace
 	os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
 }
 

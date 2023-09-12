@@ -39,10 +39,11 @@ type Install struct {
 	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current system: os"`
 	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm64], Default current system: architecture"`
 	CEF      string `long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. default, windows7, gtk2, flash" default:""`
-	IGolang  bool   // 是否已安装Golang
-	ICEF     bool   // 是否已安装CEF
-	INSIS    bool   // 是否已安装nsis
-	IUPX     bool   // 是否已安装upx
+	IGolang  bool   // 是否安装Golang
+	ICEF     bool   // 是否安装CEF
+	INSIS    bool   // 是否安装nsis
+	IUPX     bool   // 是否安装upx
+	I7za     bool   // 是否安装7za
 	IsSame   bool   // 安装的OS和Arch是否为当前系统架构, 默认当前系统架构
 }
 

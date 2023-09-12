@@ -28,33 +28,29 @@ import (
 	"strings"
 )
 
+func homeKey(homeKey string) string {
+	return "$" + homeKey
+}
+
 func SetUPXEnv(upxRoot string) {
 	upx := filepath.Join(upxRoot, "upx")
 	if !tools.IsExist(upx) {
 		term.Logger.Error("Failed to set the UPX environment variable, not a correct UPX installation directory. " + upxRoot)
 		return
 	}
-	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args("UPX_HOME", upxRoot))
-	cmd := toolsCommand.NewCMD()
-	cmd.IsPrint = false
-	cmd.MessageCallback = func(s []byte, e error) {
-		msg := strings.TrimSpace(string(s))
-		if msg != "" {
-			term.Logger.Info("CMD " + msg)
-		}
-		if e != nil {
-			term.Logger.Error("CMD " + e.Error())
-		}
-	}
-	defer cmd.Close()
-	var exUpxRoot = fmt.Sprintf("export UPX_HOME=%s", upxRoot)
-	var exPath = "export PATH=$PATH:$UPX_HOME"
+	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args(consts.UPXHomeKey, upxRoot))
+	var exUpxRoot = fmt.Sprintf("export %s=%s", consts.UPXHomeKey, upxRoot)
+	var exPath = "export PATH=$PATH:" + homeKey(consts.UPXHomeKey)
 	var exs = []string{exUpxRoot, exPath}
-	setPosixEnv(exs, exPath, "$UPX_HOME")
+	setPosixEnv(exs, exPath, homeKey(consts.UPXHomeKey))
 	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
 }
 
 func SetNSISEnv(nsisRoot string) {
+
+}
+
+func Set7zaEnv(z7zRoot string) {
 
 }
 
@@ -65,18 +61,6 @@ func SetGoEnv(goRoot string) {
 		return
 	}
 	term.Logger.Info("Setting Golang environment Variables: ", term.Logger.Args("GOROOT", goRoot, "GOCACHE", "%GOROOT%\\go-build", "GOBIN", "%GOROOT%\\bin"))
-	cmd := toolsCommand.NewCMD()
-	cmd.IsPrint = false
-	cmd.MessageCallback = func(s []byte, e error) {
-		msg := strings.TrimSpace(string(s))
-		if msg != "" {
-			term.Logger.Info("CMD " + msg)
-		}
-		if e != nil {
-			term.Logger.Error("CMD " + e.Error())
-		}
-	}
-	defer cmd.Close()
 	//export GOROOT=/home/yanghy/app/go
 	//export GOCACHE=$GOROOT/go-build
 	//export GOBIN=$GOROOT/bin
@@ -103,18 +87,6 @@ func SetEnergyHomeEnv(homePath string) {
 		return
 	}
 	term.Logger.Info("Setting ENERGY environment Variables [ENERGY_HOME] to " + homePath)
-	cmd := toolsCommand.NewCMD()
-	cmd.IsPrint = false
-	cmd.MessageCallback = func(s []byte, e error) {
-		msg := strings.TrimSpace(string(s))
-		if msg != "" {
-			term.Logger.Info("CMD " + msg)
-		}
-		if e != nil {
-			term.Logger.Error("CMD " + e.Error())
-		}
-	}
-	defer cmd.Close()
 	var energyHome = fmt.Sprintf("export %s=%s", consts.EnergyHomeKey, homePath)
 	exs := []string{energyHome}
 	setPosixEnv(exs, "", "")
@@ -124,15 +96,6 @@ func SetEnergyHomeEnv(homePath string) {
 func setPosixEnv(exs []string, binPath, bin string) {
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
-	cmd.MessageCallback = func(s []byte, e error) {
-		msg := strings.TrimSpace(string(s))
-		if msg != "" {
-			fmt.Println("CMD:", msg)
-		}
-		if e != nil {
-			fmt.Println("CMD Error:", e)
-		}
-	}
 	defer cmd.Close()
 	var envFiles []string
 	if consts.IsLinux {

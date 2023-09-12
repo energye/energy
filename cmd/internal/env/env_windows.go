@@ -23,15 +23,19 @@ import (
 	"strings"
 )
 
+func homeKey(homeKey string) string {
+	return "%" + homeKey + "%"
+}
+
 func SetUPXEnv(upxRoot string) {
 	upx := filepath.Join(upxRoot, "upx.exe")
 	if !tools.IsExist(upx) {
 		term.Logger.Error("Failed to set the UPX environment variable, not a correct UPX installation directory. " + upxRoot)
 		return
 	}
-	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args("UPX_HOME", upxRoot))
+	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args(consts.UPXHomeKey, upxRoot))
 	setWindowsEnv(consts.UPXHomeKey, upxRoot)
-	appendWindowsEnv("Path", "%UPX_HOME%")
+	appendWindowsEnv("Path", homeKey(consts.UPXHomeKey))
 	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
 }
 
@@ -41,15 +45,27 @@ func SetNSISEnv(nsisRoot string) {
 		term.Logger.Error("Error: Failed to set the NSIS environment variable, not a correct NSIS installation directory. " + nsisRoot)
 		return
 	}
-	term.Logger.Info("Setting NSIS environment Variables: ", term.Logger.Args("NSIS_HOME", nsisRoot))
+	term.Logger.Info("Setting NSIS environment Variables: ", term.Logger.Args(consts.NSISHomeKey, nsisRoot))
 	//regCurUser := tools.NewRegistryCurrentUser()
 	//defer regCurUser.Close()
 	//regCurUser.Set(consts.NSISHomeKey, nsisRoot)
 	//regCurUser.Append("Path", "%NSIS_HOME%")
 	//cmd
 	setWindowsEnv(consts.NSISHomeKey, nsisRoot)
-	appendWindowsEnv("Path", "%NSIS_HOME%")
+	appendWindowsEnv("Path", homeKey(consts.NSISHomeKey))
 	term.BoxPrintln("Hint: Reopen the cmd window for the makensis command to take effect.")
+}
+
+func Set7zaEnv(z7zRoot string) {
+	makensis := filepath.Join(z7zRoot, "7za.exe")
+	if !tools.IsExist(makensis) {
+		term.Logger.Error("Error: Failed to set the 7za environment variable, not a correct 7za installation directory. " + z7zRoot)
+		return
+	}
+	term.Logger.Info("Setting 7za environment Variables: ", term.Logger.Args(consts.Z7ZHomeKey, z7zRoot))
+	setWindowsEnv(consts.Z7ZHomeKey, z7zRoot)
+	appendWindowsEnv("Path", homeKey(consts.Z7ZHomeKey))
+	term.BoxPrintln("Hint: Reopen the cmd window for the 7za command to take effect.")
 }
 
 func SetGoEnv(goRoot string) {

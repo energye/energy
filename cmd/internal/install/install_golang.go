@@ -30,6 +30,7 @@ func installGolang(c *command.Config) (string, func()) {
 		return "", nil
 	}
 	pterm.Println()
+	term.Section.Println("Install Golang")
 	s := goInstallPathName(c) // 安装目录
 	exts := map[string]string{
 		"darwin":  "tar.gz",
@@ -58,7 +59,8 @@ func installGolang(c *command.Config) (string, func()) {
 			downloadSource = consts.GolangDownloadSource
 		}
 		downloadUrl := fmt.Sprintf(consts.GolangDownloadURL, downloadSource, fileName)
-		term.Section.Println("Golang-Download-URL:", downloadUrl, "Save-Path:", savePath)
+		term.Logger.Info("Golang Download URL: " + downloadUrl)
+		term.Logger.Info("Golang Save Path: " + savePath)
 		err = downloadGolang(downloadUrl, savePath, fileName, 0)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())

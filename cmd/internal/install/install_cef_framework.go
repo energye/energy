@@ -30,6 +30,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		return "", nil
 	}
 	pterm.Println()
+	term.Section.Println("Install CEF")
 	// 获取提取文件配置
 	extractData, err := tools.HttpRequestGET(consts.DownloadExtractURL)
 	if err != nil {

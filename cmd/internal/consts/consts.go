@@ -46,6 +46,18 @@ const (
 	NSISDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
 	NSISDownloadVersion = "3.09"
 	NSISHomeKey         = "NSIS_HOME"
+
+	// NSIS7z
+	// https://gitee.com/energye/assets/releases/download/environment/nsis7z.windows.386-19.00.zip
+	NSIS7zDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
+	NSIS7zDownloadVersion = "19.00"
+)
+
+const (
+	// https://gitee.com/energye/assets/releases/download/environment/7za.windows.all-2301.zip
+	Z7ZDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
+	Z7ZDownloadVersion = "2301"
+	Z7ZHomeKey         = "Z7Z_HOME"
 )
 
 const (
