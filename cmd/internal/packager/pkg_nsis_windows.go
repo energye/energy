@@ -44,14 +44,14 @@ func GeneraInstaller(proj *project.Project) error {
 		}
 	}
 	// 7za 压缩 CEF
-	if proj.Info.InstallPack.Compress == "7za" && tools.CommandExists("7za") {
-		proj.Info.InstallPack.UseCompress = true
+	if proj.NSIS.Compress == "7za" && tools.CommandExists("7za") {
+		proj.NSIS.UseCompress = true
 	}
-	if proj.Info.InstallPack.UseCompress {
+	if proj.NSIS.UseCompress {
 		if cef7zFile, err := compressCEF7za(proj); err != nil {
 			return err
 		} else {
-			proj.Info.InstallPack.CompressFile = cef7zFile
+			proj.NSIS.CompressFile = cef7zFile
 		}
 	}
 
@@ -119,7 +119,10 @@ func windows(proj *project.Project) error {
 		data["Name"] = proj.Name
 		data["ProjectPath"] = filepath.FromSlash(proj.ProjectPath)
 		data["FrameworkPath"] = filepath.FromSlash(proj.FrameworkPath)
-		data["Info"] = proj.Info.FromSlash()
+		proj.Info.FromSlash()
+		proj.NSIS.FromSlash()
+		data["Info"] = proj.Info
+		data["NSIS"] = proj.NSIS
 		if content, err := tools.RenderTemplate(string(toolsData), data); err != nil {
 			return err
 		} else if err = assets.WriteFile(proj, windowsNsisTools, content); err != nil {

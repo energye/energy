@@ -29,6 +29,7 @@ type Project struct {
 	AssetsDir      string `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
 	Info           Info   `json:"info"`           // 应用信息
+	NSIS           NSIS   `json:"nsis"`           // windows nsis 安装包
 	Author         Author `json:"author"`         // 作者信息
 }
 
@@ -86,49 +87,42 @@ func (m *Project) setDefaults() {
 }
 
 type Info struct {
-	Icon            string      `json:"icon"`            //应用图标
-	CompanyName     string      `json:"companyName"`     //公司名称
-	ProductName     string      `json:"productName"`     //产品名称
-	FileVersion     string      `json:"FileVersion"`     //文件版本
-	ProductVersion  string      `json:"productVersion"`  //产品版本
-	Copyright       *string     `json:"copyright"`       //版权
-	Comments        *string     `json:"comments"`        //exe详情描述
-	FileDescription *string     `json:"fileDescription"` //描述
-	InstallPack     InstallPack `json:"installPack"`     // windows nsis 安装包
+	Icon            string  `json:"icon"`            //应用图标
+	CompanyName     string  `json:"companyName"`     //公司名称
+	ProductName     string  `json:"productName"`     //产品名称
+	FileVersion     string  `json:"FileVersion"`     //文件版本
+	ProductVersion  string  `json:"productVersion"`  //产品版本
+	Copyright       *string `json:"copyright"`       //版权
+	Comments        *string `json:"comments"`        //exe详情描述
+	FileDescription *string `json:"fileDescription"` //描述
 }
 
-func (m *Info) FromSlash() *Info {
+func (m *Info) FromSlash() {
 	m.Icon = filepath.FromSlash(m.Icon)
-	m.InstallPack = *m.InstallPack.FromSlash()
-	return m
 }
 
-func (m *Info) ToSlash() *Info {
+func (m *Info) ToSlash() {
 	m.Icon = filepath.ToSlash(m.Icon)
-	m.InstallPack = *m.InstallPack.ToSlash()
-	return m
 }
 
-func (m *InstallPack) FromSlash() *InstallPack {
+func (m *NSIS) FromSlash() {
 	m.Icon = filepath.FromSlash(m.Icon)
 	m.UnIcon = filepath.FromSlash(m.UnIcon)
 	for i, as := range m.Assets {
 		m.Assets[i] = filepath.FromSlash(as)
 	}
-	return m
 }
 
-func (m *InstallPack) ToSlash() *InstallPack {
+func (m *NSIS) ToSlash() {
 	m.Icon = filepath.ToSlash(m.Icon)
 	m.UnIcon = filepath.ToSlash(m.UnIcon)
 	for i, as := range m.Assets {
 		m.Assets[i] = filepath.ToSlash(as)
 	}
-	return m
 }
 
-// InstallPack windows NSIS
-type InstallPack struct {
+// NSIS windows NSIS
+type NSIS struct {
 	Icon                  string   `json:"icon"`                  //安装包图标
 	Assets                []string `json:"assets"`                //打包的资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	UnIcon                string   `json:"unIcon"`                //安装包卸载图标

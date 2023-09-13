@@ -13,18 +13,18 @@
 !define INFO_Copyright "{{.Info.Copyright}}"
 !define PRODUCT_EXECUTABLE "${INFO_ProjectName}.exe"
 !define UNINST_KEY_NAME "${INFO_CompanyName}${INFO_ProductName}"
-!define INFO_Icon "{{.Info.InstallPack.Icon}}"
-!define INFO_UnIcon "{{.Info.InstallPack.UnIcon}}"
-!define ENERGY_LANGUAGE "{{.Info.InstallPack.Language}}"
+!define INFO_Icon "{{.NSIS.Icon}}"
+!define INFO_UnIcon "{{.NSIS.UnIcon}}"
+!define ENERGY_LANGUAGE "{{.NSIS.Language}}"
 
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINST_KEY_NAME}"
 
-{{if .Info.InstallPack.License}}
-!define ENERGY_PAGE_LICENSE "{{.Info.InstallPack.License}}" ; license.txt path
+{{if .NSIS.License}}
+!define ENERGY_PAGE_LICENSE "{{.NSIS.License}}" ; license.txt path
 {{end}}
 
-{{if .Info.InstallPack.RequestExecutionLevel}}
-!define REQUEST_EXECUTION_LEVEL "{{.Info.InstallPack.RequestExecutionLevel}}"
+{{if .NSIS.RequestExecutionLevel}}
+!define REQUEST_EXECUTION_LEVEL "{{.NSIS.RequestExecutionLevel}}"
 RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 {{end}}
 
@@ -33,18 +33,18 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 
     File "/oname=${PRODUCT_EXECUTABLE}" "{{.ProjectPath}}\{{.Name}}.exe" ; app.exe path, ..\..\app.exe
 
-{{if .Info.InstallPack.CompressFile}}
-    File "{{.Info.InstallPack.CompressFile}}"
+{{if .NSIS.CompressFile}}
+    File "{{.NSIS.CompressFile}}"
 {{else if .FrameworkPath}}
     File /r "{{.FrameworkPath}}\*.*"
 {{end}}
 
-{{range $i,$path := .Info.InstallPack.Assets }}
+{{range $i,$path := .NSIS.Assets }}
     File /r "{{$path}}"{{end}}
 !macroend
 
 !macro energy.compressNsis7z
-{{if .Info.InstallPack.UseCompress}} ;CEF
+{{if .NSIS.UseCompress}} ;CEF
     Nsis7z::ExtractWithCallback "$INSTDIR\CEF.7z"
     Delete "$OUTDIR\CEF.7z"
 {{end}}
