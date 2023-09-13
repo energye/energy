@@ -74,8 +74,13 @@ func WriteFile(projectData *project.Project, file string, content []byte) error 
 			return nil
 		}
 	}
-	if err := os.WriteFile(targetPath, content, 0644); err != nil {
+	if f, err := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, 0755); err != nil {
 		return err
+	} else {
+		f.Write(content)
 	}
+	//if err := os.WriteFile(targetPath, content, 0755); err != nil {
+	//	return err
+	//}
 	return nil
 }

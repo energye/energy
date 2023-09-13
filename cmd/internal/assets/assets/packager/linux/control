@@ -1,0 +1,8 @@
+Package: {{.Dpkg.Package}}
+Version: {{.Info.ProductVersion}}
+Section: Application
+Priority: optional
+Architecture: {{.Arch}}
+Maintainer: {{.Author.Name}} <{{.Author.Email}}>
+Description: {{.Info.Comments}}
+Homepage: {{.Dpkg.Homepage}}

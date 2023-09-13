@@ -1,6 +1,8 @@
 [Desktop Entry]
 Type=Application
-Exec={{.Name}}
+Terminal=false
 Name={{.Name}}
-Icon={{.Name}}
+Exec={{.Exec}}
+Icon={{.Icon}}
+Comment={{.Comments}}
 Categories=Utility;

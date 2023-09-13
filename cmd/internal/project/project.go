@@ -30,6 +30,7 @@ type Project struct {
 	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
 	Info           Info   `json:"info"`           // 应用信息
 	NSIS           NSIS   `json:"nsis"`           // windows nsis 安装包
+	Dpkg           DPKG   `json:"dpkg"`           // linux dpkg 安装包
 	Author         Author `json:"author"`         // 作者信息
 }
 
@@ -132,6 +133,15 @@ type NSIS struct {
 	Compress              string   `json:"compress"`              //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
 	UseCompress           bool     `json:"-"`                     //如果支持配置的, true=使用压缩
 	CompressFile          string   `json:"-"`                     //压缩后的文件完全目录
+}
+
+type DPKG struct {
+	Assets       []string `json:"assets"` //打包的资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Package      string   `json:"package"`
+	Homepage     string   `json:"homepage"`
+	Compress     string   `json:"compress"` //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
+	UseCompress  bool     `json:"-"`        //如果支持配置的, true=使用压缩
+	CompressFile string   `json:"-"`        //压缩后的文件完全目录
 }
 
 type Author struct {
