@@ -23,6 +23,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -116,7 +117,8 @@ func generaProject(c *command.Config) error {
 	data["OutputFilename"] = c.Init.Name
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
-	if err := createFile("assets/energy.json", consts.EnergyProjectConfig, data); err != nil {
+	energyJSON := fmt.Sprintf("assets/energy_%s.json", runtime.GOOS)
+	if err := createFile(energyJSON, consts.EnergyProjectConfig, data); err != nil {
 		return err
 	}
 
