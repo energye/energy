@@ -21,10 +21,13 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/energye/golcl/tools/command"
 	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 const (
@@ -57,23 +60,64 @@ func GeneraInstaller(proj *project.Project) error {
 		}
 	}
 	var err error
+	// create debian/control
 	if err = linuxControl(proj, appRoot); err != nil {
 		return err
 	}
+	// create debian/copyright
+	if err = linuxCopyright(proj, appRoot); err != nil {
+		return err
+	}
+	// create app.desktop
 	if err = linuxDesktop(proj, appRoot); err != nil {
 		return err
 	}
-	if err = linuxOpt(proj, appRoot); err != nil {
+	// copy source
+	if err = linuxOptCopy(proj, appRoot); err != nil {
 		return err
 	}
+	// dpkg -b
+	var debName string
+	if debName, err = dpkgB(proj); err != nil {
+		return err
+	}
+	// out log
+	outInstall := filepath.Join(assets.BuildOutPath(proj), "linux", debName)
+	successLog := "Success \n\tInstall Package: %s\n\tInstall: sudo dpkg -i %s\n\tRemove:  sudo dpkg -r %s"
+	term.Section.Println(fmt.Sprintf(successLog, outInstall, debName, proj.Dpkg.Package))
 	return nil
+}
+
+func dpkgB(proj *project.Project) (string, error) {
+	dir := filepath.Join(assets.BuildOutPath(proj), "linux")
+	//sudo dpkg -b demo-1.0.0/ demo-[os]-[arch].deb
+	app := fmt.Sprintf("%s-%s", proj.Name, proj.Info.ProductVersion)
+	debName := fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
+	outFile := filepath.Join(dir, debName)
+	term.Logger.Info("Generate dpkg package. Almost complete", term.Logger.Args("deb", debName))
+	cmd := command.NewCMD()
+	cmd.IsPrint = false
+	cmd.Dir = dir
+	var err error
+	cmd.MessageCallback = func(bytes []byte, e error) {
+		if e != nil {
+			err = e
+		}
+	}
+	if tools.IsExist(outFile) {
+		os.Remove(outFile)
+	}
+	var args = []string{"-b", app, debName}
+	cmd.Command("dpkg", args...)
+	cmd.Close()
+	return debName, err
 }
 
 func opt(proj *project.Project) string {
 	return filepath.Join("/opt", proj.Info.CompanyName, proj.Info.ProductName)
 }
 
-func linuxOpt(proj *project.Project, appRoot string) error {
+func linuxOptCopy(proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate dpkg copy:",
 		term.Logger.Args("company", proj.Info.CompanyName, "product", proj.Info.ProductName, "opt",
 			fmt.Sprintf("/opt/%s/%s", proj.Info.CompanyName, proj.Info.ProductName)))
@@ -88,6 +132,11 @@ func linuxOpt(proj *project.Project, appRoot string) error {
 	if !tools.IsExist(exeDir) {
 		return fmt.Errorf("execution file not found: %s", exeDir)
 	}
+	exeIconDir := proj.Info.Icon
+	if !tools.IsExist(exeIconDir) {
+		return fmt.Errorf("execution file not found: %s", exeDir)
+	}
+
 	term.Logger.Info("Generate dpkg execution " + exeDir)
 	cefDir := os.Getenv(consts.EnergyHomeKey)
 	if !tools.IsExist(cefDir) {
@@ -98,14 +147,53 @@ func linuxOpt(proj *project.Project, appRoot string) error {
 		if srcFile, err := os.Open(src); err != nil {
 			return err
 		} else {
-			defer srcFile.Close()
 			st, err := srcFile.Stat()
 			if err != nil {
 				return err
 			}
 			if st.IsDir() {
-
+				srcFile.Close() //close
+				var pathLen = len(src)
+				err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+					if path == src { // current root
+						return nil
+					}
+					outPath := path[pathLen:]
+					// exclude file or dir
+					for _, p := range proj.Dpkg.Exclude {
+						if strings.Contains(outPath, p) {
+							return nil
+						}
+					}
+					targetPath := filepath.Join(dst, outPath)
+					info, _ := d.Info()
+					if d.IsDir() {
+						return os.MkdirAll(targetPath, info.Mode())
+					} else {
+						if tools.IsExistAndSize(targetPath, info.Size()) {
+							term.Logger.Info("\tcopy skip: " + outPath)
+							return nil
+						}
+						srcFile, err := os.Open(path)
+						if err != nil {
+							return err
+						}
+						defer srcFile.Close()
+						dstFile, err := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, info.Mode())
+						if err != nil {
+							return err
+						}
+						defer dstFile.Close()
+						term.Logger.Info("\tcopy: " + outPath)
+						_, err = io.Copy(dstFile, srcFile)
+						return err
+					}
+				})
+				if err != nil {
+					return err
+				}
 			} else {
+				defer srcFile.Close()
 				dstFilePath := filepath.Join(dst, st.Name())
 				dstFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, st.Mode())
 				if err != nil {
@@ -122,11 +210,15 @@ func linuxOpt(proj *project.Project, appRoot string) error {
 	}
 	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("execution", exeDir))
 	if err := copyFiles(exeDir, optDir); err != nil {
-		return nil
+		return err
+	}
+	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("icon", exeIconDir))
+	if err := copyFiles(exeIconDir, optDir); err != nil {
+		return err
 	}
 	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("framework", cefDir))
 	if err := copyFiles(cefDir, optDir); err != nil {
-		return nil
+		return err
 	}
 	return nil
 }
@@ -159,6 +251,11 @@ func linuxDesktop(proj *project.Project, appRoot string) error {
 			}
 		}
 	}
+	return nil
+}
+
+func linuxCopyright(proj *project.Project, appRoot string) error {
+	term.Logger.Info("Generate dpkg copyright")
 	return nil
 }
 

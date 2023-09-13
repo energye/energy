@@ -109,23 +109,24 @@ func (m *Info) ToSlash() {
 func (m *NSIS) FromSlash() {
 	m.Icon = filepath.FromSlash(m.Icon)
 	m.UnIcon = filepath.FromSlash(m.UnIcon)
-	for i, as := range m.Assets {
-		m.Assets[i] = filepath.FromSlash(as)
+	for i, as := range m.Include {
+		m.Include[i] = filepath.FromSlash(as)
 	}
 }
 
 func (m *NSIS) ToSlash() {
 	m.Icon = filepath.ToSlash(m.Icon)
 	m.UnIcon = filepath.ToSlash(m.UnIcon)
-	for i, as := range m.Assets {
-		m.Assets[i] = filepath.ToSlash(as)
+	for i, as := range m.Include {
+		m.Include[i] = filepath.ToSlash(as)
 	}
 }
 
 // NSIS windows NSIS
 type NSIS struct {
 	Icon                  string   `json:"icon"`                  //安装包图标
-	Assets                []string `json:"assets"`                //打包的资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Include               []string `json:"include"`               //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Exclude               []string `json:"exclude"`               //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	UnIcon                string   `json:"unIcon"`                //安装包卸载图标
 	License               string   `json:"license"`               //安装包授权信息,(license.txt)文件路径
 	Language              string   `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
@@ -136,7 +137,8 @@ type NSIS struct {
 }
 
 type DPKG struct {
-	Assets       []string `json:"assets"` //打包的资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Include      []string `json:"include"` //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Exclude      []string `json:"exclude"` //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	Package      string   `json:"package"`
 	Homepage     string   `json:"homepage"`
 	Compress     string   `json:"compress"` //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za

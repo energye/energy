@@ -134,7 +134,8 @@ func windows(proj *project.Project) error {
 
 // 使用nsis生成安装包
 func makeNSIS(proj *project.Project) (string, error) {
-	term.Logger.Info("NSIS Making Installation, Almost complete")
+	installPackage := proj.Name + "-installer.exe"
+	term.Logger.Info("NSIS Making Installation, Almost complete", term.Logger.Args("Install Package", installPackage))
 	var args []string
 	cmd := command.NewCMD()
 	cmd.IsPrint = false
@@ -145,6 +146,6 @@ func makeNSIS(proj *project.Project) (string, error) {
 	nsisScriptPath := filepath.Join(assets.BuildOutPath(proj), windowsNsis)
 	args = append(args, nsisScriptPath)
 	cmd.Command("makensis", args...)
-	outInstall := filepath.Join(filepath.Dir(nsisScriptPath), proj.Name+"-installer.exe")
+	outInstall := filepath.Join(filepath.Dir(nsisScriptPath), installPackage)
 	return outInstall, nil
 }

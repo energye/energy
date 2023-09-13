@@ -106,6 +106,19 @@ func IsExist(path string) bool {
 	return true
 }
 
+func IsExistAndSize(path string, size int64) bool {
+	s, err := os.Stat(path)
+	if err != nil {
+		if os.IsExist(err) && s.Size() == size {
+			return true
+		} else if os.IsNotExist(err) {
+			return false
+		}
+		return false
+	}
+	return true
+}
+
 func RenderTemplate(templateText string, data map[string]any) ([]byte, error) {
 	tmpl, err := template.New("").Parse(templateText)
 	if err != nil {

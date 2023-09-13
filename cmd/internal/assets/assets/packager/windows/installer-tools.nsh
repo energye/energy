@@ -39,7 +39,7 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
     File /r "{{.FrameworkPath}}\*.*"
 {{end}}
 
-{{range $i,$path := .NSIS.Assets }}
+{{range $i,$path := .NSIS.Include }}
     File /r "{{$path}}"{{end}}
 !macroend
 

@@ -5,4 +5,5 @@ Name={{.Name}}
 Exec={{.Exec}}
 Icon={{.Icon}}
 Comment={{.Comments}}
+Encoding=UTF-8
 Categories=Utility;

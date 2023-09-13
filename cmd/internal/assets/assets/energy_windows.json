@@ -15,7 +15,8 @@
     "fileDescription": "Built using ENERGY (https://github.com/energye/energy)"
   },
   "nsis": {
-    "assets": [],
+    "include": [],
+    "exclude": ["cache"],
     "icon": "{{.ProjectPath}}/resources/icon.ico",
     "unIcon": "{{.ProjectPath}}/resources/icon.ico",
     "license": "",
