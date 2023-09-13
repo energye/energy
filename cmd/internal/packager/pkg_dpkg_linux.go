@@ -107,7 +107,7 @@ func linuxOpt(proj *project.Project, appRoot string) error {
 
 			} else {
 				dstFilePath := filepath.Join(dst, st.Name())
-				dstFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, 0755)
+				dstFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, st.Mode())
 				if err != nil {
 					return err
 				}
