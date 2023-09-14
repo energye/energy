@@ -77,6 +77,7 @@ type Build struct {
 	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
 	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file. windows"`
 	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
+	Gtk     string `long:"gtk" description:"Compile on Linux, enable TempDll. gtk: gtk2 or gtk3" default:"gtk3"`
 	TempDll bool   `short:"d" long:"dll" description:"Enable built-in liblcl build"`
 }
 
