@@ -10,12 +10,21 @@
 
 package build
 
-import "github.com/energye/energy/v2/cmd/internal/command"
+import (
+	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/project"
+)
 
 const (
 	assetsFSPath = "assets/build/"
 )
 
 func Build(c *command.Config) error {
-	return build(c)
+	// 读取项目配置文件 energy.json 在main函数目录
+	if proj, err := project.NewProject(c.Build.Path); err != nil {
+		return err
+	} else {
+		proj.TempDll = c.Build.TempDll
+		return build(c, proj)
+	}
 }

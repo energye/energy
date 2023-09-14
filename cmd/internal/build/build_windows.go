@@ -42,47 +42,48 @@ const (
 //  exe生成图标
 //  编译go
 //  upx
-func build(c *command.Config) error {
-	// 读取项目配置文件 energy.json 在main函数目录
-	if proj, err := project.NewProject(c.Build.Path); err != nil {
+func build(c *command.Config, proj *project.Project) error {
+	var (
+		err      error
+		iconPath string
+		syso     string
+	)
+	if iconPath, err = generaICON(proj); err != nil {
 		return err
-	} else {
-		var (
-			iconPath string
-			syso     string
-		)
-		if iconPath, err = generaICON(proj); err != nil {
-			return err
+	}
+	defer func() {
+		if syso != "" {
+			os.Remove(syso)
 		}
-		defer func() {
-			if syso != "" {
-				os.Remove(syso)
-			}
-		}()
-		if syso, err = generaSYSO(iconPath, proj); err != nil {
-			return err
+	}()
+	if syso, err = generaSYSO(iconPath, proj); err != nil {
+		return err
+	}
+	// go build
+	cmd := toolsCommand.NewCMD()
+	cmd.Dir = proj.ProjectPath
+	cmd.IsPrint = false
+	term.Section.Println("Building", proj.OutputFilename)
+	var args = []string{"build"}
+	if proj.TempDll {
+		args = append(args, "--tags=tempdll")
+	}
+	args = append(args, "-ldflags", "-s -w -H windowsgui")
+	args = append(args, "-o", proj.OutputFilename)
+	cmd.Command("go", args...)
+	// upx
+	if c.Build.Upx && tools.CommandExists("upx") {
+		term.Section.Println("Upx compression")
+		args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
+		if c.Build.UpxFlag != "" {
+			args = strings.Split(c.Build.UpxFlag, " ")
+			args = append(args, proj.OutputFilename)
 		}
-		// go build
-		cmd := toolsCommand.NewCMD()
-		cmd.Dir = proj.ProjectPath
-		cmd.IsPrint = false
-		term.Section.Println("Building", proj.OutputFilename)
-		var args = []string{"build", "-ldflags", "-H windowsgui -s -w", "-o", proj.OutputFilename}
-		cmd.Command("go", args...)
-		// upx
-		if c.Build.Upx && tools.CommandExists("upx") {
-			term.Section.Println("Upx compression")
-			args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
-			if c.Build.UpxFlag != "" {
-				args = strings.Split(c.Build.UpxFlag, " ")
-				args = append(args, proj.OutputFilename)
-			}
-			cmd.Command("upx", args...)
-		}
-		cmd.Close()
-		if err == nil {
-			term.Section.Println("Build Successfully")
-		}
+		cmd.Command("upx", args...)
+	}
+	cmd.Close()
+	if err == nil {
+		term.Section.Println("Build Successfully")
 	}
 
 	return nil

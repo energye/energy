@@ -77,10 +77,13 @@ type Build struct {
 	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
 	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file. windows"`
 	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
+	TempDll bool   `short:"d" long:"dll" description:"Enable built-in liblcl build"`
 }
 
 type EnergyConfig struct {
-	Source DownloadSource `json:"source"`
+	Framework string         `json:"framework"`
+	Version   string         `json:"version"`
+	Source    DownloadSource `json:"source"`
 }
 
 type DownloadSource struct {

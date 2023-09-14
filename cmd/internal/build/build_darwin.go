@@ -20,25 +20,25 @@ import (
 	toolsCommand "github.com/energye/golcl/tools/command"
 )
 
-func build(c *command.Config) error {
-	// 读取项目配置文件 energy.json 在main函数目录
-	if proj, err := project.NewProject(c.Build.Path); err != nil {
-		return err
-	} else {
-		// go build
-		cmd := toolsCommand.NewCMD()
-		cmd.Dir = proj.ProjectPath
-		cmd.IsPrint = false
-		term.Section.Println("Building", proj.OutputFilename)
-		var args = []string{"build", "-ldflags", "-s -w", "-o", proj.OutputFilename}
-		cmd.Command("go", args...)
-		cmd.Command("strip", proj.OutputFilename)
-		// upx
+func build(c *command.Config, proj *project.Project) error {
+	// go build
+	cmd := toolsCommand.NewCMD()
+	cmd.Dir = proj.ProjectPath
+	cmd.IsPrint = false
+	term.Section.Println("Building", proj.OutputFilename)
+	var args = []string{"build"}
+	if proj.TempDll {
+		args = append(args, "--tags=tempdll")
+	}
+	args = append(args, "-ldflags", "-s -w")
+	args = append(args, "-o", proj.OutputFilename)
+	cmd.Command("go", args...)
+	cmd.Command("strip", proj.OutputFilename)
+	// upx
 
-		cmd.Close()
-		if err == nil {
-			term.Section.Println("Build Successfully")
-		}
+	cmd.Close()
+	if err == nil {
+		term.Section.Println("Build Successfully")
 	}
 	return nil
 }
