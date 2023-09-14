@@ -76,6 +76,13 @@ func GeneraInstaller(proj *project.Project) error {
 	if err = linuxOptCopy(proj, appRoot); err != nil {
 		return err
 	}
+	// 7zz 压缩 CEF
+	comper := proj.NSIS.Compress
+	switch comper {
+	case "7z", "7za":
+		proj.NSIS.UseCompress = tools.CommandExists(comper)
+	}
+
 	// dpkg -b
 	var debName string
 	if debName, err = dpkgB(proj); err != nil {

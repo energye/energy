@@ -44,8 +44,10 @@ func GeneraInstaller(proj *project.Project) error {
 		}
 	}
 	// 7za 压缩 CEF
-	if proj.NSIS.Compress == "7za" && tools.CommandExists("7za") {
-		proj.NSIS.UseCompress = true
+	comper := proj.NSIS.Compress
+	switch comper {
+	case "7z", "7za":
+		proj.NSIS.UseCompress = tools.CommandExists(comper)
 	}
 	if proj.NSIS.UseCompress {
 		if cef7zFile, err := compressCEF7za(proj); err != nil {
