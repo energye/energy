@@ -42,9 +42,8 @@ const (
 //  exe生成图标
 //  编译go
 //  upx
-func build(c *command.Config, proj *project.Project) error {
+func build(c *command.Config, proj *project.Project) (err error) {
 	var (
-		err      error
 		iconPath string
 		syso     string
 	)

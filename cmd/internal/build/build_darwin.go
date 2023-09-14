@@ -20,7 +20,7 @@ import (
 	toolsCommand "github.com/energye/golcl/tools/command"
 )
 
-func build(c *command.Config, proj *project.Project) error {
+func build(c *command.Config, proj *project.Project) (err error) {
 	// go build
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = proj.ProjectPath
