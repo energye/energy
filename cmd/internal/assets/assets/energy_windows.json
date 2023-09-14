@@ -22,7 +22,8 @@
     "license": "",
     "language": "english",
     "requestExecutionLevel": "admin",
-    "compress": "7za"
+    "compress": "7za",
+    "compressName": "framework.7z"
   },
   "author": {
     "name": "yanghy",

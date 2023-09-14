@@ -16,7 +16,8 @@
     "exclude": ["cache"],
     "package": "com.{{.CompanyName}}.{{.CompanyName}}",
     "homepage": "https://github.com/energye/energy",
-    "compress": "7zz"
+    "compress": "7zz",
+    "compressName": "framework.7z"
   },
   "author": {
     "name": "yanghy",

@@ -132,7 +132,8 @@ type NSIS struct {
 	License               string   `json:"license"`               //安装包授权信息,(license.txt)文件路径
 	Language              string   `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files
 	RequestExecutionLevel string   `json:"requestExecutionLevel"` //admin or ""
-	Compress              string   `json:"compress"`              //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
+	Compress              string   `json:"compress"`              //压缩CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
+	CompressName          string   `json:"compressName"`          //压缩CEF后的7z包名称
 	UseCompress           bool     `json:"-"`                     //如果支持配置的, true=使用压缩
 	CompressFile          string   `json:"-"`                     //压缩后的文件完全目录
 }

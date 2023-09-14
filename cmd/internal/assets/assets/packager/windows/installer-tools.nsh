@@ -45,8 +45,8 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 
 !macro energy.compressNsis7z
 {{if .NSIS.UseCompress}} ;CEF
-    Nsis7z::ExtractWithCallback "$INSTDIR\CEF.7z"
-    Delete "$OUTDIR\CEF.7z"
+    Nsis7z::ExtractWithCallback "$INSTDIR\{{.NSIS.CompressName}}"
+    Delete "$OUTDIR\{{.NSIS.CompressName}}"
 {{end}}
 !macroend
 

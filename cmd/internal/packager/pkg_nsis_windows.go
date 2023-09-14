@@ -72,14 +72,13 @@ func GeneraInstaller(proj *project.Project) error {
 }
 
 func compressCEF7za(proj *project.Project) (string, error) {
-	cef7zFile := "CEF.7z"
-	term.Logger.Info("7za compress " + cef7zFile + ", This may take some time")
+	term.Logger.Info("7za compress " + proj.NSIS.CompressName + ", This may take some time")
 	buildWindowsPath := filepath.Join(assets.BuildOutPath(proj), "windows")
-	outFilePath := filepath.FromSlash(filepath.Join(buildWindowsPath, cef7zFile))
+	outFilePath := filepath.FromSlash(filepath.Join(buildWindowsPath, proj.NSIS.CompressName))
 	if proj.Clean {
 		os.Remove(outFilePath)
 	} else if tools.IsExist(outFilePath) {
-		term.Logger.Info(cef7zFile + " file exist")
+		term.Logger.Info(proj.NSIS.CompressName + " file exist")
 		return outFilePath, nil
 	}
 
@@ -98,7 +97,10 @@ func compressCEF7za(proj *project.Project) (string, error) {
 	cmd := command.NewCMD()
 	cmd.IsPrint = false
 	var args = []string{"a", outFilePath, filepath.FromSlash(fmt.Sprintf("%s/*", proj.FrameworkPath))}
-	cmd.Command("7za", args...)
+	for _, exc := range proj.NSIS.Exclude {
+		args = append(args, "-xr!"+exc)
+	}
+	cmd.Command(proj.NSIS.Compress, args...)
 	cmd.Close()
 	return outFilePath, nil
 }
