@@ -110,6 +110,7 @@ func (m *Info) ToSlash() {
 func (m *NSIS) FromSlash() {
 	m.Icon = filepath.FromSlash(m.Icon)
 	m.UnIcon = filepath.FromSlash(m.UnIcon)
+	m.License = filepath.FromSlash(m.License)
 	for i, as := range m.Include {
 		m.Include[i] = filepath.FromSlash(as)
 	}
@@ -118,6 +119,7 @@ func (m *NSIS) FromSlash() {
 func (m *NSIS) ToSlash() {
 	m.Icon = filepath.ToSlash(m.Icon)
 	m.UnIcon = filepath.ToSlash(m.UnIcon)
+	m.License = filepath.ToSlash(m.License)
 	for i, as := range m.Include {
 		m.Include[i] = filepath.ToSlash(as)
 	}

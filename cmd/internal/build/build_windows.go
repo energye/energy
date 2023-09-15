@@ -50,11 +50,13 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	if iconPath, err = generaICON(proj); err != nil {
 		return err
 	}
-	defer func() {
+	var delSyso = func() {
 		if syso != "" {
 			os.Remove(syso)
+			syso = ""
 		}
-	}()
+	}
+	defer delSyso()
 	if syso, err = generaSYSO(iconPath, proj); err != nil {
 		return err
 	}
@@ -70,6 +72,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	args = append(args, "-ldflags", "-s -w -H windowsgui")
 	args = append(args, "-o", proj.OutputFilename)
 	cmd.Command("go", args...)
+	delSyso()
 	// upx
 	if c.Build.Upx && tools.CommandExists("upx") {
 		term.Section.Println("Upx compression")
