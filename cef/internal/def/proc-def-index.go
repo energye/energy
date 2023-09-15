@@ -26,8 +26,6 @@ const (
 	// TForm
 	Form_SetOnMessagesEvent
 	// CEF
-	LibVersion
-	LibBuildVersion
 	CEF_Win_CreateRectRgn
 	CEF_Win_SetRectRgn
 	CEF_Win_DeleteObject

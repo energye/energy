@@ -13,26 +13,7 @@ package version
 
 import "github.com/energye/liblclbinres"
 
-// Current Branch Version
-var (
-	libBuildVersion = "" // pascal lib-lcl build
-)
-
 // LibVersion return lib-lcl version
 func LibVersion() string {
 	return liblclbinres.LibVersion()
-}
-
-// LibBuildVersion return pascal lib build version
-func LibBuildVersion() string {
-	return libBuildVersion
-}
-
-// SetLibBuildVersion Set pascal lib build version
-func SetLibBuildVersion(version string) {
-	if version == "" {
-		libBuildVersion = "0.0.0"
-	} else {
-		libBuildVersion = version
-	}
 }

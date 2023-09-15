@@ -26,8 +26,6 @@ func init() {
 		// TForm
 		dllimports.NewEnergyImport("Form_SetOnMessagesEvent", 0),
 		//CEF
-		dllimports.NewEnergyImport("LibVersion", 0),
-		dllimports.NewEnergyImport("LibBuildVersion", 0),
 		dllimports.NewEnergyImport("CEF_Win_CreateRectRgn", 0),
 		dllimports.NewEnergyImport("CEF_Win_SetRectRgn", 0),
 		dllimports.NewEnergyImport("CEF_Win_DeleteObject", 0),

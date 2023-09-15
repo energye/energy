@@ -14,20 +14,8 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/internal/version"
 	"github.com/energye/energy/v2/common/imports"
-	"github.com/energye/golcl/lcl/api"
 )
-
-// defInit
-//	GlobalInit
-func defInit() {
-	{
-		// Set pascal lib-lcl build version
-		r1, _, _ := imports.Proc(def.LibBuildVersion).Call()
-		version.SetLibBuildVersion(api.GoStr(r1))
-	}
-}
 
 // setMacOSXCommandLine
 // 针对 MacOSX 设置命令行参数

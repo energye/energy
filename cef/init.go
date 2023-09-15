@@ -77,8 +77,6 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	}
 	// go lcl
 	inits.Init(libs, resources)
-	// def
-	defInit()
 	// macos command line
 	setMacOSXCommandLine(api.PascalStr(Args.CommandLine()))
 	// main thread run call

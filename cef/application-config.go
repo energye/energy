@@ -1067,11 +1067,6 @@ func (m *TCEFApplication) LibVersion() string {
 	return version.LibVersion()
 }
 
-// LibBuildVersion 返回 lib-lcl 构建版本
-func (m *TCEFApplication) LibBuildVersion() string {
-	return version.LibBuildVersion()
-}
-
 func (m *TCEFApplication) LibCefPath() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_LibCefPath).Call()
 	return api.GoStr(r1)
