@@ -50,7 +50,9 @@ type softEnf struct {
 
 func Install(c *command.Config) error {
 	// 初始配置和安装目录
-	initInstall(c)
+	if err := initInstall(c); err != nil {
+		return err
+	}
 	// 检查环境
 	willInstall := checkInstallEnv(c)
 	var (
@@ -339,7 +341,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	return
 }
 
-func initInstall(c *command.Config) {
+func initInstall(c *command.Config) (err error) {
 	if c.Install.Path == "" {
 		// current dir
 		c.Install.Path = c.Wd
@@ -358,20 +360,39 @@ func initInstall(c *command.Config) {
 		c.Install.IsSame = true
 	}
 	// 创建安装目录
-	os.MkdirAll(c.Install.Path, fs.ModePerm)        // framework root
-	os.MkdirAll(cefInstallPathName(c), fs.ModePerm) //cef
-	os.MkdirAll(goInstallPathName(c), fs.ModePerm)  // go
+	err = os.MkdirAll(c.Install.Path, fs.ModePerm) // framework root
+	if err != nil {
+		return
+	}
+	err = os.MkdirAll(cefInstallPathName(c), fs.ModePerm) //cef
+	if err != nil {
+		return
+	}
+	err = os.MkdirAll(goInstallPathName(c), fs.ModePerm) // go
+	if err != nil {
+		return
+	}
 	if nsisCanInstall() {
-		os.MkdirAll(nsisInstallPathName(c), fs.ModePerm) // nsis
+		err = os.MkdirAll(nsisInstallPathName(c), fs.ModePerm) // nsis
+		if err != nil {
+			return
+		}
 	}
 	if upxCanInstall() {
-		os.MkdirAll(upxInstallPathName(c), fs.ModePerm) //upx
+		err = os.MkdirAll(upxInstallPathName(c), fs.ModePerm) //upx
+		if err != nil {
+			return
+		}
 	}
 	if z7zCanInstall() {
-		os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
+		err = os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
+		if err != nil {
+			return
+		}
 	}
 	// framework download cace
-	os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
+	err = os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
+	return err
 }
 
 func filePathInclude(compressPath string, files ...any) (string, bool) {
