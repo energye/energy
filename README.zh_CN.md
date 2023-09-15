@@ -52,27 +52,23 @@
 #### 基本需求
 
 > - Golang >= 1.18
-> - Energy 开发环境
->
-> 使用 energy 命令行工具自动安装开发环境
->
-> 获取 [energy](https://github.com/energye/energy) 项目，或直接使用预编译命令行工具 [下载地址](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
->
-> <p style="color:palevioletred;">如果使用预编译命令行工具以下步骤可跳过</p>
+> - Energy 开发环境(CEF, liblcl)
+
+#### 环境安装
+
+- 自动安装开发环境
+
+> 使用 energy 命令行工具自动安装完整开发环境 [下载地址](https://energy.yanghy.cn/course/100/1694511322285207)
 > 
-> `git clone https://github.com/energye/energy.git`
->
-> 进入 energy 命令行目录
-> 
-> `cd energy/cmd/energy`
->
-> 安装命令行工具
-> 
-> `go install`
->
-> 执行安装命令
-> 
-> `energy install .`
+> 此安装过程有选择性的从网络下载以下框架和工具
+
+| 名称          | 平台             | 说明             |
+|-------------|----------------|----------------|
+| Golang      | ALL            | Go语言开发环境       |
+| CEF, liblcl | ALL            | CEF框架          |
+| NSIS        | Windows        | Windows安装包制作工具 |
+| UPX         | Windows, Linux | 执行文件压缩工具       |
+| 7z          | Windows, Linux | CEF框架压缩工具      |
 
 ### 入门指南 - [传送门](https://energy.yanghy.cn)
 
@@ -81,21 +77,18 @@
 * [文档](https://energy.yanghy.cn/document/300/0)
 
 ### 快速入门
-> 必须: 你需要自己安装Go开发环境 [Golang安装包](https://golang.google.cn/dl/)
-> 
-> 使用 [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) 命令行工具自动安装开发环境依赖
->
-> `energy install .`
->
-> 以example/simple示例为例
->
-> 更新最新发布版本依赖
->
-> `go mod tidy`
->
-> 在IDE中运行 simple 或 go run simple.go
 
-### example/simple 示例代码
+> 使用 [energy](https://energy.yanghy.cn/course/100/1694511322285207) 命令行工具自动安装完整开发环境
+
+### 三个步骤运行一个简单应用
+
+1. 安装开发环境: `energy install .`
+2. 初始化应用: `energy init .`
+3. 运行应用: `go run main.go`
+
+### 示例代码
+
+main.go
 
 ```go
 package main
@@ -105,23 +98,24 @@ import (
 )
 
 func main() {
-	//全局初始化 每个应用都必须调用的
+	//全局初始化
 	cef.GlobalInit(nil, nil)
 	//创建应用
-	cefApp := cef.NewApplication()
+	app := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }
 ```
----
 
-### 运行应用
-- Windows、Linux
-> `go run simple.go`
-- MacOS
-> `go run simple.go energy_env=dev`
+### 项目打包
+1. 编译：`energy build .`
+2. 打包：`energy package .`
+3. 最后自动生的安装包
+   - windows  使用`nsis`工具生成exe安装包
+   - linux    使用`dpkg`制作deb安装包
+   - macos    生成`xxx.app`
 
 ### 系统支持
 

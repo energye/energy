@@ -53,36 +53,28 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [Development environment](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
-
-> Install automatically using the energy command line tool
+### [Development Environment](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
 
 #### Basic needs
 
-> - golang >= 1.18
+> - Golang >= 1.18
+> - Energy (CEF, liblcl)
+
+#### Environmental installation
+
+- Automatic installation development environment
+
+> Automatically install the complete development environment using the energy command-line tool [Download address](https://energy.yanghy.cn/course/100/1694511322285207)
 >
-> - energy development environment
->
-> Use the energy command line tool to automatically install the development environment
->
-> Get [energy](https://github.com/energye/energy) project, or use the precompiled command line tool
-> directly [Download address](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
->
-> <p style="color:palevioletred;">If using pre compiled command-line tools, the following steps can be skipped</p>
->
-> `git clone https://github.com/energye/energy.git`
->
-> Enter the  [energy](https://github.com/energye/energy) command line directory
->
-> `cd energy/cmd/energy`
->
-> Install command line tools
->
-> `go install`
->
-> Execute the installation command
->
-> `energy install .`
+> This installation process selectively downloads the following frameworks and tools from the network
+
+| Name        | Platform       | illustrate                                   |
+|-------------|----------------|----------------------------------------------|
+| Golang      | ALL            | Golang Development Environment               |
+| CEF, liblcl | ALL            | CEF Framework                                |
+| NSIS        | Windows        | Windows Installation package production tool |
+| UPX         | Windows, Linux | Execute file compression tool                |
+| 7z          | Windows, Linux | CEF Framework compression tool               |
 
 ### Getting Started Guide - [Transfer gate](https://energy.yanghy.cn)
 
@@ -92,22 +84,17 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 
 ### Quick Get Start
 
-> Must: You need to install the Go development environment yourself [Golang Install](https://golang.google.cn/dl/)
->
-> Use [energy-command-line](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a) Command line tool automatic
-> installation environment dependency
->
-> `energy install .`
->
-> Take example/simple as an example
->
-> Update latest release dependency
->
-> `go mod tidy`
->
-> Run `simple` in the IDE or `go run simple.go`
+> Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) Command line tools automatically install the complete development environment
 
-### example/simple Code
+### Run a simple application in three steps
+
+1. Installation and development environment: `energy install .`
+2. Initiate Application: `energy init .`
+3. Run Application: `go run main.go`
+
+### sample code
+
+main.go
 
 ```go
 package main
@@ -117,31 +104,25 @@ import (
 )
 
 func main() {
-	//Global initialization must be called by every application
+	//Global initialization
 	cef.GlobalInit(nil, nil)
-	//Create application
-	cefApp := cef.NewApplication()
-	//Set URL
-	cef.BrowserWindow.Config.Url = "https://www.yanghy.cn"
-	//Run App
-	cef.Run(cefApp)
+	//Create an application
+	app := cef.NewApplication()
+	//Specify a URL address or local HTML file directory
+	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+	//Run Application
+	cef.Run(app)
 }
 ```
 
----
+### Pack Project
+1. build：`energy build .`
+2. package：`energy package .`
+3. The final automatically generated installation package
+    - windows  Using`nsis`Create exe installation package
+    - linux    Using`dpkg`Create deb installation package
+    - macos    Generate`xxx.app`
 
-### Run app
-
-- Windows、Linux
-
-> `go run simple.go`
-
-- MacOS
-
-> `go run simple.go energy_env=dev`
-
-
----
 
 ### System support
 
