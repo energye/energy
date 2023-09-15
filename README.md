@@ -4,7 +4,7 @@
 
 <p align="center" style="font-size: 24px;">
     <strong>
-        Energy is framework for Go to build desktop applications based on CEF
+        Energy is a framework for Go to build desktop applications based on CEF
     </strong>
 </p>
 
@@ -22,31 +22,24 @@ English
 
 ### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
-Energy is a framework developed by Golang based on CEF(Chromium Embedded Framework), embedded
-with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
+Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embedded
+[CEF](https://bitbucket.org/chromiumembedded/cef) binary
 > [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF(Chromium Embedded
 > Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 >
 > Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows,
 > Linux and MacOS
->
-> Knowledge of the front-end technology stack and some knowledge of the Go language is required
-
 ### Characteristic
 
 > - Rich CEF API and LCL system native widgets
-> - development environment is simple and the compilation speed is fast. Only the Go development environment and the CEF
-    binary framework that Energy depends on are needed
-> - cross-platform: A set of code can be packaged into Windows, domestic UOS, Deepin, Kylin, MacOS, Linux
-> - Language responsibilities
->> - Go: Go is responsible for window creation, CEF configuration and function implementation, creation of various UI
-     components, low-level system calls, and functions that JS cannot handle, such as file stream, security encryption,
-     high-performance processing, etc.
->> - Web: HTML + CSS + JavaScript responsible for the function of the client interface, make any interface you want, Any front-end technology framework can be used
-> - front-end technology: Support mainstream front-end frameworks, such as Vue, React, Angular or pure HTML+CSS
-> - event driven: High performance event driven, IPC based communication, Go and Web side is very convenient function
-    call and data interaction
-> - resource loading: supports local or built-in to executable files, http service support is not required, multiple choices.
+> - Development environment is simple and the compilation speed is fast. Only need Go and Energy.
+> - Cross-Platform: You can package your code as Windows, domestic UOS, Deepin, Kylin, MacOS and Linux
+> - Responsibilities
+>> - Go: Go is responsible for creating Windows, configuring CEF and implementing functions, creating various UI components, calling the low level of the system and some functions that JS cannot handle, such as: file flow, security encryption, high-performance processing, etc.
+>> - Web: HTML + CSS + JavaScript is responsible for the function of the client interface, you can make any interface you want.
+> - Front-end technology: Support mainstream frameworks, such as Vue, React, Angular or pure HTML+CSS+JS.
+> - Event driven: High performance event driven, based on IPC communication, Go and Web can call each other quality.
+> - Esource loading: You can either read local resources or resources build into execution files without http services, or you can load resources using http services.
 
 ### Built-in dependency&integration
 
@@ -64,9 +57,9 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 
 - Automatic installation development environment
 
-> Automatically install the complete development environment using the energy command-line tool [Download address](https://energy.yanghy.cn/course/100/1694511322285207)
+> Using the energy command-line tool [Download address](https://energy.yanghy.cn/course/100/1694511322285207)
 >
-> This installation process selectively downloads the following frameworks and tools from the network
+> During the installation process, you can optionally install the following frameworks and tools, or you can download the resources yourself.
 
 | Name        | Platform       | illustrate                                   |
 |-------------|----------------|----------------------------------------------|
@@ -76,21 +69,21 @@ with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
 | UPX         | Windows, Linux | Execute file compression tool                |
 | 7z          | Windows, Linux | CEF Framework compression tool               |
 
-### Getting Started Guide - [Transfer gate](https://energy.yanghy.cn)
+### Guide to Start - [Link](https://energy.yanghy.cn)
 
 * [Course](https://energy.yanghy.cn/course/100/0)
 * [Example](https://energy.yanghy.cn/example/200/0)
 * [Document](https://energy.yanghy.cn/document/300/0)
 
-### Quick Get Start
+### Quick Start
 
-> Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) Command line tools automatically install the complete development environment
+> Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) Command line tools to install the complete development environment automatically.
 
-### Run a simple application in three steps
+### Run a simple application by three steps
 
-1. Installation and development environment: `energy install .`
-2. Initiate Application: `energy init .`
-3. Run Application: `go run main.go`
+1. Install development environment: `energy install .`
+2. Initiate an Application: `energy init .`
+3. Run the Application: `go run main.go`
 
 ### sample code
 
@@ -115,10 +108,10 @@ func main() {
 }
 ```
 
-### Pack Project
-1. build：`energy build .`
-2. package：`energy package .`
-3. The final automatically generated installation package
+### Build
+1. Build：`energy build .`
+2. Package：`energy package .`
+3. Package Type：
     - windows  Using`nsis`Create exe installation package
     - linux    Using`dpkg`Create deb installation package
     - macos    Generate`xxx.app`
@@ -148,7 +141,8 @@ func main() {
     </a>
 </p>
 
-Thank you for ordering a Star for the project
+If this project is helpful to you, please give me a star
+
 
 ---
 
