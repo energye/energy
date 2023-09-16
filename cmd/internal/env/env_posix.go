@@ -40,7 +40,7 @@ func SetUPXEnv(upxRoot string) {
 	term.Logger.Info("Setting UPX environment Variables: ", term.Logger.Args(consts.UPXHomeKey, upxRoot))
 	var exUpxRoot = fmt.Sprintf("export %s=%s", consts.UPXHomeKey, upxRoot)
 	var exPath = "export PATH=$PATH:" + homeKey(consts.UPXHomeKey)
-	var exs = []string{exUpxRoot, exPath}
+	var exs = []string{exUpxRoot}
 	setPosixEnv(exs, exPath, homeKey(consts.UPXHomeKey))
 	term.BoxPrintln("Hint: Reopen the cmd window for the upx command to take effect.")
 }
@@ -69,7 +69,7 @@ func SetGoEnv(goRoot string) {
 	var exGoBin = "export GOBIN=$GOROOT/bin"
 	var exPath = "export PATH=$PATH:$GOBIN"
 	var exs = []string{exGoRoot, exGoCache, exGoBin}
-	setPosixEnv(exs, exPath, "$GOBIN")
+	setPosixEnv(exs, exPath, homeKey("GOBIN"))
 	term.BoxPrintln("Hint: Reopen the cmd window for the Go command to take effect.")
 }
 
@@ -118,9 +118,9 @@ func setPosixEnv(exs []string, binPath, bin string) {
 		for _, v := range s2 {
 			v = strings.TrimSpace(v)
 			if v != "" && export == "" {
-				export = v
+				export = strings.ToLower(v)
 			} else if v != "" && exportName == "" {
-				exportName = v
+				exportName = strings.ToUpper(v)
 			}
 		}
 		return
@@ -140,12 +140,15 @@ func setPosixEnv(exs []string, binPath, bin string) {
 	// 检查path变量
 	var isExportPath = func(line string) bool {
 		export, exportName := exportSplit(line)
-		if export == "export" && exportName == "PATH" {
-			if strings.Contains(line, bin) {
-				return true
-			}
+		return export == "export" && exportName == "PATH"
+	}
+	// 检查bin path变量
+	var isExportBinPath = func(line string) (isPath, isBin bool) {
+		isPath = isExportPath(line)
+		if isPath {
+			isBin = strings.Contains(line, bin)
 		}
-		return false
+		return
 	}
 	for _, file := range envFiles {
 		tempExts = exs[:]
@@ -168,8 +171,11 @@ func setPosixEnv(exs []string, binPath, bin string) {
 						return false
 					})
 					// path里是否存在要设置的bin
-					if binPath != "" && isExportPath(line) {
+					if isPath, isBin := isExportBinPath(line); binPath != "" && isBin {
 						currentPath = line
+					} else if isPath {
+						newContent.WriteString(line)
+						newContent.WriteString("\n")
 					} else {
 						// 其它变量, 判断是否存在，如果存在替换, 否则将原来的添加进来
 						if ex, ok := isExport(line); ok {
@@ -186,10 +192,11 @@ func setPosixEnv(exs []string, binPath, bin string) {
 					newContent.WriteString(ext)
 					newContent.WriteString("\n")
 				}
+				// 最后一行设置 path
 				if currentPath != "" { // 不为空说明现有的path里已经存在 bin, 放到最后一行
 					newContent.WriteString(currentPath)
 					newContent.WriteString("\n")
-				} else if binPath != "" { //不为空并且现有的path里没有bin时，自己设置一个带有bin 的 path, 放到最后一行
+				} else if binPath != "" { //不为空并且现有的path里没有bin时，自己设置一个带有bin 的 新path, 放到最后一行
 					newContent.WriteString(binPath)
 					newContent.WriteString("\n")
 				}
