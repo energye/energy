@@ -23,7 +23,6 @@ import (
 	toolsCommand "github.com/energye/golcl/tools/command"
 	"io/ioutil"
 	"os"
-	"path"
 	"path/filepath"
 	"strings"
 )
@@ -109,18 +108,39 @@ func setPosixEnv(exs []string, binPath, bin string) {
 		return
 	}
 	var tempExts []string
+	// 拆分当前配置，确保是环境变量并且没有空字符
+	var exportSplit = func(s string) (export, exportName string) {
+		s1 := strings.Split(strings.TrimSpace(s), "=")
+		if len(s1) < 2 {
+			return "", ""
+		}
+		s2 := strings.Split(strings.TrimSpace(s1[0]), " ")
+		for _, v := range s2 {
+			v = strings.TrimSpace(v)
+			if v != "" && export == "" {
+				export = v
+			} else if v != "" && exportName == "" {
+				exportName = v
+			}
+		}
+		return
+	}
+	// 检查当前要导出的变量
 	var isExport = func(line string) (string, bool) {
+		export, exportName := exportSplit(line)
 		for i, ex := range tempExts {
-			exName := strings.Split(ex, "=")[0]
-			if strings.Index(line, exName) == 0 {
+			exExport, exExportName := exportSplit(ex)
+			if exExport == export && exportName == exExportName {
 				tempExts = append(tempExts[i+1:], tempExts[:i]...)
 				return ex, true
 			}
 		}
 		return "", false
 	}
+	// 检查path变量
 	var isExportPath = func(line string) bool {
-		if strings.Index(line, "export PATH") == 0 {
+		export, exportName := exportSplit(line)
+		if export == "export" && exportName == "PATH" {
 			if strings.Contains(line, bin) {
 				return true
 			}
@@ -129,7 +149,7 @@ func setPosixEnv(exs []string, binPath, bin string) {
 	}
 	for _, file := range envFiles {
 		tempExts = exs[:]
-		var fp = path.Join(homeDir, file)
+		var fp = filepath.Join(homeDir, file)
 		cmd.Command("touch", fp)
 		f, err := os.OpenFile(fp, os.O_RDWR|os.O_APPEND, 0666)
 		if err == nil {
