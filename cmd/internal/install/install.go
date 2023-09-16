@@ -390,7 +390,7 @@ func initInstall(c *command.Config) (err error) {
 			return
 		}
 	}
-	// framework download cace
+	// framework download cache
 	err = os.MkdirAll(filepath.Join(c.Install.Path, consts.FrameworkCache), fs.ModePerm)
 	return err
 }
