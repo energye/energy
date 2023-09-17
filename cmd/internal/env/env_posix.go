@@ -102,8 +102,7 @@ func envfiles() (result []string) {
 }
 
 func SourceEnvFiles() {
-	var envFiles = envfiles()
-	term.Logger.Info("Refresh Environment Variables source: " + strings.Join(envFiles, " "))
+	term.Logger.Info("Refresh Environment Variables")
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	defer cmd.Close()
@@ -112,6 +111,7 @@ func SourceEnvFiles() {
 		term.Logger.Error(err.Error())
 		return
 	}
+	var envFiles = envfiles()
 	for _, file := range envFiles {
 		var fp = filepath.Join(homeDir, file)
 		// bash
