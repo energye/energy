@@ -92,19 +92,43 @@ func SetEnergyHomeEnv(homePath string) {
 	term.BoxPrintln("Hint: Reopen the cmd window to make the environment variables take effect.")
 }
 
+func envfiles() (result []string) {
+	if consts.IsLinux {
+		result = []string{".profile", ".zshrc", ".bashrc"}
+	} else if consts.IsDarwin {
+		result = []string{".profile", ".zshrc", ".bash_profile"}
+	}
+	return result
+}
+
+func SourceEnvFiles() {
+	var envFiles = envfiles()
+	term.Logger.Info("Refresh Environment Variables source: " + strings.Join(envFiles, " "))
+	cmd := toolsCommand.NewCMD()
+	cmd.IsPrint = false
+	defer cmd.Close()
+	homeDir, err := homedir.Dir()
+	if err != nil {
+		term.Logger.Error(err.Error())
+		return
+	}
+	for _, file := range envFiles {
+		var fp = filepath.Join(homeDir, file)
+		// bash
+		cmd.Command("bash", "-c", fmt.Sprintf("source %s", fp))
+		// zsh
+		cmd.Command("zsh", "-c", fmt.Sprintf("source %s", fp))
+	}
+}
+
 func setPosixEnv(exs []string, binPath, bin string) {
 	cmd := toolsCommand.NewCMD()
 	cmd.IsPrint = false
 	defer cmd.Close()
-	var envFiles []string
-	if consts.IsLinux {
-		envFiles = []string{".profile", ".zshrc", ".bashrc"}
-	} else if consts.IsDarwin {
-		envFiles = []string{".profile", ".zshrc", ".bash_profile"}
-	}
+	var envFiles = envfiles()
 	homeDir, err := homedir.Dir()
 	if err != nil {
-		println(err.Error())
+		term.Logger.Error(err.Error())
 		return
 	}
 	var tempExts []string
@@ -205,7 +229,7 @@ func setPosixEnv(exs []string, binPath, bin string) {
 					// 如果任何操作失败, 重新写入覆盖文件
 					var oldWrite = func() {
 						if f, err = os.OpenFile(fp, os.O_RDWR, 0666); err == nil {
-							println("Restore files", file)
+							term.Logger.Info("Restore files. " + file)
 							f.WriteString(oldContent)
 							f.Close()
 						}
@@ -214,7 +238,7 @@ func setPosixEnv(exs []string, binPath, bin string) {
 					if newOpenFile, err := os.OpenFile(fp, os.O_RDWR|os.O_TRUNC, 0666); err == nil {
 						// 写入新的环境配置
 						if _, err := newOpenFile.Write(newContent.Bytes()); err == nil {
-							println("Write files success.", file)
+							term.Logger.Info("Write files success. " + file)
 							newOpenFile.Close()
 						} else {
 							//写入失败，把老的内容还原

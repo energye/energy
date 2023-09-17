@@ -49,10 +49,6 @@ type softEnf struct {
 }
 
 func Install(c *command.Config) error {
-	// 初始配置和安装目录
-	if err := initInstall(c); err != nil {
-		return err
-	}
 	// 检查环境
 	willInstall := checkInstallEnv(c)
 	var (
@@ -111,6 +107,12 @@ func Install(c *command.Config) error {
 					}
 				}
 			}
+			if len(selectedOptions) > 0 {
+				// 初始配置和安装目录
+				if err := initInstall(c); err != nil {
+					return err
+				}
+			}
 		}
 	}
 	// 安装Go开发环境
@@ -147,6 +149,7 @@ func Install(c *command.Config) error {
 	if z7zRoot != "" {
 		env.Set7zaEnv(z7zRoot)
 	}
+	env.SourceEnvFiles()
 
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil || z7zSuccessCallback != nil {
@@ -169,6 +172,7 @@ func Install(c *command.Config) error {
 		z7zSuccessCallback()
 	}
 	copyEnergyCMD(goRoot)
+
 	return nil
 }
 
@@ -285,12 +289,8 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 			}
 			return ""
 		}()
-		if lib != "" {
-			s := filepath.Join(cefInstallPathName(c), lib)
-			return "All", tools.IsExist(s)
-		} else {
-			return "Unsupported Platform", true
-		}
+		s := filepath.Join(cefInstallPathName(c), lib)
+		return "All", tools.IsExist(s)
 	}, cefName, func() {
 		c.Install.ICEF = true //yes callback
 	})
@@ -364,30 +364,40 @@ func initInstall(c *command.Config) (err error) {
 	if err != nil {
 		return
 	}
-	err = os.MkdirAll(cefInstallPathName(c), fs.ModePerm) //cef
-	if err != nil {
-		return
-	}
-	err = os.MkdirAll(goInstallPathName(c), fs.ModePerm) // go
-	if err != nil {
-		return
-	}
-	if nsisCanInstall() {
-		err = os.MkdirAll(nsisInstallPathName(c), fs.ModePerm) // nsis
+	if c.Install.ICEF {
+		err = os.MkdirAll(cefInstallPathName(c), fs.ModePerm) //cef
 		if err != nil {
 			return
 		}
 	}
-	if upxCanInstall() {
-		err = os.MkdirAll(upxInstallPathName(c), fs.ModePerm) //upx
+	if c.Install.IGolang {
+		err = os.MkdirAll(goInstallPathName(c), fs.ModePerm) // go
 		if err != nil {
 			return
 		}
 	}
-	if z7zCanInstall() {
-		err = os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
-		if err != nil {
-			return
+	if c.Install.INSIS {
+		if nsisCanInstall() {
+			err = os.MkdirAll(nsisInstallPathName(c), fs.ModePerm) // nsis
+			if err != nil {
+				return
+			}
+		}
+	}
+	if c.Install.IUPX {
+		if upxCanInstall() {
+			err = os.MkdirAll(upxInstallPathName(c), fs.ModePerm) //upx
+			if err != nil {
+				return
+			}
+		}
+	}
+	if c.Install.I7za {
+		if z7zCanInstall() {
+			err = os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
+			if err != nil {
+				return
+			}
 		}
 	}
 	// framework download cache
