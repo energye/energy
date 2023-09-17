@@ -91,7 +91,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 读取assets内的文件
-	var createFile = func(readFilePath, outFilePath string, data map[string]any) error {
+	var createFile = func(readFilePath, outFilePath string, data map[string]any, perm fs.FileMode) error {
 		// 创建 energy.json template
 		if fileData, err := assets.ReadFile(nil, "", readFilePath); err != nil {
 			return err
@@ -102,12 +102,19 @@ func generaProject(c *command.Config) error {
 				}
 			}
 			path := filepath.Join(projectPath, outFilePath)
-			if err = ioutil.WriteFile(path, fileData, 0666); err != nil {
+			if err = ioutil.WriteFile(path, fileData, perm); err != nil {
 				return err
 			}
 		}
 		return nil
 	}
+
+	if consts.IsLinux /* && consts.IsARM64*/ {
+		if err := createFile("assets/initialize/run.sh", "run.sh", nil, 0755); err != nil {
+			return err
+		}
+	}
+
 	// 创建 energy.json template
 	// 默认配置
 	data := make(map[string]any)
@@ -118,12 +125,12 @@ func generaProject(c *command.Config) error {
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
 	energyJSON := fmt.Sprintf("assets/energy_%s.json", runtime.GOOS)
-	if err := createFile(energyJSON, consts.EnergyProjectConfig, data); err != nil {
+	if err := createFile(energyJSON, consts.EnergyProjectConfig, data, 0666); err != nil {
 		return err
 	}
 
 	// 创建 main.go
-	if err := createFile(fmt.Sprintf("assets/initialize/main.go.%s", c.Init.ResLoad), "main.go", nil); err != nil {
+	if err := createFile(fmt.Sprintf("assets/initialize/main.go.%s", c.Init.ResLoad), "main.go", nil, 0666); err != nil {
 		return err
 	}
 
@@ -132,7 +139,7 @@ func generaProject(c *command.Config) error {
 	data["Name"] = c.Init.Name
 	data["GoVersion"] = "1.18"
 	data["EnergyVersion"] = "latest"
-	if err := createFile("assets/initialize/go.mod.t", "go.mod", data); err != nil {
+	if err := createFile("assets/initialize/go.mod.t", "go.mod", data, 0666); err != nil {
 		return err
 	}
 
@@ -140,20 +147,20 @@ func generaProject(c *command.Config) error {
 	if err := os.MkdirAll(filepath.Join(projectPath, "resources"), fs.ModePerm); err != nil {
 		return err
 	}
-	if err := createFile("assets/initialize/index.html", filepath.Join("resources", "index.html"), nil); err != nil {
+	if err := createFile("assets/initialize/index.html", filepath.Join("resources", "index.html"), nil, 0666); err != nil {
 		return err
 	}
-	if err := createFile("assets/icon.ico", filepath.Join("resources", "icon.ico"), nil); err != nil {
+	if err := createFile("assets/icon.ico", filepath.Join("resources", "icon.ico"), nil, 0666); err != nil {
 		return err
 	}
-	if err := createFile("assets/icon.png", filepath.Join("resources", "icon.png"), nil); err != nil {
+	if err := createFile("assets/icon.png", filepath.Join("resources", "icon.png"), nil, 0666); err != nil {
 		return err
 	}
 
 	// 创建 README.md
 	data = make(map[string]any)
 	data["Name"] = c.Init.Name
-	if err := createFile("assets/initialize/README.md", "README.md", data); err != nil {
+	if err := createFile("assets/initialize/README.md", "README.md", data, 0666); err != nil {
 		return err
 	}
 

@@ -44,6 +44,7 @@ const (
 const (
 	linuxDebControl = "linux/control"
 	linuxAppDesktop = "linux/app.desktop"
+	linuxARMStartup = "linux/startup.sh"
 )
 
 func GeneraInstaller(proj *project.Project) error {
@@ -74,6 +75,10 @@ func GeneraInstaller(proj *project.Project) error {
 	}
 	// copy source
 	if err = linuxOptCopy(proj, appRoot); err != nil {
+		return err
+	}
+	// copy linux arm startup.sh
+	if err = linuxARMStartupSH(proj, appRoot); err != nil {
 		return err
 	}
 	// 7zz 压缩 CEF
@@ -230,6 +235,35 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	return nil
 }
 
+func linuxARMStartupSH(proj *project.Project, appRoot string) error {
+	if consts.IsLinux /* && consts.IsARM64*/ {
+		term.Logger.Info("Generate dpkg startup.sh")
+		buildOutDir := assets.BuildOutPath(proj)
+		appDir := filepath.Join(buildOutDir, appRoot)
+		if startupshData, err := assets.ReadFile(proj, assetsFSPath, linuxARMStartup); err != nil {
+			return err
+		} else {
+			data := make(map[string]any)
+			data["CEFPATH"] = opt(proj)
+			data["EXECUTE"] = proj.Name
+			if content, err := tools.RenderTemplate(string(startupshData), data); err != nil {
+				return err
+			} else {
+				optDir := opt(proj)
+				outFilePath := filepath.Join(appDir, optDir, fmt.Sprintf("%s.sh", proj.Name))
+				outFile, err := os.OpenFile(outFilePath, os.O_CREATE|os.O_WRONLY, 0755)
+				if err != nil {
+					return err
+				}
+				defer outFile.Close()
+				outFile.Write(content)
+			}
+
+		}
+	}
+	return nil
+}
+
 func linuxDesktop(proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate dpkg desktop")
 	buildOutDir := assets.BuildOutPath(proj)
@@ -244,9 +278,13 @@ func linuxDesktop(proj *project.Project, appRoot string) error {
 	} else {
 		optDir := opt(proj)
 		_, icon := filepath.Split(proj.Info.Icon)
+		startup := proj.Name
+		if consts.IsLinux /* && consts.IsARM64*/ {
+			startup += ".sh"
+		}
 		data := make(map[string]any)
 		data["Name"] = proj.Name
-		data["Exec"] = filepath.Join(optDir, proj.Name)
+		data["Exec"] = filepath.Join(optDir, startup)
 		data["Icon"] = filepath.Join(optDir, icon)
 		data["Comments"] = proj.Info.Comments
 		if content, err := tools.RenderTemplate(string(desktopData), data); err != nil {
