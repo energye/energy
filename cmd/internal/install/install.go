@@ -49,6 +49,8 @@ type softEnf struct {
 }
 
 func Install(c *command.Config) error {
+	// 设置默认参数
+	defaultInstallConfig(c)
 	// 检查环境
 	willInstall := checkInstallEnv(c)
 	var (
@@ -341,7 +343,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	return
 }
 
-func initInstall(c *command.Config) (err error) {
+func defaultInstallConfig(c *command.Config) {
 	if c.Install.Path == "" {
 		// current dir
 		c.Install.Path = c.Wd
@@ -359,6 +361,9 @@ func initInstall(c *command.Config) (err error) {
 	if string(c.Install.OS) == runtime.GOOS && string(c.Install.Arch) == runtime.GOARCH {
 		c.Install.IsSame = true
 	}
+}
+
+func initInstall(c *command.Config) (err error) {
 	// 创建安装目录
 	err = os.MkdirAll(c.Install.Path, fs.ModePerm) // framework root
 	if err != nil {

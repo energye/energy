@@ -155,3 +155,7 @@ func appendWindowsEnv(name, value string) {
 		setWindowsEnv(name, value)
 	}
 }
+
+func SourceEnvFiles() {
+
+}
