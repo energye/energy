@@ -3,6 +3,9 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/rtl/version"
 )
 
 //go:embed resources
@@ -10,7 +13,7 @@ var resources embed.FS
 
 func main() {
 	//Global initialization must be called
-	cef.GlobalInit(nil, nil)
+	cef.GlobalInit(nil, &resources)
 	//Create an application
 	app := cef.NewApplication()
 	//Local load resources
@@ -18,6 +21,30 @@ func main() {
 		ResRootDir: "resources",
 		FS:         &resources,
 	}.Build())
+	// run main process and main thread
+	cef.BrowserWindow.SetBrowserInit(browserInit)
 	//run app
 	cef.Run(app)
+}
+
+// run main process and main thread
+func browserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+	// index.html ipc.emit("count", [count++])
+	ipc.On("count", func(value int) {
+		println("count", value)
+	})
+	// page load end
+	event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		// index.html, ipc.on("osInfo", function(){...})
+		println("osInfo", version.OSVersion.ToString())
+		ipc.Emit("osInfo", version.OSVersion.ToString())
+		var windowType string
+		if window.IsLCL() {
+			windowType = "LCL"
+		} else {
+			windowType = "VF"
+		}
+		// index.html, ipc.on("windowType", function(){...});
+		ipc.Emit("windowType", windowType)
+	})
 }

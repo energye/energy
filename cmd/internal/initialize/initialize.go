@@ -39,7 +39,7 @@ func InitEnergyProject(c *command.Config) error {
 	term.Logger.Info("Website", term.Logger.Args("Github", "https://github.com/energye/energy", "ENERGY", "https://energy.yanghy.cn"))
 	term.Section.Println("Run Application")
 	tableData := pterm.TableData{
-		{"command-line"}, {"go run main.go"},
+		{"command"}, {"go run main.go"},
 	}
 	err := pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
 	if err != nil {
@@ -47,7 +47,7 @@ func InitEnergyProject(c *command.Config) error {
 	}
 	term.Section.Println("Building Application")
 	tableData = pterm.TableData{
-		{"cmd name", "command-line"},
+		{"name", "command"},
 	}
 	tableData = append(tableData, []string{"go", `go build -ldflags "-s -w"`})
 	tableData = append(tableData, []string{"energy", `energy build .`})
@@ -57,7 +57,7 @@ func InitEnergyProject(c *command.Config) error {
 	}
 	term.Section.Println("Make install package")
 	tableData = pterm.TableData{
-		{"command-line"}, {"energy package ."},
+		{"command"}, {"energy package ."},
 	}
 	err = pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
 	if err != nil {
