@@ -17,7 +17,7 @@ message()
 }
 
 # install path libcef.so
-LIBCEF="{{.CEFPATH}}/libcef.so"
+LIBCEF="{{.INSTALLPATH}}/libcef.so"
 
 if [ ! -e "$LIBCEF" ]; then
   message "No CEF libcef.so found. Please make sure CEF point to valid installation."
@@ -29,5 +29,7 @@ fi
 export LD_PRELOAD="$LIBCEF"
 
 # Execution File Name
-exec {{.EXECUTE}}
+STARTUP="{{.INSTALLPATH}}/{{.EXECUTE}}"
+
+exec $STARTUP
 

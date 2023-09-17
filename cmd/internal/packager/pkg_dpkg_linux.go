@@ -236,7 +236,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 }
 
 func linuxARMStartupSH(proj *project.Project, appRoot string) error {
-	if consts.IsLinux /* && consts.IsARM64*/ {
+	if consts.IsLinux && consts.IsARM64 {
 		term.Logger.Info("Generate dpkg startup.sh")
 		buildOutDir := assets.BuildOutPath(proj)
 		appDir := filepath.Join(buildOutDir, appRoot)
@@ -244,7 +244,7 @@ func linuxARMStartupSH(proj *project.Project, appRoot string) error {
 			return err
 		} else {
 			data := make(map[string]any)
-			data["CEFPATH"] = opt(proj)
+			data["INSTALLPATH"] = opt(proj)
 			data["EXECUTE"] = proj.Name
 			if content, err := tools.RenderTemplate(string(startupshData), data); err != nil {
 				return err
@@ -279,7 +279,7 @@ func linuxDesktop(proj *project.Project, appRoot string) error {
 		optDir := opt(proj)
 		_, icon := filepath.Split(proj.Info.Icon)
 		startup := proj.Name
-		if consts.IsLinux /* && consts.IsARM64*/ {
+		if consts.IsLinux && consts.IsARM64 {
 			startup += ".sh"
 		}
 		data := make(map[string]any)

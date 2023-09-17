@@ -109,7 +109,7 @@ func generaProject(c *command.Config) error {
 		return nil
 	}
 
-	if consts.IsLinux /* && consts.IsARM64*/ {
+	if consts.IsLinux && consts.IsARM64 {
 		if err := createFile("assets/initialize/run.sh", "run.sh", nil, 0755); err != nil {
 			return err
 		}
