@@ -198,7 +198,7 @@ func copyEnergyCMD(goRoot string) {
 	}
 	energyBin := filepath.Join(goRoot, "bin", energyName)
 	if tools.IsExist(energyBin) {
-		os.RemoveAll(energyBin)
+		os.Remove(energyBin)
 	}
 	src, err := os.Open(exe)
 	if err != nil {
