@@ -437,71 +437,71 @@ func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 }
 
 func (m *TCEFViewComponent) SetOnGetPreferredSize(fn onGetPreferredSize) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetMinimumSize(fn onGetMinimumSize) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetMaximumSize(fn onGetMaximumSize) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnParentViewChanged(fn onParentViewChanged) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnChildViewChanged(fn onChildViewChanged) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnWindowChanged(fn onWindowChanged) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnLayoutChanged(fn onLayoutChanged) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnFocus(fn onFocus) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnBlur(fn onBlur) {
-	if !m.IsValid() {
-		return
-	}
+	//if !m.IsValid() {
+	//	return
+	//}
 	imports.Proc(def.ViewComponent_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }

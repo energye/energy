@@ -45,51 +45,81 @@ func (m *TCEFWindowComponent) CreateTopLevelWindow() {
 
 // Show 显示窗口
 func (m *TCEFWindowComponent) Show() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Show).Call(m.Instance())
 }
 
 // Hide 显示窗口
 func (m *TCEFWindowComponent) Hide() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Hide).Call(m.Instance())
 }
 
 // CenterWindow 根据大小窗口居中
 func (m *TCEFWindowComponent) CenterWindow(size *TCefSize) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
 }
 
 // Close 关闭窗口， 主窗口调用
 func (m *TCEFWindowComponent) Close() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Close).Call(m.Instance())
 }
 
 // Activate 激活窗口
 func (m *TCEFWindowComponent) Activate() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Activate).Call(m.Instance())
 }
 
 // Deactivate 停止激活窗口
 func (m *TCEFWindowComponent) Deactivate() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Deactivate).Call(m.Instance())
 }
 
 // BringToTop 将窗口移至最上层
 func (m *TCEFWindowComponent) BringToTop() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_BringToTop).Call(m.Instance())
 }
 
 // Maximize 最大化窗口
 func (m *TCEFWindowComponent) Maximize() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Maximize).Call(m.Instance())
 }
 
 // Minimize 最小化窗口
 func (m *TCEFWindowComponent) Minimize() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Minimize).Call(m.Instance())
 }
 
 // Restore 窗口还原
 func (m *TCEFWindowComponent) Restore() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_Restore).Call(m.Instance())
 }
 
@@ -99,110 +129,173 @@ func (m *TCEFWindowComponent) Restore() {
 
 // ShowMenu 显示菜单
 func (m *TCEFWindowComponent) ShowMenu(menuModel *ICefMenuModel, point TCefPoint, anchorPosition consts.TCefMenuAnchorPosition) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_ShowMenu).Call(m.Instance(), uintptr(menuModel.instance), uintptr(unsafe.Pointer(&point)), uintptr(anchorPosition))
 }
 
 // CancelMenu 取消菜单
 func (m *TCEFWindowComponent) CancelMenu() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_CancelMenu).Call(m.Instance())
 }
 
 // SetDraggableRegions 设置拖拽区域
 func (m *TCEFWindowComponent) SetDraggableRegions(regions []TCefDraggableRegion) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetDraggableRegions).Call(m.Instance(), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
 }
 
 // SendKeyPress 发送键盘事件
 func (m *TCEFWindowComponent) SendKeyPress(keyCode int32, eventFlags uint32) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SendKeyPress).Call(m.Instance(), uintptr(keyCode), uintptr(eventFlags))
 }
 
 // SendMouseMove 发送鼠标移动事件
 func (m *TCEFWindowComponent) SendMouseMove(screenX, screenY int32) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SendMouseMove).Call(m.Instance(), uintptr(screenX), uintptr(screenY))
 }
 
 // SendMouseEvents 发送鼠标事件
 func (m *TCEFWindowComponent) SendMouseEvents(button consts.TCefMouseButtonType, mouseDown, mouseUp bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SendMouseEvents).Call(m.Instance(), uintptr(button), api.PascalBool(mouseDown), api.PascalBool(mouseUp))
 }
 
 // SetAccelerator 设置快捷键
 func (m *TCEFWindowComponent) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
 }
 
 // RemoveAccelerator 移除指定快捷键
 func (m *TCEFWindowComponent) RemoveAccelerator(commandId int32) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_RemoveAccelerator).Call(m.Instance(), uintptr(commandId))
 }
 
 // RemoveAllAccelerators 移除所有快捷键
 func (m *TCEFWindowComponent) RemoveAllAccelerators() {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_RemoveAllAccelerators).Call(m.Instance())
 }
 
 // SetAlwaysOnTop 设置窗口是否置顶
 func (m *TCEFWindowComponent) SetAlwaysOnTop(onTop bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetAlwaysOnTop).Call(m.Instance(), api.PascalBool(onTop))
 }
 
 // SetFullscreen 设置窗口全屏
 func (m *TCEFWindowComponent) SetFullscreen(fullscreen bool) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetFullscreen).Call(m.Instance(), api.PascalBool(fullscreen))
 }
 
 // SetBackgroundColor 设置背景色
 func (m *TCEFWindowComponent) SetBackgroundColor(rect types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetBackgroundColor).Call(m.Instance(), rect.ToPtr())
 }
 
-// SetBounds 获取窗口边界
+// Bounds 获取窗口边界
 func (m *TCEFWindowComponent) Bounds() (result *TCefRect) {
+	if !m.IsValid() {
+		return nil
+	}
 	imports.Proc(def.CEFWindowComponent_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
 	return
 }
 
-// SetSize 获取窗口宽高
+// Size 获取窗口宽高
 func (m *TCEFWindowComponent) Size() (result *TCefSize) {
+	if !m.IsValid() {
+		return nil
+	}
 	imports.Proc(def.CEFWindowComponent_Size).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
 	return
 }
 
 // Position 获取窗口位置
 func (m *TCEFWindowComponent) Position() (result *TCefPoint) {
+	if !m.IsValid() {
+		return nil
+	}
 	imports.Proc(def.CEFWindowComponent_Position).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
 	return
 }
 
 // SetBounds 设置窗口边界
 func (m *TCEFWindowComponent) SetBounds(rect *TCefRect) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(rect)))
 }
 
 // SetSize 设置窗口宽高
 func (m *TCEFWindowComponent) SetSize(size *TCefSize) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
 }
 
 // SetPosition 设置窗口位置
 func (m *TCEFWindowComponent) SetPosition(point *TCefPoint) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
 }
 
 // SetTitle 设置窗口标题
 func (m *TCEFWindowComponent) SetTitle(title string) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetTitle).Call(m.Instance(), api.PascalStr(title))
 }
 
-// GetTitle 获取窗口标题
+// Title 获取窗口标题
 func (m *TCEFWindowComponent) Title() string {
+	if !m.IsValid() {
+		return ""
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_Title).Call(m.Instance())
 	return api.GoStr(r1)
 }
 
 // WindowIcon 获取窗口图标
 func (m *TCEFWindowComponent) WindowIcon() *ICefImage {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CEFWindowComponent_WindowIcon).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefImage{
@@ -212,6 +305,9 @@ func (m *TCEFWindowComponent) WindowIcon() *ICefImage {
 
 // WindowAppIcon 获取窗口应用图标
 func (m *TCEFWindowComponent) WindowAppIcon() *ICefImage {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CEFWindowComponent_WindowAppIcon).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefImage{
@@ -220,20 +316,28 @@ func (m *TCEFWindowComponent) WindowAppIcon() *ICefImage {
 }
 
 func (m *TCEFWindowComponent) SetWindowIcon(icon *ICefImage) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetWindowIcon).Call(m.Instance(), icon.Instance())
 }
 
 func (m *TCEFWindowComponent) checkICON(filename string) (string, error) {
+	if !m.IsValid() {
+		return "", errors.New("window component is nil")
+	}
 	ext := strings.ToLower(filepath.Ext(filename))
 	if ".png" != ext && ".jpeg" != ext {
 		return "", errors.New("only png and jpeg image formats are supported")
 	}
-	ext = ext[1:]
-	return ext, nil
+	return ext[1:], nil
 }
 
 // SetWindowIconByFile 设置窗口图标
 func (m *TCEFWindowComponent) SetWindowIconByFile(scaleFactor float32, filename string) error {
+	if !m.IsValid() {
+		return errors.New("window component is nil")
+	}
 	var (
 		ext string
 		err error
@@ -257,6 +361,9 @@ func (m *TCEFWindowComponent) SetWindowIconByFile(scaleFactor float32, filename 
 
 // SetWindowIconByFSFile 设置窗口图标
 func (m *TCEFWindowComponent) SetWindowIconByFSFile(scaleFactor float32, filename string) error {
+	if !m.IsValid() {
+		return errors.New("window component is nil")
+	}
 	var (
 		ext string
 		err error
@@ -279,11 +386,17 @@ func (m *TCEFWindowComponent) SetWindowIconByFSFile(scaleFactor float32, filenam
 }
 
 func (m *TCEFWindowComponent) SetWindowAppIcon(icon *ICefImage) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_SetWindowAppIcon).Call(m.Instance(), icon.Instance())
 }
 
 // SetWindowAppIconByFile 设置窗口应用图标
 func (m *TCEFWindowComponent) SetWindowAppIconByFile(scaleFactor float32, filename string) error {
+	if !m.IsValid() {
+		return errors.New("window component is nil")
+	}
 	var (
 		ext string
 		err error
@@ -307,6 +420,9 @@ func (m *TCEFWindowComponent) SetWindowAppIconByFile(scaleFactor float32, filena
 
 // SetWindowAppIconByFSFile 设置窗口应用图标
 func (m *TCEFWindowComponent) SetWindowAppIconByFSFile(scaleFactor float32, filename string) error {
+	if !m.IsValid() {
+		return errors.New("window component is nil")
+	}
 	var (
 		ext string
 		err error
@@ -330,6 +446,9 @@ func (m *TCEFWindowComponent) SetWindowAppIconByFSFile(scaleFactor float32, file
 
 // Display
 func (m *TCEFWindowComponent) Display() *ICefDisplay {
+	if !m.IsValid() {
+		return nil
+	}
 	var result uintptr
 	imports.Proc(def.CEFWindowComponent_Display).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return &ICefDisplay{
@@ -339,54 +458,81 @@ func (m *TCEFWindowComponent) Display() *ICefDisplay {
 
 // ClientAreaBoundsInScreen 获取客户端所在指定屏幕位置
 func (m *TCEFWindowComponent) ClientAreaBoundsInScreen() (result TCefRect) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_ClientAreaBoundsInScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // WindowHandle 获取窗口句柄
 func (m *TCEFWindowComponent) WindowHandle() consts.TCefWindowHandle {
+	if !m.IsValid() {
+		return 0
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_WindowHandle).Call(m.Instance())
 	return consts.TCefWindowHandle(r1)
 }
 
 // IsClosed 是否关闭
 func (m *TCEFWindowComponent) IsClosed() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsClosed).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsActive 是否激活
 func (m *TCEFWindowComponent) IsActive() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsActive).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsAlwaysOnTop 窗口是否置顶
 func (m *TCEFWindowComponent) IsAlwaysOnTop() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsAlwaysOnTop).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsFullscreen 是否全屏
 func (m *TCEFWindowComponent) IsFullscreen() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsFullscreen).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsMaximized 是否最大化
 func (m *TCEFWindowComponent) IsMaximized() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsMaximized).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // IsMinimized 是否最小化
 func (m *TCEFWindowComponent) IsMinimized() bool {
+	if !m.IsValid() {
+		return false
+	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_IsMinimized).Call(m.Instance())
 	return api.GoBool(r1)
 }
 
 // AddChildView 添加浏览器显示组件
 func (m *TCEFWindowComponent) AddChildView(browserViewComponent *TCEFBrowserViewComponent) {
+	if !m.IsValid() {
+		return
+	}
 	imports.Proc(def.CEFWindowComponent_AddChildView).Call(m.Instance(), browserViewComponent.Instance())
 }
 

@@ -50,6 +50,7 @@ type ViewsFrameworkBrowserWindow struct {
 	context              *ICefRequestContext               //
 	extraInfo            *ICefDictionaryValue              //
 	screen               IScreen                           //屏幕
+	created              bool                              //
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -71,25 +72,25 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 		browserViewComponent: BrowserViewComponentRef.New(component),
 	}
 	m.SetWindowType(windowProperty.WindowType)
-	m.chromium.SetEnableMultiBrowserMode(true)
-	m.windowComponent.SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
-		if m.chromium.CreateBrowserByBrowserViewComponent(windowProperty.Url, m.browserViewComponent, m.context, m.extraInfo) {
-			m.windowComponent.AddChildView(m.browserViewComponent)
+	m.Chromium().SetEnableMultiBrowserMode(true)
+	m.WindowComponent().SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+		if m.Chromium().CreateBrowserByBrowserViewComponent(windowProperty.Url, m.BrowserViewComponent(), m.context, m.extraInfo) {
+			m.WindowComponent().AddChildView(m.BrowserViewComponent())
 			if windowProperty.Title != "" {
-				m.windowComponent.SetTitle(windowProperty.Title)
+				m.WindowComponent().SetTitle(windowProperty.Title)
 			}
 			if windowProperty.EnableCenterWindow {
-				m.windowComponent.CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
+				m.WindowComponent().CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
 				if emfs.IsExist(windowProperty.IconFS) {
-					if err := m.windowComponent.SetWindowAppIconByFSFile(1, windowProperty.IconFS); err != nil {
+					if err := m.WindowComponent().SetWindowAppIconByFSFile(1, windowProperty.IconFS); err != nil {
 						logger.Error("set window application icon error:", err.Error())
 					}
 				}
 			} else if windowProperty.Icon != "" {
 				if tools.IsExist(windowProperty.Icon) {
-					if err := m.windowComponent.SetWindowAppIconByFile(1, windowProperty.Icon); err != nil {
+					if err := m.WindowComponent().SetWindowAppIconByFile(1, windowProperty.Icon); err != nil {
 						logger.Error("set window application icon error:", err.Error())
 					}
 				}
@@ -100,11 +101,11 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 				if iconData := assets.DefaultPNGICON(); iconData != nil {
 					icon := ImageRef.New()
 					icon.AddPng(1, assets.DefaultPNGICON())
-					m.windowComponent.SetWindowAppIcon(icon)
+					m.WindowComponent().SetWindowAppIcon(icon)
 				}
 			}
-			m.browserViewComponent.RequestFocus()
-			m.windowComponent.Show()
+			m.BrowserViewComponent().RequestFocus()
+			m.WindowComponent().Show()
 			if m.doOnWindowCreated != nil {
 				m.doOnWindowCreated(sender, window)
 			}
@@ -138,7 +139,7 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		vfMainWindow.ResetWindowPropertyForEvent()
 		vfMainWindow.registerPopupEvent(true)
 		vfMainWindow.registerDefaultEvent()
-		vfMainWindow.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+		vfMainWindow.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 			*aResult = vfMainWindow.Chromium().TryCloseBrowser()
 		})
 		// 设置到 MainBrowser
@@ -160,13 +161,13 @@ func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {
 		// VF MinimumSize & MaximumSize 在事件中设置
 		// 如果动态设置，需要自己实现该回调函数
 		if wp.MinWidth > 0 && wp.MinHeight > 0 {
-			m.windowComponent.SetOnGetMinimumSize(func(view *ICefView, result *TCefSize) {
+			m.WindowComponent().SetOnGetMinimumSize(func(view *ICefView, result *TCefSize) {
 				result.Width = int32(wp.MinWidth)
 				result.Height = int32(wp.MinHeight)
 			})
 		}
 		if wp.MaxWidth > 0 && wp.MaxHeight > 0 {
-			m.windowComponent.SetOnGetMaximumSize(func(view *ICefView, result *TCefSize) {
+			m.WindowComponent().SetOnGetMaximumSize(func(view *ICefView, result *TCefSize) {
 				result.Width = int32(wp.MaxWidth)
 				result.Height = int32(wp.MaxHeight)
 			})
@@ -179,7 +180,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 	var bwEvent = BrowserWindow.browserEvent
 	if !isMain {
 		// 子窗口关闭流程
-		m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
+		m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			chromiumOnBeforeClose(browser)
 		})
 	}
@@ -215,12 +216,12 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 // ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
-	m.windowComponent.SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
+	m.WindowComponent().SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
 		*aResult = consts.TCefShowState(wp.WindowInitState + 1) // CEF 要 + 1
 	})
-	m.windowComponent.SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+	m.WindowComponent().SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
 		if wp.EnableCenterWindow {
-			m.windowComponent.CenterWindow(NewCefSize(wp.Width, wp.Height))
+			m.WindowComponent().CenterWindow(NewCefSize(wp.Width, wp.Height))
 			aResult.Width = wp.Width
 			aResult.Height = wp.Height
 		} else {
@@ -233,23 +234,23 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 			m.doOnGetInitialBounds(sender, window, aResult)
 		}
 	})
-	m.windowComponent.SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableMinimize
 	})
-	m.windowComponent.SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableResize
 	})
-	m.windowComponent.SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableMaximize
 	})
-	m.windowComponent.SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableClose
 	})
-	m.windowComponent.SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableHideCaption
 	})
-	m.windowComponent.SetAlwaysOnTop(wp.AlwaysOnTop)
-	m.windowComponent.SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
+	m.WindowComponent().SetAlwaysOnTop(wp.AlwaysOnTop)
+	m.WindowComponent().SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
 }
 
 // registerDefaultEvent 注册默认事件
@@ -257,13 +258,13 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 	var bwEvent = BrowserWindow.browserEvent
 	//默认自定义快捷键
 	defaultAcceleratorCustom()
-	m.chromium.SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
+	m.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
 			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message, m)
 		}
 		return false
 	})
-	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
+	m.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
 			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 		}
@@ -271,14 +272,14 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result, m)
 		}
 	})
-	m.chromium.SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
+	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
 		if bwEvent.onBeforeDownload != nil {
 			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m)
 		} else {
 			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
 	})
-	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		var flag bool
 		if bwEvent.onBeforeContextMenu != nil {
 			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model, m)
@@ -287,7 +288,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
 		}
 	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
+	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
 		var result bool
 		if bwEvent.onContextMenuCommand != nil {
 			result = bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, m)
@@ -297,7 +298,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 		}
 		return result
 	})
-	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
+	m.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 		var flag bool
 		if bwEvent.onAfterCreated != nil {
 			flag = bwEvent.onAfterCreated(sender, browser, m)
@@ -306,7 +307,7 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			chromiumOnAfterCreate(m, browser)
 		}
 	})
-	m.chromium.SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
+	m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
 		if bwEvent.onKeyEvent != nil {
 			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
 		}
@@ -327,36 +328,36 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			}
 		}
 	})
-	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
+	m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
 		chromiumOnBeforeBrowser(m, browser, frame, request) // default impl
 		if bwEvent.onBeforeBrowser != nil {
 			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
 		}
 		return false
 	})
-	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
+	m.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
 		if bwEvent.onTitleChange != nil {
 			bwEvent.onTitleChange(sender, browser, title, m)
 		}
 	})
-	m.chromium.SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
+	m.Chromium().SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
 		*result = !m.WindowProperty().EnableDragFile
 		if bwEvent.onDragEnter != nil {
 			bwEvent.onDragEnter(sender, browser, dragData, mask, m, result)
 		}
 	})
-	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
+	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
 		if bwEvent.onLoadEnd != nil {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode, m)
 		}
 	})
 	if m.WindowProperty().EnableWebkitAppRegion {
-		m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if bwEvent.onDraggableRegionsChanged != nil {
 				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)
 			}
 			m.regions = regions
-			m.windowComponent.SetDraggableRegions(regions.Regions())
+			m.WindowComponent().SetDraggableRegions(regions.Regions())
 		})
 	}
 	if localLoadRes.enable() {
@@ -371,6 +372,11 @@ func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
 			return
 		})
 	}
+}
+
+// Created 窗口是否创建完, m.CreateTopLevelWindow() 之后
+func (m *ViewsFrameworkBrowserWindow) Created() bool {
+	return m.created
 }
 
 // EnableAllDefaultEvent 启用所有默认事件行为
@@ -434,41 +440,56 @@ func (m *ViewsFrameworkBrowserWindow) AsLCLBrowserWindow() ILCLBrowserWindow {
 // SetTitle 设置窗口标题
 func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
 	m.WindowProperty().Title = title
+	m.WindowComponent().SetTitle(title)
 }
 
 // SetWidth 设置窗口宽
 func (m *ViewsFrameworkBrowserWindow) SetWidth(value int32) {
 	m.WindowProperty().Width = value
+	size := m.Size()
+	if size != nil {
+		m.SetSize(value, size.Height)
+	}
 }
 
 // SetHeight 设置窗口高
 func (m *ViewsFrameworkBrowserWindow) SetHeight(value int32) {
 	m.WindowProperty().Height = value
+	size := m.Size()
+	if size != nil {
+		m.SetSize(size.Width, value)
+	}
 }
 
 // Point 返回窗口坐标
 func (m *ViewsFrameworkBrowserWindow) Point() *TCefPoint {
 	result := m.WindowComponent().Position()
-	m.WindowProperty().X = result.X
-	m.WindowProperty().Y = result.Y
+	if result != nil {
+		m.WindowProperty().X = result.X
+		m.WindowProperty().Y = result.Y
+	}
 	return result
 }
 
 // Size 返回窗口宽高
 func (m *ViewsFrameworkBrowserWindow) Size() *TCefSize {
 	result := m.WindowComponent().Size()
-	m.WindowProperty().Width = result.Width
-	m.WindowProperty().Height = result.Height
+	if result != nil {
+		m.WindowProperty().Width = result.Width
+		m.WindowProperty().Height = result.Height
+	}
 	return result
 }
 
 // Bounds 返回窗口坐标和宽高
 func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 	result := m.WindowComponent().Bounds()
-	m.WindowProperty().X = result.X
-	m.WindowProperty().Y = result.Y
-	m.WindowProperty().Width = result.Width
-	m.WindowProperty().Height = result.Height
+	if result != nil {
+		m.WindowProperty().X = result.X
+		m.WindowProperty().Y = result.Y
+		m.WindowProperty().Width = result.Width
+		m.WindowProperty().Height = result.Height
+	}
 	return result
 }
 
@@ -476,12 +497,14 @@ func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 func (m *ViewsFrameworkBrowserWindow) SetPoint(x, y int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y
+	m.WindowComponent().SetPosition(&TCefPoint{X: x, Y: y})
 }
 
 // SetSize 设置窗口宽高
 func (m *ViewsFrameworkBrowserWindow) SetSize(width, height int32) {
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
+	m.WindowComponent().SetSize(&TCefSize{Width: width, Height: height})
 }
 
 // SetBounds 设置窗口坐标和宽高
@@ -490,6 +513,8 @@ func (m *ViewsFrameworkBrowserWindow) SetBounds(x, y, width, height int32) {
 	m.WindowProperty().Y = y
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
+	m.SetPoint(x, y)
+	m.SetSize(width, height)
 }
 
 // getAuxTools 获取辅助工具-开发者工具
@@ -524,7 +549,11 @@ func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 
 // Show 显示窗口
 func (m *ViewsFrameworkBrowserWindow) Show() {
-	m.WindowComponent().Show()
+	if m.Created() {
+		m.WindowComponent().Show()
+	} else {
+		m.CreateTopLevelWindow()
+	}
 }
 
 // Hide 隐藏窗口
@@ -539,11 +568,11 @@ func (m *ViewsFrameworkBrowserWindow) Close() {
 
 // WindowState 返回窗口最小化、最大化、全屏状态
 func (m *ViewsFrameworkBrowserWindow) WindowState() types.TWindowState {
-	if m.windowComponent.IsMinimized() {
+	if m.WindowComponent().IsMinimized() {
 		return types.WsMinimized
-	} else if m.windowComponent.IsMaximized() {
+	} else if m.WindowComponent().IsMaximized() {
 		return types.WsMaximized
-	} else if m.windowComponent.IsFullscreen() {
+	} else if m.WindowComponent().IsFullscreen() {
 		return types.WsFullScreen
 	}
 	return types.WsNormal
@@ -583,7 +612,7 @@ func (m *ViewsFrameworkBrowserWindow) Restore() {
 // CloseBrowserWindow 关闭浏览器窗口
 func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
 	m.isClosing = true
-	m.chromium.CloseBrowser(true)
+	m.Chromium().CloseBrowser(true)
 }
 
 // CreateTopLevelWindow 创建顶层窗口
@@ -592,6 +621,7 @@ func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
 		window.CurrentBrowseWindowCache = m
 	}
 	m.WindowComponent().CreateTopLevelWindow()
+	m.created = true
 }
 
 // CenterWindow 设置窗口居中，同时指定窗口大小
@@ -602,6 +632,7 @@ func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
 // SetCenterWindow 设置窗口居中显示
 func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
 	m.WindowProperty().EnableCenterWindow = value
+	m.CenterWindow(m.Size())
 }
 
 // IsClosing 返回窗口是否正在关闭/或已关闭 true正在或已关闭
