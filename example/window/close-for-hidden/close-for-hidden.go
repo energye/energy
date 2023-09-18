@@ -13,7 +13,6 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -28,17 +27,12 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
-	//强制使用 VF 窗口
 	//cefApp.SetExternalMessagePump(false)
 	//cefApp.SetMultiThreadedMessageLoop(false)
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
+	cef.BrowserWindow.Config.ChromiumConfig().SetEnableMenu(false)
 	//这个示例演示了两种窗口组件的使用, LCL和VF
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
