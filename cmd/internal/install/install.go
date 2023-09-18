@@ -764,13 +764,23 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 	defer resp.Body.Close()
 	total := 100
 	_, fileName := filepath.Split(localPath)
-	p, err := pterm.DefaultProgressbar.WithTotal(total).WithTitle("Download " + fileName).Start()
+	if len(fileName) > 70 {
+		c := len(fileName) - 70
+		for i := 0; i < c; i++ {
+
+		}
+	}
+	p, err := pterm.DefaultProgressbar.WithMaxWidth(80).WithTotal(total).WithTitle("Download " + fileName).Start()
 	if err != nil {
 		return err
 	}
-	defer func() {
-		p.Stop()
-	}()
+	var stop = func() {
+		if p != nil {
+			p.Stop()
+			p = nil
+		}
+	}
+	defer stop()
 	var (
 		count int
 		cn    int
@@ -811,7 +821,7 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 	if cn < total {
 		p.Add(total - cn)
 	}
-	p.Stop()
+	stop()
 	if err == nil {
 		file.Sync()
 		file.Close()
