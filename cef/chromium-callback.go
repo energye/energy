@@ -285,14 +285,13 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 }
 
 // chromiumOnContextMenuCommand 右键菜单 - 默认实现
-func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
 	browserId := browser.Identifier()
 	defer func() {
 		if err := recover(); err != nil {
 			logger.Error("OnContextMenuCommand Error:", err, "browserId:", browserId)
 		}
 	}()
-	*result = true
 	if commandId == backId {
 		browser.GoBack()
 	} else if commandId == forwardId {
@@ -322,7 +321,7 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 	} else if commandId == imageSaveId {
 		browser.StartDownload(params.SourceUrl())
 	}
-	*result = true
+	return true
 }
 
 // chromiumOnBeforePopup 弹出窗口

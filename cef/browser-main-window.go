@@ -36,19 +36,19 @@ type BrowserEvent struct {
 	onBeforePopup             chromiumEventOnBeforePopupEx             //default
 	onDragEnter               chromiumEventOnDragEnterEx               //default
 	onDraggableRegionsChanged chromiumEventOnDraggableRegionsChangedEx //default
-	onLoadEnd                 chromiumEventOnLoadEnd                   //default
+	onLoadEnd                 chromiumEventOnLoadEndEx                 //default
 	onAfterCreated            chromiumEventOnAfterCreatedEx            //default
 	onBeforeBrowser           chromiumEventOnBeforeBrowserEx           //default
 	onBeforeClose             chromiumEventOnBeforeCloseEx             //default
 	onClose                   chromiumEventOnCloseEx                   //default
 	onMainFrameChanged        chromiumEventOnMainFrameChangedEx        //default
-	onBeforeDownload          chromiumEventOnBeforeDownload            //default can cover
+	onBeforeDownload          chromiumEventOnBeforeDownloadEx          //default can cover
 	onKeyEvent                chromiumEventOnKeyEventEx                //default can cover
-	onProcessMessageReceived  BrowseProcessMessageReceived             //default
+	onProcessMessageReceived  BrowseProcessMessageReceivedEx           //default
 	onTitleChange             chromiumEventOnTitleChangeEx             //default
-	onContextMenuCommand      chromiumEventOnContextMenuCommand        //default can cover
+	onContextMenuCommand      chromiumEventOnContextMenuCommandEx      //default can cover
 	onBeforeContextMenu       chromiumEventOnBeforeContextMenuEx       //default can cover
-	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoad        //default
+	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoadEx      //default
 	onRenderCompMsg           chromiumEventOnCompMsg                   //default windows
 	onGetResourceHandler      chromiumEventOnGetResourceHandlerEx      //default
 }
@@ -240,14 +240,14 @@ func (m *BrowserEvent) SetOnLoadError(event chromiumEventOnLoadError) {
 }
 
 // SetOnLoadEnd
-func (m *BrowserEvent) SetOnLoadEnd(event chromiumEventOnLoadEnd) {
+func (m *BrowserEvent) SetOnLoadEnd(event chromiumEventOnLoadEndEx) {
 	if Args.IsMain() {
 		m.onLoadEnd = event
 	}
 }
 
 // SetOnBeforeDownload
-func (m *BrowserEvent) SetOnBeforeDownload(event chromiumEventOnBeforeDownload) {
+func (m *BrowserEvent) SetOnBeforeDownload(event chromiumEventOnBeforeDownloadEx) {
 	if Args.IsMain() {
 		m.onBeforeDownload = event
 	}
@@ -297,7 +297,7 @@ func (m *BrowserEvent) SetOnGetResourceHandler(event chromiumEventOnGetResourceH
 			m.onGetResourceHandler = event
 		} else {
 			m.ChromiumEvent().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-				resourceHandler, _ = event(sender, browser, frame, request)
+				resourceHandler, _ = event(sender, browser, frame, request, nil)
 				return
 			})
 		}
@@ -344,14 +344,14 @@ func (m *BrowserEvent) SetOnScrollOffsetChanged(event chromiumEventOnScrollOffse
 }
 
 // SetOnBrowseProcessMessageReceived
-func (m *BrowserEvent) SetOnBrowseProcessMessageReceived(event BrowseProcessMessageReceived) {
+func (m *BrowserEvent) SetOnBrowseProcessMessageReceived(event BrowseProcessMessageReceivedEx) {
 	if Args.IsMain() {
 		m.onProcessMessageReceived = event
 	}
 }
 
 // SetOnBeforeResourceLoad
-func (m *BrowserEvent) SetOnBeforeResourceLoad(event chromiumEventOnBeforeResourceLoad) {
+func (m *BrowserEvent) SetOnBeforeResourceLoad(event chromiumEventOnBeforeResourceLoadEx) {
 	if Args.IsMain() {
 		m.onBeforeResourceLoad = event
 	}
@@ -421,7 +421,7 @@ func (m *BrowserEvent) SetOnBeforeContextMenu(event chromiumEventOnBeforeContext
 }
 
 // SetOnContextMenuCommand
-func (m *BrowserEvent) SetOnContextMenuCommand(event chromiumEventOnContextMenuCommand) {
+func (m *BrowserEvent) SetOnContextMenuCommand(event chromiumEventOnContextMenuCommandEx) {
 	if Args.IsMain() {
 		m.onContextMenuCommand = event
 	}

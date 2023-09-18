@@ -685,7 +685,7 @@ func init() {
 			eventFlags := uint32(getVal(5))
 			result := (*bool)(getPtr(6))
 			if !KeyAccelerator.commandIdEventCallback(browse, commandId, params, eventFlags, result) {
-				fn.(chromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browse, frame, params, commandId, eventFlags, result)
+				*result = fn.(chromiumEventOnContextMenuCommand)(lcl.AsObject(sender), browse, frame, params, commandId, eventFlags)
 			}
 			params.Free()
 		case chromiumEventOnContextMenuDismissed:

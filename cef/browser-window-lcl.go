@@ -823,7 +823,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	defaultAcceleratorCustom()
 	m.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
 		if bwEvent.onProcessMessageReceived != nil {
-			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message)
+			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message, m)
 		}
 		return false
 	})
@@ -832,13 +832,13 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 		}
 		if bwEvent.onBeforeResourceLoad != nil {
-			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result)
+			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result, m)
 		}
 	})
 	//事件可以被覆盖
 	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
 		if bwEvent.onBeforeDownload != nil {
-			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback)
+			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m)
 		} else {
 			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
 		}
@@ -846,24 +846,26 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
 		var flag bool
 		if bwEvent.onBeforeContextMenu != nil {
-			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model)
+			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model, m)
 		}
 		if !flag {
 			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
 		}
 	})
-	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
+		var result bool
 		if bwEvent.onContextMenuCommand != nil {
-			bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, result)
+			result = bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, m)
 		}
-		if !*result {
-			chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags, result)
+		if !result {
+			result = chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags)
 		}
+		return result
 	})
 	m.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 		var flag bool
 		if bwEvent.onAfterCreated != nil {
-			flag = bwEvent.onAfterCreated(sender, browser)
+			flag = bwEvent.onAfterCreated(sender, browser, m)
 		}
 		if !flag {
 			chromiumOnAfterCreate(m, browser)
@@ -912,7 +914,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 	})
 	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
 		if bwEvent.onLoadEnd != nil {
-			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode)
+			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode, m)
 		}
 	})
 	if m.WindowProperty().EnableWebkitAppRegion {
@@ -928,7 +930,7 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
 			//var flag bool
 			if bwEvent.onGetResourceHandler != nil {
-				resourceHandler, _ = bwEvent.onGetResourceHandler(sender, browser, frame, request)
+				resourceHandler, _ = bwEvent.onGetResourceHandler(sender, browser, frame, request, m)
 			}
 			//if !flag {
 			//	resourceHandler = localLoadRes.getResourceHandler(browser, frame, request)

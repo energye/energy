@@ -133,7 +133,7 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 	if localLoadRes.enable() {
 		var homeURL string
 		if BrowserWindow.Config.Url != defaultAboutBlank {
-			homeURL = BrowserWindow.Config.Url
+			homeURL = window.WindowProperty().Url
 		} else {
 			defaultURL := new(bytes.Buffer)
 			defaultURL.WriteString(m.Scheme)
