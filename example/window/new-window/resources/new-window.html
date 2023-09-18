@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>new-window</title>
+    <script>
+        function resize(type) {
+            ipc.emit("resize", [type]);
+        }
+    </script>
+</head>
+<body style="width: 100%;text-align: center;overflow: hidden;">
+改变当前窗口大小:
+<button onclick="resize(1)"> 小 </button>
+<button onclick="resize(2)"> 中 </button>
+<button onclick="resize(3)"> 大 </button>
+<a href="other.html">other</a>
+</body>
+</html>

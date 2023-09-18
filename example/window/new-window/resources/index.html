@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>new-window</title>
+    <script>
+        function createWindow() {
+            ipc.emit("createWindow", ["NewWindowName " + new Date().getTime()], function (windowId) {
+
+            });
+        }
+        ipc.on("on-create-window-ok", function (id) {
+            document.getElementById("msg").innerText = "窗口创建成功: " + id
+        });
+
+        ipc.on("on-close-window", function (id) {
+            document.getElementById("msg").innerText = "窗口被关闭: " + id
+        });
+    </script>
+</head>
+<body style="width: 100%;text-align: center;overflow: hidden;">
+<button onclick="createWindow()">创建新窗口</button>
+<a href="index.html" target="_blank">超链接打开新窗口</a>
+<div id="msg"></div>
+</body>
+</html>
