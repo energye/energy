@@ -14,6 +14,7 @@ package cef
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/internal/window"
 	. "github.com/energye/energy/v2/common"
@@ -116,9 +117,10 @@ func (m *LCLBrowserWindow) setProperty() {
 		// 默认
 		// vf png
 		// lcl ico
-		lcl.Application.Icon().LoadFromBytes(defaultICONIco)
+		if iconData := assets.DefaultICOICON(); iconData != nil {
+			lcl.Application.Icon().LoadFromBytes(iconData)
+		}
 	}
-	freeDefaultICON()
 	if wp.EnableCenterWindow {
 		m.SetSize(wp.Width, wp.Height)
 		m.SetCenterWindow(true)

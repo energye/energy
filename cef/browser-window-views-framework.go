@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/internal/window"
 	"github.com/energye/energy/v2/cef/process"
@@ -96,11 +97,12 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 				// 默认
 				// vf png
 				// lcl ico
-				icon := ImageRef.New()
-				icon.AddPng(1, defaultICONPng)
-				m.windowComponent.SetWindowAppIcon(icon)
+				if iconData := assets.DefaultPNGICON(); iconData != nil {
+					icon := ImageRef.New()
+					icon.AddPng(1, assets.DefaultPNGICON())
+					m.windowComponent.SetWindowAppIcon(icon)
+				}
 			}
-			freeDefaultICON()
 			m.browserViewComponent.RequestFocus()
 			m.windowComponent.Show()
 			if m.doOnWindowCreated != nil {
