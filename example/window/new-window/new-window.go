@@ -16,8 +16,8 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -28,8 +28,9 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	app := cef.NewApplication()
-	//cefApp.SetExternalMessagePump(false)
-	//cefApp.SetMultiThreadedMessageLoop(false)
+	//强制使用VF窗口
+	app.SetExternalMessagePump(false)
+	app.SetMultiThreadedMessageLoop(false)
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "fs://energy"
@@ -45,30 +46,31 @@ func main() {
 			ipc.Emit("on-create-window-ok", browser.Identifier(), window.Id())
 			return false // 什么都不做
 		})
-
+		//浏览器窗口关闭回调, 在这里触发ipc事件通知主窗口
+		event.SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction, window cef.IBrowserWindow) bool {
+			ipc.Emit("on-close-window", window.Id())
+			return false
+		})
 		//---- ipc 监听事件
 		// 监听事件, 创建新窗口
-		ipc.On("createWindow", func(name string) {
+		ipc.On("create-window", func(name string) {
+			println("create-window", name)
 			// 创建窗口常规属性对象
 			wp := cef.NewWindowProperty()
 			wp.Url = "fs://energy/new-window.html"
 			wp.Title = name
 			// 创建新的浏览器窗口
-			newWindow := cef.NewLCLBrowserWindow(nil, wp)
+			newWindow := cef.NewBrowserWindow(nil, wp)
 			newWindow.SetWidth(800)
 			newWindow.SetHeight(600)
 			// EnableAllDefaultEvent 启用所有默认实现事件
 			// 如果未启用，所有事件需要你自己控制和实现, 大部分功能无法使用
 			newWindow.EnableAllDefaultEvent()
-			newWindow.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
-				//窗口关闭时触发
-				ipc.Emit("on-close-window", newWindow.Id())
-				return false // 不做处理
-			})
 			window.RunOnMainThread(func() {
-				// 在主线程中
-				newWindow.Show()
+				println("create-window show", name)
 			})
+			// 在主线程中
+			newWindow.Show()
 		})
 		// 改变当前窗口大小
 		ipc.On("resize", func(_type int, channel callback.IChannel) {

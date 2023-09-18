@@ -5,9 +5,7 @@
     <title>new-window</title>
     <script>
         function createWindow() {
-            ipc.emit("createWindow", ["NewWindowName " + new Date().getTime()], function (windowId) {
-
-            });
+            ipc.emit("create-window", ["NewWindowName " + new Date().getTime()]);
         }
         ipc.on("on-create-window-ok", function (id) {
             document.getElementById("msg").innerText = "窗口创建成功: " + id
