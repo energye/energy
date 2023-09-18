@@ -2,7 +2,7 @@
 
 message()
 {
-  TITLE="Cannot start GoLand"
+  TITLE="Cannot start {{.EXECUTE}}"
   if [ -n "$(command -v zenity)" ]; then
     zenity --error --title="$TITLE" --text="$1" --no-wrap
   elif [ -n "$(command -v kdialog)" ]; then
@@ -32,4 +32,3 @@ export LD_PRELOAD="$LIBCEF"
 STARTUP="{{.INSTALLPATH}}/{{.EXECUTE}}"
 
 exec $STARTUP
-

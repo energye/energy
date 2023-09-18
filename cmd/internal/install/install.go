@@ -179,8 +179,13 @@ func Install(c *command.Config) error {
 }
 
 func copyEnergyCMD(goRoot string) {
+	term.Logger.Info("Copy energy command-line to GOROOT/bin")
 	if goRoot == "" {
-		return
+		goRoot = os.Getenv("GOROOT")
+		if goRoot == "" {
+			term.Logger.Error("Install Copy energy command-line, GOROOT not found, Incorrect configuration or please restart term")
+			return
+		}
 	}
 	exe, err := os.Executable()
 	if err != nil {

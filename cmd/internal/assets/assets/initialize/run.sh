@@ -2,7 +2,7 @@
 
 message()
 {
-  TITLE="Cannot start GoLand"
+  TITLE="Cannot start ENERGY_HOME"
   if [ -n "$(command -v zenity)" ]; then
     zenity --error --title="$TITLE" --text="$1" --no-wrap
   elif [ -n "$(command -v kdialog)" ]; then
@@ -34,4 +34,3 @@ export LD_PRELOAD="$LIBCEF"
 
 # go run xxx.go
 exec go run $1
-
