@@ -196,9 +196,9 @@ func copyEnergyCMD(goRoot string) {
 	if consts.IsWindows {
 		energyName += ".exe"
 	}
-	goBin := filepath.Join(goRoot, "bin", energyName)
-	if tools.IsExist(goBin) {
-		return
+	energyBin := filepath.Join(goRoot, "bin", energyName)
+	if tools.IsExist(energyBin) {
+		os.RemoveAll(energyBin)
 	}
 	src, err := os.Open(exe)
 	if err != nil {
@@ -206,7 +206,7 @@ func copyEnergyCMD(goRoot string) {
 		return
 	}
 	defer src.Close()
-	dst, err := os.OpenFile(goBin, os.O_CREATE|os.O_WRONLY, fs.ModePerm)
+	dst, err := os.OpenFile(energyBin, os.O_CREATE|os.O_WRONLY, fs.ModePerm)
 	if err != nil {
 		term.Logger.Error(err.Error())
 		return
