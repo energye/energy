@@ -29,8 +29,8 @@ func main() {
 	//创建应用
 	app := cef.NewApplication()
 	//强制使用VF窗口
-	app.SetExternalMessagePump(false)
-	app.SetMultiThreadedMessageLoop(false)
+	//app.SetExternalMessagePump(false)
+	//app.SetMultiThreadedMessageLoop(false)
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "fs://energy"
@@ -59,7 +59,8 @@ func main() {
 			wp := cef.NewWindowProperty()
 			wp.Url = "fs://energy/new-window.html"
 			wp.Title = name
-			// 创建新的浏览器窗口
+			wp.EnableHideCaption = true // 无标题窗口
+			// 创建浏览器窗口
 			newWindow := cef.NewBrowserWindow(nil, wp)
 			newWindow.SetWidth(800)
 			newWindow.SetHeight(600)
@@ -68,9 +69,9 @@ func main() {
 			newWindow.EnableAllDefaultEvent()
 			window.RunOnMainThread(func() {
 				println("create-window show", name)
+				// 在主线程中
+				newWindow.Show()
 			})
-			// 在主线程中
-			newWindow.Show()
 		})
 		// 改变当前窗口大小
 		ipc.On("resize", func(_type int, channel callback.IChannel) {
@@ -86,7 +87,7 @@ func main() {
 				case 2:
 					win.SetSize(600, 400)
 				case 3:
-					win.SetSize(800, 600)
+					win.SetSize(1024, 768)
 				}
 			})
 		})

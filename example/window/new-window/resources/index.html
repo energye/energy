@@ -4,15 +4,17 @@
     <meta charset="UTF-8">
     <title>new-window</title>
     <script>
+        // 创建子窗口
         function createWindow() {
             ipc.emit("create-window", ["NewWindowName " + new Date().getTime()]);
         }
+        // 子窗口创建
         ipc.on("on-create-window-ok", function (id) {
-            document.getElementById("msg").innerText = "窗口创建成功: " + id
+            document.getElementById("msg").innerText = "创建 - 窗口ID: " + id
         });
-
+        // 子窗口关闭
         ipc.on("on-close-window", function (id) {
-            document.getElementById("msg").innerText = "窗口被关闭: " + id
+            document.getElementById("msg").innerText = "关闭 - 窗口ID: " + id
         });
     </script>
 </head>
