@@ -61,7 +61,7 @@ func (m *TCEFWindowComponent) Hide() {
 
 // CenterWindow 根据大小窗口居中
 func (m *TCEFWindowComponent) CenterWindow(size *TCefSize) {
-	if !m.IsValid() {
+	if !m.IsValid() || size == nil {
 		return
 	}
 	imports.Proc(def.CEFWindowComponent_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(size)))

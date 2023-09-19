@@ -25,6 +25,7 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
+	"os"
 	"runtime"
 )
 
@@ -46,6 +47,7 @@ type ViewsFrameworkBrowserWindow struct {
 	tray                  ITray                             //托盘
 	doOnWindowCreated     WindowComponentOnWindowCreated    //窗口创建
 	doOnGetInitialBounds  WindowComponentOnGetInitialBounds //窗口初始bounds
+	doOnCloseQuery        WindowComponentOnCanCloseEx       //
 	regions               *TCefDraggableRegions             //窗口内html拖拽区域
 	context               *ICefRequestContext               //
 	extraInfo             *ICefDictionaryValue              //
@@ -141,8 +143,13 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 					vfMainWindow.tray.close()
 				}
 				app.QuitMessageLoop()
+				// TODO 当前使用 os.Exit(0) 正确退出应用程序
+				if app.IsUIGtk3() {
+					os.Exit(0)
+				}
 			}
 		})
+
 		// SetOnClose如果阻止关闭，该函数不会执行
 		vfMainWindow.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
 			if bwEvent.onClose != nil {
@@ -154,10 +161,17 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 		vfMainWindow.EnableAllDefaultEvent() // 开启默认事件
 		// 主窗口关闭时触发该函数
 		// EnableClose=true时关闭窗口, false时不关闭窗口
-		vfMainWindow.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			*aResult = m.Config.WindowProperty.EnableClose
-			if m.Config.WindowProperty.EnableClose {
-				*aResult = vfMainWindow.Chromium().TryCloseBrowser()
+		vfMainWindow.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, canClose *bool) {
+			var flag bool
+			if vfMainWindow.doOnCloseQuery != nil {
+				flag = vfMainWindow.doOnCloseQuery(sender, window, vfMainWindow, canClose)
+			}
+			if !flag {
+				*canClose = m.Config.WindowProperty.EnableClose
+				if m.Config.WindowProperty.EnableClose {
+					//*aResult = vfMainWindow.Chromium().TryCloseBrowser()
+					vfMainWindow.CloseBrowserWindow()
+				}
 			}
 		})
 		// 设置到 MainBrowser, 主窗口有且仅有一个
@@ -275,10 +289,17 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableMaximize
 	})
-	m.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-		*aResult = wp.EnableClose
-		if wp.EnableClose {
-			*aResult = m.Chromium().TryCloseBrowser()
+	m.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, canClose *bool) {
+		var flag bool
+		if m.doOnCloseQuery != nil {
+			flag = m.doOnCloseQuery(sender, window, m, canClose)
+		}
+		if !flag {
+			*canClose = wp.EnableClose
+			if wp.EnableClose {
+				//*canClose = m.Chromium().TryCloseBrowser()
+				m.CloseBrowserWindow()
+			}
 		}
 	})
 	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
@@ -758,4 +779,8 @@ func (m *ViewsFrameworkBrowserWindow) RunOnMainThread(fn func()) {
 			fn()
 		})
 	}
+}
+
+func (m *ViewsFrameworkBrowserWindow) SetOnCloseQuery(fn WindowComponentOnCanCloseEx) {
+	m.doOnCloseQuery = fn
 }

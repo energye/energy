@@ -219,6 +219,7 @@ type WindowComponentOnCanResize func(sender lcl.IObject, window *ICefWindow, aRe
 type WindowComponentOnCanMaximize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanMinimize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnCanCloseEx func(sender lcl.IObject, cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
 type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
 type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)
 
