@@ -697,7 +697,9 @@ func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
 // SetCenterWindow 设置窗口居中显示
 func (m *ViewsFrameworkBrowserWindow) SetCenterWindow(value bool) {
 	m.WindowProperty().EnableCenterWindow = value
-	m.CenterWindow(m.Size())
+	if value {
+		m.CenterWindow(NewCefSize(m.WindowProperty().Width, m.WindowProperty().Height))
+	}
 }
 
 // IsClosing 返回窗口是否正在关闭/或已关闭 true正在或已关闭
