@@ -52,7 +52,7 @@ func main() {
 			radioDefault2Check consts.MenuId
 		)
 		//右键弹出菜单
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) bool {
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel, window cef.IBrowserWindow) bool {
 			//既然是自定义，当然要去除之前事先定义好的
 			model.Clear()
 			//开始创建菜单，每个菜单项都有自己的ID, 所以要先定义一个能保存这些菜单项的ID的变量
@@ -118,9 +118,9 @@ func main() {
 			return true
 		})
 		//右键菜单项命令
-		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, menuId consts.MenuId, eventFlags uint32, result *bool) {
+		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, menuId consts.MenuId, eventFlags uint32, window cef.IBrowserWindow) bool {
 			fmt.Printf("params: %+v\n", params)
-			fmt.Println("menuId: ", menuId, eventFlags, *result)
+			fmt.Println("menuId: ", menuId, eventFlags)
 			//在这里处理某个菜单项的点击事件所触发的命令，这里的命令对应着一个菜单项的ID
 			var clickMenuId = 0
 			switch menuId {
@@ -141,6 +141,7 @@ func main() {
 			}
 			ipc.Emit("menu", clickMenuId, fmt.Sprintf("菜单 %d 随便传点什么吧 但是，字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数字符串参数.", menuId))
 			//*result = true
+			return true
 		})
 	})
 	//运行应用

@@ -27,7 +27,7 @@ func main() {
 			loadEnergyUrl consts.MenuId
 			loadBaiduUrl  consts.MenuId
 		)
-		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) bool {
+		event.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel, window cef.IBrowserWindow) bool {
 			model.AddSeparator()
 			loadEnergyUrl = model.CefMis.NextCommandId()
 			model.AddCheckItem(loadEnergyUrl, "load-energy")
@@ -35,18 +35,19 @@ func main() {
 			model.AddCheckItem(loadBaiduUrl, "load-baidu")
 			return false
 		})
-		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, result *bool) {
+		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, window cef.IBrowserWindow) bool {
 			if commandId == loadEnergyUrl {
 				window.Chromium().LoadUrl("https://energy.yanghy.cn")
 			} else if commandId == loadBaiduUrl {
 				window.Chromium().LoadUrl("https://www.baidu.com")
 			}
+			return true
 		})
 		// 使用 load start 和 load end 回调观察当前加载的url
 		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
 			fmt.Println("load-start:", frame.Url())
 		})
-		event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32, window cef.IBrowserWindow) {
 			fmt.Println("load-end:", frame.Url())
 		})
 		// 在 on before browser 配置代理
