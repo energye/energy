@@ -51,9 +51,8 @@ func main() {
 				println("5秒后显示窗口")
 				time.Sleep(time.Second * 5)
 				window.RunOnMainThread(func() {
-					//window.SetCenterWindow(true)
-					win.SetPoint(300, 300)
-					//在屏幕中间显示
+					//window.SetPoint(300, 300)
+					window.SetCenterWindow(true)
 					window.Show()
 					println("show window")
 				})
