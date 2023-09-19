@@ -13,7 +13,6 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"time"
@@ -58,9 +57,9 @@ func main() {
 		} else if window.IsViewsFramework() {
 			//VF 窗口是CEF自己创建的，这里我们只管Chromium的Close事件即可
 			bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
-			bw.Chromium().SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
-				*aAction = consts.CbaCancel //取消关闭 , 如果想关闭窗口， *aAction = consts.CbaClose
-				window.Hide()               //隐藏窗口
+			bw.SetOnCloseQuery(func(sender lcl.IObject, cefWindow *cef.ICefWindow, window cef.IBrowserWindow, canClose *bool) bool {
+				*canClose = false //取消关闭 , 如果想关闭窗口 true
+				window.Hide()     //隐藏窗口
 				// 5秒后显示窗口
 				go func() {
 					println("VF 窗口隐藏, 5秒后显示.")
@@ -69,6 +68,7 @@ func main() {
 						window.Show() //显示窗口
 					})
 				}()
+				return true //跳过默认事件, 如果想关闭窗口，这里返回false
 			})
 		}
 	})

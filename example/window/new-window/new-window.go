@@ -38,6 +38,7 @@ func main() {
 		ResRootDir: "resources",
 		FS:         &resources,
 	}.Build())
+	//cef.BrowserWindow.Config.EnableClose = false
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//浏览器窗口之后回调，在这里获取创建的浏览器ID
 		event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, window cef.IBrowserWindow) bool {

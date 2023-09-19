@@ -41,18 +41,21 @@ func main() {
 	cef.BrowserWindow.Config.Y = -800
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// chromium 创建完成之后再隐藏掉窗口
-		event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) bool {
+		event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, win cef.IBrowserWindow) bool {
 			window.RunOnMainThread(func() { // 在这UI线程执行
 				window.Hide()
 			})
+			println("hide window")
 			// 5秒后显示窗口
 			go func() {
 				println("5秒后显示窗口")
 				time.Sleep(time.Second * 5)
 				window.RunOnMainThread(func() {
+					//window.SetCenterWindow(true)
+					win.SetPoint(300, 300)
 					//在屏幕中间显示
-					window.SetCenterWindow(true)
 					window.Show()
+					println("show window")
 				})
 			}()
 			return false

@@ -13,7 +13,6 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"time"
@@ -34,6 +33,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
 	cef.BrowserWindow.Config.ChromiumConfig().SetEnableMenu(false)
+	cef.BrowserWindow.Config.EnableClose = false
 	//这个示例演示了两种窗口组件的使用, LCL和VF
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
@@ -41,7 +41,7 @@ func main() {
 			//LCL 窗口是我们创建的，需要我们自己管理窗口
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
-				*action = types.CaMinimize //隐藏窗口
+				*action = types.CaMinimize //最小化窗口
 				// 5秒后还原窗口
 				go func() {
 					println("LCL 最小化窗口, 5秒后还原.")
@@ -58,9 +58,9 @@ func main() {
 		} else if window.IsViewsFramework() {
 			//VF 窗口是CEF自己创建的，这里我们只管Chromium的Close事件即可
 			bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
-			bw.Chromium().SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
-				*aAction = consts.CbaCancel //取消关闭 , 如果想关闭窗口，*aAction = consts.CbaClose
-				window.Minimize()           //最小化窗口
+			bw.SetOnCloseQuery(func(sender lcl.IObject, win *cef.ICefWindow, window cef.IBrowserWindow, canClose *bool) bool {
+				*canClose = false // 取消关闭 , 如果想关闭窗口 true
+				window.Minimize() //最小化窗口
 				// 5秒后显示窗口
 				go func() {
 					println("VF 最小化窗口, 5秒后还原.")
@@ -69,7 +69,20 @@ func main() {
 						window.Restore() //还原窗口
 					})
 				}()
+				return true
 			})
+			//bw.Chromium().SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
+			//	*aAction = consts.CbaCancel //取消关闭 , 如果想关闭窗口，*aAction = consts.CbaClose
+			//	window.Minimize()           //最小化窗口
+			//	// 5秒后显示窗口
+			//	go func() {
+			//		println("VF 最小化窗口, 5秒后还原.")
+			//		time.Sleep(time.Second * 5)
+			//		window.RunOnMainThread(func() {
+			//			window.Restore() //还原窗口
+			//		})
+			//	}()
+			//})
 		}
 	})
 	//运行应用
