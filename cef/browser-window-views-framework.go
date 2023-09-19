@@ -34,23 +34,24 @@ import (
 //
 // 当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
-	isClosing            bool                              //
-	windowType           consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
-	windowId             int32                             //
-	chromium             IChromium                         //
-	component            lcl.IComponent                    //
-	windowComponent      *TCEFWindowComponent              //
-	browserViewComponent *TCEFBrowserViewComponent         //
-	windowProperty       *WindowProperty                   //窗口属性
-	auxTools             *auxTools                         //辅助工具
-	tray                 ITray                             //托盘
-	doOnWindowCreated    WindowComponentOnWindowCreated    //窗口创建
-	doOnGetInitialBounds WindowComponentOnGetInitialBounds //窗口初始bounds
-	regions              *TCefDraggableRegions             //窗口内html拖拽区域
-	context              *ICefRequestContext               //
-	extraInfo            *ICefDictionaryValue              //
-	screen               IScreen                           //屏幕
-	created              bool                              //
+	isClosing             bool                              //
+	windowType            consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
+	windowId              int32                             //
+	chromium              IChromium                         //
+	component             lcl.IComponent                    //
+	windowComponent       *TCEFWindowComponent              //
+	browserViewComponent  *TCEFBrowserViewComponent         //
+	windowProperty        *WindowProperty                   //窗口属性
+	auxTools              *auxTools                         //辅助工具
+	tray                  ITray                             //托盘
+	doOnWindowCreated     WindowComponentOnWindowCreated    //窗口创建
+	doOnGetInitialBounds  WindowComponentOnGetInitialBounds //窗口初始bounds
+	regions               *TCefDraggableRegions             //窗口内html拖拽区域
+	context               *ICefRequestContext               //
+	extraInfo             *ICefDictionaryValue              //
+	screen                IScreen                           //屏幕
+	created               bool                              //创建顶层窗口完成
+	canEnableDefaultEvent bool                              //是否启用了默认事件
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -121,33 +122,51 @@ func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
 	if !process.Args.IsMain() {
 		return
 	}
+	var bwEvent = BrowserWindow.browserEvent
 	// VF 主窗口在 application 上下文初始化时创建
 	app.SetOnContextInitialized(func() {
+		// 主窗口
 		m.Config.WindowProperty.WindowType = consts.WT_MAIN_BROWSER
-		// main window
 		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
 		// 主窗口关闭流程 before close
 		// OnCanClose如果阻止关闭，该函数不会执行
 		vfMainWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-			chromiumOnBeforeClose(browser)
-			if vfMainWindow.tray != nil {
-				vfMainWindow.tray.close()
+			var flag = false
+			if bwEvent.onBeforeClose != nil {
+				flag = bwEvent.onBeforeClose(sender, browser, vfMainWindow)
 			}
-			app.QuitMessageLoop()
+			if !flag {
+				chromiumOnBeforeClose(browser)
+				if vfMainWindow.tray != nil {
+					vfMainWindow.tray.close()
+				}
+				app.QuitMessageLoop()
+			}
 		})
-		// 重置窗口属性, 注册默认实现事件
+		// SetOnClose如果阻止关闭，该函数不会执行
+		vfMainWindow.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
+			if bwEvent.onClose != nil {
+				bwEvent.onClose(sender, browser, aAction, vfMainWindow)
+			}
+		})
+		// 重置窗口属性, 使用事件初始窗口属性
 		vfMainWindow.ResetWindowPropertyForEvent()
-		vfMainWindow.registerPopupEvent(true)
-		vfMainWindow.registerDefaultEvent()
+		vfMainWindow.EnableAllDefaultEvent() // 开启默认事件
+		// 主窗口关闭时触发该函数
+		// EnableClose=true时关闭窗口, false时不关闭窗口
 		vfMainWindow.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
-			*aResult = vfMainWindow.Chromium().TryCloseBrowser()
+			*aResult = m.Config.WindowProperty.EnableClose
+			if m.Config.WindowProperty.EnableClose {
+				*aResult = vfMainWindow.Chromium().TryCloseBrowser()
+			}
 		})
-		// 设置到 MainBrowser
+		// 设置到 MainBrowser, 主窗口有且仅有一个
 		BrowserWindow.mainVFBrowserWindow = vfMainWindow
 		if m.Config.browserWindowOnEventCallback != nil {
 			BrowserWindow.browserEvent.chromium = vfMainWindow.chromium
 			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vfMainWindow)
 		}
+		// IPC
 		ipc.SetProcessMessage(vfMainWindow.Chromium().(*TCEFChromium))
 		vfMainWindow.CreateTopLevelWindow()
 		//创建完窗口之后设置窗口属性
@@ -181,7 +200,18 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 	if !isMain {
 		// 子窗口关闭流程
 		m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-			chromiumOnBeforeClose(browser)
+			var flag bool
+			if bwEvent.onBeforeClose != nil {
+				flag = bwEvent.onBeforeClose(sender, browser, m)
+			}
+			if !flag {
+				chromiumOnBeforeClose(browser)
+			}
+		})
+		m.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
+			if bwEvent.onClose != nil {
+				bwEvent.onClose(sender, browser, aAction, m)
+			}
 		})
 	}
 	m.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
@@ -204,9 +234,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 		}
 		if !result {
 			vFrameBrowserWindow.ResetWindowPropertyForEvent()
-			vFrameBrowserWindow.registerPopupEvent(false)
-			vFrameBrowserWindow.registerDefaultEvent()
+			vFrameBrowserWindow.EnableAllDefaultEvent()
 			vFrameBrowserWindow.CreateTopLevelWindow()
+			vFrameBrowserWindow.createAfterWindowPropertyForEvent()
 			result = true
 		}
 		return result
@@ -214,6 +244,8 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 }
 
 // ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
+//  VF窗口初始化时通过回调事件设置一些默认行为，而不像LCL窗口直接通过属性设置
+//  在初始化之后部分属性可直接设置
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	m.WindowComponent().SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
@@ -245,6 +277,9 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	})
 	m.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableClose
+		if wp.EnableClose {
+			*aResult = m.Chromium().TryCloseBrowser()
+		}
 	})
 	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableHideCaption
@@ -381,8 +416,9 @@ func (m *ViewsFrameworkBrowserWindow) Created() bool {
 
 // EnableAllDefaultEvent 启用所有默认事件行为
 func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
-	m.registerPopupEvent(false)
+	m.registerPopupEvent(m.WindowType() == consts.WT_MAIN_BROWSER)
 	m.registerDefaultEvent()
+	m.canEnableDefaultEvent = true
 }
 
 // SetOnWindowCreated 窗口创建
@@ -550,9 +586,15 @@ func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 // Show 显示窗口
 func (m *ViewsFrameworkBrowserWindow) Show() {
 	if m.Created() {
+		m.BrowserViewComponent().RequestFocus()
 		m.WindowComponent().Show()
 	} else {
+		if m.canEnableDefaultEvent {
+			// 启用了默认事件，窗口属性配置事件在创建顶层窗口之前调用
+			m.ResetWindowPropertyForEvent()
+		}
 		m.CreateTopLevelWindow()
+		m.createAfterWindowPropertyForEvent()
 	}
 }
 
@@ -617,10 +659,12 @@ func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
 
 // CreateTopLevelWindow 创建顶层窗口
 func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
+	// 非辅助工具类型窗口，不做托管, 辅助工具窗口有自己的事件行为
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		window.CurrentBrowseWindowCache = m
 	}
 	m.WindowComponent().CreateTopLevelWindow()
+	// 标记已创建
 	m.created = true
 }
 

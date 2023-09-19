@@ -208,6 +208,8 @@ func (m *auxTools) DevTools() *devToolsWindow {
 func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) IBrowserWindow {
 	// 获取当前应用的主窗口
 	main := BrowserWindow.MainWindow()
+	// 设置为弹出的子窗口
+	windowProperty.WindowType = consts.WT_POPUP_SUB_BROWSER
 	if main.IsLCL() {
 		// 创建LCL窗口
 		return NewLCLBrowserWindow(config, windowProperty, owner...)
