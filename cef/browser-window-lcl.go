@@ -560,7 +560,7 @@ func (m *LCLBrowserWindow) defaultWindowCloseEvent() {
 	m.TForm.SetOnCloseQuery(m.closeQuery)
 }
 
-// EnableDefaultCloseEvent 启用默认关闭事件行为-该窗口将被关闭
+// EnableDefaultCloseEvent 启用默认关闭事件
 func (m *LCLBrowserWindow) EnableDefaultCloseEvent() {
 	m.defaultWindowCloseEvent()
 	m.registerDefaultChromiumCloseEvent()
@@ -568,8 +568,12 @@ func (m *LCLBrowserWindow) EnableDefaultCloseEvent() {
 
 // EnableAllDefaultEvent 启用所有默认事件行为
 func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
+	// 窗口关闭事件，window和chromium将以正确的行为关闭
 	m.defaultWindowCloseEvent()
+	// chromium事件，在回调事件中实现框架的默认行为
 	m.defaultChromiumEvent()
+	// 仅windows有的事件，窗口消息事件
+	m.registerWindowsCompMsgEvent()
 }
 
 // SetOnResize 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
