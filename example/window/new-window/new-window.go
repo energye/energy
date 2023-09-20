@@ -90,6 +90,7 @@ func main() {
 				case 3:
 					win.SetSize(1024, 768)
 				}
+				win.SetCenterWindow(true)
 			})
 		})
 

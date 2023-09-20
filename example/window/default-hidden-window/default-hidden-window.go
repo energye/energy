@@ -14,6 +14,7 @@ import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
@@ -37,14 +38,14 @@ func main() {
 	// 1.默认不居中
 	// 2.窗口显示在屏幕之外，数值要大于窗口宽高
 	cef.BrowserWindow.Config.EnableCenterWindow = false
-	cef.BrowserWindow.Config.X = -1200
-	cef.BrowserWindow.Config.Y = -800
+	cef.BrowserWindow.Config.X = 0
+	cef.BrowserWindow.Config.Y = 0
+	cef.BrowserWindow.Config.Width = 1
+	cef.BrowserWindow.Config.Height = 1
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// chromium 创建完成之后再隐藏掉窗口
-		event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, win cef.IBrowserWindow) bool {
-			window.RunOnMainThread(func() { // 在这UI线程执行
-				window.Hide()
-			})
+		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
+			window.Hide()
 			println("hide window")
 			// 5秒后显示窗口
 			go func() {
@@ -52,12 +53,12 @@ func main() {
 				time.Sleep(time.Second * 5)
 				window.RunOnMainThread(func() {
 					//window.SetPoint(300, 300)
+					window.SetSize(800, 600)
 					window.SetCenterWindow(true)
 					window.Show()
 					println("show window")
 				})
 			}()
-			return false
 		})
 	})
 	//运行应用
