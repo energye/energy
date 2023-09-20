@@ -61,27 +61,25 @@ func Run(app *TCEFApplication) {
 	} else {
 		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时, 启用 VF (ViewsFrameworkBrowserWindow) 窗口组件
 		if app.IsMessageLoop() {
-			// 启用VF窗口组件
-			BrowserWindow.appContextInitialized(app)
+			// 启用VFMessageLoop
+			// 初始化窗口组件
+			appContextInitialized(app)
+		}
+		if common.IsLinux() {
+			// linux gtk
+			lclwidget.CustomWidgetSetInitialization()
+			lcl.Application.Initialize()
 		}
 		// 启动主进程
 		success := app.StartMainProcess()
 		if success {
-			if app.IsUIGtk2() {
-				//LCL -> Linux GTK2 必须在主进程启动之后初始化组件
-				lclwidget.CustomWidgetSetInitialization()
-			}
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
 			}
 			appMainRunCallback()
 			if app.IsMessageLoop() {
-				if app.IsUIGtk2() {
-					//LCL -> Linux GTK2
-					lcl.Application.Initialize()
-				}
-				// VF窗口
+				// VF窗口 MessageLoop
 				app.RunMessageLoop()
 			} else {
 				// 创建LCL窗口组件

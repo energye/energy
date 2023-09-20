@@ -118,13 +118,14 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 }
 
 // ViewsFrameworkBrowserWindow 主窗口初始化
-func (m *browserWindow) appContextInitialized(app *TCEFApplication) {
+func appContextInitialized(app *TCEFApplication) {
 	// 仅主进程初始化主窗口,
 	// 子进程也不会初始， 判断一下省着多调用函数了
 	if !process.Args.IsMain() {
 		return
 	}
-	var bwEvent = BrowserWindow.browserEvent
+	var m = BrowserWindow
+	var bwEvent = m.browserEvent
 	// VF 主窗口在 application 上下文初始化时创建
 	app.SetOnContextInitialized(func() {
 		// 主窗口
