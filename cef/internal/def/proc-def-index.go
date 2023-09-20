@@ -258,6 +258,7 @@ const (
 	CEFWorkScheduler_SetDepleteWorkDelay
 	CEFWorkScheduler_SetUseQueueThread
 	// application
+	CEFApplication_DoMessageLoopWork
 	CEFApplication_RunMessageLoop
 	CEFApplication_QuitMessageLoop
 	CEFApplication_Create

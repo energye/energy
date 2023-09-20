@@ -98,6 +98,11 @@ func (m *TCEFApplication) StartSubProcess() (result bool) {
 	return false
 }
 
+// DoMessageLoopWork
+func (m *TCEFApplication) DoMessageLoopWork() {
+	imports.Proc(def.CEFApplication_DoMessageLoopWork).Call()
+}
+
 // RunMessageLoop
 func (m *TCEFApplication) RunMessageLoop() {
 	defer func() {

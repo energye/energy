@@ -258,6 +258,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWorkScheduler_SetDepleteWorkDelay", 0),
 		dllimports.NewEnergyImport("CEFWorkScheduler_SetUseQueueThread", 0),
 		//application
+		dllimports.NewEnergyImport("CEFApplication_DoMessageLoopWork", 0),
 		dllimports.NewEnergyImport("CEFApplication_RunMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_QuitMessageLoop", 0),
 		dllimports.NewEnergyImport("CEFApplication_Create", 0),
