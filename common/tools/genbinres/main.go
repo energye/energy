@@ -24,7 +24,7 @@ import (
 	"strings"
 )
 
-const liblclVersion = "v2.2.4" // liblcl发布版本
+const liblclVersion = "v2.2.5" // liblcl发布版本
 
 const (
 	liblclbinres = "/src/github.com/energye/liblclbinres"

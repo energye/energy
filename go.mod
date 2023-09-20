@@ -3,10 +3,13 @@ module github.com/energye/energy/v2
 go 1.18
 
 require (
+	github.com/energye/golcl v1.0.6
+	github.com/energye/liblclbinres v1.0.4
+)
+
+require (
 	atomicgo.dev/cursor v0.2.0
 	atomicgo.dev/keyboard v0.2.9
-	github.com/energye/golcl v1.0.6
-	github.com/energye/liblclbinres v1.0.3
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/json-iterator/go v1.1.12
