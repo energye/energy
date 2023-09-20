@@ -34,7 +34,7 @@ func browserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		println("count", value)
 	})
 	// page load end
-	event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+	event.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32, window cef.IBrowserWindow) {
 		// index.html, ipc.on("osInfo", function(){...})
 		println("osInfo", version.OSVersion.ToString())
 		ipc.Emit("osInfo", version.OSVersion.ToString())

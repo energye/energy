@@ -91,7 +91,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 读取assets内的文件
-	var createFile = func(readFilePath, outFilePath string, data map[string]any, perm fs.FileMode) error {
+	var createFile = func(readFilePath, outFilePath string, data map[string]any, perm fs.FileMode, replace ...string) error {
 		// 创建 energy.json template
 		if fileData, err := assets.ReadFile(nil, "", readFilePath); err != nil {
 			return err
@@ -102,6 +102,10 @@ func generaProject(c *command.Config) error {
 				}
 			}
 			path := filepath.Join(projectPath, outFilePath)
+			if len(replace) > 0 {
+				sh := strings.NewReplacer(replace...)
+				fileData = []byte(sh.Replace(string(fileData)))
+			}
 			if err = ioutil.WriteFile(path, fileData, perm); err != nil {
 				return err
 			}
@@ -110,7 +114,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	if consts.IsLinux && consts.IsARM64 {
-		if err := createFile("assets/initialize/run.sh", "run.sh", nil, 0755); err != nil {
+		if err := createFile("assets/initialize/run.sh", "run.sh", nil, 0755, "\r", ""); err != nil {
 			return err
 		}
 	}

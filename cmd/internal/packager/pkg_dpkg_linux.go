@@ -246,7 +246,8 @@ func linuxARMStartupSH(proj *project.Project, appRoot string) error {
 			data := make(map[string]any)
 			data["INSTALLPATH"] = opt(proj)
 			data["EXECUTE"] = proj.Name
-			if content, err := tools.RenderTemplate(string(startupshData), data); err != nil {
+			sh := strings.NewReplacer("\r", "")
+			if content, err := tools.RenderTemplate(sh.Replace(string(startupshData)), data); err != nil {
 				return err
 			} else {
 				optDir := opt(proj)
