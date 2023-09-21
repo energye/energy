@@ -4,15 +4,18 @@
   "frameworkPath": "{{.FrameworkPath}}",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
-  "info": {
-    "icon": "{{.ProjectPath}}/resources/icon.ico",
+  "plist": {
+    "icon": "{{.ProjectPath}}/resources/icon.png",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",
-    "fileVersion": "1.0.0",
-    "productVersion": "1.0.0",
+    "locals": [
+      "zh_CN",
+      "en"
+    ],
+    "cfBundleVersion": "1.0.0",
+    "cfBundleShortVersionString": "1.0.0",
     "copyright": "Copyright.....",
-    "comments": "Built using ENERGY (https://github.com/energye/energy)",
-    "fileDescription": "Built using ENERGY (https://github.com/energye/energy)"
+    "comments": "Built using ENERGY (https://github.com/energye/energy)"
   },
   "author": {
     "name": "yanghy",

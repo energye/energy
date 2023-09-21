@@ -32,6 +32,7 @@ type Project struct {
 	Info           Info   `json:"info"`           // 应用信息
 	NSIS           NSIS   `json:"nsis"`           // windows nsis 安装包
 	Dpkg           DPKG   `json:"dpkg"`           // linux dpkg 安装包
+	PList          PList  `json:"plist"`          // darwin plist 安装包
 	Author         Author `json:"author"`         // 作者信息
 }
 
@@ -149,6 +150,19 @@ type DPKG struct {
 	Compress     string   `json:"compress"` //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
 	UseCompress  bool     `json:"-"`        //如果支持配置的, true=使用压缩
 	CompressFile string   `json:"-"`        //压缩后的文件完全目录
+}
+
+type PList struct {
+	Icon                       string   `json:"icon"`                       //应用图标, png 或 icns, 如果指定png则生成icns, 如果指定icns则直接使用
+	CompanyName                string   `json:"companyName"`                //公司名称
+	ProductName                string   `json:"productName"`                //产品名称
+	FileVersion                string   `json:"FileVersion"`                //文件版本
+	Locals                     []string `json:"locals"`                     //语言
+	CFBundleVersion            string   `json:"cfBundleVersion"`            //内部版本
+	CFBundleShortVersionString string   `json:"cfBundleShortVersionString"` //发布版本号版本
+	Copyright                  *string  `json:"copyright"`                  //版权
+	Comments                   *string  `json:"comments"`                   //exe详情描述
+
 }
 
 type Author struct {
