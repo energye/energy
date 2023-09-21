@@ -59,6 +59,7 @@ func Concat(str ...string) string {
 	}
 	return c.String()
 }
+
 func IsWindows() bool {
 	return isWindows
 }
@@ -559,8 +560,8 @@ func LibPath() string {
 	var lib = libCef()
 	if lib != "" {
 		//当前目录
-		if tools.IsExist(consts.ExePath + consts.Separator + lib) {
-			return consts.ExePath
+		if tools.IsExist(consts.ExeDir + consts.Separator + lib) {
+			return consts.ExeDir
 		}
 		//环境变量
 		var env = os.Getenv(consts.ENERGY_HOME_KEY)

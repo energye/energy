@@ -21,9 +21,12 @@ import (
 )
 
 var (
-	ExePath    string                       //执行文件目录
-	HomeDir, _ = homedir.Dir()              //系统用户目录
-	Separator  = string(filepath.Separator) //系统目录分隔符
+	CurrentExecuteDir string                       // 当前执行目录
+	ExeDir            string                       // 执行文件所在目录
+	ExePath           string                       // 执行文件所在完整目录
+	ExeName           string                       // 执行文件名称
+	HomeDir, _        = homedir.Dir()              // 当前系统用户目录
+	Separator         = string(filepath.Separator) // 平台目录分隔符
 )
 
 const (
@@ -33,7 +36,11 @@ const (
 )
 
 func init() {
-	ExePath, _ = os.Getwd()
+	// 当前执行目录，在其它目录执行目标执行文件时，返回当前执行目录
+	CurrentExecuteDir, _ = os.Getwd()
+	// 执行文件所在真实目录
+	ExePath = os.Args[0]
+	ExeDir, ExeName = filepath.Split(ExePath)
 }
 
 //0:net 1:unix

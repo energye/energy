@@ -105,7 +105,7 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	} else if config.Home[0] != '/' {
 		config.Home = "/" + config.Home
 	}
-	m.exePath, _ = os.Getwd()
+	m.exePath = ExeDir
 	// 默认的资源目录
 	if config.ResRootDir == "" {
 		if config.FS != nil {

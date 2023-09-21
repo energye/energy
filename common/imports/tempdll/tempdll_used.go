@@ -43,7 +43,7 @@ func CheckAndReleaseDLL() (string, bool) {
 	case TddTmp: // default
 		tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), liblclbinres.CRC32Value)
 	case TddCurrent:
-		tempDLLDir = consts.ExePath
+		tempDLLDir = consts.ExeDir
 	case TddEnergyHome:
 		tempDLLDir = os.Getenv(consts.ENERGY_HOME_KEY)
 	case TddCustom:

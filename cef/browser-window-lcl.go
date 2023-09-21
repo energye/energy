@@ -844,7 +844,8 @@ func (m *LCLBrowserWindow) registerDefaultEvent() {
 		if bwEvent.onBeforeDownload != nil {
 			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m)
 		} else {
-			callback.Cont(consts.ExePath+consts.Separator+suggestedName, true)
+			// 默认保存到当前执行文件所在目录
+			callback.Cont(consts.ExeDir+consts.Separator+suggestedName, true)
 		}
 	})
 	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
