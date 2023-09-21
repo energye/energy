@@ -41,7 +41,7 @@ func main() {
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
 		//LocalAssets 指定本地资源支持热更新 - 适用开发或web端源码可以查看
-		//server.LocalAssets = fmt.Sprintf("%s/example/browser-internal-http-server/resources", consts.ExePath)
+		//server.LocalAssets = fmt.Sprintf("%s/example/browser-internal-http-server/resources", consts.ExeDir)
 		//Assets 内置资源不支持热更新 - 适用应用发布
 		server.Assets = &resources
 		go server.StartHttpServer()

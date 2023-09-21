@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/build-examples/syso"
 	"github.com/energye/golcl/tools/command"
 	"io/ioutil"
@@ -17,7 +18,7 @@ const (
 )
 
 func main() {
-	wd, _ := os.Getwd()
+	wd := consts.CurrentExecuteDir
 	println("current:", wd)
 	dist := filepath.Join(wd, "example", "dist")
 	if !isExist(dist) {

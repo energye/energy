@@ -6,11 +6,11 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/example/sub-process/main-process/src"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/pkgs/macapp"
-	"os"
 	"path"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
 	//MacOS配置要在 GlobalInit 它之前
 	//特别说明MacOS：子进程不需要配置
-	wd, _ := os.Getwd()
+	wd := consts.CurrentExecuteDir
 	if common.IsDarwin() {
 		//主进程中 主子进程方式，在这里指定子进程的执行文件
 		subExePath := path.Join(wd, "example", "sub-process", "sub-process", "sub-process")

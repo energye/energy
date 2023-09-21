@@ -10,7 +10,6 @@ import (
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"strings"
 	"unsafe"
@@ -55,7 +54,8 @@ func main() {
 		})
 
 		// 要替换的图片
-		wd, _ := os.Getwd()
+		wd := consts.CurrentExecuteDir
+		fmt.Println("exePath", wd)
 		replaceImageBuf, err := ioutil.ReadFile(filepath.Join(wd, "example", "response-filter", "resources", "jupiter.png"))
 		fmt.Println("err:", err)
 		// 当前读取位置 和 图片总大小

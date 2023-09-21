@@ -16,10 +16,10 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"os"
 	"path/filepath"
 )
 
@@ -83,13 +83,10 @@ func main() {
 			defer mem.Free()
 			if lcl.Clipboard.GetFormat(bmpFormat, mem) {
 				mem.SetPosition(0)
-				if wd, err := os.Getwd(); err == nil {
-					path := filepath.Join(wd, "bg.bmp")
-					mem.SaveToFile(path)
-					return path
-				} else {
-					return err.Error()
-				}
+				wd := consts.CurrentExecuteDir
+				path := filepath.Join(wd, "bg.bmp")
+				mem.SaveToFile(path)
+				return path
 			}
 			return "获取失败"
 		})

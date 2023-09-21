@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"os"
 	"path/filepath"
@@ -18,7 +19,7 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://www.ultrasounds.com" // flash 在线测试地址
 	eh := os.Getenv("ENERGY_HOME")
 	if eh == "" {
-		eh, _ = os.Getwd()
+		eh = consts.ExeDir
 	}
 	// Energy CEF Flash Demo, 支持 CEF-87.1.14
 	// flash 下载地址: https://www.flash.cn/download-wins 选择Adobe Flash Player PPAPI版
@@ -29,7 +30,7 @@ func main() {
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
 		eh := os.Getenv("ENERGY_HOME")
 		if eh == "" {
-			eh, _ = os.Getwd()
+			eh = consts.ExeDir
 		}
 		commandLine.AppendSwitch("--allow-outdated-plugins")
 		commandLine.AppendSwitch("--disable-web-security")

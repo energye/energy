@@ -4,7 +4,7 @@ import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
-	"os"
+	"github.com/energye/energy/v2/consts"
 	"path"
 )
 
@@ -16,7 +16,7 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	//创建应用
 	cefApp := cef.NewApplication()
-	wd, _ := os.Getwd()
+	wd := consts.CurrentExecuteDir
 	indexHtmlPath := path.Join(wd, "example", "load-html-url", "resources", "index.html")
 	println("indexHtmlPath", indexHtmlPath)
 	//指定一个URL地址，或本地html文件目录

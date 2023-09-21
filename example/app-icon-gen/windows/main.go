@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/energy/tools/winRes"
-	"os"
 	"path/filepath"
 )
 
@@ -23,8 +23,7 @@ func sysoRsrc() {
 }
 
 func wd() string {
-	d, _ := os.Getwd()
-	return d
+	return consts.CurrentExecuteDir
 }
 
 // 使用 rsrc 生成图标

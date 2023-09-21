@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"os"
 	"path/filepath"
@@ -30,7 +31,7 @@ func main() {
 	envPath := os.Getenv("ENERGY_HOME")
 	if envPath == "" {
 		// 未配置 ENERGY_HOME 环境变量， 在当前目录保存cache
-		envPath, _ = os.Getwd()
+		envPath = consts.ExeDir
 		envPath = filepath.Join(envPath, "cache")
 	} else {
 		envPath = filepath.Join(envPath, "cache")

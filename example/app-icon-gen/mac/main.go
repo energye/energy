@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/tools/command"
 	"io/fs"
 	"io/ioutil"
@@ -11,7 +12,7 @@ import (
 )
 
 func main() {
-	wd, _ := os.Getwd()
+	wd := consts.ExeDir
 	exePath := filepath.Join(wd, "example", "app-icon-gen")     // 当前执行目录
 	resourcePath := filepath.Join(exePath, "resources")         // 资源 icon.png 存放目录
 	savePath := filepath.Join(resourcePath, "bytes.txt")        // icns 字节数组

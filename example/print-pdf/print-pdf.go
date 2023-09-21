@@ -7,9 +7,9 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
-	"os"
 	"path"
 )
 
@@ -38,7 +38,7 @@ func main() {
 		server.Assets = &resources
 		go server.StartHttpServer()
 	})
-	wd, _ := os.Getwd()
+	wd := consts.CurrentExecuteDir
 	//监听事件
 	ipc.On("print-pdf", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
