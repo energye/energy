@@ -152,6 +152,7 @@ func (m *TCEFApplication) FrameworkDirPath() string {
 }
 
 func (m *TCEFApplication) SetFrameworkDirPath(value string) {
+	common.SetFrameworkEnv(value)
 	imports.Proc(def.CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
 	// resources 和 locals 在同一目录
 	m.SetResourcesDirPath(value)

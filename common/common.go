@@ -576,3 +576,7 @@ func FrameworkDir() string {
 	}
 	return ""
 }
+
+func SetFrameworkEnv(value string) {
+	os.Setenv(consts.ENERGY_HOME_KEY, value)
+}
