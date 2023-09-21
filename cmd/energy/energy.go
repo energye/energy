@@ -40,7 +40,7 @@ func main() {
 }
 
 func termRun() {
-	wd, _ := os.Getwd()
+	wd := tools.CurrentExecuteDir()
 	cc := &command.Config{Wd: wd}
 	parser := flags.NewParser(cc, flags.HelpFlag|flags.PassDoubleDash)
 	if len(os.Args) < 2 {

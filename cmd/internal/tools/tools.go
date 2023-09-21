@@ -25,6 +25,18 @@ import (
 	"text/template"
 )
 
+var (
+	exePath           string
+	currentExecuteDir string
+)
+
+func init() {
+	// 执行文件所在目录
+	exePath, _ = filepath.Split(os.Args[0])
+	// 当前执行目录，在其它目录执行目标执行文件时，返回当前执行目录
+	currentExecuteDir, _ = os.Getwd()
+}
+
 // CommandExists 命令是否存在
 func CommandExists(name string) bool {
 	_, err := exec.LookPath(name)
@@ -190,4 +202,16 @@ func CheckCEFDir() bool {
 		return tools.IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
 	}
 	return false
+}
+
+// ExePath
+//  返回当前执行文件路径
+func ExePath() string {
+	return exePath
+}
+
+// CurrentExecuteDir
+//  返回当前执行目录
+func CurrentExecuteDir() string {
+	return currentExecuteDir
 }

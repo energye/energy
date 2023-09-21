@@ -13,7 +13,7 @@ package project
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/golcl/energy/tools"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -40,7 +40,8 @@ func (m *Project) setDefaults() {
 		m.Name = "energyapp"
 	}
 	if m.ProjectPath == "" {
-		m.ProjectPath, _ = os.Getwd()
+		// 设置当前执行目录为项目目录
+		m.ProjectPath = tools.CurrentExecuteDir()
 	}
 	if m.FrameworkPath == "" {
 		m.FrameworkPath = os.Getenv(consts.EnergyHomeKey)
@@ -169,7 +170,8 @@ func parse(projectData []byte) (*Project, error) {
 // NewProject 创建项目对象, 根据energy.json配置
 func NewProject(projectPath string) (*Project, error) {
 	if projectPath == "" {
-		projectPath, _ = os.Getwd()
+		// 设置当前执行目录为项目目录
+		projectPath = tools.CurrentExecuteDir()
 	}
 	config := filepath.Join(projectPath, consts.EnergyProjectConfig)
 	rawBytes, err := os.ReadFile(config)

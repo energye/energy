@@ -82,14 +82,11 @@ func compressCEF7za(proj *project.Project) (string, error) {
 		return outFilePath, nil
 	}
 
-	wd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
+	wd := tools.CurrentExecuteDir()
 	defer func() {
 		os.Chdir(wd)
 	}()
-	err = os.Chdir(proj.FrameworkPath)
+	err := os.Chdir(proj.FrameworkPath)
 	if err != nil {
 		return "", err
 	}
