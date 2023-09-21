@@ -21,7 +21,7 @@ import (
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
-	"path"
+	"path/filepath"
 	"strings"
 	"unsafe"
 )
@@ -80,9 +80,10 @@ func (m *TCEFApplication) initDefaultSettings() {
 	} else {
 		panic("Unsupported system, currently only supports Windows, Mac OS, and Linux")
 	}
-
 	if m.FrameworkDirPath() == "" {
-		lp := common.LibPath()
+		// 默认CEF框架目录
+		// 当前执行文件所在目录或ENERGY_HOME环境配置目录
+		lp := common.FrameworkDir()
 		if lp != "" {
 			m.SetFrameworkDirPath(lp)
 		}
@@ -152,9 +153,9 @@ func (m *TCEFApplication) FrameworkDirPath() string {
 
 func (m *TCEFApplication) SetFrameworkDirPath(value string) {
 	imports.Proc(def.CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
-	// 默认 resources 和 locals 在同一目录
+	// resources 和 locals 在同一目录
 	m.SetResourcesDirPath(value)
-	m.SetLocalesDirPath(path.Join(value, "locales"))
+	m.SetLocalesDirPath(filepath.Join(value, "locales"))
 }
 
 // MainBundlePath 仅用于macOS

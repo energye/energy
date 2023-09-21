@@ -20,6 +20,7 @@ import (
 	"github.com/energye/golcl/energy/tools"
 	"math"
 	"os"
+	"path/filepath"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -556,16 +557,20 @@ func libCef() string {
 	return ""
 }
 
-func LibPath() string {
-	var lib = libCef()
+// FrameworkDir
+//  返回CEF框架目录, 以当前执行文件所在目录开始查找
+//  如果当前执行文件目录未找到，再从ENERGY_HOME环境变量查找
+//  Darwin 平台除外
+func FrameworkDir() string {
+	var lib = libCef() // 根据CEF libcef.xx 动态库
 	if lib != "" {
 		//当前目录
-		if tools.IsExist(consts.ExeDir + consts.Separator + lib) {
+		if tools.IsExist(filepath.Join(consts.ExeDir, lib)) {
 			return consts.ExeDir
 		}
 		//环境变量
 		var env = os.Getenv(consts.ENERGY_HOME_KEY)
-		if tools.IsExist(env + consts.Separator + lib) {
+		if tools.IsExist(filepath.Join(env, lib)) {
 			return env
 		}
 	}
