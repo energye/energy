@@ -117,7 +117,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 	tmpWorkDir := filepath.Join(buildOutDir, "tmp")
 	os.Remove(tmpWorkDir)
 	if iconExt == ".png" {
-		term.Logger.Info("\tcreates icns")
+		term.Logger.Info("\tcreate icnns")
 		src, err := os.Open(proj.PList.Icon)
 		if err != nil {
 			return err
@@ -162,7 +162,8 @@ func generateICNS(proj *project.Project, appRoot string) error {
 		}
 		proj.PList.Icon = filepath.Join(tmpWorkDir, name+".icns")
 	}
-	if iconExt == ".png" || iconExt == ".icns" {
+	iconExt = strings.ToLower(filepath.Ext(proj.PList.Icon))
+	if iconExt == ".icns" {
 		term.Logger.Info("\tcopy icns")
 		src, err := os.Open(proj.PList.Icon)
 		if err != nil {
