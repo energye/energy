@@ -183,7 +183,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 						return os.MkdirAll(targetPath, info.Mode())
 					} else {
 						if tools.IsExistAndSize(targetPath, info.Size()) {
-							term.Logger.Info("\tcopy skip: " + outPath)
+							//term.Logger.Info("\tcopy skip: " + outPath)
 							return nil
 						}
 						srcFile, err := os.Open(path)
@@ -196,7 +196,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 							return err
 						}
 						defer dstFile.Close()
-						term.Logger.Info("\tcopy: " + outPath)
+						//term.Logger.Info("\tcopy: " + outPath)
 						_, err = io.Copy(dstFile, srcFile)
 						return err
 					}

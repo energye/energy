@@ -35,6 +35,9 @@ func AssetsPath(projectData *project.Project, file string) string {
 
 // BuildOutPath 返回固定构建输出目录 $current/build
 func BuildOutPath(projectData *project.Project) string {
+	if projectData.AppType == project.AtHelper {
+		return projectData.ProjectPath
+	}
 	return filepath.Join(projectData.ProjectPath, "build")
 }
 

@@ -17,6 +17,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -93,25 +94,170 @@ func GeneraInstaller(proj *project.Project) error {
 	if err := copyFrameworkFile(proj, appRoot); err != nil {
 		return err
 	}
+	if err := copyHelperFile(proj, appRoot); err != nil {
+		return err
+	}
+	return nil
+}
+
+func copyFiles(proj *project.Project, src, dst string) error {
+	if srcFile, err := os.Open(src); err != nil {
+		return err
+	} else {
+		st, err := srcFile.Stat()
+		if err != nil {
+			return err
+		}
+		if st.IsDir() {
+			srcFile.Close() //close
+			var pathLen = len(src)
+			err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
+				if path == src { // current root
+					return nil
+				}
+				outPath := path[pathLen:]
+				// exclude file or dir
+				for _, p := range proj.PList.Exclude {
+					if strings.Contains(outPath, p) {
+						return nil
+					}
+				}
+				targetPath := filepath.Join(dst, outPath)
+				info, _ := d.Info()
+				if d.IsDir() {
+					return os.MkdirAll(targetPath, info.Mode())
+				} else {
+					if tools.IsExistAndSize(targetPath, info.Size()) {
+						//term.Logger.Info("\tcopy skip: " + outPath)
+						return nil
+					}
+					srcFile, err := os.Open(path)
+					if err != nil {
+						return err
+					}
+					defer srcFile.Close()
+					dstFile, err := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, info.Mode())
+					if err != nil {
+						return err
+					}
+					defer dstFile.Close()
+					//term.Logger.Info("\tcopy: " + outPath)
+					_, err = io.Copy(dstFile, srcFile)
+					return err
+				}
+			})
+			if err != nil {
+				return err
+			}
+		} else {
+			defer srcFile.Close()
+			dstFilePath := filepath.Join(dst, st.Name())
+			dstFile, err := os.OpenFile(dstFilePath, os.O_CREATE|os.O_WRONLY, st.Mode())
+			if err != nil {
+				return err
+			}
+			defer dstFile.Close()
+			_, err = io.Copy(dstFile, srcFile)
+			if err != nil {
+				return err
+			}
+		}
+	}
 	return nil
 }
 
 func copyFrameworkFile(proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate app copy framework:",
 		term.Logger.Args("company", proj.Info.CompanyName, "product", proj.Info.ProductName))
+	buildOutDir := assets.BuildOutPath(proj)
+	appDir := filepath.Join(buildOutDir, appRoot)
+	// Contents
+	contents := filepath.Join(appDir, appContents)
+	exeDir := filepath.Join(proj.ProjectPath, proj.OutputFilename)
+	if !tools.IsExist(exeDir) {
+		return fmt.Errorf("execution file not found: %s", exeDir)
+	}
+	cefDir := os.Getenv(consts.EnergyHomeKey)
+	if !tools.IsExist(cefDir) {
+		return fmt.Errorf("%s not found: %s", consts.EnergyHomeKey, cefDir)
+	}
+	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("execution", exeDir))
+	// Contents/MacOS/exe
+	outExe := filepath.Join(contents, appContentsMacOS)
+	if err := copyFiles(proj, exeDir, outExe); err != nil {
+		return err
+	}
+	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("framework", cefDir))
+	// Contents/Frameworks/cef
+	outCEF := filepath.Join(contents, appContentsFrameworks)
+	if err := copyFiles(proj, cefDir, outCEF); err != nil {
+		return err
+	}
 
 	return nil
 }
 
 func copyHelperFile(proj *project.Project, appRoot string) error {
-	term.Logger.Info("Generate app copy framework:",
-		term.Logger.Args("company", proj.Info.CompanyName, "product", proj.Info.ProductName))
-
+	term.Logger.Info("Generate app copy cef helper")
+	buildOutDir := assets.BuildOutPath(proj)
+	appDir := filepath.Join(buildOutDir, appRoot)
+	contents := filepath.Join(appDir, appContents)
+	frameworksDir := filepath.Join(contents, appContentsFrameworks)
+	// 应用构建执行文件目录
+	exeDir := filepath.Join(proj.ProjectPath, proj.OutputFilename)
+	var err error
+	exeFile, err := os.Open(exeDir)
+	if err != nil {
+		return err
+	}
+	defer exeFile.Close()
+	// 设置为helper选项
+	proj.PList.LSUIElement = true
+	proj.AppType = project.AtHelper
+	cmd := command.NewCMD()
+	cmd.IsPrint = false
+	cmd.MessageCallback = func(bytes []byte, e error) {
+		if e != nil {
+			err = e
+		}
+	}
+	for _, app := range helpers {
+		proj.ProjectPath = frameworksDir
+		helperAppRoot := fmt.Sprintf("%s %s.app", proj.Name, app)
+		// helper app
+		if err = createApp(proj, helperAppRoot); err != nil {
+			return err
+		}
+		// helper app Info.plist
+		if err = createAppInfoPList(proj, helperAppRoot); err != nil {
+			return err
+		}
+		// helper PkgInfo
+		if err = createAppPkgInfo(proj, helperAppRoot); err != nil {
+			return err
+		}
+		// helper ln liblcl.dylib
+		cmd.Dir = filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsFrameworks)
+		cmd.Command("ln", "-shf", "../../../liblcl.dylib", "liblcl.dylib")
+		if err != nil {
+			return err
+		}
+		// helper exe
+		helperMacOSExe := filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsMacOS, fmt.Sprintf("%s %s", proj.OutputFilename, app))
+		helperMacOSExeFile, err := os.OpenFile(helperMacOSExe, os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			return err
+		}
+		defer helperMacOSExeFile.Close()
+		io.Copy(helperMacOSExeFile, exeFile)
+		exeFile.Seek(0, 0)
+	}
+	cmd.Close()
 	return nil
 }
 
 func createApp(proj *project.Project, appRoot string) error {
-	term.Logger.Info("Generate app create app dir.")
+	term.Logger.Info("Generate app create app dir: " + appRoot)
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
 	// Contents
@@ -176,7 +322,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 		cmd.Dir = tmpWorkDir
 		cmd.IsPrint = false
 		cmd.MessageCallback = func(bytes []byte, e error) {
-			if err != nil {
+			if e != nil {
 				err = e
 			}
 		}
@@ -193,23 +339,12 @@ func generateICNS(proj *project.Project, appRoot string) error {
 	iconExt = strings.ToLower(filepath.Ext(proj.PList.Icon))
 	if iconExt == ".icns" {
 		term.Logger.Info("\tcopy icns")
-		src, err := os.Open(proj.PList.Icon)
-		if err != nil {
-			return err
-		}
-		defer src.Close()
 		// Contents
 		contents := filepath.Join(appDir, appContents)
 		// Contents/Resources
 		_, icnsName := filepath.Split(proj.PList.Icon)
-		outIcnsFilePath := filepath.Join(contents, appContentsResources, icnsName)
-		os.Remove(outIcnsFilePath)
-		dst, err := os.OpenFile(outIcnsFilePath, os.O_CREATE|os.O_WRONLY, 0755)
-		if err != nil {
-			return err
-		}
-		defer dst.Close()
-		_, err = io.Copy(dst, src)
+		outIcnsFilePath := filepath.Join(contents, appContentsResources)
+		err := copyFiles(proj, proj.PList.Icon, outIcnsFilePath)
 		if err != nil {
 			return err
 		}

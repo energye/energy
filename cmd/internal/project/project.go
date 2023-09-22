@@ -20,20 +20,28 @@ import (
 	"strings"
 )
 
+type AppType int
+
+const (
+	AtApp AppType = iota
+	AtHelper
+)
+
 // Project holds the data related to a ENERGY project
 type Project struct {
-	Clean          bool   `json:"-"`              // 清空配置重新生成
-	TempDll        bool   `json:"-"`              // 使用内置liblcl构建
-	Name           string `json:"name"`           // 应用名称
-	ProjectPath    string `json:"projectPath"`    // 项目目录
-	FrameworkPath  string `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
-	AssetsDir      string `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
-	OutputFilename string `json:"outputFilename"` // 输出安装包文件名
-	Info           Info   `json:"info"`           // 应用信息
-	NSIS           NSIS   `json:"nsis"`           // windows nsis 安装包
-	Dpkg           DPKG   `json:"dpkg"`           // linux dpkg 安装包
-	PList          PList  `json:"plist"`          // darwin plist 安装包
-	Author         Author `json:"author"`         // 作者信息
+	AppType        AppType `json:"-"`              // app, helper
+	Clean          bool    `json:"-"`              // 清空配置重新生成
+	TempDll        bool    `json:"-"`              // 使用内置liblcl构建
+	Name           string  `json:"name"`           // 应用名称
+	ProjectPath    string  `json:"projectPath"`    // 项目目录
+	FrameworkPath  string  `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
+	AssetsDir      string  `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
+	OutputFilename string  `json:"outputFilename"` // 输出安装包文件名
+	Info           Info    `json:"info"`           // 应用信息
+	NSIS           NSIS    `json:"nsis"`           // windows nsis 安装包
+	Dpkg           DPKG    `json:"dpkg"`           // linux dpkg 安装包
+	PList          PList   `json:"plist"`          // darwin plist 安装包
+	Author         Author  `json:"author"`         // 作者信息
 }
 
 func (m *Project) setDefaults() {
@@ -153,6 +161,8 @@ type DPKG struct {
 }
 
 type PList struct {
+	Include                    []string `json:"include"`                    //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Exclude                    []string `json:"exclude"`                    //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	Icon                       string   `json:"icon"`                       //应用图标, png 或 icns, 如果指定png则生成icns, 如果指定icns则直接使用
 	CompanyName                string   `json:"companyName"`                //公司名称
 	ProductName                string   `json:"productName"`                //产品名称
