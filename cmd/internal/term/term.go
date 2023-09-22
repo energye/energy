@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	energyCliVersion = "1.0.0"
+	CliVersion = "1.0.1"
 )
 
 var Logger *pterm.Logger

@@ -49,7 +49,11 @@ func termRun() {
 		os.Exit(1)
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
-		println(err.Error())
+		if extraArgs[0] == "-v" || extraArgs[0] == "v" {
+			term.Section.Println(" ", term.CliVersion)
+		} else {
+			println(err.Error())
+		}
 		//exit <- 1
 		os.Exit(1)
 	} else {
@@ -68,6 +72,9 @@ func termRun() {
 			cc.Index = 6
 		case "build":
 			cc.Index = 7
+		case "v":
+			term.Section.Println(" ", term.CliVersion)
+			return
 		}
 		cmd := commands[cc.Index]
 		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {

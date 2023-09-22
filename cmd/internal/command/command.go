@@ -24,6 +24,7 @@ type Config struct {
 	Env       Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
 	Init      Init    `command:"init" description:"initialize the energy application project"`
 	Build     Build   `command:"build" description:"building an energy project"`
+	V         string  `command:"v" description:"energy cli version"`
 }
 
 type Command struct {

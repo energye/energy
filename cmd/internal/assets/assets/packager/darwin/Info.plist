@@ -6,8 +6,8 @@
         <key>CFBundleName</key>
         <string>{{.Name}}</string>
         <key>CFBundleLocalizations</key>
-        <array>
-           <string>{{.PList.Locales}}</string>
+        <array>{{range $i,$value := .PList.Locals }}
+            <string>{{$value}}</string>{{end}}
         </array>
         <key>CFBundleIdentifier</key>
         <string>com.{{.PList.CompanyName}}.{{.PList.ProductName}}</string>

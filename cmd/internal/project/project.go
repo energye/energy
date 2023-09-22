@@ -162,6 +162,7 @@ type PList struct {
 	CFBundleShortVersionString string   `json:"cfBundleShortVersionString"` //发布版本号版本
 	Copyright                  *string  `json:"copyright"`                  //版权
 	Comments                   *string  `json:"comments"`                   //exe详情描述
+	LSUIElement                bool     `json:"-"`                          //UI
 
 }
 
