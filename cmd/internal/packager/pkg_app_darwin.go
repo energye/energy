@@ -45,7 +45,6 @@ const (
 	macCefHelperGpu       = "Helper (GPU)"
 	macCefHelperPlugin    = "Helper (Plugin)"
 	macCefHelpersRenderer = "Helper (Renderer)"
-	cef                   = "Chromium Embedded Framework.framework"
 )
 
 var (
