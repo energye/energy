@@ -77,6 +77,7 @@ func WriteFile(projectData *project.Project, file string, content []byte) error 
 			return nil
 		}
 	}
+	os.Remove(targetPath)
 	if f, err := os.OpenFile(targetPath, os.O_CREATE|os.O_WRONLY, 0755); err != nil {
 		return err
 	} else {

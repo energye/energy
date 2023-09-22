@@ -248,8 +248,8 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 		if err != nil {
 			return err
 		}
-		defer helperMacOSExeFile.Close()
 		io.Copy(helperMacOSExeFile, exeFile)
+		helperMacOSExeFile.Close()
 		exeFile.Seek(0, 0)
 	}
 	cmd.Close()
