@@ -80,8 +80,7 @@ type IChromiumProc interface {
 	//SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
 	CefClient() *ICefClient
 	SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, message argument.IList)
-	CreateClientHandler(alsOSR bool) bool
-	CreateClientHandlerAndResult(alsOSR bool) (*ICefClient, bool)
+	CreateClientHandler(alsOSR bool) (*ICefClient, bool)
 	SetFocus(value bool)
 	SendExternalBeginFrame()
 	SendKeyEvent(event *TCefKeyEvent)
@@ -604,21 +603,13 @@ func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dic
 	_CEFChromium_ExecuteDevToolsMethod(m.Instance(), messageId, method, dictionaryValue)
 }
 
-func (m *TCEFChromium) CreateClientHandler(alsOSR bool) bool {
-	if !m.IsValid() {
-		return false
-	}
-	var result uintptr
-	return api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), uintptr(unsafe.Pointer(&result)), api.PascalBool(false), api.PascalBool(alsOSR)))
-}
-
-func (m *TCEFChromium) CreateClientHandlerAndResult(alsOSR bool) (*ICefClient, bool) {
+func (m *TCEFChromium) CreateClientHandler(alsOSR bool) (*ICefClient, bool) {
 	if !m.IsValid() {
 		return nil, false
 	}
 	var result uintptr
-	ok := api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), uintptr(unsafe.Pointer(&result)), api.PascalBool(true), api.PascalBool(alsOSR)))
-	if result != 0 {
+	ok := api.GoBool(_CEFChromium_CreateClientHandler(m.Instance(), uintptr(unsafe.Pointer(&result)), api.PascalBool(alsOSR)))
+	if result != 0 && ok {
 		return &ICefClient{instance: unsafe.Pointer(result), ct: CtOther}, ok
 	}
 	return nil, false
@@ -1769,8 +1760,8 @@ func _CEFChromium_ExecuteDevToolsMethod(instance uintptr, messageId int32, metho
 }
 
 // TCEFChromium _CEFChromium_CreateClientHandler
-func _CEFChromium_CreateClientHandler(instance, client, result, alsOSR uintptr) uintptr {
-	r1, _, _ := imports.Proc(def.CEFChromium_CreateClientHandler).Call(instance, client, result, alsOSR)
+func _CEFChromium_CreateClientHandler(instance, client, alsOSR uintptr) uintptr {
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateClientHandler).Call(instance, client, alsOSR)
 	return r1
 }
 
