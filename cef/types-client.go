@@ -65,10 +65,15 @@ func (m *ICefClient) Free() {
 	}
 }
 
+// IsSelfEvent
+//  当前client对象是自己事件代理
 func (m *ICefClient) IsSelfEvent() bool {
 	return m.ct == consts.CtSelfOwn
 }
 
+// IsOtherEvent
+//  当前client对象是其他对象事件代理
+//  例如chromium events
 func (m *ICefClient) IsOtherEvent() bool {
 	return m.ct == consts.CtOther
 }
