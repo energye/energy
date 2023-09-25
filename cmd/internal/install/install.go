@@ -248,7 +248,7 @@ func nsisCanInstall() bool {
 }
 
 func upxCanInstall() bool {
-	return (consts.IsWindows && !consts.IsARM64) || (consts.IsLinux)
+	return (consts.IsWindows && !consts.IsARM64) || consts.IsLinux || consts.IsDarwin
 }
 
 func z7zCanInstall() bool {
@@ -317,9 +317,15 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 		// upx
 		check(func() (string, bool) {
 			if upxCanInstall() {
-				return "Windows AMD, Linux", tools.CommandExists("upx")
+				if consts.IsDarwin {
+					if tools.CommandExists("upx") {
+						return "All", true
+					}
+					return "Install: brew install upx", true
+				}
+				return "All", tools.CommandExists("upx")
 			} else {
-				return "Non Windows and Linux skipping UPX.", true
+				return "Unsupported platform UPX.", true
 			}
 		}, "UPX", func() {
 			c.Install.IUPX = true //yes callback
