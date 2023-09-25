@@ -43,6 +43,7 @@ func runPackage(c *command.Config) error {
 		return err
 	} else {
 		proj.Clean = c.Package.Clean
+		proj.Dpkg.Pkgbuild = c.Package.Pkgbuild
 		if err = packager.GeneraInstaller(proj); err != nil {
 			return err
 		}

@@ -29,27 +29,27 @@ const (
 )
 
 // AssetsPath 返回配置资源目录
-func AssetsPath(projectData *project.Project, file string) string {
-	return filepath.ToSlash(filepath.Join(projectData.AssetsDir, file))
+func AssetsPath(proj *project.Project, file string) string {
+	return filepath.ToSlash(filepath.Join(proj.AssetsDir, file))
 }
 
 // BuildOutPath 返回固定构建输出目录 $current/build
-func BuildOutPath(projectData *project.Project) string {
-	if projectData.AppType == project.AtHelper {
-		return projectData.ProjectPath
+func BuildOutPath(proj *project.Project) string {
+	if proj.AppType == project.AtHelper {
+		return proj.ProjectPath
 	}
-	return filepath.Join(projectData.ProjectPath, "build")
+	return filepath.Join(proj.ProjectPath, "build")
 }
 
 // ReadFile
 //  读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
-func ReadFile(projectData *project.Project, assetsFSPath, file string) ([]byte, error) {
+func ReadFile(proj *project.Project, assetsFSPath, file string) ([]byte, error) {
 	var (
 		content []byte
 		err     error
 	)
-	if projectData != nil {
-		localFilePath := AssetsPath(projectData, file)
+	if proj != nil {
+		localFilePath := AssetsPath(proj, file)
 		content, err = os.ReadFile(localFilePath)
 	}
 	if errors.Is(err, fs.ErrNotExist) || content == nil {

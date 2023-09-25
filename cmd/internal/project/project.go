@@ -158,6 +158,7 @@ type DPKG struct {
 	Compress     string   `json:"compress"` //压纹CEF, 当前仅支持7z/a压缩，""(空)时不启用压缩 默认: 7za
 	UseCompress  bool     `json:"-"`        //如果支持配置的, true=使用压缩
 	CompressFile string   `json:"-"`        //压缩后的文件完全目录
+	Pkgbuild     bool     `json:"-"`        // 生成pkg安装包
 }
 
 type PList struct {

@@ -67,12 +67,14 @@ var (
 		macCefHelperPlugin,
 		macCefHelpersRenderer,
 	}
+	projectPath string
 )
 
 func GeneraInstaller(proj *project.Project) error {
 	appRoot := fmt.Sprintf("darwin/%s.app", proj.Name)
 	buildOutDir := assets.BuildOutPath(proj)
 	buildOutDir = filepath.Join(buildOutDir, appRoot)
+	projectPath = proj.ProjectPath
 	if !tools.IsExist(buildOutDir) {
 		if err := os.MkdirAll(buildOutDir, 0755); err != nil {
 			return fmt.Errorf("unable to create directory: %w", err)
@@ -95,6 +97,11 @@ func GeneraInstaller(proj *project.Project) error {
 	}
 	if err := copyHelperFile(proj, appRoot); err != nil {
 		return err
+	}
+	if proj.Dpkg.Pkgbuild {
+		if err := pkgbuild(proj, appRoot); err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -192,7 +199,36 @@ func copyFrameworkFile(proj *project.Project, appRoot string) error {
 	if err := copyFiles(proj, cefDir, outCEF); err != nil {
 		return err
 	}
+	return nil
+}
 
+// pkgbuild --root demo.app --identifier com.demo.demo --version 1.0.0 --install-location /Applications/demo.app demo.pkg
+func pkgbuild(proj *project.Project, appRoot string) error {
+	proj.AppType = project.AtApp
+	proj.ProjectPath = projectPath
+	buildOutDir := assets.BuildOutPath(proj)
+	cmdWorkDir := filepath.Join(buildOutDir, "darwin")
+	term.Logger.Info("Generate app pkgbuild", term.Logger.Args("cmd work dir", cmdWorkDir))
+	// remove xxx.pkg
+	os.Remove(filepath.Join(cmdWorkDir, fmt.Sprintf("%s.pkg", proj.Name)))
+	cmd := command.NewCMD()
+	//cmd.IsPrint = false
+	cmd.Dir = cmdWorkDir
+	cmd.MessageCallback = func(bytes []byte, err error) {
+		msg := string(bytes)
+		if msg != "" {
+			println(msg)
+		}
+	}
+	var args = []string{"--root", fmt.Sprintf("%s.app", proj.Name),
+		"--identifier", fmt.Sprintf("com.%s.%s", proj.PList.CompanyName, proj.PList.ProductName),
+		"--version", proj.PList.CFBundleVersion,
+		"--install-location", fmt.Sprintf("/Applications/%s.app", proj.Name),
+		fmt.Sprintf("%s.pkg", proj.Name)}
+	cmd.Command("pkgbuild", args...)
+	cmd.Close()
+	// remove xxx.app
+	os.Remove(filepath.Join(buildOutDir, appRoot))
 	return nil
 }
 
@@ -259,6 +295,7 @@ func createApp(proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate app create app dir: " + appRoot)
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
+	os.Remove(appDir)
 	// Contents
 	contents := filepath.Join(appDir, appContents)
 	if err := os.MkdirAll(contents, 0755); err != nil {

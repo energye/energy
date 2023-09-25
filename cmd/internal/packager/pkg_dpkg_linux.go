@@ -116,9 +116,7 @@ func dpkgB(proj *project.Project) (string, error) {
 			err = e
 		}
 	}
-	if tools.IsExist(outFile) {
-		os.Remove(outFile)
-	}
+	os.Remove(outFile)
 	var args = []string{"-b", app, debName}
 	cmd.Command("dpkg", args...)
 	cmd.Close()
