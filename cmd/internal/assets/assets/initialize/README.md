@@ -56,4 +56,4 @@
 > 2. 执行制作安装包命令 - Run the create installation package command
 >> `energy package .`
 >>
->> [Reference link]()
+>> [Reference link](https://energy.yanghy.cn/course/100/1694511508415349)
