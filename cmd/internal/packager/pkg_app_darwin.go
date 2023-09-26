@@ -98,7 +98,7 @@ func GeneraInstaller(proj *project.Project) error {
 	if err := copyHelperFile(proj, appRoot); err != nil {
 		return err
 	}
-	if proj.Dpkg.Pkgbuild {
+	if proj.PList.Pkgbuild {
 		if err := pkgbuild(proj, appRoot); err != nil {
 			return err
 		}
@@ -187,13 +187,13 @@ func copyFrameworkFile(proj *project.Project, appRoot string) error {
 	if !tools.IsExist(cefDir) {
 		return fmt.Errorf("%s not found: %s", consts.EnergyHomeKey, cefDir)
 	}
-	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("execution", exeDir))
+	term.Logger.Info("Generate app copy:", term.Logger.Args("execution", exeDir))
 	// Contents/MacOS/exe
 	outExe := filepath.Join(contents, appContentsMacOS)
 	if err := copyFiles(proj, exeDir, outExe); err != nil {
 		return err
 	}
-	term.Logger.Info("Generate dpkg copy:", term.Logger.Args("framework", cefDir))
+	term.Logger.Info("Generate app copy:", term.Logger.Args("framework", cefDir))
 	// Contents/Frameworks/cef
 	outCEF := filepath.Join(contents, appContentsFrameworks)
 	if err := copyFiles(proj, cefDir, outCEF); err != nil {
