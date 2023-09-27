@@ -66,7 +66,7 @@ Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embed
 | Golang      | ALL            | Golang Development Environment               |
 | CEF, liblcl | ALL            | CEF Framework                                |
 | NSIS        | Windows        | Windows Installation package production tool |
-| UPX         | Windows, Linux | Execute file compression tool                |
+| UPX         | All            | Execute file compression tool                |
 | 7z          | Windows, Linux | CEF Framework compression tool               |
 
 ### Guide to Start - [Link](https://energy.yanghy.cn)

@@ -66,7 +66,7 @@
 | Golang      | ALL            | Go语言开发环境       |
 | CEF, liblcl | ALL            | CEF框架          |
 | NSIS        | Windows        | Windows安装包制作工具 |
-| UPX         | Windows, Linux | 执行文件压缩工具       |
+| UPX         | ALL            | 执行文件压缩工具       |
 | 7z          | Windows, Linux | CEF框架压缩工具      |
 
 ### 入门指南 - [传送门](https://energy.yanghy.cn)
