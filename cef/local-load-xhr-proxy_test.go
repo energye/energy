@@ -2,7 +2,6 @@ package cef
 
 import (
 	"bytes"
-	"github.com/energye/energy/v2/consts"
 	"log"
 	"net/http"
 	"testing"
@@ -10,14 +9,7 @@ import (
 
 func TestXHRProxyClientSSLSend(t *testing.T) {
 	proxy := &XHRProxy{
-		Scheme: consts.LpsHttps,
-		IP:     "energy.yanghy.cn",
-		SSL: XHRProxySSL{
-			RootDir: "\\resources\\ssl",
-			Cert:    "demo.energy.pem",
-			Key:     "demo.energy.key",
-			CARoots: []string{"root.cer"},
-		},
+		IP: "energy.yanghy.cn",
 	}
 	proxy.init()
 	httpRequest, err := http.NewRequest("GET", "https://energy.yanghy.cn/api/energy/download", nil)
