@@ -20,8 +20,6 @@ English
 ![repo](https://img.shields.io/github/repo-size/energye/energy.svg?logo=github&logoColor=green&label=repo-size)
 ---
 
-https://codecov.io/gh/energye/energy/branch/main/graph/badge.svg
-
 ### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
 Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embedded
