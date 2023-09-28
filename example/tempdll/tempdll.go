@@ -9,7 +9,7 @@ import (
 //  需要通过编译命令控制该方式的开启
 //  编译命令 -tags="tempdll"
 //   windows: go build -ldflags "-H windowsgui -s -w" -tags="tempdll"
-//   linux  : go build -ldflags "-s -w" -tags="tempdll"
+//   linux  : go build -ldflags "-s -w" -tags="tempdll [gtk3 | gtk2]"
 //   macos  : go build -ldflags "-s -w" -tags="tempdll"
 //   也可通过 upx 工具, 压缩编译好的执行文件以减少体积
 
