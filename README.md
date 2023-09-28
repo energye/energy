@@ -12,12 +12,12 @@
 English
 
 ---
+![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
+![Build Status](https://github.com/energye/energy/actions/workflows/go.yml/badge.svg)
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ![repo](https://img.shields.io/github/repo-size/energye/energy.svg?logo=github&logoColor=green&label=repo-size)
-
-![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
 ### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
@@ -66,7 +66,7 @@ Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embed
 | Golang      | ALL            | Golang Development Environment               |
 | CEF, liblcl | ALL            | CEF Framework                                |
 | NSIS        | Windows        | Windows Installation package production tool |
-| UPX         | Windows, Linux | Execute file compression tool                |
+| UPX         | All            | Execute file compression tool                |
 | 7z          | Windows, Linux | CEF Framework compression tool               |
 
 ### Guide to Start - [Link](https://energy.yanghy.cn)

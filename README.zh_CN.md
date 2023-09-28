@@ -13,12 +13,12 @@
 
 ---
 
+![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
+![Build Status](https://github.com/energye/energy/actions/workflows/go.yml/badge.svg)
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ![repo](https://img.shields.io/github/repo-size/energye/energy.svg?logo=github&logoColor=green&label=repo-size)
-
-![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 ---
 
 ### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
@@ -66,7 +66,7 @@
 | Golang      | ALL            | Go语言开发环境       |
 | CEF, liblcl | ALL            | CEF框架          |
 | NSIS        | Windows        | Windows安装包制作工具 |
-| UPX         | Windows, Linux | 执行文件压缩工具       |
+| UPX         | ALL            | 执行文件压缩工具       |
 | 7z          | Windows, Linux | CEF框架压缩工具      |
 
 ### 入门指南 - [传送门](https://energy.yanghy.cn)
