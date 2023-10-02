@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-// Package types CEF & Go 类型映射
+// Package types CEF & Go type mapping
 package types
 
 import (
