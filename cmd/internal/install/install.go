@@ -197,6 +197,10 @@ func copyEnergyCMD(goRoot string) {
 		energyName += ".exe"
 	}
 	energyBin := filepath.Join(goRoot, "bin", energyName)
+	if filepath.ToSlash(exe) == filepath.ToSlash(energyBin) {
+		term.Logger.Info("current energy")
+		return
+	}
 	if tools.IsExist(energyBin) {
 		os.Remove(energyBin)
 	}
