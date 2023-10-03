@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>screenshot</title>
+</head>
+<body>
+<button onclick="screenshot()">截屏</button>
+<script>
+    function screenshot() {
+        ipc.emit("screenshot");
+    }
+</script>
+</body>
+</html>
