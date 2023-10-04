@@ -55,7 +55,7 @@ func browserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		image.SetAlign(types.AlClient)
 		// 可以使用一些事件来处理截图.
 		image.SetOnMouseMove(func(sender lcl.IObject, shift types.TShiftState, x, y int32) {
-
+			println("MouseMove")
 		})
 		image.SetOnMouseDown(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 
