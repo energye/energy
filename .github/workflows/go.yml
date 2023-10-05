@@ -23,9 +23,6 @@ jobs:
       
     - name: Test
       run: go test ./... -v -coverprofile=cover.out -covermode=atomic
-
-    - name: Tool Cover
-      run: go tool cover -html=cover.out -o cover.html
         
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
