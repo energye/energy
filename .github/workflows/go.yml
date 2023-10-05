@@ -21,10 +21,16 @@ jobs:
       with:
         go-version: '1.18'
       
-    - name: Run coverage
-      run: go test ./... -coverprofile=coverage.out
+    - name: Test
+      run: go test -v -coverprofile=cover.out -covermode=atomic ./...
+
+    - name: Tool Cover
+      run: go tool cover -html=cover.out -o cover.html
         
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
-      env:
-       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      with:
+       token: ${{ secrets.CODECOV_TOKEN }}
+       file: ./cover.out
+       flags: unittests
+       verbose: true
