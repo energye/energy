@@ -14,12 +14,14 @@ package target
 
 // Type
 //  0: Trigger the JS event of the specified target process
-//  1: Trigger GO events for the specified target process
+//  1: Trigger TgGoSub events for the specified target sub process
+//  2: Trigger TgGoMain events for the specified target main process
 type Type int8
 
 const (
-	TgJs Type = iota //JS Event
-	TgGo             //GO Event
+	TgJs     Type = iota //JS Event
+	TgGoSub              //GO Event sub
+	TgGoMain             //GO Event main
 )
 
 // ITarget
@@ -43,7 +45,7 @@ type Target struct {
 //	browserId: browser window ID
 //	channelId: IPC channelID, frameId or GO IPC channelID
 //	targetType: Optional parameter, target type default 0
-//	  Type: TgJs:JS Event, TgGo:GO Event
+//	  Type: TgJs:JS Event, TgGoSub:GO Sub Event, TgGoMain:GO Main Event
 func NewTarget(browserId int32, channelId int64, targetType ...Type) ITarget {
 	m := &Target{
 		browseId:  browserId,
@@ -53,6 +55,14 @@ func NewTarget(browserId int32, channelId int64, targetType ...Type) ITarget {
 		m.targetType = targetType[0]
 	}
 	return m
+}
+
+// NewTargetMain Create a new Emit target Main Process
+//  targetType: TgGoMain
+func NewTargetMain() ITarget {
+	return &Target{
+		targetType: TgGoMain,
+	}
 }
 
 // TargetType

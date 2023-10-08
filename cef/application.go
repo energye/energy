@@ -51,6 +51,9 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 	return application
 }
 
+// CreateApplication
+//  创建CEF Application
+//  初始化CEF时必须创建，多进程模式每个application配置都应该相同
 func CreateApplication() *TCEFApplication {
 	var result uintptr
 	imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
@@ -134,10 +137,14 @@ func (m *TCEFApplication) Free() {
 	}
 }
 
+// AddCustomCommandLine
+//  添加自定义进程启动时添加的命令行参数
 func (m *TCEFApplication) AddCustomCommandLine(commandLine, value string) {
 	imports.Proc(def.AddCustomCommandLine).Call(api.PascalStr(commandLine), api.PascalStr(value))
 }
 
+// SetOnRegCustomSchemes
+//  自定义协议注册回调函数
 func (m *TCEFApplication) SetOnRegCustomSchemes(fn GlobalCEFAppEventOnRegCustomSchemes) {
 	m.onRegCustomSchemes = fn
 }
@@ -155,32 +162,44 @@ func (m *TCEFApplication) defaultSetOnRegCustomSchemes() {
 	})
 }
 
-// TODO TCefPreferenceRegistrarRef
+// SetOnRegisterCustomPreferences
+//  TODO 该函数还未完全实现
 func (m *TCEFApplication) SetOnRegisterCustomPreferences(fn GlobalCEFAppEventOnRegisterCustomPreferences) {
 	imports.Proc(def.CEFGlobalApp_SetOnRegisterCustomPreferences).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnContextInitialized
+//  上下文初始化
 func (m *TCEFApplication) SetOnContextInitialized(fn GlobalCEFAppEventOnContextInitialized) {
 	imports.Proc(def.CEFGlobalApp_SetOnContextInitialized).Call(api.MakeEventDataPtr(fn))
 }
 
-// 启动子进程之前自定义命令行参数设置
+// SetOnBeforeChildProcessLaunch
+//  启动子进程之前自定义命令行参数设置
 func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBeforeChildProcessLaunch) {
 	imports.Proc(def.CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnGetDefaultClient
+//  获取并返回CefClient, 我们自己创建并返回到 *ICefClient = myCefClient
 func (m *TCEFApplication) SetOnGetDefaultClient(fn GlobalCEFAppEventOnGetDefaultClient) {
 	imports.Proc(def.CEFGlobalApp_SetOnGetDefaultClient).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnGetLocalizedString
+//  获取并返回本地化
 func (m *TCEFApplication) SetOnGetLocalizedString(fn GlobalCEFAppEventOnGetLocalizedString) {
 	imports.Proc(def.CEFGlobalApp_SetOnGetLocalizedString).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnGetDataResource
+//  获取并返回本地资源
 func (m *TCEFApplication) SetOnGetDataResource(fn GlobalCEFAppEventOnGetDataResource) {
 	imports.Proc(def.CEFGlobalApp_SetOnGetDataResource).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnGetDataResourceForScale
+//  获取并返回本地资源大小
 func (m *TCEFApplication) SetOnGetDataResourceForScale(fn GlobalCEFAppEventOnGetDataResourceForScale) {
 	imports.Proc(def.CEFGlobalApp_SetOnGetDataResourceForScale).Call(api.MakeEventDataPtr(fn))
 }
@@ -243,7 +262,8 @@ func (m *TCEFApplication) SetOnFocusedNodeChanged(fn GlobalCEFAppEventOnFocusedN
 	imports.Proc(def.CEFGlobalApp_SetOnFocusedNodeChanged).Call(api.MakeEventDataPtr(fn))
 }
 
-// 进程间通信处理消息接收
+// SetOnProcessMessageReceived
+//   进程间通信处理消息接收回调函数
 func (m *TCEFApplication) SetOnProcessMessageReceived(fn RenderProcessMessageReceived) {
 	m.onProcessMessageReceived = fn
 }
