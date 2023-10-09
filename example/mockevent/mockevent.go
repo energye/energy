@@ -8,6 +8,8 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/consts"
+	t "github.com/energye/energy/v2/types"
+	lcltypes "github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -55,12 +57,14 @@ func main() {
 			btn2 := body.GetDocument().GetElementById("btn2")
 			btn3 := body.GetDocument().GetElementById("btn3")
 			inpText := body.GetDocument().GetElementById("inpText")
+			inp2Text := body.GetDocument().GetElementById("inp2Text")
 			fmt.Println("inpText", inpText.GetElementBounds())
 			var doms = make(map[string]cef.TCefRect)
 			doms["btn1"] = btn1.GetElementBounds()
 			doms["btn2"] = btn2.GetElementBounds()
 			doms["btn3"] = btn3.GetElementBounds()
 			doms["inpText"] = inpText.GetElementBounds()
+			doms["inp2Text"] = inp2Text.GetElementBounds()
 			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), browserId, channelId, doms)
 		})
 		frame.VisitDom(visitor)
@@ -78,14 +82,12 @@ func main() {
 		}
 		// 模拟按钮点击事件
 		var buttonClickEvent = func(domRect cef.TCefRect) {
-			// 页面加载完之后
-			window.RunOnMainThread(func() { //在UI主线程
+			window.RunOnMainThread(func() { //在UI主线程执行
 				chromium := window.Chromium()
 				// 鼠标事件
 				me := &cef.TCefMouseEvent{}
 				// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
 				me.X, me.Y = domXYCenter(domRect)
-				fmt.Println("buttonClickEvent", me)
 				// 模拟鼠标到指定位置
 				chromium.SendMouseMoveEvent(me, false)
 				// 模拟鼠标双击事件
@@ -95,16 +97,52 @@ func main() {
 				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, true, 1)
 			})
 		}
+		// 模拟文本输入
+		var inputTextEvent = func(value string, domRect cef.TCefRect) {
+			// 文本框区域点击
+			buttonClickEvent(domRect)
+			window.RunOnMainThread(func() { //在UI主线程执行
+				chromium := window.Chromium()
+				// 鼠标事件
+				me := &cef.TCefMouseEvent{}
+				// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
+				me.X, me.Y = domXYCenter(domRect)
+				// 一个一个字符设置
+				for _, v := range value {
+					chromium.SendKeyEvent(keyPress(string(v)))
+				}
+			})
+		}
 		ipc.On("renderLoadEnd", func(browserId int32, channelId int64, doms map[string]cef.TCefRect) {
 			fmt.Println("doms", doms)
+			// 按钮
 			buttonClickEvent(doms["btn1"])
 			buttonClickEvent(doms["btn2"])
 			buttonClickEvent(doms["btn3"])
-
+			// 文本框
+			inputTextEvent("我爱中国", doms["inp2Text"])            //中文
+			inputTextEvent("energy.yanghy.cn", doms["inpText"]) //英文
+			// 滚动条
 			// 回复到渲染进程执行成功, 触发是Go的事件.
 			ipc.EmitTarget("repayMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
 		})
 	})
 	//运行应用
 	cef.Run(app)
+}
+
+func keyPress(key string) *cef.TCefKeyEvent {
+	utf8Key := &lcltypes.TUTF8Char{}
+	utf8Key.SetString(key)
+	event := &cef.TCefKeyEvent{}
+	var asciiCode int
+	fmt.Sscanf(utf8Key.ToString(), "%c", &asciiCode)
+	event.Kind = consts.KEYEVENT_CHAR
+	event.WindowsKeyCode = t.Int32(asciiCode)
+	event.NativeKeyCode = 0
+	event.IsSystemKey = 0
+	event.Character = '0'
+	event.UnmodifiedCharacter = '0'
+	event.FocusOnEditableField = 1 // 0=false, 1=true
+	return event
 }
