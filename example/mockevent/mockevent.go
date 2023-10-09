@@ -43,6 +43,7 @@ func main() {
 	// 通过VisitDom获取html元素的位置和大小
 	// SetOnVisit 函数只能在渲染进程中执行
 	app.SetOnRenderLoadEnd(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		// 浏览器ID和通道ID, 用于回复给渲染进程使用
 		var (
 			browserId = browser.Identifier()
 			channelId = frame.Identifier()
@@ -52,21 +53,25 @@ func main() {
 		// 监听事件
 		// 这个事件在渲染进程中才会执行
 		visitor.SetOnVisit(func(document *cef.ICefDomDocument) {
+			// html > body
 			body := document.GetBody()
+			// 使用元素id获取
 			btn1 := body.GetDocument().GetElementById("btn1")
 			btn2 := body.GetDocument().GetElementById("btn2")
 			btn3 := body.GetDocument().GetElementById("btn3")
 			inpText := body.GetDocument().GetElementById("inpText")
 			inp2Text := body.GetDocument().GetElementById("inp2Text")
-			fmt.Println("inpText", inpText.GetElementBounds())
+			// dom元素Rect集合数据发送到主进程
 			var doms = make(map[string]cef.TCefRect)
 			doms["btn1"] = btn1.GetElementBounds()
 			doms["btn2"] = btn2.GetElementBounds()
 			doms["btn3"] = btn3.GetElementBounds()
 			doms["inpText"] = inpText.GetElementBounds()
 			doms["inp2Text"] = inp2Text.GetElementBounds()
+			// 触发主进程ipc监听事件
 			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), browserId, channelId, doms)
 		})
+		// 调用该函数后, 执行SetOnVisit回调函数
 		frame.VisitDom(visitor)
 	})
 
@@ -99,7 +104,7 @@ func main() {
 		}
 		// 模拟文本输入
 		var inputTextEvent = func(value string, domRect cef.TCefRect) {
-			// 文本框区域点击
+			// 文本框区域点击, 获取焦点
 			buttonClickEvent(domRect)
 			window.RunOnMainThread(func() { //在UI主线程执行
 				chromium := window.Chromium()
@@ -120,7 +125,7 @@ func main() {
 			buttonClickEvent(doms["btn2"])
 			buttonClickEvent(doms["btn3"])
 			// 文本框
-			inputTextEvent("我爱中国", doms["inp2Text"])            //中文
+			inputTextEvent("我爱中国！", doms["inp2Text"])           //中文
 			inputTextEvent("energy.yanghy.cn", doms["inpText"]) //英文
 			// 滚动条
 			// 回复到渲染进程执行成功, 触发是Go的事件.
@@ -139,10 +144,6 @@ func keyPress(key string) *cef.TCefKeyEvent {
 	fmt.Sscanf(utf8Key.ToString(), "%c", &asciiCode)
 	event.Kind = consts.KEYEVENT_CHAR
 	event.WindowsKeyCode = t.Int32(asciiCode)
-	event.NativeKeyCode = 0
-	event.IsSystemKey = 0
-	event.Character = '0'
-	event.UnmodifiedCharacter = '0'
 	event.FocusOnEditableField = 1 // 0=false, 1=true
 	return event
 }
