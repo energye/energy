@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/consts"
 )
 
@@ -25,19 +26,25 @@ func main() {
 	}.Build())
 
 	/*
-		1. 仅在主进程中使用ipc监听renderLoadEnd事件
-		2. 在渲染进程中的app.SetOnRenderLoadEnd监听渲染进程页面加载结束事件，在这个事件里获取页面html元素位置和大小
-		3. html元素位置和大小获取之后触发主进程监听事件, 把要获取到的html元素位置和大小发送到主进程renderLoadEnd事件
-		4. 主进程renderLoadEnd事件被触发后使用渲染进程传递的元素数据模拟事件操作
-			模拟事件使用当前窗口chromium或者browser提供的函数
-			chromium.SendXXX 只能在主进程中使用
-			browser.SendXXX  可在主进程或渲染进程中直接使用
+		模拟: 按钮点击, 文本输入, 滚动条
+			1. 仅在主进程中使用ipc监听renderLoadEnd事件
+			2. 在渲染进程中的app.SetOnRenderLoadEnd监听渲染进程页面加载结束事件，在这个事件里获取页面html元素位置和大小
+			3. html元素位置和大小获取之后触发主进程监听事件, 把要获取到的html元素位置和大小发送到主进程renderLoadEnd事件
+			4. 主进程renderLoadEnd事件被触发后使用渲染进程传递的元素数据模拟事件操作
+				模拟事件使用当前窗口chromium或者browser提供的函数
+				chromium.SendXXX 只能在主进程中使用
+				browser.SendXXX  可在主进程或渲染进程中直接使用
+			5. 最后主进程回复ipc消息给渲染进程
 	*/
 
 	// 在渲染进程中处理结束事件
 	// 通过VisitDom获取html元素的位置和大小
 	// SetOnVisit 函数只能在渲染进程中执行
 	app.SetOnRenderLoadEnd(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		var (
+			browserId = browser.Identifier()
+			channelId = frame.Identifier()
+		)
 		// 创建 dom visitor
 		visitor := cef.DomVisitorRef.New()
 		// 监听事件
@@ -54,10 +61,17 @@ func main() {
 			doms["btn2"] = btn2.GetElementBounds()
 			doms["btn3"] = btn3.GetElementBounds()
 			doms["inpText"] = inpText.GetElementBounds()
-			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), doms)
+			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), browserId, channelId, doms)
 		})
 		frame.VisitDom(visitor)
 	})
+
+	// 丰富一下示例, 在Go中主子进程消息传递
+	ipc.On("repayMockIsSuccess", func() {
+		fmt.Println("mock success")
+	}, // OtSub 仅子进程监听该事件
+		types.OnOptions{OnType: types.OtSub})
+
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		var domXYCenter = func(bound cef.TCefRect) (int32, int32) {
 			return bound.X + bound.Width/2, bound.Y + bound.Height/2
@@ -79,14 +93,16 @@ func main() {
 				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, false, 1)
 				//   左键点击抬起1次
 				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, true, 1)
-
 			})
 		}
-		ipc.On("renderLoadEnd", func(doms map[string]cef.TCefRect) {
+		ipc.On("renderLoadEnd", func(browserId int32, channelId int64, doms map[string]cef.TCefRect) {
 			fmt.Println("doms", doms)
 			buttonClickEvent(doms["btn1"])
 			buttonClickEvent(doms["btn2"])
 			buttonClickEvent(doms["btn3"])
+
+			// 回复到渲染进程执行成功, 触发是Go的事件.
+			ipc.EmitTarget("repayMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
 		})
 	})
 	//运行应用
