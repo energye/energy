@@ -4,14 +4,16 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
-        function btnClick() {
+        function btnClick(m) {
             let msg = document.getElementById("msg")
-            msg.innerHTML += "mouse click<br>"
+            msg.innerHTML += m.innerText + "<br>"
         }
     </script>
 </head>
 <body>
-<button onclick="btnClick()">Button</button>
+<button onclick="btnClick(this)" id="btn1">Button1</button>
+<button onclick="btnClick(this)" id="btn2">Button2</button>
+<button onclick="btnClick(this)" id="btn3">Button3</button>
 <br>
 <input type="text" id="inpText"><br>
 <div id="msg"></div>
