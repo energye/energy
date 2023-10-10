@@ -79,53 +79,43 @@ func main() {
 	})
 
 	// 丰富一下示例, 在Go中主子进程消息传递
-	ipc.On("repayMockIsSuccess", func() {
+	ipc.On("replyMockIsSuccess", func() {
 		fmt.Println("mock success")
 	}, // OtSub 仅子进程监听该事件
 		types.OnOptions{OnType: types.OtSub})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		chromium := window.Chromium()
 		var domXYCenter = func(bound cef.TCefRect) (int32, int32) {
 			return bound.X + bound.Width/2, bound.Y + bound.Height/2
 		}
 		// 模拟button点击事件
 		var buttonClickEvent = func(domRect cef.TCefRect) {
-			window.RunOnMainThread(func() { //在UI主线程执行
-				chromium := window.Chromium()
-				// 鼠标事件
-				me := &cef.TCefMouseEvent{}
-				// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
-				me.X, me.Y = domXYCenter(domRect)
-				// 模拟鼠标到指定位置
-				chromium.SendMouseMoveEvent(me, false)
-				// 模拟鼠标双击事件
-				//   左键点击按下1次
-				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, false, 1)
-				//   左键点击抬起1次
-				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, true, 1)
-			})
+			// 鼠标事件
+			me := &cef.TCefMouseEvent{}
+			// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
+			me.X, me.Y = domXYCenter(domRect)
+			// 模拟鼠标到指定位置
+			chromium.SendMouseMoveEvent(me, false)
+			// 模拟鼠标双击事件
+			//   左键点击按下1次
+			chromium.SendMouseClickEvent(me, consts.MBT_LEFT, false, 1)
+			//   左键点击抬起1次
+			chromium.SendMouseClickEvent(me, consts.MBT_LEFT, true, 1)
 		}
 		// 模拟input输入
 		var inputTextEvent = func(value string, domRect cef.TCefRect) {
 			// 点击, 获取焦点
 			buttonClickEvent(domRect)
-			window.RunOnMainThread(func() { //在UI主线程执行
-				chromium := window.Chromium()
-				// 鼠标事件
-				me := &cef.TCefMouseEvent{}
-				// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
-				me.X, me.Y = domXYCenter(domRect)
-				// 一个一个字符设置
-				for _, v := range value {
-					chromium.SendKeyEvent(keyPress(string(v)))
-				}
-			})
+			// 一个一个字符设置
+			for _, v := range value {
+				chromium.SendKeyEvent(keyPress(string(v)))
+			}
 		}
 		// 模拟textarea滚动
 		var textareaWheelEvent = func(domRect cef.TCefRect) {
 			// 点击, 获取焦点
 			buttonClickEvent(domRect)
-			chromium := window.Chromium()
 			// 鼠标事件
 			me := &cef.TCefMouseEvent{
 				Modifiers: consts.EVENTFLAG_MIDDLE_MOUSE_BUTTON,
@@ -149,7 +139,7 @@ func main() {
 			// 滚动
 			textareaWheelEvent(doms["tare"])
 			// 回复到渲染进程执行成功, 触发是Go的事件.
-			ipc.EmitTarget("repayMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
+			ipc.EmitTarget("replyMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
 		})
 	})
 	//运行应用
@@ -162,6 +152,7 @@ func keyPress(key string) *cef.TCefKeyEvent {
 	event := &cef.TCefKeyEvent{}
 	var asciiCode int
 	fmt.Sscanf(utf8Key.ToString(), "%c", &asciiCode)
+	fmt.Println("keyPress", key, asciiCode)
 	event.Kind = consts.KEYEVENT_CHAR
 	event.WindowsKeyCode = t.Int32(asciiCode)
 	event.FocusOnEditableField = 1 // 0=false, 1=true
