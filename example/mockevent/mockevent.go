@@ -10,6 +10,7 @@ import (
 	"github.com/energye/energy/v2/consts"
 	t "github.com/energye/energy/v2/types"
 	lcltypes "github.com/energye/golcl/lcl/types"
+	"time"
 )
 
 //go:embed resources
@@ -61,6 +62,7 @@ func main() {
 			btn3 := body.GetDocument().GetElementById("btn3")
 			inpText := body.GetDocument().GetElementById("inpText")
 			inp2Text := body.GetDocument().GetElementById("inp2Text")
+			tare := body.GetDocument().GetElementById("tare")
 			// dom元素Rect集合数据发送到主进程
 			var doms = make(map[string]cef.TCefRect)
 			doms["btn1"] = btn1.GetElementBounds()
@@ -68,6 +70,7 @@ func main() {
 			doms["btn3"] = btn3.GetElementBounds()
 			doms["inpText"] = inpText.GetElementBounds()
 			doms["inp2Text"] = inp2Text.GetElementBounds()
+			doms["tare"] = tare.GetElementBounds()
 			// 触发主进程ipc监听事件
 			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), browserId, channelId, doms)
 		})
@@ -85,7 +88,7 @@ func main() {
 		var domXYCenter = func(bound cef.TCefRect) (int32, int32) {
 			return bound.X + bound.Width/2, bound.Y + bound.Height/2
 		}
-		// 模拟按钮点击事件
+		// 模拟button点击事件
 		var buttonClickEvent = func(domRect cef.TCefRect) {
 			window.RunOnMainThread(func() { //在UI主线程执行
 				chromium := window.Chromium()
@@ -102,9 +105,9 @@ func main() {
 				chromium.SendMouseClickEvent(me, consts.MBT_LEFT, true, 1)
 			})
 		}
-		// 模拟文本输入
+		// 模拟input输入
 		var inputTextEvent = func(value string, domRect cef.TCefRect) {
-			// 文本框区域点击, 获取焦点
+			// 点击, 获取焦点
 			buttonClickEvent(domRect)
 			window.RunOnMainThread(func() { //在UI主线程执行
 				chromium := window.Chromium()
@@ -118,6 +121,22 @@ func main() {
 				}
 			})
 		}
+		// 模拟textarea滚动
+		var textareaWheelEvent = func(domRect cef.TCefRect) {
+			// 点击, 获取焦点
+			buttonClickEvent(domRect)
+			chromium := window.Chromium()
+			// 鼠标事件
+			me := &cef.TCefMouseEvent{
+				Modifiers: consts.EVENTFLAG_MIDDLE_MOUSE_BUTTON,
+			}
+			// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
+			me.X, me.Y = domXYCenter(domRect)
+			for i := 0; i < 10; i++ {
+				chromium.SendMouseWheelEvent(me, -100, -100)
+				time.Sleep(time.Second / 2)
+			}
+		}
 		ipc.On("renderLoadEnd", func(browserId int32, channelId int64, doms map[string]cef.TCefRect) {
 			fmt.Println("doms", doms)
 			// 按钮
@@ -127,7 +146,8 @@ func main() {
 			// 文本框
 			inputTextEvent("我爱中国！", doms["inp2Text"])           //中文
 			inputTextEvent("energy.yanghy.cn", doms["inpText"]) //英文
-			// 滚动条
+			// 滚动
+			textareaWheelEvent(doms["tare"])
 			// 回复到渲染进程执行成功, 触发是Go的事件.
 			ipc.EmitTarget("repayMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
 		})
