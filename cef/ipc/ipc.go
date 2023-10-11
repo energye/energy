@@ -67,7 +67,7 @@ func RemoveOn(name string) {
 // IPC GO 中触发 Go | JS 监听的事件, 默认主进程
 //
 // 参数
-//	name: JS 监听的事件名
+//	name: 监听的事件名
 //  []argument: 入参
 // 				基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 // 				复合类型: slice, map, struct
@@ -79,7 +79,7 @@ func Emit(name string, argument ...any) {
 // IPC GO 中触发 Go | JS 监听的事件, 默认主进程
 //
 // 参数
-//	name: JS 监听的事件名
+//	name: 监听的事件名
 //  []argument: 入参
 // 				基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 // 				复合类型: slice, map, struct
@@ -92,7 +92,7 @@ func EmitAndCallback(name string, argument []any, callback any) {
 // IPC GO 中触发指定目标 Go | JS 监听的事件
 //
 // 参数
-//	name: JS监听的事件名
+//	name: 监听的事件名
 //	target: 接收事件的目标
 //  []argument: 入参
 // 				基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
@@ -105,7 +105,7 @@ func EmitTarget(name string, target target.ITarget, argument ...any) {
 // IPC GO 中触发指定目标 Go | JS 监听的事件
 //
 // 参数
-//	name: JS 监听的事件名
+//	name: 监听的事件名
 //	target: 接收事件的目标
 //  []argument: 入参
 // 				基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
