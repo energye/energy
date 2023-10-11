@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
@@ -20,11 +19,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//主窗口的配置
 	cef.BrowserWindow.Config.Title = "Energy - 内置资源和内置服务示例"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
+
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/internal-http-server.html"
 	//内置静态资源服务的安全key和value设置
