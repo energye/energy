@@ -10,7 +10,6 @@ import (
 	"github.com/energye/energy/v2/consts"
 	t "github.com/energye/energy/v2/types"
 	lcltypes "github.com/energye/golcl/lcl/types"
-	"time"
 )
 
 //go:embed resources
@@ -23,6 +22,8 @@ func main() {
 	var app = cef.NewApplication()
 	cef.BrowserWindow.Config.Title = "Energy - mockevent"
 	cef.BrowserWindow.Config.Url = "fs://energy" // 设置默认
+	//cef.BrowserWindow.Config.WindowInitState = lcltypes.WsFullScreen
+
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
 		FS:         &resources, //静态资源所在的 embed.FS
@@ -38,6 +39,8 @@ func main() {
 				chromium.SendXXX 只能在主进程中使用
 				browser.SendXXX  可在主进程或渲染进程中直接使用
 			5. 最后主进程回复ipc消息给渲染进程
+
+			该示例在windows下表现较好，linux和mac输入事件键盘码需要转换以及中文问题
 	*/
 
 	// 在渲染进程中处理结束事件
@@ -122,10 +125,7 @@ func main() {
 			}
 			// 设置元素坐标，元素坐标相对于窗口，这里取元素中间位置
 			me.X, me.Y = domXYCenter(domRect)
-			for i := 0; i < 10; i++ {
-				chromium.SendMouseWheelEvent(me, -100, -100)
-				time.Sleep(time.Second / 2)
-			}
+			chromium.SendMouseWheelEvent(me, -100, -100)
 		}
 		ipc.On("renderLoadEnd", func(browserId int32, channelId int64, doms map[string]cef.TCefRect) {
 			fmt.Println("doms", doms)
