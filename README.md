@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://assets.yanghy.cn/energy-doc/energy-icon.png">
+    <img src="https://assets.yanghy.cn/energy-icon.png">
 </p>
 
 <p align="center" style="font-size: 24px;">
@@ -163,7 +163,7 @@ If this project is helpful to you, please give me a star
 [![QQGroup](https://img.shields.io/badge/QQ-541258627-green.svg?logo=tencentqq&logoColor=blue)](https://jq.qq.com/?_wv=1027&k=YgFjCGJX)
 
 <p align="center">
-    <img src="https://assets.yanghy.cn/energy-doc/qq-group.jpg" width="250">
+    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250">
 </p>
 
 ---
@@ -172,31 +172,31 @@ If this project is helpful to you, please give me a star
 
 ##### Windows-10
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-10.png">
+<img src="https://assets.yanghy.cn/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-64.png">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-windows-7-32.png">
+<img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
+<img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
 
 ##### Linux - Deepin
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-20.8.png">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-deepin-hide-20.8.png">
+<img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">
+<img src="https://assets.yanghy.cn/frameless-deepin-hide-20.8.png">
 
 ##### Linux - Kylin ARM
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-V10-SP1.png">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-kylin-arm-hide-V10-SP1.png">
+<img src="https://assets.yanghy.cn/frameless-kylin-arm-V10-SP1.png">
+<img src="https://assets.yanghy.cn/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-18.04.6.png">
-<img src="https://assets.yanghy.cn/energy-doc/frameless-ubuntu-hide-18.04.6.png">
+<img src="https://assets.yanghy.cn/frameless-ubuntu-18.04.6.png">
+<img src="https://assets.yanghy.cn/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOSX
 
-<img src="https://assets.yanghy.cn/energy-doc/frameless-macos.png">
+<img src="https://assets.yanghy.cn/frameless-macos.png">
 
 
 ----
