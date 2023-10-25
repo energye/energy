@@ -1189,6 +1189,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialBounds", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialShowState", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnIsFrameless", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWithStandardWindowButtons", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetTitlebarHeight", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanResize", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanMaximize", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanMinimize", 0),

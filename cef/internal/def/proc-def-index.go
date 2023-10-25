@@ -1189,6 +1189,8 @@ const (
 	CEFWindowComponent_SetOnGetInitialBounds
 	CEFWindowComponent_SetOnGetInitialShowState
 	CEFWindowComponent_SetOnIsFrameless
+	CEFWindowComponent_SetOnWithStandardWindowButtons
+	CEFWindowComponent_SetOnGetTitlebarHeight
 	CEFWindowComponent_SetOnCanResize
 	CEFWindowComponent_SetOnCanMaximize
 	CEFWindowComponent_SetOnCanMinimize

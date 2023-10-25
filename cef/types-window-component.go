@@ -571,6 +571,14 @@ func (m *TCEFWindowComponent) SetOnIsFrameless(fn WindowComponentOnIsFrameless) 
 	imports.Proc(def.CEFWindowComponent_SetOnIsFrameless).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *TCEFWindowComponent) SetOnWithStandardWindowButtons(fn WindowComponentOnWithStandardWindowButtons) {
+	imports.Proc(def.CEFWindowComponent_SetOnWithStandardWindowButtons).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFWindowComponent) SetOnGetTitleBarHeight(fn WindowComponentOnGetTitleBarHeight) {
+	imports.Proc(def.CEFWindowComponent_SetOnGetTitlebarHeight).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 // SetOnCanResize 设置窗口是否允许调整大小回调事件
 func (m *TCEFWindowComponent) SetOnCanResize(fn WindowComponentOnCanResize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
@@ -646,6 +654,15 @@ func init() {
 			sender := getPtr(0)
 			window := getPtr(1)
 			fn.(WindowComponentOnIsFrameless)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnWithStandardWindowButtons:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnWithStandardWindowButtons)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+		case WindowComponentOnGetTitleBarHeight:
+			sender := getPtr(0)
+			window := getPtr(1)
+			titleBarHeight := *(*float32)(getPtr(2))
+			fn.(WindowComponentOnGetTitleBarHeight)(lcl.AsObject(sender), &ICefWindow{instance: window}, titleBarHeight, (*bool)(getPtr(3)))
 		case WindowComponentOnCanResize:
 			sender := getPtr(0)
 			window := getPtr(1)

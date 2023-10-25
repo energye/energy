@@ -1186,10 +1186,11 @@ type TCefPopupFeatures struct {
 	WidthSet          int32
 	Height            int32
 	HeightSet         int32
-	MenuBarVisible    int32
-	StatusBarVisible  int32
-	ToolBarVisible    int32
-	ScrollbarsVisible int32
+	MenuBarVisible    int32 // ~ CEF 109
+	StatusBarVisible  int32 // ~ CEF 109
+	ToolBarVisible    int32 // ~ CEF 109
+	ScrollbarsVisible int32 // ~ CEF 109
+	IsPopup           int32 // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
 }
 
 // /include/internal/cef_types.h (cef_composition_underline_t)

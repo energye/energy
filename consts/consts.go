@@ -1683,3 +1683,38 @@ const (
 	LpsHttps                         // https
 	//LpsTcp                           // tcp
 )
+
+/// <summary>
+/// Permission types used with OnShowPermissionPrompt. Some types are
+/// platform-specific or only supported with the Chrome runtime. Should be kept
+/// in sync with Chromium's permissions::RequestType type.
+/// </summary>
+/// <remarks>
+/// <para>TCefPermissionRequestTypes values.</para>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
+/// </remarks>
+type TCefPermissionRequestTypes = int32
+
+const (
+	CEF_PERMISSION_TYPE_NONE                       TCefPermissionRequestTypes = 0
+	CEF_PERMISSION_TYPE_ACCESSIBILITY_EVENTS       TCefPermissionRequestTypes = 1 << 0
+	CEF_PERMISSION_TYPE_AR_SESSION                 TCefPermissionRequestTypes = 1 << 1
+	CEF_PERMISSION_TYPE_CAMERA_PAN_TILT_ZOOM       TCefPermissionRequestTypes = 1 << 2
+	CEF_PERMISSION_TYPE_CAMERA_STREAM              TCefPermissionRequestTypes = 1 << 3
+	CEF_PERMISSION_TYPE_CLIPBOARD                  TCefPermissionRequestTypes = 1 << 4
+	CEF_PERMISSION_TYPE_TOP_LEVEL_STORAGE_ACCESS   TCefPermissionRequestTypes = 1 << 5
+	CEF_PERMISSION_TYPE_DISK_QUOTA                 TCefPermissionRequestTypes = 1 << 6
+	CEF_PERMISSION_TYPE_LOCAL_FONTS                TCefPermissionRequestTypes = 1 << 7
+	CEF_PERMISSION_TYPE_GEOLOCATION                TCefPermissionRequestTypes = 1 << 8
+	CEF_PERMISSION_TYPE_IDLE_DETECTION             TCefPermissionRequestTypes = 1 << 9
+	CEF_PERMISSION_TYPE_MIC_STREAM                 TCefPermissionRequestTypes = 1 << 10
+	CEF_PERMISSION_TYPE_MIDI                       TCefPermissionRequestTypes = 1 << 11
+	CEF_PERMISSION_TYPE_MIDI_SYSEX                 TCefPermissionRequestTypes = 1 << 12
+	CEF_PERMISSION_TYPE_MULTIPLE_DOWNLOADS         TCefPermissionRequestTypes = 1 << 13
+	CEF_PERMISSION_TYPE_NOTIFICATIONS              TCefPermissionRequestTypes = 1 << 14
+	CEF_PERMISSION_TYPE_PROTECTED_MEDIA_IDENTIFIER TCefPermissionRequestTypes = 1 << 15
+	CEF_PERMISSION_TYPE_REGISTER_PROTOCOL_HANDLER  TCefPermissionRequestTypes = 1 << 16
+	CEF_PERMISSION_TYPE_STORAGE_ACCESS             TCefPermissionRequestTypes = 1 << 17
+	CEF_PERMISSION_TYPE_VR_SESSION                 TCefPermissionRequestTypes = 1 << 18
+	CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT          TCefPermissionRequestTypes = 1 << 19
+)

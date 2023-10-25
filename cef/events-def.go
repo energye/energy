@@ -215,6 +215,8 @@ type WindowComponentOnGetParentWindow func(sender lcl.IObject, window *ICefWindo
 type WindowComponentOnGetInitialBounds func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect)
 type WindowComponentOnGetInitialShowState func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState)
 type WindowComponentOnIsFrameless func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnWithStandardWindowButtons func(sender lcl.IObject, window *ICefWindow, aResult *bool)
+type WindowComponentOnGetTitleBarHeight func(sender lcl.IObject, window *ICefWindow, titleBarHeight float32, aResult *bool)
 type WindowComponentOnCanResize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanMaximize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
 type WindowComponentOnCanMinimize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
