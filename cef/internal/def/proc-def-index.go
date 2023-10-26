@@ -325,6 +325,7 @@ const (
 	CEFAppConfig_SetLogFile
 	CEFAppConfig_LogSeverity
 	CEFAppConfig_SetLogSeverity
+	CEFAppConfig_LogItems
 	CEFAppConfig_JavaScriptFlags
 	CEFAppConfig_SetJavaScriptFlags
 	CEFAppConfig_ResourcesDirPath
@@ -2593,6 +2594,8 @@ const (
 	TextfieldComponent_SelectAll
 	TextfieldComponent_ClearSelection
 	TextfieldComponent_SelectRange
+	TextfieldComponent_SelectedRange
+	TextfieldComponent_CursorPosition
 	TextfieldComponent_SetFontList
 	TextfieldComponent_ApplyTextColor
 	TextfieldComponent_ApplyTextStyle

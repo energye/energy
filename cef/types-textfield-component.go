@@ -130,11 +130,42 @@ func (m *TCEFTextFieldComponent) ClearSelection() {
 	imports.Proc(def.TextfieldComponent_ClearSelection).Call(m.Instance())
 }
 
+// SelectRange
+//  CEF 117 Remove
 func (m *TCEFTextFieldComponent) SelectRange(range_ TCefRange) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.TextfieldComponent_SelectRange).Call(m.Instance(), uintptr(unsafe.Pointer(&range_)))
+}
+
+// SetSelectRange
+//  CEF 117 ~
+func (m *TCEFTextFieldComponent) SetSelectRange(range_ TCefRange) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.TextfieldComponent_SelectedRange).Call(consts.SetValue, m.Instance(), uintptr(unsafe.Pointer(&range_)))
+}
+
+// GetSelectRange
+//  CEF 117 ~
+func (m *TCEFTextFieldComponent) GetSelectRange() (result TCefRange) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.TextfieldComponent_SelectedRange).Call(consts.GetValue, m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return
+}
+
+// CursorPosition
+//  CEF 117 ~
+func (m *TCEFTextFieldComponent) CursorPosition() uint32 {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.TextfieldComponent_CursorPosition).Call(m.Instance())
+	return uint32(r1)
 }
 
 func (m *TCEFTextFieldComponent) SetTextColor(color types.TCefColor) {

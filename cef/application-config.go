@@ -320,6 +320,16 @@ func (m *TCEFApplication) SetLogSeverity(value LogSeverity) {
 	imports.Proc(def.CEFAppConfig_SetLogSeverity).Call(value.ToPtr())
 }
 
+func (m *TCEFApplication) LogItems() TCefLogItems {
+	var result uintptr
+	imports.Proc(def.CEFAppConfig_LogItems).Call(GetValue, uintptr(unsafe.Pointer(&result)))
+	return TCefLogItems(result)
+}
+
+func (m *TCEFApplication) SetLogItems(value TCefLogItems) {
+	imports.Proc(def.CEFAppConfig_LogItems).Call(SetValue, uintptr(value))
+}
+
 func (m *TCEFApplication) JavaScriptFlags() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_JavaScriptFlags).Call()
 	return api.GoStr(r1)

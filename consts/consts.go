@@ -2224,3 +2224,27 @@ const (
 	CEF_CONTENT_SETTING_VALUE_DETECT_IMPORTANT_CONTENT
 	CEF_CONTENT_SETTING_VALUE_NUM_VALUES
 )
+
+/// <summary>
+/// Log items prepended to each log line.
+/// </summary>
+/// <remarks>
+/// <para>See the uCEFConstants unit for all possible values.</para>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_log_items_t)</see></para>
+/// </remarks>
+type TCefLogItems = types.Cardinal
+
+const (
+	/// Prepend the default list of items.
+	LOG_ITEMS_DEFAULT TCefLogItems = 0
+	/// Prepend no items.
+	LOG_ITEMS_NONE TCefLogItems = 1
+	/// Prepend the process ID.
+	LOG_ITEMS_FLAG_PROCESS_ID TCefLogItems = 1 << 1
+	/// Prepend the thread ID.
+	LOG_ITEMS_FLAG_THREAD_ID TCefLogItems = 1 << 2
+	/// Prepend the timestamp.
+	LOG_ITEMS_FLAG_TIME_STAMP TCefLogItems = 1 << 3
+	/// Prepend the tickcount.
+	LOG_ITEMS_FLAG_TICK_COUNT TCefLogItems = 1 << 4
+)
