@@ -43,6 +43,12 @@ func init() {
 	ExeDir, ExeName = filepath.Split(ExePath)
 }
 
+// Proc Get value and Set value
+const (
+	GetValue uintptr = 0
+	SetValue uintptr = 1
+)
+
 //0:net 1:unix
 type IPC_TYPE = types.Int8
 
@@ -1787,4 +1793,34 @@ type TCefGestureCommand int32
 const (
 	CEF_GESTURE_COMMAND_BACK TCefGestureCommand = iota
 	CEF_GESTURE_COMMAND_FORWARD
+)
+
+/// <summary>
+/// Download interrupt reasons. Should be kept in sync with
+/// Chromium's download::DownloadInterruptReason type.
+/// </summary>
+/// <remarks>
+/// <para>See the uCEFConstants unit for all possible values.</para>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_download_interrupt_reason_t)</see></para>
+/// </remarks>
+type TCefDownloadInterruptReason int32
+
+type TCefUIColorMode int32
+
+/// <summary>
+/// Color mode in UI for platforms that support it.
+/// </summary>
+const (
+	/// <summary>
+	/// System default.
+	/// </summary>
+	UICMSystemDefault TCefUIColorMode = iota
+	/// <summary>
+	/// Forces light color mode in UI for platforms that support it.
+	/// </summary>
+	UICMForceLight
+	/// <summary>
+	/// Forces dark color mode in UI for platforms that support it.
+	/// </summary>
+	UICMForceDark
 )

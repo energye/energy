@@ -470,6 +470,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFAppConfig_SetNetLogCaptureMode", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_EnableHighDPISupport", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetEnableHighDPISupport", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_RemoteAllowOrigins", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_AutoAcceptCamAndMicCapture", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_UIColorMode", 0),
 		// 自定义属性
 		dllimports.NewEnergyImport("CEFAppConfig_DeleteCache", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_DeleteCookies", 0),
@@ -1510,6 +1513,8 @@ func init() {
 		dllimports.NewEnergyImport("CefDownloadItem_IsInProgress", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_IsComplete", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_IsCanceled", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_IsInterrupted", 0),
+		dllimports.NewEnergyImport("CefDownloadItem_GetInterruptReason", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_CurrentSpeed", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_PercentComplete", 0),
 		dllimports.NewEnergyImport("CefDownloadItem_TotalBytes", 0),

@@ -470,6 +470,9 @@ const (
 	CEFAppConfig_SetNetLogCaptureMode
 	CEFAppConfig_EnableHighDPISupport
 	CEFAppConfig_SetEnableHighDPISupport
+	CEFAppConfig_RemoteAllowOrigins
+	CEFAppConfig_AutoAcceptCamAndMicCapture
+	CEFAppConfig_UIColorMode
 	// 自定义属性
 	CEFAppConfig_DeleteCache
 	CEFAppConfig_DeleteCookies
@@ -1510,6 +1513,8 @@ const (
 	CefDownloadItem_IsInProgress
 	CefDownloadItem_IsComplete
 	CefDownloadItem_IsCanceled
+	CefDownloadItem_IsInterrupted
+	CefDownloadItem_GetInterruptReason
 	CefDownloadItem_CurrentSpeed
 	CefDownloadItem_PercentComplete
 	CefDownloadItem_TotalBytes

@@ -959,6 +959,33 @@ func (m *TCEFApplication) SetNetLogCaptureMode(value TCefNetLogCaptureMode) {
 	imports.Proc(def.CEFAppConfig_SetNetLogCaptureMode).Call(value.ToPtr())
 }
 
+func (m *TCEFApplication) RemoteAllowOrigins() string {
+	r1, _, _ := imports.Proc(def.CEFAppConfig_RemoteAllowOrigins).Call(GetValue)
+	return api.GoStr(r1)
+}
+
+func (m *TCEFApplication) SetRemoteAllowOrigins(value string) {
+	imports.Proc(def.CEFAppConfig_RemoteAllowOrigins).Call(SetValue, api.PascalStr(value))
+}
+
+func (m *TCEFApplication) AutoAcceptCamAndMicCapture() bool {
+	r1, _, _ := imports.Proc(def.CEFAppConfig_AutoAcceptCamAndMicCapture).Call(GetValue)
+	return api.GoBool(r1)
+}
+
+func (m *TCEFApplication) SetAutoAcceptCamAndMicCapture(value bool) {
+	imports.Proc(def.CEFAppConfig_AutoAcceptCamAndMicCapture).Call(SetValue, api.PascalBool(value))
+}
+
+func (m *TCEFApplication) UIColorMode() TCefUIColorMode {
+	r1, _, _ := imports.Proc(def.CEFAppConfig_UIColorMode).Call(GetValue)
+	return TCefUIColorMode(r1)
+}
+
+func (m *TCEFApplication) SetUIColorMode(value TCefUIColorMode) {
+	imports.Proc(def.CEFAppConfig_UIColorMode).Call(SetValue, uintptr(value))
+}
+
 // EnableHighDPISupport
 //  CEF 112 Remove
 func (m *TCEFApplication) EnableHighDPISupport() bool {

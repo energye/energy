@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
 	"time"
 	"unsafe"
@@ -66,6 +67,26 @@ func (m *ICefDownloadItem) IsCanceled() bool {
 	}
 	r1, _, _ := imports.Proc(def.CefDownloadItem_IsCanceled).Call(m.Instance())
 	return api.GoBool(r1)
+}
+
+// IsInterrupted
+//  CEF 114 ~
+func (m *ICefDownloadItem) IsInterrupted() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CefDownloadItem_IsInterrupted).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+// GetInterruptReason
+//  CEF 114 ~
+func (m *ICefDownloadItem) GetInterruptReason() consts.TCefDownloadInterruptReason {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.CefDownloadItem_GetInterruptReason).Call(m.Instance())
+	return consts.TCefDownloadInterruptReason(r1)
 }
 
 func (m *ICefDownloadItem) CurrentSpeed() int64 {
