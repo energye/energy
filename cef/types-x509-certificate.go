@@ -275,6 +275,8 @@ func (m *ICefX509CertPrincipal) GetCountryName() string {
 	return api.GoStr(r1)
 }
 
+// GetStreetAddresses
+//  CEF 115 Remove
 func (m *ICefX509CertPrincipal) GetStreetAddresses() *lcl.TStrings {
 	if !m.IsValid() {
 		return nil
@@ -302,6 +304,8 @@ func (m *ICefX509CertPrincipal) GetOrganizationUnitNames() *lcl.TStrings {
 	return addresses
 }
 
+// GetDomainComponents
+//  CEF 115 Remove
 func (m *ICefX509CertPrincipal) GetDomainComponents() *lcl.TStrings {
 	if !m.IsValid() {
 		return nil

@@ -69,6 +69,14 @@ func (m *ICefWindow) Show() {
 	imports.Proc(def.ICEFWindow_Show).Call(m.Instance())
 }
 
+// ShowAsBrowserModalDialog 显示窗口 浏览器模式对话框
+func (m *ICefWindow) ShowAsBrowserModalDialog(browserView *ICefBrowserView) {
+	if !m.IsValid() || !browserView.IsValid() {
+		return
+	}
+	imports.Proc(def.ICEFWindow_ShowAsBrowserModalDialog).Call(m.Instance(), browserView.Instance())
+}
+
 // Hide 显示窗口
 func (m *ICefWindow) Hide() {
 	if !m.IsValid() {

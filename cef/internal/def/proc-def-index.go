@@ -674,6 +674,8 @@ const (
 	RequestContext_GetExtensions
 	RequestContext_GetExtension
 	RequestContext_GetMediaRouter
+	RequestContext_WebsiteSetting
+	RequestContext_ContentSetting
 	// TCEFChromium
 	CEFChromium_SetOnAfterCreated
 	CEFChromium_SetOnBeforeClose
@@ -1145,6 +1147,7 @@ const (
 	CEFWindowComponent_Create
 	CEFWindowComponent_CreateTopLevelWindow
 	CEFWindowComponent_Show
+	CEFWindowComponent_ShowAsBrowserModalDialog
 	CEFWindowComponent_Hide
 	CEFWindowComponent_CenterWindow
 	CEFWindowComponent_Close
@@ -1193,6 +1196,7 @@ const (
 	CEFWindowComponent_SetOnWindowDestroyed
 	CEFWindowComponent_SetOnWindowActivationChanged
 	CEFWindowComponent_SetOnGetParentWindow
+	CEFWindowComponent_SetOnIsWindowModalDialog
 	CEFWindowComponent_SetOnGetInitialBounds
 	CEFWindowComponent_SetOnGetInitialShowState
 	CEFWindowComponent_SetOnIsFrameless
@@ -1239,6 +1243,7 @@ const (
 	// ICefWindow
 	ICEFWindowRef_CreateTopLevel
 	ICEFWindow_Show
+	ICEFWindow_ShowAsBrowserModalDialog
 	ICEFWindow_Hide
 	ICEFWindow_CenterWindow
 	ICEFWindow_Close

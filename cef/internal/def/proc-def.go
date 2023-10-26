@@ -674,6 +674,8 @@ func init() {
 		dllimports.NewEnergyImport("RequestContext_GetExtensions", 0),
 		dllimports.NewEnergyImport("RequestContext_GetExtension", 0),
 		dllimports.NewEnergyImport("RequestContext_GetMediaRouter", 0),
+		dllimports.NewEnergyImport("RequestContext_WebsiteSetting", 0),
+		dllimports.NewEnergyImport("RequestContext_ContentSetting", 0),
 		//TCEFChromium - event
 		dllimports.NewEnergyImport("CEFChromium_SetOnAfterCreated", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnBeforeClose", 0),
@@ -1145,6 +1147,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_Create", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_CreateTopLevelWindow", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Show", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_ShowAsBrowserModalDialog", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Hide", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_CenterWindow", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_Close", 0),
@@ -1193,6 +1196,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowDestroyed", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowActivationChanged", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetParentWindow", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnIsWindowModalDialog", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialBounds", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialShowState", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnIsFrameless", 0),
@@ -1239,6 +1243,7 @@ func init() {
 		//ICefWindow
 		dllimports.NewEnergyImport("ICEFWindowRef_CreateTopLevel", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Show", 0),
+		dllimports.NewEnergyImport("ICEFWindow_ShowAsBrowserModalDialog", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Hide", 0),
 		dllimports.NewEnergyImport("ICEFWindow_CenterWindow", 0),
 		dllimports.NewEnergyImport("ICEFWindow_Close", 0),

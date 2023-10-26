@@ -1017,6 +1017,13 @@ type ICefCompletionCallback struct {
 	instance unsafe.Pointer
 }
 
+// ICefMediaRouter
+// TODO no impl
+type ICefMediaRouter struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ICefRunContextMenuCallback
 //  /include/capi/cef_context_menu_handler_capi.h (cef_run_context_menu_callback_t)
 type ICefRunContextMenuCallback struct {

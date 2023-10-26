@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -284,4 +285,50 @@ func (m *ICefRequestContext) GetExtension(extensionId string) *ICefExtension {
 		return &ICefExtension{instance: unsafe.Pointer(result)}
 	}
 	return nil
+}
+
+func (m *ICefRequestContext) GetMediaRouter(callback *ICefCompletionCallback) *ICefMediaRouter {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.RequestContext_GetMediaRouter).Call(m.Instance(), callback.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMediaRouter{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+func (m *ICefRequestContext) GetWebsiteSetting(requestingUrl, topLevelUrl string, contentType consts.TCefContentSettingTypes) *ICefValue {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.GetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefValue{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+func (m *ICefRequestContext) SetWebsiteSetting(requestingUrl, topLevelUrl string, contentType consts.TCefContentSettingTypes, value *ICefValue) {
+	if !m.IsValid() || !value.IsValid() {
+		return
+	}
+	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.SetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), value.Instance())
+}
+
+func (m *ICefRequestContext) GetContentSetting(requestingUrl, topLevelUrl string, contentType consts.TCefContentSettingTypes) consts.TCefContentSettingValues {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.RequestContext_ContentSetting).Call(consts.GetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), 0)
+	return consts.TCefContentSettingValues(r1)
+}
+
+func (m *ICefRequestContext) SetContentSetting(requestingUrl, topLevelUrl string, contentType consts.TCefContentSettingTypes, value consts.TCefContentSettingValues) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.RequestContext_ContentSetting).Call(consts.SetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), uintptr(value))
 }

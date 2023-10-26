@@ -243,11 +243,15 @@ func (m *TCEFApplication) SetRootCache(value string) {
 	imports.Proc(def.CEFAppConfig_SetRootCache).Call(api.PascalStr(value))
 }
 
+// UserDataPath
+//  CEF 115 Remove
 func (m *TCEFApplication) UserDataPath() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_UserDataPath).Call()
 	return api.GoStr(r1)
 }
 
+// SetUserDataPath
+//  CEF 115 Remove
 func (m *TCEFApplication) SetUserDataPath(value string) {
 	imports.Proc(def.CEFAppConfig_SetUserDataPath).Call(api.PascalStr(value))
 }

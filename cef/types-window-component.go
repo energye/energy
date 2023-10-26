@@ -51,6 +51,14 @@ func (m *TCEFWindowComponent) Show() {
 	imports.Proc(def.CEFWindowComponent_Show).Call(m.Instance())
 }
 
+// ShowAsBrowserModalDialog 显示窗口 浏览器模式对话框
+func (m *TCEFWindowComponent) ShowAsBrowserModalDialog(browserView *ICefBrowserView) {
+	if !m.IsValid() || !browserView.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFWindowComponent_ShowAsBrowserModalDialog).Call(m.Instance(), browserView.Instance())
+}
+
 // Hide 显示窗口
 func (m *TCEFWindowComponent) Hide() {
 	if !m.IsValid() {
@@ -556,6 +564,11 @@ func (m *TCEFWindowComponent) SetOnGetParentWindow(fn WindowComponentOnGetParent
 	imports.Proc(def.CEFWindowComponent_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// SetOnIsWindowModalDialog 窗口是否为模态弹窗
+func (m *TCEFWindowComponent) SetOnIsWindowModalDialog(fn WindowComponentOnIsWindowModalDialog) {
+	imports.Proc(def.CEFWindowComponent_SetOnIsWindowModalDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 // SetOnGetInitialBounds 窗口初始窗口边界回调事件
 func (m *TCEFWindowComponent) SetOnGetInitialBounds(fn WindowComponentOnGetInitialBounds) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetInitialBounds).Call(m.Instance(), api.MakeEventDataPtr(fn))
@@ -639,6 +652,10 @@ func init() {
 			resultWindow := &ICefWindow{}
 			fn.(WindowComponentOnGetParentWindow)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
 			*resultWindowPtr = uintptr(resultWindow.instance)
+		case WindowComponentOnIsWindowModalDialog:
+			sender := getPtr(0)
+			window := getPtr(1)
+			fn.(WindowComponentOnIsWindowModalDialog)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnGetInitialBounds:
 			sender := getPtr(0)
 			window := getPtr(1)
