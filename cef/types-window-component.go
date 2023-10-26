@@ -609,6 +609,11 @@ func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
 	imports.Proc(def.CEFWindowComponent_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// SetOnWindowFullscreenTransition
+func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn WindowComponentOnKeyEvent) {
+	imports.Proc(def.CEFWindowComponent_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		getPtr := func(i int) unsafe.Pointer {
@@ -688,6 +693,11 @@ func init() {
 			window := getPtr(1)
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
 			fn.(WindowComponentOnKeyEvent)(lcl.AsObject(sender), &ICefWindow{instance: window}, keyEvent, (*bool)(getPtr(3)))
+		case WindowComponentOnWindowFullscreenTransition:
+			sender := getPtr(0)
+			window := getPtr(1)
+			isCompleted := api.GoBool(getVal(2))
+			fn.(WindowComponentOnWindowFullscreenTransition)(lcl.AsObject(sender), &ICefWindow{instance: window}, isCompleted)
 		default:
 			return false
 		}

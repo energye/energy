@@ -959,6 +959,8 @@ func (m *TCEFApplication) SetNetLogCaptureMode(value TCefNetLogCaptureMode) {
 	imports.Proc(def.CEFAppConfig_SetNetLogCaptureMode).Call(value.ToPtr())
 }
 
+// EnableHighDPISupport
+//  CEF 112 Remove
 func (m *TCEFApplication) EnableHighDPISupport() bool {
 	if common.IsWindows() {
 		r1, _, _ := imports.Proc(def.CEFAppConfig_EnableHighDPISupport).Call()
@@ -967,6 +969,8 @@ func (m *TCEFApplication) EnableHighDPISupport() bool {
 	return false
 }
 
+// SetEnableHighDPISupport
+//  CEF 112 Remove
 func (m *TCEFApplication) SetEnableHighDPISupport(value bool) {
 	if common.IsWindows() {
 		imports.Proc(def.CEFAppConfig_SetEnableHighDPISupport).Call(api.PascalBool(value))

@@ -115,6 +115,10 @@ type chromiumEventOnTooltip func(sender lcl.IObject, browser *ICefBrowser, text 
 type chromiumEventOnTouchHandleStateChanged func(sender lcl.IObject, browser *ICefBrowser, state *TCefTouchHandleState)
 type chromiumEventOnUpdateDragCursor func(sender lcl.IObject, browser *ICefBrowser, operation consts.TCefDragOperation)
 type chromiumEventOnVirtualKeyboardRequested func(sender lcl.IObject, browser *ICefBrowser, inputMode consts.TCefTextInputMode)
+type chromiumEventOnIsChromeAppMenuItemVisible func(sender lcl.IObject, browser *ICefBrowser, commandId int32) bool
+type chromiumEventOnIsChromeAppMenuItemEnabled func(sender lcl.IObject, browser *ICefBrowser, commandId int32) bool
+type chromiumEventOnIsChromePageActionIconVisible func(sender lcl.IObject, iconType consts.TCefChromePageActionIconType) bool
+type chromiumEventOnIsChromeToolbarButtonVisible func(sender lcl.IObject, buttonType consts.TCefChromeToolbarButtonType) bool
 type chromiumEventOnBeforeBrowser func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool
 type chromiumEventOnBeforeBrowserEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool, window IBrowserWindow) bool
 type chromiumEventOnAddressChange func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, url string)
@@ -224,6 +228,7 @@ type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aRes
 type WindowComponentOnCanCloseEx func(sender lcl.IObject, cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
 type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
 type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)
+type WindowComponentOnWindowFullscreenTransition func(sender lcl.IObject, window *ICefWindow, isCompleted bool)
 
 /************* TCEFBrowserViewComponent *************/
 

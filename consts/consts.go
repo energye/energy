@@ -1684,6 +1684,8 @@ const (
 	//LpsTcp                           // tcp
 )
 
+type TCefPermissionRequestTypes int32
+
 /// <summary>
 /// Permission types used with OnShowPermissionPrompt. Some types are
 /// platform-specific or only supported with the Chrome runtime. Should be kept
@@ -1693,8 +1695,6 @@ const (
 /// <para>TCefPermissionRequestTypes values.</para>
 /// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
 /// </remarks>
-type TCefPermissionRequestTypes = int32
-
 const (
 	CEF_PERMISSION_TYPE_NONE                       TCefPermissionRequestTypes = 0
 	CEF_PERMISSION_TYPE_ACCESSIBILITY_EVENTS       TCefPermissionRequestTypes = 1 << 0
@@ -1717,4 +1717,61 @@ const (
 	CEF_PERMISSION_TYPE_STORAGE_ACCESS             TCefPermissionRequestTypes = 1 << 17
 	CEF_PERMISSION_TYPE_VR_SESSION                 TCefPermissionRequestTypes = 1 << 18
 	CEF_PERMISSION_TYPE_WINDOW_MANAGEMENT          TCefPermissionRequestTypes = 1 << 19
+)
+
+type TCefChromePageActionIconType int32
+
+/// <summary>
+/// Chrome page action icon types. Should be kept in sync with Chromium's
+/// PageActionIconType type.
+/// </summary>
+/// <remarks>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_page_action_icon_type_t)</see></para>
+/// </remarks>
+const (
+	CEF_CPAIT_BOOKMARK_STAR TCefChromePageActionIconType = iota
+	CEF_CPAIT_CLICK_TO_CALL
+	CEF_CPAIT_COOKIE_CONTROLS
+	CEF_CPAIT_FILE_SYSTEM_ACCESS
+	CEF_CPAIT_FIND
+	CEF_CPAIT_HIGH_EFFICIENCY
+	CEF_CPAIT_INTENT_PICKER
+	CEF_CPAIT_LOCAL_CARD_MIGRATION
+	CEF_CPAIT_MANAGE_PASSWORDS
+	CEF_CPAIT_PAYMENTS_OFFER_NOTIFICATION
+	CEF_CPAIT_PRICE_TRACKING
+	CEF_CPAIT_PWA_INSTALL
+	CEF_CPAIT_QR_CODE_GENERATOR
+	CEF_CPAIT_READER_MODE
+	CEF_CPAIT_SAVE_AUTOFILL_ADDRESS
+	CEF_CPAIT_SAVE_CARD
+	CEF_CPAIT_SEND_TAB_TO_SELF
+	CEF_CPAIT_SHARING_HUB
+	CEF_CPAIT_SIDE_SEARCH
+	CEF_CPAIT_SMS_REMOTE_FETCHER
+	CEF_CPAIT_TRANSLATE
+	CEF_CPAIT_VIRTUAL_CARD_ENROLL
+	CEF_CPAIT_VIRTUAL_CARD_MANUAL_FALLBACK
+	CEF_CPAIT_ZOOM
+	CEF_CPAIT_SAVE_IBAN
+	CEF_CPAIT_MANDATORY_REAUTH
+	CEF_CPAIT_PRICE_INSIGHTS
+	//{* CEF_CPAIT_MAX_VALUE = CEF_CPAIT_PRICE_INSIGHTS *}
+)
+
+type TCefChromeToolbarButtonType int32
+
+/// <summary>
+/// Chrome toolbar button types. Should be kept in sync with CEF's internal
+/// ToolbarButtonType type.
+/// </summary>
+/// <remarks>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_chrome_toolbar_button_type_t)</see></para>
+/// </remarks>
+const (
+	CEF_CTBT_CAST TCefChromeToolbarButtonType = iota
+	CEF_CTBT_DOWNLOAD
+	CEF_CTBT_SEND_TAB_TO_SELF
+	CEF_CTBT_SIDE_PANEL
+	//{* CEF_CTBT_MAX_VALUE = CEF_CTBT_SIDE_PANEL *}
 )

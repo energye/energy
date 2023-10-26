@@ -807,6 +807,10 @@ const (
 	CEFChromium_SetOnTouchHandleStateChanged
 	CEFChromium_SetOnUpdateDragCursor
 	CEFChromium_SetOnVirtualKeyboardRequested
+	CEFChromium_SetOnIsChromeAppMenuItemVisible
+	CEFChromium_SetOnIsChromeAppMenuItemEnabled
+	CEFChromium_SetOnIsChromePageActionIconVisible
+	CEFChromium_SetOnIsChromeToolbarButtonVisible
 	// TCEFChromium - proc
 	CEFChromium_Free
 	CEFChromium_GetHashCode
@@ -1197,6 +1201,7 @@ const (
 	CEFWindowComponent_SetOnCanClose
 	CEFWindowComponent_SetOnAccelerator
 	CEFWindowComponent_SetOnKeyEvent
+	CEFWindowComponent_SetOnWindowFullscreenTransition
 	// TCEFBrowserViewComponent
 	CEFBrowserViewComponent_Create
 	CEFBrowserViewComponent_CreateBrowserView

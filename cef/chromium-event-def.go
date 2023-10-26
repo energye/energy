@@ -158,6 +158,10 @@ type IChromiumEvent interface {
 	SetOnTouchHandleStateChanged(fn chromiumEventOnTouchHandleStateChanged)
 	SetOnUpdateDragCursor(fn chromiumEventOnUpdateDragCursor)
 	SetOnVirtualKeyboardRequested(fn chromiumEventOnVirtualKeyboardRequested)
+	SetOnIsChromeAppMenuItemVisible(fn chromiumEventOnIsChromeAppMenuItemVisible)       // CEF 112 ~ , 仅适用于 ChromeRuntime 模式
+	SetOnIsChromeAppMenuItemEnabled(fn chromiumEventOnIsChromeAppMenuItemEnabled)       // CEF 112 ~ , 仅适用于 ChromeRuntime 模式
+	SetOnIsChromePageActionIconVisible(fn chromiumEventOnIsChromePageActionIconVisible) // CEF 112 ~ , 仅适用于 ChromeRuntime 模式
+	SetOnIsChromeToolbarButtonVisible(fn chromiumEventOnIsChromeToolbarButtonVisible)   // CEF 112 ~ , 仅适用于 ChromeRuntime 模式
 }
 
 func (m *TCEFChromium) SetOnAfterCreated(fn chromiumEventOnAfterCreated) {
@@ -1107,6 +1111,34 @@ func (m *TCEFChromium) SetOnVirtualKeyboardRequested(fn chromiumEventOnVirtualKe
 		return
 	}
 	imports.Proc(def.CEFChromium_SetOnVirtualKeyboardRequested).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnIsChromeAppMenuItemVisible(fn chromiumEventOnIsChromeAppMenuItemVisible) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnIsChromeAppMenuItemVisible).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnIsChromeAppMenuItemEnabled(fn chromiumEventOnIsChromeAppMenuItemEnabled) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnIsChromeAppMenuItemEnabled).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnIsChromePageActionIconVisible(fn chromiumEventOnIsChromePageActionIconVisible) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnIsChromePageActionIconVisible).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnIsChromeToolbarButtonVisible(fn chromiumEventOnIsChromeToolbarButtonVisible) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnIsChromeToolbarButtonVisible).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // --------TCEFChromium Event proc begin--------

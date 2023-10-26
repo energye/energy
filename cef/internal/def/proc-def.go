@@ -807,6 +807,10 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetOnTouchHandleStateChanged", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnUpdateDragCursor", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetOnVirtualKeyboardRequested", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnIsChromeAppMenuItemVisible", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnIsChromeAppMenuItemEnabled", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnIsChromePageActionIconVisible", 0),
+		dllimports.NewEnergyImport("CEFChromium_SetOnIsChromeToolbarButtonVisible", 0),
 		//TCEFChromium - proc
 		dllimports.NewEnergyImport("CEFChromium_Free", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetHashCode", 0),
@@ -1197,6 +1201,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnCanClose", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnAccelerator", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnKeyEvent", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowFullscreenTransition", 0),
 		//TCEFBrowserViewComponent
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_Create", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_CreateBrowserView", 0),

@@ -634,6 +634,24 @@ func init() {
 			browser := &ICefBrowser{instance: getPtr(1)}
 			inputMode := consts.TCefTextInputMode(getVal(2))
 			fn.(chromiumEventOnVirtualKeyboardRequested)(lcl.AsObject(getPtr(0)), browser, inputMode)
+		case chromiumEventOnIsChromeAppMenuItemVisible:
+			browser := &ICefBrowser{instance: getPtr(1)}
+			commandId := int32(getVal(2))
+			result := (*bool)(getPtr(3))
+			*result = fn.(chromiumEventOnIsChromeAppMenuItemVisible)(lcl.AsObject(getPtr(0)), browser, commandId)
+		case chromiumEventOnIsChromeAppMenuItemEnabled:
+			browser := &ICefBrowser{instance: getPtr(1)}
+			commandId := int32(getVal(2))
+			result := (*bool)(getPtr(3))
+			*result = fn.(chromiumEventOnIsChromeAppMenuItemEnabled)(lcl.AsObject(getPtr(0)), browser, commandId)
+		case chromiumEventOnIsChromePageActionIconVisible:
+			buttonType := consts.TCefChromePageActionIconType(getVal(1))
+			result := (*bool)(getPtr(2))
+			*result = fn.(chromiumEventOnIsChromePageActionIconVisible)(lcl.AsObject(getPtr(0)), buttonType)
+		case chromiumEventOnIsChromeToolbarButtonVisible:
+			iconType := consts.TCefChromeToolbarButtonType(getVal(1))
+			result := (*bool)(getPtr(2))
+			*result = fn.(chromiumEventOnIsChromeToolbarButtonVisible)(lcl.AsObject(getPtr(0)), iconType)
 		case chromiumEventOnFindResult:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
