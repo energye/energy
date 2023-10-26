@@ -237,3 +237,5 @@ type BrowserViewComponentOnBrowserDestroyed func(sender lcl.IObject, browserView
 type BrowserViewComponentOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool) *ICefBrowserViewDelegate
 type BrowserViewComponentOnPopupBrowserViewCreated func(sender lcl.IObject, browserView, popupBrowserView *ICefBrowserView, isDevtools bool, aResult *bool)
 type BrowserViewComponentOnGetChromeToolbarType func(sender lcl.IObject, aResult *consts.TCefChromeToolbarType)
+type BrowserViewComponentOnUseFramelessWindowForPictureInPicture func(sender lcl.IObject, browserView *ICefBrowserView) bool
+type BrowserViewComponentOnGestureCommand func(sender lcl.IObject, browserView *ICefBrowserView, gestureCommand consts.TCefGestureCommand) bool

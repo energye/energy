@@ -1215,6 +1215,8 @@ const (
 	CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView
 	CEFBrowserViewComponent_SetOnPopupBrowserViewCreated
 	CEFBrowserViewComponent_SetOnGetChromeToolbarType
+	CEFBrowserViewComponent_SetOnUseFramelessWindowForPictureInPicture
+	CEFBrowserViewComponent_SetOnGestureCommand
 	// ICefDisplay
 	CEFDisplayRef_Primary
 	CEFDisplayRef_NearestPoint

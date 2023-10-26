@@ -1775,3 +1775,16 @@ const (
 	CEF_CTBT_SIDE_PANEL
 	//{* CEF_CTBT_MAX_VALUE = CEF_CTBT_SIDE_PANEL *}
 )
+
+type TCefGestureCommand int32
+
+/// <summary>
+/// Specifies the gesture commands.
+/// </summary>
+/// <remarks>
+/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_gesture_command_t)</see></para>
+/// </remarks>
+const (
+	CEF_GESTURE_COMMAND_BACK TCefGestureCommand = iota
+	CEF_GESTURE_COMMAND_FORWARD
+)

@@ -1215,6 +1215,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnPopupBrowserViewCreated", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetChromeToolbarType", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnUseFramelessWindowForPictureInPicture", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGestureCommand", 0),
 		//ICefDisplay
 		dllimports.NewEnergyImport("CEFDisplayRef_Primary", 0),
 		dllimports.NewEnergyImport("CEFDisplayRef_NearestPoint", 0),
