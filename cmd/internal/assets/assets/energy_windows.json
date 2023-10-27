@@ -5,6 +5,7 @@
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
   "info": {
+    "manifest": "{{.ProjectPath}}/{{.Name}}.manifest",
     "icon": "{{.ProjectPath}}/resources/icon.ico",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",

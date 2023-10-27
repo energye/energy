@@ -99,6 +99,7 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 		return "", err
 	}
 	defer iconFile.Close()
+	// icon
 	ico, err := winres.LoadICO(iconFile)
 	if err != nil {
 		return "", fmt.Errorf("couldn't load icon from icon.ico: %w", err)
@@ -107,7 +108,14 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	manifestData, err := assets.ReadFile(proj, assetsFSPath, windowManifest)
+	// Manifest
+	var manifestData []byte
+	if proj.Info.Manifest != "" {
+		manifestData, err = ioutil.ReadFile(proj.Info.Manifest)
+	}
+	if manifestData == nil || err != nil {
+		manifestData, err = assets.ReadFile(proj, assetsFSPath, windowManifest)
+	}
 	if err != nil {
 		return "", err
 	}
@@ -116,6 +124,7 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 		return "", err
 	}
 	rs.SetManifest(xmlData)
+	// versionInfo
 	versionInfo, err := assets.ReadFile(proj, assetsFSPath, windowVersionInfo)
 	if err != nil {
 		return "", err
