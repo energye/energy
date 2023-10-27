@@ -651,7 +651,7 @@ func init() {
 			resultWindowPtr := (*uintptr)(getPtr(4))
 			resultWindow := &ICefWindow{}
 			fn.(WindowComponentOnGetParentWindow)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
-			*resultWindowPtr = uintptr(resultWindow.instance)
+			*resultWindowPtr = resultWindow.Instance()
 		case WindowComponentOnIsWindowModalDialog:
 			sender := getPtr(0)
 			window := getPtr(1)
