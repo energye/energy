@@ -25,6 +25,16 @@ import (
 	"strings"
 )
 
+// 安装CEF和liblcl框架
+//  根据当前系统自动安装CEF
+//  Windows
+//    	系统版本号 > windows10: CEF > 109
+//    	系统版本号 < windows10: CEF = 109
+//  MacOS
+//		CEF 最新版本
+//  Linux
+//    Gtk2: CEF = 106
+//    Gtk3: CEF 最新版本
 func installCEFFramework(c *command.Config) (string, func()) {
 	if !c.Install.ICEF {
 		return "", nil
@@ -61,10 +71,11 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// -c cef args value
 	// default(empty), windows7, gtk2, flash
 	cef := strings.ToLower(c.Install.CEF)
-	if cef != consts.CefEmpty && cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87 {
-		term.Logger.Error("-c [cef] Incorrect args value")
-		return "", nil
-	}
+	//if cef == consts.CefEmpty /*&& cef != consts.Cef109 && cef != consts.Cef106 && cef != consts.Cef87*/ {
+	//	term.Logger.Error("-c [cef] Incorrect args value")
+	//	return "", nil
+	//}
+	// 安装目录名称
 	installPathName := cefInstallPathName(c)
 	term.Section.Println("Install Path", installPathName)
 
@@ -72,10 +83,10 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	// 所有版本列表
 	var versionList = edv["versionList"].(map[string]any)
 
-	// 当前安装版本
+	// 获取到当前安装版本
 	var installVersion map[string]any
 	if c.Install.Version == "latest" {
-		// 默认最新版本
+		// 获取最新版本号, latest=vx.x.x
 		if v, ok := versionList[edv["latest"].(string)]; ok {
 			installVersion = v.(map[string]any)
 		}
@@ -94,15 +105,25 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	var (
 		cefModuleName, liblclModuleName string
 	)
+	if consts.IsWindows {
+		// windows 版本小于10，使用CEF109，CEF 109是最后一个支持windows7的版本
+		majorVersion, _, _ := versionNumber()
+		if majorVersion < 10 {
+			cef = consts.Cef109
+		}
+	}
 	// 使用提供的特定版本号
+	// cefModuleName 对应配置字段 module
+	// liblclModuleName 对应配置字段
 	if cef == consts.Cef106 {
-		cefModuleName = "cef-106" // CEF 106.1.1
+		cefModuleName = "cef-106" // CEF 106.1.1, linux gtk2
 	} else if cef == consts.Cef109 {
-		cefModuleName = "cef-109" // CEF 109.1.18
+		cefModuleName = "cef-109"       // CEF 109.1.18
+		liblclModuleName = "liblcl-109" // liblcl 109, windows7
 	} else if cef == consts.Cef87 {
 		// cef 87 要和 liblcl 87 配对
 		cefModuleName = "cef-87"       // CEF 87.1.14
-		liblclModuleName = "liblcl-87" // liblcl 87
+		liblclModuleName = "liblcl-87" // liblcl 87, flash
 	}
 	// 如未指定CEF参数、或参数不正确，选择当前CEF模块最（新）大的版本号
 	if cefModuleName == "" {

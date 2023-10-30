@@ -27,7 +27,7 @@ var CmdInstall = &command.Command{
 	-arch Specify install ARCH: [386, amd64, arm64], Default current system: architecture
 	-cef Install system supports CEF version, provide 4 options, default empty
 		default : Automatically select support for the latest version based on the current system.
-		109 : CEF 109.1.18 is the last one to support Windows 7.
+		109 : CEF 109.1.18 is the last one to support Windows 7, windows version < 10
 		106 : CEF 106.1.1 is the last default support for GTK2 in Linux.
 		87  : CEF 87.1.14 is the last one to support Flash.
 	.  Execute default command
