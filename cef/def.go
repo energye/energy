@@ -15,12 +15,13 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/golcl/lcl"
 )
 
-// setMacOSXCommandLine
-// 针对 MacOSX 设置命令行参数
+// SetCommandLine
+// 针对 MacOS 设置命令行参数
 //
 // 没找到什么好的方式，只能这样设置
-func setMacOSXCommandLine(commandLine uintptr) {
-	imports.Proc(def.SetMacOSXCommandLine).Call(commandLine)
+func SetCommandLine(argsList *lcl.TStringList) {
+	imports.Proc(def.SetCommandLine).Call(argsList.Instance())
 }

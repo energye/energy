@@ -237,7 +237,7 @@ const (
 	CEFCallback_Cancel
 	// process
 	CEF_AddCrDelegate
-	SetMacOSXCommandLine
+	SetCommandLine
 	CEFStartMainProcess
 	CEFStartSubProcess
 	AddCustomCommandLine

@@ -23,6 +23,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/pkgs/macapp"
+	"os"
 	"runtime"
 )
 
@@ -78,7 +79,15 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	// go lcl
 	inits.Init(libs, resources)
 	// macos command line
-	setMacOSXCommandLine(api.PascalStr(Args.CommandLine()))
+	if IsDarwin() {
+		argsList := lcl.NewStringList()
+		for _, v := range os.Args {
+			argsList.Add(v)
+		}
+		// 手动设置进程命令参数
+		SetCommandLine(argsList)
+		argsList.Free()
+	}
 	// main thread run call
 	applicationQueueAsyncCallInit()
 	//应用低层出错异常捕获

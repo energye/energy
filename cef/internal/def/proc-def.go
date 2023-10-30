@@ -237,7 +237,7 @@ func init() {
 		dllimports.NewEnergyImport("cefCallback_Cancel", 0),
 		//process
 		dllimports.NewEnergyImport("CEF_AddCrDelegate", 0),
-		dllimports.NewEnergyImport("SetMacOSXCommandLine", 0),
+		dllimports.NewEnergyImport("SetCommandLine", 0),
 		dllimports.NewEnergyImport("CEFStartMainProcess", 0),
 		dllimports.NewEnergyImport("CEFStartSubProcess", 0),
 		dllimports.NewEnergyImport("AddCustomCommandLine", 0),
