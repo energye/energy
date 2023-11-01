@@ -227,6 +227,10 @@ const (
 	// TCefBaseRefCounted
 	CefBaseRefCounted_Wrap
 	CefBaseRefCounted_Free
+	CefBaseRefCounted_SameAs
+	CefBaseRefCounted_HasOneRef
+	CefBaseRefCounted_HasAtLeastOneRef
+	CefBaseRefCounted_DestroyOtherRefs
 	// ApplicationQueueAsyncCallFunc
 	SetApplicationQueueAsyncCallFunc
 	CEFApplication_QueueAsyncCall

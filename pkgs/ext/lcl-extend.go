@@ -44,6 +44,7 @@ func init() {
 		dllimports.NewEnergyImport("Ext_ReadStringProperty", 0),
 		dllimports.NewEnergyImport("Ext_Form_Activate", 0),
 		dllimports.NewEnergyImport("Ext_Form_Deactivate", 0),
+		dllimports.NewEnergyImport("Ext_Assigned", 0),
 	}
 	imports.SetLClExtImportDefs(lclExtImportDefs)
 }
@@ -54,6 +55,7 @@ const (
 	Ext_ReadStringProperty
 	Ext_Form_Activate
 	Ext_Form_Deactivate
+	Ext_Assigned
 )
 
 func PanelBevelColor(panel *lcl.TPanel) types.TColor {
@@ -94,4 +96,9 @@ func ReadObjectStringProperty(sender lcl.IObject) map[string]ObjectProperty {
 		}
 	}
 	return result
+}
+
+func Assigned(ptr uintptr) bool {
+	r1, _, _ := imports.ExtProc(Ext_Assigned).Call(ptr)
+	return api.GoBool(r1)
 }

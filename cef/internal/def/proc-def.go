@@ -227,6 +227,10 @@ func init() {
 		//TCEFBaseRefCountedRef
 		dllimports.NewEnergyImport("CefBaseRefCounted_Wrap", 0),
 		dllimports.NewEnergyImport("CefBaseRefCounted_Free", 0),
+		dllimports.NewEnergyImport("CefBaseRefCounted_SameAs", 0),
+		dllimports.NewEnergyImport("CefBaseRefCounted_HasOneRef", 0),
+		dllimports.NewEnergyImport("CefBaseRefCounted_HasAtLeastOneRef", 0),
+		dllimports.NewEnergyImport("CefBaseRefCounted_DestroyOtherRefs", 0),
 		//ApplicationQueueAsyncCallFunc
 		dllimports.NewEnergyImport("SetApplicationQueueAsyncCallFunc", 0),
 		dllimports.NewEnergyImport("CEFApplication_QueueAsyncCall", 0),
