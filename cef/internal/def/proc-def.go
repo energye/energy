@@ -23,6 +23,8 @@ func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
 		//null nil
 		dllimports.NewEnergyImport("", 0),
+		// Exception
+		dllimports.NewEnergyImport("SetExceptionHandlerCallback", 0),
 		// TForm
 		dllimports.NewEnergyImport("Form_SetOnMessagesEvent", 0),
 		//CEF

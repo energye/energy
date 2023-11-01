@@ -23,6 +23,8 @@ package def
 const (
 	//null nil
 	null_nil = iota
+	// Exception
+	SetExceptionHandlerCallback
 	// TForm
 	Form_SetOnMessagesEvent
 	// CEF

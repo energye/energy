@@ -17,7 +17,6 @@ import (
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports/tempdll"
-	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -26,16 +25,6 @@ import (
 	"os"
 	"runtime"
 )
-
-// ExceptionCallback 异常回调函数
-type ExceptionCallback func(sender lcl.IObject, e *lcl.Exception)
-
-var exceptionCallback ExceptionCallback
-
-// SetOnException 设置 lib-lcl -> CEF 低层异常捕获回调函数
-func SetOnException(exception ExceptionCallback) {
-	exceptionCallback = exception
-}
 
 // GlobalInit 全局初始化
 //  需要手动调用的函数,在main函数中调用
@@ -90,14 +79,6 @@ func GlobalInit(libs *embed.FS, resources *embed.FS) {
 	}
 	// main thread run call
 	applicationQueueAsyncCallInit()
-	//应用低层出错异常捕获
-	lcl.Application.SetOnException(func(sender lcl.IObject, e *lcl.Exception) {
-		if exceptionCallback != nil {
-			exceptionCallback(sender, e)
-		} else {
-			logger.Error("ResultString:", e.Message())
-		}
-	})
 }
 
 // v8init v8初始化
