@@ -11,7 +11,7 @@
 // Package version Energy framework version config
 package version
 
-import "github.com/energye/liblclbinres"
+import "github.com/energye/liblclbinres/v2"
 
 // LibVersion return lib-lcl version
 func LibVersion() string {

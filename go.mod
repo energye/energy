@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/energye/golcl v1.0.7
-	github.com/energye/liblclbinres v1.0.4
+	github.com/energye/liblclbinres/v2 v2.3.1
 )
 
 require (

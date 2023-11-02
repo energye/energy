@@ -20,7 +20,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/pkgs/libname"
-	"github.com/energye/liblclbinres"
+	"github.com/energye/liblclbinres/v2"
 	"hash/crc32"
 	"io"
 	"io/ioutil"
