@@ -178,7 +178,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 			sourceSelect = tools.ToInt(c.Install.Download)
 		}
 		if len(s) > sourceSelect {
-			return strings.ReplaceAll(url, "{source}", s[sourceSelect])
+			return strings.ReplaceAll(url, "{source}", strings.TrimSpace(s[sourceSelect]))
 		}
 		return url
 	}
@@ -201,7 +201,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	if liblclModule != nil {
 		libEnergyOS, isSupport := liblclOS(c, cef, liblclVersion, tools.ToString(liblclModule["buildSupportOSArch"]))
 		downloadEnergyURL := tools.ToString(liblclModule["downloadUrl"])
-		downloadEnergyURL = replaceSource(downloadEnergyURL, tools.ToString(liblclModule["downloadSource"]), tools.ToInt(liblclModule["downloadSourceSelect"]), "liblcl")
+		downloadEnergyURL = replaceSource(downloadEnergyURL, tools.ToString(liblclModule["downloadSource"]), tools.ToInt(liblclModule["defaultSourceSelect"]), "liblcl")
 		module := tools.ToString(liblclModule["module"])
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", liblclVersion)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", module)

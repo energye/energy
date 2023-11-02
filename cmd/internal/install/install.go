@@ -289,7 +289,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 			// 检查环境变量是否配置
 			return "All", tools.CheckCEFDir()
 		}
-		// 非当月系统架构时检查一下目标安装路径是否已经存在
+		// 非当前系统架构时检查一下目标安装路径是否已经存在
 		var lib = func() string {
 			if c.Install.OS.IsWindows() {
 				return "libcef.dll"

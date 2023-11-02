@@ -20,8 +20,8 @@ var CmdInstall = &command.Command{
 	Short:     "Automatic installation and configuration of the energy framework complete development environment",
 	Long: `
 	-p Installation directory Default current directory
-	-v Specifying a version number,Default latest.\
-	-n Name of the framework directory after installation, Default EnergyFramework.\
+	-v Specifying a version number,Default latest
+	-n Name of the framework directory after installation, Default EnergyFramework
 	-d Download Source, 0:gitee or 1:github, Default empty
 	-os Specify install OS: [windows, linux, darwin], default current system: os
 	-arch Specify install ARCH: [386, amd64, arm64], Default current system: architecture

@@ -167,21 +167,9 @@ func Compare(compare1, compare2 string) bool {
 	}
 	compare1 = strings.Split(compare1, "-")[0]
 	compare2 = strings.Split(compare2, "-")[0]
-	cv := strings.Split(compare1, ".")
-	ev := strings.Split(compare2, ".")
-	c0, _ := strconv.Atoi(cv[0])
-	c1, _ := strconv.Atoi(cv[1])
-	c2, _ := strconv.Atoi(cv[2])
-	e0, _ := strconv.Atoi(ev[0])
-	e1, _ := strconv.Atoi(ev[1])
-	e2, _ := strconv.Atoi(ev[2])
-	if e0 < c0 {
-		return true
-	}
-	if e1 < c1 {
-		return true
-	}
-	if e2 < c2 {
+	cv, _ := strconv.Atoi(strings.ReplaceAll(compare1, ".", ""))
+	ev, _ := strconv.Atoi(strings.ReplaceAll(compare2, ".", ""))
+	if ev < cv {
 		return true
 	}
 	return false
