@@ -26,10 +26,9 @@ var CmdInit = &command.Command{
 	UsageLine: "init -n [name]",
 	Short:     "Initialized energy project",
 	Long: `
-	-n Initialized project name
-	.  Execute default command
-
 	Initialize energy golang project
+	-n Initialized project name
+	.  Execute command
 `,
 }
 

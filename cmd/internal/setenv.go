@@ -22,7 +22,7 @@ var CmdSetenv = &command.Command{
 	Short:     "Set energy framework development environment",
 	Long: `
 	-p Set the Framework pointed to by the ENERGY_HOME development environment variable
-	.  Execute default command
+	.  Execute command
 `,
 }
 

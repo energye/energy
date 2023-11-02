@@ -27,7 +27,7 @@ var CmdVersion = &command.Command{
 	Short:     "Get version list",
 	Long: `
 	-a show all details
-	.  Execute default command
+	.  Execute command
 `,
 }
 

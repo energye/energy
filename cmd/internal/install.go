@@ -30,7 +30,7 @@ var CmdInstall = &command.Command{
 		109 : CEF 109.1.18 is the last one to support Windows 7, windows version < 10
 		106 : CEF 106.1.1 is the last default support for GTK2 in Linux.
 		87  : CEF 87.1.14 is the last one to support Flash.
-	.  Execute default command
+	.  Execute command
 
 Auto installation and configuration of the energy framework complete development environment.
 Installation package is downloaded over the network during the installation process.

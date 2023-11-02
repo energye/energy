@@ -18,11 +18,25 @@ import (
 )
 
 var CmdBuild = &command.Command{
-	UsageLine: "build",
+	UsageLine: "build -p [path] -u [upx] --UpxFlag --gtk -d [dll]",
 	Short:     "build energy project",
 	Long: `
 	Building energy project
-	.  Execute default command
+	-p Project path, default current path. Can be configured in energy.json
+	-u Set this parameter and install upx. Use upx to compress the execution file.
+	  --upxFlag: Upx command line parameters 
+	--gtk Compile on Linux, enable TempDll. gtk2 or gtk3
+	-d Enable built-in liblcl build, 
+	  windows: 
+	    if < windows10 use cef_109: -tags="tempdll && win7"
+	    else >= windows10 use latest: -tags="tempdll"
+	  linux: gtk2 or gtk3: 
+	    gtk2 use cef_106: -tags="tempdll && gtk2" 
+	    gtk3 use latest: -tags="tempdll && gtk3" 
+	  macos:
+	    use latest: -tags="tempdll"
+	
+	.  Execute command
 `,
 }
 
