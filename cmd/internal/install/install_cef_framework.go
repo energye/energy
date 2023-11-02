@@ -300,13 +300,11 @@ func cefOS(c *command.Config, module map[string]any) (string, bool) {
 			return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
 		}
 	} else if c.Install.OS.IsDarwin() { // macosx for 64 bit
-		//if runtime.GOARCH == "arm64" {
-		//	return "macosarm64", isSupport(MacOSARM64)
-		//} else if runtime.GOARCH == "amd64" {
-		//	return "macosx64", isSupport(MacOSX64)
-		//}
-		// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
-		return "macosx64", isSupport(consts.MacOSX64)
+		if c.Install.Arch.IsARM64() {
+			return "macosarm64", isSupport(consts.MacOSARM64)
+		} else if c.Install.Arch.IsAMD64() {
+			return "macosx64", isSupport(consts.MacOSX64)
+		}
 	}
 	//not support
 	return fmt.Sprintf("%v %v", c.Install.OS, c.Install.Arch), false
@@ -336,18 +334,13 @@ func liblclName(c *command.Config, version, cef string) (string, bool) {
 		if c.Install.OS.IsLinux() && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linuxarm64gtk2"
 		} else {
-			if c.Install.OS.IsDarwin() {
-				// Mac amd64 m1 m2 架构目前使用amd64, m1,m2使用Rosetta2兼容
-				key = fmt.Sprintf("%samd64", c.Install.OS)
-			} else {
-				key = fmt.Sprintf("%sarm64", c.Install.OS)
-			}
+			key = fmt.Sprintf("%sarm64", c.Install.OS) // linux arm64, macos arm64
 		}
 	} else {
 		if c.Install.OS.IsLinux() && cef == consts.Cef106 { // 只linux区别liblcl gtk2
 			key = "linuxamd64gtk2"
 		} else {
-			key = fmt.Sprintf("%s%s", c.Install.OS, c.Install.Arch)
+			key = fmt.Sprintf("%s%s", c.Install.OS, c.Install.Arch) // windows 386 amd64, linux amd64, macos amd64
 		}
 	}
 	if tools.Compare("2.2.4", version) {
