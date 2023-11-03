@@ -23,6 +23,7 @@ const (
 	DownloadExtractURL = domain + "/api/cmd/extract"
 	CheckUpgradeURL    = domain + "/api/cmd/upgrade"
 	CheckCreateURL     = domain + "/api/cmd/create"
+	LatestVersionURL   = domain + "/api/upgrade/latest/version"
 )
 
 const (

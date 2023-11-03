@@ -11,6 +11,8 @@
 package initialize
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
@@ -137,12 +139,30 @@ func generaProject(c *command.Config) error {
 	if err := createFile(fmt.Sprintf("assets/initialize/main.go.%s", c.Init.ResLoad), "main.go", nil, 0666); err != nil {
 		return err
 	}
-
+	term.Logger.Info("Get latest release number")
+	latest := "latest" // 默认
+	latestVersionJSON, err := tools.HttpRequestGET(consts.LatestVersionURL)
+	if err == nil {
+		var latestVersionData map[string]any
+		latestVersionJSON = bytes.TrimPrefix(latestVersionJSON, []byte("\xef\xbb\xbf"))
+		if err := json.Unmarshal(latestVersionJSON, &latestVersionData); err != nil {
+			term.Logger.Error(err.Error())
+		} else {
+			success := latestVersionData["success"] == true
+			if success {
+				data := latestVersionData["data"].(map[string]any)
+				latest = fmt.Sprintf("v%v.%v.%v", data["major"], data["minor"], data["revision"])
+			}
+		}
+	} else {
+		term.Logger.Error(err.Error())
+	}
+	term.Logger.Info("ENERGY latest release number: " + latest)
 	// 创建 go.mod
 	data = make(map[string]any)
 	data["Name"] = c.Init.Name
 	data["GoVersion"] = "1.18"
-	data["EnergyVersion"] = "latest"
+	data["EnergyVersion"] = latest
 	if err := createFile("assets/initialize/go.mod.t", "go.mod", data, 0666); err != nil {
 		return err
 	}
