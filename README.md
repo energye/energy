@@ -62,16 +62,6 @@ Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embed
 - Automatic installation development environment
 
 > Using the energy command-line tool [Download address](https://energy.yanghy.cn/course/100/1694511322285207)
->
-> During the installation process, you can optionally install the following frameworks and tools, or you can download the resources yourself.
-
-| Name        | Platform       | illustrate                                   |
-|-------------|----------------|----------------------------------------------|
-| Golang      | ALL            | Golang Development Environment               |
-| CEF, liblcl | ALL            | CEF Framework                                |
-| NSIS        | Windows        | Windows Installation package production tool |
-| UPX         | All            | Execute file compression tool                |
-| 7z          | Windows, Linux | CEF Framework compression tool               |
 
 ### Guide to Start - [Link](https://energy.yanghy.cn)
 
@@ -130,10 +120,10 @@ func main() {
 |             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
 |-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
 | Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
-| MacOSX      | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOSX 10.15                       |
+| MacOSX      | ![MacOSX](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                        | ![MacOSX](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                   | MacOSX 10.15                       |
 | MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2, Rosetta2 AMD             |
 | Linux       | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
-| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | Kylin-V10-SP1-2107                 |
+| Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/supported-success.svg?logo=Linux)                | Kylin-V10-SP1-2107                 |
 
 ### Related Projects
 * [CEF](https://github.com/chromiumembedded/cef)
