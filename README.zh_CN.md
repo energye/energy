@@ -165,11 +165,11 @@ func main() {
 <img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
 <img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
 
-##### Linux - 国产 Deepin
+##### Linux - Deepin
 <img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">
 <img src="https://assets.yanghy.cn/frameless-deepin-hide-20.8.png">
 
-##### Linux - 国产 Kylin ARM
+##### Linux - Kylin ARM
 <img src="https://assets.yanghy.cn/frameless-kylin-arm-V10-SP1.png">
 <img src="https://assets.yanghy.cn/frameless-kylin-arm-hide-V10-SP1.png">
 
