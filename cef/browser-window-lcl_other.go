@@ -61,7 +61,27 @@ func (m *LCLBrowserWindow) FramelessForLine() {
 	//TODO no impl
 }
 
-// for other platform maximize and restore
+// Restore 非Windows平台，窗口还原
+func (m *LCLBrowserWindow) Restore() {
+	if m.TForm == nil {
+		return
+	}
+	m.RunOnMainThread(func() {
+		m.SetWindowState(types.WsNormal)
+	})
+}
+
+// Minimize 非Windows平台，窗口最小化
+func (m *LCLBrowserWindow) Minimize() {
+	if m.TForm == nil {
+		return
+	}
+	m.RunOnMainThread(func() {
+		m.SetWindowState(types.WsMinimized)
+	})
+}
+
+// Maximize 非Windows平台，窗口最大化/还原
 func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return

@@ -606,23 +606,6 @@ func (m *LCLBrowserWindow) SetOnActivateAfter(fn lcl.TNotifyEvent) {
 	m.onActivateAfter = fn
 }
 
-// Minimize
-func (m *LCLBrowserWindow) Minimize() {
-	if m.TForm == nil {
-		return
-	}
-	m.RunOnMainThread(func() {
-		m.SetWindowState(types.WsMinimized)
-	})
-}
-
-// Restore
-func (m *LCLBrowserWindow) Restore() {
-	m.RunOnMainThread(func() {
-		m.SetWindowState(types.WsNormal)
-	})
-}
-
 // DisableTransparent 禁用口透明
 func (m *LCLBrowserWindow) DisableTransparent() {
 	if m.TForm == nil {
