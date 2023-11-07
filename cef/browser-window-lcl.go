@@ -23,7 +23,7 @@ import (
 	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
-	t "github.com/energye/energy/v2/types"
+	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
@@ -54,6 +54,7 @@ type LCLBrowserWindow struct {
 	onClose                   TCloseEvent          //扩展事件
 	onCloseQuery              TCloseQueryEvent     //扩展事件
 	onActivateAfter           lcl.TNotifyEvent     //扩展事件
+	onWndProc                 []lcl.TWndProcEvent  //扩展事件
 	auxTools                  IAuxTools            //辅助工具
 	tray                      ITray                //托盘
 	hWnd                      types.HWND           //
@@ -64,6 +65,14 @@ type LCLBrowserWindow struct {
 	wmSizeMessage             wmSize               //
 	wmWindowPosChangedMessage wmWindowPosChanged   //
 	screen                    IScreen              //屏幕
+}
+
+type WindowBroderForm struct {
+	*lcl.TForm
+	borderColors []types.TColor
+	rgn          int
+	alpha        uint8
+	borderWidth  int32
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
@@ -163,6 +172,19 @@ func (m *LCLBrowserWindow) setProperty() {
 	}
 	// 当前窗口状态
 	m.setCurrentProperty()
+}
+
+// SetOnWndProc
+func (m *LCLBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
+	if m.onWndProc == nil {
+		m.TForm.SetOnWndProc(func(msg *types.TMessage) {
+			m.InheritedWndProc(msg)
+			for _, _fn := range m.onWndProc {
+				_fn(msg)
+			}
+		})
+	}
+	m.onWndProc = append(m.onWndProc, fn)
 }
 
 // FullScreen 窗口全屏
@@ -1127,13 +1149,13 @@ const (
 	mtPaint
 )
 
-type wmPaint func(message *t.TPaint)
-type wmMove func(message *t.TMove)
-type wmSize func(message *t.TSize)
-type wmWindowPosChanged func(message *t.TWindowPosChanged)
+type wmPaint func(message *et.TPaint)
+type wmMove func(message *et.TMove)
+type wmSize func(message *et.TSize)
+type wmWindowPosChanged func(message *et.TWindowPosChanged)
 
 func (m *LCLBrowserWindow) onFormMessages() {
-	m.setOnWMPaint(func(message *t.TPaint) {
+	m.setOnWMPaint(func(message *et.TPaint) {
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
 		}
@@ -1141,7 +1163,7 @@ func (m *LCLBrowserWindow) onFormMessages() {
 			m.wmPaintMessage(message)
 		}
 	})
-	m.setOnWMMove(func(message *t.TMove) {
+	m.setOnWMMove(func(message *et.TMove) {
 		m.setCurrentProperty()
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
@@ -1150,7 +1172,7 @@ func (m *LCLBrowserWindow) onFormMessages() {
 			m.wmMoveMessage(message)
 		}
 	})
-	m.setOnWMSize(func(message *t.TSize) {
+	m.setOnWMSize(func(message *et.TSize) {
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
 		}
@@ -1158,7 +1180,7 @@ func (m *LCLBrowserWindow) onFormMessages() {
 			m.wmSizeMessage(message)
 		}
 	})
-	m.setOnWMWindowPosChanged(func(message *t.TWindowPosChanged) {
+	m.setOnWMWindowPosChanged(func(message *et.TWindowPosChanged) {
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
 		}
@@ -1207,13 +1229,13 @@ func init() {
 		}
 		switch fn.(type) {
 		case wmPaint:
-			fn.(wmPaint)((*t.TPaint)(getPtr(0)))
+			fn.(wmPaint)((*et.TPaint)(getPtr(0)))
 		case wmMove:
-			fn.(wmMove)((*t.TMove)(getPtr(0)))
+			fn.(wmMove)((*et.TMove)(getPtr(0)))
 		case wmSize:
-			fn.(wmSize)((*t.TSize)(getPtr(0)))
+			fn.(wmSize)((*et.TSize)(getPtr(0)))
 		case wmWindowPosChanged:
-			fn.(wmWindowPosChanged)((*t.TWindowPosChanged)(getPtr(0)))
+			fn.(wmWindowPosChanged)((*et.TWindowPosChanged)(getPtr(0)))
 		default:
 			return false
 		}

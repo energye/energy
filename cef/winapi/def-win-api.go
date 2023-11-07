@@ -558,8 +558,8 @@ func WinCreatePenIndirect(LogPen types.TagLogPen) types.HPEN {
 	return types.HPEN(r1)
 }
 
-func WinCreatePolygonRgn(Points types.Point, NumPts types.Integer, FillMode types.Integer) *types.HRGN {
-	r1, _, _ := imports.Proc(def.CEF_Win_CreatePolygonRgn).Call(uintptr(unsafe.Pointer(&Points)), uintptr(NumPts), uintptr(FillMode))
+func WinCreatePolygonRgn(points []types.Point, NumPts types.Integer, FillMode types.Integer) *types.HRGN {
+	r1, _, _ := imports.Proc(def.CEF_Win_CreatePolygonRgn).Call(uintptr(unsafe.Pointer(&points[0])), uintptr(NumPts), uintptr(FillMode))
 	return types.NewHRGN(r1)
 }
 

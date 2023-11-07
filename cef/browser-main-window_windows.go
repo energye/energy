@@ -22,18 +22,10 @@ import (
 )
 
 func (m *lclBrowserWindow) mainFormNotInTaskBar() {
-	m.TForm.SetOnWndProc(func(msg *types.TMessage) {
-		m.InheritedWndProc(msg)
-		if m.onMainFormWndProc != nil {
-			m.onMainFormWndProc(msg)
-		}
+	m.SetOnWndProc(func(msg *types.TMessage) {
 		if !m.WindowProperty().MainFormOnTaskBar && msg.Msg == messages.WM_SHOWWINDOW {
 			m.Hide()
 			winapi.WinSetWindowLong(t.HWND(lcl.Application.Handle()), win.GWL_EXSTYLE, win.WS_EX_TOOLWINDOW)
 		}
 	})
-}
-
-func (m *lclBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
-	m.onMainFormWndProc = fn
 }

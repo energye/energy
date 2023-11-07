@@ -21,7 +21,37 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
+	"syscall"
 )
+
+var (
+	user32dll            = syscall.NewLazyDLL("user32.dll")
+	gdi32dll             = syscall.NewLazyDLL("gdi32.dll")
+	_BeginDeferWindowPos = user32dll.NewProc("BeginDeferWindowPos")
+	_DeferWindowPos      = user32dll.NewProc("DeferWindowPos")
+	_EndDeferWindowPos   = user32dll.NewProc("EndDeferWindowPos")
+	_FrameRgn            = gdi32dll.NewProc("FrameRgn")
+)
+
+func FrameRgn(hdc types.HDC, hrgn *types.HRGN, hbr types.HBRUSH, w, h int) bool {
+	r1, _, _ := _FrameRgn.Call(hdc.ToPtr(), hrgn.Instance(), hbr.ToPtr(), uintptr(w), uintptr(h))
+	return r1 > 0
+}
+
+func BeginDeferWindowPos(nNumWindows int) types.HDWP {
+	r1, _, _ := _BeginDeferWindowPos.Call(uintptr(nNumWindows))
+	return types.HDWP(r1)
+}
+
+func DeferWindowPos(hWinPosInfo types.HDWP, hWnd types.HWND, hWndInsertAfter types.HWND, x, y, cx, cy int, uFlags uint) types.HDWP {
+	r1, _, _ := _DeferWindowPos.Call(uintptr(hWinPosInfo), hWnd.ToPtr(), hWndInsertAfter.ToPtr(), uintptr(x), uintptr(y), uintptr(cx), uintptr(cy), uintptr(uFlags))
+	return types.HDWP(r1)
+}
+
+func EndDeferWindowPos(hWinPosInfo types.HDWP) bool {
+	r1, _, _ := _EndDeferWindowPos.Call(uintptr(hWinPosInfo))
+	return r1 > 0
+}
 
 func WinGetWindowLongPtr(hWnd types.HWND, nIndex types.LongInt) types.LongPtr {
 	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowLongPtr).Call(uintptr(hWnd), uintptr(nIndex))

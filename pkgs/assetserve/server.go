@@ -140,7 +140,7 @@ func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) {
 			println("tls server listen end", err.Error())
 		}
 	}()
-	go m.graceShutdown(server)
+	//go m.graceShutdown(server)
 }
 
 func (m *assetsHttpServer) serve(addr string, handler http.Handler) {
@@ -150,7 +150,7 @@ func (m *assetsHttpServer) serve(addr string, handler http.Handler) {
 			println("server listen end", err.Error())
 		}
 	}()
-	go m.graceShutdown(server)
+	//go m.graceShutdown(server)
 }
 
 func (m *assetsHttpServer) graceShutdown(server *http.Server) {
@@ -163,7 +163,7 @@ func (m *assetsHttpServer) graceShutdown(server *http.Server) {
 	if err := server.Shutdown(ctx); err != nil {
 		println("http server grace shutdown failed error:", err)
 	}
-	os.Exit(1)
+	//os.Exit(1)
 }
 
 // StartHttpServer 启动内置Http Server

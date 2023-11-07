@@ -55,7 +55,6 @@ type BrowserEvent struct {
 
 // LCLBrowserWindow
 type lclBrowserWindow struct {
-	onMainFormWndProc lcl.TWndProcEvent
 	LCLBrowserWindow
 }
 

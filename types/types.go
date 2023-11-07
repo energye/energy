@@ -31,6 +31,7 @@ type String string
 type Boolean bool
 type Float32 float32
 type Float64 float64
+type HDWP uintptr
 type Single = Float32
 type PChar = String
 type Char = byte
