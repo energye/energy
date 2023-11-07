@@ -63,8 +63,8 @@ func (m *LCLBrowserWindow) HideTitle() {
 
 // RoundRectRgn 窗口无边框时圆角
 func (m *LCLBrowserWindow) RoundRectRgn() {
-	hnd := winapi.WinCreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()), 10, 10)
-	winapi.WinSetWindowRgn(et.HWND(m.Handle()), hnd, true)
+	hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()), 10, 10)
+	winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
 }
 
 // FramelessForDefault 窗口四边框系统默认样式
@@ -75,8 +75,8 @@ func (m *LCLBrowserWindow) FramelessForDefault() {
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 
 	// SetClassLong(this.Handle, GCL_STYLE, GetClassLong(this.Handle, GCL_STYLE) | CS_DropSHADOW);
-	//gclStyle := winapi.WinGetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE)
-	//winapi.WinSetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE, gclStyle|messages.CS_DROPSHADOW)
+	//gclStyle := winapi.GetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE)
+	//winapi.SetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE, gclStyle|messages.CS_DROPSHADOW)
 }
 
 // FramelessForLine 窗口四边框是一条细线
@@ -111,8 +111,8 @@ func (m *LCLBrowserWindow) SetFocus() {
 // freeRgn
 func (m *customWindowCaption) freeRgn() {
 	if m.rgn != nil {
-		winapi.WinSetRectRgn(m.rgn, 0, 0, 0, 0)
-		winapi.WinDeleteObject(m.rgn)
+		winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
+		winapi.DeleteObject(m.rgn)
 		m.rgn.Free()
 	}
 }
@@ -149,19 +149,19 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 		case messages.HTBOTTOMRIGHT, messages.HTTOPLEFT: //右下 左上
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENWSE))
+			winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENWSE))
 		case messages.HTRIGHT, messages.HTLEFT: //右 左
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZEWE))
+			winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZEWE))
 		case messages.HTTOPRIGHT, messages.HTBOTTOMLEFT: //右上 左下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENESW))
+			winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENESW))
 		case messages.HTTOP, messages.HTBOTTOM: //上 下
 			*lResult = types.LRESULT(m.borderHT)
 			*aHandled = true
-			winapi.WinSetCursor(winapi.WinLoadCursor(0, messages.IDC_SIZENS))
+			winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENS))
 		}
 	}
 }
@@ -244,11 +244,11 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 		X: dx,
 		Y: dy,
 	}
-	winapi.WinScreenToClient(hWND, p)
+	winapi.ScreenToClient(hWND, p)
 	p.X -= m.bw.WindowParent().Left()
 	p.Y -= m.bw.WindowParent().Top()
 	if m.bw.WindowProperty().EnableWebkitAppRegion && m.rgn != nil {
-		m.canCaption = winapi.WinPtInRegion(m.rgn, p.X, p.Y)
+		m.canCaption = winapi.PtInRegion(m.rgn, p.X, p.Y)
 	} else {
 		m.canCaption = false
 	}
@@ -314,20 +314,20 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 	m.RunOnMainThread(func() {
 		if m.cwcap.rgn == nil {
 			//第一次时创建RGN
-			m.cwcap.rgn = winapi.WinCreateRectRgn(0, 0, 0, 0)
+			m.cwcap.rgn = winapi.CreateRectRgn(0, 0, 0, 0)
 		} else {
 			//每次重置RGN
-			winapi.WinSetRectRgn(m.cwcap.rgn, 0, 0, 0, 0)
+			winapi.SetRectRgn(m.cwcap.rgn, 0, 0, 0, 0)
 		}
 		for i := 0; i < m.cwcap.regions.RegionsCount(); i++ {
 			region := m.cwcap.regions.Region(i)
-			creRGN := winapi.WinCreateRectRgn(region.Bounds.X, region.Bounds.Y, region.Bounds.X+region.Bounds.Width, region.Bounds.Y+region.Bounds.Height)
+			creRGN := winapi.CreateRectRgn(region.Bounds.X, region.Bounds.Y, region.Bounds.X+region.Bounds.Width, region.Bounds.Y+region.Bounds.Height)
 			if region.Draggable {
-				winapi.WinCombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_OR)
+				winapi.CombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_OR)
 			} else {
-				winapi.WinCombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_DIFF)
+				winapi.CombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_DIFF)
 			}
-			winapi.WinDeleteObject(creRGN)
+			winapi.DeleteObject(creRGN)
 		}
 	})
 }
@@ -439,9 +439,9 @@ func (m *LCLBrowserWindow) doDrag() {
 
 //framelessWindowBroderTransparent 无边框窗口自定义窗口透明
 func (m *WindowBroderForm) framelessWindowBroderTransparent(hWnd et.HWND) {
-	exStyle := winapi.WinGetWindowLong(hWnd, win.GWL_EXSTYLE)
+	exStyle := winapi.GetWindowLong(hWnd, win.GWL_EXSTYLE)
 	exStyle = exStyle | win.WS_EX_LAYERED
-	winapi.WinSetWindowLong(hWnd, win.GWL_EXSTYLE, exStyle)
+	winapi.SetWindowLong(hWnd, win.GWL_EXSTYLE, exStyle)
 	win.SetLayeredWindowAttributes(hWnd.ToPtr(), colors.ClWhite, m.alpha, win.LWA_ALPHA|win.LWA_COLORKEY)
 }
 
@@ -480,9 +480,9 @@ func (m *WindowBroderForm) Paint() {
 }
 
 func (m *WindowBroderForm) RoundRectRgn() {
-	hnd := winapi.WinCreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()),
+	hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()),
 		et.LongInt(m.rgn), et.LongInt(m.rgn))
-	winapi.WinSetWindowRgn(et.HWND(m.Handle()), hnd, true)
+	winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
 }
 
 func NewWindowBorder(window *LCLBrowserWindow) (m *WindowBroderForm) {

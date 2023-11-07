@@ -25,7 +25,7 @@ func (m *lclBrowserWindow) mainFormNotInTaskBar() {
 	m.SetOnWndProc(func(msg *types.TMessage) {
 		if !m.WindowProperty().MainFormOnTaskBar && msg.Msg == messages.WM_SHOWWINDOW {
 			m.Hide()
-			winapi.WinSetWindowLong(t.HWND(lcl.Application.Handle()), win.GWL_EXSTYLE, win.WS_EX_TOOLWINDOW)
+			winapi.SetWindowLong(t.HWND(lcl.Application.Handle()), win.GWL_EXSTYLE, win.WS_EX_TOOLWINDOW)
 		}
 	})
 }

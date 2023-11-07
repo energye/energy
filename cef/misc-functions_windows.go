@@ -22,11 +22,11 @@ import (
 )
 
 func CefIsKeyDown(wparam types.WPARAM) bool {
-	return winapi.WinGetKeyState(types.Int32(wparam)) < 0
+	return winapi.GetKeyState(types.Int32(wparam)) < 0
 }
 
 func CefIsKeyToggled(wparam types.WPARAM) bool {
-	return (int16(winapi.WinGetKeyState(types.Int32(wparam))) & 0x1) != 0
+	return (int16(winapi.GetKeyState(types.Int32(wparam))) & 0x1) != 0
 }
 
 func GetCefMouseModifiersByWPARAM(wparam types.WPARAM) (result consts.TCefEventFlags) {
