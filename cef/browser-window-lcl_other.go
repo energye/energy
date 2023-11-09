@@ -15,7 +15,10 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/common"
+	et "github.com/energye/energy/v2/types"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
 
@@ -59,6 +62,20 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 // FramelessForLine 窗口四边框是一条细线
 func (m *LCLBrowserWindow) FramelessForLine() {
 	//TODO no impl
+}
+
+func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
+	if m.rgn == 0 && rgn > 0 {
+		m.rgn = rgn
+		m.SetOnPaint(func(sender lcl.IObject) {
+			hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()), et.LongInt(m.rgn), et.LongInt(m.rgn))
+			winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
+		})
+	}
+}
+
+func (m *LCLBrowserWindow) Frameless() {
+
 }
 
 // Restore 非Windows平台，窗口还原
