@@ -58,31 +58,43 @@ func (m *LCLBrowserWindow) ShowTitle() {
 // HideTitle 隐藏标题栏 无边框样式
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
-	m.SetBorderStyle(types.BsNone)
+	m.Frameless()
 }
 
-// RoundRectRgn 窗口无边框时圆角
-func (m *LCLBrowserWindow) RoundRectRgn() {
-	hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()), 10, 10)
-	winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
+// SetRoundRectRgn 窗口无边框时圆角设置
+func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
+	if m.rgn == 0 && rgn > 0 {
+		m.rgn = rgn
+		m.SetOnPaint(func(sender lcl.IObject) {
+			hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()), et.LongInt(m.rgn), et.LongInt(m.rgn))
+			winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
+		})
+	}
 }
 
 // FramelessForDefault 窗口四边框系统默认样式
-//  TODO 窗口顶部有条线
+//  TODO 窗口顶部有条线,
 func (m *LCLBrowserWindow) FramelessForDefault() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 
-	// SetClassLong(this.Handle, GCL_STYLE, GetClassLong(this.Handle, GCL_STYLE) | CS_DropSHADOW);
+	//winapi.SetClassLongPtr(this.Handle, GCL_STYLE, GetClassLong(this.Handle, GCL_STYLE)|CS_DropSHADOW)
 	//gclStyle := winapi.GetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE)
-	//winapi.SetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE, gclStyle|messages.CS_DROPSHADOW)
+	//winapi.WinSetClassLongPtr().SetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE, gclStyle|messages.CS_DROPSHADOW)
 }
 
 // FramelessForLine 窗口四边框是一条细线
 func (m *LCLBrowserWindow) FramelessForLine() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME|win.WS_BORDER))
+	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+}
+
+// Frameless 无边框
+func (m *LCLBrowserWindow) Frameless() {
+	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 

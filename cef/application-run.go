@@ -90,7 +90,7 @@ func Run(app *TCEFApplication) {
 				//lcl.RunApp(&BrowserWindow.mainBrowserWindow)
 
 				lcl.Application.Initialize()
-				//lcl.Application.SetMainFormOnTaskBar(true)
+				lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
 				lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow)
 				lcl.Application.Run()
 				//lclwidget.CustomWidgetSetFinalization()

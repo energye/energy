@@ -55,6 +55,7 @@ type LCLBrowserWindow struct {
 	onCloseQuery              TCloseQueryEvent     //扩展事件
 	onActivateAfter           lcl.TNotifyEvent     //扩展事件
 	onWndProc                 []lcl.TWndProcEvent  //扩展事件
+	onPaint                   []lcl.TNotifyEvent   //扩展事件
 	auxTools                  IAuxTools            //辅助工具
 	tray                      ITray                //托盘
 	hWnd                      types.HWND           //
@@ -65,6 +66,7 @@ type LCLBrowserWindow struct {
 	wmSizeMessage             wmSize               //
 	wmWindowPosChangedMessage wmWindowPosChanged   //
 	screen                    IScreen              //屏幕
+	rgn                       int                  //窗口四边圆角
 }
 
 type WindowBroderForm struct {
@@ -174,7 +176,19 @@ func (m *LCLBrowserWindow) setProperty() {
 	m.setCurrentProperty()
 }
 
-// SetOnWndProc
+// SetOnPaint 扩展事件，向下链试调用
+func (m *LCLBrowserWindow) SetOnPaint(fn lcl.TNotifyEvent) {
+	if m.onPaint == nil {
+		m.TForm.SetOnPaint(func(sender lcl.IObject) {
+			for _, _fn := range m.onPaint {
+				_fn(sender)
+			}
+		})
+	}
+	m.onPaint = append(m.onPaint, fn)
+}
+
+// SetOnWndProc  扩展事件，向下链试调用
 func (m *LCLBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
 	if m.onWndProc == nil {
 		m.TForm.SetOnWndProc(func(msg *types.TMessage) {
