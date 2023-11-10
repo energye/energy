@@ -17,7 +17,10 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
 	//创建应用
-	cefApp := cef.NewApplication()
+	app := cef.NewApplication()
+	// 强制使用VF窗口
+	//app.SetExternalMessagePump(false)
+	//app.SetMultiThreadedMessageLoop(false)
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -47,5 +50,5 @@ func main() {
 		fmt.Println("zoom-reset")
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }
