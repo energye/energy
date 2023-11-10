@@ -87,15 +87,6 @@ const (
 	FsBorder                            // fill this color (it fills only connected pixels of this color)
 )
 
-type MONITOR_DPI_TYPE = Int32
-
-const (
-	MDT_EFFECTIVE_DPI MONITOR_DPI_TYPE = 0
-	MDT_ANGULAR_DPI                    = 1
-	MDT_RAW_DPI                        = 2
-	MDT_DEFAULT                        = MDT_EFFECTIVE_DPI
-)
-
 type HRGN struct {
 	instance unsafe.Pointer
 }

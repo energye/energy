@@ -26,12 +26,24 @@ import (
 
 var (
 	user32dll            = syscall.NewLazyDLL("user32.dll")
-	gdi32dll             = syscall.NewLazyDLL("gdi32.dll")
 	_BeginDeferWindowPos = user32dll.NewProc("BeginDeferWindowPos")
 	_DeferWindowPos      = user32dll.NewProc("DeferWindowPos")
 	_EndDeferWindowPos   = user32dll.NewProc("EndDeferWindowPos")
-	_FrameRgn            = gdi32dll.NewProc("FrameRgn")
+	_GetDpiForWindow     = user32dll.NewProc("GetDpiForWindow")
 )
+var (
+	gdi32dll  = syscall.NewLazyDLL("gdi32.dll")
+	_FrameRgn = gdi32dll.NewProc("FrameRgn")
+)
+
+func GetDpiForWindow(hwnd types.HWND) (types.UINT, error) {
+	if err := _GetDpiForWindow.Find(); err == nil {
+		dpi, _, _ := _GetDpiForWindow.Call(uintptr(hwnd))
+		return types.UINT(dpi), nil
+	} else {
+		return 0, err
+	}
+}
 
 func FrameRgn(hdc types.HDC, hrgn *types.HRGN, hbr types.HBRUSH, w, h int) bool {
 	r1, _, _ := _FrameRgn.Call(hdc.ToPtr(), hrgn.Instance(), hbr.ToPtr(), uintptr(w), uintptr(h))

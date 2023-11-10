@@ -9,8 +9,6 @@
 //----------------------------------------
 
 // Package winapi energy - lcl window api
-// export in Lazarus winapih.inc
-// TODO : All functions of this API have not been fully tested yet
 package winapi
 
 import (
@@ -20,307 +18,6 @@ import (
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
-)
-
-const (
-	// Mouse message key states
-	MK_LBUTTON  = 1
-	MK_RBUTTON  = 2
-	MK_SHIFT    = 4
-	MK_CONTROL  = 8
-	MK_MBUTTON  = 0x10
-	MK_XBUTTON1 = 0x20
-	MK_XBUTTON2 = 0x40
-	// following are "virtual" key states
-	MK_DOUBLECLICK = 0x80
-	MK_TRIPLECLICK = 0x100
-	MK_QUADCLICK   = 0x200
-	MK_ALT         = 0x20000000
-)
-
-//------------
-// KeyFlags (High word part !!!)
-//------------
-const (
-	KF_EXTENDED = 0x100
-	KF_DLGMODE  = 0x800
-	KF_MENUMODE = 0x1000
-	KF_ALTDOWN  = 0x2000
-	KF_REPEAT   = 0x4000
-	KF_UP       = 0x8000
-)
-
-//-------------
-// Virtual keys
-//-------------
-//
-// Basic keys up to $FF have values and meaning compatible with the Windows API as described here:
-// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/WinUI/WindowsUserInterface/UserInput/VirtualKeyCodes.asp
-//
-// Starting with $100 and upwards the key constants are LCL additions
-//
-const (
-	VK_UNKNOWN  = 0 // defined by LCL
-	VK_LBUTTON  = 1
-	VK_RBUTTON  = 2
-	VK_CANCEL   = 3
-	VK_MBUTTON  = 4
-	VK_XBUTTON1 = 5
-	VK_XBUTTON2 = 6
-	VK_BACK     = 8 // The "Backspace" key, dont confuse with the
-	// Android BACK key which is mapped to VK_ESCAPE
-	VK_TAB        = 9
-	VK_CLEAR      = 12
-	VK_RETURN     = 13 // The "Enter" key, also used for a keypad center press
-	VK_SHIFT      = 16 // See also VK_LSHIFT, VK_RSHIFT
-	VK_CONTROL    = 17 // See also VK_LCONTROL, VK_RCONTROL
-	VK_MENU       = 18 // The ALT key. Also called "Option" in Mac OS X. See also VK_LMENU, VK_RMENU
-	VK_PAUSE      = 19 // Pause/Break key
-	VK_CAPITAL    = 20 // CapsLock key
-	VK_KANA       = 21
-	VK_HANGUL     = 21
-	VK_JUNJA      = 23
-	VK_FINAL      = 24
-	VK_HANJA      = 25
-	VK_KANJI      = 25
-	VK_ESCAPE     = 27 // Also used for the hardware Back key in Android
-	VK_CONVERT    = 28
-	VK_NONCONVERT = 29
-	VK_ACCEPT     = 30
-	VK_MODECHANGE = 31
-	VK_SPACE      = 32
-	VK_PRIOR      = 33 // Page Up
-	VK_NEXT       = 34 // Page Down
-	VK_END        = 35
-	VK_HOME       = 36
-	VK_LEFT       = 37
-	VK_UP         = 38
-	VK_RIGHT      = 39
-	VK_DOWN       = 40
-	VK_SELECT     = 41
-	VK_PRINT      = 42 // PrintScreen key
-	VK_EXECUTE    = 43
-	VK_SNAPSHOT   = 44
-	VK_INSERT     = 45
-	VK_DELETE     = 46
-	VK_HELP       = 47
-	VK_0          = 0x30
-	VK_1          = 0x31
-	VK_2          = 0x32
-	VK_3          = 0x33
-	VK_4          = 0x34
-	VK_5          = 0x35
-	VK_6          = 0x36
-	VK_7          = 0x37
-	VK_8          = 0x38
-	VK_9          = 0x39
-	//3A-40 Undefined
-	VK_A    = 0x41
-	VK_B    = 0x42
-	VK_C    = 0x43
-	VK_D    = 0x44
-	VK_E    = 0x45
-	VK_F    = 0x46
-	VK_G    = 0x47
-	VK_H    = 0x48
-	VK_I    = 0x49
-	VK_J    = 0x4A
-	VK_K    = 0x4B
-	VK_L    = 0x4C
-	VK_M    = 0x4D
-	VK_N    = 0x4E
-	VK_O    = 0x4F
-	VK_P    = 0x50
-	VK_Q    = 0x51
-	VK_R    = 0x52
-	VK_S    = 0x53
-	VK_T    = 0x54
-	VK_U    = 0x55
-	VK_V    = 0x56
-	VK_W    = 0x57
-	VK_X    = 0x58
-	VK_Y    = 0x59
-	VK_Z    = 0x5A
-	VK_LWIN = 0x5B // In Mac OS X this is the Apple, or Command key. Windows Key in PC keyboards
-	VK_RWIN = 0x5C // In Mac OS X this is the Apple, or Command key. Windows Key in PC keyboards
-	VK_APPS = 0x5D // The PopUp key in PC keyboards
-	// $5E reserved
-	VK_SLEEP     = 0x5F
-	VK_NUMPAD0   = 96 // $60
-	VK_NUMPAD1   = 97
-	VK_NUMPAD2   = 98
-	VK_NUMPAD3   = 99
-	VK_NUMPAD4   = 100
-	VK_NUMPAD5   = 101
-	VK_NUMPAD6   = 102
-	VK_NUMPAD7   = 103
-	VK_NUMPAD8   = 104
-	VK_NUMPAD9   = 105
-	VK_MULTIPLY  = 106 // VK_MULTIPLY up to VK_DIVIDE are usually in the numeric keypad in PC keyboards
-	VK_ADD       = 107
-	VK_SEPARATOR = 108
-	VK_SUBTRACT  = 109
-	VK_DECIMAL   = 110
-	VK_DIVIDE    = 111
-	VK_F1        = 112
-	VK_F2        = 113
-	VK_F3        = 114
-	VK_F4        = 115
-	VK_F5        = 116
-	VK_F6        = 117
-	VK_F7        = 118
-	VK_F8        = 119
-	VK_F9        = 120
-	VK_F10       = 121
-	VK_F11       = 122
-	VK_F12       = 123
-	VK_F13       = 124
-	VK_F14       = 125
-	VK_F15       = 126
-	VK_F16       = 127
-	VK_F17       = 128
-	VK_F18       = 129
-	VK_F19       = 130
-	VK_F20       = 131
-	VK_F21       = 132
-	VK_F22       = 133
-	VK_F23       = 134
-	VK_F24       = 135 // $87
-
-	// $88-$8F unassigned
-
-	VK_NUMLOCK = 0x90
-	VK_SCROLL  = 0x91
-
-	// $92-$96  OEM specific
-	// $97-$9F  Unassigned
-
-	// not in VCL defined:
-	//MWE: And should not be used.
-	//     The keys they are on map to another VK
-
-	//  VK_SEMICOLON  = 186;
-	//  VK_EQUAL      = 187; // $BB
-	//  VK_COMMA      = 188;
-	//  VK_POINT      = 190;
-	//  VK_SLASH      = 191;
-	//  VK_AT         = 192;
-
-	// VK_L & VK_R - left and right Alt, Ctrl and Shift virtual keys.
-	// When Application.ExtendedKeysSupport is false, these keys are
-	// used only as parameters to GetAsyncKeyState() and GetKeyState().
-	// No other API or message will distinguish left and right keys in this way
-	//
-	// When Application.ExtendedKeysSupport is true, these keys will be sent
-	// on KeyDown / KeyUp instead of the generic VK_SHIFT, VK_CONTROL, etc.
-	VK_LSHIFT   = 0xA0
-	VK_RSHIFT   = 0xA1
-	VK_LCONTROL = 0xA2
-	VK_RCONTROL = 0xA3
-	VK_LMENU    = 0xA4 // Left ALT key (also named Option in Mac OS X)
-	VK_RMENU    = 0xA5 // Right ALT key (also named Option in Mac OS X)
-
-	VK_BROWSER_BACK        = 0xA6
-	VK_BROWSER_FORWARD     = 0xA7
-	VK_BROWSER_REFRESH     = 0xA8
-	VK_BROWSER_STOP        = 0xA9
-	VK_BROWSER_SEARCH      = 0xAA
-	VK_BROWSER_FAVORITES   = 0xAB
-	VK_BROWSER_HOME        = 0xAC
-	VK_VOLUME_MUTE         = 0xAD
-	VK_VOLUME_DOWN         = 0xAE
-	VK_VOLUME_UP           = 0xAF
-	VK_MEDIA_NEXT_TRACK    = 0xB0
-	VK_MEDIA_PREV_TRACK    = 0xB1
-	VK_MEDIA_STOP          = 0xB2
-	VK_MEDIA_PLAY_PAUSE    = 0xB3
-	VK_LAUNCH_MAIL         = 0xB4
-	VK_LAUNCH_MEDIA_SELECT = 0xB5
-	VK_LAUNCH_APP1         = 0xB6
-	VK_LAUNCH_APP2         = 0xB7
-
-	// VK_OEM keys are utilized only when Application.ExtendedKeysSupport is false
-
-	// $B8-$B9 Reserved
-	VK_OEM_1 = 0xBA // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the ';:' key
-	VK_OEM_PLUS   = 0xBB // For any country/region, the '+' key
-	VK_OEM_COMMA  = 0xBC // For any country/region, the ',' key
-	VK_OEM_MINUS  = 0xBD // For any country/region, the '-' key
-	VK_OEM_PERIOD = 0xBE // For any country/region, the '.' key
-	VK_OEM_2      = 0xBF // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the '/?' key
-	VK_OEM_3 = 0xC0 // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the '`~' key
-	// $C1-$D7 Reserved
-	// $D8-$DA Unassigned
-	VK_OEM_4 = 0xDB // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the '[{' key
-	VK_OEM_5 = 0xDC // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the '\|' key
-	VK_OEM_6 = 0xDD // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the ']}' key
-	VK_OEM_7 = 0xDE // Used for miscellaneous characters; it can vary by keyboard.
-	// For the US standard keyboard, the 'single-quote/double-quote' key
-	VK_OEM_8 = 0xDF // Used for miscellaneous characters; it can vary by keyboard.
-
-	// $E0 Reserved
-	// $E1 OEM specific
-	VK_OEM_102 = 0xE2 // Either the angle bracket key or the backslash key on the RT 102-key keyboard
-
-	// $E3-$E4 OEM specific
-
-	VK_PROCESSKEY = 0xE7 // IME Process key
-
-	// $E8 Unassigned
-	// $E9-$F5 OEM specific
-
-	VK_ATTN         = 0xF6
-	VK_CRSEL        = 0xF7
-	VK_EXSEL        = 0xF8
-	VK_EREOF        = 0xF9
-	VK_PLAY         = 0xFA
-	VK_ZOOM         = 0xFB
-	VK_NONAME       = 0xFC
-	VK_PA1          = 0xFD
-	VK_OEM_CLEAR    = 0xFE
-	VK_HIGHESTVALUE = 0xFFFF
-	VK_UNDEFINED    = 0xFF // defined by LCL
-
-	//==============================================
-	// LCL aliases for more clear naming of keys
-	//==============================================
-
-	VK_LCL_EQUAL      = VK_OEM_PLUS   // The "=+" Key
-	VK_LCL_COMMA      = VK_OEM_COMMA  // The ",<" Key
-	VK_LCL_POINT      = VK_OEM_PERIOD // The ".>" Key
-	VK_LCL_SLASH      = VK_OEM_2      // The "/?" Key
-	VK_LCL_SEMI_COMMA = VK_OEM_1      // The ";:" Key
-	VK_LCL_MINUS      = VK_OEM_MINUS  // The "-_" Key
-
-	VK_LCL_OPEN_BRAKET   = VK_OEM_4 //deprecated 'Use VK_LCL_OPEN_BRACKET instead';
-	VK_LCL_CLOSE_BRAKET  = VK_OEM_6 //deprecated 'Use VK_LCL_CLOSE_BRACKET instead';
-	VK_LCL_OPEN_BRACKET  = VK_OEM_4 // The "[{" Key
-	VK_LCL_CLOSE_BRACKET = VK_OEM_6 // The "]}" Key
-
-	VK_LCL_BACKSLASH = VK_OEM_5 // The "\|" Key
-	VK_LCL_TILDE     = VK_OEM_3 // The "`~" Key
-	VK_LCL_QUOTE     = VK_OEM_7 // The "'"" Key
-
-	VK_LCL_ALT      = VK_MENU
-	VK_LCL_LALT     = VK_LMENU
-	VK_LCL_RALT     = VK_RMENU
-	VK_LCL_CAPSLOCK = VK_CAPITAL
-
-	//==============================================
-	// New LCL defined keys
-	//==============================================
-
-	VK_LCL_POWER   = 0x100
-	VK_LCL_CALL    = 0x101
-	VK_LCL_ENDCALL = 0x102
-	VK_LCL_AT      = 0x103 // Not equivalent to anything < $FF, will only be sent by a primary "@" key
-	// but not for a @ key as secondary action of a "2" key for example
 )
 
 func LOBYTE(w uint16) byte {
@@ -791,14 +488,14 @@ func GetMonitorInfo(hMonitor types.HMONITOR, lpmi types.TagMonitorInfo) types.Lo
 	return types.LongBool(api.GoBool(r1))
 }
 
-func GetDpiForMonitor(hmonitor types.HMONITOR, dpiType types.MONITOR_DPI_TYPE, dpiX *types.UINT, dpiY *types.UINT) types.HRESULT { // out
+func GetDpiForMonitor(hmonitor types.HMONITOR, dpiType MONITOR_DPI_TYPE, dpiX *types.UINT, dpiY *types.UINT) types.HRESULT { // out
 	var (
-		outDpiX types.UINT
-		outDpiY types.UINT
+		outDpiX uint32
+		outDpiY uint32
 	)
-	r1, _, _ := imports.Proc(def.CEF_Win_GetDpiForMonitor).Call(uintptr(hmonitor), uintptr(dpiType), uintptr(unsafe.Pointer(&outDpiY)), uintptr(outDpiY))
-	*dpiX = outDpiX
-	*dpiY = outDpiY
+	r1, _, _ := imports.Proc(def.CEF_Win_GetDpiForMonitor).Call(uintptr(hmonitor), uintptr(dpiType), uintptr(unsafe.Pointer(&outDpiX)), uintptr(unsafe.Pointer(&outDpiY)))
+	*dpiX = types.UINT(outDpiX)
+	*dpiY = types.UINT(outDpiY)
 	return types.HRESULT(r1)
 }
 
@@ -1303,4 +1000,11 @@ func UpdateWindow(Handle types.HWND) types.LongBool {
 func WindowFromPoint(Point types.Point) types.HWND {
 	r1, _, _ := imports.Proc(def.CEF_Win_WindowFromPoint).Call(uintptr(unsafe.Pointer(&Point)))
 	return types.HWND(r1)
+}
+
+func ScalePercent() float32 {
+	dc := GetDC(0)
+	dpiX := GetDeviceCaps(dc, LOGPIXELSX)
+	ReleaseDC(0, dc)
+	return float32(dpiX) / 96.0
 }

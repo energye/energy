@@ -322,6 +322,17 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 // setDraggableRegions
 // 每一次拖拽区域改变都需要重新设置
 func (m *LCLBrowserWindow) setDraggableRegions() {
+	var scp float32
+	// Windows 10 版本 1607 [仅限桌面应用]
+	// Windows Server 2016 [仅限桌面应用]
+	// 可动态调整
+	dpi, err := winapi.GetDpiForWindow(et.HWND(m.Handle()))
+	if err == nil {
+		scp = float32(dpi) / 96.0
+	} else {
+		// 使用默认的，但不能动态调整
+		scp = winapi.ScalePercent()
+	}
 	//在主线程中运行
 	m.RunOnMainThread(func() {
 		if m.cwcap.rgn == nil {
@@ -331,9 +342,17 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 			//每次重置RGN
 			winapi.SetRectRgn(m.cwcap.rgn, 0, 0, 0, 0)
 		}
+		// 重新根据缩放比计算新的区域位置
 		for i := 0; i < m.cwcap.regions.RegionsCount(); i++ {
 			region := m.cwcap.regions.Region(i)
-			creRGN := winapi.CreateRectRgn(region.Bounds.X, region.Bounds.Y, region.Bounds.X+region.Bounds.Width, region.Bounds.Y+region.Bounds.Height)
+			x := int32(float32(region.Bounds.X) * scp)
+			y := int32(float32(region.Bounds.Y) * scp)
+			w := int32(float32(region.Bounds.Width) * scp)
+			h := int32(float32(region.Bounds.Height) * scp)
+			creRGN := winapi.CreateRectRgn(x,
+				y,
+				x+w,
+				y+h)
 			if region.Draggable {
 				winapi.CombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_OR)
 			} else {
