@@ -14,9 +14,11 @@
         function reset() {
             ipc.emit("zoom-reset");
         }
+
         function dec() {
             ipc.emit("zoom-dec");
         }
+
         function inc() {
             ipc.emit("zoom-inc");
         }
@@ -26,6 +28,7 @@
 <button onclick="inc()">放大</button>
 <button onclick="dec()">缩小</button>
 <button onclick="reset()">重置</button>
+<div style="-webkit-app-region: drag;left: 50%;top: 160px;width: 100px;height: 100px;background-color: red;position: absolute;">drag</div>
 <div>
     文字文字文字文字文字文字文字文字文字文字文字
 </div>
