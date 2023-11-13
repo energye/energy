@@ -40,10 +40,10 @@ func trayDemo(browserWindow cef.IBrowserWindow) {
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	//带图标的菜单
 	iconItem := tray.NewMenuItem("带个图标", nil)
-	iconItem.Bitmap().SetSize(32, 32)      //图标情况调整大小
+	iconItem.Bitmap().SetSize(16, 16)      //图标情况调整大小
 	iconItem.Bitmap().SetTransparent(true) //透明
 	icon := lcl.NewIcon()
-	icon.LoadFromFSFile("resources/icon_1.ico")
+	icon.LoadFromFSFile("resources/icon_menu.ico")
 	iconItem.Bitmap().Canvas().Draw(0, 0, icon) //画上去
 	tray.TrayMenu().Items().Add(iconItem)
 
