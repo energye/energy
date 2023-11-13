@@ -92,6 +92,7 @@ func (m *TCEFApplication) initDefaultSettings() {
 	m.SetLocale(LANGUAGE_zh_CN)
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
 	m.SetEnablePrintPreview(true)
+	m.SetEnableGPU(true)
 	// 以下条件判断根据不同平台, 启动不同的窗口组件
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
