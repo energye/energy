@@ -3,6 +3,12 @@
 > CEF: HTML + JS + CSS
 >
 > LCL: Various system native UI components
+> 
+> CEF is a multi-process mode, by default (no standalone sub-process set) it repeatedly starts the current executable to start multiple processes, including (PtBrowser/PtRenderer/PtZygote/PtGPU/PtUtility/PtBroker/PtCrashpad/PtOther).
+> When writing code, we need to pay special attention to most of the cases we write the main function in the main process, that is, the PtBrowser main process, energy provides the main process to execute the callback function, we need to write the main function in the main process callback function, if the main function or init function is written anywhere
+> These function functions will be executed (repeatedly) when the child process is started, which may cause unexpected errors.
+> You can also distinguish the main sub-process by setting up independent sub-processes, so that you don't need to consider the problem of repeated execution errors, and the main function or init function can also be written in any position, the principle is that after the main process (PtBrowser) is successfully started, the main process application. The SetBrowserSubprocessPath("sub.exe) function sets the pathname of the child process execution file
+> The child process is a separate execution file that does not need to write any major functions. Example program: sub-process
 
 | Example Name                                         | Example Description                                                                                                                                             |
 |------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
