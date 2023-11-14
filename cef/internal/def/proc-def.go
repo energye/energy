@@ -18,6 +18,7 @@ import (
 )
 
 // init
+//
 //	导入函数定义数组列表
 func init() {
 	var energyImportDefs = []*dllimports.ImportTable{
@@ -562,6 +563,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindow_GetName", 0),
 		dllimports.NewEnergyImport("CEFWindow_SetName", 0),
 		dllimports.NewEnergyImport("CEFWindow_UpdateSize", 0),
+		dllimports.NewEnergyImport("CEFWindow_Repaint", 0),
 		dllimports.NewEnergyImport("CEFWindow_OnEnter", 0),
 		dllimports.NewEnergyImport("CEFWindow_OnExit", 0),
 		dllimports.NewEnergyImport("CEFWindow_SetTag", 0),
@@ -597,6 +599,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFLinkedWindow_GetName", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_SetName", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_UpdateSize", 0),
+		dllimports.NewEnergyImport("CEFLinkedWindow_Repaint", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnEnter", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_OnExit", 0),
 		dllimports.NewEnergyImport("CEFLinkedWindow_SetChromium", 0),

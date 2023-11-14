@@ -54,6 +54,10 @@ func (m *TCEFLinkedWindowParent) UpdateSize() {
 	imports.Proc(def.CEFLinkedWindow_UpdateSize).Call(m.Instance())
 }
 
+func (m *TCEFLinkedWindowParent) Repaint() {
+	imports.Proc(def.CEFLinkedWindow_Repaint).Call(m.Instance())
+}
+
 // Type 组件类型, 这里返回 TCEFLinkedWindowParent 类型
 func (m *TCEFLinkedWindowParent) Type() consts.TCefWindowHandleType {
 	return consts.Wht_LinkedWindowParent

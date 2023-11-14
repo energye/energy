@@ -562,6 +562,7 @@ const (
 	CEFWindow_GetName
 	CEFWindow_SetName
 	CEFWindow_UpdateSize
+	CEFWindow_Repaint
 	CEFWindow_OnEnter
 	CEFWindow_OnExit
 	CEFWindow_SetTag
@@ -597,6 +598,7 @@ const (
 	CEFLinkedWindow_GetName
 	CEFLinkedWindow_SetName
 	CEFLinkedWindow_UpdateSize
+	CEFLinkedWindow_Repaint
 	CEFLinkedWindow_OnEnter
 	CEFLinkedWindow_OnExit
 	CEFLinkedWindow_SetChromium

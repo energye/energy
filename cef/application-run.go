@@ -48,7 +48,8 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 }
 
 // Run 运行应用
-//  在这里启动浏览器的主进程和子进程
+//
+//	在这里启动浏览器的主进程和子进程
 func Run(app *TCEFApplication) {
 	defer func() {
 		api.EnergyLibRelease()
@@ -91,7 +92,7 @@ func Run(app *TCEFApplication) {
 
 				lcl.Application.Initialize()
 				lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
-				lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow)
+				lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
 				lcl.Application.Run()
 				//lclwidget.CustomWidgetSetFinalization()
 			}

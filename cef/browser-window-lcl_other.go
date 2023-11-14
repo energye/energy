@@ -78,6 +78,10 @@ func (m *LCLBrowserWindow) Frameless() {
 
 }
 
+func (m *LCLBrowserWindow) taskMenu() {
+
+}
+
 // Restore 非Windows平台，窗口还原
 func (m *LCLBrowserWindow) Restore() {
 	if m.TForm == nil {

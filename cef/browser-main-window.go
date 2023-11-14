@@ -30,7 +30,8 @@ type browserWindow struct {
 }
 
 // BrowserEvent 浏览器全局事件监听-已被默认实现事件
-//  该结构中的对象属性, 是已被默认实现的
+//
+//	该结构中的对象属性, 是已被默认实现的
 type BrowserEvent struct {
 	chromium                  IChromiumEvent                           //chromium event
 	onBeforePopup             chromiumEventOnBeforePopupEx             //default
@@ -93,9 +94,10 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 }
 
 // MainWindow 获取主浏窗口
-//  返回LCL或VF窗口组件实例
-//  Window和MacOS平台LCL窗口组件
-//  Linux平台VF窗口组件
+//
+//	返回LCL或VF窗口组件实例
+//	Window和MacOS平台LCL窗口组件
+//	Linux平台VF窗口组件
 func (m *browserWindow) MainWindow() IBrowserWindow {
 	if m.mainVFBrowserWindow != nil {
 		return m.mainVFBrowserWindow
@@ -106,10 +108,11 @@ func (m *browserWindow) MainWindow() IBrowserWindow {
 }
 
 // SetBrowserInit 主窗口初始化时回调
-//  LCL: 可以对主窗体属性设置、创建各种LCL子组件
-//  VF : 有很大限制不能使用LCL的组件
-//  event	: 浏览器事件
-//  window	: 窗口信息对象
+//
+//	LCL: 可以对主窗体属性设置、创建各种LCL子组件
+//	VF : 有很大限制不能使用LCL的组件
+//	event	: 浏览器事件
+//	window	: 窗口信息对象
 func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
@@ -288,8 +291,9 @@ func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
 }
 
 // SetOnGetResourceHandler
-//  获取资源处理器，通过该函数自己处理资源获取
-//  返回 false 并且设置[本地|内置FS]资源加载时开启并继续执行默认实现
+//
+//	获取资源处理器，通过该函数自己处理资源获取
+//	返回 false 并且设置[本地|内置FS]资源加载时开启并继续执行默认实现
 func (m *BrowserEvent) SetOnGetResourceHandler(event chromiumEventOnGetResourceHandlerEx) {
 	if Args.IsMain() {
 		if localLoadRes.enable() {
@@ -448,10 +452,11 @@ func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChang
 }
 
 // SetOnBeforePopup
-//  弹出窗口, 已被默认实现的函数
-//  函数返回值
-//    false: 窗口会以默认行为管理
-//    true: 需要你自己管理窗口行为
+//
+//	弹出窗口, 已被默认实现的函数
+//	函数返回值
+//	  false: 窗口会以默认行为管理
+//	  true: 需要你自己管理窗口行为
 func (m *BrowserEvent) SetOnBeforePopup(event chromiumEventOnBeforePopupEx) {
 	if Args.IsMain() {
 		m.onBeforePopup = event

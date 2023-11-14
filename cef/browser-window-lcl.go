@@ -47,15 +47,15 @@ type LCLBrowserWindow struct {
 	windowType                consts.WINDOW_TYPE   //窗口类型
 	isClosing                 bool                 //
 	canClose                  bool                 //
-	onResize                  TNotifyEvent         //扩展事件
+	onResize                  []TNotifyEvent       //扩展事件 向后链试循环调用
 	windowResize              TNotifyEvent         //扩展事件
 	onActivate                TNotifyEvent         //扩展事件
-	onShow                    TNotifyEvent         //扩展事件
+	onShow                    []TNotifyEvent       //扩展事件 向后链试循环调用
 	onClose                   TCloseEvent          //扩展事件
 	onCloseQuery              TCloseQueryEvent     //扩展事件
 	onActivateAfter           lcl.TNotifyEvent     //扩展事件
-	onWndProc                 []lcl.TWndProcEvent  //扩展事件
-	onPaint                   []lcl.TNotifyEvent   //扩展事件
+	onWndProc                 []lcl.TWndProcEvent  //扩展事件 向后链试循环调用
+	onPaint                   []lcl.TNotifyEvent   //扩展事件 向后链试循环调用
 	auxTools                  IAuxTools            //辅助工具
 	tray                      ITray                //托盘
 	hWnd                      types.HWND           //
@@ -78,7 +78,8 @@ type WindowBroderForm struct {
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
-//  该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
+//
+//	该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
 func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
 	var browseWindow = NewLCLWindow(windowProperty, owner...)
 	browseWindow.ChromiumCreate(config, windowProperty.Url)
@@ -92,13 +93,13 @@ func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProper
 
 // NewLCLWindow 创建一个LCL window窗口
 func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
-	var window = &LCLBrowserWindow{}
-	if len(owner) > 0 {
-		window.TForm = lcl.NewForm(owner[0])
-	} else {
-		window.TForm = lcl.NewForm(BrowserWindow.mainBrowserWindow)
-		//lcl.Application.CreateForm(&window)
-	}
+	var window *LCLBrowserWindow
+	//if len(owner) > 0 {
+	//} else {
+	//	window.TForm = lcl.Application.CreateForm(BrowserWindow.mainBrowserWindow)
+	//	//lcl.Application.CreateForm(&window)
+	//}
+	lcl.Application.CreateForm(&window)
 	window.windowProperty = &windowProperty
 	window.cwcap = &customWindowCaption{
 		bw: window,
@@ -238,6 +239,7 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 }
 
 // RunOnMainThread
+//
 //	在UI主线程中运行
 func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
 	runtime.LockOSThread()
@@ -495,9 +497,10 @@ func (m *LCLBrowserWindow) SetNotInTaskBar() {
 }
 
 // WindowParent
-//  返回chromium的父组件对象，该对象不是window组件对象,属于window的一个子组件
-//  在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
-//  通过函数可调整该组件的属性
+//
+//	返回chromium的父组件对象，该对象不是window组件对象,属于window的一个子组件
+//	在windows下它是 TCEFWindowParent, linux或macOSx下它是 TCEFLinkedWindowParent
+//	通过函数可调整该组件的属性
 func (m *LCLBrowserWindow) WindowParent() ICEFWindowParent {
 	return m.chromiumBrowser.WindowParent()
 }
@@ -518,8 +521,9 @@ func (m *LCLBrowserWindow) WindowType() consts.WINDOW_TYPE {
 }
 
 // ChromiumCreate
-//  创建window浏览器组件
-//  不带有默认事件的chromium
+//
+//	创建window浏览器组件
+//	不带有默认事件的chromium
 func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl string) {
 	if m.chromiumBrowser != nil {
 		return
@@ -570,8 +574,9 @@ func (m *LCLBrowserWindow) defaultChromiumEvent() {
 }
 
 // FormCreate
-//  创建窗口
-//  不带有默认事件的窗口
+//
+//	创建窗口
+//	不带有默认事件的窗口
 func (m *LCLBrowserWindow) FormCreate() {
 	if m.isFormCreate {
 		return
@@ -579,6 +584,7 @@ func (m *LCLBrowserWindow) FormCreate() {
 	m.isFormCreate = true
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
 	m.onFormMessages()
+	m.taskMenu()
 }
 
 // defaultWindowEvent 默认窗口活动/关闭处理事件
@@ -614,7 +620,7 @@ func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
 
 // SetOnResize 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnResize(fn TNotifyEvent) {
-	m.onResize = fn
+	m.onResize = append(m.onResize, fn)
 }
 
 // SetOnActivate 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
@@ -624,7 +630,7 @@ func (m *LCLBrowserWindow) SetOnActivate(fn TNotifyEvent) {
 
 // SetOnShow 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnShow(fn TNotifyEvent) {
-	m.onShow = fn
+	m.onShow = append(m.onShow, fn)
 }
 
 // SetOnClose 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
@@ -769,12 +775,15 @@ func (m *LCLBrowserWindow) IsLCL() bool {
 // show 内部调用
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
 	if m.onShow != nil {
-		m.onShow(sender)
+		for _, fn := range m.onShow {
+			fn(sender)
+		}
 	}
 }
 
 // SetCreateBrowserExtraInfo
-//  设置 Chromium 创建浏览器时设置的扩展信息
+//
+//	设置 Chromium 创建浏览器时设置的扩展信息
 func (m *LCLBrowserWindow) SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) {
 	if m.chromiumBrowser != nil {
 		m.chromiumBrowser.SetCreateBrowserExtraInfo(windowName, context, extraInfo)
@@ -785,8 +794,10 @@ func (m *LCLBrowserWindow) SetCreateBrowserExtraInfo(windowName string, context 
 func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 	var ret bool
 	if m.onResize != nil {
-		if m.onResize(sender) {
-			ret = true
+		for _, fn := range m.onResize {
+			if fn(sender) {
+				ret = true
+			}
 		}
 	}
 	if !ret {
