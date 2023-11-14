@@ -58,7 +58,8 @@ func (m *LCLBrowserWindow) ShowTitle() {
 // HideTitle 隐藏标题栏 无边框样式
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
-	m.Frameless()
+	m.SetBorderStyle(types.BsNone)
+	//m.Frameless()
 }
 
 // SetRoundRectRgn 窗口无边框时圆角设置
@@ -73,7 +74,8 @@ func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
 }
 
 // FramelessForDefault 窗口四边框系统默认样式
-//  TODO 窗口顶部有条线,
+//
+//	TODO 窗口顶部有条线,
 func (m *LCLBrowserWindow) FramelessForDefault() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
@@ -98,10 +100,22 @@ func (m *LCLBrowserWindow) Frameless() {
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
+// windows无边框窗口任务栏处理
+func (m *LCLBrowserWindow) taskMenu() {
+	m.SetOnShow(func(sender lcl.IObject) bool {
+		if m.WindowProperty().EnableHideCaption {
+			gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+			win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle|win.WS_SYSMENU|win.WS_MINIMIZEBOX))
+		}
+		return false
+	})
+}
+
 // SetFocus
-//  在窗口 (Visible = true) 显示之后设置窗口焦点
-//  https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
-//  https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-setfocus
+//
+//	在窗口 (Visible = true) 显示之后设置窗口焦点
+//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
+//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-setfocus
 func (m *LCLBrowserWindow) SetFocus() {
 	if m.TForm != nil {
 		m.Visible()
@@ -468,7 +482,7 @@ func (m *LCLBrowserWindow) doDrag() {
 	}
 }
 
-//framelessWindowBroderTransparent 无边框窗口自定义窗口透明
+// framelessWindowBroderTransparent 无边框窗口自定义窗口透明
 func (m *WindowBroderForm) framelessWindowBroderTransparent(hWnd et.HWND) {
 	exStyle := winapi.GetWindowLong(hWnd, win.GWL_EXSTYLE)
 	exStyle = exStyle | win.WS_EX_LAYERED
