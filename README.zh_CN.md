@@ -134,25 +134,28 @@ func main() {
 
 ---
 
+### 欢迎加入
+energy扔处于建设的过程中，有很多的事情无法独自完成，如果有感兴趣的同学想参与energy的实现或学习，可通过微信或QQ联系我。
+
+如果你觉得此项目对你有帮助，请点亮 Star
+
+---
+
+### ENERGY QQ交流群 & 微信
+
+<p align="center">
+    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250" title="QQ交流群: 541258627" alt="QQ交流群: 541258627">
+    <img src="https://assets.yanghy.cn/we-chat.jpg" width="250" title="微信: sniawmdf" alt="微信: sniawmdf" style="margin-left: 30px;">
+</p>
+
+---
+
 ### 鸣谢 Jetbrains
 
 <p align="center">
     <a href="https://www.jetbrains.com?from=energy">
         <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains Logo (Main) logo.">
     </a>
-</p>
-
-
-如果你觉得此项目对你有帮助，请点亮 Star
-
----
-
-### QQ交流群
-
-[![QQGroup](https://img.shields.io/badge/QQ-541258627-green.svg?logo=tencentqq&logoColor=blue)](https://jq.qq.com/?_wv=1027&k=YgFjCGJX)
-
-<p align="center">
-    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250">
 </p>
 
 ---

@@ -135,25 +135,30 @@ func main() {
 
 ---
 
-### Thanks Jetbrains
+### Welcome to join
+join energy throwing in the process of construction, there are many things that cannot be completed alone, if there are interested students who want to participate in the realization or learning of energy, you can contact me through WeChat or QQ.
 
-<p align="center">
-    <a href="https://www.jetbrains.com?from=energy">
-        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains Logo (Main) logo.">
-    </a>
-</p>
 
 If this project is helpful to you, please give me a star
 
 
 ---
 
-### QQ Group
-
-[![QQGroup](https://img.shields.io/badge/QQ-541258627-green.svg?logo=tencentqq&logoColor=blue)](https://jq.qq.com/?_wv=1027&k=YgFjCGJX)
+### ENERGY QQ Group & WeChat
 
 <p align="center">
-    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250">
+    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250" title="QQ Group: 541258627" alt="QQ Group: 541258627">
+    <img src="https://assets.yanghy.cn/we-chat.jpg" width="250" title="WeChat: sniawmdf" alt="WeChat: sniawmdf" style="margin-left: 30px;">
+</p>
+
+---
+
+### Thanks Jetbrains
+
+<p align="center">
+    <a href="https://www.jetbrains.com?from=energy">
+        <img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.svg" alt="JetBrains Logo (Main) logo.">
+    </a>
 </p>
 
 ---
