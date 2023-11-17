@@ -30,7 +30,7 @@ type IChromiumOptions interface {
 	Databases() consts.TCefState
 	Webgl() consts.TCefState
 	BackgroundColor() types.TCefColor
-	AcceptLanguageList() types.String
+	AcceptLanguageList() types.String // Remove CEF 118
 	WindowlessFrameRate() types.Integer
 	ChromeStatusBubble() consts.TCefState
 	SetJavascript(value consts.TCefState)
@@ -45,9 +45,11 @@ type IChromiumOptions interface {
 	SetDatabases(value consts.TCefState)
 	SetWebgl(value consts.TCefState)
 	SetBackgroundColor(value types.TCefColor)
-	SetAcceptLanguageList(value types.String)
+	SetAcceptLanguageList(value types.String) // Remove CEF 118
 	SetWindowlessFrameRate(value types.Integer)
 	SetChromeStatusBubble(value consts.TCefState)
+	ChromeZoomBubble() consts.TCefState
+	SetChromeZoomBubble(value consts.TCefState)
 }
 
 func NewChromiumOptions(chromium IChromium) IChromiumOptions {
@@ -64,7 +66,7 @@ func NewChromiumOptions(chromium IChromium) IChromiumOptions {
 		databases:                  consts.STATE_DEFAULT,
 		webgl:                      consts.STATE_DEFAULT,
 		backgroundColor:            0,
-		acceptLanguageList:         "",
+		acceptLanguageList:         "", // Remove CEF 118
 		windowlessFrameRate:        consts.CEF_OSR_FRAMERATE_DEFAULT,
 		chromeStatusBubble:         consts.STATE_DEFAULT,
 		Chromium:                   chromium,
@@ -119,6 +121,7 @@ func (m *TChromiumOptions) BackgroundColor() types.TCefColor {
 	return m.backgroundColor
 }
 
+// AcceptLanguageList Remove CEF 118
 func (m *TChromiumOptions) AcceptLanguageList() types.String {
 	return m.acceptLanguageList
 }
@@ -193,6 +196,7 @@ func (m *TChromiumOptions) SetBackgroundColor(value types.TCefColor) {
 	imports.Proc(def.ChromiumOptions_SetBackgroundColor).Call(m.Chromium.Instance(), value.ToPtr())
 }
 
+// SetAcceptLanguageList Remove CEF 118
 func (m *TChromiumOptions) SetAcceptLanguageList(value types.String) {
 	m.acceptLanguageList = value
 	imports.Proc(def.ChromiumOptions_SetAcceptLanguageList).Call(m.Chromium.Instance(), value.ToPtr())
@@ -206,4 +210,13 @@ func (m *TChromiumOptions) SetWindowlessFrameRate(value types.Integer) {
 func (m *TChromiumOptions) SetChromeStatusBubble(value consts.TCefState) {
 	m.chromeStatusBubble = value
 	imports.Proc(def.ChromiumOptions_SetChromeStatusBubble).Call(m.Chromium.Instance(), value.ToPtr())
+}
+
+func (m *TChromiumOptions) ChromeZoomBubble() consts.TCefState {
+	r1, _, _ := imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.GetValue, m.Chromium.Instance(), 0)
+	return consts.TCefState(r1)
+}
+
+func (m *TChromiumOptions) SetChromeZoomBubble(value consts.TCefState) {
+	imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.SetValue, m.Chromium.Instance(), uintptr(value))
 }

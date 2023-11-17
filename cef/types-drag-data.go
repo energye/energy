@@ -263,3 +263,24 @@ func (m *ICefDragData) HasImage() bool {
 	r1, _, _ := imports.Proc(def.CefDragData_HasImage).Call(m.Instance())
 	return api.GoBool(r1)
 }
+
+func (m *ICefDragData) GetFilePaths() []string {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	r1, _, _ := imports.Proc(def.CefDragData_GetFilePaths).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 && r1 > 0 {
+		fileNamesList := lcl.AsStrings(result)
+		if fileNamesList.IsValid() {
+			count := int(fileNamesList.Count())
+			fileNames := make([]string, count, count)
+			for i := 0; i < count; i++ {
+				fileNames[i] = fileNamesList.Strings(int32(i))
+			}
+			fileNamesList.Free()
+			return fileNames
+		}
+	}
+	return nil
+}

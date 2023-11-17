@@ -354,6 +354,7 @@ const (
 	CEFAppConfig_SetCookieableSchemesList
 	CEFAppConfig_CookieableSchemesExcludeDefaults
 	CEFAppConfig_SetCookieableSchemesExcludeDefaults
+	CEFAppConfig_ChromePolicyId
 	// 设置常用的命令行参数属性
 	CEFAppConfig_SingleProcess
 	CEFAppConfig_SetSingleProcess
@@ -983,6 +984,9 @@ const (
 	CEFChromium_ResetZoomStep
 	CEFChromium_ResetZoomPct
 	CEFChromium_ReadZoom
+	CEFChromium_ZoomCommand
+	CEFChromium_DefaultZoomLevel
+	CEFChromium_CanZoom
 	CEFChromium_WasResized
 	CEFChromium_WasHidden
 	CEFChromium_NotifyScreenInfoChanged
@@ -992,6 +996,8 @@ const (
 	CEFChromium_IMECancelComposition
 	CEFChromium_HasDevTools
 	CEFChromium_InitializeDragAndDrop
+	CEFChromium_Fullscreen
+	CEFChromium_ExitFullscreen
 	// ChromiumOptions
 	ChromiumOptions_SetJavascript
 	ChromiumOptions_SetJavascriptCloseWindows
@@ -1008,6 +1014,7 @@ const (
 	ChromiumOptions_SetAcceptLanguageList
 	ChromiumOptions_SetWindowlessFrameRate
 	ChromiumOptions_SetChromeStatusBubble
+	ChromiumOptions_ChromeZoomBubble
 	// ICefFrame
 	CEFFrame_Undo
 	CEFFrame_Redo
@@ -1768,6 +1775,7 @@ const (
 	CefDragData_GetImage
 	CefDragData_GetImageHotspot
 	CefDragData_HasImage
+	CefDragData_GetFilePaths
 	// ICefFindHandler
 	CefFindHandlerRef_Create
 	CefFindHandler_OnFindResult

@@ -56,7 +56,7 @@ func (m *TCEFApplication) IsUIGtk3() bool {
 	return m.ui == UitGtk3
 }
 
-//initDefaultSettings 初始 energy 默认设置
+// initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
 	if common.IsWindows() {
 		m.ui = UitWin32
@@ -186,8 +186,9 @@ func (m *TCEFApplication) MultiThreadedMessageLoop() bool {
 }
 
 // IsMessageLoop
-//  消息轮询方式使用不同的窗口组件
-//  return true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件
+//
+//	消息轮询方式使用不同的窗口组件
+//	return true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件
 func (m *TCEFApplication) IsMessageLoop() bool {
 	emp := m.ExternalMessagePump()
 	mtml := m.MultiThreadedMessageLoop()
@@ -245,14 +246,16 @@ func (m *TCEFApplication) SetRootCache(value string) {
 }
 
 // UserDataPath
-//  CEF 115 Remove
+//
+//	CEF 115 Remove
 func (m *TCEFApplication) UserDataPath() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_UserDataPath).Call()
 	return api.GoStr(r1)
 }
 
 // SetUserDataPath
-//  CEF 115 Remove
+//
+//	CEF 115 Remove
 func (m *TCEFApplication) SetUserDataPath(value string) {
 	imports.Proc(def.CEFAppConfig_SetUserDataPath).Call(api.PascalStr(value))
 }
@@ -322,9 +325,8 @@ func (m *TCEFApplication) SetLogSeverity(value LogSeverity) {
 }
 
 func (m *TCEFApplication) LogItems() TCefLogItems {
-	var result uintptr
-	imports.Proc(def.CEFAppConfig_LogItems).Call(GetValue, uintptr(unsafe.Pointer(&result)))
-	return TCefLogItems(result)
+	r1, _, _ := imports.Proc(def.CEFAppConfig_LogItems).Call(GetValue, 0)
+	return TCefLogItems(r1)
 }
 
 func (m *TCEFApplication) SetLogItems(value TCefLogItems) {
@@ -405,11 +407,13 @@ func (m *TCEFApplication) SetBackgroundColor(value types.TCefColor) {
 	imports.Proc(def.CEFAppConfig_SetBackgroundColor).Call(value.ToPtr())
 }
 
+// AcceptLanguageList Remove CEF 118
 func (m *TCEFApplication) AcceptLanguageList() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_AcceptLanguageList).Call()
 	return api.GoStr(r1)
 }
 
+// SetAcceptLanguageList Remove CEF 118
 func (m *TCEFApplication) SetAcceptLanguageList(value string) {
 	imports.Proc(def.CEFAppConfig_SetAcceptLanguageList).Call(api.PascalStr(value))
 }
@@ -430,6 +434,15 @@ func (m *TCEFApplication) CookieableSchemesExcludeDefaults() bool {
 
 func (m *TCEFApplication) SetCookieableSchemesExcludeDefaults(value bool) {
 	imports.Proc(def.CEFAppConfig_SetCookieableSchemesExcludeDefaults).Call(api.PascalBool(value))
+}
+
+func (m *TCEFApplication) ChromePolicyId() string {
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ChromePolicyId).Call(GetValue)
+	return api.GoStr(r1)
+}
+
+func (m *TCEFApplication) SetChromePolicyId(value string) {
+	imports.Proc(def.CEFAppConfig_ChromePolicyId).Call(SetValue, api.PascalStr(value))
 }
 
 /*** 设置常用的命令行参数属性 ***/
@@ -1002,7 +1015,8 @@ func (m *TCEFApplication) SetUIColorMode(value TCefUIColorMode) {
 }
 
 // EnableHighDPISupport
-//  CEF 112 Remove
+//
+//	CEF 112 Remove
 func (m *TCEFApplication) EnableHighDPISupport() bool {
 	if common.IsWindows() {
 		r1, _, _ := imports.Proc(def.CEFAppConfig_EnableHighDPISupport).Call()
@@ -1012,7 +1026,8 @@ func (m *TCEFApplication) EnableHighDPISupport() bool {
 }
 
 // SetEnableHighDPISupport
-//  CEF 112 Remove
+//
+//	CEF 112 Remove
 func (m *TCEFApplication) SetEnableHighDPISupport(value bool) {
 	if common.IsWindows() {
 		imports.Proc(def.CEFAppConfig_SetEnableHighDPISupport).Call(api.PascalBool(value))

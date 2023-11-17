@@ -120,8 +120,8 @@ type IChromiumProc interface {
 	Block3rdPartyCookies() bool
 	SetAcceptCookies(cp TCefCookiePref)
 	AcceptCookies() TCefCookiePref
-	SetAcceptLanguageList(languageList string)
-	AcceptLanguageList() string
+	SetAcceptLanguageList(languageList string) // Remove CEF 118
+	AcceptLanguageList() string                // Remove CEF 118
 	SetPrintingEnabled(value bool)
 	PrintingEnabled() bool
 	SetYouTubeRestrict(value bool)
@@ -183,6 +183,13 @@ type IChromiumProc interface {
 	ResetZoomStep()
 	ResetZoomPct()
 	ReadZoom()
+	IncZoomCommand()
+	DecZoomCommand()
+	ResetZoomCommand()
+	DefaultZoomLevel() float64
+	CanIncZoom()
+	CanDecZoom()
+	CanResetZoom()
 	WasResized()
 	WasHidden(hidden bool)
 	NotifyScreenInfoChanged()
@@ -918,6 +925,7 @@ func (m *TCEFChromium) AcceptCookies() TCefCookiePref {
 	return TCefCookiePref(r1)
 }
 
+// SetAcceptLanguageList Remove CEF 118
 func (m *TCEFChromium) SetAcceptLanguageList(languageList string) {
 	if !m.IsValid() {
 		return
@@ -925,6 +933,7 @@ func (m *TCEFChromium) SetAcceptLanguageList(languageList string) {
 	imports.Proc(def.CEFChromium_SetAcceptLanguageList).Call(m.Instance(), api.PascalStr(languageList))
 }
 
+// AcceptLanguageList Remove CEF 118
 func (m *TCEFChromium) AcceptLanguageList() string {
 	if !m.IsValid() {
 		return ""
@@ -1428,6 +1437,56 @@ func (m *TCEFChromium) ReadZoom() {
 	imports.Proc(def.CEFChromium_ReadZoom).Call(m.Instance())
 }
 
+func (m *TCEFChromium) IncZoomCommand() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_ZoomCommand).Call(m.Instance(), ZcInc)
+}
+
+func (m *TCEFChromium) DecZoomCommand() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_ZoomCommand).Call(m.Instance(), ZcDec)
+}
+
+func (m *TCEFChromium) ResetZoomCommand() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_ZoomCommand).Call(m.Instance(), ZcReset)
+}
+
+func (m *TCEFChromium) DefaultZoomLevel() (result float64) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_DefaultZoomLevel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return
+}
+
+func (m *TCEFChromium) CanIncZoom() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_CanZoom).Call(m.Instance(), CzInc)
+}
+
+func (m *TCEFChromium) CanDecZoom() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_CanZoom).Call(m.Instance(), CzDec)
+}
+
+func (m *TCEFChromium) CanResetZoom() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_CanZoom).Call(m.Instance(), CzReset)
+}
+
 func (m *TCEFChromium) WasResized() {
 	if !m.IsValid() {
 		return
@@ -1499,6 +1558,7 @@ func (m *TCEFChromium) HasDevTools() bool {
 }
 
 // InitializeDragAndDrop
+//
 //	By Windows
 func (m *TCEFChromium) InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl) {
 	if !m.IsValid() {
@@ -1545,6 +1605,21 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 		}
 	}
 	return false
+}
+
+func (m *TCEFChromium) Fullscreen() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_Fullscreen).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) ExitFullscreen(willCauseResize bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_ExitFullscreen).Call(m.Instance(), api.PascalBool(willCauseResize))
 }
 
 //--------TCEFChromium proc begin--------

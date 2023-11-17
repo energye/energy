@@ -89,8 +89,9 @@ const (
 )
 
 // TCefTerminationStatus
-//  进程结束的状态
-//  /include/internal/cef_types.h (cef_termination_status_t)
+//
+//	进程结束的状态
+//	/include/internal/cef_types.h (cef_termination_status_t)
 type TCefTerminationStatus = types.Int32
 
 const (
@@ -460,12 +461,26 @@ const (
 	UR_FAILED
 )
 
-// /include/internal/cef_types.h (cef_state_t)
+// / <summary>
+// / Represents the state of a setting.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_state_t)</see></para>
+// / </remarks>
 type TCefState = types.Int32
 
 const (
+	/// <summary>
+	/// Use the default state for the setting.
+	/// </summary>
 	STATE_DEFAULT = TCefState(iota)
+	/// <summary>
+	/// Enable or allow the setting.
+	/// </summary>
 	STATE_ENABLED
+	/// <summary>
+	/// Disable or disallow the setting.
+	/// </summary>
 	STATE_DISABLED
 )
 
@@ -1201,6 +1216,7 @@ const (
 )
 
 // CefCreateType
+//
 //	CtSelfOwn 自己处理事件
 //	CtOther   使用其他组件处理事件
 type CefCreateType = types.Int8
@@ -1217,9 +1233,10 @@ type TCefQuickMenuEditStateFlags = types.Int32
 type TCefLogSeverity = types.Cardinal
 
 // TCefCursorHandle
-//  /include/internal/cef_types_win.h (cef_cursor_handle_t)
-//  /include/internal/cef_types_mac.h (cef_cursor_handle_t)
-//  /include/internal/cef_types_linux.h (cef_cursor_handle_t)
+//
+//	/include/internal/cef_types_win.h (cef_cursor_handle_t)
+//	/include/internal/cef_types_mac.h (cef_cursor_handle_t)
+//	/include/internal/cef_types_linux.h (cef_cursor_handle_t)
 type TCefCursorHandle uintptr
 
 // /include/internal/cef_types.h (cef_cursor_type_t)
@@ -1309,7 +1326,8 @@ const (
 )
 
 // TCefDuplexMode
-//  /include/internal/cef_types.h (cef_duplex_mode_t)
+//
+//	/include/internal/cef_types.h (cef_duplex_mode_t)
 type TCefDuplexMode = types.Int32
 
 // /include/internal/cef_types.h (cef_color_model_t)
@@ -1340,8 +1358,10 @@ const (
 )
 
 // CefSchemeOption
-//  Configuration options for registering a custom scheme.
-//  These values are used when calling AddCustomScheme.
+//
+//	Configuration options for registering a custom scheme.
+//	These values are used when calling AddCustomScheme.
+//
 // /include/internal/cef_types.h (cef_scheme_options_t)
 type CefSchemeOption = types.Int32
 
@@ -1419,7 +1439,8 @@ const (
 )
 
 // TCefResponseFilterStatus
-//  /include/internal/cef_types.h (cef_response_filter_status_t)
+//
+//	/include/internal/cef_types.h (cef_response_filter_status_t)
 type TCefResponseFilterStatus = types.Int32
 
 const (
@@ -1528,7 +1549,7 @@ const (
 	CEF_CUS_NONE
 )
 
-//  MessageBox() Flags
+// MessageBox() Flags
 const (
 	MB_OK               = 0x00000000
 	MB_OKCANCEL         = 0x00000001
@@ -1671,7 +1692,8 @@ const (
 )
 
 // LocalCustomerScheme 本地资源加载自定义固定协议
-//  file, fs
+//
+//	file, fs
 type LocalCustomerScheme string
 
 const (
@@ -1680,8 +1702,9 @@ const (
 )
 
 // LocalProxyScheme
-//  本地加载资源，在浏览器发起xhr请求时的代理协议
-//  http, https
+//
+//	本地加载资源，在浏览器发起xhr请求时的代理协议
+//	http, https
 type LocalProxyScheme int
 
 const (
@@ -1692,15 +1715,15 @@ const (
 
 type TCefPermissionRequestTypes int32
 
-/// <summary>
-/// Permission types used with OnShowPermissionPrompt. Some types are
-/// platform-specific or only supported with the Chrome runtime. Should be kept
-/// in sync with Chromium's permissions::RequestType type.
-/// </summary>
-/// <remarks>
-/// <para>TCefPermissionRequestTypes values.</para>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Permission types used with OnShowPermissionPrompt. Some types are
+// / platform-specific or only supported with the Chrome runtime. Should be kept
+// / in sync with Chromium's permissions::RequestType type.
+// / </summary>
+// / <remarks>
+// / <para>TCefPermissionRequestTypes values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
+// / </remarks>
 const (
 	CEF_PERMISSION_TYPE_NONE                       TCefPermissionRequestTypes = 0
 	CEF_PERMISSION_TYPE_ACCESSIBILITY_EVENTS       TCefPermissionRequestTypes = 1 << 0
@@ -1727,13 +1750,13 @@ const (
 
 type TCefChromePageActionIconType int32
 
-/// <summary>
-/// Chrome page action icon types. Should be kept in sync with Chromium's
-/// PageActionIconType type.
-/// </summary>
-/// <remarks>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_page_action_icon_type_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Chrome page action icon types. Should be kept in sync with Chromium's
+// / PageActionIconType type.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_page_action_icon_type_t)</see></para>
+// / </remarks>
 const (
 	CEF_CPAIT_BOOKMARK_STAR TCefChromePageActionIconType = iota
 	CEF_CPAIT_CLICK_TO_CALL
@@ -1767,13 +1790,13 @@ const (
 
 type TCefChromeToolbarButtonType int32
 
-/// <summary>
-/// Chrome toolbar button types. Should be kept in sync with CEF's internal
-/// ToolbarButtonType type.
-/// </summary>
-/// <remarks>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_chrome_toolbar_button_type_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Chrome toolbar button types. Should be kept in sync with CEF's internal
+// / ToolbarButtonType type.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_chrome_toolbar_button_type_t)</see></para>
+// / </remarks>
 const (
 	CEF_CTBT_CAST TCefChromeToolbarButtonType = iota
 	CEF_CTBT_DOWNLOAD
@@ -1784,32 +1807,32 @@ const (
 
 type TCefGestureCommand int32
 
-/// <summary>
-/// Specifies the gesture commands.
-/// </summary>
-/// <remarks>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_gesture_command_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Specifies the gesture commands.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_gesture_command_t)</see></para>
+// / </remarks>
 const (
 	CEF_GESTURE_COMMAND_BACK TCefGestureCommand = iota
 	CEF_GESTURE_COMMAND_FORWARD
 )
 
-/// <summary>
-/// Download interrupt reasons. Should be kept in sync with
-/// Chromium's download::DownloadInterruptReason type.
-/// </summary>
-/// <remarks>
-/// <para>See the uCEFConstants unit for all possible values.</para>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_download_interrupt_reason_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Download interrupt reasons. Should be kept in sync with
+// / Chromium's download::DownloadInterruptReason type.
+// / </summary>
+// / <remarks>
+// / <para>See the uCEFConstants unit for all possible values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_download_interrupt_reason_t)</see></para>
+// / </remarks>
 type TCefDownloadInterruptReason int32
 
 type TCefUIColorMode int32
 
-/// <summary>
-/// Color mode in UI for platforms that support it.
-/// </summary>
+// / <summary>
+// / Color mode in UI for platforms that support it.
+// / </summary>
 const (
 	/// <summary>
 	/// System default.
@@ -1827,14 +1850,14 @@ const (
 
 type TCefContentSettingTypes int32
 
-/// <summary>
-/// Supported content setting types. Some types are platform-specific or only
-/// supported with the Chrome runtime. Should be kept in sync with Chromium's
-/// ContentSettingsType type.
-/// </summary>
-/// <remarks>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_types_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Supported content setting types. Some types are platform-specific or only
+// / supported with the Chrome runtime. Should be kept in sync with Chromium's
+// / ContentSettingsType type.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_types_t)</see></para>
+// / </remarks>
 const (
 	CEF_CONTENT_SETTING_TYPE_COOKIES TCefContentSettingTypes = iota
 	CEF_CONTENT_SETTING_TYPE_IMAGES
@@ -2208,13 +2231,13 @@ const (
 
 type TCefContentSettingValues int32
 
-/// <summary>
-/// Supported content setting values. Should be kept in sync with Chromium's
-/// ContentSetting type.
-/// </summary>
-/// <remarks>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_values_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Supported content setting values. Should be kept in sync with Chromium's
+// / ContentSetting type.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_values_t)</see></para>
+// / </remarks>
 const (
 	CEF_CONTENT_SETTING_VALUE_DEFAULT TCefContentSettingValues = iota
 	CEF_CONTENT_SETTING_VALUE_ALLOW
@@ -2225,13 +2248,13 @@ const (
 	CEF_CONTENT_SETTING_VALUE_NUM_VALUES
 )
 
-/// <summary>
-/// Log items prepended to each log line.
-/// </summary>
-/// <remarks>
-/// <para>See the uCEFConstants unit for all possible values.</para>
-/// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_log_items_t)</see></para>
-/// </remarks>
+// / <summary>
+// / Log items prepended to each log line.
+// / </summary>
+// / <remarks>
+// / <para>See the uCEFConstants unit for all possible values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_log_items_t)</see></para>
+// / </remarks>
 type TCefLogItems = types.Cardinal
 
 const (
@@ -2247,4 +2270,20 @@ const (
 	LOG_ITEMS_FLAG_TIME_STAMP TCefLogItems = 1 << 3
 	/// Prepend the tickcount.
 	LOG_ITEMS_FLAG_TICK_COUNT TCefLogItems = 1 << 4
+)
+
+type ZoomCommand = uintptr
+
+const (
+	ZcInc   ZoomCommand = iota + 1 // IncZoomCommand
+	ZcDec                          // DecZoomCommand
+	ZcReset                        // ResetZoomCommand
+)
+
+type CanZoom = uintptr
+
+const (
+	CzInc   CanZoom = iota + 1 // CanIncZoom
+	CzDec                      // CanDecZoom
+	CzReset                    // CanResetZoom
 )

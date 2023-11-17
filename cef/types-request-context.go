@@ -304,7 +304,8 @@ func (m *ICefRequestContext) GetWebsiteSetting(requestingUrl, topLevelUrl string
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.GetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.GetValue, m.Instance(), api.PascalStr(requestingUrl),
+		api.PascalStr(topLevelUrl), uintptr(contentType), 0, uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefValue{instance: unsafe.Pointer(result)}
 	}
@@ -315,7 +316,7 @@ func (m *ICefRequestContext) SetWebsiteSetting(requestingUrl, topLevelUrl string
 	if !m.IsValid() || !value.IsValid() {
 		return
 	}
-	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.SetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), value.Instance())
+	imports.Proc(def.RequestContext_WebsiteSetting).Call(consts.SetValue, m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), value.Instance(), 0)
 }
 
 func (m *ICefRequestContext) GetContentSetting(requestingUrl, topLevelUrl string, contentType consts.TCefContentSettingTypes) consts.TCefContentSettingValues {

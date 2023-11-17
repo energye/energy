@@ -355,6 +355,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFAppConfig_SetCookieableSchemesList", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_CookieableSchemesExcludeDefaults", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetCookieableSchemesExcludeDefaults", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ChromePolicyId", 0),
 		// 设置常用的命令行参数属性
 		dllimports.NewEnergyImport("CEFAppConfig_SingleProcess", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SetSingleProcess", 0),
@@ -984,6 +985,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_ResetZoomStep", 0),
 		dllimports.NewEnergyImport("CEFChromium_ResetZoomPct", 0),
 		dllimports.NewEnergyImport("CEFChromium_ReadZoom", 0),
+		dllimports.NewEnergyImport("CEFChromium_ZoomCommand", 0),
+		dllimports.NewEnergyImport("CEFChromium_DefaultZoomLevel", 0),
+		dllimports.NewEnergyImport("CEFChromium_CanZoom", 0),
 		dllimports.NewEnergyImport("CEFChromium_WasResized", 0),
 		dllimports.NewEnergyImport("CEFChromium_WasHidden", 0),
 		dllimports.NewEnergyImport("CEFChromium_NotifyScreenInfoChanged", 0),
@@ -993,6 +997,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_IMECancelComposition", 0),
 		dllimports.NewEnergyImport("CEFChromium_HasDevTools", 0),
 		dllimports.NewEnergyImport("CEFChromium_InitializeDragAndDrop", 0),
+		dllimports.NewEnergyImport("CEFChromium_Fullscreen", 0),
+		dllimports.NewEnergyImport("CEFChromium_ExitFullscreen", 0),
 		// ChromiumOptions
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascript", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascriptCloseWindows", 0),
@@ -1009,6 +1015,7 @@ func init() {
 		dllimports.NewEnergyImport("ChromiumOptions_SetAcceptLanguageList", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetWindowlessFrameRate", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetChromeStatusBubble", 0),
+		dllimports.NewEnergyImport("ChromiumOptions_ChromeZoomBubble", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),
@@ -1769,6 +1776,7 @@ func init() {
 		dllimports.NewEnergyImport("CefDragData_GetImage", 0),
 		dllimports.NewEnergyImport("CefDragData_GetImageHotspot", 0),
 		dllimports.NewEnergyImport("CefDragData_HasImage", 0),
+		dllimports.NewEnergyImport("CefDragData_GetFilePaths", 0),
 		// ICefFindHandler
 		dllimports.NewEnergyImport("CefFindHandlerRef_Create", 0),
 		dllimports.NewEnergyImport("CefFindHandler_OnFindResult", 0),

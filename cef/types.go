@@ -56,7 +56,7 @@ type TCefRequestContextSettings struct {
 	CachePath                        TCefString
 	PersistSessionCookies            Int32
 	PersistUserPreferences           Int32
-	AcceptLanguageList               TCefString
+	AcceptLanguageList               TCefString // Remove CEF 118
 	CookieableSchemesList            TCefString
 	CookieableSchemesExcludeDefaults Int32
 }
@@ -67,7 +67,7 @@ func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 		CachePath:                        api.PascalStr(string(m.CachePath)),
 		PersistSessionCookies:            uintptr(m.PersistSessionCookies),
 		PersistUserPreferences:           uintptr(m.PersistUserPreferences),
-		AcceptLanguageList:               api.PascalStr(string(m.AcceptLanguageList)),
+		AcceptLanguageList:               api.PascalStr(string(m.AcceptLanguageList)), // Remove CEF 118
 		CookieableSchemesList:            api.PascalStr(string(m.CookieableSchemesList)),
 		CookieableSchemesExcludeDefaults: uintptr(m.CookieableSchemesExcludeDefaults),
 	}
@@ -101,7 +101,7 @@ type TCefBrowserSettings struct {
 	Databases                  TCefState
 	Webgl                      TCefState
 	BackgroundColor            TCefColor
-	AcceptLanguageList         TCefString
+	AcceptLanguageList         TCefString // Remove CEF 118
 	ChromeStatusBubble         TCefState
 }
 
@@ -165,7 +165,8 @@ type BeforePopupInfo struct {
 }
 
 // TCefRect
-//  /include/internal/cef_types_geometry.h (cef_rect_t)
+//
+//	/include/internal/cef_types_geometry.h (cef_rect_t)
 type TCefRect struct {
 	X      int32
 	Y      int32
@@ -187,7 +188,8 @@ type TRGBQuad struct {
 }
 
 // NewTCefRectArray
-//  TCefRect 动态数组结构, 通过指针引用取值
+//
+//	TCefRect 动态数组结构, 通过指针引用取值
 func NewTCefRectArray(ptr uintptr, count uint32) *TCefRectArray {
 	return &TCefRectArray{
 		ptr:    ptr,
@@ -208,21 +210,24 @@ func (m *TCefRectArray) Get(index int) *TCefRect {
 }
 
 // TCefSize
-//  /include/internal/cef_types_geometry.h (cef_size_t)
+//
+//	/include/internal/cef_types_geometry.h (cef_size_t)
 type TCefSize struct {
 	Width  int32
 	Height int32
 }
 
 // TCefPoint
-//  /include/internal/cef_types_geometry.h (cef_point_t)
+//
+//	/include/internal/cef_types_geometry.h (cef_point_t)
 type TCefPoint struct {
 	X int32
 	Y int32
 }
 
 // TCefCursorInfo
-//  /include/internal/cef_types.h (cef_cursor_info_t)
+//
+//	/include/internal/cef_types.h (cef_cursor_info_t)
 type TCefCursorInfo struct {
 	Hotspot          TCefPoint
 	ImageScaleFactor Single
@@ -303,7 +308,8 @@ type ICefProcessMessage struct {
 }
 
 // TCefBinaryValueArray
-//  []ICefBinaryValue
+//
+//	[]ICefBinaryValue
 type TCefBinaryValueArray struct {
 	instance     unsafe.Pointer
 	binaryValues []*ICefBinaryValue
@@ -346,7 +352,8 @@ type ICefDictionaryValue struct {
 }
 
 // ICefDisplayArray
-//  []ICefDisplayArray
+//
+//	[]ICefDisplayArray
 type ICefDisplayArray struct {
 	instance     unsafe.Pointer
 	binaryValues []*ICefDisplayArray
@@ -385,7 +392,8 @@ type ICefExtension struct {
 }
 
 // ICefSchemeHandlerFactory
-//  /include/capi/cef_scheme_capi.h (cef_scheme_handler_factory_t)
+//
+//	/include/capi/cef_scheme_capi.h (cef_scheme_handler_factory_t)
 type ICefSchemeHandlerFactory struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -419,7 +427,8 @@ type ICefDomDocument struct {
 }
 
 // TCefScreenInfo
-//  /include/internal/cef_types.h (cef_screen_info_t)
+//
+//	/include/internal/cef_types.h (cef_screen_info_t)
 type TCefScreenInfo struct {
 	DeviceScaleFactor Single
 	Depth             int32
@@ -430,7 +439,8 @@ type TCefScreenInfo struct {
 }
 
 // TCefTouchHandleState
-//  /include/internal/cef_types.h (cef_touch_handle_state_t)
+//
+//	/include/internal/cef_types.h (cef_touch_handle_state_t)
 type TCefTouchHandleState struct {
 	TouchHandleId    int32
 	Flags            uint32
@@ -656,7 +666,8 @@ type TCefX509CertificateArray struct {
 }
 
 // ICefX509Certificate
-//  /include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t)
+//
+//	/include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t)
 type ICefX509Certificate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -670,7 +681,8 @@ type ICefX509CertPrincipal struct {
 }
 
 // ICefSslInfo
-//  /include/capi/cef_ssl_info_capi.h (cef_sslinfo_t)
+//
+//	/include/capi/cef_ssl_info_capi.h (cef_sslinfo_t)
 type ICefSslInfo struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -701,19 +713,19 @@ type ICefContextMenuHandler struct {
 	instance unsafe.Pointer
 }
 
-//ICefDialogHandler
+// ICefDialogHandler
 type ICefDialogHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefDisplayHandler
+// ICefDisplayHandler
 type ICefDisplayHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefDownloadHandler
+// ICefDownloadHandler
 type ICefDownloadHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -725,87 +737,89 @@ type ICefDownloadItem struct {
 	instance unsafe.Pointer
 }
 
-//ICefDragHandler
+// ICefDragHandler
 type ICefDragHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefFindHandler
+// ICefFindHandler
 type ICefFindHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefFocusHandler
+// ICefFocusHandler
 type ICefFocusHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefFrameHandler
+// ICefFrameHandler
 type ICefFrameHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefPermissionHandler
+// ICefPermissionHandler
 type ICefPermissionHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefJsDialogHandler
+// ICefJsDialogHandler
 type ICefJsDialogHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefKeyboardHandler
+// ICefKeyboardHandler
 type ICefKeyboardHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefLifeSpanHandler
+// ICefLifeSpanHandler
 type ICefLifeSpanHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefLoadHandler
+// ICefLoadHandler
 type ICefLoadHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefPrintHandler
+// ICefPrintHandler
 type ICefPrintHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefRenderHandler
+// ICefRenderHandler
 type ICefRenderHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
-//ICefRequestHandler
+// ICefRequestHandler
 type ICefRequestHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefAccessibilityHandler
-//  /include/capi/cef_accessibility_handler_capi.h (cef_accessibility_handler_t)
+//
+//	/include/capi/cef_accessibility_handler_capi.h (cef_accessibility_handler_t)
 type ICefAccessibilityHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefResourceRequestHandler
-//  /include/capi/cef_resource_request_handler_capi.h (cef_resource_request_handler_t)
+//
+//	/include/capi/cef_resource_request_handler_capi.h (cef_resource_request_handler_t)
 type ICefResourceRequestHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -813,7 +827,8 @@ type ICefResourceRequestHandler struct {
 }
 
 // ICefCookieAccessFilter
-//  /include/capi/cef_resource_request_handler_capi.h (cef_cookie_access_filter_t)
+//
+//	/include/capi/cef_resource_request_handler_capi.h (cef_cookie_access_filter_t)
 type ICefCookieAccessFilter struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -821,14 +836,16 @@ type ICefCookieAccessFilter struct {
 }
 
 // ICefResourceHandler
-//  /include/capi/cef_resource_handler_capi.h (cef_resource_handler_t)
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_handler_t)
 type ICefResourceHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefResponseFilter
-//  /include/capi/cef_response_filter_capi.h (cef_response_filter_t)
+//
+//	/include/capi/cef_response_filter_capi.h (cef_response_filter_t)
 type ICefResponseFilter struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -846,7 +863,8 @@ type ICefV8Exception struct {
 }
 
 // ICefStreamWriter
-//  /include/capi/cef_stream_capi.h (cef_stream_writer_t)
+//
+//	/include/capi/cef_stream_capi.h (cef_stream_writer_t)
 type ICefStreamWriter struct {
 	*TCefBaseRefCounted
 }
@@ -856,8 +874,8 @@ type ICefStreamWriter struct {
 // v8上下文对象
 //
 // 生命周期
-//   1. 在回调函数中有效
-//   2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
+//  1. 在回调函数中有效
+//  2. 回调函数外使用 cef.V8ContextRef.Current() 获取上下文对象
 type ICefV8Context struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -867,7 +885,8 @@ type ICefV8Context struct {
 }
 
 // ICefV8Value
-//  CEF V8 值类型, 对应到 JavaScrip 的类型, 使用该对象时需要合理的管理释放
+//
+//	CEF V8 值类型, 对应到 JavaScrip 的类型, 使用该对象时需要合理的管理释放
 type ICefV8Value struct {
 	base         TCefBaseRefCounted
 	instance     unsafe.Pointer
@@ -897,12 +916,12 @@ type ICefV8Handler struct {
 	instance unsafe.Pointer
 }
 
-//ICefV8Interceptor
+// ICefV8Interceptor
 type ICefV8Interceptor struct {
 	instance unsafe.Pointer
 }
 
-//ICefV8Accessor
+// ICefV8Accessor
 type ICefV8Accessor struct {
 	instance unsafe.Pointer
 }
@@ -920,21 +939,24 @@ type ICefPrintSettings struct {
 }
 
 // ICefSelectClientCertificateCallback
-//  /include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t)
+//
+//	/include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t)
 type ICefSelectClientCertificateCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefResourceReadCallback
-//  /include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t)
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t)
 type ICefResourceReadCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefResourceSkipCallback
-//  /include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t)
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t)
 type ICefResourceSkipCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -978,7 +1000,7 @@ type ICefAuthCallback struct {
 	instance unsafe.Pointer
 }
 
-//ICefV8ArrayBufferReleaseCallback
+// ICefV8ArrayBufferReleaseCallback
 type ICefV8ArrayBufferReleaseCallback struct {
 	instance unsafe.Pointer
 }
@@ -1025,21 +1047,24 @@ type ICefMediaRouter struct {
 }
 
 // ICefRunContextMenuCallback
-//  /include/capi/cef_context_menu_handler_capi.h (cef_run_context_menu_callback_t)
+//
+//	/include/capi/cef_context_menu_handler_capi.h (cef_run_context_menu_callback_t)
 type ICefRunContextMenuCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefRunQuickMenuCallback
-//  /include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t)
+//
+//	/include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t)
 type ICefRunQuickMenuCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefFileDialogCallback
-//  /include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t)
+//
+//	/include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t)
 type ICefFileDialogCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -1060,23 +1085,26 @@ type ICefDownloadImageCallback struct {
 }
 
 // ICefMediaAccessCallback
-//  This interface is declared twice with almost identical parameters. "allowed_permissions" is defined as int and uint32.
-//  /include/capi/cef_media_access_handler_capi.h (cef_media_access_callback_t)
-//  /include/capi/cef_permission_handler_capi.h (cef_media_access_callback_t)
+//
+//	This interface is declared twice with almost identical parameters. "allowed_permissions" is defined as int and uint32.
+//	/include/capi/cef_media_access_handler_capi.h (cef_media_access_callback_t)
+//	/include/capi/cef_permission_handler_capi.h (cef_media_access_callback_t)
 type ICefMediaAccessCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefPermissionPromptCallback
-//  /include/capi/cef_permission_handler_capi.h (cef_permission_prompt_callback_t)
+//
+//	/include/capi/cef_permission_handler_capi.h (cef_permission_prompt_callback_t)
 type ICefPermissionPromptCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefJsDialogCallback
-//  /include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t)
+//
+//	/include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t)
 type ICefJsDialogCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -1101,7 +1129,8 @@ type ICefDomNode struct {
 }
 
 // TCefMediaRouteArray
-//  []ICefMediaRoute
+//
+//	[]ICefMediaRoute
 type TCefMediaRouteArray struct {
 	instance   unsafe.Pointer
 	mediaRoute []*ICefMediaRoute
@@ -1109,14 +1138,16 @@ type TCefMediaRouteArray struct {
 }
 
 // ICefMediaRoute
-//  /include/capi/cef_media_router_capi.h (cef_media_observer_t)
+//
+//	/include/capi/cef_media_router_capi.h (cef_media_observer_t)
 type ICefMediaRoute struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // TCefMediaSinkArray
-//  []ICefMediaSink
+//
+//	[]ICefMediaSink
 type TCefMediaSinkArray struct {
 	instance  unsafe.Pointer
 	mediaSink []*ICefMediaSink
@@ -1124,14 +1155,16 @@ type TCefMediaSinkArray struct {
 }
 
 // ICefMediaSink
-//  /include/capi/cef_media_router_capi.h (cef_media_sink_t)
+//
+//	/include/capi/cef_media_router_capi.h (cef_media_sink_t)
 type ICefMediaSink struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefNavigationEntry
-//  /include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t)
+//
+//	/include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t)
 type ICefNavigationEntry struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -1143,7 +1176,8 @@ type TCefPreferenceRegistrarRef struct {
 }
 
 // TCefRange
-//  /include/internal/cef_types_geometry.h (cef_range_t)
+//
+//	/include/internal/cef_types_geometry.h (cef_range_t)
 type TCefRange struct {
 	From int32
 	To   int32
@@ -1247,7 +1281,7 @@ type TChromiumOptions struct {
 	databases                  TCefState
 	webgl                      TCefState
 	backgroundColor            TCefColor
-	acceptLanguageList         String
+	acceptLanguageList         String // Remove CEF 118
 	windowlessFrameRate        Integer
 	chromeStatusBubble         TCefState
 }

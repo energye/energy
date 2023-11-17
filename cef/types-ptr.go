@@ -34,7 +34,7 @@ type tCefRequestContextSettingsPtr struct {
 	CachePath                        uintptr //TCefString
 	PersistSessionCookies            uintptr //int32
 	PersistUserPreferences           uintptr //int32
-	AcceptLanguageList               uintptr //uint32
+	AcceptLanguageList               uintptr //uint32  Remove CEF 118
 	CookieableSchemesList            uintptr //uint32
 	CookieableSchemesExcludeDefaults uintptr //int32
 }
@@ -66,7 +66,7 @@ type tCefBrowserSettingsPtr struct {
 	Databases                  uintptr //TCefState
 	Webgl                      uintptr //TCefState
 	BackgroundColor            uintptr //TCefColor
-	AcceptLanguageList         uintptr //TCefString
+	AcceptLanguageList         uintptr //TCefString Remove CEF 118
 	ChromeStatusBubble         uintptr //TCefState
 }
 
@@ -110,7 +110,7 @@ func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
 		Databases:                  m.Databases.ToPtr(),
 		Webgl:                      m.Webgl.ToPtr(),
 		BackgroundColor:            m.BackgroundColor.ToPtr(),
-		AcceptLanguageList:         m.AcceptLanguageList.ToPtr(),
+		AcceptLanguageList:         m.AcceptLanguageList.ToPtr(), // Remove CEF 118
 		ChromeStatusBubble:         m.ChromeStatusBubble.ToPtr(),
 	}
 }
@@ -144,7 +144,7 @@ func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
 		Databases:                  TCefState(m.Databases),
 		Webgl:                      TCefState(m.Webgl),
 		BackgroundColor:            TCefColor(m.BackgroundColor),
-		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList)),
+		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList)), // Remove CEF 118
 		ChromeStatusBubble:         TCefState(m.ChromeStatusBubble),
 	}
 }
