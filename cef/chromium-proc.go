@@ -199,6 +199,8 @@ type IChromiumProc interface {
 	IMECancelComposition()
 	HasDevTools() bool
 	InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl)
+	Fullscreen() bool
+	ExitFullscreen(willCauseResize bool)
 }
 
 // IsValid 实例有效
