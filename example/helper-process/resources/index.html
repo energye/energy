@@ -48,7 +48,7 @@
             name: "sub-process-on-event",                 //事件名
             arguments: ["energy"],          //参数
             callback: function (r1) {               //回调函数
-                alert("callback render-dom-visitor r1: "+ r1)
+                alert("result: "+ r1)
             },
             mode: 0, // int 0:async or 1:sync, default 0:async  触发模式、异步和同步
             target: 1, // int 0:main 1:current 2:other  触发目标, 主进程、当前进程、其它进程(需要主进程)

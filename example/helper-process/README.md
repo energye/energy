@@ -6,19 +6,20 @@ macos 有明显的区别
 windows linux MacOS 的使用
 步骤
  1. 先编译好子进程程序 
-    cd sub-process 
+    cd helper
     go build
-    sub-process.exe 
+    helper.exe 
  2. 目录配置
-    windows linux: 将子进程执行文件（sub-process.exe）在主进程SetBrowseSubprocessPath配置，
-        如果在 FrameworkDirPath 可以直接写文件名
-    MacOS: 将子进程执行文件（sub-process.exe）在主进程 macapp.MacApp.SetBrowseSubprocessPath 配置绝对路径
+    windows linux: 将子进程执行文件（helper.exe）在主进程SetBrowseSubprocessPath配置，
+        如果在 CEF框架目录 可以直接写文件名
+    MacOS: 将子进程执行文件（helper）在主进程 macapp.MacApp.SetBrowseSubprocessPath 配置绝对路径, 主要用于生成 Mac App独有的子进程
  3. 运行主程序
  
- 示例目录说明
-     main-process 主进程
-        resources 资源目录
-     sub-process 子进程
+目录说明
+     app  统一application对象，保持主子进程配置一样
+     main 主进程
+     resources 资源目录
+     helper 子进程
  
  
  二 MacOS 的使用 - 手动创建独立子进程 app 包
