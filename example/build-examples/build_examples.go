@@ -34,7 +34,7 @@ func main() {
 		"frameless", "html5test", "i18n", "internal-http-server", "ipc-on-emit/go-composite-type", "ipc-on-emit/go-to-go", "ipc-on-emit/go-to-js", "ipc-on-emit/js-to-go",
 		"key-event", "lib-checkupdate", "load-html-url", "local-load", "mockevent",
 		"msgbox", "popup-sub-window", "print-pdf", "process-type", "proxy", "response-filter",
-		"scheme", "screen", "screenshot", "search-text", "simple", "simple-local-load", "sub-process/main-process", "sub-process/sub-process", "sys-dialog",
+		"scheme", "screen", "screenshot", "search-text", "simple", "simple-local-load", "helper-process", "helper-process/helper", "sys-dialog",
 		"sys-menu", "tempdll", "view-source", "vue", "window/close-for-hidden", "window/close-for-minimize", "window/default-hidden-window", "window/new-window",
 		"webkit-register", "window/close-for-hidden", "window/close-for-minimize", "window/default-hidden-window", "zoom"}
 	var (
