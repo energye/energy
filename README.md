@@ -28,22 +28,19 @@ English
 
 Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embedded
 [CEF](https://bitbucket.org/chromiumembedded/cef) binary
-> [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF(Chromium Embedded
-> Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
->
-> Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows,
-> Linux and MacOS
+- [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF (Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
+- Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows, Linux and MacOS
 ### Characteristic
 
-> - Rich CEF API and LCL system native widgets
-> - Development environment is simple and the compilation speed is fast. Only need Go and Energy.
-> - Cross-Platform: You can package your code as Windows, domestic UOS, Deepin, Kylin, MacOS and Linux
-> - Responsibilities
->> - Go: Go is responsible for creating Windows, configuring CEF and implementing functions, creating various UI components, calling the low level of the system and some functions that JS cannot handle, such as: file flow, security encryption, high-performance processing, etc.
->> - Web: HTML + CSS + JavaScript is responsible for the function of the client interface, you can make any interface you want.
-> - Front-end technology: Support mainstream frameworks, such as Vue, React, Angular or pure HTML+CSS+JS.
-> - Event driven: High performance event driven, based on IPC communication, Go and Web can call each other quality.
-> - Esource loading: You can either read local resources or resources build into execution files without http services, or you can load resources using http services.
+- Rich CEF API and LCL system native widgets
+- Development environment is simple and the compilation speed is fast. Only need Go and Energy.
+- Cross-Platform: You can package your code as Windows, domestic UOS, Deepin, Kylin, MacOS and Linux
+- Responsibilities
+  - Go: Go is responsible for creating Windows, configuring CEF and implementing functions, creating various UI components, calling the low level of the system and some functions that JS cannot handle, such as: file flow, security encryption, high-performance processing, etc.
+  - Web: HTML + CSS + JavaScript is responsible for the function of the client interface, you can make any interface you want.
+- Front-end technology: Support mainstream frameworks, such as Vue, React, Angular or pure HTML+CSS+JS.
+- Event driven: High performance event driven communication based on IPC allowing intercommunication between Go and Web.
+- Resource loading: You can either read local resources or resources built into execution files either with or without HTTP services.
 
 ### Built-in dependency&integration
 
@@ -54,14 +51,12 @@ Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embed
 
 #### Basic needs
 
-> - Golang >= 1.18
-> - Energy (CEF, liblcl)
+- Golang >= 1.18
+- Energy (CEF, liblcl)
 
 #### Environmental installation
 
-- Automatic installation development environment
-
-> Using the energy command-line tool [Download address](https://energy.yanghy.cn/course/100/1694511322285207)
+Automatic installation development environment using the energy [command-line tool](https://energy.yanghy.cn/course/100/1694511322285207)
 
 ### Guide to Start - [Link](https://energy.yanghy.cn)
 
@@ -71,7 +66,7 @@ Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embed
 
 ### Quick Start
 
-> Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) Command line tools to install the complete development environment automatically.
+- Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) command line tools to install the complete development environment automatically.
 
 ### Run a simple application by three steps
 
@@ -106,9 +101,9 @@ func main() {
 1. Build：`energy build .`
 2. Package：`energy package .`
 3. Package Type：
-    - windows  Using`nsis`Create exe installation package
-    - linux    Using`dpkg`Create deb installation package
-    - macos    Generate`xxx.app`
+    - windows: Using `nsis` create exe installation package
+    - linux: Using `dpkg` create deb installation package
+    - macos: Generate `xxx.app`
 
 
 ### System support
