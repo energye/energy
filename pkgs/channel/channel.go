@@ -47,7 +47,7 @@ var (
 	port             = 19878         // net ipc default: 19878
 )
 
-//mt 消息类型
+// mt 消息类型
 type mt int8
 
 const (
