@@ -15,6 +15,7 @@ import (
 )
 
 // ICEFChromiumBrowser
+//
 //	CEFChromium浏览器接口
 type ICEFChromiumBrowser interface {
 	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //
@@ -25,6 +26,7 @@ type ICEFChromiumBrowser interface {
 }
 
 // TCEFChromiumBrowser
+//
 //	CEFChromium浏览器包装结构
 type TCEFChromiumBrowser struct {
 	chromium     IChromium        // chromium
@@ -37,6 +39,7 @@ type TCEFChromiumBrowser struct {
 }
 
 // NewChromiumBrowser
+//
 //	初始创建一个 chromium 浏览器
 func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFChromiumBrowser {
 	var m = new(TCEFChromiumBrowser)
@@ -51,6 +54,7 @@ func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFC
 }
 
 // checkAndCreateBrowser
+//
 //	创建浏览器
 //	创建时如果未创建成功, 使用定时器创建直到成功
 func (m *TCEFChromiumBrowser) checkAndCreateBrowser(sender lcl.IObject) {
@@ -79,6 +83,7 @@ func (m *TCEFChromiumBrowser) SetCreateBrowserExtraInfo(windowName string, conte
 }
 
 // CreateBrowser
+//
 //	创建浏览器
 //	创建时如果未创建成功, 使用定时任务创建直到成功
 func (m *TCEFChromiumBrowser) CreateBrowser() {
@@ -86,18 +91,21 @@ func (m *TCEFChromiumBrowser) CreateBrowser() {
 }
 
 // Chromium
+//
 //	返回 chromium
 func (m *TCEFChromiumBrowser) Chromium() IChromium {
 	return m.chromium
 }
 
 // WindowParent
+//
 //	返回 chromium window 组件
 func (m *TCEFChromiumBrowser) WindowParent() ICEFWindowParent {
 	return m.windowParent
 }
 
 // IsCreated
+//
 //	创建浏览器是否成功
 func (m *TCEFChromiumBrowser) IsCreated() bool {
 	return m.isCreated
