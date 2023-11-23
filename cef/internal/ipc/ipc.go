@@ -46,6 +46,7 @@ type browserIPC struct {
 }
 
 // SyncChan
+//
 //	IPC synchronous receiving data channel
 type SyncChan struct {
 	lock           sync.Mutex  //
@@ -64,6 +65,7 @@ func init() {
 }
 
 // createCallback
+//
 //	Create and return a callback function
 func createCallback(fn any) *callback.Callback {
 	switch fn.(type) {
@@ -80,6 +82,7 @@ func createCallback(fn any) *callback.Callback {
 }
 
 // SetProcessMessage
+//
 //	Set the process message object
 //	without manually calling it
 func SetProcessMessage(pm types.IProcessMessage) {
@@ -89,8 +92,9 @@ func SetProcessMessage(pm types.IProcessMessage) {
 	browser.processMessage = pm
 }
 
-//On
-//  IPC GO Listening for events
+// On
+//
+//	IPC GO Listening for events
 func On(name string, fn any, options ...types.OnOptions) {
 	if name == "" || fn == nil {
 		return
@@ -115,7 +119,7 @@ func On(name string, fn any, options ...types.OnOptions) {
 	}
 }
 
-//RemoveOn
+// RemoveOn
 // IPC GO Remove listening events
 func RemoveOn(name string) {
 	if name == "" {
@@ -127,8 +131,9 @@ func RemoveOn(name string) {
 }
 
 // Emit
-//  Event that triggers listening
-//  default to triggering the main process
+//
+//	Event that triggers listening
+//	default to triggering the main process
 func Emit(name string, argument ...any) {
 	if name == "" || browser.processMessage == nil {
 		return
@@ -137,9 +142,10 @@ func Emit(name string, argument ...any) {
 }
 
 // EmitAndCallback
-//  Event that triggers listening
-//  with callback function
-//  default to the main process
+//
+//	Event that triggers listening
+//	with callback function
+//	default to the main process
 func EmitAndCallback(name string, argument []any, fn any) {
 	if name == "" || browser.processMessage == nil {
 		return
@@ -153,7 +159,8 @@ func EmitAndCallback(name string, argument []any, fn any) {
 }
 
 // EmitTarget
-//  Trigger an event for the specified target to listen to
+//
+//	Trigger an event for the specified target to listen to
 func EmitTarget(name string, tag target.ITarget, argument ...any) {
 	if name == "" {
 		return
@@ -171,7 +178,8 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) {
 }
 
 // EmitTargetAndCallback
-//  Trigger an event with a callback function for the specified target to listen on
+//
+//	Trigger an event with a callback function for the specified target to listen on
 func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn any) {
 	if name == "" {
 		return
@@ -196,8 +204,9 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn a
 }
 
 // CheckOnEvent
-//  IPC checks if the event listening in GO exists
-//  returns the function and removes it
+//
+//	IPC checks if the event listening in GO exists
+//	returns the function and removes it
 func CheckOnEvent(name string) *callback.Callback {
 	if name == "" {
 		return nil
@@ -211,8 +220,9 @@ func CheckOnEvent(name string) *callback.Callback {
 }
 
 // CheckEmitCallback
-//  IPC checks if the GO Emit callback function exists
-//  returns the function and removes it
+//
+//	IPC checks if the GO Emit callback function exists
+//	returns the function and removes it
 func CheckEmitCallback(id int32) *callback.Callback {
 	browser.emitLock.Lock()
 	defer browser.emitLock.Unlock()
@@ -224,6 +234,7 @@ func CheckEmitCallback(id int32) *callback.Callback {
 }
 
 // removeEmitCallback
+//
 //	Delete callback function for specified message ID
 func removeEmitCallback(id int32) {
 	browser.emitLock.Lock()
@@ -232,6 +243,7 @@ func removeEmitCallback(id int32) {
 }
 
 // addOnEvent
+//
 //	Add listening event
 //	callback function
 //	  1. context 2.argument list
@@ -245,6 +257,7 @@ func (m *browserIPC) addOnEvent(name string, fn *callback.Callback) {
 }
 
 // emitOnEvent
+//
 //	Trigger listening event
 func (m *browserIPC) emitOnEvent(name string, argumentList types.IArrayValue) {
 	if m == nil || name == "" || argumentList == nil {
@@ -255,6 +268,7 @@ func (m *browserIPC) emitOnEvent(name string, argumentList types.IArrayValue) {
 }
 
 // addOnEvent
+//
 //	Add emit callback function
 func (m *browserIPC) addEmitCallback(fn any) int32 {
 	if m == nil || fn == nil {
@@ -275,7 +289,8 @@ func (m *browserIPC) addEmitCallback(fn any) int32 {
 }
 
 // SetDelayTime
-//  Set maximum delay time in milliseconds
+//
+//	Set maximum delay time in milliseconds
 func (m *SyncChan) SetDelayTime(delay time.Duration) {
 	m.delay = delay
 }
@@ -291,6 +306,7 @@ func (m *SyncChan) Stop() {
 }
 
 // DelayWaiting
+//
 //	Synchronous message, delay, default 5000 milliseconds
 func (m *SyncChan) DelayWaiting() {
 	m.lock.Lock()

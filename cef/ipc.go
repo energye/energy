@@ -143,7 +143,7 @@ func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 	return nil
 }
 
-//clear 清空所有回调函数
+// clear 清空所有回调函数
 func (m *ipcEmitHandler) clear() {
 	for _, v := range m.callbackList {
 		v.function.SetCanNotFree(false)
@@ -184,7 +184,7 @@ func (m *ipcOnHandler) getCallback(eventName string) *ipcCallback {
 	return m.callbackList[eventName]
 }
 
-//clear 清空所有回调函数
+// clear 清空所有回调函数
 func (m *ipcOnHandler) clear() {
 	for _, v := range m.callbackList {
 		v.function.SetCanNotFree(false)

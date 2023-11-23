@@ -26,13 +26,15 @@ type IBrowserIPCChan interface {
 }
 
 // browserIPCChan
-//  Current browser process IPC channel processing
+//
+//	Current browser process IPC channel processing
 type browserIPCChan struct {
 	ipc      channel.IBrowserChannel
 	callback []func(channelId int64, argument argument.IList) bool
 }
 
 // CreateBrowserIPC
+//
 //	Main process IPC creation
 func CreateBrowserIPC() IBrowserIPCChan {
 	if browserChan == nil {
@@ -58,15 +60,22 @@ func CreateBrowserIPC() IBrowserIPCChan {
 	return browserChan
 }
 
+// BrowserChan
+//
+// 返回Browser IPC Channel, 这个是在channel创建的
 func BrowserChan() IBrowserIPCChan {
 	return browserChan
 }
 
+// IPC
+//
+// 返回Browser IPC Channel
 func (m *browserIPCChan) IPC() channel.IBrowserChannel {
 	return m.ipc
 }
 
 // AddCallback
+//
 //	Add a callback function
 //	callback returns true ipc to stop traversing
 //	otherwise continue traversing until the last one
