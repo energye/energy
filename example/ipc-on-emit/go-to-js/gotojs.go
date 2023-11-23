@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/example/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"strings"
 )
@@ -23,8 +24,9 @@ func main() {
 	})
 	//创建应用
 	cefApp := cef.NewApplication()
+	port := common.Port()
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/go-to-js.html"
+	cef.BrowserWindow.Config.Url = fmt.Sprintf("http://localhost:%d/go-to-js.html", port)
 	cef.BrowserWindow.Config.Title = "Energy - go on event - js emit event"
 
 	//在go中监听一个事件, 不带返回值
@@ -99,7 +101,7 @@ func main() {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
 		server := assetserve.NewAssetsHttpServer()
-		server.PORT = 22022
+		server.PORT = port
 		server.AssetsFSName = "resources" //必须设置目录名
 		server.Assets = &resources
 		go server.StartHttpServer()
