@@ -27,6 +27,7 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 var (
@@ -44,8 +45,11 @@ var (
 	memoryAddress    = "energy.sock" //
 	ipcSock          string          // sock path
 	useNetIPCChannel = false         //
-	port             = 19878         // net ipc default: 19878
+	port             = 0             // net ipc default: 0
 )
+
+// IPCNetSocketPortKey IPC 监听端口号的Key名, 在初始化之前该值可被改变
+var IPCNetSocketPortKey = "--energy-ipc-net-socket-port"
 
 // mt 消息类型
 type mt int8
@@ -78,7 +82,13 @@ func MemoryAddress() string {
 	return memoryAddress
 }
 
-func isUseNetIPC() bool {
+// IsUseNetIPC
+//
+// 当前IPC使用的通道类型
+//
+//	MacOS, Linux, Windows10 && Build >= 17063 时使用 unix socket
+//	Windows10 以下 && Windows10 Build < 17063 时使用 net socket
+func IsUseNetIPC() bool {
 	if common.IsDarwin() || common.IsLinux() {
 		return false
 	}
@@ -101,7 +111,7 @@ func SetPort(v int) {
 	}
 }
 
-// Port 获取并返回net socket端口
+// Port 获取并返回未使用的net socket端口
 func Port() int {
 	if port != 0 {
 		return port
@@ -118,6 +128,12 @@ func Port() int {
 		}
 		defer listen.Close()
 		port = listen.Addr().(*net.TCPAddr).Port
+		// 主进程(浏览器进程)环境变量以使子进程获取这个端口
+		os.Setenv(IPCNetSocketPortKey, strconv.Itoa(port))
+	} else if process.Args.IsRender() {
+		// 子进程(渲染进程)获取这个端口号
+		nsp := os.Getenv(IPCNetSocketPortKey)
+		port, _ = strconv.Atoi(nsp)
 	}
 	return port
 }

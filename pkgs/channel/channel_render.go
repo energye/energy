@@ -29,9 +29,10 @@ type renderChannel struct {
 //
 // param: channelId Unique channel ID identifier
 func NewRender(channelId int64, addresses ...string) IRenderChannel {
-	useNetIPCChannel = isUseNetIPC()
+	useNetIPCChannel = IsUseNetIPC()
 	render := &renderChannel{}
 	if useNetIPCChannel {
+		// 监听端口
 		address := fmt.Sprintf("localhost:%d", Port())
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
@@ -83,6 +84,7 @@ func (m *renderChannel) SendToChannel(toChannelId int64, data []byte) {
 }
 
 // UpdateChannelId
+//
 //	Update channel ID
 //	The original channel ID is invalid after updating
 func (m *renderChannel) UpdateChannelId(newChannelId int64) {
@@ -93,12 +95,14 @@ func (m *renderChannel) UpdateChannelId(newChannelId int64) {
 }
 
 // sendMessage
-//  Send data to the specified channel
+//
+//	Send data to the specified channel
 func (m *renderChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
 	_, _ = m.channel.write(messageType, channelId, toChannelId, data)
 }
 
 // Handler
+//
 //	Set custom processing callback function
 func (m *renderChannel) Handler(handler IPCCallback) {
 	m.handler = handler

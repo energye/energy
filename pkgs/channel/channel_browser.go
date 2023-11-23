@@ -32,11 +32,12 @@ type browserChannel struct {
 
 // NewBrowser Create main(browser) process channel
 func NewBrowser(addresses ...string) IBrowserChannel {
-	useNetIPCChannel = isUseNetIPC()
+	useNetIPCChannel = IsUseNetIPC()
 	browser := &browserChannel{
 		channel: sync.Map{},
 	}
 	if useNetIPCChannel {
+		// 监听并绑定端口
 		address := fmt.Sprintf("localhost:%d", Port())
 		listener, err := net.Listen("tcp", address)
 		if err != nil {
@@ -101,6 +102,7 @@ func (m *browserChannel) onChannelConnect(conn *channel) {
 }
 
 // removeChannel Delete specified channel
+//
 //	When the channel is closed
 func (m *browserChannel) removeChannel(channelId int64) {
 	logger.Debug("IPC browser channel remove channelId:", channelId)
@@ -120,12 +122,14 @@ func (m *browserChannel) sendMessage(messageType mt, channelId, toChannelId int6
 }
 
 // Handler
+//
 //	Set custom processing callback function
 func (m *browserChannel) Handler(handler IPCCallback) {
 	m.handler = handler
 }
 
 // accept
+//
 //	Receive new connection
 func (m *browserChannel) accept() {
 	for {
@@ -147,6 +151,7 @@ func (m *browserChannel) accept() {
 }
 
 // newConnection
+//
 //	new connection
 func (m *browserChannel) newConnection(conn net.Conn) {
 	defer func() {
