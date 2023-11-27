@@ -22,6 +22,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/energy/v2/pkgs/winicon"
+	rtlVersion "github.com/energye/golcl/lcl/rtl/version"
 	toolsCommand "github.com/energye/golcl/tools/command"
 	"github.com/tc-hib/winres"
 	"github.com/tc-hib/winres/version"
@@ -39,9 +40,10 @@ const (
 )
 
 // 构建windows执行程序
-//  exe生成图标
-//  编译go
-//  upx
+//
+//	exe生成图标
+//	编译go
+//	upx
 func build(c *command.Config, proj *project.Project) (err error) {
 	var (
 		iconPath string
@@ -67,7 +69,12 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	term.Section.Println("Building", proj.OutputFilename)
 	var args = []string{"build"}
 	if proj.TempDll {
-		args = append(args, "--tags=tempdll")
+		ov := rtlVersion.OSVersion
+		isWin10 := (ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063)
+		if !isWin10 { // windows10 build < 17063 使用 CEF 109
+			c.Build.TempDllFlag = "109"
+		}
+		args = append(args, "--tags=tempdll "+c.Build.TempDllFlag)
 	}
 	args = append(args, "-ldflags", "-s -w -H windowsgui")
 	args = append(args, "-o", proj.OutputFilename)

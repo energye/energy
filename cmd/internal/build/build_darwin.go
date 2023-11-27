@@ -30,7 +30,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	term.Section.Println("Building", proj.OutputFilename)
 	var args = []string{"build"}
 	if proj.TempDll {
-		args = append(args, "--tags=tempdll")
+		args = append(args, "--tags=tempdll "+c.Build.TempDllFlag)
 	}
 	args = append(args, "-ldflags", "-s -w")
 	args = append(args, "-o", proj.OutputFilename)

@@ -19,7 +19,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
-	"os"
 	"strings"
 )
 
@@ -31,12 +30,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	term.Section.Println("Building", proj.OutputFilename)
 	var args = []string{"build"}
 	if proj.TempDll {
-		c.Build.Gtk = strings.ToLower(c.Build.Gtk)
-		if c.Build.Gtk != "gtk3" && c.Build.Gtk != "gtk2" {
-			term.Logger.Error("Compiling and enabling TempDll. gtk can only be gtk2 or gtk3")
-			os.Exit(1)
-		}
-		args = append(args, "--tags=tempdll "+c.Build.Gtk)
+		args = append(args, "--tags=tempdll "+c.Build.TempDllFlag)
 	}
 	args = append(args, "-ldflags", "-s -w")
 	args = append(args, "-o", proj.OutputFilename)

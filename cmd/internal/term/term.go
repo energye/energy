@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	CliVersion = "1.0.2"
+	CliVersion = "1.0.3"
 )
 
 var Logger *pterm.Logger
