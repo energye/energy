@@ -286,7 +286,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
-		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk {
+		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk && m.WindowProperty().EnableMaximize {
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 			if win.ReleaseCapture() {
