@@ -41,10 +41,13 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 		if common.IsWindows() {
 			// 如果开启开发者工具, 需要在IU线程中创建window
 			browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
-			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
-			browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
+			devTools := browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools()
+			if devTools.DevTools() == nil {
+				devTools.SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
+				devTools.DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
+			}
 			browserWindow.RunOnMainThread(func() { // show window, run is main ui thread
-				browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools().DevTools().Show()
+				devTools.DevTools().Show()
 			})
 		} else {
 			browserWindow.Chromium().ShowDevTools(nil)
