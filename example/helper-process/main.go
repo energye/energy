@@ -2,11 +2,11 @@ package main
 
 import (
 	"embed"
-	"example/helper-process/app"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/example/helper-process/app"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/pkgs/macapp"

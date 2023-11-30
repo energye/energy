@@ -1,12 +1,12 @@
 package main
 
 import (
-	"example/helper-process/app"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/example/helper-process/app"
 )
 
 /*
