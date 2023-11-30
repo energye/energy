@@ -78,6 +78,7 @@ func main() {
 		var elliptic = func(window cef.IBrowserWindow) {
 			hRegion := winapi.CreateEllipticRgn(0, 0, 550, 550)
 			winapi.SetWindowRgn(types.HWND(window.Handle()), hRegion, true)
+			winapi.DeleteObject(hRegion)
 		}
 		var transparent = func(window cef.IBrowserWindow) {
 			if window.IsLCL() {
