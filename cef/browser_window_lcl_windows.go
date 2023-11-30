@@ -63,6 +63,8 @@ func (m *LCLBrowserWindow) HideTitle() {
 }
 
 // SetRoundRectRgn 窗口无边框时圆角设置
+//
+//	如果 rgn 值设置的过大同时开启GPU加速窗口会卡顿
 func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
 	if m.rgn == 0 && rgn > 0 {
 		m.rgn = rgn
