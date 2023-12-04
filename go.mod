@@ -14,6 +14,7 @@ require (
 	github.com/jessevdk/go-flags v1.5.0
 	github.com/json-iterator/go v1.1.12
 	github.com/lithammer/fuzzysearch v1.1.8
+	github.com/mattn/go-pointer v0.0.1
 	github.com/pterm/pterm v0.12.66
 	github.com/tc-hib/winres v0.2.0
 	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c
