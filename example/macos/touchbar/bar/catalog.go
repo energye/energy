@@ -10,7 +10,7 @@ func MakeCatalog(switcher barutils.Switcher, update func()) barbuilder.Item {
 	fmt.Println("MakeCatalog")
 	// TODO: showcase Escape
 	return barutils.VirtualPopover(barbuilder.Popover{
-		CollapsedText:  "Catalog",
+		CollapsedText:  "目录",
 		CollapsedImage: barbuilder.TBBookmarksTemplate,
 		Bar: []barbuilder.Item{
 			&barbuilder.Label{
