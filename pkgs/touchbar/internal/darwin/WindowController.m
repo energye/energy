@@ -11,32 +11,32 @@
 
 @implementation WindowController
 
-static NSTouchBarItemIdentifier standardOtherItems = @"net.lbrunner.touchbar.other_items";
-static NSTouchBarItemIdentifier standardSpaceSmall = @"net.lbrunner.touchbar.small_space";
-static NSTouchBarItemIdentifier standardSpaceLarge = @"net.lbrunner.touchbar.large_space";
-static NSTouchBarItemIdentifier standardSpaceFlexible = @"net.lbrunner.touchbar.flexible_space";
-static NSTouchBarItemIdentifier standardCandidateList = @"net.lbrunner.touchbar.candidates";
-static NSTouchBarItemIdentifier standardCharacterPicker = @"net.lbrunner.touchbar.char_picker";
-static NSTouchBarItemIdentifier standardTextFormat = @"net.lbrunner.touchbar.text_format";
-static NSTouchBarItemIdentifier standardTextAlignment = @"net.lbrunner.touchbar.text_align";
-static NSTouchBarItemIdentifier standardTextColorPicker = @"net.lbrunner.touchbar.text_color";
-static NSTouchBarItemIdentifier standardTextList = @"net.lbrunner.touchbar.text_list";
-static NSTouchBarItemIdentifier standardTextStyle = @"net.lbrunner.touchbar.text_style";
+static NSTouchBarItemIdentifier standardOtherItems = @"com.energy.touchbar.other_items";
+static NSTouchBarItemIdentifier standardSpaceSmall = @"com.energy.touchbar.small_space";
+static NSTouchBarItemIdentifier standardSpaceLarge = @"com.energy.touchbar.large_space";
+static NSTouchBarItemIdentifier standardSpaceFlexible = @"com.energy.touchbar.flexible_space";
+static NSTouchBarItemIdentifier standardCandidateList = @"com.energy.touchbar.candidates";
+static NSTouchBarItemIdentifier standardCharacterPicker = @"com.energy.touchbar.char_picker";
+static NSTouchBarItemIdentifier standardTextFormat = @"com.energy.touchbar.text_format";
+static NSTouchBarItemIdentifier standardTextAlignment = @"com.energy.touchbar.text_align";
+static NSTouchBarItemIdentifier standardTextColorPicker = @"com.energy.touchbar.text_color";
+static NSTouchBarItemIdentifier standardTextList = @"com.energy.touchbar.text_list";
+static NSTouchBarItemIdentifier standardTextStyle = @"com.energy.touchbar.text_style";
 
-static NSTouchBarItemIdentifier prefixWidget = @"net.lbrunner.touchbar";
-static NSTouchBarItemIdentifier prefixButton = @"net.lbrunner.touchbar.button.";
-static NSTouchBarItemIdentifier prefixCandidates = @"net.lbrunner.touchbar.candidates.";
-static NSTouchBarItemIdentifier prefixColorpicker = @"net.lbrunner.touchbar.colorpicker.";
-static NSTouchBarItemIdentifier prefixCustom = @"net.lbrunner.touchbar.custom.";
-static NSTouchBarItemIdentifier prefixGroup = @"net.lbrunner.touchbar.group.";
-static NSTouchBarItemIdentifier prefixLabel = @"net.lbrunner.touchbar.label.";
-static NSTouchBarItemIdentifier prefixPicker = @"net.lbrunner.touchbar.picker.";
-static NSTouchBarItemIdentifier prefixPopover = @"net.lbrunner.touchbar.popover.";
-static NSTouchBarItemIdentifier prefixScrubber = @"net.lbrunner.touchbar.scrubber.";
-static NSTouchBarItemIdentifier prefixSegmented = @"net.lbrunner.touchbar.segmented.";
-static NSTouchBarItemIdentifier prefixSharer = @"net.lbrunner.touchbar.sharer.";
-static NSTouchBarItemIdentifier prefixSlider = @"net.lbrunner.touchbar.slider.";
-static NSTouchBarItemIdentifier prefixStepper = @"net.lbrunner.touchbar.stepper.";
+static NSTouchBarItemIdentifier prefixWidget = @"com.energy.touchbar";
+static NSTouchBarItemIdentifier prefixButton = @"com.energy.touchbar.button.";
+static NSTouchBarItemIdentifier prefixCandidates = @"com.energy.touchbar.candidates.";
+static NSTouchBarItemIdentifier prefixColorpicker = @"com.energy.touchbar.colorpicker.";
+static NSTouchBarItemIdentifier prefixCustom = @"com.energy.touchbar.custom.";
+static NSTouchBarItemIdentifier prefixGroup = @"com.energy.touchbar.group.";
+static NSTouchBarItemIdentifier prefixLabel = @"com.energy.touchbar.label.";
+static NSTouchBarItemIdentifier prefixPicker = @"com.energy.touchbar.picker.";
+static NSTouchBarItemIdentifier prefixPopover = @"com.energy.touchbar.popover.";
+static NSTouchBarItemIdentifier prefixScrubber = @"com.energy.touchbar.scrubber.";
+static NSTouchBarItemIdentifier prefixSegmented = @"com.energy.touchbar.segmented.";
+static NSTouchBarItemIdentifier prefixSharer = @"com.energy.touchbar.sharer.";
+static NSTouchBarItemIdentifier prefixSlider = @"com.energy.touchbar.slider.";
+static NSTouchBarItemIdentifier prefixStepper = @"com.energy.touchbar.stepper.";
 
 - (id)initWithData:(const char *)data andHandler:(void (^)(char *))handler error:(NSError**)error {
   if ((self = [WindowController alloc]) == nil) {
@@ -361,7 +361,7 @@ static NSTouchBarItemIdentifier prefixStepper = @"net.lbrunner.touchbar.stepper.
     if (error != nil) {
       return error;
     }
-    return [[[NSError alloc] initWithDomain:@"net.lbrunner.touchbar.go" code:1 userInfo:@{@"Error reason": @"cannot make regex"}] autorelease];
+    return [[[NSError alloc] initWithDomain:@"com.energy.touchbar.go" code:1 userInfo:@{@"Error reason": @"cannot make regex"}] autorelease];
   }
   return nil;
 }

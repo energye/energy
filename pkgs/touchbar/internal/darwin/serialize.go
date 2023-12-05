@@ -6,7 +6,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
 )
 
-const namespace = "net.lbrunner.touchbar"
+const namespace = "com.energy.touchbar"
 
 const (
 	standardOtherItemsProxy = namespace + ".other_items"

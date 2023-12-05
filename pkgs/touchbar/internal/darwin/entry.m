@@ -6,7 +6,7 @@
 // but I don't understand Objective-C enough to know where and how to fix it
 
 static NSError* makeError(NSString* reason) {
-  return [[[NSError alloc] initWithDomain:@"net.lbrunner.touchbar.go" code:1 userInfo:@{@"Error reason": reason}] autorelease];
+  return [[[NSError alloc] initWithDomain:@"com.energy.touchbar.go" code:1 userInfo:@{@"Error reason": reason}] autorelease];
 }
 
 static NSError* setWindowController(NSWindow* window, WindowController* controller) {
