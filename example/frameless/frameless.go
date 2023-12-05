@@ -40,12 +40,9 @@ func main() {
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	}
-	if !common.IsDarwin() {
-		// LCL macos 隐藏标题栏后，不能调整大小
-		cef.BrowserWindow.Config.EnableHideCaption = true
-		// LCL macos 隐藏标题栏后，该选项不生效
-		//cef.BrowserWindow.Config.EnableResize = true
-	}
+	cef.BrowserWindow.Config.EnableHideCaption = true
+	// LCL macos 隐藏标题栏后，该选项不生效
+	//cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1366
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
@@ -82,7 +79,7 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.AsLCLBrowserWindow().FramelessForLine()
-		if window.IsLCL() {
+		if window.IsLCL() && common.IsWindows() {
 			// 边框圆角, 仅LCL
 			window.AsLCLBrowserWindow().SetRoundRectRgn(10)
 		}
