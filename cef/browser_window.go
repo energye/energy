@@ -30,10 +30,10 @@ type auxTools struct {
 	viewSourceWindow IBrowserWindow  //viewSource
 }
 
-// 窗口当前属性
+// 窗口当前状态属性
 type windowCurrentProperty struct {
-	ws         types.TWindowState
-	x, y, w, h int32
+	ws         types.TWindowState // 仅记录最大化和全屏状态
+	x, y, w, h int32              // 仅在最大化和全屏时记录窗口位置和宽高
 }
 
 // WindowProperty

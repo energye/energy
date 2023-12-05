@@ -202,34 +202,6 @@ func (m *LCLBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
 	m.onWndProc = append(m.onWndProc, fn)
 }
 
-// FullScreen 窗口全屏
-func (m *LCLBrowserWindow) FullScreen() {
-	if m.WindowProperty().EnableHideCaption {
-		m.RunOnMainThread(func() {
-			m.WindowProperty().current.ws = types.WsFullScreen
-			m.setCurrentProperty()
-			m.SetBoundsRect(m.Monitor().BoundsRect())
-		})
-	}
-}
-
-// ExitFullScreen 窗口退出全屏
-func (m *LCLBrowserWindow) ExitFullScreen() {
-	wp := m.WindowProperty()
-	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
-		m.RunOnMainThread(func() {
-			wp.current.ws = types.WsNormal
-			m.SetWindowState(types.WsNormal)
-			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
-		})
-	}
-}
-
-// IsFullScreen 是否全屏
-func (m *LCLBrowserWindow) IsFullScreen() bool {
-	return m.WindowProperty().current.ws == types.WsFullScreen
-}
-
 // Handle 窗口句柄
 func (m *LCLBrowserWindow) Handle() types.HWND {
 	if m.hWnd == 0 {
@@ -819,14 +791,15 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 
 // 在窗口坐标、大小、全屏时保存当前窗口属性
 func (m *LCLBrowserWindow) setCurrentProperty() {
-	if m.WindowProperty().current.ws == types.WsFullScreen {
+	wp := m.WindowProperty()
+	if wp.current.ws == types.WsFullScreen || wp.current.ws == types.WsMaximized {
 		return
 	}
 	boundRect := m.BoundsRect()
-	m.WindowProperty().current.x = boundRect.Left
-	m.WindowProperty().current.y = boundRect.Top
-	m.WindowProperty().current.w = boundRect.Width()
-	m.WindowProperty().current.h = boundRect.Height()
+	wp.current.x = boundRect.Left
+	wp.current.y = boundRect.Top
+	wp.current.w = boundRect.Width()
+	wp.current.h = boundRect.Height()
 }
 
 // activate 内部调用

@@ -107,47 +107,73 @@ func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
 	}
-	QueueAsyncCall(func(id int) {
-		//var bs = m.BorderStyle()
-		//var monitor = m.Monitor().WorkareaRect()
-		//这个if判断应该不会执行了，windows有自己的，linux是VF的，mac走else
-		//if (bs == types.BsNone || bs == types.BsSingle) && !common.IsDarwin() { //不能调整窗口大，所以手动控制窗口状态
-		//	var ws = m.WindowState()
-		//	var redWindowState types.TWindowState
-		//	//默认状态0
-		//	if m.windowProperty.windowState == types.WsNormal && m.windowProperty.windowState == ws {
-		//		redWindowState = types.WsMaximized
-		//	} else {
-		//		if m.windowProperty.windowState == types.WsNormal {
-		//			redWindowState = types.WsMaximized
-		//		} else if m.windowProperty.windowState == types.WsMaximized {
-		//			redWindowState = types.WsNormal
-		//		}
-		//	}
-		//	m.windowProperty.windowState = redWindowState
-		//	if redWindowState == types.WsMaximized {
-		//		m.windowProperty.X = m.Left()
-		//		m.windowProperty.Y = m.Top()
-		//		m.windowProperty.Width = m.Width()
-		//		m.windowProperty.Height = m.Height()
-		//		m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left-1, monitor.Bottom-monitor.Top-1)
-		//	} else if redWindowState == types.WsNormal {
-		//		m.SetBounds(m.windowProperty.X, m.windowProperty.Y, m.windowProperty.Width, m.windowProperty.Height)
-		//	}
-		//	m.SetWindowState(redWindowState)
-		//} else {
+	m.RunOnMainThread(func() {
 		if m.WindowState() == types.WsMaximized {
+			// 当前窗口是最大化状态 > 恢复窗口
+			// 此时记录窗口状态
+			m.WindowProperty().current.ws = types.WsNormal
 			m.SetWindowState(types.WsNormal)
 			if common.IsDarwin() { //要这样重复设置2次不然不启作用
 				m.SetWindowState(types.WsMaximized)
 				m.SetWindowState(types.WsNormal)
 			}
+			// 当前窗口如果是无标题栏窗口需要恢复到之前记录的窗口属性
+			wp := m.WindowProperty()
+			if wp.EnableHideCaption {
+				m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+			}
+
 		} else if m.WindowState() == types.WsNormal {
+			// 当前状态是正常的 > 将窗口最大化
+			// 在无标题栏窗口时，最大化和全屏正常是无法改变窗口状态
+			// 因此需要自己处理窗口大小, 在此之前需要记录窗口状态
+			m.setCurrentProperty()
+			m.WindowProperty().current.ws = types.WsMaximized
+			if m.WindowProperty().EnableHideCaption {
+				// 无标题窗口时调整窗口大小，设置为工作窗口大小
+				m.SetBoundsRect(m.Monitor().WorkareaRect())
+			}
+			// 触发窗口最大化
 			m.SetWindowState(types.WsMaximized)
 		}
-		//m.windowProperty.windowState = m.WindowState()
-		//}
 	})
+}
+
+// FullScreen 窗口全屏
+func (m *LCLBrowserWindow) FullScreen() {
+	m.RunOnMainThread(func() {
+		// 将窗口全屏
+		// 在无标题栏窗口时，最大化和全屏正常是无法改变窗口状态
+		// 因此需要自己处理窗口大小, 在此之前需要记录窗口状态
+		m.setCurrentProperty()
+		m.WindowProperty().current.ws = types.WsFullScreen
+		// 触发全屏
+		m.SetWindowState(types.WsFullScreen)
+		if m.WindowProperty().EnableHideCaption {
+			// 设置为屏幕大小
+			m.SetBoundsRect(m.Monitor().BoundsRect())
+		}
+	})
+}
+
+// ExitFullScreen 窗口退出全屏
+func (m *LCLBrowserWindow) ExitFullScreen() {
+	m.RunOnMainThread(func() {
+		// 恢复窗口大小
+		wp := m.WindowProperty()
+		if wp.EnableHideCaption {
+			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+		}
+		// 记录当前窗口状态
+		wp.current.ws = types.WsNormal
+		// 触发窗口还原正常
+		m.SetWindowState(types.WsNormal)
+	})
+}
+
+// IsFullScreen 是否全屏
+func (m *LCLBrowserWindow) IsFullScreen() bool {
+	return m.WindowState() == types.WsFullScreen
 }
 
 // SetFocus 设置窗口焦点

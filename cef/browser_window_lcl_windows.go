@@ -451,6 +451,34 @@ func (m *LCLBrowserWindow) Maximize() {
 	})
 }
 
+// FullScreen 窗口全屏
+func (m *LCLBrowserWindow) FullScreen() {
+	if m.WindowProperty().EnableHideCaption {
+		m.RunOnMainThread(func() {
+			m.WindowProperty().current.ws = types.WsFullScreen
+			m.setCurrentProperty()
+			m.SetBoundsRect(m.Monitor().BoundsRect())
+		})
+	}
+}
+
+// ExitFullScreen 窗口退出全屏
+func (m *LCLBrowserWindow) ExitFullScreen() {
+	wp := m.WindowProperty()
+	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
+		m.RunOnMainThread(func() {
+			wp.current.ws = types.WsNormal
+			m.SetWindowState(types.WsNormal)
+			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+		})
+	}
+}
+
+// IsFullScreen 是否全屏
+func (m *LCLBrowserWindow) IsFullScreen() bool {
+	return m.WindowProperty().current.ws == types.WsFullScreen
+}
+
 // 窗口透明
 //func (m *LCLBrowserWindow) SetTransparentColor() {
 //	m.SetColor(colors.ClNavy)
