@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/v2/pkgs/touchbar"
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
-	"github.com/energye/golcl/lcl/types"
 	"os"
 )
 
@@ -19,8 +18,18 @@ func main() {
 	app.SetUseMockKeyChain(true)
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	var tb barbuilder.TouchBar
+	var freeTb = func() {
+		if tb != nil {
+			fmt.Println("tb Uninstall")
+			// end
+			err := tb.Uninstall()
+			if err != nil {
+				panic(err)
+			}
+		}
+	}
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		bw := window.AsLCLBrowserWindow().BrowserWindow()
+		//bw := window.AsLCLBrowserWindow().BrowserWindow()
 
 		tb = touchbar.New(barbuilder.Options{
 			EventErrorLogger: func(err error) {
@@ -73,7 +82,6 @@ func main() {
 						window.ExitFullScreen()
 						fullScreenBtn.Title = "全屏"
 					} else {
-						bw.SetWindowState(types.WsFullScreen)
 						window.FullScreen()
 						fullScreenBtn.Title = "退出全屏"
 					}
@@ -99,7 +107,8 @@ func main() {
 					Title: "关闭",
 					OnClick: func() {
 						window.CloseBrowserWindow()
-						os.Exit(0) // 在这里关闭时失败
+						freeTb()
+						os.Exit(0) // 在这里关闭时失败, 所以这样退出
 					},
 				},
 			}
@@ -114,12 +123,5 @@ func main() {
 	})
 	//run application
 	cef.Run(app)
-	if tb != nil {
-		fmt.Println("tb Uninstall")
-		// end
-		err := tb.Uninstall()
-		if err != nil {
-			panic(err)
-		}
-	}
+	freeTb()
 }
