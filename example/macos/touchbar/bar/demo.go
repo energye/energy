@@ -2,13 +2,14 @@ package bar
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
 	"sync"
 	"time"
 
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
 )
 
-func MakeDemo(update func()) barbuilder.Item {
+func MakeDemo(switcher barutils.Switcher) barbuilder.Item {
 	fmt.Println("MakeDemo")
 	var onSpin func()
 
@@ -50,7 +51,7 @@ func MakeDemo(update func()) barbuilder.Item {
 					Text:  fmt.Sprintf("Error: %v", err),
 					Color: barbuilder.HexColor("#ff0000"),
 				}
-				update()
+				switcher.Update()
 			}
 
 			mutex.Lock()
@@ -79,7 +80,7 @@ func MakeDemo(update func()) barbuilder.Item {
 			reel1.Content = &barbuilder.ContentLabel{Text: *value1}
 			reel2.Content = &barbuilder.ContentLabel{Text: *value2}
 			reel3.Content = &barbuilder.ContentLabel{Text: *value3}
-			update()
+			switcher.Update()
 
 			time.Sleep(timeBetweenSpin)
 			if time.Since(start) >= 4*time.Second {
@@ -110,7 +111,7 @@ func MakeDemo(update func()) barbuilder.Item {
 				Text: "🙁 Spin Again",
 			}
 		}
-		update()
+		switcher.Update()
 	}
 
 	return &barbuilder.Popover{

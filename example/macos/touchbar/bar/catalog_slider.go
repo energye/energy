@@ -7,7 +7,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
 )
 
-func makeSliderCatalog(switcher barutils.Switcher, update func()) barbuilder.Item {
+func makeSliderCatalog(switcher barutils.Switcher) barbuilder.Item {
 	result := &barbuilder.Label{Content: &barbuilder.ContentLabel{Text: ""}}
 
 	return barutils.VirtualPopover(barbuilder.Popover{
@@ -30,7 +30,7 @@ func makeSliderCatalog(switcher barutils.Switcher, update func()) barbuilder.Ite
 						MaximumValue: 100,
 						OnChange: func(value float64) {
 							result.Content = &barbuilder.ContentLabel{Text: fmt.Sprintf("value: %v", value)}
-							update()
+							switcher.Update()
 						},
 					},
 				},
@@ -50,7 +50,7 @@ func makeSliderCatalog(switcher barutils.Switcher, update func()) barbuilder.Ite
 						AccessoryWidth:   barbuilder.SliderAccessoryWide,
 						OnChange: func(value float64) {
 							result.Content = &barbuilder.ContentLabel{Text: fmt.Sprintf("value: %v", value)}
-							update()
+							switcher.Update()
 						},
 					},
 				},

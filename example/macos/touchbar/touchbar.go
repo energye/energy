@@ -7,6 +7,8 @@ import (
 	"github.com/energye/energy/v2/pkgs/touchbar"
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
+	"github.com/energye/golcl/lcl/types"
+	"os"
 )
 
 func main() {
@@ -18,25 +20,67 @@ func main() {
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	var tb barbuilder.TouchBar
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		bw := window.AsLCLBrowserWindow().BrowserWindow()
+
 		tb = touchbar.New(barbuilder.Options{
 			EventErrorLogger: func(err error) {
 				fmt.Println("EventErrorLogger", err)
 			},
 		})
 
-		makeUpdater := func(switcher barutils.Switcher) func() {
-			return func() {
-				fmt.Println("makeUpdater")
-				err := switcher.Update()
-				if err != nil {
-					fmt.Printf("could not update: %v\n", err)
-				}
-			}
-		}
-
 		config := barutils.MakeStackableBar(tb, func(switcher barutils.Switcher) []barbuilder.Item {
-			update := makeUpdater(switcher)
-			fmt.Println("MakeStackableBar")
+			var (
+				isMax  = false
+				isMin  = false
+				isFull = false
+			)
+			var (
+				maxBtn        *barbuilder.Button
+				minBtn        *barbuilder.Button
+				fullScreenBtn *barbuilder.Button
+			)
+			maxBtn = &barbuilder.Button{
+				Title: "最大化",
+				OnClick: func() {
+					if isMax {
+						maxBtn.Title = "最大化"
+					} else {
+						maxBtn.Title = "还原"
+					}
+					window.Maximize()
+					isMax = !isMax
+					switcher.Update()
+				},
+			}
+			minBtn = &barbuilder.Button{
+				Title: "最小化",
+				OnClick: func() {
+					if isMin {
+						window.Restore()
+						minBtn.Title = "最小化"
+					} else {
+						window.Minimize()
+						minBtn.Title = "还原"
+					}
+					isMin = !isMin
+					switcher.Update()
+				},
+			}
+			fullScreenBtn = &barbuilder.Button{
+				Title: "全屏",
+				OnClick: func() {
+					if isFull {
+						window.ExitFullScreen()
+						fullScreenBtn.Title = "全屏"
+					} else {
+						bw.SetWindowState(types.WsFullScreen)
+						window.FullScreen()
+						fullScreenBtn.Title = "退出全屏"
+					}
+					isFull = !isFull
+					switcher.Update()
+				},
+			}
 			return []barbuilder.Item{
 				&barbuilder.Label{
 					Content: &barbuilder.ContentLabel{
@@ -44,9 +88,20 @@ func main() {
 					},
 				},
 				&barbuilder.SpaceLarge{},
-				bar.MakeDemo(update),
+				bar.MakeDemo(switcher),
 				&barbuilder.SpaceSmall{},
-				bar.MakeCatalog(switcher, update),
+				bar.MakeCatalog(switcher),
+				&barbuilder.SpaceFlexible{},
+				maxBtn,
+				minBtn,
+				fullScreenBtn,
+				&barbuilder.Button{
+					Title: "关闭",
+					OnClick: func() {
+						window.CloseBrowserWindow()
+						os.Exit(0) // 在这里关闭时失败
+					},
+				},
 			}
 		})
 

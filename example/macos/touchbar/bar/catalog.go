@@ -6,7 +6,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
 )
 
-func MakeCatalog(switcher barutils.Switcher, update func()) barbuilder.Item {
+func MakeCatalog(switcher barutils.Switcher) barbuilder.Item {
 	fmt.Println("MakeCatalog")
 	// TODO: showcase Escape
 	return barutils.VirtualPopover(barbuilder.Popover{
@@ -20,13 +20,13 @@ func MakeCatalog(switcher barutils.Switcher, update func()) barbuilder.Item {
 			},
 			makeCommonCatalog(switcher),
 			makeLabelCatalog(),
-			makeButtonCatalog(update),
+			makeButtonCatalog(switcher),
 			barutils.VirtualPopover(barbuilder.Popover{
 				CollapsedText:  "Next",
 				CollapsedImage: barbuilder.TBBookmarksTemplate,
 				Bar: []barbuilder.Item{
 					makePopoverCatalog(switcher),
-					makeSliderCatalog(switcher, update),
+					makeSliderCatalog(switcher),
 				},
 			}, switcher),
 		},

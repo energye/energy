@@ -2,9 +2,10 @@ package bar
 
 import (
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
 )
 
-func makeButtonCatalog(update func()) barbuilder.Item {
+func makeButtonCatalog(switcher barutils.Switcher) barbuilder.Item {
 	result := &barbuilder.Label{Content: &barbuilder.ContentLabel{Text: ""}}
 
 	return &barbuilder.Popover{
@@ -21,7 +22,7 @@ func makeButtonCatalog(update func()) barbuilder.Item {
 				Title: "Plain",
 				OnClick: func() {
 					result.Content = &barbuilder.ContentLabel{Text: "Button1 pressed"}
-					update()
+					switcher.Update()
 				},
 			},
 			&barbuilder.SpaceSmall{},
@@ -29,7 +30,7 @@ func makeButtonCatalog(update func()) barbuilder.Item {
 				Image: barbuilder.TBAlarmTemplate,
 				OnClick: func() {
 					result.Content = &barbuilder.ContentLabel{Text: "Button2 pressed"}
-					update()
+					switcher.Update()
 				},
 			},
 			&barbuilder.SpaceSmall{},
@@ -39,7 +40,7 @@ func makeButtonCatalog(update func()) barbuilder.Item {
 				BezelColor: barbuilder.HexColor("#e35412"),
 				OnClick: func() {
 					result.Content = &barbuilder.ContentLabel{Text: "Button3 pressed"}
-					update()
+					switcher.Update()
 				},
 			},
 			&barbuilder.SpaceSmall{},
@@ -51,7 +52,7 @@ func makeButtonCatalog(update func()) barbuilder.Item {
 				Disabled: true,
 				OnClick: func() {
 					result.Content = &barbuilder.ContentLabel{Text: "Button4 pressed"}
-					update()
+					switcher.Update()
 				},
 			},
 		},
