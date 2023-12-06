@@ -71,7 +71,7 @@ func main() {
 					}
 					window.Maximize()
 					isMax = !isMax
-					ipc.Emit("touchbar", 1, "touch bar max button")
+					ipc.Emit("touchbar", 1, "touch bar: max button")
 					switcher.Update()
 				},
 			}
@@ -81,12 +81,16 @@ func main() {
 					if isMin {
 						window.Restore()
 						minBtn.Title = "最小化"
+						fullScreenBtn.Disabled = false
+						maxBtn.Disabled = false
 					} else {
 						window.Minimize()
 						minBtn.Title = "还原"
+						fullScreenBtn.Disabled = true
+						maxBtn.Disabled = true
 					}
 					isMin = !isMin
-					ipc.Emit("touchbar", 2, "touch bar min button")
+					ipc.Emit("touchbar", 2, "touch bar: min button")
 					switcher.Update()
 				},
 			}
@@ -105,7 +109,7 @@ func main() {
 						maxBtn.Disabled = true
 					}
 					isFull = !isFull
-					ipc.Emit("touchbar", 3, "touch bar full screen button")
+					ipc.Emit("touchbar", 3, "touch bar: full screen button")
 					switcher.Update()
 				},
 			}
