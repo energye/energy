@@ -252,6 +252,10 @@ func (m *LCLBrowserWindow) SetCenterWindow(value bool) {
 	}
 }
 
+// CreateParams
+//func (m *LCLBrowserWindow) CreateParams(params *types.TCreateParams) {
+//}
+
 // Close 关闭窗口 非browser窗口使用
 func (m *LCLBrowserWindow) Close() {
 	if m.TForm == nil {
