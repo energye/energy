@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>touchbar</title>
+    <script type="application/javascript">
+        ipc.on("touchbar", function (state, message) {
+            let msg = document.getElementById("message");
+            msg.innerHTML = state + " : " + message;
+        });
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;background-color: #110022;width: 100vw; height: 100vh;text-align: center; display: flex; justify-content: center; align-items: center;">
+<div id="message" style="width: 100%;color: white;">  -  </div>
+</body>
+</html>

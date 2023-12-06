@@ -1,8 +1,11 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/example/macos/touchbar/bar"
 	"github.com/energye/energy/v2/pkgs/touchbar"
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
@@ -10,13 +13,25 @@ import (
 	"os"
 )
 
+//go:embed assets
+var assets embed.FS
+
 func main() {
-	cef.GlobalInit(nil, nil)
+	cef.GlobalInit(nil, &assets)
 
 	//create application
 	app := cef.NewApplication()
-	app.SetUseMockKeyChain(true)
-	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
+	if common.IsDarwin() {
+		app.SetUseMockKeyChain(true)
+	}
+	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
+		ResRootDir: "assets",
+		FS:         &assets,
+		Home:       "touchbar.html",
+	}.Build())
+	cef.BrowserWindow.Config.Width = 400
+	cef.BrowserWindow.Config.Height = 600
+
 	var tb barbuilder.TouchBar
 	var freeTb = func() {
 		if tb != nil {
@@ -29,8 +44,6 @@ func main() {
 		}
 	}
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		//bw := window.AsLCLBrowserWindow().BrowserWindow()
-
 		tb = touchbar.New(barbuilder.Options{
 			EventErrorLogger: func(err error) {
 				fmt.Println("EventErrorLogger", err)
@@ -58,6 +71,7 @@ func main() {
 					}
 					window.Maximize()
 					isMax = !isMax
+					ipc.Emit("touchbar", 1, "touch bar max button")
 					switcher.Update()
 				},
 			}
@@ -72,6 +86,7 @@ func main() {
 						minBtn.Title = "还原"
 					}
 					isMin = !isMin
+					ipc.Emit("touchbar", 2, "touch bar min button")
 					switcher.Update()
 				},
 			}
@@ -81,11 +96,16 @@ func main() {
 					if isFull {
 						window.ExitFullScreen()
 						fullScreenBtn.Title = "全屏"
+						minBtn.Disabled = false
+						maxBtn.Disabled = false
 					} else {
 						window.FullScreen()
 						fullScreenBtn.Title = "退出全屏"
+						minBtn.Disabled = true
+						maxBtn.Disabled = true
 					}
 					isFull = !isFull
+					ipc.Emit("touchbar", 3, "touch bar full screen button")
 					switcher.Update()
 				},
 			}
@@ -107,15 +127,13 @@ func main() {
 					Title: "关闭",
 					OnClick: func() {
 						window.CloseBrowserWindow()
-						freeTb()
+						freeTb()   // free
 						os.Exit(0) // 在这里关闭时失败, 所以这样退出
 					},
 				},
 			}
 		})
-
 		err := tb.Install(config)
-		fmt.Println("install err", err)
 		if err != nil {
 			panic(err)
 		}
@@ -123,5 +141,6 @@ func main() {
 	})
 	//run application
 	cef.Run(app)
+	// free
 	freeTb()
 }
