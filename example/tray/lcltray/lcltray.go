@@ -34,7 +34,7 @@ func trayDemo(browserWindow cef.IBrowserWindow) {
 	if common.IsLinux() {
 		newTray.SetIconFS("resources/icon.png")
 	} else {
-		newTray.SetIconFS("resources/icon.ico")
+		newTray.SetIconFS("resources/icon_menu.ico")
 	}
 	tray := newTray.AsLCLTray()
 	menu1 := tray.AddMenuItem("父菜单", nil)
