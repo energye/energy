@@ -58,7 +58,7 @@ withParentMenuId: (int)theParentMenuId
   - (IBAction)menuHandler:(id)sender;
   - (void)statusOnClick:(NSButton *)btn;
   @property (assign) IBOutlet NSWindow *window;
-  @end
+@end
 
 @implementation AppDelegate {
   NSStatusItem *statusItem;
