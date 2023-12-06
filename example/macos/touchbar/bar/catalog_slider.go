@@ -2,6 +2,7 @@ package bar
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/cef/ipc"
 
 	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
@@ -30,6 +31,7 @@ func makeSliderCatalog(switcher barutils.Switcher) barbuilder.Item {
 						MaximumValue: 100,
 						OnChange: func(value float64) {
 							result.Content = &barbuilder.ContentLabel{Text: fmt.Sprintf("value: %v", value)}
+							ipc.Emit("touchbar", 4, "touch bar Slider: "+fmt.Sprintf("%v", value))
 							switcher.Update()
 						},
 					},
@@ -50,6 +52,7 @@ func makeSliderCatalog(switcher barutils.Switcher) barbuilder.Item {
 						AccessoryWidth:   barbuilder.SliderAccessoryWide,
 						OnChange: func(value float64) {
 							result.Content = &barbuilder.ContentLabel{Text: fmt.Sprintf("value: %v", value)}
+							ipc.Emit("touchbar", 4, "touch bar All options: "+fmt.Sprintf("%v", value))
 							switcher.Update()
 						},
 					},

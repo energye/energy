@@ -2,6 +2,7 @@ package bar
 
 import (
 	"fmt"
+	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
 	"sync"
 	"time"
@@ -82,6 +83,8 @@ func MakeDemo(switcher barutils.Switcher) barbuilder.Item {
 			reel3.Content = &barbuilder.ContentLabel{Text: *value3}
 			switcher.Update()
 
+			ipc.Emit("touchbar", 5, "touch bar 🎰 Spin: "+fmt.Sprintf("%v %v %v", *value1, *value2, *value3))
+
 			time.Sleep(timeBetweenSpin)
 			if time.Since(start) >= 4*time.Second {
 				break
@@ -111,6 +114,7 @@ func MakeDemo(switcher barutils.Switcher) barbuilder.Item {
 				Text: "🙁 Spin Again",
 			}
 		}
+		ipc.Emit("touchbar", 6, "touch bar 🎰 Spin: "+fmt.Sprintf("%v %v %v : %v", *value1, *value2, *value3, result.Content.(*barbuilder.ContentLabel).Text))
 		switcher.Update()
 	}
 
