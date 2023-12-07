@@ -7,18 +7,18 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
 
-//资源目录，内置到执行程序中
+// 资源目录，内置到执行程序中
+//
 //go:embed resources
 var resources embed.FS
 
-//这个示例使用了几个事件来演示下载文件
+// 这个示例使用了几个事件来演示下载文件
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
@@ -27,11 +27,6 @@ func main() {
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/cookie.html"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
 
 	//监听获取cookie事件
 	ipc.On("VisitCookie", func(context context.IContext) {

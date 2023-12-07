@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
@@ -15,11 +14,6 @@ func main() {
 	cef.GlobalInit(nil, &resources)
 	app := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	if common.IsLinux() && app.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
 	cef.BrowserWindow.Config.Title = "ENERGY - Custom Drag Window"
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")

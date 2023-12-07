@@ -4,12 +4,11 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
 
-//主浏览器窗口
+// 主浏览器窗口
 func MainBrowserWindow(app *cef.TCEFApplication) {
 	//只有启动主进程才会继续执行
 	if !process.Args.IsMain() {
@@ -23,11 +22,6 @@ func MainBrowserWindow(app *cef.TCEFApplication) {
 	//窗口宽高
 	cef.BrowserWindow.Config.Width = 1024
 	cef.BrowserWindow.Config.Height = 768
-	if common.IsLinux() && app.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
 	//chromium配置
 	config := cef.NewChromiumConfig()
 	config.SetEnableMenu(true)
@@ -69,8 +63,8 @@ func MainBrowserWindow(app *cef.TCEFApplication) {
 	})
 }
 
-//控制组件UI
-//地址栏和控制按钮创建
+// 控制组件UI
+// 地址栏和控制按钮创建
 func controlUI(browserWindow *cef.LCLBrowserWindow) (goBack *lcl.TButton, goForward *lcl.TButton, stop *lcl.TButton, refresh *lcl.TButton, progressLabel *lcl.TLabel, addrBox *lcl.TComboBox) {
 	window := browserWindow
 	//这里使用系统UI组件

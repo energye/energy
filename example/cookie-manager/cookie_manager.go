@@ -1,10 +1,8 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"os"
@@ -12,22 +10,14 @@ import (
 	//_ "net/http/pprof"
 )
 
-//go:embed resources
-var resources embed.FS
-
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, nil)
 	//创建应用
 	var app = cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	cef.BrowserWindow.Config.Title = "Energy - cookie-manager"
-	if common.IsLinux() && app.IsUIGtk3() {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
-	} else {
-		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
-	}
 	envPath := os.Getenv("ENERGY_HOME")
 	if envPath == "" {
 		// 未配置 ENERGY_HOME 环境变量， 在当前目录保存cache
