@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0px;
+            padding: 0px;
+            background-color: #110022;
+            width: 100vw;
+            height: 100vh;
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+    <script type="application/javascript">
+        ipc.on("receiveMessage", function (data) {
+            let msg = document.getElementById("message");
+            msg.innerHTML += data + "<br>";
+        });
+    </script>
+</head>
+<body>
+<div style="width: 100%;color: white;">
+    <p>
+        <button onclick="ipc.emit('sendMessage')">send message</button>
+    </p>
+    <p>
+        <a href="multiple-window.html" target="_blank">new window</a>
+    </p>
+</div>
+<div id="message" style="width: 100%;color: white;"></div>
+</body>
+</html>
