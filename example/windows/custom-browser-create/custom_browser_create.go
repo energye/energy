@@ -1,12 +1,4 @@
-//----------------------------------------
-//
-// Copyright © yanghy. All Rights Reserved.
-//
-// Licensed under Apache License Version 2.0, January 2004
-//
-// https://www.apache.org/licenses/LICENSE-2.0
-//
-//----------------------------------------
+//go:build windows
 
 package main
 
@@ -30,7 +22,10 @@ type MainWindowDemo struct {
 //示例演示将CEF做为一个LCL组件使用
 //在适当的情况动态创建一个或多个浏览器，实际可做为子组件使用或弹出窗口，根据需求而定
 //需要自己正确处理关闭流程
-//可以自己定制出CEF的使用
+//可以自己定制出CEF的使用, 不同平台有些区别.
+//MacOS下使用方式和Windows基本一至
+//Linux目前需要在Gtk2下并且使用CEF106版本, 默认Linux大于CEF106版本使用的是GTK3,
+//Linux可以使用VF窗口来自定义创建
 
 func main() {
 	cef.GlobalInit(nil, nil)
