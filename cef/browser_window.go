@@ -37,8 +37,9 @@ type windowCurrentProperty struct {
 }
 
 // WindowProperty
-//  提供部分窗口属性配置，初始化时生效
-//  如需更多属性配置或自定义窗口行为请在`SetBrowserInit`回调函数中使用
+//
+//	提供部分窗口属性配置，初始化时生效
+//	如需更多属性配置或自定义窗口行为请在`SetBrowserInit`回调函数中使用
 type WindowProperty struct {
 	IsShowModel     bool               // 是否以模态窗口显示
 	WindowInitState types.TWindowState // 窗口 初始状态: 最小化、最大化、全屏, 全屏时隐藏标题栏生效
@@ -62,6 +63,7 @@ type WindowProperty struct {
 	EnableClose               bool                  // 窗口 关闭时是否关闭窗口 default: true
 	EnableCenterWindow        bool                  // 窗口 居中显示 default: true
 	EnableDragFile            bool                  // 窗口 是否允许向窗口内拖拽文件
+	EnableMainWindow          bool                  // 窗口 是否启用主窗口 default: true
 	AlwaysOnTop               bool                  // 窗口 窗口置顶
 	X                         int32                 // 窗口 EnableCenterWindow=false X坐标 default: 100
 	Y                         int32                 // 窗口 EnableCenterWindow=false Y坐标 default: 100
@@ -75,8 +77,9 @@ type WindowProperty struct {
 }
 
 // IBrowserWindow
-//  浏览器窗口基础接口
-//  定义了常用函数, 更多窗口功能或属性在SetBrowserInit函数中使用
+//
+//	浏览器窗口基础接口
+//	定义了常用函数, 更多窗口功能或属性在SetBrowserInit函数中使用
 type IBrowserWindow interface {
 	Id() int32                                                                                                //窗口ID
 	Handle() types.HWND                                                                                       //窗口句柄
@@ -186,6 +189,7 @@ func NewWindowProperty() WindowProperty {
 		EnableWebkitAppRegion:     true,
 		EnableWebkitAppRegionDClk: true,
 		MainFormOnTaskBar:         true,
+		EnableMainWindow:          true,
 		X:                         100,
 		Y:                         100,
 		Width:                     1024,
@@ -202,11 +206,12 @@ func (m *auxTools) DevTools() *devToolsWindow {
 }
 
 // NewBrowserWindow
-//  创建浏览器窗口
-//  根据当前主窗口类型创建
-//  窗口类型
-//	  	LCL: 是基于LCL组件库创建的窗口，相比VF有多更的原生小部件使用，更多的窗口操作
-//		VF : 是基于CEF ViewFramework 组件创建的窗口, 相比LCL无法使用系统原生小部件，较少的窗口操作
+//
+//	 创建浏览器窗口
+//	 根据当前主窗口类型创建
+//	 窗口类型
+//		  	LCL: 是基于LCL组件库创建的窗口，相比VF有多更的原生小部件使用，更多的窗口操作
+//			VF : 是基于CEF ViewFramework 组件创建的窗口, 相比LCL无法使用系统原生小部件，较少的窗口操作
 func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) IBrowserWindow {
 	// 获取当前应用的主窗口
 	main := BrowserWindow.MainWindow()

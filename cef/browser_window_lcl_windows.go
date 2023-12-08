@@ -22,7 +22,6 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/types/colors"
 	"github.com/energye/golcl/lcl/win"
 )
 
@@ -510,73 +509,4 @@ func (m *LCLBrowserWindow) doDrag() {
 			m.cwcap.canCaption = true
 		}
 	}
-}
-
-// framelessWindowBroderTransparent 无边框窗口自定义窗口透明
-func (m *WindowBroderForm) framelessWindowBroderTransparent(hWnd et.HWND) {
-	exStyle := winapi.GetWindowLong(hWnd, win.GWL_EXSTYLE)
-	exStyle = exStyle | win.WS_EX_LAYERED
-	winapi.SetWindowLong(hWnd, win.GWL_EXSTYLE, exStyle)
-	win.SetLayeredWindowAttributes(hWnd.ToPtr(), colors.ClWhite, m.alpha, win.LWA_ALPHA|win.LWA_COLORKEY)
-}
-
-// SetBorderColors 设置边框颜色
-func (m *WindowBroderForm) SetBorderColors(borderColors []types.TColor) {
-	m.borderColors = borderColors
-}
-
-// SetBorderRgn 设置边框圆角弧度
-func (m *WindowBroderForm) SetBorderRgn(rgn int) {
-	m.rgn = rgn
-}
-
-// SetBorderAlpha 边框透明度 0~255
-func (m *WindowBroderForm) SetBorderAlpha(alpha uint8) {
-	m.alpha = alpha
-}
-
-// Paint 根据设置的border颜色和四边圆角画边框, 在Show之前调用该函数
-func (m *WindowBroderForm) Paint() {
-	m.SetOnPaint(func(sender lcl.IObject) {
-		r := m.ClientRect()
-		canvas := m.Canvas()
-		//canvas.Brush().SetStyle(types.BsClear)
-		pen := canvas.Pen()
-		pen.SetWidth(1)
-		//pen.SetMode(types.PmNotMask)
-		//pen.SetStyle(types.PsClear)
-		for i := 1; i <= len(m.borderColors); i++ {
-			pen.SetColor(m.borderColors[i-1])
-			canvas.Rectangle(r.Left+int32(i), r.Top+int32(i), r.Right-int32(i), r.Bottom-int32(i))
-		}
-	})
-	m.framelessWindowBroderTransparent(et.HWND(m.Handle()))
-	m.RoundRectRgn()
-}
-
-func (m *WindowBroderForm) RoundRectRgn() {
-	hnd := winapi.CreateRoundRectRgn(0, 0, et.LongInt(m.Width()), et.LongInt(m.Height()),
-		et.LongInt(m.rgn), et.LongInt(m.rgn))
-	winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
-}
-
-func NewWindowBorder(window *LCLBrowserWindow) (m *WindowBroderForm) {
-	//var borderColors = []types.TColor{0xFEFEFE, 0xFDFDFD, 0xFCFCFC, 0xFBFBFB, 0xFAFAFA, 0xF7F7F7, 0xEDEDED, 0xE3E3E3, 0xD9D9D9}
-	m = &WindowBroderForm{
-		TForm:        lcl.NewForm(window),
-		borderColors: []types.TColor{0xEDEDED, 0xE3E3E3, 0xD9D9D9, colors.ClBlack, colors.ClBlack},
-		rgn:          30,
-		alpha:        25,
-	}
-
-	m.borderWidth = int32(len(m.borderColors)) // 边框宽度, 像素个数
-	m.SetPosition(window.Position())
-	m.SetLeft(window.Left() - m.borderWidth)
-	m.SetTop(window.Top() - m.borderWidth)
-	m.SetWidth(window.Width() + m.borderWidth*2)   // 同步主窗口, 比主窗口大一圈, 填充边框颜色的像素个数
-	m.SetHeight(window.Height() + m.borderWidth*2) // 同步主窗口, 比主窗口大一圈, 填充边框颜色的像素个数
-	m.SetBorderStyle(types.BsNone)                 // 边框窗口无边框
-	m.SetColor(colors.ClWhite)                     // 边框窗口的填充颜色, 做为透明色
-	m.SetFormStyle(types.FsStayOnTop)
-	return m
 }

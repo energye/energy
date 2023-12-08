@@ -54,17 +54,20 @@ func Run(app *TCEFApplication) {
 	defer func() {
 		api.EnergyLibRelease()
 	}()
+	if application == nil {
+		application = app
+	}
 	//MacOSX 多进程时，需要调用StartSubProcess来启动子进程
-	if common.IsDarwin() && !app.SingleProcess() && !process.Args.IsMain() {
+	if common.IsDarwin() && !application.SingleProcess() && !process.Args.IsMain() {
 		// 启动子进程
-		app.StartSubProcess()
-		app.Free()
+		application.StartSubProcess()
+		application.Free()
 	} else {
 		//externalMessagePump 和 multiThreadedMessageLoop 为 false 时, 启用 VF (ViewsFrameworkBrowserWindow) 窗口组件
-		if app.IsMessageLoop() {
+		if application.IsMessageLoop() {
 			// 启用VFMessageLoop
 			// 初始化窗口组件
-			appContextInitialized(app)
+			appContextInitialized()
 		}
 		if common.IsLinux() {
 			// linux gtk
@@ -72,16 +75,16 @@ func Run(app *TCEFApplication) {
 			lcl.Application.Initialize()
 		}
 		// 启动主进程
-		success := app.StartMainProcess()
+		success := application.StartMainProcess()
 		if success {
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
 			}
 			appMainRunCallback()
-			if app.IsMessageLoop() {
+			if application.IsMessageLoop() {
 				// VF窗口 MessageLoop
-				app.RunMessageLoop()
+				application.RunMessageLoop()
 			} else {
 				// 创建LCL窗口组件
 				if BrowserWindow.mainBrowserWindow == nil {

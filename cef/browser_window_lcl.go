@@ -69,14 +69,6 @@ type LCLBrowserWindow struct {
 	rgn                       int                  //窗口四边圆角
 }
 
-type WindowBroderForm struct {
-	*lcl.TForm
-	borderColors []types.TColor
-	rgn          int
-	alpha        uint8
-	borderWidth  int32
-}
-
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
 //
 //	该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理

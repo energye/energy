@@ -26,7 +26,7 @@ type browserWindow struct {
 	popupWindow         IBrowserWindow               //弹出的子窗口
 	browserEvent        *BrowserEvent                //浏览器全局事件, 已默认实现事件
 	Config              *browserConfig               //浏览器和窗口配置
-	windowInfo          map[int32]IBrowserWindow     //窗口信息集合
+	windowInfo          map[int32]IBrowserWindow     //窗口信息集合 仅在主进程中使用
 }
 
 // BrowserEvent 浏览器全局事件监听-已被默认实现事件
@@ -146,9 +146,10 @@ func (m *browserWindow) GetWindowInfos() map[int32]IBrowserWindow {
 	return m.windowInfo
 }
 
-// putWindowInfo 创建一个窗口这后会添加到windowInfo中
-func (m *browserWindow) putWindowInfo(browserId int32, windowInfo IBrowserWindow) {
-	m.windowInfo[browserId] = windowInfo
+// PutWindowInfo 创建一个窗口这后我们需要添加到windowInfo中维护列表中
+// Chromium 回调函数 SetOnBeforeBrowser 内设置
+func (m *browserWindow) PutWindowInfo(browser *ICefBrowser, windowInfo IBrowserWindow) {
+	m.windowInfo[browser.BrowserId()] = windowInfo
 }
 
 // removeWindowInfo 窗口关闭会从windowInfo移除

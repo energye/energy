@@ -61,7 +61,7 @@ func chromiumOnBeforeBrowser(browserWindow IBrowserWindow, browser *ICefBrowser,
 			bw.WindowProperty().WindowType == consts.WT_DEV_TOOLS || bw.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
 			return
 		}
-		BrowserWindow.putWindowInfo(browser.BrowserId(), bw)
+		BrowserWindow.PutWindowInfo(browser, bw)
 		// 只LCL窗口使用自定义的窗口拖拽
 		if bw.IsLCL() {
 			dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension

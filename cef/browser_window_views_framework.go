@@ -118,7 +118,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 }
 
 // ViewsFrameworkBrowserWindow 主窗口初始化
-func appContextInitialized(app *TCEFApplication) {
+func appContextInitialized() {
 	// 仅主进程初始化主窗口,
 	// 子进程也不会初始， 判断一下省着多调用函数了
 	if !process.Args.IsMain() {
@@ -127,10 +127,11 @@ func appContextInitialized(app *TCEFApplication) {
 	var m = BrowserWindow
 	var bwEvent = m.browserEvent
 	// VF 主窗口在 application 上下文初始化时创建
-	app.SetOnContextInitialized(func() {
+	application.SetOnContextInitialized(func() {
 		// 主窗口
 		m.Config.WindowProperty.WindowType = consts.WT_MAIN_BROWSER
 		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
+
 		// 主窗口关闭流程 before close
 		// OnCanClose如果阻止关闭，该函数不会执行
 		vfMainWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
@@ -140,14 +141,7 @@ func appContextInitialized(app *TCEFApplication) {
 			}
 			if !flag {
 				chromiumOnBeforeClose(browser)
-				if vfMainWindow.tray != nil {
-					vfMainWindow.tray.close()
-				}
-				app.QuitMessageLoop()
-				// TODO 当前使用 os.Exit(0) 正确退出应用程序
-				if app.IsUIGtk3() {
-					os.Exit(0)
-				}
+				vfMainWindow.TryCloseWindowAndTerminate()
 			}
 		})
 
@@ -189,6 +183,33 @@ func appContextInitialized(app *TCEFApplication) {
 	})
 }
 
+// TryCloseWindowAndTerminate
+// 尝试关闭窗口并退出应用,
+// EnableMainWindow
+//
+//	如果禁用主窗口, 存在多窗口时只在最后一个窗口关闭时才退出整个应用进程
+//	如果启用主窗口, 关闭主窗口时退出整个应用进程
+func (m *ViewsFrameworkBrowserWindow) TryCloseWindowAndTerminate() {
+	var closeWindowAndTerminate = func() {
+		if m.tray != nil {
+			m.tray.close()
+		}
+		application.QuitMessageLoop()
+		// TODO 当前使用 os.Exit(0) 正确退出应用程序
+		if application.IsUIGtk3() {
+			os.Exit(0)
+		}
+	}
+	if BrowserWindow.Config.EnableMainWindow {
+		closeWindowAndTerminate()
+	} else {
+		count := len(BrowserWindow.GetWindowInfos())
+		if count < 1 {
+			closeWindowAndTerminate()
+		}
+	}
+}
+
 func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	if wp.EnableResize {
@@ -221,6 +242,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 			}
 			if !flag {
 				chromiumOnBeforeClose(browser)
+				m.TryCloseWindowAndTerminate()
 			}
 		})
 		m.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
@@ -259,8 +281,9 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 }
 
 // ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
-//  VF窗口初始化时通过回调事件设置一些默认行为，而不像LCL窗口直接通过属性设置
-//  在初始化之后部分属性可直接设置
+//
+//	VF窗口初始化时通过回调事件设置一些默认行为，而不像LCL窗口直接通过属性设置
+//	在初始化之后部分属性可直接设置
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
 	m.WindowComponent().SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
@@ -455,7 +478,8 @@ func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds W
 }
 
 // SetCreateBrowserExtraInfo
-//  设置 Chromium 创建浏览器时设置的扩展信息
+//
+//	设置 Chromium 创建浏览器时设置的扩展信息
 func (m *ViewsFrameworkBrowserWindow) SetCreateBrowserExtraInfo(_ string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) {
 	m.context = context
 	m.extraInfo = extraInfo
@@ -772,6 +796,7 @@ func (m *ViewsFrameworkBrowserWindow) Screen() IScreen {
 }
 
 // RunOnMainThread
+//
 //	在主线程中运行
 func (m *ViewsFrameworkBrowserWindow) RunOnMainThread(fn func()) {
 	runtime.LockOSThread()
