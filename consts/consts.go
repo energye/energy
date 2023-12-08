@@ -181,6 +181,7 @@ const (
 	LANGUAGE_vi     LANGUAGE = "vi"
 )
 
+// TCefCloseBrowserAction
 // Chromium关闭的操作类型
 // 在 TChromium.Onclose 使用
 // -------------------------
@@ -197,7 +198,7 @@ const (
 	CbaCancel
 )
 
-// CEF 进程 ChannelId
+// CefProcessId CEF 进程 Id
 type CefProcessId = types.Int32
 
 const (
@@ -212,7 +213,7 @@ const (
 	NIL                                 // nil
 )
 
-// 函数类型
+// FN_TYPE 函数类型
 type FN_TYPE = types.Int8
 
 const (
@@ -220,7 +221,7 @@ const (
 	FN_TYPE_OBJECT                 //对象函数，所属对象
 )
 
-// 通用类型或对象类型
+// IS_CO 通用类型或对象类型
 type IS_CO = types.Int8
 
 const (
