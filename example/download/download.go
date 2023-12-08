@@ -10,13 +10,14 @@ import (
 	"github.com/energye/golcl/lcl"
 )
 
-//资源目录，内置到执行程序中
+// 资源目录，内置到执行程序中
+//
 //go:embed resources
 var resources embed.FS
 
-//这个示例使用了几个事件来演示下载文件
-//在cef.BrowserWindow.SetBrowserInit初始化函数中设置event.SetOnBeforeDownload，用于设置保存目录
-//并且设置event.SetOnDownloadUpdated获取下载进度信息
+// 这个示例使用了几个事件来演示下载文件
+// 在cef.BrowserWindow.SetBrowserInit初始化函数中设置event.SetOnBeforeDownload，用于设置保存目录
+// 并且设置event.SetOnDownloadUpdated获取下载进度信息
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)
