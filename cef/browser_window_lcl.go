@@ -16,7 +16,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/internal/window"
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -521,10 +520,6 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 		}
 		m.Chromium().SendCaptureLostEvent()
 	})
-	// 主窗口、子窗口chromium检测
-	if m.WindowProperty().WindowType != consts.WT_DEV_TOOLS {
-		window.CurrentBrowseWindowCache = m
-	}
 }
 
 // WindowProperty 部分提供部分窗口属性设置
@@ -1135,12 +1130,12 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					m.Close()
 				}
 			}
+			// 最后再移除
+			//BrowserWindow.removeWindowInfo(m.windowId)
+			chromiumOnBeforeClose(m, browser)
 			m.RunOnMainThread(func() { // main thread run
 				closeWindow()
 			})
-			// 最后再移除
-			BrowserWindow.removeWindowInfo(m.windowId)
-			//chromiumOnBeforeClose(browser)
 		}
 	})
 }

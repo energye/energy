@@ -15,7 +15,6 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/ipc"
-	"github.com/energye/energy/v2/cef/internal/window"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
@@ -36,7 +35,7 @@ import (
 // 当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
 	isClosing             bool                              //
-	windowType            consts.WINDOW_TYPE                //0:browser 1:devTools 2:viewSource 默认:0
+	windowType            consts.WINDOW_TYPE                //窗口类型
 	windowId              int32                             //
 	chromium              IChromium                         //
 	component             lcl.IComponent                    //
@@ -140,7 +139,7 @@ func appContextInitialized() {
 				flag = bwEvent.onBeforeClose(sender, browser, vfMainWindow)
 			}
 			if !flag {
-				chromiumOnBeforeClose(browser)
+				chromiumOnBeforeClose(vfMainWindow, browser)
 				vfMainWindow.TryCloseWindowAndTerminate()
 			}
 		})
@@ -200,9 +199,11 @@ func (m *ViewsFrameworkBrowserWindow) TryCloseWindowAndTerminate() {
 			os.Exit(0)
 		}
 	}
-	if BrowserWindow.Config.EnableMainWindow {
+	// 启用主窗口，当前关闭窗口为主浏览器窗口直接退出进程
+	if BrowserWindow.Config.EnableMainWindow && m.WindowType() == consts.WT_MAIN_BROWSER {
 		closeWindowAndTerminate()
 	} else {
+		// 禁用主窗口，无窗口列表时退出进程
 		count := len(BrowserWindow.GetWindowInfos())
 		if count < 1 {
 			closeWindowAndTerminate()
@@ -241,7 +242,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 				flag = bwEvent.onBeforeClose(sender, browser, m)
 			}
 			if !flag {
-				chromiumOnBeforeClose(browser)
+				chromiumOnBeforeClose(m, browser)
 				m.TryCloseWindowAndTerminate()
 			}
 		})
@@ -706,10 +707,6 @@ func (m *ViewsFrameworkBrowserWindow) CloseBrowserWindow() {
 
 // CreateTopLevelWindow 创建顶层窗口
 func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
-	// 非辅助工具类型窗口，不做托管, 辅助工具窗口有自己的事件行为
-	if m.WindowType() != consts.WT_DEV_TOOLS {
-		window.CurrentBrowseWindowCache = m
-	}
 	m.WindowComponent().CreateTopLevelWindow()
 	// 标记已创建
 	m.created = true

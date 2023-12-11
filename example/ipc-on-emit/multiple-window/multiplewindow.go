@@ -4,10 +4,10 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
@@ -16,16 +16,20 @@ import (
 var assets embed.FS
 
 func main() {
-	logger.SetEnable(true)
-	logger.SetLevel(logger.CefLog_Debug)
+	//logger.SetEnable(true)
+	//logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &assets)
+	exception.SetOnException(func(message string) {
+		fmt.Println("Exception message", message)
+	})
 	//创建应用
 	app := cef.NewApplication()
 	//app.SetExternalMessagePump(false)
 	//app.SetMultiThreadedMessageLoop(false)
 	cef.BrowserWindow.Config.Title = "Energy - ipc multiple-window"
 	cef.BrowserWindow.Config.EnableMainWindow = false
+
 	//本地资源加载
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "assets",
@@ -47,6 +51,7 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
+			fmt.Println("BeforePopup", browser.Identifier())
 			popupWindow.SetSize(800, 600)
 			return false
 		})

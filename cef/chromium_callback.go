@@ -14,7 +14,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/i18n"
-	"github.com/energye/energy/v2/cef/internal/window"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
@@ -49,23 +48,16 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 }
 
 // chromiumOnBeforeBrowser
-func chromiumOnBeforeBrowser(browserWindow IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
-	if window.CurrentBrowseWindowCache != nil {
-		bw := window.CurrentBrowseWindowCache.(IBrowserWindow)
-		if bw.Id() != browser.Identifier() {
-			return
-		}
-		window.CurrentBrowseWindowCache = nil
-		// 辅助工具不具有浏览器窗口特性
-		if bw.WindowType() == consts.WT_DEV_TOOLS || bw.WindowType() == consts.WT_VIEW_SOURCE ||
-			bw.WindowProperty().WindowType == consts.WT_DEV_TOOLS || bw.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
-			return
-		}
-		BrowserWindow.PutWindowInfo(browser, bw)
-		// 只LCL窗口使用自定义的窗口拖拽
-		if bw.IsLCL() {
-			dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension
-		}
+func chromiumOnBeforeBrowser(bw IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
+	// 辅助工具不具有浏览器窗口特性
+	if bw.WindowType() == consts.WT_DEV_TOOLS || bw.WindowType() == consts.WT_VIEW_SOURCE ||
+		bw.WindowProperty().WindowType == consts.WT_DEV_TOOLS || bw.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
+		return
+	}
+	BrowserWindow.PutWindowInfo(browser, bw)
+	// 只LCL窗口使用自定义的窗口拖拽
+	if bw.IsLCL() {
+		dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension
 	}
 	// 当前应用是LCL窗口预先创建下一个window
 	if !application.IsMessageLoop() {
@@ -75,11 +67,11 @@ func chromiumOnBeforeBrowser(browserWindow IBrowserWindow, browser *ICefBrowser,
 		})
 	}
 	// 方式二 本地资源加载处理器
-	localLoadRes.getSchemeHandlerFactory(browserWindow, browser)
+	localLoadRes.getSchemeHandlerFactory(bw, browser)
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前
-func chromiumOnBeforeClose(browser *ICefBrowser) {
+func chromiumOnBeforeClose(bw IBrowserWindow, browser *ICefBrowser) {
 	BrowserWindow.removeWindowInfo(browser.Identifier())
 }
 
