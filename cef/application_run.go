@@ -33,6 +33,8 @@ var (
 		},
 		windowInfo: make(map[int32]IBrowserWindow),
 	}
+	// disabledMainWindow 如果在Config配置中禁用主窗口(EnableMainWindow=false)时, 使用该窗口替代主窗口
+	disabledMainWindow               *disableMainWindow
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
 
@@ -86,17 +88,8 @@ func Run(app *TCEFApplication) {
 				// VF窗口 MessageLoop
 				application.RunMessageLoop()
 			} else {
-				// 创建LCL窗口组件
-				if BrowserWindow.mainBrowserWindow == nil {
-					BrowserWindow.mainBrowserWindow = new(lclBrowserWindow)
-				}
-				// LCL窗口
-				//lcl.RunApp(&BrowserWindow.mainBrowserWindow)
-
-				lcl.Application.Initialize()
-				lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
-				lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
-				lcl.Application.Run()
+				// LCL窗口 创建并运行应用
+				BrowserWindow.createFormAndRun()
 				//lclwidget.CustomWidgetSetFinalization()
 			}
 		}

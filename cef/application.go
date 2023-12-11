@@ -108,6 +108,7 @@ func (m *TCEFApplication) DoMessageLoopWork() {
 }
 
 // RunMessageLoop
+// Chrome runtime
 func (m *TCEFApplication) RunMessageLoop() {
 	defer func() {
 		logger.Debug("application run value loop end")

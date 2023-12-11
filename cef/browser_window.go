@@ -63,7 +63,7 @@ type WindowProperty struct {
 	EnableClose               bool                  // 窗口 关闭时是否关闭窗口 default: true
 	EnableCenterWindow        bool                  // 窗口 居中显示 default: true
 	EnableDragFile            bool                  // 窗口 是否允许向窗口内拖拽文件
-	EnableMainWindow          bool                  // 窗口 是否启用主窗口 default: true
+	EnableMainWindow          bool                  // 窗口 是否启用主窗口 default: true, 值为false时不再有主子窗口区分
 	AlwaysOnTop               bool                  // 窗口 窗口置顶
 	X                         int32                 // 窗口 EnableCenterWindow=false X坐标 default: 100
 	Y                         int32                 // 窗口 EnableCenterWindow=false Y坐标 default: 100

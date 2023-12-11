@@ -1010,6 +1010,24 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 	})
 }
 
+// TryCloseWindowAndTerminate
+// 尝试关闭窗口并退出应用,
+// EnableMainWindow = false
+//
+//	如果禁用主窗口, 存在多窗口时只在最后一个窗口关闭时才退出整个应用进程
+func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
+	if !BrowserWindow.Config.EnableMainWindow {
+		count := len(BrowserWindow.GetWindowInfos())
+		if count < 1 {
+			if m.tray != nil {
+				m.tray.close()
+			}
+			// 窗口数量已经是0个了，结束应用
+			lcl.Application.Terminate()
+		}
+	}
+}
+
 // close 内部调用
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	var ret bool
@@ -1023,6 +1041,7 @@ func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction)
 		} else if IsWindows() { // windows 子窗口
 			*action = types.CaHide
 		}
+		m.TryCloseWindowAndTerminate()
 	}
 }
 

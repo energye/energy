@@ -59,6 +59,38 @@ type lclBrowserWindow struct {
 	LCLBrowserWindow
 }
 
+// disableMainWindow
+// 禁用主窗口使用该窗口结构做为主窗口, 该窗口不被显示
+type disableMainWindow struct {
+	*lcl.TForm
+}
+
+// 创建LCL窗口并运行应用
+func (m *browserWindow) createFormAndRun() {
+	// 创建LCL窗口组件
+	if BrowserWindow.mainBrowserWindow == nil {
+		BrowserWindow.mainBrowserWindow = new(lclBrowserWindow)
+	}
+	// LCL窗口
+	lcl.Application.Initialize()
+	lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
+	if m.Config.EnableMainWindow {
+		lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
+	} else {
+		lcl.Application.CreateForm(&disabledMainWindow, true)
+		lcl.Application.SetShowMainForm(false)
+	}
+	lcl.Application.Run()
+}
+
+// OnFormCreate disableMainWindow
+func (m *disableMainWindow) OnFormCreate(sender lcl.IObject) {
+	// 禁用主窗口后需要创建一个新的窗口来代替主窗口显示
+	lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow)
+	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该窗口关闭，获取主窗口函数将返回无效的窗口
+	BrowserWindow.mainBrowserWindow.Show()
+}
+
 // OnFormCreate LCL窗口组件窗口创建回调
 func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.windowProperty = &BrowserWindow.Config.WindowProperty
@@ -69,6 +101,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.defaultChromiumEvent()
 	m.setProperty()
+	m.SetShowInTaskBar()
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
