@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
@@ -15,14 +16,16 @@ import (
 var assets embed.FS
 
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &assets)
 	//创建应用
 	app := cef.NewApplication()
-	app.SetExternalMessagePump(false)
-	app.SetMultiThreadedMessageLoop(false)
+	//app.SetExternalMessagePump(false)
+	//app.SetMultiThreadedMessageLoop(false)
 	cef.BrowserWindow.Config.Title = "Energy - ipc multiple-window"
-	//cef.BrowserWindow.Config.EnableMainWindow = false
+	cef.BrowserWindow.Config.EnableMainWindow = false
 	//本地资源加载
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "assets",
@@ -31,7 +34,7 @@ func main() {
 	}.Build())
 
 	// 多窗口接收消息
-	ipc.On("sendMessage", func(channel callback.IChannel) {
+	ipc.On("sendMessage", func(channel callback.IChannel, type_ int) {
 		// 获得所有窗口
 		infos := cef.BrowserWindow.GetWindowInfos()
 		fmt.Println("windows-count:", len(infos))
