@@ -139,7 +139,7 @@ func main() {
 			// 滚动
 			textareaWheelEvent(doms["tare"])
 			// 回复到渲染进程执行成功, 触发是Go的事件.
-			ipc.EmitTarget("replyMockIsSuccess", target.NewTarget(browserId, channelId, target.TgGoSub))
+			ipc.EmitTarget("replyMockIsSuccess", target.NewTarget(nil, browserId, channelId, target.TgGoSub))
 		})
 	})
 	//运行应用

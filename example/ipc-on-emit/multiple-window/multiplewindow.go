@@ -25,9 +25,11 @@ func main() {
 	})
 	//创建应用
 	app := cef.NewApplication()
+	// 强制使用VF窗口
 	//app.SetExternalMessagePump(false)
 	//app.SetMultiThreadedMessageLoop(false)
 	cef.BrowserWindow.Config.Title = "Energy - ipc multiple-window"
+	// 关闭主窗口配置, 默认开启, 关闭后如果有多个窗口同时存在, 在关闭主窗口时应用进程不会结束，直到最后一个窗口关闭才结束应用进程
 	cef.BrowserWindow.Config.EnableMainWindow = false
 
 	//本地资源加载
@@ -44,9 +46,17 @@ func main() {
 		fmt.Println("windows-count:", len(infos))
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
-			iTarget := info.Browser().Target(target.TgJs)
+			iTarget := info.Target(target.TgJs)
 			ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
+			ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
+				fmt.Println("target callback")
+			})
 		}
+		// 关闭主窗口时 energy 会取最小的窗口ID设置为一个新的临时主窗口做为IPC通信发送
+		ipc.Emit("receiveMessage", "测试当前新主窗口接收")
+		ipc.EmitAndCallback("receiveMessage", []any{"带有callback的触发事件"}, func() {
+			fmt.Println("callback")
+		})
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
