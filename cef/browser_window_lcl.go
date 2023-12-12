@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
@@ -102,6 +103,31 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 	window.defaultWindowEvent()
 	window.setProperty()
 	return window
+}
+
+// Target
+//
+//	IPC消息接收目标, 当前窗口chromium发送
+//	参数: targetType 可选, 接收类型
+func (m *LCLBrowserWindow) Target(targetType ...target.Type) target.ITarget {
+	if !m.IsValid() {
+		return nil
+	}
+	browse := m.Chromium().Browser()
+	if !browse.IsValid() {
+		return nil
+	}
+	return target.NewTarget(m.ProcessMessage(), browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+}
+
+// ProcessMessage
+//
+//	IPC消息触发当前Chromium
+func (m *LCLBrowserWindow) ProcessMessage() target.IProcessMessage {
+	if m.chromiumBrowser == nil {
+		return nil
+	}
+	return m.chromiumBrowser.Chromium().(*TCEFChromium)
 }
 
 // 设置属性

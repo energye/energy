@@ -15,6 +15,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/assets"
 	"github.com/energye/energy/v2/cef/internal/ipc"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
@@ -209,6 +210,28 @@ func (m *ViewsFrameworkBrowserWindow) TryCloseWindowAndTerminate() {
 			closeWindowAndTerminate()
 		}
 	}
+}
+
+// Target
+//
+//	IPC消息接收目标, 当前窗口chromium发送
+//	参数: targetType 可选, 接收类型
+func (m *ViewsFrameworkBrowserWindow) Target(targetType ...target.Type) target.ITarget {
+	browse := m.Chromium().Browser()
+	if !browse.IsValid() {
+		return nil
+	}
+	return target.NewTarget(m.ProcessMessage(), browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+}
+
+// ProcessMessage
+//
+//	IPC消息触发当前Chromium
+func (m *ViewsFrameworkBrowserWindow) ProcessMessage() target.IProcessMessage {
+	if m.chromium == nil {
+		return nil
+	}
+	return m.chromium.(*TCEFChromium)
 }
 
 func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {

@@ -15,7 +15,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
@@ -129,9 +128,10 @@ func (m *ICefBrowser) SetZoomLevel(zoomLevel float64) {
 }
 
 // RunFileDialog FileDialog
-//  打开文件、文件夹、多选文件、保存
-//	在回调函数中获取最终选择结果
-//	如果回调函数为 nil 不会弹出窗口
+//
+//	 打开文件、文件夹、多选文件、保存
+//		在回调函数中获取最终选择结果
+//		如果回调函数为 nil 不会弹出窗口
 func (m *ICefBrowser) RunFileDialog(mode FileDialogMode, title, defaultFilePath string, acceptFilters lcl.IStrings, callback *ICefRunFileDialogCallback) {
 	if !m.IsValid() {
 		return
@@ -515,16 +515,6 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	result = 0
 	resultSize = 0
 	return frameNames
-}
-
-// Target
-//	IPC消息接收目标, 当前窗口
-//	参数: targetType 可选, 接收类型
-func (m *ICefBrowser) Target(targetType ...target.Type) target.ITarget {
-	if !m.IsValid() {
-		return nil
-	}
-	return target.NewTarget(m.Identifier(), m.MainFrame().Identifier(), targetType...)
 }
 
 // Find 检索页面文本

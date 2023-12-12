@@ -242,10 +242,11 @@ func (m *CEFTray) createTrayWindow() {
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
 		m.chromium.LoadUrl(m.url)
 	})
-	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
-		chromiumOnBeforeBrowser(nil, browser, frame, request) // default impl
-		return false
-	})
+	// 移除掉，没什么用了
+	//m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
+	//	chromiumOnBeforeBrowser(nil, browser, frame, request) // default impl
+	//	return false
+	//})
 	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
 			request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
