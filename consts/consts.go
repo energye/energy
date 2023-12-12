@@ -566,10 +566,10 @@ const (
 type WINDOW_TYPE = types.Int8
 
 const (
-	WT_MAIN_BROWSER = WINDOW_TYPE(iota)
-	WT_POPUP_SUB_BROWSER
-	WT_DEV_TOOLS
-	WT_VIEW_SOURCE
+	WT_MAIN_BROWSER      = WINDOW_TYPE(iota) // 主窗口 只允许有一个, 如果自己创建窗口需要设置为 WT_POPUP_SUB_BROWSER 子窗口选项
+	WT_POPUP_SUB_BROWSER                     // 子窗口 允许有多个
+	WT_DEV_TOOLS                             // 开发者工具窗口
+	WT_VIEW_SOURCE                           // 显示源代码窗口
 )
 
 // /include/internal/cef_types.h (cef_context_menu_type_flags_t)
