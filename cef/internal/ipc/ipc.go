@@ -42,7 +42,8 @@ type browserIPC struct {
 	emitCallbackMessageId int32
 	onLock                sync.Mutex
 	emitLock              sync.Mutex
-	processMessage        types.IProcessMessage
+	messageLock           sync.Mutex
+	processMessage        target.IProcessMessage
 }
 
 // SyncChan
@@ -85,10 +86,12 @@ func createCallback(fn any) *callback.Callback {
 //
 //	Set the process message object
 //	without manually calling it
-func SetProcessMessage(pm types.IProcessMessage) {
+func SetProcessMessage(pm target.IProcessMessage) {
 	if pm == nil {
 		return
 	}
+	browser.messageLock.Lock()
+	defer browser.messageLock.Unlock()
 	browser.processMessage = pm
 }
 
@@ -138,6 +141,8 @@ func Emit(name string, argument ...any) {
 	if name == "" || browser.processMessage == nil {
 		return
 	}
+	browser.messageLock.Lock()
+	defer browser.messageLock.Unlock()
 	browser.processMessage.EmitRender(0, name, nil, argument...)
 }
 
@@ -150,6 +155,8 @@ func EmitAndCallback(name string, argument []any, fn any) {
 	if name == "" || browser.processMessage == nil {
 		return
 	}
+	browser.messageLock.Lock()
+	defer browser.messageLock.Unlock()
 	messageId := browser.addEmitCallback(fn)
 	if ok := browser.processMessage.EmitRender(messageId, name, nil, argument...); !ok {
 		if messageId > 0 {
@@ -171,10 +178,11 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) {
 			return
 		}
 	}
-	if browser.processMessage == nil {
-		return
+	var processMessage = tag.ProcessMessage()
+	if processMessage == nil {
+		processMessage = browser.processMessage
 	}
-	browser.processMessage.EmitRender(0, name, tag, argument...)
+	processMessage.EmitRender(0, name, tag, argument...)
 }
 
 // EmitTargetAndCallback
@@ -192,11 +200,12 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn a
 			return
 		}
 	}
-	if browser.processMessage == nil {
-		return
+	var processMessage = tag.ProcessMessage()
+	if processMessage == nil {
+		processMessage = browser.processMessage
 	}
 	messageId = browser.addEmitCallback(fn)
-	if ok := browser.processMessage.EmitRender(messageId, name, tag, argument...); !ok {
+	if ok := processMessage.EmitRender(messageId, name, tag, argument...); !ok {
 		if messageId > 0 {
 			removeEmitCallback(messageId)
 		}

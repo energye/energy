@@ -11,7 +11,6 @@
 package types
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/consts"
 )
 
@@ -65,14 +64,6 @@ type IV8ValueKeys interface {
 	Count() int
 	Get(index int) string
 	Free()
-}
-
-type ICefProcessMessageIPC interface {
-	Instance() uintptr
-}
-
-type IProcessMessage interface {
-	EmitRender(messageId int32, eventName string, target target.ITarget, data ...any) bool
 }
 
 // OnType listening type
