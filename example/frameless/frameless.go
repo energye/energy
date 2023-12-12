@@ -24,6 +24,7 @@ import (
 //go:embed resources
 var resources embed.FS
 
+// go build -ldflags "-s -w"
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &resources)

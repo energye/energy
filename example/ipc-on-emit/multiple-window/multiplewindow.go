@@ -15,6 +15,7 @@ import (
 //go:embed assets
 var assets embed.FS
 
+// go build -ldflags "-s -w"
 func main() {
 	//logger.SetEnable(true)
 	//logger.SetLevel(logger.CefLog_Debug)
