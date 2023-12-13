@@ -44,7 +44,7 @@ type browserIPC struct {
 	emitLock              sync.Mutex
 	messageLock           sync.Mutex
 	window                target.IWindow
-	browserWindow         target.IBrowserWindow
+	//browserWindow         target.IBrowserWindow
 }
 
 // SyncChan
@@ -98,11 +98,11 @@ func SetProcessMessage(pm target.IWindow) {
 
 // SetBrowserWindow
 // Set BrowserWindow on initialization
-func SetBrowserWindow(bw target.IBrowserWindow) {
-	if browser.browserWindow == nil {
-		browser.browserWindow = bw
-	}
-}
+//func SetBrowserWindow(bw target.IBrowserWindow) {
+//	if browser.browserWindow == nil {
+//		browser.browserWindow = bw
+//	}
+//}
 
 // On
 //
@@ -146,17 +146,19 @@ func RemoveOn(name string) {
 //
 //	Event that triggers listening
 //	default to triggering the main process
-func Emit(name string, argument ...any) {
+func Emit(name string, argument ...any) bool {
 	if name == "" || browser.window == nil {
-		return
+		return false
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
 	// When the window is closed, select a new window as the main window
 	if browser.window == nil || browser.window.IsClosing() {
-		browser.window = browser.browserWindow.LookForMainWindow()
+		return false
+		//browser.window = browser.browserWindow.LookForMainWindow()
 	}
 	browser.window.ProcessMessage().EmitRender(0, name, nil, argument...)
+	return true
 }
 
 // EmitAndCallback
@@ -164,36 +166,40 @@ func Emit(name string, argument ...any) {
 //	Event that triggers listening
 //	with callback function
 //	default to the main process
-func EmitAndCallback(name string, argument []any, fn any) {
+func EmitAndCallback(name string, argument []any, fn any) bool {
 	if name == "" || browser.window == nil {
-		return
+		return false
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
-	messageId := browser.addEmitCallback(fn)
-	// When the window is closed, select a new window as the main window
+	// When the window is closed
 	if browser.window == nil || browser.window.IsClosing() {
-		browser.window = browser.browserWindow.LookForMainWindow()
+		return false
+		//browser.window = browser.browserWindow.LookForMainWindow()
 	}
+	messageId := browser.addEmitCallback(fn)
 	if ok := browser.window.ProcessMessage().EmitRender(messageId, name, nil, argument...); !ok {
+		//fail in send
 		if messageId > 0 {
 			removeEmitCallback(messageId)
 		}
+		return false
 	}
+	return true
 }
 
 // EmitTarget
 //
 //	Trigger an event for the specified target to listen to
-func EmitTarget(name string, tag target.ITarget, argument ...any) {
+func EmitTarget(name string, tag target.ITarget, argument ...any) bool {
 	if name == "" {
-		return
+		return false
 	}
 	if tag != nil {
 		// Send Go
 		if (tag.ChannelId() > 0 && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
 			emitSendToGoChannel(0, tag, name, argument)
-			return
+			return true
 		}
 	}
 	// Send JS
@@ -201,34 +207,43 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) {
 	if window == nil {
 		window = browser.window
 	}
+	if window.IsClosing() {
+		return false
+	}
 	window.ProcessMessage().EmitRender(0, name, tag, argument...)
+	return true
 }
 
 // EmitTargetAndCallback
 //
 //	Trigger an event with a callback function for the specified target to listen on
-func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn any) {
+func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn any) bool {
 	if name == "" {
-		return
+		return false
 	}
 	var messageId int32 = 0
 	if tag != nil {
 		if (tag.ChannelId() > 0 && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
 			messageId = browser.addEmitCallback(fn)
 			emitSendToGoChannel(messageId, tag, name, argument)
-			return
+			return true
 		}
 	}
 	var window = tag.Window()
 	if window == nil {
 		window = browser.window
 	}
+	if window.IsClosing() {
+		return false
+	}
 	messageId = browser.addEmitCallback(fn)
 	if ok := window.ProcessMessage().EmitRender(messageId, name, tag, argument...); !ok {
 		if messageId > 0 {
 			removeEmitCallback(messageId)
 		}
+		return false
 	}
+	return true
 }
 
 // CheckOnEvent

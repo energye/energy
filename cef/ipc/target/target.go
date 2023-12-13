@@ -57,9 +57,9 @@ type IWindow interface {
 	ProcessMessage() IProcessMessage
 }
 
-type IBrowserWindow interface {
-	LookForMainWindow() (window IWindow)
-}
+//type IBrowserWindow interface {
+//	LookForMainWindow() (window IWindow)
+//}
 
 // NewTarget Create a new Emit target
 //
