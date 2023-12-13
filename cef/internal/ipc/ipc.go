@@ -97,7 +97,7 @@ func SetProcessMessage(pm target.IWindow) {
 }
 
 // SetBrowserWindow
-// 初始化时设置BrowserWindow
+// Set BrowserWindow on initialization
 func SetBrowserWindow(bw target.IBrowserWindow) {
 	if browser.browserWindow == nil {
 		browser.browserWindow = bw
@@ -152,7 +152,7 @@ func Emit(name string, argument ...any) {
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
-	// 窗口被关闭，重新选择一个窗口做为主窗口
+	// When the window is closed, select a new window as the main window
 	if browser.window == nil || browser.window.IsClosing() {
 		browser.window = browser.browserWindow.LookForMainWindow()
 	}
@@ -171,7 +171,7 @@ func EmitAndCallback(name string, argument []any, fn any) {
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
 	messageId := browser.addEmitCallback(fn)
-	// 窗口被关闭，重新选择一个窗口做为主窗口
+	// When the window is closed, select a new window as the main window
 	if browser.window == nil || browser.window.IsClosing() {
 		browser.window = browser.browserWindow.LookForMainWindow()
 	}
