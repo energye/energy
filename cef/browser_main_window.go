@@ -14,6 +14,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -86,8 +87,8 @@ func (m *browserWindow) createFormAndRun() {
 // OnFormCreate disableMainWindow
 func (m *disableMainWindow) OnFormCreate(sender lcl.IObject) {
 	// 禁用主窗口后需要创建一个新的窗口来代替主窗口显示
-	lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow)
-	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该窗口关闭，获取主窗口函数将返回无效的窗口
+	lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
+	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该主窗口关闭，在获取主窗口函数将返回无效的窗口
 	BrowserWindow.mainBrowserWindow.Show()
 }
 
@@ -115,7 +116,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		bw: &m.LCLBrowserWindow,
 	}
 	//设置 CEF Chromium IPC
-	ipc.SetProcessMessage(m.Chromium().(*TCEFChromium))
+	ipc.SetProcessMessage(m)
 	// 如果开启了开发者工具，需要在这里初始化开发者工具窗口
 	if m.Chromium().Config().EnableDevTools() {
 		m.createAuxTools()
@@ -131,7 +132,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 //	返回LCL或VF窗口组件实例
 //	Window和MacOS平台LCL窗口组件
 //	Linux平台VF窗口组件
-func (m *browserWindow) MainWindow() IBrowserWindow {
+func (m *browserWindow) MainWindow() (window IBrowserWindow) {
 	if m.mainVFBrowserWindow != nil {
 		return m.mainVFBrowserWindow
 	} else if m.mainBrowserWindow != nil {
@@ -196,6 +197,40 @@ func (m *browserWindow) GetBrowser(browseId int32) *ICefBrowser {
 		return winInfo.Browser()
 	}
 	return nil
+}
+
+// LookForMainWindow
+// 找到一个最小的窗口ID做主下一个主窗口
+func (m *browserWindow) LookForMainWindow() (window target.IWindow) {
+	var (
+		browseId     int32 = 0
+		browseWindow IBrowserWindow
+	)
+	// 找到最小浏览器ID做下一个主窗口
+	for bid, info := range m.GetWindowInfos() {
+		if info.IsClosing() {
+			// 已被关闭的窗口忽略
+			continue
+		} else if info.WindowType() == WT_MAIN_BROWSER {
+			// 如果是主窗口直接返回
+			browseWindow = info
+			break
+		}
+		// 找到最小browserID做为主窗口
+		if browseId == 0 {
+			browseId = bid
+			browseWindow = info
+		} else if bid < browseId {
+			browseId = bid
+			browseWindow = info
+		}
+	}
+	if browseWindow != nil {
+		// 设置为主窗口
+		browseWindow.SetWindowType(WT_MAIN_BROWSER)
+		window = browseWindow.AsTargetWindow()
+	}
+	return
 }
 
 // SetOnAfterCreated

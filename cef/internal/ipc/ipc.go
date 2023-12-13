@@ -43,7 +43,8 @@ type browserIPC struct {
 	onLock                sync.Mutex
 	emitLock              sync.Mutex
 	messageLock           sync.Mutex
-	processMessage        target.IProcessMessage
+	window                target.IWindow
+	browserWindow         target.IBrowserWindow
 }
 
 // SyncChan
@@ -86,13 +87,21 @@ func createCallback(fn any) *callback.Callback {
 //
 //	Set the process message object
 //	without manually calling it
-func SetProcessMessage(pm target.IProcessMessage) {
+func SetProcessMessage(pm target.IWindow) {
 	if pm == nil {
 		return
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
-	browser.processMessage = pm
+	browser.window = pm
+}
+
+// SetBrowserWindow
+// 初始化时设置BrowserWindow
+func SetBrowserWindow(bw target.IBrowserWindow) {
+	if browser.browserWindow == nil {
+		browser.browserWindow = bw
+	}
 }
 
 // On
@@ -138,12 +147,16 @@ func RemoveOn(name string) {
 //	Event that triggers listening
 //	default to triggering the main process
 func Emit(name string, argument ...any) {
-	if name == "" || browser.processMessage == nil {
+	if name == "" || browser.window == nil {
 		return
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
-	browser.processMessage.EmitRender(0, name, nil, argument...)
+	// 窗口被关闭，重新选择一个窗口做为主窗口
+	if browser.window == nil || browser.window.IsClosing() {
+		browser.window = browser.browserWindow.LookForMainWindow()
+	}
+	browser.window.ProcessMessage().EmitRender(0, name, nil, argument...)
 }
 
 // EmitAndCallback
@@ -152,13 +165,17 @@ func Emit(name string, argument ...any) {
 //	with callback function
 //	default to the main process
 func EmitAndCallback(name string, argument []any, fn any) {
-	if name == "" || browser.processMessage == nil {
+	if name == "" || browser.window == nil {
 		return
 	}
 	browser.messageLock.Lock()
 	defer browser.messageLock.Unlock()
 	messageId := browser.addEmitCallback(fn)
-	if ok := browser.processMessage.EmitRender(messageId, name, nil, argument...); !ok {
+	// 窗口被关闭，重新选择一个窗口做为主窗口
+	if browser.window == nil || browser.window.IsClosing() {
+		browser.window = browser.browserWindow.LookForMainWindow()
+	}
+	if ok := browser.window.ProcessMessage().EmitRender(messageId, name, nil, argument...); !ok {
 		if messageId > 0 {
 			removeEmitCallback(messageId)
 		}
@@ -173,16 +190,18 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) {
 		return
 	}
 	if tag != nil {
+		// Send Go
 		if (tag.ChannelId() > 0 && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
 			emitSendToGoChannel(0, tag, name, argument)
 			return
 		}
 	}
-	var processMessage = tag.ProcessMessage()
-	if processMessage == nil {
-		processMessage = browser.processMessage
+	// Send JS
+	var window = tag.Window()
+	if window == nil {
+		window = browser.window
 	}
-	processMessage.EmitRender(0, name, tag, argument...)
+	window.ProcessMessage().EmitRender(0, name, tag, argument...)
 }
 
 // EmitTargetAndCallback
@@ -200,12 +219,12 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn a
 			return
 		}
 	}
-	var processMessage = tag.ProcessMessage()
-	if processMessage == nil {
-		processMessage = browser.processMessage
+	var window = tag.Window()
+	if window == nil {
+		window = browser.window
 	}
 	messageId = browser.addEmitCallback(fn)
-	if ok := processMessage.EmitRender(messageId, name, tag, argument...); !ok {
+	if ok := window.ProcessMessage().EmitRender(messageId, name, tag, argument...); !ok {
 		if messageId > 0 {
 			removeEmitCallback(messageId)
 		}

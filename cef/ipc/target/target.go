@@ -29,17 +29,10 @@ const (
 //
 // ipc.NewTarget() *Target
 type ITarget interface {
-	BrowserId() int32                // Browser Window ID
-	ChannelId() int64                // IPC channelID, frameId or GO IPC channelID
-	TargetType() Type                // Target type default 0: Trigger JS event
-	ProcessMessage() IProcessMessage // Send IPC Chromium
-}
-
-// ITargetWindow
-//
-//	IPC send window
-type ITargetWindow interface {
-	TargetChromium() IProcessMessage
+	BrowserId() int32 // Browser Window ID
+	ChannelId() int64 // IPC channelID, frameId or GO IPC channelID
+	TargetType() Type // Target type default 0: Trigger JS event
+	Window() IWindow  // Send IPC Chromium
 }
 
 // IProcessMessage
@@ -52,10 +45,20 @@ type IProcessMessage interface {
 //
 //	receiving target of the event
 type Target struct {
-	chromium   IProcessMessage
+	window     IWindow
 	browseId   int32
 	channelId  int64
 	targetType Type
+}
+
+// IWindow IPC进程消息窗口
+type IWindow interface {
+	IsClosing() bool
+	ProcessMessage() IProcessMessage
+}
+
+type IBrowserWindow interface {
+	LookForMainWindow() (window IWindow)
 }
 
 // NewTarget Create a new Emit target
@@ -65,9 +68,9 @@ type Target struct {
 //	channelId: IPC channelID, frameId or GO IPC channelID
 //	targetType: Optional parameter, target type default 0
 //	  Type: TgJs:JS Event, TgGoSub:GO Sub Event, TgGoMain:GO Main Event
-func NewTarget(targetChromium IProcessMessage, browserId int32, channelId int64, targetType ...Type) ITarget {
+func NewTarget(targetChromium IWindow, browserId int32, channelId int64, targetType ...Type) ITarget {
 	m := &Target{
-		chromium:  targetChromium,
+		window:    targetChromium,
 		browseId:  browserId,
 		channelId: channelId,
 	}
@@ -109,9 +112,9 @@ func (m *Target) ChannelId() int64 {
 	return m.channelId
 }
 
-// ProcessMessage
+// Window
 //
 //	return chromium ProcessMessage
-func (m *Target) ProcessMessage() IProcessMessage {
-	return m.chromium
+func (m *Target) Window() IWindow {
+	return m.window
 }

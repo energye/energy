@@ -133,6 +133,7 @@ type IBrowserWindow interface {
 	RunOnMainThread(fn func())                                                                                //在UI主线程中运行
 	Screen() IScreen                                                                                          //返回屏幕信息
 	Target(targetType ...target.Type) target.ITarget                                                          //IPC接收目标
+	AsTargetWindow() target.IWindow                                                                           //IPC
 }
 
 // ILCLBrowserWindow

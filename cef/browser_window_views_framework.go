@@ -176,7 +176,7 @@ func appContextInitialized() {
 			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vfMainWindow)
 		}
 		// IPC
-		ipc.SetProcessMessage(vfMainWindow.Chromium().(*TCEFChromium))
+		ipc.SetProcessMessage(vfMainWindow)
 		vfMainWindow.CreateTopLevelWindow()
 		//创建完窗口之后设置窗口属性
 		vfMainWindow.createAfterWindowPropertyForEvent()
@@ -221,7 +221,7 @@ func (m *ViewsFrameworkBrowserWindow) Target(targetType ...target.Type) target.I
 	if !browse.IsValid() {
 		return nil
 	}
-	return target.NewTarget(m.ProcessMessage(), browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
 }
 
 // ProcessMessage
@@ -232,6 +232,10 @@ func (m *ViewsFrameworkBrowserWindow) ProcessMessage() target.IProcessMessage {
 		return nil
 	}
 	return m.chromium.(*TCEFChromium)
+}
+
+func (m *ViewsFrameworkBrowserWindow) AsTargetWindow() target.IWindow {
+	return m
 }
 
 func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {

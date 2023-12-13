@@ -105,6 +105,21 @@ func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBr
 	return window
 }
 
+// RunOnMainThread
+//
+//	在UI主线程中运行
+func RunOnMainThread(fn func()) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	if api.DMainThreadId() == api.DCurrentThreadId() {
+		fn()
+	} else {
+		QueueAsyncCall(func(id int) {
+			fn()
+		})
+	}
+}
+
 // Target
 //
 //	IPC消息接收目标, 当前窗口chromium发送
@@ -117,7 +132,7 @@ func (m *LCLBrowserWindow) Target(targetType ...target.Type) target.ITarget {
 	if !browse.IsValid() {
 		return nil
 	}
-	return target.NewTarget(m.ProcessMessage(), browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
 }
 
 // ProcessMessage
@@ -128,6 +143,10 @@ func (m *LCLBrowserWindow) ProcessMessage() target.IProcessMessage {
 		return nil
 	}
 	return m.chromiumBrowser.Chromium().(*TCEFChromium)
+}
+
+func (m *LCLBrowserWindow) AsTargetWindow() target.IWindow {
+	return m
 }
 
 // 设置属性
@@ -231,15 +250,7 @@ func (m *LCLBrowserWindow) Handle() types.HWND {
 //
 //	在UI主线程中运行
 func (m *LCLBrowserWindow) RunOnMainThread(fn func()) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if api.DMainThreadId() == api.DCurrentThreadId() {
-		fn()
-	} else {
-		QueueAsyncCall(func(id int) {
-			fn()
-		})
-	}
+	RunOnMainThread(fn)
 }
 
 // BrowserWindow 返回LCL窗口组件实例对象
@@ -1045,6 +1056,34 @@ func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
 			}
 			// 窗口数量已经是0个了，结束应用
 			lcl.Application.Terminate()
+		} else {
+			// 如果是主窗口, 并且关闭了主窗口配置, 需要重新指定一个窗口做为主窗口使用
+			// 指定后的主窗口会失去一些作用, 例如 SetBrowserInit 内的window参数
+			//if m.WindowType() == consts.WT_MAIN_BROWSER {
+			//	infos := BrowserWindow.GetWindowInfos()
+			//	var browserId int32 = 0
+			//	// 找到一个最小的窗口ID做主下一个主窗口
+			//	for bid, _ := range infos {
+			//		if browserId == 0 {
+			//			browserId = bid
+			//		} else if bid < browserId {
+			//			browserId = bid
+			//		}
+			//	}
+			//	window := BrowserWindow.GetWindowInfo(browserId)
+			//	if window != nil {
+			//		// 窗口类型设置为主窗口
+			//		window.SetWindowType(consts.WT_MAIN_BROWSER)
+			//		// 设置 CEF Chromium IPC
+			//		ipc.SetProcessMessage(window.Chromium().(*TCEFChromium))
+			//		// TODO 是否需要更换主窗口获取？目前看来还有问题,只能在GetWindowInfo中获取可用窗口
+			//		//if window.IsLCL() {
+			//		//	BrowserWindow.mainBrowserWindow.LCLBrowserWindow = *window.(*LCLBrowserWindow)
+			//		//} else {
+			//		//	BrowserWindow.mainVFBrowserWindow = window.(*ViewsFrameworkBrowserWindow)
+			//		//}
+			//	}
+			//}
 		}
 	}
 }
