@@ -64,6 +64,15 @@ func main() {
 		})
 		println("ipc.EmitAndCallback", ok)
 	})
+	ipc.On("refresh", func() {
+		infos := cef.BrowserWindow.GetWindowInfos()
+		for _, info := range infos {
+			// 将消息发送到目标窗口, 类型为JS接收
+			iTarget := info.Target(target.TgJs)
+			var ok = ipc.EmitTarget("refresh", iTarget)
+			println("ipc.EmitTarget-refresh", ok)
+		}
+	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
@@ -73,6 +82,21 @@ func main() {
 			})
 			return false
 		})
+		// 多窗口消息发送
+		go func() {
+			var count = 1
+			for true {
+				// 一秒一次, 计数循环
+				time.Sleep(time.Second)
+				// 获得当前所有窗口信息
+				infos := cef.BrowserWindow.GetWindowInfos()
+				for _, info := range infos {
+					iTarget := info.Target(target.TgJs)
+					ipc.EmitTarget("count", iTarget, count)
+				}
+				count++
+			}
+		}()
 	})
 	//运行应用
 	cef.Run(app)

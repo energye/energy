@@ -24,17 +24,26 @@
             let msg = document.getElementById("message");
             msg.innerHTML += data + "<br>";
         });
+        ipc.on("refresh",function (){
+            window.location.reload();
+        });
+        ipc.on("count",function (c){
+            let count = document.getElementById("count");
+            count.innerHTML = c;
+        });
     </script>
 </head>
 <body>
 <div style="width: 100%;color: white;">
     <p>
         <button onclick="ipc.emit('sendMessage')">send message</button>
+        <button onclick="ipc.emit('refresh')">refresh message</button>
     </p>
     <p>
         <a href="multiple-window.html" target="_blank">new window</a>
     </p>
 </div>
+<div id="count" style="width: 100%;color: white;"></div>
 <div id="message" style="width: 100%;color: white;"></div>
 </body>
 </html>
