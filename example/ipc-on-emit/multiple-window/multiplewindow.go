@@ -42,22 +42,27 @@ func main() {
 
 	// 多窗口接收消息
 	ipc.On("sendMessage", func(channel callback.IChannel, type_ int) {
+		var ok bool
 		// 获得所有窗口
 		infos := cef.BrowserWindow.GetWindowInfos()
 		fmt.Println("windows-count:", len(infos))
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
 			iTarget := info.Target(target.TgJs)
-			ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
-			ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
+			ok = ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
+			println("ipc.EmitTarget", ok, iTarget.BrowserId())
+			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
 				fmt.Println("target callback")
 			})
+			println("ipc.EmitTargetAndCallback", ok, iTarget.BrowserId())
 		}
-		// 在配置去禁用主窗口时 energy 会取最小的窗口ID设置为一个新的临时主窗口做为IPC通信发送
-		ipc.Emit("receiveMessage", "测试当前新主窗口接收")
-		ipc.EmitAndCallback("receiveMessage", []any{"带有callback的触发事件"}, func() {
+		// 主窗口接收, 主窗口被关闭后发送无效
+		ok = ipc.Emit("receiveMessage", "测试当前新主窗口接收")
+		println("ipc.Emit", ok)
+		ok = ipc.EmitAndCallback("receiveMessage", []any{"带有callback的触发事件"}, func() {
 			fmt.Println("callback")
 		})
+		println("ipc.EmitAndCallback", ok)
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
