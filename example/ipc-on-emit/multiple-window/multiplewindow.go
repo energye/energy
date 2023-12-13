@@ -30,7 +30,7 @@ func main() {
 	//app.SetExternalMessagePump(false)
 	//app.SetMultiThreadedMessageLoop(false)
 	cef.BrowserWindow.Config.Title = "Energy - ipc multiple-window"
-	// 关闭主窗口配置, 默认开启, 关闭后如果有多个窗口同时存在, 在关闭主窗口时应用进程不会结束，直到最后一个窗口关闭才结束应用进程
+	// 禁用主窗口配置, 默认开启, 禁用后如果有多个窗口同时存在, 在关闭主窗口时应用进程不会结束，直到最后一个窗口关闭才结束应用进程
 	cef.BrowserWindow.Config.EnableMainWindow = false
 
 	//本地资源加载
@@ -53,7 +53,7 @@ func main() {
 				fmt.Println("target callback")
 			})
 		}
-		// 关闭主窗口时 energy 会取最小的窗口ID设置为一个新的临时主窗口做为IPC通信发送
+		// 在配置去禁用主窗口时 energy 会取最小的窗口ID设置为一个新的临时主窗口做为IPC通信发送
 		ipc.Emit("receiveMessage", "测试当前新主窗口接收")
 		ipc.EmitAndCallback("receiveMessage", []any{"带有callback的触发事件"}, func() {
 			fmt.Println("callback")
@@ -63,7 +63,9 @@ func main() {
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("BeforePopup", browser.Identifier())
-			popupWindow.SetSize(800, 600)
+			popupWindow.RunOnMainThread(func() {
+				popupWindow.SetSize(800, 600)
+			})
 			return false
 		})
 	})
