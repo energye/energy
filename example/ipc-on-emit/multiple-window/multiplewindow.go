@@ -77,16 +77,6 @@ func main() {
 			println("ipc.EmitTarget-refresh", ok)
 		}
 	})
-	// 创建窗口
-	ipc.On("createWindow", func() {
-		infos := cef.BrowserWindow.GetWindowInfos()
-		for _, info := range infos {
-			// 将消息发送到目标窗口, 类型为JS接收
-			iTarget := info.Target(target.TgJs)
-			var ok = ipc.EmitTarget("refresh", iTarget)
-			println("ipc.EmitTarget-refresh", ok)
-		}
-	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// 弹出窗口处理
