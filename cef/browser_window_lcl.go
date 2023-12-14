@@ -1112,9 +1112,10 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 		ret = m.onCloseQuery(sender, close)
 	}
 	if !ret {
-		if m.tray != nil {
-			m.tray.close()
-		}
+		// TODO 标记，可能需要移除
+		//if m.tray != nil {
+		//	m.tray.close()
+		//}
 		logger.Debug("window.onCloseQuery windowType:", m.WindowType())
 		if IsDarwin() {
 			//main window close

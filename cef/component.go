@@ -8,14 +8,19 @@
 //
 //----------------------------------------
 
-// CEF 扩展组件
+// 扩展组件
 
 package cef
 
 // NewTray 适用于 windows linux macos 系统托盘
 func (m *LCLBrowserWindow) NewTray() ITray {
 	if m.tray == nil {
-		m.tray = newTray(m.TForm)
+		if BrowserWindow.Config.EnableMainWindow {
+			m.tray = newTray(m.TForm)
+		} else {
+			// 禁用主窗口, 这时需要使用 disabledMainWindow, 因为它才是实际的主窗口
+			m.tray = newTray(disabledMainWindow.TForm)
+		}
 	}
 	return m.tray
 }
