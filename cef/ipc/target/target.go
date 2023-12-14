@@ -41,6 +41,20 @@ type IProcessMessage interface {
 	EmitRender(messageId int32, eventName string, target ITarget, data ...any) bool
 }
 
+// IWindow for IPC
+type IWindow interface {
+	Target(targetType ...Type) ITarget // return IPC target
+	IsClosing() bool                   // Whether the window is closed
+	ProcessMessage() IProcessMessage   // process message, chromium
+}
+
+// IBrowserWindow
+//
+//	BrowserWindow for IPC
+type IBrowserWindow interface {
+	LookForMainWindow() (window IWindow) //select a new window, This window is the first one created and not closed
+}
+
 // Target Go IPC
 //
 //	receiving target of the event
@@ -50,16 +64,6 @@ type Target struct {
 	channelId  int64
 	targetType Type
 }
-
-// IWindow IPC进程消息窗口
-type IWindow interface {
-	IsClosing() bool
-	ProcessMessage() IProcessMessage
-}
-
-//type IBrowserWindow interface {
-//	LookForMainWindow() (window IWindow)
-//}
 
 // NewTarget Create a new Emit target
 //

@@ -14,6 +14,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
@@ -200,37 +201,37 @@ func (m *browserWindow) GetBrowser(browseId int32) *ICefBrowser {
 
 // LookForMainWindow
 // 找到一个最小的窗口ID做主下一个主窗口
-//func (m *browserWindow) LookForMainWindow() (window target.IWindow) {
-//	var (
-//		browseId     int32 = 0
-//		browseWindow IBrowserWindow
-//	)
-//	// 找到最小浏览器ID做下一个主窗口
-//	for bid, info := range m.GetWindowInfos() {
-//		if info.IsClosing() {
-//			// 已被关闭的窗口忽略
-//			continue
-//		} /* else if info.WindowType() == WT_MAIN_BROWSER {
-//			// 如果是主窗口直接返回
-//			browseWindow = info
-//			break
-//		}*/
-//		// 找到最小browserID做为主窗口
-//		if browseId == 0 {
-//			browseId = bid
-//			browseWindow = info
-//		} else if bid < browseId {
-//			browseId = bid
-//			browseWindow = info
-//		}
-//	}
-//	if browseWindow != nil {
-//		// 设置为主窗口
-//		browseWindow.SetWindowType(WT_MAIN_BROWSER)
-//		window = browseWindow.AsTargetWindow()
-//	}
-//	return
-//}
+func (m *browserWindow) LookForMainWindow() (window target.IWindow) {
+	var (
+		browseId     int32 = 0
+		browseWindow IBrowserWindow
+	)
+	// 找到最小浏览器ID做下一个主窗口
+	for bid, info := range m.GetWindowInfos() {
+		if info.IsClosing() {
+			// 已被关闭的窗口忽略
+			continue
+		} /* else if info.WindowType() == WT_MAIN_BROWSER {
+			// 如果是主窗口直接返回
+			browseWindow = info
+			break
+		}*/
+		// 找到最小browserID做为主窗口
+		if browseId == 0 {
+			browseId = bid
+			browseWindow = info
+		} else if bid < browseId {
+			browseId = bid
+			browseWindow = info
+		}
+	}
+	if browseWindow != nil {
+		// TODO 设置为主窗口，会导致多次关闭进程结束？
+		//browseWindow.SetWindowType(WT_MAIN_BROWSER)
+		window = browseWindow.AsTargetWindow()
+	}
+	return
+}
 
 // SetOnAfterCreated
 func (m *BrowserEvent) SetOnAfterCreated(event chromiumEventOnAfterCreatedEx) {

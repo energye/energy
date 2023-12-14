@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
@@ -38,12 +39,12 @@ var (
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
 
-//func init() {
-//	if process.Args.IsMain() || process.Args.IsRender() {
-//		// 设置BrowserWindow到IPC实现
-//		ipc.SetBrowserWindow(BrowserWindow)
-//	}
-//}
+func init() {
+	if process.Args.IsMain() || process.Args.IsRender() {
+		// 设置BrowserWindow到IPC实现
+		ipc.SetBrowserWindow(BrowserWindow)
+	}
+}
 
 type browserProcessStartAfterCallbackFunc func(success bool)
 

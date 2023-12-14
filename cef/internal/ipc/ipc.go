@@ -44,7 +44,7 @@ type browserIPC struct {
 	emitLock              sync.Mutex
 	messageLock           sync.Mutex
 	window                target.IWindow
-	//browserWindow         target.IBrowserWindow
+	browserWindow         target.IBrowserWindow
 }
 
 // SyncChan
@@ -98,11 +98,11 @@ func SetProcessMessage(pm target.IWindow) {
 
 // SetBrowserWindow
 // Set BrowserWindow on initialization
-//func SetBrowserWindow(bw target.IBrowserWindow) {
-//	if browser.browserWindow == nil {
-//		browser.browserWindow = bw
-//	}
-//}
+func SetBrowserWindow(bw target.IBrowserWindow) {
+	if browser.browserWindow == nil {
+		browser.browserWindow = bw
+	}
+}
 
 // On
 //
@@ -150,12 +150,10 @@ func Emit(name string, argument ...any) bool {
 	if name == "" || browser.window == nil {
 		return false
 	}
-	browser.messageLock.Lock()
-	defer browser.messageLock.Unlock()
-	// When the window is closed, select a new window as the main window
+	// When the window is closed
 	if browser.window == nil || browser.window.IsClosing() {
-		return false
-		//browser.window = browser.browserWindow.LookForMainWindow()
+		// This window is the first one created and not closed
+		SetProcessMessage(browser.browserWindow.LookForMainWindow())
 	}
 	browser.window.ProcessMessage().EmitRender(0, name, nil, argument...)
 	return true
@@ -170,12 +168,10 @@ func EmitAndCallback(name string, argument []any, fn any) bool {
 	if name == "" || browser.window == nil {
 		return false
 	}
-	browser.messageLock.Lock()
-	defer browser.messageLock.Unlock()
 	// When the window is closed
 	if browser.window == nil || browser.window.IsClosing() {
-		return false
-		//browser.window = browser.browserWindow.LookForMainWindow()
+		// This window is the first one created and not closed
+		SetProcessMessage(browser.browserWindow.LookForMainWindow())
 	}
 	messageId := browser.addEmitCallback(fn)
 	if ok := browser.window.ProcessMessage().EmitRender(messageId, name, nil, argument...); !ok {
@@ -205,6 +201,7 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) bool {
 	// Send JS
 	var window = tag.Window()
 	if window == nil {
+		// default window
 		window = browser.window
 	}
 	if window.IsClosing() {
@@ -231,6 +228,7 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn a
 	}
 	var window = tag.Window()
 	if window == nil {
+		// default window
 		window = browser.window
 	}
 	if window.IsClosing() {
