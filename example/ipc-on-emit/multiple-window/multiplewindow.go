@@ -8,22 +8,23 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/example/common/tray"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
 
-//go:embed assets
-var assets embed.FS
+//go:embed resources
+var resources embed.FS
 
 // go build -ldflags "-s -w"
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &assets)
+	cef.GlobalInit(nil, &resources)
 	exception.SetOnException(func(message string) {
-		fmt.Println("Exception message", message)
+		fmt.Println("Global Exception message", message)
 	})
 	//创建应用
 	app := cef.NewApplication()
@@ -31,33 +32,22 @@ func main() {
 	//app.SetExternalMessagePump(false)
 	//app.SetMultiThreadedMessageLoop(false)
 	cef.BrowserWindow.Config.Title = "Energy - ipc multiple-window"
-	// 禁用主窗口配置, 默认开启, 禁用后如果有多个窗口同时存在, 在关闭主窗口时应用进程不会结束，直到最后一个窗口关闭才结束应用进程
+	// 禁用主窗口配置, 该属性默认开启, 禁用后如果有多个窗口同时存在, 在关闭主窗口时应用进程不会结束，直到最后一个窗口关闭才结束应用进程
 	cef.BrowserWindow.Config.EnableMainWindow = false
 
 	//本地资源加载
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
-		ResRootDir: "assets",
-		FS:         &assets,
+		ResRootDir: "resources",
+		FS:         &resources,
 		Home:       "multiple-window.html",
 	}.Build())
 
-	// 多窗口接收消息
+	// 多窗口发送/接收消息
 	ipc.On("sendMessage", func(channel callback.IChannel, type_ int) {
 		var ok bool
 		// 获得所有窗口
 		infos := cef.BrowserWindow.GetWindowInfos()
-		fmt.Println("windows-count:", len(infos))
-		for _, info := range infos {
-			// 将消息发送到目标窗口, 类型为JS接收
-			iTarget := info.Target(target.TgJs)
-			ok = ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
-			println("ipc.EmitTarget", ok, iTarget.BrowserId())
-			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
-				fmt.Println("target callback")
-			})
-			println("ipc.EmitTargetAndCallback", ok, iTarget.BrowserId())
-		}
-
+		fmt.Println("window-count:", len(infos))
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
 			iTarget := info.Target(target.TgJs)
@@ -77,7 +67,18 @@ func main() {
 		})
 		println("ipc.EmitAndCallback", ok)
 	})
+	// 刷新所有窗口
 	ipc.On("refresh", func() {
+		infos := cef.BrowserWindow.GetWindowInfos()
+		for _, info := range infos {
+			// 将消息发送到目标窗口, 类型为JS接收
+			iTarget := info.Target(target.TgJs)
+			var ok = ipc.EmitTarget("refresh", iTarget)
+			println("ipc.EmitTarget-refresh", ok)
+		}
+	})
+	// 创建窗口
+	ipc.On("createWindow", func() {
 		infos := cef.BrowserWindow.GetWindowInfos()
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
@@ -88,6 +89,7 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		// 弹出窗口处理
 		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
 			fmt.Println("BeforePopup", browser.Identifier())
 			popupWindow.RunOnMainThread(func() {
@@ -110,6 +112,14 @@ func main() {
 				count++
 			}
 		}()
+		// 托盘
+		if window.IsLCL() {
+			// LCL窗口 Window, MacOS
+			tray.LCLTray(window)
+		} else {
+			// VF窗口 默认Linux
+			tray.SYSTray(window)
+		}
 	})
 	//运行应用
 	cef.Run(app)
