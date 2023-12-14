@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
@@ -17,8 +18,8 @@ var assets embed.FS
 
 // go build -ldflags "-s -w"
 func main() {
-	//logger.SetEnable(true)
-	//logger.SetLevel(logger.CefLog_Debug)
+	logger.SetEnable(true)
+	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, &assets)
 	exception.SetOnException(func(message string) {
@@ -56,6 +57,18 @@ func main() {
 			})
 			println("ipc.EmitTargetAndCallback", ok, iTarget.BrowserId())
 		}
+
+		for _, info := range infos {
+			// 将消息发送到目标窗口, 类型为JS接收
+			iTarget := info.Target(target.TgJs)
+			ok = ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
+			println("ipc.EmitTarget", ok, iTarget.BrowserId())
+			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
+				fmt.Println("target callback")
+			})
+			println("ipc.EmitTargetAndCallback", ok, iTarget.BrowserId())
+		}
+
 		// 主窗口接收, 主窗口被关闭后发送无效
 		ok = ipc.Emit("receiveMessage", "测试当前新主窗口接收")
 		println("ipc.Emit", ok)
