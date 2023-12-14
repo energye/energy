@@ -1056,34 +1056,6 @@ func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
 			}
 			// 窗口数量已经是0个了，结束应用
 			lcl.Application.Terminate()
-		} else {
-			// 如果是主窗口, 并且关闭了主窗口配置, 需要重新指定一个窗口做为主窗口使用
-			// 指定后的主窗口会失去一些作用, 例如 SetBrowserInit 内的window参数
-			//if m.WindowType() == consts.WT_MAIN_BROWSER {
-			//	infos := BrowserWindow.GetWindowInfos()
-			//	var browserId int32 = 0
-			//	// 找到一个最小的窗口ID做主下一个主窗口
-			//	for bid, _ := range infos {
-			//		if browserId == 0 {
-			//			browserId = bid
-			//		} else if bid < browserId {
-			//			browserId = bid
-			//		}
-			//	}
-			//	window := BrowserWindow.GetWindowInfo(browserId)
-			//	if window != nil {
-			//		// 窗口类型设置为主窗口
-			//		window.SetWindowType(consts.WT_MAIN_BROWSER)
-			//		// 设置 CEF Chromium IPC
-			//		ipc.SetProcessMessage(window.Chromium().(*TCEFChromium))
-			//		// TODO 是否需要更换主窗口获取？目前看来还有问题,只能在GetWindowInfo中获取可用窗口
-			//		//if window.IsLCL() {
-			//		//	BrowserWindow.mainBrowserWindow.LCLBrowserWindow = *window.(*LCLBrowserWindow)
-			//		//} else {
-			//		//	BrowserWindow.mainVFBrowserWindow = window.(*ViewsFrameworkBrowserWindow)
-			//		//}
-			//	}
-			//}
 		}
 	}
 }
