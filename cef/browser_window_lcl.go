@@ -53,7 +53,7 @@ type LCLBrowserWindow struct {
 	windowResize              TNotifyEvent         //扩展事件
 	onActivate                TNotifyEvent         //扩展事件
 	onShow                    []TNotifyEvent       //扩展事件 向后链试循环调用
-	onClose                   TCloseEvent          //扩展事件
+	onClose                   []TCloseEvent        //扩展事件 向后链试循环调用
 	onCloseQuery              TCloseQueryEvent     //扩展事件
 	onActivateAfter           lcl.TNotifyEvent     //扩展事件
 	onWndProc                 []lcl.TWndProcEvent  //扩展事件 向后链试循环调用
@@ -665,7 +665,7 @@ func (m *LCLBrowserWindow) SetOnShow(fn TNotifyEvent) {
 
 // SetOnClose 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
 func (m *LCLBrowserWindow) SetOnClose(fn TCloseEvent) {
-	m.onClose = fn
+	m.onClose = append(m.onClose, fn)
 }
 
 // SetOnCloseQuery 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
@@ -1094,7 +1094,11 @@ func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
 func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction) {
 	var ret bool
 	if m.onClose != nil {
-		ret = m.onClose(sender, action)
+		for _, fn := range m.onClose {
+			if fn(sender, action) {
+				ret = true
+			}
+		}
 	}
 	if !ret {
 		logger.Debug("window.onClose")
