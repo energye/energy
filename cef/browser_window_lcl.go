@@ -30,7 +30,9 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
+	"path/filepath"
 	"runtime"
+	"strings"
 	"time"
 	"unsafe"
 )
@@ -155,11 +157,39 @@ func (m *LCLBrowserWindow) setProperty() {
 	m.SetTitle(wp.Title)
 	if wp.IconFS != "" {
 		if emfs.IsExist(wp.IconFS) {
-			_ = lcl.Application.Icon().LoadFromFSFile(wp.IconFS)
+			ext := strings.ToLower(filepath.Ext(wp.IconFS))
+			switch ext {
+			case ".png":
+				png := lcl.NewPngImage()
+				png.LoadFromFSFile(wp.IconFS)
+				lcl.Application.Icon().Assign(png)
+				png.Free()
+			case ".jpeg":
+				jpeg := lcl.NewJPEGImage()
+				jpeg.LoadFromFSFile(wp.IconFS)
+				lcl.Application.Icon().Assign(jpeg)
+				jpeg.Free()
+			case ".ico":
+				_ = lcl.Application.Icon().LoadFromFSFile(wp.IconFS)
+			}
 		}
 	} else if wp.Icon != "" {
 		if tools.IsExist(wp.Icon) {
-			lcl.Application.Icon().LoadFromFile(wp.Icon)
+			ext := strings.ToLower(filepath.Ext(wp.Icon))
+			switch ext {
+			case ".png":
+				png := lcl.NewPngImage()
+				png.LoadFromFSFile(wp.Icon)
+				lcl.Application.Icon().Assign(png)
+				png.Free()
+			case ".jpeg":
+				jpeg := lcl.NewJPEGImage()
+				jpeg.LoadFromFSFile(wp.Icon)
+				lcl.Application.Icon().Assign(jpeg)
+				jpeg.Free()
+			case ".ico":
+				lcl.Application.Icon().LoadFromFile(wp.Icon)
+			}
 		}
 	} else {
 		// 默认
