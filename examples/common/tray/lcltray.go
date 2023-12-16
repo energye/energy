@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 // LCLTray LCL组件托盘, 适用windows和macosx
@@ -36,7 +37,6 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	icon := lcl.NewPngImage()
 	icon.LoadFromFSFile("resources/icon.png")
 	iconItem.Bitmap().Assign(icon) //.Canvas().Draw(0, 0, icon) //画上去
-	icon.Free()
 	tray.TrayMenu().Items().Add(iconItem)
 
 	menu1.Add(tray.NewMenuItem("子菜单", func(s lcl.IObject) {
@@ -94,6 +94,23 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	tray.TrayMenu().Items().Add(radio3)
 	// --
 	tray.AddMenuItem("-", nil)
+	var (
+		showMenu *lcl.TMenuItem
+		wotMenu  *lcl.TMenuItem
+	)
+	var wot = func(sender lcl.IObject) {
+		wotMenu.SetVisible(!wotMenu.Visible())
+		if wotMenu.Visible() {
+			showMenu.SetCaption("Hide WOT")
+		} else {
+			showMenu.SetCaption("Show WOT")
+		}
+		fmt.Println(wotMenu.Visible())
+	}
+	showMenu = tray.AddMenuItem("Hide WOT", wot)
+	wotMenu = tray.AddMenuItem("Me WOT", wot)
+	// --
+	tray.AddMenuItem("-", nil)
 
 	tray.AddMenuItem("退出", func(s lcl.IObject) {
 		// 关闭所有窗口
@@ -103,4 +120,21 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	})
 	//托盘 end
 	tray.Show()
+	var trayICON bool
+	timer := lcl.NewTimer(window)
+	timer.SetInterval(1000)
+	timer.SetOnTimer(func(sender lcl.IObject) {
+		if trayICON {
+			newTray.SetIconFS("resources/icon.png")
+		} else {
+			newTray.SetIconFS("resources/icon_red.png")
+		}
+		trayICON = !trayICON
+	})
+	timer.SetEnabled(true)
+	window.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
+		timer.SetEnabled(false)
+		timer.Free()
+		return false
+	})
 }

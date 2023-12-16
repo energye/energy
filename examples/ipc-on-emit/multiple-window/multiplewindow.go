@@ -1,28 +1,25 @@
 package main
 
 import (
-	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	demoCommon "github.com/energye/energy/v2/examples/common"
 	"github.com/energye/energy/v2/examples/common/tray"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"
 )
 
-//go:embed resources
-var resources embed.FS
-
 // go build -ldflags "-s -w"
 func main() {
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	exception.SetOnException(func(message string) {
 		fmt.Println("Global Exception message", message)
 	})
@@ -38,7 +35,7 @@ func main() {
 	//本地资源加载
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
-		FS:         &resources,
+		FS:         demoCommon.ResourcesFS(),
 		Home:       "multiple-window.html",
 	}.Build())
 
