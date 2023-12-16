@@ -120,6 +120,8 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	})
 	//托盘 end
 	tray.Show()
+
+	// 图标切换
 	var trayICON bool
 	timer := lcl.NewTimer(window)
 	timer.SetInterval(1000)
