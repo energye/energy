@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<!--其它区域不是透明色(白色 ClWhite)， 透明色你可以指定任意颜色，但必须和Go代码中的颜色一致-->
+<body style="background-color: #6375cc;width: 100%;text-align: center;overflow: hidden">
+
+<div style="width: 200px;height: 200px;top: 50px;left: 100px;background-color: white;position: absolute;">
+    <!-- 这个div背景色是白色（ClWhite）, 根据Go代码中 WindowTransparent 函数的设置白色（ClWhite）为透明色，一搬情况透明色是网页中未被使用的颜色，否则所有透明色都会被透明 -->
+    <div style="width: 100px;height: 25px;background-color: burlywood;margin-top: 80px;margin-left: 50px;">这里不透明</div>
+</div>
+<h3 style="color: #010615;background-color: #eee906;-webkit-app-region: drag;">白色区域是透明</h3>
+<div style="background-color: #eee906;position: absolute;width: 95%;top: 260px;text-align: left;">
+    1. 这个示例使用 CSS + Go中的winapi配合, 原理是设置整个窗口的透明, 根据颜色通道设置一个透明颜色<br>
+    2. 透明颜色可以是任意颜色, 一搬在网页和窗口中是未被使用的，在Go和页面中这个颜色值必须一样才能达到想要的效果<br>
+    3. 示例中使用的是白色 white. 其它区域都非白色 white
+</div>
+</body>
+</html>

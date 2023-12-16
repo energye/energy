@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>response-filter</title>
+    <style>
+        button {
+            margin: 5px;
+        }
+    </style>
+    <script type="application/javascript">
+        // 刷新页面
+        function refresh() {
+            ipc.emit("refresh")
+        }
+
+        // 文本替换
+        function replace(t) {
+            ipc.emit("replace", [t])
+        }
+
+        // 监听事件
+        ipc.on("replace", function (t) {
+            console.log("replace", t)
+            if (t === 1) {
+                document.getElementById("replaceHtml").checked = true
+            } else if (t === 2) {
+                document.getElementById("replaceIcon").checked = true
+            }
+        });
+    </script>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<p>
+<h3 style="-webkit-app-region: drag;">response-filter</h3></p>
+<p>
+    <button onclick="refresh()" id="refresh">刷新页面</button>
+    <br>
+    <input id="replaceHtml" type="radio" name="replace" onchange="replace(1)"/><label
+        for="replaceHtml">replaceHtml</label> <br>
+    <input id="replaceIcon" type="radio" name="replace" onchange="replace(2)"/><label
+        for="replaceIcon">replaceIcon</label> <br>
+</p>
+<p>
+    在GO中使用JavaScript、HTML和CSS构建跨平台的桌面应用程序
+</p>
+<p>
+    <img src="icon.png" width="128" height="128"/>
+</p>
+<p id="msgHtml"></p>
+</body>
+<script type="application/javascript">
+    let msgHtml = document.getElementById("msgHtml");
+
+    function msg(...vvv) {
+        let str = msgHtml.innerHTML;
+        for (let i = 0; i < vvv.length; i++) {
+            str = str + "  " + vvv[i];
+        }
+        str += "<br>";
+        msgHtml.innerHTML = str;
+    }
+
+    function clearMsg() {
+        msgHtml.innerHTML = "";
+    }
+
+    msg("process browserId", process.browserId)
+    msg("process frameId", process.frameId)
+</script>
+</html>
