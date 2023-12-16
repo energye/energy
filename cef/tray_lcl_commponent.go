@@ -15,6 +15,8 @@ package cef
 import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"path/filepath"
+	"strings"
 )
 
 // 创建系统托盘
@@ -112,12 +114,45 @@ func (m *LCLTray) TrayMenu() *lcl.TPopupMenu {
 
 // SetIconFS 设置托盘图标
 func (m *LCLTray) SetIconFS(iconResourcePath string) {
-	m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
+	ext := strings.ToLower(filepath.Ext(iconResourcePath))
+	switch ext {
+	case ".png":
+		png := lcl.NewPngImage()
+		png.LoadFromFSFile(iconResourcePath)
+		m.trayIcon.Icon().Assign(png)
+		png.Free()
+	case ".jpeg":
+		jpeg := lcl.NewJPEGImage()
+		jpeg.LoadFromFSFile(iconResourcePath)
+		m.trayIcon.Icon().Assign(jpeg)
+		jpeg.Free()
+	case ".ico":
+		m.trayIcon.Icon().LoadFromFSFile(iconResourcePath)
+	}
 }
 
 // SetIcon 设置托盘图标
 func (m *LCLTray) SetIcon(iconResourcePath string) {
-	m.trayIcon.Icon().LoadFromFile(iconResourcePath)
+	ext := strings.ToLower(filepath.Ext(iconResourcePath))
+	switch ext {
+	case ".png":
+		png := lcl.NewPngImage()
+		png.LoadFromFile(iconResourcePath)
+		m.trayIcon.Icon().Assign(png)
+		png.Free()
+	case ".jpeg":
+		jpeg := lcl.NewJPEGImage()
+		jpeg.LoadFromFile(iconResourcePath)
+		m.trayIcon.Icon().Assign(jpeg)
+		jpeg.Free()
+	case ".ico":
+		m.trayIcon.Icon().LoadFromFile(iconResourcePath)
+	}
+}
+
+// TrayIcon return TTrayIcon
+func (m *LCLTray) TrayIcon() *lcl.TTrayIcon {
+	return m.trayIcon
 }
 
 // SetHint 设置提示
@@ -144,20 +179,18 @@ func (m *LCLTray) Notice(title, content string, timeout int32) {
 
 // NewMenuItem
 // 创建一个菜单，还未添加到托盘
-func (m *LCLTray) NewMenuItem(caption string, onClick MenuItemClick) *lcl.TMenuItem {
+func (m *LCLTray) NewMenuItem(caption string, onClick lcl.TNotifyEvent) *lcl.TMenuItem {
 	item := lcl.NewMenuItem(m.trayIcon)
 	item.SetCaption(caption)
 	if onClick != nil {
-		item.SetOnClick(func(sender lcl.IObject) {
-			onClick()
-		})
+		item.SetOnClick(onClick)
 	}
 	return item
 }
 
 // AddMenuItem
 // 添加一个托盘菜单
-func (m *LCLTray) AddMenuItem(caption string, onClick MenuItemClick) *lcl.TMenuItem {
+func (m *LCLTray) AddMenuItem(caption string, onClick lcl.TNotifyEvent) *lcl.TMenuItem {
 	item := m.NewMenuItem(caption, onClick)
 	m.TrayMenu().Items().Add(item)
 	return item
