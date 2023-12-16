@@ -1,8 +1,8 @@
 package tray
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -15,29 +15,24 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	newTray := window.NewTray()
 	newTray.SetTitle("任务管理器里显示的标题")
 	newTray.SetHint("这里是文字\n文字啊")
-	if common.IsLinux() {
-		newTray.SetIconFS("resources/icon.png")
-	} else {
-		newTray.SetIconFS("resources/icon.ico")
-	}
+	newTray.SetIconFS("resources/icon.png")
 	tray := newTray.AsLCLTray()
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	//带图标的菜单
 	iconItem := tray.NewMenuItem("带个图标", nil)
-	iconItem.Bitmap().SetSize(16, 16)      //图标情况调整大小
-	iconItem.Bitmap().SetTransparent(true) //透明
-	icon := lcl.NewIcon()
-	icon.LoadFromFSFile("resources/icon.ico")
-	iconItem.Bitmap().Canvas().Draw(0, 0, icon) //画上去
+	icon := lcl.NewPngImage()
+	icon.LoadFromFSFile("resources/icon.png")
+	iconItem.Bitmap().Assign(icon) //.Canvas().Draw(0, 0, icon) //画上去
+	icon.Free()
 	tray.TrayMenu().Items().Add(iconItem)
 
-	menu1.Add(tray.NewMenuItem("子菜单", func() {
+	menu1.Add(tray.NewMenuItem("子菜单", func(s lcl.IObject) {
 		lcl.ShowMessage("子菜单点击 提示消息")
 	}))
-	tray.AddMenuItem("显示气泡", func() {
+	tray.AddMenuItem("显示气泡", func(s lcl.IObject) {
 		tray.Notice("气泡标题", "气泡内容", 2000)
 	})
-	tray.AddMenuItem("显示/隐藏", func() {
+	tray.AddMenuItem("显示/隐藏", func(s lcl.IObject) {
 		// 所有窗口
 		for _, info := range cef.BrowserWindow.GetWindowInfos() {
 			window := info.AsLCLBrowserWindow().BrowserWindow()
@@ -47,7 +42,45 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 			}
 		}
 	})
-	tray.AddMenuItem("退出", func() {
+	tray.AddMenuItem("-", nil)
+	var check *lcl.TMenuItem
+	check = tray.NewMenuItem("Check", func(s lcl.IObject) {
+		check.SetChecked(!check.Checked())
+	})
+	check.SetChecked(true)
+	tray.TrayMenu().Items().Add(check)
+	tray.AddMenuItem("-", nil)
+	var (
+		radio1     *lcl.TMenuItem
+		radio2     *lcl.TMenuItem
+		radio3     *lcl.TMenuItem
+		groupIndex uint8 = 1
+	)
+	radio1 = tray.NewMenuItem("Radio1", func(s lcl.IObject) {
+		fmt.Println("Radio1")
+		lcl.AsMenuItem(s).SetChecked(true)
+	})
+	radio1.SetGroupIndex(groupIndex)
+	radio1.SetRadioItem(true)
+	tray.TrayMenu().Items().Add(radio1)
+	radio2 = tray.NewMenuItem("Radio2", func(s lcl.IObject) {
+		fmt.Println("Radio2")
+		lcl.AsMenuItem(s).SetChecked(true)
+	})
+	radio2.SetGroupIndex(groupIndex)
+	radio2.SetRadioItem(true)
+	tray.TrayMenu().Items().Add(radio2)
+	radio3 = tray.NewMenuItem("Radio3", func(s lcl.IObject) {
+		fmt.Println("Radio3")
+		lcl.AsMenuItem(s).SetChecked(true)
+	})
+	radio3.SetGroupIndex(groupIndex)
+	radio3.SetRadioItem(true)
+	tray.TrayMenu().Items().Add(radio3)
+
+	tray.AddMenuItem("-", nil)
+
+	tray.AddMenuItem("退出", func(s lcl.IObject) {
 		// 关闭所有窗口
 		for _, info := range cef.BrowserWindow.GetWindowInfos() {
 			info.CloseBrowserWindow()
