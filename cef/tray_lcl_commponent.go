@@ -181,7 +181,9 @@ func (m *LCLTray) Notice(title, content string, timeout int32) {
 // 创建一个菜单，还未添加到托盘
 func (m *LCLTray) NewMenuItem(caption string, onClick lcl.TNotifyEvent) *lcl.TMenuItem {
 	item := lcl.NewMenuItem(m.trayIcon)
-	item.SetCaption(caption)
+	if caption != "" {
+		item.SetCaption(caption)
+	}
 	if onClick != nil {
 		item.SetOnClick(onClick)
 	}
