@@ -17,20 +17,27 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	newTray.SetTitle("任务管理器里显示的标题")
 	newTray.SetHint("这里是文字\n文字啊")
 	newTray.SetIconFS("resources/icon.png")
+	// 托盘图标事件
+	newTray.SetOnClick(func() {
+		fmt.Println("click")
+	})
+	newTray.SetOnDblClick(func() {
+		fmt.Println("dclick")
+	})
 	tray := newTray.AsLCLTray()
 	// image
-	//imageMenu := tray.NewMenuItem("", nil)
-	//imageMenu.SetOnMeasureItem(func(sender lcl.IObject, aCanvas *lcl.TCanvas, width, height *int32) {
-	//	*height = 60
-	//	*width = 270
-	//})
-	//imageMenuPng := lcl.NewIcon()
-	//imageMenuPng.LoadFromFSFile("resources/icon_red.ico")
-	//imageMenu.Bitmap().Canvas().Draw(0, 0, imageMenuPng) //画上去
-	//imageMenuPng.Free()
-	//tray.TrayMenu().Items().Add(imageMenu)
-	// --
-	//tray.AddMenuItem("-", nil)
+	imageMenu := tray.NewMenuItem("", nil)
+	imageMenu.SetOnMeasureItem(func(sender lcl.IObject, aCanvas *lcl.TCanvas, width, height *int32) {
+		*height = 60
+		*width = 270
+	})
+	imageMenuPng := lcl.NewIcon()
+	imageMenuPng.LoadFromFSFile("resources/icon_red.ico")
+	imageMenu.Bitmap().Canvas().Draw(0, 0, imageMenuPng) //画上去
+	imageMenuPng.Free()
+	tray.TrayMenu().Items().Add(imageMenu)
+	//--
+	tray.AddMenuItem("-", nil)
 	menu1 := tray.AddMenuItem("父菜单", nil)
 	//带图标的菜单
 	iconItem := tray.NewMenuItem("带个图标", nil)
@@ -132,6 +139,7 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 			newTray.SetIconFS("resources/icon_red.png")
 		}
 		trayICON = !trayICON
+		fmt.Println("timer", trayICON)
 	})
 	timer.SetEnabled(true)
 	window.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
