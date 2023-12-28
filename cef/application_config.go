@@ -1310,3 +1310,46 @@ func (m *TCEFApplication) LastErrorMessage() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_LastErrorMessage).Call()
 	return api.GoStr(r1)
 }
+
+// SpecificVersion 返回当前支持的CEF特定版本
+//
+//	0: 非针特定本，当前版本或当前最新版本
+//	49:  特定 WindowsXP
+//	87:  特定 Flash
+//	106: 特定 Linux GTK2
+//	109: 特定 7, 8/8.1 and Windows Server 2012
+func (m *TCEFApplication) SpecificVersion() SpecificVersion {
+	if m.specificVersion == SV_INVALID {
+		r1, _, _ := imports.Proc(def.CEFAppConfig_SpecificVersion).Call()
+		switch SpecificVersion(r1) {
+		case SV_CEF, SV_CEF49, SV_CEF87, SV_CEF106, SV_CEF109:
+			m.specificVersion = SpecificVersion(r1)
+		}
+	}
+	return m.specificVersion
+}
+
+// IsNotSpecVer 非针特定本，当前版本或当前最新版本
+func (m *TCEFApplication) IsNotSpecVer() bool {
+	return m.SpecificVersion() == SV_CEF
+}
+
+// IsSpecVer49 特定 WindowsXP
+func (m *TCEFApplication) IsSpecVer49() bool {
+	return m.SpecificVersion() == SV_CEF49
+}
+
+// IsSpecVer87 特定 Flash
+func (m *TCEFApplication) IsSpecVer87() bool {
+	return m.SpecificVersion() == SV_CEF87
+}
+
+// IsSpecVer106 特定 Linux GTK2
+func (m *TCEFApplication) IsSpecVer106() bool {
+	return m.SpecificVersion() == SV_CEF106
+}
+
+// IsSpecVer109 特定 7, 8/8.1 and Windows Server 2012
+func (m *TCEFApplication) IsSpecVer109() bool {
+	return m.SpecificVersion() == SV_CEF109
+}

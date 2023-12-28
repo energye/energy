@@ -706,8 +706,9 @@ func (m *ICefV8Value) RejectPromise(errorMsg string) bool {
 }
 
 // SetCanNotFree
-//  设置是否允许释放, 可以管理对象的独立释放
-//	v=false 时允许释放
+//
+//	 设置是否允许释放, 可以管理对象的独立释放
+//		v=false 时允许释放
 func (m *ICefV8Value) SetCanNotFree(v bool) {
 	if m != nil && m.instance != nil {
 		m.cantNotFree = v
@@ -910,13 +911,22 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 	}
 }
 
-//func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
+// NewObject TODO 未增加 ICefV8Interceptor
 func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 	var result uintptr
-	if accessor == nil || accessor.instance == nil {
-		imports.Proc(def.CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(0), uintptr(unsafe.Pointer(&result)))
+	if application.IsSpecVer49() {
+		// windows xp
+		if accessor == nil || accessor.instance == nil {
+			imports.Proc(def.CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(unsafe.Pointer(&result)))
+		} else {
+			imports.Proc(def.CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(unsafe.Pointer(&result)))
+		}
 	} else {
-		imports.Proc(def.CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
+		if accessor == nil || accessor.instance == nil {
+			imports.Proc(def.CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(0), uintptr(unsafe.Pointer(&result)))
+		} else {
+			imports.Proc(def.CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
+		}
 	}
 	return &ICefV8Value{
 		instance:    unsafe.Pointer(result),

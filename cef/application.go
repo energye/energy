@@ -27,6 +27,7 @@ var application *TCEFApplication
 // TCEFApplication CEF应用对象
 type TCEFApplication struct {
 	instance                 unsafe.Pointer
+	specificVersion          SpecificVersion // 特定版本 default -1
 	ui                       UITool
 	onContextCreated         GlobalCEFAppEventOnContextCreated
 	onProcessMessageReceived RenderProcessMessageReceived
@@ -58,7 +59,7 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 func CreateApplication() *TCEFApplication {
 	var result uintptr
 	imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
-	return &TCEFApplication{instance: unsafe.Pointer(result)}
+	return &TCEFApplication{instance: unsafe.Pointer(result), specificVersion: SV_INVALID}
 }
 
 // AddCrDelegate MacOSX Delegate

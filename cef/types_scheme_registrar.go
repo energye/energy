@@ -43,6 +43,22 @@ func (m *TCefSchemeRegistrarRef) AddCustomScheme(schemeName string, options cons
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.SchemeRegistrarRef_AddCustomScheme).Call(m.Instance(), api.PascalStr(schemeName), uintptr(options))
-	return api.GoBool(r1)
+	if application.IsSpecVer49() {
+		// windows xp
+		var (
+			isStandard, isLocal, isDisplayIsolated bool
+		)
+		if options == consts.CEF_SCHEME_OPTION_STANDARD {
+			isStandard = true
+		} else if options == consts.CEF_SCHEME_OPTION_LOCAL {
+			isLocal = true
+		} else if options == consts.CEF_SCHEME_OPTION_DISPLAY_ISOLATED {
+			isDisplayIsolated = true
+		}
+		r1, _, _ := imports.Proc(def.SchemeRegistrarRef_AddCustomScheme).Call(m.Instance(), api.PascalStr(schemeName), api.PascalBool(isStandard), api.PascalBool(isLocal), api.PascalBool(isDisplayIsolated))
+		return api.GoBool(r1)
+	} else {
+		r1, _, _ := imports.Proc(def.SchemeRegistrarRef_AddCustomScheme).Call(m.Instance(), api.PascalStr(schemeName), uintptr(options))
+		return api.GoBool(r1)
+	}
 }

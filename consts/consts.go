@@ -64,12 +64,16 @@ const (
 	Ct_Client
 )
 
-type TriggerMode = types.Int8
+// SpecificVersion 特定版本: CEF49，CEF87，CEF106，CEF109
+type SpecificVersion = types.Int32
 
 const (
-	Tm_Async    = TriggerMode(iota) //异步
-	Tm_Callback                     //异步，带回调函数返回结果
-	Tm_Sync                         //同步，阻塞等待结果返回值
+	SV_INVALID = SpecificVersion(-1)  // 无效
+	SV_CEF     = SpecificVersion(0)   // 非特定版本，当前版本或当前最新版本
+	SV_CEF49   = SpecificVersion(49)  // 特定 WindowsXP
+	SV_CEF87   = SpecificVersion(87)  // 特定 Flash
+	SV_CEF106  = SpecificVersion(106) // 特定 Linux GTK2
+	SV_CEF109  = SpecificVersion(109) // 特定 Windows 7, 8/8.1 and Windows Server 2012
 )
 
 // 功能和消息常量
