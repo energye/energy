@@ -49,51 +49,48 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetChromium(m.chromium, 0)
+	// 创建一个定时器, 用来createBrowser
 	m.timer = lcl.NewTimer(m)
-	m.timer.SetOnTimer(func(sender lcl.IObject) {
-		fmt.Println("SetOnTimer")
-		m.timer.SetEnabled(false)
-		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) &&
-			!m.chromium.Initialized() {
-			m.timer.SetEnabled(true)
-		}
-	})
+	m.timer.SetOnTimer(m.show)
+	// 在show时创建chromium browser
+	m.SetOnShow(m.show)
+	// 1. 关闭之前先调用chromium.CloseBrowser(true)，然后触发 chromium.SetOnClose
+	m.SetOnCloseQuery(m.closeQuery)
+	// 2. 触发后控制延迟关闭, 在UI线程中调用 windowParent.Free() 释放对象，然后触发 chromium.SetOnBeforeClose
+	m.chromium.SetOnClose(m.chromiumClose)
+	// 3. 触发后将canClose设置为true, 发送消息到主窗口关闭，触发 m.SetOnCloseQuery
+	m.chromium.SetOnBeforeClose(m.chromiumBeforeClose)
+}
 
-	m.SetOnShow(func(sender lcl.IObject) {
-		fmt.Println("SetOnShow")
-		m.timer.SetEnabled(false)
-		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) &&
-			!m.chromium.Initialized() {
-			m.timer.SetEnabled(true)
-		}
-	})
+func (m *BrowserWindow) show(sender lcl.IObject) {
+	fmt.Println("show")
+	m.timer.SetEnabled(false)
+	if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) &&
+		!m.chromium.Initialized() {
+		m.timer.SetEnabled(true)
+	}
+}
 
-	m.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) {
-		fmt.Println("SetOnCloseQuery")
-		*canClose = m.canClose
-		if !m.canClose {
-			m.canClose = true
-			m.chromium.CloseBrowser(true)
-			//m.SetVisible(false)
-		}
-	})
-
-	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-		fmt.Println("SetOnAfterCreated")
-		m.chromium.LoadUrl("https://www.baidu.com")
-	})
-
-	m.chromium.SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
-		fmt.Println("chromium SetOnClose")
-		*aAction = consts.CbaDelay
-		cef.RunOnMainThread(func() {
-			m.windowParent.Free()
-		})
-	})
-
-	m.chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-		fmt.Println("chromium SetOnBeforeClose")
+func (m *BrowserWindow) closeQuery(sender lcl.IObject, canClose *bool) {
+	fmt.Println("closeQuery")
+	*canClose = m.canClose
+	if !m.canClose {
 		m.canClose = true
-		rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+		m.chromium.CloseBrowser(true)
+		//m.SetVisible(false)
+	}
+}
+
+func (m *BrowserWindow) chromiumClose(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
+	fmt.Println("chromiumClose")
+	*aAction = consts.CbaDelay
+	cef.RunOnMainThread(func() {
+		m.windowParent.Free()
 	})
+}
+
+func (m *BrowserWindow) chromiumBeforeClose(sender lcl.IObject, browser *cef.ICefBrowser) {
+	fmt.Println("chromiumBeforeClose")
+	m.canClose = true
+	rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
 }
