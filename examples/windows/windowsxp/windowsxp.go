@@ -60,6 +60,17 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.chromium.SetOnClose(m.chromiumClose)
 	// 3. 触发后将canClose设置为true, 发送消息到主窗口关闭，触发 m.SetOnCloseQuery
 	m.chromium.SetOnBeforeClose(m.chromiumBeforeClose)
+
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, browserSettings *cef.TCefBrowserSettings, noJavascriptAccess *bool) bool {
+		fmt.Println("beforePopupInfo:", beforePopupInfo.TargetUrl, beforePopupInfo.TargetDisposition, beforePopupInfo.TargetFrameName, beforePopupInfo.UserGesture)
+		fmt.Println(*noJavascriptAccess)
+		fmt.Println(browser.BrowserId(), frame.Identifier(), frame.Url(), frame.V8Context().Frame().Url())
+		fmt.Printf("browserSettings: %+v\n", browserSettings)
+		return true
+	})
+	//m.chromium.SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
+	//	return true
+	//})
 }
 
 func (m *BrowserWindow) show(sender lcl.IObject) {
