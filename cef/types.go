@@ -16,7 +16,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/common"
-	. "github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -31,8 +31,8 @@ type ICefCookie struct {
 	Secure, Httponly, HasExpires   bool
 	Creation, LastAccess, Expires  time.Time
 	Count, Total, ID               int32
-	SameSite                       TCefCookieSameSite
-	Priority                       TCefCookiePriority
+	SameSite                       consts.TCefCookieSameSite
+	Priority                       consts.TCefCookiePriority
 	SetImmediately                 bool
 	DeleteCookie                   bool
 	Result                         bool
@@ -40,8 +40,8 @@ type ICefCookie struct {
 
 // TCefKeyEvent CEF 键盘事件
 type TCefKeyEvent struct {
-	Kind                 TCefKeyEventType // called 'type' in the original CEF source code
-	Modifiers            TCefEventFlags
+	Kind                 consts.TCefKeyEventType // called 'type' in the original CEF source code
+	Modifiers            consts.TCefEventFlags
 	WindowsKeyCode       Int32
 	NativeKeyCode        Int32
 	IsSystemKey          Int32
@@ -75,6 +75,7 @@ func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 
 // TCefBrowserSettings CEF Browser配置
 type TCefBrowserSettings struct {
+	instance                   *tCefBrowserSettingsPtr
 	Size                       NativeUInt
 	WindowlessFrameRate        Integer
 	StandardFontFamily         TCefString
@@ -88,21 +89,21 @@ type TCefBrowserSettings struct {
 	MinimumFontSize            Integer
 	MinimumLogicalFontSize     Integer
 	DefaultEncoding            TCefString
-	RemoteFonts                TCefState
-	Javascript                 TCefState
-	JavascriptCloseWindows     TCefState
-	JavascriptAccessClipboard  TCefState
-	JavascriptDomPaste         TCefState
-	ImageLoading               TCefState
-	ImageShrinkStandaLonetoFit TCefState
-	TextAreaResize             TCefState
-	TabToLinks                 TCefState
-	LocalStorage               TCefState
-	Databases                  TCefState
-	Webgl                      TCefState
+	RemoteFonts                consts.TCefState
+	Javascript                 consts.TCefState
+	JavascriptCloseWindows     consts.TCefState
+	JavascriptAccessClipboard  consts.TCefState
+	JavascriptDomPaste         consts.TCefState
+	ImageLoading               consts.TCefState
+	ImageShrinkStandaLonetoFit consts.TCefState
+	TextAreaResize             consts.TCefState
+	TabToLinks                 consts.TCefState
+	LocalStorage               consts.TCefState
+	Databases                  consts.TCefState
+	Webgl                      consts.TCefState
 	BackgroundColor            TCefColor
 	AcceptLanguageList         TCefString // Remove CEF 118
-	ChromeStatusBubble         TCefState
+	ChromeStatusBubble         consts.TCefState
 }
 
 // TCefCommandLine 进程启动命令行参数设置
@@ -118,8 +119,8 @@ type ICefCommandLine struct {
 
 // TCefProxy 代理配置
 type TCefProxy struct {
-	ProxyType              TCefProxyType
-	ProxyScheme            TCefProxyScheme
+	ProxyType              consts.TCefProxyType
+	ProxyScheme            consts.TCefProxyScheme
 	ProxyServer            string
 	ProxyPort              int32
 	ProxyUsername          string
@@ -138,9 +139,9 @@ type TCefTouchEvent struct {
 	RadiusY       float32
 	RotationAngle float32
 	Pressure      float32
-	Type          TCefTouchEeventType
-	Modifiers     TCefEventFlags
-	PointerType   TCefPointerType
+	Type          consts.TCefTouchEeventType
+	Modifiers     consts.TCefEventFlags
+	PointerType   consts.TCefPointerType
 }
 
 // TCustomHeader 自定义请求头
@@ -153,14 +154,14 @@ type TCustomHeader struct {
 type TCefMouseEvent struct {
 	X         int32
 	Y         int32
-	Modifiers TCefEventFlags
+	Modifiers consts.TCefEventFlags
 }
 
 // BeforePopupInfo 弹出子窗口信息
 type BeforePopupInfo struct {
 	TargetUrl         string
 	TargetFrameName   string
-	TargetDisposition TCefWindowOpenDisposition
+	TargetDisposition consts.TCefWindowOpenDisposition
 	UserGesture       bool
 }
 
@@ -382,7 +383,7 @@ type ICefExtensionHandler struct {
 type TCustomExtensionHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefExtension
@@ -445,7 +446,7 @@ type TCefTouchHandleState struct {
 	TouchHandleId    int32
 	Flags            uint32
 	Enabled          int32
-	Orientation      TCefHorizontalAlignment
+	Orientation      consts.TCefHorizontalAlignment
 	MirrorVertical   int32
 	MirrorHorizontal int32
 	Origin           TCefPoint
@@ -456,7 +457,7 @@ type TCefTouchHandleState struct {
 type ICefRequestContextHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefMenuModel 菜单
@@ -590,7 +591,7 @@ type ICefView struct {
 type ICefViewDelegate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefOverlayController TODO 未实现
@@ -730,7 +731,7 @@ type ICefSslInfo struct {
 type ICefClient struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefAudioHandler
@@ -861,7 +862,7 @@ type ICefAccessibilityHandler struct {
 type ICefResourceRequestHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefCookieAccessFilter
@@ -870,7 +871,7 @@ type ICefResourceRequestHandler struct {
 type ICefCookieAccessFilter struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefResourceHandler
@@ -928,7 +929,7 @@ type ICefV8Context struct {
 type ICefV8Value struct {
 	base         TCefBaseRefCounted
 	instance     unsafe.Pointer
-	valueType    V8ValueType             // 值类型
+	valueType    consts.V8ValueType      // 值类型
 	valueByIndex []*ICefV8Value          // 当前对象的所有数组集合
 	valueByKeys  map[string]*ICefV8Value // 当前对象的所有key=value子集合
 	cantNotFree  bool                    // 是否允许释放, false时允许释放
@@ -1004,14 +1005,14 @@ type ICefResourceSkipCallback struct {
 type ICefDeleteCookiesCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefSetCookieCallback
 type ICefSetCookieCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
-	ct       CefCreateType
+	ct       consts.CefCreateType
 }
 
 // ICefPrintDialogCallback
@@ -1232,27 +1233,27 @@ type TCefInsets struct {
 // TCefAudioParameters
 // /include/internal/cef_types.h (cef_audio_parameters_t)
 type TCefAudioParameters struct {
-	channelLayout   TCefChannelLayout
+	channelLayout   consts.TCefChannelLayout
 	sampleRate      int32
 	framesPerBuffer int32
 }
 
 type CefPdfPrintSettings struct {
-	Landscape           int32                  // Integer
-	PrintBackground     int32                  // Integer
-	Scale               float64                // double
-	PaperWidth          float64                // double
-	PaperHeight         float64                // double
-	PreferCssPageSize   int32                  // Integer
-	MarginType          TCefPdfPrintMarginType // TCefPdfPrintMarginType
-	MarginTop           float64                // double
-	MarginRight         float64                // double
-	MarginBottom        float64                // double
-	MarginLeft          float64                // double
-	PageRanges          string                 // TCefString
-	DisplayHeaderFooter int32                  // Integer
-	HeaderTemplate      string                 // TCefString
-	FooterTemplate      string                 // TCefString
+	Landscape           int32                         // Integer
+	PrintBackground     int32                         // Integer
+	Scale               float64                       // double
+	PaperWidth          float64                       // double
+	PaperHeight         float64                       // double
+	PreferCssPageSize   int32                         // Integer
+	MarginType          consts.TCefPdfPrintMarginType // TCefPdfPrintMarginType
+	MarginTop           float64                       // double
+	MarginRight         float64                       // double
+	MarginBottom        float64                       // double
+	MarginLeft          float64                       // double
+	PageRanges          string                        // TCefString
+	DisplayHeaderFooter int32                         // Integer
+	HeaderTemplate      string                        // TCefString
+	FooterTemplate      string                        // TCefString
 }
 
 // /include/internal/cef_types.h (cef_popup_features_t)
@@ -1278,7 +1279,7 @@ type TCefCompositionUnderline struct {
 	Color           TCefColor
 	BackgroundColor TCefColor
 	Thick           int32
-	Style           TCefCompositionUnderlineStyle
+	Style           consts.TCefCompositionUnderlineStyle
 }
 
 type TCefCompositionUnderlineArray struct {
@@ -1294,8 +1295,8 @@ type TCefBoxLayoutSettings struct {
 	InsideBorderVerticalSpacing   Integer
 	InsideBorderInsets            TCefInsets
 	BetweenChildSpacing           Integer
-	MainAxisAlignment             TCefMainAxisAlignment
-	CrossAxisAlignment            TCefCrossAxisAlignment
+	MainAxisAlignment             consts.TCefMainAxisAlignment
+	CrossAxisAlignment            consts.TCefCrossAxisAlignment
 	MinimumCrossAxisSize          Integer
 	DefaultFlex                   Integer
 }
@@ -1307,21 +1308,21 @@ type ResultString struct {
 
 type TChromiumOptions struct {
 	Chromium                   IChromium
-	javascript                 TCefState
-	javascriptCloseWindows     TCefState
-	javascriptAccessClipboard  TCefState
-	javascriptDomPaste         TCefState
-	imageLoading               TCefState
-	imageShrinkStandaloneToFit TCefState
-	textAreaResize             TCefState
-	tabToLinks                 TCefState
-	localStorage               TCefState
-	databases                  TCefState
-	webgl                      TCefState
+	javascript                 consts.TCefState
+	javascriptCloseWindows     consts.TCefState
+	javascriptAccessClipboard  consts.TCefState
+	javascriptDomPaste         consts.TCefState
+	imageLoading               consts.TCefState
+	imageShrinkStandaloneToFit consts.TCefState
+	textAreaResize             consts.TCefState
+	tabToLinks                 consts.TCefState
+	localStorage               consts.TCefState
+	databases                  consts.TCefState
+	webgl                      consts.TCefState
 	backgroundColor            TCefColor
 	acceptLanguageList         String // Remove CEF 118
 	windowlessFrameRate        Integer
-	chromeStatusBubble         TCefState
+	chromeStatusBubble         consts.TCefState
 }
 
 func (m *TCefCompositionUnderlineArray) Count() int {
@@ -1396,9 +1397,9 @@ func NewCefPoint(x, y int32) *TCefPoint {
 }
 
 func (m *TCefKeyEvent) KeyDown() bool {
-	return m.Kind == KEYEVENT_RAW_KEYDOWN || m.Kind == KEYEVENT_KEYDOWN
+	return m.Kind == consts.KEYEVENT_RAW_KEYDOWN || m.Kind == consts.KEYEVENT_KEYDOWN
 }
 
 func (m *TCefKeyEvent) KeyUp() bool {
-	return m.Kind == KEYEVENT_KEYUP
+	return m.Kind == consts.KEYEVENT_KEYUP
 }

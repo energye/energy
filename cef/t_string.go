@@ -8,8 +8,8 @@
 //
 //----------------------------------------
 
-// energy => pascal string
-// 字符串引用, 用于在取string时字节指针失效
+// energy go string => pascal string
+// 字符串引用, 用于读取string值
 
 package cef
 
@@ -26,7 +26,8 @@ type TString struct {
 }
 
 // IsValid
-//  return true if created
+//
+//	return true if created
 func (m *TString) IsValid() bool {
 	if m == nil || m.instance == nil {
 		return false
@@ -35,8 +36,9 @@ func (m *TString) IsValid() bool {
 }
 
 // Value
-//  get string pointer, string length
-//	bytes copy
+//
+//	 get string pointer, string length
+//		bytes copy
 func (m *TString) Value() string {
 	if !m.IsValid() {
 		return ""
@@ -54,7 +56,8 @@ func (m *TString) Value() string {
 }
 
 // Free
-//  Destroy this reference
+//
+//	Destroy this reference
 func (m *TString) Free() {
 	if !m.IsValid() {
 		return
@@ -65,15 +68,28 @@ func (m *TString) Free() {
 }
 
 // Instance
-//  return string value pointer
+//
+//	return string value pointer
 func (m *TString) Instance() uintptr {
 	return uintptr(m.instance)
 }
 
 // NewTString
-//	创建一个 TString pointer reference
+//
+//	Create TString pointer reference
 func NewTString() *TString {
 	var result uintptr
 	imports.Proc(def.TString_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &TString{instance: unsafe.Pointer(result)}
+}
+
+// AsTString
+//
+//	Convert TString
+//	instance must string(TString) pointer
+func AsTString(instance uintptr) *TString {
+	if instance == 0 {
+		return nil
+	}
+	return &TString{instance: unsafe.Pointer(instance)}
 }

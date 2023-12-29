@@ -226,20 +226,26 @@ func (m *ICefFrame) Identifier() (result int64) {
 	return result
 }
 
-func (m *ICefFrame) Name() string {
+func (m *ICefFrame) Name() (value string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CEFFrame_Name).Call(m.Instance())
-	return api.GoStr(r1)
+	val := NewTString()
+	imports.Proc(def.CEFFrame_Name).Call(m.Instance(), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
-func (m *ICefFrame) Url() string {
+func (m *ICefFrame) Url() (value string) {
 	if !m.IsValid() {
 		return ""
 	}
-	r1, _, _ := imports.Proc(def.CEFFrame_Url).Call(m.Instance())
-	return api.GoStr(r1)
+	val := NewTString()
+	imports.Proc(def.CEFFrame_Url).Call(m.Instance(), val.Instance())
+	value = val.Value()
+	val.Free()
+	return
 }
 
 func (m *ICefFrame) Parent() *ICefFrame {

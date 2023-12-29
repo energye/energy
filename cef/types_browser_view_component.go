@@ -145,7 +145,8 @@ func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewCompo
 }
 
 // SetOnUseFramelessWindowForPictureInPicture
-//  CEF 113 ~
+//
+//	CEF 113 ~
 func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn BrowserViewComponentOnUseFramelessWindowForPictureInPicture) {
 	if !m.IsValid() {
 		return
@@ -154,7 +155,8 @@ func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn
 }
 
 // SetOnGestureCommand
-//  CEF 113 ~
+//
+//	CEF 113 ~
 func (m *TCEFBrowserViewComponent) SetOnGestureCommand(fn BrowserViewComponentOnGestureCommand) {
 	if !m.IsValid() {
 		return

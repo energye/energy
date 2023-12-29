@@ -566,7 +566,9 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 		config = NewChromiumConfig()
 	}
 	m.chromiumBrowser = NewChromiumBrowser(m, config)
-	m.Chromium().SetEnableMultiBrowserMode(true)
+	if !application.IsSpecVer49() {
+		m.Chromium().SetEnableMultiBrowserMode(true)
+	}
 
 	if defaultUrl != "" {
 		m.Chromium().SetDefaultURL(defaultUrl)
@@ -1015,7 +1017,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		}
 		return false
 	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool {
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
 		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}

@@ -876,14 +876,15 @@ func init() {
 			var (
 				//windowInfo = getPtr(4) // not use
 				//resultClientPtr = (*uintptr)(getPtr(5))
-				client = &ICefClient{instance: getPtr(5)}
-				//setting	=  getPtr(6)
-				//extra_info =  getPtr(7)
+				client             = &ICefClient{instance: getPtr(5)}
+				browserSettingsPtr = (*tCefBrowserSettingsPtr)(getPtr(6))
+				//extra_info =  getPtr(7) // CEF49 = nil
 				noJavascriptAccess = (*bool)(getPtr(8))
 				result             = (*bool)(getPtr(9))
 			)
-			//callback
-			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, client, noJavascriptAccess)
+			browserSettings := browserSettingsPtr.Convert()
+			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, client, browserSettings, noJavascriptAccess)
+			browserSettings.SetInstanceValue()
 		case chromiumEventOnOpenUrlFromTab:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}

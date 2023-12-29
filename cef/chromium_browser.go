@@ -12,6 +12,7 @@ package cef
 
 import (
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 // ICEFChromiumBrowser
@@ -47,6 +48,9 @@ func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFC
 	m.windowParent = NewCEFWindowParent(owner)
 	m.windowParent.SetParent(owner)
 	m.windowParent.SetChromium(m.chromium, 0)
+	m.windowParent.SetWidth(100)
+	m.windowParent.SetHeight(100)
+	m.windowParent.SetAlign(types.AlNone)
 	m.createTimer = lcl.NewTimer(owner)
 	m.createTimer.SetInterval(200)
 	m.createTimer.SetOnTimer(m.checkAndCreateBrowser)

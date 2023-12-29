@@ -377,6 +377,46 @@ func (m UIntptr) ToPtr() uintptr {
 	return uintptr(m)
 }
 
+// SetValue
+//
+// 给指针设置值, 仅基础类型, 字符串需直接赋值
+func (m UIntptr) SetValue(value interface{}) {
+	switch value.(type) {
+	case uintptr:
+		*(*uintptr)(unsafe.Pointer(m)) = value.(uintptr)
+	case int:
+		*(*int)(unsafe.Pointer(m)) = value.(int)
+	case int8:
+		*(*int8)(unsafe.Pointer(m)) = value.(int8)
+	case int16:
+		*(*int16)(unsafe.Pointer(m)) = value.(int16)
+	case int32:
+		*(*int32)(unsafe.Pointer(m)) = value.(int32)
+	case int64:
+		*(*int64)(unsafe.Pointer(m)) = value.(int64)
+	case uint:
+		*(*uint)(unsafe.Pointer(m)) = value.(uint)
+	case uint8:
+		*(*uint8)(unsafe.Pointer(m)) = value.(uint8)
+	case uint16:
+		*(*uint16)(unsafe.Pointer(m)) = value.(uint16)
+	case uint32:
+		*(*uint32)(unsafe.Pointer(m)) = value.(uint32)
+	case uint64:
+		*(*uint64)(unsafe.Pointer(m)) = value.(uint64)
+	case float32:
+		//*(*float32)(unsafe.Pointer(uintptr(unsafe.Pointer(&m)))) = value.(float32)
+		*(*float32)(unsafe.Pointer(m)) = value.(float32)
+	case float64:
+		//*(*float64)(unsafe.Pointer(uintptr(unsafe.Pointer(&m)))) = value.(float64)
+		*(*float64)(unsafe.Pointer(m)) = value.(float64)
+	case bool:
+		*(*bool)(unsafe.Pointer(m)) = value.(bool)
+	case string:
+
+	}
+}
+
 func (m String) ToPtr() uintptr {
 	return api.PascalStr(string(m))
 }
