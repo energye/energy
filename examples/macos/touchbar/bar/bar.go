@@ -9,7 +9,7 @@ import (
 
 var spinValues = []string{"🍒", "💎", "7️⃣", "🍊", "🔔", "⭐", "🍇", "🍀"}
 
-func randomChoice[T any](choices []T) (*T, error) {
+func randomChoice(choices []string) (*string, error) {
 	v, err := rand.Int(rand.Reader, big.NewInt(int64(len(choices))))
 	if err != nil {
 		return nil, err

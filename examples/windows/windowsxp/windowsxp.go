@@ -73,6 +73,14 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	//m.chromium.SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
 	//	return true
 	//})
+	m.chromium.SetOnTooltip(func(sender lcl.IObject, browser *cef.ICefBrowser, text *string) (result bool) {
+		fmt.Println("text", *text)
+		return true
+	})
+	m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+		fmt.Println("SetOnRenderCompMsg", *lResult, *aHandled)
+		//*aHandled = true
+	})
 }
 
 func (m *BrowserWindow) show(sender lcl.IObject) {

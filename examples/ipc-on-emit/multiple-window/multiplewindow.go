@@ -50,7 +50,7 @@ func main() {
 			iTarget := info.Target(target.TgJs)
 			ok = ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
 			println("ipc.EmitTarget", ok, iTarget.BrowserId())
-			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []any{"带有callback的触发事件: " + time.Now().String()}, func() {
+			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []interface{}{"带有callback的触发事件: " + time.Now().String()}, func() {
 				fmt.Println("target callback")
 			})
 			println("ipc.EmitTargetAndCallback", ok, iTarget.BrowserId())
@@ -59,7 +59,7 @@ func main() {
 		// 主窗口接收, 主窗口被关闭后发送无效
 		ok = ipc.Emit("receiveMessage", "测试当前新主窗口接收")
 		println("ipc.Emit", ok)
-		ok = ipc.EmitAndCallback("receiveMessage", []any{"带有callback的触发事件"}, func() {
+		ok = ipc.EmitAndCallback("receiveMessage", []interface{}{"带有callback的触发事件"}, func() {
 			fmt.Println("callback")
 		})
 		println("ipc.EmitAndCallback", ok)

@@ -50,7 +50,7 @@ func timeTask() {
 		//将数据发送出去
 		ipc.Emit("js-on-event-demo", fmt.Sprintf("Go发送的数据: %d", param0), float64(param0+10))
 		// 如果JS返回结果, 需要通过回调函数入参方式接收返回值
-		ipc.EmitAndCallback("js-on-event-demo-return", []any{fmt.Sprintf("Go发送的数据: %d", param0), float64(param0 + 10)}, func(r1 string) {
+		ipc.EmitAndCallback("js-on-event-demo-return", []interface{}{fmt.Sprintf("Go发送的数据: %d", param0), float64(param0 + 10)}, func(r1 string) {
 			//需要正确的获取类型，否则会失败
 			fmt.Println("JS返回数据:", r1)
 		})

@@ -40,7 +40,7 @@ func main() {
 	// 在渲染进程页面加载时触发主进程 browserOn 事件
 	app.SetOnRenderLoadStart(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
 		url := frame.Url()
-		arguments := []any{url}
+		arguments := []interface{}{url}
 		//触发主进程事件, 并接收返回结果
 		ipc.EmitTargetAndCallback("browserOn", target.NewTargetMain(), arguments, func(result string) {
 			// 接收主进程直接返回结果
