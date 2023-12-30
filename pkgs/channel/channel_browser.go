@@ -78,7 +78,7 @@ func (m *browserChannel) Channel(channelId int64) IChannel {
 
 // ChannelIds Return all connected channel IDs
 func (m *browserChannel) ChannelIds() (result []int64) {
-	m.channel.Range(func(key, value any) bool {
+	m.channel.Range(func(key, value interface{}) bool {
 		result = append(result, key.(int64))
 		return true
 	})

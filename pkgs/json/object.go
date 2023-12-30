@@ -29,7 +29,7 @@ import (
 type JSONObject interface {
 	BaseJSON
 	HasKey(key string) bool               // has key
-	Set(key string, value any)            // Sets or overrides the value of the specified key and sets a new arbitrary type value
+	Set(key string, value interface{})    // Sets or overrides the value of the specified key and sets a new arbitrary type value
 	RemoveByKey(key string)               // remove data for key
 	GetStringByKey(key string) string     // return string data for key
 	GetIntByKey(key string) int           // return int data for key
@@ -51,7 +51,7 @@ type JSONObject interface {
 //    []byte("{...}")
 //    struct
 //    map[string][type]
-func NewJSONObject(value any) JSONObject {
+func NewJSONObject(value interface{}) JSONObject {
 	if value != nil {
 		switch value.(type) {
 		// if []byte must byte JSONObject
@@ -77,26 +77,26 @@ func NewJSONObject(value any) JSONObject {
 		if kind != reflect.Map && kind != reflect.Struct {
 			return nil
 		}
-		//convert map[string]any type
+		//convert map[string]interface{} type
 		if byt, err := jsoniter.Marshal(value); err == nil {
-			var v map[string]any
+			var v map[string]interface{}
 			if err = jsoniter.Unmarshal(byt, &v); err == nil {
 				return &JsonData{t: reflect.Map, v: v, s: len(v)}
 			}
 		}
 	}
-	return &JsonData{t: reflect.Map, v: make(map[string]any), s: 0}
+	return &JsonData{t: reflect.Map, v: make(map[string]interface{}), s: 0}
 }
 
 func (m *JsonData) HasKey(key string) bool {
 	if m.IsObject() {
-		_, ok := m.v.(map[string]any)[key]
+		_, ok := m.v.(map[string]interface{})[key]
 		return ok
 	}
 	return false
 }
 
-func (m *JsonData) Set(key string, value any) {
+func (m *JsonData) Set(key string, value interface{}) {
 	if m.IsObject() {
 		switch value.(type) {
 		case []byte:
@@ -123,7 +123,7 @@ func (m *JsonData) Set(key string, value any) {
 				if kind == reflect.Struct {
 					// struct -> map
 					if d, err := jsoniter.Marshal(value); err == nil {
-						var v map[string]any
+						var v map[string]interface{}
 						if err = jsoniter.Unmarshal(d, &v); err == nil {
 							value = v // json object
 						}
@@ -131,7 +131,7 @@ func (m *JsonData) Set(key string, value any) {
 				} else if kind == reflect.Slice || kind == reflect.Array {
 					// slice -> array
 					if d, err := jsoniter.Marshal(value); err == nil {
-						var v []any
+						var v []interface{}
 						if err = jsoniter.Unmarshal(d, &v); err == nil {
 							value = v // json array
 						}
@@ -139,17 +139,17 @@ func (m *JsonData) Set(key string, value any) {
 				}
 			}
 		}
-		if _, ok := m.v.(map[string]any)[key]; !ok {
+		if _, ok := m.v.(map[string]interface{})[key]; !ok {
 			m.s++
 		}
-		m.v.(map[string]any)[key] = value // default base type
+		m.v.(map[string]interface{})[key] = value // default base type
 	}
 }
 
 func (m *JsonData) RemoveByKey(key string) {
 	if m.IsObject() {
-		if _, ok := m.v.(map[string]any)[key]; ok {
-			delete(m.v.(map[string]any), key)
+		if _, ok := m.v.(map[string]interface{})[key]; ok {
+			delete(m.v.(map[string]interface{}), key)
 			m.s--
 		}
 	}
@@ -157,7 +157,7 @@ func (m *JsonData) RemoveByKey(key string) {
 
 func (m *JsonData) GetStringByKey(key string) string {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).String()
@@ -173,7 +173,7 @@ func (m *JsonData) GetStringByKey(key string) string {
 
 func (m *JsonData) GetIntByKey(key string) (r int) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).Int()
@@ -187,7 +187,7 @@ func (m *JsonData) GetIntByKey(key string) (r int) {
 
 func (m *JsonData) GetInt64ByKey(key string) (r int64) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).Int64()
@@ -201,7 +201,7 @@ func (m *JsonData) GetInt64ByKey(key string) (r int64) {
 
 func (m *JsonData) GetUIntByKey(key string) (r uint) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).UInt()
@@ -215,7 +215,7 @@ func (m *JsonData) GetUIntByKey(key string) (r uint) {
 
 func (m *JsonData) GetUInt64ByKey(key string) (r uint64) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).UInt64()
@@ -236,7 +236,7 @@ func (m *JsonData) GetBytesByKey(key string) []byte {
 
 func (m *JsonData) GetFloatByKey(key string) (r float64) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).Float()
@@ -250,7 +250,7 @@ func (m *JsonData) GetFloatByKey(key string) (r float64) {
 
 func (m *JsonData) GetBoolByKey(key string) (r bool) {
 	if m.IsObject() {
-		if value, ok := m.v.(map[string]any)[key]; ok {
+		if value, ok := m.v.(map[string]interface{})[key]; ok {
 			switch value.(type) {
 			case *JsonData:
 				return value.(*JsonData).Bool()
@@ -273,7 +273,7 @@ func (m *JsonData) GetObjectByKey(key string) JSONObject {
 func (m *JsonData) Keys() []string {
 	if m.IsObject() {
 		var result []string
-		for key, _ := range m.v.(map[string]any) {
+		for key, _ := range m.v.(map[string]interface{}) {
 			result = append(result, key)
 		}
 		return result
@@ -283,7 +283,7 @@ func (m *JsonData) Keys() []string {
 
 func (m *JsonData) GetByKey(key string) JSON {
 	if m.IsObject() {
-		value, ok := m.v.(map[string]any)[key]
+		value, ok := m.v.(map[string]interface{})[key]
 		if !ok {
 			return nil
 		}
@@ -322,12 +322,12 @@ func (m *JsonData) GetByKey(key string) JSON {
 			}
 		case bool:
 			return &JsonData{t: reflect.Bool, v: value, s: 1, p: m, pKey: key}
-		case []any:
-			if v, ok := value.([]any); ok {
+		case []interface{}:
+			if v, ok := value.([]interface{}); ok {
 				return &JsonData{t: reflect.Slice, v: v, s: len(v), p: m, pKey: key}
 			}
-		case map[string]any:
-			if v, ok := value.(map[string]any); ok {
+		case map[string]interface{}:
+			if v, ok := value.(map[string]interface{}); ok {
 				return &JsonData{t: reflect.Map, v: v, s: len(v), p: m, pKey: key}
 			}
 		default:

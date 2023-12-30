@@ -26,33 +26,33 @@ import (
 // BaseJSON
 //  JSON base object
 type BaseJSON interface {
-	Size() int              //返回数据数量
-	Type() reflect.Kind     //当前对象数量类型
-	Data() any              //返回原始数据
-	JsonData() *JsonData    //返回原始JsonData数据结构
-	SetValue(value any)     //设置值
-	String() string         //返回 string 类型值
-	Int() int               //返回 int 类型值, 把所有数字类型都转换 int 返回
-	Int64() int64           //返回 uint 类型值, 把所有数字类型都转换 int64 返回
-	UInt() uint             //返回 uint 类型值, 把所有数字类型都转换 uint 返回
-	UInt64() uint64         //返回 uint 类型值, 把所有数字类型都转换 uint64 返回
-	Bytes() []byte          //转换为 '[]byte' 并返回, 任意类型都将转换
-	Float() float64         //返回 float64 类型值 把所有数字类型都转换 float64 返回
-	Bool() bool             //返回 bool 类型值
-	JSONObject() JSONObject //返回 JSONObject 对象类型
-	JSONArray() JSONArray   //返回 JSONArray 对象类型
-	JSON() JSON             //返回 JSON 对象类型
-	ToJSONString() string   //转换为JSON字符串并返回
-	IsString() bool         //当前对象是否为 string
-	IsInt() bool            //当前对象是否为 int
-	IsUInt() bool           //当前对象是否为 uint
-	IsBytes() bool          //当前对象是否为 []byte
-	IsFloat() bool          //当前对象是否为 float64
-	IsBool() bool           //当前对象是否为 bool
-	IsObject() bool         //当前对象是否为 JSONObject
-	IsArray() bool          //当前对象是否为 JSONArray
-	Clear()                 //清空所有数据，保留原始数据类型
-	Free()                  //释放数据空间，且类型失效，当前对象不可用
+	Size() int                  //返回数据数量
+	Type() reflect.Kind         //当前对象数量类型
+	Data() interface{}          //返回原始数据
+	JsonData() *JsonData        //返回原始JsonData数据结构
+	SetValue(value interface{}) //设置值
+	String() string             //返回 string 类型值
+	Int() int                   //返回 int 类型值, 把所有数字类型都转换 int 返回
+	Int64() int64               //返回 uint 类型值, 把所有数字类型都转换 int64 返回
+	UInt() uint                 //返回 uint 类型值, 把所有数字类型都转换 uint 返回
+	UInt64() uint64             //返回 uint 类型值, 把所有数字类型都转换 uint64 返回
+	Bytes() []byte              //转换为 '[]byte' 并返回, 任意类型都将转换
+	Float() float64             //返回 float64 类型值 把所有数字类型都转换 float64 返回
+	Bool() bool                 //返回 bool 类型值
+	JSONObject() JSONObject     //返回 JSONObject 对象类型
+	JSONArray() JSONArray       //返回 JSONArray 对象类型
+	JSON() JSON                 //返回 JSON 对象类型
+	ToJSONString() string       //转换为JSON字符串并返回
+	IsString() bool             //当前对象是否为 string
+	IsInt() bool                //当前对象是否为 int
+	IsUInt() bool               //当前对象是否为 uint
+	IsBytes() bool              //当前对象是否为 []byte
+	IsFloat() bool              //当前对象是否为 float64
+	IsBool() bool               //当前对象是否为 bool
+	IsObject() bool             //当前对象是否为 JSONObject
+	IsArray() bool              //当前对象是否为 JSONArray
+	Clear()                     //清空所有数据，保留原始数据类型
+	Free()                      //释放数据空间，且类型失效，当前对象不可用
 }
 
 // JSON Object
@@ -66,7 +66,7 @@ type JSON interface {
 type JsonData struct {
 	t      reflect.Kind // type
 	s      int          // size
-	v      any          // value
+	v      interface{}  // value
 	pKey   string       // object parent key
 	pIndex int          // array parent index
 	p      *JsonData    // parent
@@ -78,7 +78,7 @@ type JsonData struct {
 //	t: data type
 //	s: data size
 //	v: data value
-func NewJsonData(t reflect.Kind, s int, v any) *JsonData {
+func NewJsonData(t reflect.Kind, s int, v interface{}) *JsonData {
 	return &JsonData{t: t, s: s, v: v}
 }
 
@@ -91,16 +91,16 @@ func NewJSON(data []byte) JSON {
 	if data == nil {
 		return nil
 	}
-	var v any
+	var v interface{}
 	if err := jsoniter.Unmarshal(data, &v); err == nil {
 		rv := reflect.ValueOf(v)
 		switch rv.Kind() {
 		case reflect.Slice:
-			if v, ok := v.([]any); ok {
+			if v, ok := v.([]interface{}); ok {
 				return &JsonData{t: reflect.Slice, v: v, s: len(v)}
 			}
 		case reflect.Map:
-			if v, ok := v.(map[string]any); ok {
+			if v, ok := v.(map[string]interface{}); ok {
 				return &JsonData{t: reflect.Map, v: v, s: len(v)}
 			}
 		}
@@ -116,7 +116,7 @@ func (m *JsonData) Type() reflect.Kind {
 	return m.t
 }
 
-func (m *JsonData) Data() any {
+func (m *JsonData) Data() interface{} {
 	return m.v
 }
 
@@ -195,7 +195,7 @@ func (m *JsonData) modifyParentValue() {
 	}
 }
 
-func (m *JsonData) SetValue(value any) {
+func (m *JsonData) SetValue(value interface{}) {
 	switch value.(type) {
 	case JsonData:
 		v := value.(JsonData)
@@ -280,15 +280,15 @@ func (m *JsonData) SetValue(value any) {
 		m.v = value
 		m.s = 1
 		m.modifyParentValue()
-	case []any:
+	case []interface{}:
 		m.t = reflect.Slice
 		m.v = value
-		m.s = len(value.([]any))
+		m.s = len(value.([]interface{}))
 		m.modifyParentValue()
-	case map[string]any:
+	case map[string]interface{}:
 		m.t = reflect.Map
 		m.v = value
-		m.s = len(value.(map[string]any))
+		m.s = len(value.(map[string]interface{}))
 		m.modifyParentValue()
 	default:
 		if v := NewJSONArray(value); v != nil {
@@ -310,10 +310,10 @@ func (m *JsonData) ToJSONString() string {
 }
 
 // ConvertToData to map / slice / value
-func (m *JsonData) ConvertToData() any {
+func (m *JsonData) ConvertToData() interface{} {
 	if m.IsObject() {
-		result := make(map[string]any, m.s)
-		for k, _ := range m.v.(map[string]any) {
+		result := make(map[string]interface{}, m.s)
+		for k, _ := range m.v.(map[string]interface{}) {
 			v := m.GetByKey(k)
 			if v == nil {
 				result[k] = nil
@@ -333,8 +333,8 @@ func (m *JsonData) ConvertToData() any {
 		}
 		return result
 	} else if m.IsArray() {
-		result := make([]any, m.s, m.s)
-		for i, _ := range m.v.([]any) {
+		result := make([]interface{}, m.s, m.s)
+		for i, _ := range m.v.([]interface{}) {
 			v := m.GetByIndex(i)
 			if v == nil {
 				result[i] = nil
@@ -392,9 +392,9 @@ func (m *JsonData) IsArray() bool {
 
 func (m *JsonData) Clear() {
 	if m.IsObject() {
-		m.v = make(map[string]any, 0)
+		m.v = make(map[string]interface{}, 0)
 	} else if m.IsArray() {
-		m.v = make([]any, 0)
+		m.v = make([]interface{}, 0)
 	} else {
 		m.v = nil
 	}
@@ -410,7 +410,7 @@ func (m *JsonData) Free() {
 	m.t = reflect.Invalid
 }
 
-func toBytes(s any) []byte {
+func toBytes(s interface{}) []byte {
 	switch s.(type) {
 	case []byte:
 		return s.([]byte)
@@ -450,7 +450,7 @@ func toBytes(s any) []byte {
 	return nil
 }
 
-func toFloat64(s any) (result float64, ok bool) {
+func toFloat64(s interface{}) (result float64, ok bool) {
 	ok = true
 	switch s.(type) {
 	case float32:
@@ -483,7 +483,7 @@ func toFloat64(s any) (result float64, ok bool) {
 	return
 }
 
-func toInt(s any) (result int, ok bool) {
+func toInt(s interface{}) (result int, ok bool) {
 	ok = true
 	switch s.(type) {
 	case float32:
@@ -516,7 +516,7 @@ func toInt(s any) (result int, ok bool) {
 	return
 }
 
-func toInt64(s any) (result int64, ok bool) {
+func toInt64(s interface{}) (result int64, ok bool) {
 	ok = true
 	switch s.(type) {
 	case float32:
@@ -549,7 +549,7 @@ func toInt64(s any) (result int64, ok bool) {
 	return
 }
 
-func toUInt(s any) (result uint, ok bool) {
+func toUInt(s interface{}) (result uint, ok bool) {
 	ok = true
 	switch s.(type) {
 	case float32:
@@ -582,7 +582,7 @@ func toUInt(s any) (result uint, ok bool) {
 	return
 }
 
-func toUInt64(s any) (result uint64, ok bool) {
+func toUInt64(s interface{}) (result uint64, ok bool) {
 	ok = true
 	switch s.(type) {
 	case float32:
@@ -615,7 +615,7 @@ func toUInt64(s any) (result uint64, ok bool) {
 	return
 }
 
-func toBool(s any) (result, ok bool) {
+func toBool(s interface{}) (result, ok bool) {
 	ok = true
 	switch s.(type) {
 	case bool:
@@ -636,7 +636,7 @@ func toBool(s any) (result, ok bool) {
 	return
 }
 
-func isBaseType(v any) bool {
+func isBaseType(v interface{}) bool {
 	switch v.(type) {
 	case string, float32, float64, bool, int, int8, int16, int32, int64, uint, uint8, uint16, uint32, uint64, uintptr:
 		return true

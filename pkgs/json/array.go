@@ -27,20 +27,20 @@ import (
 //  Manipulate data according to subscript, failure to return the default value of the data type
 type JSONArray interface {
 	BaseJSON
-	Add(value ...any)                      // Add data of any type
-	SetByIndex(index int, value any)       // Set any type of data at the specified subscript position
-	RemoveByIndex(index int)               // remove data for index
-	GetStringByIndex(index int) string     // return string data for index
-	GetIntByIndex(index int) int           // return int data for index
-	GetInt64ByIndex(index int) int64       // return int64 data for index
-	GetUIntByIndex(index int) uint         // return uint data for index
-	GetUInt64ByIndex(index int) uint64     // return uint64 data for index
-	GetBytesByIndex(index int) []byte      // return []byte data for index
-	GetFloatByIndex(index int) float64     // return float64 data for index
-	GetBoolByIndex(index int) bool         // return bool data for index
-	GetArrayByIndex(index int) JSONArray   // return JSONArray data for index
-	GetObjectByIndex(index int) JSONObject // return JSONObject data for index
-	GetByIndex(index int) JSON             // return JSON data for index
+	Add(value ...interface{})                // Add data of any type
+	SetByIndex(index int, value interface{}) // Set any type of data at the specified subscript position
+	RemoveByIndex(index int)                 // remove data for index
+	GetStringByIndex(index int) string       // return string data for index
+	GetIntByIndex(index int) int             // return int data for index
+	GetInt64ByIndex(index int) int64         // return int64 data for index
+	GetUIntByIndex(index int) uint           // return uint data for index
+	GetUInt64ByIndex(index int) uint64       // return uint64 data for index
+	GetBytesByIndex(index int) []byte        // return []byte data for index
+	GetFloatByIndex(index int) float64       // return float64 data for index
+	GetBoolByIndex(index int) bool           // return bool data for index
+	GetArrayByIndex(index int) JSONArray     // return JSONArray data for index
+	GetObjectByIndex(index int) JSONObject   // return JSONObject data for index
+	GetByIndex(index int) JSON               // return JSON data for index
 }
 
 // NewJSONArray
@@ -48,7 +48,7 @@ type JSONArray interface {
 //  value:
 //    []byte("[...]")
 //    []slice
-func NewJSONArray(value any) JSONArray {
+func NewJSONArray(value interface{}) JSONArray {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONArray
 		switch value.(type) {
@@ -73,20 +73,20 @@ func NewJSONArray(value any) JSONArray {
 		if kind != reflect.Slice && kind != reflect.Array {
 			return nil
 		}
-		//转为[]any类型
+		//转为[]interface{}类型
 		if byt, err := jsoniter.Marshal(value); err == nil {
-			var v []any
+			var v []interface{}
 			if err = jsoniter.Unmarshal(byt, &v); err == nil {
 				return &JsonData{t: reflect.Slice, v: v, s: len(v)}
 			}
 		}
 	}
-	return &JsonData{t: reflect.Slice, v: make([]any, 0), s: 0}
+	return &JsonData{t: reflect.Slice, v: make([]interface{}, 0), s: 0}
 }
 
-func (m *JsonData) Add(value ...any) {
+func (m *JsonData) Add(value ...interface{}) {
 	if m.IsArray() {
-		tmp := make([]any, len(value), len(value))
+		tmp := make([]interface{}, len(value), len(value))
 		for i, v := range value {
 			switch v.(type) {
 			case []byte:
@@ -117,7 +117,7 @@ func (m *JsonData) Add(value ...any) {
 					if kind == reflect.Struct {
 						// struct -> map
 						if d, err := jsoniter.Marshal(v); err == nil {
-							var vv map[string]any
+							var vv map[string]interface{}
 							if err = jsoniter.Unmarshal(d, &vv); err == nil {
 								tmp[i] = vv // json object
 							}
@@ -125,7 +125,7 @@ func (m *JsonData) Add(value ...any) {
 					} else if kind == reflect.Slice || kind == reflect.Array {
 						// slice -> array
 						if d, err := jsoniter.Marshal(v); err == nil {
-							var vv []any
+							var vv []interface{}
 							if err = jsoniter.Unmarshal(d, &vv); err == nil {
 								tmp[i] = vv // json array
 							}
@@ -138,30 +138,30 @@ func (m *JsonData) Add(value ...any) {
 				}
 			}
 		}
-		m.v = append(m.v.([]any), tmp...)
+		m.v = append(m.v.([]interface{}), tmp...)
 		m.s += len(value)
 	}
 }
 
-func (m *JsonData) SetByIndex(index int, value any) {
+func (m *JsonData) SetByIndex(index int, value interface{}) {
 	if m.IsArray() && index < m.s {
 		switch value.(type) {
 		case []byte:
 			if vv := NewJSON(value.([]byte)); vv != nil {
-				m.v.([]any)[index] = vv.JsonData()
+				m.v.([]interface{})[index] = vv.JsonData()
 			} else {
-				m.v.([]any)[index] = value
+				m.v.([]interface{})[index] = value
 			}
 		case JsonData:
-			m.v.([]any)[index] = value.(JsonData)
+			m.v.([]interface{})[index] = value.(JsonData)
 		case *JsonData:
-			m.v.([]any)[index] = value.(*JsonData)
+			m.v.([]interface{})[index] = value.(*JsonData)
 		case JSON:
-			m.v.([]any)[index] = value.(JSON).JsonData()
+			m.v.([]interface{})[index] = value.(JSON).JsonData()
 		case JSONObject:
-			m.v.([]any)[index] = value.(JSONObject).JsonData()
+			m.v.([]interface{})[index] = value.(JSONObject).JsonData()
 		case JSONArray:
-			m.v.([]any)[index] = value.(JSONArray).JsonData()
+			m.v.([]interface{})[index] = value.(JSONArray).JsonData()
 		default:
 			if !isBaseType(value) {
 				rv := reflect.ValueOf(value)
@@ -171,28 +171,28 @@ func (m *JsonData) SetByIndex(index int, value any) {
 				}
 				if kind == reflect.Struct {
 					if d, err := jsoniter.Marshal(value); err == nil {
-						var v map[string]any
+						var v map[string]interface{}
 						if err = jsoniter.Unmarshal(d, &v); err == nil {
 							value = v // json object
 						}
 					}
 				} else if kind == reflect.Slice || kind == reflect.Array {
 					if d, err := jsoniter.Marshal(value); err == nil {
-						var v []any
+						var v []interface{}
 						if err = jsoniter.Unmarshal(d, &v); err == nil {
 							value = v // json array
 						}
 					}
 				}
 			}
-			m.v.([]any)[index] = value
+			m.v.([]interface{})[index] = value
 		}
 	}
 }
 
 func (m *JsonData) RemoveByIndex(index int) {
 	if m.IsArray() && index >= 0 && index < m.s {
-		v := m.v.([]any)
+		v := m.v.([]interface{})
 		m.v = append(v[:index], v[index+1:]...)
 		m.s--
 	}
@@ -200,7 +200,7 @@ func (m *JsonData) RemoveByIndex(index int) {
 
 func (m *JsonData) GetStringByIndex(index int) string {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).String()
@@ -215,7 +215,7 @@ func (m *JsonData) GetStringByIndex(index int) string {
 
 func (m *JsonData) GetIntByIndex(index int) int {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).Int()
@@ -229,7 +229,7 @@ func (m *JsonData) GetIntByIndex(index int) int {
 
 func (m *JsonData) GetInt64ByIndex(index int) int64 {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).Int64()
@@ -243,7 +243,7 @@ func (m *JsonData) GetInt64ByIndex(index int) int64 {
 
 func (m *JsonData) GetUIntByIndex(index int) uint {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).UInt()
@@ -257,7 +257,7 @@ func (m *JsonData) GetUIntByIndex(index int) uint {
 
 func (m *JsonData) GetUInt64ByIndex(index int) uint64 {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).UInt64()
@@ -278,7 +278,7 @@ func (m *JsonData) GetBytesByIndex(index int) []byte {
 
 func (m *JsonData) GetFloatByIndex(index int) float64 {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).Float()
@@ -292,7 +292,7 @@ func (m *JsonData) GetFloatByIndex(index int) float64 {
 
 func (m *JsonData) GetBoolByIndex(index int) bool {
 	if m.IsArray() && index < m.s {
-		v := m.v.([]any)[index]
+		v := m.v.([]interface{})[index]
 		switch v.(type) {
 		case *JsonData:
 			return v.(*JsonData).Bool()
@@ -314,7 +314,7 @@ func (m *JsonData) GetObjectByIndex(index int) JSONObject {
 
 func (m *JsonData) GetByIndex(index int) JSON {
 	if m.IsArray() && index < m.s {
-		value := m.v.([]any)[index]
+		value := m.v.([]interface{})[index]
 		switch value.(type) {
 		case JsonData:
 			v := value.(JsonData)
@@ -352,12 +352,12 @@ func (m *JsonData) GetByIndex(index int) JSON {
 			}
 		case bool:
 			return &JsonData{t: reflect.Bool, v: value, s: 1, p: m, pIndex: index}
-		case []any:
-			if v, ok := value.([]any); ok {
+		case []interface{}:
+			if v, ok := value.([]interface{}); ok {
 				return &JsonData{t: reflect.Slice, v: v, s: len(v), p: m, pIndex: index}
 			}
-		case map[string]any:
-			if v, ok := value.(map[string]any); ok {
+		case map[string]interface{}:
+			if v, ok := value.(map[string]interface{}); ok {
 				return &JsonData{t: reflect.Map, v: v, s: len(v), p: m, pIndex: index}
 			}
 		default:
