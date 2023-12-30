@@ -38,7 +38,7 @@ type ITarget interface {
 // IProcessMessage
 // Send IPC Chromium
 type IProcessMessage interface {
-	EmitRender(messageId int32, eventName string, target ITarget, data ...any) bool
+	EmitRender(messageId int32, eventName string, target ITarget, data ...interface{}) bool
 }
 
 // IWindow for IPC

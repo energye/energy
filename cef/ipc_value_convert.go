@@ -336,7 +336,7 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICe
 }
 
 // V8ValueToProcessMessageArray 转换 []byte 进程消息
-func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageArray(v8value *ICefV8Value) any {
+func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageArray(v8value *ICefV8Value) interface{} {
 	if !v8value.IsValid() {
 		return nil
 	}
@@ -349,7 +349,7 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageArray(v8value *ICe
 			return result
 		}
 	} else {
-		result := make([]any, 1)
+		result := make([]interface{}, 1)
 		if v8value.IsString() {
 			result[0] = v8value.GetStringValue()
 		} else if v8value.IsInt() {
@@ -377,12 +377,12 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageArray(v8value *ICe
 }
 
 // V8valueArrayToSlice ICefV8Value 转换 Slice
-func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value) ([]any, error) {
+func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value) ([]interface{}, error) {
 	if !v8value.IsArray() {
 		return nil, errors.New("convert list value error. Please pass in the array type")
 	}
 	argsLen := v8value.GetArrayLength()
-	result := make([]any, argsLen)
+	result := make([]interface{}, argsLen)
 	for i := 0; i < argsLen; i++ {
 		args := v8value.GetValueByIndex(i)
 		if !args.IsValid() {
@@ -428,7 +428,7 @@ func (m *v8ValueProcessMessageConvert) V8valueArrayToSlice(v8value *ICefV8Value)
 }
 
 // V8valueObjectToMap ICefV8Value 转换 Maps
-func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) (map[string]any, error) {
+func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) (map[string]interface{}, error) {
 	if !v8value.IsObject() {
 		return nil, errors.New("convert dictionary value error. Please pass in the object type")
 	}
@@ -436,7 +436,7 @@ func (m *v8ValueProcessMessageConvert) V8valueObjectToMap(v8value *ICefV8Value) 
 	if keys == nil || keys.keys == nil || !keys.keys.IsValid() || keys.Count() == 0 {
 		return nil, errors.New("get dict keys error")
 	}
-	result := make(map[string]any, keys.Count())
+	result := make(map[string]interface{}, keys.Count())
 	for i := 0; i < keys.Count(); i++ {
 		key := keys.Get(i)
 		args := v8value.getValueByKey(key)

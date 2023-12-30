@@ -1572,7 +1572,7 @@ func (m *TCEFChromium) InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl) {
 // EmitRender IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target target.ITarget, data ...any) bool {
+func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
 	if !m.initialized {
 		m.initialized = m.Initialized()
 		if !m.initialized {

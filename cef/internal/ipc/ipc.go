@@ -51,10 +51,10 @@ type browserIPC struct {
 //
 //	IPC synchronous receiving data channel
 type SyncChan struct {
-	lock           sync.Mutex  //
-	isClose        bool        //is closed
-	timer          *time.Timer //
-	ResultSyncChan chan any    //receive synchronization chan, default nil
+	lock           sync.Mutex       //
+	isClose        bool             //is closed
+	timer          *time.Timer      //
+	ResultSyncChan chan interface{} //receive synchronization chan, default nil
 	delay          time.Duration
 }
 
@@ -69,7 +69,7 @@ func init() {
 // createCallback
 //
 //	Create and return a callback function
-func createCallback(fn any) *callback.Callback {
+func createCallback(fn interface{}) *callback.Callback {
 	switch fn.(type) {
 	case func(context context.IContext):
 		return &callback.Callback{Context: &callback.ContextCallback{Callback: fn.(func(context context.IContext))}}
@@ -107,7 +107,7 @@ func SetBrowserWindow(bw target.IBrowserWindow) {
 // On
 //
 //	IPC GO Listening for events
-func On(name string, fn any, options ...types.OnOptions) {
+func On(name string, fn interface{}, options ...types.OnOptions) {
 	if name == "" || fn == nil {
 		return
 	}
@@ -146,7 +146,7 @@ func RemoveOn(name string) {
 //
 //	Event that triggers listening
 //	default to triggering the main process
-func Emit(name string, argument ...any) bool {
+func Emit(name string, argument ...interface{}) bool {
 	if name == "" || browser.window == nil {
 		return false
 	}
@@ -164,7 +164,7 @@ func Emit(name string, argument ...any) bool {
 //	Event that triggers listening
 //	with callback function
 //	default to the main process
-func EmitAndCallback(name string, argument []any, fn any) bool {
+func EmitAndCallback(name string, argument []interface{}, fn interface{}) bool {
 	if name == "" || browser.window == nil {
 		return false
 	}
@@ -187,7 +187,7 @@ func EmitAndCallback(name string, argument []any, fn any) bool {
 // EmitTarget
 //
 //	Trigger an event for the specified target to listen to
-func EmitTarget(name string, tag target.ITarget, argument ...any) bool {
+func EmitTarget(name string, tag target.ITarget, argument ...interface{}) bool {
 	if name == "" {
 		return false
 	}
@@ -214,7 +214,7 @@ func EmitTarget(name string, tag target.ITarget, argument ...any) bool {
 // EmitTargetAndCallback
 //
 //	Trigger an event with a callback function for the specified target to listen on
-func EmitTargetAndCallback(name string, tag target.ITarget, argument []any, fn any) bool {
+func EmitTargetAndCallback(name string, tag target.ITarget, argument []interface{}, fn interface{}) bool {
 	if name == "" {
 		return false
 	}
@@ -311,7 +311,7 @@ func (m *browserIPC) emitOnEvent(name string, argumentList types.IArrayValue) {
 // addOnEvent
 //
 //	Add emit callback function
-func (m *browserIPC) addEmitCallback(fn any) int32 {
+func (m *browserIPC) addEmitCallback(fn interface{}) int32 {
 	if m == nil || fn == nil {
 		return 0
 	}
@@ -354,7 +354,7 @@ func (m *SyncChan) DelayWaiting() {
 	defer m.lock.Unlock()
 	m.isClose = false
 	if m.ResultSyncChan == nil {
-		m.ResultSyncChan = make(chan any)
+		m.ResultSyncChan = make(chan interface{})
 		if m.delay == 0 {
 			m.delay = 5 * time.Second
 		}

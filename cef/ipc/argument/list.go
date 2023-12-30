@@ -23,7 +23,7 @@ type IList interface {
 	BrowserId() int32     // browserId
 	GetName() string      // messageName
 	GetEventName() string // eventName
-	GetData() any         // messageData
+	GetData() interface{} // messageData
 	JSON() json.JSON      // messageData convert JSON
 	Bytes() []byte        // messageData convert []byte
 	Reset()               // free
@@ -32,13 +32,13 @@ type IList interface {
 // List
 //	IPC Argument List
 type List struct {
-	Id        int32     `json:"id"`        // messageId
-	BId       int32     `json:"bid"`       // browserId
-	Name      string    `json:"name"`      // messageName
-	EventName string    `json:"eventName"` // eventName
-	Data      any       `json:"data"`      // messageData
-	jsonData  json.JSON `json:"-"`
-	bytesData []byte    `json:"-"`
+	Id        int32       `json:"id"`        // messageId
+	BId       int32       `json:"bid"`       // browserId
+	Name      string      `json:"name"`      // messageName
+	EventName string      `json:"eventName"` // eventName
+	Data      interface{} `json:"data"`      // messageData
+	jsonData  json.JSON   `json:"-"`
+	bytesData []byte      `json:"-"`
 }
 
 func UnList(data []byte) IList {
@@ -68,7 +68,7 @@ func (m *List) GetEventName() string {
 	return m.EventName
 }
 
-func (m *List) GetData() any {
+func (m *List) GetData() interface{} {
 	return m.Data
 }
 

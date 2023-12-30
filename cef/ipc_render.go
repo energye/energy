@@ -131,7 +131,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	}()
 
 	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
-		var callbackArgsBytes any
+		var callbackArgsBytes interface{}
 		//enter v8context
 		if m.v8Context.Enter() {
 			var ret *ICefV8Value
@@ -351,7 +351,7 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	m.initEventGlobal()
 	result = true
-	var args any
+	var args interface{}
 	defer func() {
 		if args != nil {
 			args = nil
@@ -436,7 +436,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 }
 
 // multiProcessCurrentProcess 多进程消息 -  当前进程
-func (m *ipcRenderProcess) multiProcessCurrentProcess(emitName string, callback *ipcCallback, data any) {
+func (m *ipcRenderProcess) multiProcessCurrentProcess(emitName string, callback *ipcCallback, data interface{}) {
 	// 主进程
 	eventCallback := ipc.CheckOnEvent(emitName)
 	var ipcContext context.IContext
@@ -461,7 +461,7 @@ func (m *ipcRenderProcess) multiProcessCurrentProcess(emitName string, callback 
 }
 
 // singleProcess 单进程
-func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback, data any) {
+func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback, data interface{}) {
 	if ipcBrowser == nil {
 		return
 	}
@@ -479,7 +479,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 }
 
 // multiProcessSync 多进程消息 - 同步
-func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data any) {
+func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data interface{}) {
 	//延迟等待接收结果，默认5秒
 	m.syncChan.DelayWaiting()
 	message := &ipcArgument.List{
@@ -509,7 +509,7 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 }
 
 // multiProcessAsync 多进程消息 - 异步
-func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, emitName string, data any) bool {
+func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, emitName string, data interface{}) bool {
 	if frame != nil {
 		message := &ipcArgument.List{
 			Id:        messageId,

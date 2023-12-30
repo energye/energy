@@ -38,7 +38,7 @@ import (
 //
 //	  复合类型: slice, map, struct
 //
-//	  slice: 根据js实际类型定义, []any | []interface{} | [][data type]
+//	  slice: 根据js实际类型定义, []interface{} | []interface{} | [][data type]
 //	  map: key 只能 string 类型, value 基本类型+复合类型
 //	  struct: 首字母大写, 字段类型匹配
 //	    type ArgsStructDemo struct {
@@ -55,7 +55,7 @@ import (
 // 出参
 //
 //	fn 回调函数的出参与入参使用方式相同
-func On(name string, fn any, options ...types.OnOptions) {
+func On(name string, fn interface{}, options ...types.OnOptions) {
 	ipc.On(name, fn, options...)
 }
 
@@ -77,7 +77,7 @@ func RemoveOn(name string) {
 //	 []argument: 入参
 //					基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //					复合类型: slice, map, struct
-func Emit(name string, argument ...any) bool {
+func Emit(name string, argument ...interface{}) bool {
 	return ipc.Emit(name, argument...)
 }
 
@@ -91,7 +91,7 @@ func Emit(name string, argument ...any) bool {
 //					基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //					复合类型: slice, map, struct
 //	 callback: 回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) [result...] {}
-func EmitAndCallback(name string, argument []any, callback any) bool {
+func EmitAndCallback(name string, argument []interface{}, callback interface{}) bool {
 	return ipc.EmitAndCallback(name, argument, callback)
 }
 
@@ -105,7 +105,7 @@ func EmitAndCallback(name string, argument []any, callback any) bool {
 //	 []argument: 入参
 //					基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //					复合类型: slice, map, struct
-func EmitTarget(name string, target target.ITarget, argument ...any) bool {
+func EmitTarget(name string, target target.ITarget, argument ...interface{}) bool {
 	return ipc.EmitTarget(name, target, argument...)
 }
 
@@ -120,6 +120,6 @@ func EmitTarget(name string, target target.ITarget, argument ...any) bool {
 //					基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
 //					复合类型: slice, map, struct
 //	 callback: 回调函数, 接收返回值. 函数类型 EmitContextCallback 或 func(...) [result...] {}
-func EmitTargetAndCallback(name string, target target.ITarget, argument []any, callback any) bool {
+func EmitTargetAndCallback(name string, target target.ITarget, argument []interface{}, callback interface{}) bool {
 	return ipc.EmitTargetAndCallback(name, target, argument, callback)
 }

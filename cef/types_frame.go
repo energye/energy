@@ -164,7 +164,7 @@ func (m *ICefFrame) SendProcessMessageForV8Value(messageName string, targetProce
 // EmitRender IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-func (m *ICefFrame) EmitRender(messageId int32, eventName string, target target.ITarget, data ...any) bool {
+func (m *ICefFrame) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
 	if !m.IsValid() {
 		return false
 	}

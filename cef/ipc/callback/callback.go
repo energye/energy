@@ -79,7 +79,7 @@ func (m *ContextCallback) Invoke(context context.IContext) {
 	resultValues := context.Replay().Result()
 	if len(resultValues) > 0 {
 		// call result
-		resultArgument := make([]any, len(resultValues), len(resultValues))
+		resultArgument := make([]interface{}, len(resultValues), len(resultValues))
 		for i, result := range resultValues {
 			switch result.(type) {
 			case error:
@@ -210,7 +210,7 @@ func (m *ArgumentCallback) Invoke(context context.IContext) {
 	resultValues := m.Callback.Call(inArgsValues)
 	if len(resultValues) > 0 {
 		// call result
-		resultArgument := make([]any, len(resultValues), len(resultValues))
+		resultArgument := make([]interface{}, len(resultValues), len(resultValues))
 		for i, result := range resultValues {
 			res := result.Interface()
 			switch res.(type) {
