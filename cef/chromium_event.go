@@ -866,24 +866,23 @@ func init() {
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(3))
-			beforePopupInfo := &BeforePopupInfo{
-				TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
-				TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
-				TargetDisposition: consts.TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
-				UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
-			}
 			var (
-				//windowInfo = getPtr(4) // not use
+				beforePInfoPtr    = (*beforePopupInfoPtr)(getPtr(3))
+				rpopupFeaturesPtr = (*tCefPopupFeaturesPtr)(getPtr(4))
+				windowInfoPtr     = (*tCefWindowInfoPtr)(getPtr(5))
 				//resultClientPtr = (*uintptr)(getPtr(5))
-				client             = &ICefClient{instance: getPtr(5)}
-				browserSettingsPtr = (*tCefBrowserSettingsPtr)(getPtr(6))
-				//extra_info =  getPtr(7) // CEF49 = nil
-				noJavascriptAccess = (*bool)(getPtr(8))
-				result             = (*bool)(getPtr(9))
+				client             = &ICefClient{instance: getPtr(6)}
+				browserSettingsPtr = (*tCefBrowserSettingsPtr)(getPtr(7))
+				//extra_info =  getPtr(8) // CEF49 = nil
+				noJavascriptAccess = (*bool)(getPtr(9))
+				result             = (*bool)(getPtr(10))
 			)
+			beforePopupInfo := beforePInfoPtr.Convert()
+			popupFeatures := rpopupFeaturesPtr.Convert()
+			windowInfo := windowInfoPtr.Convert()
 			browserSettings := browserSettingsPtr.Convert()
-			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, client, browserSettings, noJavascriptAccess)
+			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, popupFeatures, windowInfo, client, browserSettings, noJavascriptAccess)
+			windowInfo.SetInstanceValue()
 			browserSettings.SetInstanceValue()
 		case chromiumEventOnOpenUrlFromTab:
 			sender := getPtr(0)

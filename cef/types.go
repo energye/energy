@@ -1258,19 +1258,41 @@ type CefPdfPrintSettings struct {
 
 // /include/internal/cef_types.h (cef_popup_features_t)
 type TCefPopupFeatures struct {
-	X                 int32
-	XSet              int32
-	Y                 int32
-	YSet              int32
-	Width             int32
-	WidthSet          int32
-	Height            int32
-	HeightSet         int32
-	MenuBarVisible    int32 // ~ CEF 109
-	StatusBarVisible  int32 // ~ CEF 109
-	ToolBarVisible    int32 // ~ CEF 109
-	ScrollbarsVisible int32 // ~ CEF 109
-	IsPopup           int32 // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
+	X                  Integer
+	XSet               Integer
+	Y                  Integer
+	YSet               Integer
+	Width              Integer
+	WidthSet           Integer
+	Height             Integer
+	HeightSet          Integer
+	MenuBarVisible     Integer // ~ CEF 109
+	StatusBarVisible   Integer // ~ CEF 109
+	ToolBarVisible     Integer // ~ CEF 109
+	LocationBarVisible Integer
+	ScrollbarsVisible  Integer // ~ CEF 109
+	IsPopup            Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
+	Resizable          Integer
+	Fullscreen         Integer
+	Dialog             Integer
+	AdditionalFeatures TCefStringList
+}
+
+// /include/internal/cef_types_win.h (cef_window_info_t)
+type TCefWindowInfo struct {
+	instance                   *tCefWindowInfoPtr
+	ExStyle                    DWORD
+	WindowName                 TCefString
+	Style                      DWORD
+	X                          Integer
+	Y                          Integer
+	Width                      Integer
+	Height                     Integer
+	ParentWindow               TCefWindowHandle
+	Menu                       HMENU
+	WindowlessRenderingEnabled Integer
+	TransparentPaintingEnabled Integer
+	Window                     TCefWindowHandle
 }
 
 // /include/internal/cef_types.h (cef_composition_underline_t)

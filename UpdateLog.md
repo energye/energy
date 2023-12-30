@@ -1,5 +1,7 @@
 #### Windows XP 版本支持
 
+以下修改需同步到其它特定分枝和主分枝
+
 增加了特定版本支持 API
 liblcl
     CEFAppConfig_SpecificVersion
@@ -17,3 +19,6 @@ liblcl
     同步修改
     CefBrowserSettingsToGoBrowserSettings
     GoBrowserSettingsToCefBrowserSettings
+
+    增加参数 TCefWindowInfo 
+    增加参数 TCefPopupFeatures

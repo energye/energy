@@ -13,7 +13,6 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -104,12 +103,7 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(2))
-			beforePopupInfo := &BeforePopupInfo{
-				TargetUrl:         api.GoStr(beforePInfoPtr.TargetUrl),
-				TargetFrameName:   api.GoStr(beforePInfoPtr.TargetFrameName),
-				TargetDisposition: consts.TCefWindowOpenDisposition(beforePInfoPtr.TargetDisposition),
-				UserGesture:       api.GoBool(beforePInfoPtr.UserGesture),
-			}
+			beforePopupInfo := beforePInfoPtr.Convert()
 			var (
 				//windowInfo = getPtr(3) // not use
 				//resultClientPtr = (*uintptr)(getPtr(4))

@@ -47,6 +47,7 @@ type Cardinal = UInt32
 type LongBool = Boolean
 type BOOL = LongBool
 type DWORD = Cardinal
+type TCefWindowHandle = HWND
 type HWND = UIntptr
 type WPARAM = UIntptr
 type LPARAM = UIntptr
@@ -79,7 +80,7 @@ type TGraphicsColor = Int32
 type Smallint = Int16
 type HFONT = UIntptr
 type HRESULT = Int32
-
+type TCefStringList = Pointer
 type TGraphicsFillStyle = Int32
 
 const (
@@ -381,6 +382,9 @@ func (m UIntptr) ToPtr() uintptr {
 //
 // 给指针设置值, 仅基础类型, 字符串需直接赋值
 func (m UIntptr) SetValue(value interface{}) {
+	if m == 0 {
+		return
+	}
 	switch value.(type) {
 	case uintptr:
 		*(*uintptr)(unsafe.Pointer(m)) = value.(uintptr)

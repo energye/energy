@@ -39,6 +39,45 @@ type tCefRequestContextSettingsPtr struct {
 	CookieableSchemesExcludeDefaults uintptr //int32
 }
 
+// TCefPopupFeatures
+type tCefPopupFeaturesPtr struct {
+	X                  UIntptr // Integer
+	XSet               UIntptr // Integer
+	Y                  UIntptr // Integer
+	YSet               UIntptr // Integer
+	Width              UIntptr // Integer
+	WidthSet           UIntptr // Integer
+	Height             UIntptr // Integer
+	HeightSet          UIntptr // Integer
+	MenuBarVisible     UIntptr // Integer // ~ CEF 109
+	StatusBarVisible   UIntptr // Integer // ~ CEF 109
+	ToolBarVisible     UIntptr // Integer // ~ CEF 109
+	LocationBarVisible UIntptr // Integer
+	ScrollbarsVisible  UIntptr // Integer // ~ CEF 109
+	IsPopup            UIntptr // Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
+	Resizable          UIntptr // Integer
+	Fullscreen         UIntptr // Integer
+	Dialog             UIntptr // Integer
+	AdditionalFeatures UIntptr // TCefStringList
+}
+
+// TCefWindowInfo
+type tCefWindowInfoPtr struct {
+	ExStyle                    UIntptr //DWORD
+	WindowName                 UIntptr //TCefString
+	Style                      UIntptr //DWORD
+	X                          UIntptr //Integer
+	Y                          UIntptr //Integer
+	Width                      UIntptr //Integer
+	Height                     UIntptr //Integer
+	ParentWindow               UIntptr //TCefWindowHandle
+	Menu                       UIntptr //HMENU
+	WindowlessRenderingEnabled UIntptr //Integer
+	TransparentPaintingEnabled UIntptr //Integer
+	Window                     UIntptr //TCefWindowHandle
+}
+
+// TCefBrowserSettings
 type tCefBrowserSettingsPtr struct {
 	Size                       UIntptr //NativeUInt
 	WindowlessFrameRate        UIntptr //Integer
@@ -78,41 +117,89 @@ type tCefCompositionUnderlinePtr struct {
 	Style           uintptr //TCefCompositionUnderlineStyle
 }
 
-// SetInstanceValue 为实例指针设置值
+type tCefProxyPtr struct {
+	ProxyType              uintptr //TCefProxyType
+	ProxyScheme            uintptr //TCefProxySchem
+	ProxyServer            uintptr //string
+	ProxyPort              uintptr //int32
+	ProxyUsername          uintptr //string
+	ProxyPassword          uintptr //string
+	ProxyScriptURL         uintptr //string
+	ProxyByPassList        uintptr //string
+	MaxConnectionsPerProxy uintptr //int32
+}
+
+type beforePopupInfoPtr struct {
+	TargetUrl         UIntptr // string
+	TargetFrameName   UIntptr // string
+	TargetDisposition UIntptr // int32
+	UserGesture       UIntptr // bool
+}
+
+type tCefRectPtr struct {
+	X      uintptr //int32
+	Y      uintptr //int32
+	Width  uintptr //int32
+	Height uintptr //int32
+}
+
+type tCustomHeader struct {
+	CustomHeaderName  uintptr //string
+	CustomHeaderValue uintptr //string
+}
+
+type cefPdfPrintSettingsPtr struct {
+	landscape           uintptr //Integer
+	printBackground     uintptr //Integer
+	scale               uintptr //double
+	paperWidth          uintptr //double
+	paperHeight         uintptr //double
+	preferCssPageSize   uintptr //Integer
+	marginType          uintptr //TCefPdfPrintMarginType
+	marginTop           uintptr //double
+	marginRight         uintptr //double
+	marginBottom        uintptr //double
+	marginLeft          uintptr //double
+	pageRanges          uintptr //TCefString
+	displayHeaderFooter uintptr //Integer
+	headerTemplate      uintptr //TCefString
+	footerTemplate      uintptr //TCefString
+}
+
+// SetInstanceValue 实例指针设置值
 func (m *TCefBrowserSettings) SetInstanceValue() {
 	if m.instance == nil {
 		return
 	}
 	// 字段指针引用赋值, 如果是字符串类型需直接赋值
-	// TODO 需要全部修改
-	m.instance.Size.SetValue(uint32(m.Size))
-	m.instance.WindowlessFrameRate.SetValue(int32(m.WindowlessFrameRate))
-	m.instance.StandardFontFamily = UIntptr(m.StandardFontFamily.ToPtr()) // 字符串赋值
-	m.instance.FixedFontFamily = UIntptr(m.FixedFontFamily.ToPtr())
-	//m.instance.SerifFontFamily = m.SerifFontFamily.ToPtr()
-	//m.instance.SansSerifFontFamily = m.SansSerifFontFamily.ToPtr()
-	//m.instance.CursiveFontFamily = m.CursiveFontFamily.ToPtr()
-	//m.instance.FantasyFontFamily = m.FantasyFontFamily.ToPtr()
-	//m.instance.DefaultFontSize = m.DefaultFontSize.ToPtr()
-	//m.instance.DefaultFixedFontSize = m.DefaultFixedFontSize.ToPtr()
-	//m.instance.MinimumFontSize = m.MinimumFontSize.ToPtr()
-	//m.instance.MinimumLogicalFontSize = m.MinimumLogicalFontSize.ToPtr()
-	//m.instance.DefaultEncoding = m.DefaultEncoding.ToPtr()
-	//m.instance.RemoteFonts = m.RemoteFonts.ToPtr()
-	//m.instance.Javascript = m.Javascript.ToPtr()
-	//m.instance.JavascriptCloseWindows = m.JavascriptCloseWindows.ToPtr()
-	//m.instance.JavascriptAccessClipboard = m.JavascriptAccessClipboard.ToPtr()
-	//m.instance.JavascriptDomPaste = m.JavascriptDomPaste.ToPtr()
-	//m.instance.ImageLoading = m.ImageLoading.ToPtr()
-	//m.instance.ImageShrinkStandaLonetoFit = m.ImageShrinkStandaLonetoFit.ToPtr()
-	//m.instance.TextAreaResize = m.TextAreaResize.ToPtr()
-	//m.instance.TabToLinks = m.TabToLinks.ToPtr()
-	//m.instance.LocalStorage = m.LocalStorage.ToPtr()
-	//m.instance.Databases = m.Databases.ToPtr()
-	//m.instance.Webgl = m.Webgl.ToPtr()
-	//m.instance.BackgroundColor = m.BackgroundColor.ToPtr()
-	//m.instance.AcceptLanguageList = m.AcceptLanguageList.ToPtr() // Remove CEF 118
-	//m.instance.ChromeStatusBubble = m.ChromeStatusBubble.ToPtr()
+	m.instance.Size.SetValue(uint32(m.Size))                                            // NativeUInt
+	m.instance.WindowlessFrameRate.SetValue(int32(m.WindowlessFrameRate))               // Integer
+	m.instance.StandardFontFamily = UIntptr(m.StandardFontFamily.ToPtr())               // TCefString
+	m.instance.FixedFontFamily = UIntptr(m.FixedFontFamily.ToPtr())                     // TCefString
+	m.instance.SerifFontFamily = UIntptr(m.SerifFontFamily.ToPtr())                     // TCefString
+	m.instance.SansSerifFontFamily = UIntptr(m.SansSerifFontFamily.ToPtr())             // TCefString
+	m.instance.CursiveFontFamily = UIntptr(m.CursiveFontFamily.ToPtr())                 // TCefString
+	m.instance.FantasyFontFamily = UIntptr(m.FantasyFontFamily.ToPtr())                 // TCefString
+	m.instance.DefaultFontSize.SetValue(int32(m.DefaultFontSize))                       // Integer
+	m.instance.DefaultFixedFontSize.SetValue(int32(m.DefaultFixedFontSize))             // Integer
+	m.instance.MinimumFontSize.SetValue(int32(m.MinimumFontSize))                       // Integer
+	m.instance.MinimumLogicalFontSize.SetValue(int32(m.MinimumLogicalFontSize))         // Integer
+	m.instance.DefaultEncoding = UIntptr(m.DefaultEncoding.ToPtr())                     // TCefString
+	m.instance.RemoteFonts.SetValue(int32(m.RemoteFonts))                               // TCefState
+	m.instance.Javascript.SetValue(int32(m.Javascript))                                 // TCefState
+	m.instance.JavascriptCloseWindows.SetValue(int32(m.JavascriptCloseWindows))         // TCefState
+	m.instance.JavascriptAccessClipboard.SetValue(int32(m.JavascriptAccessClipboard))   // TCefState
+	m.instance.JavascriptDomPaste.SetValue(int32(m.JavascriptDomPaste))                 // TCefState
+	m.instance.ImageLoading.SetValue(int32(m.ImageLoading))                             // TCefState
+	m.instance.ImageShrinkStandaLonetoFit.SetValue(int32(m.ImageShrinkStandaLonetoFit)) // TCefState
+	m.instance.TextAreaResize.SetValue(int32(m.TextAreaResize))                         // TCefState
+	m.instance.TabToLinks.SetValue(int32(m.TabToLinks))                                 // TCefState
+	m.instance.LocalStorage.SetValue(int32(m.LocalStorage))                             // TCefState
+	m.instance.Databases.SetValue(int32(m.Databases))                                   // TCefState
+	m.instance.Webgl.SetValue(int32(m.Webgl))                                           // TCefState
+	m.instance.BackgroundColor.SetValue(uint32(m.BackgroundColor))                      // TCefColor
+	m.instance.AcceptLanguageList = UIntptr(m.AcceptLanguageList.ToPtr())               // TCefString Remove CEF 118
+	m.instance.ChromeStatusBubble.SetValue(int32(m.ChromeStatusBubble))                 // TCefState
 }
 
 // ToPtr 转换为指针
@@ -158,26 +245,31 @@ func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
 		return unsafe.Pointer(ptr)
 	}
 	getCefState := func(ptr uintptr) consts.TCefState {
-		// 可以确保字段不为空
 		if ptr == 0 {
 			return 0
 		}
 		return *(*consts.TCefState)(getPtr(ptr))
 	}
+	getInteger := func(ptr uintptr) Integer {
+		if ptr == 0 {
+			return 0
+		}
+		return *(*Integer)(getPtr(ptr))
+	}
 	return &TCefBrowserSettings{
 		instance:                   m,
 		Size:                       *(*NativeUInt)(getPtr(m.Size.ToPtr())),
-		WindowlessFrameRate:        *(*Integer)(getPtr(m.WindowlessFrameRate.ToPtr())),
+		WindowlessFrameRate:        getInteger(m.WindowlessFrameRate.ToPtr()),
 		StandardFontFamily:         TCefString(api.GoStr(m.StandardFontFamily.ToPtr())),
 		FixedFontFamily:            TCefString(api.GoStr(m.FixedFontFamily.ToPtr())),
 		SerifFontFamily:            TCefString(api.GoStr(m.SerifFontFamily.ToPtr())),
 		SansSerifFontFamily:        TCefString(api.GoStr(m.SansSerifFontFamily.ToPtr())),
 		CursiveFontFamily:          TCefString(api.GoStr(m.CursiveFontFamily.ToPtr())),
 		FantasyFontFamily:          TCefString(api.GoStr(m.FantasyFontFamily.ToPtr())),
-		DefaultFontSize:            *(*Integer)(getPtr(m.DefaultFontSize.ToPtr())),
-		DefaultFixedFontSize:       *(*Integer)(getPtr(m.DefaultFixedFontSize.ToPtr())),
-		MinimumFontSize:            *(*Integer)(getPtr(m.MinimumFontSize.ToPtr())),
-		MinimumLogicalFontSize:     *(*Integer)(getPtr(m.MinimumLogicalFontSize.ToPtr())),
+		DefaultFontSize:            getInteger(m.DefaultFontSize.ToPtr()),
+		DefaultFixedFontSize:       getInteger(m.DefaultFixedFontSize.ToPtr()),
+		MinimumFontSize:            getInteger(m.MinimumFontSize.ToPtr()),
+		MinimumLogicalFontSize:     getInteger(m.MinimumLogicalFontSize.ToPtr()),
 		DefaultEncoding:            TCefString(api.GoStr(m.DefaultEncoding.ToPtr())),
 		RemoteFonts:                getCefState(m.RemoteFonts.ToPtr()),
 		Javascript:                 getCefState(m.Javascript.ToPtr()),
@@ -195,55 +287,6 @@ func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
 		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList.ToPtr())), // Remove CEF 118
 		ChromeStatusBubble:         getCefState(m.ChromeStatusBubble.ToPtr()),
 	}
-}
-
-type tCefProxyPtr struct {
-	ProxyType              uintptr //TCefProxyType
-	ProxyScheme            uintptr //TCefProxySchem
-	ProxyServer            uintptr //string
-	ProxyPort              uintptr //int32
-	ProxyUsername          uintptr //string
-	ProxyPassword          uintptr //string
-	ProxyScriptURL         uintptr //string
-	ProxyByPassList        uintptr //string
-	MaxConnectionsPerProxy uintptr //int32
-}
-
-type beforePopupInfoPtr struct {
-	TargetUrl         uintptr //string
-	TargetFrameName   uintptr //string
-	TargetDisposition uintptr //int32
-	UserGesture       uintptr //bool
-}
-
-type tCefRectPtr struct {
-	X      uintptr //int32
-	Y      uintptr //int32
-	Width  uintptr //int32
-	Height uintptr //int32
-}
-
-type tCustomHeader struct {
-	CustomHeaderName  uintptr //string
-	CustomHeaderValue uintptr //string
-}
-
-type cefPdfPrintSettingsPtr struct {
-	landscape           uintptr //Integer
-	printBackground     uintptr //Integer
-	scale               uintptr //double
-	paperWidth          uintptr //double
-	paperHeight         uintptr //double
-	preferCssPageSize   uintptr //Integer
-	marginType          uintptr //TCefPdfPrintMarginType
-	marginTop           uintptr //double
-	marginRight         uintptr //double
-	marginBottom        uintptr //double
-	marginLeft          uintptr //double
-	pageRanges          uintptr //TCefString
-	displayHeaderFooter uintptr //Integer
-	headerTemplate      uintptr //TCefString
-	footerTemplate      uintptr //TCefString
 }
 
 func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
@@ -266,5 +309,96 @@ func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
 		displayHeaderFooter: uintptr(m.DisplayHeaderFooter),
 		headerTemplate:      api.PascalStr(m.HeaderTemplate),
 		footerTemplate:      api.PascalStr(m.FooterTemplate),
+	}
+}
+
+// Convert 转换为结构
+func (m *tCefWindowInfoPtr) Convert() *TCefWindowInfo {
+	getPtr := func(ptr uintptr) unsafe.Pointer {
+		return unsafe.Pointer(ptr)
+	}
+	getInteger := func(ptr uintptr) Integer {
+		if ptr == 0 {
+			return 0
+		}
+		return *(*Integer)(getPtr(ptr))
+	}
+	return &TCefWindowInfo{
+		instance:                   m,
+		ExStyle:                    *(*DWORD)(getPtr(m.ExStyle.ToPtr())),                 // DWORD
+		WindowName:                 TCefString(api.GoStr(m.WindowName.ToPtr())),          // TCefString
+		Style:                      *(*DWORD)(getPtr(m.Style.ToPtr())),                   // DWORD
+		X:                          getInteger(m.X.ToPtr()),                              // Integer
+		Y:                          getInteger(m.Y.ToPtr()),                              // Integer
+		Width:                      getInteger(m.Width.ToPtr()),                          // Integer
+		Height:                     getInteger(m.Height.ToPtr()),                         // Integer
+		ParentWindow:               *(*TCefWindowHandle)(getPtr(m.ParentWindow.ToPtr())), // TCefWindowHandle
+		Menu:                       *(*HMENU)(getPtr(m.Menu.ToPtr())),                    // HMENU
+		WindowlessRenderingEnabled: getInteger(m.WindowlessRenderingEnabled.ToPtr()),     // Integer
+		TransparentPaintingEnabled: getInteger(m.TransparentPaintingEnabled.ToPtr()),     // Integer
+		Window:                     *(*TCefWindowHandle)(getPtr(m.Window.ToPtr())),       // TCefWindowHandle
+	}
+}
+
+// SetInstanceValue 实例指针设置值
+func (m *TCefWindowInfo) SetInstanceValue() {
+	if m.instance == nil {
+		return
+	}
+	// 字段指针引用赋值, 如果是字符串类型需直接赋值
+	m.instance.ExStyle.SetValue(uint32(m.ExStyle))                                      // DWORD
+	m.instance.WindowName = UIntptr(m.WindowName.ToPtr())                               // TCefString
+	m.instance.Style.SetValue(uint32(m.Style))                                          // DWORD
+	m.instance.X.SetValue(int32(m.X))                                                   // Integer
+	m.instance.Y.SetValue(int32(m.Y))                                                   // Integer
+	m.instance.Width.SetValue(int32(m.Width))                                           // Integer
+	m.instance.Height.SetValue(int32(m.Height))                                         // Integer
+	m.instance.ParentWindow.SetValue(uintptr(m.ParentWindow))                           // TCefWindowHandle
+	m.instance.Menu.SetValue(uintptr(m.Menu))                                           // HMENU
+	m.instance.WindowlessRenderingEnabled.SetValue(int32(m.WindowlessRenderingEnabled)) // Integer
+	m.instance.TransparentPaintingEnabled.SetValue(int32(m.TransparentPaintingEnabled)) // Integer
+	m.instance.Window.SetValue(uintptr(m.Window))                                       // TCefWindowHandle
+}
+
+// Convert 转换为结构
+func (m *beforePopupInfoPtr) Convert() *BeforePopupInfo {
+	return &BeforePopupInfo{
+		TargetUrl:         api.GoStr(m.TargetUrl.ToPtr()),
+		TargetFrameName:   api.GoStr(m.TargetFrameName.ToPtr()),
+		TargetDisposition: consts.TCefWindowOpenDisposition(m.TargetDisposition),
+		UserGesture:       api.GoBool(m.UserGesture.ToPtr()),
+	}
+}
+
+// Convert 转换为结构
+func (m *tCefPopupFeaturesPtr) Convert() *TCefPopupFeatures {
+	getPtr := func(ptr uintptr) unsafe.Pointer {
+		return unsafe.Pointer(ptr)
+	}
+	getInteger := func(ptr uintptr) Integer {
+		if ptr == 0 {
+			return 0
+		}
+		return *(*Integer)(getPtr(ptr))
+	}
+	return &TCefPopupFeatures{
+		X:                  getInteger(m.X.ToPtr()),
+		XSet:               getInteger(m.XSet.ToPtr()),
+		Y:                  getInteger(m.Y.ToPtr()),
+		YSet:               getInteger(m.YSet.ToPtr()),
+		Width:              getInteger(m.Width.ToPtr()),
+		WidthSet:           getInteger(m.WidthSet.ToPtr()),
+		Height:             getInteger(m.Height.ToPtr()),
+		HeightSet:          getInteger(m.HeightSet.ToPtr()),
+		MenuBarVisible:     getInteger(m.MenuBarVisible.ToPtr()),
+		StatusBarVisible:   getInteger(m.StatusBarVisible.ToPtr()),
+		ToolBarVisible:     getInteger(m.ToolBarVisible.ToPtr()),
+		LocationBarVisible: getInteger(m.LocationBarVisible.ToPtr()),
+		ScrollbarsVisible:  getInteger(m.ScrollbarsVisible.ToPtr()),
+		IsPopup:            getInteger(m.IsPopup.ToPtr()),
+		Resizable:          getInteger(m.Resizable.ToPtr()),
+		Fullscreen:         getInteger(m.Fullscreen.ToPtr()),
+		Dialog:             getInteger(m.Dialog.ToPtr()),
+		AdditionalFeatures: *(*TCefStringList)(getPtr(m.AdditionalFeatures.ToPtr())),
 	}
 }

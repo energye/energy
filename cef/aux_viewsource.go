@@ -46,7 +46,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 					request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
 				})
 			}
-			viewSourceWindow.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
+			viewSourceWindow.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
 				wp := NewWindowProperty()
 				wp.Url = beforePopupInfo.TargetUrl
 				wp.Title = beforePopupInfo.TargetUrl

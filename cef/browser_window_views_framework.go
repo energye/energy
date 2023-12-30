@@ -285,7 +285,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 		}
 		return false
 	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
 		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}
