@@ -497,16 +497,21 @@ func DDateTimeToGoDateTime(dateTime float64) time.Time {
 	return gTime
 }
 
-func ArrayIndexOf[T any](array []T, a interface{}) int {
-	if len(array) == 0 {
-		return -1
-	}
-	var t any
-	for i := 0; i < len(array); i++ {
-		t = array[i]
-		if t == a {
-			return i
+// ArrayIndexOf 返回a在array数组的下标, a必须和array元素的类型相同
+func ArrayIndexOf(array interface{}, a interface{}) int {
+	switch array.(type) {
+	case []string:
+		arrs := array.([]string)
+		if len(arrs) == 0 {
+			return -1
 		}
+		eq := a.(string)
+		for i, v := range arrs {
+			if v == eq {
+				return i
+			}
+		}
+		//case []int: //其它待增加
 	}
 	return -1
 }
