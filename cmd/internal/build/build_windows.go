@@ -136,7 +136,7 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	data := make(map[string]any)
+	data := make(map[string]interface{})
 	data["Info"] = proj.Info
 	versionInfo, err = tools.RenderTemplate(string(versionInfo), data)
 	if err != nil {

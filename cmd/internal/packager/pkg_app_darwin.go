@@ -398,7 +398,7 @@ func createAppInfoPList(proj *project.Project, appRoot string) error {
 	if plistData, err := assets.ReadFile(proj, assetsFSPath, darwinInfoPList); err != nil {
 		return err
 	} else {
-		data := make(map[string]any)
+		data := make(map[string]interface{})
 		data["Name"] = proj.Name
 		data["OutputFilename"] = proj.OutputFilename
 		data["PList"] = proj.PList

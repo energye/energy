@@ -131,7 +131,7 @@ func IsExistAndSize(path string, size int64) bool {
 	return true
 }
 
-func RenderTemplate(templateText string, data map[string]any) ([]byte, error) {
+func RenderTemplate(templateText string, data map[string]interface{}) ([]byte, error) {
 	tmpl, err := template.New("").Parse(templateText)
 	if err != nil {
 		return nil, err

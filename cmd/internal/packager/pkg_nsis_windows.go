@@ -116,7 +116,7 @@ func windows(proj *project.Project) error {
 	if toolsData, err := assets.ReadFile(proj, assetsFSPath, windowsNsisTools); err != nil {
 		return err
 	} else {
-		data := make(map[string]any)
+		data := make(map[string]interface{})
 		data["Name"] = proj.Name
 		data["ProjectPath"] = filepath.FromSlash(proj.ProjectPath)
 		data["FrameworkPath"] = filepath.FromSlash(proj.FrameworkPath)

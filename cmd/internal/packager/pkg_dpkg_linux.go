@@ -241,7 +241,7 @@ func linuxARMStartupSH(proj *project.Project, appRoot string) error {
 		if startupshData, err := assets.ReadFile(proj, assetsFSPath, linuxARMStartup); err != nil {
 			return err
 		} else {
-			data := make(map[string]any)
+			data := make(map[string]interface{})
 			data["INSTALLPATH"] = opt(proj)
 			data["EXECUTE"] = proj.Name
 			sh := strings.NewReplacer("\r", "")
@@ -281,7 +281,7 @@ func linuxDesktop(proj *project.Project, appRoot string) error {
 		if consts.IsLinux && consts.IsARM64 {
 			startup += ".sh"
 		}
-		data := make(map[string]any)
+		data := make(map[string]interface{})
 		data["Name"] = proj.Name
 		data["Exec"] = filepath.Join(optDir, startup)
 		data["Icon"] = filepath.Join(optDir, icon)
@@ -315,7 +315,7 @@ func linuxControl(proj *project.Project, appRoot string) error {
 	if controlData, err := assets.ReadFile(proj, assetsFSPath, linuxDebControl); err != nil {
 		return err
 	} else {
-		data := make(map[string]any)
+		data := make(map[string]interface{})
 		data["Arch"] = runtime.GOARCH
 		data["Info"] = proj.Info
 		data["Author"] = proj.Author

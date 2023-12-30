@@ -425,7 +425,7 @@ func initInstall(c *command.Config) (err error) {
 	return err
 }
 
-func filePathInclude(compressPath string, files ...any) (string, bool) {
+func filePathInclude(compressPath string, files ...interface{}) (string, bool) {
 	if len(files) == 0 {
 		return compressPath, true
 	} else {
@@ -506,7 +506,7 @@ func tarFileCount(filePath string) (int, error) {
 	return count, nil
 }
 
-func ExtractUnTar(filePath, targetPath string, files ...any) error {
+func ExtractUnTar(filePath, targetPath string, files ...interface{}) error {
 	term.Logger.Info("Read Files Number")
 	fileCount, err := tarFileCount(filePath)
 	println(fileCount)
@@ -591,7 +591,7 @@ func ExtractUnTar(filePath, targetPath string, files ...any) error {
 	return nil
 }
 
-func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...any) error {
+func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...interface{}) error {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		multi := pterm.DefaultMultiPrinter

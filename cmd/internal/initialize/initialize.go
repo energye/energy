@@ -93,7 +93,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 读取assets内的文件
-	var createFile = func(readFilePath, outFilePath string, data map[string]any, perm fs.FileMode, replace ...string) error {
+	var createFile = func(readFilePath, outFilePath string, data map[string]interface{}, perm fs.FileMode, replace ...string) error {
 		// 创建 energy.json template
 		if fileData, err := assets.ReadFile(nil, "", readFilePath); err != nil {
 			return err
@@ -123,7 +123,7 @@ func generaProject(c *command.Config) error {
 
 	// 创建 energy.json template
 	// 默认配置
-	data := make(map[string]any)
+	data := make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	data["ProjectPath"] = filepath.ToSlash(projectPath)
 	data["FrameworkPath"] = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
@@ -143,14 +143,14 @@ func generaProject(c *command.Config) error {
 	latest := "latest" // 默认
 	latestVersionJSON, err := tools.HttpRequestGET(consts.LatestVersionURL)
 	if err == nil {
-		var latestVersionData map[string]any
+		var latestVersionData map[string]interface{}
 		latestVersionJSON = bytes.TrimPrefix(latestVersionJSON, []byte("\xef\xbb\xbf"))
 		if err := json.Unmarshal(latestVersionJSON, &latestVersionData); err != nil {
 			term.Logger.Error(err.Error())
 		} else {
 			success := latestVersionData["success"] == true
 			if success {
-				data := latestVersionData["data"].(map[string]any)
+				data := latestVersionData["data"].(map[string]interface{})
 				latest = fmt.Sprintf("v%v.%v.%v", data["major"], data["minor"], data["revision"])
 			}
 		}
@@ -159,7 +159,7 @@ func generaProject(c *command.Config) error {
 	}
 	term.Logger.Info("ENERGY latest release number: " + latest)
 	// 创建 go.mod
-	data = make(map[string]any)
+	data = make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	data["GoVersion"] = "1.18"
 	data["EnergyVersion"] = latest
@@ -182,7 +182,7 @@ func generaProject(c *command.Config) error {
 	}
 
 	// 创建 README.md
-	data = make(map[string]any)
+	data = make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	if err := createFile("assets/initialize/README.md", "README.md", data, 0666); err != nil {
 		return err

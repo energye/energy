@@ -51,11 +51,11 @@ func GoENERGY() {
 	pterm.Println(pterm.LightBlue("      GO\n") + pterm.LightBlue("    ENERGY"))
 }
 
-func BoxPrintln(a ...any) {
+func BoxPrintln(a ...interface{}) {
 	pterm.DefaultBox.Println(a...)
 }
 
-func Println(a ...any) {
+func Println(a ...interface{}) {
 	pterm.Println(a...)
 }
 
