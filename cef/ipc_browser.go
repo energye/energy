@@ -146,15 +146,16 @@ func (m *ipcBrowserProcess) registerEvent() {
 			if argument.GetName() == internalIPCDRAG {
 				if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
 					if wi.IsLCL() {
-						data := argument.JSON()
-						if data != nil {
+						dataJSON := argument.JSON()
+						if dataJSON != nil {
 							bw := wi.AsLCLBrowserWindow().BrowserWindow()
 							if bw.drag == nil {
 								bw.drag = &drag{}
 							}
-							bw.drag.T = int8(data.GetIntByKey("T"))
-							bw.drag.X = int32(data.GetIntByKey("X"))
-							bw.drag.Y = int32(data.GetIntByKey("Y"))
+							object := dataJSON.JSONObject()
+							bw.drag.T = int8(object.GetIntByKey("T"))
+							bw.drag.X = int32(object.GetIntByKey("X"))
+							bw.drag.Y = int32(object.GetIntByKey("Y"))
 							bw.drag.window = wi
 						}
 						wi.RunOnMainThread(func() {

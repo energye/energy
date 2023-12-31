@@ -17,7 +17,6 @@ package json
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/consts"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strconv"
 	"strings"
@@ -26,7 +25,7 @@ import (
 // JSONArray
 //  Manipulate data according to subscript, failure to return the default value of the data type
 type JSONArray interface {
-	BaseJSON
+	JSON
 	Add(value ...interface{})                // Add data of any type
 	SetByIndex(index int, value interface{}) // Set any type of data at the specified subscript position
 	RemoveByIndex(index int)                 // remove data for index
@@ -74,9 +73,9 @@ func NewJSONArray(value interface{}) JSONArray {
 			return nil
 		}
 		//转为[]interface{}类型
-		if byt, err := jsoniter.Marshal(value); err == nil {
+		if byt, err := json.Marshal(value); err == nil {
 			var v []interface{}
-			if err = jsoniter.Unmarshal(byt, &v); err == nil {
+			if err = json.Unmarshal(byt, &v); err == nil {
 				return &JsonData{t: reflect.Slice, v: v, s: len(v)}
 			}
 		}
@@ -116,17 +115,17 @@ func (m *JsonData) Add(value ...interface{}) {
 					}
 					if kind == reflect.Struct {
 						// struct -> map
-						if d, err := jsoniter.Marshal(v); err == nil {
+						if d, err := json.Marshal(v); err == nil {
 							var vv map[string]interface{}
-							if err = jsoniter.Unmarshal(d, &vv); err == nil {
+							if err = json.Unmarshal(d, &vv); err == nil {
 								tmp[i] = vv // json object
 							}
 						}
 					} else if kind == reflect.Slice || kind == reflect.Array {
 						// slice -> array
-						if d, err := jsoniter.Marshal(v); err == nil {
+						if d, err := json.Marshal(v); err == nil {
 							var vv []interface{}
-							if err = jsoniter.Unmarshal(d, &vv); err == nil {
+							if err = json.Unmarshal(d, &vv); err == nil {
 								tmp[i] = vv // json array
 							}
 						}
@@ -170,16 +169,16 @@ func (m *JsonData) SetByIndex(index int, value interface{}) {
 					kind = rv.Elem().Kind()
 				}
 				if kind == reflect.Struct {
-					if d, err := jsoniter.Marshal(value); err == nil {
+					if d, err := json.Marshal(value); err == nil {
 						var v map[string]interface{}
-						if err = jsoniter.Unmarshal(d, &v); err == nil {
+						if err = json.Unmarshal(d, &v); err == nil {
 							value = v // json object
 						}
 					}
 				} else if kind == reflect.Slice || kind == reflect.Array {
-					if d, err := jsoniter.Marshal(value); err == nil {
+					if d, err := json.Marshal(value); err == nil {
 						var v []interface{}
-						if err = jsoniter.Unmarshal(d, &v); err == nil {
+						if err = json.Unmarshal(d, &v); err == nil {
 							value = v // json array
 						}
 					}
@@ -305,11 +304,11 @@ func (m *JsonData) GetBoolByIndex(index int) bool {
 }
 
 func (m *JsonData) GetArrayByIndex(index int) JSONArray {
-	return m.GetByIndex(index)
+	return m.GetByIndex(index).JSONArray()
 }
 
 func (m *JsonData) GetObjectByIndex(index int) JSONObject {
-	return m.GetByIndex(index)
+	return m.GetByIndex(index).JSONObject()
 }
 
 func (m *JsonData) GetByIndex(index int) JSON {

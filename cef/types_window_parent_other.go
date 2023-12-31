@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build !windows
+// +build !windows
 
 // CEFWindowParent组件
 // MacOSX, Linux

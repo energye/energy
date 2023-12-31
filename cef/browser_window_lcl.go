@@ -24,7 +24,6 @@ import (
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
-	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -156,22 +155,20 @@ func (m *LCLBrowserWindow) setProperty() {
 	wp := m.WindowProperty()
 	m.SetTitle(wp.Title)
 	if wp.IconFS != "" {
-		if emfs.IsExist(wp.IconFS) {
-			ext := strings.ToLower(filepath.Ext(wp.IconFS))
-			switch ext {
-			case ".png":
-				png := lcl.NewPngImage()
-				png.LoadFromFSFile(wp.IconFS)
-				lcl.Application.Icon().Assign(png)
-				png.Free()
-			case ".jpeg":
-				jpeg := lcl.NewJPEGImage()
-				jpeg.LoadFromFSFile(wp.IconFS)
-				lcl.Application.Icon().Assign(jpeg)
-				jpeg.Free()
-			case ".ico":
-				_ = lcl.Application.Icon().LoadFromFSFile(wp.IconFS)
-			}
+		ext := strings.ToLower(filepath.Ext(wp.IconFS))
+		switch ext {
+		case ".png":
+			png := lcl.NewPngImage()
+			png.LoadFromFSFile(wp.IconFS)
+			lcl.Application.Icon().Assign(png)
+			png.Free()
+		case ".jpeg":
+			jpeg := lcl.NewJPEGImage()
+			jpeg.LoadFromFSFile(wp.IconFS)
+			lcl.Application.Icon().Assign(jpeg)
+			jpeg.Free()
+		case ".ico":
+			_ = lcl.Application.Icon().LoadFromFSFile(wp.IconFS)
 		}
 	} else if wp.Icon != "" {
 		if tools.IsExist(wp.Icon) {

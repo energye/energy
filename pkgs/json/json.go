@@ -18,18 +18,15 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v2/common"
 	. "github.com/energye/energy/v2/consts"
-	jsoniter "github.com/json-iterator/go" //json-iterator or encoding/json
 	"reflect"
 	"strconv"
 )
 
-// BaseJSON
-//  JSON base object
-type BaseJSON interface {
+// JSON object
+type JSON interface {
 	Size() int                  //返回数据数量
 	Type() reflect.Kind         //当前对象数量类型
 	Data() interface{}          //返回原始数据
-	JsonData() *JsonData        //返回原始JsonData数据结构
 	SetValue(value interface{}) //设置值
 	String() string             //返回 string 类型值
 	Int() int                   //返回 int 类型值, 把所有数字类型都转换 int 返回
@@ -41,7 +38,7 @@ type BaseJSON interface {
 	Bool() bool                 //返回 bool 类型值
 	JSONObject() JSONObject     //返回 JSONObject 对象类型
 	JSONArray() JSONArray       //返回 JSONArray 对象类型
-	JSON() JSON                 //返回 JSON 对象类型
+	JsonData() *JsonData        //JSON Data
 	ToJSONString() string       //转换为JSON字符串并返回
 	IsString() bool             //当前对象是否为 string
 	IsInt() bool                //当前对象是否为 int
@@ -53,12 +50,6 @@ type BaseJSON interface {
 	IsArray() bool              //当前对象是否为 JSONArray
 	Clear()                     //清空所有数据，保留原始数据类型
 	Free()                      //释放数据空间，且类型失效，当前对象不可用
-}
-
-// JSON Object
-type JSON interface {
-	JSONArray
-	JSONObject
 }
 
 // JsonData
@@ -92,7 +83,7 @@ func NewJSON(data []byte) JSON {
 		return nil
 	}
 	var v interface{}
-	if err := jsoniter.Unmarshal(data, &v); err == nil {
+	if err := json.Unmarshal(data, &v); err == nil {
 		rv := reflect.ValueOf(v)
 		switch rv.Kind() {
 		case reflect.Slice:
@@ -121,10 +112,6 @@ func (m *JsonData) Data() interface{} {
 }
 
 func (m *JsonData) JsonData() *JsonData {
-	return m
-}
-
-func (m *JsonData) JSON() JSON {
 	return m
 }
 
@@ -208,15 +195,6 @@ func (m *JsonData) SetValue(value interface{}) {
 		m.modifyParentValue()
 	case *JsonData:
 		v := value.(*JsonData)
-		m.t = v.t
-		m.v = v.v
-		m.s = v.s
-		m.p = v.p
-		m.pIndex = v.pIndex
-		m.pKey = v.pKey
-		m.modifyParentValue()
-	case JSON:
-		v := value.(JSON).JsonData()
 		m.t = v.t
 		m.v = v.v
 		m.s = v.s
@@ -443,7 +421,7 @@ func toBytes(s interface{}) []byte {
 	case uint64:
 		return common.UInt64ToBytes(s.(uint64))
 	default:
-		if r, err := jsoniter.Marshal(s); err == nil {
+		if r, err := json.Marshal(s); err == nil {
 			return r
 		}
 	}

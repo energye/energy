@@ -29,7 +29,7 @@ func (m *TCefCommandLine) toString() string {
 	var str bytes.Buffer
 	var i = 0
 	var replace = func(s, old, new string) string {
-		return strings.ReplaceAll(s, old, new)
+		return strings.Replace(s, old, new, -1)
 	}
 	for name, value := range m.commandLines {
 		if i > 0 {

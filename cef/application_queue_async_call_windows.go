@@ -8,6 +8,9 @@
 //
 //----------------------------------------
 
+//go:build windows && cgo
+// +build windows,cgo
+
 package cef
 
 import "syscall"

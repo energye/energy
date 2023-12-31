@@ -75,11 +75,9 @@ func (m *SysMenuItem) AddSubMenu(label string, click ...MenuItemClick) *SysMenuI
 
 // SetIconFS windows推荐使用ico图标, linux推荐使用png图标, macosx使用ico和png都可
 func (m *SysMenuItem) SetIconFS(iconResourcePath string) {
-	if emfs.IsExist(iconResourcePath) {
-		data, err := emfs.GetResources(iconResourcePath)
-		if err == nil {
-			m.SetIconBytes(data)
-		}
+	data, err := emfs.GetResources(iconResourcePath)
+	if err == nil {
+		m.SetIconBytes(data)
 	}
 }
 

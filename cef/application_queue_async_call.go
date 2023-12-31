@@ -90,7 +90,8 @@ func QueueSyncCall(fn qacFn) int {
 }
 
 func (m *queueAsyncCall) call(id uintptr) {
-	if call, ok := m.calls.LoadAndDelete(id); ok {
+	if call, ok := m.calls.Load(id); ok {
+		m.calls.Delete(id)
 		qc := call.(*queueCall)
 		if qc.IsSync {
 			qc.Fn(int(id))
@@ -101,7 +102,7 @@ func (m *queueAsyncCall) call(id uintptr) {
 	}
 }
 func (m *queueAsyncCall) set(fn *queueCall) uintptr {
-	if m.id >= math.MaxUint {
+	if m.id >= math.MaxUint32 {
 		m.id = 0
 	}
 	m.id++

@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build !windows
+// +build !windows
 
 // 辅助工具-开发者工具 windows
 

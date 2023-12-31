@@ -178,13 +178,11 @@ func (m *SysTray) Notice(title, content string, timeout int32) {
 
 // SetIconFS 设置托盘图标
 func (m *SysTray) SetIconFS(iconResourcePath string) {
-	if emfs.IsExist(iconResourcePath) {
-		data, err := emfs.GetResources(iconResourcePath)
-		if err == nil {
-			m.icon = data
-			if m.start != nil {
-				systray.SetIcon(m.icon)
-			}
+	data, err := emfs.GetResources(iconResourcePath)
+	if err == nil {
+		m.icon = data
+		if m.start != nil {
+			systray.SetIcon(m.icon)
 		}
 	}
 }

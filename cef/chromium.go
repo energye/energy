@@ -21,6 +21,7 @@ import (
 
 // IChromium 组件接口
 type IChromium interface {
+	lcl.IObject
 	IChromiumProc
 	IChromiumEvent
 }

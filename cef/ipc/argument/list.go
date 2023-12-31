@@ -92,9 +92,9 @@ func (m *List) JSON() json.JSON {
 	case json.JSON:
 		m.jsonData = m.Data.(json.JSON)
 	case json.JSONObject:
-		m.jsonData = m.Data.(json.JSONObject).JSON()
+		m.jsonData = m.Data.(json.JSONObject)
 	case json.JSONArray:
-		m.jsonData = m.Data.(json.JSONArray).JSON()
+		m.jsonData = m.Data.(json.JSONArray)
 	}
 	if m.jsonData != nil {
 		return m.jsonData
@@ -106,11 +106,11 @@ func (m *List) JSON() json.JSON {
 	}
 	if kind == reflect.Slice || kind == reflect.Array {
 		if v := json.NewJSONArray(m.Data); v != nil {
-			m.jsonData = v.JSON()
+			m.jsonData = v.JSONArray()
 		}
 	} else if kind == reflect.Map || kind == reflect.Struct {
 		if v := json.NewJSONObject(m.Data); v != nil {
-			m.jsonData = v.JSON()
+			m.jsonData = v.JSONObject()
 		}
 	}
 	return m.jsonData

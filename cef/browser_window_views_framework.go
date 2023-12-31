@@ -20,7 +20,6 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
-	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -86,10 +85,8 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 				m.WindowComponent().CenterWindow(NewCefSize(windowProperty.Width, windowProperty.Height))
 			}
 			if windowProperty.IconFS != "" {
-				if emfs.IsExist(windowProperty.IconFS) {
-					if err := m.WindowComponent().SetWindowAppIconByFSFile(1, windowProperty.IconFS); err != nil {
-						logger.Error("set window application icon error:", err.Error())
-					}
+				if err := m.WindowComponent().SetWindowAppIconByFSFile(1, windowProperty.IconFS); err != nil {
+					logger.Error("set window application icon error:", err.Error())
 				}
 			} else if windowProperty.Icon != "" {
 				if tools.IsExist(windowProperty.Icon) {

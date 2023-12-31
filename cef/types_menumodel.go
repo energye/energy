@@ -56,7 +56,7 @@ func (m *keyEventAccelerator) AddAcceleratorCustom(accelerator *AcceleratorCusto
 	if accelerator == nil {
 		return
 	}
-	accelerator.Accelerator = strings.ReplaceAll(strings.ToUpper(accelerator.Accelerator), " ", "")
+	accelerator.Accelerator = strings.Replace(strings.ToUpper(accelerator.Accelerator), " ", "", -1)
 	as := strings.Split(accelerator.Accelerator, "+")
 	if len(as) > 0 && len(as) <= 4 {
 		var shift = ArrayIndexOf(as, MA_Shift) != -1
@@ -161,7 +161,7 @@ func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 		m.SetLabel(item.CommandId, item.Label)
 	}
 	if item.Accelerator != "" {
-		item.Accelerator = strings.ReplaceAll(strings.ToUpper(item.Accelerator), " ", "")
+		item.Accelerator = strings.Replace(strings.ToUpper(item.Accelerator), " ", "", -1)
 		as := strings.Split(item.Accelerator, "+")
 		if len(as) > 0 && len(as) <= 4 {
 			var shift = ArrayIndexOf(as, MA_Shift) != -1

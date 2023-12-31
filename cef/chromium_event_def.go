@@ -15,14 +15,12 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
 
 // IChromiumEvent
 // Chromium 事件行为接口
 type IChromiumEvent interface {
-	lcl.IObject
 	SetOnAfterCreated(fn chromiumEventOnAfterCreated)
 	SetOnBeforeBrowser(fn chromiumEventOnBeforeBrowser)
 	SetOnAddressChange(fn chromiumEventOnAddressChange)

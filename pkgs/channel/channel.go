@@ -27,7 +27,9 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strconv"
+	"strings"
 )
 
 var (
@@ -85,15 +87,18 @@ func MemoryAddress() string {
 // IsUseNetIPC
 //
 // 当前IPC使用的通道类型
-//
+
 //	MacOS, Linux, Windows10 && Build >= 17063 时使用 unix socket
 //	Windows10 以下 && Windows10 Build < 17063 时使用 net socket
 func IsUseNetIPC() bool {
 	if common.IsDarwin() || common.IsLinux() {
 		return false
 	}
+	goVersion := strings.Replace(runtime.Version(), "go", "", -1)
+	vers := strings.Split(goVersion, ".")
+	supoortWindows := common.StrToInt32(vers[0]) >= 1 && common.StrToInt32(vers[1]) >= 14 // Go 版本 >= 1.14 支持Windows
 	ov := version.OSVersion
-	if (ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063) {
+	if ((ov.Major > 10) || (ov.Major == 10 && ov.Build >= 17063)) && supoortWindows {
 		return false
 	}
 	return true

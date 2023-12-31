@@ -473,7 +473,7 @@ const (
 var dBaseDateTime = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
 
 func GoDateTimeToDDateTime(dateTime time.Time) float64 {
-	date := float64(dateTime.Sub(dBaseDateTime).Milliseconds() / 1000 / 60 / 60 / 24)
+	date := float64(dateTime.Sub(dBaseDateTime).Nanoseconds() / 1000000 / 60 / 60 / 24)
 	diHour := decimal.NewFromFloat(float64(dateTime.Hour()))
 	diMinute := decimal.NewFromFloat(float64(dateTime.Minute())).Mul(decimal.NewFromFloat(60))
 	diSecond := decimal.NewFromFloat(float64(dateTime.Second()))

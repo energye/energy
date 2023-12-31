@@ -49,8 +49,8 @@ func SendNotification(n *Notification) {
 }
 
 func escapeNotificationString(in string) string {
-	noSlash := strings.ReplaceAll(in, "`", "``")
-	return strings.ReplaceAll(noSlash, "\"", "`\"")
+	noSlash := strings.Replace(in, "`", "``", -1)
+	return strings.Replace(noSlash, "\"", "`\"", -1)
 }
 
 func runScript(name, script string) {

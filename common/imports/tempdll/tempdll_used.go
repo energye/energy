@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build tempdll
+// +build tempdll
 
 // 编译命令: go build -tags="tempdll"
 

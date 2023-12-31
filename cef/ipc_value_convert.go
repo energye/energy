@@ -230,7 +230,7 @@ func (m *v8ValueProcessMessageConvert) JSONArrayToV8Value(array json.JSONArray) 
 		case reflect.Bool:
 			result.SetValueByIndex(int32(i), V8ValueRef.NewBool(value.Bool()))
 		case reflect.Slice:
-			if v := m.JSONArrayToV8Value(value); v != nil {
+			if v := m.JSONArrayToV8Value(value.JSONArray()); v != nil {
 				result.SetValueByIndex(int32(i), v)
 			} else {
 				result.SetValueByIndex(int32(i), V8ValueRef.NewNull())
@@ -310,7 +310,7 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 				result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)
 			}
 		case reflect.Map:
-			if v := m.JSONObjectToV8Value(value); v != nil {
+			if v := m.JSONObjectToV8Value(value.JSONObject()); v != nil {
 				result.setValueByKey(key, v, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 			} else {
 				result.setValueByKey(key, V8ValueRef.NewNull(), consts.V8_PROPERTY_ATTRIBUTE_NONE)

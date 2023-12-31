@@ -21,9 +21,9 @@ package assetserve
 import (
 	"context"
 	"crypto/tls"
-	"embed"
 	"errors"
 	"fmt"
+	"github.com/energye/golcl/energy/emfs"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -47,12 +47,12 @@ var AssetsServerHeaderKeyName = "ASSETS_SERVER_KEY"
 var AssetsServerHeaderKeyValue string
 
 type assetsHttpServer struct {
-	LocalAssets  string    //本地静态资源目录 示例: /app/assets/   http://127.0.0.1:8888/demo/demo.html -> /app/assets/demo/demo.html
-	AssetsFSName string    //静态资源内置FS目录名 默认值: resources
-	Assets       *embed.FS //静态资源内置FS目录对象
-	IP           string    //默认值: 127.0.0.1
-	PORT         int       //默认值: 80
-	SSL          *SSL      //设置后启动https
+	LocalAssets  string        //本地静态资源目录 示例: /app/assets/   http://127.0.0.1:8888/demo/demo.html -> /app/assets/demo/demo.html
+	AssetsFSName string        //静态资源内置FS目录名 默认值: resources
+	Assets       emfs.IEmbedFS //静态资源内置FS目录对象
+	IP           string        //默认值: 127.0.0.1
+	PORT         int           //默认值: 80
+	SSL          *SSL          //设置后启动https
 }
 
 // SSL 证书配置，根据 Assets 或 LocalAssets 寻找证书文件位置
@@ -112,11 +112,11 @@ func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) {
 					return tls.Certificate{}, err
 				}
 			} else if m.LocalAssets != "" {
-				certPEMBlock, err = os.ReadFile(m.LocalAssets + certFile)
+				certPEMBlock, err = ioutil.ReadFile(m.LocalAssets + certFile)
 				if err != nil {
 					return tls.Certificate{}, err
 				}
-				keyPEMBlock, err = os.ReadFile(m.LocalAssets + keyFile)
+				keyPEMBlock, err = ioutil.ReadFile(m.LocalAssets + keyFile)
 				if err != nil {
 					return tls.Certificate{}, err
 				}
@@ -169,7 +169,7 @@ func (m *assetsHttpServer) graceShutdown(server *http.Server) {
 // StartHttpServer 启动内置Http Server
 func (m *assetsHttpServer) StartHttpServer() {
 	if m.LocalAssets != "" {
-		m.LocalAssets = strings.ReplaceAll(m.LocalAssets, "\\", "/")
+		m.LocalAssets = strings.Replace(m.LocalAssets, "\\", "/", -1) // ReplaceAll
 		if strings.LastIndex(m.LocalAssets, "/") != len(m.LocalAssets)-1 {
 			m.LocalAssets = m.LocalAssets + "/"
 		}

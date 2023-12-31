@@ -13,10 +13,10 @@
 package cef
 
 import (
-	"embed"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports/tempdll"
+	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -32,7 +32,7 @@ import (
 //    libs 内置到应用程序的类库
 //    resources 内置到应用程序的资源文件
 //  MacOSX环境, goland、ide等开发环境需配置命令行参数[energy_env=dev]以保证应用正常运行
-func GlobalInit(libs *embed.FS, resources *embed.FS) {
+func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	if IsDarwin() {
 		macapp.MacApp.IsCEF(true)
 		//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行

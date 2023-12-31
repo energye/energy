@@ -17,7 +17,6 @@ package json
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/consts"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"strconv"
 	"strings"
@@ -27,7 +26,7 @@ import (
 //	object type key : value
 //  According to the key operation data, the default value of the data type is returned when a failure occurs
 type JSONObject interface {
-	BaseJSON
+	JSON
 	HasKey(key string) bool               // has key
 	Set(key string, value interface{})    // Sets or overrides the value of the specified key and sets a new arbitrary type value
 	RemoveByKey(key string)               // remove data for key
@@ -78,9 +77,9 @@ func NewJSONObject(value interface{}) JSONObject {
 			return nil
 		}
 		//convert map[string]interface{} type
-		if byt, err := jsoniter.Marshal(value); err == nil {
+		if byt, err := json.Marshal(value); err == nil {
 			var v map[string]interface{}
-			if err = jsoniter.Unmarshal(byt, &v); err == nil {
+			if err = json.Unmarshal(byt, &v); err == nil {
 				return &JsonData{t: reflect.Map, v: v, s: len(v)}
 			}
 		}
@@ -122,17 +121,17 @@ func (m *JsonData) Set(key string, value interface{}) {
 				}
 				if kind == reflect.Struct {
 					// struct -> map
-					if d, err := jsoniter.Marshal(value); err == nil {
+					if d, err := json.Marshal(value); err == nil {
 						var v map[string]interface{}
-						if err = jsoniter.Unmarshal(d, &v); err == nil {
+						if err = json.Unmarshal(d, &v); err == nil {
 							value = v // json object
 						}
 					}
 				} else if kind == reflect.Slice || kind == reflect.Array {
 					// slice -> array
-					if d, err := jsoniter.Marshal(value); err == nil {
+					if d, err := json.Marshal(value); err == nil {
 						var v []interface{}
-						if err = jsoniter.Unmarshal(d, &v); err == nil {
+						if err = json.Unmarshal(d, &v); err == nil {
 							value = v // json array
 						}
 					}
@@ -263,11 +262,11 @@ func (m *JsonData) GetBoolByKey(key string) (r bool) {
 }
 
 func (m *JsonData) GetArrayByKey(key string) JSONArray {
-	return m.GetByKey(key)
+	return m.GetByKey(key).JSONArray()
 }
 
 func (m *JsonData) GetObjectByKey(key string) JSONObject {
-	return m.GetByKey(key)
+	return m.GetByKey(key).JSONObject()
 }
 
 func (m *JsonData) Keys() []string {

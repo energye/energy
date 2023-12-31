@@ -14,15 +14,14 @@ import (
 	"bytes"
 	"crypto/tls"
 	"crypto/x509"
-	"embed"
 	"errors"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
+	"github.com/energye/golcl/energy/emfs"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -48,11 +47,11 @@ type XHRProxy struct {
 // XHRProxySSL
 //  https证书配置，如果其中某一配置为空，则跳过ssl检查, 如果证书配置错误则请求失败
 type XHRProxySSL struct {
-	FS      *embed.FS // 证书到内置执行文件时需要设置
-	RootDir string    // 根目录 如果使用 FS 时目录名 root/path, 否则本地目录/to/root/path
-	Cert    string    // RootDir/to/path/cert.crt
-	Key     string    // RootDir/to/path/key.key
-	CARoots []string  // RootDir/to/path/ca.crt
+	FS      emfs.IEmbedFS // 证书到内置执行文件时需要设置
+	RootDir string        // 根目录 如果使用 FS 时目录名 root/path, 否则本地目录/to/root/path
+	Cert    string        // RootDir/to/path/cert.crt
+	Key     string        // RootDir/to/path/key.key
+	CARoots []string      // RootDir/to/path/ca.crt
 }
 
 // HttpClient
@@ -117,11 +116,11 @@ func (m *XHRProxy) init() {
 					)
 					var readFile = func(path string) (data []byte, err error) {
 						if m.SSL.FS != nil {
-							path = strings.ReplaceAll(filepath.Join(m.SSL.RootDir, path), "\\", "/")
+							path = strings.Replace(filepath.Join(m.SSL.RootDir, path), "\\", "/", -1)
 							data, err = m.SSL.FS.ReadFile(path)
 						} else {
 							path = filepath.Join(m.SSL.RootDir, path)
-							data, err = os.ReadFile(path)
+							data, err = ioutil.ReadFile(path)
 						}
 						return
 					}

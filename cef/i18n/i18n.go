@@ -14,9 +14,9 @@
 package i18n
 
 import (
-	"embed"
 	"encoding/json"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/energy/emfs"
 	"io/ioutil"
 	"path/filepath"
 	"strings"
@@ -27,7 +27,7 @@ var (
 	resources    map[string]string             // 资源-优先
 	resourcesVar = make(map[string]*string, 0) // 变量资源-切换时被同步
 	lPath        string                        // 本地加载
-	lFS          *embed.FS                     // 内置加载-优先
+	lFS          emfs.IEmbedFS                 // 内置加载-优先
 	lFSPath      string                        // 内置加载-资源所在目录
 )
 
@@ -41,7 +41,7 @@ func SetLocalPath(localPath string) {
 //	设置本地资源在FS中加载-优先
 //	lFS: 内置对象
 // 	lFSPath: 资源所在目录 to/path
-func SetLocalFS(localFS *embed.FS, localFSPath string) {
+func SetLocalFS(localFS emfs.IEmbedFS, localFSPath string) {
 	lFS = localFS
 	lFSPath = localFSPath
 }

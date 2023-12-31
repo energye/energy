@@ -31,8 +31,6 @@ import (
 // IChromiumProc
 // Chromium 功能函数接口
 type IChromiumProc interface {
-	lcl.IObject
-	Instance() uintptr
 	Options() IChromiumOptions
 	Config() *TCefChromiumConfig
 	Browser() *ICefBrowser

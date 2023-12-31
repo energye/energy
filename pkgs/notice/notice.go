@@ -52,12 +52,10 @@ func (m *Notification) SetIcon(iconResourcePath string) *Notification {
 }
 
 func (m *Notification) SetIconFS(iconResourcePath string) *Notification {
-	if emfs.IsExist(iconResourcePath) {
-		data, err := emfs.GetResources(iconResourcePath)
-		if err == nil {
-			m.Icon = data
-			m.iconExt = filepath.Ext(iconResourcePath)
-		}
+	data, err := emfs.GetResources(iconResourcePath)
+	if err == nil {
+		m.Icon = data
+		m.iconExt = filepath.Ext(iconResourcePath)
 	}
 	return m
 }

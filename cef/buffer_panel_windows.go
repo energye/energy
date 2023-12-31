@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build windows
+// +build windows
 
 // CEF TBufferPanel
 

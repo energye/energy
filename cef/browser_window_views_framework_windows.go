@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build windows
+// +build windows
 
 // VF窗口组件定义和实现-windows平台
 
