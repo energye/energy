@@ -1266,16 +1266,16 @@ type TCefPopupFeatures struct {
 	WidthSet           Integer
 	Height             Integer
 	HeightSet          Integer
-	MenuBarVisible     Integer // ~ CEF 109
-	StatusBarVisible   Integer // ~ CEF 109
-	ToolBarVisible     Integer // ~ CEF 109
+	MenuBarVisible     Integer // Use-CEF:[49]
+	StatusBarVisible   Integer // Use-CEF:[49]
+	ToolBarVisible     Integer // Use-CEF:[49]
 	LocationBarVisible Integer
-	ScrollbarsVisible  Integer // ~ CEF 109
+	ScrollbarsVisible  Integer // Use-CEF:[49]
 	IsPopup            Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
 	Resizable          Integer
 	Fullscreen         Integer
 	Dialog             Integer
-	AdditionalFeatures TCefStringList
+	AdditionalFeatures TCefStringList // Use-CEF:[49]
 }
 
 // /include/internal/cef_types_win.h (cef_window_info_t)

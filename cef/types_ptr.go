@@ -58,7 +58,7 @@ type tCefPopupFeaturesPtr struct {
 	Resizable          UIntptr // Integer
 	Fullscreen         UIntptr // Integer
 	Dialog             UIntptr // Integer
-	AdditionalFeatures UIntptr // TCefStringList
+	AdditionalFeatures UIntptr // TCefStringList // Use-CEF:[49]
 }
 
 // TCefWindowInfo
@@ -381,6 +381,12 @@ func (m *tCefPopupFeaturesPtr) Convert() *TCefPopupFeatures {
 		}
 		return *(*Integer)(getPtr(ptr))
 	}
+	getStringList := func(ptr uintptr) TCefStringList {
+		if ptr == 0 {
+			return 0
+		}
+		return *(*TCefStringList)(getPtr(ptr))
+	}
 	return &TCefPopupFeatures{
 		X:                  getInteger(m.X.ToPtr()),
 		XSet:               getInteger(m.XSet.ToPtr()),
@@ -399,6 +405,6 @@ func (m *tCefPopupFeaturesPtr) Convert() *TCefPopupFeatures {
 		Resizable:          getInteger(m.Resizable.ToPtr()),
 		Fullscreen:         getInteger(m.Fullscreen.ToPtr()),
 		Dialog:             getInteger(m.Dialog.ToPtr()),
-		AdditionalFeatures: *(*TCefStringList)(getPtr(m.AdditionalFeatures.ToPtr())),
+		AdditionalFeatures: getStringList(m.AdditionalFeatures.ToPtr()),
 	}
 }

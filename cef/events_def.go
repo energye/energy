@@ -52,8 +52,8 @@ type chromiumEventOnDismissPermissionPrompt func(sender lcl.IObject, browser *IC
 type chromiumEventOnDocumentAvailableInMainFrame func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnDownloadImageFinished func(sender lcl.IObject, imageUrl string, httpStatusCode int32, image *ICefImage)
 type chromiumEventOnExecuteTaskOnCefThread func(sender lcl.IObject, taskID uint32)
-type chromiumEventOnExtensionBeforeBackgroundBrowser func(sender lcl.IObject, extension *ICefExtension, url string) (client *ICefClient, settings *TCefBrowserSettings, result bool)
-type chromiumEventOnExtensionBeforeBrowser func(sender lcl.IObject, extension *ICefExtension, browser, activeBrowser *ICefBrowser, index int32, url string, active bool, resultClient *ICefClient, resultSettings *TCefBrowserSettings) bool
+type chromiumEventOnExtensionBeforeBackgroundBrowser func(sender lcl.IObject, extension *ICefExtension, url string, resultClient *ICefClient, settings *TCefBrowserSettings) (result bool)
+type chromiumEventOnExtensionBeforeBrowser func(sender lcl.IObject, extension *ICefExtension, browser, activeBrowser *ICefBrowser, index int32, url string, active bool, windowInfo *TCefWindowInfo, resultClient *ICefClient, resultSettings *TCefBrowserSettings) bool
 type chromiumEventOnExtensionCanAccessBrowser func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, includeIncognito bool, targetBrowser *ICefBrowser) bool
 type chromiumEventOnExtensionGetActiveBrowser func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, includeIncognito bool, resultBrowser *ICefBrowser)
 type chromiumEventOnExtensionGetExtensionResource func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, file string, callback *ICefGetExtensionResourceCallback) bool
@@ -166,8 +166,8 @@ type chromiumEventOnFrameCreated func(sender lcl.IObject, browser *ICefBrowser, 
 type chromiumEventOnFrameDetached func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type chromiumEventOnMainFrameChanged func(sender lcl.IObject, browser *ICefBrowser, oldFrame *ICefFrame, newFrame *ICefFrame)
 type chromiumEventOnMainFrameChangedEx func(sender lcl.IObject, browser *ICefBrowser, oldFrame *ICefFrame, newFrame *ICefFrame, window IBrowserWindow)
-type chromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool
-type chromiumEventOnBeforePopupEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupWindow IBrowserWindow, noJavascriptAccess *bool) bool
+type chromiumEventOnBeforePopup func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, resultClient *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
+type chromiumEventOnBeforePopupEx func(sender lcl.IObject, popupWindow IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, resultClient *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
 type chromiumEventOnOpenUrlFromTab func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool
 type chromiumEventOnDragEnter func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool)
 type chromiumEventOnDragEnterEx func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, window IBrowserWindow, result *bool)

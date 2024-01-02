@@ -282,7 +282,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 		}
 		return false
 	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}
@@ -292,7 +292,7 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(NewChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
 		var result = false
 		if bwEvent.onBeforePopup != nil {
-			result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, vFrameBrowserWindow, noJavascriptAccess)
+			result = bwEvent.onBeforePopup(sender, vFrameBrowserWindow, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 		}
 		if !result {
 			vFrameBrowserWindow.ResetWindowPropertyForEvent()

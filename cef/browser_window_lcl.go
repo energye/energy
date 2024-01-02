@@ -1014,7 +1014,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		}
 		return false
 	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, noJavascriptAccess *bool) bool {
+	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}
@@ -1024,7 +1024,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 			bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
 			var result = false
 			if bwEvent.onBeforePopup != nil {
-				result = bwEvent.onBeforePopup(sender, browser, frame, beforePopupInfo, bw, noJavascriptAccess)
+				result = bwEvent.onBeforePopup(sender, bw, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 			}
 			if !result { // true 表示用户自行处理
 				bw.defaultWindowCloseEvent()

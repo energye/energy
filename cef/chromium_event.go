@@ -234,49 +234,47 @@ func init() {
 		case chromiumEventOnExtensionBeforeBackgroundBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			url := api.GoStr(getVal(2))
-			clientPtr := (*uintptr)(unsafe.Pointer(getVal(3)))
-			// TODO TCefBrowserSettings
-			//resultSettingsPtr := (*uintptr)(unsafe.Pointer(getVal(4)))
-			resultPtr := (*bool)(unsafe.Pointer(getVal(5)))
-			client, resultSettings, result := fn.(chromiumEventOnExtensionBeforeBackgroundBrowser)(lcl.AsObject(getPtr(0)), extension, url)
-			if client.instance != nil && client.IsValid() {
-				*clientPtr = client.Instance()
+			clientPtr := (*uintptr)(getPtr(3))
+			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(4))
+			resultPtr := (*bool)(getPtr(5))
+			resultClient := &ICefClient{}
+			browserSettings := browserSettingsPtr.Convert()
+			*resultPtr = fn.(chromiumEventOnExtensionBeforeBackgroundBrowser)(lcl.AsObject(getPtr(0)), extension, url, resultClient, browserSettings)
+			if resultClient.instance != nil && resultClient.IsValid() {
+				*clientPtr = resultClient.Instance()
 			}
-			if resultSettings != nil {
-				//*resultSettingsPtr = resultSettings
-			}
-			*resultPtr = result
-			//*resultSettingsPtr = resultSettings.ToPtr()
+			browserSettings.SetInstanceValue()
 		case chromiumEventOnExtensionBeforeBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			browse, activeBrowser := &ICefBrowser{instance: getPtr(2)}, &ICefBrowser{instance: getPtr(3)}
 			index := int32(getVal(4))
 			url := api.GoStr(getVal(5))
 			active := api.GoBool(getVal(6))
-			//windowInfoPtr:=(*uintptr)(unsafe.Pointer(getVal(7)))
-			resultClientPtr := (*uintptr)(unsafe.Pointer(getVal(8)))
+			windowInfoPtr := (*tCefWindowInfoPtr)(getPtr(7))
+			resultClientPtr := (*uintptr)(getPtr(8))
+			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(9))
+			result := (*bool)(getPtr(10))
+			windowInfo := windowInfoPtr.Convert()
 			resultClient := &ICefClient{}
-			// TODO TCefBrowserSettings
-			//resultSettingsPtr := (*uintptr)(unsafe.Pointer(getVal(9)))
-			resultSettings := &TCefBrowserSettings{}
-			result := (*bool)(unsafe.Pointer(getVal(10)))
-			*result = fn.(chromiumEventOnExtensionBeforeBrowser)(lcl.AsObject(getPtr(0)), extension, browse, activeBrowser, index, url, active, resultClient, resultSettings)
-			if resultClient.instance != nil {
+			resultSettings := browserSettingsPtr.Convert()
+			*result = fn.(chromiumEventOnExtensionBeforeBrowser)(lcl.AsObject(getPtr(0)), extension, browse, activeBrowser, index, url, active, windowInfo, resultClient, resultSettings)
+			windowInfo.SetInstanceValue()
+			if resultClient.instance != nil && resultClient.IsValid() {
 				*resultClientPtr = resultClient.Instance()
 			}
-		//*resultSettingsPtr = resultSettings.ToPtr()
+			resultSettings.SetInstanceValue()
 		case chromiumEventOnExtensionCanAccessBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			browse := &ICefBrowser{instance: getPtr(2)}
 			includeIncognito := api.GoBool(getVal(3))
 			targetBrowser := &ICefBrowser{instance: getPtr(4)}
-			result := (*bool)(unsafe.Pointer(getVal(5)))
+			result := (*bool)(getPtr(5))
 			*result = fn.(chromiumEventOnExtensionCanAccessBrowser)(lcl.AsObject(getPtr(0)), extension, browse, includeIncognito, targetBrowser)
 		case chromiumEventOnExtensionGetActiveBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			browse := &ICefBrowser{instance: getPtr(2)}
 			includeIncognito := api.GoBool(getVal(3))
-			resultBrowserPtr := (*uintptr)(unsafe.Pointer(getVal(4)))
+			resultBrowserPtr := (*uintptr)(getPtr(4))
 			resultBrowser := &ICefBrowser{}
 			fn.(chromiumEventOnExtensionGetActiveBrowser)(lcl.AsObject(getPtr(0)), extension, browse, includeIncognito, resultBrowser)
 			if resultBrowser.instance != nil {
@@ -287,7 +285,7 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(2)}
 			file := api.GoStr(getVal(3))
 			callback := &ICefGetExtensionResourceCallback{instance: getPtr(4)}
-			result := (*bool)(unsafe.Pointer(getVal(5)))
+			result := (*bool)(getPtr(5))
 			*result = fn.(chromiumEventOnExtensionGetExtensionResource)(lcl.AsObject(getPtr(0)), extension, browse, file, callback)
 		case chromiumEventOnExtensionLoaded:
 			fn.(chromiumEventOnExtensionLoaded)(lcl.AsObject(getPtr(0)), &ICefExtension{instance: getPtr(1)})
@@ -316,15 +314,6 @@ func init() {
 			acceptFiltersList := lcl.AsStrings(getVal(5))
 			callback := &ICefFileDialogCallback{instance: getPtr(6)}
 			result := (*bool)(getPtr(7))
-			//var acceptFilters []string
-			//if acceptFiltersList.IsValid() {
-			//	count := int(acceptFiltersList.Count())
-			//	acceptFilters = make([]string, count, count)
-			//	for i := 0; i < count; i++ {
-			//		acceptFilters[i] = acceptFiltersList.Strings(int32(i))
-			//	}
-			//	//acceptFiltersList.Free()
-			//}
 			*result = fn.(chromiumEventOnFileDialog)(lcl.AsObject(getPtr(0)), browse, mode, title, defaultFilePath, acceptFiltersList, callback)
 		case chromiumEventOnGetAccessibilityHandler:
 			accessibilityHandler := &ICefAccessibilityHandler{instance: getPtr(1)}
@@ -867,23 +856,30 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			var (
-				beforePInfoPtr    = (*beforePopupInfoPtr)(getPtr(3))
-				rpopupFeaturesPtr = (*tCefPopupFeaturesPtr)(getPtr(4))
-				windowInfoPtr     = (*tCefWindowInfoPtr)(getPtr(5))
-				//resultClientPtr = (*uintptr)(getPtr(5))
-				client             = &ICefClient{instance: getPtr(6)}
+				beforePInfoPtr     = (*beforePopupInfoPtr)(getPtr(3))
+				popupFeaturesPtr   = (*tCefPopupFeaturesPtr)(getPtr(4))
+				windowInfoPtr      = (*tCefWindowInfoPtr)(getPtr(5))
+				resultClientPtr    = (*uintptr)(getPtr(6))
 				browserSettingsPtr = (*tCefBrowserSettingsPtr)(getPtr(7))
-				//extra_info =  getPtr(8) // CEF49 = nil
+				resultExtraInfoPtr = (*uintptr)(getPtr(8)) // CEF49 = nil
 				noJavascriptAccess = (*bool)(getPtr(9))
 				result             = (*bool)(getPtr(10))
 			)
 			beforePopupInfo := beforePInfoPtr.Convert()
-			popupFeatures := rpopupFeaturesPtr.Convert()
+			popupFeatures := popupFeaturesPtr.Convert()
 			windowInfo := windowInfoPtr.Convert()
+			resultClient := &ICefClient{}
 			browserSettings := browserSettingsPtr.Convert()
-			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, popupFeatures, windowInfo, client, browserSettings, noJavascriptAccess)
+			resultExtraInfo := &ICefDictionaryValue{}
+			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
 			windowInfo.SetInstanceValue()
+			if resultClient.instance != nil && resultClient.IsValid() {
+				*resultClientPtr = resultClient.Instance()
+			}
 			browserSettings.SetInstanceValue()
+			if resultExtraInfo.instance != nil && resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
+				*resultExtraInfoPtr = resultExtraInfo.Instance()
+			}
 		case chromiumEventOnOpenUrlFromTab:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
