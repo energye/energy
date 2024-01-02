@@ -8,8 +8,8 @@
 //
 //----------------------------------------
 
-//go:build windows && cgo
-// +build windows,cgo
+//go:build windows
+// +build windows
 
 package cef
 
