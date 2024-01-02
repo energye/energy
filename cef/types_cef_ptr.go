@@ -61,22 +61,6 @@ type tCefPopupFeaturesPtr struct {
 	AdditionalFeatures UIntptr // TCefStringList // Use-CEF:[49]
 }
 
-// TCefWindowInfo
-type tCefWindowInfoPtr struct {
-	ExStyle                    UIntptr //DWORD
-	WindowName                 UIntptr //TCefString
-	Style                      UIntptr //DWORD
-	X                          UIntptr //Integer
-	Y                          UIntptr //Integer
-	Width                      UIntptr //Integer
-	Height                     UIntptr //Integer
-	ParentWindow               UIntptr //TCefWindowHandle
-	Menu                       UIntptr //HMENU
-	WindowlessRenderingEnabled UIntptr //Integer
-	TransparentPaintingEnabled UIntptr //Integer
-	Window                     UIntptr //TCefWindowHandle
-}
-
 // TCefBrowserSettings
 type tCefBrowserSettingsPtr struct {
 	Size                       UIntptr //NativeUInt
@@ -310,54 +294,6 @@ func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
 		headerTemplate:      api.PascalStr(m.HeaderTemplate),
 		footerTemplate:      api.PascalStr(m.FooterTemplate),
 	}
-}
-
-// Convert 转换为结构
-func (m *tCefWindowInfoPtr) Convert() *TCefWindowInfo {
-	getPtr := func(ptr uintptr) unsafe.Pointer {
-		return unsafe.Pointer(ptr)
-	}
-	getInteger := func(ptr uintptr) Integer {
-		if ptr == 0 {
-			return 0
-		}
-		return *(*Integer)(getPtr(ptr))
-	}
-	return &TCefWindowInfo{
-		instance:                   m,
-		ExStyle:                    *(*DWORD)(getPtr(m.ExStyle.ToPtr())),                 // DWORD
-		WindowName:                 TCefString(api.GoStr(m.WindowName.ToPtr())),          // TCefString
-		Style:                      *(*DWORD)(getPtr(m.Style.ToPtr())),                   // DWORD
-		X:                          getInteger(m.X.ToPtr()),                              // Integer
-		Y:                          getInteger(m.Y.ToPtr()),                              // Integer
-		Width:                      getInteger(m.Width.ToPtr()),                          // Integer
-		Height:                     getInteger(m.Height.ToPtr()),                         // Integer
-		ParentWindow:               *(*TCefWindowHandle)(getPtr(m.ParentWindow.ToPtr())), // TCefWindowHandle
-		Menu:                       *(*HMENU)(getPtr(m.Menu.ToPtr())),                    // HMENU
-		WindowlessRenderingEnabled: getInteger(m.WindowlessRenderingEnabled.ToPtr()),     // Integer
-		TransparentPaintingEnabled: getInteger(m.TransparentPaintingEnabled.ToPtr()),     // Integer
-		Window:                     *(*TCefWindowHandle)(getPtr(m.Window.ToPtr())),       // TCefWindowHandle
-	}
-}
-
-// SetInstanceValue 实例指针设置值
-func (m *TCefWindowInfo) SetInstanceValue() {
-	if m.instance == nil {
-		return
-	}
-	// 字段指针引用赋值, 如果是字符串类型需直接赋值
-	m.instance.ExStyle.SetValue(uint32(m.ExStyle))                                      // DWORD
-	m.instance.WindowName = UIntptr(m.WindowName.ToPtr())                               // TCefString
-	m.instance.Style.SetValue(uint32(m.Style))                                          // DWORD
-	m.instance.X.SetValue(int32(m.X))                                                   // Integer
-	m.instance.Y.SetValue(int32(m.Y))                                                   // Integer
-	m.instance.Width.SetValue(int32(m.Width))                                           // Integer
-	m.instance.Height.SetValue(int32(m.Height))                                         // Integer
-	m.instance.ParentWindow.SetValue(uintptr(m.ParentWindow))                           // TCefWindowHandle
-	m.instance.Menu.SetValue(uintptr(m.Menu))                                           // HMENU
-	m.instance.WindowlessRenderingEnabled.SetValue(int32(m.WindowlessRenderingEnabled)) // Integer
-	m.instance.TransparentPaintingEnabled.SetValue(int32(m.TransparentPaintingEnabled)) // Integer
-	m.instance.Window.SetValue(uintptr(m.Window))                                       // TCefWindowHandle
 }
 
 // Convert 转换为结构

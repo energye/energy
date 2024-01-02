@@ -1278,23 +1278,6 @@ type TCefPopupFeatures struct {
 	AdditionalFeatures TCefStringList // Use-CEF:[49]
 }
 
-// /include/internal/cef_types_win.h (cef_window_info_t)
-type TCefWindowInfo struct {
-	instance                   *tCefWindowInfoPtr
-	ExStyle                    DWORD
-	WindowName                 TCefString
-	Style                      DWORD
-	X                          Integer
-	Y                          Integer
-	Width                      Integer
-	Height                     Integer
-	ParentWindow               TCefWindowHandle
-	Menu                       HMENU
-	WindowlessRenderingEnabled Integer
-	TransparentPaintingEnabled Integer
-	Window                     TCefWindowHandle
-}
-
 // /include/internal/cef_types.h (cef_composition_underline_t)
 type TCefCompositionUnderline struct {
 	Range           TCefRange

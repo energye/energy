@@ -28,7 +28,9 @@ liblcl
     增加参数 TCefWindowInfo 
     增加参数 TCefPopupFeatures
   
-    修复: Chromium OnExtension XXXX 相关函数没返回 Sender
+    修复-增加: Chromium OnExtension XXXX 相关函数没返回 Sender
+    其它带有 TCefBrowserSettings 回调函数, uCEF_LCL_BrowserViewDelegateRef
+        OnGetDelegateForPopupBrowserView
 
 
 
