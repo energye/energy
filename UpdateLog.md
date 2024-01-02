@@ -9,7 +9,7 @@ windows xp go 1.11.13
 
 增加了特定版本支持 API
 liblcl
-    CEFAppConfig_SpecificVersion
+    CEFAppConfig_SpecificVersion  OK
 
 修改字符串返回, 使用TString API
 liblcl
@@ -27,6 +27,8 @@ liblcl
 
     增加参数 TCefWindowInfo 
     增加参数 TCefPopupFeatures
+  
+    修复: Chromium OnExtension XXXX 相关函数没返回 Sender
 
 
 
@@ -37,4 +39,5 @@ golcl 增加 支持 go1.10的打开文件接口
 
 
 Go
-  移除 liblclbinres 在构建时生成二进制liblcl.go 
+  移除 liblclbinres 在构建时生成二进制liblcl.go , 将go-bindata集成到energy命令行工具中
+  energy命令行工具中集成 go-bindata

@@ -90,7 +90,7 @@ func mainBrowserInit() {
 		fmt.Println("主窗口初始化回调函数")
 		window.SetCenterWindow(true)
 
-		event.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupWindow cef.IBrowserWindow, noJavascriptAccess *bool) bool {
+		event.SetOnBeforePopup(func(sender lcl.IObject, popupWindow cef.IBrowserWindow, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 			fmt.Println("OnBeforePopup: " + beforePopupInfo.TargetUrl)
 			popupWindow.SetTitle("改变了标题 - " + beforePopupInfo.TargetUrl)
 			return false

@@ -1,4 +1,5 @@
 //go:build windows
+// +build windows
 
 package main
 
@@ -124,7 +125,7 @@ func (m *MainWindowDemo) OnFormCreate(sender lcl.IObject) {
 				return true
 			})
 			//禁止弹出新窗口
-			chromiumBrowser.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
+			chromiumBrowser.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 				fmt.Println("OnBeforePopup")
 				return true
 			})

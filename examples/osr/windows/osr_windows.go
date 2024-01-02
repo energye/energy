@@ -110,7 +110,7 @@ func (m *WindowForm) chromiumEvent() {
 		m.bufferPanel.SetCursor(cef.CefCursorToWindowsCursor(cursorType))
 		return true
 	})
-	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, client *cef.ICefClient, noJavascriptAccess *bool) bool {
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		return true // 阻止弹出窗口
 	})
 	m.chromium.SetOnTooltip(func(sender lcl.IObject, browser *cef.ICefBrowser, text *string) (result bool) {
