@@ -32,6 +32,8 @@ liblcl
     其它带有 TCefBrowserSettings 回调函数, uCEF_LCL_BrowserViewDelegateRef
         OnGetDelegateForPopupBrowserView
 
+    ICefLifeSpanHandler onBeforePopup
+
 
 
 XP系统支持Go energy不支持go mod和embed.FS

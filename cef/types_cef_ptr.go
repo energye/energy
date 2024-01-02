@@ -273,6 +273,7 @@ func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
 		BackgroundColor:            *(*TCefColor)(getPtr(m.BackgroundColor.ToPtr())),
 		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList.ToPtr())), // Remove CEF 118
 		ChromeStatusBubble:         getCefState(m.ChromeStatusBubble.ToPtr()),
+		ChromeZoomBubble:           getCefState(m.ChromeZoomBubble.ToPtr()),
 	}
 }
 

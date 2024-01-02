@@ -88,7 +88,7 @@ func (m *ICefLifeSpanHandler) SetOnBeforeClose(fn onBeforeClose) {
 
 // ************************** events ************************** //
 
-type onBeforePopup func(browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, noJavascriptAccess *bool) bool
+type onBeforePopup func(browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, resultClient *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
 type onAfterCreated func(browser *ICefBrowser)
 type doClose func(browser *ICefBrowser) bool
 type onBeforeClose func(browser *ICefBrowser)
@@ -102,22 +102,31 @@ func init() {
 		case onBeforePopup:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
-			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(2))
-			beforePopupInfo := beforePInfoPtr.convert()
 			var (
-				//windowInfo = getPtr(3) // not use
-				//resultClientPtr = (*uintptr)(getPtr(4))
-				client = &ICefClient{instance: getPtr(4)}
-				//setting	=  getPtr(5)
-				//extra_info =  getPtr(6)
-				noJavascriptAccess = (*bool)(getPtr(7))
-				result             = (*bool)(getPtr(8))
+				beforePInfoPtr     = (*beforePopupInfoPtr)(getPtr(2))
+				popupFeaturesPtr   = (*tCefPopupFeaturesPtr)(getPtr(3))
+				windowInfoPtr      = (*tCefWindowInfoPtr)(getPtr(4))
+				resultClientPtr    = (*uintptr)(getPtr(5))
+				browserSettingsPtr = (*tCefBrowserSettingsPtr)(getPtr(6))
+				resultExtraInfoPtr = (*uintptr)(getPtr(7)) // CEF49 = nil
+				noJavascriptAccess = (*bool)(getPtr(8))
+				result             = (*bool)(getPtr(9))
 			)
-			//callback
-			*result = fn.(onBeforePopup)(browse, frame, beforePopupInfo, client, noJavascriptAccess)
-			//if client.Instance() != 0 {
-			//	*resultClientPtr = client.Instance()
-			//}
+			beforePopupInfo := beforePInfoPtr.convert()
+			popupFeatures := popupFeaturesPtr.convert()
+			windowInfo := windowInfoPtr.convert()
+			resultClient := &ICefClient{}
+			browserSettings := browserSettingsPtr.convert()
+			resultExtraInfo := &ICefDictionaryValue{}
+			*result = fn.(onBeforePopup)(browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
+			windowInfo.setInstanceValue()
+			if resultClient.instance != nil && resultClient.IsValid() {
+				*resultClientPtr = resultClient.Instance()
+			}
+			browserSettings.setInstanceValue()
+			if resultExtraInfo.instance != nil && resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
+				*resultExtraInfoPtr = resultExtraInfo.Instance()
+			}
 		case onAfterCreated:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			fn.(onAfterCreated)(browse)
