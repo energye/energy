@@ -61,9 +61,6 @@ func SetBrowserProcessStartAfterCallback(callback browserProcessStartAfterCallba
 //
 //	在这里启动浏览器的主进程和子进程
 func Run(app *TCEFApplication) {
-	defer func() {
-		api.EnergyLibRelease()
-	}()
 	if application == nil {
 		application = app
 	}
@@ -87,6 +84,10 @@ func Run(app *TCEFApplication) {
 		// 启动主进程
 		success := application.StartMainProcess()
 		if success {
+			api.SetReleaseCallback(func() {
+				app.Destroy()
+				app.Free()
+			})
 			// 主进程启动成功之后回调
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)

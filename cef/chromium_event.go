@@ -37,9 +37,6 @@ func init() {
 		return lcl.AsObject(senderPtr), browser, frame, request, response
 	}
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		var (
-			instance unsafe.Pointer
-		)
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}
@@ -671,8 +668,7 @@ func init() {
 			fn.(chromiumEventOnResourceResponse)(sender, browse, frame, request, response, (*bool)(getPtr(5)))
 		case chromiumEventOnBeforeResourceLoad:
 			sender, browse, frame, req, _ := resourceEventGet(fn, getVal, false)
-			instance = getInstance(getVal(4))
-			callback := &ICefCallback{instance: instance}
+			callback := &ICefCallback{instance: getPtr(4)}
 			fn.(chromiumEventOnBeforeResourceLoad)(sender, browse, frame, req, callback, (*consts.TCefReturnValue)(getPtr(5)))
 		case chromiumEventOnBeforeContextMenu:
 			sender := getPtr(0)
