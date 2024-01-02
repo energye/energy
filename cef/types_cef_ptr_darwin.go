@@ -35,7 +35,7 @@ type tCefWindowInfoPtr struct {
 }
 
 // Convert 转换为结构
-func (m *tCefWindowInfoPtr) Convert() *TCefWindowInfo {
+func (m *tCefWindowInfoPtr) convert() *TCefWindowInfo {
 	getPtr := func(ptr uintptr) unsafe.Pointer {
 		return unsafe.Pointer(ptr)
 	}

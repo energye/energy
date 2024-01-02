@@ -103,7 +103,7 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(0)}
 			frame := &ICefFrame{instance: getPtr(1)}
 			beforePInfoPtr := (*beforePopupInfoPtr)(getPtr(2))
-			beforePopupInfo := beforePInfoPtr.Convert()
+			beforePopupInfo := beforePInfoPtr.convert()
 			var (
 				//windowInfo = getPtr(3) // not use
 				//resultClientPtr = (*uintptr)(getPtr(4))

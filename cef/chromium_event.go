@@ -235,12 +235,12 @@ func init() {
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(4))
 			resultPtr := (*bool)(getPtr(5))
 			resultClient := &ICefClient{}
-			browserSettings := browserSettingsPtr.Convert()
+			browserSettings := browserSettingsPtr.convert()
 			*resultPtr = fn.(chromiumEventOnExtensionBeforeBackgroundBrowser)(lcl.AsObject(getPtr(0)), extension, url, resultClient, browserSettings)
 			if resultClient.instance != nil && resultClient.IsValid() {
 				*clientPtr = resultClient.Instance()
 			}
-			browserSettings.SetInstanceValue()
+			browserSettings.setInstanceValue()
 		case chromiumEventOnExtensionBeforeBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			browse, activeBrowser := &ICefBrowser{instance: getPtr(2)}, &ICefBrowser{instance: getPtr(3)}
@@ -251,15 +251,15 @@ func init() {
 			resultClientPtr := (*uintptr)(getPtr(8))
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(9))
 			result := (*bool)(getPtr(10))
-			windowInfo := windowInfoPtr.Convert()
+			windowInfo := windowInfoPtr.convert()
 			resultClient := &ICefClient{}
-			resultSettings := browserSettingsPtr.Convert()
+			resultSettings := browserSettingsPtr.convert()
 			*result = fn.(chromiumEventOnExtensionBeforeBrowser)(lcl.AsObject(getPtr(0)), extension, browse, activeBrowser, index, url, active, windowInfo, resultClient, resultSettings)
-			windowInfo.SetInstanceValue()
+			windowInfo.setInstanceValue()
 			if resultClient.instance != nil && resultClient.IsValid() {
 				*resultClientPtr = resultClient.Instance()
 			}
-			resultSettings.SetInstanceValue()
+			resultSettings.setInstanceValue()
 		case chromiumEventOnExtensionCanAccessBrowser:
 			extension := &ICefExtension{instance: getPtr(1)}
 			browse := &ICefBrowser{instance: getPtr(2)}
@@ -861,18 +861,18 @@ func init() {
 				noJavascriptAccess = (*bool)(getPtr(9))
 				result             = (*bool)(getPtr(10))
 			)
-			beforePopupInfo := beforePInfoPtr.Convert()
-			popupFeatures := popupFeaturesPtr.Convert()
-			windowInfo := windowInfoPtr.Convert()
+			beforePopupInfo := beforePInfoPtr.convert()
+			popupFeatures := popupFeaturesPtr.convert()
+			windowInfo := windowInfoPtr.convert()
 			resultClient := &ICefClient{}
-			browserSettings := browserSettingsPtr.Convert()
+			browserSettings := browserSettingsPtr.convert()
 			resultExtraInfo := &ICefDictionaryValue{}
 			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
-			windowInfo.SetInstanceValue()
+			windowInfo.setInstanceValue()
 			if resultClient.instance != nil && resultClient.IsValid() {
 				*resultClientPtr = resultClient.Instance()
 			}
-			browserSettings.SetInstanceValue()
+			browserSettings.setInstanceValue()
 			if resultExtraInfo.instance != nil && resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
 				*resultExtraInfoPtr = resultExtraInfo.Instance()
 			}

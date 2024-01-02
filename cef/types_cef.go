@@ -104,6 +104,7 @@ type TCefBrowserSettings struct {
 	BackgroundColor            TCefColor
 	AcceptLanguageList         TCefString // Remove CEF 118
 	ChromeStatusBubble         consts.TCefState
+	ChromeZoomBubble           consts.TCefState // Use[118]
 }
 
 // TCefCommandLine 进程启动命令行参数设置

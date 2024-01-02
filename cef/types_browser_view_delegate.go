@@ -125,7 +125,7 @@ func init() {
 		case onGetDelegateForPopupBrowserView:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(0)}}
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(1))
-			browserSettings := browserSettingsPtr.Convert()
+			browserSettings := browserSettingsPtr.convert()
 			client := &ICefClient{instance: getPtr(2)}
 			resultPtr := (*uintptr)(getPtr(4))
 			result := fn.(onGetDelegateForPopupBrowserView)(browserView, browserSettings, client, api.GoBool(getVal(3)))

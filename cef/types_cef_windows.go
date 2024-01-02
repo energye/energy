@@ -39,7 +39,7 @@ type TCefWindowInfo struct {
 }
 
 // SetInstanceValue 实例指针设置值
-func (m *TCefWindowInfo) SetInstanceValue() {
+func (m *TCefWindowInfo) setInstanceValue() {
 	if m.instance == nil {
 		return
 	}

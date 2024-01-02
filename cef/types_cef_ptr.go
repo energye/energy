@@ -91,6 +91,7 @@ type tCefBrowserSettingsPtr struct {
 	BackgroundColor            UIntptr //TCefColor
 	AcceptLanguageList         UIntptr //TCefString Remove CEF 118
 	ChromeStatusBubble         UIntptr //TCefState
+	ChromeZoomBubble           UIntptr //  consts.TCefState // Use[118]
 }
 
 type tCefCompositionUnderlinePtr struct {
@@ -151,7 +152,7 @@ type cefPdfPrintSettingsPtr struct {
 }
 
 // SetInstanceValue 实例指针设置值
-func (m *TCefBrowserSettings) SetInstanceValue() {
+func (m *TCefBrowserSettings) setInstanceValue() {
 	if m.instance == nil {
 		return
 	}
@@ -184,6 +185,7 @@ func (m *TCefBrowserSettings) SetInstanceValue() {
 	m.instance.BackgroundColor.SetValue(uint32(m.BackgroundColor))                      // TCefColor
 	m.instance.AcceptLanguageList = UIntptr(m.AcceptLanguageList.ToPtr())               // TCefString Remove CEF 118
 	m.instance.ChromeStatusBubble.SetValue(int32(m.ChromeStatusBubble))                 // TCefState
+	m.instance.ChromeZoomBubble.SetValue(int32(m.ChromeZoomBubble))                     // TCefState
 }
 
 // ToPtr 转换为指针
@@ -220,11 +222,12 @@ func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
 		BackgroundColor:            UIntptr(m.BackgroundColor.ToPtr()),
 		AcceptLanguageList:         UIntptr(m.AcceptLanguageList.ToPtr()), // Remove CEF 118
 		ChromeStatusBubble:         UIntptr(m.ChromeStatusBubble.ToPtr()),
+		ChromeZoomBubble:           UIntptr(m.ChromeZoomBubble.ToPtr()),
 	}
 }
 
 // Convert 转换为结构
-func (m *tCefBrowserSettingsPtr) Convert() *TCefBrowserSettings {
+func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
 	getPtr := func(ptr uintptr) unsafe.Pointer {
 		return unsafe.Pointer(ptr)
 	}
@@ -297,7 +300,7 @@ func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
 }
 
 // Convert 转换为结构
-func (m *beforePopupInfoPtr) Convert() *BeforePopupInfo {
+func (m *beforePopupInfoPtr) convert() *BeforePopupInfo {
 	return &BeforePopupInfo{
 		TargetUrl:         api.GoStr(m.TargetUrl.ToPtr()),
 		TargetFrameName:   api.GoStr(m.TargetFrameName.ToPtr()),
@@ -307,7 +310,7 @@ func (m *beforePopupInfoPtr) Convert() *BeforePopupInfo {
 }
 
 // Convert 转换为结构
-func (m *tCefPopupFeaturesPtr) Convert() *TCefPopupFeatures {
+func (m *tCefPopupFeaturesPtr) convert() *TCefPopupFeatures {
 	getPtr := func(ptr uintptr) unsafe.Pointer {
 		return unsafe.Pointer(ptr)
 	}
