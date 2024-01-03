@@ -15,13 +15,13 @@
 package cef
 
 import (
+	goJSON "encoding/json"
 	"errors"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl/api"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 	"unsafe"
 )
@@ -328,7 +328,7 @@ func (m *v8ValueProcessMessageConvert) V8ValueToProcessMessageBytes(v8value *ICe
 		return nil
 	}
 	if v := m.V8ValueToProcessMessageArray(v8value); v != nil {
-		if v, err := jsoniter.Marshal(v); err == nil {
+		if v, err := goJSON.Marshal(v); err == nil {
 			return v
 		}
 	}

@@ -11,8 +11,8 @@
 package argument
 
 import (
+	goJSON "encoding/json"
 	"github.com/energye/energy/v2/pkgs/json"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )
 
@@ -46,7 +46,7 @@ func UnList(data []byte) IList {
 		return nil
 	}
 	var v = &List{}
-	if err := jsoniter.Unmarshal(data, v); err == nil {
+	if err := goJSON.Unmarshal(data, v); err == nil {
 		return v
 	}
 	return nil
@@ -120,7 +120,7 @@ func (m *List) Bytes() []byte {
 	if m.bytesData != nil {
 		return m.bytesData
 	}
-	if byt, err := jsoniter.Marshal(m); err == nil {
+	if byt, err := goJSON.Marshal(m); err == nil {
 		m.bytesData = byt
 		return byt
 	}

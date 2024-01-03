@@ -3,7 +3,7 @@ module github.com/energye/energy/v2
 go 1.16
 
 require (
-	github.com/energye/golcl v1.0.7
+	github.com/energye/golcl v1.0.8
 	github.com/energye/liblclbinres/v2 v2.3.5
 )
 
@@ -12,8 +12,6 @@ require (
 	atomicgo.dev/keyboard v0.2.9
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
-	github.com/json-iterator/go v1.1.12
-	github.com/kenshaw/snaker v0.2.0 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-pointer v0.0.1
 	github.com/pterm/pterm v0.12.66

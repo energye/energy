@@ -11,9 +11,9 @@
 package callback
 
 import (
+	goJSON "encoding/json"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/pkgs/json"
-	jsoniter "github.com/json-iterator/go"
 	"reflect"
 )
 
@@ -160,7 +160,7 @@ func (m *ArgumentCallback) Invoke(context context.IContext) {
 						// struct
 						if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
 							v := reflect.New(inType)
-							if err := jsoniter.Unmarshal(jsonBytes, v.Interface()); err == nil {
+							if err := goJSON.Unmarshal(jsonBytes, v.Interface()); err == nil {
 								inArgsValues[i] = v.Elem()
 							}
 						}
@@ -171,7 +171,7 @@ func (m *ArgumentCallback) Invoke(context context.IContext) {
 						if inType.Elem().Kind() != reflect.Interface {
 							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
 								vv := reflect.New(inType)
-								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
+								if err := goJSON.Unmarshal(jsonBytes, vv.Interface()); err == nil {
 									inArgsValues[i] = vv.Elem()
 								}
 							}
@@ -185,7 +185,7 @@ func (m *ArgumentCallback) Invoke(context context.IContext) {
 						if inType.Elem().Kind() != reflect.Interface {
 							if jsonBytes := argsValue.Bytes(); jsonBytes != nil {
 								vv := reflect.New(inType)
-								if err := jsoniter.Unmarshal(jsonBytes, vv.Interface()); err == nil {
+								if err := goJSON.Unmarshal(jsonBytes, vv.Interface()); err == nil {
 									inArgsValues[i] = vv.Elem()
 								}
 							}

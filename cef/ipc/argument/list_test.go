@@ -8,7 +8,7 @@ func TestList(t *testing.T) {
 	list := &List{
 		Data: make([]string, 0),
 	}
-	json := list.JSON()
+	json := list.JSON().JSONArray()
 	json.Add("value1")
 	json.Add("value2")
 	json.Add("value3")
