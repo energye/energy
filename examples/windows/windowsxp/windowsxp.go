@@ -61,22 +61,38 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	// 3. 触发后将canClose设置为true, 发送消息到主窗口关闭，触发 m.SetOnCloseQuery
 	m.chromium.SetOnBeforeClose(m.chromiumBeforeClose)
 
-	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, client *cef.ICefClient, browserSettings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo,
+		popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, client *cef.ICefClient, browserSettings *cef.TCefBrowserSettings,
+		resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		fmt.Println("beforePopupInfo:", beforePopupInfo.TargetUrl, beforePopupInfo.TargetDisposition, beforePopupInfo.TargetFrameName, beforePopupInfo.UserGesture)
 		fmt.Println(*noJavascriptAccess)
 		fmt.Println(browser.BrowserId(), frame.Identifier(), frame.Url(), frame.V8Context().Frame().Url())
 		fmt.Printf("windowInfo: %+v\n", windowInfo)
 		fmt.Printf("browserSettings: %+v\n", browserSettings)
 		fmt.Printf("popupFeatures: %+v\n", popupFeatures)
-		extraInfo := cef.DictionaryValueRef.New()
-		*resultExtraInfo = *extraInfo
+
+		wp := cef.NewWindowProperty()
+		wp.Url = "https://www.baidu.com"
+		//window := cef.NewLCLWindow(wp)
+		//window.Show()
 		return true
 	})
 
-	//m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-	//	fmt.Println("SetOnRenderCompMsg", *lResult, *aHandled)
-	//	//*aHandled = true
-	//})
+	m.chromium.SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+		fmt.Println("SetOnRenderCompMsg", *lResult, *aHandled)
+		//*aHandled = true
+	})
+
+	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+		fmt.Println("SetOnBeforeContextMenu")
+	})
+	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
+		fmt.Println("SetOnContextMenuCommand")
+		return false
+	})
+	m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
+		fmt.Println("SetOnBeforeResourceLoad", frame.Url())
+	})
 }
 
 func (m *BrowserWindow) show(sender lcl.IObject) {

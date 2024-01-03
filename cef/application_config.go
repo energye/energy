@@ -200,12 +200,17 @@ func (m *TCEFApplication) SetMultiThreadedMessageLoop(value bool) {
 }
 
 func (m *TCEFApplication) ExternalMessagePump() bool {
-	r1, _, _ := imports.Proc(def.CEFAppConfig_ExternalMessagePump).Call()
-	return api.GoBool(r1)
+	if !m.IsSpecVer49() {
+		r1, _, _ := imports.Proc(def.CEFAppConfig_ExternalMessagePump).Call()
+		return api.GoBool(r1)
+	}
+	return false
 }
 
 func (m *TCEFApplication) SetExternalMessagePump(value bool) {
-	imports.Proc(def.CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
+	if !m.IsSpecVer49() {
+		imports.Proc(def.CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
+	}
 }
 
 func (m *TCEFApplication) WindowlessRenderingEnabled() bool {
@@ -705,7 +710,9 @@ func (m *TCEFApplication) EnablePrintPreview() bool {
 }
 
 func (m *TCEFApplication) SetEnablePrintPreview(value bool) {
-	imports.Proc(def.CEFAppConfig_SetEnablePrintPreview).Call(api.PascalBool(value))
+	if !m.IsSpecVer49() {
+		imports.Proc(def.CEFAppConfig_SetEnablePrintPreview).Call(api.PascalBool(value))
+	}
 }
 
 func (m *TCEFApplication) DefaultEncoding() string {
