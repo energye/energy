@@ -3,6 +3,7 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -15,7 +16,7 @@ func main() {
 	wd, _ := os.Getwd()
 	file := os.Args[1]
 	filePath := filepath.Join(wd, file)
-	data, err := os.ReadFile(filePath)
+	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		println(err.Error())
 		return

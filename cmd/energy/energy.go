@@ -20,6 +20,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/golcl/energy/homedir"
 	"github.com/jessevdk/go-flags"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -33,6 +34,7 @@ var commands = []*command.Command{
 	internal.CmdEnv,
 	internal.CmdInit,
 	internal.CmdBuild,
+	internal.CmdBindata,
 }
 
 func main() {
@@ -46,16 +48,15 @@ func termRun() {
 	parser := flags.NewParser(cc, flags.HelpFlag|flags.PassDoubleDash)
 	if len(os.Args) < 2 {
 		parser.WriteHelp(term.TermOut)
-		//exit <- 1
 		os.Exit(1)
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
-		if extraArgs[0] == "-v" || extraArgs[0] == "v" {
+		if len(extraArgs) > 0 && (extraArgs[0] == "-v" || extraArgs[0] == "v") {
 			term.Section.Println(" ", term.CliVersion)
+			os.Exit(0)
 		} else {
 			println(err.Error())
 		}
-		//exit <- 1
 		os.Exit(1)
 	} else {
 		switch parser.Active.Name {
@@ -73,21 +74,17 @@ func termRun() {
 			cc.Index = 6
 		case "build":
 			cc.Index = 7
+		case "bindata":
+			cc.Index = 8
 		case "v":
 			term.Section.Println(" ", term.CliVersion)
 			return
 		}
 		cmd := commands[cc.Index]
-		if len(extraArgs) < 1 || extraArgs[len(extraArgs)-1] != "." {
-			term.Section.Println(cmd.UsageLine, "\n", cmd.Long)
-			//exit <- 1
-			os.Exit(1)
-		}
 		term.Section.Println(cmd.Short)
 		readConfig(cc)
 		if err := cmd.Run(cc); err != nil {
 			term.Section.Println(err.Error())
-			//exit <- 1
 			os.Exit(1)
 		}
 	}
@@ -120,13 +117,13 @@ func readConfig(c *command.Config) {
 			term.Section.Println(err.Error())
 			return
 		}
-		if err := os.WriteFile(config, cfgJSON, 0644); err != nil {
+		if err := ioutil.WriteFile(config, cfgJSON, 0644); err != nil {
 			term.Section.Println(err.Error())
 			return
 		}
 		c.EnergyCfg = cfg
 	} else {
-		cfgJSON, err := os.ReadFile(config)
+		cfgJSON, err := ioutil.ReadFile(config)
 		if err != nil {
 			term.Section.Println(err.Error())
 			return

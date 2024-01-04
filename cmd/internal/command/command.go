@@ -24,6 +24,7 @@ type Config struct {
 	Env       Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
 	Init      Init    `command:"init" description:"initialize the energy application project"`
 	Build     Build   `command:"build" description:"building an energy project"`
+	Bindata   Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
 	V         string  `command:"v" description:"energy cli version"`
 }
 
@@ -81,6 +82,23 @@ type Build struct {
 	UpxFlag     string `long:"upxFlag" description:"Upx command line parameters" default:""`
 	TempDll     bool   `short:"d" long:"dll" description:"Enable built-in liblcl build"`
 	TempDllFlag string `long:"tempDllFlag" description:"TempDll parameters" default:"latest"`
+}
+
+type Bindata struct {
+	Debug      bool   `long:"debug" description:"Do not embed the assets, but provide the embedding API. Contents will still be loaded from disk."`
+	Dev        bool   `long:"dev" description:"Similar to debug, but does not emit absolute paths. Expects a rootDir variable to already exist in the generated code's package."`
+	Tags       string `long:"tags" description:"Optional set of build tags to include." default:""`
+	Prefix     string `long:"prefix" description:"Optional path prefix to strip off asset names." default:""`
+	Package    string `long:"pkg" description:"Package name to use in the generated code." default:"main"`
+	NoMemCopy  bool   `long:"nomemcopy" description:"Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries."`
+	NoCompress bool   `long:"nocompress" description:"Assets will *not* be GZIP compressed when this flag is specified."`
+	NoMetadata bool   `long:"nometadata" description:"Assets will not preserve size, mode, and modtime info."`
+	FSSystem   bool   `long:"fs" description:"Whether generate instance http.FileSystem interface code."`
+	Mode       uint   `long:"mode" description:"Optional file mode override for all files."`
+	ModTime    int64  `long:"modtime" description:"Optional modification unix timestamp override for all files."`
+	Output     string `long:"o" description:"Optional name of the output file to be generated." default:"./bindata.go"`
+	Ignore     string `long:"Ignore" description:"Regex pattern to ignore." default:""`
+	Paths      string `long:"paths" description:"Static resource directory" default:""`
 }
 
 type EnergyConfig struct {
