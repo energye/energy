@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/examples/windows/windowsxp/test"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
@@ -18,12 +19,12 @@ import (
     以达到静态资源内嵌
 */
 // 以下命令生成静态资源“字节数据”进行绑定，使用 go 命令: go generate
-//go:generate energy bindata -fs -o=assets.go -pkg=assets ./assets
+//go:generate energy bindata --fs --o=assets/assets.go --pkg=assets --paths=./resources
 
 func main() {
-
+	fs := test.AssetFile()
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, nil)
+	cef.GlobalInit(nil, fs)
 	//创建应用
 	app := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
@@ -35,7 +36,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
-		server.Assets = &resources
+		server.Assets = fs
 		go server.StartHttpServer()
 	})
 	//运行应用

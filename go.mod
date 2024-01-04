@@ -12,6 +12,7 @@ require (
 	atomicgo.dev/keyboard v0.2.9
 	github.com/godbus/dbus/v5 v5.1.0
 	github.com/jessevdk/go-flags v1.5.0
+	github.com/kenshaw/snaker v0.2.0 // indirect
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/mattn/go-pointer v0.0.1
 	github.com/pterm/pterm v0.12.66
