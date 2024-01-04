@@ -88,7 +88,7 @@ func (m *LCLBrowserWindow) Restore() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		m.SetWindowState(types.WsNormal)
 	})
 }
@@ -98,7 +98,7 @@ func (m *LCLBrowserWindow) Minimize() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		m.SetWindowState(types.WsMinimized)
 	})
 }
@@ -108,7 +108,7 @@ func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if m.WindowState() == types.WsMaximized {
 			// 当前窗口是最大化状态 > 恢复窗口
 			// 此时记录窗口状态
@@ -142,7 +142,7 @@ func (m *LCLBrowserWindow) Maximize() {
 
 // FullScreen 窗口全屏
 func (m *LCLBrowserWindow) FullScreen() {
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		// 将窗口全屏
 		// 在无标题栏窗口时，最大化和全屏正常是无法改变窗口状态
 		// 因此需要自己处理窗口大小, 在此之前需要记录窗口状态
@@ -159,7 +159,7 @@ func (m *LCLBrowserWindow) FullScreen() {
 
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		// 恢复窗口大小
 		wp := m.WindowProperty()
 		if wp.EnableHideCaption {

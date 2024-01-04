@@ -41,6 +41,12 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 		}
 		wp.UpdateSize()
 	}
+	// 当前应用是LCL窗口预先创建下一个window
+	if !application.IsMessageLoop() {
+		RunOnMainThread(func() {
+			BrowserWindow.createNextLCLPopupWindow()
+		})
+	}
 	localLoadRes.loadDefaultURL(window, browser)
 	return false
 }
@@ -56,13 +62,6 @@ func chromiumOnBeforeBrowser(bw IBrowserWindow, browser *ICefBrowser, frame *ICe
 	// 只LCL窗口使用自定义的窗口拖拽
 	if bw.IsLCL() {
 		dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension
-	}
-	// 当前应用是LCL窗口预先创建下一个window
-	if !application.IsMessageLoop() {
-		QueueAsyncCall(func(id int) {
-			// lcl
-			BrowserWindow.createNextLCLPopupWindow()
-		})
 	}
 	// 方式二 本地资源加载处理器
 	localLoadRes.getSchemeHandlerFactory(bw, browser)

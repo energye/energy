@@ -102,12 +102,12 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.defaultWindowCloseEvent()
 	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.defaultChromiumEvent()
-	m.setProperty()
+	m.SetProperty()
 	m.SetShowInTaskBar()
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
-		m.setProperty() //再次设置可能修改属性
+		m.SetProperty() //再次设置可能修改属性
 	}
 	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
 	m.registerWindowsCompMsgEvent()
@@ -519,6 +519,8 @@ func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChang
 // SetOnBeforePopup
 //
 //	弹出窗口, 已被默认实现的函数
+//  此时的chromium还未创建, 如需要获得chromium你需要先自己创建, 可通过 ChromiumCreate 或 自定义实现 NewChromium, 此时应返回true, 否则使用默认行为Chromium应返回false
+//  该事件回调会在任意线程中执行，在操作相关窗口(UI)时应在UI线程中操作 RunOnMainThread
 //	函数返回值
 //	  false: 窗口会以默认行为管理
 //	  true: 需要你自己管理窗口行为

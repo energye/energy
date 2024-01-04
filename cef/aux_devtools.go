@@ -46,7 +46,7 @@ func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
 				devTools.SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
 				devTools.DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
 			}
-			browserWindow.RunOnMainThread(func() { // show window, run is main ui thread
+			RunOnMainThread(func() { // show window, run is main ui thread
 				devTools.DevTools().Show()
 			})
 		} else {

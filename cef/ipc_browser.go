@@ -158,7 +158,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 							bw.drag.Y = int32(object.GetIntByKey("Y"))
 							bw.drag.window = wi
 						}
-						wi.RunOnMainThread(func() {
+						RunOnMainThread(func() {
 							wi.AsLCLBrowserWindow().BrowserWindow().doDrag()
 						})
 					}

@@ -350,7 +350,7 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 		scp = winapi.ScalePercent()
 	}
 	//在主线程中运行
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if m.cwcap.rgn == nil {
 			//第一次时创建RGN
 			m.cwcap.rgn = winapi.CreateRectRgn(0, 0, 0, 0)
@@ -416,7 +416,7 @@ func (m *LCLBrowserWindow) Restore() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if win.ReleaseCapture() {
 			win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
 		}
@@ -428,7 +428,7 @@ func (m *LCLBrowserWindow) Minimize() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if win.ReleaseCapture() {
 			win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MINIMIZE, 0)
 		}
@@ -440,7 +440,7 @@ func (m *LCLBrowserWindow) Maximize() {
 	if m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if win.ReleaseCapture() {
 			if m.WindowState() == types.WsNormal {
 				win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
@@ -454,7 +454,7 @@ func (m *LCLBrowserWindow) Maximize() {
 // FullScreen 窗口全屏
 func (m *LCLBrowserWindow) FullScreen() {
 	if m.WindowProperty().EnableHideCaption {
-		m.RunOnMainThread(func() {
+		RunOnMainThread(func() {
 			m.WindowProperty().current.ws = types.WsFullScreen
 			m.setCurrentProperty()
 			m.SetBoundsRect(m.Monitor().BoundsRect())
@@ -466,7 +466,7 @@ func (m *LCLBrowserWindow) FullScreen() {
 func (m *LCLBrowserWindow) ExitFullScreen() {
 	wp := m.WindowProperty()
 	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
-		m.RunOnMainThread(func() {
+		RunOnMainThread(func() {
 			wp.current.ws = types.WsNormal
 			m.SetWindowState(types.WsNormal)
 			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)

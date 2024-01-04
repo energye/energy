@@ -97,7 +97,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 	window = new(LCLBrowserWindow)
 	window.TForm = lcl.NewForm(owner)
 	// 窗口设置一个名字
-	window.TForm.SetName(fmt.Sprintf("Form_%d", time.Now().UnixMilli()))
+	window.TForm.SetName(fmt.Sprintf("Form_%d", time.Now().UnixNano()/1e6))
 	window.windowProperty = &windowProperty
 	window.cwcap = &customWindowCaption{
 		bw: window,
@@ -107,7 +107,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 	window.FormCreate()
 	window.SetShowInTaskBar()
 	window.defaultWindowEvent()
-	window.setProperty()
+	window.SetProperty()
 	return window
 }
 
@@ -155,8 +155,8 @@ func (m *LCLBrowserWindow) AsTargetWindow() target.IWindow {
 	return m
 }
 
-// 设置属性
-func (m *LCLBrowserWindow) setProperty() {
+// SetProperty 设置属性, 根据当前窗口的自定义 WindowProperty
+func (m *LCLBrowserWindow) SetProperty() {
 	wp := m.WindowProperty()
 	m.SetTitle(wp.Title)
 	if wp.IconFS != "" {
@@ -1026,17 +1026,15 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
 			bw := next.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-			bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
 			var result = false
 			if bwEvent.onBeforePopup != nil {
 				result = bwEvent.onBeforePopup(sender, bw, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 			}
 			if !result { // true 表示用户自行处理
-				bw.defaultWindowCloseEvent()
-				bw.defaultChromiumEvent()
-				bw.registerWindowsCompMsgEvent()
-				bw.setProperty()
-				m.RunOnMainThread(func() {
+				RunOnMainThread(func() {
+					bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
+					bw.EnableAllDefaultEvent()
+					bw.SetProperty()
 					// show window, run in main thread
 					if bw.WindowProperty().IsShowModel {
 						bw.ShowModal()
@@ -1057,7 +1055,7 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 	if m == nil || m.TForm == nil {
 		return
 	}
-	m.RunOnMainThread(func() {
+	RunOnMainThread(func() {
 		if IsDarwin() {
 			//main window close
 			if m.WindowType() == consts.WT_MAIN_BROWSER {
@@ -1140,7 +1138,7 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 		} else {
 			*close = m.canClose
 		}
-		m.RunOnMainThread(func() {
+		RunOnMainThread(func() {
 			if !m.isClosing {
 				m.isClosing = true
 				m.Chromium().CloseBrowser(true)
@@ -1173,7 +1171,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 				*aAction = consts.CbaDelay
 			}
 			if !IsDarwin() {
-				m.RunOnMainThread(func() { //run in main thread
+				RunOnMainThread(func() { //run in main thread
 					m.WindowParent().Free()
 					logger.Debug("chromium.onClose => windowParent.Free")
 				})
@@ -1209,7 +1207,7 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 			// 最后再移除
 			//BrowserWindow.removeWindowInfo(m.windowId)
 			chromiumOnBeforeClose(m, browser)
-			m.RunOnMainThread(func() { // main thread run
+			RunOnMainThread(func() { // main thread run
 				closeWindow()
 			})
 		}
