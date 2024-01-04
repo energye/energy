@@ -52,6 +52,15 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 	return application
 }
 
+// SetApplication
+//
+//  设置全局 Application
+func SetApplication(app *TCEFApplication) {
+	if application == nil {
+		application = app
+	}
+}
+
 // CreateApplication
 //
 //	创建CEF Application

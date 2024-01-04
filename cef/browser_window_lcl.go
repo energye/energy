@@ -73,8 +73,11 @@ type LCLBrowserWindow struct {
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
 //
 //	该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
-	var browseWindow = NewLCLWindow(windowProperty, owner...)
+//  config: Chromium配置, 提供快捷chromium配置
+//  windowProperty: 窗口属性
+//  owner: 被创建组件拥有者
+func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner lcl.IComponent) *LCLBrowserWindow {
+	var browseWindow = NewLCLWindow(windowProperty, owner)
 	browseWindow.ChromiumCreate(config, windowProperty.Url)
 	//OnBeforeBrowser 是一个必须的默认事件，在浏览器创建时窗口序号会根据browserId生成
 	browseWindow.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
@@ -85,14 +88,16 @@ func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProper
 }
 
 // NewLCLWindow 创建一个LCL window窗口
-func NewLCLWindow(windowProperty WindowProperty, owner ...lcl.IComponent) *LCLBrowserWindow {
+//
+//  windowProperty: 窗口属性
+//  owner: 被创建组件拥有者
+func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrowserWindow {
 	var window *LCLBrowserWindow
-	//if len(owner) > 0 {
-	//} else {
-	//	window.TForm = lcl.Application.CreateForm(BrowserWindow.mainBrowserWindow)
-	//	//lcl.Application.CreateForm(&window)
-	//}
-	lcl.Application.CreateForm(&window)
+	//lcl.Application.CreateForm(&window)
+	window = new(LCLBrowserWindow)
+	window.TForm = lcl.NewForm(owner)
+	// 窗口设置一个名字
+	window.TForm.SetName(fmt.Sprintf("Form_%d", time.Now().UnixMilli()))
 	window.windowProperty = &windowProperty
 	window.cwcap = &customWindowCaption{
 		bw: window,

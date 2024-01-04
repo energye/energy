@@ -59,7 +59,7 @@ func main() {
 			wp.Title = name
 			wp.EnableHideCaption = true // 无标题窗口
 			// 创建浏览器窗口
-			newWindow := cef.NewBrowserWindow(nil, wp)
+			newWindow := cef.NewBrowserWindow(nil, wp, nil)
 			newWindow.SetWidth(800)
 			newWindow.SetHeight(600)
 			// EnableAllDefaultEvent 启用所有默认实现事件

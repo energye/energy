@@ -21,13 +21,14 @@ import (
 )
 
 // 浏览器包装结构体
+//
+//  主窗口、弹出子进程、默认浏览器实现的事件、窗口维护集合、浏览器配置 仅在主进程中使用
 type browserWindow struct {
-	mainBrowserWindow   *lclBrowserWindow            //LCL 主浏览器窗口
-	mainVFBrowserWindow *ViewsFrameworkBrowserWindow //Views Frameworks 主浏览器窗口
-	popupWindow         IBrowserWindow               //弹出的子窗口
-	browserEvent        *BrowserEvent                //浏览器全局事件, 已默认实现事件
-	Config              *browserConfig               //浏览器和窗口配置
-	windowInfo          map[int32]IBrowserWindow     //窗口信息集合 仅在主进程中使用
+	mainBrowserWindow IBrowserWindow           // 主浏览器窗口
+	popupWindow       IBrowserWindow           // 弹出的子窗口
+	browserEvent      *BrowserEvent            // 浏览器全局事件, 已默认实现事件
+	Config            *browserConfig           // 浏览器和窗口配置
+	windowInfo        map[int32]IBrowserWindow // 窗口信息集合
 }
 
 // BrowserEvent 浏览器全局事件监听-已被默认实现事件
@@ -68,16 +69,15 @@ type disableMainWindow struct {
 
 // 创建LCL窗口并运行应用
 func (m *browserWindow) createFormAndRun() {
-	// 创建LCL窗口组件
-	if BrowserWindow.mainBrowserWindow == nil {
-		BrowserWindow.mainBrowserWindow = new(lclBrowserWindow)
-	}
 	// LCL窗口
 	lcl.Application.Initialize()
 	lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
 	if m.Config.EnableMainWindow {
-		lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
+		// 使用主窗口创建
+		lcl.Application.CreateForm(&enableMainWindow, true)
+		BrowserWindow.mainBrowserWindow = enableMainWindow
 	} else {
+		// 使用禁用窗口创建, 它默认不会显示, 在它的 OnFormCreate 中创建主窗口
 		lcl.Application.CreateForm(&disabledMainWindow, true)
 		lcl.Application.SetShowMainForm(false)
 	}
@@ -87,9 +87,10 @@ func (m *browserWindow) createFormAndRun() {
 // OnFormCreate disableMainWindow
 func (m *disableMainWindow) OnFormCreate(sender lcl.IObject) {
 	// 禁用主窗口后需要创建一个新的窗口来代替主窗口显示
-	lcl.Application.CreateForm(&BrowserWindow.mainBrowserWindow, true)
+	lcl.Application.CreateForm(&enableMainWindow, true)
+	BrowserWindow.mainBrowserWindow = enableMainWindow
 	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该主窗口关闭，在获取主窗口函数将返回无效的窗口
-	BrowserWindow.mainBrowserWindow.Show()
+	BrowserWindow.MainWindow().Show()
 }
 
 // OnFormCreate LCL窗口组件窗口创建回调
@@ -132,13 +133,8 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 //	返回LCL或VF窗口组件实例
 //	Window和MacOS平台LCL窗口组件
 //	Linux平台VF窗口组件
-func (m *browserWindow) MainWindow() (window IBrowserWindow) {
-	if m.mainVFBrowserWindow != nil {
-		return m.mainVFBrowserWindow
-	} else if m.mainBrowserWindow != nil {
-		return m.mainBrowserWindow
-	}
-	return nil
+func (m *browserWindow) MainWindow() IBrowserWindow {
+	return m.mainBrowserWindow
 }
 
 // SetBrowserInit 主窗口初始化时回调

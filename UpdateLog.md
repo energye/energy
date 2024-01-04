@@ -44,4 +44,7 @@ golcl 增加 支持 go1.10的打开文件接口
 
 Go
   移除 liblclbinres 在构建时生成二进制liblcl.go , 将go-bindata集成到energy命令行工具中
-  energy命令行工具中集成 go-bindata
+  命令行工具 
+     集成 go-bindata
+     build 增加自定义扩展参数
+  

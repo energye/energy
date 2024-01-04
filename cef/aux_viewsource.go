@@ -33,7 +33,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 			wp.Url = viewSourceUrl
 			wp.Title = fmt.Sprintf("%s - %s", viewSourceName, frame.Url())
 			wp.WindowType = WT_VIEW_SOURCE
-			viewSourceWindow := NewLCLBrowserWindow(nil, wp)
+			viewSourceWindow := NewLCLBrowserWindow(nil, wp, nil)
 			viewSourceWindow.SetWidth(800)
 			viewSourceWindow.SetHeight(600)
 			if common.IsDarwin() || common.IsLinux() {
@@ -51,7 +51,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 				wp.Url = beforePopupInfo.TargetUrl
 				wp.Title = beforePopupInfo.TargetUrl
 				wp.WindowType = WT_VIEW_SOURCE
-				bw := NewLCLBrowserWindow(nil, wp)
+				bw := NewLCLBrowserWindow(nil, wp, nil)
 				bw.SetWidth(800)
 				bw.SetHeight(600)
 				bw.EnableDefaultCloseEvent()

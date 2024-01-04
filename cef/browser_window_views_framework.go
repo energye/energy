@@ -56,16 +56,15 @@ type ViewsFrameworkBrowserWindow struct {
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
-func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) *ViewsFrameworkBrowserWindow {
+//
+// config: Chromium配置, 提供快捷chromium配置
+// windowProperty: 窗口属性
+// owner: 被创建组件拥有者
+func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner lcl.IComponent) *ViewsFrameworkBrowserWindow {
 	if config == nil {
 		config = NewChromiumConfig()
 	}
-	var component lcl.IComponent
-	if len(owner) > 0 {
-		component = lcl.NewComponent(owner[0])
-	} else {
-		component = lcl.NewComponent(nil)
-	}
+	var component = lcl.NewComponent(owner)
 	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       &windowProperty,
 		component:            component,
@@ -127,7 +126,7 @@ func appContextInitialized() {
 	application.SetOnContextInitialized(func() {
 		// 主窗口
 		m.Config.WindowProperty.WindowType = consts.WT_MAIN_BROWSER
-		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty)
+		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty, nil)
 
 		// 主窗口关闭流程 before close
 		// OnCanClose如果阻止关闭，该函数不会执行
@@ -167,7 +166,7 @@ func appContextInitialized() {
 			}
 		})
 		// 设置到 MainBrowser, 主窗口有且仅有一个
-		BrowserWindow.mainVFBrowserWindow = vfMainWindow
+		BrowserWindow.mainBrowserWindow = vfMainWindow
 		if m.Config.browserWindowOnEventCallback != nil {
 			BrowserWindow.browserEvent.chromium = vfMainWindow.chromium
 			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vfMainWindow)

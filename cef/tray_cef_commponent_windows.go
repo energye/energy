@@ -69,7 +69,7 @@ func (m *CEFTray) AsLCLTray() *LCLTray {
 
 // Show 显示/启动 托盘
 func (m *CEFTray) Show() {
-	if BrowserWindow.mainBrowserWindow.Chromium() == nil || !BrowserWindow.mainBrowserWindow.Chromium().Initialized() {
+	if BrowserWindow.MainWindow().Chromium() == nil || !BrowserWindow.MainWindow().Chromium().Initialized() {
 		return
 	}
 	m.TForm.Show()

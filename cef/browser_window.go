@@ -215,17 +215,20 @@ func (m *auxTools) DevTools() *devToolsWindow {
 //	 窗口类型
 //		  	LCL: 是基于LCL组件库创建的窗口，相比VF有多更的原生小部件使用，更多的窗口操作
 //			VF : 是基于CEF ViewFramework 组件创建的窗口, 相比LCL无法使用系统原生小部件，较少的窗口操作
-func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner ...lcl.IComponent) IBrowserWindow {
+//  config: Chromium配置, 提供快捷chromium配置
+//  windowProperty: 窗口属性
+//  owner: 被创建组件拥有者
+func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner lcl.IComponent) IBrowserWindow {
 	// 获取当前应用的主窗口
 	main := BrowserWindow.MainWindow()
-	// 设置为弹出的子窗口
+	// 设置为子窗口
 	windowProperty.WindowType = consts.WT_POPUP_SUB_BROWSER
 	if main.IsLCL() {
 		// 创建LCL窗口
-		return NewLCLBrowserWindow(config, windowProperty, owner...)
+		return NewLCLBrowserWindow(config, windowProperty, owner)
 	} else if main.IsViewsFramework() {
 		// 创建VF窗口
-		return NewViewsFrameworkBrowserWindow(config, windowProperty, owner...)
+		return NewViewsFrameworkBrowserWindow(config, windowProperty, owner)
 	}
 	return nil
 }

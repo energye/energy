@@ -35,7 +35,9 @@ var (
 		windowInfo: make(map[int32]IBrowserWindow),
 	}
 	// disabledMainWindow 如果在Config配置中禁用主窗口(EnableMainWindow=false)时, 使用该窗口替代主窗口
-	disabledMainWindow               *disableMainWindow
+	disabledMainWindow *disableMainWindow
+	// LCL 主窗口实例
+	enableMainWindow                 *lclBrowserWindow
 	browserProcessStartAfterCallback browserProcessStartAfterCallbackFunc
 )
 
