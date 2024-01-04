@@ -30,6 +30,7 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	app := cef.CreateApplication()
 	cef.SetApplication(app)
+	// 指定 CEF Framework
 	app.SetFrameworkDirPath("E:\\app\\energy\\EnergyFramework\\")
 	if app.StartMainProcess() {
 		// 结束应用后释放资源
