@@ -1,22 +1,25 @@
+
+### 2.4.0
+
 #### Windows XP 版本支持
 
-
+```text
 go1.10 是最后一个支持WinXP的, 但是编译出的exe对CEF封装的不好
 go1.11.4 和1.11.13 编译出的exe可以在WinXP SP3 运行, 测试赞未发现问题
 windows xp go 1.11.13 
 
-以下修改需同步到其它特定分枝和主分枝
+以下修改liblcl需同步到其它特定分枝和主分枝
 
 增加了特定版本支持 API
 liblcl
     CEFAppConfig_SpecificVersion  OK
 
-修改字符串返回, 使用TString API
+修改字符串返回, 使用TString API  OK
 liblcl
     CEFFrame_Name
     CEFFrame_Url
 
-侯改 ChromiumEvent_OnBeforePopup
+侯改 ChromiumEvent_OnBeforePopup  OK
 Go
     SetOnBeforePopup 增加 settings *TCefBrowserSettings
 liblcl
@@ -47,4 +50,5 @@ Go
   命令行工具 
      集成 go-bindata
      build 增加自定义扩展参数
-  
+
+```

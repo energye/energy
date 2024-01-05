@@ -22,7 +22,7 @@ var CmdBindata = &command.Command{
 	Short:     "Use bindata to embed static resources",
 	Long: `
 	If the go version is less than 1.16, you can use bindata to embed static resources
-	  Example: go:generate energy bindata --fs --o=assets/assets.go --pkg=assets --paths=./resources
+	  Example: go:generate energy bindata --fs --o=assets/assets.go --pkg=assets --paths=./resources,./assets
 	.  Execute command
 `,
 }

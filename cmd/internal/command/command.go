@@ -82,6 +82,7 @@ type Build struct {
 	UpxFlag     string `long:"upxFlag" description:"Upx command line parameters" default:""`
 	TempDll     bool   `short:"d" long:"dll" description:"Enable built-in liblcl build"`
 	TempDllFlag string `long:"tempDllFlag" description:"TempDll parameters" default:"latest"`
+	Args        string `long:"args" description:"go build [args]" default:""`
 }
 
 type Bindata struct {
@@ -98,7 +99,7 @@ type Bindata struct {
 	ModTime    int64  `long:"modtime" description:"Optional modification unix timestamp override for all files."`
 	Output     string `long:"o" description:"Optional name of the output file to be generated." default:"./bindata.go"`
 	Ignore     string `long:"Ignore" description:"Regex pattern to ignore." default:""`
-	Paths      string `long:"paths" description:"Static resource directory" default:""`
+	Paths      string `long:"paths" description:"Static resource directory, Multiple Catalogs: ./resource,./libs" default:""`
 }
 
 type EnergyConfig struct {

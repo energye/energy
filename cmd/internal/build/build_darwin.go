@@ -32,6 +32,12 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	if proj.TempDll {
 		args = append(args, "--tags=tempdll "+c.Build.TempDllFlag)
 	}
+	if c.Build.Args != "" {
+		gbargs := strings.Split(c.Build.Args, " ")
+		for i := range gbargs {
+			args = append(args, gbargs[i])
+		}
+	}
 	args = append(args, "-ldflags", "-s -w")
 	args = append(args, "-o", proj.OutputFilename)
 	cmd.Command("go", args...)
