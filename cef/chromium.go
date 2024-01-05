@@ -13,6 +13,8 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -48,7 +50,8 @@ func NewChromium(owner lcl.IComponent, config *TCefChromiumConfig) IChromium {
 	} else {
 		m.config = NewChromiumConfig()
 	}
-	m.instance = unsafe.Pointer(_CEFChromium_Create(lcl.CheckPtr(owner)))
+	r1, _, _ := imports.Proc(def.CEFChromium_Create).Call(lcl.CheckPtr(owner))
+	m.instance = unsafe.Pointer(r1)
 	m.initDefault()
 	m.options = NewChromiumOptions(m)
 	return m
@@ -68,16 +71,4 @@ func (m *TCEFChromium) Instance() uintptr {
 		return 0
 	}
 	return uintptr(m.instance)
-}
-
-// ExecuteJavaScript
-// 执行JS代码
-//
-// code: js代码
-//
-// scriptURL: js脚本地址 默认about:blank
-//
-// startLine: js脚本启始执行行号
-func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32) {
-	_CEFChromium_ExecuteJavaScript(uintptr(m.instance), code, scriptURL, startLine)
 }
