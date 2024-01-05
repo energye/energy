@@ -658,6 +658,9 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_StopFinding", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GetRequestContext", 0),
 		dllimports.NewEnergyImport("CEFBrowserRef_UnWrap", 0),
+		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessage", 0),             // CEF 49
+		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessageForJSONBytes", 0), // CEF 49
+		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessageForV8Value", 0),   // CEF 49
 		// ICefRequestContext
 		dllimports.NewEnergyImport("RequestContextRef_Global", 0),
 		dllimports.NewEnergyImport("RequestContextRef_New", 0),

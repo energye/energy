@@ -17,6 +17,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/json"
 )
@@ -421,11 +422,29 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					callback := &ipcCallback{resultType: rt_function, function: V8ValueRef.UnWrap(rule.emitCallback)}
 					messageId = m.emitHandler.addCallback(callback)
 				}
-				if success := m.multiProcessAsync(m.v8Context.Frame(), messageId, rule.emitNameValue, args); !success {
+				var (
+					message   target.IProcessMessage
+					v8Context *ICefV8Context // CEF49
+				)
+				if application.IsSpecVer49() {
+					// CEF49
+					// TODO 不清楚为什么要单独获取一次，尝试在全局定义一个和局部获取都不能完成发送消息???
+					//      其它地方又不需要重新获取???
+					v8Context = V8ContextRef.Current()
+					message = v8Context.Browser()
+				} else {
+					message = m.v8Context.Frame()
+				}
+				// 在多进程时，发送多进程异步消息，如果当前CEF版本是CEF49使用Browser的发送消息函数
+				if success := m.multiProcessAsync(message, messageId, rule.emitNameValue, args); !success {
 					//失败，释放回调函数
 					rule.emitCallback.SetCanNotFree(false)
 				}
 				retVal.SetResult(V8ValueRef.NewBool(true))
+				if v8Context != nil {
+					// CEF49
+					v8Context.Free()
+				}
 			}
 		}
 	} else {
@@ -509,14 +528,14 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 }
 
 // multiProcessAsync 多进程消息 - 异步
-func (m *ipcRenderProcess) multiProcessAsync(frame *ICefFrame, messageId int32, emitName string, data interface{}) bool {
-	if frame != nil {
+func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessage, messageId int32, emitName string, data interface{}) bool {
+	if processMessage != nil {
 		message := &ipcArgument.List{
 			Id:        messageId,
 			EventName: emitName,
 			Data:      data,
 		}
-		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
+		processMessage.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
 		message.Reset()
 		return true
 	}
@@ -676,6 +695,10 @@ func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(argumentList json
 
 // makeIPC ipc
 func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
+	if m.ipcObject != nil {
+		// 刷新时释放掉
+		m.clear()
+	}
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
@@ -688,10 +711,6 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	m.onHandler.handler = V8HandlerRef.New()
 	m.onHandler.handler.Execute(m.jsOnEvent)
 
-	if m.ipcObject != nil {
-		// 刷新时释放掉
-		m.ipcObject.Free()
-	}
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)

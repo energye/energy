@@ -15,9 +15,12 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
@@ -548,6 +551,69 @@ func (m *ICefBrowser) GetRequestContext() *ICefRequestContext {
 		return m.requestContext
 	}
 	return nil
+}
+
+// SendProcessMessage 发送进程消息
+//  仅支持 CEF49
+func (m *ICefBrowser) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
+	if application.IsSpecVer49() {
+		if !m.IsValid() {
+			return
+		}
+		imports.Proc(def.CEFBrowser_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
+		message.Free()
+	}
+}
+
+// SendProcessMessageForJSONBytes 发送进程消息
+//  仅支持 CEF49
+func (m *ICefBrowser) SendProcessMessageForJSONBytes(messageName string, targetProcess CefProcessId, data []byte) {
+	if application.IsSpecVer49() {
+		if !m.IsValid() {
+			return
+		}
+		imports.Proc(def.CEFBrowser_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
+	}
+}
+
+// SendProcessMessageForV8Value 发送进程消息
+//  仅支持 CEF49
+func (m *ICefBrowser) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
+	if application.IsSpecVer49() {
+		if !m.IsValid() {
+			return
+		}
+		imports.Proc(def.CEFBrowser_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
+	}
+}
+
+// EmitRender IPC 发送进程 消息
+//
+// messageId != 0 是带有回调函数消息
+//  仅支持 CEF49
+func (m *ICefBrowser) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
+	if !application.IsSpecVer49() {
+		return false
+	}
+	if !m.IsValid() {
+		return false
+	}
+	message := &argument.List{Id: messageId, EventName: eventName}
+	if len(data) > 0 {
+		argumentJSONArray := json.NewJSONArray(nil)
+		for _, result := range data {
+			switch result.(type) {
+			case error:
+				argumentJSONArray.Add(result.(error).Error())
+			default:
+				argumentJSONArray.Add(result)
+			}
+		}
+		message.Data = argumentJSONArray.Data()
+	}
+	m.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEvent, PID_RENDER, message.Bytes())
+	message.Reset()
+	return true
 }
 
 func (m *ICefBrowser) Free() {

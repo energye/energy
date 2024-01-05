@@ -75,7 +75,12 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 				replyMessage.Data = replay.Result()
 			}
 		}
-		frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+		if application.IsSpecVer49() {
+			// CEF49
+			browser.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+		} else {
+			frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+		}
 		replyMessage.Reset()
 	}
 	if ipcContext != nil {

@@ -138,7 +138,7 @@ func (m *ICefFrame) IsFocused() bool {
 
 // SendProcessMessage 发送进程消息
 func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
-	if !m.IsValid() {
+	if !m.IsValid() || application.IsSpecVer49() {
 		return
 	}
 	imports.Proc(def.CEFFrame_SendProcessMessage).Call(m.Instance(), targetProcess.ToPtr(), message.Instance())
@@ -147,7 +147,7 @@ func (m *ICefFrame) SendProcessMessage(targetProcess CefProcessId, message *ICef
 
 // SendProcessMessageForJSONBytes 发送进程消息
 func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetProcess CefProcessId, data []byte) {
-	if !m.IsValid() {
+	if !m.IsValid() || application.IsSpecVer49() {
 		return
 	}
 	imports.Proc(def.CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
@@ -155,7 +155,7 @@ func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetPro
 
 // SendProcessMessageForV8Value 发送进程消息
 func (m *ICefFrame) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
-	if !m.IsValid() {
+	if !m.IsValid() || application.IsSpecVer49() {
 		return
 	}
 	imports.Proc(def.CEFFrame_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
@@ -165,7 +165,7 @@ func (m *ICefFrame) SendProcessMessageForV8Value(messageName string, targetProce
 //
 // messageId != 0 是带有回调函数消息
 func (m *ICefFrame) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
-	if !m.IsValid() {
+	if !m.IsValid() || application.IsSpecVer49() {
 		return false
 	}
 	message := &argument.List{Id: messageId, EventName: eventName}

@@ -658,6 +658,9 @@ const (
 	CEFBrowser_StopFinding
 	CEFBrowser_GetRequestContext
 	CEFBrowserRef_UnWrap
+	CEFBrowser_SendProcessMessage             // CEF 49
+	CEFBrowser_SendProcessMessageForJSONBytes // CEF 49
+	CEFBrowser_SendProcessMessageForV8Value   // CEF 49
 	// ICefRequestContext
 	RequestContextRef_Global
 	RequestContextRef_New

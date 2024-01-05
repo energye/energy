@@ -12,6 +12,8 @@
 
 package target
 
+import "github.com/energye/energy/v2/consts"
+
 // Type
 //
 //	0: Trigger the JS event of the specified target process
@@ -39,6 +41,7 @@ type ITarget interface {
 // Send IPC Chromium
 type IProcessMessage interface {
 	EmitRender(messageId int32, eventName string, target ITarget, data ...interface{}) bool
+	SendProcessMessageForJSONBytes(messageName string, targetProcess consts.CefProcessId, data []byte)
 }
 
 // IWindow for IPC
