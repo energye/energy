@@ -23,7 +23,7 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
@@ -40,7 +40,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022
 		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

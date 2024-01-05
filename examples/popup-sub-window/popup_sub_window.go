@@ -37,7 +37,7 @@ func main() {
 			var newForm *cef.LCLBrowserWindow
 			ipc.On("openWindow", func() {
 				if newForm == nil {
-					newForm = cef.NewLCLWindow(cef.NewWindowProperty())
+					newForm = cef.NewLCLWindow(cef.NewWindowProperty(), nil)
 					newForm.SetTitle("新窗口标题")
 					newForm.SetWidth(400)
 					newForm.SetHeight(200)
@@ -60,7 +60,7 @@ func main() {
 					wp := cef.NewWindowProperty()
 					wp.Url = url
 					wp.Title = title
-					browserWindow = cef.NewLCLBrowserWindow(nil, wp)
+					browserWindow = cef.NewLCLBrowserWindow(nil, wp, nil)
 					browserWindow.SetWidth(width)
 					browserWindow.SetHeight(height)
 					browserWindow.SetShowInTaskBar()
@@ -125,7 +125,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022
 		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

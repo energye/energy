@@ -18,7 +18,7 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	exception.SetOnException(func(message string) {
 		fmt.Println("message", message)
 	})
@@ -103,7 +103,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = port
 		server.AssetsFSName = "resources" //必须设置目录名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

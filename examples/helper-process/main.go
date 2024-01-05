@@ -37,7 +37,7 @@ func main() {
 		macapp.MacApp.SetBrowseSubprocessPath(subExePath)
 	}
 	//CEF全局初始化
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	// 使用 SetBrowserSubprocessPath 设置子进程执行文件目录
 	var subName = subExeName()
 	// 子进程执行文件完整目录
@@ -73,7 +73,7 @@ func startHttpServer() {
 	server := assetserve.NewAssetsHttpServer()
 	server.PORT = 22022
 	server.AssetsFSName = "resources" //必须设置目录名
-	server.Assets = &resources
+	server.Assets = resources
 	go server.StartHttpServer()
 }
 

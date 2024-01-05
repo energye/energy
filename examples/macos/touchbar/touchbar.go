@@ -1,4 +1,5 @@
 //go:build darwin
+// +build darwin
 
 package main
 
@@ -19,7 +20,7 @@ import (
 var assets embed.FS
 
 func main() {
-	cef.GlobalInit(nil, &assets)
+	cef.GlobalInit(nil, assets)
 
 	//create application
 	app := cef.NewApplication()
@@ -28,7 +29,7 @@ func main() {
 	}
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "assets",
-		FS:         &assets,
+		FS:         assets,
 		Home:       "touchbar.html",
 	}.Build())
 	cef.BrowserWindow.Config.Width = 400

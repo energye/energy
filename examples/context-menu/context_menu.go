@@ -14,14 +14,14 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "fs://energy"
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
-		FS:         &resources,
+		FS:         resources,
 	}.Build())
 	//在主窗口初始化监听浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {

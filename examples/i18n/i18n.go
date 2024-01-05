@@ -26,11 +26,11 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp := cef.NewApplication()
 	// 在这里设置i18n资源加载方式, 这里使用内置到exe方式
-	i18n.SetLocalFS(&resources, "resources")
+	i18n.SetLocalFS(resources, "resources")
 	// 默认使用中文
 	i18n.Switch(consts.LANGUAGE_zh_CN)
 	//指定一个URL地址，或本地html文件目录
@@ -66,7 +66,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

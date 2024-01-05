@@ -17,7 +17,7 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	var app = cef.NewApplication()
 	cef.BrowserWindow.Config.Title = "Energy - mockevent"
@@ -26,7 +26,7 @@ func main() {
 
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
-		FS:         &resources, //静态资源所在的 embed.FS
+		FS:         resources, //静态资源所在的 embed.FS
 	}.Build())
 
 	/*

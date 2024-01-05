@@ -11,7 +11,7 @@ import (
 var resources embed.FS
 
 func main() {
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	app := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.Title = "ENERGY - Custom Drag Window"
@@ -21,7 +21,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	cef.Run(app)

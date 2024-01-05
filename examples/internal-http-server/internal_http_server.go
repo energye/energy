@@ -14,7 +14,7 @@ var resources embed.FS
 
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp := cef.NewApplication()
 	//主窗口的配置
@@ -38,7 +38,7 @@ func main() {
 		//LocalAssets 指定本地资源支持热更新 - 适用开发或web端源码可以查看
 		//server.LocalAssets = fmt.Sprintf("%s/example/browser-internal-http-server/resources", consts.ExeDir)
 		//Assets 内置资源不支持热更新 - 适用应用发布
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

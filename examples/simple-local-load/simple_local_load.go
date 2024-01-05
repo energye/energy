@@ -23,7 +23,7 @@ func main() {
 	// xhr数据获取通过Proxy配置, 支持http, https证书配置
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
-		FS:         &resources,
+		FS:         resources,
 	}.Build())
 	// 运行应用
 	cef.Run(app)

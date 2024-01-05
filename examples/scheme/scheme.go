@@ -18,7 +18,7 @@ var resources embed.FS
 var cefApp *cef.TCEFApplication
 
 func main() {
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp = cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录

@@ -21,7 +21,7 @@ var resources embed.FS
 // 这个示例使用了几个事件来演示下载文件
 func main() {
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(nil, &resources)
+	cef.GlobalInit(nil, resources)
 	//创建应用
 	cefApp := cef.NewApplication()
 	//主窗口的配置
@@ -84,7 +84,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
-		server.Assets = &resources
+		server.Assets = resources
 		go server.StartHttpServer()
 	})
 	//运行应用

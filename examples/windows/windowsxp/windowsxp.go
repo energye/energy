@@ -29,7 +29,7 @@ import (
   可变 --o=输出目录, --pkg=包名,  --paths=打包目录可多个‘,‘豆号分隔
 */
 // 静态资源
-//go:generate energy bindata --fs --o=test/assets/assets.go --pkg=assets --paths=./resources
+//go:generate energy bindata --fs --o=test/assets/assets.go --pkg=assets --paths=./resources/...
 // 动态链接库
 //go:generate energy bindata --fs --o=test/libs/libs.go --pkg=libs --paths=./libs
 
