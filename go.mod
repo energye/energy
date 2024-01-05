@@ -21,6 +21,4 @@ require (
 	golang.org/x/sys v0.12.0
 )
 
-require (
-	github.com/kenshaw/snaker v0.2.0 // indirect
-)
+require github.com/kenshaw/snaker v0.2.0 // indirect
