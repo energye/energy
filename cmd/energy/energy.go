@@ -48,7 +48,7 @@ func termRun() {
 	parser := flags.NewParser(cc, flags.HelpFlag|flags.PassDoubleDash)
 	if len(os.Args) < 2 {
 		parser.WriteHelp(term.TermOut)
-		os.Exit(1)
+		os.Exit(0)
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
 		if len(extraArgs) > 0 && (extraArgs[0] == "-v" || extraArgs[0] == "v") {
@@ -81,6 +81,15 @@ func termRun() {
 			return
 		}
 		cmd := commands[cc.Index]
+		// energy [cmd] help
+		var name string
+		if len(extraArgs) > 0 {
+			name = extraArgs[0]
+		}
+		if name == "help" {
+			term.Section.Println(cmd.UsageLine, "\n", cmd.Long)
+			os.Exit(0)
+		}
 		term.Section.Println(cmd.Short)
 		readConfig(cc)
 		if err := cmd.Run(cc); err != nil {

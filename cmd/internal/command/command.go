@@ -25,6 +25,7 @@ type Config struct {
 	Init      Init    `command:"init" description:"initialize the energy application project"`
 	Build     Build   `command:"build" description:"building an energy project"`
 	Bindata   Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
+	Help      Help    `command:"help" description:"energy [cmd] help"`
 	V         string  `command:"v" description:"energy cli version"`
 }
 
@@ -56,6 +57,9 @@ type Package struct {
 }
 
 type Env struct {
+}
+
+type Help struct {
 }
 
 type Setenv struct {
