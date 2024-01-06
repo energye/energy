@@ -28,7 +28,6 @@ var CmdInit = &command.Command{
 	Long: `
 	Initialize energy golang project
 	-n Initialized project name
-	.  Execute command
 `,
 }
 

@@ -22,7 +22,6 @@ var CmdPackage = &command.Command{
 	Long: `
 	-p Project path, default current path. Can be configured in energy.json
 	-c Clear configuration and regenerate the default configuration
-	.  Execute command
 
 Making an Installation Package
 	Windows: 

@@ -18,32 +18,13 @@ import (
 )
 
 var CmdBuild = &command.Command{
-	UsageLine: "build -p [path] -u [upx] --upxFlag -d [dll] --tempDllFlag",
+	UsageLine: "build -p [path] -u [upx] --upxFlag",
 	Short:     "build energy project",
 	Long: `
 	Building energy project
 	-p Project path, default current path. Can be configured in energy.json
 	-u Set this parameter and install upx. Use upx to compress the execution file.
 	  --upxFlag: Upx command line parameters
-	-d TempDll Enable built-in liblcl build, 
-	  --tempDllFlag [dll] TempDll parameters, default latest.
-		windows:
-			386: -tags="tempdll latest"
-			amd64: -tags="tempdll latest"
-		windows(Windows 7, 8/8.1 and Windows Server 2012):
-			386: -tags="tempdll 109"
-			amd64: -tags="tempdll 109"
-		linux(gtk3):
-			amd64: -tags="tempdll latest"
-			arm64: -tags="tempdll latest"
-		linux(gtk2):
-			amd64: -tags="tempdll 106"
-			arm64: -tags="tempdll 106"
-		macos:
-			amd64: -tags="tempdll latest"
-			arm64: -tags="tempdll latest"
-	
-	.  Execute command
 `,
 }
 

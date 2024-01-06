@@ -20,9 +20,7 @@ import (
 var CmdEnv = &command.Command{
 	UsageLine: "env",
 	Short:     "Get ENERGY Framework Development Environment",
-	Long: `
-	.  Execute command
-`,
+	Long:      ``,
 }
 
 func init() {

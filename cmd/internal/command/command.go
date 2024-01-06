@@ -81,12 +81,10 @@ type Init struct {
 }
 
 type Build struct {
-	Path        string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
-	Upx         bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file."`
-	UpxFlag     string `long:"upxFlag" description:"Upx command line parameters" default:""`
-	TempDll     bool   `short:"d" long:"dll" description:"Enable built-in liblcl build"`
-	TempDllFlag string `long:"tempDllFlag" description:"TempDll parameters" default:"latest"`
-	Args        string `long:"args" description:"go build [args]" default:""`
+	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
+	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file."`
+	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
+	Args    string `long:"args" description:"go build [args]" default:""`
 }
 
 type Bindata struct {

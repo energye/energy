@@ -24,7 +24,6 @@ func Build(c *command.Config) error {
 	if proj, err := project.NewProject(c.Build.Path); err != nil {
 		return err
 	} else {
-		proj.TempDll = c.Build.TempDll
 		return build(c, proj)
 	}
 }

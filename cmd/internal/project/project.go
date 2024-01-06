@@ -31,7 +31,6 @@ const (
 type Project struct {
 	AppType        AppType `json:"-"`              // app, helper
 	Clean          bool    `json:"-"`              // 清空配置重新生成
-	TempDll        bool    `json:"-"`              // 使用内置liblcl构建
 	Name           string  `json:"name"`           // 应用名称
 	ProjectPath    string  `json:"projectPath"`    // 项目目录
 	FrameworkPath  string  `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
