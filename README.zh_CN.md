@@ -37,8 +37,7 @@
 > - 具有丰富的CEF API 和 LCL 系统原生小部件
 > - 开发环境简单,编译速度快,仅需Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
-> - 职责
->> - Go: Go负责窗口管理、CEF配置、功能实现、各种UI组件创建、系统低层调用和JavaScript处理不了的功能，如: 文件流、安全加密、高性能处理等
+>> - Golang: 窗口管理、CEF API封装&配置、功能实现、各种UI组件创建、系统低层调用和JavaScript处理不了的功能，如: 文件流、安全加密、高性能处理等
 >> - Web: HTML + CSS + JavaScript 负责客户端界面的功能, 做出任意你想要的界面
 > - 前端技术: 支持主流前端框架。例如：Vue、React、Angular 和 原生HTML+CSS+JS等
 > - 事件驱动: 高性能事件驱动, 基于IPC通信，实现Go和Web端迅捷调用及数据交互
