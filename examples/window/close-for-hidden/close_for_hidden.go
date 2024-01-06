@@ -51,7 +51,7 @@ func main() {
 		} else if window.IsViewsFramework() {
 			//VF 窗口是CEF自己创建的，这里我们只管Chromium的Close事件即可
 			bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
-			bw.SetOnCloseQuery(func(sender lcl.IObject, cefWindow *cef.ICefWindow, window cef.IBrowserWindow, canClose *bool) bool {
+			bw.SetOnCloseQuery(func(cefWindow *cef.ICefWindow, window cef.IBrowserWindow, canClose *bool) bool {
 				*canClose = false //取消关闭 , 如果想关闭窗口 true
 				window.Hide()     //隐藏窗口
 				// 5秒后显示窗口
