@@ -57,11 +57,12 @@ func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 		case "HTTP", "HTTPS", "FILE", "FTP", "ABOUT", "DATA":
 			return
 		}
-		registrar.AddCustomScheme(localLoadRes.Scheme,
-			consts.CEF_SCHEME_OPTION_STANDARD|
-				consts.CEF_SCHEME_OPTION_CORS_ENABLED|
-				consts.CEF_SCHEME_OPTION_SECURE|
-				consts.CEF_SCHEME_OPTION_FETCH_ENABLED)
+		if application.IsSpecVer49() {
+			registrar.AddCustomScheme(localLoadRes.Scheme, consts.CEF_SCHEME_OPTION_STANDARD|consts.CEF_SCHEME_OPTION_LOCAL)
+		} else {
+			registrar.AddCustomScheme(localLoadRes.Scheme,
+				consts.CEF_SCHEME_OPTION_STANDARD|consts.CEF_SCHEME_OPTION_CORS_ENABLED|consts.CEF_SCHEME_OPTION_SECURE|consts.CEF_SCHEME_OPTION_FETCH_ENABLED)
+		}
 	}
 }
 

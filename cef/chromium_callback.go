@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
@@ -25,6 +26,7 @@ import (
 
 // chromiumOnAfterCreate 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
+	fmt.Println("chromiumOnAfterCreate", browser.Identifier())
 	if common.IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
 	}
@@ -47,24 +49,27 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 			BrowserWindow.createNextLCLPopupWindow()
 		})
 	}
-	localLoadRes.loadDefaultURL(window, browser)
+	//localLoadRes.loadDefaultURL(window, browser) // TODO
+	// 方式二 本地资源加载处理器
+	localLoadRes.getSchemeHandlerFactory(window, browser) // TODO
 	return false
 }
 
 // chromiumOnBeforeBrowser
-func chromiumOnBeforeBrowser(bw IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
+func chromiumOnBeforeBrowser(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
+	fmt.Println("chromiumOnBeforeBrowser", browser.Identifier())
 	// 辅助工具不具有浏览器窗口特性
-	if bw.WindowType() == consts.WT_DEV_TOOLS || bw.WindowType() == consts.WT_VIEW_SOURCE ||
-		bw.WindowProperty().WindowType == consts.WT_DEV_TOOLS || bw.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
+	if window.WindowType() == consts.WT_DEV_TOOLS || window.WindowType() == consts.WT_VIEW_SOURCE ||
+		window.WindowProperty().WindowType == consts.WT_DEV_TOOLS || window.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {
 		return
 	}
-	BrowserWindow.PutWindowInfo(browser, bw)
+	BrowserWindow.PutWindowInfo(browser, window)
 	// 只LCL窗口使用自定义的窗口拖拽
-	if bw.IsLCL() {
-		dragExtensionJS(frame, bw.WindowProperty().EnableWebkitAppRegion) // drag extension
+	if window.IsLCL() {
+		dragExtensionJS(frame, window.WindowProperty().EnableWebkitAppRegion) // drag extension
 	}
 	// 方式二 本地资源加载处理器
-	localLoadRes.getSchemeHandlerFactory(bw, browser)
+	//localLoadRes.getSchemeHandlerFactory(window, browser) // TODO
 }
 
 // chromiumOnBeforeClose - chromium 关闭之前

@@ -119,6 +119,16 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 			proxy.init()
 		}
 	}
+	if BrowserWindow.Config.Url == "" || BrowserWindow.Config.Url == defaultAboutBlank {
+		defaultURL := new(bytes.Buffer)
+		defaultURL.WriteString(m.Scheme)
+		defaultURL.WriteString("://")
+		defaultURL.WriteString(m.Domain)
+		if m.Home != localHome {
+			defaultURL.WriteString(m.Home)
+		}
+		BrowserWindow.Config.Url = defaultURL.String()
+	}
 	return config
 }
 
@@ -130,7 +140,7 @@ func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
 }
 
 func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefBrowser) {
-	if localLoadRes.enable() {
+	if m.enable() {
 		var homeURL string
 		if BrowserWindow.Config.Url != defaultAboutBlank {
 			homeURL = window.WindowProperty().Url
@@ -150,16 +160,13 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 
 // getSchemeHandlerFactory
 //  方式二 资源处理器默认实现，使用本地资源加载时开启
-func (m *LocalLoadResource) getSchemeHandlerFactory(browserWindow IBrowserWindow, browser *ICefBrowser) {
-	if localLoadRes.enable() {
-		//if reqUrl, err := url.Parse(request.URL()); err == nil && reqUrl.Scheme == string(localLoadRes.Scheme) {
+func (m *LocalLoadResource) getSchemeHandlerFactory(window IBrowserWindow, browser *ICefBrowser) {
+	if m.enable() {
 		handler := SchemeHandlerFactoryRef.New()
 		handler.SetNew(func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler {
 			return m.getResourceHandler(browser, frame, request)
 		})
-		browser.GetRequestContext().RegisterSchemeHandlerFactory(localLoadRes.Scheme, localLoadRes.Domain, handler)
-		//browserWindow.setSchemeHandlerFactory(handler) // TODO
-		//}
+		browser.GetRequestContext().RegisterSchemeHandlerFactory(m.Scheme, m.Domain, handler)
 	}
 	return
 }
@@ -167,9 +174,9 @@ func (m *LocalLoadResource) getSchemeHandlerFactory(browserWindow IBrowserWindow
 // getResourceHandler
 //  方式一 资源处理器默认实现，使用本地资源加载时开启
 func (m *LocalLoadResource) getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
-	if localLoadRes.enable() {
-		if source, ok := localLoadRes.checkRequest(request); ok {
-			handler := ResourceHandlerRef.New(browser, frame, localLoadRes.Scheme, request)
+	if m.enable() {
+		if source, ok := m.checkRequest(request); ok {
+			handler := ResourceHandlerRef.New(browser, frame, m.Scheme, request)
 			//handler.Open(source.open)
 			handler.ProcessRequest(source.processRequest)
 			handler.GetResponseHeaders(source.response)

@@ -39,16 +39,19 @@ liblcl
 
 
 
-XP系统支持Go energy不支持go mod和embed.FS
-go mod: 使用 gopath, 手动模块
+XP系统支持Go energy不支持go mod和embed.FS   ok
 embed.FS: 使用第三方编译 go-bindata https://zhuanlan.zhihu.com/p/458008381
-golcl 增加 支持 go1.10的打开文件接口
+golcl 增加 支持 go1.11的打开文件接口 emfs
 
 
 Go
   移除 liblclbinres 在构建时生成二进制liblcl.go , 将go-bindata集成到energy命令行工具中
   命令行工具 
      集成 go-bindata
-     build 增加自定义扩展参数
+     build 增加自定义扩展参数  
 
+移除 liblclbinres, 使用libs编译时的内置动态链接库
+
+Go 
+  修改了本地资源加载顺序，需要验证Linux MacOS
 ```
