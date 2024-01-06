@@ -151,7 +151,14 @@ func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
 		if mw := m.MainWindow(); mw != nil {
-			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, mw.AsLCLBrowserWindow().BrowserWindow())
+			// owner设置nil以防址多窗口时被连带关闭, 如果多窗口时也可指定为真实的主窗口
+			//var owner lcl.IComponent
+			//if disabledMainWindow != nil {
+			//	owner = disabledMainWindow // 真实的主窗口
+			//} else if enableMainWindow != nil {
+			//	owner = enableMainWindow // 未开启多窗口
+			//}
+			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, nil)
 		}
 	}
 }

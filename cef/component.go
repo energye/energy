@@ -13,24 +13,23 @@
 package cef
 
 // NewTray 适用于 windows linux macos 系统托盘
-func (m *LCLBrowserWindow) NewTray() ITray {
-	if m.tray == nil {
-		if BrowserWindow.Config.EnableMainWindow {
-			m.tray = newTray(m.TForm)
-		} else {
-			// 禁用主窗口, 这时需要使用 disabledMainWindow, 因为它才是实际的主窗口
-			m.tray = newTray(disabledMainWindow.TForm)
-		}
+func (m *LCLBrowserWindow) NewTray() (tray ITray) {
+	if BrowserWindow.Config.EnableMainWindow {
+		tray = newTray(m.TForm)
+		m.tray = append(m.tray, tray)
+	} else {
+		// 禁用主窗口, 这时需要使用 disabledMainWindow, 因为它才是实际的主窗口
+		tray = newTray(disabledMainWindow.TForm)
+		m.tray = append(m.tray, tray)
 	}
-	return m.tray
+	return tray
 }
 
 // NewSysTray LCL窗口组件,系统托盘
-func (m *LCLBrowserWindow) NewSysTray() ITray {
-	if m.tray == nil {
-		m.tray = newSysTray()
-	}
-	return m.tray
+func (m *LCLBrowserWindow) NewSysTray() (tray ITray) {
+	tray = newSysTray()
+	m.tray = append(m.tray, tray)
+	return tray
 }
 
 // NewSysTray VF窗口组件,只适用于windows的无菜单托盘

@@ -98,7 +98,7 @@ type IBrowserWindow interface {
 	WindowType() consts.WINDOW_TYPE                                                                           //窗口类型
 	SetWindowType(windowType consts.WINDOW_TYPE)                                                              //设置窗口类型
 	Browser() *ICefBrowser                                                                                    //窗口内的Browser对象
-	Chromium() IChromium                                                                                      //窗口内的Chromium对象
+	Chromium() IChromium                                                                                      //窗口内的Chromium对象, 返回空时我们可能需要自己创建, ChromiumCreate
 	DisableMaximize()                                                                                         //禁用最大化
 	DisableMinimize()                                                                                         //禁用最小化
 	DisableResize()                                                                                           //禁用窗口大小调整
@@ -142,19 +142,20 @@ type IBrowserWindow interface {
 // 定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *LCLBrowserWindow //返回 LCLBrowserWindow 窗口结构
-	EnableDefaultCloseEvent()         //启用默认关闭事件
-	WindowParent() ICEFWindowParent   //浏览器父窗口组件
-	DisableTransparent()              //禁用窗口透明
-	EnableTransparent(value uint8)    //启用并设置窗口透明
-	DisableSystemMenu()               //禁用标题栏系统菜单
-	DisableHelp()                     //禁用标题栏帮助
-	EnableSystemMenu()                //启用标题栏系统菜单
-	EnableHelp()                      //启用标题栏帮助
-	NewTray() ITray                   //创建LCL的系统托盘
-	SetRoundRectRgn(rgn int)          //窗口无边框时圆角设置
-	FramelessForLine()                //无边框四边一条细线样式
-	Frameless()                       //无边框
+	BrowserWindow() *LCLBrowserWindow                             //返回 LCLBrowserWindow 窗口结构
+	EnableDefaultCloseEvent()                                     //启用默认关闭事件
+	WindowParent() ICEFWindowParent                               //浏览器父窗口组件
+	DisableTransparent()                                          //禁用窗口透明
+	EnableTransparent(value uint8)                                //启用并设置窗口透明
+	DisableSystemMenu()                                           //禁用标题栏系统菜单
+	DisableHelp()                                                 //禁用标题栏帮助
+	EnableSystemMenu()                                            //启用标题栏系统菜单
+	EnableHelp()                                                  //启用标题栏帮助
+	NewTray() ITray                                               //创建LCL的系统托盘
+	SetRoundRectRgn(rgn int)                                      //窗口无边框时圆角设置
+	FramelessForLine()                                            //无边框四边一条细线样式
+	Frameless()                                                   //无边框
+	ChromiumCreate(config *TCefChromiumConfig, defaultUrl string) //chromium实例为空时创建 chromium
 }
 
 // IViewsFrameworkBrowserWindow

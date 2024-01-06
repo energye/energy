@@ -58,7 +58,7 @@ type LCLBrowserWindow struct {
 	onWndProc                 []lcl.TWndProcEvent  //扩展事件 向后链试循环调用
 	onPaint                   []lcl.TNotifyEvent   //扩展事件 向后链试循环调用
 	auxTools                  IAuxTools            //辅助工具
-	tray                      ITray                //托盘
+	tray                      []ITray              //托盘 可以同时创建多个
 	hWnd                      types.HWND           //
 	cwcap                     *customWindowCaption //自定义窗口标题栏
 	drag                      *drag                //自定义拖拽
@@ -558,7 +558,7 @@ func (m *LCLBrowserWindow) WindowType() consts.WINDOW_TYPE {
 
 // ChromiumCreate
 //
-//	创建window浏览器组件
+//	chromium 实例为空时创建window浏览器组件
 //	不带有默认事件的chromium
 func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl string) {
 	if m.chromiumBrowser != nil {
@@ -1082,8 +1082,10 @@ func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
 	if !BrowserWindow.Config.EnableMainWindow {
 		count := len(BrowserWindow.GetWindowInfos())
 		if count < 1 {
-			if m.tray != nil {
-				m.tray.close()
+			if len(m.tray) > 0 {
+				for _, tray := range m.tray {
+					tray.close()
+				}
 			}
 			// 窗口数量已经是0个了，结束应用
 			lcl.Application.Terminate()
@@ -1119,10 +1121,6 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 		ret = m.onCloseQuery(sender, close)
 	}
 	if !ret {
-		// TODO 标记，可能需要移除
-		//if m.tray != nil {
-		//	m.tray.close()
-		//}
 		logger.Debug("window.onCloseQuery windowType:", m.WindowType())
 		if IsDarwin() {
 			//main window close
