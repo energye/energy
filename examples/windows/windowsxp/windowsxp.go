@@ -11,6 +11,7 @@ import (
 // CEF 49是最后一个支持Windows XP的CEF版本
 // 在energy中使用与新的CEF版本没太多区别，因版本跨度太大不支持新的CEF API, 使用时需注意且会报出相关错误, 虽然energy提供了。
 // 仅在Windows XP以及其它Windows系统中运行, 不支持Linux、MacOS
+// 如果必须在Windows XP环境中运行CEF，需要接受旧版本的限制和潜在的安全风险。
 
 /*
   由于Golang最后一个支持WindowsXP版本是1.10, 经测试Golang1.11版本编译的执行文件也可在 Windows XP SP3 中运行, 同时Golang1.11也支持go.mod模块管理, 方便很多.
