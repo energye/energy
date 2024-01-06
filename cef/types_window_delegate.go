@@ -166,6 +166,13 @@ func (m *ICefWindowDelegate) SetOnGetParentWindow(fn WindowComponentOnGetParentW
 	imports.Proc(def.WindowDelegate_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *ICefWindowDelegate) SetOnIsWindowModalDialog(fn WindowComponentOnIsWindowModalDialog) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnIsWindowModalDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 func (m *ICefWindowDelegate) SetOnGetInitialBounds(fn WindowComponentOnGetInitialBounds) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
@@ -185,6 +192,20 @@ func (m *ICefWindowDelegate) SetOnIsFrameless(fn WindowComponentOnIsFrameless) {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnIsFrameless).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefWindowDelegate) SetOnWithStandardWindowButtons(fn WindowComponentOnWithStandardWindowButtons) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnWithStandardWindowButtons).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefWindowDelegate) SetOnGetTitleBarHeight(fn WindowComponentOnGetTitleBarHeight) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnGetTitlebarHeight).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefWindowDelegate) SetOnCanResize(fn WindowComponentOnCanResize) {
@@ -227,6 +248,13 @@ func (m *ICefWindowDelegate) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefWindowDelegate) SetOnWindowFullscreenTransition(fn WindowComponentOnWindowFullscreenTransition) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type WindowOnWindowClosing func(window *ICefWindow)

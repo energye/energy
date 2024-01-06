@@ -2559,15 +2559,19 @@ const (
 	WindowDelegate_SetOnWindowActivationChanged
 	WindowDelegate_SetOnWindowBoundsChanged
 	WindowDelegate_SetOnGetParentWindow
+	WindowDelegate_SetOnIsWindowModalDialog
 	WindowDelegate_SetOnGetInitialBounds
 	WindowDelegate_SetOnGetInitialShowState
 	WindowDelegate_SetOnIsFrameless
+	WindowDelegate_SetOnWithStandardWindowButtons
+	WindowDelegate_SetOnGetTitlebarHeight
 	WindowDelegate_SetOnCanResize
 	WindowDelegate_SetOnCanMaximize
 	WindowDelegate_SetOnCanMinimize
 	WindowDelegate_SetOnCanClose
 	WindowDelegate_SetOnAccelerator
 	WindowDelegate_SetOnKeyEvent
+	WindowDelegate_SetOnWindowFullscreenTransition
 	// TCEFPanelComponent
 	PanelComponent_Create
 	PanelComponent_CreatePanel
