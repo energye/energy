@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/examples/windows/windowsxp/pkg/assets"
-	"github.com/energye/energy/v2/examples/windows/windowsxp/pkg/libs"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
@@ -35,10 +33,11 @@ import (
 //go:generate energy bindata --fs --o=pkg/libs/libs.go --pkg=libs --paths=./libs
 
 func main() {
-	libsFS := libs.AssetFile()
-	resourceFS := assets.AssetFile()
+	//libsFS := libs.AssetFile()
+	//resourceFS := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
-	cef.GlobalInit(libsFS, resourceFS)
+	//cef.GlobalInit(libsFS, resourceFS)
+	cef.GlobalInit(nil, nil)
 	//创建应用
 	app := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
@@ -50,7 +49,7 @@ func main() {
 		server := assetserve.NewAssetsHttpServer()
 		server.PORT = 22022               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
-		server.Assets = resourceFS
+		//server.Assets = resourceFS
 		go server.StartHttpServer()
 	})
 	//运行应用
