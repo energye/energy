@@ -54,4 +54,10 @@ Go
 
 Go 
   修改了本地资源加载顺序，需要验证Linux MacOS
+  
+  
+liblcl
+    增加
+    CEF_LCL_WindowDelegate.inc      {$I CEF_LCL_WindowDelegate.inc}
+    uCEF_LCL_WindowDelegateRef.pas  uCEF_LCL_WindowDelegateRef
 ```
