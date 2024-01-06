@@ -74,7 +74,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 	}
 	m.SetWindowType(windowProperty.WindowType)
 	m.Chromium().SetEnableMultiBrowserMode(true)
-	m.WindowComponent().SetOnWindowCreated(func(sender lcl.IObject, window *ICefWindow) {
+	m.WindowComponent().SetOnWindowCreated(func(window *ICefWindow) {
 		if m.Chromium().CreateBrowserByBrowserViewComponent(windowProperty.Url, m.BrowserViewComponent(), m.context, m.extraInfo) {
 			m.WindowComponent().AddChildView(m.BrowserViewComponent())
 			if windowProperty.Title != "" {
@@ -106,7 +106,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 			m.BrowserViewComponent().RequestFocus()
 			m.WindowComponent().Show()
 			if m.doOnWindowCreated != nil {
-				m.doOnWindowCreated(sender, window)
+				m.doOnWindowCreated(window)
 			}
 		}
 	})
@@ -152,10 +152,10 @@ func appContextInitialized() {
 		vfMainWindow.EnableAllDefaultEvent() // 开启默认事件
 		// 主窗口关闭时触发该函数
 		// EnableClose=true时关闭窗口, false时不关闭窗口
-		vfMainWindow.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, canClose *bool) {
+		vfMainWindow.WindowComponent().SetOnCanClose(func(window *ICefWindow, canClose *bool) {
 			var flag bool
 			if vfMainWindow.doOnCloseQuery != nil {
-				flag = vfMainWindow.doOnCloseQuery(sender, window, vfMainWindow, canClose)
+				flag = vfMainWindow.doOnCloseQuery(window, vfMainWindow, canClose)
 			}
 			if !flag {
 				*canClose = m.Config.WindowProperty.EnableClose
@@ -310,10 +310,10 @@ func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
 //	在初始化之后部分属性可直接设置
 func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	wp := m.WindowProperty()
-	m.WindowComponent().SetOnGetInitialShowState(func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState) {
+	m.WindowComponent().SetOnGetInitialShowState(func(window *ICefWindow, aResult *consts.TCefShowState) {
 		*aResult = consts.TCefShowState(wp.WindowInitState + 1) // CEF 要 + 1
 	})
-	m.WindowComponent().SetOnGetInitialBounds(func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect) {
+	m.WindowComponent().SetOnGetInitialBounds(func(window *ICefWindow, aResult *TCefRect) {
 		if wp.EnableCenterWindow {
 			m.WindowComponent().CenterWindow(NewCefSize(wp.Width, wp.Height))
 			aResult.Width = wp.Width
@@ -325,22 +325,22 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 			aResult.Height = wp.Height
 		}
 		if m.doOnGetInitialBounds != nil {
-			m.doOnGetInitialBounds(sender, window, aResult)
+			m.doOnGetInitialBounds(window, aResult)
 		}
 	})
-	m.WindowComponent().SetOnCanMinimize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanMinimize(func(window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableMinimize
 	})
-	m.WindowComponent().SetOnCanResize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanResize(func(window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableResize
 	})
-	m.WindowComponent().SetOnCanMaximize(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnCanMaximize(func(window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableMaximize
 	})
-	m.WindowComponent().SetOnCanClose(func(sender lcl.IObject, window *ICefWindow, canClose *bool) {
+	m.WindowComponent().SetOnCanClose(func(window *ICefWindow, canClose *bool) {
 		var flag bool
 		if m.doOnCloseQuery != nil {
-			flag = m.doOnCloseQuery(sender, window, m, canClose)
+			flag = m.doOnCloseQuery(window, m, canClose)
 		}
 		if !flag {
 			*canClose = wp.EnableClose
@@ -350,7 +350,7 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 			}
 		}
 	})
-	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnIsFrameless(func(window *ICefWindow, aResult *bool) {
 		*aResult = wp.EnableHideCaption
 	})
 	m.WindowComponent().SetAlwaysOnTop(wp.AlwaysOnTop)

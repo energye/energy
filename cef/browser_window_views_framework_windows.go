@@ -16,7 +16,6 @@
 package cef
 
 import (
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/win"
 )
 
@@ -26,7 +25,7 @@ func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	//handle := m.WindowComponent().WindowHandle()
 	//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)|win.WS_CAPTION))
 	//win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnIsFrameless(func(window *ICefWindow, aResult *bool) {
 		*aResult = false
 	})
 }
@@ -37,7 +36,7 @@ func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	//handle := m.WindowComponent().WindowHandle()
 	//win.SetWindowLong(handle.ToPtr(), win.GWL_STYLE, uintptr(win.GetWindowLong(handle.ToPtr(), win.GWL_STYLE)&^win.WS_CAPTION))
 	//win.SetWindowPos(handle.ToPtr(), 0, 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-	m.WindowComponent().SetOnIsFrameless(func(sender lcl.IObject, window *ICefWindow, aResult *bool) {
+	m.WindowComponent().SetOnIsFrameless(func(window *ICefWindow, aResult *bool) {
 		*aResult = true
 	})
 }

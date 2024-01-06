@@ -39,7 +39,7 @@ func (*textFieldDelegate) NewForCustom(textFieldComponent *TCEFTextFieldComponen
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.TextfieldDelegate_CreateForCustom).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.TextfieldDelegate_CreateForCustom).Call(textFieldComponent.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefTextFieldDelegate{&ICefViewDelegate{
 			instance: getInstance(result),

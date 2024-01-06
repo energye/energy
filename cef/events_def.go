@@ -212,24 +212,24 @@ type TCloseQueryEvent func(sender lcl.IObject, canClose *bool) bool
 
 /************* TCEFWindowComponent *************/
 
-type WindowComponentOnWindowCreated func(sender lcl.IObject, window *ICefWindow)
-type WindowComponentOnWindowDestroyed func(sender lcl.IObject, window *ICefWindow)
-type WindowComponentOnWindowActivationChanged func(sender lcl.IObject, window *ICefWindow, active bool)
-type WindowComponentOnGetParentWindow func(sender lcl.IObject, window *ICefWindow, isMenu, canActivateMenu *bool, aResult *ICefWindow)
-type WindowComponentOnIsWindowModalDialog func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnGetInitialBounds func(sender lcl.IObject, window *ICefWindow, aResult *TCefRect)
-type WindowComponentOnGetInitialShowState func(sender lcl.IObject, window *ICefWindow, aResult *consts.TCefShowState)
-type WindowComponentOnIsFrameless func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnWithStandardWindowButtons func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnGetTitleBarHeight func(sender lcl.IObject, window *ICefWindow, titleBarHeight float32, aResult *bool)
-type WindowComponentOnCanResize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnCanMaximize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnCanMinimize func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnCanClose func(sender lcl.IObject, window *ICefWindow, aResult *bool)
-type WindowComponentOnCanCloseEx func(sender lcl.IObject, cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
-type WindowComponentOnAccelerator func(sender lcl.IObject, window *ICefWindow, commandId int32, aResult *bool)
-type WindowComponentOnKeyEvent func(sender lcl.IObject, window *ICefWindow, event *TCefKeyEvent, aResult *bool)
-type WindowComponentOnWindowFullscreenTransition func(sender lcl.IObject, window *ICefWindow, isCompleted bool)
+type WindowComponentOnWindowCreated func(window *ICefWindow)
+type WindowComponentOnWindowDestroyed func(window *ICefWindow)
+type WindowComponentOnWindowActivationChanged func(window *ICefWindow, active bool)
+type WindowComponentOnGetParentWindow func(window *ICefWindow, isMenu, canActivateMenu *bool, aResult *ICefWindow)
+type WindowComponentOnIsWindowModalDialog func(window *ICefWindow, aResult *bool)
+type WindowComponentOnGetInitialBounds func(window *ICefWindow, aResult *TCefRect)
+type WindowComponentOnGetInitialShowState func(window *ICefWindow, aResult *consts.TCefShowState)
+type WindowComponentOnIsFrameless func(window *ICefWindow, aResult *bool)
+type WindowComponentOnWithStandardWindowButtons func(window *ICefWindow, aResult *bool)
+type WindowComponentOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight float32, aResult *bool)
+type WindowComponentOnCanResize func(window *ICefWindow, aResult *bool)
+type WindowComponentOnCanMaximize func(window *ICefWindow, aResult *bool)
+type WindowComponentOnCanMinimize func(window *ICefWindow, aResult *bool)
+type WindowComponentOnCanClose func(window *ICefWindow, aResult *bool)
+type WindowComponentOnCanCloseEx func(cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
+type WindowComponentOnAccelerator func(window *ICefWindow, commandId int32, aResult *bool)
+type WindowComponentOnKeyEvent func(window *ICefWindow, event *TCefKeyEvent, aResult *bool)
+type WindowComponentOnWindowFullscreenTransition func(window *ICefWindow, isCompleted bool)
 
 /************* TCEFBrowserViewComponent *************/
 

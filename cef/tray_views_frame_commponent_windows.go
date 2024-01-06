@@ -56,7 +56,7 @@ func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *V
 }
 
 func (m *ViewsFrameTray) registerMouseEvent() {
-	m.trayWindow.WindowComponent().SetOnWindowActivationChanged(func(sender lcl.IObject, window *ICefWindow, active bool) {
+	m.trayWindow.WindowComponent().SetOnWindowActivationChanged(func(window *ICefWindow, active bool) {
 		if active {
 		} else {
 			m.trayWindow.Hide()

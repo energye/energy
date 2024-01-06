@@ -2540,6 +2540,34 @@ const (
 	// ICefPanelDelegate
 	PanelDelegateRef_Create
 	PanelDelegateRef_CreateForCustom
+	// ICefWindowDelegate
+	WindowDelegate_Create
+	WindowDelegate_CreateForCustom
+	WindowDelegate_SetOnGetPreferredSize
+	WindowDelegate_SetOnGetMinimumSize
+	WindowDelegate_SetOnGetMaximumSize
+	WindowDelegate_SetOnGetHeightForWidth
+	WindowDelegate_SetOnParentViewChanged
+	WindowDelegate_SetOnChildViewChanged
+	WindowDelegate_SetOnWindowChanged
+	WindowDelegate_SetOnLayoutChanged
+	WindowDelegate_SetOnFocus
+	WindowDelegate_SetOnBlur
+	WindowDelegate_SetOnWindowCreated
+	WindowDelegate_SetOnWindowClosing
+	WindowDelegate_SetOnWindowDestroyed
+	WindowDelegate_SetOnWindowActivationChanged
+	WindowDelegate_SetOnWindowBoundsChanged
+	WindowDelegate_SetOnGetParentWindow
+	WindowDelegate_SetOnGetInitialBounds
+	WindowDelegate_SetOnGetInitialShowState
+	WindowDelegate_SetOnIsFrameless
+	WindowDelegate_SetOnCanResize
+	WindowDelegate_SetOnCanMaximize
+	WindowDelegate_SetOnCanMinimize
+	WindowDelegate_SetOnCanClose
+	WindowDelegate_SetOnAccelerator
+	WindowDelegate_SetOnKeyEvent
 	// TCEFPanelComponent
 	PanelComponent_Create
 	PanelComponent_CreatePanel

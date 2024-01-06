@@ -622,26 +622,37 @@ type ICefBoxLayout struct {
 }
 
 // ICefBrowserViewDelegate
+// /include/capi/views/cef_browser_view_delegate_capi.h (cef_browser_view_delegate_t)
 type ICefBrowserViewDelegate struct {
 	*ICefViewDelegate
 }
 
 // ICefButtonDelegate
+// /include/capi/views/cef_button_delegate_capi.h (cef_button_delegate_t)
 type ICefButtonDelegate struct {
 	*ICefViewDelegate
 }
 
 // ICefMenuButtonDelegate
+// /include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_delegate_t)
 type ICefMenuButtonDelegate struct {
 	*ICefButtonDelegate
 }
 
 // ICefPanelDelegate
+// /include/capi/views/cef_panel_delegate_capi.h (cef_panel_delegate_t)
 type ICefPanelDelegate struct {
 	*ICefViewDelegate
 }
 
+// ICefWindowDelegate
+// /include/capi/views/cef_window_delegate_capi.h (cef_window_delegate_t)
+type ICefWindowDelegate struct {
+	*ICefPanelDelegate
+}
+
 // ICefTextFieldDelegate
+// /include/capi/views/cef_textfield_delegate_capi.h (cef_textfield_delegate_t)
 type ICefTextFieldDelegate struct {
 	*ICefViewDelegate
 }

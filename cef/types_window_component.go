@@ -634,30 +634,30 @@ func init() {
 		}
 		switch fn.(type) {
 		case WindowComponentOnWindowCreated:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnWindowCreated)(lcl.AsObject(sender), &ICefWindow{instance: window})
+			fn.(WindowComponentOnWindowCreated)(&ICefWindow{instance: window})
 		case WindowComponentOnWindowDestroyed:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnWindowDestroyed)(lcl.AsObject(sender), &ICefWindow{instance: window})
+			fn.(WindowComponentOnWindowDestroyed)(&ICefWindow{instance: window})
 		case WindowComponentOnWindowActivationChanged:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnWindowActivationChanged)(lcl.AsObject(sender), &ICefWindow{instance: window}, api.GoBool(getVal(2)))
+			fn.(WindowComponentOnWindowActivationChanged)(&ICefWindow{instance: window}, api.GoBool(getVal(2)))
 		case WindowComponentOnGetParentWindow:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			resultWindowPtr := (*uintptr)(getPtr(4))
 			resultWindow := &ICefWindow{}
-			fn.(WindowComponentOnGetParentWindow)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
+			fn.(WindowComponentOnGetParentWindow)(&ICefWindow{instance: window}, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
 			*resultWindowPtr = resultWindow.Instance()
 		case WindowComponentOnIsWindowModalDialog:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnIsWindowModalDialog)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnIsWindowModalDialog)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnGetInitialBounds:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			resultRectPtr := (*TCefRect)(getPtr(2))
 			resultRect := new(TCefRect)
@@ -665,56 +665,56 @@ func init() {
 			resultRect.Y = 0
 			resultRect.Width = 800
 			resultRect.Height = 600
-			fn.(WindowComponentOnGetInitialBounds)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultRect)
+			fn.(WindowComponentOnGetInitialBounds)(&ICefWindow{instance: window}, resultRect)
 			*resultRectPtr = *resultRect
 		case WindowComponentOnGetInitialShowState:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			resultShowState := (*consts.TCefShowState)(getPtr(2))
-			fn.(WindowComponentOnGetInitialShowState)(lcl.AsObject(sender), &ICefWindow{instance: window}, resultShowState)
+			fn.(WindowComponentOnGetInitialShowState)(&ICefWindow{instance: window}, resultShowState)
 		case WindowComponentOnIsFrameless:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnIsFrameless)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnIsFrameless)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnWithStandardWindowButtons:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnWithStandardWindowButtons)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnWithStandardWindowButtons)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnGetTitleBarHeight:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			titleBarHeight := *(*float32)(getPtr(2))
-			fn.(WindowComponentOnGetTitleBarHeight)(lcl.AsObject(sender), &ICefWindow{instance: window}, titleBarHeight, (*bool)(getPtr(3)))
+			fn.(WindowComponentOnGetTitleBarHeight)(&ICefWindow{instance: window}, titleBarHeight, (*bool)(getPtr(3)))
 		case WindowComponentOnCanResize:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnCanResize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnCanResize)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnCanMaximize:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnCanMaximize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnCanMaximize)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnCanMinimize:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnCanMinimize)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnCanMinimize)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnCanClose:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnCanClose)(lcl.AsObject(sender), &ICefWindow{instance: window}, (*bool)(getPtr(2)))
+			fn.(WindowComponentOnCanClose)(&ICefWindow{instance: window}, (*bool)(getPtr(2)))
 		case WindowComponentOnAccelerator:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
-			fn.(WindowComponentOnAccelerator)(lcl.AsObject(sender), &ICefWindow{instance: window}, int32(getVal(2)), (*bool)(getPtr(3)))
+			fn.(WindowComponentOnAccelerator)(&ICefWindow{instance: window}, int32(getVal(2)), (*bool)(getPtr(3)))
 		case WindowComponentOnKeyEvent:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
-			fn.(WindowComponentOnKeyEvent)(lcl.AsObject(sender), &ICefWindow{instance: window}, keyEvent, (*bool)(getPtr(3)))
+			fn.(WindowComponentOnKeyEvent)(&ICefWindow{instance: window}, keyEvent, (*bool)(getPtr(3)))
 		case WindowComponentOnWindowFullscreenTransition:
-			sender := getPtr(0)
+			_ = getPtr(0)
 			window := getPtr(1)
 			isCompleted := api.GoBool(getVal(2))
-			fn.(WindowComponentOnWindowFullscreenTransition)(lcl.AsObject(sender), &ICefWindow{instance: window}, isCompleted)
+			fn.(WindowComponentOnWindowFullscreenTransition)(&ICefWindow{instance: window}, isCompleted)
 		default:
 			return false
 		}
