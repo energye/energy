@@ -40,7 +40,11 @@ func (m *ICefPanel) GetAsWindow() *ICefWindow {
 	imports.Proc(def.CEFPanel_GetAsWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefWindow{
-			instance: getInstance(result),
+			&ICefPanel{
+				&ICefView{
+					instance: getInstance(result),
+				},
+			},
 		}
 	}
 	return nil

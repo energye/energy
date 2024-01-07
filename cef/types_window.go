@@ -35,7 +35,7 @@ func (*cefWindow) New(windowComponent *TCEFWindowComponent) *ICefWindow {
 	var result uintptr
 	imports.Proc(def.ICEFWindowRef_CreateTopLevel).Call(windowComponent.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefWindow{instance: getInstance(result)}
+		return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(result)}}}
 	}
 	return nil
 }

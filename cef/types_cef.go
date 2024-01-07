@@ -368,12 +368,6 @@ type ICefDisplay struct {
 	instance unsafe.Pointer
 }
 
-// ICefWindow
-type ICefWindow struct {
-	base     TCefBaseRefCounted
-	instance unsafe.Pointer
-}
-
 // ICefExtensionHandler
 type ICefExtensionHandler struct {
 	base     TCefBaseRefCounted
@@ -540,6 +534,12 @@ type ICefScrollView struct {
 // /include/capi/views/cef_textfield_capi.h (cef_textfield_t)
 type ICefTextfield struct {
 	*ICefView
+}
+
+// ICefWindow
+// /include/capi/views/cef_window_capi.h (cef_window_t)
+type ICefWindow struct {
+	*ICefPanel
 }
 
 /*

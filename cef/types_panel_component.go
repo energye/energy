@@ -151,9 +151,7 @@ func (m *TCEFPanelComponent) AsWindow() *ICefWindow {
 	var result uintptr
 	imports.Proc(def.PanelComponent_AsWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefWindow{
-			instance: getInstance(result),
-		}
+		return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(result)}}}
 	}
 	return nil
 }

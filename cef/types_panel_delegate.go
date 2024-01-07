@@ -31,11 +31,84 @@ func (*panelDelegate) New() *ICefPanelDelegate {
 	return nil
 }
 
-func (*panelDelegate) NewForCustom() *ICefPanelDelegate {
+func (*panelDelegate) NewForCustom(panel *TCEFPanelComponent) *ICefPanelDelegate {
+	if !panel.IsValid() {
+		return nil
+	}
 	var result uintptr
-	imports.Proc(def.PanelDelegateRef_CreateForCustom).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.PanelDelegateRef_CreateForCustom).Call(panel.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefPanelDelegate{&ICefViewDelegate{instance: getInstance(result), ct: consts.CtOther}}
 	}
 	return nil
 }
+
+//func (m *ICefPanelDelegate) SetOnGetPreferredSize(fn onGetPreferredSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnGetMinimumSize(fn onGetMinimumSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnGetMaximumSize(fn onGetMaximumSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnParentViewChanged(fn onParentViewChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnChildViewChanged(fn onChildViewChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnWindowChanged(fn onWindowChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnLayoutChanged(fn onLayoutChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnFocus(fn onFocus) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefPanelDelegate) SetOnBlur(fn onBlur) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.PanelDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}

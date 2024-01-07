@@ -34,12 +34,12 @@ func (*textFieldDelegate) New() *ICefTextFieldDelegate {
 	return nil
 }
 
-func (*textFieldDelegate) NewForCustom(textFieldComponent *TCEFTextFieldComponent) *ICefTextFieldDelegate {
-	if !textFieldComponent.IsValid() {
+func (*textFieldDelegate) NewForCustom(textField *TCEFTextFieldComponent) *ICefTextFieldDelegate {
+	if !textField.IsValid() {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.TextfieldDelegate_CreateForCustom).Call(textFieldComponent.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.TextfieldDelegate_CreateForCustom).Call(textField.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefTextFieldDelegate{&ICefViewDelegate{
 			instance: getInstance(result),
@@ -50,14 +50,14 @@ func (*textFieldDelegate) NewForCustom(textFieldComponent *TCEFTextFieldComponen
 }
 
 func (m *ICefTextFieldDelegate) SetOnKeyEvent(fn onTextFieldKeyEvent) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.TextfieldDelegate_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *ICefTextFieldDelegate) SetOnAfterUserAction(fn onAfterUserAction) {
-	if !m.IsValid() {
+	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.TextfieldDelegate_SetOnAfterUserAction).Call(m.Instance(), api.MakeEventDataPtr(fn))

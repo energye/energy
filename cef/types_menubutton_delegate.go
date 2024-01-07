@@ -35,9 +35,12 @@ func (*menuButtonDelegate) New() *ICefMenuButtonDelegate {
 	return nil
 }
 
-func (*menuButtonDelegate) NewForCustom(menuButtonComponent *TCEFMenuButtonComponent) *ICefMenuButtonDelegate {
+func (*menuButtonDelegate) NewForCustom(menuButton *TCEFMenuButtonComponent) *ICefMenuButtonDelegate {
+	if !menuButton.IsValid() {
+		return nil
+	}
 	var result uintptr
-	imports.Proc(def.MenuButtonDelegateRef_CreateForCustom).Call(menuButtonComponent.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.MenuButtonDelegateRef_CreateForCustom).Call(menuButton.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefMenuButtonDelegate{&ICefButtonDelegate{&ICefViewDelegate{
 			instance: getInstance(result),
