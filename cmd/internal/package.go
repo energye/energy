@@ -30,6 +30,7 @@ Making an Installation Package
 		Creating deb installation packages using dpkg
 	MacOS:
 		Generate app package for energy
+		--pkg Switch, generate pkg package
 `,
 }
 
