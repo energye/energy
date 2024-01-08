@@ -175,11 +175,11 @@ func init() {
 		case chromiumEventOnDevToolsAgentDetached:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			fn.(chromiumEventOnDevToolsAgentDetached)(lcl.AsObject(getPtr(0)), browse)
-		case chromiumEventOnDevToolsEvent:
+		case chromiumEventOnDevTools:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			method := api.GoStr(2)
 			params := &ICefValue{instance: getPtr(3)}
-			fn.(chromiumEventOnDevToolsEvent)(lcl.AsObject(getPtr(0)), browse, method, params)
+			fn.(chromiumEventOnDevTools)(lcl.AsObject(getPtr(0)), browse, method, params)
 		case chromiumEventOnDevToolsMessage:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			message := &ICefValue{instance: getPtr(2)}
@@ -197,12 +197,12 @@ func init() {
 			success := api.GoBool(getVal(3))
 			result := &ICefValue{instance: getPtr(1)}
 			fn.(chromiumEventOnDevToolsMethodResult)(lcl.AsObject(getPtr(0)), browse, messageId, success, result)
-		case chromiumEventOnDevToolsRawEvent:
+		case chromiumEventOnDevToolsRaw:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			method := api.GoStr(2)
 			params := getVal(3)
 			paramsSize := uint32(getVal(4))
-			fn.(chromiumEventOnDevToolsRawEvent)(lcl.AsObject(getPtr(0)), browse, method, params, paramsSize)
+			fn.(chromiumEventOnDevToolsRaw)(lcl.AsObject(getPtr(0)), browse, method, params, paramsSize)
 		case chromiumEventOnDevToolsRawMessage:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			message := getVal(2)
@@ -290,6 +290,34 @@ func init() {
 			fn.(chromiumEventOnExtensionLoadFailed)(lcl.AsObject(getPtr(0)), consts.TCefErrorCode(getVal(1)))
 		case chromiumEventOnExtensionUnloaded:
 			fn.(chromiumEventOnExtensionUnloaded)(lcl.AsObject(getPtr(0)), &ICefExtension{instance: getPtr(1)})
+		case chromiumEventOnPrintStart:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(chromiumEventOnPrintStart)(lcl.AsObject(getPtr(0)), browse)
+		case chromiumEventOnPrintSettings:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			settings := &ICefPrintSettings{instance: getPtr(2)}
+			getDefaults := api.GoBool(getVal(3))
+			fn.(chromiumEventOnPrintSettings)(lcl.AsObject(getPtr(0)), browse, settings, getDefaults)
+		case chromiumEventOnPrintDialog:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			hasSelection := api.GoBool(getVal(2))
+			callback := &ICefPrintDialogCallback{instance: getPtr(3)}
+			result := (*bool)(getPtr(4))
+			*result = fn.(chromiumEventOnPrintDialog)(lcl.AsObject(getPtr(0)), browse, hasSelection, callback)
+		case chromiumEventOnPrintJob:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			documentName, PDFFilePath := api.GoStr(getVal(2)), api.GoStr(getVal(3))
+			callback := &ICefPrintJobCallback{instance: getPtr(4)}
+			result := (*bool)(getPtr(5))
+			*result = fn.(chromiumEventOnPrintJob)(lcl.AsObject(getPtr(0)), browse, documentName, PDFFilePath, callback)
+		case chromiumEventOnPrintReset:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			fn.(chromiumEventOnPrintReset)(lcl.AsObject(getPtr(0)), browse)
+		case chromiumEventOnGetPDFPaperSize:
+			browse := &ICefBrowser{instance: getPtr(1)}
+			deviceUnitsPerInch := int32(getVal(2))
+			resultSize := (*TCefSize)(getPtr(3))
+			fn.(chromiumEventOnGetPDFPaperSize)(lcl.AsObject(getPtr(0)), browse, deviceUnitsPerInch, resultSize)
 		case chromiumEventOnFavIconUrlChange:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			iconUrlsList := lcl.AsStrings(getVal(2))
@@ -469,13 +497,13 @@ func init() {
 			fn.(chromiumEventOnPrefsAvailable)(lcl.AsObject(getPtr(0)), api.GoBool(getVal(1)))
 		case chromiumEventOnPrefsUpdated:
 			fn.(chromiumEventOnPrefsUpdated)(lcl.AsObject(getPtr(0)))
-		case chromiumEventOnPreKeyEvent:
+		case chromiumEventOnPreKey:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			event := (*TCefKeyEvent)(getPtr(2))
 			osEvent := (*consts.TCefEventHandle)(getPtr(3))
 			isKeyboardShortcut := (*bool)(getPtr(4))
 			result := (*bool)(getPtr(5))
-			*isKeyboardShortcut, *result = fn.(chromiumEventOnPreKeyEvent)(lcl.AsObject(getPtr(0)), browse, event, osEvent)
+			*isKeyboardShortcut, *result = fn.(chromiumEventOnPreKey)(lcl.AsObject(getPtr(0)), browse, event, osEvent)
 		case chromiumEventOnProtocolExecution:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
@@ -751,12 +779,12 @@ func init() {
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			fn.(chromiumEventOnTitleChange)(lcl.AsObject(sender), browse, api.GoStr(getVal(2)))
-		case chromiumEventOnKeyEvent:
+		case chromiumEventOnKey:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
 			osEvent := (*consts.TCefEventHandle)(getPtr(3))
-			fn.(chromiumEventOnKeyEvent)(lcl.AsObject(sender), browse, keyEvent, osEvent, (*bool)(getPtr(4)))
+			fn.(chromiumEventOnKey)(lcl.AsObject(sender), browse, keyEvent, osEvent, (*bool)(getPtr(4)))
 		case chromiumEventOnFullScreenModeChange:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}

@@ -746,6 +746,12 @@ const (
 	CEFChromium_SetOnExtensionLoaded
 	CEFChromium_SetOnExtensionLoadFailed
 	CEFChromium_SetOnExtensionUnloaded
+	CEFChromium_SetOnPrintStart
+	CEFChromium_SetOnPrintSettings
+	CEFChromium_SetOnPrintDialog
+	CEFChromium_SetOnPrintJob
+	CEFChromium_SetOnPrintReset
+	CEFChromium_SetOnGetPDFPaperSize
 	CEFChromium_SetOnAcceleratedPaint
 	CEFChromium_SetOnAllConnectionsClosed
 	CEFChromium_SetOnAudioStreamError

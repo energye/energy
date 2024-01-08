@@ -243,7 +243,7 @@ func (m *ICefWindowDelegate) SetOnAccelerator(fn WindowComponentOnAccelerator) {
 	imports.Proc(def.WindowDelegate_SetOnAccelerator).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
+func (m *ICefWindowDelegate) SetOnKeyEvent(fn WindowComponentOnKey) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}

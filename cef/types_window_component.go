@@ -618,12 +618,12 @@ func (m *TCEFWindowComponent) SetOnAccelerator(fn WindowComponentOnAccelerator) 
 }
 
 // SetOnKeyEvent 设置键盘事件回调事件
-func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKeyEvent) {
+func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKey) {
 	imports.Proc(def.CEFWindowComponent_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnWindowFullscreenTransition
-func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn WindowComponentOnKeyEvent) {
+func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn WindowComponentOnKey) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
@@ -705,11 +705,11 @@ func init() {
 			_ = getPtr(0)
 			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
 			fn.(WindowComponentOnAccelerator)(window, int32(getVal(2)), (*bool)(getPtr(3)))
-		case WindowComponentOnKeyEvent:
+		case WindowComponentOnKey:
 			_ = getPtr(0)
 			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
-			fn.(WindowComponentOnKeyEvent)(window, keyEvent, (*bool)(getPtr(3)))
+			fn.(WindowComponentOnKey)(window, keyEvent, (*bool)(getPtr(3)))
 		case WindowComponentOnWindowFullscreenTransition:
 			_ = getPtr(0)
 			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}

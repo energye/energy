@@ -76,7 +76,7 @@ type IChromiumProc interface {
 	UpdatePreferences()
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
 	//SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
-	CefClient() *ICefClient
+	Client() *ICefClient
 	SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, data []byte)
 	CreateClientHandler(alsOSR bool) (*ICefClient, bool)
 	SetFocus(value bool)
@@ -1275,8 +1275,8 @@ func (m *TCEFChromium) SendProcessMessageForV8Value(messageName string, targetPr
 	imports.Proc(def.CEFChromium_SendProcessMessageForV8Value).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), arguments.Instance())
 }
 
-// CefClient 获取Client
-func (m *TCEFChromium) CefClient() *ICefClient {
+// Client 获取Client
+func (m *TCEFChromium) Client() *ICefClient {
 	if !m.IsValid() {
 		return nil
 	}

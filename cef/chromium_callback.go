@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
@@ -26,7 +25,6 @@ import (
 
 // chromiumOnAfterCreate 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
-	fmt.Println("chromiumOnAfterCreate", browser.Identifier())
 	if common.IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())
 	}
@@ -57,7 +55,6 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 
 // chromiumOnBeforeBrowser
 func chromiumOnBeforeBrowser(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) {
-	fmt.Println("chromiumOnBeforeBrowser", browser.Identifier())
 	// 辅助工具不具有浏览器窗口特性
 	if window.WindowType() == consts.WT_DEV_TOOLS || window.WindowType() == consts.WT_VIEW_SOURCE ||
 		window.WindowProperty().WindowType == consts.WT_DEV_TOOLS || window.WindowProperty().WindowType == consts.WT_VIEW_SOURCE {

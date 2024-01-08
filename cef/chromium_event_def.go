@@ -36,7 +36,7 @@ type IChromiumEvent interface {
 	SetOnBeforeDownload(fn chromiumEventOnBeforeDownload)
 	SetOnDownloadUpdated(fn chromiumEventOnDownloadUpdated)
 	SetOnFullScreenModeChange(fn chromiumEventOnFullScreenModeChange)
-	SetOnKeyEvent(fn chromiumEventOnKeyEvent)
+	SetOnKeyEvent(fn chromiumEventOnKey)
 	SetOnTitleChange(fn chromiumEventOnTitleChange)
 	SetOnRenderCompMsg(fn chromiumEventOnCompMsg)
 	SetOnWidgetCompMsg(fn chromiumEventOnCompMsg)
@@ -85,11 +85,11 @@ type IChromiumEvent interface {
 	SetOnCursorChange(fn chromiumEventOnCursorChange)
 	SetOnDevToolsAgentAttached(fn chromiumEventOnDevToolsAgentAttached)
 	SetOnDevToolsAgentDetached(fn chromiumEventOnDevToolsAgentDetached)
-	SetOnDevToolsEvent(fn chromiumEventOnDevToolsEvent)
+	SetOnDevToolsEvent(fn chromiumEventOnDevTools)
 	SetOnDevToolsMessage(fn chromiumEventOnDevToolsMessage)
 	SetOnDevToolsMethodRawResult(fn chromiumEventOnDevToolsMethodRawResult)
 	SetOnDevToolsMethodResult(fn chromiumEventOnDevToolsMethodResult)
-	SetOnDevToolsRawEvent(fn chromiumEventOnDevToolsRawEvent)
+	SetOnDevToolsRawEvent(fn chromiumEventOnDevToolsRaw)
 	SetOnDevToolsRawMessage(fn chromiumEventOnDevToolsRawMessage)
 	SetOnDialogClosed(fn chromiumEventOnDialogClosed)
 	SetOnDismissPermissionPrompt(fn chromiumEventOnDismissPermissionPrompt)
@@ -104,6 +104,12 @@ type IChromiumEvent interface {
 	SetOnExtensionLoaded(fn chromiumEventOnExtensionLoaded)
 	SetOnExtensionLoadFailed(fn chromiumEventOnExtensionLoadFailed)
 	SetOnExtensionUnloaded(fn chromiumEventOnExtensionUnloaded)
+	SetOnPrintStart(fn chromiumEventOnPrintStart)
+	SetOnPrintSettings(fn chromiumEventOnPrintSettings)
+	SetOnPrintDialog(fn chromiumEventOnPrintDialog)
+	SetOnPrintJob(fn chromiumEventOnPrintJob)
+	SetOnPrintReset(fn chromiumEventOnPrintReset)
+	SetOnGetPDFPaperSize(fn chromiumEventOnGetPDFPaperSize)
 	SetOnFavIconUrlChange(fn chromiumEventOnFavIconUrlChange)
 	SetOnFileDialog(fn chromiumEventOnFileDialog)
 	SetOnGetAccessibilityHandler(fn chromiumEventOnGetAccessibilityHandler)
@@ -130,7 +136,7 @@ type IChromiumEvent interface {
 	SetOnPopupSize(fn chromiumEventOnPopupSize)
 	SetOnPrefsAvailable(fn chromiumEventOnPrefsAvailable)
 	SetOnPrefsUpdated(fn chromiumEventOnPrefsUpdated)
-	SetOnPreKeyEvent(fn chromiumEventOnPreKeyEvent)
+	SetOnPreKeyEvent(fn chromiumEventOnPreKey)
 	SetOnProtocolExecution(fn chromiumEventOnProtocolExecution)
 	SetOnQuickMenuCommand(fn chromiumEventOnQuickMenuCommand)
 	SetOnQuickMenuDismissed(fn chromiumEventOnQuickMenuDismissed)
@@ -267,7 +273,7 @@ func (m *TCEFChromium) SetOnFullScreenModeChange(fn chromiumEventOnFullScreenMod
 	_CEFChromium_SetOnFullScreenModeChange(m.Instance(), fn)
 }
 
-func (m *TCEFChromium) SetOnKeyEvent(fn chromiumEventOnKeyEvent) {
+func (m *TCEFChromium) SetOnKeyEvent(fn chromiumEventOnKey) {
 	if !m.IsValid() {
 		return
 	}
@@ -544,6 +550,48 @@ func (m *TCEFChromium) SetOnExtensionUnloaded(fn chromiumEventOnExtensionUnloade
 	imports.Proc(def.CEFChromium_SetOnExtensionUnloaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *TCEFChromium) SetOnPrintStart(fn chromiumEventOnPrintStart) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnPrintStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnPrintSettings(fn chromiumEventOnPrintSettings) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnPrintSettings).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnPrintDialog(fn chromiumEventOnPrintDialog) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnPrintDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnPrintJob(fn chromiumEventOnPrintJob) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnPrintJob).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnPrintReset(fn chromiumEventOnPrintReset) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnPrintReset).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFChromium) SetOnGetPDFPaperSize(fn chromiumEventOnGetPDFPaperSize) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetOnGetPDFPaperSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 func (m *TCEFChromium) SetOnAcceleratedPaint(fn chromiumEventOnAcceleratedPaint) {
 	if !m.IsValid() {
 		return
@@ -670,7 +718,7 @@ func (m *TCEFChromium) SetOnDevToolsAgentDetached(fn chromiumEventOnDevToolsAgen
 	imports.Proc(def.CEFChromium_SetOnDevToolsAgentDetached).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFChromium) SetOnDevToolsEvent(fn chromiumEventOnDevToolsEvent) {
+func (m *TCEFChromium) SetOnDevToolsEvent(fn chromiumEventOnDevTools) {
 	if !m.IsValid() {
 		return
 	}
@@ -698,7 +746,7 @@ func (m *TCEFChromium) SetOnDevToolsMethodResult(fn chromiumEventOnDevToolsMetho
 	imports.Proc(def.CEFChromium_SetOnDevToolsMethodResult).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFChromium) SetOnDevToolsRawEvent(fn chromiumEventOnDevToolsRawEvent) {
+func (m *TCEFChromium) SetOnDevToolsRawEvent(fn chromiumEventOnDevToolsRaw) {
 	if !m.IsValid() {
 		return
 	}
@@ -929,7 +977,7 @@ func (m *TCEFChromium) SetOnPrefsUpdated(fn chromiumEventOnPrefsUpdated) {
 	imports.Proc(def.CEFChromium_SetOnPrefsUpdated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFChromium) SetOnPreKeyEvent(fn chromiumEventOnPreKeyEvent) {
+func (m *TCEFChromium) SetOnPreKeyEvent(fn chromiumEventOnPreKey) {
 	if !m.IsValid() {
 		return
 	}
