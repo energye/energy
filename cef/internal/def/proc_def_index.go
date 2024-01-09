@@ -2486,16 +2486,16 @@ const (
 	// ICefButtonDelegate
 	ButtonDelegateRef_Create
 	ButtonDelegateRef_CreateForCustom
-	ButtonDelegate_SetOnGetPreferredSize
-	ButtonDelegate_SetOnGetMinimumSize
-	ButtonDelegate_SetOnGetMaximumSize
-	ButtonDelegate_SetOnGetHeightForWidth
-	ButtonDelegate_SetOnParentViewChanged
-	ButtonDelegate_SetOnChildViewChanged
-	ButtonDelegate_SetOnWindowChanged
-	ButtonDelegate_SetOnLayoutChanged
-	ButtonDelegate_SetOnFocus
-	ButtonDelegate_SetOnBlur
+	//ButtonDelegate_SetOnGetPreferredSize
+	//ButtonDelegate_SetOnGetMinimumSize
+	//ButtonDelegate_SetOnGetMaximumSize
+	//ButtonDelegate_SetOnGetHeightForWidth
+	//ButtonDelegate_SetOnParentViewChanged
+	//ButtonDelegate_SetOnChildViewChanged
+	//ButtonDelegate_SetOnWindowChanged
+	//ButtonDelegate_SetOnLayoutChanged
+	//ButtonDelegate_SetOnFocus
+	//ButtonDelegate_SetOnBlur
 	ButtonDelegate_SetOnButtonPressed
 	ButtonDelegate_SetOnButtonStateChanged
 	// ICefLabelButton
@@ -2556,29 +2556,29 @@ const (
 	// ICefPanelDelegate
 	PanelDelegateRef_Create
 	PanelDelegateRef_CreateForCustom
-	PanelDelegate_SetOnGetPreferredSize
-	PanelDelegate_SetOnGetMinimumSize
-	PanelDelegate_SetOnGetMaximumSize
-	PanelDelegate_SetOnGetHeightForWidth
-	PanelDelegate_SetOnParentViewChanged
-	PanelDelegate_SetOnChildViewChanged
-	PanelDelegate_SetOnWindowChanged
-	PanelDelegate_SetOnLayoutChanged
-	PanelDelegate_SetOnFocus
-	PanelDelegate_SetOnBlur
+	//PanelDelegate_SetOnGetPreferredSize
+	//PanelDelegate_SetOnGetMinimumSize
+	//PanelDelegate_SetOnGetMaximumSize
+	//PanelDelegate_SetOnGetHeightForWidth
+	//PanelDelegate_SetOnParentViewChanged
+	//PanelDelegate_SetOnChildViewChanged
+	//PanelDelegate_SetOnWindowChanged
+	//PanelDelegate_SetOnLayoutChanged
+	//PanelDelegate_SetOnFocus
+	//PanelDelegate_SetOnBlur
 	// ICefWindowDelegate
 	WindowDelegate_Create
 	WindowDelegate_CreateForCustom
-	WindowDelegate_SetOnGetPreferredSize
-	WindowDelegate_SetOnGetMinimumSize
-	WindowDelegate_SetOnGetMaximumSize
-	WindowDelegate_SetOnGetHeightForWidth
-	WindowDelegate_SetOnParentViewChanged
-	WindowDelegate_SetOnChildViewChanged
-	WindowDelegate_SetOnWindowChanged
-	WindowDelegate_SetOnLayoutChanged
-	WindowDelegate_SetOnFocus
-	WindowDelegate_SetOnBlur
+	//WindowDelegate_SetOnGetPreferredSize
+	//WindowDelegate_SetOnGetMinimumSize
+	//WindowDelegate_SetOnGetMaximumSize
+	//WindowDelegate_SetOnGetHeightForWidth
+	//WindowDelegate_SetOnParentViewChanged
+	//WindowDelegate_SetOnChildViewChanged
+	//WindowDelegate_SetOnWindowChanged
+	//WindowDelegate_SetOnLayoutChanged
+	//WindowDelegate_SetOnFocus
+	//WindowDelegate_SetOnBlur
 	WindowDelegate_SetOnWindowCreated
 	WindowDelegate_SetOnWindowClosing
 	WindowDelegate_SetOnWindowDestroyed

@@ -44,75 +44,75 @@ func (*buttonDelegate) NewForCustom(buttonComponent *TCEFButtonComponent) *ICefB
 	return nil
 }
 
-func (m *ICefButtonDelegate) SetOnGetPreferredSize(fn onGetPreferredSize) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnGetMinimumSize(fn onGetMinimumSize) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnGetMaximumSize(fn onGetMaximumSize) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnParentViewChanged(fn onParentViewChanged) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnChildViewChanged(fn onChildViewChanged) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnWindowChanged(fn onWindowChanged) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnLayoutChanged(fn onLayoutChanged) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnFocus(fn onFocus) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefButtonDelegate) SetOnBlur(fn onBlur) {
-	if !m.IsValid() || m.IsOtherEvent() {
-		return
-	}
-	imports.Proc(def.ButtonDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
+//func (m *ICefButtonDelegate) SetOnGetPreferredSize(fn onGetPreferredSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnGetMinimumSize(fn onGetMinimumSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnGetMaximumSize(fn onGetMaximumSize) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnParentViewChanged(fn onParentViewChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnChildViewChanged(fn onChildViewChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnWindowChanged(fn onWindowChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnLayoutChanged(fn onLayoutChanged) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnFocus(fn onFocus) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
+//
+//func (m *ICefButtonDelegate) SetOnBlur(fn onBlur) {
+//	if !m.IsValid() || m.IsOtherEvent() {
+//		return
+//	}
+//	imports.Proc(def.ButtonDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
+//}
 
 func (m *ICefButtonDelegate) SetOnButtonPressed(fn onButtonPressed) {
 	if !m.IsValid() || m.IsOtherEvent() {
