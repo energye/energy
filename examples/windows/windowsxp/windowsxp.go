@@ -41,7 +41,7 @@ func main() {
 	//创建应用
 	app := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	// 主进程回调函数
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {
 		fmt.Println("主进程启动 创建一个内置http服务")
