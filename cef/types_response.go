@@ -38,7 +38,11 @@ func (*response) New() *ICefResponse {
 func (*response) UnWrap(data *ICefResponse) *ICefResponse {
 	var result uintptr
 	imports.Proc(def.CefResponseRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

@@ -32,7 +32,11 @@ func (m *postData) New() *ICefPostData {
 func (m *postData) UnWrap(data *ICefPostData) *ICefPostData {
 	var result uintptr
 	imports.Proc(def.CefPostDataRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

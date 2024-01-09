@@ -39,8 +39,11 @@ func (*responseFilter) New() *ICefResponseFilter {
 func (*responseFilter) UnWrap(data *ICefResponseFilter) *ICefResponseFilter {
 	var result uintptr
 	imports.Proc(def.CefResponseFilter_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result == 0 {
+		return nil
+	}
 	data.base.Free(data.Instance())
-	data.instance = unsafe.Pointer(result)
+	data.instance = getInstance(result)
 	return data
 }
 

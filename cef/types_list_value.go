@@ -37,7 +37,11 @@ func (*listValue) New() *ICefListValue {
 func (*listValue) UnWrap(data *ICefListValue) *ICefListValue {
 	var result uintptr
 	imports.Proc(def.CefListValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

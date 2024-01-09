@@ -25,18 +25,20 @@ type streamWriter uintptr
 func (*streamWriter) UnWrap(data *ICefStreamWriter) *ICefStreamWriter {
 	var result uintptr
 	imports.Proc(def.CefStreamWriterRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	if result != 0 {
-		data.instance = unsafe.Pointer(result)
-		return data
+	if result == 0 {
+		return nil
 	}
-	return nil
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
+	return data
+
 }
 
 func (*streamWriter) NewForFile(filename string) *ICefStreamWriter {
 	var result uintptr
 	imports.Proc(def.CefStreamWriterRef_CreateForFile).Call(api.PascalStr(filename), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefStreamWriter{NewBaseRefCounted(result)}
+		return &ICefStreamWriter{instance: getInstance(result)}
 	}
 	return nil
 }
@@ -49,6 +51,20 @@ func (*streamWriter) NewForFile(filename string) *ICefStreamWriter {
 //	}
 //	return nil
 //}
+
+func (m *ICefStreamWriter) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
+}
+
+func (m *ICefStreamWriter) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return true
+}
 
 func (m *ICefStreamWriter) Write(data []byte, size, n uint32) uint32 {
 	if !m.IsValid() {

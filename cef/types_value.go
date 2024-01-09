@@ -30,6 +30,9 @@ type cefValue uintptr
 func (*cefValue) New() *ICefValue {
 	var result uintptr
 	imports.Proc(def.CefValueRef_New).Call(uintptr(unsafe.Pointer(&result)))
+	if result == 0 {
+		return nil
+	}
 	return &ICefValue{
 		instance: unsafe.Pointer(result),
 	}
@@ -37,8 +40,12 @@ func (*cefValue) New() *ICefValue {
 
 func (*cefValue) UnWrap(data *ICefValue) *ICefValue {
 	var result uintptr
-	imports.Proc(def.CefValueRef_UnWrap).Call(uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	imports.Proc(def.CefValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

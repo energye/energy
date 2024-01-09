@@ -34,11 +34,15 @@ func (*cefDictionaryValue) New() *ICefDictionaryValue {
 	}
 }
 
-// data
+// UnWrap
 func (*cefDictionaryValue) UnWrap(data *ICefDictionaryValue) *ICefDictionaryValue {
 	var result uintptr
 	imports.Proc(def.CefDictionaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

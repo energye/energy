@@ -651,6 +651,10 @@ type browser uintptr
 func (*browser) UnWrap(data *ICefBrowser) *ICefBrowser {
 	var result uintptr
 	imports.Proc(def.CEFBrowserRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }

@@ -48,7 +48,11 @@ func (m *processMessage) New(name string) *ICefProcessMessage {
 func (m *processMessage) UnWrap(data *ICefProcessMessage) *ICefProcessMessage {
 	var result uintptr
 	imports.Proc(def.CefProcessMessageRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

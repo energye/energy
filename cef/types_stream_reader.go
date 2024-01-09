@@ -26,18 +26,19 @@ type streamReader uintptr
 func (*streamReader) UnWrap(data *ICefStreamReader) *ICefStreamReader {
 	var result uintptr
 	imports.Proc(def.CefStreamReaderRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	if result != 0 {
-		data.instance = unsafe.Pointer(result)
-		return data
+	if result == 0 {
+		return nil
 	}
-	return nil
+	data.base.Free(data.Instance())
+	data.instance = unsafe.Pointer(result)
+	return data
 }
 
 func (*streamReader) NewForFile(filename string) *ICefStreamReader {
 	var result uintptr
 	imports.Proc(def.CefStreamReaderRef_CreateForFile).Call(api.PascalStr(filename), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefStreamReader{instance: unsafe.Pointer(result)}
+		return &ICefStreamReader{instance: getInstance(result)}
 	}
 	return nil
 }

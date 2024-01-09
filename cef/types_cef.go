@@ -917,7 +917,8 @@ type ICefV8Exception struct {
 //
 //	/include/capi/cef_stream_capi.h (cef_stream_writer_t)
 type ICefStreamWriter struct {
-	*TCefBaseRefCounted
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
 }
 
 // ICefV8Context

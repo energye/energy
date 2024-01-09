@@ -2706,6 +2706,17 @@ func init() {
 		dllimports.NewEnergyImport("TextfieldDelegate_CreateForCustom", 0),
 		dllimports.NewEnergyImport("TextfieldDelegate_SetOnKeyEvent", 0),
 		dllimports.NewEnergyImport("TextfieldDelegate_SetOnAfterUserAction", 0),
+		// ICefLayout
+		dllimports.NewEnergyImport("LayoutRef_UnWrap", 0),
+		dllimports.NewEnergyImport("Layout_AsBoxLayout", 0),
+		dllimports.NewEnergyImport("Layout_AsFillLayout", 0),
+		dllimports.NewEnergyImport("Layout_IsValid", 0),
+		// ICefFillLayout
+		dllimports.NewEnergyImport("FillLayoutRef_UnWrap", 0),
+		// ICefBoxLayout
+		dllimports.NewEnergyImport("BoxLayoutRef_UnWrap", 0),
+		dllimports.NewEnergyImport("BoxLayout_SetFlexForView", 0),
+		dllimports.NewEnergyImport("BoxLayout_ClearFlexForView", 0),
 	} //end
 	imports.SetEnergyImportDefs(energyImportDefs)
 }

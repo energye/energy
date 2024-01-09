@@ -157,6 +157,10 @@ func (m *cefV8ContextRef) Entered() *ICefV8Context {
 func (m *cefV8ContextRef) UnWrap(data *ICefV8Context) *ICefV8Context {
 	var result uintptr
 	imports.Proc(def.CefV8ContextRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }

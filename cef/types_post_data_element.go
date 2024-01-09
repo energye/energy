@@ -34,7 +34,11 @@ func (m *postDataElement) New() *ICefPostDataElement {
 func (m *postDataElement) UnWrap(data *ICefPostDataElement) *ICefPostDataElement {
 	var result uintptr
 	imports.Proc(def.PostDataElementRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

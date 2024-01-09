@@ -992,8 +992,11 @@ func (*cefV8Value) NewPromise() *ICefV8Value {
 func (*cefV8Value) UnWrap(data *ICefV8Value) *ICefV8Value {
 	var result uintptr
 	imports.Proc(def.CefV8ValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result == 0 {
+		return nil
+	}
 	data.base.Free(data.Instance())
-	data.instance = unsafe.Pointer(result)
+	data.instance = getInstance(result)
 	return data
 }
 

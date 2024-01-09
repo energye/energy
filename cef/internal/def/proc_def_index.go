@@ -2706,4 +2706,15 @@ const (
 	TextfieldDelegate_CreateForCustom
 	TextfieldDelegate_SetOnKeyEvent
 	TextfieldDelegate_SetOnAfterUserAction
+	// ICefLayout
+	LayoutRef_UnWrap
+	Layout_AsBoxLayout
+	Layout_AsFillLayout
+	Layout_IsValid
+	// ICefFillLayout
+	FillLayoutRef_UnWrap
+	// ICefBoxLayout
+	BoxLayoutRef_UnWrap
+	BoxLayout_SetFlexForView
+	BoxLayout_ClearFlexForView
 ) //end

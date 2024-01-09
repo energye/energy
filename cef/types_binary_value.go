@@ -53,7 +53,11 @@ func (*cefBinaryValue) Create() *ICefBinaryValue {
 func (*cefBinaryValue) UnWrap(data *ICefBinaryValue) *ICefBinaryValue {
 	var result uintptr
 	imports.Proc(def.CefBinaryValueRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	data.instance = unsafe.Pointer(result)
+	if result == 0 {
+		return nil
+	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
 	return data
 }
 

@@ -33,9 +33,12 @@ func (*commandLine) New() *ICefCommandLine {
 func (*commandLine) UnWrap(data *ICefCommandLine) *ICefCommandLine {
 	var result uintptr
 	imports.Proc(def.CefCommandLineRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefCommandLine{
-		instance: unsafe.Pointer(result),
+	if result == 0 {
+		return nil
 	}
+	data.base.Free(data.Instance())
+	data.instance = getInstance(result)
+	return data
 }
 
 func (*commandLine) Global() *ICefCommandLine {
