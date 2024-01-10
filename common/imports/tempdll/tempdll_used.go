@@ -8,41 +8,41 @@
 //
 //----------------------------------------
 
-//go:build tempdll
-// +build tempdll
-
-// 编译命令: go build -tags="tempdll"
-
 package tempdll
 
 import (
-	"bytes"
-	"compress/zlib"
 	"fmt"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/pkgs/libname"
-	"github.com/energye/liblclbinres/v2"
 	"hash/crc32"
-	"io"
 	"io/ioutil"
 	"os"
+	"path"
 )
 
 func init() {
-	TempDLL = &temdll{}
+	TempDLL = &temdll{
+		dllFSDir: "libs",
+	}
 }
 
 // CheckAndReleaseDLL
 //  检查动态库并释放
 func CheckAndReleaseDLL() (string, bool) {
-	if TempDLL == nil || TempDLL.DllSaveDirType() == TddInvalid {
+	if TempDLL == nil || TempDLL.DllSaveDirType() == TddInvalid || emfs.GetLibsFS() == nil {
 		return "", false
 	}
+	// 在内置libs内读取
+	liblclData, err := emfs.GetLibsFS().ReadFile(path.Join(TempDLL.dllFSDir, libname.GetDLLName()))
+	if err != nil {
+		return "", false
+	}
+	crc32Val := crc32.ChecksumIEEE(liblclData)
+
 	// 动态库保存目录
-	var tempDLLDir string
+	var tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), crc32Val)
 	switch TempDLL.DllSaveDirType() {
-	case TddTmp: // default
-		tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), liblclbinres.CRC32Value)
 	case TddCurrent:
 		tempDLLDir = consts.ExeDir
 	case TddEnergyHome:
@@ -50,14 +50,7 @@ func CheckAndReleaseDLL() (string, bool) {
 	case TddCustom:
 		if TempDLL.DllSaveDir() != "" {
 			tempDLLDir = TempDLL.DllSaveDir()
-		} else {
-			tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), liblclbinres.CRC32Value)
 		}
-	default:
-		tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), liblclbinres.CRC32Value)
-	}
-	if tempDLLDir == "" {
-		tempDLLDir = fmt.Sprintf("%s/liblcl/%x", os.TempDir(), liblclbinres.CRC32Value)
 	}
 
 	// create liblcl: $tempdir/liblcl/{crc32}/liblcl.{ext}
@@ -66,25 +59,25 @@ func CheckAndReleaseDLL() (string, bool) {
 			return "", false
 		}
 	}
-	// 设置到tempDllDir
-	// 使用tempdll将最优先从该目录加载
+	// 设置到tempDllDir, 使用tempdll将最优先从该目录加载
 	libname.SetTempDllDir(tempDLLDir)
 	// 如果不是自定义设置目录，在这里设置到DllSaveDir方便使用时获取
 	if TempDLL.DllSaveDirType() != TddCustom {
 		TempDLL.SetDllSaveDir(tempDLLDir)
 	}
-	tempDLLFileName := fmt.Sprintf("%s/%s", tempDLLDir, libname.GetDLLName())
 	// test crc32
+	// 防止liblcl被修改
+	tempDLLFileName := fmt.Sprintf("%s/%s", tempDLLDir, libname.GetDLLName())
 	if fileExists(tempDLLFileName) {
 		bs, err := ioutil.ReadFile(tempDLLFileName)
 		if err == nil {
-			if crc32.ChecksumIEEE(bs) != liblclbinres.CRC32Value {
+			if crc32.ChecksumIEEE(bs) != crc32Val {
 				os.Remove(tempDLLFileName)
 			}
 		}
 	}
 	if !fileExists(tempDLLFileName) {
-		if err := zlibUnCompressToFile(tempDLLFileName, liblclbinres.LCLBinRes); err != nil {
+		if err := releaseLib(tempDLLFileName, liblclData); err != nil {
 			if os.Remove(tempDLLFileName) != nil {
 				return "", false
 			}
@@ -93,22 +86,15 @@ func CheckAndReleaseDLL() (string, bool) {
 	return tempDLLFileName, true
 }
 
-func zlibUnCompressToFile(destFileName string, input []byte) error {
-	r, err := zlib.NewReader(bytes.NewReader(input))
+func releaseLib(destFileName string, input []byte) error {
+	var file *os.File
+	file, err := os.OpenFile(destFileName, os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		return err
 	}
-	defer r.Close()
-	fi, err := os.Create(destFileName)
-	if err != nil {
-		return err
-	}
-	defer fi.Close()
-	_, err = io.Copy(fi, r)
-	if err != nil {
-		return nil
-	}
-	return nil
+	defer file.Close()
+	_, err = file.Write(input)
+	return err
 }
 
 func fileExists(path string) bool {

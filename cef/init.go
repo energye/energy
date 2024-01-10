@@ -23,7 +23,6 @@ import (
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/pkgs/macapp"
 	"os"
-	"runtime"
 )
 
 // GlobalInit 全局初始化
@@ -54,7 +53,7 @@ func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	// 如果使用 liblclbinres 编译则通过该方式加载动态库
 	if dllPath, dllOk := tempdll.CheckAndReleaseDLL(); dllOk {
 		api.SetLoadUILibCallback(func() (path string, ok bool) {
-			if runtime.GOOS == "darwin" {
+			if IsDarwin() {
 				//MacOSX从Frameworks加载
 				libname.LibName = "@executable_path/../Frameworks/" + libname.GetDLLName()
 			} else {
@@ -86,7 +85,5 @@ func v8init() {
 	if Args.IsMain() || Args.IsRender() {
 		//ipc初始化
 		ipcInit()
-		//bind初始化
-		//bindInit()
 	}
 }

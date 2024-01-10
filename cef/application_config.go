@@ -15,7 +15,6 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/internal/version"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
@@ -1132,9 +1131,9 @@ func (m *TCEFApplication) LibCefVersion() string {
 	return api.GoStr(r1)
 }
 
-// LibVersion 返回 lib-lcl 版本
+// LibVersion 返回 lib-lcl 版本, TODO 暂时移除
 func (m *TCEFApplication) LibVersion() string {
-	return version.LibVersion()
+	return ""
 }
 
 func (m *TCEFApplication) LibCefPath() string {

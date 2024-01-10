@@ -8,15 +8,14 @@
 //
 //----------------------------------------
 
-//  动态链接库内置到Go字节码方式
+//  动态链接库内置到Go执行文件
 //  如果启用该方式则根据存放目录类型生成动态库并加载
-//  默认存放在系统临时目录
-//  通过编译命令 `-tags` 参数指定开启该方式 `go build -tags="tempdll"`
+//  默认将liblcl释放放在系统临时目录
 
 package tempdll
 
 // TempDLL
-//  通过编译命令 `-tags` 参数控制该变量的初始化 `go build -tags="tempdll"`
+//  目录释放配置
 var TempDLL *temdll
 
 // TempDllDIR
@@ -32,8 +31,9 @@ const (
 )
 
 type temdll struct {
-	dllSaveDirType TempDllDIR
-	dllSaveDir     string
+	dllSaveDirType TempDllDIR // 保存类型
+	dllSaveDir     string     // 保存目录
+	dllFSDir       string     // dll所在fs目录, 默认libs, 格式为: you/liblcl/path, 目录不允许\\出现
 }
 
 // SetDllSaveDirType
@@ -67,10 +67,18 @@ func (m *temdll) DllSaveDirType() TempDllDIR {
 }
 
 // DllSaveDir
-//	设置动态库保存目录, 默认为空
+//	返回动态库保存目录, 默认为空
 func (m *temdll) DllSaveDir() string {
 	if m == nil {
 		return ""
 	}
 	return m.dllSaveDir
+}
+
+// SetDllFSDir
+//
+// 设置dll所在内置资源目录
+// 默认libs, 格式为: you/liblcl/path, 目录不允许\\
+func (m *temdll) SetDllFSDir(dllFSDir string) {
+	m.dllFSDir = dllFSDir
 }
