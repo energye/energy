@@ -14,6 +14,7 @@ package main
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/cmd/internal"
+	"github.com/energye/energy/v2/cmd/internal/checkversion"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/term"
@@ -52,12 +53,11 @@ func termRun() {
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
 		if len(extraArgs) > 0 && (extraArgs[0] == "-v" || extraArgs[0] == "v") {
-			term.Section.Println(" ", term.CliVersion)
-			os.Exit(0)
+			checkversion.Check()
 		} else {
 			println(err.Error())
 		}
-		os.Exit(1)
+		return
 	} else {
 		switch parser.Active.Name {
 		case "install":
@@ -77,7 +77,7 @@ func termRun() {
 		case "bindata":
 			cc.Index = 8
 		case "v":
-			term.Section.Println(" ", term.CliVersion)
+			checkversion.Check()
 			return
 		}
 		cmd := commands[cc.Index]

@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -199,7 +200,7 @@ func NewProject(projectPath string) (*Project, error) {
 		projectPath = tools.CurrentExecuteDir()
 	}
 	config := filepath.Join(projectPath, consts.EnergyProjectConfig)
-	rawBytes, err := os.ReadFile(config)
+	rawBytes, err := ioutil.ReadFile(config)
 	if err != nil {
 		return nil, err
 	}

@@ -16,7 +16,9 @@ import (
 )
 
 const (
-	CliVersion = "1.0.4"
+	Build = 1
+	Major = 0
+	Minor = 4
 )
 
 var Logger *pterm.Logger
