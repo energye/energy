@@ -4,6 +4,7 @@
   "frameworkPath": "{{.FrameworkPath}}",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
+  "libemfs": "libs",
   "info": {
     "icon": "{{.ProjectPath}}/resources/icon.png",
     "companyName": "{{.CompanyName}}",

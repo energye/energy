@@ -261,7 +261,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	return installPathName, func() {
 		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", c.Install.Version, "liblcl", liblclVersion))
 		if liblclModule == nil {
-			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version, You need to use built-in binary build. [go build -tags="tempdll"]`)
+			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version`)
 		}
 	}
 }

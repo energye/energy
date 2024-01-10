@@ -20,6 +20,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"text/template"
@@ -202,4 +203,18 @@ func ExePath() string {
 //  返回当前执行目录
 func CurrentExecuteDir() string {
 	return currentExecuteDir
+}
+
+var platformExtNames = map[string]string{
+	"windows": ".dll",
+	"linux":   ".so",
+	"darwin":  ".dylib",
+}
+
+func GetDLLName() string {
+	libName := "liblcl"
+	if ext, ok := platformExtNames[runtime.GOOS]; ok {
+		return libName + ext
+	}
+	return libName
 }

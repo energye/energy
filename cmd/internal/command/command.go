@@ -85,6 +85,7 @@ type Build struct {
 	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file."`
 	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
 	Args    string `long:"args" description:"go build [args]" default:""`
+	Libemfs bool   `long:"libemfs" description:"Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation"`
 }
 
 type Bindata struct {

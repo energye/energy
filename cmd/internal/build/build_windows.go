@@ -68,6 +68,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	term.Section.Println("Building", proj.OutputFilename)
 	var args = []string{"build"}
 	if c.Build.Args != "" {
+		// go build args
 		gbargs := strings.Split(c.Build.Args, " ")
 		for i := range gbargs {
 			args = append(args, gbargs[i])

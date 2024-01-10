@@ -18,13 +18,15 @@ import (
 )
 
 var CmdBuild = &command.Command{
-	UsageLine: "build -p [path] -u [upx] --upxFlag",
+	UsageLine: "build -p [path] -u [upx] --upxFlag --args --libemfs",
 	Short:     "build energy project",
 	Long: `
 	Building energy project
 	-p Project path, default current path. Can be configured in energy.json
 	-u Set this parameter and install upx. Use upx to compress the execution file.
-	  --upxFlag: Upx command line parameters
+	   --upxFlag: Upx command line parameters
+	--args Set go build [args]
+	--libemfs Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation
 `,
 }
 

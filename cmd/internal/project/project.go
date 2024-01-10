@@ -37,6 +37,7 @@ type Project struct {
 	FrameworkPath  string  `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
 	AssetsDir      string  `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string  `json:"outputFilename"` // 输出安装包文件名
+	LibEMFS        string  `json:"libemfs"`        // 内置libs存放目录, 以项目目录根目录开始 ProjectPath + Libs = liblcl.dll 目录, 默认libs
 	Info           Info    `json:"info"`           // 应用信息
 	NSIS           NSIS    `json:"nsis"`           // windows nsis 安装包
 	Dpkg           DPKG    `json:"dpkg"`           // linux dpkg 安装包
@@ -86,6 +87,9 @@ func (m *Project) setDefaults() {
 	if m.Info.FileDescription == nil {
 		v := "Built using ENERGY (https://github.com/energye/energy)"
 		m.Info.FileDescription = &v
+	}
+	if m.LibEMFS == "" {
+		m.LibEMFS = "Libs"
 	}
 	switch runtime.GOOS {
 	case "windows":
