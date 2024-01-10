@@ -11,19 +11,19 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/examples/common/tray"
-	"github.com/energye/energy/v2/examples/frameless/assets"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl/rtl/version"
 )
 
 //go:embed resources
-//var resources embed.FS
+var resources embed.FS
 
 //用于Go版本低于1.16
 //go:generate energy bindata --fs --o=assets/assets.go --pkg=assets --paths=./resources/...
@@ -31,7 +31,7 @@ import (
 // go build -ldflags "-s -w"
 func main() {
 	//命令: go generate 生成内置资源
-	resources := assets.AssetFile()
+	//resources := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, resources)
 	//创建应用
