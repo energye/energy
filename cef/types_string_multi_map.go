@@ -69,20 +69,20 @@ func (m *ICefStringMultiMap) GetEnumerate(key string, index uint32) (r string) {
 }
 
 // GetKey 根据 index 获取key
-func (m *ICefStringMultiMap) GetKey(index uint32) (r string) {
-	value := NewTString()
-	imports.Proc(def.StringMultimap_GetKey).Call(m.Instance(), uintptr(index), value.Instance())
-	r = value.Value()
-	value.Free()
-	return r
+func (m *ICefStringMultiMap) GetKey(index uint32) (key string) {
+	tKey := NewTString()
+	imports.Proc(def.StringMultimap_GetKey).Call(m.Instance(), uintptr(index), tKey.Instance())
+	key = tKey.Value()
+	tKey.Free()
+	return
 }
 
 // GetValue 根据 index 获取value
-func (m *ICefStringMultiMap) GetValue(index uint32) (r string) {
-	value := NewTString()
-	imports.Proc(def.StringMultimap_GetValue).Call(m.Instance(), uintptr(index), value.Instance())
-	r = value.Value()
-	value.Free()
+func (m *ICefStringMultiMap) GetValue(index uint32) (value string) {
+	tValue := NewTString()
+	imports.Proc(def.StringMultimap_GetValue).Call(m.Instance(), uintptr(index), tValue.Instance())
+	value = tValue.Value()
+	tValue.Free()
 	return
 }
 
