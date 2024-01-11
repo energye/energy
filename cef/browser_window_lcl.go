@@ -1038,7 +1038,8 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 			}
 			if !result { // true 表示用户自行处理
 				RunOnMainThread(func() {
-					bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
+					bw.Chromium().SetDefaultURL(beforePopupInfo.TargetUrl)
+					//bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
 					bw.EnableAllDefaultEvent()
 					bw.SetProperty()
 					// show window, run in main thread

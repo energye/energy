@@ -150,7 +150,7 @@ func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 // createNextLCLPopupWindow 预创建下一个弹出的子窗口
 func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
-		if mw := m.MainWindow(); mw != nil {
+		if mw := m.MainWindow(); mw != nil && mw.IsLCL() {
 			// owner设置nil以防址多窗口时被连带关闭, 如果多窗口时也可指定为真实的主窗口
 			//var owner lcl.IComponent
 			//if disabledMainWindow != nil {
@@ -159,6 +159,7 @@ func (m *browserWindow) createNextLCLPopupWindow() {
 			//	owner = enableMainWindow // 未开启多窗口
 			//}
 			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, nil)
+			m.popupWindow.AsLCLBrowserWindow().BrowserWindow().ChromiumCreate(NewChromiumConfig(), "")
 		}
 	}
 }

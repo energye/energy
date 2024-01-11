@@ -53,6 +53,7 @@ func NewChromiumBrowser(owner lcl.IWinControl, config *TCefChromiumConfig) ICEFC
 	m.windowParent.SetAlign(types.AlNone)
 	m.createTimer = lcl.NewTimer(owner)
 	m.createTimer.SetInterval(200)
+	m.createTimer.SetEnabled(false)
 	m.createTimer.SetOnTimer(m.checkAndCreateBrowser)
 	return m
 }

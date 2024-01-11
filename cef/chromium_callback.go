@@ -42,7 +42,7 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 		wp.UpdateSize()
 	}
 	// 当前应用是LCL窗口预先创建下一个window
-	if !application.IsMessageLoop() {
+	if !application.IsMessageLoop() && window.Chromium().Config().EnableWindowPopup() {
 		RunOnMainThread(func() {
 			BrowserWindow.createNextLCLPopupWindow()
 		})

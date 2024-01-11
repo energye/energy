@@ -101,13 +101,6 @@ func main() {
 				window.RunOnMainThread(func() {
 					popupWindow.SetSize(550, 550)
 					popupWindow.HideTitle()
-					// 如果
-					if popupWindow.Chromium() == nil {
-						bw := popupWindow.AsLCLBrowserWindow()
-						bw.ChromiumCreate(nil, beforePopupInfo.TargetUrl)
-						bw.EnableAllDefaultEvent()
-						bw.Show()
-					}
 					popupWindow.Chromium().Config().SetEnableMenu(false)
 					// 如果使用winapi方式改变窗口，需要在主线程中运行
 					elliptic(popupWindow)
