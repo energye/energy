@@ -14,6 +14,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
@@ -49,6 +50,10 @@ func main() {
 		go server.StartHttpServer()
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+		exception.SetOnException(func(message string) {
+			fmt.Println(message)
+		})
+
 		ipc.On("setText", func(text string) {
 			lcl.Clipboard.SetAsText(text)
 			println("set-text", text)

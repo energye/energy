@@ -16,7 +16,7 @@ import (
 type BrowserWindow struct {
 	cef.LCLBrowserWindow
 	timer        *lcl.TTimer
-	windowParent *cef.TCEFWindowParent
+	windowParent cef.ICEFWindowParent
 	chromium     cef.IChromium
 	canClose     bool
 	ChildForm    *cef.LCLBrowserWindow
