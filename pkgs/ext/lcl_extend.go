@@ -46,7 +46,7 @@ func init() {
 		dllimports.NewEnergyImport("Ext_Form_Deactivate", 0),
 		dllimports.NewEnergyImport("Ext_Assigned", 0),
 	}
-	imports.SetLClExtImportDefs(lclExtImportDefs)
+	imports.LibLCLExt().SetImportTable(lclExtImportDefs)
 }
 
 const (
@@ -59,25 +59,25 @@ const (
 )
 
 func PanelBevelColor(panel *lcl.TPanel) types.TColor {
-	r1, _, _ := imports.ExtProc(Ext_Panel_GetBevelColor).Call(panel.Instance())
+	r1, _, _ := imports.LibLCLExt().Proc(Ext_Panel_GetBevelColor).Call(panel.Instance())
 	return types.TColor(r1)
 }
 
 func SetPanelBevelColor(panel *lcl.TPanel, colors types.TColor) {
-	imports.ExtProc(Ext_Panel_SetBevelColor).Call(panel.Instance(), uintptr(colors))
+	imports.LibLCLExt().Proc(Ext_Panel_SetBevelColor).Call(panel.Instance(), uintptr(colors))
 }
 
 func readObjectStringProperty(sender lcl.IObject) string {
-	r1, _, _ := imports.ExtProc(Ext_ReadStringProperty).Call(lcl.CheckPtr(sender))
+	r1, _, _ := imports.LibLCLExt().Proc(Ext_ReadStringProperty).Call(lcl.CheckPtr(sender))
 	return api.GoStr(r1)
 }
 
 func FormActivate(form *lcl.TForm) {
-	imports.ExtProc(Ext_Form_Activate).Call(form.Instance())
+	imports.LibLCLExt().Proc(Ext_Form_Activate).Call(form.Instance())
 }
 
 func FormDeactivate(form *lcl.TForm) {
-	imports.ExtProc(Ext_Form_Deactivate).Call(form.Instance())
+	imports.LibLCLExt().Proc(Ext_Form_Deactivate).Call(form.Instance())
 }
 
 func ReadObjectStringProperty(sender lcl.IObject) map[string]ObjectProperty {
@@ -99,6 +99,6 @@ func ReadObjectStringProperty(sender lcl.IObject) map[string]ObjectProperty {
 }
 
 func Assigned(ptr uintptr) bool {
-	r1, _, _ := imports.ExtProc(Ext_Assigned).Call(ptr)
+	r1, _, _ := imports.LibLCLExt().Proc(Ext_Assigned).Call(ptr)
 	return api.GoBool(r1)
 }

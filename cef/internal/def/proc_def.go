@@ -2718,5 +2718,5 @@ func init() {
 		dllimports.NewEnergyImport("BoxLayout_SetFlexForView", 0),
 		dllimports.NewEnergyImport("BoxLayout_ClearFlexForView", 0),
 	} //end
-	imports.SetEnergyImportDefs(energyImportDefs)
+	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

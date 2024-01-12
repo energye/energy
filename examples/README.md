@@ -1,7 +1,7 @@
 ## Energy example
 ### In Energy, CEF combined with LCL can make various applications
 > CEF: HTML + JS + CSS
->
+> 
 > LCL: Various system native UI components
 > 
 > CEF is a multi-process mode, by default (no standalone sub-process set) it repeatedly starts the current executable to start multiple processes, including (PtBrowser/PtRenderer/PtZygote/PtGPU/PtUtility/PtBroker/PtCrashpad/PtOther).

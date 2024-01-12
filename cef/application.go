@@ -95,7 +95,7 @@ func (m *TCEFApplication) StartMainProcess() bool {
 	if m.instance != nil {
 		v8init()
 		logger.Debug("application single exe,", process.Args.ProcessType(), "process start")
-		r1, _, _ := imports.Proc(def.CEFStartMainProcess).Call(m.Instance())
+		r1, _, _ := imports.Proc(def.CEFStartMainProcess).Call()
 		return api.GoBool(r1)
 	}
 	return false
@@ -106,7 +106,7 @@ func (m *TCEFApplication) StartSubProcess() (result bool) {
 	if m.instance != nil {
 		v8init()
 		logger.Debug("application multiple exe,", process.Args.ProcessType(), "process start")
-		r1, _, _ := imports.Proc(def.CEFStartSubProcess).Call(m.Instance())
+		r1, _, _ := imports.Proc(def.CEFStartSubProcess).Call()
 		result = api.GoBool(r1)
 	}
 	return false

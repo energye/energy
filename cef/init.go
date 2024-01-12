@@ -13,13 +13,16 @@
 package cef
 
 import (
+	_ "github.com/energye/energy/v2/cef/internal/def"
 	. "github.com/energye/energy/v2/cef/process"
 	. "github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/common/imports/tempdll"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/pkgs/macapp"
 	"os"
@@ -36,8 +39,7 @@ func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 		macapp.MacApp.IsCEF(true)
 		//MacOSX环境, ide开发环境需命令行参数[energy_env=dev]以保证应用正常运行
 		var env = func() string {
-			energyEnv := Args.Args("energy_env")
-			env := Args.Args("env")
+			energyEnv, env := Args.Args("energy_env"), Args.Args("env")
 			if energyEnv != "" {
 				return energyEnv
 			}
@@ -50,22 +52,88 @@ func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 			macapp.MacApp.SetEnergyEnv(macapp.ENERGY_ENV(env))
 		}
 	}
-	// 如果使用 liblclbinres 编译则通过该方式加载动态库
-	if dllPath, dllOk := tempdll.CheckAndReleaseDLL(); dllOk {
-		api.SetLoadUILibCallback(func() (path string, ok bool) {
-			if IsDarwin() {
-				//MacOSX从Frameworks加载
-				libname.LibName = "@executable_path/../Frameworks/" + libname.GetDLLName()
-			} else {
-				libname.LibName = dllPath
+
+	// lcl 初始化时回调，如果设置了该回调函数需要通过该函数返回liblcl库
+	api.SetLoadLibCallback(func() (liblcl dllimports.DLL, err error) {
+		// load liblcl
+		// liblcl name, 不为空时表示自定义加载目录
+		if libname.LibName == "" {
+			// 如果使用内置dll编译,则通过该方式加载动态库
+			path, fullPath, ok := tempdll.CheckAndReleaseDLL(libname.GetDLLName())
+			if ok {
+				libname.LibName = fullPath
+				// 设置到tempDllDir, 使用tempdll将最优先从该目录加载
+				libname.SetTempDllDir(path)
 			}
-			path = dllPath
-			ok = dllOk
-			return
-		})
-	}
-	// go lcl
-	inits.Init(libs, resources)
+		}
+		if IsDarwin() { // MacOS固定加载目录
+			//MacOSX从Frameworks加载
+			libname.LibName = "@executable_path/../Frameworks/" + libname.GetDLLName()
+		} else if libname.LibName == "" {
+			libname.LibName = libname.LibPath(libname.GetDLLName())
+		}
+		if libname.LibName != "" {
+			liblcl, err = dllimports.NewDLL(libname.LibName)
+		}
+
+		// load libenergy
+		// 尝试初始化libenergy, 如果初始化失败则返回liblcl对象
+		// 否则libenergy表示独立存模块
+		// libenergy name, 不为空时表示自定义加载目录
+		if imports.LibenergyName == "" {
+			// 如果使用内置dll编译,则通过该方式加载动态库
+			path, fullPath, ok := tempdll.CheckAndReleaseDLL(imports.GetDLLName())
+			if ok {
+				imports.LibenergyName = fullPath
+				// 设置到tempDllDir, 使用tempdll将最优先从该目录加载
+				libname.SetTempDllDir(path)
+			}
+		}
+		if IsDarwin() { // MacOS固定加载目录
+			//MacOSX从Frameworks加载
+			imports.LibenergyName = "@executable_path/../Frameworks/" + imports.GetDLLName()
+		} else if imports.LibenergyName == "" {
+			imports.LibenergyName = libname.LibPath(imports.GetDLLName())
+		}
+		var libenergy *imports.DllTable
+		libenergy = imports.LoadLib(imports.LibenergyName)
+		if libenergy.IsOk() {
+			// 如果加载成功，初始化回调事件
+			libenergy.LCLInit()
+		}
+		// 如果初始化失败则表明为找到该库，或未定义出独立的libenergy
+		// 此时使用加载成功的liblcl
+		if !libenergy.IsOk() && liblcl > 0 {
+			libenergy.SetOk(true)
+			libenergy.SetDll(liblcl)
+		} else if libenergy.IsOk() && liblcl == 0 {
+			liblcl = libenergy.Dll()
+			err = nil
+		}
+		if liblcl == 0 {
+			panic(`Hint:
+	Golcl dependency library liblcl was not found
+	Please check whether liblcl exists locally
+	If local liblcl exist, please put it in the specified location, If it does not exist, please download it from the Energy official website.
+	Configuration Location:
+		1. Current program execution directory
+		2. USER_HOME/golcl/
+		3. Environment variables LCL_HOME or ENERGY_HOME
+			environment variable LCL_HOME is configured preferentially in the non-energy framework
+			environment variable ENERGY_HOME takes precedence in the Energy framework
+			ENERGY_HOME environment variable is recommended
+`)
+		}
+		// 加载完成设置到libenergy全局
+		imports.LibEnergy().SetOk(libenergy.IsOk())
+		imports.LibEnergy().SetDll(libenergy.Dll())
+		imports.LibLCLExt().SetOk(libenergy.IsOk())
+		imports.LibLCLExt().SetDll(libenergy.Dll())
+		return
+	})
+	emfs.SetEMFS(libs, resources)
+	// go lcl init
+	inits.InitAll()
 	// macos command line
 	if IsDarwin() {
 		argsList := lcl.NewStringList()

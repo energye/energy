@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
 
@@ -78,15 +77,20 @@ func Run(app *TCEFApplication) {
 			// 初始化窗口组件
 			appContextInitialized()
 		}
-		if common.IsLinux() {
-			// linux gtk
-			lclwidget.CustomWidgetSetInitialization()
-			lcl.Application.Initialize()
-		}
 		// 启动主进程
 		success := application.StartMainProcess()
 		if success {
+			isWidgetInit := common.IsLinux() && app.IsUIGtk3()
+			if isWidgetInit {
+				// linux  widget init
+				lclwidget.CustomWidgetSetInitialization()
+				//lcl.Application.Initialize()
+			}
 			api.SetReleaseCallback(func() {
+				if isWidgetInit {
+					// linux widget free
+					lclwidget.CustomWidgetSetFinalization()
+				}
 				app.Destroy()
 				app.Free()
 			})

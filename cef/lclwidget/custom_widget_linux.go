@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build linux
+// +build linux
 
 // Linux
 // GTK2 & GTK3: Manually calling initialization
