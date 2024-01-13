@@ -14,7 +14,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
-	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl/api"
@@ -83,13 +82,13 @@ func Run(app *TCEFApplication) {
 			isWidgetInit := common.IsLinux() && app.IsUIGtk3()
 			if isWidgetInit {
 				// linux  widget init
-				lclwidget.CustomWidgetSetInitialization()
+				api.CustomWidgetSetInitialization()
 				//lcl.Application.Initialize()
 			}
 			api.SetReleaseCallback(func() {
 				if isWidgetInit {
 					// linux widget free
-					lclwidget.CustomWidgetSetFinalization()
+					api.CustomWidgetSetFinalization()
 				}
 				app.Destroy()
 				app.Free()

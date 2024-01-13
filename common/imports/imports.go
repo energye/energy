@@ -13,19 +13,11 @@
 package imports
 
 import (
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api/dllimports"
-	"runtime"
 )
 
 var (
-	LibenergyName string
 
-	platformExtNames = map[string]string{
-		"windows": ".dll",
-		"linux":   ".so",
-		"darwin":  ".dylib",
-	}
 	//energy 扩展 LCL 导入
 	liblclext *DllTable
 	//energy CEF 导入
@@ -51,15 +43,6 @@ func LibEnergy() *DllTable {
 // LibLCLExt liblcl ext
 func LibLCLExt() *DllTable {
 	return liblclext
-}
-
-// GetDLLName libenergy
-func GetDLLName() string {
-	libName := "libenergy"
-	if ext, ok := platformExtNames[runtime.GOOS]; ok {
-		return libName + ext
-	}
-	return libName
 }
 
 // Proc cef energy
@@ -126,35 +109,4 @@ func (m *DllTable) ImportTable() []*dllimports.ImportTable {
 
 func (m *DllTable) SetImportTable(table []*dllimports.ImportTable) {
 	m.table = table
-}
-
-func (m *DllTable) LCLInit() {
-	if !m.IsOk() {
-		return
-	}
-	callback := func(index int, ptr ...uintptr) uintptr {
-		proc := dllimports.ImportDefFunc(m.dll, dllimports.DllImportDefs(), index)
-		if proc > 0 {
-			r1, _, _ := proc.Call(ptr...)
-			return r1
-		}
-		return 0
-	}
-	runtime.LockOSThread()
-	// 设置事件的回调函数，因go中callback数量有限，只好折中处理
-	callback(dllimports.SETEVENTCALLBACK, lcl.Callback.Event())
-	// 消息回调
-	callback(dllimports.SETMESSAGECALLBACK, lcl.Callback.Message())
-	// 线程同步回调
-	callback(dllimports.SETTHREADSYNCCALLBACK, lcl.Callback.ThreadSync())
-	// 调求回调CreateParams方法
-	callback(dllimports.SETREQUESTCALLCREATEPARAMSCALLBACK, lcl.Callback.RequestCallCreateParams())
-	// 清除事件回调
-	callback(dllimports.SETREMOVEEVENTCALLBACK, lcl.Callback.RemoveEven())
-
-	lcl.Application = lcl.AsApplication(callback(dllimports.APPLICATION_INSTANCE))
-	lcl.Screen = lcl.AsScreen(callback(dllimports.SCREEN_INSTANCE))
-	lcl.Mouse = lcl.AsMouse(callback(dllimports.MOUSE_INSTANCE))
-	lcl.Clipboard = lcl.AsClipboard(callback(dllimports.CLIPBOARD_INSTANCE))
-	lcl.Printer = lcl.AsPrinter(callback(dllimports.PRINTER_INSTANCE))
 }

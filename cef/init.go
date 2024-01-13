@@ -75,41 +75,6 @@ func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 		if libname.LibName != "" {
 			liblcl, err = dllimports.NewDLL(libname.LibName)
 		}
-
-		// load libenergy
-		// 尝试初始化libenergy, 如果初始化失败则返回liblcl对象
-		// 否则libenergy表示独立存模块
-		// libenergy name, 不为空时表示自定义加载目录
-		if imports.LibenergyName == "" {
-			// 如果使用内置dll编译,则通过该方式加载动态库
-			path, fullPath, ok := tempdll.CheckAndReleaseDLL(imports.GetDLLName())
-			if ok {
-				imports.LibenergyName = fullPath
-				// 设置到tempDllDir, 使用tempdll将最优先从该目录加载
-				libname.SetTempDllDir(path)
-			}
-		}
-		if IsDarwin() { // MacOS固定加载目录
-			//MacOSX从Frameworks加载
-			imports.LibenergyName = "@executable_path/../Frameworks/" + imports.GetDLLName()
-		} else if imports.LibenergyName == "" {
-			imports.LibenergyName = libname.LibPath(imports.GetDLLName())
-		}
-		var libenergy *imports.DllTable
-		libenergy = imports.LoadLib(imports.LibenergyName)
-		if libenergy.IsOk() {
-			// 如果加载成功，初始化回调事件
-			libenergy.LCLInit()
-		}
-		// 如果初始化失败则表明为找到该库，或未定义出独立的libenergy
-		// 此时使用加载成功的liblcl
-		if !libenergy.IsOk() && liblcl > 0 {
-			libenergy.SetOk(true)
-			libenergy.SetDll(liblcl)
-		} else if libenergy.IsOk() && liblcl == 0 {
-			liblcl = libenergy.Dll()
-			err = nil
-		}
 		if liblcl == 0 {
 			panic(`Hint:
 	Golcl dependency library liblcl was not found
@@ -125,10 +90,10 @@ func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 `)
 		}
 		// 加载完成设置到libenergy全局
-		imports.LibEnergy().SetOk(libenergy.IsOk())
-		imports.LibEnergy().SetDll(libenergy.Dll())
-		imports.LibLCLExt().SetOk(libenergy.IsOk())
-		imports.LibLCLExt().SetDll(libenergy.Dll())
+		imports.LibEnergy().SetOk(true)
+		imports.LibEnergy().SetDll(liblcl)
+		imports.LibLCLExt().SetOk(true)
+		imports.LibLCLExt().SetDll(liblcl)
 		return
 	})
 	emfs.SetEMFS(libs, resources)
