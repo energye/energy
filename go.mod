@@ -2,7 +2,7 @@ module github.com/energye/energy/v2
 
 go 1.16
 
-require github.com/energye/golcl v1.0.8
+require github.com/energye/golcl v1.0.9
 
 require (
 	atomicgo.dev/cursor v0.2.0
