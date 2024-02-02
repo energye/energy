@@ -144,7 +144,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	}
 	exeIconDir := proj.Info.Icon
 	if !tools.IsExist(exeIconDir) {
-		return fmt.Errorf("execution file not found: %s", exeDir)
+		return fmt.Errorf("exeIcon file not found: %s", exeIconDir)
 	}
 
 	term.Logger.Info("Generate dpkg execution " + exeDir)
