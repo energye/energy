@@ -99,7 +99,8 @@ func main() {
 				count++
 			}
 		}()
-		// 托盘
+		// 托盘，如果关闭主窗口模式，在关闭托盘所创建的窗口时
+		// 我们实际应该将这个窗口隐藏掉，因此目前还有点问题
 		if window.IsLCL() {
 			// LCL窗口 Window, MacOS
 			tray.LCLTray(window)
