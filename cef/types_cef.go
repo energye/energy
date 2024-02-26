@@ -52,7 +52,6 @@ type TCefKeyEvent struct {
 
 // TCefRequestContextSettings CEF 请求上下文配置
 type TCefRequestContextSettings struct {
-	Size                             UInt32
 	CachePath                        TCefString
 	PersistSessionCookies            Int32
 	PersistUserPreferences           Int32
@@ -63,7 +62,6 @@ type TCefRequestContextSettings struct {
 
 func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 	return &tCefRequestContextSettingsPtr{
-		Size:                             uintptr(m.Size),
 		CachePath:                        api.PascalStr(string(m.CachePath)),
 		PersistSessionCookies:            uintptr(m.PersistSessionCookies),
 		PersistUserPreferences:           uintptr(m.PersistUserPreferences),
@@ -76,7 +74,6 @@ func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 // TCefBrowserSettings CEF Browser配置
 type TCefBrowserSettings struct {
 	instance                   *tCefBrowserSettingsPtr
-	Size                       NativeUInt
 	WindowlessFrameRate        Integer
 	StandardFontFamily         TCefString
 	FixedFontFamily            TCefString

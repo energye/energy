@@ -9,15 +9,18 @@ import (
 	"github.com/energye/energy/v2/pkgs/channel"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/pkgs/libname"
 )
 
 func main() {
+	libname.LibName = "C:\\Users\\Administrator\\golcl\\liblcl2.3.5.dll"
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	cefApp := cef.NewApplication()
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
 			trayDemo(window)
+			lcl.Application.SetShowMainForm(false)
 		}
 	})
 	cef.SetBrowserProcessStartAfterCallback(func(b bool) {

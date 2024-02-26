@@ -38,7 +38,7 @@ func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, h
 	}
 	requestContextSettingsPtr := requestContextSettings.ToPtr()
 	var result uintptr
-	imports.Proc(def.RequestContextRef_New).Call(uintptr(unsafe.Pointer(&requestContextSettingsPtr)), handler.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.RequestContextRef_New).Call(uintptr(unsafe.Pointer(requestContextSettingsPtr)), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestContext{instance: getInstance(result)}
 	}

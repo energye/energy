@@ -30,13 +30,12 @@ type iCefCookiePtr struct {
 }
 
 type tCefRequestContextSettingsPtr struct {
-	Size                             uintptr //uint32
 	CachePath                        uintptr //TCefString
-	PersistSessionCookies            uintptr //int32
-	PersistUserPreferences           uintptr //int32
-	AcceptLanguageList               uintptr //uint32  Remove CEF 118
-	CookieableSchemesList            uintptr //uint32
-	CookieableSchemesExcludeDefaults uintptr //int32
+	PersistSessionCookies            uintptr //Int32 // bool
+	PersistUserPreferences           uintptr //Int32 // bool
+	AcceptLanguageList               uintptr //TCefString  Remove CEF 118
+	CookieableSchemesList            uintptr //TCefString
+	CookieableSchemesExcludeDefaults uintptr //Int32
 }
 
 // TCefPopupFeatures
@@ -63,7 +62,6 @@ type tCefPopupFeaturesPtr struct {
 
 // TCefBrowserSettings
 type tCefBrowserSettingsPtr struct {
-	Size                       UIntptr //NativeUInt
 	WindowlessFrameRate        UIntptr //Integer
 	StandardFontFamily         UIntptr //TCefString
 	FixedFontFamily            UIntptr //TCefString
@@ -157,7 +155,6 @@ func (m *TCefBrowserSettings) setInstanceValue() {
 		return
 	}
 	// 字段指针引用赋值, 如果是字符串类型需直接赋值
-	m.instance.Size.SetValue(uint32(m.Size))                                            // NativeUInt
 	m.instance.WindowlessFrameRate.SetValue(int32(m.WindowlessFrameRate))               // Integer
 	m.instance.StandardFontFamily = UIntptr(m.StandardFontFamily.ToPtr())               // TCefString
 	m.instance.FixedFontFamily = UIntptr(m.FixedFontFamily.ToPtr())                     // TCefString
@@ -194,7 +191,6 @@ func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
 		return nil
 	}
 	return &tCefBrowserSettingsPtr{
-		Size:                       UIntptr(m.Size.ToPtr()),
 		WindowlessFrameRate:        UIntptr(m.WindowlessFrameRate.ToPtr()),
 		StandardFontFamily:         UIntptr(m.StandardFontFamily.ToPtr()),
 		FixedFontFamily:            UIntptr(m.FixedFontFamily.ToPtr()),
@@ -245,7 +241,6 @@ func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
 	}
 	return &TCefBrowserSettings{
 		instance:                   m,
-		Size:                       *(*NativeUInt)(getPtr(m.Size.ToPtr())),
 		WindowlessFrameRate:        getInteger(m.WindowlessFrameRate.ToPtr()),
 		StandardFontFamily:         TCefString(api.GoStr(m.StandardFontFamily.ToPtr())),
 		FixedFontFamily:            TCefString(api.GoStr(m.FixedFontFamily.ToPtr())),

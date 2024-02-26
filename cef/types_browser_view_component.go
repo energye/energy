@@ -40,7 +40,7 @@ func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url str
 	if extraInfo == nil {
 		extraInfo = DictionaryValueRef.New()
 	}
-	imports.Proc(def.CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(&contextSettingsPtr)), uintptr(unsafe.Pointer(&browserSettingsPtr)), extraInfo.Instance())
+	imports.Proc(def.CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), uintptr(client.instance), api.PascalStr(url), uintptr(unsafe.Pointer(contextSettingsPtr)), uintptr(unsafe.Pointer(browserSettingsPtr)), extraInfo.Instance())
 }
 
 // Instance

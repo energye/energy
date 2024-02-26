@@ -315,8 +315,3 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 	}
 	return true
 }
-
-// chromiumOnBeforePopup 弹出窗口
-func chromiumOnBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, client *ICefClient, settings *TCefBrowserSettings, extraInfo *ICefDictionaryValue, noJavascriptAccess *bool, result *bool) {
-
-}
