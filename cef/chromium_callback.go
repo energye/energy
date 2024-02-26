@@ -47,7 +47,7 @@ func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 			BrowserWindow.createNextLCLPopupWindow()
 		})
 	}
-	if common.IsDarwin() { // MacOS 需要在这里加载URL
+	if !common.IsWindows() { // LCL: Linux, MacOS 需要在这里加载URL
 		localLoadRes.loadDefaultURL(window, browser) // TODO
 	}
 	// 方式二 本地资源加载处理器
