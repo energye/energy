@@ -117,7 +117,7 @@ func main() {
 
 |             | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
 |-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows XP SP3、 7、10、11            |
 | MacOSX      | ![MacOSX](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                        | ![MacOSX](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                   | MacOSX 10.15                       |
 | MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2                           |
 | Linux       | ![Linux](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)                | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
@@ -166,6 +166,10 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 ##### Windows-7 32 & 64
 <img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
 <img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
+
+##### Windows-XP-SP3
+
+<img src="https://assets.yanghy.cn/windows-xp-sp3.png">
 
 ##### Linux - Deepin
 <img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">

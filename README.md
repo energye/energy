@@ -112,9 +112,9 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
-|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
-|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
-| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows 7、Windows 10、Windows 11    |
+|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version     |
+|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|-------------------------|
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows XP SP3、 7、10、11 |
 | MacOSX      | ![MacOSX](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                        | ![MacOSX](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                   | MacOSX 10.15                       |
 | MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2                           |
 | Linux       | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
@@ -166,6 +166,10 @@ If this project is helpful to you, please give me a star
 
 <img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
 <img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
+
+##### Windows-XP-SP3
+
+<img src="https://assets.yanghy.cn/windows-xp-sp3.png">
 
 ##### Linux - Deepin
 
