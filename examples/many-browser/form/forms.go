@@ -332,6 +332,8 @@ func toolBar(window *cef.LCLBrowserWindow, toolPanel *lcl.TPanel) (goBack *lcl.T
 
 // window窗口下面, 特殊一点吧，放两个browser
 func windowBottomLayout(window *cef.LCLBrowserWindow) *lcl.TPageControl {
+	lock.Lock()
+	defer lock.Unlock()
 	bottomBoxPanel := lcl.NewPanel(window)
 	bottomBoxPanel.SetParent(window)
 	// 设置窗口下面的panel位置和宽高，要把上面panel高算上
