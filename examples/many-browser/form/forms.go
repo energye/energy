@@ -263,6 +263,7 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	})
 	// 设置完chromium事件后再创建浏览器
 	if common.IsWindows() {
+		// windows 可以直接在这里创建
 		chromium.CreateBrowser() // 创建浏览器
 	}
 	tabSheet.SetOnResize(func(sender lcl.IObject) {
@@ -273,7 +274,8 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	})
 	// CreateBrowser For Linux, MacOS
 	tabSheet.SetOnShow(func(sender lcl.IObject) {
-		chromium.CreateBrowser() // 创建浏览器
+		// 创建过不会重复创建
+		chromium.CreateBrowser()
 	})
 	// 最后 激活当前这个 tab
 	page.SetActivePage(tabSheet)
@@ -378,8 +380,10 @@ func windowBottomLayout(window *cef.LCLBrowserWindow) *lcl.TPageControl {
 		return false
 	})
 	if common.IsWindows() {
+		// windows 可以直接在这里创建
 		chromium.CreateBrowser() // 创建浏览器
 	}
+	// 改变窗口大小时
 	window.SetOnResize(func(sender lcl.IObject) bool {
 		chromium.Chromium().NotifyMoveOrResizeStarted()
 		if chromium.WindowParent() != nil {
@@ -389,6 +393,7 @@ func windowBottomLayout(window *cef.LCLBrowserWindow) *lcl.TPageControl {
 	})
 	// CreateBrowser For Linux, MacOS
 	window.SetOnActivateAfter(func(sender lcl.IObject) {
+		// 创建过不会重复创建
 		chromium.CreateBrowser()
 	})
 	return page

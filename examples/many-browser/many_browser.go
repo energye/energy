@@ -4,6 +4,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/many-browser/form"
+	_ "github.com/energye/energy/v2/examples/many-browser/syso"
 	"path/filepath"
 )
 
