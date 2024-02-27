@@ -3,6 +3,7 @@ package form
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
@@ -22,6 +23,10 @@ func SetRootCachePath(v string) {
 }
 
 // CreateComponent 动态创建组件
+// 在此示例中，运用了 LCL + CEF 创建的丰富窗口
+// LCL 原生系统UI组件，注意目前它在Linux下仅支持GTK2，但是GTK2目前还无法输入中文
+// 在创建browser过程windows和其它系统有些区别，非Windows要在browser的父组件show 或 active事件中创建, 同时要在Resize实现
+// 如果操作任何控制UI方面组件除CEF页面内(html渲染), 正确使用都要在主线程中执行（RunOnMainThread）函数
 func CreateComponent(window cef.IBrowserWindow) {
 	// 在这里改变主窗口的默认属性
 	bw := window.AsLCLBrowserWindow().BrowserWindow()
@@ -33,6 +38,7 @@ type tabBrowser struct {
 	tab      *lcl.TTabSheet
 	chromium cef.ICEFChromiumBrowser
 	isClose  bool
+	activeFn func()
 }
 
 var (
@@ -64,7 +70,7 @@ func windowTopLayout(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	linkLabel.SetOnLinkClick(func(sender lcl.IObject, link string, linktype types.TSysLinkType) {
 		rtl.SysOpen(link)
 	})
-	//
+	// add browser
 	newTabBtn := lcl.NewButton(window)
 	newTabBtn.SetParent(topPanel)
 	newTabBtn.SetCaption(" + AddTab ")
@@ -74,6 +80,7 @@ func windowTopLayout(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	newTabBtn.SetOnClick(func(sender lcl.IObject) {
 		newTabBrowser(window, page)
 	})
+	// remove browser
 	removeTabBtn := lcl.NewButton(window)
 	removeTabBtn.SetParent(topPanel)
 	removeTabBtn.SetCaption(" − RemoveTab ")
@@ -181,7 +188,9 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	// 通过chromium获取回调事件
 	chromium.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
 		// 在这里更新 WindowParent 大小, 以保证渲染到窗口中
-		chromium.WindowParent().UpdateSize()
+		cef.RunOnMainThread(func() {
+			chromium.WindowParent().UpdateSize()
+		})
 		return false
 	})
 	chromium.Chromium().SetOnRequestContextInitialized(func(sender lcl.IObject, requestContext *cef.ICefRequestContext) {
@@ -190,7 +199,9 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	})
 	chromium.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 		if !tab.isClose {
-			tabSheet.SetCaption(title) // 页面中title改变， 同时改变tab的标题
+			cef.RunOnMainThread(func() {
+				tabSheet.SetCaption(title) // 页面中title改变， 同时改变tab的标题
+			})
 		}
 	})
 	// 在popup事件里，打开新地址, 不在新窗口，而是在当前页面打开新地址
@@ -251,8 +262,19 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 		}
 	})
 	// 设置完chromium事件后再创建浏览器
-	chromium.CreateBrowser() // 创建浏览器
-
+	if common.IsWindows() {
+		chromium.CreateBrowser() // 创建浏览器
+	}
+	tabSheet.SetOnResize(func(sender lcl.IObject) {
+		chromium.Chromium().NotifyMoveOrResizeStarted()
+		if chromium.WindowParent() != nil {
+			chromium.WindowParent().UpdateSize()
+		}
+	})
+	// CreateBrowser For Linux, MacOS
+	tabSheet.SetOnShow(func(sender lcl.IObject) {
+		chromium.CreateBrowser() // 创建浏览器
+	})
 	// 最后 激活当前这个 tab
 	page.SetActivePage(tabSheet)
 	// 将对象缓存到map
@@ -355,6 +377,19 @@ func windowBottomLayout(window *cef.LCLBrowserWindow) *lcl.TPageControl {
 		fmt.Println("SetOnBeforeBrowser")
 		return false
 	})
-	chromium.CreateBrowser() // 创建浏览器
+	if common.IsWindows() {
+		chromium.CreateBrowser() // 创建浏览器
+	}
+	window.SetOnResize(func(sender lcl.IObject) bool {
+		chromium.Chromium().NotifyMoveOrResizeStarted()
+		if chromium.WindowParent() != nil {
+			chromium.WindowParent().UpdateSize()
+		}
+		return false
+	})
+	// CreateBrowser For Linux, MacOS
+	window.SetOnActivateAfter(func(sender lcl.IObject) {
+		chromium.CreateBrowser()
+	})
 	return page
 }
