@@ -19,22 +19,22 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
-	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
 )
 
 // 安装CEF和liblcl框架
-//  根据当前系统自动安装CEF
-//  Windows
-//    	系统版本号 > windows10: CEF > 109
-//    	系统版本号 < windows10: CEF = 109
-//  MacOS
-//		CEF 最新版本
-//  Linux
-//    Gtk2: CEF = 106
-//    Gtk3: CEF 最新版本
+//
+//	 根据当前系统自动安装CEF
+//	 Windows
+//	   	系统版本号 > windows10: CEF > 109
+//	   	系统版本号 < windows10: CEF = 109
+//	 MacOS
+//			CEF 最新版本
+//	 Linux
+//	   Gtk2: CEF = 106
+//	   Gtk3: CEF 最新版本
 func installCEFFramework(c *command.Config) (string, func()) {
 	if !c.Install.ICEF {
 		return "", nil
@@ -356,8 +356,9 @@ func liblclName(c *command.Config, version, cef string) (string, bool) {
 }
 
 // 命名规则 OS+[ARCH]+BIT+[GTK2]
-//  ARCH: 非必需, ARM 时填写, AMD为空
-//  GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
+//
+//	ARCH: 非必需, ARM 时填写, AMD为空
+//	GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
 func liblclOS(c *command.Config, cef, version, buildSupportOSArch string) (string, bool) {
 	archs := strings.Split(buildSupportOSArch, ",")
 	var goarch string
@@ -401,10 +402,6 @@ func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig 
 
 // url文件名
 func urlName(downloadUrl string) string {
-	if u, err := url.QueryUnescape(downloadUrl); err != nil {
-		return ""
-	} else {
-		u = u[strings.LastIndex(u, "/")+1:]
-		return u
-	}
+	downloadUrl = downloadUrl[strings.LastIndex(downloadUrl, "/")+1:]
+	return downloadUrl
 }
