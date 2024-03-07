@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-//Package main energy command-line
+// Package main energy command-line
 package main
 
 import (
