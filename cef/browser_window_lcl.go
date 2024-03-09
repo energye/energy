@@ -72,10 +72,10 @@ type LCLBrowserWindow struct {
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
 //
-//	该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
-//  config: Chromium配置, 提供快捷chromium配置
-//  windowProperty: 窗口属性
-//  owner: 被创建组件拥有者
+//		该窗口默认不具备默认事件处理能力, 通过 EnableDefaultEvent 函数注册事件处理
+//	 config: Chromium配置, 提供快捷chromium配置
+//	 windowProperty: 窗口属性
+//	 owner: 被创建组件拥有者
 func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner lcl.IComponent) *LCLBrowserWindow {
 	var browseWindow = NewLCLWindow(windowProperty, owner)
 	browseWindow.ChromiumCreate(config, windowProperty.Url)
@@ -89,8 +89,8 @@ func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProper
 
 // NewLCLWindow 创建一个LCL window窗口
 //
-//  windowProperty: 窗口属性
-//  owner: 被创建组件拥有者
+//	windowProperty: 窗口属性
+//	owner: 被创建组件拥有者
 func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrowserWindow {
 	var window *LCLBrowserWindow
 	//lcl.Application.CreateForm(&window)
@@ -228,11 +228,11 @@ func (m *LCLBrowserWindow) SetProperty() {
 		c := m.Constraints()
 		if wp.MinWidth > 0 && wp.MinHeight > 0 {
 			c.SetMinWidth(wp.MinWidth)
-			c.SetMinWidth(wp.MinHeight)
+			c.SetMinHeight(wp.MinHeight)
 		}
 		if wp.MaxWidth > 0 && wp.MaxHeight > 0 {
-			c.SetMinWidth(wp.MaxWidth)
-			c.SetMinWidth(wp.MaxHeight)
+			c.SetMaxWidth(wp.MaxWidth)
+			c.SetMaxHeight(wp.MaxHeight)
 		}
 	}
 	// 只有隐藏窗口标题时才全屏
