@@ -1029,6 +1029,7 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 		if !m.Chromium().Config().EnableWindowPopup() {
 			return true
 		}
+		// 取出预创建的下一个弹出窗口对象
 		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
 			bw := next.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
@@ -1036,10 +1037,11 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 			if bwEvent.onBeforePopup != nil {
 				result = bwEvent.onBeforePopup(sender, bw, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 			}
-			if !result { // true 表示用户自行处理
+			// result = true 表示用户自行处理
+			if !result {
+				// 使用energy默认弹出窗口
 				RunOnMainThread(func() {
 					bw.Chromium().SetDefaultURL(beforePopupInfo.TargetUrl)
-					//bw.ChromiumCreate(NewChromiumConfig(), beforePopupInfo.TargetUrl)
 					bw.EnableAllDefaultEvent()
 					bw.SetProperty()
 					// show window, run in main thread
@@ -1049,10 +1051,15 @@ func (m *LCLBrowserWindow) registerPopupEvent() {
 					}
 					bw.Show()
 				})
+				// 此时已经在energy内成功创建弹出窗口对象，阻止CEF创建窗口行为
 				result = true
+				// 将 BrowserWindow 维护弹出窗口对象(popupWindow)设置为nil, 表示该窗口已被使用
+				// 并在 chromium.OnAfterCreate 事件中再次预创建弹出窗口对象
+				BrowserWindow.popupWindow = nil
 			}
 			return result
 		}
+		// 未取到下一个弹出窗口对象时，默认行为不创建窗口
 		return true
 	})
 }

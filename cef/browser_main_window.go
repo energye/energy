@@ -22,7 +22,7 @@ import (
 
 // 浏览器包装结构体
 //
-//  主窗口、弹出子进程、默认浏览器实现的事件、窗口维护集合、浏览器配置 仅在主进程中使用
+//	主窗口、弹出子进程、默认浏览器实现的事件、窗口维护集合、浏览器配置 仅在主进程中使用
 type browserWindow struct {
 	mainBrowserWindow IBrowserWindow           // 主浏览器窗口
 	popupWindow       IBrowserWindow           // 弹出的子窗口
@@ -147,7 +147,7 @@ func (m *browserWindow) SetBrowserInit(fn browserWindowOnEventCallback) {
 	m.Config.setBrowserWindowInitOnEvent(fn)
 }
 
-// createNextLCLPopupWindow 预创建下一个弹出的子窗口
+// createNextLCLPopupWindow 预创建下一个弹出的子窗口对象
 func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
 		if mw := m.MainWindow(); mw != nil && mw.IsLCL() {
@@ -164,11 +164,9 @@ func (m *browserWindow) createNextLCLPopupWindow() {
 	}
 }
 
-// getNextLCLPopupWindow 拿到预创建的下一个弹出的子窗口
+// getNextLCLPopupWindow 拿到预创建的下一个弹出子窗口
 func (m *browserWindow) getNextLCLPopupWindow() IBrowserWindow {
-	bw := m.popupWindow
-	m.popupWindow = nil
-	return bw
+	return m.popupWindow
 }
 
 // GetWindowInfo 根据浏览器窗口ID获取窗口信息
@@ -526,12 +524,13 @@ func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChang
 
 // SetOnBeforePopup
 //
-//	弹出窗口, 已被默认实现的函数
-//  此时的chromium还未创建, 如需要获得chromium你需要先自己创建, 可通过 ChromiumCreate 或 自定义实现 NewChromium, 此时应返回true, 否则使用默认行为Chromium应返回false
-//  该事件回调会在任意线程中执行，在操作相关窗口(UI)时应在UI线程中操作 RunOnMainThread
-//	函数返回值
-//	  false: 窗口会以默认行为管理
-//	  true: 需要你自己管理窗口行为
+//	 弹出窗口, 已被默认实现的函数
+//	 此时的chromium还未创建, 如需要获得chromium你需要先自己创建, 可通过 ChromiumCreate 或 自定义实现 NewChromium
+//	 如果自定义实现此时应在回调函数内返回true, 否则使用默认行为Chromium应返回false
+//	 该事件回调会在任意线程中执行，在操作相关窗口(UI)时应在UI线程中操作 RunOnMainThread
+//		函数返回值
+//		  false: 弱出窗口会以默认行为
+//		  true: 需要你自己管理窗口行为
 func (m *BrowserEvent) SetOnBeforePopup(event chromiumEventOnBeforePopupEx) {
 	if Args.IsMain() {
 		m.onBeforePopup = event
