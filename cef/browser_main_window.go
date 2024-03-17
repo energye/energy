@@ -158,7 +158,9 @@ func (m *browserWindow) createNextLCLPopupWindow() {
 			//} else if enableMainWindow != nil {
 			//	owner = enableMainWindow // 未开启多窗口
 			//}
+			// 创建 LCL 窗口对象
 			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, nil)
+			// 创建 Chromium 对象
 			m.popupWindow.AsLCLBrowserWindow().BrowserWindow().ChromiumCreate(NewChromiumConfig(), "")
 		}
 	}
@@ -525,12 +527,11 @@ func (m *BrowserEvent) SetOnMainFrameChanged(event chromiumEventOnMainFrameChang
 // SetOnBeforePopup
 //
 //	 弹出窗口, 已被默认实现的函数
-//	 此时的chromium还未创建, 如需要获得chromium你需要先自己创建, 可通过 ChromiumCreate 或 自定义实现 NewChromium
-//	 如果自定义实现此时应在回调函数内返回true, 否则使用默认行为Chromium应返回false
+//	 如果自定义实现应在回调函数内返回true, 否则使用默认行为应返回false
 //	 该事件回调会在任意线程中执行，在操作相关窗口(UI)时应在UI线程中操作 RunOnMainThread
-//		函数返回值
-//		  false: 弱出窗口会以默认行为
-//		  true: 需要你自己管理窗口行为
+//		回调函数返回 bool
+//		  false: 使用弹出窗口默认行为
+//		  true:  阻止默认行为
 func (m *BrowserEvent) SetOnBeforePopup(event chromiumEventOnBeforePopupEx) {
 	if Args.IsMain() {
 		m.onBeforePopup = event
