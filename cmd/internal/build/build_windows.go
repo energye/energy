@@ -124,6 +124,17 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	data := make(map[string]interface{})
+	data["Info"] = proj.Info
+	// 生成 manifest
+	manifestData, err = tools.RenderTemplate(string(manifestData), data)
+	if err != nil {
+		return "", err
+	}
+	err = ioutil.WriteFile(filepath.Join(proj.ProjectPath, fmt.Sprintf("%s.manifest", proj.Name)), manifestData, fs.ModePerm)
+	if err != nil {
+		return "", err
+	}
 	xmlData, err := winres.AppManifestFromXML(manifestData)
 	if err != nil {
 		return "", err
@@ -134,8 +145,6 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	data := make(map[string]interface{})
-	data["Info"] = proj.Info
 	versionInfo, err = tools.RenderTemplate(string(versionInfo), data)
 	if err != nil {
 		return "", err
