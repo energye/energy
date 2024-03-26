@@ -26,10 +26,31 @@ English
 
 ### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
-Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embedded
-[CEF](https://bitbucket.org/chromiumembedded/cef) binary
-- [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF (Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
-- Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows, Linux and MacOS
+> [energy](https://github.com/energye/energy)
+> go based on
+> [LCL](https://www.lazarus-ide.org/)
+> [CEF](https://bitbucket.org/chromiumembedded/cef)
+> [Webview2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/)
+> developed framework
+>
+>
+>> LCL - Basic library, graphical user interface (GUI) component library, provides a large number of components, including various buttons, text boxes, labels, forms, etc.
+>>
+>> CEF - Browser component library, CEF3 library encapsulated on the basis of LCL
+>>
+>> Webview2 - Browser component library, Webview2 library encapsulated on the basis of LCL
+>>
+> Using Go and web technologies (HTML + CSS + JavaScript) to build cross-platform desktop applications that support Windows, Linux, and MacOS
+>
+> Build & Use
+>
+>> LCL Used alone to develop native graphical user interface (GUI) applications
+>
+>> LCL + CEF Mixed use, developing native graphical user interface (GUI) and browser applications
+>
+>> LCL + Webview2 Mixed use, developing native graphical user interface (GUI) and browser applications
+
+
 ### Characteristic
 
 - Rich CEF API and LCL system native widgets

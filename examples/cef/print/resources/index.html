@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>browser-print-pdf</title>
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <style>
+        button {
+            height: 40px;
+            width: 150px;
+            margin: 10px;
+        }
+
+        select {
+            height: 30px;
+            width: 250px;
+            margin: 10px;
+            font-size: 18px;
+        }
+
+        input {
+            height: 30px;
+            width: 250px;
+            margin: 10px;
+        }
+    </style>
+    <script type="application/javascript">
+        $(function () {
+            let selPrintList = $("#printList")
+            ipc.emit("printList", function (result) {
+                selPrintList.html("")
+                for (let i in result) {
+                    let option = $("<option>")
+                    option.html(result[i]);
+                    option.val(i);
+                    selPrintList.append(option)
+                }
+            });
+        })
+
+        function print(t) {
+            let selPrintList = $("#printList")
+            let printText = $("#printText")
+            console.log(t, selPrintList.val(), printText.val())
+            ipc.emit("print", [t, selPrintList.val() - 0, printText.val()]);
+        }
+
+    </script>
+</head>
+<body style="overflow: hidden;margin: 0px;padding: 0px;width: 100%;text-align: center;">
+<div style="width: 70vw; text-align: left;margin: auto;font-size:18px ">
+     打印机列表: <select id="printList"></select>
+    <br>
+    <button onclick="print(1)">静默: 当前页面打印</button>
+    <br>
+    <button onclick="print(3)">默认打印机弹窗</button>
+    <br>
+    <button onclick="print(2)">静默: 打印文本测试</button>
+    文本:<input id="printText">
+    <br>
+    <button onclick="print(4)">打印图片</button>
+    <br>
+</div>
+</body>
+</html>

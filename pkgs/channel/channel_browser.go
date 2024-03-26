@@ -14,8 +14,8 @@ package channel
 
 import (
 	"fmt"
-	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
+	. "github.com/energye/energy/v2/types"
 	"net"
 	"sync"
 )

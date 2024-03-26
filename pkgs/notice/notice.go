@@ -9,12 +9,12 @@
 //----------------------------------------
 
 // notice is a cross-platform system notification library
-// notice 是一个跨平台的系统通知库
+
 package notice
 
 import (
-	"github.com/energye/golcl/energy/emfs"
-	"github.com/energye/golcl/energy/tools"
+	"github.com/energye/energy/v2/emfs"
+	"github.com/energye/energy/v2/tools"
 	"io/ioutil"
 	"path/filepath"
 	"strconv"

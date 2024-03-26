@@ -20,9 +20,9 @@ import (
 type CefLoggerLevel int8
 
 const (
-	CefLog_Error CefLoggerLevel = iota
-	CefLog_Info
-	CefLog_Debug
+	LError CefLoggerLevel = iota
+	LInfo
+	LDebug
 )
 
 const log_file_name = "energy.log"
@@ -49,7 +49,7 @@ func loggerInit() {
 	}
 	logger.enable = true
 	logger.logFile = logFile
-	logger.level = CefLog_Error
+	logger.level = LError
 	logger.logger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate|log.Ltime)
 }
 
@@ -69,42 +69,42 @@ func Enable() bool {
 }
 
 func Error(v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Error {
+	if logger.enable && logger.level >= LError {
 		logger.logger.SetPrefix("[ENERGY-Error] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Errorf(format string, v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Error {
+	if logger.enable && logger.level >= LError {
 		logger.logger.SetPrefix("[ENERGY-Error] ")
 		logger.logger.Printf(format, v...)
 	}
 }
 
 func Info(v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Info {
+	if logger.enable && logger.level >= LInfo {
 		logger.logger.SetPrefix("[ENERGY-Info] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Infof(format string, v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Info {
+	if logger.enable && logger.level >= LInfo {
 		logger.logger.SetPrefix("[ENERGY-Info] ")
 		logger.logger.Printf(format, v...)
 	}
 }
 
 func Debug(v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Debug {
+	if logger.enable && logger.level >= LDebug {
 		logger.logger.SetPrefix("[ENERGY-Debug] ")
 		logger.logger.Println(v...)
 	}
 }
 
 func Debugf(format string, v ...interface{}) {
-	if logger.enable && logger.level >= CefLog_Debug {
+	if logger.enable && logger.level >= LDebug {
 		logger.logger.SetPrefix("[ENERGY-Debug] ")
 		logger.logger.Printf(format, v...)
 	}

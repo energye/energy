@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>浏览器主机应用程序通信</title>
+    <script>
+        let sharedBuffer;
+        window.chrome.webview.addEventListener("message", function (event) {
+            document.getElementById("messagelog").value = "Message received: " + event.data;
+        });
+        window.chrome.webview.addEventListener("sharedbufferreceived", e => {
+            SharedBufferReceived(e);
+        });
+
+        function sendMessageToHostApp() {
+            window.chrome.webview.postMessage(document.getElementById("msgtext").value);
+        }
+
+        function DisplaySharedBufferData(buffer) {
+            document.getElementById("shared-buffer-data").value = new TextDecoder().decode(new Uint8Array(buffer));
+        }
+
+        function SharedBufferReceived(e) {
+            sharedBuffer = e.getBuffer();
+            DisplaySharedBufferData(sharedBuffer);
+        }
+
+        function UpdateSharedBufferData(buffer) {
+            if (!buffer)
+                return;
+            const sharedArray = new Uint8Array(buffer);
+            sharedArray.fill(0);
+            let data = new TextEncoder().encode(document.getElementById("shared-buffer-data").value.trim());
+            sharedArray.set(data.subarray(0, data.length));
+            window.chrome.webview.postMessage("SharedBufferDataUpdated");
+        }
+    </script>
+</head>
+<body style="border: 0px;width: 95%;">
+<p>
+    Webview2<br>
+    此部分浏览器 HTML
+</p>
+<p>
+    <input value="你好，来自浏览器！" id="msgtext" style="width: 99%;"></br>
+    <button onclick="sendMessageToHostApp()">向主机应用程序发送消息 >>></button>
+</p>
+</br>
+<hr>
+<p>
+    来自主机应用程序的消息 :</br>
+    <textarea id="messagelog" rows="10" style="width: 99%;"></textarea>
+</p>
+<hr>
+<p>从主机应用程序发送的共享缓冲区内容 :</br>
+    <textarea id="shared-buffer-data" rows="10" style="width: 99%;"></textarea>
+</p>
+<p>
+    <button onclick="UpdateSharedBufferData(sharedBuffer)">更新共享缓冲区中的数据</button>
+</p>
+<p>
+    <a href="https://gitee.com/energye/energy" target="_blank">energy</a>
+</p>
+</body>
+</html>

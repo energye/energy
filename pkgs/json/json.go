@@ -17,7 +17,7 @@ package json
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/common"
-	. "github.com/energye/energy/v2/consts"
+	. "github.com/energye/energy/v2/types"
 	"reflect"
 	"strconv"
 )

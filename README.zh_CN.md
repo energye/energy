@@ -1,10 +1,12 @@
 <p align="center">
-    <img src="https://assets.yanghy.cn/energy-icon.png">
+   <img src="https://assets.yanghy.cn/energy-icon.png">
+   <br>
+   <strong style="font-size: 24px">3.0 dev</strong>
 </p>
 
 <p align="center" style="font-size: 24px;">
     <strong>
-        Energy是Go基于CEF构建桌面应用的框架
+        是Go基于 LCL & CEF & Webview2 构建桌面应用的框架
     </strong>
 </p>
 
@@ -26,10 +28,30 @@
 
 ### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
-> [energy](https://github.com/energye/energy) 是 Go 基于 CEF(Chromium Embedded Framework)
-> 开发的框架，内嵌 [CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
+> [energy](https://github.com/energye/energy) 
+> 是 Go 基于
+> [LCL](https://www.lazarus-ide.org/) 
+> [CEF](https://bitbucket.org/chromiumembedded/cef) 
+> [Webview2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) 
+> 开发的框架
 >
-> 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
+> 
+>> LCL - 基础库, 图形用户界面 (GUI) 组件库, 提供了大量的组件，包括各种按钮、文本框、标签、表单等
+>>
+>> CEF - 浏览器组件库 [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi), 在LCL基础上封装的CEF3库
+>> 
+>> Webview2 - 浏览器组件库 [WebView4Delphi](https://github.com/salvadordf/WebView4Delphi), 在LCL基础上封装的Webview2库
+>> 
+>> 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
+> 
+> 构建&使用
+> 
+>> LCL 单独使用, 开发原生图形用户界面(GUI) 应用
+> 
+>> LCL + CEF 混合使用, 开发原生图形用户界面(GUI)和浏览器应用
+> 
+>> LCL + Webview2 混合使用, 开发原生图形用户界面(GUI)和浏览器应用
+
 
 
 ### 特性
@@ -52,7 +74,7 @@
 
 #### 基本需求
 
-> - Golang >= 1.18
+> - Golang >= 1.16
 > - Energy 开发环境(CEF, liblcl)
 
 #### 环境安装

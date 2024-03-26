@@ -23,7 +23,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
-	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/energy/v2/emfs"
 	"io/ioutil"
 	"net"
 	"net/http"

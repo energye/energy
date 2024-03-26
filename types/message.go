@@ -1,21 +1,25 @@
 //----------------------------------------
 //
-// Copyright © yanghy. All Rights Reserved.
+// Copyright © ying32. All Rights Reserved.
 //
-// Licensed under Apache License Version 2.0, January 2004
-//
-// https://www.apache.org/licenses/LICENSE-2.0
+// Licensed under Apache License 2.0
 //
 //----------------------------------------
 
+//go:build windows || arm || (linux && 386) || (darwin && 386)
+// +build windows arm linux,386 darwin,386
+
 package types
 
-type TRect struct {
-	Left   int32
-	Top    int32
-	Right  int32
-	Bottom int32
+// TMessage 消息值参见 types/messages包
+type TMessage struct {
+	Msg    Cardinal
+	WParam WPARAM
+	LParam LPARAM
+	Result LRESULT
 }
+
+type TLMessage = TMessage
 
 type WindowPos struct {
 	Hwnd            THandle

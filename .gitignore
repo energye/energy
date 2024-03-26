@@ -123,6 +123,7 @@ rsrc
 bytes.txt
 *.icns
 icons.iconset/
+*cache
 
 energy-*
 

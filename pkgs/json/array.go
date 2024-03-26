@@ -16,7 +16,7 @@ package json
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/types"
 	"reflect"
 	"strconv"
 	"strings"
@@ -339,7 +339,7 @@ func (m *JsonData) GetByIndex(index int) JSON {
 			return &JsonData{t: reflect.Uint, v: v, s: strconv.IntSize, p: m, pIndex: index}
 		case []byte:
 			if v := m.GetBytesByIndex(index); v != nil {
-				return &JsonData{t: consts.SLICE_BYTE, v: v, s: len(v), p: m, pIndex: index}
+				return &JsonData{t: types.SLICE_BYTE, v: v, s: len(v), p: m, pIndex: index}
 			}
 		case float32, float64:
 			//不带有 . 转为 int 类型
@@ -360,7 +360,7 @@ func (m *JsonData) GetByIndex(index int) JSON {
 				return &JsonData{t: reflect.Map, v: v, s: len(v), p: m, pIndex: index}
 			}
 		default:
-			return &JsonData{t: consts.NIL, v: nil, s: 0, p: m, pIndex: index}
+			return &JsonData{t: types.NIL, v: nil, s: 0, p: m, pIndex: index}
 		}
 	}
 	return nil

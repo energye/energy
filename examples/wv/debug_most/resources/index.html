@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+内置到 EXE HTML<br>
+<a href="https://www.baidu.com">百度</a><br>
+<button onclick="sendMessage()">sendMessage</button><input id="messageData" value="SetTitleText value">
+</body>
+<script>
+    function sendMessage() {
+        let messageData = document.getElementById("messageData").value;
+        window.chrome.webview.postMessage(messageData);
+    }
+</script>
+</html>

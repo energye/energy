@@ -15,17 +15,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/decimal"
-	"github.com/energye/golcl/energy/tools"
+	"github.com/energye/energy/v2/tools"
+	"github.com/energye/energy/v2/types"
 	"math"
 	"os"
 	"path/filepath"
 	"reflect"
 	"runtime"
 	"strconv"
-	"strings"
-	"time"
 	"unsafe"
 )
 
@@ -51,15 +48,6 @@ const (
 	isSolaris   = runtime.GOOS == "solaris"   //not support
 	isZos       = runtime.GOOS == "zos"       //not support
 )
-
-// Concat 字符串拼接
-func Concat(str ...string) string {
-	var c = strings.Builder{}
-	for _, v := range str {
-		c.WriteString(v)
-	}
-	return c.String()
-}
 
 func IsWindows() bool {
 	return isWindows
@@ -109,134 +97,6 @@ func GetParamOf(index int, ptr uintptr) uintptr {
 // GetParamPtr 根据指定指针位置开始 偏移获取指针
 func GetParamPtr(ptr uintptr, offset int) unsafe.Pointer {
 	return unsafe.Pointer(ptr + uintptr(offset))
-}
-
-// ValueToBool bool
-func ValueToBool(v interface{}) bool {
-	switch v.(type) {
-	case []byte:
-		bv := v.([]byte)
-		if len(bv) == 1 {
-			return ByteToInt8(bv[0]) > 0
-		} else if len(bv) == 2 {
-			return BytesToInt16(bv) > 0
-		} else if len(bv) == 4 {
-			return BytesToInt32(bv) > 0
-		} else if len(bv) == 8 {
-			return BytesToInt64(bv) > 0
-		}
-		return len(bv) > 0
-	}
-	switch v.(type) {
-	case string:
-		return len(v.(string)) > 0
-	case float32:
-		return v.(float32) > 0
-	case float64:
-		return v.(float64) > 0
-	case bool:
-		return v.(bool)
-	case int:
-		return v.(int) > 0
-	case int8:
-		return v.(int8) > 0
-	case int16:
-		return v.(int16) > 0
-	case int32:
-		return v.(int32) > 0
-	case int64:
-		return v.(int64) > 0
-	case uintptr:
-		return v.(uintptr) > 0
-	default:
-		return false
-	}
-}
-
-func ValueToFloat64(v interface{}) float64 {
-	switch v.(type) {
-	case []byte:
-		bv := v.([]byte)
-		if len(bv) == 4 {
-			return float64(BytesToFloat32(bv))
-		} else if len(bv) == 8 {
-			return BytesToFloat64(bv)
-		}
-		return 0.0
-	}
-	switch v.(type) {
-	case string:
-		return StrToFloat64(v.(string))
-	case float32:
-		return float64(v.(float32))
-	case float64:
-		return v.(float64)
-	case bool:
-		if v.(bool) {
-			return 1
-		} else {
-			return 0
-		}
-	case int:
-		return float64(v.(int))
-	case int8:
-		return float64(v.(int8))
-	case int16:
-		return float64(v.(int16))
-	case int32:
-		return float64(v.(int32))
-	case int64:
-		return float64(v.(int64))
-	case uintptr:
-		return float64(v.(uintptr))
-	default:
-		return 0
-	}
-}
-
-func ValueToInt(v interface{}) int {
-	switch v.(type) {
-	case []byte:
-		bv := v.([]byte)
-		if len(bv) == 1 {
-			return int(ByteToInt8(bv[0]))
-		} else if len(bv) == 2 {
-			return int(BytesToInt16(bv))
-		} else if len(bv) == 4 {
-			return int(BytesToInt32(bv))
-		} else if len(bv) == 8 {
-			return int(BytesToInt64(bv))
-		}
-		return 0
-	}
-	switch v.(type) {
-	case string:
-		return int(StrToInt64(v.(string)))
-	case float32:
-		return int(math.Round(float64(StrToFloat32(v.(string)))))
-	case float64:
-		return int(math.Round(StrToFloat64(v.(string))))
-	case bool:
-		if v.(bool) {
-			return 1
-		} else {
-			return 0
-		}
-	case int:
-		return v.(int)
-	case int8:
-		return int(v.(int8))
-	case int16:
-		return int(v.(int16))
-	case int32:
-		return int(v.(int32))
-	case int64:
-		return int(v.(int64))
-	case uintptr:
-		return int(v.(uintptr))
-	default:
-		return 0
-	}
 }
 
 func IntToBytes(i int) []byte {
@@ -470,33 +330,6 @@ const (
 	dDay            = 24 * dSecond
 )
 
-var dBaseDateTime = time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
-
-func GoDateTimeToDDateTime(dateTime time.Time) float64 {
-	date := float64(dateTime.Sub(dBaseDateTime).Nanoseconds() / 1000000 / 60 / 60 / 24)
-	diHour := decimal.NewFromFloat(float64(dateTime.Hour()))
-	diMinute := decimal.NewFromFloat(float64(dateTime.Minute())).Mul(decimal.NewFromFloat(60))
-	diSecond := decimal.NewFromFloat(float64(dateTime.Second()))
-	diTime := diHour.Mul(decimal.NewFromFloat(dSecond)).Add(diMinute).Add(diSecond).Div(decimal.NewFromFloat(dDay))
-	var dTime, _ = diTime.Add(decimal.NewFromFloat(date)).Float64()
-	return dTime
-}
-
-func DDateTimeToGoDateTime(dateTime float64) time.Time {
-	dtStr := strings.Split(fmt.Sprintf("%v", dateTime), ".")
-	dDate, _ := strconv.Atoi(dtStr[0])
-	diDateTime := decimal.NewFromFloat(dateTime)
-	diDate := decimal.NewFromFloat(float64(dDate))
-	diTime := diDateTime.Sub(diDate)
-	dTime, _ := diTime.Float64()
-	gTime := time.Date(1899, 12, 30, 0, 0, 0, 0, time.UTC)
-	gTime = gTime.AddDate(0, 0, dDate)
-	diTime = decimal.NewFromFloat(float64(time.Second)).Mul(decimal.NewFromFloat(dTime).Mul(decimal.NewFromFloat(dDay)))
-	diTime = diTime.Add(decimal.NewFromFloat(dTime))
-	gTime = gTime.Add(time.Duration(diTime.IntPart()))
-	return gTime
-}
-
 // ArrayIndexOf 返回a在array数组的下标, a必须和array元素的类型相同
 func ArrayIndexOf(array interface{}, a interface{}) int {
 	switch array.(type) {
@@ -563,18 +396,19 @@ func libCef() string {
 }
 
 // FrameworkDir
-//  返回CEF框架目录, 以当前执行文件所在目录开始查找
-//  如果当前执行文件目录未找到，再从ENERGY_HOME环境变量查找
-//  Darwin 平台除外
+//
+//	返回CEF框架目录, 以当前执行文件所在目录开始查找
+//	如果当前执行文件目录未找到，再从ENERGY_HOME环境变量查找
+//	Darwin 平台除外
 func FrameworkDir() string {
 	var lib = libCef() // 根据CEF libcef.xx 动态库
 	if lib != "" {
 		//当前目录
-		if tools.IsExist(filepath.Join(consts.ExeDir, lib)) {
-			return consts.ExeDir
+		if tools.IsExist(filepath.Join(types.ExeDir, lib)) {
+			return types.ExeDir
 		}
 		//环境变量
-		var env = os.Getenv(consts.ENERGY_HOME_KEY)
+		var env = os.Getenv(types.ENERGY_HOME_KEY)
 		if tools.IsExist(filepath.Join(env, lib)) {
 			return env
 		}
@@ -583,5 +417,5 @@ func FrameworkDir() string {
 }
 
 func SetFrameworkEnv(value string) {
-	os.Setenv(consts.ENERGY_HOME_KEY, value)
+	os.Setenv(types.ENERGY_HOME_KEY, value)
 }
