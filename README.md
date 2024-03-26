@@ -1,10 +1,12 @@
 <p align="center">
     <img src="https://assets.yanghy.cn/energy-icon.png">
+   <br>
+   <strong style="font-size: 24px">3.0 dev</strong>
 </p>
 
 <p align="center" style="font-size: 24px;">
     <strong>
-        Energy is a framework for Go to build desktop applications based on CEF
+        Energy is framework for building desktop applications based on LCL & CEF & Webview2
     </strong>
 </p>
 
