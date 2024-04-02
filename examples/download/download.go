@@ -24,7 +24,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/download.html"
+	cef.BrowserWindow.Config.Url = "https://pc.weixin.qq.com/"
 
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
@@ -41,6 +41,8 @@ func main() {
 			fmt.Println("\t", downloadItem.State(), downloadItem.TotalBytes(), "/", downloadItem.ReceivedBytes(), "speed:", downloadItem.CurrentSpeed(), "fullPath", downloadItem.FullPath())
 			ipc.Emit("downloadUpdateDemo", downloadItem.Id(), downloadItem.FullPath(), downloadItem.ReceivedBytes(), downloadItem.TotalBytes())
 		})
+		// CEF 下载貌似有些问题，下载过程中右键下载文件会现文件浏览窗口卡死问题
+		// 测试 cefclient.exe 也有这个问题
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
