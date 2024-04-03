@@ -32,6 +32,14 @@ var (
 	borderRange int32 = 5  //四边框
 )
 
+// 组件消息类型
+type compMessageType int8
+
+const (
+	cmtCEF compMessageType = iota
+	cmtLCL
+)
+
 // customWindowCaption 自定义窗口标题栏
 //
 // 隐藏窗口标题栏，通过html+css实现自定义窗口标题栏，实现窗口拖拽等
@@ -162,11 +170,24 @@ func (m *customWindowCaption) free() {
 }
 
 // onNCMouseMove NC 非客户区鼠标移动
-func (m *customWindowCaption) onNCMouseMove(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+func (m *customWindowCaption) onNCMouseMove(hWND types.HWND, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	if m.canCaption { // 当前在标题栏
 	} else if m.canBorder { // 当前在边框
 		*lResult = types.LRESULT(m.borderHT)
 		*aHandled = true
+		//全屏时不允许移动窗口
+		// TODO 暂时不使用，配合 WndProc
+		//if m.bw.WindowProperty().current.ws == types.WsFullScreen {
+		//	return
+		//}
+		//s := winapi.GetKeyState(winapi.VK_LBUTTON) & 0x800
+		//if winapi.GetKeyState(winapi.VK_LBUTTON) < 0 {
+		//	x, y := m.toPoint(message)
+		//	m.borderMD = true
+		//	if win.ReleaseCapture() {
+		//		win.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
+		//	}
+		//}
 	}
 }
 
@@ -195,41 +216,43 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 }
 
 // onCanBorder 鼠标是否在边框
-func (m *customWindowCaption) onCanBorder(x, y int32, rect *types.TRect) (int, bool) {
-	if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= angleRange; m.canBorder { // 右上
+func (m *customWindowCaption) onCanBorder(x, y int32, windowRect *types.TRect) bool {
+	width := windowRect.Width()
+	height := windowRect.Height()
+	if m.canBorder = x <= width && x >= width-angleRange && y <= angleRange; m.canBorder { // 右上
 		m.borderWMSZ = messages.WMSZ_TOPRIGHT
 		m.borderHT = messages.HTTOPRIGHT
-		return m.borderHT, true
-	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-angleRange && y <= rect.Height() && y >= rect.Height()-angleRange; m.canBorder { // 右下
+		return true
+	} else if m.canBorder = x <= width && x >= width-angleRange && y <= height && y >= height-angleRange; m.canBorder { // 右下
 		m.borderWMSZ = messages.WMSZ_BOTTOMRIGHT
 		m.borderHT = messages.HTBOTTOMRIGHT
-		return m.borderHT, true
+		return true
 	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
 		m.borderWMSZ = messages.WMSZ_TOPLEFT
 		m.borderHT = messages.HTTOPLEFT
-		return m.borderHT, true
-	} else if m.canBorder = x <= angleRange && y >= rect.Height()-angleRange; m.canBorder { //左下
+		return true
+	} else if m.canBorder = x <= angleRange && y >= height-angleRange; m.canBorder { //左下
 		m.borderWMSZ = messages.WMSZ_BOTTOMLEFT
 		m.borderHT = messages.HTBOTTOMLEFT
-		return m.borderHT, true
-	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y <= borderRange; m.canBorder { //上
+		return true
+	} else if m.canBorder = x > angleRange && x < width-angleRange && y <= borderRange; m.canBorder { //上
 		m.borderWMSZ = messages.WMSZ_TOP
 		m.borderHT = messages.HTTOP
-		return m.borderHT, true
-	} else if m.canBorder = x > angleRange && x < rect.Width()-angleRange && y >= rect.Height()-borderRange; m.canBorder { //下
+		return true
+	} else if m.canBorder = x > angleRange && x < width-angleRange && y >= height-borderRange; m.canBorder { //下
 		m.borderWMSZ = messages.WMSZ_BOTTOM
 		m.borderHT = messages.HTBOTTOM
-		return m.borderHT, true
-	} else if m.canBorder = x <= borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { //左
+		return true
+	} else if m.canBorder = x <= borderRange && y > angleRange && y < height-angleRange; m.canBorder { //左
 		m.borderWMSZ = messages.WMSZ_LEFT
 		m.borderHT = messages.HTLEFT
-		return m.borderHT, true
-	} else if m.canBorder = x <= rect.Width() && x >= rect.Width()-borderRange && y > angleRange && y < rect.Height()-angleRange; m.canBorder { // 右
+		return true
+	} else if m.canBorder = x <= width && x >= width-borderRange && y > angleRange && y < height-angleRange; m.canBorder { // 右
 		m.borderWMSZ = messages.WMSZ_RIGHT
 		m.borderHT = messages.HTRIGHT
-		return m.borderHT, true
+		return true
 	}
-	return 0, false
+	return false
 }
 
 // onNCLButtonDown NC 鼠标左键按下
@@ -247,9 +270,9 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 			win.PostMessage(hWND, messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, rtl.MakeLParam(uint16(x), uint16(y)))
 		}
 	} else if m.canBorder { // 边框
-		x, y := m.toPoint(message)
 		*lResult = types.LRESULT(m.borderHT)
 		*aHandled = true
+		x, y := m.toPoint(message)
 		m.borderMD = true
 		if win.ReleaseCapture() {
 			win.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
@@ -284,7 +307,7 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 }
 
 // doOnRenderCompMsg
-func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+func (m *LCLBrowserWindow) doOnRenderCompMsg(messageType compMessageType, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
@@ -300,15 +323,16 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 				win.SendMessage(m.Handle(), messages.WM_NCLBUTTONUP, messages.HTCAPTION, 0)
 			}
 		}
+	case messages.WM_NCMOUSEMOVE: // 160 nc mouse move
+		m.cwcap.onNCMouseMove(m.Handle(), message, lResult, aHandled)
 	case messages.WM_NCLBUTTONDOWN: // 161 nc left down
+		// 标题栏和边框处理
 		m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
 	case messages.WM_NCLBUTTONUP: // 162 nc l up
 		if m.cwcap.canCaption {
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 		}
-	case messages.WM_NCMOUSEMOVE: // 160 nc mouse move
-		m.cwcap.onNCMouseMove(message, lResult, aHandled)
 	case messages.WM_SETCURSOR: // 32 设置鼠标图标样式
 		m.cwcap.onSetCursor(message, lResult, aHandled)
 	case messages.WM_NCHITTEST: // 132 NCHITTEST
@@ -316,8 +340,22 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			m.cwcap.borderMD = false
 			return
 		}
-		//鼠标坐标是否在标题区域
-		x, y, caption := m.cwcap.isCaption(et.HWND(m.Handle()), message)
+		var (
+			x, y    int32 // 鼠标在当前窗口的坐标
+			caption bool  // CEF HTML 自定义标题栏
+		)
+		if messageType == cmtCEF {
+			//鼠标坐标是否在标题区域
+			x, y, caption = m.cwcap.isCaption(et.HWND(m.Handle()), message)
+		} else if messageType == cmtLCL {
+			x, y = m.cwcap.toPoint(message)
+			p := &et.Point{
+				X: x,
+				Y: y,
+			}
+			winapi.ScreenToClient(et.HWND(m.Handle()), p)
+			x, y = p.X, p.Y
+		}
 		if caption { //窗口标题栏
 			*lResult = messages.HTCAPTION
 			*aHandled = true
@@ -326,9 +364,60 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(message *types.TMessage, lResult *t
 			if m.WindowProperty().current.ws == types.WsFullScreen {
 				return
 			}
-			rect := m.BoundsRect()
-			if result, handled := m.cwcap.onCanBorder(x, y, &rect); handled {
-				*lResult = types.LRESULT(result)
+			var rect types.TRect
+			// 当前类型的消息取出计算的宽高
+			if messageType == cmtCEF {
+				rect = m.WindowParent().BoundsRect()
+			} else if messageType == cmtLCL {
+				rect = m.BoundsRect()
+			}
+			// 判断当前鼠标是否在边框范围
+			// 窗口边框和CEF组件边框
+			handled := m.cwcap.onCanBorder(x, y, &rect)
+			if handled {
+				// 鼠标在边框范围
+				// 当是CEF组件消息，判断一次组件四边距离窗口四边间距，如果大于边框范围则取消操作
+				// TODO 暂时不使用
+				//if messageType == cmtCEF {
+				//	windowRect := m.BoundsRect()
+				//	switch m.cwcap.borderHT {
+				//	case messages.HTTOP: // 上
+				//		if rect.Top > borderRange {
+				//			return
+				//		}
+				//	case messages.HTBOTTOM: // 下
+				//		if (windowRect.Height() - rect.Bottom) > borderRange {
+				//			return
+				//		}
+				//	case messages.HTLEFT: // 左
+				//		if rect.Left > borderRange {
+				//			return
+				//		}
+				//	case messages.HTRIGHT: // 右
+				//		if (windowRect.Width() - rect.Right) > borderRange {
+				//			return
+				//		}
+				//	case messages.HTTOPRIGHT: // 右上
+				//		if (windowRect.Width()-rect.Right) > borderRange || rect.Top > borderRange {
+				//			return
+				//		}
+				//	case messages.HTBOTTOMRIGHT: // 右下
+				//		if (windowRect.Width()-rect.Right) > borderRange || (windowRect.Height()-rect.Bottom) > borderRange {
+				//			return
+				//		}
+				//	case messages.HTTOPLEFT: // 左上
+				//		if rect.Left > borderRange || rect.Top > borderRange {
+				//			return
+				//		}
+				//	case messages.HTBOTTOMLEFT: // 左下
+				//		if rect.Left > borderRange || (windowRect.Height()-rect.Bottom) > borderRange {
+				//			return
+				//		}
+				//	}
+				//}
+
+				// 鼠标在边框位置
+				*lResult = types.LRESULT(m.cwcap.borderHT)
 				*aHandled = true
 			}
 		}
@@ -388,9 +477,21 @@ func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
 			bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
 		}
 		if !*aHandled {
-			m.doOnRenderCompMsg(message, lResult, aHandled)
+			m.doOnRenderCompMsg(cmtCEF, message, lResult, aHandled)
 		}
 	})
+	// TODO 暂时不使用
+	//m.SetOnWndProc(func(msg *types.TMessage) {
+	//	var (
+	//		tmpHandled bool
+	//		lResult    types.LRESULT
+	//	)
+	//	m.doOnRenderCompMsg(cmtLCL, msg, &lResult, &tmpHandled)
+	//	if tmpHandled {
+	//		msg.Result = lResult
+	//	}
+	//})
+
 	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
 		m.windowResize = func(sender lcl.IObject) bool {
 			if m.WindowState() == types.WsMaximized && (m.WindowProperty().EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
