@@ -86,13 +86,13 @@ var (
 )
 
 // chromiumOnBeforeContextMenu 右键菜单 - 默认实现
-func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-	if !window.Chromium().Config().EnableMenu() {
+func chromiumOnBeforeContextMenu(currentWindow IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
+	if !currentWindow.Chromium().Config().EnableMenu() {
 		model.Clear()
 		return
 	}
 	//开发者工具和显示源代码不展示自定义默认菜单
-	if window.WindowType() == consts.WT_DEV_TOOLS || window.WindowType() == consts.WT_VIEW_SOURCE {
+	if currentWindow.WindowType() == consts.WT_DEV_TOOLS || currentWindow.WindowType() == consts.WT_VIEW_SOURCE {
 		return
 	}
 	undoVisible, undoEnabled := model.IsVisible(consts.MENU_ID_UNDO), model.IsEnabled(consts.MENU_ID_UNDO)
@@ -251,18 +251,18 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 		},
 	})
 	model.AddSeparator()
-	if window.Chromium().Config().EnableViewSource() {
+	if currentWindow.Chromium().Config().EnableViewSource() {
 		viewSourceId = model.CefMis.NextCommandId()
 		model.AddMenuItem(&MenuItem{
 			CommandId:   viewSourceId,
 			Text:        i18n.Resource("viewPageSource"),
 			Accelerator: "ctrl+u",
 			Callback: func(browser *ICefBrowser, commandId consts.MenuId, params *ICefContextMenuParams, menuType consts.TCefContextMenuType, eventFlags uint32, result *bool) {
-				browser.ViewSource()
+				browser.ViewSource(currentWindow)
 			},
 		})
 	}
-	if window.Chromium().Config().EnableDevTools() {
+	if currentWindow.Chromium().Config().EnableDevTools() {
 		devToolsId = model.CefMis.NextCommandId()
 		model.AddItem(devToolsId, i18n.Resource("devTools"))
 	}
@@ -279,7 +279,7 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 }
 
 // 右键菜单 - 默认实现
-func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
+func chromiumOnContextMenuCommand(currentWindow IBrowserWindow, currentChromium ICEFChromiumBrowser, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
 	browserId := browser.Identifier()
 	defer func() {
 		if err := recover(); err != nil {
@@ -293,18 +293,18 @@ func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, f
 	} else if commandId == printId {
 		browser.Print()
 	} else if commandId == closeBrowserId {
-		window.CloseBrowserWindow()
+		currentWindow.CloseBrowserWindow()
 	} else if commandId == refreshId {
 		browser.Reload()
 	} else if commandId == forcedRefreshId {
 		browser.ReloadIgnoreCache()
 	} else if commandId == viewSourceId {
-		if window.Chromium().Config().EnableViewSource() {
-			browser.ViewSource()
+		if currentChromium.Chromium().Config().EnableViewSource() {
+			browser.ViewSource(currentWindow)
 		}
 	} else if commandId == devToolsId {
-		if window.Chromium().Config().EnableDevTools() {
-			browser.ShowDevTools()
+		if currentChromium.Chromium().Config().EnableDevTools() {
+			browser.ShowDevTools(currentWindow, currentChromium)
 		}
 	} else if commandId == aUrlId {
 		lcl.Clipboard.SetAsText(params.LinkUrl())

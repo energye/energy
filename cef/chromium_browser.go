@@ -227,7 +227,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 				result = bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, m.window)
 			}
 			if !result {
-				result = chromiumOnContextMenuCommand(m.window, browser, frame, params, commandId, eventFlags)
+				result = chromiumOnContextMenuCommand(m.window, m, browser, frame, params, commandId, eventFlags)
 			}
 			return result
 		})
@@ -251,7 +251,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 				}
 				if m.Chromium().Config().EnableDevTools() {
 					if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-						browser.ShowDevTools()
+						browser.ShowDevTools(m.window, m)
 						*result = true
 					} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
 						*result = true

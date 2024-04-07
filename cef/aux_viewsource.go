@@ -24,10 +24,10 @@ const (
 	viewSourceName = "view-source"
 )
 
-func (m *ICefBrowser) createBrowserViewSource() {
-	if currentWindowInfo := BrowserWindow.GetWindowInfo(m.Identifier()); currentWindowInfo != nil {
+func (m *ICefBrowser) createBrowserViewSource(currentWindow IBrowserWindow) {
+	if currentWindow != nil {
 		var frame = m.MainFrame()
-		if currentWindowInfo.IsLCL() {
+		if currentWindow.IsLCL() {
 			var viewSourceUrl = fmt.Sprintf("view-source:%s", frame.Url())
 			wp := NewWindowProperty()
 			wp.Url = viewSourceUrl
@@ -71,7 +71,7 @@ func (m *ICefBrowser) createBrowserViewSource() {
 			QueueAsyncCall(func(id int) { //main thread run
 				viewSourceWindow.Show()
 			})
-		} else if currentWindowInfo.IsViewsFramework() {
+		} else if currentWindow.IsViewsFramework() {
 			frame.ViewSource()
 		}
 	}

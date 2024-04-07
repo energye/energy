@@ -376,20 +376,20 @@ func (m *ICefBrowser) SendMouseClickEvent(event *TCefMouseEvent, type_ TCefMouse
 }
 
 // ViewSource 显示网页源码
-func (m *ICefBrowser) ViewSource() {
+func (m *ICefBrowser) ViewSource(currentWindow IBrowserWindow) {
 	if !m.IsValid() {
 		return
 	}
-	m.createBrowserViewSource()
+	m.createBrowserViewSource(currentWindow)
 }
 
 // ShowDevTools 显示开发者工具
-func (m *ICefBrowser) ShowDevTools() {
+func (m *ICefBrowser) ShowDevTools(currentWindow IBrowserWindow, currentChromium ICEFChromiumBrowser) {
 	if !m.IsValid() {
 		return
 	}
-	if browserWinInfo := BrowserWindow.GetWindowInfo(m.Identifier()); browserWinInfo != nil {
-		m.createBrowserDevTools(browserWinInfo)
+	if currentWindow != nil {
+		m.createBrowserDevTools(currentWindow, currentChromium)
 	}
 }
 
@@ -554,7 +554,8 @@ func (m *ICefBrowser) GetRequestContext() *ICefRequestContext {
 }
 
 // SendProcessMessage 发送进程消息
-//  仅支持 CEF49
+//
+//	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
 	if application.IsSpecVer49() {
 		if !m.IsValid() {
@@ -566,7 +567,8 @@ func (m *ICefBrowser) SendProcessMessage(targetProcess CefProcessId, message *IC
 }
 
 // SendProcessMessageForJSONBytes 发送进程消息
-//  仅支持 CEF49
+//
+//	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessageForJSONBytes(messageName string, targetProcess CefProcessId, data []byte) {
 	if application.IsSpecVer49() {
 		if !m.IsValid() {
@@ -577,7 +579,8 @@ func (m *ICefBrowser) SendProcessMessageForJSONBytes(messageName string, targetP
 }
 
 // SendProcessMessageForV8Value 发送进程消息
-//  仅支持 CEF49
+//
+//	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
 	if application.IsSpecVer49() {
 		if !m.IsValid() {
@@ -590,7 +593,8 @@ func (m *ICefBrowser) SendProcessMessageForV8Value(messageName string, targetPro
 // EmitRender IPC 发送进程 消息
 //
 // messageId != 0 是带有回调函数消息
-//  仅支持 CEF49
+//
+//	仅支持 CEF49
 func (m *ICefBrowser) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
 	if !application.IsSpecVer49() {
 		return false

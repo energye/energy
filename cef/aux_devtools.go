@@ -36,24 +36,24 @@ func updateBrowserDevTools(window IBrowserWindow, browser *ICefBrowser, title st
 	}
 }
 
-func (m *ICefBrowser) createBrowserDevTools(browserWindow IBrowserWindow) {
-	if browserWindow.IsLCL() {
+func (m *ICefBrowser) createBrowserDevTools(currentWindow IBrowserWindow, currentChromium ICEFChromiumBrowser) {
+	if currentWindow.IsLCL() {
 		if common.IsWindows() {
 			// 如果开启开发者工具, 需要在IU线程中创建window
-			browserWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
-			devTools := browserWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools()
+			currentWindow.AsLCLBrowserWindow().BrowserWindow().createAuxTools()
+			devTools := currentWindow.AsLCLBrowserWindow().BrowserWindow().GetAuxTools()
 			if devTools.DevTools() == nil {
-				devTools.SetDevTools(createDevtoolsWindow(browserWindow.AsLCLBrowserWindow().BrowserWindow()))
+				devTools.SetDevTools(createDevtoolsWindow(currentWindow.AsLCLBrowserWindow().BrowserWindow(), currentChromium))
 				devTools.DevTools().SetCaption(fmt.Sprintf("%s - %s", devToolsName, m.MainFrame().Url()))
 			}
 			RunOnMainThread(func() { // show window, run is main ui thread
 				devTools.DevTools().Show()
 			})
 		} else {
-			browserWindow.Chromium().ShowDevTools(nil)
+			currentChromium.Chromium().ShowDevTools(nil)
 		}
-	} else if browserWindow.IsViewsFramework() {
-		browserWindow.Chromium().ShowDevTools(nil)
+	} else if currentWindow.IsViewsFramework() {
+		currentChromium.Chromium().ShowDevTools(nil)
 	}
 }
 
