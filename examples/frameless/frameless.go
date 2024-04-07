@@ -22,6 +22,7 @@ import (
 	"github.com/energye/golcl/lcl/rtl/version"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
+	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
@@ -32,6 +33,7 @@ var resources embed.FS
 
 // go build -ldflags "-s -w"
 func main() {
+	libname.LibName = "C:\\Users\\Administrator\\golcl\\lcl_liblcl.dll"
 	//命令: go generate 生成内置资源
 	//resources := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
@@ -89,7 +91,7 @@ func main() {
 			//window.AsLCLBrowserWindow().SetRoundRectRgn(10) // WindowParent 未铺满窗口会有严重的闪烁
 			var (
 				borderSpace    int32 = 2
-				titleBarHeight int32 = 35
+				titleBarHeight int32 = 30
 			)
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
 			bw.SetColor(colors.ClBrown)             //给窗口随便设置一个颜色

@@ -178,6 +178,8 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 
 	// 创建Chromium Browser， 将 tabSheet 做为父组件
 	chromium := cef.NewChromiumBrowser(boxBottom, nil)
+	chromium.SetSelfWindow(window)
+	chromium.RegisterDefaultEvent()
 	tab.chromium = chromium
 	chromium.WindowParent().SetAlign(types.AlClient)
 	// 请求上下文配置
@@ -372,7 +374,10 @@ func windowBottomLayout(window *cef.LCLBrowserWindow) *lcl.TPageControl {
 	right.SetParent(tabSheet)
 	right.SetAlign(types.AlClient)
 	right.SetColor(colors.ClBackground)
+	// 创建右半部分浏览器
 	chromium := cef.NewChromiumBrowser(right, nil)
+	chromium.SetSelfWindow(window)  // 设置当前窗口，让默认事件全部生效
+	chromium.RegisterDefaultEvent() // 注册默认实现事件
 	chromium.WindowParent().SetAlign(types.AlClient)
 	chromium.Chromium().SetDefaultURL("https://www.baidu.com") // 设置加载的页面地址
 	chromium.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
