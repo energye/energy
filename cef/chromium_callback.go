@@ -181,11 +181,14 @@ func chromiumOnBeforeContextMenu(currentWindow IBrowserWindow, browser *ICefBrow
 		model.AddSeparator()
 	}
 	//A标签和图片 链接
-	if params.MediaType() == consts.CM_MEDIATYPE_NONE { //a=5
+	isLink := params.TypeFlags()&consts.CM_TYPEFLAG_LINK == consts.CM_TYPEFLAG_LINK
+	isCopyLink := params.MediaType() == consts.CM_MEDIATYPE_NONE && isLink
+	if isCopyLink {
 		aUrlId = model.CefMis.NextCommandId()
 		model.AddItem(aUrlId, i18n.Resource("copyLink"))
 	}
-	if params.MediaType() == consts.CM_MEDIATYPE_IMAGE { // image=9
+	isCopyImage := params.MediaType() == consts.CM_MEDIATYPE_IMAGE && isLink
+	if isCopyImage {
 		//copyImageId = model.CefMis.NextCommandId()
 		//model.AddItem(copyImageId, "复制图片")
 		imageUrlId = model.CefMis.NextCommandId()
@@ -193,7 +196,7 @@ func chromiumOnBeforeContextMenu(currentWindow IBrowserWindow, browser *ICefBrow
 		imageSaveId = model.CefMis.NextCommandId()
 		model.AddItem(imageSaveId, i18n.Resource("imageSaveAs"))
 	}
-	if params.MediaType() == consts.CM_MEDIATYPE_NONE || params.MediaType() == consts.CM_MEDIATYPE_IMAGE {
+	if isCopyLink || isCopyImage {
 		model.AddSeparator()
 	}
 	backId = model.CefMis.NextCommandId()

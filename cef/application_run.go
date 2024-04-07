@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 )
 
@@ -76,17 +77,22 @@ func Run(app *TCEFApplication) {
 			// 初始化窗口组件
 			appContextInitialized()
 		}
+		// Linux Gtk3
+		widgetInit := common.IsLinux() && app.IsUIGtk3()
+		if widgetInit {
+			// linux widget init
+			// TODO:
+			//  Linux Gtk3 自定义初始化组件库，实际应放在 StartMainProcess 成功之后再执行，但不行，不能输入英文字符。
+			//  放在 StartMainProcess 之前执行又会有警告。先加在这里。
+			//  初始化组件库，主要为了在Gtk3时能使用部分LCL组件库的功能。
+			api.CustomWidgetSetInitialization()
+			lcl.Application.Initialize()
+		}
 		// 启动主进程
 		success := application.StartMainProcess()
 		if success {
-			isWidgetInit := common.IsLinux() && app.IsUIGtk3()
-			if isWidgetInit {
-				// linux  widget init
-				api.CustomWidgetSetInitialization()
-				//lcl.Application.Initialize()
-			}
 			api.SetReleaseCallback(func() {
-				if isWidgetInit {
+				if widgetInit {
 					// linux widget free
 					api.CustomWidgetSetFinalization()
 				}
