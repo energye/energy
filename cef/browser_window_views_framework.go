@@ -19,7 +19,6 @@ import (
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
-	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -37,7 +36,7 @@ type ViewsFrameworkBrowserWindow struct {
 	isClosing             bool                              //
 	windowType            consts.WINDOW_TYPE                //窗口类型
 	windowId              int32                             //
-	chromium              IChromium                         //
+	chromiumBrowser       ICEFChromiumBrowser               //
 	component             lcl.IComponent                    //
 	windowComponent       *TCEFWindowComponent              //
 	browserViewComponent  *TCEFBrowserViewComponent         //
@@ -65,13 +64,17 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 		config = NewChromiumConfig()
 	}
 	var component = lcl.NewComponent(owner)
+	chromiumBrowser := &TCEFChromiumBrowser{
+		chromium: NewChromium(component, config),
+	}
 	m := &ViewsFrameworkBrowserWindow{
 		windowProperty:       &windowProperty,
 		component:            component,
-		chromium:             NewChromium(component, config),
+		chromiumBrowser:      chromiumBrowser,
 		windowComponent:      WindowComponentRef.New(component),
 		browserViewComponent: BrowserViewComponentRef.New(component),
 	}
+	chromiumBrowser.window = m
 	m.SetWindowType(windowProperty.WindowType)
 	m.Chromium().SetEnableMultiBrowserMode(true)
 	m.WindowComponent().SetOnWindowCreated(func(window *ICefWindow) {
@@ -168,7 +171,7 @@ func appContextInitialized() {
 		// 设置到 MainBrowser, 主窗口有且仅有一个
 		BrowserWindow.mainBrowserWindow = vfMainWindow
 		if m.Config.browserWindowOnEventCallback != nil {
-			BrowserWindow.browserEvent.chromium = vfMainWindow.chromium
+			BrowserWindow.browserEvent.chromium = vfMainWindow.Chromium()
 			m.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, vfMainWindow)
 		}
 		// IPC
@@ -224,10 +227,10 @@ func (m *ViewsFrameworkBrowserWindow) Target(targetType ...target.Type) target.I
 //
 //	IPC消息触发当前Chromium
 func (m *ViewsFrameworkBrowserWindow) ProcessMessage() target.IProcessMessage {
-	if m.chromium == nil {
+	if m.chromiumBrowser == nil {
 		return nil
 	}
-	return m.chromium.(*TCEFChromium)
+	return m.chromiumBrowser.Chromium().(*TCEFChromium)
 }
 
 func (m *ViewsFrameworkBrowserWindow) AsTargetWindow() target.IWindow {
@@ -254,54 +257,26 @@ func (m *ViewsFrameworkBrowserWindow) createAfterWindowPropertyForEvent() {
 	}
 }
 
-// registerPopupEvent 注册弹出子窗口事件
-func (m *ViewsFrameworkBrowserWindow) registerPopupEvent(isMain bool) {
+// WV 窗口的弹出事件
+func (m *ViewsFrameworkBrowserWindow) doBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
 	var bwEvent = BrowserWindow.browserEvent
-	if !isMain {
-		// 子窗口关闭流程
-		m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
-			var flag bool
-			if bwEvent.onBeforeClose != nil {
-				flag = bwEvent.onBeforeClose(sender, browser, m)
-			}
-			if !flag {
-				chromiumOnBeforeClose(m, browser)
-				m.TryCloseWindowAndTerminate()
-			}
-		})
-		m.Chromium().SetOnClose(func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
-			if bwEvent.onClose != nil {
-				bwEvent.onClose(sender, browser, aAction, m)
-			}
-		})
+
+	wp := *m.windowProperty //clone
+	wp.Url = beforePopupInfo.TargetUrl
+	wp.WindowType = consts.WT_POPUP_SUB_BROWSER
+	var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(NewChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
+	var result = false
+	if bwEvent.onBeforePopup != nil {
+		result = bwEvent.onBeforePopup(sender, vFrameBrowserWindow, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 	}
-	m.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
-		if !m.Chromium().Config().EnableOpenUrlTab() {
-			return true
-		}
-		return false
-	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
-		if !m.Chromium().Config().EnableWindowPopup() {
-			return true
-		}
-		wp := *m.windowProperty //clone
-		wp.Url = beforePopupInfo.TargetUrl
-		wp.WindowType = consts.WT_POPUP_SUB_BROWSER
-		var vFrameBrowserWindow = NewViewsFrameworkBrowserWindow(NewChromiumConfig(), wp, BrowserWindow.MainWindow().AsViewsFrameworkBrowserWindow().Component())
-		var result = false
-		if bwEvent.onBeforePopup != nil {
-			result = bwEvent.onBeforePopup(sender, vFrameBrowserWindow, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
-		}
-		if !result {
-			vFrameBrowserWindow.ResetWindowPropertyForEvent()
-			vFrameBrowserWindow.EnableAllDefaultEvent()
-			vFrameBrowserWindow.CreateTopLevelWindow()
-			vFrameBrowserWindow.createAfterWindowPropertyForEvent()
-			result = true
-		}
-		return result
-	})
+	if !result {
+		vFrameBrowserWindow.ResetWindowPropertyForEvent()
+		vFrameBrowserWindow.EnableAllDefaultEvent()
+		vFrameBrowserWindow.CreateTopLevelWindow()
+		vFrameBrowserWindow.createAfterWindowPropertyForEvent()
+		result = true
+	}
+	return result
 }
 
 // ResetWindowPropertyForEvent 重置窗口属性-通过事件函数
@@ -357,135 +332,6 @@ func (m *ViewsFrameworkBrowserWindow) ResetWindowPropertyForEvent() {
 	m.WindowComponent().SetBounds(NewCefRect(wp.X, wp.Y, wp.Width, wp.Height))
 }
 
-// registerDefaultEvent 注册默认事件
-func (m *ViewsFrameworkBrowserWindow) registerDefaultEvent() {
-	var bwEvent = BrowserWindow.browserEvent
-	//默认自定义快捷键
-	defaultAcceleratorCustom()
-	m.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
-		if bwEvent.onProcessMessageReceived != nil {
-			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message, m)
-		}
-		return false
-	})
-	m.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
-		if assetserve.AssetsServerHeaderKeyValue != "" {
-			if application.IsSpecVer49() {
-				headerMap := request.GetHeaderMap()
-				headerMap.Append(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue)
-				request.SetHeaderMap(headerMap)
-				headerMap.Free()
-			} else {
-				request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
-			}
-		}
-		if bwEvent.onBeforeResourceLoad != nil {
-			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result, m)
-		}
-	})
-	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
-		if bwEvent.onBeforeDownload != nil {
-			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m)
-		} else {
-			// 默认保存到当前执行文件所在目录
-			callback.Cont(consts.ExeDir+consts.Separator+suggestedName, true)
-		}
-	})
-	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		var flag bool
-		if bwEvent.onBeforeContextMenu != nil {
-			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model, m)
-		}
-		if !flag {
-			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
-		}
-	})
-	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
-		var result bool
-		if bwEvent.onContextMenuCommand != nil {
-			result = bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, m)
-		}
-		if !result {
-			result = chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags)
-		}
-		return result
-	})
-	m.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		var flag bool
-		if bwEvent.onAfterCreated != nil {
-			flag = bwEvent.onAfterCreated(sender, browser, m)
-		}
-		if !flag {
-			chromiumOnAfterCreate(m, browser)
-		}
-	})
-	m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
-		if bwEvent.onKeyEvent != nil {
-			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
-		}
-		if !*result {
-			if m.WindowType() == consts.WT_DEV_TOOLS || m.WindowType() == consts.WT_VIEW_SOURCE {
-				return
-			}
-			if m.Chromium().Config().EnableDevTools() {
-				if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-					browser.ShowDevTools()
-					*result = true
-				} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
-					*result = true
-				}
-			}
-			if KeyAccelerator.accelerator(browser, event, result) {
-				return
-			}
-		}
-	})
-	m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
-		chromiumOnBeforeBrowser(m, browser, frame, request) // default impl
-		if bwEvent.onBeforeBrowser != nil {
-			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
-		}
-		return false
-	})
-	m.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		if bwEvent.onTitleChange != nil {
-			bwEvent.onTitleChange(sender, browser, title, m)
-		}
-	})
-	m.Chromium().SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
-		*result = !m.WindowProperty().EnableDragFile
-		if bwEvent.onDragEnter != nil {
-			bwEvent.onDragEnter(sender, browser, dragData, mask, m, result)
-		}
-	})
-	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
-		if bwEvent.onLoadEnd != nil {
-			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode, m)
-		}
-	})
-	if m.WindowProperty().EnableWebkitAppRegion {
-		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
-			if bwEvent.onDraggableRegionsChanged != nil {
-				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)
-			}
-			m.regions = regions
-			m.WindowComponent().SetDraggableRegions(regions.Regions())
-		})
-	}
-	if localLoadRes.enable() {
-		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-			//var flag bool
-			if bwEvent.onGetResourceHandler != nil {
-				resourceHandler, _ = bwEvent.onGetResourceHandler(sender, browser, frame, request, m)
-			}
-			//if !flag {
-			//	resourceHandler = localLoadRes.getResourceHandler(browser, frame, request)
-			//}
-			return
-		})
-	}
-}
-
 // Created 窗口是否创建完, m.CreateTopLevelWindow() 之后
 func (m *ViewsFrameworkBrowserWindow) Created() bool {
 	return m.created
@@ -493,8 +339,8 @@ func (m *ViewsFrameworkBrowserWindow) Created() bool {
 
 // EnableAllDefaultEvent 启用所有默认事件行为
 func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
-	m.registerPopupEvent(m.WindowType() == consts.WT_MAIN_BROWSER)
-	m.registerDefaultEvent()
+	m.chromiumBrowser.RegisterDefaultPopupEvent()
+	m.chromiumBrowser.RegisterDefaultEvent()
 	m.canEnableDefaultEvent = true
 }
 
@@ -650,7 +496,7 @@ func (m *ViewsFrameworkBrowserWindow) Browser() *ICefBrowser {
 
 // Chromium 返回 chromium
 func (m *ViewsFrameworkBrowserWindow) Chromium() IChromium {
-	return m.chromium
+	return m.chromiumBrowser.Chromium()
 }
 
 // Id 获取窗口ID

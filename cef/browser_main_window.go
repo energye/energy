@@ -110,7 +110,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		m.SetProperty() //再次设置可能修改属性
 	}
 	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
-	m.registerWindowsCompMsgEvent()
+	//m.registerWindowsCompMsgEvent()
 
 	//自定义窗口标题栏
 	m.cwcap = &customWindowCaption{

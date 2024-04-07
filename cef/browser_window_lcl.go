@@ -22,7 +22,6 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/energy/v2/logger"
-	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
@@ -592,6 +591,21 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 	})
 }
 
+// BroderDirectionAdjustments 返回可以调整窗口大小的边框方向, 默认所有方向
+func (m *LCLBrowserWindow) BroderDirectionAdjustments() et.BroderDirectionAdjustments {
+	if m.chromiumBrowser == nil {
+		return 0
+	}
+	return m.chromiumBrowser.BroderDirectionAdjustments()
+}
+
+// SetBroderDirectionAdjustments 设置可以调整窗口大小的边框方向, 默认所有方向
+func (m *LCLBrowserWindow) SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) {
+	if m.chromiumBrowser != nil {
+		m.chromiumBrowser.SetBroderDirectionAdjustments(val)
+	}
+}
+
 // WindowProperty 部分提供部分窗口属性设置
 func (m *LCLBrowserWindow) WindowProperty() *WindowProperty {
 	return m.windowProperty
@@ -600,8 +614,8 @@ func (m *LCLBrowserWindow) WindowProperty() *WindowProperty {
 // defaultChromiumEvent 默认的chromium事件
 func (m *LCLBrowserWindow) defaultChromiumEvent() {
 	if m.WindowType() != consts.WT_DEV_TOOLS {
-		m.registerPopupEvent()
-		m.registerDefaultEvent()
+		m.chromiumBrowser.RegisterDefaultEvent()
+		m.chromiumBrowser.RegisterDefaultPopupEvent()
 		m.registerDefaultChromiumCloseEvent()
 	}
 }
@@ -635,20 +649,18 @@ func (m *LCLBrowserWindow) defaultWindowCloseEvent() {
 	m.TForm.SetOnCloseQuery(m.closeQuery)
 }
 
-// EnableDefaultCloseEvent 启用默认关闭事件
+// EnableDefaultCloseEvent 启用默认关闭事件，仅窗口关闭事件
 func (m *LCLBrowserWindow) EnableDefaultCloseEvent() {
 	m.defaultWindowCloseEvent()
 	m.registerDefaultChromiumCloseEvent()
 }
 
-// EnableAllDefaultEvent 启用所有默认事件行为
+// EnableAllDefaultEvent 启用所有默认事件行为, 包含窗口关闭事件
 func (m *LCLBrowserWindow) EnableAllDefaultEvent() {
-	// 窗口关闭事件，window和chromium将以正确的行为关闭
+	// 窗口关闭事件，window和chromium关闭流程回调
 	m.defaultWindowCloseEvent()
 	// chromium事件，在回调事件中实现框架的默认行为
 	m.defaultChromiumEvent()
-	// 仅windows有的事件，窗口消息事件
-	m.registerWindowsCompMsgEvent()
 }
 
 // SetOnResize 事件,不会覆盖默认事件，返回值：false继续执行默认事件, true跳过默认事件
@@ -884,184 +896,41 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 	}
 }
 
-// registerDefaultEvent 注册默认事件 部分事件允许被覆盖
-func (m *LCLBrowserWindow) registerDefaultEvent() {
+// LCL 窗口的弹出事件
+func (m *LCLBrowserWindow) doBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
 	var bwEvent = BrowserWindow.browserEvent
-	//默认自定义快捷键
-	defaultAcceleratorCustom()
-	m.Chromium().SetOnProcessMessageReceived(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) bool {
-		if bwEvent.onProcessMessageReceived != nil {
-			return bwEvent.onProcessMessageReceived(sender, browser, frame, sourceProcess, message, m)
+	// 取出预创建的下一个弹出窗口对象
+	if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
+		bw := next.AsLCLBrowserWindow().BrowserWindow()
+		bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+		var result = false
+		if bwEvent.onBeforePopup != nil {
+			result = bwEvent.onBeforePopup(sender, bw, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 		}
-		return false
-	})
-	m.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
-		if assetserve.AssetsServerHeaderKeyValue != "" {
-			if application.IsSpecVer49() {
-				headerMap := request.GetHeaderMap()
-				headerMap.Append(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue)
-				request.SetHeaderMap(headerMap)
-				headerMap.Free()
-			} else {
-				request.SetHeaderByName(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue, true)
-			}
-		}
-		if bwEvent.onBeforeResourceLoad != nil {
-			bwEvent.onBeforeResourceLoad(sender, browser, frame, request, callback, result, m)
-		}
-	})
-	//事件可以被覆盖
-	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
-		if bwEvent.onBeforeDownload != nil {
-			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m)
-		} else {
-			// 默认保存到当前执行文件所在目录
-			callback.Cont(consts.ExeDir+consts.Separator+suggestedName, true)
-		}
-	})
-	m.Chromium().SetOnBeforeContextMenu(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel) {
-		var flag bool
-		if bwEvent.onBeforeContextMenu != nil {
-			flag = bwEvent.onBeforeContextMenu(sender, browser, frame, params, model, m)
-		}
-		if !flag {
-			chromiumOnBeforeContextMenu(m, browser, frame, params, model)
-		}
-	})
-	m.Chromium().SetOnContextMenuCommand(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
-		var result bool
-		if bwEvent.onContextMenuCommand != nil {
-			result = bwEvent.onContextMenuCommand(sender, browser, frame, params, commandId, eventFlags, m)
-		}
+		// result = true 表示用户自行处理
 		if !result {
-			result = chromiumOnContextMenuCommand(m, browser, frame, params, commandId, eventFlags)
+			// 使用energy默认弹出窗口
+			RunOnMainThread(func() {
+				bw.Chromium().SetDefaultURL(beforePopupInfo.TargetUrl)
+				bw.EnableAllDefaultEvent()
+				bw.SetProperty()
+				// show window, run in main thread
+				if bw.WindowProperty().IsShowModel {
+					bw.ShowModal()
+					return
+				}
+				bw.Show()
+			})
+			// 此时已经在energy内成功创建弹出窗口对象，阻止CEF创建窗口行为
+			result = true
+			// 将 BrowserWindow 维护弹出窗口对象(popupWindow)设置为nil, 表示该窗口已被使用
+			// 并在 chromium.OnAfterCreate 事件中再次预创建弹出窗口对象
+			BrowserWindow.popupWindow = nil
 		}
 		return result
-	})
-	m.Chromium().SetOnAfterCreated(func(sender lcl.IObject, browser *ICefBrowser) {
-		var flag bool
-		if bwEvent.onAfterCreated != nil {
-			flag = bwEvent.onAfterCreated(sender, browser, m)
-		}
-		if !flag {
-			chromiumOnAfterCreate(m, browser)
-		}
-	})
-	//事件可以被覆盖
-	m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
-		if bwEvent.onKeyEvent != nil {
-			bwEvent.onKeyEvent(sender, browser, event, osEvent, m, result)
-		}
-		if !*result {
-			if m.WindowType() == consts.WT_DEV_TOOLS || m.WindowType() == consts.WT_VIEW_SOURCE {
-				return
-			}
-			if m.Chromium().Config().EnableDevTools() {
-				if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-					browser.ShowDevTools()
-					*result = true
-				} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
-					*result = true
-				}
-			}
-			if KeyAccelerator.accelerator(browser, event, result) {
-				return
-			}
-		}
-	})
-	m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
-		chromiumOnBeforeBrowser(m, browser, frame, request) // default impl
-		if bwEvent.onBeforeBrowser != nil {
-			return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m)
-		}
-		return false
-	})
-	m.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *ICefBrowser, title string) {
-		updateBrowserDevTools(m, browser, title)
-		if bwEvent.onTitleChange != nil {
-			bwEvent.onTitleChange(sender, browser, title, m)
-		}
-	})
-	m.Chromium().SetOnDragEnter(func(sender lcl.IObject, browser *ICefBrowser, dragData *ICefDragData, mask consts.TCefDragOperations, result *bool) {
-		*result = !m.WindowProperty().EnableDragFile
-		if bwEvent.onDragEnter != nil {
-			bwEvent.onDragEnter(sender, browser, dragData, mask, m, result)
-		}
-	})
-	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
-		if bwEvent.onLoadEnd != nil {
-			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode, m)
-		}
-	})
-	if m.WindowProperty().EnableWebkitAppRegion {
-		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
-			if bwEvent.onDraggableRegionsChanged != nil {
-				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m)
-			}
-			m.cwcap.regions = regions
-			m.setDraggableRegions()
-		})
 	}
-	if localLoadRes.enable() {
-		m.Chromium().SetOnGetResourceHandler(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler) {
-			//var flag bool
-			if bwEvent.onGetResourceHandler != nil {
-				resourceHandler, _ = bwEvent.onGetResourceHandler(sender, browser, frame, request, m)
-			}
-			//if !flag {
-			//	resourceHandler = localLoadRes.getResourceHandler(browser, frame, request)
-			//}
-			return
-		})
-	}
-}
-
-// registerPopupEvent 注册弹出子窗口事件
-func (m *LCLBrowserWindow) registerPopupEvent() {
-	var bwEvent = BrowserWindow.browserEvent
-	m.Chromium().SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
-		if !m.Chromium().Config().EnableOpenUrlTab() {
-			return true
-		}
-		return false
-	})
-	m.Chromium().SetOnBeforePopup(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool {
-		if !m.Chromium().Config().EnableWindowPopup() {
-			return true
-		}
-		// 取出预创建的下一个弹出窗口对象
-		if next := BrowserWindow.getNextLCLPopupWindow(); next != nil {
-			bw := next.AsLCLBrowserWindow().BrowserWindow()
-			bw.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
-			var result = false
-			if bwEvent.onBeforePopup != nil {
-				result = bwEvent.onBeforePopup(sender, bw, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
-			}
-			// result = true 表示用户自行处理
-			if !result {
-				// 使用energy默认弹出窗口
-				RunOnMainThread(func() {
-					bw.Chromium().SetDefaultURL(beforePopupInfo.TargetUrl)
-					bw.EnableAllDefaultEvent()
-					bw.SetProperty()
-					// show window, run in main thread
-					if bw.WindowProperty().IsShowModel {
-						bw.ShowModal()
-						return
-					}
-					bw.Show()
-				})
-				// 此时已经在energy内成功创建弹出窗口对象，阻止CEF创建窗口行为
-				result = true
-				// 将 BrowserWindow 维护弹出窗口对象(popupWindow)设置为nil, 表示该窗口已被使用
-				// 并在 chromium.OnAfterCreate 事件中再次预创建弹出窗口对象
-				BrowserWindow.popupWindow = nil
-			}
-			return result
-		}
-		// 未取到下一个弹出窗口对象时，默认行为不创建窗口
-		return true
-	})
+	// 未取到下一个弹出窗口对象时，默认行为不创建窗口
+	return true
 }
 
 // CloseBrowserWindow 关闭带有浏览器的窗口

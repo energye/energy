@@ -16,6 +16,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/consts"
+	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -134,6 +135,9 @@ type IBrowserWindow interface {
 	Screen() IScreen                                                                                          //返回屏幕信息
 	Target(targetType ...target.Type) target.ITarget                                                          //IPC接收目标
 	AsTargetWindow() target.IWindow                                                                           //IPC
+	doBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo,
+		popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings,
+		resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
 }
 
 // ILCLBrowserWindow
@@ -142,20 +146,22 @@ type IBrowserWindow interface {
 // 定义了LCL常用函数
 type ILCLBrowserWindow interface {
 	IBrowserWindow
-	BrowserWindow() *LCLBrowserWindow                             //返回 LCLBrowserWindow 窗口结构
-	EnableDefaultCloseEvent()                                     //启用默认关闭事件
-	WindowParent() ICEFWindowParent                               //浏览器父窗口组件
-	DisableTransparent()                                          //禁用窗口透明
-	EnableTransparent(value uint8)                                //启用并设置窗口透明
-	DisableSystemMenu()                                           //禁用标题栏系统菜单
-	DisableHelp()                                                 //禁用标题栏帮助
-	EnableSystemMenu()                                            //启用标题栏系统菜单
-	EnableHelp()                                                  //启用标题栏帮助
-	NewTray() ITray                                               //创建LCL的系统托盘
-	SetRoundRectRgn(rgn int)                                      //窗口无边框时圆角设置
-	FramelessForLine()                                            //无边框四边一条细线样式
-	Frameless()                                                   //无边框
-	ChromiumCreate(config *TCefChromiumConfig, defaultUrl string) //chromium实例为空时创建 chromium
+	BrowserWindow() *LCLBrowserWindow                                //返回 LCLBrowserWindow 窗口结构
+	EnableDefaultCloseEvent()                                        //启用默认关闭事件
+	WindowParent() ICEFWindowParent                                  //浏览器父窗口组件
+	DisableTransparent()                                             //禁用窗口透明
+	EnableTransparent(value uint8)                                   //启用并设置窗口透明
+	DisableSystemMenu()                                              //禁用标题栏系统菜单
+	DisableHelp()                                                    //禁用标题栏帮助
+	EnableSystemMenu()                                               //启用标题栏系统菜单
+	EnableHelp()                                                     //启用标题栏帮助
+	NewTray() ITray                                                  //创建LCL的系统托盘
+	SetRoundRectRgn(rgn int)                                         //窗口无边框时圆角设置
+	FramelessForLine()                                               //无边框四边一条细线样式
+	Frameless()                                                      //无边框
+	ChromiumCreate(config *TCefChromiumConfig, defaultUrl string)    //chromium实例为空时创建 chromium
+	BroderDirectionAdjustments() et.BroderDirectionAdjustments       //返回可以调整窗口大小的边框方向, 默认所有方向
+	SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) // 设置可以调整窗口大小的边框方向, 默认所有方向
 }
 
 // IViewsFrameworkBrowserWindow
@@ -211,14 +217,14 @@ func (m *auxTools) DevTools() *devToolsWindow {
 
 // NewBrowserWindow
 //
-//	 创建浏览器窗口
-//	 根据当前主窗口类型创建
-//	 窗口类型
+//	创建浏览器窗口
+//	根据当前主窗口类型创建
+//	窗口类型
 //		  	LCL: 是基于LCL组件库创建的窗口，相比VF有多更的原生小部件使用，更多的窗口操作
 //			VF : 是基于CEF ViewFramework 组件创建的窗口, 相比LCL无法使用系统原生小部件，较少的窗口操作
-//  config: Chromium配置, 提供快捷chromium配置
-//  windowProperty: 窗口属性
-//  owner: 被创建组件拥有者
+//	config: Chromium配置, 提供快捷chromium配置
+//	windowProperty: 窗口属性
+//	owner: 被创建组件拥有者
 func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty, owner lcl.IComponent) IBrowserWindow {
 	// 获取当前应用的主窗口
 	main := BrowserWindow.MainWindow()

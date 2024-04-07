@@ -150,6 +150,7 @@ func (m *customWindowCaption) freeRgn() {
 		winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
 		winapi.DeleteObject(m.rgn)
 		m.rgn.Free()
+		m.rgn = nil
 	}
 }
 
@@ -215,39 +216,40 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 	}
 }
 
-// onCanBorder 鼠标是否在边框
-func (m *customWindowCaption) onCanBorder(x, y int32, windowRect *types.TRect) bool {
+// 鼠标是否在边框，并返回当前鼠标样式
+func (m *customWindowCaption) onCanBorder(chromiumBrowser ICEFChromiumBrowser, x, y int32, windowRect *types.TRect) bool {
 	width := windowRect.Width()
 	height := windowRect.Height()
-	if m.canBorder = x <= width && x >= width-angleRange && y <= angleRange; m.canBorder { // 右上
+	bda := chromiumBrowser.BroderDirectionAdjustments()
+	if m.canBorder = x <= width && x >= width-angleRange && y <= angleRange; m.canBorder && bda.In(et.BdaTopRight) { // 右上
 		m.borderWMSZ = messages.WMSZ_TOPRIGHT
 		m.borderHT = messages.HTTOPRIGHT
 		return true
-	} else if m.canBorder = x <= width && x >= width-angleRange && y <= height && y >= height-angleRange; m.canBorder { // 右下
+	} else if m.canBorder = x <= width && x >= width-angleRange && y <= height && y >= height-angleRange; m.canBorder && bda.In(et.BdaBottomRight) { // 右下
 		m.borderWMSZ = messages.WMSZ_BOTTOMRIGHT
 		m.borderHT = messages.HTBOTTOMRIGHT
 		return true
-	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder { //左上
+	} else if m.canBorder = x <= angleRange && y <= angleRange; m.canBorder && bda.In(et.BdaTopLeft) { //左上
 		m.borderWMSZ = messages.WMSZ_TOPLEFT
 		m.borderHT = messages.HTTOPLEFT
 		return true
-	} else if m.canBorder = x <= angleRange && y >= height-angleRange; m.canBorder { //左下
+	} else if m.canBorder = x <= angleRange && y >= height-angleRange; m.canBorder && bda.In(et.BdaBottomLeft) { //左下
 		m.borderWMSZ = messages.WMSZ_BOTTOMLEFT
 		m.borderHT = messages.HTBOTTOMLEFT
 		return true
-	} else if m.canBorder = x > angleRange && x < width-angleRange && y <= borderRange; m.canBorder { //上
+	} else if m.canBorder = x > angleRange && x < width-angleRange && y <= borderRange; m.canBorder && bda.In(et.BdaTop) { //上
 		m.borderWMSZ = messages.WMSZ_TOP
 		m.borderHT = messages.HTTOP
 		return true
-	} else if m.canBorder = x > angleRange && x < width-angleRange && y >= height-borderRange; m.canBorder { //下
+	} else if m.canBorder = x > angleRange && x < width-angleRange && y >= height-borderRange; m.canBorder && bda.In(et.BdaBottom) { //下
 		m.borderWMSZ = messages.WMSZ_BOTTOM
 		m.borderHT = messages.HTBOTTOM
 		return true
-	} else if m.canBorder = x <= borderRange && y > angleRange && y < height-angleRange; m.canBorder { //左
+	} else if m.canBorder = x <= borderRange && y > angleRange && y < height-angleRange; m.canBorder && bda.In(et.BdaLeft) { //左
 		m.borderWMSZ = messages.WMSZ_LEFT
 		m.borderHT = messages.HTLEFT
 		return true
-	} else if m.canBorder = x <= width && x >= width-borderRange && y > angleRange && y < height-angleRange; m.canBorder { // 右
+	} else if m.canBorder = x <= width && x >= width-borderRange && y > angleRange && y < height-angleRange; m.canBorder && bda.In(et.BdaRight) { // 右
 		m.borderWMSZ = messages.WMSZ_RIGHT
 		m.borderHT = messages.HTRIGHT
 		return true
@@ -289,15 +291,15 @@ func (m *customWindowCaption) toPoint(message *types.TMessage) (x, y int32) {
 // 鼠标是否在标题栏区域
 //
 // 如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
-func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (int32, int32, bool) {
+func (m *customWindowCaption) isCaption(chromiumBrowser ICEFChromiumBrowser, hWND et.HWND, message *types.TMessage) (int32, int32, bool) {
 	dx, dy := m.toPoint(message)
 	p := &et.Point{
 		X: dx,
 		Y: dy,
 	}
 	winapi.ScreenToClient(hWND, p)
-	p.X -= m.bw.WindowParent().Left()
-	p.Y -= m.bw.WindowParent().Top()
+	p.X -= chromiumBrowser.WindowParent().Left()
+	p.Y -= chromiumBrowser.WindowParent().Top()
 	if m.bw.WindowProperty().EnableWebkitAppRegion && m.rgn != nil {
 		m.canCaption = winapi.PtInRegion(m.rgn, p.X, p.Y)
 	} else {
@@ -306,8 +308,7 @@ func (m *customWindowCaption) isCaption(hWND et.HWND, message *types.TMessage) (
 	return p.X, p.Y, m.canCaption
 }
 
-// doOnRenderCompMsg
-func (m *LCLBrowserWindow) doOnRenderCompMsg(messageType compMessageType, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
+func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser, messageType compMessageType, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
@@ -346,7 +347,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(messageType compMessageType, messag
 		)
 		if messageType == cmtCEF {
 			//鼠标坐标是否在标题区域
-			x, y, caption = m.cwcap.isCaption(et.HWND(m.Handle()), message)
+			x, y, caption = m.cwcap.isCaption(chromiumBrowser, et.HWND(m.Handle()), message)
 		} else if messageType == cmtLCL {
 			x, y = m.cwcap.toPoint(message)
 			p := &et.Point{
@@ -367,13 +368,14 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(messageType compMessageType, messag
 			var rect types.TRect
 			// 当前类型的消息取出计算的宽高
 			if messageType == cmtCEF {
-				rect = m.WindowParent().BoundsRect()
+				rect = chromiumBrowser.WindowParent().BoundsRect()
 			} else if messageType == cmtLCL {
 				rect = m.BoundsRect()
 			}
 			// 判断当前鼠标是否在边框范围
 			// 窗口边框和CEF组件边框
-			handled := m.cwcap.onCanBorder(x, y, &rect)
+
+			handled := m.cwcap.onCanBorder(chromiumBrowser, x, y, &rect)
 			if handled {
 				// 鼠标在边框范围
 				// 当是CEF组件消息，判断一次组件四边距离窗口四边间距，如果大于边框范围则取消操作
@@ -454,10 +456,7 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 			y := int32(float32(region.Bounds.Y) * scp)
 			w := int32(float32(region.Bounds.Width) * scp)
 			h := int32(float32(region.Bounds.Height) * scp)
-			creRGN := winapi.CreateRectRgn(x,
-				y,
-				x+w,
-				y+h)
+			creRGN := winapi.CreateRectRgn(x, y, x+w, y+h)
 			if region.Draggable {
 				winapi.CombineRgn(m.cwcap.rgn, m.cwcap.rgn, creRGN, consts.RGN_OR)
 			} else {
@@ -466,50 +465,6 @@ func (m *LCLBrowserWindow) setDraggableRegions() {
 			winapi.DeleteObject(creRGN)
 		}
 	})
-}
-
-// registerWindowsCompMsgEvent
-// 注册windows下CompMsg事件
-func (m *LCLBrowserWindow) registerWindowsCompMsgEvent() {
-	var bwEvent = BrowserWindow.browserEvent
-	m.Chromium().SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-		if bwEvent.onRenderCompMsg != nil {
-			bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
-		}
-		if !*aHandled {
-			m.doOnRenderCompMsg(cmtCEF, message, lResult, aHandled)
-		}
-	})
-	// TODO 暂时不使用
-	//m.SetOnWndProc(func(msg *types.TMessage) {
-	//	var (
-	//		tmpHandled bool
-	//		lResult    types.LRESULT
-	//	)
-	//	m.doOnRenderCompMsg(cmtLCL, msg, &lResult, &tmpHandled)
-	//	if tmpHandled {
-	//		msg.Result = lResult
-	//	}
-	//})
-
-	if m.WindowProperty().EnableWebkitAppRegion && m.WindowProperty().EnableWebkitAppRegionDClk {
-		m.windowResize = func(sender lcl.IObject) bool {
-			if m.WindowState() == types.WsMaximized && (m.WindowProperty().EnableHideCaption || m.BorderStyle() == types.BsNone || m.BorderStyle() == types.BsSingle) {
-				var monitor = m.Monitor().WorkareaRect()
-				m.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
-				m.SetWindowState(types.WsMaximized)
-			}
-			return false
-		}
-	}
-
-	//if m.WindowProperty().EnableWebkitAppRegion {
-	//
-	//} else {
-	//	if bwEvent.onRenderCompMsg != nil {
-	//		m.chromium.SetOnRenderCompMsg(bwEvent.onRenderCompMsg)
-	//	}
-	//}
 }
 
 // Restore Windows平台，窗口还原

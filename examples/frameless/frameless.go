@@ -17,9 +17,12 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/examples/common/tray"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/rtl/version"
+	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/types/colors"
+	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
@@ -30,6 +33,7 @@ var resources embed.FS
 
 // go build -ldflags "-s -w"
 func main() {
+	libname.LibName = "C:\\Users\\Administrator\\golcl\\lcl_liblcl.dll"
 	//命令: go generate 生成内置资源
 	//resources := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
@@ -48,7 +52,8 @@ func main() {
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1366
 	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
-	chromiumConfig.SetEnableMenu(false) //禁用右键菜单
+	chromiumConfig.SetEnableMenu(false)        //禁用右键菜单
+	chromiumConfig.SetEnableWindowPopup(false) //禁用弹
 
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
@@ -83,10 +88,50 @@ func main() {
 		//window.AsLCLBrowserWindow().FramelessForLine()
 		if window.IsLCL() && common.IsWindows() {
 			// 边框圆角, 仅LCL
-			window.AsLCLBrowserWindow().SetRoundRectRgn(10)
+			//window.AsLCLBrowserWindow().SetRoundRectRgn(10) // WindowParent 未铺满窗口会有严重的闪烁
+			bw := window.AsLCLBrowserWindow().BrowserWindow()
+			bw.SetColor(colors.ClBrown)
+			bw.WindowParent().RevertCustomAnchors()
+			var borderSpace int32 = 2
+			bw.WindowParent().SetTop(borderSpace + 35)
+			bw.WindowParent().SetLeft(borderSpace)
+			bw.WindowParent().SetWidth(bw.Width() - borderSpace*2)
+			bw.WindowParent().SetHeight(bw.Height() - borderSpace*2 - 35)
+			bw.WindowParent().SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+
+			// 禁止窗口边框指定方向拖拽调整大小
+			bda := bw.BroderDirectionAdjustments()
+			fmt.Println("BroderDirectionAdjustments 1:", bda.In(et.BdaTopLeft))
+			bda = bda.Exclude(et.BdaTopLeft, et.BdaTop, et.BdaTopRight) //禁用 左上, 上, 右上
+			fmt.Println("BroderDirectionAdjustments 1:", bda.In(et.BdaTopLeft))
+			bw.SetBroderDirectionAdjustments(bda)
+
+			// 创建一个自定义chromium
+			chromium := cef.NewChromiumBrowser(bw, window.Chromium().Config())
+			bda = chromium.BroderDirectionAdjustments()
+			fmt.Println("BroderDirectionAdjustments 2:", bda.In(et.BdaBottomLeft))
+			bda = bda.Exclude(et.BdaBottomLeft, et.BdaBottom, et.BdaBottomRight) //禁用 左下, 下, 右下
+			fmt.Println("BroderDirectionAdjustments 2:", bda.In(et.BdaBottomLeft))
+			chromium.SetBroderDirectionAdjustments(bda)
+
+			// 设置在窗口显示的位置
+			part := chromium.WindowParent()
+			part.SetHeight(35)
+			part.SetTop(borderSpace)
+			part.SetLeft(borderSpace)
+			part.SetWidth(bw.Width() - borderSpace*2)
+			part.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight))
+
+			chromium.Chromium().SetDefaultURL("https://www.baidu.com/")
+			chromium.RegisterDefaultEvent()
+			//chromium.RegisterDefaultPopupEvent()
+			chromium.CreateBrowser()
+
+			//browserWindow := cef.NewBrowserWindow()
+			//browserWindow.EnableAllDefaultEvent()
 		}
 		if window.IsLCL() {
-			tray.LCLTray(window)
+			//tray.LCLTray(window)
 		}
 	})
 	//在主进程启动成功之后执行

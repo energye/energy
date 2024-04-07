@@ -13,6 +13,7 @@ package types
 
 import (
 	"github.com/energye/golcl/lcl/api"
+	lcltypes "github.com/energye/golcl/lcl/types"
 	"unsafe"
 )
 
@@ -448,3 +449,30 @@ func (m *HRGN) Free() {
 func (m *HRGN) Instance() uintptr {
 	return uintptr(m.instance)
 }
+
+// TSet 定义和 LCL TSet 一样，方便使用
+type TSet = lcltypes.TSet
+
+// NewSet
+//
+// 新建TSet，初始值为0，然后添加元素
+func NewSet(opts ...uint8) TSet {
+	return lcltypes.NewSet(opts...)
+}
+
+// BroderDirectionAdjustment 边框方向调整集合
+type BroderDirectionAdjustment = uint8
+
+const (
+	BdaTop = iota
+	BdaTopRight
+	BdaRight
+	BdaBottomRight
+	BdaBottom
+	BdaBottomLeft
+	BdaLeft
+	BdaTopLeft
+)
+
+// BroderDirectionAdjustments SET
+type BroderDirectionAdjustments = TSet
