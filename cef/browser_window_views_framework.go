@@ -132,7 +132,7 @@ func appContextInitialized() {
 		vfMainWindow := NewViewsFrameworkBrowserWindow(m.Config.ChromiumConfig(), m.Config.WindowProperty, nil)
 
 		// 主窗口关闭流程 before close
-		// OnCanClose如果阻止关闭，该函数不会执行
+		// 如果OnCanClose阻止关闭，该函数不会执行
 		vfMainWindow.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {
 			var flag = false
 			if bwEvent.onBeforeClose != nil {

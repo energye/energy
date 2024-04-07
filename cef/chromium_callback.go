@@ -23,7 +23,7 @@ import (
 	"github.com/energye/golcl/lcl/types/messages"
 )
 
-// chromiumOnAfterCreate 事件处理函数返回true将不继续执行
+// 事件处理函数返回true将不继续执行
 func chromiumOnAfterCreate(window IBrowserWindow, browser *ICefBrowser) bool {
 	if common.IsWindows() {
 		rtl.SendMessage(browser.HostWindowHandle(), messages.WM_SETICON, 1, lcl.Application.Icon().Handle())

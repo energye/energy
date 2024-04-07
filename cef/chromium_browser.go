@@ -263,7 +263,9 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 			}
 		})
 		m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
-			m.WindowParent().UpdateSize()
+			if m.WindowParent() != nil { // VF 时是空的
+				m.WindowParent().UpdateSize()
+			}
 			chromiumOnBeforeBrowser(m.window, browser, frame, request) // default impl
 			if bwEvent.onBeforeBrowser != nil {
 				return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m.window)

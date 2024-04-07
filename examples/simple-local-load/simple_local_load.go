@@ -25,7 +25,6 @@ func main() {
 		ResRootDir: "resources",
 		FS:         resources,
 	}.Build())
-	cef.BrowserWindow.Config.Url = "https://pc.weixin.qq.com"
 	// 运行应用
 	cef.Run(app)
 }
