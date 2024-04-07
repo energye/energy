@@ -75,7 +75,6 @@ func (m *browserWindow) createFormAndRun() {
 	if m.Config.EnableMainWindow {
 		// 使用主窗口创建
 		lcl.Application.CreateForm(&enableMainWindow, true)
-		BrowserWindow.mainBrowserWindow = enableMainWindow
 	} else {
 		// 使用禁用窗口创建, 它默认不会显示, 在它的 OnFormCreate 中创建主窗口
 		lcl.Application.CreateForm(&disabledMainWindow, true)
@@ -88,7 +87,6 @@ func (m *browserWindow) createFormAndRun() {
 func (m *disableMainWindow) OnFormCreate(sender lcl.IObject) {
 	// 禁用主窗口后需要创建一个新的窗口来代替主窗口显示
 	lcl.Application.CreateForm(&enableMainWindow, true)
-	BrowserWindow.mainBrowserWindow = enableMainWindow
 	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该主窗口关闭，在获取主窗口函数将返回无效的窗口
 	BrowserWindow.MainWindow().Show()
 }
@@ -104,6 +102,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.defaultChromiumEvent()
 	m.SetProperty()
 	m.SetShowInTaskBar()
+	BrowserWindow.mainBrowserWindow = m
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)

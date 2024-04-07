@@ -70,7 +70,7 @@ func (m *TCEFChromiumBrowser) registerWindowsCompMsgEvent() {
 			if bwEvent.onRenderCompMsg != nil {
 				bwEvent.onRenderCompMsg(sender, message, lResult, aHandled)
 			}
-			if !*aHandled {
+			if !*aHandled && window.cwcap != nil {
 				window.doOnRenderCompMsg(m, cmtCEF, message, lResult, aHandled)
 			}
 		})

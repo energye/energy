@@ -92,9 +92,9 @@ func NewLCLBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProper
 //	owner: 被创建组件拥有者
 func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrowserWindow {
 	var window *LCLBrowserWindow
-	//lcl.Application.CreateForm(&window)
+	//lcl.Application.CreateForm(&window) // create 1
 	window = new(LCLBrowserWindow)
-	window.TForm = lcl.NewForm(owner)
+	window.TForm = lcl.NewForm(owner) // create 2
 	// 窗口设置一个名字
 	window.TForm.SetName(fmt.Sprintf("Form_%d", time.Now().UnixNano()/1e6))
 	window.windowProperty = &windowProperty
