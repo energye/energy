@@ -13,10 +13,12 @@
 
 package cef
 
-// 每一次拖拽区域改变都需要重新设置
-func (m *TCEFChromiumBrowser) setDraggableRegions() {
+// TODO no
+type customWindowCaption struct {
+	bw      *LCLBrowserWindow
+	regions *TCefDraggableRegions
 }
 
-// 非windows 没有 CompMsg 事件
-func (m *TCEFChromiumBrowser) registerWindowsCompMsgEvent() {
+func (m *customWindowCaption) free() {
+	//TODO no
 }

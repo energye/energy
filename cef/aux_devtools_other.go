@@ -16,6 +16,6 @@
 package cef
 
 // no windows
-func createDevtoolsWindow(owner *LCLBrowserWindow) *devToolsWindow {
+func createDevtoolsWindow(owner *LCLBrowserWindow, currentChromium ICEFChromiumBrowser) *devToolsWindow {
 	return nil
 }

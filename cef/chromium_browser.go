@@ -340,47 +340,6 @@ func (m *TCEFChromiumBrowser) RegisterDefaultPopupEvent() {
 	}
 }
 
-// setDraggableRegions
-// 每一次拖拽区域改变都需要重新设置
-func (m *TCEFChromiumBrowser) setDraggableRegions() {
-	var scp float32
-	// Windows 10 版本 1607 [仅限桌面应用]
-	// Windows Server 2016 [仅限桌面应用]
-	// 可动态调整
-	dpi, err := winapi.GetDpiForWindow(et.HWND(m.window.Handle()))
-	if err == nil {
-		scp = float32(dpi) / 96.0
-	} else {
-		// 使用默认的，但不能动态调整
-		scp = winapi.ScalePercent()
-	}
-	//在主线程中运行
-	RunOnMainThread(func() {
-		if m.rgn == nil {
-			//第一次时创建RGN
-			m.rgn = winapi.CreateRectRgn(0, 0, 0, 0)
-		} else {
-			//每次重置RGN
-			winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
-		}
-		// 重新根据缩放比计算新的区域位置
-		for i := 0; i < m.regions.RegionsCount(); i++ {
-			region := m.regions.Region(i)
-			x := int32(float32(region.Bounds.X) * scp)
-			y := int32(float32(region.Bounds.Y) * scp)
-			w := int32(float32(region.Bounds.Width) * scp)
-			h := int32(float32(region.Bounds.Height) * scp)
-			creRGN := winapi.CreateRectRgn(x, y, x+w, y+h)
-			if region.Draggable {
-				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_OR)
-			} else {
-				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_DIFF)
-			}
-			winapi.DeleteObject(creRGN)
-		}
-	})
-}
-
 // Rgn 返回区域
 func (m *TCEFChromiumBrowser) Rgn() *et.HRGN {
 	return m.rgn
