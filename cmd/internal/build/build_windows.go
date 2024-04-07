@@ -15,6 +15,7 @@ package build
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
@@ -182,7 +183,7 @@ func generaSYSO(iconPath string, proj *project.Project) (string, error) {
 func generaICON(proj *project.Project) (string, error) {
 	iconPath := proj.Info.Icon
 	if !tools.IsExist(iconPath) {
-		return "", fs.ErrNotExist
+		return "", errors.New("file does not exist: " + iconPath)
 	}
 	iconExt := filepath.Ext(iconPath)
 	if strings.ToLower(iconExt) == ".png" {
