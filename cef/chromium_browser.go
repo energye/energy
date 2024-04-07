@@ -11,6 +11,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
@@ -38,6 +39,10 @@ type ICEFChromiumBrowser interface {
 	RegisterDefaultPopupEvent()
 	BroderDirectionAdjustments() et.BroderDirectionAdjustments       // 返回可以调整窗口大小的边框方向, 默认所有方向
 	SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) // 设置可以调整窗口大小的边框方向, 默认所有方向
+	Rgn() *et.HRGN                                                   // Rgn 返回区域
+	Regions() *TCefDraggableRegions                                  // Regions 返回区域坐标
+	FreeRgn()                                                        // FreeRgn 释放掉rgn
+	FreeRegions()                                                    // FreeRegions 释放掉regions
 }
 
 // TCEFChromiumBrowser
@@ -53,6 +58,8 @@ type TCEFChromiumBrowser struct {
 	context                    *ICefRequestContext           //
 	extraInfo                  *ICefDictionaryValue          //
 	broderDirectionAdjustments et.BroderDirectionAdjustments //可以调整窗口大小的边框方向, 默认所有方向
+	regions                    *TCefDraggableRegions         //窗口内html拖拽区域
+	rgn                        *et.HRGN                      //
 }
 
 // NewChromiumBrowser
@@ -256,6 +263,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 			}
 		})
 		m.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, userGesture, isRedirect bool) bool {
+			m.WindowParent().UpdateSize()
 			chromiumOnBeforeBrowser(m.window, browser, frame, request) // default impl
 			if bwEvent.onBeforeBrowser != nil {
 				return bwEvent.onBeforeBrowser(sender, browser, frame, request, userGesture, isRedirect, m.window)
@@ -280,8 +288,8 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 					bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m.window)
 				}
 				if m.window.IsLCL() {
-					m.window.AsLCLBrowserWindow().BrowserWindow().cwcap.regions = regions
-					m.window.AsLCLBrowserWindow().BrowserWindow().setDraggableRegions()
+					m.regions = regions
+					m.setDraggableRegions()
 				} else {
 					m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
 					m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
@@ -329,5 +337,73 @@ func (m *TCEFChromiumBrowser) RegisterDefaultPopupEvent() {
 			}
 			return m.window.doBeforePopup(sender, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 		})
+	}
+}
+
+// setDraggableRegions
+// 每一次拖拽区域改变都需要重新设置
+func (m *TCEFChromiumBrowser) setDraggableRegions() {
+	var scp float32
+	// Windows 10 版本 1607 [仅限桌面应用]
+	// Windows Server 2016 [仅限桌面应用]
+	// 可动态调整
+	dpi, err := winapi.GetDpiForWindow(et.HWND(m.window.Handle()))
+	if err == nil {
+		scp = float32(dpi) / 96.0
+	} else {
+		// 使用默认的，但不能动态调整
+		scp = winapi.ScalePercent()
+	}
+	//在主线程中运行
+	RunOnMainThread(func() {
+		if m.rgn == nil {
+			//第一次时创建RGN
+			m.rgn = winapi.CreateRectRgn(0, 0, 0, 0)
+		} else {
+			//每次重置RGN
+			winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
+		}
+		// 重新根据缩放比计算新的区域位置
+		for i := 0; i < m.regions.RegionsCount(); i++ {
+			region := m.regions.Region(i)
+			x := int32(float32(region.Bounds.X) * scp)
+			y := int32(float32(region.Bounds.Y) * scp)
+			w := int32(float32(region.Bounds.Width) * scp)
+			h := int32(float32(region.Bounds.Height) * scp)
+			creRGN := winapi.CreateRectRgn(x, y, x+w, y+h)
+			if region.Draggable {
+				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_OR)
+			} else {
+				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_DIFF)
+			}
+			winapi.DeleteObject(creRGN)
+		}
+	})
+}
+
+// Rgn 返回区域
+func (m *TCEFChromiumBrowser) Rgn() *et.HRGN {
+	return m.rgn
+}
+
+// Regions 返回区域坐标
+func (m *TCEFChromiumBrowser) Regions() *TCefDraggableRegions {
+	return m.regions
+}
+
+// FreeRgn 释放掉rgn
+func (m *TCEFChromiumBrowser) FreeRgn() {
+	if m.rgn != nil {
+		winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
+		winapi.DeleteObject(m.rgn)
+		m.rgn.Free()
+	}
+}
+
+// FreeRegions 释放掉regions
+func (m *TCEFChromiumBrowser) FreeRegions() {
+	if m.regions != nil {
+		m.regions.regions = nil
+		m.regions = nil
 	}
 }

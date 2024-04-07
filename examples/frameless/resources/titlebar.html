@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Window Titlebar</title>
+    <style>
+        body {
+            overflow: hidden;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .titlebar-back {
+            background-color: #333333;
+            color: white;
+            display: flex;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            align-items: center;
+        }
+
+        .titlebar-darg {
+            margin: 5px; /* 留出位置以便可以拖拽窗口 */
+            -webkit-app-region: drag;
+            -webkit-user-select: none;
+            width: 100%
+        }
+
+        .titlebar-text {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+
+        .titlebar-button {
+            background: transparent;
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            -webkit-app-region: no-drag;
+            text-align: right;
+        }
+    </style>
+    <script type="application/javascript">
+        function Minimize() {
+            console.log('最小化窗口');
+            ipc.emit("window-state", [0])
+        }
+
+        function Maximize() {
+            console.log('最大化窗口');
+            ipc.emit("window-state", [1])
+        }
+
+        function Close() {
+            console.log('关闭窗口');
+            ipc.emit("window-close")
+        }
+    </script>
+</head>
+<body>
+<div class="titlebar-back">
+    <div class="titlebar-darg">
+        <span class="titlebar-text">Custom Titlebar</span>
+        <button class="titlebar-button" onclick="Minimize()">Minimize</button>
+        <button class="titlebar-button" onclick="Maximize()">Maximize</button>
+        <button class="titlebar-button" onclick="Close()">Close</button>
+    </div>
+</div>
+</body>
+</html>

@@ -278,7 +278,7 @@ func chromiumOnBeforeContextMenu(window IBrowserWindow, browser *ICefBrowser, fr
 	}
 }
 
-// chromiumOnContextMenuCommand 右键菜单 - 默认实现
+// 右键菜单 - 默认实现
 func chromiumOnContextMenuCommand(window IBrowserWindow, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
 	browserId := browser.Identifier()
 	defer func() {

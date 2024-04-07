@@ -51,9 +51,9 @@ func main() {
 	//cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1366
-	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
-	chromiumConfig.SetEnableMenu(false)        //禁用右键菜单
-	chromiumConfig.SetEnableWindowPopup(false) //禁用弹
+	//chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
+	//chromiumConfig.SetEnableMenu(false)        //禁用右键菜单
+	//chromiumConfig.SetEnableWindowPopup(false) //禁用弹
 
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
@@ -89,43 +89,43 @@ func main() {
 		if window.IsLCL() && common.IsWindows() {
 			// 边框圆角, 仅LCL
 			//window.AsLCLBrowserWindow().SetRoundRectRgn(10) // WindowParent 未铺满窗口会有严重的闪烁
+			var (
+				borderSpace    int32 = 2
+				titleBarHeight int32 = 35
+			)
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
-			bw.SetColor(colors.ClBrown)
-			bw.WindowParent().RevertCustomAnchors()
-			var borderSpace int32 = 2
-			bw.WindowParent().SetTop(borderSpace + 35)
+			bw.SetColor(colors.ClBrown)             //给窗口随便设置一个颜色
+			bw.WindowParent().RevertCustomAnchors() // 恢复到自定义定位，在下面代码中重新设置布局
+			bw.WindowParent().SetTop(borderSpace + titleBarHeight)
 			bw.WindowParent().SetLeft(borderSpace)
 			bw.WindowParent().SetWidth(bw.Width() - borderSpace*2)
-			bw.WindowParent().SetHeight(bw.Height() - borderSpace*2 - 35)
+			bw.WindowParent().SetHeight(bw.Height() - borderSpace*2 - titleBarHeight)
 			bw.WindowParent().SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 
 			// 禁止窗口边框指定方向拖拽调整大小
 			bda := bw.BroderDirectionAdjustments()
-			fmt.Println("BroderDirectionAdjustments 1:", bda.In(et.BdaTopLeft))
 			bda = bda.Exclude(et.BdaTopLeft, et.BdaTop, et.BdaTopRight) //禁用 左上, 上, 右上
-			fmt.Println("BroderDirectionAdjustments 1:", bda.In(et.BdaTopLeft))
 			bw.SetBroderDirectionAdjustments(bda)
 
 			// 创建一个自定义chromium
 			chromium := cef.NewChromiumBrowser(bw, window.Chromium().Config())
 			bda = chromium.BroderDirectionAdjustments()
-			fmt.Println("BroderDirectionAdjustments 2:", bda.In(et.BdaBottomLeft))
 			bda = bda.Exclude(et.BdaBottomLeft, et.BdaBottom, et.BdaBottomRight) //禁用 左下, 下, 右下
-			fmt.Println("BroderDirectionAdjustments 2:", bda.In(et.BdaBottomLeft))
 			chromium.SetBroderDirectionAdjustments(bda)
 
 			// 设置在窗口显示的位置
 			part := chromium.WindowParent()
-			part.SetHeight(35)
+			part.SetHeight(titleBarHeight)
 			part.SetTop(borderSpace)
 			part.SetLeft(borderSpace)
 			part.SetWidth(bw.Width() - borderSpace*2)
 			part.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight))
+			//chromium.SetSelfWindow(bw)// 如果 NewChromiumBrowser 参数 owner 非 IBrowserWindow 类型时需要手动指定
+			chromium.Chromium().SetDefaultURL("http://localhost:22022/titlebar.html")
 
-			chromium.Chromium().SetDefaultURL("https://www.baidu.com/")
-			chromium.RegisterDefaultEvent()
-			//chromium.RegisterDefaultPopupEvent()
-			chromium.CreateBrowser()
+			chromium.RegisterDefaultEvent()      // 注册默认事件
+			chromium.RegisterDefaultPopupEvent() // 注册默认弹出窗口事件
+			chromium.CreateBrowser()             //最后创建浏览器
 
 			//browserWindow := cef.NewBrowserWindow()
 			//browserWindow.EnableAllDefaultEvent()
