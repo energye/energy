@@ -3,14 +3,12 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
 var resources embed.FS
 
 func main() {
-	libname.LibName = "C:\\Users\\Administrator\\golcl\\lcl_liblcl.dll"
 	// 全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	// 创建应用

@@ -11,7 +11,6 @@ import (
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/pkgs/libname"
 	"strings"
 )
 
@@ -19,7 +18,6 @@ import (
 var resources embed.FS
 
 func main() {
-	libname.LibName = "C:\\Users\\Administrator\\golcl\\lcl_liblcl.dll"
 	logger.SetEnable(true)
 	logger.SetLevel(logger.CefLog_Debug)
 	//全局初始化 每个应用都必须调用的

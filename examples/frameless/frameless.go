@@ -22,7 +22,6 @@ import (
 	"github.com/energye/golcl/lcl/rtl/version"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
-	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
@@ -33,7 +32,6 @@ var resources embed.FS
 
 // go build -ldflags "-s -w"
 func main() {
-	libname.LibName = "C:\\Users\\Administrator\\golcl\\lcl_liblcl.dll"
 	//命令: go generate 生成内置资源
 	//resources := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
@@ -51,9 +49,9 @@ func main() {
 	//cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1366
-	//chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
-	//chromiumConfig.SetEnableMenu(false)        //禁用右键菜单
-	//chromiumConfig.SetEnableWindowPopup(false) //禁用弹
+	chromiumConfig := cef.BrowserWindow.Config.ChromiumConfig()
+	chromiumConfig.SetEnableMenu(false)        //禁用右键菜单
+	chromiumConfig.SetEnableWindowPopup(false) //禁用弹
 
 	//监听窗口状态事件
 	ipc.On("window-state", func(context context.IContext) {
