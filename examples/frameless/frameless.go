@@ -17,6 +17,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/examples/common/tray"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/rtl/version"
@@ -129,7 +130,7 @@ func main() {
 			//browserWindow.EnableAllDefaultEvent()
 		}
 		if window.IsLCL() {
-			//tray.LCLTray(window)
+			tray.LCLTray(window)
 		}
 	})
 	//在主进程启动成功之后执行
