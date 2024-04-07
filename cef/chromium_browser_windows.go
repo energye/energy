@@ -14,6 +14,9 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/winapi"
+	"github.com/energye/energy/v2/consts"
+	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
