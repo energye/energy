@@ -159,7 +159,7 @@ func init() {
 		case chromiumEventOnConsoleMessage:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			level := consts.TCefLogSeverity(getVal(2))
-			message, source := api.GoStr(3), api.GoStr(4)
+			message, source := api.GoStr(getVal(3)), api.GoStr(getVal(4))
 			line := int32(getVal(5))
 			result := (*bool)(getPtr(6))
 			*result = fn.(chromiumEventOnConsoleMessage)(lcl.AsObject(getPtr(0)), browse, level, message, source, line)
@@ -177,7 +177,7 @@ func init() {
 			fn.(chromiumEventOnDevToolsAgentDetached)(lcl.AsObject(getPtr(0)), browse)
 		case chromiumEventOnDevTools:
 			browse := &ICefBrowser{instance: getPtr(1)}
-			method := api.GoStr(2)
+			method := api.GoStr(getVal(2))
 			params := &ICefValue{instance: getPtr(3)}
 			fn.(chromiumEventOnDevTools)(lcl.AsObject(getPtr(0)), browse, method, params)
 		case chromiumEventOnDevToolsMessage:
@@ -199,7 +199,7 @@ func init() {
 			fn.(chromiumEventOnDevToolsMethodResult)(lcl.AsObject(getPtr(0)), browse, messageId, success, result)
 		case chromiumEventOnDevToolsRaw:
 			browse := &ICefBrowser{instance: getPtr(1)}
-			method := api.GoStr(2)
+			method := api.GoStr(getVal(2))
 			params := getVal(3)
 			paramsSize := uint32(getVal(4))
 			fn.(chromiumEventOnDevToolsRaw)(lcl.AsObject(getPtr(0)), browse, method, params, paramsSize)
@@ -363,7 +363,7 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			request := &ICefRequest{instance: getPtr(3)}
-			isNavigation, isDownload := api.GoBool(4), api.GoBool(5)
+			isNavigation, isDownload := api.GoBool(getVal(4)), api.GoBool(getVal(5))
 			requestInitiator := api.GoStr(getVal(6))
 			disableDefaultHandlingPtr := (*bool)(getPtr(7))
 			resourceRequestHandlerPtr := (*uintptr)(getPtr(8))
@@ -376,7 +376,7 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			request := &ICefRequest{instance: getPtr(3)}
-			isNavigation, isDownload := api.GoBool(4), api.GoBool(5)
+			isNavigation, isDownload := api.GoBool(getVal(4)), api.GoBool(getVal(5))
 			requestInitiator := api.GoStr(getVal(6))
 			disableDefaultHandlingPtr := (*bool)(getPtr(7))
 			resourceRequestHandlerPtr := (*uintptr)(getPtr(8))
