@@ -888,6 +888,7 @@ const (
 	CEFChromium_FlushCookieStore
 	CEFChromium_SetProxy
 	CEFChromium_UpdatePreferences
+	CEFChromium_SendDevToolsMessage
 	CEFChromium_ExecuteDevToolsMethod
 	CEFChromium_CreateClientHandler
 	CEFChromium_SetFocus

@@ -74,7 +74,8 @@ type IChromiumProc interface {
 	FlushCookieStore(flushImmediately bool) bool // flushImmediately = true
 	SetProxy(cefProxy *TCefProxy)
 	UpdatePreferences()
-	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue)
+	SendDevToolsMessage(message string) bool
+	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) int32
 	//SendProcessMessage(targetProcess CefProcessId, processMessage *ICefProcessMessage)
 	Client() *ICefClient
 	SendProcessMessageForJSONBytes(name string, targetProcess CefProcessId, data []byte)
@@ -641,14 +642,20 @@ func (m *TCEFChromium) UpdatePreferences() {
 	imports.Proc(def.CEFChromium_UpdatePreferences).Call(m.Instance())
 }
 
-func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) {
+func (m *TCEFChromium) SendDevToolsMessage(message string) bool {
+	r1, _, _ := imports.Proc(def.CEFChromium_SendDevToolsMessage).Call(m.Instance(), api.PascalStr(message))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) int32 {
 	if !m.IsValid() {
-		return
+		return 0
 	}
 	if dictionaryValue == nil {
 		dictionaryValue = DictionaryValueRef.New()
 	}
-	imports.Proc(def.CEFChromium_ExecuteDevToolsMethod).Call(m.Instance(), uintptr(messageId), api.PascalStr(method), dictionaryValue.Instance())
+	r1, _, _ := imports.Proc(def.CEFChromium_ExecuteDevToolsMethod).Call(m.Instance(), uintptr(messageId), api.PascalStr(method), dictionaryValue.Instance())
+	return int32(r1)
 }
 
 func (m *TCEFChromium) CreateClientHandler(alsOSR bool) (*ICefClient, bool) {

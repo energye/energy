@@ -888,6 +888,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_FlushCookieStore", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetProxy", 0),
 		dllimports.NewEnergyImport("CEFChromium_UpdatePreferences", 0),
+		dllimports.NewEnergyImport("CEFChromium_SendDevToolsMessage", 0),
 		dllimports.NewEnergyImport("CEFChromium_ExecuteDevToolsMethod", 0),
 		dllimports.NewEnergyImport("CEFChromium_CreateClientHandler", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetFocus", 0),
