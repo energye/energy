@@ -44,7 +44,7 @@ func init() {
 		case chromiumEventOnAcceleratedPaint:
 			browser := &ICefBrowser{instance: getPtr(1)}
 			kind := consts.TCefPaintElementType(getVal(2))
-			dirtyRectsCount := uint32(getVal(3))
+			dirtyRectsCount := *(*uint32)(getPtr(3))
 			dirtyRectsPtr := getVal(4)
 			sharedHandle := getVal(5)
 			fn.(chromiumEventOnAcceleratedPaint)(lcl.AsObject(getPtr(0)), browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), sharedHandle)
@@ -189,7 +189,7 @@ func init() {
 			messageId := int32(getVal(2))
 			success := api.GoBool(getVal(3))
 			result := getVal(4)
-			resultSize := uint32(getVal(5))
+			resultSize := *(*uint32)(getPtr(5))
 			fn.(chromiumEventOnDevToolsMethodRawResult)(lcl.AsObject(getPtr(0)), browse, messageId, success, result, resultSize)
 		case chromiumEventOnDevToolsMethodResult:
 			browse := &ICefBrowser{instance: getPtr(1)}
@@ -201,12 +201,12 @@ func init() {
 			browse := &ICefBrowser{instance: getPtr(1)}
 			method := api.GoStr(getVal(2))
 			params := getVal(3)
-			paramsSize := uint32(getVal(4))
+			paramsSize := *(*uint32)(getPtr(4))
 			fn.(chromiumEventOnDevToolsRaw)(lcl.AsObject(getPtr(0)), browse, method, params, paramsSize)
 		case chromiumEventOnDevToolsRawMessage:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			message := getVal(2)
-			messageSize := uint32(getVal(3))
+			messageSize := *(*uint32)(getPtr(3))
 			handledPtr := (*bool)(getPtr(4))
 			*handledPtr = fn.(chromiumEventOnDevToolsRawMessage)(lcl.AsObject(getPtr(0)), browse, message, messageSize)
 		case chromiumEventOnDialogClosed:
@@ -444,7 +444,7 @@ func init() {
 		case chromiumEventOnIMECompositionRangeChanged:
 			browser := &ICefBrowser{instance: getPtr(1)}
 			rng := (*TCefRange)(getPtr(2))
-			characterBoundsCount := uint32(getVal(3))
+			characterBoundsCount := *(*uint32)(getPtr(3))
 			characterBounds := (*TCefRect)(getPtr(4))
 			fn.(chromiumEventOnIMECompositionRangeChanged)(lcl.AsObject(getPtr(0)), browser, rng, characterBoundsCount, characterBounds)
 		case chromiumEventOnJsDialog:
@@ -478,7 +478,7 @@ func init() {
 		case chromiumEventOnPaint:
 			browser := &ICefBrowser{instance: getPtr(1)}
 			kind := consts.TCefPaintElementType(getVal(2))
-			dirtyRectsCount := uint32(getVal(3))
+			dirtyRectsCount := *(*uint32)(getPtr(3))
 			dirtyRectsPtr := getVal(4)
 			buffer := getVal(5)
 			width, height := int32(getVal(6)), int32(getVal(7))
@@ -584,7 +584,7 @@ func init() {
 			isProxy := api.GoBool(getVal(1))
 			host := api.GoStr(getVal(2))
 			port := int32(getVal(3))
-			certificates := &TCefX509CertificateArray{count: uint32(getVal(4)), instance: getPtr(5)}
+			certificates := &TCefX509CertificateArray{count: *(*uint32)(getPtr(4)), instance: getPtr(5)}
 			callback := &ICefSelectClientCertificateCallback{instance: getPtr(6)}
 			resultPtr := (*bool)(getPtr(7))
 			*resultPtr = fn.(chromiumEventOnSelectClientCertificate)(lcl.AsObject(getPtr(0)), browser, isProxy, host, port, certificates, callback)
@@ -924,7 +924,7 @@ func init() {
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
-			regionsCount := int32(getVal(3))
+			regionsCount := *(*uint32)(getPtr(3))
 			regions := NewCefDraggableRegions()
 			var region TCefDraggableRegion
 			var regionSize = unsafe.Sizeof(region)
