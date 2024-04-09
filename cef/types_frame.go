@@ -150,7 +150,14 @@ func (m *ICefFrame) SendProcessMessageForJSONBytes(messageName string, targetPro
 	if !m.IsValid() || application.IsSpecVer49() {
 		return
 	}
-	imports.Proc(def.CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), uintptr(unsafe.Pointer(&data[0])), uintptr(uint32(len(data))))
+	var (
+		dataPtr uintptr
+		count   = uint32(len(data))
+	)
+	if count > 0 {
+		dataPtr = uintptr(unsafe.Pointer(&data[0]))
+	}
+	imports.Proc(def.CEFFrame_SendProcessMessageForJSONBytes).Call(m.Instance(), api.PascalStr(messageName), targetProcess.ToPtr(), dataPtr, uintptr(count))
 }
 
 // SendProcessMessageForV8Value 发送进程消息

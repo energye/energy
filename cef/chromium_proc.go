@@ -200,6 +200,9 @@ type IChromiumProc interface {
 	InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl)
 	Fullscreen() bool
 	ExitFullscreen(willCauseResize bool)
+	AsTargetWindow() target.IWindow
+	IsClosing() bool
+	setClosing(v bool)
 }
 
 // IsValid 实例有效
@@ -1677,4 +1680,44 @@ func (m *TCEFChromium) ExitFullscreen(willCauseResize bool) {
 		return
 	}
 	imports.Proc(def.CEFChromium_ExitFullscreen).Call(m.Instance(), api.PascalBool(willCauseResize))
+}
+
+// Target
+//
+//	IPC消息接收目标, 当前窗口chromium发送
+//	参数: targetType 可选, 接收类型
+func (m *TCEFChromium) Target(targetType ...target.Type) target.ITarget {
+	if !m.IsValid() {
+		return nil
+	}
+	browse := m.Browser()
+	if !browse.IsValid() {
+		return nil
+	}
+	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+}
+
+// ProcessMessage
+//
+//	IPC消息触发当前Chromium
+func (m *TCEFChromium) ProcessMessage() target.IProcessMessage {
+	if m == nil {
+		return nil
+	}
+	return m
+}
+
+// AsTargetWindow 转换为 IPC 目标接收窗口
+func (m *TCEFChromium) AsTargetWindow() target.IWindow {
+	return m
+}
+
+// IsClosing 返回窗口是否正在关闭/或已关闭 true正在或已关闭
+func (m *TCEFChromium) IsClosing() bool {
+	return m.isClosing
+}
+
+// 当窗口关闭时设置为true
+func (m *TCEFChromium) setClosing(v bool) {
+	m.isClosing = v
 }

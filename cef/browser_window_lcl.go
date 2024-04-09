@@ -576,7 +576,7 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 	//windowParent
 	m.WindowParent().DefaultAnchors()
 	m.WindowParent().SetOnEnter(func(sender lcl.IObject) {
-		if m.isClosing {
+		if m.IsClosing() {
 			return
 		}
 		m.Chromium().Initialized()
@@ -584,7 +584,7 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 		m.Chromium().SetFocus(true)
 	})
 	m.WindowParent().SetOnExit(func(sender lcl.IObject) {
-		if m.isClosing {
+		if m.IsClosing() {
 			return
 		}
 		m.Chromium().SendCaptureLostEvent()
@@ -846,7 +846,7 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 		}
 	}
 	if !ret {
-		if m.isClosing {
+		if m.IsClosing() {
 			return
 		}
 		m.setCurrentProperty()
@@ -882,7 +882,7 @@ func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
 		ret = m.onActivate(sender)
 	}
 	if !ret {
-		if m.isClosing {
+		if m.IsClosing() {
 			return
 		}
 		if m.chromiumBrowser != nil && !m.chromiumBrowser.IsCreated() {
@@ -945,16 +945,22 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 				m.Close()
 			} else {
 				//sub window close
-				m.isClosing = true
+				m.setClosing(true)
 				m.Hide()
 				m.Chromium().CloseBrowser(true)
 			}
 		} else {
-			m.isClosing = true
+			m.setClosing(true)
 			m.Hide()
 			m.Chromium().CloseBrowser(true)
 		}
 	})
+}
+
+// 窗口关闭时设置为true
+func (m *LCLBrowserWindow) setClosing(v bool) {
+	m.isClosing = v
+	m.Chromium().setClosing(v)
 }
 
 // TryCloseWindowAndTerminate
@@ -1020,8 +1026,8 @@ func (m *LCLBrowserWindow) closeQuery(sender lcl.IObject, close *bool) {
 			*close = m.canClose
 		}
 		RunOnMainThread(func() {
-			if !m.isClosing {
-				m.isClosing = true
+			if !m.IsClosing() {
+				m.setClosing(true)
 				m.Chromium().CloseBrowser(true)
 				if IsDarwin() {
 					m.Show() // mac 主窗口未得到焦点时应用不退出, 所以show一下

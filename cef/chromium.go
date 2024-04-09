@@ -40,6 +40,7 @@ type TCEFChromium struct {
 	widgetHandle  types.HWND
 	renderHandle  types.HWND
 	initialized   bool
+	isClosing     bool
 }
 
 // NewChromium 创建一个新的 TCEFChromium
