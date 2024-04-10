@@ -23,8 +23,9 @@ import (
 )
 
 // JSONObject
-//	object type key : value
-//  According to the key operation data, the default value of the data type is returned when a failure occurs
+//
+//		object type key : value
+//	 According to the key operation data, the default value of the data type is returned when a failure occurs
 type JSONObject interface {
 	JSON
 	HasKey(key string) bool               // has key
@@ -45,11 +46,12 @@ type JSONObject interface {
 }
 
 // NewJSONObject
+//
 //	byte JSONObject, struct convert
-//  value:
-//    []byte("{...}")
-//    struct
-//    map[string][type]
+//	 value:
+//	   []byte("{...}")
+//	   struct
+//	   map[string][type]
 func NewJSONObject(value interface{}) JSONObject {
 	if value != nil {
 		switch value.(type) {
@@ -262,11 +264,17 @@ func (m *JsonData) GetBoolByKey(key string) (r bool) {
 }
 
 func (m *JsonData) GetArrayByKey(key string) JSONArray {
-	return m.GetByKey(key).JSONArray()
+	if v := m.GetByKey(key); v != nil {
+		return v.JSONArray()
+	}
+	return nil
 }
 
 func (m *JsonData) GetObjectByKey(key string) JSONObject {
-	return m.GetByKey(key).JSONObject()
+	if v := m.GetByKey(key); v != nil {
+		return v.JSONObject()
+	}
+	return nil
 }
 
 func (m *JsonData) Keys() []string {
