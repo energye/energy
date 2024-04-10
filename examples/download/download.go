@@ -24,7 +24,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//主窗口的配置
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "https://pc.weixin.qq.com/"
+	cef.BrowserWindow.Config.Url = "http://localhost:22022/download.html"
 
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
