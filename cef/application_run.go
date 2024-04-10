@@ -28,7 +28,7 @@ var (
 	//  LCL窗口组件默认在Windows、MacOSX平台
 	BrowserWindow = &browserWindow{
 		browserEvent: &BrowserEvent{},
-		Config: &browserConfig{
+		Config: &BrowserConfig{
 			WindowProperty: NewWindowProperty(),
 		},
 		windowInfo: make(map[int32]IBrowserWindow),

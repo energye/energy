@@ -27,7 +27,7 @@ type browserWindow struct {
 	mainBrowserWindow IBrowserWindow           // 主浏览器窗口
 	popupWindow       IBrowserWindow           // 弹出的子窗口
 	browserEvent      *BrowserEvent            // 浏览器全局事件, 已默认实现事件
-	Config            *browserConfig           // 浏览器和窗口配置
+	Config            *BrowserConfig           // 浏览器和窗口配置
 	windowInfo        map[int32]IBrowserWindow // 窗口信息集合
 }
 

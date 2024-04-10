@@ -12,7 +12,7 @@
 
 package cef
 
-// TCefChromiumConfig Chromium的基础配置
+// TCefChromiumConfig 提供Chromium的基础快捷配置
 type TCefChromiumConfig struct {
 	enableMenu        bool //启用右键菜单
 	enableViewSource  bool //启用查看源代码
@@ -65,6 +65,7 @@ func (m *TCefChromiumConfig) EnableDevTools() bool {
 }
 
 // SetEnableWindowPopup 设置启用弹出新窗口
+//
 //	与tab互斥
 func (m *TCefChromiumConfig) SetEnableWindowPopup(value bool) *TCefChromiumConfig {
 	m.enableWindowPopup = value
@@ -79,6 +80,7 @@ func (m *TCefChromiumConfig) EnableWindowPopup() bool {
 }
 
 // SetEnableOpenUrlTab 设置启用打开新tab
+//
 //	与popup互斥
 func (m *TCefChromiumConfig) SetEnableOpenUrlTab(value bool) *TCefChromiumConfig {
 	m.enableOpenUrlTab = value
