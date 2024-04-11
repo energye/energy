@@ -49,36 +49,36 @@ type Energy struct {
 
 // NewEnergyChromium Create a chrome and layout it in the current main window
 func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Energy {
-	chromium := &Energy{
+	m := &Energy{
 		event:           make(chan *cdp.Event),
 		logger:          defaults.CDP,
 		pending:         new(sync.Map),
 		enablePageCheck: true,
 	}
-	chromium.rodBrowser = New()
-	chromium.rodBrowser.client = chromium
-	chromium.chromiumBrowser = cef.NewChromiumBrowser(owner, config)
-	chromium.chromiumBrowser.RegisterDefaultEvent()
-	chromium.chromium = chromium.chromiumBrowser.Chromium()
-	chromium.listen()
-	return chromium
+	m.rodBrowser = New()
+	m.rodBrowser.client = m
+	m.chromiumBrowser = cef.NewChromiumBrowser(owner, config)
+	m.chromiumBrowser.RegisterDefaultEvent()
+	m.chromium = m.chromiumBrowser.Chromium()
+	m.listen()
+	return m
 }
 
 // NewEnergyWindow creates a window
 func NewEnergyWindow(config *cef.TCefChromiumConfig, windowProperty cef.WindowProperty, owner lcl.IComponent) *Energy {
-	chromium := &Energy{
+	m := &Energy{
 		event:           make(chan *cdp.Event),
 		logger:          defaults.CDP,
 		pending:         new(sync.Map),
 		enablePageCheck: true,
 	}
-	chromium.rodBrowser = New()
-	chromium.rodBrowser.client = chromium
-	chromium.window = cef.NewBrowserWindow(config, windowProperty, owner)
-	chromium.window.EnableAllDefaultEvent()
-	chromium.chromium = chromium.window.Chromium()
-	chromium.listen()
-	return chromium
+	m.rodBrowser = New()
+	m.rodBrowser.client = m
+	m.window = cef.NewBrowserWindow(config, windowProperty, owner)
+	m.window.EnableAllDefaultEvent()
+	m.chromium = m.window.Chromium()
+	m.listen()
+	return m
 }
 
 // ReadData Read pointer data to [] byte
