@@ -60,18 +60,22 @@ func main() {
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
 			// 返回 ids
-			ipc.On("window-ids", func() []int {
+			ipc.On("window-infos", func() []*crawling.Info {
 				return crawling.WindowIds()
 			})
 			// 创建一个窗口
-			ipc.On("open-url-window", func(url string, windowId int) int {
+			ipc.On("create", func() int {
+				return crawling.Create()
+			})
+			// 显示这个窗口
+			ipc.On("show", func(windowId int, url string) {
 				fmt.Println("open-url:", url)
-				return crawling.Create(url)
+				crawling.Show(windowId, url)
 			})
 			// 关闭窗口
-			ipc.On("close-window", func(windowId int) {
+			ipc.On("close-window", func(windowId int) bool {
 				fmt.Println("close-windowId:", windowId)
-				crawling.Close(windowId)
+				return crawling.Close(windowId)
 			})
 			// 主窗口的控制台消息
 			chromium := window.Chromium()

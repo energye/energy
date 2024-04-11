@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/cdp"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/defaults"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/proto"
@@ -22,19 +21,19 @@ type Result struct {
 	Err error
 }
 
-type OnBeforePopup func(chromium *Chromium)
+type OnBeforePopup func(energy *Energy)
+type OnLoadingProgressChange func(energy *Energy, progress float64)
 
-type Chromium struct {
+type Energy struct {
 	rodBrowser      *Browser
 	chromium        cef.IChromium
 	chromiumBrowser cef.ICEFChromiumBrowser
 	window          cef.IBrowserWindow
-	title           string
-	url             string
 	targetId        proto.TargetTargetID
 	created         bool
 
-	onBeforePopup OnBeforePopup
+	onBeforePopup           OnBeforePopup
+	onLoadingProgressChange OnLoadingProgressChange
 
 	loadSuccess     bool
 	enablePageCheck bool
@@ -48,9 +47,9 @@ type Chromium struct {
 	logger  utils.Logger
 }
 
-// NewChromium Create a chrome and layout it in the current main window
-func NewChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Chromium {
-	chromium := &Chromium{
+// NewEnergyChromium Create a chrome and layout it in the current main window
+func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Energy {
+	chromium := &Energy{
 		event:           make(chan *cdp.Event),
 		logger:          defaults.CDP,
 		pending:         new(sync.Map),
@@ -65,9 +64,9 @@ func NewChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Chromiu
 	return chromium
 }
 
-// NewWindow creates a window
-func NewWindow(config *cef.TCefChromiumConfig, windowProperty cef.WindowProperty, owner lcl.IComponent) *Chromium {
-	chromium := &Chromium{
+// NewEnergyWindow creates a window
+func NewEnergyWindow(config *cef.TCefChromiumConfig, windowProperty cef.WindowProperty, owner lcl.IComponent) *Energy {
+	chromium := &Energy{
 		event:           make(chan *cdp.Event),
 		logger:          defaults.CDP,
 		pending:         new(sync.Map),
@@ -93,19 +92,27 @@ func ReadData(data uintptr, count uint32) []byte {
 	return result
 }
 
-func (m *Chromium) SetOnBeforePopup(fn OnBeforePopup) {
+func (m *Energy) Chromium() cef.IChromium {
+	return m.chromium
+}
+
+func (m *Energy) SetOnBeforePopup(fn OnBeforePopup) {
 	m.onBeforePopup = fn
 }
 
+func (m *Energy) SetOnLoadingProgressChange(fn OnLoadingProgressChange) {
+	m.onLoadingProgressChange = fn
+}
+
 // TargetInfo Return current target info
-func (m *Chromium) TargetInfo() *proto.TargetTargetInfo {
+func (m *Energy) TargetInfo() *proto.TargetTargetInfo {
 	result, err := proto.TargetGetTargetInfo{TargetID: m.targetId}.Call(m)
 	m.rodBrowser.e(err)
 	return result.TargetInfo
 }
 
 // Targets Return All Targets Info
-func (m *Chromium) Targets() []*proto.TargetTargetInfo {
+func (m *Energy) Targets() []*proto.TargetTargetInfo {
 	result, err := proto.TargetGetTargets{}.Call(m)
 	m.rodBrowser.e(err)
 	return result.TargetInfos
@@ -115,22 +122,22 @@ func (m *Chromium) Targets() []*proto.TargetTargetInfo {
 //
 // Note that the devtools and rod for operating CEF in energy are different, and some functions cannot be directly used through rod
 // For example, window state management or chrome closure requires obtaining window objects and chrome objects directly for use
-func (m *Chromium) RodBrowser() *Browser {
+func (m *Energy) RodBrowser() *Browser {
 	return m.rodBrowser
 }
 
 // ChromiumBrowser return chromium
-func (m *Chromium) ChromiumBrowser() cef.ICEFChromiumBrowser {
+func (m *Energy) ChromiumBrowser() cef.ICEFChromiumBrowser {
 	return m.chromiumBrowser
 }
 
 // BrowserWindow return Window
-func (m *Chromium) BrowserWindow() cef.IBrowserWindow {
+func (m *Energy) BrowserWindow() cef.IBrowserWindow {
 	return m.window
 }
 
 // Page Return the current Chromium Page
-func (m *Chromium) Page() *Page {
+func (m *Energy) Page() *Page {
 	if m.page == nil {
 		if m.targetId == "" {
 			m.targetId = m.TargetInfo().TargetID
@@ -145,7 +152,7 @@ func (m *Chromium) Page() *Page {
 }
 
 // CreateBrowser Call this function to create a browser after creating chrome or window
-func (m *Chromium) CreateBrowser() {
+func (m *Energy) CreateBrowser() {
 	if !m.created {
 		m.created = true
 		if m.chromiumBrowser != nil {
@@ -158,27 +165,22 @@ func (m *Chromium) CreateBrowser() {
 }
 
 // LoadSuccess Returns whether the current page was successfully loaded
-func (m *Chromium) LoadSuccess() bool {
+func (m *Energy) LoadSuccess() bool {
 	return m.loadSuccess
 }
 
 // EnableCheckPageLoad  Enable page loading detection
-func (m *Chromium) EnableCheckPageLoad(v bool) {
+func (m *Energy) EnableCheckPageLoad(v bool) {
 	m.enablePageCheck = v
 }
 
 // PageLoadProcess Return to page loading progress
-func (m *Chromium) PageLoadProcess() float64 {
+func (m *Energy) PageLoadProcess() float64 {
 	return m.pageLoadProcess
 }
 
-// URL return current url
-func (m *Chromium) URL() string {
-	return m.url
-}
-
 // CheckWaitPageLoad Detect and wait for the current page to load until it is successfully loaded
-func (m *Chromium) CheckWaitPageLoad() {
+func (m *Energy) CheckWaitPageLoad() {
 	if !m.loadSuccess && m.enablePageCheck {
 		if m.timer == nil {
 			m.timer = time.NewTimer(time.Second / 100)
@@ -194,7 +196,7 @@ func (m *Chromium) CheckWaitPageLoad() {
 }
 
 // Call a method and wait for its response.
-func (m *Chromium) Call(ctx context.Context, sessionID, method string, params interface{}) ([]byte, error) {
+func (m *Energy) Call(ctx context.Context, sessionID, method string, params interface{}) ([]byte, error) {
 	m.CheckWaitPageLoad()
 	req := &cdp.Request{
 		ID:        int(atomic.AddUint64(&m.count, 1)),
@@ -221,16 +223,16 @@ func (m *Chromium) Call(ctx context.Context, sessionID, method string, params in
 }
 
 // Event returns a channel that will emit browser devtools protocol events. Must be consumed or will block producer.
-func (m *Chromium) Event() <-chan *cdp.Event {
+func (m *Energy) Event() <-chan *cdp.Event {
 	return m.event
 }
 
 // Pending Each message event result map
-func (m *Chromium) Pending() *sync.Map {
+func (m *Energy) Pending() *sync.Map {
 	return m.pending
 }
 
-func (m *Chromium) listen() {
+func (m *Energy) listen() {
 	// 消息接收，energy中使用 CEF 回调函数接收消息
 	m.chromium.SetOnDevToolsRawMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, message uintptr, messageSize uint32) (handled bool) {
 		data := ReadData(message, messageSize)
@@ -263,27 +265,26 @@ func (m *Chromium) listen() {
 		fmt.Println("OnDevToolsMethodRawResult messageId:", messageId, "success:", success, "result:", result, "resultSize:", resultSize)
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
-		m.title = title
 		if m.window != nil {
 			m.window.SetTitle(title)
 		}
 	})
-	m.chromium.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
-		m.url = frame.Url()
-	})
 	m.chromium.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 		m.pageLoadProcess = progress
 		m.loadSuccess = int(progress*100) == 100
+		if m.onLoadingProgressChange != nil {
+			m.onLoadingProgressChange(m, progress)
+		}
 	})
 
 	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		if m.onBeforePopup != nil {
 			wp := cef.NewWindowProperty()
 			wp.Url = beforePopupInfo.TargetUrl
-			rodWindow := NewWindow(m.chromium.Config(), wp, nil)
+			window := NewEnergyWindow(m.chromium.Config(), wp, nil)
 			cef.RunOnMainThread(func() {
-				rodWindow.CreateBrowser()
-				go m.onBeforePopup(rodWindow)
+				window.CreateBrowser()
+				go m.onBeforePopup(window)
 			})
 		}
 		return true

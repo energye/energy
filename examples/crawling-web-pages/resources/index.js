@@ -4,32 +4,70 @@ ipc.on("open-url-process", function (value, windowId) {
 })
 
 $(function () {
-    // 打开一个地址
-    $("#openUrl").click(function () {
-        var me = $(this)
-        var url = me.parent().find("#url").val()
-        if (url === "") {
-            return
+    let defaultURL = "https://gitee.com"
+    let create = function (windowId, url) {
+        let html = `
+<div className="row" id="${windowId}">
+    <span>windowId: ${windowId}</span>
+    <input id="url" style="width: 250px" value="${url}">
+    <button id="show">打开</button>
+    <button id="closeWindow">关闭</button>
+    <button id="crawling">抓取页面</button>
+    <span id="loadProcess"> - </span>
+</div>`
+        let row = $(html)
+        let showBtn = row.find("#show")
+        let urlInp = row.find("#url")
+        showBtn.click(function () {
+            let url = urlInp.val()
+            if (url === "") {
+                return
+            }
+            ipc.emit("show", [windowId, url])
+        })
+        // 关闭这个窗口
+        let closeWindowBtn = row.find("#closeWindow")
+        closeWindowBtn.click(function () {
+            ipc.emit("close-window", [windowId], function (result) {
+                if (result) {
+                    row.remove()
+                }
+            })
+        })
+        let crawlingBtn = row.find("#crawling")
+        // 抓取一些内容
+        crawlingBtn.click(function () {
+            ipc.emit("crawling", [windowId], function (result) {
+                console.log("crawling-result:", result)
+            })
+        })
+        return row
+    }
+    $("#create").click(function () {
+        ipc.emit("create", [], function (windowId) {
+            console.log("create windowId:", windowId)
+            if (windowId > 0) {
+                $("#box").append(create(windowId, defaultURL))
+            }
+        })
+    })
+    ipc.on("close-window", function (windowId) {
+        console.log("close-windowId:", windowId)
+        $("#" + windowId).remove()
+    })
+    ipc.on("create-window", function (windowId, url) {
+        console.log("create-windowId:", windowId, "url:", url)
+        $("#box").append(create(windowId, url))
+    })
+    ipc.emit("window-infos", [], function (result) {
+        console.log("window-infos list:", JSON.stringify(result))
+        for (let i in result) {
+            let data = result[i]
+            let url = data.URL
+            if (url === "") {
+                url = defaultURL
+            }
+            $("#box").append(create(data.WindowId, url))
         }
-        var window = me.parent().find("#windowId")
-        var windowId = parseInt(window.val())
-        ipc.emit("open-url-window", [url, windowId], function (windowId) {
-            console.log("windowId:", windowId)
-            window.val(windowId)
-        })
-    })
-    // 关闭这个窗口
-    $("#closeWindow").click(function () {
-        var windowId = parseInt($(this).parent().find("#windowId").val())
-        console.log("close-window id:", windowId)
-        ipc.emit("close-window", [windowId])
-    })
-    //
-    $("#crawling").click(function () {
-        var windowId = parseInt($(this).parent().find("#windowId").val())
-        console.log("crawling-window id:", windowId)
-        ipc.emit("crawling", [windowId], function (result) {
-            console.log("crawling-result:", result)
-        })
     })
 })
