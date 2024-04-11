@@ -287,17 +287,14 @@ func (m *Chromium) listen() {
 		}
 		return true
 	})
-
 	//TODO 还未实现补全
 	m.chromium.SetOnDevToolsEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, method string, params *cef.ICefValue) {
 		fmt.Println("OnDevToolsEvent", method, "params:", params.GetType())
 	})
-
 	//TODO 还未实现补全
 	m.chromium.SetOnDevToolsMethodRawResult(func(sender lcl.IObject, browser *cef.ICefBrowser, messageId int32, success bool, result uintptr, resultSize uint32) {
 		fmt.Println("OnDevToolsMethodRawResult messageId:", messageId, "success:", success, "result:", result, "resultSize:", resultSize)
 	})
-
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 		m.title = title
 		if m.window != nil {

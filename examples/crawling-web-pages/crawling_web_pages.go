@@ -16,7 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/examples/crawling-web-pages/rod"
+	"github.com/energye/energy/v2/examples/crawling-web-pages/crawling"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
@@ -30,11 +30,6 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	//创建应用
 	app := cef.NewApplication()
-	app.SetDevToolsProtocolLogFile("E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\devtoolsprotocol.log")
-	//app.SetRemoteDebuggingPort(8777) // http://localhost:8777/json/protocol
-	app.SetOnFocusedNodeChanged(func(browser *cef.ICefBrowser, frame *cef.ICefFrame, node *cef.ICefDomNode) {
-		//fmt.Println("OnFocusedNodeChanged", node.GetElementTagName(), node.GetElementAttributes())
-	})
 	cef.BrowserWindow.Config.Width = 800
 	cef.BrowserWindow.Config.Height = 600
 	cef.BrowserWindow.Config.X = 300
@@ -44,26 +39,39 @@ func main() {
 	cef.BrowserWindow.Config.EnableResize = false
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 
+	/*
+		这个并不是一个几行代码的示例
+		它是在 rod 基础上增加的一个扩展方式, 完全复用 rod 的功能(对于一些窗口状态管理, Chromium操作还是需要在energy API控制)
+		devtools-protocol 和 rod 的发送消息和处理上的方式完全不同
+		rod: WebSocket
+		energy: CEF API
+
+		使用方式:
+			1. 创建一个energy扩展rod的window(rod.NewWindow)或chromium(rod.NewChromium)
+			2. 创建浏览器
+			3. 获取到 rod Page 对象开始做事情
+
+		rod使用: https://go-rod.github.io
+		devtools: https://chromedevtools.github.io/devtools-protocol
+
+		除此之外你也可以自己定义 devtools 的使用
+	*/
+
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
-			// 打开新窗口或url
-			var rodWindow *rod.Chromium
+			// 返回 ids
+			ipc.On("window-ids", func() []int {
+				return crawling.WindowIds()
+			})
+			// 创建一个窗口
 			ipc.On("open-url-window", func(url string, windowId int) int {
 				fmt.Println("open-url:", url)
-				wp := cef.NewWindowProperty()
-				wp.Url = url
-				rodWindow = rod.NewWindow(nil, wp, nil)
-				window.RunOnMainThread(func() {
-					rodWindow.CreateBrowser()
-				})
-				return 0
+				return crawling.Create(url)
 			})
 			// 关闭窗口
 			ipc.On("close-window", func(windowId int) {
-				fmt.Println("close-window:", windowId)
-				//if tmpWindow, ok := windows[windowId]; ok {
-				//	tmpWindow.Window.CloseBrowserWindow()
-				//}
+				fmt.Println("close-windowId:", windowId)
+				crawling.Close(windowId)
 			})
 			// 主窗口的控制台消息
 			chromium := window.Chromium()
@@ -71,31 +79,11 @@ func main() {
 				fmt.Println("ConsoleMessage:", message)
 				return false
 			})
-
 			// 抓取
-			//var page *rod.Page
-			ipc.On("crawling", func(windowId int) string {
+			ipc.On("crawling", func(windowId int) {
 				// 以下所有操作都需要在线程里，否则UI线程被锁死
-				fmt.Println("crawling")
-				if rodWindow == nil {
-					return "还未打开窗口"
-				}
-				page := rodWindow.Page()
-				page.MustElement("#kw").MustSelectAllText().MustInput("") //清空文本框
-				page.MustElement("#kw").MustInput("go energy")            //输入内容
-				page.MustElement("#su").MustClick()                       //点击按钮
-				wrapper := page.MustElement("#wrapper_wrapper")           //根据id获取标签
-				containers := wrapper.MustElements(".c-container")        //根据class样式获取所有标签
-				for len(containers) == 0 {                                // 返回0个继续获取
-					containers = wrapper.MustElements(".c-container")
-				}
-				fmt.Println("containers:", len(containers))
-				for _, container := range containers {
-					a := container.MustElement("a")
-					fmt.Println("a:", a.MustText())
-				}
-				fmt.Println(page.MustHTML()[0:100])
-				return page.MustHTML()[0:100]
+				fmt.Println("crawling windowId:", windowId)
+				crawling.Crawling(windowId)
 			})
 		}
 	})
