@@ -22,6 +22,8 @@ type Result struct {
 	Err error
 }
 
+type OnBeforePopup func(chromium *Chromium)
+
 type Chromium struct {
 	rodBrowser      *Browser
 	chromium        cef.IChromium
@@ -30,6 +32,9 @@ type Chromium struct {
 	title           string
 	url             string
 	targetId        proto.TargetTargetID
+	created         bool
+
+	onBeforePopup OnBeforePopup
 
 	loadSuccess     bool
 	enablePageCheck bool
@@ -88,6 +93,10 @@ func ReadData(data uintptr, count uint32) []byte {
 	return result
 }
 
+func (m *Chromium) SetOnBeforePopup(fn OnBeforePopup) {
+	m.onBeforePopup = fn
+}
+
 // TargetInfo Return current target info
 func (m *Chromium) TargetInfo() *proto.TargetTargetInfo {
 	result, err := proto.TargetGetTargetInfo{TargetID: m.targetId}.Call(m)
@@ -126,7 +135,7 @@ func (m *Chromium) Page() *Page {
 		if m.targetId == "" {
 			m.targetId = m.TargetInfo().TargetID
 		}
-		p, err := m.PageFromTarget(m.targetId)
+		p, err := m.rodBrowser.PageFromTarget(m.targetId)
 		if err != nil {
 			return nil
 		}
@@ -135,60 +144,17 @@ func (m *Chromium) Page() *Page {
 	return m.page
 }
 
-// PageFromTarget gets or creates a Page instance.
-func (m *Chromium) PageFromTarget(targetID proto.TargetTargetID) (*Page, error) {
-	m.rodBrowser.targetsLock.Lock()
-	defer m.rodBrowser.targetsLock.Unlock()
-	page := m.rodBrowser.loadCachedPage(targetID)
-	if page != nil {
-		return page, nil
-	}
-	session, err := proto.TargetAttachToTarget{
-		TargetID: targetID,
-		Flatten:  true, // if it's not set no response will return
-	}.Call(m)
-	if err != nil {
-		return nil, err
-	}
-	sessionCtx, cancel := context.WithCancel(m.rodBrowser.ctx)
-	page = &Page{
-		e:             m.rodBrowser.e,
-		ctx:           sessionCtx,
-		sessionCancel: cancel,
-		sleeper:       m.rodBrowser.sleeper,
-		browser:       m.rodBrowser,
-		TargetID:      targetID,
-		SessionID:     session.SessionID,
-		FrameID:       proto.PageFrameID(targetID),
-		jsCtxLock:     &sync.Mutex{},
-		jsCtxID:       new(proto.RuntimeRemoteObjectID),
-		helpersLock:   &sync.Mutex{},
-	}
-	page.root = page
-	page.newKeyboard().newMouse().newTouch()
-	if !m.rodBrowser.defaultDevice.IsClear() {
-		err = page.Emulate(m.rodBrowser.defaultDevice)
-		if err != nil {
-			return nil, err
-		}
-	}
-	m.rodBrowser.cachePage(page)
-	page.initEvents()
-	// If we don't enable it, it will cause a lot of unexpected browser behavior.
-	// Such as proto.PageAddScriptToEvaluateOnNewDocument won't work.
-	page.EnableDomain(&proto.PageEnable{})
-
-	return page, nil
-}
-
 // CreateBrowser Call this function to create a browser after creating chrome or window
 func (m *Chromium) CreateBrowser() {
-	if m.chromiumBrowser != nil {
-		m.chromiumBrowser.CreateBrowser()
-	} else if m.window != nil {
-		m.window.Show()
+	if !m.created {
+		m.created = true
+		if m.chromiumBrowser != nil {
+			m.chromiumBrowser.CreateBrowser()
+		} else if m.window != nil {
+			m.window.Show()
+		}
+		m.rodBrowser.initEvents()
 	}
-	m.rodBrowser.initEvents()
 }
 
 // LoadSuccess Returns whether the current page was successfully loaded
@@ -215,9 +181,9 @@ func (m *Chromium) URL() string {
 func (m *Chromium) CheckWaitPageLoad() {
 	if !m.loadSuccess && m.enablePageCheck {
 		if m.timer == nil {
-			m.timer = time.NewTimer(time.Second / 10)
+			m.timer = time.NewTimer(time.Second / 100)
 		} else {
-			m.timer.Reset(time.Second / 10)
+			m.timer.Reset(time.Second / 100)
 		}
 		defer m.timer.Stop()
 		select {
@@ -308,5 +274,18 @@ func (m *Chromium) listen() {
 	m.chromium.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 		m.pageLoadProcess = progress
 		m.loadSuccess = int(progress*100) == 100
+	})
+
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
+		if m.onBeforePopup != nil {
+			wp := cef.NewWindowProperty()
+			wp.Url = beforePopupInfo.TargetUrl
+			rodWindow := NewWindow(m.chromium.Config(), wp, nil)
+			cef.RunOnMainThread(func() {
+				rodWindow.CreateBrowser()
+				go m.onBeforePopup(rodWindow)
+			})
+		}
+		return true
 	})
 }

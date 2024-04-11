@@ -26,6 +26,13 @@ func Create(url string) int {
 	// 创建一个 energy 扩展 rod 的窗口
 	rodWindow := rod.NewWindow(nil, wp, nil)
 	windows[windowId] = rodWindow
+	rodWindow.SetOnBeforePopup(func(chromium *rod.Chromium) {
+		page := chromium.Page()
+		fmt.Println("OnBeforePopup TargetID:", page.TargetID)
+		elements := page.MustElements("a")
+		fmt.Println("A tag - count:", len(elements))
+		fmt.Println("title:", page.MustElement("title").MustText())
+	})
 	// 在UI线程中创建或显示这个窗口
 	cef.RunOnMainThread(func() {
 		rodWindow.CreateBrowser()
