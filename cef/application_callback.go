@@ -19,7 +19,7 @@ import (
 	"strings"
 )
 
-// appOnContextCreated 创建应用上下文 - 默认实现
+// 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
 	process.Current.SetBrowserId(browser.Identifier())                           // 当前进程 browserID
 	process.Current.SetFrameId(frame.Identifier())                               // 当前进程 frameId
@@ -29,17 +29,17 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	makeProcess(browser, frame, context)                                         // process make
 }
 
-// appMainRunCallback 应用运行 - 默认实现
+// 应用运行 - 默认实现
 func appMainRunCallback() {
 	ipcBrowser.registerEvent() // browser ipc
 }
 
-// appWebKitInitialized - webkit - 默认实现
+// webkit - 默认实现
 func appWebKitInitialized() {
 	dragExtensionHandler() // drag extension handler
 }
 
-// renderProcessMessageReceived 渲染进程消息 - 默认实现
+// 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEventReplay {
 		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
@@ -49,7 +49,7 @@ func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, source
 	return
 }
 
-// regCustomSchemes 注册自定义协议 - 默认实现
+// 注册自定义协议 - 默认实现
 func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 	if localLoadRes.enable() {
 		// 以下几种默认的协议不去注册
@@ -66,7 +66,7 @@ func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 	}
 }
 
-// browserProcessMessageReceived 主进程消息 - 默认实现
+// 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	if message.Name() == internalIPCJSExecuteGoEvent {
 		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)

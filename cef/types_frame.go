@@ -286,7 +286,7 @@ func (m *frameRef) UnWrap(data *ICefFrame) *ICefFrame {
 	if result == 0 {
 		return nil
 	}
-	data.base.Free(data.Instance())
+	//data.base.Free(data.Instance())
 	data.instance = getInstance(result)
 	return data
 }
