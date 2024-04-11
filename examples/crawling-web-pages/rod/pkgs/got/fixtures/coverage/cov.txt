@@ -1,0 +1,2 @@
+mode: atomic
+github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/got/fixtures/coverage/foo.go:4.16,6.2 1 1

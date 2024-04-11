@@ -1,0 +1,17 @@
+body {
+    overflow: hidden;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    background: #9b95e5;
+}
+
+.box {
+    width: 100vw;
+    height: 100vh;
+}
+
+.row{
+    margin: 10px;
+    width: 100%;
+}
