@@ -2,7 +2,9 @@
 
 package utils
 
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // ReadData 读取指针数据到 []byte
 func ReadData(data uintptr, count uint32) []byte {

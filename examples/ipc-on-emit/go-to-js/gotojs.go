@@ -11,6 +11,7 @@ import (
 	"github.com/energye/energy/v2/examples/common"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"strings"
+	"time"
 )
 
 //go:embed resources
@@ -94,6 +95,10 @@ func main() {
 		fmt.Println("param4:", param4)
 		fmt.Println("param5:", param5)
 		return fmt.Sprintf("%d-%v-%v-%v-%v", param1, param2, param3, param4, param5)
+	})
+
+	ipc.On("ipc-emit-sync", func(data string) string {
+		return fmt.Sprintf("Go Result: %v - %v", data, time.Now().String())
 	})
 
 	//内置http服务链接安全配置

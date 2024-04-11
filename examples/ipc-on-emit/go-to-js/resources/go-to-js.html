@@ -13,6 +13,7 @@
             message.innerHTML = message.innerHTML + data + "<br>"
         }
 
+        let gId = 0
         //ipc.emit函数有3个参数
         //参数1 事件名        必填    string类型
         //参数2 参数          非必填  array类型,传递到Go中的数据,
@@ -24,7 +25,7 @@
         function goOnEventDemo() {
             clearMessage()
             //参数传递,从下标0开始表示第1个参数
-            ipc.emit('go-on-event-demo', ['传递的数据'])
+            ipc.emit('go-on-event-demo', ['传递的数据 ' + gId])
         }
 
         //带有返回值的事件
@@ -45,16 +46,42 @@
         // 使用形参接收参数
         // 在JS中入参类型必须相同
         function goOnEventDemoArgument() {
-            ipc.emit('go-on-event-demo-argument', [100, '字符串-Energy', 1000.001, true, "字符串"]);
+            ipc.emit('go-on-event-demo-argument', [100 + gId, '字符串-Energy' + gId, 1000.001 + gId, true, "字符串" + gId]);
         }
 
         // 在Go中监听一个事件, 带返回值
         // 使用形参接收参数
         // 在JS中入参类型必须相同
         function goOnEventDemoArgumentReturn() {
-            ipc.emit('go-on-event-demo-argument-return', [100, '字符串-Energy', 1000.001, true, "字符串"], function (result) {
+            ipc.emit('go-on-event-demo-argument-return', [100 + gId, '字符串-Energy' + gId, 1000.001 + gId, true, "字符串" + gId], function (result) {
                 writeMessage("result: " + result)
             });
+        }
+
+        // 在Go中监听一个事件, 带返回值
+        // 返回值使用同步返回变量接收
+        function goOnEventJSEmitSync() {
+            let result = ipc.emitSync("ipc-emit-sync", ["data(ipc-emit-sync)" + gId])
+            writeMessage("result: " + result)
+        }
+
+
+        let intval = null;
+
+        function autoEmit() {
+            if (intval == null) {
+                // cef ipc 不要 for {} 无间隔的调用
+                intval = setInterval(function () {
+                    goOnEventDemo()
+                    goOnEventDemoArgument()
+                    goOnEventDemoArgumentReturn()
+                    goOnEventJSEmitSync()
+                    gId++
+                })
+            } else {
+                clearInterval(intval)
+                intval = null
+            }
         }
     </script>
 </head>
@@ -64,6 +91,9 @@ Go中监听事件，JS中调用<br>
 <button onclick="goOnEventDemoReturn()">go-on-event-demo-return</button>
 <button onclick="goOnEventDemoArgument()">go-on-event-demo-argument</button>
 <button onclick="goOnEventDemoArgumentReturn()">go-on-event-demo-argument-return</button>
+<br>
+<button onclick="goOnEventJSEmitSync()">ipc-emit-sync</button>
+<button onclick="autoEmit()">autoEmit</button>
 <div id="message"></div>
 </body>
 </html>
