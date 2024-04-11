@@ -44,6 +44,7 @@ func Close(windowId int) {
 func Crawling(windowId int) {
 	if window, ok := windows[windowId]; ok {
 		page := window.Page()
+		fmt.Println("TargetID:", page.TargetID)
 		page.MustElement("#kw").MustSelectAllText().MustInput("") //清空文本框
 		page.MustElement("#kw").MustInput("go energy")            //输入内容
 		page.MustElement("#su").MustClick()                       //点击按钮

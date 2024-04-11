@@ -29,6 +29,7 @@ type Chromium struct {
 	window          cef.IBrowserWindow
 	title           string
 	url             string
+	targetId        proto.TargetTargetID
 
 	loadSuccess     bool
 	enablePageCheck bool
@@ -87,17 +88,18 @@ func ReadData(data uintptr, count uint32) []byte {
 	return result
 }
 
-// GetTarget Return the current page targetInfo. If there are multiple identical titles and URLs at the same time, the first one will be returned
-func (m *Chromium) GetTarget() *proto.TargetTargetInfo {
+// TargetInfo Return current target info
+func (m *Chromium) TargetInfo() *proto.TargetTargetInfo {
+	result, err := proto.TargetGetTargetInfo{TargetID: m.targetId}.Call(m)
+	m.rodBrowser.e(err)
+	return result.TargetInfo
+}
+
+// Targets Return All Targets Info
+func (m *Chromium) Targets() []*proto.TargetTargetInfo {
 	result, err := proto.TargetGetTargets{}.Call(m)
 	m.rodBrowser.e(err)
-	for _, info := range result.TargetInfos {
-		fmt.Printf("targetInfo: %+v\n", info)
-		if m.title == info.Title && m.url == info.URL {
-			return info
-		}
-	}
-	return nil
+	return result.TargetInfos
 }
 
 // RodBrowser return RodBrowser
@@ -121,11 +123,10 @@ func (m *Chromium) BrowserWindow() cef.IBrowserWindow {
 // Page Return the current Chromium Page
 func (m *Chromium) Page() *Page {
 	if m.page == nil {
-		targetInfo := m.GetTarget()
-		if targetInfo == nil {
-			return nil
+		if m.targetId == "" {
+			m.targetId = m.TargetInfo().TargetID
 		}
-		p, err := m.PageFromTarget(targetInfo.TargetID)
+		p, err := m.PageFromTarget(m.targetId)
 		if err != nil {
 			return nil
 		}
