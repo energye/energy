@@ -64,6 +64,8 @@ func main() {
 			gId = info.Chromium().ExecuteDevToolsMethod(gId, "Emulation.setUserAgentOverride", dict)
 			fmt.Println("ExecuteDevToolsMethod - result messageId:", gId)
 			fmt.Println()
+
+			// 更多devtools: https://chromedevtools.github.io/devtools-protocol/
 		})
 		// 使用  DevToolsRawMessage  处理，方便些
 		window.Chromium().SetOnDevToolsRawMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, message uintptr, messageSize uint32) (handled bool) {
