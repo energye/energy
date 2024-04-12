@@ -74,6 +74,7 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 	// 窗口关闭时调用，通知主窗口，有窗口关闭
 	energy.SetOnClose(func(energy *rod.Energy) {
 		ipc.Emit("close-window", newWindowId)
+		delete(windows, newWindowId)
 	})
 }
 

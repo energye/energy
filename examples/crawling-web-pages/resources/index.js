@@ -6,6 +6,7 @@ ipc.on("open-url-process", function (value, windowId) {
 // 仅测试区分测试的功能类型
 const testTypeDefault = 0
 const testTypeUpload = 1
+const testTypeDownload = 2
 
 $(function () {
     // 默认加载出当前已创建的窗口，例如刷新页面后
@@ -97,6 +98,14 @@ $(function () {
     $("#upload").click(function () {
         ipc.emit("upload-start-server", [testTypeUpload], function (url, windowId) {
             $("#box").append(create(windowId, url, testTypeUpload))
+        })
+    })
+
+    // 下载文件
+
+    $("#download").click(function () {
+        ipc.emit("download-file", [testTypeDownload], function (url, windowId) {
+            $("#box").append(create(windowId, url, testTypeDownload))
         })
     })
 })

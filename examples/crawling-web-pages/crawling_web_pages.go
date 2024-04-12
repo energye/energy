@@ -85,17 +85,19 @@ func main() {
 		})
 		// 仅测试区分测试的功能类型
 		const (
-			testTypeDefault = 0
-			testTypeUpload  = 1
+			testTypeDefault  = 0
+			testTypeUpload   = 1
+			testTypeDownload = 2
 		)
 		// 抓取
 		ipc.On("crawling", func(windowId, testType int) {
-			// 以下所有操作都需要在线程里，否则UI线程被锁死
 			fmt.Println("crawling windowId:", windowId)
 			if testType == testTypeDefault {
 				crawling.Crawling(windowId)
 			} else if testType == testTypeUpload {
 				crawling.Upload(windowId)
+			} else if testType == testTypeDownload {
+				crawling.Download(windowId)
 			}
 		})
 
@@ -106,6 +108,12 @@ func main() {
 				url = crawling.UploadServer()
 			}
 			fmt.Println("启动上传文件测试服务", url)
+			windowId := crawling.Create(url, typ)
+			return url, windowId
+		})
+
+		ipc.On("download-file", func(typ int) (string, int) {
+			url := "https://gitcode.com/energye/energy"
 			windowId := crawling.Create(url, typ)
 			return url, windowId
 		})

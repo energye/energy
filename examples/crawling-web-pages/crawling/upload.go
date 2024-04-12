@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 )
 
+// 示例来自 rod upload
+
 // Upload 上传个试试？
 func Upload(windowId int) {
 	if window, ok := windows[windowId]; ok {
