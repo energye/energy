@@ -15,11 +15,13 @@ var windows = make(map[int]*WindowInfo)
 type WindowInfo struct {
 	energy *rod.Energy
 	url    string
+	typ    int
 }
 
 type Info struct {
 	WindowId int
 	URL      string
+	Typ      int
 }
 
 // WindowIds 返回所有windowId
@@ -28,19 +30,20 @@ func WindowIds() (result []*Info) {
 		result = append(result, &Info{
 			WindowId: id,
 			URL:      info.url,
+			Typ:      info.typ,
 		})
 	}
 	return
 }
 
 // Create 创建一个浏览器窗口
-func Create(url string) int {
+func Create(url string, testType int) int {
 	windowId := time.Now().Nanosecond()
 	wp := cef.NewWindowProperty()
 	wp.Url = url // 创建时指定一个URL
 	// 创建一个 energy 扩展 rod 的窗口
 	energyWindow := rod.NewEnergyWindow(nil, wp, nil)
-	windows[windowId] = &WindowInfo{energy: energyWindow}
+	windows[windowId] = &WindowInfo{energy: energyWindow, typ: testType}
 	createHandle(windowId, energyWindow)
 	return windowId
 }
