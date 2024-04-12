@@ -42,11 +42,9 @@ type Energy struct {
 	onClose                 OnClose
 	onDevToolsRawMessage    OnDevToolsRawMessage
 
-	loadSuccess      bool
-	enablePageCheck  bool
-	pageCheckProcess int
-	timer            *time.Timer
-	pageLoadProcess  float64
+	loadSuccess     bool
+	timer           *time.Timer
+	pageLoadProcess float64
 
 	page    *Page
 	count   uint64
@@ -58,11 +56,9 @@ type Energy struct {
 // NewEnergyChromium Create a chrome and layout it in the current main window
 func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Energy {
 	m := &Energy{
-		event:            make(chan *cdp.Event),
-		logger:           defaults.CDP,
-		pending:          new(sync.Map),
-		enablePageCheck:  true,
-		pageCheckProcess: 100,
+		event:   make(chan *cdp.Event),
+		logger:  defaults.CDP,
+		pending: new(sync.Map),
 	}
 	m.rodBrowser = New()
 	m.rodBrowser.client = m
@@ -76,11 +72,9 @@ func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *E
 // NewEnergyWindow creates a window
 func NewEnergyWindow(config *cef.TCefChromiumConfig, windowProperty cef.WindowProperty, owner lcl.IComponent) *Energy {
 	m := &Energy{
-		event:            make(chan *cdp.Event),
-		logger:           defaults.CDP,
-		pending:          new(sync.Map),
-		enablePageCheck:  true,
-		pageCheckProcess: 100,
+		event:   make(chan *cdp.Event),
+		logger:  defaults.CDP,
+		pending: new(sync.Map),
 	}
 	m.rodBrowser = New()
 	m.rodBrowser.client = m
@@ -200,49 +194,14 @@ func (m *Energy) LoadSuccess() bool {
 	return m.loadSuccess
 }
 
-// EnableCheckPageLoad  Enable page loading detection
-func (m *Energy) EnableCheckPageLoad(v bool) {
-	m.enablePageCheck = v
-}
-
 // PageLoadProcess Return to page loading progress
 func (m *Energy) PageLoadProcess() float64 {
 	return m.pageLoadProcess
 }
 
-// SetPageCheckProcess Set Check page loading process 0 ~ 100
-func (m *Energy) SetPageCheckProcess(v int) {
-	if v < 0 {
-		v = 0
-	}
-	if v > 100 {
-		v = 100
-	}
-	m.pageCheckProcess = v
-}
-
-// CheckWaitPageLoad Detect and wait for the current page to load until it is successfully loaded
-//
-//	Detect page loading, devtools methods will not be executed when the page is not fully loaded or is smaller than `pageCheckProcess`
-//	So we won't get the execution structure
-func (m *Energy) CheckWaitPageLoad() {
-	if !m.loadSuccess && m.enablePageCheck {
-		if m.timer == nil {
-			m.timer = time.NewTimer(time.Second / 100)
-		} else {
-			m.timer.Reset(time.Second / 100)
-		}
-		defer m.timer.Stop()
-		select {
-		case <-m.timer.C:
-			m.CheckWaitPageLoad()
-		}
-	}
-}
-
 // Call a method and wait for its response.
 func (m *Energy) Call(ctx context.Context, sessionID, method string, params interface{}) ([]byte, error) {
-	m.CheckWaitPageLoad()
+	//m.CheckWaitPageLoad()
 	req := &cdp.Request{
 		ID:        int(atomic.AddUint64(&m.count, 1)),
 		SessionID: sessionID,
@@ -336,7 +295,7 @@ func (m *Energy) listen() {
 	})
 	m.chromium.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 		m.pageLoadProcess = progress
-		m.loadSuccess = int(progress*100) >= m.pageCheckProcess
+		m.loadSuccess = int(progress*100) == 100
 		if m.onLoadingProgressChange != nil {
 			m.onLoadingProgressChange(m, progress)
 		}

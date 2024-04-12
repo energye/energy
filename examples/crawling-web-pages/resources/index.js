@@ -8,17 +8,31 @@ const testTypeDefault = 0
 const testTypeUpload = 1
 
 $(function () {
+    // 默认加载出当前已创建的窗口，例如刷新页面后
+    ipc.emit("window-infos", function (result) {
+        console.log("window-infos list:", JSON.stringify(result))
+        for (let i in result) {
+            let data = result[i]
+            let url = data.URL
+            if (url === "") {
+                url = defaultURL
+            }
+            $("#box").append(create(data.WindowId, url, data.Typ))
+        }
+    })
+
+
     let defaultURL = "https://gitee.com" // 给个默认地址
 
     // 创建页面的功能按钮
     let create = function (windowId, url, type) {
         let html = `
 <div className="row" id="${windowId}">
-    <span>windowId: ${windowId}</span>
-    <input id="url" style="width: 250px" value="${url}">
+    <span>${windowId}</span>
+    <input id="url" style="width: 250px" value="${url}" readonly>
     <button id="show">打开</button>
     <button id="closeWindow">关闭</button>
-    <button id="crawling">页面打开后-测试一下</button>
+    <button id="crawling">打开后-测试</button>
     <span id="loadProcess"> - </span>
 </div>`
         let row = $(html)
@@ -48,6 +62,7 @@ $(function () {
                 console.log("crawling-result:", result)
             })
         })
+
         return row
     }
 
@@ -75,18 +90,6 @@ $(function () {
     // 窗口的加载进度
     ipc.on("window-loading-progress", function (windowId, progress) {
         $("#" + windowId).find("#loadProcess").html("Loading: " + progress)
-    })
-    // 默认加载出当前已创建的窗口，例如刷新页面后
-    ipc.emit("window-infos", function (result) {
-        console.log("window-infos list:", JSON.stringify(result))
-        for (let i in result) {
-            let data = result[i]
-            let url = data.URL
-            if (url === "") {
-                url = defaultURL
-            }
-            $("#box").append(create(data.WindowId, url, data.Typ))
-        }
     })
 
     // 上传文件

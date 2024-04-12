@@ -61,7 +61,7 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 		ipc.Emit("create-window", windowId, url)
 
 		// 采集一些东西
-		page := energyWindow.Page()
+		page := energyWindow.Page().MustWaitLoad()
 		fmt.Println("OnBeforePopup TargetID:", page.TargetID)
 		elements := page.MustElements("a")
 		fmt.Println("A tag - count:", len(elements))
@@ -71,6 +71,7 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 	energy.SetOnLoadingProgressChange(func(energy *rod.Energy, progress float64) {
 		ipc.Emit("window-loading-progress", newWindowId, int(progress*100))
 	})
+	// 窗口关闭时调用，通知主窗口，有窗口关闭
 	energy.SetOnClose(func(energy *rod.Energy) {
 		ipc.Emit("close-window", newWindowId)
 	})
@@ -100,20 +101,19 @@ func Close(windowId int) bool {
 // Crawling 抓取一些内容测试
 func Crawling(windowId int) {
 	if window, ok := windows[windowId]; ok {
-		window.energy.SetPageCheckProcess(50) // 页面加载 >= 50% 就可以获取
-		page := window.energy.Page()
+		page := window.energy.Page().MustWaitLoad()
 		fmt.Println("TargetID:", page.TargetID)
 		head := page.MustElement(`ul[class="mb-0 flex items-center"]`) //清空文本框 .MustSelectAllText().MustInput("")
 		li2 := head.MustElements("li")[1]
 		openSource := li2.MustElement("a")
 		openSource.MustClick() // 开源点击
-		queryForm := page.MustElement(`form[class="ui form custom js-form-control"]`)
+		queryForm := page.MustWaitLoad().MustElement(`form[class="ui form custom js-form-control"]`)
 		queryInp := queryForm.MustElement("#q")
 		queryInp.MustSelectAllText().MustInput("") // 清空文本框
 		queryInp.MustInput("energy")               // 输入搜索内容
 		queryBtn := queryForm.MustElement(`button`)
 		queryBtn.MustClick() //点击后 跳转页面
-		hitsList := page.MustElement("#hits-list")
+		hitsList := page.MustWaitLoad().MustElement("#hits-list")
 		titles := hitsList.MustElements(`div[class="title"]`)
 		for _, title := range titles {
 			a := title.MustElement("a")

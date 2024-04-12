@@ -12,8 +12,7 @@ import (
 // Upload 上传个试试？
 func Upload(windowId int) {
 	if window, ok := windows[windowId]; ok {
-		window.energy.SetPageCheckProcess(50) // 页面加载 >= 50% 就可以获取
-		page := window.energy.Page()
+		page := window.energy.Page().MustWaitLoad()
 		fmt.Println("TargetID:", page.TargetID)
 		wd, _ := os.Getwd()
 		wd = filepath.Join(wd, "examples", "crawling-web-pages", "crawling_web_pages.go")
