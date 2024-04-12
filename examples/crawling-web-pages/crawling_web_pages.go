@@ -40,16 +40,17 @@ func main() {
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 
 	/*
+		此示例仅限学习
 		这个并不是一个几行代码的示例
 		它是在 rod 基础上增加的一个扩展方式, 完全复用 rod 的功能(对于一些窗口状态管理, Chromium操作还是需要在energy API控制)
-		devtools-protocol 和 rod 的发送消息和处理上的方式完全不同
-		rod: WebSocket
-		energy: CEF API
+		devtools-protocol 和 rod 的发送消息和处理上，完全不同
+			rod: WebSocket
+			energy: CEF API
 
 		使用方式:
 			1. 创建一个energy扩展rod的window(rod.NewWindow)或chromium(rod.NewChromium)
-			2. 创建浏览器
-			3. 获取到 rod Page 对象开始做事情
+			2. 创建浏览器或显示浏览器窗口 CreateBrowser
+			3. 获取 rod Page 对象开始搞事情
 
 		rod使用: https://go-rod.github.io
 		devtools: https://chromedevtools.github.io/devtools-protocol
@@ -80,7 +81,7 @@ func main() {
 			// 主窗口的控制台消息
 			chromium := window.Chromium()
 			chromium.SetOnConsoleMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, level consts.TCefLogSeverity, message, source string, line int32) bool {
-				fmt.Println("ConsoleMessage:", message)
+				fmt.Println("javascript-console.log:", message)
 				return false
 			})
 			// 抓取

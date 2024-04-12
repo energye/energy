@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"strings"
 	"time"
 )
 
@@ -63,6 +64,9 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 		fmt.Println("title:", page.MustElement("title").MustText())
 
 	})
+	energy.SetOnLoadingProgressChange(func(energy *rod.Energy, progress float64) {
+		ipc.Emit("window-loading-progress", newWindowId, int(progress*100))
+	})
 	window := energy.BrowserWindow().AsLCLBrowserWindow().BrowserWindow()
 	window.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 		ipc.Emit("close-window", newWindowId)
@@ -77,6 +81,7 @@ func Show(windowId int, url string) {
 		window.url = url
 		// UI线程中创建浏览器
 		cef.RunOnMainThread(func() {
+			window.energy.Chromium().LoadUrl(url)
 			window.energy.CreateBrowser()
 		})
 	}
@@ -95,21 +100,29 @@ func Close(windowId int) bool {
 // Crawling 抓取一些内容测试
 func Crawling(windowId int) {
 	if window, ok := windows[windowId]; ok {
+		window.energy.SetPageCheckProcess(50) // 页面加载 >= 50% 就可以获取
 		page := window.energy.Page()
 		fmt.Println("TargetID:", page.TargetID)
-		page.MustElement("#kw").MustSelectAllText().MustInput("") //清空文本框
-		page.MustElement("#kw").MustInput("go energy")            //输入内容
-		page.MustElement("#su").MustClick()                       //点击按钮
-		wrapper := page.MustElement("#wrapper_wrapper")           //根据id获取标签
-		containers := wrapper.MustElements(".c-container")        //根据class样式获取所有标签
-		for len(containers) == 0 {                                // 返回0个继续获取
-			containers = wrapper.MustElements(".c-container")
+		head := page.MustElement(`ul[class="mb-0 flex items-center"]`) //清空文本框 .MustSelectAllText().MustInput("")
+		li2 := head.MustElements("li")[1]
+		openSource := li2.MustElement("a")
+		openSource.MustClick() // 开源点击
+		queryForm := page.MustElement(`form[class="ui form custom js-form-control"]`)
+		queryInp := queryForm.MustElement("#q")
+		queryInp.MustSelectAllText().MustInput("") // 清空文本框
+		queryInp.MustInput("energy")               // 输入搜索内容
+		queryBtn := queryForm.MustElement(`button`)
+		queryBtn.MustClick() //点击后 跳转页面
+		hitsList := page.MustElement("#hits-list")
+		titles := hitsList.MustElements(`div[class="title"]`)
+		for _, title := range titles {
+			a := title.MustElement("a")
+			href := a.MustAttribute("href")
+			fmt.Println(*href)
+			if strings.Index(*href, "gitee.com/energye/energy") != -1 {
+				a.MustClick() //点击后 跳转页面
+				break
+			}
 		}
-		fmt.Println("containers:", len(containers))
-		for _, container := range containers {
-			a := container.MustElement("a")
-			fmt.Println("a:", a.MustText())
-		}
-		fmt.Println(page.MustHTML()[0:100])
 	}
 }

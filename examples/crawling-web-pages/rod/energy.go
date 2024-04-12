@@ -35,10 +35,11 @@ type Energy struct {
 	onBeforePopup           OnBeforePopup
 	onLoadingProgressChange OnLoadingProgressChange
 
-	loadSuccess     bool
-	enablePageCheck bool
-	timer           *time.Timer
-	pageLoadProcess float64
+	loadSuccess      bool
+	enablePageCheck  bool
+	pageCheckProcess int
+	timer            *time.Timer
+	pageLoadProcess  float64
 
 	page    *Page
 	count   uint64
@@ -50,10 +51,11 @@ type Energy struct {
 // NewEnergyChromium Create a chrome and layout it in the current main window
 func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *Energy {
 	m := &Energy{
-		event:           make(chan *cdp.Event),
-		logger:          defaults.CDP,
-		pending:         new(sync.Map),
-		enablePageCheck: true,
+		event:            make(chan *cdp.Event),
+		logger:           defaults.CDP,
+		pending:          new(sync.Map),
+		enablePageCheck:  true,
+		pageCheckProcess: 100,
 	}
 	m.rodBrowser = New()
 	m.rodBrowser.client = m
@@ -67,10 +69,11 @@ func NewEnergyChromium(owner lcl.IWinControl, config *cef.TCefChromiumConfig) *E
 // NewEnergyWindow creates a window
 func NewEnergyWindow(config *cef.TCefChromiumConfig, windowProperty cef.WindowProperty, owner lcl.IComponent) *Energy {
 	m := &Energy{
-		event:           make(chan *cdp.Event),
-		logger:          defaults.CDP,
-		pending:         new(sync.Map),
-		enablePageCheck: true,
+		event:            make(chan *cdp.Event),
+		logger:           defaults.CDP,
+		pending:          new(sync.Map),
+		enablePageCheck:  true,
+		pageCheckProcess: 100,
 	}
 	m.rodBrowser = New()
 	m.rodBrowser.client = m
@@ -179,6 +182,17 @@ func (m *Energy) PageLoadProcess() float64 {
 	return m.pageLoadProcess
 }
 
+// SetPageCheckProcess Set Check page loading process 0 ~ 100
+func (m *Energy) SetPageCheckProcess(v int) {
+	if v < 0 {
+		v = 0
+	}
+	if v > 100 {
+		v = 100
+	}
+	m.pageCheckProcess = v
+}
+
 // CheckWaitPageLoad Detect and wait for the current page to load until it is successfully loaded
 func (m *Energy) CheckWaitPageLoad() {
 	if !m.loadSuccess && m.enablePageCheck {
@@ -271,7 +285,7 @@ func (m *Energy) listen() {
 	})
 	m.chromium.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 		m.pageLoadProcess = progress
-		m.loadSuccess = int(progress*100) == 100
+		m.loadSuccess = int(progress*100) >= m.pageCheckProcess
 		if m.onLoadingProgressChange != nil {
 			m.onLoadingProgressChange(m, progress)
 		}

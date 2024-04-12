@@ -12,7 +12,7 @@ $(function () {
     <input id="url" style="width: 250px" value="${url}">
     <button id="show">打开</button>
     <button id="closeWindow">关闭</button>
-    <button id="crawling">抓取页面</button>
+    <button id="crawling">页面打开后-测试一下</button>
     <span id="loadProcess"> - </span>
 </div>`
         let row = $(html)
@@ -58,6 +58,9 @@ $(function () {
     ipc.on("create-window", function (windowId, url) {
         console.log("create-windowId:", windowId, "url:", url)
         $("#box").append(create(windowId, url))
+    })
+    ipc.on("window-loading-progress", function (windowId, progress) {
+        $("#" + windowId).find("#loadProcess").html("Loading: " + progress)
     })
     ipc.emit("window-infos", [], function (result) {
         console.log("window-infos list:", JSON.stringify(result))
