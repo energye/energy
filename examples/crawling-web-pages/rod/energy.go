@@ -5,11 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/cdp"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/defaults"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/proto"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/utils"
+	engJSON "github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -22,6 +25,7 @@ type Result struct {
 }
 
 type OnBeforePopup func(energy *Energy)
+type OnClose func(energy *Energy)
 type OnLoadingProgressChange func(energy *Energy, progress float64)
 
 type Energy struct {
@@ -34,6 +38,7 @@ type Energy struct {
 
 	onBeforePopup           OnBeforePopup
 	onLoadingProgressChange OnLoadingProgressChange
+	onClose                 OnClose
 
 	loadSuccess      bool
 	enablePageCheck  bool
@@ -99,12 +104,19 @@ func (m *Energy) Chromium() cef.IChromium {
 	return m.chromium
 }
 
+// SetOnBeforePopup energy rod popup callback
 func (m *Energy) SetOnBeforePopup(fn OnBeforePopup) {
 	m.onBeforePopup = fn
 }
 
+// SetOnLoadingProgressChange page load process
 func (m *Energy) SetOnLoadingProgressChange(fn OnLoadingProgressChange) {
 	m.onLoadingProgressChange = fn
+}
+
+// SetOnClose window close callback
+func (m *Energy) SetOnClose(fn OnClose) {
+	m.onClose = fn
 }
 
 // TargetInfo Return current target info
@@ -161,7 +173,13 @@ func (m *Energy) CreateBrowser() {
 		if m.chromiumBrowser != nil {
 			m.chromiumBrowser.CreateBrowser()
 		} else if m.window != nil {
-			m.window.Show()
+			if m.window.IsLCL() {
+				cef.RunOnMainThread(func() {
+					m.window.Show()
+				})
+			} else {
+				m.window.Show()
+			}
 		}
 		m.rodBrowser.initEvents()
 	}
@@ -220,8 +238,7 @@ func (m *Energy) Call(ctx context.Context, sessionID, method string, params inte
 	}
 
 	m.logger.Println(req)
-
-	data, err := json.Marshal(req)
+	data, err := json.Marshal(params)
 	utils.E(err)
 
 	done := make(chan Result)
@@ -230,10 +247,13 @@ func (m *Energy) Call(ctx context.Context, sessionID, method string, params inte
 	})
 	defer m.pending.Delete(req.ID)
 	//m.logger.Println("send-data:", string(data))
-	m.chromium.SendDevToolsMessage(string(data))
+	//fmt.Println("send-data:", string(data))
+	//m.chromium.SendDevToolsMessage(string(data))
+	dict := JSONParse(data)
+	m.chromium.ExecuteDevToolsMethod(int32(req.ID), req.Method, dict)
 	res := <-done
+	dict.Free()
 	return res.Msg, res.Err
-	//return nil, nil
 }
 
 // Event returns a channel that will emit browser devtools protocol events. Must be consumed or will block producer.
@@ -247,6 +267,21 @@ func (m *Energy) Pending() *sync.Map {
 }
 
 func (m *Energy) listen() {
+	if m.window.IsLCL() {
+		bw := m.window.AsLCLBrowserWindow().BrowserWindow()
+		bw.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
+			if m.onClose != nil {
+				m.onClose(m)
+			}
+			return false
+		})
+	} else {
+		m.chromium.SetOnClose(func(sender lcl.IObject, browser *cef.ICefBrowser, aAction *consts.TCefCloseBrowserAction) {
+			if m.onClose != nil {
+				m.onClose(m)
+			}
+		})
+	}
 	// 消息接收，energy中使用 CEF 回调函数接收消息
 	m.chromium.SetOnDevToolsRawMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, message uintptr, messageSize uint32) (handled bool) {
 		data := ReadData(message, messageSize)
@@ -303,4 +338,56 @@ func (m *Energy) listen() {
 		}
 		return true
 	})
+}
+
+func parseObject(object engJSON.JSONObject) *cef.ICefDictionaryValue {
+	obj := cef.DictionaryValueRef.New()
+	keys := object.Keys()
+	for _, key := range keys {
+		if key == "id" || key == "method" {
+			continue
+		}
+		val := object.GetByKey(key)
+		if val.IsInt() {
+			obj.SetInt(key, int32(val.Int()))
+		} else if val.IsBool() {
+			obj.SetBool(key, val.Bool())
+		} else if val.IsString() {
+			obj.SetString(key, val.String())
+		} else if val.IsFloat() {
+			obj.SetDouble(key, val.Float())
+		} else if val.IsObject() {
+			obj.SetDictionary(key, parseObject(val.JSONObject()))
+		} else if val.IsArray() {
+			obj.SetList(key, parseArray(val.JSONArray()))
+		}
+	}
+	return obj
+}
+
+func parseArray(array engJSON.JSONArray) *cef.ICefListValue {
+	arr := cef.ListValueRef.New()
+	for i := 0; i < array.Size(); i++ {
+		val := array.GetByIndex(i)
+		if val.IsInt() {
+			arr.SetInt(uint32(i), int32(val.Int()))
+		} else if val.IsBool() {
+			arr.SetBool(uint32(i), val.Bool())
+		} else if val.IsString() {
+			arr.SetString(uint32(i), val.String())
+		} else if val.IsFloat() {
+			arr.SetDouble(uint32(i), val.Float())
+		} else if val.IsObject() {
+			arr.SetDictionary(uint32(i), parseObject(val.JSONObject()))
+		} else if val.IsArray() {
+			arr.SetList(uint32(i), parseArray(val.JSONArray()))
+		}
+	}
+	return arr
+}
+
+func JSONParse(jsonByte []byte) (result *cef.ICefDictionaryValue) {
+	obj := engJSON.NewJSONObject(jsonByte)
+	result = parseObject(obj)
+	return
 }

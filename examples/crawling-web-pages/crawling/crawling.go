@@ -5,8 +5,6 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod"
-	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/types"
 	"strings"
 	"time"
 )
@@ -35,9 +33,10 @@ func WindowIds() (result []*Info) {
 }
 
 // Create 创建一个浏览器窗口
-func Create() int {
+func Create(url string) int {
 	windowId := time.Now().Nanosecond()
 	wp := cef.NewWindowProperty()
+	wp.Url = url // 创建时指定一个URL
 	// 创建一个 energy 扩展 rod 的窗口
 	energyWindow := rod.NewEnergyWindow(nil, wp, nil)
 	windows[windowId] = &WindowInfo{energy: energyWindow}
@@ -67,23 +66,19 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 	energy.SetOnLoadingProgressChange(func(energy *rod.Energy, progress float64) {
 		ipc.Emit("window-loading-progress", newWindowId, int(progress*100))
 	})
-	window := energy.BrowserWindow().AsLCLBrowserWindow().BrowserWindow()
-	window.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
+	energy.SetOnClose(func(energy *rod.Energy) {
 		ipc.Emit("close-window", newWindowId)
-		return false
 	})
 }
 
 // Show 显示窗口，在energy中不显示窗口无法使用rod功能
 func Show(windowId int, url string) {
 	if window, ok := windows[windowId]; ok {
-		window.energy.Chromium().SetDefaultURL(url) //在这里设置个url
-		window.url = url
-		// UI线程中创建浏览器
-		cef.RunOnMainThread(func() {
+		window.energy.CreateBrowser() // CreateBrowser 创建成功后，不会重复创建
+		if url != "" {
+			window.url = url
 			window.energy.Chromium().LoadUrl(url)
-			window.energy.CreateBrowser()
-		})
+		}
 	}
 }
 

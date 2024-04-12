@@ -65,8 +65,8 @@ func main() {
 				return crawling.WindowIds()
 			})
 			// 创建一个窗口
-			ipc.On("create", func() int {
-				return crawling.Create()
+			ipc.On("create", func(url string) int {
+				return crawling.Create(url)
 			})
 			// 显示这个窗口
 			ipc.On("show", func(windowId int, url string) {

@@ -44,7 +44,8 @@ $(function () {
         return row
     }
     $("#create").click(function () {
-        ipc.emit("create", [], function (windowId) {
+        // defaultURL 默认地址
+        ipc.emit("create", [defaultURL], function (windowId) {
             console.log("create windowId:", windowId)
             if (windowId > 0) {
                 $("#box").append(create(windowId, defaultURL))
