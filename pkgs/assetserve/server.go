@@ -37,13 +37,15 @@ import (
 var contentType = map[string]string{}
 
 // AssetsServerHeaderKeyName
-//  用于保证链接的安全的请求头(header)key名称
+//
+//	用于保证链接的安全的请求头(header)key名称
 var AssetsServerHeaderKeyName = "ASSETS_SERVER_KEY"
 
 // AssetsServerHeaderKeyValue
-//  用于保证链接的安全的key值
-//  这里简单的在请求所有资源时增加请求头的判断
-//  不为空时生效
+//
+//	用于保证链接的安全的key值
+//	这里简单的在请求所有资源时增加请求头的判断
+//	不为空时生效
 var AssetsServerHeaderKeyValue string
 
 type assetsHttpServer struct {
@@ -73,6 +75,7 @@ func init() {
 }
 
 // NewAssetsHttpServer
+//
 //	创建静态资源http服务
 func NewAssetsHttpServer() *assetsHttpServer {
 	return &assetsHttpServer{
@@ -92,7 +95,6 @@ func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) {
 		println("serverTLS Listen failed error:", err)
 		return
 	}
-	defer ln.Close()
 	var config = &tls.Config{}
 	config.NextProtos = append(config.NextProtos, "http/1.1")
 	configHasCert := len(config.Certificates) > 0 || config.GetCertificate != nil
@@ -136,6 +138,7 @@ func (m *assetsHttpServer) serveTLS(addr string, handler http.Handler) {
 	}
 	tlsListener := tls.NewListener(ln, config)
 	go func() {
+		defer ln.Close()
 		if err = server.Serve(tlsListener); err != nil {
 			println("tls server listen end", err.Error())
 		}
