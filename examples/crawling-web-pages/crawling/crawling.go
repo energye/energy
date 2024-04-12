@@ -16,6 +16,7 @@ type WindowInfo struct {
 	energy *rod.Energy
 	url    string
 }
+
 type Info struct {
 	WindowId int
 	URL      string
@@ -44,6 +45,7 @@ func Create(url string) int {
 	return windowId
 }
 
+// 弹出或创建窗口处理，主要一些事件
 func createHandle(newWindowId int, energy *rod.Energy) {
 	//注册处理弹出窗口
 	energy.SetOnBeforePopup(func(energyWindow *rod.Energy) {

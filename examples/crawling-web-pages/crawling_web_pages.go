@@ -59,38 +59,36 @@ func main() {
 	*/
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		if window.IsLCL() {
-			// 返回 ids
-			ipc.On("window-infos", func() []*crawling.Info {
-				return crawling.WindowIds()
-			})
-			// 创建一个窗口
-			ipc.On("create", func(url string) int {
-				return crawling.Create(url)
-			})
-			// 显示这个窗口
-			ipc.On("show", func(windowId int, url string) {
-				fmt.Println("open-url:", url)
-				crawling.Show(windowId, url)
-			})
-			// 关闭窗口
-			ipc.On("close-window", func(windowId int) bool {
-				fmt.Println("close-windowId:", windowId)
-				return crawling.Close(windowId)
-			})
-			// 主窗口的控制台消息
-			chromium := window.Chromium()
-			chromium.SetOnConsoleMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, level consts.TCefLogSeverity, message, source string, line int32) bool {
-				fmt.Println("javascript-console.log:", message)
-				return false
-			})
-			// 抓取
-			ipc.On("crawling", func(windowId int) {
-				// 以下所有操作都需要在线程里，否则UI线程被锁死
-				fmt.Println("crawling windowId:", windowId)
-				crawling.Crawling(windowId)
-			})
-		}
+		// 返回 ids
+		ipc.On("window-infos", func() []*crawling.Info {
+			return crawling.WindowIds()
+		})
+		// 创建一个窗口
+		ipc.On("create", func(url string) int {
+			return crawling.Create(url)
+		})
+		// 显示这个窗口
+		ipc.On("show", func(windowId int, url string) {
+			fmt.Println("open-url:", url)
+			crawling.Show(windowId, url)
+		})
+		// 关闭窗口
+		ipc.On("close-window", func(windowId int) bool {
+			fmt.Println("close-windowId:", windowId)
+			return crawling.Close(windowId)
+		})
+		// 主窗口的控制台消息
+		chromium := window.Chromium()
+		chromium.SetOnConsoleMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, level consts.TCefLogSeverity, message, source string, line int32) bool {
+			fmt.Println("javascript-console.log:", message)
+			return false
+		})
+		// 抓取
+		ipc.On("crawling", func(windowId int) {
+			// 以下所有操作都需要在线程里，否则UI线程被锁死
+			fmt.Println("crawling windowId:", windowId)
+			crawling.Crawling(windowId)
+		})
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务

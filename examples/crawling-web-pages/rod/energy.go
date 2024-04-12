@@ -3,7 +3,6 @@ package rod
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/cdp"
@@ -27,7 +26,9 @@ type Result struct {
 type OnBeforePopup func(energy *Energy)
 type OnClose func(energy *Energy)
 type OnLoadingProgressChange func(energy *Energy, progress float64)
+type OnDevToolsRawMessage func(data []byte)
 
+// Energy Devtools message processing structure for rod extension encapsulation
 type Energy struct {
 	rodBrowser      *Browser
 	chromium        cef.IChromium
@@ -39,6 +40,7 @@ type Energy struct {
 	onBeforePopup           OnBeforePopup
 	onLoadingProgressChange OnLoadingProgressChange
 	onClose                 OnClose
+	onDevToolsRawMessage    OnDevToolsRawMessage
 
 	loadSuccess      bool
 	enablePageCheck  bool
@@ -100,6 +102,7 @@ func ReadData(data uintptr, count uint32) []byte {
 	return result
 }
 
+// Chromium return current chromium instance
 func (m *Energy) Chromium() cef.IChromium {
 	return m.chromium
 }
@@ -117,6 +120,11 @@ func (m *Energy) SetOnLoadingProgressChange(fn OnLoadingProgressChange) {
 // SetOnClose window close callback
 func (m *Energy) SetOnClose(fn OnClose) {
 	m.onClose = fn
+}
+
+// SetOnDevToolsRawMessage Call SendDevToolsMessage or ExecuteDevToolsMethod. If successfully validated, the callback function will be executed and it will return the execution result
+func (m *Energy) SetOnDevToolsRawMessage(fn OnDevToolsRawMessage) {
+	m.onDevToolsRawMessage = fn
 }
 
 // TargetInfo Return current target info
@@ -170,9 +178,11 @@ func (m *Energy) Page() *Page {
 func (m *Energy) CreateBrowser() {
 	if !m.created {
 		m.created = true
+		// chromium
 		if m.chromiumBrowser != nil {
 			m.chromiumBrowser.CreateBrowser()
 		} else if m.window != nil {
+			// window
 			if m.window.IsLCL() {
 				cef.RunOnMainThread(func() {
 					m.window.Show()
@@ -212,6 +222,9 @@ func (m *Energy) SetPageCheckProcess(v int) {
 }
 
 // CheckWaitPageLoad Detect and wait for the current page to load until it is successfully loaded
+//
+//	Detect page loading, devtools methods will not be executed when the page is not fully loaded or is smaller than `pageCheckProcess`
+//	So we won't get the execution structure
 func (m *Energy) CheckWaitPageLoad() {
 	if !m.loadSuccess && m.enablePageCheck {
 		if m.timer == nil {
@@ -248,7 +261,7 @@ func (m *Energy) Call(ctx context.Context, sessionID, method string, params inte
 	defer m.pending.Delete(req.ID)
 	//m.logger.Println("send-data:", string(data))
 	//fmt.Println("send-data:", string(data))
-	//m.chromium.SendDevToolsMessage(string(data))
+	//m.chromium.SendDevToolsMessage(string(data))// Linux cannot be used
 	dict := JSONParse(data)
 	m.chromium.ExecuteDevToolsMethod(int32(req.ID), req.Method, dict)
 	res := <-done
@@ -285,6 +298,9 @@ func (m *Energy) listen() {
 	// 消息接收，energy中使用 CEF 回调函数接收消息
 	m.chromium.SetOnDevToolsRawMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, message uintptr, messageSize uint32) (handled bool) {
 		data := ReadData(message, messageSize)
+		if m.onDevToolsRawMessage != nil {
+			m.onDevToolsRawMessage(data)
+		}
 		var id struct {
 			ID int `json:"id"`
 		}
@@ -306,13 +322,13 @@ func (m *Energy) listen() {
 		return true
 	})
 	//TODO 还未实现补全
-	m.chromium.SetOnDevToolsEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, method string, params *cef.ICefValue) {
-		fmt.Println("OnDevToolsEvent", method, "params:", params.GetType())
-	})
+	//m.chromium.SetOnDevToolsEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, method string, params *cef.ICefValue) {
+	//	//fmt.Println("OnDevToolsEvent", method, "params:", params.GetType())
+	//})
 	//TODO 还未实现补全
-	m.chromium.SetOnDevToolsMethodRawResult(func(sender lcl.IObject, browser *cef.ICefBrowser, messageId int32, success bool, result uintptr, resultSize uint32) {
-		fmt.Println("OnDevToolsMethodRawResult messageId:", messageId, "success:", success, "result:", result, "resultSize:", resultSize)
-	})
+	//m.chromium.SetOnDevToolsMethodRawResult(func(sender lcl.IObject, browser *cef.ICefBrowser, messageId int32, success bool, result uintptr, resultSize uint32) {
+	//	//fmt.Println("OnDevToolsMethodRawResult messageId:", messageId, "success:", success, "result:", result, "resultSize:", resultSize)
+	//})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 		if m.window != nil {
 			m.window.SetTitle(title)
