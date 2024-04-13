@@ -18,7 +18,7 @@ import (
 // go build -ldflags "-s -w"
 func main() {
 	logger.SetEnable(true)
-	logger.SetLevel(logger.CefLog_Debug)
+	logger.SetLevel(logger.LDebug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	exception.SetOnException(func(message string) {

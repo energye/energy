@@ -20,7 +20,7 @@ var resources embed.FS
 
 func main() {
 	logger.SetEnable(true)
-	logger.SetLevel(logger.CefLog_Debug)
+	logger.SetLevel(logger.LDebug)
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	//创建应用
