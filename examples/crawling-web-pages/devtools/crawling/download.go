@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 )
 
+// 以下代码来自 rod download
+
 func Download(windowId int) {
 	if window, ok := windows[windowId]; ok {
 		page := window.energy.Page().MustWaitLoad()

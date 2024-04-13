@@ -16,7 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/examples/crawling-web-pages/crawling"
+	"github.com/energye/energy/v2/examples/crawling-web-pages/devtools/crawling"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
@@ -42,7 +42,7 @@ func main() {
 	/*
 		此示例仅限学习
 		这个并不是一个几行代码的示例
-		它是在 rod 基础上增加的一个扩展方式, 完全复用 rod 的功能(对于一些窗口状态管理, Chromium操作还是需要在energy API控制)
+		它是在 rod 基础上增加的一个扩展, 完全复用 rod 的功能(对于一些窗口状态管理, Chromium操作还是需要在energy API控制)
 		devtools-protocol 和 rod 的发送消息和处理上，完全不同
 			rod: WebSocket
 			energy: CEF API
@@ -111,7 +111,7 @@ func main() {
 			windowId := crawling.Create(url, typ)
 			return url, windowId
 		})
-
+		// 测试下载文件
 		ipc.On("download-file", func(typ int) (string, int) {
 			url := "http://localhost:22022/download.html"
 			windowId := crawling.Create(url, typ)
