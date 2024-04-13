@@ -38,11 +38,10 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, resources)
 	//创建应用
-	cefApp := cef.NewApplication()
-	// 下面2个配置项用来切换使用VF或LCL窗口组件
-	// VF = (ExternalMessagePump = false && MultiThreadedMessageLoop = false)
-	//cefApp.SetExternalMessagePump(false)
-	//cefApp.SetMultiThreadedMessageLoop(false)
+	app := cef.NewApplication()
+	// 强制使用VF窗口模式
+	//app.EnableVFWindow(true)
+
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.EnableHideCaption = true
@@ -58,20 +57,23 @@ func main() {
 	ipc.On("window-state", func(context context.IContext) {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		state := context.ArgumentList().GetIntByIndex(0)
-		if state == 0 {
-			fmt.Println("窗口最小化")
-			bw.Minimize()
-		} else if state == 1 {
-			fmt.Println("窗口最大化/还原")
-			bw.Maximize()
-		} else if state == 3 {
-			fmt.Println("全屏/退出全屏")
-			if bw.IsFullScreen() {
-				bw.ExitFullScreen()
-			} else {
-				bw.FullScreen()
+		// 当前 ipc 在非UI线程中执行，窗口控制需要在UI线程执行
+		cef.RunOnMainThread(func() {
+			if state == 0 {
+				fmt.Println("窗口最小化")
+				bw.Minimize()
+			} else if state == 1 {
+				fmt.Println("窗口最大化/还原")
+				bw.Maximize()
+			} else if state == 3 {
+				fmt.Println("全屏/退出全屏")
+				if bw.IsFullScreen() {
+					bw.ExitFullScreen()
+				} else {
+					bw.FullScreen()
+				}
 			}
-		}
+		})
 	})
 	//监听窗口关闭事件
 	ipc.On("window-close", func(context context.IContext) {
@@ -146,5 +148,5 @@ func main() {
 		go server.StartHttpServer()
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }
