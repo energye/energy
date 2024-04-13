@@ -15,7 +15,7 @@
 
 package cef
 
-// ShowTitle 显示标题栏
+// ShowTitle 显示标题栏-无法动态控制, 在 CreateTopLevelWindow 之前调用
 func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	m.WindowProperty().EnableHideCaption = false
 	m.WindowComponent().SetOnIsFrameless(func(window *ICefWindow, aResult *bool) {
@@ -23,7 +23,7 @@ func (m *ViewsFrameworkBrowserWindow) ShowTitle() {
 	})
 }
 
-// HideTitle 隐藏标题栏
+// HideTitle 隐藏标题栏-无法动态控制, 在 CreateTopLevelWindow 之前调用
 func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
 	m.WindowComponent().SetOnIsFrameless(func(window *ICefWindow, aResult *bool) {
@@ -31,14 +31,17 @@ func (m *ViewsFrameworkBrowserWindow) HideTitle() {
 	})
 }
 
+// SetDefaultInTaskBar 空函数
 func (m *ViewsFrameworkBrowserWindow) SetDefaultInTaskBar() {
 
 }
 
+// SetShowInTaskBar 空函数
 func (m *ViewsFrameworkBrowserWindow) SetShowInTaskBar() {
 
 }
 
+// SetNotInTaskBar 空函数
 func (m *ViewsFrameworkBrowserWindow) SetNotInTaskBar() {
 
 }

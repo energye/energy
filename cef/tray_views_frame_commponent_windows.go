@@ -66,10 +66,10 @@ func (m *ViewsFrameTray) registerMouseEvent() {
 	m.trayIcon.SetOnMouseUp(func(sender lcl.IObject, button types.TMouseButton, shift types.TShiftState, x, y int32) {
 		if isCreateTopLevelWindow {
 			isCreateTopLevelWindow = false
-			m.trayWindow.CreateTopLevelWindow()
 			m.trayWindow.HideTitle()
-			m.trayWindow.SetNotInTaskBar()
+			m.trayWindow.CreateTopLevelWindow()
 			m.trayWindow.WindowComponent().SetAlwaysOnTop(true)
+			m.trayWindow.SetNotInTaskBar()
 		}
 		display := m.trayWindow.WindowComponent().Display()
 		bounds := display.Bounds()
@@ -161,6 +161,7 @@ func (m *ViewsFrameTray) close() {
 	if m.isClosing {
 		return
 	}
+	m.isClosing = true
 	m.trayIcon.SetVisible(false)
 	m.Hide()
 	m.trayIcon.Free()
