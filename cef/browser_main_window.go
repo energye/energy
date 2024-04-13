@@ -71,7 +71,7 @@ type disableMainWindow struct {
 func (m *browserWindow) createFormAndRun() {
 	// LCL窗口
 	lcl.Application.Initialize()
-	lcl.Application.SetMainFormOnTaskBar(BrowserWindow.Config.MainFormOnTaskBar)
+	lcl.Application.SetMainFormOnTaskBar(true)
 	if m.Config.EnableMainWindow {
 		// 使用主窗口创建
 		lcl.Application.CreateForm(&enableMainWindow, true)
@@ -121,9 +121,6 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	if m.Chromium().Config().EnableDevTools() {
 		m.createAuxTools()
 		//m.GetAuxTools().SetDevTools(createDevtoolsWindow(&m.LCLBrowserWindow, m.chromiumBrowser)) // TODO 先移除
-	}
-	if !m.WindowProperty().MainFormOnTaskBar {
-		m.mainFormNotInTaskBar()
 	}
 }
 
