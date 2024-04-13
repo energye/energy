@@ -119,7 +119,7 @@ func Crawling(windowId int) {
 		for _, title := range titles {
 			a := title.MustElement("a")
 			href := a.MustAttribute("href")
-			fmt.Println(*href)
+			fmt.Println("gitee energy href:", *href)
 			if strings.Index(*href, "gitee.com/energye/energy") != -1 {
 				a.MustClick() //点击后 跳转页面
 				break
