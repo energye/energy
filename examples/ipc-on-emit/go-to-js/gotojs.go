@@ -9,6 +9,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/examples/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"strings"
 	"time"

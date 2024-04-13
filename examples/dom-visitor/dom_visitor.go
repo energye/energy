@@ -9,6 +9,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/consts"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	//_ "net/http/pprof"
 )

@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	demoCommon "github.com/energye/energy/v2/examples/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/pkgs/channel"
 )
@@ -13,8 +14,7 @@ func main() {
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	cefApp := cef.NewApplication()
 	// 强制切换到VF窗口组件, 需要同时设置以下两个配置项为 false
-	cefApp.SetExternalMessagePump(false)
-	cefApp.SetMultiThreadedMessageLoop(false)
+	cefApp.EnableVFWindow(true)
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsViewsFramework() {

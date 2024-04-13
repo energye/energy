@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/consts"
 	demoCommon "github.com/energye/energy/v2/examples/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
@@ -17,9 +18,11 @@ func main() {
 	//Create an application
 	app := cef.NewApplication()
 	//Local load resources
+
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		ResRootDir: "resources",
 		FS:         demoCommon.ResourcesFS(),
+		Home:       "screenshot.html",
 	}.Build())
 	cef.BrowserWindow.Config.Width = 600
 	cef.BrowserWindow.Config.Height = 400

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	_ "github.com/energye/energy/v2/examples/syso"
 )
 
 func main() {

@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/target"
 	ipcTypes "github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/consts"
+	_ "github.com/energye/energy/v2/examples/syso"
 )
 
 func main() {

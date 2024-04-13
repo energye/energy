@@ -1,9 +1,11 @@
 //go:build windows
+// +build windows
 
 package main
 
 import (
 	"github.com/energye/energy/v2/cef"
+	_ "github.com/energye/energy/v2/examples/syso"
 )
 
 func main() {

@@ -9,6 +9,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/target"
 	demoCommon "github.com/energye/energy/v2/examples/common"
 	"github.com/energye/energy/v2/examples/common/tray"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"time"

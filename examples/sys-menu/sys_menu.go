@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	demoCommon "github.com/energye/energy/v2/examples/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"

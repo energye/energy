@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"time"
 )
@@ -38,7 +39,7 @@ func main() {
 	cef.Run(cefApp)
 }
 
-//定时执行web js
+// 定时执行web js
 func timeTask() {
 	//这里模拟go中触发js监听的事件
 	var param0 = 0

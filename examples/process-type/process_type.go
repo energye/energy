@@ -4,6 +4,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 )
 
 func main() {

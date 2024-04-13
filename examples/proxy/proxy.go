@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/consts"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"strings"
 )

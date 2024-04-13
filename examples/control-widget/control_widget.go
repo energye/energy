@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/examples/control-widget/src"
+	_ "github.com/energye/energy/v2/examples/syso"
 )
 
 func main() {

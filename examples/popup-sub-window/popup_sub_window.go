@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/common"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/types"

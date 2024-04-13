@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 

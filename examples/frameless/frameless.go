@@ -18,6 +18,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/examples/common/tray"
+	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/rtl/version"
