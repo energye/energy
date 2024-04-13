@@ -145,6 +145,7 @@ func (m *MainWindowDemo) OnFormCreate(sender lcl.IObject) {
 					rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0) //发送关闭消息
 				})
 			})
+			chromiumBrowser.CreateBrowser()
 		}
 	})
 	// 以下是窗口关闭时 正确关闭浏览器的流程
