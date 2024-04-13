@@ -17,7 +17,7 @@ func Upload(windowId int) {
 		page := window.energy.Page().MustWaitLoad()
 		fmt.Println("TargetID:", page.TargetID)
 		wd, _ := os.Getwd()
-		wd = filepath.Join(wd, "examples", "crawling-web-pages", "crawling_web_pages.go")
+		wd = filepath.Join(wd, "examples", "crawling-web-pages", "devtools", "devtools.go")
 		page.MustElement(`input[name="upload"]`).MustSetFiles(wd)
 		page.MustElement(`input[name="submit"]`).MustClick()
 	}
