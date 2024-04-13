@@ -8,6 +8,7 @@ import (
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/pkgs/channel"
+	"github.com/energye/golcl/lcl"
 )
 
 func main() {
@@ -47,31 +48,38 @@ func trayDemo(browserWindow cef.IBrowserWindow) {
 	})
 	ipc.On("tray-show-balloon", func(context channel.IIPCContext) {
 		fmt.Println("tray-show-balloon")
-		vfTray.Notice("气泡标题", "气泡内容", 2000)
-		vfTray.Hide()
-		fmt.Println("tray-show-balloon end")
+		// 窗口控制在UI线程控制
+		cef.RunOnMainThread(func() {
+			vfTray.Notice("气泡标题", "气泡内容", 2000)
+			vfTray.Hide()
+			fmt.Println("tray-show-balloon end")
+		})
 	})
 	var vfBwVisible = true
 	ipc.On("tray-show-main-window", func(context channel.IIPCContext) {
-		if vfBwVisible {
-			vfBw.Hide()
-			vfBwVisible = false
-		} else {
-			vfBw.Show()
-			vfBwVisible = true
-		}
-
-		vfTray.Hide()
+		// 窗口控制在UI线程控制
+		cef.RunOnMainThread(func() {
+			if vfBwVisible {
+				vfBw.Hide()
+				vfBwVisible = false
+			} else {
+				vfBw.Show()
+				vfBwVisible = true
+			}
+			vfTray.Hide()
+		})
 	})
 	ipc.On("tray-close-main-window", func(context channel.IIPCContext) {
-		browserWindow.CloseBrowserWindow()
+		// 窗口控制在UI线程控制
+		cef.RunOnMainThread(func() {
+			browserWindow.CloseBrowserWindow()
+		})
 	})
 	ipc.On("tray-show-message-box", func(context channel.IIPCContext) {
-		//在VF窗口组件中无法使用LCL组件
-		//cef.QueueAsyncCall(func(id int) {
-		//	lcl.ShowMessage("tray-show-message-box 提示消息")
-		//})
-		vfTray.Hide()
+		cef.RunOnMainThread(func() {
+			vfTray.Hide()
+			lcl.ShowMessage("tray-show-message-box 提示消息")
+		})
 	})
 	//托盘 end
 }
