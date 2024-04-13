@@ -12,6 +12,7 @@ import (
 	engJSON "github.com/energye/energy/v2/pkgs/json"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"path/filepath"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -27,6 +28,7 @@ type OnBeforePopup func(energy *Energy)
 type OnClose func(energy *Energy)
 type OnLoadingProgressChange func(energy *Energy, progress float64)
 type OnDevToolsRawMessage func(data []byte)
+type OnBeforeDownload func(suggestedName string) (downloadPath string, showDialog bool)
 
 // Energy Devtools message processing structure for rod extension encapsulation
 type Energy struct {
@@ -37,10 +39,13 @@ type Energy struct {
 	targetId        proto.TargetTargetID
 	created         bool
 
+	downloadPath string
+
 	onBeforePopup           OnBeforePopup
 	onLoadingProgressChange OnLoadingProgressChange
 	onClose                 OnClose
 	onDevToolsRawMessage    OnDevToolsRawMessage
+	onBeforeDownload        OnBeforeDownload
 
 	loadSuccess     bool
 	timer           *time.Timer
@@ -167,6 +172,15 @@ func (m *Energy) Page() *Page {
 	}
 	return m.page
 }
+func (m *Energy) WaitDownload(downloadPath string) func() (info *proto.PageDownloadWillBegin) {
+	m.downloadPath = downloadPath
+	return m.RodBrowser().WaitDownload(m.downloadPath)
+}
+
+// EachEvent is similar to [Page.EachEvent], but catches events of the entire browser.
+func (m *Energy) EachEvent(callbacks ...interface{}) (wait func()) {
+	return m.RodBrowser().EachEvent(callbacks...)
+}
 
 // CreateBrowser Call this function to create a browser after creating chrome or window
 func (m *Energy) CreateBrowser() {
@@ -201,7 +215,6 @@ func (m *Energy) PageLoadProcess() float64 {
 
 // Call a method and wait for its response.
 func (m *Energy) Call(ctx context.Context, sessionID, method string, params interface{}) ([]byte, error) {
-	//m.CheckWaitPageLoad()
 	req := &cdp.Request{
 		ID:        int(atomic.AddUint64(&m.count, 1)),
 		SessionID: sessionID,
@@ -214,18 +227,28 @@ func (m *Energy) Call(ctx context.Context, sessionID, method string, params inte
 	utils.E(err)
 
 	done := make(chan Result)
+	once := sync.Once{}
 	m.pending.Store(req.ID, func(res Result) {
-		done <- res
+		once.Do(func() {
+			select {
+			case <-ctx.Done():
+			case done <- res:
+			}
+		})
 	})
 	defer m.pending.Delete(req.ID)
 	//m.logger.Println("send-data:", string(data))
-	//fmt.Println("send-data:", string(data))
+	//fmt.Println("send-data:", req.ID, req.Method, string(data))
 	//m.chromium.SendDevToolsMessage(string(data))// Linux cannot be used
 	dict := JSONParse(data)
 	m.chromium.ExecuteDevToolsMethod(int32(req.ID), req.Method, dict)
-	res := <-done
-	dict.Free()
-	return res.Msg, res.Err
+	defer dict.Free()
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	case res := <-done:
+		return res.Msg, res.Err
+	}
 }
 
 // Event returns a channel that will emit browser devtools protocol events. Must be consumed or will block producer.
@@ -256,7 +279,9 @@ func (m *Energy) listen() {
 	}
 	// 消息接收，energy中使用 CEF 回调函数接收消息
 	m.chromium.SetOnDevToolsRawMessage(func(sender lcl.IObject, browser *cef.ICefBrowser, message uintptr, messageSize uint32) (handled bool) {
+		handled = true
 		data := ReadData(message, messageSize)
+		//m.logger.Println("OnDevToolsRawMessage data:", string(data))
 		if m.onDevToolsRawMessage != nil {
 			m.onDevToolsRawMessage(data)
 		}
@@ -265,6 +290,16 @@ func (m *Energy) listen() {
 		}
 		err := json.Unmarshal(data, &id)
 		utils.E(err)
+
+		if id.ID == 0 {
+			var evt cdp.Event
+			err := json.Unmarshal(data, &evt)
+			utils.E(err)
+			m.logger.Println(&evt)
+			m.event <- &evt
+			return false
+		}
+
 		var res cdp.Response
 		err = json.Unmarshal(data, &res)
 		utils.E(err)
@@ -278,16 +313,8 @@ func (m *Energy) listen() {
 		} else {
 			val.(func(Result))(Result{nil, res.Error})
 		}
-		return true
+		return
 	})
-	//TODO 还未实现补全
-	//m.chromium.SetOnDevToolsEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, method string, params *cef.ICefValue) {
-	//	//fmt.Println("OnDevToolsEvent", method, "params:", params.GetType())
-	//})
-	//TODO 还未实现补全
-	//m.chromium.SetOnDevToolsMethodRawResult(func(sender lcl.IObject, browser *cef.ICefBrowser, messageId int32, success bool, result uintptr, resultSize uint32) {
-	//	//fmt.Println("OnDevToolsMethodRawResult messageId:", messageId, "success:", success, "result:", result, "resultSize:", resultSize)
-	//})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 		if m.window != nil {
 			m.window.SetTitle(title)
@@ -313,10 +340,23 @@ func (m *Energy) listen() {
 		}
 		return true
 	})
+	m.chromium.SetOnBeforeDownload(func(sender lcl.IObject, browser *cef.ICefBrowser, downloadItem *cef.ICefDownloadItem, suggestedName string, callback *cef.ICefBeforeDownloadCallback) {
+		var (
+			downloadPath = filepath.Join(m.downloadPath, suggestedName)
+			showDialog   = false
+		)
+		if m.onBeforeDownload != nil {
+			downloadPath, showDialog = m.onBeforeDownload(suggestedName)
+		}
+		callback.Cont(downloadPath, showDialog)
+	})
 }
 
 func parseObject(object engJSON.JSONObject) *cef.ICefDictionaryValue {
 	obj := cef.DictionaryValueRef.New()
+	if object == nil {
+		return obj
+	}
 	keys := object.Keys()
 	for _, key := range keys {
 		if key == "id" || key == "method" {
@@ -342,6 +382,9 @@ func parseObject(object engJSON.JSONObject) *cef.ICefDictionaryValue {
 
 func parseArray(array engJSON.JSONArray) *cef.ICefListValue {
 	arr := cef.ListValueRef.New()
+	if array == nil {
+		return arr
+	}
 	for i := 0; i < array.Size(); i++ {
 		val := array.GetByIndex(i)
 		if val.IsInt() {

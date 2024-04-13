@@ -10,12 +10,10 @@ import (
 func Download(windowId int) {
 	if window, ok := windows[windowId]; ok {
 		page := window.energy.Page().MustWaitLoad()
-		browser := page.Browser()
 		fmt.Println("TargetID:", page.TargetID)
 		wd, _ := os.Getwd()
-		page.MustElement(`div[class="clone-btn px-4 flex cursor-pointer items-center"]`).MustClick()
-		wait := page.Browser().WaitDownload(wd)
-		go browser.EachEvent(func(e *proto.PageDownloadProgress) bool {
+		wait := window.energy.WaitDownload(wd)
+		go window.energy.EachEvent(func(e *proto.PageDownloadProgress) bool {
 			completed := "(unknown)"
 			if e.TotalBytes != 0 {
 				completed = fmt.Sprintf("%0.2f%%", e.ReceivedBytes/e.TotalBytes*100.0)
@@ -23,8 +21,8 @@ func Download(windowId int) {
 			fmt.Printf("state: %s, completed: %s\n", e.State, completed)
 			return e.State == proto.PageDownloadProgressStateCompleted
 		})()
-		page.MustElementR("a", "Download ZIP").MustClick()
+		page.MustElement(`#win64`).MustClick()
 		res := wait()
-		fmt.Printf("wrote %s", filepath.Join(wd, res.GUID))
+		fmt.Printf("wrote %s\n", filepath.Join(wd, res.GUID))
 	}
 }

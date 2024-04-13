@@ -13,6 +13,7 @@ var flagDevToolWsURL = flag.String("devtools-ws-url", "", "DevTools WebSocket UR
 // instance using a remote WebSocket URL.
 func main() {
 	flag.Parse()
+	// chrome.exe --headless --remote-debugging-port=8777
 	*flagDevToolWsURL = "ws://127.0.0.1:9222/devtools/browser/41c8af06-f898-4e32-bb5c-a65506066a3f"
 	if *flagDevToolWsURL == "" {
 		log.Fatal("must specify -devtools-ws-url")
@@ -21,7 +22,6 @@ func main() {
 	browse = browse.ControlURL(*flagDevToolWsURL)
 	browse = browse.MustConnect()
 	page := browse.MustPage("https://www.baidu.com")
-	browse.Pages()
 	page.MustElement("#wrapper").MustWaitVisible()
 	log.Println("Body of duckduckgo.com starts with:")
 	log.Println(page.MustHTML()[0:100])

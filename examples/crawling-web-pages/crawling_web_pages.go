@@ -113,7 +113,7 @@ func main() {
 		})
 
 		ipc.On("download-file", func(typ int) (string, int) {
-			url := "https://gitcode.com/energye/energy"
+			url := "http://localhost:22022/download.html"
 			windowId := crawling.Create(url, typ)
 			return url, windowId
 		})
