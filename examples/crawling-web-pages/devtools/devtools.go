@@ -37,7 +37,7 @@ func main() {
 	cef.BrowserWindow.Config.EnableCenterWindow = false
 	cef.BrowserWindow.Config.EnableMaximize = false
 	cef.BrowserWindow.Config.EnableResize = false
-	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	cef.BrowserWindow.Config.Url = "http://localhost:22023/index.html"
 
 	/*
 		此示例仅限学习
@@ -113,7 +113,7 @@ func main() {
 		})
 		// 测试下载文件
 		ipc.On("download-file", func(typ int) (string, int) {
-			url := "http://localhost:22022/download.html"
+			url := "http://localhost:22023/download.html"
 			windowId := crawling.Create(url, typ)
 			return url, windowId
 		})
@@ -125,7 +125,7 @@ func main() {
 		fmt.Println("主进程启动 创建一个内置http服务")
 		//通过内置http服务加载资源
 		server := assetserve.NewAssetsHttpServer()
-		server.PORT = 22022               //服务端口号
+		server.PORT = 22023               //服务端口号
 		server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
 		server.Assets = resources
 		go server.StartHttpServer()

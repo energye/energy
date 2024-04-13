@@ -40,7 +40,7 @@ func main() {
 	cef.GlobalInit(nil, resources)
 	//创建应用
 	app := cef.NewApplication()
-	// 强制使用VF窗口模式
+	// 强制使用VF窗口模式, VF窗口是chromium runtime创建的
 	//app.EnableVFWindow(true)
 
 	//指定一个URL地址，或本地html文件目录
