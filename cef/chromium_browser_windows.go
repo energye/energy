@@ -63,7 +63,7 @@ func (m *TCEFChromiumBrowser) setDraggableRegions() {
 
 // 注册windows下CompMsg事件
 func (m *TCEFChromiumBrowser) registerWindowsCompMsgEvent() {
-	if m.window != nil {
+	if m.window != nil && m.window.IsLCL() {
 		window := m.window.AsLCLBrowserWindow().BrowserWindow()
 		var bwEvent = BrowserWindow.browserEvent
 		m.Chromium().SetOnRenderCompMsg(func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
@@ -88,7 +88,8 @@ func (m *TCEFChromiumBrowser) registerWindowsCompMsgEvent() {
 
 		if window.WindowProperty().EnableWebkitAppRegion && window.WindowProperty().EnableWebkitAppRegionDClk {
 			window.windowResize = func(sender lcl.IObject) bool {
-				if window.WindowState() == types.WsMaximized && (window.WindowProperty().EnableHideCaption || window.BorderStyle() == types.BsNone || window.BorderStyle() == types.BsSingle) {
+				if window.WindowState() == types.WsMaximized && (window.WindowProperty().EnableHideCaption ||
+					window.BorderStyle() == types.BsNone || window.BorderStyle() == types.BsSingle) {
 					var monitor = window.Monitor().WorkareaRect()
 					window.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
 					window.SetWindowState(types.WsMaximized)

@@ -95,6 +95,11 @@ func (m *TCEFApplication) initDefaultSettings() {
 	// 以下条件判断根据不同平台, 启动不同的窗口组件
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
+	m.DefaultMessageLoop()
+}
+
+// DefaultMessageLoop 默认消息轮询, 在创建 CEF Application 时确定使用什么方式
+func (m *TCEFApplication) DefaultMessageLoop() {
 	if common.IsLinux() { // Linux => (VF)View Framework 窗口
 		if m.IsUIGtk3() {
 			// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
@@ -196,6 +201,16 @@ func (m *TCEFApplication) IsMessageLoop() bool {
 
 func (m *TCEFApplication) SetMultiThreadedMessageLoop(value bool) {
 	imports.Proc(def.CEFAppConfig_SetMultiThreadedMessageLoop).Call(api.PascalBool(value))
+}
+
+// EnableVFWindow 启用VF(ViewsFramework)窗口, Linux默认该模式，非Linux需要强制开启才可使用
+func (m *TCEFApplication) EnableVFWindow(e bool) {
+	if e {
+		m.SetExternalMessagePump(false)
+		m.SetMultiThreadedMessageLoop(false)
+	} else {
+		m.DefaultMessageLoop()
+	}
 }
 
 func (m *TCEFApplication) ExternalMessagePump() bool {

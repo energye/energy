@@ -119,9 +119,17 @@ func RunOnMainThread(fn func()) {
 	if api.DMainThreadId() == api.DCurrentThreadId() {
 		fn()
 	} else {
-		QueueAsyncCall(func(id int) {
-			fn()
-		})
+		// 当前窗口模式是VF时，使用 lcl.ThreadSync, 在运行应用时初始化Application
+		if application.IsMessageLoop() {
+			lcl.ThreadSync(func() {
+				fn()
+			})
+		} else {
+			// 当前窗口模式LCL时，使用 QueueAsyncCall
+			QueueAsyncCall(func(id int) {
+				fn()
+			})
+		}
 	}
 }
 

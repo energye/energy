@@ -86,6 +86,9 @@ func Run(app *TCEFApplication) {
 			//  放在 StartMainProcess 之前执行又会有警告。先加在这里。
 			//  初始化组件库，主要为了在Gtk3时能使用部分LCL组件库的功能。
 			api.CustomWidgetSetInitialization()
+		}
+		// 窗口消息方式是true(VF)时初始化一次Application，以使用一些LCL功能, 例如UI线程执行函数
+		if application.IsMessageLoop() {
 			lcl.Application.Initialize()
 		}
 		// 启动主进程
