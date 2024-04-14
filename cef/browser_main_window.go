@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/ipc/target"
 	. "github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 )
@@ -85,10 +86,20 @@ func (m *browserWindow) createFormAndRun() {
 
 // OnFormCreate disableMainWindow
 func (m *disableMainWindow) OnFormCreate(sender lcl.IObject) {
-	// 禁用主窗口后需要创建一个新的窗口来代替主窗口显示
+	// 禁用主窗口：需要创建一个新的窗口来代替主窗口显示
 	lcl.Application.CreateForm(&enableMainWindow, true)
-	// 显示窗口，此时的主窗口是默认显示的第一个窗口, 如果将该主窗口关闭，在获取主窗口函数将返回无效的窗口
-	BrowserWindow.MainWindow().Show()
+	// 禁用主窗口：将其设置为子窗口类型
+	enableMainWindow.SetWindowType(WT_POPUP_SUB_BROWSER)
+	// 显示窗口，此时的主窗口是默认显示的第一个窗口
+	// 如果将该主窗口关闭，在获取主窗口函数将返回无效的窗口
+	if common.IsDarwin() {
+		// MacOS需要在UI异步线程中显示它
+		QueueAsyncCall(func(id int) {
+			BrowserWindow.MainWindow().Show()
+		})
+	} else {
+		BrowserWindow.MainWindow().Show()
+	}
 }
 
 // OnFormCreate LCL窗口组件窗口创建回调

@@ -529,7 +529,7 @@ func (m *LCLBrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
 
-// SetWindowType 设置窗口类型
+// SetWindowType 设置窗口类型，一搬情况不建议修改，除非你自己定义维护的窗口
 func (m *LCLBrowserWindow) SetWindowType(windowType consts.WINDOW_TYPE) {
 	m.windowType = windowType
 }
@@ -924,6 +924,7 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 	}
 	RunOnMainThread(func() {
 		if IsDarwin() {
+			logger.Debug("CloseBrowserWindow WindowType:", m.WindowType())
 			//main window close
 			if m.WindowType() == consts.WT_MAIN_BROWSER {
 				m.Close()
@@ -947,21 +948,22 @@ func (m *LCLBrowserWindow) setClosing(v bool) {
 	m.Chromium().setClosing(v)
 }
 
-// TryCloseWindowAndTerminate
+// TryCloseWindow
 // 尝试关闭窗口并退出应用,
 // EnableMainWindow = false
 //
 //	如果禁用主窗口, 存在多窗口时只在最后一个窗口关闭时才退出整个应用进程
-func (m *LCLBrowserWindow) TryCloseWindowAndTerminate() {
+func (m *LCLBrowserWindow) TryCloseWindow() {
 	if !BrowserWindow.Config.EnableMainWindow {
 		count := len(BrowserWindow.GetWindowInfos())
+		logger.Debug("TryCloseWindow WindowCount:", count)
 		if count < 1 {
 			if len(m.tray) > 0 {
 				for _, tray := range m.tray {
 					tray.close()
 				}
 			}
-			// 窗口数量已经是0个了，结束应用
+			// 窗口数量已经是0个了，结束应用，如果处理onclose时需要在窗口加入该事件处理
 			lcl.Application.Terminate()
 		}
 	}
@@ -984,7 +986,8 @@ func (m *LCLBrowserWindow) close(sender lcl.IObject, action *types.TCloseAction)
 		} else if IsWindows() { // windows 子窗口
 			*action = types.CaHide
 		}
-		m.TryCloseWindowAndTerminate()
+		// 禁用主窗口时，在这种模式下没有主窗口，尝试关闭最后一个窗口后结束进程
+		m.TryCloseWindow()
 	}
 }
 

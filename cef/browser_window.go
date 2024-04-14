@@ -15,7 +15,9 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/energy/v2/logger"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -246,7 +248,9 @@ func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty,
 func RunOnMainThread(fn func()) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
-	if api.DMainThreadId() == api.DCurrentThreadId() {
+	logger.Debug("MainThreadId:", api.DMainThreadId(), "CurrentThreadId:", api.DCurrentThreadId(), "IsMessageLoop:", application.IsMessageLoop())
+	// MacOS 虽然当前线程是主线程, 但还是需要在UI异步线程中才可正确执行
+	if !common.IsDarwin() && api.DMainThreadId() == api.DCurrentThreadId() {
 		fn()
 	} else {
 		// 当前窗口模式是VF时，使用 lcl.ThreadSync, 在运行应用时初始化Application

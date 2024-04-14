@@ -25,7 +25,7 @@ const (
 	LDebug
 )
 
-const logFileName = "energy.log"
+var logFileName = "energy.log"
 
 type Logger struct {
 	logFile *os.File
@@ -51,6 +51,10 @@ func loggerInit() {
 	logger.logFile = logFile
 	logger.level = LError
 	logger.logger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate|log.Ltime)
+}
+
+func SetLogFile(filePath string) {
+	logFileName = filePath
 }
 
 func SetLevel(l Level) {
