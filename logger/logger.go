@@ -27,6 +27,7 @@ const (
 
 var logFileName = "energy.log"
 
+// Logger logger conifg
 type Logger struct {
 	logFile *os.File
 	logger  *log.Logger
@@ -53,14 +54,17 @@ func loggerInit() {
 	logger.logger = log.New(io.MultiWriter(os.Stdout, logFile), "", log.Ldate|log.Ltime)
 }
 
+// SetLogFile set log file full path
 func SetLogFile(filePath string) {
 	logFileName = filePath
 }
 
+// SetLevel set log level
 func SetLevel(l Level) {
 	logger.level = l
 }
 
+// SetEnable enable log, default true
 func SetEnable(enable bool) {
 	logger.enable = enable
 	if enable {
@@ -68,10 +72,12 @@ func SetEnable(enable bool) {
 	}
 }
 
+// Enable return log Enable
 func Enable() bool {
 	return logger.enable
 }
 
+// Error level
 func Error(v ...interface{}) {
 	if logger.enable && logger.level >= LError {
 		logger.logger.SetPrefix("[ENERGY-Error] ")
@@ -79,6 +85,7 @@ func Error(v ...interface{}) {
 	}
 }
 
+// Errorf level fmt
 func Errorf(format string, v ...interface{}) {
 	if logger.enable && logger.level >= LError {
 		logger.logger.SetPrefix("[ENERGY-Error] ")
@@ -86,6 +93,7 @@ func Errorf(format string, v ...interface{}) {
 	}
 }
 
+// Info level
 func Info(v ...interface{}) {
 	if logger.enable && logger.level >= LInfo {
 		logger.logger.SetPrefix("[ENERGY-Info] ")
@@ -93,6 +101,7 @@ func Info(v ...interface{}) {
 	}
 }
 
+// Infof level fmt
 func Infof(format string, v ...interface{}) {
 	if logger.enable && logger.level >= LInfo {
 		logger.logger.SetPrefix("[ENERGY-Info] ")
@@ -100,6 +109,7 @@ func Infof(format string, v ...interface{}) {
 	}
 }
 
+// Debug level
 func Debug(v ...interface{}) {
 	if logger.enable && logger.level >= LDebug {
 		logger.logger.SetPrefix("[ENERGY-Debug] ")
@@ -107,6 +117,7 @@ func Debug(v ...interface{}) {
 	}
 }
 
+// Debugf level fmt
 func Debugf(format string, v ...interface{}) {
 	if logger.enable && logger.level >= LDebug {
 		logger.logger.SetPrefix("[ENERGY-Debug] ")
@@ -114,6 +125,7 @@ func Debugf(format string, v ...interface{}) {
 	}
 }
 
+// Fatal level
 func Fatal(v ...interface{}) {
 	if logger.enable {
 		logger.logger.SetPrefix("[ENERGY-Fatal] ")
@@ -121,6 +133,7 @@ func Fatal(v ...interface{}) {
 	}
 }
 
+// Fatalf level fmt
 func Fatalf(format string, v ...interface{}) {
 	if logger.enable {
 		logger.logger.SetPrefix("[ENERGY-Fatal] ")
