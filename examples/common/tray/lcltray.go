@@ -127,12 +127,15 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 	})
 	//托盘 end
 	tray.Show()
-
-	// 图标切换
+	// 图标切换 定时器
 	var trayICON bool
 	timer := lcl.NewTimer(window)
 	timer.SetInterval(1000)
 	timer.SetOnTimer(func(sender lcl.IObject) {
+		if window.IsClosing() {
+			// 如果窗口关闭或关闭中
+			return
+		}
 		if trayICON {
 			newTray.SetIconFS("resources/icon.png")
 		} else {
@@ -142,9 +145,9 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 		fmt.Println("timer", trayICON)
 	})
 	timer.SetEnabled(true)
+	// 窗口关闭，关闭定时器
 	window.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) bool {
 		timer.SetEnabled(false)
-		timer.Free()
 		return false
 	})
 }
