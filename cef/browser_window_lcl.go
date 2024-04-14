@@ -29,7 +29,6 @@ import (
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"time"
 	"unsafe"
@@ -108,29 +107,6 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 	window.defaultWindowEvent()
 	window.SetProperty()
 	return window
-}
-
-// RunOnMainThread
-//
-//	在UI主线程中运行
-func RunOnMainThread(fn func()) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if api.DMainThreadId() == api.DCurrentThreadId() {
-		fn()
-	} else {
-		// 当前窗口模式是VF时，使用 lcl.ThreadSync, 在运行应用时初始化Application
-		if application.IsMessageLoop() {
-			lcl.ThreadSync(func() {
-				fn()
-			})
-		} else {
-			// 当前窗口模式LCL时，使用 QueueAsyncCall
-			QueueAsyncCall(func(id int) {
-				fn()
-			})
-		}
-	}
 }
 
 // Target

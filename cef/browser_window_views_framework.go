@@ -21,10 +21,8 @@ import (
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"os"
-	"runtime"
 )
 
 // ViewsFrameworkBrowserWindow 基于CEF views framework 窗口组件
@@ -672,15 +670,7 @@ func (m *ViewsFrameworkBrowserWindow) Screen() IScreen {
 //
 //	在主线程中运行
 func (m *ViewsFrameworkBrowserWindow) RunOnMainThread(fn func()) {
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-	if api.DMainThreadId() == api.DCurrentThreadId() {
-		fn()
-	} else {
-		lcl.ThreadSync(func() {
-			fn()
-		})
-	}
+	RunOnMainThread(fn)
 }
 
 func (m *ViewsFrameworkBrowserWindow) SetOnCloseQuery(fn WindowComponentOnCanCloseEx) {

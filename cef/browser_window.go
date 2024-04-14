@@ -18,7 +18,9 @@ import (
 	"github.com/energye/energy/v2/consts"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
+	"runtime"
 )
 
 const (
@@ -236,4 +238,27 @@ func NewBrowserWindow(config *TCefChromiumConfig, windowProperty WindowProperty,
 		return NewViewsFrameworkBrowserWindow(config, windowProperty, owner)
 	}
 	return nil
+}
+
+// RunOnMainThread
+//
+//	在UI主线程中运行
+func RunOnMainThread(fn func()) {
+	runtime.LockOSThread()
+	defer runtime.UnlockOSThread()
+	if api.DMainThreadId() == api.DCurrentThreadId() {
+		fn()
+	} else {
+		// 当前窗口模式是VF时，使用 lcl.ThreadSync, 在运行应用时初始化Application
+		if application.IsMessageLoop() {
+			lcl.ThreadSync(func() {
+				fn()
+			})
+		} else {
+			// 当前窗口模式LCL时，使用 QueueAsyncCall
+			QueueAsyncCall(func(id int) {
+				fn()
+			})
+		}
+	}
 }
