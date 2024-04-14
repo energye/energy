@@ -34,6 +34,8 @@ type TCEFApplication struct {
 	onWebKitInitialized      GlobalCEFAppEventOnWebKitInitialized
 	onRegCustomSchemes       GlobalCEFAppEventOnRegCustomSchemes
 	onRenderLoadStart        GlobalCEFAppEventOnRenderLoadStart
+	externalMessagePump      bool
+	multiThreadedMessageLoop bool
 }
 
 // NewApplication 创建CEF应用
@@ -54,7 +56,7 @@ func NewApplication(disableRegisDefaultEvent ...bool) *TCEFApplication {
 
 // SetApplication
 //
-//  设置全局 Application
+//	设置全局 Application
 func SetApplication(app *TCEFApplication) {
 	if application == nil {
 		application = app

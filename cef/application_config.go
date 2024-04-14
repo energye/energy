@@ -191,15 +191,16 @@ func (m *TCEFApplication) MultiThreadedMessageLoop() bool {
 
 // IsMessageLoop
 //
-//	消息轮询方式使用不同的窗口组件
-//	return true: 使用VF(views framework)窗口组件, false: 使用LCL窗口组件
+//	不同的窗口组件使用不同的消息轮询
+//	return
+//		true : VF(views framework)窗口组件
+//		false: LCL窗口组件
 func (m *TCEFApplication) IsMessageLoop() bool {
-	emp := m.ExternalMessagePump()
-	mtml := m.MultiThreadedMessageLoop()
-	return !emp && !mtml
+	return !m.externalMessagePump && !m.multiThreadedMessageLoop
 }
 
 func (m *TCEFApplication) SetMultiThreadedMessageLoop(value bool) {
+	m.multiThreadedMessageLoop = value
 	imports.Proc(def.CEFAppConfig_SetMultiThreadedMessageLoop).Call(api.PascalBool(value))
 }
 
@@ -223,6 +224,7 @@ func (m *TCEFApplication) ExternalMessagePump() bool {
 
 func (m *TCEFApplication) SetExternalMessagePump(value bool) {
 	if !m.IsSpecVer49() {
+		m.externalMessagePump = value
 		imports.Proc(def.CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
 	}
 }
