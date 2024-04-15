@@ -24,6 +24,8 @@ func main() {
 	// 使用测试网址 www.antutu.com/html5 在任务管理器中观察 CPU 和 GPU 使用情况
 	app.SetEnableGPU(true)
 	cef.BrowserWindow.Config.Url = "https://www.antutu.com/html5"
+	//cef.BrowserWindow.Config.Url = "https://threejs.org" // WebGL
+	//cef.BrowserWindow.Config.Url = "https://ice-gl.gitee.io/icegl-three-vue-tres"
 	cef.BrowserWindow.Config.Title = "ENERGY GPU Test"
 	//运行应用
 	cef.Run(app)
