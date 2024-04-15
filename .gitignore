@@ -76,9 +76,7 @@ plugins
 
 # Castalia statistics file (since XE7 Castalia is distributed with Delphi)
 *.stat
-/.vscode
-/UILibSources/liblcl/lib
-/UILibSources/liblcl/backup
+.vscode
 /bin/styles
 /bin/win64
 /bin/win32
@@ -88,27 +86,10 @@ plugins
 *.vsf
 *.ini
 *.td
-/lcl/dylib/testdll
 *.bak
-/samples/ExtPlugins
-/samples/cef3browser
-/samples/ipscanner
-/samples/libcefext_x64_test.rar
-/samples/Windows/miniblinkWebview/LocalStorage
-/samples/Windows/miniblinkWebview/cookies.dat
-/samples/Windows/wkeWebBrowser/wke.dll.mblink
-/samples/opengl
+
 /bin
-/samples/markdownEd/icons/
-/samples/cef2goTest
-/samples/eventsTest
 *.res
-/samples/testbindevents
-/samples/Windows/memloaddll/defaultRes_windows_386.syso
-/samples/Windows/memloaddll/defaultRes_windows_amd64.syso
-/samples/directUITest/
-/samples/cgoTest/
-/samples/controls
 
 # other
 .idea
@@ -122,7 +103,7 @@ rsrc
 *.rar
 bytes.txt
 *.icns
-icons.iconset/
+icons.iconset
 
 energy-*
 
