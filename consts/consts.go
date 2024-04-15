@@ -30,7 +30,6 @@ var (
 )
 
 const (
-	Empty           = ""
 	ENERGY_HOME_KEY = "ENERGY_HOME"
 	MemoryNetwork   = "unix"
 )
