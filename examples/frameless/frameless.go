@@ -16,7 +16,6 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/examples/common/tray"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
@@ -40,7 +39,7 @@ func main() {
 	cef.GlobalInit(nil, resources)
 	//创建应用
 	app := cef.NewApplication()
-	// 强制使用VF窗口模式, VF窗口是chromium runtime创建的
+	// 强制使用VF窗口模式, VF窗口是ViewsFramework"创建的
 	//app.EnableVFWindow(true)
 
 	//指定一个URL地址，或本地html文件目录
@@ -88,7 +87,8 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		//window.AsLCLBrowserWindow().FramelessForLine()
-		if window.IsLCL() && common.IsWindows() {
+		enableBrowserTitleBar := false
+		if window.IsLCL() && enableBrowserTitleBar /*&& common.IsWindows()*/ {
 			// 边框圆角, 仅LCL
 			//window.AsLCLBrowserWindow().SetRoundRectRgn(10) // WindowParent 未铺满窗口会有严重的闪烁
 			var (
