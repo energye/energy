@@ -53,6 +53,5 @@ func main() {
 	if app.StartMainProcess() {
 		fmt.Println("StartMainProcess Success")
 		app.RunMessageLoop()
-		fmt.Println("RunMessageLoop")
 	}
 }
