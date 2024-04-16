@@ -683,7 +683,7 @@ func init() {
 		case WindowComponentOnGetTitleBarHeight:
 			_ = getPtr(0)
 			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			titleBarHeight := *(*float32)(getPtr(2))
+			titleBarHeight := (*float32)(getPtr(2))
 			fn.(WindowComponentOnGetTitleBarHeight)(window, titleBarHeight, (*bool)(getPtr(3)))
 		case WindowComponentOnCanResize:
 			_ = getPtr(0)

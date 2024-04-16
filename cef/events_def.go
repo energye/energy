@@ -227,7 +227,7 @@ type WindowComponentOnGetInitialBounds func(window *ICefWindow, result *TCefRect
 type WindowComponentOnGetInitialShowState func(window *ICefWindow, result *consts.TCefShowState)
 type WindowComponentOnIsFrameless func(window *ICefWindow, result *bool)
 type WindowComponentOnWithStandardWindowButtons func(window *ICefWindow, result *bool)
-type WindowComponentOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight float32, result *bool)
+type WindowComponentOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight *float32, result *bool)
 type WindowComponentOnCanResize func(window *ICefWindow, result *bool)
 type WindowComponentOnCanMaximize func(window *ICefWindow, result *bool)
 type WindowComponentOnCanMinimize func(window *ICefWindow, result *bool)
