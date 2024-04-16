@@ -50,6 +50,8 @@ type IChromiumProc interface {
 	ResetZoomLevel()
 	CloseAllBrowsers()
 	CreateBrowser(window ICEFWindowParent, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
+	CreateBrowserByWinControl(browserParent *lcl.TWinControl, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
+	CreateBrowserByWindowHandle(parentHandle TCefWindowHandle, rect types.TRect, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue, forceAsPopup bool) bool
 	CreateBrowserByBrowserViewComponent(homePage string, browserViewComponent *TCEFBrowserViewComponent, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool
 	Initialized() bool
 	IsSameBrowser(browser *ICefBrowser) bool
@@ -200,6 +202,15 @@ type IChromiumProc interface {
 	InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl)
 	Fullscreen() bool
 	ExitFullscreen(willCauseResize bool)
+	LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler, requestContext *ICefRequestContext) bool
+	DidLoadExtension(extensionId string) bool
+	HasExtension(extensionId string) bool
+	GetExtensions(extensionIds lcl.TStringList) bool
+	GetExtension(extensionId string) *ICefExtension
+	GetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) *ICefValue
+	SetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value *ICefValue)
+	GetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) TCefContentSettingValues
+	SetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value TCefContentSettingValues)
 	AsTargetWindow() target.IWindow
 	IsClosing() bool
 	setClosing(v bool)
@@ -426,11 +437,26 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string,
 	if !m.IsValid() {
 		return false
 	}
-	var windowPtr uintptr
+	var (
+		parentHandle TCefWindowHandle
+		rect         types.TRect
+	)
 	if window != nil {
-		windowPtr = window.Instance()
+		parentHandle = TCefWindowHandle(window.Handle())
+		rect = window.BoundsRect()
 	}
-	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowser).Call(m.Instance(), windowPtr, api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
+	return m.CreateBrowserByWindowHandle(parentHandle, rect, windowName, context, extraInfo, false)
+}
+
+func (m *TCEFChromium) CreateBrowserByWinControl(browserParent *lcl.TWinControl, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool {
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByWinControl).Call(m.Instance(), browserParent.Instance(), api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) CreateBrowserByWindowHandle(parentHandle TCefWindowHandle, rect types.TRect, windowName string, context *ICefRequestContext,
+	extraInfo *ICefDictionaryValue, forceAsPopup bool) bool {
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByWindowHandle).Call(m.Instance(), uintptr(parentHandle), uintptr(unsafe.Pointer(&rect)),
+		api.PascalStr(windowName), context.Instance(), extraInfo.Instance(), api.PascalBool(forceAsPopup))
 	return api.GoBool(r1)
 }
 
@@ -1680,6 +1706,84 @@ func (m *TCEFChromium) ExitFullscreen(willCauseResize bool) {
 		return
 	}
 	imports.Proc(def.CEFChromium_ExitFullscreen).Call(m.Instance(), api.PascalBool(willCauseResize))
+}
+
+func (m *TCEFChromium) LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler, requestContext *ICefRequestContext) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_LoadExtension).Call(m.Instance(), api.PascalStr(rootDirectory), manifest.Instance(), handler.Instance(), requestContext.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) DidLoadExtension(extensionId string) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_DidLoadExtension).Call(m.Instance(), api.PascalStr(extensionId))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) HasExtension(extensionId string) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_HasExtension).Call(m.Instance(), api.PascalStr(extensionId))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) GetExtensions(extensionIds lcl.TStringList) bool {
+	if !m.IsValid() || !extensionIds.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_GetExtensions).Call(m.Instance(), extensionIds.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) GetExtension(extensionId string) *ICefExtension {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CEFChromium_GetExtension).Call(m.Instance(), api.PascalStr(extensionId), uintptr(unsafe.Pointer(&result)))
+	if result > 0 {
+		return &ICefExtension{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *TCEFChromium) GetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) *ICefValue {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CEFChromium_GetWebsiteSetting).Call(m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType))
+	if result > 0 {
+		return &ICefValue{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *TCEFChromium) SetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value *ICefValue) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetWebsiteSetting).Call(m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), value.Instance())
+}
+
+func (m *TCEFChromium) GetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) TCefContentSettingValues {
+	if !m.IsValid() {
+		return CEF_CONTENT_SETTING_VALUE_DEFAULT
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_GetContentSetting).Call(m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType))
+	return TCefContentSettingValues(r1)
+}
+
+func (m *TCEFChromium) SetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value TCefContentSettingValues) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetContentSetting).Call(m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), uintptr(value))
 }
 
 // Target

@@ -39,7 +39,9 @@ func init() {
 			client := (*uintptr)(getPtr(0))
 			getClient := &ICefClient{instance: unsafe.Pointer(client)}
 			fn.(GlobalCEFAppEventOnGetDefaultClient)(getClient)
-			*client = uintptr(getClient.instance)
+			if client != nil {
+				*client = uintptr(getClient.instance)
+			}
 		case GlobalCEFAppEventOnGetLocalizedString:
 			stringVal := (*uintptr)(getPtr(1))
 			result := (*bool)(getPtr(2))

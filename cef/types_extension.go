@@ -17,6 +17,21 @@ import (
 	"unsafe"
 )
 
+// ExtensionRef -> ICefExtension
+var ExtensionRef extension
+
+type extension uintptr
+
+func (*extension) UnWrap(data *ICefExtension) *ICefExtension {
+	var result uintptr
+	imports.Proc(def.CefExtensionRef_UnWrap).Call(data.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result == 0 {
+		return nil
+	}
+	data.instance = getInstance(result)
+	return data
+}
+
 // Instance 实例
 func (m *ICefExtension) Instance() uintptr {
 	if m == nil {
@@ -107,7 +122,7 @@ func (m *ICefExtension) IsLoaded() bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefExtension) unload() {
+func (m *ICefExtension) Unload() {
 	if !m.IsValid() {
 		return
 	}

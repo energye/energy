@@ -38,12 +38,13 @@ func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string)
 }
 
 // RegisterExtension 注册JS扩展
-//  将自定义JS代码植入到当前浏览器
-//	在 WebKitInitialized 回调函数中使用
-//	参数:
-//		name: 根对象名, 不允许使用默认的内部名称, 参阅 isInternalBind 函数
-//		code: js code
-//		handler: 处理器, 根据本地函数名回调该处理器
+//
+//	 将自定义JS代码植入到当前浏览器
+//		在 WebKitInitialized 回调函数中使用
+//		参数:
+//			name: 根对象名, 不允许使用默认的内部名称, 参阅 isInternalBind 函数
+//			code: js code
+//			handler: 处理器, 根据本地函数名回调该处理器
 func RegisterExtension(name, code string, handler *ICefV8Handler) {
 	registerExtension(name, code, handler)
 }
@@ -128,6 +129,27 @@ func LogicalToDeviceInt32(value int32, deviceScaleFactor float64) int32 {
 
 func LogicalToDeviceRect(rect *TCefRect, deviceScaleFactor float64) {
 	imports.Proc(def.Misc_LogicalToDeviceRect).Call(uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+}
+
+func InitializeWindowHandle() consts.TCefWindowHandle {
+	var result uintptr
+	imports.Proc(def.Misc_InitializeWindowHandle).Call(uintptr(unsafe.Pointer(&result)))
+	return consts.TCefWindowHandle(result)
+}
+
+func ValidCefWindowHandle(handle consts.TCefWindowHandle) bool {
+	r1, _, _ := imports.Proc(def.Misc_ValidCefWindowHandle).Call(uintptr(handle))
+	return api.GoBool(r1)
+}
+
+func GetScreenDPI() int32 {
+	r1, _, _ := imports.Proc(def.Misc_GetScreenDPI).Call()
+	return int32(r1)
+}
+
+func GetDeviceScaleFactor() (result float32) {
+	imports.Proc(def.Misc_GetDeviceScaleFactor).Call(uintptr(unsafe.Pointer(&result)))
+	return
 }
 
 func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor) {

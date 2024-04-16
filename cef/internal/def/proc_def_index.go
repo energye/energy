@@ -863,9 +863,8 @@ const (
 	CEFChromium_StopLoad
 	CEFChromium_ResetZoomLevel
 	CEFChromium_CloseAllBrowsers
-	CEFChromium_CreateBrowser
-	CEFChromium_CreateBrowserByWindow
-	CEFChromium_CreateBrowserByLinkedWindow
+	CEFChromium_CreateBrowserByWinControl
+	CEFChromium_CreateBrowserByWindowHandle
 	CEFChromium_CreateBrowserByBrowserViewComponent
 	CEFChromium_Initialized
 	CEFChromium_IsSameBrowser
@@ -1010,6 +1009,15 @@ const (
 	CEFChromium_InitializeDragAndDrop
 	CEFChromium_Fullscreen
 	CEFChromium_ExitFullscreen
+	CEFChromium_LoadExtension
+	CEFChromium_DidLoadExtension
+	CEFChromium_HasExtension
+	CEFChromium_GetExtensions
+	CEFChromium_GetExtension
+	CEFChromium_GetWebsiteSetting
+	CEFChromium_SetWebsiteSetting
+	CEFChromium_GetContentSetting
+	CEFChromium_SetContentSetting
 	// ChromiumOptions
 	ChromiumOptions_SetJavascript
 	ChromiumOptions_SetJavascriptCloseWindows
@@ -1112,6 +1120,10 @@ const (
 	Misc_DeviceToLogicalPoint
 	Misc_LogicalToDeviceInt32
 	Misc_LogicalToDeviceRect
+	Misc_InitializeWindowHandle
+	Misc_ValidCefWindowHandle
+	Misc_GetScreenDPI
+	Misc_GetDeviceScaleFactor
 	// ICefRequest
 	CefRequestRef_New
 	CefRequestRef_UnWrap
@@ -1625,6 +1637,7 @@ const (
 	CefExtensionHandler_CanAccessBrowser
 	CefExtensionHandler_GetExtensionResource
 	// ICefExtension
+	CefExtensionRef_UnWrap
 	CefExtension_GetIdentifier
 	CefExtension_GetPath
 	CefExtension_GetManifest
