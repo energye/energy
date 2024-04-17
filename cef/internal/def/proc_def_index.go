@@ -2731,4 +2731,39 @@ const (
 	BoxLayoutRef_UnWrap
 	BoxLayout_SetFlexForView
 	BoxLayout_ClearFlexForView
+	// TGIFPlay
+	GIFPlay_Create
+	GIFPlay_SetParent
+	GIFPlay_Free
+	GIFPlay_SetColor
+	GIFPlay_Dragging
+	GIFPlay_Animate
+	GIFPlay_NextFrame
+	GIFPlay_PriorFrame
+	GIFPlay_Empty
+	GIFPlay_CurrentImageIndex
+	GIFPlay_LoadFromFile
+	GIFPlay_LoadFromStream
+	GIFPlay_GetLeft
+	GIFPlay_SetLeft
+	GIFPlay_GetTop
+	GIFPlay_SetTop
+	GIFPlay_GetWidth
+	GIFPlay_SetWidth
+	GIFPlay_GetHeight
+	GIFPlay_SetHeight
+	GIFPlay_SetBounds
+	GIFPlay_Update
+	GIFPlay_SetAlign
+	GIFPlay_SetAnchors
+	GIFPlay_SetAutoSize
+	GIFPlay_SetVisible
+	GIFPlay_SetOnClick
+	GIFPlay_SetOnFrameChanged
+	GIFPlay_SetOnDblClick
+	GIFPlay_SetOnMouseDown
+	GIFPlay_SetOnMouseEnter
+	GIFPlay_SetOnMouseLeave
+	GIFPlay_SetOnMouseMove
+	GIFPlay_SetOnMouseUp
 ) //end
