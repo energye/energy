@@ -35,16 +35,20 @@ func Create(window *cef.LCLBrowserWindow) *Mask {
 	mem.LoadFromFSFile("resources/loading.gif")
 	//play.LoadFromFile("本地加载") //或本地加载
 	mask.gifPlay.LoadFromStream(mem)
+	mask.gifPlay.SetOnFrameChanged(func(sender lcl.IObject) {
+		fmt.Println("OnFrameChanged CurrentImageIndex:", mask.gifPlay.CurrentImageIndex())
+	})
 	mem.Free() // stream free
 	//关闭时释放掉 play 占内存啊
 	mask.maskForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
 		mask.gifPlay.Animate(false)
 		mask.gifPlay.Free()
 	})
+	// 进度显示
 	mask.progressLabel = lcl.NewLabel(mask.maskForm)
 	mask.progressLabel.SetParent(mask.maskForm)
 	mask.progressLabel.Font().SetColor(colors.ClRed)
-	mask.progressLabel.Font().SetSize(24)
+	mask.progressLabel.Font().SetSize(18)
 	// 居中显示
 	var center = func(sender lcl.IObject) {
 		mask.gifPlay.SetLeft(window.Width()/2 - mask.gifPlay.Width()/2)
