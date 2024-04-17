@@ -2766,6 +2766,8 @@ func init() {
 		dllimports.NewEnergyImport("GIFPlay_SetOnMouseLeave", 0),
 		dllimports.NewEnergyImport("GIFPlay_SetOnMouseMove", 0),
 		dllimports.NewEnergyImport("GIFPlay_SetOnMouseUp", 0),
+		dllimports.NewEnergyImport("GIFPlay_SetOnStart", 0),
+		dllimports.NewEnergyImport("GIFPlay_SetOnStop", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

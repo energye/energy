@@ -2766,4 +2766,6 @@ const (
 	GIFPlay_SetOnMouseLeave
 	GIFPlay_SetOnMouseMove
 	GIFPlay_SetOnMouseUp
+	GIFPlay_SetOnStart
+	GIFPlay_SetOnStop
 ) //end

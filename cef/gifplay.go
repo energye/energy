@@ -64,6 +64,14 @@ func (m *TGIFPlay) Animate(value bool) {
 	imports.Proc(def.GIFPlay_Animate).Call(m.Instance(), api.PascalBool(value))
 }
 
+func (m *TGIFPlay) Start() {
+	m.Animate(true)
+}
+
+func (m *TGIFPlay) Stop() {
+	m.Animate(false)
+}
+
 func (m *TGIFPlay) NextFrame() {
 	imports.Proc(def.GIFPlay_NextFrame).Call(m.Instance())
 }
@@ -149,27 +157,27 @@ func (m *TGIFPlay) SetVisible(value bool) {
 	imports.Proc(def.GIFPlay_SetVisible).Call(m.Instance(), api.PascalBool(value))
 }
 
-func (m *TGIFPlay) SetOnClick(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnClick(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnClick).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnFrameChanged(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnFrameChanged(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnFrameChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnDblClick(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnDblClick(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnDblClick).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnMouseDown(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnMouseDown(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnMouseDown).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnMouseEnter(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnMouseEnter(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnMouseEnter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnMouseLeave(fn TNotifyEvent) {
+func (m *TGIFPlay) SetOnMouseLeave(fn lcl.TNotifyEvent) {
 	imports.Proc(def.GIFPlay_SetOnMouseLeave).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
@@ -177,8 +185,16 @@ func (m *TGIFPlay) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
 	imports.Proc(def.GIFPlay_SetOnMouseMove).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TGIFPlay) SetOnMouseUp(fn TMouseEvent) {
+func (m *TGIFPlay) SetOnMouseUp(fn lcl.TMouseEvent) {
 	imports.Proc(def.GIFPlay_SetOnMouseUp).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnStart(fn lcl.TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnStart).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnStop(fn lcl.TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnStop).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // Instance
