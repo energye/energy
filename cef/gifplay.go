@@ -11,155 +11,193 @@
 package cef
 
 import (
-	"bytes"
-	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
-	"image/gif"
-	"os"
+	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/types"
+	"unsafe"
 )
 
 // TGIFPlay GIF 图片播放组件
 type TGIFPlay struct {
-	*lcl.TImage              // 展示每帧图像
-	cache        [][]byte    // gif缓存
-	cacheCount   int         //
-	autoPlay     bool        // 自动默认，默认 true
-	currentFrame int         // 当前帧
-	playTask     *lcl.TTimer // 播放任务
+	instance unsafe.Pointer
 }
 
-// NewGIFPlay 创建一个GIFPlay
+// NewGIFPlay
+//
+// 创建一个新的对象。
 func NewGIFPlay(owner lcl.IComponent) *TGIFPlay {
-	m := &TGIFPlay{
-		playTask: lcl.NewTimer(owner),
-	}
-	m.TImage = lcl.NewImage(owner)
-	m.playTask.SetInterval(66)
-	m.playTask.SetEnabled(false)
-	m.play()
+	m := new(TGIFPlay)
+	r1, _, _ := imports.Proc(def.GIFPlay_Create).Call(owner.Instance())
+	m.instance = unsafe.Pointer(r1)
 	return m
 }
 
-// IsValid 返回GIFPlay是否有效
-func (m *TGIFPlay) IsValid() bool {
-	return m.playTask != nil && m.TImage.IsValid()
+// SetParent
+//
+// 设置控件父容器。
+func (m *TGIFPlay) SetParent(value lcl.IWinControl) {
+	imports.Proc(def.GIFPlay_SetParent).Call(m.Instance(), value.Instance())
 }
 
-func (m *TGIFPlay) play() {
-	m.playTask.SetOnTimer(func(sender lcl.IObject) {
-		if m.cacheCount == 0 || m.cache == nil {
-			return
-		}
-		if m.currentFrame >= m.cacheCount {
-			m.currentFrame = 0
-		}
-		m.Picture().LoadFromBytes(m.cache[m.currentFrame])
-		m.currentFrame++
-	})
-}
-
-// Free 停止播放并释放掉这个GIFPlay, 释放后将不可用
+// Free
+//
+// 释放对象。
 func (m *TGIFPlay) Free() {
-	m.Stop()
-	m.playTask = nil
-	m.TImage.Free()
-	m.cache = nil
-}
-
-// Stop 在当前帧停止播放
-func (m *TGIFPlay) Stop() {
-	if m.playTask != nil {
-		m.playTask.SetEnabled(false)
+	if m.instance != nil {
+		imports.Proc(def.GIFPlay_Free).Call(m.Instance())
+		m.instance = nil
 	}
 }
 
-// Start 在当前帧开始播放
-func (m *TGIFPlay) Start() {
-	if m.playTask != nil {
-		m.playTask.SetEnabled(true)
-	}
+func (m *TGIFPlay) SetColor(value types.TColor) {
+	imports.Proc(def.GIFPlay_SetColor).Call(m.Instance(), uintptr(value))
 }
 
-// PlaybackSpeed 设置播放速度，毫秒 默认 66
-func (m *TGIFPlay) PlaybackSpeed(playbackSpeed uint32) {
-	if m.playTask != nil {
-		m.playTask.SetInterval(playbackSpeed)
-	}
+func (m *TGIFPlay) Dragging() bool {
+	r1, _, _ := imports.Proc(def.GIFPlay_Dragging).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
-// LoadFile 在本地加载GIF
-func (m *TGIFPlay) LoadFile(filePath string) {
-	if m.playTask == nil {
-		return
-	}
-	file, err := os.Open(filePath)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer file.Close()
-	frames, err := gif.DecodeAll(file)
-	if err != nil {
-		panic(err)
-	}
-	m.cacheGIFFrames(frames)
+func (m *TGIFPlay) Animate(value bool) {
+	imports.Proc(def.GIFPlay_Animate).Call(m.Instance(), api.PascalBool(value))
 }
 
-// LoadFSFile 在内置FS中加载GIF
-func (m *TGIFPlay) LoadFSFile(filePath string) {
-	if m.playTask == nil {
-		return
-	}
-	data, err := emfs.GetResources(filePath)
-	if err != nil {
-		panic(err.Error())
-	}
-	m.LoadBytes(data)
+func (m *TGIFPlay) NextFrame() {
+	imports.Proc(def.GIFPlay_NextFrame).Call(m.Instance())
 }
 
-// LoadBytes 在图片字节里加载GIF
-func (m *TGIFPlay) LoadBytes(data []byte) {
-	if m.playTask == nil {
-		return
-	}
-	var buf bytes.Buffer
-	buf.Write(data)
-	frames, err := gif.DecodeAll(&buf)
-	if err != nil {
-		panic(err)
-	}
-	defer buf.Reset()
-	m.cacheGIFFrames(frames)
+func (m *TGIFPlay) PriorFrame() {
+	imports.Proc(def.GIFPlay_PriorFrame).Call(m.Instance())
 }
 
-// CacheFrames 返回所有帧
-func (m *TGIFPlay) CacheFrames() [][]byte {
-	return m.cache
+func (m *TGIFPlay) Empty() {
+	imports.Proc(def.GIFPlay_Empty).Call(m.Instance())
 }
 
-func (m *TGIFPlay) AppendFrame(data []byte) {
-
+func (m *TGIFPlay) CurrentImageIndex() int32 {
+	r1, _, _ := imports.Proc(def.GIFPlay_CurrentImageIndex).Call(m.Instance())
+	return int32(r1)
 }
 
-func (m *TGIFPlay) RemoveFrame(index int) {
-
+func (m *TGIFPlay) LoadFromFile(filePath string) {
+	imports.Proc(def.GIFPlay_LoadFromFile).Call(m.Instance(), api.PascalStr(filePath))
 }
 
-func (m *TGIFPlay) InsertFrame(index int, data []byte) {
-
+func (m *TGIFPlay) LoadFromStream(stream lcl.IStream) {
+	imports.Proc(def.GIFPlay_LoadFromStream).Call(m.Instance(), stream.Instance())
 }
 
-func (m *TGIFPlay) cacheGIFFrames(frames *gif.GIF) {
-	if m.playTask == nil {
-		return
-	}
-	m.cacheCount = len(frames.Image)
-	m.cache = make([][]byte, m.cacheCount)
-	for i, img := range frames.Image {
-		var buf bytes.Buffer
-		err := gif.Encode(&buf, img, nil)
-		if err != nil {
-			panic(err.Error())
-		}
-		m.cache[i] = buf.Bytes()
-	}
+func (m *TGIFPlay) Left() int32 {
+	r1, _, _ := imports.Proc(def.GIFPlay_GetLeft).Call(m.Instance())
+	return int32(r1)
+}
+
+func (m *TGIFPlay) SetLeft(value int32) {
+	imports.Proc(def.GIFPlay_SetLeft).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) Top() int32 {
+	r1, _, _ := imports.Proc(def.GIFPlay_GetTop).Call(m.Instance())
+	return int32(r1)
+}
+
+func (m *TGIFPlay) SetTop(value int32) {
+	imports.Proc(def.GIFPlay_SetTop).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) Width() int32 {
+	r1, _, _ := imports.Proc(def.GIFPlay_GetWidth).Call(m.Instance())
+	return int32(r1)
+}
+
+func (m *TGIFPlay) SetWidth(value int32) {
+	imports.Proc(def.GIFPlay_SetWidth).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) Height() int32 {
+	r1, _, _ := imports.Proc(def.GIFPlay_GetHeight).Call(m.Instance())
+	return int32(r1)
+}
+
+func (m *TGIFPlay) SetHeight(value int32) {
+	imports.Proc(def.GIFPlay_SetHeight).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) SetBounds(ALeft int32, ATop int32, AWidth int32, AHeight int32) {
+	imports.Proc(def.GIFPlay_SetBounds).Call(m.Instance(), uintptr(ALeft), uintptr(ATop), uintptr(AWidth), uintptr(AHeight))
+}
+
+func (m *TGIFPlay) Update() {
+	imports.Proc(def.GIFPlay_Update).Call(m.Instance())
+}
+
+func (m *TGIFPlay) SetAlign(value types.TAlign) {
+	imports.Proc(def.GIFPlay_SetAlign).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) SetAnchors(value types.TAnchors) {
+	imports.Proc(def.GIFPlay_SetAnchors).Call(m.Instance(), uintptr(value))
+}
+
+func (m *TGIFPlay) SetAutoSize(value bool) {
+	imports.Proc(def.GIFPlay_SetAutoSize).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TGIFPlay) SetVisible(value bool) {
+	imports.Proc(def.GIFPlay_SetVisible).Call(m.Instance(), api.PascalBool(value))
+}
+
+func (m *TGIFPlay) SetOnClick(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnClick).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnFrameChanged(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnFrameChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnDblClick(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnDblClick).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnMouseDown(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnMouseDown).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnMouseEnter(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnMouseEnter).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnMouseLeave(fn TNotifyEvent) {
+	imports.Proc(def.GIFPlay_SetOnMouseLeave).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnMouseMove(fn lcl.TMouseMoveEvent) {
+	imports.Proc(def.GIFPlay_SetOnMouseMove).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TGIFPlay) SetOnMouseUp(fn TMouseEvent) {
+	imports.Proc(def.GIFPlay_SetOnMouseUp).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+// Instance
+//
+// 返回对象实例指针。
+func (m *TGIFPlay) Instance() uintptr {
+	return uintptr(m.instance)
+}
+
+// UnsafeAddr
+//
+// 获取一个不安全的地址。
+func (m *TGIFPlay) UnsafeAddr() unsafe.Pointer {
+	return m.instance
+}
+
+// IsValid
+//
+// 检测地址是否为空。
+func (m *TGIFPlay) IsValid() bool {
+	return m.instance != nil
 }
