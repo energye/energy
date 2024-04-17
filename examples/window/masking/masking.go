@@ -14,9 +14,11 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/examples/window/masking/mask"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/types"
 )
 
 //go:embed resources
@@ -35,6 +37,12 @@ func main() {
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
+			part := bw.WindowParent()
+			if common.IsLinux() {
+				part.RevertCustomAnchors()
+				part.SetWidth(1)
+				part.SetHeight(1)
+			}
 			maskForm := mask.Create(bw)
 			maskForm.Show()
 			// 页面加载进度, 控制何时关闭遮罩
@@ -48,6 +56,14 @@ func main() {
 						if v == 100 {
 							maskForm.Mask().Close()
 							maskForm.Mask().Free()
+
+							if common.IsLinux() {
+								part.SetWidth(bw.Width())
+								part.SetHeight(bw.Height())
+								part.SetAlign(types.AlClient)
+								part.UpdateSize()
+								bw.Chromium().NotifyMoveOrResizeStarted()
+							}
 						}
 					}
 				})

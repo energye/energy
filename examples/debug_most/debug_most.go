@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/consts/messages"
 	_ "github.com/energye/energy/v2/examples/syso"
@@ -11,6 +12,7 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
+	"os"
 	"time"
 )
 
@@ -31,8 +33,11 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	app := cef.CreateApplication()
 	cef.SetApplication(app)
+	app.SetDisableZygote(true)
+	app.SetExternalMessagePump(false)
+	app.SetMultiThreadedMessageLoop(true)
 	// 指定 CEF Framework
-	app.SetFrameworkDirPath("E:\\app\\energy\\EnergyFramework\\")
+	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
 	if app.StartMainProcess() {
 		// 结束应用后释放资源
 		api.SetReleaseCallback(func() {
@@ -87,6 +92,7 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 	m.chromium.SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
 		fmt.Println("SetOnBeforeBrowser 1")
+		m.windowParent.UpdateSize()
 		return false
 	})
 
@@ -149,17 +155,19 @@ func (m *BrowserWindow) OnMessages() {
 func (m *BrowserWindow) active(sender lcl.IObject) {
 	fmt.Println("active")
 	m.timer.SetEnabled(false)
-	if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) &&
-		!m.chromium.Initialized() {
+	m.chromium.Initialized()
+	if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
 		m.timer.SetEnabled(true)
 	}
 }
 func (m *BrowserWindow) show(sender lcl.IObject) {
 	fmt.Println("show")
-	m.timer.SetEnabled(false)
-	if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) &&
-		!m.chromium.Initialized() {
-		m.timer.SetEnabled(true)
+	if !common.IsLinux() {
+		m.timer.SetEnabled(false)
+		m.chromium.Initialized()
+		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
+			m.timer.SetEnabled(true)
+		}
 	}
 }
 func (m *BrowserWindow) resize(sender lcl.IObject) {
