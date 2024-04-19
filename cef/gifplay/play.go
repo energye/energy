@@ -42,14 +42,6 @@ const (
 	AlphaOpaque      uint16 = 0xFFFF
 )
 
-const (
-	SoFromBeginning = iota
-	SoFromCurrent
-	SoFromEnd
-)
-
-type PByte = uintptr
-
 type TRGB struct {
 	Red, Green, Blue byte
 }
@@ -168,7 +160,7 @@ func (m *TGIFPlay) ResetImage() {
 	m.currentImage = 0
 	canvas := m.currentView.Canvas()
 	canvas.Brush().SetColor(m.Color())
-	canvas.FillRect(types.TRect{Left: 0, Top: 0, Right: m.Width(), Bottom: m.Height()})
+	canvas.FillRect(types.Rect(0, 0, m.Width(), m.Height()))
 }
 
 func (m *TGIFPlay) LoadFromFile(filePath string) {

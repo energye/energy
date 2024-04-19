@@ -17,11 +17,10 @@ import (
 )
 
 type TGIFImage struct {
-	Bitmap *ext.TBitmap
-	PosX   uint16
-	PosY   uint16
-	Delay  uint16
-	Method byte
+	Bitmap     *ext.TBitmap
+	PosX, PosY uint16
+	Delay      uint16
+	Method     byte
 }
 
 type TGIFImageDescriptor struct {
@@ -40,7 +39,7 @@ func (m *TGIFImageDescriptor) BytesToConvert(data []byte) {
 
 type TGIFGraphicsControlExtension struct {
 	BlockSize  byte   // 剩余字段的大小（始终为04h）
-	Packedbit  byte   // 要使用的图形处理方法
+	PackedBit  byte   // 要使用的图形处理方法
 	DelayTime  uint16 // 等待数十秒
 	ColorIndex byte   // 透明颜色索引
 	Terminator byte   // 块终止符（始终为0）

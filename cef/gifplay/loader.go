@@ -120,26 +120,24 @@ func (m *TGIFLoader) ReadPalette(stream *lcl.TMemoryStream, size int) {
 
 func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 	var (
-		unpackedSize, packedSize      int64
-		data, bits, code              uint32
-		sourcePtr                     PByte
-		inCode                        uint32
-		codeSize                      uint32
-		codeMask                      uint32
-		freeCode                      uint32
-		oldCode                       uint32
-		prefix                        [CODE_TABLE_SIZE]uint32
-		suffix, stack                 = make([]byte, CODE_TABLE_SIZE), make([]byte, CODE_TABLE_SIZE)
-		stackPointer                  PByte
-		b, initialCodeSize, firstChar byte
-		clearCode, eoiCode            uint16
+		unpackedSize, packedSize           int64
+		data, bits, code                   uint32
+		inCode                             uint32
+		codeSize                           uint32
+		codeMask                           uint32
+		freeCode                           uint32
+		oldCode                            uint32
+		prefix                             [CODE_TABLE_SIZE]uint32
+		suffix, stack                      = make([]byte, CODE_TABLE_SIZE), make([]byte, CODE_TABLE_SIZE)
+		b, initialCodeSize, firstChar      byte
+		clearCode, eoiCode                 uint16
+		targetIdx, stackIdx, sourceDataIdx int
 	)
 	// 解压缩字典的初始化
 	_, d := stream.Read(1)
 	initialCodeSize = d[0]
 	// 压缩尾部
-	OldPos := stream.Position()
-	packedSize = 0
+	oldPos := stream.Position()
 	for {
 		_, d = stream.Read(1)
 		b = d[0]
@@ -151,7 +149,7 @@ func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 			break
 		}
 	}
-	stream.SetPosition(OldPos)
+	stream.SetPosition(oldPos)
 	var sourceBuf bytes.Buffer
 	for {
 		_, d = stream.Read(1)
@@ -166,8 +164,6 @@ func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 	}
 	sourceData := sourceBuf.Bytes()
 	sourceBuf.Reset()
-	sourcePtr = PByte(unsafe.Pointer(&sourceData[0]))
-	target := uintptr(unsafe.Pointer(&m.scanLine[0]))
 	codeSize = uint32(initialCodeSize + 1)
 	clearCode = 1 << initialCodeSize
 	eoiCode = clearCode + 1
@@ -179,13 +175,12 @@ func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 		prefix[I] = CODE_TABLE_SIZE
 		suffix[I] = byte(I)
 	}
-	stackPointer = uintptr(unsafe.Pointer(&stack[0]))
 	firstChar = 0
 	data = 0
 	bits = 0
 	//解压缩LZW gif
 	for unpackedSize > 0 && packedSize > 0 {
-		source := uint32(*(*byte)(unsafe.Pointer(sourcePtr)))
+		source := uint32(sourceData[sourceDataIdx])
 		data += source << bits
 		bits += 8
 		for bits >= codeSize {
@@ -207,26 +202,26 @@ func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 			}
 			if oldCode == CODE_TABLE_SIZE {
 				firstChar = suffix[code]
-				*(*byte)(unsafe.Pointer(target)) = firstChar
-				target++
+				m.scanLine[targetIdx] = firstChar
+				targetIdx++
 				unpackedSize--
 				oldCode = code
 				continue
 			}
 			inCode = code
 			if code == freeCode {
-				*(*byte)(unsafe.Pointer(stackPointer)) = firstChar
-				stackPointer++
+				stack[stackIdx] = firstChar
+				stackIdx++
 				code = oldCode
 			}
 			for code > uint32(clearCode) {
-				*(*byte)(unsafe.Pointer(stackPointer)) = suffix[code]
-				stackPointer++
+				stack[stackIdx] = suffix[code]
+				stackIdx++
 				code = prefix[code]
 			}
 			firstChar = suffix[code]
-			*(*byte)(unsafe.Pointer(stackPointer)) = firstChar
-			stackPointer++
+			stack[stackIdx] = firstChar
+			stackIdx++
 			prefix[freeCode] = oldCode
 			suffix[freeCode] = firstChar
 			if freeCode == codeMask && codeSize < 12 {
@@ -238,16 +233,16 @@ func (m *TGIFLoader) ReadScanLine(stream *lcl.TMemoryStream) {
 			}
 			oldCode = inCode
 			for {
-				stackPointer--
-				*(*byte)(unsafe.Pointer(target)) = *(*byte)(unsafe.Pointer(stackPointer))
-				target++
+				stackIdx--
+				m.scanLine[targetIdx] = stack[stackIdx]
+				targetIdx++
 				unpackedSize--
-				if stackPointer == uintptr(unsafe.Pointer(&stack[0])) {
+				if stackIdx == 0 {
 					break
 				}
 			}
 		}
-		sourcePtr++
+		sourceDataIdx++
 		packedSize--
 	}
 }
@@ -274,8 +269,8 @@ func (m *TGIFLoader) ReadGlobalPalette(stream *lcl.TMemoryStream) {
 }
 
 func (m *TGIFLoader) ReadGraphCtrlExt() {
-	m.isTransparent = (m.gifGraphicsCtrlExt.Packedbit & ID_TRANSPARENT) != 0
-	m.disposalMethod = (m.gifGraphicsCtrlExt.Packedbit & 0x1C) >> 2
+	m.isTransparent = (m.gifGraphicsCtrlExt.PackedBit & ID_TRANSPARENT) != 0
+	m.disposalMethod = (m.gifGraphicsCtrlExt.PackedBit & 0x1C) >> 2
 	if m.isTransparent {
 		// 如果透明位图更改alpha通道
 		m.gifBackgroundColor = m.gifGraphicsCtrlExt.ColorIndex
