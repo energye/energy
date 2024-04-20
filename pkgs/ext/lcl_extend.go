@@ -45,13 +45,6 @@ func init() {
 		dllimports.NewEnergyImport("Ext_Form_Activate", 0),
 		dllimports.NewEnergyImport("Ext_Form_Deactivate", 0),
 		dllimports.NewEnergyImport("Ext_Assigned", 0),
-		// TBitmap
-		dllimports.NewEnergyImport("Bitmap_LoadFromIntfImage", 0),
-		// TLazIntfImage
-		dllimports.NewEnergyImport("LazIntfImage_Create", 0),
-		dllimports.NewEnergyImport("LazIntfImage_DataDescription", 0),
-		dllimports.NewEnergyImport("LazIntfImage_Colors", 0),
-		dllimports.NewEnergyImport("LazIntfImage_Free", 0),
 	}
 	imports.LibLCLExt().SetImportTable(lclExtImportDefs)
 }
@@ -63,13 +56,6 @@ const (
 	Ext_Form_Activate
 	Ext_Form_Deactivate
 	Ext_Assigned
-	// TBitmap
-	Bitmap_LoadFromIntfImage
-	// TLazIntfImage
-	LazIntfImage_Create
-	LazIntfImage_DataDescription
-	LazIntfImage_Colors
-	LazIntfImage_Free
 )
 
 func PanelBevelColor(panel *lcl.TPanel) types.TColor {
