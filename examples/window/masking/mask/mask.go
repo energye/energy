@@ -3,6 +3,8 @@ package mask
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/gifanim"
+	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
@@ -10,7 +12,7 @@ import (
 
 type Mask struct {
 	maskForm      *lcl.TForm
-	gifPlay       *cef.TGIFPlay
+	gifPlay       *gifanim.TGIFAnimate
 	progressLabel *lcl.TLabel
 }
 
@@ -28,20 +30,19 @@ func Create(window *cef.LCLBrowserWindow) *Mask {
 	mask.maskForm.SetAlphaBlendValue(150)               //透明度
 	mask.maskForm.SetFormStyle(types.FsSystemStayOnTop) //置顶??
 	// 创建一个gif播放组件
-	mask.gifPlay = cef.NewGIFPlay(mask.maskForm)
+	mask.gifPlay = gifanim.NewGIFAnimate(mask.maskForm)
 	mask.gifPlay.SetParent(mask.maskForm)
+	mask.gifPlay.SetAnimate(true)
 	//在内置FS中读取gif资源
-	mem := lcl.NewMemoryStream()
-	mem.LoadFromFSFile("resources/loading.gif")
+	data, _ := emfs.GetResources("resources/loading.gif")
 	//play.LoadFromFile("本地加载") //或本地加载
-	mask.gifPlay.LoadFromStream(mem)
-	mask.gifPlay.SetOnFrameChanged(func(sender lcl.IObject) {
-		fmt.Println("OnFrameChanged CurrentImageIndex:", mask.gifPlay.CurrentImageIndex())
+	mask.gifPlay.LoadFromBytes(data)
+	mask.gifPlay.SetOnFrameChanged(func(frame *gifanim.Frame) {
+		fmt.Println("OnFrameChanged CurrentImageIndex:", frame.Index(), mask.gifPlay.CurrentFrameIndex())
 	})
-	mem.Free() // stream free
 	//关闭时释放掉 play 占内存啊
 	mask.maskForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
-		mask.gifPlay.Animate(false)
+		mask.gifPlay.SetAnimate(false)
 		mask.gifPlay.Free()
 	})
 	// 进度显示
@@ -71,8 +72,4 @@ func (m *Mask) Show() {
 
 func (m *Mask) Mask() *lcl.TForm {
 	return m.maskForm
-}
-
-func (m *Mask) GIFPlay() *cef.TGIFPlay {
-	return m.gifPlay
 }
