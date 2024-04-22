@@ -10,15 +10,20 @@
 
 package gifanim
 
-import "github.com/energye/golcl/lcl"
+import (
+	"github.com/energye/golcl/lcl"
+)
 
 type Frame struct {
-	index int
-	x, y  int32
-	w, h  int32
-	delay uint32
-	data  []byte
-	image *lcl.TGIFImage
+	index  int
+	method byte
+	x, y   int32
+	w, h   int32
+	delay  uint32
+	data   []byte
+	//background lcl.IBitmap
+	//image      *lcl.TGIFImage
+	image *lcl.TPngImage
 }
 
 func (m *Frame) Index() int {
@@ -30,26 +35,43 @@ func (m *Frame) Point() (x, y int32) {
 	return
 }
 
+func (m *Frame) SetPoint(x, y int32) {
+	m.x, m.y = x, y
+}
+
 func (m *Frame) Rect() (width, height int32) {
 	width, height = m.w, m.h
 	return
+}
+
+func (m *Frame) SetRect(width, height int32) {
+	m.w, m.h = width, height
 }
 
 func (m *Frame) Delay() uint32 {
 	return m.delay
 }
 
+func (m *Frame) SetDelay(delay uint32) {
+	m.delay = delay
+}
+
 func (m *Frame) Data() []byte {
 	return m.data
 }
 
-func (m *Frame) Image() *lcl.TGIFImage {
-	return m.image
+func (m *Frame) SetData(data []byte) {
+	m.data = data
 }
+
+//func (m *Frame) Image() *lcl.TGIFImage {
+//	return m.image
+//}
 
 func (m *Frame) scan() {
 	if m.image == nil {
-		m.image = lcl.NewGIFImage()
+		//m.image = lcl.NewGIFImage()
+		m.image = lcl.NewPngImage()
 		m.image.SetSize(m.w, m.h)
 		m.image.LoadFromBytes(m.data)
 	}
