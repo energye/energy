@@ -14,12 +14,13 @@ package gifanim
 
 import (
 	"bytes"
+	"encoding/binary"
 	"github.com/energye/energy/v2/pkgs/ext"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"image"
 	"image/gif"
-	"image/png"
-	"os"
+	"io/ioutil"
 )
 
 const (
@@ -76,7 +77,7 @@ func (m *TGIFAnimate) onTimer(sender lcl.IObject) {
 	} else {
 		m.index++
 	}
-	nextDelay := m.nextDelay()
+	nextDelay := m.frames[m.index].delay
 	if nextDelay != m.delay {
 		m.delay = nextDelay
 		m.task.SetEnabled(false)
@@ -134,13 +135,19 @@ func (m *TGIFAnimate) load() {
 	m.reset()
 	m.count = len(m.gif.Image)
 	m.frames = make([]*Frame, m.count)
-	for i, frame := range m.gif.Image {
-		bounds := frame.Bounds()
-		var pngBuf bytes.Buffer
-		err := png.Encode(&pngBuf, frame)
+	var frameToBytes = func(frame *image.Paletted) (result []byte) {
+		var buf bytes.Buffer
+		//err := png.Encode(&buf, frame)
+		err := gif.Encode(&buf, frame, nil)
 		if err != nil {
 			panic(err)
 		}
+		result = buf.Bytes()
+		buf.Reset()
+		return
+	}
+	for i, frame := range m.gif.Image {
+		bounds := frame.Bounds()
 		m.frames[i] = &Frame{
 			index:  i,
 			method: m.gif.Disposal[i],
@@ -149,9 +156,8 @@ func (m *TGIFAnimate) load() {
 			w:      int32(bounds.Dx()),
 			h:      int32(bounds.Dy()),
 			delay:  uint32(m.gif.Delay[i] * 10),
-			data:   pngBuf.Bytes(),
+			data:   frameToBytes(frame),
 		}
-		pngBuf.Reset()
 	}
 	m.initialed()
 	m.gif = nil
@@ -181,10 +187,6 @@ func (m *TGIFAnimate) reset() {
 	m.frames = nil
 	m.index = 0
 	m.count = 0
-}
-
-func (m *TGIFAnimate) nextDelay() uint32 {
-	return m.frames[m.index].delay
 }
 
 func (m *TGIFAnimate) currentFrame() *Frame {
@@ -290,12 +292,19 @@ func (m *TGIFAnimate) LoadFromFile(filePath string) {
 	if m.filePath == filePath {
 		return
 	}
-	file, err := os.Open(filePath)
+	data, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
-	g, err := gif.DecodeAll(file)
+	m.LoadFromBytes(data)
+}
+
+func (m *TGIFAnimate) LoadFromBytes(data []byte) {
+	header := m.ReadHeader(data)
+	if header == nil || !header.IsGIF() || !header.Is89a() {
+		return
+	}
+	g, err := gif.DecodeAll(bytes.NewReader(data))
 	if err != nil {
 		panic(err)
 	}
@@ -303,13 +312,15 @@ func (m *TGIFAnimate) LoadFromFile(filePath string) {
 	m.load()
 }
 
-func (m *TGIFAnimate) LoadFromBytes(data []byte) {
-	g, err := gif.DecodeAll(bytes.NewReader(data))
-	if err != nil {
-		panic(err)
+func (m *TGIFAnimate) ReadHeader(data []byte) *TGIFHeader {
+	if data != nil && len(data) > 13 {
+		header := new(TGIFHeader)
+		var buf bytes.Buffer
+		buf.Write(data[:13])
+		binary.Read(&buf, binary.LittleEndian, header)
+		return header
 	}
-	m.gif = g
-	m.load()
+	return nil
 }
 
 func Rect(left, top, right, bottom int32) types.TRect {

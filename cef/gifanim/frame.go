@@ -22,8 +22,8 @@ type Frame struct {
 	delay  uint32
 	data   []byte
 	//background lcl.IBitmap
-	//image      *lcl.TGIFImage
-	image *lcl.TPngImage
+	image *lcl.TGIFImage
+	//image *lcl.TPngImage
 }
 
 func (m *Frame) Index() int {
@@ -70,8 +70,8 @@ func (m *Frame) SetData(data []byte) {
 
 func (m *Frame) scan() {
 	if m.image == nil {
-		//m.image = lcl.NewGIFImage()
-		m.image = lcl.NewPngImage()
+		m.image = lcl.NewGIFImage()
+		//m.image = lcl.NewPngImage()
 		m.image.SetSize(m.w, m.h)
 		m.image.LoadFromBytes(m.data)
 	}
