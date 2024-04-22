@@ -15,15 +15,14 @@ import (
 )
 
 type Frame struct {
-	index  int
-	method byte
-	x, y   int32
-	w, h   int32
-	delay  uint32
-	data   []byte
-	//background lcl.IBitmap
-	image *lcl.TGIFImage
-	//image *lcl.TPngImage
+	index      int
+	method     byte
+	x, y       int32
+	w, h       int32
+	delay      uint32
+	data       []byte
+	background *lcl.TBitmap
+	image      lcl.IBitmap
 }
 
 func (m *Frame) Index() int {
@@ -64,16 +63,21 @@ func (m *Frame) SetData(data []byte) {
 	m.data = data
 }
 
-//func (m *Frame) Image() *lcl.TGIFImage {
-//	return m.image
-//}
+func (m *Frame) Image() lcl.IBitmap {
+	return m.image
+}
 
 func (m *Frame) scan() {
 	if m.image == nil {
-		m.image = lcl.NewGIFImage()
-		//m.image = lcl.NewPngImage()
-		m.image.SetSize(m.w, m.h)
-		m.image.LoadFromBytes(m.data)
+		if usePNG {
+			m.image = lcl.NewPngImage()
+			m.image.(*lcl.TPngImage).SetSize(m.w, m.h)
+			m.image.(*lcl.TPngImage).LoadFromBytes(m.data)
+		} else {
+			m.image = lcl.NewGIFImage()
+			m.image.(*lcl.TGIFImage).SetSize(m.w, m.h)
+			m.image.(*lcl.TGIFImage).LoadFromBytes(m.data)
+		}
 	}
 }
 

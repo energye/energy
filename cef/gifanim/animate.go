@@ -19,9 +19,17 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"image"
+	"image/color"
+	"image/color/palette"
 	"image/gif"
+	"image/png"
 	"io/ioutil"
+	"sync"
+	"unsafe"
 )
+
+// 控制使用哪种组件绘制每帧图片
+const usePNG = false
 
 const (
 	DisposalNone = iota + 1
@@ -31,8 +39,13 @@ const (
 
 type TGIFAnimate struct {
 	*ext.TImage
-	buffImg        *lcl.TBitmap
+	buffImg *lcl.TBitmap
+
+	restore     bool
+	restoreLock sync.WaitGroup
+
 	task           *lcl.TTimer
+	bgColor        color.Color
 	delay          uint32
 	filePath       string
 	cache          bool
@@ -50,7 +63,7 @@ func NewGIFAnimate(owner lcl.IComponent) *TGIFAnimate {
 	m := new(TGIFAnimate)
 	m.delay = 100
 	m.buffImg = lcl.NewBitmap()
-	m.TImage = ext.NewImage(owner)
+	m.TImage = ext.NewImage(owner) // component
 	//m.SetOnPaint(m.onPaint)
 	m.task = lcl.NewTimer(owner)
 	m.task.SetEnabled(false)
@@ -96,49 +109,87 @@ func (m *TGIFAnimate) initialed() {
 	m.h = int32(m.gif.Config.Height)
 	m.SetWidth(m.w)
 	m.SetHeight(m.h)
-	m.Picture().LoadFromBytes(m.frames[0].data)
 	m.buffImg.SetSize(m.w, m.h)
 	m.buffImg.SetPixelFormat(types.Pf32bit)
 	m.buffImg.SetHandleType(types.BmDIB)
-	// 填充整个画布
-	//m.Canvas().FillRect(types.Rect(0, 0, m.w, m.h))
-	//m.Repaint()
+	//m.Repaint() // 使用OnPaint有些问题, 这里直接绘制
 }
 
 func (m *TGIFAnimate) scan() {
 	frame := m.currentFrame()
 	m.doFrameChanged(frame)
 	frame.scan()
-	canvas := m.Canvas()
-	m.buffImg.Canvas().Draw(frame.x, frame.y, frame.image)
-	//canvas.Draw(frame.x, frame.y, frame.image)
-	switch frame.method {
-	case DisposalNone: // 不处理，图形留在原处
-	case DisposalBackground: // 删除当前帧，恢复为上一个帧的内容. 显示图形的区域必须要恢复成背景颜色
-		// TOdO 先不处理，当前只处理简单的GIF
-		//pFrame := m.priorFrame(frame.index)
-		//pFrame.scan()
-		////canvas.Draw(pFrame.x, pFrame.y, pFrame.image)
-		//m.buffImg.Canvas().Draw(pFrame.x, pFrame.y, pFrame.image)
-		//m.task.SetEnabled(false) // debug
-	case DisposalPrevious: // 删除当前帧，恢复为 GIF 开始时的状态
-		canvas.FillRect(Rect(0, 0, m.w, m.h))
+	if m.restore {
+		m.restoreLock.Wait()
+		preFrame := m.priorFrame(frame.index)
+		if preFrame.background != nil {
+			m.buffImg.Canvas().Draw(preFrame.x, preFrame.y, preFrame.background)
+			preFrame.background.Clear()
+			m.Picture().Assign(m.buffImg)
+		}
+		m.restore = false
 	}
-	canvas.Draw(0, 0, m.buffImg)
-	//canvas.Draw(frame.x, frame.y, frame.image)
+	m.buffImg.Canvas().Draw(frame.x, frame.y, frame.image)
+	m.Picture().Assign(m.buffImg)
+	switch frame.method {
+	case DisposalNone:
+	case DisposalBackground:
+		go func() { // 不阻塞UI线程，在两次任务之间处理bitmap填充
+			m.restoreLock.Add(1)
+			if frame.background == nil {
+				frame.background = lcl.NewBitmap()
+			}
+			m.fillBackground(frame.w, frame.h, frame.background)
+			m.restoreLock.Done()
+		}()
+		m.restore = true
+		//m.Stop() // TODO debug
+	case DisposalPrevious: // 删除当前帧，恢复为 GIF 开始时的状态
+		//canvas.FillRect(Rect(0, 0, m.w, m.h))
+	}
 	if !m.cache {
 		frame.reset()
 	}
 }
 
+func (m *TGIFAnimate) fillBackground(width, height int32, bmp *lcl.TBitmap) {
+	bmp.SetSize(width, height)
+	bmp.SetPixelFormat(types.Pf32bit)
+	bmp.SetHandleType(types.BmDIB)
+	//br, bg, bb, ba := m.bgColor.RGBA()
+	for y := 0; y < int(height); y++ {
+		ptr := bmp.ScanLine(int32(y))
+		for x := 0; x < int(width); x++ {
+			pixelIndex := x * 4
+			r := (*byte)(unsafe.Pointer(ptr + uintptr(pixelIndex)))
+			g := (*byte)(unsafe.Pointer(ptr + uintptr(pixelIndex+1)))
+			b := (*byte)(unsafe.Pointer(ptr + uintptr(pixelIndex+2)))
+			a := (*byte)(unsafe.Pointer(ptr + uintptr(pixelIndex+3)))
+			//*r = uint8(br >> 8)
+			//*g = uint8(bg >> 8)
+			//*b = uint8(bb >> 8)
+			//*a = uint8(ba >> 8)
+			*r = 0 //uint8(br >> 8)
+			*g = 0 //uint8(bg >> 8)
+			*b = 0 //uint8(bb >> 8)
+			*a = 0 //uint8(ba >> 8)
+		}
+	}
+}
 func (m *TGIFAnimate) load() {
 	m.reset()
 	m.count = len(m.gif.Image)
 	m.frames = make([]*Frame, m.count)
 	var frameToBytes = func(frame *image.Paletted) (result []byte) {
-		var buf bytes.Buffer
-		//err := png.Encode(&buf, frame)
-		err := gif.Encode(&buf, frame, nil)
+		var (
+			buf bytes.Buffer
+			err error
+		)
+		if usePNG {
+			err = png.Encode(&buf, frame)
+		} else {
+			err = gif.Encode(&buf, frame, nil)
+		}
 		if err != nil {
 			panic(err)
 		}
@@ -146,6 +197,7 @@ func (m *TGIFAnimate) load() {
 		buf.Reset()
 		return
 	}
+	m.bgColor = palette.Plan9[m.gif.BackgroundIndex]
 	for i, frame := range m.gif.Image {
 		bounds := frame.Bounds()
 		m.frames[i] = &Frame{
@@ -162,22 +214,6 @@ func (m *TGIFAnimate) load() {
 	m.initialed()
 	m.gif = nil
 }
-
-//
-//func background(width, height int, data []byte) lcl.IBitmap {
-//	bmp := lcl.NewBitmap()
-//	bmp.SetSize(int32(width), int32(height))
-//	bmp.SetPixelFormat(types.Pf32bit)
-//	bmp.SetHandleType(types.BmDIB)
-//	//bmp.SetTransparent(true)
-//
-//	img := lcl.NewPngImage()
-//	//img.SetTransparent(true)
-//	img.LoadFromBytes(data)
-//	bmp.Assign(img)
-//
-//	return bmp
-//}
 
 func (m *TGIFAnimate) reset() {
 	for _, frame := range m.frames {
@@ -321,8 +357,4 @@ func (m *TGIFAnimate) ReadHeader(data []byte) *TGIFHeader {
 		return header
 	}
 	return nil
-}
-
-func Rect(left, top, right, bottom int32) types.TRect {
-	return types.TRect{Left: left, Top: top, Right: right, Bottom: bottom}
 }
