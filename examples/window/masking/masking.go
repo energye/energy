@@ -38,13 +38,12 @@ func main() {
 		if window.IsLCL() {
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
 			part := bw.WindowParent()
-			if common.IsLinux() {
+			if common.IsLinux() { // Linux 只能在Gtk2使用，还有些问题。不能像 windows 和 MacOS 那样
 				part.RevertCustomAnchors()
 				part.SetWidth(1)
 				part.SetHeight(1)
 			}
 			maskForm := mask.Create(bw)
-			maskForm.Show()
 			// 页面加载进度, 控制何时关闭遮罩
 			bw.Chromium().SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
 				v := int(progress * 100)
@@ -67,6 +66,12 @@ func main() {
 						}
 					}
 				})
+			})
+			bw.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
+				cef.RunOnMainThread(func() {
+					maskForm.Show()
+				})
+				return false
 			})
 		}
 	})

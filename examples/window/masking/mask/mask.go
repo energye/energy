@@ -20,15 +20,15 @@ func Create(window *cef.LCLBrowserWindow) *Mask {
 	var mask = new(Mask)
 	// 创建一个 form 或 panel、或其它任意 IWinControl 组件模拟遮罩
 	// form 可以设置透明度
-	mask.maskForm = lcl.NewForm(window)            // form有窗口句柄
-	mask.maskForm.SetParent(window.WindowParent()) // 显示在浏览器窗口组件里的一个子窗口
-	mask.maskForm.SetBorderStyle(types.BsNone)     // 因为是窗口所以要去掉标签栏，效果和panel差不多了
-	mask.maskForm.SetAlign(types.AlClient)         //铺满整个主窗口
+	mask.maskForm = lcl.NewForm(window)        // form有窗口句柄
+	mask.maskForm.SetParent(window)            // 显示在浏览器窗口组件里的一个子窗口
+	mask.maskForm.SetBorderStyle(types.BsNone) // 因为是窗口所以要去掉标签栏，效果和panel差不多了
+	mask.maskForm.SetAlign(types.AlClient)     //铺满整个主窗口
 	//mask.maskForm.SetColor(colors.ClSkyblue)
 	// 这是透明设置，只能form, 但是它的子组件也会跟着半透明
-	mask.maskForm.SetAlphaBlend(true)             //透明
-	mask.maskForm.SetAlphaBlendValue(200)         //透明度
-	mask.maskForm.SetFormStyle(types.FsStayOnTop) //置顶??
+	mask.maskForm.SetAlphaBlend(true)     //透明
+	mask.maskForm.SetAlphaBlendValue(200) //透明度
+	mask.maskForm.BringToFront()
 	// 创建一个gif播放组件
 	mask.gifPlay = gifanim.NewGIFAnimate(mask.maskForm)
 	mask.gifPlay.SetParent(mask.maskForm)
