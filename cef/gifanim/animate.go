@@ -37,6 +37,9 @@ const (
 	DisposalPrevious
 )
 
+// TGIFAnimate
+//
+//	GIF 动画组件
 type TGIFAnimate struct {
 	*ext.TImage
 	buffImg *lcl.TBitmap
@@ -59,11 +62,14 @@ type TGIFAnimate struct {
 	onFrameChanged func(frame *Frame)
 }
 
+// NewGIFAnimate
+//
+//	创建GIF动画播放组件
 func NewGIFAnimate(owner lcl.IComponent) *TGIFAnimate {
 	m := new(TGIFAnimate)
 	m.delay = 100
 	m.buffImg = lcl.NewBitmap()
-	m.TImage = ext.NewImage(owner) // component
+	m.TImage = ext.NewImage(owner)
 	//m.SetOnPaint(m.onPaint)
 	m.task = lcl.NewTimer(owner)
 	m.task.SetEnabled(false)
@@ -84,13 +90,13 @@ func (m *TGIFAnimate) onTimer(sender lcl.IObject) {
 	if m.count == 0 {
 		return
 	}
-	m.scan()
 	if m.index >= m.count-1 {
 		m.index = 0
 	} else {
 		m.index++
 	}
-	nextDelay := m.frames[m.index].delay
+	m.scan()
+	nextDelay := m.next(m.index).delay
 	if nextDelay != m.delay {
 		m.delay = nextDelay
 		m.task.SetEnabled(false)
@@ -113,6 +119,7 @@ func (m *TGIFAnimate) initialed() {
 	m.buffImg.SetPixelFormat(types.Pf32bit)
 	m.buffImg.SetHandleType(types.BmDIB)
 	//m.Repaint() // 使用OnPaint有些问题, 这里直接绘制
+	m.scan()
 }
 
 func (m *TGIFAnimate) scan() {
@@ -121,7 +128,7 @@ func (m *TGIFAnimate) scan() {
 	frame.scan()
 	if m.restore {
 		m.restoreLock.Wait()
-		preFrame := m.priorFrame(frame.index)
+		preFrame := m.prior(frame.index)
 		if preFrame.background != nil {
 			m.buffImg.Canvas().Draw(preFrame.x, preFrame.y, preFrame.background)
 			preFrame.background.Clear()
@@ -134,7 +141,7 @@ func (m *TGIFAnimate) scan() {
 	switch frame.method {
 	case DisposalNone:
 	case DisposalBackground:
-		go func() { // 不阻塞UI线程，在两次任务之间处理bitmap填充
+		go func() {
 			m.restoreLock.Add(1)
 			if frame.background == nil {
 				frame.background = lcl.NewBitmap()
@@ -143,8 +150,7 @@ func (m *TGIFAnimate) scan() {
 			m.restoreLock.Done()
 		}()
 		m.restore = true
-		//m.Stop() // TODO debug
-	case DisposalPrevious: // 删除当前帧，恢复为 GIF 开始时的状态
+	case DisposalPrevious:
 		//canvas.FillRect(Rect(0, 0, m.w, m.h))
 	}
 	if !m.cache {
@@ -176,6 +182,7 @@ func (m *TGIFAnimate) fillBackground(width, height int32, bmp *lcl.TBitmap) {
 		}
 	}
 }
+
 func (m *TGIFAnimate) load() {
 	m.reset()
 	m.count = len(m.gif.Image)
@@ -229,6 +236,15 @@ func (m *TGIFAnimate) currentFrame() *Frame {
 	return m.frames[m.index]
 }
 
+func (m *TGIFAnimate) prior(index int) *Frame {
+	index--
+	if index < 0 {
+		index = m.count - 1
+	}
+	return m.frames[index]
+}
+
+// PrevFrame 播放上一帧
 func (m *TGIFAnimate) PrevFrame() {
 	m.index--
 	if m.index < 0 {
@@ -237,6 +253,15 @@ func (m *TGIFAnimate) PrevFrame() {
 	m.scan()
 }
 
+func (m *TGIFAnimate) next(index int) *Frame {
+	index++
+	if index >= m.count-1 {
+		index = 0
+	}
+	return m.frames[index]
+}
+
+// NextFrame 播放下一帧
 func (m *TGIFAnimate) NextFrame() {
 	if m.index >= m.count-1 {
 		m.index = 0
@@ -246,14 +271,7 @@ func (m *TGIFAnimate) NextFrame() {
 	m.scan()
 }
 
-func (m *TGIFAnimate) priorFrame(index int) *Frame {
-	index--
-	if index < 0 {
-		index = m.count - 1
-	}
-	return m.frames[index]
-}
-
+// SetAnimate 设置GIF播放或停止
 func (m *TGIFAnimate) SetAnimate(v bool) {
 	m.task.SetEnabled(v)
 	if v {
@@ -263,18 +281,22 @@ func (m *TGIFAnimate) SetAnimate(v bool) {
 	}
 }
 
+// Animate 返回当前GIF播放或停止
 func (m *TGIFAnimate) Animate() bool {
 	return m.task.Enabled()
 }
 
+// CurrentFrameIndex 返回当前帧索引
 func (m *TGIFAnimate) CurrentFrameIndex() int {
 	return m.index
 }
 
+// FrameCount 返回帧总数
 func (m *TGIFAnimate) FrameCount() int {
 	return m.count
 }
 
+// Frame 返回指定索引帧
 func (m *TGIFAnimate) Frame(index int) *Frame {
 	if index < m.count {
 		return m.frames[index]
@@ -282,10 +304,12 @@ func (m *TGIFAnimate) Frame(index int) *Frame {
 	return nil
 }
 
+// Stop 停止播放
 func (m *TGIFAnimate) Stop() {
 	m.SetAnimate(false)
 }
 
+// Start 开始播放
 func (m *TGIFAnimate) Start() {
 	m.SetAnimate(true)
 }
@@ -308,22 +332,27 @@ func (m *TGIFAnimate) doFrameChanged(frame *Frame) {
 	}
 }
 
+// SetOnStop 停止播放事件
 func (m *TGIFAnimate) SetOnStop(fn func()) {
 	m.onStop = fn
 }
 
+// SetOnStart 开始播放事件
 func (m *TGIFAnimate) SetOnStart(fn func()) {
 	m.onStart = fn
 }
 
+// SetOnFrameChanged 播放每帧改变事件
 func (m *TGIFAnimate) SetOnFrameChanged(fn func(frame *Frame)) {
 	m.onFrameChanged = fn
 }
 
+// EnableCache 启用缓存
 func (m *TGIFAnimate) EnableCache(v bool) {
 	m.cache = v
 }
 
+// LoadFromFile 从本地文件加载GIF
 func (m *TGIFAnimate) LoadFromFile(filePath string) {
 	if m.filePath == filePath {
 		return
@@ -335,6 +364,7 @@ func (m *TGIFAnimate) LoadFromFile(filePath string) {
 	m.LoadFromBytes(data)
 }
 
+// LoadFromBytes 从字节数组加载GIF
 func (m *TGIFAnimate) LoadFromBytes(data []byte) {
 	header := m.ReadHeader(data)
 	if header == nil || !header.IsGIF() || !header.Is89a() {
