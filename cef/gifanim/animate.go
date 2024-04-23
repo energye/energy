@@ -132,12 +132,11 @@ func (m *TGIFAnimate) scan() {
 		if preFrame.background != nil {
 			m.buffImg.Canvas().Draw(preFrame.x, preFrame.y, preFrame.background)
 			preFrame.background.Clear()
-			m.Picture().Assign(m.buffImg)
 		}
 		m.restore = false
 	}
 	m.buffImg.Canvas().Draw(frame.x, frame.y, frame.image)
-	m.Picture().Assign(m.buffImg)
+	m.Picture().Assign(m.buffImg) // Linux 怎么不能使用？ TBitmap
 	switch frame.method {
 	case DisposalNone:
 	case DisposalBackground:
