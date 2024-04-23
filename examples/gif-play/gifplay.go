@@ -4,11 +4,12 @@ import "C"
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/gifanim"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/energy/emfs"
+	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/pkgs/macapp"
 )
 
 type TMainForm struct {
@@ -24,7 +25,8 @@ var resources embed.FS
 
 func main() {
 	lcl.DEBUG = true
-	cef.GlobalInit(nil, resources)
+	macapp.MacApp.SetEnergyEnv("dev") // MacOS 开发时配置，在初始化之前
+	inits.Init(nil, resources)
 	lcl.Application.SetOnException(func(sender lcl.IObject, e *lcl.Exception) {
 		fmt.Println("Exception:", e.Message())
 	})
