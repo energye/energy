@@ -317,7 +317,13 @@ func (m *Energy) listen() {
 	})
 	m.chromium.SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 		if m.window != nil {
-			m.window.SetTitle(title)
+			if m.window.IsLCL() {
+				cef.RunOnMainThread(func() {
+					m.window.SetTitle(title)
+				})
+			} else {
+				m.window.SetTitle(title)
+			}
 		}
 	})
 	m.chromium.SetOnLoadingProgressChange(func(sender lcl.IObject, browser *cef.ICefBrowser, progress float64) {
