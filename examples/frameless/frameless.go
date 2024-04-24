@@ -44,8 +44,9 @@ func main() {
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	// LCL MacOS 效果不好，不如VF窗口模式, TODO => LCL。 VF：应需要系统菜单
 	cef.BrowserWindow.Config.EnableHideCaption = true
-	// LCL macos 隐藏标题栏后，该选项不生效
+	// LCL MacOS 隐藏标题栏后，该选项不生效
 	//cef.BrowserWindow.Config.EnableResize = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1366

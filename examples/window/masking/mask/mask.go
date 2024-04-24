@@ -26,7 +26,7 @@ func Create(window *cef.LCLBrowserWindow) *Mask {
 	mask.maskForm.SetAlign(types.AlClient)     //铺满整个主窗口
 	//mask.maskForm.SetColor(colors.ClSkyblue)
 	// 这是透明设置，只能form, 但是它的子组件也会跟着半透明
-	mask.maskForm.SetAlphaBlend(true)     //透明
+	mask.maskForm.SetAlphaBlend(true)     //透明 MacOS好像没效果啊
 	mask.maskForm.SetAlphaBlendValue(200) //透明度
 	mask.maskForm.BringToFront()
 	// 创建一个gif播放组件
@@ -69,6 +69,18 @@ func (m *Mask) Show() {
 	m.maskForm.Show()
 }
 
-func (m *Mask) Mask() *lcl.TForm {
-	return m.maskForm
+func (m *Mask) Hide() {
+	m.maskForm.Hide()
+}
+
+func (m *Mask) IsValid() bool {
+	return m.maskForm.IsValid()
+}
+
+func (m *Mask) Stop() {
+	m.gifPlay.Stop()
+}
+
+func (m *Mask) Start() {
+	m.gifPlay.Start()
 }

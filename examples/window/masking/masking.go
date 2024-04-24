@@ -50,11 +50,11 @@ func main() {
 				fmt.Println("OnLoadingProgressChange:", v)
 				// 更新UI组件或状态必须在UI线程中运行
 				cef.RunOnMainThread(func() {
-					if maskForm.Mask().IsValid() {
+					if maskForm.IsValid() {
 						maskForm.Progress(v)
 						if v == 100 {
-							maskForm.Mask().Close()
-							maskForm.Mask().Free()
+							maskForm.Hide()
+							maskForm.Stop()
 
 							if common.IsLinux() {
 								part.SetWidth(bw.Width())
@@ -70,6 +70,7 @@ func main() {
 			bw.Chromium().SetOnBeforeBrowser(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, userGesture, isRedirect bool) bool {
 				cef.RunOnMainThread(func() {
 					maskForm.Show()
+					maskForm.Start()
 				})
 				return false
 			})
