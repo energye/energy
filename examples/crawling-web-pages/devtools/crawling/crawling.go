@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/examples/crawling-web-pages/rod"
 	"strings"
 	"time"
 )

@@ -2,7 +2,6 @@ package crawling
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/examples/crawling-web-pages/rod/pkgs/proto"
 	"os"
 	"path/filepath"
 )
