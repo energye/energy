@@ -59,10 +59,26 @@
         }
 
         // 在Go中监听一个事件, 带返回值
-        // 返回值使用同步返回变量接收
-        function goOnEventJSEmitSync() {
-            let result = ipc.emitSync("ipc-emit-sync", ["data(ipc-emit-sync)" + gId])
+        // 返回值使用返回变量接收
+        /*
+         * 介绍
+         * emitWait: 使用变量接收返回参数
+         * 入参
+         *  参数一: 固定为事件名
+         *  参数二: 可变，函数入参，或超时时间
+         *  参数三: 固定超时时间
+         *
+         * 超时时间: 毫秒， 默认5000
+         *
+         */
+        function goOnEventJSEmitWait() {
+            let result;
+            result = ipc.emitWait("ipc-emit-sync", ["data(ipc-emit-sync)" + gId], 1000)
             writeMessage("result: " + result)
+            setTimeout(function () {
+                result = ipc.emitWait("ipc-emit-sync")
+                writeMessage("result: " + result)
+            })
         }
 
 
@@ -75,7 +91,7 @@
                     goOnEventDemo()
                     goOnEventDemoArgument()
                     goOnEventDemoArgumentReturn()
-                    goOnEventJSEmitSync()
+                    goOnEventJSEmitWait()
                     gId++
                 })
             } else {
@@ -92,7 +108,7 @@ Go中监听事件，JS中调用<br>
 <button onclick="goOnEventDemoArgument()">go-on-event-demo-argument</button>
 <button onclick="goOnEventDemoArgumentReturn()">go-on-event-demo-argument-return</button>
 <br>
-<button onclick="goOnEventJSEmitSync()">ipc-emit-sync</button>
+<button onclick="goOnEventJSEmitWait()">ipc-emit-wait</button>
 <button onclick="autoEmit()">autoEmit</button>
 <div id="message"></div>
 </body>

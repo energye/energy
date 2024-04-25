@@ -99,6 +99,8 @@ func main() {
 	})
 
 	ipc.On("ipc-emit-sync", func(data string) string {
+		//time.Sleep(time.Second * 8)
+		fmt.Println("执行完成")
 		return fmt.Sprintf("Go Result: %v - %v", data, time.Now().String())
 	})
 
