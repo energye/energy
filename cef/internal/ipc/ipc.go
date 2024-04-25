@@ -47,15 +47,12 @@ type browserIPC struct {
 	browserWindow         target.IBrowserWindow
 }
 
-// SyncChan
+// WaitChan
 //
 //	IPC synchronous receiving data channel
-type SyncChan struct {
-	lock           sync.Mutex       //
-	isClose        bool             //is closed
-	timer          *time.Timer      //
-	ResultSyncChan chan interface{} //receive synchronization chan, default nil
-	delay          time.Duration
+type WaitChan struct {
+	count   int32
+	Pending *sync.Map
 }
 
 func init() {
@@ -329,44 +326,45 @@ func (m *browserIPC) addEmitCallback(fn interface{}) int32 {
 	return 0
 }
 
-// SetDelayTime
-//
-//	Set maximum delay time in milliseconds
-func (m *SyncChan) SetDelayTime(delay time.Duration) {
-	m.delay = delay
+// 计时器
+type delayer struct {
+	stop  bool
+	timer *time.Timer
 }
 
 // Stop Immediate stop delay
-func (m *SyncChan) Stop() {
+func (m *delayer) Stop() {
 	if m.timer != nil {
-		if !m.isClose {
+		if !m.stop {
 			m.timer.Stop()
 		}
-		m.isClose = true
+		m.stop = true
+		m.timer = nil
 	}
 }
 
-// DelayWaiting
-//
-//	Synchronous message, delay, default 5000 milliseconds
-func (m *SyncChan) DelayWaiting() {
-	m.lock.Lock()
-	defer m.lock.Unlock()
-	m.isClose = false
-	if m.ResultSyncChan == nil {
-		m.ResultSyncChan = make(chan interface{})
-		if m.delay == 0 {
-			m.delay = 5 * time.Second
+// NextMessageId 返回下一个消息ID
+func (m *WaitChan) NextMessageId() (id int32) {
+	id = m.count
+	m.count++
+	return
+}
+
+// NewDelayer 创建一个计时器
+func (m *WaitChan) NewDelayer(messageId int32, delay time.Duration) *delayer {
+	md := new(delayer)
+	md.timer = time.AfterFunc(delay, func() {
+		if !md.stop {
+			md.stop = true
+			m.Done(messageId, nil)
 		}
-	}
-	if m.timer == nil {
-		m.timer = time.AfterFunc(m.delay, func() {
-			if !m.isClose {
-				m.isClose = true
-				m.ResultSyncChan <- nil
-			}
-		})
-	} else {
-		m.timer.Reset(m.delay)
+	})
+	return md
+}
+
+func (m *WaitChan) Done(messageId int32, data interface{}) {
+	if val, ok := m.Pending.Load(messageId); ok {
+		val.(func(result interface{}))(data)
+		m.Pending.Delete(messageId)
 	}
 }

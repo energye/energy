@@ -144,7 +144,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 		if argument != nil {
 			name := argument.GetName()
 			if name == internalIPCJSExecuteGoSyncEvent { //JS 同步事件
-				m.jsExecuteGoSyncMethodMessage(argument.BrowserId(), channelId, argument)
+				m.jsExecuteGoSyncMethodMessage(argument.BrowserId(), channelId, argument.MessageId(), argument)
 				return true
 			} else if name == internalIPCGoExecuteJSEventReplay {
 				ipcBrowser.goExecuteMethodMessageReply(argument.BrowserId(), channelId, argument)
@@ -184,7 +184,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 }
 
 // JS执行Go事件 - 同步消息处理
-func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameId int64, argument ipcArgument.IList) {
+func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameId int64, messageId int32, argument ipcArgument.IList) {
 	var argumentList json.JSONArray
 	if argument.JSON() != nil {
 		argumentList = argument.JSON().JSONArray()
@@ -192,7 +192,7 @@ func (m *ipcBrowserProcess) jsExecuteGoSyncMethodMessage(browserId int32, frameI
 	var emitName = argument.GetEventName()
 	var ipcContext = m.jsExecuteGoMethod(browserId, frameId, emitName, argumentList)
 	message := &ipcArgument.List{
-		Id:   1,
+		Id:   messageId,
 		Name: internalIPCJSExecuteGoSyncEventReplay,
 	}
 	// 同步回调函数处理

@@ -20,6 +20,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/json"
+	"time"
 )
 
 // ipcRenderProcess 渲染进程
@@ -28,7 +29,7 @@ type ipcRenderProcess struct {
 	ipcObject       *ICefV8Value    // ipc object
 	emitHandler     *ipcEmitHandler // ipc.emit handler
 	onHandler       *ipcOnHandler   // ipc.on handler
-	syncChan        *ipc.SyncChan
+	waitChan        *ipc.WaitChan
 	v8Context       *ICefV8Context
 }
 
@@ -184,6 +185,7 @@ const (
 	ruleArguments = "arguments"
 	ruleCallback  = "callback"
 	ruleMode      = "mode"
+	ruleWaitTime  = "waitTime"
 	ruleTarget    = "target"
 )
 
@@ -192,7 +194,7 @@ type modelRule int8
 
 const (
 	modelAsync modelRule = iota // 异步
-	modelSync                   // 同步
+	modelWait                   // 等待结果
 )
 
 // 触发接收目标
@@ -212,17 +214,22 @@ const (
 	exerArgs                      //参数
 )
 
+// 触发模式是 modelWait 时的默认等待时间
+const defaultEmitWaitTime = 5 * time.Second
+
 // jsExecuteRule
+//
 //	JS 执行规则
 type jsExecuteRule struct {
-	rule          executeRule  //规则
-	model         modelRule    //模式 默认 modelAsync
-	target        targetRule   //目标 默认 targetMain
-	first         *ICefV8Value //
-	emitName      *ICefV8Value //事件名
-	emitNameValue string       //事件名值
-	emitArgs      *ICefV8Value //事件参数
-	emitCallback  *ICefV8Value //事件回调函数
+	rule          executeRule   //规则
+	model         modelRule     //模式 默认 modelAsync
+	waitTime      time.Duration //等待时间，当触发模式为 modelWait 有效, 默认5000毫秒
+	target        targetRule    //目标 默认 targetMain
+	first         *ICefV8Value  //
+	emitName      *ICefV8Value  //事件名
+	emitNameValue string        //事件名值
+	emitArgs      *ICefV8Value  //事件参数
+	emitCallback  *ICefV8Value  //事件回调函数
 }
 
 // freeV8Value
@@ -241,37 +248,65 @@ func (m *jsExecuteRule) freeAll() {
 	m.emitNameValue = ""
 }
 
-// jsExecuteGoRule 执行规则
+// 执行规则
 func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArray) (*jsExecuteRule, error) {
 	if arguments.Size() >= 1 {
 		m := new(jsExecuteRule)
 		m.first = arguments.Get(0)
-		if m.first.IsString() { // args
+		m.waitTime = defaultEmitWaitTime // default
+		if m.first.IsString() {          // args
 			m.emitName = m.first
 			m.emitNameValue = m.emitName.GetStringValue()
+			if name == internalIPCEmitWait { // 等待超时返回结果
+				m.model = modelWait
+			} else {
+				m.model = modelAsync // default
+			}
 			if arguments.Size() == 2 {
 				args2 := arguments.Get(1)
 				if args2.IsArray() {
 					m.emitArgs = args2
-				} else if args2.IsFunction() {
+				} else if m.model == modelAsync && args2.IsFunction() {
 					m.emitCallback = args2
+				} else if m.model == modelWait && args2.IsUInt() {
+					// 等待超时触发
+					waitTimeValue := args2.GetUIntValue()
+					args2.Free()
+					if waitTimeValue > 0 {
+						m.waitTime = time.Duration(waitTimeValue) * time.Millisecond
+					}
 				} else {
 					m.freeAll()
-					return nil, errors.New("ipc.emit second argument can only be a parameter or callback function")
+					if m.model == modelAsync {
+						return nil, errors.New("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
+					} else {
+						return nil, errors.New("ipc.emitWait second argument can only be a input parameter. third parameter can only be a timeout time")
+					}
 				}
 			} else if arguments.Size() == 3 {
 				m.emitArgs = arguments.Get(1)
-				m.emitCallback = arguments.Get(2)
-				if !m.emitArgs.IsArray() || !m.emitCallback.IsFunction() {
+				// 第三个参数, 根据触发模式
+				args3 := arguments.Get(2)
+				// 异步触发
+				if m.model == modelAsync && args3.IsFunction() {
+					m.emitCallback = args3
+				} else if m.model == modelWait && args3.IsUInt() {
+					// 等待超时触发
+					waitTimeValue := args3.GetUIntValue()
+					args3.Free()
+					if waitTimeValue > 0 {
+						m.waitTime = time.Duration(waitTimeValue) * time.Millisecond
+					}
+				} else {
 					m.freeAll()
-					return nil, errors.New("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
+					if m.model == modelAsync {
+						return nil, errors.New("ipc.emit second argument can only be a input parameter. third parameter can only be a callback function")
+					} else {
+						return nil, errors.New("ipc.emitWait second argument can only be a input parameter. third parameter can only be a timeout time")
+					}
 				}
 			}
-			if name == internalIPCEmitSync { //同步
-				m.model = modelSync
-			} else {
-				m.model = modelAsync // default
-			}
+
 			m.rule = exerArgs
 			m.target = targetMain // default
 			return m, nil
@@ -282,7 +317,8 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 				keyMap[keys.Get(i)] = true
 			}
 			keys.Free()
-			if _, ok := keyMap[ruleName]; ok { // 事件名称
+			// 事件名称
+			if _, ok := keyMap[ruleName]; ok {
 				m.emitName = m.first.getValueByKey(ruleName)
 				if !m.emitName.IsString() {
 					m.freeAll()
@@ -293,21 +329,24 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 				m.freeAll()
 				return nil, errors.New("ipc.emit event name is incorrect, Pass as an string")
 			}
-			if _, ok := keyMap[ruleArguments]; ok { // 参数列表
+			// 参数列表
+			if _, ok := keyMap[ruleArguments]; ok {
 				m.emitArgs = m.first.getValueByKey(ruleArguments) // array
 				if !m.emitArgs.IsArray() {
 					m.freeAll()
 					return nil, errors.New("ipc.emit event arguments is incorrect, Pass as an array")
 				}
 			}
-			if _, ok := keyMap[ruleCallback]; ok { // 回调函数
+			// 回调函数
+			if _, ok := keyMap[ruleCallback]; ok {
 				m.emitCallback = m.first.getValueByKey(ruleCallback) // function
 				if !m.emitCallback.IsFunction() {
 					m.freeAll()
 					return nil, errors.New("ipc.emit event callback function is incorrect, Pass as an function")
 				}
 			}
-			if _, ok := keyMap[ruleMode]; ok { // 触发模式
+			// 触发模式
+			if _, ok := keyMap[ruleMode]; ok {
 				mode := m.first.getValueByKey(ruleMode) // int 0:async or 1:sync, default 0:async
 				if !mode.IsInt() {
 					m.freeAll()
@@ -315,7 +354,7 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 				}
 				modeValue := modelRule(mode.GetIntValue())
 				mode.Free()
-				if modeValue == modelAsync || modeValue == modelSync {
+				if modeValue == modelAsync || modeValue == modelWait {
 					m.model = modeValue
 				} else {
 					m.model = modelAsync // default
@@ -323,7 +362,22 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 			} else {
 				m.model = modelAsync // default
 			}
-			if _, ok := keyMap[ruleTarget]; ok { // 触发目标
+			// 触发等待时间，触发模式为 modelWait 有效
+			if _, ok := keyMap[ruleWaitTime]; ok && m.model == modelWait {
+				waitTime := m.first.getValueByKey(ruleWaitTime) // int 0:async or 1:sync, default 0:async
+				if !waitTime.IsUInt() {
+					m.freeAll()
+					return nil, errors.New("ipc.emitWait The timeout waiting time is incorrect, Pass as an uint, unit millisecond")
+				}
+				// 单位 毫秒
+				waitTimeValue := waitTime.GetUIntValue()
+				waitTime.Free()
+				if waitTimeValue > 0 {
+					m.waitTime = time.Duration(waitTimeValue) * time.Millisecond
+				}
+			}
+			// 触发目标
+			if _, ok := keyMap[ruleTarget]; ok {
 				target := m.first.getValueByKey(ruleTarget) // int 0:main 1:current 2:other
 				if !target.IsInt() {
 					m.freeAll()
@@ -348,7 +402,7 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 
 // jsExecuteGoEvent
 //
-//  JS 执行 GO 监听事件
+//	JS 执行 GO 监听事件
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	m.initEventGlobal()
 	result = true
@@ -369,7 +423,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				return
 			}
 		}
-		var isSync = rule.model == modelSync //同步
+		var isWait = rule.model == modelWait //等待超时返回结果
 		//单进程 不通过进程消息, 全是同步
 		if application.SingleProcess() {
 			callback := &ipcCallback{}
@@ -390,8 +444,8 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				retVal.SetResult(V8ValueRef.NewBool(true))
 			}
 		} else { //多进程
-			// 同步 或 当前子进程
-			if isSync || rule.target == targetCurrent {
+			// 等待超时 或 当前子进程
+			if isWait || rule.target == targetCurrent {
 				callback := &ipcCallback{isSync: true}
 				// 回调函数或变量方式接收返回值, 优先回调函数
 				if rule.emitCallback != nil { //callback function
@@ -403,8 +457,8 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				//当前子进程
 				if rule.target == targetCurrent {
 					m.multiProcessCurrentProcess(rule.emitNameValue, callback, args)
-				} else { //同步 - 主进程
-					m.multiProcessSync(1, rule.emitNameValue, callback, args)
+				} else { //等待 - 主进程
+					m.multiProcessWait(rule.emitNameValue, callback, rule.waitTime, args)
 				}
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
@@ -497,10 +551,16 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 	m.executeCallbackFunction(false, callback, nil)
 }
 
-// multiProcessSync 多进程消息 - 同步
-func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, callback *ipcCallback, data interface{}) {
+// 多进程消息 - 会阻塞渲染进程，并等待 delay 时间后超时
+func (m *ipcRenderProcess) multiProcessWait(emitName string, callback *ipcCallback, delay time.Duration, data interface{}) {
 	//延迟等待接收结果，默认5秒
-	m.syncChan.DelayWaiting()
+	messageId := m.waitChan.NextMessageId()
+	resultChan := make(chan interface{})
+	m.waitChan.Pending.Store(messageId, func(result interface{}) {
+		select {
+		case resultChan <- result:
+		}
+	})
 	message := &ipcArgument.List{
 		Id:        messageId,
 		BId:       ipc.RenderChan().BrowserId(),
@@ -511,23 +571,28 @@ func (m *ipcRenderProcess) multiProcessSync(messageId int32, emitName string, ca
 	//发送数据到主进程
 	ipc.RenderChan().IPC().Send(message.Bytes())
 	message.Reset()
-	//同步等待结果 delayWaiting 自动结束
-	resultData := <-m.syncChan.ResultSyncChan
-	//接收成功，停止
-	m.syncChan.Stop()
-	var argumentList json.JSONArray
-	if resultData != nil {
-		argumentList = resultData.(json.JSONArray)
+	// 开始计时, 直到 delay 时间结束，或正常返回结果
+	delayer := m.waitChan.NewDelayer(messageId, delay)
+	select {
+	case resultData := <-resultChan:
+		//接收成功，停止
+		delayer.Stop()
+		delayer = nil
+		var argumentList json.JSONArray
+		if resultData != nil {
+			argumentList = resultData.(json.JSONArray)
+		}
+		if argumentList != nil {
+			m.executeCallbackFunction(true, callback, argumentList)
+			argumentList.Free()
+		} else {
+			m.executeCallbackFunction(false, callback, nil)
+		}
 	}
-	if argumentList != nil {
-		m.executeCallbackFunction(true, callback, argumentList)
-		argumentList.Free()
-	} else {
-		m.executeCallbackFunction(false, callback, nil)
-	}
+
 }
 
-// multiProcessAsync 多进程消息 - 异步
+// 多进程消息 - 异步
 func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessage, messageId int32, emitName string, data interface{}) bool {
 	if processMessage != nil {
 		message := &ipcArgument.List{
@@ -542,7 +607,7 @@ func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessa
 	return false
 }
 
-// ipcJSExecuteGoEventMessageReply JS执行Go监听，Go的消息回复
+// JS执行Go监听，Go的消息回复
 func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
@@ -604,7 +669,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 	return
 }
 
-// executeCallbackFunction 执行 v8 function 回调函数
+// 执行 v8 function 回调函数
 func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *ipcCallback, returnArgs json.JSONArray) {
 	if isReturnArgs { //有返回参数
 		//enter v8context
@@ -661,7 +726,7 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 	}
 }
 
-// registerGoSyncReplayEvent Go IPC 渲染进程监听
+// Go IPC 渲染进程监听
 func (m *ipcRenderProcess) registerGoSyncReplayEvent() {
 	if m.isInitRenderIPC {
 		return
@@ -671,11 +736,14 @@ func (m *ipcRenderProcess) registerGoSyncReplayEvent() {
 		if argument != nil {
 			name := argument.GetName()
 			if name == internalIPCJSExecuteGoSyncEventReplay {
-				var argumentList json.JSONArray
+				var (
+					messageId    = argument.MessageId()
+					argumentList json.JSONArray
+				)
 				if argument.JSON() != nil {
 					argumentList = argument.JSON().JSONArray()
 				}
-				m.ipcJSExecuteGoSyncEventMessageReply(argumentList)
+				m.ipcJSExecuteGoSyncEventMessageReply(messageId, argumentList)
 				return true
 			}
 		}
@@ -684,16 +752,12 @@ func (m *ipcRenderProcess) registerGoSyncReplayEvent() {
 
 }
 
-// ipcJSExecuteGoSyncEventMessageReply JS执行Go事件 - 同步回复接收
-func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(argumentList json.JSONArray) {
-	if argumentList != nil {
-		m.syncChan.ResultSyncChan <- argumentList
-	} else {
-		m.syncChan.ResultSyncChan <- nil
-	}
+// JS执行Go事件 - 同步回复接收
+func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, argumentList json.JSONArray) {
+	m.waitChan.Done(messageId, argumentList)
 }
 
-// makeIPC ipc
+// ipc
 func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	if m.ipcObject != nil {
 		// 刷新时释放掉
@@ -714,7 +778,7 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipcObject.setValueByKey(internalIPCEmitSync, V8ValueRef.newFunction(internalIPCEmitSync, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalIPCEmitWait, V8ValueRef.newFunction(internalIPCEmitWait, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 
 	// ipc key to v8 global

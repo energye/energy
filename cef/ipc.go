@@ -23,7 +23,7 @@ import (
 const (
 	internalIPC         = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
 	internalIPCEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
-	internalIPCEmitSync = "emitSync" // JavaScript -> ipc.emitSync 在 JavaScript 触发 GO 监听事件函数名, 同步
+	internalIPCEmitWait = "emitWait" // JavaScript -> ipc.emitWait 在 JavaScript 触发 GO 监听事件函数名, 等待超时返回结果
 	internalIPCOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
 	internalIPCDRAG     = "drag"     // JavaScript -> ipc.on drag
 )
@@ -79,7 +79,7 @@ type ipcCallback struct {
 
 // isIPCInternalKey IPC 内部定义使用 key 不允许使用
 func isIPCInternalKey(key string) bool {
-	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCDRAG || key == internalIPCEmitSync ||
+	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCDRAG || key == internalIPCEmitWait ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
 		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
 		key == internalIPCJSExecuteGoSyncEvent || key == internalIPCJSExecuteGoSyncEventReplay
@@ -92,7 +92,7 @@ func ipcInit() {
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
-			syncChan:    &ipc.SyncChan{},
+			waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 		}
@@ -104,7 +104,7 @@ func ipcInit() {
 			ipc.CreateBrowserIPC() // Go IPC browser
 		} else if process.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
-				syncChan:    &ipc.SyncChan{},
+				waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
 			}
