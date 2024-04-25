@@ -27,7 +27,7 @@ const (
 )
 
 const (
-	// GolangDownloadURL 下载地址, 默认 1.18.10
+	// GolangDownloadURL 下载地址, 默认 GolangDefaultVersion
 	// https://golang.google.cn/dl/go1.18.10.darwin-amd64.tar.gz
 	// https://golang.google.cn/dl/go1.18.10.darwin-arm64.tar.gz
 	// https://golang.google.cn/dl/go1.18.10.linux-amd64.tar.gz
@@ -38,7 +38,7 @@ const (
 	// https://golang.google.cn
 	GolangDownloadSource = "https://golang.google.cn"
 	GolangDownloadURL    = "%s/dl/%s"
-	GolangDefaultVersion = "1.18.10"
+	GolangDefaultVersion = "1.20.14"
 	GolanHomeKey         = "GOROOT"
 )
 
