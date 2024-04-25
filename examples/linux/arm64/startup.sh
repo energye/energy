@@ -4,6 +4,8 @@
 # The key lies in: export LD_PRELOAD="/you/cef/xxx/libcef.so"
 # test: copy the shell to exe dir
 
+# run: ./startup.sh demo
+
 LIBCEF="$ENERGY_HOME/libcef.so"
 
 echo $LIBCEF
