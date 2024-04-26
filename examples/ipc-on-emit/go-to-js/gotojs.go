@@ -98,10 +98,16 @@ func main() {
 		return fmt.Sprintf("%d-%v-%v-%v-%v", param1, param2, param3, param4, param5)
 	})
 
-	ipc.On("ipc-emit-sync", func(data string) string {
-		//time.Sleep(time.Second * 8)
-		fmt.Println("执行完成")
+	ipc.On("ipc-emit-wait", func(data string) string {
+		fmt.Println("data:", data)
 		return fmt.Sprintf("Go Result: %v - %v", data, time.Now().String())
+	})
+
+	ipc.On("ipc-emit-wait-2000", func() string {
+		fmt.Println("run task 4 second")
+		time.Sleep(time.Second * 4)
+		fmt.Println("run task end")
+		return "这个字符串返回也没用了"
 	})
 
 	//内置http服务链接安全配置
