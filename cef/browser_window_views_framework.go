@@ -497,6 +497,10 @@ func (m *ViewsFrameworkBrowserWindow) Chromium() IChromium {
 	return m.chromiumBrowser.Chromium()
 }
 
+func (m *ViewsFrameworkBrowserWindow) ChromiumBrowser() ICEFChromiumBrowser {
+	return m.chromiumBrowser
+}
+
 // Id 获取窗口ID
 func (m *ViewsFrameworkBrowserWindow) Id() int32 {
 	if m.windowId == 0 {

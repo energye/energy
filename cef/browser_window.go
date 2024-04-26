@@ -103,6 +103,7 @@ type IBrowserWindow interface {
 	SetWindowType(windowType consts.WINDOW_TYPE)                                                              //设置窗口类型
 	Browser() *ICefBrowser                                                                                    //窗口内的Browser对象
 	Chromium() IChromium                                                                                      //窗口内的Chromium对象, 返回空时我们可能需要自己创建, ChromiumCreate
+	ChromiumBrowser() ICEFChromiumBrowser                                                                     //ChromiumBrowser包装对象
 	DisableMaximize()                                                                                         //禁用最大化
 	DisableMinimize()                                                                                         //禁用最小化
 	DisableResize()                                                                                           //禁用窗口大小调整

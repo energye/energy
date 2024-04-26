@@ -443,6 +443,10 @@ func (m *LCLBrowserWindow) Chromium() IChromium {
 	return m.chromiumBrowser.Chromium()
 }
 
+func (m *LCLBrowserWindow) ChromiumBrowser() ICEFChromiumBrowser {
+	return m.chromiumBrowser
+}
+
 // Id 浏览器窗口ID
 func (m *LCLBrowserWindow) Id() int32 {
 	if m.windowId == 0 {
