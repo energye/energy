@@ -18,8 +18,10 @@ github.com/atomicgo/cursor v0.0.1/go.mod h1:cBON2QmmrysudxNBFthvMtN32r3jxVRIvzkU
 github.com/containerd/console v1.0.3/go.mod h1:7LqA/THxQ86k76b8c/EMSiaJ3h1eZkMkXar0TQ1gf3U=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/energye/energy/v2 v2.3.8 h1:pOqU4ZD/jrJaNDURx7MMWCL/c35dBO17aJ750ogEexg=
-github.com/energye/energy/v2 v2.3.8/go.mod h1:5DqlhKr7b9p1yxA0617PwQlyoRi/gZlxzbCsnTkwAqU=
+github.com/energye/energy/v2 v2.4.0 h1:/RtyB57V2Jy4iTBI8mDJAgGsA/llCkxTsZJBGSC9YYw=
+github.com/energye/energy/v2 v2.4.0/go.mod h1:5DqlhKr7b9p1yxA0617PwQlyoRi/gZlxzbCsnTkwAqU=
+github.com/energye/erod v0.0.2 h1:Biwj9Bk8Uzh++uSWWxRebLP6FNy8UAH9wGn7PYAV4qg=
+github.com/energye/erod v0.0.2/go.mod h1:M3Ow+opHCPqYFotArYliQb6dlolaIKu2RJf52o6qd3E=
 github.com/energye/golcl v1.0.10 h1:ZaP12w2aqIrSjfzlTg7Lj1mJzLGYmY/mltE5CBTocts=
 github.com/energye/golcl v1.0.10/go.mod h1:0wCrDx7NnHT5+gylUkKi1a9DKYewmMWZQf7xYyZuq9Y=
 github.com/go-rod/rod v0.115.0 h1:xL+4BOr4sEGVphDPqpkSYWHwDOVmoCbZUmVZhEEUK+4=

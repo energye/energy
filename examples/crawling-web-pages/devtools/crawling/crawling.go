@@ -1,10 +1,10 @@
 package crawling
 
 import (
-	"devtools/erod"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/erod"
 	"strings"
 	"time"
 )
