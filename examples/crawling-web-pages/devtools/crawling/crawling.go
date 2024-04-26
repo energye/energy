@@ -1,6 +1,7 @@
 package crawling
 
 import (
+	"devtools/erod"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
@@ -12,7 +13,7 @@ import (
 var windows = make(map[int]*WindowInfo)
 
 type WindowInfo struct {
-	energy *rod.Energy
+	energy *erod.Energy
 	url    string
 	typ    int
 }
@@ -41,16 +42,16 @@ func Create(url string, testType int) int {
 	wp := cef.NewWindowProperty()
 	wp.Url = url // 创建时指定一个URL
 	// 创建一个 energy 扩展 rod 的窗口
-	energyWindow := rod.NewEnergyWindow(nil, wp, nil)
+	energyWindow := erod.NewEnergyWindow(nil, wp, nil)
 	windows[windowId] = &WindowInfo{energy: energyWindow, typ: testType}
 	createHandle(windowId, energyWindow)
 	return windowId
 }
 
 // 弹出或创建窗口处理，主要一些事件
-func createHandle(newWindowId int, energy *rod.Energy) {
+func createHandle(newWindowId int, energy *erod.Energy) {
 	//注册处理弹出窗口
-	energy.SetOnBeforePopup(func(energyWindow *rod.Energy) {
+	energy.SetOnBeforePopup(func(energyWindow *erod.Energy) {
 		// 创建新窗口ID
 		windowId := time.Now().Nanosecond()
 		url := energyWindow.BrowserWindow().WindowProperty().Url
@@ -67,11 +68,11 @@ func createHandle(newWindowId int, energy *rod.Energy) {
 		fmt.Println("title:", page.MustElement("title").MustText())
 
 	})
-	energy.SetOnLoadingProgressChange(func(energy *rod.Energy, progress float64) {
+	energy.SetOnLoadingProgressChange(func(energy *erod.Energy, progress float64) {
 		ipc.Emit("window-loading-progress", newWindowId, int(progress*100))
 	})
 	// 窗口关闭时调用，通知主窗口，有窗口关闭
-	energy.SetOnClose(func(energy *rod.Energy) {
+	energy.SetOnClose(func(energy *erod.Energy) {
 		ipc.Emit("close-window", newWindowId)
 		delete(windows, newWindowId)
 	})
@@ -83,7 +84,7 @@ func Show(windowId int, url string) {
 		window.energy.CreateBrowser() // CreateBrowser 创建成功后，不会重复创建
 		if url != "" {
 			window.url = url
-			window.energy.Chromium().LoadUrl(url)
+			window.energy.ChromiumBrowser().Chromium().LoadUrl(url)
 		}
 	}
 }

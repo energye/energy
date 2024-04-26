@@ -2,6 +2,7 @@ package crawling
 
 import (
 	"fmt"
+	"github.com/go-rod/rod/lib/proto"
 	"os"
 	"path/filepath"
 )

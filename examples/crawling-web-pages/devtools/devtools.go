@@ -11,12 +11,12 @@
 package main
 
 import (
+	"devtools/crawling"
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/examples/crawling-web-pages/devtools/crawling"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
@@ -57,7 +57,6 @@ func main() {
 
 		除此之外你也可以自己定义 devtools 的使用
 	*/
-
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// 返回 ids
 		ipc.On("window-infos", func() []*crawling.Info {
