@@ -36,7 +36,7 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		size := argumentListBytes.GetSize()
 		messageDataBytes = make([]byte, size)
 		c := argumentListBytes.GetData(messageDataBytes, 0)
-		argumentListBytes.Free() //立即释放掉
+		argumentListBytes.Free() //释放掉
 		if c == 0 {
 			return
 		}
@@ -48,7 +48,6 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		argumentList json.JSONArray    // []
 		browserID    = browser.Identifier()
 		frameID      = frame.Identifier()
-		isAsync      bool
 	)
 	if messageDataBytes != nil {
 		argument = ipcArgument.UnList(messageDataBytes)
@@ -76,7 +75,8 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		var execute = func() {
 			defer func() {
 				free()
-				if isAsync {
+				if eventCallback.IsAsync {
+					// free UnWarp
 					frame.Free()
 					browser.Free()
 				}
@@ -111,7 +111,6 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		}
 		// 当前监听事件是异步，开启协程执行，但是CEF模式不能Debug协程（IDE无响应）
 		if eventCallback.IsAsync {
-			isAsync = true
 			browser = BrowserRef.UnWrap(browser) // 必须 Warp
 			frame = FrameRef.UnWrap(frame)       // 必须 Warp
 			go execute()
