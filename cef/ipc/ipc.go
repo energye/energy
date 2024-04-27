@@ -27,20 +27,18 @@ import (
 //
 // 参数
 //
-//	  支持 JavaScript 对应 Go 的基本类型和复合类型
-//		 name: 事件名称
-//	  fn : 事件回调函数 EmitContextCallback 或 func(...) [result...] {}
-//	  options: 监听选项, 配置监听规则
+//	支持 JavaScript 对应 Go 的基本类型和复合类型
+//	name: 事件名称
+//	fn : 事件回调函数 EmitContextCallback 或 func(...) [result...] {}
+//	options: 监听选项, 配置监听规则, 异步或同步规则
 //
 // 入参
 //
-//		 基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
-//
-//	  复合类型: slice, map, struct
-//
-//	  slice: 根据js实际类型定义, []interface{} | []interface{} | [][data type]
-//	  map: key 只能 string 类型, value 基本类型+复合类型
-//	  struct: 首字母大写, 字段类型匹配
+//	基本类型: int(int8 ~ uint64), bool, float(float32、float64), string
+//	复合类型: slice, map, struct
+//	slice: 根据js实际类型定义, []interface{} | []interface{} | [][data type]
+//	map: key 只能 string 类型, value 基本类型+复合类型
+//	struct: 首字母大写, 字段类型匹配
 //	    type ArgsStructDemo struct {
 //	       Key1 string
 //			  Key2 string
@@ -62,9 +60,6 @@ func On(name string, fn interface{}, options ...types.OnOptions) {
 // RemoveOn
 // IPC GO 移除监听事件
 func RemoveOn(name string) {
-	if name == "" {
-		return
-	}
 	ipc.RemoveOn(name)
 }
 

@@ -23,6 +23,7 @@ var argumentChannelType = reflect.TypeOf(new(IChannel)).Elem()
 type EmitContextCallback func(context context.IContext)
 
 // IChannel
+//
 //	The channel ID of the parameter type callback function
 //	Used for listening to events and receiving parameters from the event channel source
 type IChannel interface {
@@ -34,17 +35,20 @@ type IChannel interface {
 //  1. Callback Function - Context Mode
 //  2. Callback Function - Argument Mode
 type Callback struct {
+	IsAsync  bool              // JS ipc.emit mode
 	Context  *ContextCallback  // 1 Context
 	Argument *ArgumentCallback // 2 Argument
 }
 
 // ContextCallback
+//
 //	Callback function with context
 type ContextCallback struct {
 	Callback EmitContextCallback
 }
 
 // ArgumentCallback
+//
 //	Callback function with parameters
 type ArgumentCallback struct {
 	Callback *reflect.Value
@@ -64,6 +68,7 @@ func (m *argumentChannel) ChannelId() int64 {
 }
 
 // ContextCallback
+//
 //	Return context parameter callback
 func (m *Callback) ContextCallback() *ContextCallback {
 	if m.Context == nil {
@@ -96,6 +101,7 @@ func (m *ContextCallback) Invoke(context context.IContext) {
 }
 
 // ArgumentCallback
+//
 //	return argument list callback function
 func (m *Callback) ArgumentCallback() *ArgumentCallback {
 	if m.Argument == nil {

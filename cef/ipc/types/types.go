@@ -75,7 +75,29 @@ const (
 	OtAll                // All process
 )
 
+// Mode IPC mode of the browser process
+type Mode = int8
+
+const (
+	// MSync Synchronization, the default way CEF is used
+	//  In JS, ipc.emit triggers the Go event and processes long-term tasks. The window will remain frozen until the task processing is completed.
+	MSync Mode = iota
+	// MAsync
+	//  Asynchronous, using coroutines, coroutines (within the event) cannot be debugged, there are no other unforeseen problems found so far.
+	//  异步 (Asynchronous): Refers to an approach where operations can continue without waiting for the previous operations' completion.
+	//  使用协程 (using coroutines): Indicates the implementation or employment of coroutines, which are a way to manage the execution flow in a non-preemptive manner.
+	//  协程(事件内)无法Debug (coroutines (within the event) cannot be debugged): Points out the inability to debug coroutines when they are inside an event.
+	//  暂未发现其它无法预料的问题 (there are no other unforeseen problems found so far): Indicates that, at the time of the statement, no other unforeseen issues have been encountered or identified.
+	//
+	// 使用场景 (Usage scenarios):
+	//
+	//  Only applicable when using JS ipc.emit to trigger events.
+	//  Recommended for use in the Go UI main thread when performing long-duration tasks, otherwise it will freeze the UI window.
+	MAsync
+)
+
 // OnOptions Listening options
 type OnOptions struct {
 	OnType OnType // Listening type, default main process
+	Mode   Mode   // IPC emit mode of the browser process
 }

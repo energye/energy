@@ -538,10 +538,10 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 	if ipcBrowser == nil {
 		return
 	}
-	// 主进程
+	// 当前为主进程
 	ipcContext := ipcBrowser.jsExecuteGoMethod(m.v8Context.Browser().Identifier(), m.v8Context.Frame().Identifier(), emitName, json.NewJSONArray(data))
 	if ipcContext != nil && callback != nil {
-		//处理回复消息
+		// 处理回复消息
 		replay := ipcContext.Replay()
 		if replay.Result() != nil && len(replay.Result()) > 0 {
 			m.executeCallbackFunction(true, callback, json.NewJSONArray(replay.Result()))
@@ -551,7 +551,7 @@ func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback,
 	m.executeCallbackFunction(false, callback, nil)
 }
 
-// 多进程消息 - 会阻塞渲染进程，并等待 delay 时间后超时
+// 多进程消息 - 会阻塞渲染进程，并等待 delay 时间后自动返回
 func (m *ipcRenderProcess) multiProcessWait(emitName string, callback *ipcCallback, delay time.Duration, data interface{}) {
 	//延迟等待接收结果，默认5秒
 	messageId := m.waitChan.NextMessageId()
@@ -561,10 +561,11 @@ func (m *ipcRenderProcess) multiProcessWait(emitName string, callback *ipcCallba
 		case resultChan <- result:
 		}
 	})
+	// 组装消息
 	message := &ipcArgument.List{
 		Id:        messageId,
 		BId:       ipc.RenderChan().BrowserId(),
-		Name:      internalIPCJSExecuteGoSyncEvent,
+		Name:      internalIPCJSExecuteGoWaitEvent,
 		EventName: emitName,
 		Data:      data,
 	}
@@ -727,7 +728,7 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 }
 
 // Go IPC 渲染进程监听
-func (m *ipcRenderProcess) registerGoSyncReplayEvent() {
+func (m *ipcRenderProcess) registerGoWaitReplayEvent() {
 	if m.isInitRenderIPC {
 		return
 	}
@@ -735,7 +736,7 @@ func (m *ipcRenderProcess) registerGoSyncReplayEvent() {
 	ipc.RenderChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
 		if argument != nil {
 			name := argument.GetName()
-			if name == internalIPCJSExecuteGoSyncEventReplay {
+			if name == internalIPCJSExecuteGoWaitEventReplay {
 				var (
 					messageId    = argument.MessageId()
 					argumentList json.JSONArray

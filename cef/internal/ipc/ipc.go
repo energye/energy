@@ -108,9 +108,12 @@ func On(name string, fn interface{}, options ...types.OnOptions) {
 	if name == "" || fn == nil {
 		return
 	}
-	var isOn = false
+	var (
+		isOn   = false
+		option *types.OnOptions
+	)
 	if options != nil && len(options) > 0 && !cef.Application().SingleProcess() {
-		option := options[0]
+		option = &options[0]
 		if option.OnType == types.OtAll {
 			isOn = true
 		} else if option.OnType == types.OtMain && isMainProcess {
@@ -123,6 +126,9 @@ func On(name string, fn interface{}, options ...types.OnOptions) {
 	}
 	if isOn {
 		if callbackFN := createCallback(fn); callbackFN != nil {
+			if option != nil {
+				callbackFN.IsAsync = option.Mode == types.MAsync
+			}
 			browser.addOnEvent(name, callbackFN)
 		}
 	}

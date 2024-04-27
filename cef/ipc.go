@@ -32,8 +32,8 @@ const (
 const (
 	internalIPCJSExecuteGoEvent           = "JSEmitGo"           // JS 触发 GO事件异步
 	internalIPCJSExecuteGoEventReplay     = "JSEmitGoReplay"     // JS 触发 GO事件异步 - 返回结果
-	internalIPCJSExecuteGoSyncEvent       = "JSEmitSyncGo"       // JS 触发 GO事件同步
-	internalIPCJSExecuteGoSyncEventReplay = "JSEmitSyncGoReplay" // JS 触发 GO事件同步 - 返回结果
+	internalIPCJSExecuteGoWaitEvent       = "JSEmitWaitGo"       // JS 触发 GO事件同步
+	internalIPCJSExecuteGoWaitEventReplay = "JSEmitWaitGoReplay" // JS 触发 GO事件同步 - 返回结果
 	internalIPCGoExecuteJSEvent           = "GoEmitJS"           // GO 触发 JS事件
 	internalIPCGoExecuteJSEventReplay     = "GoEmitJSReplay"     // GO 触发 JS事件 - 返回结果
 )
@@ -82,7 +82,7 @@ func isIPCInternalKey(key string) bool {
 	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCDRAG || key == internalIPCEmitWait ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
 		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
-		key == internalIPCJSExecuteGoSyncEvent || key == internalIPCJSExecuteGoSyncEventReplay
+		key == internalIPCJSExecuteGoWaitEvent || key == internalIPCJSExecuteGoWaitEventReplay
 
 }
 
