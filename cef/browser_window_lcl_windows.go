@@ -273,7 +273,7 @@ func (m *LCLBrowserWindow) Minimize() {
 
 // Maximize Windows平台，窗口最大化/还原
 func (m *LCLBrowserWindow) Maximize() {
-	if m.TForm == nil {
+	if m.TForm == nil || m.IsFullScreen() {
 		return
 	}
 	RunOnMainThread(func() {
@@ -291,6 +291,11 @@ func (m *LCLBrowserWindow) Maximize() {
 func (m *LCLBrowserWindow) FullScreen() {
 	if m.WindowProperty().EnableHideCaption {
 		RunOnMainThread(func() {
+			if m.WindowState() == types.WsMinimized || m.WindowState() == types.WsMaximized {
+				if win.ReleaseCapture() {
+					win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+				}
+			}
 			m.WindowProperty().current.ws = types.WsFullScreen
 			m.setCurrentProperty()
 			m.SetBoundsRect(m.Monitor().BoundsRect())
