@@ -149,7 +149,6 @@ type HeadlessBrowser struct {
 	timer            *lcl.TTimer
 	chromium         cef.IChromium
 	browserCreated   bool
-	canClose         bool
 	printPDFCallback chan bool
 }
 
