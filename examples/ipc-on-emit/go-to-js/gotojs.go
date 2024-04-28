@@ -8,6 +8,7 @@ import (
 	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
+	ipcTypes "github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
@@ -42,7 +43,8 @@ func main() {
 		//参数是以js调用时传递的参数下标位置开始计算，从0开始表示第1个参数
 		p1 := arguments.GetStringByIndex(0)
 		fmt.Println("参数1:", p1)
-	})
+		context.Result(time.Now().String())
+	} /*, ipcTypes.OnOptions{Mode: ipcTypes.MAsync}*/)
 
 	//带有返回值的事件
 	//使用上下文获取参数
@@ -89,6 +91,7 @@ func main() {
 	// 使用形参接收参数
 	// 在JS中入参类型必须相同
 	// 返回参数可以同时返回多个, 在JS接收时同样使用回调函数方式以多个入参形式接收
+	// 注意：这是一个异步事件执行, 在此函数内大多数情况无法正常Debug调试它
 	ipc.On("go-on-event-demo-argument-return", func(param1 int, param2 string, param3 float64, param4 bool, param5 string) string {
 		fmt.Println("param1:", param1)
 		fmt.Println("param2:", param2)
@@ -96,7 +99,7 @@ func main() {
 		fmt.Println("param4:", param4)
 		fmt.Println("param5:", param5)
 		return fmt.Sprintf("%d-%v-%v-%v-%v", param1, param2, param3, param4, param5)
-	})
+	}, ipcTypes.OnOptions{Mode: ipcTypes.MAsync})
 
 	ipc.On("ipc-emit-wait", func(data string) string {
 		fmt.Println("data:", data)

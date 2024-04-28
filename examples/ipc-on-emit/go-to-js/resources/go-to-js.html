@@ -25,7 +25,9 @@
         function goOnEventDemo() {
             clearMessage()
             //参数传递,从下标0开始表示第1个参数
-            ipc.emit('go-on-event-demo', ['传递的数据 ' + gId])
+            ipc.emit('go-on-event-demo', ['传递的数据 ' + gId], function (result) {
+                writeMessage("result: " + result)
+            })
         }
 
         //带有返回值的事件
@@ -71,17 +73,19 @@
          * 超时时间: 毫秒， 默认5000
          *
          */
-        function goOnEventJSEmitWait() {
+        function goOnEventJSEmitWait(isAuto) {
             let result;
             // 定义最长等待时间 1000 毫秒
             result = ipc.emitWait("ipc-emit-wait", ["data(ipc-emit-wait-5000) " + gId], 1000)
             writeMessage("result-wait-5000: " + result)
-            setTimeout(function () {
-                // 如果发生等待（未及时返回）页面将在这段时间内无法操作。
-                // 等待2秒
-                result = ipc.emitWait("ipc-emit-wait-2000", 2000)
-                writeMessage("result-wait-2000: " + result)
-            })
+            if (!isAuto){
+                setTimeout(function () {
+                    // 如果发生等待（未及时返回）页面将在这段时间内无法操作。
+                    // 等待2秒
+                    result = ipc.emitWait("ipc-emit-wait-2000", 2000)
+                    writeMessage("result-wait-2000: " + result)
+                })
+            }
             // 定义最长等待时间 1 毫秒, <= 0 = 5000
             result = ipc.emitWait("ipc-emit-wait", ["data(ipc-emit-wait-1) " + gId], 1) // 1毫秒？？
             writeMessage("result-wait-1: " + result)
@@ -97,7 +101,7 @@
                     goOnEventDemo()
                     goOnEventDemoArgument()
                     goOnEventDemoArgumentReturn()
-                    goOnEventJSEmitWait()
+                    goOnEventJSEmitWait(true)
                     gId++
                 })
             } else {
