@@ -55,6 +55,7 @@ func (m *MainWindow) OnFormCreate(sender lcl.IObject) {
 	m.SetWidth(600)
 	m.EnabledMaximize(false)
 	m.WorkAreaCenter()
+	m.SetCaption("Energy - headless")
 
 	defaultURL := "https://gitee.com/energye/energy"
 	//保存目录
