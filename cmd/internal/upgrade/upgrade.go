@@ -10,9 +10,12 @@
 
 package upgrade
 
-import "github.com/energye/energy/v2/cmd/internal/command"
+import (
+	"errors"
+	"github.com/energye/energy/v2/cmd/internal/command"
+)
 
-// 升级当前版本
-func upg(c *command.Config) (err error) {
-	return nil
+// Upgrade 升级当前版本
+func Upgrade(c *command.Config) (err error) {
+	return errors.New("no added features")
 }

@@ -26,6 +26,7 @@ type Config struct {
 	Build     Build   `command:"build" description:"building an energy project"`
 	Bindata   Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
 	Gen       Gen     `command:"gen" description:"generate icons or syso commands"`
+	Upg       Upgrade `command:"upg" description:"check and upgrade the current version"`
 	Help      Help    `command:"help" description:"energy [cmd] help"`
 	V         string  `command:"v" description:"energy cli version"`
 }
@@ -33,6 +34,9 @@ type Config struct {
 type Command struct {
 	Run                    func(c *Config) error
 	UsageLine, Short, Long string
+}
+
+type Upgrade struct {
 }
 
 type Gen struct {

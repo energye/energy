@@ -37,6 +37,7 @@ var commands = []*command.Command{
 	/*7*/ internal.CmdBuild,
 	/*8*/ internal.CmdBindata,
 	/*9*/ internal.CmdGen,
+	/*10*/ internal.CmdUpgrade,
 }
 
 func main() {
@@ -79,6 +80,8 @@ func termRun() {
 			cc.Index = 8
 		case "gen":
 			cc.Index = 9
+		case "upg":
+			cc.Index = 10
 		case "v":
 			checkversion.Check()
 			return
