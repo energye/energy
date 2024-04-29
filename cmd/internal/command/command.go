@@ -25,6 +25,7 @@ type Config struct {
 	Init      Init    `command:"init" description:"initialize the energy application project"`
 	Build     Build   `command:"build" description:"building an energy project"`
 	Bindata   Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
+	Gen       Gen     `command:"gen" description:"generate icons or syso commands"`
 	Help      Help    `command:"help" description:"energy [cmd] help"`
 	V         string  `command:"v" description:"energy cli version"`
 }
@@ -32,6 +33,34 @@ type Config struct {
 type Command struct {
 	Run                    func(c *Config) error
 	UsageLine, Short, Long string
+}
+
+type Gen struct {
+	Icon bool `long:"icon" description:"Used to generate application icons,  can convert .png to .ico Generate pixel size of: [256, 128, 64, 48, 32, 16]"`
+	Syso bool `long:"syso" description:"Generate the application program xxx.syso, and when compiling the execution file, the execution file information can be written into it"`
+	// 参数
+	// icon, syso
+	IconFilePath string `short:"p" long:"iconFilePath" description:"Icon file directory:"`
+	OutPath      string `short:"o" long:"outPath" description:"Save directory"`
+	// syso
+	Name             string `short:"n" long:"name" description:"Generate the syso file name and move it to the application name"`
+	ManifestFilePath string `short:"m" long:"manifestFilePath" description:"Manifest file directory, if empty, will use the default template"`
+	Arch             string `short:"a" long:"arch" description:"amd64 or i386 or arm64, if empty, the current system architecture"`
+	InfoFilePath     string `short:"i" long:"infoFilePath" description:"Generate directory for syso information data files in JSON format."`
+}
+
+type Icon struct {
+	IconFilePath string `short:"p" long:"iconFilePath" description:"Icon Directory: Supporting ICO, PNG formats, recommended as a 1024x1024 PNG"`
+	OutPath      string `short:"o" long:"outPath" description:"ICO output save directory"`
+}
+
+type SYSO struct {
+	Name             string `short:"n" long:"name" description:""`
+	IconFilePath     string `short:"p" long:"iconFilePath" description:"Icon Directory: Supporting .ICO formats"`
+	ManifestFilePath string `short:"m" long:"manifestFilePath" description:"Manifest file directory, if empty, will use the default template"`
+	OutPath          string `short:"o" long:"outPath" description:".syso output save directory"`
+	Arch             string `short:"a" long:"arch" description:"amd64 or i386 or arm64, if empty, the current system architecture"`
+	SysoInfoFilePath string `short:"s" long:"sysoInfoFilePath" description:"Generate directory for syso information data files in JSON format."`
 }
 
 type Install struct {

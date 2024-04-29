@@ -14,23 +14,15 @@
 package build
 
 import (
-	"bytes"
-	"errors"
-	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/gen"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/energy/v2/pkgs/winicon"
 	toolsCommand "github.com/energye/golcl/tools/command"
-	"github.com/tc-hib/winres"
-	"github.com/tc-hib/winres/version"
-	"io/fs"
-	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -99,109 +91,12 @@ func build(c *command.Config, proj *project.Project) (err error) {
 
 // 生成syso图标
 func generaSYSO(iconPath string, proj *project.Project) (string, error) {
-	rs := &winres.ResourceSet{}
-	iconFile, err := os.Open(iconPath)
-	if err != nil {
-		return "", err
-	}
-	defer iconFile.Close()
-	// icon
-	ico, err := winres.LoadICO(iconFile)
-	if err != nil {
-		return "", fmt.Errorf("couldn't load icon from icon.ico: %w", err)
-	}
-	err = rs.SetIcon(winres.RT_ICON, ico)
-	if err != nil {
-		return "", err
-	}
-	// Manifest
-	var manifestData []byte
-	if proj.Info.Manifest != "" {
-		manifestData, err = ioutil.ReadFile(proj.Info.Manifest)
-	}
-	if manifestData == nil || err != nil {
-		manifestData, err = assets.ReadFile(proj, assetsFSPath, windowManifest)
-	}
-	if err != nil {
-		return "", err
-	}
-	data := make(map[string]interface{})
-	data["Info"] = proj.Info
-	// 生成 manifest
-	manifestData, err = tools.RenderTemplate(string(manifestData), data)
-	if err != nil {
-		return "", err
-	}
-	err = ioutil.WriteFile(filepath.Join(proj.ProjectPath, fmt.Sprintf("%s.manifest", proj.Name)), manifestData, fs.ModePerm)
-	if err != nil {
-		return "", err
-	}
-	xmlData, err := winres.AppManifestFromXML(manifestData)
-	if err != nil {
-		return "", err
-	}
-	rs.SetManifest(xmlData)
-	// versionInfo
-	versionInfo, err := assets.ReadFile(proj, assetsFSPath, windowVersionInfo)
-	if err != nil {
-		return "", err
-	}
-	versionInfo, err = tools.RenderTemplate(string(versionInfo), data)
-	if err != nil {
-		return "", err
-	}
-	if len(versionInfo) != 0 {
-		var v version.Info
-		if err := v.UnmarshalJSON(versionInfo); err != nil {
-			return "", err
-		}
-		rs.SetVersionInfo(v)
-	}
-	targetFile := filepath.Join(proj.ProjectPath, fmt.Sprintf("%s-%s.syso", proj.Name, runtime.GOOS))
-	fout, err := os.Create(targetFile)
-	if err != nil {
-		return "", err
-	}
-	defer fout.Close()
-	archs := map[string]winres.Arch{
-		"amd64": winres.ArchAMD64,
-		"arm64": winres.ArchARM64,
-		"386":   winres.ArchI386,
-	}
-	targetArch, supported := archs[runtime.GOARCH]
-	if !supported {
-		return targetFile, fmt.Errorf("arch '%s' not supported", runtime.GOARCH)
-	}
-	err = rs.WriteObject(fout, targetArch)
-	if err != nil {
-		return targetFile, err
-	}
-	return targetFile, nil
+	return gen.GeneraSYSO(proj.Name, iconPath, proj.Info.Manifest, proj.ProjectPath, "", proj.Info)
 }
 
 // 生成应用图标，如果配置的是png图标，把png转换ico
 func generaICON(proj *project.Project) (string, error) {
 	iconPath := proj.Info.Icon
-	if !tools.IsExist(iconPath) {
-		return "", errors.New("file does not exist: " + iconPath)
-	}
-	iconExt := filepath.Ext(iconPath)
-	if strings.ToLower(iconExt) == ".png" {
-		// png => ico
-		content, err := ioutil.ReadFile(iconPath)
-		if err != nil {
-			return "", err
-		}
-		iconPath = filepath.Join(assets.BuildOutPath(proj), "windows", "icon.ico")
-		output, err := os.OpenFile(iconPath, os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			return "", err
-		}
-		defer output.Close()
-		err = winicon.GenerateIcon(bytes.NewBuffer(content), output, []int{256, 128, 64, 48, 32, 16})
-		if err != nil {
-			return "", err
-		}
-	}
-	return iconPath, nil
+	outPath := filepath.Join(assets.BuildOutPath(proj), "windows")
+	return gen.GeneraICON(iconPath, outPath)
 }

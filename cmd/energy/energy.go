@@ -27,15 +27,16 @@ import (
 )
 
 var commands = []*command.Command{
-	nil,
-	internal.CmdInstall,
-	internal.CmdPackage,
-	internal.CmdVersion,
-	internal.CmdSetenv,
-	internal.CmdEnv,
-	internal.CmdInit,
-	internal.CmdBuild,
-	internal.CmdBindata,
+	/*0*/ nil,
+	/*1*/ internal.CmdInstall,
+	/*2*/ internal.CmdPackage,
+	/*3*/ internal.CmdVersion,
+	/*4*/ internal.CmdSetenv,
+	/*5*/ internal.CmdEnv,
+	/*6*/ internal.CmdInit,
+	/*7*/ internal.CmdBuild,
+	/*8*/ internal.CmdBindata,
+	/*9*/ internal.CmdGen,
 }
 
 func main() {
@@ -76,6 +77,8 @@ func termRun() {
 			cc.Index = 7
 		case "bindata":
 			cc.Index = 8
+		case "gen":
+			cc.Index = 9
 		case "v":
 			checkversion.Check()
 			return

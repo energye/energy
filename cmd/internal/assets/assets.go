@@ -42,7 +42,8 @@ func BuildOutPath(proj *project.Project) string {
 }
 
 // ReadFile
-//  读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
+//
+//	读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
 func ReadFile(proj *project.Project, assetsFSPath, file string) ([]byte, error) {
 	var (
 		content []byte
@@ -59,8 +60,14 @@ func ReadFile(proj *project.Project, assetsFSPath, file string) ([]byte, error) 
 		}
 		return content, nil
 	}
-
 	return content, err
+}
+
+// Assets
+//
+//	返回 assets embed.FS 对象
+func Assets() embed.FS {
+	return assets
 }
 
 // WriteFile 写文件到本地目录
