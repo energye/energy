@@ -13,7 +13,10 @@
 
 package gen
 
-import "errors"
+import (
+	"errors"
+	"github.com/energye/energy/v2/cmd/internal/project"
+)
 
 func GeneraICON(iconFilePath, outPath string) (string, error) {
 	return "", errors.New("Genera ICON only applicable to Windows")
