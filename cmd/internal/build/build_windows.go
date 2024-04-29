@@ -21,7 +21,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -39,19 +38,11 @@ const (
 func build(c *command.Config, proj *project.Project) (err error) {
 	var (
 		iconPath string
-		syso     string
 	)
 	if iconPath, err = generaICON(proj); err != nil {
 		return err
 	}
-	var delSyso = func() {
-		if syso != "" {
-			os.Remove(syso)
-			syso = ""
-		}
-	}
-	defer delSyso()
-	if syso, err = generaSYSO(iconPath, proj); err != nil {
+	if _, err = generaSYSO(iconPath, proj); err != nil {
 		return err
 	}
 	// go build
@@ -70,7 +61,6 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	args = append(args, "-ldflags", "-s -w -H windowsgui")
 	args = append(args, "-o", proj.OutputFilename)
 	cmd.Command("go", args...)
-	delSyso()
 	// upx
 	if c.Build.Upx && tools.CommandExists("upx") {
 		term.Section.Println("Upx compression")
