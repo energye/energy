@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -44,7 +45,9 @@ func main() {
 		})
 		// LCL窗口
 		lcl.Application.Initialize()
-		lcl.Application.SetMainFormOnTaskBar(true)
+		// 应用图标
+		icon, _ := common.ResourcesFS().ReadFile("resources/icon.ico")
+		lcl.Application.Icon().LoadFromBytes(icon)
 		lcl.Application.CreateForm(&BW, true)
 		lcl.Application.Run()
 	}
