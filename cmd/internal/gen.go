@@ -22,16 +22,18 @@ var CmdGen = &command.Command{
 	Short:     "generate icons or syso commands",
 	Long: `
 	generate icons or syso commands
-	--icon Used to generate application icons,  can convert .png to .ico Generate pixel size of: [256, 128, 64, 48, 32, 16]
+	--icon Used to generate application icons, can convert .png to .ico.
+			Generate pixel size of: [256, 128, 64, 48, 32, 16]
 		-p --iconFilePath: Icon source file directory
-		-o --outPath: Save directory after icon generation, When empty, the current directory
-	--syso Generate the application program xxx.syso, and when compiling the execution file, the execution file information can be written into it
+		-o --outPath: Save directory after icon generation. if empty, the current directory
+	--syso Generate the application program xxx.syso, and when compiling the execution file
+			the execution file information can be written into it
 		-p --iconFilePath: Icon source file directory
-		-o --outPath: Save directory after icon generation, When empty, the current directory
+		-o --outPath: Save directory after icon generation. if empty, the current directory
 		-n --name: Generate the syso file name and move it to the application name
-		-m --manifestFilePath: Manifest file directory, if empty, will use the default template
-		-a --arch: amd64 or i386 or arm64, if empty, the current system architecture
-		-s --infoFilePath: Generate directory for syso information data files in JSON format
+		-m --manifestFilePath: Manifest file directory. if empty, will use the default template
+		-a --arch: amd64 or i386 or arm64. if empty, the current system architecture
+		-i --infoFilePath: Generate directory for syso information data files in JSON format
 `,
 }
 
