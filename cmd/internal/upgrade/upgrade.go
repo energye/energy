@@ -17,5 +17,9 @@ import (
 
 // Upgrade 升级当前版本
 func Upgrade(c *command.Config) (err error) {
+	//wd, _ := os.Getwd()
+	//gomod := filepath.Join(wd, "go.mod")
+	//data, _ := ioutil.ReadFile(gomod)
+	//fl, err := modfile.Parse(gomod, data, nil)
 	return errors.New("no added features")
 }
