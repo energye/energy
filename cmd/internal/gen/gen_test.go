@@ -3,6 +3,7 @@ package gen
 import (
 	"encoding/json"
 	"github.com/energye/energy/v2/cmd/internal/project"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"testing"
@@ -13,6 +14,7 @@ func TestIcon(t *testing.T) {
 	testdata := filepath.Join(wd, "testdata")
 	icon := filepath.Join(testdata, "Go-Energy.png")
 	outPath := filepath.Join(wd, "out")
+	os.MkdirAll(outPath, fs.ModePerm)
 	println("wd:", wd)
 	outPath, err := GeneraICON(icon, outPath)
 	if err != nil {
