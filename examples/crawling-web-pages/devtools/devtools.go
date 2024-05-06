@@ -11,13 +11,13 @@
 package main
 
 import (
-	"devtools/crawling"
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/erod/examples/devtools/crawling"
 	"github.com/energye/golcl/lcl"
 )
 
@@ -91,14 +91,19 @@ func main() {
 		// 抓取
 		ipc.On("crawling", func(windowId, testType int) {
 			fmt.Println("crawling windowId:", windowId)
+			// 在ipc里使用rod当前需要开启协程，或使用异步IPC监听选项配置
 			if testType == testTypeDefault {
-				crawling.Crawling(windowId)
+				go crawling.Crawling(windowId)
 			} else if testType == testTypeUpload {
-				crawling.Upload(windowId)
+				go crawling.Upload(windowId)
 			} else if testType == testTypeDownload {
-				crawling.Download(windowId)
+				go crawling.Download(windowId)
 			}
 		})
+		// 异步IPC监听选项配置
+		//ipc.On("crawling", func(windowId, testType int) {
+		//
+		//}, types.OnOptions{Mode: types.MAsync})
 
 		// 测试上传
 		var url string
