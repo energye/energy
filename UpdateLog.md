@@ -1,4 +1,20 @@
-### 2.4.0
+### 2.4.1 - 2024-05-06
+1. Modify all demo syso
+1. U: Add JS ipc.emit to trigger Go event synchronization mode configuration option, default: `MSync`
+1. U: Optimizing the conflict between fullscreen and maximized window.
+1. A: demo headless
+1. U: command-line manifest requestedExecutionLevel => asInvoker
+1. U: command-line add gen windows > icon, syso cmd
+
+Remarks: `ipc.On`
+```go
+// go: Asynchronous listening mode
+ipc.On("name", func(){
+	// ...
+}, ipcTypes.OnOptions{Mode: ipcTypes.MAsync})
+```
+
+### 2.4.0 - 2024-04-26
 This version is incompatible with 2.3.x.
 
 1. U: LCLBrowserWindow and ViewsFrameworkBrowserWindow, Add func ChromiumBrowser() ICEFChromiumBrowser
