@@ -37,6 +37,7 @@ const (
 	// https://golang.google.cn/dl/go1.18.10.windows-arm64.zip
 	// https://golang.google.cn
 	GolangDownloadSource = "https://golang.google.cn"
+	CEFDownloadSource    = "https://cef-builds.spotifycdn.com/"
 	GolangDownloadURL    = "%s/dl/%s"
 	GolangDefaultVersion = "1.19.13"
 	GolanHomeKey         = "GOROOT"

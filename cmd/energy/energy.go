@@ -12,18 +12,14 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/energye/energy/v2/cmd/internal"
 	"github.com/energye/energy/v2/cmd/internal/checkversion"
 	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/golcl/energy/homedir"
 	"github.com/jessevdk/go-flags"
-	"io/ioutil"
 	"os"
-	"path/filepath"
 )
 
 var commands = []*command.Command{
@@ -106,49 +102,5 @@ func termRun() {
 }
 
 func readConfig(c *command.Config) {
-	home, err := homedir.Dir()
-	if err != nil {
-		term.Section.Println(err.Error())
-		return
-	}
-	energyDir := filepath.Join(home, ".energy")
-	if !tools.IsExist(energyDir) {
-		err = os.MkdirAll(energyDir, os.ModePerm)
-		if err != nil {
-			term.Section.Println(err.Error())
-			return
-		}
-	}
-	config := filepath.Join(energyDir, "energy.json")
-	if !tools.IsExist(config) {
-		cfg := command.EnergyConfig{
-			Source: command.DownloadSource{
-				Golang: consts.GolangDownloadSource,
-				CEF:    "",
-			},
-		}
-		cfgJSON, err := json.MarshalIndent(&cfg, "", "\t")
-		if err != nil {
-			term.Section.Println(err.Error())
-			return
-		}
-		if err := ioutil.WriteFile(config, cfgJSON, 0644); err != nil {
-			term.Section.Println(err.Error())
-			return
-		}
-		c.EnergyCfg = cfg
-	} else {
-		cfgJSON, err := ioutil.ReadFile(config)
-		if err != nil {
-			term.Section.Println(err.Error())
-			return
-		}
-		cfg := command.EnergyConfig{}
-		err = json.Unmarshal(cfgJSON, &cfg)
-		if err != nil {
-			term.Section.Println(err.Error())
-			return
-		}
-		c.EnergyCfg = cfg
-	}
+	c.EnergyCfg = *env.DevEnvReadUpdate("", "", "", "", "")
 }

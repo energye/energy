@@ -139,9 +139,13 @@ type Bindata struct {
 }
 
 type EnergyConfig struct {
-	Framework string         `json:"framework"`
-	Version   string         `json:"version"`
-	Source    DownloadSource `json:"source"`
+	GoRoot   string         `json:"goroot"`
+	CEFRoot  string         `json:"cefroot"`
+	NSISRoot string         `json:"nsisroot"`
+	UPXRoot  string         `json:"upxroot"`
+	Z7zRoot  string         `json:"z7zroot"`
+	Version  string         `json:"version"`
+	Source   DownloadSource `json:"source"`
 }
 
 type DownloadSource struct {

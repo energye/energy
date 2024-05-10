@@ -173,17 +173,20 @@ func Install(c *command.Config) error {
 	if z7zSuccessCallback != nil {
 		z7zSuccessCallback()
 	}
+
+	//cfg := env.DevEnvReadUpdate(goRoot, cefFrameworkRoot, nsisRoot, upxRoot, z7zRoot)
 	copyEnergyCMD(goRoot)
 
 	return nil
 }
 
+// 复制energy命令工具到GOROOT/bin目录
 func copyEnergyCMD(goRoot string) {
 	term.Logger.Info("Copy energy command-line to GOROOT/bin")
 	if goRoot == "" {
 		goRoot = os.Getenv("GOROOT")
 		if goRoot == "" {
-			term.Logger.Error("Install Copy energy command-line, GOROOT not found, Incorrect configuration or please restart term")
+			term.Logger.Warn("Install Copy energy command-line, GOROOT not found, Incorrect configuration or please restart term")
 			return
 		}
 	}
@@ -260,11 +263,12 @@ func z7zCanInstall() bool {
 }
 
 // 检查当前环境
-//  golang, nsis, cef, upx
-//  golang: all os
-//  nsis: windows
-//  cef: all os
-//  upx: windows amd64, 386, linux amd64, arm64
+//
+//	golang, nsis, cef, upx
+//	golang: all os
+//	nsis: windows
+//	cef: all os
+//	upx: windows amd64, 386, linux amd64, arm64
 func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	result = make([]*softEnf, 0)
 	var check = func(chkInstall func() (string, bool), name string, yes func()) {
@@ -747,7 +751,8 @@ func isFileExist(filename string, filesize int64) bool {
 }
 
 // DownloadFile 下载文件
-//  如果文件存在大小一样不再下载
+//
+//	如果文件存在大小一样不再下载
 func DownloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
 	var (
 		fsize   int64
