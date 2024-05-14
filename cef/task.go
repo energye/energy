@@ -41,7 +41,7 @@ func NewTask() *ITask {
 }
 
 func (m *ITask) OnlyPostTask(threadId TCefThreadId) bool {
-	r1, _, _ := imports.Proc(def.Task_OnlyPostTask).Call(uintptr(threadId))
+	r1, _, _ := imports.Proc(def.Task_OnlyPostTask).Call(m.Instance(), uintptr(threadId))
 	return GoBool(r1)
 }
 

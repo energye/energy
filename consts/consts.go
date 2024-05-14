@@ -2291,3 +2291,19 @@ const (
 	CzDec                      // CanDecZoom
 	CzReset                    // CanResetZoom
 )
+
+// TCefThreadId
+//
+//	Existing thread IDs.
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_thread_id_t))</a>
+type TCefThreadId = int32
+
+const (
+	TID_UI TCefThreadId = iota
+	TID_FILE_BACKGROUND
+	TID_FILE_USER_VISIBLE
+	TID_FILE_USER_BLOCKING
+	TID_PROCESS_LAUNCHER
+	TID_IO
+	TID_RENDERER
+)
