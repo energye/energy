@@ -152,6 +152,21 @@ func GetDeviceScaleFactor() (result float32) {
 	return
 }
 
+func CefPostTask(threadId consts.TCefThreadId, task *ITask) bool {
+	r1, _, _ := imports.Proc(def.Misc_CefPostTask).Call(uintptr(threadId), task.Instance())
+	return api.GoBool(r1)
+}
+
+func CefPostDelayedTask(threadId consts.TCefThreadId, task *ITask, delayMs int64) bool {
+	r1, _, _ := imports.Proc(def.Misc_CefPostDelayedTask).Call(uintptr(threadId), task.Instance(), uintptr(unsafe.Pointer(&delayMs)))
+	return api.GoBool(r1)
+}
+
+func CefCurrentlyOn(threadId consts.TCefThreadId) bool {
+	r1, _, _ := imports.Proc(def.Misc_CefCurrentlyOn).Call(uintptr(threadId))
+	return api.GoBool(r1)
+}
+
 func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor) {
 	switch cefCursor {
 	case consts.CT_POINTER:

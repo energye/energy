@@ -1124,6 +1124,9 @@ const (
 	Misc_ValidCefWindowHandle
 	Misc_GetScreenDPI
 	Misc_GetDeviceScaleFactor
+	Misc_CefPostTask
+	Misc_CefPostDelayedTask
+	Misc_CefCurrentlyOn
 	// ICefRequest
 	CefRequestRef_New
 	CefRequestRef_UnWrap
@@ -2731,4 +2734,9 @@ const (
 	BoxLayoutRef_UnWrap
 	BoxLayout_SetFlexForView
 	BoxLayout_ClearFlexForView
+	// ITask
+	Task_Create
+	Task_OnlyPostTask
+	Task_OnlyPostDelayedTask
+	Task_SetOnExecute
 ) //end

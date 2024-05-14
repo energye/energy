@@ -1124,6 +1124,9 @@ func init() {
 		dllimports.NewEnergyImport("Misc_ValidCefWindowHandle", 0),
 		dllimports.NewEnergyImport("Misc_GetScreenDPI", 0),
 		dllimports.NewEnergyImport("Misc_GetDeviceScaleFactor", 0),
+		dllimports.NewEnergyImport("Misc_CefPostTask", 0),
+		dllimports.NewEnergyImport("Misc_CefPostDelayedTask", 0),
+		dllimports.NewEnergyImport("Misc_CefCurrentlyOn", 0),
 		//ICefRequest
 		dllimports.NewEnergyImport("CefRequestRef_New", 0),
 		dllimports.NewEnergyImport("CefRequestRef_UnWrap", 0),
@@ -2731,6 +2734,11 @@ func init() {
 		dllimports.NewEnergyImport("BoxLayoutRef_UnWrap", 0),
 		dllimports.NewEnergyImport("BoxLayout_SetFlexForView", 0),
 		dllimports.NewEnergyImport("BoxLayout_ClearFlexForView", 0),
+		// ITask
+		dllimports.NewEnergyImport("Task_Create", 0),
+		dllimports.NewEnergyImport("Task_OnlyPostTask", 0),
+		dllimports.NewEnergyImport("Task_OnlyPostDelayedTask", 0),
+		dllimports.NewEnergyImport("Task_SetOnExecute", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }
