@@ -474,17 +474,17 @@ const (
 type TCefState = types.Int32
 
 const (
-	/// <summary>
-	/// Use the default state for the setting.
-	/// </summary>
+	// <summary>
+	// Use the default state for the setting.
+	// </summary>
 	STATE_DEFAULT = TCefState(iota)
-	/// <summary>
-	/// Enable or allow the setting.
-	/// </summary>
+	// <summary>
+	// Enable or allow the setting.
+	// </summary>
 	STATE_ENABLED
-	/// <summary>
-	/// Disable or disallow the setting.
-	/// </summary>
+	// <summary>
+	// Disable or disallow the setting.
+	// </summary>
 	STATE_DISABLED
 )
 
@@ -1386,14 +1386,14 @@ const (
 	//  Section 2.1 of RFC 1123. These URLs will be canonicalized to
 	//  "scheme://host/path" in the simplest case and
 	//  "scheme://username:password@host:port/path" in the most explicit case. For
-	//  example, "scheme:host/path" and "scheme:///host/path" will both be
+	//  example, "scheme:host/path" and "scheme://host/path" will both be
 	//  canonicalized to "scheme://host/path". The origin of a standard scheme URL
 	//  is the combination of scheme, host and port (i.e., "scheme://host:port" in
 	//  the most explicit case).
 	//
 	//  For non-standard scheme URLs only the "scheme:" component is parsed and
 	//  canonicalized. The remainder of the URL will be passed to the handler as-
-	//  is. For example, "scheme:///some%20text" will remain the same.
+	//  is. For example, "scheme://some%20text" will remain the same.
 	//  Non-standard scheme URLs cannot be used as a target for form submission.
 	CEF_SCHEME_OPTION_STANDARD = 1 << 0
 
@@ -1838,17 +1838,17 @@ type TCefUIColorMode int32
 // / Color mode in UI for platforms that support it.
 // / </summary>
 const (
-	/// <summary>
-	/// System default.
-	/// </summary>
+	// <summary>
+	// System default.
+	// </summary>
 	UICMSystemDefault TCefUIColorMode = iota
-	/// <summary>
-	/// Forces light color mode in UI for platforms that support it.
-	/// </summary>
+	// <summary>
+	// Forces light color mode in UI for platforms that support it.
+	// </summary>
 	UICMForceLight
-	/// <summary>
-	/// Forces dark color mode in UI for platforms that support it.
-	/// </summary>
+	// <summary>
+	// Forces dark color mode in UI for platforms that support it.
+	// </summary>
 	UICMForceDark
 )
 
@@ -1867,9 +1867,9 @@ const (
 	CEF_CONTENT_SETTING_TYPE_IMAGES
 	CEF_CONTENT_SETTING_TYPE_JAVASCRIPT
 
-	/// <summary>
-	/// This setting governs both popups and unwanted redirects like tab-unders and framebusting.
-	/// </summary>
+	// <summary>
+	// This setting governs both popups and unwanted redirects like tab-unders and framebusting.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_POPUPS
 
 	CEF_CONTENT_SETTING_TYPE_GEOLOCATION
@@ -1894,341 +1894,341 @@ const (
 	CEF_CONTENT_SETTING_TYPE_IMPORTANT_SITE_INFO
 	CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOBLOCKER_DATA
 	CEF_CONTENT_SETTING_TYPE_ADS
-	/// <summary>
-	/// Website setting which stores metadata for the subresource filter to aid in
-	/// decisions for whether or not to show the UI.
-	/// </summary>
+	// <summary>
+	// Website setting which stores metadata for the subresource filter to aid in
+	// decisions for whether or not to show the UI.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_ADS_DATA
-	/// <summary>
-	/// This is special-cased in the permissions layer to always allow, and as
-	/// such doesn't have associated prefs data.
-	/// </summary>
+	// <summary>
+	// This is special-cased in the permissions layer to always allow, and as
+	// such doesn't have associated prefs data.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_MIDI
-	/// <summary>
-	/// This content setting type is for caching password protection service's
-	/// verdicts of each origin.
-	/// </summary>
+	// <summary>
+	// This content setting type is for caching password protection service's
+	// verdicts of each origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PASSWORD_PROTECTION
-	/// <summary>
-	/// Website setting which stores engagement data for media related to a
-	/// specific origin.
-	/// </summary>
+	// <summary>
+	// Website setting which stores engagement data for media related to a
+	// specific origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_MEDIA_ENGAGEMENT
-	/// <summary>
-	/// Content setting which stores whether or not the site can play audible
-	/// sound. This will not block playback but instead the user will not hear it.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether or not the site can play audible
+	// sound. This will not block playback but instead the user will not hear it.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SOUND
-	/// <summary>
-	/// Website setting which stores the list of client hints that the origin
-	/// requested the browser to remember. The browser is expected to send all
-	/// client hints in the HTTP request headers for every resource requested
-	/// from that origin.
-	/// </summary>
+	// <summary>
+	// Website setting which stores the list of client hints that the origin
+	// requested the browser to remember. The browser is expected to send all
+	// client hints in the HTTP request headers for every resource requested
+	// from that origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_CLIENT_HINTS
-	/// <summary>
-	/// Generic Sensor API covering ambient-light-sensor, accelerometer, gyroscope
-	/// and magnetometer are all mapped to a single content_settings_type.
-	/// Setting for the Generic Sensor API covering ambient-light-sensor,
-	/// accelerometer, gyroscope and magnetometer. These are all mapped to a
-	/// single ContentSettingsType.
-	/// </summary>
+	// <summary>
+	// Generic Sensor API covering ambient-light-sensor, accelerometer, gyroscope
+	// and magnetometer are all mapped to a single content_settings_type.
+	// Setting for the Generic Sensor API covering ambient-light-sensor,
+	// accelerometer, gyroscope and magnetometer. These are all mapped to a
+	// single ContentSettingsType.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SENSORS
-	/// <summary>
-	/// Content setting which stores whether or not the user has granted the site
-	/// permission to respond to accessibility events, which can be used to
-	/// provide a custom accessibility experience. Requires explicit user consent
-	/// because some users may not want sites to know they're using assistive
-	/// technology.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether or not the user has granted the site
+	// permission to respond to accessibility events, which can be used to
+	// provide a custom accessibility experience. Requires explicit user consent
+	// because some users may not want sites to know they're using assistive
+	// technology.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_ACCESSIBILITY_EVENTS
-	/// <summary>
-	/// Used to store whether to allow a website to install a payment handler.
-	/// </summary>
+	// <summary>
+	// Used to store whether to allow a website to install a payment handler.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PAYMENT_HANDLER
-	/// <summary>
-	/// Content setting which stores whether to allow sites to ask for permission
-	/// to access USB devices. If this is allowed specific device permissions are
-	/// stored under USB_CHOOSER_DATA.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether to allow sites to ask for permission
+	// to access USB devices. If this is allowed specific device permissions are
+	// stored under USB_CHOOSER_DATA.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_USB_GUARD
-	/// <summary>
-	/// Nothing is stored in this setting at present. Please refer to
-	/// BackgroundFetchPermissionContext for details on how this permission
-	/// is ascertained.
-	/// </summary>
+	// <summary>
+	// Nothing is stored in this setting at present. Please refer to
+	// BackgroundFetchPermissionContext for details on how this permission
+	// is ascertained.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_BACKGROUND_FETCH
-	/// <summary>
-	/// Website setting which stores the amount of times the user has dismissed
-	/// intent picker UI without explicitly choosing an option.
-	/// </summary>
+	// <summary>
+	// Website setting which stores the amount of times the user has dismissed
+	// intent picker UI without explicitly choosing an option.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_INTENT_PICKER_DISPLAY
-	/// <summary>
-	/// Used to store whether to allow a website to detect user active/idle state.
-	/// </summary>
+	// <summary>
+	// Used to store whether to allow a website to detect user active/idle state.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_IDLE_DETECTION
-	/// <summary>
-	/// Setting for enabling auto-select of all screens for getDisplayMediaSet.
-	/// </summary>
+	// <summary>
+	// Setting for enabling auto-select of all screens for getDisplayMediaSet.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_GET_DISPLAY_MEDIA_SET_SELECT_ALL_SCREENS
-	/// <summary>
-	/// Content settings for access to serial ports. The "guard" content setting
-	/// stores whether to allow sites to ask for permission to access a port. The
-	/// permissions granted to access particular ports are stored in the "chooser
-	/// data" website setting.
-	/// </summary>
+	// <summary>
+	// Content settings for access to serial ports. The "guard" content setting
+	// stores whether to allow sites to ask for permission to access a port. The
+	// permissions granted to access particular ports are stored in the "chooser
+	// data" website setting.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SERIAL_GUARD
 	CEF_CONTENT_SETTING_TYPE_SERIAL_CHOOSER_DATA
-	/// <summary>
-	/// Nothing is stored in this setting at present. Please refer to
-	/// PeriodicBackgroundSyncPermissionContext for details on how this permission
-	/// is ascertained.
-	/// This content setting is not registered because it does not require access
-	/// to any existing providers.
-	/// </summary>
+	// <summary>
+	// Nothing is stored in this setting at present. Please refer to
+	// PeriodicBackgroundSyncPermissionContext for details on how this permission
+	// is ascertained.
+	// This content setting is not registered because it does not require access
+	// to any existing providers.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PERIODIC_BACKGROUND_SYNC
-	/// <summary>
-	/// Content setting which stores whether to allow sites to ask for permission
-	/// to do Bluetooth scanning.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether to allow sites to ask for permission
+	// to do Bluetooth scanning.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_BLUETOOTH_SCANNING
-	/// <summary>
-	/// Content settings for access to HID devices. The "guard" content setting
-	/// stores whether to allow sites to ask for permission to access a device.
-	/// The permissions granted to access particular devices are stored in the
-	/// "chooser data" website setting.
-	/// </summary>
+	// <summary>
+	// Content settings for access to HID devices. The "guard" content setting
+	// stores whether to allow sites to ask for permission to access a device.
+	// The permissions granted to access particular devices are stored in the
+	// "chooser data" website setting.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_HID_GUARD
 	CEF_CONTENT_SETTING_TYPE_HID_CHOOSER_DATA
-	/// <summary>
-	/// Wake Lock API, which has two lock types: screen and system locks.
-	/// Currently, screen locks do not need any additional permission, and system
-	/// locks are always denied while the right UI is worked out.
-	/// </summary>
+	// <summary>
+	// Wake Lock API, which has two lock types: screen and system locks.
+	// Currently, screen locks do not need any additional permission, and system
+	// locks are always denied while the right UI is worked out.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SCREEN
 	CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SYSTEM
-	/// <summary>
-	/// Legacy SameSite cookie behavior. This disables SameSite=Lax-by-default,
-	/// SameSite=None requires Secure, and Schemeful Same-Site, forcing the
-	/// legacy behavior wherein 1) cookies that don't specify SameSite are treated
-	/// as SameSite=None, 2) SameSite=None cookies are not required to be Secure,
-	/// and 3) schemeful same-site is not active.
-	///
-	/// This will also be used to revert to legacy behavior when future changes
-	/// in cookie handling are introduced.
-	/// </summary>
+	// <summary>
+	// Legacy SameSite cookie behavior. This disables SameSite=Lax-by-default,
+	// SameSite=None requires Secure, and Schemeful Same-Site, forcing the
+	// legacy behavior wherein 1) cookies that don't specify SameSite are treated
+	// as SameSite=None, 2) SameSite=None cookies are not required to be Secure,
+	// and 3) schemeful same-site is not active.
+	//
+	// This will also be used to revert to legacy behavior when future changes
+	// in cookie handling are introduced.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_ACCESS
-	/// <summary>
-	/// Content settings which stores whether to allow sites to ask for permission
-	/// to save changes to an original file selected by the user through the
-	/// File System Access API.
-	/// </summary>
+	// <summary>
+	// Content settings which stores whether to allow sites to ask for permission
+	// to save changes to an original file selected by the user through the
+	// File System Access API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_WRITE_GUARD
-	/// <summary>
-	/// Used to store whether to allow a website to exchange data with NFC
-	/// devices.
-	/// </summary>
+	// <summary>
+	// Used to store whether to allow a website to exchange data with NFC
+	// devices.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_NFC
-	/// <summary>
-	/// Website setting to store permissions granted to access particular
-	/// Bluetooth devices.
-	/// </summary>
+	// <summary>
+	// Website setting to store permissions granted to access particular
+	// Bluetooth devices.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_BLUETOOTH_CHOOSER_DATA
-	/// <summary>
-	/// Full access to the system clipboard (sanitized read without user gesture,
-	/// and unsanitized read and write with user gesture).
-	/// </summary>
+	// <summary>
+	// Full access to the system clipboard (sanitized read without user gesture,
+	// and unsanitized read and write with user gesture).
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_CLIPBOARD_READ_WRITE
-	/// <summary>
-	/// This is special-cased in the permissions layer to always allow, and as
-	/// such doesn't have associated prefs data.
-	/// </summary>
+	// <summary>
+	// This is special-cased in the permissions layer to always allow, and as
+	// such doesn't have associated prefs data.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_CLIPBOARD_SANITIZED_WRITE
-	/// <summary>
-	/// This content setting type is for caching safe browsing real time url
-	/// check's verdicts of each origin.
-	/// </summary>
+	// <summary>
+	// This content setting type is for caching safe browsing real time url
+	// check's verdicts of each origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SAFE_BROWSING_URL_CHECK_DATA
-	/// <summary>
-	/// Used to store whether a site is allowed to request AR or VR sessions with
-	/// the WebXr Device API.
-	/// </summary>
+	// <summary>
+	// Used to store whether a site is allowed to request AR or VR sessions with
+	// the WebXr Device API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_VR
 	CEF_CONTENT_SETTING_TYPE_AR
-	/// <summary>
-	/// Content setting which stores whether to allow site to open and read files
-	/// and directories selected through the File System Access API.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether to allow site to open and read files
+	// and directories selected through the File System Access API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_READ_GUARD
-	/// <summary>
-	/// Access to first party storage in a third-party context. Exceptions are
-	/// scoped to the combination of requesting/top-level origin, and are managed
-	/// through the Storage Access API. For the time being, this content setting
-	/// exists in parallel to third-party cookie rules stored in COOKIES.
-	/// </summary>
+	// <summary>
+	// Access to first party storage in a third-party context. Exceptions are
+	// scoped to the combination of requesting/top-level origin, and are managed
+	// through the Storage Access API. For the time being, this content setting
+	// exists in parallel to third-party cookie rules stored in COOKIES.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS
-	/// <summary>
-	/// Content setting which stores whether to allow a site to control camera
-	/// movements. It does not give access to camera.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether to allow a site to control camera
+	// movements. It does not give access to camera.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_CAMERA_PAN_TILT_ZOOM
-	/// <summary>
-	/// Content setting for Screen Enumeration and Screen Detail functionality.
-	/// Permits access to detailed multi-screen information, like size and
-	/// position. Permits placing fullscreen and windowed content on specific
-	/// screens. See also: https://w3c.github.io/window-placement
-	/// </summary>
+	// <summary>
+	// Content setting for Screen Enumeration and Screen Detail functionality.
+	// Permits access to detailed multi-screen information, like size and
+	// position. Permits placing fullscreen and windowed content on specific
+	// screens. See also: https://w3c.github.io/window-placement
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_WINDOW_MANAGEMENT
-	/// <summary>
-	/// Stores whether to allow insecure websites to make local network requests.
-	/// See also: https://wicg.github.io/local-network-access
-	/// Set through enterprise policies only.
-	/// </summary>
+	// <summary>
+	// Stores whether to allow insecure websites to make local network requests.
+	// See also: https://wicg.github.io/local-network-access
+	// Set through enterprise policies only.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_INSECURE_LOCAL_NETWORK
-	/// <summary>
-	/// Content setting which stores whether or not a site can access low-level
-	/// locally installed font data using the Local Fonts Access API.
-	/// </summary>
+	// <summary>
+	// Content setting which stores whether or not a site can access low-level
+	// locally installed font data using the Local Fonts Access API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_LOCAL_FONTS
-	/// <summary>
-	/// Stores per-origin state for permission auto-revocation (for all permission
-	/// types).
-	/// </summary>
+	// <summary>
+	// Stores per-origin state for permission auto-revocation (for all permission
+	// types).
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOREVOCATION_DATA
-	/// <summary>
-	/// Stores per-origin state of the most recently selected directory for the
-	/// use by the File System Access API.
-	/// </summary>
+	// <summary>
+	// Stores per-origin state of the most recently selected directory for the
+	// use by the File System Access API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_LAST_PICKED_DIRECTORY
-	/// <summary>
-	/// Controls access to the getDisplayMedia API when {preferCurrentTab: true}
-	/// is specified.
-	/// </summary>
+	// <summary>
+	// Controls access to the getDisplayMedia API when {preferCurrentTab: true}
+	// is specified.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_DISPLAY_CAPTURE
-	/// <summary>
-	/// Website setting to store permissions metadata granted to paths on the
-	/// local file system via the File System Access API.
-	/// |FILE_SYSTEM_WRITE_GUARD| is the corresponding "guard" setting.
-	/// </summary>
+	// <summary>
+	// Website setting to store permissions metadata granted to paths on the
+	// local file system via the File System Access API.
+	// |FILE_SYSTEM_WRITE_GUARD| is the corresponding "guard" setting.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_CHOOSER_DATA
-	/// <summary>
-	/// Stores a grant that allows a relying party to send a request for identity
-	/// information to specified identity providers, potentially through any
-	/// anti-tracking measures that would otherwise prevent it. This setting is
-	/// associated with the relying party's origin.
-	/// </summary>
+	// <summary>
+	// Stores a grant that allows a relying party to send a request for identity
+	// information to specified identity providers, potentially through any
+	// anti-tracking measures that would otherwise prevent it. This setting is
+	// associated with the relying party's origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_SHARING
-	/// <summary>
-	/// Whether to use the v8 optimized JIT for running JavaScript on the page.
-	/// </summary>
+	// <summary>
+	// Whether to use the v8 optimized JIT for running JavaScript on the page.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_JIT
-	/// <summary>
-	/// Content setting which stores user decisions to allow loading a site over
-	/// HTTP. Entries are added by hostname when a user bypasses the HTTPS-First
-	/// Mode interstitial warning when a site does not support HTTPS. Allowed
-	/// hosts are exact hostname matches -- subdomains of a host on the allowlist
-	/// must be separately allowlisted.
-	/// </summary>
+	// <summary>
+	// Content setting which stores user decisions to allow loading a site over
+	// HTTP. Entries are added by hostname when a user bypasses the HTTPS-First
+	// Mode interstitial warning when a site does not support HTTPS. Allowed
+	// hosts are exact hostname matches -- subdomains of a host on the allowlist
+	// must be separately allowlisted.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_HTTP_ALLOWED
-	/// <summary>
-	/// Stores metadata related to form fill, such as e.g. whether user data was
-	/// autofilled on a specific website.
-	/// </summary>
+	// <summary>
+	// Stores metadata related to form fill, such as e.g. whether user data was
+	// autofilled on a specific website.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FORMFILL_METADATA
-	/// <summary>
-	/// Setting to indicate that there is an active federated sign-in session
-	/// between a specified relying party and a specified identity provider for
-	/// a specified account. When this is present it allows access to session
-	/// management capabilities between the sites. This setting is associated
-	/// with the relying party's origin.
-	/// </summary>
+	// <summary>
+	// Setting to indicate that there is an active federated sign-in session
+	// between a specified relying party and a specified identity provider for
+	// a specified account. When this is present it allows access to session
+	// management capabilities between the sites. This setting is associated
+	// with the relying party's origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_ACTIVE_SESSION
-	/// <summary>
-	/// Setting to indicate whether Chrome should automatically apply darkening to
-	/// web content.
-	/// </summary>
+	// <summary>
+	// Setting to indicate whether Chrome should automatically apply darkening to
+	// web content.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_AUTO_DARK_WEB_CONTENT
-	/// <summary>
-	/// Setting to indicate whether Chrome should request the desktop view of a
-	/// site instead of the mobile one.
-	/// </summary>
+	// <summary>
+	// Setting to indicate whether Chrome should request the desktop view of a
+	// site instead of the mobile one.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_REQUEST_DESKTOP_SITE
-	/// <summary>
-	/// Setting to indicate whether browser should allow signing into a website
-	/// via the browser FedCM API.
-	/// </summary>
+	// <summary>
+	// Setting to indicate whether browser should allow signing into a website
+	// via the browser FedCM API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_API
-	/// <summary>
-	/// Stores notification interactions per origin for the past 90 days.
-	/// Interactions per origin are pre-aggregated over seven-day windows: A
-	/// notification interaction or display is assigned to the last Monday
-	/// midnight in local time.
-	/// </summary>
+	// <summary>
+	// Stores notification interactions per origin for the past 90 days.
+	// Interactions per origin are pre-aggregated over seven-day windows: A
+	// notification interaction or display is assigned to the last Monday
+	// midnight in local time.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_NOTIFICATION_INTERACTIONS
-	/// <summary>
-	/// Website setting which stores the last reduced accept language negotiated
-	/// for a given origin, to be used on future visits to the origin.
-	/// </summary>
+	// <summary>
+	// Website setting which stores the last reduced accept language negotiated
+	// for a given origin, to be used on future visits to the origin.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_REDUCED_ACCEPT_LANGUAGE
-	/// <summary>
-	/// Website setting which is used for NotificationPermissionReviewService to
-	/// store origin blocklist from review notification permissions feature.
-	/// </summary>
+	// <summary>
+	// Website setting which is used for NotificationPermissionReviewService to
+	// store origin blocklist from review notification permissions feature.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_NOTIFICATION_PERMISSION_REVIEW
-	/// <summary>
-	/// Website setting to store permissions granted to access particular devices
-	/// in private network.
-	/// </summary>
+	// <summary>
+	// Website setting to store permissions granted to access particular devices
+	// in private network.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD
 	CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA
-	/// <summary>
-	/// Website setting which stores whether the browser has observed the user
-	/// signing into an identity-provider based on observing the IdP-SignIn-Status
-	/// HTTP header.
-	/// </summary>
+	// <summary>
+	// Website setting which stores whether the browser has observed the user
+	// signing into an identity-provider based on observing the IdP-SignIn-Status
+	// HTTP header.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS
-	/// <summary>
-	/// Website setting which is used for UnusedSitePermissionsService to
-	/// store revoked permissions of unused sites from unused site permissions
-	/// feature.
-	/// </summary>
+	// <summary>
+	// Website setting which is used for UnusedSitePermissionsService to
+	// store revoked permissions of unused sites from unused site permissions
+	// feature.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_REVOKED_UNUSED_SITE_PERMISSIONS
-	/// <summary>
-	/// Similar to STORAGE_ACCESS, but applicable at the page-level rather than
-	/// being specific to a frame.
-	/// </summary>
+	// <summary>
+	// Similar to STORAGE_ACCESS, but applicable at the page-level rather than
+	// being specific to a frame.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_STORAGE_ACCESS
-	/// <summary>
-	/// Setting to indicate whether user has opted in to allowing auto re-authn
-	/// via the FedCM API.
-	/// </summary>
+	// <summary>
+	// Setting to indicate whether user has opted in to allowing auto re-authn
+	// via the FedCM API.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_AUTO_REAUTHN_PERMISSION
-	/// <summary>
-	/// Website setting which stores whether the user has explicitly registered
-	/// a website as an identity-provider.
-	/// </summary>
+	// <summary>
+	// Website setting which stores whether the user has explicitly registered
+	// a website as an identity-provider.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION
-	/// <summary>
-	/// Content setting which is used to indicate whether anti-abuse functionality
-	/// should be enabled.
-	/// </summary>
+	// <summary>
+	// Content setting which is used to indicate whether anti-abuse functionality
+	// should be enabled.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE
-	/// <summary>
-	/// Content setting used to indicate whether third-party storage partitioning
-	/// should be enabled.
-	/// </summary>
+	// <summary>
+	// Content setting used to indicate whether third-party storage partitioning
+	// should be enabled.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING
-	/// <summary>
-	/// Used to indicate whether HTTPS-First Mode is enabled on the hostname.
-	/// </summary>
+	// <summary>
+	// Used to indicate whether HTTPS-First Mode is enabled on the hostname.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED
-	/// <summary>
-	/// Stores per origin metadata for cookie controls.
-	/// </summary>
+	// <summary>
+	// Stores per origin metadata for cookie controls.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA
-	/// <summary>
-	/// Setting for supporting 3PCD.
-	/// </summary>
+	// <summary>
+	// Setting for supporting 3PCD.
+	// </summary>
 	CEF_CONTENT_SETTING_TYPE_TPCD_SUPPORT
 	CEF_CONTENT_SETTING_TYPE_NUM_TYPES
 )
@@ -2262,17 +2262,17 @@ const (
 type TCefLogItems = types.Cardinal
 
 const (
-	/// Prepend the default list of items.
+	// Prepend the default list of items.
 	LOG_ITEMS_DEFAULT TCefLogItems = 0
-	/// Prepend no items.
+	// Prepend no items.
 	LOG_ITEMS_NONE TCefLogItems = 1
-	/// Prepend the process ID.
+	// Prepend the process ID.
 	LOG_ITEMS_FLAG_PROCESS_ID TCefLogItems = 1 << 1
-	/// Prepend the thread ID.
+	// Prepend the thread ID.
 	LOG_ITEMS_FLAG_THREAD_ID TCefLogItems = 1 << 2
-	/// Prepend the timestamp.
+	// Prepend the timestamp.
 	LOG_ITEMS_FLAG_TIME_STAMP TCefLogItems = 1 << 3
-	/// Prepend the tickcount.
+	// Prepend the tickcount.
 	LOG_ITEMS_FLAG_TICK_COUNT TCefLogItems = 1 << 4
 )
 
@@ -2299,11 +2299,45 @@ const (
 type TCefThreadId = int32
 
 const (
+	// The main thread in the browser. This will be the same as the main
+	// application thread if CefInitialize() is called with a
+	// TCefSettings.multi_threaded_message_loop value of false. Do not perform
+	// blocking tasks on this thread. All tasks posted after
+	// ICefBrowserProcessHandler.OnContextInitialized() and before CefShutdown()
+	// are guaranteed to run. This thread will outlive all other CEF threads.
 	TID_UI TCefThreadId = iota
+	// Used for blocking tasks like file system access where the user won't
+	// notice if the task takes an arbitrarily long time to complete. All tasks
+	// posted after ICefBrowserProcessHandler.OnContextInitialized() and before
+	// CefShutdown() are guaranteed to run.
 	TID_FILE_BACKGROUND
+	// Used for blocking tasks like file system access that affect UI or
+	// responsiveness of future user interactions. Do not use if an immediate
+	// response to a user interaction is expected. All tasks posted after
+	// ICefBrowserProcessHandler.OnContextInitialized() and before CefShutdown()
+	// are guaranteed to run.
+	// Examples:
+	// - Updating the UI to reflect progress on a long task.
+	// - Loading data that might be shown in the UI after a future user
+	//   interaction.
 	TID_FILE_USER_VISIBLE
+	// Used for blocking tasks like file system access that affect UI
+	// immediately after a user interaction. All tasks posted after
+	// ICefBrowserProcessHandler.OnContextInitialized() and before CefShutdown()
+	// are guaranteed to run.
+	// Example: Generating data shown in the UI immediately after a click.
 	TID_FILE_USER_BLOCKING
+	// Used to launch and terminate browser processes.
 	TID_PROCESS_LAUNCHER
+	// Used to process IPC and network messages. Do not perform blocking tasks on
+	// this thread. All tasks posted after
+	// ICefBrowserProcessHandler.OnContextInitialized() and before CefShutdown()
+	// are guaranteed to run.
 	TID_IO
+	// The main thread in the renderer. Used for all WebKit and V8 interaction.
+	// Tasks may be posted to this thread after
+	// ICefRenderProcessHandler.OnWebKitInitialized but are not guaranteed to
+	// run before sub-process termination (sub-processes may be killed at any
+	// time without warning).
 	TID_RENDERER
 )
