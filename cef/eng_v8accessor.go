@@ -53,12 +53,12 @@ type TV8Accessor struct {
 }
 
 func NewV8Accessor() IV8Accessor {
-	r1 := CEF().SysCallN(2230)
+	r1 := CEF().SysCallN(2235)
 	return AsV8Accessor(r1)
 }
 
 func V8AccessorClass() TClass {
-	ret := CEF().SysCallN(2229)
+	ret := CEF().SysCallN(2234)
 	return TClass(ret)
 }
 
@@ -67,7 +67,7 @@ func (m *TV8Accessor) SetOnGet(fn TOnV8AccessorGet) {
 		RemoveEventElement(m.getPtr)
 	}
 	m.getPtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2231, m.Instance(), m.getPtr)
+	CEF().SysCallN(2236, m.Instance(), m.getPtr)
 }
 
 func (m *TV8Accessor) SetOnSet(fn TOnV8AccessorSet) {
@@ -75,5 +75,5 @@ func (m *TV8Accessor) SetOnSet(fn TOnV8AccessorSet) {
 		RemoveEventElement(m.setPtr)
 	}
 	m.setPtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2232, m.Instance(), m.setPtr)
+	CEF().SysCallN(2237, m.Instance(), m.setPtr)
 }

@@ -24,11 +24,11 @@ type TFPMemoryImage struct {
 }
 
 func NewFPMemoryImage(AWidth, AHeight int32) IFPMemoryImage {
-	r1 := LCL().SysCallN(2738, uintptr(AWidth), uintptr(AHeight))
+	r1 := LCL().SysCallN(2981, uintptr(AWidth), uintptr(AHeight))
 	return AsFPMemoryImage(r1)
 }
 
 func FPMemoryImageClass() TClass {
-	ret := LCL().SysCallN(2737)
+	ret := LCL().SysCallN(2980)
 	return TClass(ret)
 }

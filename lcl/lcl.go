@@ -15,6 +15,8 @@ import (
 	"unsafe"
 )
 
+type unsafePointer = unsafe.Pointer
+
 func MathRound(AValue float64) int64 {
 	if AValue >= 0 {
 		return int64(math.Trunc(AValue + 0.5))

@@ -66,75 +66,75 @@ type TCheckBox struct {
 }
 
 func NewCheckBox(TheOwner IComponent) ICheckBox {
-	r1 := LCL().SysCallN(381, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(568, GetObjectUintptr(TheOwner))
 	return AsCheckBox(r1)
 }
 
 func (m *TCheckBox) Checked() bool {
-	r1 := LCL().SysCallN(379, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(566, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckBox) SetChecked(AValue bool) {
-	LCL().SysCallN(379, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(566, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCheckBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(382, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(569, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TCheckBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(382, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(569, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCheckBox) DragKind() TDragKind {
-	r1 := LCL().SysCallN(383, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(570, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TCheckBox) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(383, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(570, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCheckBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(384, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(571, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TCheckBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(384, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(571, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCheckBox) ParentColor() bool {
-	r1 := LCL().SysCallN(385, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(572, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckBox) SetParentColor(AValue bool) {
-	LCL().SysCallN(385, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(572, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCheckBox) ParentFont() bool {
-	r1 := LCL().SysCallN(386, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(573, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(386, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(573, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCheckBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(387, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(574, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(387, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(574, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CheckBoxClass() TClass {
-	ret := LCL().SysCallN(380)
+	ret := LCL().SysCallN(567)
 	return TClass(ret)
 }
 
@@ -143,7 +143,7 @@ func (m *TCheckBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(388, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(575, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TCheckBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -151,7 +151,7 @@ func (m *TCheckBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(389, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(576, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TCheckBox) SetOnDragOver(fn TDragOverEvent) {
@@ -159,7 +159,7 @@ func (m *TCheckBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(390, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(577, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TCheckBox) SetOnEditingDone(fn TNotifyEvent) {
@@ -167,7 +167,7 @@ func (m *TCheckBox) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(391, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(578, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TCheckBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -175,7 +175,7 @@ func (m *TCheckBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(392, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(579, m.Instance(), m.endDragPtr)
 }
 
 func (m *TCheckBox) SetOnMouseDown(fn TMouseEvent) {
@@ -183,7 +183,7 @@ func (m *TCheckBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(393, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(580, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TCheckBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -191,7 +191,7 @@ func (m *TCheckBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(394, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(581, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TCheckBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -199,7 +199,7 @@ func (m *TCheckBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(395, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(582, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TCheckBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -207,7 +207,7 @@ func (m *TCheckBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(396, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(583, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TCheckBox) SetOnMouseUp(fn TMouseEvent) {
@@ -215,7 +215,7 @@ func (m *TCheckBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(397, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(584, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TCheckBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -223,7 +223,7 @@ func (m *TCheckBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(398, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(585, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TCheckBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -231,7 +231,7 @@ func (m *TCheckBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(399, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(586, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TCheckBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -239,7 +239,7 @@ func (m *TCheckBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(400, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(587, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TCheckBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -247,5 +247,5 @@ func (m *TCheckBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(401, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(588, m.Instance(), m.startDragPtr)
 }

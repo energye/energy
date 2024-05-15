@@ -27,26 +27,26 @@ type TListEnumerator struct {
 }
 
 func NewListEnumerator(AList IList) IListEnumerator {
-	r1 := LCL().SysCallN(3377, GetObjectUintptr(AList))
+	r1 := LCL().SysCallN(4019, GetObjectUintptr(AList))
 	return AsListEnumerator(r1)
 }
 
 func (m *TListEnumerator) Current() uintptr {
-	r1 := LCL().SysCallN(3378, m.Instance())
+	r1 := LCL().SysCallN(4020, m.Instance())
 	return uintptr(r1)
 }
 
 func (m *TListEnumerator) GetCurrent() uintptr {
-	r1 := LCL().SysCallN(3379, m.Instance())
+	r1 := LCL().SysCallN(4021, m.Instance())
 	return uintptr(r1)
 }
 
 func (m *TListEnumerator) MoveNext() bool {
-	r1 := LCL().SysCallN(3380, m.Instance())
+	r1 := LCL().SysCallN(4022, m.Instance())
 	return GoBool(r1)
 }
 
 func ListEnumeratorClass() TClass {
-	ret := LCL().SysCallN(3376)
+	ret := LCL().SysCallN(4018)
 	return TClass(ret)
 }

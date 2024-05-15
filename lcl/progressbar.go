@@ -64,66 +64,66 @@ type TProgressBar struct {
 }
 
 func NewProgressBar(AOwner IComponent) IProgressBar {
-	r1 := LCL().SysCallN(4005, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4647, GetObjectUintptr(AOwner))
 	return AsProgressBar(r1)
 }
 
 func (m *TProgressBar) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4006, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4648, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TProgressBar) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4006, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4648, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TProgressBar) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4007, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4649, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TProgressBar) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4007, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4649, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TProgressBar) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4008, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4650, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TProgressBar) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4008, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4650, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TProgressBar) ParentColor() bool {
-	r1 := LCL().SysCallN(4009, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4651, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TProgressBar) SetParentColor(AValue bool) {
-	LCL().SysCallN(4009, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4651, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TProgressBar) ParentFont() bool {
-	r1 := LCL().SysCallN(4010, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4652, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TProgressBar) SetParentFont(AValue bool) {
-	LCL().SysCallN(4010, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4652, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TProgressBar) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4011, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4653, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TProgressBar) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4011, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4653, 1, m.Instance(), PascalBool(AValue))
 }
 
 func ProgressBarClass() TClass {
-	ret := LCL().SysCallN(4004)
+	ret := LCL().SysCallN(4646)
 	return TClass(ret)
 }
 
@@ -132,7 +132,7 @@ func (m *TProgressBar) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4012, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4654, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TProgressBar) SetOnDragDrop(fn TDragDropEvent) {
@@ -140,7 +140,7 @@ func (m *TProgressBar) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4013, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4655, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TProgressBar) SetOnDragOver(fn TDragOverEvent) {
@@ -148,7 +148,7 @@ func (m *TProgressBar) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4014, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4656, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TProgressBar) SetOnEndDrag(fn TEndDragEvent) {
@@ -156,7 +156,7 @@ func (m *TProgressBar) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4015, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4657, m.Instance(), m.endDragPtr)
 }
 
 func (m *TProgressBar) SetOnMouseDown(fn TMouseEvent) {
@@ -164,7 +164,7 @@ func (m *TProgressBar) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4016, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4658, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TProgressBar) SetOnMouseEnter(fn TNotifyEvent) {
@@ -172,7 +172,7 @@ func (m *TProgressBar) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4017, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4659, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TProgressBar) SetOnMouseLeave(fn TNotifyEvent) {
@@ -180,7 +180,7 @@ func (m *TProgressBar) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4018, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4660, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TProgressBar) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -188,7 +188,7 @@ func (m *TProgressBar) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4019, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4661, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TProgressBar) SetOnMouseUp(fn TMouseEvent) {
@@ -196,7 +196,7 @@ func (m *TProgressBar) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4020, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4662, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TProgressBar) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -204,7 +204,7 @@ func (m *TProgressBar) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4021, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4663, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TProgressBar) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -212,7 +212,7 @@ func (m *TProgressBar) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4022, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4664, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TProgressBar) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -220,7 +220,7 @@ func (m *TProgressBar) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4023, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4665, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TProgressBar) SetOnStartDock(fn TStartDockEvent) {
@@ -228,7 +228,7 @@ func (m *TProgressBar) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4024, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(4666, m.Instance(), m.startDockPtr)
 }
 
 func (m *TProgressBar) SetOnStartDrag(fn TStartDragEvent) {
@@ -236,5 +236,5 @@ func (m *TProgressBar) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4025, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4667, m.Instance(), m.startDragPtr)
 }

@@ -14,11 +14,11 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	Btn1 lcl.IButton
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 	f.SetCaption("WinOLE")

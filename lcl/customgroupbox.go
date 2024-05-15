@@ -26,20 +26,20 @@ type TCustomGroupBox struct {
 }
 
 func NewCustomGroupBox(AOwner IComponent) ICustomGroupBox {
-	r1 := LCL().SysCallN(1589, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1779, GetObjectUintptr(AOwner))
 	return AsCustomGroupBox(r1)
 }
 
 func (m *TCustomGroupBox) ParentBackground() bool {
-	r1 := LCL().SysCallN(1590, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1780, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomGroupBox) SetParentBackground(AValue bool) {
-	LCL().SysCallN(1590, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1780, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CustomGroupBoxClass() TClass {
-	ret := LCL().SysCallN(1588)
+	ret := LCL().SysCallN(1778)
 	return TClass(ret)
 }

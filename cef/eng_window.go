@@ -172,7 +172,7 @@ type ICefWindow interface {
 	SendKeyPress(keycode int32, eventflags uint32) // procedure
 	// SendMouseMove
 	//  Simulate a mouse move. The mouse cursor will be moved to the specified
-	// (screen_x, screen_y) position. This function is exposed primarily for
+	//  (screen_x, screen_y) position. This function is exposed primarily for
 	//  testing purposes.
 	SendMouseMove(screenx, screeny int32) // procedure
 	// SendMouseEvents

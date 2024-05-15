@@ -27,26 +27,26 @@ type TComponentEnumerator struct {
 }
 
 func NewComponentEnumerator(AComponent IComponent) IComponentEnumerator {
-	r1 := LCL().SysCallN(685, GetObjectUintptr(AComponent))
+	r1 := LCL().SysCallN(875, GetObjectUintptr(AComponent))
 	return AsComponentEnumerator(r1)
 }
 
 func (m *TComponentEnumerator) Current() IComponent {
-	r1 := LCL().SysCallN(686, m.Instance())
+	r1 := LCL().SysCallN(876, m.Instance())
 	return AsComponent(r1)
 }
 
 func (m *TComponentEnumerator) GetCurrent() IComponent {
-	r1 := LCL().SysCallN(687, m.Instance())
+	r1 := LCL().SysCallN(877, m.Instance())
 	return AsComponent(r1)
 }
 
 func (m *TComponentEnumerator) MoveNext() bool {
-	r1 := LCL().SysCallN(688, m.Instance())
+	r1 := LCL().SysCallN(878, m.Instance())
 	return GoBool(r1)
 }
 
 func ComponentEnumeratorClass() TClass {
-	ret := LCL().SysCallN(684)
+	ret := LCL().SysCallN(874)
 	return TClass(ret)
 }

@@ -58,57 +58,57 @@ type TFloatSpinEdit struct {
 }
 
 func NewFloatSpinEdit(TheOwner IComponent) IFloatSpinEdit {
-	r1 := LCL().SysCallN(2778, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3021, GetObjectUintptr(TheOwner))
 	return AsFloatSpinEdit(r1)
 }
 
 func (m *TFloatSpinEdit) AutoSelected() bool {
-	r1 := LCL().SysCallN(2776, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3019, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFloatSpinEdit) SetAutoSelected(AValue bool) {
-	LCL().SysCallN(2776, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3019, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFloatSpinEdit) AutoSelect() bool {
-	r1 := LCL().SysCallN(2775, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3018, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFloatSpinEdit) SetAutoSelect(AValue bool) {
-	LCL().SysCallN(2775, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3018, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFloatSpinEdit) ParentColor() bool {
-	r1 := LCL().SysCallN(2779, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3022, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFloatSpinEdit) SetParentColor(AValue bool) {
-	LCL().SysCallN(2779, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3022, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFloatSpinEdit) ParentFont() bool {
-	r1 := LCL().SysCallN(2780, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3023, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFloatSpinEdit) SetParentFont(AValue bool) {
-	LCL().SysCallN(2780, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3023, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFloatSpinEdit) ParentShowHint() bool {
-	r1 := LCL().SysCallN(2781, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3024, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFloatSpinEdit) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(2781, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3024, 1, m.Instance(), PascalBool(AValue))
 }
 
 func FloatSpinEditClass() TClass {
-	ret := LCL().SysCallN(2777)
+	ret := LCL().SysCallN(3020)
 	return TClass(ret)
 }
 
@@ -117,7 +117,7 @@ func (m *TFloatSpinEdit) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2782, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(3025, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseDown(fn TMouseEvent) {
@@ -125,7 +125,7 @@ func (m *TFloatSpinEdit) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2783, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3026, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseEnter(fn TNotifyEvent) {
@@ -133,7 +133,7 @@ func (m *TFloatSpinEdit) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2784, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3027, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseLeave(fn TNotifyEvent) {
@@ -141,7 +141,7 @@ func (m *TFloatSpinEdit) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2785, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3028, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -149,7 +149,7 @@ func (m *TFloatSpinEdit) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2786, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3029, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseUp(fn TMouseEvent) {
@@ -157,7 +157,7 @@ func (m *TFloatSpinEdit) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2787, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3030, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -165,7 +165,7 @@ func (m *TFloatSpinEdit) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2788, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(3031, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -173,7 +173,7 @@ func (m *TFloatSpinEdit) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2789, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(3032, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -181,7 +181,7 @@ func (m *TFloatSpinEdit) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2793, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(3036, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -189,7 +189,7 @@ func (m *TFloatSpinEdit) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2790, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(3033, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -197,7 +197,7 @@ func (m *TFloatSpinEdit) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2791, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(3034, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TFloatSpinEdit) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -205,5 +205,5 @@ func (m *TFloatSpinEdit) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2792, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(3035, m.Instance(), m.mouseWheelRightPtr)
 }

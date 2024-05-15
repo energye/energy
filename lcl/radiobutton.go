@@ -64,75 +64,75 @@ type TRadioButton struct {
 }
 
 func NewRadioButton(TheOwner IComponent) IRadioButton {
-	r1 := LCL().SysCallN(4028, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4670, GetObjectUintptr(TheOwner))
 	return AsRadioButton(r1)
 }
 
 func (m *TRadioButton) Checked() bool {
-	r1 := LCL().SysCallN(4026, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4668, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TRadioButton) SetChecked(AValue bool) {
-	LCL().SysCallN(4026, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4668, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TRadioButton) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4029, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4671, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TRadioButton) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4029, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4671, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TRadioButton) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4030, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4672, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TRadioButton) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4030, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4672, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TRadioButton) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4031, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4673, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TRadioButton) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4031, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4673, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TRadioButton) ParentColor() bool {
-	r1 := LCL().SysCallN(4032, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4674, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TRadioButton) SetParentColor(AValue bool) {
-	LCL().SysCallN(4032, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4674, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TRadioButton) ParentFont() bool {
-	r1 := LCL().SysCallN(4033, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4675, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TRadioButton) SetParentFont(AValue bool) {
-	LCL().SysCallN(4033, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4675, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TRadioButton) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4034, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4676, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TRadioButton) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4034, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4676, 1, m.Instance(), PascalBool(AValue))
 }
 
 func RadioButtonClass() TClass {
-	ret := LCL().SysCallN(4027)
+	ret := LCL().SysCallN(4669)
 	return TClass(ret)
 }
 
@@ -141,7 +141,7 @@ func (m *TRadioButton) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4035, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4677, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TRadioButton) SetOnDragDrop(fn TDragDropEvent) {
@@ -149,7 +149,7 @@ func (m *TRadioButton) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4036, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4678, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TRadioButton) SetOnDragOver(fn TDragOverEvent) {
@@ -157,7 +157,7 @@ func (m *TRadioButton) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4037, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4679, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TRadioButton) SetOnEndDrag(fn TEndDragEvent) {
@@ -165,7 +165,7 @@ func (m *TRadioButton) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4038, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4680, m.Instance(), m.endDragPtr)
 }
 
 func (m *TRadioButton) SetOnMouseDown(fn TMouseEvent) {
@@ -173,7 +173,7 @@ func (m *TRadioButton) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4039, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4681, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TRadioButton) SetOnMouseEnter(fn TNotifyEvent) {
@@ -181,7 +181,7 @@ func (m *TRadioButton) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4040, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4682, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TRadioButton) SetOnMouseLeave(fn TNotifyEvent) {
@@ -189,7 +189,7 @@ func (m *TRadioButton) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4041, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4683, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TRadioButton) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -197,7 +197,7 @@ func (m *TRadioButton) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4042, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4684, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TRadioButton) SetOnMouseUp(fn TMouseEvent) {
@@ -205,7 +205,7 @@ func (m *TRadioButton) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4043, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4685, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TRadioButton) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -213,7 +213,7 @@ func (m *TRadioButton) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4044, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4686, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TRadioButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -221,7 +221,7 @@ func (m *TRadioButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4045, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4687, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TRadioButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -229,7 +229,7 @@ func (m *TRadioButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4046, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4688, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TRadioButton) SetOnStartDrag(fn TStartDragEvent) {
@@ -237,5 +237,5 @@ func (m *TRadioButton) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4047, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4689, m.Instance(), m.startDragPtr)
 }

@@ -9,9 +9,7 @@
 package lcl
 
 import (
-	"github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 type TNotifyEvent func(sender IObject)
@@ -48,11 +46,12 @@ type TTBAdvancedCustomDrawEvent func(sender IToolBar, rect TRect, stage TCustomD
 // 主线程运行回调函数
 type TMainThreadSyncProc func()
 type TMainThreadAsyncProc func(id uint32)
+type TWndProcEvent func(msg *TMessage)
 
 // TDropFilesEvent
 // 注意，当在Windows上使用时如果使用了UAC，则无法收到消息
 // 需要使用未公开的winapi   ChangeWindowMessageFilter 或 ChangeWindowMessageFilterEx 根据系统版本不同使用其中的，然后添加
-// ChangeWindowMessageFilterEx(pnl_Drag.Handle, WM_DROPFILES, MSGFLT_ALLOW, LChangeFilterStruct);消息
+// ChangeWindowMessageFilterEx(pnl_Drag.Handle, WM_DROPFILES, MSGFLT_ALLOW, LChangeFilterStruct),消息
 type TDropFilesEvent func(sender IObject, fileNames []string)
 type TConstrainedResizeEvent func(sender IObject, minWidth, minHeight, maxWidth, maxHeight *int32)
 type THelpEvent func(command uint16, data THelpEventData, callHelp, result *bool)
@@ -79,7 +78,7 @@ type TSectionTrackEvent func(headerControl IHeaderControl, section IHeaderSectio
 type TSectionDragEvent func(sender IObject, fromSection, toSection IHeaderSection, allowDrag *bool)
 type TCustomSectionNotifyEvent func(headerControl IHeaderControl, section IHeaderSection)
 
-// TGestureEvent = procedure(Sender: TObject; const EventInfo: TGestureEventInfo; var Handled: Boolean) of object;
+// TGestureEvent = procedure(sender IObject, EventInfo: TGestureEventInfo, Handled: bool)
 //type TGestureEvent func(sender IObject, eventInfo TGestureEventInfo, handled *bool)
 
 type TStartDragEvent func(sender IObject, dragObject *IDragObject)
@@ -109,7 +108,6 @@ type TLVDrawItemEvent func(sender IListView, item IListItem, rect TRect, state T
 type TLVDataHintEvent func(sender IObject, startIndex, endIndex int32)
 type TTVCustomDrawEvent func(sender ITreeView, rect TRect, defaultDraw *bool)
 type TTVCustomDrawItemEvent func(sender ITreeView, node ITreeNode, state TCustomDrawState, defaultDraw *bool)
-type TWndProcEvent func(msg *TMessage)
 type TWebTitleChangeEvent func(sender IObject, text string)
 type TWebJSExternalEvent func(sender IObject, funcName, args string, retVal *string)
 type TTaskDlgClickEvent func(sender IObject, modalResult TModalResult, canClose *bool)
@@ -182,7 +180,7 @@ type TTVEditingEndEvent func(sender IObject, node ITreeNode, cancel bool)
 type TTVHasChildrenEvent func(sender ICustomTreeView, node ITreeNode) bool
 type TTVNodeChangedEvent func(sender IObject, node ITreeNode, changeReason TTreeNodeChangeReason)
 type TShowHintEvent func(hintStr *string, canShow *bool, hintInfo *THintInfo)
-type TControlShowHintEvent func(sender IObject, hintInfo *THintInfo)
+type TControlShowHintEvent func(sender IObject, hintInfo THintInfo)
 type TDestroyResolutionHandleEvent func(sender ICustomImageList, width int32, referenceHandle TLCLHandle)
 
 // 方法参数回调
@@ -194,66 +192,136 @@ type TLVCompare func(item1, item2 IListItem, optionalParam uint32) int32 //stdca
 type TListSortCompare func(item1, item2 uintptr) int32
 type TCollectionSortCompare func(item1, item2 ICollectionItem) int32
 
-// THintInfo record
-type THintInfo struct {
-	HintControl     IControl
-	HintWindowClass TWinControlClass
-	HintPos         *TPoint // screen coordinates
-	HintMaxWidth    Integer
-	HintColor       TColor
-	CursorRect      *TRect
-	CursorPos       *TPoint
-	ReshowTimeout   Integer
-	HideTimeout     Integer
-	HintStr         string
-	HintData        Pointer
-}
+// node events
 
-// PHintInfo = ^THintInfo;
-type PHintInfo struct {
-	HintControl     uintptr // TControl
-	HintWindowClass uintptr // TWinControlClass
-	HintPos         uintptr // TPoint // screen coordinates
-	HintMaxWidth    uintptr // Integer
-	HintColor       uintptr // TColor
-	CursorRect      uintptr // TRect
-	CursorPos       uintptr // TPoint
-	ReshowTimeout   uintptr // Integer
-	HideTimeout     uintptr // Integer
-	HintStr         uintptr // string
-	HintData        uintptr // Pointer
-}
+type TVTChangingEvent func(sender IBaseVirtualTree, node IVirtualNode, allowed *bool)
+type TVTCheckChangingEvent func(sender IBaseVirtualTree, node IVirtualNode, newState *TCheckState, allowed *bool)
+type TVTChangeEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTStructureChangeEvent func(sender IBaseVirtualTree, node IVirtualNode, reason TChangeReason)
+type TVTEditCancelEvent func(sender IBaseVirtualTree, column TColumnIndex)
+type TVTEditChangingEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, allowed *bool)
+type TVTEditChangeEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex)
+type TVTFreeNodeEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTFocusChangingEvent func(sender IBaseVirtualTree, oldNode, newNode IVirtualNode, oldColumn, newColumn TColumnIndex, allowed *bool)
+type TVTFocusChangeEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex)
+type TVTAddToSelectionEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTRemoveFromSelectionEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTGetImageEvent func(sender IBaseVirtualTree, node IVirtualNode, kind TVTImageKind, column TColumnIndex, ghosted *bool, imageIndex *int32)
+type TVTGetImageExEvent func(sender IBaseVirtualTree, node IVirtualNode, kind TVTImageKind, column TColumnIndex, ghosted *bool, imageIndex *int32, imageList *ICustomImageList)
+type TVTGetImageTextEvent func(sender IBaseVirtualTree, node IVirtualNode, kind TVTImageKind, column TColumnIndex, imageText *string)
+type TVTHotNodeChangeEvent func(sender IBaseVirtualTree, oldNode, newNode IVirtualNode)
+type TVTInitChildrenEvent func(sender IBaseVirtualTree, node IVirtualNode, childCount *Cardinal)
+type TVTInitNodeEvent func(sender IBaseVirtualTree, parentNode, node IVirtualNode, initialStates *TVirtualNodeInitStates)
+type TVTPopupEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, point TPoint, askParent *bool, popupMenu *IPopupMenu)
+type TVTHelpContextEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, helpContext *int32)
+type TVTCreateEditorEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, outEditLink *IVTEditLink)
+type TVTSaveTreeEvent func(sender IBaseVirtualTree, stream IStream)
+type TVTSaveNodeEvent func(sender IBaseVirtualTree, node IVirtualNode, stream IStream)
 
-// PHintInfo 结构转为指针
-func (m *THintInfo) PHintInfo() *PHintInfo {
-	return &PHintInfo{
-		HintControl:     m.HintControl.Instance(),
-		HintWindowClass: uintptr(m.HintWindowClass),
-		HintPos:         uintptr(unsafe.Pointer(m.HintPos)),
-		HintMaxWidth:    uintptr(m.HintMaxWidth),
-		HintColor:       uintptr(m.HintColor),
-		CursorRect:      uintptr(unsafe.Pointer(m.CursorRect)),
-		CursorPos:       uintptr(unsafe.Pointer(m.CursorPos)),
-		ReshowTimeout:   uintptr(m.ReshowTimeout),
-		HideTimeout:     uintptr(m.HideTimeout),
-		HintStr:         api.PascalStr(m.HintStr),
-		HintData:        uintptr(m.HintData),
-	}
-}
+type TVTNodeExportEvent func(sender IBaseVirtualTree, exportType TVTExportType, Node IVirtualNode) bool
+type TVTColumnExportEvent func(sender IBaseVirtualTree, exportType TVTExportType, column IVirtualTreeColumn)
+type TVTTreeExportEvent func(sender IBaseVirtualTree, exportType TVTExportType)
+type TVTDrawNodeEvent func(sender IBaseVirtualTree, paintInfo TVTPaintInfo)
+type TVTGetCellContentMarginEvent func(sender IBaseVirtualTree, hintCanvas ICanvas, node IVirtualNode, column TColumnIndex, cellContentMarginType TVTCellContentMarginType, cellContentMargin *TPoint)
+type TVTGetNodeWidthEvent func(sender IBaseVirtualTree, hintCanvas ICanvas, node IVirtualNode, column TColumnIndex, nodeWidth *int32)
 
-// THintInfo 指针转为结构
-func (m *PHintInfo) THintInfo() *THintInfo {
-	return &THintInfo{
-		HintControl:     AsControl(m.HintControl),
-		HintWindowClass: TWinControlClass(m.HintWindowClass),
-		HintPos:         (*TPoint)(getPointer(m.HintPos)),
-		HintMaxWidth:    *(*Integer)(getPointer(m.HintMaxWidth)),
-		HintColor:       *(*TColor)(getPointer(m.HintColor)),
-		CursorRect:      (*TRect)(getPointer(m.CursorRect)),
-		CursorPos:       (*TPoint)(getPointer(m.CursorPos)),
-		ReshowTimeout:   *(*Integer)(getPointer(m.ReshowTimeout)),
-		HideTimeout:     *(*Integer)(getPointer(m.HideTimeout)),
-		HintStr:         api.GoStr(m.HintStr),
-		HintData:        Pointer(m.HintData),
-	}
-}
+// header/column events
+
+type TVTHeaderClickEvent func(sender IVTHeader, hitInfo TVTHeaderHitInfo)
+type TVTHeaderMouseEvent func(sender IVTHeader, button TMouseButton, shift TShiftState, x, y int32)
+type TVTHeaderMouseMoveEvent func(sender IVTHeader, shift TShiftState, x, y int32)
+type TVTBeforeHeaderHeightTrackingEvent func(sender IVTHeader, shift TShiftState)
+type TVTAfterHeaderHeightTrackingEvent func(sender IVTHeader)
+type TVTHeaderHeightTrackingEvent func(sender IVTHeader, point *TPoint, shift TShiftState, allowed *bool)
+type TVTHeaderHeightDblClickResizeEvent func(sender IVTHeader, point *TPoint, shift TShiftState, allowed *bool)
+type TVTHeaderNotifyEvent func(sender IVTHeader, column TColumnIndex)
+type TVTHeaderDraggingEvent func(sender IVTHeader, column TColumnIndex, allowed *bool)
+type TVTHeaderDraggedEvent func(sender IVTHeader, column TColumnIndex, oldPosition int32)
+type TVTHeaderDraggedOutEvent func(sender IVTHeader, column TColumnIndex, dropPosition TPoint)
+type TVTHeaderPaintEvent func(sender IVTHeader, headerCanvas ICanvas, column IVirtualTreeColumn, rect TRect, hHover, pressed bool, dropMark TVTDropMarkMode)
+type TVTHeaderPaintQueryElementsEvent func(sender IVTHeader, paintInfo *THeaderPaintInfo, elements *THeaderPaintElements)
+type TVTAdvancedHeaderPaintEvent func(sender IVTHeader, paintInfo *THeaderPaintInfo, elements THeaderPaintElements)
+type TVTBeforeAutoFitColumnsEvent func(sender IVTHeader, smartAutoFitType *TSmartAutoFitType)
+type TVTBeforeAutoFitColumnEvent func(sender IVTHeader, column TColumnIndex, smartAutoFitType *TSmartAutoFitType, allowed *bool)
+type TVTAfterAutoFitColumnEvent func(sender IVTHeader, column TColumnIndex)
+type TVTAfterAutoFitColumnsEvent func(sender IVTHeader)
+type TVTColumnClickEvent func(sender IBaseVirtualTree, column TColumnIndex, shift TShiftState)
+type TVTColumnDblClickEvent func(sender IBaseVirtualTree, column TColumnIndex, shift TShiftState)
+type TVTColumnWidthDblClickResizeEvent func(sender IVTHeader, column TColumnIndex, shift TShiftState, point TPoint, allowed *bool)
+type TVTBeforeColumnWidthTrackingEvent func(sender IVTHeader, column TColumnIndex, shift TShiftState)
+type TVTAfterColumnWidthTrackingEvent func(sender IVTHeader, column TColumnIndex)
+type TVTColumnWidthTrackingEvent func(sender IVTHeader, column TColumnIndex, shift TShiftState, trackPoint *TPoint, point TPoint, allowed *bool)
+type TVTGetHeaderCursorEvent func(sender IVTHeader, cursor *HCURSOR)
+type TVTBeforeGetMaxColumnWidthEvent func(sender IVTHeader, column TColumnIndex, useSmartColumnWidth *bool)
+type TVTAfterGetMaxColumnWidthEvent func(sender IVTHeader, column TColumnIndex, maxWidth *int32)
+type TVTCanSplitterResizeColumnEvent func(sender IVTHeader, point TPoint, column TColumnIndex, allowed *bool)
+type TVTCanSplitterResizeHeaderEvent func(sender IVTHeader, point TPoint, allowed *bool)
+
+// move, copy and node tracking events
+
+type TVTNodeMovedEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTNodeMovingEvent func(sender IBaseVirtualTree, node, target IVirtualNode, allowed *bool)
+type TVTNodeCopiedEvent func(sender IBaseVirtualTree, node IVirtualNode)
+type TVTNodeCopyingEvent func(sender IBaseVirtualTree, node, target IVirtualNode, allowed *bool)
+type TVTNodeClickEvent func(sender IBaseVirtualTree, hitInfo THitInfo)
+type TVTNodeHeightTrackingEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, shift TShiftState, trackPoint *TPoint, point TPoint, allowed *bool)
+type TVTNodeHeightDblClickResizeEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, shift TShiftState, point TPoint, allowed *bool)
+type TVTCanSplitterResizeNodeEvent func(sender IBaseVirtualTree, point TPoint, node IVirtualNode, column TColumnIndex, allowed *bool)
+
+// drag'n drop/OLE
+
+type TVTCreateDragManagerEvent func(sender IBaseVirtualTree, outDragManager *IVTDragManager)
+type TVTCreateDataObjectEvent func(sender IBaseVirtualTree, outIDataObject *IDataObject)
+type TVTDragAllowedEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, allowed *bool)
+type TVTDragOverEvent func(sender IBaseVirtualTree, source IObject, shift TShiftState, state TDragState, point TPoint, mode TDropMode, effect *LongWord, accept *bool)
+type TVTDragDropEvent func(sender IBaseVirtualTree, source IObject, dataObject IDataObject, formats *TFormatArray, shift TShiftState, point TPoint, effect *LongWord, mode TDropMode)
+
+// TODO 还没搞明白这种事件怎么处理 TFormatEtc TFormatEtcArray TStgMedium
+//type TVTRenderOLEDataEvent func(sender IBaseVirtualTree, FormatEtcIn TFormatEtc, outMedium TStgMedium, ForClipboard bool, Result HRESULT)
+//type TVTGetUserClipboardFormatsEvent func(sender IBaseVirtualTree, Formats TFormatEtcArray)
+
+// paint events
+
+type TVTBeforeItemEraseEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, itemRect TRect, itemColor *TColor, eraseAction *TItemEraseAction)
+type TVTAfterItemEraseEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, itemRect TRect)
+type TVTBeforeItemPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, itemRect TRect, customDraw *bool)
+type TVTAfterItemPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, itemRect TRect)
+type TVTBeforeCellPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, column TColumnIndex, cellPaintMode TVTCellPaintMode, cellRect TRect, contentRect *TRect)
+type TVTAfterCellPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, column TColumnIndex, cellRect TRect)
+type TVTPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas)
+type TVTBackgroundPaintEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, rect TRect, handled *bool)
+type TVTGetLineStyleEvent func(sender IBaseVirtualTree, bits *Pointer)
+type TVTMeasureItemEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, nodeHeight *int32)
+
+// search, sort
+
+type TVTCompareEvent func(sender IBaseVirtualTree, node1, node2 IVirtualNode, column TColumnIndex, result *int32)
+type TVTIncrementalSearchEvent func(sender IBaseVirtualTree, node IVirtualNode, searchText string, result *int32)
+
+// operations
+
+type TVTOperationEvent func(sender IBaseVirtualTree, operationKind TVTOperationKind)
+
+type TVTHintKindEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, kind *TVTHintKind)
+type TVTDrawHintEvent func(sender IBaseVirtualTree, hintCanvas ICanvas, node IVirtualNode, rect TRect, column TColumnIndex)
+type TVTGetHintSizeEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, rect *TRect)
+
+// miscellaneous
+
+type TVTBeforeDrawLineImageEvent func(sender IBaseVirtualTree, node IVirtualNode, level int32, posX *int32)
+type TVTGetNodeDataSizeEvent func(sender IBaseVirtualTree, nodeDataSize *int32)
+type TVTKeyActionEvent func(sender IBaseVirtualTree, charCode *Word, shift *TShiftState, doDefault *bool)
+type TVTScrollEvent func(sender IBaseVirtualTree, deltaX, deltaY int32)
+type TVTUpdatingEvent func(sender IBaseVirtualTree, state TVTUpdateState)
+type TVTGetCursorEvent func(sender IBaseVirtualTree, cursor *TCursor)
+type TVTStateChangeEvent func(sender IBaseVirtualTree, enter, leave TVirtualTreeStates)
+type TVTGetCellIsEmptyEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, isEmpty *bool)
+type TVTScrollBarShowEvent func(sender IBaseVirtualTree, bar int32, show bool)
+
+type TVTDrawTextEvent func(Sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, column TColumnIndex, cellText string, cellRect TRect, defaultDraw bool)
+type TVSTGetTextEvent func(sender IBaseVirtualTree, nNode IVirtualNode, column TColumnIndex, textType TVSTTextType, cellText *string)
+type TVTPaintText func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, column TColumnIndex, textType TVSTTextType)
+type TVSTGetHintEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, lineBreakStyle *TVTTooltipLineBreakStyle, hintText *string)
+type TVTMeasureTextEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, Node IVirtualNode, column TColumnIndex, cellText string, extent *int32)
+type TVSTNewTextEvent func(sender IBaseVirtualTree, node IVirtualNode, column TColumnIndex, newText string)
+type TVSTShortenstringEvent func(sender IBaseVirtualTree, targetCanvas ICanvas, node IVirtualNode, column TColumnIndex, str string, textSpace int32, result *string, done *bool)

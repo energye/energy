@@ -235,18 +235,18 @@ func initNetConn() {
 			}
 			switch p.CMD {
 			case 1000:
-				lcl.ThreadSync(func() {
+				lcl.RunOnMainThreadSync(func() {
 					memoMsg.Lines().Add(fmtMessage(p.NK, p.Content))
 				})
 			case 1001:
-				lcl.ThreadSync(func() {
+				lcl.RunOnMainThreadSync(func() {
 					index := friendList.Items().IndexOf(p.NK)
 					if index == -1 {
 						friendList.Items().Add(p.NK)
 					}
 				})
 			case 1002:
-				lcl.ThreadSync(func() {
+				lcl.RunOnMainThreadSync(func() {
 					index := friendList.Items().IndexOf(p.NK)
 					if index != -1 {
 						friendList.Items().Delete(index)

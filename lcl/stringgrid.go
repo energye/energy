@@ -93,224 +93,224 @@ type TStringGrid struct {
 }
 
 func NewStringGrid(AOwner IComponent) IStringGrid {
-	r1 := LCL().SysCallN(4546, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(5195, GetObjectUintptr(AOwner))
 	return AsStringGrid(r1)
 }
 
 func (m *TStringGrid) Modified() bool {
-	r1 := LCL().SysCallN(4555, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5204, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStringGrid) SetModified(AValue bool) {
-	LCL().SysCallN(4555, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5204, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStringGrid) InplaceEditor() IWinControl {
-	r1 := LCL().SysCallN(4554, m.Instance())
+	r1 := LCL().SysCallN(5203, m.Instance())
 	return AsWinControl(r1)
 }
 
 func (m *TStringGrid) AlternateColor() TColor {
-	r1 := LCL().SysCallN(4538, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5187, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TStringGrid) SetAlternateColor(AValue TColor) {
-	LCL().SysCallN(4538, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5187, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) AutoEdit() bool {
-	r1 := LCL().SysCallN(4539, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5188, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStringGrid) SetAutoEdit(AValue bool) {
-	LCL().SysCallN(4539, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5188, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStringGrid) CellHintPriority() TCellHintPriority {
-	r1 := LCL().SysCallN(4540, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5189, 0, m.Instance(), 0)
 	return TCellHintPriority(r1)
 }
 
 func (m *TStringGrid) SetCellHintPriority(AValue TCellHintPriority) {
-	LCL().SysCallN(4540, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5189, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ColRowDraggingCursor() TCursor {
-	r1 := LCL().SysCallN(4543, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5192, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TStringGrid) SetColRowDraggingCursor(AValue TCursor) {
-	LCL().SysCallN(4543, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5192, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ColRowDragIndicatorColor() TColor {
-	r1 := LCL().SysCallN(4542, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5191, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TStringGrid) SetColRowDragIndicatorColor(AValue TColor) {
-	LCL().SysCallN(4542, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5191, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ColSizingCursor() TCursor {
-	r1 := LCL().SysCallN(4544, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5193, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TStringGrid) SetColSizingCursor(AValue TCursor) {
-	LCL().SysCallN(4544, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5193, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ColumnClickSorts() bool {
-	r1 := LCL().SysCallN(4545, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5194, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStringGrid) SetColumnClickSorts(AValue bool) {
-	LCL().SysCallN(4545, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5194, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStringGrid) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4547, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5196, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TStringGrid) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4547, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5196, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4548, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5197, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TStringGrid) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4548, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5197, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4549, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5198, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TStringGrid) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4549, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5198, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) HeaderHotZones() TGridZoneSet {
-	r1 := LCL().SysCallN(4550, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5199, 0, m.Instance(), 0)
 	return TGridZoneSet(r1)
 }
 
 func (m *TStringGrid) SetHeaderHotZones(AValue TGridZoneSet) {
-	LCL().SysCallN(4550, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5199, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) HeaderPushZones() TGridZoneSet {
-	r1 := LCL().SysCallN(4551, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5200, 0, m.Instance(), 0)
 	return TGridZoneSet(r1)
 }
 
 func (m *TStringGrid) SetHeaderPushZones(AValue TGridZoneSet) {
-	LCL().SysCallN(4551, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5200, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ImageIndexSortAsc() TImageIndex {
-	r1 := LCL().SysCallN(4552, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5201, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TStringGrid) SetImageIndexSortAsc(AValue TImageIndex) {
-	LCL().SysCallN(4552, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5201, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ImageIndexSortDesc() TImageIndex {
-	r1 := LCL().SysCallN(4553, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5202, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TStringGrid) SetImageIndexSortDesc(AValue TImageIndex) {
-	LCL().SysCallN(4553, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5202, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) MouseWheelOption() TMouseWheelOption {
-	r1 := LCL().SysCallN(4556, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5205, 0, m.Instance(), 0)
 	return TMouseWheelOption(r1)
 }
 
 func (m *TStringGrid) SetMouseWheelOption(AValue TMouseWheelOption) {
-	LCL().SysCallN(4556, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5205, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) ParentColor() bool {
-	r1 := LCL().SysCallN(4557, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5206, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStringGrid) SetParentColor(AValue bool) {
-	LCL().SysCallN(4557, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5206, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStringGrid) ParentFont() bool {
-	r1 := LCL().SysCallN(4558, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5207, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStringGrid) SetParentFont(AValue bool) {
-	LCL().SysCallN(4558, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5207, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStringGrid) RangeSelectMode() TRangeSelectMode {
-	r1 := LCL().SysCallN(4559, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5208, 0, m.Instance(), 0)
 	return TRangeSelectMode(r1)
 }
 
 func (m *TStringGrid) SetRangeSelectMode(AValue TRangeSelectMode) {
-	LCL().SysCallN(4559, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5208, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) RowSizingCursor() TCursor {
-	r1 := LCL().SysCallN(4560, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5209, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TStringGrid) SetRowSizingCursor(AValue TCursor) {
-	LCL().SysCallN(4560, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5209, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStringGrid) TitleFont() IFont {
-	r1 := LCL().SysCallN(4572, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5221, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TStringGrid) SetTitleFont(AValue IFont) {
-	LCL().SysCallN(4572, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5221, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TStringGrid) TitleImageList() IImageList {
-	r1 := LCL().SysCallN(4573, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5222, 0, m.Instance(), 0)
 	return AsImageList(r1)
 }
 
 func (m *TStringGrid) SetTitleImageList(AValue IImageList) {
-	LCL().SysCallN(4573, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5222, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TStringGrid) TitleStyle() TTitleStyle {
-	r1 := LCL().SysCallN(4574, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5223, 0, m.Instance(), 0)
 	return TTitleStyle(r1)
 }
 
 func (m *TStringGrid) SetTitleStyle(AValue TTitleStyle) {
-	LCL().SysCallN(4574, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5223, 1, m.Instance(), uintptr(AValue))
 }
 
 func StringGridClass() TClass {
-	ret := LCL().SysCallN(4541)
+	ret := LCL().SysCallN(5190)
 	return TClass(ret)
 }
 
@@ -319,7 +319,7 @@ func (m *TStringGrid) SetOnCellProcess(fn TCellProcessEvent) {
 		RemoveEventElement(m.cellProcessPtr)
 	}
 	m.cellProcessPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4561, m.Instance(), m.cellProcessPtr)
+	LCL().SysCallN(5210, m.Instance(), m.cellProcessPtr)
 }
 
 func (m *TStringGrid) SetOnCheckboxToggled(fn TToggledCheckboxEvent) {
@@ -327,7 +327,7 @@ func (m *TStringGrid) SetOnCheckboxToggled(fn TToggledCheckboxEvent) {
 		RemoveEventElement(m.checkboxToggledPtr)
 	}
 	m.checkboxToggledPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4562, m.Instance(), m.checkboxToggledPtr)
+	LCL().SysCallN(5211, m.Instance(), m.checkboxToggledPtr)
 }
 
 func (m *TStringGrid) SetOnEditingDone(fn TNotifyEvent) {
@@ -335,7 +335,7 @@ func (m *TStringGrid) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4563, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(5212, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TStringGrid) SetOnGetCellHint(fn TGetCellHintEvent) {
@@ -343,7 +343,7 @@ func (m *TStringGrid) SetOnGetCellHint(fn TGetCellHintEvent) {
 		RemoveEventElement(m.getCellHintPtr)
 	}
 	m.getCellHintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4564, m.Instance(), m.getCellHintPtr)
+	LCL().SysCallN(5213, m.Instance(), m.getCellHintPtr)
 }
 
 func (m *TStringGrid) SetOnGetCheckboxState(fn TGetCheckboxStateEvent) {
@@ -351,7 +351,7 @@ func (m *TStringGrid) SetOnGetCheckboxState(fn TGetCheckboxStateEvent) {
 		RemoveEventElement(m.getCheckboxStatePtr)
 	}
 	m.getCheckboxStatePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4565, m.Instance(), m.getCheckboxStatePtr)
+	LCL().SysCallN(5214, m.Instance(), m.getCheckboxStatePtr)
 }
 
 func (m *TStringGrid) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -359,7 +359,7 @@ func (m *TStringGrid) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4566, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(5215, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TStringGrid) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -367,7 +367,7 @@ func (m *TStringGrid) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4567, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(5216, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TStringGrid) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -375,7 +375,7 @@ func (m *TStringGrid) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4568, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(5217, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TStringGrid) SetOnSetCheckboxState(fn TSetCheckboxStateEvent) {
@@ -383,7 +383,7 @@ func (m *TStringGrid) SetOnSetCheckboxState(fn TSetCheckboxStateEvent) {
 		RemoveEventElement(m.setCheckboxStatePtr)
 	}
 	m.setCheckboxStatePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4569, m.Instance(), m.setCheckboxStatePtr)
+	LCL().SysCallN(5218, m.Instance(), m.setCheckboxStatePtr)
 }
 
 func (m *TStringGrid) SetOnUserCheckboxBitmap(fn TUserCheckBoxBitmapEvent) {
@@ -391,7 +391,7 @@ func (m *TStringGrid) SetOnUserCheckboxBitmap(fn TUserCheckBoxBitmapEvent) {
 		RemoveEventElement(m.userCheckboxBitmapPtr)
 	}
 	m.userCheckboxBitmapPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4570, m.Instance(), m.userCheckboxBitmapPtr)
+	LCL().SysCallN(5219, m.Instance(), m.userCheckboxBitmapPtr)
 }
 
 func (m *TStringGrid) SetOnUserCheckboxImage(fn TUserCheckBoxImageEvent) {
@@ -399,5 +399,5 @@ func (m *TStringGrid) SetOnUserCheckboxImage(fn TUserCheckBoxImageEvent) {
 		RemoveEventElement(m.userCheckboxImagePtr)
 	}
 	m.userCheckboxImagePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4571, m.Instance(), m.userCheckboxImagePtr)
+	LCL().SysCallN(5220, m.Instance(), m.userCheckboxImagePtr)
 }

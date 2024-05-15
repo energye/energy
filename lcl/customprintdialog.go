@@ -42,92 +42,92 @@ type TCustomPrintDialog struct {
 }
 
 func NewCustomPrintDialog(TheOwner IComponent) ICustomPrintDialog {
-	r1 := LCL().SysCallN(1939, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(2129, GetObjectUintptr(TheOwner))
 	return AsCustomPrintDialog(r1)
 }
 
 func (m *TCustomPrintDialog) Collate() bool {
-	r1 := LCL().SysCallN(1937, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2127, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomPrintDialog) SetCollate(AValue bool) {
-	LCL().SysCallN(1937, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2127, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomPrintDialog) Copies() int32 {
-	r1 := LCL().SysCallN(1938, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2128, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPrintDialog) SetCopies(AValue int32) {
-	LCL().SysCallN(1938, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2128, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) FromPage() int32 {
-	r1 := LCL().SysCallN(1940, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2130, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPrintDialog) SetFromPage(AValue int32) {
-	LCL().SysCallN(1940, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2130, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) MinPage() int32 {
-	r1 := LCL().SysCallN(1942, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2132, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPrintDialog) SetMinPage(AValue int32) {
-	LCL().SysCallN(1942, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2132, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) MaxPage() int32 {
-	r1 := LCL().SysCallN(1941, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2131, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPrintDialog) SetMaxPage(AValue int32) {
-	LCL().SysCallN(1941, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2131, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) Options() TPrintDialogOptions {
-	r1 := LCL().SysCallN(1943, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2133, 0, m.Instance(), 0)
 	return TPrintDialogOptions(r1)
 }
 
 func (m *TCustomPrintDialog) SetOptions(AValue TPrintDialogOptions) {
-	LCL().SysCallN(1943, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2133, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) PrintToFile() bool {
-	r1 := LCL().SysCallN(1945, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2135, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomPrintDialog) SetPrintToFile(AValue bool) {
-	LCL().SysCallN(1945, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2135, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomPrintDialog) PrintRange() TPrintRange {
-	r1 := LCL().SysCallN(1944, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2134, 0, m.Instance(), 0)
 	return TPrintRange(r1)
 }
 
 func (m *TCustomPrintDialog) SetPrintRange(AValue TPrintRange) {
-	LCL().SysCallN(1944, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2134, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPrintDialog) ToPage() int32 {
-	r1 := LCL().SysCallN(1946, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2136, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPrintDialog) SetToPage(AValue int32) {
-	LCL().SysCallN(1946, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2136, 1, m.Instance(), uintptr(AValue))
 }
 
 func CustomPrintDialogClass() TClass {
-	ret := LCL().SysCallN(1936)
+	ret := LCL().SysCallN(2126)
 	return TClass(ret)
 }

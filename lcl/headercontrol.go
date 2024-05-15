@@ -66,57 +66,57 @@ type THeaderControl struct {
 }
 
 func NewHeaderControl(AOwner IComponent) IHeaderControl {
-	r1 := LCL().SysCallN(3046, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(3289, GetObjectUintptr(AOwner))
 	return AsHeaderControl(r1)
 }
 
 func (m *THeaderControl) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3047, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3290, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *THeaderControl) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3047, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3290, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *THeaderControl) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3048, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3291, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *THeaderControl) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3048, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3291, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *THeaderControl) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3049, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3292, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *THeaderControl) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3049, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3292, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *THeaderControl) ParentFont() bool {
-	r1 := LCL().SysCallN(3050, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3293, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *THeaderControl) SetParentFont(AValue bool) {
-	LCL().SysCallN(3050, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3293, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *THeaderControl) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3051, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3294, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *THeaderControl) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3051, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3294, 1, m.Instance(), PascalBool(AValue))
 }
 
 func HeaderControlClass() TClass {
-	ret := LCL().SysCallN(3045)
+	ret := LCL().SysCallN(3288)
 	return TClass(ret)
 }
 
@@ -125,7 +125,7 @@ func (m *THeaderControl) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3052, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3295, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *THeaderControl) SetOnDragDrop(fn TDragDropEvent) {
@@ -133,7 +133,7 @@ func (m *THeaderControl) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3053, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3296, m.Instance(), m.dragDropPtr)
 }
 
 func (m *THeaderControl) SetOnDragOver(fn TDragOverEvent) {
@@ -141,7 +141,7 @@ func (m *THeaderControl) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3054, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3297, m.Instance(), m.dragOverPtr)
 }
 
 func (m *THeaderControl) SetOnEndDock(fn TEndDragEvent) {
@@ -149,7 +149,7 @@ func (m *THeaderControl) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3055, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(3298, m.Instance(), m.endDockPtr)
 }
 
 func (m *THeaderControl) SetOnEndDrag(fn TEndDragEvent) {
@@ -157,7 +157,7 @@ func (m *THeaderControl) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3056, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(3299, m.Instance(), m.endDragPtr)
 }
 
 func (m *THeaderControl) SetOnMouseDown(fn TMouseEvent) {
@@ -165,7 +165,7 @@ func (m *THeaderControl) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3057, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3300, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *THeaderControl) SetOnMouseEnter(fn TNotifyEvent) {
@@ -173,7 +173,7 @@ func (m *THeaderControl) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3058, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3301, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *THeaderControl) SetOnMouseLeave(fn TNotifyEvent) {
@@ -181,7 +181,7 @@ func (m *THeaderControl) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3059, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3302, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *THeaderControl) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -189,7 +189,7 @@ func (m *THeaderControl) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3060, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3303, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *THeaderControl) SetOnMouseUp(fn TMouseEvent) {
@@ -197,7 +197,7 @@ func (m *THeaderControl) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3061, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3304, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -205,7 +205,7 @@ func (m *THeaderControl) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3062, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(3305, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -213,7 +213,7 @@ func (m *THeaderControl) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3063, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(3306, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -221,7 +221,7 @@ func (m *THeaderControl) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3067, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(3310, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -229,7 +229,7 @@ func (m *THeaderControl) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3064, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(3307, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -237,7 +237,7 @@ func (m *THeaderControl) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3065, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(3308, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *THeaderControl) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -245,5 +245,5 @@ func (m *THeaderControl) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3066, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(3309, m.Instance(), m.mouseWheelRightPtr)
 }

@@ -158,12 +158,12 @@ type ICefView interface {
 	// ConvertPointToWindow
 	//  Convert |point| from this View's coordinate system to that of the Window.
 	//  This View must belong to a Window when calling this function. Returns true
-	// (1) if the conversion is successful or false(0) otherwise.
+	//  (1) if the conversion is successful or false(0) otherwise.
 	ConvertPointToWindow(point *TCefPoint) bool // function
 	// ConvertPointFromWindow
 	//  Convert |point| to this View's coordinate system from that of the Window.
 	//  This View must belong to a Window when calling this function. Returns true
-	// (1) if the conversion is successful or false(0) otherwise.
+	//  (1) if the conversion is successful or false(0) otherwise.
 	ConvertPointFromWindow(point *TCefPoint) bool // function
 	// ConvertPointToView
 	//  Convert |point| from this View's coordinate system to that of |view|.

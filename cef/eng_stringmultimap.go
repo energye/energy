@@ -51,7 +51,7 @@ type TCefStringMultimap struct {
 }
 
 func NewCefStringMultimap() ICefStringMultimap {
-	r1 := CEF().SysCallN(1407)
+	r1 := CEF().SysCallN(1406)
 	return AsCefStringMultimap(r1)
 }
 

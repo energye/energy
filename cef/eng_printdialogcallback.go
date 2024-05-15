@@ -15,7 +15,7 @@ import (
 // ICefPrintDialogCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface for asynchronous continuation of print dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_handler_capi.h">CEF source file: /include/capi/cef_print_handler_capi.h (cef_print_dialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_handler_capi.h">CEF source file: /include/capi/cef_print_handler_capi.h (cef_print_dialog_callback_t))</a>
 type ICefPrintDialogCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -29,7 +29,7 @@ type ICefPrintDialogCallback interface {
 // TCefPrintDialogCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface for asynchronous continuation of print dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_handler_capi.h">CEF source file: /include/capi/cef_print_handler_capi.h (cef_print_dialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_handler_capi.h">CEF source file: /include/capi/cef_print_handler_capi.h (cef_print_dialog_callback_t))</a>
 type TCefPrintDialogCallback struct {
 	TCefBaseRefCounted
 }

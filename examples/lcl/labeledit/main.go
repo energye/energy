@@ -8,7 +8,7 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	lblEditLeft   lcl.ILabeledEdit
 	lblEditTop    lcl.ILabeledEdit
 	lblEditRight  lcl.ILabeledEdit
@@ -16,7 +16,7 @@ type TMainForm struct {
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {

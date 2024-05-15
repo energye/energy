@@ -15,7 +15,7 @@ import (
 // ICefStreamWriter Parent: ICefBaseRefCounted
 //
 //	Interface used to write data to a stream. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_stream_capi.h">CEF source file: /include/capi/cef_stream_capi.h (cef_stream_writer_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_stream_capi.h">CEF source file: /include/capi/cef_stream_capi.h (cef_stream_writer_t))</a>
 type ICefStreamWriter interface {
 	ICefBaseRefCounted
 	// Write
@@ -38,7 +38,7 @@ type ICefStreamWriter interface {
 // TCefStreamWriter Parent: TCefBaseRefCounted
 //
 //	Interface used to write data to a stream. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_stream_capi.h">CEF source file: /include/capi/cef_stream_capi.h (cef_stream_writer_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_stream_capi.h">CEF source file: /include/capi/cef_stream_capi.h (cef_stream_writer_t))</a>
 type TCefStreamWriter struct {
 	TCefBaseRefCounted
 }

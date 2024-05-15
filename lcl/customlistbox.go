@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomListBox Parent: IWinControl
@@ -106,271 +105,271 @@ type TCustomListBox struct {
 }
 
 func NewCustomListBox(TheOwner IComponent) ICustomListBox {
-	r1 := LCL().SysCallN(1809, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(1999, GetObjectUintptr(TheOwner))
 	return AsCustomListBox(r1)
 }
 
 func (m *TCustomListBox) BorderStyle() TBorderStyle {
-	r1 := LCL().SysCallN(1800, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1990, 0, m.Instance(), 0)
 	return TBorderStyle(r1)
 }
 
 func (m *TCustomListBox) SetBorderStyle(AValue TBorderStyle) {
-	LCL().SysCallN(1800, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1990, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) Canvas() ICanvas {
-	r1 := LCL().SysCallN(1801, m.Instance())
+	r1 := LCL().SysCallN(1991, m.Instance())
 	return AsCanvas(r1)
 }
 
 func (m *TCustomListBox) ClickOnSelChange() bool {
-	r1 := LCL().SysCallN(1806, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1996, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetClickOnSelChange(AValue bool) {
-	LCL().SysCallN(1806, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1996, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) Columns() int32 {
-	r1 := LCL().SysCallN(1807, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1997, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomListBox) SetColumns(AValue int32) {
-	LCL().SysCallN(1807, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1997, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) Count() int32 {
-	r1 := LCL().SysCallN(1808, m.Instance())
+	r1 := LCL().SysCallN(1998, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomListBox) ExtendedSelect() bool {
-	r1 := LCL().SysCallN(1811, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2001, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetExtendedSelect(AValue bool) {
-	LCL().SysCallN(1811, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2001, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) IntegralHeight() bool {
-	r1 := LCL().SysCallN(1815, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2005, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetIntegralHeight(AValue bool) {
-	LCL().SysCallN(1815, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2005, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) ItemHeight() int32 {
-	r1 := LCL().SysCallN(1818, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2008, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomListBox) SetItemHeight(AValue int32) {
-	LCL().SysCallN(1818, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2008, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) ItemIndex() int32 {
-	r1 := LCL().SysCallN(1819, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2009, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomListBox) SetItemIndex(AValue int32) {
-	LCL().SysCallN(1819, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2009, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) Items() IStrings {
-	r1 := LCL().SysCallN(1822, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2012, 0, m.Instance(), 0)
 	return AsStrings(r1)
 }
 
 func (m *TCustomListBox) SetItems(AValue IStrings) {
-	LCL().SysCallN(1822, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2012, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomListBox) MultiSelect() bool {
-	r1 := LCL().SysCallN(1826, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2016, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetMultiSelect(AValue bool) {
-	LCL().SysCallN(1826, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2016, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) Options() TListBoxOptions {
-	r1 := LCL().SysCallN(1827, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2017, 0, m.Instance(), 0)
 	return TListBoxOptions(r1)
 }
 
 func (m *TCustomListBox) SetOptions(AValue TListBoxOptions) {
-	LCL().SysCallN(1827, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2017, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) ParentColor() bool {
-	r1 := LCL().SysCallN(1828, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2018, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetParentColor(AValue bool) {
-	LCL().SysCallN(1828, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2018, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) ParentFont() bool {
-	r1 := LCL().SysCallN(1829, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2019, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(1829, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2019, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(1830, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2020, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(1830, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2020, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) ScrollWidth() int32 {
-	r1 := LCL().SysCallN(1831, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2021, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomListBox) SetScrollWidth(AValue int32) {
-	LCL().SysCallN(1831, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2021, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) SelCount() int32 {
-	r1 := LCL().SysCallN(1832, m.Instance())
+	r1 := LCL().SysCallN(2022, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomListBox) Selected(Index int32) bool {
-	r1 := LCL().SysCallN(1835, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(2025, 0, m.Instance(), uintptr(Index))
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetSelected(Index int32, AValue bool) {
-	LCL().SysCallN(1835, 1, m.Instance(), uintptr(Index), PascalBool(AValue))
+	LCL().SysCallN(2025, 1, m.Instance(), uintptr(Index), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) Sorted() bool {
-	r1 := LCL().SysCallN(1848, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2038, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) SetSorted(AValue bool) {
-	LCL().SysCallN(1848, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2038, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomListBox) Style() TListBoxStyle {
-	r1 := LCL().SysCallN(1849, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2039, 0, m.Instance(), 0)
 	return TListBoxStyle(r1)
 }
 
 func (m *TCustomListBox) SetStyle(AValue TListBoxStyle) {
-	LCL().SysCallN(1849, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2039, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) TopIndex() int32 {
-	r1 := LCL().SysCallN(1850, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2040, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomListBox) SetTopIndex(AValue int32) {
-	LCL().SysCallN(1850, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2040, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomListBox) GetIndexAtXY(X, Y int32) int32 {
-	r1 := LCL().SysCallN(1812, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(2002, m.Instance(), uintptr(X), uintptr(Y))
 	return int32(r1)
 }
 
 func (m *TCustomListBox) GetIndexAtY(Y int32) int32 {
-	r1 := LCL().SysCallN(1813, m.Instance(), uintptr(Y))
+	r1 := LCL().SysCallN(2003, m.Instance(), uintptr(Y))
 	return int32(r1)
 }
 
 func (m *TCustomListBox) GetSelectedText() string {
-	r1 := LCL().SysCallN(1814, m.Instance())
+	r1 := LCL().SysCallN(2004, m.Instance())
 	return GoStr(r1)
 }
 
 func (m *TCustomListBox) ItemAtPos(Pos *TPoint, Existing bool) int32 {
-	r1 := LCL().SysCallN(1816, m.Instance(), uintptr(unsafe.Pointer(Pos)), PascalBool(Existing))
+	r1 := LCL().SysCallN(2006, m.Instance(), uintptr(unsafePointer(Pos)), PascalBool(Existing))
 	return int32(r1)
 }
 
 func (m *TCustomListBox) ItemRect(Index int32) (resultRect TRect) {
-	LCL().SysCallN(1820, m.Instance(), uintptr(Index), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(2010, m.Instance(), uintptr(Index), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TCustomListBox) ItemVisible(Index int32) bool {
-	r1 := LCL().SysCallN(1821, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(2011, m.Instance(), uintptr(Index))
 	return GoBool(r1)
 }
 
 func (m *TCustomListBox) ItemFullyVisible(Index int32) bool {
-	r1 := LCL().SysCallN(1817, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(2007, m.Instance(), uintptr(Index))
 	return GoBool(r1)
 }
 
 func CustomListBoxClass() TClass {
-	ret := LCL().SysCallN(1802)
+	ret := LCL().SysCallN(1992)
 	return TClass(ret)
 }
 
 func (m *TCustomListBox) AddItem(Item string, AnObject IObject) {
-	LCL().SysCallN(1799, m.Instance(), PascalStr(Item), GetObjectUintptr(AnObject))
+	LCL().SysCallN(1989, m.Instance(), PascalStr(Item), GetObjectUintptr(AnObject))
 }
 
 func (m *TCustomListBox) Click() {
-	LCL().SysCallN(1805, m.Instance())
+	LCL().SysCallN(1995, m.Instance())
 }
 
 func (m *TCustomListBox) Clear() {
-	LCL().SysCallN(1803, m.Instance())
+	LCL().SysCallN(1993, m.Instance())
 }
 
 func (m *TCustomListBox) ClearSelection() {
-	LCL().SysCallN(1804, m.Instance())
+	LCL().SysCallN(1994, m.Instance())
 }
 
 func (m *TCustomListBox) LockSelectionChange() {
-	LCL().SysCallN(1823, m.Instance())
+	LCL().SysCallN(2013, m.Instance())
 }
 
 func (m *TCustomListBox) MakeCurrentVisible() {
-	LCL().SysCallN(1824, m.Instance())
+	LCL().SysCallN(2014, m.Instance())
 }
 
 func (m *TCustomListBox) MeasureItem(Index int32, TheHeight *int32) {
 	var result1 uintptr
-	LCL().SysCallN(1825, m.Instance(), uintptr(Index), uintptr(unsafe.Pointer(&result1)))
+	LCL().SysCallN(2015, m.Instance(), uintptr(Index), uintptr(unsafePointer(&result1)))
 	*TheHeight = int32(result1)
 }
 
 func (m *TCustomListBox) SelectAll() {
-	LCL().SysCallN(1833, m.Instance())
+	LCL().SysCallN(2023, m.Instance())
 }
 
 func (m *TCustomListBox) SelectRange(ALow, AHigh int32, ASelected bool) {
-	LCL().SysCallN(1834, m.Instance(), uintptr(ALow), uintptr(AHigh), PascalBool(ASelected))
+	LCL().SysCallN(2024, m.Instance(), uintptr(ALow), uintptr(AHigh), PascalBool(ASelected))
 }
 
 func (m *TCustomListBox) DeleteSelected() {
-	LCL().SysCallN(1810, m.Instance())
+	LCL().SysCallN(2000, m.Instance())
 }
 
 func (m *TCustomListBox) UnlockSelectionChange() {
-	LCL().SysCallN(1851, m.Instance())
+	LCL().SysCallN(2041, m.Instance())
 }
 
 func (m *TCustomListBox) SetOnDblClick(fn TNotifyEvent) {
@@ -378,7 +377,7 @@ func (m *TCustomListBox) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1836, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(2026, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TCustomListBox) SetOnDrawItem(fn TDrawItemEvent) {
@@ -386,7 +385,7 @@ func (m *TCustomListBox) SetOnDrawItem(fn TDrawItemEvent) {
 		RemoveEventElement(m.drawItemPtr)
 	}
 	m.drawItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1837, m.Instance(), m.drawItemPtr)
+	LCL().SysCallN(2027, m.Instance(), m.drawItemPtr)
 }
 
 func (m *TCustomListBox) SetOnMeasureItem(fn TMeasureItemEvent) {
@@ -394,7 +393,7 @@ func (m *TCustomListBox) SetOnMeasureItem(fn TMeasureItemEvent) {
 		RemoveEventElement(m.measureItemPtr)
 	}
 	m.measureItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1838, m.Instance(), m.measureItemPtr)
+	LCL().SysCallN(2028, m.Instance(), m.measureItemPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseDown(fn TMouseEvent) {
@@ -402,7 +401,7 @@ func (m *TCustomListBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1839, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(2029, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -410,7 +409,7 @@ func (m *TCustomListBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1840, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(2030, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -418,7 +417,7 @@ func (m *TCustomListBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1841, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(2031, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TCustomListBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -426,7 +425,7 @@ func (m *TCustomListBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1842, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(2032, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TCustomListBox) SetOnMouseUp(fn TMouseEvent) {
@@ -434,7 +433,7 @@ func (m *TCustomListBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1843, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(2033, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -442,7 +441,7 @@ func (m *TCustomListBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1844, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(2034, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -450,7 +449,7 @@ func (m *TCustomListBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1845, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(2035, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TCustomListBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -458,7 +457,7 @@ func (m *TCustomListBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1846, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(2036, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TCustomListBox) SetOnSelectionChange(fn TSelectionChangeEvent) {
@@ -466,5 +465,5 @@ func (m *TCustomListBox) SetOnSelectionChange(fn TSelectionChangeEvent) {
 		RemoveEventElement(m.selectionChangePtr)
 	}
 	m.selectionChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1847, m.Instance(), m.selectionChangePtr)
+	LCL().SysCallN(2037, m.Instance(), m.selectionChangePtr)
 }

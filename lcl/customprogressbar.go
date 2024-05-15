@@ -42,91 +42,91 @@ type TCustomProgressBar struct {
 }
 
 func NewCustomProgressBar(AOwner IComponent) ICustomProgressBar {
-	r1 := LCL().SysCallN(1951, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2141, GetObjectUintptr(AOwner))
 	return AsCustomProgressBar(r1)
 }
 
 func (m *TCustomProgressBar) Max() int32 {
-	r1 := LCL().SysCallN(1952, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2142, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomProgressBar) SetMax(AValue int32) {
-	LCL().SysCallN(1952, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2142, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) Min() int32 {
-	r1 := LCL().SysCallN(1953, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2143, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomProgressBar) SetMin(AValue int32) {
-	LCL().SysCallN(1953, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2143, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) Orientation() TProgressBarOrientation {
-	r1 := LCL().SysCallN(1954, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2144, 0, m.Instance(), 0)
 	return TProgressBarOrientation(r1)
 }
 
 func (m *TCustomProgressBar) SetOrientation(AValue TProgressBarOrientation) {
-	LCL().SysCallN(1954, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2144, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) Position() int32 {
-	r1 := LCL().SysCallN(1955, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2145, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomProgressBar) SetPosition(AValue int32) {
-	LCL().SysCallN(1955, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2145, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) Smooth() bool {
-	r1 := LCL().SysCallN(1956, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2146, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomProgressBar) SetSmooth(AValue bool) {
-	LCL().SysCallN(1956, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2146, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomProgressBar) Step() int32 {
-	r1 := LCL().SysCallN(1957, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2147, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomProgressBar) SetStep(AValue int32) {
-	LCL().SysCallN(1957, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2147, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) Style() TProgressBarStyle {
-	r1 := LCL().SysCallN(1960, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2150, 0, m.Instance(), 0)
 	return TProgressBarStyle(r1)
 }
 
 func (m *TCustomProgressBar) SetStyle(AValue TProgressBarStyle) {
-	LCL().SysCallN(1960, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2150, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomProgressBar) BarShowText() bool {
-	r1 := LCL().SysCallN(1949, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2139, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomProgressBar) SetBarShowText(AValue bool) {
-	LCL().SysCallN(1949, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2139, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CustomProgressBarClass() TClass {
-	ret := LCL().SysCallN(1950)
+	ret := LCL().SysCallN(2140)
 	return TClass(ret)
 }
 
 func (m *TCustomProgressBar) StepIt() {
-	LCL().SysCallN(1959, m.Instance())
+	LCL().SysCallN(2149, m.Instance())
 }
 
 func (m *TCustomProgressBar) StepBy(Delta int32) {
-	LCL().SysCallN(1958, m.Instance(), uintptr(Delta))
+	LCL().SysCallN(2148, m.Instance(), uintptr(Delta))
 }

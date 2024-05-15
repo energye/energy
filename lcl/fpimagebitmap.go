@@ -24,11 +24,11 @@ type TFPImageBitmap struct {
 }
 
 func NewFPImageBitmap() IFPImageBitmap {
-	r1 := LCL().SysCallN(2709)
+	r1 := LCL().SysCallN(2952)
 	return AsFPImageBitmap(r1)
 }
 
 func FPImageBitmapClass() TClass {
-	ret := LCL().SysCallN(2708)
+	ret := LCL().SysCallN(2951)
 	return TClass(ret)
 }

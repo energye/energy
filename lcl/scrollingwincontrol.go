@@ -30,37 +30,37 @@ type TScrollingWinControl struct {
 }
 
 func NewScrollingWinControl(TheOwner IComponent) IScrollingWinControl {
-	r1 := LCL().SysCallN(4315, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4964, GetObjectUintptr(TheOwner))
 	return AsScrollingWinControl(r1)
 }
 
 func (m *TScrollingWinControl) HorzScrollBar() IControlScrollBar {
-	r1 := LCL().SysCallN(4316, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4965, 0, m.Instance(), 0)
 	return AsControlScrollBar(r1)
 }
 
 func (m *TScrollingWinControl) SetHorzScrollBar(AValue IControlScrollBar) {
-	LCL().SysCallN(4316, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4965, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TScrollingWinControl) VertScrollBar() IControlScrollBar {
-	r1 := LCL().SysCallN(4319, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4968, 0, m.Instance(), 0)
 	return AsControlScrollBar(r1)
 }
 
 func (m *TScrollingWinControl) SetVertScrollBar(AValue IControlScrollBar) {
-	LCL().SysCallN(4319, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4968, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func ScrollingWinControlClass() TClass {
-	ret := LCL().SysCallN(4314)
+	ret := LCL().SysCallN(4963)
 	return TClass(ret)
 }
 
 func (m *TScrollingWinControl) UpdateScrollbars() {
-	LCL().SysCallN(4318, m.Instance())
+	LCL().SysCallN(4967, m.Instance())
 }
 
 func (m *TScrollingWinControl) ScrollInView(AControl IControl) {
-	LCL().SysCallN(4317, m.Instance(), GetObjectUintptr(AControl))
+	LCL().SysCallN(4966, m.Instance(), GetObjectUintptr(AControl))
 }

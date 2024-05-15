@@ -11,18 +11,18 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	Button1 lcl.IButton
 }
 
 type TForm1 struct {
-	*lcl.TForm
+	lcl.TForm
 	Button1 lcl.IButton
 }
 
 var (
-	mainForm *TMainForm
-	form1    *TForm1
+	mainForm TMainForm
+	form1    TForm1
 )
 
 func main() {
@@ -34,10 +34,10 @@ func main() {
 
 func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
 	fmt.Println("TMainForm OnFormCreate")
-	m.SetOnWndProc(func(msg *types.TMessage) {
-		m.InheritedWndProc(msg)
-		fmt.Println("msg", msg)
-	})
+	//m.SetOnWndProc(func(msg *types.TMessage) {
+	//	m.InheritedWndProc(msg)
+	//	fmt.Println("msg", msg)
+	//})
 	m.SetCaption("Hello")
 	m.EnabledMaximize(false)
 	m.WorkAreaCenter()

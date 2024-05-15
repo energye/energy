@@ -43,12 +43,12 @@ type TV8Handler struct {
 }
 
 func NewV8Handler() IV8Handler {
-	r1 := CEF().SysCallN(2237)
+	r1 := CEF().SysCallN(2242)
 	return AsV8Handler(r1)
 }
 
 func V8HandlerClass() TClass {
-	ret := CEF().SysCallN(2236)
+	ret := CEF().SysCallN(2241)
 	return TClass(ret)
 }
 
@@ -57,5 +57,5 @@ func (m *TV8Handler) SetOnExecute(fn TOnV8HandlerExecute) {
 		RemoveEventElement(m.executePtr)
 	}
 	m.executePtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2238, m.Instance(), m.executePtr)
+	CEF().SysCallN(2243, m.Instance(), m.executePtr)
 }

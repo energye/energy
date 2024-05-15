@@ -15,20 +15,22 @@ import (
 	"runtime"
 )
 
-const (
-	// CN: 要求最小liblcl二进制版本
-	// EN: Requires a minimum liblcl binary version.
-	requireMinBinaryVersion = 0x02040000
-)
-
 var (
-	// 几个实例类，不需要Create即可访问，同时也不需要手动Free
-
-	Application IApplication // 应用程序管理
-	Screen      IScreen      // 屏幕
-	Mouse       IMouse       // 鼠标
-	Clipboard   IClipboard   // 剪切板
-	Printer     IPrinter     // 打印机
+	// Application
+	//
+	//  The TApplication singleton.
+	//  is a unit global variable with the
+	//  instance representing the currently executing application.
+	//  The value for the variable is assigned in the initialization section for the unit when the application is started.
+	//  It is freed in the finalization section when the application is terminated.
+	//  Use the
+	//  TApplicationProperties
+	//  component to provide design-time configuration settings for properties (including event handlers) which are automatically applied to Application at run-time.
+	Application IApplication
+	Screen      IScreen    // 屏幕
+	Mouse       IMouse     // 鼠标
+	Clipboard   IClipboard // 剪切板
+	Printer     IPrinter   // 打印机
 )
 
 func toVersionString(ver uint32) string {
@@ -45,22 +47,16 @@ func LCLInit() {
 			os.Exit(1)
 		}
 	}()
-	// 这个似乎得默认加上，锁定主线程，防止中间被改变
 	runtime.LockOSThread()
-	// 设置事件的回调函数，因go中callback数量有限，只好折中处理
 	SetEventCallback(eventCallback)
-	// 清除事件回调
 	SetRemoveEventCallback(removeEventCallback)
-	// 消息回调
 	SetMessageCallback(messageCallback)
-	// 调求回调CreateParams方法
 	SetRequestCallCreateParamsCallback(requestCallCreateParamsCallback)
 	// 主线程回调 异步
 	SetThreadAsyncCallback(threadAsyncCallback)
 	// 主线程同步 回调
 	SetThreadSyncCallback(threadSyncCallback)
 
-	// 导入几个实例类
 	Application = AsApplication(Application_Instance())
 	Screen = AsScreen(Screen_Instance())
 	Mouse = AsMouse(Mouse_Instance())

@@ -28,31 +28,31 @@ type TComboExItems struct {
 }
 
 func NewComboExItems(AOwner IPersistent, AItemClass TCollectionItemClass) IComboExItems {
-	r1 := LCL().SysCallN(668, GetObjectUintptr(AOwner), uintptr(AItemClass))
+	r1 := LCL().SysCallN(858, GetObjectUintptr(AOwner), uintptr(AItemClass))
 	return AsComboExItems(r1)
 }
 
 func (m *TComboExItems) ComboItems(AIndex int32) IComboExItem {
-	r1 := LCL().SysCallN(667, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(857, m.Instance(), uintptr(AIndex))
 	return AsComboExItem(r1)
 }
 
 func (m *TComboExItems) AddForComboExItem() IComboExItem {
-	r1 := LCL().SysCallN(664, m.Instance())
+	r1 := LCL().SysCallN(854, m.Instance())
 	return AsComboExItem(r1)
 }
 
 func (m *TComboExItems) AddItem(ACaption string, AImageIndex SmallInt, AOverlayImageIndex SmallInt, ASelectedImageIndex SmallInt, AIndent SmallInt, AData TCustomData) IComboExItem {
-	r1 := LCL().SysCallN(665, m.Instance(), PascalStr(ACaption), uintptr(AImageIndex), uintptr(AOverlayImageIndex), uintptr(ASelectedImageIndex), uintptr(AIndent), uintptr(AData))
+	r1 := LCL().SysCallN(855, m.Instance(), PascalStr(ACaption), uintptr(AImageIndex), uintptr(AOverlayImageIndex), uintptr(ASelectedImageIndex), uintptr(AIndent), uintptr(AData))
 	return AsComboExItem(r1)
 }
 
 func (m *TComboExItems) InsertForComboExItem(AIndex int32) IComboExItem {
-	r1 := LCL().SysCallN(669, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(859, m.Instance(), uintptr(AIndex))
 	return AsComboExItem(r1)
 }
 
 func ComboExItemsClass() TClass {
-	ret := LCL().SysCallN(666)
+	ret := LCL().SysCallN(856)
 	return TClass(ret)
 }

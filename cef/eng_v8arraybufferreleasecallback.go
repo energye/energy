@@ -37,12 +37,12 @@ type TV8ArrayBufferReleaseCallback struct {
 }
 
 func NewV8ArrayBufferReleaseCallback() IV8ArrayBufferReleaseCallback {
-	r1 := CEF().SysCallN(2234)
+	r1 := CEF().SysCallN(2239)
 	return AsV8ArrayBufferReleaseCallback(r1)
 }
 
 func V8ArrayBufferReleaseCallbackClass() TClass {
-	ret := CEF().SysCallN(2233)
+	ret := CEF().SysCallN(2238)
 	return TClass(ret)
 }
 
@@ -51,5 +51,5 @@ func (m *TV8ArrayBufferReleaseCallback) SetOnReleaseBuffer(fn TOnV8ArrayBufferRe
 		RemoveEventElement(m.releaseBufferPtr)
 	}
 	m.releaseBufferPtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2235, m.Instance(), m.releaseBufferPtr)
+	CEF().SysCallN(2240, m.Instance(), m.releaseBufferPtr)
 }

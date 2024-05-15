@@ -26,20 +26,20 @@ type TCustomFrame struct {
 }
 
 func NewCustomFrame(AOwner IComponent) ICustomFrame {
-	r1 := LCL().SysCallN(1545, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1735, GetObjectUintptr(AOwner))
 	return AsCustomFrame(r1)
 }
 
 func (m *TCustomFrame) ParentBackground() bool {
-	r1 := LCL().SysCallN(1546, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1736, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomFrame) SetParentBackground(AValue bool) {
-	LCL().SysCallN(1546, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1736, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CustomFrameClass() TClass {
-	ret := LCL().SysCallN(1544)
+	ret := LCL().SysCallN(1734)
 	return TClass(ret)
 }

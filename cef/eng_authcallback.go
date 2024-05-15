@@ -15,7 +15,7 @@ import (
 // ICefAuthCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of authentication requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_auth_callback_capi.h">CEF source file: /include/capi/cef_auth_callback_capi.h (cef_auth_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_auth_callback_capi.h">CEF source file: /include/capi/cef_auth_callback_capi.h (cef_auth_callback_t))</a>
 type ICefAuthCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -29,7 +29,7 @@ type ICefAuthCallback interface {
 // TCefAuthCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of authentication requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_auth_callback_capi.h">CEF source file: /include/capi/cef_auth_callback_capi.h (cef_auth_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_auth_callback_capi.h">CEF source file: /include/capi/cef_auth_callback_capi.h (cef_auth_callback_t))</a>
 type TCefAuthCallback struct {
 	TCefBaseRefCounted
 }

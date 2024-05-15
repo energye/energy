@@ -39,78 +39,78 @@ type TCustomMemo struct {
 }
 
 func NewCustomMemo(AOwner IComponent) ICustomMemo {
-	r1 := LCL().SysCallN(1904, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2094, GetObjectUintptr(AOwner))
 	return AsCustomMemo(r1)
 }
 
 func (m *TCustomMemo) Lines() IStrings {
-	r1 := LCL().SysCallN(1906, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2096, 0, m.Instance(), 0)
 	return AsStrings(r1)
 }
 
 func (m *TCustomMemo) SetLines(AValue IStrings) {
-	LCL().SysCallN(1906, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2096, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomMemo) HorzScrollBar() IMemoScrollBar {
-	r1 := LCL().SysCallN(1905, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2095, 0, m.Instance(), 0)
 	return AsMemoScrollBar(r1)
 }
 
 func (m *TCustomMemo) SetHorzScrollBar(AValue IMemoScrollBar) {
-	LCL().SysCallN(1905, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2095, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomMemo) VertScrollBar() IMemoScrollBar {
-	r1 := LCL().SysCallN(1908, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2098, 0, m.Instance(), 0)
 	return AsMemoScrollBar(r1)
 }
 
 func (m *TCustomMemo) SetVertScrollBar(AValue IMemoScrollBar) {
-	LCL().SysCallN(1908, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2098, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomMemo) ScrollBars() TScrollStyle {
-	r1 := LCL().SysCallN(1907, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2097, 0, m.Instance(), 0)
 	return TScrollStyle(r1)
 }
 
 func (m *TCustomMemo) SetScrollBars(AValue TScrollStyle) {
-	LCL().SysCallN(1907, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2097, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomMemo) WantReturns() bool {
-	r1 := LCL().SysCallN(1909, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2099, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomMemo) SetWantReturns(AValue bool) {
-	LCL().SysCallN(1909, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2099, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomMemo) WantTabs() bool {
-	r1 := LCL().SysCallN(1910, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2100, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomMemo) SetWantTabs(AValue bool) {
-	LCL().SysCallN(1910, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2100, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomMemo) WordWrap() bool {
-	r1 := LCL().SysCallN(1911, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2101, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomMemo) SetWordWrap(AValue bool) {
-	LCL().SysCallN(1911, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2101, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CustomMemoClass() TClass {
-	ret := LCL().SysCallN(1903)
+	ret := LCL().SysCallN(2093)
 	return TClass(ret)
 }
 
 func (m *TCustomMemo) Append(AValue string) {
-	LCL().SysCallN(1902, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(2092, m.Instance(), PascalStr(AValue))
 }

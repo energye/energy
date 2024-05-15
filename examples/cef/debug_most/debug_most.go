@@ -14,7 +14,7 @@ import (
 )
 
 type BrowserWindow struct {
-	lcl.IForm
+	lcl.TForm
 	mainWindowId int32 // 主窗口ID
 	timer        lcl.ITimer
 	windowParent cef.ICEFWindowParent
@@ -23,7 +23,7 @@ type BrowserWindow struct {
 	ChildForm    lcl.IForm
 }
 
-var BW *BrowserWindow
+var BW BrowserWindow
 
 func main() {
 	//全局初始化 每个应用都必须调用的
@@ -44,7 +44,7 @@ func main() {
 		// LCL窗口
 		lcl.Application.Initialize()
 		lcl.Application.SetMainFormOnTaskBar(true)
-		lcl.Application.CreateForm(&BW, true)
+		lcl.Application.CreateForm(&BW)
 		lcl.Application.Run()
 	}
 	fmt.Println("app free")
@@ -66,11 +66,11 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.timer = lcl.NewTimer(m)
 	m.timer.SetOnTimer(m.show)
 	// 在show时创建chromium browser
-	m.IForm.SetOnShow(m.show)
-	m.IForm.SetOnActivate(m.active)
-	m.IForm.SetOnResize(m.resize)
+	m.TForm.SetOnShow(m.show)
+	m.TForm.SetOnActivate(m.active)
+	m.TForm.SetOnResize(m.resize)
 	// 1. 关闭之前先调用chromium.CloseBrowser(true)，然后触发 chromium.SetOnClose
-	m.IForm.SetOnCloseQuery(m.closeQuery)
+	m.TForm.SetOnCloseQuery(m.closeQuery)
 	// 2. 触发后控制延迟关闭, 在UI线程中调用 windowParent.Free() 释放对象，然后触发 chromium.SetOnBeforeClose
 	m.chromium.SetOnClose(m.chromiumClose)
 	// 3. 触发后将canClose设置为true, 发送消息到主窗口关闭，触发 m.SetOnCloseQuery

@@ -15,7 +15,7 @@ import (
 // ICefValue Parent: ICefBaseRefCounted
 //
 //	Interface that wraps other data value types. Complex types (binary, dictionary and list) will be referenced but not owned by this object. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_value_t))</a>
 type ICefValue interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -89,7 +89,7 @@ type ICefValue interface {
 // TCefValue Parent: TCefBaseRefCounted
 //
 //	Interface that wraps other data value types. Complex types (binary, dictionary and list) will be referenced but not owned by this object. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_value_t))</a>
 type TCefValue struct {
 	TCefBaseRefCounted
 }

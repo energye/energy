@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IPageControl Parent: ICustomTabControl
@@ -87,132 +86,132 @@ type TPageControl struct {
 }
 
 func NewPageControl(TheOwner IComponent) IPageControl {
-	r1 := LCL().SysCallN(3746, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4388, GetObjectUintptr(TheOwner))
 	return AsPageControl(r1)
 }
 
 func (m *TPageControl) ActivePageIndex() int32 {
-	r1 := LCL().SysCallN(3742, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4384, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageControl) SetActivePageIndex(AValue int32) {
-	LCL().SysCallN(3742, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4384, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageControl) PagesForTabSheet(Index int32) ITabSheet {
-	r1 := LCL().SysCallN(3755, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4397, m.Instance(), uintptr(Index))
 	return AsTabSheet(r1)
 }
 
 func (m *TPageControl) ActivePage() ITabSheet {
-	r1 := LCL().SysCallN(3741, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4383, 0, m.Instance(), 0)
 	return AsTabSheet(r1)
 }
 
 func (m *TPageControl) SetActivePage(AValue ITabSheet) {
-	LCL().SysCallN(3741, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4383, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TPageControl) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3747, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4389, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TPageControl) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3747, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4389, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageControl) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3748, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4390, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TPageControl) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3748, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4390, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageControl) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3749, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4391, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TPageControl) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3749, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4391, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageControl) ParentFont() bool {
-	r1 := LCL().SysCallN(3756, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4398, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPageControl) SetParentFont(AValue bool) {
-	LCL().SysCallN(3756, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4398, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TPageControl) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3757, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4399, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPageControl) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3757, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4399, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TPageControl) TabIndex() int32 {
-	r1 := LCL().SysCallN(3778, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4420, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageControl) SetTabIndex(AValue int32) {
-	LCL().SysCallN(3778, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4420, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageControl) FindNextPage(CurPage ITabSheet, GoForward, CheckTabVisible bool) ITabSheet {
-	r1 := LCL().SysCallN(3750, m.Instance(), GetObjectUintptr(CurPage), PascalBool(GoForward), PascalBool(CheckTabVisible))
+	r1 := LCL().SysCallN(4392, m.Instance(), GetObjectUintptr(CurPage), PascalBool(GoForward), PascalBool(CheckTabVisible))
 	return AsTabSheet(r1)
 }
 
 func (m *TPageControl) IndexOfTabAt(X, Y int32) int32 {
-	r1 := LCL().SysCallN(3753, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(4395, m.Instance(), uintptr(X), uintptr(Y))
 	return int32(r1)
 }
 
 func (m *TPageControl) IndexOfTabAt1(P *TPoint) int32 {
-	r1 := LCL().SysCallN(3754, m.Instance(), uintptr(unsafe.Pointer(P)))
+	r1 := LCL().SysCallN(4396, m.Instance(), uintptr(unsafePointer(P)))
 	return int32(r1)
 }
 
 func (m *TPageControl) IndexOfPageAt(X, Y int32) int32 {
-	r1 := LCL().SysCallN(3751, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(4393, m.Instance(), uintptr(X), uintptr(Y))
 	return int32(r1)
 }
 
 func (m *TPageControl) IndexOfPageAt1(P *TPoint) int32 {
-	r1 := LCL().SysCallN(3752, m.Instance(), uintptr(unsafe.Pointer(P)))
+	r1 := LCL().SysCallN(4394, m.Instance(), uintptr(unsafePointer(P)))
 	return int32(r1)
 }
 
 func (m *TPageControl) AddTabSheet() ITabSheet {
-	r1 := LCL().SysCallN(3743, m.Instance())
+	r1 := LCL().SysCallN(4385, m.Instance())
 	return AsTabSheet(r1)
 }
 
 func PageControlClass() TClass {
-	ret := LCL().SysCallN(3744)
+	ret := LCL().SysCallN(4386)
 	return TClass(ret)
 }
 
 func (m *TPageControl) Clear() {
-	LCL().SysCallN(3745, m.Instance())
+	LCL().SysCallN(4387, m.Instance())
 }
 
 func (m *TPageControl) SelectNextPage(GoForward bool) {
-	LCL().SysCallN(3758, m.Instance(), PascalBool(GoForward))
+	LCL().SysCallN(4400, m.Instance(), PascalBool(GoForward))
 }
 
 func (m *TPageControl) SelectNextPage1(GoForward bool, CheckTabVisible bool) {
-	LCL().SysCallN(3759, m.Instance(), PascalBool(GoForward), PascalBool(CheckTabVisible))
+	LCL().SysCallN(4401, m.Instance(), PascalBool(GoForward), PascalBool(CheckTabVisible))
 }
 
 func (m *TPageControl) SetOnGetDockCaption(fn TGetDockCaptionEvent) {
@@ -220,7 +219,7 @@ func (m *TPageControl) SetOnGetDockCaption(fn TGetDockCaptionEvent) {
 		RemoveEventElement(m.getDockCaptionPtr)
 	}
 	m.getDockCaptionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3766, m.Instance(), m.getDockCaptionPtr)
+	LCL().SysCallN(4408, m.Instance(), m.getDockCaptionPtr)
 }
 
 func (m *TPageControl) SetOnChange(fn TNotifyEvent) {
@@ -228,7 +227,7 @@ func (m *TPageControl) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3760, m.Instance(), m.changePtr)
+	LCL().SysCallN(4402, m.Instance(), m.changePtr)
 }
 
 func (m *TPageControl) SetOnContextPopup(fn TContextPopupEvent) {
@@ -236,7 +235,7 @@ func (m *TPageControl) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3761, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4403, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TPageControl) SetOnDragDrop(fn TDragDropEvent) {
@@ -244,7 +243,7 @@ func (m *TPageControl) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3762, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4404, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TPageControl) SetOnDragOver(fn TDragOverEvent) {
@@ -252,7 +251,7 @@ func (m *TPageControl) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3763, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4405, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TPageControl) SetOnEndDock(fn TEndDragEvent) {
@@ -260,7 +259,7 @@ func (m *TPageControl) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3764, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(4406, m.Instance(), m.endDockPtr)
 }
 
 func (m *TPageControl) SetOnEndDrag(fn TEndDragEvent) {
@@ -268,7 +267,7 @@ func (m *TPageControl) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3765, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4407, m.Instance(), m.endDragPtr)
 }
 
 func (m *TPageControl) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
@@ -276,7 +275,7 @@ func (m *TPageControl) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
 		RemoveEventElement(m.getSiteInfoPtr)
 	}
 	m.getSiteInfoPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3767, m.Instance(), m.getSiteInfoPtr)
+	LCL().SysCallN(4409, m.Instance(), m.getSiteInfoPtr)
 }
 
 func (m *TPageControl) SetOnMouseDown(fn TMouseEvent) {
@@ -284,7 +283,7 @@ func (m *TPageControl) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3768, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4410, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TPageControl) SetOnMouseEnter(fn TNotifyEvent) {
@@ -292,7 +291,7 @@ func (m *TPageControl) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3769, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4411, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TPageControl) SetOnMouseLeave(fn TNotifyEvent) {
@@ -300,7 +299,7 @@ func (m *TPageControl) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3770, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4412, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TPageControl) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -308,7 +307,7 @@ func (m *TPageControl) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3771, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4413, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TPageControl) SetOnMouseUp(fn TMouseEvent) {
@@ -316,7 +315,7 @@ func (m *TPageControl) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3772, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4414, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TPageControl) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -324,7 +323,7 @@ func (m *TPageControl) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3773, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4415, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TPageControl) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -332,7 +331,7 @@ func (m *TPageControl) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3774, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4416, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TPageControl) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -340,7 +339,7 @@ func (m *TPageControl) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3775, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4417, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TPageControl) SetOnStartDock(fn TStartDockEvent) {
@@ -348,7 +347,7 @@ func (m *TPageControl) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3776, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(4418, m.Instance(), m.startDockPtr)
 }
 
 func (m *TPageControl) SetOnStartDrag(fn TStartDragEvent) {
@@ -356,5 +355,5 @@ func (m *TPageControl) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3777, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4419, m.Instance(), m.startDragPtr)
 }

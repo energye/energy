@@ -24,11 +24,11 @@ type TGEEdit struct {
 }
 
 func NewGEEdit(TheOwner IComponent) IGEEdit {
-	r1 := LCL().SysCallN(2918, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3161, GetObjectUintptr(TheOwner))
 	return AsGEEdit(r1)
 }
 
 func GEEditClass() TClass {
-	ret := LCL().SysCallN(2917)
+	ret := LCL().SysCallN(3160)
 	return TClass(ret)
 }

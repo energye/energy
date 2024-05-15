@@ -24,11 +24,11 @@ type TButtonControl struct {
 }
 
 func NewButtonControl(TheOwner IComponent) IButtonControl {
-	r1 := LCL().SysCallN(288, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(475, GetObjectUintptr(TheOwner))
 	return AsButtonControl(r1)
 }
 
 func ButtonControlClass() TClass {
-	ret := LCL().SysCallN(287)
+	ret := LCL().SysCallN(474)
 	return TClass(ret)
 }

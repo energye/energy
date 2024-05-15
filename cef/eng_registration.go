@@ -15,7 +15,7 @@ import (
 // ICefRegistration Parent: ICefBaseRefCounted
 //
 //	Generic callback interface used for managing the lifespan of a registration.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_registration_capi.h">CEF source file: /include/capi/cef_registration_capi.h (cef_registration_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_registration_capi.h">CEF source file: /include/capi/cef_registration_capi.h (cef_registration_t))</a>
 type ICefRegistration interface {
 	ICefBaseRefCounted
 }
@@ -23,7 +23,7 @@ type ICefRegistration interface {
 // TCefRegistration Parent: TCefBaseRefCounted
 //
 //	Generic callback interface used for managing the lifespan of a registration.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_registration_capi.h">CEF source file: /include/capi/cef_registration_capi.h (cef_registration_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_registration_capi.h">CEF source file: /include/capi/cef_registration_capi.h (cef_registration_t))</a>
 type TCefRegistration struct {
 	TCefBaseRefCounted
 }

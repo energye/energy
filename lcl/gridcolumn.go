@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IGridColumn Parent: ICollectionItem
@@ -69,210 +68,210 @@ type TGridColumn struct {
 }
 
 func NewGridColumn(ACollection ICollection) IGridColumn {
-	r1 := LCL().SysCallN(2983, GetObjectUintptr(ACollection))
+	r1 := LCL().SysCallN(3226, GetObjectUintptr(ACollection))
 	return AsGridColumn(r1)
 }
 
 func (m *TGridColumn) Grid() ICustomGrid {
-	r1 := LCL().SysCallN(2990, m.Instance())
+	r1 := LCL().SysCallN(3233, m.Instance())
 	return AsCustomGrid(r1)
 }
 
 func (m *TGridColumn) DefaultWidth() int32 {
-	r1 := LCL().SysCallN(2984, m.Instance())
+	r1 := LCL().SysCallN(3227, m.Instance())
 	return int32(r1)
 }
 
 func (m *TGridColumn) StoredWidth() int32 {
-	r1 := LCL().SysCallN(2999, m.Instance())
+	r1 := LCL().SysCallN(3242, m.Instance())
 	return int32(r1)
 }
 
 func (m *TGridColumn) WidthChanged() bool {
-	r1 := LCL().SysCallN(3006, m.Instance())
+	r1 := LCL().SysCallN(3249, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TGridColumn) Alignment() TAlignment {
-	r1 := LCL().SysCallN(2979, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3222, 0, m.Instance(), 0)
 	return TAlignment(r1)
 }
 
 func (m *TGridColumn) SetAlignment(AValue TAlignment) {
-	LCL().SysCallN(2979, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3222, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) ButtonStyle() TColumnButtonStyle {
-	r1 := LCL().SysCallN(2980, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3223, 0, m.Instance(), 0)
 	return TColumnButtonStyle(r1)
 }
 
 func (m *TGridColumn) SetButtonStyle(AValue TColumnButtonStyle) {
-	LCL().SysCallN(2980, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3223, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) Color() TColor {
-	r1 := LCL().SysCallN(2982, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3225, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TGridColumn) SetColor(AValue TColor) {
-	LCL().SysCallN(2982, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3225, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) DropDownRows() int32 {
-	r1 := LCL().SysCallN(2985, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3228, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TGridColumn) SetDropDownRows(AValue int32) {
-	LCL().SysCallN(2985, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3228, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) Expanded() bool {
-	r1 := LCL().SysCallN(2986, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3229, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGridColumn) SetExpanded(AValue bool) {
-	LCL().SysCallN(2986, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3229, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TGridColumn) Font() IFont {
-	r1 := LCL().SysCallN(2989, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3232, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TGridColumn) SetFont(AValue IFont) {
-	LCL().SysCallN(2989, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3232, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TGridColumn) Layout() TTextLayout {
-	r1 := LCL().SysCallN(2992, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3235, 0, m.Instance(), 0)
 	return TTextLayout(r1)
 }
 
 func (m *TGridColumn) SetLayout(AValue TTextLayout) {
-	LCL().SysCallN(2992, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3235, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) MinSize() int32 {
-	r1 := LCL().SysCallN(2994, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3237, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TGridColumn) SetMinSize(AValue int32) {
-	LCL().SysCallN(2994, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3237, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) MaxSize() int32 {
-	r1 := LCL().SysCallN(2993, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3236, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TGridColumn) SetMaxSize(AValue int32) {
-	LCL().SysCallN(2993, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3236, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) PickList() IStrings {
-	r1 := LCL().SysCallN(2995, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3238, 0, m.Instance(), 0)
 	return AsStrings(r1)
 }
 
 func (m *TGridColumn) SetPickList(AValue IStrings) {
-	LCL().SysCallN(2995, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3238, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TGridColumn) ReadOnly() bool {
-	r1 := LCL().SysCallN(2996, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3239, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGridColumn) SetReadOnly(AValue bool) {
-	LCL().SysCallN(2996, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3239, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TGridColumn) SizePriority() int32 {
-	r1 := LCL().SysCallN(2998, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3241, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TGridColumn) SetSizePriority(AValue int32) {
-	LCL().SysCallN(2998, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3241, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) Tag() uint32 {
-	r1 := LCL().SysCallN(3000, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3243, 0, m.Instance(), 0)
 	return uint32(r1)
 }
 
 func (m *TGridColumn) SetTag(AValue uint32) {
-	LCL().SysCallN(3000, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3243, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) Title() IGridColumnTitle {
-	r1 := LCL().SysCallN(3001, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3244, 0, m.Instance(), 0)
 	return AsGridColumnTitle(r1)
 }
 
 func (m *TGridColumn) SetTitle(AValue IGridColumnTitle) {
-	LCL().SysCallN(3001, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3244, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TGridColumn) Width() int32 {
-	r1 := LCL().SysCallN(3005, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3248, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TGridColumn) SetWidth(AValue int32) {
-	LCL().SysCallN(3005, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3248, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGridColumn) Visible() bool {
-	r1 := LCL().SysCallN(3004, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3247, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGridColumn) SetVisible(AValue bool) {
-	LCL().SysCallN(3004, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3247, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TGridColumn) ValueChecked() string {
-	r1 := LCL().SysCallN(3002, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3245, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TGridColumn) SetValueChecked(AValue string) {
-	LCL().SysCallN(3002, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(3245, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TGridColumn) ValueUnchecked() string {
-	r1 := LCL().SysCallN(3003, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3246, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TGridColumn) SetValueUnchecked(AValue string) {
-	LCL().SysCallN(3003, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(3246, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TGridColumn) IsDefault() bool {
-	r1 := LCL().SysCallN(2991, m.Instance())
+	r1 := LCL().SysCallN(3234, m.Instance())
 	return GoBool(r1)
 }
 
 func GridColumnClass() TClass {
-	ret := LCL().SysCallN(2981)
+	ret := LCL().SysCallN(3224)
 	return TClass(ret)
 }
 
 func (m *TGridColumn) FillDefaultFont() {
-	LCL().SysCallN(2987, m.Instance())
+	LCL().SysCallN(3230, m.Instance())
 }
 
 func (m *TGridColumn) FixDesignFontsPPI(ADesignTimePPI int32) {
-	LCL().SysCallN(2988, m.Instance(), uintptr(ADesignTimePPI))
+	LCL().SysCallN(3231, m.Instance(), uintptr(ADesignTimePPI))
 }
 
 func (m *TGridColumn) ScaleFontsPPI(AToPPI int32, AProportion float64) {
-	LCL().SysCallN(2997, m.Instance(), uintptr(AToPPI), uintptr(unsafe.Pointer(&AProportion)))
+	LCL().SysCallN(3240, m.Instance(), uintptr(AToPPI), uintptr(unsafePointer(&AProportion)))
 }

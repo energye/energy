@@ -10,13 +10,13 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	CbbPrinters lcl.IComboBox
 	Btn1        lcl.IButton
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {

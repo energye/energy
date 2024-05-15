@@ -26,21 +26,21 @@ type TMenuItemEnumerator struct {
 }
 
 func NewMenuItemEnumerator(AMenuItem IMenuItem) IMenuItemEnumerator {
-	r1 := LCL().SysCallN(3595, GetObjectUintptr(AMenuItem))
+	r1 := LCL().SysCallN(4237, GetObjectUintptr(AMenuItem))
 	return AsMenuItemEnumerator(r1)
 }
 
 func (m *TMenuItemEnumerator) Current() IMenuItem {
-	r1 := LCL().SysCallN(3596, m.Instance())
+	r1 := LCL().SysCallN(4238, m.Instance())
 	return AsMenuItem(r1)
 }
 
 func (m *TMenuItemEnumerator) MoveNext() bool {
-	r1 := LCL().SysCallN(3597, m.Instance())
+	r1 := LCL().SysCallN(4239, m.Instance())
 	return GoBool(r1)
 }
 
 func MenuItemEnumeratorClass() TClass {
-	ret := LCL().SysCallN(3594)
+	ret := LCL().SysCallN(4236)
 	return TClass(ret)
 }

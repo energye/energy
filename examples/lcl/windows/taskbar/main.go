@@ -11,7 +11,7 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	taskBar  *tsbar.WinTaskBar
 	Button1  lcl.IButton
 	Button2  lcl.IButton
@@ -20,7 +20,7 @@ type TMainForm struct {
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {

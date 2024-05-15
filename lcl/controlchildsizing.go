@@ -50,121 +50,121 @@ type TControlChildSizing struct {
 }
 
 func NewControlChildSizing(OwnerControl IWinControl) IControlChildSizing {
-	r1 := LCL().SysCallN(753, GetObjectUintptr(OwnerControl))
+	r1 := LCL().SysCallN(943, GetObjectUintptr(OwnerControl))
 	return AsControlChildSizing(r1)
 }
 
 func (m *TControlChildSizing) Control() IWinControl {
-	r1 := LCL().SysCallN(751, m.Instance())
+	r1 := LCL().SysCallN(941, m.Instance())
 	return AsWinControl(r1)
 }
 
 func (m *TControlChildSizing) LeftRightSpacing() int32 {
-	r1 := LCL().SysCallN(759, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(949, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TControlChildSizing) SetLeftRightSpacing(AValue int32) {
-	LCL().SysCallN(759, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(949, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) TopBottomSpacing() int32 {
-	r1 := LCL().SysCallN(764, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(954, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TControlChildSizing) SetTopBottomSpacing(AValue int32) {
-	LCL().SysCallN(764, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(954, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) HorizontalSpacing() int32 {
-	r1 := LCL().SysCallN(756, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(946, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TControlChildSizing) SetHorizontalSpacing(AValue int32) {
-	LCL().SysCallN(756, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(946, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) VerticalSpacing() int32 {
-	r1 := LCL().SysCallN(765, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(955, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TControlChildSizing) SetVerticalSpacing(AValue int32) {
-	LCL().SysCallN(765, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(955, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) EnlargeHorizontal() TChildControlResizeStyle {
-	r1 := LCL().SysCallN(754, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(944, 0, m.Instance(), 0)
 	return TChildControlResizeStyle(r1)
 }
 
 func (m *TControlChildSizing) SetEnlargeHorizontal(AValue TChildControlResizeStyle) {
-	LCL().SysCallN(754, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(944, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) EnlargeVertical() TChildControlResizeStyle {
-	r1 := LCL().SysCallN(755, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(945, 0, m.Instance(), 0)
 	return TChildControlResizeStyle(r1)
 }
 
 func (m *TControlChildSizing) SetEnlargeVertical(AValue TChildControlResizeStyle) {
-	LCL().SysCallN(755, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(945, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) ShrinkHorizontal() TChildControlResizeStyle {
-	r1 := LCL().SysCallN(762, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(952, 0, m.Instance(), 0)
 	return TChildControlResizeStyle(r1)
 }
 
 func (m *TControlChildSizing) SetShrinkHorizontal(AValue TChildControlResizeStyle) {
-	LCL().SysCallN(762, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(952, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) ShrinkVertical() TChildControlResizeStyle {
-	r1 := LCL().SysCallN(763, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(953, 0, m.Instance(), 0)
 	return TChildControlResizeStyle(r1)
 }
 
 func (m *TControlChildSizing) SetShrinkVertical(AValue TChildControlResizeStyle) {
-	LCL().SysCallN(763, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(953, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) Layout() TControlChildrenLayout {
-	r1 := LCL().SysCallN(758, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(948, 0, m.Instance(), 0)
 	return TControlChildrenLayout(r1)
 }
 
 func (m *TControlChildSizing) SetLayout(AValue TControlChildrenLayout) {
-	LCL().SysCallN(758, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(948, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) ControlsPerLine() int32 {
-	r1 := LCL().SysCallN(752, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(942, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TControlChildSizing) SetControlsPerLine(AValue int32) {
-	LCL().SysCallN(752, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(942, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TControlChildSizing) IsEqual(Sizing IControlChildSizing) bool {
-	r1 := LCL().SysCallN(757, m.Instance(), GetObjectUintptr(Sizing))
+	r1 := LCL().SysCallN(947, m.Instance(), GetObjectUintptr(Sizing))
 	return GoBool(r1)
 }
 
 func ControlChildSizingClass() TClass {
-	ret := LCL().SysCallN(750)
+	ret := LCL().SysCallN(940)
 	return TClass(ret)
 }
 
 func (m *TControlChildSizing) AssignTo(Dest IPersistent) {
-	LCL().SysCallN(749, m.Instance(), GetObjectUintptr(Dest))
+	LCL().SysCallN(939, m.Instance(), GetObjectUintptr(Dest))
 }
 
 func (m *TControlChildSizing) SetGridSpacing(Spacing int32) {
-	LCL().SysCallN(760, m.Instance(), uintptr(Spacing))
+	LCL().SysCallN(950, m.Instance(), uintptr(Spacing))
 }
 
 func (m *TControlChildSizing) SetOnChange(fn TNotifyEvent) {
@@ -172,5 +172,5 @@ func (m *TControlChildSizing) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(761, m.Instance(), m.changePtr)
+	LCL().SysCallN(951, m.Instance(), m.changePtr)
 }

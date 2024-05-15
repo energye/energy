@@ -30,30 +30,30 @@ type TCustomControl struct {
 }
 
 func NewCustomControl(AOwner IComponent) ICustomControl {
-	r1 := LCL().SysCallN(1283, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1473, GetObjectUintptr(AOwner))
 	return AsCustomControl(r1)
 }
 
 func (m *TCustomControl) Canvas() ICanvas {
-	r1 := LCL().SysCallN(1281, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1471, 0, m.Instance(), 0)
 	return AsCanvas(r1)
 }
 
 func (m *TCustomControl) SetCanvas(AValue ICanvas) {
-	LCL().SysCallN(1281, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1471, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomControl) BorderStyle() TBorderStyle {
-	r1 := LCL().SysCallN(1280, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1470, 0, m.Instance(), 0)
 	return TBorderStyle(r1)
 }
 
 func (m *TCustomControl) SetBorderStyle(AValue TBorderStyle) {
-	LCL().SysCallN(1280, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1470, 1, m.Instance(), uintptr(AValue))
 }
 
 func CustomControlClass() TClass {
-	ret := LCL().SysCallN(1282)
+	ret := LCL().SysCallN(1472)
 	return TClass(ret)
 }
 
@@ -62,5 +62,5 @@ func (m *TCustomControl) SetOnPaint(fn TNotifyEvent) {
 		RemoveEventElement(m.paintPtr)
 	}
 	m.paintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1284, m.Instance(), m.paintPtr)
+	LCL().SysCallN(1474, m.Instance(), m.paintPtr)
 }

@@ -62,183 +62,183 @@ type TCoolBand struct {
 }
 
 func NewCoolBand(aCollection ICollection) ICoolBand {
-	r1 := LCL().SysCallN(962, GetObjectUintptr(aCollection))
+	r1 := LCL().SysCallN(1152, GetObjectUintptr(aCollection))
 	return AsCoolBand(r1)
 }
 
 func (m *TCoolBand) Height() int32 {
-	r1 := LCL().SysCallN(965, m.Instance())
+	r1 := LCL().SysCallN(1155, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCoolBand) Left() int32 {
-	r1 := LCL().SysCallN(969, m.Instance())
+	r1 := LCL().SysCallN(1159, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCoolBand) Right() int32 {
-	r1 := LCL().SysCallN(974, m.Instance())
+	r1 := LCL().SysCallN(1164, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCoolBand) Top() int32 {
-	r1 := LCL().SysCallN(976, m.Instance())
+	r1 := LCL().SysCallN(1166, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCoolBand) Bitmap() IBitmap {
-	r1 := LCL().SysCallN(956, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1146, 0, m.Instance(), 0)
 	return AsBitmap(r1)
 }
 
 func (m *TCoolBand) SetBitmap(AValue IBitmap) {
-	LCL().SysCallN(956, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1146, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCoolBand) BorderStyle() TBorderStyle {
-	r1 := LCL().SysCallN(957, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1147, 0, m.Instance(), 0)
 	return TBorderStyle(r1)
 }
 
 func (m *TCoolBand) SetBorderStyle(AValue TBorderStyle) {
-	LCL().SysCallN(957, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1147, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCoolBand) Break() bool {
-	r1 := LCL().SysCallN(958, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1148, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetBreak(AValue bool) {
-	LCL().SysCallN(958, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1148, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) Color() TColor {
-	r1 := LCL().SysCallN(960, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1150, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCoolBand) SetColor(AValue TColor) {
-	LCL().SysCallN(960, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1150, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCoolBand) Control() IControl {
-	r1 := LCL().SysCallN(961, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1151, 0, m.Instance(), 0)
 	return AsControl(r1)
 }
 
 func (m *TCoolBand) SetControl(AValue IControl) {
-	LCL().SysCallN(961, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1151, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCoolBand) FixedBackground() bool {
-	r1 := LCL().SysCallN(963, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1153, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetFixedBackground(AValue bool) {
-	LCL().SysCallN(963, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1153, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) FixedSize() bool {
-	r1 := LCL().SysCallN(964, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1154, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetFixedSize(AValue bool) {
-	LCL().SysCallN(964, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1154, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) HorizontalOnly() bool {
-	r1 := LCL().SysCallN(966, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1156, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetHorizontalOnly(AValue bool) {
-	LCL().SysCallN(966, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1156, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) ImageIndex() TImageIndex {
-	r1 := LCL().SysCallN(967, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1157, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TCoolBand) SetImageIndex(AValue TImageIndex) {
-	LCL().SysCallN(967, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1157, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCoolBand) MinHeight() int32 {
-	r1 := LCL().SysCallN(970, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1160, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCoolBand) SetMinHeight(AValue int32) {
-	LCL().SysCallN(970, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1160, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCoolBand) MinWidth() int32 {
-	r1 := LCL().SysCallN(971, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1161, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCoolBand) SetMinWidth(AValue int32) {
-	LCL().SysCallN(971, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1161, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCoolBand) ParentColor() bool {
-	r1 := LCL().SysCallN(973, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1163, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetParentColor(AValue bool) {
-	LCL().SysCallN(973, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1163, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) ParentBitmap() bool {
-	r1 := LCL().SysCallN(972, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1162, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetParentBitmap(AValue bool) {
-	LCL().SysCallN(972, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1162, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) Text() string {
-	r1 := LCL().SysCallN(975, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1165, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TCoolBand) SetText(AValue string) {
-	LCL().SysCallN(975, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(1165, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TCoolBand) Visible() bool {
-	r1 := LCL().SysCallN(977, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1167, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCoolBand) SetVisible(AValue bool) {
-	LCL().SysCallN(977, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1167, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCoolBand) Width() int32 {
-	r1 := LCL().SysCallN(978, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1168, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCoolBand) SetWidth(AValue int32) {
-	LCL().SysCallN(978, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1168, 1, m.Instance(), uintptr(AValue))
 }
 
 func CoolBandClass() TClass {
-	ret := LCL().SysCallN(959)
+	ret := LCL().SysCallN(1149)
 	return TClass(ret)
 }
 
 func (m *TCoolBand) AutosizeWidth() {
-	LCL().SysCallN(955, m.Instance())
+	LCL().SysCallN(1145, m.Instance())
 }
 
 func (m *TCoolBand) InvalidateCoolBar(Sender IObject) {
-	LCL().SysCallN(968, m.Instance(), GetObjectUintptr(Sender))
+	LCL().SysCallN(1158, m.Instance(), GetObjectUintptr(Sender))
 }

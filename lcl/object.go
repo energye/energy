@@ -11,16 +11,15 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IObject Root Interface
 type IObject interface {
 	Instance() uintptr
-	UnsafeAddr() unsafe.Pointer
+	UnsafeAddr() unsafePointer
 	IsValid() bool
 	Is() TIs
-	SetInstance(instance unsafe.Pointer)
+	SetInstance(instance unsafePointer)
 	Equals(Obj IObject) bool           // function
 	GetHashCode() uint32               // function
 	ToString() string                  // function
@@ -34,59 +33,59 @@ type IObject interface {
 
 // TObject Root Object
 type TObject struct {
-	instance unsafe.Pointer
+	instance unsafePointer
 }
 
 func NewObject() IObject {
-	r1 := LCL().SysCallN(3720)
+	r1 := LCL().SysCallN(4362)
 	return AsObject(r1)
 }
 
 func (m *TObject) Equals(Obj IObject) bool {
-	r1 := LCL().SysCallN(3721, m.Instance(), GetObjectUintptr(Obj))
+	r1 := LCL().SysCallN(4363, m.Instance(), GetObjectUintptr(Obj))
 	return GoBool(r1)
 }
 
 func (m *TObject) GetHashCode() uint32 {
-	r1 := LCL().SysCallN(3723, m.Instance())
+	r1 := LCL().SysCallN(4365, m.Instance())
 	return uint32(r1)
 }
 
 func ObjectClass() TClass {
-	ret := LCL().SysCallN(3716)
+	ret := LCL().SysCallN(4358)
 	return TClass(ret)
 }
 
 func (m *TObject) ToString() string {
-	r1 := LCL().SysCallN(3726, m.Instance())
+	r1 := LCL().SysCallN(4368, m.Instance())
 	return GoStr(r1)
 }
 
 func (m *TObject) InheritsFrom(AClass TClass) bool {
-	r1 := LCL().SysCallN(3724, m.Instance(), uintptr(AClass))
+	r1 := LCL().SysCallN(4366, m.Instance(), uintptr(AClass))
 	return GoBool(r1)
 }
 
 func (m *TObject) ClassType() TClass {
-	r1 := LCL().SysCallN(3719, m.Instance())
+	r1 := LCL().SysCallN(4361, m.Instance())
 	return TClass(r1)
 }
 
 func (m *TObject) ClassName() string {
-	r1 := LCL().SysCallN(3717, m.Instance())
+	r1 := LCL().SysCallN(4359, m.Instance())
 	return GoStr(r1)
 }
 
 func (m *TObject) ClassParent() TClass {
-	r1 := LCL().SysCallN(3718, m.Instance())
+	r1 := LCL().SysCallN(4360, m.Instance())
 	return TClass(r1)
 }
 
 func (m *TObject) InstanceSize() (resultInt64 int64) {
-	LCL().SysCallN(3725, m.Instance(), uintptr(unsafe.Pointer(&resultInt64)))
+	LCL().SysCallN(4367, m.Instance(), uintptr(unsafePointer(&resultInt64)))
 	return
 }
 
 func (m *TObject) Free() {
-	m.free(3722)
+	m.free(4364)
 }

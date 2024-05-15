@@ -10,6 +10,7 @@ package lcl
 
 import (
 	. "github.com/energye/energy/v2/api"
+	"reflect"
 )
 
 /*
@@ -74,8 +75,41 @@ import (
 // 创建一个TForm。
 //
 // Create a TForm.
-func (m *TApplication) CreateForm(fields ...interface{}) IForm {
-	return AsForm(resObjectBuild(0, nil, m.Instance(), fields...))
+func (m *TApplication) CreateForm(forms ...IForm) IForm {
+	size := len(forms)
+	if size == 0 {
+		return AsForm(Application_CreateForm(m.Instance()))
+	}
+	for i := 0; i < size; i++ {
+		form := forms[i]
+		var (
+			mainForm                 = Application.MainForm()
+			isMain                   = mainForm == nil || mainForm.Instance() == 0 // 0 | nil = main
+			v                        = reflect.ValueOf(form)
+			formPtr, createParamsPtr uintptr
+		)
+		// CreateParams 实现回调
+		if createParams, ok := form.(IOnCreateParams); ok {
+			if !isMain {
+				createParamsPtr = v.Pointer()
+			}
+			addToRequestCreateParamsMap(createParamsPtr, createParams.CreateParams)
+		}
+		formPtr = Application_CreateForm(m.Instance())
+		form.SetInstance(unsafePointer(formPtr))
+		if !isMain {
+			Form_SetGoPtr(formPtr, createParamsPtr)
+		}
+		// OnCreate 实现回调
+		if create, ok := form.(IOnCreate); ok {
+			create.OnFormCreate(form)
+		}
+	}
+	return nil
+}
+
+func (m *TApplication) CreateResForm(forms ...IForm) {
+
 }
 
 // Run

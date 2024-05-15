@@ -82,84 +82,84 @@ type TFrame struct {
 }
 
 func NewFrame(TheOwner IComponent) IFrame {
-	r1 := LCL().SysCallN(2888, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3131, GetObjectUintptr(TheOwner))
 	return AsFrame(r1)
 }
 
 func (m *TFrame) AutoScroll() bool {
-	r1 := LCL().SysCallN(2886, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3129, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFrame) SetAutoScroll(AValue bool) {
-	LCL().SysCallN(2886, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3129, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFrame) DragCursor() TCursor {
-	r1 := LCL().SysCallN(2889, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3132, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TFrame) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(2889, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3132, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFrame) DragKind() TDragKind {
-	r1 := LCL().SysCallN(2890, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3133, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TFrame) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(2890, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3133, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFrame) DragMode() TDragMode {
-	r1 := LCL().SysCallN(2891, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3134, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TFrame) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(2891, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3134, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFrame) LCLVersion() string {
-	r1 := LCL().SysCallN(2892, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3135, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TFrame) SetLCLVersion(AValue string) {
-	LCL().SysCallN(2892, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(3135, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TFrame) ParentColor() bool {
-	r1 := LCL().SysCallN(2893, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3136, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFrame) SetParentColor(AValue bool) {
-	LCL().SysCallN(2893, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3136, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFrame) ParentFont() bool {
-	r1 := LCL().SysCallN(2894, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3137, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFrame) SetParentFont(AValue bool) {
-	LCL().SysCallN(2894, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3137, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFrame) ParentShowHint() bool {
-	r1 := LCL().SysCallN(2895, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3138, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFrame) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(2895, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3138, 1, m.Instance(), PascalBool(AValue))
 }
 
 func FrameClass() TClass {
-	ret := LCL().SysCallN(2887)
+	ret := LCL().SysCallN(3130)
 	return TClass(ret)
 }
 
@@ -168,7 +168,7 @@ func (m *TFrame) SetOnConstrainedResize(fn TConstrainedResizeEvent) {
 		RemoveEventElement(m.constrainedResizePtr)
 	}
 	m.constrainedResizePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2896, m.Instance(), m.constrainedResizePtr)
+	LCL().SysCallN(3139, m.Instance(), m.constrainedResizePtr)
 }
 
 func (m *TFrame) SetOnContextPopup(fn TContextPopupEvent) {
@@ -176,7 +176,7 @@ func (m *TFrame) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2897, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3140, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TFrame) SetOnDblClick(fn TNotifyEvent) {
@@ -184,7 +184,7 @@ func (m *TFrame) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2898, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(3141, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TFrame) SetOnDragDrop(fn TDragDropEvent) {
@@ -192,7 +192,7 @@ func (m *TFrame) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2899, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3142, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TFrame) SetOnDragOver(fn TDragOverEvent) {
@@ -200,7 +200,7 @@ func (m *TFrame) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2900, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3143, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TFrame) SetOnEndDock(fn TEndDragEvent) {
@@ -208,7 +208,7 @@ func (m *TFrame) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2901, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(3144, m.Instance(), m.endDockPtr)
 }
 
 func (m *TFrame) SetOnEndDrag(fn TEndDragEvent) {
@@ -216,7 +216,7 @@ func (m *TFrame) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2902, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(3145, m.Instance(), m.endDragPtr)
 }
 
 func (m *TFrame) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
@@ -224,7 +224,7 @@ func (m *TFrame) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
 		RemoveEventElement(m.getSiteInfoPtr)
 	}
 	m.getSiteInfoPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2903, m.Instance(), m.getSiteInfoPtr)
+	LCL().SysCallN(3146, m.Instance(), m.getSiteInfoPtr)
 }
 
 func (m *TFrame) SetOnMouseDown(fn TMouseEvent) {
@@ -232,7 +232,7 @@ func (m *TFrame) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2904, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3147, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TFrame) SetOnMouseEnter(fn TNotifyEvent) {
@@ -240,7 +240,7 @@ func (m *TFrame) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2905, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3148, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TFrame) SetOnMouseLeave(fn TNotifyEvent) {
@@ -248,7 +248,7 @@ func (m *TFrame) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2906, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3149, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TFrame) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -256,7 +256,7 @@ func (m *TFrame) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2907, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3150, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TFrame) SetOnMouseUp(fn TMouseEvent) {
@@ -264,7 +264,7 @@ func (m *TFrame) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2908, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3151, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TFrame) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -272,7 +272,7 @@ func (m *TFrame) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2909, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(3152, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TFrame) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -280,7 +280,7 @@ func (m *TFrame) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2910, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(3153, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TFrame) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -288,7 +288,7 @@ func (m *TFrame) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2914, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(3157, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TFrame) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -296,7 +296,7 @@ func (m *TFrame) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2911, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(3154, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TFrame) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -304,7 +304,7 @@ func (m *TFrame) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2912, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(3155, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TFrame) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -312,7 +312,7 @@ func (m *TFrame) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2913, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(3156, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TFrame) SetOnStartDock(fn TStartDockEvent) {
@@ -320,7 +320,7 @@ func (m *TFrame) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2915, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(3158, m.Instance(), m.startDockPtr)
 }
 
 func (m *TFrame) SetOnStartDrag(fn TStartDragEvent) {
@@ -328,5 +328,5 @@ func (m *TFrame) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2916, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(3159, m.Instance(), m.startDragPtr)
 }

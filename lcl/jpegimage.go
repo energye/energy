@@ -42,83 +42,83 @@ type TJPEGImage struct {
 }
 
 func NewJPEGImage() IJPEGImage {
-	r1 := LCL().SysCallN(3170)
+	r1 := LCL().SysCallN(3413)
 	return AsJPEGImage(r1)
 }
 
 func (m *TJPEGImage) CompressionQuality() TJPEGQualityRange {
-	r1 := LCL().SysCallN(3169, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3412, 0, m.Instance(), 0)
 	return TJPEGQualityRange(r1)
 }
 
 func (m *TJPEGImage) SetCompressionQuality(AValue TJPEGQualityRange) {
-	LCL().SysCallN(3169, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3412, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TJPEGImage) GrayScale() bool {
-	r1 := LCL().SysCallN(3171, m.Instance())
+	r1 := LCL().SysCallN(3414, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TJPEGImage) MinHeight() int32 {
-	r1 := LCL().SysCallN(3172, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3415, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TJPEGImage) SetMinHeight(AValue int32) {
-	LCL().SysCallN(3172, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3415, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TJPEGImage) MinWidth() int32 {
-	r1 := LCL().SysCallN(3173, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3416, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TJPEGImage) SetMinWidth(AValue int32) {
-	LCL().SysCallN(3173, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3416, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TJPEGImage) ProgressiveEncoding() bool {
-	r1 := LCL().SysCallN(3175, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3418, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TJPEGImage) SetProgressiveEncoding(AValue bool) {
-	LCL().SysCallN(3175, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3418, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TJPEGImage) Performance() TJPEGPerformance {
-	r1 := LCL().SysCallN(3174, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3417, 0, m.Instance(), 0)
 	return TJPEGPerformance(r1)
 }
 
 func (m *TJPEGImage) SetPerformance(AValue TJPEGPerformance) {
-	LCL().SysCallN(3174, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3417, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TJPEGImage) Scale() TJPEGScale {
-	r1 := LCL().SysCallN(3176, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3419, 0, m.Instance(), 0)
 	return TJPEGScale(r1)
 }
 
 func (m *TJPEGImage) SetScale(AValue TJPEGScale) {
-	LCL().SysCallN(3176, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3419, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TJPEGImage) Smoothing() bool {
-	r1 := LCL().SysCallN(3177, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3420, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TJPEGImage) SetSmoothing(AValue bool) {
-	LCL().SysCallN(3177, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3420, 1, m.Instance(), PascalBool(AValue))
 }
 
 func JPEGImageClass() TClass {
-	ret := LCL().SysCallN(3167)
+	ret := LCL().SysCallN(3410)
 	return TClass(ret)
 }
 
 func (m *TJPEGImage) Compress() {
-	LCL().SysCallN(3168, m.Instance())
+	LCL().SysCallN(3411, m.Instance())
 }

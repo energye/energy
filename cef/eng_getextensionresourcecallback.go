@@ -15,7 +15,7 @@ import (
 // ICefGetExtensionResourceCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of ICefExtensionHandler.GetExtensionResource.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_handler_capi.h">CEF source file: /include/capi/cef_extension_handler_capi.h (cef_get_extension_resource_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_handler_capi.h">CEF source file: /include/capi/cef_extension_handler_capi.h (cef_get_extension_resource_callback_t))</a>
 type ICefGetExtensionResourceCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -29,7 +29,7 @@ type ICefGetExtensionResourceCallback interface {
 // TCefGetExtensionResourceCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of ICefExtensionHandler.GetExtensionResource.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_handler_capi.h">CEF source file: /include/capi/cef_extension_handler_capi.h (cef_get_extension_resource_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_handler_capi.h">CEF source file: /include/capi/cef_extension_handler_capi.h (cef_get_extension_resource_callback_t))</a>
 type TCefGetExtensionResourceCallback struct {
 	TCefBaseRefCounted
 }

@@ -13,7 +13,7 @@ import (
 )
 
 type TMainFrom struct {
-	*lcl.TForm
+	lcl.TForm
 	ListView    lcl.IListView
 	stateImages lcl.IImageList
 	isWindows   bool
@@ -30,7 +30,7 @@ type TTempItem struct {
 }
 
 var (
-	MainFrom *TMainFrom
+	MainFrom TMainFrom
 	tempData []TTempItem
 )
 

@@ -62,66 +62,66 @@ type TToggleBox struct {
 }
 
 func NewToggleBox(TheOwner IComponent) IToggleBox {
-	r1 := LCL().SysCallN(4777, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(5435, GetObjectUintptr(TheOwner))
 	return AsToggleBox(r1)
 }
 
 func (m *TToggleBox) Checked() bool {
-	r1 := LCL().SysCallN(4775, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5433, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToggleBox) SetChecked(AValue bool) {
-	LCL().SysCallN(4775, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5433, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToggleBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4778, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5436, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TToggleBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4778, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5436, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToggleBox) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4779, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5437, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TToggleBox) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4779, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5437, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToggleBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4780, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5438, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TToggleBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4780, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5438, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToggleBox) ParentFont() bool {
-	r1 := LCL().SysCallN(4781, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5439, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToggleBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(4781, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5439, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToggleBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4782, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5440, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToggleBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4782, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5440, 1, m.Instance(), PascalBool(AValue))
 }
 
 func ToggleBoxClass() TClass {
-	ret := LCL().SysCallN(4776)
+	ret := LCL().SysCallN(5434)
 	return TClass(ret)
 }
 
@@ -130,7 +130,7 @@ func (m *TToggleBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4783, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(5441, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TToggleBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -138,7 +138,7 @@ func (m *TToggleBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4784, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(5442, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TToggleBox) SetOnDragOver(fn TDragOverEvent) {
@@ -146,7 +146,7 @@ func (m *TToggleBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4785, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(5443, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TToggleBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -154,7 +154,7 @@ func (m *TToggleBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4786, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(5444, m.Instance(), m.endDragPtr)
 }
 
 func (m *TToggleBox) SetOnMouseDown(fn TMouseEvent) {
@@ -162,7 +162,7 @@ func (m *TToggleBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4787, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(5445, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TToggleBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -170,7 +170,7 @@ func (m *TToggleBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4788, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(5446, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TToggleBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -178,7 +178,7 @@ func (m *TToggleBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4789, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(5447, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TToggleBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -186,7 +186,7 @@ func (m *TToggleBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4790, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(5448, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TToggleBox) SetOnMouseUp(fn TMouseEvent) {
@@ -194,7 +194,7 @@ func (m *TToggleBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4791, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(5449, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TToggleBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -202,7 +202,7 @@ func (m *TToggleBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4792, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5450, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TToggleBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -210,7 +210,7 @@ func (m *TToggleBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4793, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5451, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TToggleBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -218,7 +218,7 @@ func (m *TToggleBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4794, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5452, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TToggleBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -226,5 +226,5 @@ func (m *TToggleBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4795, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(5453, m.Instance(), m.startDragPtr)
 }

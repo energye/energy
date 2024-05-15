@@ -47,7 +47,7 @@ type IV8Interceptor interface {
 	//  value being assigned to the interceptor. If assignment fails, set
 	//  |exception| to the exception that will be thrown. This setter will always
 	//  be called, even when the property has an associated accessor. Return true
-	// (1) if interceptor assignment was handled, false(0) otherwise.
+	//  (1) if interceptor assignment was handled, false(0) otherwise.
 	SetOnSetByName(fn TOnV8InterceptorSetByName) // property event
 	// SetOnSetByIndex
 	//  Handle assignment of the interceptor value identified by |index|. |object|
@@ -77,12 +77,12 @@ type TV8Interceptor struct {
 }
 
 func NewV8Interceptor() IV8Interceptor {
-	r1 := CEF().SysCallN(2240)
+	r1 := CEF().SysCallN(2245)
 	return AsV8Interceptor(r1)
 }
 
 func V8InterceptorClass() TClass {
-	ret := CEF().SysCallN(2239)
+	ret := CEF().SysCallN(2244)
 	return TClass(ret)
 }
 
@@ -91,7 +91,7 @@ func (m *TV8Interceptor) SetOnGetByName(fn TOnV8InterceptorGetByName) {
 		RemoveEventElement(m.getByNamePtr)
 	}
 	m.getByNamePtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2242, m.Instance(), m.getByNamePtr)
+	CEF().SysCallN(2247, m.Instance(), m.getByNamePtr)
 }
 
 func (m *TV8Interceptor) SetOnGetByIndex(fn TOnV8InterceptorGetByIndex) {
@@ -99,7 +99,7 @@ func (m *TV8Interceptor) SetOnGetByIndex(fn TOnV8InterceptorGetByIndex) {
 		RemoveEventElement(m.getByIndexPtr)
 	}
 	m.getByIndexPtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2241, m.Instance(), m.getByIndexPtr)
+	CEF().SysCallN(2246, m.Instance(), m.getByIndexPtr)
 }
 
 func (m *TV8Interceptor) SetOnSetByName(fn TOnV8InterceptorSetByName) {
@@ -107,7 +107,7 @@ func (m *TV8Interceptor) SetOnSetByName(fn TOnV8InterceptorSetByName) {
 		RemoveEventElement(m.setByNamePtr)
 	}
 	m.setByNamePtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2244, m.Instance(), m.setByNamePtr)
+	CEF().SysCallN(2249, m.Instance(), m.setByNamePtr)
 }
 
 func (m *TV8Interceptor) SetOnSetByIndex(fn TOnV8InterceptorSetByIndex) {
@@ -115,5 +115,5 @@ func (m *TV8Interceptor) SetOnSetByIndex(fn TOnV8InterceptorSetByIndex) {
 		RemoveEventElement(m.setByIndexPtr)
 	}
 	m.setByIndexPtr = MakeEventDataPtr(fn)
-	CEF().SysCallN(2243, m.Instance(), m.setByIndexPtr)
+	CEF().SysCallN(2248, m.Instance(), m.setByIndexPtr)
 }

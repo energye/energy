@@ -15,7 +15,7 @@ import (
 // ICefMediaSource Parent: ICefBaseRefCounted
 //
 //	Represents a source from which media can be routed. Instances of this object are retrieved via ICefMediaRouter.GetSource. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_source_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_source_t))</a>
 type ICefMediaSource interface {
 	ICefBaseRefCounted
 	// GetId
@@ -32,7 +32,7 @@ type ICefMediaSource interface {
 // TCefMediaSource Parent: TCefBaseRefCounted
 //
 //	Represents a source from which media can be routed. Instances of this object are retrieved via ICefMediaRouter.GetSource. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_source_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_source_t))</a>
 type TCefMediaSource struct {
 	TCefBaseRefCounted
 }

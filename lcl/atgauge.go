@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IATGauge Parent: IGraphicControl
@@ -84,7 +83,7 @@ func (m *TATGauge) Theme() (resultPATFlatTheme TATFlatTheme) {
 }
 
 func (m *TATGauge) SetTheme(AValue *TATFlatTheme) {
-	LCL().SysCallN(24, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(24, 1, m.Instance(), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TATGauge) BorderStyle() TBorderStyle {

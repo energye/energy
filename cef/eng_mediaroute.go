@@ -15,7 +15,7 @@ import (
 // ICefMediaRoute Parent: ICefBaseRefCounted
 //
 //	Represents the route between a media source and sink. Instances of this object are created via ICefMediaRouter.CreateRoute and retrieved via ICefMediaObserver.OnRoutes. Contains the status and metadata of a routing operation. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_route_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_route_t))</a>
 type ICefMediaRoute interface {
 	ICefBaseRefCounted
 	// GetId
@@ -38,7 +38,7 @@ type ICefMediaRoute interface {
 // TCefMediaRoute Parent: TCefBaseRefCounted
 //
 //	Represents the route between a media source and sink. Instances of this object are created via ICefMediaRouter.CreateRoute and retrieved via ICefMediaObserver.OnRoutes. Contains the status and metadata of a routing operation. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_route_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_route_t))</a>
 type TCefMediaRoute struct {
 	TCefBaseRefCounted
 }

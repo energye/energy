@@ -29,7 +29,7 @@ type IResourceHandler interface {
 	//  immediately set |handle_request| to true(1) and return false(0). This
 	//  function will be called in sequence but not from a dedicated thread. For
 	//  backwards compatibility set |handle_request| to false(0) and return false
-	// (0) and the ProcessRequest function will be called.
+	//  (0) and the ProcessRequest function will be called.
 	SetOnOpen(fn TOnResourceHandlerOpen) // property event
 	// SetOnProcessRequest
 	//  Begin processing the request. To handle the request return true(1) and

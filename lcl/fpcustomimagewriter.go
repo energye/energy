@@ -25,10 +25,10 @@ type TFPCustomImageWriter struct {
 }
 
 func FPCustomImageWriterClass() TClass {
-	ret := LCL().SysCallN(2673)
+	ret := LCL().SysCallN(2916)
 	return TClass(ret)
 }
 
 func (m *TFPCustomImageWriter) ImageWrite(Str IStream, Img IFPCustomImage) {
-	LCL().SysCallN(2674, m.Instance(), GetObjectUintptr(Str), GetObjectUintptr(Img))
+	LCL().SysCallN(2917, m.Instance(), GetObjectUintptr(Str), GetObjectUintptr(Img))
 }

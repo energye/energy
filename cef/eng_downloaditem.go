@@ -15,7 +15,7 @@ import (
 // ICefDownloadItem Parent: ICefBaseRefCounted
 //
 //	Interface used to represent a download item.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_item_capi.h">CEF source file: /include/capi/cef_download_item_capi.h (cef_download_item_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_item_capi.h">CEF source file: /include/capi/cef_download_item_capi.h (cef_download_item_t))</a>
 type ICefDownloadItem interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -80,7 +80,7 @@ type ICefDownloadItem interface {
 // TCefDownloadItem Parent: TCefBaseRefCounted
 //
 //	Interface used to represent a download item.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_item_capi.h">CEF source file: /include/capi/cef_download_item_capi.h (cef_download_item_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_item_capi.h">CEF source file: /include/capi/cef_download_item_capi.h (cef_download_item_t))</a>
 type TCefDownloadItem struct {
 	TCefBaseRefCounted
 }

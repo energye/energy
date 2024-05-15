@@ -15,7 +15,7 @@ import (
 // ICefResourceReadCallback Parent: ICefBaseRefCounted
 //
 //	Callback for asynchronous continuation of ICefResourceHandler.read.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t))</a>
 type ICefResourceReadCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -26,7 +26,7 @@ type ICefResourceReadCallback interface {
 // TCefResourceReadCallback Parent: TCefBaseRefCounted
 //
 //	Callback for asynchronous continuation of ICefResourceHandler.read.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t))</a>
 type TCefResourceReadCallback struct {
 	TCefBaseRefCounted
 }

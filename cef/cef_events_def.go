@@ -483,3 +483,7 @@ type TOnLayoutChanged func(sender IObject, view ICefView, newBounds TCefRect)
 type TOnView func(sender IObject, view ICefView)
 type TOnFocus = TOnView
 type TOnBlur = TOnView
+
+// TTask
+
+type TTaskExecute func()

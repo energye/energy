@@ -30,36 +30,36 @@ type TCustomDateTimePicker struct {
 }
 
 func NewCustomDateTimePicker(AOwner IComponent) ICustomDateTimePicker {
-	r1 := LCL().SysCallN(1306, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1496, GetObjectUintptr(AOwner))
 	return AsCustomDateTimePicker(r1)
 }
 
 func (m *TCustomDateTimePicker) DateIsNull() bool {
-	r1 := LCL().SysCallN(1307, m.Instance())
+	r1 := LCL().SysCallN(1497, m.Instance())
 	return GoBool(r1)
 }
 
 func CustomDateTimePickerClass() TClass {
-	ret := LCL().SysCallN(1305)
+	ret := LCL().SysCallN(1495)
 	return TClass(ret)
 }
 
 func (m *TCustomDateTimePicker) SelectDate() {
-	LCL().SysCallN(1309, m.Instance())
+	LCL().SysCallN(1499, m.Instance())
 }
 
 func (m *TCustomDateTimePicker) SelectTime() {
-	LCL().SysCallN(1310, m.Instance())
+	LCL().SysCallN(1500, m.Instance())
 }
 
 func (m *TCustomDateTimePicker) SendExternalKey(aKey Char) {
-	LCL().SysCallN(1311, m.Instance(), uintptr(aKey))
+	LCL().SysCallN(1501, m.Instance(), uintptr(aKey))
 }
 
 func (m *TCustomDateTimePicker) SendExternalKeyCode(Key Word) {
-	LCL().SysCallN(1312, m.Instance(), uintptr(Key))
+	LCL().SysCallN(1502, m.Instance(), uintptr(Key))
 }
 
 func (m *TCustomDateTimePicker) Paint() {
-	LCL().SysCallN(1308, m.Instance())
+	LCL().SysCallN(1498, m.Instance())
 }

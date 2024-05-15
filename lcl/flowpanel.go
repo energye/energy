@@ -64,57 +64,57 @@ type TFlowPanel struct {
 }
 
 func NewFlowPanel(AOwner IComponent) IFlowPanel {
-	r1 := LCL().SysCallN(2807, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(3050, GetObjectUintptr(AOwner))
 	return AsFlowPanel(r1)
 }
 
 func (m *TFlowPanel) DragCursor() TCursor {
-	r1 := LCL().SysCallN(2808, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3051, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TFlowPanel) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(2808, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3051, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFlowPanel) DragKind() TDragKind {
-	r1 := LCL().SysCallN(2809, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3052, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TFlowPanel) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(2809, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3052, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFlowPanel) DragMode() TDragMode {
-	r1 := LCL().SysCallN(2810, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3053, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TFlowPanel) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(2810, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3053, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFlowPanel) ParentFont() bool {
-	r1 := LCL().SysCallN(2811, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3054, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFlowPanel) SetParentFont(AValue bool) {
-	LCL().SysCallN(2811, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3054, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TFlowPanel) ParentShowHint() bool {
-	r1 := LCL().SysCallN(2812, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3055, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFlowPanel) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(2812, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3055, 1, m.Instance(), PascalBool(AValue))
 }
 
 func FlowPanelClass() TClass {
-	ret := LCL().SysCallN(2806)
+	ret := LCL().SysCallN(3049)
 	return TClass(ret)
 }
 
@@ -123,7 +123,7 @@ func (m *TFlowPanel) SetOnConstrainedResize(fn TConstrainedResizeEvent) {
 		RemoveEventElement(m.constrainedResizePtr)
 	}
 	m.constrainedResizePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2813, m.Instance(), m.constrainedResizePtr)
+	LCL().SysCallN(3056, m.Instance(), m.constrainedResizePtr)
 }
 
 func (m *TFlowPanel) SetOnContextPopup(fn TContextPopupEvent) {
@@ -131,7 +131,7 @@ func (m *TFlowPanel) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2814, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3057, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TFlowPanel) SetOnDblClick(fn TNotifyEvent) {
@@ -139,7 +139,7 @@ func (m *TFlowPanel) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2815, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(3058, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TFlowPanel) SetOnDragDrop(fn TDragDropEvent) {
@@ -147,7 +147,7 @@ func (m *TFlowPanel) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2816, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3059, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TFlowPanel) SetOnDragOver(fn TDragOverEvent) {
@@ -155,7 +155,7 @@ func (m *TFlowPanel) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2817, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3060, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TFlowPanel) SetOnEndDock(fn TEndDragEvent) {
@@ -163,7 +163,7 @@ func (m *TFlowPanel) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2818, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(3061, m.Instance(), m.endDockPtr)
 }
 
 func (m *TFlowPanel) SetOnEndDrag(fn TEndDragEvent) {
@@ -171,7 +171,7 @@ func (m *TFlowPanel) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2819, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(3062, m.Instance(), m.endDragPtr)
 }
 
 func (m *TFlowPanel) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
@@ -179,7 +179,7 @@ func (m *TFlowPanel) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
 		RemoveEventElement(m.getSiteInfoPtr)
 	}
 	m.getSiteInfoPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2820, m.Instance(), m.getSiteInfoPtr)
+	LCL().SysCallN(3063, m.Instance(), m.getSiteInfoPtr)
 }
 
 func (m *TFlowPanel) SetOnMouseDown(fn TMouseEvent) {
@@ -187,7 +187,7 @@ func (m *TFlowPanel) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2821, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3064, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TFlowPanel) SetOnMouseEnter(fn TNotifyEvent) {
@@ -195,7 +195,7 @@ func (m *TFlowPanel) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2822, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3065, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TFlowPanel) SetOnMouseLeave(fn TNotifyEvent) {
@@ -203,7 +203,7 @@ func (m *TFlowPanel) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2823, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3066, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TFlowPanel) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -211,7 +211,7 @@ func (m *TFlowPanel) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2824, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3067, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TFlowPanel) SetOnMouseUp(fn TMouseEvent) {
@@ -219,7 +219,7 @@ func (m *TFlowPanel) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2825, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3068, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TFlowPanel) SetOnStartDock(fn TStartDockEvent) {
@@ -227,7 +227,7 @@ func (m *TFlowPanel) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2826, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(3069, m.Instance(), m.startDockPtr)
 }
 
 func (m *TFlowPanel) SetOnStartDrag(fn TStartDragEvent) {
@@ -235,5 +235,5 @@ func (m *TFlowPanel) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2827, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(3070, m.Instance(), m.startDragPtr)
 }

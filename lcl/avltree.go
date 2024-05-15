@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IAVLTree Parent: IObject
@@ -86,7 +85,7 @@ func (m *TAVLTree) Add(Data uintptr) IAVLTreeNode {
 
 func (m *TAVLTree) AddAscendingSequence(Data uintptr, LastAdded IAVLTreeNode, Successor *IAVLTreeNode) IAVLTreeNode {
 	var result2 uintptr
-	r1 := LCL().SysCallN(41, m.Instance(), uintptr(Data), GetObjectUintptr(LastAdded), uintptr(unsafe.Pointer(&result2)))
+	r1 := LCL().SysCallN(41, m.Instance(), uintptr(Data), GetObjectUintptr(LastAdded), uintptr(unsafePointer(&result2)))
 	*Successor = AsAVLTreeNode(result2)
 	return AsAVLTreeNode(r1)
 }
@@ -205,13 +204,13 @@ func (m *TAVLTree) Delete(ANode IAVLTreeNode) {
 
 func (m *TAVLTree) MoveDataLeftMost(ANode *IAVLTreeNode) {
 	var result0 uintptr
-	LCL().SysCallN(67, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	LCL().SysCallN(67, m.Instance(), uintptr(unsafePointer(&result0)))
 	*ANode = AsAVLTreeNode(result0)
 }
 
 func (m *TAVLTree) MoveDataRightMost(ANode *IAVLTreeNode) {
 	var result0 uintptr
-	LCL().SysCallN(68, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	LCL().SysCallN(68, m.Instance(), uintptr(unsafePointer(&result0)))
 	*ANode = AsAVLTreeNode(result0)
 }
 

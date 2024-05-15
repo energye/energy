@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IPaperSize Parent: IObject
@@ -35,59 +34,59 @@ type TPaperSize struct {
 }
 
 func NewPaperSize(aOwner IPrinter) IPaperSize {
-	r1 := LCL().SysCallN(3852, GetObjectUintptr(aOwner))
+	r1 := LCL().SysCallN(4494, GetObjectUintptr(aOwner))
 	return AsPaperSize(r1)
 }
 
 func (m *TPaperSize) DefaultPapers() bool {
-	r1 := LCL().SysCallN(3854, m.Instance())
+	r1 := LCL().SysCallN(4496, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TPaperSize) Width() int32 {
-	r1 := LCL().SysCallN(3860, m.Instance())
+	r1 := LCL().SysCallN(4502, m.Instance())
 	return int32(r1)
 }
 
 func (m *TPaperSize) Height() int32 {
-	r1 := LCL().SysCallN(3855, m.Instance())
+	r1 := LCL().SysCallN(4497, m.Instance())
 	return int32(r1)
 }
 
 func (m *TPaperSize) PaperName() string {
-	r1 := LCL().SysCallN(3856, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4498, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TPaperSize) SetPaperName(AValue string) {
-	LCL().SysCallN(3856, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(4498, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TPaperSize) DefaultPaperName() string {
-	r1 := LCL().SysCallN(3853, m.Instance())
+	r1 := LCL().SysCallN(4495, m.Instance())
 	return GoStr(r1)
 }
 
 func (m *TPaperSize) PaperRect() (resultPaperRect TPaperRect) {
-	r1 := LCL().SysCallN(3857, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4499, 0, m.Instance(), 0)
 	return *(*TPaperRect)(getPointer(r1))
 }
 
 func (m *TPaperSize) SetPaperRect(AValue *TPaperRect) {
-	LCL().SysCallN(3857, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(4499, 1, m.Instance(), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TPaperSize) SupportedPapers() IStrings {
-	r1 := LCL().SysCallN(3859, m.Instance())
+	r1 := LCL().SysCallN(4501, m.Instance())
 	return AsStrings(r1)
 }
 
 func (m *TPaperSize) PaperRectOf(aName string) (resultPaperRect TPaperRect) {
-	r1 := LCL().SysCallN(3858, m.Instance(), PascalStr(aName))
+	r1 := LCL().SysCallN(4500, m.Instance(), PascalStr(aName))
 	return *(*TPaperRect)(getPointer(r1))
 }
 
 func PaperSizeClass() TClass {
-	ret := LCL().SysCallN(3851)
+	ret := LCL().SysCallN(4493)
 	return TClass(ret)
 }

@@ -7,10 +7,10 @@ import (
 	"github.com/energye/energy/v2/types"
 )
 
-var MainForm *TMainForm
+var MainForm TMainForm
 
 type TMainForm struct {
-	lcl.IForm
+	lcl.TForm
 }
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	inits.Init(nil, nil)
 	lcl.Application.Initialize()
 	lcl.Application.SetMainFormOnTaskBar(true)
-	lcl.Application.CreateForm(&MainForm, true)
+	lcl.Application.CreateForm(&MainForm)
 	lcl.Application.Run()
 }
 

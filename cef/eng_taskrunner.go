@@ -15,7 +15,7 @@ import (
 // ICefTaskRunner Parent: ICefBaseRefCounted
 //
 //	Interface that asynchronously executes tasks on the associated thread. It is safe to call the functions of this interface on any thread. CEF maintains multiple internal threads that are used for handling different types of tasks in different processes. The TCefThreadId definitions in cef_types.h list the common CEF threads. Task runners are also available for other CEF threads as appropriate (for example, V8 WebWorker threads).
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_task_capi.h">CEF source file: /include/capi/cef_task_capi.h (cef_task_runner_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_task_capi.h">CEF source file: /include/capi/cef_task_capi.h (cef_task_runner_t))</a>
 type ICefTaskRunner interface {
 	ICefBaseRefCounted
 	// IsSame
@@ -38,7 +38,7 @@ type ICefTaskRunner interface {
 // TCefTaskRunner Parent: TCefBaseRefCounted
 //
 //	Interface that asynchronously executes tasks on the associated thread. It is safe to call the functions of this interface on any thread. CEF maintains multiple internal threads that are used for handling different types of tasks in different processes. The TCefThreadId definitions in cef_types.h list the common CEF threads. Task runners are also available for other CEF threads as appropriate (for example, V8 WebWorker threads).
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_task_capi.h">CEF source file: /include/capi/cef_task_capi.h (cef_task_runner_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_task_capi.h">CEF source file: /include/capi/cef_task_capi.h (cef_task_runner_t))</a>
 type TCefTaskRunner struct {
 	TCefBaseRefCounted
 }

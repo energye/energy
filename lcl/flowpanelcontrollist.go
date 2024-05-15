@@ -29,35 +29,35 @@ type TFlowPanelControlList struct {
 }
 
 func NewFlowPanelControlList(AOwner IPersistent) IFlowPanelControlList {
-	r1 := LCL().SysCallN(2797, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(3040, GetObjectUintptr(AOwner))
 	return AsFlowPanelControlList(r1)
 }
 
 func (m *TFlowPanelControlList) ItemsForFlowPanelControl(Index int32) IFlowPanelControl {
-	r1 := LCL().SysCallN(2799, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(3042, 0, m.Instance(), uintptr(Index))
 	return AsFlowPanelControl(r1)
 }
 
 func (m *TFlowPanelControlList) SetItemsForFlowPanelControl(Index int32, AValue IFlowPanelControl) {
-	LCL().SysCallN(2799, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
+	LCL().SysCallN(3042, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
 }
 
 func (m *TFlowPanelControlList) IndexOf(AControl IControl) int32 {
-	r1 := LCL().SysCallN(2798, m.Instance(), GetObjectUintptr(AControl))
+	r1 := LCL().SysCallN(3041, m.Instance(), GetObjectUintptr(AControl))
 	return int32(r1)
 }
 
 func (m *TFlowPanelControlList) AllowAdd() bool {
-	r1 := LCL().SysCallN(2794, m.Instance())
+	r1 := LCL().SysCallN(3037, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFlowPanelControlList) AllowDelete() bool {
-	r1 := LCL().SysCallN(2795, m.Instance())
+	r1 := LCL().SysCallN(3038, m.Instance())
 	return GoBool(r1)
 }
 
 func FlowPanelControlListClass() TClass {
-	ret := LCL().SysCallN(2796)
+	ret := LCL().SysCallN(3039)
 	return TClass(ret)
 }

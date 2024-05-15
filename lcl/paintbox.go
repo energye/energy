@@ -70,57 +70,57 @@ type TPaintBox struct {
 }
 
 func NewPaintBox(AOwner IComponent) IPaintBox {
-	r1 := LCL().SysCallN(3796, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4438, GetObjectUintptr(AOwner))
 	return AsPaintBox(r1)
 }
 
 func (m *TPaintBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3797, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4439, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TPaintBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3797, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4439, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPaintBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3798, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4440, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TPaintBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3798, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4440, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPaintBox) ParentColor() bool {
-	r1 := LCL().SysCallN(3799, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4441, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPaintBox) SetParentColor(AValue bool) {
-	LCL().SysCallN(3799, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4441, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TPaintBox) ParentFont() bool {
-	r1 := LCL().SysCallN(3800, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4442, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPaintBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(3800, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4442, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TPaintBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3801, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4443, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPaintBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3801, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4443, 1, m.Instance(), PascalBool(AValue))
 }
 
 func PaintBoxClass() TClass {
-	ret := LCL().SysCallN(3795)
+	ret := LCL().SysCallN(4437)
 	return TClass(ret)
 }
 
@@ -129,7 +129,7 @@ func (m *TPaintBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3802, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4444, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TPaintBox) SetOnDblClick(fn TNotifyEvent) {
@@ -137,7 +137,7 @@ func (m *TPaintBox) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3803, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(4445, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TPaintBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -145,7 +145,7 @@ func (m *TPaintBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3804, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4446, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TPaintBox) SetOnDragOver(fn TDragOverEvent) {
@@ -153,7 +153,7 @@ func (m *TPaintBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3805, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4447, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TPaintBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -161,7 +161,7 @@ func (m *TPaintBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3806, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4448, m.Instance(), m.endDragPtr)
 }
 
 func (m *TPaintBox) SetOnMouseDown(fn TMouseEvent) {
@@ -169,7 +169,7 @@ func (m *TPaintBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3807, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4449, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TPaintBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -177,7 +177,7 @@ func (m *TPaintBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3808, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4450, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TPaintBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -185,7 +185,7 @@ func (m *TPaintBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3809, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4451, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TPaintBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -193,7 +193,7 @@ func (m *TPaintBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3810, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4452, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TPaintBox) SetOnMouseUp(fn TMouseEvent) {
@@ -201,7 +201,7 @@ func (m *TPaintBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3811, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4453, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -209,7 +209,7 @@ func (m *TPaintBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3812, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4454, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -217,7 +217,7 @@ func (m *TPaintBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3813, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4455, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -225,7 +225,7 @@ func (m *TPaintBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3817, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4459, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -233,7 +233,7 @@ func (m *TPaintBox) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3814, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(4456, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -241,7 +241,7 @@ func (m *TPaintBox) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3815, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(4457, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TPaintBox) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -249,7 +249,7 @@ func (m *TPaintBox) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3816, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(4458, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TPaintBox) SetOnPaint(fn TNotifyEvent) {
@@ -257,7 +257,7 @@ func (m *TPaintBox) SetOnPaint(fn TNotifyEvent) {
 		RemoveEventElement(m.paintPtr)
 	}
 	m.paintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3818, m.Instance(), m.paintPtr)
+	LCL().SysCallN(4460, m.Instance(), m.paintPtr)
 }
 
 func (m *TPaintBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -265,5 +265,5 @@ func (m *TPaintBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3819, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4461, m.Instance(), m.startDragPtr)
 }

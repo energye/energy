@@ -10,20 +10,24 @@ package lcl
 
 import (
 	"github.com/energye/energy/v2/types"
-	"reflect"
 	"sync"
-	"unsafe"
 )
+
+// TOnCreateParams TForm CreateParams 函数
+type TOnCreateParams func(params *types.TCreateParams)
 
 var requestCreateParamsMap sync.Map
 
-func addToRequestCreateParamsMap(ptr uintptr, proc reflect.Value) {
+func addToRequestCreateParamsMap(ptr uintptr, proc TOnCreateParams) {
 	requestCreateParamsMap.Store(ptr, proc)
 }
 
 func requestCallCreateParamsCallbackProc(ptr uintptr, params uintptr) uintptr {
 	if val, ok := requestCreateParamsMap.Load(ptr); ok {
-		val.(reflect.Value).Call([]reflect.Value{reflect.ValueOf((*types.TCreateParams)(unsafe.Pointer(params)))})
+		//val.(reflect.Value).Call([]reflect.Value{reflect.ValueOf((*types.TCreateParams)(unsafe.Pointer(params)))})
+		if fn, ok := val.(TOnCreateParams); ok {
+			fn((*types.TCreateParams)(unsafePointer(params)))
+		}
 	}
 	return 0
 }

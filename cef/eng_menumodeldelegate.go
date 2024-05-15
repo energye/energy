@@ -31,11 +31,11 @@ type IMenuModelDelegate interface {
 	SetOnMouseOutsideMenu(fn TOnMouseOutsideMenu) // property event
 	// SetOnUnhandledOpenSubmenu
 	//  Called on unhandled open submenu keyboard commands. |is_rtl| will be true
-	// (1) if the menu is displaying a right-to-left language.
+	//  (1) if the menu is displaying a right-to-left language.
 	SetOnUnhandledOpenSubmenu(fn TOnUnhandledOpenSubmenu) // property event
 	// SetOnUnhandledCloseSubmenu
 	//  Called on unhandled close submenu keyboard commands. |is_rtl| will be true
-	// (1) if the menu is displaying a right-to-left language.
+	//  (1) if the menu is displaying a right-to-left language.
 	SetOnUnhandledCloseSubmenu(fn TOnUnhandledCloseSubmenu) // property event
 	// SetOnMenuWillShow
 	//  The menu is about to show.

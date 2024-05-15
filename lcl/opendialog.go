@@ -33,34 +33,34 @@ type TOpenDialog struct {
 }
 
 func NewOpenDialog(TheOwner IComponent) IOpenDialog {
-	r1 := LCL().SysCallN(3728, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4370, GetObjectUintptr(TheOwner))
 	return AsOpenDialog(r1)
 }
 
 func (m *TOpenDialog) Options() TOpenOptions {
-	r1 := LCL().SysCallN(3732, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4374, 0, m.Instance(), 0)
 	return TOpenOptions(r1)
 }
 
 func (m *TOpenDialog) SetOptions(AValue TOpenOptions) {
-	LCL().SysCallN(3732, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4374, 1, m.Instance(), uintptr(AValue))
 }
 
 func OpenDialogClass() TClass {
-	ret := LCL().SysCallN(3727)
+	ret := LCL().SysCallN(4369)
 	return TClass(ret)
 }
 
 func (m *TOpenDialog) DoFolderChange() {
-	LCL().SysCallN(3729, m.Instance())
+	LCL().SysCallN(4371, m.Instance())
 }
 
 func (m *TOpenDialog) DoSelectionChange() {
-	LCL().SysCallN(3730, m.Instance())
+	LCL().SysCallN(4372, m.Instance())
 }
 
 func (m *TOpenDialog) IntfSetOption(AOption TOpenOption, AValue bool) {
-	LCL().SysCallN(3731, m.Instance(), uintptr(AOption), PascalBool(AValue))
+	LCL().SysCallN(4373, m.Instance(), uintptr(AOption), PascalBool(AValue))
 }
 
 func (m *TOpenDialog) SetOnFolderChange(fn TNotifyEvent) {
@@ -68,7 +68,7 @@ func (m *TOpenDialog) SetOnFolderChange(fn TNotifyEvent) {
 		RemoveEventElement(m.folderChangePtr)
 	}
 	m.folderChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3733, m.Instance(), m.folderChangePtr)
+	LCL().SysCallN(4375, m.Instance(), m.folderChangePtr)
 }
 
 func (m *TOpenDialog) SetOnSelectionChange(fn TNotifyEvent) {
@@ -76,5 +76,5 @@ func (m *TOpenDialog) SetOnSelectionChange(fn TNotifyEvent) {
 		RemoveEventElement(m.selectionChangePtr)
 	}
 	m.selectionChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3734, m.Instance(), m.selectionChangePtr)
+	LCL().SysCallN(4376, m.Instance(), m.selectionChangePtr)
 }

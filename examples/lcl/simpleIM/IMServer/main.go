@@ -49,7 +49,7 @@ func main() {
 }
 
 func updateOnlineClient() {
-	lcl.ThreadSync(func() {
+	lcl.RunOnMainThreadSync(func() {
 		onlineClientlbl.SetCaption(fmt.Sprintf("当前在线人数：%d", onlineClientCount))
 	})
 }

@@ -23,6 +23,6 @@ type TCefStringMultimapRef struct {
 }
 
 func NewCefStringMultimapRef(aHandle TCefStringMultimapHandle) ICefStringMultimapRef {
-	r1 := CEF().SysCallN(1406, uintptr(aHandle))
+	r1 := CEF().SysCallN(1407, uintptr(aHandle))
 	return AsCefStringMultimapRef(r1)
 }

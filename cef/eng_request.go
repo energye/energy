@@ -15,7 +15,7 @@ import (
 // ICefRequest Parent: ICefBaseRefCounted
 //
 //	Interface used to represent a web request. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_request_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_request_t))</a>
 type ICefRequest interface {
 	ICefBaseRefCounted
 	// IsReadOnly
@@ -89,7 +89,7 @@ type ICefRequest interface {
 // TCefRequest Parent: TCefBaseRefCounted
 //
 //	Interface used to represent a web request. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_request_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_request_t))</a>
 type TCefRequest struct {
 	TCefBaseRefCounted
 }

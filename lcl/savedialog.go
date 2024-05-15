@@ -24,11 +24,11 @@ type TSaveDialog struct {
 }
 
 func NewSaveDialog(AOwner IComponent) ISaveDialog {
-	r1 := LCL().SysCallN(4204, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4846, GetObjectUintptr(AOwner))
 	return AsSaveDialog(r1)
 }
 
 func SaveDialogClass() TClass {
-	ret := LCL().SysCallN(4203)
+	ret := LCL().SysCallN(4845)
 	return TClass(ret)
 }

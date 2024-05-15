@@ -37,9 +37,7 @@ package lcl
 
 import (
 	"fmt"
-	. "github.com/energye/energy/v2/api"
 	"reflect"
-	"runtime"
 	"unsafe"
 )
 
@@ -139,118 +137,118 @@ func fullFiledVal(f IComponent, goInstance reflect.Value, fullSubComponent, afte
 }
 
 // 共用的一个从资源中加载构建对象
-func resObjectBuild(typ int, owner IComponent, appInst uintptr, fields ...interface{}) IComponent {
-	if !DEBUG {
-		defer func() {
-			if err := recover(); err != nil {
-				fmt.Println("resCreateForm Error: ", err)
-			}
-		}()
-	}
-	runtime.LockOSThread()
-	defer runtime.UnlockOSThread()
-
-	var fullSubComponent bool
-	var afterBindSubComponentsEvents bool
-	var field1 interface{}
-	var goInstance reflect.Value
-
-	// 检测是否为MainForm，通过判断 指定方法为nil。
-	mainForm := Application.MainForm()
-	isMainForm := mainForm == nil || mainForm.Instance() == 0
-	instancePtr := uintptr(0)
-	// 不检查一些了，也不做最初版本的兼容
-	if len(fields) > 0 {
-		goInstance = newGoFormInstance(fields[0])
-		if !isMainForm {
-			instancePtr = goInstance.Pointer()
-		}
-		// 固定名称  CreateParams
-		cFunc := goInstance.MethodByName("CreateParams")
-		if cFunc.IsValid() {
-			addToRequestCreateParamsMap(instancePtr, cFunc)
-		}
-	}
-
-	var resObj IComponent
-
-	switch typ {
-	case 0:
-		// 由参数的个数决定，创建窗口时是否使用缩放，此值需要 lcl.Application.SetScaled(true) 后才能生效。
-		resObj = AsForm(Application_CreateForm(appInst))
-	case 1:
-		resObj = AsForm(Form_Create2(CheckPtr(owner)))
-	case 2:
-		// TFrame
-		resObj = NewFrame(owner)
-	}
-
-	// 不为TFrame和MainForm时才设置这个
-	if typ != 2 && !isMainForm {
-		// 设置条件
-		Form_SetGoPtr(resObj.Instance(), instancePtr)
-	}
-
-	//条件设置用
-	bindSubs := func(sub, afterSub bool) {
-		fullSubComponent = sub
-		afterBindSubComponentsEvents = afterSub
-	}
-
-	// 查找并构建Form
-	findAndBuildForm := func(field interface{}) error {
-		res, err := findFormResource(field)
-		// 找到了对应的Form资源
-		if err == nil {
-			bindSubs(true, false)
-			loadFormResourceStream(*res.Data, resObj)
-		}
-		return err
-	}
-
-	switch len(fields) {
-	case 1:
-		field1 = fields[0]
-		bindSubs(false, false)
-		// 查找并构建Form
-		if findAndBuildForm(field1) != nil {
-			// 没有找到对应的资源，估计是手动创建的，将这个永远设置为true
-			bindSubs(false, true)
-		}
-	case 2:
-		switch fields[1].(type) {
-		// 当第二个参数为bool时，表示不填充子组件，为true表示之后绑定事件
-		case bool:
-			field1 = fields[0]
-			bindSubs(false, false) //fields[1].(bool)
-			// 查找并构建Form
-			if findAndBuildForm(field1) != nil {
-				// 没有找到对应的资源，估计是手动创建的
-				// 如果指定为false则不绑定
-				bindSubs(false, fields[1].(bool))
-			}
-		default:
-			// 第二个参数类型不为bool时，填充子组件为true，之后绑定事件为false
-			field1 = fields[1]
-			bindSubs(true, false)
-			switch fields[0].(type) {
-			case string:
-				ResFormLoadFromFile(fields[0].(string), CheckPtr(resObj))
-			case []byte:
-				loadFormResourceStream(fields[0].([]byte), resObj)
-			}
-		}
-	default:
-		return resObj
-	}
-	fullFiledVal(resObj, goInstance, fullSubComponent, afterBindSubComponentsEvents)
-	return nil
-}
+//func resObjectBuild(typ int, owner IComponent, appInst uintptr, fields ...interface{}) IComponent {
+//	if !DEBUG {
+//		defer func() {
+//			if err := recover(); err != nil {
+//				fmt.Println("resCreateForm Error: ", err)
+//			}
+//		}()
+//	}
+//	runtime.LockOSThread()
+//	defer runtime.UnlockOSThread()
+//
+//	var fullSubComponent bool
+//	var afterBindSubComponentsEvents bool
+//	var field1 interface{}
+//	var goInstance reflect.Value
+//
+//	// 检测是否为MainForm，通过判断 指定方法为nil。
+//	mainForm := Application.MainForm()
+//	isMainForm := mainForm == nil || mainForm.Instance() == 0
+//	instancePtr := uintptr(0)
+//	// 不检查一些了，也不做最初版本的兼容
+//	if len(fields) > 0 {
+//		goInstance = newGoFormInstance(fields[0])
+//		if !isMainForm {
+//			instancePtr = goInstance.Pointer()
+//		}
+//		// 固定名称  CreateParams
+//		cFunc := goInstance.MethodByName("CreateParams")
+//		if cFunc.IsValid() {
+//			//addToRequestCreateParamsMap(instancePtr, cFunc)
+//		}
+//	}
+//
+//	var resObj IComponent
+//
+//	switch typ {
+//	case 0:
+//		// 由参数的个数决定，创建窗口时是否使用缩放，此值需要 lcl.Application.SetScaled(true) 后才能生效。
+//		resObj = AsForm(Application_CreateForm(appInst))
+//	case 1:
+//		resObj = AsForm(Form_Create2(CheckPtr(owner)))
+//	case 2:
+//		// TFrame
+//		resObj = NewFrame(owner)
+//	}
+//
+//	// 不为TFrame和MainForm时才设置这个
+//	if typ != 2 && !isMainForm {
+//		// 设置条件
+//		Form_SetGoPtr(resObj.Instance(), instancePtr)
+//	}
+//
+//	//条件设置用
+//	bindSubs := func(sub, afterSub bool) {
+//		fullSubComponent = sub
+//		afterBindSubComponentsEvents = afterSub
+//	}
+//
+//	// 查找并构建Form
+//	findAndBuildForm := func(field interface{}) error {
+//		res, err := findFormResource(field)
+//		// 找到了对应的Form资源
+//		if err == nil {
+//			bindSubs(true, false)
+//			loadFormResourceStream(*res.Data, resObj)
+//		}
+//		return err
+//	}
+//
+//	switch len(fields) {
+//	case 1:
+//		field1 = fields[0]
+//		bindSubs(false, false)
+//		// 查找并构建Form
+//		if findAndBuildForm(field1) != nil {
+//			// 没有找到对应的资源，估计是手动创建的，将这个永远设置为true
+//			bindSubs(false, true)
+//		}
+//	case 2:
+//		switch fields[1].(type) {
+//		// 当第二个参数为bool时，表示不填充子组件，为true表示之后绑定事件
+//		case bool:
+//			field1 = fields[0]
+//			bindSubs(false, false) //fields[1].(bool)
+//			// 查找并构建Form
+//			if findAndBuildForm(field1) != nil {
+//				// 没有找到对应的资源，估计是手动创建的
+//				// 如果指定为false则不绑定
+//				bindSubs(false, fields[1].(bool))
+//			}
+//		default:
+//			// 第二个参数类型不为bool时，填充子组件为true，之后绑定事件为false
+//			field1 = fields[1]
+//			bindSubs(true, false)
+//			switch fields[0].(type) {
+//			case string:
+//				ResFormLoadFromFile(fields[0].(string), CheckPtr(resObj))
+//			case []byte:
+//				loadFormResourceStream(fields[0].([]byte), resObj)
+//			}
+//		}
+//	default:
+//		return resObj
+//	}
+//	fullFiledVal(resObj, goInstance, fullSubComponent, afterBindSubComponentsEvents)
+//	return nil
+//}
 
 // 从Stream中加载Form资源
-func loadFormResourceStream(data []byte, obj IComponent) {
-	mem := NewMemoryStream()
-	defer mem.Free()
-	mem.Write(data)
-	ResFormLoadFromStream(CheckPtr(mem), CheckPtr(obj))
-}
+//func loadFormResourceStream(data []byte, obj IComponent) {
+//	mem := NewMemoryStream()
+//	defer mem.Free()
+//	mem.Write(data)
+//	ResFormLoadFromStream(CheckPtr(mem), CheckPtr(obj))
+//}

@@ -15,7 +15,7 @@ import (
 // ICefRunQuickMenuCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used for continuation of custom quick menu display.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t))</a>
 type ICefRunQuickMenuCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -29,7 +29,7 @@ type ICefRunQuickMenuCallback interface {
 // TCefRunQuickMenuCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used for continuation of custom quick menu display.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_run_quick_menu_callback_t))</a>
 type TCefRunQuickMenuCallback struct {
 	TCefBaseRefCounted
 }

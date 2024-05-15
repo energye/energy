@@ -18,10 +18,10 @@ var (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 	f.SetCaption("Windows Messages")
@@ -34,8 +34,8 @@ func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 	fmt.Println("newWndProc:", newWndProc)
 	fmt.Println("oldWndPro:", oldWndPrc)
 
-	btn := lcl.NewButton(mainForm)
-	btn.SetParent(mainForm)
+	btn := lcl.NewButton(&mainForm)
+	btn.SetParent(&mainForm)
 	btn.SetCaption("按钮1")
 	btn.SetLeft(50)
 	btn.SetTop(50)

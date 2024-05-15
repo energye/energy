@@ -9,11 +9,11 @@ import (
 )
 
 type TForm1 struct {
-	*lcl.TForm
+	lcl.TForm
 	Button1 lcl.IXButton
 }
 
-var form1 *TForm1
+var form1 TForm1
 
 func main() {
 	inits.Init(nil, nil)
@@ -30,7 +30,7 @@ func (f *TForm1) OnFormCreate(sender lcl.IObject) {
 	f.Button1.SetParent(f)
 	f.Button1.SetDrawMode(types.DimCenter)
 
-	f.Button1.Picture().LoadFromFile("favicon.png")
+	f.Button1.Picture().LoadFromFile("icon.png")
 
 	f.Button1.SetBackColor(colors.ClAzure)
 	f.Button1.SetNormalFontColor(colors.ClBlue)

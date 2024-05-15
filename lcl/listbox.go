@@ -46,39 +46,39 @@ type TListBox struct {
 }
 
 func NewListBox(TheOwner IComponent) IListBox {
-	r1 := LCL().SysCallN(3331, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3973, GetObjectUintptr(TheOwner))
 	return AsListBox(r1)
 }
 
 func (m *TListBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3332, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3974, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TListBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3332, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3974, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListBox) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3333, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3975, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TListBox) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3333, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3975, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3334, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3976, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TListBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3334, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3976, 1, m.Instance(), uintptr(AValue))
 }
 
 func ListBoxClass() TClass {
-	ret := LCL().SysCallN(3330)
+	ret := LCL().SysCallN(3972)
 	return TClass(ret)
 }
 
@@ -87,7 +87,7 @@ func (m *TListBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3335, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3977, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TListBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -95,7 +95,7 @@ func (m *TListBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3336, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3978, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TListBox) SetOnDragOver(fn TDragOverEvent) {
@@ -103,7 +103,7 @@ func (m *TListBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3337, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3979, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TListBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -111,7 +111,7 @@ func (m *TListBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3338, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(3980, m.Instance(), m.endDragPtr)
 }
 
 func (m *TListBox) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -119,7 +119,7 @@ func (m *TListBox) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3339, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(3981, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TListBox) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -127,7 +127,7 @@ func (m *TListBox) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3340, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(3982, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TListBox) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -135,7 +135,7 @@ func (m *TListBox) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3341, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(3983, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TListBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -143,5 +143,5 @@ func (m *TListBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3342, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(3984, m.Instance(), m.startDragPtr)
 }

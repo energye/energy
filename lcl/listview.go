@@ -159,255 +159,255 @@ type TListView struct {
 }
 
 func NewListView(AOwner IComponent) IListView {
-	r1 := LCL().SysCallN(3438, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4080, GetObjectUintptr(AOwner))
 	return AsListView(r1)
 }
 
 func (m *TListView) AllocBy() int32 {
-	r1 := LCL().SysCallN(3431, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4073, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TListView) SetAllocBy(AValue int32) {
-	LCL().SysCallN(3431, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4073, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) AutoSort() bool {
-	r1 := LCL().SysCallN(3432, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4074, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetAutoSort(AValue bool) {
-	LCL().SysCallN(3432, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4074, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) AutoSortIndicator() bool {
-	r1 := LCL().SysCallN(3433, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4075, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetAutoSortIndicator(AValue bool) {
-	LCL().SysCallN(3433, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4075, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) AutoWidthLastColumn() bool {
-	r1 := LCL().SysCallN(3434, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4076, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetAutoWidthLastColumn(AValue bool) {
-	LCL().SysCallN(3434, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4076, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) Columns() IListColumns {
-	r1 := LCL().SysCallN(3437, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4079, 0, m.Instance(), 0)
 	return AsListColumns(r1)
 }
 
 func (m *TListView) SetColumns(AValue IListColumns) {
-	LCL().SysCallN(3437, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4079, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TListView) ColumnClick() bool {
-	r1 := LCL().SysCallN(3436, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4078, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetColumnClick(AValue bool) {
-	LCL().SysCallN(3436, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4078, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3439, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4081, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TListView) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3439, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4081, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3440, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4082, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TListView) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3440, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4082, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3441, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4083, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TListView) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3441, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4083, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) HideSelection() bool {
-	r1 := LCL().SysCallN(3442, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4084, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetHideSelection(AValue bool) {
-	LCL().SysCallN(3442, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4084, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) LargeImages() ICustomImageList {
-	r1 := LCL().SysCallN(3443, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4085, 0, m.Instance(), 0)
 	return AsCustomImageList(r1)
 }
 
 func (m *TListView) SetLargeImages(AValue ICustomImageList) {
-	LCL().SysCallN(3443, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4085, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TListView) LargeImagesWidth() int32 {
-	r1 := LCL().SysCallN(3444, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4086, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TListView) SetLargeImagesWidth(AValue int32) {
-	LCL().SysCallN(3444, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4086, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) OwnerDraw() bool {
-	r1 := LCL().SysCallN(3445, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4087, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetOwnerDraw(AValue bool) {
-	LCL().SysCallN(3445, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4087, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) ParentColor() bool {
-	r1 := LCL().SysCallN(3446, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4088, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetParentColor(AValue bool) {
-	LCL().SysCallN(3446, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4088, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) ParentFont() bool {
-	r1 := LCL().SysCallN(3447, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4089, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetParentFont(AValue bool) {
-	LCL().SysCallN(3447, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4089, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3448, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4090, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3448, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4090, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) ScrollBars() TScrollStyle {
-	r1 := LCL().SysCallN(3449, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4091, 0, m.Instance(), 0)
 	return TScrollStyle(r1)
 }
 
 func (m *TListView) SetScrollBars(AValue TScrollStyle) {
-	LCL().SysCallN(3449, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4091, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) ShowColumnHeaders() bool {
-	r1 := LCL().SysCallN(3490, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4132, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetShowColumnHeaders(AValue bool) {
-	LCL().SysCallN(3490, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4132, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) SmallImages() ICustomImageList {
-	r1 := LCL().SysCallN(3491, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4133, 0, m.Instance(), 0)
 	return AsCustomImageList(r1)
 }
 
 func (m *TListView) SetSmallImages(AValue ICustomImageList) {
-	LCL().SysCallN(3491, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4133, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TListView) SmallImagesWidth() int32 {
-	r1 := LCL().SysCallN(3492, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4134, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TListView) SetSmallImagesWidth(AValue int32) {
-	LCL().SysCallN(3492, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4134, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) SortColumn() int32 {
-	r1 := LCL().SysCallN(3493, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4135, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TListView) SetSortColumn(AValue int32) {
-	LCL().SysCallN(3493, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4135, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) SortDirection() TSortDirection {
-	r1 := LCL().SysCallN(3494, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4136, 0, m.Instance(), 0)
 	return TSortDirection(r1)
 }
 
 func (m *TListView) SetSortDirection(AValue TSortDirection) {
-	LCL().SysCallN(3494, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4136, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) SortType() TSortType {
-	r1 := LCL().SysCallN(3495, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4137, 0, m.Instance(), 0)
 	return TSortType(r1)
 }
 
 func (m *TListView) SetSortType(AValue TSortType) {
-	LCL().SysCallN(3495, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4137, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) StateImages() ICustomImageList {
-	r1 := LCL().SysCallN(3496, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4138, 0, m.Instance(), 0)
 	return AsCustomImageList(r1)
 }
 
 func (m *TListView) SetStateImages(AValue ICustomImageList) {
-	LCL().SysCallN(3496, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4138, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TListView) StateImagesWidth() int32 {
-	r1 := LCL().SysCallN(3497, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4139, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TListView) SetStateImagesWidth(AValue int32) {
-	LCL().SysCallN(3497, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4139, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListView) ToolTips() bool {
-	r1 := LCL().SysCallN(3498, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4140, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListView) SetToolTips(AValue bool) {
-	LCL().SysCallN(3498, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4140, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListView) ViewStyle() TViewStyle {
-	r1 := LCL().SysCallN(3499, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4141, 0, m.Instance(), 0)
 	return TViewStyle(r1)
 }
 
 func (m *TListView) SetViewStyle(AValue TViewStyle) {
-	LCL().SysCallN(3499, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4141, 1, m.Instance(), uintptr(AValue))
 }
 
 func ListViewClass() TClass {
-	ret := LCL().SysCallN(3435)
+	ret := LCL().SysCallN(4077)
 	return TClass(ret)
 }
 
@@ -416,7 +416,7 @@ func (m *TListView) SetOnAdvancedCustomDraw(fn TLVAdvancedCustomDrawEvent) {
 		RemoveEventElement(m.advancedCustomDrawPtr)
 	}
 	m.advancedCustomDrawPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3450, m.Instance(), m.advancedCustomDrawPtr)
+	LCL().SysCallN(4092, m.Instance(), m.advancedCustomDrawPtr)
 }
 
 func (m *TListView) SetOnAdvancedCustomDrawItem(fn TLVAdvancedCustomDrawItemEvent) {
@@ -424,7 +424,7 @@ func (m *TListView) SetOnAdvancedCustomDrawItem(fn TLVAdvancedCustomDrawItemEven
 		RemoveEventElement(m.advancedCustomDrawItemPtr)
 	}
 	m.advancedCustomDrawItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3451, m.Instance(), m.advancedCustomDrawItemPtr)
+	LCL().SysCallN(4093, m.Instance(), m.advancedCustomDrawItemPtr)
 }
 
 func (m *TListView) SetOnAdvancedCustomDrawSubItem(fn TLVAdvancedCustomDrawSubItemEvent) {
@@ -432,7 +432,7 @@ func (m *TListView) SetOnAdvancedCustomDrawSubItem(fn TLVAdvancedCustomDrawSubIt
 		RemoveEventElement(m.advancedCustomDrawSubItemPtr)
 	}
 	m.advancedCustomDrawSubItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3452, m.Instance(), m.advancedCustomDrawSubItemPtr)
+	LCL().SysCallN(4094, m.Instance(), m.advancedCustomDrawSubItemPtr)
 }
 
 func (m *TListView) SetOnChange(fn TLVChangeEvent) {
@@ -440,7 +440,7 @@ func (m *TListView) SetOnChange(fn TLVChangeEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3453, m.Instance(), m.changePtr)
+	LCL().SysCallN(4095, m.Instance(), m.changePtr)
 }
 
 func (m *TListView) SetOnColumnClick(fn TLVColumnClickEvent) {
@@ -448,7 +448,7 @@ func (m *TListView) SetOnColumnClick(fn TLVColumnClickEvent) {
 		RemoveEventElement(m.columnClickPtr)
 	}
 	m.columnClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3454, m.Instance(), m.columnClickPtr)
+	LCL().SysCallN(4096, m.Instance(), m.columnClickPtr)
 }
 
 func (m *TListView) SetOnCompare(fn TLVCompareEvent) {
@@ -456,7 +456,7 @@ func (m *TListView) SetOnCompare(fn TLVCompareEvent) {
 		RemoveEventElement(m.comparePtr)
 	}
 	m.comparePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3455, m.Instance(), m.comparePtr)
+	LCL().SysCallN(4097, m.Instance(), m.comparePtr)
 }
 
 func (m *TListView) SetOnContextPopup(fn TContextPopupEvent) {
@@ -464,7 +464,7 @@ func (m *TListView) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3456, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4098, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TListView) SetOnCreateItemClass(fn TLVCreateItemClassEvent) {
@@ -472,7 +472,7 @@ func (m *TListView) SetOnCreateItemClass(fn TLVCreateItemClassEvent) {
 		RemoveEventElement(m.createItemClassPtr)
 	}
 	m.createItemClassPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3457, m.Instance(), m.createItemClassPtr)
+	LCL().SysCallN(4099, m.Instance(), m.createItemClassPtr)
 }
 
 func (m *TListView) SetOnCustomDraw(fn TLVCustomDrawEvent) {
@@ -480,7 +480,7 @@ func (m *TListView) SetOnCustomDraw(fn TLVCustomDrawEvent) {
 		RemoveEventElement(m.customDrawPtr)
 	}
 	m.customDrawPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3458, m.Instance(), m.customDrawPtr)
+	LCL().SysCallN(4100, m.Instance(), m.customDrawPtr)
 }
 
 func (m *TListView) SetOnCustomDrawItem(fn TLVCustomDrawItemEvent) {
@@ -488,7 +488,7 @@ func (m *TListView) SetOnCustomDrawItem(fn TLVCustomDrawItemEvent) {
 		RemoveEventElement(m.customDrawItemPtr)
 	}
 	m.customDrawItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3459, m.Instance(), m.customDrawItemPtr)
+	LCL().SysCallN(4101, m.Instance(), m.customDrawItemPtr)
 }
 
 func (m *TListView) SetOnCustomDrawSubItem(fn TLVCustomDrawSubItemEvent) {
@@ -496,7 +496,7 @@ func (m *TListView) SetOnCustomDrawSubItem(fn TLVCustomDrawSubItemEvent) {
 		RemoveEventElement(m.customDrawSubItemPtr)
 	}
 	m.customDrawSubItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3460, m.Instance(), m.customDrawSubItemPtr)
+	LCL().SysCallN(4102, m.Instance(), m.customDrawSubItemPtr)
 }
 
 func (m *TListView) SetOnData(fn TLVDataEvent) {
@@ -504,7 +504,7 @@ func (m *TListView) SetOnData(fn TLVDataEvent) {
 		RemoveEventElement(m.dataPtr)
 	}
 	m.dataPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3461, m.Instance(), m.dataPtr)
+	LCL().SysCallN(4103, m.Instance(), m.dataPtr)
 }
 
 func (m *TListView) SetOnDataFind(fn TLVDataFindEvent) {
@@ -512,7 +512,7 @@ func (m *TListView) SetOnDataFind(fn TLVDataFindEvent) {
 		RemoveEventElement(m.dataFindPtr)
 	}
 	m.dataFindPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3462, m.Instance(), m.dataFindPtr)
+	LCL().SysCallN(4104, m.Instance(), m.dataFindPtr)
 }
 
 func (m *TListView) SetOnDataHint(fn TLVDataHintEvent) {
@@ -520,7 +520,7 @@ func (m *TListView) SetOnDataHint(fn TLVDataHintEvent) {
 		RemoveEventElement(m.dataHintPtr)
 	}
 	m.dataHintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3463, m.Instance(), m.dataHintPtr)
+	LCL().SysCallN(4105, m.Instance(), m.dataHintPtr)
 }
 
 func (m *TListView) SetOnDataStateChange(fn TLVDataStateChangeEvent) {
@@ -528,7 +528,7 @@ func (m *TListView) SetOnDataStateChange(fn TLVDataStateChangeEvent) {
 		RemoveEventElement(m.dataStateChangePtr)
 	}
 	m.dataStateChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3464, m.Instance(), m.dataStateChangePtr)
+	LCL().SysCallN(4106, m.Instance(), m.dataStateChangePtr)
 }
 
 func (m *TListView) SetOnDblClick(fn TNotifyEvent) {
@@ -536,7 +536,7 @@ func (m *TListView) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3465, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(4107, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TListView) SetOnDeletion(fn TLVDeletedEvent) {
@@ -544,7 +544,7 @@ func (m *TListView) SetOnDeletion(fn TLVDeletedEvent) {
 		RemoveEventElement(m.deletionPtr)
 	}
 	m.deletionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3466, m.Instance(), m.deletionPtr)
+	LCL().SysCallN(4108, m.Instance(), m.deletionPtr)
 }
 
 func (m *TListView) SetOnDragDrop(fn TDragDropEvent) {
@@ -552,7 +552,7 @@ func (m *TListView) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3467, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4109, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TListView) SetOnDragOver(fn TDragOverEvent) {
@@ -560,7 +560,7 @@ func (m *TListView) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3468, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4110, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TListView) SetOnDrawItem(fn TLVDrawItemEvent) {
@@ -568,7 +568,7 @@ func (m *TListView) SetOnDrawItem(fn TLVDrawItemEvent) {
 		RemoveEventElement(m.drawItemPtr)
 	}
 	m.drawItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3469, m.Instance(), m.drawItemPtr)
+	LCL().SysCallN(4111, m.Instance(), m.drawItemPtr)
 }
 
 func (m *TListView) SetOnEdited(fn TLVEditedEvent) {
@@ -576,7 +576,7 @@ func (m *TListView) SetOnEdited(fn TLVEditedEvent) {
 		RemoveEventElement(m.editedPtr)
 	}
 	m.editedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3470, m.Instance(), m.editedPtr)
+	LCL().SysCallN(4112, m.Instance(), m.editedPtr)
 }
 
 func (m *TListView) SetOnEditing(fn TLVEditingEvent) {
@@ -584,7 +584,7 @@ func (m *TListView) SetOnEditing(fn TLVEditingEvent) {
 		RemoveEventElement(m.editingPtr)
 	}
 	m.editingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3471, m.Instance(), m.editingPtr)
+	LCL().SysCallN(4113, m.Instance(), m.editingPtr)
 }
 
 func (m *TListView) SetOnEndDock(fn TEndDragEvent) {
@@ -592,7 +592,7 @@ func (m *TListView) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3472, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(4114, m.Instance(), m.endDockPtr)
 }
 
 func (m *TListView) SetOnEndDrag(fn TEndDragEvent) {
@@ -600,7 +600,7 @@ func (m *TListView) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3473, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4115, m.Instance(), m.endDragPtr)
 }
 
 func (m *TListView) SetOnInsert(fn TLVInsertEvent) {
@@ -608,7 +608,7 @@ func (m *TListView) SetOnInsert(fn TLVInsertEvent) {
 		RemoveEventElement(m.insertPtr)
 	}
 	m.insertPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3474, m.Instance(), m.insertPtr)
+	LCL().SysCallN(4116, m.Instance(), m.insertPtr)
 }
 
 func (m *TListView) SetOnItemChecked(fn TLVCheckedItemEvent) {
@@ -616,7 +616,7 @@ func (m *TListView) SetOnItemChecked(fn TLVCheckedItemEvent) {
 		RemoveEventElement(m.itemCheckedPtr)
 	}
 	m.itemCheckedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3475, m.Instance(), m.itemCheckedPtr)
+	LCL().SysCallN(4117, m.Instance(), m.itemCheckedPtr)
 }
 
 func (m *TListView) SetOnMouseDown(fn TMouseEvent) {
@@ -624,7 +624,7 @@ func (m *TListView) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3476, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4118, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TListView) SetOnMouseEnter(fn TNotifyEvent) {
@@ -632,7 +632,7 @@ func (m *TListView) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3477, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4119, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TListView) SetOnMouseLeave(fn TNotifyEvent) {
@@ -640,7 +640,7 @@ func (m *TListView) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3478, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4120, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TListView) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -648,7 +648,7 @@ func (m *TListView) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3479, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4121, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TListView) SetOnMouseUp(fn TMouseEvent) {
@@ -656,7 +656,7 @@ func (m *TListView) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3480, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4122, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TListView) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -664,7 +664,7 @@ func (m *TListView) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3481, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4123, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TListView) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -672,7 +672,7 @@ func (m *TListView) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3482, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4124, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TListView) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -680,7 +680,7 @@ func (m *TListView) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3486, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4128, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TListView) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -688,7 +688,7 @@ func (m *TListView) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3483, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(4125, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TListView) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -696,7 +696,7 @@ func (m *TListView) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3484, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(4126, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TListView) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -704,7 +704,7 @@ func (m *TListView) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3485, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(4127, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TListView) SetOnSelectItem(fn TLVSelectItemEvent) {
@@ -712,7 +712,7 @@ func (m *TListView) SetOnSelectItem(fn TLVSelectItemEvent) {
 		RemoveEventElement(m.selectItemPtr)
 	}
 	m.selectItemPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3487, m.Instance(), m.selectItemPtr)
+	LCL().SysCallN(4129, m.Instance(), m.selectItemPtr)
 }
 
 func (m *TListView) SetOnStartDock(fn TStartDockEvent) {
@@ -720,7 +720,7 @@ func (m *TListView) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3488, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(4130, m.Instance(), m.startDockPtr)
 }
 
 func (m *TListView) SetOnStartDrag(fn TStartDragEvent) {
@@ -728,5 +728,5 @@ func (m *TListView) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3489, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4131, m.Instance(), m.startDragPtr)
 }

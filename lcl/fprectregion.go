@@ -24,11 +24,11 @@ type TFPRectRegion struct {
 }
 
 func NewFPRectRegion() IFPRectRegion {
-	r1 := LCL().SysCallN(2751)
+	r1 := LCL().SysCallN(2994)
 	return AsFPRectRegion(r1)
 }
 
 func FPRectRegionClass() TClass {
-	ret := LCL().SysCallN(2750)
+	ret := LCL().SysCallN(2993)
 	return TClass(ret)
 }

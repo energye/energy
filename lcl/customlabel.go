@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomLabel Parent: IGraphicControl
@@ -28,7 +27,7 @@ type TCustomLabel struct {
 }
 
 func NewCustomLabel(TheOwner IComponent) ICustomLabel {
-	r1 := LCL().SysCallN(1792, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(1982, GetObjectUintptr(TheOwner))
 	return AsCustomLabel(r1)
 }
 
@@ -36,7 +35,7 @@ func (m *TCustomLabel) CalcFittingFontHeight(TheText string, MaxWidth, MaxHeight
 	var result2 uintptr
 	var result3 uintptr
 	var result4 uintptr
-	r1 := LCL().SysCallN(1790, m.Instance(), PascalStr(TheText), uintptr(MaxWidth), uintptr(MaxHeight), uintptr(unsafe.Pointer(&result2)), uintptr(unsafe.Pointer(&result3)), uintptr(unsafe.Pointer(&result4)))
+	r1 := LCL().SysCallN(1980, m.Instance(), PascalStr(TheText), uintptr(MaxWidth), uintptr(MaxHeight), uintptr(unsafePointer(&result2)), uintptr(unsafePointer(&result3)), uintptr(unsafePointer(&result4)))
 	*OutFontHeight = int32(result2)
 	*OutNeededWidth = int32(result3)
 	*OutNeededHeight = int32(result4)
@@ -44,15 +43,15 @@ func (m *TCustomLabel) CalcFittingFontHeight(TheText string, MaxWidth, MaxHeight
 }
 
 func (m *TCustomLabel) AdjustFontForOptimalFill() bool {
-	r1 := LCL().SysCallN(1789, m.Instance())
+	r1 := LCL().SysCallN(1979, m.Instance())
 	return GoBool(r1)
 }
 
 func CustomLabelClass() TClass {
-	ret := LCL().SysCallN(1791)
+	ret := LCL().SysCallN(1981)
 	return TClass(ret)
 }
 
 func (m *TCustomLabel) Paint() {
-	LCL().SysCallN(1793, m.Instance())
+	LCL().SysCallN(1983, m.Instance())
 }

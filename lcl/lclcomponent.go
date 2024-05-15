@@ -28,28 +28,28 @@ type TLCLComponent struct {
 }
 
 func NewLCLComponent(TheOwner IComponent) ILCLComponent {
-	r1 := LCL().SysCallN(3179, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3422, GetObjectUintptr(TheOwner))
 	return AsLCLComponent(r1)
 }
 
 func (m *TLCLComponent) LCLRefCount() int32 {
-	r1 := LCL().SysCallN(3182, m.Instance())
+	r1 := LCL().SysCallN(3425, m.Instance())
 	return int32(r1)
 }
 
 func LCLComponentClass() TClass {
-	ret := LCL().SysCallN(3178)
+	ret := LCL().SysCallN(3421)
 	return TClass(ret)
 }
 
 func (m *TLCLComponent) RemoveAllHandlersOfObject(AnObject IObject) {
-	LCL().SysCallN(3183, m.Instance(), GetObjectUintptr(AnObject))
+	LCL().SysCallN(3426, m.Instance(), GetObjectUintptr(AnObject))
 }
 
 func (m *TLCLComponent) IncLCLRefCount() {
-	LCL().SysCallN(3181, m.Instance())
+	LCL().SysCallN(3424, m.Instance())
 }
 
 func (m *TLCLComponent) DecLCLRefCount() {
-	LCL().SysCallN(3180, m.Instance())
+	LCL().SysCallN(3423, m.Instance())
 }

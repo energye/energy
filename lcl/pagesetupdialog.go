@@ -52,129 +52,129 @@ type TPageSetupDialog struct {
 }
 
 func NewPageSetupDialog(TheOwner IComponent) IPageSetupDialog {
-	r1 := LCL().SysCallN(3781, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4423, GetObjectUintptr(TheOwner))
 	return AsPageSetupDialog(r1)
 }
 
 func (m *TPageSetupDialog) AttachTo() ICustomForm {
-	r1 := LCL().SysCallN(3779, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4421, 0, m.Instance(), 0)
 	return AsCustomForm(r1)
 }
 
 func (m *TPageSetupDialog) SetAttachTo(AValue ICustomForm) {
-	LCL().SysCallN(3779, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4421, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TPageSetupDialog) PageWidth() int32 {
-	r1 := LCL().SysCallN(3792, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4434, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetPageWidth(AValue int32) {
-	LCL().SysCallN(3792, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4434, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) PageHeight() int32 {
-	r1 := LCL().SysCallN(3791, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4433, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetPageHeight(AValue int32) {
-	LCL().SysCallN(3791, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4433, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MarginLeft() int32 {
-	r1 := LCL().SysCallN(3783, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4425, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMarginLeft(AValue int32) {
-	LCL().SysCallN(3783, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4425, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MarginTop() int32 {
-	r1 := LCL().SysCallN(3785, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4427, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMarginTop(AValue int32) {
-	LCL().SysCallN(3785, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4427, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MarginRight() int32 {
-	r1 := LCL().SysCallN(3784, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4426, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMarginRight(AValue int32) {
-	LCL().SysCallN(3784, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4426, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MarginBottom() int32 {
-	r1 := LCL().SysCallN(3782, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4424, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMarginBottom(AValue int32) {
-	LCL().SysCallN(3782, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4424, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MinMarginLeft() int32 {
-	r1 := LCL().SysCallN(3787, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4429, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMinMarginLeft(AValue int32) {
-	LCL().SysCallN(3787, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4429, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MinMarginTop() int32 {
-	r1 := LCL().SysCallN(3789, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4431, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMinMarginTop(AValue int32) {
-	LCL().SysCallN(3789, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4431, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MinMarginRight() int32 {
-	r1 := LCL().SysCallN(3788, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4430, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMinMarginRight(AValue int32) {
-	LCL().SysCallN(3788, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4430, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) MinMarginBottom() int32 {
-	r1 := LCL().SysCallN(3786, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4428, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPageSetupDialog) SetMinMarginBottom(AValue int32) {
-	LCL().SysCallN(3786, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4428, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) Options() TPageSetupDialogOptions {
-	r1 := LCL().SysCallN(3790, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4432, 0, m.Instance(), 0)
 	return TPageSetupDialogOptions(r1)
 }
 
 func (m *TPageSetupDialog) SetOptions(AValue TPageSetupDialogOptions) {
-	LCL().SysCallN(3790, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4432, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPageSetupDialog) Units() TPageMeasureUnits {
-	r1 := LCL().SysCallN(3794, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4436, 0, m.Instance(), 0)
 	return TPageMeasureUnits(r1)
 }
 
 func (m *TPageSetupDialog) SetUnits(AValue TPageMeasureUnits) {
-	LCL().SysCallN(3794, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4436, 1, m.Instance(), uintptr(AValue))
 }
 
 func PageSetupDialogClass() TClass {
-	ret := LCL().SysCallN(3780)
+	ret := LCL().SysCallN(4422)
 	return TClass(ret)
 }
 
@@ -183,5 +183,5 @@ func (m *TPageSetupDialog) SetOnDialogResult(fn TDialogResultEvent) {
 		RemoveEventElement(m.dialogResultPtr)
 	}
 	m.dialogResultPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3793, m.Instance(), m.dialogResultPtr)
+	LCL().SysCallN(4435, m.Instance(), m.dialogResultPtr)
 }

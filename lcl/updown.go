@@ -82,138 +82,138 @@ type TUpDown struct {
 }
 
 func NewUpDown(AOwner IComponent) IUpDown {
-	r1 := LCL().SysCallN(5126, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(5784, GetObjectUintptr(AOwner))
 	return AsUpDown(r1)
 }
 
 func (m *TUpDown) AlignButton() TUDAlignButton {
-	r1 := LCL().SysCallN(5122, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5780, 0, m.Instance(), 0)
 	return TUDAlignButton(r1)
 }
 
 func (m *TUpDown) SetAlignButton(AValue TUDAlignButton) {
-	LCL().SysCallN(5122, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5780, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) ArrowKeys() bool {
-	r1 := LCL().SysCallN(5123, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5781, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetArrowKeys(AValue bool) {
-	LCL().SysCallN(5123, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5781, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TUpDown) Associate() IWinControl {
-	r1 := LCL().SysCallN(5124, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5782, 0, m.Instance(), 0)
 	return AsWinControl(r1)
 }
 
 func (m *TUpDown) SetAssociate(AValue IWinControl) {
-	LCL().SysCallN(5124, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5782, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TUpDown) Increment() int32 {
-	r1 := LCL().SysCallN(5128, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5786, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TUpDown) SetIncrement(AValue int32) {
-	LCL().SysCallN(5128, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5786, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) Max() SmallInt {
-	r1 := LCL().SysCallN(5129, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5787, 0, m.Instance(), 0)
 	return SmallInt(r1)
 }
 
 func (m *TUpDown) SetMax(AValue SmallInt) {
-	LCL().SysCallN(5129, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5787, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) Min() SmallInt {
-	r1 := LCL().SysCallN(5130, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5788, 0, m.Instance(), 0)
 	return SmallInt(r1)
 }
 
 func (m *TUpDown) SetMin(AValue SmallInt) {
-	LCL().SysCallN(5130, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5788, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) MinRepeatInterval() Byte {
-	r1 := LCL().SysCallN(5131, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5789, 0, m.Instance(), 0)
 	return Byte(r1)
 }
 
 func (m *TUpDown) SetMinRepeatInterval(AValue Byte) {
-	LCL().SysCallN(5131, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5789, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) Orientation() TUDOrientation {
-	r1 := LCL().SysCallN(5132, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5790, 0, m.Instance(), 0)
 	return TUDOrientation(r1)
 }
 
 func (m *TUpDown) SetOrientation(AValue TUDOrientation) {
-	LCL().SysCallN(5132, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5790, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) ParentColor() bool {
-	r1 := LCL().SysCallN(5133, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5791, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetParentColor(AValue bool) {
-	LCL().SysCallN(5133, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5791, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TUpDown) ParentShowHint() bool {
-	r1 := LCL().SysCallN(5134, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5792, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(5134, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5792, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TUpDown) Position() SmallInt {
-	r1 := LCL().SysCallN(5135, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5793, 0, m.Instance(), 0)
 	return SmallInt(r1)
 }
 
 func (m *TUpDown) SetPosition(AValue SmallInt) {
-	LCL().SysCallN(5135, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5793, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TUpDown) Thousands() bool {
-	r1 := LCL().SysCallN(5151, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5809, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetThousands(AValue bool) {
-	LCL().SysCallN(5151, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5809, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TUpDown) Flat() bool {
-	r1 := LCL().SysCallN(5127, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5785, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetFlat(AValue bool) {
-	LCL().SysCallN(5127, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5785, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TUpDown) Wrap() bool {
-	r1 := LCL().SysCallN(5152, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5810, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TUpDown) SetWrap(AValue bool) {
-	LCL().SysCallN(5152, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5810, 1, m.Instance(), PascalBool(AValue))
 }
 
 func UpDownClass() TClass {
-	ret := LCL().SysCallN(5125)
+	ret := LCL().SysCallN(5783)
 	return TClass(ret)
 }
 
@@ -222,7 +222,7 @@ func (m *TUpDown) SetOnChanging(fn TUDChangingEvent) {
 		RemoveEventElement(m.changingPtr)
 	}
 	m.changingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5136, m.Instance(), m.changingPtr)
+	LCL().SysCallN(5794, m.Instance(), m.changingPtr)
 }
 
 func (m *TUpDown) SetOnChangingEx(fn TUDChangingEventEx) {
@@ -230,7 +230,7 @@ func (m *TUpDown) SetOnChangingEx(fn TUDChangingEventEx) {
 		RemoveEventElement(m.changingExPtr)
 	}
 	m.changingExPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5137, m.Instance(), m.changingExPtr)
+	LCL().SysCallN(5795, m.Instance(), m.changingExPtr)
 }
 
 func (m *TUpDown) SetOnClickForUDClickEvent(fn TUDClickEvent) {
@@ -238,7 +238,7 @@ func (m *TUpDown) SetOnClickForUDClickEvent(fn TUDClickEvent) {
 		RemoveEventElement(m.clickForUDClickEventPtr)
 	}
 	m.clickForUDClickEventPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5138, m.Instance(), m.clickForUDClickEventPtr)
+	LCL().SysCallN(5796, m.Instance(), m.clickForUDClickEventPtr)
 }
 
 func (m *TUpDown) SetOnContextPopup(fn TContextPopupEvent) {
@@ -246,7 +246,7 @@ func (m *TUpDown) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5139, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(5797, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TUpDown) SetOnMouseDown(fn TMouseEvent) {
@@ -254,7 +254,7 @@ func (m *TUpDown) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5140, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(5798, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TUpDown) SetOnMouseEnter(fn TNotifyEvent) {
@@ -262,7 +262,7 @@ func (m *TUpDown) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5141, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(5799, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TUpDown) SetOnMouseLeave(fn TNotifyEvent) {
@@ -270,7 +270,7 @@ func (m *TUpDown) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5142, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(5800, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TUpDown) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -278,7 +278,7 @@ func (m *TUpDown) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5143, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(5801, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TUpDown) SetOnMouseUp(fn TMouseEvent) {
@@ -286,7 +286,7 @@ func (m *TUpDown) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5144, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(5802, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -294,7 +294,7 @@ func (m *TUpDown) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5145, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5803, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -302,7 +302,7 @@ func (m *TUpDown) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5146, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5804, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -310,7 +310,7 @@ func (m *TUpDown) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5150, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5808, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -318,7 +318,7 @@ func (m *TUpDown) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5147, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(5805, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -326,7 +326,7 @@ func (m *TUpDown) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5148, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(5806, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TUpDown) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -334,5 +334,5 @@ func (m *TUpDown) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5149, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(5807, m.Instance(), m.mouseWheelRightPtr)
 }

@@ -41,81 +41,81 @@ type TCollection struct {
 }
 
 func NewCollection(AItemClass TCollectionItemClass) ICollection {
-	r1 := LCL().SysCallN(513, uintptr(AItemClass))
+	r1 := LCL().SysCallN(703, uintptr(AItemClass))
 	return AsCollection(r1)
 }
 
 func (m *TCollection) Count() int32 {
-	r1 := LCL().SysCallN(512, m.Instance())
+	r1 := LCL().SysCallN(702, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCollection) ItemClass() TCollectionItemClass {
-	r1 := LCL().SysCallN(520, m.Instance())
+	r1 := LCL().SysCallN(710, m.Instance())
 	return TCollectionItemClass(r1)
 }
 
 func (m *TCollection) Items(Index int32) ICollectionItem {
-	r1 := LCL().SysCallN(521, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(711, 0, m.Instance(), uintptr(Index))
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollection) SetItems(Index int32, AValue ICollectionItem) {
-	LCL().SysCallN(521, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
+	LCL().SysCallN(711, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
 }
 
 func (m *TCollection) Owner() IPersistent {
-	r1 := LCL().SysCallN(523, m.Instance())
+	r1 := LCL().SysCallN(713, m.Instance())
 	return AsPersistent(r1)
 }
 
 func (m *TCollection) Add() ICollectionItem {
-	r1 := LCL().SysCallN(508, m.Instance())
+	r1 := LCL().SysCallN(698, m.Instance())
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollection) GetEnumerator() ICollectionEnumerator {
-	r1 := LCL().SysCallN(518, m.Instance())
+	r1 := LCL().SysCallN(708, m.Instance())
 	return AsCollectionEnumerator(r1)
 }
 
 func (m *TCollection) Insert(Index int32) ICollectionItem {
-	r1 := LCL().SysCallN(519, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(709, m.Instance(), uintptr(Index))
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollection) FindItemID(ID int32) ICollectionItem {
-	r1 := LCL().SysCallN(517, m.Instance(), uintptr(ID))
+	r1 := LCL().SysCallN(707, m.Instance(), uintptr(ID))
 	return AsCollectionItem(r1)
 }
 
 func CollectionClass() TClass {
-	ret := LCL().SysCallN(510)
+	ret := LCL().SysCallN(700)
 	return TClass(ret)
 }
 
 func (m *TCollection) BeginUpdate() {
-	LCL().SysCallN(509, m.Instance())
+	LCL().SysCallN(699, m.Instance())
 }
 
 func (m *TCollection) Clear() {
-	LCL().SysCallN(511, m.Instance())
+	LCL().SysCallN(701, m.Instance())
 }
 
 func (m *TCollection) EndUpdate() {
-	LCL().SysCallN(515, m.Instance())
+	LCL().SysCallN(705, m.Instance())
 }
 
 func (m *TCollection) Delete(Index int32) {
-	LCL().SysCallN(514, m.Instance(), uintptr(Index))
+	LCL().SysCallN(704, m.Instance(), uintptr(Index))
 }
 
 func (m *TCollection) Exchange(Index1, index2 int32) {
-	LCL().SysCallN(516, m.Instance(), uintptr(Index1), uintptr(index2))
+	LCL().SysCallN(706, m.Instance(), uintptr(Index1), uintptr(index2))
 }
 
 func (m *TCollection) Move(Index1, index2 int32) {
-	LCL().SysCallN(522, m.Instance(), uintptr(Index1), uintptr(index2))
+	LCL().SysCallN(712, m.Instance(), uintptr(Index1), uintptr(index2))
 }
 
 func (m *TCollection) Sort(fn TCollectionSortCompare) {
@@ -123,5 +123,5 @@ func (m *TCollection) Sort(fn TCollectionSortCompare) {
 		RemoveEventElement(m.sortPtr)
 	}
 	m.sortPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(524, m.Instance(), m.sortPtr)
+	LCL().SysCallN(714, m.Instance(), m.sortPtr)
 }

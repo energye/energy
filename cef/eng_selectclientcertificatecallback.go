@@ -15,7 +15,7 @@ import (
 // ICefSelectClientCertificateCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used to select a client certificate for authentication.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_handler_capi.h">CEF source file: /include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_handler_capi.h">CEF source file: /include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t))</a>
 type ICefSelectClientCertificateCallback interface {
 	ICefBaseRefCounted
 	// Select
@@ -26,7 +26,7 @@ type ICefSelectClientCertificateCallback interface {
 // TCefSelectClientCertificateCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used to select a client certificate for authentication.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_handler_capi.h">CEF source file: /include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_handler_capi.h">CEF source file: /include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t))</a>
 type TCefSelectClientCertificateCallback struct {
 	TCefBaseRefCounted
 }

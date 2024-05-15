@@ -11,13 +11,12 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IApplication Parent: ICustomApplication
 type IApplication interface {
 	ICustomApplication
-	CreateForm(fields ...interface{}) IForm
+	CreateForm(forms ...IForm) IForm
 	Initialize()
 	SetRunLoopReceived(proc uintptr)
 	SetIconResId(id int)
@@ -467,7 +466,7 @@ func (m *TApplication) GetControlAtMouse() IControl {
 }
 
 func (m *TApplication) GetControlAtPos(P *TPoint) IControl {
-	r1 := LCL().SysCallN(124, m.Instance(), uintptr(unsafe.Pointer(P)))
+	r1 := LCL().SysCallN(124, m.Instance(), uintptr(unsafePointer(P)))
 	return AsControl(r1)
 }
 
@@ -513,7 +512,7 @@ func (m *TApplication) MessageBox(Text, Caption string, Flags int32) int32 {
 
 func (m *TApplication) IsShortcut(Message *TLMKey) bool {
 	var result0 uintptr
-	r1 := LCL().SysCallN(151, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	r1 := LCL().SysCallN(151, m.Instance(), uintptr(unsafePointer(&result0)))
 	*Message = *(*TLMKey)(getPointer(result0))
 	return GoBool(r1)
 }
@@ -539,7 +538,7 @@ func ApplicationClass() TClass {
 }
 
 func (m *TApplication) ActivateHint(CursorPos *TPoint, CheckHintControlChange bool) {
-	LCL().SysCallN(97, m.Instance(), uintptr(unsafe.Pointer(CursorPos)), PascalBool(CheckHintControlChange))
+	LCL().SysCallN(97, m.Instance(), uintptr(unsafePointer(CursorPos)), PascalBool(CheckHintControlChange))
 }
 
 func (m *TApplication) ControlDestroyed(AControl IControl) {
@@ -588,7 +587,7 @@ func (m *TApplication) HideHint() {
 
 func (m *TApplication) HintMouseMessage(Control IControl, AMessage *TLMessage) {
 	var result1 uintptr
-	LCL().SysCallN(136, m.Instance(), GetObjectUintptr(Control), uintptr(unsafe.Pointer(&result1)))
+	LCL().SysCallN(136, m.Instance(), GetObjectUintptr(Control), uintptr(unsafePointer(&result1)))
 	*AMessage = *(*TLMessage)(getPointer(result1))
 }
 
@@ -634,25 +633,25 @@ func (m *TApplication) NotifyUserInputHandler(Sender IObject, Msg uint32) {
 
 func (m *TApplication) NotifyKeyDownBeforeHandler(Sender IObject, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(166, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(166, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) NotifyKeyDownHandler(Sender IObject, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(167, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(167, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) ControlKeyDown(Sender IObject, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(107, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(107, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) ControlKeyUp(Sender IObject, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(108, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(108, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
@@ -694,25 +693,25 @@ func (m *TApplication) IntfThemeOptionChange(AThemeServices IThemeServices, AOpt
 
 func (m *TApplication) DoArrowKey(AControl IWinControl, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(112, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(112, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) DoTabKey(AControl IWinControl, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(116, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(116, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) DoEscapeKey(AControl IWinControl, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(114, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(114, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TApplication) DoReturnKey(AControl IWinControl, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(115, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(115, m.Instance(), GetObjectUintptr(AControl), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 

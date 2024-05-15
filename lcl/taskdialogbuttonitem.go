@@ -24,11 +24,11 @@ type TTaskDialogButtonItem struct {
 }
 
 func NewTaskDialogButtonItem(ACollection ICollection) ITaskDialogButtonItem {
-	r1 := LCL().SysCallN(4692, GetObjectUintptr(ACollection))
+	r1 := LCL().SysCallN(5350, GetObjectUintptr(ACollection))
 	return AsTaskDialogButtonItem(r1)
 }
 
 func TaskDialogButtonItemClass() TClass {
-	ret := LCL().SysCallN(4691)
+	ret := LCL().SysCallN(5349)
 	return TClass(ret)
 }

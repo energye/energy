@@ -15,7 +15,7 @@ import (
 // ICefJsDialogCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of JavaScript dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_jsdialog_handler_capi.h">CEF source file: /include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_jsdialog_handler_capi.h">CEF source file: /include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t))</a>
 type ICefJsDialogCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -26,7 +26,7 @@ type ICefJsDialogCallback interface {
 // TCefJsDialogCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used for asynchronous continuation of JavaScript dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_jsdialog_handler_capi.h">CEF source file: /include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_jsdialog_handler_capi.h">CEF source file: /include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t))</a>
 type TCefJsDialogCallback struct {
 	TCefBaseRefCounted
 }

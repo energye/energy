@@ -146,7 +146,7 @@ func (p *TPlayControl) onMouseMove(sender IObject, shift TShiftState, x, y int32
 		return
 	}
 	var col, row int32
-	p.MouseToCellInOverload1(x, y, &col, &row)
+	p.MouseToCell1(x, y, &col, &row)
 	p.mouseMoveIndex = row
 	if p.mouseMoveIndex == -1 {
 		return

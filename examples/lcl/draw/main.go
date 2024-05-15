@@ -81,7 +81,7 @@ func main() {
 
 		// pen
 		pen.SetColor(colors.ClFuchsia)
-		canvas.RectangleInOverload1(r.Left, r.Top, r.Right, r.Bottom)
+		canvas.Rectangle1(r.Left, r.Top, r.Right, r.Bottom)
 
 		textFmt := types.NewSet(types.TfCenter, types.TfSingleLine, types.TfVerticalCenter)
 		canvas.TextRect2(r, s, textFmt)

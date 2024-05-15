@@ -26,21 +26,21 @@ type TLazDockPage struct {
 }
 
 func NewLazDockPage(TheOwner IComponent) ILazDockPage {
-	r1 := LCL().SysCallN(3283, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3526, GetObjectUintptr(TheOwner))
 	return AsLazDockPage(r1)
 }
 
 func (m *TLazDockPage) DockZone() IDockZone {
-	r1 := LCL().SysCallN(3284, m.Instance())
+	r1 := LCL().SysCallN(3527, m.Instance())
 	return AsDockZone(r1)
 }
 
 func (m *TLazDockPage) PageControl() ILazDockPages {
-	r1 := LCL().SysCallN(3285, m.Instance())
+	r1 := LCL().SysCallN(3528, m.Instance())
 	return AsLazDockPages(r1)
 }
 
 func LazDockPageClass() TClass {
-	ret := LCL().SysCallN(3282)
+	ret := LCL().SysCallN(3525)
 	return TClass(ret)
 }

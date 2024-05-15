@@ -1702,6 +1702,9 @@ func eventCallbackProc(f uintptr, args uintptr, _ int) uintptr {
 			view := AsCefView(getVal(1))
 			fn.(TOnView)(lcl.AsObject(getVal(0)), view)
 
+		case TTaskExecute:
+			fn.(TTaskExecute)()
+
 		//case TOnFocus = TOnView
 		//case TOnBlur = TOnView
 

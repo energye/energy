@@ -42,83 +42,83 @@ type TCustomCheckCombo struct {
 }
 
 func NewCustomCheckCombo(AOwner IComponent) ICustomCheckCombo {
-	r1 := LCL().SysCallN(1181, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1371, GetObjectUintptr(AOwner))
 	return AsCustomCheckCombo(r1)
 }
 
 func (m *TCustomCheckCombo) AllowGrayed() bool {
-	r1 := LCL().SysCallN(1175, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1365, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomCheckCombo) SetAllowGrayed(AValue bool) {
-	LCL().SysCallN(1175, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1365, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomCheckCombo) Count() int32 {
-	r1 := LCL().SysCallN(1180, m.Instance())
+	r1 := LCL().SysCallN(1370, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomCheckCombo) Checked(AIndex int32) bool {
-	r1 := LCL().SysCallN(1178, 0, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(1368, 0, m.Instance(), uintptr(AIndex))
 	return GoBool(r1)
 }
 
 func (m *TCustomCheckCombo) SetChecked(AIndex int32, AValue bool) {
-	LCL().SysCallN(1178, 1, m.Instance(), uintptr(AIndex), PascalBool(AValue))
+	LCL().SysCallN(1368, 1, m.Instance(), uintptr(AIndex), PascalBool(AValue))
 }
 
 func (m *TCustomCheckCombo) ItemEnabled(AIndex int32) bool {
-	r1 := LCL().SysCallN(1183, 0, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(1373, 0, m.Instance(), uintptr(AIndex))
 	return GoBool(r1)
 }
 
 func (m *TCustomCheckCombo) SetItemEnabled(AIndex int32, AValue bool) {
-	LCL().SysCallN(1183, 1, m.Instance(), uintptr(AIndex), PascalBool(AValue))
+	LCL().SysCallN(1373, 1, m.Instance(), uintptr(AIndex), PascalBool(AValue))
 }
 
 func (m *TCustomCheckCombo) Objects(AIndex int32) IObject {
-	r1 := LCL().SysCallN(1184, 0, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(1374, 0, m.Instance(), uintptr(AIndex))
 	return AsObject(r1)
 }
 
 func (m *TCustomCheckCombo) SetObjects(AIndex int32, AValue IObject) {
-	LCL().SysCallN(1184, 1, m.Instance(), uintptr(AIndex), GetObjectUintptr(AValue))
+	LCL().SysCallN(1374, 1, m.Instance(), uintptr(AIndex), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomCheckCombo) State(AIndex int32) TCheckBoxState {
-	r1 := LCL().SysCallN(1186, 0, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(1376, 0, m.Instance(), uintptr(AIndex))
 	return TCheckBoxState(r1)
 }
 
 func (m *TCustomCheckCombo) SetState(AIndex int32, AValue TCheckBoxState) {
-	LCL().SysCallN(1186, 1, m.Instance(), uintptr(AIndex), uintptr(AValue))
+	LCL().SysCallN(1376, 1, m.Instance(), uintptr(AIndex), uintptr(AValue))
 }
 
 func CustomCheckComboClass() TClass {
-	ret := LCL().SysCallN(1179)
+	ret := LCL().SysCallN(1369)
 	return TClass(ret)
 }
 
 func (m *TCustomCheckCombo) AddItemForCheckBoxState(AItem string, AState TCheckBoxState, AEnabled bool) {
-	LCL().SysCallN(1174, m.Instance(), PascalStr(AItem), uintptr(AState), PascalBool(AEnabled))
+	LCL().SysCallN(1364, m.Instance(), PascalStr(AItem), uintptr(AState), PascalBool(AEnabled))
 }
 
 func (m *TCustomCheckCombo) AssignItems(AItems IStrings) {
-	LCL().SysCallN(1176, m.Instance(), GetObjectUintptr(AItems))
+	LCL().SysCallN(1366, m.Instance(), GetObjectUintptr(AItems))
 }
 
 func (m *TCustomCheckCombo) DeleteItem(AIndex int32) {
-	LCL().SysCallN(1182, m.Instance(), uintptr(AIndex))
+	LCL().SysCallN(1372, m.Instance(), uintptr(AIndex))
 }
 
 func (m *TCustomCheckCombo) CheckAll(AState TCheckBoxState, AAllowGrayed bool, AAllowDisabled bool) {
-	LCL().SysCallN(1177, m.Instance(), uintptr(AState), PascalBool(AAllowGrayed), PascalBool(AAllowDisabled))
+	LCL().SysCallN(1367, m.Instance(), uintptr(AState), PascalBool(AAllowGrayed), PascalBool(AAllowDisabled))
 }
 
 func (m *TCustomCheckCombo) Toggle(AIndex int32) {
-	LCL().SysCallN(1187, m.Instance(), uintptr(AIndex))
+	LCL().SysCallN(1377, m.Instance(), uintptr(AIndex))
 }
 
 func (m *TCustomCheckCombo) SetOnItemChange(fn TCheckItemChange) {
@@ -126,5 +126,5 @@ func (m *TCustomCheckCombo) SetOnItemChange(fn TCheckItemChange) {
 		RemoveEventElement(m.itemChangePtr)
 	}
 	m.itemChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1185, m.Instance(), m.itemChangePtr)
+	LCL().SysCallN(1375, m.Instance(), m.itemChangePtr)
 }

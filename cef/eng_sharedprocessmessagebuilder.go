@@ -15,7 +15,7 @@ import (
 // ICefSharedProcessMessageBuilder Parent: ICefBaseRefCounted
 //
 //	Interface that builds a ICefProcessMessage containing a shared memory region. This interface is not thread-safe but may be used exclusively on a different thread from the one which constructed it.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_process_message_builder_capi.h">CEF source file: /include/capi/cef_shared_process_message_builder_capi.h (cef_shared_process_message_builder_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_process_message_builder_capi.h">CEF source file: /include/capi/cef_shared_process_message_builder_capi.h (cef_shared_process_message_builder_t))</a>
 type ICefSharedProcessMessageBuilder interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -35,7 +35,7 @@ type ICefSharedProcessMessageBuilder interface {
 // TCefSharedProcessMessageBuilder Parent: TCefBaseRefCounted
 //
 //	Interface that builds a ICefProcessMessage containing a shared memory region. This interface is not thread-safe but may be used exclusively on a different thread from the one which constructed it.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_process_message_builder_capi.h">CEF source file: /include/capi/cef_shared_process_message_builder_capi.h (cef_shared_process_message_builder_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_process_message_builder_capi.h">CEF source file: /include/capi/cef_shared_process_message_builder_capi.h (cef_shared_process_message_builder_t))</a>
 type TCefSharedProcessMessageBuilder struct {
 	TCefBaseRefCounted
 }

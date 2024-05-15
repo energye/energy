@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomDrawGrid Parent: ICustomGrid
@@ -208,494 +207,494 @@ type TCustomDrawGrid struct {
 }
 
 func NewCustomDrawGrid(AOwner IComponent) ICustomDrawGrid {
-	r1 := LCL().SysCallN(1329, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1519, GetObjectUintptr(AOwner))
 	return AsCustomDrawGrid(r1)
 }
 
 func (m *TCustomDrawGrid) AllowOutboundEvents() bool {
-	r1 := LCL().SysCallN(1318, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1508, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetAllowOutboundEvents(AValue bool) {
-	LCL().SysCallN(1318, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1508, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) BorderColor() TColor {
-	r1 := LCL().SysCallN(1322, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1512, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetBorderColor(AValue TColor) {
-	LCL().SysCallN(1322, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1512, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Col() int32 {
-	r1 := LCL().SysCallN(1324, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1514, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetCol(AValue int32) {
-	LCL().SysCallN(1324, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1514, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) ColWidths(aCol int32) int32 {
-	r1 := LCL().SysCallN(1327, 0, m.Instance(), uintptr(aCol))
+	r1 := LCL().SysCallN(1517, 0, m.Instance(), uintptr(aCol))
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetColWidths(aCol int32, AValue int32) {
-	LCL().SysCallN(1327, 1, m.Instance(), uintptr(aCol), uintptr(AValue))
+	LCL().SysCallN(1517, 1, m.Instance(), uintptr(aCol), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) ColRow() (resultPoint TPoint) {
-	LCL().SysCallN(1326, 0, m.Instance(), uintptr(unsafe.Pointer(&resultPoint)), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(1516, 0, m.Instance(), uintptr(unsafePointer(&resultPoint)), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TCustomDrawGrid) SetColRow(AValue *TPoint) {
-	LCL().SysCallN(1326, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(1516, 1, m.Instance(), uintptr(unsafePointer(AValue)), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TCustomDrawGrid) DisabledFontColor() TColor {
-	r1 := LCL().SysCallN(1337, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1527, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetDisabledFontColor(AValue TColor) {
-	LCL().SysCallN(1337, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1527, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Editor() IWinControl {
-	r1 := LCL().SysCallN(1338, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1528, 0, m.Instance(), 0)
 	return AsWinControl(r1)
 }
 
 func (m *TCustomDrawGrid) SetEditor(AValue IWinControl) {
-	LCL().SysCallN(1338, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1528, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) EditorBorderStyle() TBorderStyle {
-	r1 := LCL().SysCallN(1339, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1529, 0, m.Instance(), 0)
 	return TBorderStyle(r1)
 }
 
 func (m *TCustomDrawGrid) SetEditorBorderStyle(AValue TBorderStyle) {
-	LCL().SysCallN(1339, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1529, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) EditorMode() bool {
-	r1 := LCL().SysCallN(1340, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1530, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetEditorMode(AValue bool) {
-	LCL().SysCallN(1340, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1530, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) ExtendedColSizing() bool {
-	r1 := LCL().SysCallN(1342, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1532, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetExtendedColSizing(AValue bool) {
-	LCL().SysCallN(1342, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1532, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) AltColorStartNormal() bool {
-	r1 := LCL().SysCallN(1319, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1509, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetAltColorStartNormal(AValue bool) {
-	LCL().SysCallN(1319, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1509, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) FastEditing() bool {
-	r1 := LCL().SysCallN(1344, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1534, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetFastEditing(AValue bool) {
-	LCL().SysCallN(1344, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1534, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) FixedGridLineColor() TColor {
-	r1 := LCL().SysCallN(1347, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1537, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetFixedGridLineColor(AValue TColor) {
-	LCL().SysCallN(1347, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1537, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FocusColor() TColor {
-	r1 := LCL().SysCallN(1351, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1541, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetFocusColor(AValue TColor) {
-	LCL().SysCallN(1351, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1541, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FocusRectVisible() bool {
-	r1 := LCL().SysCallN(1352, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1542, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetFocusRectVisible(AValue bool) {
-	LCL().SysCallN(1352, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1542, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) GridHeight() int32 {
-	r1 := LCL().SysCallN(1353, m.Instance())
+	r1 := LCL().SysCallN(1543, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) GridWidth() int32 {
-	r1 := LCL().SysCallN(1357, m.Instance())
+	r1 := LCL().SysCallN(1547, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) IsCellSelected(aCol, aRow int32) bool {
-	r1 := LCL().SysCallN(1359, m.Instance(), uintptr(aCol), uintptr(aRow))
+	r1 := LCL().SysCallN(1549, m.Instance(), uintptr(aCol), uintptr(aRow))
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) LeftCol() int32 {
-	r1 := LCL().SysCallN(1360, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1550, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetLeftCol(AValue int32) {
-	LCL().SysCallN(1360, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1550, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Row() int32 {
-	r1 := LCL().SysCallN(1365, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1555, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetRow(AValue int32) {
-	LCL().SysCallN(1365, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1555, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) RowHeights(aRow int32) int32 {
-	r1 := LCL().SysCallN(1367, 0, m.Instance(), uintptr(aRow))
+	r1 := LCL().SysCallN(1557, 0, m.Instance(), uintptr(aRow))
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetRowHeights(aRow int32, AValue int32) {
-	LCL().SysCallN(1367, 1, m.Instance(), uintptr(aRow), uintptr(AValue))
+	LCL().SysCallN(1557, 1, m.Instance(), uintptr(aRow), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) SaveOptions() TSaveOptions {
-	r1 := LCL().SysCallN(1368, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1558, 0, m.Instance(), 0)
 	return TSaveOptions(r1)
 }
 
 func (m *TCustomDrawGrid) SetSaveOptions(AValue TSaveOptions) {
-	LCL().SysCallN(1368, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1558, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) SelectedColor() TColor {
-	r1 := LCL().SysCallN(1370, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1560, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetSelectedColor(AValue TColor) {
-	LCL().SysCallN(1370, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1560, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) SelectedColumn() IGridColumn {
-	r1 := LCL().SysCallN(1371, m.Instance())
+	r1 := LCL().SysCallN(1561, m.Instance())
 	return AsGridColumn(r1)
 }
 
 func (m *TCustomDrawGrid) Selection() (resultGridRect TGridRect) {
-	LCL().SysCallN(1372, 0, m.Instance(), uintptr(unsafe.Pointer(&resultGridRect)), uintptr(unsafe.Pointer(&resultGridRect)))
+	LCL().SysCallN(1562, 0, m.Instance(), uintptr(unsafePointer(&resultGridRect)), uintptr(unsafePointer(&resultGridRect)))
 	return
 }
 
 func (m *TCustomDrawGrid) SetSelection(AValue *TGridRect) {
-	LCL().SysCallN(1372, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(1562, 1, m.Instance(), uintptr(unsafePointer(AValue)), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TCustomDrawGrid) StrictSort() bool {
-	r1 := LCL().SysCallN(1413, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1603, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetStrictSort(AValue bool) {
-	LCL().SysCallN(1413, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1603, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) TopRow() int32 {
-	r1 := LCL().SysCallN(1415, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1605, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetTopRow(AValue int32) {
-	LCL().SysCallN(1415, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1605, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) UseXORFeatures() bool {
-	r1 := LCL().SysCallN(1416, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1606, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetUseXORFeatures(AValue bool) {
-	LCL().SysCallN(1416, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1606, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) AutoAdvance() TAutoAdvance {
-	r1 := LCL().SysCallN(1320, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1510, 0, m.Instance(), 0)
 	return TAutoAdvance(r1)
 }
 
 func (m *TCustomDrawGrid) SetAutoAdvance(AValue TAutoAdvance) {
-	LCL().SysCallN(1320, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1510, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) AutoFillColumns() bool {
-	r1 := LCL().SysCallN(1321, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1511, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetAutoFillColumns(AValue bool) {
-	LCL().SysCallN(1321, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1511, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) ColCount() int32 {
-	r1 := LCL().SysCallN(1325, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1515, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetColCount(AValue int32) {
-	LCL().SysCallN(1325, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1515, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Columns() IGridColumns {
-	r1 := LCL().SysCallN(1328, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1518, 0, m.Instance(), 0)
 	return AsGridColumns(r1)
 }
 
 func (m *TCustomDrawGrid) SetColumns(AValue IGridColumns) {
-	LCL().SysCallN(1328, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1518, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) DefaultColWidth() int32 {
-	r1 := LCL().SysCallN(1330, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1520, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetDefaultColWidth(AValue int32) {
-	LCL().SysCallN(1330, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1520, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) DefaultDrawing() bool {
-	r1 := LCL().SysCallN(1332, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1522, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetDefaultDrawing(AValue bool) {
-	LCL().SysCallN(1332, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1522, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) DefaultRowHeight() int32 {
-	r1 := LCL().SysCallN(1333, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1523, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetDefaultRowHeight(AValue int32) {
-	LCL().SysCallN(1333, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1523, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FadeUnfocusedSelection() bool {
-	r1 := LCL().SysCallN(1343, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1533, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetFadeUnfocusedSelection(AValue bool) {
-	LCL().SysCallN(1343, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1533, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) FixedColor() TColor {
-	r1 := LCL().SysCallN(1345, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1535, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetFixedColor(AValue TColor) {
-	LCL().SysCallN(1345, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1535, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FixedCols() int32 {
-	r1 := LCL().SysCallN(1346, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1536, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetFixedCols(AValue int32) {
-	LCL().SysCallN(1346, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1536, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FixedHotColor() TColor {
-	r1 := LCL().SysCallN(1348, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1538, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetFixedHotColor(AValue TColor) {
-	LCL().SysCallN(1348, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1538, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) FixedRows() int32 {
-	r1 := LCL().SysCallN(1349, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1539, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetFixedRows(AValue int32) {
-	LCL().SysCallN(1349, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1539, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Flat() bool {
-	r1 := LCL().SysCallN(1350, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1540, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetFlat(AValue bool) {
-	LCL().SysCallN(1350, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1540, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) GridLineColor() TColor {
-	r1 := LCL().SysCallN(1354, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1544, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomDrawGrid) SetGridLineColor(AValue TColor) {
-	LCL().SysCallN(1354, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1544, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) GridLineStyle() TPenStyle {
-	r1 := LCL().SysCallN(1355, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1545, 0, m.Instance(), 0)
 	return TPenStyle(r1)
 }
 
 func (m *TCustomDrawGrid) SetGridLineStyle(AValue TPenStyle) {
-	LCL().SysCallN(1355, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1545, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) GridLineWidth() int32 {
-	r1 := LCL().SysCallN(1356, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1546, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetGridLineWidth(AValue int32) {
-	LCL().SysCallN(1356, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1546, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Options() TGridOptions {
-	r1 := LCL().SysCallN(1362, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1552, 0, m.Instance(), 0)
 	return TGridOptions(r1)
 }
 
 func (m *TCustomDrawGrid) SetOptions(AValue TGridOptions) {
-	LCL().SysCallN(1362, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1552, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) Options2() TGridOptions2 {
-	r1 := LCL().SysCallN(1363, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1553, 0, m.Instance(), 0)
 	return TGridOptions2(r1)
 }
 
 func (m *TCustomDrawGrid) SetOptions2(AValue TGridOptions2) {
-	LCL().SysCallN(1363, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1553, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) ParentShowHint() bool {
-	r1 := LCL().SysCallN(1364, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1554, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomDrawGrid) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(1364, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1554, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomDrawGrid) RowCount() int32 {
-	r1 := LCL().SysCallN(1366, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1556, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) SetRowCount(AValue int32) {
-	LCL().SysCallN(1366, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1556, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) ScrollBars() TScrollStyle {
-	r1 := LCL().SysCallN(1369, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1559, 0, m.Instance(), 0)
 	return TScrollStyle(r1)
 }
 
 func (m *TCustomDrawGrid) SetScrollBars(AValue TScrollStyle) {
-	LCL().SysCallN(1369, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1559, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) TabAdvance() TAutoAdvance {
-	r1 := LCL().SysCallN(1414, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1604, 0, m.Instance(), 0)
 	return TAutoAdvance(r1)
 }
 
 func (m *TCustomDrawGrid) SetTabAdvance(AValue TAutoAdvance) {
-	LCL().SysCallN(1414, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1604, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomDrawGrid) VisibleColCount() int32 {
-	r1 := LCL().SysCallN(1417, m.Instance())
+	r1 := LCL().SysCallN(1607, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomDrawGrid) VisibleRowCount() int32 {
-	r1 := LCL().SysCallN(1418, m.Instance())
+	r1 := LCL().SysCallN(1608, m.Instance())
 	return int32(r1)
 }
 
 func CustomDrawGridClass() TClass {
-	ret := LCL().SysCallN(1323)
+	ret := LCL().SysCallN(1513)
 	return TClass(ret)
 }
 
 func (m *TCustomDrawGrid) DeleteColRow(IsColumn bool, index int32) {
-	LCL().SysCallN(1335, m.Instance(), PascalBool(IsColumn), uintptr(index))
+	LCL().SysCallN(1525, m.Instance(), PascalBool(IsColumn), uintptr(index))
 }
 
 func (m *TCustomDrawGrid) DeleteCol(Index int32) {
-	LCL().SysCallN(1334, m.Instance(), uintptr(Index))
+	LCL().SysCallN(1524, m.Instance(), uintptr(Index))
 }
 
 func (m *TCustomDrawGrid) DeleteRow(Index int32) {
-	LCL().SysCallN(1336, m.Instance(), uintptr(Index))
+	LCL().SysCallN(1526, m.Instance(), uintptr(Index))
 }
 
 func (m *TCustomDrawGrid) ExchangeColRow(IsColumn bool, index, WithIndex int32) {
-	LCL().SysCallN(1341, m.Instance(), PascalBool(IsColumn), uintptr(index), uintptr(WithIndex))
+	LCL().SysCallN(1531, m.Instance(), PascalBool(IsColumn), uintptr(index), uintptr(WithIndex))
 }
 
 func (m *TCustomDrawGrid) InsertColRow(IsColumn bool, index int32) {
-	LCL().SysCallN(1358, m.Instance(), PascalBool(IsColumn), uintptr(index))
+	LCL().SysCallN(1548, m.Instance(), PascalBool(IsColumn), uintptr(index))
 }
 
 func (m *TCustomDrawGrid) MoveColRow(IsColumn bool, FromIndex, ToIndex int32) {
-	LCL().SysCallN(1361, m.Instance(), PascalBool(IsColumn), uintptr(FromIndex), uintptr(ToIndex))
+	LCL().SysCallN(1551, m.Instance(), PascalBool(IsColumn), uintptr(FromIndex), uintptr(ToIndex))
 }
 
 func (m *TCustomDrawGrid) SortColRow(IsColumn bool, index int32) {
-	LCL().SysCallN(1411, m.Instance(), PascalBool(IsColumn), uintptr(index))
+	LCL().SysCallN(1601, m.Instance(), PascalBool(IsColumn), uintptr(index))
 }
 
 func (m *TCustomDrawGrid) SortColRow1(IsColumn bool, Index, FromIndex, ToIndex int32) {
-	LCL().SysCallN(1412, m.Instance(), PascalBool(IsColumn), uintptr(Index), uintptr(FromIndex), uintptr(ToIndex))
+	LCL().SysCallN(1602, m.Instance(), PascalBool(IsColumn), uintptr(Index), uintptr(FromIndex), uintptr(ToIndex))
 }
 
 func (m *TCustomDrawGrid) DefaultDrawCell(aCol, aRow int32, aRect *TRect, aState TGridDrawState) {
 	var result1 uintptr
-	LCL().SysCallN(1331, m.Instance(), uintptr(aCol), uintptr(aRow), uintptr(unsafe.Pointer(&result1)), uintptr(aState))
+	LCL().SysCallN(1521, m.Instance(), uintptr(aCol), uintptr(aRow), uintptr(unsafePointer(&result1)), uintptr(aState))
 	*aRect = *(*TRect)(getPointer(result1))
 }
 
@@ -704,7 +703,7 @@ func (m *TCustomDrawGrid) SetOnAfterSelection(fn TOnSelectEvent) {
 		RemoveEventElement(m.afterSelectionPtr)
 	}
 	m.afterSelectionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1373, m.Instance(), m.afterSelectionPtr)
+	LCL().SysCallN(1563, m.Instance(), m.afterSelectionPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnBeforeSelection(fn TOnSelectEvent) {
@@ -712,7 +711,7 @@ func (m *TCustomDrawGrid) SetOnBeforeSelection(fn TOnSelectEvent) {
 		RemoveEventElement(m.beforeSelectionPtr)
 	}
 	m.beforeSelectionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1374, m.Instance(), m.beforeSelectionPtr)
+	LCL().SysCallN(1564, m.Instance(), m.beforeSelectionPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnColRowDeleted(fn TGridOperationEvent) {
@@ -720,7 +719,7 @@ func (m *TCustomDrawGrid) SetOnColRowDeleted(fn TGridOperationEvent) {
 		RemoveEventElement(m.colRowDeletedPtr)
 	}
 	m.colRowDeletedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1376, m.Instance(), m.colRowDeletedPtr)
+	LCL().SysCallN(1566, m.Instance(), m.colRowDeletedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnColRowExchanged(fn TGridOperationEvent) {
@@ -728,7 +727,7 @@ func (m *TCustomDrawGrid) SetOnColRowExchanged(fn TGridOperationEvent) {
 		RemoveEventElement(m.colRowExchangedPtr)
 	}
 	m.colRowExchangedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1377, m.Instance(), m.colRowExchangedPtr)
+	LCL().SysCallN(1567, m.Instance(), m.colRowExchangedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnColRowInserted(fn TGridOperationEvent) {
@@ -736,7 +735,7 @@ func (m *TCustomDrawGrid) SetOnColRowInserted(fn TGridOperationEvent) {
 		RemoveEventElement(m.colRowInsertedPtr)
 	}
 	m.colRowInsertedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1378, m.Instance(), m.colRowInsertedPtr)
+	LCL().SysCallN(1568, m.Instance(), m.colRowInsertedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnColRowMoved(fn TGridOperationEvent) {
@@ -744,7 +743,7 @@ func (m *TCustomDrawGrid) SetOnColRowMoved(fn TGridOperationEvent) {
 		RemoveEventElement(m.colRowMovedPtr)
 	}
 	m.colRowMovedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1379, m.Instance(), m.colRowMovedPtr)
+	LCL().SysCallN(1569, m.Instance(), m.colRowMovedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnCompareCells(fn TOnCompareCells) {
@@ -752,7 +751,7 @@ func (m *TCustomDrawGrid) SetOnCompareCells(fn TOnCompareCells) {
 		RemoveEventElement(m.compareCellsPtr)
 	}
 	m.compareCellsPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1380, m.Instance(), m.compareCellsPtr)
+	LCL().SysCallN(1570, m.Instance(), m.compareCellsPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnContextPopup(fn TContextPopupEvent) {
@@ -760,7 +759,7 @@ func (m *TCustomDrawGrid) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1381, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(1571, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnDblClick(fn TNotifyEvent) {
@@ -768,7 +767,7 @@ func (m *TCustomDrawGrid) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1382, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(1572, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnDragDrop(fn TDragDropEvent) {
@@ -776,7 +775,7 @@ func (m *TCustomDrawGrid) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1383, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(1573, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnDragOver(fn TDragOverEvent) {
@@ -784,7 +783,7 @@ func (m *TCustomDrawGrid) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1384, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(1574, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnDrawCell(fn TOnDrawCell) {
@@ -792,7 +791,7 @@ func (m *TCustomDrawGrid) SetOnDrawCell(fn TOnDrawCell) {
 		RemoveEventElement(m.drawCellPtr)
 	}
 	m.drawCellPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1385, m.Instance(), m.drawCellPtr)
+	LCL().SysCallN(1575, m.Instance(), m.drawCellPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnButtonClick(fn TOnSelectEvent) {
@@ -800,7 +799,7 @@ func (m *TCustomDrawGrid) SetOnButtonClick(fn TOnSelectEvent) {
 		RemoveEventElement(m.buttonClickPtr)
 	}
 	m.buttonClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1375, m.Instance(), m.buttonClickPtr)
+	LCL().SysCallN(1565, m.Instance(), m.buttonClickPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnEndDock(fn TEndDragEvent) {
@@ -808,7 +807,7 @@ func (m *TCustomDrawGrid) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1386, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(1576, m.Instance(), m.endDockPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnEndDrag(fn TEndDragEvent) {
@@ -816,7 +815,7 @@ func (m *TCustomDrawGrid) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1387, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(1577, m.Instance(), m.endDragPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnGetEditMask(fn TGetEditEvent) {
@@ -824,7 +823,7 @@ func (m *TCustomDrawGrid) SetOnGetEditMask(fn TGetEditEvent) {
 		RemoveEventElement(m.getEditMaskPtr)
 	}
 	m.getEditMaskPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1388, m.Instance(), m.getEditMaskPtr)
+	LCL().SysCallN(1578, m.Instance(), m.getEditMaskPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnGetEditText(fn TGetEditEvent) {
@@ -832,7 +831,7 @@ func (m *TCustomDrawGrid) SetOnGetEditText(fn TGetEditEvent) {
 		RemoveEventElement(m.getEditTextPtr)
 	}
 	m.getEditTextPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1389, m.Instance(), m.getEditTextPtr)
+	LCL().SysCallN(1579, m.Instance(), m.getEditTextPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnHeaderClick(fn THdrEvent) {
@@ -840,7 +839,7 @@ func (m *TCustomDrawGrid) SetOnHeaderClick(fn THdrEvent) {
 		RemoveEventElement(m.headerClickPtr)
 	}
 	m.headerClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1390, m.Instance(), m.headerClickPtr)
+	LCL().SysCallN(1580, m.Instance(), m.headerClickPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnHeaderSized(fn THdrEvent) {
@@ -848,7 +847,7 @@ func (m *TCustomDrawGrid) SetOnHeaderSized(fn THdrEvent) {
 		RemoveEventElement(m.headerSizedPtr)
 	}
 	m.headerSizedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1391, m.Instance(), m.headerSizedPtr)
+	LCL().SysCallN(1581, m.Instance(), m.headerSizedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnHeaderSizing(fn THeaderSizingEvent) {
@@ -856,7 +855,7 @@ func (m *TCustomDrawGrid) SetOnHeaderSizing(fn THeaderSizingEvent) {
 		RemoveEventElement(m.headerSizingPtr)
 	}
 	m.headerSizingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1392, m.Instance(), m.headerSizingPtr)
+	LCL().SysCallN(1582, m.Instance(), m.headerSizingPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseDown(fn TMouseEvent) {
@@ -864,7 +863,7 @@ func (m *TCustomDrawGrid) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1393, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(1583, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseEnter(fn TNotifyEvent) {
@@ -872,7 +871,7 @@ func (m *TCustomDrawGrid) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1394, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(1584, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseLeave(fn TNotifyEvent) {
@@ -880,7 +879,7 @@ func (m *TCustomDrawGrid) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1395, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(1585, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -888,7 +887,7 @@ func (m *TCustomDrawGrid) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1396, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(1586, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseUp(fn TMouseEvent) {
@@ -896,7 +895,7 @@ func (m *TCustomDrawGrid) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1397, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(1587, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -904,7 +903,7 @@ func (m *TCustomDrawGrid) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1398, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(1588, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -912,7 +911,7 @@ func (m *TCustomDrawGrid) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1399, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(1589, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -920,7 +919,7 @@ func (m *TCustomDrawGrid) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1400, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(1590, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnPickListSelect(fn TNotifyEvent) {
@@ -928,7 +927,7 @@ func (m *TCustomDrawGrid) SetOnPickListSelect(fn TNotifyEvent) {
 		RemoveEventElement(m.pickListSelectPtr)
 	}
 	m.pickListSelectPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1401, m.Instance(), m.pickListSelectPtr)
+	LCL().SysCallN(1591, m.Instance(), m.pickListSelectPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnPrepareCanvas(fn TOnPrepareCanvasEvent) {
@@ -936,7 +935,7 @@ func (m *TCustomDrawGrid) SetOnPrepareCanvas(fn TOnPrepareCanvasEvent) {
 		RemoveEventElement(m.prepareCanvasPtr)
 	}
 	m.prepareCanvasPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1402, m.Instance(), m.prepareCanvasPtr)
+	LCL().SysCallN(1592, m.Instance(), m.prepareCanvasPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnSelectEditor(fn TSelectEditorEvent) {
@@ -944,7 +943,7 @@ func (m *TCustomDrawGrid) SetOnSelectEditor(fn TSelectEditorEvent) {
 		RemoveEventElement(m.selectEditorPtr)
 	}
 	m.selectEditorPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1404, m.Instance(), m.selectEditorPtr)
+	LCL().SysCallN(1594, m.Instance(), m.selectEditorPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnSelection(fn TOnSelectEvent) {
@@ -952,7 +951,7 @@ func (m *TCustomDrawGrid) SetOnSelection(fn TOnSelectEvent) {
 		RemoveEventElement(m.selectionPtr)
 	}
 	m.selectionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1405, m.Instance(), m.selectionPtr)
+	LCL().SysCallN(1595, m.Instance(), m.selectionPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnSelectCell(fn TOnSelectCellEvent) {
@@ -960,7 +959,7 @@ func (m *TCustomDrawGrid) SetOnSelectCell(fn TOnSelectCellEvent) {
 		RemoveEventElement(m.selectCellPtr)
 	}
 	m.selectCellPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1403, m.Instance(), m.selectCellPtr)
+	LCL().SysCallN(1593, m.Instance(), m.selectCellPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnSetEditText(fn TSetEditEvent) {
@@ -968,7 +967,7 @@ func (m *TCustomDrawGrid) SetOnSetEditText(fn TSetEditEvent) {
 		RemoveEventElement(m.setEditTextPtr)
 	}
 	m.setEditTextPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1406, m.Instance(), m.setEditTextPtr)
+	LCL().SysCallN(1596, m.Instance(), m.setEditTextPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnStartDock(fn TStartDockEvent) {
@@ -976,7 +975,7 @@ func (m *TCustomDrawGrid) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1407, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(1597, m.Instance(), m.startDockPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnStartDrag(fn TStartDragEvent) {
@@ -984,7 +983,7 @@ func (m *TCustomDrawGrid) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1408, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(1598, m.Instance(), m.startDragPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnTopleftChanged(fn TNotifyEvent) {
@@ -992,7 +991,7 @@ func (m *TCustomDrawGrid) SetOnTopleftChanged(fn TNotifyEvent) {
 		RemoveEventElement(m.topleftChangedPtr)
 	}
 	m.topleftChangedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1409, m.Instance(), m.topleftChangedPtr)
+	LCL().SysCallN(1599, m.Instance(), m.topleftChangedPtr)
 }
 
 func (m *TCustomDrawGrid) SetOnValidateEntry(fn TValidateEntryEvent) {
@@ -1000,5 +999,5 @@ func (m *TCustomDrawGrid) SetOnValidateEntry(fn TValidateEntryEvent) {
 		RemoveEventElement(m.validateEntryPtr)
 	}
 	m.validateEntryPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1410, m.Instance(), m.validateEntryPtr)
+	LCL().SysCallN(1600, m.Instance(), m.validateEntryPtr)
 }

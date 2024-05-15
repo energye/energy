@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IFPCustomRegion Is Abstract Class Parent: IObject
@@ -27,16 +26,16 @@ type TFPCustomRegion struct {
 }
 
 func (m *TFPCustomRegion) GetBoundingRect() (resultRect TRect) {
-	LCL().SysCallN(2706, m.Instance(), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(2949, m.Instance(), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TFPCustomRegion) IsPointInRegion(AX, AY int32) bool {
-	r1 := LCL().SysCallN(2707, m.Instance(), uintptr(AX), uintptr(AY))
+	r1 := LCL().SysCallN(2950, m.Instance(), uintptr(AX), uintptr(AY))
 	return GoBool(r1)
 }
 
 func FPCustomRegionClass() TClass {
-	ret := LCL().SysCallN(2705)
+	ret := LCL().SysCallN(2948)
 	return TClass(ret)
 }

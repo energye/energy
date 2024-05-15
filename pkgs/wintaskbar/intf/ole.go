@@ -57,8 +57,8 @@ func getOffset(name string) uintptr {
 	return 0
 }
 
-func Succeeded(Status types.HResult) bool {
-	return Status&types.HResult(0x80000000) == 0
+func Succeeded(Status types.HRESULT) bool {
+	return Status&types.HRESULT(0x80000000) == 0
 }
 
 type ITaskbarList4 uintptr
@@ -85,7 +85,7 @@ func (ii ITaskbarList4) HrInit() error {
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil
@@ -115,7 +115,7 @@ func (ii ITaskbarList4) addOrUpdateButtons(offset uintptr, hWnd types.HWND, butt
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil
@@ -146,7 +146,7 @@ func (ii ITaskbarList4) SetThumbnailTooltip(hWnd types.HWND, tip string) error {
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil
@@ -172,7 +172,7 @@ func (ii ITaskbarList4) SetProgressValue(hWnd types.HWND, ullCompleted, ullTotal
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil
@@ -194,7 +194,7 @@ func (ii ITaskbarList4) SetProgressState(hWnd types.HWND, flags int32) error {
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil
@@ -220,7 +220,7 @@ func (ii ITaskbarList4) SetOverlayIcon(hWnd types.HWND, hIcon types.HICON, pszDe
 	if err != nil {
 		return err
 	}
-	if !Succeeded(types.HResult(result.Val)) {
+	if !Succeeded(types.HRESULT(result.Val)) {
 		return ole.NewError(uintptr(result.Val))
 	}
 	return nil

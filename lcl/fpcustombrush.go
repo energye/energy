@@ -29,34 +29,34 @@ type TFPCustomBrush struct {
 }
 
 func NewFPCustomBrush() IFPCustomBrush {
-	r1 := LCL().SysCallN(2590)
+	r1 := LCL().SysCallN(2833)
 	return AsFPCustomBrush(r1)
 }
 
 func (m *TFPCustomBrush) Style() TFPBrushStyle {
-	r1 := LCL().SysCallN(2592, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2835, 0, m.Instance(), 0)
 	return TFPBrushStyle(r1)
 }
 
 func (m *TFPCustomBrush) SetStyle(AValue TFPBrushStyle) {
-	LCL().SysCallN(2592, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2835, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFPCustomBrush) Image() IFPCustomImage {
-	r1 := LCL().SysCallN(2591, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2834, 0, m.Instance(), 0)
 	return AsFPCustomImage(r1)
 }
 
 func (m *TFPCustomBrush) SetImage(AValue IFPCustomImage) {
-	LCL().SysCallN(2591, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2834, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TFPCustomBrush) CopyBrush() IFPCustomBrush {
-	r1 := LCL().SysCallN(2589, m.Instance())
+	r1 := LCL().SysCallN(2832, m.Instance())
 	return AsFPCustomBrush(r1)
 }
 
 func FPCustomBrushClass() TClass {
-	ret := LCL().SysCallN(2588)
+	ret := LCL().SysCallN(2831)
 	return TClass(ret)
 }

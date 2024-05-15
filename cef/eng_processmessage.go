@@ -15,7 +15,7 @@ import (
 // ICefProcessMessage Parent: ICefBaseRefCounted
 //
 //	Interface representing a message. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_process_message_capi.h">CEF source file: /include/capi/cef_process_message_capi.h (cef_process_message_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_process_message_capi.h">CEF source file: /include/capi/cef_process_message_capi.h (cef_process_message_t))</a>
 type ICefProcessMessage interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -41,7 +41,7 @@ type ICefProcessMessage interface {
 // TCefProcessMessage Parent: TCefBaseRefCounted
 //
 //	Interface representing a message. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_process_message_capi.h">CEF source file: /include/capi/cef_process_message_capi.h (cef_process_message_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_process_message_capi.h">CEF source file: /include/capi/cef_process_message_capi.h (cef_process_message_t))</a>
 type TCefProcessMessage struct {
 	TCefBaseRefCounted
 }

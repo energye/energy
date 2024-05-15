@@ -27,26 +27,26 @@ type TCollectionEnumerator struct {
 }
 
 func NewCollectionEnumerator(ACollection ICollection) ICollectionEnumerator {
-	r1 := LCL().SysCallN(498, GetObjectUintptr(ACollection))
+	r1 := LCL().SysCallN(688, GetObjectUintptr(ACollection))
 	return AsCollectionEnumerator(r1)
 }
 
 func (m *TCollectionEnumerator) Current() ICollectionItem {
-	r1 := LCL().SysCallN(499, m.Instance())
+	r1 := LCL().SysCallN(689, m.Instance())
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollectionEnumerator) GetCurrent() ICollectionItem {
-	r1 := LCL().SysCallN(500, m.Instance())
+	r1 := LCL().SysCallN(690, m.Instance())
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollectionEnumerator) MoveNext() bool {
-	r1 := LCL().SysCallN(501, m.Instance())
+	r1 := LCL().SysCallN(691, m.Instance())
 	return GoBool(r1)
 }
 
 func CollectionEnumeratorClass() TClass {
-	ret := LCL().SysCallN(497)
+	ret := LCL().SysCallN(687)
 	return TClass(ret)
 }

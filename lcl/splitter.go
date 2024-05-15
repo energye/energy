@@ -40,30 +40,30 @@ type TSplitter struct {
 }
 
 func NewSplitter(TheOwner IComponent) ISplitter {
-	r1 := LCL().SysCallN(4419, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(5068, GetObjectUintptr(TheOwner))
 	return AsSplitter(r1)
 }
 
 func (m *TSplitter) ParentColor() bool {
-	r1 := LCL().SysCallN(4420, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5069, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TSplitter) SetParentColor(AValue bool) {
-	LCL().SysCallN(4420, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5069, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TSplitter) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4421, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5070, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TSplitter) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4421, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5070, 1, m.Instance(), PascalBool(AValue))
 }
 
 func SplitterClass() TClass {
-	ret := LCL().SysCallN(4418)
+	ret := LCL().SysCallN(5067)
 	return TClass(ret)
 }
 
@@ -72,7 +72,7 @@ func (m *TSplitter) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4422, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5071, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TSplitter) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -80,7 +80,7 @@ func (m *TSplitter) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4423, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5072, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TSplitter) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -88,7 +88,7 @@ func (m *TSplitter) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4427, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5076, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TSplitter) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -96,7 +96,7 @@ func (m *TSplitter) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4424, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(5073, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TSplitter) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -104,7 +104,7 @@ func (m *TSplitter) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4425, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(5074, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TSplitter) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -112,5 +112,5 @@ func (m *TSplitter) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4426, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(5075, m.Instance(), m.mouseWheelRightPtr)
 }

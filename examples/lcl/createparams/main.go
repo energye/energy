@@ -10,18 +10,18 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	Button1 lcl.IButton
 }
 
 type TForm1 struct {
-	*lcl.TForm
+	lcl.TForm
 	Button1 lcl.IButton
 }
 
 var (
-	mainForm *TMainForm
-	form1    *TForm1
+	mainForm TMainForm
+	form1    TForm1
 )
 
 func main() {

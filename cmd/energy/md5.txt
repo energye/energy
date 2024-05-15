@@ -1,0 +1,4 @@
+cbec7b803c33c460a487d0c7a03dfeb9  energy-darwin-64
+4fe3328e94144b189d79adaea4fa2eaf  energy-darwinarm-64
+9d93e6a4d2f3f3e6c16e32552f39db7f  energy-linux-64
+0d92b388f9e36c225ed5d02669592bf5  energy-linuxarm-64

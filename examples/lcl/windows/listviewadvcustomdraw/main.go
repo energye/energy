@@ -19,7 +19,7 @@ import (
 )
 
 type TMainFrom struct {
-	*lcl.TForm
+	lcl.TForm
 	ListView lcl.IListView
 	Icons    lcl.IImageList
 	tempIco  lcl.IIcon
@@ -34,7 +34,7 @@ type TTempItem struct {
 }
 
 var (
-	MainFrom *TMainFrom
+	MainFrom TMainFrom
 	tempData []TTempItem
 )
 

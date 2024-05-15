@@ -471,3 +471,64 @@ func InterfacedObjectCreate() int {
 func InterfacedObjectRefCount() int {
 	return lcl.InterfacedObject_RefCount
 }
+
+func VirtualTreeColumnsGetVisibleColumns() int {
+	return lcl.VirtualTreeColumns_GetVisibleColumns
+}
+
+func VTImageInfoGet() int {
+	return lcl.VTImageInfo_Get
+}
+
+func VirtualNodeCreate() int {
+	return lcl.VirtualNode_Create
+}
+
+func VirtualNodeIndex() int {
+	return lcl.VirtualNode_Index
+}
+func VirtualNodeChildCount() int {
+	return lcl.VirtualNode_ChildCount
+}
+func VirtualNodeNodeHeight() int {
+	return lcl.VirtualNode_NodeHeight
+}
+func VirtualNodeStates() int {
+	return lcl.VirtualNode_States
+}
+func VirtualNodeAlign() int {
+	return lcl.VirtualNode_Align
+}
+func VirtualNodeCheckState() int {
+	return lcl.VirtualNode_CheckState
+}
+func VirtualNodeCheckType() int {
+	return lcl.VirtualNode_CheckType
+}
+func VirtualNodeDummy() int {
+	return lcl.VirtualNode_Dummy
+}
+func VirtualNodeTotalCount() int {
+	return lcl.VirtualNode_TotalCount
+}
+func VirtualNodeTotalHeight() int {
+	return lcl.VirtualNode_TotalHeight
+}
+func VirtualNodeParent() int {
+	return lcl.VirtualNode_Parent
+}
+func VirtualNodePrevSibling() int {
+	return lcl.VirtualNode_PrevSibling
+}
+func VirtualNodeNextSibling() int {
+	return lcl.VirtualNode_NextSibling
+}
+func VirtualNodeFirstChild() int {
+	return lcl.VirtualNode_FirstChild
+}
+func VirtualNodeLastChild() int {
+	return lcl.VirtualNode_LastChild
+}
+func VirtualNodeData() int {
+	return lcl.VirtualNode_Data
+}

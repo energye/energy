@@ -33,52 +33,52 @@ type TLazDockZone struct {
 }
 
 func NewLazDockZone(TheTree IDockTree, TheChildControl IControl) ILazDockZone {
-	r1 := LCL().SysCallN(3300, GetObjectUintptr(TheTree), GetObjectUintptr(TheChildControl))
+	r1 := LCL().SysCallN(3543, GetObjectUintptr(TheTree), GetObjectUintptr(TheChildControl))
 	return AsLazDockZone(r1)
 }
 
 func (m *TLazDockZone) Splitter() ILazDockSplitter {
-	r1 := LCL().SysCallN(3306, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3549, 0, m.Instance(), 0)
 	return AsLazDockSplitter(r1)
 }
 
 func (m *TLazDockZone) SetSplitter(AValue ILazDockSplitter) {
-	LCL().SysCallN(3306, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3549, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TLazDockZone) Pages() ILazDockPages {
-	r1 := LCL().SysCallN(3305, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3548, 0, m.Instance(), 0)
 	return AsLazDockPages(r1)
 }
 
 func (m *TLazDockZone) SetPages(AValue ILazDockPages) {
-	LCL().SysCallN(3305, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3548, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TLazDockZone) Page() ILazDockPage {
-	r1 := LCL().SysCallN(3304, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3547, 0, m.Instance(), 0)
 	return AsLazDockPage(r1)
 }
 
 func (m *TLazDockZone) SetPage(AValue ILazDockPage) {
-	LCL().SysCallN(3304, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3547, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TLazDockZone) GetCaption() string {
-	r1 := LCL().SysCallN(3302, m.Instance())
+	r1 := LCL().SysCallN(3545, m.Instance())
 	return GoStr(r1)
 }
 
 func (m *TLazDockZone) GetParentControl() IWinControl {
-	r1 := LCL().SysCallN(3303, m.Instance())
+	r1 := LCL().SysCallN(3546, m.Instance())
 	return AsWinControl(r1)
 }
 
 func LazDockZoneClass() TClass {
-	ret := LCL().SysCallN(3299)
+	ret := LCL().SysCallN(3542)
 	return TClass(ret)
 }
 
 func (m *TLazDockZone) FreeSubComponents() {
-	LCL().SysCallN(3301, m.Instance())
+	LCL().SysCallN(3544, m.Instance())
 }

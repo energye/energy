@@ -66,147 +66,147 @@ type TXButton struct {
 }
 
 func NewXButton(AOwner IComponent) IXButton {
-	r1 := LCL().SysCallN(5300, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(6109, GetObjectUintptr(AOwner))
 	return AsXButton(r1)
 }
 
 func (m *TXButton) Caption() string {
-	r1 := LCL().SysCallN(5298, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6107, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TXButton) SetCaption(AValue string) {
-	LCL().SysCallN(5298, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(6107, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TXButton) ShowCaption() bool {
-	r1 := LCL().SysCallN(5318, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6127, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TXButton) SetShowCaption(AValue bool) {
-	LCL().SysCallN(5318, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6127, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TXButton) BackColor() TColor {
-	r1 := LCL().SysCallN(5295, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6104, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetBackColor(AValue TColor) {
-	LCL().SysCallN(5295, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6104, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) HoverColor() TColor {
-	r1 := LCL().SysCallN(5304, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6113, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetHoverColor(AValue TColor) {
-	LCL().SysCallN(5304, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6113, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) DownColor() TColor {
-	r1 := LCL().SysCallN(5301, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6110, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetDownColor(AValue TColor) {
-	LCL().SysCallN(5301, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6110, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) BorderWidth() int32 {
-	r1 := LCL().SysCallN(5297, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6106, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TXButton) SetBorderWidth(AValue int32) {
-	LCL().SysCallN(5297, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6106, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) BorderColor() TColor {
-	r1 := LCL().SysCallN(5296, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6105, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetBorderColor(AValue TColor) {
-	LCL().SysCallN(5296, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6105, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) Picture() IPicture {
-	r1 := LCL().SysCallN(5310, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6119, 0, m.Instance(), 0)
 	return AsPicture(r1)
 }
 
 func (m *TXButton) SetPicture(AValue IPicture) {
-	LCL().SysCallN(5310, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(6119, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TXButton) DrawMode() TDrawImageMode {
-	r1 := LCL().SysCallN(5303, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6112, 0, m.Instance(), 0)
 	return TDrawImageMode(r1)
 }
 
 func (m *TXButton) SetDrawMode(AValue TDrawImageMode) {
-	LCL().SysCallN(5303, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6112, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) NormalFontColor() TColor {
-	r1 := LCL().SysCallN(5306, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6115, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetNormalFontColor(AValue TColor) {
-	LCL().SysCallN(5306, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6115, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) DownFontColor() TColor {
-	r1 := LCL().SysCallN(5302, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6111, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetDownFontColor(AValue TColor) {
-	LCL().SysCallN(5302, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6111, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) HoverFontColor() TColor {
-	r1 := LCL().SysCallN(5305, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6114, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TXButton) SetHoverFontColor(AValue TColor) {
-	LCL().SysCallN(5305, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6114, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TXButton) ParentFont() bool {
-	r1 := LCL().SysCallN(5308, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6117, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TXButton) SetParentFont(AValue bool) {
-	LCL().SysCallN(5308, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6117, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TXButton) ParentShowHint() bool {
-	r1 := LCL().SysCallN(5309, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6118, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TXButton) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(5309, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6118, 1, m.Instance(), PascalBool(AValue))
 }
 
 func XButtonClass() TClass {
-	ret := LCL().SysCallN(5299)
+	ret := LCL().SysCallN(6108)
 	return TClass(ret)
 }
 
 func (m *TXButton) Paint() {
-	LCL().SysCallN(5307, m.Instance())
+	LCL().SysCallN(6116, m.Instance())
 }
 
 func (m *TXButton) Resize() {
-	LCL().SysCallN(5311, m.Instance())
+	LCL().SysCallN(6120, m.Instance())
 }
 
 func (m *TXButton) SetOnDblClick(fn TNotifyEvent) {
@@ -214,7 +214,7 @@ func (m *TXButton) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5312, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(6121, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TXButton) SetOnMouseDown(fn TMouseEvent) {
@@ -222,7 +222,7 @@ func (m *TXButton) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5313, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(6122, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TXButton) SetOnMouseEnter(fn TNotifyEvent) {
@@ -230,7 +230,7 @@ func (m *TXButton) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5314, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(6123, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TXButton) SetOnMouseLeave(fn TNotifyEvent) {
@@ -238,7 +238,7 @@ func (m *TXButton) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5315, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(6124, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TXButton) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -246,7 +246,7 @@ func (m *TXButton) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5316, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(6125, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TXButton) SetOnMouseUp(fn TMouseEvent) {
@@ -254,5 +254,5 @@ func (m *TXButton) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5317, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(6126, m.Instance(), m.mouseUpPtr)
 }

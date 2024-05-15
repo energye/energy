@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IToolButton Parent: IGraphicControl
@@ -93,178 +92,178 @@ type TToolButton struct {
 }
 
 func NewToolButton(TheOwner IComponent) IToolButton {
-	r1 := LCL().SysCallN(4848, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(5506, GetObjectUintptr(TheOwner))
 	return AsToolButton(r1)
 }
 
 func (m *TToolButton) Index() int32 {
-	r1 := LCL().SysCallN(4858, m.Instance())
+	r1 := LCL().SysCallN(5516, m.Instance())
 	return int32(r1)
 }
 
 func (m *TToolButton) AllowAllUp() bool {
-	r1 := LCL().SysCallN(4843, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5501, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetAllowAllUp(AValue bool) {
-	LCL().SysCallN(4843, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5501, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) Down() bool {
-	r1 := LCL().SysCallN(4849, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5507, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetDown(AValue bool) {
-	LCL().SysCallN(4849, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5507, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4850, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5508, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TToolButton) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4850, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5508, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToolButton) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4851, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5509, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TToolButton) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4851, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5509, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToolButton) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4852, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5510, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TToolButton) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4852, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5510, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToolButton) DropdownMenu() IPopupMenu {
-	r1 := LCL().SysCallN(4853, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5511, 0, m.Instance(), 0)
 	return AsPopupMenu(r1)
 }
 
 func (m *TToolButton) SetDropdownMenu(AValue IPopupMenu) {
-	LCL().SysCallN(4853, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5511, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TToolButton) Grouped() bool {
-	r1 := LCL().SysCallN(4855, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5513, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetGrouped(AValue bool) {
-	LCL().SysCallN(4855, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5513, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) ImageIndex() TImageIndex {
-	r1 := LCL().SysCallN(4856, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5514, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TToolButton) SetImageIndex(AValue TImageIndex) {
-	LCL().SysCallN(4856, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5514, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToolButton) Indeterminate() bool {
-	r1 := LCL().SysCallN(4857, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5515, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetIndeterminate(AValue bool) {
-	LCL().SysCallN(4857, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5515, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) Marked() bool {
-	r1 := LCL().SysCallN(4859, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5517, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetMarked(AValue bool) {
-	LCL().SysCallN(4859, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5517, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) MenuItem() IMenuItem {
-	r1 := LCL().SysCallN(4860, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5518, 0, m.Instance(), 0)
 	return AsMenuItem(r1)
 }
 
 func (m *TToolButton) SetMenuItem(AValue IMenuItem) {
-	LCL().SysCallN(4860, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5518, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TToolButton) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4861, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5519, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4861, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5519, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) ShowCaption() bool {
-	r1 := LCL().SysCallN(4879, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5537, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetShowCaption(AValue bool) {
-	LCL().SysCallN(4879, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5537, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) Style() TToolButtonStyle {
-	r1 := LCL().SysCallN(4880, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5538, 0, m.Instance(), 0)
 	return TToolButtonStyle(r1)
 }
 
 func (m *TToolButton) SetStyle(AValue TToolButtonStyle) {
-	LCL().SysCallN(4880, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5538, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TToolButton) Wrap() bool {
-	r1 := LCL().SysCallN(4881, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5539, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TToolButton) SetWrap(AValue bool) {
-	LCL().SysCallN(4881, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5539, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TToolButton) CheckMenuDropdown() bool {
-	r1 := LCL().SysCallN(4845, m.Instance())
+	r1 := LCL().SysCallN(5503, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TToolButton) PointInArrow(X, Y int32) bool {
-	r1 := LCL().SysCallN(4862, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(5520, m.Instance(), uintptr(X), uintptr(Y))
 	return GoBool(r1)
 }
 
 func ToolButtonClass() TClass {
-	ret := LCL().SysCallN(4846)
+	ret := LCL().SysCallN(5504)
 	return TClass(ret)
 }
 
 func (m *TToolButton) Click() {
-	LCL().SysCallN(4847, m.Instance())
+	LCL().SysCallN(5505, m.Instance())
 }
 
 func (m *TToolButton) ArrowClick() {
-	LCL().SysCallN(4844, m.Instance())
+	LCL().SysCallN(5502, m.Instance())
 }
 
 func (m *TToolButton) GetCurrentIcon(ImageList *ICustomImageList, TheIndex *int32, TheEffect *TGraphicsDrawEffect) {
 	var result0 uintptr
 	var result1 uintptr
 	var result2 uintptr
-	LCL().SysCallN(4854, m.Instance(), uintptr(unsafe.Pointer(&result0)), uintptr(unsafe.Pointer(&result1)), uintptr(unsafe.Pointer(&result2)))
+	LCL().SysCallN(5512, m.Instance(), uintptr(unsafePointer(&result0)), uintptr(unsafePointer(&result1)), uintptr(unsafePointer(&result2)))
 	*ImageList = AsCustomImageList(result0)
 	*TheIndex = int32(result1)
 	*TheEffect = TGraphicsDrawEffect(result2)
@@ -275,7 +274,7 @@ func (m *TToolButton) SetOnArrowClick(fn TNotifyEvent) {
 		RemoveEventElement(m.arrowClickPtr)
 	}
 	m.arrowClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4863, m.Instance(), m.arrowClickPtr)
+	LCL().SysCallN(5521, m.Instance(), m.arrowClickPtr)
 }
 
 func (m *TToolButton) SetOnContextPopup(fn TContextPopupEvent) {
@@ -283,7 +282,7 @@ func (m *TToolButton) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4864, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(5522, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TToolButton) SetOnDragDrop(fn TDragDropEvent) {
@@ -291,7 +290,7 @@ func (m *TToolButton) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4865, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(5523, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TToolButton) SetOnDragOver(fn TDragOverEvent) {
@@ -299,7 +298,7 @@ func (m *TToolButton) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4866, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(5524, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TToolButton) SetOnEndDock(fn TEndDragEvent) {
@@ -307,7 +306,7 @@ func (m *TToolButton) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4867, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(5525, m.Instance(), m.endDockPtr)
 }
 
 func (m *TToolButton) SetOnEndDrag(fn TEndDragEvent) {
@@ -315,7 +314,7 @@ func (m *TToolButton) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4868, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(5526, m.Instance(), m.endDragPtr)
 }
 
 func (m *TToolButton) SetOnMouseDown(fn TMouseEvent) {
@@ -323,7 +322,7 @@ func (m *TToolButton) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4869, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(5527, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TToolButton) SetOnMouseEnter(fn TNotifyEvent) {
@@ -331,7 +330,7 @@ func (m *TToolButton) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4870, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(5528, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TToolButton) SetOnMouseLeave(fn TNotifyEvent) {
@@ -339,7 +338,7 @@ func (m *TToolButton) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4871, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(5529, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TToolButton) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -347,7 +346,7 @@ func (m *TToolButton) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4872, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(5530, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TToolButton) SetOnMouseUp(fn TMouseEvent) {
@@ -355,7 +354,7 @@ func (m *TToolButton) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4873, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(5531, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TToolButton) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -363,7 +362,7 @@ func (m *TToolButton) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4874, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5532, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TToolButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -371,7 +370,7 @@ func (m *TToolButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4875, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5533, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TToolButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -379,7 +378,7 @@ func (m *TToolButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4876, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5534, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TToolButton) SetOnStartDock(fn TStartDockEvent) {
@@ -387,7 +386,7 @@ func (m *TToolButton) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4877, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(5535, m.Instance(), m.startDockPtr)
 }
 
 func (m *TToolButton) SetOnStartDrag(fn TStartDragEvent) {
@@ -395,5 +394,5 @@ func (m *TToolButton) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4878, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(5536, m.Instance(), m.startDragPtr)
 }

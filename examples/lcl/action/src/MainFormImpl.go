@@ -10,7 +10,7 @@ import (
 )
 
 type TMainForm struct {
-	lcl.IForm
+	lcl.TForm
 	ImgList  lcl.IImageList
 	ActList  lcl.IActionList
 	Tlbar    lcl.IToolBar
@@ -22,7 +22,7 @@ type TMainForm struct {
 	MainMenu lcl.IMainMenu
 }
 
-var MainForm *TMainForm
+var MainForm TMainForm
 
 func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
 	f.SetCaption("Hello")

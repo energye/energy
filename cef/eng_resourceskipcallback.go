@@ -15,7 +15,7 @@ import (
 // ICefResourceSkipCallback Parent: ICefBaseRefCounted
 //
 //	Callback for asynchronous continuation of ICefResourceHandler.skip.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t))</a>
 type ICefResourceSkipCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -26,7 +26,7 @@ type ICefResourceSkipCallback interface {
 // TCefResourceSkipCallback Parent: TCefBaseRefCounted
 //
 //	Callback for asynchronous continuation of ICefResourceHandler.skip.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_resource_handler_capi.h">CEF source file: /include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t))</a>
 type TCefResourceSkipCallback struct {
 	TCefBaseRefCounted
 }

@@ -24,11 +24,11 @@ type TSelectDirectoryDialog struct {
 }
 
 func NewSelectDirectoryDialog(AOwner IComponent) ISelectDirectoryDialog {
-	r1 := LCL().SysCallN(4321, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4970, GetObjectUintptr(AOwner))
 	return AsSelectDirectoryDialog(r1)
 }
 
 func SelectDirectoryDialogClass() TClass {
-	ret := LCL().SysCallN(4320)
+	ret := LCL().SysCallN(4969)
 	return TClass(ret)
 }

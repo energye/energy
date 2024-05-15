@@ -15,7 +15,7 @@ import (
 // ICefMediaSink Parent: ICefBaseRefCounted
 //
 //	Represents a sink to which media can be routed. Instances of this object are retrieved via ICefMediaObserver.OnSinks. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_sink_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_sink_t))</a>
 type ICefMediaSink interface {
 	ICefBaseRefCounted
 	// GetId
@@ -44,7 +44,7 @@ type ICefMediaSink interface {
 // TCefMediaSink Parent: TCefBaseRefCounted
 //
 //	Represents a sink to which media can be routed. Instances of this object are retrieved via ICefMediaObserver.OnSinks. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_sink_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_sink_t))</a>
 type TCefMediaSink struct {
 	TCefBaseRefCounted
 }

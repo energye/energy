@@ -136,13 +136,32 @@ var preImportDefs = []*imports.Table{
 	imports.NewTable("StreamAdapter_Write", 0),
 	imports.NewTable("InterfacedObject_Create", 0), // TInterfacedObject
 	imports.NewTable("InterfacedObject_RefCount", 0),
-	imports.NewTable("DFreeAndNil", 0), // FreeAndNil
-	imports.NewTable("DToUnixTime", 0), // DateTime
-	imports.NewTable("DUnixToTime", 0),
-	imports.NewTable("SetCEFEventCallback", 0),       // CEF
-	imports.NewTable("SetCEFRemoveEventCallback", 0), // CEF
-	imports.NewTable("SetWVEventCallback", 0),        // WV
-	imports.NewTable("SetWVRemoveEventCallback", 0),  // WV
+	imports.NewTable("DFreeAndNil", 0),                          // FreeAndNil
+	imports.NewTable("DToUnixTime", 0),                          // DateTime
+	imports.NewTable("DUnixToTime", 0),                          // DateTime
+	imports.NewTable("SetCEFEventCallback", 0),                  // CEF
+	imports.NewTable("SetCEFRemoveEventCallback", 0),            // CEF
+	imports.NewTable("SetWVEventCallback", 0),                   // WV
+	imports.NewTable("SetWVRemoveEventCallback", 0),             // WV
+	imports.NewTable("VirtualTreeColumns_GetVisibleColumns", 0), // TVirtualTreeColumns
+	imports.NewTable("VTImageInfo_Get", 0),                      // TVirtualTreeColumns
+	imports.NewTable("VirtualNode_Create", 0),                   // PVirtualNode
+	imports.NewTable("VirtualNode_Index", 0),                    // PVirtualNode
+	imports.NewTable("VirtualNode_ChildCount", 0),               // PVirtualNode
+	imports.NewTable("VirtualNode_NodeHeight", 0),               // PVirtualNode
+	imports.NewTable("VirtualNode_States", 0),                   // PVirtualNode
+	imports.NewTable("VirtualNode_Align", 0),                    // PVirtualNode
+	imports.NewTable("VirtualNode_CheckState", 0),               // PVirtualNode
+	imports.NewTable("VirtualNode_CheckType", 0),                // PVirtualNode
+	imports.NewTable("VirtualNode_Dummy", 0),                    // PVirtualNode
+	imports.NewTable("VirtualNode_TotalCount", 0),               // PVirtualNode
+	imports.NewTable("VirtualNode_TotalHeight", 0),              // PVirtualNode
+	imports.NewTable("VirtualNode_Parent", 0),                   // PVirtualNode
+	imports.NewTable("VirtualNode_PrevSibling", 0),              // PVirtualNode
+	imports.NewTable("VirtualNode_NextSibling", 0),              // PVirtualNode
+	imports.NewTable("VirtualNode_FirstChild", 0),               // PVirtualNode
+	imports.NewTable("VirtualNode_LastChild", 0),                // PVirtualNode
+	imports.NewTable("VirtualNode_Data", 0),                     // PVirtualNode
 }
 
 // InitPreDefsImport 初始化预定义api
@@ -278,4 +297,23 @@ const (
 	SetCEFRemoveEventCallback
 	SetWVEventCallback
 	SetWVRemoveEventCallback
+	VirtualTreeColumns_GetVisibleColumns
+	VTImageInfo_Get
+	VirtualNode_Create
+	VirtualNode_Index
+	VirtualNode_ChildCount
+	VirtualNode_NodeHeight
+	VirtualNode_States
+	VirtualNode_Align
+	VirtualNode_CheckState
+	VirtualNode_CheckType
+	VirtualNode_Dummy
+	VirtualNode_TotalCount
+	VirtualNode_TotalHeight
+	VirtualNode_Parent
+	VirtualNode_PrevSibling
+	VirtualNode_NextSibling
+	VirtualNode_FirstChild
+	VirtualNode_LastChild
+	VirtualNode_Data
 )

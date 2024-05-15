@@ -15,7 +15,7 @@ import (
 // ICefSSLStatus Parent: ICefBaseRefCounted
 //
 //	Interface representing the SSL information for a navigation entry.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_status_capi.h">CEF source file: /include/capi/cef_ssl_status_capi.h (cef_sslstatus_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_status_capi.h">CEF source file: /include/capi/cef_ssl_status_capi.h (cef_sslstatus_t))</a>
 type ICefSSLStatus interface {
 	ICefBaseRefCounted
 	// IsSecureConnection
@@ -38,7 +38,7 @@ type ICefSSLStatus interface {
 // TCefSSLStatus Parent: TCefBaseRefCounted
 //
 //	Interface representing the SSL information for a navigation entry.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_status_capi.h">CEF source file: /include/capi/cef_ssl_status_capi.h (cef_sslstatus_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_status_capi.h">CEF source file: /include/capi/cef_ssl_status_capi.h (cef_sslstatus_t))</a>
 type TCefSSLStatus struct {
 	TCefBaseRefCounted
 }

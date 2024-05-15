@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IDataModule Parent: IComponent
@@ -37,58 +36,58 @@ type TDataModule struct {
 }
 
 func NewDataModule(AOwner IComponent) IDataModule {
-	r1 := LCL().SysCallN(2287, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2504, GetObjectUintptr(AOwner))
 	return AsDataModule(r1)
 }
 
 func NewDataModuleNew(AOwner IComponent) IDataModule {
-	r1 := LCL().SysCallN(2288, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2505, GetObjectUintptr(AOwner))
 	return AsDataModule(r1)
 }
 
 func NewDataModuleNew1(AOwner IComponent, CreateMode int32) IDataModule {
-	r1 := LCL().SysCallN(2289, GetObjectUintptr(AOwner), uintptr(CreateMode))
+	r1 := LCL().SysCallN(2506, GetObjectUintptr(AOwner), uintptr(CreateMode))
 	return AsDataModule(r1)
 }
 
 func (m *TDataModule) DesignOffset() (resultPoint TPoint) {
-	LCL().SysCallN(2290, 0, m.Instance(), uintptr(unsafe.Pointer(&resultPoint)), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(2507, 0, m.Instance(), uintptr(unsafePointer(&resultPoint)), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TDataModule) SetDesignOffset(AValue *TPoint) {
-	LCL().SysCallN(2290, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(2507, 1, m.Instance(), uintptr(unsafePointer(AValue)), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TDataModule) DesignSize() (resultPoint TPoint) {
-	LCL().SysCallN(2292, 0, m.Instance(), uintptr(unsafe.Pointer(&resultPoint)), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(2509, 0, m.Instance(), uintptr(unsafePointer(&resultPoint)), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TDataModule) SetDesignSize(AValue *TPoint) {
-	LCL().SysCallN(2292, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(2509, 1, m.Instance(), uintptr(unsafePointer(AValue)), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TDataModule) DesignPPI() int32 {
-	r1 := LCL().SysCallN(2291, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2508, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TDataModule) SetDesignPPI(AValue int32) {
-	LCL().SysCallN(2291, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2508, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TDataModule) OldCreateOrder() bool {
-	r1 := LCL().SysCallN(2293, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2510, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TDataModule) SetOldCreateOrder(AValue bool) {
-	LCL().SysCallN(2293, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2510, 1, m.Instance(), PascalBool(AValue))
 }
 
 func DataModuleClass() TClass {
-	ret := LCL().SysCallN(2286)
+	ret := LCL().SysCallN(2503)
 	return TClass(ret)
 }
 
@@ -97,7 +96,7 @@ func (m *TDataModule) SetOnCreate(fn TNotifyEvent) {
 		RemoveEventElement(m.createPtr)
 	}
 	m.createPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2294, m.Instance(), m.createPtr)
+	LCL().SysCallN(2511, m.Instance(), m.createPtr)
 }
 
 func (m *TDataModule) SetOnDestroy(fn TNotifyEvent) {
@@ -105,5 +104,5 @@ func (m *TDataModule) SetOnDestroy(fn TNotifyEvent) {
 		RemoveEventElement(m.destroyPtr)
 	}
 	m.destroyPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2295, m.Instance(), m.destroyPtr)
+	LCL().SysCallN(2512, m.Instance(), m.destroyPtr)
 }

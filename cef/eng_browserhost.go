@@ -15,9 +15,11 @@ import (
 // ICefBrowserHost Parent: ICefBaseRefCounted
 //
 //	Interface used to represent the browser process aspects of a browser. The functions of this interface can only be called in the browser process. They may be called on any thread in that process unless otherwise indicated in the comments.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_browser_capi.h">CEF source file: /include/capi/cef_browser_capi.h (cef_browser_host_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_browser_capi.h">CEF source file: /include/capi/cef_browser_capi.h (cef_browser_host_t))</a>
 type ICefBrowserHost interface {
 	ICefBaseRefCounted
+	// IMESetComposition
+	//  Begins a new composition or updates the existing composition. Blink has a special node (a composition node) that allows the input function to change text without affecting other DOM nodes. |text| is the optional text that will be inserted into the composition node. |underlines| is an optional set of ranges that will be underlined in the resulting text. |replacement_range| is an optional range of the existing text that will be replaced. |selection_range| is an optional range of the resulting text that will be selected after insertion or replacement. The |replacement_range| value is only used on OS X. This function may be called multiple times as the composition changes. When the client is done making changes the composition should either be canceled or completed. To cancel the composition call ImeCancelComposition. To complete the composition call either ImeCommitText or ImeFinishComposingText. Completion is usually signaled when: 1. The client receives a WM_IME_COMPOSITION message with a GCS_RESULTSTR flag (on Windows), or; 2. The client receives a "commit" signal of GtkIMContext (on Linux), or; 3. insertText of NSTextInput is called (on Mac). This function is only used when window rendering is disabled.
 	IMESetComposition(text string, underlines TCefCompositionUnderlineDynArray, replacementrange, selectionrange *TCefRange)
 	// GetBrowser
 	//  Returns the hosted browser object.
@@ -213,7 +215,7 @@ type ICefBrowserHost interface {
 // TCefBrowserHost Parent: TCefBaseRefCounted
 //
 //	Interface used to represent the browser process aspects of a browser. The functions of this interface can only be called in the browser process. They may be called on any thread in that process unless otherwise indicated in the comments.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_browser_capi.h">CEF source file: /include/capi/cef_browser_capi.h (cef_browser_host_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_browser_capi.h">CEF source file: /include/capi/cef_browser_capi.h (cef_browser_host_t))</a>
 type TCefBrowserHost struct {
 	TCefBaseRefCounted
 }

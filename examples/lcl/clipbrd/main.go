@@ -17,7 +17,7 @@ import (
 import _ "github.com/energye/energy/v2/examples/syso"
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	btn  lcl.IButton
 	btn2 lcl.IButton
 	btn3 lcl.IButton
@@ -26,7 +26,7 @@ type TMainForm struct {
 	img  lcl.IImage
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func main() {
 	inits.Init(nil, nil)

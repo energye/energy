@@ -15,7 +15,7 @@ import (
 // ICEFServer Parent: ICefBaseRefCounted
 //
 //	Interface representing a server that supports HTTP and WebSocket requests. Server capacity is limited and is intended to handle only a small number of simultaneous connections (e.g. for communicating between applications on localhost). The functions of this interface are safe to call from any thread in the brower process unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_server_capi.h">CEF source file: /include/capi/cef_server_capi.h (cef_server_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_server_capi.h">CEF source file: /include/capi/cef_server_capi.h (cef_server_t))</a>
 type ICEFServer interface {
 	ICefBaseRefCounted
 	// GetTaskRunner
@@ -62,7 +62,7 @@ type ICEFServer interface {
 // TCEFServer Parent: TCefBaseRefCounted
 //
 //	Interface representing a server that supports HTTP and WebSocket requests. Server capacity is limited and is intended to handle only a small number of simultaneous connections (e.g. for communicating between applications on localhost). The functions of this interface are safe to call from any thread in the brower process unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_server_capi.h">CEF source file: /include/capi/cef_server_capi.h (cef_server_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_server_capi.h">CEF source file: /include/capi/cef_server_capi.h (cef_server_t))</a>
 type TCEFServer struct {
 	TCefBaseRefCounted
 }

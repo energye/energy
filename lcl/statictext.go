@@ -70,66 +70,66 @@ type TStaticText struct {
 }
 
 func NewStaticText(AOwner IComponent) IStaticText {
-	r1 := LCL().SysCallN(4429, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(5078, GetObjectUintptr(AOwner))
 	return AsStaticText(r1)
 }
 
 func (m *TStaticText) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4430, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5079, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TStaticText) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4430, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5079, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStaticText) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4431, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5080, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TStaticText) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4431, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5080, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStaticText) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4432, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5081, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TStaticText) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4432, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(5081, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TStaticText) ParentFont() bool {
-	r1 := LCL().SysCallN(4434, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5083, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStaticText) SetParentFont(AValue bool) {
-	LCL().SysCallN(4434, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5083, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStaticText) ParentColor() bool {
-	r1 := LCL().SysCallN(4433, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5082, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStaticText) SetParentColor(AValue bool) {
-	LCL().SysCallN(4433, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5082, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TStaticText) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4435, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5084, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TStaticText) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4435, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5084, 1, m.Instance(), PascalBool(AValue))
 }
 
 func StaticTextClass() TClass {
-	ret := LCL().SysCallN(4428)
+	ret := LCL().SysCallN(5077)
 	return TClass(ret)
 }
 
@@ -138,7 +138,7 @@ func (m *TStaticText) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4436, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(5085, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TStaticText) SetOnDblClick(fn TNotifyEvent) {
@@ -146,7 +146,7 @@ func (m *TStaticText) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4437, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(5086, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TStaticText) SetOnDragDrop(fn TDragDropEvent) {
@@ -154,7 +154,7 @@ func (m *TStaticText) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4438, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(5087, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TStaticText) SetOnDragOver(fn TDragOverEvent) {
@@ -162,7 +162,7 @@ func (m *TStaticText) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4439, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(5088, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TStaticText) SetOnEndDrag(fn TEndDragEvent) {
@@ -170,7 +170,7 @@ func (m *TStaticText) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4440, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(5089, m.Instance(), m.endDragPtr)
 }
 
 func (m *TStaticText) SetOnMouseDown(fn TMouseEvent) {
@@ -178,7 +178,7 @@ func (m *TStaticText) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4441, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(5090, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TStaticText) SetOnMouseEnter(fn TNotifyEvent) {
@@ -186,7 +186,7 @@ func (m *TStaticText) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4442, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(5091, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TStaticText) SetOnMouseLeave(fn TNotifyEvent) {
@@ -194,7 +194,7 @@ func (m *TStaticText) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4443, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(5092, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TStaticText) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -202,7 +202,7 @@ func (m *TStaticText) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4444, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(5093, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TStaticText) SetOnMouseUp(fn TMouseEvent) {
@@ -210,7 +210,7 @@ func (m *TStaticText) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4445, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(5094, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -218,7 +218,7 @@ func (m *TStaticText) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4446, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5095, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -226,7 +226,7 @@ func (m *TStaticText) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4447, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5096, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -234,7 +234,7 @@ func (m *TStaticText) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4451, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5100, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -242,7 +242,7 @@ func (m *TStaticText) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4448, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(5097, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -250,7 +250,7 @@ func (m *TStaticText) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4449, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(5098, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TStaticText) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -258,7 +258,7 @@ func (m *TStaticText) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4450, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(5099, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TStaticText) SetOnStartDrag(fn TStartDragEvent) {
@@ -266,5 +266,5 @@ func (m *TStaticText) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4452, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(5101, m.Instance(), m.startDragPtr)
 }

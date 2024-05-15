@@ -13,12 +13,12 @@ import (
 )
 
 type TMainForm struct {
-	lcl.IForm
+	lcl.TForm
 	windowParent wv.IWVWindowParent
 	browser      wv.IWVBrowser
 }
 
-var MainForm *TMainForm
+var MainForm TMainForm
 var load wv.IWVLoader
 var scheme = "myscheme"
 
@@ -57,7 +57,7 @@ func main() {
 	})
 	lcl.Application.Initialize()
 	lcl.Application.SetMainFormOnTaskBar(true)
-	lcl.Application.CreateForm(&MainForm, true)
+	lcl.Application.CreateForm(&MainForm)
 	lcl.Application.Run()
 }
 

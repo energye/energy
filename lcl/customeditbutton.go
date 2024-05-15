@@ -24,11 +24,11 @@ type TCustomEditButton struct {
 }
 
 func NewCustomEditButton(AOwner IComponent) ICustomEditButton {
-	r1 := LCL().SysCallN(1420, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1610, GetObjectUintptr(AOwner))
 	return AsCustomEditButton(r1)
 }
 
 func CustomEditButtonClass() TClass {
-	ret := LCL().SysCallN(1419)
+	ret := LCL().SysCallN(1609)
 	return TClass(ret)
 }

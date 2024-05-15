@@ -15,7 +15,7 @@ import (
 // ICefCookieManager Parent: ICefBaseRefCounted
 //
 //	Interface used for managing cookies. The functions of this interface may be called on any thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_cookie_capi.h">CEF source file: /include/capi/cef_cookie_capi.h (cef_cookie_manager_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_cookie_capi.h">CEF source file: /include/capi/cef_cookie_capi.h (cef_cookie_manager_t))</a>
 type ICefCookieManager interface {
 	ICefBaseRefCounted
 	// VisitAllCookies
@@ -38,7 +38,7 @@ type ICefCookieManager interface {
 // TCefCookieManager Parent: TCefBaseRefCounted
 //
 //	Interface used for managing cookies. The functions of this interface may be called on any thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_cookie_capi.h">CEF source file: /include/capi/cef_cookie_capi.h (cef_cookie_manager_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_cookie_capi.h">CEF source file: /include/capi/cef_cookie_capi.h (cef_cookie_manager_t))</a>
 type TCefCookieManager struct {
 	TCefBaseRefCounted
 }

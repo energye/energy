@@ -43,9 +43,14 @@ import (
 
 var globalApp ICefApplication
 
+// IApplication
+//
+//	自定义Application
 type IApplication interface {
 	ICefApplication
+	// 注册默认事件
 	registerDefaultEvent()
+	// 初始化默认设置
 	initDefaultSettings()
 }
 

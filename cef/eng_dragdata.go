@@ -15,7 +15,7 @@ import (
 // ICefDragData Parent: ICefBaseRefCounted
 //
 //	Interface used to represent drag data. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_drag_data_capi.h">CEF source file: /include/capi/cef_drag_data_capi.h (cef_drag_data_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_drag_data_capi.h">CEF source file: /include/capi/cef_drag_data_capi.h (cef_drag_data_t))</a>
 type ICefDragData interface {
 	ICefBaseRefCounted
 	// Clone
@@ -104,7 +104,7 @@ type ICefDragData interface {
 // TCefDragData Parent: TCefBaseRefCounted
 //
 //	Interface used to represent drag data. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_drag_data_capi.h">CEF source file: /include/capi/cef_drag_data_capi.h (cef_drag_data_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_drag_data_capi.h">CEF source file: /include/capi/cef_drag_data_capi.h (cef_drag_data_t))</a>
 type TCefDragData struct {
 	TCefBaseRefCounted
 }

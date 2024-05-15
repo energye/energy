@@ -15,7 +15,7 @@ import (
 // ICefBaseRefCounted Parent: IObject
 //
 //	All ref-counted framework interfaces must inherit from this interface.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_base_capi.h">CEF source file: /include/capi/cef_base_capi.h (cef_base_ref_counted_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_base_capi.h">CEF source file: /include/capi/cef_base_capi.h (cef_base_ref_counted_t))</a>
 type ICefBaseRefCounted interface {
 	IObject
 	// HasOneRef
@@ -41,7 +41,7 @@ type ICefBaseRefCounted interface {
 // TCefBaseRefCounted Parent: TObject
 //
 //	All ref-counted framework interfaces must inherit from this interface.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_base_capi.h">CEF source file: /include/capi/cef_base_capi.h (cef_base_ref_counted_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_base_capi.h">CEF source file: /include/capi/cef_base_capi.h (cef_base_ref_counted_t))</a>
 type TCefBaseRefCounted struct {
 	TObject
 }

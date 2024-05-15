@@ -70,84 +70,84 @@ type TEdit struct {
 }
 
 func NewEdit(AOwner IComponent) IEdit {
-	r1 := LCL().SysCallN(2550, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2793, GetObjectUintptr(AOwner))
 	return AsEdit(r1)
 }
 
 func (m *TEdit) AutoSelected() bool {
-	r1 := LCL().SysCallN(2548, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2791, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TEdit) SetAutoSelected(AValue bool) {
-	LCL().SysCallN(2548, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2791, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TEdit) AutoSelect() bool {
-	r1 := LCL().SysCallN(2547, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2790, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TEdit) SetAutoSelect(AValue bool) {
-	LCL().SysCallN(2547, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2790, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TEdit) DragCursor() TCursor {
-	r1 := LCL().SysCallN(2551, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2794, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TEdit) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(2551, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2794, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TEdit) DragKind() TDragKind {
-	r1 := LCL().SysCallN(2552, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2795, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TEdit) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(2552, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2795, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TEdit) DragMode() TDragMode {
-	r1 := LCL().SysCallN(2553, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2796, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TEdit) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(2553, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2796, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TEdit) ParentColor() bool {
-	r1 := LCL().SysCallN(2554, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2797, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TEdit) SetParentColor(AValue bool) {
-	LCL().SysCallN(2554, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2797, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TEdit) ParentFont() bool {
-	r1 := LCL().SysCallN(2555, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2798, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TEdit) SetParentFont(AValue bool) {
-	LCL().SysCallN(2555, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2798, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TEdit) ParentShowHint() bool {
-	r1 := LCL().SysCallN(2556, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2799, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TEdit) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(2556, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2799, 1, m.Instance(), PascalBool(AValue))
 }
 
 func EditClass() TClass {
-	ret := LCL().SysCallN(2549)
+	ret := LCL().SysCallN(2792)
 	return TClass(ret)
 }
 
@@ -156,7 +156,7 @@ func (m *TEdit) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2557, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(2800, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TEdit) SetOnDblClick(fn TNotifyEvent) {
@@ -164,7 +164,7 @@ func (m *TEdit) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2558, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(2801, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TEdit) SetOnDragDrop(fn TDragDropEvent) {
@@ -172,7 +172,7 @@ func (m *TEdit) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2559, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(2802, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TEdit) SetOnDragOver(fn TDragOverEvent) {
@@ -180,7 +180,7 @@ func (m *TEdit) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2560, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(2803, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TEdit) SetOnEditingDone(fn TNotifyEvent) {
@@ -188,7 +188,7 @@ func (m *TEdit) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2561, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(2804, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TEdit) SetOnEndDrag(fn TEndDragEvent) {
@@ -196,7 +196,7 @@ func (m *TEdit) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2562, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(2805, m.Instance(), m.endDragPtr)
 }
 
 func (m *TEdit) SetOnMouseDown(fn TMouseEvent) {
@@ -204,7 +204,7 @@ func (m *TEdit) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2563, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(2806, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TEdit) SetOnMouseEnter(fn TNotifyEvent) {
@@ -212,7 +212,7 @@ func (m *TEdit) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2564, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(2807, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TEdit) SetOnMouseLeave(fn TNotifyEvent) {
@@ -220,7 +220,7 @@ func (m *TEdit) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2565, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(2808, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TEdit) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -228,7 +228,7 @@ func (m *TEdit) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2566, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(2809, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TEdit) SetOnMouseUp(fn TMouseEvent) {
@@ -236,7 +236,7 @@ func (m *TEdit) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2567, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(2810, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TEdit) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -244,7 +244,7 @@ func (m *TEdit) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2568, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(2811, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TEdit) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -252,7 +252,7 @@ func (m *TEdit) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2569, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(2812, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TEdit) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -260,7 +260,7 @@ func (m *TEdit) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2570, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(2813, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TEdit) SetOnStartDrag(fn TStartDragEvent) {
@@ -268,5 +268,5 @@ func (m *TEdit) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2571, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(2814, m.Instance(), m.startDragPtr)
 }

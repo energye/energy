@@ -40,7 +40,13 @@ func GetObjectUintptr(object IObject) uintptr {
 	if object == nil {
 		return 0
 	}
-	return object.Instance()
+	switch object.(type) {
+	case IObject:
+		return object.Instance()
+	case IUnknown:
+		return GetUnknownUintptr(object.(IUnknown))
+	}
+	return 0
 }
 
 // GetUnknownUintptr 获取接口指针

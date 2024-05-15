@@ -118,6 +118,17 @@ func AsApplication(obj interface{}) IApplication {
 	return application
 }
 
+// AsBaseVirtualTree Convert a pointer object to an existing class object
+func AsBaseVirtualTree(obj interface{}) IBaseVirtualTree {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	baseVirtualTree := new(TBaseVirtualTree)
+	SetObjectInstance(baseVirtualTree, instance)
+	return baseVirtualTree
+}
+
 // AsBasicAction Convert a pointer object to an existing class object
 func AsBasicAction(obj interface{}) IBasicAction {
 	instance := GetInstance(obj)
@@ -303,6 +314,17 @@ func AsClipboard(obj interface{}) IClipboard {
 	clipboard := new(TClipboard)
 	SetObjectInstance(clipboard, instance)
 	return clipboard
+}
+
+// AsClipboardFormats Convert a pointer object to an existing class object
+func AsClipboardFormats(obj interface{}) IClipboardFormats {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	clipboardFormats := new(TClipboardFormats)
+	SetObjectInstance(clipboardFormats, instance)
+	return clipboardFormats
 }
 
 // AsCollection Convert a pointer object to an existing class object
@@ -1163,6 +1185,17 @@ func AsCustomStringGrid(obj interface{}) ICustomStringGrid {
 	return customStringGrid
 }
 
+// AsCustomStringTreeOptions Convert a pointer object to an existing class object
+func AsCustomStringTreeOptions(obj interface{}) ICustomStringTreeOptions {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	customStringTreeOptions := new(TCustomStringTreeOptions)
+	SetObjectInstance(customStringTreeOptions, instance)
+	return customStringTreeOptions
+}
+
 // AsCustomTabControl Convert a pointer object to an existing class object
 func AsCustomTabControl(obj interface{}) ICustomTabControl {
 	instance := GetInstance(obj)
@@ -1240,6 +1273,39 @@ func AsCustomUpDown(obj interface{}) ICustomUpDown {
 	return customUpDown
 }
 
+// AsCustomVirtualDrawTree Convert a pointer object to an existing class object
+func AsCustomVirtualDrawTree(obj interface{}) ICustomVirtualDrawTree {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	customVirtualDrawTree := new(TCustomVirtualDrawTree)
+	SetObjectInstance(customVirtualDrawTree, instance)
+	return customVirtualDrawTree
+}
+
+// AsCustomVirtualStringTree Convert a pointer object to an existing class object
+func AsCustomVirtualStringTree(obj interface{}) ICustomVirtualStringTree {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	customVirtualStringTree := new(TCustomVirtualStringTree)
+	SetObjectInstance(customVirtualStringTree, instance)
+	return customVirtualStringTree
+}
+
+// AsCustomVirtualTreeOptions Convert a pointer object to an existing class object
+func AsCustomVirtualTreeOptions(obj interface{}) ICustomVirtualTreeOptions {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	customVirtualTreeOptions := new(TCustomVirtualTreeOptions)
+	SetObjectInstance(customVirtualTreeOptions, instance)
+	return customVirtualTreeOptions
+}
+
 // AsDataModule Convert a pointer object to an existing class object
 func AsDataModule(obj interface{}) IDataModule {
 	instance := GetInstance(obj)
@@ -1271,6 +1337,17 @@ func AsDirectoryEdit(obj interface{}) IDirectoryEdit {
 	directoryEdit := new(TDirectoryEdit)
 	SetObjectInstance(directoryEdit, instance)
 	return directoryEdit
+}
+
+// AsDividerBevel Convert a pointer object to an existing class object
+func AsDividerBevel(obj interface{}) IDividerBevel {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	dividerBevel := new(TDividerBevel)
+	SetObjectInstance(dividerBevel, instance)
+	return dividerBevel
 }
 
 // AsDockManager Convert a pointer object to an existing class object
@@ -2054,6 +2131,39 @@ func AsLazDockZone(obj interface{}) ILazDockZone {
 	return lazDockZone
 }
 
+// AsLazIntfImage Convert a pointer object to an existing class object
+func AsLazIntfImage(obj interface{}) ILazIntfImage {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	lazIntfImage := new(TLazIntfImage)
+	SetObjectInstance(lazIntfImage, instance)
+	return lazIntfImage
+}
+
+// AsLazVirtualDrawTree Convert a pointer object to an existing class object
+func AsLazVirtualDrawTree(obj interface{}) ILazVirtualDrawTree {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	lazVirtualDrawTree := new(TLazVirtualDrawTree)
+	SetObjectInstance(lazVirtualDrawTree, instance)
+	return lazVirtualDrawTree
+}
+
+// AsLazVirtualStringTree Convert a pointer object to an existing class object
+func AsLazVirtualStringTree(obj interface{}) ILazVirtualStringTree {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	lazVirtualStringTree := new(TLazVirtualStringTree)
+	SetObjectInstance(lazVirtualStringTree, instance)
+	return lazVirtualStringTree
+}
+
 // AsLinkLabel Convert a pointer object to an existing class object
 func AsLinkLabel(obj interface{}) ILinkLabel {
 	instance := GetInstance(obj)
@@ -2714,6 +2824,17 @@ func AsScrollBar(obj interface{}) IScrollBar {
 	return scrollBar
 }
 
+// AsScrollBarOptions Convert a pointer object to an existing class object
+func AsScrollBarOptions(obj interface{}) IScrollBarOptions {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	scrollBarOptions := new(TScrollBarOptions)
+	SetObjectInstance(scrollBarOptions, instance)
+	return scrollBarOptions
+}
+
 // AsScrollBox Convert a pointer object to an existing class object
 func AsScrollBox(obj interface{}) IScrollBox {
 	instance := GetInstance(obj)
@@ -2888,6 +3009,17 @@ func AsStringList(obj interface{}) IStringList {
 	stringList := new(TStringList)
 	SetObjectInstance(stringList, instance)
 	return stringList
+}
+
+// AsStringTreeOptions Convert a pointer object to an existing class object
+func AsStringTreeOptions(obj interface{}) IStringTreeOptions {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	stringTreeOptions := new(TStringTreeOptions)
+	SetObjectInstance(stringTreeOptions, instance)
+	return stringTreeOptions
 }
 
 // AsStrings Convert a pointer object to an existing class object
@@ -3154,6 +3286,61 @@ func AsUpDown(obj interface{}) IUpDown {
 	return upDown
 }
 
+// AsVTColors Convert a pointer object to an existing class object
+func AsVTColors(obj interface{}) IVTColors {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	vTColors := new(TVTColors)
+	SetObjectInstance(vTColors, instance)
+	return vTColors
+}
+
+// AsVTDragImage Convert a pointer object to an existing class object
+func AsVTDragImage(obj interface{}) IVTDragImage {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	vTDragImage := new(TVTDragImage)
+	SetObjectInstance(vTDragImage, instance)
+	return vTDragImage
+}
+
+// AsVTFixedAreaConstraints Convert a pointer object to an existing class object
+func AsVTFixedAreaConstraints(obj interface{}) IVTFixedAreaConstraints {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	vTFixedAreaConstraints := new(TVTFixedAreaConstraints)
+	SetObjectInstance(vTFixedAreaConstraints, instance)
+	return vTFixedAreaConstraints
+}
+
+// AsVTHeader Convert a pointer object to an existing class object
+func AsVTHeader(obj interface{}) IVTHeader {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	vTHeader := new(TVTHeader)
+	SetObjectInstance(vTHeader, instance)
+	return vTHeader
+}
+
+// AsVTVirtualNodeEnumerator Convert a pointer object to an existing class object
+func AsVTVirtualNodeEnumerator(obj interface{}) IVTVirtualNodeEnumerator {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	vTVirtualNodeEnumerator := new(TVTVirtualNodeEnumerator)
+	SetObjectInstance(vTVirtualNodeEnumerator, instance)
+	return vTVirtualNodeEnumerator
+}
+
 // AsValueListEditor Convert a pointer object to an existing class object
 func AsValueListEditor(obj interface{}) IValueListEditor {
 	instance := GetInstance(obj)
@@ -3174,6 +3361,39 @@ func AsValueListStrings(obj interface{}) IValueListStrings {
 	valueListStrings := new(TValueListStrings)
 	SetObjectInstance(valueListStrings, instance)
 	return valueListStrings
+}
+
+// AsVirtualTreeColumn Convert a pointer object to an existing class object
+func AsVirtualTreeColumn(obj interface{}) IVirtualTreeColumn {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	virtualTreeColumn := new(TVirtualTreeColumn)
+	SetObjectInstance(virtualTreeColumn, instance)
+	return virtualTreeColumn
+}
+
+// AsVirtualTreeColumns Convert a pointer object to an existing class object
+func AsVirtualTreeColumns(obj interface{}) IVirtualTreeColumns {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	virtualTreeColumns := new(TVirtualTreeColumns)
+	SetObjectInstance(virtualTreeColumns, instance)
+	return virtualTreeColumns
+}
+
+// AsVirtualTreeOptions Convert a pointer object to an existing class object
+func AsVirtualTreeOptions(obj interface{}) IVirtualTreeOptions {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	virtualTreeOptions := new(TVirtualTreeOptions)
+	SetObjectInstance(virtualTreeOptions, instance)
+	return virtualTreeOptions
 }
 
 // AsWinControl Convert a pointer object to an existing class object

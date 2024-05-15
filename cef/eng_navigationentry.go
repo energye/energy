@@ -15,7 +15,7 @@ import (
 // ICefNavigationEntry Parent: ICefBaseRefCounted
 //
 //	Interface used to represent an entry in navigation history.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_navigation_entry_capi.h">CEF source file: /include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_navigation_entry_capi.h">CEF source file: /include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t))</a>
 type ICefNavigationEntry interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -53,7 +53,7 @@ type ICefNavigationEntry interface {
 // TCefNavigationEntry Parent: TCefBaseRefCounted
 //
 //	Interface used to represent an entry in navigation history.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_navigation_entry_capi.h">CEF source file: /include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_navigation_entry_capi.h">CEF source file: /include/capi/cef_navigation_entry_capi.h (cef_navigation_entry_t))</a>
 type TCefNavigationEntry struct {
 	TCefBaseRefCounted
 }

@@ -87,74 +87,74 @@ type TForm struct {
 }
 
 func NewForm(TheOwner IComponent) IForm {
-	r1 := LCL().SysCallN(2859, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3102, GetObjectUintptr(TheOwner))
 	return AsForm(r1)
 }
 
 func (m *TForm) ClientHandle() HWND {
-	r1 := LCL().SysCallN(2858, m.Instance())
+	r1 := LCL().SysCallN(3101, m.Instance())
 	return HWND(r1)
 }
 
 func (m *TForm) DragKind() TDragKind {
-	r1 := LCL().SysCallN(2860, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3103, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TForm) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(2860, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3103, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TForm) DragMode() TDragMode {
-	r1 := LCL().SysCallN(2861, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3104, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TForm) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(2861, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3104, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TForm) SessionProperties() string {
-	r1 := LCL().SysCallN(2865, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3108, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TForm) SetSessionProperties(AValue string) {
-	LCL().SysCallN(2865, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(3108, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TForm) LCLVersion() string {
-	r1 := LCL().SysCallN(2862, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3105, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TForm) SetLCLVersion(AValue string) {
-	LCL().SysCallN(2862, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(3105, 1, m.Instance(), PascalStr(AValue))
 }
 
 func FormClass() TClass {
-	ret := LCL().SysCallN(2857)
+	ret := LCL().SysCallN(3100)
 	return TClass(ret)
 }
 
 func (m *TForm) Cascade() {
-	LCL().SysCallN(2856, m.Instance())
+	LCL().SysCallN(3099, m.Instance())
 }
 
 func (m *TForm) Next() {
-	LCL().SysCallN(2863, m.Instance())
+	LCL().SysCallN(3106, m.Instance())
 }
 
 func (m *TForm) Previous() {
-	LCL().SysCallN(2864, m.Instance())
+	LCL().SysCallN(3107, m.Instance())
 }
 
 func (m *TForm) Tile() {
-	LCL().SysCallN(2885, m.Instance())
+	LCL().SysCallN(3128, m.Instance())
 }
 
 func (m *TForm) ArrangeIcons() {
-	LCL().SysCallN(2855, m.Instance())
+	LCL().SysCallN(3098, m.Instance())
 }
 
 func (m *TForm) SetOnConstrainedResize(fn TConstrainedResizeEvent) {
@@ -162,7 +162,7 @@ func (m *TForm) SetOnConstrainedResize(fn TConstrainedResizeEvent) {
 		RemoveEventElement(m.constrainedResizePtr)
 	}
 	m.constrainedResizePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2866, m.Instance(), m.constrainedResizePtr)
+	LCL().SysCallN(3109, m.Instance(), m.constrainedResizePtr)
 }
 
 func (m *TForm) SetOnContextPopup(fn TContextPopupEvent) {
@@ -170,7 +170,7 @@ func (m *TForm) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2867, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3110, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TForm) SetOnDblClick(fn TNotifyEvent) {
@@ -178,7 +178,7 @@ func (m *TForm) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2868, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(3111, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TForm) SetOnDragDrop(fn TDragDropEvent) {
@@ -186,7 +186,7 @@ func (m *TForm) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2869, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3112, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TForm) SetOnDragOver(fn TDragOverEvent) {
@@ -194,7 +194,7 @@ func (m *TForm) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2870, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3113, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TForm) SetOnEndDock(fn TEndDragEvent) {
@@ -202,7 +202,7 @@ func (m *TForm) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2871, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(3114, m.Instance(), m.endDockPtr)
 }
 
 func (m *TForm) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
@@ -210,7 +210,7 @@ func (m *TForm) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
 		RemoveEventElement(m.getSiteInfoPtr)
 	}
 	m.getSiteInfoPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2872, m.Instance(), m.getSiteInfoPtr)
+	LCL().SysCallN(3115, m.Instance(), m.getSiteInfoPtr)
 }
 
 func (m *TForm) SetOnMouseDown(fn TMouseEvent) {
@@ -218,7 +218,7 @@ func (m *TForm) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2873, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3116, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TForm) SetOnMouseEnter(fn TNotifyEvent) {
@@ -226,7 +226,7 @@ func (m *TForm) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2874, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3117, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TForm) SetOnMouseLeave(fn TNotifyEvent) {
@@ -234,7 +234,7 @@ func (m *TForm) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2875, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3118, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TForm) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -242,7 +242,7 @@ func (m *TForm) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2876, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3119, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TForm) SetOnMouseUp(fn TMouseEvent) {
@@ -250,7 +250,7 @@ func (m *TForm) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2877, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3120, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TForm) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -258,7 +258,7 @@ func (m *TForm) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2878, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(3121, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TForm) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -266,7 +266,7 @@ func (m *TForm) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2879, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(3122, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TForm) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -274,7 +274,7 @@ func (m *TForm) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2883, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(3126, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TForm) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -282,7 +282,7 @@ func (m *TForm) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2880, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(3123, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TForm) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -290,7 +290,7 @@ func (m *TForm) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2881, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(3124, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TForm) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -298,7 +298,7 @@ func (m *TForm) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2882, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(3125, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TForm) SetOnStartDock(fn TStartDockEvent) {
@@ -306,5 +306,5 @@ func (m *TForm) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2884, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(3127, m.Instance(), m.startDockPtr)
 }

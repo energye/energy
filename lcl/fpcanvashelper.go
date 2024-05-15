@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IFPCanvasHelper Parent: IPersistent
@@ -38,54 +37,54 @@ type TFPCanvasHelper struct {
 }
 
 func NewFPCanvasHelper() IFPCanvasHelper {
-	r1 := LCL().SysCallN(2581)
+	r1 := LCL().SysCallN(2824)
 	return AsFPCanvasHelper(r1)
 }
 
 func (m *TFPCanvasHelper) Allocated() bool {
-	r1 := LCL().SysCallN(2578, m.Instance())
+	r1 := LCL().SysCallN(2821, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFPCanvasHelper) FixedCanvas() bool {
-	r1 := LCL().SysCallN(2585, m.Instance())
+	r1 := LCL().SysCallN(2828, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFPCanvasHelper) Canvas() IFPCustomCanvas {
-	r1 := LCL().SysCallN(2579, m.Instance())
+	r1 := LCL().SysCallN(2822, m.Instance())
 	return AsFPCustomCanvas(r1)
 }
 
 func (m *TFPCanvasHelper) FPColor() (resultFPColor TFPColor) {
-	r1 := LCL().SysCallN(2584, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2827, 0, m.Instance(), 0)
 	return *(*TFPColor)(getPointer(r1))
 }
 
 func (m *TFPCanvasHelper) SetFPColor(AValue *TFPColor) {
-	LCL().SysCallN(2584, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(2827, 1, m.Instance(), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TFPCanvasHelper) DelayAllocate() bool {
-	r1 := LCL().SysCallN(2583, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2826, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TFPCanvasHelper) SetDelayAllocate(AValue bool) {
-	LCL().SysCallN(2583, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2826, 1, m.Instance(), PascalBool(AValue))
 }
 
 func FPCanvasHelperClass() TClass {
-	ret := LCL().SysCallN(2580)
+	ret := LCL().SysCallN(2823)
 	return TClass(ret)
 }
 
 func (m *TFPCanvasHelper) AllocateResources(ACanvas IFPCustomCanvas, CanDelay bool) {
-	LCL().SysCallN(2577, m.Instance(), GetObjectUintptr(ACanvas), PascalBool(CanDelay))
+	LCL().SysCallN(2820, m.Instance(), GetObjectUintptr(ACanvas), PascalBool(CanDelay))
 }
 
 func (m *TFPCanvasHelper) DeallocateResources() {
-	LCL().SysCallN(2582, m.Instance())
+	LCL().SysCallN(2825, m.Instance())
 }
 
 func (m *TFPCanvasHelper) SetOnChanging(fn TNotifyEvent) {
@@ -93,7 +92,7 @@ func (m *TFPCanvasHelper) SetOnChanging(fn TNotifyEvent) {
 		RemoveEventElement(m.changingPtr)
 	}
 	m.changingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2587, m.Instance(), m.changingPtr)
+	LCL().SysCallN(2830, m.Instance(), m.changingPtr)
 }
 
 func (m *TFPCanvasHelper) SetOnChange(fn TNotifyEvent) {
@@ -101,5 +100,5 @@ func (m *TFPCanvasHelper) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2586, m.Instance(), m.changePtr)
+	LCL().SysCallN(2829, m.Instance(), m.changePtr)
 }

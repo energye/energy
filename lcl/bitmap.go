@@ -26,11 +26,11 @@ type TBitmap struct {
 }
 
 func NewBitmap() IBitmap {
-	r1 := LCL().SysCallN(257)
+	r1 := LCL().SysCallN(444)
 	return AsBitmap(r1)
 }
 
 func BitmapClass() TClass {
-	ret := LCL().SysCallN(256)
+	ret := LCL().SysCallN(443)
 	return TClass(ret)
 }

@@ -24,11 +24,11 @@ type TPortableAnyMapGraphic struct {
 }
 
 func NewPortableAnyMapGraphic() IPortableAnyMapGraphic {
-	r1 := LCL().SysCallN(3927)
+	r1 := LCL().SysCallN(4569)
 	return AsPortableAnyMapGraphic(r1)
 }
 
 func PortableAnyMapGraphicClass() TClass {
-	ret := LCL().SysCallN(3926)
+	ret := LCL().SysCallN(4568)
 	return TClass(ret)
 }

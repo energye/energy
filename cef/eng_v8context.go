@@ -15,7 +15,7 @@ import (
 // ICefv8Context Parent: ICefBaseRefCounted
 //
 //	Interface representing a V8 context handle. V8 handles can only be accessed from the thread on which they are created. Valid threads for creating a V8 handle include the render process main thread (TID_RENDERER) and WebWorker threads. A task runner for posting tasks on the associated thread can be retrieved via the ICefV8context.GetTaskRunner() function.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8context_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8context_t))</a>
 type ICefv8Context interface {
 	ICefBaseRefCounted
 	// GetTaskRunner
@@ -50,7 +50,7 @@ type ICefv8Context interface {
 // TCefv8Context Parent: TCefBaseRefCounted
 //
 //	Interface representing a V8 context handle. V8 handles can only be accessed from the thread on which they are created. Valid threads for creating a V8 handle include the render process main thread (TID_RENDERER) and WebWorker threads. A task runner for posting tasks on the associated thread can be retrieved via the ICefV8context.GetTaskRunner() function.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8context_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8context_t))</a>
 type TCefv8Context struct {
 	TCefBaseRefCounted
 }

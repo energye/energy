@@ -15,7 +15,7 @@ import (
 // ICefV8Exception Parent: ICefBaseRefCounted
 //
 //	Interface representing a V8 exception. The functions of this interface may be called on any render process thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8exception_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8exception_t))</a>
 type ICefV8Exception interface {
 	ICefBaseRefCounted
 	// GetMessage
@@ -47,7 +47,7 @@ type ICefV8Exception interface {
 // TCefV8Exception Parent: TCefBaseRefCounted
 //
 //	Interface representing a V8 exception. The functions of this interface may be called on any render process thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8exception_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8exception_t))</a>
 type TCefV8Exception struct {
 	TCefBaseRefCounted
 }

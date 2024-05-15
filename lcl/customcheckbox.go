@@ -34,49 +34,49 @@ type TCustomCheckBox struct {
 }
 
 func NewCustomCheckBox(TheOwner IComponent) ICustomCheckBox {
-	r1 := LCL().SysCallN(1169, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(1359, GetObjectUintptr(TheOwner))
 	return AsCustomCheckBox(r1)
 }
 
 func (m *TCustomCheckBox) Alignment() TLeftRight {
-	r1 := LCL().SysCallN(1166, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1356, 0, m.Instance(), 0)
 	return TLeftRight(r1)
 }
 
 func (m *TCustomCheckBox) SetAlignment(AValue TLeftRight) {
-	LCL().SysCallN(1166, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1356, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomCheckBox) AllowGrayed() bool {
-	r1 := LCL().SysCallN(1167, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1357, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomCheckBox) SetAllowGrayed(AValue bool) {
-	LCL().SysCallN(1167, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1357, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomCheckBox) State() TCheckBoxState {
-	r1 := LCL().SysCallN(1173, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1363, 0, m.Instance(), 0)
 	return TCheckBoxState(r1)
 }
 
 func (m *TCustomCheckBox) SetState(AValue TCheckBoxState) {
-	LCL().SysCallN(1173, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1363, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomCheckBox) ShortCut() TShortCut {
-	r1 := LCL().SysCallN(1171, m.Instance())
+	r1 := LCL().SysCallN(1361, m.Instance())
 	return TShortCut(r1)
 }
 
 func (m *TCustomCheckBox) ShortCutKey2() TShortCut {
-	r1 := LCL().SysCallN(1172, m.Instance())
+	r1 := LCL().SysCallN(1362, m.Instance())
 	return TShortCut(r1)
 }
 
 func CustomCheckBoxClass() TClass {
-	ret := LCL().SysCallN(1168)
+	ret := LCL().SysCallN(1358)
 	return TClass(ret)
 }
 
@@ -85,5 +85,5 @@ func (m *TCustomCheckBox) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1170, m.Instance(), m.changePtr)
+	LCL().SysCallN(1360, m.Instance(), m.changePtr)
 }

@@ -35,40 +35,40 @@ type TListControlItems struct {
 }
 
 func NewListControlItems(AOwner IPersistent, AItemClass TCollectionItemClass) IListControlItems {
-	r1 := LCL().SysCallN(3370, GetObjectUintptr(AOwner), uintptr(AItemClass))
+	r1 := LCL().SysCallN(4012, GetObjectUintptr(AOwner), uintptr(AItemClass))
 	return AsListControlItems(r1)
 }
 
 func (m *TListControlItems) ItemsForListControlItem(AIndex int32) IListControlItem {
-	r1 := LCL().SysCallN(3372, m.Instance(), uintptr(AIndex))
+	r1 := LCL().SysCallN(4014, m.Instance(), uintptr(AIndex))
 	return AsListControlItem(r1)
 }
 
 func (m *TListControlItems) CaseSensitive() bool {
-	r1 := LCL().SysCallN(3368, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4010, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TListControlItems) SetCaseSensitive(AValue bool) {
-	LCL().SysCallN(3368, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4010, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TListControlItems) SortType() TListItemsSortType {
-	r1 := LCL().SysCallN(3375, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4017, 0, m.Instance(), 0)
 	return TListItemsSortType(r1)
 }
 
 func (m *TListControlItems) SetSortType(AValue TListItemsSortType) {
-	LCL().SysCallN(3375, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4017, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListControlItems) AddForListControlItem() IListControlItem {
-	r1 := LCL().SysCallN(3367, m.Instance())
+	r1 := LCL().SysCallN(4009, m.Instance())
 	return AsListControlItem(r1)
 }
 
 func ListControlItemsClass() TClass {
-	ret := LCL().SysCallN(3369)
+	ret := LCL().SysCallN(4011)
 	return TClass(ret)
 }
 
@@ -77,11 +77,11 @@ func (m *TListControlItems) CustomSort(fn TListItemsCompare) {
 		RemoveEventElement(m.customSortPtr)
 	}
 	m.customSortPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3371, m.Instance(), m.customSortPtr)
+	LCL().SysCallN(4013, m.Instance(), m.customSortPtr)
 }
 
 func (m *TListControlItems) SortForOverload() {
-	LCL().SysCallN(3374, m.Instance())
+	LCL().SysCallN(4016, m.Instance())
 }
 
 func (m *TListControlItems) SetOnCompare(fn TListCompareEvent) {
@@ -89,5 +89,5 @@ func (m *TListControlItems) SetOnCompare(fn TListCompareEvent) {
 		RemoveEventElement(m.comparePtr)
 	}
 	m.comparePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3373, m.Instance(), m.comparePtr)
+	LCL().SysCallN(4015, m.Instance(), m.comparePtr)
 }

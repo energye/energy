@@ -32,47 +32,47 @@ type TCustomFlowPanel struct {
 }
 
 func NewCustomFlowPanel(AOwner IComponent) ICustomFlowPanel {
-	r1 := LCL().SysCallN(1464, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1654, GetObjectUintptr(AOwner))
 	return AsCustomFlowPanel(r1)
 }
 
 func (m *TCustomFlowPanel) AutoWrap() bool {
-	r1 := LCL().SysCallN(1461, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1651, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomFlowPanel) SetAutoWrap(AValue bool) {
-	LCL().SysCallN(1461, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1651, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomFlowPanel) ControlList() IFlowPanelControlList {
-	r1 := LCL().SysCallN(1463, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1653, 0, m.Instance(), 0)
 	return AsFlowPanelControlList(r1)
 }
 
 func (m *TCustomFlowPanel) SetControlList(AValue IFlowPanelControlList) {
-	LCL().SysCallN(1463, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1653, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomFlowPanel) FlowStyle() TFlowStyle {
-	r1 := LCL().SysCallN(1466, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1656, 0, m.Instance(), 0)
 	return TFlowStyle(r1)
 }
 
 func (m *TCustomFlowPanel) SetFlowStyle(AValue TFlowStyle) {
-	LCL().SysCallN(1466, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1656, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomFlowPanel) FlowLayout() TTextLayout {
-	r1 := LCL().SysCallN(1465, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1655, 0, m.Instance(), 0)
 	return TTextLayout(r1)
 }
 
 func (m *TCustomFlowPanel) SetFlowLayout(AValue TTextLayout) {
-	LCL().SysCallN(1465, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1655, 1, m.Instance(), uintptr(AValue))
 }
 
 func CustomFlowPanelClass() TClass {
-	ret := LCL().SysCallN(1462)
+	ret := LCL().SysCallN(1652)
 	return TClass(ret)
 }

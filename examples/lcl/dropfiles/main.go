@@ -8,10 +8,10 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func main() {
 	inits.Init(nil, nil)
@@ -30,11 +30,10 @@ func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 
 	// windows10没生效，有待研究
 	windowsUACMessageFilter(f.Handle())
-}
-
-func (f *TMainForm) OnFormDropFiles(sender lcl.IObject, aFileNames []string) {
-	fmt.Println("当前拖放文件事件执行，文件数：", len(aFileNames))
-	for i, s := range aFileNames {
-		fmt.Println("index:", i, ", filename:", s)
-	}
+	f.SetOnDropFiles(func(sender lcl.IObject, fileNames []string) {
+		fmt.Println("当前拖放文件事件执行，文件数：", len(fileNames))
+		for i, s := range fileNames {
+			fmt.Println("index:", i, ", filename:", s)
+		}
+	})
 }

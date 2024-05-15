@@ -143,16 +143,11 @@ func InputComboEx2(aCaption, aPrompt string, aList IStrings, allowCustomText boo
 // 简化运行。
 //
 // simplify running.
-func RunApp(values ...interface{}) {
+func RunApp(forms ...IForm) {
 	Application.Initialize()
 	Application.SetMainFormOnTaskBar(true)
-	for i := 0; i < len(values); i++ {
-		switch values[i].(type) {
-		case func():
-			values[i].(func())()
-		default:
-			Application.CreateForm(values[i])
-		}
+	for i := 0; i < len(forms); i++ {
+		Application.CreateForm(forms[i])
 	}
 	Application.Run()
 }

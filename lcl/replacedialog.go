@@ -28,21 +28,21 @@ type TReplaceDialog struct {
 }
 
 func NewReplaceDialog(AOwner IComponent) IReplaceDialog {
-	r1 := LCL().SysCallN(4161, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4803, GetObjectUintptr(AOwner))
 	return AsReplaceDialog(r1)
 }
 
 func (m *TReplaceDialog) ReplaceText() string {
-	r1 := LCL().SysCallN(4162, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4804, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TReplaceDialog) SetReplaceText(AValue string) {
-	LCL().SysCallN(4162, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(4804, 1, m.Instance(), PascalStr(AValue))
 }
 
 func ReplaceDialogClass() TClass {
-	ret := LCL().SysCallN(4160)
+	ret := LCL().SysCallN(4802)
 	return TClass(ret)
 }
 
@@ -51,5 +51,5 @@ func (m *TReplaceDialog) SetOnReplace(fn TNotifyEvent) {
 		RemoveEventElement(m.replacePtr)
 	}
 	m.replacePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4163, m.Instance(), m.replacePtr)
+	LCL().SysCallN(4805, m.Instance(), m.replacePtr)
 }

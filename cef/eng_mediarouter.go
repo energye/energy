@@ -15,7 +15,7 @@ import (
 // ICefMediaRouter Parent: ICefBaseRefCounted
 //
 //	Supports discovery of and communication with media devices on the local network via the Cast and DIAL protocols. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_router_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_router_t))</a>
 type ICefMediaRouter interface {
 	ICefBaseRefCounted
 	// AddObserver
@@ -38,7 +38,7 @@ type ICefMediaRouter interface {
 // TCefMediaRouter Parent: TCefBaseRefCounted
 //
 //	Supports discovery of and communication with media devices on the local network via the Cast and DIAL protocols. The functions of this interface may be called on any browser process thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_router_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_media_router_capi.h">CEF source file: /include/capi/cef_media_router_capi.h (cef_media_router_t))</a>
 type TCefMediaRouter struct {
 	TCefBaseRefCounted
 }

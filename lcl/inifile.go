@@ -30,43 +30,43 @@ type TIniFile struct {
 }
 
 func NewIniFile(AFileName string, AOptions TIniFileOptions) IIniFile {
-	r1 := LCL().SysCallN(3154, PascalStr(AFileName), uintptr(AOptions))
+	r1 := LCL().SysCallN(3397, PascalStr(AFileName), uintptr(AOptions))
 	return AsIniFile(r1)
 }
 
 func NewIniFile1(AStream IStream, AOptions TIniFileOptions) IIniFile {
-	r1 := LCL().SysCallN(3155, GetObjectUintptr(AStream), uintptr(AOptions))
+	r1 := LCL().SysCallN(3398, GetObjectUintptr(AStream), uintptr(AOptions))
 	return AsIniFile(r1)
 }
 
 func (m *TIniFile) Stream() IStream {
-	r1 := LCL().SysCallN(3157, m.Instance())
+	r1 := LCL().SysCallN(3400, m.Instance())
 	return AsStream(r1)
 }
 
 func (m *TIniFile) CacheUpdates() bool {
-	r1 := LCL().SysCallN(3152, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3395, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TIniFile) SetCacheUpdates(AValue bool) {
-	LCL().SysCallN(3152, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3395, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TIniFile) WriteBOM() bool {
-	r1 := LCL().SysCallN(3158, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3401, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TIniFile) SetWriteBOM(AValue bool) {
-	LCL().SysCallN(3158, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3401, 1, m.Instance(), PascalBool(AValue))
 }
 
 func IniFileClass() TClass {
-	ret := LCL().SysCallN(3153)
+	ret := LCL().SysCallN(3396)
 	return TClass(ret)
 }
 
 func (m *TIniFile) ReadSectionRaw(Section string, Strings IStrings) {
-	LCL().SysCallN(3156, m.Instance(), PascalStr(Section), GetObjectUintptr(Strings))
+	LCL().SysCallN(3399, m.Instance(), PascalStr(Section), GetObjectUintptr(Strings))
 }

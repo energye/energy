@@ -36,49 +36,49 @@ type TCustomPage struct {
 }
 
 func NewCustomPage(TheOwner IComponent) ICustomPage {
-	r1 := LCL().SysCallN(1919, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(2109, GetObjectUintptr(TheOwner))
 	return AsCustomPage(r1)
 }
 
 func (m *TCustomPage) PageIndex() int32 {
-	r1 := LCL().SysCallN(1921, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2111, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomPage) SetPageIndex(AValue int32) {
-	LCL().SysCallN(1921, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2111, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPage) TabVisible() bool {
-	r1 := LCL().SysCallN(1924, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2114, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomPage) SetTabVisible(AValue bool) {
-	LCL().SysCallN(1924, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2114, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomPage) ImageIndex() TImageIndex {
-	r1 := LCL().SysCallN(1920, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2110, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TCustomPage) SetImageIndex(AValue TImageIndex) {
-	LCL().SysCallN(1920, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2110, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomPage) CanTab() bool {
-	r1 := LCL().SysCallN(1917, m.Instance())
+	r1 := LCL().SysCallN(2107, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCustomPage) VisibleIndex() int32 {
-	r1 := LCL().SysCallN(1925, m.Instance())
+	r1 := LCL().SysCallN(2115, m.Instance())
 	return int32(r1)
 }
 
 func CustomPageClass() TClass {
-	ret := LCL().SysCallN(1918)
+	ret := LCL().SysCallN(2108)
 	return TClass(ret)
 }
 
@@ -87,7 +87,7 @@ func (m *TCustomPage) SetOnHide(fn TNotifyEvent) {
 		RemoveEventElement(m.hidePtr)
 	}
 	m.hidePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1922, m.Instance(), m.hidePtr)
+	LCL().SysCallN(2112, m.Instance(), m.hidePtr)
 }
 
 func (m *TCustomPage) SetOnShow(fn TNotifyEvent) {
@@ -95,5 +95,5 @@ func (m *TCustomPage) SetOnShow(fn TNotifyEvent) {
 		RemoveEventElement(m.showPtr)
 	}
 	m.showPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1923, m.Instance(), m.showPtr)
+	LCL().SysCallN(2113, m.Instance(), m.showPtr)
 }

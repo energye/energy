@@ -24,11 +24,11 @@ type TOwnedCollection struct {
 }
 
 func NewOwnedCollection(AOwner IPersistent, AItemClass TCollectionItemClass) IOwnedCollection {
-	r1 := LCL().SysCallN(3740, GetObjectUintptr(AOwner), uintptr(AItemClass))
+	r1 := LCL().SysCallN(4382, GetObjectUintptr(AOwner), uintptr(AItemClass))
 	return AsOwnedCollection(r1)
 }
 
 func OwnedCollectionClass() TClass {
-	ret := LCL().SysCallN(3739)
+	ret := LCL().SysCallN(4381)
 	return TClass(ret)
 }

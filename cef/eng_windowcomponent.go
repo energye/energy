@@ -163,7 +163,7 @@ type ICEFWindowComponent interface {
 	SendKeyPress(keycode int32, eventflags uint32) // procedure
 	// SendMouseMove
 	//  Simulate a mouse move. The mouse cursor will be moved to the specified
-	// (screen_x, screen_y) position. This function is exposed primarily for
+	//  (screen_x, screen_y) position. This function is exposed primarily for
 	//  testing purposes.
 	SendMouseMove(screenx, screeny int32) // procedure
 	// SendMouseEvents
@@ -211,7 +211,7 @@ type ICEFWindowComponent interface {
 	//  to true(1) if |window| will be displayed as a menu, in which case it will
 	//  not be clipped to the parent window bounds. Set |can_activate_menu| to
 	//  false(0) if |is_menu| is true(1) and |window| should not be activated
-	// (given keyboard focus) when displayed.
+	//  (given keyboard focus) when displayed.
 	SetOnGetParentWindow(fn TOnGetParentWindow) // property event
 	// SetOnIsWindowModalDialog
 	//  Return true(1) if |window| should be created as a window modal dialog.

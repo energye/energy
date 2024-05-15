@@ -14,9 +14,9 @@ import (
 )
 
 // CreateResForm : 从资源中创建Form，不使用Application.CreateForm
-func CreateResForm(owner IComponent, fields ...interface{}) {
-	resObjectBuild(1, owner, 0, fields...)
-}
+//func CreateResForm(owner IComponent, fields ...interface{}) {
+//	resObjectBuild(1, owner, 0, fields...)
+//}
 
 func (m *TForm) EnabledMaximize(v bool) {
 	bi := m.BorderIcons()
@@ -111,4 +111,14 @@ func (m *TForm) ScaleSelf() {
 		m.SetClientWidth(int32(float64(m.ClientWidth()) * (float64(Screen.PixelsPerInch()) / 96.0)))
 		m.SetClientHeight(int32(float64(m.ClientHeight()) * (float64(Screen.PixelsPerInch()) / 96.0)))
 	}
+}
+
+// IOnCreate TForm OnCreate 事件函数
+type IOnCreate interface {
+	OnFormCreate(sender IObject)
+}
+
+// IOnCreateParams TForm CreateParams 事件函数
+type IOnCreateParams interface {
+	CreateParams(params *types.TCreateParams)
 }

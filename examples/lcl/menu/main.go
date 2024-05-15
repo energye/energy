@@ -12,12 +12,12 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	mainMenu lcl.IMainMenu
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {

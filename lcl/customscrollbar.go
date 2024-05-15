@@ -44,84 +44,84 @@ type TCustomScrollBar struct {
 }
 
 func NewCustomScrollBar(AOwner IComponent) ICustomScrollBar {
-	r1 := LCL().SysCallN(2014, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2204, GetObjectUintptr(AOwner))
 	return AsCustomScrollBar(r1)
 }
 
 func (m *TCustomScrollBar) Kind() TScrollBarKind {
-	r1 := LCL().SysCallN(2015, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2205, 0, m.Instance(), 0)
 	return TScrollBarKind(r1)
 }
 
 func (m *TCustomScrollBar) SetKind(AValue TScrollBarKind) {
-	LCL().SysCallN(2015, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2205, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) LargeChange() TScrollBarInc {
-	r1 := LCL().SysCallN(2016, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2206, 0, m.Instance(), 0)
 	return TScrollBarInc(r1)
 }
 
 func (m *TCustomScrollBar) SetLargeChange(AValue TScrollBarInc) {
-	LCL().SysCallN(2016, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2206, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) Max() int32 {
-	r1 := LCL().SysCallN(2017, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2207, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomScrollBar) SetMax(AValue int32) {
-	LCL().SysCallN(2017, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2207, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) Min() int32 {
-	r1 := LCL().SysCallN(2018, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2208, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomScrollBar) SetMin(AValue int32) {
-	LCL().SysCallN(2018, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2208, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) PageSize() int32 {
-	r1 := LCL().SysCallN(2019, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2209, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomScrollBar) SetPageSize(AValue int32) {
-	LCL().SysCallN(2019, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2209, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) Position() int32 {
-	r1 := LCL().SysCallN(2020, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2210, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomScrollBar) SetPosition(AValue int32) {
-	LCL().SysCallN(2020, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2210, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomScrollBar) SmallChange() TScrollBarInc {
-	r1 := LCL().SysCallN(2025, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2215, 0, m.Instance(), 0)
 	return TScrollBarInc(r1)
 }
 
 func (m *TCustomScrollBar) SetSmallChange(AValue TScrollBarInc) {
-	LCL().SysCallN(2025, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2215, 1, m.Instance(), uintptr(AValue))
 }
 
 func CustomScrollBarClass() TClass {
-	ret := LCL().SysCallN(2013)
+	ret := LCL().SysCallN(2203)
 	return TClass(ret)
 }
 
 func (m *TCustomScrollBar) SetParams(APosition, AMin, AMax, APageSize int32) {
-	LCL().SysCallN(2023, m.Instance(), uintptr(APosition), uintptr(AMin), uintptr(AMax), uintptr(APageSize))
+	LCL().SysCallN(2213, m.Instance(), uintptr(APosition), uintptr(AMin), uintptr(AMax), uintptr(APageSize))
 }
 
 func (m *TCustomScrollBar) SetParams1(APosition, AMin, AMax int32) {
-	LCL().SysCallN(2024, m.Instance(), uintptr(APosition), uintptr(AMin), uintptr(AMax))
+	LCL().SysCallN(2214, m.Instance(), uintptr(APosition), uintptr(AMin), uintptr(AMax))
 }
 
 func (m *TCustomScrollBar) SetOnChange(fn TNotifyEvent) {
@@ -129,7 +129,7 @@ func (m *TCustomScrollBar) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2021, m.Instance(), m.changePtr)
+	LCL().SysCallN(2211, m.Instance(), m.changePtr)
 }
 
 func (m *TCustomScrollBar) SetOnScroll(fn TScrollEvent) {
@@ -137,5 +137,5 @@ func (m *TCustomScrollBar) SetOnScroll(fn TScrollEvent) {
 		RemoveEventElement(m.scrollPtr)
 	}
 	m.scrollPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2022, m.Instance(), m.scrollPtr)
+	LCL().SysCallN(2212, m.Instance(), m.scrollPtr)
 }

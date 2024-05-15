@@ -16,12 +16,12 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	imgList lcl.IImageList
 	lv1     lcl.IListView
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 	f.SetCaption("Windows Process")
@@ -36,7 +36,6 @@ func (f *TMainForm) OnFormCreate(object lcl.IObject) {
 }
 
 func (f *TMainForm) initComponents() {
-
 	f.imgList = lcl.NewImageList(f)
 	f.imgList.SetWidth(24)
 	f.imgList.SetHeight(24)

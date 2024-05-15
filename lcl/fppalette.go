@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IFPPalette Parent: IObject
@@ -37,64 +36,64 @@ type TFPPalette struct {
 }
 
 func NewFPPalette(ACount int32) IFPPalette {
-	r1 := LCL().SysCallN(2747, uintptr(ACount))
+	r1 := LCL().SysCallN(2990, uintptr(ACount))
 	return AsFPPalette(r1)
 }
 
 func (m *TFPPalette) Color(Index int32) (resultFPColor TFPColor) {
-	r1 := LCL().SysCallN(2744, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(2987, 0, m.Instance(), uintptr(Index))
 	return *(*TFPColor)(getPointer(r1))
 }
 
 func (m *TFPPalette) SetColor(Index int32, AValue *TFPColor) {
-	LCL().SysCallN(2744, 1, m.Instance(), uintptr(Index), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(2987, 1, m.Instance(), uintptr(Index), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TFPPalette) Count() int32 {
-	r1 := LCL().SysCallN(2746, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2989, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TFPPalette) SetCount(AValue int32) {
-	LCL().SysCallN(2746, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2989, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFPPalette) Capacity() int32 {
-	r1 := LCL().SysCallN(2741, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2984, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TFPPalette) SetCapacity(AValue int32) {
-	LCL().SysCallN(2741, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2984, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFPPalette) IndexOf(AColor *TFPColor) int32 {
-	r1 := LCL().SysCallN(2748, m.Instance(), uintptr(unsafe.Pointer(AColor)))
+	r1 := LCL().SysCallN(2991, m.Instance(), uintptr(unsafePointer(AColor)))
 	return int32(r1)
 }
 
 func (m *TFPPalette) Add(Value *TFPColor) int32 {
-	r1 := LCL().SysCallN(2739, m.Instance(), uintptr(unsafe.Pointer(Value)))
+	r1 := LCL().SysCallN(2982, m.Instance(), uintptr(unsafePointer(Value)))
 	return int32(r1)
 }
 
 func FPPaletteClass() TClass {
-	ret := LCL().SysCallN(2742)
+	ret := LCL().SysCallN(2985)
 	return TClass(ret)
 }
 
 func (m *TFPPalette) Build(Img IFPCustomImage) {
-	LCL().SysCallN(2740, m.Instance(), GetObjectUintptr(Img))
+	LCL().SysCallN(2983, m.Instance(), GetObjectUintptr(Img))
 }
 
 func (m *TFPPalette) Copy(APalette IFPPalette) {
-	LCL().SysCallN(2745, m.Instance(), GetObjectUintptr(APalette))
+	LCL().SysCallN(2988, m.Instance(), GetObjectUintptr(APalette))
 }
 
 func (m *TFPPalette) Merge(pal IFPPalette) {
-	LCL().SysCallN(2749, m.Instance(), GetObjectUintptr(pal))
+	LCL().SysCallN(2992, m.Instance(), GetObjectUintptr(pal))
 }
 
 func (m *TFPPalette) Clear() {
-	LCL().SysCallN(2743, m.Instance())
+	LCL().SysCallN(2986, m.Instance())
 }

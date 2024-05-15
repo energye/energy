@@ -28,12 +28,12 @@ type TGraphicsObject struct {
 }
 
 func NewGraphicsObject() IGraphicsObject {
-	r1 := LCL().SysCallN(2960)
+	r1 := LCL().SysCallN(3203)
 	return AsGraphicsObject(r1)
 }
 
 func GraphicsObjectClass() TClass {
-	ret := LCL().SysCallN(2959)
+	ret := LCL().SysCallN(3202)
 	return TClass(ret)
 }
 
@@ -42,7 +42,7 @@ func (m *TGraphicsObject) SetOnChanging(fn TNotifyEvent) {
 		RemoveEventElement(m.changingPtr)
 	}
 	m.changingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2962, m.Instance(), m.changingPtr)
+	LCL().SysCallN(3205, m.Instance(), m.changingPtr)
 }
 
 func (m *TGraphicsObject) SetOnChange(fn TNotifyEvent) {
@@ -50,5 +50,5 @@ func (m *TGraphicsObject) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2961, m.Instance(), m.changePtr)
+	LCL().SysCallN(3204, m.Instance(), m.changePtr)
 }

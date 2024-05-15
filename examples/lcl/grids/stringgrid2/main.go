@@ -33,7 +33,7 @@ type InputData struct {
 }
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	grid     lcl.IStringGrid
 	edit     lcl.IEdit
 	pnl      lcl.IPanel
@@ -42,7 +42,7 @@ type TMainForm struct {
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {

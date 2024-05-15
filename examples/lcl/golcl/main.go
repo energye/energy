@@ -319,9 +319,9 @@ func main() {
 				p := lcl.Mouse.CursorPos()
 				switch node.Level() {
 				case 0:
-					tvpm1.PopUpInOverload1(p.X, p.Y)
+					tvpm1.PopUp1(p.X, p.Y)
 				case 1:
-					tvpm2.PopUpInOverload1(p.X, p.Y)
+					tvpm2.PopUp1(p.X, p.Y)
 				}
 				fmt.Println("node.Level():", node.Level(), ", text:", node.Text())
 			}

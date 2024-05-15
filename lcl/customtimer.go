@@ -34,30 +34,30 @@ type TCustomTimer struct {
 }
 
 func NewCustomTimer(AOwner IComponent) ICustomTimer {
-	r1 := LCL().SysCallN(2159, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2351, GetObjectUintptr(AOwner))
 	return AsCustomTimer(r1)
 }
 
 func (m *TCustomTimer) Enabled() bool {
-	r1 := LCL().SysCallN(2160, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2352, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomTimer) SetEnabled(AValue bool) {
-	LCL().SysCallN(2160, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2352, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomTimer) Interval() uint32 {
-	r1 := LCL().SysCallN(2161, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2353, 0, m.Instance(), 0)
 	return uint32(r1)
 }
 
 func (m *TCustomTimer) SetInterval(AValue uint32) {
-	LCL().SysCallN(2161, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2353, 1, m.Instance(), uintptr(AValue))
 }
 
 func CustomTimerClass() TClass {
-	ret := LCL().SysCallN(2158)
+	ret := LCL().SysCallN(2350)
 	return TClass(ret)
 }
 
@@ -66,7 +66,7 @@ func (m *TCustomTimer) SetOnTimer(fn TNotifyEvent) {
 		RemoveEventElement(m.timerPtr)
 	}
 	m.timerPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2164, m.Instance(), m.timerPtr)
+	LCL().SysCallN(2356, m.Instance(), m.timerPtr)
 }
 
 func (m *TCustomTimer) SetOnStartTimer(fn TNotifyEvent) {
@@ -74,7 +74,7 @@ func (m *TCustomTimer) SetOnStartTimer(fn TNotifyEvent) {
 		RemoveEventElement(m.startTimerPtr)
 	}
 	m.startTimerPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2162, m.Instance(), m.startTimerPtr)
+	LCL().SysCallN(2354, m.Instance(), m.startTimerPtr)
 }
 
 func (m *TCustomTimer) SetOnStopTimer(fn TNotifyEvent) {
@@ -82,5 +82,5 @@ func (m *TCustomTimer) SetOnStopTimer(fn TNotifyEvent) {
 		RemoveEventElement(m.stopTimerPtr)
 	}
 	m.stopTimerPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(2163, m.Instance(), m.stopTimerPtr)
+	LCL().SysCallN(2355, m.Instance(), m.stopTimerPtr)
 }

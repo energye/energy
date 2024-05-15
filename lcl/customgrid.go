@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomGrid Parent: ICustomControl
@@ -65,202 +64,202 @@ type TCustomGrid struct {
 }
 
 func NewCustomGrid(AOwner IComponent) ICustomGrid {
-	r1 := LCL().SysCallN(1558, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1748, GetObjectUintptr(AOwner))
 	return AsCustomGrid(r1)
 }
 
 func (m *TCustomGrid) CursorState() TGridCursorState {
-	r1 := LCL().SysCallN(1559, m.Instance())
+	r1 := LCL().SysCallN(1749, m.Instance())
 	return TGridCursorState(r1)
 }
 
 func (m *TCustomGrid) SelectedRange(AIndex int32) (resultGridRect TGridRect) {
-	LCL().SysCallN(1584, m.Instance(), uintptr(AIndex), uintptr(unsafe.Pointer(&resultGridRect)))
+	LCL().SysCallN(1774, m.Instance(), uintptr(AIndex), uintptr(unsafePointer(&resultGridRect)))
 	return
 }
 
 func (m *TCustomGrid) SelectedRangeCount() int32 {
-	r1 := LCL().SysCallN(1585, m.Instance())
+	r1 := LCL().SysCallN(1775, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomGrid) SortOrder() TSortOrder {
-	r1 := LCL().SysCallN(1587, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1777, 0, m.Instance(), 0)
 	return TSortOrder(r1)
 }
 
 func (m *TCustomGrid) SetSortOrder(AValue TSortOrder) {
-	LCL().SysCallN(1587, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1777, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomGrid) SortColumn() int32 {
-	r1 := LCL().SysCallN(1586, m.Instance())
+	r1 := LCL().SysCallN(1776, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomGrid) CellRect(ACol, ARow int32) (resultRect TRect) {
-	LCL().SysCallN(1550, m.Instance(), uintptr(ACol), uintptr(ARow), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(1740, m.Instance(), uintptr(ACol), uintptr(ARow), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TCustomGrid) CellToGridZone(aCol, aRow int32) TGridZone {
-	r1 := LCL().SysCallN(1551, m.Instance(), uintptr(aCol), uintptr(aRow))
+	r1 := LCL().SysCallN(1741, m.Instance(), uintptr(aCol), uintptr(aRow))
 	return TGridZone(r1)
 }
 
 func (m *TCustomGrid) ClearCols() bool {
-	r1 := LCL().SysCallN(1555, m.Instance())
+	r1 := LCL().SysCallN(1745, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCustomGrid) ClearRows() bool {
-	r1 := LCL().SysCallN(1556, m.Instance())
+	r1 := LCL().SysCallN(1746, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCustomGrid) EditorByStyle(Style TColumnButtonStyle) IWinControl {
-	r1 := LCL().SysCallN(1560, m.Instance(), uintptr(Style))
+	r1 := LCL().SysCallN(1750, m.Instance(), uintptr(Style))
 	return AsWinControl(r1)
 }
 
 func (m *TCustomGrid) HasMultiSelection() bool {
-	r1 := LCL().SysCallN(1567, m.Instance())
+	r1 := LCL().SysCallN(1757, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCustomGrid) IsCellVisible(aCol, aRow int32) bool {
-	r1 := LCL().SysCallN(1573, m.Instance(), uintptr(aCol), uintptr(aRow))
+	r1 := LCL().SysCallN(1763, m.Instance(), uintptr(aCol), uintptr(aRow))
 	return GoBool(r1)
 }
 
 func (m *TCustomGrid) IsFixedCellVisible(aCol, aRow int32) bool {
-	r1 := LCL().SysCallN(1574, m.Instance(), uintptr(aCol), uintptr(aRow))
+	r1 := LCL().SysCallN(1764, m.Instance(), uintptr(aCol), uintptr(aRow))
 	return GoBool(r1)
 }
 
 func (m *TCustomGrid) MouseCoord(X, Y int32) (resultGridCoord TGridCoord) {
-	LCL().SysCallN(1577, m.Instance(), uintptr(X), uintptr(Y), uintptr(unsafe.Pointer(&resultGridCoord)))
+	LCL().SysCallN(1767, m.Instance(), uintptr(X), uintptr(Y), uintptr(unsafePointer(&resultGridCoord)))
 	return
 }
 
 func (m *TCustomGrid) MouseToCell(Mouse *TPoint) (resultPoint TPoint) {
-	LCL().SysCallN(1578, m.Instance(), uintptr(unsafe.Pointer(Mouse)), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(1768, m.Instance(), uintptr(unsafePointer(Mouse)), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TCustomGrid) MouseToLogcell(Mouse *TPoint) (resultPoint TPoint) {
-	LCL().SysCallN(1581, m.Instance(), uintptr(unsafe.Pointer(Mouse)), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(1771, m.Instance(), uintptr(unsafePointer(Mouse)), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TCustomGrid) MouseToGridZone(X, Y int32) TGridZone {
-	r1 := LCL().SysCallN(1580, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(1770, m.Instance(), uintptr(X), uintptr(Y))
 	return TGridZone(r1)
 }
 
 func CustomGridClass() TClass {
-	ret := LCL().SysCallN(1553)
+	ret := LCL().SysCallN(1743)
 	return TClass(ret)
 }
 
 func (m *TCustomGrid) AdjustInnerCellRect(ARect *TRect) {
 	var result0 uintptr
-	LCL().SysCallN(1547, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	LCL().SysCallN(1737, m.Instance(), uintptr(unsafePointer(&result0)))
 	*ARect = *(*TRect)(getPointer(result0))
 }
 
 func (m *TCustomGrid) AutoAdjustColumns() {
-	LCL().SysCallN(1548, m.Instance())
+	LCL().SysCallN(1738, m.Instance())
 }
 
 func (m *TCustomGrid) BeginUpdate() {
-	LCL().SysCallN(1549, m.Instance())
+	LCL().SysCallN(1739, m.Instance())
 }
 
 func (m *TCustomGrid) CheckPosition() {
-	LCL().SysCallN(1552, m.Instance())
+	LCL().SysCallN(1742, m.Instance())
 }
 
 func (m *TCustomGrid) Clear() {
-	LCL().SysCallN(1554, m.Instance())
+	LCL().SysCallN(1744, m.Instance())
 }
 
 func (m *TCustomGrid) ClearSelections() {
-	LCL().SysCallN(1557, m.Instance())
+	LCL().SysCallN(1747, m.Instance())
 }
 
 func (m *TCustomGrid) EditorKeyDown(Sender IObject, Key *Word, Shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(1561, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(Shift))
+	LCL().SysCallN(1751, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(Shift))
 	*Key = Word(result1)
 }
 
 func (m *TCustomGrid) EditorKeyPress(Sender IObject, Key *Char) {
 	var result1 uintptr
-	LCL().SysCallN(1562, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)))
+	LCL().SysCallN(1752, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)))
 	*Key = Char(result1)
 }
 
 func (m *TCustomGrid) EditorUTF8KeyPress(Sender IObject, UTF8Key *TUTF8Char) {
 	var result1 uintptr
-	LCL().SysCallN(1565, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)))
+	LCL().SysCallN(1755, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)))
 	*UTF8Key = *(*TUTF8Char)(getPointer(result1))
 }
 
 func (m *TCustomGrid) EditorKeyUp(Sender IObject, key *Word, shift TShiftState) {
 	var result1 uintptr
-	LCL().SysCallN(1563, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafe.Pointer(&result1)), uintptr(shift))
+	LCL().SysCallN(1753, m.Instance(), GetObjectUintptr(Sender), uintptr(unsafePointer(&result1)), uintptr(shift))
 	*key = Word(result1)
 }
 
 func (m *TCustomGrid) EditorTextChanged(aCol, aRow int32, aText string) {
-	LCL().SysCallN(1564, m.Instance(), uintptr(aCol), uintptr(aRow), PascalStr(aText))
+	LCL().SysCallN(1754, m.Instance(), uintptr(aCol), uintptr(aRow), PascalStr(aText))
 }
 
 func (m *TCustomGrid) EndUpdate(aRefresh bool) {
-	LCL().SysCallN(1566, m.Instance(), PascalBool(aRefresh))
+	LCL().SysCallN(1756, m.Instance(), PascalBool(aRefresh))
 }
 
 func (m *TCustomGrid) HideSortArrow() {
-	LCL().SysCallN(1568, m.Instance())
+	LCL().SysCallN(1758, m.Instance())
 }
 
 func (m *TCustomGrid) InvalidateCell(aCol, aRow int32) {
-	LCL().SysCallN(1569, m.Instance(), uintptr(aCol), uintptr(aRow))
+	LCL().SysCallN(1759, m.Instance(), uintptr(aCol), uintptr(aRow))
 }
 
 func (m *TCustomGrid) InvalidateCol(ACol int32) {
-	LCL().SysCallN(1570, m.Instance(), uintptr(ACol))
+	LCL().SysCallN(1760, m.Instance(), uintptr(ACol))
 }
 
 func (m *TCustomGrid) InvalidateRange(aRange *TRect) {
-	LCL().SysCallN(1571, m.Instance(), uintptr(unsafe.Pointer(aRange)))
+	LCL().SysCallN(1761, m.Instance(), uintptr(unsafePointer(aRange)))
 }
 
 func (m *TCustomGrid) InvalidateRow(ARow int32) {
-	LCL().SysCallN(1572, m.Instance(), uintptr(ARow))
+	LCL().SysCallN(1762, m.Instance(), uintptr(ARow))
 }
 
 func (m *TCustomGrid) LoadFromFile(FileName string) {
-	LCL().SysCallN(1575, m.Instance(), PascalStr(FileName))
+	LCL().SysCallN(1765, m.Instance(), PascalStr(FileName))
 }
 
 func (m *TCustomGrid) LoadFromStream(AStream IStream) {
-	LCL().SysCallN(1576, m.Instance(), GetObjectUintptr(AStream))
+	LCL().SysCallN(1766, m.Instance(), GetObjectUintptr(AStream))
 }
 
 func (m *TCustomGrid) MouseToCell1(X, Y int32, OutCol, OutRow *int32) {
 	var result1 uintptr
 	var result2 uintptr
-	LCL().SysCallN(1579, m.Instance(), uintptr(X), uintptr(Y), uintptr(unsafe.Pointer(&result1)), uintptr(unsafe.Pointer(&result2)))
+	LCL().SysCallN(1769, m.Instance(), uintptr(X), uintptr(Y), uintptr(unsafePointer(&result1)), uintptr(unsafePointer(&result2)))
 	*OutCol = int32(result1)
 	*OutRow = int32(result2)
 }
 
 func (m *TCustomGrid) SaveToFile(FileName string) {
-	LCL().SysCallN(1582, m.Instance(), PascalStr(FileName))
+	LCL().SysCallN(1772, m.Instance(), PascalStr(FileName))
 }
 
 func (m *TCustomGrid) SaveToStream(AStream IStream) {
-	LCL().SysCallN(1583, m.Instance(), GetObjectUintptr(AStream))
+	LCL().SysCallN(1773, m.Instance(), GetObjectUintptr(AStream))
 }

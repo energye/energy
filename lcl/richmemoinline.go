@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IRichMemoInline Parent: IObject
@@ -29,28 +28,28 @@ type TRichMemoInline struct {
 }
 
 func NewRichMemoInline() IRichMemoInline {
-	r1 := LCL().SysCallN(4174)
+	r1 := LCL().SysCallN(4816)
 	return AsRichMemoInline(r1)
 }
 
 func (m *TRichMemoInline) Owner() ICustomRichMemo {
-	r1 := LCL().SysCallN(4177, m.Instance())
+	r1 := LCL().SysCallN(4819, m.Instance())
 	return AsCustomRichMemo(r1)
 }
 
 func RichMemoInlineClass() TClass {
-	ret := LCL().SysCallN(4173)
+	ret := LCL().SysCallN(4815)
 	return TClass(ret)
 }
 
 func (m *TRichMemoInline) Draw(Canvas ICanvas, ASize *TSize) {
-	LCL().SysCallN(4175, m.Instance(), GetObjectUintptr(Canvas), uintptr(unsafe.Pointer(ASize)))
+	LCL().SysCallN(4817, m.Instance(), GetObjectUintptr(Canvas), uintptr(unsafePointer(ASize)))
 }
 
 func (m *TRichMemoInline) SetVisible(AVisible bool) {
-	LCL().SysCallN(4178, m.Instance(), PascalBool(AVisible))
+	LCL().SysCallN(4820, m.Instance(), PascalBool(AVisible))
 }
 
 func (m *TRichMemoInline) Invalidate() {
-	LCL().SysCallN(4176, m.Instance())
+	LCL().SysCallN(4818, m.Instance())
 }

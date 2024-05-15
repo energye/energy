@@ -15,7 +15,7 @@ import (
 // ICefRequestContextHandler Parent: ICefBaseRefCounted
 //
 //	Implement this interface to provide handler implementations. The handler instance will not be released until all objects related to the context have been destroyed.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_handler_capi.h">CEF source file: /include/capi/cef_request_context_handler_capi.h (cef_request_context_handler_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_handler_capi.h">CEF source file: /include/capi/cef_request_context_handler_capi.h (cef_request_context_handler_t))</a>
 type ICefRequestContextHandler interface {
 	ICefBaseRefCounted
 	// OnRequestContextInitialized
@@ -32,7 +32,7 @@ type ICefRequestContextHandler interface {
 // TCefRequestContextHandler Parent: TCefBaseRefCounted
 //
 //	Implement this interface to provide handler implementations. The handler instance will not be released until all objects related to the context have been destroyed.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_handler_capi.h">CEF source file: /include/capi/cef_request_context_handler_capi.h (cef_request_context_handler_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_handler_capi.h">CEF source file: /include/capi/cef_request_context_handler_capi.h (cef_request_context_handler_t))</a>
 type TCefRequestContextHandler struct {
 	TCefBaseRefCounted
 }

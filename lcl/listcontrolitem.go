@@ -30,38 +30,38 @@ type TListControlItem struct {
 }
 
 func NewListControlItem(ACollection ICollection) IListControlItem {
-	r1 := LCL().SysCallN(3364, GetObjectUintptr(ACollection))
+	r1 := LCL().SysCallN(4006, GetObjectUintptr(ACollection))
 	return AsListControlItem(r1)
 }
 
 func (m *TListControlItem) Data() TCustomData {
-	r1 := LCL().SysCallN(3365, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4007, 0, m.Instance(), 0)
 	return TCustomData(r1)
 }
 
 func (m *TListControlItem) SetData(AValue TCustomData) {
-	LCL().SysCallN(3365, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4007, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TListControlItem) Caption() string {
-	r1 := LCL().SysCallN(3362, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4004, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TListControlItem) SetCaption(AValue string) {
-	LCL().SysCallN(3362, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(4004, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TListControlItem) ImageIndex() TImageIndex {
-	r1 := LCL().SysCallN(3366, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4008, 0, m.Instance(), 0)
 	return TImageIndex(r1)
 }
 
 func (m *TListControlItem) SetImageIndex(AValue TImageIndex) {
-	LCL().SysCallN(3366, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4008, 1, m.Instance(), uintptr(AValue))
 }
 
 func ListControlItemClass() TClass {
-	ret := LCL().SysCallN(3363)
+	ret := LCL().SysCallN(4005)
 	return TClass(ret)
 }

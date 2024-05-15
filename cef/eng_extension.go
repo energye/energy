@@ -15,7 +15,7 @@ import (
 // ICefExtension Parent: ICefBaseRefCounted
 //
 //	Object representing an extension. Methods may be called on any thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_capi.h">CEF source file: /include/capi/cef_extension_capi.h (cef_extension_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_capi.h">CEF source file: /include/capi/cef_extension_capi.h (cef_extension_t))</a>
 type ICefExtension interface {
 	ICefBaseRefCounted
 	// GetIdentifier
@@ -55,7 +55,7 @@ type ICefExtension interface {
 // TCefExtension Parent: TCefBaseRefCounted
 //
 //	Object representing an extension. Methods may be called on any thread unless otherwise indicated.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_capi.h">CEF source file: /include/capi/cef_extension_capi.h (cef_extension_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_capi.h">CEF source file: /include/capi/cef_extension_capi.h (cef_extension_t))</a>
 type TCefExtension struct {
 	TCefBaseRefCounted
 }

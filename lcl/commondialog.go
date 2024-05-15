@@ -45,81 +45,81 @@ type TCommonDialog struct {
 }
 
 func NewCommonDialog(TheOwner IComponent) ICommonDialog {
-	r1 := LCL().SysCallN(672, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(862, GetObjectUintptr(TheOwner))
 	return AsCommonDialog(r1)
 }
 
 func (m *TCommonDialog) Handle() THandle {
-	r1 := LCL().SysCallN(674, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(864, 0, m.Instance(), 0)
 	return THandle(r1)
 }
 
 func (m *TCommonDialog) SetHandle(AValue THandle) {
-	LCL().SysCallN(674, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(864, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCommonDialog) UserChoice() int32 {
-	r1 := LCL().SysCallN(682, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(872, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCommonDialog) SetUserChoice(AValue int32) {
-	LCL().SysCallN(682, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(872, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCommonDialog) Width() int32 {
-	r1 := LCL().SysCallN(683, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(873, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCommonDialog) SetWidth(AValue int32) {
-	LCL().SysCallN(683, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(873, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCommonDialog) Height() int32 {
-	r1 := LCL().SysCallN(676, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(866, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCommonDialog) SetHeight(AValue int32) {
-	LCL().SysCallN(676, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(866, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCommonDialog) HelpContext() THelpContext {
-	r1 := LCL().SysCallN(677, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(867, 0, m.Instance(), 0)
 	return THelpContext(r1)
 }
 
 func (m *TCommonDialog) SetHelpContext(AValue THelpContext) {
-	LCL().SysCallN(677, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(867, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCommonDialog) Title() string {
-	r1 := LCL().SysCallN(681, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(871, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TCommonDialog) SetTitle(AValue string) {
-	LCL().SysCallN(681, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(871, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TCommonDialog) Execute() bool {
-	r1 := LCL().SysCallN(673, m.Instance())
+	r1 := LCL().SysCallN(863, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCommonDialog) HandleAllocated() bool {
-	r1 := LCL().SysCallN(675, m.Instance())
+	r1 := LCL().SysCallN(865, m.Instance())
 	return GoBool(r1)
 }
 
 func CommonDialogClass() TClass {
-	ret := LCL().SysCallN(670)
+	ret := LCL().SysCallN(860)
 	return TClass(ret)
 }
 
 func (m *TCommonDialog) Close() {
-	LCL().SysCallN(671, m.Instance())
+	LCL().SysCallN(861, m.Instance())
 }
 
 func (m *TCommonDialog) SetOnClose(fn TNotifyEvent) {
@@ -127,7 +127,7 @@ func (m *TCommonDialog) SetOnClose(fn TNotifyEvent) {
 		RemoveEventElement(m.closePtr)
 	}
 	m.closePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(679, m.Instance(), m.closePtr)
+	LCL().SysCallN(869, m.Instance(), m.closePtr)
 }
 
 func (m *TCommonDialog) SetOnCanClose(fn TCloseQueryEvent) {
@@ -135,7 +135,7 @@ func (m *TCommonDialog) SetOnCanClose(fn TCloseQueryEvent) {
 		RemoveEventElement(m.canClosePtr)
 	}
 	m.canClosePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(678, m.Instance(), m.canClosePtr)
+	LCL().SysCallN(868, m.Instance(), m.canClosePtr)
 }
 
 func (m *TCommonDialog) SetOnShow(fn TNotifyEvent) {
@@ -143,5 +143,5 @@ func (m *TCommonDialog) SetOnShow(fn TNotifyEvent) {
 		RemoveEventElement(m.showPtr)
 	}
 	m.showPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(680, m.Instance(), m.showPtr)
+	LCL().SysCallN(870, m.Instance(), m.showPtr)
 }

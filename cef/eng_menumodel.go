@@ -15,7 +15,7 @@ import (
 // ICefMenuModel Parent: ICefBaseRefCounted
 //
 //	Supports creation and modification of menus. See TCefMenuId for the command ids that have default implementations. All user-defined command ids should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of this interface can only be accessed on the browser process the UI thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_capi.h">CEF source file: /include/capi/cef_menu_model_capi.h (cef_menu_model_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_capi.h">CEF source file: /include/capi/cef_menu_model_capi.h (cef_menu_model_t))</a>
 type ICefMenuModel interface {
 	ICefBaseRefCounted
 	// IsSubMenu
@@ -191,7 +191,7 @@ type ICefMenuModel interface {
 // TCefMenuModel Parent: TCefBaseRefCounted
 //
 //	Supports creation and modification of menus. See TCefMenuId for the command ids that have default implementations. All user-defined command ids should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of this interface can only be accessed on the browser process the UI thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_capi.h">CEF source file: /include/capi/cef_menu_model_capi.h (cef_menu_model_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_capi.h">CEF source file: /include/capi/cef_menu_model_capi.h (cef_menu_model_t))</a>
 type TCefMenuModel struct {
 	TCefBaseRefCounted
 }

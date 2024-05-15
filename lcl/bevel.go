@@ -48,39 +48,39 @@ type TBevel struct {
 }
 
 func NewBevel(AOwner IComponent) IBevel {
-	r1 := LCL().SysCallN(223, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(410, GetObjectUintptr(AOwner))
 	return AsBevel(r1)
 }
 
 func (m *TBevel) ParentShowHint() bool {
-	r1 := LCL().SysCallN(224, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(411, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TBevel) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(224, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(411, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TBevel) Shape() TBevelShape {
-	r1 := LCL().SysCallN(234, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(421, 0, m.Instance(), 0)
 	return TBevelShape(r1)
 }
 
 func (m *TBevel) SetShape(AValue TBevelShape) {
-	LCL().SysCallN(234, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(421, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TBevel) Style() TBevelStyle {
-	r1 := LCL().SysCallN(235, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(422, 0, m.Instance(), 0)
 	return TBevelStyle(r1)
 }
 
 func (m *TBevel) SetStyle(AValue TBevelStyle) {
-	LCL().SysCallN(235, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(422, 1, m.Instance(), uintptr(AValue))
 }
 
 func BevelClass() TClass {
-	ret := LCL().SysCallN(222)
+	ret := LCL().SysCallN(409)
 	return TClass(ret)
 }
 
@@ -89,7 +89,7 @@ func (m *TBevel) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(225, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(412, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TBevel) SetOnMouseEnter(fn TNotifyEvent) {
@@ -97,7 +97,7 @@ func (m *TBevel) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(226, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(413, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TBevel) SetOnMouseLeave(fn TNotifyEvent) {
@@ -105,7 +105,7 @@ func (m *TBevel) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(227, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(414, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TBevel) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -113,7 +113,7 @@ func (m *TBevel) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(228, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(415, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TBevel) SetOnMouseUp(fn TMouseEvent) {
@@ -121,7 +121,7 @@ func (m *TBevel) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(229, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(416, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TBevel) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -129,7 +129,7 @@ func (m *TBevel) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(230, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(417, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TBevel) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -137,7 +137,7 @@ func (m *TBevel) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(231, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(418, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TBevel) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -145,7 +145,7 @@ func (m *TBevel) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(232, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(419, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TBevel) SetOnPaint(fn TNotifyEvent) {
@@ -153,5 +153,5 @@ func (m *TBevel) SetOnPaint(fn TNotifyEvent) {
 		RemoveEventElement(m.paintPtr)
 	}
 	m.paintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(233, m.Instance(), m.paintPtr)
+	LCL().SysCallN(420, m.Instance(), m.paintPtr)
 }

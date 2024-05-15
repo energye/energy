@@ -15,7 +15,7 @@ import (
 // ICefCommandLine Parent: ICefBaseRefCounted
 //
 //	Interface used to create and/or parse command line arguments. Arguments with "--", "-" and, on Windows, "/" prefixes are considered switches. Switches will always precede any arguments without switch prefixes. Switches can optionally have a value specified using the "=" delimiter (e.g. "-switch=value"). An argument of "--" will terminate switch parsing with all subsequent tokens, regardless of prefix, being interpreted as non-switch arguments. Switch names should be lowercase ASCII and will be converted to such if necessary. Switch values will retain the original case and UTF8 encoding. This interface can be used before cef_initialize() is called.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_command_line_capi.h">CEF source file: /include/capi/cef_command_line_capi.h (cef_command_line_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_command_line_capi.h">CEF source file: /include/capi/cef_command_line_capi.h (cef_command_line_t))</a>
 type ICefCommandLine interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -86,7 +86,7 @@ type ICefCommandLine interface {
 // TCefCommandLine Parent: TCefBaseRefCounted
 //
 //	Interface used to create and/or parse command line arguments. Arguments with "--", "-" and, on Windows, "/" prefixes are considered switches. Switches will always precede any arguments without switch prefixes. Switches can optionally have a value specified using the "=" delimiter (e.g. "-switch=value"). An argument of "--" will terminate switch parsing with all subsequent tokens, regardless of prefix, being interpreted as non-switch arguments. Switch names should be lowercase ASCII and will be converted to such if necessary. Switch values will retain the original case and UTF8 encoding. This interface can be used before cef_initialize() is called.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_command_line_capi.h">CEF source file: /include/capi/cef_command_line_capi.h (cef_command_line_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_command_line_capi.h">CEF source file: /include/capi/cef_command_line_capi.h (cef_command_line_t))</a>
 type TCefCommandLine struct {
 	TCefBaseRefCounted
 }

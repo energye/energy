@@ -29,32 +29,32 @@ type TPersistent struct {
 }
 
 func NewPersistent() IPersistent {
-	r1 := LCL().SysCallN(3880)
+	r1 := LCL().SysCallN(4522)
 	return AsPersistent(r1)
 }
 
 func (m *TPersistent) GetNamePath() string {
-	r1 := LCL().SysCallN(3884, m.Instance())
+	r1 := LCL().SysCallN(4526, m.Instance())
 	return GoStr(r1)
 }
 
 func PersistentClass() TClass {
-	ret := LCL().SysCallN(3879)
+	ret := LCL().SysCallN(4521)
 	return TClass(ret)
 }
 
 func (m *TPersistent) Assign(Source IPersistent) {
-	LCL().SysCallN(3878, m.Instance(), GetObjectUintptr(Source))
+	LCL().SysCallN(4520, m.Instance(), GetObjectUintptr(Source))
 }
 
 func (m *TPersistent) FPOAttachObserver(AObserver IObject) {
-	LCL().SysCallN(3881, m.Instance(), GetObjectUintptr(AObserver))
+	LCL().SysCallN(4523, m.Instance(), GetObjectUintptr(AObserver))
 }
 
 func (m *TPersistent) FPODetachObserver(AObserver IObject) {
-	LCL().SysCallN(3882, m.Instance(), GetObjectUintptr(AObserver))
+	LCL().SysCallN(4524, m.Instance(), GetObjectUintptr(AObserver))
 }
 
 func (m *TPersistent) FPONotifyObservers(ASender IObject, AOperation TFPObservedOperation, Data uintptr) {
-	LCL().SysCallN(3883, m.Instance(), GetObjectUintptr(ASender), uintptr(AOperation), uintptr(Data))
+	LCL().SysCallN(4525, m.Instance(), GetObjectUintptr(ASender), uintptr(AOperation), uintptr(Data))
 }

@@ -76,75 +76,75 @@ type TColorBox struct {
 }
 
 func NewColorBox(AOwner IComponent) IColorBox {
-	r1 := LCL().SysCallN(526, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(716, GetObjectUintptr(AOwner))
 	return AsColorBox(r1)
 }
 
 func (m *TColorBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(527, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(717, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TColorBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(527, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(717, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TColorBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(528, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(718, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TColorBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(528, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(718, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TColorBox) ItemHeight() int32 {
-	r1 := LCL().SysCallN(529, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(719, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TColorBox) SetItemHeight(AValue int32) {
-	LCL().SysCallN(529, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(719, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TColorBox) ItemWidth() int32 {
-	r1 := LCL().SysCallN(530, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(720, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TColorBox) SetItemWidth(AValue int32) {
-	LCL().SysCallN(530, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(720, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TColorBox) ParentColor() bool {
-	r1 := LCL().SysCallN(531, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(721, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TColorBox) SetParentColor(AValue bool) {
-	LCL().SysCallN(531, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(721, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TColorBox) ParentFont() bool {
-	r1 := LCL().SysCallN(532, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(722, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TColorBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(532, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(722, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TColorBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(533, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(723, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TColorBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(533, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(723, 1, m.Instance(), PascalBool(AValue))
 }
 
 func ColorBoxClass() TClass {
-	ret := LCL().SysCallN(525)
+	ret := LCL().SysCallN(715)
 	return TClass(ret)
 }
 
@@ -153,7 +153,7 @@ func (m *TColorBox) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(534, m.Instance(), m.changePtr)
+	LCL().SysCallN(724, m.Instance(), m.changePtr)
 }
 
 func (m *TColorBox) SetOnCloseUp(fn TNotifyEvent) {
@@ -161,7 +161,7 @@ func (m *TColorBox) SetOnCloseUp(fn TNotifyEvent) {
 		RemoveEventElement(m.closeUpPtr)
 	}
 	m.closeUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(535, m.Instance(), m.closeUpPtr)
+	LCL().SysCallN(725, m.Instance(), m.closeUpPtr)
 }
 
 func (m *TColorBox) SetOnContextPopup(fn TContextPopupEvent) {
@@ -169,7 +169,7 @@ func (m *TColorBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(536, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(726, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TColorBox) SetOnDblClick(fn TNotifyEvent) {
@@ -177,7 +177,7 @@ func (m *TColorBox) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(537, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(727, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TColorBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -185,7 +185,7 @@ func (m *TColorBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(538, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(728, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TColorBox) SetOnDragOver(fn TDragOverEvent) {
@@ -193,7 +193,7 @@ func (m *TColorBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(539, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(729, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TColorBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -201,7 +201,7 @@ func (m *TColorBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(542, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(732, m.Instance(), m.endDragPtr)
 }
 
 func (m *TColorBox) SetOnDropDown(fn TNotifyEvent) {
@@ -209,7 +209,7 @@ func (m *TColorBox) SetOnDropDown(fn TNotifyEvent) {
 		RemoveEventElement(m.dropDownPtr)
 	}
 	m.dropDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(540, m.Instance(), m.dropDownPtr)
+	LCL().SysCallN(730, m.Instance(), m.dropDownPtr)
 }
 
 func (m *TColorBox) SetOnEditingDone(fn TNotifyEvent) {
@@ -217,7 +217,7 @@ func (m *TColorBox) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(541, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(731, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TColorBox) SetOnMouseDown(fn TMouseEvent) {
@@ -225,7 +225,7 @@ func (m *TColorBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(543, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(733, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TColorBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -233,7 +233,7 @@ func (m *TColorBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(544, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(734, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TColorBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -241,7 +241,7 @@ func (m *TColorBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(545, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(735, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TColorBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -249,7 +249,7 @@ func (m *TColorBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(546, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(736, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TColorBox) SetOnMouseUp(fn TMouseEvent) {
@@ -257,7 +257,7 @@ func (m *TColorBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(547, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(737, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TColorBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -265,7 +265,7 @@ func (m *TColorBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(548, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(738, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TColorBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -273,7 +273,7 @@ func (m *TColorBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(549, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(739, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TColorBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -281,7 +281,7 @@ func (m *TColorBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(550, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(740, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TColorBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -289,7 +289,7 @@ func (m *TColorBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(552, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(742, m.Instance(), m.startDragPtr)
 }
 
 func (m *TColorBox) SetOnSelect(fn TNotifyEvent) {
@@ -297,5 +297,5 @@ func (m *TColorBox) SetOnSelect(fn TNotifyEvent) {
 		RemoveEventElement(m.selectPtr)
 	}
 	m.selectPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(551, m.Instance(), m.selectPtr)
+	LCL().SysCallN(741, m.Instance(), m.selectPtr)
 }

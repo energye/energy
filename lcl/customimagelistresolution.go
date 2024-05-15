@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomImageListResolution Parent: ILCLReferenceComponent
@@ -46,103 +45,103 @@ type TCustomImageListResolution struct {
 }
 
 func NewCustomImageListResolution(TheOwner IComponent) ICustomImageListResolution {
-	r1 := LCL().SysCallN(1632, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(1822, GetObjectUintptr(TheOwner))
 	return AsCustomImageListResolution(r1)
 }
 
 func (m *TCustomImageListResolution) ImageList() ICustomImageList {
-	r1 := LCL().SysCallN(1648, m.Instance())
+	r1 := LCL().SysCallN(1838, m.Instance())
 	return AsCustomImageList(r1)
 }
 
 func (m *TCustomImageListResolution) Width() int32 {
-	r1 := LCL().SysCallN(1650, m.Instance())
+	r1 := LCL().SysCallN(1840, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomImageListResolution) Height() int32 {
-	r1 := LCL().SysCallN(1647, m.Instance())
+	r1 := LCL().SysCallN(1837, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomImageListResolution) Count() int32 {
-	r1 := LCL().SysCallN(1631, m.Instance())
+	r1 := LCL().SysCallN(1821, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomImageListResolution) AutoCreatedInDesignTime() bool {
-	r1 := LCL().SysCallN(1629, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1819, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomImageListResolution) SetAutoCreatedInDesignTime(AValue bool) {
-	LCL().SysCallN(1629, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1819, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomImageListResolution) GetHotSpot() (resultPoint TPoint) {
-	LCL().SysCallN(1643, m.Instance(), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(1833, m.Instance(), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func CustomImageListResolutionClass() TClass {
-	ret := LCL().SysCallN(1630)
+	ret := LCL().SysCallN(1820)
 	return TClass(ret)
 }
 
 func (m *TCustomImageListResolution) GetBitmap(Index int32, Image ICustomBitmap) {
-	LCL().SysCallN(1640, m.Instance(), uintptr(Index), GetObjectUintptr(Image))
+	LCL().SysCallN(1830, m.Instance(), uintptr(Index), GetObjectUintptr(Image))
 }
 
 func (m *TCustomImageListResolution) GetBitmap1(Index int32, Image ICustomBitmap, AEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1641, m.Instance(), uintptr(Index), GetObjectUintptr(Image), uintptr(AEffect))
+	LCL().SysCallN(1831, m.Instance(), uintptr(Index), GetObjectUintptr(Image), uintptr(AEffect))
 }
 
 func (m *TCustomImageListResolution) GetIcon(Index int32, Image IIcon, AEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1644, m.Instance(), uintptr(Index), GetObjectUintptr(Image), uintptr(AEffect))
+	LCL().SysCallN(1834, m.Instance(), uintptr(Index), GetObjectUintptr(Image), uintptr(AEffect))
 }
 
 func (m *TCustomImageListResolution) GetIcon1(Index int32, Image IIcon) {
-	LCL().SysCallN(1645, m.Instance(), uintptr(Index), GetObjectUintptr(Image))
+	LCL().SysCallN(1835, m.Instance(), uintptr(Index), GetObjectUintptr(Image))
 }
 
 func (m *TCustomImageListResolution) GetFullBitmap(Image ICustomBitmap, AEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1642, m.Instance(), GetObjectUintptr(Image), uintptr(AEffect))
+	LCL().SysCallN(1832, m.Instance(), GetObjectUintptr(Image), uintptr(AEffect))
 }
 
 func (m *TCustomImageListResolution) GetRawImage(Index int32, OutImage *TRawImage) {
 	var result1 uintptr
-	LCL().SysCallN(1646, m.Instance(), uintptr(Index), uintptr(unsafe.Pointer(&result1)))
+	LCL().SysCallN(1836, m.Instance(), uintptr(Index), uintptr(unsafePointer(&result1)))
 	*OutImage = *(*TRawImage)(getPointer(result1))
 }
 
 func (m *TCustomImageListResolution) Draw(ACanvas ICanvas, AX, AY, AIndex int32, AEnabled bool) {
-	LCL().SysCallN(1633, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), PascalBool(AEnabled))
+	LCL().SysCallN(1823, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), PascalBool(AEnabled))
 }
 
 func (m *TCustomImageListResolution) Draw1(ACanvas ICanvas, AX, AY, AIndex int32, ADrawEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1634, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawEffect))
+	LCL().SysCallN(1824, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawEffect))
 }
 
 func (m *TCustomImageListResolution) Draw2(ACanvas ICanvas, AX, AY, AIndex int32, ADrawingStyle TDrawingStyle, AImageType TImageType, AEnabled bool) {
-	LCL().SysCallN(1635, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawingStyle), uintptr(AImageType), PascalBool(AEnabled))
+	LCL().SysCallN(1825, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawingStyle), uintptr(AImageType), PascalBool(AEnabled))
 }
 
 func (m *TCustomImageListResolution) Draw3(ACanvas ICanvas, AX, AY, AIndex int32, ADrawingStyle TDrawingStyle, AImageType TImageType, ADrawEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1636, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawingStyle), uintptr(AImageType), uintptr(ADrawEffect))
+	LCL().SysCallN(1826, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(ADrawingStyle), uintptr(AImageType), uintptr(ADrawEffect))
 }
 
 func (m *TCustomImageListResolution) StretchDraw(Canvas ICanvas, Index int32, ARect *TRect, Enabled bool) {
-	LCL().SysCallN(1649, m.Instance(), GetObjectUintptr(Canvas), uintptr(Index), uintptr(unsafe.Pointer(ARect)), PascalBool(Enabled))
+	LCL().SysCallN(1839, m.Instance(), GetObjectUintptr(Canvas), uintptr(Index), uintptr(unsafePointer(ARect)), PascalBool(Enabled))
 }
 
 func (m *TCustomImageListResolution) DrawOverlay(ACanvas ICanvas, AX, AY, AIndex int32, AOverlay TOverlay, AEnabled bool) {
-	LCL().SysCallN(1637, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), PascalBool(AEnabled))
+	LCL().SysCallN(1827, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), PascalBool(AEnabled))
 }
 
 func (m *TCustomImageListResolution) DrawOverlay1(ACanvas ICanvas, AX, AY, AIndex int32, AOverlay TOverlay, ADrawEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1638, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), uintptr(ADrawEffect))
+	LCL().SysCallN(1828, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), uintptr(ADrawEffect))
 }
 
 func (m *TCustomImageListResolution) DrawOverlay2(ACanvas ICanvas, AX, AY, AIndex int32, AOverlay TOverlay, ADrawingStyle TDrawingStyle, AImageType TImageType, ADrawEffect TGraphicsDrawEffect) {
-	LCL().SysCallN(1639, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), uintptr(ADrawingStyle), uintptr(AImageType), uintptr(ADrawEffect))
+	LCL().SysCallN(1829, m.Instance(), GetObjectUintptr(ACanvas), uintptr(AX), uintptr(AY), uintptr(AIndex), uintptr(AOverlay), uintptr(ADrawingStyle), uintptr(AImageType), uintptr(ADrawEffect))
 }

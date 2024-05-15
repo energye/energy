@@ -42,85 +42,85 @@ type TCustomColorBox struct {
 }
 
 func NewCustomColorBox(AOwner IComponent) ICustomColorBox {
-	r1 := LCL().SysCallN(1217, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(1407, GetObjectUintptr(AOwner))
 	return AsCustomColorBox(r1)
 }
 
 func (m *TCustomColorBox) ColorRectWidth() int32 {
-	r1 := LCL().SysCallN(1215, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1405, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomColorBox) SetColorRectWidth(AValue int32) {
-	LCL().SysCallN(1215, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1405, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) ColorRectOffset() int32 {
-	r1 := LCL().SysCallN(1214, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1404, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomColorBox) SetColorRectOffset(AValue int32) {
-	LCL().SysCallN(1214, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1404, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) StyleForColorBoxStyle() TColorBoxStyle {
-	r1 := LCL().SysCallN(1222, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1412, 0, m.Instance(), 0)
 	return TColorBoxStyle(r1)
 }
 
 func (m *TCustomColorBox) SetStyleForColorBoxStyle(AValue TColorBoxStyle) {
-	LCL().SysCallN(1222, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1412, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) Colors(Index int32) TColor {
-	r1 := LCL().SysCallN(1216, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(1406, m.Instance(), uintptr(Index))
 	return TColor(r1)
 }
 
 func (m *TCustomColorBox) ColorNames(Index int32) string {
-	r1 := LCL().SysCallN(1213, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(1403, m.Instance(), uintptr(Index))
 	return GoStr(r1)
 }
 
 func (m *TCustomColorBox) Selected() TColor {
-	r1 := LCL().SysCallN(1220, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1410, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomColorBox) SetSelected(AValue TColor) {
-	LCL().SysCallN(1220, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1410, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) DefaultColorColor() TColor {
-	r1 := LCL().SysCallN(1218, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1408, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomColorBox) SetDefaultColorColor(AValue TColor) {
-	LCL().SysCallN(1218, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1408, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) NoneColorColor() TColor {
-	r1 := LCL().SysCallN(1219, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1409, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TCustomColorBox) SetNoneColorColor(AValue TColor) {
-	LCL().SysCallN(1219, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1409, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomColorBox) ColorDialog() IColorDialog {
-	r1 := LCL().SysCallN(1212, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1402, 0, m.Instance(), 0)
 	return AsColorDialog(r1)
 }
 
 func (m *TCustomColorBox) SetColorDialog(AValue IColorDialog) {
-	LCL().SysCallN(1212, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(1402, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func CustomColorBoxClass() TClass {
-	ret := LCL().SysCallN(1211)
+	ret := LCL().SysCallN(1401)
 	return TClass(ret)
 }
 
@@ -129,5 +129,5 @@ func (m *TCustomColorBox) SetOnGetColors(fn TGetColorsEvent) {
 		RemoveEventElement(m.getColorsPtr)
 	}
 	m.getColorsPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1221, m.Instance(), m.getColorsPtr)
+	LCL().SysCallN(1411, m.Instance(), m.getColorsPtr)
 }

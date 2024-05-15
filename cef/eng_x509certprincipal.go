@@ -15,7 +15,7 @@ import (
 // ICefX509CertPrincipal Parent: ICefBaseRefCounted
 //
 //	Interface representing the issuer or subject field of an X.509 certificate.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t))</a>
 type ICefX509CertPrincipal interface {
 	ICefBaseRefCounted
 	// GetDisplayName
@@ -44,7 +44,7 @@ type ICefX509CertPrincipal interface {
 // TCefX509CertPrincipal Parent: TCefBaseRefCounted
 //
 //	Interface representing the issuer or subject field of an X.509 certificate.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t))</a>
 type TCefX509CertPrincipal struct {
 	TCefBaseRefCounted
 }

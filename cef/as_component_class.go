@@ -2736,6 +2736,17 @@ func AsSchemeHandlerFactory(obj interface{}) ISchemeHandlerFactory {
 	return schemeHandlerFactory
 }
 
+// AsTask Convert a pointer object to an existing class object
+func AsTask(obj interface{}) ITask {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	task := new(TTask)
+	SetObjectInstance(task, instance)
+	return task
+}
+
 // AsV8Accessor Convert a pointer object to an existing class object
 func AsV8Accessor(obj interface{}) IV8Accessor {
 	instance := GetInstance(obj)

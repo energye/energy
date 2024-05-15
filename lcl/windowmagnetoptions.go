@@ -33,51 +33,51 @@ type TWindowMagnetOptions struct {
 }
 
 func NewWindowMagnetOptions() IWindowMagnetOptions {
-	r1 := LCL().SysCallN(5290)
+	r1 := LCL().SysCallN(6099)
 	return AsWindowMagnetOptions(r1)
 }
 
 func (m *TWindowMagnetOptions) SnapToMonitor() bool {
-	r1 := LCL().SysCallN(5294, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6103, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWindowMagnetOptions) SetSnapToMonitor(AValue bool) {
-	LCL().SysCallN(5294, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6103, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWindowMagnetOptions) SnapToForms() bool {
-	r1 := LCL().SysCallN(5293, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6102, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWindowMagnetOptions) SetSnapToForms(AValue bool) {
-	LCL().SysCallN(5293, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6102, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWindowMagnetOptions) SnapFormTarget() bool {
-	r1 := LCL().SysCallN(5292, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6101, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWindowMagnetOptions) SetSnapFormTarget(AValue bool) {
-	LCL().SysCallN(5292, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6101, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWindowMagnetOptions) Distance() int32 {
-	r1 := LCL().SysCallN(5291, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6100, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TWindowMagnetOptions) SetDistance(AValue int32) {
-	LCL().SysCallN(5291, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6100, 1, m.Instance(), uintptr(AValue))
 }
 
 func WindowMagnetOptionsClass() TClass {
-	ret := LCL().SysCallN(5289)
+	ret := LCL().SysCallN(6098)
 	return TClass(ret)
 }
 
 func (m *TWindowMagnetOptions) AssignTo(Dest IPersistent) {
-	LCL().SysCallN(5288, m.Instance(), GetObjectUintptr(Dest))
+	LCL().SysCallN(6097, m.Instance(), GetObjectUintptr(Dest))
 }

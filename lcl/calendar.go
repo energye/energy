@@ -48,12 +48,12 @@ type TCalendar struct {
 }
 
 func NewCalendar(AOwner IComponent) ICalendar {
-	r1 := LCL().SysCallN(310, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(497, GetObjectUintptr(AOwner))
 	return AsCalendar(r1)
 }
 
 func CalendarClass() TClass {
-	ret := LCL().SysCallN(309)
+	ret := LCL().SysCallN(496)
 	return TClass(ret)
 }
 
@@ -62,7 +62,7 @@ func (m *TCalendar) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(311, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(498, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TCalendar) SetOnMouseDown(fn TMouseEvent) {
@@ -70,7 +70,7 @@ func (m *TCalendar) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(312, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(499, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TCalendar) SetOnMouseEnter(fn TNotifyEvent) {
@@ -78,7 +78,7 @@ func (m *TCalendar) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(313, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(500, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TCalendar) SetOnMouseLeave(fn TNotifyEvent) {
@@ -86,7 +86,7 @@ func (m *TCalendar) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(314, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(501, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TCalendar) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -94,7 +94,7 @@ func (m *TCalendar) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(315, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(502, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TCalendar) SetOnMouseUp(fn TMouseEvent) {
@@ -102,7 +102,7 @@ func (m *TCalendar) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(316, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(503, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -110,7 +110,7 @@ func (m *TCalendar) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(317, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(504, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -118,7 +118,7 @@ func (m *TCalendar) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(318, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(505, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -126,7 +126,7 @@ func (m *TCalendar) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(322, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(509, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -134,7 +134,7 @@ func (m *TCalendar) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(319, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(506, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -142,7 +142,7 @@ func (m *TCalendar) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(320, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(507, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TCalendar) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -150,5 +150,5 @@ func (m *TCalendar) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(321, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(508, m.Instance(), m.mouseWheelRightPtr)
 }

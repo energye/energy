@@ -116,7 +116,7 @@ type ICefApplicationCore interface {
 	//  value is empty and TCefSettings.cache_path is non-empty then it will
 	//  default to the TCefSettings.cache_path value. If both values are empty
 	//  then the default platform-specific directory will be used
-	// ("~/.config/cef_user_data" directory on Linux, "~/Library/Application
+	//  ("~/.config/cef_user_data" directory on Linux, "~/Library/Application
 	//  Support/CEF/User Data" directory on MacOS, "AppData\Local\CEF\User Data"
 	//  directory under the user profile directory on Windows). If this value is
 	//  non-empty then it must be an absolute path. Failure to set this value
@@ -247,7 +247,7 @@ type ICefApplicationCore interface {
 	//  The number of stack trace frames to capture for uncaught exceptions.
 	//  Specify a positive value to enable the
 	//  ICefRenderProcessHandler.OnUncaughtException() callback. Specify 0
-	// (default value) and OnUncaughtException() will not be called. Also
+	//  (default value) and OnUncaughtException() will not be called. Also
 	//  configurable using the "uncaught-exception-stack-size" command-line
 	//  switch.
 	UncaughtExceptionStackSize() int32 // property
@@ -408,7 +408,7 @@ type ICefApplicationCore interface {
 	//  This option can be used to force parameters of field trials when testing
 	//  changes locally. The argument is a param list of(key, value) pairs prefixed
 	//  by an associated(trial, group) pair. You specify the param list for multiple
-	// (trial, group) pairs with a comma separator.
+	//  (trial, group) pairs with a comma separator.
 	//  Example: "Trial1.Group1:k1/v1/k2/v2,Trial2.Group2:k3/v3/k4/v4"
 	//  Trial names, groups names, parameter names, and value should all be URL
 	//  escaped for all non-alphanumeric characters.

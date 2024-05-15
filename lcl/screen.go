@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IScreen Parent: ILCLComponent
@@ -97,337 +96,337 @@ type TScreen struct {
 }
 
 func NewScreen(AOwner IComponent) IScreen {
-	r1 := LCL().SysCallN(4214, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4856, GetObjectUintptr(AOwner))
 	return AsScreen(r1)
 }
 
 func (m *TScreen) ActiveControl() IWinControl {
-	r1 := LCL().SysCallN(4207, m.Instance())
+	r1 := LCL().SysCallN(4849, m.Instance())
 	return AsWinControl(r1)
 }
 
 func (m *TScreen) ActiveCustomForm() ICustomForm {
-	r1 := LCL().SysCallN(4208, m.Instance())
+	r1 := LCL().SysCallN(4850, m.Instance())
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) ActiveForm() IForm {
-	r1 := LCL().SysCallN(4209, m.Instance())
+	r1 := LCL().SysCallN(4851, m.Instance())
 	return AsForm(r1)
 }
 
 func (m *TScreen) Cursor() TCursor {
-	r1 := LCL().SysCallN(4215, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4857, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TScreen) SetCursor(AValue TCursor) {
-	LCL().SysCallN(4215, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4857, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TScreen) RealCursor() TCursor {
-	r1 := LCL().SysCallN(4261, m.Instance())
+	r1 := LCL().SysCallN(4903, m.Instance())
 	return TCursor(r1)
 }
 
 func (m *TScreen) Cursors(Index int32) HCURSOR {
-	r1 := LCL().SysCallN(4216, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4858, 0, m.Instance(), uintptr(Index))
 	return HCURSOR(r1)
 }
 
 func (m *TScreen) SetCursors(Index int32, AValue HCURSOR) {
-	LCL().SysCallN(4216, 1, m.Instance(), uintptr(Index), uintptr(AValue))
+	LCL().SysCallN(4858, 1, m.Instance(), uintptr(Index), uintptr(AValue))
 }
 
 func (m *TScreen) CustomFormCount() int32 {
-	r1 := LCL().SysCallN(4218, m.Instance())
+	r1 := LCL().SysCallN(4860, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) CustomForms(Index int32) ICustomForm {
-	r1 := LCL().SysCallN(4222, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4864, m.Instance(), uintptr(Index))
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) CustomFormZOrderCount() int32 {
-	r1 := LCL().SysCallN(4221, m.Instance())
+	r1 := LCL().SysCallN(4863, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) CustomFormsZOrdered(Index int32) ICustomForm {
-	r1 := LCL().SysCallN(4223, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4865, m.Instance(), uintptr(Index))
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) DesktopLeft() int32 {
-	r1 := LCL().SysCallN(4227, m.Instance())
+	r1 := LCL().SysCallN(4869, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) DesktopTop() int32 {
-	r1 := LCL().SysCallN(4229, m.Instance())
+	r1 := LCL().SysCallN(4871, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) DesktopHeight() int32 {
-	r1 := LCL().SysCallN(4226, m.Instance())
+	r1 := LCL().SysCallN(4868, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) DesktopWidth() int32 {
-	r1 := LCL().SysCallN(4230, m.Instance())
+	r1 := LCL().SysCallN(4872, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) DesktopRect() (resultRect TRect) {
-	LCL().SysCallN(4228, m.Instance(), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(4870, m.Instance(), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TScreen) FocusedForm() ICustomForm {
-	r1 := LCL().SysCallN(4240, m.Instance())
+	r1 := LCL().SysCallN(4882, m.Instance())
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) FormCount() int32 {
-	r1 := LCL().SysCallN(4242, m.Instance())
+	r1 := LCL().SysCallN(4884, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) Forms(Index int32) IForm {
-	r1 := LCL().SysCallN(4244, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4886, m.Instance(), uintptr(Index))
 	return AsForm(r1)
 }
 
 func (m *TScreen) DataModuleCount() int32 {
-	r1 := LCL().SysCallN(4224, m.Instance())
+	r1 := LCL().SysCallN(4866, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) DataModules(Index int32) IDataModule {
-	r1 := LCL().SysCallN(4225, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4867, m.Instance(), uintptr(Index))
 	return AsDataModule(r1)
 }
 
 func (m *TScreen) HintFont() IFont {
-	r1 := LCL().SysCallN(4248, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4890, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TScreen) SetHintFont(AValue IFont) {
-	LCL().SysCallN(4248, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4890, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TScreen) IconFont() IFont {
-	r1 := LCL().SysCallN(4249, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4891, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TScreen) SetIconFont(AValue IFont) {
-	LCL().SysCallN(4249, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4891, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TScreen) MenuFont() IFont {
-	r1 := LCL().SysCallN(4250, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4892, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TScreen) SetMenuFont(AValue IFont) {
-	LCL().SysCallN(4250, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4892, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TScreen) SystemFont() IFont {
-	r1 := LCL().SysCallN(4264, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4906, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TScreen) SetSystemFont(AValue IFont) {
-	LCL().SysCallN(4264, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4906, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TScreen) Fonts() IStrings {
-	r1 := LCL().SysCallN(4241, m.Instance())
+	r1 := LCL().SysCallN(4883, m.Instance())
 	return AsStrings(r1)
 }
 
 func (m *TScreen) Height() int32 {
-	r1 := LCL().SysCallN(4247, m.Instance())
+	r1 := LCL().SysCallN(4889, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) MonitorCount() int32 {
-	r1 := LCL().SysCallN(4251, m.Instance())
+	r1 := LCL().SysCallN(4893, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) Monitors(Index int32) IMonitor {
-	r1 := LCL().SysCallN(4255, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(4897, m.Instance(), uintptr(Index))
 	return AsMonitor(r1)
 }
 
 func (m *TScreen) PixelsPerInch() int32 {
-	r1 := LCL().SysCallN(4259, m.Instance())
+	r1 := LCL().SysCallN(4901, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) PrimaryMonitor() IMonitor {
-	r1 := LCL().SysCallN(4260, m.Instance())
+	r1 := LCL().SysCallN(4902, m.Instance())
 	return AsMonitor(r1)
 }
 
 func (m *TScreen) Width() int32 {
-	r1 := LCL().SysCallN(4267, m.Instance())
+	r1 := LCL().SysCallN(4909, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) WorkAreaRect() (resultRect TRect) {
-	LCL().SysCallN(4270, m.Instance(), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(4912, m.Instance(), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TScreen) WorkAreaHeight() int32 {
-	r1 := LCL().SysCallN(4268, m.Instance())
+	r1 := LCL().SysCallN(4910, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) WorkAreaLeft() int32 {
-	r1 := LCL().SysCallN(4269, m.Instance())
+	r1 := LCL().SysCallN(4911, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) WorkAreaTop() int32 {
-	r1 := LCL().SysCallN(4271, m.Instance())
+	r1 := LCL().SysCallN(4913, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) WorkAreaWidth() int32 {
-	r1 := LCL().SysCallN(4272, m.Instance())
+	r1 := LCL().SysCallN(4914, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) CustomFormIndex(AForm ICustomForm) int32 {
-	r1 := LCL().SysCallN(4219, m.Instance(), GetObjectUintptr(AForm))
+	r1 := LCL().SysCallN(4861, m.Instance(), GetObjectUintptr(AForm))
 	return int32(r1)
 }
 
 func (m *TScreen) FormIndex(AForm IForm) int32 {
-	r1 := LCL().SysCallN(4243, m.Instance(), GetObjectUintptr(AForm))
+	r1 := LCL().SysCallN(4885, m.Instance(), GetObjectUintptr(AForm))
 	return int32(r1)
 }
 
 func (m *TScreen) CustomFormZIndex(AForm ICustomForm) int32 {
-	r1 := LCL().SysCallN(4220, m.Instance(), GetObjectUintptr(AForm))
+	r1 := LCL().SysCallN(4862, m.Instance(), GetObjectUintptr(AForm))
 	return int32(r1)
 }
 
 func (m *TScreen) GetCurrentModalForm() ICustomForm {
-	r1 := LCL().SysCallN(4245, m.Instance())
+	r1 := LCL().SysCallN(4887, m.Instance())
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) GetCurrentModalFormZIndex() int32 {
-	r1 := LCL().SysCallN(4246, m.Instance())
+	r1 := LCL().SysCallN(4888, m.Instance())
 	return int32(r1)
 }
 
 func (m *TScreen) CustomFormBelongsToActiveGroup(AForm ICustomForm) bool {
-	r1 := LCL().SysCallN(4217, m.Instance(), GetObjectUintptr(AForm))
+	r1 := LCL().SysCallN(4859, m.Instance(), GetObjectUintptr(AForm))
 	return GoBool(r1)
 }
 
 func (m *TScreen) FindNonDesignerForm(FormName string) ICustomForm {
-	r1 := LCL().SysCallN(4239, m.Instance(), PascalStr(FormName))
+	r1 := LCL().SysCallN(4881, m.Instance(), PascalStr(FormName))
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) FindForm(FormName string) ICustomForm {
-	r1 := LCL().SysCallN(4237, m.Instance(), PascalStr(FormName))
+	r1 := LCL().SysCallN(4879, m.Instance(), PascalStr(FormName))
 	return AsCustomForm(r1)
 }
 
 func (m *TScreen) FindNonDesignerDataModule(DataModuleName string) IDataModule {
-	r1 := LCL().SysCallN(4238, m.Instance(), PascalStr(DataModuleName))
+	r1 := LCL().SysCallN(4880, m.Instance(), PascalStr(DataModuleName))
 	return AsDataModule(r1)
 }
 
 func (m *TScreen) FindDataModule(DataModuleName string) IDataModule {
-	r1 := LCL().SysCallN(4236, m.Instance(), PascalStr(DataModuleName))
+	r1 := LCL().SysCallN(4878, m.Instance(), PascalStr(DataModuleName))
 	return AsDataModule(r1)
 }
 
 func (m *TScreen) DisableForms(SkipForm ICustomForm, DisabledList IList) IList {
-	r1 := LCL().SysCallN(4231, m.Instance(), GetObjectUintptr(SkipForm), GetObjectUintptr(DisabledList))
+	r1 := LCL().SysCallN(4873, m.Instance(), GetObjectUintptr(SkipForm), GetObjectUintptr(DisabledList))
 	return AsList(r1)
 }
 
 func (m *TScreen) MonitorFromPoint(Point *TPoint, MonitorDefault TMonitorDefaultTo) IMonitor {
-	r1 := LCL().SysCallN(4252, m.Instance(), uintptr(unsafe.Pointer(Point)), uintptr(MonitorDefault))
+	r1 := LCL().SysCallN(4894, m.Instance(), uintptr(unsafePointer(Point)), uintptr(MonitorDefault))
 	return AsMonitor(r1)
 }
 
 func (m *TScreen) MonitorFromRect(Rect *TRect, MonitorDefault TMonitorDefaultTo) IMonitor {
-	r1 := LCL().SysCallN(4253, m.Instance(), uintptr(unsafe.Pointer(Rect)), uintptr(MonitorDefault))
+	r1 := LCL().SysCallN(4895, m.Instance(), uintptr(unsafePointer(Rect)), uintptr(MonitorDefault))
 	return AsMonitor(r1)
 }
 
 func (m *TScreen) MonitorFromWindow(Handle THandle, MonitorDefault TMonitorDefaultTo) IMonitor {
-	r1 := LCL().SysCallN(4254, m.Instance(), uintptr(Handle), uintptr(MonitorDefault))
+	r1 := LCL().SysCallN(4896, m.Instance(), uintptr(Handle), uintptr(MonitorDefault))
 	return AsMonitor(r1)
 }
 
 func ScreenClass() TClass {
-	ret := LCL().SysCallN(4213)
+	ret := LCL().SysCallN(4855)
 	return TClass(ret)
 }
 
 func (m *TScreen) MoveFormToFocusFront(ACustomForm ICustomForm) {
-	LCL().SysCallN(4256, m.Instance(), GetObjectUintptr(ACustomForm))
+	LCL().SysCallN(4898, m.Instance(), GetObjectUintptr(ACustomForm))
 }
 
 func (m *TScreen) MoveFormToZFront(ACustomForm ICustomForm) {
-	LCL().SysCallN(4257, m.Instance(), GetObjectUintptr(ACustomForm))
+	LCL().SysCallN(4899, m.Instance(), GetObjectUintptr(ACustomForm))
 }
 
 func (m *TScreen) NewFormWasCreated(AForm ICustomForm) {
-	LCL().SysCallN(4258, m.Instance(), GetObjectUintptr(AForm))
+	LCL().SysCallN(4900, m.Instance(), GetObjectUintptr(AForm))
 }
 
 func (m *TScreen) UpdateMonitors() {
-	LCL().SysCallN(4265, m.Instance())
+	LCL().SysCallN(4907, m.Instance())
 }
 
 func (m *TScreen) UpdateScreen() {
-	LCL().SysCallN(4266, m.Instance())
+	LCL().SysCallN(4908, m.Instance())
 }
 
 func (m *TScreen) EnableForms(AFormList *IList) {
 	var result0 uintptr
-	LCL().SysCallN(4232, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	LCL().SysCallN(4874, m.Instance(), uintptr(unsafePointer(&result0)))
 	*AFormList = AsList(result0)
 }
 
 func (m *TScreen) BeginTempCursor(aCursor TCursor) {
-	LCL().SysCallN(4211, m.Instance(), uintptr(aCursor))
+	LCL().SysCallN(4853, m.Instance(), uintptr(aCursor))
 }
 
 func (m *TScreen) EndTempCursor(aCursor TCursor) {
-	LCL().SysCallN(4234, m.Instance(), uintptr(aCursor))
+	LCL().SysCallN(4876, m.Instance(), uintptr(aCursor))
 }
 
 func (m *TScreen) BeginWaitCursor() {
-	LCL().SysCallN(4212, m.Instance())
+	LCL().SysCallN(4854, m.Instance())
 }
 
 func (m *TScreen) EndWaitCursor() {
-	LCL().SysCallN(4235, m.Instance())
+	LCL().SysCallN(4877, m.Instance())
 }
 
 func (m *TScreen) BeginScreenCursor() {
-	LCL().SysCallN(4210, m.Instance())
+	LCL().SysCallN(4852, m.Instance())
 }
 
 func (m *TScreen) EndScreenCursor() {
-	LCL().SysCallN(4233, m.Instance())
+	LCL().SysCallN(4875, m.Instance())
 }
 
 func (m *TScreen) SetOnActiveControlChange(fn TNotifyEvent) {
@@ -435,7 +434,7 @@ func (m *TScreen) SetOnActiveControlChange(fn TNotifyEvent) {
 		RemoveEventElement(m.activeControlChangePtr)
 	}
 	m.activeControlChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4262, m.Instance(), m.activeControlChangePtr)
+	LCL().SysCallN(4904, m.Instance(), m.activeControlChangePtr)
 }
 
 func (m *TScreen) SetOnActiveFormChange(fn TNotifyEvent) {
@@ -443,5 +442,5 @@ func (m *TScreen) SetOnActiveFormChange(fn TNotifyEvent) {
 		RemoveEventElement(m.activeFormChangePtr)
 	}
 	m.activeFormChangePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4263, m.Instance(), m.activeFormChangePtr)
+	LCL().SysCallN(4905, m.Instance(), m.activeFormChangePtr)
 }

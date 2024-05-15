@@ -60,57 +60,57 @@ type TButton struct {
 }
 
 func NewButton(TheOwner IComponent) IButton {
-	r1 := LCL().SysCallN(290, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(477, GetObjectUintptr(TheOwner))
 	return AsButton(r1)
 }
 
 func (m *TButton) DragCursor() TCursor {
-	r1 := LCL().SysCallN(291, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(478, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TButton) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(291, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(478, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TButton) DragKind() TDragKind {
-	r1 := LCL().SysCallN(292, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(479, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TButton) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(292, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(479, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TButton) DragMode() TDragMode {
-	r1 := LCL().SysCallN(293, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(480, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TButton) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(293, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(480, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TButton) ParentFont() bool {
-	r1 := LCL().SysCallN(294, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(481, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TButton) SetParentFont(AValue bool) {
-	LCL().SysCallN(294, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(481, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TButton) ParentShowHint() bool {
-	r1 := LCL().SysCallN(295, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(482, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TButton) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(295, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(482, 1, m.Instance(), PascalBool(AValue))
 }
 
 func ButtonClass() TClass {
-	ret := LCL().SysCallN(289)
+	ret := LCL().SysCallN(476)
 	return TClass(ret)
 }
 
@@ -119,7 +119,7 @@ func (m *TButton) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(296, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(483, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TButton) SetOnDragDrop(fn TDragDropEvent) {
@@ -127,7 +127,7 @@ func (m *TButton) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(297, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(484, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TButton) SetOnDragOver(fn TDragOverEvent) {
@@ -135,7 +135,7 @@ func (m *TButton) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(298, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(485, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TButton) SetOnEndDrag(fn TEndDragEvent) {
@@ -143,7 +143,7 @@ func (m *TButton) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(299, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(486, m.Instance(), m.endDragPtr)
 }
 
 func (m *TButton) SetOnMouseDown(fn TMouseEvent) {
@@ -151,7 +151,7 @@ func (m *TButton) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(300, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(487, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TButton) SetOnMouseEnter(fn TNotifyEvent) {
@@ -159,7 +159,7 @@ func (m *TButton) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(301, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(488, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TButton) SetOnMouseLeave(fn TNotifyEvent) {
@@ -167,7 +167,7 @@ func (m *TButton) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(302, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(489, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TButton) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -175,7 +175,7 @@ func (m *TButton) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(303, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(490, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TButton) SetOnMouseUp(fn TMouseEvent) {
@@ -183,7 +183,7 @@ func (m *TButton) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(304, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(491, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TButton) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -191,7 +191,7 @@ func (m *TButton) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(305, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(492, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -199,7 +199,7 @@ func (m *TButton) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(306, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(493, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -207,7 +207,7 @@ func (m *TButton) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(307, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(494, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TButton) SetOnStartDrag(fn TStartDragEvent) {
@@ -215,5 +215,5 @@ func (m *TButton) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(308, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(495, m.Instance(), m.startDragPtr)
 }

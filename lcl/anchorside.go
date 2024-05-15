@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IAnchorSide Parent: IPersistent
@@ -71,7 +70,7 @@ func (m *TAnchorSide) CheckSidePosition(NewControl IControl, NewSide TAnchorSide
 	var result2 uintptr
 	var result3 uintptr
 	var result4 uintptr
-	r1 := LCL().SysCallN(87, m.Instance(), GetObjectUintptr(NewControl), uintptr(NewSide), uintptr(unsafe.Pointer(&result2)), uintptr(unsafe.Pointer(&result3)), uintptr(unsafe.Pointer(&result4)))
+	r1 := LCL().SysCallN(87, m.Instance(), GetObjectUintptr(NewControl), uintptr(NewSide), uintptr(unsafePointer(&result2)), uintptr(unsafePointer(&result3)), uintptr(unsafePointer(&result4)))
 	*OutReferenceControl = AsControl(result2)
 	*OutReferenceSide = TAnchorSideReference(result3)
 	*OutPosition = int32(result4)
@@ -92,7 +91,7 @@ func (m *TAnchorSide) GetSidePosition(OutReferenceControl *IControl, OutReferenc
 	var result0 uintptr
 	var result1 uintptr
 	var result2 uintptr
-	LCL().SysCallN(92, m.Instance(), uintptr(unsafe.Pointer(&result0)), uintptr(unsafe.Pointer(&result1)), uintptr(unsafe.Pointer(&result2)))
+	LCL().SysCallN(92, m.Instance(), uintptr(unsafePointer(&result0)), uintptr(unsafePointer(&result1)), uintptr(unsafePointer(&result2)))
 	*OutReferenceControl = AsControl(result0)
 	*OutReferenceSide = TAnchorSideReference(result1)
 	*OutPosition = int32(result2)

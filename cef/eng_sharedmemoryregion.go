@@ -15,7 +15,7 @@ import (
 // ICefSharedMemoryRegion Parent: ICefBaseRefCounted
 //
 //	Interface that wraps platform-dependent share memory region mapping.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_memory_region_capi.h">CEF source file: /include/capi/cef_shared_memory_region_capi.h (cef_shared_memory_region_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_memory_region_capi.h">CEF source file: /include/capi/cef_shared_memory_region_capi.h (cef_shared_memory_region_t))</a>
 type ICefSharedMemoryRegion interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -32,7 +32,7 @@ type ICefSharedMemoryRegion interface {
 // TCefSharedMemoryRegion Parent: TCefBaseRefCounted
 //
 //	Interface that wraps platform-dependent share memory region mapping.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_memory_region_capi.h">CEF source file: /include/capi/cef_shared_memory_region_capi.h (cef_shared_memory_region_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_shared_memory_region_capi.h">CEF source file: /include/capi/cef_shared_memory_region_capi.h (cef_shared_memory_region_t))</a>
 type TCefSharedMemoryRegion struct {
 	TCefBaseRefCounted
 }

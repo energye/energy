@@ -70,66 +70,66 @@ type TGroupBox struct {
 }
 
 func NewGroupBox(AOwner IComponent) IGroupBox {
-	r1 := LCL().SysCallN(3021, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(3264, GetObjectUintptr(AOwner))
 	return AsGroupBox(r1)
 }
 
 func (m *TGroupBox) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3022, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3265, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TGroupBox) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3022, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3265, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGroupBox) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3023, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3266, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TGroupBox) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3023, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3266, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGroupBox) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3024, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3267, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TGroupBox) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3024, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3267, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TGroupBox) ParentColor() bool {
-	r1 := LCL().SysCallN(3025, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3268, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGroupBox) SetParentColor(AValue bool) {
-	LCL().SysCallN(3025, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3268, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TGroupBox) ParentFont() bool {
-	r1 := LCL().SysCallN(3026, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3269, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGroupBox) SetParentFont(AValue bool) {
-	LCL().SysCallN(3026, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3269, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TGroupBox) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3027, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3270, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TGroupBox) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3027, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(3270, 1, m.Instance(), PascalBool(AValue))
 }
 
 func GroupBoxClass() TClass {
-	ret := LCL().SysCallN(3020)
+	ret := LCL().SysCallN(3263)
 	return TClass(ret)
 }
 
@@ -138,7 +138,7 @@ func (m *TGroupBox) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3028, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(3271, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TGroupBox) SetOnDblClick(fn TNotifyEvent) {
@@ -146,7 +146,7 @@ func (m *TGroupBox) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3029, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(3272, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TGroupBox) SetOnDragDrop(fn TDragDropEvent) {
@@ -154,7 +154,7 @@ func (m *TGroupBox) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3030, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(3273, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TGroupBox) SetOnDragOver(fn TDragOverEvent) {
@@ -162,7 +162,7 @@ func (m *TGroupBox) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3031, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(3274, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TGroupBox) SetOnEndDock(fn TEndDragEvent) {
@@ -170,7 +170,7 @@ func (m *TGroupBox) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3032, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(3275, m.Instance(), m.endDockPtr)
 }
 
 func (m *TGroupBox) SetOnEndDrag(fn TEndDragEvent) {
@@ -178,7 +178,7 @@ func (m *TGroupBox) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3033, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(3276, m.Instance(), m.endDragPtr)
 }
 
 func (m *TGroupBox) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
@@ -186,7 +186,7 @@ func (m *TGroupBox) SetOnGetSiteInfo(fn TGetSiteInfoEvent) {
 		RemoveEventElement(m.getSiteInfoPtr)
 	}
 	m.getSiteInfoPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3034, m.Instance(), m.getSiteInfoPtr)
+	LCL().SysCallN(3277, m.Instance(), m.getSiteInfoPtr)
 }
 
 func (m *TGroupBox) SetOnMouseDown(fn TMouseEvent) {
@@ -194,7 +194,7 @@ func (m *TGroupBox) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3035, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(3278, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TGroupBox) SetOnMouseEnter(fn TNotifyEvent) {
@@ -202,7 +202,7 @@ func (m *TGroupBox) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3036, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(3279, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TGroupBox) SetOnMouseLeave(fn TNotifyEvent) {
@@ -210,7 +210,7 @@ func (m *TGroupBox) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3037, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(3280, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TGroupBox) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -218,7 +218,7 @@ func (m *TGroupBox) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3038, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(3281, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TGroupBox) SetOnMouseUp(fn TMouseEvent) {
@@ -226,7 +226,7 @@ func (m *TGroupBox) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3039, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(3282, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TGroupBox) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -234,7 +234,7 @@ func (m *TGroupBox) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3040, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(3283, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TGroupBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -242,7 +242,7 @@ func (m *TGroupBox) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3041, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(3284, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TGroupBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -250,7 +250,7 @@ func (m *TGroupBox) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3042, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(3285, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TGroupBox) SetOnStartDock(fn TStartDockEvent) {
@@ -258,7 +258,7 @@ func (m *TGroupBox) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3043, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(3286, m.Instance(), m.startDockPtr)
 }
 
 func (m *TGroupBox) SetOnStartDrag(fn TStartDragEvent) {
@@ -266,5 +266,5 @@ func (m *TGroupBox) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3044, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(3287, m.Instance(), m.startDragPtr)
 }

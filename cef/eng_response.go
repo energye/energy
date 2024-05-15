@@ -15,7 +15,7 @@ import (
 // ICefResponse Parent: ICefBaseRefCounted
 //
 //	Interface used to represent a web response. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_response_capi.h">CEF source file: /include/capi/cef_response_capi.h (cef_response_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_response_capi.h">CEF source file: /include/capi/cef_response_capi.h (cef_response_t))</a>
 type ICefResponse interface {
 	ICefBaseRefCounted
 	// IsReadOnly
@@ -74,7 +74,7 @@ type ICefResponse interface {
 // TCefResponse Parent: TCefBaseRefCounted
 //
 //	Interface used to represent a web response. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_response_capi.h">CEF source file: /include/capi/cef_response_capi.h (cef_response_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_response_capi.h">CEF source file: /include/capi/cef_response_capi.h (cef_response_t))</a>
 type TCefResponse struct {
 	TCefBaseRefCounted
 }

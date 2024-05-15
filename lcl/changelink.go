@@ -31,26 +31,26 @@ type TChangeLink struct {
 }
 
 func NewChangeLink() IChangeLink {
-	r1 := LCL().SysCallN(375)
+	r1 := LCL().SysCallN(562)
 	return AsChangeLink(r1)
 }
 
 func (m *TChangeLink) Sender() ICustomImageList {
-	r1 := LCL().SysCallN(376, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(563, 0, m.Instance(), 0)
 	return AsCustomImageList(r1)
 }
 
 func (m *TChangeLink) SetSender(AValue ICustomImageList) {
-	LCL().SysCallN(376, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(563, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func ChangeLinkClass() TClass {
-	ret := LCL().SysCallN(374)
+	ret := LCL().SysCallN(561)
 	return TClass(ret)
 }
 
 func (m *TChangeLink) Change() {
-	LCL().SysCallN(373, m.Instance())
+	LCL().SysCallN(560, m.Instance())
 }
 
 func (m *TChangeLink) SetOnChange(fn TNotifyEvent) {
@@ -58,7 +58,7 @@ func (m *TChangeLink) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(377, m.Instance(), m.changePtr)
+	LCL().SysCallN(564, m.Instance(), m.changePtr)
 }
 
 func (m *TChangeLink) SetOnDestroyResolutionHandle(fn TDestroyResolutionHandleEvent) {
@@ -66,5 +66,5 @@ func (m *TChangeLink) SetOnDestroyResolutionHandle(fn TDestroyResolutionHandleEv
 		RemoveEventElement(m.destroyResolutionHandlePtr)
 	}
 	m.destroyResolutionHandlePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(378, m.Instance(), m.destroyResolutionHandlePtr)
+	LCL().SysCallN(565, m.Instance(), m.destroyResolutionHandlePtr)
 }

@@ -25,16 +25,16 @@ type TLazAccessibleObjectEnumerator struct {
 }
 
 func NewLazAccessibleObjectEnumerator(Tree IAVLTree, aLowToHigh bool) ILazAccessibleObjectEnumerator {
-	r1 := LCL().SysCallN(3242, GetObjectUintptr(Tree), PascalBool(aLowToHigh))
+	r1 := LCL().SysCallN(3485, GetObjectUintptr(Tree), PascalBool(aLowToHigh))
 	return AsLazAccessibleObjectEnumerator(r1)
 }
 
 func (m *TLazAccessibleObjectEnumerator) CurrentForLazAccessibleObject() ILazAccessibleObject {
-	r1 := LCL().SysCallN(3243, m.Instance())
+	r1 := LCL().SysCallN(3486, m.Instance())
 	return AsLazAccessibleObject(r1)
 }
 
 func LazAccessibleObjectEnumeratorClass() TClass {
-	ret := LCL().SysCallN(3241)
+	ret := LCL().SysCallN(3484)
 	return TClass(ret)
 }

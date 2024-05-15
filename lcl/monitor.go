@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IMonitor Parent: IObject
@@ -35,61 +34,61 @@ type TMonitor struct {
 }
 
 func NewMonitor() IMonitor {
-	r1 := LCL().SysCallN(3698)
+	r1 := LCL().SysCallN(4340)
 	return AsMonitor(r1)
 }
 
 func (m *TMonitor) Handle() HMONITOR {
-	r1 := LCL().SysCallN(3699, m.Instance())
+	r1 := LCL().SysCallN(4341, m.Instance())
 	return HMONITOR(r1)
 }
 
 func (m *TMonitor) MonitorNum() int32 {
-	r1 := LCL().SysCallN(3702, m.Instance())
+	r1 := LCL().SysCallN(4344, m.Instance())
 	return int32(r1)
 }
 
 func (m *TMonitor) Left() int32 {
-	r1 := LCL().SysCallN(3701, m.Instance())
+	r1 := LCL().SysCallN(4343, m.Instance())
 	return int32(r1)
 }
 
 func (m *TMonitor) Height() int32 {
-	r1 := LCL().SysCallN(3700, m.Instance())
+	r1 := LCL().SysCallN(4342, m.Instance())
 	return int32(r1)
 }
 
 func (m *TMonitor) Top() int32 {
-	r1 := LCL().SysCallN(3705, m.Instance())
+	r1 := LCL().SysCallN(4347, m.Instance())
 	return int32(r1)
 }
 
 func (m *TMonitor) Width() int32 {
-	r1 := LCL().SysCallN(3706, m.Instance())
+	r1 := LCL().SysCallN(4348, m.Instance())
 	return int32(r1)
 }
 
 func (m *TMonitor) BoundsRect() (resultRect TRect) {
-	LCL().SysCallN(3696, m.Instance(), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(4338, m.Instance(), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TMonitor) WorkareaRect() (resultRect TRect) {
-	LCL().SysCallN(3707, m.Instance(), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(4349, m.Instance(), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TMonitor) Primary() bool {
-	r1 := LCL().SysCallN(3704, m.Instance())
+	r1 := LCL().SysCallN(4346, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TMonitor) PixelsPerInch() int32 {
-	r1 := LCL().SysCallN(3703, m.Instance())
+	r1 := LCL().SysCallN(4345, m.Instance())
 	return int32(r1)
 }
 
 func MonitorClass() TClass {
-	ret := LCL().SysCallN(3697)
+	ret := LCL().SysCallN(4339)
 	return TClass(ret)
 }

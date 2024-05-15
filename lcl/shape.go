@@ -76,84 +76,84 @@ type TShape struct {
 }
 
 func NewShape(TheOwner IComponent) IShape {
-	r1 := LCL().SysCallN(4324, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4973, GetObjectUintptr(TheOwner))
 	return AsShape(r1)
 }
 
 func (m *TShape) Brush() IBrush {
-	r1 := LCL().SysCallN(4322, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4971, 0, m.Instance(), 0)
 	return AsBrush(r1)
 }
 
 func (m *TShape) SetBrush(AValue IBrush) {
-	LCL().SysCallN(4322, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4971, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TShape) DragCursor() TCursor {
-	r1 := LCL().SysCallN(4325, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4974, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TShape) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(4325, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4974, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TShape) DragKind() TDragKind {
-	r1 := LCL().SysCallN(4326, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4975, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TShape) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(4326, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4975, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TShape) DragMode() TDragMode {
-	r1 := LCL().SysCallN(4327, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4976, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TShape) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(4327, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4976, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TShape) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4329, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4978, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TShape) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4329, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4978, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TShape) Pen() IPen {
-	r1 := LCL().SysCallN(4330, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4979, 0, m.Instance(), 0)
 	return AsPen(r1)
 }
 
 func (m *TShape) SetPen(AValue IPen) {
-	LCL().SysCallN(4330, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4979, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TShape) Shape() TShapeType {
-	r1 := LCL().SysCallN(4349, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4998, 0, m.Instance(), 0)
 	return TShapeType(r1)
 }
 
 func (m *TShape) SetShape(AValue TShapeType) {
-	LCL().SysCallN(4349, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4998, 1, m.Instance(), uintptr(AValue))
 }
 
 func ShapeClass() TClass {
-	ret := LCL().SysCallN(4323)
+	ret := LCL().SysCallN(4972)
 	return TClass(ret)
 }
 
 func (m *TShape) Paint() {
-	LCL().SysCallN(4328, m.Instance())
+	LCL().SysCallN(4977, m.Instance())
 }
 
 func (m *TShape) StyleChanged(Sender IObject) {
-	LCL().SysCallN(4350, m.Instance(), GetObjectUintptr(Sender))
+	LCL().SysCallN(4999, m.Instance(), GetObjectUintptr(Sender))
 }
 
 func (m *TShape) SetOnDragDrop(fn TDragDropEvent) {
@@ -161,7 +161,7 @@ func (m *TShape) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4331, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4980, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TShape) SetOnDragOver(fn TDragOverEvent) {
@@ -169,7 +169,7 @@ func (m *TShape) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4332, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4981, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TShape) SetOnEndDock(fn TEndDragEvent) {
@@ -177,7 +177,7 @@ func (m *TShape) SetOnEndDock(fn TEndDragEvent) {
 		RemoveEventElement(m.endDockPtr)
 	}
 	m.endDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4333, m.Instance(), m.endDockPtr)
+	LCL().SysCallN(4982, m.Instance(), m.endDockPtr)
 }
 
 func (m *TShape) SetOnEndDrag(fn TEndDragEvent) {
@@ -185,7 +185,7 @@ func (m *TShape) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4334, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4983, m.Instance(), m.endDragPtr)
 }
 
 func (m *TShape) SetOnMouseDown(fn TMouseEvent) {
@@ -193,7 +193,7 @@ func (m *TShape) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4335, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4984, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TShape) SetOnMouseEnter(fn TNotifyEvent) {
@@ -201,7 +201,7 @@ func (m *TShape) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4336, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4985, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TShape) SetOnMouseLeave(fn TNotifyEvent) {
@@ -209,7 +209,7 @@ func (m *TShape) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4337, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4986, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TShape) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -217,7 +217,7 @@ func (m *TShape) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4338, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4987, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TShape) SetOnMouseUp(fn TMouseEvent) {
@@ -225,7 +225,7 @@ func (m *TShape) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4339, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4988, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TShape) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -233,7 +233,7 @@ func (m *TShape) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4340, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4989, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TShape) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -241,7 +241,7 @@ func (m *TShape) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4341, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4990, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TShape) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -249,7 +249,7 @@ func (m *TShape) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4345, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4994, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TShape) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -257,7 +257,7 @@ func (m *TShape) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4342, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(4991, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TShape) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -265,7 +265,7 @@ func (m *TShape) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4343, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(4992, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TShape) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -273,7 +273,7 @@ func (m *TShape) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4344, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(4993, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TShape) SetOnPaint(fn TNotifyEvent) {
@@ -281,7 +281,7 @@ func (m *TShape) SetOnPaint(fn TNotifyEvent) {
 		RemoveEventElement(m.paintPtr)
 	}
 	m.paintPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4346, m.Instance(), m.paintPtr)
+	LCL().SysCallN(4995, m.Instance(), m.paintPtr)
 }
 
 func (m *TShape) SetOnStartDock(fn TStartDockEvent) {
@@ -289,7 +289,7 @@ func (m *TShape) SetOnStartDock(fn TStartDockEvent) {
 		RemoveEventElement(m.startDockPtr)
 	}
 	m.startDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4347, m.Instance(), m.startDockPtr)
+	LCL().SysCallN(4996, m.Instance(), m.startDockPtr)
 }
 
 func (m *TShape) SetOnStartDrag(fn TStartDragEvent) {
@@ -297,5 +297,5 @@ func (m *TShape) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4348, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4997, m.Instance(), m.startDragPtr)
 }

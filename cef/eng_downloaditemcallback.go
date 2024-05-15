@@ -15,7 +15,7 @@ import (
 // ICefDownloadItemCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used to asynchronously cancel a download.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_download_item_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_download_item_callback_t))</a>
 type ICefDownloadItemCallback interface {
 	ICefBaseRefCounted
 	// Cancel
@@ -32,7 +32,7 @@ type ICefDownloadItemCallback interface {
 // TCefDownloadItemCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used to asynchronously cancel a download.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_download_item_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_download_item_callback_t))</a>
 type TCefDownloadItemCallback struct {
 	TCefBaseRefCounted
 }

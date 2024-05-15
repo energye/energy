@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IPopupMenu Parent: IMenu
@@ -43,75 +42,75 @@ type TPopupMenu struct {
 }
 
 func NewPopupMenu(AOwner IComponent) IPopupMenu {
-	r1 := LCL().SysCallN(3917, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4559, GetObjectUintptr(AOwner))
 	return AsPopupMenu(r1)
 }
 
 func (m *TPopupMenu) PopupComponent() IComponent {
-	r1 := LCL().SysCallN(3921, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4563, 0, m.Instance(), 0)
 	return AsComponent(r1)
 }
 
 func (m *TPopupMenu) SetPopupComponent(AValue IComponent) {
-	LCL().SysCallN(3921, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(4563, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TPopupMenu) PopupPoint() (resultPoint TPoint) {
-	LCL().SysCallN(3922, m.Instance(), uintptr(unsafe.Pointer(&resultPoint)))
+	LCL().SysCallN(4564, m.Instance(), uintptr(unsafePointer(&resultPoint)))
 	return
 }
 
 func (m *TPopupMenu) Alignment() TPopupAlignment {
-	r1 := LCL().SysCallN(3913, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4555, 0, m.Instance(), 0)
 	return TPopupAlignment(r1)
 }
 
 func (m *TPopupMenu) SetAlignment(AValue TPopupAlignment) {
-	LCL().SysCallN(3913, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4555, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPopupMenu) AutoPopup() bool {
-	r1 := LCL().SysCallN(3914, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4556, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TPopupMenu) SetAutoPopup(AValue bool) {
-	LCL().SysCallN(3914, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4556, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TPopupMenu) HelpContext() THelpContext {
-	r1 := LCL().SysCallN(3918, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4560, 0, m.Instance(), 0)
 	return THelpContext(r1)
 }
 
 func (m *TPopupMenu) SetHelpContext(AValue THelpContext) {
-	LCL().SysCallN(3918, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4560, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPopupMenu) TrackButton() TTrackButton {
-	r1 := LCL().SysCallN(3925, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4567, 0, m.Instance(), 0)
 	return TTrackButton(r1)
 }
 
 func (m *TPopupMenu) SetTrackButton(AValue TTrackButton) {
-	LCL().SysCallN(3925, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4567, 1, m.Instance(), uintptr(AValue))
 }
 
 func PopupMenuClass() TClass {
-	ret := LCL().SysCallN(3915)
+	ret := LCL().SysCallN(4557)
 	return TClass(ret)
 }
 
 func (m *TPopupMenu) PopUp() {
-	LCL().SysCallN(3919, m.Instance())
+	LCL().SysCallN(4561, m.Instance())
 }
 
 func (m *TPopupMenu) PopUp1(X, Y int32) {
-	LCL().SysCallN(3920, m.Instance(), uintptr(X), uintptr(Y))
+	LCL().SysCallN(4562, m.Instance(), uintptr(X), uintptr(Y))
 }
 
 func (m *TPopupMenu) Close() {
-	LCL().SysCallN(3916, m.Instance())
+	LCL().SysCallN(4558, m.Instance())
 }
 
 func (m *TPopupMenu) SetOnPopup(fn TNotifyEvent) {
@@ -119,7 +118,7 @@ func (m *TPopupMenu) SetOnPopup(fn TNotifyEvent) {
 		RemoveEventElement(m.popupPtr)
 	}
 	m.popupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3924, m.Instance(), m.popupPtr)
+	LCL().SysCallN(4566, m.Instance(), m.popupPtr)
 }
 
 func (m *TPopupMenu) SetOnClose(fn TNotifyEvent) {
@@ -127,5 +126,5 @@ func (m *TPopupMenu) SetOnClose(fn TNotifyEvent) {
 		RemoveEventElement(m.closePtr)
 	}
 	m.closePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3923, m.Instance(), m.closePtr)
+	LCL().SysCallN(4565, m.Instance(), m.closePtr)
 }

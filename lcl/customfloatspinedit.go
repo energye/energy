@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomFloatSpinEdit Parent: ICustomEdit
@@ -42,89 +41,89 @@ type TCustomFloatSpinEdit struct {
 }
 
 func NewCustomFloatSpinEdit(TheOwner IComponent) ICustomFloatSpinEdit {
-	r1 := LCL().SysCallN(1450, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(1640, GetObjectUintptr(TheOwner))
 	return AsCustomFloatSpinEdit(r1)
 }
 
 func (m *TCustomFloatSpinEdit) DecimalPlaces() int32 {
-	r1 := LCL().SysCallN(1451, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1641, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomFloatSpinEdit) SetDecimalPlaces(AValue int32) {
-	LCL().SysCallN(1451, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1641, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomFloatSpinEdit) EditorEnabled() bool {
-	r1 := LCL().SysCallN(1452, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1642, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomFloatSpinEdit) SetEditorEnabled(AValue bool) {
-	LCL().SysCallN(1452, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1642, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomFloatSpinEdit) Increment() (resultDouble float64) {
-	LCL().SysCallN(1454, 0, m.Instance(), uintptr(unsafe.Pointer(&resultDouble)), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1644, 0, m.Instance(), uintptr(unsafePointer(&resultDouble)), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func (m *TCustomFloatSpinEdit) SetIncrement(AValue float64) {
-	LCL().SysCallN(1454, 1, m.Instance(), uintptr(unsafe.Pointer(&AValue)), uintptr(unsafe.Pointer(&AValue)))
+	LCL().SysCallN(1644, 1, m.Instance(), uintptr(unsafePointer(&AValue)), uintptr(unsafePointer(&AValue)))
 }
 
 func (m *TCustomFloatSpinEdit) MinValue() (resultDouble float64) {
-	LCL().SysCallN(1456, 0, m.Instance(), uintptr(unsafe.Pointer(&resultDouble)), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1646, 0, m.Instance(), uintptr(unsafePointer(&resultDouble)), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func (m *TCustomFloatSpinEdit) SetMinValue(AValue float64) {
-	LCL().SysCallN(1456, 1, m.Instance(), uintptr(unsafe.Pointer(&AValue)), uintptr(unsafe.Pointer(&AValue)))
+	LCL().SysCallN(1646, 1, m.Instance(), uintptr(unsafePointer(&AValue)), uintptr(unsafePointer(&AValue)))
 }
 
 func (m *TCustomFloatSpinEdit) MaxValue() (resultDouble float64) {
-	LCL().SysCallN(1455, 0, m.Instance(), uintptr(unsafe.Pointer(&resultDouble)), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1645, 0, m.Instance(), uintptr(unsafePointer(&resultDouble)), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func (m *TCustomFloatSpinEdit) SetMaxValue(AValue float64) {
-	LCL().SysCallN(1455, 1, m.Instance(), uintptr(unsafe.Pointer(&AValue)), uintptr(unsafe.Pointer(&AValue)))
+	LCL().SysCallN(1645, 1, m.Instance(), uintptr(unsafePointer(&AValue)), uintptr(unsafePointer(&AValue)))
 }
 
 func (m *TCustomFloatSpinEdit) Value() (resultDouble float64) {
-	LCL().SysCallN(1458, 0, m.Instance(), uintptr(unsafe.Pointer(&resultDouble)), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1648, 0, m.Instance(), uintptr(unsafePointer(&resultDouble)), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func (m *TCustomFloatSpinEdit) SetValue(AValue float64) {
-	LCL().SysCallN(1458, 1, m.Instance(), uintptr(unsafe.Pointer(&AValue)), uintptr(unsafe.Pointer(&AValue)))
+	LCL().SysCallN(1648, 1, m.Instance(), uintptr(unsafePointer(&AValue)), uintptr(unsafePointer(&AValue)))
 }
 
 func (m *TCustomFloatSpinEdit) ValueEmpty() bool {
-	r1 := LCL().SysCallN(1459, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1649, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomFloatSpinEdit) SetValueEmpty(AValue bool) {
-	LCL().SysCallN(1459, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(1649, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomFloatSpinEdit) GetLimitedValue(AValue float64) (resultDouble float64) {
-	LCL().SysCallN(1453, m.Instance(), uintptr(unsafe.Pointer(&AValue)), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1643, m.Instance(), uintptr(unsafePointer(&AValue)), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func (m *TCustomFloatSpinEdit) ValueToStr(AValue float64) string {
-	r1 := LCL().SysCallN(1460, m.Instance(), uintptr(unsafe.Pointer(&AValue)))
+	r1 := LCL().SysCallN(1650, m.Instance(), uintptr(unsafePointer(&AValue)))
 	return GoStr(r1)
 }
 
 func (m *TCustomFloatSpinEdit) StrToValue(S string) (resultDouble float64) {
-	LCL().SysCallN(1457, m.Instance(), PascalStr(S), uintptr(unsafe.Pointer(&resultDouble)))
+	LCL().SysCallN(1647, m.Instance(), PascalStr(S), uintptr(unsafePointer(&resultDouble)))
 	return
 }
 
 func CustomFloatSpinEditClass() TClass {
-	ret := LCL().SysCallN(1449)
+	ret := LCL().SysCallN(1639)
 	return TClass(ret)
 }

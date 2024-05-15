@@ -42,67 +42,67 @@ type TCustomRadioGroup struct {
 }
 
 func NewCustomRadioGroup(TheOwner IComponent) ICustomRadioGroup {
-	r1 := LCL().SysCallN(1966, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(2156, GetObjectUintptr(TheOwner))
 	return AsCustomRadioGroup(r1)
 }
 
 func (m *TCustomRadioGroup) AutoFill() bool {
-	r1 := LCL().SysCallN(1961, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2151, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCustomRadioGroup) SetAutoFill(AValue bool) {
-	LCL().SysCallN(1961, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(2151, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCustomRadioGroup) ItemIndex() int32 {
-	r1 := LCL().SysCallN(1967, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2157, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomRadioGroup) SetItemIndex(AValue int32) {
-	LCL().SysCallN(1967, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2157, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomRadioGroup) Items() IStrings {
-	r1 := LCL().SysCallN(1968, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2158, 0, m.Instance(), 0)
 	return AsStrings(r1)
 }
 
 func (m *TCustomRadioGroup) SetItems(AValue IStrings) {
-	LCL().SysCallN(1968, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(2158, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCustomRadioGroup) Columns() int32 {
-	r1 := LCL().SysCallN(1965, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2155, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomRadioGroup) SetColumns(AValue int32) {
-	LCL().SysCallN(1965, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2155, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomRadioGroup) ColumnLayout() TColumnLayout {
-	r1 := LCL().SysCallN(1964, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2154, 0, m.Instance(), 0)
 	return TColumnLayout(r1)
 }
 
 func (m *TCustomRadioGroup) SetColumnLayout(AValue TColumnLayout) {
-	LCL().SysCallN(1964, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2154, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomRadioGroup) CanModify() bool {
-	r1 := LCL().SysCallN(1962, m.Instance())
+	r1 := LCL().SysCallN(2152, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCustomRadioGroup) Rows() int32 {
-	r1 := LCL().SysCallN(1969, m.Instance())
+	r1 := LCL().SysCallN(2159, m.Instance())
 	return int32(r1)
 }
 
 func CustomRadioGroupClass() TClass {
-	ret := LCL().SysCallN(1963)
+	ret := LCL().SysCallN(2153)
 	return TClass(ret)
 }
 
@@ -111,7 +111,7 @@ func (m *TCustomRadioGroup) SetOnItemEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.itemEnterPtr)
 	}
 	m.itemEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1970, m.Instance(), m.itemEnterPtr)
+	LCL().SysCallN(2160, m.Instance(), m.itemEnterPtr)
 }
 
 func (m *TCustomRadioGroup) SetOnItemExit(fn TNotifyEvent) {
@@ -119,7 +119,7 @@ func (m *TCustomRadioGroup) SetOnItemExit(fn TNotifyEvent) {
 		RemoveEventElement(m.itemExitPtr)
 	}
 	m.itemExitPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1971, m.Instance(), m.itemExitPtr)
+	LCL().SysCallN(2161, m.Instance(), m.itemExitPtr)
 }
 
 func (m *TCustomRadioGroup) SetOnSelectionChanged(fn TNotifyEvent) {
@@ -127,5 +127,5 @@ func (m *TCustomRadioGroup) SetOnSelectionChanged(fn TNotifyEvent) {
 		RemoveEventElement(m.selectionChangedPtr)
 	}
 	m.selectionChangedPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(1972, m.Instance(), m.selectionChangedPtr)
+	LCL().SysCallN(2162, m.Instance(), m.selectionChangedPtr)
 }

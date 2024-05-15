@@ -15,7 +15,7 @@ import (
 // ICefDomNode Parent: ICefBaseRefCounted
 //
 //	Interface used to represent a DOM node. The functions of this interface should only be called on the render process main thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dom_capi.h">CEF source file: /include/capi/cef_dom_capi.h (cef_domnode_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dom_capi.h">CEF source file: /include/capi/cef_dom_capi.h (cef_domnode_t))</a>
 type ICefDomNode interface {
 	ICefBaseRefCounted
 	// GetType
@@ -104,7 +104,7 @@ type ICefDomNode interface {
 // TCefDomNode Parent: TCefBaseRefCounted
 //
 //	Interface used to represent a DOM node. The functions of this interface should only be called on the render process main thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dom_capi.h">CEF source file: /include/capi/cef_dom_capi.h (cef_domnode_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dom_capi.h">CEF source file: /include/capi/cef_dom_capi.h (cef_domnode_t))</a>
 type TCefDomNode struct {
 	TCefBaseRefCounted
 }

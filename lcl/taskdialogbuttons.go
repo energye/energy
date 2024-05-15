@@ -31,44 +31,44 @@ type TTaskDialogButtons struct {
 }
 
 func NewTaskDialogButtons(AOwner IPersistent, AItemClass TCollectionItemClass) ITaskDialogButtons {
-	r1 := LCL().SysCallN(4700, GetObjectUintptr(AOwner), uintptr(AItemClass))
+	r1 := LCL().SysCallN(5358, GetObjectUintptr(AOwner), uintptr(AItemClass))
 	return AsTaskDialogButtons(r1)
 }
 
 func (m *TTaskDialogButtons) DefaultButton() ITaskDialogBaseButtonItem {
-	r1 := LCL().SysCallN(4701, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5359, 0, m.Instance(), 0)
 	return AsTaskDialogBaseButtonItem(r1)
 }
 
 func (m *TTaskDialogButtons) SetDefaultButton(AValue ITaskDialogBaseButtonItem) {
-	LCL().SysCallN(4701, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5359, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TTaskDialogButtons) ItemsForTaskDialogBaseButtonItem(Index int32) ITaskDialogBaseButtonItem {
-	r1 := LCL().SysCallN(4704, 0, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(5362, 0, m.Instance(), uintptr(Index))
 	return AsTaskDialogBaseButtonItem(r1)
 }
 
 func (m *TTaskDialogButtons) SetItemsForTaskDialogBaseButtonItem(Index int32, AValue ITaskDialogBaseButtonItem) {
-	LCL().SysCallN(4704, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
+	LCL().SysCallN(5362, 1, m.Instance(), uintptr(Index), GetObjectUintptr(AValue))
 }
 
 func (m *TTaskDialogButtons) AddForTaskDialogBaseButtonItem() ITaskDialogBaseButtonItem {
-	r1 := LCL().SysCallN(4698, m.Instance())
+	r1 := LCL().SysCallN(5356, m.Instance())
 	return AsTaskDialogBaseButtonItem(r1)
 }
 
 func (m *TTaskDialogButtons) FindButton(AModalResult TModalResult) ITaskDialogBaseButtonItem {
-	r1 := LCL().SysCallN(4702, m.Instance(), uintptr(AModalResult))
+	r1 := LCL().SysCallN(5360, m.Instance(), uintptr(AModalResult))
 	return AsTaskDialogBaseButtonItem(r1)
 }
 
 func (m *TTaskDialogButtons) GetEnumeratorForTaskDialogButtonsEnumerator() ITaskDialogButtonsEnumerator {
-	r1 := LCL().SysCallN(4703, m.Instance())
+	r1 := LCL().SysCallN(5361, m.Instance())
 	return AsTaskDialogButtonsEnumerator(r1)
 }
 
 func TaskDialogButtonsClass() TClass {
-	ret := LCL().SysCallN(4699)
+	ret := LCL().SysCallN(5357)
 	return TClass(ret)
 }

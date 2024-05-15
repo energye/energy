@@ -28,21 +28,21 @@ type TGIFImage struct {
 }
 
 func NewGIFImage() IGIFImage {
-	r1 := LCL().SysCallN(2921)
+	r1 := LCL().SysCallN(3164)
 	return AsGIFImage(r1)
 }
 
 func (m *TGIFImage) Interlaced() bool {
-	r1 := LCL().SysCallN(2922, m.Instance())
+	r1 := LCL().SysCallN(3165, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TGIFImage) BitsPerPixel() byte {
-	r1 := LCL().SysCallN(2919, m.Instance())
+	r1 := LCL().SysCallN(3162, m.Instance())
 	return byte(r1)
 }
 
 func GIFImageClass() TClass {
-	ret := LCL().SysCallN(2920)
+	ret := LCL().SysCallN(3163)
 	return TClass(ret)
 }

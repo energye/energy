@@ -15,7 +15,7 @@ import (
 // ICefDictionaryValue Parent: ICefBaseRefCounted
 //
 //	Interface representing a dictionary value. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_dictionary_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_dictionary_value_t))</a>
 type ICefDictionaryValue interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -110,7 +110,7 @@ type ICefDictionaryValue interface {
 // TCefDictionaryValue Parent: TCefBaseRefCounted
 //
 //	Interface representing a dictionary value. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_dictionary_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_dictionary_value_t))</a>
 type TCefDictionaryValue struct {
 	TCefBaseRefCounted
 }

@@ -28,29 +28,29 @@ type TColorDialog struct {
 }
 
 func NewColorDialog(TheOwner IComponent) IColorDialog {
-	r1 := LCL().SysCallN(575, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(765, GetObjectUintptr(TheOwner))
 	return AsColorDialog(r1)
 }
 
 func (m *TColorDialog) Color() TColor {
-	r1 := LCL().SysCallN(574, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(764, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TColorDialog) SetColor(AValue TColor) {
-	LCL().SysCallN(574, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(764, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TColorDialog) CustomColors() IStrings {
-	r1 := LCL().SysCallN(576, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(766, 0, m.Instance(), 0)
 	return AsStrings(r1)
 }
 
 func (m *TColorDialog) SetCustomColors(AValue IStrings) {
-	LCL().SysCallN(576, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(766, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func ColorDialogClass() TClass {
-	ret := LCL().SysCallN(573)
+	ret := LCL().SysCallN(763)
 	return TClass(ret)
 }

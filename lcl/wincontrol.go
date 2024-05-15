@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IWinControl Parent: IControl
@@ -131,398 +130,398 @@ type TWinControl struct {
 }
 
 func NewWinControl(TheOwner IComponent) IWinControl {
-	r1 := LCL().SysCallN(5220, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(6029, GetObjectUintptr(TheOwner))
 	return AsWinControl(r1)
 }
 
 func NewWinControlParented(AParentWindow HWND) IWinControl {
-	r1 := LCL().SysCallN(5221, uintptr(AParentWindow))
+	r1 := LCL().SysCallN(6030, uintptr(AParentWindow))
 	return AsWinControl(r1)
 }
 
 func (m *TWinControl) BorderWidth() TBorderWidth {
-	r1 := LCL().SysCallN(5203, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6012, 0, m.Instance(), 0)
 	return TBorderWidth(r1)
 }
 
 func (m *TWinControl) SetBorderWidth(AValue TBorderWidth) {
-	LCL().SysCallN(5203, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6012, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TWinControl) BoundsLockCount() int32 {
-	r1 := LCL().SysCallN(5204, m.Instance())
+	r1 := LCL().SysCallN(6013, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) Brush() IBrush {
-	r1 := LCL().SysCallN(5205, m.Instance())
+	r1 := LCL().SysCallN(6014, m.Instance())
 	return AsBrush(r1)
 }
 
 func (m *TWinControl) CachedClientHeight() int32 {
-	r1 := LCL().SysCallN(5207, m.Instance())
+	r1 := LCL().SysCallN(6016, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) CachedClientWidth() int32 {
-	r1 := LCL().SysCallN(5208, m.Instance())
+	r1 := LCL().SysCallN(6017, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) ChildSizing() IControlChildSizing {
-	r1 := LCL().SysCallN(5211, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6020, 0, m.Instance(), 0)
 	return AsControlChildSizing(r1)
 }
 
 func (m *TWinControl) SetChildSizing(AValue IControlChildSizing) {
-	LCL().SysCallN(5211, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(6020, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TWinControl) ControlCount() int32 {
-	r1 := LCL().SysCallN(5218, m.Instance())
+	r1 := LCL().SysCallN(6027, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) Controls(Index int32) IControl {
-	r1 := LCL().SysCallN(5219, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(6028, m.Instance(), uintptr(Index))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) DockClientCount() int32 {
-	r1 := LCL().SysCallN(5225, m.Instance())
+	r1 := LCL().SysCallN(6034, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) DockClients(Index int32) IControl {
-	r1 := LCL().SysCallN(5226, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(6035, m.Instance(), uintptr(Index))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) DockManager() IDockManager {
-	r1 := LCL().SysCallN(5228, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6037, 0, m.Instance(), 0)
 	return AsDockManager(r1)
 }
 
 func (m *TWinControl) SetDockManager(AValue IDockManager) {
-	LCL().SysCallN(5228, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(6037, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TWinControl) DockSite() bool {
-	r1 := LCL().SysCallN(5229, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6038, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWinControl) SetDockSite(AValue bool) {
-	LCL().SysCallN(5229, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6038, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) DoubleBuffered() bool {
-	r1 := LCL().SysCallN(5230, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6039, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWinControl) SetDoubleBuffered(AValue bool) {
-	LCL().SysCallN(5230, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6039, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) Handle() HWND {
-	r1 := LCL().SysCallN(5242, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6051, 0, m.Instance(), 0)
 	return HWND(r1)
 }
 
 func (m *TWinControl) SetHandle(AValue HWND) {
-	LCL().SysCallN(5242, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6051, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TWinControl) IsFlipped() bool {
-	r1 := LCL().SysCallN(5250, m.Instance())
+	r1 := LCL().SysCallN(6059, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) IsResizing() bool {
-	r1 := LCL().SysCallN(5251, m.Instance())
+	r1 := LCL().SysCallN(6060, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) TabOrder() TTabOrder {
-	r1 := LCL().SysCallN(5282, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6091, 0, m.Instance(), 0)
 	return TTabOrder(r1)
 }
 
 func (m *TWinControl) SetTabOrder(AValue TTabOrder) {
-	LCL().SysCallN(5282, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6091, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TWinControl) TabStop() bool {
-	r1 := LCL().SysCallN(5283, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6092, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWinControl) SetTabStop(AValue bool) {
-	LCL().SysCallN(5283, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6092, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) ParentDoubleBuffered() bool {
-	r1 := LCL().SysCallN(5257, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6066, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWinControl) SetParentDoubleBuffered(AValue bool) {
-	LCL().SysCallN(5257, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6066, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) ParentWindow() HWND {
-	r1 := LCL().SysCallN(5258, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6067, 0, m.Instance(), 0)
 	return HWND(r1)
 }
 
 func (m *TWinControl) SetParentWindow(AValue HWND) {
-	LCL().SysCallN(5258, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(6067, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TWinControl) Showing() bool {
-	r1 := LCL().SysCallN(5281, m.Instance())
+	r1 := LCL().SysCallN(6090, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) UseDockManager() bool {
-	r1 := LCL().SysCallN(5286, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(6095, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TWinControl) SetUseDockManager(AValue bool) {
-	LCL().SysCallN(5286, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6095, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) SetDesignerDeleting(AValue bool) {
-	LCL().SysCallN(5222, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(6031, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TWinControl) IsSpecialSubControl() bool {
-	r1 := LCL().SysCallN(5252, m.Instance())
+	r1 := LCL().SysCallN(6061, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) VisibleDockClientCount() int32 {
-	r1 := LCL().SysCallN(5287, m.Instance())
+	r1 := LCL().SysCallN(6096, m.Instance())
 	return int32(r1)
 }
 
 func (m *TWinControl) ControlAtPos(Pos *TPoint, AllowDisabled bool) IControl {
-	r1 := LCL().SysCallN(5215, m.Instance(), uintptr(unsafe.Pointer(Pos)), PascalBool(AllowDisabled))
+	r1 := LCL().SysCallN(6024, m.Instance(), uintptr(unsafePointer(Pos)), PascalBool(AllowDisabled))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) ControlAtPos1(Pos *TPoint, AllowDisabled, AllowWinControls bool) IControl {
-	r1 := LCL().SysCallN(5216, m.Instance(), uintptr(unsafe.Pointer(Pos)), PascalBool(AllowDisabled), PascalBool(AllowWinControls))
+	r1 := LCL().SysCallN(6025, m.Instance(), uintptr(unsafePointer(Pos)), PascalBool(AllowDisabled), PascalBool(AllowWinControls))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) ControlAtPos2(Pos *TPoint, Flags TControlAtPosFlags) IControl {
-	r1 := LCL().SysCallN(5217, m.Instance(), uintptr(unsafe.Pointer(Pos)), uintptr(Flags))
+	r1 := LCL().SysCallN(6026, m.Instance(), uintptr(unsafePointer(Pos)), uintptr(Flags))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) ContainsControl(Control IControl) bool {
-	r1 := LCL().SysCallN(5214, m.Instance(), GetObjectUintptr(Control))
+	r1 := LCL().SysCallN(6023, m.Instance(), GetObjectUintptr(Control))
 	return GoBool(r1)
 }
 
 func (m *TWinControl) ClientRectNeedsInterfaceUpdate() bool {
-	r1 := LCL().SysCallN(5213, m.Instance())
+	r1 := LCL().SysCallN(6022, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) CanFocus() bool {
-	r1 := LCL().SysCallN(5209, m.Instance())
+	r1 := LCL().SysCallN(6018, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) CanSetFocus() bool {
-	r1 := LCL().SysCallN(5210, m.Instance())
+	r1 := LCL().SysCallN(6019, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) GetControlIndex(AControl IControl) int32 {
-	r1 := LCL().SysCallN(5238, m.Instance(), GetObjectUintptr(AControl))
+	r1 := LCL().SysCallN(6047, m.Instance(), GetObjectUintptr(AControl))
 	return int32(r1)
 }
 
 func (m *TWinControl) Focused() bool {
-	r1 := LCL().SysCallN(5237, m.Instance())
+	r1 := LCL().SysCallN(6046, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) PerformTab(ForwardTab bool) bool {
-	r1 := LCL().SysCallN(5259, m.Instance(), PascalBool(ForwardTab))
+	r1 := LCL().SysCallN(6068, m.Instance(), PascalBool(ForwardTab))
 	return GoBool(r1)
 }
 
 func (m *TWinControl) FindChildControl(ControlName string) IControl {
-	r1 := LCL().SysCallN(5234, m.Instance(), PascalStr(ControlName))
+	r1 := LCL().SysCallN(6043, m.Instance(), PascalStr(ControlName))
 	return AsControl(r1)
 }
 
 func (m *TWinControl) GetEnumeratorControls() IWinControlEnumerator {
-	r1 := LCL().SysCallN(5240, m.Instance())
+	r1 := LCL().SysCallN(6049, m.Instance())
 	return AsWinControlEnumerator(r1)
 }
 
 func (m *TWinControl) GetEnumeratorControlsReverse() IWinControlEnumerator {
-	r1 := LCL().SysCallN(5241, m.Instance())
+	r1 := LCL().SysCallN(6050, m.Instance())
 	return AsWinControlEnumerator(r1)
 }
 
 func (m *TWinControl) GetDockCaption(AControl IControl) string {
-	r1 := LCL().SysCallN(5239, m.Instance(), GetObjectUintptr(AControl))
+	r1 := LCL().SysCallN(6048, m.Instance(), GetObjectUintptr(AControl))
 	return GoStr(r1)
 }
 
 func (m *TWinControl) HandleAllocated() bool {
-	r1 := LCL().SysCallN(5243, m.Instance())
+	r1 := LCL().SysCallN(6052, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) BrushCreated() bool {
-	r1 := LCL().SysCallN(5206, m.Instance())
+	r1 := LCL().SysCallN(6015, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TWinControl) IntfUTF8KeyPress(UTF8Key *TUTF8Char, RepeatCount int32, SystemKey bool) bool {
 	var result0 uintptr
-	r1 := LCL().SysCallN(5248, m.Instance(), uintptr(unsafe.Pointer(&result0)), uintptr(RepeatCount), PascalBool(SystemKey))
+	r1 := LCL().SysCallN(6057, m.Instance(), uintptr(unsafePointer(&result0)), uintptr(RepeatCount), PascalBool(SystemKey))
 	*UTF8Key = *(*TUTF8Char)(getPointer(result0))
 	return GoBool(r1)
 }
 
 func (m *TWinControl) IntfGetDropFilesTarget() IWinControl {
-	r1 := LCL().SysCallN(5247, m.Instance())
+	r1 := LCL().SysCallN(6056, m.Instance())
 	return AsWinControl(r1)
 }
 
 func WinControlClass() TClass {
-	ret := LCL().SysCallN(5212)
+	ret := LCL().SysCallN(6021)
 	return TClass(ret)
 }
 
 func (m *TWinControl) BeginUpdateBounds() {
-	LCL().SysCallN(5202, m.Instance())
+	LCL().SysCallN(6011, m.Instance())
 }
 
 func (m *TWinControl) EndUpdateBounds() {
-	LCL().SysCallN(5232, m.Instance())
+	LCL().SysCallN(6041, m.Instance())
 }
 
 func (m *TWinControl) LockRealizeBounds() {
-	LCL().SysCallN(5253, m.Instance())
+	LCL().SysCallN(6062, m.Instance())
 }
 
 func (m *TWinControl) UnlockRealizeBounds() {
-	LCL().SysCallN(5284, m.Instance())
+	LCL().SysCallN(6093, m.Instance())
 }
 
 func (m *TWinControl) DoAdjustClientRectChange(InvalidateRect bool) {
-	LCL().SysCallN(5224, m.Instance(), PascalBool(InvalidateRect))
+	LCL().SysCallN(6033, m.Instance(), PascalBool(InvalidateRect))
 }
 
 func (m *TWinControl) InvalidateClientRectCache(WithChildControls bool) {
-	LCL().SysCallN(5249, m.Instance(), PascalBool(WithChildControls))
+	LCL().SysCallN(6058, m.Instance(), PascalBool(WithChildControls))
 }
 
 func (m *TWinControl) DisableAlign() {
-	LCL().SysCallN(5223, m.Instance())
+	LCL().SysCallN(6032, m.Instance())
 }
 
 func (m *TWinControl) EnableAlign() {
-	LCL().SysCallN(5231, m.Instance())
+	LCL().SysCallN(6040, m.Instance())
 }
 
 func (m *TWinControl) ReAlign() {
-	LCL().SysCallN(5260, m.Instance())
+	LCL().SysCallN(6069, m.Instance())
 }
 
 func (m *TWinControl) ScrollByWS(DeltaX, DeltaY int32) {
-	LCL().SysCallN(5264, m.Instance(), uintptr(DeltaX), uintptr(DeltaY))
+	LCL().SysCallN(6073, m.Instance(), uintptr(DeltaX), uintptr(DeltaY))
 }
 
 func (m *TWinControl) ScrollBy(DeltaX, DeltaY int32) {
-	LCL().SysCallN(5263, m.Instance(), uintptr(DeltaX), uintptr(DeltaY))
+	LCL().SysCallN(6072, m.Instance(), uintptr(DeltaX), uintptr(DeltaY))
 }
 
 func (m *TWinControl) FixDesignFontsPPIWithChildren(ADesignTimePPI int32) {
-	LCL().SysCallN(5235, m.Instance(), uintptr(ADesignTimePPI))
+	LCL().SysCallN(6044, m.Instance(), uintptr(ADesignTimePPI))
 }
 
 func (m *TWinControl) DockDrop(DragDockObject IDragDockObject, X, Y int32) {
-	LCL().SysCallN(5227, m.Instance(), GetObjectUintptr(DragDockObject), uintptr(X), uintptr(Y))
+	LCL().SysCallN(6036, m.Instance(), GetObjectUintptr(DragDockObject), uintptr(X), uintptr(Y))
 }
 
 func (m *TWinControl) SetControlIndex(AControl IControl, NewIndex int32) {
-	LCL().SysCallN(5266, m.Instance(), GetObjectUintptr(AControl), uintptr(NewIndex))
+	LCL().SysCallN(6075, m.Instance(), GetObjectUintptr(AControl), uintptr(NewIndex))
 }
 
 func (m *TWinControl) SelectNext(CurControl IWinControl, GoForward, CheckTabStop bool) {
-	LCL().SysCallN(5265, m.Instance(), GetObjectUintptr(CurControl), PascalBool(GoForward), PascalBool(CheckTabStop))
+	LCL().SysCallN(6074, m.Instance(), GetObjectUintptr(CurControl), PascalBool(GoForward), PascalBool(CheckTabStop))
 }
 
 func (m *TWinControl) NotifyControls(Msg Word) {
-	LCL().SysCallN(5254, m.Instance(), uintptr(Msg))
+	LCL().SysCallN(6063, m.Instance(), uintptr(Msg))
 }
 
 func (m *TWinControl) AddControl() {
-	LCL().SysCallN(5201, m.Instance())
+	LCL().SysCallN(6010, m.Instance())
 }
 
 func (m *TWinControl) InsertControl(AControl IControl) {
-	LCL().SysCallN(5245, m.Instance(), GetObjectUintptr(AControl))
+	LCL().SysCallN(6054, m.Instance(), GetObjectUintptr(AControl))
 }
 
 func (m *TWinControl) InsertControl1(AControl IControl, Index int32) {
-	LCL().SysCallN(5246, m.Instance(), GetObjectUintptr(AControl), uintptr(Index))
+	LCL().SysCallN(6055, m.Instance(), GetObjectUintptr(AControl), uintptr(Index))
 }
 
 func (m *TWinControl) RemoveControl(AControl IControl) {
-	LCL().SysCallN(5261, m.Instance(), GetObjectUintptr(AControl))
+	LCL().SysCallN(6070, m.Instance(), GetObjectUintptr(AControl))
 }
 
 func (m *TWinControl) SetFocus() {
-	LCL().SysCallN(5267, m.Instance())
+	LCL().SysCallN(6076, m.Instance())
 }
 
 func (m *TWinControl) FlipChildren(AllLevels bool) {
-	LCL().SysCallN(5236, m.Instance(), PascalBool(AllLevels))
+	LCL().SysCallN(6045, m.Instance(), PascalBool(AllLevels))
 }
 
 func (m *TWinControl) ScaleBy(Multiplier, Divider int32) {
-	LCL().SysCallN(5262, m.Instance(), uintptr(Multiplier), uintptr(Divider))
+	LCL().SysCallN(6071, m.Instance(), uintptr(Multiplier), uintptr(Divider))
 }
 
 func (m *TWinControl) UpdateDockCaption(Exclude IControl) {
-	LCL().SysCallN(5285, m.Instance(), GetObjectUintptr(Exclude))
+	LCL().SysCallN(6094, m.Instance(), GetObjectUintptr(Exclude))
 }
 
 func (m *TWinControl) HandleNeeded() {
-	LCL().SysCallN(5244, m.Instance())
+	LCL().SysCallN(6053, m.Instance())
 }
 
 func (m *TWinControl) EraseBackground(DC HDC) {
-	LCL().SysCallN(5233, m.Instance(), uintptr(DC))
+	LCL().SysCallN(6042, m.Instance(), uintptr(DC))
 }
 
 func (m *TWinControl) PaintTo(DC HDC, X, Y int32) {
-	LCL().SysCallN(5255, m.Instance(), uintptr(DC), uintptr(X), uintptr(Y))
+	LCL().SysCallN(6064, m.Instance(), uintptr(DC), uintptr(X), uintptr(Y))
 }
 
 func (m *TWinControl) PaintTo1(ACanvas ICanvas, X, Y int32) {
-	LCL().SysCallN(5256, m.Instance(), GetObjectUintptr(ACanvas), uintptr(X), uintptr(Y))
+	LCL().SysCallN(6065, m.Instance(), GetObjectUintptr(ACanvas), uintptr(X), uintptr(Y))
 }
 
 func (m *TWinControl) SetShape(AShape IBitmap) {
-	LCL().SysCallN(5279, m.Instance(), GetObjectUintptr(AShape))
+	LCL().SysCallN(6088, m.Instance(), GetObjectUintptr(AShape))
 }
 
 func (m *TWinControl) SetShape1(AShape IRegion) {
-	LCL().SysCallN(5280, m.Instance(), GetObjectUintptr(AShape))
+	LCL().SysCallN(6089, m.Instance(), GetObjectUintptr(AShape))
 }
 
 func (m *TWinControl) SetOnAlignInsertBefore(fn TAlignInsertBeforeEvent) {
@@ -530,7 +529,7 @@ func (m *TWinControl) SetOnAlignInsertBefore(fn TAlignInsertBeforeEvent) {
 		RemoveEventElement(m.alignInsertBeforePtr)
 	}
 	m.alignInsertBeforePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5268, m.Instance(), m.alignInsertBeforePtr)
+	LCL().SysCallN(6077, m.Instance(), m.alignInsertBeforePtr)
 }
 
 func (m *TWinControl) SetOnAlignPosition(fn TAlignPositionEvent) {
@@ -538,7 +537,7 @@ func (m *TWinControl) SetOnAlignPosition(fn TAlignPositionEvent) {
 		RemoveEventElement(m.alignPositionPtr)
 	}
 	m.alignPositionPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5269, m.Instance(), m.alignPositionPtr)
+	LCL().SysCallN(6078, m.Instance(), m.alignPositionPtr)
 }
 
 func (m *TWinControl) SetOnDockDrop(fn TDockDropEvent) {
@@ -546,7 +545,7 @@ func (m *TWinControl) SetOnDockDrop(fn TDockDropEvent) {
 		RemoveEventElement(m.dockDropPtr)
 	}
 	m.dockDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5270, m.Instance(), m.dockDropPtr)
+	LCL().SysCallN(6079, m.Instance(), m.dockDropPtr)
 }
 
 func (m *TWinControl) SetOnDockOver(fn TDockOverEvent) {
@@ -554,7 +553,7 @@ func (m *TWinControl) SetOnDockOver(fn TDockOverEvent) {
 		RemoveEventElement(m.dockOverPtr)
 	}
 	m.dockOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5271, m.Instance(), m.dockOverPtr)
+	LCL().SysCallN(6080, m.Instance(), m.dockOverPtr)
 }
 
 func (m *TWinControl) SetOnEnter(fn TNotifyEvent) {
@@ -562,7 +561,7 @@ func (m *TWinControl) SetOnEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.enterPtr)
 	}
 	m.enterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5272, m.Instance(), m.enterPtr)
+	LCL().SysCallN(6081, m.Instance(), m.enterPtr)
 }
 
 func (m *TWinControl) SetOnExit(fn TNotifyEvent) {
@@ -570,7 +569,7 @@ func (m *TWinControl) SetOnExit(fn TNotifyEvent) {
 		RemoveEventElement(m.exitPtr)
 	}
 	m.exitPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5273, m.Instance(), m.exitPtr)
+	LCL().SysCallN(6082, m.Instance(), m.exitPtr)
 }
 
 func (m *TWinControl) SetOnKeyDown(fn TKeyEvent) {
@@ -578,7 +577,7 @@ func (m *TWinControl) SetOnKeyDown(fn TKeyEvent) {
 		RemoveEventElement(m.keyDownPtr)
 	}
 	m.keyDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5274, m.Instance(), m.keyDownPtr)
+	LCL().SysCallN(6083, m.Instance(), m.keyDownPtr)
 }
 
 func (m *TWinControl) SetOnKeyPress(fn TKeyPressEvent) {
@@ -586,7 +585,7 @@ func (m *TWinControl) SetOnKeyPress(fn TKeyPressEvent) {
 		RemoveEventElement(m.keyPressPtr)
 	}
 	m.keyPressPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5275, m.Instance(), m.keyPressPtr)
+	LCL().SysCallN(6084, m.Instance(), m.keyPressPtr)
 }
 
 func (m *TWinControl) SetOnKeyUp(fn TKeyEvent) {
@@ -594,7 +593,7 @@ func (m *TWinControl) SetOnKeyUp(fn TKeyEvent) {
 		RemoveEventElement(m.keyUpPtr)
 	}
 	m.keyUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5276, m.Instance(), m.keyUpPtr)
+	LCL().SysCallN(6085, m.Instance(), m.keyUpPtr)
 }
 
 func (m *TWinControl) SetOnUnDock(fn TUnDockEvent) {
@@ -602,7 +601,7 @@ func (m *TWinControl) SetOnUnDock(fn TUnDockEvent) {
 		RemoveEventElement(m.unDockPtr)
 	}
 	m.unDockPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5278, m.Instance(), m.unDockPtr)
+	LCL().SysCallN(6087, m.Instance(), m.unDockPtr)
 }
 
 func (m *TWinControl) SetOnUTF8KeyPress(fn TUTF8KeyPressEvent) {
@@ -610,5 +609,5 @@ func (m *TWinControl) SetOnUTF8KeyPress(fn TUTF8KeyPressEvent) {
 		RemoveEventElement(m.uTF8KeyPressPtr)
 	}
 	m.uTF8KeyPressPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(5277, m.Instance(), m.uTF8KeyPressPtr)
+	LCL().SysCallN(6086, m.Instance(), m.uTF8KeyPressPtr)
 }

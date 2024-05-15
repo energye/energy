@@ -31,43 +31,43 @@ type TCollectionItem struct {
 }
 
 func NewCollectionItem(ACollection ICollection) ICollectionItem {
-	r1 := LCL().SysCallN(504, GetObjectUintptr(ACollection))
+	r1 := LCL().SysCallN(694, GetObjectUintptr(ACollection))
 	return AsCollectionItem(r1)
 }
 
 func (m *TCollectionItem) Collection() ICollection {
-	r1 := LCL().SysCallN(503, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(693, 0, m.Instance(), 0)
 	return AsCollection(r1)
 }
 
 func (m *TCollectionItem) SetCollection(AValue ICollection) {
-	LCL().SysCallN(503, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(693, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCollectionItem) ID() int32 {
-	r1 := LCL().SysCallN(506, m.Instance())
+	r1 := LCL().SysCallN(696, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCollectionItem) Index() int32 {
-	r1 := LCL().SysCallN(507, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(697, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCollectionItem) SetIndex(AValue int32) {
-	LCL().SysCallN(507, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(697, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCollectionItem) DisplayName() string {
-	r1 := LCL().SysCallN(505, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(695, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TCollectionItem) SetDisplayName(AValue string) {
-	LCL().SysCallN(505, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(695, 1, m.Instance(), PascalStr(AValue))
 }
 
 func CollectionItemClass() TClass {
-	ret := LCL().SysCallN(502)
+	ret := LCL().SysCallN(692)
 	return TClass(ret)
 }

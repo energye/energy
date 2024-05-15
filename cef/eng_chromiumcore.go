@@ -18,7 +18,32 @@ import (
 //	It has all you need to create, modify and destroy a web browser.
 type IChromiumCore interface {
 	IComponent
+	// IMESetComposition
+	//  Begins a new composition or updates the existing composition. Blink has a
+	//  special node (a composition node) that allows the input function to change
+	//  text without affecting other DOM nodes. |text| is the optional text that
+	//  will be inserted into the composition node. |underlines| is an optional
+	//  set of ranges that will be underlined in the resulting text.
+	//  |replacement_range| is an optional range of the existing text that will be
+	//  replaced. |selection_range| is an optional range of the resulting text
+	//  that will be selected after insertion or replacement. The
+	//  |replacement_range| value is only used on OS X.
+	//  This function may be called multiple times as the composition changes.
+	//  When the client is done making changes the composition should either be
+	//  canceled or completed. To cancel the composition call
+	//  ImeCancelComposition. To complete the composition call either
+	//  ImeCommitText or ImeFinishComposingText. Completion is usually signaled
+	//  when:
+	//  1. The client receives a WM_IME_COMPOSITION message with a GCS_RESULTSTR
+	//  flag (on Windows), or;
+	//  2. The client receives a "commit" signal of GtkIMContext (on Linux), or;
+	//  3. insertText of NSTextInput is called (on Mac).
+	//  This function is only used when window rendering is disabled.
 	IMESetComposition(text string, underlines TCefCompositionUnderlineDynArray, replacementrange, selectionrange *TCefRange)
+	// SetCookie
+	//  TChromiumCore.SetCookie triggers the TChromiumCore.OnCookieSet event when the cookie has been set
+	//  aID is an optional parameter to identify which SetCookie call has triggered the
+	//  OnCookieSet event.
 	SetCookie(url string, aSetImmediately bool, aID int32, cookie TCookie) bool
 	// DefaultUrl
 	//  First URL loaded by the browser after its creation.
@@ -261,7 +286,7 @@ type IChromiumCore interface {
 	//  Returns true(1) if the renderer is currently in browser fullscreen. This
 	//  differs from window fullscreen in that browser fullscreen is entered using
 	//  the JavaScript Fullscreen API and modifies CSS attributes such as the
-	// ::backdrop pseudo-element and:fullscreen pseudo-structure. This property
+	//  ::backdrop pseudo-element and:fullscreen pseudo-structure. This property
 	//  can only be called on the UI thread.
 	Fullscreen() bool // property
 	// SafeSearch
@@ -514,7 +539,7 @@ type IChromiumCore interface {
 	// SendDevToolsMessage
 	//  Send a function call message over the DevTools protocol. |message_| must be
 	//  a UTF8-encoded JSON dictionary that contains "id"(int), "function"
-	// (string) and "params"(dictionary, optional) values. See the DevTools
+	//  (string) and "params"(dictionary, optional) values. See the DevTools
 	//  protocol documentation at https://chromedevtools.github.io/devtools-
 	//  protocol/ for details of supported functions and the expected "params"
 	//  dictionary contents. |message_| will be copied if necessary. This function
@@ -987,7 +1012,7 @@ type IChromiumCore interface {
 	//  window fullscreen should also exit browser fullscreen. With the Alloy
 	//  runtime this function should be called in response to a user action such
 	//  as clicking the green traffic light button on MacOS
-	// (ICefWindowDelegate.OnWindowFullscreenTransition callback) or pressing
+	//  (ICefWindowDelegate.OnWindowFullscreenTransition callback) or pressing
 	//  the "ESC" key(ICefKeyboardHandler.OnPreKeyEvent callback). With the
 	//  Chrome runtime these standard exit actions are handled internally but
 	//  new/additional user actions can use this function. Set |will_cause_resize|
@@ -1058,7 +1083,7 @@ type IChromiumCore interface {
 	//  STATE_ENABLED then accessibility will be enabled. If |accessibility_state|
 	//  is STATE_DISABLED then accessibility will be completely disabled.
 	//  For windowed browsers accessibility will be enabled in Complete mode
-	// (which corresponds to kAccessibilityModeComplete in Chromium). In this
+	//  (which corresponds to kAccessibilityModeComplete in Chromium). In this
 	//  mode all platform accessibility objects will be created and managed by
 	//  Chromium's internal implementation. The client needs only to detect the
 	//  screen reader and call this function appropriately. For example, on macOS
@@ -1066,7 +1091,7 @@ type IChromiumCore interface {
 	//  attribute to detect VoiceOver state changes and on Windows the client can
 	//  handle WM_GETOBJECT with OBJID_CLIENT to detect accessibility readers.
 	//  For windowless browsers accessibility will be enabled in TreeOnly mode
-	// (which corresponds to kAccessibilityModeWebContentsOnly in Chromium). In
+	//  (which corresponds to kAccessibilityModeWebContentsOnly in Chromium). In
 	//  this mode renderer accessibility is enabled, the full tree is computed,
 	//  and events are passed to CefAccessibiltyHandler, but platform
 	//  accessibility objects are not created. The client may implement platform
@@ -1089,7 +1114,7 @@ type IChromiumCore interface {
 	DragTargetDragOver(event *TCefMouseEvent, allowedOps TCefDragOperations) // procedure
 	// DragTargetDragLeave
 	//  Call this function when the user drags the mouse out of the web view
-	// (after calling DragTargetDragEnter). This function is only used when
+	//  (after calling DragTargetDragEnter). This function is only used when
 	//  window rendering is disabled.
 	DragTargetDragLeave() // procedure
 	// DragTargetDrop
@@ -1358,7 +1383,7 @@ type IChromiumCore interface {
 	SetOnRunContextMenu(fn TOnRunContextMenu) // property event
 	// SetOnContextMenuCommand
 	//  Called to execute a command selected from the context menu. Return true
-	// (1) if the command was handled or false(0) for the default
+	//  (1) if the command was handled or false(0) for the default
 	//  implementation. See cef_menu_id_t for the command ids that have default
 	//  implementations. All user-defined command ids should be between
 	//  MENU_ID_USER_FIRST and MENU_ID_USER_LAST. |params| will have the same
@@ -1402,7 +1427,7 @@ type IChromiumCore interface {
 	//  Called before a keyboard event is sent to the renderer. |event| contains
 	//  information about the keyboard event. |os_event| is the operating system
 	//  event message, if any. Return true(1) if the event was handled or false
-	// (0) otherwise. If the event will be handled in on_key_event() as a
+	//  (0) otherwise. If the event will be handled in on_key_event() as a
 	//  keyboard shortcut set |is_keyboard_shortcut| to true(1) and return false
 	//  This event will be called on the browser process CEF UI thread.
 	//  <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_keyboard_handler_capi.h">CEF source file: /include/capi/cef_keyboard_handler_capi.h(cef_keyboard_handler_t)</a>
@@ -1436,7 +1461,7 @@ type IChromiumCore interface {
 	//  the browser content area. If |fullscreen| is false(0) the content will
 	//  automatically return to its original size and position. With the Alloy
 	//  runtime the client is responsible for triggering the fullscreen transition
-	// (for example, by calling ICefWindow.SetFullscreen when using Views).
+	//  (for example, by calling ICefWindow.SetFullscreen when using Views).
 	//  With the Chrome runtime the fullscreen transition will be triggered
 	//  automatically. The ICefWindowDelegate.OnWindowFullscreenTransition
 	//  function will be called during the fullscreen transition for notification
@@ -1496,7 +1521,7 @@ type IChromiumCore interface {
 	SetOnMediaAccessChange(fn TOnMediaAccessChange) // property event
 	// SetOnCanDownload
 	//  Called before a download begins in response to a user-initiated action
-	// (e.g. alt + link click or link click that returns a `Content-Disposition:
+	//  (e.g. alt + link click or link click that returns a `Content-Disposition:
 	//  attachment` response from the server). |url| is the target download URL
 	//  and |request_function| is the target function(GET, POST, etc). Return
 	//  true(1) to proceed with the download or false(0) to cancel the download.
@@ -1658,7 +1683,7 @@ type IChromiumCore interface {
 	//  4. User approves the close.
 	//  5. JavaScript 'onunload' handler executes.
 	//  6. CEF sends a close notification to the application's top-level window
-	// (because OnClose() returned false by default).
+	//  (because OnClose() returned false by default).
 	//  7. Application's top-level window receives the close notification and
 	//  calls TryCloseBrowser(). TryCloseBrowser() returns true so the client
 	//  allows the window close.
@@ -1703,7 +1728,7 @@ type IChromiumCore interface {
 	//  ICefLoadHandler.OnLoadEnd will be called. If the navigation is
 	//  canceled ICefLoadHandler.OnLoadError will be called with an
 	//  |errorCode| value of ERR_ABORTED. The |user_gesture| value will be true
-	// (1) if the browser navigated via explicit user gesture(e.g. clicking a
+	//  (1) if the browser navigated via explicit user gesture(e.g. clicking a
 	//  link) or false(0) if it navigated automatically(e.g. via the
 	//  DomContentLoaded event).
 	//  This event will be called on the browser process CEF UI thread.
@@ -1787,7 +1812,7 @@ type IChromiumCore interface {
 	//  is a navigation. |is_download| will be true(1) if the resource request is
 	//  a download. |request_initiator| is the origin(scheme + domain) of the
 	//  page that initiated the request. Set |disable_default_handling| to true
-	// (1) to disable default handling of the request, in which case it will need
+	//  (1) to disable default handling of the request, in which case it will need
 	//  to be handled via ICefResourceRequestHandler.GetResourceHandler or it
 	//  will be canceled. To allow the resource load to proceed with default
 	//  handling return NULL. To specify a handler for the resource return a
@@ -1843,7 +1868,7 @@ type IChromiumCore interface {
 	//  |browser| and |frame| values represent the source of the request, and may
 	//  be NULL for requests originating from service workers or ICefUrlRequest.
 	//  To allow the resource load to proceed without modification return false
-	// (0). To redirect or retry the resource load optionally modify |request|
+	//  (0). To redirect or retry the resource load optionally modify |request|
 	//  and return true(1). Modification of the request URL will be treated as a
 	//  redirect. Requests handled using the default network loader cannot be
 	//  redirected in this callback. The |response| object cannot be modified in
@@ -1950,7 +1975,7 @@ type IChromiumCore interface {
 	//  Called to retrieve the translation from view DIP coordinates to screen
 	//  coordinates. Windows/Linux should provide screen device(pixel)
 	//  coordinates and MacOS should provide screen DIP coordinates. Return true
-	// (1) if the requested coordinates were provided.
+	//  (1) if the requested coordinates were provided.
 	//  This event will be called on the browser process CEF UI thread.
 	//  <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_render_handler_capi.h">CEF source file: /include/capi/cef_render_handler_capi.h(cef_render_handler_t)</a>
 	SetOnGetScreenPoint(fn TOnGetScreenPoint) // property event
@@ -2111,7 +2136,7 @@ type IChromiumCore interface {
 	//  ICefResourceRequestHandler object. This function will not be called if
 	//  the client associated with |browser| returns a non-NULL value from
 	//  ICefRequestHandler.GetResourceRequestHandler for the same request
-	// (identified by ICefRequest.GetIdentifier).
+	//  (identified by ICefRequest.GetIdentifier).
 	//  This event will be called on the browser process CEF IO thread.
 	//  <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_context_handler_capi.h">CEF source file: /include/capi/cef_request_context_handler_capi.h(cef_request_context_handler_t)</a>
 	SetOnGetResourceRequestHandler_ReqCtxHdlr(fn TOnGetResourceRequestHandler) // property event
@@ -2188,12 +2213,12 @@ type IChromiumCore interface {
 	//  JSON dictionary representing either a function result or an event.
 	//  |message| is only valid for the scope of this callback and should be
 	//  copied if necessary. Return true(1) if the message was handled or false
-	// (0) if the message should be further processed and passed to the
+	//  (0) if the message should be further processed and passed to the
 	//  OnDevToolsMethodResult or OnDevToolsEvent functions as appropriate.
 	//  Method result dictionaries include an "id"(int) value that identifies the
 	//  orginating function call sent from
 	//  ICefBrowserHost.SendDevToolsMessage, and optionally either a "result"
-	// (dictionary) or "error"(dictionary) value. The "error" dictionary will
+	//  (dictionary) or "error"(dictionary) value. The "error" dictionary will
 	//  contain "code"(int) and "message"(string) values. Event dictionaries
 	//  include a "function"(string) value and optionally a "params"(dictionary)
 	//  value. See the DevTools protocol documentation at
@@ -2211,12 +2236,12 @@ type IChromiumCore interface {
 	//  JSON dictionary representing either a function result or an event.
 	//  |message| is only valid for the scope of this callback and should be
 	//  copied if necessary. Return true(1) if the message was handled or false
-	// (0) if the message should be further processed and passed to the
+	//  (0) if the message should be further processed and passed to the
 	//  OnDevToolsMethodResult or OnDevToolsEvent functions as appropriate.
 	//  Method result dictionaries include an "id"(int) value that identifies the
 	//  orginating function call sent from
 	//  ICefBrowserHost.SendDevToolsMessage, and optionally either a "result"
-	// (dictionary) or "error"(dictionary) value. The "error" dictionary will
+	//  (dictionary) or "error"(dictionary) value. The "error" dictionary will
 	//  contain "code"(int) and "message"(string) values. Event dictionaries
 	//  include a "function"(string) value and optionally a "params"(dictionary)
 	//  value. See the DevTools protocol documentation at
@@ -2377,7 +2402,7 @@ type IChromiumCore interface {
 	//  <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_extension_handler_capi.h">CEF source file: /include/capi/cef_extension_handler_capi.h(cef_extension_handler_t)</a>
 	SetOnExtensionGetExtensionResource(fn TOnGetExtensionResource) // property event
 	// SetOnPrintStart
-	//{$IFDEF LINUX}
+	//  {$IFDEF LINUX}
 	//  Called when printing has started for the specified |browser|. This
 	//  function will be called before the other OnPrint*() functions and
 	//  irrespective of how printing was initiated(e.g.
@@ -2446,7 +2471,7 @@ type IChromiumCore interface {
 	SetOnFrameDetached(fn TOnFrameDetached) // property event
 	// SetOnMainFrameChanged
 	//  Called when the main frame changes due to(a) initial browser creation,
-	// (b) final browser destruction,(c) cross-origin navigation or(d) re-
+	//  (b) final browser destruction,(c) cross-origin navigation or(d) re-
 	//  navigation after renderer process termination(due to crashes, etc).
 	//  |old_frame| will be NULL and |new_frame| will be non-NULL when a main
 	//  frame is assigned to |browser| for the first time. |old_frame| will be

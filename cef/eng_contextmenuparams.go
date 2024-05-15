@@ -15,7 +15,7 @@ import (
 // ICefContextMenuParams Parent: ICefBaseRefCounted
 //
 //	Provides information about the context menu state. The functions of this interface can only be accessed on browser process the UI thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_context_menu_params_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_context_menu_params_t))</a>
 type ICefContextMenuParams interface {
 	ICefBaseRefCounted
 	// GetXCoord
@@ -83,7 +83,7 @@ type ICefContextMenuParams interface {
 // TCefContextMenuParams Parent: TCefBaseRefCounted
 //
 //	Provides information about the context menu state. The functions of this interface can only be accessed on browser process the UI thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_context_menu_params_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_context_menu_handler_capi.h">CEF source file: /include/capi/cef_context_menu_handler_capi.h (cef_context_menu_params_t))</a>
 type TCefContextMenuParams struct {
 	TCefBaseRefCounted
 }

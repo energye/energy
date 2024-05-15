@@ -53,141 +53,141 @@ type TPrinterCanvas struct {
 }
 
 func NewPrinterCanvas(APrinter IPrinter) IPrinterCanvas {
-	r1 := LCL().SysCallN(3944, GetObjectUintptr(APrinter))
+	r1 := LCL().SysCallN(4586, GetObjectUintptr(APrinter))
 	return AsPrinterCanvas(r1)
 }
 
 func (m *TPrinterCanvas) Printer() IPrinter {
-	r1 := LCL().SysCallN(3955, m.Instance())
+	r1 := LCL().SysCallN(4597, m.Instance())
 	return AsPrinter(r1)
 }
 
 func (m *TPrinterCanvas) Title() string {
-	r1 := LCL().SysCallN(3957, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4599, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *TPrinterCanvas) SetTitle(AValue string) {
-	LCL().SysCallN(3957, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(4599, 1, m.Instance(), PascalStr(AValue))
 }
 
 func (m *TPrinterCanvas) PageHeight() int32 {
-	r1 := LCL().SysCallN(3950, m.Instance())
+	r1 := LCL().SysCallN(4592, m.Instance())
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) PageWidth() int32 {
-	r1 := LCL().SysCallN(3952, m.Instance())
+	r1 := LCL().SysCallN(4594, m.Instance())
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) PaperWidth() int32 {
-	r1 := LCL().SysCallN(3954, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4596, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetPaperWidth(AValue int32) {
-	LCL().SysCallN(3954, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4596, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) PaperHeight() int32 {
-	r1 := LCL().SysCallN(3953, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4595, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetPaperHeight(AValue int32) {
-	LCL().SysCallN(3953, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4595, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) PageNumber() int32 {
-	r1 := LCL().SysCallN(3951, m.Instance())
+	r1 := LCL().SysCallN(4593, m.Instance())
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) TopMargin() int32 {
-	r1 := LCL().SysCallN(3958, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4600, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetTopMargin(AValue int32) {
-	LCL().SysCallN(3958, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4600, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) LeftMargin() int32 {
-	r1 := LCL().SysCallN(3947, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4589, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetLeftMargin(AValue int32) {
-	LCL().SysCallN(3947, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4589, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) BottomMargin() int32 {
-	r1 := LCL().SysCallN(3942, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4584, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetBottomMargin(AValue int32) {
-	LCL().SysCallN(3942, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4584, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) RightMargin() int32 {
-	r1 := LCL().SysCallN(3956, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4598, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetRightMargin(AValue int32) {
-	LCL().SysCallN(3956, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4598, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) Orientation() TPrinterOrientation {
-	r1 := LCL().SysCallN(3949, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4591, 0, m.Instance(), 0)
 	return TPrinterOrientation(r1)
 }
 
 func (m *TPrinterCanvas) SetOrientation(AValue TPrinterOrientation) {
-	LCL().SysCallN(3949, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4591, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) XDPI() int32 {
-	r1 := LCL().SysCallN(3959, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4601, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetXDPI(AValue int32) {
-	LCL().SysCallN(3959, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4601, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TPrinterCanvas) YDPI() int32 {
-	r1 := LCL().SysCallN(3960, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4602, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TPrinterCanvas) SetYDPI(AValue int32) {
-	LCL().SysCallN(3960, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4602, 1, m.Instance(), uintptr(AValue))
 }
 
 func PrinterCanvasClass() TClass {
-	ret := LCL().SysCallN(3943)
+	ret := LCL().SysCallN(4585)
 	return TClass(ret)
 }
 
 func (m *TPrinterCanvas) BeginDoc() {
-	LCL().SysCallN(3940, m.Instance())
+	LCL().SysCallN(4582, m.Instance())
 }
 
 func (m *TPrinterCanvas) NewPage() {
-	LCL().SysCallN(3948, m.Instance())
+	LCL().SysCallN(4590, m.Instance())
 }
 
 func (m *TPrinterCanvas) BeginPage() {
-	LCL().SysCallN(3941, m.Instance())
+	LCL().SysCallN(4583, m.Instance())
 }
 
 func (m *TPrinterCanvas) EndPage() {
-	LCL().SysCallN(3946, m.Instance())
+	LCL().SysCallN(4588, m.Instance())
 }
 
 func (m *TPrinterCanvas) EndDoc() {
-	LCL().SysCallN(3945, m.Instance())
+	LCL().SysCallN(4587, m.Instance())
 }

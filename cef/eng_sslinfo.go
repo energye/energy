@@ -15,7 +15,7 @@ import (
 // ICefSslInfo Parent: ICefBaseRefCounted
 //
 //	Interface representing SSL information.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_info_capi.h">CEF source file: /include/capi/cef_ssl_info_capi.h (cef_sslinfo_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_info_capi.h">CEF source file: /include/capi/cef_ssl_info_capi.h (cef_sslinfo_t))</a>
 type ICefSslInfo interface {
 	ICefBaseRefCounted
 	// GetCertStatus
@@ -29,7 +29,7 @@ type ICefSslInfo interface {
 // TCefSslInfo Parent: TCefBaseRefCounted
 //
 //	Interface representing SSL information.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_info_capi.h">CEF source file: /include/capi/cef_ssl_info_capi.h (cef_sslinfo_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_ssl_info_capi.h">CEF source file: /include/capi/cef_ssl_info_capi.h (cef_sslinfo_t))</a>
 type TCefSslInfo struct {
 	TCefBaseRefCounted
 }

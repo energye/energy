@@ -24,11 +24,11 @@ type TCustomUpDown struct {
 }
 
 func NewCustomUpDown(AOwner IComponent) ICustomUpDown {
-	r1 := LCL().SysCallN(2285, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(2477, GetObjectUintptr(AOwner))
 	return AsCustomUpDown(r1)
 }
 
 func CustomUpDownClass() TClass {
-	ret := LCL().SysCallN(2284)
+	ret := LCL().SysCallN(2476)
 	return TClass(ret)
 }

@@ -11,7 +11,7 @@ package cef
 // TCefRect struct type: base
 //
 //	Structure representing a rectangle.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_rect_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_rect_t))</a>
 type TCefRect struct {
 	X      int32 //
 	Y      int32 //
@@ -22,7 +22,7 @@ type TCefRect struct {
 // TCefPoint struct type: base
 //
 //	Structure representing a point.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_point_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_point_t))</a>
 type TCefPoint struct {
 	X int32 //
 	Y int32 //
@@ -31,7 +31,7 @@ type TCefPoint struct {
 // TCefSize struct type: base
 //
 //	Structure representing a size.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_size_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_size_t))</a>
 type TCefSize struct {
 	Width  int32 //
 	Height int32 //
@@ -40,7 +40,7 @@ type TCefSize struct {
 // TCefRange struct type: base
 //
 //	Structure representing a range.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_range_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_range_t))</a>
 type TCefRange struct {
 	From uint32 //
 	To   uint32 //
@@ -49,7 +49,7 @@ type TCefRange struct {
 // TCefCursorInfo struct type: unrecognized
 //
 //	Structure representing cursor information. |buffer| will be |size.width|*|size.height|*4 bytes in size and represents a BGRA image with an upper-left origin.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_cursor_info_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_cursor_info_t))</a>
 type TCefCursorInfo struct {
 	Hotspot          TCefPoint //
 	ImageScaleFactor float32   //
@@ -60,7 +60,7 @@ type TCefCursorInfo struct {
 // TCefUrlParts struct type: complex
 //
 //	URL component parts.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_urlparts_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_urlparts_t))</a>
 type TCefUrlParts struct {
 	instance *tCefUrlParts
 	Spec     string //  The complete URL specification.
@@ -95,7 +95,7 @@ type TUrlParts struct {
 // TCefInsets struct type: base
 //
 //	Structure representing insets.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_insets_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_geometry.h">CEF source file: /include/internal/cef_types_geometry.h (cef_insets_t))</a>
 type TCefInsets struct {
 	Top    int32 //
 	Left   int32 //
@@ -106,7 +106,7 @@ type TCefInsets struct {
 // TCefTouchHandleState struct type: base
 //
 //	Touch handle state.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_touch_handle_state_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_touch_handle_state_t))</a>
 type TCefTouchHandleState struct {
 	TouchHandleId    int32                   //  Touch handle id. Increments for each new touch handle.
 	Flags            uint32                  //  Combination of TCefTouchHandleStateFlags values indicating what state is set.
@@ -121,7 +121,7 @@ type TCefTouchHandleState struct {
 // TCefCompositionUnderline struct type: base
 //
 //	Structure representing IME composition underline information. This is a thin wrapper around Blink's WebCompositionUnderline class and should be kept in sync with that.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_composition_underline_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_composition_underline_t))</a>
 type TCefCompositionUnderline struct {
 	Range           TCefRange                     //  Underline character range.
 	Color           TCefColor                     //  Text color.
@@ -133,7 +133,7 @@ type TCefCompositionUnderline struct {
 // TCefTime struct type: base
 //
 //	Time information. Values should always be in UTC.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_time_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_time_t))</a>
 type TCefTime struct {
 	Year        int32 //  Four or five digit year "2007" (1601 to 30827 on Windows, 1970 to 2038 on 32-bit POSIX)
 	Month       int32 //  1-based month (values 1 = January, etc.)
@@ -148,7 +148,7 @@ type TCefTime struct {
 // TCefBoxLayoutSettings struct type: base
 //
 //	Initialization settings. Specify NULL or 0 to get the recommended default values. Many of these and other settings can also configured using command- line switches.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_box_layout_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_box_layout_settings_t))</a>
 type TCefBoxLayoutSettings struct {
 	Horizontal                    int32                  //  If true (1) the layout will be horizontal, otherwise the layout will be vertical.
 	InsideBorderHorizontalSpacing int32                  //  Adds additional horizontal space between the child view area and the host view border.
@@ -164,7 +164,7 @@ type TCefBoxLayoutSettings struct {
 // TCefSettings struct type: complex
 //
 //	Initialization settings. Specify NULL or 0 to get the recommended default values. Many of these and other settings can also configured using command- line switches.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_settings_t))</a>
 type TCefSettings struct {
 	instance                         *tCefSettings
 	NoSandbox                        int32           //  Set to true (1) to disable the sandbox for sub-processes. See cef_sandbox_win.h for requirements to enable the sandbox on Windows. Also configurable using the "no-sandbox" command-line switch.
@@ -202,7 +202,7 @@ type TCefSettings struct {
 // TCefDraggableRegion struct type: base
 //
 //	Structure representing a draggable region.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_draggable_region_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_draggable_region_t))</a>
 type TCefDraggableRegion struct {
 	Bounds    TCefRect //  Bounds of the region.
 	Draggable int32    //  True (1) this this region is draggable and false (0) otherwise.
@@ -211,7 +211,7 @@ type TCefDraggableRegion struct {
 // TCefKeyEvent struct type: base
 //
 //	Structure representing keyboard event information.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_key_event_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_key_event_t))</a>
 type TCefKeyEvent struct {
 	Kind                 TCefKeyEventType //  The type of keyboard event. It's called 'type' in the original CEF source code.
 	Modifiers            TCefEventFlags   //  Bit flags describing any pressed modifier keys. See TCefEventFlags for values.
@@ -226,7 +226,7 @@ type TCefKeyEvent struct {
 // TCefPopupFeatures struct type: base
 //
 //	Popup window features.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_popup_features_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_popup_features_t))</a>
 type TCefPopupFeatures struct {
 	X         int32 //
 	XSet      int32 //
@@ -242,7 +242,7 @@ type TCefPopupFeatures struct {
 // TCefBrowserSettings struct type: complex
 //
 //	Browser initialization settings. Specify NULL or 0 to get the recommended default values. The consequences of using custom values may not be well tested. Many of these and other settings can also configured using command- line switches.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_browser_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_browser_settings_t))</a>
 type TCefBrowserSettings struct {
 	instance                   *tCefBrowserSettings
 	WindowlessFrameRate        int32     //  The maximum rate in frames per second (fps) that ICefRenderHandler.OnPaint will be called for a windowless browser. The actual fps may be lower if the browser cannot generate frames at the requested rate. The minimum value is 1 and the maximum value is 60 (default 30). This value can also be changed dynamically via ICefBrowserHost.SetWindowlessFrameRate.
@@ -277,7 +277,7 @@ type TCefBrowserSettings struct {
 // TCefScreenInfo struct type: base
 //
 //	Screen information used when window rendering is disabled. This structure is passed as a parameter to ICefRenderHandler.GetScreenInfo and should be filled in by the client.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_screen_info_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_screen_info_t))</a>
 type TCefScreenInfo struct {
 	DeviceScaleFactor float32  //  Device scale factor. Specifies the ratio between physical and logical pixels.
 	Depth             int32    //  The screen depth in bits per pixel.
@@ -290,7 +290,7 @@ type TCefScreenInfo struct {
 // TCefRequestContextSettings struct type: complex
 //
 //	Request context initialization settings. Specify NULL or 0 to get the recommended default values.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_request_context_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_request_context_settings_t))</a>
 type TCefRequestContextSettings struct {
 	instance                         *tCefRequestContextSettings
 	CachePath                        string //  The location where cache data for this request context will be stored on disk. If this value is non-empty then it must be an absolute path that is either equal to or a child directory of TCefSettings.root_cache_path. If this value is empty then browsers will be created in "incognito mode" where in-memory caches are used for storage and no data is persisted to disk. HTML5 databases such as localStorage will only persist across sessions if a cache path is specified. To share the global browser cache and related configuration set this value to match the TCefSettings.cache_path value.
@@ -304,7 +304,7 @@ type TCefRequestContextSettings struct {
 // TCefCookie struct type: complex
 //
 //	Cookie information.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_cookie_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_cookie_t))</a>
 type TCefCookie struct {
 	instance   *tCefCookie
 	Name       string             //  The cookie name.
@@ -343,7 +343,7 @@ type TCookie struct {
 // TCefPdfPrintSettings struct type: complex
 //
 //	Structure representing PDF print settings. These values match the parameters supported by the DevTools Page.printToPDF function. See https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_pdf_print_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_pdf_print_settings_t))</a>
 type TCefPdfPrintSettings struct {
 	instance            *tCefPdfPrintSettings
 	Landscape           int32                  //  Set to true (1) for landscape mode or false (0) for portrait mode.
@@ -367,7 +367,7 @@ type TCefPdfPrintSettings struct {
 // TCefMouseEvent struct type: base
 //
 //	Structure representing mouse event information.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_mouse_event_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_mouse_event_t))</a>
 type TCefMouseEvent struct {
 	X         int32          //  X coordinate relative to the left side of the view.
 	Y         int32          //  Y coordinate relative to the top side of the view.
@@ -377,7 +377,7 @@ type TCefMouseEvent struct {
 // TCefTouchEvent struct type: base
 //
 //	Structure representing touch event information.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_touch_event_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_touch_event_t))</a>
 type TCefTouchEvent struct {
 	Id            int32               //  Id of a touch point. Must be unique per touch, can be any number except -1. Note that a maximum of 16 concurrent touches will be tracked; touches beyond that will be ignored.
 	X             float32             //  X coordinate relative to the left side of the view.
@@ -394,7 +394,7 @@ type TCefTouchEvent struct {
 // TCefAudioParameters struct type: base
 //
 //	Structure representing the audio parameters for setting up the audio handler.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_audio_parameters_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_audio_parameters_t))</a>
 type TCefAudioParameters struct {
 	ChannelLayout   TCefChannelLayout //  Layout of the audio channels
 	SampleRate      int32             //  Sample rate
@@ -404,7 +404,7 @@ type TCefAudioParameters struct {
 // TCefMediaSinkDeviceInfo struct type: complex
 //
 //	Device information for a MediaSink object. handler.
-//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_media_sink_device_info_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_media_sink_device_info_t))</a>
 type TCefMediaSinkDeviceInfo struct {
 	instance  *tCefMediaSinkDeviceInfo
 	IpAddress string //

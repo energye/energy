@@ -57,44 +57,44 @@ type TTabSheet struct {
 }
 
 func NewTabSheet(TheOwner IComponent) ITabSheet {
-	r1 := LCL().SysCallN(4668, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(5326, GetObjectUintptr(TheOwner))
 	return AsTabSheet(r1)
 }
 
 func (m *TTabSheet) PageControl() IPageControl {
-	r1 := LCL().SysCallN(4669, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5327, 0, m.Instance(), 0)
 	return AsPageControl(r1)
 }
 
 func (m *TTabSheet) SetPageControl(AValue IPageControl) {
-	LCL().SysCallN(4669, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(5327, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TTabSheet) TabIndex() int32 {
-	r1 := LCL().SysCallN(4685, m.Instance())
+	r1 := LCL().SysCallN(5343, m.Instance())
 	return int32(r1)
 }
 
 func (m *TTabSheet) ParentFont() bool {
-	r1 := LCL().SysCallN(4670, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5328, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TTabSheet) SetParentFont(AValue bool) {
-	LCL().SysCallN(4670, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5328, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TTabSheet) ParentShowHint() bool {
-	r1 := LCL().SysCallN(4671, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(5329, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TTabSheet) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(4671, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(5329, 1, m.Instance(), PascalBool(AValue))
 }
 
 func TabSheetClass() TClass {
-	ret := LCL().SysCallN(4667)
+	ret := LCL().SysCallN(5325)
 	return TClass(ret)
 }
 
@@ -103,7 +103,7 @@ func (m *TTabSheet) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4672, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(5330, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TTabSheet) SetOnDragDrop(fn TDragDropEvent) {
@@ -111,7 +111,7 @@ func (m *TTabSheet) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4673, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(5331, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TTabSheet) SetOnDragOver(fn TDragOverEvent) {
@@ -119,7 +119,7 @@ func (m *TTabSheet) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4674, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(5332, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TTabSheet) SetOnEndDrag(fn TEndDragEvent) {
@@ -127,7 +127,7 @@ func (m *TTabSheet) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4675, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(5333, m.Instance(), m.endDragPtr)
 }
 
 func (m *TTabSheet) SetOnMouseDown(fn TMouseEvent) {
@@ -135,7 +135,7 @@ func (m *TTabSheet) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4676, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(5334, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TTabSheet) SetOnMouseEnter(fn TNotifyEvent) {
@@ -143,7 +143,7 @@ func (m *TTabSheet) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4677, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(5335, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TTabSheet) SetOnMouseLeave(fn TNotifyEvent) {
@@ -151,7 +151,7 @@ func (m *TTabSheet) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4678, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(5336, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TTabSheet) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -159,7 +159,7 @@ func (m *TTabSheet) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4679, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(5337, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TTabSheet) SetOnMouseUp(fn TMouseEvent) {
@@ -167,7 +167,7 @@ func (m *TTabSheet) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4680, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(5338, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TTabSheet) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -175,7 +175,7 @@ func (m *TTabSheet) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4681, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(5339, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TTabSheet) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -183,7 +183,7 @@ func (m *TTabSheet) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4682, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(5340, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TTabSheet) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -191,7 +191,7 @@ func (m *TTabSheet) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4683, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(5341, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TTabSheet) SetOnStartDrag(fn TStartDragEvent) {
@@ -199,5 +199,5 @@ func (m *TTabSheet) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(4684, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(5342, m.Instance(), m.startDragPtr)
 }

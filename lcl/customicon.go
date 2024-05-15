@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICustomIcon Parent: IRasterImage
@@ -37,68 +36,68 @@ type TCustomIcon struct {
 }
 
 func NewCustomIcon() ICustomIcon {
-	r1 := LCL().SysCallN(1615)
+	r1 := LCL().SysCallN(1805)
 	return AsCustomIcon(r1)
 }
 
 func (m *TCustomIcon) Current() int32 {
-	r1 := LCL().SysCallN(1616, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(1806, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TCustomIcon) SetCurrent(AValue int32) {
-	LCL().SysCallN(1616, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(1806, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCustomIcon) Count() int32 {
-	r1 := LCL().SysCallN(1614, m.Instance())
+	r1 := LCL().SysCallN(1804, m.Instance())
 	return int32(r1)
 }
 
 func (m *TCustomIcon) GetBestIndexForSize(ASize *TSize) int32 {
-	r1 := LCL().SysCallN(1618, m.Instance(), uintptr(unsafe.Pointer(ASize)))
+	r1 := LCL().SysCallN(1808, m.Instance(), uintptr(unsafePointer(ASize)))
 	return int32(r1)
 }
 
 func CustomIconClass() TClass {
-	ret := LCL().SysCallN(1613)
+	ret := LCL().SysCallN(1803)
 	return TClass(ret)
 }
 
 func (m *TCustomIcon) Add(AFormat TPixelFormat, AHeight, AWidth Word) {
-	LCL().SysCallN(1611, m.Instance(), uintptr(AFormat), uintptr(AHeight), uintptr(AWidth))
+	LCL().SysCallN(1801, m.Instance(), uintptr(AFormat), uintptr(AHeight), uintptr(AWidth))
 }
 
 func (m *TCustomIcon) AssignImage(ASource IRasterImage) {
-	LCL().SysCallN(1612, m.Instance(), GetObjectUintptr(ASource))
+	LCL().SysCallN(1802, m.Instance(), GetObjectUintptr(ASource))
 }
 
 func (m *TCustomIcon) Delete(Aindex int32) {
-	LCL().SysCallN(1617, m.Instance(), uintptr(Aindex))
+	LCL().SysCallN(1807, m.Instance(), uintptr(Aindex))
 }
 
 func (m *TCustomIcon) Remove(AFormat TPixelFormat, AHeight, AWidth Word) {
-	LCL().SysCallN(1621, m.Instance(), uintptr(AFormat), uintptr(AHeight), uintptr(AWidth))
+	LCL().SysCallN(1811, m.Instance(), uintptr(AFormat), uintptr(AHeight), uintptr(AWidth))
 }
 
 func (m *TCustomIcon) GetDescription(Aindex int32, OutFormat *TPixelFormat, OutHeight, OutWidth *Word) {
 	var result1 uintptr
 	var result2 uintptr
 	var result3 uintptr
-	LCL().SysCallN(1619, m.Instance(), uintptr(Aindex), uintptr(unsafe.Pointer(&result1)), uintptr(unsafe.Pointer(&result2)), uintptr(unsafe.Pointer(&result3)))
+	LCL().SysCallN(1809, m.Instance(), uintptr(Aindex), uintptr(unsafePointer(&result1)), uintptr(unsafePointer(&result2)), uintptr(unsafePointer(&result3)))
 	*OutFormat = TPixelFormat(result1)
 	*OutHeight = Word(result2)
 	*OutWidth = Word(result3)
 }
 
 func (m *TCustomIcon) SetSize(AWidth, AHeight int32) {
-	LCL().SysCallN(1622, m.Instance(), uintptr(AWidth), uintptr(AHeight))
+	LCL().SysCallN(1812, m.Instance(), uintptr(AWidth), uintptr(AHeight))
 }
 
 func (m *TCustomIcon) LoadFromResourceHandle(Instance THandle, ResHandle TFPResourceHandle) {
-	LCL().SysCallN(1620, m.Instance(), uintptr(Instance), uintptr(ResHandle))
+	LCL().SysCallN(1810, m.Instance(), uintptr(Instance), uintptr(ResHandle))
 }
 
 func (m *TCustomIcon) Sort() {
-	LCL().SysCallN(1623, m.Instance())
+	LCL().SysCallN(1813, m.Instance())
 }

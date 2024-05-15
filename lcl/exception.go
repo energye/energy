@@ -28,34 +28,34 @@ type Exception struct {
 }
 
 func NewException(msg string) IException {
-	r1 := LCL().SysCallN(2573, PascalStr(msg))
+	r1 := LCL().SysCallN(2816, PascalStr(msg))
 	return AsException(r1)
 }
 
 func NewExceptionHelp(Msg string, AHelpContext int32) IException {
-	r1 := LCL().SysCallN(2574, PascalStr(Msg), uintptr(AHelpContext))
+	r1 := LCL().SysCallN(2817, PascalStr(Msg), uintptr(AHelpContext))
 	return AsException(r1)
 }
 
 func (m *Exception) HelpContext() int32 {
-	r1 := LCL().SysCallN(2575, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2818, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *Exception) SetHelpContext(AValue int32) {
-	LCL().SysCallN(2575, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(2818, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *Exception) Message() string {
-	r1 := LCL().SysCallN(2576, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(2819, 0, m.Instance(), 0)
 	return GoStr(r1)
 }
 
 func (m *Exception) SetMessage(AValue string) {
-	LCL().SysCallN(2576, 1, m.Instance(), PascalStr(AValue))
+	LCL().SysCallN(2819, 1, m.Instance(), PascalStr(AValue))
 }
 
 func ExceptionClass() TClass {
-	ret := LCL().SysCallN(2572)
+	ret := LCL().SysCallN(2815)
 	return TClass(ret)
 }

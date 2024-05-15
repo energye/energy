@@ -72,66 +72,66 @@ type TMemo struct {
 }
 
 func NewMemo(AOwner IComponent) IMemo {
-	r1 := LCL().SysCallN(3564, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(4206, GetObjectUintptr(AOwner))
 	return AsMemo(r1)
 }
 
 func (m *TMemo) DragCursor() TCursor {
-	r1 := LCL().SysCallN(3565, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4207, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TMemo) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(3565, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4207, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TMemo) DragKind() TDragKind {
-	r1 := LCL().SysCallN(3566, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4208, 0, m.Instance(), 0)
 	return TDragKind(r1)
 }
 
 func (m *TMemo) SetDragKind(AValue TDragKind) {
-	LCL().SysCallN(3566, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4208, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TMemo) DragMode() TDragMode {
-	r1 := LCL().SysCallN(3567, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4209, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TMemo) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(3567, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(4209, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TMemo) ParentColor() bool {
-	r1 := LCL().SysCallN(3568, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4210, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TMemo) SetParentColor(AValue bool) {
-	LCL().SysCallN(3568, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4210, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TMemo) ParentFont() bool {
-	r1 := LCL().SysCallN(3569, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4211, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TMemo) SetParentFont(AValue bool) {
-	LCL().SysCallN(3569, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4211, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TMemo) ParentShowHint() bool {
-	r1 := LCL().SysCallN(3570, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(4212, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TMemo) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(3570, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(4212, 1, m.Instance(), PascalBool(AValue))
 }
 
 func MemoClass() TClass {
-	ret := LCL().SysCallN(3563)
+	ret := LCL().SysCallN(4205)
 	return TClass(ret)
 }
 
@@ -140,7 +140,7 @@ func (m *TMemo) SetOnContextPopup(fn TContextPopupEvent) {
 		RemoveEventElement(m.contextPopupPtr)
 	}
 	m.contextPopupPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3571, m.Instance(), m.contextPopupPtr)
+	LCL().SysCallN(4213, m.Instance(), m.contextPopupPtr)
 }
 
 func (m *TMemo) SetOnDblClick(fn TNotifyEvent) {
@@ -148,7 +148,7 @@ func (m *TMemo) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3572, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(4214, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TMemo) SetOnDragDrop(fn TDragDropEvent) {
@@ -156,7 +156,7 @@ func (m *TMemo) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3573, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(4215, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TMemo) SetOnDragOver(fn TDragOverEvent) {
@@ -164,7 +164,7 @@ func (m *TMemo) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3574, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(4216, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TMemo) SetOnEditingDone(fn TNotifyEvent) {
@@ -172,7 +172,7 @@ func (m *TMemo) SetOnEditingDone(fn TNotifyEvent) {
 		RemoveEventElement(m.editingDonePtr)
 	}
 	m.editingDonePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3575, m.Instance(), m.editingDonePtr)
+	LCL().SysCallN(4217, m.Instance(), m.editingDonePtr)
 }
 
 func (m *TMemo) SetOnEndDrag(fn TEndDragEvent) {
@@ -180,7 +180,7 @@ func (m *TMemo) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3576, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(4218, m.Instance(), m.endDragPtr)
 }
 
 func (m *TMemo) SetOnMouseDown(fn TMouseEvent) {
@@ -188,7 +188,7 @@ func (m *TMemo) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3577, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(4219, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TMemo) SetOnMouseEnter(fn TNotifyEvent) {
@@ -196,7 +196,7 @@ func (m *TMemo) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3578, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(4220, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TMemo) SetOnMouseLeave(fn TNotifyEvent) {
@@ -204,7 +204,7 @@ func (m *TMemo) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3579, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(4221, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TMemo) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -212,7 +212,7 @@ func (m *TMemo) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3580, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(4222, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TMemo) SetOnMouseUp(fn TMouseEvent) {
@@ -220,7 +220,7 @@ func (m *TMemo) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3581, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(4223, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TMemo) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -228,7 +228,7 @@ func (m *TMemo) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3582, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(4224, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TMemo) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -236,7 +236,7 @@ func (m *TMemo) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3583, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(4225, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TMemo) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -244,7 +244,7 @@ func (m *TMemo) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3587, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(4229, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TMemo) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
@@ -252,7 +252,7 @@ func (m *TMemo) SetOnMouseWheelHorz(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelHorzPtr)
 	}
 	m.mouseWheelHorzPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3584, m.Instance(), m.mouseWheelHorzPtr)
+	LCL().SysCallN(4226, m.Instance(), m.mouseWheelHorzPtr)
 }
 
 func (m *TMemo) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
@@ -260,7 +260,7 @@ func (m *TMemo) SetOnMouseWheelLeft(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelLeftPtr)
 	}
 	m.mouseWheelLeftPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3585, m.Instance(), m.mouseWheelLeftPtr)
+	LCL().SysCallN(4227, m.Instance(), m.mouseWheelLeftPtr)
 }
 
 func (m *TMemo) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
@@ -268,7 +268,7 @@ func (m *TMemo) SetOnMouseWheelRight(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelRightPtr)
 	}
 	m.mouseWheelRightPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3586, m.Instance(), m.mouseWheelRightPtr)
+	LCL().SysCallN(4228, m.Instance(), m.mouseWheelRightPtr)
 }
 
 func (m *TMemo) SetOnStartDrag(fn TStartDragEvent) {
@@ -276,5 +276,5 @@ func (m *TMemo) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(3588, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(4230, m.Instance(), m.startDragPtr)
 }

@@ -37,53 +37,53 @@ type TBasicAction struct {
 }
 
 func NewBasicAction(AOwner IComponent) IBasicAction {
-	r1 := LCL().SysCallN(212, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(399, GetObjectUintptr(AOwner))
 	return AsBasicAction(r1)
 }
 
 func (m *TBasicAction) ActionComponent() IComponent {
-	r1 := LCL().SysCallN(210, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(397, 0, m.Instance(), 0)
 	return AsComponent(r1)
 }
 
 func (m *TBasicAction) SetActionComponent(AValue IComponent) {
-	LCL().SysCallN(210, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(397, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TBasicAction) HandlesTarget(Target IObject) bool {
-	r1 := LCL().SysCallN(215, m.Instance(), GetObjectUintptr(Target))
+	r1 := LCL().SysCallN(402, m.Instance(), GetObjectUintptr(Target))
 	return GoBool(r1)
 }
 
 func (m *TBasicAction) Execute() bool {
-	r1 := LCL().SysCallN(213, m.Instance())
+	r1 := LCL().SysCallN(400, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TBasicAction) Update() bool {
-	r1 := LCL().SysCallN(220, m.Instance())
+	r1 := LCL().SysCallN(407, m.Instance())
 	return GoBool(r1)
 }
 
 func BasicActionClass() TClass {
-	ret := LCL().SysCallN(211)
+	ret := LCL().SysCallN(398)
 	return TClass(ret)
 }
 
 func (m *TBasicAction) UpdateTarget(Target IObject) {
-	LCL().SysCallN(221, m.Instance(), GetObjectUintptr(Target))
+	LCL().SysCallN(408, m.Instance(), GetObjectUintptr(Target))
 }
 
 func (m *TBasicAction) ExecuteTarget(Target IObject) {
-	LCL().SysCallN(214, m.Instance(), GetObjectUintptr(Target))
+	LCL().SysCallN(401, m.Instance(), GetObjectUintptr(Target))
 }
 
 func (m *TBasicAction) RegisterChanges(Value IBasicActionLink) {
-	LCL().SysCallN(216, m.Instance(), GetObjectUintptr(Value))
+	LCL().SysCallN(403, m.Instance(), GetObjectUintptr(Value))
 }
 
 func (m *TBasicAction) UnRegisterChanges(Value IBasicActionLink) {
-	LCL().SysCallN(219, m.Instance(), GetObjectUintptr(Value))
+	LCL().SysCallN(406, m.Instance(), GetObjectUintptr(Value))
 }
 
 func (m *TBasicAction) SetOnExecute(fn TNotifyEvent) {
@@ -91,7 +91,7 @@ func (m *TBasicAction) SetOnExecute(fn TNotifyEvent) {
 		RemoveEventElement(m.executePtr)
 	}
 	m.executePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(217, m.Instance(), m.executePtr)
+	LCL().SysCallN(404, m.Instance(), m.executePtr)
 }
 
 func (m *TBasicAction) SetOnUpdate(fn TNotifyEvent) {
@@ -99,5 +99,5 @@ func (m *TBasicAction) SetOnUpdate(fn TNotifyEvent) {
 		RemoveEventElement(m.updatePtr)
 	}
 	m.updatePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(218, m.Instance(), m.updatePtr)
+	LCL().SysCallN(405, m.Instance(), m.updatePtr)
 }

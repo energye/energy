@@ -16,7 +16,7 @@ import (
 	"unsafe"
 )
 
-var mainForm *TMainForm
+var mainForm TMainForm
 var load wv.IWVLoader
 
 //go:embed resources
@@ -46,12 +46,12 @@ func main() {
 	})
 	lcl.Application.Initialize()
 	lcl.Application.SetMainFormOnTaskBar(true)
-	lcl.Application.CreateForm(&mainForm, true)
+	lcl.Application.CreateForm(&mainForm)
 	lcl.Application.Run()
 }
 
 type TMainForm struct {
-	lcl.IForm
+	lcl.TForm
 	windowParent         wv.IWVWindowParent
 	browser              wv.IWVBrowser
 	messageEdit          lcl.IEdit

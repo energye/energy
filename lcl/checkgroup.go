@@ -60,57 +60,57 @@ type TCheckGroup struct {
 }
 
 func NewCheckGroup(TheOwner IComponent) ICheckGroup {
-	r1 := LCL().SysCallN(436, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(623, GetObjectUintptr(TheOwner))
 	return AsCheckGroup(r1)
 }
 
 func (m *TCheckGroup) DragCursor() TCursor {
-	r1 := LCL().SysCallN(437, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(624, 0, m.Instance(), 0)
 	return TCursor(r1)
 }
 
 func (m *TCheckGroup) SetDragCursor(AValue TCursor) {
-	LCL().SysCallN(437, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(624, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCheckGroup) DragMode() TDragMode {
-	r1 := LCL().SysCallN(438, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(625, 0, m.Instance(), 0)
 	return TDragMode(r1)
 }
 
 func (m *TCheckGroup) SetDragMode(AValue TDragMode) {
-	LCL().SysCallN(438, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(625, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCheckGroup) ParentFont() bool {
-	r1 := LCL().SysCallN(440, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(627, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckGroup) SetParentFont(AValue bool) {
-	LCL().SysCallN(440, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(627, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCheckGroup) ParentColor() bool {
-	r1 := LCL().SysCallN(439, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(626, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckGroup) SetParentColor(AValue bool) {
-	LCL().SysCallN(439, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(626, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCheckGroup) ParentShowHint() bool {
-	r1 := LCL().SysCallN(441, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(628, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCheckGroup) SetParentShowHint(AValue bool) {
-	LCL().SysCallN(441, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(628, 1, m.Instance(), PascalBool(AValue))
 }
 
 func CheckGroupClass() TClass {
-	ret := LCL().SysCallN(435)
+	ret := LCL().SysCallN(622)
 	return TClass(ret)
 }
 
@@ -119,7 +119,7 @@ func (m *TCheckGroup) SetOnDblClick(fn TNotifyEvent) {
 		RemoveEventElement(m.dblClickPtr)
 	}
 	m.dblClickPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(442, m.Instance(), m.dblClickPtr)
+	LCL().SysCallN(629, m.Instance(), m.dblClickPtr)
 }
 
 func (m *TCheckGroup) SetOnDragDrop(fn TDragDropEvent) {
@@ -127,7 +127,7 @@ func (m *TCheckGroup) SetOnDragDrop(fn TDragDropEvent) {
 		RemoveEventElement(m.dragDropPtr)
 	}
 	m.dragDropPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(443, m.Instance(), m.dragDropPtr)
+	LCL().SysCallN(630, m.Instance(), m.dragDropPtr)
 }
 
 func (m *TCheckGroup) SetOnDragOver(fn TDragOverEvent) {
@@ -135,7 +135,7 @@ func (m *TCheckGroup) SetOnDragOver(fn TDragOverEvent) {
 		RemoveEventElement(m.dragOverPtr)
 	}
 	m.dragOverPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(444, m.Instance(), m.dragOverPtr)
+	LCL().SysCallN(631, m.Instance(), m.dragOverPtr)
 }
 
 func (m *TCheckGroup) SetOnEndDrag(fn TEndDragEvent) {
@@ -143,7 +143,7 @@ func (m *TCheckGroup) SetOnEndDrag(fn TEndDragEvent) {
 		RemoveEventElement(m.endDragPtr)
 	}
 	m.endDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(445, m.Instance(), m.endDragPtr)
+	LCL().SysCallN(632, m.Instance(), m.endDragPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseDown(fn TMouseEvent) {
@@ -151,7 +151,7 @@ func (m *TCheckGroup) SetOnMouseDown(fn TMouseEvent) {
 		RemoveEventElement(m.mouseDownPtr)
 	}
 	m.mouseDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(446, m.Instance(), m.mouseDownPtr)
+	LCL().SysCallN(633, m.Instance(), m.mouseDownPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseEnter(fn TNotifyEvent) {
@@ -159,7 +159,7 @@ func (m *TCheckGroup) SetOnMouseEnter(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseEnterPtr)
 	}
 	m.mouseEnterPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(447, m.Instance(), m.mouseEnterPtr)
+	LCL().SysCallN(634, m.Instance(), m.mouseEnterPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseLeave(fn TNotifyEvent) {
@@ -167,7 +167,7 @@ func (m *TCheckGroup) SetOnMouseLeave(fn TNotifyEvent) {
 		RemoveEventElement(m.mouseLeavePtr)
 	}
 	m.mouseLeavePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(448, m.Instance(), m.mouseLeavePtr)
+	LCL().SysCallN(635, m.Instance(), m.mouseLeavePtr)
 }
 
 func (m *TCheckGroup) SetOnMouseMove(fn TMouseMoveEvent) {
@@ -175,7 +175,7 @@ func (m *TCheckGroup) SetOnMouseMove(fn TMouseMoveEvent) {
 		RemoveEventElement(m.mouseMovePtr)
 	}
 	m.mouseMovePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(449, m.Instance(), m.mouseMovePtr)
+	LCL().SysCallN(636, m.Instance(), m.mouseMovePtr)
 }
 
 func (m *TCheckGroup) SetOnMouseUp(fn TMouseEvent) {
@@ -183,7 +183,7 @@ func (m *TCheckGroup) SetOnMouseUp(fn TMouseEvent) {
 		RemoveEventElement(m.mouseUpPtr)
 	}
 	m.mouseUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(450, m.Instance(), m.mouseUpPtr)
+	LCL().SysCallN(637, m.Instance(), m.mouseUpPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseWheel(fn TMouseWheelEvent) {
@@ -191,7 +191,7 @@ func (m *TCheckGroup) SetOnMouseWheel(fn TMouseWheelEvent) {
 		RemoveEventElement(m.mouseWheelPtr)
 	}
 	m.mouseWheelPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(451, m.Instance(), m.mouseWheelPtr)
+	LCL().SysCallN(638, m.Instance(), m.mouseWheelPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
@@ -199,7 +199,7 @@ func (m *TCheckGroup) SetOnMouseWheelDown(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelDownPtr)
 	}
 	m.mouseWheelDownPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(452, m.Instance(), m.mouseWheelDownPtr)
+	LCL().SysCallN(639, m.Instance(), m.mouseWheelDownPtr)
 }
 
 func (m *TCheckGroup) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
@@ -207,7 +207,7 @@ func (m *TCheckGroup) SetOnMouseWheelUp(fn TMouseWheelUpDownEvent) {
 		RemoveEventElement(m.mouseWheelUpPtr)
 	}
 	m.mouseWheelUpPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(453, m.Instance(), m.mouseWheelUpPtr)
+	LCL().SysCallN(640, m.Instance(), m.mouseWheelUpPtr)
 }
 
 func (m *TCheckGroup) SetOnStartDrag(fn TStartDragEvent) {
@@ -215,5 +215,5 @@ func (m *TCheckGroup) SetOnStartDrag(fn TStartDragEvent) {
 		RemoveEventElement(m.startDragPtr)
 	}
 	m.startDragPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(454, m.Instance(), m.startDragPtr)
+	LCL().SysCallN(641, m.Instance(), m.startDragPtr)
 }

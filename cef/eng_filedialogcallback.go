@@ -15,7 +15,7 @@ import (
 // ICefFileDialogCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface for asynchronous continuation of file dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dialog_handler_capi.h">CEF source file: /include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dialog_handler_capi.h">CEF source file: /include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t))</a>
 type ICefFileDialogCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -29,7 +29,7 @@ type ICefFileDialogCallback interface {
 // TCefFileDialogCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface for asynchronous continuation of file dialog requests.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dialog_handler_capi.h">CEF source file: /include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_dialog_handler_capi.h">CEF source file: /include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t))</a>
 type TCefFileDialogCallback struct {
 	TCefBaseRefCounted
 }

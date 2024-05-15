@@ -15,7 +15,7 @@ import (
 // ICefListValue Parent: ICefBaseRefCounted
 //
 //	Interface representing a list value. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_list_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_list_value_t))</a>
 type ICefListValue interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -107,7 +107,7 @@ type ICefListValue interface {
 // TCefListValue Parent: TCefBaseRefCounted
 //
 //	Interface representing a list value. Can be used on any process and thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_list_value_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_values_capi.h">CEF source file: /include/capi/cef_values_capi.h (cef_list_value_t))</a>
 type TCefListValue struct {
 	TCefBaseRefCounted
 }

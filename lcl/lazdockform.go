@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ILazDockForm Parent: ICustomForm
@@ -34,56 +33,56 @@ type TLazDockForm struct {
 }
 
 func NewLazDockForm(AOwner IComponent) ILazDockForm {
-	r1 := LCL().SysCallN(3274, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(3517, GetObjectUintptr(AOwner))
 	return AsLazDockForm(r1)
 }
 
 func (m *TLazDockForm) MainControl() IControl {
-	r1 := LCL().SysCallN(3280, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3523, 0, m.Instance(), 0)
 	return AsControl(r1)
 }
 
 func (m *TLazDockForm) SetMainControl(AValue IControl) {
-	LCL().SysCallN(3280, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3523, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TLazDockForm) FindMainControlCandidate() IControl {
-	r1 := LCL().SysCallN(3276, m.Instance())
+	r1 := LCL().SysCallN(3519, m.Instance())
 	return AsControl(r1)
 }
 
 func (m *TLazDockForm) FindHeader(x, y int32, OutPart *TLazDockHeaderPart) IControl {
 	var result1 uintptr
-	r1 := LCL().SysCallN(3275, m.Instance(), uintptr(x), uintptr(y), uintptr(unsafe.Pointer(&result1)))
+	r1 := LCL().SysCallN(3518, m.Instance(), uintptr(x), uintptr(y), uintptr(unsafePointer(&result1)))
 	*OutPart = TLazDockHeaderPart(result1)
 	return AsControl(r1)
 }
 
 func (m *TLazDockForm) IsDockedControl(Control IControl) bool {
-	r1 := LCL().SysCallN(3279, m.Instance(), GetObjectUintptr(Control))
+	r1 := LCL().SysCallN(3522, m.Instance(), GetObjectUintptr(Control))
 	return GoBool(r1)
 }
 
 func (m *TLazDockForm) ControlHasTitle(Control IControl) bool {
-	r1 := LCL().SysCallN(3273, m.Instance(), GetObjectUintptr(Control))
+	r1 := LCL().SysCallN(3516, m.Instance(), GetObjectUintptr(Control))
 	return GoBool(r1)
 }
 
 func (m *TLazDockForm) GetTitleRect(Control IControl) (resultRect TRect) {
-	LCL().SysCallN(3278, m.Instance(), GetObjectUintptr(Control), uintptr(unsafe.Pointer(&resultRect)))
+	LCL().SysCallN(3521, m.Instance(), GetObjectUintptr(Control), uintptr(unsafePointer(&resultRect)))
 	return
 }
 
 func (m *TLazDockForm) GetTitleOrientation(Control IControl) TDockOrientation {
-	r1 := LCL().SysCallN(3277, m.Instance(), GetObjectUintptr(Control))
+	r1 := LCL().SysCallN(3520, m.Instance(), GetObjectUintptr(Control))
 	return TDockOrientation(r1)
 }
 
 func LazDockFormClass() TClass {
-	ret := LCL().SysCallN(3272)
+	ret := LCL().SysCallN(3515)
 	return TClass(ret)
 }
 
 func (m *TLazDockForm) UpdateCaption() {
-	LCL().SysCallN(3281, m.Instance())
+	LCL().SysCallN(3524, m.Instance())
 }

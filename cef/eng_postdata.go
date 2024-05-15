@@ -15,9 +15,11 @@ import (
 // ICefPostData Parent: ICefBaseRefCounted
 //
 //	Interface used to represent post data for a web request. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_post_data_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_post_data_t))</a>
 type ICefPostData interface {
 	ICefBaseRefCounted
+	// GetElements
+	//  Retrieve the post data elements.
 	GetElements(elementsCount *NativeUInt, elements *ICefPostDataElementArray)
 	// IsReadOnly
 	//  Returns true (1) if this object is read-only.
@@ -42,7 +44,7 @@ type ICefPostData interface {
 // TCefPostData Parent: TCefBaseRefCounted
 //
 //	Interface used to represent post data for a web request. The functions of this interface may be called on any thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_post_data_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_request_capi.h">CEF source file: /include/capi/cef_request_capi.h (cef_post_data_t))</a>
 type TCefPostData struct {
 	TCefBaseRefCounted
 }

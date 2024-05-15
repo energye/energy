@@ -41,10 +41,9 @@ func GetDLLName() string {
 }
 
 // LibPath
-//
-//		获取 lib 动态库目录
-//	 优先级
-//		  tempDllDir > 当前目录 > 用户目录 > LCL_HOME > ENERGY_HOME
+//	获取 lib 动态库目录
+//  优先级
+//	  tempDllDir > 当前目录 > 用户目录 > LCL_HOME > ENERGY_HOME
 func LibPath(dllName string) string {
 	//tempdll内置目录
 	for _, dir := range tempDllDir {

@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // ICanvas Parent: IFPCustomCanvas
@@ -86,258 +85,258 @@ type TCanvas struct {
 }
 
 func NewCanvas() ICanvas {
-	r1 := LCL().SysCallN(336)
+	r1 := LCL().SysCallN(523)
 	return AsCanvas(r1)
 }
 
 func (m *TCanvas) Pixels(X, Y int32) TColor {
-	r1 := LCL().SysCallN(355, 0, m.Instance(), uintptr(X), uintptr(Y))
+	r1 := LCL().SysCallN(542, 0, m.Instance(), uintptr(X), uintptr(Y))
 	return TColor(r1)
 }
 
 func (m *TCanvas) SetPixels(X, Y int32, AValue TColor) {
-	LCL().SysCallN(355, 1, m.Instance(), uintptr(X), uintptr(Y), uintptr(AValue))
+	LCL().SysCallN(542, 1, m.Instance(), uintptr(X), uintptr(Y), uintptr(AValue))
 }
 
 func (m *TCanvas) Handle() HDC {
-	r1 := LCL().SysCallN(350, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(537, 0, m.Instance(), 0)
 	return HDC(r1)
 }
 
 func (m *TCanvas) SetHandle(AValue HDC) {
-	LCL().SysCallN(350, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(537, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCanvas) TextStyle() (resultTextStyle TTextStyle) {
-	LCL().SysCallN(370, 0, m.Instance(), uintptr(unsafe.Pointer(&resultTextStyle)), uintptr(unsafe.Pointer(&resultTextStyle)))
+	LCL().SysCallN(557, 0, m.Instance(), uintptr(unsafePointer(&resultTextStyle)), uintptr(unsafePointer(&resultTextStyle)))
 	return
 }
 
 func (m *TCanvas) SetTextStyle(AValue *TTextStyle) {
-	LCL().SysCallN(370, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(557, 1, m.Instance(), uintptr(unsafePointer(AValue)), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TCanvas) AntialiasingMode() TAntialiasingMode {
-	r1 := LCL().SysCallN(324, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(511, 0, m.Instance(), 0)
 	return TAntialiasingMode(r1)
 }
 
 func (m *TCanvas) SetAntialiasingMode(AValue TAntialiasingMode) {
-	LCL().SysCallN(324, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(511, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCanvas) AutoRedraw() bool {
-	r1 := LCL().SysCallN(326, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(513, 0, m.Instance(), 0)
 	return GoBool(r1)
 }
 
 func (m *TCanvas) SetAutoRedraw(AValue bool) {
-	LCL().SysCallN(326, 1, m.Instance(), PascalBool(AValue))
+	LCL().SysCallN(513, 1, m.Instance(), PascalBool(AValue))
 }
 
 func (m *TCanvas) BrushForBrush() IBrush {
-	r1 := LCL().SysCallN(328, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(515, 0, m.Instance(), 0)
 	return AsBrush(r1)
 }
 
 func (m *TCanvas) SetBrushForBrush(AValue IBrush) {
-	LCL().SysCallN(328, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(515, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCanvas) CopyMode() TCopyMode {
-	r1 := LCL().SysCallN(334, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(521, 0, m.Instance(), 0)
 	return TCopyMode(r1)
 }
 
 func (m *TCanvas) SetCopyMode(AValue TCopyMode) {
-	LCL().SysCallN(334, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(521, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TCanvas) FontForFont() IFont {
-	r1 := LCL().SysCallN(340, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(527, 0, m.Instance(), 0)
 	return AsFont(r1)
 }
 
 func (m *TCanvas) SetFontForFont(AValue IFont) {
-	LCL().SysCallN(340, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(527, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCanvas) PenForPen() IPen {
-	r1 := LCL().SysCallN(353, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(540, 0, m.Instance(), 0)
 	return AsPen(r1)
 }
 
 func (m *TCanvas) SetPenForPen(AValue IPen) {
-	LCL().SysCallN(353, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(540, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCanvas) Region() IRegion {
-	r1 := LCL().SysCallN(359, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(546, 0, m.Instance(), 0)
 	return AsRegion(r1)
 }
 
 func (m *TCanvas) SetRegion(AValue IRegion) {
-	LCL().SysCallN(359, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(546, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func (m *TCanvas) TryLock() bool {
-	r1 := LCL().SysCallN(371, m.Instance())
+	r1 := LCL().SysCallN(558, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCanvas) GetTextMetrics(OutTM *TLCLTextMetric) bool {
 	var result0 uintptr
-	r1 := LCL().SysCallN(347, m.Instance(), uintptr(unsafe.Pointer(&result0)))
+	r1 := LCL().SysCallN(534, m.Instance(), uintptr(unsafePointer(&result0)))
 	*OutTM = *(*TLCLTextMetric)(getPointer(result0))
 	return GoBool(r1)
 }
 
 func (m *TCanvas) TextFitInfo(Text string, MaxWidth int32) int32 {
-	r1 := LCL().SysCallN(367, m.Instance(), PascalStr(Text), uintptr(MaxWidth))
+	r1 := LCL().SysCallN(554, m.Instance(), PascalStr(Text), uintptr(MaxWidth))
 	return int32(r1)
 }
 
 func (m *TCanvas) HandleAllocated() bool {
-	r1 := LCL().SysCallN(351, m.Instance())
+	r1 := LCL().SysCallN(538, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TCanvas) GetUpdatedHandle(ReqState TCanvasState) HDC {
-	r1 := LCL().SysCallN(348, m.Instance(), uintptr(ReqState))
+	r1 := LCL().SysCallN(535, m.Instance(), uintptr(ReqState))
 	return HDC(r1)
 }
 
 func CanvasClass() TClass {
-	ret := LCL().SysCallN(333)
+	ret := LCL().SysCallN(520)
 	return TClass(ret)
 }
 
 func (m *TCanvas) Lock() {
-	LCL().SysCallN(352, m.Instance())
+	LCL().SysCallN(539, m.Instance())
 }
 
 func (m *TCanvas) Unlock() {
-	LCL().SysCallN(372, m.Instance())
+	LCL().SysCallN(559, m.Instance())
 }
 
 func (m *TCanvas) Refresh() {
-	LCL().SysCallN(358, m.Instance())
+	LCL().SysCallN(545, m.Instance())
 }
 
 func (m *TCanvas) Changing() {
-	LCL().SysCallN(330, m.Instance())
+	LCL().SysCallN(517, m.Instance())
 }
 
 func (m *TCanvas) Changed() {
-	LCL().SysCallN(329, m.Instance())
+	LCL().SysCallN(516, m.Instance())
 }
 
 func (m *TCanvas) SaveHandleState() {
-	LCL().SysCallN(363, m.Instance())
+	LCL().SysCallN(550, m.Instance())
 }
 
 func (m *TCanvas) RestoreHandleState() {
-	LCL().SysCallN(360, m.Instance())
+	LCL().SysCallN(547, m.Instance())
 }
 
 func (m *TCanvas) ArcTo(ALeft, ATop, ARight, ABottom, SX, SY, EX, EY int32) {
-	LCL().SysCallN(325, m.Instance(), uintptr(ALeft), uintptr(ATop), uintptr(ARight), uintptr(ABottom), uintptr(SX), uintptr(SY), uintptr(EX), uintptr(EY))
+	LCL().SysCallN(512, m.Instance(), uintptr(ALeft), uintptr(ATop), uintptr(ARight), uintptr(ABottom), uintptr(SX), uintptr(SY), uintptr(EX), uintptr(EY))
 }
 
 func (m *TCanvas) AngleArc(X, Y int32, Radius uint32, StartAngle, SweepAngle float32) {
-	LCL().SysCallN(323, m.Instance(), uintptr(X), uintptr(Y), uintptr(Radius), uintptr(StartAngle), uintptr(SweepAngle))
+	LCL().SysCallN(510, m.Instance(), uintptr(X), uintptr(Y), uintptr(Radius), uintptr(StartAngle), uintptr(SweepAngle))
 }
 
 func (m *TCanvas) BrushCopy(ADestRect *TRect, ABitmap IBitmap, ASourceRect *TRect, ATransparentColor TColor) {
-	LCL().SysCallN(327, m.Instance(), uintptr(unsafe.Pointer(ADestRect)), GetObjectUintptr(ABitmap), uintptr(unsafe.Pointer(ASourceRect)), uintptr(ATransparentColor))
+	LCL().SysCallN(514, m.Instance(), uintptr(unsafePointer(ADestRect)), GetObjectUintptr(ABitmap), uintptr(unsafePointer(ASourceRect)), uintptr(ATransparentColor))
 }
 
 func (m *TCanvas) Chord(x1, y1, x2, y2, Angle16Deg, Angle16DegLength int32) {
-	LCL().SysCallN(331, m.Instance(), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(Angle16Deg), uintptr(Angle16DegLength))
+	LCL().SysCallN(518, m.Instance(), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(Angle16Deg), uintptr(Angle16DegLength))
 }
 
 func (m *TCanvas) Chord1(x1, y1, x2, y2, SX, SY, EX, EY int32) {
-	LCL().SysCallN(332, m.Instance(), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(SX), uintptr(SY), uintptr(EX), uintptr(EY))
+	LCL().SysCallN(519, m.Instance(), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(SX), uintptr(SY), uintptr(EX), uintptr(EY))
 }
 
 func (m *TCanvas) CopyRectForRect(Dest *TRect, SrcCanvas ICanvas, Source *TRect) {
-	LCL().SysCallN(335, m.Instance(), uintptr(unsafe.Pointer(Dest)), GetObjectUintptr(SrcCanvas), uintptr(unsafe.Pointer(Source)))
+	LCL().SysCallN(522, m.Instance(), uintptr(unsafePointer(Dest)), GetObjectUintptr(SrcCanvas), uintptr(unsafePointer(Source)))
 }
 
 func (m *TCanvas) DrawForGraphic(X, Y int32, SrcGraphic IGraphic) {
-	LCL().SysCallN(338, m.Instance(), uintptr(X), uintptr(Y), GetObjectUintptr(SrcGraphic))
+	LCL().SysCallN(525, m.Instance(), uintptr(X), uintptr(Y), GetObjectUintptr(SrcGraphic))
 }
 
 func (m *TCanvas) DrawFocusRect(ARect *TRect) {
-	LCL().SysCallN(337, m.Instance(), uintptr(unsafe.Pointer(ARect)))
+	LCL().SysCallN(524, m.Instance(), uintptr(unsafePointer(ARect)))
 }
 
 func (m *TCanvas) StretchDrawForRect(DestRect *TRect, SrcGraphic IGraphic) {
-	LCL().SysCallN(366, m.Instance(), uintptr(unsafe.Pointer(DestRect)), GetObjectUintptr(SrcGraphic))
+	LCL().SysCallN(553, m.Instance(), uintptr(unsafePointer(DestRect)), GetObjectUintptr(SrcGraphic))
 }
 
 func (m *TCanvas) FloodFillForColor(X, Y int32, FillColor TColor, FillStyle TFillStyle) {
-	LCL().SysCallN(339, m.Instance(), uintptr(X), uintptr(Y), uintptr(FillColor), uintptr(FillStyle))
+	LCL().SysCallN(526, m.Instance(), uintptr(X), uintptr(Y), uintptr(FillColor), uintptr(FillStyle))
 }
 
 func (m *TCanvas) Frame3d(ARect *TRect, FrameWidth int32, Style TGraphicsBevelCut) {
 	var result0 uintptr
-	LCL().SysCallN(344, m.Instance(), uintptr(unsafe.Pointer(&result0)), uintptr(FrameWidth), uintptr(Style))
+	LCL().SysCallN(531, m.Instance(), uintptr(unsafePointer(&result0)), uintptr(FrameWidth), uintptr(Style))
 	*ARect = *(*TRect)(getPointer(result0))
 }
 
 func (m *TCanvas) Frame3D1(ARect *TRect, TopColor, BottomColor TColor, FrameWidth int32) {
 	var result0 uintptr
-	LCL().SysCallN(343, m.Instance(), uintptr(unsafe.Pointer(&result0)), uintptr(TopColor), uintptr(BottomColor), uintptr(FrameWidth))
+	LCL().SysCallN(530, m.Instance(), uintptr(unsafePointer(&result0)), uintptr(TopColor), uintptr(BottomColor), uintptr(FrameWidth))
 	*ARect = *(*TRect)(getPointer(result0))
 }
 
 func (m *TCanvas) Frame(ARect *TRect) {
-	LCL().SysCallN(341, m.Instance(), uintptr(unsafe.Pointer(ARect)))
+	LCL().SysCallN(528, m.Instance(), uintptr(unsafePointer(ARect)))
 }
 
 func (m *TCanvas) Frame1(X1, Y1, X2, Y2 int32) {
-	LCL().SysCallN(342, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
+	LCL().SysCallN(529, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
 }
 
 func (m *TCanvas) FrameRect(ARect *TRect) {
-	LCL().SysCallN(345, m.Instance(), uintptr(unsafe.Pointer(ARect)))
+	LCL().SysCallN(532, m.Instance(), uintptr(unsafePointer(ARect)))
 }
 
 func (m *TCanvas) FrameRect1(X1, Y1, X2, Y2 int32) {
-	LCL().SysCallN(346, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
+	LCL().SysCallN(533, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
 }
 
 func (m *TCanvas) GradientFill(ARect *TRect, AStart, AStop TColor, ADirection TGradientDirection) {
-	LCL().SysCallN(349, m.Instance(), uintptr(unsafe.Pointer(ARect)), uintptr(AStart), uintptr(AStop), uintptr(ADirection))
+	LCL().SysCallN(536, m.Instance(), uintptr(unsafePointer(ARect)), uintptr(AStart), uintptr(AStop), uintptr(ADirection))
 }
 
 func (m *TCanvas) Pie(EllipseX1, EllipseY1, EllipseX2, EllipseY2, StartX, StartY, EndX, EndY int32) {
-	LCL().SysCallN(354, m.Instance(), uintptr(EllipseX1), uintptr(EllipseY1), uintptr(EllipseX2), uintptr(EllipseY2), uintptr(StartX), uintptr(StartY), uintptr(EndX), uintptr(EndY))
+	LCL().SysCallN(541, m.Instance(), uintptr(EllipseX1), uintptr(EllipseY1), uintptr(EllipseX2), uintptr(EllipseY2), uintptr(StartX), uintptr(StartY), uintptr(EndX), uintptr(EndY))
 }
 
 func (m *TCanvas) Polygon(Points []TPoint, Winding bool) {
-	sysCallPoint(356, m.Instance(), Points, PascalBool(Winding))
+	sysCallPoint(543, m.Instance(), Points, PascalBool(Winding))
 }
 
 func (m *TCanvas) Polyline(Points []TPoint) {
-	sysCallPoint(357, m.Instance(), Points)
+	sysCallPoint(544, m.Instance(), Points)
 }
 
 func (m *TCanvas) RoundRect(X1, Y1, X2, Y2 int32, RX, RY int32) {
-	LCL().SysCallN(361, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2), uintptr(RX), uintptr(RY))
+	LCL().SysCallN(548, m.Instance(), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2), uintptr(RX), uintptr(RY))
 }
 
 func (m *TCanvas) RoundRect1(Rect *TRect, RX, RY int32) {
-	LCL().SysCallN(362, m.Instance(), uintptr(unsafe.Pointer(Rect)), uintptr(RX), uintptr(RY))
+	LCL().SysCallN(549, m.Instance(), uintptr(unsafePointer(Rect)), uintptr(RX), uintptr(RY))
 }
 
 func (m *TCanvas) TextRect(ARect *TRect, X, Y int32, Text string) {
-	LCL().SysCallN(368, m.Instance(), uintptr(unsafe.Pointer(ARect)), uintptr(X), uintptr(Y), PascalStr(Text))
+	LCL().SysCallN(555, m.Instance(), uintptr(unsafePointer(ARect)), uintptr(X), uintptr(Y), PascalStr(Text))
 }
 
 func (m *TCanvas) TextRect1(ARect *TRect, X, Y int32, Text string, Style *TTextStyle) {
-	LCL().SysCallN(369, m.Instance(), uintptr(unsafe.Pointer(ARect)), uintptr(X), uintptr(Y), PascalStr(Text), uintptr(unsafe.Pointer(Style)))
+	LCL().SysCallN(556, m.Instance(), uintptr(unsafePointer(ARect)), uintptr(X), uintptr(Y), PascalStr(Text), uintptr(unsafePointer(Style)))
 }
 
 func (m *TCanvas) SetOnChange(fn TNotifyEvent) {
@@ -345,7 +344,7 @@ func (m *TCanvas) SetOnChange(fn TNotifyEvent) {
 		RemoveEventElement(m.changePtr)
 	}
 	m.changePtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(364, m.Instance(), m.changePtr)
+	LCL().SysCallN(551, m.Instance(), m.changePtr)
 }
 
 func (m *TCanvas) SetOnChanging(fn TNotifyEvent) {
@@ -353,5 +352,5 @@ func (m *TCanvas) SetOnChanging(fn TNotifyEvent) {
 		RemoveEventElement(m.changingPtr)
 	}
 	m.changingPtr = MakeEventDataPtr(fn)
-	LCL().SysCallN(365, m.Instance(), m.changingPtr)
+	LCL().SysCallN(552, m.Instance(), m.changingPtr)
 }

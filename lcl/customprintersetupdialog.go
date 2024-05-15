@@ -24,11 +24,11 @@ type TCustomPrinterSetupDialog struct {
 }
 
 func NewCustomPrinterSetupDialog(TheOwner IComponent) ICustomPrinterSetupDialog {
-	r1 := LCL().SysCallN(1948, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(2138, GetObjectUintptr(TheOwner))
 	return AsCustomPrinterSetupDialog(r1)
 }
 
 func CustomPrinterSetupDialogClass() TClass {
-	ret := LCL().SysCallN(1947)
+	ret := LCL().SysCallN(2137)
 	return TClass(ret)
 }

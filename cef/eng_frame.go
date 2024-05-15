@@ -15,7 +15,7 @@ import (
 // ICefFrame Parent: ICefBaseRefCounted
 //
 //	Interface used to represent a frame in the browser window. When used in the browser process the functions of this interface may be called on any thread unless otherwise indicated in the comments. When used in the render process the functions of this interface may only be called on the main thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_frame_capi.h">CEF source file: /include/capi/cef_frame_capi.h (cef_frame_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_frame_capi.h">CEF source file: /include/capi/cef_frame_capi.h (cef_frame_t))</a>
 type ICefFrame interface {
 	ICefBaseRefCounted
 	// IsValid
@@ -98,7 +98,7 @@ type ICefFrame interface {
 // TCefFrame Parent: TCefBaseRefCounted
 //
 //	Interface used to represent a frame in the browser window. When used in the browser process the functions of this interface may be called on any thread unless otherwise indicated in the comments. When used in the render process the functions of this interface may only be called on the main thread.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_frame_capi.h">CEF source file: /include/capi/cef_frame_capi.h (cef_frame_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_frame_capi.h">CEF source file: /include/capi/cef_frame_capi.h (cef_frame_t))</a>
 type TCefFrame struct {
 	TCefBaseRefCounted
 }

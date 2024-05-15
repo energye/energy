@@ -24,11 +24,11 @@ type TTaskDialog struct {
 }
 
 func NewTaskDialog(AOwner IComponent) ITaskDialog {
-	r1 := LCL().SysCallN(4708, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(5366, GetObjectUintptr(AOwner))
 	return AsTaskDialog(r1)
 }
 
 func TaskDialogClass() TClass {
-	ret := LCL().SysCallN(4707)
+	ret := LCL().SysCallN(5365)
 	return TClass(ret)
 }

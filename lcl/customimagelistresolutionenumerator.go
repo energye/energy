@@ -27,26 +27,26 @@ type TCustomImageListResolutionEnumerator struct {
 }
 
 func NewCustomImageListResolutionEnumerator(AImgList ICustomImageList, ADesc bool) ICustomImageListResolutionEnumerator {
-	r1 := LCL().SysCallN(1625, GetObjectUintptr(AImgList), PascalBool(ADesc))
+	r1 := LCL().SysCallN(1815, GetObjectUintptr(AImgList), PascalBool(ADesc))
 	return AsCustomImageListResolutionEnumerator(r1)
 }
 
 func (m *TCustomImageListResolutionEnumerator) Current() ICustomImageListResolution {
-	r1 := LCL().SysCallN(1626, m.Instance())
+	r1 := LCL().SysCallN(1816, m.Instance())
 	return AsCustomImageListResolution(r1)
 }
 
 func (m *TCustomImageListResolutionEnumerator) GetEnumerator() ICustomImageListResolutionEnumerator {
-	r1 := LCL().SysCallN(1627, m.Instance())
+	r1 := LCL().SysCallN(1817, m.Instance())
 	return AsCustomImageListResolutionEnumerator(r1)
 }
 
 func (m *TCustomImageListResolutionEnumerator) MoveNext() bool {
-	r1 := LCL().SysCallN(1628, m.Instance())
+	r1 := LCL().SysCallN(1818, m.Instance())
 	return GoBool(r1)
 }
 
 func CustomImageListResolutionEnumeratorClass() TClass {
-	ret := LCL().SysCallN(1624)
+	ret := LCL().SysCallN(1814)
 	return TClass(ret)
 }

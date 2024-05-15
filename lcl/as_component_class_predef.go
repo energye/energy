@@ -58,3 +58,35 @@ func AsStreamAdapter(obj uintptr) IStreamAdapter {
 	SetObjectInstance(streamAdapter, instance)
 	return streamAdapter
 }
+
+// AsVTVirtualNodeEnumeration  Convert a pointer object to an existing class object
+func AsVTVirtualNodeEnumeration(obj uintptr) IVTVirtualNodeEnumeration {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	result := new(TVTVirtualNodeEnumeration)
+	result.instance = instance
+	return result
+}
+
+// AsDataObject Convert a pointer object to an existing class object
+func AsDataObject(obj uintptr) IDataObject {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	dataObject := new(DataObject)
+	SetUnknownInstance(dataObject, instance)
+	return dataObject
+}
+
+func AsVirtualNode(obj uintptr) IVirtualNode {
+	instance := GetInstance(obj)
+	if instance == nil {
+		return nil
+	}
+	result := new(TVirtualNode)
+	result.instance = instance
+	return result
+}

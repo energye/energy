@@ -27,25 +27,25 @@ type TLazDockPages struct {
 }
 
 func NewLazDockPages(TheOwner IComponent) ILazDockPages {
-	r1 := LCL().SysCallN(3288, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(3531, GetObjectUintptr(TheOwner))
 	return AsLazDockPages(r1)
 }
 
 func (m *TLazDockPages) PageForLazDockPage(Index int32) ILazDockPage {
-	r1 := LCL().SysCallN(3289, m.Instance(), uintptr(Index))
+	r1 := LCL().SysCallN(3532, m.Instance(), uintptr(Index))
 	return AsLazDockPage(r1)
 }
 
 func (m *TLazDockPages) ActivePageComponent() ILazDockPage {
-	r1 := LCL().SysCallN(3286, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3529, 0, m.Instance(), 0)
 	return AsLazDockPage(r1)
 }
 
 func (m *TLazDockPages) SetActivePageComponent(AValue ILazDockPage) {
-	LCL().SysCallN(3286, 1, m.Instance(), GetObjectUintptr(AValue))
+	LCL().SysCallN(3529, 1, m.Instance(), GetObjectUintptr(AValue))
 }
 
 func LazDockPagesClass() TClass {
-	ret := LCL().SysCallN(3287)
+	ret := LCL().SysCallN(3530)
 	return TClass(ret)
 }

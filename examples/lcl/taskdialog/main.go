@@ -9,16 +9,16 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 	Btn1 lcl.IButton
 }
 
-var MainForm *TMainForm
+var MainForm TMainForm
 
 func main() {
 	inits.Init(nil, nil)
 	lcl.Application.Initialize()
-	lcl.Application.CreateForm(&MainForm, true)
+	lcl.Application.CreateForm(&MainForm)
 	lcl.Application.Run()
 }
 

@@ -15,7 +15,7 @@ import (
 // ICefBeforeDownloadCallback Parent: ICefBaseRefCounted
 //
 //	Callback interface used to asynchronously continue a download.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_before_download_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_before_download_callback_t))</a>
 type ICefBeforeDownloadCallback interface {
 	ICefBaseRefCounted
 	// Cont
@@ -26,7 +26,7 @@ type ICefBeforeDownloadCallback interface {
 // TCefBeforeDownloadCallback Parent: TCefBaseRefCounted
 //
 //	Callback interface used to asynchronously continue a download.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_before_download_callback_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_download_handler_capi.h">CEF source file: /include/capi/cef_download_handler_capi.h (cef_before_download_callback_t))</a>
 type TCefBeforeDownloadCallback struct {
 	TCefBaseRefCounted
 }

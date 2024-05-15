@@ -24,11 +24,11 @@ type TSavePictureDialog struct {
 }
 
 func NewSavePictureDialog(TheOwner IComponent) ISavePictureDialog {
-	r1 := LCL().SysCallN(4206, GetObjectUintptr(TheOwner))
+	r1 := LCL().SysCallN(4848, GetObjectUintptr(TheOwner))
 	return AsSavePictureDialog(r1)
 }
 
 func SavePictureDialogClass() TClass {
-	ret := LCL().SysCallN(4205)
+	ret := LCL().SysCallN(4847)
 	return TClass(ret)
 }

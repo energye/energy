@@ -18,6 +18,8 @@ import (
 //	to draw the browser contents. See the SimpleOSRBrowser demo for more details.
 type IBufferPanel interface {
 	ICustomPanel
+	// ChangeCompositionRange
+	//  Calls ChangeCompositionRange in the IME handler.
 	ChangeCompositionRange(selectionrange *TCefRange, characterbounds TCefRectDynArray)
 	// ScanlineSize
 	//  Returns the scanline size.

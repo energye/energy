@@ -24,11 +24,11 @@ type TValueListStrings struct {
 }
 
 func NewValueListStrings(AOwner IValueListEditor) IValueListStrings {
-	r1 := LCL().SysCallN(5195, GetObjectUintptr(AOwner))
+	r1 := LCL().SysCallN(5936, GetObjectUintptr(AOwner))
 	return AsValueListStrings(r1)
 }
 
 func ValueListStringsClass() TClass {
-	ret := LCL().SysCallN(5194)
+	ret := LCL().SysCallN(5935)
 	return TClass(ret)
 }

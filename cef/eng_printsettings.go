@@ -15,10 +15,14 @@ import (
 // ICefPrintSettings Parent: ICefBaseRefCounted
 //
 //	Interface representing print settings.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_settings_capi.h">CEF source file: /include/capi/cef_print_settings_capi.h (cef_print_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_settings_capi.h">CEF source file: /include/capi/cef_print_settings_capi.h (cef_print_settings_t))</a>
 type ICefPrintSettings interface {
 	ICefBaseRefCounted
+	// SetPageRanges
+	//  Set the page ranges.
 	SetPageRanges(ranges TRangeArray)
+	// GetPageRanges
+	//  Retrieve the page ranges.
 	GetPageRanges() TRangeArray
 	// IsValid
 	//  Returns true (1) if this object is valid. Do not call any other functions if this function returns false (0).
@@ -85,7 +89,7 @@ type ICefPrintSettings interface {
 // TCefPrintSettings Parent: TCefBaseRefCounted
 //
 //	Interface representing print settings.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_settings_capi.h">CEF source file: /include/capi/cef_print_settings_capi.h (cef_print_settings_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_print_settings_capi.h">CEF source file: /include/capi/cef_print_settings_capi.h (cef_print_settings_t))</a>
 type TCefPrintSettings struct {
 	TCefBaseRefCounted
 }

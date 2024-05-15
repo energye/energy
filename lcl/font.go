@@ -11,7 +11,6 @@ package lcl
 import (
 	. "github.com/energye/energy/v2/api"
 	. "github.com/energye/energy/v2/types"
-	"unsafe"
 )
 
 // IFont Parent: IFPCustomFont
@@ -50,124 +49,124 @@ type TFont struct {
 }
 
 func NewFont() IFont {
-	r1 := LCL().SysCallN(2841)
+	r1 := LCL().SysCallN(3084)
 	return AsFont(r1)
 }
 
 func (m *TFont) FontData() (resultFontData TFontData) {
-	r1 := LCL().SysCallN(2843, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3086, 0, m.Instance(), 0)
 	return *(*TFontData)(getPointer(r1))
 }
 
 func (m *TFont) SetFontData(AValue *TFontData) {
-	LCL().SysCallN(2843, 1, m.Instance(), uintptr(unsafe.Pointer(AValue)))
+	LCL().SysCallN(3086, 1, m.Instance(), uintptr(unsafePointer(AValue)))
 }
 
 func (m *TFont) Handle() HFONT {
-	r1 := LCL().SysCallN(2844, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3087, 0, m.Instance(), 0)
 	return HFONT(r1)
 }
 
 func (m *TFont) SetHandle(AValue HFONT) {
-	LCL().SysCallN(2844, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3087, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) IsMonoSpace() bool {
-	r1 := LCL().SysCallN(2849, m.Instance())
+	r1 := LCL().SysCallN(3092, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFont) PixelsPerInch() int32 {
-	r1 := LCL().SysCallN(2851, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3094, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TFont) SetPixelsPerInch(AValue int32) {
-	LCL().SysCallN(2851, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3094, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) CharSet() TFontCharSet {
-	r1 := LCL().SysCallN(2838, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3081, 0, m.Instance(), 0)
 	return TFontCharSet(r1)
 }
 
 func (m *TFont) SetCharSet(AValue TFontCharSet) {
-	LCL().SysCallN(2838, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3081, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) Color() TColor {
-	r1 := LCL().SysCallN(2840, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3083, 0, m.Instance(), 0)
 	return TColor(r1)
 }
 
 func (m *TFont) SetColor(AValue TColor) {
-	LCL().SysCallN(2840, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3083, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) Height() int32 {
-	r1 := LCL().SysCallN(2846, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3089, 0, m.Instance(), 0)
 	return int32(r1)
 }
 
 func (m *TFont) SetHeight(AValue int32) {
-	LCL().SysCallN(2846, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3089, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) Pitch() TFontPitch {
-	r1 := LCL().SysCallN(2850, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3093, 0, m.Instance(), 0)
 	return TFontPitch(r1)
 }
 
 func (m *TFont) SetPitch(AValue TFontPitch) {
-	LCL().SysCallN(2850, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3093, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) Quality() TFontQuality {
-	r1 := LCL().SysCallN(2852, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3095, 0, m.Instance(), 0)
 	return TFontQuality(r1)
 }
 
 func (m *TFont) SetQuality(AValue TFontQuality) {
-	LCL().SysCallN(2852, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3095, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) Style() TFontStyles {
-	r1 := LCL().SysCallN(2854, 0, m.Instance(), 0)
+	r1 := LCL().SysCallN(3097, 0, m.Instance(), 0)
 	return TFontStyles(r1)
 }
 
 func (m *TFont) SetStyle(AValue TFontStyles) {
-	LCL().SysCallN(2854, 1, m.Instance(), uintptr(AValue))
+	LCL().SysCallN(3097, 1, m.Instance(), uintptr(AValue))
 }
 
 func (m *TFont) HandleAllocated() bool {
-	r1 := LCL().SysCallN(2845, m.Instance())
+	r1 := LCL().SysCallN(3088, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFont) IsDefault() bool {
-	r1 := LCL().SysCallN(2847, m.Instance())
+	r1 := LCL().SysCallN(3090, m.Instance())
 	return GoBool(r1)
 }
 
 func (m *TFont) IsEqual(AFont IFont) bool {
-	r1 := LCL().SysCallN(2848, m.Instance(), GetObjectUintptr(AFont))
+	r1 := LCL().SysCallN(3091, m.Instance(), GetObjectUintptr(AFont))
 	return GoBool(r1)
 }
 
 func FontClass() TClass {
-	ret := LCL().SysCallN(2839)
+	ret := LCL().SysCallN(3082)
 	return TClass(ret)
 }
 
 func (m *TFont) BeginUpdate() {
-	LCL().SysCallN(2837, m.Instance())
+	LCL().SysCallN(3080, m.Instance())
 }
 
 func (m *TFont) EndUpdate() {
-	LCL().SysCallN(2842, m.Instance())
+	LCL().SysCallN(3085, m.Instance())
 }
 
 func (m *TFont) SetDefault() {
-	LCL().SysCallN(2853, m.Instance())
+	LCL().SysCallN(3096, m.Instance())
 }

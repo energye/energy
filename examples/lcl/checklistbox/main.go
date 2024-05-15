@@ -9,10 +9,10 @@ import (
 )
 
 type TMainForm struct {
-	*lcl.TForm
+	lcl.TForm
 }
 
-var mainForm *TMainForm
+var mainForm TMainForm
 
 func main() {
 	inits.Init(nil, nil)

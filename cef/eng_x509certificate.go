@@ -15,10 +15,14 @@ import (
 // ICefX509Certificate Parent: ICefBaseRefCounted
 //
 //	Interface representing a X.509 certificate.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t))</a>
 type ICefX509Certificate interface {
 	ICefBaseRefCounted
+	// GetDEREncodedIssuerChain
+	//  Returns the DER encoded data for the certificate issuer chain. If we failed to encode a certificate in the chain it is still present in the array but is an NULL string.
 	GetDEREncodedIssuerChain(chainCount *NativeUInt, chain *ICefBinaryValueArray)
+	// GetPEMEncodedIssuerChain
+	//  Returns the PEM encoded data for the certificate issuer chain. If we failed to encode a certificate in the chain it is still present in the array but is an NULL string.
 	GetPEMEncodedIssuerChain(chainCount *NativeUInt, chain *ICefBinaryValueArray)
 	// GetSubject
 	//  Returns the subject of the X.509 certificate. For HTTPS server certificates this represents the web server. The common name of the subject should match the host name of the web server.
@@ -55,7 +59,7 @@ type ICefX509Certificate interface {
 // TCefX509Certificate Parent: TCefBaseRefCounted
 //
 //	Interface representing a X.509 certificate.
-//	 <a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t))
+//	<a href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_x509_certificate_capi.h">CEF source file: /include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t))</a>
 type TCefX509Certificate struct {
 	TCefBaseRefCounted
 }
