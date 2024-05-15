@@ -30,7 +30,6 @@ type ipcRenderProcess struct {
 	emitHandler     *ipcEmitHandler // ipc.emit handler
 	onHandler       *ipcOnHandler   // ipc.on handler
 	waitChan        *ipc.WaitChan
-	v8Context       *ICefV8Context
 }
 
 func (m *ipcRenderProcess) clear() {
@@ -40,16 +39,6 @@ func (m *ipcRenderProcess) clear() {
 	}
 	if m.onHandler != nil {
 		m.onHandler.clear()
-	}
-	if m.v8Context != nil {
-		m.v8Context.Free()
-		m.v8Context = nil
-	}
-}
-
-func (m *ipcRenderProcess) initEventGlobal() {
-	if m.v8Context == nil {
-		m.v8Context = V8ContextRef.Current()
 	}
 }
 
@@ -62,7 +51,6 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 		arguments.Free()
 		return
 	}
-	m.initEventGlobal()
 	var (
 		onName      *ICefV8Value // 事件名
 		onNameValue string       // 事件名
@@ -91,7 +79,7 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 	return
 }
 
-// ipcGoExecuteJSEvent Go ipc.emit 执行JS事件
+// Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
 	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
@@ -135,7 +123,8 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
 		var callbackArgsBytes interface{}
 		//enter v8context
-		if m.v8Context.Enter() {
+		ctx := frame.V8Context()
+		if ctx.Enter() {
 			var ret *ICefV8Value
 			var argsArray *TCefV8ValueArray
 			var err error
@@ -145,11 +134,11 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			}
 			if argsArray != nil && err == nil {
 				// parse v8array success
-				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray)
+				ret = callback.function.ExecuteFunctionWithContext(ctx, nil, argsArray)
 				argsArray.Free()
 			} else {
 				// parse v8array fail
-				ret = callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil)
+				ret = callback.function.ExecuteFunctionWithContext(ctx, nil, nil)
 			}
 			if ret != nil && ret.IsValid() && messageId != 0 { // messageId != 0 callback func args
 				// v8value to process message bytes
@@ -159,8 +148,9 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 				ret.Free()
 			}
 			//exit v8context
-			m.v8Context.Exit()
+			ctx.Exit()
 		}
+		ctx.Free()
 		if messageId != 0 { //messageId != 0 callback func
 			callbackMessage := &ipcArgument.List{
 				Id:   messageId,
@@ -400,11 +390,8 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 	return nil, errors.New("ipc.emit first argument must be the event name or option rule")
 }
 
-// jsExecuteGoEvent
-//
-//	JS 执行 GO 监听事件
+// JS 执行 GO 监听事件
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
-	m.initEventGlobal()
 	result = true
 	var args interface{}
 	defer func() {
@@ -415,6 +402,8 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 	rule, err := m.jsExecuteGoRule(name, arguments)
 	if err == nil {
 		defer rule.freeAll()
+		v8ctx := V8ContextRef.Current()
+		defer v8ctx.Free()
 		if rule.emitArgs != nil { //入参
 			//V8Value 转换
 			args = ValueConvert.V8ValueToProcessMessageArray(rule.emitArgs)
@@ -433,7 +422,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 			} else { //variable
 				callback.resultType = rt_variable
 			}
-			m.singleProcess(rule.emitNameValue, callback, args)
+			m.singleProcess(v8ctx, rule.emitNameValue, callback, args)
 			if callback.resultType == rt_variable {
 				if callback.variable != nil {
 					retVal.SetResult(callback.variable)
@@ -456,9 +445,9 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 				}
 				//当前子进程
 				if rule.target == targetCurrent {
-					m.multiProcessCurrentProcess(rule.emitNameValue, callback, args)
+					m.multiProcessCurrentProcess(v8ctx, rule.emitNameValue, callback, args)
 				} else { //等待 - 主进程
-					m.multiProcessWait(rule.emitNameValue, callback, rule.waitTime, args)
+					m.multiProcessWait(v8ctx, rule.emitNameValue, callback, rule.waitTime, args)
 				}
 				if callback.resultType == rt_variable {
 					if callback.variable != nil {
@@ -476,18 +465,12 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					callback := &ipcCallback{resultType: rt_function, function: V8ValueRef.UnWrap(rule.emitCallback)}
 					messageId = m.emitHandler.addCallback(callback)
 				}
-				var (
-					message   target.IProcessMessage
-					v8Context *ICefV8Context // CEF49
-				)
+				var message target.IProcessMessage
 				if application.IsSpecVer49() {
 					// CEF49
-					// TODO 不清楚为什么要单独获取一次，尝试在全局定义一个和局部获取都不能完成发送消息???
-					//      其它地方又不需要重新获取???
-					v8Context = V8ContextRef.Current()
-					message = v8Context.Browser()
+					message = v8ctx.Browser()
 				} else {
-					message = m.v8Context.Frame()
+					message = v8ctx.Frame()
 				}
 				// 在多进程时，发送多进程异步消息，如果当前CEF版本是CEF49使用Browser的发送消息函数
 				if success := m.multiProcessAsync(message, messageId, rule.emitNameValue, args); !success {
@@ -495,10 +478,6 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					rule.emitCallback.SetCanNotFree(false)
 				}
 				retVal.SetResult(V8ValueRef.NewBool(true))
-				if v8Context != nil {
-					// CEF49
-					v8Context.Free()
-				}
 			}
 		}
 	} else {
@@ -508,13 +487,13 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 	return
 }
 
-// multiProcessCurrentProcess 多进程消息 -  当前进程
-func (m *ipcRenderProcess) multiProcessCurrentProcess(emitName string, callback *ipcCallback, data interface{}) {
+// 多进程消息 -  当前进程
+func (m *ipcRenderProcess) multiProcessCurrentProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data interface{}) {
 	// 主进程
 	eventCallback := ipc.CheckOnEvent(emitName)
 	var ipcContext context.IContext
 	if eventCallback != nil {
-		ipcContext = context.NewContext(m.v8Context.Browser().Identifier(), m.v8Context.Frame().Identifier(), true, json.NewJSONArray(data))
+		ipcContext = context.NewContext(v8ctx.Browser().Identifier(), v8ctx.Frame().Identifier(), true, json.NewJSONArray(data))
 		//调用监听函数
 		if ctxCallback := eventCallback.ContextCallback(); ctxCallback != nil {
 			ctxCallback.Invoke(ipcContext)
@@ -526,33 +505,33 @@ func (m *ipcRenderProcess) multiProcessCurrentProcess(emitName string, callback 
 		//处理回复消息
 		replay := ipcContext.Replay()
 		if replay.Result() != nil && len(replay.Result()) > 0 {
-			m.executeCallbackFunction(true, callback, json.NewJSONArray(replay.Result()))
+			m.executeCallbackFunction(v8ctx, true, callback, json.NewJSONArray(replay.Result()))
 			return
 		}
 	}
-	m.executeCallbackFunction(false, callback, nil)
+	m.executeCallbackFunction(v8ctx, false, callback, nil)
 }
 
-// singleProcess 单进程
-func (m *ipcRenderProcess) singleProcess(emitName string, callback *ipcCallback, data interface{}) {
+// 单进程
+func (m *ipcRenderProcess) singleProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data interface{}) {
 	if ipcBrowser == nil {
 		return
 	}
 	// 当前为主进程
-	ipcContext := ipcBrowser.jsExecuteGoMethod(m.v8Context.Browser().Identifier(), m.v8Context.Frame().Identifier(), emitName, json.NewJSONArray(data))
+	ipcContext := ipcBrowser.jsExecuteGoMethod(v8ctx.Browser().Identifier(), v8ctx.Frame().Identifier(), emitName, json.NewJSONArray(data))
 	if ipcContext != nil && callback != nil {
 		// 处理回复消息
 		replay := ipcContext.Replay()
 		if replay.Result() != nil && len(replay.Result()) > 0 {
-			m.executeCallbackFunction(true, callback, json.NewJSONArray(replay.Result()))
+			m.executeCallbackFunction(v8ctx, true, callback, json.NewJSONArray(replay.Result()))
 			return
 		}
 	}
-	m.executeCallbackFunction(false, callback, nil)
+	m.executeCallbackFunction(v8ctx, false, callback, nil)
 }
 
 // 多进程消息 - 会阻塞渲染进程，并等待 delay 时间后自动返回
-func (m *ipcRenderProcess) multiProcessWait(emitName string, callback *ipcCallback, delay time.Duration, data interface{}) {
+func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, delay time.Duration, data interface{}) {
 	//延迟等待接收结果，默认5秒
 	messageId := m.waitChan.NextMessageId()
 	resultChan := make(chan interface{})
@@ -584,10 +563,10 @@ func (m *ipcRenderProcess) multiProcessWait(emitName string, callback *ipcCallba
 			argumentList = resultData.(json.JSONArray)
 		}
 		if argumentList != nil {
-			m.executeCallbackFunction(true, callback, argumentList)
+			m.executeCallbackFunction(v8ctx, true, callback, argumentList)
 			argumentList.Free()
 		} else {
-			m.executeCallbackFunction(false, callback, nil)
+			m.executeCallbackFunction(v8ctx, false, callback, nil)
 		}
 	}
 
@@ -641,9 +620,6 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			argumentList.Reset()
 		}
 	}()
-	if m.v8Context == nil {
-		return
-	}
 	if callback := m.emitHandler.getCallback(messageId); callback != nil {
 		var returnArgs json.JSONArray
 		defer func() {
@@ -659,22 +635,24 @@ func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser,
 			//[]byte
 			returnArgs = argumentList.JSON().JSONArray()
 		}
+		v8ctx := frame.V8Context()
 		if returnArgs != nil {
-			m.executeCallbackFunction(isReturnArgs, callback, returnArgs)
+			m.executeCallbackFunction(v8ctx, isReturnArgs, callback, returnArgs)
 		} else {
-			m.executeCallbackFunction(isReturnArgs, callback, nil)
+			m.executeCallbackFunction(v8ctx, isReturnArgs, callback, nil)
 		}
 		callback.function.Free()
 		callback.name.Free()
+		v8ctx.Free()
 	}
 	return
 }
 
 // 执行 v8 function 回调函数
-func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *ipcCallback, returnArgs json.JSONArray) {
+func (m *ipcRenderProcess) executeCallbackFunction(v8ctx *ICefV8Context, isReturnArgs bool, callback *ipcCallback, returnArgs json.JSONArray) {
 	if isReturnArgs { //有返回参数
 		//enter v8context
-		if m.v8Context.Enter() {
+		if v8ctx.Enter() {
 			var argsArray *TCefV8ValueArray
 			var err error
 			if callback.resultType == rt_function {
@@ -684,11 +662,11 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 				}
 				if argsArray != nil && err == nil {
 					// parse v8array success
-					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, argsArray).Free()
+					callback.function.ExecuteFunctionWithContext(v8ctx, nil, argsArray).Free()
 					argsArray.Free()
 				} else {
 					// parse v8array fail
-					callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
+					callback.function.ExecuteFunctionWithContext(v8ctx, nil, nil).Free()
 				}
 			} else if callback.resultType == rt_variable {
 				if returnArgs != nil && returnArgs.Size() > 0 {
@@ -713,13 +691,13 @@ func (m *ipcRenderProcess) executeCallbackFunction(isReturnArgs bool, callback *
 				}
 			}
 			//exit v8context
-			m.v8Context.Exit()
+			v8ctx.Exit()
 		}
 	} else { //无返回参数
 		if callback.resultType == rt_function {
-			if m.v8Context.Enter() {
-				callback.function.ExecuteFunctionWithContext(m.v8Context, nil, nil).Free()
-				m.v8Context.Exit()
+			if v8ctx.Enter() {
+				callback.function.ExecuteFunctionWithContext(v8ctx, nil, nil).Free()
+				v8ctx.Exit()
 			}
 		} else if callback.resultType == rt_variable {
 			// null
