@@ -4,7 +4,7 @@
 
 <p align="center" style="font-size: 24px;">
     <strong>
-        Energy is a framework for Go to build desktop applications based on CEF
+        Energy is a GUI framework developed by Go, based on LCL and CEF
     </strong>
 </p>
 
@@ -26,10 +26,10 @@ English
 
 ### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
-Energy is a framework by Golang based on CEF(Chromium Embedded Framework), embedded
-[CEF](https://bitbucket.org/chromiumembedded/cef) binary
-- [energy](https://github.com/energye/energy) is a framework developed by Golang based on CEF (Chromium Embedded Framework), embedded with [CEF](https://bitbucket.org/chromiumembedded/cef) binary
-- Use Go and Web technology (HTML+CSS+JavaScript) to build cross-platform desktop applications that support Windows, Linux and MacOS
+- Energy is a GUI framework developed in Go, based on [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) and [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework), which is used to develop cross-platform desktop applications for Windows, MacOS, and Linux.
+- LCL alone can create lightweight native applications, or can be combined with CEF to create more feature-complete applications.
+- Construct cross-platform desktop applications that support Windows, Linux, and MacOS using Go and web technologies (HTML + CSS + JavaScript).
+
 ### Characteristic
 
 - Rich CEF API and LCL system native widgets

@@ -4,7 +4,7 @@
 
 <p align="center" style="font-size: 24px;">
     <strong>
-        Energy是Go基于CEF构建桌面应用的框架
+        Energy是Go基于LCL和CEF开发的GUI框架
     </strong>
 </p>
 
@@ -26,16 +26,18 @@
 
 ### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
-> [energy](https://github.com/energye/energy) 是 Go 基于 CEF(Chromium Embedded Framework)
-> 开发的框架，内嵌 [CEF](https://bitbucket.org/chromiumembedded/cef) 二进制
->
+> Energy 是 Go 基于 [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) 和 [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework) 开发的 GUI 框架, 用于开发Windows、MacOS 和 Linux 跨平台桌面应用.
+> 
+> 可仅用 LCL 创建轻量级原生应用，或结合 LCL 与 CEF 打造功能更全的应用程序
+> 
 > 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
+
 
 
 ### 特性
 
-> - 具有丰富的CEF API 和 LCL 系统原生小部件
-> - 开发环境简单,编译速度快,仅需Go和Energy依赖的CEF二进制框架
+> - 具有丰富的 CEF API 和 丰富的 LCL 系统原生控件
+> - 开发环境简单, 编译速度快, 仅需Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
 >> - Golang: 窗口管理、CEF API封装&配置、功能实现、各种UI组件创建、系统低层调用和JavaScript处理不了的功能，如: 文件流、安全加密、高性能处理等
 >> - Web: HTML + CSS + JavaScript 负责客户端界面的功能, 做出任意你想要的界面
@@ -183,7 +185,7 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 <img src="https://assets.yanghy.cn/frameless-ubuntu-18.04.6.png">
 <img src="https://assets.yanghy.cn/frameless-ubuntu-hide-18.04.6.png">
 
-##### MacOSX
+##### MacOS
 <img src="https://assets.yanghy.cn/frameless-macos.png">
 
 
