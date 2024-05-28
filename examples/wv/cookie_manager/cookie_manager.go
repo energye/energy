@@ -115,7 +115,7 @@ func (m *TMainForm) createRightBoxLayout() {
 	})
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	m.SetCaption("Webview2 Cookie 管理")
 	m.SetPosition(types.PoScreenCenter)
 	m.SetWidth(1024)

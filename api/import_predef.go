@@ -138,6 +138,10 @@ func SetRequestCallCreateParamsCallback(ptr uintptr) {
 	defSyscallN(lcl.SetRequestCallCreateParamsCallback, ptr)
 }
 
+func SetRequestCallFormCreateCallback(ptr uintptr) {
+	defSyscallN(lcl.SetRequestCallFormCreateCallback, ptr)
+}
+
 func SetRemoveEventCallback(ptr uintptr) {
 	defSyscallN(lcl.SetRemoveEventCallback, ptr)
 }

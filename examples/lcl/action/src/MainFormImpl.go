@@ -24,7 +24,7 @@ type TMainForm struct {
 
 var MainForm TMainForm
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 	f.SetCaption("Hello")
 	f.SetPosition(types.PoScreenCenter)
 	f.EnabledMaximize(false)

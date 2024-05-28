@@ -32,8 +32,8 @@ func main() {
 	lcl.RunApp(&mainForm, &form1)
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("TMainForm OnFormCreate")
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
+	fmt.Println("TMainForm FormCreate")
 	//m.SetOnWndProc(func(msg *types.TMessage) {
 	//	m.InheritedWndProc(msg)
 	//	fmt.Println("msg", msg)
@@ -70,8 +70,8 @@ func (f *TMainForm) OnButton2Click(object lcl.IObject) {
 
 // ---------- Form1 ----------------
 
-func (f *TForm1) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("TForm1 OnFormCreate")
+func (f *TForm1) FormCreate(sender lcl.IObject) {
+	fmt.Println("TForm1 FormCreate")
 	f.Button1 = lcl.NewButton(f)
 	fmt.Println("f.Button1:", f.Button1.Instance())
 	f.Button1.SetParent(f)

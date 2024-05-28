@@ -50,7 +50,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 	f.SetWidth(1000)
 	f.SetHeight(570)
 	f.ScreenCenter()

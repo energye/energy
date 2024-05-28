@@ -61,8 +61,8 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
-	m.SetCaption("energy webview2 debug_most test")
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
+	m.SetCaption("Energy3.0 - webview2 simple")
 	m.SetPosition(types.PoScreenCenter)
 	m.SetWidth(1024)
 	m.SetHeight(768)

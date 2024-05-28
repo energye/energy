@@ -46,7 +46,7 @@ type TMainForm struct {
 	browser      wv.IWVBrowser
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	m.SetCaption("html5test")
 	m.SetPosition(types.PoScreenCenter)
 	m.SetWidth(1024)

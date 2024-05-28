@@ -27,7 +27,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 	f.Btn1 = lcl.NewButton(f)
 	f.Btn1.SetParent(f)
 	f.Btn1.SetBounds(10, 10, 88, 28)

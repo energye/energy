@@ -23,7 +23,7 @@ type TMainForm struct {
 
 var mainForm TMainForm
 
-func (f *TMainForm) OnFormCreate(object lcl.IObject) {
+func (f *TMainForm) FormCreate(object lcl.IObject) {
 	f.SetCaption("Windows Messages")
 	f.SetWidth(300)
 	f.SetHeight(200)

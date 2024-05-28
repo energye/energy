@@ -52,6 +52,7 @@ func LCLInit() {
 	SetRemoveEventCallback(removeEventCallback)
 	SetMessageCallback(messageCallback)
 	SetRequestCallCreateParamsCallback(requestCallCreateParamsCallback)
+	SetRequestCallFormCreateCallback(requestCallFormCreateCallback)
 	// 主线程回调 异步
 	SetThreadAsyncCallback(threadAsyncCallback)
 	// 主线程同步 回调

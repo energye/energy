@@ -20,7 +20,7 @@ func main() {
 	lcl.RunApp(&form1)
 }
 
-func (f *TForm1) OnFormCreate(sender lcl.IObject) {
+func (f *TForm1) FormCreate(sender lcl.IObject) {
 
 	f.SetWidth(600)
 	f.SetHeight(400)

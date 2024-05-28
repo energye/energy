@@ -18,7 +18,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (f *TMainForm) OnFormCreate(object lcl.IObject) {
+func (f *TMainForm) FormCreate(object lcl.IObject) {
 	f.SetCaption("drop files")
 	f.SetWidth(300)
 	f.SetHeight(200)

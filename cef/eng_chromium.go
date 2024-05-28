@@ -18,7 +18,7 @@ import (
 //	It has all you need to create, modify and destroy a web browser.
 type IChromium interface {
 	IChromiumCore
-	// CreateBrowserForBool
+	// CreateBrowserByWinControl
 	//  Used to create the browser after the global request context has been
 	//  initialized. You need to set all properties and events before calling
 	//  this function because it will only create the internal handlers needed
@@ -26,7 +26,7 @@ type IChromium interface {
 	//  initialization.
 	//  The browser will be fully initialized when the TChromiumCore.OnAfterCreated
 	//  event is triggered.
-	CreateBrowserForBool(aBrowserParent IWinControl, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool // function
+	CreateBrowserByWinControl(aBrowserParent IWinControl, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool // function
 	// SaveAsBitmapStream
 	//  Copy the DC to a bitmap stream. Only works on Windows with browsers without GPU acceleration.
 	//  It's recommended to use the "Page.captureScreenshot" DevTools method instead.
@@ -79,7 +79,7 @@ func NewChromium(aOwner IComponent) IChromium {
 	return AsChromium(r1)
 }
 
-func (m *TChromium) CreateBrowserForBool(aBrowserParent IWinControl, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool {
+func (m *TChromium) CreateBrowserByWinControl(aBrowserParent IWinControl, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool {
 	r1 := CEF().SysCallN(2116, m.Instance(), GetObjectUintptr(aBrowserParent), PascalStr(aWindowName), GetObjectUintptr(aContext), GetObjectUintptr(aExtraInfo))
 	return GoBool(r1)
 }

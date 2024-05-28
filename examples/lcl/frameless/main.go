@@ -22,7 +22,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	m.SetCaption("frameless")
 	m.SetPosition(types.PoScreenCenter)
 	m.SetBorderStyleForFormBorderStyle(types.BsNone)

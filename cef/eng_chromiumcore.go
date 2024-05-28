@@ -458,7 +458,7 @@ type IChromiumCore interface {
 	// SetNewBrowserParent
 	//  Used to reparent the browser to a different TCEFWindowParent.
 	SetNewBrowserParent(aNewParentHwnd HWND) bool // function
-	// CreateBrowser
+	// CreateBrowserByWindowHandle
 	//  Used to create the browser after the global request context has been
 	//  initialized. You need to set all properties and events before calling
 	//  this function because it will only create the internal handlers needed
@@ -466,8 +466,8 @@ type IChromiumCore interface {
 	//  initialization.
 	//  The browser will be fully initialized when the TChromiumCore.OnAfterCreated
 	//  event is triggered.
-	CreateBrowser(aParentHandle TCefWindowHandle, aParentRect *TRect, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue, aForceAsPopup bool) bool // function
-	// CreateBrowser1
+	CreateBrowserByWindowHandle(aParentHandle TCefWindowHandle, aParentRect *TRect, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue, aForceAsPopup bool) bool // function
+	// CreateBrowserByBrowserViewComponent
 	//  Used to create the browser after the global request context has been
 	//  initialized. You need to set all properties and events before calling
 	//  this function because it will only create the internal handlers needed
@@ -475,7 +475,7 @@ type IChromiumCore interface {
 	//  initialization.
 	//  The browser will be fully initialized when the TChromiumCore.OnAfterCreated
 	//  event is triggered.
-	CreateBrowser1(aURL string, aBrowserViewComp ICEFBrowserViewComponent, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool // function
+	CreateBrowserByBrowserViewComponent(aURL string, aBrowserViewComp ICEFBrowserViewComponent, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool // function
 	// ClearCertificateExceptions
 	//  Clears all certificate exceptions that were added as part of handling
 	//  OnCertificateError. If you call this it is recommended that you also call
@@ -3428,13 +3428,13 @@ func (m *TChromiumCore) SetNewBrowserParent(aNewParentHwnd HWND) bool {
 	return GoBool(r1)
 }
 
-func (m *TChromiumCore) CreateBrowser(aParentHandle TCefWindowHandle, aParentRect *TRect, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue, aForceAsPopup bool) bool {
-	r1 := CEF().SysCallN(1749, m.Instance(), uintptr(aParentHandle), uintptr(unsafePointer(aParentRect)), PascalStr(aWindowName), GetObjectUintptr(aContext), GetObjectUintptr(aExtraInfo), PascalBool(aForceAsPopup))
+func (m *TChromiumCore) CreateBrowserByWindowHandle(aParentHandle TCefWindowHandle, aParentRect *TRect, aWindowName string, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue, aForceAsPopup bool) bool {
+	r1 := CEF().SysCallN(1750, m.Instance(), uintptr(aParentHandle), uintptr(unsafePointer(aParentRect)), PascalStr(aWindowName), GetObjectUintptr(aContext), GetObjectUintptr(aExtraInfo), PascalBool(aForceAsPopup))
 	return GoBool(r1)
 }
 
-func (m *TChromiumCore) CreateBrowser1(aURL string, aBrowserViewComp ICEFBrowserViewComponent, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool {
-	r1 := CEF().SysCallN(1750, m.Instance(), PascalStr(aURL), GetObjectUintptr(aBrowserViewComp), GetObjectUintptr(aContext), GetObjectUintptr(aExtraInfo))
+func (m *TChromiumCore) CreateBrowserByBrowserViewComponent(aURL string, aBrowserViewComp ICEFBrowserViewComponent, aContext ICefRequestContext, aExtraInfo ICefDictionaryValue) bool {
+	r1 := CEF().SysCallN(1749, m.Instance(), PascalStr(aURL), GetObjectUintptr(aBrowserViewComp), GetObjectUintptr(aContext), GetObjectUintptr(aExtraInfo))
 	return GoBool(r1)
 }
 

@@ -10,11 +10,11 @@ import (
 )
 
 type TMainForm struct {
-	lcl.IForm
+	lcl.TForm
 }
 
 var (
-	mainForm *TMainForm
+	mainForm TMainForm
 )
 
 func main() {
@@ -23,8 +23,8 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("TMainForm OnFormCreate")
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
+	fmt.Println("TMainForm FormCreate")
 	m.SetCaption("LazVirtualDrawTree")
 	m.WorkAreaCenter()
 	m.SetWidth(600)

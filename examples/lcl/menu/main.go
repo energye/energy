@@ -25,7 +25,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 
 	f.SetCaption("Menu example")
 	f.ScreenCenter()
@@ -136,6 +136,8 @@ func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
 
 	// 将窗口设置一个弹出菜单，右键单击就可显示
 	f.SetPopupMenu(pm)
+
+	f.SetOnPaint(f.OnFormPaint)
 }
 
 func (f *TMainForm) OnFormPaint(sender lcl.IObject) {

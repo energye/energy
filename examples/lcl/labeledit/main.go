@@ -24,7 +24,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 	f.SetCaption("Hello")
 	f.EnabledMaximize(false)
 	f.SetWidth(300)

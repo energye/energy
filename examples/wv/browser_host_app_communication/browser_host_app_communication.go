@@ -171,7 +171,7 @@ func (m *TMainForm) fullChar(buf types.PByte, size, value uintptr) {
 	}
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	m.SetCaption("Webview2 浏览器主机应用程序通信")
 	m.SetPosition(types.PoScreenCenter)
 	m.SetWidth(1024)

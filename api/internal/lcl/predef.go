@@ -30,6 +30,7 @@ var preImportDefs = []*imports.Table{
 	imports.NewTable("SetMessageCallback", 0),
 	imports.NewTable("SetThreadSyncCallback", 0),
 	imports.NewTable("SetRequestCallCreateParamsCallback", 0),
+	imports.NewTable("SetRequestCallFormCreateCallback", 0),
 	imports.NewTable("SetRemoveEventCallback", 0),
 	imports.NewTable("SetThreadAsyncCallback", 0),
 	imports.NewTable("SetIPCEventCallback", 0),
@@ -184,6 +185,7 @@ const (
 	SetMessageCallback
 	SetThreadSyncCallback
 	SetRequestCallCreateParamsCallback
+	SetRequestCallFormCreateCallback
 	SetRemoveEventCallback
 	SetThreadAsyncCallback
 	SetIPCEventCallback

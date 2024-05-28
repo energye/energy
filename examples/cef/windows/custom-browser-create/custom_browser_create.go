@@ -43,8 +43,8 @@ func main() {
 	}
 }
 
-func (m *MainWindowDemo) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("MainWindowDemo OnFormCreate")
+func (m *MainWindowDemo) FormCreate(sender lcl.IObject) {
+	fmt.Println("MainWindowDemo FormCreate")
 
 	m.SetCaption("主窗口")
 	m.SetWidth(1000)

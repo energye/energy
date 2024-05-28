@@ -76,6 +76,8 @@ import (
 //
 // Create a TForm.
 func (m *TApplication) CreateForm(forms ...IForm) IForm {
+	//runtime.LockOSThread()
+	//defer runtime.UnlockOSThread()
 	size := len(forms)
 	if size == 0 {
 		return AsForm(Application_CreateForm(m.Instance()))
@@ -83,26 +85,27 @@ func (m *TApplication) CreateForm(forms ...IForm) IForm {
 	for i := 0; i < size; i++ {
 		form := forms[i]
 		var (
-			mainForm                 = Application.MainForm()
-			isMain                   = mainForm == nil || mainForm.Instance() == 0 // 0 | nil = main
-			v                        = reflect.ValueOf(form)
-			formPtr, createParamsPtr uintptr
+			mainForm        = Application.MainForm()
+			isMain          = mainForm == nil || mainForm.Instance() == 0 // 0 | nil = main
+			v               = reflect.ValueOf(form)
+			createParamsPtr uintptr
 		)
-		// CreateParams 实现回调
-		if createParams, ok := form.(IOnCreateParams); ok {
-			if !isMain {
-				createParamsPtr = v.Pointer()
-			}
-			addToRequestCreateParamsMap(createParamsPtr, createParams.CreateParams)
+		if !isMain {
+			createParamsPtr = v.Pointer()
 		}
-		formPtr = Application_CreateForm(m.Instance())
+		// OnCreate 实现回调
+		if _, ok := form.(IOnCreate); ok {
+			addRequestFormCreateMap(createParamsPtr, form)
+		}
+		// CreateParams 实现回调
+		if _, ok := form.(IOnCreateParams); ok {
+			addRequestCreateParamsMap(createParamsPtr, form)
+		}
+
+		formPtr := Application_CreateForm(m.Instance())
 		form.SetInstance(unsafePointer(formPtr))
 		if !isMain {
 			Form_SetGoPtr(formPtr, createParamsPtr)
-		}
-		// OnCreate 实现回调
-		if create, ok := form.(IOnCreate); ok {
-			create.OnFormCreate(form)
 		}
 	}
 	return nil

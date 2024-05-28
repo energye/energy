@@ -10,10 +10,13 @@ package cef
 
 import (
 	. "github.com/energye/energy/v2/api"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/emfs"
 	"github.com/energye/energy/v2/inits"
 	"github.com/energye/energy/v2/lcl"
+	"github.com/energye/energy/v2/pkgs/macapp"
 	"github.com/energye/energy/v2/types"
+	"os"
 	"unsafe"
 )
 
@@ -1718,7 +1721,21 @@ func eventCallbackProc(f uintptr, args uintptr, _ int) uintptr {
 //
 //	初始化
 func GlobalInit(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
+	if common.IsDarwin() {
+		macapp.MacApp.IsCEF(true)
+	}
 	inits.Init(libs, resources)
 	SetCEFEventCallback(eventCallback)
 	SetCEFRemoveEventCallback(removeEventCallback)
+
+	// macos command line
+	if common.IsDarwin() {
+		argsList := lcl.NewStringList()
+		for _, v := range os.Args {
+			argsList.Add(v)
+		}
+		// 手动设置进程命令参数
+		SetCommandLine(argsList)
+		argsList.Free()
+	}
 }

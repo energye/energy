@@ -21,7 +21,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	m.SetCaption("Window Min Max Size")
 	m.WorkAreaCenter()
 	m.SetWidth(500)

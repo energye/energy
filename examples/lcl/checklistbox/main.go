@@ -19,7 +19,7 @@ func main() {
 	lcl.RunApp(&mainForm)
 }
 
-func (f *TMainForm) OnFormCreate(object lcl.IObject) {
+func (f *TMainForm) FormCreate(object lcl.IObject) {
 	f.SetCaption("TCheckListBox测试")
 	f.ScreenCenter()
 	f.EnabledMaximize(false)

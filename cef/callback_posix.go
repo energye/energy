@@ -16,14 +16,14 @@ package cef
 // #cgo darwin LDFLAGS: -mmacosx-version-min=10.10
 // #include <stdint.h>
 //
-// extern void* doEventCallbackProc(uintptr_t f, void* args, long argcount);
-// static void* doGetEventCallbackAddr() {
-//    return &doEventCallbackProc;
+// extern void* doCEFEventCallbackProc(uintptr_t f, void* args, long argcount);
+// static void* doGetCEFEventCallbackAddr() {
+//    return &doCEFEventCallbackProc;
 // }
 //
-// extern void* doRemoveEventCallbackProc(uintptr_t ptr);
-// static void* doRemoveEventCallbackAddr() {
-//    return &doRemoveEventCallbackProc;
+// extern void* doRemoveCEFEventCallbackProc(uintptr_t ptr);
+// static void* doRemoveCEFEventCallbackAddr() {
+//    return &doRemoveCEFEventCallbackProc;
 // }
 import "C"
 
@@ -31,19 +31,19 @@ import (
 	"unsafe"
 )
 
-//export doEventCallbackProc
-func doEventCallbackProc(f C.uintptr_t, args unsafe.Pointer, argcount C.long) unsafe.Pointer {
+//export doCEFEventCallbackProc
+func doCEFEventCallbackProc(f C.uintptr_t, args unsafe.Pointer, argcount C.long) unsafe.Pointer {
 	eventCallbackProc(uintptr(f), uintptr(args), int(argcount))
 	return nil
 }
 
-//export doRemoveEventCallbackProc
-func doRemoveEventCallbackProc(ptr C.uintptr_t) unsafe.Pointer {
+//export doRemoveCEFEventCallbackProc
+func doRemoveCEFEventCallbackProc(ptr C.uintptr_t) unsafe.Pointer {
 	removeEventCallbackProc(uintptr(ptr))
 	return nil
 }
 
 var (
-	eventCallback       = uintptr(C.doGetEventCallbackAddr())
-	removeEventCallback = uintptr(C.doRemoveEventCallbackAddr())
+	eventCallback       = uintptr(C.doGetCEFEventCallbackAddr())
+	removeEventCallback = uintptr(C.doRemoveCEFEventCallbackAddr())
 )

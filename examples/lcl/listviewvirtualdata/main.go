@@ -41,7 +41,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (f *TMainFrom) OnFormCreate(sender lcl.IObject) {
+func (f *TMainFrom) FormCreate(sender lcl.IObject) {
 	f.isWindows = runtime.GOOS == "windows"
 	fmt.Println("OnCreate")
 	f.SetWidth(800)

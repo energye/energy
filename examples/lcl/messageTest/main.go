@@ -23,7 +23,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (f *TForm1) OnFormCreate(sender lcl.IObject) {
+func (f *TForm1) FormCreate(sender lcl.IObject) {
 	form1.SetCaption("Message Test")
 	form1.SetPosition(types.PoScreenCenter)
 	form1.EnabledMaximize(false)

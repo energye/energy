@@ -26,7 +26,7 @@ type TMainForm struct {
 
 var MainForm *TMainForm
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	//m.SetBorderStyleForFormBorderStyle(types.BsNone) // 边框窗口无边框
 	m.SetColor(colors.ClWhite) // 边框窗口的填充颜色, 做为透明色
 	//m.SetFormStyle(types.FsStayOnTop)

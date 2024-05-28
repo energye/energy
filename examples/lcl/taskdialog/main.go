@@ -22,7 +22,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 	f.ScreenCenter()
 	f.SetCaption("taskDialog演示")
 

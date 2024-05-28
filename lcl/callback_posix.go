@@ -31,9 +31,14 @@ package lcl
 //    return &doThreadSyncCallbackProc;
 // }
 //
-// extern void* doRequestCallCreateParamsCallbackProc(uintptr_t ptr, void* params);
+// extern void* doRequestCallCreateParamsCallbackProc(uintptr_t ptr, void* sender, void* params);
 // static void* doRequestCallCreateParamsCallbackAddr() {
 //    return &doRequestCallCreateParamsCallbackProc;
+// }
+//
+// extern void* doRequestCallFormCreateCallbackProc(uintptr_t ptr, void* sender);
+// static void* doRequestCallFormCreateCallbackAddr() {
+//    return &doRequestCallFormCreateCallbackProc;
 // }
 //
 // extern void* doRemoveEventCallbackProc(uintptr_t ptr);
@@ -65,8 +70,14 @@ func doThreadSyncCallbackProc() unsafe.Pointer {
 }
 
 //export doRequestCallCreateParamsCallbackProc
-func doRequestCallCreateParamsCallbackProc(ptr C.uintptr_t, params unsafe.Pointer) unsafe.Pointer {
-	requestCallCreateParamsCallbackProc(uintptr(ptr), uintptr(params))
+func doRequestCallCreateParamsCallbackProc(ptr C.uintptr_t, sender, params unsafe.Pointer) unsafe.Pointer {
+	requestCallCreateParamsCallbackProc(uintptr(ptr), uintptr(sender), uintptr(params))
+	return nil
+}
+
+//export doRequestCallFormCreateCallbackProc
+func doRequestCallFormCreateCallbackProc(ptr C.uintptr_t, sender unsafe.Pointer) unsafe.Pointer {
+	requestCallFormCreateCallbackProc(uintptr(ptr), uintptr(sender))
 	return nil
 }
 
@@ -81,5 +92,6 @@ var (
 	messageCallback                 = uintptr(C.doGetMessageCallbackAddr())
 	threadSyncCallback              = uintptr(C.doGetThreadSyncCallbackAddr())
 	requestCallCreateParamsCallback = uintptr(C.doRequestCallCreateParamsCallbackAddr())
+	requestCallFormCreateCallback   = uintptr(C.doRequestCallFormCreateCallbackAddr())
 	removeEventCallback             = uintptr(C.doRemoveEventCallbackAddr())
 )

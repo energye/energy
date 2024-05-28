@@ -50,8 +50,8 @@ type WindowForm struct {
 }
 
 // 窗口创建时回调事件
-func (m *WindowForm) OnFormCreate(sender lcl.IObject) {
-	fmt.Println("OnFormCreate")
+func (m *WindowForm) FormCreate(sender lcl.IObject) {
+	fmt.Println("FormCreate")
 	m.SetCaption("Energy - OSR")
 	m.SetWidth(1400)
 	m.SetHeight(900)

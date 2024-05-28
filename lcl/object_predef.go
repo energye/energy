@@ -39,7 +39,9 @@ func (m *TObject) Is() TIs {
 }
 
 func (m *TObject) SetInstance(instance unsafe.Pointer) {
-	m.instance = instance
+	if uintptr(m.instance) != uintptr(instance) {
+		m.instance = instance
+	}
 }
 
 func (m *TObject) free(index int) {

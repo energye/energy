@@ -45,7 +45,7 @@ func main() {
 	lcl.Application.Run()
 }
 
-func (f *TMainFrom) OnFormCreate(sender lcl.IObject) {
+func (f *TMainFrom) FormCreate(sender lcl.IObject) {
 	f.SetDoubleBuffered(true)
 	f.SetHeight(600)
 	f.SetWidth(800)

@@ -25,12 +25,11 @@ func main() {
 	inits.Init(nil, nil)
 	lcl.Application.Initialize()
 	lcl.Application.SetScaled(true)
-	lcl.Application.SetMainFormOnTaskBar(true)
 	lcl.Application.CreateForm(&MainForm, &Form1)
 	lcl.Application.Run()
 }
 
-func (m *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (m *TMainForm) FormCreate(sender lcl.IObject) {
 	fmt.Println("main create")
 	m.SetCaption("Main")
 	m.SetPosition(types.PoScreenCenter)
@@ -54,7 +53,7 @@ func (m *TMainForm) CreateParams(params *types.TCreateParams) {
 	fmt.Println("调用此过程  TMainForm.CreateParams")
 }
 
-func (m *TForm1) OnFormCreate(sender lcl.IObject) {
+func (m *TForm1) FormCreate(sender lcl.IObject) {
 	fmt.Println("form1 create")
 	m.SetCaption("Form1")
 }

@@ -29,7 +29,7 @@ func main() {
 	lcl.RunApp(&mainForm, &form1)
 }
 
-func (f *TMainForm) OnFormCreate(sender lcl.IObject) {
+func (f *TMainForm) FormCreate(sender lcl.IObject) {
 
 	f.SetCaption("Hello")
 	f.EnabledMaximize(false)
@@ -54,7 +54,7 @@ func (f *TMainForm) CreateParams(params *types.TCreateParams) {
 	fmt.Println("调用此过程  TMainForm.CreateParams")
 }
 
-func (f *TForm1) OnFormCreate(sender lcl.IObject) {
+func (f *TForm1) FormCreate(sender lcl.IObject) {
 	fmt.Println("onCreate")
 	f.Button1 = lcl.NewButton(f)
 	fmt.Println("f.Button1:", f.Button1.Instance())
