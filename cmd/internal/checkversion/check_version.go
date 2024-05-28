@@ -13,20 +13,76 @@ package checkversion
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"runtime"
+	"strconv"
 )
 
-//Check 检查版本
+const (
+	cliVersionURL = "https://energye.github.io/data/command-line-tools.json"
+)
+
+type cliVersion struct {
+	Build       int    `json:"build"`
+	Major       int    `json:"major"`
+	Minor       int    `json:"minor"`
+	DownloadURL string `json:"downloadUrl"`
+}
+
+// Check 检查版本
 func Check() {
-	term.Section.Println(" current", fmt.Sprintf("%d.%d.%d", term.Build, term.Major, term.Minor))
-	remoteVersion()
+	term.Section.Println(" Current:", fmt.Sprintf("%d.%d.%d", term.Build, term.Major, term.Minor))
+	cli, err := remoteVersion()
+	if err != nil {
+		term.Logger.Error("Check cli version failed to obtain remote information: " + err.Error())
+		return
+	}
+	term.Section.Println(" Latest :", fmt.Sprintf("%d.%d.%d", cli.Build, cli.Major, cli.Minor))
+	cv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", term.Build, term.Major, term.Minor))
+	if err != nil {
+		term.Logger.Error("Check cli version failed: " + err.Error())
+		return
+	}
+	rv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", cli.Build, cli.Major, cli.Minor))
+	if err != nil {
+		term.Logger.Error("Check cli version failed: " + err.Error())
+		return
+	}
+	if cv < rv {
+		// 先这样，以后在规范名字
+		cliName := "energy-" + runtime.GOOS
+		if consts.IsARM64 {
+			cliName += "arm"
+		}
+		if consts.IsWindows && consts.Is386 {
+			cliName += "-32"
+		} else {
+			cliName += "-64"
+		}
+		cliName += ".zip"
+		//term.Section.Println("There is a new version available, would you like to update?(y)")
+		downloadURL, _ := url.JoinPath(cli.DownloadURL, cliName)
+		term.Section.Println("There new version available. Download:", downloadURL)
+	}
 }
 
 // 获取远程版本
-func remoteVersion() {
-	term.Section.Println(" latest ", fmt.Sprintf("%d.%d.%d", term.Build, term.Major, term.Minor))
+func remoteVersion() (*cliVersion, error) {
+	data, err := tools.Get(cliVersionURL)
+	if err != nil {
+		return nil, err
+	}
+	var cli cliVersion
+	err = json.Unmarshal(data, &cli)
+	if err != nil {
+		return nil, err
+	}
+	return &cli, nil
 }
 
 type GeoInfo struct {
