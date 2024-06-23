@@ -14,11 +14,11 @@
 package build
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	toolsCommand "github.com/energye/energy/v2/tools/command"
+	"github.com/energye/energy/v3/cmd/internal/command"
+	toolsCommand "github.com/energye/energy/v3/cmd/internal/pkgs/command"
+	"github.com/energye/energy/v3/cmd/internal/project"
+	"github.com/energye/energy/v3/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"strings"
 )
 

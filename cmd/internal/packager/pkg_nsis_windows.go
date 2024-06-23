@@ -16,11 +16,11 @@ package packager
 import (
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/assets"
-	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/energy/v2/tools/command"
+	"github.com/energye/energy/v3/cmd/internal/assets"
+	"github.com/energye/energy/v3/cmd/internal/pkgs/command"
+	"github.com/energye/energy/v3/cmd/internal/project"
+	"github.com/energye/energy/v3/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"os"
 	"path/filepath"
 )

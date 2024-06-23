@@ -13,12 +13,12 @@ package checkversion
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/term"
 	"io/ioutil"
 	"net/http"
 )
 
-//Check 检查版本
+// Check 检查版本
 func Check() {
 	term.Section.Println(" current", fmt.Sprintf("%d.%d.%d", term.Build, term.Major, term.Minor))
 	remoteVersion()

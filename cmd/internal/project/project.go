@@ -12,8 +12,8 @@ package project
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/energye/energy/v3/cmd/internal/consts"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -186,7 +186,7 @@ type Author struct {
 	Email string `json:"email"`
 }
 
-//  APP项目配置转换到Project
+// APP项目配置转换到Project
 func parse(projectData []byte) (*Project, error) {
 	m := &Project{}
 	err := json.Unmarshal(projectData, m)

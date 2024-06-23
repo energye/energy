@@ -8,19 +8,19 @@
 //
 //----------------------------------------
 
-//Package main energy command-line
+// Package main energy command-line
 package main
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal"
-	"github.com/energye/energy/v2/cmd/internal/checkversion"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/energy/v2/tools/homedir"
-	"github.com/jessevdk/go-flags"
+	"github.com/energye/energy/v3/cmd/internal"
+	"github.com/energye/energy/v3/cmd/internal/checkversion"
+	"github.com/energye/energy/v3/cmd/internal/command"
+	"github.com/energye/energy/v3/cmd/internal/consts"
+	"github.com/energye/energy/v3/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/tools"
+	"github.com/energye/energy/v3/cmd/internal/tools/homedir"
+	flags "github.com/jessevdk/go-flags"
 	"io/ioutil"
 	"os"
 	"path/filepath"

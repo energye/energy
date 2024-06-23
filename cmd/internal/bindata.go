@@ -13,8 +13,8 @@
 package internal
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/bindata"
-	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v3/cmd/internal/bindata"
+	"github.com/energye/energy/v3/cmd/internal/command"
 )
 
 var CmdBindata = &command.Command{

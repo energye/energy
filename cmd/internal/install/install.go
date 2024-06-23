@@ -16,11 +16,11 @@ import (
 	"compress/gzip"
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/env"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/energye/energy/v3/cmd/internal/command"
+	"github.com/energye/energy/v3/cmd/internal/consts"
+	"github.com/energye/energy/v3/cmd/internal/env"
+	"github.com/energye/energy/v3/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"github.com/pterm/pterm"
 	"io"
 	"io/fs"
@@ -260,11 +260,12 @@ func z7zCanInstall() bool {
 }
 
 // 检查当前环境
-//  golang, nsis, cef, upx
-//  golang: all os
-//  nsis: windows
-//  cef: all os
-//  upx: windows amd64, 386, linux amd64, arm64
+//
+//	golang, nsis, cef, upx
+//	golang: all os
+//	nsis: windows
+//	cef: all os
+//	upx: windows amd64, 386, linux amd64, arm64
 func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	result = make([]*softEnf, 0)
 	var check = func(chkInstall func() (string, bool), name string, yes func()) {
@@ -747,7 +748,8 @@ func isFileExist(filename string, filesize int64) bool {
 }
 
 // DownloadFile 下载文件
-//  如果文件存在大小一样不再下载
+//
+//	如果文件存在大小一样不再下载
 func DownloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
 	var (
 		fsize   int64

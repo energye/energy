@@ -12,7 +12,7 @@
 package bindata
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v3/cmd/internal/command"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -65,9 +65,9 @@ func argsConfig(bind command.Bindata) *Config {
 // parseRecursive determines whether the given path has a recursive indicator and
 // returns a new path with the recursive indicator chopped off if it does.
 //
-//  ex:
-//      /path/to/foo/...    -> (/path/to/foo, true)
-//      /path/to/bar        -> (/path/to/bar, false)
+//	ex:
+//	    /path/to/foo/...    -> (/path/to/foo, true)
+//	    /path/to/bar        -> (/path/to/bar, false)
 func parseInput(path string) InputConfig {
 	if strings.HasSuffix(path, "/...") {
 		return InputConfig{

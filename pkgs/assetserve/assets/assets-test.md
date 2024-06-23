@@ -1,1 +1,0 @@
-assets test embed.FS

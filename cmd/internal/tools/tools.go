@@ -12,8 +12,7 @@ package tools
 
 import (
 	"bytes"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/tools"
+	"github.com/energye/energy/v3/cmd/internal/consts"
 	"io/ioutil"
 	"math"
 	"net/http"
@@ -188,19 +187,21 @@ func CheckCEFDir() bool {
 		return ""
 	}()
 	if lib != "" {
-		return tools.IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
+		return IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
 	}
 	return false
 }
 
 // ExePath
-//  返回当前执行文件路径
+//
+//	返回当前执行文件路径
 func ExePath() string {
 	return exePath
 }
 
 // CurrentExecuteDir
-//  返回当前执行目录
+//
+//	返回当前执行目录
 func CurrentExecuteDir() string {
 	return currentExecuteDir
 }

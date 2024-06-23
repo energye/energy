@@ -15,10 +15,10 @@ package env
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	toolsCommand "github.com/energye/energy/v2/tools/command"
+	"github.com/energye/energy/v3/cmd/internal/consts"
+	toolsCommand "github.com/energye/energy/v3/cmd/internal/pkgs/command"
+	"github.com/energye/energy/v3/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"path/filepath"
 	"strings"
 )

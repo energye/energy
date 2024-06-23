@@ -14,7 +14,7 @@
 package term
 
 import (
-	"github.com/energye/energy/v2/lcl/rtl/version"
+	"github.com/energye/lcl/rtl/version"
 	"github.com/pterm/pterm"
 )
 

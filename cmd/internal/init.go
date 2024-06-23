@@ -14,9 +14,9 @@ package internal
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/initialize"
-	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v3/cmd/internal/command"
+	"github.com/energye/energy/v3/cmd/internal/initialize"
+	"github.com/energye/energy/v3/cmd/internal/term"
 	"github.com/pterm/pterm"
 	"os"
 	"strings"

@@ -14,8 +14,8 @@ import (
 	"embed"
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/energye/energy/v3/cmd/internal/project"
+	"github.com/energye/energy/v3/cmd/internal/tools"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -42,7 +42,8 @@ func BuildOutPath(proj *project.Project) string {
 }
 
 // ReadFile
-//  读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
+//
+//	读取文件，根据项目配置先在本地目录读取，如果读取失败，则在内置资源目录读取
 func ReadFile(proj *project.Project, assetsFSPath, file string) ([]byte, error) {
 	var (
 		content []byte
