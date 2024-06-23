@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"time"
@@ -32,20 +33,22 @@ func main() {
 		server.Assets = resources
 		go server.StartHttpServer()
 		// 在这里模拟传递参数在主进程触发JS监听的事件
+	})
+	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// 定时执行web js
-		go timeTask()
+		go timeTask(window)
 	})
 	//运行应用
 	cef.Run(cefApp)
 }
 
 // 定时执行web js
-func timeTask() {
+func timeTask(window cef.IBrowserWindow) {
 	//这里模拟go中触发js监听的事件
 	var param0 = 0
 	for {
 		//每1秒钟执行一次
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 2)
 		fmt.Println("timeTask", param0)
 		param0++
 		//将数据发送出去
@@ -55,5 +58,16 @@ func timeTask() {
 			//需要正确的获取类型，否则会失败
 			fmt.Println("JS返回数据:", r1)
 		})
+		window.Chromium().AsTargetWindow()
+		browser := window.Browser()
+		frameNames := browser.GetFrameNames()
+		for i := 0; i < browser.FrameCount(); i++ {
+			frame := browser.GetFrameByName(frameNames[i].Value)
+			if !frame.IsMain() {
+				fmt.Println("\tname:", frameNames[i].Name, "value:", frameNames[i].Value, "frameId:", frame.Identifier())
+				targetFrame := target.NewTarget(frame, window.Browser().BrowserId(), frame.Identifier())
+				ipc.EmitTarget("js-on-event-demo", targetFrame, fmt.Sprintf("当前FrameId: %d Go发送的数据: %d", frame.Identifier(), param0), float64(param0+10))
+			}
+		}
 	}
 }
