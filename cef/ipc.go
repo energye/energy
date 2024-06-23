@@ -52,7 +52,7 @@ var (
 	ipcBrowser             *ipcBrowserProcess // 主进程 IPC
 )
 
-// ipcEmitHandler ipc.emit 处理器
+// ipc.emit 处理器
 type ipcEmitHandler struct {
 	handler           *ICefV8Handler         // ipc.emit handler
 	handlerSync       *ICefV8Handler         // ipc.emitSync handler
@@ -61,14 +61,14 @@ type ipcEmitHandler struct {
 	callbackLock      sync.Mutex             // ipc.emit lock
 }
 
-// ipcOnHandler ipc.on 处理器
+// ipc.on 处理器
 type ipcOnHandler struct {
 	handler      *ICefV8Handler          // ipc.on handler
 	callbackList map[string]*ipcCallback // ipc.on callbackList
 	callbackLock sync.Mutex              // ipc.emit lock
 }
 
-// ipcCallback ipc.emit 回调结果
+// ipc.emit 回调结果
 type ipcCallback struct {
 	isSync     bool         //同否同步 true:同步 false:异步, 默认false
 	resultType result_type  //返回值类型 0:function 1:variable 默认:0
@@ -77,7 +77,7 @@ type ipcCallback struct {
 	name       *ICefV8Value //事件名称
 }
 
-// isIPCInternalKey IPC 内部定义使用 key 不允许使用
+// IPC 内部定义使用 key 不允许使用
 func isIPCInternalKey(key string) bool {
 	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCDRAG || key == internalIPCEmitWait ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
@@ -86,15 +86,15 @@ func isIPCInternalKey(key string) bool {
 
 }
 
-// ipcInit 初始化
+// 初始化
 func ipcInit() {
 	isSingleProcess := application.SingleProcess()
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
-			waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
-			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-			onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+			waitChan:       &ipc.WaitChan{Pending: new(sync.Map)},
+			emitHandler:    &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+			onFrameHandler: make(map[int64]*ipcOnHandler),
 		}
 		ipc.CreateBrowserIPC()                            // Go IPC browser
 		ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
@@ -104,16 +104,16 @@ func ipcInit() {
 			ipc.CreateBrowserIPC() // Go IPC browser
 		} else if process.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
-				waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
-				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-				onHandler:   &ipcOnHandler{callbackList: make(map[string]*ipcCallback)},
+				waitChan:       &ipc.WaitChan{Pending: new(sync.Map)},
+				emitHandler:    &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+				onFrameHandler: make(map[int64]*ipcOnHandler),
 			}
 			ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
 		}
 	}
 }
 
-// addCallback
+// 添加一个回调函数
 func (m *ipcEmitHandler) addCallback(callback *ipcCallback) int32 {
 	//return uintptr(unsafe.Pointer(m.callbackList.PushBack(callback)))
 	m.callbackLock.Lock()
@@ -122,7 +122,7 @@ func (m *ipcEmitHandler) addCallback(callback *ipcCallback) int32 {
 	return m.callbackMessageId
 }
 
-// nextMessageId 获取下一个消息ID
+// 获取下一个消息ID
 func (m *ipcEmitHandler) nextMessageId() int32 {
 	m.callbackMessageId++
 	if m.callbackMessageId == -1 {
@@ -131,7 +131,7 @@ func (m *ipcEmitHandler) nextMessageId() int32 {
 	return m.callbackMessageId
 }
 
-// getCallback 返回回调函数
+// 返回回调函数
 func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 	//return (*list.Element)(unsafe.Pointer(ptr)).Value.(*ipcCallback)
 	m.callbackLock.Lock()
@@ -143,7 +143,7 @@ func (m *ipcEmitHandler) getCallback(messageId int32) *ipcCallback {
 	return nil
 }
 
-// clear 清空所有回调函数
+// 清空所有回调函数
 func (m *ipcEmitHandler) clear() {
 	for _, v := range m.callbackList {
 		v.function.SetCanNotFree(false)
@@ -154,7 +154,7 @@ func (m *ipcEmitHandler) clear() {
 	m.callbackList = make(map[int32]*ipcCallback)
 }
 
-// addCallback 根据事件名添加回调函数
+// 根据事件名添加回调函数
 func (m *ipcOnHandler) addCallback(eventName string, callback *ipcCallback) {
 	//return uintptr(unsafe.Pointer(m.callbackList.PushBack(callback)))
 	m.callbackLock.Lock()
@@ -168,7 +168,7 @@ func (m *ipcOnHandler) addCallback(eventName string, callback *ipcCallback) {
 	m.callbackList[eventName] = callback
 }
 
-// removeCallback 根据事件名移除回调函数
+// 根据事件名移除回调函数
 func (m *ipcOnHandler) removeCallback(eventName string) {
 	//m.callbackList.Remove((*list.Element)(unsafe.Pointer(ptr)))
 	m.callbackLock.Lock()
@@ -176,7 +176,7 @@ func (m *ipcOnHandler) removeCallback(eventName string) {
 	delete(m.callbackList, eventName)
 }
 
-// getCallback 根据事件名返回回调函数
+// 根据事件名返回回调函数
 func (m *ipcOnHandler) getCallback(eventName string) *ipcCallback {
 	//return (*list.Element)(unsafe.Pointer(ptr)).Value.(*ipcCallback)
 	m.callbackLock.Lock()
@@ -184,7 +184,7 @@ func (m *ipcOnHandler) getCallback(eventName string) *ipcCallback {
 	return m.callbackList[eventName]
 }
 
-// clear 清空所有回调函数
+// 清空所有回调函数
 func (m *ipcOnHandler) clear() {
 	for _, v := range m.callbackList {
 		v.function.SetCanNotFree(false)

@@ -654,6 +654,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_StopLoad", 0),
 		dllimports.NewEnergyImport("CEFBrowser_FrameCount", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GetFrameNames", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetFrameIdentifiers", 0),
 		dllimports.NewEnergyImport("CEFBrowser_Find", 0),
 		dllimports.NewEnergyImport("CEFBrowser_StopFinding", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GetRequestContext", 0),

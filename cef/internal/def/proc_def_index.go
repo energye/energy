@@ -654,6 +654,7 @@ const (
 	CEFBrowser_StopLoad
 	CEFBrowser_FrameCount
 	CEFBrowser_GetFrameNames
+	CEFBrowser_GetFrameIdentifiers
 	CEFBrowser_Find
 	CEFBrowser_StopFinding
 	CEFBrowser_GetRequestContext

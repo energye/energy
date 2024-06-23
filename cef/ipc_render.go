@@ -26,24 +26,27 @@ import (
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
 	isInitRenderIPC bool
-	ipcObject       *ICefV8Value    // ipc object
-	emitHandler     *ipcEmitHandler // ipc.emit handler
-	onHandler       *ipcOnHandler   // ipc.on handler
+	ipcObject       *ICefV8Value            // ipc object
+	emitHandler     *ipcEmitHandler         // ipc.emit handler
+	onHandler       map[int64]*ipcOnHandler // ipc.on handler
 	waitChan        *ipc.WaitChan
 }
 
-func (m *ipcRenderProcess) clear() {
+func (m *ipcRenderProcess) clear(frameId int64) {
 	if m.ipcObject != nil {
 		m.ipcObject.Free()
 		m.ipcObject = nil
 	}
 	if m.onHandler != nil {
-		m.onHandler.clear()
+		if on, ok := m.onHandler[frameId]; ok {
+			on.clear()
+			delete(m.onHandler, frameId)
+		}
 	}
 }
 
-// jsOnEvent JS ipc.on 监听事件
-func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+// JS ipc.on 监听事件
+func (m *ipcOnHandler) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	if name != internalIPCOn {
 		return
 	} else if arguments.Size() != 2 { //必须是2个参数
@@ -74,13 +77,17 @@ func (m *ipcRenderProcess) jsOnEvent(name string, object *ICefV8Value, arguments
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
 	//ipc on
-	m.onHandler.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback), name: V8ValueRef.UnWrap(onName)})
+	m.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback), name: V8ValueRef.UnWrap(onName)})
 	result = true
 	return
 }
 
 // Go ipc.emit 执行JS事件
 func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+	on, ok := m.onHandler[frame.Identifier()]
+	if !ok {
+		return false
+	}
 	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
 	//接收二进制数据失败
@@ -120,7 +127,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		}
 	}()
 
-	if callback := ipcRender.onHandler.getCallback(emitName); callback != nil {
+	if callback := on.getCallback(emitName); callback != nil {
 		var callbackArgsBytes interface{}
 		//enter v8context
 		ctx := frame.V8Context()
@@ -737,10 +744,10 @@ func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, 
 }
 
 // ipc
-func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
+func (m *ipcRenderProcess) makeIPC(frameId int64, context *ICefV8Context) {
 	if m.ipcObject != nil {
 		// 刷新时释放掉
-		m.clear()
+		m.clear(frameId)
 	}
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
@@ -751,14 +758,24 @@ func (m *ipcRenderProcess) makeIPC(context *ICefV8Context) {
 	m.emitHandler.handlerSync.Execute(m.jsExecuteGoEvent)
 
 	// ipc on
-	m.onHandler.handler = V8HandlerRef.New()
-	m.onHandler.handler.Execute(m.jsOnEvent)
+	var on *ipcOnHandler
+	if handler, ok := m.onHandler[frameId]; ok {
+		on = handler
+	} else {
+		on = &ipcOnHandler{handler: V8HandlerRef.New(), callbackList: make(map[string]*ipcCallback)}
+		on.handler.Execute(on.jsOnEvent)
+		m.onHandler[frameId] = on
+	}
+
+	//m.onHandler.handler = V8HandlerRef.New()
+	//m.onHandler.handler.Execute(m.jsOnEvent)
+	//on.handler = V8HandlerRef.New()
 
 	// ipc object
 	m.ipcObject = V8ValueRef.NewObject(nil)
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCEmitWait, V8ValueRef.newFunction(internalIPCEmitWait, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, m.onHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, on.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 
 	// ipc key to v8 global
 	context.Global().setValueByKey(internalIPC, m.ipcObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)

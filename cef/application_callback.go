@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	"github.com/energye/energy/v2/cef/internal/process"
 	"github.com/energye/energy/v2/consts"
@@ -21,11 +22,12 @@ import (
 
 // 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
+	fmt.Println("appOnContextCreated browserId:", browser.Identifier(), " frameId:", frame.Identifier(), "IsMain:", frame.IsMain())
 	process.Current.SetBrowserId(browser.Identifier())                           // 当前进程 browserID
 	process.Current.SetFrameId(frame.Identifier())                               // 当前进程 frameId
 	ipc.RenderChan().SetRealityChannel(browser.Identifier(), frame.Identifier()) // 设置并更新真实的通道ID
 	ipcRender.registerGoWaitReplayEvent()                                        // render ipc
-	ipcRender.makeIPC(context)                                                   // render ipc make
+	ipcRender.makeIPC(frame.Identifier(), context)                               // render ipc make
 	makeProcess(browser, frame, context)                                         // process make
 }
 

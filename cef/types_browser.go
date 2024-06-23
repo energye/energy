@@ -520,6 +520,15 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	return frameNames
 }
 
+func (m *ICefBrowser) GetFrameIdentifiers() []int64 {
+	var list uintptr
+	var count uint32
+	var ids uintptr
+	imports.Proc(def.CEFBrowser_GetFrameIdentifiers).Call(m.Instance(), uintptr(unsafe.Pointer(&list)), uintptr(unsafe.Pointer(&count)), uintptr(unsafe.Pointer(&ids)))
+	// TODO 未取到正确结果
+	return nil
+}
+
 // Find 检索页面文本
 func (m *ICefBrowser) Find(searchText string, forward, matchCase, findNext bool) {
 	if !m.IsValid() {

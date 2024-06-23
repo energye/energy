@@ -264,6 +264,28 @@ func (m *ICefFrame) Parent() *ICefFrame {
 	return &ICefFrame{instance: unsafe.Pointer(result)}
 }
 
+func (m *ICefFrame) Target(targetType ...target.Type) target.ITarget {
+	if !m.IsValid() {
+		return nil
+	}
+	browse := m.Browser()
+	if !browse.IsValid() {
+		return nil
+	}
+	return target.NewTarget(m, browse.Identifier(), m.Identifier(), targetType...)
+}
+
+func (m *ICefFrame) IsClosing() bool {
+	return false //Determine whether the window has been closed by oneself
+}
+
+func (m *ICefFrame) ProcessMessage() target.IProcessMessage {
+	if m == nil {
+		return nil
+	}
+	return m
+}
+
 func (m *ICefFrame) Free() {
 	if !m.IsValid() {
 		return
