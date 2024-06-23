@@ -58,7 +58,6 @@ func timeTask(window cef.IBrowserWindow) {
 			//需要正确的获取类型，否则会失败
 			fmt.Println("JS返回数据:", r1)
 		})
-		window.Chromium().AsTargetWindow()
 		browser := window.Browser()
 		frameNames := browser.GetFrameNames()
 		for i := 0; i < browser.FrameCount(); i++ {

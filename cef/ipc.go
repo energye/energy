@@ -92,9 +92,9 @@ func ipcInit() {
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{
-			waitChan:       &ipc.WaitChan{Pending: new(sync.Map)},
-			emitHandler:    &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-			onFrameHandler: make(map[int64]*ipcOnHandler),
+			waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
+			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+			onHandler:   make(map[int64]*ipcOnHandler),
 		}
 		ipc.CreateBrowserIPC()                            // Go IPC browser
 		ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
@@ -104,9 +104,9 @@ func ipcInit() {
 			ipc.CreateBrowserIPC() // Go IPC browser
 		} else if process.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
-				waitChan:       &ipc.WaitChan{Pending: new(sync.Map)},
-				emitHandler:    &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-				onFrameHandler: make(map[int64]*ipcOnHandler),
+				waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
+				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
+				onHandler:   make(map[int64]*ipcOnHandler),
 			}
 			ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
 		}
