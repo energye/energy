@@ -13,8 +13,8 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/pkgs/channel"
+	"github.com/energye/energy/v3/cef/ipc/argument"
+	"github.com/energye/energy/v3/pkgs/channel"
 )
 
 // Main Process IPC

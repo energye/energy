@@ -15,15 +15,20 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/internal/cef"
-	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/cef/ipc/types"
-	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v3/cef/internal/cef"
+	"github.com/energye/energy/v3/cef/ipc/callback"
+	"github.com/energye/energy/v3/cef/ipc/context"
+	"github.com/energye/energy/v3/cef/ipc/target"
+	"github.com/energye/energy/v3/cef/ipc/types"
+	"github.com/energye/lcl/process"
 	"reflect"
 	"sync"
 	"time"
+)
+
+const (
+	InternalIPCGoExecuteGoEvent       = "GoEmitGo"
+	InternalIPCGoExecuteJSEventReplay = "GoEmitGoReplay"
 )
 
 var (

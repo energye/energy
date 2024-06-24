@@ -11,12 +11,12 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/cef/process"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/channel"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/energye/cef/cef"
+	"github.com/energye/energy/v3/cef/internal/process"
+	"github.com/energye/energy/v3/cef/ipc/argument"
+	"github.com/energye/energy/v3/cef/ipc/context"
+	"github.com/energye/energy/v3/pkgs/channel"
+	"github.com/energye/lcl/pkgs/json"
 )
 
 // listen
@@ -41,7 +41,7 @@ func (m *renderIPCChan) goExecuteGoEventReplay(ctx channel.IIPCContext, argument
 		if argumentList.JSON() != nil {
 			argumentJSONArray = argumentList.JSON().JSONArray()
 		}
-		ipcContext := context.NewContext(process.BrowserId(), ctx.ChannelId(), false, argumentJSONArray)
+		ipcContext := context.NewContext(process.Current.BrowserId(), ctx.ChannelId(), false, argumentJSONArray)
 		// Call listener function
 		// Based on the currently defined event listening
 		// 1. Callback Function - Context Mode
@@ -68,7 +68,7 @@ func (m *renderIPCChan) goExecuteGoEvent(ctx channel.IIPCContext, argumentList a
 		if argumentList.JSON() != nil {
 			argumentJSONArray = argumentList.JSON().JSONArray()
 		}
-		ipcContext = context.NewContext(process.BrowserId(), ctx.ChannelId(), messageId != 0, argumentJSONArray)
+		ipcContext = context.NewContext(process.Current.BrowserId(), ctx.ChannelId(), messageId != 0, argumentJSONArray)
 		// Call listener function
 		// Based on the currently defined event listening
 		// 1. Callback Function - Context Mode
@@ -90,7 +90,7 @@ func (m *renderIPCChan) goExecuteGoEvent(ctx channel.IIPCContext, argumentList a
 				replyMessage.Data = replay.Result()
 			}
 		}
-		if ctx.ProcessId() == consts.PID_RENDER {
+		if ctx.ProcessId() == cef.PID_RENDERER {
 			m.ipc.SendToChannel(ctx.ChannelId(), replyMessage.Bytes())
 		} else {
 			m.ipc.Send(replyMessage.Bytes())

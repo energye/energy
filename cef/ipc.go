@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"github.com/energye/cef/cef"
 	"github.com/energye/energy/v3/cef/internal/ipc"
 	"github.com/energye/lcl/process"
 	"sync"
@@ -54,8 +55,8 @@ var (
 
 // ipc.emit 处理器
 type ipcEmitHandler struct {
-	handler           *ICefV8Handler         // ipc.emit handler
-	handlerSync       *ICefV8Handler         // ipc.emitSync handler
+	handler           cef.ICefv8Handler      // ipc.emit handler
+	handlerSync       cef.ICefv8Handler      // ipc.emitSync handler
 	callbackList      map[int32]*ipcCallback // ipc.emit callbackList *list.List
 	callbackMessageId int32                  // ipc.emit messageId
 	callbackLock      sync.Mutex             // ipc.emit lock
@@ -63,18 +64,18 @@ type ipcEmitHandler struct {
 
 // ipc.on 处理器
 type ipcOnHandler struct {
-	handler      *ICefV8Handler          // ipc.on handler
+	handler      cef.ICefv8Handler       // ipc.on handler
 	callbackList map[string]*ipcCallback // ipc.on callbackList
 	callbackLock sync.Mutex              // ipc.emit lock
 }
 
 // ipc.emit 回调结果
 type ipcCallback struct {
-	isSync     bool         //同否同步 true:同步 false:异步, 默认false
-	resultType result_type  //返回值类型 0:function 1:variable 默认:0
-	variable   *ICefV8Value //回调函数, 根据 resultType
-	function   *ICefV8Value //回调函数, 根据 resultType
-	name       *ICefV8Value //事件名称
+	isSync     bool            //同否同步 true:同步 false:异步, 默认false
+	resultType result_type     //返回值类型 0:function 1:variable 默认:0
+	variable   cef.ICefv8Value //回调函数, 根据 resultType
+	function   cef.ICefv8Value //回调函数, 根据 resultType
+	name       cef.ICefv8Value //事件名称
 }
 
 // IPC 内部定义使用 key 不允许使用
@@ -88,7 +89,7 @@ func isIPCInternalKey(key string) bool {
 
 // 初始化
 func ipcInit() {
-	isSingleProcess := application.SingleProcess()
+	isSingleProcess := cef.GlobalCEFApp().SingleProcess()
 	if isSingleProcess {
 		ipcBrowser = &ipcBrowserProcess{}
 		ipcRender = &ipcRenderProcess{

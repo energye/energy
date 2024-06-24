@@ -12,8 +12,8 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/pkgs/channel"
+	"github.com/energye/energy/v3/cef/ipc/argument"
+	"github.com/energye/energy/v3/pkgs/channel"
 )
 
 // Rendering (sub) process IPC
@@ -28,7 +28,8 @@ type IRenderIPCChan interface {
 }
 
 // renderIPCChan
-//  Current renderer process IPC channel processing
+//
+//	Current renderer process IPC channel processing
 type renderIPCChan struct {
 	browserId int32
 	channelId int64
@@ -90,6 +91,7 @@ func (m *renderIPCChan) ChannelId() int64 {
 }
 
 // AddCallback
+//
 //	Add a callback function
 //	callback returns true ipc to stop traversing
 //	otherwise continue traversing until the last one

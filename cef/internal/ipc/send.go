@@ -11,12 +11,13 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v3/cef/ipc/argument"
+	"github.com/energye/energy/v3/cef/ipc/target"
 )
 
 // emitSendToChannel
-//  trigger the specified target Go channel event
+//
+//	trigger the specified target Go channel event
 func emitSendToGoChannel(messageId int32, tag target.ITarget, eventName string, arguments []interface{}) {
 	message := &argument.List{
 		Id:        messageId,
