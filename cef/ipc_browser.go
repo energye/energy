@@ -13,21 +13,22 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/internal/ipc"
-	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/energye/cef/cef"
+	"github.com/energye/energy/v3/cef/internal/ipc"
+	ipcArgument "github.com/energye/energy/v3/cef/ipc/argument"
+	"github.com/energye/energy/v3/cef/ipc/callback"
+	"github.com/energye/energy/v3/cef/ipc/context"
+	"github.com/energye/lcl/pkgs/json"
+	"unsafe"
 )
 
 // ipcBrowserProcess 主进程
 type ipcBrowserProcess struct{}
 
 // JS 执行 Go 监听函数
-func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
+func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser cef.ICefBrowser, frame cef.ICefFrame, message cef.ICefProcessMessage) (result bool) {
 	result = true
-	argumentListBytes := message.ArgumentList().GetBinary(0)
+	argumentListBytes := message.GetArgumentList().GetBinary(0)
 	if argumentListBytes == nil {
 		return
 	}
@@ -35,7 +36,7 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 	if argumentListBytes.IsValid() {
 		size := argumentListBytes.GetSize()
 		messageDataBytes = make([]byte, size)
-		c := argumentListBytes.GetData(messageDataBytes, 0)
+		c := argumentListBytes.GetData(uintptr(unsafe.Pointer(&messageDataBytes[0])), uint32(len(messageDataBytes)), 0)
 		argumentListBytes.Free() //释放掉
 		if c == 0 {
 			return
@@ -46,8 +47,8 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		emitName     string
 		argument     ipcArgument.IList // json.JSON
 		argumentList json.JSONArray    // []
-		browserID    = browser.Identifier()
-		frameID      = frame.Identifier()
+		browserID    = browser.GetIdentifier()
+		frameID      = frame.GetIdentifier()
 	)
 	if messageDataBytes != nil {
 		argument = ipcArgument.UnList(messageDataBytes)
@@ -96,9 +97,16 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 				}
 				if application.IsSpecVer49() {
 					// CEF49
-					browser.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+					//browser.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 				} else {
-					frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+					dataBytes := replyMessage.Bytes()
+					processMessage := cef.ProcessMessageRef.New(internalIPCJSExecuteGoEventReplay)
+					messageArgumentList := processMessage.GetArgumentList()
+					dataBin := cef.BinaryValueRef.New(uintptr(unsafe.Pointer(&dataBytes[0])), uint32(len(dataBytes)))
+					messageArgumentList.SetBinary(0, dataBin)
+					frame.SendProcessMessage(cef.PID_RENDERER, processMessage)
+					messageArgumentList.Clear()
+					//frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
 				}
 				replyMessage.Reset()
 			}
@@ -111,8 +119,8 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 		}
 		// 当前监听事件是异步，开启协程执行，但是CEF模式不能Debug协程（IDE无响应）
 		if eventCallback.IsAsync {
-			browser = BrowserRef.UnWrap(browser) // 必须 Warp
-			frame = FrameRef.UnWrap(frame)       // 必须 Warp
+			browser = cef.BrowserRef.UnWrap(browser.Instance()) // 必须 Warp
+			frame = cef.FrameRef.UnWrap(frame.Instance())       // 必须 Warp
 			go execute()
 		} else {
 			// 同步执行, 默认这是使用CEF正确的方式

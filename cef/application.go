@@ -10,7 +10,6 @@ package cef
 
 import (
 	"github.com/energye/cef/cef"
-	"github.com/energye/cef/types"
 	"github.com/energye/lcl/tools"
 	"github.com/energye/lcl/tools/conv"
 	"github.com/energye/lcl/tools/exec"
@@ -46,6 +45,8 @@ import (
 // *********************************************************
 // *********************************************************
 
+var application IApplication
+
 // IApplication
 //
 //	自定义Application
@@ -55,6 +56,16 @@ type IApplication interface {
 	registerDefaultEvent()
 	// 初始化默认设置
 	initDefaultSettings()
+	SpecificVersion() cef.SpecificVersion
+	IsNotSpecVer() bool
+	IsSpecVer49() bool
+	IsSpecVer87() bool
+	IsSpecVer106() bool
+	IsSpecVer109() bool
+	IsUIWin32() bool
+	IsUICocoa() bool
+	IsUIGtk2() bool
+	IsUIGtk3() bool
 }
 
 type TApplication struct {
@@ -69,11 +80,11 @@ func AsApplication(obj interface{}) IApplication {
 	if instance == nil {
 		return nil
 	}
-	application := new(TApplication)
-	application.specificVersion = cef.SvINVALID
-	application.ui = cef.UitInvalid
-	cef.SetObjectInstance(application, instance)
-	return application
+	app := new(TApplication)
+	app.specificVersion = cef.SvINVALID
+	app.ui = cef.UitInvalid
+	cef.SetObjectInstance(app, instance)
+	return app
 }
 
 // NewApplication 创建CEF应用
@@ -83,14 +94,21 @@ func AsApplication(obj interface{}) IApplication {
 func NewApplication(disableRegisDefaultEvent ...bool) cef.ICefApplication {
 	if cef.GlobalCEFApp() == nil {
 		app := cef.NewCefApplication()
-		customApp := AsApplication(app)
+		application = AsApplication(app)
 		cef.SetGlobalCEFApp(app)
 		if len(disableRegisDefaultEvent) == 0 || !disableRegisDefaultEvent[0] {
-			customApp.registerDefaultEvent()
+			application.registerDefaultEvent()
 		}
-		customApp.initDefaultSettings()
+		application.initDefaultSettings()
 	}
 	return cef.GlobalCEFApp()
+}
+
+func DestroyGlobalCEFApp() {
+	if application != nil {
+		cef.DestroyGlobalCEFApp()
+		application = nil
+	}
 }
 
 // SpecificVersion
@@ -260,7 +278,7 @@ func FrameworkDir() string {
 			return exec.Dir
 		}
 		//环境变量
-		var env = os.Getenv(types.ENERGY_HOME_KEY)
+		var env = os.Getenv("ENERGY_HOME")
 		if tools.IsExist(filepath.Join(env, lib)) {
 			return env
 		}
