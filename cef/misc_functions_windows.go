@@ -9,6 +9,7 @@
 //----------------------------------------
 
 //go:build windows
+// +build windows
 
 // 函数工具 - windows
 
