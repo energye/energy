@@ -30,33 +30,40 @@
 
 > [energy](https://github.com/energye/energy) 
 > 是 Go 基于
-> [LCL](https://www.lazarus-ide.org/) 
-> [CEF](https://bitbucket.org/chromiumembedded/cef) 
-> [Webview2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/) 
+> [LCL](https://www.lazarus-ide.org/)、
+> [CEF](https://bitbucket.org/chromiumembedded/cef)、
+> [Webview2](https://learn.microsoft.com/en-us/microsoft-edge/webview2/)、
+> [Webkit Gtk](https://webkitgtk.org/)、
+> [Webkit Apple](https://developer.apple.com/documentation/webkit/)
 > 开发的框架
 >
 > 
->> LCL - 基础库, 图形用户界面 (GUI) 组件库, 提供了大量的组件，包括各种按钮、文本框、标签、表单等
+>> LCL - 基础库, 图形用户界面(GUI)组件库, 提供了非常丰富的系统原生控件
 >>
 >> CEF - 浏览器组件库 [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi), 在LCL基础上封装的CEF3库
 >> 
 >> Webview2 - 浏览器组件库 [WebView4Delphi](https://github.com/salvadordf/WebView4Delphi), 在LCL基础上封装的Webview2库
 >> 
->> 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
+>> Webkit - 浏览器组件库, webkit webview, 在LCL基础上封装的Webkit库
+>> 
+>> 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用。
+>> 将web内容无缝集成到应用程序中，并自定义内容交互以满足应用程序的需求。
 > 
 > 构建&使用
 > 
->> LCL 单独使用, 开发原生图形用户界面(GUI) 应用
+>> LCL 单独使用, 开发原生图形用户界面(GUI)应用. 轻量级, 丰富的系统原生控件
 > 
->> LCL + CEF 混合使用, 开发原生图形用户界面(GUI)和浏览器应用
-> 
->> LCL + Webview2 混合使用, 开发原生图形用户界面(GUI)和浏览器应用
+>> LCL + CEF 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 重量级, 使用全部chromium API
+>
+>> LCL + Webview2 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 使用全部webview2 API
+>
+>> LCL + Webkit 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 有限使用webkit API
 
 
 
 ### 特性
 
-> - 具有丰富的CEF API 和 LCL 系统原生小部件
+> - 具有丰富的浏览器 API 和 LCL 系统原生小部件
 > - 开发环境简单,编译速度快,仅需Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
 >> - Golang: 窗口管理、CEF API封装&配置、功能实现、各种UI组件创建、系统低层调用和JavaScript处理不了的功能，如: 文件流、安全加密、高性能处理等
