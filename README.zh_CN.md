@@ -53,11 +53,11 @@
 > 
 >> LCL 单独使用, 开发原生图形用户界面(GUI)应用. 轻量级, 丰富的系统原生控件
 > 
->> LCL + CEF 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 重量级, 使用全部chromium API
+>> LCL + CEF 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 重量级, 全量chromium API
 >
->> LCL + Webview2 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 使用全部webview2 API
+>> LCL + Webview2 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 全量webview2 API
 >
->> LCL + Webkit 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 有限使用webkit API
+>> LCL + Webkit 混合使用, 开发原生图形用户界面(GUI)和浏览器应用. 轻量级, 基础webkit API
 
 
 
