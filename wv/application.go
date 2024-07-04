@@ -8,6 +8,9 @@ import (
 	"path/filepath"
 )
 
+// application
+var application *Application
+
 type Application struct {
 	wv.IWVLoader
 	fMainWindow        *BrowserWindow
@@ -15,22 +18,24 @@ type Application struct {
 }
 
 func NewApplication() *Application {
-	app := &Application{
-		IWVLoader: wv.GlobalWebView2Loader(),
-		fMainWindow: &BrowserWindow{
-			options: Options{
-				Name:       "energy - webview",
-				DefaultURL: "",
-				Width:      1024,
-				Height:     768,
+	if application == nil {
+		application = &Application{
+			IWVLoader: wv.GlobalWebView2Loader(),
+			fMainWindow: &BrowserWindow{
+				options: Options{
+					Name:       "energy - webview",
+					DefaultURL: "",
+					Width:      1024,
+					Height:     768,
+				},
 			},
-		},
+		}
+		webView2Loader, _ := filepath.Split(libname.LibName)
+		webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
+		application.SetUserDataFolder(filepath.Join(exec.CurrentDir, "EnergyCache"))
+		application.SetLoaderDllPath(webView2Loader)
 	}
-	webView2Loader, _ := filepath.Split(libname.LibName)
-	webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
-	app.SetUserDataFolder(filepath.Join(exec.CurrentDir, "EnergyCache"))
-	app.SetLoaderDllPath(webView2Loader)
-	return app
+	return application
 }
 
 func (m *Application) Run() {
@@ -43,6 +48,15 @@ func (m *Application) Run() {
 }
 
 func (m *Application) SetOptions(options Options) {
+	if options.Name == "" {
+		options.Name = "energy - webview2"
+	}
+	if options.Width == 0 {
+		options.Width = 1024
+	}
+	if options.Height == 0 {
+		options.Height = 768
+	}
 	m.fMainWindow.options = options
 }
 

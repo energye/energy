@@ -4,7 +4,7 @@ type Options struct {
 	Name            string
 	DefaultURL      string
 	ICON            []byte
-	Width           int32
-	Height          int32
+	Width           int
+	Height          int
 	EnabledDevTools bool
 }
