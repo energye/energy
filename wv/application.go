@@ -25,8 +25,8 @@ func NewApplication() *Application {
 				options: Options{
 					Name:       "energy - webview",
 					DefaultURL: "",
-					Width:      1024,
-					Height:     768,
+					Width:      800,
+					Height:     600,
 				},
 			},
 		}
@@ -53,10 +53,10 @@ func (m *Application) SetOptions(options Options) {
 		options.Name = "energy - webview2"
 	}
 	if options.Width == 0 {
-		options.Width = 1024
+		options.Width = 800
 	}
 	if options.Height == 0 {
-		options.Height = 768
+		options.Height = 600
 	}
 	m.fMainWindow.options = options
 }

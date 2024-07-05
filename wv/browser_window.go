@@ -3,9 +3,11 @@ package wv
 import (
 	"fmt"
 	"github.com/energye/energy/v3/internal/assets"
+	"github.com/energye/energy/v3/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
+	"sync/atomic"
 )
 
 type OnWindowCreate func(window IBrowserWindow)
@@ -23,6 +25,7 @@ type IBrowserWindow interface {
 
 type BrowserWindow struct {
 	lcl.TForm
+	id                   uint32
 	windowParent         wv.IWVWindowParent
 	browser              wv.IWVBrowser
 	options              Options
@@ -30,9 +33,18 @@ type BrowserWindow struct {
 	onAfterCreated       wv.TNotifyEvent
 	onWebMessageReceived wv.TOnWebMessageReceivedEvent
 	onShow               wv.TNotifyEvent
+	messageReceived      ipc.IMessageReceivedDelegate
+}
+
+var windowID uint32
+
+func getWindowID() uint32 {
+	atomic.AddUint32(&windowID, 1)
+	return windowID
 }
 
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
+	m.id = getWindowID()
 	m.SetCaption(m.options.Name)
 	m.SetWidth(int32(m.options.Width))
 	m.SetHeight(int32(m.options.Height))
@@ -58,14 +70,29 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	}
 }
 
+func (m *BrowserWindow) MessageSend() {
+	//m.browser.PostWebMessageAsString()
+}
+
 func (m *BrowserWindow) defaultEvent() {
+	m.messageReceived = ipc.NewMessageReceivedDelegate()
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		m.windowParent.UpdateSize()
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)
 		}
 	})
-
+	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
+		if m.messageReceived != nil {
+			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
+			message := args.WebMessageAsString()
+			args.Free()
+			m.messageReceived.Received(m.id, message)
+		}
+		if m.onWebMessageReceived != nil {
+			m.onWebMessageReceived(sender, webview, args)
+		}
+	})
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {
 			fmt.Println("回调函数 => SetOnShow 初始化失败")

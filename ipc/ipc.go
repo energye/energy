@@ -22,7 +22,24 @@ var (
 	listener *ipcListener
 )
 
-type IListener interface {
+type IMessageSendDelegate interface {
+	MessageSend()
+}
+
+type IMessageReceivedDelegate interface {
+	Received(windowId uint32, message string)
+}
+
+type MessageReceivedDelegate struct {
+}
+
+func NewMessageReceivedDelegate() IMessageReceivedDelegate {
+	result := &MessageReceivedDelegate{}
+	return result
+}
+
+func (m *MessageReceivedDelegate) Received(windowId uint32, message string) {
+
 }
 
 type ipcListener struct {
