@@ -8,10 +8,10 @@
 //
 //----------------------------------------
 
-package ipc
+package callback
 
 // EventCallback IPC context callback
-type EventCallback func(context IEvent)
+type EventCallback func(event IEvent)
 
 type ICallback interface {
 	Invoke(context IEvent)
@@ -27,6 +27,10 @@ func (m *Callback) Invoke(context IEvent) {
 	if m.callback != nil {
 		m.callback(context)
 	}
+}
+
+func New(callback EventCallback) ICallback {
+	return &Callback{callback: callback}
 }
 
 // IEvent

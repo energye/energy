@@ -16,12 +16,13 @@ package ipc
 
 import (
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/ipc/callback"
 )
 
 // On
 //
 //	IPC GO Listening for events
-func On(name string, fn ipc.EventCallback) {
+func On(name string, fn callback.EventCallback) {
 	ipc.AddEvent(name, fn)
 }
 

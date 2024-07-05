@@ -25,7 +25,7 @@ type IBrowserWindow interface {
 
 type BrowserWindow struct {
 	lcl.TForm
-	id                   uint32
+	windowId             uint32
 	windowParent         wv.IWVWindowParent
 	browser              wv.IWVBrowser
 	options              Options
@@ -33,6 +33,7 @@ type BrowserWindow struct {
 	onAfterCreated       wv.TNotifyEvent
 	onWebMessageReceived wv.TOnWebMessageReceivedEvent
 	onShow               wv.TNotifyEvent
+	onClose              lcl.TCloseEvent
 	messageReceived      ipc.IMessageReceivedDelegate
 }
 
@@ -44,7 +45,7 @@ func getWindowID() uint32 {
 }
 
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
-	m.id = getWindowID()
+	m.windowId = getWindowID()
 	m.SetCaption(m.options.Name)
 	m.SetWidth(int32(m.options.Width))
 	m.SetHeight(int32(m.options.Height))
@@ -63,11 +64,16 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	} else {
 		lcl.Application.Icon().LoadFromBytes(m.options.ICON)
 	}
+	ipc.RegisterMessageSend(m)
 	m.defaultEvent()
 	// call window main form create callback
 	if m.onWindowCreate != nil {
 		m.onWindowCreate(m)
 	}
+}
+
+func (m *BrowserWindow) WindowId() uint32 {
+	return m.windowId
 }
 
 func (m *BrowserWindow) MessageSend() {
@@ -81,13 +87,16 @@ func (m *BrowserWindow) defaultEvent() {
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)
 		}
+		settings := m.browser.CoreWebView2Settings()
+		settings.SetAreDevToolsEnabled(m.options.EnabledDevTools)
+		settings.Free()
 	})
 	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
 		if m.messageReceived != nil {
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 			message := args.WebMessageAsString()
 			args.Free()
-			m.messageReceived.Received(m.id, message)
+			m.messageReceived.Received(m.WindowId(), message)
 		}
 		if m.onWebMessageReceived != nil {
 			m.onWebMessageReceived(sender, webview, args)
@@ -105,6 +114,15 @@ func (m *BrowserWindow) defaultEvent() {
 			m.onShow(sender)
 		}
 	})
+	m.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
+		if m.onClose != nil {
+			m.onClose(sender, action)
+		}
+		// 确认关闭时取消注册
+		if *action == types.CaFree {
+			ipc.UnRegisterMessageSend(m)
+		}
+	})
 }
 
 func (m *BrowserWindow) WindowParent() wv.IWVWindowParent {
@@ -117,6 +135,10 @@ func (m *BrowserWindow) Browser() wv.IWVBrowser {
 
 func (m *BrowserWindow) SetOnShow(fn wv.TNotifyEvent) {
 	m.onShow = fn
+}
+
+func (m *BrowserWindow) SetOnClose(fn lcl.TCloseEvent) {
+	m.onClose = fn
 }
 
 func (m *BrowserWindow) SetOnBrowserAfterCreated(fn wv.TNotifyEvent) {
