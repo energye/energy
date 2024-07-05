@@ -13,7 +13,7 @@ var application *Application
 
 type Application struct {
 	wv.IWVLoader
-	fMainWindow        *BrowserWindow
+	mainWindow         *BrowserWindow
 	onGetCustomSchemes wv.TOnLoaderGetCustomSchemesEvent
 }
 
@@ -21,7 +21,7 @@ func NewApplication() *Application {
 	if application == nil {
 		application = &Application{
 			IWVLoader: wv.GlobalWebView2Loader(),
-			fMainWindow: &BrowserWindow{
+			mainWindow: &BrowserWindow{
 				options: Options{
 					Name:       "energy - webview",
 					DefaultURL: "",
@@ -43,7 +43,7 @@ func (m *Application) Run() {
 	if m.StartWebView2() {
 		lcl.Application.Initialize()
 		lcl.Application.SetMainFormOnTaskBar(true)
-		lcl.Application.CreateForm(m.fMainWindow)
+		lcl.Application.CreateForm(m.mainWindow)
 		lcl.Application.Run()
 	}
 }
@@ -58,11 +58,11 @@ func (m *Application) SetOptions(options Options) {
 	if options.Height == 0 {
 		options.Height = 600
 	}
-	m.fMainWindow.options = options
+	m.mainWindow.options = options
 }
 
 func (m *Application) SetOnWindowCreate(fn OnWindowCreate) {
-	m.fMainWindow.onWindowCreate = fn
+	m.mainWindow.onWindowCreate = fn
 }
 
 func (m *Application) SetOnGetCustomSchemes(fn wv.TOnLoaderGetCustomSchemesEvent) {

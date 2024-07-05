@@ -1,7 +1,6 @@
 package wv
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
@@ -25,16 +24,17 @@ type IBrowserWindow interface {
 
 type BrowserWindow struct {
 	lcl.TForm
-	windowId             uint32
-	windowParent         wv.IWVWindowParent
-	browser              wv.IWVBrowser
-	options              Options
-	onWindowCreate       OnWindowCreate
-	onAfterCreated       wv.TNotifyEvent
-	onWebMessageReceived wv.TOnWebMessageReceivedEvent
-	onShow               wv.TNotifyEvent
-	onClose              lcl.TCloseEvent
-	messageReceived      ipc.IMessageReceivedDelegate
+	windowId                uint32
+	windowParent            wv.IWVWindowParent
+	browser                 wv.IWVBrowser
+	options                 Options
+	onWindowCreate          OnWindowCreate
+	onAfterCreated          wv.TNotifyEvent
+	onWebMessageReceived    wv.TOnWebMessageReceivedEvent
+	onContextMenuRequested  wv.TOnContextMenuRequestedEvent
+	onShow                  wv.TNotifyEvent
+	onClose                 lcl.TCloseEvent
+	messageReceivedDelegate ipc.IMessageReceivedDelegate
 }
 
 var windowID uint32
@@ -81,22 +81,32 @@ func (m *BrowserWindow) MessageSend() {
 }
 
 func (m *BrowserWindow) defaultEvent() {
-	m.messageReceived = ipc.NewMessageReceivedDelegate()
+	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		m.windowParent.UpdateSize()
+		settings := m.browser.CoreWebView2Settings()
+		settings.SetAreDevToolsEnabled(!m.options.DisableDevTools)
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)
 		}
-		settings := m.browser.CoreWebView2Settings()
-		settings.SetAreDevToolsEnabled(m.options.EnabledDevTools)
-		settings.Free()
+	})
+	m.browser.SetOnContextMenuRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
+		if m.options.DisableContextMenu {
+			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
+			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
+			menuItemCollection.RemoveAllMenuItems()
+			menuItemCollection.Free()
+			args.Free()
+		} else if m.onContextMenuRequested != nil {
+			m.onContextMenuRequested(sender, webview, args)
+		}
 	})
 	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
-		if m.messageReceived != nil {
+		if m.messageReceivedDelegate != nil {
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 			message := args.WebMessageAsString()
 			args.Free()
-			m.messageReceived.Received(m.WindowId(), message)
+			m.messageReceivedDelegate.Received(m.WindowId(), message)
 		}
 		if m.onWebMessageReceived != nil {
 			m.onWebMessageReceived(sender, webview, args)
@@ -104,7 +114,7 @@ func (m *BrowserWindow) defaultEvent() {
 	})
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {
-			fmt.Println("回调函数 => SetOnShow 初始化失败")
+			// Log？？
 		} else {
 			if application.Initialized() {
 				m.browser.CreateBrowser(m.windowParent.Handle(), true)
@@ -118,7 +128,7 @@ func (m *BrowserWindow) defaultEvent() {
 		if m.onClose != nil {
 			m.onClose(sender, action)
 		}
-		// 确认关闭时取消注册
+		// 关闭时取消注册
 		if *action == types.CaFree {
 			ipc.UnRegisterMessageSend(m)
 		}
