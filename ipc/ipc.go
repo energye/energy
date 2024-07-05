@@ -15,73 +15,20 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v3/cef/ipc/types"
+	"github.com/energye/energy/v3/internal/ipc"
 )
-
-var (
-	listener *ipcListener
-)
-
-type IMessageSendDelegate interface {
-	MessageSend()
-}
-
-type IMessageReceivedDelegate interface {
-	Received(windowId uint32, message string)
-}
-
-type MessageReceivedDelegate struct {
-}
-
-func NewMessageReceivedDelegate() IMessageReceivedDelegate {
-	result := &MessageReceivedDelegate{}
-	return result
-}
-
-func (m *MessageReceivedDelegate) Received(windowId uint32, message string) {
-
-}
-
-type ipcListener struct {
-	callbacks map[string]ICallback
-}
-
-func init() {
-	listener = &ipcListener{
-		callbacks: make(map[string]ICallback),
-	}
-}
-
-// createCallback
-//
-//	Create and return a callback function
-func createCallback(fn interface{}) ICallback {
-	switch fn.(type) {
-	case EventCallback:
-		return &Callback{callback: fn.(EventCallback)}
-	}
-	return nil
-}
 
 // On
 //
 //	IPC GO Listening for events
-func On(name string, fn EventCallback) {
-	if name == "" || fn == nil {
-		return
-	}
-	if callback := createCallback(fn); callback != nil {
-		listener.addEvent(name, callback)
-	}
+func On(name string, fn ipc.EventCallback) {
+	ipc.AddEvent(name, fn)
 }
 
 // RemoveOn
 // IPC GO Remove listening events
 func RemoveOn(name string) {
-	if name == "" {
-		return
-	}
-	delete(listener.callbacks, name)
+	ipc.RemoveOn(name)
 }
 
 // Emit
@@ -100,43 +47,3 @@ func RemoveOn(name string) {
 //	browser.window.ProcessMessage().EmitRender(0, name, nil, argument...)
 //	return true
 //}
-
-// addOnEvent
-//
-//	Add listening event
-//	callback function
-//	  1. context 2.argument list
-func (m *ipcListener) addEvent(name string, fn ICallback) {
-	if m == nil || name == "" || fn == nil {
-		return
-	}
-	m.callbacks[name] = fn
-}
-
-// emitOnEvent
-//
-//	Trigger listening event
-func (m *ipcListener) emitEvent(name string, argumentList types.IArrayValue) {
-	if m == nil || name == "" || argumentList == nil {
-		return
-	}
-}
-
-// addOnEvent
-//
-//	Add emit callback function
-func (m *ipcListener) addEmitCallback(fn interface{}) int32 {
-	if m == nil || fn == nil {
-		return 0
-	}
-	//if callbackFN := createCallback(fn); callbackFN != nil {
-	//	if m.emitCallbackMessageId == -1 {
-	//		m.emitCallbackMessageId = 1
-	//	} else {
-	//		m.emitCallbackMessageId++
-	//	}
-	//	m.emitCallback[m.emitCallbackMessageId] = callbackFN
-	//	return m.emitCallbackMessageId
-	//}
-	return 0
-}

@@ -3,7 +3,7 @@ package wv
 import (
 	"fmt"
 	"github.com/energye/energy/v3/internal/assets"
-	"github.com/energye/energy/v3/ipc"
+	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
