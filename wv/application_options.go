@@ -7,4 +7,5 @@ type Options struct {
 	Width           int
 	Height          int
 	EnabledDevTools bool
+	LocalLoad       *LocalLoad
 }

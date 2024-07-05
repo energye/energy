@@ -34,6 +34,7 @@ func NewApplication() *Application {
 		webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
 		application.SetUserDataFolder(filepath.Join(exec.CurrentDir, "EnergyCache"))
 		application.SetLoaderDllPath(webView2Loader)
+		application.defaultEvent()
 	}
 	return application
 }
@@ -69,7 +70,7 @@ func (m *Application) SetOnGetCustomSchemes(fn wv.TOnLoaderGetCustomSchemesEvent
 }
 
 func (m *Application) defaultEvent() {
-	m.SetOnGetCustomSchemes(func(sender wv.IObject, customSchemes *wv.TWVCustomSchemeInfoArray) {
+	m.IWVLoader.SetOnGetCustomSchemes(func(sender wv.IObject, customSchemes *wv.TWVCustomSchemeInfoArray) {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}

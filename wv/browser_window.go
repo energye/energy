@@ -2,6 +2,7 @@ package wv
 
 import (
 	"fmt"
+	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
@@ -13,8 +14,11 @@ type IBrowserWindow interface {
 	lcl.IForm
 	WindowParent() wv.IWVWindowParent
 	Browser() wv.IWVBrowser
-	SetOnAfterCreated(fn wv.TNotifyEvent)
-	SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent)
+	// SetOnBrowserAfterCreated Called after a new browser is created and it's ready to navigate to the default URL.
+	SetOnBrowserAfterCreated(fn wv.TNotifyEvent)
+	// SetOnBrowserMessageReceived
+	SetOnBrowserMessageReceived(fn wv.TOnWebMessageReceivedEvent)
+	SetOnShow(fn wv.TNotifyEvent)
 }
 
 type BrowserWindow struct {
@@ -25,6 +29,7 @@ type BrowserWindow struct {
 	onWindowCreate       OnWindowCreate
 	onAfterCreated       wv.TNotifyEvent
 	onWebMessageReceived wv.TOnWebMessageReceivedEvent
+	onShow               wv.TNotifyEvent
 }
 
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
@@ -41,6 +46,11 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	if m.options.DefaultURL != "" {
 		m.browser.SetDefaultURL(m.options.DefaultURL)
 	}
+	if m.options.ICON == nil {
+		lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
+	} else {
+		lcl.Application.Icon().LoadFromBytes(m.options.ICON)
+	}
 	m.defaultEvent()
 	// call window main form create callback
 	if m.onWindowCreate != nil {
@@ -56,14 +66,16 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 
-	m.SetOnShow(func(sender lcl.IObject) {
+	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {
 			fmt.Println("回调函数 => SetOnShow 初始化失败")
 		} else {
 			if application.Initialized() {
-				fmt.Println("回调函数 => SetOnShow 初始化成功")
 				m.browser.CreateBrowser(m.windowParent.Handle(), true)
 			}
+		}
+		if m.onShow != nil {
+			m.onShow(sender)
 		}
 	})
 }
@@ -76,10 +88,14 @@ func (m *BrowserWindow) Browser() wv.IWVBrowser {
 	return m.browser
 }
 
-func (m *BrowserWindow) SetOnAfterCreated(fn wv.TNotifyEvent) {
+func (m *BrowserWindow) SetOnShow(fn wv.TNotifyEvent) {
+	m.onShow = fn
+}
+
+func (m *BrowserWindow) SetOnBrowserAfterCreated(fn wv.TNotifyEvent) {
 	m.onAfterCreated = fn
 }
 
-func (m *BrowserWindow) SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
+func (m *BrowserWindow) SetOnBrowserMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
 	m.onWebMessageReceived = fn
 }
