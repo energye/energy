@@ -23,10 +23,8 @@ func NewApplication() *Application {
 			IWVLoader: wv.GlobalWebView2Loader(),
 			mainWindow: &BrowserWindow{
 				options: Options{
-					Name:       "energy - webview",
-					DefaultURL: "",
-					Width:      800,
-					Height:     600,
+					Width:  800,
+					Height: 600,
 				},
 			},
 		}
@@ -49,9 +47,6 @@ func (m *Application) Run() {
 }
 
 func (m *Application) SetOptions(options Options) {
-	if options.Name == "" {
-		options.Name = "energy - webview2"
-	}
 	if options.Width == 0 {
 		options.Width = 800
 	}

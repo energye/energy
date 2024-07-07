@@ -8,14 +8,14 @@ import (
 )
 
 var (
-	listener        *ipcListener
-	messageSend     map[uint32]IMessageSend
-	messageSendLock sync.RWMutex
+	listener           *ipcListener
+	processMessage     map[uint32]IProcessMessage
+	processMessageLock sync.RWMutex
 )
 
-type IMessageSend interface {
+type IProcessMessage interface {
 	WindowId() uint32
-	MessageSend()
+	SendMessage()
 }
 
 type IMessageReceivedDelegate interface {
@@ -29,6 +29,7 @@ type ipcListener struct {
 	callbacks map[string]callback.ICallback
 }
 
+// NewMessageReceivedDelegate create MessageReceivedDelegate
 func NewMessageReceivedDelegate() IMessageReceivedDelegate {
 	result := &MessageReceivedDelegate{}
 	return result
@@ -48,20 +49,21 @@ func init() {
 	listener = &ipcListener{
 		callbacks: make(map[string]callback.ICallback),
 	}
-	messageSend = make(map[uint32]IMessageSend)
+	processMessage = make(map[uint32]IProcessMessage)
 }
 
-// RegisterMessageSend process message send
-func RegisterMessageSend(window IMessageSend) {
-	messageSendLock.Lock()
-	messageSend[window.WindowId()] = window
-	messageSendLock.Unlock()
+// RegisterProcessMessage process message
+func RegisterProcessMessage(window IProcessMessage) {
+	processMessageLock.Lock()
+	processMessage[window.WindowId()] = window
+	processMessageLock.Unlock()
 }
 
-func UnRegisterMessageSend(window IMessageSend) {
-	messageSendLock.Lock()
-	delete(messageSend, window.WindowId())
-	messageSendLock.Unlock()
+// UnRegisterProcessMessage cancel process message
+func UnRegisterProcessMessage(window IProcessMessage) {
+	processMessageLock.Lock()
+	delete(processMessage, window.WindowId())
+	processMessageLock.Unlock()
 }
 
 // createCallback
@@ -84,8 +86,8 @@ func AddEvent(name string, fn callback.EventCallback) {
 	if listener == nil || name == "" || fn == nil {
 		return
 	}
-	if callback := createCallback(fn); callback != nil {
-		listener.callbacks[name] = callback
+	if newCallback := createCallback(fn); newCallback != nil {
+		listener.callbacks[name] = newCallback
 	}
 }
 
