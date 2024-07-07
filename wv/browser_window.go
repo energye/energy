@@ -1,3 +1,13 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
 package wv
 
 import (
@@ -11,6 +21,9 @@ import (
 
 type OnWindowCreate func(window IBrowserWindow)
 
+// IBrowserWindow
+//
+//	A browser window composed of TForms and webview2 controls
 type IBrowserWindow interface {
 	lcl.IForm
 	WindowParent() wv.IWVWindowParent
@@ -18,8 +31,11 @@ type IBrowserWindow interface {
 	// SetOnBrowserAfterCreated Called after a new browser is created and it's ready to navigate to the default URL.
 	SetOnBrowserAfterCreated(fn wv.TNotifyEvent)
 	// SetOnBrowserMessageReceived
+	//  runs when the `ICoreWebView2Settings.IsWebMessageEnabled`
+	//	setting is set and the top-level document of the WebView runs `window.chrome.webview.postMessage`.
 	SetOnBrowserMessageReceived(fn wv.TOnWebMessageReceivedEvent)
 	SetOnShow(fn wv.TNotifyEvent)
+	SetOnClose(fn lcl.TCloseEvent)
 }
 
 // BrowserWindow
@@ -133,7 +149,7 @@ func (m *BrowserWindow) defaultEvent() {
 	// window, OnShow
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {
-			// Log？？
+			// Log ???
 		} else {
 			if application.Initialized() {
 				m.browser.CreateBrowser(m.windowParent.Handle(), true)
