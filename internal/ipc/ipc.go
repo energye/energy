@@ -12,13 +12,13 @@ package ipc
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v3/cef/ipc/types"
 	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
 
 var (
 	listener           *ipcListener
+	listenerLock       sync.RWMutex
 	processMessage     map[uint32]IProcessMessage
 	processMessageLock sync.RWMutex
 )
@@ -97,22 +97,32 @@ func AddEvent(name string, fn callback.EventCallback) {
 		return
 	}
 	if newCallback := createCallback(fn); newCallback != nil {
+		listenerLock.Lock()
 		listener.callbacks[name] = newCallback
+		listenerLock.Unlock()
 	}
 }
 
 // RemoveOn
 // IPC GO Remove listening events
 func RemoveOn(name string) {
+	listenerLock.Lock()
 	delete(listener.callbacks, name)
+	listenerLock.Unlock()
 }
 
 // emitOnEvent
 //
 //	Trigger listening event
-func (m *ipcListener) emitEvent(name string, argumentList types.IArrayValue) {
-	if m == nil || name == "" || argumentList == nil {
+func (m *ipcListener) emitEvent(name string, argument ...interface{}) {
+	if m == nil || name == "" || argument == nil {
 		return
+	}
+	listenerLock.Lock()
+	fn, ok := listener.callbacks[name]
+	listenerLock.Unlock()
+	if ok {
+		fn.Invoke(nil)
 	}
 }
 
