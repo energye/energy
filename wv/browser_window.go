@@ -99,8 +99,8 @@ func (m *BrowserWindow) WindowId() uint32 {
 	return m.windowId
 }
 
-func (m *BrowserWindow) SendMessage() {
-	//m.browser.PostWebMessageAsString()
+func (m *BrowserWindow) SendMessage(data []byte) {
+	m.browser.PostWebMessageAsString(string(data))
 }
 
 // Default preset function implementation
@@ -114,9 +114,15 @@ func (m *BrowserWindow) defaultEvent() {
 	// webview2 AfterCreated
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		m.windowParent.UpdateSize()
+		// local load
+		if m.options.LocalLoad != nil {
+			m.browser.AddWebResourceRequestedFilter(m.options.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
+		}
+		// current browser ipc javascript
+		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcjs), m.browser)
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
-		// Global control of devtools account opening and closing
+		// Global control of devtools account open and clos
 		settings.SetAreDevToolsEnabled(!m.options.DisableDevTools)
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)

@@ -12,6 +12,7 @@ package ipc
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
@@ -25,7 +26,7 @@ var (
 
 type IProcessMessage interface {
 	WindowId() uint32
-	SendMessage()
+	SendMessage(data []byte)
 }
 
 type IMessageReceivedDelegate interface {
@@ -46,12 +47,30 @@ func NewMessageReceivedDelegate() IMessageReceivedDelegate {
 }
 
 func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) {
+	fmt.Println("MessageReceivedDelegate windowId:", windowId, "messageData:", messageData)
 	var message ProcessMessage
 	err := json.Unmarshal([]byte(messageData), &message)
+	fmt.Printf("\t%+v:\n", message)
+	process := GetProcessMessage(windowId)
 	if err != nil {
-
+		//sendError := &ProcessMessage{}
+		//process.SendMessage()
 	} else {
-
+		// call go ipc callback
+		if message.Name == "" {
+			return
+		}
+		listenerLock.Lock()
+		fn, ok := listener.callbacks[message.Name]
+		listenerLock.Unlock()
+		if ok {
+			ctx := callback.NewContext(windowId, message.Data)
+			fn.Invoke(ctx)
+		}
+		//
+		if message.Id != 0 {
+			process.SendMessage([]byte(""))
+		}
 	}
 }
 
@@ -62,18 +81,25 @@ func init() {
 	processMessage = make(map[uint32]IProcessMessage)
 }
 
-// RegisterProcessMessage process message
+// RegisterProcessMessage reegister process message object
 func RegisterProcessMessage(window IProcessMessage) {
 	processMessageLock.Lock()
 	processMessage[window.WindowId()] = window
 	processMessageLock.Unlock()
 }
 
-// UnRegisterProcessMessage cancel process message
+// UnRegisterProcessMessage cancel process message object
 func UnRegisterProcessMessage(window IProcessMessage) {
 	processMessageLock.Lock()
 	delete(processMessage, window.WindowId())
 	processMessageLock.Unlock()
+}
+
+// GetProcessMessage return process message object
+func GetProcessMessage(windowId uint32) IProcessMessage {
+	processMessageLock.Lock()
+	defer processMessageLock.Unlock()
+	return processMessage[windowId]
 }
 
 // createCallback
@@ -114,16 +140,8 @@ func RemoveOn(name string) {
 // emitOnEvent
 //
 //	Trigger listening event
-func (m *ipcListener) emitEvent(name string, argument ...interface{}) {
-	if m == nil || name == "" || argument == nil {
-		return
-	}
-	listenerLock.Lock()
-	fn, ok := listener.callbacks[name]
-	listenerLock.Unlock()
-	if ok {
-		fn.Invoke(nil)
-	}
+func (m *ipcListener) emitEvent(name string, data interface{}) {
+
 }
 
 // addOnEvent
