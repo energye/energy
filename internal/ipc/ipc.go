@@ -63,13 +63,17 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 		listenerLock.Lock()
 		fn, ok := listener.callbacks[message.Name]
 		listenerLock.Unlock()
+		var result interface{}
 		if ok {
 			ctx := callback.NewContext(windowId, message.Data)
-			fn.Invoke(ctx)
+			result = fn.Invoke(ctx)
 		}
 		//
 		if message.Id != 0 {
-			process.SendMessage([]byte(""))
+			message.Name = ""
+			message.Data = result
+			tmpMsg, _ := json.Marshal(&message)
+			process.SendMessage(tmpMsg)
 		}
 	}
 }

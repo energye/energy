@@ -16,6 +16,7 @@ package callback
 type IContext interface {
 	Data() interface{}          //ArgumentList
 	Result(data ...interface{}) //callback function return Result
+	getResult() interface{}
 }
 
 // Context IPC Context
@@ -41,4 +42,8 @@ func (m *Context) Data() interface{} {
 
 func (m *Context) Result(results ...interface{}) {
 	m.result = results
+}
+
+func (m *Context) getResult() interface{} {
+	return m.result
 }
