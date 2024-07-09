@@ -68,7 +68,7 @@ func getWindowID() uint32 {
 // Initialize window properties or other tasks here
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.windowId = getWindowID()
-	m.SetCaption(m.options.Name)
+	m.SetCaption(m.options.Caption)
 	m.SetWidth(int32(m.options.Width))
 	m.SetHeight(int32(m.options.Height))
 	m.ScreenCenter()

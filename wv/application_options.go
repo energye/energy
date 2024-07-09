@@ -11,7 +11,7 @@
 package wv
 
 type Options struct {
-	Name               string
+	Caption            string
 	DefaultURL         string
 	ICON               []byte
 	Width              int
