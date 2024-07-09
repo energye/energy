@@ -12,7 +12,6 @@ package ipc
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
@@ -22,6 +21,7 @@ var (
 	listenerLock       sync.RWMutex
 	processMessage     map[uint32]IProcessMessage
 	processMessageLock sync.RWMutex
+	mainWindowId       uint32 // ipc message default window flag
 )
 
 type IProcessMessage interface {
@@ -47,10 +47,8 @@ func NewMessageReceivedDelegate() IMessageReceivedDelegate {
 }
 
 func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) {
-	fmt.Println("MessageReceivedDelegate windowId:", windowId, "messageData:", messageData)
 	var message ProcessMessage
 	err := json.Unmarshal([]byte(messageData), &message)
-	fmt.Printf("\t%+v:\n", message)
 	process := GetProcessMessage(windowId)
 	if err != nil {
 		//sendError := &ProcessMessage{}
@@ -72,7 +70,10 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 		if message.Id != 0 {
 			message.Name = ""
 			message.Data = result
-			tmpMsg, _ := json.Marshal(&message)
+			tmpMsg, err := message.ToJSON()
+			if err != nil {
+				// Log ???
+			}
 			process.SendMessage(tmpMsg)
 		}
 	}
@@ -83,6 +84,11 @@ func init() {
 		callbacks: make(map[string]callback.ICallback),
 	}
 	processMessage = make(map[uint32]IProcessMessage)
+}
+
+// SetMainWindowId For IPC messages
+func SetMainWindowId(windowId uint32) {
+	mainWindowId = windowId
 }
 
 // RegisterProcessMessage reegister process message object
@@ -117,12 +123,12 @@ func createCallback(fn interface{}) callback.ICallback {
 	return nil
 }
 
-// AddEvent
+// On
 //
 //	Add listening event
 //	callback function
 //	  1. context 2.argument list
-func AddEvent(name string, fn callback.EventCallback) {
+func On(name string, fn callback.EventCallback) {
 	if listener == nil || name == "" || fn == nil {
 		return
 	}
@@ -141,17 +147,33 @@ func RemoveOn(name string) {
 	listenerLock.Unlock()
 }
 
-// emitOnEvent
+// Emit Sends an ipc message to the specified window
 //
-//	Trigger listening event
-func (m *ipcListener) emitEvent(name string, data interface{}) {
-
+//	windowId: target window, default 0 = mainWindow, otherwise, it must be a valid window identifier
+//	name: emit message name
+//	arguments: emit message data
+func Emit(windowId uint32, name string, arguments ...interface{}) {
+	if windowId == 0 {
+		windowId = mainWindowId
+	}
+	processMessageLock.Lock()
+	emitMsg, ok := processMessage[windowId]
+	processMessageLock.Unlock()
+	if ok {
+		message := &ProcessMessage{
+			Name: name,
+			Data: arguments,
+		}
+		data, err := message.ToJSON()
+		if err != nil {
+			// Log ???
+		}
+		emitMsg.SendMessage(data)
+	}
 }
 
-// addOnEvent
-//
-//	Add emit callback function
-func (m *ipcListener) addEmitCallback(fn interface{}) int32 {
+// Add emit callback function
+func (m *ipcListener) emitCallback(fn interface{}) int32 {
 	if m == nil || fn == nil {
 		return 0
 	}

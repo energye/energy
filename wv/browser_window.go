@@ -26,6 +26,7 @@ type OnWindowCreate func(window IBrowserWindow)
 //	A browser window composed of TForms and webview2 controls
 type IBrowserWindow interface {
 	lcl.IForm
+	IsClosing() bool
 	WindowParent() wv.IWVWindowParent
 	Browser() wv.IWVBrowser
 	// SetOnBrowserAfterCreated Called after a new browser is created and it's ready to navigate to the default URL.
@@ -42,6 +43,7 @@ type IBrowserWindow interface {
 type BrowserWindow struct {
 	lcl.TForm
 	windowId                uint32
+	isClosing               bool
 	windowParent            wv.IWVWindowParent
 	browser                 wv.IWVBrowser
 	options                 Options
@@ -86,6 +88,7 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	}
 	// Registers the current window to the process message for future use when the specified window handles the message
 	ipc.RegisterProcessMessage(m)
+	ipc.SetMainWindowId(m.WindowId())
 	// BrowserWindow Default preset function implementation
 	m.defaultEvent()
 	// call window main form create callback
@@ -100,6 +103,9 @@ func (m *BrowserWindow) WindowId() uint32 {
 }
 
 func (m *BrowserWindow) SendMessage(data []byte) {
+	if m.IsClosing() {
+		return
+	}
 	m.browser.PostWebMessageAsString(string(data))
 }
 
@@ -172,10 +178,15 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 		// window close and free
 		if *action == types.CaFree {
+			m.isClosing = true
 			// cancel process message
 			ipc.UnRegisterProcessMessage(m)
 		}
 	})
+}
+
+func (m *BrowserWindow) IsClosing() bool {
+	return m.isClosing
 }
 
 func (m *BrowserWindow) WindowParent() wv.IWVWindowParent {

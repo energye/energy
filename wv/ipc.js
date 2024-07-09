@@ -175,7 +175,6 @@
         window.ProcessMessage = (message) => webview.postMessage(message);
         // render process receive browser process string message
         webview.addEventListener("message", event => {
-            console.log("message:", event);
             const result = window.energy.__executeEvent(event.data);
             if (result) {
 

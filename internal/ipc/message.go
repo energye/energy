@@ -10,8 +10,14 @@
 
 package ipc
 
+import "encoding/json"
+
 type ProcessMessage struct {
 	Name string      `json:"n"`
 	Data interface{} `json:"d"`
 	Id   int         `json:"i"`
+}
+
+func (m *ProcessMessage) ToJSON() ([]byte, error) {
+	return json.Marshal(m)
 }

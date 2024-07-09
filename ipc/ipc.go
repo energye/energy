@@ -23,7 +23,7 @@ import (
 //
 //	IPC GO Listening for events
 func On(name string, fn callback.EventCallback) {
-	ipc.AddEvent(name, fn)
+	ipc.On(name, fn)
 }
 
 // RemoveOn
@@ -36,15 +36,9 @@ func RemoveOn(name string) {
 //
 //	Event that triggers listening
 //	default to triggering the main process
-func Emit(name string, argument ...interface{}) bool {
+func Emit(name string, arguments ...interface{}) {
 	if name == "" {
-		return false
+		return
 	}
-	// When the window is closed
-	//if browser.window == nil || browser.window.IsClosing() {
-	//	// This window is the first one created and not closed
-	//	SetProcessMessage(browser.browserWindow.LookForMainWindow())
-	//}
-	//browser.window.ProcessMessage().EmitRender(0, name, nil, argument...)
-	return true
+	ipc.Emit(0, name, arguments)
 }
