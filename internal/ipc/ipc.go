@@ -56,7 +56,7 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 		//process.SendMessage()
 	} else {
 		// call go ipc callback
-		if message.Name == "" {
+		if message.Name == "" || !CheckMessageType(message.Type) {
 			return
 		}
 		listenerLock.Lock()
@@ -173,6 +173,7 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 			}
 		}
 		message := &ProcessMessage{
+			Type: MT_GO_SEND,
 			Name: name,
 			Data: arguments,
 			Id:   resultCallbackId,

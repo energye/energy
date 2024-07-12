@@ -11,18 +11,10 @@
 
 // render process send process message
 (function () {
-    class Browser {
-        #windowId = 0;
-        #frameId = 0;
-
-        getWindowId() {
-            return this.#windowId;
-        }
-
-        getFrameId() {
-            return this.#frameId;
-        }
-    }
+    const MT_GO_SEND = 1;
+    const MT_JS_SEND = MT_GO_SEND + 1;
+    const MT_GO_CALLBACK = MT_JS_SEND + 1;
+    const MT_JS_CALLBACK = MT_GO_CALLBACK + 1;
 
     // Energy
     class Energy {
@@ -40,6 +32,15 @@
         #executionID;
 
         /**
+         * js process message
+         * @param {string} message json
+         * @public
+         */
+        processMessage(message) {
+            console.error("Unsupported Platform");
+        };
+
+        /**
          * Creates an instance of Energy.
          * @memberof Energy
          */
@@ -47,7 +48,45 @@
             this.#eventListeners = new Map();
             this.#emitCallbacks = new Map();
             this.#executionID = 0;
+            // process message
+            if (this.#deepTest(["chrome", "webview", "postMessage"])) {
+                // webview2
+                let webview = window.chrome.webview;
+                // render process send message => go
+                this.processMessage = (message) => webview.postMessage(message);
+                // render process receive browser process string message
+                webview.addEventListener("message", event => {
+                    const result = window.energy.__executeEvent(event.data);
+                    if (result && result.id !== 0) {
+                        console.log("ipc.on-execute result:", result)
+                        const payload = {
+                            n: '', // name
+                            d: [].slice.apply([result]), // data
+                            i: result.id, // executionID
+                        };
+                        this.processMessage(JSON.stringify(payload));
+                    }
+                });
+                // render process receive browser process buffer message
+                webview.addEventListener("sharedbufferreceived", event => {
+                    let buffer = event.getBuffer();
+                    let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
+                    console.log("buffer:", bufferData);
+                });
+            } else if (this.#deepTest(["webkit", "messageHandlers", "external", "postMessage"])) {
+                // webkit
+                // render process send message => go
+                this.processMessage = (message) => window.webkit.messageHandlers.external.postMessage(message);
+            } else {
+                console.error("Unsupported Platform");
+            }
         }
+
+        #deepTest(s) {
+            let obj = window[s.shift()];
+            while (obj && s.length) obj = obj[s.shift()];
+            return obj;
+        };
 
         /**
          * @param {object} message
@@ -81,6 +120,7 @@
         /**
          * @param {string} name
          * @param {function} callback
+         * @private
          */
         __setEventListener(name, callback) {
             this.#eventListeners.set(name, callback);
@@ -89,6 +129,7 @@
         /**
          * @param {number} executionID
          * @param {function} callback
+         * @private
          */
         __setJSEmitCallback(executionID, callback) {
             this.#emitCallbacks.set(executionID, callback);
@@ -97,6 +138,7 @@
         /**
          * @param {string} messageData
          * @return If there is a return value
+         * @private
          */
         __executeEvent(messageData) {
             try {
@@ -112,6 +154,7 @@
         /**
          * return the ID of the next IPC message executed in JavaScript
          * @returns {number} messageId
+         * @private
          */
         __nextExecutionID() {
             this.#executionID++;
@@ -170,6 +213,7 @@
                 window.energy.__setJSEmitCallback(executionID, callback)
             }
             const payload = {
+                t: MT_JS_SEND, // message type
                 n: name, // name
                 d: [].slice.apply(data), // data
                 i: executionID, // executionID
@@ -177,41 +221,10 @@
             // call js event
 
             // call go event
-            ProcessMessage(JSON.stringify(payload));
+            energy.processMessage(JSON.stringify(payload));
         }
     }
 
     window.energy = new Energy();
     window.ipc = new IPC();
-
-    let deepTest = function (s) {
-        let obj = window[s.shift()];
-        while (obj && s.length) obj = obj[s.shift()];
-        return obj;
-    };
-    if (deepTest(["chrome", "webview", "postMessage"])) {
-        // webview2
-        let webview = window.chrome.webview;
-        // render process send message => go
-        window.ProcessMessage = (message) => webview.postMessage(message);
-        // render process receive browser process string message
-        webview.addEventListener("message", event => {
-            const result = window.energy.__executeEvent(event.data);
-            if (result) {
-                console.log("ipc.on-execute result:", result)
-            }
-        });
-        // render process receive browser process buffer message
-        webview.addEventListener("sharedbufferreceived", event => {
-            let buffer = event.getBuffer();
-            let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
-            console.log("buffer:", bufferData);
-        });
-    } else if (deepTest(["webkit", "messageHandlers", "external", "postMessage"])) {
-        // webkit
-        // render process send message => go
-        window.ProcessMessage = (message) => window.webkit.messageHandlers.external.postMessage(message);
-    } else {
-        console.error("Unsupported Platform");
-    }
 })();

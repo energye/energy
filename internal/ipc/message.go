@@ -15,23 +15,42 @@ import (
 	"sync/atomic"
 )
 
+// callback function id
 var executionID uint32
 
+// MessageType IPC Message type
+type MessageType uint8
+
+const (
+	MT_GO_SEND MessageType = iota + 1
+	MT_JS_SEND
+	MT_GO_CALLBACK
+	MT_JS_CALLBACK
+)
+
 type ProcessMessage struct {
+	Type MessageType `json:"t"`
 	Name string      `json:"n"`
 	Data interface{} `json:"d"`
 	Id   uint32      `json:"i"`
 }
 
+// ToJSON
 func (m *ProcessMessage) ToJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
+// NextExecutionID
 func NextExecutionID() uint32 {
 	atomic.AddUint32(&executionID, 1)
 	return executionID
 }
 
+// ResetExecutionID
 func ResetExecutionID() {
 	atomic.StoreUint32(&executionID, 0)
+}
+
+func CheckMessageType(t MessageType) bool {
+	return t == MT_GO_SEND || t == MT_JS_SEND || t == MT_GO_CALLBACK || t == MT_JS_CALLBACK
 }
