@@ -37,7 +37,8 @@ type MessageReceivedDelegate struct {
 }
 
 type ipcListener struct {
-	callbacks map[string]callback.ICallback
+	onCallbacks   map[string]callback.ICallback
+	emitCallbacks map[uint32]callback.ICallback
 }
 
 // NewMessageReceivedDelegate create MessageReceivedDelegate
@@ -59,7 +60,7 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 			return
 		}
 		listenerLock.Lock()
-		fn, ok := listener.callbacks[message.Name]
+		fn, ok := listener.onCallbacks[message.Name]
 		listenerLock.Unlock()
 		var result interface{}
 		if ok {
@@ -81,7 +82,8 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 
 func init() {
 	listener = &ipcListener{
-		callbacks: make(map[string]callback.ICallback),
+		onCallbacks:   make(map[string]callback.ICallback),
+		emitCallbacks: make(map[uint32]callback.ICallback),
 	}
 	processMessage = make(map[uint32]IProcessMessage)
 }
@@ -134,7 +136,7 @@ func On(name string, fn callback.EventCallback) {
 	}
 	if newCallback := createCallback(fn); newCallback != nil {
 		listenerLock.Lock()
-		listener.callbacks[name] = newCallback
+		listener.onCallbacks[name] = newCallback
 		listenerLock.Unlock()
 	}
 }
@@ -143,7 +145,7 @@ func On(name string, fn callback.EventCallback) {
 // IPC GO Remove listening events
 func RemoveOn(name string) {
 	listenerLock.Lock()
-	delete(listener.callbacks, name)
+	delete(listener.onCallbacks, name)
 	listenerLock.Unlock()
 }
 
@@ -160,9 +162,20 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 	emitMsg, ok := processMessage[windowId]
 	processMessageLock.Unlock()
 	if ok {
+		var resultCallbackId uint32
+		if len(arguments) > 0 {
+			argsl := arguments[len(arguments)-1]
+			switch argsl.(type) {
+			case callback.EventCallback:
+				resultCallbackId = NextExecutionID()
+				listener.emitCallbacks[resultCallbackId] = callback.New(argsl.(callback.EventCallback))
+				arguments = arguments[:len(arguments)-1]
+			}
+		}
 		message := &ProcessMessage{
 			Name: name,
 			Data: arguments,
+			Id:   resultCallbackId,
 		}
 		data, err := message.ToJSON()
 		if err != nil {

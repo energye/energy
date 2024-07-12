@@ -40,5 +40,5 @@ func Emit(name string, arguments ...interface{}) {
 	if name == "" {
 		return
 	}
-	ipc.Emit(0, name, arguments)
+	ipc.Emit(0, name, arguments...)
 }

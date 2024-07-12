@@ -10,14 +10,28 @@
 
 package ipc
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"sync/atomic"
+)
+
+var executionID uint32
 
 type ProcessMessage struct {
 	Name string      `json:"n"`
 	Data interface{} `json:"d"`
-	Id   int         `json:"i"`
+	Id   uint32      `json:"i"`
 }
 
 func (m *ProcessMessage) ToJSON() ([]byte, error) {
 	return json.Marshal(m)
+}
+
+func NextExecutionID() uint32 {
+	atomic.AddUint32(&executionID, 1)
+	return executionID
+}
+
+func ResetExecutionID() {
+	atomic.StoreUint32(&executionID, 0)
 }

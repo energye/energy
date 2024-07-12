@@ -10,6 +10,7 @@
 
 package wv
 
+// Options App config option
 type Options struct {
 	Caption            string
 	DefaultURL         string

@@ -11,7 +11,7 @@
 package callback
 
 // EventCallback IPC context callback
-type EventCallback func(context IContext)
+type EventCallback = func(context IContext)
 
 type ICallback interface {
 	Invoke(context IContext) interface{}

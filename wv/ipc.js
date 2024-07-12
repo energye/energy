@@ -1,3 +1,14 @@
+//----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+//----------------------------------------
+
+
 // render process send process message
 (function () {
     class Browser {
@@ -33,32 +44,37 @@
          * @memberof Energy
          */
         constructor() {
-            this.#eventListeners = {};
-            this.#emitCallbacks = {};
+            this.#eventListeners = new Map();
+            this.#emitCallbacks = new Map();
             this.#executionID = 0;
         }
 
         /**
          * @param {object} message
+         * @return If there is a return value
          */
         #notifyListeners(message) {
             let id = message.i;
             let name = message.n;
             let callback;
             if (!name && id !== 0) {
-                callback = this.#emitCallbacks[id];
+                callback = this.#emitCallbacks.get(id);
                 if (callback) {
-                    delete this.#emitCallbacks[id];
+                    this.#emitCallbacks.delete(id);
                 }
             } else {
-                callback = this.#eventListeners[name];
+                callback = this.#eventListeners.get(name);
             }
             if (callback) {
                 let args = message.d;
                 if (!Array.isArray(args)) {
                     args = [args]
                 }
-                return callback.apply(null, args);
+                let result = callback.apply(null, args);
+                return {
+                    id: id,
+                    result: result,
+                }
             }
         };
 
@@ -67,7 +83,7 @@
          * @param {function} callback
          */
         __setEventListener(name, callback) {
-            this.#eventListeners[name] = callback;
+            this.#eventListeners.set(name, callback);
         }
 
         /**
@@ -75,11 +91,12 @@
          * @param {function} callback
          */
         __setJSEmitCallback(executionID, callback) {
-            this.#emitCallbacks[executionID] = callback;
+            this.#emitCallbacks.set(executionID, callback);
         }
 
         /**
          * @param {string} messageData
+         * @return If there is a return value
          */
         __executeEvent(messageData) {
             try {
@@ -92,6 +109,10 @@
             }
         };
 
+        /**
+         * return the ID of the next IPC message executed in JavaScript
+         * @returns {number} messageId
+         */
         __nextExecutionID() {
             this.#executionID++;
             return this.#executionID;
@@ -177,7 +198,7 @@
         webview.addEventListener("message", event => {
             const result = window.energy.__executeEvent(event.data);
             if (result) {
-
+                console.log("ipc.on-execute result:", result)
             }
         });
         // render process receive browser process buffer message
