@@ -40,6 +40,8 @@ type IBrowserWindow interface {
 }
 
 // BrowserWindow
+//
+//	energy webview2 window, It consists of TForm and WVBrowser
 type BrowserWindow struct {
 	lcl.TForm
 	windowId                uint32
@@ -126,7 +128,7 @@ func (m *BrowserWindow) defaultEvent() {
 			m.browser.AddWebResourceRequestedFilter(m.options.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
-		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcjs), m.browser)
+		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos

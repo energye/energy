@@ -13,4 +13,4 @@ package wv
 import _ "embed"
 
 //go:embed ipc.js
-var ipcjs []byte
+var ipcJS []byte
