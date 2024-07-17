@@ -50,33 +50,46 @@ func NewMessageReceivedDelegate() IMessageReceivedDelegate {
 func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) {
 	var message ProcessMessage
 	err := json.Unmarshal([]byte(messageData), &message)
-	process := GetProcessMessage(windowId)
 	if err != nil {
+		// Log ???
 		//sendError := &ProcessMessage{}
 		//process.SendMessage()
 	} else {
 		// call go ipc callback
 		if message.Name == "" || !CheckMessageType(message.Type) {
+			// Log ???
 			return
 		}
-		listenerLock.Lock()
-		fn, ok := listener.onCallbacks[message.Name]
-		listenerLock.Unlock()
-		var result interface{}
-		if ok {
-			ctx := callback.NewContext(windowId, message.Data)
-			result = fn.Invoke(ctx)
+		switch message.Type {
+		case MT_JS_EMIT:
+			m.handlerJSEMIT(windowId, &message)
 		}
-		//
-		if message.Id != 0 {
-			message.Name = ""
-			message.Data = result
-			tmpMsg, err := message.ToJSON()
-			if err != nil {
-				// Log ???
-			}
-			process.SendMessage(tmpMsg)
+	}
+}
+
+func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *ProcessMessage) {
+	listenerLock.Lock()
+	fn, ok := listener.onCallbacks[message.Name]
+	listenerLock.Unlock()
+	var result interface{}
+	if ok {
+		ctx := callback.NewContext(windowId, message.Data)
+		result = fn.Invoke(ctx)
+	}
+	// Not for 0 js has callback functions
+	if message.Id != 0 {
+		message.Name = ""
+		message.Data = result
+		tmpMsg, err := message.ToJSON()
+		if err != nil {
+			// Log ???
 		}
+		process := GetProcessMessage(windowId)
+		if process == nil {
+			// Log ???
+			return
+		}
+		process.SendMessage(tmpMsg)
 	}
 }
 
@@ -173,7 +186,7 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 			}
 		}
 		message := &ProcessMessage{
-			Type: MT_GO_SEND,
+			Type: MT_GO_EMIT,
 			Name: name,
 			Data: arguments,
 			Id:   resultCallbackId,

@@ -11,10 +11,10 @@
 
 // render process send process message
 (function () {
-    const MT_GO_SEND = 1;
-    const MT_JS_SEND = MT_GO_SEND + 1;
-    const MT_GO_CALLBACK = MT_JS_SEND + 1;
-    const MT_JS_CALLBACK = MT_GO_CALLBACK + 1;
+    const MT_GO_EMIT = 1;
+    const MT_JS_EMIT = MT_GO_EMIT + 1;
+    const MT_GO_EMIT_CALLBACK = MT_JS_EMIT + 1;
+    const MT_JS_EMIT_CALLBACK = MT_GO_EMIT_CALLBACK + 1;
 
     // Energy
     class Energy {
@@ -213,7 +213,7 @@
                 window.energy.__setJSEmitCallback(executionID, callback)
             }
             const payload = {
-                t: MT_JS_SEND, // message type
+                t: MT_JS_EMIT, // message type
                 n: name, // name
                 d: [].slice.apply(data), // data
                 i: executionID, // executionID

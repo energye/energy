@@ -22,10 +22,10 @@ var executionID uint32
 type MessageType uint8
 
 const (
-	MT_GO_SEND MessageType = iota + 1
-	MT_JS_SEND
-	MT_GO_CALLBACK
-	MT_JS_CALLBACK
+	MT_GO_EMIT MessageType = iota + 1
+	MT_JS_EMIT
+	MT_GO_EMIT_CALLBACK
+	MT_JS_EMIT_CALLBACK
 )
 
 type ProcessMessage struct {
@@ -52,5 +52,5 @@ func ResetExecutionID() {
 }
 
 func CheckMessageType(t MessageType) bool {
-	return t == MT_GO_SEND || t == MT_JS_SEND || t == MT_GO_CALLBACK || t == MT_JS_CALLBACK
+	return t == MT_GO_EMIT || t == MT_JS_EMIT || t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK
 }
