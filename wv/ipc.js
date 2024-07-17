@@ -58,11 +58,11 @@
                 webview.addEventListener("message", event => {
                     const result = window.energy.__executeEvent(event.data);
                     if (result && result.id !== 0) {
-                        console.log("ipc.on-execute result:", result)
                         const payload = {
-                            n: '', // name
-                            d: [].slice.apply([result]), // data
-                            i: result.id, // executionID
+                            t: MT_GO_EMIT_CALLBACK,                         // MessageType
+                            n: result.name,                                 // name
+                            d: [].slice.apply([result.result]),     // data
+                            i: result.id,                                   // executionID
                         };
                         this.processMessage(JSON.stringify(payload));
                     }
@@ -90,32 +90,35 @@
 
         /**
          * @param {object} message
-         * @return If there is a return value
          */
         #notifyListeners(message) {
-            let id = message.i;
-            let name = message.n;
-            let callback;
-            if (!name && id !== 0) {
-                callback = this.#emitCallbacks.get(id);
-                if (callback) {
-                    this.#emitCallbacks.delete(id);
-                }
-            } else {
-                callback = this.#eventListeners.get(name);
+            switch (message.t) {
+                case MT_GO_EMIT:
+                    return this.#handlerGOEMIT(message)
             }
+        };
+
+        /**
+         * @param {object} message
+         * @return If there is a return value
+         */
+        #handlerGOEMIT(message) {
+            let id = message.i;   // executionID
+            let name = message.n; // name
+            let callback = this.#eventListeners.get(name);
             if (callback) {
-                let args = message.d;
+                let args = message.d; // arguments
                 if (!Array.isArray(args)) {
                     args = [args]
                 }
                 let result = callback.apply(null, args);
                 return {
                     id: id,
+                    name: name,
                     result: result,
                 }
             }
-        };
+        }
 
         /**
          * @param {string} name
@@ -213,10 +216,10 @@
                 window.energy.__setJSEmitCallback(executionID, callback)
             }
             const payload = {
-                t: MT_JS_EMIT, // message type
-                n: name, // name
+                t: MT_JS_EMIT,           // MessageType
+                n: name,                 // name
                 d: [].slice.apply(data), // data
-                i: executionID, // executionID
+                i: executionID,          // executionID
             };
             // call js event
 

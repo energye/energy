@@ -102,11 +102,11 @@ func (m *BrowserWindow) WindowId() uint32 {
 	return m.windowId
 }
 
-func (m *BrowserWindow) SendMessage(data []byte) {
+func (m *BrowserWindow) SendMessage(payload []byte) {
 	if m.IsClosing() {
 		return
 	}
-	m.browser.PostWebMessageAsString(string(data))
+	m.browser.PostWebMessageAsString(string(payload))
 }
 
 // Default preset function implementation

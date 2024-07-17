@@ -26,10 +26,14 @@ var (
 
 type IProcessMessage interface {
 	WindowId() uint32
-	SendMessage(data []byte)
+	SendMessage(payload []byte)
 }
 
+// IMessageReceivedDelegate Process message agent processor
 type IMessageReceivedDelegate interface {
+	// Received message
+	//  windowId: The currently received browser window id
+	//  message: Process message JSON string
 	Received(windowId uint32, message string)
 }
 
@@ -63,10 +67,21 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) 
 		switch message.Type {
 		case MT_JS_EMIT:
 			m.handlerJSEMIT(windowId, &message)
+		case MT_GO_EMIT_CALLBACK:
+			m.handlerGOEMITCallback(windowId, &message)
 		}
 	}
 }
 
+// go ipc.emit
+func (m *MessageReceivedDelegate) handlerGOEMITCallback(windowId uint32, message *ProcessMessage) {
+	if callbackFunc, ok := listener.emitCallbacks[message.Id]; ok {
+		ctx := callback.NewContext(windowId, message.Data)
+		callbackFunc.Invoke(ctx)
+	}
+}
+
+// js ipc.emit
 func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *ProcessMessage) {
 	listenerLock.Lock()
 	fn, ok := listener.onCallbacks[message.Name]
@@ -74,13 +89,14 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *Proces
 	var result interface{}
 	if ok {
 		ctx := callback.NewContext(windowId, message.Data)
+		// call ipc.on callback function
 		result = fn.Invoke(ctx)
 	}
-	// Not for 0 js has callback functions
+	// not 0 js has callback function
 	if message.Id != 0 {
 		message.Name = ""
 		message.Data = result
-		tmpMsg, err := message.ToJSON()
+		payload, err := message.ToJSON()
 		if err != nil {
 			// Log ???
 		}
@@ -89,7 +105,7 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *Proces
 			// Log ???
 			return
 		}
-		process.SendMessage(tmpMsg)
+		process.SendMessage(payload)
 	}
 }
 
@@ -169,19 +185,20 @@ func RemoveOn(name string) {
 //	arguments: emit message data
 func Emit(windowId uint32, name string, arguments ...interface{}) {
 	if windowId == 0 {
-		windowId = mainWindowId
+		windowId = mainWindowId // default main browser window id
 	}
 	processMessageLock.Lock()
 	emitMsg, ok := processMessage[windowId]
 	processMessageLock.Unlock()
 	if ok {
-		var resultCallbackId uint32
+		var executionID uint32
 		if len(arguments) > 0 {
-			argsl := arguments[len(arguments)-1]
-			switch argsl.(type) {
+			// Check if the last parameter is a callback function
+			argsFunc := arguments[len(arguments)-1]
+			switch argsFunc.(type) {
 			case callback.EventCallback:
-				resultCallbackId = NextExecutionID()
-				listener.emitCallbacks[resultCallbackId] = callback.New(argsl.(callback.EventCallback))
+				executionID = NextExecutionID()
+				listener.emitCallbacks[executionID] = callback.New(argsFunc.(callback.EventCallback))
 				arguments = arguments[:len(arguments)-1]
 			}
 		}
@@ -189,13 +206,13 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 			Type: MT_GO_EMIT,
 			Name: name,
 			Data: arguments,
-			Id:   resultCallbackId,
+			Id:   executionID,
 		}
-		data, err := message.ToJSON()
+		payload, err := message.ToJSON()
 		if err != nil {
 			// Log ???
 		}
-		emitMsg.SendMessage(data)
+		emitMsg.SendMessage(payload)
 	}
 }
 

@@ -29,13 +29,12 @@ const (
 )
 
 type ProcessMessage struct {
-	Type MessageType `json:"t"`
-	Name string      `json:"n"`
-	Data interface{} `json:"d"`
-	Id   uint32      `json:"i"`
+	Type MessageType `json:"t"` // MessageType, Used to distinguish message types, this constant is defined the same in GO and JS
+	Name string      `json:"n"` // Message name
+	Data interface{} `json:"d"` // Message payload
+	Id   uint32      `json:"i"` // Not 0 (js or go) ipc.emit has callback function
 }
 
-// ToJSON
 func (m *ProcessMessage) ToJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
@@ -52,5 +51,6 @@ func ResetExecutionID() {
 }
 
 func CheckMessageType(t MessageType) bool {
-	return t == MT_GO_EMIT || t == MT_JS_EMIT || t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK
+	return t == MT_GO_EMIT || t == MT_JS_EMIT ||
+		t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK
 }
