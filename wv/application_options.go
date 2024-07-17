@@ -15,6 +15,8 @@ type Options struct {
 	Caption            string
 	DefaultURL         string
 	ICON               []byte
+	X                  int
+	Y                  int
 	Width              int
 	Height             int
 	DisableDevTools    bool

@@ -69,9 +69,10 @@ func getWindowID() uint32 {
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.windowId = getWindowID()
 	m.SetCaption(m.options.Caption)
+	m.SetLeft(int32(m.options.X))
+	m.SetTop(int32(m.options.Y))
 	m.SetWidth(int32(m.options.Width))
 	m.SetHeight(int32(m.options.Height))
-	m.ScreenCenter()
 	m.SetDoubleBuffered(true)
 	m.windowParent = wv.NewWVWindowParent(m)
 	m.windowParent.SetParent(m)
