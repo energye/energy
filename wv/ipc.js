@@ -56,16 +56,7 @@
                 this.processMessage = (message) => webview.postMessage(message);
                 // render process receive browser process string message
                 webview.addEventListener("message", event => {
-                    const result = window.energy.__executeEvent(event.data);
-                    if (result && result.id !== 0) {
-                        const payload = {
-                            t: MT_GO_EMIT_CALLBACK,                         // MessageType
-                            n: result.name,                                 // name
-                            d: [].slice.apply([result.result]),     // data
-                            i: result.id,                                   // executionID
-                        };
-                        this.processMessage(JSON.stringify(payload));
-                    }
+                    window.energy.__executeEvent(event.data);
                 });
                 // render process receive browser process buffer message
                 webview.addEventListener("sharedbufferreceived", event => {
@@ -94,13 +85,32 @@
         #notifyListeners(message) {
             switch (message.t) {
                 case MT_GO_EMIT:
-                    return this.#handlerGOEMIT(message)
+                    this.#handlerGOEMIT(message);
+                    break
+                case MT_JS_EMIT_CALLBACK:
+                    this.#handlerJSEMITCallback(message);
+                    break
             }
         };
 
         /**
          * @param {object} message
-         * @return If there is a return value
+         */
+        #handlerJSEMITCallback(message) {
+            let id = message.i;                         // executionID
+            let callback = this.#emitCallbacks.get(id); // get ipc.emit callback function
+            if (callback) {
+                this.#emitCallbacks.delete(id); // remove ipc.emit callback function by executionID
+                let args = message.d;           // arguments
+                if (!Array.isArray(args)) {
+                    args = [args];
+                }
+                callback.apply(null, args);
+            }
+        }
+
+        /**
+         * @param {object} message
          */
         #handlerGOEMIT(message) {
             let id = message.i;   // executionID
@@ -109,13 +119,18 @@
             if (callback) {
                 let args = message.d; // arguments
                 if (!Array.isArray(args)) {
-                    args = [args]
+                    args = [args];
                 }
                 let result = callback.apply(null, args);
-                return {
-                    id: id,
-                    name: name,
-                    result: result,
+                // not 0 go has callback function
+                if (id !== 0) {
+                    const payload = {
+                        t: MT_GO_EMIT_CALLBACK,                  // MessageType
+                        n: name,                                 // name
+                        d: [].slice.apply([result]),     // data
+                        i: id,                                   // executionID
+                    };
+                    this.processMessage(JSON.stringify(payload));
                 }
             }
         }
@@ -140,15 +155,11 @@
 
         /**
          * @param {string} messageData
-         * @return If there is a return value
          * @private
          */
         __executeEvent(messageData) {
             try {
-                const result = this.#notifyListeners(JSON.parse(messageData));
-                if (result) {
-                    return result
-                }
+                this.#notifyListeners(JSON.parse(messageData));
             } catch (e) {
                 throw new Error(e + ' ' + messageData);
             }
