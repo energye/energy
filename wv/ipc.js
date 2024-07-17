@@ -37,7 +37,7 @@
          * @public
          */
         processMessage(message) {
-            console.error("Unsupported Platform");
+            throw new Error("Unsupported Platform");
         };
 
         /**
@@ -59,17 +59,17 @@
                     window.energy.__executeEvent(event.data);
                 });
                 // render process receive browser process buffer message
-                webview.addEventListener("sharedbufferreceived", event => {
-                    let buffer = event.getBuffer();
-                    let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
-                    console.log("buffer:", bufferData);
-                });
+                //webview.addEventListener("sharedbufferreceived", event => {
+                    //let buffer = event.getBuffer();
+                    //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
+                    // console.log("buffer:", bufferData);
+                //});
             } else if (this.#deepTest(["webkit", "messageHandlers", "external", "postMessage"])) {
                 // webkit
                 // render process send message => go
                 this.processMessage = (message) => window.webkit.messageHandlers.external.postMessage(message);
             } else {
-                console.error("Unsupported Platform");
+                throw new Error("Unsupported Platform");
             }
         }
 
