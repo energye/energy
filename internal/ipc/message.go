@@ -16,7 +16,9 @@ import (
 )
 
 // callback function id
-var executionID uint32
+var (
+	goExecutionID uint32
+)
 
 // MessageType IPC Message type
 type MessageType uint8
@@ -41,13 +43,13 @@ func (m *ProcessMessage) ToJSON() ([]byte, error) {
 
 // NextExecutionID
 func NextExecutionID() uint32 {
-	atomic.AddUint32(&executionID, 1)
-	return executionID
+	atomic.AddUint32(&goExecutionID, 1)
+	return goExecutionID
 }
 
 // ResetExecutionID
 func ResetExecutionID() {
-	atomic.StoreUint32(&executionID, 0)
+	atomic.StoreUint32(&goExecutionID, 0)
 }
 
 func CheckMessageType(t MessageType) bool {
