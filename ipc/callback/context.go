@@ -16,7 +16,11 @@ package callback
 type IContext interface {
 	Data() interface{}          //ArgumentList
 	Result(data ...interface{}) //callback function return Result
-	getResult() interface{}
+}
+
+type IOnCallbackContext interface {
+	IContext
+	GetResult() interface{} // callback function result
 }
 
 // Context IPC Context
@@ -27,7 +31,7 @@ type Context struct {
 }
 
 // NewContext create IPC event message
-func NewContext(windowId uint32, data interface{}) IContext {
+func NewContext(windowId uint32, data interface{}) IOnCallbackContext {
 	ctx := &Context{
 		windowId: windowId,
 		data:     data,
@@ -44,6 +48,6 @@ func (m *Context) Result(results ...interface{}) {
 	m.result = results
 }
 
-func (m *Context) getResult() interface{} {
+func (m *Context) GetResult() interface{} {
 	return m.result
 }
