@@ -60,9 +60,9 @@
                 });
                 // render process receive browser process buffer message
                 //webview.addEventListener("sharedbufferreceived", event => {
-                    //let buffer = event.getBuffer();
-                    //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
-                    // console.log("buffer:", bufferData);
+                //let buffer = event.getBuffer();
+                //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
+                // console.log("buffer:", bufferData);
                 //});
             } else if (this.#deepTest(["webkit", "messageHandlers", "external", "postMessage"])) {
                 // webkit
@@ -145,6 +145,14 @@
         }
 
         /**
+         * @param {string} name
+         * @private
+         */
+        __removeEventListener(name) {
+            this.#eventListeners.delete(name);
+        }
+
+        /**
          * @param {number} executionID
          * @param {function} callback
          * @private
@@ -188,6 +196,13 @@
                 // __energyEventListeners[name].push(thisListener);
                 window.energy.__setEventListener(name, callback);
             }
+        }
+
+        /**
+         * @param {string} name
+         */
+        removeOn(name) {
+            window.energy.__removeEventListener(name);
         }
 
         /**
