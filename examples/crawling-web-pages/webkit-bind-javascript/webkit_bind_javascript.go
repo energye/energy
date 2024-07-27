@@ -19,14 +19,12 @@ import (
 	"github.com/energye/energy/v2/examples/crawling-web-pages/webkit-bind-javascript/implant"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
-	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
 var resources embed.FS
 
 func main() {
-	libname.LibName = "C:\\Users\\yanghy\\golcl\\liblclv2.dll"
 	lcl.DEBUG = true // 一些底层调用时错误会输出
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
