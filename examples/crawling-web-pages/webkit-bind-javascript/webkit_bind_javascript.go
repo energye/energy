@@ -19,12 +19,14 @@ import (
 	"github.com/energye/energy/v2/examples/crawling-web-pages/webkit-bind-javascript/implant"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/pkgs/libname"
 )
 
 //go:embed resources
 var resources embed.FS
 
 func main() {
+	libname.LibName = "C:\\Users\\yanghy\\golcl\\liblclv2.dll"
 	lcl.DEBUG = true // 一些底层调用时错误会输出
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
@@ -38,6 +40,7 @@ func main() {
 	cef.BrowserWindow.Config.EnableMaximize = false
 	cef.BrowserWindow.Config.EnableResize = false
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	cef.BrowserWindow.Config.Url = "https://web.whatsapp.com/"
 
 	// 注入本地js
 	app.SetOnWebKitInitialized(func() {
@@ -66,9 +69,12 @@ func main() {
 			}
 			return false
 		})
-		jsCode := implant.JS
+		jsCode := implant.HelperJS()
 		// 注册JS, dom 是自定义注入的js全局变量名或常量名
 		cef.RegisterExtension("v8/dom", jsCode, v8Handler)
+	})
+	ipc.On("implantName", func(data string) {
+		fmt.Println("implantName", data)
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// ipc
@@ -89,6 +95,9 @@ func main() {
 			// 这里只能取出字符串
 			fmt.Println("javascript-console.log:", message)
 			return false
+		})
+		chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+			chromium.ExecuteJavaScript(`dom.element("body")`, "", 0)
 		})
 	})
 	//内置http服务需要使用 go:embed resources 内置资源到执行程序中

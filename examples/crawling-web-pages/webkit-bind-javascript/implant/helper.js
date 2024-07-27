@@ -5,6 +5,7 @@ if (!dom) {
             const s = dom.selectable(this)
             // return s.querySelector(selector)
             dom.html = s.querySelector(selector).innerHTML
+            ipc.emit('implantName', [s.querySelector(selector).innerHTML]);
         },
 
         elements(selector) {
