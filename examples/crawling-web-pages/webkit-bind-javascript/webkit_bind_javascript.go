@@ -40,7 +40,6 @@ func main() {
 	cef.BrowserWindow.Config.EnableMaximize = false
 	cef.BrowserWindow.Config.EnableResize = false
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.Url = "https://web.whatsapp.com/"
 
 	// 注入本地js
 	app.SetOnWebKitInitialized(func() {
