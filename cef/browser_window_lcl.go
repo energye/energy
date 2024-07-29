@@ -57,7 +57,6 @@ type LCLBrowserWindow struct {
 	onPaint                   []lcl.TNotifyEvent   //扩展事件 向后链试循环调用
 	auxTools                  IAuxTools            //辅助工具
 	tray                      []ITray              //托盘 可以同时创建多个
-	hWnd                      types.HWND           //
 	cwcap                     *customWindowCaption //自定义窗口标题栏
 	drag                      *drag                //自定义拖拽
 	wmPaintMessage            wmPaint              //
@@ -255,10 +254,7 @@ func (m *LCLBrowserWindow) SetOnWndProc(fn lcl.TWndProcEvent) {
 
 // Handle 窗口句柄
 func (m *LCLBrowserWindow) Handle() types.HWND {
-	if m.hWnd == 0 {
-		m.hWnd = m.TForm.Handle()
-	}
-	return m.hWnd
+	return m.TForm.Handle()
 }
 
 // RunOnMainThread
