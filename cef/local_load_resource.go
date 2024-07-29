@@ -34,7 +34,8 @@ const (
 var localLoadRes *LocalLoadResource
 
 // LocalLoadResource 初始化时设置
-//  本地&内置加载资源
+//
+//	本地&内置加载资源
 type LocalLoadResource struct {
 	LocalLoadConfig
 	mimeType    map[string]string
@@ -42,8 +43,9 @@ type LocalLoadResource struct {
 }
 
 // LocalLoadConfig
-//  本地&内置资源加载配置
-//  然后使用 Build() 函数构建对象
+//
+//	本地&内置资源加载配置
+//	然后使用 Build() 函数构建对象
 type LocalLoadConfig struct {
 	Enable bool   // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
 	Domain string // 自定义域, 格式: xxx | xxx.xx | xxx.xxx.xxx， example, example.com, 默认: energy
@@ -84,8 +86,9 @@ func localLoadResourceInit(config *LocalLoadConfig) {
 }
 
 // Build
-//  构建本地资源加载配置
-//  初始化默认值和默认代理配置
+//
+//	构建本地资源加载配置
+//	初始化默认值和默认代理配置
 func (m LocalLoadConfig) Build() *LocalLoadConfig {
 	if localLoadRes != nil && !process.Args.IsMain() {
 		return nil
@@ -133,7 +136,8 @@ func (m LocalLoadConfig) Build() *LocalLoadConfig {
 }
 
 // Disable
-//  如果不想启用该代理配置，需要主动调用该函数，仅在应用出始化时有效
+//
+//	如果不想启用该代理配置，需要主动调用该函数，仅在应用出始化时有效
 func (m *LocalLoadConfig) Disable() *LocalLoadConfig {
 	m.Enable = false
 	return m
@@ -159,7 +163,8 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 }
 
 // getSchemeHandlerFactory
-//  方式二 资源处理器默认实现，使用本地资源加载时开启
+//
+//	方式二 资源处理器默认实现，使用本地资源加载时开启
 func (m *LocalLoadResource) getSchemeHandlerFactory(window IBrowserWindow, browser *ICefBrowser) {
 	if m.enable() {
 		handler := SchemeHandlerFactoryRef.New()
@@ -172,7 +177,8 @@ func (m *LocalLoadResource) getSchemeHandlerFactory(window IBrowserWindow, brows
 }
 
 // getResourceHandler
-//  方式一 资源处理器默认实现，使用本地资源加载时开启
+//
+//	方式一 资源处理器默认实现，使用本地资源加载时开启
 func (m *LocalLoadResource) getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
 	if m.enable() {
 		if source, ok := m.checkRequest(request); ok {
@@ -196,7 +202,8 @@ func (m *LocalLoadResource) enable() bool {
 }
 
 // getMimeType
-//  获取资源mime type
+//
+//	获取资源mime type
 func (m *LocalLoadResource) getMimeType(extension string) string {
 	if mimeType, ok := m.mimeType[extension]; ok {
 		return mimeType
@@ -218,15 +225,16 @@ func (m *LocalLoadResource) ext(path string) string {
 }
 
 // 使用本地资源加载时,先验证每个请求的合法性
-//  所支持的scheme, domain
-//  URL格式, fs://energy/index.html, 文件路径必须包含扩展名
-//  这里返回false后不会创建资源处理对象
+//
+//	所支持的scheme, domain
+//	URL格式, fs://energy/index.html, 文件路径必须包含扩展名
+//	这里返回false后不会创建资源处理对象
 func (m *LocalLoadResource) checkRequest(request *ICefRequest) (*source, bool) {
 	rt := request.ResourceType()
 	// 根据资源类型跳过哪些资源不被本地加载
 	// TODO: rt_media 类型应该在此去除
 	switch rt {
-	case RT_MEDIA, RT_PING, RT_CSP_REPORT, RT_PLUGIN_RESOURCE:
+	case /*RT_MEDIA,*/ RT_PING, RT_CSP_REPORT, RT_PLUGIN_RESOURCE:
 		return nil, false
 	}
 	reqUrl, err := url.Parse(request.URL())
