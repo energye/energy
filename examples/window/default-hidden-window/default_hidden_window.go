@@ -37,7 +37,7 @@ func main() {
 	cef.BrowserWindow.Config.Height = 1
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		// chromium 创建完成之后再隐藏掉窗口
-		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
+		event.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType, window cef.IBrowserWindow) {
 			window.Hide()
 			println("hide window")
 			// 5秒后显示窗口
