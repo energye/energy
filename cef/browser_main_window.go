@@ -40,6 +40,7 @@ type BrowserEvent struct {
 	onBeforePopup             chromiumEventOnBeforePopupEx             //default
 	onDragEnter               chromiumEventOnDragEnterEx               //default
 	onDraggableRegionsChanged chromiumEventOnDraggableRegionsChangedEx //default
+	onLoadStart               chromiumEventOnLoadStartEx               //default
 	onLoadEnd                 chromiumEventOnLoadEndEx                 //default
 	onAfterCreated            chromiumEventOnAfterCreatedEx            //default
 	onBeforeBrowser           chromiumEventOnBeforeBrowserEx           //default
@@ -294,9 +295,9 @@ func (m *BrowserEvent) SetOnZoomPctAvailable(event chromiumEventOnResultFloat) {
 }
 
 // SetOnLoadStart
-func (m *BrowserEvent) SetOnLoadStart(event chromiumEventOnLoadStart) {
+func (m *BrowserEvent) SetOnLoadStart(event chromiumEventOnLoadStartEx) {
 	if Args.IsMain() {
-		m.chromium.SetOnLoadStart(event)
+		m.onLoadStart = event
 	}
 }
 

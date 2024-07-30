@@ -140,6 +140,7 @@ type chromiumEventOnClose func(sender lcl.IObject, browser *ICefBrowser, aAction
 type chromiumEventOnCloseEx func(sender lcl.IObject, browser *ICefBrowser, aAction *consts.TCefCloseBrowserAction, window IBrowserWindow) bool
 type chromiumEventOnScrollOffsetChanged func(sender lcl.IObject, browser *ICefBrowser, x, y float64)
 type chromiumEventOnLoadStart func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType)
+type chromiumEventOnLoadStartEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType, window IBrowserWindow)
 type chromiumEventOnLoadingStateChange func(sender lcl.IObject, browser *ICefBrowser, isLoading, canGoBack, canGoForward bool)
 type chromiumEventOnLoadingProgressChange func(sender lcl.IObject, browser *ICefBrowser, progress float64)
 type chromiumEventOnLoadError func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, errorCode consts.CEF_NET_ERROR, errorText, failedUrl string)

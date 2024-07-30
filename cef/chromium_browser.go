@@ -194,6 +194,16 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 			callback.Cont(consts.ExeDir+consts.Separator+suggestedName, true)
 		}
 	})
+	m.Chromium().SetOnLoadStart(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType) {
+		enableWebkitAppRegion := true
+		if m.window != nil {
+			enableWebkitAppRegion = m.window.WindowProperty().EnableWebkitAppRegion
+		}
+		dragExtensionJS(frame, enableWebkitAppRegion)
+		if bwEvent.onLoadStart != nil {
+			bwEvent.onLoadStart(sender, browser, frame, transitionType, m.window)
+		}
+	})
 	m.Chromium().SetOnLoadEnd(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, httpStatusCode int32) {
 		if bwEvent.onLoadEnd != nil {
 			bwEvent.onLoadEnd(sender, browser, frame, httpStatusCode, m.window)
