@@ -11,7 +11,8 @@
 
 // render process send process message
 (function () {
-    const MT_GO_EMIT = 1;
+    const MT_READY = 1;
+    const MT_GO_EMIT = MT_READY + 1;
     const MT_JS_EMIT = MT_GO_EMIT + 1;
     const MT_GO_EMIT_CALLBACK = MT_JS_EMIT + 1;
     const MT_JS_EMIT_CALLBACK = MT_GO_EMIT_CALLBACK + 1;
@@ -299,12 +300,7 @@
             let that = this;
 
             function dragMessage(t, n, d) {
-                const payload = {
-                    t: t,
-                    n: n,
-                    d: d,
-                    i: 0,
-                };
+                const payload = {t: t, n: n, d: d};
                 energy.processMessage(JSON.stringify(payload));
             }
 
@@ -313,8 +309,6 @@
                     return
                 }
                 that.#shouldDrag = false;
-                // native function mouseMove();
-                // mouseMove({x: e.screenX, y: e.screenY});
                 dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
             }
 
@@ -361,5 +355,5 @@
 
     window.energy = new Energy();
     window.ipc = new IPC();
-
+    //window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
 })();

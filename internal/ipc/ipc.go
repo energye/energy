@@ -11,7 +11,6 @@
 package ipc
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
@@ -56,7 +55,7 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMess
 	//sendError := &ProcessMessage{}
 	//process.SendMessage()
 	// call go ipc callback
-	if message.Name == "" || !CheckMessageType(message.Type) {
+	if message.Name == "" {
 		// Log ???
 		return false
 	}
@@ -65,8 +64,6 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMess
 		m.handlerJSEMIT(windowId, message)
 	case MT_GO_EMIT_CALLBACK: // go ipc.emit - callback function
 		m.handlerGOEMITCallback(windowId, message)
-	case MT_DRAG_MOVE, MT_DRAG_DOWN, MT_DRAG_UP, MT_DRAG_DBLCLICK:
-		fmt.Println("drag:", message.Type)
 	default:
 		return false
 	}

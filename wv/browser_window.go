@@ -165,16 +165,22 @@ window.energy.drag().setup();
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 			message := args.WebMessageAsString()
 			args.Free()
+			// ipc message
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
 			if err == nil {
-				flag = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
+				if pMessage.Type == ipc.MT_READY {
+					flag = true
+				} else if ipc.CheckIPCMessage(pMessage.Type) {
+					flag = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
+				} else if ipc.CheckDragMessage(pMessage.Type) {
+					m.Drag(pMessage)
+					flag = true
+				}
 			}
 		}
-		if !flag {
-			if m.onWebMessageReceived != nil {
-				m.onWebMessageReceived(sender, webview, args)
-			}
+		if !flag && m.onWebMessageReceived != nil {
+			m.onWebMessageReceived(sender, webview, args)
 		}
 	})
 	// window, OnShow
