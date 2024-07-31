@@ -12,6 +12,7 @@ package wv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
@@ -169,11 +170,15 @@ window.energy.drag().setup();
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
 			if err == nil {
+				fmt.Println("message-data:", pMessage.Data)
+				// ipc ready
 				if pMessage.Type == ipc.MT_READY {
 					flag = true
 				} else if ipc.CheckIPCMessage(pMessage.Type) {
+					// ipc on, emit
 					flag = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
 				} else if ipc.CheckDragMessage(pMessage.Type) {
+					// ipc drag
 					m.Drag(pMessage)
 					flag = true
 				}

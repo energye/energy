@@ -14,7 +14,6 @@
 package wv
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
@@ -22,7 +21,6 @@ import (
 )
 
 func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
-	fmt.Println("drag", message.Type)
 	switch message.Type {
 	case ipc.MT_DRAG_MOVE:
 		if m.WindowState() == types.WsFullScreen {
