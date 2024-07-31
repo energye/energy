@@ -15,6 +15,10 @@
     const MT_JS_EMIT = MT_GO_EMIT + 1;
     const MT_GO_EMIT_CALLBACK = MT_JS_EMIT + 1;
     const MT_JS_EMIT_CALLBACK = MT_GO_EMIT_CALLBACK + 1;
+    const MT_DRAG_MOVE = MT_JS_EMIT_CALLBACK + 1;
+    const MT_DRAG_DOWN = MT_DRAG_MOVE + 1;
+    const MT_DRAG_UP = MT_DRAG_DOWN + 1;
+    const MT_DRAG_DBLCLICK = MT_DRAG_UP + 1;
 
     // Energy
     class Energy {
@@ -30,6 +34,9 @@
 
         // js ipc.emit callback executionID, global accumulation
         #executionID;
+
+        //drag
+        #drag;
 
         /**
          * js process message
@@ -71,6 +78,11 @@
             } else {
                 throw new Error("Unsupported Platform");
             }
+            this.#drag = new Drag();
+        }
+
+        drag() {
+            return this.#drag;
         }
 
         #deepTest(s) {
@@ -254,6 +266,100 @@
         }
     }
 
+    class Drag {
+        #enableDrag = false;
+        #shouldDrag = false;
+        #cssDragProperty = "-webkit-app-region";
+        #cssDragValue = "drag";
+
+        constructor() {
+        }
+
+        #war(e) {
+            let v = window.getComputedStyle(e.target)[this.#cssDragProperty];
+            if (v) {
+                v = v.trim();
+                if (v !== this.#cssDragValue) {
+                    return false;
+                }
+                // return e.buttons === 1;
+                return e.detail === 1 || e.detail === 2;
+            }
+            return false;
+        }
+
+        enableDrag(v) {
+            this.#enableDrag = v;
+        }
+
+        setup() {
+            if (!this.#enableDrag) {
+                return;
+            }
+            let that = this;
+
+            function dragMessage(t, n, d) {
+                const payload = {
+                    t: t,
+                    n: n,
+                    d: d,
+                    i: 0,
+                };
+                energy.processMessage(JSON.stringify(payload));
+            }
+
+            function mouseMove(e) {
+                if (!that.#enableDrag || !that.#shouldDrag) {
+                    return
+                }
+                that.#shouldDrag = false;
+                // native function mouseMove();
+                // mouseMove({x: e.screenX, y: e.screenY});
+                dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
+            }
+
+            function mouseUp(e) {
+                if (!that.#enableDrag) {
+                    return
+                }
+                that.#shouldDrag = false;
+                if (that.#war(e)) {
+                    e.preventDefault();
+                    dragMessage(MT_DRAG_UP, 'up', null);
+                }
+            }
+
+            function mouseDown(e) {
+                if (!that.#enableDrag || ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
+                    return
+                }
+                if (that.#war(e)) {
+                    e.preventDefault();
+                    that.#shouldDrag = true;
+                    dragMessage(MT_DRAG_DOWN, 'down', {x: e.screenX, y: e.screenY});
+                } else {
+                    that.#shouldDrag = false;
+                }
+            }
+
+            function dblClick(e) {
+                if (!that.#enableDrag) {
+                    return;
+                }
+                if (that.#war(e)) {
+                    e.preventDefault();
+                    dragMessage(MT_DRAG_DBLCLICK, 'dblclk', null);
+                }
+            }
+
+            window.addEventListener("mousemove", mouseMove);
+            window.addEventListener("mousedown", mouseDown);
+            window.addEventListener("mouseup", mouseUp);
+            window.addEventListener("dblclick", dblClick);
+        }
+    }
+
     window.energy = new Energy();
     window.ipc = new IPC();
+
 })();

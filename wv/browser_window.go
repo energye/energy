@@ -11,6 +11,7 @@
 package wv
 
 import (
+	"encoding/json"
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
@@ -44,18 +45,18 @@ type IBrowserWindow interface {
 //	energy webview2 window, It consists of TForm and WVBrowser
 type BrowserWindow struct {
 	lcl.TForm
-	windowId                uint32
-	isClosing               bool
-	windowParent            wv.IWVWindowParent
-	browser                 wv.IWVBrowser
-	options                 Options
-	onWindowCreate          OnWindowCreate
-	onAfterCreated          wv.TNotifyEvent
-	onWebMessageReceived    wv.TOnWebMessageReceivedEvent
-	onContextMenuRequested  wv.TOnContextMenuRequestedEvent
-	onShow                  wv.TNotifyEvent
-	onClose                 lcl.TCloseEvent
-	messageReceivedDelegate ipc.IMessageReceivedDelegate
+	windowId                   uint32
+	isClosing                  bool
+	windowParent               wv.IWVWindowParent
+	browser                    wv.IWVBrowser
+	options                    Options
+	onWindowCreate             OnWindowCreate
+	onAfterCreated             wv.TNotifyEvent
+	onWebMessageReceived       wv.TOnWebMessageReceivedEvent
+	onContextMenuRequested     wv.TOnContextMenuRequestedEvent
+	onShow                     wv.TNotifyEvent
+	onClose                    lcl.TCloseEvent
+	ipcMessageReceivedDelegate ipc.IMessageReceivedDelegate
 }
 
 var windowID uint32
@@ -119,7 +120,7 @@ func (m *BrowserWindow) SendMessage(payload []byte) {
 //	2. Specify the event function in the current window and retain the default event behavior
 func (m *BrowserWindow) defaultEvent() {
 	// ipc message received
-	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
+	m.ipcMessageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	// webview2 AfterCreated
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		m.windowParent.UpdateSize()
@@ -137,6 +138,14 @@ func (m *BrowserWindow) defaultEvent() {
 			m.onAfterCreated(sender)
 		}
 	})
+	m.browser.SetOnNavigationStarting(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
+		jsCode := `
+window.energy.drag().enableDrag(true);
+window.energy.drag().setup();
+`
+
+		m.browser.ExecuteScript(jsCode, 0)
+	})
 	// context menu
 	m.browser.SetOnContextMenuRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
 		if m.options.DisableContextMenu {
@@ -151,14 +160,21 @@ func (m *BrowserWindow) defaultEvent() {
 	})
 	// process message received
 	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
-		if m.messageReceivedDelegate != nil {
+		var flag bool
+		if m.ipcMessageReceivedDelegate != nil {
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 			message := args.WebMessageAsString()
 			args.Free()
-			m.messageReceivedDelegate.Received(m.WindowId(), message)
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal([]byte(message), &pMessage)
+			if err == nil {
+				flag = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
+			}
 		}
-		if m.onWebMessageReceived != nil {
-			m.onWebMessageReceived(sender, webview, args)
+		if !flag {
+			if m.onWebMessageReceived != nil {
+				m.onWebMessageReceived(sender, webview, args)
+			}
 		}
 	})
 	// window, OnShow

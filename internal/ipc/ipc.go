@@ -11,7 +11,7 @@
 package ipc
 
 import (
-	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/ipc/callback"
 	"sync"
 )
@@ -34,7 +34,7 @@ type IMessageReceivedDelegate interface {
 	// Received message
 	//  windowId: The currently received browser window id
 	//  message: Process message JSON string
-	Received(windowId uint32, message string)
+	Received(windowId uint32, message *ProcessMessage) bool
 }
 
 type MessageReceivedDelegate struct {
@@ -51,26 +51,26 @@ func NewMessageReceivedDelegate() IMessageReceivedDelegate {
 	return result
 }
 
-func (m *MessageReceivedDelegate) Received(windowId uint32, messageData string) {
-	var message ProcessMessage
-	err := json.Unmarshal([]byte(messageData), &message)
-	if err != nil {
+func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMessage) bool {
+	// Log ???
+	//sendError := &ProcessMessage{}
+	//process.SendMessage()
+	// call go ipc callback
+	if message.Name == "" || !CheckMessageType(message.Type) {
 		// Log ???
-		//sendError := &ProcessMessage{}
-		//process.SendMessage()
-	} else {
-		// call go ipc callback
-		if message.Name == "" || !CheckMessageType(message.Type) {
-			// Log ???
-			return
-		}
-		switch message.Type {
-		case MT_JS_EMIT: // js ipc.emit
-			m.handlerJSEMIT(windowId, &message)
-		case MT_GO_EMIT_CALLBACK: // go ipc.emit - callback function
-			m.handlerGOEMITCallback(windowId, &message)
-		}
+		return false
 	}
+	switch message.Type {
+	case MT_JS_EMIT: // js ipc.emit
+		m.handlerJSEMIT(windowId, message)
+	case MT_GO_EMIT_CALLBACK: // go ipc.emit - callback function
+		m.handlerGOEMITCallback(windowId, message)
+	case MT_DRAG_MOVE, MT_DRAG_DOWN, MT_DRAG_UP, MT_DRAG_DBLCLICK:
+		fmt.Println("drag:", message.Type)
+	default:
+		return false
+	}
+	return true
 }
 
 // go ipc.emit - callback function

@@ -28,6 +28,10 @@ const (
 	MT_JS_EMIT
 	MT_GO_EMIT_CALLBACK
 	MT_JS_EMIT_CALLBACK
+	MT_DRAG_MOVE
+	MT_DRAG_DOWN
+	MT_DRAG_UP
+	MT_DRAG_DBLCLICK
 )
 
 type ProcessMessage struct {
@@ -54,5 +58,6 @@ func ResetExecutionID() {
 
 func CheckMessageType(t MessageType) bool {
 	return t == MT_GO_EMIT || t == MT_JS_EMIT ||
-		t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK
+		t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK ||
+		t == MT_DRAG_MOVE || t == MT_DRAG_DOWN || t == MT_DRAG_UP || t == MT_DRAG_DBLCLICK
 }
