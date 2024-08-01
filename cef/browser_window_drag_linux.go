@@ -126,7 +126,6 @@ func dragExtensionHandler() {
                     return
                 }
                 energyExtension.drag.shouldDrag = false;
-				//document.body.style.cursor = "default";
 				native function mouseUp();
 				mouseUp();
             }
