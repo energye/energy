@@ -80,10 +80,17 @@ func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr
 				return 0
 			}
 		}
+		//fmt.Println("message:", message)
 	}
 	return win.CallWindowProc(m.oldWndPrc, m.Handle(), message, wParam, lParam)
 }
 
 func (m *BrowserWindow) _HookWndProcMessage() {
 	m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
+}
+
+func (m *BrowserWindow) _RestoreWndProc() {
+	if m.oldWndPrc != 0 {
+		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
+	}
 }

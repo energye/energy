@@ -12,6 +12,7 @@ package wv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
@@ -58,6 +59,7 @@ type BrowserWindow struct {
 	onWebMessageReceived       wv.TOnWebMessageReceivedEvent
 	onContextMenuRequested     wv.TOnContextMenuRequestedEvent
 	onShow                     wv.TNotifyEvent
+	onDestroy                  wv.TNotifyEvent
 	onClose                    lcl.TCloseEvent
 	ipcMessageReceivedDelegate ipc.IMessageReceivedDelegate
 	oldWndPrc                  uintptr
@@ -81,17 +83,14 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m._HookWndProcMessage()
 	// 3. setting and init
 	m.SetCaption(m.options.Caption)
-	//m.SetLeft(int32(m.options.X))
-	//m.SetTop(int32(m.options.Y))
-	//m.SetWidth(int32(m.options.Width))
-	//m.SetHeight(int32(m.options.Height))
-	m.SetBounds(int32(m.options.X), int32(m.options.Y), int32(m.options.Width), int32(m.options.Height))
+	m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 	m.SetDoubleBuffered(true)
 	m.SetShowInTaskBar(types.StAlways)
 
 	m.windowParent = wv.NewWVWindowParent(m)
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
+
 	m.browser = wv.NewWVBrowser(m)
 	m.windowParent.SetBrowser(m.browser)
 	if m.options.DefaultURL != "" {
@@ -173,7 +172,7 @@ window.energy.drag().setup();
 	})
 	// process message received
 	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
-		var flag bool
+		var handle bool
 		if m.ipcMessageReceivedDelegate != nil {
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
 			message := args.WebMessageAsString()
@@ -185,20 +184,26 @@ window.energy.drag().setup();
 				//fmt.Println("message:", pMessage.Type, pMessage.Data)
 				// ipc ready
 				if pMessage.Type == ipc.MT_READY {
-					flag = true
+					handle = true
 				} else if ipc.CheckIPCMessage(pMessage.Type) {
-					// ipc on, emit
-					flag = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
+					// ipc on, emit event
+					handle = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
 				} else if ipc.CheckDragMessage(pMessage.Type) {
-					// ipc drag
+					// ipc drag window
 					m.Drag(pMessage)
-					flag = true
+					handle = true
 				}
 			}
 		}
-		if !flag && m.onWebMessageReceived != nil {
+		if !handle && m.onWebMessageReceived != nil {
 			m.onWebMessageReceived(sender, webview, args)
 		}
+	})
+	m.browser.SetOnWidget1CompMsg(func(sender wv.IObject, message *types.TMessage, handled *bool) {
+		fmt.Println("SetOnWidget1CompMsg")
+	})
+	m.browser.SetOnRenderCompMsg(func(sender wv.IObject, message *types.TMessage, handled *bool) {
+		fmt.Println("SetOnRenderCompMsg")
 	})
 	// window, OnShow
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
@@ -225,6 +230,12 @@ window.energy.drag().setup();
 			ipc.UnRegisterProcessMessage(m)
 		}
 	})
+	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
+		m._RestoreWndProc()
+		if m.onDestroy != nil {
+			m.onDestroy(sender)
+		}
+	})
 }
 
 func (m *BrowserWindow) IsClosing() bool {
@@ -245,6 +256,10 @@ func (m *BrowserWindow) SetOnShow(fn wv.TNotifyEvent) {
 
 func (m *BrowserWindow) SetOnClose(fn lcl.TCloseEvent) {
 	m.onClose = fn
+}
+
+func (m *BrowserWindow) SetOnDestroy(fn lcl.TNotifyEvent) {
+	m.onDestroy = fn
 }
 
 func (m *BrowserWindow) SetOnBrowserAfterCreated(fn wv.TNotifyEvent) {

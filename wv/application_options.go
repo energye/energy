@@ -15,10 +15,10 @@ type Options struct {
 	Caption            string
 	DefaultURL         string
 	ICON               []byte
-	X                  int
-	Y                  int
-	Width              int
-	Height             int
+	X                  int32
+	Y                  int32
+	Width              int32
+	Height             int32
 	DisableDevTools    bool
 	DisableContextMenu bool
 	Frameless          bool
