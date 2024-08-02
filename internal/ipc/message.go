@@ -25,14 +25,16 @@ type MessageType uint8
 
 const (
 	MT_READY MessageType = iota + 1
-	MT_GO_EMIT
-	MT_JS_EMIT
-	MT_GO_EMIT_CALLBACK
-	MT_JS_EMIT_CALLBACK
+	MT_EVENT_GO_EMIT
+	MT_EVENT_JS_EMIT
+	MT_EVENT_GO_EMIT_CALLBACK
+	MT_EVENT_JS_EMIT_CALLBACK
 	MT_DRAG_MOVE
 	MT_DRAG_DOWN
 	MT_DRAG_UP
 	MT_DRAG_DBLCLICK
+	MT_DRAG_RESIZE
+	MT_DRAG_BORDER_WMSZ
 )
 
 type ProcessMessage struct {
@@ -55,13 +57,4 @@ func NextExecutionID() uint32 {
 // ResetExecutionID
 func ResetExecutionID() {
 	atomic.StoreUint32(&goExecutionID, 0)
-}
-
-func CheckIPCMessage(t MessageType) bool {
-	return t == MT_GO_EMIT || t == MT_JS_EMIT ||
-		t == MT_GO_EMIT_CALLBACK || t == MT_JS_EMIT_CALLBACK
-}
-
-func CheckDragMessage(t MessageType) bool {
-	return t == MT_DRAG_MOVE || t == MT_DRAG_DOWN || t == MT_DRAG_UP || t == MT_DRAG_DBLCLICK
 }

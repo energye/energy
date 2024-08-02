@@ -60,9 +60,9 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMess
 		return false
 	}
 	switch message.Type {
-	case MT_JS_EMIT: // js ipc.emit
+	case MT_EVENT_JS_EMIT: // js ipc.emit
 		m.handlerJSEMIT(windowId, message)
-	case MT_GO_EMIT_CALLBACK: // go ipc.emit - callback function
+	case MT_EVENT_GO_EMIT_CALLBACK: // go ipc.emit - callback function
 		m.handlerGOEMITCallback(windowId, message)
 	default:
 		return false
@@ -91,7 +91,7 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *Proces
 	}
 	// not 0 js has callback function
 	if message.Id != 0 {
-		message.Type = MT_JS_EMIT_CALLBACK
+		message.Type = MT_EVENT_JS_EMIT_CALLBACK
 		message.Data = result
 		payload, err := message.ToJSON()
 		if err != nil {
@@ -200,7 +200,7 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 			}
 		}
 		message := &ProcessMessage{
-			Type: MT_GO_EMIT,
+			Type: MT_EVENT_GO_EMIT,
 			Name: name,
 			Data: arguments,
 			Id:   executionID,

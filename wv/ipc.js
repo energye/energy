@@ -12,14 +12,16 @@
 // render process send process message
 (function () {
     const MT_READY = 1;
-    const MT_GO_EMIT = MT_READY + 1;
-    const MT_JS_EMIT = MT_GO_EMIT + 1;
-    const MT_GO_EMIT_CALLBACK = MT_JS_EMIT + 1;
-    const MT_JS_EMIT_CALLBACK = MT_GO_EMIT_CALLBACK + 1;
-    const MT_DRAG_MOVE = MT_JS_EMIT_CALLBACK + 1;
+    const MT_EVENT_GO_EMIT = MT_READY + 1;
+    const MT_EVENT_JS_EMIT = MT_EVENT_GO_EMIT + 1;
+    const MT_EVENT_GO_EMIT_CALLBACK = MT_EVENT_JS_EMIT + 1;
+    const MT_EVENT_JS_EMIT_CALLBACK = MT_EVENT_GO_EMIT_CALLBACK + 1;
+    const MT_DRAG_MOVE = MT_EVENT_JS_EMIT_CALLBACK + 1;
     const MT_DRAG_DOWN = MT_DRAG_MOVE + 1;
     const MT_DRAG_UP = MT_DRAG_DOWN + 1;
     const MT_DRAG_DBLCLICK = MT_DRAG_UP + 1;
+    const MT_DRAG_RESIZE = MT_DRAG_DBLCLICK + 1;
+    const MT_DRAG_BORDER_WMSZ = MT_DRAG_RESIZE + 1;
 
     // Energy
     class Energy {
@@ -39,6 +41,8 @@
         //drag
         #drag;
 
+        #env = {};
+
         /**
          * js process message
          * @param {string} message json
@@ -47,6 +51,25 @@
         processMessage(message) {
             throw new Error("Unsupported Platform");
         };
+
+        /**
+         * energy set env arguments
+         * @param {string} key
+         * @param {string} value
+         * @public
+         */
+        setEnv(key, value) {
+            this.#env[key] = value
+        }
+
+        /**
+         * energy get env arguments
+         * @param {string} key
+         * @public
+         */
+        getEnv(key) {
+            return this.#env[key]
+        }
 
         /**
          * Creates an instance of Energy.
@@ -97,10 +120,10 @@
          */
         #notifyListeners(message) {
             switch (message.t) {
-                case MT_GO_EMIT:
+                case MT_EVENT_GO_EMIT:
                     this.#handlerGOEMIT(message);
                     break
-                case MT_JS_EMIT_CALLBACK:
+                case MT_EVENT_JS_EMIT_CALLBACK:
                     this.#handlerJSEMITCallback(message);
                     break
             }
@@ -138,7 +161,7 @@
                 // not 0 go has callback function
                 if (id !== 0) {
                     const payload = {
-                        t: MT_GO_EMIT_CALLBACK,                  // MessageType
+                        t: MT_EVENT_GO_EMIT_CALLBACK,                  // MessageType
                         n: name,                                 // name
                         d: [].slice.apply([result]),     // data
                         i: id,                                   // executionID
@@ -255,7 +278,7 @@
                 window.energy.__setJSEmitCallback(executionID, callback)
             }
             const payload = {
-                t: MT_JS_EMIT,           // MessageType
+                t: MT_EVENT_JS_EMIT,           // MessageType
                 n: name,                 // name
                 d: [].slice.apply(data), // data
                 i: executionID,          // executionID
@@ -276,7 +299,7 @@
         constructor() {
         }
 
-        #war(e) {
+        #test(e) {
             let v = window.getComputedStyle(e.target)[this.#cssDragProperty];
             if (v) {
                 v = v.trim();
@@ -304,12 +327,58 @@
                 energy.processMessage(JSON.stringify(payload));
             }
 
-            function mouseMove(e) {
-                if (!that.#enableDrag || !that.#shouldDrag) {
-                    return
+            let idcCursor = null;
+            let frameWidth = energy.getEnv("frameWidth") || 4;
+            let frameHeight = energy.getEnv("frameHeight") || 4;
+            let frameCorner = energy.getEnv("frameCorner") || 8;
+
+            // console.log('frameWidth:', frameWidth, 'frameHeight:', frameHeight, 'frameCorner:', frameCorner);
+
+            function setCursor(cursor, ht) {
+                if (idcCursor !== cursor) {
+                    document.documentElement.style.cursor = cursor || 'auto';
+                    idcCursor = cursor;
+                    // dragMessage(MT_DRAG_BORDER_WMSZ, 'wmsz', ht);
                 }
-                that.#shouldDrag = false;
-                dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
+            }
+
+            function mouseDragResize(e) {
+                let leftBorder = e.clientX < frameWidth;
+                let topBorder = e.clientY < frameHeight;
+                let rightBorder = window.outerWidth - e.clientX < frameWidth;
+                let bottomBorder = window.outerHeight - e.clientY < frameHeight;
+                let leftCorner = e.clientX < frameWidth + frameCorner;
+                let topCorner = e.clientY < frameHeight + frameCorner;
+                let rightCorner = window.outerWidth - e.clientX < frameWidth + frameCorner;
+                let bottomCorner = window.outerHeight - e.clientY < frameHeight + frameCorner;
+                if (!leftBorder && !topBorder && !rightBorder && !bottomBorder && idcCursor !== void 0) {
+                    setCursor();
+                } else if (rightCorner && bottomCorner) {
+                    setCursor("se-resize", 17);
+                } else if (leftCorner && bottomCorner) {
+                    setCursor("sw-resize", 16);
+                } else if (leftCorner && topCorner) {
+                    setCursor("nw-resize", 13);
+                } else if (topCorner && rightCorner) {
+                    setCursor("ne-resize", 14);
+                } else if (leftBorder) {
+                    setCursor("w-resize", 10);
+                } else if (topBorder) {
+                    setCursor("n-resize", 12);
+                } else if (bottomBorder) {
+                    setCursor("s-resize", 15);
+                } else if (rightBorder) {
+                    setCursor("e-resize", 11);
+                }
+            }
+
+            function mouseMove(e) {
+                if (that.#enableDrag && that.#shouldDrag) {
+                    that.#shouldDrag = false;
+                    dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
+                } else {
+                    mouseDragResize(e)
+                }
             }
 
             function mouseUp(e) {
@@ -317,17 +386,17 @@
                     return
                 }
                 that.#shouldDrag = false;
-                if (that.#war(e)) {
+                if (that.#test(e)) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_UP, 'up', null);
                 }
             }
 
             function mouseDown(e) {
-                if (!that.#enableDrag || ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
-                    return
-                }
-                if (that.#war(e)) {
+                if (idcCursor) {
+                    e.preventDefault();
+                    dragMessage(MT_DRAG_RESIZE, 'resize', idcCursor);
+                } else if (that.#enableDrag && !(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.#test(e)) {
                     e.preventDefault();
                     that.#shouldDrag = true;
                     dragMessage(MT_DRAG_DOWN, 'down', {x: e.screenX, y: e.screenY});
@@ -340,7 +409,7 @@
                 if (!that.#enableDrag) {
                     return;
                 }
-                if (that.#war(e)) {
+                if (that.#test(e)) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_DBLCLICK, 'dblclk', null);
                 }
