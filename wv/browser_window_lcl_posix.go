@@ -25,3 +25,15 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	case ipc.MT_DRAG_DBLCLICK:
 	}
 }
+
+func (m *BrowserWindow) HideTitleBar() {
+
+}
+
+func (m *BrowserWindow) ShowTitleBar() {
+
+}
+
+func (m *BrowserWindow) _HookWndProcMessage() {
+
+}

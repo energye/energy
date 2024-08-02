@@ -21,5 +21,6 @@ type Options struct {
 	Height             int
 	DisableDevTools    bool
 	DisableContextMenu bool
+	Frameless          bool
 	LocalLoad          *LocalLoad
 }
