@@ -27,15 +27,11 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	}
 }
 
-func (m *BrowserWindow) HideTitleBar() {
-
-}
-
-func (m *BrowserWindow) ShowTitleBar() {
-
-}
-
 func (m *BrowserWindow) _HookWndProcMessage() {
+
+}
+
+func (m *BrowserWindow) _RestoreWndProc() {
 
 }
 

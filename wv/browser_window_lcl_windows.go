@@ -16,7 +16,6 @@ package wv
 import (
 	"bytes"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/lcl/api/winapi"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
@@ -26,6 +25,9 @@ import (
 )
 
 func (m *BrowserWindow) Resize(ht string) {
+	if m.IsFullScreen() {
+		return
+	}
 	if win.ReleaseCapture() {
 		var borderHT uintptr
 		switch ht {
@@ -51,6 +53,9 @@ func (m *BrowserWindow) Resize(ht string) {
 }
 
 func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
+	if m.IsFullScreen() {
+		return
+	}
 	switch message.Type {
 	case ipc.MT_DRAG_MOVE:
 		//fmt.Println("MT_DRAG_MOVE", m.WindowState())
@@ -85,15 +90,15 @@ func _WndProcCallback(hwnd types.HWND, message uint32, wParam, lParam uintptr) u
 }
 
 func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr {
+	//fmt.Println("_WndProc message:", message)
 	if m.options.Frameless {
-		//fmt.Println("_WndProc message:", message)
 		switch message {
 		case messages.WM_ACTIVATE:
 			// If we want to have a frameless window but with the default frame decorations, extend the DWM client area.
 			// This Option is not affected by returning 0 in WM_NCCALCSIZE.
 			// As a result we have hidden the titlebar but still have the default window frame styling.
 			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
-			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
+			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 4, CxRightWidth: 4, CyTopHeight: 4, CyBottomHeight: 4})
 		case messages.WM_NCCALCSIZE:
 			// Disable the standard frame by allowing the client area to take the full
 			// window size.
@@ -101,11 +106,12 @@ func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr
 			// This hides the titlebar and also disables the resizing from user interaction because the standard frame is not
 			// shown. We still need the WS_THICKFRAME style to enable resizing from the frontend.
 			if wParam != 0 {
+				//cycaption := win.GetSystemMetrics(4)
 				//rect := (*types.TRect)(unsafe.Pointer(lParam))
-				//rect.Bottom += 50
+				//rect.Bottom += -1
+				//rect.Right += -1
 				return 0
 			}
-			//case messages.WM_SIZE:
 		}
 		//fmt.Println("message:", message)
 	}
@@ -116,26 +122,32 @@ func (m *BrowserWindow) _HookWndProcMessage() {
 	m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
 }
 
-func (m *BrowserWindow) _SetCursor(idc int) {
-	switch idc {
-	case messages.HTBOTTOMRIGHT, messages.HTTOPLEFT: //右下 左上
-		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENWSE))
-	case messages.HTRIGHT, messages.HTLEFT: //右 左
-		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZEWE))
-	case messages.HTTOPRIGHT, messages.HTBOTTOMLEFT: //右上 左下
-		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENESW))
-	case messages.HTTOP, messages.HTBOTTOM: //上 下
-		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENS))
-	default:
-		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_HAND))
-	}
-}
+//func (m *BrowserWindow) _SetCursor(idc int) {
+//	switch idc {
+//	case messages.HTBOTTOMRIGHT, messages.HTTOPLEFT: //右下 左上
+//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENWSE))
+//	case messages.HTRIGHT, messages.HTLEFT: //右 左
+//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZEWE))
+//	case messages.HTTOPRIGHT, messages.HTBOTTOMLEFT: //右上 左下
+//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENESW))
+//	case messages.HTTOP, messages.HTBOTTOM: //上 下
+//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENS))
+//	default:
+//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_HAND))
+//	}
+//}
 
 func (m *BrowserWindow) _RestoreWndProc() {
 	if m.oldWndPrc != 0 {
 		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
 	}
 }
+
+var (
+	frameWidth  = win.GetSystemMetrics(32)
+	frameHeight = win.GetSystemMetrics(33)
+	frameCorner = frameWidth + frameHeight
+)
 
 func (m *BrowserWindow) navigationStarting(webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
 	jsCode := bytes.Buffer{}
@@ -146,15 +158,8 @@ func (m *BrowserWindow) navigationStarting(webview wv.ICoreWebView2, args wv.ICo
 		jsCode.WriteString(value)
 		jsCode.WriteString(");")
 	}
-	var (
-		SM_CXSIZEFRAME int32 = 32
-		SM_CYSIZEFRAME int32 = 33
-	)
-	frameWidth := int(win.GetSystemMetrics(SM_CXSIZEFRAME))
-	frameHeight := int(win.GetSystemMetrics(SM_CYSIZEFRAME))
-	frameCorner := frameWidth + frameHeight
-	envJS("frameWidth", strconv.Itoa(frameWidth))
-	envJS("frameHeight", strconv.Itoa(frameHeight))
-	envJS("frameCorner", strconv.Itoa(frameCorner))
+	envJS("frameWidth", strconv.Itoa(int(frameWidth)))
+	envJS("frameHeight", strconv.Itoa(int(frameHeight)))
+	envJS("frameCorner", strconv.Itoa(int(frameCorner)))
 	m.browser.ExecuteScript(jsCode.String(), 0)
 }
