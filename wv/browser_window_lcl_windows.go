@@ -98,7 +98,7 @@ func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr
 			// This Option is not affected by returning 0 in WM_NCCALCSIZE.
 			// As a result we have hidden the titlebar but still have the default window frame styling.
 			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
-			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 4, CxRightWidth: 4, CyTopHeight: 4, CyBottomHeight: 4})
+			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
 		case messages.WM_NCCALCSIZE:
 			// Disable the standard frame by allowing the client area to take the full
 			// window size.
