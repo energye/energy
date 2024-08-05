@@ -140,6 +140,7 @@ func (m *BrowserWindow) _HookWndProcMessage() {
 func (m *BrowserWindow) _RestoreWndProc() {
 	if m.oldWndPrc != 0 {
 		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
+		m.oldWndPrc = 0
 	}
 }
 

@@ -266,6 +266,7 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
+		deleteBrowserWindow(m.Handle())
 		m._RestoreWndProc()
 		if m.onDestroy != nil {
 			m.onDestroy(sender)
