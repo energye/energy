@@ -38,21 +38,22 @@ import (
 //
 // 该窗口使用CEF和LCL组件实现，CEF<=1.106.xx版本 在windows、MacOSX可正常使用, Linux无法输入中文, CEF>=2.107.xx版本linux强制使用 ViewsFrameworkBrowserWindow 窗口组件
 type LCLBrowserWindow struct {
-	*lcl.TForm                                     //window form
-	isFormCreate              bool                 //是否创建完成 WindowForm
-	chromiumBrowser           ICEFChromiumBrowser  //浏览器
-	windowProperty            *WindowProperty      //窗口属性
-	windowId                  int32                //窗口ID
-	windowType                consts.WINDOW_TYPE   //窗口类型
-	isClosing                 bool                 //
-	canClose                  bool                 //
-	onResize                  []TNotifyEvent       //扩展事件 向后链试循环调用
-	windowResize              TNotifyEvent         //扩展事件
-	onActivate                TNotifyEvent         //扩展事件
-	onShow                    []TNotifyEvent       //扩展事件 向后链试循环调用
-	onClose                   []TCloseEvent        //扩展事件 向后链试循环调用
-	onCloseQuery              TCloseQueryEvent     //扩展事件
-	onActivateAfter           lcl.TNotifyEvent     //扩展事件
+	*lcl.TForm                                    //window form
+	isFormCreate              bool                //是否创建完成 WindowForm
+	chromiumBrowser           ICEFChromiumBrowser //浏览器
+	windowProperty            *WindowProperty     //窗口属性
+	windowId                  int32               //窗口ID
+	windowType                consts.WINDOW_TYPE  //窗口类型
+	isClosing                 bool                //
+	canClose                  bool                //
+	onResize                  []TNotifyEvent      //扩展事件 向后链试循环调用
+	windowResize              TNotifyEvent        //扩展事件
+	onActivate                TNotifyEvent        //扩展事件
+	onShow                    []TNotifyEvent      //扩展事件 向后链试循环调用
+	onClose                   []TCloseEvent       //扩展事件 向后链试循环调用
+	onCloseQuery              TCloseQueryEvent    //扩展事件
+	onActivateAfter           lcl.TNotifyEvent    //扩展事件
+	onDestroy                 lcl.TNotifyEvent
 	onWndProc                 []lcl.TWndProcEvent  //扩展事件 向后链试循环调用
 	onPaint                   []lcl.TNotifyEvent   //扩展事件 向后链试循环调用
 	auxTools                  IAuxTools            //辅助工具
@@ -65,6 +66,7 @@ type LCLBrowserWindow struct {
 	wmWindowPosChangedMessage wmWindowPosChanged   //
 	screen                    IScreen              //屏幕
 	rgn                       int                  //窗口四边圆角
+	oldWndPrc                 uintptr
 }
 
 // NewLCLBrowserWindow 创建一个 LCL 带有 chromium 窗口
@@ -194,7 +196,7 @@ func (m *LCLBrowserWindow) SetProperty() {
 		m.SetFormStyle(types.FsSystemStayOnTop)
 	}
 	if wp.EnableHideCaption {
-		m.HideTitle()
+		//m.HideTitle()
 	} else {
 		if !wp.EnableMinimize {
 			m.DisableMinimize()
@@ -615,16 +617,17 @@ func (m *LCLBrowserWindow) FormCreate() {
 	m.isFormCreate = true
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
 	m.onFormMessages()
-	m.taskMenu()
 }
 
 // defaultWindowEvent 默认窗口活动/关闭处理事件
 func (m *LCLBrowserWindow) defaultWindowEvent() {
+	m._HookWndProcMessage()
 	if m.WindowType() != consts.WT_DEV_TOOLS {
 		m.TForm.SetOnActivate(m.activate)
 	}
 	m.TForm.SetOnResize(m.resize)
 	m.TForm.SetOnShow(m.show)
+	m.TForm.SetOnDestroy(m.destroy)
 }
 
 // defaultWindowCloseEvent 默认的窗口关闭事件
@@ -803,10 +806,18 @@ func (m *LCLBrowserWindow) IsLCL() bool {
 
 // show 内部调用
 func (m *LCLBrowserWindow) show(sender lcl.IObject) {
+	m.SetBoundsRect(m.BoundsRect()) // trigger WM_NCCALCSIZE hook msg
 	if m.onShow != nil {
 		for _, fn := range m.onShow {
 			fn(sender)
 		}
+	}
+}
+
+func (m *LCLBrowserWindow) destroy(sender lcl.IObject) {
+	m._RestoreWndProc()
+	if m.onDestroy != nil {
+		m.onDestroy(sender)
 	}
 }
 
@@ -1176,6 +1187,10 @@ func (m *LCLBrowserWindow) SetOnWMSize(fn wmSize) {
 
 func (m *LCLBrowserWindow) SetOnWMWindowPosChanged(fn wmWindowPosChanged) {
 	m.wmWindowPosChangedMessage = fn
+}
+
+func (m *LCLBrowserWindow) SetOnDestroy(fn lcl.TNotifyEvent) {
+	m.onDestroy = fn
 }
 
 func init() {

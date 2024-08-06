@@ -41,18 +41,11 @@ const (
 // ShowTitle 显示标题栏
 func (m *LCLBrowserWindow) ShowTitle() {
 	m.WindowProperty().EnableHideCaption = false
-	//win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(win.GetWindowLong(m.Handle(), win.GWL_STYLE)|win.WS_CAPTION))
-	//win.SetWindowPos(m.Handle(), m.Handle(), 0, 0, 0, 0, win.SWP_NOSIZE|win.SWP_NOMOVE|win.SWP_NOZORDER|win.SWP_NOACTIVATE|win.SWP_FRAMECHANGED)
-	m.EnabledMaximize(m.WindowProperty().EnableMaximize)
-	m.EnabledMinimize(m.WindowProperty().EnableMinimize)
-	m.SetBorderStyle(types.BsSizeable)
 }
 
 // HideTitle 隐藏标题栏 无边框样式
 func (m *LCLBrowserWindow) HideTitle() {
 	m.WindowProperty().EnableHideCaption = true
-	m.SetBorderStyle(types.BsNone)
-	//m.Frameless()
 }
 
 // SetRoundRectRgn 窗口无边框时圆角设置
@@ -68,44 +61,6 @@ func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
 	}
 }
 
-// FramelessForDefault 窗口四边框系统默认样式
-//
-//	TODO 窗口顶部有条线,
-func (m *LCLBrowserWindow) FramelessForDefault() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_BORDER|win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-
-	//winapi.SetClassLongPtr(this.Handle, GCL_STYLE, GetClassLong(this.Handle, GCL_STYLE)|CS_DropSHADOW)
-	//gclStyle := winapi.GetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE)
-	//winapi.WinSetClassLongPtr().SetClassLongPtr(et.HWND(m.Handle()), messages.GCL_STYLE, gclStyle|messages.CS_DROPSHADOW)
-}
-
-// FramelessForLine 窗口四边框是一条细线
-func (m *LCLBrowserWindow) FramelessForLine() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME|win.WS_BORDER))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-// Frameless 无边框
-func (m *LCLBrowserWindow) Frameless() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-// windows无边框窗口任务栏处理
-func (m *LCLBrowserWindow) taskMenu() {
-	m.SetOnShow(func(sender lcl.IObject) bool {
-		if m.WindowProperty().EnableHideCaption {
-			gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-			win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle|win.WS_SYSMENU|win.WS_MINIMIZEBOX))
-		}
-		return false
-	})
-}
-
 // SetFocus
 //
 //	在窗口 (Visible = true) 显示之后设置窗口焦点
@@ -114,7 +69,7 @@ func (m *LCLBrowserWindow) taskMenu() {
 func (m *LCLBrowserWindow) SetFocus() {
 	if m.TForm != nil {
 		m.Visible()
-		//窗口\激活在Z序中的下个顶层窗口
+		//窗口激活在Z序中的下个顶层窗口
 		m.Minimize()
 		//激活窗口出现在前景
 		m.Restore()
@@ -198,47 +153,6 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser
 
 			handled := m.cwcap.onCanBorder(chromiumBrowser, x, y, &rect)
 			if handled {
-				// 鼠标在边框范围
-				// 当是CEF组件消息，判断一次组件四边距离窗口四边间距，如果大于边框范围则取消操作
-				// TODO 暂时不使用
-				//if messageType == cmtCEF {
-				//	windowRect := m.BoundsRect()
-				//	switch m.cwcap.borderHT {
-				//	case messages.HTTOP: // 上
-				//		if rect.Top > borderRange {
-				//			return
-				//		}
-				//	case messages.HTBOTTOM: // 下
-				//		if (windowRect.Height() - rect.Bottom) > borderRange {
-				//			return
-				//		}
-				//	case messages.HTLEFT: // 左
-				//		if rect.Left > borderRange {
-				//			return
-				//		}
-				//	case messages.HTRIGHT: // 右
-				//		if (windowRect.Width() - rect.Right) > borderRange {
-				//			return
-				//		}
-				//	case messages.HTTOPRIGHT: // 右上
-				//		if (windowRect.Width()-rect.Right) > borderRange || rect.Top > borderRange {
-				//			return
-				//		}
-				//	case messages.HTBOTTOMRIGHT: // 右下
-				//		if (windowRect.Width()-rect.Right) > borderRange || (windowRect.Height()-rect.Bottom) > borderRange {
-				//			return
-				//		}
-				//	case messages.HTTOPLEFT: // 左上
-				//		if rect.Left > borderRange || rect.Top > borderRange {
-				//			return
-				//		}
-				//	case messages.HTBOTTOMLEFT: // 左下
-				//		if rect.Left > borderRange || (windowRect.Height()-rect.Bottom) > borderRange {
-				//			return
-				//		}
-				//	}
-				//}
-
 				// 鼠标在边框位置
 				*lResult = types.LRESULT(m.cwcap.borderHT)
 				*aHandled = true
