@@ -10,6 +10,15 @@
 
 package winapi
 
+// messages.WM_SIZE
+const (
+	SIZE_RESTORED  = 0
+	SIZE_MINIMIZED = 1
+	SIZE_MAXIMIZED = 2
+	SIZE_MAXSHOW   = 3
+	SIZE_MAXHIDE   = 4
+)
+
 const (
 	// Mouse message key states
 	MK_LBUTTON  = 1
@@ -26,9 +35,9 @@ const (
 	MK_ALT         = 0x20000000
 )
 
-//------------
+// ------------
 // KeyFlags (High word part !!!)
-//------------
+// ------------
 const (
 	KF_EXTENDED = 0x100
 	KF_DLGMODE  = 0x800
@@ -38,15 +47,14 @@ const (
 	KF_UP       = 0x8000
 )
 
-//-------------
+// -------------
 // Virtual keys
-//-------------
+// -------------
 //
 // Basic keys up to $FF have values and meaning compatible with the Windows API as described here:
 // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/WinUI/WindowsUserInterface/UserInput/VirtualKeyCodes.asp
 //
 // Starting with $100 and upwards the key constants are LCL additions
-//
 const (
 	VK_UNKNOWN  = 0 // defined by LCL
 	VK_LBUTTON  = 1
@@ -335,8 +343,7 @@ const (
 	MONITOR_DEFAULTTONULL    = 0x00000000
 	MONITOR_DEFAULTTOPRIMARY = 0x00000001
 	MONITOR_DEFAULTTONEAREST = 0x00000002
-
-	MONITORINFOF_PRIMARY = 0x00000001
+	MONITORINFOF_PRIMARY     = 0x00000001
 )
 
 // DeviceCapabilities capabilities

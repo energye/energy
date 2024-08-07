@@ -155,14 +155,14 @@ func BeginPaint(Handle types.HWND, PS types.TagPaintStruct) types.HDC {
 	return types.HDC(r1)
 }
 
-func Arc(DC types.HDC, Left, Top, Right, Bottom, Angle16Deg, Angle16DegLength types.Integer) types.LongBool {
+func Arc(DC types.HDC, Left, Top, Right, Bottom, Angle16Deg, Angle16DegLength types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Arc).Call(uintptr(DC), uintptr(Left), uintptr(Top), uintptr(Right), uintptr(Bottom), uintptr(Angle16Deg), uintptr(Angle16DegLength))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func AngleChord(DC types.HDC, x1, y1, x2, y2, angle1, angle2 types.Integer) types.LongBool {
+func AngleChord(DC types.HDC, x1, y1, x2, y2, angle1, angle2 types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_AngleChord).Call(uintptr(DC), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(angle1), uintptr(angle2))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func CallNextHookEx(hhk types.HOOK, ncode types.Integer, WParam types.WPARAM, LParam types.LPARAM) types.Integer {
@@ -175,9 +175,9 @@ func CallWindowProc(lpPrevWndFunc types.TFarProc, Handle types.HWND, Msg types.U
 	return types.Integer(r1)
 }
 
-func BitBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Rop types.DWORD) types.LongBool {
+func BitBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Rop types.DWORD) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_BitBlt).Call(uintptr(DestDC), uintptr(X), uintptr(Y), uintptr(Width), uintptr(Height), uintptr(SrcDC), uintptr(XSrc), uintptr(YSrc), uintptr(Rop))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func CreateBitmap(Width, Height types.Integer, Planes, BitCount types.LongInt, BitmapBits types.Pointer) types.HBITMAP {
@@ -195,9 +195,9 @@ func CreateBrushWithRadialGradient(LogBrush types.TLogRadialGradient) types.HBRU
 	return types.HBITMAP(r1)
 }
 
-func CreateCaret(Handle types.HWND, Bitmap types.HBITMAP, width, Height types.Integer) types.LongBool {
+func CreateCaret(Handle types.HWND, Bitmap types.HBITMAP, width, Height types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_CreateCaret).Call(uintptr(Handle), uintptr(Bitmap), uintptr(width), uintptr(Height))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func CreateCompatibleBitmap(DC types.HDC, Width, Height types.Integer) types.HBITMAP {
@@ -264,39 +264,39 @@ func DeleteCriticalSection(CritSection types.TCriticalSection) {
 	imports.Proc(def.CEF_Win_DeleteCriticalSection).Call(uintptr(CritSection))
 }
 
-func DeleteDC(hDC types.HDC) types.LongBool {
+func DeleteDC(hDC types.HDC) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DeleteDC).Call(uintptr(hDC))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DestroyCaret(Handle types.HWND) types.LongBool {
+func DestroyCaret(Handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DestroyCaret).Call(uintptr(Handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DestroyCursor(Handle types.HCURSOR) types.LongBool {
+func DestroyCursor(Handle types.HCURSOR) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DestroyCursor).Call(uintptr(Handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DestroyIcon(Handle types.HICON) types.LongBool {
+func DestroyIcon(Handle types.HICON) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DestroyIcon).Call(uintptr(Handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DrawFrameControl(DC types.HDC, Rect types.Rect, uType, uState types.Cardinal) types.LongBool {
+func DrawFrameControl(DC types.HDC, Rect types.Rect, uType, uState types.Cardinal) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DrawFrameControl).Call(uintptr(DC), uintptr(unsafe.Pointer(&Rect)), uintptr(uType), uintptr(uState))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DrawFocusRect(DC types.HDC, Rect types.Rect) types.LongBool {
+func DrawFocusRect(DC types.HDC, Rect types.Rect) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DrawFocusRect).Call(uintptr(DC), uintptr(unsafe.Pointer(&Rect)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func DrawEdge(DC types.HDC, Rect types.Rect, edge types.Cardinal, grfFlags types.Cardinal) types.LongBool {
+func DrawEdge(DC types.HDC, Rect types.Rect, edge types.Cardinal, grfFlags types.Cardinal) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_DrawEdge).Call(uintptr(DC), uintptr(unsafe.Pointer(&Rect)), uintptr(edge), uintptr(grfFlags))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func DrawText(DC types.HDC, Str types.PChar, Count types.Integer, Rect types.Rect, Flags types.Cardinal) types.Integer {
@@ -304,23 +304,23 @@ func DrawText(DC types.HDC, Str types.PChar, Count types.Integer, Rect types.Rec
 	return types.Integer(r1)
 }
 
-func EnableScrollBar(Wnd types.HWND, wSBflags, wArrows types.Cardinal) types.LongBool {
+func EnableScrollBar(Wnd types.HWND, wSBflags, wArrows types.Cardinal) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_EnableScrollBar).Call(uintptr(Wnd), uintptr(wSBflags), uintptr(wArrows))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func EnableWindow(hWnd types.HWND, bEnable types.LongBool) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_EnableWindow).Call(uintptr(hWnd), bEnable.ToPtr())
-	return types.LongBool(api.GoBool(r1))
+func EnableWindow(hWnd types.HWND, bEnable bool) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_EnableWindow).Call(uintptr(hWnd), api.PascalBool(bEnable))
+	return bool(api.GoBool(r1))
 }
 
 func EnterCriticalSection(CritSection types.TCriticalSection) {
 	imports.Proc(def.CEF_Win_EnterCriticalSection).Call(CritSection.ToPtr())
 }
 
-func EnumDisplayMonitors(hdc types.HDC, lprcClip *types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) types.LongBool {
+func EnumDisplayMonitors(hdc types.HDC, lprcClip *types.Rect, callback *EnumDisplayMonitorsCallback, dwData types.LPARAM) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_EnumDisplayMonitors).Call(uintptr(hdc), uintptr(unsafe.Pointer(lprcClip)), callback.instance, uintptr(dwData))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func EnumFontFamilies(DC types.HDC, Family types.PChar, callback *EnumFontFamiliesCallback, LParam types.LPARAM) types.LongInt {
@@ -333,14 +333,14 @@ func EnumFontFamiliesEx(DC types.HDC, lpLogFont types.LogFontA, callback *EnumFo
 	return types.LongInt(r1)
 }
 
-func Ellipse(DC types.HDC, x1, y1, x2, y2 types.Integer) types.LongBool {
+func Ellipse(DC types.HDC, x1, y1, x2, y2 types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Ellipse).Call(uintptr(DC), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func EqualRgn(Rgn1 *types.HRGN, Rgn2 *types.HRGN) types.LongBool {
+func EqualRgn(Rgn1 *types.HRGN, Rgn2 *types.HRGN) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_EqualRgn).Call(Rgn1.Instance(), Rgn2.Instance())
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func ExcludeClipRect(dc types.HDC, Left, Top, Right, Bottom types.Integer) types.Integer {
@@ -353,9 +353,9 @@ func ExtCreatePen(dwPenStyle, dwWidth types.DWORD, lplb types.TagLogBrush, dwSty
 	return types.HPEN(r1)
 }
 
-func ExtTextOut(DC types.HDC, X, Y types.Integer, Options types.LongInt, Rect types.Rect, Str types.PChar, Count types.LongInt, Dx types.Integer) types.LongBool {
+func ExtTextOut(DC types.HDC, X, Y types.Integer, Options types.LongInt, Rect types.Rect, Str types.PChar, Count types.LongInt, Dx types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ExtTextOut).Call(uintptr(DC), uintptr(X), uintptr(Y), uintptr(Options), uintptr(unsafe.Pointer(&Rect)), Str.ToPtr(), uintptr(Count), uintptr(Dx))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func ExtSelectClipRGN(dc types.HDC, rgn *types.HRGN, Mode types.LongInt) types.Integer {
@@ -363,9 +363,9 @@ func ExtSelectClipRGN(dc types.HDC, rgn *types.HRGN, Mode types.LongInt) types.I
 	return types.Integer(r1)
 }
 
-func FillRect(DC types.HDC, Rect types.Rect, Brush types.HBRUSH) types.LongBool {
+func FillRect(DC types.HDC, Rect types.Rect, Brush types.HBRUSH) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_FillRect).Call(uintptr(DC), uintptr(unsafe.Pointer(&Rect)), uintptr(Brush))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func FillRgn(DC types.HDC, RegionHnd *types.HRGN, hbr types.HBRUSH) types.BOOL {
@@ -373,9 +373,9 @@ func FillRgn(DC types.HDC, RegionHnd *types.HRGN, hbr types.HBRUSH) types.BOOL {
 	return types.BOOL(api.GoBool(r1))
 }
 
-func FloodFill(DC types.HDC, X, Y types.Integer, Color types.TGraphicsColor, FillStyle types.TGraphicsFillStyle, Brush types.HBRUSH) types.LongBool {
+func FloodFill(DC types.HDC, X, Y types.Integer, Color types.TGraphicsColor, FillStyle types.TGraphicsFillStyle, Brush types.HBRUSH) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_FloodFill).Call(uintptr(DC), uintptr(X), uintptr(Y), uintptr(Color), uintptr(FillStyle), uintptr(Brush))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func FrameRect(DC types.HDC, Rect types.Rect, hBr types.HBRUSH) types.Integer {
@@ -403,18 +403,18 @@ func GetCapture() types.HWND {
 	return types.HWND(r1)
 }
 
-func GetCaretPos(lpPoint types.Point) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetCaretPos).Call(uintptr(unsafe.Pointer(&lpPoint)))
-	return types.LongBool(api.GoBool(r1))
+func GetCaretPos(lpPoint *types.Point) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetCaretPos).Call(uintptr(unsafe.Pointer(lpPoint)))
+	return bool(api.GoBool(r1))
 }
 
-func GetClientRect(handle types.HWND, Rect types.Rect) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClientRect).Call(uintptr(handle), uintptr(unsafe.Pointer(&Rect)))
-	return types.LongBool(api.GoBool(r1))
+func GetClientRect(handle types.HWND, Rect *types.Rect) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetClientRect).Call(uintptr(handle), uintptr(unsafe.Pointer(Rect)))
+	return bool(api.GoBool(r1))
 }
 
-func GetClipBox(DC types.HDC, lpRect types.Rect) types.LongInt {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetClipBox).Call(uintptr(DC), uintptr(unsafe.Pointer(&lpRect)))
+func GetClipBox(DC types.HDC, lpRect *types.Rect) types.LongInt {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetClipBox).Call(uintptr(DC), uintptr(unsafe.Pointer(lpRect)))
 	return types.LongInt(r1)
 }
 
@@ -428,9 +428,9 @@ func GetCurrentObject(DC types.HDC, uObjectType types.UINT) types.HGDIOBJ {
 	return types.HGDIOBJ(r1)
 }
 
-func GetCursorPos(lpPoint types.Point) types.LongBool {
+func GetCursorPos(lpPoint types.Point) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_GetCursorPos).Call(uintptr(unsafe.Pointer(&lpPoint)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func GetDC(hWnd types.HWND) types.HDC {
@@ -468,9 +468,9 @@ func GetForegroundWindow() types.HWND {
 	return types.HWND(r1)
 }
 
-func GetIconInfo(AIcon types.HICON, AIconInfo types.ICONINFO) types.LongBool {
+func GetIconInfo(AIcon types.HICON, AIconInfo types.ICONINFO) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_GetIconInfo).Call(uintptr(AIcon), uintptr(unsafe.Pointer(&AIconInfo)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func GetKeyState(nVirtKey types.Integer) types.Smallint {
@@ -483,9 +483,9 @@ func GetMapMode(DC types.HDC) types.Integer {
 	return types.Integer(r1)
 }
 
-func GetMonitorInfo(hMonitor types.HMONITOR, lpmi types.TagMonitorInfo) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetMonitorInfo).Call(uintptr(hMonitor), uintptr(unsafe.Pointer(&lpmi)))
-	return types.LongBool(api.GoBool(r1))
+func GetMonitorInfo(hMonitor types.HMONITOR, lpmi *types.TagMonitorInfo) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetMonitorInfo).Call(uintptr(hMonitor), uintptr(unsafe.Pointer(lpmi)))
+	return api.GoBool(r1)
 }
 
 func GetDpiForMonitor(hmonitor types.HMONITOR, dpiType MONITOR_DPI_TYPE, dpiX *types.UINT, dpiY *types.UINT) types.HRESULT { // out
@@ -524,9 +524,9 @@ func GetROP2(DC types.HDC) types.Integer {
 	return types.Integer(r1)
 }
 
-func GetScrollInfo(Handle types.HWND, SBStyle types.Integer, ScrollInfo types.TagScrollInfo) types.LongBool {
+func GetScrollInfo(Handle types.HWND, SBStyle types.Integer, ScrollInfo types.TagScrollInfo) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_GetScrollInfo).Call(uintptr(Handle), uintptr(SBStyle), uintptr(unsafe.Pointer(&ScrollInfo)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func GetStockObject(Value types.Integer) types.THandle {
@@ -554,38 +554,38 @@ func GetTextColor(DC types.HDC) types.TColorRef {
 	return types.TColorRef(r1)
 }
 
-func GetTextExtentExPoint(DC types.HDC, Str types.PChar, Count, MaxWidth types.Integer, MaxCount, PartialWidths types.Integer, Size types.Size) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentExPoint).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(MaxWidth), uintptr(MaxCount), uintptr(PartialWidths), uintptr(unsafe.Pointer(&Size)))
-	return types.LongBool(api.GoBool(r1))
+func GetTextExtentExPoint(DC types.HDC, Str types.PChar, Count, MaxWidth types.Integer, MaxCount, PartialWidths types.Integer, Size *types.Size) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentExPoint).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(MaxWidth), uintptr(MaxCount), uintptr(PartialWidths), uintptr(unsafe.Pointer(Size)))
+	return bool(api.GoBool(r1))
 }
 
-func GetTextExtentPoint(DC types.HDC, Str types.PChar, Count types.Integer, Size types.Size) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentPoint).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(unsafe.Pointer(&Size)))
-	return types.LongBool(api.GoBool(r1))
+func GetTextExtentPoint(DC types.HDC, Str types.PChar, Count types.Integer, Size *types.Size) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentPoint).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(unsafe.Pointer(Size)))
+	return bool(api.GoBool(r1))
 }
 
-func GetTextExtentPoint32(DC types.HDC, Str types.PChar, Count types.Integer, Size types.Size) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentPoint32).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(unsafe.Pointer(&Size)))
-	return types.LongBool(api.GoBool(r1))
+func GetTextExtentPoint32(DC types.HDC, Str types.PChar, Count types.Integer, Size *types.Size) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetTextExtentPoint32).Call(uintptr(DC), Str.ToPtr(), uintptr(Count), uintptr(unsafe.Pointer(Size)))
+	return bool(api.GoBool(r1))
 }
 
-func GetTextMetrics(DC types.HDC, TM types.TagTextMetricA) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetTextMetrics).Call(uintptr(DC), uintptr(unsafe.Pointer(&TM)))
-	return types.LongBool(api.GoBool(r1))
+func GetTextMetrics(DC types.HDC, TM *types.TagTextMetricA) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetTextMetrics).Call(uintptr(DC), uintptr(unsafe.Pointer(TM)))
+	return bool(api.GoBool(r1))
 }
 
-func GetViewPortExtEx(DC types.HDC, Size types.Size) types.Integer {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetViewPortExtEx).Call(uintptr(DC), uintptr(unsafe.Pointer(&Size)))
+func GetViewPortExtEx(DC types.HDC, Size *types.Size) types.Integer {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetViewPortExtEx).Call(uintptr(DC), uintptr(unsafe.Pointer(Size)))
 	return types.Integer(r1)
 }
 
-func GetViewPortOrgEx(DC types.HDC, P types.Point) types.Integer {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetViewPortOrgEx).Call(uintptr(DC), uintptr(unsafe.Pointer(&P)))
+func GetViewPortOrgEx(DC types.HDC, P *types.Point) types.Integer {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetViewPortOrgEx).Call(uintptr(DC), uintptr(unsafe.Pointer(P)))
 	return types.Integer(r1)
 }
 
-func GetWindowExtEx(DC types.HDC, Size types.Size) types.Integer {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowExtEx).Call(uintptr(DC), uintptr(unsafe.Pointer(&Size)))
+func GetWindowExtEx(DC types.HDC, Size *types.Size) types.Integer {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowExtEx).Call(uintptr(DC), uintptr(unsafe.Pointer(Size)))
 	return types.Integer(r1)
 }
 
@@ -594,29 +594,29 @@ func GetWindowLong(Handle types.HWND, int types.Integer) types.PtrInt {
 	return types.PtrInt(r1)
 }
 
-func GetWindowRect(Handle types.HWND, Rect types.Rect) types.Integer {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowRect).Call(uintptr(Handle), uintptr(unsafe.Pointer(&Rect)))
+func GetWindowRect(Handle types.HWND, Rect *types.Rect) types.Integer {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowRect).Call(uintptr(Handle), uintptr(unsafe.Pointer(Rect)))
 	return types.Integer(r1)
 }
 
-func GetWindowSize(Handle types.HWND, Width, Height types.Integer) types.LongBool {
-	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowSize).Call(uintptr(Handle), uintptr(Width), uintptr(Height))
-	return types.LongBool(api.GoBool(r1))
+func GetWindowSize(Handle types.HWND, Width, Height *types.Integer) bool {
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowSize).Call(uintptr(Handle), uintptr(unsafe.Pointer(Width)), uintptr(unsafe.Pointer(Height)))
+	return bool(api.GoBool(r1))
 }
 
-func GetWindowOrgEx(dc types.HDC, P types.Point) types.Integer { // because of delphi compatibility
-	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowOrgEx).Call(uintptr(dc), uintptr(unsafe.Pointer(&P)))
+func GetWindowOrgEx(dc types.HDC, P *types.Point) types.Integer { // because of delphi compatibility
+	r1, _, _ := imports.Proc(def.CEF_Win_GetWindowOrgEx).Call(uintptr(dc), uintptr(unsafe.Pointer(P)))
 	return types.Integer(r1)
 }
 
-func GradientFill(DC types.HDC, Vertices types.TagTriVertex, NumVertices types.LongInt, Meshes types.Pointer, NumMeshes types.LongInt, Mode types.LongInt) types.LongBool {
+func GradientFill(DC types.HDC, Vertices types.TagTriVertex, NumVertices types.LongInt, Meshes types.Pointer, NumMeshes types.LongInt, Mode types.LongInt) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_GradientFill).Call(uintptr(DC), uintptr(unsafe.Pointer(&Vertices)), uintptr(NumVertices), uintptr(Meshes), uintptr(NumMeshes), uintptr(Mode))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func HideCaret(hWnd types.HWND) types.LongBool {
+func HideCaret(hWnd types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_HideCaret).Call(uintptr(hWnd))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func InitializeCriticalSection(CritSection types.TCriticalSection) {
@@ -628,53 +628,53 @@ func IntersectClipRect(dc types.HDC, Left, Top, Right, Bottom types.Integer) typ
 	return types.Integer(r1)
 }
 
-func InvalidateRect(aHandle types.HWND, ARect types.Rect, bErase types.LongBool) types.LongBool {
+func InvalidateRect(aHandle types.HWND, ARect types.Rect, bErase bool) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_InvalidateRect).Call(uintptr(aHandle), uintptr(unsafe.Pointer(&ARect)), api.PascalBool(bool(bErase)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func InvalidateRgn(Handle types.HWND, Rgn *types.HRGN, Erase types.LongBool) types.LongBool {
+func InvalidateRgn(Handle types.HWND, Rgn *types.HRGN, Erase bool) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_InvalidateRgn).Call(uintptr(Handle), Rgn.Instance(), api.PascalBool(bool(Erase)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsDBCSLeadByte(TestChar byte) types.LongBool {
+func IsDBCSLeadByte(TestChar byte) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsDBCSLeadByte).Call(uintptr(TestChar))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsIconic(handle types.HWND) types.LongBool {
+func IsIconic(handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsIconic).Call(uintptr(handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsWindow(handle types.HWND) types.LongBool {
+func IsWindow(handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsWindow).Call(uintptr(handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsWindowEnabled(handle types.HWND) types.LongBool {
+func IsWindowEnabled(handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsWindowEnabled).Call(uintptr(handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsWindowVisible(handle types.HWND) types.LongBool {
+func IsWindowVisible(handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsWindowVisible).Call(uintptr(handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func IsZoomed(handle types.HWND) types.LongBool {
+func IsZoomed(handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_IsZoomed).Call(uintptr(handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func LeaveCriticalSection(CritSection types.TCriticalSection) {
 	imports.Proc(def.CEF_Win_LeaveCriticalSection).Call(uintptr(CritSection))
 }
 
-func LineTo(DC types.HDC, X, Y types.Integer) types.LongBool {
+func LineTo(DC types.HDC, X, Y types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_LineTo).Call(uintptr(DC), uintptr(X), uintptr(Y))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func LoadBitmap(hInstance types.THandle, lpBitmapName types.PChar) types.HBITMAP {
@@ -687,14 +687,14 @@ func LoadIcon(hInstance types.THandle, lpIconName types.PChar) types.HICON {
 	return types.HICON(r1)
 }
 
-func MaskBltRop(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Mask types.HBITMAP, XMask, YMask types.Integer, Rop types.DWORD) types.LongBool {
+func MaskBltRop(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Mask types.HBITMAP, XMask, YMask types.Integer, Rop types.DWORD) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_MaskBltRop).Call(uintptr(DestDC), uintptr(X), uintptr(Y), uintptr(Width), uintptr(Height), uintptr(SrcDC), uintptr(XSrc), uintptr(YSrc), uintptr(Mask), uintptr(XMask), uintptr(YMask), uintptr(Rop))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func MaskBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Mask types.HBITMAP, XMask, YMask types.Integer) types.LongBool {
+func MaskBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc types.Integer, Mask types.HBITMAP, XMask, YMask types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_MaskBlt).Call(uintptr(DestDC), uintptr(X), uintptr(Y), uintptr(Width), uintptr(Height), uintptr(SrcDC), uintptr(XSrc), uintptr(YSrc), uintptr(Mask), uintptr(XMask), uintptr(YMask))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func MessageBox(hWnd types.HWND, lpText, lpCaption types.PChar, uType types.Cardinal) types.Integer { //def MB_OK
@@ -717,9 +717,9 @@ func MonitorFromWindow(hWnd types.HWND, dwFlags types.DWORD) types.HMONITOR {
 	return types.HMONITOR(r1)
 }
 
-func MoveToEx(DC types.HDC, X, Y types.Integer, OldPoint types.Point) types.LongBool {
+func MoveToEx(DC types.HDC, X, Y types.Integer, OldPoint types.Point) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_MoveToEx).Call(uintptr(DC), uintptr(X), uintptr(Y), uintptr(unsafe.Pointer(&OldPoint)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func OffsetRgn(RGN *types.HRGN, nXOffset, nYOffset types.Integer) types.Integer {
@@ -727,34 +727,34 @@ func OffsetRgn(RGN *types.HRGN, nXOffset, nYOffset types.Integer) types.Integer 
 	return types.Integer(r1)
 }
 
-func PaintRgn(DC types.HDC, RGN *types.HRGN) types.LongBool {
+func PaintRgn(DC types.HDC, RGN *types.HRGN) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_PaintRgn).Call(uintptr(DC), RGN.Instance())
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func Pie(DC types.HDC, x1, y1, x2, y2, sx, sy, ex, ey types.Integer) types.LongBool {
+func Pie(DC types.HDC, x1, y1, x2, y2, sx, sy, ex, ey types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Pie).Call(uintptr(DC), uintptr(x1), uintptr(y1), uintptr(x2), uintptr(y2), uintptr(sx), uintptr(sy), uintptr(ex), uintptr(ey))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func PolyBezier(DC types.HDC, Points types.Point, NumPts types.Integer, Filled, Continuous types.LongBool) types.LongBool {
+func PolyBezier(DC types.HDC, Points types.Point, NumPts types.Integer, Filled, Continuous bool) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_PolyBezier).Call(uintptr(DC), uintptr(unsafe.Pointer(&Points)), uintptr(NumPts), api.PascalBool(bool(Filled)), api.PascalBool(bool(Continuous)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func Polygon(DC types.HDC, Points types.Point, NumPts types.Integer, Winding types.LongBool) types.LongBool {
+func Polygon(DC types.HDC, Points types.Point, NumPts types.Integer, Winding bool) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Polygon).Call(uintptr(DC), uintptr(unsafe.Pointer(&Points)), uintptr(NumPts), api.PascalBool(bool(Winding)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func Polyline(DC types.HDC, Points types.Point, NumPts types.Integer) types.LongBool {
+func Polyline(DC types.HDC, Points types.Point, NumPts types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Polyline).Call(uintptr(DC), uintptr(unsafe.Pointer(&Points)), uintptr(NumPts))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func PostMessage(Handle types.HWND, Msg types.Cardinal, WParam types.WPARAM, LParam types.LPARAM) types.LongBool {
+func PostMessage(Handle types.HWND, Msg types.Cardinal, WParam types.WPARAM, LParam types.LPARAM) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_PostMessage).Call(uintptr(Handle), uintptr(Msg), uintptr(WParam), uintptr(LParam))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func RealizePalette(DC types.HDC) types.Cardinal {
@@ -762,29 +762,29 @@ func RealizePalette(DC types.HDC) types.Cardinal {
 	return types.Cardinal(r1)
 }
 
-func Rectangle(DC types.HDC, X1, Y1, X2, Y2 types.Integer) types.LongBool {
+func Rectangle(DC types.HDC, X1, Y1, X2, Y2 types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_Rectangle).Call(uintptr(DC), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func RectInRegion(RGN *types.HRGN, ARect types.Rect) types.LongBool {
+func RectInRegion(RGN *types.HRGN, ARect types.Rect) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_RectInRegion).Call(RGN.Instance(), uintptr(unsafe.Pointer(&ARect)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func RectVisible(DC types.HDC, ARect types.Rect) types.LongBool {
+func RectVisible(DC types.HDC, ARect types.Rect) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_RectVisible).Call(uintptr(DC), uintptr(unsafe.Pointer(&ARect)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func RedrawWindow(Wnd types.HWND, lprcUpdate types.Rect, hrgnUpdate *types.HRGN, flags types.UINT) types.LongBool {
+func RedrawWindow(Wnd types.HWND, lprcUpdate types.Rect, hrgnUpdate *types.HRGN, flags types.UINT) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_RedrawWindow).Call(uintptr(Wnd), uintptr(unsafe.Pointer(&lprcUpdate)), hrgnUpdate.Instance(), uintptr(flags))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func ReleaseCapture() types.LongBool {
+func ReleaseCapture() bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ReleaseCapture).Call()
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func ReleaseDC(hWnd types.HWND, DC types.HDC) types.Integer {
@@ -797,14 +797,14 @@ func RemoveProp(Handle types.HWND, Str types.PChar) types.THandle {
 	return types.THandle(r1)
 }
 
-func RestoreDC(DC types.HDC, SavedDC types.Integer) types.LongBool {
+func RestoreDC(DC types.HDC, SavedDC types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_RestoreDC).Call(uintptr(DC), uintptr(SavedDC))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func RoundRect(DC types.HDC, X1, Y1, X2, Y2 types.Integer, RX, RY types.Integer) types.LongBool {
+func RoundRect(DC types.HDC, X1, Y1, X2, Y2 types.Integer, RX, RY types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_RoundRect).Call(uintptr(DC), uintptr(X1), uintptr(Y1), uintptr(X2), uintptr(Y2), uintptr(RX), uintptr(RY))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SaveDC(DC types.HDC) types.Integer {
@@ -812,9 +812,9 @@ func SaveDC(DC types.HDC) types.Integer {
 	return types.Integer(r1)
 }
 
-func ScrollWindowEx(hWnd types.HWND, dx, dy types.Integer, prcScroll, prcClip types.Rect, hrgnUpdate *types.HRGN, prcUpdate types.Rect, flags types.UINT) types.LongBool {
+func ScrollWindowEx(hWnd types.HWND, dx, dy types.Integer, prcScroll, prcClip types.Rect, hrgnUpdate *types.HRGN, prcUpdate types.Rect, flags types.UINT) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ScrollWindowEx).Call(uintptr(hWnd), uintptr(dx), uintptr(dy), uintptr(unsafe.Pointer(&prcScroll)), uintptr(unsafe.Pointer(&prcClip)), hrgnUpdate.Instance(), uintptr(unsafe.Pointer(&prcUpdate)), uintptr(flags))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SelectClipRGN(DC types.HDC, RGN *types.HRGN) types.LongInt {
@@ -827,7 +827,7 @@ func SelectObject(DC types.HDC, GDIObj types.HGDIOBJ) types.HGDIOBJ {
 	return types.HGDIOBJ(r1)
 }
 
-func SelectPalette(DC types.HDC, Palette types.HPALETTE, ForceBackground types.LongBool) types.HPALETTE {
+func SelectPalette(DC types.HDC, Palette types.HPALETTE, ForceBackground bool) types.HPALETTE {
 	r1, _, _ := imports.Proc(def.CEF_Win_SelectPalette).Call(uintptr(DC), uintptr(Palette), api.PascalBool(bool(ForceBackground)))
 	return types.HPALETTE(r1)
 }
@@ -857,19 +857,19 @@ func SetCapture(AHandle types.HWND) types.HWND {
 	return types.HWND(r1)
 }
 
-func SetCaretPos(X, Y types.Integer) types.LongBool {
+func SetCaretPos(X, Y types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetCaretPos).Call(uintptr(X), uintptr(Y))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetCaretPosEx(handle types.HWND, X, Y types.Integer) types.LongBool {
+func SetCaretPosEx(handle types.HWND, X, Y types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetCaretPosEx).Call(uintptr(handle), uintptr(X), uintptr(Y))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetCursorPos(X, Y types.Integer) types.LongBool {
+func SetCursorPos(X, Y types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetCursorPos).Call(uintptr(X), uintptr(Y))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SetFocus(hWnd types.HWND) types.HWND {
@@ -877,9 +877,9 @@ func SetFocus(hWnd types.HWND) types.HWND {
 	return types.HWND(r1)
 }
 
-func SetForegroundWindow(hWnd types.HWND) types.LongBool {
+func SetForegroundWindow(hWnd types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetForegroundWindow).Call(uintptr(hWnd))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SetMapMode(DC types.HDC, fnMapMode types.Integer) types.Integer {
@@ -887,9 +887,9 @@ func SetMapMode(DC types.HDC, fnMapMode types.Integer) types.Integer {
 	return types.Integer(r1)
 }
 
-func SetMenu(AWindowHandle types.HWND, AMenuHandle types.HMENU) types.LongBool {
+func SetMenu(AWindowHandle types.HWND, AMenuHandle types.HMENU) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetMenu).Call(uintptr(AWindowHandle), uintptr(AMenuHandle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SetParent(hWndChild types.HWND, hWndParent types.HWND) types.HWND {
@@ -897,9 +897,9 @@ func SetParent(hWndChild types.HWND, hWndParent types.HWND) types.HWND {
 	return types.HWND(r1)
 }
 
-func SetProp(Handle types.HWND, Str types.PChar, Data types.Pointer) types.LongBool {
+func SetProp(Handle types.HWND, Str types.PChar, Data types.Pointer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetProp).Call(uintptr(Handle), Str.ToPtr(), uintptr(Data))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func SetROP2(DC types.HDC, Mode types.Integer) types.Integer {
@@ -907,7 +907,7 @@ func SetROP2(DC types.HDC, Mode types.Integer) types.Integer {
 	return types.Integer(r1)
 }
 
-func SetScrollInfo(Handle types.HWND, SBStyle types.Integer, ScrollInfo types.TagScrollInfo, Redraw types.LongBool) types.Integer {
+func SetScrollInfo(Handle types.HWND, SBStyle types.Integer, ScrollInfo types.TagScrollInfo, Redraw bool) types.Integer {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetScrollInfo).Call(uintptr(Handle), uintptr(SBStyle), uintptr(unsafe.Pointer(&ScrollInfo)), api.PascalBool(bool(Redraw)))
 	return types.Integer(r1)
 }
@@ -932,49 +932,49 @@ func SetWindowLong(Handle types.HWND, Idx types.Integer, NewLong types.PtrInt) t
 	return types.PtrInt(r1)
 }
 
-func SetViewPortExtEx(DC types.HDC, XExtent, YExtent types.Integer, OldSize types.Size) types.LongBool {
+func SetViewPortExtEx(DC types.HDC, XExtent, YExtent types.Integer, OldSize types.Size) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetViewPortExtEx).Call(uintptr(DC), uintptr(XExtent), uintptr(YExtent), uintptr(unsafe.Pointer(&OldSize)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetViewPortOrgEx(DC types.HDC, NewX, NewY types.Integer, OldPoint types.Point) types.LongBool {
+func SetViewPortOrgEx(DC types.HDC, NewX, NewY types.Integer, OldPoint types.Point) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetViewPortOrgEx).Call(uintptr(DC), uintptr(NewX), uintptr(NewY), uintptr(unsafe.Pointer(&OldPoint)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetWindowExtEx(DC types.HDC, XExtent, YExtent types.Integer, OldSize types.Size) types.LongBool {
+func SetWindowExtEx(DC types.HDC, XExtent, YExtent types.Integer, OldSize types.Size) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetWindowExtEx).Call(uintptr(DC), uintptr(XExtent), uintptr(YExtent), uintptr(unsafe.Pointer(&OldSize)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetWindowOrgEx(dc types.HDC, NewX, NewY types.Integer, OldPoint types.Point) types.LongBool {
+func SetWindowOrgEx(dc types.HDC, NewX, NewY types.Integer, OldPoint types.Point) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetWindowOrgEx).Call(uintptr(dc), uintptr(NewX), uintptr(NewY), uintptr(unsafe.Pointer(&OldPoint)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func SetWindowPos(hWnd types.HWND, hWndInsertAfter types.HWND, X, Y, cx, cy types.Integer, uFlags types.UINT) types.LongBool {
+func SetWindowPos(hWnd types.HWND, hWndInsertAfter types.HWND, X, Y, cx, cy types.Integer, uFlags types.UINT) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SetWindowPos).Call(uintptr(hWnd), uintptr(hWndInsertAfter), uintptr(X), uintptr(Y), uintptr(cx), uintptr(cy), uintptr(uFlags))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func ShowCaret(hWnd types.HWND) types.LongBool {
+func ShowCaret(hWnd types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ShowCaret).Call(uintptr(hWnd))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func ShowScrollBar(Handle types.HWND, wBar types.Integer, bShow types.LongBool) types.LongBool {
+func ShowScrollBar(Handle types.HWND, wBar types.Integer, bShow bool) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ShowScrollBar).Call(uintptr(Handle), uintptr(wBar), api.PascalBool(bool(bShow)))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func ShowWindow(hWnd types.HWND, nCmdShow types.Integer) types.LongBool {
+func ShowWindow(hWnd types.HWND, nCmdShow types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_ShowWindow).Call(uintptr(hWnd), uintptr(nCmdShow))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func StretchBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc, SrcWidth, SrcHeight types.Integer, Rop types.Cardinal) types.LongBool {
+func StretchBlt(DestDC types.HDC, X, Y, Width, Height types.Integer, SrcDC types.HDC, XSrc, YSrc, SrcWidth, SrcHeight types.Integer, Rop types.Cardinal) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_StretchBlt).Call(uintptr(DestDC), uintptr(X), uintptr(Y), uintptr(Width), uintptr(Height), uintptr(SrcDC), uintptr(XSrc), uintptr(YSrc), uintptr(SrcWidth), uintptr(SrcHeight), uintptr(Rop))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func StretchDIBits(DC types.HDC, DestX, DestY, DestWidth, DestHeight, SrcX, SrcY, SrcWidth, SrcHeight types.Integer, Bits types.Pointer, BitsInfo types.TagBitmapInfo, Usage types.UINT, Rop types.DWORD) types.Integer {
@@ -982,19 +982,19 @@ func StretchDIBits(DC types.HDC, DestX, DestY, DestWidth, DestHeight, SrcX, SrcY
 	return types.Integer(r1)
 }
 
-func SystemParametersInfo(uiAction types.DWORD, uiParam types.DWORD, pvParam types.Pointer, fWinIni types.DWORD) types.LongBool {
+func SystemParametersInfo(uiAction types.DWORD, uiParam types.DWORD, pvParam types.Pointer, fWinIni types.DWORD) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_SystemParametersInfo).Call(uintptr(uiAction), uintptr(uiParam), uintptr(pvParam), uintptr(fWinIni))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func TextOut(DC types.HDC, X, Y types.Integer, Str types.PChar, Count types.Integer) types.LongBool {
+func TextOut(DC types.HDC, X, Y types.Integer, Str types.PChar, Count types.Integer) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_TextOut).Call(uintptr(DC), uintptr(X), uintptr(Y), Str.ToPtr(), uintptr(Count))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
-func UpdateWindow(Handle types.HWND) types.LongBool {
+func UpdateWindow(Handle types.HWND) bool {
 	r1, _, _ := imports.Proc(def.CEF_Win_UpdateWindow).Call(uintptr(Handle))
-	return types.LongBool(api.GoBool(r1))
+	return bool(api.GoBool(r1))
 }
 
 func WindowFromPoint(Point types.Point) types.HWND {

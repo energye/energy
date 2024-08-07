@@ -38,8 +38,8 @@ type auxTools struct {
 
 // 窗口当前状态属性
 type windowCurrentProperty struct {
-	ws         types.TWindowState // 仅记录最大化和全屏状态
-	x, y, w, h int32              // 仅在最大化和全屏时记录窗口位置和宽高
+	windowState             types.TWindowState // 仅记录最大化和全屏状态
+	previousWindowPlacement types.TRect
 }
 
 // WindowProperty

@@ -14,25 +14,13 @@
 package cef
 
 import (
-	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/energy/v2/cef/winapi"
+	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/types/messages"
 	"github.com/energye/golcl/lcl/win"
 	"syscall"
 	"unsafe"
 )
-
-var (
-	dwmAPI                        = syscall.NewLazyDLL("dwmapi.dll")
-	_DwmExtendFrameIntoClientArea = dwmAPI.NewProc("DwmExtendFrameIntoClientArea")
-)
-
-type margins struct {
-	CxLeftWidth, CxRightWidth, CyTopHeight, CyBottomHeight int32
-}
-
-func extendFrameIntoClientArea(hwnd uintptr, margins margins) {
-	_, _, _ = _DwmExtendFrameIntoClientArea.Call(hwnd, uintptr(unsafe.Pointer(&margins)))
-}
 
 func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
 	if m.WindowProperty().EnableHideCaption {
@@ -42,7 +30,7 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 			// This Option is not affected by returning 0 in WM_NCCALCSIZE.
 			// As a result we have hidden the titlebar but still have the default window frame styling.
 			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
-			extendFrameIntoClientArea(m.Handle(), margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
+			winapi.ExtendFrameIntoClientArea(m.Handle(), winapi.Margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
 		case messages.WM_NCCALCSIZE:
 			// Trigger condition: Change the window size
 			// Disable the standard frame by allowing the client area to take the full window size.
@@ -55,15 +43,24 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 				//isMinimize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MINIMIZE != 0
 				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
 				if isMaximize {
-					rect := (*types.TRect)(unsafe.Pointer(lParam))
-					workRect := m.Monitor().WorkareaRect()
-					*rect = workRect
+					rect := (*types.Rect)(unsafe.Pointer(lParam))
+					// Need to obtain correct monitor information to prevent error freezing message loops from occurring
+					monitor := winapi.MonitorFromRect(*rect, winapi.MONITOR_DEFAULTTONULL)
+					if monitor != 0 {
+						var monitorInfo types.TagMonitorInfo
+						monitorInfo.CbSize = types.DWORD(unsafe.Sizeof(monitorInfo))
+						if winapi.GetMonitorInfo(monitor, &monitorInfo) {
+							*rect = monitorInfo.RcWork
+						}
+					}
 				}
 				return 0
 			}
 		}
 	}
-	return win.CallWindowProc(m.oldWndPrc, hwnd, message, wParam, lParam)
+
+	//return uintptr(winapi.CallWindowProc(types.TFarProc(m.oldWndPrc), hwnd, types.UINT(message), types.WPARAM(wParam), types.LPARAM(lParam)))
+	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
 }
 
 func (m *LCLBrowserWindow) _HookWndProcMessage() {

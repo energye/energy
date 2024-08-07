@@ -124,7 +124,7 @@ func (m *customWindowCaption) onNCLButtonDown(hWND types.HWND, message *types.TM
 		*lResult = messages.HTCAPTION
 		*aHandled = true
 		//全屏时不能移动窗口
-		if m.bw.WindowProperty().current.ws == types.WsFullScreen {
+		if m.bw.IsFullScreen() {
 			return
 		}
 		x, y := m.toPoint(message)

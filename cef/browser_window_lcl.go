@@ -226,7 +226,7 @@ func (m *LCLBrowserWindow) SetProperty() {
 		m.SetWindowState(wp.WindowInitState)
 	}
 	// 当前窗口状态
-	m.setCurrentProperty()
+	//m.setCurrentProperty()
 }
 
 // SetOnPaint 扩展事件，向下链试调用
@@ -844,7 +844,7 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 		if m.IsClosing() {
 			return
 		}
-		m.setCurrentProperty()
+		//m.setCurrentProperty()
 		if m.windowResize != nil {
 			m.windowResize(sender)
 		}
@@ -858,17 +858,17 @@ func (m *LCLBrowserWindow) resize(sender lcl.IObject) {
 }
 
 // 在窗口坐标、大小、全屏时保存当前窗口属性
-func (m *LCLBrowserWindow) setCurrentProperty() {
-	wp := m.WindowProperty()
-	if wp.current.ws == types.WsFullScreen || wp.current.ws == types.WsMaximized {
-		return
-	}
-	boundRect := m.BoundsRect()
-	wp.current.x = boundRect.Left
-	wp.current.y = boundRect.Top
-	wp.current.w = boundRect.Width()
-	wp.current.h = boundRect.Height()
-}
+//func (m *LCLBrowserWindow) setCurrentProperty() {
+//	wp := m.WindowProperty()
+//	if wp.current.ws == types.WsFullScreen || wp.current.ws == types.WsMaximized {
+//		return
+//	}
+//	boundRect := m.BoundsRect()
+//	wp.current.x = boundRect.Left
+//	wp.current.y = boundRect.Top
+//	wp.current.w = boundRect.Width()
+//	wp.current.h = boundRect.Height()
+//}
 
 // activate 内部调用
 func (m *LCLBrowserWindow) activate(sender lcl.IObject) {
@@ -1131,7 +1131,7 @@ func (m *LCLBrowserWindow) onFormMessages() {
 		}
 	})
 	m.setOnWMMove(func(message *et.TMove) {
-		m.setCurrentProperty()
+		//m.setCurrentProperty()
 		if m.Chromium() != nil {
 			m.Chromium().NotifyMoveOrResizeStarted()
 		}

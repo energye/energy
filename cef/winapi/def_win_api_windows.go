@@ -22,19 +22,30 @@ import (
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"syscall"
+	"unsafe"
 )
 
 var (
-	user32dll            = syscall.NewLazyDLL("user32.dll")
-	_BeginDeferWindowPos = user32dll.NewProc("BeginDeferWindowPos")
-	_DeferWindowPos      = user32dll.NewProc("DeferWindowPos")
-	_EndDeferWindowPos   = user32dll.NewProc("EndDeferWindowPos")
-	_GetDpiForWindow     = user32dll.NewProc("GetDpiForWindow")
+	user32dll                     = syscall.NewLazyDLL("user32.dll")
+	dwmAPI                        = syscall.NewLazyDLL("dwmapi.dll")
+	_BeginDeferWindowPos          = user32dll.NewProc("BeginDeferWindowPos")
+	_DeferWindowPos               = user32dll.NewProc("DeferWindowPos")
+	_EndDeferWindowPos            = user32dll.NewProc("EndDeferWindowPos")
+	_GetDpiForWindow              = user32dll.NewProc("GetDpiForWindow")
+	_DwmExtendFrameIntoClientArea = dwmAPI.NewProc("DwmExtendFrameIntoClientArea")
 )
 var (
 	gdi32dll  = syscall.NewLazyDLL("gdi32.dll")
 	_FrameRgn = gdi32dll.NewProc("FrameRgn")
 )
+
+type Margins struct {
+	CxLeftWidth, CxRightWidth, CyTopHeight, CyBottomHeight int32
+}
+
+func ExtendFrameIntoClientArea(hwnd uintptr, margins Margins) {
+	_, _, _ = _DwmExtendFrameIntoClientArea.Call(hwnd, uintptr(unsafe.Pointer(&margins)))
+}
 
 func GetDpiForWindow(hwnd types.HWND) (types.UINT, error) {
 	if err := _GetDpiForWindow.Find(); err == nil {

@@ -86,16 +86,16 @@ func (m *TCEFChromiumBrowser) registerWindowsCompMsgEvent() {
 		//	}
 		//})
 
-		if window.WindowProperty().EnableWebkitAppRegion && window.WindowProperty().EnableWebkitAppRegionDClk {
-			window.windowResize = func(sender lcl.IObject) bool {
-				if window.WindowState() == types.WsMaximized && (window.WindowProperty().EnableHideCaption ||
-					window.BorderStyle() == types.BsNone || window.BorderStyle() == types.BsSingle) {
-					var monitor = window.Monitor().WorkareaRect()
-					window.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
-					window.SetWindowState(types.WsMaximized)
-				}
-				return false
-			}
-		}
+		//if window.WindowProperty().EnableWebkitAppRegion && window.WindowProperty().EnableWebkitAppRegionDClk {
+		//	window.windowResize = func(sender lcl.IObject) bool {
+		//		if window.WindowState() == types.WsMaximized && (window.WindowProperty().EnableHideCaption ||
+		//			window.BorderStyle() == types.BsNone || window.BorderStyle() == types.BsSingle) {
+		//			var monitor = window.Monitor().WorkareaRect()
+		//			window.SetBounds(monitor.Left, monitor.Top, monitor.Right-monitor.Left, monitor.Bottom-monitor.Top)
+		//			window.SetWindowState(types.WsMaximized)
+		//		}
+		//		return false
+		//	}
+		//}
 	}
 }

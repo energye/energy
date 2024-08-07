@@ -88,7 +88,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser
 	switch message.Msg {
 	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
 		//标题栏拖拽区域 双击最大化和还原
-		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk && m.WindowProperty().EnableMaximize {
+		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk && m.WindowProperty().EnableMaximize && !m.IsFullScreen() {
 			*lResult = messages.HTCAPTION
 			*aHandled = true
 			if win.ReleaseCapture() {
@@ -138,7 +138,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser
 			*aHandled = true
 		} else if m.WindowProperty().EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
 			//全屏时不能调整窗口大小
-			if m.WindowProperty().current.ws == types.WsFullScreen {
+			if m.WindowProperty().current.windowState == types.WsFullScreen {
 				return
 			}
 			var rect types.TRect
@@ -167,9 +167,10 @@ func (m *LCLBrowserWindow) Restore() {
 		return
 	}
 	RunOnMainThread(func() {
-		if win.ReleaseCapture() {
-			win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
-		}
+		//if win.ReleaseCapture() {
+		//	win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+		//}
+		m.SetWindowState(types.WsNormal)
 	})
 }
 
@@ -179,9 +180,10 @@ func (m *LCLBrowserWindow) Minimize() {
 		return
 	}
 	RunOnMainThread(func() {
-		if win.ReleaseCapture() {
-			win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MINIMIZE, 0)
-		}
+		//if win.ReleaseCapture() {
+		//	win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MINIMIZE, 0)
+		//}
+		m.SetWindowState(types.WsMinimized)
 	})
 }
 
@@ -191,12 +193,17 @@ func (m *LCLBrowserWindow) Maximize() {
 		return
 	}
 	RunOnMainThread(func() {
-		if win.ReleaseCapture() {
-			if m.WindowState() == types.WsNormal {
-				win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
-			} else {
-				win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
-			}
+		//if win.ReleaseCapture() {
+		//	if m.WindowState() == types.WsNormal {
+		//		win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
+		//	} else {
+		//		win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
+		//	}
+		//}
+		if m.WindowState() == types.WsNormal {
+			m.SetWindowState(types.WsMaximized)
+		} else {
+			m.SetWindowState(types.WsNormal)
 		}
 	})
 }
@@ -204,15 +211,21 @@ func (m *LCLBrowserWindow) Maximize() {
 // FullScreen 窗口全屏
 func (m *LCLBrowserWindow) FullScreen() {
 	if m.WindowProperty().EnableHideCaption {
+		if m.IsFullScreen() {
+			return
+		}
 		RunOnMainThread(func() {
 			if m.WindowState() == types.WsMinimized || m.WindowState() == types.WsMaximized {
 				if win.ReleaseCapture() {
 					win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
 				}
 			}
-			m.WindowProperty().current.ws = types.WsFullScreen
-			m.setCurrentProperty()
-			m.SetBoundsRect(m.Monitor().BoundsRect())
+			m.WindowProperty().current.windowState = types.WsFullScreen
+			m.WindowProperty().current.previousWindowPlacement = m.BoundsRect()
+			//m.setCurrentProperty()
+			//style := uint32(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
+			monitorRect := m.Monitor().BoundsRect()
+			win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
 		})
 	}
 }
@@ -220,18 +233,21 @@ func (m *LCLBrowserWindow) FullScreen() {
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
 	wp := m.WindowProperty()
-	if wp.EnableHideCaption && wp.current.ws == types.WsFullScreen {
-		RunOnMainThread(func() {
-			wp.current.ws = types.WsNormal
-			m.SetWindowState(types.WsNormal)
-			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
-		})
+	if wp.EnableHideCaption {
+		if m.IsFullScreen() {
+			RunOnMainThread(func() {
+				wp.current.windowState = types.WsNormal
+				m.SetWindowState(types.WsNormal)
+				//m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+				m.SetBoundsRect(m.WindowProperty().current.previousWindowPlacement)
+			})
+		}
 	}
 }
 
 // IsFullScreen 是否全屏
 func (m *LCLBrowserWindow) IsFullScreen() bool {
-	return m.WindowProperty().current.ws == types.WsFullScreen
+	return m.WindowProperty().current.windowState == types.WsFullScreen
 }
 
 // 窗口透明
@@ -256,7 +272,7 @@ func (m *LCLBrowserWindow) doDrag() {
 		m.drag.drag()
 	} else {
 		// 全屏时不能拖拽窗口
-		if m.WindowProperty().current.ws == types.WsFullScreen {
+		if m.IsFullScreen() {
 			return
 		}
 		// 此时是 down 事件, 拖拽窗口

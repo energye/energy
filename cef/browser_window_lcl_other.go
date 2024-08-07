@@ -132,39 +132,39 @@ func (m *LCLBrowserWindow) Maximize() {
 
 // FullScreen 窗口全屏
 func (m *LCLBrowserWindow) FullScreen() {
-	RunOnMainThread(func() {
-		// 将窗口全屏
-		// 在无标题栏窗口时，最大化和全屏正常是无法改变窗口状态
-		// 因此需要自己处理窗口大小, 在此之前需要记录窗口状态
-		m.setCurrentProperty()
-		m.WindowProperty().current.ws = types.WsFullScreen
-		// 触发全屏
-		m.SetWindowState(types.WsFullScreen)
-		if m.WindowProperty().EnableHideCaption {
-			// 设置为屏幕大小
-			m.SetBoundsRect(m.Monitor().BoundsRect())
+	if m.WindowProperty().EnableHideCaption {
+		if m.IsFullScreen() {
+			return
 		}
-	})
+		RunOnMainThread(func() {
+			//m.setCurrentProperty()
+			m.WindowProperty().current.windowState = types.WsFullScreen
+			m.WindowProperty().current.previousWindowPlacement = m.BoundsRect()
+			m.SetWindowState(types.WsFullScreen)
+			m.SetBoundsRect(m.Monitor().BoundsRect())
+		})
+	}
 }
 
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
-	RunOnMainThread(func() {
-		// 恢复窗口大小
-		wp := m.WindowProperty()
-		if wp.EnableHideCaption {
-			m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+	// 恢复窗口大小
+	wp := m.WindowProperty()
+	if wp.EnableHideCaption {
+		if m.IsFullScreen() {
+			RunOnMainThread(func() {
+				wp.current.windowState = types.WsNormal
+				//m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+				m.SetBoundsRect(m.WindowProperty().current.previousWindowPlacement)
+				m.SetWindowState(types.WsNormal)
+			})
 		}
-		// 记录当前窗口状态
-		wp.current.ws = types.WsNormal
-		// 触发窗口还原正常
-		m.SetWindowState(types.WsNormal)
-	})
+	}
 }
 
 // IsFullScreen 是否全屏
 func (m *LCLBrowserWindow) IsFullScreen() bool {
-	return m.WindowState() == types.WsFullScreen
+	return m.WindowProperty().current.windowState == types.WsFullScreen
 }
 
 // SetFocus 设置窗口焦点
