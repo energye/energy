@@ -44,16 +44,21 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
 			extendFrameIntoClientArea(m.Handle(), margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
 		case messages.WM_NCCALCSIZE:
-			// Disable the standard frame by allowing the client area to take the full
-			// window size.
+			// Trigger condition: Change the window size
+			// Disable the standard frame by allowing the client area to take the full window size.
 			// See: https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-nccalcsize#remarks
 			// This hides the titlebar and also disables the resizing from user interaction because the standard frame is not
 			// shown. We still need the WS_THICKFRAME style to enable resizing from the frontend.
 			if wParam != 0 {
-				//cycaption := win.GetSystemMetrics(4)
-				//rect := (*types.TRect)(unsafe.Pointer(lParam))
-				//rect.Bottom += -1
-				//rect.Right += -1
+				// Content overflow screen issue when maximizing borderless windows
+				// See: https://github.com/MicrosoftEdge/WebView2Feedback/issues/2549
+				//isMinimize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MINIMIZE != 0
+				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
+				if isMaximize {
+					rect := (*types.TRect)(unsafe.Pointer(lParam))
+					workRect := m.Monitor().WorkareaRect()
+					*rect = workRect
+				}
 				return 0
 			}
 		}

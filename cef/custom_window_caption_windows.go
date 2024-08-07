@@ -50,19 +50,6 @@ func (m *customWindowCaption) onNCMouseMove(hWND types.HWND, message *types.TMes
 	} else if m.canBorder { // 当前在边框
 		*lResult = types.LRESULT(m.borderHT)
 		*aHandled = true
-		//全屏时不允许移动窗口
-		// TODO 暂时不使用，配合 WndProc
-		//if m.bw.WindowProperty().current.ws == types.WsFullScreen {
-		//	return
-		//}
-		//s := winapi.GetKeyState(winapi.VK_LBUTTON) & 0x800
-		//if winapi.GetKeyState(winapi.VK_LBUTTON) < 0 {
-		//	x, y := m.toPoint(message)
-		//	m.borderMD = true
-		//	if win.ReleaseCapture() {
-		//		win.PostMessage(hWND, messages.WM_SYSCOMMAND, uintptr(messages.SC_SIZE|m.borderWMSZ), rtl.MakeLParam(uint16(x), uint16(y)))
-		//	}
-		//}
 	}
 }
 
@@ -91,7 +78,7 @@ func (m *customWindowCaption) onSetCursor(message *types.TMessage, lResult *type
 }
 
 // 鼠标是否在边框，并返回当前鼠标样式
-func (m *customWindowCaption) onCanBorder(chromiumBrowser ICEFChromiumBrowser, x, y int32, windowRect *types.TRect) bool {
+func (m *customWindowCaption) onCanBorder(chromiumBrowser ICEFChromiumBrowser, x, y int32, windowRect types.TRect) bool {
 	width := windowRect.Width()
 	height := windowRect.Height()
 	bda := chromiumBrowser.BroderDirectionAdjustments()

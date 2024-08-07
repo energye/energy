@@ -151,7 +151,7 @@ func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser
 			// 判断当前鼠标是否在边框范围
 			// 窗口边框和CEF组件边框
 
-			handled := m.cwcap.onCanBorder(chromiumBrowser, x, y, &rect)
+			handled := m.cwcap.onCanBorder(chromiumBrowser, x, y, rect)
 			if handled {
 				// 鼠标在边框位置
 				*lResult = types.LRESULT(m.cwcap.borderHT)
