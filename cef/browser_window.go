@@ -36,9 +36,9 @@ type auxTools struct {
 	viewSourceWindow IBrowserWindow  //viewSource
 }
 
-// 窗口当前状态属性
+// 窗口当前状态属性，仅触发全屏使用
 type windowCurrentProperty struct {
-	windowState             types.TWindowState // 仅记录最大化和全屏状态
+	windowState             types.TWindowState
 	previousWindowPlacement types.TRect
 }
 

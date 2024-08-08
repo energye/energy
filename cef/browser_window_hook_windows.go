@@ -44,6 +44,7 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
 				if isMaximize {
 					rect := (*types.Rect)(unsafe.Pointer(lParam))
+					// m.Monitor().WorkareaRect(): When minimizing windows and restoring windows on multiple monitors, the main monitor is obtained.
 					// Need to obtain correct monitor information to prevent error freezing message loops from occurring
 					monitor := winapi.MonitorFromRect(*rect, winapi.MONITOR_DEFAULTTONULL)
 					if monitor != 0 {
