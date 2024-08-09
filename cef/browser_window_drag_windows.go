@@ -16,16 +16,14 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"strconv"
+	"github.com/energye/energy/v2/consts/messages"
+	"github.com/energye/golcl/lcl/types"
+	"github.com/energye/golcl/lcl/win"
 )
 
 // 窗口拖拽JS扩展
-// 在这里执行并启用JS拖拽
-func dragExtensionJS(frame *ICefFrame, drag bool) {
-	// Windows2种方式,自定义+webkit 只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
-	var executeJS = `
-energyExtension.drag.setEnableDrag(` + strconv.FormatBool(drag) + `);
-energyExtension.drag.setup();`
+func dragExtensionJS(frame *ICefFrame) {
+	var executeJS = `energyExtension.drag.setup();`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
@@ -36,105 +34,97 @@ energyExtension.drag.setup();`
 func dragExtensionHandler() {
 	energyExtensionHandler := V8HandlerRef.New()
 	energyExtensionHandler.Execute(func(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-		if name == mouseDown {
+		if name == mouseDown || name == mouseUp {
 			return true
-		} else if name == mouseUp {
+		} else if name == mouseMove {
+			// caption move
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
 				Name: internalIPCDRAG,
-				Data: &drag{T: dragUp},
+				Data: &drag{T: dragMove},
 			}
 			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
-		} else if name == mouseMove {
+		} else if name == mouseDblClick {
+			// caption double click
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
 				Name: internalIPCDRAG,
+				Data: &drag{T: dragDblClick},
+			}
+			ipc.RenderChan().IPC().Send(message.Bytes())
+			return true
+		} else if name == mouseResize {
+			// window border resize
+			htValue := arguments.Get(0)
+			ht := htValue.GetStringValue()
+			htValue.Free()
+			message := &ipcArgument.List{
+				Id:   -1,
+				BId:  ipc.RenderChan().BrowserId(),
+				Name: internalIPCDRAG,
+				Data: &drag{T: dragResize, HT: ht},
 			}
 			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
 		}
 		return false
 	})
-	var code = `
-		let energyExtension;
-        if (!energyExtension) {
-            energyExtension = {
-                drag: {
-                    enableDrag: false,
-                    shouldDrag: false,
-                    cssDragProperty: "--webkit-app-region",
-                    cssDragValue: "drag",
-                    defaultCursor: null
-                },
-            };
-        }
-        (function () {
-            energyExtension.drag.war = function (e) {
-                let v = window.getComputedStyle(e.target).getPropertyValue(energyExtension.drag.cssDragProperty);
-                if (v) {
-                    v = v.trim();
-                    if (v !== energyExtension.drag.cssDragValue || e.buttons !== 1) {
-                        return false;
-                    }
-                    return e.detail === 1;
-                }
-                return false;
-            }
-            energyExtension.drag.mouseMove = function (e) {
-                if (!energyExtension.drag.enableDrag || !energyExtension.drag.shouldDrag) {
-                    return
-                }
-				energyExtension.drag.shouldDrag = false;
-				native function mouseMove();
-				mouseMove();
-            }
-            energyExtension.drag.mouseUp = function (e) {
-                if (!energyExtension.drag.enableDrag) {
-                    return
-                }
-                energyExtension.drag.shouldDrag = false;
-				if (energyExtension.drag.war(e)) {
-                    e.preventDefault();
-					native function mouseUp();
-					mouseUp();
-				}
-            }
-            energyExtension.drag.mouseDown = function (e) {
-                if (!energyExtension.drag.enableDrag || ((e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight))) {
-                    return
-                }
-                if (energyExtension.drag.war(e)) {
-                    e.preventDefault();
-                    energyExtension.drag.shouldDrag = true;
-                    native function mouseDown();
-                    mouseDown();
-                } else {
-                    energyExtension.drag.shouldDrag = false;
-                }
-            }
-            energyExtension.drag.setEnableDrag = function (v) {
-				energyExtension.drag.enableDrag = v;
-            }
-            energyExtension.drag.setup = function () {
-				if (!energyExtension.drag.enableDrag) {
-					return;
-				}
-                window.addEventListener("mousemove", energyExtension.drag.mouseMove);
-                window.addEventListener("mousedown", energyExtension.drag.mouseDown);
-                window.addEventListener("mouseup", energyExtension.drag.mouseUp);
-            }
-        })();
-`
-	RegisterExtension("energyExtension", code, energyExtensionHandler)
+	RegisterExtension("energyExtension", string(ipc.IPCJS), energyExtensionHandler)
 }
 
 func (m *drag) drag() {
-	if m.T == dragUp {
-		if m.window.IsLCL() {
-			m.window.AsLCLBrowserWindow().BrowserWindow().cwcap.canCaption = false
+	window := m.window.AsLCLBrowserWindow().BrowserWindow()
+	switch m.T {
+	case dragUp:
+	case dragDown:
+	case dragMove:
+		// 全屏时不能拖拽窗口
+		if window.IsFullScreen() {
+			return
+		}
+		// 此时是 down 事件, 拖拽窗口
+		if win.ReleaseCapture() {
+			win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+		}
+	case dragResize:
+		if window.IsFullScreen() {
+			return
+		}
+		var borderHT uintptr
+		switch m.HT {
+		case "n-resize":
+			borderHT = messages.HTTOP
+		case "ne-resize":
+			borderHT = messages.HTTOPRIGHT
+		case "e-resize":
+			borderHT = messages.HTRIGHT
+		case "se-resize":
+			borderHT = messages.HTBOTTOMRIGHT
+		case "s-resize":
+			borderHT = messages.HTBOTTOM
+		case "sw-resize":
+			borderHT = messages.HTBOTTOMLEFT
+		case "w-resize":
+			borderHT = messages.HTLEFT
+		case "nw-resize":
+			borderHT = messages.HTTOPLEFT
+		}
+		if borderHT != 0 {
+			if win.ReleaseCapture() {
+				win.PostMessage(window.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
+			}
+		}
+	case dragDblClick:
+		if window.WindowProperty().EnableWebkitAppRegionDClk {
+			if window.WindowState() == types.WsNormal {
+				window.SetWindowState(types.WsMaximized)
+			} else {
+				window.SetWindowState(types.WsNormal)
+			}
 		}
 	}
+
 }

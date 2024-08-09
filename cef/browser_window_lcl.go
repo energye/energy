@@ -54,18 +54,17 @@ type LCLBrowserWindow struct {
 	onCloseQuery              TCloseQueryEvent    //扩展事件
 	onActivateAfter           lcl.TNotifyEvent    //扩展事件
 	onDestroy                 lcl.TNotifyEvent
-	onWndProc                 []lcl.TWndProcEvent  //扩展事件 向后链试循环调用
-	onPaint                   []lcl.TNotifyEvent   //扩展事件 向后链试循环调用
-	auxTools                  IAuxTools            //辅助工具
-	tray                      []ITray              //托盘 可以同时创建多个
-	cwcap                     *customWindowCaption //自定义窗口标题栏
-	drag                      *drag                //自定义拖拽
-	wmPaintMessage            wmPaint              //
-	wmMoveMessage             wmMove               //
-	wmSizeMessage             wmSize               //
-	wmWindowPosChangedMessage wmWindowPosChanged   //
-	screen                    IScreen              //屏幕
-	rgn                       int                  //窗口四边圆角
+	onWndProc                 []lcl.TWndProcEvent //扩展事件 向后链试循环调用
+	onPaint                   []lcl.TNotifyEvent  //扩展事件 向后链试循环调用
+	auxTools                  IAuxTools           //辅助工具
+	tray                      []ITray             //托盘 可以同时创建多个
+	drag                      *drag               //自定义拖拽
+	wmPaintMessage            wmPaint             //
+	wmMoveMessage             wmMove              //
+	wmSizeMessage             wmSize              //
+	wmWindowPosChangedMessage wmWindowPosChanged  //
+	screen                    IScreen             //屏幕
+	rgn                       int                 //窗口四边圆角
 	oldWndPrc                 uintptr
 }
 
@@ -98,9 +97,6 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 	// 窗口设置一个名字
 	window.TForm.SetName(fmt.Sprintf("Form_%d", time.Now().UnixNano()/1e6))
 	window.windowProperty = &windowProperty
-	window.cwcap = &customWindowCaption{
-		bw: window,
-	}
 	window.SetWindowType(windowProperty.WindowType)
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
@@ -1061,7 +1057,6 @@ func (m *LCLBrowserWindow) registerDefaultChromiumCloseEvent() {
 					logger.Debug("chromium.onClose => windowParent.Free")
 				})
 			}
-			m.cwcap.free() //释放自定义标题栏 rgn
 		}
 	})
 	m.Chromium().SetOnBeforeClose(func(sender lcl.IObject, browser *ICefBrowser) {

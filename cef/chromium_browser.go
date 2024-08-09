@@ -11,7 +11,6 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
@@ -39,10 +38,6 @@ type ICEFChromiumBrowser interface {
 	RegisterDefaultPopupEvent()
 	BroderDirectionAdjustments() et.BroderDirectionAdjustments       // 返回可以调整窗口大小的边框方向, 默认所有方向
 	SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) // 设置可以调整窗口大小的边框方向, 默认所有方向
-	Rgn() *et.HRGN                                                   // Rgn 返回区域
-	Regions() *TCefDraggableRegions                                  // Regions 返回区域坐标
-	FreeRgn()                                                        // FreeRgn 释放掉rgn
-	FreeRegions()                                                    // FreeRegions 释放掉regions
 }
 
 // TCEFChromiumBrowser
@@ -59,7 +54,6 @@ type TCEFChromiumBrowser struct {
 	extraInfo                  *ICefDictionaryValue          //
 	broderDirectionAdjustments et.BroderDirectionAdjustments //可以调整窗口大小的边框方向, 默认所有方向
 	regions                    *TCefDraggableRegions         //窗口内html拖拽区域
-	rgn                        *et.HRGN                      //
 }
 
 // NewChromiumBrowser
@@ -195,11 +189,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		}
 	})
 	m.Chromium().SetOnLoadStart(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType) {
-		enableWebkitAppRegion := true
-		if m.window != nil {
-			enableWebkitAppRegion = m.window.WindowProperty().EnableWebkitAppRegion
-		}
-		dragExtensionJS(frame, enableWebkitAppRegion)
+		dragExtensionJS(frame)
 		if bwEvent.onLoadStart != nil {
 			bwEvent.onLoadStart(sender, browser, frame, transitionType, m.window)
 		}
@@ -294,23 +284,18 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 				bwEvent.onDragEnter(sender, browser, dragData, mask, m.window, result)
 			}
 		})
-		if m.window.WindowProperty().EnableWebkitAppRegion {
-			m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
-				if bwEvent.onDraggableRegionsChanged != nil {
-					bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m.window)
-				}
-				if m.window.IsLCL() {
-					m.regions = regions
-					m.setDraggableRegions()
-				} else {
-					m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
-					m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
-				}
-			})
-		}
+		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
+			if m.window.IsLCL() {
+				// 使用 js drag
+			} else if m.window.IsViewsFramework() {
+				m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
+				m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
+			}
+			if bwEvent.onDraggableRegionsChanged != nil {
+				bwEvent.onDraggableRegionsChanged(sender, browser, frame, regions, m.window)
+			}
+		})
 	}
-	// 注册windows下CompMsg事件, CEF 组件消息事件
-	m.registerWindowsCompMsgEvent()
 }
 
 func (m *TCEFChromiumBrowser) RegisterDefaultPopupEvent() {
@@ -349,32 +334,5 @@ func (m *TCEFChromiumBrowser) RegisterDefaultPopupEvent() {
 			}
 			return m.window.doBeforePopup(sender, browser, frame, beforePopupInfo, popupFeatures, windowInfo, client, settings, resultExtraInfo, noJavascriptAccess)
 		})
-	}
-}
-
-// Rgn 返回区域
-func (m *TCEFChromiumBrowser) Rgn() *et.HRGN {
-	return m.rgn
-}
-
-// Regions 返回区域坐标
-func (m *TCEFChromiumBrowser) Regions() *TCefDraggableRegions {
-	return m.regions
-}
-
-// FreeRgn 释放掉rgn
-func (m *TCEFChromiumBrowser) FreeRgn() {
-	if m.rgn != nil {
-		winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
-		winapi.DeleteObject(m.rgn)
-		m.rgn.Free()
-	}
-}
-
-// FreeRegions 释放掉regions
-func (m *TCEFChromiumBrowser) FreeRegions() {
-	if m.regions != nil {
-		m.regions.regions = nil
-		m.regions = nil
 	}
 }

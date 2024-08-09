@@ -63,10 +63,6 @@ func chromiumOnBeforeBrowser(window IBrowserWindow, browser *ICefBrowser, frame 
 		return
 	}
 	BrowserWindow.PutWindowInfo(browser, window)
-	// 只LCL窗口使用自定义的窗口拖拽
-	if window.IsLCL() {
-		dragExtensionJS(frame, window.WindowProperty().EnableWebkitAppRegion) // drag extension
-	}
 	// 方式二 本地资源加载处理器
 	//localLoadRes.getSchemeHandlerFactory(window, browser) // TODO
 }

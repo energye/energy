@@ -11,21 +11,30 @@
 package cef
 
 const (
-	mouseUp   = "mouseUp"
-	mouseDown = "mouseDown"
-	mouseMove = "mouseMove"
-	dragUp    = 0
-	dragDown  = 1
-	dragMove  = 2
+	mouseUp       = "mouseUp"
+	mouseDown     = "mouseDown"
+	mouseMove     = "mouseMove"
+	mouseResize   = "mouseResize"
+	mouseDblClick = "mouseDblClick"
+)
+
+const (
+	dragUp = iota
+	dragDown
+	dragMove
+	dragResize
+	dragDblClick
 )
 
 // drag
-//  custom window drag
-//  The second method, Implemented using JavaScript, currently suitable for LCL windows on Windows and Mac OS
-//  VF window is already implemented and supported by default
+//
+//	custom window drag
+//	The second method, Implemented using JavaScript, currently suitable for LCL windows on Windows and Mac OS
+//	VF window is already implemented and supported by default
 type drag struct {
-	T      int8           // 0:up, 1:down, 2:move
+	T      int8           // data type
 	X, Y   int32          // data mouse point
+	HT     string         // mouse ht
 	window IBrowserWindow // drag window
 	wx, wy int32          // window point
 	dx, dy int32          // down mouse point

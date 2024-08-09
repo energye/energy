@@ -59,7 +59,6 @@ type WindowProperty struct {
 	Url                       string
 	Icon                      string                // 窗口图标 加载本地图标 local > /app/resources/icon.ico, VF窗口linux使用png
 	IconFS                    string                // 窗口图标 加载emfs内置图标 emfs > resources/icon.ico, VF窗口linux使用png
-	EnableWebkitAppRegion     bool                  //
 	EnableWebkitAppRegionDClk bool                  //
 	EnableHideCaption         bool                  // 窗口 是否隐藏标题栏, VF窗口组件Linux下不能动态控制
 	EnableMinimize            bool                  // 窗口 是否启用最小化 default: true
@@ -198,7 +197,6 @@ func NewWindowProperty() WindowProperty {
 		EnableResize:              true,
 		EnableClose:               true,
 		EnableCenterWindow:        true,
-		EnableWebkitAppRegion:     true,
 		EnableWebkitAppRegionDClk: true,
 		EnableMainWindow:          true,
 		X:                         100,

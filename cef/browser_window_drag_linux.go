@@ -96,7 +96,7 @@ func dragExtensionHandler() {
                 drag: {
                     enableDrag: false,
                     shouldDrag: false,
-                    cssDragProperty: "--webkit-app-region",
+                    cssDragProperty: "-webkit-app-region",
                     cssDragValue: "drag",
                     defaultCursor: null
                 },
@@ -104,7 +104,7 @@ func dragExtensionHandler() {
         }
         (function () {
             energyExtension.drag.war = function (e) {
-                let v = window.getComputedStyle(e.target).getPropertyValue(energyExtension.drag.cssDragProperty);
+                let v = window.getComputedStyle(e.target)[energyExtension.drag.cssDragProperty];
                 if (v) {
                     v = v.trim();
                     if (v !== energyExtension.drag.cssDragValue || e.buttons !== 1) {

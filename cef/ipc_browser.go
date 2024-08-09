@@ -186,30 +186,29 @@ func (m *ipcBrowserProcess) registerEvent() {
 	})
 	// window drag
 	ipc.BrowserChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
-		if argument != nil {
-			if argument.GetName() == internalIPCDRAG {
-				if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
-					// LCL
-					if wi.IsLCL() {
-						dataJSON := argument.JSON()
-						if dataJSON != nil {
-							bw := wi.AsLCLBrowserWindow().BrowserWindow()
-							if bw.drag == nil {
-								bw.drag = &drag{}
+		if argument != nil && argument.GetName() == internalIPCDRAG {
+			if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
+				if wi.IsLCL() {
+					window := wi.AsLCLBrowserWindow().BrowserWindow()
+					dataJSON := argument.JSON()
+					if dataJSON != nil {
+						if window.drag == nil {
+							window.drag = &drag{
+								window: wi,
 							}
-							object := dataJSON.JSONObject()
-							bw.drag.T = int8(object.GetIntByKey("T"))
-							bw.drag.X = int32(object.GetIntByKey("X"))
-							bw.drag.Y = int32(object.GetIntByKey("Y"))
-							bw.drag.window = wi
 						}
-						RunOnMainThread(func() {
-							wi.AsLCLBrowserWindow().BrowserWindow().doDrag()
-						})
+						object := dataJSON.JSONObject()
+						window.drag.T = int8(object.GetIntByKey("T"))
+						window.drag.X = int32(object.GetIntByKey("X"))
+						window.drag.Y = int32(object.GetIntByKey("Y"))
+						window.drag.HT = object.GetStringByKey("HT")
 					}
+					RunOnMainThread(func() {
+						window.doDrag()
+					})
 				}
-				return true
 			}
+			return true
 		}
 		return false
 	})

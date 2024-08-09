@@ -78,89 +78,6 @@ func (m *LCLBrowserWindow) SetFocus() {
 	}
 }
 
-//func (m *LCLBrowserWindow) Frameless() {
-//	var rect = &types.TRect{}
-//	win.GetWindowRect(m.Handle(), rect)
-//	win.SetWindowPos(m.Handle(), 0, rect.Left, rect.Top, rect.Right-rect.Left, rect.Bottom-rect.Top, win.SWP_FRAMECHANGED)
-//}
-
-func (m *LCLBrowserWindow) doOnRenderCompMsg(chromiumBrowser ICEFChromiumBrowser, messageType compMessageType, message *types.TMessage, lResult *types.LRESULT, aHandled *bool) {
-	switch message.Msg {
-	case messages.WM_NCLBUTTONDBLCLK: // 163 NC left dclick
-		//标题栏拖拽区域 双击最大化和还原
-		if m.cwcap.canCaption && m.WindowProperty().EnableWebkitAppRegionDClk && m.WindowProperty().EnableMaximize && !m.IsFullScreen() {
-			*lResult = messages.HTCAPTION
-			*aHandled = true
-			if win.ReleaseCapture() {
-				if m.WindowState() == types.WsNormal {
-					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
-				} else {
-					win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
-				}
-				win.SendMessage(m.Handle(), messages.WM_NCLBUTTONUP, messages.HTCAPTION, 0)
-			}
-		}
-	case messages.WM_NCMOUSEMOVE: // 160 nc mouse move
-		m.cwcap.onNCMouseMove(m.Handle(), message, lResult, aHandled)
-	case messages.WM_NCLBUTTONDOWN: // 161 nc left down
-		// 标题栏和边框处理
-		m.cwcap.onNCLButtonDown(m.Handle(), message, lResult, aHandled)
-	case messages.WM_NCLBUTTONUP: // 162 nc l up
-		if m.cwcap.canCaption {
-			*lResult = messages.HTCAPTION
-			*aHandled = true
-		}
-	case messages.WM_SETCURSOR: // 32 设置鼠标图标样式
-		m.cwcap.onSetCursor(message, lResult, aHandled)
-	case messages.WM_NCHITTEST: // 132 NCHITTEST
-		if m.cwcap.borderMD { //TODO 测试windows7, 161消息之后再次处理132消息导致消息错误
-			m.cwcap.borderMD = false
-			return
-		}
-		var (
-			x, y    int32 // 鼠标在当前窗口的坐标
-			caption bool  // CEF HTML 自定义标题栏
-		)
-		if messageType == cmtCEF {
-			//鼠标坐标是否在标题区域
-			x, y, caption = m.cwcap.isCaption(chromiumBrowser, et.HWND(m.Handle()), message)
-		} else if messageType == cmtLCL {
-			x, y = m.cwcap.toPoint(message)
-			p := &et.Point{
-				X: x,
-				Y: y,
-			}
-			winapi.ScreenToClient(et.HWND(m.Handle()), p)
-			x, y = p.X, p.Y
-		}
-		if caption { //窗口标题栏
-			*lResult = messages.HTCAPTION
-			*aHandled = true
-		} else if m.WindowProperty().EnableHideCaption && m.WindowProperty().EnableResize && m.WindowState() == types.WsNormal { //1.窗口隐藏标题栏 2.启用了调整窗口大小 3.非最大化、最小化、全屏状态
-			//全屏时不能调整窗口大小
-			if m.WindowProperty().current.windowState == types.WsFullScreen {
-				return
-			}
-			var rect types.TRect
-			// 当前类型的消息取出计算的宽高
-			if messageType == cmtCEF {
-				rect = chromiumBrowser.WindowParent().BoundsRect()
-			} else if messageType == cmtLCL {
-				rect = m.BoundsRect()
-			}
-			// 判断当前鼠标是否在边框范围
-			// 窗口边框和CEF组件边框
-
-			handled := m.cwcap.onCanBorder(chromiumBrowser, x, y, rect)
-			if handled {
-				// 鼠标在边框位置
-				*lResult = types.LRESULT(m.cwcap.borderHT)
-				*aHandled = true
-			}
-		}
-	}
-}
-
 // Restore Windows平台，窗口还原
 func (m *LCLBrowserWindow) Restore() {
 	if m.TForm == nil {
@@ -266,19 +183,7 @@ func (m *LCLBrowserWindow) IsFullScreen() bool {
 //}
 
 func (m *LCLBrowserWindow) doDrag() {
-	// Windows Drag Window
-	// m.drag != nil 时，这里处理的是 up 事件, 给标题栏标记为false
 	if m.drag != nil {
 		m.drag.drag()
-	} else {
-		// 全屏时不能拖拽窗口
-		if m.IsFullScreen() {
-			return
-		}
-		// 此时是 down 事件, 拖拽窗口
-		if win.ReleaseCapture() {
-			win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
-			m.cwcap.canCaption = true
-		}
 	}
 }

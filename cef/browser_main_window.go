@@ -54,7 +54,6 @@ type BrowserEvent struct {
 	onContextMenuCommand      chromiumEventOnContextMenuCommandEx      //default can cover
 	onBeforeContextMenu       chromiumEventOnBeforeContextMenuEx       //default can cover
 	onBeforeResourceLoad      chromiumEventOnBeforeResourceLoadEx      //default
-	onRenderCompMsg           chromiumEventOnCompMsg                   //default windows
 	onGetResourceHandler      chromiumEventOnGetResourceHandlerEx      //default
 }
 
@@ -123,10 +122,6 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
 	//m.registerWindowsCompMsgEvent()
 
-	//自定义窗口标题栏
-	m.cwcap = &customWindowCaption{
-		bw: &m.LCLBrowserWindow,
-	}
 	//设置 CEF Chromium IPC
 	ipc.SetProcessMessage(m)
 	// 如果开启了开发者工具，需要在这里初始化开发者工具窗口
@@ -361,13 +356,6 @@ func (m *BrowserEvent) SetOnKeyEvent(event chromiumEventOnKeyEventEx) {
 func (m *BrowserEvent) SetOnTitleChange(event chromiumEventOnTitleChangeEx) {
 	if Args.IsMain() {
 		m.onTitleChange = event
-	}
-}
-
-// SetOnRenderCompMsg windows
-func (m *BrowserEvent) SetOnRenderCompMsg(event chromiumEventOnCompMsg) {
-	if Args.IsMain() {
-		m.onRenderCompMsg = event
 	}
 }
 
