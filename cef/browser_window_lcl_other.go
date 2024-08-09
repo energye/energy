@@ -102,7 +102,7 @@ func (m *LCLBrowserWindow) Maximize() {
 		if m.WindowState() == types.WsMaximized {
 			// 当前窗口是最大化状态 > 恢复窗口
 			// 此时记录窗口状态
-			m.WindowProperty().current.ws = types.WsNormal
+			m.WindowProperty().current.windowState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
 			if common.IsDarwin() { //要这样重复设置2次不然不启作用
 				m.SetWindowState(types.WsMaximized)
@@ -111,15 +111,13 @@ func (m *LCLBrowserWindow) Maximize() {
 			// 当前窗口如果是无标题栏窗口需要恢复到之前记录的窗口属性
 			wp := m.WindowProperty()
 			if wp.EnableHideCaption {
-				m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
+				m.SetBoundsRect(wp.current.previousWindowPlacement)
 			}
-
 		} else if m.WindowState() == types.WsNormal {
 			// 当前状态是正常的 > 将窗口最大化
 			// 在无标题栏窗口时，最大化和全屏正常是无法改变窗口状态
 			// 因此需要自己处理窗口大小, 在此之前需要记录窗口状态
-			m.setCurrentProperty()
-			m.WindowProperty().current.ws = types.WsMaximized
+			m.WindowProperty().current.windowState = types.WsMaximized
 			if m.WindowProperty().EnableHideCaption {
 				// 无标题窗口时调整窗口大小，设置为工作窗口大小
 				m.SetBoundsRect(m.Monitor().WorkareaRect())

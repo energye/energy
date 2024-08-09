@@ -5,7 +5,7 @@ if (!energyExtension) {
             shouldDrag: false,
             cssDragProperty: "-webkit-app-region",
             cssDragValue: "drag",
-            defaultCursor: null
+            os: null,
         },
     };
 }
@@ -14,6 +14,18 @@ if (!energyExtension) {
     let frameWidth = 4;
     let frameHeight =  4;
     let frameCorner = 8;
+
+    function IsWindows() {
+        return energyExtension.drag.os === "windows";
+    }
+
+    function IsDarwin() {
+        return energyExtension.drag.os === "darwin";
+    }
+
+    function IsLinux() {
+        return energyExtension.drag.os === "linux";
+    }
 
     function setCursor(cursor, ht) {
         if (idcCursor !== cursor) {
@@ -54,13 +66,11 @@ if (!energyExtension) {
 
     function test(e) {
         let v = window.getComputedStyle(e.target)[energyExtension.drag.cssDragProperty];
-        console.log('test', v, energyExtension.drag.cssDragProperty)
         if (v) {
             v = v.trim();
             if (v !== energyExtension.drag.cssDragValue) {
                 return false;
             }
-            console.log('e.detail', e.detail)
             return e.detail === 1 || e.detail === 2;
         }
         return false;
@@ -68,19 +78,21 @@ if (!energyExtension) {
 
     function mouseMove(e) {
         if (energyExtension.drag.shouldDrag) {
-            energyExtension.drag.shouldDrag = false;
             native function mouseMove();
-            mouseMove();
-        }else{
+            mouseMove({x: e.screenX, y: e.screenY});
+        } else if (IsWindows()){
             mouseDragResize(e);
         }
     }
     function mouseUp(e) {
+        if (!energyExtension.drag.shouldDrag) {
+            return
+        }
         energyExtension.drag.shouldDrag = false;
         if (test(e)) {
             e.preventDefault();
-            native function mouseUp();
-            mouseUp();
+            //native function mouseUp();
+            //mouseUp();
         }
     }
     function mouseDown(e) {
@@ -92,7 +104,7 @@ if (!energyExtension) {
             e.preventDefault();
             energyExtension.drag.shouldDrag = true;
             native function mouseDown();
-            mouseDown();
+            mouseDown({x: e.screenX, y: e.screenY});
         } else {
             energyExtension.drag.shouldDrag = false;
         }

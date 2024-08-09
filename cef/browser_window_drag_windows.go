@@ -19,11 +19,12 @@ import (
 	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"
+	"runtime"
 )
 
 // 窗口拖拽JS扩展
 func dragExtensionJS(frame *ICefFrame) {
-	var executeJS = `energyExtension.drag.setup();`
+	var executeJS = `energyExtension.drag.setup();energyExtension.drag.os="` + runtime.GOOS + `";`
 	frame.ExecuteJavaScript(executeJS, "", 0)
 }
 
