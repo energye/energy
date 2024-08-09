@@ -516,6 +516,9 @@ func (m *LCLBrowserWindow) Maximize() {
 
 // IsFullScreen 是否全屏
 func (m *LCLBrowserWindow) IsFullScreen() bool {
+	if IsDarwin() {
+		return m.WindowProperty().current.windowState == types.WsFullScreen && m.WindowState() == types.WsFullScreen
+	}
 	return m.WindowProperty().current.windowState == types.WsFullScreen
 }
 

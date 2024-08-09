@@ -13,8 +13,29 @@
 
 package cef
 
+/*
+#cgo CFLAGS: -mmacosx-version-min=10.10 -x objective-c
+#cgo LDFLAGS: -mmacosx-version-min=10.10 -framework Cocoa
+
+#include "Cocoa/Cocoa.h"
+
+void setFrameless(void* nsWindow) {
+    NSWindow* window = (NSWindow*)nsWindow;
+	NSView* contentView = window.contentView; // view := NSView(win.contentView);
+	[contentView setWantsLayer:YES]; // view.setWantsLayer(true);
+	CALayer* layer = contentView.layer;
+	layer.cornerRadius = 8.0;
+	window.backgroundColor = [NSColor clearColor];
+	layer.backgroundColor = [NSColor whiteColor].CGColor;
+}
+
+*/
+import "C"
+
 import (
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
+	"unsafe"
 )
 
 const (
@@ -25,17 +46,29 @@ const (
 	NSWindowStyleMaskResizable      = 8 // 窗口可以调整大小
 )
 
+type NSWindow struct {
+	lcl.NSWindow
+}
+
+func (m *NSWindow) Instance() unsafe.Pointer {
+	return unsafe.Pointer(m.NSWindow)
+}
+
+func (m *LCLBrowserWindow) NSWindow() *NSWindow {
+	return &NSWindow{m.PlatformWindow()}
+}
+
 func (m *LCLBrowserWindow) frameless() {
-	nsWindow := m.PlatformWindow()
+	nsWindow := m.NSWindow()
 	nsWindow.SetTitleBarAppearsTransparent(true)
 	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
 	nsWindow.SetStyleMask(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
+	C.setFrameless(nsWindow.Instance())
 }
 
 func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
 	if m.rgn == 0 && rgn > 0 {
 		m.rgn = rgn
-
 	}
 }
 
@@ -54,7 +87,6 @@ func (m *LCLBrowserWindow) FullScreen() {
 
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
-	// 恢复窗口大小
 	if m.IsFullScreen() {
 		wp := m.WindowProperty()
 		RunOnMainThread(func() {

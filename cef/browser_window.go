@@ -201,8 +201,8 @@ func NewWindowProperty() WindowProperty {
 		EnableMainWindow:          true,
 		X:                         100,
 		Y:                         100,
-		Width:                     1024,
-		Height:                    768,
+		Width:                     800,
+		Height:                    600,
 	}
 }
 

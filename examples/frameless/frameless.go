@@ -35,8 +35,7 @@ func main() {
 	cef.GlobalInit(nil, resources)
 	//创建应用
 	app := cef.NewApplication()
-	// 强制使用VF窗口模式, VF窗口是ViewsFramework"创建的
-	//app.EnableVFWindow(true)
+	app.SetUseMockKeyChain(true) // MacOS dev:test mock key
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -62,7 +61,7 @@ func main() {
 				fmt.Println("窗口最大化/还原")
 				bw.Maximize()
 			} else if state == 3 {
-				fmt.Println("全屏/退出全屏")
+				fmt.Println("全屏/退出全屏", bw.IsFullScreen(), bw.WindowState())
 				if bw.IsFullScreen() {
 					bw.ExitFullScreen()
 				} else {
@@ -82,57 +81,9 @@ func main() {
 	})
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
-		//window.AsLCLBrowserWindow().FramelessForLine()
-		//enableBrowserTitleBar := false
-
-		//lcl.HandleToPlatformHandle(window.Handle())
-		//if window.IsLCL() && enableBrowserTitleBar /*&& common.IsWindows()*/ {
-		//	// 边框圆角, 仅LCL
-		//	//window.AsLCLBrowserWindow().SetRoundRectRgn(10) // WindowParent 未铺满窗口会有严重的闪烁
-		//	var (
-		//		borderSpace    int32 = 2
-		//		titleBarHeight int32 = 30
-		//	)
-		//	bw := window.AsLCLBrowserWindow().BrowserWindow()
-		//	bw.SetColor(colors.ClBrown)             //给窗口随便设置一个颜色
-		//	bw.WindowParent().RevertCustomAnchors() // 恢复到自定义定位，在下面代码中重新设置布局
-		//	bw.WindowParent().SetTop(borderSpace + titleBarHeight)
-		//	bw.WindowParent().SetLeft(borderSpace)
-		//	bw.WindowParent().SetWidth(bw.Width() - borderSpace*2)
-		//	bw.WindowParent().SetHeight(bw.Height() - borderSpace*2 - titleBarHeight)
-		//	bw.WindowParent().SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
-		//
-		//	// 禁止窗口边框指定方向拖拽调整大小
-		//	bda := bw.BroderDirectionAdjustments()
-		//	bda = bda.Exclude(et.BdaTopLeft, et.BdaTop, et.BdaTopRight) //禁用 左上, 上, 右上
-		//	bw.SetBroderDirectionAdjustments(bda)
-		//
-		//	// 创建一个自定义chromium
-		//	chromium := cef.NewChromiumBrowser(bw, window.Chromium().Config())
-		//	bda = chromium.BroderDirectionAdjustments()
-		//	bda = bda.Exclude(et.BdaBottomLeft, et.BdaBottom, et.BdaBottomRight) //禁用 左下, 下, 右下
-		//	chromium.SetBroderDirectionAdjustments(bda)
-		//
-		//	// 设置在窗口显示的位置
-		//	part := chromium.WindowParent()
-		//	part.SetHeight(titleBarHeight)
-		//	part.SetTop(borderSpace)
-		//	part.SetLeft(borderSpace)
-		//	part.SetWidth(bw.Width() - borderSpace*2)
-		//	part.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight))
-		//	//chromium.SetSelfWindow(bw)// 如果 NewChromiumBrowser 参数 owner 非 IBrowserWindow 类型时需要手动指定
-		//	chromium.Chromium().SetDefaultURL("http://localhost:22022/titlebar.html")
-		//
-		//	chromium.RegisterDefaultEvent()      // 注册默认事件
-		//	chromium.RegisterDefaultPopupEvent() // 注册默认弹出窗口事件
-		//	chromium.CreateBrowser()             //最后创建浏览器
-		//
-		//	//browserWindow := cef.NewBrowserWindow()
-		//	//browserWindow.EnableAllDefaultEvent()
-		//}
-		//if window.IsLCL() {
-		//	tray.LCLTray(window)
-		//}
+		if window.IsLCL() {
+			//tray.LCLTray(window)
+		}
 	})
 	//在主进程启动成功之后执行
 	//在这里启动内置http服务
