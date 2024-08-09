@@ -11,8 +11,6 @@
 //go:build windows
 // +build windows
 
-// LCL窗口组件定义和实现-windows平台
-
 package cef
 
 import (
@@ -38,14 +36,8 @@ const (
 	cmtLCL
 )
 
-// ShowTitle 显示标题栏
-func (m *LCLBrowserWindow) ShowTitle() {
-	m.WindowProperty().EnableHideCaption = false
-}
+func (m *LCLBrowserWindow) frameless() {
 
-// HideTitle 隐藏标题栏 无边框样式
-func (m *LCLBrowserWindow) HideTitle() {
-	m.WindowProperty().EnableHideCaption = true
 }
 
 // SetRoundRectRgn 窗口无边框时圆角设置
@@ -59,70 +51,6 @@ func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
 			winapi.SetWindowRgn(et.HWND(m.Handle()), hnd, true)
 		})
 	}
-}
-
-// SetFocus
-//
-//	在窗口 (Visible = true) 显示之后设置窗口焦点
-//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
-//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-setfocus
-func (m *LCLBrowserWindow) SetFocus() {
-	if m.TForm != nil {
-		m.Visible()
-		//窗口激活在Z序中的下个顶层窗口
-		m.Minimize()
-		//激活窗口出现在前景
-		m.Restore()
-		//窗口设置焦点
-		m.TForm.SetFocus()
-	}
-}
-
-// Restore Windows平台，窗口还原
-func (m *LCLBrowserWindow) Restore() {
-	if m.TForm == nil {
-		return
-	}
-	RunOnMainThread(func() {
-		//if win.ReleaseCapture() {
-		//	win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
-		//}
-		m.SetWindowState(types.WsNormal)
-	})
-}
-
-// Minimize Windows平台，窗口最小化
-func (m *LCLBrowserWindow) Minimize() {
-	if m.TForm == nil {
-		return
-	}
-	RunOnMainThread(func() {
-		//if win.ReleaseCapture() {
-		//	win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MINIMIZE, 0)
-		//}
-		m.SetWindowState(types.WsMinimized)
-	})
-}
-
-// Maximize Windows平台，窗口最大化/还原
-func (m *LCLBrowserWindow) Maximize() {
-	if m.TForm == nil || m.IsFullScreen() {
-		return
-	}
-	RunOnMainThread(func() {
-		//if win.ReleaseCapture() {
-		//	if m.WindowState() == types.WsNormal {
-		//		win.PostMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_MAXIMIZE, 0)
-		//	} else {
-		//		win.SendMessage(m.Handle(), messages.WM_SYSCOMMAND, messages.SC_RESTORE, 0)
-		//	}
-		//}
-		if m.WindowState() == types.WsNormal {
-			m.SetWindowState(types.WsMaximized)
-		} else {
-			m.SetWindowState(types.WsNormal)
-		}
-	})
 }
 
 // FullScreen 窗口全屏
@@ -139,7 +67,6 @@ func (m *LCLBrowserWindow) FullScreen() {
 			}
 			m.WindowProperty().current.windowState = types.WsFullScreen
 			m.WindowProperty().current.previousWindowPlacement = m.BoundsRect()
-			//m.setCurrentProperty()
 			//style := uint32(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
 			monitorRect := m.Monitor().BoundsRect()
 			win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
@@ -149,22 +76,14 @@ func (m *LCLBrowserWindow) FullScreen() {
 
 // ExitFullScreen 窗口退出全屏
 func (m *LCLBrowserWindow) ExitFullScreen() {
-	wp := m.WindowProperty()
-	if wp.EnableHideCaption {
-		if m.IsFullScreen() {
-			RunOnMainThread(func() {
-				wp.current.windowState = types.WsNormal
-				m.SetWindowState(types.WsNormal)
-				//m.SetBounds(wp.current.x, wp.current.y, wp.current.w, wp.current.h)
-				m.SetBoundsRect(m.WindowProperty().current.previousWindowPlacement)
-			})
-		}
+	if m.IsFullScreen() {
+		wp := m.WindowProperty()
+		RunOnMainThread(func() {
+			wp.current.windowState = types.WsNormal
+			m.SetWindowState(types.WsNormal)
+			m.SetBoundsRect(m.WindowProperty().current.previousWindowPlacement)
+		})
 	}
-}
-
-// IsFullScreen 是否全屏
-func (m *LCLBrowserWindow) IsFullScreen() bool {
-	return m.WindowProperty().current.windowState == types.WsFullScreen
 }
 
 // 窗口透明
@@ -181,9 +100,3 @@ func (m *LCLBrowserWindow) IsFullScreen() bool {
 //		//LWA_ALPHA | LWA_COLORKEY: crKey的地方全透明，其它地方根据bAlpha确定透明度
 //		win.LWA_ALPHA|win.LWA_COLORKEY)
 //}
-
-func (m *LCLBrowserWindow) doDrag() {
-	if m.drag != nil {
-		m.drag.drag()
-	}
-}

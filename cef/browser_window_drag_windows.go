@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/consts/messages"
-	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"
 	"runtime"
 )
@@ -120,11 +119,7 @@ func (m *drag) drag() {
 		}
 	case dragDblClick:
 		if window.WindowProperty().EnableWebkitAppRegionDClk {
-			if window.WindowState() == types.WsNormal {
-				window.SetWindowState(types.WsMaximized)
-			} else {
-				window.SetWindowState(types.WsNormal)
-			}
+			window.Maximize()
 		}
 	}
 

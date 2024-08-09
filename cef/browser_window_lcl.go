@@ -193,6 +193,7 @@ func (m *LCLBrowserWindow) SetProperty() {
 	}
 	if wp.EnableHideCaption {
 		//m.HideTitle()
+		m.frameless()
 	} else {
 		if !wp.EnableMinimize {
 			m.DisableMinimize()
@@ -449,6 +450,16 @@ func (m *LCLBrowserWindow) Id() int32 {
 	return m.windowId
 }
 
+// ShowTitle 显示标题栏
+func (m *LCLBrowserWindow) ShowTitle() {
+	m.WindowProperty().EnableHideCaption = false
+}
+
+// HideTitle 隐藏标题栏 无边框样式
+func (m *LCLBrowserWindow) HideTitle() {
+	m.WindowProperty().EnableHideCaption = true
+}
+
 // Show
 func (m *LCLBrowserWindow) Show() {
 	if m.TForm == nil {
@@ -463,6 +474,49 @@ func (m *LCLBrowserWindow) Hide() {
 		return
 	}
 	m.TForm.Hide()
+}
+
+// Restore Windows平台，窗口还原
+func (m *LCLBrowserWindow) Restore() {
+	if m.TForm == nil {
+		return
+	}
+	RunOnMainThread(func() {
+		m.SetWindowState(types.WsNormal)
+	})
+}
+
+// Minimize Windows平台，窗口最小化
+func (m *LCLBrowserWindow) Minimize() {
+	if m.TForm == nil {
+		return
+	}
+	RunOnMainThread(func() {
+		m.SetWindowState(types.WsMinimized)
+	})
+}
+
+// Maximize 窗口最大化/还原
+func (m *LCLBrowserWindow) Maximize() {
+	if m.TForm == nil || m.IsFullScreen() {
+		return
+	}
+	RunOnMainThread(func() {
+		if m.WindowState() == types.WsNormal {
+			m.SetWindowState(types.WsMaximized)
+		} else {
+			m.SetWindowState(types.WsNormal)
+			if IsDarwin() { //要这样重复设置2次不然不启作用
+				m.SetWindowState(types.WsMaximized)
+				m.SetWindowState(types.WsNormal)
+			}
+		}
+	})
+}
+
+// IsFullScreen 是否全屏
+func (m *LCLBrowserWindow) IsFullScreen() bool {
+	return m.WindowProperty().current.windowState == types.WsFullScreen
 }
 
 // WindowState 返回窗口最小化、最大化、全屏状态
@@ -1101,6 +1155,25 @@ func (m *LCLBrowserWindow) Screen() IScreen {
 	return m.screen
 }
 
+// SetFocus
+//
+//	在窗口 (Visible = true) 显示之后设置窗口焦点
+func (m *LCLBrowserWindow) SetFocus() {
+	if m.TForm != nil {
+		if IsWindows() {
+			//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-showwindow
+			//	https://learn.microsoft.com/zh-cn/windows/win32/api/winuser/nf-winuser-setfocus
+			m.Visible()
+			//窗口激活在Z序中的下个顶层窗口
+			m.Minimize()
+			//激活窗口出现在前景
+			m.Restore()
+		}
+		//窗口设置焦点
+		m.TForm.SetFocus()
+	}
+}
+
 // wm message event
 type messageType int32
 
@@ -1186,6 +1259,12 @@ func (m *LCLBrowserWindow) SetOnWMWindowPosChanged(fn wmWindowPosChanged) {
 
 func (m *LCLBrowserWindow) SetOnDestroy(fn lcl.TNotifyEvent) {
 	m.onDestroy = fn
+}
+
+func (m *LCLBrowserWindow) doDrag() {
+	if m.drag != nil {
+		m.drag.drag()
+	}
 }
 
 func init() {
