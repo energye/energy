@@ -2,7 +2,6 @@ let energyExtension;
 if (!energyExtension) {
     energyExtension = {
         drag: {
-            shouldDrag: false,
             cssDragProperty: "-webkit-app-region",
             cssDragValue: "drag",
             os: null,
@@ -10,6 +9,7 @@ if (!energyExtension) {
     };
 }
 (function () {
+    let shouldDrag = false;
     let idcCursor = null;
     let frameWidth = 4;
     let frameHeight =  4;
@@ -77,7 +77,8 @@ if (!energyExtension) {
     }
 
     function mouseMove(e) {
-        if (energyExtension.drag.shouldDrag) {
+        if (shouldDrag) {
+            shouldDrag = false;
             native function mouseMove();
             mouseMove({x: e.screenX, y: e.screenY});
         } else if (IsWindows()){
@@ -85,15 +86,7 @@ if (!energyExtension) {
         }
     }
     function mouseUp(e) {
-        if (!energyExtension.drag.shouldDrag) {
-            return
-        }
-        energyExtension.drag.shouldDrag = false;
-        if (test(e)) {
-            e.preventDefault();
-            //native function mouseUp();
-            //mouseUp();
-        }
+        shouldDrag = false;
     }
     function mouseDown(e) {
         if (idcCursor) {
@@ -101,12 +94,11 @@ if (!energyExtension) {
             native function mouseResize();
             mouseResize(idcCursor);
         } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && test(e)) {
-            e.preventDefault();
-            energyExtension.drag.shouldDrag = true;
+            shouldDrag = true;
             native function mouseDown();
             mouseDown({x: e.screenX, y: e.screenY});
         } else {
-            energyExtension.drag.shouldDrag = false;
+            shouldDrag = false;
         }
     }
     function dblClick(e) {
