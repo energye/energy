@@ -60,14 +60,18 @@
         </el-aside>
 
         <el-container>
-            <el-header style="font-size: 12px;-webkit-app-region: drag; -webkit-user-select: none;">
-                <div style="width: 650px;float: left;-webkit-app-region: drag;">
-                    <div style="float: left"><img src="icon.png" style="margin-top: 10px;-webkit-app-region: drag;" height="40"/></div>
-                    <div style="font-size: 12px;font-weight: bold;">窗口标题栏 VUE + ElementUI <span style="color: green;-webkit-app-region: drag;">  {{osInfo}}</span>
+            <el-header style="font-size: 12px;-webkit-app-region:drag; -webkit-user-select: none;">
+                <div style="width: 650px;float: left;">
+                    <div style="float: left">
+                        <img src="icon.png" style="margin-top: 10px;" height="40"/>
+                    </div>
+                    <div style="font-size: 12px;font-weight: bold;-webkit-app-region:drag; ">
+                        窗口标题栏 VUE + ElementUI
+                        <span style="color: green;-webkit-app-region:drag;">  {{osInfo}}</span>
                     </div>
                 </div>
-                <div style="text-align: right;">
-                    <el-dropdown style="-webkit-app-region: no-drag;">
+                <div style="text-align: right;-webkit-app-region:drag;">
+                    <el-dropdown>
                         <i class="el-icon-setting" style="margin-right: 15px"></i>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>查看</el-dropdown-item>
