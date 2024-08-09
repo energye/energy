@@ -78,9 +78,9 @@ if (!energyExtension) {
 
     function mouseMove(e) {
         if (shouldDrag) {
-            shouldDrag = false;
+            shouldDrag = !IsWindows();
             native function mouseMove();
-            mouseMove({x: e.screenX, y: e.screenY});
+            mouseMove({x: e.screenX, y: e.screenY, ts: parseInt(e.timeStamp)});
         } else if (IsWindows()){
             mouseDragResize(e);
         }
@@ -96,7 +96,7 @@ if (!energyExtension) {
         } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && test(e)) {
             shouldDrag = true;
             native function mouseDown();
-            mouseDown({x: e.screenX, y: e.screenY});
+            mouseDown({x: e.screenX, y: e.screenY, ts: parseInt(e.timeStamp)});
         } else {
             shouldDrag = false;
         }

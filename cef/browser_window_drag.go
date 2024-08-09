@@ -35,6 +35,7 @@ type drag struct {
 	T      int8           // data type
 	X, Y   int32          // data mouse point
 	HT     string         // mouse ht
+	TS     int32          // mouse timeStamp
 	window IBrowserWindow // drag window
 	wx, wy int32          // window point
 	dx, dy int32          // down mouse point

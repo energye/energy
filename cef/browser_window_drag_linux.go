@@ -59,22 +59,25 @@ func dragExtensionHandler() {
 			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
 		} else if name == mouseMove {
-			var mx, my int32
+			var mx, my, timeStamp int32
 			if arguments.Size() > 0 {
 				point := arguments.Get(0)
 				v8ValX := point.getValueByKey("x")
 				v8ValY := point.getValueByKey("y")
+				v8TimeStamp := point.getValueByKey("ts")
 				mx = v8ValX.GetIntValue()
 				my = v8ValY.GetIntValue()
+				timeStamp = v8TimeStamp.GetIntValue()
 				v8ValX.Free()
 				v8ValY.Free()
+				v8TimeStamp.Free()
 				point.Free()
 			}
 			message := &ipcArgument.List{
 				Id:   -1,
 				BId:  ipc.RenderChan().BrowserId(),
 				Name: internalIPCDRAG,
-				Data: &drag{T: dragMove, X: mx, Y: my},
+				Data: &drag{T: dragMove, X: mx, Y: my, TS: timeStamp},
 			}
 			ipc.RenderChan().IPC().Send(message.Bytes())
 			return true
@@ -120,5 +123,23 @@ func (m *drag) drag() {
 				window.SetWindowState(types.WsNormal)
 			}
 		}
+	case dragResize:
 	}
 }
+
+// locate libgtk-x11-2.0.so
+// nm -D --defined-only libgtk-x11-2.0.so | grep gtk_drag_begin
+// gtkWidget := lcl.HandleToPlatformHandle(window.Handle())
+// gtkWindow := gtkWidget.Window()
+// fmt.Println("gtkWidget:", gtkWidget, "gtkWindow:", gtkWindow, m.TimeStamp)
+// GDK_ACTION_MOVE := int32(1 << 2) //1 shl 2
+// lib, err := dllimports.NewDLL("libgtk-x11-2.0.so")
+// fmt.Println("lib:", lib, "err:", err)
+// proc, err := lib.GetProcAddr("gtk_window_begin_move_drag")
+// proc, err := lib.GetProcAddr("gtk_drag_begin")
+// fmt.Println("proc:", proc, "err:", err)
+// r1, r2, err := proc.Call(uintptr(gtkWidget), 0, uintptr(GDK_ACTION_MOVE), 1, uintptr(unsafe.Pointer(&event)))
+// fmt.Println("r1:", r1, "r2:", r2, "err:", err)
+// r1, r2, err := proc.Call(uintptr(gtkWindow), 1, uintptr(m.mx), uintptr(m.my), uintptr(m.TimeStamp))
+// fmt.Println("r1:", r1, "r2:", r2, "err:", err)
+// gtk_window_begin_resize_drag

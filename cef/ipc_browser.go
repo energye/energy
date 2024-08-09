@@ -202,6 +202,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 						window.drag.X = int32(object.GetIntByKey("X"))
 						window.drag.Y = int32(object.GetIntByKey("Y"))
 						window.drag.HT = object.GetStringByKey("HT")
+						window.drag.TS = int32(object.GetIntByKey("TS"))
 					}
 					RunOnMainThread(func() {
 						window.doDrag()
