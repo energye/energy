@@ -35,9 +35,9 @@ func main() {
 			// 主窗口
 			bw := window.AsLCLBrowserWindow().BrowserWindow()
 			// 拿到CEFWindowParent
-			windowParent := bw.WindowParent()
+			//windowParent := bw.WindowParent()
 			// 恢复四角定位， 因为默认整个窗口自动调整大小
-			windowParent.RevertCustomAnchors()
+			//windowParent.RevertCustomAnchors()
 
 			// 系统菜单
 			// 开始创建菜单
@@ -46,14 +46,14 @@ func main() {
 			// html 内容
 			// 重新设置父组件
 			// 创建contentBox panel组件
-			contentBox := lcl.NewPanel(bw)
-			contentBox.SetParent(bw)            //这一步不能少
-			contentBox.SetAlign(types.AlClient) // 根据客户区自动适应大小, 这块是panel的宽高根据主窗口自动调整大小
+			//contentBox := lcl.NewPanel(bw)
+			//contentBox.SetParent(bw)            //这一步不能少
+			//contentBox.SetAlign(types.AlClient) // 根据客户区自动适应大小, 这块是panel的宽高根据主窗口自动调整大小
 
 			//重新指定 CEFWindowParent 的父组件
-			windowParent.SetParent(contentBox)
+			//windowParent.SetParent(contentBox)
 			// 重新设置四角定位，自动调整大小
-			windowParent.DefaultAnchors()
+			//windowParent.DefaultAnchors()
 		}
 	})
 	//运行应用
