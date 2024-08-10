@@ -23,10 +23,10 @@ void setFrameless(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
 	NSView* contentView = window.contentView; // view := NSView(win.contentView);
 	[contentView setWantsLayer:YES]; // view.setWantsLayer(true);
-	CALayer* layer = contentView.layer;
-	layer.cornerRadius = 8.0;
-	window.backgroundColor = [NSColor clearColor];
-	layer.backgroundColor = [NSColor whiteColor].CGColor;
+	CALayer* layer = contentView.layer; // contentView.layer
+	layer.cornerRadius = 8.0; // layer.setCornerRadius(8.0);
+	window.backgroundColor = [NSColor clearColor]; // window.setBackgroundColor(NSColor.clearColor);
+	layer.backgroundColor = [NSColor whiteColor].CGColor; // layer.setBackgroundColor(NSColor.whiteColor.CGColor);
 }
 
 */
