@@ -11,6 +11,8 @@
 package cef
 
 import (
+	"errors"
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
@@ -54,6 +56,7 @@ type TCEFChromiumBrowser struct {
 	extraInfo                  *ICefDictionaryValue          //
 	broderDirectionAdjustments et.BroderDirectionAdjustments //可以调整窗口大小的边框方向, 默认所有方向
 	regions                    *TCefDraggableRegions         //窗口内html拖拽区域
+	rgn                        *et.HRGN                      //
 }
 
 // NewChromiumBrowser
@@ -286,7 +289,8 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		})
 		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if m.window.IsLCL() {
-				// 使用 js drag
+				m.regions = regions
+				m.setDraggableRegions()
 			} else if m.window.IsViewsFramework() {
 				m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
 				m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
@@ -336,3 +340,69 @@ func (m *TCEFChromiumBrowser) RegisterDefaultPopupEvent() {
 		})
 	}
 }
+
+// 每一次拖拽区域改变都需要重新设置
+func (m *TCEFChromiumBrowser) setDraggableRegions() {
+	var scp float32
+	// Windows 10 版本 1607 [仅限桌面应用]
+	// Windows Server 2016 [仅限桌面应用]
+	// 可动态调整
+	dpi, err := 0, errors.New("1") //winapi.GetDpiForWindow(et.HWND(m.window.Handle()))
+	if err == nil {
+		scp = float32(dpi) / 96.0
+	} else {
+		// 使用默认的，但不能动态调整
+		scp = winapi.ScalePercent()
+	}
+	//在主线程中运行
+	RunOnMainThread(func() {
+		if m.rgn == nil {
+			//第一次时创建RGN
+			m.rgn = winapi.CreateRectRgn(0, 0, 0, 0)
+		} else {
+			//每次重置RGN
+			winapi.SetRectRgn(m.rgn, 0, 0, 0, 0)
+		}
+		// 重新根据缩放比计算新的区域位置
+		for i := 0; i < m.regions.RegionsCount(); i++ {
+			region := m.regions.Region(i)
+			x := int32(float32(region.Bounds.X) * scp)
+			y := int32(float32(region.Bounds.Y) * scp)
+			w := int32(float32(region.Bounds.Width) * scp)
+			h := int32(float32(region.Bounds.Height) * scp)
+			creRGN := winapi.CreateRectRgn(x, y, x+w, y+h)
+			//println("region:", region, x, y, x+w, y+h)
+			if region.Draggable {
+				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_OR)
+			} else {
+				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_DIFF)
+			}
+			winapi.DeleteObject(creRGN)
+		}
+	})
+}
+
+func PtInRegion(x, y int, rectX, rectY, rectWidth, rectHeight int) bool {
+	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
+	return x >= rectX && x < rectX+rectWidth && y >= rectY && y < rectY+rectHeight
+}
+
+// 鼠标是否在标题栏区域
+//
+// 如果启用了css拖拽则校验拖拽区域,否则只返回相对于浏览器窗口的x,y坐标
+//func (m *customWindowCaption) isCaption(chromiumBrowser ICEFChromiumBrowser, hWND et.HWND, message *types.TMessage) (int32, int32, bool) {
+//	dx, dy := m.toPoint(message)
+//	p := &et.Point{
+//		X: dx,
+//		Y: dy,
+//	}
+//	winapi.ScreenToClient(hWND, p)
+//	p.X -= chromiumBrowser.WindowParent().Left()
+//	p.Y -= chromiumBrowser.WindowParent().Top()
+//	if m.bw.WindowProperty().EnableWebkitAppRegion && chromiumBrowser.Rgn() != nil {
+//		m.canCaption = winapi.PtInRegion(chromiumBrowser.Rgn(), p.X, p.Y)
+//	} else {
+//		m.canCaption = false
+//	}
+//	return p.X, p.Y, m.canCaption
+//}

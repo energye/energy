@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/examples/common/tray"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl/rtl/version"
@@ -39,9 +40,7 @@ func main() {
 
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	cef.BrowserWindow.Config.EnableHideCaption = true
-	// LCL MacOS 隐藏标题栏后，该选项不生效
-	//cef.BrowserWindow.Config.EnableResize = true
+	//cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.Config.Title = "Energy Vue + ElementUI 示例"
 	cef.BrowserWindow.Config.Width = 1200
 	cef.BrowserWindow.Config.Height = 600
@@ -82,7 +81,7 @@ func main() {
 
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		if window.IsLCL() {
-			//tray.LCLTray(window)
+			tray.LCLTray(window)
 		}
 	})
 	//在主进程启动成功之后执行

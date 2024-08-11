@@ -119,8 +119,8 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
 		m.SetProperty() //再次设置可能修改属性
 	}
-	//browserWindowOnEventCallback 执行完后，注册CompMsgEvent
-	//m.registerWindowsCompMsgEvent()
+
+	//m.PlatformWindow().Init()
 
 	//设置 CEF Chromium IPC
 	ipc.SetProcessMessage(m)

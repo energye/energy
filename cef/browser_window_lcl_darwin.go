@@ -18,6 +18,14 @@ package cef
 #cgo LDFLAGS: -mmacosx-version-min=10.10 -framework Cocoa
 
 #include "Cocoa/Cocoa.h"
+#include "browser_window_drag_darwin.h"
+#import <WebKit/WebKit.h>
+
+// objective-c log > go println
+void LogInfo(NSString* message) {
+    const char* msg = [message cStringUsingEncoding:NSUTF8StringEncoding];
+	GoLog((char *)msg);
+}
 
 void setFrameless(void* nsWindow) {
     NSWindow* window = (NSWindow*)nsWindow;
@@ -29,6 +37,41 @@ void setFrameless(void* nsWindow) {
 	layer.backgroundColor = [NSColor whiteColor].CGColor; // layer.setBackgroundColor(NSColor.whiteColor.CGColor);
 }
 
+void setWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
+	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
+}
+
+void init() {
+	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
+		NSWindow* eventWindow = [event window];
+		if (eventWindow == nil ) {
+			return event;
+		}
+		LogInfo(@"LeftMouseDown");
+		BOOL flag = ShouldDrag(eventWindow);
+		if(flag){
+			[eventWindow performWindowDragWithEvent:event];
+		}
+        NSPoint location = [event locationInWindow];
+        NSRect frame = [eventWindow frame];
+        //if( location.y > frame.size.height - self.invisibleTitleBarHeight ) {
+        //    [window performWindowDragWithEvent:event];
+        //    return;
+        //}
+		//[eventWindow performWindowDragWithEvent:event];
+		return event;
+	}];
+
+	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseUp handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
+		NSWindow* eventWindow = [event window];
+		if (eventWindow == nil ) {
+			return event;
+        }
+		LogInfo(@"LeftMouseUp");
+		SetShouldDrag(eventWindow, false);
+		return event;
+	}];
+}
 */
 import "C"
 
@@ -46,20 +89,28 @@ const (
 	NSWindowStyleMaskResizable      = 8 // 窗口可以调整大小
 )
 
-type NSWindow struct {
+type PlatformWindow struct {
 	lcl.NSWindow
 }
 
-func (m *NSWindow) Instance() unsafe.Pointer {
+func (m *PlatformWindow) Instance() unsafe.Pointer {
 	return unsafe.Pointer(m.NSWindow)
 }
 
-func (m *LCLBrowserWindow) NSWindow() *NSWindow {
-	return &NSWindow{m.PlatformWindow()}
+func (m *PlatformWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
+	C.setWindowBackgroundColor(m.Instance(), C.int(red), C.int(green), C.int(blue), C.int(alpha))
+}
+
+func (m *PlatformWindow) Init() {
+	C.init()
+}
+
+func (m *LCLBrowserWindow) PlatformWindow() *PlatformWindow {
+	return &PlatformWindow{m.TForm.PlatformWindow()}
 }
 
 func (m *LCLBrowserWindow) frameless() {
-	nsWindow := m.NSWindow()
+	nsWindow := m.PlatformWindow()
 	nsWindow.SetTitleBarAppearsTransparent(true)
 	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
 	nsWindow.SetStyleMask(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
