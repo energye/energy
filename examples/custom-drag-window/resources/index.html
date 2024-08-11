@@ -8,8 +8,12 @@
             height: 100px;
             background-color: #4CAF50;
             border-radius: 50%;
-            margin: 20px;
             -webkit-app-region: drag;
+            -webkit-user-select: none;
+            display: flex;
+            align-items: center;
+            margin: auto;
+            justify-content: center;
         }
     </style>
     <script>
@@ -33,6 +37,6 @@
     <p>不选择文本: -webkit-user-select: none;</p>
     <p>非拖拽区域: -webkit-app-region: no-drag;</p>
 </div>
-<div class="circle"></div>
+<div class="circle">drag</div>
 </body>
 </html>
