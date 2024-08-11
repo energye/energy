@@ -289,8 +289,8 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		})
 		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if m.window.IsLCL() {
-				m.regions = regions
-				m.setDraggableRegions()
+				//m.regions = regions
+				//m.setDraggableRegions()
 			} else if m.window.IsViewsFramework() {
 				m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
 				m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
@@ -371,7 +371,6 @@ func (m *TCEFChromiumBrowser) setDraggableRegions() {
 			w := int32(float32(region.Bounds.Width) * scp)
 			h := int32(float32(region.Bounds.Height) * scp)
 			creRGN := winapi.CreateRectRgn(x, y, x+w, y+h)
-			//println("region:", region, x, y, x+w, y+h)
 			if region.Draggable {
 				winapi.CombineRgn(m.rgn, m.rgn, creRGN, consts.RGN_OR)
 			} else {
