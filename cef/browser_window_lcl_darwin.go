@@ -19,7 +19,6 @@ package cef
 
 #include "Cocoa/Cocoa.h"
 #include "browser_window_drag_darwin.h"
-#import <WebKit/WebKit.h>
 
 // objective-c log > go println
 void LogInfo(NSString* message) {
