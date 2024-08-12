@@ -101,7 +101,7 @@ func (m *PlatformWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
 }
 
 func (m *PlatformWindow) Init() {
-	C.init()
+	//C.init()
 }
 
 func (m *LCLBrowserWindow) PlatformWindow() *PlatformWindow {
@@ -112,7 +112,13 @@ func (m *LCLBrowserWindow) frameless() {
 	nsWindow := m.PlatformWindow()
 	nsWindow.SetTitleBarAppearsTransparent(true)
 	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
-	nsWindow.SetStyleMask(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
+	mask := uint(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
+	wp := m.WindowProperty()
+	if !wp.EnableResize {
+		mask ^= NSWindowStyleMaskResizable
+	}
+	nsWindow.SetStyleMask(mask)
+
 	C.setFrameless(nsWindow.Instance())
 }
 
