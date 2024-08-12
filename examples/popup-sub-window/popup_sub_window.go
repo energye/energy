@@ -12,6 +12,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
+	lclTypes "github.com/energye/golcl/lcl/types"
 	"strings"
 )
 
@@ -94,6 +95,7 @@ func main() {
 			if strings.Index(beforePopupInfo.TargetUrl, "popup_1") > 0 {
 				popupWindow.SetSize(800, 600)
 				popupWindow.HideTitle()
+				popupWindow.WindowProperty().EnableResize = false
 			} else if strings.Index(beforePopupInfo.TargetUrl, "popup_2") > 0 {
 				popupWindow.SetSize(300, 300)
 				popupWindow.HideTitle()
@@ -102,8 +104,11 @@ func main() {
 				popupWindow.WindowProperty().EnableWebkitAppRegionDClk = false
 				window.RunOnMainThread(func() {
 					popupWindow.SetSize(550, 550)
-					popupWindow.HideTitle()
-					popupWindow.Chromium().Config().SetEnableMenu(false)
+					//popupWindow.HideTitle()
+					if popupWindow.IsLCL() {
+						popupWindow.AsLCLBrowserWindow().BrowserWindow().SetBorderStyle(lclTypes.BsNone)
+					}
+					//popupWindow.Chromium().Config().SetEnableMenu(false)
 					// 如果使用winapi方式改变窗口，需要在主线程中运行
 					elliptic(popupWindow)
 				})
