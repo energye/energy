@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
 	"sync/atomic"
@@ -266,7 +267,6 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
-		deleteBrowserWindow(m.Handle())
 		m._RestoreWndProc()
 		if m.onDestroy != nil {
 			m.onDestroy(sender)
@@ -321,7 +321,8 @@ func (m *BrowserWindow) FullScreen() {
 		m.windowsState = types.WsFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
 		monitorRect := m.Monitor().BoundsRect()
-		m.SetBoundsRect(&monitorRect)
+		//m.SetBoundsRect(&monitorRect)
+		win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
 	})
 }
 

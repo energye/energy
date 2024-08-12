@@ -22,6 +22,7 @@ import (
 	"github.com/energye/wv/wv"
 	"strconv"
 	"syscall"
+	"unsafe"
 )
 
 func (m *BrowserWindow) Resize(ht string) {
@@ -59,7 +60,7 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	switch message.Type {
 	case ipc.MT_DRAG_MOVE:
 		//fmt.Println("MT_DRAG_MOVE", m.WindowState())
-		if m.WindowState() == types.WsFullScreen {
+		if m.IsFullScreen() {
 			return
 		}
 		if win.ReleaseCapture() {
@@ -81,16 +82,13 @@ var (
 )
 
 func _WndProcCallback(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
-	//fmt.Println("HookMsg msg:", message)
 	if window := getBrowserWindow(hwnd); window != nil {
 		return window._WndProc(message, wParam, lParam)
 	}
-	//return win.CallWindowProc(oldWndPrc, hwnd, message, wParam, lParam)
 	return win.DefWindowProc(hwnd, message, wParam, lParam)
 }
 
 func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr {
-	//fmt.Println("_WndProc message:", message)
 	if m.options.Frameless {
 		switch message {
 		case messages.WM_ACTIVATE:
@@ -100,6 +98,7 @@ func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr
 			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
 			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
 		case messages.WM_NCCALCSIZE:
+			// Trigger condition: Change the window size
 			// Disable the standard frame by allowing the client area to take the full
 			// window size.
 			// See: https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-nccalcsize#remarks
@@ -107,13 +106,18 @@ func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr
 			// shown. We still need the WS_THICKFRAME style to enable resizing from the frontend.
 			if wParam != 0 {
 				//cycaption := win.GetSystemMetrics(4)
-				//rect := (*types.TRect)(unsafe.Pointer(lParam))
-				//rect.Bottom += -1
-				//rect.Right += -1
+				// Content overflow screen issue when maximizing borderless windows
+				// See: https://github.com/MicrosoftEdge/WebView2Feedback/issues/2549
+				//isMinimize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MINIMIZE != 0
+				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
+				if isMaximize {
+					rect := (*types.TRect)(unsafe.Pointer(lParam))
+					workRect := m.Monitor().WorkareaRect()
+					*rect = workRect
+				}
 				return 0
 			}
 		}
-		//fmt.Println("message:", message)
 	}
 	return win.CallWindowProc(m.oldWndPrc, m.Handle(), message, wParam, lParam)
 }
