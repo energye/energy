@@ -18,14 +18,7 @@ import (
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/consts/messages"
 	"github.com/energye/golcl/lcl/win"
-	"runtime"
 )
-
-// 窗口拖拽JS扩展
-func dragExtensionJS(frame *ICefFrame) {
-	var executeJS = `energyExtension.drag.setup();energyExtension.drag.os="` + runtime.GOOS + `";`
-	frame.ExecuteJavaScript(executeJS, "", 0)
-}
 
 // 窗口拖拽JS扩展处理器
 //  1. 注册JS扩展到CEF, 注册鼠标事件，通过本地函数在Go里处理鼠标事件
@@ -90,7 +83,7 @@ func (m *drag) drag() {
 			win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
 		}
 	case dragResize:
-		if window.IsFullScreen() {
+		if window.IsFullScreen() || !window.WindowProperty().EnableResize {
 			return
 		}
 		var borderHT uintptr

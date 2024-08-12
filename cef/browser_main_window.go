@@ -111,14 +111,15 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.defaultWindowCloseEvent()
 	m.ChromiumCreate(BrowserWindow.Config.ChromiumConfig(), BrowserWindow.Config.Url)
 	m.defaultChromiumEvent()
-	m.SetProperty()
+	wp := m.WindowProperty()
+	m.SetBounds(wp.X, wp.Y, wp.Width, wp.Height)
 	m.SetShowInTaskBar()
 	BrowserWindow.mainBrowserWindow = m
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
-		m.SetProperty() //再次设置可能修改属性
 	}
+	m.SetProperty()
 
 	//m.PlatformWindow().Init()
 

@@ -10,6 +10,12 @@
 
 package cef
 
+import (
+	"bytes"
+	"runtime"
+	"strconv"
+)
+
 const (
 	mouseUp       = "mouseUp"
 	mouseDown     = "mouseDown"
@@ -40,4 +46,18 @@ type drag struct {
 	wx, wy int32          // window point
 	dx, dy int32          // down mouse point
 	mx, my int32          // move mouse point
+}
+
+// Extension JS
+func dragExtensionJS(frame *ICefFrame, window IBrowserWindow) {
+	var code = bytes.Buffer{}
+	// js drag window
+	code.WriteString("energyExtension.drag.setup();")
+	// current os
+	code.WriteString("energyExtension.drag.os='" + runtime.GOOS + "';")
+	if window != nil {
+		// enable resize
+		code.WriteString("energyExtension.drag.enableResize=" + strconv.FormatBool(window.WindowProperty().EnableResize) + ";")
+	}
+	frame.ExecuteJavaScript(code.String(), "", 0)
 }

@@ -5,6 +5,7 @@ if (!energyExtension) {
             cssDragProperty: "-webkit-app-region",
             cssDragValue: "drag",
             os: null,
+            enableResize: true,
         },
     };
 }
@@ -15,15 +16,15 @@ if (!energyExtension) {
     let frameHeight =  4;
     let frameCorner = 8;
 
-    function IsWindows() {
+    function isWindows() {
         return energyExtension.drag.os === "windows";
     }
 
-    function IsDarwin() {
+    function isDarwin() {
         return energyExtension.drag.os === "darwin";
     }
 
-    function IsLinux() {
+    function isLinux() {
         return energyExtension.drag.os === "linux";
     }
 
@@ -32,6 +33,10 @@ if (!energyExtension) {
             document.documentElement.style.cursor = cursor || 'auto';
             idcCursor = cursor;
         }
+    }
+
+    function enableResize() {
+        return energyExtension.drag.enableResize;
     }
 
     function mouseDragResize(e) {
@@ -78,12 +83,12 @@ if (!energyExtension) {
 
     function mouseMove(e) {
         if (shouldDrag) {
-            if (IsWindows()) {
+            if (isWindows()) {
                 shouldDrag = false;// && !IsDarwin();
             }
             native function mouseMove();
             mouseMove({x: e.screenX, y: e.screenY, ts: parseInt(e.timeStamp)});
-        } else if (IsWindows()){
+        } else if (enableResize() && isWindows()){
             mouseDragResize(e);
         }
     }
@@ -91,7 +96,7 @@ if (!energyExtension) {
         shouldDrag = false;
     }
     function mouseDown(e) {
-        if (idcCursor) {
+        if (enableResize() && idcCursor) {
             e.preventDefault();
             native function mouseResize();
             mouseResize(idcCursor);

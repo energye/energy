@@ -72,7 +72,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 		windowComponent:      WindowComponentRef.New(component),
 		browserViewComponent: BrowserViewComponentRef.New(component),
 	}
-	chromiumBrowser.window = m
+	chromiumBrowser.SetSelfWindow(m)
 	m.SetWindowType(windowProperty.WindowType)
 	m.Chromium().SetEnableMultiBrowserMode(true)
 	m.WindowComponent().SetOnWindowCreated(func(window *ICefWindow) {

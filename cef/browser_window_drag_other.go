@@ -16,17 +16,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"runtime"
 )
-
-// 窗口拖拽JS扩展
-// 在这里执行并启用JS拖拽
-func dragExtensionJS(frame *ICefFrame) {
-	// MacOS只在LCL窗口中使用自定义窗口拖拽, VF窗口默认已实现
-	// 在MacOS中LCL窗口没有有效的消息事件
-	var executeJS = `energyExtension.drag.setup();energyExtension.drag.os="` + runtime.GOOS + `";`
-	frame.ExecuteJavaScript(executeJS, "", 0)
-}
 
 // 窗口拖拽JS扩展处理器
 //  1. 注册JS扩展到CEF, 注册鼠标事件，通过本地函数在Go里处理鼠标事件

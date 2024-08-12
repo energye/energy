@@ -192,7 +192,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		}
 	})
 	m.Chromium().SetOnLoadStart(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType) {
-		dragExtensionJS(frame)
+		dragExtensionJS(frame, m.window)
 		if bwEvent.onLoadStart != nil {
 			bwEvent.onLoadStart(sender, browser, frame, transitionType, m.window)
 		}

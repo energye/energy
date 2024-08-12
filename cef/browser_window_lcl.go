@@ -222,8 +222,6 @@ func (m *LCLBrowserWindow) SetProperty() {
 	} else {
 		m.SetWindowState(wp.WindowInitState)
 	}
-	// 当前窗口状态
-	//m.setCurrentProperty()
 }
 
 // SetOnPaint 扩展事件，向下链试调用
