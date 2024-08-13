@@ -145,13 +145,13 @@ func OnPaint(handle types.HWND) {
 //	imports.Proc(def.CEF_Win_SetDraggableRegions).Call(aRGN.Instance(), uintptr(int32(len(regions))), uintptr(unsafe.Pointer(&regions[0])), uintptr(int32(len(regions))))
 //}
 
-func EndPaint(Handle types.HWND, PS types.TagPaintStruct) types.Integer {
-	r1, _, _ := imports.Proc(def.CEF_Win_EndPaint).Call(uintptr(Handle), uintptr(unsafe.Pointer(&PS)))
+func EndPaint(Handle types.HWND, PS *types.TagPaintStruct) types.Integer {
+	r1, _, _ := imports.Proc(def.CEF_Win_EndPaint).Call(uintptr(Handle), uintptr(unsafe.Pointer(PS)))
 	return types.Integer(r1)
 }
 
-func BeginPaint(Handle types.HWND, PS types.TagPaintStruct) types.HDC {
-	r1, _, _ := imports.Proc(def.CEF_Win_BeginPaint).Call(uintptr(Handle), uintptr(unsafe.Pointer(&PS)))
+func BeginPaint(Handle types.HWND, PS *types.TagPaintStruct) types.HDC {
+	r1, _, _ := imports.Proc(def.CEF_Win_BeginPaint).Call(uintptr(Handle), uintptr(unsafe.Pointer(PS)))
 	return types.HDC(r1)
 }
 
