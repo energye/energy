@@ -15,8 +15,11 @@ package wv
 
 import (
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/wv/wv"
 )
+
+func (m *BrowserWindow) Resize(ht string) {
+
+}
 
 func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	switch message.Type {
@@ -25,14 +28,6 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	case ipc.MT_DRAG_UP:
 	case ipc.MT_DRAG_DBLCLICK:
 	}
-}
-
-func (m *BrowserWindow) _HookWndProcMessage() {
-
-}
-
-func (m *BrowserWindow) _RestoreWndProc() {
-
 }
 
 func (m *BrowserWindow) navigationStarting(webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {

@@ -32,7 +32,6 @@ type IBrowserWindow interface {
 	WindowParent() wv.IWVWindowParent
 	Browser() wv.IWVBrowser
 	WindowId() uint32
-	_WndProc(message uint32, wParam, lParam uintptr) uintptr
 	// SetOnBrowserAfterCreated Called after a new browser is created and it's ready to navigate to the default URL.
 	SetOnBrowserAfterCreated(fn wv.TNotifyEvent)
 	// SetOnBrowserMessageReceived
@@ -268,6 +267,7 @@ func (m *BrowserWindow) defaultEvent() {
 	})
 	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
 		m._RestoreWndProc()
+		deleteBrowserWindow(m.Handle())
 		if m.onDestroy != nil {
 			m.onDestroy(sender)
 		}

@@ -21,8 +21,6 @@ import (
 	"github.com/energye/lcl/types/messages"
 	"github.com/energye/wv/wv"
 	"strconv"
-	"syscall"
-	"unsafe"
 )
 
 func (m *BrowserWindow) Resize(ht string) {
@@ -74,77 +72,6 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 		} else {
 			m.SetWindowState(types.WsNormal)
 		}
-	}
-}
-
-var (
-	wndProcCallback = syscall.NewCallback(_WndProcCallback)
-)
-
-func _WndProcCallback(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
-	if window := getBrowserWindow(hwnd); window != nil {
-		return window._WndProc(message, wParam, lParam)
-	}
-	return win.DefWindowProc(hwnd, message, wParam, lParam)
-}
-
-func (m *BrowserWindow) _WndProc(message uint32, wParam, lParam uintptr) uintptr {
-	if m.options.Frameless {
-		switch message {
-		case messages.WM_ACTIVATE:
-			// If we want to have a frameless window but with the default frame decorations, extend the DWM client area.
-			// This Option is not affected by returning 0 in WM_NCCALCSIZE.
-			// As a result we have hidden the titlebar but still have the default window frame styling.
-			// See: https://docs.microsoft.com/en-us/windows/win32/api/dwmapi/nf-dwmapi-dwmextendframeintoclientarea#remarks
-			win.ExtendFrameIntoClientArea(m.Handle(), win.Margins{CxLeftWidth: 1, CxRightWidth: 1, CyTopHeight: 1, CyBottomHeight: 1})
-		case messages.WM_NCCALCSIZE:
-			// Trigger condition: Change the window size
-			// Disable the standard frame by allowing the client area to take the full
-			// window size.
-			// See: https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-nccalcsize#remarks
-			// This hides the titlebar and also disables the resizing from user interaction because the standard frame is not
-			// shown. We still need the WS_THICKFRAME style to enable resizing from the frontend.
-			if wParam != 0 {
-				//cycaption := win.GetSystemMetrics(4)
-				// Content overflow screen issue when maximizing borderless windows
-				// See: https://github.com/MicrosoftEdge/WebView2Feedback/issues/2549
-				//isMinimize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MINIMIZE != 0
-				isMaximize := uint32(win.GetWindowLong(m.Handle(), win.GWL_STYLE))&win.WS_MAXIMIZE != 0
-				if isMaximize {
-					rect := (*types.TRect)(unsafe.Pointer(lParam))
-					workRect := m.Monitor().WorkareaRect()
-					*rect = workRect
-				}
-				return 0
-			}
-		}
-	}
-	return win.CallWindowProc(m.oldWndPrc, m.Handle(), message, wParam, lParam)
-}
-
-func (m *BrowserWindow) _HookWndProcMessage() {
-	m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
-}
-
-//func (m *BrowserWindow) _SetCursor(idc int) {
-//	switch idc {
-//	case messages.HTBOTTOMRIGHT, messages.HTTOPLEFT: //右下 左上
-//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENWSE))
-//	case messages.HTRIGHT, messages.HTLEFT: //右 左
-//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZEWE))
-//	case messages.HTTOPRIGHT, messages.HTBOTTOMLEFT: //右上 左下
-//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENESW))
-//	case messages.HTTOP, messages.HTBOTTOM: //上 下
-//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_SIZENS))
-//	default:
-//		winapi.SetCursor(winapi.LoadCursor(0, messages.IDC_HAND))
-//	}
-//}
-
-func (m *BrowserWindow) _RestoreWndProc() {
-	if m.oldWndPrc != 0 {
-		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
-		m.oldWndPrc = 0
 	}
 }
 
