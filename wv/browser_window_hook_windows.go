@@ -14,6 +14,8 @@
 package wv
 
 import (
+	"fmt"
+	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/api/winapi"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
@@ -23,6 +25,23 @@ import (
 )
 
 func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
+	switch message {
+	case messages.WM_SETTINGCHANGE:
+		settingChanged := win32.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
+		fmt.Println("WM_SETTINGCHANGE settingChanged:", settingChanged)
+		if settingChanged == "ImmersiveColorSet" {
+
+		}
+
+	case messages.WM_POWERBROADCAST:
+		//switch wParam {
+		//case w32.PBT_APMPOWERSTATUSCHANGE:
+		//case w32.PBT_APMSUSPEND:
+		//case w32.PBT_APMRESUMEAUTOMATIC:
+		//case w32.PBT_APMRESUMESUSPEND:
+		//case w32.PBT_POWERSETTINGCHANGE:
+		//}
+	}
 	if m.options.Frameless {
 		switch message {
 		case messages.WM_ACTIVATE:

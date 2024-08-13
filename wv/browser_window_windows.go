@@ -14,12 +14,62 @@
 package wv
 
 import (
+	"bytes"
+	"encoding/json"
+	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
+	"runtime"
 )
+
+func (m *BrowserWindow) windowCreate() {
+	if m.options.Windows.ICON == nil {
+		lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
+	} else {
+		lcl.Application.Icon().LoadFromBytes(m.options.Windows.ICON)
+	}
+	switch m.options.Windows.Theme {
+	case SystemDefault:
+		win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
+	case Light:
+		win32.ChangeTheme(m.Handle(), false)
+	case Dark:
+		win32.ChangeTheme(m.Handle(), true)
+	}
+}
+
+var (
+	frameWidth  = win.GetSystemMetrics(32)
+	frameHeight = win.GetSystemMetrics(33)
+	frameCorner = frameWidth + frameHeight
+)
+
+func (m *BrowserWindow) navigationStarting() {
+	jsCode := &bytes.Buffer{}
+	var envJS = func(json string) {
+		jsCode.WriteString(`window.energy.setOptionsEnv(`)
+		jsCode.WriteString(json)
+		jsCode.WriteString(`);`)
+	}
+	optionsJSON, err := json.Marshal(m.options)
+	if err == nil {
+		envJS(string(optionsJSON))
+	}
+	env := make(map[string]interface{})
+	env["frameWidth"] = frameWidth
+	env["frameHeight"] = frameHeight
+	env["frameCorner"] = frameCorner
+	env["os"] = runtime.GOOS
+	envJSON, err := json.Marshal(env)
+	if err == nil {
+		envJS(string(envJSON))
+	}
+	m.browser.ExecuteScript(jsCode.String(), 0)
+}
 
 func (m *BrowserWindow) Resize(ht string) {
 	if m.IsFullScreen() || m.options.DisableResize {
