@@ -63,6 +63,17 @@
         }
 
         /**
+         * energy options set env
+         * @param {JSON} options
+         * @public
+         */
+        setOptionsEnv(options) {
+            for (let key in options) {
+                this.setEnv(key, options[key]);
+            }
+        }
+
+        /**
          * energy get env arguments
          * @param {string} key
          * @public
@@ -291,7 +302,6 @@
     }
 
     class Drag {
-        #enableDrag = false;
         #shouldDrag = false;
         #cssDragProperty = "-webkit-app-region";
         #cssDragValue = "drag";
@@ -312,16 +322,9 @@
             return false;
         }
 
-        enableDrag(v) {
-            this.#enableDrag = v;
-        }
 
         setup() {
-            if (!this.#enableDrag) {
-                return;
-            }
             let that = this;
-
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
                 energy.processMessage(JSON.stringify(payload));
@@ -331,8 +334,9 @@
             let frameWidth = energy.getEnv("frameWidth") || 4;
             let frameHeight = energy.getEnv("frameHeight") || 4;
             let frameCorner = energy.getEnv("frameCorner") || 8;
-
-            // console.log('frameWidth:', frameWidth, 'frameHeight:', frameHeight, 'frameCorner:', frameCorner);
+            let disableResize = energy.getEnv("disableResize") || false;
+            let disableWebkitAppRegionDClk = energy.getEnv("disableWebkitAppRegionDClk") || false;
+            let isWindows = energy.getEnv("os") === "windows";
 
             function setCursor(cursor, ht) {
                 if (idcCursor !== cursor) {
@@ -373,18 +377,17 @@
             }
 
             function mouseMove(e) {
-                if (that.#enableDrag && that.#shouldDrag) {
-                    that.#shouldDrag = false;
+                if (that.#shouldDrag) {
+                    if (isWindows) {
+                        that.#shouldDrag = false;
+                    }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
-                } else {
+                } else if (!disableResize && isWindows) {
                     mouseDragResize(e)
                 }
             }
 
             function mouseUp(e) {
-                if (!that.#enableDrag) {
-                    return
-                }
                 that.#shouldDrag = false;
                 if (that.#test(e)) {
                     e.preventDefault();
@@ -396,7 +399,7 @@
                 if (idcCursor) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_RESIZE, 'resize', idcCursor);
-                } else if (that.#enableDrag && !(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.#test(e)) {
+                } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.#test(e)) {
                     e.preventDefault();
                     that.#shouldDrag = true;
                     dragMessage(MT_DRAG_DOWN, 'down', {x: e.screenX, y: e.screenY});
@@ -406,10 +409,7 @@
             }
 
             function dblClick(e) {
-                if (!that.#enableDrag) {
-                    return;
-                }
-                if (that.#test(e)) {
+                if (that.#test(e) && !disableWebkitAppRegionDClk) {
                     e.preventDefault();
                     dragMessage(MT_DRAG_DBLCLICK, 'dblclk', null);
                 }

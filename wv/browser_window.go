@@ -11,6 +11,7 @@
 package wv
 
 import (
+	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
@@ -18,6 +19,7 @@ import (
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
+	"runtime"
 	"sync/atomic"
 )
 
@@ -79,6 +81,7 @@ type BrowserWindow struct {
 	oldWndPrc                  uintptr
 	previousWindowPlacement    types.TRect
 	windowsState               types.TWindowState
+	preWindowStyle             uintptr
 }
 
 var windowID uint32
@@ -102,7 +105,7 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 	m.SetDoubleBuffered(true)
 	m.SetShowInTaskBar(types.StAlways)
-	//m.SetColor(colors.ClBlack)
+
 	// background panel
 	background := lcl.NewPanel(m)
 	background.SetParent(m)
@@ -110,7 +113,6 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	background.SetParentDoubleBuffered(true)
 	background.SetBevelInner(types.BvNone)
 	background.SetBevelOuter(types.BvNone)
-	//background.SetAlign(types.AlClient)
 	background.SetAlign(types.AlCustom)
 	background.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
 	background.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
@@ -143,6 +145,23 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	// call window main form create callback
 	if m.onWindowCreate != nil {
 		m.onWindowCreate(m)
+	}
+	if m.options.Frameless {
+
+	} else {
+		if m.options.DisableResize {
+			m.SetBorderStyleForFormBorderStyle(types.BsSingle)
+			m.EnabledMaximize(false)
+		}
+		if m.options.DisableMinimize {
+			m.EnabledMinimize(false)
+		}
+		if m.options.DisableMaximize {
+			m.EnabledMaximize(false)
+		}
+		if m.options.DisableSystemMenu {
+			m.EnabledSystemMenu(false)
+		}
 	}
 }
 
@@ -185,7 +204,7 @@ func (m *BrowserWindow) defaultEvent() {
 	})
 	m.browser.SetOnNavigationStarting(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
 		m.navigationStarting(webview, args)
-		jsCode := `window.energy.drag().enableDrag(true);window.energy.drag().setup();`
+		jsCode := `window.energy.drag().setup();`
 		m.browser.ExecuteScript(jsCode, 0)
 		if m.onNavigationStarting != nil {
 			m.onNavigationStarting(sender, webview, args)
@@ -249,6 +268,11 @@ func (m *BrowserWindow) defaultEvent() {
 				m.browser.CreateBrowser(m.windowParent.Handle(), true)
 			}
 		}
+		if m.options.DefaultWindowStatus == types.WsFullScreen {
+			m.FullScreen()
+		} else {
+			m.SetWindowState(m.options.DefaultWindowStatus)
+		}
 		if m.onShow != nil {
 			m.onShow(sender)
 		}
@@ -310,39 +334,46 @@ func (m *BrowserWindow) SetOnNavigationStarting(fn wv.TOnNavigationStartingEvent
 	m.onNavigationStarting = fn
 }
 
-func (m *BrowserWindow) FullScreen() {
-	if m.IsFullScreen() {
-		return
-	}
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.IsMinimize() || m.IsMaximize() {
-			m.Restore()
-		}
-		m.windowsState = types.WsFullScreen
-		m.previousWindowPlacement = m.BoundsRect()
-		monitorRect := m.Monitor().BoundsRect()
-		//m.SetBoundsRect(&monitorRect)
-		win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
-	})
-}
+var (
+	frameWidth  = win.GetSystemMetrics(32)
+	frameHeight = win.GetSystemMetrics(33)
+	frameCorner = frameWidth + frameHeight
+)
 
-func (m *BrowserWindow) ExitFullScreen() {
-	if m.IsFullScreen() {
-		m.windowsState = types.WsNormal
-		m.SetWindowState(types.WsNormal)
-		m.SetBoundsRect(&m.previousWindowPlacement)
-		return
+func (m *BrowserWindow) navigationStarting(webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
+	jsCode := &bytes.Buffer{}
+	var envJS = func(json string) {
+		jsCode.WriteString(`window.energy.setOptionsEnv(`)
+		jsCode.WriteString(json)
+		jsCode.WriteString(`);`)
 	}
+	optionsJSON, err := json.Marshal(m.options)
+	if err == nil {
+		envJS(string(optionsJSON))
+	}
+	env := make(map[string]interface{})
+	env["frameWidth"] = frameWidth
+	env["frameHeight"] = frameHeight
+	env["frameCorner"] = frameCorner
+	env["os"] = runtime.GOOS
+	envJSON, err := json.Marshal(env)
+	if err == nil {
+		envJS(string(envJSON))
+	}
+	m.browser.ExecuteScript(jsCode.String(), 0)
 }
 
 func (m *BrowserWindow) Minimize() {
+	if m.options.DisableMinimize {
+		return
+	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
 		m.SetWindowState(types.WsMinimized)
 	})
 }
 
 func (m *BrowserWindow) Maximize() {
-	if m.IsFullScreen() {
+	if m.IsFullScreen() || m.options.DisableMaximize {
 		return
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {

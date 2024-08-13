@@ -10,17 +10,25 @@
 
 package wv
 
+import "github.com/energye/lcl/types"
+
 // Options App config option
 type Options struct {
-	Caption            string
-	DefaultURL         string
-	ICON               []byte
-	X                  int32
-	Y                  int32
-	Width              int32
-	Height             int32
-	DisableDevTools    bool
-	DisableContextMenu bool
-	Frameless          bool
-	LocalLoad          *LocalLoad
+	Caption                    string             `json:"-"`
+	DefaultURL                 string             `json:"-"`
+	ICON                       []byte             `json:"-"`
+	LocalLoad                  *LocalLoad         `json:"-"`
+	X                          int32              `json:"x"`
+	Y                          int32              `json:"y"`
+	Width                      int32              `json:"width"`
+	Height                     int32              `json:"height"`
+	DefaultWindowStatus        types.TWindowState `json:"-"`
+	DisableDevTools            bool               `json:"-"`
+	DisableContextMenu         bool               `json:"-"`
+	DisableWebkitAppRegionDClk bool               `json:"disableWebkitAppRegionDClk"`
+	DisableResize              bool               `json:"disableResize"`
+	DisableMinimize            bool               `json:"-"`
+	DisableMaximize            bool               `json:"-"`
+	DisableSystemMenu          bool               `json:"-"`
+	Frameless                  bool               `json:"frameless"`
 }

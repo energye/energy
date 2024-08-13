@@ -30,6 +30,14 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	}
 }
 
-func (m *BrowserWindow) navigationStarting(webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
+func (m *BrowserWindow) FullScreen() {
+	if m.IsFullScreen() {
+		return
+	}
+}
 
+func (m *BrowserWindow) ExitFullScreen() {
+	if m.IsFullScreen() {
+
+	}
 }
