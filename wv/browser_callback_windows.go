@@ -15,7 +15,6 @@ package wv
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -34,15 +33,17 @@ type NewWindowCallback struct {
 	window  IBrowserWindow
 }
 
-func (m *NewWindowCallback) NewWindow() IBrowserWindow {
+func (m *NewWindowCallback) NewWindow(options Options) IBrowserWindow {
 	if m.window == nil {
 		m.handled = true
 		args := wv.NewCoreWebView2NewWindowRequestedEventArgs(m.args)
-		var window = &BrowserWindow{options: Options{DefaultURL: args.URI()}}
+		if options.DefaultURL == "" {
+			options.DefaultURL = args.URI()
+		}
+		var window = &BrowserWindow{options: options}
 		window.newWindowRequestedEventArgs = args
 		window.deferral = wv.NewCoreWebView2Deferral(args.Deferral())
 		lcl.Application.CreateForm(window)
-		window.afterCreate()
 		m.window = window
 	}
 	return m.window
@@ -163,7 +164,7 @@ func (m *BrowserWindow) defaultEvent() {
 		} else {
 			// Default pop-up window
 			lcl.RunOnMainThreadAsync(func(id uint32) {
-				callback.NewWindow().Show()
+				callback.NewWindow(Options{}).Show()
 			})
 		}
 	})
@@ -199,7 +200,6 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
-		fmt.Println("SetOnDestroy")
 		m._RestoreWndProc()
 		deleteBrowserWindow(m)
 		// cancel process message

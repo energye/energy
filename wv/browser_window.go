@@ -41,6 +41,8 @@ type IBrowserWindow interface {
 	//  one. Navigations will be blocked until all `NavigationStarting` event handlers
 	SetOnNavigationStarting(fn TOnNavigationStartingEvent)
 	SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx)
+	SetOnWindowCreate(fn OnCreate)
+	SetOnWindowAfterCreate(fn OnCreate)
 	SetOnShow(fn TNotifyEvent)
 	SetOnResize(fn TNotifyEvent)
 	SetOnClose(fn lcl.TCloseEvent)
@@ -73,6 +75,8 @@ type BrowserWindow struct {
 	onNewWindowRequested        TOnNewWindowRequestedEventEx
 	onShow                      TNotifyEvent
 	onDestroy                   TNotifyEvent
+	onWindowCreate              OnCreate
+	onWindowAfterCreate         OnCreate
 	onClose                     lcl.TCloseEvent
 	ipcMessageReceivedDelegate  ipc.IMessageReceivedDelegate
 	oldWndPrc                   uintptr
@@ -127,12 +131,19 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	ipc.RegisterProcessMessage(m)
 	// BrowserWindow Default preset function implementation
 	m.defaultEvent()
+	if m.onWindowCreate != nil {
+		m.onWindowCreate(m)
+	}
 }
 
 func (m *BrowserWindow) FormAfterCreate(sender lcl.IObject) {
 	// add browser window in globalBrowserWindows
 	addBrowserWindow(m)
 	m._HookWndProcMessage()
+	if m.onWindowAfterCreate != nil {
+		m.onWindowAfterCreate(m)
+	}
+	m.afterCreate()
 }
 
 // FormCreate call afterCreate
@@ -238,6 +249,14 @@ func (m *BrowserWindow) SetOnNavigationStarting(fn TOnNavigationStartingEvent) {
 
 func (m *BrowserWindow) SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx) {
 	m.onNewWindowRequested = fn
+}
+
+func (m *BrowserWindow) SetOnWindowCreate(fn OnCreate) {
+	m.onWindowCreate = fn
+}
+
+func (m *BrowserWindow) SetOnWindowAfterCreate(fn OnCreate) {
+	m.onWindowAfterCreate = fn
 }
 
 func (m *BrowserWindow) Minimize() {

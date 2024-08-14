@@ -56,7 +56,6 @@ func (m *MainWindow) FormCreate(sender lcl.IObject) {
 	if m.onWindowCreate != nil {
 		m.onWindowCreate(m)
 	}
-	m.afterCreate()
 }
 
 func (m *MainWindow) FormAfterCreate(sender lcl.IObject) {
@@ -70,6 +69,5 @@ func (m *MainWindow) FormAfterCreate(sender lcl.IObject) {
 func NewBrowserWindow(options Options) IBrowserWindow {
 	var window = &BrowserWindow{options: options}
 	lcl.Application.CreateForm(window)
-	window.afterCreate()
 	return window
 }
