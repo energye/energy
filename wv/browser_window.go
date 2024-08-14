@@ -355,12 +355,15 @@ func (m *BrowserWindow) Maximize() {
 }
 
 func (m *BrowserWindow) Restore() {
-	if m.IsMinimize() || m.IsMaximize() {
+	// In the case of a title bar
+	// If the current state is full screen and the extracted state is Ws Maximized,
+	// So let's first perform IsFullScreen() judgment here
+	if m.IsFullScreen() {
+		m.ExitFullScreen()
+	} else if m.IsMinimize() || m.IsMaximize() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			m.SetWindowState(types.WsNormal)
 		})
-	} else if m.IsFullScreen() {
-		m.ExitFullScreen()
 	}
 }
 
