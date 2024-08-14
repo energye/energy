@@ -20,11 +20,11 @@ var (
 	listenerLock       sync.RWMutex
 	processMessage     map[uint32]IProcessMessage
 	processMessageLock sync.RWMutex
-	mainWindowId       uint32 // ipc message default window flag
+	defaultBrowserId   uint32 // ipc message default browser id
 )
 
 type IProcessMessage interface {
-	WindowId() uint32
+	BrowserId() uint32
 	SendMessage(payload []byte)
 }
 
@@ -71,21 +71,21 @@ func (m *MessageReceivedDelegate) Received(windowId uint32, message *ProcessMess
 }
 
 // go ipc.emit - callback function
-func (m *MessageReceivedDelegate) handlerGOEMITCallback(windowId uint32, message *ProcessMessage) {
+func (m *MessageReceivedDelegate) handlerGOEMITCallback(browserId uint32, message *ProcessMessage) {
 	if callbackFunc, ok := listener.emitCallbacks[message.Id]; ok {
-		ctx := callback.NewContext(windowId, message.Data)
+		ctx := callback.NewContext(browserId, message.Data)
 		callbackFunc.Invoke(ctx)
 	}
 }
 
 // js ipc.emit
-func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *ProcessMessage) {
+func (m *MessageReceivedDelegate) handlerJSEMIT(browserId uint32, message *ProcessMessage) {
 	listenerLock.Lock()
 	fn, ok := listener.onCallbacks[message.Name]
 	listenerLock.Unlock()
 	var result interface{}
 	if ok {
-		ctx := callback.NewContext(windowId, message.Data)
+		ctx := callback.NewContext(browserId, message.Data)
 		// call ipc.on callback function
 		result = fn.Invoke(ctx)
 	}
@@ -97,7 +97,7 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(windowId uint32, message *Proces
 		if err != nil {
 			// Log ???
 		}
-		process := GetProcessMessage(windowId)
+		process := GetProcessMessage(browserId)
 		if process == nil {
 			// Log ???
 			return
@@ -114,30 +114,30 @@ func init() {
 	processMessage = make(map[uint32]IProcessMessage)
 }
 
-// SetMainWindowId For IPC messages
-func SetMainWindowId(windowId uint32) {
-	mainWindowId = windowId
+// SetMainDefaultBrowserId For IPC messages
+func SetMainDefaultBrowserId(browserId uint32) {
+	defaultBrowserId = browserId
 }
 
-// RegisterProcessMessage reegister process message object
+// RegisterProcessMessage register process message object
 func RegisterProcessMessage(window IProcessMessage) {
 	processMessageLock.Lock()
-	processMessage[window.WindowId()] = window
+	processMessage[window.BrowserId()] = window
 	processMessageLock.Unlock()
 }
 
 // UnRegisterProcessMessage cancel process message object
 func UnRegisterProcessMessage(window IProcessMessage) {
 	processMessageLock.Lock()
-	delete(processMessage, window.WindowId())
+	delete(processMessage, window.BrowserId())
 	processMessageLock.Unlock()
 }
 
 // GetProcessMessage return process message object
-func GetProcessMessage(windowId uint32) IProcessMessage {
+func GetProcessMessage(browserId uint32) IProcessMessage {
 	processMessageLock.Lock()
 	defer processMessageLock.Unlock()
-	return processMessage[windowId]
+	return processMessage[browserId]
 }
 
 // createCallback
@@ -180,22 +180,22 @@ func RemoveOn(name string) {
 //	windowId: target window, default 0 = mainWindow, otherwise, it must be a valid window identifier
 //	name: emit message name
 //	arguments: emit message data
-func Emit(windowId uint32, name string, arguments ...interface{}) {
-	if windowId == 0 {
-		windowId = mainWindowId // default main browser window id
+func Emit(browserId uint32, name string, arguments ...interface{}) {
+	if browserId == 0 {
+		browserId = defaultBrowserId // default main browser window id
 	}
 	processMessageLock.Lock()
-	emitMsg, ok := processMessage[windowId]
+	emitMsg, ok := processMessage[browserId]
 	processMessageLock.Unlock()
 	if ok {
 		var executionID uint32
 		if len(arguments) > 0 {
 			// Check if the last parameter is a callback function
-			argsFunc := arguments[len(arguments)-1]
-			switch argsFunc.(type) {
+			callbackFunction := arguments[len(arguments)-1]
+			switch callbackFunction.(type) {
 			case callback.EventCallback:
 				executionID = NextExecutionID()
-				listener.emitCallbacks[executionID] = callback.New(argsFunc.(callback.EventCallback))
+				listener.emitCallbacks[executionID] = callback.New(callbackFunction.(callback.EventCallback))
 				arguments = arguments[:len(arguments)-1]
 			}
 		}
@@ -211,21 +211,4 @@ func Emit(windowId uint32, name string, arguments ...interface{}) {
 		}
 		emitMsg.SendMessage(payload)
 	}
-}
-
-// Add emit callback function
-func (m *ipcListener) emitCallback(fn interface{}) int32 {
-	if m == nil || fn == nil {
-		return 0
-	}
-	//if callbackFN := createCallback(fn); callbackFN != nil {
-	//	if m.emitCallbackMessageId == -1 {
-	//		m.emitCallbackMessageId = 1
-	//	} else {
-	//		m.emitCallbackMessageId++
-	//	}
-	//	m.emitCallback[m.emitCallbackMessageId] = callbackFN
-	//	return m.emitCallbackMessageId
-	//}
-	return 0
 }

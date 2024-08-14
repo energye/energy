@@ -19,6 +19,13 @@ import (
 	"github.com/energye/energy/v3/ipc/callback"
 )
 
+type OptionsEvent struct {
+	BrowserId uint32
+	Name      string
+	Data      interface{}
+	Callback  callback.EventCallback
+}
+
 // On
 //
 //	IPC GO Listening for events
@@ -41,4 +48,15 @@ func Emit(name string, arguments ...interface{}) {
 		return
 	}
 	ipc.Emit(0, name, arguments...)
+}
+
+// EmitOptions
+//
+//	Event that triggers listening
+//	default: 0 to triggering the main browser
+func EmitOptions(options *OptionsEvent) {
+	if options == nil || options.Name == "" {
+		return
+	}
+	ipc.Emit(options.BrowserId, options.Name, options.Data, options.Callback)
 }

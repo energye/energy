@@ -337,6 +337,7 @@
             let disableResize = energy.getEnv("disableResize") || false;
             let disableWebkitAppRegionDClk = energy.getEnv("disableWebkitAppRegionDClk") || false;
             let isWindows = energy.getEnv("os") === "windows";
+            let frameless = energy.getEnv("frameless") || false;
 
             function setCursor(cursor, ht) {
                 if (idcCursor !== cursor) {
@@ -382,7 +383,7 @@
                         that.#shouldDrag = false;
                     }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
-                } else if (!disableResize && isWindows) {
+                } else if (!disableResize && isWindows && frameless) {
                     mouseDragResize(e)
                 }
             }

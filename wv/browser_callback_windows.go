@@ -41,9 +41,7 @@ func (m *NewWindowCallback) NewWindow() IBrowserWindow {
 		var window = &BrowserWindow{options: Options{DefaultURL: args.URI()}}
 		window.newWindowRequestedEventArgs = args
 		window.deferral = wv.NewCoreWebView2Deferral(args.Deferral())
-		//window.TForm = *lcl.NewForm(nil).(*lcl.TForm)
 		lcl.Application.CreateForm(window)
-		//window.FormCreate(nil)
 		window.afterCreate()
 		m.window = window
 	}
@@ -124,14 +122,13 @@ func (m *BrowserWindow) defaultEvent() {
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
 			if err == nil {
-				//fmt.Println("message:", pMessage.Type, pMessage.Data)
 				switch pMessage.Type {
 				case ipc.MT_READY:
 					// ipc ready
 					handle = true
 				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
 					// ipc on, emit event
-					handle = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
+					handle = m.ipcMessageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					m.Drag(pMessage)

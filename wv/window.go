@@ -13,32 +13,33 @@ package wv
 import (
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/types"
 )
 
+// OnCreate TForm create callback
 type OnCreate func(window IBrowserWindow)
 
 var (
-	globalBrowserWindows map[types.HWND]IBrowserWindow
+	// global browser list
+	globalBrowserWindows map[uint32]IBrowserWindow
 )
 
+func init() {
+	globalBrowserWindows = make(map[uint32]IBrowserWindow)
+}
+
 func addBrowserWindow(window IBrowserWindow) {
-	globalBrowserWindows[window.Handle()] = window
+	globalBrowserWindows[window.BrowserId()] = window
 }
 
 func deleteBrowserWindow(window IBrowserWindow) {
-	delete(globalBrowserWindows, window.Handle())
+	delete(globalBrowserWindows, window.BrowserId())
 }
 
-func getBrowserWindow(hwnd types.HWND) IBrowserWindow {
-	if window, ok := globalBrowserWindows[hwnd]; ok {
+func GetBrowserWindow(windowId uint32) IBrowserWindow {
+	if window, ok := globalBrowserWindows[windowId]; ok {
 		return window
 	}
 	return nil
-}
-
-func init() {
-	globalBrowserWindows = make(map[types.HWND]IBrowserWindow)
 }
 
 // MainWindow app main window
@@ -50,7 +51,7 @@ type MainWindow struct {
 
 func (m *MainWindow) FormCreate(sender lcl.IObject) {
 	m.BrowserWindow.FormCreate(sender)
-	ipc.SetMainWindowId(m.WindowId())
+	ipc.SetMainDefaultBrowserId(m.BrowserId())
 	// call window main form create callback
 	if m.onWindowCreate != nil {
 		m.onWindowCreate(m)
