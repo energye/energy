@@ -55,8 +55,12 @@ func (m *Application) SetOptions(options Options) {
 	m.mainWindow.options = options
 }
 
-func (m *Application) SetOnWindowCreate(fn OnWindowCreate) {
+func (m *Application) SetOnWindowCreate(fn OnCreate) {
 	m.mainWindow.onWindowCreate = fn
+}
+
+func (m *Application) SetOnWindowAfterCreate(fn OnCreate) {
+	m.mainWindow.onWindowAfterCreate = fn
 }
 
 func (m *Application) SetOnGetCustomSchemes(fn wv.TOnLoaderGetCustomSchemesEvent) {

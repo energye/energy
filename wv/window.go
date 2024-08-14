@@ -16,6 +16,8 @@ import (
 	"github.com/energye/lcl/types"
 )
 
+type OnCreate func(window IBrowserWindow)
+
 var (
 	globalBrowserWindows map[types.HWND]IBrowserWindow
 )
@@ -24,12 +26,12 @@ func addBrowserWindow(window IBrowserWindow) {
 	globalBrowserWindows[window.Handle()] = window
 }
 
-func deleteBrowserWindow(windowId types.HWND) {
-	delete(globalBrowserWindows, windowId)
+func deleteBrowserWindow(window IBrowserWindow) {
+	delete(globalBrowserWindows, window.Handle())
 }
 
-func getBrowserWindow(windowId types.HWND) IBrowserWindow {
-	if window, ok := globalBrowserWindows[windowId]; ok {
+func getBrowserWindow(hwnd types.HWND) IBrowserWindow {
+	if window, ok := globalBrowserWindows[hwnd]; ok {
 		return window
 	}
 	return nil
@@ -42,7 +44,8 @@ func init() {
 // MainWindow app main window
 type MainWindow struct {
 	BrowserWindow
-	onWindowCreate OnWindowCreate
+	onWindowCreate      OnCreate
+	onWindowAfterCreate OnCreate
 }
 
 func (m *MainWindow) FormCreate(sender lcl.IObject) {
@@ -53,6 +56,13 @@ func (m *MainWindow) FormCreate(sender lcl.IObject) {
 		m.onWindowCreate(m)
 	}
 	m.afterCreate()
+}
+
+func (m *MainWindow) FormAfterCreate(sender lcl.IObject) {
+	m.BrowserWindow.FormAfterCreate(sender)
+	if m.onWindowAfterCreate != nil {
+		m.onWindowAfterCreate(m)
+	}
 }
 
 // NewBrowserWindow create browser window

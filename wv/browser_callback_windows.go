@@ -25,7 +25,7 @@ import (
 type TNotifyEvent = wv.TNotifyEvent
 type TOnWebMessageReceivedEvent = wv.TOnWebMessageReceivedEvent
 type TOnNavigationStartingEvent = wv.TOnNavigationStartingEvent
-type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, window *NewWindowCallback) bool
+type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
 type TOnContextMenuRequestedEvent = wv.TOnContextMenuRequestedEvent
 
 type NewWindowCallback struct {
@@ -204,7 +204,7 @@ func (m *BrowserWindow) defaultEvent() {
 	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
 		fmt.Println("SetOnDestroy")
 		m._RestoreWndProc()
-		deleteBrowserWindow(m.WindowId())
+		deleteBrowserWindow(m)
 		// cancel process message
 		ipc.UnRegisterProcessMessage(m)
 		if m.onDestroy != nil {

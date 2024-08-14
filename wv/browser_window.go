@@ -18,8 +18,6 @@ import (
 	"sync/atomic"
 )
 
-type OnWindowCreate func(window IBrowserWindow)
-
 // IBrowserWindow
 //
 //	A browser window composed of TForms and webview2 controls
@@ -95,8 +93,7 @@ func getWindowID() uint32 {
 // Initialize window properties or other tasks here
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.windowId = getWindowID()
-	//m.HandleNeeded()
-	m.defaultSize()
+	m.defaultOptions()
 	// setting and init
 	m.SetCaption(m.options.Caption)
 	m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
@@ -167,7 +164,7 @@ func (m *BrowserWindow) afterCreate() { // after
 	//m.platformCreate()
 }
 
-func (m *BrowserWindow) defaultSize() {
+func (m *BrowserWindow) defaultOptions() {
 	if m.options.Width <= 0 {
 		m.options.Width = 800
 	}
