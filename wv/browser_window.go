@@ -11,7 +11,6 @@
 package wv
 
 import (
-	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -31,19 +30,21 @@ type IBrowserWindow interface {
 	Browser() wv.IWVBrowser
 	WindowId() uint32
 	// SetOnBrowserAfterCreated Called after a new browser is created and it's ready to navigate to the default URL.
-	SetOnBrowserAfterCreated(fn wv.TNotifyEvent)
+	SetOnBrowserAfterCreated(fn TNotifyEvent)
+	SetOnContextMenuRequestedEvent(fn TOnContextMenuRequestedEvent)
 	// SetOnBrowserMessageReceived
 	//  runs when the `ICoreWebView2Settings.IsWebMessageEnabled`
 	//	setting is set and the top-level document of the WebView runs `window.chrome.webview.postMessage`.
-	SetOnBrowserMessageReceived(fn wv.TOnWebMessageReceivedEvent)
+	SetOnBrowserMessageReceived(fn TOnWebMessageReceivedEvent)
 	// SetOnNavigationStarting
 	//  runs when the WebView main frame is requesting
 	//  permission to navigate to a different URI. Redirects trigger this
 	//  operation as well, and the navigation id is the same as the original
 	//  one. Navigations will be blocked until all `NavigationStarting` event handlers
-	SetOnNavigationStarting(fn wv.TOnNavigationStartingEvent)
-	SetOnShow(fn wv.TNotifyEvent)
-	SetOnResize(fn wv.TNotifyEvent)
+	SetOnNavigationStarting(fn TOnNavigationStartingEvent)
+	SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx)
+	SetOnShow(fn TNotifyEvent)
+	SetOnResize(fn TNotifyEvent)
 	SetOnClose(fn lcl.TCloseEvent)
 	FullScreen()
 	ExitFullScreen()
@@ -60,24 +61,26 @@ type IBrowserWindow interface {
 //	energy webview2 window, It consists of TForm and WVBrowser
 type BrowserWindow struct {
 	lcl.TForm
-	windowId                   uint32
-	isClosing                  bool
-	windowParent               wv.IWVWindowParent
-	browser                    wv.IWVBrowser
-	options                    Options
-	onWindowCreate             OnWindowCreate
-	onAfterCreated             wv.TNotifyEvent
-	onWebMessageReceived       wv.TOnWebMessageReceivedEvent
-	onNavigationStarting       wv.TOnNavigationStartingEvent
-	onContextMenuRequested     wv.TOnContextMenuRequestedEvent
-	onShow                     wv.TNotifyEvent
-	onDestroy                  wv.TNotifyEvent
-	onClose                    lcl.TCloseEvent
-	ipcMessageReceivedDelegate ipc.IMessageReceivedDelegate
-	oldWndPrc                  uintptr
-	previousWindowPlacement    types.TRect
-	windowsState               types.TWindowState
-	preWindowStyle             uintptr
+	windowId                    uint32
+	isClosing                   bool
+	windowParent                wv.IWVWindowParent
+	browser                     wv.IWVBrowser
+	options                     Options
+	newWindowRequestedEventArgs wv.ICoreWebView2NewWindowRequestedEventArgs
+	deferral                    wv.ICoreWebView2Deferral
+	onAfterCreated              TNotifyEvent
+	onWebMessageReceived        TOnWebMessageReceivedEvent
+	onNavigationStarting        TOnNavigationStartingEvent
+	onContextMenuRequested      TOnContextMenuRequestedEvent
+	onNewWindowRequested        TOnNewWindowRequestedEventEx
+	onShow                      TNotifyEvent
+	onDestroy                   TNotifyEvent
+	onClose                     lcl.TCloseEvent
+	ipcMessageReceivedDelegate  ipc.IMessageReceivedDelegate
+	oldWndPrc                   uintptr
+	previousWindowPlacement     types.TRect
+	windowsState                types.TWindowState
+	preWindowStyle              uintptr
 }
 
 var windowID uint32
@@ -92,16 +95,13 @@ func getWindowID() uint32 {
 // Initialize window properties or other tasks here
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.windowId = getWindowID()
-	// 1. add browser window in globalBrowserWindows
-	addBrowserWindow(m)
-	// 2. windows hook wndProc message
-	m._HookWndProcMessage()
-	// 3. setting and init
+	//m.HandleNeeded()
+	m.defaultSize()
+	// setting and init
 	m.SetCaption(m.options.Caption)
 	m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)
 	m.SetDoubleBuffered(true)
 	m.SetShowInTaskBar(types.StAlways)
-
 	// background panel
 	background := lcl.NewPanel(m)
 	background.SetParent(m)
@@ -126,14 +126,18 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	}
 	// Registers the current window to the process message for future use when the specified window handles the message
 	ipc.RegisterProcessMessage(m)
-	ipc.SetMainWindowId(m.WindowId())
 	// BrowserWindow Default preset function implementation
 	m.defaultEvent()
-	// call window main form create callback
-	if m.onWindowCreate != nil {
-		m.onWindowCreate(m)
-	}
-	// after
+}
+
+func (m *BrowserWindow) FormAfterCreate(sender lcl.IObject) {
+	// add browser window in globalBrowserWindows
+	addBrowserWindow(m)
+	m._HookWndProcMessage()
+}
+
+// FormCreate call afterCreate
+func (m *BrowserWindow) afterCreate() { // after
 	if m.options.Frameless {
 
 	} else {
@@ -160,7 +164,16 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 		constr.SetMinWidth(m.options.MinWidth)
 		constr.SetMinHeight(m.options.MinHeight)
 	}
-	m.windowCreate()
+	//m.platformCreate()
+}
+
+func (m *BrowserWindow) defaultSize() {
+	if m.options.Width <= 0 {
+		m.options.Width = 800
+	}
+	if m.options.Height <= 0 {
+		m.options.Height = 600
+	}
 }
 
 // WindowId Window ID, generated by accumulating sequence numbers
@@ -175,127 +188,6 @@ func (m *BrowserWindow) SendMessage(payload []byte) {
 	m.browser.PostWebMessageAsString(string(payload))
 }
 
-// Default preset function implementation
-//
-//	Users have two options when implementing event behavior on their own
-//	1. Use Browser() to obtain the browser object and remove and override the current specified event
-//	2. Specify the event function in the current window and retain the default event behavior
-func (m *BrowserWindow) defaultEvent() {
-	// ipc message received
-	m.ipcMessageReceivedDelegate = ipc.NewMessageReceivedDelegate()
-	// webview2 AfterCreated
-	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
-		m.windowParent.UpdateSize()
-		// local load
-		if m.options.LocalLoad != nil {
-			m.browser.AddWebResourceRequestedFilter(m.options.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
-		}
-		// current browser ipc javascript
-		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
-		// CoreWebView2Settings
-		settings := m.browser.CoreWebView2Settings()
-		// Global control of devtools account open and clos
-		settings.SetAreDevToolsEnabled(!m.options.DisableDevTools)
-		if m.onAfterCreated != nil {
-			m.onAfterCreated(sender)
-		}
-	})
-	m.browser.SetOnNavigationStarting(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
-		m.navigationStarting()
-		jsCode := `window.energy.drag().setup();`
-		m.browser.ExecuteScript(jsCode, 0)
-		if m.onNavigationStarting != nil {
-			m.onNavigationStarting(sender, webview, args)
-		}
-	})
-	// context menu
-	m.browser.SetOnContextMenuRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
-		if m.options.DisableContextMenu {
-			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
-			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
-			menuItemCollection.RemoveAllMenuItems()
-			menuItemCollection.Free()
-			args.Free()
-		} else if m.onContextMenuRequested != nil {
-			m.onContextMenuRequested(sender, webview, args)
-		}
-	})
-	// process message received
-	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
-		var handle bool
-		if m.ipcMessageReceivedDelegate != nil {
-			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
-			message := args.WebMessageAsString()
-			args.Free()
-			// ipc message
-			var pMessage ipc.ProcessMessage
-			err := json.Unmarshal([]byte(message), &pMessage)
-			if err == nil {
-				//fmt.Println("message:", pMessage.Type, pMessage.Data)
-				switch pMessage.Type {
-				case ipc.MT_READY:
-					// ipc ready
-					handle = true
-				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
-					// ipc on, emit event
-					handle = m.ipcMessageReceivedDelegate.Received(m.WindowId(), &pMessage)
-				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
-					// ipc drag window
-					m.Drag(pMessage)
-					handle = true
-				case ipc.MT_DRAG_RESIZE:
-					// border drag resize
-					ht := pMessage.Data.(string)
-					m.Resize(ht)
-				case ipc.MT_DRAG_BORDER_WMSZ:
-					//fmt.Println("pMessage.Data", pMessage.Data)
-					//m._SetCursor(17)
-				}
-			}
-		}
-		if !handle && m.onWebMessageReceived != nil {
-			m.onWebMessageReceived(sender, webview, args)
-		}
-	})
-	// window, OnShow
-	m.TForm.SetOnShow(func(sender lcl.IObject) {
-		if application.InitializationError() {
-			// Log ???
-		} else {
-			if application.Initialized() {
-				m.browser.CreateBrowser(m.windowParent.Handle(), true)
-			}
-		}
-		if m.options.DefaultWindowStatus == types.WsFullScreen {
-			m.FullScreen()
-		} else {
-			m.SetWindowState(m.options.DefaultWindowStatus)
-		}
-		if m.onShow != nil {
-			m.onShow(sender)
-		}
-	})
-	// window, OnClose
-	m.TForm.SetOnClose(func(sender lcl.IObject, action *types.TCloseAction) {
-		if m.onClose != nil {
-			m.onClose(sender, action)
-		}
-		// window close and free
-		if *action == types.CaFree {
-			m.isClosing = true
-			// cancel process message
-			ipc.UnRegisterProcessMessage(m)
-		}
-	})
-	m.TForm.SetOnDestroy(func(sender lcl.IObject) {
-		m._RestoreWndProc()
-		deleteBrowserWindow(m.Handle())
-		if m.onDestroy != nil {
-			m.onDestroy(sender)
-		}
-	})
-}
-
 func (m *BrowserWindow) IsClosing() bool {
 	return m.isClosing
 }
@@ -308,7 +200,7 @@ func (m *BrowserWindow) Browser() wv.IWVBrowser {
 	return m.browser
 }
 
-func (m *BrowserWindow) SetOnShow(fn wv.TNotifyEvent) {
+func (m *BrowserWindow) SetOnShow(fn TNotifyEvent) {
 	m.onShow = fn
 }
 
@@ -316,20 +208,28 @@ func (m *BrowserWindow) SetOnClose(fn lcl.TCloseEvent) {
 	m.onClose = fn
 }
 
-func (m *BrowserWindow) SetOnDestroy(fn lcl.TNotifyEvent) {
+func (m *BrowserWindow) SetOnDestroy(fn TNotifyEvent) {
 	m.onDestroy = fn
 }
 
-func (m *BrowserWindow) SetOnBrowserAfterCreated(fn wv.TNotifyEvent) {
+func (m *BrowserWindow) SetOnBrowserAfterCreated(fn TNotifyEvent) {
 	m.onAfterCreated = fn
 }
 
-func (m *BrowserWindow) SetOnBrowserMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
+func (m *BrowserWindow) SetOnContextMenuRequestedEvent(fn TOnContextMenuRequestedEvent) {
+	m.onContextMenuRequested = fn
+}
+
+func (m *BrowserWindow) SetOnBrowserMessageReceived(fn TOnWebMessageReceivedEvent) {
 	m.onWebMessageReceived = fn
 }
 
-func (m *BrowserWindow) SetOnNavigationStarting(fn wv.TOnNavigationStartingEvent) {
+func (m *BrowserWindow) SetOnNavigationStarting(fn TOnNavigationStartingEvent) {
 	m.onNavigationStarting = fn
+}
+
+func (m *BrowserWindow) SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx) {
+	m.onNewWindowRequested = fn
 }
 
 func (m *BrowserWindow) Minimize() {

@@ -80,8 +80,14 @@ func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam 
 }
 
 func (m *BrowserWindow) _HookWndProcMessage() {
-	wndProcCallback := syscall.NewCallback(m.wndProc)
-	m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
+	if m.oldWndPrc == 0 {
+		wndProcCallback := syscall.NewCallback(m.wndProc)
+		m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
+		// trigger WM_NCCALCSIZE
+		// https://learn.microsoft.com/en-us/windows/win32/dwm/customframe#removing-the-standard-frame
+		clientRect := m.BoundsRect()
+		win.SetWindowPos(m.Handle(), 0, clientRect.Left, clientRect.Top, clientRect.Right-clientRect.Left, clientRect.Bottom-clientRect.Top, win.SWP_FRAMECHANGED)
+	}
 }
 
 func (m *BrowserWindow) _RestoreWndProc() {

@@ -23,20 +23,15 @@ var application *Application
 
 type Application struct {
 	wv.IWVLoader
-	mainWindow         *BrowserWindow
+	mainWindow         *MainWindow
 	onGetCustomSchemes wv.TOnLoaderGetCustomSchemesEvent
 }
 
 func NewApplication() *Application {
 	if application == nil {
 		application = &Application{
-			IWVLoader: wv.GlobalWebView2Loader(),
-			mainWindow: &BrowserWindow{
-				options: Options{
-					Width:  800,
-					Height: 600,
-				},
-			},
+			IWVLoader:  wv.GlobalWebView2Loader(),
+			mainWindow: &MainWindow{},
 		}
 		webView2Loader, _ := filepath.Split(libname.LibName)
 		webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
@@ -57,12 +52,6 @@ func (m *Application) Run() {
 }
 
 func (m *Application) SetOptions(options Options) {
-	if options.Width == 0 {
-		options.Width = 800
-	}
-	if options.Height == 0 {
-		options.Height = 600
-	}
 	m.mainWindow.options = options
 }
 

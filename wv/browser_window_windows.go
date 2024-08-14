@@ -26,7 +26,7 @@ import (
 	"runtime"
 )
 
-func (m *BrowserWindow) windowCreate() {
+func (m *BrowserWindow) platformCreate() {
 	if m.options.Windows.ICON == nil {
 		lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
 	} else {

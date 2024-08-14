@@ -17,7 +17,7 @@ import (
 	"github.com/energye/energy/v3/internal/ipc"
 )
 
-func (m *BrowserWindow) windowCreate() {
+func (m *BrowserWindow) platformCreate() {
 
 }
 
