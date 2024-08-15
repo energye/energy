@@ -305,6 +305,7 @@
         #shouldDrag = false;
         #cssDragProperty = "-webkit-app-region";
         #cssDragValue = "drag";
+        #inited = false;
 
         constructor() {
         }
@@ -324,6 +325,10 @@
 
 
         setup() {
+            if (this.#inited) {
+                return
+            }
+            this.#inited = true;
             let that = this;
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
