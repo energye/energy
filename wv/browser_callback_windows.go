@@ -24,6 +24,7 @@ import (
 type TNotifyEvent = wv.TNotifyEvent
 type TOnWebMessageReceivedEvent = wv.TOnWebMessageReceivedEvent
 type TOnNavigationStartingEvent = wv.TOnNavigationStartingEvent
+type TOnContentLoadingEvent = wv.TOnContentLoadingEvent
 type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
 type TOnContextMenuRequestedEvent = wv.TOnContextMenuRequestedEvent
 
@@ -92,12 +93,12 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 		m.windowParent.UpdateSize()
 	})
-	m.browser.SetOnNavigationStarting(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
+	m.browser.SetOnContentLoading(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
 		m.navigationStarting()
 		jsCode := `window.energy.drag().setup();`
 		m.browser.ExecuteScript(jsCode, 0)
-		if m.onNavigationStarting != nil {
-			m.onNavigationStarting(sender, webview, args)
+		if m.onContentLoading != nil {
+			m.onContentLoading(sender, webview, args)
 		}
 	})
 	// context menu

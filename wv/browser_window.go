@@ -34,15 +34,8 @@ type IBrowserWindow interface {
 	//  runs when the `ICoreWebView2Settings.IsWebMessageEnabled`
 	//	setting is set and the top-level document of the WebView runs `window.chrome.webview.postMessage`.
 	SetOnBrowserMessageReceived(fn TOnWebMessageReceivedEvent)
-	// SetOnNavigationStarting
-	//  runs when the WebView main frame is requesting
-	//  permission to navigate to a different URI. Redirects trigger this
-	//  operation as well, and the navigation id is the same as the original
-	//  one. Navigations will be blocked until all `NavigationStarting` event handlers
-	SetOnNavigationStarting(fn TOnNavigationStartingEvent)
+	SetOnContentLoadingEvent(fn TOnContentLoadingEvent)
 	SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx)
-	SetOnWindowCreate(fn OnCreate)
-	SetOnWindowAfterCreate(fn OnCreate)
 	SetOnShow(fn TNotifyEvent)
 	SetOnResize(fn TNotifyEvent)
 	SetOnClose(fn lcl.TCloseEvent)
@@ -71,12 +64,11 @@ type BrowserWindow struct {
 	onAfterCreated              TNotifyEvent
 	onWebMessageReceived        TOnWebMessageReceivedEvent
 	onNavigationStarting        TOnNavigationStartingEvent
+	onContentLoading            TOnContentLoadingEvent
 	onContextMenuRequested      TOnContextMenuRequestedEvent
 	onNewWindowRequested        TOnNewWindowRequestedEventEx
 	onShow                      TNotifyEvent
 	onDestroy                   TNotifyEvent
-	onWindowCreate              OnCreate
-	onWindowAfterCreate         OnCreate
 	onClose                     lcl.TCloseEvent
 	ipcMessageReceivedDelegate  ipc.IMessageReceivedDelegate
 	oldWndPrc                   uintptr
@@ -131,18 +123,12 @@ func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	ipc.RegisterProcessMessage(m)
 	// BrowserWindow Default preset function implementation
 	m.defaultEvent()
-	if m.onWindowCreate != nil {
-		m.onWindowCreate(m)
-	}
 }
 
 func (m *BrowserWindow) FormAfterCreate(sender lcl.IObject) {
 	// add browser window in globalBrowserWindows
 	addBrowserWindow(m)
 	m._HookWndProcMessage()
-	if m.onWindowAfterCreate != nil {
-		m.onWindowAfterCreate(m)
-	}
 	m.afterCreate()
 }
 
@@ -247,16 +233,12 @@ func (m *BrowserWindow) SetOnNavigationStarting(fn TOnNavigationStartingEvent) {
 	m.onNavigationStarting = fn
 }
 
+func (m *BrowserWindow) SetOnContentLoadingEvent(fn TOnContentLoadingEvent) {
+	m.onContentLoading = fn
+}
+
 func (m *BrowserWindow) SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx) {
 	m.onNewWindowRequested = fn
-}
-
-func (m *BrowserWindow) SetOnWindowCreate(fn OnCreate) {
-	m.onWindowCreate = fn
-}
-
-func (m *BrowserWindow) SetOnWindowAfterCreate(fn OnCreate) {
-	m.onWindowAfterCreate = fn
 }
 
 func (m *BrowserWindow) Minimize() {
