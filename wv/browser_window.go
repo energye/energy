@@ -71,10 +71,10 @@ type BrowserWindow struct {
 	onDestroy                   TNotifyEvent
 	onClose                     lcl.TCloseEvent
 	ipcMessageReceivedDelegate  ipc.IMessageReceivedDelegate
-	oldWndPrc                   uintptr
 	previousWindowPlacement     types.TRect
 	windowsState                types.TWindowState
-	preWindowStyle              uintptr
+	oldWndPrc                   uintptr
+	oldWindowStyle              uintptr
 }
 
 // global browser id

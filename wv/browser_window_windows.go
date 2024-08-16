@@ -144,7 +144,7 @@ func (m *BrowserWindow) FullScreen() {
 		monitorRect := m.Monitor().BoundsRect()
 		if !m.options.Frameless {
 			// save current window style, use ExitFullScreen
-			m.preWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
+			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
 			m.borderFrameless()
 			m.SetWindowState(types.WsFullScreen)
 		}
@@ -156,7 +156,7 @@ func (m *BrowserWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			if !m.options.Frameless {
-				win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.preWindowStyle)
+				win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.oldWindowStyle)
 			}
 			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
