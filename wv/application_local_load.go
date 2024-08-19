@@ -14,10 +14,8 @@ import "github.com/energye/lcl/emfs"
 
 // LocalLoad
 //
-//	本地&内置资源加载配置
-//	然后使用 Build() 函数构建对象
+//	Respond directly by loading local or built-in resources
 type LocalLoad struct {
-	Enable bool   // 设置是否启用本地资源缓存到内存, 默认true: 启用, 禁用时需要调用Disable函数
 	Scheme string // 自定义协议, 不建议使用 HTTP、HTTPS、FILE、FTP、ABOUT和DATA 默认: fs
 	Domain string // 自定义域, 格式: xxx | xxx.xx | xxx.xxx.xxx， example, example.com, 默认: energy
 	// 资源根目录, fs为空时: 本地目录(默认当前程序执行目录), fs不为空时: 默认值 resources, 使用内置加载

@@ -27,6 +27,7 @@ type TOnNavigationStartingEvent = wv.TOnNavigationStartingEvent
 type TOnContentLoadingEvent = wv.TOnContentLoadingEvent
 type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
 type TOnContextMenuRequestedEvent = wv.TOnContextMenuRequestedEvent
+type TOnWebResourceRequestedEvent func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) bool
 
 type NewWindowCallback struct {
 	args    wv.ICoreWebView2NewWindowRequestedEventArgs
@@ -168,6 +169,9 @@ func (m *BrowserWindow) defaultEvent() {
 				callback.NewWindow(Options{}).Show()
 			})
 		}
+	})
+	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
+
 	})
 	// window, OnShow
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
