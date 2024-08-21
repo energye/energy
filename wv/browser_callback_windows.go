@@ -65,6 +65,9 @@ func (m *NewWindowCallback) SetHandled(v bool) {
 //	1. Use Browser() to obtain the browser object and remove and override the current specified event
 //	2. Specify the event function in the current window and retain the default event behavior
 func (m *BrowserWindow) defaultEvent() {
+	if m.options.LocalLoad != nil {
+		localLoadStreamCreate()
+	}
 	// ipc message received
 	m.ipcMessageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	// webview2 AfterCreated
@@ -170,9 +173,17 @@ func (m *BrowserWindow) defaultEvent() {
 			})
 		}
 	})
-	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 
+	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
+		var flag bool
+		if m.onWebResourceRequestedEvent != nil {
+			flag = m.onWebResourceRequestedEvent(sender, webview, args)
+		}
+		if !flag && localLoadRes != nil {
+			localLoadRes.resourceRequested(m.browser, webview, args)
+		}
 	})
+
 	// window, OnShow
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {

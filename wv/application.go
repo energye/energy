@@ -53,6 +53,7 @@ func (m *Application) Run() {
 
 func (m *Application) SetOptions(options Options) {
 	m.mainWindow.options = options
+	localLoadResourceInit(options.LocalLoad)
 }
 
 func (m *Application) SetOnWindowCreate(fn OnCreate) {
@@ -72,10 +73,12 @@ func (m *Application) defaultEvent() {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}
-		*customSchemes = append(*customSchemes, &wv.TWVCustomSchemeInfo{
-			SchemeName:            "fs",
-			TreatAsSecure:         true,
-			HasAuthorityComponent: true,
-		})
+		if localLoadRes != nil {
+			*customSchemes = append(*customSchemes, &wv.TWVCustomSchemeInfo{
+				SchemeName:            localLoadRes.Scheme,
+				TreatAsSecure:         true,
+				HasAuthorityComponent: true,
+			})
+		}
 	})
 }

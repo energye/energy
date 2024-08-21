@@ -36,6 +36,7 @@ type IBrowserWindow interface {
 	SetOnBrowserMessageReceived(fn TOnWebMessageReceivedEvent)
 	SetOnContentLoadingEvent(fn TOnContentLoadingEvent)
 	SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx)
+	SetOnWebResourceRequestedEvent(fn TOnWebResourceRequestedEvent)
 	SetOnShow(fn TNotifyEvent)
 	SetOnResize(fn TNotifyEvent)
 	SetOnClose(fn lcl.TCloseEvent)
@@ -67,6 +68,7 @@ type BrowserWindow struct {
 	onContentLoading            TOnContentLoadingEvent
 	onContextMenuRequested      TOnContextMenuRequestedEvent
 	onNewWindowRequested        TOnNewWindowRequestedEventEx
+	onWebResourceRequestedEvent TOnWebResourceRequestedEvent
 	onShow                      TNotifyEvent
 	onDestroy                   TNotifyEvent
 	onClose                     lcl.TCloseEvent
@@ -239,6 +241,10 @@ func (m *BrowserWindow) SetOnContentLoadingEvent(fn TOnContentLoadingEvent) {
 
 func (m *BrowserWindow) SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEventEx) {
 	m.onNewWindowRequested = fn
+}
+
+func (m *BrowserWindow) SetOnWebResourceRequestedEvent(fn TOnWebResourceRequestedEvent) {
+	m.onWebResourceRequestedEvent = fn
 }
 
 func (m *BrowserWindow) Minimize() {

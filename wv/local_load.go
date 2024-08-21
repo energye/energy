@@ -10,7 +10,16 @@
 
 package wv
 
-import "github.com/energye/lcl/emfs"
+import (
+	"github.com/energye/lcl/emfs"
+	"github.com/energye/lcl/tools/exec"
+)
+
+const (
+	localProto  = "fs"          // 默认本地资源加载协议
+	localDomain = "energy"      // 默认本地资源加载域
+	localHome   = "/index.html" //
+)
 
 // LocalLoad
 //
@@ -24,4 +33,35 @@ type LocalLoad struct {
 	FS         emfs.IEmbedFS // 内置加载资源对象, 不为nil时使用内置加载，默认: nil
 	Proxy      IXHRProxy     // 数据请求代理, 在浏览器发送xhr请求时可通过该配置转发, 你可自定义实现该 IXHRProxy 接口
 	Home       string        // 默认首页HTML文件名: /index.html , 默认: /index.html
+	exePath    string
+}
+
+func (m *LocalLoad) defaultInit() {
+	if m.Domain == "" {
+		m.Domain = localDomain
+	}
+	if m.Scheme == "" {
+		m.Scheme = localProto
+	}
+	if m.Home == "" {
+		m.Home = localHome
+	} else if m.Home[0] != '/' {
+		m.Home = "/" + m.Home
+	}
+	m.exePath = exec.Path
+	// 默认的资源目录
+	if m.ResRootDir == "" {
+		if m.FS != nil && m.ResRootDir == "" {
+			// embed exe
+			m.ResRootDir = "resources"
+		} else {
+			// local disk, exe current dir
+			m.ResRootDir = exec.Path
+		}
+	}
+	if m.Proxy != nil {
+		if proxy, ok := m.Proxy.(*XHRProxy); ok {
+			proxy.init()
+		}
+	}
 }
