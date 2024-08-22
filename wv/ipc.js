@@ -323,7 +323,6 @@
         }
 
         setup() {
-            console.log("setup");
             let that = this;
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
@@ -426,5 +425,4 @@
     window.energy = new Energy();
     window.ipc = new IPC();
     //window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
-    console.log("ipc.js");
 })();

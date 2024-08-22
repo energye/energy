@@ -14,7 +14,6 @@
 package wv
 
 import (
-	"fmt"
 	"github.com/energye/energy/v3/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -23,16 +22,6 @@ import (
 	"net/url"
 	"path/filepath"
 )
-
-var (
-	assetsStream        lcl.IMemoryStream
-	assetsStreamAdapter lcl.IStreamAdapter
-)
-
-func localLoadStreamCreate() {
-	assetsStream = lcl.NewMemoryStream()
-	assetsStreamAdapter = lcl.NewStreamAdapter(assetsStream, types.SoOwned)
-}
 
 func (m *LocalLoadResource) read(path string) ([]byte, error) {
 	if localLoadRes.FS == nil {
@@ -50,47 +39,46 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 
 func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 	// 自定义协议资源加载
-	args = wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
-	request := wv.NewCoreWebView2WebResourceRequestRef(args.Request())
-	// 需要释放掉
-	defer func() {
-		request.Free()
-		args.Free()
-	}()
-	// 重置 stream
-	assetsStream.SetPosition(0)
-	assetsStream.Clear()
-	fmt.Println("回调函数 WVBrowser => SetOnWebResourceRequested")
-	fmt.Println("回调函数 WVBrowser => TempURI:", request.URI(), request.Method())
+	tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
+	request := tempArgs.Request()
+	tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
 	var (
-		statusCode   int32 = 200
-		reasonPhrase       = "OK"
-		headers            = ""
+		statusCode          int32 = 200
+		reasonPhrase              = "OK"
+		headers                   = ""
+		data                []byte
+		response            wv.ICoreWebView2WebResourceResponse
+		assetsStream        lcl.IMemoryStream
+		assetsStreamAdapter lcl.IStreamAdapter
 	)
-	reqUrl, err := url.Parse(request.URI())
-	if err != nil {
-		fmt.Println("加载本地资源-error:", err)
-		statusCode = 404
-		reasonPhrase = "not found"
-		headers = "Content-Type: application/json"
-	} else {
-		data, err := m.read(reqUrl.Path)
-		if err != nil {
-			fmt.Println("加载本地资源-error:", err)
-			statusCode = 404
-			reasonPhrase = "not found"
-			headers = "Content-Type: application/json"
-		} else {
+	reqUrl, err := url.Parse(tempRequest.URI())
+	if err == nil {
+		data, err = m.read(reqUrl.Path)
+		if err == nil {
+			assetsStream = lcl.NewMemoryStream()
+			assetsStreamAdapter = lcl.NewStreamAdapter(assetsStream, types.SoOwned)
+			assetsStream.Write(data)
+			assetsStream.SetPosition(0)
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
-			assetsStream.LoadFromBytes(data)
+			environment := browser.CoreWebView2Environment()
+			environment.CreateWebResourceResponse(assetsStreamAdapter, statusCode, reasonPhrase, headers, &response)
 		}
 	}
-	fmt.Println("回调函数 WVBrowser => stream", assetsStream.Size())
-	fmt.Println("回调函数 WVBrowser => adapter:", assetsStreamAdapter.StreamOwnership(), assetsStreamAdapter.Stream().Size())
+	if err != nil {
+		statusCode = 404
+		reasonPhrase = "Not Found"
+		environment := browser.CoreWebView2Environment()
+		environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
+	}
+	tempArgs.SetResponse(response)
 
-	var response wv.ICoreWebView2WebResourceResponse
-	environment := browser.CoreWebView2Environment()
-	fmt.Println("回调函数 WVBrowser => Initialized():", environment.Initialized(), environment.BrowserVersionInfo())
-	environment.CreateWebResourceResponse(assetsStreamAdapter, statusCode, reasonPhrase, headers, &response)
-	args.SetResponse(response)
+	tempRequest.FreeAndNil()
+	tempArgs.FreeAndNil()
+	response.Nil()
+	if assetsStreamAdapter != nil {
+		assetsStreamAdapter.Nil()
+	}
+	if assetsStream != nil {
+		assetsStream.Nil()
+	}
 }
