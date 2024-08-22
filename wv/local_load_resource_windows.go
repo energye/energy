@@ -38,7 +38,7 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 }
 
 func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
-	// 自定义协议资源加载
+	// temp object
 	tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
 	request := tempArgs.Request()
 	tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
@@ -51,8 +51,10 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 		assetsStream        lcl.IMemoryStream
 		assetsStreamAdapter lcl.IStreamAdapter
 	)
+	// request url, get file path
 	reqUrl, err := url.Parse(tempRequest.URI())
 	if err == nil {
+		// read resource
 		data, err = m.read(reqUrl.Path)
 		if err == nil {
 			assetsStream = lcl.NewMemoryStream()
@@ -61,24 +63,32 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 			assetsStream.SetPosition(0)
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
 			environment := browser.CoreWebView2Environment()
+			// success response resource
 			environment.CreateWebResourceResponse(assetsStreamAdapter, statusCode, reasonPhrase, headers, &response)
+			environment.Nil()
 		}
 	}
+	// No matter what error, return 404
 	if err != nil {
 		statusCode = 404
 		reasonPhrase = "Not Found"
 		environment := browser.CoreWebView2Environment()
+		// empty response resource
 		environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
+		environment.Nil()
 	}
 	tempArgs.SetResponse(response)
 
 	tempRequest.FreeAndNil()
 	tempArgs.FreeAndNil()
 	response.Nil()
+	request.Nil()
 	if assetsStreamAdapter != nil {
 		assetsStreamAdapter.Nil()
 	}
 	if assetsStream != nil {
 		assetsStream.Nil()
 	}
+	webView.Nil()
+	args.Nil()
 }
