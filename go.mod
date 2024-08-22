@@ -1,6 +1,6 @@
 module github.com/energye/energy/v3
 
-go 1.16
+go 1.20
 
 require (
 	atomicgo.dev/cursor v0.2.0
