@@ -95,6 +95,7 @@ func (m *BrowserWindow) defaultEvent() {
 		m.windowParent.UpdateSize()
 	})
 	m.browser.SetOnContentLoading(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
+		return
 		m.navigationStarting()
 		jsCode := `window.energy.drag().setup();`
 		m.browser.ExecuteScript(jsCode, 0)

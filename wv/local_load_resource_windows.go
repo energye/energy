@@ -60,7 +60,6 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 			assetsStream = lcl.NewMemoryStream()
 			assetsStreamAdapter = lcl.NewStreamAdapter(assetsStream, types.SoOwned)
 			assetsStream.Write(data)
-			assetsStream.SetPosition(0)
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
 			environment := browser.CoreWebView2Environment()
 			// success response resource
@@ -89,6 +88,4 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 	if assetsStream != nil {
 		assetsStream.Nil()
 	}
-	webView.Nil()
-	args.Nil()
 }
