@@ -37,34 +37,50 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 	}
 }
 
+// released after the resource processing is complete
+func (m *LocalLoadResource) releaseStream(path string) {
+	if stream, ok := m.streams[path]; ok {
+		stream.Free()
+		delete(m.streams, path)
+	}
+}
+
+// current resource is set temp cache
+func (m *LocalLoadResource) setTempStream(path string, stream lcl.IMemoryStream) {
+	m.streams[path] = stream
+}
+
 func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 	// temp object
 	tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
 	request := tempArgs.Request()
 	tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
 	var (
-		statusCode          int32 = 200
-		reasonPhrase              = "OK"
-		headers                   = ""
-		data                []byte
-		response            wv.ICoreWebView2WebResourceResponse
-		assetsStream        lcl.IMemoryStream
-		assetsStreamAdapter lcl.IStreamAdapter
+		statusCode    int32 = 200
+		reasonPhrase        = "OK"
+		headers             = ""
+		data          []byte
+		response      wv.ICoreWebView2WebResourceResponse
+		stream        lcl.IMemoryStream
+		streamAdapter lcl.IStreamAdapter
 	)
+	//m.freePreviousResourceStream()
 	// request url, get file path
 	reqUrl, err := url.Parse(tempRequest.URI())
 	if err == nil {
 		// read resource
 		data, err = m.read(reqUrl.Path)
 		if err == nil {
-			assetsStream = lcl.NewMemoryStream()
-			assetsStreamAdapter = lcl.NewStreamAdapter(assetsStream, types.SoOwned)
-			assetsStream.Write(data)
+			stream = lcl.NewMemoryStream()
+			streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
+			stream.Write(data)
+			// current resource is set temp cache
+			// released after the resource processing is complete
+			m.setTempStream(reqUrl.Path, stream)
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
 			environment := browser.CoreWebView2Environment()
 			// success response resource
-			environment.CreateWebResourceResponse(assetsStreamAdapter, statusCode, reasonPhrase, headers, &response)
-			environment.Nil()
+			environment.CreateWebResourceResponse(streamAdapter, statusCode, reasonPhrase, headers, &response)
 		}
 	}
 	// No matter what error, return 404
@@ -74,18 +90,16 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 		environment := browser.CoreWebView2Environment()
 		// empty response resource
 		environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
-		environment.Nil()
 	}
 	tempArgs.SetResponse(response)
+	// free
+	tempRequest.Free()
+	tempArgs.Free()
 
-	tempRequest.FreeAndNil()
-	tempArgs.FreeAndNil()
-	response.Nil()
-	request.Nil()
-	if assetsStreamAdapter != nil {
-		assetsStreamAdapter.Nil()
+	if response != nil {
+		response.Nil()
 	}
-	if assetsStream != nil {
-		assetsStream.Nil()
+	if streamAdapter != nil {
+		streamAdapter.Nil()
 	}
 }

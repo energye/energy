@@ -10,12 +10,15 @@
 
 package wv
 
+import "github.com/energye/lcl/lcl"
+
 // 本地加载资源
 var localLoadRes *LocalLoadResource
 
 // LocalLoadResource
 type LocalLoadResource struct {
 	*LocalLoad
+	streams map[string]lcl.IMemoryStream
 }
 
 // 初始化本地加载配置对象
@@ -23,6 +26,7 @@ func localLoadResourceInit(ll *LocalLoad) {
 	if ll != nil {
 		localLoadRes = &LocalLoadResource{
 			LocalLoad: ll,
+			streams:   make(map[string]lcl.IMemoryStream),
 		}
 		localLoadRes.LocalLoad.defaultInit()
 	}

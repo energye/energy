@@ -19,6 +19,7 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"github.com/energye/wv/wv"
+	"net/url"
 )
 
 type TNotifyEvent = wv.TNotifyEvent
@@ -95,7 +96,6 @@ func (m *BrowserWindow) defaultEvent() {
 		m.windowParent.UpdateSize()
 	})
 	m.browser.SetOnContentLoading(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
-		return
 		m.navigationStarting()
 		jsCode := `window.energy.drag().setup();`
 		m.browser.ExecuteScript(jsCode, 0)
@@ -171,17 +171,28 @@ func (m *BrowserWindow) defaultEvent() {
 			})
 		}
 	})
-
+	m.browser.SetOnWebResourceResponseReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
+		if localLoadRes != nil {
+			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
+			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
+			if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
+				localLoadRes.releaseStream(reqUrl.Path)
+			}
+			tempRequest.Free()
+			tempArgs.Free()
+		}
+	})
 	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 		var flag bool
 		if m.onWebResourceRequestedEvent != nil {
 			flag = m.onWebResourceRequestedEvent(sender, webview, args)
 		}
 		if !flag && localLoadRes != nil {
-			localLoadRes.resourceRequested(m.browser, webview, args)
+			lcl.RunOnMainThreadSync(func() {
+				localLoadRes.resourceRequested(m.browser, webview, args)
+			})
 		}
 	})
-
 	// window, OnShow
 	m.TForm.SetOnShow(func(sender lcl.IObject) {
 		if application.InitializationError() {
