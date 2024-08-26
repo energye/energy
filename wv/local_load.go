@@ -16,9 +16,9 @@ import (
 )
 
 const (
-	localProto  = "fs"          // 默认本地资源加载协议
-	localDomain = "energy"      // 默认本地资源加载域
-	localHome   = "/index.html" //
+	localProto  = "fs"
+	localDomain = "energy"
+	localHome   = "/index.html"
 )
 
 // LocalLoad
