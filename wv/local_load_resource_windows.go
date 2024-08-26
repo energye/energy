@@ -14,6 +14,7 @@
 package wv
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -40,7 +41,7 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 // released after the resource processing is complete
 func (m *LocalLoadResource) releaseStream(path string) {
 	if stream, ok := m.streams[path]; ok {
-		stream.Free()
+		stream.FreeAndNil()
 		delete(m.streams, path)
 	}
 }
@@ -70,6 +71,7 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 	if err == nil {
 		// read resource
 		data, err = m.read(reqUrl.Path)
+		fmt.Println("data-len:", len(data), err, reqUrl.Path)
 		if err == nil {
 			stream = lcl.NewMemoryStream()
 			streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
@@ -82,6 +84,7 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 			// success response resource
 			environment.CreateWebResourceResponse(streamAdapter, statusCode, reasonPhrase, headers, &response)
 		}
+
 	}
 	// No matter what error, return 404
 	if err != nil {
@@ -93,8 +96,8 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 	}
 	tempArgs.SetResponse(response)
 	// free
-	tempRequest.Free()
-	tempArgs.Free()
+	tempRequest.FreeAndNil()
+	tempArgs.FreeAndNil()
 
 	if response != nil {
 		response.Nil()
