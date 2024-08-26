@@ -55,29 +55,30 @@ type IBrowserWindow interface {
 //	energy webview2 window, It consists of TForm and WVBrowser
 type BrowserWindow struct {
 	lcl.TForm
-	browserId                   uint32
-	isClosing                   bool
-	windowParent                wv.IWVWindowParent
-	browser                     wv.IWVBrowser
-	options                     Options
-	newWindowRequestedEventArgs wv.ICoreWebView2NewWindowRequestedEventArgs
-	deferral                    wv.ICoreWebView2Deferral
-	onAfterCreated              TNotifyEvent
-	onWebMessageReceived        TOnWebMessageReceivedEvent
-	onNavigationStarting        TOnNavigationStartingEvent
-	onContentLoading            TOnContentLoadingEvent
-	onContextMenuRequested      TOnContextMenuRequestedEvent
-	onNewWindowRequested        TOnNewWindowRequestedEventEx
-	onWebResourceRequestedEvent TOnWebResourceRequestedEvent
-	onShow                      TNotifyEvent
-	onDestroy                   TNotifyEvent
-	onClose                     lcl.TCloseEvent
-	ipcMessageReceivedDelegate  ipc.IMessageReceivedDelegate
-	previousWindowPlacement     types.TRect
-	windowsState                types.TWindowState
-	oldWndPrc                   uintptr
-	oldWindowStyle              uintptr
-	llr                         *LocalLoadResource
+	browserId                          uint32
+	isClosing                          bool
+	windowParent                       wv.IWVWindowParent
+	browser                            wv.IWVBrowser
+	options                            Options
+	newWindowRequestedEventArgs        wv.ICoreWebView2NewWindowRequestedEventArgs
+	deferral                           wv.ICoreWebView2Deferral
+	onAfterCreated                     TNotifyEvent
+	onWebMessageReceived               TOnWebMessageReceivedEvent
+	onNavigationStarting               TOnNavigationStartingEvent
+	onContentLoading                   TOnContentLoadingEvent
+	onContextMenuRequested             TOnContextMenuRequestedEvent
+	onNewWindowRequested               TOnNewWindowRequestedEventEx
+	onWebResourceRequestedEvent        TOnWebResourceRequestedEvent
+	onWebResourceResponseReceivedEvent TOnWebResourceResponseReceivedEvent
+	onShow                             TNotifyEvent
+	onDestroy                          TNotifyEvent
+	onClose                            lcl.TCloseEvent
+	ipcMessageReceivedDelegate         ipc.IMessageReceivedDelegate
+	previousWindowPlacement            types.TRect
+	windowsState                       types.TWindowState
+	oldWndPrc                          uintptr
+	oldWindowStyle                     uintptr
+	llr                                *LocalLoadResource
 }
 
 // global browser id
@@ -248,6 +249,10 @@ func (m *BrowserWindow) SetOnNewWindowRequestedEvent(fn TOnNewWindowRequestedEve
 
 func (m *BrowserWindow) SetOnWebResourceRequestedEvent(fn TOnWebResourceRequestedEvent) {
 	m.onWebResourceRequestedEvent = fn
+}
+
+func (m *BrowserWindow) SetOnWebResourceResponseReceivedEvent(fn TOnWebResourceResponseReceivedEvent) {
+	m.onWebResourceResponseReceivedEvent = fn
 }
 
 func (m *BrowserWindow) Minimize() {

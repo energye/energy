@@ -69,6 +69,7 @@ func (m *BrowserWindow) navigationStarting() {
 		envJS(string(envJSON))
 	}
 	m.browser.ExecuteScript(jsCode.String(), 0)
+	m.browser.ExecuteScript(`window.energy.drag().setup();`, 0)
 }
 
 func (m *BrowserWindow) Resize(ht string) {

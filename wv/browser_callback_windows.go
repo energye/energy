@@ -29,6 +29,7 @@ type TOnContentLoadingEvent = wv.TOnContentLoadingEvent
 type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
 type TOnContextMenuRequestedEvent = wv.TOnContextMenuRequestedEvent
 type TOnWebResourceRequestedEvent func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) bool
+type TOnWebResourceResponseReceivedEvent func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) bool
 
 type NewWindowCallback struct {
 	args    wv.ICoreWebView2NewWindowRequestedEventArgs
@@ -68,10 +69,9 @@ func (m *NewWindowCallback) SetHandled(v bool) {
 func (m *BrowserWindow) defaultEvent() {
 	// ipc message received
 	m.ipcMessageReceivedDelegate = ipc.NewMessageReceivedDelegate()
-	// webview2 AfterCreated
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
-		if m.llr.LocalLoad != nil {
+		if m.llr != nil {
 			m.browser.AddWebResourceRequestedFilter(m.llr.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
@@ -97,13 +97,10 @@ func (m *BrowserWindow) defaultEvent() {
 	})
 	m.browser.SetOnContentLoading(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
 		m.navigationStarting()
-		jsCode := `window.energy.drag().setup();`
-		m.browser.ExecuteScript(jsCode, 0)
 		if m.onContentLoading != nil {
 			m.onContentLoading(sender, webview, args)
 		}
 	})
-	// context menu
 	m.browser.SetOnContextMenuRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
 		if m.options.DisableContextMenu {
 			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
@@ -172,7 +169,11 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.browser.SetOnWebResourceResponseReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
-		if m.llr != nil {
+		var handle bool
+		if m.onWebResourceResponseReceivedEvent != nil {
+			handle = m.onWebResourceResponseReceivedEvent(sender, webview, args)
+		}
+		if !handle && m.llr != nil {
 			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
 			defer tempArgs.Free()
 			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
@@ -183,11 +184,11 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
-		var flag bool
+		var handle bool
 		if m.onWebResourceRequestedEvent != nil {
-			flag = m.onWebResourceRequestedEvent(sender, webview, args)
+			handle = m.onWebResourceRequestedEvent(sender, webview, args)
 		}
-		if !flag && m.llr != nil {
+		if !handle && m.llr != nil {
 			lcl.RunOnMainThreadSync(func() {
 				m.llr.resourceRequested(m.browser, webview, args)
 			})
