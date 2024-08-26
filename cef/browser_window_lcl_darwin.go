@@ -14,8 +14,8 @@
 package cef
 
 /*
-#cgo CFLAGS: -mmacosx-version-min=10.10 -x objective-c
-#cgo LDFLAGS: -mmacosx-version-min=10.10 -framework Cocoa
+#cgo CFLAGS: -mmacosx-version-min=10.12 -x objective-c
+#cgo LDFLAGS: -mmacosx-version-min=10.12 -framework Cocoa
 
 #include "Cocoa/Cocoa.h"
 #include "browser_window_drag_darwin.h"

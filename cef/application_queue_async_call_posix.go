@@ -13,8 +13,8 @@
 
 package cef
 
-// #cgo darwin CFLAGS: -mmacosx-version-min=10.10
-// #cgo darwin LDFLAGS: -mmacosx-version-min=10.10
+// #cgo darwin CFLAGS: -mmacosx-version-min=10.12
+// #cgo darwin LDFLAGS: -mmacosx-version-min=10.12
 //
 // extern void* doApplicationQueueAsyncCallEventProc(void* f);
 // static void* doGetApplicationQueueAsyncCallEventAddr() {
