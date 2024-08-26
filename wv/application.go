@@ -13,7 +13,6 @@ package wv
 import (
 	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/tools/exec"
 	"github.com/energye/wv/wv"
 	"path/filepath"
 )
@@ -25,6 +24,7 @@ type Application struct {
 	wv.IWVLoader
 	mainWindow         *MainWindow
 	onGetCustomSchemes wv.TOnLoaderGetCustomSchemesEvent
+	localLoad          *LocalLoad
 }
 
 func NewApplication() *Application {
@@ -35,7 +35,6 @@ func NewApplication() *Application {
 		}
 		webView2Loader, _ := filepath.Split(libname.LibName)
 		webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
-		application.SetUserDataFolder(filepath.Join(exec.CurrentDir, "EnergyCache"))
 		application.SetLoaderDllPath(webView2Loader)
 		application.defaultEvent()
 	}
@@ -53,7 +52,10 @@ func (m *Application) Run() {
 
 func (m *Application) SetOptions(options Options) {
 	m.mainWindow.options = options
-	localLoadResourceInit(options.LocalLoad)
+}
+
+func (m *Application) SetLocalLoad(localLoad LocalLoad) {
+	m.localLoad = &localLoad
 }
 
 func (m *Application) SetOnWindowCreate(fn OnCreate) {
@@ -73,9 +75,9 @@ func (m *Application) defaultEvent() {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}
-		if localLoadRes != nil {
+		if m.localLoad != nil {
 			*customSchemes = append(*customSchemes, &wv.TWVCustomSchemeInfo{
-				SchemeName:            localLoadRes.Scheme,
+				SchemeName:            m.localLoad.Scheme,
 				TreatAsSecure:         true,
 				HasAuthorityComponent: true,
 			})

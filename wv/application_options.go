@@ -16,7 +16,6 @@ import "github.com/energye/lcl/types"
 type Options struct {
 	Caption                    string                `json:"-"`                          // window title
 	DefaultURL                 string                `json:"-"`                          // load url in window
-	LocalLoad                  *LocalLoad            `json:"-"`                          // Load resources locally without network requests
 	X                          int32                 `json:"x"`                          // initial X position of the window.
 	Y                          int32                 `json:"y"`                          // initial Y position of the window.
 	Width                      int32                 `json:"width"`                      // initial width of the window

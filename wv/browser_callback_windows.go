@@ -71,8 +71,8 @@ func (m *BrowserWindow) defaultEvent() {
 	// webview2 AfterCreated
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
-		if m.options.LocalLoad != nil {
-			m.browser.AddWebResourceRequestedFilter(m.options.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
+		if m.llr.LocalLoad != nil {
+			m.browser.AddWebResourceRequestedFilter(m.llr.LocalLoad.Scheme+"*", wv.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
 		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
@@ -172,14 +172,14 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	m.browser.SetOnWebResourceResponseReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
-		if localLoadRes != nil {
+		if m.llr != nil {
 			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
+			defer tempArgs.Free()
 			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
+			defer tempRequest.Free()
 			if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
-				localLoadRes.releaseStream(reqUrl.Path)
+				m.llr.releaseStream(reqUrl.Path)
 			}
-			tempRequest.Free()
-			tempArgs.Free()
 		}
 	})
 	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
@@ -187,9 +187,9 @@ func (m *BrowserWindow) defaultEvent() {
 		if m.onWebResourceRequestedEvent != nil {
 			flag = m.onWebResourceRequestedEvent(sender, webview, args)
 		}
-		if !flag && localLoadRes != nil {
+		if !flag && m.llr != nil {
 			lcl.RunOnMainThreadSync(func() {
-				localLoadRes.resourceRequested(m.browser, webview, args)
+				m.llr.resourceRequested(m.browser, webview, args)
 			})
 		}
 	})

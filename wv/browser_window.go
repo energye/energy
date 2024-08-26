@@ -77,6 +77,7 @@ type BrowserWindow struct {
 	windowsState                types.TWindowState
 	oldWndPrc                   uintptr
 	oldWindowStyle              uintptr
+	llr                         *LocalLoadResource
 }
 
 // global browser id
@@ -94,6 +95,8 @@ func getBrowserID() uint32 {
 func (m *BrowserWindow) FormCreate(sender lcl.IObject) {
 	m.browserId = getBrowserID()
 	m.defaultOptions()
+	// local load resource
+	m.llr = newLocalLoadResource(application.localLoad)
 	// setting and init
 	m.SetCaption(m.options.Caption)
 	m.SetBounds(m.options.X, m.options.Y, m.options.Width, m.options.Height)

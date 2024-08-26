@@ -12,22 +12,21 @@ package wv
 
 import "github.com/energye/lcl/lcl"
 
-// 本地加载资源
-var localLoadRes *LocalLoadResource
-
-// LocalLoadResource
+// LocalLoadResource Local or built-in resource loading
 type LocalLoadResource struct {
 	*LocalLoad
 	streams map[string]lcl.IMemoryStream
 }
 
-// 初始化本地加载配置对象
-func localLoadResourceInit(ll *LocalLoad) {
+func newLocalLoadResource(ll *LocalLoad) *LocalLoadResource {
 	if ll != nil {
-		localLoadRes = &LocalLoadResource{
-			LocalLoad: ll,
+		newLocalLoad := *ll
+		ret := &LocalLoadResource{
+			LocalLoad: &newLocalLoad,
 			streams:   make(map[string]lcl.IMemoryStream),
 		}
-		localLoadRes.LocalLoad.defaultInit()
+		ret.LocalLoad.defaultInit()
+		return ret
 	}
+	return nil
 }

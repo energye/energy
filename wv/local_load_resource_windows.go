@@ -25,16 +25,16 @@ import (
 )
 
 func (m *LocalLoadResource) read(path string) ([]byte, error) {
-	if localLoadRes.FS == nil {
+	if m.FS == nil {
 		var rootPath string
-		if localLoadRes.ResRootDir[0] == '@' {
-			rootPath = filepath.Join(localLoadRes.exePath, localLoadRes.ResRootDir[1:])
+		if m.ResRootDir[0] == '@' {
+			rootPath = filepath.Join(m.exePath, m.ResRootDir[1:])
 		} else {
-			rootPath = localLoadRes.ResRootDir
+			rootPath = m.ResRootDir
 		}
 		return ioutil.ReadFile(filepath.Join(rootPath, path))
 	} else {
-		return m.FS.ReadFile(localLoadRes.ResRootDir + path)
+		return m.FS.ReadFile(m.ResRootDir + path)
 	}
 }
 
@@ -54,8 +54,10 @@ func (m *LocalLoadResource) setTempStream(path string, stream lcl.IMemoryStream)
 func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 	// temp object
 	tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
+	defer tempArgs.FreeAndNil()
 	request := tempArgs.Request()
 	tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
+	defer tempRequest.FreeAndNil()
 	var (
 		statusCode    int32 = 200
 		reasonPhrase        = "OK"
@@ -75,6 +77,7 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 		if err == nil {
 			stream = lcl.NewMemoryStream()
 			streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
+			defer streamAdapter.Nil()
 			stream.Write(data)
 			// current resource is set temp cache
 			// released after the resource processing is complete
@@ -95,14 +98,8 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 		environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
 	}
 	tempArgs.SetResponse(response)
-	// free
-	tempRequest.FreeAndNil()
-	tempArgs.FreeAndNil()
 
 	if response != nil {
 		response.Nil()
-	}
-	if streamAdapter != nil {
-		streamAdapter.Nil()
 	}
 }
