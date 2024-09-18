@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
@@ -20,12 +21,11 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"time"
 )
 
 // 下载go并配置安装
-func installGolang(c *command.Config) (string, func()) {
+func installGolang(config *remotecfg.TConfig, c *command.Config) (string, func()) {
 	if !c.Install.IGolang {
 		return "", nil
 	}
@@ -37,31 +37,28 @@ func installGolang(c *command.Config) (string, func()) {
 		"linux":   "tar.gz",
 		"windows": "zip",
 	}
+	golang := config.ModeBaseConfig.DownloadSourceItem.GoLang.Item(0)
 	// 开始下载并安装Go开发环境
-	version := consts.GolangDefaultVersion
+	version := golang.Version
 	gos := runtime.GOOS
 	arch := runtime.GOARCH
 	ext := exts[gos]
 	if !tools.IsExist(s) {
-		term.Section.Println("Directory does not exist. Creating directory.", s)
+		term.Section.Println("Creating directory.", s)
 		if err := os.MkdirAll(s, fs.ModePerm); err != nil {
 			term.Section.Println("Failed to create goroot directory", err.Error())
 			return "", nil
 		}
 	}
 	fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
-	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
+	saveFilePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
-	if !tools.IsExist(savePath) {
-		// Go下载源, 格式只能是 [https://xxx.xxx.xx]/dl/go1.18.10.windows-arm64.zip
-		downloadSource := strings.TrimSpace(c.EnergyCfg.Source.Golang)
-		if downloadSource == "" {
-			downloadSource = consts.GolangDownloadSource
-		}
-		downloadUrl := fmt.Sprintf(consts.GolangDownloadURL, downloadSource, fileName)
+	if !tools.IsExist(saveFilePath) {
+		// Go下载源, 格式只能是 https://xxx.xxx.xx/dl/%s
+		downloadUrl := fmt.Sprintf(golang.Url, fileName)
 		term.Logger.Info("Golang Download URL: " + downloadUrl)
-		term.Logger.Info("Golang Save Path: " + savePath)
-		err = downloadGolang(downloadUrl, savePath, fileName, 0)
+		term.Logger.Info("Golang Save Path: " + saveFilePath)
+		err = downloadGolang(downloadUrl, saveFilePath, fileName, 0)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 		} else {
@@ -74,13 +71,13 @@ func installGolang(c *command.Config) (string, func()) {
 		// 释放文件
 		if consts.IsWindows {
 			//zip
-			if err = ExtractUnZip(savePath, targetPath, true); err != nil {
+			if err = ExtractUnZip(saveFilePath, targetPath, true); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}
 		} else {
 			//tar
-			if err = ExtractUnTar(savePath, targetPath); err != nil {
+			if err = ExtractUnTar(saveFilePath, targetPath); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}

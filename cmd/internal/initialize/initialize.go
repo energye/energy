@@ -11,12 +11,11 @@
 package initialize
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/golcl/tools/command"
@@ -140,20 +139,10 @@ func generaProject(c *command.Config) error {
 		return err
 	}
 	term.Logger.Info("Get latest release number")
-	latest := "latest" // 默认
-	latestVersionJSON, err := tools.HttpRequestGET(consts.LatestVersionURL)
+	latest := "latest"                              // 默认
+	latestVersion, err := remotecfg.LatestVersion() // tools.Get(consts.LatestVersionURL)
 	if err == nil {
-		var latestVersionData map[string]interface{}
-		latestVersionJSON = bytes.TrimPrefix(latestVersionJSON, []byte("\xef\xbb\xbf"))
-		if err := json.Unmarshal(latestVersionJSON, &latestVersionData); err != nil {
-			term.Logger.Error(err.Error())
-		} else {
-			success := latestVersionData["success"] == true
-			if success {
-				data := latestVersionData["data"].(map[string]interface{})
-				latest = fmt.Sprintf("v%v.%v.%v", data["major"], data["minor"], data["revision"])
-			}
-		}
+		latest = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
 	} else {
 		term.Logger.Error(err.Error())
 	}

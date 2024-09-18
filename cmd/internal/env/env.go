@@ -61,10 +61,6 @@ func DevEnvReadUpdate(goroot, cefroot, nsisroot, upxroot, z7zroot string) *comma
 			NSISRoot: nsisroot,
 			UPXRoot:  upxroot,
 			Z7zRoot:  z7zroot,
-			Source: command.DownloadSource{
-				Golang: consts.GolangDownloadSource,
-				CEF:    consts.CEFDownloadSource,
-			},
 		}
 		cfgJSON, err := json.MarshalIndent(&cfg, "", "\t")
 		if err != nil {

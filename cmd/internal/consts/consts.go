@@ -13,65 +13,24 @@ package consts
 import "runtime"
 
 const (
-	ENERGY = "energy"
-)
-
-const (
-	domain             = "https://energy.yanghy.cn"
-	DownloadVersionURL = domain + "/api/cmd/edv"
-	DownloadInstallURL = domain + "/api/cmd/install"
-	DownloadExtractURL = domain + "/api/cmd/extract"
-	CheckUpgradeURL    = domain + "/api/cmd/upgrade"
-	CheckCreateURL     = domain + "/api/cmd/create"
-	LatestVersionURL   = domain + "/api/upgrade/latest/version"
-)
-
-const (
-	// GolangDownloadURL 下载地址, 默认 GolangDefaultVersion
-	// https://golang.google.cn/dl/go1.18.10.darwin-amd64.tar.gz
-	// https://golang.google.cn/dl/go1.18.10.darwin-arm64.tar.gz
-	// https://golang.google.cn/dl/go1.18.10.linux-amd64.tar.gz
-	// https://golang.google.cn/dl/go1.18.10.linux-arm64.tar.gz
-	// https://golang.google.cn/dl/go1.18.10.windows-386.zip
-	// https://golang.google.cn/dl/go1.18.10.windows-amd64.zip
-	// https://golang.google.cn/dl/go1.18.10.windows-arm64.zip
-	// https://golang.google.cn
-	GolangDownloadSource = "https://golang.google.cn"
-	CEFDownloadSource    = "https://cef-builds.spotifycdn.com/"
-	GolangDownloadURL    = "%s/dl/%s"
-	GolangDefaultVersion = "1.19.13"
-	GolanHomeKey         = "GOROOT"
-)
-
-const (
-	// NSISDownloadURL 下载地址，默认 3.09
-	// https://gitee.com/energye/assets/releases/download/environment/nsis.windows.386-3.09.zip
-	NSISDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
-	NSISDownloadVersion = "3.09"
-	NSISHomeKey         = "NSIS_HOME"
-
-	// NSIS7z
-	// https://gitee.com/energye/assets/releases/download/environment/nsis7z.windows.386-19.00.zip
-	NSIS7zDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
-	NSIS7zDownloadVersion = "19.00"
-)
-
-const (
-	// https://gitee.com/energye/assets/releases/download/environment/7za.windows.all-2301.zip
-	Z7ZDownloadURL     = "https://gitee.com/energye/assets/releases/download/environment/%s"
-	Z7ZDownloadVersion = "2301"
-	Z7ZHomeKey         = "Z7Z_HOME"
-)
-
-const (
-	UPXHomeKey = "UPX_HOME"
+	ENERGY               = "energy"
+	BASE_CONFIG_URL      = "https://energye.github.io/data/model-base-config.json"
+	LATEST_VERSION_URL   = "https://energye.github.io/data/latest-version.json"
+	CMD_VERSION_URL      = "https://energye.github.io/data/command-line-tools.json"
+	VERSIONS_UPGRADE_URL = "https://energye.github.io/data/versions-upgrade.json"
+	MODEL_CEF_URL        = "https://energye.github.io/data/model-cef.json"
+	MODEL_LCL_URL        = "https://energye.github.io/data/model-liblcl.json"
 )
 
 const (
 	CefKey              = "cef"
 	LiblclKey           = "liblcl"
-	FrameworkCache      = "EnergyFrameworkDownloadCache"
+	GolanHomeKey        = "GOROOT"
+	NSISHomeKey         = "NSIS_HOME"
+	Z7ZHomeKey          = "Z7Z_HOME"
+	UPXHomeKey          = "UPX_HOME"
 	EnergyHomeKey       = "ENERGY_HOME"
+	FrameworkCache      = "EnergyFrameworkDownloadCache"
 	EnergyProjectConfig = "energy.json"
 )
 

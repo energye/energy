@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
+	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
@@ -41,6 +42,7 @@ type downloadInfo struct {
 	isSupport     bool
 	module        string
 }
+
 type softEnf struct {
 	name      string
 	desc      string
@@ -48,11 +50,15 @@ type softEnf struct {
 	yes       func()
 }
 
-func Install(c *command.Config) error {
+func Install(cliConfig *command.Config) error {
+	config, err := remotecfg.BaseConfig()
+	if err != nil {
+		return err
+	}
 	// 设置默认参数
-	defaultInstallConfig(c)
+	defaultInstallConfig(cliConfig)
 	// 检查环境
-	willInstall := checkInstallEnv(c)
+	willInstall := checkInstallEnv(cliConfig)
 	var (
 		goRoot                      string
 		goSuccessCallback           func()
@@ -111,42 +117,50 @@ func Install(c *command.Config) error {
 			}
 			if len(selectedOptions) > 0 {
 				// 初始配置和安装目录
-				if err := initInstall(c); err != nil {
+				if err := initInstall(cliConfig); err != nil {
 					return err
 				}
 			}
 		}
 	}
+	// 检查保存框架二进制文件缓存目录是否存在
+	saveCachePath := filepath.Join(cliConfig.Install.Path, consts.FrameworkCache)
+	if !tools.IsExist(saveCachePath) {
+		term.Section.Println("Creating directory.", saveCachePath)
+		if err := os.MkdirAll(saveCachePath, fs.ModePerm); err != nil {
+			return err
+		}
+	}
 	// 安装Go开发环境
-	goRoot, goSuccessCallback = installGolang(c)
+	goRoot, goSuccessCallback = installGolang(config, cliConfig)
 	// 设置 go 环境变量
 	if goRoot != "" {
 		env.SetGoEnv(goRoot)
 	}
 
 	// 安装CEF二进制框架
-	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(c)
+	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(config, cliConfig)
 	// 设置 energy cef 环境变量
-	if cefFrameworkRoot != "" && c.Install.IsSame {
+	if cefFrameworkRoot != "" && cliConfig.Install.IsSame {
 		env.SetEnergyHomeEnv(cefFrameworkRoot)
 	}
 
 	// 安装nsis安装包制作工具, 仅windows - amd64
-	nsisRoot, nsisSuccessCallback = installNSIS(c)
+	nsisRoot, nsisSuccessCallback = installNSIS(config, cliConfig)
 	// 设置nsis环境变量
 	if nsisRoot != "" {
 		env.SetNSISEnv(nsisRoot)
 	}
 
 	// 安装upx, 内置, 仅windows, linux
-	upxRoot, upxSuccessCallback = installUPX(c)
+	upxRoot, upxSuccessCallback = installUPX(config, cliConfig)
 	// 设置upx环境变量
 	if upxRoot != "" {
 		env.SetUPXEnv(upxRoot)
 	}
 
 	// 安装7za
-	z7zRoot, z7zSuccessCallback = install7z(c)
+	z7zRoot, z7zSuccessCallback = install7z(config, cliConfig)
 	// 设置7za环境变量
 	if z7zRoot != "" {
 		env.Set7zaEnv(z7zRoot)
@@ -429,12 +443,12 @@ func initInstall(c *command.Config) (err error) {
 	return err
 }
 
-func filePathInclude(compressPath string, files ...interface{}) (string, bool) {
+func filePathInclude(compressPath string, files ...string) (string, bool) {
 	if len(files) == 0 {
 		return compressPath, true
 	} else {
 		for _, file := range files {
-			f := file.(string)
+			f := file
 			tIdx := strings.LastIndex(f, "/*")
 			if tIdx != -1 {
 				f = f[:tIdx]
@@ -510,7 +524,7 @@ func tarFileCount(filePath string) (int, error) {
 	return count, nil
 }
 
-func ExtractUnTar(filePath, targetPath string, files ...interface{}) error {
+func ExtractUnTar(filePath, targetPath string, files ...string) error {
 	term.Logger.Info("Read Files Number")
 	fileCount, err := tarFileCount(filePath)
 	println(fileCount)
@@ -595,7 +609,7 @@ func ExtractUnTar(filePath, targetPath string, files ...interface{}) error {
 	return nil
 }
 
-func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...interface{}) error {
+func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...string) error {
 	if rc, err := zip.OpenReader(filePath); err == nil {
 		defer rc.Close()
 		multi := pterm.DefaultMultiPrinter
@@ -673,9 +687,9 @@ func ExtractUnZip(filePath, targetPath string, rmRootDir bool, files ...interfac
 			// 指定名字的文件
 			for i := 0; i < len(files); i++ {
 				extractFilesProcessBar.Increment() // +1
-				if f, err := rc.Open(files[i].(string)); err == nil {
+				if f, err := rc.Open(files[i]); err == nil {
 					info, _ := f.Stat()
-					if err := createWriteFile(info, files[i].(string), f); err != nil {
+					if err := createWriteFile(info, files[i], f); err != nil {
 						return err
 					}
 					_ = f.Close()

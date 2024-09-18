@@ -14,9 +14,7 @@ import (
 	"bytes"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/golcl/energy/tools"
-	"io/ioutil"
 	"math"
-	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -144,20 +142,6 @@ func RenderTemplate(templateText string, data map[string]interface{}) ([]byte, e
 	return out.Bytes(), nil
 }
 
-func HttpRequestGET(url string) ([]byte, error) {
-	client := new(http.Client)
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	ret, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
-}
-
 // Compare compare2 < compare1 = true
 func Compare(compare1, compare2 string) bool {
 	if compare1[0] == 'v' {
@@ -194,13 +178,15 @@ func CheckCEFDir() bool {
 }
 
 // ExePath
-//  返回当前执行文件路径
+//
+//	返回当前执行文件路径
 func ExePath() string {
 	return exePath
 }
 
 // CurrentExecuteDir
-//  返回当前执行目录
+//
+//	返回当前执行目录
 func CurrentExecuteDir() string {
 	return currentExecuteDir
 }

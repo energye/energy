@@ -74,7 +74,7 @@ type Install struct {
 	Download string `short:"d" long:"download" description:"Download Source, 0:gitee or 1:github, Default empty" default:""`
 	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current system: os"`
 	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm64], Default current system: architecture"`
-	CEF      string `long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. options: 109(support windows7), 106(support linux gtk2), 87(support flash)" default:""`
+	CEFVer   string `long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. options: 109(support windows7), 106(support linux gtk2), 87(support flash)" default:""`
 	IGolang  bool   // 是否安装Golang
 	ICEF     bool   // 是否安装CEF
 	INSIS    bool   // 是否安装nsis
@@ -139,18 +139,12 @@ type Bindata struct {
 }
 
 type EnergyConfig struct {
-	GoRoot   string         `json:"goroot"`
-	CEFRoot  string         `json:"cefroot"`
-	NSISRoot string         `json:"nsisroot"`
-	UPXRoot  string         `json:"upxroot"`
-	Z7zRoot  string         `json:"z7zroot"`
-	Version  string         `json:"version"`
-	Source   DownloadSource `json:"source"`
-}
-
-type DownloadSource struct {
-	Golang string `json:"golang"`
-	CEF    string `json:"cef"`
+	GoRoot   string `json:"goroot"`
+	CEFRoot  string `json:"cefroot"`
+	NSISRoot string `json:"nsisroot"`
+	UPXRoot  string `json:"upxroot"`
+	Z7zRoot  string `json:"z7zroot"`
+	Version  string `json:"version"`
 }
 
 func (m OS) IsWindows() bool {
