@@ -20,7 +20,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	toolsCommand "github.com/energye/golcl/tools/command"
+	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"path/filepath"
 	"strings"
 )

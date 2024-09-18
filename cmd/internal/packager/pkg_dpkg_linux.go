@@ -21,7 +21,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/golcl/tools/command"
+	command "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"io"
 	"io/fs"
 	"os"

@@ -13,7 +13,6 @@ package tools
 import (
 	"bytes"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/golcl/energy/tools"
 	"math"
 	"os"
 	"os/exec"
@@ -172,7 +171,7 @@ func CheckCEFDir() bool {
 		return ""
 	}()
 	if lib != "" {
-		return tools.IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
+		return IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
 	}
 	return false
 }

@@ -20,7 +20,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/energy/v2/pkgs/winicon"
+	"github.com/energye/energy/v2/cmd/internal/tools/winicon"
 	"github.com/tc-hib/winres"
 	"github.com/tc-hib/winres/version"
 	"io/fs"
