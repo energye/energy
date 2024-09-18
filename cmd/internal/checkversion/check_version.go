@@ -30,14 +30,14 @@ func Check() {
 		term.Logger.Error(err.Error())
 		return
 	}
-	term.Section.Println(" CLI Current:", fmt.Sprintf("%d.%d.%d", term.Build, term.Major, term.Minor))
-	term.Section.Println(" CLI Latest :", fmt.Sprintf("%d.%d.%d", cli.Build, cli.Major, cli.Minor))
-	cv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", term.Build, term.Major, term.Minor))
+	term.Section.Println(" CLI Current:", fmt.Sprintf("%d.%d.%d", term.Major, term.Minor, term.Build))
+	term.Section.Println(" CLI Latest :", fmt.Sprintf("%d.%d.%d", cli.Major, cli.Minor, cli.Build))
+	cv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", term.Major, term.Minor, term.Build))
 	if err != nil {
 		term.Logger.Error("Check cli version failed: " + err.Error())
 		return
 	}
-	rv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", cli.Build, cli.Major, cli.Minor))
+	rv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", cli.Major, cli.Minor, cli.Build))
 	if err != nil {
 		term.Logger.Error("Check cli version failed: " + err.Error())
 		return

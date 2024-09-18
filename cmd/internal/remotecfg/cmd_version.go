@@ -35,6 +35,6 @@ func CMDVersion() (*TCMDVersion, error) {
 	if err != nil {
 		return nil, err
 	}
-	cv.Version = fmt.Sprintf("%v.%v.%v", cv.Build, cv.Major, cv.Minor)
+	cv.Version = fmt.Sprintf("%v.%v.%v", cv.Major, cv.Minor, cv.Build)
 	return &cv, nil
 }
