@@ -19,9 +19,9 @@ import (
 
 type TCMDVersion struct {
 	Version     string `json:"-"`
-	Build       int32  `json:"build"`
 	Major       int32  `json:"major"`
 	Minor       int32  `json:"minor"`
+	Build       int32  `json:"build"`
 	DownloadURL string `json:"downloadUrl"`
 }
 

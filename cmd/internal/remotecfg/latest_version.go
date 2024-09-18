@@ -19,9 +19,9 @@ import (
 
 type TLatestVersion struct {
 	Version string `json:"version"`
-	Build   int32  `json:"-"`
 	Major   int32  `json:"-"`
 	Minor   int32  `json:"-"`
+	Build   int32  `json:"-"`
 }
 
 func LatestVersion() (*TLatestVersion, error) {
@@ -35,8 +35,8 @@ func LatestVersion() (*TLatestVersion, error) {
 		return nil, err
 	}
 	vs := strings.Split(lv.Version, ".")
-	lv.Build = int32(tools.ToInt(vs[0]))
-	lv.Major = int32(tools.ToInt(vs[1]))
-	lv.Minor = int32(tools.ToInt(vs[2]))
+	lv.Major = int32(tools.ToInt(vs[0]))
+	lv.Minor = int32(tools.ToInt(vs[1]))
+	lv.Build = int32(tools.ToInt(vs[2]))
 	return &lv, nil
 }
