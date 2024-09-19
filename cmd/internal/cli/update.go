@@ -44,7 +44,7 @@ func OnlineUpdate(downloadURL string) error {
 	if err != nil {
 		return err
 	}
-	os.Remove(savePath)
+	//os.Remove(savePath)
 	cliName := consts.ENERGY
 	zipCliName := CliFileName()
 	if consts.IsWindows {
@@ -59,11 +59,14 @@ func OnlineUpdate(downloadURL string) error {
 		cmd.Dir = path
 		err = cmd.Start()
 	} else {
-		args := []string{"-f", cliName, "&", "mv", zipCliName, cliName}
-		term.Section.Println("Run command:", args)
-		cmd := exec.Command("rm", args...)
-		cmd.Dir = path
-		err = cmd.Start()
+		err = os.Remove(filepath.Join(path, cliName))
+		if err != nil {
+			return err
+		}
+		err = os.Rename(filepath.Join(path, zipCliName), filepath.Join(path, cliName))
+		if err != nil {
+			return err
+		}
 	}
 	if err != nil {
 		return err
