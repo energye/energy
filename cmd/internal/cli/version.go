@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package checkversion
+package cli
 
 import (
 	"encoding/json"
@@ -23,8 +23,8 @@ import (
 	"strconv"
 )
 
-// Check 检查版本
-func Check() {
+// Version 检查版本
+func Version() {
 	cli, err := remotecfg.CMDVersion()
 	if err != nil {
 		term.Logger.Error(err.Error())

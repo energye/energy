@@ -13,7 +13,6 @@ package main
 
 import (
 	"github.com/energye/energy/v2/cmd/internal"
-	"github.com/energye/energy/v2/cmd/internal/checkversion"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/term"
@@ -34,6 +33,8 @@ var commands = []*command.Command{
 	/*8*/ internal.CmdBindata,
 	/*9*/ internal.CmdGen,
 	/*10*/ internal.CmdUpgrade,
+	/*11*/ internal.CmdHelp,
+	/*12*/ internal.CmdCli,
 }
 
 func main() {
@@ -50,11 +51,7 @@ func termRun() {
 		os.Exit(0)
 	}
 	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
-		if len(extraArgs) > 0 && (extraArgs[0] == "-v" || extraArgs[0] == "v") {
-			checkversion.Check()
-		} else {
-			println(err.Error())
-		}
+		println(err.Error())
 		return
 	} else {
 		switch parser.Active.Name {
@@ -78,21 +75,23 @@ func termRun() {
 			cc.Index = 9
 		case "upg":
 			cc.Index = 10
-		case "v":
-			checkversion.Check()
-			return
+		case "help":
+			cc.Index = 11
+		case "cli":
+			cc.Index = 12
 		}
 		cmd := commands[cc.Index]
 		// energy [cmd] help
-		var name string
 		if len(extraArgs) > 0 {
-			name = extraArgs[0]
+			name := extraArgs[0]
+			if name == "help" {
+				term.Section.Println(cmd.UsageLine, "\n", cmd.Long)
+				os.Exit(0)
+			}
 		}
-		if name == "help" {
-			term.Section.Println(cmd.UsageLine, "\n", cmd.Long)
-			os.Exit(0)
+		if cmd.Short != "" {
+			term.Section.Println(cmd.Short)
 		}
-		term.Section.Println(cmd.Short)
 		readConfig(cc)
 		if err := cmd.Run(cc); err != nil {
 			term.Section.Println(err.Error())

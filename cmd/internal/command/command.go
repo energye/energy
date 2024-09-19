@@ -28,7 +28,7 @@ type Config struct {
 	Gen       Gen     `command:"gen" description:"generate icons or syso commands"`
 	Upg       Upgrade `command:"upg" description:"check and upgrade the current version"`
 	Help      Help    `command:"help" description:"energy [cmd] help"`
-	V         string  `command:"v" description:"energy cli version"`
+	Cli       Cli     `command:"cli" description:"energy cli"`
 }
 
 type Command struct {
@@ -37,6 +37,11 @@ type Command struct {
 }
 
 type Upgrade struct {
+}
+
+type Cli struct {
+	Version bool `short:"v" long:"version" description:"energy cli version"`
+	Update  bool `short:"u" long:"update" description:"energy cli update"`
 }
 
 type Gen struct {

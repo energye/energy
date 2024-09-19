@@ -12,6 +12,7 @@ package install
 import (
 	"archive/tar"
 	"archive/zip"
+	"bufio"
 	"compress/bzip2"
 	"compress/gzip"
 	"errors"
@@ -22,14 +23,13 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/energye/rawhttp"
 	"github.com/pterm/pterm"
 	"io"
 	"io/fs"
-	"net/http"
 	"os"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 )
 
@@ -215,7 +215,7 @@ func copyEnergyCMD(goRoot string) {
 	}
 	energyBin := filepath.Join(goRoot, "bin", energyName)
 	if filepath.ToSlash(exe) == filepath.ToSlash(energyBin) {
-		term.Logger.Info("current energy")
+		term.Logger.Info("Current energy cli")
 		return
 	}
 	if tools.IsExist(energyBin) {
@@ -774,12 +774,12 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 		written int64
 	)
 	tmpFilePath := localPath + ".download"
-	client := new(http.Client)
+	client := rawhttp.NewClient(rawhttp.DefaultOptions)
 	resp, err := client.Get(url)
 	if err != nil {
 		return err
 	}
-	fsize, err = strconv.ParseInt(resp.Header.Get("Content-Length"), 10, 32)
+	fsize = resp.ContentLength
 	if err != nil {
 		return err
 	}
@@ -818,10 +818,11 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 	var (
 		count int
 		cn    int
+		nw    int
+		read  = bufio.NewReader(resp.Body)
 	)
-	var nw int
 	for {
-		nr, er := resp.Body.Read(buf)
+		nr, er := read.Read(buf)
 		if nr > 0 {
 			nw, err = file.Write(buf[0:nr])
 			if nw > 0 {
