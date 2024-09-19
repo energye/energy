@@ -18,9 +18,9 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"runtime"
 	"strconv"
+	"strings"
 )
 
 var remoteVersion *remotecfg.TCMDVersion
@@ -57,10 +57,11 @@ func CheckVersion() string {
 	if cv < rv {
 		// 先这样，以后在规范名字
 		cliName := CliFileName() + ".zip"
-		//term.Section.Println("There is a new version available, would you like to update?(y)")
-		// https://gitee.com/energye/assets/releases/download/cli/energy-darwinarm-64.zip
-		// https://gitee.com/energye/assets/releases/download/cli/energy-windows-64.zip
-		downloadURL, _ := url.JoinPath(remoteVersion.DownloadURL, cliName)
+		downloadURL := remoteVersion.DownloadURL
+		if strings.LastIndex(downloadURL, "/") != len(downloadURL) {
+			downloadURL += "/"
+		}
+		downloadURL = downloadURL + cliName
 		term.Section.Println("There new version available.\n  Download:", downloadURL)
 		return downloadURL
 	}
