@@ -13,11 +13,12 @@ package internal
 import (
 	"github.com/energye/energy/v2/cmd/internal/cli"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/term"
 )
 
 var CmdCli = &command.Command{
 	UsageLine: "energy cli -v [version] -u [update]",
-	Short:     "energy cli cmd",
+	Short:     "",
 	Long: `
 energy cli version and update:
   -v Current CLI version check
@@ -30,11 +31,16 @@ func init() {
 }
 
 func runCli(c *command.Config) error {
-	if c.Cli.Version {
-		cli.Version()
+	var downloadURL string
+	if c.Cli.Version || c.Cli.Update {
+		downloadURL = cli.CheckVersion()
 	}
-	if c.Cli.Update {
-		return cli.Update(c.Cli)
+	if c.Cli.Update && downloadURL != "" {
+		err := cli.OnlineUpdate(downloadURL)
+		if err != nil {
+			return err
+		}
+		term.Section.Println("ENERGY CLI UPDATE SUCCESS")
 	}
 	return nil
 }

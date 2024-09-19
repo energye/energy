@@ -71,13 +71,13 @@ func installGolang(config *remotecfg.TConfig, c *command.Config) (string, func()
 		// 释放文件
 		if consts.IsWindows {
 			//zip
-			if err = ExtractUnZip(saveFilePath, targetPath, true); err != nil {
+			if err = tools.ExtractUnZip(saveFilePath, targetPath, true); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}
 		} else {
 			//tar
-			if err = ExtractUnTar(saveFilePath, targetPath); err != nil {
+			if err = tools.ExtractUnTar(saveFilePath, targetPath); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}
@@ -90,7 +90,7 @@ func installGolang(config *remotecfg.TConfig, c *command.Config) (string, func()
 }
 
 func downloadGolang(downloadUrl, savePath, fileName string, count int) error {
-	err := DownloadFile(downloadUrl, savePath, nil)
+	err := tools.DownloadFile(downloadUrl, savePath, nil)
 	if err != nil && count < 5 {
 		// 失败尝试5次，每次递增一秒等待
 		n := count + 1

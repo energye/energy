@@ -34,7 +34,7 @@ func installNSIS7z(config *remotecfg.TConfig, c *command.Config) (string, func()
 	if !tools.IsExist(savePath) {
 		term.Logger.Info("NSIS7z Download URL: " + downloadUrl)
 		term.Logger.Info("NSIS7z Save Path: " + savePath)
-		err = DownloadFile(downloadUrl, savePath, nil)
+		err = tools.DownloadFile(downloadUrl, savePath, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 		} else {
@@ -46,7 +46,7 @@ func installNSIS7z(config *remotecfg.TConfig, c *command.Config) (string, func()
 		targetPath := s
 		// 释放文件
 		// zip
-		if err = ExtractUnZip(savePath, targetPath, false); err != nil {
+		if err = tools.ExtractUnZip(savePath, targetPath, false); err != nil {
 			term.Logger.Error(err.Error())
 			return "", nil
 		}

@@ -51,14 +51,14 @@ func InitEnergyProject(c *command.Config) error {
 		{"name", "command"},
 	}
 	tableData = append(tableData, []string{"go", `go build -ldflags "-s -w"`})
-	tableData = append(tableData, []string{"energy", `energy build .`})
+	tableData = append(tableData, []string{"energy", `energy build`})
 	err = pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
 	if err != nil {
 		return err
 	}
 	term.Section.Println("Make install package")
 	tableData = pterm.TableData{
-		{"command"}, {"energy package ."},
+		{"command"}, {"energy package"},
 	}
 	err = pterm.DefaultTable.WithHasHeader().WithHeaderRowSeparator("-").WithBoxed().WithData(tableData).Render()
 	if err != nil {
@@ -203,7 +203,7 @@ func checkEnv(init *command.Init) {
 	term.Logger.Info("Check the current environment and follow the prompts if there are any")
 	// 检查Go环境
 	if !tools.CommandExists("go") {
-		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "energy-install", "energy install ."))
+		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "energy-install", "energy install"))
 	} else {
 		var version string
 		cmd := toolsCommand.NewCMD()
@@ -251,7 +251,7 @@ func checkEnv(init *command.Init) {
 	// 检查ENERGY_HOME
 	if !tools.CheckCEFDir() {
 		term.Logger.Warn(`Energy dependent CEF Framework is not installed
-	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install ."))
+	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install"))
 	} else {
 		term.Logger.Info("CEF Framework OK")
 		init.IEnv = true

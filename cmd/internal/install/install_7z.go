@@ -36,7 +36,7 @@ func install7z(config *remotecfg.TConfig, c *command.Config) (string, func()) {
 	term.Logger.Info("7za Download URL: " + downloadUrl)
 	term.Logger.Info("7za Save Path: " + savePath)
 	if !tools.IsExist(savePath) {
-		err = DownloadFile(downloadUrl, savePath, nil)
+		err = tools.DownloadFile(downloadUrl, savePath, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 		} else {
@@ -48,7 +48,7 @@ func install7z(config *remotecfg.TConfig, c *command.Config) (string, func()) {
 		targetPath := s
 		// 释放文件
 		// zip
-		if err = ExtractUnZip(savePath, targetPath, false); err != nil {
+		if err = tools.ExtractUnZip(savePath, targetPath, false); err != nil {
 			term.Logger.Error(err.Error())
 			return "", nil
 		}

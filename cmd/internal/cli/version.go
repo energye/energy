@@ -23,41 +23,61 @@ import (
 	"strconv"
 )
 
-// Version 检查版本
-func Version() {
-	cli, err := remotecfg.CMDVersion()
-	if err != nil {
-		term.Logger.Error(err.Error())
-		return
+var remoteVersion *remotecfg.TCMDVersion
+
+func version() error {
+	var err error
+	if remoteVersion == nil {
+		remoteVersion, err = remotecfg.CMDVersion()
+		if err != nil {
+			term.Logger.Error(err.Error())
+			return err
+		}
 	}
-	term.Section.Println(" CLI Current:", fmt.Sprintf("%d.%d.%d", term.Major, term.Minor, term.Build))
-	term.Section.Println(" CLI Latest :", fmt.Sprintf("%d.%d.%d", cli.Major, cli.Minor, cli.Build))
+	return nil
+}
+
+// CheckVersion 检查版本
+func CheckVersion() string {
+	if err := version(); err != nil {
+		return ""
+	}
+	term.Section.Println("CLI Current:", fmt.Sprintf("%d.%d.%d", term.Major, term.Minor, term.Build))
+	term.Section.Println("CLI Latest :", fmt.Sprintf("%d.%d.%d", remoteVersion.Major, remoteVersion.Minor, remoteVersion.Build))
 	cv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", term.Major, term.Minor, term.Build))
 	if err != nil {
 		term.Logger.Error("Check cli version failed: " + err.Error())
-		return
+		return ""
 	}
-	rv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", cli.Major, cli.Minor, cli.Build))
+	rv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", remoteVersion.Major, remoteVersion.Minor, remoteVersion.Build))
 	if err != nil {
 		term.Logger.Error("Check cli version failed: " + err.Error())
-		return
+		return ""
 	}
 	if cv < rv {
 		// 先这样，以后在规范名字
-		cliName := "energy-" + runtime.GOOS
-		if consts.IsARM64 {
-			cliName += "arm"
-		}
-		if consts.IsWindows && consts.Is386 {
-			cliName += "-32"
-		} else {
-			cliName += "-64"
-		}
-		cliName += ".zip"
+		cliName := CliFileName() + ".zip"
 		//term.Section.Println("There is a new version available, would you like to update?(y)")
-		downloadURL, _ := url.JoinPath(cli.DownloadURL, cliName)
-		term.Section.Println("There new version available. Download:", downloadURL)
+		// https://gitee.com/energye/assets/releases/download/cli/energy-darwinarm-64.zip
+		// https://gitee.com/energye/assets/releases/download/cli/energy-windows-64.zip
+		downloadURL, _ := url.JoinPath(remoteVersion.DownloadURL, cliName)
+		term.Section.Println("There new version available.\n  Download:", downloadURL)
+		return downloadURL
 	}
+	return ""
+}
+
+func CliFileName() string {
+	cliName := consts.ENERGY + "-" + runtime.GOOS
+	if consts.IsARM64 {
+		cliName += "arm"
+	}
+	if consts.IsWindows && consts.Is386 {
+		cliName += "-32"
+	} else {
+		cliName += "-64"
+	}
+	return cliName
 }
 
 type GeoInfo struct {

@@ -10,8 +10,63 @@
 
 package cli
 
-import "github.com/energye/energy/v2/cmd/internal/command"
+import (
+	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
+	"net/url"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+)
 
-func Update(cli command.Cli) error {
+// OnlineUpdate 在线更新 cli
+func OnlineUpdate(downloadURL string) error {
+	term.Section.Println("Start downloading")
+	path, err := os.Executable()
+	if err != nil {
+		return err
+	}
+	dUrl, err := url.Parse(downloadURL)
+	if err != nil {
+		return err
+	}
+	uPath := dUrl.Path
+	fileName := uPath[strings.LastIndex(uPath, "/"):]
+	path, _ = filepath.Split(path)
+	savePath := filepath.Join(path, fileName)
+	err = tools.DownloadFile(downloadURL, savePath, nil)
+	if err != nil {
+		return err
+	}
+	err = tools.ExtractUnZip(savePath, path, false)
+	if err != nil {
+		return err
+	}
+	os.Remove(savePath)
+	cliName := consts.ENERGY
+	zipCliName := CliFileName()
+	if consts.IsWindows {
+		zipCliName += ".exe"
+		cliName += ".exe"
+	}
+
+	if consts.IsWindows {
+		args := []string{"/c", "del", cliName, "&", "ren", zipCliName, cliName}
+		term.Section.Println("Run command:", args)
+		cmd := exec.Command("cmd.exe", args...)
+		cmd.Dir = path
+		err = cmd.Start()
+	} else {
+		args := []string{"-f", cliName, "&", "mv", zipCliName, cliName}
+		term.Section.Println("Run command:", args)
+		cmd := exec.Command("rm", args...)
+		cmd.Dir = path
+		err = cmd.Start()
+	}
+	if err != nil {
+		return err
+	}
 	return nil
 }

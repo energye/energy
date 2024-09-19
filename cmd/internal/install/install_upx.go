@@ -62,7 +62,7 @@ func installUPX(config *remotecfg.TConfig, c *command.Config) (string, func()) {
 		if err != nil {
 			return "", nil
 		}
-		writeFile(fs, targetFile, stat.Size(), func(totalLength, processLength int64) {
+		tools.WriteFile(fs, targetFile, stat.Size(), func(totalLength, processLength int64) {
 			process := int((float64(processLength) / float64(totalLength)) * 100)
 			if process > count {
 				count = process

@@ -16,6 +16,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
 	"path/filepath"
 	"strconv"
@@ -188,7 +189,7 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 			term.Logger.Warn("Warn module is not built or configured [" + dl.module + "]")
 			continue
 		}
-		err = DownloadFile(dl.url, dl.downloadPath, nil)
+		err = tools.DownloadFile(dl.url, dl.downloadPath, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
 			return "", nil
@@ -209,7 +210,7 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 					term.Logger.Error(err.Error())
 					return "", nil
 				}
-				tarName, err := UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
+				tarName, err := tools.UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
 					processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
 				})
 				processBar.Stop()
@@ -350,10 +351,10 @@ func extractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig 
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
 	if keyName == consts.CefKey {
 		//tar
-		return ExtractUnTar(sourcePath, di.frameworkPath, extractOSConfig...)
+		return tools.ExtractUnTar(sourcePath, di.frameworkPath, extractOSConfig...)
 	} else if keyName == consts.LiblclKey {
 		//zip
-		return ExtractUnZip(sourcePath, di.frameworkPath, false, extractOSConfig...)
+		return tools.ExtractUnZip(sourcePath, di.frameworkPath, false, extractOSConfig...)
 	}
 	return errors.New("not module")
 }
