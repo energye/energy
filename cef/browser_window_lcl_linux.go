@@ -21,7 +21,7 @@ import (
 )
 
 func (m *LCLBrowserWindow) frameless() {
-
+	// no impl
 }
 
 func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {

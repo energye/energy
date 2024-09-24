@@ -60,7 +60,6 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 		}
 	}
 
-	//return uintptr(winapi.CallWindowProc(types.TFarProc(m.oldWndPrc), hwnd, types.UINT(message), types.WPARAM(wParam), types.LPARAM(lParam)))
 	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
 }
 

@@ -14,7 +14,9 @@
 package cef
 
 func (m *LCLBrowserWindow) _HookWndProcMessage() {
+	// no impl
 }
 
 func (m *LCLBrowserWindow) _RestoreWndProc() {
+	// no impl
 }

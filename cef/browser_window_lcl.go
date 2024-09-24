@@ -192,7 +192,6 @@ func (m *LCLBrowserWindow) SetProperty() {
 		m.SetFormStyle(types.FsSystemStayOnTop)
 	}
 	if wp.EnableHideCaption {
-		//m.HideTitle()
 		m.frameless()
 	} else {
 		if !wp.EnableMinimize {

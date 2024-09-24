@@ -22,22 +22,8 @@ import (
 	"github.com/energye/golcl/lcl/win"
 )
 
-// 定义四角和边框范围
-var (
-	angleRange  int32 = 10 //四角
-	borderRange int32 = 5  //四边框
-)
-
-// 组件消息类型
-type compMessageType int8
-
-const (
-	cmtCEF compMessageType = iota
-	cmtLCL
-)
-
 func (m *LCLBrowserWindow) frameless() {
-
+	// no impl
 }
 
 // SetRoundRectRgn 窗口无边框时圆角设置

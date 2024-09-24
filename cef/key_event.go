@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/common"
 	. "github.com/energye/energy/v2/consts"
 )
 
@@ -37,52 +36,4 @@ func acceleratorCode(shift, ctrl, alt bool, keyCode rune) string {
 		accelerator = string(keyCode)
 	}
 	return accelerator
-}
-
-var defaultAcceleratorCustom = func() {
-	//macos 下快捷键
-	if common.IsDarwin() {
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+a",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().SelectAll()
-				*result = true
-			},
-		})
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+x",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().Cut()
-				*result = true
-			},
-		})
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+c",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().Copy()
-				*result = true
-			},
-		})
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+v",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().Paste()
-				*result = true
-			},
-		})
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+z",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().Undo()
-				*result = true
-			},
-		})
-		KeyAccelerator.AddAcceleratorCustom(&AcceleratorCustom{
-			Accelerator: "ctrl+shift+z",
-			Callback: func(browse *ICefBrowser, event *TCefKeyEvent, result *bool) {
-				browse.GetFocusedFrame().Redo()
-				*result = true
-			},
-		})
-	}
 }
