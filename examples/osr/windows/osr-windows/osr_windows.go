@@ -5,12 +5,16 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
+	_ "github.com/energye/energy/v2/examples/syso"
 	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
+	"github.com/energye/golcl/pkgs/libname"
 	"math"
+	"os"
+	"path/filepath"
 	"time"
 	"unsafe"
 )
@@ -20,21 +24,22 @@ import (
 // 该示例演示了windows的OSR模式示例
 
 func main() {
+	libname.LibName = filepath.Join(os.Getenv("ENERGY_HOME"), "liblcl.dll")
 	cef.GlobalInit(nil, nil)
 	var window = &WindowForm{}
 	//创建应用
-	cefApp := cef.NewApplication(true)
+	app := cef.NewApplication(true)
 	// OSR 离屏渲染
-	cefApp.SetWindowlessRenderingEnabled(true)
+	app.SetWindowlessRenderingEnabled(true)
 	// 指定消息模式
-	cefApp.SetExternalMessagePump(true)
-	cefApp.SetMultiThreadedMessageLoop(false)
+	app.SetExternalMessagePump(true)
+	app.SetMultiThreadedMessageLoop(false)
 	// create work schedule
 	global := cef.GlobalWorkSchedulerCreate(nil)
 	global.SetDefaultInterval(10)
-	cefApp.SetOnScheduleMessagePumpWork(nil)
+	app.SetOnScheduleMessagePumpWork(nil)
 	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
-	cefApp.StartMainProcess()
+	app.StartMainProcess()
 	// 运行应用, 传入窗口
 	lcl.RunApp(&window)
 }
@@ -179,6 +184,7 @@ func (m *WindowForm) chromiumEvent() {
 	// 在Paint内展示内容到窗口中
 	// 使用 bitmap
 	m.chromium.SetOnPaint(func(sender lcl.IObject, browser *cef.ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *cef.TCefRectArray, buffer uintptr, width, height int32) {
+		fmt.Println("OnPaint kind:", kind)
 		if m.bufferPanel.BeginBufferDraw() {
 			if kind == consts.PET_POPUP {
 				if popUpBitmap == nil || popUpBitmap.Width() != width || popUpBitmap.Height() != height {
