@@ -8,7 +8,6 @@ import (
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
-	"github.com/energye/golcl/lcl/win"
 )
 
 type TMainForm struct {
@@ -40,7 +39,6 @@ func main() {
 }
 
 func Println(s ...interface{}) {
-	win.OutputDebugString(s...)
 	fmt.Println(s...)
 }
 
