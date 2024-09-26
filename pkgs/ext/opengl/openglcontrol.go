@@ -30,6 +30,13 @@ type TOpenGLControl struct {
 	mouseWheelPtr        uintptr
 	mouseWheelDownPtr    uintptr
 	mouseWheelUpPtr      uintptr
+	clickPtr             uintptr
+	enterPtr             uintptr
+	exitPtr              uintptr
+	keyDownPtr           uintptr
+	keyPressPtr          uintptr
+	keyUpPtr             uintptr
+	resizePtr            uintptr
 }
 
 func NewOpenGLControl(TheOwner lcl.IComponent) *TOpenGLControl {
@@ -134,6 +141,62 @@ func (m *TOpenGLControl) SetOnMouseWheelUp(fn lcl.TMouseWheelUpDownEvent) {
 	openGLDllTableAPI().SysCallN(12, m.Instance(), m.mouseWheelUpPtr)
 }
 
+func (m *TOpenGLControl) SetOnClick(fn lcl.TNotifyEvent) {
+	if m.clickPtr != 0 {
+		RemoveEventElement(m.clickPtr)
+	}
+	m.clickPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(13, m.Instance(), m.clickPtr)
+}
+
+func (m *TOpenGLControl) SetOnEnter(fn lcl.TNotifyEvent) {
+	if m.enterPtr != 0 {
+		RemoveEventElement(m.enterPtr)
+	}
+	m.enterPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(14, m.Instance(), m.enterPtr)
+}
+
+func (m *TOpenGLControl) SetOnExit(fn lcl.TNotifyEvent) {
+	if m.exitPtr != 0 {
+		RemoveEventElement(m.exitPtr)
+	}
+	m.exitPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(15, m.Instance(), m.exitPtr)
+}
+
+func (m *TOpenGLControl) SetOnKeyDown(fn lcl.TKeyEvent) {
+	if m.keyDownPtr != 0 {
+		RemoveEventElement(m.keyDownPtr)
+	}
+	m.keyDownPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(16, m.Instance(), m.keyDownPtr)
+}
+
+func (m *TOpenGLControl) SetOnKeyPress(fn lcl.TKeyPressEvent) {
+	if m.keyPressPtr != 0 {
+		RemoveEventElement(m.keyPressPtr)
+	}
+	m.keyPressPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(17, m.Instance(), m.keyPressPtr)
+}
+
+func (m *TOpenGLControl) SetOnKeyUp(fn lcl.TKeyEvent) {
+	if m.keyUpPtr != 0 {
+		RemoveEventElement(m.keyUpPtr)
+	}
+	m.keyUpPtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(18, m.Instance(), m.keyUpPtr)
+}
+
+func (m *TOpenGLControl) SetOnResize(fn lcl.TNotifyEvent) {
+	if m.resizePtr != 0 {
+		RemoveEventElement(m.resizePtr)
+	}
+	m.resizePtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(19, m.Instance(), m.resizePtr)
+}
+
 var (
 	openGLDllTable *imports.DllTable
 )
@@ -154,6 +217,13 @@ func openGLDllTableAPI() *imports.DllTable {
 			dllimports.NewEnergyImport("OpenGLControl_SetOnMouseWheel", 0),
 			dllimports.NewEnergyImport("OpenGLControl_SetOnMouseWheelDown", 0),
 			dllimports.NewEnergyImport("OpenGLControl_SetOnMouseWheelUp", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnClick", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnEnter", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnExit", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnKeyDown", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnKeyPress", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnKeyUp", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnResize", 0),
 		}
 		openGLDllTable = new(imports.DllTable)
 		openGLDllTable.SetOk(true)

@@ -200,6 +200,9 @@ type IChromiumProc interface {
 	IMECancelComposition()
 	HasDevTools() bool
 	InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl)
+	InitializeDragAndDropByHWND(aDropTargetWnd types.HWND)
+	ShutdownDragAndDrop()
+	SetNewBrowserParent(aNewParentHwnd types.HWND)
 	Fullscreen() bool
 	ExitFullscreen(willCauseResize bool)
 	LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler, requestContext *ICefRequestContext) bool
@@ -449,7 +452,11 @@ func (m *TCEFChromium) CreateBrowser(window ICEFWindowParent, windowName string,
 }
 
 func (m *TCEFChromium) CreateBrowserByWinControl(browserParent *lcl.TWinControl, windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) bool {
-	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByWinControl).Call(m.Instance(), browserParent.Instance(), api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
+	var control uintptr
+	if browserParent != nil {
+		control = browserParent.Instance()
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_CreateBrowserByWinControl).Call(m.Instance(), control, api.PascalStr(windowName), context.Instance(), extraInfo.Instance())
 	return api.GoBool(r1)
 }
 
@@ -1640,12 +1647,42 @@ func (m *TCEFChromium) HasDevTools() bool {
 
 // InitializeDragAndDrop
 //
-//	By Windows
+//	By Windows: Used with browsers in OSR mode to initialize drag and drop in Windows.
 func (m *TCEFChromium) InitializeDragAndDrop(dropTargetCtrl lcl.IWinControl) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.CEFChromium_InitializeDragAndDrop).Call(m.Instance(), lcl.CheckPtr(dropTargetCtrl))
+}
+
+// InitializeDragAndDropByHWND
+//
+//	By Windows: Used with browsers in OSR mode to initialize drag and drop in Windows.
+func (m *TCEFChromium) InitializeDragAndDropByHWND(aDropTargetWnd types.HWND) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_InitializeDragAndDropByHWND).Call(m.Instance(), aDropTargetWnd)
+}
+
+// ShutdownDragAndDrop
+//
+//	By Windows: Used with browsers in OSR mode to shutdown drag and drop in Windows.
+func (m *TCEFChromium) ShutdownDragAndDrop() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_ShutdownDragAndDrop).Call(m.Instance())
+}
+
+// SetNewBrowserParent
+//
+//	By Windows: Used to reparent the browser to a different TCEFWindowParent.
+func (m *TCEFChromium) SetNewBrowserParent(aNewParentHwnd types.HWND) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SetNewBrowserParent).Call(m.Instance(), aNewParentHwnd)
 }
 
 // EmitRender IPC 发送进程 消息

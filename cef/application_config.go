@@ -1261,6 +1261,13 @@ func (m *TCEFApplication) MustCreateLoadHandler() bool {
 	return api.GoBool(r1)
 }
 
+// By Windows:
+// Set to true (1) before calling Windows APIs like TrackPopupMenu that enter a
+// modal message loop. Set to false (0) after exiting the modal message loop.
+func (m *TCEFApplication) OsmodalLoop(value bool) {
+	imports.Proc(def.CEFAppConfig_OsmodalLoop).Call(api.PascalBool(value))
+}
+
 func (m *TCEFApplication) SetMustCreateLoadHandler(value bool) {
 	imports.Proc(def.CEFAppConfig_SetMustCreateLoadHandler).Call(api.PascalBool(value))
 }

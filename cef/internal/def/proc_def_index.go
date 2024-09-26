@@ -508,6 +508,7 @@ const (
 	CEFAppConfig_MustCreateBrowserProcessHandler
 	CEFAppConfig_MustCreateRenderProcessHandler
 	CEFAppConfig_MustCreateLoadHandler
+	CEFAppConfig_OsmodalLoop
 	CEFAppConfig_Status
 	CEFAppConfig_MissingLibFiles
 	CEFAppConfig_MustFreeLibrary
@@ -1008,6 +1009,9 @@ const (
 	CEFChromium_IMECancelComposition
 	CEFChromium_HasDevTools
 	CEFChromium_InitializeDragAndDrop
+	CEFChromium_InitializeDragAndDropByHWND
+	CEFChromium_ShutdownDragAndDrop
+	CEFChromium_SetNewBrowserParent
 	CEFChromium_Fullscreen
 	CEFChromium_ExitFullscreen
 	CEFChromium_LoadExtension
