@@ -27,7 +27,8 @@ type TBufferPanel struct {
 }
 
 // NewBufferPanel
-//  创建一个新的对象。
+//
+//	创建一个新的对象。
 func NewBufferPanel(owner lcl.IComponent) *TBufferPanel {
 	m := new(TBufferPanel)
 	var result uintptr
@@ -1880,11 +1881,11 @@ func (m *TBufferPanel) SetOnMouseWheel(fn lcl.TMouseWheelEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnMouseWheel, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnOnKeyDown(fn lcl.TKeyEvent) {
+func (m *TBufferPanel) SetOnKeyDown(fn lcl.TKeyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnKeyDown, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnOnKeyUp(fn lcl.TKeyEvent) {
+func (m *TBufferPanel) SetOnKeyUp(fn lcl.TKeyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnKeyUp, m.Instance(), api.MakeEventDataPtr(fn))
 }
 

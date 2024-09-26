@@ -322,7 +322,7 @@ func (m *WindowForm) bufferPanelEvent() {
 		m.chromium.SendMouseWheelEvent(mouseEvent, 0, wheelDelta)
 	})
 	// 键盘事件 按下
-	m.bufferPanel.SetOnOnKeyDown(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
+	m.bufferPanel.SetOnKeyDown(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
 		//fmt.Println("SetOnOnKeyDown", *key, shift)
 		keyEvent := &cef.TCefKeyEvent{}
 		if *key != 0 {
@@ -339,7 +339,7 @@ func (m *WindowForm) bufferPanelEvent() {
 		}
 	})
 	// 键盘事件 抬起
-	m.bufferPanel.SetOnOnKeyUp(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
+	m.bufferPanel.SetOnKeyUp(func(sender lcl.IObject, key *types.Char, shift types.TShiftState) {
 		//fmt.Println("SetOnOnKeyUp", *key, shift)
 		keyEvent := &cef.TCefKeyEvent{}
 		if *key != 0 {
