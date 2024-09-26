@@ -12,7 +12,11 @@ on:
 jobs:
 
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-22.04, windows-2019]
+
     steps:
     - uses: actions/checkout@v3
 
@@ -20,7 +24,20 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: '1.20'
-      
+
+    - name: Build Energy CLI
+      run: |
+        cd ./cmd/energy
+        go install
+        energy
+        energy cli -v
+
+    - name: Windows Test CGO ENABLED
+      if: matrix.os == 'windows-2019'
+      run: |
+        set CGO_ENABLED=1
+        go env
+
     - name: Test
       run: |
         go mod tidy
