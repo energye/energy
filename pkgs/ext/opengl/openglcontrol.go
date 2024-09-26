@@ -197,6 +197,14 @@ func (m *TOpenGLControl) SetOnResize(fn lcl.TNotifyEvent) {
 	openGLDllTableAPI().SysCallN(19, m.Instance(), m.resizePtr)
 }
 
+func (m *TOpenGLControl) SetOnUTF8KeyPress(fn lcl.TUTF8KeyPressEvent) {
+	if m.resizePtr != 0 {
+		RemoveEventElement(m.resizePtr)
+	}
+	m.resizePtr = MakeEventDataPtr(fn)
+	openGLDllTableAPI().SysCallN(20, m.Instance(), m.resizePtr)
+}
+
 var (
 	openGLDllTable *imports.DllTable
 )
@@ -224,6 +232,7 @@ func openGLDllTableAPI() *imports.DllTable {
 			dllimports.NewEnergyImport("OpenGLControl_SetOnKeyPress", 0),
 			dllimports.NewEnergyImport("OpenGLControl_SetOnKeyUp", 0),
 			dllimports.NewEnergyImport("OpenGLControl_SetOnResize", 0),
+			dllimports.NewEnergyImport("OpenGLControl_SetOnUTF8KeyPress", 0),
 		}
 		openGLDllTable = new(imports.DllTable)
 		openGLDllTable.SetOk(true)
