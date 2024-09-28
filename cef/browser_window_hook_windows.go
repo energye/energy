@@ -16,6 +16,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/types"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types/messages"
 	"github.com/energye/golcl/lcl/win"
 	"syscall"
@@ -23,6 +24,15 @@ import (
 )
 
 func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
+	switch message {
+	case messages.WM_DPICHANGED:
+		if !lcl.Application.Scaled() {
+			newWindowSize := (*types.Rect)(unsafe.Pointer(lParam))
+			win.SetWindowPos(m.Handle(), uintptr(0),
+				newWindowSize.Left, newWindowSize.Top, newWindowSize.Right-newWindowSize.Left, newWindowSize.Bottom-newWindowSize.Top,
+				win.SWP_NOZORDER|win.SWP_NOACTIVATE)
+		}
+	}
 	if m.WindowProperty().EnableHideCaption {
 		switch message {
 		case messages.WM_ACTIVATE:
