@@ -32,8 +32,7 @@ func main() {
 	app.SetExternalMessagePump(true)
 	app.SetMultiThreadedMessageLoop(false)
 	// create work schedule
-	global := cef.GlobalWorkSchedulerCreate(nil)
-	global.SetDefaultInterval(10)
+	cef.GlobalWorkSchedulerCreate(nil)
 	app.SetOnScheduleMessagePumpWork(nil)
 	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
 	if app.StartMainProcess() {
