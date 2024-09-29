@@ -15,7 +15,7 @@
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
-![Build Status](https://github.com/energye/energy/actions/workflows/go.yml/badge.svg)
+![Build Status](https://github.com/energye/energy/actions/workflows/build-test.yml/badge.svg)
 ![repo](https://img.shields.io/github/repo-size/energye/energy.svg?logo=github&logoColor=green&label=repo-size)
 [![Go Report](https://goreportcard.com/badge/github.com/energye/energy)](https://goreportcard.com/report/github.com/energye/energy/v2)
 [![Go Reference](https://pkg.go.dev/badge/github.com/energye/energy)](https://pkg.go.dev/github.com/energye/energy/v2)
