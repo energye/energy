@@ -31,7 +31,14 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 		written int64
 	)
 	tmpFilePath := localPath + ".download"
-	client := rawhttp.NewClient(rawhttp.DefaultOptions)
+	options := &rawhttp.Options{
+		Timeout:                -1,
+		FollowRedirects:        true,
+		MaxRedirects:           10,
+		AutomaticHostHeader:    true,
+		AutomaticContentLength: true,
+	}
+	client := rawhttp.NewClient(options)
 	resp, err := client.Get(url)
 	if err != nil {
 		return err
