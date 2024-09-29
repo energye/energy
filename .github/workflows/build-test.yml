@@ -25,18 +25,24 @@ jobs:
       with:
         go-version: '1.20'
 
+    - name: Linux Install Dependencies(OpenGL)
+      if: ${{ matrix.os == 'ubuntu-22.04' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mesa-utils mesa-common-dev libx11-dev libxcursor-dev libxrandr-dev libxinerama-dev libxi-dev libgl1-mesa-dev libxxf86vm-dev libglfw3-dev
+
+    - name: Windows ENABLED CGO
+      if: matrix.os == 'windows-2019'
+      run: |
+        set CGO_ENABLED=1
+        go env
+
     - name: Build Energy CLI
       run: |
         cd ./cmd/energy
         go install
         energy
         energy cli -v
-
-    - name: Windows Test CGO ENABLED
-      if: matrix.os == 'windows-2019'
-      run: |
-        set CGO_ENABLED=1
-        go env
 
     - name: Test
       run: |
