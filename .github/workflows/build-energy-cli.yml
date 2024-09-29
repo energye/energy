@@ -1,0 +1,37 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: build-energy-cli
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-2019]
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: '1.20'
+
+    - name: Build CLI
+      run: |
+        cd ./cmd/energy/md5
+        go install
+        cd ../
+        .\build.bat
+        7z a energy-windows-32.zip      energy-windows-32.exe
+        7z a energy-windows-64.zip      energy-windows-64.exe
+        7z a energy-darwin-64.zip       energy-darwin-64
+        7z a energy-darwinarm-64.zip    energy-darwinarm-64
+        7z a energy-linux-64.zip        energy-linux-64
+        7z a energy-linuxarm-64.zip     energy-linuxarm-64
+        dir
