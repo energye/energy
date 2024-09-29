@@ -1,34 +1,41 @@
 # Upgrade Log
 
+### 2.4.4
+
+- U: winapi Change some function parameters to pointer pass
+- U: energy cli, Retrieve installation environment commands remotely
+- U: Remove CLI dependencies
+- U: energy cli, add cli -v, -u
+- U: workflows: go-version: '1.20'
+- U: Optimize and remove unnecessary code
+- A: Add OpenGL TOpenGLControl Component, and add OpenGL example
+- Fix: frameless window DPI issue
+- U: Upgrade golcl v1.0.11
+
 ### 2.4.3
 
-```text
 - cli, add check version
 - Fix: #32 The rendering process ipc listens for adding a frameId group.  Add a frame object to implement the ipc target.IWindow interface
 - Fix: #33 After obtaining the window handle, pop-up window dragging failed
 - Fix: #34 --webkit-app-region Invalid after refreshing the page
 - Windows and MacOS optimize borderless window styles. Previously, there was no glass shadow when borderless, but now it is the same as the system default,
 - Windows, MacOS windows drag and resize using JS-IPC implementation
-```
 
 ### 2.4.2
 
-```text
 - A: CEFTask CefPostTask, CefPostDelayedTask, CefCurrentlyOn
 - Fix: Issue of rendering process deadlock caused by IPC nested calls
 - U: command-line update
 - U: demo gifplay
-```
 
 ### 2.4.1
 
-```text
-1. Modify all demo syso
-1. U: Add JS ipc.emit to trigger Go event synchronization mode configuration option, default: `MSync`
-1. U: Optimizing the conflict between fullscreen and maximized window.
-1. A: demo headless
-1. U: command-line manifest requestedExecutionLevel => asInvoker
-1. U: command-line add gen windows > icon, syso cmd
+- Modify all demo syso
+- U: Add JS ipc.emit to trigger Go event synchronization mode configuration option, default: `MSync`
+- U: Optimizing the conflict between fullscreen and maximized window.
+- A: demo headless
+- U: command-line manifest requestedExecutionLevel => asInvoker
+- U: command-line add gen windows > icon, syso cmd
 
 Remarks: `ipc.On`
 
@@ -37,80 +44,71 @@ ipc.On("name", func(){
 	// ...
 }, ipcTypes.OnOptions{Mode: ipcTypes.MAsync})
 
-```
 
 ### 2.4.0
 
-```text
 This version is incompatible with 2.3.x.
 
-1. U: LCLBrowserWindow and ViewsFrameworkBrowserWindow, Add func ChromiumBrowser() ICEFChromiumBrowser
-1. U: rename, ipc.emitSync => ipc.emitWait, This trigger has a timeout configuration
-1. A: linux arm64 demo startup.sh
-1. U: energy cmd version 1.0.6, install golang default version 1.19.13
-1. A: Add gif play component
-1. U: TCEFWindowComponent.SetOnGetTitleBarHeight param titleBarHeight => *float32
-1. A: extension, misc_functions api
-1. U: MacOS UI async thread run function
-1. U: Logic when using RunOnMainThread to determine IsMessage Loop
-1. Fix: vf tary Window state control
-1. U: Remove MainFormOnTaskBar configuration and use Enabling MainWindow configuration when the taskbar is not displayed
-1. U: all demo, windows import syso
-1. Fix: Use VF Application init. RunOnMainThread VF Use ThreadSync UI. ChromiumBrowser LCLBrowserWindow nil bug.
-1. U: Go execution IPC listening event changed to asynchronous execution
-1. U: Condition judgment when the gate is empty
-1. U: browserConfig > BrowserConfig
-1. U: IPC NewTarget IWindow > Add Chromium
-1. U: Chromium All Event Callback Parameters NativeUInt Type Pointer Passing
-1. A: Chromium SendDevToolsMessage function, ExecuteDevToolsMethod Add Result messageId
-1. A&U: examples
-```
+- U: LCLBrowserWindow and ViewsFrameworkBrowserWindow, Add func ChromiumBrowser() ICEFChromiumBrowser
+- U: rename, ipc.emitSync => ipc.emitWait, This trigger has a timeout configuration
+- A: linux arm64 demo startup.sh
+- U: energy cmd version 1.0.6, install golang default version 1.19.13
+- A: Add gif play component
+- U: TCEFWindowComponent.SetOnGetTitleBarHeight param titleBarHeight => *float32
+- A: extension, misc_functions api
+- U: MacOS UI async thread run function
+- U: Logic when using RunOnMainThread to determine IsMessage Loop
+- Fix: vf tary Window state control
+- U: Remove MainFormOnTaskBar configuration and use Enabling MainWindow configuration when the taskbar is not displayed
+- U: all demo, windows import syso
+- Fix: Use VF Application init. RunOnMainThread VF Use ThreadSync UI. ChromiumBrowser LCLBrowserWindow nil bug.
+- U: Go execution IPC listening event changed to asynchronous execution
+- U: Condition judgment when the gate is empty
+- U: browserConfig > BrowserConfig
+- U: IPC NewTarget IWindow > Add Chromium
+- U: Chromium All Event Callback Parameters NativeUInt Type Pointer Passing
+- A: Chromium SendDevToolsMessage function, ExecuteDevToolsMethod Add Result messageId
+- A&U: examples
 
 ### 2.3.8
 
-```text
-1. Fix: Chromium event callback parameter pointer value
-2. U: Adjust the timing of the main window settings
-3. U: Adjusting the default implementation event to the chrrimbrowser structure
-4. Fix: When customizing the layout of Chromium in the window, you cannot drag to change the window size
-5. U: energy custom menu modify
-6. U: command-line, windows build write [app].manifest to disk
-7. Fix: Energy custom event, pop-up window event only triggers once issue
-8. Fix: Window Min,Max Size Bug
-9. Fix: cmd download cef-framework file name
-10. U: Modify some examples
+- Fix: Chromium event callback parameter pointer value
+- U: Adjust the timing of the main window settings
+- U: Adjusting the default implementation event to the chrrimbrowser structure
+- Fix: When customizing the layout of Chromium in the window, you cannot drag to change the window size
+- U: energy custom menu modify
+- U: command-line, windows build write [app].manifest to disk
+- Fix: Energy custom event, pop-up window event only triggers once issue
+- Fix: Window Min,Max Size Bug
+- Fix: cmd download cef-framework file name
+- U: Modify some examples
 
-```
 
 ### 2.3.7
 
-```text
-1. Fix: Window Min,Max Size Bug
-2. Fix: Energy custom event, pop-up window event only triggers once issue
-```
+- Fix: Window Min,Max Size Bug
+- Fix: Energy custom event, pop-up window event only triggers once issue
 
 ### 2.3.6
 
-```text
-1. MacOS 增加 touch bar 支持， 和touchbar示例
-2. MacOS 无标题栏窗口状态控制
-3. 删除示例下的多于icon资源文件
-4. 增加 ipc 多窗口通信示例
-5. 修改托盘示例
-5. 增加LCL支持主窗口配置，关闭主窗口后，如果在多窗口时直到最后一个窗口关闭才退出应用
-6. 增加WindowsXP SP3支持
-7. 修改部分API字符串使用TString类
-8. 为了支持Go的底版本将所有any类型改为interface类型
-9. energy最底支持Go1.11版本
-10. 修复chromium相关事件回调函数参数
-11. 增加部分API判断, 对CEF API不支持CEF49, 未判断完全，但不影响，CEF49支持的API不如CEF新版本的多
-12. 命令行工具优化，未增加对WindowsXP的安装，目前WindowsXP需要手动安装
-13. 命令工具增加bindata命令，当Go版本小于1.16时，为支持Embed内嵌资源接口
-14. 优化LCL托盘可以同时创建多个
-15. 增加一些energy还未实现的CEF API
-16. 优化预先创建下一个子弹出窗口
-17. 修复一些错误，记录结构类型调用 API 时传递指针错误问题
-```
+- MacOS 增加 touch bar 支持， 和touchbar示例
+- MacOS 无标题栏窗口状态控制
+- 删除示例下的多于icon资源文件
+- 增加 ipc 多窗口通信示例
+- 修改托盘示例
+- 增加LCL支持主窗口配置，关闭主窗口后，如果在多窗口时直到最后一个窗口关闭才退出应用
+- 增加WindowsXP SP3支持
+- 修改部分API字符串使用TString类
+- 为了支持Go的底版本将所有any类型改为interface类型
+- energy最底支持Go1.11版本
+- 修复chromium相关事件回调函数参数
+- 增加部分API判断, 对CEF API不支持CEF49, 未判断完全，但不影响，CEF49支持的API不如CEF新版本的多
+- 命令行工具优化，未增加对WindowsXP的安装，目前WindowsXP需要手动安装
+- 命令工具增加bindata命令，当Go版本小于1.16时，为支持Embed内嵌资源接口
+- 优化LCL托盘可以同时创建多个
+- 增加一些energy还未实现的CEF API
+- 优化预先创建下一个子弹出窗口
+- 修复一些错误，记录结构类型调用 API 时传递指针错误问题
 
 ### 2.3.5
 
