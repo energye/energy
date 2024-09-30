@@ -30,6 +30,6 @@ func main() {
 		return
 	}
 	defer md5File.Close()
-	md5File.WriteString(md5String + "  " + file + "\n")
+	md5File.WriteString(md5String + "  " + file + "\r\n")
 	println("file:", file, "md5:", md5String)
 }
