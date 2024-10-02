@@ -82,14 +82,18 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 			if v, ok := versionList[installVersion.Identical]; ok {
 				installVersion = &v
 				break
+			} else {
+				term.Logger.Error("Incorrect version configuration. Identical: " + installVersion.Identical)
+				return "", nil
 			}
+		} else {
+			break
 		}
 	}
 	if installVersion == nil {
 		term.Logger.Error("Invalid version number " + c.Install.Version)
 		return "", nil
 	}
-
 	// 当前版本 cef 和 liblcl 版本选择
 	var (
 		cefModuleName, liblclModuleName string
@@ -112,6 +116,8 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 		cefModuleName = "cef-87"       // CEF 87.1.14
 		liblclModuleName = "liblcl-87" // liblcl 87, flash
 	}
+	term.Section.Println("Install CEF-V: " + cefVer)
+
 	// 如未指定CEF参数、或参数不正确，选择当前支持CEF版本最（新）大的版本号
 	if cefModuleName == "" {
 		var (
