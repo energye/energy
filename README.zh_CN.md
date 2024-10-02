@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://assets.yanghy.cn/energy-icon.png">
+    <img src="https://energye.github.io/imgs/energy.png">
 </p>
 
 <p align="center" style="font-size: 24px;">
