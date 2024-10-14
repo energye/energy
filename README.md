@@ -12,6 +12,7 @@
 English
 
 ---
+
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
@@ -60,9 +61,9 @@ Automatic installation development environment using the energy [command-line to
 
 ### Guide to Start - [Link](https://energy.yanghy.cn)
 
-* [Course](https://energy.yanghy.cn/course/100/0)
-* [Example](https://energy.yanghy.cn/example/200/0)
-* [Document](https://energy.yanghy.cn/document/300/0)
+- [Guide](https://energye.github.io/en/guide/getting-started)
+- [Example](https://energye.github.io/en/examples)
+- [Document](https://energye.github.io/en/document)
 
 ### Quick Start
 
@@ -82,29 +83,29 @@ main.go
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
+ "github.com/energye/energy/v2/cef"
 )
 
 func main() {
-	//Global initialization
-	cef.GlobalInit(nil, nil)
-	//Create an application
-	app := cef.NewApplication()
-	//Specify a URL address or local HTML file directory
-	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
-	//Run Application
-	cef.Run(app)
+ //Global initialization
+ cef.GlobalInit(nil, nil)
+ //Create an application
+ app := cef.NewApplication()
+ //Specify a URL address or local HTML file directory
+ cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+ //Run Application
+ cef.Run(app)
 }
 ```
 
 ### Build
+
 1. Build：`energy build .`
 2. Package：`energy package .`
 3. Package Type：
     - windows: Using `nsis` create exe installation package
     - linux: Using `dpkg` create deb installation package
     - macos: Generate `xxx.app`
-
 
 ### System support
 
@@ -121,16 +122,18 @@ func main() {
 | Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/supported-success.svg?logo=Linux)                | Kylin-V10-SP1-2107                 |
 
 ### Related Projects
-* [CEF](https://github.com/chromiumembedded/cef)
-* [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi)
-* [CefSharp](https://github.com/cefsharp/CefSharp)
-* [Java-CEF](https://bitbucket.org/chromiumembedded/java-cef)
-* [cefpython](https://github.com/cztomczak/cefpython)
-* [Chromium](https://chromium.googlesource.com/chromium/src/)
+
+- [CEF](https://github.com/chromiumembedded/cef)
+- [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi)
+- [CefSharp](https://github.com/cefsharp/CefSharp)
+- [Java-CEF](https://bitbucket.org/chromiumembedded/java-cef)
+- [cefpython](https://github.com/cztomczak/cefpython)
+- [Chromium](https://chromium.googlesource.com/chromium/src/)
 
 ---
 
 ### Welcome to join
+
 join energy throwing in the process of construction, there are many things that cannot be completed alone, if there are interested students who want to participate in the realization or learning of energy, you can contact me through WeChat or QQ.
 
 If this project is helpful to you, please give me a star
@@ -190,7 +193,6 @@ If this project is helpful to you, please give me a star
 
 <img src="https://assets.yanghy.cn/frameless-macos.png">
 
-
 ----
 
 ### Public License
@@ -198,6 +200,7 @@ If this project is helpful to you, please give me a star
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=green)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ### Contributors
+
 <a href="https://github.com/energye/energy/graphs/contributors">
     <img src="https://opencollective.com/energy/contributors.svg?width=890&button=false" />
 </a>

@@ -12,6 +12,7 @@
 [English](README.md)
 
 ---
+
 ![go-version](https://img.shields.io/github/go-mod/go-version/energye/energy?logo=git&logoColor=green)
 [![github](https://img.shields.io/github/last-commit/energye/energy/main.svg?logo=github&logoColor=green&label=commit)](https://github.com/energye/energy)
 [![release](https://img.shields.io/github/v/release/energye/energy?logo=git&logoColor=green)](https://github.com/energye/energy/releases)
@@ -27,20 +28,20 @@
 ### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
 
 > Energy 是 Go 基于 [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) 和 [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework) 开发的 GUI 框架, 用于开发Windows、MacOS 和 Linux 跨平台桌面应用.
-> 
+>
 > 可仅用 LCL 创建轻量级原生应用，或结合 LCL 与 CEF 打造功能更全的应用程序
-> 
+>
 > 使用 Go 和 Web 端技术 ( HTML + CSS + JavaScript ) 构建支持Windows, Linux, MacOS跨平台桌面应用
-
-
 
 ### 特性
 
 > - 具有丰富的 CEF API 和 丰富的 LCL 系统原生控件
 > - 开发环境简单, 编译速度快, 仅需Go和Energy依赖的CEF二进制框架
 > - 跨平台: 一套代码可以打包成 Windows, 国产UOS、Deepin、Kylin, MacOS, Linux
+>>
 >> - Golang: 窗口管理、CEF API封装&配置、功能实现、各种UI组件创建、系统低层调用和JavaScript处理不了的功能，如: 文件流、安全加密、高性能处理等
 >> - Web: HTML + CSS + JavaScript 负责客户端界面的功能, 做出任意你想要的界面
+>>
 > - 前端技术: 支持主流前端框架。例如：Vue、React、Angular 和 原生HTML+CSS+JS等
 > - 事件驱动: 高性能事件驱动, 基于IPC通信，实现Go和Web端迅捷调用及数据交互
 > - 资源加载: 可无需http服务支撑，直接读取本地资源或内置到执行文件的资源, 也支持http服务加载资源
@@ -65,9 +66,9 @@
 
 ### 入门指南 - [传送门](https://energy.yanghy.cn)
 
-* [教程](https://energy.yanghy.cn/course/100/0)
-* [示例](https://energy.yanghy.cn/example/200/0)
-* [文档](https://energy.yanghy.cn/document/300/0)
+- [教程](https://energy.yanghy.cn/guide/getting-started)
+- [示例](https://energy.yanghy.cn/examples)
+- [文档](https://energy.yanghy.cn/document)
 
 ### 快速入门
 
@@ -87,22 +88,23 @@ main.go
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
+ "github.com/energye/energy/v2/cef"
 )
 
 func main() {
-	//全局初始化
-	cef.GlobalInit(nil, nil)
-	//创建应用
-	app := cef.NewApplication()
-	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
-	//运行应用
-	cef.Run(app)
+ //全局初始化
+ cef.GlobalInit(nil, nil)
+ //创建应用
+ app := cef.NewApplication()
+ //指定一个URL地址，或本地html文件目录
+ cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+ //运行应用
+ cef.Run(app)
 }
 ```
 
 ### 应用打包
+
 1. 编译：`energy build .`
 2. 打包：`energy package .`
 3. 自动生成的安装包
@@ -116,7 +118,6 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
-
 |             | 32位                                                                                        | 64位                                                                                        | 测试系统版本                             |
 |-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
 | Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows XP SP3、 7、10、11            |
@@ -126,16 +127,17 @@ func main() {
 | Linux ARM   | ![Linux ARM](https://img.shields.io/badge/自编译-supported-success.svg?logo=Linux)            | ![Linux ARM](https://img.shields.io/badge/supported-success.svg?logo=Linux)                | Kylin-V10-SP1-2107                 |
 
 ### 相关项目
-* [CEF](https://github.com/chromiumembedded/cef)
-* [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi)
-* [CefSharp](https://github.com/cefsharp/CefSharp)
-* [Java-CEF](https://bitbucket.org/chromiumembedded/java-cef)
-* [cefpython](https://github.com/cztomczak/cefpython)
-* [Chromium](https://chromium.googlesource.com/chromium/src/)
+- [CEF](https://github.com/chromiumembedded/cef)
+- [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi)
+- [CefSharp](https://github.com/cefsharp/CefSharp)
+- [Java-CEF](https://bitbucket.org/chromiumembedded/java-cef)
+- [cefpython](https://github.com/cztomczak/cefpython)
+- [Chromium](https://chromium.googlesource.com/chromium/src/)
 
 ---
 
 ### 欢迎加入
+
 energy扔处于建设的过程中，有很多的事情无法独自完成，如果有感兴趣的同学想参与energy的实现或学习，可通过微信或QQ联系我。
 
 如果你觉得此项目对你有帮助，请点亮 Star
@@ -162,10 +164,13 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 ---
 
 ### 项目截图
+
 ##### Windows-10
+
 <img src="https://assets.yanghy.cn/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
+
 <img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
 <img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
 
@@ -174,20 +179,23 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 <img src="https://assets.yanghy.cn/windows-xp-sp3.png">
 
 ##### Linux - Deepin
+
 <img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">
 <img src="https://assets.yanghy.cn/frameless-deepin-hide-20.8.png">
 
 ##### Linux - Kylin ARM
+
 <img src="https://assets.yanghy.cn/frameless-kylin-arm-V10-SP1.png">
 <img src="https://assets.yanghy.cn/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
+
 <img src="https://assets.yanghy.cn/frameless-ubuntu-18.04.6.png">
 <img src="https://assets.yanghy.cn/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOS
-<img src="https://assets.yanghy.cn/frameless-macos.png">
 
+<img src="https://assets.yanghy.cn/frameless-macos.png">
 
 ----
 
@@ -196,6 +204,8 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=green)](http://www.apache.org/licenses/LICENSE-2.0)
 
 ### 贡献者
+
 <a href="https://github.com/energye/energy/graphs/contributors">
     <img src="https://opencollective.com/energy/contributors.svg?width=890&button=false" />
 </a>
+
