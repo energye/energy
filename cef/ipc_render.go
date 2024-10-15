@@ -18,6 +18,7 @@ import (
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/json"
 	"time"
@@ -47,9 +48,10 @@ func (m *ipcRenderProcess) clear(frameId int64) {
 
 // JS ipc.on 监听事件
 func (m *ipcOnHandler) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
+	var size int
 	if name != internalIPCOn {
 		return
-	} else if arguments.Size() != 2 { //必须是2个参数
+	} else if size = arguments.Size(); !(size >= 2 && size <= 3) { //必须是2 | 3个参数
 		exception.SetValue("ipc.on parameter should be 2 quantity")
 		arguments.Free()
 		return
@@ -73,11 +75,37 @@ func (m *ipcOnHandler) jsOnEvent(name string, object *ICefV8Value, arguments *TC
 		arguments.Free()
 		return
 	}
+	//监听选项, 第三个参数
+	options := arguments.Get(2)
+	if size == 3 && !options.IsObject() {
+		exception.SetValue("ipc.on event options should be a object")
+		arguments.Free()
+		return
+	}
 	retVal.SetResult(V8ValueRef.NewBool(true))
 	onCallback.SetCanNotFree(true)
 	onNameValue = onName.GetStringValue()
-	//ipc on
-	m.addCallback(onNameValue, &ipcCallback{function: V8ValueRef.UnWrap(onCallback), name: V8ValueRef.UnWrap(onName)})
+
+	callback := &ipcCallback{
+		function: V8ValueRef.UnWrap(onCallback),
+		name:     V8ValueRef.UnWrap(onName),
+	}
+
+	// 监听模式，JS: ipc.on 监听事件 options 模式(mode)值是 MAsync(1)时，在回调函数的参数列表最后一个参数 complete 对象
+	if size == 3 && options.IsValid() {
+		modeValue := options.GetValueByKey("mode")
+		if modeValue.IsValid() {
+			callback.mode = types.Mode(modeValue.GetIntValue())
+			modeValue.Free()
+		}
+		options.Free()
+		if callback.mode == types.MAsync {
+			callback.asyncHandler = newAsyncGoExecuteJSHandler()
+		}
+	}
+
+	//ipc on, 添加到维护集合
+	m.addCallback(onNameValue, callback)
 	result = true
 	return
 }
@@ -139,6 +167,17 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 				//bytes to v8array value
 				argsArray, err = ValueConvert.BytesToV8ArrayValue(argumentList.Bytes())
 			}
+			// MAsync: 异步模式
+			if callback.mode == types.MAsync {
+				if argsArray == nil {
+					argsArray = V8ValueArrayRef.New()
+				}
+				complete := V8ValueRef.NewObject(nil)
+				complete.SetValueByKey("callback", callback.asyncHandler.callback, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+				complete.SetValueByKey("id", V8ValueRef.NewInt(messageId), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+				argsArray.Add(complete)
+			}
+			// 执行事件函数
 			if argsArray != nil && err == nil {
 				// parse v8array success
 				ret = callback.function.ExecuteFunctionWithContext(ctx, nil, argsArray)
@@ -147,7 +186,8 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 				// parse v8array fail
 				ret = callback.function.ExecuteFunctionWithContext(ctx, nil, nil)
 			}
-			if ret != nil && ret.IsValid() && messageId != 0 { // messageId != 0 callback func args
+			// MSync: 同步模式
+			if callback.mode == types.MSync && ret != nil && ret.IsValid() && messageId != 0 { // messageId != 0 callback func args
 				// v8value to process message bytes
 				callbackArgsBytes = ValueConvert.V8ValueToProcessMessageArray(ret)
 				ret.Free()
@@ -158,19 +198,9 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 			ctx.Exit()
 		}
 		ctx.Free()
-		if messageId != 0 { //messageId != 0 callback func
-			callbackMessage := &ipcArgument.List{
-				Id:   messageId,
-				BId:  ipc.RenderChan().BrowserId(),
-				Name: internalIPCGoExecuteJSEventReplay,
-			}
-			if callbackArgsBytes != nil {
-				callbackMessage.Data = callbackArgsBytes //json.NewJSONArray(callbackArgsBytes).Data()
-			}
-			// send ipc message
-			// send bytes data to browser ipc
-			ipc.RenderChan().IPC().Send(callbackMessage.Bytes())
-			callbackMessage.Reset()
+		// MSync: 同步模式
+		if callback.mode == types.MSync {
+			replayGoExecuteJSEvent(messageId, callbackArgsBytes)
 		}
 	}
 	return

@@ -14,6 +14,8 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/cef/process"
 	"sync"
 	"time"
@@ -70,11 +72,13 @@ type ipcOnHandler struct {
 
 // ipc.emit 回调结果
 type ipcCallback struct {
-	isSync     bool         //同否同步 true:同步 false:异步, 默认false
-	resultType result_type  //返回值类型 0:function 1:variable 默认:0
-	variable   *ICefV8Value //回调函数, 根据 resultType
-	function   *ICefV8Value //回调函数, 根据 resultType
-	name       *ICefV8Value //事件名称
+	isSync       bool                     //同否同步 true:同步 false:异步, 默认false
+	resultType   result_type              //返回值类型 0:function 1:variable 默认:0
+	variable     *ICefV8Value             //回调函数, 根据 resultType
+	function     *ICefV8Value             //回调函数, 根据 resultType
+	name         *ICefV8Value             //事件名称
+	mode         types.Mode               //监听模式
+	asyncHandler *asyncGoExecuteJSHandler //监听模式为 MAsync
 }
 
 // IPC 内部定义使用 key 不允许使用
@@ -192,4 +196,76 @@ func (m *ipcOnHandler) clear() {
 		v.name.Free()
 	}
 	m.callbackList = make(map[string]*ipcCallback)
+}
+
+// JS: ipc.on 异步模式完成事件处理
+type asyncGoExecuteJSHandler struct {
+	handler  *ICefV8Handler
+	callback *ICefV8Value
+}
+
+// 返回一个新的 asyncGoExecuteJSHandler
+func newAsyncGoExecuteJSHandler() *asyncGoExecuteJSHandler {
+	asyncHandler := &asyncGoExecuteJSHandler{
+		handler: V8HandlerRef.New(),
+	}
+	// 创建处理器函数, 在异步监听模式时使用
+	asyncHandler.handler.Execute(asyncHandler.asyncHandler)
+	asyncHandler.callback = V8ValueRef.NewFunction("callback", asyncHandler.handler)
+	asyncHandler.callback.SetCanNotFree(true)
+	return asyncHandler
+}
+
+func (m *asyncGoExecuteJSHandler) free() {
+	if m.callback != nil {
+		m.callback.Free()
+		m.callback = nil
+	}
+}
+
+// Js: ipc.on 异步监听模式完成处理器
+func (m *asyncGoExecuteJSHandler) asyncHandler(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
+	idValue := object.GetValueByKey("id")
+	defer idValue.Free()
+	messageId := idValue.GetIntValue()
+	size := arguments.Size()
+	result := make([]interface{}, size)
+	for i := 0; i < size; i++ {
+		tempVal := arguments.Get(i)
+		if !tempVal.IsValid() {
+			result[i] = nil
+			continue
+		}
+		isObject := tempVal.IsObject() || tempVal.IsArray()
+		callbackArgsBytes := ValueConvert.V8ValueToProcessMessageArray(tempVal)
+		tempVal.Free()
+		if isObject {
+			result[i] = callbackArgsBytes
+		} else {
+			if val, ok := callbackArgsBytes.([]interface{}); ok && len(val) == 1 {
+				result[i] = callbackArgsBytes.([]interface{})[0]
+			} else {
+				result[i] = nil
+			}
+		}
+	}
+	replayGoExecuteJSEvent(messageId, result)
+	return true
+}
+
+func replayGoExecuteJSEvent(messageId int32, callbackArgsBytes interface{}) {
+	if messageId != 0 {
+		callbackMessage := &ipcArgument.List{
+			Id:   messageId,
+			BId:  ipc.RenderChan().BrowserId(),
+			Name: internalIPCGoExecuteJSEventReplay,
+		}
+		if callbackArgsBytes != nil {
+			callbackMessage.Data = callbackArgsBytes //json.NewJSONArray(callbackArgsBytes).Data()
+		}
+		// send ipc message
+		// send bytes data to browser ipc
+		ipc.RenderChan().IPC().Send(callbackMessage.Bytes())
+		callbackMessage.Reset()
+	}
 }
