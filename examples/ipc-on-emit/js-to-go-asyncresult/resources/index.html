@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>js-to-go</title>
+</head>
+<body style="margin: 0px;padding: 0px;">
+<div style="margin: 10px;">
+    JS ipc.on 异步返回值监听模式<br>
+
+    监听选项 options: {mode: Mode} <br>
+    &nbsp;&nbsp;const MSync = 0 同步返回 默认<br>
+    &nbsp;&nbsp;const MAsync = 1 异步返回<br><br>
+    MAsync： 异步返回, 在监听回调函数时，默认会在参数列表自动增加一个 complete 参数, 固定在最后一个参数位置<br>
+    它是一个 object 类型, 包含两个字段 callback, id<br><br>
+    complete: <br>
+    &nbsp;&nbsp;callback: 回调函数, 当执行完异步操作后, 调用来完成返回结果<br>
+    &nbsp;&nbsp;callback 只能调用一次, 多次调用失效, 第一次调用成功后被移除<br>
+    &nbsp;&nbsp;id: 当前事件消息 id, 是 go 触发时的回调函数 id<br><br>
+</div>
+<button onclick="ipc.emit('gotest')">tests</button>
+<a href="index.html" target="_blank">new window</a>
+<div id="message"></div>
+<script type="application/javascript">
+    const MSync = 0 // 同步返回 默认
+    const MAsync = 1 // 异步返回
+
+    function writeMessage(data) {
+        let message = document.getElementById("message");
+        message.innerHTML = message.innerHTML + data + "<br>"
+    }
+
+    let idx = 0;
+    ipc.on('jstest', function (myData, complete) {
+        writeMessage("data: " + myData + " id: " + complete.id + " task: " + idx)
+        new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('test11111111-' + (new Date().getTime()) + "-task:" + idx);
+            }, 1000);
+        }).then(function (data) {
+            complete.callback(data) // 第一次 有效
+            return 'test22222222-' + (new Date().getTime()) + "-task:" + idx;
+        }).then(function (data) {
+            complete.callback(data) // 无效
+        });
+        return "ok" // 默认无效
+        // 监听模式 异步返回
+    }, {mode: MAsync})
+
+    setInterval(function () {
+        // other task
+        idx++
+    }, 1)
+</script>
+</body>
+</html>
+
