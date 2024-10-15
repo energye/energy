@@ -43,7 +43,7 @@ func main() {
 			}
 			for _, info := range infos {
 				iTarget := info.Target(target.TgJs)
-				ipc.EmitTargetAndCallback("jstest", iTarget, []any{"testdata"}, func(data string, channel callback.IChannel) {
+				ipc.EmitTargetAndCallback("jstest", iTarget, []interface{}{"testdata"}, func(data string, channel callback.IChannel) {
 					fmt.Println("data:", data, "windowId:", channel.BrowserId(), "channelId:", channel.ChannelId())
 					alreadyRunCount++
 					total := len(cef.BrowserWindow.GetWindowInfos())
