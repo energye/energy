@@ -25,7 +25,7 @@
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
-### [项目简介](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
+### [项目简介](https://energy.yanghy.cn/course/what-is-energy)
 
 > Energy 是 Go 基于 [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) 和 [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework) 开发的 GUI 框架, 用于开发Windows、MacOS 和 Linux 跨平台桌面应用.
 >
@@ -51,7 +51,7 @@
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [开发环境](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
+### [开发环境](https://energy.yanghy.cn/course/getting-started)
 
 #### 基本需求
 
@@ -60,24 +60,22 @@
 
 #### 环境安装
 
-- 自动安装开发环境
+> 使用 [energy cli](https://energy.yanghy.cn/course/cli-use-instructions) 自动安装完整开发环境
 
-> 使用 energy 命令行工具自动安装完整开发环境 [命令行工具下载地址](https://energy.yanghy.cn/course/100/1694511322285207)
+### 入门指南 - [传送门](https://energy.yanghy.cn/course/getting-started)
 
-### 入门指南 - [传送门](https://energy.yanghy.cn)
-
-- [教程](https://energy.yanghy.cn/guide/getting-started)
+- [教程](https://energy.yanghy.cn/course/getting-started)
 - [示例](https://energy.yanghy.cn/examples)
 - [文档](https://energy.yanghy.cn/document)
 
 ### 快速入门
 
-> 使用 [energy](https://energy.yanghy.cn/course/100/1694511322285207) 命令行工具自动安装完整开发环境
+> [快速入门](https://energy.yanghy.cn/course/getting-started)
 
 ### 三个步骤运行一个简单应用
 
-1. 安装开发环境: `energy install .`
-2. 初始化应用: `energy init .`
+1. 安装开发环境: `energy install`
+2. 初始化应用: `energy init`
 3. 运行应用: `go run main.go`
 
 ### 示例代码
@@ -88,25 +86,25 @@ main.go
 package main
 
 import (
- "github.com/energye/energy/v2/cef"
+    "github.com/energye/energy/v2/cef"
 )
 
 func main() {
- //全局初始化
- cef.GlobalInit(nil, nil)
- //创建应用
- app := cef.NewApplication()
- //指定一个URL地址，或本地html文件目录
- cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
- //运行应用
- cef.Run(app)
+   //全局初始化
+   cef.GlobalInit(nil, nil)
+   //创建应用
+   app := cef.NewApplication()
+   //指定一个URL地址，或本地html文件目录
+   cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+   //运行应用
+   cef.Run(app)
 }
 ```
 
 ### 应用打包
 
-1. 编译：`energy build .`
-2. 打包：`energy package .`
+1. 编译：`energy build`
+2. 打包：`energy package`
 3. 自动生成的安装包
    - windows  使用`nsis`工具生成exe安装包
    - linux    使用`dpkg`制作deb安装包
@@ -147,8 +145,8 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 ### ENERGY QQ交流群 & 微信
 
 <p align="center">
-    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250" title="QQ交流群: 541258627" alt="QQ交流群: 541258627">
-    <img src="https://assets.yanghy.cn/we-chat.jpg" width="250" title="微信: sniawmdf" alt="微信: sniawmdf" style="margin-left: 30px;">
+    <img src="https://energye.github.io/imgs/assets/qq-group.jpg" width="250" title="QQ交流群: 541258627" alt="QQ交流群: 541258627">
+    <img src="https://energye.github.io/imgs/assets/we-chat.jpg" width="250" title="微信: sniawmdf" alt="微信: sniawmdf" style="margin-left: 30px;">
 </p>
 
 ---
@@ -167,35 +165,35 @@ energy扔处于建设的过程中，有很多的事情无法独自完成，如�
 
 ##### Windows-10
 
-<img src="https://assets.yanghy.cn/frameless-windows-10.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
 
-<img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
-<img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-7-64.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-7-32.png">
 
 ##### Windows-XP-SP3
 
-<img src="https://assets.yanghy.cn/windows-xp-sp3.png">
+<img src="https://energye.github.io/imgs/readme/windows-xp-sp3.png">
 
 ##### Linux - Deepin
 
-<img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">
-<img src="https://assets.yanghy.cn/frameless-deepin-hide-20.8.png">
+<img src="https://energye.github.io/imgs/readme/frameless-deepin-20.8.png">
+<img src="https://energye.github.io/imgs/readme/frameless-deepin-hide-20.8.png">
 
 ##### Linux - Kylin ARM
 
-<img src="https://assets.yanghy.cn/frameless-kylin-arm-V10-SP1.png">
-<img src="https://assets.yanghy.cn/frameless-kylin-arm-hide-V10-SP1.png">
+<img src="https://energye.github.io/imgs/readme/frameless-kylin-arm-V10-SP1.png">
+<img src="https://energye.github.io/imgs/readme/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
 
-<img src="https://assets.yanghy.cn/frameless-ubuntu-18.04.6.png">
-<img src="https://assets.yanghy.cn/frameless-ubuntu-hide-18.04.6.png">
+<img src="https://energye.github.io/imgs/readme/frameless-ubuntu-18.04.6.png">
+<img src="https://energye.github.io/imgs/readme/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOS
 
-<img src="https://assets.yanghy.cn/frameless-macos.png">
+<img src="https://energye.github.io/imgs/readme/frameless-macos.png">
 
 ----
 

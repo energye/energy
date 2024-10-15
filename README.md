@@ -25,7 +25,7 @@ English
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
-### [Project Introduction](https://energy.yanghy.cn/course/100/6350f94ca749ba0318943f25)
+### [Project Introduction](https://energye.github.io/course/what-is-energy)
 
 - Energy is a GUI framework developed in Go, based on [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) and [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework), which is used to develop cross-platform desktop applications for Windows, MacOS, and Linux.
 - LCL alone can create lightweight native applications, or can be combined with CEF to create more feature-complete applications.
@@ -48,7 +48,7 @@ English
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [Development Environment](https://energy.yanghy.cn/course/100/63511b14a749ba0318943f3a)
+### [Development Environment](https://energye.github.io/en/course/getting-started)
 
 #### Basic needs
 
@@ -57,22 +57,22 @@ English
 
 #### Environmental installation
 
-Automatic installation development environment using the energy [command-line tool](https://energy.yanghy.cn/course/100/1694511322285207)
+Automatic installation development environment using the energy [command-line tool](https://energye.github.io/course/cli-use-instructions)
 
-### Guide to Start - [Link](https://energy.yanghy.cn)
+### Guide to Start - [Link](https://energye.github.io/en/course/getting-started)
 
-- [Guide](https://energye.github.io/en/guide/getting-started)
+- [Guide](https://energye.github.io/en/course/getting-started)
 - [Example](https://energye.github.io/en/examples)
 - [Document](https://energye.github.io/en/document)
 
 ### Quick Start
 
-- Using [energy](https://energy.yanghy.cn/course/100/1694511322285207) command line tools to install the complete development environment automatically.
+- [Getting Started](https://energye.github.io/en/course/getting-started)
 
 ### Run a simple application by three steps
 
-1. Install development environment: `energy install .`
-2. Initiate an Application: `energy init .`
+1. Install development environment: `energy install`
+2. Initiate an Application: `energy init`
 3. Run the Application: `go run main.go`
 
 ### sample code
@@ -83,25 +83,25 @@ main.go
 package main
 
 import (
- "github.com/energye/energy/v2/cef"
+    "github.com/energye/energy/v2/cef"
 )
 
 func main() {
- //Global initialization
- cef.GlobalInit(nil, nil)
- //Create an application
- app := cef.NewApplication()
- //Specify a URL address or local HTML file directory
- cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
- //Run Application
- cef.Run(app)
+     //Global initialization
+     cef.GlobalInit(nil, nil)
+     //Create an application
+     app := cef.NewApplication()
+     //Specify a URL address or local HTML file directory
+     cef.BrowserWindow.Config.Url = "https://energye.github.io"
+     //Run Application
+     cef.Run(app)
 }
 ```
 
 ### Build
 
-1. Build：`energy build .`
-2. Package：`energy package .`
+1. Build：`energy build`
+2. Package：`energy package`
 3. Package Type：
     - windows: Using `nsis` create exe installation package
     - linux: Using `dpkg` create deb installation package
@@ -143,8 +143,8 @@ If this project is helpful to you, please give me a star
 ### ENERGY QQ Group & WeChat
 
 <p align="center">
-    <img src="https://assets.yanghy.cn/qq-group.jpg" width="250" title="QQ Group: 541258627" alt="QQ Group: 541258627">
-    <img src="https://assets.yanghy.cn/we-chat.jpg" width="250" title="WeChat: sniawmdf" alt="WeChat: sniawmdf" style="margin-left: 30px;">
+    <img src="https://energye.github.io/imgs/assets/qq-group.jpg" width="250" title="QQ Group: 541258627" alt="QQ Group: 541258627">
+    <img src="https://energye.github.io/imgs/assets/we-chat.jpg" width="250" title="WeChat: sniawmdf" alt="WeChat: sniawmdf" style="margin-left: 30px;">
 </p>
 
 ---
@@ -163,35 +163,35 @@ If this project is helpful to you, please give me a star
 
 ##### Windows-10
 
-<img src="https://assets.yanghy.cn/frameless-windows-10.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-10.png">
 
 ##### Windows-7 32 & 64
 
-<img src="https://assets.yanghy.cn/frameless-windows-7-64.png">
-<img src="https://assets.yanghy.cn/frameless-windows-7-32.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-7-64.png">
+<img src="https://energye.github.io/imgs/readme/frameless-windows-7-32.png">
 
 ##### Windows-XP-SP3
 
-<img src="https://assets.yanghy.cn/windows-xp-sp3.png">
+<img src="https://energye.github.io/imgs/readme/windows-xp-sp3.png">
 
 ##### Linux - Deepin
 
-<img src="https://assets.yanghy.cn/frameless-deepin-20.8.png">
-<img src="https://assets.yanghy.cn/frameless-deepin-hide-20.8.png">
+<img src="https://energye.github.io/imgs/readme/frameless-deepin-20.8.png">
+<img src="https://energye.github.io/imgs/readme/frameless-deepin-hide-20.8.png">
 
 ##### Linux - Kylin ARM
 
-<img src="https://assets.yanghy.cn/frameless-kylin-arm-V10-SP1.png">
-<img src="https://assets.yanghy.cn/frameless-kylin-arm-hide-V10-SP1.png">
+<img src="https://energye.github.io/imgs/readme/frameless-kylin-arm-V10-SP1.png">
+<img src="https://energye.github.io/imgs/readme/frameless-kylin-arm-hide-V10-SP1.png">
 
 ##### Linux - Ubuntu
 
-<img src="https://assets.yanghy.cn/frameless-ubuntu-18.04.6.png">
-<img src="https://assets.yanghy.cn/frameless-ubuntu-hide-18.04.6.png">
+<img src="https://energye.github.io/imgs/readme/frameless-ubuntu-18.04.6.png">
+<img src="https://energye.github.io/imgs/readme/frameless-ubuntu-hide-18.04.6.png">
 
 ##### MacOSX
 
-<img src="https://assets.yanghy.cn/frameless-macos.png">
+<img src="https://energye.github.io/imgs/readme/frameless-macos.png">
 
 ----
 
