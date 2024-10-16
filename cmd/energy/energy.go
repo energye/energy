@@ -12,6 +12,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cmd/internal"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/env"
@@ -19,6 +20,8 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/jessevdk/go-flags"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 var commands = []*command.Command{
@@ -93,6 +96,7 @@ func termRun() {
 			term.Section.Println(cmd.Short)
 		}
 		readConfig(cc)
+		signalHandler()
 		if err := cmd.Run(cc); err != nil {
 			term.Section.Println(err.Error())
 			os.Exit(1)
@@ -102,4 +106,16 @@ func termRun() {
 
 func readConfig(c *command.Config) {
 	c.EnergyCfg = *env.DevEnvReadUpdate("", "", "", "", "")
+}
+
+func signalHandler() {
+	ctrlC := make(chan os.Signal, 1)
+	signal.Notify(ctrlC, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		for {
+			sig := <-ctrlC
+			println(fmt.Sprintf("\nReceived signal: %v. CTRL+C Force Exit.", sig))
+			os.Exit(1)
+		}
+	}()
 }
