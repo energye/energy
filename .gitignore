@@ -94,6 +94,7 @@ plugins
 # other
 .idea
 test
+node_modules
 rsrc
 1048576000
 /exe/app.ico
