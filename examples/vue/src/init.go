@@ -1,0 +1,38 @@
+package src
+
+import (
+	"fmt"
+	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/energye/energy/v2/cef/ipc/callback"
+	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/golcl/lcl/rtl/version"
+)
+
+func BrowserProcessStart(b bool) {
+	ipc.On("os-info", func(context context.IContext) {
+		fmt.Println("os-info", version.OSVersion.ToString())
+		context.Result(version.OSVersion.ToString())
+	})
+	ipc.On("minimize", func(channel callback.IChannel) {
+		if win := cef.BrowserWindow.GetWindowInfo(channel.BrowserId()); win != nil {
+			win.Minimize()
+		}
+	})
+	ipc.On("maximize", func(channel callback.IChannel) bool {
+		if win := cef.BrowserWindow.GetWindowInfo(channel.BrowserId()); win != nil {
+			win.Maximize()
+			return true
+		}
+		return false
+	})
+	ipc.On("close", func(channel callback.IChannel) {
+		if win := cef.BrowserWindow.GetWindowInfo(channel.BrowserId()); win != nil {
+			win.CloseBrowserWindow()
+		}
+	})
+}
+
+func BrowserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+	//
+}
