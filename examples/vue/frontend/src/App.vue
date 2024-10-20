@@ -20,7 +20,6 @@
 
 <script setup lang="ts">
 import HelloWorld from './components/HelloWorld.vue'
-
 function minimize() {
   console.log("minimize")
   ipc.emit('minimize')
@@ -28,14 +27,21 @@ function minimize() {
 
 function maximize() {
   console.log("maximize")
-  ipc.emit('maximize', function (data) {
-    if (data) {
-    }
+  ipc.emit('maximize', function () {
   })
 }
+
 function close() {
   ipc.emit('close')
 }
+
+ipc.on("testasync", function (complete) {
+  console.log("testasync",  complete)
+  setTimeout(function (){
+    complete.callback("data");
+  }, 1000)
+}, {mode: 1})
+
 </script>
 
 <style scoped>

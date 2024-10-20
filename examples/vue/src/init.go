@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	"github.com/energye/golcl/lcl/rtl/version"
+	"time"
 )
 
 func BrowserProcessStart(b bool) {
@@ -31,6 +32,14 @@ func BrowserProcessStart(b bool) {
 			win.CloseBrowserWindow()
 		}
 	})
+	go func() {
+		for {
+			time.Sleep(time.Second)
+			ipc.EmitAndCallback("testasync", nil, func(data string) {
+				fmt.Println("data:", data)
+			})
+		}
+	}()
 }
 
 func BrowserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
