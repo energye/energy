@@ -40,39 +40,39 @@ func main() {
 			var newForm *cef.LCLBrowserWindow
 			ipc.On("openWindow", func() {
 				if newForm == nil {
-					newForm = cef.NewLCLWindow(cef.NewWindowProperty(), nil)
-					newForm.SetTitle("新窗口标题")
-					newForm.SetWidth(400)
-					newForm.SetHeight(200)
-					btn := lcl.NewButton(newForm)
-					btn.SetParent(newForm)
-					btn.SetCaption("点击我有提示")
-					btn.SetWidth(100)
-					btn.SetLeft(100)
-					btn.SetTop(50)
-					btn.SetOnClick(func(sender lcl.IObject) {
-						lcl.ShowMessage("新窗口的按钮事件提示")
+					cef.QueueAsyncCall(func(id int) {
+						newForm = cef.NewLCLWindow(cef.NewWindowProperty(), nil)
+						newForm.SetTitle("新窗口标题")
+						newForm.SetWidth(400)
+						newForm.SetHeight(200)
+						btn := lcl.NewButton(newForm)
+						btn.SetParent(newForm)
+						btn.SetCaption("点击我有提示")
+						btn.SetWidth(100)
+						btn.SetLeft(100)
+						btn.SetTop(50)
+						btn.SetOnClick(func(sender lcl.IObject) {
+							lcl.ShowMessage("新窗口的按钮事件提示")
+						})
+						newForm.ShowModal()
 					})
 				}
-				cef.QueueAsyncCall(func(id int) {
-					newForm.ShowModal()
-				})
 			})
 			ipc.On("openBrowserWindow", func(url, title string, width, height int32) {
-				if browserWindow == nil || browserWindow.IsClosing() {
-					wp := cef.NewWindowProperty()
-					wp.Url = url
-					wp.Title = title
-					browserWindow = cef.NewLCLBrowserWindow(nil, wp, nil)
-					browserWindow.SetWidth(width)
-					browserWindow.SetHeight(height)
-					browserWindow.SetShowInTaskBar()
-					browserWindow.EnableDefaultCloseEvent()
-					browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
-						fmt.Println("SetOnTitleChange", wp.Title, title)
-					})
-				}
 				cef.QueueAsyncCall(func(id int) {
+					if browserWindow == nil || browserWindow.IsClosing() {
+						wp := cef.NewWindowProperty()
+						wp.Url = url
+						wp.Title = title
+						browserWindow = cef.NewLCLBrowserWindow(nil, wp, nil)
+						browserWindow.SetWidth(width)
+						browserWindow.SetHeight(height)
+						browserWindow.SetShowInTaskBar()
+						browserWindow.EnableDefaultCloseEvent()
+						browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
+							fmt.Println("SetOnTitleChange", wp.Title, title)
+						})
+					}
 					browserWindow.ShowModal() // 欌态窗口，打开开发者工具后，关闭窗口有问题。
 				})
 			})
