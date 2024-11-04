@@ -37,6 +37,7 @@ type Project struct {
 	FrameworkPath  string  `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
 	AssetsDir      string  `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string  `json:"outputFilename"` // 输出安装包文件名
+	HelperFilePath string  `json:"helperFilePath"` // MacOS helper 进程二进制文件目录
 	LibEMFS        string  `json:"libemfs"`        // 内置libs存放目录, 以项目目录根目录开始 ProjectPath + Libs = liblcl.dll 目录, 默认libs
 	Info           Info    `json:"info"`           // 应用信息
 	NSIS           NSIS    `json:"nsis"`           // windows nsis 安装包
@@ -186,7 +187,7 @@ type Author struct {
 	Email string `json:"email"`
 }
 
-//  APP项目配置转换到Project
+// APP项目配置转换到Project
 func parse(projectData []byte) (*Project, error) {
 	m := &Project{}
 	err := json.Unmarshal(projectData, m)

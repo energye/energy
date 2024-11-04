@@ -4,6 +4,7 @@
   "frameworkPath": "{{.FrameworkPath}}",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
+  "helperFilePath": "",
   "plist": {
     "icon": "{{.ProjectPath}}/resources/icon.png",
     "companyName": "{{.CompanyName}}",

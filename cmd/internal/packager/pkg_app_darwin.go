@@ -238,14 +238,7 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 	appDir := filepath.Join(buildOutDir, appRoot)
 	contents := filepath.Join(appDir, appContents)
 	frameworksDir := filepath.Join(contents, appContentsFrameworks)
-	// 应用构建执行文件目录
-	exeDir := filepath.Join(proj.ProjectPath, proj.OutputFilename)
 	var err error
-	exeFile, err := os.Open(exeDir)
-	if err != nil {
-		return err
-	}
-	defer exeFile.Close()
 	// 设置为helper选项
 	proj.PList.LSUIElement = true
 	proj.AppType = project.AtHelper
@@ -255,6 +248,29 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 		if e != nil {
 			err = e
 		}
+	}
+	// helper process
+	var helperProcessFilename string
+	if proj.HelperFilePath != "" {
+		term.Logger.Info("Copy helper process: " + proj.HelperFilePath)
+		if !tools.IsExist(proj.HelperFilePath) {
+			return errors.New("helper process binary executable file does not exist")
+		}
+		// copy helper process to xxx.app/Contents/MacOS/xxxHelper
+		helperExeFile, err := os.Open(proj.HelperFilePath)
+		if err != nil {
+			return err
+		}
+		_, helperExeFilename := filepath.Split(proj.HelperFilePath)
+		// xxx + Helper = xxx.app/Contents/MacOSs/xxxHelper
+		helperProcessFilename = fmt.Sprintf("%sHelper", helperExeFilename)
+		helperFilePath := filepath.Join(contents, appContentsMacOS, helperProcessFilename)
+		helperFile, err := os.OpenFile(helperFilePath, os.O_CREATE|os.O_WRONLY, 0755)
+		if err != nil {
+			return err
+		}
+		io.Copy(helperFile, helperExeFile)
+		helperFile.Close()
 	}
 	for _, app := range helpers {
 		proj.ProjectPath = frameworksDir
@@ -275,17 +291,28 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 		cmd.Dir = filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsFrameworks)
 		cmd.Command("ln", "-shf", "../../../liblcl.dylib", "liblcl.dylib")
 		if err != nil {
+			// for error
 			return err
 		}
-		// helper exe
-		helperMacOSExe := filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsMacOS, fmt.Sprintf("%s %s", proj.OutputFilename, app))
-		helperMacOSExeFile, err := os.OpenFile(helperMacOSExe, os.O_CREATE|os.O_WRONLY, 0755)
+
+		// helper exe ln
+		helperWork := filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsMacOS)
+		var helperSource string
+		if helperProcessFilename != "" {
+			helperSource = fmt.Sprintf("../../../../MacOS/%s", helperProcessFilename)
+		} else {
+			helperSource = fmt.Sprintf("../../../../MacOS/%s", proj.OutputFilename)
+		}
+		helperDest := fmt.Sprintf("%s %s", proj.OutputFilename, app)
+		// remove ln helper process file
+		os.Remove(filepath.Join(helperWork, helperDest))
+		cmd.Dir = helperWork
+		cmd.Command("ln", "-s", helperSource, helperDest)
 		if err != nil {
+			// for error
 			return err
 		}
-		io.Copy(helperMacOSExeFile, exeFile)
-		helperMacOSExeFile.Close()
-		exeFile.Seek(0, 0)
+		fmt.Println("helper:", helperWork, helperSource, helperDest)
 	}
 	cmd.Close()
 	return nil
