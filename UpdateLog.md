@@ -1,6 +1,16 @@
 # Upgrade Log
 
-### 2.4.4
+### 2.4.5 - 2024/11/04
+- Fix: cli install
+- Fix: LoadLibrary liblcl ERROR
+- A: JS ipc.on options: mode, async result
+- Fix: #39 energy cli CTRL+C Force Exit
+- A: demo vue & ipc types ipc.d.ts
+- Fix: #42 Optimize MacOS development mode xxx.app package creation and update issues
+- U: cli, MacOS helper process ln, Reduce the size of the app package, About 4 times the size of the main process file
+- U: Upgrade Golcl v1.0.12
+
+### 2.4.4 - 2024/09/29
 
 - U: winapi Change some function parameters to pointer pass
 - U: energy cli, Retrieve installation environment commands remotely
