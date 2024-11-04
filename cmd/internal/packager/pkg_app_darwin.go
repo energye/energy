@@ -312,7 +312,6 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 			// for error
 			return err
 		}
-		fmt.Println("helper:", helperWork, helperSource, helperDest)
 	}
 	cmd.Close()
 	return nil
