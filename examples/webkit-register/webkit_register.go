@@ -13,16 +13,21 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	demoCommon "github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"time"
 )
 
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	//创建应用
-	cefApp := cef.NewApplication()
+	app := cef.NewApplication()
+	if common.IsDarwin() {
+		app.SetUseMockKeyChain(true)
+	}
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/webkit-register.html"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.png"
@@ -31,7 +36,7 @@ func main() {
 	// webkit 初始化时注册JS函数
 	// 使用 RegisterExtension
 	// V8Handler 接收执行时回调
-	cefApp.SetOnWebKitInitialized(func() {
+	app.SetOnWebKitInitialized(func() {
 		var myparamValue string
 		v8Handler := cef.V8HandlerRef.New()
 		v8Handler.Execute(func(name string, object *cef.ICefV8Value, arguments *cef.TCefV8ValueArray, retVal *cef.ResultV8Value, exception *cef.ResultString) bool {
@@ -39,6 +44,7 @@ func main() {
 			var result bool
 			if name == "GetMyParam" {
 				result = true
+				myparamValue = myparamValue + " " + time.Now().String()
 				retVal.SetResult(cef.V8ValueRef.NewString(myparamValue))
 			} else if name == "SetMyParam" {
 				if arguments.Size() > 0 {
@@ -65,6 +71,7 @@ func main() {
                 });
                 test.__defineSetter__('myparam', function (b) {
                     native function SetMyParam();
+					b = b + ' TEST';
                     if (b) SetMyParam(b);
                 });
             })();
@@ -86,5 +93,5 @@ func main() {
 		go server.StartHttpServer()
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }

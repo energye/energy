@@ -30,7 +30,8 @@ var resources embed.FS
 func main() {
 	//MacOS通过指定 IsCEF ，在开发环境中自动生成可运行的程序包
 	//MacOS配置要在调用 GlobalInit 它之前设置
-	//特别说明MacOS：子进程不需要配置 SetBrowseSubprocessPath 来生成 Mac App特定的helper进程
+	//MacOS：子(helper)进程不需要配置 app.SetBrowseSubprocessPath(),
+	//       MacOS如需要单独的 helper 进程通过 macapp.MacApp.SetBrowseSubprocessPath 生成 Mac App特定的helper进程
 	wd := consts.CurrentExecuteDir
 	if common.IsDarwin() {
 		// 主进程中 主子进程方式，在这里指定子进程的执行文件
@@ -39,14 +40,16 @@ func main() {
 	}
 	//CEF全局初始化
 	cef.GlobalInit(nil, resources)
-	// 使用 SetBrowserSubprocessPath 设置子进程执行文件目录
-	var subName = subExeName()
-	// 子进程执行文件完整目录
-	var subExePath = filepath.Join(wd, "helper", subName)
-	println("subExePath", subExePath)
-	// 设置子进程执行文件目录
-	// 子进程执行文件如果在同一目录并且在CEF框架目录可只写文件名
-	app.GetApplication().SetBrowserSubprocessPath(subExePath)
+	if !common.IsDarwin() {
+		// 使用 SetBrowserSubprocessPath 设置子进程执行文件目录
+		var subName = subExeName()
+		// 子进程执行文件完整目录
+		var subExePath = filepath.Join(wd, "helper", subName)
+		println("subExePath", subExePath)
+		// 设置子进程执行文件目录
+		// 子进程执行文件如果在同一目录并且在CEF框架目录可只写文件名
+		app.GetApplication().SetBrowserSubprocessPath(subExePath)
+	}
 	//主进程初始化
 	mainBrowserInit()
 	//启动内置http服务
