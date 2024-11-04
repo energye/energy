@@ -46,14 +46,14 @@
 >> MacOS: `go build -ldflags "-s -w"`
 > 
 > Use Energy
->> `energy build .`
+>> `energy build`
 > 
 
 ## 制作安装包 - Making installation packages
 > 1. 构建应用 - Building Applications
->> `energy build .`
+>> `energy build`
 > 
 > 2. 执行制作安装包命令 - Run the create installation package command
->> `energy package .`
+>> `energy package`
 >>
->> [Reference link](https://energy.yanghy.cn/course/100/1694511508415349)
+>> [Reference link](https://energye.github.io/course/build-package)

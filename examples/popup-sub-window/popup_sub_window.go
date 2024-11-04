@@ -68,12 +68,12 @@ func main() {
 						browserWindow.SetWidth(width)
 						browserWindow.SetHeight(height)
 						browserWindow.SetShowInTaskBar()
-						browserWindow.EnableDefaultCloseEvent()
+						browserWindow.EnableAllDefaultEvent()
 						browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 							fmt.Println("SetOnTitleChange", wp.Title, title)
 						})
 					}
-					browserWindow.ShowModal() // 欌态窗口，打开开发者工具后，关闭窗口有问题。
+					browserWindow.Show() // 欌态窗口，打开开发者工具后，关闭窗口有问题。
 				})
 			})
 		}
