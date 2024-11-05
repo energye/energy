@@ -12,7 +12,7 @@ package wv
 
 import (
 	"github.com/energye/lcl/emfs"
-	"github.com/energye/wv/wv"
+	"github.com/energye/wv/windows"
 )
 
 // Init 全局初始化, 需手动调用的函数
