@@ -3,9 +3,9 @@ module devtools
 go 1.18
 
 require (
-	github.com/energye/energy/v2 v2.4.4
-	github.com/energye/erod v0.0.4
-	github.com/energye/golcl v1.0.11
+	github.com/energye/energy/v2 v2.4.5
+	github.com/energye/erod v0.0.5
+	github.com/energye/golcl v1.0.12
 	github.com/go-rod/rod v0.116.2
 )
 
