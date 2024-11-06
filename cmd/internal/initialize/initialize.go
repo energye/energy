@@ -37,7 +37,7 @@ func InitEnergyProject(c *command.Config) error {
 	}
 	pterm.Println()
 	term.Section.Println("Successfully initialized the energy application project:", c.Init.Name)
-	term.Logger.Info("Website", term.Logger.Args("Github", "https://github.com/energye/energy", "ENERGY", "https://energy.yanghy.cn"))
+	term.Logger.Info("Website", term.Logger.Args("Github", "https://github.com/energye/energy", "ENERGY", "https://energye.github.io"))
 	term.Section.Println("Run Application")
 	tableData := pterm.TableData{
 		{"command"}, {"go run main.go"},
