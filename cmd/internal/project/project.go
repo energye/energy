@@ -56,7 +56,15 @@ func (m *Project) setDefaults() {
 		m.ProjectPath = tools.CurrentExecuteDir()
 	}
 	if m.FrameworkPath == "" || m.FrameworkPath[0] == '$' {
-		m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+		if m.FrameworkPath[0] == '$' {
+			if m.FrameworkPath == "$ENERGY_HOME" {
+				m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+			} else {
+				m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
+			}
+		} else {
+			m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+		}
 	}
 	if !tools.IsExist(m.FrameworkPath) {
 		panic("energy framework directory does not exist: " + m.FrameworkPath)
