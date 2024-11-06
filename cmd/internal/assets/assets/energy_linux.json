@@ -1,12 +1,12 @@
 {
   "name": "{{.Name}}",
-  "projectPath": "{{.ProjectPath}}",
-  "frameworkPath": "{{.FrameworkPath}}",
+  "projectPath": "@",
+  "frameworkPath": "$ENERGY_HOME",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
   "libemfs": "libs",
   "info": {
-    "icon": "{{.ProjectPath}}/resources/icon.png",
+    "icon": "@/resources/icon.png",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",
     "productVersion": "1.0.0",

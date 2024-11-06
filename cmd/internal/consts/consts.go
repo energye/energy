@@ -23,15 +23,19 @@ const (
 )
 
 const (
-	CefKey              = "cef"
-	LiblclKey           = "liblcl"
-	GolanHomeKey        = "GOROOT"
-	NSISHomeKey         = "NSIS_HOME"
-	Z7ZHomeKey          = "Z7Z_HOME"
-	UPXHomeKey          = "UPX_HOME"
-	EnergyHomeKey       = "ENERGY_HOME"
-	FrameworkCache      = "EnergyFrameworkDownloadCache"
-	EnergyProjectConfig = "energy.json"
+	CefKey         = "cef"
+	LiblclKey      = "liblcl"
+	GolanHomeKey   = "GOROOT"
+	NSISHomeKey    = "NSIS_HOME"
+	Z7ZHomeKey     = "Z7Z_HOME"
+	UPXHomeKey     = "UPX_HOME"
+	EnergyHomeKey  = "ENERGY_HOME"
+	FrameworkCache = "EnergyFrameworkDownloadCache"
+)
+
+var (
+	EnergyProjectConfig = []string{"energy_darwin.json", "energy_linux.json", "energy_windows.json"}
+	ConfigFile          = "energy_%s.json"
 )
 
 const (

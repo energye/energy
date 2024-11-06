@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -24,7 +25,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
 
@@ -73,7 +73,10 @@ func generaProject(c *command.Config) error {
 	term.Logger.Info("Create Project", term.Logger.Args("Name", c.Init.Name))
 	if tools.IsExist(projectPath) {
 		term.Logger.Warn(fmt.Sprintf("Project dir `%s` exist, delete init default files.", c.Init.Name))
-		var deleteFiles = []string{consts.EnergyProjectConfig /*"resources", */, "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
+		var deleteFiles = []string{ /*"resources", */ "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
+		for _, fileName := range consts.EnergyProjectConfig {
+			deleteFiles = append(deleteFiles, project.PlatformConfigFile(fileName))
+		}
 		for _, f := range deleteFiles {
 			path := filepath.Join(projectPath, f)
 			if info, err := os.Lstat(path); err == nil {
@@ -107,6 +110,7 @@ func generaProject(c *command.Config) error {
 				sh := strings.NewReplacer(replace...)
 				fileData = []byte(sh.Replace(string(fileData)))
 			}
+			os.MkdirAll(filepath.Dir(path), fs.ModePerm)
 			if err = ioutil.WriteFile(path, fileData, perm); err != nil {
 				return err
 			}
@@ -119,7 +123,6 @@ func generaProject(c *command.Config) error {
 			return err
 		}
 	}
-
 	// 创建 energy.json template
 	// 默认配置
 	data := make(map[string]interface{})
@@ -129,9 +132,12 @@ func generaProject(c *command.Config) error {
 	data["OutputFilename"] = c.Init.Name
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
-	energyJSON := fmt.Sprintf("assets/energy_%s.json", runtime.GOOS)
-	if err := createFile(energyJSON, consts.EnergyProjectConfig, data, 0666); err != nil {
-		return err
+	for _, fileName := range consts.EnergyProjectConfig {
+		energyTemp := fmt.Sprintf("assets/%s", fileName)
+		outPath := project.PlatformConfigFile(fileName)
+		if err := createFile(energyTemp, outPath, data, 0666); err != nil {
+			return err
+		}
 	}
 
 	// 创建 main.go

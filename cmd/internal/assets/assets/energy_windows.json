@@ -1,13 +1,13 @@
 {
   "name": "{{.Name}}",
-  "projectPath": "{{.ProjectPath}}",
-  "frameworkPath": "{{.FrameworkPath}}",
+  "projectPath": "@",
+  "frameworkPath": "$ENERGY_HOME",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
   "libemfs": "libs",
   "info": {
-    "manifest": "{{.ProjectPath}}/{{.Name}}.manifest",
-    "icon": "{{.ProjectPath}}/resources/icon.ico",
+    "manifest": "@/{{.Name}}.manifest",
+    "icon": "@/resources/icon.ico",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",
     "fileVersion": "1.0.0",
@@ -19,8 +19,8 @@
   "nsis": {
     "include": [],
     "exclude": ["cache"],
-    "icon": "{{.ProjectPath}}/resources/icon.ico",
-    "unIcon": "{{.ProjectPath}}/resources/icon.ico",
+    "icon": "@/resources/icon.ico",
+    "unIcon": "@/resources/icon.ico",
     "license": "",
     "language": "english",
     "requestExecutionLevel": "admin",

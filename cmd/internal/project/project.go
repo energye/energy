@@ -12,6 +12,7 @@ package project
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/ioutil"
@@ -50,12 +51,12 @@ func (m *Project) setDefaults() {
 	if m.Name == "" {
 		m.Name = "energyapp"
 	}
-	if m.ProjectPath == "" {
+	if m.ProjectPath == "" || m.ProjectPath[0] == '@' {
 		// 设置当前执行目录为项目目录
 		m.ProjectPath = tools.CurrentExecuteDir()
 	}
-	if m.FrameworkPath == "" {
-		m.FrameworkPath = os.Getenv(consts.EnergyHomeKey)
+	if m.FrameworkPath == "" || m.FrameworkPath[0] == '$' {
+		m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
 	}
 	if !tools.IsExist(m.FrameworkPath) {
 		panic("energy framework directory does not exist: " + m.FrameworkPath)
@@ -67,10 +68,10 @@ func (m *Project) setDefaults() {
 		m.OutputFilename = m.Name
 	}
 	if m.Author.Name == "" {
-		m.Author.Name = "yanghy"
+		m.Author.Name = "Your name"
 	}
 	if m.Author.Email == "" {
-		m.Author.Email = "snxamdf@126.com"
+		m.Author.Email = "YourEmail@xxx.com"
 	}
 	if m.Info.CompanyName == "" {
 		m.Info.CompanyName = m.Name
@@ -100,7 +101,27 @@ func (m *Project) setDefaults() {
 	case "darwin", "linux":
 		m.OutputFilename = strings.TrimSuffix(m.OutputFilename, ".exe")
 	}
-
+	var replaceRootPath = func(fieldValue string) string {
+		if fieldValue == "" || fieldValue[0] != '@' {
+			return fieldValue
+		}
+		if fieldValue[0] == '@' {
+			fieldValue = fieldValue[1:]
+			return filepath.Join(m.ProjectPath, fieldValue)
+		}
+		return fieldValue
+	}
+	switch runtime.GOOS {
+	case "windows":
+		m.Info.Manifest = replaceRootPath(m.Info.Manifest)
+		m.Info.Icon = replaceRootPath(m.Info.Icon)
+		m.NSIS.Icon = replaceRootPath(m.NSIS.Icon)
+		m.NSIS.UnIcon = replaceRootPath(m.NSIS.UnIcon)
+	case "darwin":
+		m.PList.Icon = replaceRootPath(m.PList.Icon)
+	case "linux":
+		m.Info.Icon = replaceRootPath(m.Info.Icon)
+	}
 }
 
 type Info struct {
@@ -194,17 +215,16 @@ func parse(projectData []byte) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	m.setDefaults()
 	return m, nil
 }
 
 // NewProject 创建项目对象, 根据energy.json配置
-func NewProject(projectPath string) (*Project, error) {
-	if projectPath == "" {
+func NewProject(argsProjectPath string) (*Project, error) {
+	if argsProjectPath == "" {
 		// 设置当前执行目录为项目目录
-		projectPath = tools.CurrentExecuteDir()
+		argsProjectPath = tools.CurrentExecuteDir()
 	}
-	config := filepath.Join(projectPath, consts.EnergyProjectConfig)
+	config := filepath.Join(argsProjectPath, PlatformConfigFile(""))
 	rawBytes, err := ioutil.ReadFile(config)
 	if err != nil {
 		return nil, err
@@ -213,9 +233,18 @@ func NewProject(projectPath string) (*Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	if m.ProjectPath == "" {
-		m.ProjectPath = projectPath
+	if m.ProjectPath == "" || m.ProjectPath != argsProjectPath {
+		m.ProjectPath = argsProjectPath
 	}
+	m.setDefaults()
 	m.ProjectPath = filepath.FromSlash(m.ProjectPath)
 	return m, nil
+}
+
+// PlatformConfigFile 返回指定平台的 energy 项目配置文件目录
+func PlatformConfigFile(fileName string) string {
+	if strings.TrimSpace(fileName) == "" {
+		fileName = fmt.Sprintf(consts.ConfigFile, runtime.GOOS)
+	}
+	return filepath.Join("config", fileName)
 }
