@@ -17,7 +17,7 @@ import (
 	"github.com/energye/energy/v3/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
-	"github.com/energye/wv/wv"
+	"github.com/energye/wv/windows"
 	"io/ioutil"
 	"net/url"
 	"path/filepath"

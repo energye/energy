@@ -13,7 +13,7 @@ package wv
 import (
 	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/wv/wv"
+	"github.com/energye/wv/windows"
 	"path/filepath"
 )
 
