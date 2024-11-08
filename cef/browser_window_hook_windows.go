@@ -15,6 +15,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/winapi"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types/messages"
@@ -74,6 +75,10 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 }
 
 func (m *LCLBrowserWindow) _HookWndProcMessage() {
+	switch m.WindowType() {
+	case consts.WT_DEV_TOOLS, consts.WT_VIEW_SOURCE:
+		return
+	}
 	wndProcCallback := syscall.NewCallback(m.wndProc)
 	m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
 }
