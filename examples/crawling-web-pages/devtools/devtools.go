@@ -30,6 +30,11 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	//创建应用
 	app := cef.NewApplication()
+
+	//远程调试开启
+	//app.SetRemoteDebuggingPort(22222)
+	//app.SetRemoteAllowOrigins("*")// 指定 http://ip:port 或  *
+
 	cef.BrowserWindow.Config.Width = 800
 	cef.BrowserWindow.Config.Height = 600
 	cef.BrowserWindow.Config.X = 300
