@@ -13,6 +13,7 @@ package cli
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
@@ -25,10 +26,10 @@ import (
 
 var remoteVersion *remotecfg.TCMDVersion
 
-func version() error {
+func version(c command.EnergyConfig) error {
 	var err error
 	if remoteVersion == nil {
-		remoteVersion, err = remotecfg.CMDVersion()
+		remoteVersion, err = remotecfg.CMDVersion(c)
 		if err != nil {
 			term.Logger.Error(err.Error())
 			return err
@@ -38,8 +39,8 @@ func version() error {
 }
 
 // CheckVersion 检查版本
-func CheckVersion() string {
-	if err := version(); err != nil {
+func CheckVersion(c command.EnergyConfig) string {
+	if err := version(c); err != nil {
 		return ""
 	}
 	term.Section.Println("CLI Current:", fmt.Sprintf("%d.%d.%d", term.Major, term.Minor, term.Build))

@@ -14,12 +14,14 @@ import "runtime"
 
 const (
 	ENERGY               = "energy"
-	BASE_CONFIG_URL      = "https://energye.github.io/data/model-base-config.json"
-	LATEST_VERSION_URL   = "https://energye.github.io/data/latest-version.json"
-	CMD_VERSION_URL      = "https://energye.github.io/data/command-line-tools.json"
-	VERSIONS_UPGRADE_URL = "https://energye.github.io/data/versions-upgrade.json"
-	MODEL_CEF_URL        = "https://energye.github.io/data/model-cef.json"
-	MODEL_LCL_URL        = "https://energye.github.io/data/model-liblcl.json"
+	DomainYangHY         = "https://energy.yanghy.cn"
+	DomainGithub         = "https://energye.github.io"
+	BASE_CONFIG_URL      = "/data/model-base-config.json"
+	LATEST_VERSION_URL   = "/data/latest-version.json"
+	CMD_VERSION_URL      = "/data/command-line-tools.json"
+	VERSIONS_UPGRADE_URL = "/data/versions-upgrade.json"
+	MODEL_CEF_URL        = "/data/model-cef.json"
+	MODEL_LCL_URL        = "/data/model-liblcl.json"
 )
 
 const (

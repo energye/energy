@@ -10,6 +10,8 @@
 
 package remotecfg
 
+import "github.com/energye/energy/v2/cmd/internal/command"
+
 var configInstance *TConfig
 
 type TConfig struct {
@@ -26,22 +28,22 @@ type TModelItem struct {
 	Identical          string `json:"identical"`
 }
 
-func BaseConfig() (*TConfig, error) {
+func BaseConfig(c command.EnergyConfig) (*TConfig, error) {
 	if configInstance == nil {
 		configInstance = new(TConfig)
-		lv, err := LatestVersion()
+		lv, err := LatestVersion(c)
 		if err != nil {
 			return nil, err
 		}
-		mdc, err := ModeBaseConfig()
+		mdc, err := ModeBaseConfig(c)
 		if err != nil {
 			return nil, err
 		}
-		cefCfg, err := ModelCEFConfig()
+		cefCfg, err := ModelCEFConfig(c)
 		if err != nil {
 			return nil, err
 		}
-		lclCfg, err := ModelLCLConfig()
+		lclCfg, err := ModelLCLConfig(c)
 		if err != nil {
 			return nil, err
 		}

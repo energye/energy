@@ -12,6 +12,7 @@ package remotecfg
 
 import (
 	"encoding/json"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
@@ -20,8 +21,8 @@ type TModelCEFConfigs map[string]TModelCEFConfig
 
 type TModelCEFConfig map[string]TModelItem
 
-func ModelCEFConfig() (TModelCEFConfigs, error) {
-	data, err := tools.Get(consts.MODEL_CEF_URL)
+func ModelCEFConfig(c command.EnergyConfig) (TModelCEFConfigs, error) {
+	data, err := tools.Get(consts.RemoteURL(c, consts.MODEL_CEF_URL))
 	if err != nil {
 		return nil, err
 	}

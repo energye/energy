@@ -43,7 +43,7 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 
 	extractOSConfig := config.ModeBaseConfig.Extract.Item(string(c.Install.OS))
 	latestVersion := config.LatestVersion
-	versionList, err := remotecfg.VersionUpgradeList()
+	versionList, err := remotecfg.VersionUpgradeList(c.EnergyCfg)
 	if err != nil {
 		term.Logger.Error(err.Error())
 		return "", nil

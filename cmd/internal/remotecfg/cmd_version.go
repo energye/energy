@@ -13,6 +13,7 @@ package remotecfg
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
@@ -25,8 +26,8 @@ type TCMDVersion struct {
 	DownloadURL string `json:"downloadUrl"`
 }
 
-func CMDVersion() (*TCMDVersion, error) {
-	data, err := tools.Get(consts.CMD_VERSION_URL)
+func CMDVersion(c command.EnergyConfig) (*TCMDVersion, error) {
+	data, err := tools.Get(consts.RemoteURL(c, consts.CMD_VERSION_URL))
 	if err != nil {
 		return nil, err
 	}

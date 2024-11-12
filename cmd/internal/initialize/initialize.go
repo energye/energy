@@ -145,8 +145,8 @@ func generaProject(c *command.Config) error {
 		return err
 	}
 	term.Logger.Info("Get latest release number")
-	latest := "latest"                              // 默认
-	latestVersion, err := remotecfg.LatestVersion() // tools.Get(consts.LatestVersionURL)
+	latest := "latest"                                         // 默认
+	latestVersion, err := remotecfg.LatestVersion(c.EnergyCfg) // tools.Get(consts.LatestVersionURL)
 	if err == nil {
 		latest = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
 	} else {

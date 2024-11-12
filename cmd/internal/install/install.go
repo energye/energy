@@ -43,7 +43,7 @@ type softEnf struct {
 }
 
 func Install(cliConfig *command.Config) error {
-	config, err := remotecfg.BaseConfig()
+	config, err := remotecfg.BaseConfig(cliConfig.EnergyCfg)
 	if err != nil {
 		return err
 	}

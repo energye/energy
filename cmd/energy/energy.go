@@ -105,7 +105,7 @@ func termRun() {
 }
 
 func readConfig(c *command.Config) {
-	c.EnergyCfg = *env.DevEnvReadUpdate("", "", "", "", "")
+	c.EnergyCfg = *env.DevEnvReadUpdate()
 }
 
 func signalHandler() {

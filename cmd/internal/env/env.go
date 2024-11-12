@@ -18,49 +18,22 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/energye/energy/v2/cmd/internal/tools/homedir"
 	"io/ioutil"
-	"os"
 	"path/filepath"
+	"strings"
 )
 
 // DevEnvReadUpdate 开发环境信息读取和修改
-func DevEnvReadUpdate(goroot, cefroot, nsisroot, upxroot, z7zroot string) *command.EnergyConfig {
+func DevEnvReadUpdate() *command.EnergyConfig {
 	home, err := homedir.Dir()
 	if err != nil {
 		term.Section.Println(err.Error())
 		return nil
 	}
-	energyDir := filepath.Join(home, ".energy")
-	if !tools.IsExist(energyDir) {
-		err = os.MkdirAll(energyDir, os.ModePerm)
-		if err != nil {
-			term.Section.Println(err.Error())
-			return nil
-		}
-	}
-	config := filepath.Join(energyDir, "energy.json")
-	if goroot == "" {
-		goroot = os.Getenv("GOROOT")
-	}
-	if cefroot == "" {
-		cefroot = os.Getenv(consts.EnergyHomeKey)
-	}
-	if nsisroot == "" {
-		nsisroot = os.Getenv(consts.NSISHomeKey)
-	}
-	if upxroot == "" {
-		upxroot = os.Getenv(consts.UPXHomeKey)
-	}
-	if z7zroot == "" {
-		z7zroot = os.Getenv(consts.Z7ZHomeKey)
-	}
+	config := filepath.Join(home, ".energy")
 	if !tools.IsExist(config) {
 		// 创建
 		cfg := command.EnergyConfig{
-			GoRoot:   goroot,
-			CEFRoot:  cefroot,
-			NSISRoot: nsisroot,
-			UPXRoot:  upxroot,
-			Z7zRoot:  z7zroot,
+			Registry: consts.DomainGithub,
 		}
 		cfgJSON, err := json.MarshalIndent(&cfg, "", "\t")
 		if err != nil {
@@ -85,44 +58,8 @@ func DevEnvReadUpdate(goroot, cefroot, nsisroot, upxroot, z7zroot string) *comma
 			term.Section.Println(err.Error())
 			return nil
 		}
-		isUpdate := false
-		if goroot != "" {
-			cfg.GoRoot = goroot
-			isUpdate = true
-		}
-		if cefroot != "" {
-			cfg.CEFRoot = cefroot
-			isUpdate = true
-		}
-		if nsisroot != "" {
-			cfg.NSISRoot = nsisroot
-			isUpdate = true
-		}
-		if upxroot != "" {
-			cfg.UPXRoot = upxroot
-			isUpdate = true
-		}
-		if z7zroot != "" {
-			cfg.Z7zRoot = z7zroot
-			isUpdate = true
-		}
-		if isUpdate {
-			cfgJSON, err = json.MarshalIndent(&cfg, "", "\t")
-			if err != nil {
-				term.Section.Println(err.Error())
-				return nil
-			}
-			configFile, err := os.OpenFile(config, os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0666)
-			if err != nil {
-				term.Section.Println(err.Error())
-				return nil
-			}
-			defer configFile.Close()
-			_, err = configFile.Write(cfgJSON)
-			if err != nil {
-				term.Section.Println(err.Error())
-				return nil
-			}
+		if strings.TrimSpace(cfg.Registry) == "" {
+			cfg.Registry = consts.DomainGithub
 		}
 		return &cfg
 	}
