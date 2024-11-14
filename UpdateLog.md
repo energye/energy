@@ -1,5 +1,13 @@
 # Upgrade Log
 
+### 2.4.6 - 2024/11/14
+- U: CLI > 2.4.6, In future release versions of the CLI, the version number will be synchronized with the main version number.
+- U: CLI - Add Registry for obtaining remote configurations
+- Fix: #45 Windows right-click menu to view source code crash issue
+- U: energy.json > config/energy_[os].json,  Simultaneous initialization of multi platform configuration
+- U: demo crawling-web-pages/devtools
+- U: demo devtools SetRemoteDebuggingPort
+
 ### 2.4.5 - 2024/11/04
 - Fix: cli install
 - Fix: LoadLibrary liblcl ERROR
