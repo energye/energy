@@ -14,7 +14,6 @@ import (
 	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/wv/windows"
-	"path/filepath"
 )
 
 // application
@@ -33,9 +32,7 @@ func NewApplication() *Application {
 			IWVLoader:  wv.GlobalWebView2Loader(),
 			mainWindow: &MainWindow{},
 		}
-		webView2Loader, _ := filepath.Split(libname.LibName)
-		webView2Loader = filepath.Join(webView2Loader, "WebView2Loader.dll")
-		application.SetLoaderDllPath(webView2Loader)
+		application.SetLoaderDllPath(libname.GetLibPath("WebView2Loader.dll"))
 		application.defaultEvent()
 	}
 	return application
