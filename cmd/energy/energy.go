@@ -41,7 +41,7 @@ var commands = []*command.Command{
 }
 
 func main() {
-	term.GoENERGY()
+	//term.GoENERGY()
 	termRun()
 }
 
