@@ -276,6 +276,7 @@ const (
 	CEFGlobalApp_SetOnRegisterCustomPreferences
 	CEFGlobalApp_SetOnContextInitialized
 	CEFGlobalApp_SetOnBeforeChildProcessLaunch
+	CEFGlobalApp_SetOnAlreadyRunningAppRelaunch
 	CEFGlobalApp_SetOnGetDefaultClient
 	CEFGlobalApp_SetOnGetLocalizedString
 	CEFGlobalApp_SetOnGetDataResource

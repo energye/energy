@@ -199,6 +199,13 @@ func (m *TCEFApplication) SetOnBeforeChildProcessLaunch(fn GlobalCEFAppEventOnBe
 	imports.Proc(def.CEFGlobalApp_SetOnBeforeChildProcessLaunch).Call(api.MakeEventDataPtr(fn))
 }
 
+// SetOnAlreadyRunningAppRelaunch
+//
+//	启动子进程之前自定义命令行参数设置
+func (m *TCEFApplication) SetOnAlreadyRunningAppRelaunch(fn GlobalCEFAppEventOnAlreadyRunningAppRelaunchEvent) {
+	imports.Proc(def.CEFGlobalApp_SetOnAlreadyRunningAppRelaunch).Call(api.MakeEventDataPtr(fn))
+}
+
 // SetOnGetDefaultClient
 //
 //	获取并返回CefClient, 我们自己创建并返回到 *ICefClient = myCefClient

@@ -186,6 +186,7 @@ type GlobalCEFAppEventOnRegCustomSchemes func(registrar *TCefSchemeRegistrarRef)
 type GlobalCEFAppEventOnRegisterCustomPreferences func(type_ consts.TCefPreferencesType, registrar *TCefPreferenceRegistrarRef)
 type GlobalCEFAppEventOnContextInitialized func()
 type GlobalCEFAppEventOnBeforeChildProcessLaunch func( /*commandLine *TCefCommandLine,*/ commandLine *ICefCommandLine)
+type GlobalCEFAppEventOnAlreadyRunningAppRelaunchEvent func(commandLine *ICefCommandLine, currentDirectory string) bool
 type GlobalCEFAppEventOnGetDefaultClient func(client *ICefClient)
 type GlobalCEFAppEventOnGetLocalizedString func(stringId int32, stringVal *ResultString, result *ResultBool)
 type GlobalCEFAppEventOnGetDataResource func(resourceId int32, data *ResultBytes, result *ResultBool)

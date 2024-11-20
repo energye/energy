@@ -276,6 +276,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnRegisterCustomPreferences", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnContextInitialized", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnBeforeChildProcessLaunch", 0),
+		dllimports.NewEnergyImport("CEFGlobalApp_SetOnAlreadyRunningAppRelaunch", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDefaultClient", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetLocalizedString", 0),
 		dllimports.NewEnergyImport("CEFGlobalApp_SetOnGetDataResource", 0),

@@ -35,6 +35,9 @@ func init() {
 			fn.(GlobalCEFAppEventOnContextInitialized)()
 		case GlobalCEFAppEventOnBeforeChildProcessLaunch:
 			fn.(GlobalCEFAppEventOnBeforeChildProcessLaunch)(&ICefCommandLine{instance: getPtr(0)})
+		case GlobalCEFAppEventOnAlreadyRunningAppRelaunchEvent:
+			result := (*bool)(getPtr(2))
+			*result = fn.(GlobalCEFAppEventOnAlreadyRunningAppRelaunchEvent)(&ICefCommandLine{instance: getPtr(0)}, api.GoStr(getVal(1)))
 		case GlobalCEFAppEventOnGetDefaultClient:
 			client := (*uintptr)(getPtr(0))
 			getClient := &ICefClient{instance: unsafe.Pointer(client)}
