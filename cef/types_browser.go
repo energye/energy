@@ -621,7 +621,7 @@ func (m *ICefBrowser) EmitRender(messageId int32, eventName string, target targe
 		}
 		message.Data = argumentJSONArray.Data()
 	}
-	m.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEvent, PID_RENDER, message.Bytes())
+	m.SendProcessMessageForJSONBytes(internalIPCGoEmit, PID_RENDER, message.Bytes())
 	message.Reset()
 	return true
 }

@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/callback"
@@ -28,13 +29,14 @@ type ipcBrowserProcess struct{}
 // 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	name := message.Name()
-	if name == internalIPCJSExecuteGoEvent {
+	fmt.Println("browserProcessMessageReceived name:", name)
+	if name == internalIPCJSEmit || name == internalIPCGoEmit {
 		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
 	} else if name == internalEnergyExtension {
 		dragExtension.drag(browser, frame, message)
-	} else if name == internalIPCJSExecuteGoWaitEvent {
+	} else if name == internalIPCJSEmitWait {
 		ipcBrowser.jsExecuteGoWaitMethodMessage(browser, frame, message)
-	} else if name == internalIPCGoExecuteJSEventReplay {
+	} else if name == internalIPCGoEmitReplay {
 		ipcBrowser.goExecuteMethodMessageReply(browser, frame, message)
 	}
 	return
@@ -112,9 +114,9 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 				}
 				if application.IsSpecVer49() {
 					// CEF49
-					browser.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+					browser.SendProcessMessageForJSONBytes(internalIPCJSEmitReplay, consts.PID_RENDER, replyMessage.Bytes())
 				} else {
-					frame.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEventReplay, consts.PID_RENDER, replyMessage.Bytes())
+					frame.SendProcessMessageForJSONBytes(internalIPCJSEmitReplay, consts.PID_RENDER, replyMessage.Bytes())
 				}
 				replyMessage.Reset()
 			}
@@ -245,7 +247,7 @@ func (m *ipcBrowserProcess) jsExecuteGoWaitMethodMessage(browser *ICefBrowser, f
 	} else {
 		processMessage = frame
 	}
-	processMessage.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoWaitEventReplay, consts.PID_RENDER, messageData.Bytes())
+	processMessage.SendProcessMessageForJSONBytes(internalIPCJSEmitWaitReplay, consts.PID_RENDER, messageData.Bytes())
 	messageData.Reset()
 	if ipcContext != nil {
 		if ipcContext.ArgumentList() != nil {

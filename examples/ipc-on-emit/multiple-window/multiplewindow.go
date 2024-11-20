@@ -6,7 +6,6 @@ import (
 	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/target"
 	demoCommon "github.com/energye/energy/v2/examples/common"
 	"github.com/energye/energy/v2/examples/common/tray"
 	_ "github.com/energye/energy/v2/examples/syso"
@@ -48,7 +47,7 @@ func main() {
 		fmt.Println("window-count:", len(infos))
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
-			iTarget := info.Target(target.TgJs)
+			iTarget := info.Target()
 			ok = ipc.EmitTarget("receiveMessage", iTarget, time.Now().String())
 			println("ipc.EmitTarget", ok, iTarget.BrowserId())
 			ok = ipc.EmitTargetAndCallback("receiveMessage", iTarget, []interface{}{"带有callback的触发事件: " + time.Now().String()}, func() {
@@ -70,7 +69,7 @@ func main() {
 		infos := cef.BrowserWindow.GetWindowInfos()
 		for _, info := range infos {
 			// 将消息发送到目标窗口, 类型为JS接收
-			iTarget := info.Target(target.TgJs)
+			iTarget := info.Target()
 			var ok = ipc.EmitTarget("refresh", iTarget)
 			println("ipc.EmitTarget-refresh", ok)
 		}
@@ -94,7 +93,7 @@ func main() {
 				// 获得当前所有窗口信息
 				infos := cef.BrowserWindow.GetWindowInfos()
 				for _, info := range infos {
-					iTarget := info.Target(target.TgJs)
+					iTarget := info.Target()
 					ipc.EmitTarget("count", iTarget, count)
 				}
 				count++

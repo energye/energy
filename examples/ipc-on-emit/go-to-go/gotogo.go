@@ -57,7 +57,7 @@ func main() {
 			fmt.Println("browserOn channel:", channel.ChannelId(), "url:", url)
 			// 多种方式返回结果到子进程
 			// 1. 使用ipc事件返回结果到子进程
-			ipc.EmitTarget("renderOn", target.NewTarget(nil, 0, channel.ChannelId(), target.TgGoSub), "reply result")
+			ipc.EmitTarget("renderOn", target.NewTarget(nil, 0, channel.ChannelId()), "reply result")
 			// 2. 直接返回结果到子进程
 			return "reply result"
 		})

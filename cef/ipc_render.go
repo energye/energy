@@ -14,6 +14,7 @@ package cef
 
 import (
 	"errors"
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/context"
@@ -27,11 +28,12 @@ import (
 // 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	name := message.Name()
-	if name == internalIPCJSExecuteGoEventReplay {
+	fmt.Println("renderProcessMessageReceived name:", name)
+	if name == internalIPCJSEmitReplay {
 		result = ipcRender.jsExecuteGoEventMessageReply(browser, frame, message)
-	} else if name == internalIPCGoExecuteJSEvent {
+	} else if name == internalIPCGoEmit {
 		result = ipcRender.goExecuteJSEvent(browser, frame, message)
-	} else if name == internalIPCJSExecuteGoWaitEventReplay {
+	} else if name == internalIPCJSEmitWaitReplay {
 		ipcRender.jsExecuteGoSyncEventMessageReply(browser, frame, message)
 	}
 	return
@@ -612,7 +614,7 @@ func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName strin
 	} else {
 		processMessage = v8ctx.Frame()
 	}
-	processMessage.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoWaitEvent, consts.PID_BROWSER, message.Bytes())
+	processMessage.SendProcessMessageForJSONBytes(internalIPCJSEmitWait, consts.PID_BROWSER, message.Bytes())
 	message.Reset()
 	// 开始计时, 直到 delay 时间结束，或正常返回结果
 	delayer := m.waitChan.NewDelayer(messageId, delay)
@@ -643,7 +645,7 @@ func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessa
 			EventName: emitName,
 			Data:      data,
 		}
-		processMessage.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoEvent, consts.PID_BROWSER, message.Bytes())
+		processMessage.SendProcessMessageForJSONBytes(internalIPCJSEmit, consts.PID_BROWSER, message.Bytes())
 		message.Reset()
 		return true
 	}

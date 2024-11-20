@@ -53,6 +53,7 @@ func main() {
 			browserId = browser.Identifier()
 			channelId = frame.Identifier()
 		)
+		frame = cef.FrameRef.UnWrap(frame)
 		// 创建 dom visitor
 		visitor := cef.DomVisitorRef.New()
 		// 监听事件
@@ -75,8 +76,10 @@ func main() {
 			doms["inpText"] = inpText.GetElementBounds()
 			doms["inp2Text"] = inp2Text.GetElementBounds()
 			doms["tare"] = tare.GetElementBounds()
+			fmt.Println("frame.Identifier:", frame.Identifier())
 			// 触发主进程ipc监听事件
-			ipc.EmitTarget("renderLoadEnd", target.NewTargetMain(), browserId, channelId, doms)
+			ok := ipc.EmitTarget("renderLoadEnd", frame.Target(), browserId, channelId, doms)
+			fmt.Println("emit ok:", ok)
 		})
 		// 调用该函数后, 执行SetOnVisit回调函数
 		frame.VisitDom(visitor)
@@ -140,7 +143,7 @@ func main() {
 			// 滚动
 			textareaWheelEvent(doms["tare"])
 			// 回复到渲染进程执行成功, 触发是Go的事件.
-			ipc.EmitTarget("replyMockIsSuccess", target.NewTarget(nil, browserId, channelId, target.TgGoSub))
+			ipc.EmitTarget("replyMockIsSuccess", target.NewTarget(nil, browserId, channelId))
 		})
 	})
 	//运行应用

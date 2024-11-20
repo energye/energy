@@ -203,6 +203,9 @@ func EmitTarget(name string, tag target.ITarget, argument ...interface{}) bool {
 		// default window
 		window = browser.window
 	}
+	if window == nil {
+		return false
+	}
 	if window.IsClosing() {
 		return false
 	}
@@ -221,6 +224,9 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []interface
 	if window == nil {
 		// default window
 		window = browser.window
+	}
+	if window == nil {
+		return false
 	}
 	if window.IsClosing() {
 		return false

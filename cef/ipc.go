@@ -34,12 +34,12 @@ const (
 
 // ipc message name
 const (
-	internalIPCJSExecuteGoEvent           = "JSEmitGo"           // JS 触发 GO事件异步
-	internalIPCJSExecuteGoEventReplay     = "JSEmitGoReplay"     // JS 触发 GO事件异步 - 返回结果
-	internalIPCJSExecuteGoWaitEvent       = "JSEmitWaitGo"       // JS 触发 GO事件同步
-	internalIPCJSExecuteGoWaitEventReplay = "JSEmitWaitGoReplay" // JS 触发 GO事件同步 - 返回结果
-	internalIPCGoExecuteJSEvent           = "GoEmitJS"           // GO 触发 JS事件
-	internalIPCGoExecuteJSEventReplay     = "GoEmitJSReplay"     // GO 触发 JS事件 - 返回结果
+	internalIPCJSEmit           = "JSEmit"           // JS 触发 GO事件异步
+	internalIPCJSEmitReplay     = "JSEmitReplay"     // JS 触发 GO事件异步 - 返回结果
+	internalIPCJSEmitWait       = "JSEmitWait"       // JS 触发 GO事件同步
+	internalIPCJSEmitWaitReplay = "JSEmitWaitReplay" // JS 触发 GO事件同步 - 返回结果
+	internalIPCGoEmit           = "GoEmit"           // GO 触发 JS事件
+	internalIPCGoEmitReplay     = "GoEmitReplay"     // GO 触发 JS事件 - 返回结果
 )
 
 // js execute go 返回类型
@@ -87,9 +87,9 @@ type ipcCallback struct {
 func isIPCInternalKey(key string) bool {
 	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn ||
 		key == internalIPCDRAG || key == internalIPCEmitWait ||
-		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
-		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
-		key == internalIPCJSExecuteGoWaitEvent || key == internalIPCJSExecuteGoWaitEventReplay ||
+		key == internalIPCJSEmit || key == internalIPCJSEmitReplay ||
+		key == internalIPCGoEmit || key == internalIPCGoEmitReplay ||
+		key == internalIPCJSEmitWait || key == internalIPCJSEmitWaitReplay ||
 		key == internalEnergyExtension
 
 }
@@ -274,7 +274,7 @@ func replayGoExecuteJSEvent(processMessage target.IProcessMessage, messageId int
 			callbackMessage.Data = callbackArgsBytes //json.NewJSONArray(callbackArgsBytes).Data()
 		}
 		//发送消息到主进程
-		processMessage.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
+		processMessage.SendProcessMessageForJSONBytes(internalIPCGoEmitReplay, consts.PID_BROWSER, callbackMessage.Bytes())
 		callbackMessage.Reset()
 	}
 }

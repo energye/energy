@@ -1678,7 +1678,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 			return false
 		}
 	}
-	if target == nil || target.BrowserId() <= 0 || target.ChannelId() != "" {
+	if target == nil || target.BrowserId() <= 0 || target.ChannelId() == "" {
 		message := &argument.List{Id: messageId, EventName: eventName}
 		if len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
@@ -1692,7 +1692,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 			}
 			message.Data = argumentJSONArray.Data()
 		}
-		m.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEvent, PID_RENDER, message.Bytes())
+		m.SendProcessMessageForJSONBytes(internalIPCGoEmit, PID_RENDER, message.Bytes())
 		message.Reset()
 		return true
 	} else {
