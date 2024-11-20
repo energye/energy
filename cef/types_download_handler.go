@@ -82,7 +82,7 @@ func (m *ICefDownloadHandler) SetOnDownloadUpdated(fn onDownloadUpdated) {
 // ************************** events ************************** //
 
 type canDownload func(browser *ICefBrowser, url, requestMethod string) bool
-type onBeforeDownload func(browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback)
+type onBeforeDownload func(browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) bool
 type onDownloadUpdated func(browser *ICefBrowser, downloadItem *ICefDownloadItem, callback *ICefDownloadItemCallback)
 
 func init() {
@@ -101,7 +101,8 @@ func init() {
 			downlItem := &ICefDownloadItem{instance: getPtr(1)}
 			suggestedName := api.GoStr(getVal(2))
 			callback := &ICefBeforeDownloadCallback{instance: getPtr(3)}
-			fn.(onBeforeDownload)(browse, downlItem, suggestedName, callback)
+			result := (*bool)(getPtr(4))
+			*result = fn.(onBeforeDownload)(browse, downlItem, suggestedName, callback)
 		case onDownloadUpdated:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			downlItem := &ICefDownloadItem{instance: getPtr(1)}

@@ -61,9 +61,9 @@ func (m *ICefBrowser) BrowserId() int32 {
 }
 
 // FrameId 获取FrameID 一个窗口中可以有多Frame
-func (m *ICefBrowser) FrameId() int64 {
+func (m *ICefBrowser) FrameId() string {
 	if !m.IsValid() {
-		return 0
+		return ""
 	}
 	return m.MainFrame().Identifier()
 }
@@ -197,12 +197,12 @@ func (m *ICefBrowser) GetFocusedFrame() *ICefFrame {
 }
 
 // GetFrameById 根据FrameId获取Frame对象
-func (m *ICefBrowser) GetFrameById(frameId int64) *ICefFrame {
+func (m *ICefBrowser) GetFrameById(frameId string) *ICefFrame {
 	if !m.IsValid() {
 		return nil
 	}
 	if m.idFrames == nil {
-		m.idFrames = make(map[int64]*ICefFrame)
+		m.idFrames = make(map[string]*ICefFrame)
 	}
 	if frame, ok := m.idFrames[frameId]; ok {
 		if frame.instance != nil && frame.IsValid() {
@@ -211,7 +211,7 @@ func (m *ICefBrowser) GetFrameById(frameId int64) *ICefFrame {
 		delete(m.idFrames, frameId)
 	}
 	var result uintptr
-	imports.Proc(def.CEFBrowser_GetFrameById).Call(m.Instance(), uintptr(unsafe.Pointer(&frameId)), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFBrowser_GetFrameById).Call(m.Instance(), api.PascalStr(frameId), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		frame := &ICefFrame{instance: unsafe.Pointer(result)}
 		m.idFrames[frameId] = frame
@@ -520,13 +520,10 @@ func (m *ICefBrowser) GetFrameNames() []*FrameNames {
 	return frameNames
 }
 
-func (m *ICefBrowser) GetFrameIdentifiers() []int64 {
-	var list uintptr
-	var count uint32
-	var ids uintptr
-	imports.Proc(def.CEFBrowser_GetFrameIdentifiers).Call(m.Instance(), uintptr(unsafe.Pointer(&list)), uintptr(unsafe.Pointer(&count)), uintptr(unsafe.Pointer(&ids)))
-	// TODO 未取到正确结果
-	return nil
+func (m *ICefBrowser) GetFrameIdentifiers() *lcl.TStrings {
+	var result uintptr
+	imports.Proc(def.CEFBrowser_GetFrameIdentifiers).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return lcl.AsStrings(result)
 }
 
 // Find 检索页面文本

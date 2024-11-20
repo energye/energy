@@ -360,12 +360,12 @@ func (m *ICefWindow) SetWindowAppIconFS(scaleFactor float32, filename string) er
 }
 
 // AddOverlayView
-func (m *ICefWindow) AddOverlayView(view *ICefView, dockingMode consts.TCefDockingMode) *ICefOverlayController {
+func (m *ICefWindow) AddOverlayView(view *ICefView, dockingMode consts.TCefDockingMode, canActivate bool) *ICefOverlayController {
 	if !m.IsValid() {
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.ICEFWindow_AddOverlayView).Call(m.Instance(), view.Instance(), uintptr(dockingMode), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ICEFWindow_AddOverlayView).Call(m.Instance(), view.Instance(), uintptr(dockingMode), api.PascalBool(canActivate), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefOverlayController{instance: getInstance(result)}
 	}
@@ -451,11 +451,11 @@ func (m *ICefWindow) SendMouseEvents(button consts.TCefMouseButtonType, mouseDow
 }
 
 // SetAccelerator 设置快捷键
-func (m *ICefWindow) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) {
+func (m *ICefWindow) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed, highPriority bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ICEFWindow_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
+	imports.Proc(def.ICEFWindow_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed), api.PascalBool(highPriority))
 }
 
 // RemoveAccelerator 移除指定快捷键

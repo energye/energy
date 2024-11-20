@@ -31,10 +31,10 @@ const (
 //
 // ipc.NewTarget() *Target
 type ITarget interface {
-	BrowserId() int32 // Browser Window ID
-	ChannelId() int64 // IPC channelID, frameId or GO IPC channelID
-	TargetType() Type // Target type default 0: Trigger JS event
-	Window() IWindow  // Send IPC Chromium
+	BrowserId() int32  // Browser Window ID
+	ChannelId() string // IPC channelID, frameId or GO IPC channelID
+	TargetType() Type  // Target type default 0: Trigger JS event
+	Window() IWindow   // Send IPC Chromium
 }
 
 // IProcessMessage
@@ -64,7 +64,7 @@ type IBrowserWindow interface {
 type Target struct {
 	window     IWindow
 	browseId   int32
-	channelId  int64
+	channelId  string
 	targetType Type
 }
 
@@ -75,7 +75,7 @@ type Target struct {
 //	channelId: IPC channelID, frameId or GO IPC channelID
 //	targetType: Optional parameter, target type default 0
 //	  Type: TgJs:JS Event, TgGoSub:GO Sub Event, TgGoMain:GO Main Event
-func NewTarget(targetChromium IWindow, browserId int32, channelId int64, targetType ...Type) ITarget {
+func NewTarget(targetChromium IWindow, browserId int32, channelId string, targetType ...Type) ITarget {
 	m := &Target{
 		window:    targetChromium,
 		browseId:  browserId,
@@ -115,7 +115,7 @@ func (m *Target) BrowserId() int32 {
 // ChannelId
 //
 //	return ChannelId
-func (m *Target) ChannelId() int64 {
+func (m *Target) ChannelId() string {
 	return m.channelId
 }
 

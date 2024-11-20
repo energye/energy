@@ -360,3 +360,23 @@ func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnSch
 	}
 	imports.Proc(def.CEFGlobalApp_SetOnScheduleMessagePumpWork).Call(callback)
 }
+
+// ChromeVerGE 当前 chrome major version >= ver
+func (m *TCEFApplication) ChromeVerGE(ver uint16) bool {
+	return m.ChromeMajorVer() >= ver
+}
+
+// ChromeVerG 当前 chrome major version > ver
+func (m *TCEFApplication) ChromeVerG(ver uint16) bool {
+	return m.ChromeMajorVer() > ver
+}
+
+// ChromeVerLE 当前 chrome major version <= ver
+func (m *TCEFApplication) ChromeVerLE(ver uint16) bool {
+	return m.ChromeMajorVer() <= ver
+}
+
+// ChromeVerL 当前 chrome major version < ver
+func (m *TCEFApplication) ChromeVerL(ver uint16) bool {
+	return m.ChromeMajorVer() < ver
+}

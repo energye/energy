@@ -131,9 +131,14 @@ func (m *TCEFWindowComponent) Restore() {
 	imports.Proc(def.CEFWindowComponent_Restore).Call(m.Instance())
 }
 
-//func (m *TCEFWindowComponent) AddOverlayView() {
-//imports.Proc(CEFWindowComponent_AddOverlayView).Call(m.Instance())
-//}
+func (m *TCEFWindowComponent) AddOverlayView(view *ICefView, dockingMode consts.TCefDockingMode, canActivate bool) *ICefOverlayController {
+	var result uintptr
+	imports.Proc(def.CEFWindowComponent_AddOverlayView).Call(m.Instance(), view.Instance(), uintptr(dockingMode), api.PascalBool(canActivate), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefOverlayController{instance: getInstance(result)}
+	}
+	return nil
+}
 
 // ShowMenu 显示菜单
 func (m *TCEFWindowComponent) ShowMenu(menuModel *ICefMenuModel, point TCefPoint, anchorPosition consts.TCefMenuAnchorPosition) {
@@ -184,11 +189,11 @@ func (m *TCEFWindowComponent) SendMouseEvents(button consts.TCefMouseButtonType,
 }
 
 // SetAccelerator 设置快捷键
-func (m *TCEFWindowComponent) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) {
+func (m *TCEFWindowComponent) SetAccelerator(commandId, keyCode int32, shiftPressed, ctrlPressed, altPressed, highPriority bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
+	imports.Proc(def.CEFWindowComponent_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode), api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed), api.PascalBool(highPriority))
 }
 
 // RemoveAccelerator 移除指定快捷键

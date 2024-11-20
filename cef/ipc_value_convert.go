@@ -32,7 +32,7 @@ var ValueConvert v8ValueProcessMessageConvert
 // v8ValueProcessMessageConvert ICefV8Value 和 ICefProcessMessage 转换
 type v8ValueProcessMessageConvert uintptr
 
-//ListValueToV8Value ICefListValue 转换 ICefV8Value
+// ListValueToV8Value ICefListValue 转换 ICefV8Value
 func (m *v8ValueProcessMessageConvert) ListValueToV8Value(list *ICefListValue) (*ICefV8Value, error) {
 	if list == nil {
 		return nil, errors.New("build v8 value error. Parameter null")
@@ -85,7 +85,7 @@ func (m *v8ValueProcessMessageConvert) ListValueToV8Value(list *ICefListValue) (
 	return result, nil
 }
 
-//DictionaryValueToV8Value ICefDictionaryValue 转换 ICefV8Value
+// DictionaryValueToV8Value ICefDictionaryValue 转换 ICefV8Value
 func (m *v8ValueProcessMessageConvert) DictionaryValueToV8Value(dictionary *ICefDictionaryValue) (*ICefV8Value, error) {
 	if dictionary == nil {
 		return nil, errors.New("build v8 value error. Parameter null")
@@ -139,7 +139,7 @@ func (m *v8ValueProcessMessageConvert) DictionaryValueToV8Value(dictionary *ICef
 		if newValue == nil {
 			newValue = V8ValueRef.NewNull()
 		}
-		result.setValueByAccessor(key, consts.V8_ACCESS_CONTROL_DEFAULT, consts.V8_PROPERTY_ATTRIBUTE_NONE)
+		result.setValueByAccessor(key, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 		result.setValueByKey(key, newValue, consts.V8_PROPERTY_ATTRIBUTE_NONE)
 	}
 	return result, nil

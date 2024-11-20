@@ -63,7 +63,7 @@ type IChromiumProc interface {
 	NotifyMoveOrResizeStarted()
 	Invalidate(type_ TCefPaintElementType)
 	CloseBrowser(forceClose bool)
-	ExecuteJavaScript(code, scriptURL string, startLine int32)
+	ExecuteJavaScript(code, scriptURL string, frame ICefFrame, startLine int32)
 	ShowDevTools(window ICEFWindowParent)
 	CloseDevTools(window ICEFWindowParent)
 	VisitAllCookies(id int32)
@@ -93,7 +93,6 @@ type IChromiumProc interface {
 	FrameIsFocused() bool
 	TryCloseBrowser() bool
 	BrowserHandle() types.HWND
-	WidgetHandle() types.HWND
 	RenderHandle() types.HWND
 	SetCustomHeader(customHeader *TCustomHeader)
 	CustomHeader() *TCustomHeader
@@ -205,11 +204,6 @@ type IChromiumProc interface {
 	SetNewBrowserParent(aNewParentHwnd types.HWND)
 	Fullscreen() bool
 	ExitFullscreen(willCauseResize bool)
-	LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler, requestContext *ICefRequestContext) bool
-	DidLoadExtension(extensionId string) bool
-	HasExtension(extensionId string) bool
-	GetExtensions(extensionIds lcl.TStringList) bool
-	GetExtension(extensionId string) *ICefExtension
 	GetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) *ICefValue
 	SetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value *ICefValue)
 	GetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) TCefContentSettingValues
@@ -559,8 +553,8 @@ func (m *TCEFChromium) CloseBrowser(forceClose bool) {
 // scriptURL: js脚本地址 默认about:blank
 //
 // startLine: js脚本启始执行行号
-func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, startLine int32) {
-	imports.Proc(def.CEFChromium_ExecuteJavaScript).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptURL), uintptr(startLine))
+func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, frame ICefFrame, startLine int32) {
+	imports.Proc(def.CEFChromium_ExecuteJavaScript).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptURL), frame.Instance(), uintptr(startLine))
 }
 
 func (m *TCEFChromium) ShowDevTools(window ICEFWindowParent) {
@@ -787,17 +781,6 @@ func (m *TCEFChromium) BrowserHandle() types.HWND {
 		m.browserHandle = types.HWND(r1)
 	}
 	return m.browserHandle
-}
-
-func (m *TCEFChromium) WidgetHandle() types.HWND {
-	if !m.IsValid() {
-		return 0
-	}
-	if m.widgetHandle == 0 {
-		r1, _, _ := imports.Proc(def.CEFChromium_WidgetHandle).Call(m.Instance())
-		m.widgetHandle = types.HWND(r1)
-	}
-	return m.widgetHandle
 }
 
 func (m *TCEFChromium) RenderHandle() types.HWND {
@@ -1695,7 +1678,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 			return false
 		}
 	}
-	if target == nil || target.BrowserId() <= 0 || target.ChannelId() <= 0 {
+	if target == nil || target.BrowserId() <= 0 || target.ChannelId() != "" {
 		message := &argument.List{Id: messageId, EventName: eventName}
 		if len(data) > 0 {
 			argumentJSONArray := json.NewJSONArray(nil)
@@ -1743,50 +1726,6 @@ func (m *TCEFChromium) ExitFullscreen(willCauseResize bool) {
 		return
 	}
 	imports.Proc(def.CEFChromium_ExitFullscreen).Call(m.Instance(), api.PascalBool(willCauseResize))
-}
-
-func (m *TCEFChromium) LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler, requestContext *ICefRequestContext) bool {
-	if !m.IsValid() {
-		return false
-	}
-	r1, _, _ := imports.Proc(def.CEFChromium_LoadExtension).Call(m.Instance(), api.PascalStr(rootDirectory), manifest.Instance(), handler.Instance(), requestContext.Instance())
-	return api.GoBool(r1)
-}
-
-func (m *TCEFChromium) DidLoadExtension(extensionId string) bool {
-	if !m.IsValid() {
-		return false
-	}
-	r1, _, _ := imports.Proc(def.CEFChromium_DidLoadExtension).Call(m.Instance(), api.PascalStr(extensionId))
-	return api.GoBool(r1)
-}
-
-func (m *TCEFChromium) HasExtension(extensionId string) bool {
-	if !m.IsValid() {
-		return false
-	}
-	r1, _, _ := imports.Proc(def.CEFChromium_HasExtension).Call(m.Instance(), api.PascalStr(extensionId))
-	return api.GoBool(r1)
-}
-
-func (m *TCEFChromium) GetExtensions(extensionIds lcl.TStringList) bool {
-	if !m.IsValid() || !extensionIds.IsValid() {
-		return false
-	}
-	r1, _, _ := imports.Proc(def.CEFChromium_GetExtensions).Call(m.Instance(), extensionIds.Instance())
-	return api.GoBool(r1)
-}
-
-func (m *TCEFChromium) GetExtension(extensionId string) *ICefExtension {
-	if !m.IsValid() {
-		return nil
-	}
-	var result uintptr
-	imports.Proc(def.CEFChromium_GetExtension).Call(m.Instance(), api.PascalStr(extensionId), uintptr(unsafe.Pointer(&result)))
-	if result > 0 {
-		return &ICefExtension{instance: getInstance(result)}
-	}
-	return nil
 }
 
 func (m *TCEFChromium) GetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) *ICefValue {

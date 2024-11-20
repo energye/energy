@@ -21,23 +21,24 @@ var renderChan *renderIPCChan
 
 type IRenderIPCChan interface {
 	IPC() channel.IRenderChannel
-	SetRealityChannel(browserId int32, channelId int64)
-	AddCallback(callback func(channelId int64, argumentList argument.IList) bool)
+	SetRealityChannel(browserId int32, channelId string)
+	AddCallback(callback func(channelId string, argumentList argument.IList) bool)
 	BrowserId() int32
-	ChannelId() int64
+	ChannelId() string
 }
 
 // renderIPCChan
-//  Current renderer process IPC channel processing
+//
+//	Current renderer process IPC channel processing
 type renderIPCChan struct {
 	browserId int32
-	channelId int64
+	channelId string
 	ipc       channel.IRenderChannel
-	callback  []func(channelId int64, argumentList argument.IList) bool
+	callback  []func(channelId string, argumentList argument.IList) bool
 }
 
 // CreateRenderIPC Rendering process IPC creation
-func CreateRenderIPC(browserId int32, channelId int64) IRenderIPCChan {
+func CreateRenderIPC(browserId int32, channelId string) IRenderIPCChan {
 	if renderChan == nil {
 		renderChan = new(renderIPCChan)
 		renderChan.browserId = browserId
@@ -72,7 +73,7 @@ func (m *renderIPCChan) IPC() channel.IRenderChannel {
 }
 
 // SetRealityChannel Set the actual channel ID
-func (m *renderIPCChan) SetRealityChannel(browserId int32, channelId int64) {
+func (m *renderIPCChan) SetRealityChannel(browserId int32, channelId string) {
 	if m == nil {
 		return
 	}
@@ -85,14 +86,15 @@ func (m *renderIPCChan) BrowserId() int32 {
 	return m.browserId
 }
 
-func (m *renderIPCChan) ChannelId() int64 {
+func (m *renderIPCChan) ChannelId() string {
 	return m.channelId
 }
 
 // AddCallback
+//
 //	Add a callback function
 //	callback returns true ipc to stop traversing
 //	otherwise continue traversing until the last one
-func (m *renderIPCChan) AddCallback(callback func(channelId int64, argumentList argument.IList) bool) {
+func (m *renderIPCChan) AddCallback(callback func(channelId string, argumentList argument.IList) bool) {
 	m.callback = append(m.callback, callback)
 }

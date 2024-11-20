@@ -46,8 +46,8 @@ func init() {
 			kind := consts.TCefPaintElementType(getVal(2))
 			dirtyRectsCount := *(*uint32)(getPtr(3))
 			dirtyRectsPtr := getVal(4)
-			sharedHandle := getVal(5)
-			fn.(chromiumEventOnAcceleratedPaint)(lcl.AsObject(getPtr(0)), browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), sharedHandle)
+			info := *(*TCefAcceleratedPaintInfo)(getPtr(5))
+			fn.(chromiumEventOnAcceleratedPaint)(lcl.AsObject(getPtr(0)), browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), info)
 		case chromiumEventOnAllConnectionsClosed:
 			fn.(chromiumEventOnAllConnectionsClosed)(lcl.AsObject(getPtr(0)))
 		case chromiumEventOnAudioStreamError:
@@ -228,68 +228,6 @@ func init() {
 		case chromiumEventOnExecuteTaskOnCefThread:
 			taskID := uint32(getVal(1))
 			fn.(chromiumEventOnExecuteTaskOnCefThread)(lcl.AsObject(getPtr(0)), taskID)
-		case chromiumEventOnExtensionBeforeBackgroundBrowser:
-			extension := &ICefExtension{instance: getPtr(1)}
-			url := api.GoStr(getVal(2))
-			clientPtr := (*uintptr)(getPtr(3))
-			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(4))
-			resultPtr := (*bool)(getPtr(5))
-			resultClient := &ICefClient{}
-			browserSettings := browserSettingsPtr.convert()
-			*resultPtr = fn.(chromiumEventOnExtensionBeforeBackgroundBrowser)(lcl.AsObject(getPtr(0)), extension, url, resultClient, browserSettings)
-			if resultClient.instance != nil && resultClient.IsValid() {
-				*clientPtr = resultClient.Instance()
-			}
-			browserSettings.setInstanceValue()
-		case chromiumEventOnExtensionBeforeBrowser:
-			extension := &ICefExtension{instance: getPtr(1)}
-			browse, activeBrowser := &ICefBrowser{instance: getPtr(2)}, &ICefBrowser{instance: getPtr(3)}
-			index := int32(getVal(4))
-			url := api.GoStr(getVal(5))
-			active := api.GoBool(getVal(6))
-			windowInfoPtr := (*tCefWindowInfoPtr)(getPtr(7))
-			resultClientPtr := (*uintptr)(getPtr(8))
-			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(9))
-			result := (*bool)(getPtr(10))
-			windowInfo := windowInfoPtr.convert()
-			resultClient := &ICefClient{}
-			resultSettings := browserSettingsPtr.convert()
-			*result = fn.(chromiumEventOnExtensionBeforeBrowser)(lcl.AsObject(getPtr(0)), extension, browse, activeBrowser, index, url, active, windowInfo, resultClient, resultSettings)
-			windowInfo.setInstanceValue()
-			if resultClient.instance != nil && resultClient.IsValid() {
-				*resultClientPtr = resultClient.Instance()
-			}
-			resultSettings.setInstanceValue()
-		case chromiumEventOnExtensionCanAccessBrowser:
-			extension := &ICefExtension{instance: getPtr(1)}
-			browse := &ICefBrowser{instance: getPtr(2)}
-			includeIncognito := api.GoBool(getVal(3))
-			targetBrowser := &ICefBrowser{instance: getPtr(4)}
-			result := (*bool)(getPtr(5))
-			*result = fn.(chromiumEventOnExtensionCanAccessBrowser)(lcl.AsObject(getPtr(0)), extension, browse, includeIncognito, targetBrowser)
-		case chromiumEventOnExtensionGetActiveBrowser:
-			extension := &ICefExtension{instance: getPtr(1)}
-			browse := &ICefBrowser{instance: getPtr(2)}
-			includeIncognito := api.GoBool(getVal(3))
-			resultBrowserPtr := (*uintptr)(getPtr(4))
-			resultBrowser := &ICefBrowser{}
-			fn.(chromiumEventOnExtensionGetActiveBrowser)(lcl.AsObject(getPtr(0)), extension, browse, includeIncognito, resultBrowser)
-			if resultBrowser.instance != nil {
-				*resultBrowserPtr = resultBrowser.Instance()
-			}
-		case chromiumEventOnExtensionGetExtensionResource:
-			extension := &ICefExtension{instance: getPtr(1)}
-			browse := &ICefBrowser{instance: getPtr(2)}
-			file := api.GoStr(getVal(3))
-			callback := &ICefGetExtensionResourceCallback{instance: getPtr(4)}
-			result := (*bool)(getPtr(5))
-			*result = fn.(chromiumEventOnExtensionGetExtensionResource)(lcl.AsObject(getPtr(0)), extension, browse, file, callback)
-		case chromiumEventOnExtensionLoaded:
-			fn.(chromiumEventOnExtensionLoaded)(lcl.AsObject(getPtr(0)), &ICefExtension{instance: getPtr(1)})
-		case chromiumEventOnExtensionLoadFailed:
-			fn.(chromiumEventOnExtensionLoadFailed)(lcl.AsObject(getPtr(0)), consts.TCefErrorCode(getVal(1)))
-		case chromiumEventOnExtensionUnloaded:
-			fn.(chromiumEventOnExtensionUnloaded)(lcl.AsObject(getPtr(0)), &ICefExtension{instance: getPtr(1)})
 		case chromiumEventOnPrintStart:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			fn.(chromiumEventOnPrintStart)(lcl.AsObject(getPtr(0)), browse)
@@ -337,9 +275,11 @@ func init() {
 			title := api.GoStr(getVal(3))
 			defaultFilePath := api.GoStr(getVal(4))
 			acceptFiltersList := lcl.AsStrings(getVal(5))
-			callback := &ICefFileDialogCallback{instance: getPtr(6)}
-			result := (*bool)(getPtr(7))
-			*result = fn.(chromiumEventOnFileDialog)(lcl.AsObject(getPtr(0)), browse, mode, title, defaultFilePath, acceptFiltersList, callback)
+			acceptExtensions := lcl.AsStrings(getVal(6))
+			acceptDescriptions := lcl.AsStrings(getVal(7))
+			callback := &ICefFileDialogCallback{instance: getPtr(8)}
+			result := (*bool)(getPtr(9))
+			*result = fn.(chromiumEventOnFileDialog)(lcl.AsObject(getPtr(0)), browse, mode, title, defaultFilePath, acceptFiltersList, acceptExtensions, acceptDescriptions, callback)
 		case chromiumEventOnGetAccessibilityHandler:
 			accessibilityHandler := &ICefAccessibilityHandler{instance: getPtr(1)}
 			fn.(chromiumEventOnGetAccessibilityHandler)(lcl.AsObject(getPtr(0)), accessibilityHandler)
@@ -770,7 +710,9 @@ func init() {
 		case chromiumEventOnRenderProcessTerminated:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
-			fn.(chromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browse, consts.TCefTerminationStatus(getVal(2)))
+			code := int32(getVal(2))
+			error_ := api.GoStr(getVal(3))
+			fn.(chromiumEventOnRenderProcessTerminated)(lcl.AsObject(sender), browse, consts.TCefTerminationStatus(getVal(2)), code, error_)
 		case chromiumEventOnCompMsg:
 			message := (*types.TMessage)(getPtr(1))
 			lResultPtr := (*types.LRESULT)(getPtr(2))
@@ -847,7 +789,8 @@ func init() {
 			downItem := &ICefDownloadItem{instance: getPtr(2)}
 			suggestedName := api.GoStr(getVal(3))
 			callback := &ICefBeforeDownloadCallback{instance: getPtr(4)}
-			fn.(chromiumEventOnBeforeDownload)(lcl.AsObject(sender), browse, downItem, suggestedName, callback)
+			result := (*bool)(getPtr(5))
+			*result = fn.(chromiumEventOnBeforeDownload)(lcl.AsObject(sender), browse, downItem, suggestedName, callback)
 		case chromiumEventOnDownloadUpdated:
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}

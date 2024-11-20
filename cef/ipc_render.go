@@ -27,13 +27,13 @@ import (
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
 	isInitRenderIPC bool
-	ipcObject       *ICefV8Value            // ipc object
-	emitHandler     *ipcEmitHandler         // ipc.emit handler
-	onHandler       map[int64]*ipcOnHandler // ipc.on handler
+	ipcObject       *ICefV8Value             // ipc object
+	emitHandler     *ipcEmitHandler          // ipc.emit handler
+	onHandler       map[string]*ipcOnHandler // ipc.on handler
 	waitChan        *ipc.WaitChan
 }
 
-func (m *ipcRenderProcess) clear(frameId int64) {
+func (m *ipcRenderProcess) clear(frameId string) {
 	if m.ipcObject != nil {
 		m.ipcObject.Free()
 		m.ipcObject = nil
@@ -748,7 +748,7 @@ func (m *ipcRenderProcess) registerGoWaitReplayEvent() {
 		return
 	}
 	m.isInitRenderIPC = true
-	ipc.RenderChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
+	ipc.RenderChan().AddCallback(func(channelId string, argument ipcArgument.IList) bool {
 		if argument != nil {
 			name := argument.GetName()
 			if name == internalIPCJSExecuteGoWaitEventReplay {
@@ -774,7 +774,7 @@ func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, 
 }
 
 // ipc
-func (m *ipcRenderProcess) makeIPC(frameId int64, context *ICefV8Context) {
+func (m *ipcRenderProcess) makeIPC(frameId string, context *ICefV8Context) {
 	if m.ipcObject != nil {
 		// 刷新时释放掉
 		m.clear(frameId)

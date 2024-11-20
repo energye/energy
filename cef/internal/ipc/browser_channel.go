@@ -22,7 +22,7 @@ var browserChan *browserIPCChan
 
 type IBrowserIPCChan interface {
 	IPC() channel.IBrowserChannel
-	AddCallback(callback func(channelId int64, argument argument.IList) bool)
+	AddCallback(callback func(channelId string, argument argument.IList) bool)
 }
 
 // browserIPCChan
@@ -30,7 +30,7 @@ type IBrowserIPCChan interface {
 //	Current browser process IPC channel processing
 type browserIPCChan struct {
 	ipc      channel.IBrowserChannel
-	callback []func(channelId int64, argument argument.IList) bool
+	callback []func(channelId string, argument argument.IList) bool
 }
 
 // CreateBrowserIPC
@@ -79,6 +79,6 @@ func (m *browserIPCChan) IPC() channel.IBrowserChannel {
 //	Add a callback function
 //	callback returns true ipc to stop traversing
 //	otherwise continue traversing until the last one
-func (m *browserIPCChan) AddCallback(callback func(channelId int64, argument argument.IList) bool) {
+func (m *browserIPCChan) AddCallback(callback func(channelId string, argument argument.IList) bool) {
 	m.callback = append(m.callback, callback)
 }

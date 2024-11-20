@@ -14,14 +14,14 @@ var Current = &current{}
 
 type current struct {
 	browserId int32
-	frameId   int64
+	frameId   string
 }
 
 func (m *current) BrowserId() int32 {
 	return m.browserId
 }
 
-func (m *current) FrameId() int64 {
+func (m *current) FrameId() string {
 	return m.frameId
 }
 
@@ -29,6 +29,6 @@ func (m *current) SetBrowserId(v int32) {
 	m.browserId = v
 }
 
-func (m *current) SetFrameId(v int64) {
+func (m *current) SetFrameId(v string) {
 	m.frameId = v
 }

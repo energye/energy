@@ -28,7 +28,7 @@ type renderChannel struct {
 // NewRender Create the renderer process channel
 //
 // param: channelId Unique channel ID identifier
-func NewRender(channelId int64, addresses ...string) IRenderChannel {
+func NewRender(channelId string, addresses ...string) IRenderChannel {
 	useNetIPCChannel = IsUseNetIPC()
 	render := &renderChannel{}
 	if useNetIPCChannel {
@@ -77,7 +77,7 @@ func (m *renderChannel) Send(data []byte) {
 }
 
 // SendToChannel Send to specified channel
-func (m *renderChannel) SendToChannel(toChannelId int64, data []byte) {
+func (m *renderChannel) SendToChannel(toChannelId string, data []byte) {
 	if m.channel != nil && m.channel.IsConnect() {
 		m.sendMessage(mt_relay, m.channel.channelId, toChannelId, data)
 	}
@@ -87,7 +87,7 @@ func (m *renderChannel) SendToChannel(toChannelId int64, data []byte) {
 //
 //	Update channel ID
 //	The original channel ID is invalid after updating
-func (m *renderChannel) UpdateChannelId(newChannelId int64) {
+func (m *renderChannel) UpdateChannelId(newChannelId string) {
 	if m.channel.channelId != newChannelId {
 		m.sendMessage(mt_update_channel_id, m.channel.channelId, newChannelId, []byte{uint8(mt_update_channel_id)})
 		m.channel.channelId = newChannelId
@@ -97,7 +97,7 @@ func (m *renderChannel) UpdateChannelId(newChannelId int64) {
 // sendMessage
 //
 //	Send data to the specified channel
-func (m *renderChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
+func (m *renderChannel) sendMessage(messageType mt, channelId, toChannelId string, data []byte) {
 	_, _ = m.channel.write(messageType, channelId, toChannelId, data)
 }
 

@@ -23,7 +23,7 @@ import (
 type chromiumEventOnResult func(sender lcl.IObject, aResultOK bool)      // 通用Result bool
 type chromiumEventOnResultFloat func(sender lcl.IObject, result float64) // 通用Result float
 
-type chromiumEventOnAcceleratedPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, sharedHandle uintptr)
+type chromiumEventOnAcceleratedPaint func(sender lcl.IObject, browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, info TCefAcceleratedPaintInfo)
 type chromiumEventOnAllConnectionsClosed func(sender lcl.IObject)
 type chromiumEventOnAudioStreamError func(sender lcl.IObject, browser *ICefBrowser, message string)
 type chromiumEventOnAudioStreamPacket func(sender lcl.IObject, browser *ICefBrowser, data *uintptr, frames int32, pts int64)
@@ -52,14 +52,6 @@ type chromiumEventOnDismissPermissionPrompt func(sender lcl.IObject, browser *IC
 type chromiumEventOnDocumentAvailableInMainFrame func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnDownloadImageFinished func(sender lcl.IObject, imageUrl string, httpStatusCode int32, image *ICefImage)
 type chromiumEventOnExecuteTaskOnCefThread func(sender lcl.IObject, taskID uint32)
-type chromiumEventOnExtensionBeforeBackgroundBrowser func(sender lcl.IObject, extension *ICefExtension, url string, resultClient *ICefClient, settings *TCefBrowserSettings) (result bool)
-type chromiumEventOnExtensionBeforeBrowser func(sender lcl.IObject, extension *ICefExtension, browser, activeBrowser *ICefBrowser, index int32, url string, active bool, windowInfo *TCefWindowInfo, resultClient *ICefClient, resultSettings *TCefBrowserSettings) bool
-type chromiumEventOnExtensionCanAccessBrowser func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, includeIncognito bool, targetBrowser *ICefBrowser) bool
-type chromiumEventOnExtensionGetActiveBrowser func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, includeIncognito bool, resultBrowser *ICefBrowser)
-type chromiumEventOnExtensionGetExtensionResource func(sender lcl.IObject, extension *ICefExtension, browser *ICefBrowser, file string, callback *ICefGetExtensionResourceCallback) bool
-type chromiumEventOnExtensionLoaded func(sender lcl.IObject, extension *ICefExtension)
-type chromiumEventOnExtensionLoadFailed func(sender lcl.IObject, result consts.TCefErrorCode)
-type chromiumEventOnExtensionUnloaded func(sender lcl.IObject, extension *ICefExtension)
 type chromiumEventOnPrintStart func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnPrintSettings func(sender lcl.IObject, browser *ICefBrowser, settings *ICefPrintSettings, getDefaults bool)
 type chromiumEventOnPrintDialog func(sender lcl.IObject, browser *ICefBrowser, hasSelection bool, callback *ICefPrintDialogCallback) bool
@@ -67,7 +59,7 @@ type chromiumEventOnPrintJob func(sender lcl.IObject, browser *ICefBrowser, docu
 type chromiumEventOnPrintReset func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnGetPDFPaperSize func(sender lcl.IObject, browser *ICefBrowser, deviceUnitsPerInch int32, result *TCefSize)
 type chromiumEventOnFavIconUrlChange func(sender lcl.IObject, browser *ICefBrowser, iconUrls []string) // TStrings => []string
-type chromiumEventOnFileDialog func(sender lcl.IObject, browser *ICefBrowser, mode consts.FileDialogMode, title, defaultFilePath string, acceptFilters *lcl.TStrings, callback *ICefFileDialogCallback) bool
+type chromiumEventOnFileDialog func(sender lcl.IObject, browser *ICefBrowser, mode consts.FileDialogMode, title, defaultFilePath string, acceptFilters, acceptExtensions, acceptDescriptions *lcl.TStrings, callback *ICefFileDialogCallback) bool
 type chromiumEventOnGetAccessibilityHandler func(sender lcl.IObject, accessibilityHandler *ICefAccessibilityHandler)
 type chromiumEventOnGetAudioParameters func(sender lcl.IObject, browser *ICefBrowser, params *TCefAudioParameters) bool
 type chromiumEventOnGetResourceHandler func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) (resourceHandler *ICefResourceHandler)
@@ -130,7 +122,7 @@ type chromiumEventOnBeforeBrowserEx func(sender lcl.IObject, browser *ICefBrowse
 type chromiumEventOnAddressChange func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, url string)
 type chromiumEventOnTitleChange func(sender lcl.IObject, browser *ICefBrowser, title string)
 type chromiumEventOnTitleChangeEx func(sender lcl.IObject, browser *ICefBrowser, title string, window IBrowserWindow)
-type chromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus)
+type chromiumEventOnRenderProcessTerminated func(sender lcl.IObject, browser *ICefBrowser, status consts.TCefTerminationStatus, errorCode int32, error_ string)
 type chromiumEventOnCompMsg func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, aHandled *bool)
 type chromiumEventOnAfterCreated func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnAfterCreatedEx func(sender lcl.IObject, browser *ICefBrowser, window IBrowserWindow) bool
@@ -157,8 +149,8 @@ type chromiumEventOnContextMenuCommand func(sender lcl.IObject, browser *ICefBro
 type chromiumEventOnContextMenuCommandEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, window IBrowserWindow) bool
 type chromiumEventOnContextMenuDismissed func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame)
 type chromiumEventOnFullScreenModeChange func(sender lcl.IObject, browser *ICefBrowser, fullscreen bool)
-type chromiumEventOnBeforeDownload func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback)
-type chromiumEventOnBeforeDownloadEx func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback, window IBrowserWindow)
+type chromiumEventOnBeforeDownload func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) bool
+type chromiumEventOnBeforeDownloadEx func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback, window IBrowserWindow) bool
 type chromiumEventOnDownloadUpdated func(sender lcl.IObject, browser *ICefBrowser, downloadItem *ICefDownloadItem, callback *ICefDownloadItemCallback)
 type chromiumEventOnKey func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool)
 type chromiumEventOnKeyEventEx func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, window IBrowserWindow, result *bool)

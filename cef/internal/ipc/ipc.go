@@ -200,7 +200,7 @@ func EmitTarget(name string, tag target.ITarget, argument ...interface{}) bool {
 	}
 	if tag != nil {
 		// Send Go
-		if (tag.ChannelId() > 0 && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
+		if (tag.ChannelId() != "" && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
 			emitSendToGoChannel(0, tag, name, argument)
 			return true
 		}
@@ -227,7 +227,7 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []interface
 	}
 	var messageId int32 = 0
 	if tag != nil {
-		if (tag.ChannelId() > 0 && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
+		if (tag.ChannelId() != "" && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
 			messageId = browser.addEmitCallback(fn)
 			emitSendToGoChannel(messageId, tag, name, argument)
 			return true

@@ -81,12 +81,12 @@ func (m *ICefDomNode) IsFormControlElement() bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefDomNode) GetFormControlElementType() string {
+func (m *ICefDomNode) GetFormControlElementType() consts.TCefDomFormControlType {
 	if !m.IsValid() {
-		return ""
+		return 0
 	}
 	r1, _, _ := imports.Proc(def.CefDomNode_GetFormControlElementType).Call(m.Instance())
-	return api.GoStr(r1)
+	return consts.TCefDomFormControlType(r1)
 }
 
 func (m *ICefDomNode) IsSame() bool {

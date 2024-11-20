@@ -32,7 +32,6 @@ type iCefCookiePtr struct {
 type tCefRequestContextSettingsPtr struct {
 	CachePath                        uintptr //TCefString
 	PersistSessionCookies            uintptr //Int32 // bool
-	PersistUserPreferences           uintptr //Int32 // bool
 	AcceptLanguageList               uintptr //TCefString  Remove CEF 118
 	CookieableSchemesList            uintptr //TCefString
 	CookieableSchemesExcludeDefaults uintptr //Int32

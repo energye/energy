@@ -27,8 +27,8 @@ type EmitContextCallback func(context context.IContext)
 //	The channel ID of the parameter type callback function
 //	Used for listening to events and receiving parameters from the event channel source
 type IChannel interface {
-	BrowserId() int32 //Receive Browser Window ID
-	ChannelId() int64 //Receive Channel ID
+	BrowserId() int32  //Receive Browser Window ID
+	ChannelId() string //Receive Channel ID
 }
 
 // Callback IPC Listening callback function
@@ -56,14 +56,14 @@ type ArgumentCallback struct {
 
 type argumentChannel struct {
 	browserId int32
-	channelId int64
+	channelId string
 }
 
 func (m *argumentChannel) BrowserId() int32 {
 	return m.browserId
 }
 
-func (m *argumentChannel) ChannelId() int64 {
+func (m *argumentChannel) ChannelId() string {
 	return m.channelId
 }
 

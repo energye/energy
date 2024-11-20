@@ -27,11 +27,12 @@ type Replay struct {
 }
 
 // IContext
+//
 //	Inter process IPC communication callback context
 type IContext interface {
 	ArgumentList() json.JSONArray //ArgumentList
 	BrowserId() int32             //Event ownership: browser id
-	FrameId() int64               //Event ownership: frame id
+	FrameId() string              //Event ownership: frame id
 	Replay() IReplay              //Replay, When the trigger event returns IContext, this field is nil
 	Result(data ...interface{})   //callback function return Result
 }
@@ -39,13 +40,13 @@ type IContext interface {
 // Context IPC Event context
 type Context struct {
 	browserId int32
-	frameId   int64
+	frameId   string
 	argument  json.JSONArray
 	replay    IReplay
 }
 
 // NewContext create IPC message Replay Context
-func NewContext(browserId int32, frameId int64, isReplay bool, argument json.JSONArray) IContext {
+func NewContext(browserId int32, frameId string, isReplay bool, argument json.JSONArray) IContext {
 	ctx := &Context{
 		browserId: browserId,
 		frameId:   frameId,
@@ -66,7 +67,7 @@ func (m *Context) BrowserId() int32 {
 	return m.browserId
 }
 
-func (m *Context) FrameId() int64 {
+func (m *Context) FrameId() string {
 	return m.frameId
 }
 

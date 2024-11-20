@@ -685,11 +685,6 @@ const (
 	RequestContext_ClearHttpAuthCredentials
 	RequestContext_CloseAllConnections
 	RequestContext_ResolveHost
-	RequestContext_LoadExtension
-	RequestContext_DidLoadExtension
-	RequestContext_HasExtension
-	RequestContext_GetExtensions
-	RequestContext_GetExtension
 	RequestContext_GetMediaRouter
 	RequestContext_WebsiteSetting
 	RequestContext_ContentSetting
@@ -712,7 +707,6 @@ const (
 	CEFChromium_SetOnKeyEvent
 	CEFChromium_SetOnTitleChange
 	CEFChromium_SetOnRenderCompMsg
-	CEFChromium_SetOnWidgetCompMsg
 	CEFChromium_SetOnBrowserCompMsg
 	CEFChromium_SetOnRenderProcessTerminated
 	CEFChromium_SetOnRenderViewReady
@@ -740,14 +734,6 @@ const (
 	CEFChromium_SetOnDragEnter
 	CEFChromium_SetOnDraggableRegionsChanged
 	CEFChromium_SetOnGetAuthCredentials
-	CEFChromium_SetOnExtensionBeforeBackgroundBrowser
-	CEFChromium_SetOnExtensionBeforeBrowser
-	CEFChromium_SetOnExtensionCanAccessBrowser
-	CEFChromium_SetOnExtensionGetActiveBrowser
-	CEFChromium_SetOnExtensionGetExtensionResource
-	CEFChromium_SetOnExtensionLoaded
-	CEFChromium_SetOnExtensionLoadFailed
-	CEFChromium_SetOnExtensionUnloaded
 	CEFChromium_SetOnPrintStart
 	CEFChromium_SetOnPrintSettings
 	CEFChromium_SetOnPrintDialog
@@ -903,7 +889,6 @@ const (
 	CEFChromium_FrameIsFocused
 	CEFChromium_TryCloseBrowser
 	CEFChromium_BrowserHandle
-	CEFChromium_WidgetHandle
 	CEFChromium_RenderHandle
 	CEFChromium_SetCustomHeader
 	CEFChromium_GetCustomHeader
@@ -1014,11 +999,6 @@ const (
 	CEFChromium_SetNewBrowserParent
 	CEFChromium_Fullscreen
 	CEFChromium_ExitFullscreen
-	CEFChromium_LoadExtension
-	CEFChromium_DidLoadExtension
-	CEFChromium_HasExtension
-	CEFChromium_GetExtensions
-	CEFChromium_GetExtension
 	CEFChromium_GetWebsiteSetting
 	CEFChromium_SetWebsiteSetting
 	CEFChromium_GetContentSetting
@@ -1633,38 +1613,6 @@ const (
 	// ICefCompletionCallback
 	CefCompletionCallbackRef_Create
 	CefCompletionCallback_OnComplete
-	// ICefExtensionHandler
-	CefExtensionHandlerRef_CreateForChromium
-	CefExtensionHandlerRef_Create
-	CefExtensionHandler_OnExtensionLoadFailed
-	CefExtensionHandler_OnExtensionLoaded
-	CefExtensionHandler_OnExtensionUnloaded
-	CefExtensionHandler_OnBeforeBackgroundBrowser
-	CefExtensionHandler_OnBeforeBrowser
-	CefExtensionHandler_GetActiveBrowser
-	CefExtensionHandler_CanAccessBrowser
-	CefExtensionHandler_GetExtensionResource
-	// ICefExtension
-	CefExtensionRef_UnWrap
-	CefExtension_GetIdentifier
-	CefExtension_GetPath
-	CefExtension_GetManifest
-	CefExtension_IsSame
-	CefExtension_GetHandler
-	CefExtension_GetLoaderContext
-	CefExtension_IsLoaded
-	CefExtension_unload
-	CefExtension_GetBrowserActionPopup
-	CefExtension_GetBrowserActionIcon
-	CefExtension_GetPageActionPopup
-	CefExtension_GetPageActionIcon
-	CefExtension_GetOptionsPage
-	CefExtension_GetOptionsUIPage
-	CefExtension_GetBackgroundPage
-	CefExtension_GetURL
-	// ICefGetExtensionResourceCallback
-	CefGetExtensionResourceCallback_Cont
-	CefGetExtensionResourceCallback_Cancel
 	// ICefStreamReader
 	CefStreamReaderRef_UnWrap
 	CefStreamReaderRef_CreateForFile

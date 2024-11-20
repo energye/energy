@@ -131,7 +131,7 @@ type requestHandlerGetAuthCredentials func(browser *ICefBrowser, originUrl strin
 type requestHandlerOnCertificateError func(browser *ICefBrowser, certError consts.TCefErrorCode, requestUrl string, sslInfo *ICefSslInfo, callback *ICefCallback) bool
 type requestHandlerOnSelectClientCertificate func(browser *ICefBrowser, isProxy bool, host string, port int32, certificates *TCefX509CertificateArray, callback *ICefSelectClientCertificateCallback) bool
 type requestHandlerOnRenderViewReady func(browser *ICefBrowser)
-type requestHandlerOnRenderProcessTerminated func(browser *ICefBrowser, status consts.TCefTerminationStatus)
+type requestHandlerOnRenderProcessTerminated func(browser *ICefBrowser, status consts.TCefTerminationStatus, errorCode int32, error_ string)
 type requestHandlerOnDocumentAvailableInMainFrame func(browser *ICefBrowser)
 
 func init() {
@@ -201,7 +201,9 @@ func init() {
 		case requestHandlerOnRenderProcessTerminated:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			status := consts.TCefTerminationStatus(getVal(1))
-			fn.(requestHandlerOnRenderProcessTerminated)(browser, status)
+			errorCode := int32(getVal(2))
+			error_ := api.GoStr(getVal(3))
+			fn.(requestHandlerOnRenderProcessTerminated)(browser, status, errorCode, error_)
 		case requestHandlerOnDocumentAvailableInMainFrame:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			fn.(requestHandlerOnDocumentAvailableInMainFrame)(browser)

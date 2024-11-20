@@ -770,16 +770,6 @@ const (
 	ZOOM_STEP_DEF ZoomStep = ZOOM_STEP_100
 )
 
-// /include/internal/cef_types.h (cef_v8_accesscontrol_t)
-type TCefV8AccessControls = types.Cardinal
-
-const (
-	V8_ACCESS_CONTROL_DEFAULT               TCefV8AccessControls = 0
-	V8_ACCESS_CONTROL_ALL_CAN_READ          TCefV8AccessControls = 1 << 0
-	V8_ACCESS_CONTROL_ALL_CAN_WRITE         TCefV8AccessControls = 1 << 1
-	V8_ACCESS_CONTROL_PROHIBITS_OVERWRITING TCefV8AccessControls = 1 << 2
-)
-
 // /include/internal/cef_types.h (cef_v8_propertyattribute_t)
 type TCefV8PropertyAttributes = types.Cardinal
 
@@ -2340,4 +2330,50 @@ const (
 	// run before sub-process termination (sub-processes may be killed at any
 	// time without warning).
 	TID_RENDERER
+)
+
+// / <summary>
+// / DOM form control types. Should be kept in sync with Chromium's
+// / blink::mojom::FormControlType type.
+// / </summary>
+// / <remarks>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_dom_form_control_type_t)</see></para>
+// / </remarks>
+type TCefDomFormControlType = int32
+
+const (
+	DOM_FORM_CONTROL_TYPE_UNSUPPORTED TCefDomFormControlType = iota
+	DOM_FORM_CONTROL_TYPE_BUTTON_BUTTON
+	DOM_FORM_CONTROL_TYPE_BUTTON_SUBMIT
+	DOM_FORM_CONTROL_TYPE_BUTTON_RESET
+	DOM_FORM_CONTROL_TYPE_BUTTON_SELECT_LIST
+	DOM_FORM_CONTROL_TYPE_BUTTON_POPOVER
+	DOM_FORM_CONTROL_TYPE_FIELDSET
+	DOM_FORM_CONTROL_TYPE_INPUT_BUTTON
+	DOM_FORM_CONTROL_TYPE_INPUT_CHECKBOX
+	DOM_FORM_CONTROL_TYPE_INPUT_COLOR
+	DOM_FORM_CONTROL_TYPE_INPUT_DATE
+	DOM_FORM_CONTROL_TYPE_INPUT_DATETIME_LOCAL
+	DOM_FORM_CONTROL_TYPE_INPUT_EMAIL
+	DOM_FORM_CONTROL_TYPE_INPUT_FILE
+	DOM_FORM_CONTROL_TYPE_INPUT_HIDDEN
+	DOM_FORM_CONTROL_TYPE_INPUT_IMAGE
+	DOM_FORM_CONTROL_TYPE_INPUT_MONTH
+	DOM_FORM_CONTROL_TYPE_INPUT_NUMBER
+	DOM_FORM_CONTROL_TYPE_INPUT_PASSWORD
+	DOM_FORM_CONTROL_TYPE_INPUT_RADIO
+	DOM_FORM_CONTROL_TYPE_INPUT_RANGE
+	DOM_FORM_CONTROL_TYPE_INPUT_RESET
+	DOM_FORM_CONTROL_TYPE_INPUT_SEARCH
+	DOM_FORM_CONTROL_TYPE_INPUT_SUBMIT
+	DOM_FORM_CONTROL_TYPE_INPUT_TELEPHONE
+	DOM_FORM_CONTROL_TYPE_INPUT_TEXT
+	DOM_FORM_CONTROL_TYPE_INPUT_TIME
+	DOM_FORM_CONTROL_TYPE_INPUT_URL
+	DOM_FORM_CONTROL_TYPE_INPUT_WEEK
+	DOM_FORM_CONTROL_TYPE_OUTPUT
+	DOM_FORM_CONTROL_TYPE_SELECT_ONE
+	DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE
+	DOM_FORM_CONTROL_TYPE_SELECT_LIST
+	DOM_FORM_CONTROL_TYPE_TEXT_AREA
 )

@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/types"
@@ -98,10 +99,10 @@ func ipcInit() {
 		ipcRender = &ipcRenderProcess{
 			waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-			onHandler:   make(map[int64]*ipcOnHandler),
+			onHandler:   make(map[string]*ipcOnHandler),
 		}
-		ipc.CreateBrowserIPC()                            // Go IPC browser
-		ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
+		ipc.CreateBrowserIPC()                                               // Go IPC browser
+		ipc.CreateRenderIPC(0, fmt.Sprintf("%d", time.Now().UnixNano()/1e6)) // Go IPC render
 	} else {
 		if process.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
@@ -110,9 +111,9 @@ func ipcInit() {
 			ipcRender = &ipcRenderProcess{
 				waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
-				onHandler:   make(map[int64]*ipcOnHandler),
+				onHandler:   make(map[string]*ipcOnHandler),
 			}
-			ipc.CreateRenderIPC(0, time.Now().UnixNano()/1e6) // Go IPC render
+			ipc.CreateRenderIPC(0, fmt.Sprintf("%d", time.Now().UnixNano()/1e6)) // Go IPC render
 		}
 	}
 }

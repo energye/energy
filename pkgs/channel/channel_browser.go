@@ -69,7 +69,7 @@ func NewBrowser(addresses ...string) IBrowserChannel {
 }
 
 // Channel Return to the specified channel connection
-func (m *browserChannel) Channel(channelId int64) IChannel {
+func (m *browserChannel) Channel(channelId string) IChannel {
 	if value, ok := m.channel.Load(channelId); ok {
 		return value.(*channel)
 	}
@@ -104,18 +104,18 @@ func (m *browserChannel) onChannelConnect(conn *channel) {
 // removeChannel Delete specified channel
 //
 //	When the channel is closed
-func (m *browserChannel) removeChannel(channelId int64) {
+func (m *browserChannel) removeChannel(channelId string) {
 	logger.Debug("IPC browser channel remove channelId:", channelId)
 	m.channel.Delete(channelId)
 }
 
 // Send Specify channel to send data
-func (m *browserChannel) Send(channelId int64, data []byte) {
+func (m *browserChannel) Send(channelId string, data []byte) {
 	m.sendMessage(mt_common, channelId, channelId, data)
 }
 
 // Send Specify the channel to send messages
-func (m *browserChannel) sendMessage(messageType mt, channelId, toChannelId int64, data []byte) {
+func (m *browserChannel) sendMessage(messageType mt, channelId, toChannelId string, data []byte) {
 	if chn := m.Channel(toChannelId); chn != nil {
 		_, _ = chn.write(messageType, channelId, toChannelId, data)
 	}

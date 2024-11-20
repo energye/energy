@@ -225,12 +225,13 @@ func (m *ICefFrame) VisitDom(visitor *ICefDomVisitor) {
 	imports.Proc(def.CEFFrame_VisitDom).Call(m.Instance(), visitor.Instance())
 }
 
-func (m *ICefFrame) Identifier() (result int64) {
+func (m *ICefFrame) Identifier() string {
 	if !m.IsValid() {
-		return
+		return ""
 	}
+	var result uintptr
 	imports.Proc(def.CEFFrame_Identifier).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return result
+	return api.GoStr(result)
 }
 
 func (m *ICefFrame) Name() (value string) {

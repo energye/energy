@@ -88,8 +88,8 @@ func MemoryAddress() string {
 //
 // 当前IPC使用的通道类型
 
-//	MacOS, Linux, Windows10 && Build >= 17063 时使用 unix socket
-//	Windows10 以下 && Windows10 Build < 17063 时使用 net socket
+// MacOS, Linux, Windows10 && Build >= 17063 时使用 unix socket
+// Windows10 以下 && Windows10 Build < 17063 时使用 net socket
 func IsUseNetIPC() bool {
 	if common.IsDarwin() || common.IsLinux() {
 		return false
@@ -146,8 +146,8 @@ func Port() int {
 // IIPCContext IPC通信回调上下文
 type IIPCContext interface {
 	Connect() net.Conn        // IPC 通道链接
-	ChannelId() int64         // 返回 发送通道ID
-	ToChannelId() int64       // 返回 接收发送通道ID
+	ChannelId() string        // 返回 发送通道ID
+	ToChannelId() string      // 返回 接收发送通道ID
 	ChannelType() ChannelType // 返回 当前通道类型
 	ProcessId() CefProcessId  // 返回 通道消息来源
 	Message() IMessage        // 消息
@@ -168,13 +168,13 @@ type IChannel interface {
 	IsConnect() bool
 	Close()
 	read(b []byte) (n int, err error)
-	write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error)
+	write(messageType mt, channelId, toChannelId string, data []byte) (n int, err error)
 }
 
 type IBrowserChannel interface {
-	Channel(channelId int64) IChannel
+	Channel(channelId string) IChannel
 	ChannelIds() (result []int64)
-	Send(channelId int64, data []byte)
+	Send(channelId string, data []byte)
 	Handler(handler IPCCallback)
 	Close()
 }
@@ -182,8 +182,8 @@ type IBrowserChannel interface {
 type IRenderChannel interface {
 	Channel() IChannel
 	Send(data []byte)
-	SendToChannel(toChannelId int64, data []byte)
-	UpdateChannelId(toChannelId int64)
+	SendToChannel(toChannelId string, data []byte)
+	UpdateChannelId(toChannelId string)
 	Handler(handler IPCCallback)
 	Close()
 }
@@ -197,8 +197,8 @@ type ipcMessage struct {
 
 // IPCContext IPC 上下文
 type IPCContext struct {
-	channelId   int64        //render channelId
-	toChannelId int64        //
+	channelId   string       //render channelId
+	toChannelId string       //
 	ipcType     IPC_TYPE     // ipc type
 	channelType ChannelType  // ipc channel type
 	processId   CefProcessId // ipc msg source, browser or render
@@ -215,12 +215,12 @@ func (m *IPCContext) Free() {
 }
 
 // ChannelId 返回发送通道ID
-func (m *IPCContext) ChannelId() int64 {
+func (m *IPCContext) ChannelId() string {
 	return m.channelId
 }
 
 // ToChannelId 返回接收通道ID
-func (m *IPCContext) ToChannelId() int64 {
+func (m *IPCContext) ToChannelId() string {
 	return m.toChannelId
 }
 
@@ -272,7 +272,7 @@ func (m *ipcMessage) clear() {
 
 // channel 通道
 type channel struct {
-	channelId   int64
+	channelId   string
 	isConnect   bool
 	conn        net.Conn
 	ipcType     IPC_TYPE
@@ -307,7 +307,7 @@ func (m *channel) read(b []byte) (n int, err error) {
 }
 
 // write data
-func (m *channel) write(messageType mt, channelId, toChannelId int64, data []byte) (n int, err error) {
+func (m *channel) write(messageType mt, channelId, toChannelId string, data []byte) (n int, err error) {
 	defer func() {
 		data = nil
 	}()
@@ -375,10 +375,10 @@ func (m *channel) ipcRead() {
 				}
 			}
 			var (
-				t, proId               int8  //
-				channelId, toChannelId int64 //
-				dataLen                int32 //数据长度
-				low, high              int32 //
+				t, proId               int8   //
+				channelId, toChannelId string //
+				dataLen                int32  //数据长度
+				low, high              int32  //
 			)
 			//message type
 			low = protocolHeaderLength

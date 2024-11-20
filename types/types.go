@@ -83,6 +83,7 @@ type HFONT = UIntptr
 type HRESULT = Int32
 type TCefStringList = Pointer
 type TGraphicsFillStyle = Int32
+type TCefSharedTextureHandle = THandle
 
 const (
 	FsSurface TGraphicsFillStyle = iota // fill till the color (it fills all except this color)

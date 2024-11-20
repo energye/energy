@@ -39,7 +39,6 @@ type IChromiumEvent interface {
 	SetOnKeyEvent(fn chromiumEventOnKey)
 	SetOnTitleChange(fn chromiumEventOnTitleChange)
 	SetOnRenderCompMsg(fn chromiumEventOnCompMsg)
-	SetOnWidgetCompMsg(fn chromiumEventOnCompMsg)
 	SetOnBrowserCompMsg(fn chromiumEventOnCompMsg)
 	SetOnRenderProcessTerminated(fn chromiumEventOnRenderProcessTerminated)
 	SetOnRenderViewReady(fn chromiumEventOnRenderViewReady)
@@ -96,14 +95,6 @@ type IChromiumEvent interface {
 	SetOnDocumentAvailableInMainFrame(fn chromiumEventOnDocumentAvailableInMainFrame)
 	SetOnDownloadImageFinished(fn chromiumEventOnDownloadImageFinished)
 	SetOnExecuteTaskOnCefThread(fn chromiumEventOnExecuteTaskOnCefThread)
-	SetOnExtensionBeforeBackgroundBrowser(fn chromiumEventOnExtensionBeforeBackgroundBrowser)
-	SetOnExtensionBeforeBrowser(fn chromiumEventOnExtensionBeforeBrowser)
-	SetOnExtensionCanAccessBrowser(fn chromiumEventOnExtensionCanAccessBrowser)
-	SetOnExtensionGetActiveBrowser(fn chromiumEventOnExtensionGetActiveBrowser)
-	SetOnExtensionGetExtensionResource(fn chromiumEventOnExtensionGetExtensionResource)
-	SetOnExtensionLoaded(fn chromiumEventOnExtensionLoaded)
-	SetOnExtensionLoadFailed(fn chromiumEventOnExtensionLoadFailed)
-	SetOnExtensionUnloaded(fn chromiumEventOnExtensionUnloaded)
 	SetOnPrintStart(fn chromiumEventOnPrintStart)
 	SetOnPrintSettings(fn chromiumEventOnPrintSettings)
 	SetOnPrintDialog(fn chromiumEventOnPrintDialog)
@@ -292,13 +283,6 @@ func (m *TCEFChromium) SetOnRenderCompMsg(fn chromiumEventOnCompMsg) {
 		return
 	}
 	_CEFChromium_SetOnRenderCompMsg(m.Instance(), fn)
-}
-
-func (m *TCEFChromium) SetOnWidgetCompMsg(fn chromiumEventOnCompMsg) {
-	if !m.IsValid() {
-		return
-	}
-	_CEFChromium_SetOnWidgetCompMsg(m.Instance(), fn)
 }
 
 func (m *TCEFChromium) SetOnBrowserCompMsg(fn chromiumEventOnCompMsg) {
@@ -492,62 +476,6 @@ func (m *TCEFChromium) SetOnGetAuthCredentials(fn chromiumEventOnGetAuthCredenti
 		return
 	}
 	_CEFChromium_SetOnGetAuthCredentials(m.Instance(), fn)
-}
-
-func (m *TCEFChromium) SetOnExtensionBeforeBackgroundBrowser(fn chromiumEventOnExtensionBeforeBackgroundBrowser) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionBeforeBackgroundBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionBeforeBrowser(fn chromiumEventOnExtensionBeforeBrowser) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionBeforeBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionCanAccessBrowser(fn chromiumEventOnExtensionCanAccessBrowser) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionCanAccessBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionGetActiveBrowser(fn chromiumEventOnExtensionGetActiveBrowser) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionGetActiveBrowser).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionGetExtensionResource(fn chromiumEventOnExtensionGetExtensionResource) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionGetExtensionResource).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionLoaded(fn chromiumEventOnExtensionLoaded) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionLoaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionLoadFailed(fn chromiumEventOnExtensionLoadFailed) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionLoadFailed).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *TCEFChromium) SetOnExtensionUnloaded(fn chromiumEventOnExtensionUnloaded) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.CEFChromium_SetOnExtensionUnloaded).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFChromium) SetOnPrintStart(fn chromiumEventOnPrintStart) {
@@ -1276,11 +1204,6 @@ func _CEFChromium_SetOnTitleChange(instance uintptr, fn interface{}) {
 // TCEFChromium _CEFChromium_SetOnRenderCompMsg
 func _CEFChromium_SetOnRenderCompMsg(instance uintptr, fn interface{}) {
 	imports.Proc(def.CEFChromium_SetOnRenderCompMsg).Call(instance, api.MakeEventDataPtr(fn))
-}
-
-// TCEFChromium _CEFChromium_SetOnWidgetCompMsg
-func _CEFChromium_SetOnWidgetCompMsg(instance uintptr, fn interface{}) {
-	imports.Proc(def.CEFChromium_SetOnWidgetCompMsg).Call(instance, api.MakeEventDataPtr(fn))
 }
 
 // TCEFChromium _CEFChromium_SetOnBrowserCompMsg

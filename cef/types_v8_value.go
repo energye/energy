@@ -521,23 +521,23 @@ func (m *ICefV8Value) SetValueByIndex(index int32, value *ICefV8Value) bool {
 }
 
 // SetValueByAccessor internal
-func (m *ICefV8Value) setValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+func (m *ICefV8Value) setValueByAccessor(key string, attribute consts.TCefV8PropertyAttributes) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.CefV8Value_SetValueByAccessor).Call(m.Instance(), api.PascalStr(key), settings.ToPtr(), attribute.ToPtr())
+	r1, _, _ := imports.Proc(def.CefV8Value_SetValueByAccessor).Call(m.Instance(), api.PascalStr(key), attribute.ToPtr())
 	return api.GoBool(r1)
 }
 
 // SetValueByAccessor export
-func (m *ICefV8Value) SetValueByAccessor(key string, settings consts.TCefV8AccessControls, attribute consts.TCefV8PropertyAttributes) bool {
+func (m *ICefV8Value) SetValueByAccessor(key string, attribute consts.TCefV8PropertyAttributes) bool {
 	if !m.IsValid() {
 		return false
 	}
 	if isIPCInternalKey(key) {
 		return false
 	}
-	return m.setValueByAccessor(key, settings, attribute)
+	return m.setValueByAccessor(key, attribute)
 }
 
 func (m *ICefV8Value) GetKeys() *ICefV8ValueKeys {

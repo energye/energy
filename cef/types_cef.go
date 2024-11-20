@@ -54,7 +54,6 @@ type TCefKeyEvent struct {
 type TCefRequestContextSettings struct {
 	CachePath                        TCefString
 	PersistSessionCookies            Int32
-	PersistUserPreferences           Int32
 	AcceptLanguageList               TCefString // Remove CEF 118
 	CookieableSchemesList            TCefString
 	CookieableSchemesExcludeDefaults Int32
@@ -64,7 +63,6 @@ func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
 	return &tCefRequestContextSettingsPtr{
 		CachePath:                        api.PascalStr(string(m.CachePath)),
 		PersistSessionCookies:            uintptr(m.PersistSessionCookies),
-		PersistUserPreferences:           uintptr(m.PersistUserPreferences),
 		AcceptLanguageList:               api.PascalStr(string(m.AcceptLanguageList)), // Remove CEF 118
 		CookieableSchemesList:            api.PascalStr(string(m.CookieableSchemesList)),
 		CookieableSchemesExcludeDefaults: uintptr(m.CookieableSchemesExcludeDefaults),
@@ -269,7 +267,7 @@ type ICefBrowser struct {
 	mainFrame      *ICefFrame
 	requestContext *ICefRequestContext
 	windowHandle   types.HWND
-	idFrames       map[int64]*ICefFrame
+	idFrames       map[string]*ICefFrame
 	nameFrames     map[string]*ICefFrame
 }
 

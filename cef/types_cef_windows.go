@@ -16,6 +16,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
 )
 
@@ -58,4 +59,12 @@ func (m *TCefWindowInfo) setInstanceValue() {
 	m.instance.SharedTextureEnabled.SetValue(int32(m.SharedTextureEnabled))             // Integer
 	m.instance.ExternalBeginFrameEnabled.SetValue(int32(m.ExternalBeginFrameEnabled))   // Integer
 	m.instance.Window.SetValue(uintptr(m.Window))                                       // TCefWindowHandle
+}
+
+type TCefAcceleratedPaintInfo struct {
+	/// Handle for the shared texture. The shared texture is instantiated
+	/// without a keyed mutex.
+	shared_texture_handle TCefSharedTextureHandle
+	/// The pixel format of the texture.
+	format consts.TCefColorType
 }

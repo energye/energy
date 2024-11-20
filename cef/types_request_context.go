@@ -14,7 +14,6 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -45,9 +44,9 @@ func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, h
 	return nil
 }
 
-func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList string, cookieableSchemesExcludeDefaults, persistSessionCookies, persistUserPreferences bool, handler *ICefRequestContextHandler) *ICefRequestContext {
+func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList string, cookieableSchemesExcludeDefaults, persistSessionCookies bool, handler *ICefRequestContextHandler) *ICefRequestContext {
 	var result uintptr
-	imports.Proc(def.RequestContextRef_NewTwo).Call(api.PascalStr(cache), api.PascalStr(acceptLanguageList), api.PascalStr(cookieableSchemesList), api.PascalBool(cookieableSchemesExcludeDefaults), api.PascalBool(persistSessionCookies), api.PascalBool(persistUserPreferences), handler.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.RequestContextRef_NewTwo).Call(api.PascalStr(cache), api.PascalStr(acceptLanguageList), api.PascalStr(cookieableSchemesList), api.PascalBool(cookieableSchemesExcludeDefaults), api.PascalBool(persistSessionCookies), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefRequestContext{instance: getInstance(result)}
 	}
@@ -234,57 +233,6 @@ func (m *ICefRequestContext) ResolveHost(origin string) {
 		return
 	}
 	imports.Proc(def.RequestContext_ResolveHost).Call(m.Instance(), api.PascalStr(origin), uintptr(0))
-}
-
-func (m *ICefRequestContext) LoadExtension(rootDirectory string, manifest *ICefDictionaryValue, handler *ICefExtensionHandler) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.RequestContext_LoadExtension).Call(m.Instance(), api.PascalStr(rootDirectory), manifest.Instance(), handler.Instance())
-}
-
-func (m *ICefRequestContext) DidLoadExtension(extensionId string) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.RequestContext_DidLoadExtension).Call(m.Instance(), api.PascalStr(extensionId))
-}
-
-func (m *ICefRequestContext) HasExtension(extensionId string) {
-	if !m.IsValid() {
-		return
-	}
-	imports.Proc(def.RequestContext_HasExtension).Call(m.Instance(), api.PascalStr(extensionId))
-}
-
-func (m *ICefRequestContext) GetExtensions() (result []string, ok bool) {
-	if !m.IsValid() {
-		return nil, false
-	}
-	extensionIds := lcl.NewStringList()
-	defer extensionIds.Free()
-	r1, _, _ := imports.Proc(def.RequestContext_GetExtensions).Call(m.Instance(), extensionIds.Instance())
-	count := extensionIds.Count()
-	if api.GoBool(r1) && count > 0 {
-		result = make([]string, count, count)
-		for i := 0; i < int(count); i++ {
-			result[i] = extensionIds.Strings(int32(i))
-		}
-		return result, true
-	}
-	return nil, false
-}
-
-func (m *ICefRequestContext) GetExtension(extensionId string) *ICefExtension {
-	if !m.IsValid() {
-		return nil
-	}
-	var result uintptr
-	imports.Proc(def.RequestContext_GetExtension).Call(m.Instance(), api.PascalStr(extensionId), uintptr(unsafe.Pointer(&result)))
-	if result != 0 {
-		return &ICefExtension{instance: unsafe.Pointer(result)}
-	}
-	return nil
 }
 
 func (m *ICefRequestContext) GetMediaRouter(callback *ICefCompletionCallback) *ICefMediaRouter {

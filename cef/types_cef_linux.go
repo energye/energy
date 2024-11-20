@@ -16,6 +16,7 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
 )
 
@@ -52,4 +53,33 @@ func (m *TCefWindowInfo) setInstanceValue() {
 	m.instance.SharedTextureEnabled.SetValue(int32(m.SharedTextureEnabled))             // Integer
 	m.instance.ExternalBeginFrameEnabled.SetValue(int32(m.ExternalBeginFrameEnabled))   // Integer
 	m.instance.Window.SetValue(uintptr(m.Window))                                       // TCefWindowHandle
+}
+
+// / Structure containing the plane information of the shared texture.
+// / Sync with native_pixmap_handle.h
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_linux.h">CEF source file: /include/internal/cef_types_linux.h (cef_accelerated_paint_native_pixmap_plane_t)</see></para>
+type TCefAcceleratedPaintNativePixmapPlaneInfo struct {
+	/// The strides in bytes to be used when accessing the buffers via
+	/// a memory mapping. One per plane per entry.
+	stride Cardinal
+	/// The offsets in bytes to be used when accessing the buffers via
+	/// a memory mapping. One per plane per entry.
+	offset uint64
+	/// Size in bytes of the plane is necessary to map the buffers.
+	size uint64
+	/// File descriptor for the underlying memory object (usually dmabuf).
+	fd integer
+}
+
+const CEF_KACCELERATEDPAINTMAXPLANES = 4
+
+type TCefAcceleratedPaintInfo struct {
+	/// Planes of the shared texture, usually file descriptors of dmabufs.
+	planes [CEF_KACCELERATEDPAINTMAXPLANES]TCefAcceleratedPaintNativePixmapPlaneInfo
+	/// Plane count.
+	plane_count int32
+	/// Modifier could be used with EGL driver.
+	modifier uint64
+	/// The pixel format of the texture.
+	format consts.TCefColorType
 }

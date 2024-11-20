@@ -101,7 +101,6 @@ func main() {
 	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
 	app.SetMultiThreadedMessageLoop(false)
 	app.SetExternalMessagePump(false)
-	app.SetChromeRuntime(true) // 启用此行可启用“ChromeRuntime”模式。它处于实验状态。
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)

@@ -13,16 +13,16 @@ package process
 
 import "github.com/energye/energy/v2/cef/internal/process"
 
-// BrowserId
-//  renderer process create success
+// BrowserId renderer process create success
+//
 //	Returns the browser ID of the current process
 func BrowserId() int32 {
 	return process.Current.BrowserId()
 }
 
-// FrameId
-//  renderer process create success
+// FrameId renderer process create success
+//
 //	Returns the main FrameId (channelId) of the current process
-func FrameId() int64 {
+func FrameId() string {
 	return process.Current.FrameId()
 }

@@ -183,12 +183,13 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		}
 	})
 	//事件可以被覆盖
-	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) {
+	m.Chromium().SetOnBeforeDownload(func(sender lcl.IObject, browser *ICefBrowser, beforeDownloadItem *ICefDownloadItem, suggestedName string, callback *ICefBeforeDownloadCallback) bool {
 		if bwEvent.onBeforeDownload != nil {
-			bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m.window)
+			return bwEvent.onBeforeDownload(sender, browser, beforeDownloadItem, suggestedName, callback, m.window)
 		} else {
 			// 默认保存到当前执行文件所在目录
 			callback.Cont(consts.ExeDir+consts.Separator+suggestedName, true)
+			return true
 		}
 	})
 	m.Chromium().SetOnLoadStart(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, transitionType consts.TCefTransitionType) {

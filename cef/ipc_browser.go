@@ -130,7 +130,7 @@ func (m *ipcBrowserProcess) getJSExecuteGoEventCallback(emitName string) *callba
 }
 
 // JS 执行 Go 函数
-func (m *ipcBrowserProcess) jsExecuteGoMethod(browserId int32, frameId int64, emitName string, argumentList json.JSONArray) context.IContext {
+func (m *ipcBrowserProcess) jsExecuteGoMethod(browserId int32, frameId string, emitName string, argumentList json.JSONArray) context.IContext {
 	eventCallback := ipc.CheckOnEvent(emitName)
 	var ipcContext context.IContext
 	if eventCallback != nil {
@@ -146,7 +146,7 @@ func (m *ipcBrowserProcess) jsExecuteGoMethod(browserId int32, frameId int64, em
 }
 
 // Go 执行 JS 函数, 处理 JS 回复结果
-func (m *ipcBrowserProcess) goExecuteMethodMessageReply(browserId int32, frameId int64, argument ipcArgument.IList) (result bool) {
+func (m *ipcBrowserProcess) goExecuteMethodMessageReply(browserId int32, frameId string, argument ipcArgument.IList) (result bool) {
 	var messageId = argument.MessageId()
 	var argumentList json.JSONArray
 	if argument.JSON() != nil {
@@ -169,7 +169,7 @@ func (m *ipcBrowserProcess) goExecuteMethodMessageReply(browserId int32, frameId
 
 // Go IPC 事件监听
 func (m *ipcBrowserProcess) registerEvent() {
-	ipc.BrowserChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
+	ipc.BrowserChan().AddCallback(func(channelId string, argument ipcArgument.IList) bool {
 		if argument != nil {
 			name := argument.GetName()
 			//JS 执行 Go 事件, 并等待有效时间内返回
@@ -185,7 +185,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 		return false
 	})
 	// window drag
-	ipc.BrowserChan().AddCallback(func(channelId int64, argument ipcArgument.IList) bool {
+	ipc.BrowserChan().AddCallback(func(channelId string, argument ipcArgument.IList) bool {
 		if argument != nil && argument.GetName() == internalIPCDRAG {
 			if wi := BrowserWindow.GetWindowInfo(argument.BrowserId()); wi != nil {
 				if wi.IsLCL() {
@@ -216,7 +216,7 @@ func (m *ipcBrowserProcess) registerEvent() {
 }
 
 // JS 执行 Go 事件 - 等待消息处理
-func (m *ipcBrowserProcess) jsExecuteGoWaitMethodMessage(browserId int32, frameId int64, messageId int32, argument ipcArgument.IList) {
+func (m *ipcBrowserProcess) jsExecuteGoWaitMethodMessage(browserId int32, frameId string, messageId int32, argument ipcArgument.IList) {
 	var argumentList json.JSONArray
 	if argument.JSON() != nil {
 		argumentList = argument.JSON().JSONArray()

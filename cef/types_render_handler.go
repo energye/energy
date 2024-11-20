@@ -172,7 +172,7 @@ type renderHandlerGetScreenInfo func(browser *ICefBrowser) (screenInfo *TCefScre
 type renderHandlerOnPopupShow func(browser *ICefBrowser, show bool)
 type renderHandlerOnPopupSize func(browser *ICefBrowser, rect *TCefRect)
 type renderHandlerOnPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, buffer uintptr, width, height int32)
-type renderHandlerOnAcceleratedPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, sharedHandle uintptr)
+type renderHandlerOnAcceleratedPaint func(browser *ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *TCefRectArray, info TCefAcceleratedPaintInfo)
 type renderHandlerGetTouchHandleSize func(browser *ICefBrowser, orientation consts.TCefHorizontalAlignment) *TCefSize
 type renderHandlerOnTouchHandleStateChanged func(browser *ICefBrowser, state *TCefTouchHandleState)
 type renderHandlerOnStartDragging func(browser *ICefBrowser, dragData *ICefDragData, allowedOps consts.TCefDragOperations, x, y int32) bool
@@ -243,8 +243,8 @@ func init() {
 			kind := consts.TCefPaintElementType(getVal(1))
 			dirtyRectsCount := uint32(getVal(2))
 			dirtyRectsPtr := getVal(3)
-			sharedHandle := getVal(4)
-			fn.(renderHandlerOnAcceleratedPaint)(browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), sharedHandle)
+			info := *(*TCefAcceleratedPaintInfo)(getPtr(4))
+			fn.(renderHandlerOnAcceleratedPaint)(browser, kind, NewTCefRectArray(dirtyRectsPtr, dirtyRectsCount), info)
 		case renderHandlerGetTouchHandleSize:
 			browser := &ICefBrowser{instance: getPtr(0)}
 			orientation := consts.TCefHorizontalAlignment(getVal(1))
