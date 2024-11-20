@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cef/internal/process"
 	"github.com/energye/energy/v2/consts"
 	"strings"
@@ -21,7 +20,6 @@ import (
 
 // 创建应用上下文 - 默认实现
 func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context) {
-	fmt.Println("appOnContextCreated:", browser.Identifier(), "", frame.Identifier())
 	process.Current.SetBrowserId(browser.Identifier()) // 当前进程 browserID
 	process.Current.SetFrameId(frame.Identifier())     // 当前进程 frameId
 	ipcRender.makeIPC(frame.Identifier(), context)     // render ipc make
