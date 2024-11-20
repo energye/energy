@@ -80,9 +80,9 @@ func main() {
 			// cef.BrowserWindow.GetWindowInfo() // 或使用 browserId 获取指定窗口并执行js
 			// 不具备js上下文功能
 			for _, w := range cef.BrowserWindow.GetWindowInfos() {
-				w.Chromium().ExecuteJavaScript(`dom.element("body")`, "", 0)
-				w.Chromium().ExecuteJavaScript(`dom.elements("div")`, "", 0)
-				w.Chromium().ExecuteJavaScript(`dom.elementX("//div")`, "", 0)
+				w.Chromium().ExecuteJavaScript(`dom.element("body")`, "", w.Chromium().Browser().MainFrame(), 0)
+				w.Chromium().ExecuteJavaScript(`dom.elements("div")`, "", w.Chromium().Browser().MainFrame(), 0)
+				w.Chromium().ExecuteJavaScript(`dom.elementX("//div")`, "", w.Chromium().Browser().MainFrame(), 0)
 			}
 		})
 
@@ -94,7 +94,7 @@ func main() {
 			return false
 		})
 		chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
-			chromium.ExecuteJavaScript(`dom.element("body")`, "", 0)
+			chromium.ExecuteJavaScript(`dom.element("body")`, "", frame, 0)
 		})
 	})
 	//内置http服务需要使用 go:embed resources 内置资源到执行程序中

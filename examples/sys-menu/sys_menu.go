@@ -21,7 +21,7 @@ func main() {
 	cef.BrowserWindow.Config.Url = "fs://energy"
 	cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
 	cef.BrowserWindow.Config.Title = "SysMenu"
-	cef.BrowserWindow.Config.EnableHideCaption = true
+	//cef.BrowserWindow.Config.EnableHideCaption = true
 	cef.BrowserWindow.Config.LocalResource(cef.LocalLoadConfig{
 		Home:       "sys_menu.html",
 		ResRootDir: "resources",

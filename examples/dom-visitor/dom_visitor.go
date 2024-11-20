@@ -48,7 +48,7 @@ func main() {
 	//  3. 渲染进程中使用 DomVisitor
 	//  4. 在渲染进程的IPC消息事件中可以通过 V8ContextRef.Current() 获得 Browser 和 Frame 对象
 	// CEF DomVisitor 不如JS提供的功能函数全面
-	ipc.On("render-dom-visitor", func(channel callback.IChannel, args1 string) int64 {
+	ipc.On("render-dom-visitor", func(channel callback.IChannel, args1 string) string {
 		fmt.Println("render-dom-visitor", "channelId", channel.ChannelId(), "current-Id:", cef.V8ContextRef.Current().Frame().Identifier(), "args:", args1)
 		// 创建 dom visitor
 		visitor := cef.DomVisitorRef.New()

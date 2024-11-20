@@ -154,8 +154,7 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	if switchCacheRadFalse.Checked() {
 		settings := cef.TCefRequestContextSettings{}
 		settings.CachePath = et.TCefString(filepath.Join(rootCachePath, fmt.Sprintf("sing_%v", name)))
-		settings.PersistSessionCookies = 1  //bool: 0 或 1
-		settings.PersistUserPreferences = 1 //bool: 0 或 1
+		settings.PersistSessionCookies = 1 //bool: 0 或 1
 		context = cef.RequestContextRef.New(&settings, nil)
 	}
 	// 创建功能按钮

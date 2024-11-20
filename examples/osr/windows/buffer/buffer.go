@@ -14,10 +14,7 @@ import (
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
-	"github.com/energye/golcl/pkgs/libname"
 	"math"
-	"os"
-	"path/filepath"
 	"time"
 	"unsafe"
 )
@@ -27,7 +24,6 @@ import (
 // 该示例演示了windows的OSR模式示例
 
 func main() {
-	libname.LibName = filepath.Join(os.Getenv("ENERGY_HOME"), "liblcl.dll")
 	cef.GlobalInit(nil, nil)
 	var window = &WindowForm{}
 	//创建应用

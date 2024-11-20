@@ -128,7 +128,7 @@ func main() {
 			me.X, me.Y = domXYCenter(domRect)
 			chromium.SendMouseWheelEvent(me, -100, -100)
 		}
-		ipc.On("renderLoadEnd", func(browserId int32, channelId int64, doms map[string]cef.TCefRect) {
+		ipc.On("renderLoadEnd", func(browserId int32, channelId string, doms map[string]cef.TCefRect) {
 			fmt.Println("doms", doms)
 			// 按钮
 			buttonClickEvent(doms["btn1"])

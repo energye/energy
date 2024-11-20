@@ -40,7 +40,7 @@ func main() {
 	console.log("执行");
 })();
 `
-			window.Chromium().ExecuteJavaScript(jsCode, "", 0)
+			window.Chromium().ExecuteJavaScript(jsCode, "", frame, 0)
 		})
 	})
 	//运行应用
@@ -58,6 +58,6 @@ func timeTask() {
 		//调用js中定义的函数GoExecuteJSFunc,并传递参数，但没有返回值
 		var jsFunc = fmt.Sprintf("GoExecuteJSFunc(%d, '%d')", param0, time.Now().Second())
 		fmt.Println("GoExecuteJSFunc:", jsFunc)
-		info.Chromium().ExecuteJavaScript(jsFunc, "", 0)
+		info.Chromium().ExecuteJavaScript(jsFunc, "", info.Chromium().Browser().MainFrame(), 0)
 	}
 }
