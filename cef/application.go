@@ -298,7 +298,7 @@ func (m *TCEFApplication) setOnProcessMessageReceived(fn RenderProcessMessageRec
 
 func (m *TCEFApplication) defaultSetOnProcessMessageReceived() {
 	m.setOnProcessMessageReceived(func(browse *ICefBrowser, frame *ICefFrame, sourceProcess CefProcessId, processMessage *ICefProcessMessage) bool {
-		var result = renderProcessMessageReceived(browse, frame, sourceProcess, processMessage)
+		var result = renderProcessMessageReceived(browse, frame, processMessage)
 		if m.onProcessMessageReceived != nil && !result {
 			result = m.onProcessMessageReceived(browse, frame, sourceProcess, processMessage)
 		}

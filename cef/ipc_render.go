@@ -24,6 +24,19 @@ import (
 	"time"
 )
 
+// 渲染进程消息 - 默认实现
+func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
+	name := message.Name()
+	if name == internalIPCJSExecuteGoEventReplay {
+		result = ipcRender.jsExecuteGoEventMessageReply(browser, frame, message)
+	} else if name == internalIPCGoExecuteJSEvent {
+		result = ipcRender.goExecuteJSEvent(browser, frame, message)
+	} else if name == internalIPCJSExecuteGoWaitEventReplay {
+		ipcRender.jsExecuteGoSyncEventMessageReply(browser, frame, message)
+	}
+	return
+}
+
 // ipcRenderProcess 渲染进程
 type ipcRenderProcess struct {
 	isInitRenderIPC bool
@@ -111,7 +124,7 @@ func (m *ipcOnHandler) jsOnEvent(name string, object *ICefV8Value, arguments *TC
 }
 
 // Go ipc.emit 执行JS事件
-func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+func (m *ipcRenderProcess) goExecuteJSEvent(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	on, ok := m.onHandler[frame.Identifier()]
 	if !ok {
 		return false
@@ -200,7 +213,14 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 		ctx.Free()
 		// MSync: 同步模式
 		if callback.mode == types.MSync {
-			replayGoExecuteJSEvent(messageId, callbackArgsBytes)
+			var processMessage target.IProcessMessage
+			if application.IsSpecVer49() {
+				// CEF49
+				processMessage = browser
+			} else {
+				processMessage = frame
+			}
+			replayGoExecuteJSEvent(processMessage, messageId, callbackArgsBytes)
 		}
 	}
 	return
@@ -580,13 +600,19 @@ func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName strin
 	// 组装消息
 	message := &ipcArgument.List{
 		Id:        messageId,
-		BId:       ipc.RenderChan().BrowserId(),
-		Name:      internalIPCJSExecuteGoWaitEvent,
 		EventName: emitName,
 		Data:      data,
 	}
-	//发送数据到主进程
-	ipc.RenderChan().IPC().Send(message.Bytes())
+	//发送消息到主进程
+	//ipc.RenderChan().IPC().Send(message.Bytes())
+	var processMessage target.IProcessMessage
+	if application.IsSpecVer49() {
+		// CEF49
+		processMessage = v8ctx.Browser()
+	} else {
+		processMessage = v8ctx.Frame()
+	}
+	processMessage.SendProcessMessageForJSONBytes(internalIPCJSExecuteGoWaitEvent, consts.PID_BROWSER, message.Bytes())
 	message.Reset()
 	// 开始计时, 直到 delay 时间结束，或正常返回结果
 	delayer := m.waitChan.NewDelayer(messageId, delay)
@@ -625,7 +651,7 @@ func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessa
 }
 
 // JS执行Go监听，Go的消息回复
-func (m *ipcRenderProcess) ipcJSExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
+func (m *ipcRenderProcess) jsExecuteGoEventMessageReply(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	result = true
 	argumentListBytes := message.ArgumentList().GetBinary(0)
 	if argumentListBytes == nil {
@@ -742,34 +768,35 @@ func (m *ipcRenderProcess) executeCallbackFunction(v8ctx *ICefV8Context, isRetur
 	}
 }
 
-// Go IPC 渲染进程监听
-func (m *ipcRenderProcess) registerGoWaitReplayEvent() {
-	if m.isInitRenderIPC {
+// JS执行Go事件 - 同步回复接收
+func (m *ipcRenderProcess) jsExecuteGoSyncEventMessageReply(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) {
+	argumentListBytes := message.ArgumentList().GetBinary(0)
+	if argumentListBytes == nil {
 		return
 	}
-	m.isInitRenderIPC = true
-	ipc.RenderChan().AddCallback(func(channelId string, argument ipcArgument.IList) bool {
-		if argument != nil {
-			name := argument.GetName()
-			if name == internalIPCJSExecuteGoWaitEventReplay {
-				var (
-					messageId    = argument.MessageId()
-					argumentList json.JSONArray
-				)
-				if argument.JSON() != nil {
-					argumentList = argument.JSON().JSONArray()
-				}
-				m.ipcJSExecuteGoSyncEventMessageReply(messageId, argumentList)
-				return true
-			}
+	var messageDataBytes []byte
+	if argumentListBytes.IsValid() {
+		size := argumentListBytes.GetSize()
+		messageDataBytes = make([]byte, size)
+		c := argumentListBytes.GetData(messageDataBytes, 0)
+		argumentListBytes.Free()
+		if c == 0 {
+			return
 		}
-		return false
-	})
-
-}
-
-// JS执行Go事件 - 同步回复接收
-func (m *ipcRenderProcess) ipcJSExecuteGoSyncEventMessageReply(messageId int32, argumentList json.JSONArray) {
+	}
+	var argument ipcArgument.IList // json.JSONArray
+	if messageDataBytes != nil {
+		argument = ipcArgument.UnList(messageDataBytes)
+		messageDataBytes = nil
+	}
+	var argumentList json.JSONArray
+	if argument.JSON() != nil {
+		argumentList = argument.JSON().JSONArray()
+	}
+	messageId := argument.MessageId()
+	if argument.JSON() != nil {
+		argumentList = argument.JSON().JSONArray()
+	}
 	m.waitChan.Done(messageId, argumentList)
 }
 

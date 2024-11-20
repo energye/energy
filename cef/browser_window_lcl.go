@@ -110,7 +110,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 //
 //	IPC消息接收目标, 当前窗口chromium发送
 //	参数: targetType 可选, 接收类型
-func (m *LCLBrowserWindow) Target(targetType ...target.Type) target.ITarget {
+func (m *LCLBrowserWindow) Target() target.ITarget {
 	if !m.IsValid() {
 		return nil
 	}
@@ -118,7 +118,7 @@ func (m *LCLBrowserWindow) Target(targetType ...target.Type) target.ITarget {
 	if !browse.IsValid() {
 		return nil
 	}
-	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier())
 }
 
 // ProcessMessage

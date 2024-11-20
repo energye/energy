@@ -24,30 +24,14 @@ func appOnContextCreated(browser *ICefBrowser, frame *ICefFrame, context *ICefV8
 	fmt.Println("appOnContextCreated:", browser.Identifier(), "", frame.Identifier())
 	process.Current.SetBrowserId(browser.Identifier()) // 当前进程 browserID
 	process.Current.SetFrameId(frame.Identifier())     // 当前进程 frameId
-	//ipc.RenderChan().SetRealityChannel(browser.Identifier(), frame.Identifier()) // 设置并更新真实的通道ID
-	ipcRender.registerGoWaitReplayEvent()          // render ipc
-	ipcRender.makeIPC(frame.Identifier(), context) // render ipc make
-	makeProcess(browser, frame, context)           // process make
-}
-
-// 应用运行 - 默认实现
-func appMainRunCallback() {
-	ipcBrowser.registerEvent() // browser ipc
+	ipcRender.makeIPC(frame.Identifier(), context)     // render ipc make
+	dragExtension.make(frame.Identifier(), context)    // 拖拽JS扩展
+	makeProcess(browser, frame, context)               // process make
 }
 
 // webkit - 默认实现
 func appWebKitInitialized() {
-	dragExtensionHandler() // drag extension handler
-}
-
-// 渲染进程消息 - 默认实现
-func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, sourceProcess consts.CefProcessId, message *ICefProcessMessage) (result bool) {
-	if message.Name() == internalIPCJSExecuteGoEventReplay {
-		result = ipcRender.ipcJSExecuteGoEventMessageReply(browser, frame, sourceProcess, message)
-	} else if message.Name() == internalIPCGoExecuteJSEvent {
-		result = ipcRender.ipcGoExecuteJSEvent(browser, frame, sourceProcess, message)
-	}
-	return
+	registerDragExtensionHandler() // drag extension handler
 }
 
 // 注册自定义协议 - 默认实现
@@ -65,12 +49,4 @@ func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 				consts.CEF_SCHEME_OPTION_STANDARD|consts.CEF_SCHEME_OPTION_CORS_ENABLED|consts.CEF_SCHEME_OPTION_SECURE|consts.CEF_SCHEME_OPTION_FETCH_ENABLED)
 		}
 	}
-}
-
-// 主进程消息 - 默认实现
-func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
-	if message.Name() == internalIPCJSExecuteGoEvent {
-		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
-	}
-	return
 }

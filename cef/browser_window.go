@@ -136,7 +136,7 @@ type IBrowserWindow interface {
 	SetCreateBrowserExtraInfo(windowName string, context *ICefRequestContext, extraInfo *ICefDictionaryValue) //设置 Chromium 创建浏览器时设置的扩展信息
 	RunOnMainThread(fn func())                                                                                //在UI主线程中运行
 	Screen() IScreen                                                                                          //返回屏幕信息
-	Target(targetType ...target.Type) target.ITarget                                                          //IPC接收目标
+	Target() target.ITarget                                                                                   //IPC接收目标
 	AsTargetWindow() target.IWindow                                                                           //IPC
 	doBeforePopup(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo,
 		popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, client *ICefClient, settings *TCefBrowserSettings,

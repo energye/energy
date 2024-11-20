@@ -11,7 +11,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/consts"
 )
 
@@ -33,7 +32,7 @@ func makeProcess(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context)
 	// process
 	_processObject = V8ValueRef.NewObject(nil)
 	_processObject.setValueByKey(internalProcessBrowserId, V8ValueRef.NewInt(browser.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
-	_processObject.setValueByKey(internalProcessFrameId, V8ValueRef.NewString(fmt.Sprintf("%d", frame.Identifier())), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
+	_processObject.setValueByKey(internalProcessFrameId, V8ValueRef.NewString(frame.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 
 	// process key to v8 global
 	context.Global().setValueByKey(internalProcess, _processObject, consts.V8_PROPERTY_ATTRIBUTE_READONLY)

@@ -106,7 +106,6 @@ func Run(app *TCEFApplication) {
 			if browserProcessStartAfterCallback != nil {
 				browserProcessStartAfterCallback(success)
 			}
-			appMainRunCallback()
 			if application.IsMessageLoop() {
 				// VF窗口 MessageLoop
 				application.RunMessageLoop()

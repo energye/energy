@@ -13,22 +13,23 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
+	"github.com/energye/energy/v2/cef/ipc/target"
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/consts"
 	"sync"
-	"time"
 )
 
 // ipc bind event name
 const (
-	internalIPC         = "ipc"      // JavaScript -> ipc 事件驱动, 根对象名
-	internalIPCEmit     = "emit"     // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
-	internalIPCEmitWait = "emitWait" // JavaScript -> ipc.emitWait 在 JavaScript 触发 GO 监听事件函数名, 等待超时返回结果
-	internalIPCOn       = "on"       // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
-	internalIPCDRAG     = "drag"     // JavaScript -> ipc.on drag
+	internalIPC             = "ipc"             // JavaScript -> ipc 事件驱动, 根对象名
+	internalIPCEmit         = "emit"            // JavaScript -> ipc.emit 在 JavaScript 触发 GO 监听事件函数名, 异步
+	internalIPCEmitWait     = "emitWait"        // JavaScript -> ipc.emitWait 在 JavaScript 触发 GO 监听事件函数名, 等待超时返回结果
+	internalIPCOn           = "on"              // JavaScript -> ipc.on 在 JavaScript 监听事件, 提供给 GO 调用
+	internalIPCDRAG         = "drag"            // JavaScript -> ipc.on drag
+	internalEnergyExtension = "energyExtension" // JavaScript -> energyExtension object
 )
 
 // ipc message name
@@ -84,10 +85,12 @@ type ipcCallback struct {
 
 // IPC 内部定义使用 key 不允许使用
 func isIPCInternalKey(key string) bool {
-	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn || key == internalIPCDRAG || key == internalIPCEmitWait ||
+	return key == internalIPC || key == internalIPCEmit || key == internalIPCOn ||
+		key == internalIPCDRAG || key == internalIPCEmitWait ||
 		key == internalIPCJSExecuteGoEvent || key == internalIPCJSExecuteGoEventReplay ||
 		key == internalIPCGoExecuteJSEvent || key == internalIPCGoExecuteJSEventReplay ||
-		key == internalIPCJSExecuteGoWaitEvent || key == internalIPCJSExecuteGoWaitEventReplay
+		key == internalIPCJSExecuteGoWaitEvent || key == internalIPCJSExecuteGoWaitEventReplay ||
+		key == internalEnergyExtension
 
 }
 
@@ -101,19 +104,18 @@ func ipcInit() {
 			emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 			onHandler:   make(map[string]*ipcOnHandler),
 		}
-		ipc.CreateBrowserIPC()                                               // Go IPC browser
-		ipc.CreateRenderIPC(0, fmt.Sprintf("%d", time.Now().UnixNano()/1e6)) // Go IPC render
+		dragExtension = &dragExtensionHandler{}
 	} else {
 		if process.Args.IsMain() {
 			ipcBrowser = &ipcBrowserProcess{}
-			ipc.CreateBrowserIPC() // Go IPC browser
+			dragExtension = &dragExtensionHandler{}
 		} else if process.Args.IsRender() {
 			ipcRender = &ipcRenderProcess{
 				waitChan:    &ipc.WaitChan{Pending: new(sync.Map)},
 				emitHandler: &ipcEmitHandler{callbackList: make(map[int32]*ipcCallback)},
 				onHandler:   make(map[string]*ipcOnHandler),
 			}
-			ipc.CreateRenderIPC(0, fmt.Sprintf("%d", time.Now().UnixNano()/1e6)) // Go IPC render
+			dragExtension = &dragExtensionHandler{}
 		}
 	}
 }
@@ -224,7 +226,7 @@ func (m *asyncGoExecuteJSHandler) free() {
 	}
 }
 
-// Js: ipc.on 异步监听模式完成处理器
+// Js: ipc.on 异步监听模式, 完成处理器
 func (m *asyncGoExecuteJSHandler) asyncHandler(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
 	idValue := object.GetValueByKey("id")
 	defer idValue.Free()
@@ -250,23 +252,29 @@ func (m *asyncGoExecuteJSHandler) asyncHandler(name string, object *ICefV8Value,
 			}
 		}
 	}
-	replayGoExecuteJSEvent(messageId, result)
+	v8ctx := V8ContextRef.Current()
+	defer v8ctx.Free()
+	var processMessage target.IProcessMessage
+	if application.IsSpecVer49() {
+		// CEF49
+		processMessage = v8ctx.Browser()
+	} else {
+		processMessage = v8ctx.Frame()
+	}
+	replayGoExecuteJSEvent(processMessage, messageId, result)
 	return true
 }
 
-func replayGoExecuteJSEvent(messageId int32, callbackArgsBytes interface{}) {
+func replayGoExecuteJSEvent(processMessage target.IProcessMessage, messageId int32, callbackArgsBytes interface{}) {
 	if messageId != 0 {
 		callbackMessage := &ipcArgument.List{
-			Id:   messageId,
-			BId:  ipc.RenderChan().BrowserId(),
-			Name: internalIPCGoExecuteJSEventReplay,
+			Id: messageId,
 		}
 		if callbackArgsBytes != nil {
 			callbackMessage.Data = callbackArgsBytes //json.NewJSONArray(callbackArgsBytes).Data()
 		}
-		// send ipc message
-		// send bytes data to browser ipc
-		ipc.RenderChan().IPC().Send(callbackMessage.Bytes())
+		//发送消息到主进程
+		processMessage.SendProcessMessageForJSONBytes(internalIPCGoExecuteJSEventReplay, consts.PID_BROWSER, callbackMessage.Bytes())
 		callbackMessage.Reset()
 	}
 }

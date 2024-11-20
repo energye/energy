@@ -14,26 +14,12 @@ package target
 
 import "github.com/energye/energy/v2/consts"
 
-// Type
-//
-//	0: Trigger the JS event of the specified target process
-//	1: Trigger TgGoSub events for the specified target sub process
-//	2: Trigger TgGoMain events for the specified target main process
-type Type int8
-
-const (
-	TgJs     Type = iota //JS Event
-	TgGoSub              //GO Event sub
-	TgGoMain             //GO Event main
-)
-
 // ITarget
 //
 // ipc.NewTarget() *Target
 type ITarget interface {
 	BrowserId() int32  // Browser Window ID
 	ChannelId() string // IPC channelID, frameId or GO IPC channelID
-	TargetType() Type  // Target type default 0: Trigger JS event
 	Window() IWindow   // Send IPC Chromium
 }
 
@@ -46,9 +32,9 @@ type IProcessMessage interface {
 
 // IWindow for IPC
 type IWindow interface {
-	Target(targetType ...Type) ITarget // return IPC target
-	IsClosing() bool                   // Whether the window is closed
-	ProcessMessage() IProcessMessage   // process message, chromium
+	Target() ITarget                 // return IPC target
+	IsClosing() bool                 // Whether the window is closed
+	ProcessMessage() IProcessMessage // process message, chromium
 }
 
 // IBrowserWindow
@@ -62,10 +48,9 @@ type IBrowserWindow interface {
 //
 //	receiving target of the event
 type Target struct {
-	window     IWindow
-	browseId   int32
-	channelId  string
-	targetType Type
+	window    IWindow
+	browseId  int32
+	channelId string
 }
 
 // NewTarget Create a new Emit target
@@ -75,14 +60,11 @@ type Target struct {
 //	channelId: IPC channelID, frameId or GO IPC channelID
 //	targetType: Optional parameter, target type default 0
 //	  Type: TgJs:JS Event, TgGoSub:GO Sub Event, TgGoMain:GO Main Event
-func NewTarget(targetChromium IWindow, browserId int32, channelId string, targetType ...Type) ITarget {
+func NewTarget(targetChromium IWindow, browserId int32, channelId string) ITarget {
 	m := &Target{
 		window:    targetChromium,
 		browseId:  browserId,
 		channelId: channelId,
-	}
-	if len(targetType) > 0 {
-		m.targetType = targetType[0]
 	}
 	return m
 }
@@ -91,18 +73,7 @@ func NewTarget(targetChromium IWindow, browserId int32, channelId string, target
 //
 //	targetType: TgGoMain
 func NewTargetMain() ITarget {
-	return &Target{
-		targetType: TgGoMain,
-	}
-}
-
-// TargetType
-//
-//	target type
-//	0: Trigger JS event
-//	1: Trigger Go Event
-func (m *Target) TargetType() Type {
-	return m.targetType
+	return &Target{}
 }
 
 // BrowserId

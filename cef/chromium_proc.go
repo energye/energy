@@ -1766,7 +1766,7 @@ func (m *TCEFChromium) SetContentSetting(requestingUrl, topLevelUrl string, cont
 //
 //	IPC消息接收目标, 当前窗口chromium发送
 //	参数: targetType 可选, 接收类型
-func (m *TCEFChromium) Target(targetType ...target.Type) target.ITarget {
+func (m *TCEFChromium) Target() target.ITarget {
 	if !m.IsValid() {
 		return nil
 	}
@@ -1774,7 +1774,7 @@ func (m *TCEFChromium) Target(targetType ...target.Type) target.ITarget {
 	if !browse.IsValid() {
 		return nil
 	}
-	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier(), targetType...)
+	return target.NewTarget(m, browse.Identifier(), browse.MainFrame().Identifier())
 }
 
 // ProcessMessage

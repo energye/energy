@@ -20,13 +20,23 @@
         function mouseDown(e) {
             console.log(e)
         }
+
         window.addEventListener("mousedown", mouseDown);
+        let count = 0;
+        setInterval(function () {
+            document.getElementById("circle").innerText = "drag " + count;
+            count++;
+        }, 50)
     </script>
 </head>
 <body style="background-color: white;width: 100%;text-align: center;overflow: hidden;">
-<div style="color:red; -webkit-app-region: drag; -webkit-user-select: none;width: 400px;border: solid 1px;">可拖拽元素区域: -webkit-app-region: drag;</div>
-<h3 style="color:red; -webkit-app-region: drag; -webkit-user-select: none;width: 400px;border: solid 1px;margin-left: 150px;">可拖拽元素区域: -webkit-app-region: drag;</h3>
-<h3 style="color:gray; -webkit-app-region: no-drag; -webkit-user-select: none;">非拖拽元素区域: -webkit-app-region: no-drag;</h3>
+<div style="color:red; -webkit-app-region: drag; -webkit-user-select: none;width: 400px;border: solid 1px;">可拖拽元素区域:
+    -webkit-app-region: drag;
+</div>
+<h3 style="color:red; -webkit-app-region: drag; -webkit-user-select: none;width: 400px;border: solid 1px;margin-left: 150px;">
+    可拖拽元素区域: -webkit-app-region: drag;</h3>
+<h3 style="color:gray; -webkit-app-region: no-drag; -webkit-user-select: none;">非拖拽元素区域: -webkit-app-region:
+    no-drag;</h3>
 <a href="index.html" target="_blank">New Window</a>
 <div style="text-align: left;width: 700px;">
     <p>通过设置CSS属性 "-webkit-app-region: drag;"</p>
@@ -37,6 +47,6 @@
     <p>不选择文本: -webkit-user-select: none;</p>
     <p>非拖拽区域: -webkit-app-region: no-drag;</p>
 </div>
-<div class="circle">drag</div>
+<div id="circle" class="circle">drag</div>
 </body>
 </html>

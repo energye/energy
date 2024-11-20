@@ -12,6 +12,7 @@ package cef
 
 import (
 	"bytes"
+	"github.com/energye/energy/v2/cef/internal/ipc"
 	"runtime"
 	"strconv"
 )
@@ -52,12 +53,20 @@ type drag struct {
 func dragExtensionJS(frame *ICefFrame, window IBrowserWindow) {
 	var code = bytes.Buffer{}
 	// js drag window
-	code.WriteString("energyExtension.drag.setup();")
+	code.WriteString("__drag.setup();")
 	// current os
-	code.WriteString("energyExtension.drag.os='" + runtime.GOOS + "';")
+	code.WriteString("__drag.os='" + runtime.GOOS + "';")
 	if window != nil {
 		// enable resize
-		code.WriteString("energyExtension.drag.enableResize=" + strconv.FormatBool(window.WindowProperty().EnableResize) + ";")
+		code.WriteString("__drag.enableResize=" + strconv.FormatBool(window.WindowProperty().EnableResize) + ";")
 	}
 	frame.ExecuteJavaScript(code.String(), "", 0)
+}
+
+// 窗口拖拽JS扩展处理器
+//  1. 注册JS扩展到CEF, 注册鼠标事件，通过本地函数在Go里处理鼠标事件
+//  2. 通过IPC将鼠标消息发送到主进程，主进程监听到消息处理鼠标事件
+//  3. macos 使用窗口坐标实现窗口拖拽
+func registerDragExtensionHandler() {
+	RegisterExtension("__drag", string(ipc.IPCJS), nil)
 }

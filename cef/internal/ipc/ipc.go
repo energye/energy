@@ -198,14 +198,6 @@ func EmitTarget(name string, tag target.ITarget, argument ...interface{}) bool {
 	if name == "" {
 		return false
 	}
-	if tag != nil {
-		// Send Go
-		if (tag.ChannelId() != "" && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
-			emitSendToGoChannel(0, tag, name, argument)
-			return true
-		}
-	}
-	// Send JS
 	var window = tag.Window()
 	if window == nil {
 		// default window
@@ -225,14 +217,6 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []interface
 	if name == "" {
 		return false
 	}
-	var messageId int32 = 0
-	if tag != nil {
-		if (tag.ChannelId() != "" && tag.TargetType() == target.TgGoSub) || (tag.TargetType() == target.TgGoMain) {
-			messageId = browser.addEmitCallback(fn)
-			emitSendToGoChannel(messageId, tag, name, argument)
-			return true
-		}
-	}
 	var window = tag.Window()
 	if window == nil {
 		// default window
@@ -241,7 +225,7 @@ func EmitTargetAndCallback(name string, tag target.ITarget, argument []interface
 	if window.IsClosing() {
 		return false
 	}
-	messageId = browser.addEmitCallback(fn)
+	messageId := browser.addEmitCallback(fn)
 	if ok := window.ProcessMessage().EmitRender(messageId, name, tag, argument...); !ok {
 		if messageId > 0 {
 			removeEmitCallback(messageId)

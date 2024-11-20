@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/v2/cef/exception"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/target"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 )
@@ -42,8 +41,7 @@ func main() {
 				fmt.Println("next task")
 			}
 			for _, info := range infos {
-				iTarget := info.Target(target.TgJs)
-				ipc.EmitTargetAndCallback("jstest", iTarget, []interface{}{"testdata"}, func(data string, channel callback.IChannel) {
+				ipc.EmitTargetAndCallback("jstest", info.Target(), []interface{}{"testdata"}, func(data string, channel callback.IChannel) {
 					fmt.Println("data:", data, "windowId:", channel.BrowserId(), "channelId:", channel.ChannelId())
 					alreadyRunCount++
 					total := len(cef.BrowserWindow.GetWindowInfos())

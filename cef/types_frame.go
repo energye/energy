@@ -265,7 +265,7 @@ func (m *ICefFrame) Parent() *ICefFrame {
 	return &ICefFrame{instance: unsafe.Pointer(result)}
 }
 
-func (m *ICefFrame) Target(targetType ...target.Type) target.ITarget {
+func (m *ICefFrame) Target() target.ITarget {
 	if !m.IsValid() {
 		return nil
 	}
@@ -273,7 +273,7 @@ func (m *ICefFrame) Target(targetType ...target.Type) target.ITarget {
 	if !browse.IsValid() {
 		return nil
 	}
-	return target.NewTarget(m, browse.Identifier(), m.Identifier(), targetType...)
+	return target.NewTarget(m, browse.Identifier(), m.Identifier())
 }
 
 func (m *ICefFrame) IsClosing() bool {
