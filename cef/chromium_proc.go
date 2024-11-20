@@ -63,7 +63,7 @@ type IChromiumProc interface {
 	NotifyMoveOrResizeStarted()
 	Invalidate(type_ TCefPaintElementType)
 	CloseBrowser(forceClose bool)
-	ExecuteJavaScript(code, scriptURL string, frame ICefFrame, startLine int32)
+	ExecuteJavaScript(code, scriptURL string, frame *ICefFrame, startLine int32)
 	ShowDevTools(window ICEFWindowParent)
 	CloseDevTools(window ICEFWindowParent)
 	VisitAllCookies(id int32)
@@ -553,7 +553,7 @@ func (m *TCEFChromium) CloseBrowser(forceClose bool) {
 // scriptURL: js脚本地址 默认about:blank
 //
 // startLine: js脚本启始执行行号
-func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, frame ICefFrame, startLine int32) {
+func (m *TCEFChromium) ExecuteJavaScript(code, scriptURL string, frame *ICefFrame, startLine int32) {
 	imports.Proc(def.CEFChromium_ExecuteJavaScript).Call(m.Instance(), api.PascalStr(code), api.PascalStr(scriptURL), frame.Instance(), uintptr(startLine))
 }
 
