@@ -1321,6 +1321,9 @@ const (
 	ICEFWindow_SetAccelerator
 	ICEFWindow_RemoveAccelerator
 	ICEFWindow_RemoveAllAccelerators
+	ICEFWindow_SetThemeColor
+	ICEFWindow_ThemeChanged
+	ICEFWindow_RuntimeStyle
 	// ICefV8Value
 	CefV8Value_IsValid
 	CefV8Value_IsUndefined

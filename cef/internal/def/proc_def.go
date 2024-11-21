@@ -1321,6 +1321,9 @@ func init() {
 		dllimports.NewEnergyImport("ICEFWindow_SetAccelerator", 0),
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAccelerator", 0),
 		dllimports.NewEnergyImport("ICEFWindow_RemoveAllAccelerators", 0),
+		dllimports.NewEnergyImport("ICEFWindow_SetThemeColor", 0),
+		dllimports.NewEnergyImport("ICEFWindow_ThemeChanged", 0),
+		dllimports.NewEnergyImport("ICEFWindow_RuntimeStyle", 0),
 		//ICefV8Value
 		dllimports.NewEnergyImport("CefV8Value_IsValid", 0),
 		dllimports.NewEnergyImport("CefV8Value_IsUndefined", 0),

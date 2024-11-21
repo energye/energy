@@ -474,6 +474,60 @@ func (m *ICefWindow) RemoveAllAccelerators() {
 	imports.Proc(def.ICEFWindow_RemoveAllAccelerators).Call(m.Instance())
 }
 
+// SetThemeColor
+//
+//	Override a standard theme color or add a custom color associated with
+//	|color_id|. See cef_color_ids.h for standard ID values. Recommended usage
+//	is as follows:</para>
+//	<code>
+//	1. Customize the default native/OS theme by calling SetThemeColor before
+//	   showing the first Window. When done setting colors call
+//	   ICefWindow.ThemeChanged to trigger ICefViewDelegate.OnThemeChanged
+//	   notifications.
+//	2. Customize the current native/OS or Chrome theme after it changes by
+//	   calling SetThemeColor from the ICefWindowDelegate.OnThemeColorsChanged
+//	   callback. ICefViewDelegate.OnThemeChanged notifications will then be
+//	   triggered automatically.
+//	</code>
+//	<para>The configured color will be available immediately via
+//	ICefView.GetThemeColor and will be applied to each View in this
+//	Window's component hierarchy when ICefViewDelegate.OnThemeChanged is
+//	called. See OnThemeColorsChanged documentation for additional details.</para>
+//	<para>Clients wishing to add custom colors should use |color_id| values >=
+//	CEF_ChromeColorsEnd.
+func (m *ICefWindow) SetThemeColor(colorId int32, color types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ICEFWindow_SetThemeColor).Call(m.Instance(), uintptr(colorId), uintptr(color))
+}
+
+// ThemeChanged
+//
+//	Trigger ICefViewDelegate.OnThemeChanged callbacks for each View in
+//	this Window's component hierarchy. Unlike a native/OS or Chrome theme
+//	change this function does not reset theme colors to standard values and
+//	does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.</para>
+//	<para>Do not call this function from ICefWindowDelegate.OnThemeColorsChanged
+//	or ICefViewDelegate.OnThemeChanged.
+func (m *ICefWindow) ThemeChanged() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.ICEFWindow_ThemeChanged).Call(m.Instance())
+}
+
+// RuntimeStyle
+// Returns the runtime style for this Window (ALLOY or CHROME). See
+// TCefRuntimeStyle documentation for details.
+func (m *ICefWindow) RuntimeStyle() consts.TCefRuntimeStyle {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.ICEFWindow_RuntimeStyle).Call(m.Instance())
+	return consts.TCefRuntimeStyle(r1)
+}
+
 func (m *ICefWindow) SetWindow(window *ICefWindow) {
 	m.instance = window.instance
 }
