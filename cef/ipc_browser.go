@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/callback"
@@ -29,7 +28,6 @@ type ipcBrowserProcess struct{}
 // 主进程消息 - 默认实现
 func browserProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	name := message.Name()
-	fmt.Println("browserProcessMessageReceived name:", name)
 	if name == internalIPCJSEmit || name == internalIPCGoEmit {
 		result = ipcBrowser.jsExecuteGoMethodMessage(browser, frame, message)
 	} else if name == internalEnergyExtension {

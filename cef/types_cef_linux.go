@@ -68,7 +68,7 @@ type TCefAcceleratedPaintNativePixmapPlaneInfo struct {
 	/// Size in bytes of the plane is necessary to map the buffers.
 	size uint64
 	/// File descriptor for the underlying memory object (usually dmabuf).
-	fd integer
+	fd int32
 }
 
 const CEF_KACCELERATEDPAINTMAXPLANES = 4
