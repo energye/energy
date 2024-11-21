@@ -478,7 +478,7 @@ func (m *ICefWindow) RemoveAllAccelerators() {
 //
 //	Override a standard theme color or add a custom color associated with
 //	|color_id|. See cef_color_ids.h for standard ID values. Recommended usage
-//	is as follows:</para>
+//	is as follows:
 //	<code>
 //	1. Customize the default native/OS theme by calling SetThemeColor before
 //	   showing the first Window. When done setting colors call
@@ -492,9 +492,8 @@ func (m *ICefWindow) RemoveAllAccelerators() {
 //	<para>The configured color will be available immediately via
 //	ICefView.GetThemeColor and will be applied to each View in this
 //	Window's component hierarchy when ICefViewDelegate.OnThemeChanged is
-//	called. See OnThemeColorsChanged documentation for additional details.</para>
-//	<para>Clients wishing to add custom colors should use |color_id| values >=
-//	CEF_ChromeColorsEnd.
+//	called. See OnThemeColorsChanged documentation for additional details.
+//	Clients wishing to add custom colors should use |color_id| values >= CEF_ChromeColorsEnd.
 func (m *ICefWindow) SetThemeColor(colorId int32, color types.TCefColor) {
 	if !m.IsValid() {
 		return
@@ -507,7 +506,7 @@ func (m *ICefWindow) SetThemeColor(colorId int32, color types.TCefColor) {
 //	Trigger ICefViewDelegate.OnThemeChanged callbacks for each View in
 //	this Window's component hierarchy. Unlike a native/OS or Chrome theme
 //	change this function does not reset theme colors to standard values and
-//	does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.</para>
+//	does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.
 //	<para>Do not call this function from ICefWindowDelegate.OnThemeColorsChanged
 //	or ICefViewDelegate.OnThemeChanged.
 func (m *ICefWindow) ThemeChanged() {
