@@ -138,6 +138,10 @@ func (m *TCEFApplication) NoSandbox() bool {
 	return api.GoBool(r1)
 }
 
+// SetNoSandbox
+// Set to true (1) to disable the sandbox for sub-processes. See
+// cef_sandbox_win.h for requirements to enable the sandbox on Windows. Also
+// configurable using the "no-sandbox" command-line switch.
 func (m *TCEFApplication) SetNoSandbox(value bool) {
 	imports.Proc(def.CEFAppConfig_SetNoSandbox).Call(api.PascalBool(value))
 }
@@ -147,6 +151,14 @@ func (m *TCEFApplication) BrowserSubprocessPath() string {
 	return api.GoStr(r1)
 }
 
+// SetBrowserSubprocessPath The path to a separate executable that will be launched for sub-processes.
+// If this value is empty on Windows or Linux then the main process
+// executable will be used. If this value is empty on macOS then a helper
+// executable must exist at "Contents/Frameworks/<app>
+// Helper.app/Contents/MacOS/<app> Helper" in the top-level app bundle. See
+// the comments on CefExecuteProcess() for details. If this value is
+// non-empty then it must be an absolute path. Also configurable using the
+// "browser-subprocess-path" command-line switch.
 func (m *TCEFApplication) SetBrowserSubprocessPath(value string) {
 	imports.Proc(def.CEFAppConfig_SetBrowserSubprocessPath).Call(api.PascalStr(value))
 }

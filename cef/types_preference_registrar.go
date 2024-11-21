@@ -27,7 +27,7 @@ import (
 // This function must be called from within the scope of the
 // ICefBrowserProcessHandler.OnRegisterCustomPreferences callback.
 func (m *TCefPreferenceRegistrarRef) AddPreference(name string, defaultValue *ICefValue) bool {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetColor).Call(m.Instance(), api.PascalStr(name), defaultValue.Instance())
+	r1, _, _ := imports.Proc(def.PreferenceRegistrarRef_AddPreference).Call(m.Instance(), api.PascalStr(name), defaultValue.Instance())
 	return api.GoBool(r1)
 }
 

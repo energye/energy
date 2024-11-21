@@ -86,9 +86,8 @@ type tCefBrowserSettingsPtr struct {
 	Databases                  UIntptr //TCefState
 	Webgl                      UIntptr //TCefState
 	BackgroundColor            UIntptr //TCefColor
-	AcceptLanguageList         UIntptr //TCefString Remove CEF 118
 	ChromeStatusBubble         UIntptr //TCefState
-	ChromeZoomBubble           UIntptr //  consts.TCefState // Use[118]
+	ChromeZoomBubble           UIntptr //TCefState
 }
 
 type tCefCompositionUnderlinePtr struct {
@@ -179,7 +178,6 @@ func (m *TCefBrowserSettings) setInstanceValue() {
 	m.instance.Databases.SetValue(int32(m.Databases))                                   // TCefState
 	m.instance.Webgl.SetValue(int32(m.Webgl))                                           // TCefState
 	m.instance.BackgroundColor.SetValue(uint32(m.BackgroundColor))                      // TCefColor
-	m.instance.AcceptLanguageList = UIntptr(m.AcceptLanguageList.ToPtr())               // TCefString Remove CEF 118
 	m.instance.ChromeStatusBubble.SetValue(int32(m.ChromeStatusBubble))                 // TCefState
 	m.instance.ChromeZoomBubble.SetValue(int32(m.ChromeZoomBubble))                     // TCefState
 }
@@ -215,7 +213,6 @@ func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
 		Databases:                  UIntptr(m.Databases.ToPtr()),
 		Webgl:                      UIntptr(m.Webgl.ToPtr()),
 		BackgroundColor:            UIntptr(m.BackgroundColor.ToPtr()),
-		AcceptLanguageList:         UIntptr(m.AcceptLanguageList.ToPtr()), // Remove CEF 118
 		ChromeStatusBubble:         UIntptr(m.ChromeStatusBubble.ToPtr()),
 		ChromeZoomBubble:           UIntptr(m.ChromeZoomBubble.ToPtr()),
 	}
@@ -265,7 +262,6 @@ func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
 		Databases:                  getCefState(m.Databases.ToPtr()),
 		Webgl:                      getCefState(m.Webgl.ToPtr()),
 		BackgroundColor:            *(*TCefColor)(getPtr(m.BackgroundColor.ToPtr())),
-		AcceptLanguageList:         TCefString(api.GoStr(m.AcceptLanguageList.ToPtr())), // Remove CEF 118
 		ChromeStatusBubble:         getCefState(m.ChromeStatusBubble.ToPtr()),
 		ChromeZoomBubble:           getCefState(m.ChromeZoomBubble.ToPtr()),
 	}
