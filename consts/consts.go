@@ -655,6 +655,7 @@ const (
 	CEF_SHOW_STATE_MINIMIZED  = TCefShowState(2)
 	CEF_SHOW_STATE_MAXIMIZED  = TCefShowState(3)
 	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
+	CEF_SHOW_STATE_HIDDEN     = TCefShowState(5)
 )
 
 // include/internal/cef_types.h (cef_chrome_toolbar_type_t)
