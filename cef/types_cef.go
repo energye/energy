@@ -449,7 +449,12 @@ type ICefRequestContextHandler struct {
 	ct       consts.CefCreateType
 }
 
-// ICefMenuModel 菜单
+// ICefMenuModel
+// Supports creation and modification of menus. See TCefMenuId (cef_menu_id_t) for the
+// command ids that have default implementations. All user-defined command ids
+// should be between MENU_ID_USER_FIRST and MENU_ID_USER_LAST. The functions of
+// this structure can only be accessed on the browser process the UI thread.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_capi.h">CEF source file: /include/capi/cef_menu_model_capi.h (cef_menu_model_t)</see></para>
 type ICefMenuModel struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
