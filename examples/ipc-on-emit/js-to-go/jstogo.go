@@ -65,7 +65,7 @@ func timeTask(window cef.IBrowserWindow) {
 			if !frame.IsMain() {
 				fmt.Println("\tname:", frameNames[i].Name, "value:", frameNames[i].Value, "frameId:", frame.Identifier())
 				targetFrame := target.NewTarget(frame, window.Browser().BrowserId(), frame.Identifier())
-				ipc.EmitTarget("js-on-event-demo", targetFrame, fmt.Sprintf("当前FrameId: %d Go发送的数据: %d", frame.Identifier(), param0), float64(param0+10))
+				ipc.EmitTarget("js-on-event-demo", targetFrame, fmt.Sprintf("当前FrameId: %v Go发送的数据: %d", frame.Identifier(), param0), float64(param0+10))
 			}
 		}
 	}
