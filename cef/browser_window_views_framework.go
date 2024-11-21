@@ -77,7 +77,7 @@ func NewViewsFrameworkBrowserWindow(config *TCefChromiumConfig, windowProperty W
 	m.Chromium().SetEnableMultiBrowserMode(true)
 	m.WindowComponent().SetOnWindowCreated(func(window *ICefWindow) {
 		if m.Chromium().CreateBrowserByBrowserViewComponent(windowProperty.Url, m.BrowserViewComponent(), m.context, m.extraInfo) {
-			m.WindowComponent().AddChildView(m.BrowserViewComponent())
+			m.WindowComponent().AddChildView(m.BrowserViewComponent().BrowserView().AsView())
 			if windowProperty.Title != "" {
 				m.WindowComponent().SetTitle(windowProperty.Title)
 			}

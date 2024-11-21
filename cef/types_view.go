@@ -33,6 +33,10 @@ func (m *ICefView) Free() {
 	}
 }
 
+func (m *ICefView) AsView() *ICefView {
+	return m
+}
+
 func (m *ICefView) AsBrowserView() *ICefBrowserView {
 	if !m.IsValid() {
 		return nil

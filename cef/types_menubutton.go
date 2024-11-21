@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
 
@@ -22,9 +23,9 @@ var MenuButtonRef menuButton
 
 type menuButton uintptr
 
-func (*menuButton) New() *ICefMenuButton {
+func (*menuButton) New(delegate *ICefMenuButtonDelegate, text string) *ICefMenuButton {
 	var result uintptr
-	imports.Proc(def.MenuButtonRef_New).Call(uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.MenuButtonRef_New).Call(delegate.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefMenuButton{&ICefLabelButton{&ICefButton{&ICefView{instance: getInstance(result)}}}}
 	}

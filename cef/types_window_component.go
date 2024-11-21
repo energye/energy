@@ -592,11 +592,11 @@ func (m *TCEFWindowComponent) IsMinimized() bool {
 }
 
 // AddChildView 添加浏览器显示组件
-func (m *TCEFWindowComponent) AddChildView(browserViewComponent *TCEFBrowserViewComponent) {
+func (m *TCEFWindowComponent) AddChildView(view *ICefView) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_AddChildView).Call(m.Instance(), browserViewComponent.Instance())
+	imports.Proc(def.CEFWindowComponent_AddChildView).Call(m.Instance(), view.Instance())
 }
 
 // RuntimeStyle
