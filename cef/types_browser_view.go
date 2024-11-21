@@ -67,6 +67,6 @@ func (m *ICefBrowserView) RuntimeStyle() consts.TCefRuntimeStyle {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(def.CEFBrowserViewComponent_RuntimeStyle).Call(m.Instance())
+	r1, _, _ := imports.Proc(def.CefBrowserView_RuntimeStyle).Call(m.Instance())
 	return consts.TCefRuntimeStyle(r1)
 }
