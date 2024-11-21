@@ -104,6 +104,23 @@ func (m *TCEFBrowserViewComponent) BrowserView() *ICefBrowserView {
 	return &ICefBrowserView{&ICefView{instance: unsafe.Pointer(result)}}
 }
 
+func (m *TCEFBrowserViewComponent) ChromeToolbar() *ICefView {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CEFBrowserViewComponent_ChromeToolbar).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefView{instance: unsafe.Pointer(result)}
+}
+
+func (m *TCEFBrowserViewComponent) RuntimeStyle() consts.TCefRuntimeStyle {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.CEFBrowserViewComponent_RuntimeStyle).Call(m.Instance())
+	return consts.TCefRuntimeStyle(r1)
+}
+
 // SetOnBrowserCreated
 func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn BrowserViewComponentOnBrowserCreated) {
 	if !m.IsValid() {

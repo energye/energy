@@ -1252,6 +1252,8 @@ const (
 	CEFBrowserViewComponent_RequestFocus
 	CEFBrowserViewComponent_Browser
 	CEFBrowserViewComponent_BrowserView // no impl
+	CEFBrowserViewComponent_ChromeToolbar
+	CEFBrowserViewComponent_RuntimeStyle
 	CEFBrowserViewComponent_SetOnBrowserCreated
 	CEFBrowserViewComponent_SetOnBrowserDestroyed
 	CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView
@@ -1579,6 +1581,7 @@ const (
 	CefBrowserView_Browser
 	CefBrowserView_ChromeToolbar
 	CefBrowserView_SetPreferAccelerators
+	CefBrowserView_RuntimeStyle
 	// ICefPdfPrintCallback
 	CefPdfPrintCallback_Create
 	CefPdfPrintCallback_OnPdfPrintFinished

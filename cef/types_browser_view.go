@@ -15,6 +15,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -60,4 +61,12 @@ func (m *ICefBrowserView) ChromeToolbar() *ICefView {
 
 func (m *ICefBrowserView) SetPreferAccelerators(preferAccelerators bool) {
 	imports.Proc(def.CefBrowserView_SetPreferAccelerators).Call(m.Instance(), api.PascalBool(preferAccelerators))
+}
+
+func (m *ICefBrowserView) RuntimeStyle() consts.TCefRuntimeStyle {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.CEFBrowserViewComponent_RuntimeStyle).Call(m.Instance())
+	return consts.TCefRuntimeStyle(r1)
 }

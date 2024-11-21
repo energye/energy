@@ -1252,6 +1252,8 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_RequestFocus", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_Browser", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_BrowserView", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_ChromeToolbarw", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_RuntimeStylew", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnBrowserCreated", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnBrowserDestroyed", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetDelegateForPopupBrowserView", 0),
@@ -1579,6 +1581,7 @@ func init() {
 		dllimports.NewEnergyImport("CefBrowserView_Browser", 0),
 		dllimports.NewEnergyImport("CefBrowserView_ChromeToolbar", 0),
 		dllimports.NewEnergyImport("CefBrowserView_SetPreferAccelerators", 0),
+		dllimports.NewEnergyImport("CefBrowserView_RuntimeStyle", 0),
 		//ICefPdfPrintCallback
 		dllimports.NewEnergyImport("CefPdfPrintCallback_Create", 0),
 		dllimports.NewEnergyImport("CefPdfPrintCallback_OnPdfPrintFinished", 0),
