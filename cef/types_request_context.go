@@ -31,6 +31,9 @@ func (*requestContext) Global() *ICefRequestContext {
 	return nil
 }
 
+// Creates a new context object with the specified |settings| and optional |handler|.
+// <param name="settings">Pointer to TCefRequestContextSettings.</param>
+// <param name="handler">Optional handler for the request context.</param>
 func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, handler *ICefRequestContextHandler) *ICefRequestContext {
 	if requestContextSettings == nil {
 		requestContextSettings = &TCefRequestContextSettings{}
@@ -44,7 +47,16 @@ func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, h
 	return nil
 }
 
-func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList string, cookieableSchemesExcludeDefaults, persistSessionCookies bool, handler *ICefRequestContextHandler) *ICefRequestContext {
+// Creates a new context object with the specified settings and optional |handler|.
+//
+// <param name="aCache">The directory where cache data for this request context will be stored on disk. See TCefRequestContextSettings.cache_path for more information.</param>
+// <param name="aAcceptLanguageList">Comma delimited ordered list of language codes without any whitespace that will be used in the "Accept-Language" HTTP header. See TCefRequestContextSettings.accept_language_list for more information.</param>
+// <param name="aCookieableSchemesList">Comma delimited list of schemes supported by the associated ICefCookieManager. See TCefRequestContextSettings.cookieable_schemes_list for more information.</param>
+// <param name="aCookieableSchemesExcludeDefaults">Setting this parameter to true will disable all loading and saving of cookies. See TCefRequestContextSettings.cookieable_schemes_list for more information.</param>
+// <param name="aPersistSessionCookies">To persist session cookies (cookies without an expiry date or validity interval) by default when using the global cookie manager set this value to true. See TCefRequestContextSettings.persist_session_cookies for more information.</param>
+// <param name="handler">Optional handler for the request context.</param>
+func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList string, cookieableSchemesExcludeDefaults, persistSessionCookies bool,
+	handler *ICefRequestContextHandler) *ICefRequestContext {
 	var result uintptr
 	imports.Proc(def.RequestContextRef_NewTwo).Call(api.PascalStr(cache), api.PascalStr(acceptLanguageList), api.PascalStr(cookieableSchemesList), api.PascalBool(cookieableSchemesExcludeDefaults), api.PascalBool(persistSessionCookies), handler.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
@@ -53,6 +65,9 @@ func (*requestContext) NewTwo(cache, acceptLanguageList, cookieableSchemesList s
 	return nil
 }
 
+// Creates a new context object that shares storage with |other| and uses an optional |handler|.
+// <param name="other">Another ICefRequestContext instance that will share storage with the new ICefRequestContext instance.</param>
+// <param name="handler">Optional handler for the request context.</param>
 func (*requestContext) Shared(other *ICefRequestContext, handler *ICefRequestContextHandler) *ICefRequestContext {
 	var result uintptr
 	imports.Proc(def.RequestContextRef_Shared).Call(other.Instance(), handler.Instance(), uintptr(unsafe.Pointer(&result)))
