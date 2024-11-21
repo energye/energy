@@ -1,11 +1,11 @@
 # Upgrade Log
 
 ### 2.5.0 
-- UP: 升级 CEF130.1.16, 升级后向下有少部分API不兼容, 移除了扩展API
-- R: 移除 Go 实现的内部IPC包, pkgs/channel, 保留该包, 可做为单独的模块使用
-- R: 移除 ipc.On 监听模式里面的触发目标(TgJs, TgGoSub, TgGoMain), 因此Go触发ipc接收端只有JS
-- U: 修改 ipc 实现完全使用 CEF 进程消息, 之前版本部分功能使用的是 pkgs/channel 实现的
-- U: 修改 energyExtension 扩展插件
+- UP: Upgrade CEF130.1.16, after the upgrade, a small number of apis are incompatible, and the extension component API is removed
+- R: Remove the Go implementation's internal IPC package, pkgs/channel, and keep it available as a separate module to resolve potential issues
+- R: The trigger targets (TgJs, TgGoSub, TgGoMain) in IPc.ON listening mode are removed, so that only JS is On the Go trigger ipc receiver
+- U: Modified ipc implementation to fully use CEF process messages, previous version of some functions used pkgs/channel implementation
+- U: Modified the drag energyExtension JS extension
 
 ### 2.4.6 - 2024/11/14
 - U: CLI > 2.4.6, In future release versions of the CLI, the version number will be synchronized with the main version number.
