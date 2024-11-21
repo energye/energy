@@ -2699,4 +2699,6 @@ const (
 	Task_OnlyPostTask
 	Task_OnlyPostDelayedTask
 	Task_SetOnExecute
+	// TCefPreferenceRegistrarRef
+	PreferenceRegistrarRef_AddPreference
 ) //end

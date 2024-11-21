@@ -1218,6 +1218,8 @@ type ICefNavigationEntry struct {
 }
 
 // TCefPreferenceRegistrarRef
+// Class that manages custom preference registrations.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_registrar_t)</see></para>
 type TCefPreferenceRegistrarRef struct {
 	instance unsafe.Pointer
 }

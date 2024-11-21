@@ -2699,6 +2699,8 @@ func init() {
 		dllimports.NewEnergyImport("Task_OnlyPostTask", 0),
 		dllimports.NewEnergyImport("Task_OnlyPostDelayedTask", 0),
 		dllimports.NewEnergyImport("Task_SetOnExecute", 0),
+		// TCefPreferenceRegistrarRef
+		dllimports.NewEnergyImport("PreferenceRegistrarRef_AddPreference", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }
