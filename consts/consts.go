@@ -243,7 +243,7 @@ const (
 
 type TDateTime = types.Float64
 
-// /include/internal/cef_types.h (cef_cookie_same_site_t)
+// include/internal/cef_types.h (cef_cookie_same_site_t)
 type TCefCookieSameSite = types.Int32
 
 const (
@@ -253,7 +253,7 @@ const (
 	Ccss_CEF_COOKIE_SAME_SITE_STRICT_MODE
 )
 
-// /include/internal/cef_types.h (cef_cookie_priority_t)
+// include/internal/cef_types.h (cef_cookie_priority_t)
 type TCefCookiePriority = types.Int32
 
 const (
@@ -288,7 +288,7 @@ const (
 	CMT_RADIO
 )
 
-// /include/internal/cef_types.h (cef_context_menu_media_type_t)
+// include/internal/cef_types.h (cef_context_menu_media_type_t)
 type TCefContextMenuMediaType = types.Int32
 
 const (
@@ -333,7 +333,7 @@ const (
 	MENU_ID_USER_LAST                  MenuId = 28500
 )
 
-// /include/internal/cef_types.h (cef_menu_color_type_t)
+// include/internal/cef_types.h (cef_menu_color_type_t)
 type TCefMenuColorType = types.Int32
 
 const (
@@ -348,7 +348,7 @@ const (
 
 type ARGB = types.UInt32
 
-// /include/internal/cef_types.h (cef_key_event_type_t)
+// include/internal/cef_types.h (cef_key_event_type_t)
 type TCefKeyEventType = types.Int32
 
 const (
@@ -358,7 +358,7 @@ const (
 	KEYEVENT_CHAR
 )
 
-// /include/internal/cef_types.h (cef_event_flags_t)
+// include/internal/cef_types.h (cef_event_flags_t)
 type TCefEventFlags = types.UInt32
 
 const (
@@ -385,9 +385,9 @@ const (
 
 type TCefWindowHandleType = types.Int8
 
-// /include/internal/cef_types_win.h (cef_window_handle_t)
-// /include/internal/cef_types_mac.h (cef_window_handle_t)
-// /include/internal/cef_types_linux.h (cef_window_handle_t)
+// include/internal/cef_types_win.h (cef_window_handle_t)
+// include/internal/cef_types_mac.h (cef_window_handle_t)
+// include/internal/cef_types_linux.h (cef_window_handle_t)
 type TCefWindowHandle = types.UIntptr
 
 const (
@@ -395,7 +395,7 @@ const (
 	Wht_LinkedWindowParent
 )
 
-// /include/internal/cef_types.h (cef_return_value_t)
+// include/internal/cef_types.h (cef_return_value_t)
 type TCefReturnValue int32
 
 const (
@@ -404,7 +404,7 @@ const (
 	RV_CONTINUE_ASYNC
 )
 
-// /include/internal/cef_types.h (cef_referrer_policy_t)
+// include/internal/cef_types.h (cef_referrer_policy_t)
 type TCefReferrerPolicy = types.Int32
 
 const (
@@ -418,13 +418,13 @@ const (
 	REFERRER_POLICY_NO_REFERRER // REFERRER_POLICY_LAST_VALUE = REFERRER_POLICY_NO_REFERRER
 )
 
-// /include/internal/cef_types.h (cef_urlrequest_flags_t)
+// include/internal/cef_types.h (cef_urlrequest_flags_t)
 type TCefUrlRequestFlags = types.Int
 
-// /include/internal/cef_types.h (cef_errorcode_t)
+// include/internal/cef_types.h (cef_errorcode_t)
 type TCefErrorCode = types.Int32
 
-// /include/internal/cef_types.h (cef_resource_type_t)
+// include/internal/cef_types.h (cef_resource_type_t)
 type TCefResourceType = types.Int32
 
 const (
@@ -451,10 +451,10 @@ const (
 	RT_NAVIGATION_PRELOAD_SUB_FRAME                           // A sub-frame service worker navigation preload request.
 )
 
-// /include/internal/cef_types.h (cef_transition_type_t)
+// include/internal/cef_types.h (cef_transition_type_t)
 type TCefTransitionType = types.Int
 
-// /include/internal/cef_types.h (cef_urlrequest_status_t)
+// include/internal/cef_types.h (cef_urlrequest_status_t)
 type TCefUrlRequestStatus = types.Int32
 
 const (
@@ -465,26 +465,22 @@ const (
 	UR_FAILED
 )
 
-// / <summary>
-// / Represents the state of a setting.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_state_t)</see></para>
-// / </remarks>
+// Represents the state of a setting.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_state_t)</see></para>
 type TCefState = types.Int32
 
 const (
-	// <summary>
+
 	// Use the default state for the setting.
-	// </summary>
+
 	STATE_DEFAULT = TCefState(iota)
-	// <summary>
+
 	// Enable or allow the setting.
-	// </summary>
+
 	STATE_ENABLED
-	// <summary>
+
 	// Disable or disallow the setting.
-	// </summary>
+
 	STATE_DISABLED
 )
 
@@ -504,7 +500,7 @@ const CEF_TIMER_DEPLETEWORK_CYCLES = 10
 
 const CEF_TIMER_DEPLETEWORK_DELAY = 50
 
-// /include/internal/cef_types.h (cef_touch_event_type_t)
+// include/internal/cef_types.h (cef_touch_event_type_t)
 type TCefTouchEeventType = types.Int32
 
 const (
@@ -514,7 +510,7 @@ const (
 	CEF_TET_CANCELLED
 )
 
-// /include/internal/cef_types.h (cef_pointer_type_t)
+// include/internal/cef_types.h (cef_pointer_type_t)
 type TCefPointerType = types.Int32
 
 const (
@@ -525,7 +521,7 @@ const (
 	CEF_POINTER_TYPE_UNKNOWN
 )
 
-// /include/internal/cef_types.h (cef_mouse_button_type_t)
+// include/internal/cef_types.h (cef_mouse_button_type_t)
 type TCefMouseButtonType = types.Int32
 
 const (
@@ -547,7 +543,7 @@ const (
 	PMErr_NAME_CANNOT_USED        ProcessMessageError = -6       //不能使用的消息名称
 )
 
-// /include/internal/cef_types.h (cef_window_open_disposition_t)
+// include/internal/cef_types.h (cef_window_open_disposition_t)
 type TCefWindowOpenDisposition = types.Int32
 
 const (
@@ -575,7 +571,7 @@ const (
 	WT_VIEW_SOURCE                           // 显示源代码窗口
 )
 
-// /include/internal/cef_types.h (cef_context_menu_type_flags_t)
+// include/internal/cef_types.h (cef_context_menu_type_flags_t)
 type TCefContextMenuTypeFlags = types.UInt32
 
 const (
@@ -595,7 +591,7 @@ const (
 	CM_TYPEFLAG_EDITABLE = 1 << 5
 )
 
-// /include/internal/cef_types.h (cef_context_menu_media_state_flags_t)
+// include/internal/cef_types.h (cef_context_menu_media_state_flags_t)
 type TCefContextMenuMediaStateFlags = types.UInt32
 
 const (
@@ -615,7 +611,7 @@ const (
 	CM_MEDIAFLAG_CAN_LOOP                                              = 1 << 12
 )
 
-// /include/internal/cef_types.h (cef_context_menu_edit_state_flags_t)
+// include/internal/cef_types.h (cef_context_menu_edit_state_flags_t)
 type TCefContextMenuEditStateFlags = types.UInt32
 
 const (
@@ -631,7 +627,7 @@ const (
 	CM_EDITFLAG_CAN_EDIT_RICHLY                               = 1 << 8
 )
 
-// /include/internal/cef_types.h (cef_menu_anchor_position_t)
+// include/internal/cef_types.h (cef_menu_anchor_position_t)
 type TCefMenuAnchorPosition = types.Int32
 
 const (
@@ -640,7 +636,7 @@ const (
 	CEF_MENU_ANCHOR_BOTTOMCENTER
 )
 
-// /include/internal/cef_types.h (cef_docking_mode_t)
+// include/internal/cef_types.h (cef_docking_mode_t)
 type TCefDockingMode = types.Int32
 
 const (
@@ -651,7 +647,7 @@ const (
 	CEF_DOCKING_MODE_CUSTOM
 )
 
-// /include/internal/cef_types.h (cef_show_state_t)4
+// include/internal/cef_types.h (cef_show_state_t)4
 type TCefShowState = types.Int32
 
 const (
@@ -661,7 +657,7 @@ const (
 	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
 )
 
-// /include/internal/cef_types.h (cef_chrome_toolbar_type_t)
+// include/internal/cef_types.h (cef_chrome_toolbar_type_t)
 type TCefChromeToolbarType = types.Int32
 
 const (
@@ -670,7 +666,7 @@ const (
 	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
 )
 
-// /include/internal/cef_types.h (cef_drag_operations_mask_t)
+// include/internal/cef_types.h (cef_drag_operations_mask_t)
 type TCefDragOperations = types.Cardinal
 
 const (
@@ -684,7 +680,7 @@ const (
 	DRAG_OPERATION_EVERY   TCefDragOperations = math.MaxUint32
 )
 
-// /include/internal/cef_types.h (cef_drag_operations_mask_t)
+// include/internal/cef_types.h (cef_drag_operations_mask_t)
 type TCefDragOperation = TCefDragOperations
 
 type TrayType int8
@@ -770,7 +766,7 @@ const (
 	ZOOM_STEP_DEF ZoomStep = ZOOM_STEP_100
 )
 
-// /include/internal/cef_types.h (cef_v8_propertyattribute_t)
+// include/internal/cef_types.h (cef_v8_propertyattribute_t)
 type TCefV8PropertyAttributes = types.Cardinal
 
 const (
@@ -780,7 +776,7 @@ const (
 	V8_PROPERTY_ATTRIBUTE_DONTDELETE TCefV8PropertyAttributes = 1 << 2
 )
 
-// /include/internal/cef_types.h (cef_value_type_t)
+// include/internal/cef_types.h (cef_value_type_t)
 type TCefValueType = types.Int32
 
 const (
@@ -795,7 +791,7 @@ const (
 	VTYPE_LIST       // JSONArray
 )
 
-// /include/internal/cef_types.h (cef_postdataelement_type_t)
+// include/internal/cef_types.h (cef_postdataelement_type_t)
 type TCefPostDataElementType = types.Int32
 
 const (
@@ -1099,7 +1095,7 @@ const (
 	ERR_DNS_HTTP_FAILED                               CEF_NET_ERROR = -807
 )
 
-// /include/internal/cef_types.h (cef_color_type_t)
+// include/internal/cef_types.h (cef_color_type_t)
 type TCefColorType = types.Int32
 
 const (
@@ -1107,7 +1103,7 @@ const (
 	CEF_COLOR_TYPE_BGRA_8888
 )
 
-// /include/internal/cef_types.h (cef_alpha_type_t)
+// include/internal/cef_types.h (cef_alpha_type_t)
 type TCefAlphaType = types.Int32
 
 const (
@@ -1116,7 +1112,7 @@ const (
 	CEF_ALPHA_TYPE_POSTMULTIPLIED
 )
 
-// /include/internal/cef_types.h (cef_pdf_print_margin_type_t)
+// include/internal/cef_types.h (cef_pdf_print_margin_type_t)
 type TCefPdfPrintMarginType = types.Int32
 
 const (
@@ -1145,7 +1141,7 @@ const (
 	V8vtPromise
 )
 
-// /include/internal/cef_types.h (cef_preferences_type_t)
+// include/internal/cef_types.h (cef_preferences_type_t)
 type TCefPreferencesType = types.Int32
 
 const (
@@ -1155,7 +1151,7 @@ const (
 
 type TCefScaleFactor = types.Int32
 
-// /include/internal/cef_types.h (cef_scale_factor_t)
+// include/internal/cef_types.h (cef_scale_factor_t)
 const (
 	SCALE_FACTOR_NONE TCefScaleFactor = iota
 	SCALE_FACTOR_100P
@@ -1169,7 +1165,7 @@ const (
 	SCALE_FACTOR_300P
 )
 
-// /include/internal/cef_types.h (cef_channel_layout_t)
+// include/internal/cef_types.h (cef_channel_layout_t)
 type TCefChannelLayout = types.Int32
 
 const (
@@ -1220,10 +1216,10 @@ const (
 	CtOther                        // CtOther   使用其他组件处理事件
 )
 
-// /include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)
+// include/internal/cef_types.h (cef_quick_menu_edit_state_flags_t)
 type TCefQuickMenuEditStateFlags = types.Int32
 
-// /include/internal/cef_types.h (cef_log_severity_t)
+// include/internal/cef_types.h (cef_log_severity_t)
 type TCefLogSeverity = types.Cardinal
 
 // TCefCursorHandle
@@ -1233,7 +1229,7 @@ type TCefLogSeverity = types.Cardinal
 //	/include/internal/cef_types_linux.h (cef_cursor_handle_t)
 type TCefCursorHandle uintptr
 
-// /include/internal/cef_types.h (cef_cursor_type_t)
+// include/internal/cef_types.h (cef_cursor_type_t)
 type TCefCursorType = types.Int32
 
 const (
@@ -1289,7 +1285,7 @@ const (
 	CT_DND_LIN
 )
 
-// /include/internal/cef_types.h (cef_focus_source_t)
+// include/internal/cef_types.h (cef_focus_source_t)
 type TCefFocusSource = types.Int32
 
 const (
@@ -1297,7 +1293,7 @@ const (
 	FOCUS_SOURCE_SYSTEM
 )
 
-// /include/internal/cef_types.h (cef_permission_request_result_t)
+// include/internal/cef_types.h (cef_permission_request_result_t)
 type TCefPermissionRequestResult = types.Int32
 
 const (
@@ -1307,10 +1303,10 @@ const (
 	CEF_PERMISSION_RESULT_IGNORE
 )
 
-// /include/internal/cef_types.h (cef_media_access_permission_types_t)
+// include/internal/cef_types.h (cef_media_access_permission_types_t)
 type TCefMediaAccessPermissionTypes = types.Int32
 
-// /include/internal/cef_types.h (cef_jsdialog_type_t)
+// include/internal/cef_types.h (cef_jsdialog_type_t)
 type TCefJsDialogType = types.Int32
 
 const (
@@ -1324,7 +1320,7 @@ const (
 //	/include/internal/cef_types.h (cef_duplex_mode_t)
 type TCefDuplexMode = types.Int32
 
-// /include/internal/cef_types.h (cef_color_model_t)
+// include/internal/cef_types.h (cef_color_model_t)
 type TCefColorModel = types.Int32
 
 const (
@@ -1356,7 +1352,7 @@ const (
 //	Configuration options for registering a custom scheme.
 //	These values are used when calling AddCustomScheme.
 //
-// /include/internal/cef_types.h (cef_scheme_options_t)
+// include/internal/cef_types.h (cef_scheme_options_t)
 type CefSchemeOption = types.Int32
 
 const (
@@ -1443,7 +1439,7 @@ const (
 	RESPONSE_FILTER_ERROR
 )
 
-// /include/internal/cef_types.h (cef_paint_element_type_t)
+// include/internal/cef_types.h (cef_paint_element_type_t)
 type TCefPaintElementType = types.Int32
 
 const (
@@ -1451,7 +1447,7 @@ const (
 	PET_POPUP
 )
 
-// /include/internal/cef_types.h (cef_horizontal_alignment_t)
+// include/internal/cef_types.h (cef_horizontal_alignment_t)
 type TCefHorizontalAlignment = types.Int32
 
 const (
@@ -1460,7 +1456,7 @@ const (
 	CEF_HORIZONTAL_ALIGNMENT_RIGHT
 )
 
-// /include/internal/cef_types.h (cef_text_input_mode_t)
+// include/internal/cef_types.h (cef_text_input_mode_t)
 type TCefTextInputMode = types.Int32
 
 const (
@@ -1475,13 +1471,13 @@ const (
 	CEF_TEXT_INPUT_MODE_SEARCH // CEF_TEXT_INPUT_MODE_MAX = CEF_TEXT_INPUT_MODE_SEARCH
 )
 
-// /include/internal/cef_types.h (cef_cert_status_t)
+// include/internal/cef_types.h (cef_cert_status_t)
 type TCefCertStatus = types.Int32
 
-// /include/internal/cef_types.h (cef_media_route_create_result_t)
+// include/internal/cef_types.h (cef_media_route_create_result_t)
 type TCefMediaRouterCreateResult = types.Int32
 
-// /include/internal/cef_types.h (cef_media_route_connection_state_t)
+// include/internal/cef_types.h (cef_media_route_connection_state_t)
 type TCefMediaRouteConnectionState = types.Int32
 
 const (
@@ -1492,7 +1488,7 @@ const (
 	CEF_MRCS_TERMINATED
 )
 
-// /include/internal/cef_types.h (cef_dom_document_type_t)
+// include/internal/cef_types.h (cef_dom_document_type_t)
 type TCefDomDocumentType = types.Int32
 
 const (
@@ -1502,7 +1498,7 @@ const (
 	DOM_DOCUMENT_TYPE_PLUGIN
 )
 
-// /include/internal/cef_types.h (cef_dom_node_type_t)
+// include/internal/cef_types.h (cef_dom_node_type_t)
 type TCefDomNodeType = types.Int32
 
 const (
@@ -1533,7 +1529,7 @@ const (
 	CdstAll // default
 )
 
-// /include/internal/cef_types.h (cef_composition_underline_style_t)
+// include/internal/cef_types.h (cef_composition_underline_style_t)
 type TCefCompositionUnderlineStyle int32
 
 const (
@@ -1600,7 +1596,7 @@ const (
 	TpTimeCritical
 )
 
-// /include/internal/cef_types.h (cef_file_dialog_mode_t)
+// include/internal/cef_types.h (cef_file_dialog_mode_t)
 type FileDialogMode = types.Int32
 
 const (
@@ -1610,7 +1606,7 @@ const (
 	FILE_DIALOG_SAVE                         = 0x00000003
 )
 
-// /include/internal/cef_types.h (cef_menu_item_type_t)
+// include/internal/cef_types.h (cef_menu_item_type_t)
 type TCefMenuItemType = types.Int32
 
 const (
@@ -1622,7 +1618,7 @@ const (
 	MENUITEMTYPE_SUBMENU
 )
 
-// /include/internal/cef_types.h (cef_button_state_t)
+// include/internal/cef_types.h (cef_button_state_t)
 type TCefButtonState = types.Int32
 
 const (
@@ -1632,7 +1628,7 @@ const (
 	CEF_BUTTON_STATE_DISABLED
 )
 
-// /include/internal/cef_types.h (cef_main_axis_alignment_t)
+// include/internal/cef_types.h (cef_main_axis_alignment_t)
 type TCefMainAxisAlignment = types.Int32
 
 const (
@@ -1641,7 +1637,7 @@ const (
 	CEF_MAIN_AXIS_ALIGNMENT_END
 )
 
-// /include/internal/cef_types.h (cef_cross_axis_alignment_t)
+// include/internal/cef_types.h (cef_cross_axis_alignment_t)
 type TCefCrossAxisAlignment = types.Int32
 
 const (
@@ -1651,7 +1647,7 @@ const (
 	CEF_CROSS_AXIS_ALIGNMENT_END
 )
 
-// /include/internal/cef_types.h (cef_text_style_t)
+// include/internal/cef_types.h (cef_text_style_t)
 type TCefTextStyle = types.Int32
 
 const (
@@ -1662,7 +1658,7 @@ const (
 	CEF_TEXT_STYLE_UNDERLINE
 )
 
-// /include/internal/cef_types.h (cef_text_field_commands_t)
+// include/internal/cef_types.h (cef_text_field_commands_t)
 type TCefTextFieldCommands = types.Int32
 
 const (
@@ -1709,15 +1705,11 @@ const (
 
 type TCefPermissionRequestTypes int32
 
-// / <summary>
-// / Permission types used with OnShowPermissionPrompt. Some types are
-// / platform-specific or only supported with the Chrome runtime. Should be kept
-// / in sync with Chromium's permissions::RequestType type.
-// / </summary>
-// / <remarks>
-// / <para>TCefPermissionRequestTypes values.</para>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
-// / </remarks>
+// Permission types used with OnShowPermissionPrompt. Some types are
+// platform-specific or only supported with the Chrome runtime. Should be kept
+// in sync with Chromium's permissions::RequestType type.
+// <para>TCefPermissionRequestTypes values.</para>
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_permission_request_types_t)</see></para>
 const (
 	CEF_PERMISSION_TYPE_NONE                       TCefPermissionRequestTypes = 0
 	CEF_PERMISSION_TYPE_ACCESSIBILITY_EVENTS       TCefPermissionRequestTypes = 1 << 0
@@ -1744,13 +1736,9 @@ const (
 
 type TCefChromePageActionIconType int32
 
-// / <summary>
-// / Chrome page action icon types. Should be kept in sync with Chromium's
-// / PageActionIconType type.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_page_action_icon_type_t)</see></para>
-// / </remarks>
+// Chrome page action icon types. Should be kept in sync with Chromium's
+// PageActionIconType type.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_page_action_icon_type_t)</see></para>
 const (
 	CEF_CPAIT_BOOKMARK_STAR TCefChromePageActionIconType = iota
 	CEF_CPAIT_CLICK_TO_CALL
@@ -1784,13 +1772,9 @@ const (
 
 type TCefChromeToolbarButtonType int32
 
-// / <summary>
-// / Chrome toolbar button types. Should be kept in sync with CEF's internal
-// / ToolbarButtonType type.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_chrome_toolbar_button_type_t)</see></para>
-// / </remarks>
+// Chrome toolbar button types. Should be kept in sync with CEF's internal
+// ToolbarButtonType type.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_chrome_toolbar_button_type_t)</see></para>
 const (
 	CEF_CTBT_CAST TCefChromeToolbarButtonType = iota
 	CEF_CTBT_DOWNLOAD
@@ -1801,65 +1785,50 @@ const (
 
 type TCefGestureCommand int32
 
-// / <summary>
-// / Specifies the gesture commands.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_gesture_command_t)</see></para>
-// / </remarks>
+// Specifies the gesture commands.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_gesture_command_t)</see></para>
 const (
 	CEF_GESTURE_COMMAND_BACK TCefGestureCommand = iota
 	CEF_GESTURE_COMMAND_FORWARD
 )
 
-// / <summary>
-// / Download interrupt reasons. Should be kept in sync with
-// / Chromium's download::DownloadInterruptReason type.
-// / </summary>
-// / <remarks>
-// / <para>See the uCEFConstants unit for all possible values.</para>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_download_interrupt_reason_t)</see></para>
-// / </remarks>
+// Download interrupt reasons. Should be kept in sync with
+// Chromium's download::DownloadInterruptReason type.
+// <para>See the uCEFConstants unit for all possible values.</para>
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_download_interrupt_reason_t)</see></para>
 type TCefDownloadInterruptReason int32
 
 type TCefUIColorMode int32
 
-// / <summary>
-// / Color mode in UI for platforms that support it.
-// / </summary>
+// Color mode in UI for platforms that support it.
 const (
-	// <summary>
+
 	// System default.
-	// </summary>
+
 	UICMSystemDefault TCefUIColorMode = iota
-	// <summary>
+
 	// Forces light color mode in UI for platforms that support it.
-	// </summary>
+
 	UICMForceLight
-	// <summary>
+
 	// Forces dark color mode in UI for platforms that support it.
-	// </summary>
+
 	UICMForceDark
 )
 
 type TCefContentSettingTypes int32
 
-// / <summary>
-// / Supported content setting types. Some types are platform-specific or only
-// / supported with the Chrome runtime. Should be kept in sync with Chromium's
-// / ContentSettingsType type.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_types_t)</see></para>
-// / </remarks>
+// Supported content setting types. Some types are platform-specific or only
+// supported with the Chrome runtime. Should be kept in sync with Chromium's
+// ContentSettingsType type.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_types_t)</see></para>
 const (
 	CEF_CONTENT_SETTING_TYPE_COOKIES TCefContentSettingTypes = iota
 	CEF_CONTENT_SETTING_TYPE_IMAGES
 	CEF_CONTENT_SETTING_TYPE_JAVASCRIPT
 
-	// <summary>
 	// This setting governs both popups and unwanted redirects like tab-unders and framebusting.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_POPUPS
 
 	CEF_CONTENT_SETTING_TYPE_GEOLOCATION
@@ -1884,120 +1853,106 @@ const (
 	CEF_CONTENT_SETTING_TYPE_IMPORTANT_SITE_INFO
 	CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOBLOCKER_DATA
 	CEF_CONTENT_SETTING_TYPE_ADS
-	// <summary>
 	// Website setting which stores metadata for the subresource filter to aid in
 	// decisions for whether or not to show the UI.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_ADS_DATA
-	// <summary>
 	// This is special-cased in the permissions layer to always allow, and as
 	// such doesn't have associated prefs data.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_MIDI
-	// <summary>
 	// This content setting type is for caching password protection service's
 	// verdicts of each origin.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_PASSWORD_PROTECTION
-	// <summary>
 	// Website setting which stores engagement data for media related to a
 	// specific origin.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_MEDIA_ENGAGEMENT
-	// <summary>
 	// Content setting which stores whether or not the site can play audible
 	// sound. This will not block playback but instead the user will not hear it.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SOUND
-	// <summary>
 	// Website setting which stores the list of client hints that the origin
 	// requested the browser to remember. The browser is expected to send all
 	// client hints in the HTTP request headers for every resource requested
 	// from that origin.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_CLIENT_HINTS
-	// <summary>
 	// Generic Sensor API covering ambient-light-sensor, accelerometer, gyroscope
 	// and magnetometer are all mapped to a single content_settings_type.
 	// Setting for the Generic Sensor API covering ambient-light-sensor,
 	// accelerometer, gyroscope and magnetometer. These are all mapped to a
 	// single ContentSettingsType.
-	// </summary>
 	CEF_CONTENT_SETTING_TYPE_SENSORS
-	// <summary>
+
 	// Content setting which stores whether or not the user has granted the site
 	// permission to respond to accessibility events, which can be used to
 	// provide a custom accessibility experience. Requires explicit user consent
 	// because some users may not want sites to know they're using assistive
 	// technology.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_ACCESSIBILITY_EVENTS
-	// <summary>
+
 	// Used to store whether to allow a website to install a payment handler.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_PAYMENT_HANDLER
-	// <summary>
+
 	// Content setting which stores whether to allow sites to ask for permission
 	// to access USB devices. If this is allowed specific device permissions are
 	// stored under USB_CHOOSER_DATA.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_USB_GUARD
-	// <summary>
+
 	// Nothing is stored in this setting at present. Please refer to
 	// BackgroundFetchPermissionContext for details on how this permission
 	// is ascertained.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_BACKGROUND_FETCH
-	// <summary>
+
 	// Website setting which stores the amount of times the user has dismissed
 	// intent picker UI without explicitly choosing an option.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_INTENT_PICKER_DISPLAY
-	// <summary>
+
 	// Used to store whether to allow a website to detect user active/idle state.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_IDLE_DETECTION
-	// <summary>
+
 	// Setting for enabling auto-select of all screens for getDisplayMediaSet.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_GET_DISPLAY_MEDIA_SET_SELECT_ALL_SCREENS
-	// <summary>
+
 	// Content settings for access to serial ports. The "guard" content setting
 	// stores whether to allow sites to ask for permission to access a port. The
 	// permissions granted to access particular ports are stored in the "chooser
 	// data" website setting.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_SERIAL_GUARD
 	CEF_CONTENT_SETTING_TYPE_SERIAL_CHOOSER_DATA
-	// <summary>
+
 	// Nothing is stored in this setting at present. Please refer to
 	// PeriodicBackgroundSyncPermissionContext for details on how this permission
 	// is ascertained.
 	// This content setting is not registered because it does not require access
 	// to any existing providers.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_PERIODIC_BACKGROUND_SYNC
-	// <summary>
+
 	// Content setting which stores whether to allow sites to ask for permission
 	// to do Bluetooth scanning.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_BLUETOOTH_SCANNING
-	// <summary>
+
 	// Content settings for access to HID devices. The "guard" content setting
 	// stores whether to allow sites to ask for permission to access a device.
 	// The permissions granted to access particular devices are stored in the
 	// "chooser data" website setting.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_HID_GUARD
 	CEF_CONTENT_SETTING_TYPE_HID_CHOOSER_DATA
-	// <summary>
+
 	// Wake Lock API, which has two lock types: screen and system locks.
 	// Currently, screen locks do not need any additional permission, and system
 	// locks are always denied while the right UI is worked out.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SCREEN
 	CEF_CONTENT_SETTING_TYPE_WAKE_LOCK_SYSTEM
-	// <summary>
+
 	// Legacy SameSite cookie behavior. This disables SameSite=Lax-by-default,
 	// SameSite=None requires Secure, and Schemeful Same-Site, forcing the
 	// legacy behavior wherein 1) cookies that don't specify SameSite are treated
@@ -2006,232 +1961,228 @@ const (
 	//
 	// This will also be used to revert to legacy behavior when future changes
 	// in cookie handling are introduced.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_LEGACY_COOKIE_ACCESS
-	// <summary>
+
 	// Content settings which stores whether to allow sites to ask for permission
 	// to save changes to an original file selected by the user through the
 	// File System Access API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_WRITE_GUARD
-	// <summary>
+
 	// Used to store whether to allow a website to exchange data with NFC
 	// devices.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_NFC
-	// <summary>
+
 	// Website setting to store permissions granted to access particular
 	// Bluetooth devices.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_BLUETOOTH_CHOOSER_DATA
-	// <summary>
+
 	// Full access to the system clipboard (sanitized read without user gesture,
 	// and unsanitized read and write with user gesture).
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_CLIPBOARD_READ_WRITE
-	// <summary>
+
 	// This is special-cased in the permissions layer to always allow, and as
 	// such doesn't have associated prefs data.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_CLIPBOARD_SANITIZED_WRITE
-	// <summary>
+
 	// This content setting type is for caching safe browsing real time url
 	// check's verdicts of each origin.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_SAFE_BROWSING_URL_CHECK_DATA
-	// <summary>
+
 	// Used to store whether a site is allowed to request AR or VR sessions with
 	// the WebXr Device API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_VR
 	CEF_CONTENT_SETTING_TYPE_AR
-	// <summary>
+
 	// Content setting which stores whether to allow site to open and read files
 	// and directories selected through the File System Access API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_READ_GUARD
-	// <summary>
+
 	// Access to first party storage in a third-party context. Exceptions are
 	// scoped to the combination of requesting/top-level origin, and are managed
 	// through the Storage Access API. For the time being, this content setting
 	// exists in parallel to third-party cookie rules stored in COOKIES.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_STORAGE_ACCESS
-	// <summary>
+
 	// Content setting which stores whether to allow a site to control camera
 	// movements. It does not give access to camera.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_CAMERA_PAN_TILT_ZOOM
-	// <summary>
+
 	// Content setting for Screen Enumeration and Screen Detail functionality.
 	// Permits access to detailed multi-screen information, like size and
 	// position. Permits placing fullscreen and windowed content on specific
 	// screens. See also: https://w3c.github.io/window-placement
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_WINDOW_MANAGEMENT
-	// <summary>
+
 	// Stores whether to allow insecure websites to make local network requests.
 	// See also: https://wicg.github.io/local-network-access
 	// Set through enterprise policies only.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_INSECURE_LOCAL_NETWORK
-	// <summary>
+
 	// Content setting which stores whether or not a site can access low-level
 	// locally installed font data using the Local Fonts Access API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_LOCAL_FONTS
-	// <summary>
+
 	// Stores per-origin state for permission auto-revocation (for all permission
 	// types).
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_PERMISSION_AUTOREVOCATION_DATA
-	// <summary>
+
 	// Stores per-origin state of the most recently selected directory for the
 	// use by the File System Access API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_LAST_PICKED_DIRECTORY
-	// <summary>
+
 	// Controls access to the getDisplayMedia API when {preferCurrentTab: true}
 	// is specified.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_DISPLAY_CAPTURE
-	// <summary>
+
 	// Website setting to store permissions metadata granted to paths on the
 	// local file system via the File System Access API.
 	// |FILE_SYSTEM_WRITE_GUARD| is the corresponding "guard" setting.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FILE_SYSTEM_ACCESS_CHOOSER_DATA
-	// <summary>
+
 	// Stores a grant that allows a relying party to send a request for identity
 	// information to specified identity providers, potentially through any
 	// anti-tracking measures that would otherwise prevent it. This setting is
 	// associated with the relying party's origin.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_SHARING
-	// <summary>
+
 	// Whether to use the v8 optimized JIT for running JavaScript on the page.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_JAVASCRIPT_JIT
-	// <summary>
+
 	// Content setting which stores user decisions to allow loading a site over
 	// HTTP. Entries are added by hostname when a user bypasses the HTTPS-First
 	// Mode interstitial warning when a site does not support HTTPS. Allowed
 	// hosts are exact hostname matches -- subdomains of a host on the allowlist
 	// must be separately allowlisted.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_HTTP_ALLOWED
-	// <summary>
+
 	// Stores metadata related to form fill, such as e.g. whether user data was
 	// autofilled on a specific website.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FORMFILL_METADATA
-	// <summary>
+
 	// Setting to indicate that there is an active federated sign-in session
 	// between a specified relying party and a specified identity provider for
 	// a specified account. When this is present it allows access to session
 	// management capabilities between the sites. This setting is associated
 	// with the relying party's origin.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_ACTIVE_SESSION
-	// <summary>
+
 	// Setting to indicate whether Chrome should automatically apply darkening to
 	// web content.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_AUTO_DARK_WEB_CONTENT
-	// <summary>
+
 	// Setting to indicate whether Chrome should request the desktop view of a
 	// site instead of the mobile one.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_REQUEST_DESKTOP_SITE
-	// <summary>
+
 	// Setting to indicate whether browser should allow signing into a website
 	// via the browser FedCM API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_API
-	// <summary>
+
 	// Stores notification interactions per origin for the past 90 days.
 	// Interactions per origin are pre-aggregated over seven-day windows: A
 	// notification interaction or display is assigned to the last Monday
 	// midnight in local time.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_NOTIFICATION_INTERACTIONS
-	// <summary>
+
 	// Website setting which stores the last reduced accept language negotiated
 	// for a given origin, to be used on future visits to the origin.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_REDUCED_ACCEPT_LANGUAGE
-	// <summary>
+
 	// Website setting which is used for NotificationPermissionReviewService to
 	// store origin blocklist from review notification permissions feature.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_NOTIFICATION_PERMISSION_REVIEW
-	// <summary>
+
 	// Website setting to store permissions granted to access particular devices
 	// in private network.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_GUARD
 	CEF_CONTENT_SETTING_TYPE_PRIVATE_NETWORK_CHOOSER_DATA
-	// <summary>
+
 	// Website setting which stores whether the browser has observed the user
 	// signing into an identity-provider based on observing the IdP-SignIn-Status
 	// HTTP header.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_SIGNIN_STATUS
-	// <summary>
+
 	// Website setting which is used for UnusedSitePermissionsService to
 	// store revoked permissions of unused sites from unused site permissions
 	// feature.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_REVOKED_UNUSED_SITE_PERMISSIONS
-	// <summary>
+
 	// Similar to STORAGE_ACCESS, but applicable at the page-level rather than
 	// being specific to a frame.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_TOP_LEVEL_STORAGE_ACCESS
-	// <summary>
+
 	// Setting to indicate whether user has opted in to allowing auto re-authn
 	// via the FedCM API.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_AUTO_REAUTHN_PERMISSION
-	// <summary>
+
 	// Website setting which stores whether the user has explicitly registered
 	// a website as an identity-provider.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_FEDERATED_IDENTITY_IDENTITY_PROVIDER_REGISTRATION
-	// <summary>
+
 	// Content setting which is used to indicate whether anti-abuse functionality
 	// should be enabled.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_ANTI_ABUSE
-	// <summary>
+
 	// Content setting used to indicate whether third-party storage partitioning
 	// should be enabled.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_THIRD_PARTY_STORAGE_PARTITIONING
-	// <summary>
+
 	// Used to indicate whether HTTPS-First Mode is enabled on the hostname.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_HTTPS_ENFORCED
-	// <summary>
+
 	// Stores per origin metadata for cookie controls.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_COOKIE_CONTROLS_METADATA
-	// <summary>
+
 	// Setting for supporting 3PCD.
-	// </summary>
+
 	CEF_CONTENT_SETTING_TYPE_TPCD_SUPPORT
 	CEF_CONTENT_SETTING_TYPE_NUM_TYPES
 )
 
 type TCefContentSettingValues int32
 
-// / <summary>
-// / Supported content setting values. Should be kept in sync with Chromium's
-// / ContentSetting type.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_values_t)</see></para>
-// / </remarks>
+// Supported content setting values. Should be kept in sync with Chromium's
+// ContentSetting type.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_content_setting_values_t)</see></para>
 const (
 	CEF_CONTENT_SETTING_VALUE_DEFAULT TCefContentSettingValues = iota
 	CEF_CONTENT_SETTING_VALUE_ALLOW
@@ -2242,13 +2193,9 @@ const (
 	CEF_CONTENT_SETTING_VALUE_NUM_VALUES
 )
 
-// / <summary>
-// / Log items prepended to each log line.
-// / </summary>
-// / <remarks>
-// / <para>See the uCEFConstants unit for all possible values.</para>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_log_items_t)</see></para>
-// / </remarks>
+// Log items prepended to each log line.
+// <para>See the uCEFConstants unit for all possible values.</para>
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_log_items_t)</see></para>
 type TCefLogItems = types.Cardinal
 
 const (
@@ -2332,13 +2279,9 @@ const (
 	TID_RENDERER
 )
 
-// / <summary>
-// / DOM form control types. Should be kept in sync with Chromium's
-// / blink::mojom::FormControlType type.
-// / </summary>
-// / <remarks>
-// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_dom_form_control_type_t)</see></para>
-// / </remarks>
+// DOM form control types. Should be kept in sync with Chromium's
+// blink::mojom::FormControlType type.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_dom_form_control_type_t)</see></para>
 type TCefDomFormControlType = int32
 
 const (
@@ -2376,4 +2319,36 @@ const (
 	DOM_FORM_CONTROL_TYPE_SELECT_MULTIPLE
 	DOM_FORM_CONTROL_TYPE_SELECT_LIST
 	DOM_FORM_CONTROL_TYPE_TEXT_AREA
+)
+
+// CEF supports both a Chrome runtime style (based on the Chrome UI layer) and
+// an Alloy runtime style (based on the Chromium content layer). Chrome style
+// provides the full Chrome UI and browser functionality whereas Alloy style
+// provides less default browser functionality but adds additional client
+// callbacks and support for windowless (off-screen) rendering. The style type
+// is individually configured for each window/browser at creation time and
+// different styles can be mixed during runtime. For additional comparative
+// details on runtime styles see
+// https://bitbucket.org/chromiumembedded/cef/wiki/Architecture.md#markdown-header-cef3</para>
+//
+// <para>Windowless rendering will always use Alloy style. Windowed rendering with a
+// default window or client-provided parent window can configure the style via
+// TCefWindowInfo.runtime_style. Windowed rendering with the Views framework can
+// configure the style via ICefWindowDelegate.GetWindowRuntimeStyle and
+// ICefBrowserViewDelegate.GetBrowserRuntimeStyle. Alloy style Windows with the
+// Views framework can host only Alloy style BrowserViews but Chrome style
+// Windows can host both style BrowserViews. Additionally, a Chrome style
+// Window can host at most one Chrome style BrowserView but potentially
+// multiple Alloy style BrowserViews. See TCefWindowInfo.runtime_style
+// documentation for any additional platform-specific limitations.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types_runtime.h">CEF source file: /include/internal/cef_types_runtime.h (cef_runtime_style_t)</see></para>
+type TCefRuntimeStyle = int32
+
+const (
+	// Use the default style. See above documentation for exceptions.
+	CEF_RUNTIME_STYLE_DEFAULT TCefRuntimeStyle = iota
+	// Use Chrome style.
+	CEF_RUNTIME_STYLE_CHROME
+	// Use Alloy style.
+	CEF_RUNTIME_STYLE_ALLOY
 )

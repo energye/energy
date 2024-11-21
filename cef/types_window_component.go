@@ -51,7 +51,16 @@ func (m *TCEFWindowComponent) Show() {
 	imports.Proc(def.CEFWindowComponent_Show).Call(m.Instance())
 }
 
-// ShowAsBrowserModalDialog 显示窗口 浏览器模式对话框
+// ShowAsBrowserModalDialog
+// Show the Window as a browser modal dialog relative to |browser_view|. A
+// parent Window must be returned via
+// ICefWindowDelegate.OnGetParentWindow and |browser_view| must belong
+// to that parent Window. While this Window is visible, |browser_view| will
+// be disabled while other controls in the parent Window remain enabled.
+// Navigating or destroying the |browser_view| will close this Window
+// automatically. Alternately, use show() and return true (1) from
+// ICefWindowDelegate.OnIsWindowModalDialog for a window modal dialog
+// where all controls in the parent Window are disabled.
 func (m *TCEFWindowComponent) ShowAsBrowserModalDialog(browserView *ICefBrowserView) {
 	if !m.IsValid() || !browserView.IsValid() {
 		return
@@ -210,6 +219,47 @@ func (m *TCEFWindowComponent) RemoveAllAccelerators() {
 		return
 	}
 	imports.Proc(def.CEFWindowComponent_RemoveAllAccelerators).Call(m.Instance())
+}
+
+// SetThemeColor
+// / Override a standard theme color or add a custom color associated with
+// / |color_id|. See cef_color_ids.h for standard ID values. Recommended usage
+// / is as follows:</para>
+// / <code>
+// / 1. Customize the default native/OS theme by calling SetThemeColor before
+// /    showing the first Window. When done setting colors call
+// /    ICefWindow.ThemeChanged to trigger ICefViewDelegate.OnThemeChanged
+// /    notifications.
+// / 2. Customize the current native/OS or Chrome theme after it changes by
+// /    calling SetThemeColor from the ICefWindowDelegate.OnThemeColorsChanged
+// /    callback. ICefViewDelegate.OnThemeChanged notifications will then be
+// /    triggered automatically.
+// / </code>
+// / <para>The configured color will be available immediately via
+// / ICefView.GetThemeColor and will be applied to each View in this
+// / Window's component hierarchy when ICefViewDelegate.OnThemeChanged is
+// / called. See OnThemeColorsChanged documentation for additional details.</para>
+// / <para>Clients wishing to add custom colors should use |color_id| values >=
+// / CEF_ChromeColorsEnd.
+func (m *TCEFWindowComponent) SetThemeColor(colorId int32, color types.TCefColor) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFWindowComponent_SetThemeColor).Call(m.Instance(), uintptr(colorId), uintptr(color))
+}
+
+// ThemeChanged
+// / Trigger ICefViewDelegate.OnThemeChanged callbacks for each View in
+// / this Window's component hierarchy. Unlike a native/OS or Chrome theme
+// / change this function does not reset theme colors to standard values and
+// / does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.
+// / Do not call this function from ICefWindowDelegate.OnThemeColorsChanged
+// / or ICefViewDelegate.OnThemeChanged.
+func (m *TCEFWindowComponent) ThemeChanged() {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFWindowComponent_ThemeChanged).Call(m.Instance())
 }
 
 // SetAlwaysOnTop 设置窗口是否置顶
@@ -549,6 +599,17 @@ func (m *TCEFWindowComponent) AddChildView(browserViewComponent *TCEFBrowserView
 	imports.Proc(def.CEFWindowComponent_AddChildView).Call(m.Instance(), browserViewComponent.Instance())
 }
 
+// RuntimeStyle
+// Returns the runtime style for this Window (ALLOY or CHROME). See
+// TCefRuntimeStyle documentation for details.
+func (m *TCEFWindowComponent) RuntimeStyle() consts.TCefRuntimeStyle {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.CEFWindowComponent_RuntimeStyle).Call(m.Instance())
+	return consts.TCefRuntimeStyle(r1)
+}
+
 // SetOnWindowCreated 窗口创建回调事件
 func (m *TCEFWindowComponent) SetOnWindowCreated(fn WindowComponentOnWindowCreated) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
@@ -720,6 +781,17 @@ func init() {
 			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
 			isCompleted := api.GoBool(getVal(2))
 			fn.(WindowComponentOnWindowFullscreenTransition)(window, isCompleted)
+		case WindowComponentOnThemeColorsChanged:
+			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
+			fn.(WindowComponentOnThemeColorsChanged)(window, int32(getVal(2)))
+		case WindowComponentOnGetWindowRuntimeStyle:
+			fn.(WindowComponentOnGetWindowRuntimeStyle)((*consts.TCefRuntimeStyle)(getPtr(1)))
+		case WindowComponentOnGetLinuxWindowProperties:
+			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
+			propertiesPtr := (*tLinuxWindowPropertiesPtr)(getPtr(2))
+			properties := propertiesPtr.convert()
+			fn.(WindowComponentOnGetLinuxWindowProperties)(window, properties, (*bool)(getPtr(3)))
+			propertiesPtr = properties.ToPtr()
 		default:
 			return false
 		}

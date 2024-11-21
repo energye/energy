@@ -342,3 +342,23 @@ func (m *tCefPopupFeaturesPtr) convert() *TCefPopupFeatures {
 		AdditionalFeatures: getStringList(m.AdditionalFeatures.ToPtr()),
 	}
 }
+
+type tLinuxWindowPropertiesPtr struct {
+	/// Main window's Wayland's app_id
+	WaylandAppId uintptr
+	/// Main window's WM_CLASS_CLASS in X11
+	WmClassClass uintptr
+	/// Main window's WM_CLASS_NAME in X11
+	WmClassName uintptr
+	/// Main window's WM_WINDOW_ROLE in X11
+	WmRoleName uintptr
+}
+
+func (m *tLinuxWindowPropertiesPtr) convert() TLinuxWindowProperties {
+	return TLinuxWindowProperties{
+		WaylandAppId: api.GoStr(m.WaylandAppId),
+		WmClassClass: api.GoStr(m.WmClassClass),
+		WmClassName:  api.GoStr(m.WmClassName),
+		WmRoleName:   api.GoStr(m.WmRoleName),
+	}
+}

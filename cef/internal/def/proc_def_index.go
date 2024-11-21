@@ -1196,6 +1196,8 @@ const (
 	CEFWindowComponent_SetAccelerator
 	CEFWindowComponent_RemoveAccelerator
 	CEFWindowComponent_RemoveAllAccelerators
+	CEFWindowComponent_SetThemeColor
+	CEFWindowComponent_ThemeChanged
 	CEFWindowComponent_SetAlwaysOnTop
 	CEFWindowComponent_SetFullscreen
 	CEFWindowComponent_SetBackgroundColor
@@ -1221,6 +1223,7 @@ const (
 	CEFWindowComponent_IsMaximized
 	CEFWindowComponent_IsMinimized
 	CEFWindowComponent_AddChildView
+	CEFWindowComponent_RuntimeStyle
 	CEFWindowComponent_SetOnWindowCreated
 	CEFWindowComponent_SetOnWindowDestroyed
 	CEFWindowComponent_SetOnWindowActivationChanged
@@ -1238,6 +1241,9 @@ const (
 	CEFWindowComponent_SetOnAccelerator
 	CEFWindowComponent_SetOnKeyEvent
 	CEFWindowComponent_SetOnWindowFullscreenTransition
+	CEFWindowComponent_SetOnThemeColorsChanged
+	CEFWindowComponent_SetOnGetWindowRuntimeStyle
+	CEFWindowComponent_SetOnGetLinuxWindowProperties
 	// TCEFBrowserViewComponent
 	CEFBrowserViewComponent_Create
 	CEFBrowserViewComponent_CreateBrowserView

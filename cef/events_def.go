@@ -230,6 +230,9 @@ type WindowComponentOnCanCloseEx func(cefWindow *ICefWindow, window IBrowserWind
 type WindowComponentOnAccelerator func(window *ICefWindow, commandId int32, result *bool)
 type WindowComponentOnKey func(window *ICefWindow, event *TCefKeyEvent, result *bool)
 type WindowComponentOnWindowFullscreenTransition func(window *ICefWindow, isCompleted bool)
+type WindowComponentOnThemeColorsChanged func(window *ICefWindow, chromeTheme int32)
+type WindowComponentOnGetWindowRuntimeStyle func(result *consts.TCefRuntimeStyle)
+type WindowComponentOnGetLinuxWindowProperties func(window *ICefWindow, properties TLinuxWindowProperties, result *bool)
 
 /************* TCEFBrowserViewComponent *************/
 

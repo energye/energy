@@ -1416,3 +1416,25 @@ func (m *TCefKeyEvent) KeyDown() bool {
 func (m *TCefKeyEvent) KeyUp() bool {
 	return m.Kind == consts.KEYEVENT_KEYUP
 }
+
+// TLinuxWindowProperties String version
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_linux_window_properties_t)</see></para>
+type TLinuxWindowProperties struct {
+	/// Main window's Wayland's app_id
+	WaylandAppId string
+	/// Main window's WM_CLASS_CLASS in X11
+	WmClassClass string
+	/// Main window's WM_CLASS_NAME in X11
+	WmClassName string
+	/// Main window's WM_WINDOW_ROLE in X11
+	WmRoleName string
+}
+
+func (m *TLinuxWindowProperties) ToPtr() *tLinuxWindowPropertiesPtr {
+	return &tLinuxWindowPropertiesPtr{
+		WaylandAppId: api.PascalStr(m.WaylandAppId),
+		WmClassClass: api.PascalStr(m.WmClassClass),
+		WmClassName:  api.PascalStr(m.WmClassName),
+		WmRoleName:   api.PascalStr(m.WmRoleName),
+	}
+}
