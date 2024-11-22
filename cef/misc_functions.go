@@ -37,14 +37,67 @@ func WindowInfoAsWindowless(windowInfo, windowParent uintptr, windowName string)
 	imports.Proc(def.Misc_WindowInfoAsWindowless).Call(windowInfo, windowParent, api.PascalStr(windowName))
 }
 
-// RegisterExtension 注册JS扩展
+// RegisterExtension
+// Register a new V8 extension with the specified JavaScript extension code and
+// handler. Functions implemented by the handler are prototyped using the
+// keyword 'native'. The calling of a native function is restricted to the
+// scope in which the prototype of the native function is defined. This
+// function may only be called on the render process main thread.
 //
-//	 将自定义JS代码植入到当前浏览器
-//		在 WebKitInitialized 回调函数中使用
-//		参数:
-//			name: 根对象名, 不允许使用默认的内部名称, 参阅 isInternalBind 函数
-//			code: js code
-//			handler: 处理器, 根据本地函数名回调该处理器
+// Example JavaScript extension code: <pre>
+//
+//	// create the 'example' global object if it doesn't already exist.
+//	if (!example)
+//	  example = {};
+//	// create the 'example.test' global object if it doesn't already exist.
+//	if (!example.test)
+//	  example.test = {};
+//	(function() {
+//	  // Define the function 'example.test.myfunction'.
+//	  example.test.myfunction = function() {
+//	    // Call CefV8Handler::Execute() with the function name 'MyFunction'
+//	    // and no arguments.
+//	    native function MyFunction();
+//	    return MyFunction();
+//	  };
+//	  // Define the getter function for parameter 'example.test.myparam'.
+//	  example.test.__defineGetter__('myparam', function() {
+//	    // Call CefV8Handler::Execute() with the function name 'GetMyParam'
+//	    // and no arguments.
+//	    native function GetMyParam();
+//	    return GetMyParam();
+//	  });
+//	  // Define the setter function for parameter 'example.test.myparam'.
+//	  example.test.__defineSetter__('myparam', function(b) {
+//	    // Call CefV8Handler::Execute() with the function name 'SetMyParam'
+//	    // and a single argument.
+//	    native function SetMyParam();
+//	    if(b) SetMyParam(b);
+//	  });
+//
+//	  // Extension definitions can also contain normal JavaScript variables
+//	  // and functions.
+//	  var myint = 0;
+//	  example.test.increment = function() {
+//	    myint += 1;
+//	    return myint;
+//	  };
+//	})();
+//
+// </pre>
+//
+// Example usage in the page: <pre>
+//
+//	// Call the function.
+//	example.test.myfunction();
+//	// Set the parameter.
+//	example.test.myparam = value;
+//	// Get the parameter.
+//	value = example.test.myparam;
+//	// Call another function.
+//	example.test.increment();
+//
+// </pre>
 func RegisterExtension(name, code string, handler *ICefV8Handler) {
 	registerExtension(name, code, handler)
 }
@@ -152,16 +205,22 @@ func GetDeviceScaleFactor() (result float32) {
 	return
 }
 
+// Post a task for execution on the specified thread. Equivalent to using
+// TCefTaskRunnerRef.GetForThread(threadId).PostTask(task).
 func CefPostTask(threadId consts.TCefThreadId, task *ITask) bool {
 	r1, _, _ := imports.Proc(def.Misc_CefPostTask).Call(uintptr(threadId), task.Instance())
 	return api.GoBool(r1)
 }
 
+// Post a task for delayed execution on the specified thread. Equivalent to
+// using TCefTaskRunnerRef.GetForThread(threadId).PostDelayedTask(task, delay_ms).
 func CefPostDelayedTask(threadId consts.TCefThreadId, task *ITask, delayMs int64) bool {
 	r1, _, _ := imports.Proc(def.Misc_CefPostDelayedTask).Call(uintptr(threadId), task.Instance(), uintptr(unsafe.Pointer(&delayMs)))
 	return api.GoBool(r1)
 }
 
+// Returns true (1) if called on the specified thread. Equivalent to using
+// TCefTaskRunnerRef.GetForThread(threadId).BelongsToCurrentThread().
 func CefCurrentlyOn(threadId consts.TCefThreadId) bool {
 	r1, _, _ := imports.Proc(def.Misc_CefCurrentlyOn).Call(uintptr(threadId))
 	return api.GoBool(r1)
