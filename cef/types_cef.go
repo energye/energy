@@ -462,7 +462,11 @@ type ICefMenuModel struct {
 }
 
 // ICefMenuModelDelegate
-// include/capi/cef_menu_model_delegate_capi.h (cef_menu_model_delegate_t)
+//
+//	Implement this interface to handle menu model events. The functions of this
+//	interface will be called on the browser process UI thread unless otherwise indicated.
+//	<para><see cref="uCEFTypes|TCefMenuModelDelegate">Implements TCefMenuModelDelegate</see></para>
+//	<para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_menu_model_delegate_capi.h">CEF source file: /include/capi/cef_menu_model_delegate_capi.h (cef_menu_model_delegate_t)</see></para>
 type ICefMenuModelDelegate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer

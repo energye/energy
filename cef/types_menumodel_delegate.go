@@ -55,49 +55,66 @@ func (m *ICefMenuModelDelegate) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefRunFileDialogCallback) ExecuteCommand(fn executeCommand) {
+// ExecuteCommand
+// Perform the action associated with the specified |command_id| and optional |event_flags|.
+func (m *ICefMenuModelDelegate) ExecuteCommand(fn executeCommand) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_ExecuteCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) MouseOutsideMenu(fn mouseOutsideMenu) {
+// MouseOutsideMenu
+// / Called when the user moves the mouse outside the menu and over the owning window.
+func (m *ICefMenuModelDelegate) MouseOutsideMenu(fn mouseOutsideMenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MouseOutsideMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) UnhandledOpenSubmenu(fn unhandledOpenSubmenu) {
+// UnhandledOpenSubmenu
+// / Called on unhandled open submenu keyboard commands. |is_rtl| will be true
+// / (1) if the menu is displaying a right-to-left language.
+func (m *ICefMenuModelDelegate) UnhandledOpenSubmenu(fn unhandledOpenSubmenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_UnhandledOpenSubmenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) UnhandledCloseSubmenu(fn unhandledCloseSubmenu) {
+// UnhandledCloseSubmenu
+// / Called on unhandled close submenu keyboard commands. |is_rtl| will be true
+// / (1) if the menu is displaying a right-to-left language.
+func (m *ICefMenuModelDelegate) UnhandledCloseSubmenu(fn unhandledCloseSubmenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_UnhandledCloseSubmenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) MenuWillShow(fn menuWillShow) {
+// MenuWillShow
+// / The menu is about to show.
+func (m *ICefMenuModelDelegate) MenuWillShow(fn menuWillShow) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MenuWillShow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) MenuClosed(fn menuClosed) {
+// MenuClosed
+// / The menu has closed.
+func (m *ICefMenuModelDelegate) MenuClosed(fn menuClosed) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MenuClosed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefRunFileDialogCallback) FormatLabel(fn formatLabel) {
+// FormatLabel
+// / Optionally modify a menu item label. Return true (1) if |label| was
+// / modified.
+func (m *ICefMenuModelDelegate) FormatLabel(fn formatLabel) {
 	if !m.IsValid() {
 		return
 	}

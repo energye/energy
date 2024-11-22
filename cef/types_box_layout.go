@@ -32,6 +32,13 @@ func (*boxLayout) UnWrap(data *ICefBoxLayout) *ICefBoxLayout {
 	return nil
 }
 
+// SetFlexForView
+//
+//	Set the flex weight for the given |view|. Using the preferred size as the
+//	basis, free space along the main axis is distributed to views in the ratio
+//	of their flex weights. Similarly, if the views will overflow the parent,
+//	space is subtracted in these ratios. A flex of 0 means this view is not
+//	resized. Flex values must not be negative.
 func (m *ICefBoxLayout) SetFlexForView(view *ICefView, flex int32) {
 	if !m.IsValid() || !view.IsValid() {
 		return
@@ -39,6 +46,10 @@ func (m *ICefBoxLayout) SetFlexForView(view *ICefView, flex int32) {
 	imports.Proc(def.BoxLayout_SetFlexForView).Call(m.Instance(), view.Instance(), uintptr(flex))
 }
 
+// ClearFlexForView
+//
+//	Clears the flex for the given |view|, causing it to use the default flex
+//	specified via TCefBoxLayoutSettings.default_flex.
 func (m *ICefBoxLayout) ClearFlexForView(view *ICefView) {
 	if !m.IsValid() || !view.IsValid() {
 		return
