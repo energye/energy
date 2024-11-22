@@ -1,6 +1,6 @@
 # Upgrade Log
 
-### 2.5.0 
+### 2.5.0 - next
 - UP: Upgrade CEF130.1.16, after the upgrade, a small number of apis are incompatible, and the extension component API is removed
 - R: Remove the Go implementation's internal IPC package, pkgs/channel, and keep it available as a separate module to resolve potential issues
 - R: The trigger targets (TgJs, TgGoSub, TgGoMain) in IPc.ON listening mode are removed, so that only JS is On the Go trigger ipc receiver

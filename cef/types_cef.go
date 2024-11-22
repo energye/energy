@@ -462,7 +462,7 @@ type ICefMenuModel struct {
 }
 
 // ICefMenuModelDelegate
-// /include/capi/cef_menu_model_delegate_capi.h (cef_menu_model_delegate_t)
+// include/capi/cef_menu_model_delegate_capi.h (cef_menu_model_delegate_t)
 type ICefMenuModelDelegate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -494,49 +494,49 @@ type TCefPostDataElementArray struct {
 }
 
 // ICefBrowserView
-// /include/capi/views/cef_browser_view_capi.h (cef_browser_view_t)
+// include/capi/views/cef_browser_view_capi.h (cef_browser_view_t)
 type ICefBrowserView struct {
 	*ICefView
 }
 
 // ICefButton
-// /include/capi/views/cef_button_capi.h (cef_button_t)
+// include/capi/views/cef_button_capi.h (cef_button_t)
 type ICefButton struct {
 	*ICefView
 }
 
 // ICefLabelButton
-// /include/capi/views/cef_label_button_capi.h (cef_label_button_t)
+// include/capi/views/cef_label_button_capi.h (cef_label_button_t)
 type ICefLabelButton struct {
 	*ICefButton
 }
 
 // ICefMenuButton
-// /include/capi/views/cef_menu_button_capi.h (cef_menu_button_t)
+// include/capi/views/cef_menu_button_capi.h (cef_menu_button_t)
 type ICefMenuButton struct {
 	*ICefLabelButton
 }
 
 // ICefPanel
-// /include/capi/views/cef_panel_capi.h (cef_panel_t)
+// include/capi/views/cef_panel_capi.h (cef_panel_t)
 type ICefPanel struct {
 	*ICefView
 }
 
 // ICefScrollView
-// /include/capi/views/cef_scroll_view_capi.h (cef_scroll_view_t)
+// include/capi/views/cef_scroll_view_capi.h (cef_scroll_view_t)
 type ICefScrollView struct {
 	*ICefView
 }
 
 // ICefTextfield
-// /include/capi/views/cef_textfield_capi.h (cef_textfield_t)
+// include/capi/views/cef_textfield_capi.h (cef_textfield_t)
 type ICefTextfield struct {
 	*ICefView
 }
 
 // ICefWindow
-// /include/capi/views/cef_window_capi.h (cef_window_t)
+// include/capi/views/cef_window_capi.h (cef_window_t)
 type ICefWindow struct {
 	*ICefPanel
 }
@@ -580,14 +580,14 @@ type ICefWindow struct {
 */
 
 // ICefView
-// /include/capi/views/cef_view_capi.h (cef_view_t)
+// include/capi/views/cef_view_capi.h (cef_view_t)
 type ICefView struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefViewDelegate
-// /include/capi/views/cef_view_delegate_capi.h (cef_view_delegate_t)
+// include/capi/views/cef_view_delegate_capi.h (cef_view_delegate_t)
 type ICefViewDelegate struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -595,63 +595,63 @@ type ICefViewDelegate struct {
 }
 
 // ICefOverlayController TODO 未实现
-// /include/capi/views/cef_overlay_controller_capi.h (cef_overlay_controller_t)
+// include/capi/views/cef_overlay_controller_capi.h (cef_overlay_controller_t)
 type ICefOverlayController struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefLayout
-// /include/capi/views/cef_layout_capi.h (cef_layout_t)
+// include/capi/views/cef_layout_capi.h (cef_layout_t)
 type ICefLayout struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // ICefFillLayout
-// /include/capi/views/cef_fill_layout_capi.h (cef_fill_layout_t)
+// include/capi/views/cef_fill_layout_capi.h (cef_fill_layout_t)
 type ICefFillLayout struct {
 	*ICefLayout
 }
 
 // ICefBoxLayout
-// /include/capi/views/cef_box_layout_capi.h (cef_box_layout_t)
+// include/capi/views/cef_box_layout_capi.h (cef_box_layout_t)
 type ICefBoxLayout struct {
 	*ICefLayout
 }
 
 // ICefBrowserViewDelegate
-// /include/capi/views/cef_browser_view_delegate_capi.h (cef_browser_view_delegate_t)
+// include/capi/views/cef_browser_view_delegate_capi.h (cef_browser_view_delegate_t)
 type ICefBrowserViewDelegate struct {
 	*ICefViewDelegate
 }
 
 // ICefButtonDelegate
-// /include/capi/views/cef_button_delegate_capi.h (cef_button_delegate_t)
+// include/capi/views/cef_button_delegate_capi.h (cef_button_delegate_t)
 type ICefButtonDelegate struct {
 	*ICefViewDelegate
 }
 
 // ICefMenuButtonDelegate
-// /include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_delegate_t)
+// include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_delegate_t)
 type ICefMenuButtonDelegate struct {
 	*ICefButtonDelegate
 }
 
 // ICefPanelDelegate
-// /include/capi/views/cef_panel_delegate_capi.h (cef_panel_delegate_t)
+// include/capi/views/cef_panel_delegate_capi.h (cef_panel_delegate_t)
 type ICefPanelDelegate struct {
 	*ICefViewDelegate
 }
 
 // ICefWindowDelegate
-// /include/capi/views/cef_window_delegate_capi.h (cef_window_delegate_t)
+// include/capi/views/cef_window_delegate_capi.h (cef_window_delegate_t)
 type ICefWindowDelegate struct {
 	*ICefPanelDelegate
 }
 
 // ICefTextFieldDelegate
-// /include/capi/views/cef_textfield_delegate_capi.h (cef_textfield_delegate_t)
+// include/capi/views/cef_textfield_delegate_capi.h (cef_textfield_delegate_t)
 type ICefTextFieldDelegate struct {
 	*ICefViewDelegate
 }
@@ -702,7 +702,7 @@ type TCEFMenuButtonComponent struct {
 }
 
 // ICefMenuButtonPressedLock
-// /include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_pressed_lock_t)
+// include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_pressed_lock_t)
 type ICefMenuButtonPressedLock struct {
 	base TCefBaseRefCounted
 }
@@ -724,7 +724,7 @@ type ICefX509Certificate struct {
 }
 
 // ICefX509CertPrincipal
-// /include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t)
+// include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t)
 type ICefX509CertPrincipal struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -1122,14 +1122,14 @@ type ICefFileDialogCallback struct {
 }
 
 // TCefRunFileDialogCallback
-// /include/capi/cef_browser_capi.h (cef_run_file_dialog_callback_t)
+// include/capi/cef_browser_capi.h (cef_run_file_dialog_callback_t)
 type ICefRunFileDialogCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
 }
 
 // TCefDownloadImageCallback
-// /include/capi/cef_browser_capi.h (cef_download_image_callback_t)
+// include/capi/cef_browser_capi.h (cef_download_image_callback_t)
 type ICefDownloadImageCallback struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
@@ -1236,7 +1236,7 @@ type TCefRange struct {
 	To   int32
 }
 
-// /include/internal/cef_types_geometry.h (cef_insets_t)
+// include/internal/cef_types_geometry.h (cef_insets_t)
 type TCefInsets struct {
 	Top    int32
 	Left   int32
@@ -1245,7 +1245,7 @@ type TCefInsets struct {
 }
 
 // TCefAudioParameters
-// /include/internal/cef_types.h (cef_audio_parameters_t)
+// include/internal/cef_types.h (cef_audio_parameters_t)
 type TCefAudioParameters struct {
 	channelLayout   consts.TCefChannelLayout
 	sampleRate      int32
@@ -1270,7 +1270,7 @@ type CefPdfPrintSettings struct {
 	FooterTemplate      string                        // TCefString
 }
 
-// /include/internal/cef_types.h (cef_popup_features_t)
+// include/internal/cef_types.h (cef_popup_features_t)
 type TCefPopupFeatures struct {
 	X                  Integer
 	XSet               Integer
@@ -1292,7 +1292,7 @@ type TCefPopupFeatures struct {
 	AdditionalFeatures TCefStringList // Use-CEF:[49]
 }
 
-// /include/internal/cef_types.h (cef_composition_underline_t)
+// include/internal/cef_types.h (cef_composition_underline_t)
 type TCefCompositionUnderline struct {
 	Range           TCefRange
 	Color           TCefColor
@@ -1307,17 +1307,33 @@ type TCefCompositionUnderlineArray struct {
 	sizeOf uintptr
 }
 
-// /include/internal/cef_types.h (cef_box_layout_settings_t)
+// Initialization settings. Specify NULL or 0 to get the recommended default
+// values. Many of these and other settings can also configured using command-
+// line switches.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_box_layout_settings_t)</see></para>
 type TCefBoxLayoutSettings struct {
-	Horizontal                    Integer
+	// If true (1) the layout will be horizontal, otherwise the layout will be vertical.
+	Horizontal Integer
+	// Adds additional horizontal space between the child view area and the host view border.
 	InsideBorderHorizontalSpacing Integer
-	InsideBorderVerticalSpacing   Integer
-	InsideBorderInsets            TCefInsets
-	BetweenChildSpacing           Integer
-	MainAxisAlignment             consts.TCefMainAxisAlignment
-	CrossAxisAlignment            consts.TCefCrossAxisAlignment
-	MinimumCrossAxisSize          Integer
-	DefaultFlex                   Integer
+	// Adds additional vertical space between the child view area and the host view border.
+	InsideBorderVerticalSpacing Integer
+	// Adds additional space around the child view area.
+	InsideBorderInsets TCefInsets
+	// Adds additional space between child views.
+	BetweenChildSpacing Integer
+	// Specifies where along the main axis the child views should be laid out.
+	MainAxisAlignment consts.TCefMainAxisAlignment
+	// Specifies where along the cross axis the child views should be laid out.
+	CrossAxisAlignment consts.TCefMainAxisAlignment
+	// Minimum cross axis size.
+	MinimumCrossAxisSize Integer
+	// Default flex for views when none is specified via CefBoxLayout methods.
+	// Using the preferred size as the basis, free space along the main axis is
+	// distributed to views in the ratio of their flex weights. Similarly, if the
+	// views will overflow the parent, space is subtracted in these ratios. A
+	// flex of 0 means this view is not resized. Flex values must not be negative.
+	DefaultFlex Integer
 }
 
 // ResultString 字符串返回值
@@ -1426,13 +1442,13 @@ func (m *TCefKeyEvent) KeyUp() bool {
 // TLinuxWindowProperties String version
 // <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_linux_window_properties_t)</see></para>
 type TLinuxWindowProperties struct {
-	/// Main window's Wayland's app_id
+	// Main window's Wayland's app_id
 	WaylandAppId string
-	/// Main window's WM_CLASS_CLASS in X11
+	// Main window's WM_CLASS_CLASS in X11
 	WmClassClass string
-	/// Main window's WM_CLASS_NAME in X11
+	// Main window's WM_CLASS_NAME in X11
 	WmClassName string
-	/// Main window's WM_WINDOW_ROLE in X11
+	// Main window's WM_WINDOW_ROLE in X11
 	WmRoleName string
 }
 
