@@ -608,8 +608,7 @@ func (m *ICefMenuModel) SetFontListAt(index int32, fontList string) bool {
 
 // RemoveAcceleratorAt
 //
-//	Remove the keyboard accelerator at the specified |index|. Returns true (1)
-//	on success.
+//	Remove the keyboard accelerator at the specified |index|. Returns true (1) on success.
 func (m *ICefMenuModel) RemoveAcceleratorAt(index uint32) bool {
 	r1, _, _ := imports.Proc(def.CefMenuModel_RemoveAcceleratorAt).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
@@ -664,6 +663,9 @@ func (m *ICefMenuModel) IsVisibleAt(index uint32) bool {
 }
 
 // IsCheckedAt
+//
+//	Returns true (1) if the specified |index| is checked. Only applies to
+//	check and radio items.
 func (m *ICefMenuModel) IsCheckedAt(index uint32) bool {
 	r1, _, _ := imports.Proc(def.CefMenuModel_IsCheckedAt).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
