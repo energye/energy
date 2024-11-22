@@ -93,55 +93,55 @@ func (m *TCEFViewComponent) RequestFocus() {
 	imports.Proc(def.ViewComponent_RequestFocus).Call(m.Instance())
 }
 
-func (m *TCEFViewComponent) ConvertPointToScreen(point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointToScreen(point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToScreen).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) ConvertPointFromScreen(point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointFromScreen(point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromScreen).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) ConvertPointToWindow(point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointToWindow(point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToWindow).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) ConvertPointFromWindow(point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointFromWindow(point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromWindow).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) ConvertPointToView(view *ICefView, point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointToView(view *ICefView, point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointToView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) ConvertPointFromView(view *ICefView, point *TCefPoint) bool {
+func (m *TCEFViewComponent) ConvertPointFromView(view *ICefView, point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(point)))
+	r1, _, _ := imports.Proc(def.ViewComponent_ConvertPointFromView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) GetInitialized() bool {
+func (m *TCEFViewComponent) Initialized() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -149,63 +149,91 @@ func (m *TCEFViewComponent) GetInitialized() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) GetAsView() (result ICefView) {
+func (m *TCEFViewComponent) AsView() *ICefView {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsView).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefView{instance: getInstance(result)}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAsBrowserView() (result ICefBrowserView) {
+func (m *TCEFViewComponent) AsBrowserView() *ICefBrowserView {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsBrowserView).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefBrowserView{&ICefView{instance: getInstance(result)}}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAsButton() (result ICefButton) {
+func (m *TCEFViewComponent) AsButton() *ICefButton {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsButton).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefButton{&ICefView{instance: getInstance(result)}}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAsPanel() (result ICefPanel) {
+func (m *TCEFViewComponent) AsPanel() *ICefPanel {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsPanel).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefPanel{&ICefView{instance: getInstance(result)}}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAsScrollView() (result ICefScrollView) {
+func (m *TCEFViewComponent) AsScrollView() *ICefScrollView {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsScrollView).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefScrollView{&ICefView{instance: getInstance(result)}}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAsTextfield() (result ICefTextfield) {
+func (m *TCEFViewComponent) AsTextfield() *ICefTextfield {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetAsTextfield).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
-}
-
-func (m *TCEFViewComponent) GetViewForID(id int32) (result ICefView) {
-	if !m.IsValid() {
-		return
+	if result != 0 {
+		return &ICefTextfield{&ICefView{instance: getInstance(result)}}
 	}
-	imports.Proc(def.ViewComponent_GetViewForID).Call(m.Instance(), uintptr(id), uintptr(unsafe.Pointer(&result)))
-	return
+	return nil
 }
 
-func (m *TCEFViewComponent) GetAttached() bool {
+func (m *TCEFViewComponent) ViewForID(id int32) *ICefView {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.ViewComponent_GetViewForID).Call(m.Instance(), uintptr(id), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefView{instance: getInstance(result)}
+	}
+	return nil
+}
+
+func (m *TCEFViewComponent) Attached() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -213,63 +241,75 @@ func (m *TCEFViewComponent) GetAttached() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) GetDelegate() (result ICefViewDelegate) {
+func (m *TCEFViewComponent) Delegate() *ICefViewDelegate {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetDelegate).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefViewDelegate{instance: getInstance(result)}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetWindow() (result ICefWindow) {
+func (m *TCEFViewComponent) Window() *ICefWindow {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(result)}}}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetParentView() (result ICefView) {
+func (m *TCEFViewComponent) ParentView() *ICefView {
 	if !m.IsValid() {
-		return
+		return nil
 	}
+	var result uintptr
 	imports.Proc(def.ViewComponent_GetParentView).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return
+	if result != 0 {
+		return &ICefView{instance: getInstance(result)}
+	}
+	return nil
 }
 
-func (m *TCEFViewComponent) GetBoundsInScreen() (result TCefRect) {
+func (m *TCEFViewComponent) BoundsInScreen() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetBoundsInScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetBoundsInScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 	return
 }
 
-func (m *TCEFViewComponent) GetPreferredSize() (result TCefSize) {
+func (m *TCEFViewComponent) PreferredSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetPreferredSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetPreferredSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
-func (m *TCEFViewComponent) GetMinimumSize() (result TCefSize) {
+func (m *TCEFViewComponent) MinimumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
-func (m *TCEFViewComponent) GetMaximumSize() (result TCefSize) {
+func (m *TCEFViewComponent) MaximumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
-func (m *TCEFViewComponent) GetVisible() bool {
+func (m *TCEFViewComponent) Visible() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -284,7 +324,7 @@ func (m *TCEFViewComponent) SetVisible(visible bool) {
 	imports.Proc(def.ViewComponent_SetVisible).Call(m.Instance(), api.PascalBool(visible))
 }
 
-func (m *TCEFViewComponent) GetDrawn() bool {
+func (m *TCEFViewComponent) Drawn() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -292,7 +332,7 @@ func (m *TCEFViewComponent) GetDrawn() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) GetEnabled() bool {
+func (m *TCEFViewComponent) Enabled() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -307,7 +347,7 @@ func (m *TCEFViewComponent) SetEnabled(enabled bool) {
 	imports.Proc(def.ViewComponent_SetEnabled).Call(m.Instance(), api.PascalBool(enabled))
 }
 
-func (m *TCEFViewComponent) GetFocusable() bool {
+func (m *TCEFViewComponent) Focusable() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -322,7 +362,7 @@ func (m *TCEFViewComponent) SetFocusable(focusable bool) {
 	imports.Proc(def.ViewComponent_SetFocusable).Call(m.Instance(), api.PascalBool(focusable))
 }
 
-func (m *TCEFViewComponent) GetAccessibilityFocusable() bool {
+func (m *TCEFViewComponent) AccessibilityFocusable() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -330,11 +370,11 @@ func (m *TCEFViewComponent) GetAccessibilityFocusable() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) GetBackgroundColor() (result types.TCefColor) {
+func (m *TCEFViewComponent) BackgroundColor() (color types.TCefColor) {
 	if !m.IsValid() {
 		return 0
 	}
-	imports.Proc(def.ViewComponent_GetBackgroundColor).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetBackgroundColor).Call(m.Instance(), uintptr(unsafe.Pointer(&color)))
 	return
 }
 
@@ -345,7 +385,7 @@ func (m *TCEFViewComponent) SetBackgroundColor(color types.TCefColor) {
 	imports.Proc(def.ViewComponent_SetBackgroundColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *TCEFViewComponent) GetID() int32 {
+func (m *TCEFViewComponent) ID() int32 {
 	if !m.IsValid() {
 		return 0
 	}
@@ -360,7 +400,7 @@ func (m *TCEFViewComponent) SetID(id int32) {
 	imports.Proc(def.ViewComponent_SetID).Call(m.Instance(), uintptr(id))
 }
 
-func (m *TCEFViewComponent) GetGroupID() int32 {
+func (m *TCEFViewComponent) GroupID() int32 {
 	if !m.IsValid() {
 		return 0
 	}
@@ -375,11 +415,11 @@ func (m *TCEFViewComponent) SetGroupID(groupId int32) {
 	imports.Proc(def.ViewComponent_SetGroupID).Call(m.Instance(), uintptr(groupId))
 }
 
-func (m *TCEFViewComponent) GetBounds() (result TCefRect) {
+func (m *TCEFViewComponent) Bounds() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 	return
 }
 
@@ -390,11 +430,11 @@ func (m *TCEFViewComponent) SetBounds(bounds TCefRect) {
 	imports.Proc(def.ViewComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 }
 
-func (m *TCEFViewComponent) GetSize() (result TCefSize) {
+func (m *TCEFViewComponent) Size() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
@@ -405,11 +445,11 @@ func (m *TCEFViewComponent) SetSize(size TCefSize) {
 	imports.Proc(def.ViewComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
-func (m *TCEFViewComponent) GetPosition() (result TCefPoint) {
+func (m *TCEFViewComponent) Position() (point TCefPoint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ViewComponent_GetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.ViewComponent_GetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return
 }
 
@@ -420,7 +460,7 @@ func (m *TCEFViewComponent) SetPosition(position TCefPoint) {
 	imports.Proc(def.ViewComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&position)))
 }
 
-func (m *TCEFViewComponent) GetTypeString() string {
+func (m *TCEFViewComponent) TypeString() string {
 	if !m.IsValid() {
 		return ""
 	}
@@ -428,7 +468,7 @@ func (m *TCEFViewComponent) GetTypeString() string {
 	return api.GoStr(r1)
 }
 
-func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
+func (m *TCEFViewComponent) HeightForWidth(width int32) int32 {
 	if !m.IsValid() {
 		return 0
 	}
@@ -437,71 +477,41 @@ func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 }
 
 func (m *TCEFViewComponent) SetOnGetPreferredSize(fn onGetPreferredSize) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetMinimumSize(fn onGetMinimumSize) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetMaximumSize(fn onGetMaximumSize) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnParentViewChanged(fn onParentViewChanged) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnChildViewChanged(fn onChildViewChanged) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnWindowChanged(fn onWindowChanged) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnLayoutChanged(fn onLayoutChanged) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnFocus(fn onFocus) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFViewComponent) SetOnBlur(fn onBlur) {
-	//if !m.IsValid() {
-	//	return
-	//}
 	imports.Proc(def.ViewComponent_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
