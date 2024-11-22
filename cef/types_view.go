@@ -404,12 +404,12 @@ func (m *ICefView) SetBackgroundColor(color types.TCefColor) {
 	imports.Proc(def.View_SetBackgroundColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *ICefView) GetBackgroundColor() types.TCefColor {
+func (m *ICefView) GetBackgroundColor() (color types.TCefColor) {
 	if !m.IsValid() {
 		return 0
 	}
-	r1, _, _ := imports.Proc(def.View_GetBackgroundColor).Call(m.Instance())
-	return types.TCefColor(r1)
+	imports.Proc(def.View_GetBackgroundColor).Call(m.Instance(), uintptr(unsafe.Pointer(&color)))
+	return
 }
 
 func (m *ICefView) ConvertPointToScreen(point TCefPoint) bool {
@@ -444,18 +444,18 @@ func (m *ICefView) ConvertPointFromWindow(point TCefPoint) bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefView) ConvertPointToView(view ICefView, point TCefPoint) bool {
+func (m *ICefView) ConvertPointToView(view *ICefView, point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.View_ConvertPointToView).Call(m.Instance(), uintptr(unsafe.Pointer(&view)), uintptr(unsafe.Pointer(&point)))
+	r1, _, _ := imports.Proc(def.View_ConvertPointToView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }
 
-func (m *ICefView) ConvertPointFromView(view ICefView, point TCefPoint) bool {
+func (m *ICefView) ConvertPointFromView(view *ICefView, point TCefPoint) bool {
 	if !m.IsValid() {
 		return false
 	}
-	r1, _, _ := imports.Proc(def.View_ConvertPointFromView).Call(m.Instance(), uintptr(unsafe.Pointer(&view)), uintptr(unsafe.Pointer(&point)))
+	r1, _, _ := imports.Proc(def.View_ConvertPointFromView).Call(m.Instance(), view.Instance(), uintptr(unsafe.Pointer(&point)))
 	return api.GoBool(r1)
 }

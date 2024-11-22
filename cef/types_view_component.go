@@ -221,7 +221,7 @@ func (m *TCEFViewComponent) AsTextfield() *ICefTextfield {
 	return nil
 }
 
-func (m *TCEFViewComponent) ViewForID(id int32) *ICefView {
+func (m *TCEFViewComponent) GetViewForID(id int32) *ICefView {
 	if !m.IsValid() {
 		return nil
 	}
@@ -233,7 +233,7 @@ func (m *TCEFViewComponent) ViewForID(id int32) *ICefView {
 	return nil
 }
 
-func (m *TCEFViewComponent) Attached() bool {
+func (m *TCEFViewComponent) IsAttached() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -241,7 +241,7 @@ func (m *TCEFViewComponent) Attached() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) Delegate() *ICefViewDelegate {
+func (m *TCEFViewComponent) GetDelegate() *ICefViewDelegate {
 	if !m.IsValid() {
 		return nil
 	}
@@ -253,7 +253,7 @@ func (m *TCEFViewComponent) Delegate() *ICefViewDelegate {
 	return nil
 }
 
-func (m *TCEFViewComponent) Window() *ICefWindow {
+func (m *TCEFViewComponent) GetWindow() *ICefWindow {
 	if !m.IsValid() {
 		return nil
 	}
@@ -265,7 +265,7 @@ func (m *TCEFViewComponent) Window() *ICefWindow {
 	return nil
 }
 
-func (m *TCEFViewComponent) ParentView() *ICefView {
+func (m *TCEFViewComponent) GetParentView() *ICefView {
 	if !m.IsValid() {
 		return nil
 	}
@@ -285,7 +285,7 @@ func (m *TCEFViewComponent) BoundsInScreen() (bounds TCefRect) {
 	return
 }
 
-func (m *TCEFViewComponent) PreferredSize() (size TCefSize) {
+func (m *TCEFViewComponent) GetPreferredSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
@@ -309,7 +309,7 @@ func (m *TCEFViewComponent) MaximumSize() (size TCefSize) {
 	return
 }
 
-func (m *TCEFViewComponent) Visible() bool {
+func (m *TCEFViewComponent) IsVisible() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -324,7 +324,7 @@ func (m *TCEFViewComponent) SetVisible(visible bool) {
 	imports.Proc(def.ViewComponent_SetVisible).Call(m.Instance(), api.PascalBool(visible))
 }
 
-func (m *TCEFViewComponent) Drawn() bool {
+func (m *TCEFViewComponent) IsDrawn() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -332,7 +332,7 @@ func (m *TCEFViewComponent) Drawn() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) Enabled() bool {
+func (m *TCEFViewComponent) IsEnabled() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -347,7 +347,7 @@ func (m *TCEFViewComponent) SetEnabled(enabled bool) {
 	imports.Proc(def.ViewComponent_SetEnabled).Call(m.Instance(), api.PascalBool(enabled))
 }
 
-func (m *TCEFViewComponent) Focusable() bool {
+func (m *TCEFViewComponent) IsFocusable() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -370,7 +370,7 @@ func (m *TCEFViewComponent) AccessibilityFocusable() bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFViewComponent) BackgroundColor() (color types.TCefColor) {
+func (m *TCEFViewComponent) GetBackgroundColor() (color types.TCefColor) {
 	if !m.IsValid() {
 		return 0
 	}
@@ -385,7 +385,7 @@ func (m *TCEFViewComponent) SetBackgroundColor(color types.TCefColor) {
 	imports.Proc(def.ViewComponent_SetBackgroundColor).Call(m.Instance(), uintptr(color))
 }
 
-func (m *TCEFViewComponent) ID() int32 {
+func (m *TCEFViewComponent) GetID() int32 {
 	if !m.IsValid() {
 		return 0
 	}
@@ -430,7 +430,7 @@ func (m *TCEFViewComponent) SetBounds(bounds TCefRect) {
 	imports.Proc(def.ViewComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 }
 
-func (m *TCEFViewComponent) Size() (size TCefSize) {
+func (m *TCEFViewComponent) GetSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
@@ -445,7 +445,7 @@ func (m *TCEFViewComponent) SetSize(size TCefSize) {
 	imports.Proc(def.ViewComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
-func (m *TCEFViewComponent) Position() (point TCefPoint) {
+func (m *TCEFViewComponent) GetPosition() (point TCefPoint) {
 	if !m.IsValid() {
 		return
 	}
@@ -460,7 +460,7 @@ func (m *TCEFViewComponent) SetPosition(position TCefPoint) {
 	imports.Proc(def.ViewComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&position)))
 }
 
-func (m *TCEFViewComponent) TypeString() string {
+func (m *TCEFViewComponent) GetTypeString() string {
 	if !m.IsValid() {
 		return ""
 	}
@@ -468,7 +468,7 @@ func (m *TCEFViewComponent) TypeString() string {
 	return api.GoStr(r1)
 }
 
-func (m *TCEFViewComponent) HeightForWidth(width int32) int32 {
+func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 	if !m.IsValid() {
 		return 0
 	}

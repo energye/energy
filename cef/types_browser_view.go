@@ -50,13 +50,19 @@ func (*browserView) GetForBrowser(browser *ICefBrowser) *ICefBrowserView {
 func (m *ICefBrowserView) Browser() *ICefBrowser {
 	var result uintptr
 	imports.Proc(def.CefBrowserView_Browser).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefBrowser{instance: unsafe.Pointer(result)}
+	if result != 0 {
+		return &ICefBrowser{instance: unsafe.Pointer(result)}
+	}
+	return nil
 }
 
 func (m *ICefBrowserView) ChromeToolbar() *ICefView {
 	var result uintptr
 	imports.Proc(def.CefBrowserView_ChromeToolbar).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	return &ICefView{instance: unsafe.Pointer(result)}
+	if result != 0 {
+		return &ICefView{instance: unsafe.Pointer(result)}
+	}
+	return nil
 }
 
 func (m *ICefBrowserView) SetPreferAccelerators(preferAccelerators bool) {

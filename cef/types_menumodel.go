@@ -196,7 +196,7 @@ func (m *ICefMenuModel) Instance() uintptr {
 	if m == nil {
 		return 0
 	}
-	return m.Instance()
+	return uintptr(m.instance)
 }
 
 func (m *ICefMenuModel) Free() {
@@ -260,11 +260,12 @@ func (m *ICefMenuModel) AddRadioItem(commandId MenuId, text string, groupId int3
 
 // AddSubMenu Add a sub-menu to the menu. The new sub-menu is returned.
 func (m *ICefMenuModel) AddSubMenu(commandId MenuId, text string) *ICefMenuModel {
-	var ret uintptr
-	imports.Proc(def.CEFMenuModel_AddSubMenu).Call(m.Instance(), uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
-	return &ICefMenuModel{
-		instance: unsafe.Pointer(ret),
+	var result uintptr
+	imports.Proc(def.CEFMenuModel_AddSubMenu).Call(m.Instance(), uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(result)}
 	}
+	return nil
 }
 
 // Remove

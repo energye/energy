@@ -25,9 +25,7 @@ func (*panel) New(delegate *ICefPanelDelegate) *ICefPanel {
 	var result uintptr
 	imports.Proc(def.CEFPanelRef_New).Call(delegate.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefPanel{&ICefView{
-			instance: getInstance(result),
-		}}
+		return &ICefPanel{&ICefView{instance: getInstance(result)}}
 	}
 	return nil
 }
@@ -39,13 +37,7 @@ func (m *ICefPanel) GetAsWindow() *ICefWindow {
 	var result uintptr
 	imports.Proc(def.CEFPanel_GetAsWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefWindow{
-			&ICefPanel{
-				&ICefView{
-					instance: getInstance(result),
-				},
-			},
-		}
+		return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(result)}}}
 	}
 	return nil
 }
@@ -71,9 +63,7 @@ func (m *ICefPanel) SetToBoxLayout(settings TCefBoxLayoutSettings) *ICefBoxLayou
 	var result uintptr
 	imports.Proc(def.CEFPanel_SetToBoxLayout).Call(m.Instance(), uintptr(unsafe.Pointer(&settings)), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefBoxLayout{&ICefLayout{
-			instance: getInstance(result),
-		}}
+		return &ICefBoxLayout{&ICefLayout{instance: getInstance(result)}}
 	}
 	return nil
 }
@@ -85,9 +75,7 @@ func (m *ICefPanel) GetLayout() *ICefLayout {
 	var result uintptr
 	imports.Proc(def.CEFPanel_GetLayout).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefLayout{
-			instance: getInstance(result),
-		}
+		return &ICefLayout{instance: getInstance(result)}
 	}
 	return nil
 }
@@ -149,9 +137,7 @@ func (m *ICefPanel) GetChildViewAt(index int32) *ICefView {
 	var result uintptr
 	imports.Proc(def.CEFPanel_GetChildViewAt).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefView{
-			instance: getInstance(result),
-		}
+		return &ICefView{instance: getInstance(result)}
 	}
 	return nil
 }
