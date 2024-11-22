@@ -1633,21 +1633,18 @@ const (
 type TCefMainAxisAlignment = types.Int32
 
 const (
+	// Child views will be left/top-aligned.
 	CEF_MAIN_AXIS_ALIGNMENT_START TCefMainAxisAlignment = iota
-	CEF_MAIN_AXIS_ALIGNMENT_CENTER
-	CEF_MAIN_AXIS_ALIGNMENT_END
+	// Child views will be center-aligned.
+	CEF_AXIS_ALIGNMENT_CENTER
+	// Child views will be right/bottom-aligned.
+	CEF_AXIS_ALIGNMENT_END
+	// Child views will be stretched to fit.
+	CEF_AXIS_ALIGNMENT_STRETCH
 )
 
-// include/internal/cef_types.h (cef_cross_axis_alignment_t)
-type TCefCrossAxisAlignment = types.Int32
-
-const (
-	CEF_CROSS_AXIS_ALIGNMENT_STRETCH TCefCrossAxisAlignment = iota
-	CEF_CROSS_AXIS_ALIGNMENT_START
-	CEF_CROSS_AXIS_ALIGNMENT_CENTER
-	CEF_CROSS_AXIS_ALIGNMENT_END
-)
-
+// Text style types. Should be kepy in sync with gfx::TextStyle.
+//
 // include/internal/cef_types.h (cef_text_style_t)
 type TCefTextStyle = types.Int32
 
