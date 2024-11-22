@@ -196,7 +196,7 @@ func (m *ICefMenuModel) Instance() uintptr {
 	if m == nil {
 		return 0
 	}
-	return uintptr(m.instance)
+	return m.Instance()
 }
 
 func (m *ICefMenuModel) Free() {
@@ -213,291 +213,485 @@ func (m *ICefMenuModel) IsValid() bool {
 	return m.instance != nil
 }
 
-// AddSeparator 添加一个分隔线
+// AddSeparator Add a separator to the menu. Returns true (1) on success.
 func (m *ICefMenuModel) AddSeparator() bool {
-	return cefMenuModel_AddSeparator(uintptr(m.instance))
+	r1, _, _ := imports.Proc(def.CEFMenuModel_AddSeparator).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
-// Clear 清空菜单
+// Clear Clears the menu. Returns true (1) on success.
 func (m *ICefMenuModel) Clear() bool {
-	return cefMenuModel_Clear(uintptr(m.instance))
+	r1, _, _ := imports.Proc(def.CEFMenuModel_Clear).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
-// IsSubMenu 当前菜单项是否为子菜单
+// IsSubMenu
+// Returns true (1) if this menu is a submenu.
 func (m *ICefMenuModel) IsSubMenu() bool {
-	return cefMenuModel_IsSubMenu(uintptr(m.instance))
+	r1, _, _ := imports.Proc(def.CEFMenuModel_IsSubMenu).Call(m.Instance())
+	return api.GoBool(r1)
 }
 
-// GetCount 菜单项数量
+// GetCount Returns the number of items in this menu.
 func (m *ICefMenuModel) GetCount() int32 {
-	return cefMenuModel_GetCount(uintptr(m.instance))
+	r1, _, _ := imports.Proc(def.CEFMenuModel_GetCount).Call(m.Instance())
+	return int32(r1)
 }
 
-// AddItem 添加一个菜单项
+// AddItem Add an item to the menu. Returns true (1) on success.
 func (m *ICefMenuModel) AddItem(commandId MenuId, text string) bool {
-	return cefMenuModel_AddItem(uintptr(m.instance), commandId, text)
+	r1, _, _ := imports.Proc(def.CEFMenuModel_AddItem).Call(m.Instance(), uintptr(commandId), api.PascalStr(text))
+	return api.GoBool(r1)
 }
 
-// AddCheckItem 添加一个复选框菜单项
+// AddCheckItem Add a check item to the menu. Returns true (1) on success.
 func (m *ICefMenuModel) AddCheckItem(commandId MenuId, text string) bool {
-	return cefMenuModel_AddCheckItem(uintptr(m.instance), commandId, text)
+	r1, _, _ := imports.Proc(def.CEFMenuModel_AddCheckItem).Call(m.Instance(), uintptr(commandId), api.PascalStr(text))
+	return api.GoBool(r1)
 }
 
-// AddRadioItem 添加一个单选框菜单项-按分组
+// AddRadioItem Add a radio item to the menu. Only a single item with the specified
+//
+//	|group_id| can be checked at a time. Returns true (1) on success.
 func (m *ICefMenuModel) AddRadioItem(commandId MenuId, text string, groupId int32) bool {
-	return cefMenuModel_AddRadioItem(uintptr(m.instance), commandId, text, groupId)
+	r1, _, _ := imports.Proc(def.CEFMenuModel_AddRadioItem).Call(m.Instance(), uintptr(commandId), api.PascalStr(text), uintptr(groupId))
+	return api.GoBool(r1)
 }
 
-// AddSubMenu 创建添加并返回一个子菜单项, 使用返回的 ICefMenuModel 给子菜单添加菜单项
+// AddSubMenu Add a sub-menu to the menu. The new sub-menu is returned.
 func (m *ICefMenuModel) AddSubMenu(commandId MenuId, text string) *ICefMenuModel {
-	return cefMenuModel_AddSubMenu(uintptr(m.instance), commandId, text)
-}
-
-// Remove 指定移除一个菜单项，可直接移除Chromium默认实现的菜单项 consts.MenuId => MENU_ID_XXX
-func (m *ICefMenuModel) Remove(commandId MenuId) bool {
-	return cefMenuModel_Remove(uintptr(m.instance), commandId)
-}
-
-// RemoveAt 指定根据下标移除一个菜单项，可直接移除Chromium默认实现的菜单项 consts.MenuId => MENU_ID_XXX
-func (m *ICefMenuModel) RemoveAt(index int32) bool {
-	return cefMenuModel_RemoveAt(uintptr(m.instance), index)
-}
-
-// SetChecked 设置Check | Radio 选中
-func (m *ICefMenuModel) SetChecked(commandId MenuId, check bool) bool {
-	return cefMenuModel_SetChecked(uintptr(m.instance), commandId, check)
-}
-
-func (m *ICefMenuModel) IsChecked(commandId MenuId) bool {
-	return cefMenuModel_IsChecked(uintptr(m.instance), commandId)
-}
-
-// SetColor 设置可用菜单项 cef.NewCefARGB(a, r, g, b), 颜色根据 consts.TCefMenuColorType
-func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, color *TCefARGB) bool {
-	return cefMenuModel_SetColor(uintptr(m.instance), commandId, colorType, color)
-}
-
-func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
-	return cefMenuModel_SetFontList(uintptr(m.instance), commandId, fontList)
-}
-
-// HasAccelerator 是否有快捷键
-func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
-	return cefMenuModel_HasAccelerator(uintptr(m.instance), commandId)
-}
-
-// SetAccelerator 设置快捷键
-func (m *ICefMenuModel) SetAccelerator(commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
-	return cefMenuModel_SetAccelerator(uintptr(m.instance), commandId, keyCode, shiftPressed, ctrlPressed, altPressed)
-}
-
-// RemoveAccelerator 删除快捷键
-func (m *ICefMenuModel) RemoveAccelerator(commandId MenuId) bool {
-	return cefMenuModel_RemoveAccelerator(uintptr(m.instance), commandId)
-}
-
-// IsVisible 是否显示
-func (m *ICefMenuModel) IsVisible(commandId MenuId) bool {
-	return cefMenuModel_IsVisible(uintptr(m.instance), commandId)
-}
-
-// SetVisible 设置是否显示
-func (m *ICefMenuModel) SetVisible(commandId MenuId, visible bool) bool {
-	return cefMenuModel_SetVisible(uintptr(m.instance), commandId, visible)
-}
-
-// IsEnabled 是启用
-func (m *ICefMenuModel) IsEnabled(commandId MenuId) bool {
-	return cefMenuModel_IsEnabled(uintptr(m.instance), commandId)
-}
-
-// SetEnabled 设置是启用
-func (m *ICefMenuModel) SetEnabled(commandId MenuId, enabled bool) bool {
-	return cefMenuModel_SetEnabled(uintptr(m.instance), commandId, enabled)
-}
-
-// SetLabel 设置标签
-func (m *ICefMenuModel) SetLabel(commandId MenuId, text string) bool {
-	return cefMenuModel_SetLabel(uintptr(m.instance), commandId, text)
-}
-
-// GetIndexOf 获取下标
-func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
-	return cefMenuModel_GetIndexOf(uintptr(m.instance), commandId)
-}
-
-func (m *ICefMenuModel) GetType(commandId MenuId) TCefMenuItemType {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetType).Call(m.Instance(), uintptr(commandId))
-	return TCefMenuItemType(r1)
-}
-
-func (m *ICefMenuModel) GetLabel(commandId MenuId) string {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetLabel).Call(m.Instance(), uintptr(commandId))
-	return api.GoStr(r1)
-}
-
-func (m *ICefMenuModel) GetGroupId(commandId MenuId) int32 {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetGroupId).Call(m.Instance(), uintptr(commandId))
-	return int32(r1)
-}
-
-func (m *ICefMenuModel) SetGroupId(commandId MenuId, groupId int32) bool {
-	r1, _, _ := imports.Proc(def.CefMenuModel_SetGroupId).Call(m.Instance(), uintptr(commandId), uintptr(groupId))
-	return api.GoBool(r1)
-}
-
-func (m *ICefMenuModel) GetSubMenu(commandId MenuId) *ICefMenuModel {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetSubMenu).Call(m.Instance(), uintptr(commandId))
-	if r1 != 0 {
-		return &ICefMenuModel{instance: unsafe.Pointer(r1)}
-	}
-	return nil
-}
-
-func (m *ICefMenuModel) GetColor(commandId MenuId, colorType TCefMenuColorType) (color types.TCefColor, result bool) {
-	r1, _, _ := imports.Proc(def.CefMenuModel_GetColor).Call(m.Instance(), uintptr(commandId), uintptr(colorType), uintptr(unsafe.Pointer(&color)))
-	return color, api.GoBool(r1)
-}
-
-// ------------------------------------ PROC
-// ICefMenuModel cefMenuModel_AddSeparator
-func cefMenuModel_AddSeparator(instance uintptr) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_AddSeparator).Call(instance)
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_Clear
-func cefMenuModel_Clear(instance uintptr) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_Clear).Call(instance)
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_IsSubMenu
-func cefMenuModel_IsSubMenu(instance uintptr) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_IsSubMenu).Call(instance)
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_GetCount
-func cefMenuModel_GetCount(instance uintptr) int32 {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_GetCount).Call(instance)
-	return int32(r1)
-}
-
-// ICefMenuModel cefMenuModel_AddItem
-func cefMenuModel_AddItem(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_AddItem).Call(instance, uintptr(commandId), api.PascalStr(text))
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_AddCheckItem
-func cefMenuModel_AddCheckItem(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_AddCheckItem).Call(instance, uintptr(commandId), api.PascalStr(text))
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_AddRadioItem
-func cefMenuModel_AddRadioItem(instance uintptr, commandId MenuId, text string, groupId int32) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_AddRadioItem).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(groupId))
-	return api.GoBool(r1)
-}
-
-// ICefMenuModel cefMenuModel_AddSubMenu
-func cefMenuModel_AddSubMenu(instance uintptr, commandId MenuId, text string) *ICefMenuModel {
 	var ret uintptr
-	imports.Proc(def.CEFMenuModel_AddSubMenu).Call(instance, uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
+	imports.Proc(def.CEFMenuModel_AddSubMenu).Call(m.Instance(), uintptr(commandId), api.PascalStr(text), uintptr(unsafe.Pointer(&ret)))
 	return &ICefMenuModel{
 		instance: unsafe.Pointer(ret),
 	}
 }
 
-// ICefMenuModel cefMenuModel_Remove
-func cefMenuModel_Remove(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_Remove).Call(instance, uintptr(commandId))
+// Remove
+//
+//	Removes the item with the specified |command_id|. Returns true (1) on
+//	success.
+func (m *ICefMenuModel) Remove(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_Remove).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_Remove
-func cefMenuModel_RemoveAt(instance uintptr, index int32) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_RemoveAt).Call(instance, uintptr(index))
+// RemoveAt Removes the item at the specified |index|. Returns true (1) on success.
+func (m *ICefMenuModel) RemoveAt(index int32) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_RemoveAt).Call(m.Instance(), uintptr(index))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetChecked
-func cefMenuModel_SetChecked(instance uintptr, commandId MenuId, check bool) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetChecked).Call(instance, uintptr(commandId), api.PascalBool(check))
+// SetChecked
+//
+//	Check the specified |command_id|. Only applies to check and radio items.
+//	Returns true (1) on success.
+func (m *ICefMenuModel) SetChecked(commandId MenuId, check bool) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetChecked).Call(m.Instance(), uintptr(commandId), api.PascalBool(check))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_IsChecked
-func cefMenuModel_IsChecked(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_IsChecked).Call(instance, uintptr(commandId))
+// IsChecked
+//
+//	Returns in |color| the color that was explicitly set for |command_id| and
+//	|color_type|. If a color was not set then 0 will be returned in |color|.
+//	Returns true (1) on success.
+func (m *ICefMenuModel) IsChecked(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_IsChecked).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetColor
-func cefMenuModel_SetColor(instance uintptr, commandId MenuId, colorType TCefMenuColorType, color *TCefARGB) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetColor).Call(instance, uintptr(commandId), uintptr(colorType), uintptr(color.ARGB()))
+// SetColor 设置可用菜单项 cef.NewCefARGB(a, r, g, b), 颜色根据 consts.TCefMenuColorType
+func (m *ICefMenuModel) SetColor(commandId MenuId, colorType TCefMenuColorType, color types.TCefColor) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetColor).Call(m.Instance(), uintptr(commandId), uintptr(colorType), uintptr(color))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetFontList
-func cefMenuModel_SetFontList(instance uintptr, commandId MenuId, fontList string) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetFontList).Call(instance, uintptr(commandId), api.PascalStr(fontList))
+// SetFontList
+//
+//	Sets the font list for the specified |command_id|. If |font_list| is NULL
+//	the system font will be used. Returns true (1) on success. The format is
+//	"<FONT_FAMILY_LIST>,[STYLES] <SIZE>", where:
+//	- FONT_FAMILY_LIST is a comma-separated list of font family names,
+//	- STYLES is an optional space-separated list of style names
+//	  (case-sensitive "Bold" and "Italic" are supported), and
+//	- SIZE is an integer font size in pixels with the suffix "px".
+//
+//	Here are examples of valid font description strings:
+//	- "Arial, Helvetica, Bold Italic 14px"
+//	- "Arial, 14px"
+func (m *ICefMenuModel) SetFontList(commandId MenuId, fontList string) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetFontList).Call(m.Instance(), uintptr(commandId), api.PascalStr(fontList))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_HasAccelerator
-func cefMenuModel_HasAccelerator(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_HasAccelerator).Call(instance, uintptr(commandId))
+// HasAccelerator
+//
+//	Returns true (1) if the specified |command_id| has a keyboard accelerator
+//	assigned.
+func (m *ICefMenuModel) HasAccelerator(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_HasAccelerator).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetAccelerator
-func cefMenuModel_SetAccelerator(instance uintptr, commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetAccelerator).Call(instance, uintptr(commandId), uintptr(keyCode),
+// SetAccelerator
+//
+//	Set the keyboard accelerator for the specified |command_id|. |key_code|
+//	can be any virtual key or character value. Returns true (1) on success.
+func (m *ICefMenuModel) SetAccelerator(commandId MenuId, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetAccelerator).Call(m.Instance(), uintptr(commandId), uintptr(keyCode),
 		api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_RemoveAccelerator
-func cefMenuModel_RemoveAccelerator(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_RemoveAccelerator).Call(instance, uintptr(commandId))
+// RemoveAccelerator 删除快捷键
+//
+//	Remove the keyboard accelerator for the specified |command_id|. Returns
+//	true (1) on success.
+func (m *ICefMenuModel) RemoveAccelerator(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_RemoveAccelerator).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_IsVisible
-func cefMenuModel_IsVisible(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_IsVisible).Call(instance, uintptr(commandId))
+// IsVisible
+//
+//	Change the visibility of the specified |command_id|. Returns true (1) on
+//	success.
+func (m *ICefMenuModel) IsVisible(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_IsVisible).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetVisible
-func cefMenuModel_SetVisible(instance uintptr, commandId MenuId, visible bool) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetVisible).Call(instance, uintptr(commandId), api.PascalBool(visible))
+// SetVisible
+//
+//	Sets whether this overlay is visible. Overlays are hidden by default. If
+//	this overlay is hidden then it and any child Views will not be drawn and,
+//	if any of those Views currently have focus, then focus will also be
+//	cleared. Painting is scheduled as needed.
+func (m *ICefMenuModel) SetVisible(commandId MenuId, visible bool) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetVisible).Call(m.Instance(), uintptr(commandId), api.PascalBool(visible))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_IsEnabled
-func cefMenuModel_IsEnabled(instance uintptr, commandId MenuId) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_IsEnabled).Call(instance, uintptr(commandId))
+// IsEnabled
+//
+//	Returns true (1) if the specified |command_id| is enabled.
+func (m *ICefMenuModel) IsEnabled(commandId MenuId) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_IsEnabled).Call(m.Instance(), uintptr(commandId))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetEnabled
-func cefMenuModel_SetEnabled(instance uintptr, commandId MenuId, enabled bool) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetEnabled).Call(instance, uintptr(commandId), api.PascalBool(enabled))
+// SetEnabled
+//
+//	Change the enabled status of the specified |command_id|. Returns true (1)
+//	on success.
+func (m *ICefMenuModel) SetEnabled(commandId MenuId, enabled bool) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetEnabled).Call(m.Instance(), uintptr(commandId), api.PascalBool(enabled))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_SetLabel
-func cefMenuModel_SetLabel(instance uintptr, commandId MenuId, text string) bool {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_SetLabel).Call(instance, uintptr(commandId), api.PascalStr(text))
+// SetLabel
+//
+//	Sets the label for the specified |command_id|. Returns true (1) on success.
+func (m *ICefMenuModel) SetLabel(commandId MenuId, text string) bool {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_SetLabel).Call(m.Instance(), uintptr(commandId), api.PascalStr(text))
 	return api.GoBool(r1)
 }
 
-// ICefMenuModel cefMenuModel_GetIndexOf
-func cefMenuModel_GetIndexOf(instance uintptr, commandId MenuId) int32 {
-	r1, _, _ := imports.Proc(def.CEFMenuModel_GetIndexOf).Call(instance, uintptr(commandId))
+// GetIndexOf
+//
+//	 Returns the index associated with the specified |command_id| or -1 if not
+//		found due to the command id not existing in the menu.
+func (m *ICefMenuModel) GetIndexOf(commandId MenuId) int32 {
+	r1, _, _ := imports.Proc(def.CEFMenuModel_GetIndexOf).Call(m.Instance(), uintptr(commandId))
 	return int32(r1)
+}
+
+// GetType
+//
+//	Returns the item type for the specified |command_id|.
+func (m *ICefMenuModel) GetType(commandId MenuId) TCefMenuItemType {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetType).Call(m.Instance(), uintptr(commandId))
+	return TCefMenuItemType(r1)
+}
+
+// GetLabel
+//
+//	Sets the label for the specified |command_id|. Returns true (1) on success.
+func (m *ICefMenuModel) GetLabel(commandId MenuId) string {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetLabel).Call(m.Instance(), uintptr(commandId))
+	return api.GoStr(r1)
+}
+
+// GetGroupId
+//
+//	Returns the group id for the specified |command_id| or -1 if invalid.
+func (m *ICefMenuModel) GetGroupId(commandId MenuId) int32 {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetGroupId).Call(m.Instance(), uintptr(commandId))
+	return int32(r1)
+}
+
+// SetGroupId
+//
+//	Sets the group id for the specified |command_id|. Returns true (1) on success.
+func (m *ICefMenuModel) SetGroupId(commandId MenuId, groupId int32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetGroupId).Call(m.Instance(), uintptr(commandId), uintptr(groupId))
+	return api.GoBool(r1)
+}
+
+// GetSubMenu
+//
+//	Returns the submenu for the specified |command_id| or NULL if invalid.
+func (m *ICefMenuModel) GetSubMenu(commandId MenuId) *ICefMenuModel {
+	var result uintptr
+	imports.Proc(def.CefMenuModel_GetSubMenu).Call(m.Instance(), uintptr(commandId), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+// GetColor
+//
+//	Returns in |color| the color that was explicitly set for |command_id| and
+//	|color_type|. If a color was not set then 0 will be returned in |color|.
+//	Returns true (1) on success.
+func (m *ICefMenuModel) GetColor(commandId MenuId, colorType TCefMenuColorType) (color types.TCefColor, result bool) {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetColor).Call(m.Instance(), uintptr(commandId), uintptr(colorType), uintptr(unsafe.Pointer(&color)))
+	return color, api.GoBool(r1)
+}
+
+// InsertSeparatorAt
+//
+//	Insert a separator in the menu at the specified |index|. Returns true (1) on success.
+func (m *ICefMenuModel) InsertSeparatorAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_InsertSeparatorAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// InsertItemAt
+// Insert an item in the menu at the specified |index|. Returns true (1) on
+// success.
+func (m *ICefMenuModel) InsertItemAt(index uint32, commandId int32, text string) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_InsertItemAt).Call(m.Instance(), uintptr(index), uintptr(commandId), api.PascalStr(text))
+	return api.GoBool(r1)
+}
+
+// InsertCheckItemAt
+// Insert a check item in the menu at the specified |index|. Returns true (1)
+// on success.
+func (m *ICefMenuModel) InsertCheckItemAt(index uint32, commandId int32, text string) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_InsertCheckItemAt).Call(m.Instance(), uintptr(index), uintptr(commandId), api.PascalStr(text))
+	return api.GoBool(r1)
+}
+
+// InsertRadioItemAt
+// Insert a radio item in the menu at the specified |index|. Only a single
+// item with the specified |group_id| can be checked at a time. Returns true
+// (1) on success.
+func (m *ICefMenuModel) InsertRadioItemAt(index uint32, commandId int32, text string, groupId int32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_InsertRadioItemAt).Call(m.Instance(), uintptr(index), uintptr(commandId),
+		api.PascalStr(text), uintptr(groupId))
+	return api.GoBool(r1)
+}
+
+// InsertSubMenuAt
+// Insert a sub-menu in the menu at the specified |index|. The new sub-menu
+// is returned.
+func (m *ICefMenuModel) InsertSubMenuAt(index uint32, commandId int32, text string) *ICefMenuModel {
+	var result uintptr
+	imports.Proc(def.CefMenuModel_InsertSubMenuAt).Call(m.Instance(), uintptr(index), uintptr(commandId), api.PascalStr(text),
+		uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+// GetCommandIdAt Returns the command id at the specified |index| or -1 if not found due to
+// invalid range or the index being a separator.
+func (m *ICefMenuModel) GetCommandIdAt(index uint32) int32 {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetCommandIdAt).Call(m.Instance(), uintptr(index))
+	return int32(r1)
+}
+
+// SetCommandIdAt
+// Sets the command id at the specified |index|. Returns true (1) on success.
+func (m *ICefMenuModel) SetCommandIdAt(index uint32, commandId int32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetCommandIdAt).Call(m.Instance(), uintptr(index), uintptr(commandId))
+	return api.GoBool(r1)
+}
+
+// GetLabelAt
+//
+//	Returns the label at the specified |index| or NULL if not found due to
+//	invalid range or the index being a separator.
+func (m *ICefMenuModel) GetLabelAt(index uint32) string {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetLabelAt).Call(m.Instance(), uintptr(index))
+	return api.GoStr(r1)
+}
+
+// SetLabelAt
+//
+//	Set the label at the specified |index|. Returns true (1) on success.
+func (m *ICefMenuModel) SetLabelAt(index uint32, text string) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetLabelAt).Call(m.Instance(), uintptr(index), api.PascalStr(text))
+	return api.GoBool(r1)
+}
+
+// GetTypeAt
+//
+//	Returns the item type at the specified |index|.
+func (m *ICefMenuModel) GetTypeAt(index uint32) TCefMenuItemType {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetTypeAt).Call(m.Instance(), uintptr(index))
+	return TCefMenuItemType(r1)
+}
+
+// GetGroupIdAt
+//
+//	Returns the group id at the specified |index| or -1 if invalid.
+func (m *ICefMenuModel) GetGroupIdAt(index uint32) int32 {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetGroupIdAt).Call(m.Instance(), uintptr(index))
+	return int32(r1)
+}
+
+// SetGroupIdAt
+//
+//	Sets the group id at the specified |index|. Returns true (1) on success.
+func (m *ICefMenuModel) SetGroupIdAt(index uint32, groupId int32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetGroupIdAt).Call(m.Instance(), uintptr(index), uintptr(groupId))
+	return api.GoBool(r1)
+}
+
+// GetSubMenuAt
+//
+//	Returns the submenu at the specified |index| or NULL if invalid.
+func (m *ICefMenuModel) GetSubMenuAt(index uint32) *ICefMenuModel {
+	var result uintptr
+	imports.Proc(def.CefMenuModel_GetSubMenuAt).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMenuModel{instance: unsafe.Pointer(result)}
+	}
+	return nil
+}
+
+// GetColorAt
+//
+//	Returns in |color| the color that was explicitly set for |command_id| and
+//	|color_type|. Specify an |index| value of -1 to return the default color
+//	in |color|. If a color was not set then 0 will be returned in |color|.
+//	Returns true (1) on success.
+func (m *ICefMenuModel) GetColorAt(index uint32, colorType TCefMenuColorType) (color types.TCefColor, ok bool) {
+	r1, _, _ := imports.Proc(def.CefMenuModel_GetColorAt).Call(m.Instance(), uintptr(index), uintptr(colorType), uintptr(unsafe.Pointer(&color)))
+	ok = api.GoBool(r1)
+	return
+}
+
+// SetFontListAt
+//
+//	Sets the font list for the specified |index|. Specify an |index| value of
+//	-1 to set the default font. If |font_list| is NULL the system font will be
+//	used. Returns true (1) on success. The format is
+//	"<FONT_FAMILY_LIST>,[STYLES] <SIZE>", where:
+//	- FONT_FAMILY_LIST is a comma-separated list of font family names,
+//	- STYLES is an optional space-separated list of style names
+//	  (case-sensitive "Bold" and "Italic" are supported), and
+//	- SIZE is an integer font size in pixels with the suffix "px".
+//
+//	Here are examples of valid font description strings:
+//	- "Arial, Helvetica, Bold Italic 14px"
+//	- "Arial, 14px"
+func (m *ICefMenuModel) SetFontListAt(index int32, fontList string) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetFontListAt).Call(m.Instance(), uintptr(index), api.PascalStr(fontList))
+	return api.GoBool(r1)
+}
+
+// RemoveAcceleratorAt
+//
+//	Remove the keyboard accelerator at the specified |index|. Returns true (1)
+//	on success.
+func (m *ICefMenuModel) RemoveAcceleratorAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_RemoveAcceleratorAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// SetAcceleratorAt
+//
+//	Set the keyboard accelerator at the specified |index|. |key_code| can be
+//	any virtual key or character value. Returns true (1) on success.
+func (m *ICefMenuModel) SetAcceleratorAt(index uint32, keyCode int32, shiftPressed, ctrlPressed, altPressed bool) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetAcceleratorAt).Call(m.Instance(), uintptr(index), uintptr(keyCode),
+		api.PascalBool(shiftPressed), api.PascalBool(ctrlPressed), api.PascalBool(altPressed))
+	return api.GoBool(r1)
+}
+
+// SetColorAt
+//
+//	Set the explicit color for |command_id| and |index| to |color|. Specify a
+//	|color| value of 0 to remove the explicit color. Specify an |index| value
+//	of -1 to set the default color for items that do not have an explicit
+//	color set. If no explicit color or default color is set for |color_type|
+//	then the system color will be used. Returns true (1) on success.
+func (m *ICefMenuModel) SetColorAt(index int32, colorType TCefMenuColorType, color types.TCefColor) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetColorAt).Call(m.Instance(), uintptr(index), uintptr(colorType), uintptr(color))
+	return api.GoBool(r1)
+}
+
+// IsEnabledAt
+//
+//	Returns true (1) if the specified |index| is enabled.
+func (m *ICefMenuModel) IsEnabledAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_IsEnabledAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// SetVisibleAt
+//
+//	Change the visibility at the specified |index|. Returns true (1) on
+//	success.
+func (m *ICefMenuModel) SetVisibleAt(index uint32, visible bool) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetVisibleAt).Call(m.Instance(), uintptr(index), api.PascalBool(visible))
+	return api.GoBool(r1)
+}
+
+// IsVisibleAt
+//
+//	Returns true (1) if the specified |index| is checked. Only applies to
+//	check and radio items.
+func (m *ICefMenuModel) IsVisibleAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_IsVisibleAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// IsCheckedAt
+func (m *ICefMenuModel) IsCheckedAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_IsCheckedAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// SetEnabledAt
+//
+//	Change the enabled status at the specified |index|. Returns true (1) on
+//	success.
+func (m *ICefMenuModel) SetEnabledAt(index uint32, enabled bool) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetEnabledAt).Call(m.Instance(), uintptr(index), api.PascalBool(enabled))
+	return api.GoBool(r1)
+}
+
+// HasAcceleratorAt
+//
+//	Returns true (1) if the specified |index| has a keyboard accelerator
+//	assigned.
+func (m *ICefMenuModel) HasAcceleratorAt(index uint32) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_HasAcceleratorAt).Call(m.Instance(), uintptr(index))
+	return api.GoBool(r1)
+}
+
+// SetCheckedAt
+//
+//	Check the specified |index|. Only applies to check and radio items.
+//	Returns true (1) on success.
+func (m *ICefMenuModel) SetCheckedAt(index uint32, checked bool) bool {
+	r1, _, _ := imports.Proc(def.CefMenuModel_SetCheckedAt).Call(m.Instance(), uintptr(index), api.PascalBool(checked))
+	return api.GoBool(r1)
 }

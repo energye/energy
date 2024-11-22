@@ -1078,6 +1078,31 @@ const (
 	CefMenuModel_SetGroupId
 	CefMenuModel_GetSubMenu
 	CefMenuModel_GetColor
+	CefMenuModel_InsertSeparatorAt
+	CefMenuModel_InsertItemAt
+	CefMenuModel_InsertCheckItemAt
+	CefMenuModel_InsertRadioItemAt
+	CefMenuModel_InsertSubMenuAt
+	CefMenuModel_GetCommandIdAt
+	CefMenuModel_SetCommandIdAt
+	CefMenuModel_GetLabelAt
+	CefMenuModel_SetLabelAt
+	CefMenuModel_GetTypeAt
+	CefMenuModel_GetGroupIdAt
+	CefMenuModel_SetGroupIdAt
+	CefMenuModel_GetSubMenuAt
+	CefMenuModel_GetColorAt
+	CefMenuModel_SetFontListAt
+	CefMenuModel_RemoveAcceleratorAt
+	CefMenuModel_SetAcceleratorAt
+	CefMenuModel_SetColorAt
+	CefMenuModel_IsEnabledAt
+	CefMenuModel_SetVisibleAt
+	CefMenuModel_IsVisibleAt
+	CefMenuModel_IsCheckedAt
+	CefMenuModel_SetEnabledAt
+	CefMenuModel_HasAcceleratorAt
+	CefMenuModel_SetCheckedAt
 	// ICefMenuModelDelegate
 	MenuModelDelegateRef_Create
 	MenuModelDelegate_ExecuteCommand
