@@ -13,6 +13,7 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
@@ -22,6 +23,14 @@ import (
 type ICefAudioHandler struct {
 	base     TCefBaseRefCounted
 	instance unsafe.Pointer
+}
+
+// TCefAudioParameters
+// include/internal/cef_types.h (cef_audio_parameters_t)
+type TCefAudioParameters struct {
+	channelLayout   consts.TCefChannelLayout
+	sampleRate      int32
+	framesPerBuffer int32
 }
 
 // AudioHandlerRef -> ICefAudioHandler
