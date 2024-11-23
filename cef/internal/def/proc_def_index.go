@@ -2764,4 +2764,25 @@ const (
 	V8StackFrame_GetColumn
 	V8StackFrame_IsEval
 	V8StackFrame_IsConstructor
+	// ICefOverlayController
+	OverlayControllerRefRef_UnWrap
+	OverlayController_IsValid
+	OverlayController_IsSame
+	OverlayController_GetContentsView
+	OverlayController_GetWindow
+	OverlayController_GetDockingMode
+	OverlayController_DestroyOverlay
+	OverlayController_SetBounds
+	OverlayController_GetBounds
+	OverlayController_GetBoundsInScreen
+	OverlayController_SetSize
+	OverlayController_GetSize
+	OverlayController_SetPosition
+	OverlayController_GetPosition
+	OverlayController_SetInsets
+	OverlayController_GetInsets
+	OverlayController_SizeToPreferredSize
+	OverlayController_SetVisible
+	OverlayController_IsVisible
+	OverlayController_IsDrawn
 ) //end

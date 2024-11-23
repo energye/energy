@@ -2764,6 +2764,27 @@ func init() {
 		dllimports.NewEnergyImport("V8StackFrame_GetColumn", 0),
 		dllimports.NewEnergyImport("V8StackFrame_IsEval", 0),
 		dllimports.NewEnergyImport("V8StackFrame_IsConstructor", 0),
+		// ICefOverlayController
+		dllimports.NewEnergyImport("OverlayControllerRefRef_UnWrap", 0),
+		dllimports.NewEnergyImport("OverlayController_IsValid", 0),
+		dllimports.NewEnergyImport("OverlayController_IsSame", 0),
+		dllimports.NewEnergyImport("OverlayController_GetContentsView", 0),
+		dllimports.NewEnergyImport("OverlayController_GetWindow", 0),
+		dllimports.NewEnergyImport("OverlayController_GetDockingMode", 0),
+		dllimports.NewEnergyImport("OverlayController_DestroyOverlay", 0),
+		dllimports.NewEnergyImport("OverlayController_SetBounds", 0),
+		dllimports.NewEnergyImport("OverlayController_GetBounds", 0),
+		dllimports.NewEnergyImport("OverlayController_GetBoundsInScreen", 0),
+		dllimports.NewEnergyImport("OverlayController_SetSize", 0),
+		dllimports.NewEnergyImport("OverlayController_GetSize", 0),
+		dllimports.NewEnergyImport("OverlayController_SetPosition", 0),
+		dllimports.NewEnergyImport("OverlayController_GetPosition", 0),
+		dllimports.NewEnergyImport("OverlayController_SetInsets", 0),
+		dllimports.NewEnergyImport("OverlayController_GetInsets", 0),
+		dllimports.NewEnergyImport("OverlayController_SizeToPreferredSize", 0),
+		dllimports.NewEnergyImport("OverlayController_SetVisible", 0),
+		dllimports.NewEnergyImport("OverlayController_IsVisible", 0),
+		dllimports.NewEnergyImport("OverlayController_IsDrawn", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }
