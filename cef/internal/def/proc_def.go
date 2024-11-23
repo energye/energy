@@ -2816,6 +2816,23 @@ func init() {
 		dllimports.NewEnergyImport("MediaSink_IsCastSink", 0),
 		dllimports.NewEnergyImport("MediaSink_IsDialSink", 0),
 		dllimports.NewEnergyImport("MediaSink_IsCompatibleWith", 0),
+		// TCefMediaSinkArray
+		dllimports.NewEnergyImport("MediaSinkArray_Get", 0),
+		// ICefMediaObserver
+		dllimports.NewEnergyImport("MediaObserverRef_Create", 0),
+		dllimports.NewEnergyImport("MediaObserverRef_CustomCreate", 0),
+		dllimports.NewEnergyImport("MediaObserver_OnSinks", 0),
+		dllimports.NewEnergyImport("MediaObserver_OnRoutes", 0),
+		dllimports.NewEnergyImport("MediaObserver_OnRouteStateChanged", 0),
+		dllimports.NewEnergyImport("MediaObserver_OnRouteMessageReceived", 0),
+		// ICefMediaRouteCreateCallback
+		dllimports.NewEnergyImport("MediaRouteCreateCallbackRef_Create", 0),
+		dllimports.NewEnergyImport("MediaRouteCreateCallbackRef_CustomCreate", 0),
+		dllimports.NewEnergyImport("MediaRouteCreateCallback_OnMediaRouteCreateFinished", 0),
+		// ICefMediaSinkDeviceInfoCallback
+		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallbackRef_Create", 0),
+		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallbackRef_CustomCreate", 0),
+		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallback_OnMediaSinkDeviceInfo", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

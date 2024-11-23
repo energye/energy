@@ -135,3 +135,36 @@ type TCefMediaSinkArray struct {
 	mediaSink []*ICefMediaSink
 	count     uint32
 }
+
+// Instance 实例
+func (m *TCefMediaSinkArray) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.instance)
+}
+
+func (m *TCefMediaSinkArray) Free() {
+	if m.instance != nil {
+		m.instance = nil
+	}
+}
+
+func (m *TCefMediaSinkArray) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return m.instance != nil
+}
+
+func (m *TCefMediaSinkArray) Get(index int) *ICefMediaSink {
+	if !m.IsValid() && index >= 0 && index < int(m.count) {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.MediaSinkArray_Get).Call(m.Instance(), uintptr(index), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefMediaSink{instance: getInstance(result)}
+	}
+	return nil
+}

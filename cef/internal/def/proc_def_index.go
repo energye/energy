@@ -2816,4 +2816,21 @@ const (
 	MediaSink_IsCastSink
 	MediaSink_IsDialSink
 	MediaSink_IsCompatibleWith
+	// TCefMediaSinkArray
+	MediaSinkArray_Get
+	// ICefMediaObserver
+	MediaObserverRef_Create
+	MediaObserverRef_CustomCreate
+	MediaObserver_OnSinks
+	MediaObserver_OnRoutes
+	MediaObserver_OnRouteStateChanged
+	MediaObserver_OnRouteMessageReceived
+	// ICefMediaRouteCreateCallback
+	MediaRouteCreateCallbackRef_Create
+	MediaRouteCreateCallbackRef_CustomCreate
+	MediaRouteCreateCallback_OnMediaRouteCreateFinished
+	// ICefMediaSinkDeviceInfoCallback
+	MediaSinkDeviceInfoCallbackRef_Create
+	MediaSinkDeviceInfoCallbackRef_CustomCreate
+	MediaSinkDeviceInfoCallback_OnMediaSinkDeviceInfo
 ) //end

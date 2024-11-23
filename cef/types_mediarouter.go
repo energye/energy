@@ -74,8 +74,8 @@ func (m *ICefMediaRouter) IsValid() bool {
 	return m.instance != nil
 }
 
-// / Add an observer for MediaRouter events. The observer will remain
-// / registered until the returned Registration object is destroyed.
+// Add an observer for MediaRouter events. The observer will remain
+// registered until the returned Registration object is destroyed.
 func (m *ICefMediaRouter) AddObserver(observer *ICefMediaObserver) *ICefRegistration {
 	if !m.IsValid() {
 		return nil
@@ -88,9 +88,9 @@ func (m *ICefMediaRouter) AddObserver(observer *ICefMediaObserver) *ICefRegistra
 	return nil
 }
 
-// / Returns a MediaSource object for the specified media source URN. Supported
-// / URN schemes include "cast:" and "dial:", and will be already known by the
-// / client application (e.g. "cast:<appId>?clientId=<clientId>").
+// Returns a MediaSource object for the specified media source URN. Supported
+// URN schemes include "cast:" and "dial:", and will be already known by the
+// client application (e.g. "cast:<appId>?clientId=<clientId>").
 func (m *ICefMediaRouter) GetSource(urn string) *ICefMediaSource {
 	if !m.IsValid() {
 		return nil
@@ -103,8 +103,8 @@ func (m *ICefMediaRouter) GetSource(urn string) *ICefMediaSource {
 	return nil
 }
 
-// / Trigger an asynchronous call to ICefMediaObserver.OnSinks on all
-// / registered observers.
+// Trigger an asynchronous call to ICefMediaObserver.OnSinks on all
+// registered observers.
 func (m *ICefMediaRouter) NotifyCurrentSinks() {
 	if !m.IsValid() {
 		return
@@ -112,12 +112,12 @@ func (m *ICefMediaRouter) NotifyCurrentSinks() {
 	imports.Proc(def.MediaRouter_NotifyCurrentSinks).Call(m.Instance())
 }
 
-// / Create a new route between |source| and |sink|. Source and sink must be
-// / valid, compatible (as reported by ICefMediaSink.IsCompatibleWith), and
-// / a route between them must not already exist. |callback| will be executed
-// / on success or failure. If route creation succeeds it will also trigger an
-// / asynchronous call to ICefMediaObserver.OnRoutes on all registered
-// / observers.
+// Create a new route between |source| and |sink|. Source and sink must be
+// valid, compatible (as reported by ICefMediaSink.IsCompatibleWith), and
+// a route between them must not already exist. |callback| will be executed
+// on success or failure. If route creation succeeds it will also trigger an
+// asynchronous call to ICefMediaObserver.OnRoutes on all registered
+// observers.
 func (m *ICefMediaRouter) CreateRoute(source *ICefMediaSource, sink *ICefMediaSink, callback *ICefMediaRouteCreateCallback) {
 	if !m.IsValid() {
 		return
@@ -125,32 +125,11 @@ func (m *ICefMediaRouter) CreateRoute(source *ICefMediaSource, sink *ICefMediaSi
 	imports.Proc(def.MediaRouter_CreateRoute).Call(m.Instance(), source.Instance(), sink.Instance(), callback.Instance())
 }
 
-// / Trigger an asynchronous call to ICefMediaObserver.OnRoutes on all
-// / registered observers.
+// Trigger an asynchronous call to ICefMediaObserver.OnRoutes on all
+// registered observers.
 func (m *ICefMediaRouter) NotifyCurrentRoutes() {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MediaRouter_NotifyCurrentRoutes).Call(m.Instance())
-}
-
-// Instance 实例
-func (m *TCefMediaSinkArray) Instance() uintptr {
-	if m == nil {
-		return 0
-	}
-	return uintptr(m.instance)
-}
-
-func (m *TCefMediaSinkArray) Free() {
-	if m.instance != nil {
-		m.instance = nil
-	}
-}
-
-func (m *TCefMediaSinkArray) IsValid() bool {
-	if m == nil || m.instance == nil {
-		return false
-	}
-	return m.instance != nil
 }
