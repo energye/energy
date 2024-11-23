@@ -2729,6 +2729,41 @@ func init() {
 		dllimports.NewEnergyImport("Task_SetOnExecute", 0),
 		// TCefPreferenceRegistrarRef
 		dllimports.NewEnergyImport("PreferenceRegistrarRef_AddPreference", 0),
+		// ICefNavigationEntry
+		dllimports.NewEnergyImport("NavigationEntryRef_UnWrap", 0),
+		dllimports.NewEnergyImport("NavigationEntry_IsValid", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetUrl", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetDisplayUrl", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetOriginalUrl", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetTitle", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetTransitionType", 0),
+		dllimports.NewEnergyImport("NavigationEntry_HasPostData", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetCompletionTime", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetHttpStatusCode", 0),
+		dllimports.NewEnergyImport("NavigationEntry_GetSSLStatus", 0),
+		// ICefSSLStatus
+		dllimports.NewEnergyImport("SSLStatusRef_UnWrap", 0),
+		dllimports.NewEnergyImport("SSLStatus_IsSecureConnection", 0),
+		dllimports.NewEnergyImport("SSLStatus_GetCertStatus", 0),
+		dllimports.NewEnergyImport("SSLStatus_GetSSLVersion", 0),
+		dllimports.NewEnergyImport("SSLStatus_GetContentStatus", 0),
+		dllimports.NewEnergyImport("SSLStatus_GetX509Certificate", 0),
+		// ICefV8StackFrame
+		dllimports.NewEnergyImport("V8StackTraceRef_UnWrap", 0),
+		dllimports.NewEnergyImport("V8StackTraceRef_Current", 0),
+		dllimports.NewEnergyImport("V8StackTrace_IsValid", 0),
+		dllimports.NewEnergyImport("V8StackTrace_GetFrameCount", 0),
+		dllimports.NewEnergyImport("V8StackTrace_GetFrame", 0),
+		// ICefV8StackFrame
+		dllimports.NewEnergyImport("V8StackFrameRef_UnWrap", 0),
+		dllimports.NewEnergyImport("V8StackFrame_IsValid", 0),
+		dllimports.NewEnergyImport("V8StackFrame_GetScriptName", 0),
+		dllimports.NewEnergyImport("V8StackFrame_GetScriptNameOrSourceUrl", 0),
+		dllimports.NewEnergyImport("V8StackFrame_GetFunctionName", 0),
+		dllimports.NewEnergyImport("V8StackFrame_GetLineNumber", 0),
+		dllimports.NewEnergyImport("V8StackFrame_GetColumn", 0),
+		dllimports.NewEnergyImport("V8StackFrame_IsEval", 0),
+		dllimports.NewEnergyImport("V8StackFrame_IsConstructor", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

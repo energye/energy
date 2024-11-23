@@ -2729,4 +2729,39 @@ const (
 	Task_SetOnExecute
 	// TCefPreferenceRegistrarRef
 	PreferenceRegistrarRef_AddPreference
+	// ICefNavigationEntry
+	NavigationEntryRef_UnWrap
+	NavigationEntry_IsValid
+	NavigationEntry_GetUrl
+	NavigationEntry_GetDisplayUrl
+	NavigationEntry_GetOriginalUrl
+	NavigationEntry_GetTitle
+	NavigationEntry_GetTransitionType
+	NavigationEntry_HasPostData
+	NavigationEntry_GetCompletionTime
+	NavigationEntry_GetHttpStatusCode
+	NavigationEntry_GetSSLStatus
+	// ICefSSLStatus
+	SSLStatusRef_UnWrap
+	SSLStatus_IsSecureConnection
+	SSLStatus_GetCertStatus
+	SSLStatus_GetSSLVersion
+	SSLStatus_GetContentStatus
+	SSLStatus_GetX509Certificate
+	// ICefV8StackFrame
+	V8StackTraceRef_UnWrap
+	V8StackTraceRef_Current
+	V8StackTrace_IsValid
+	V8StackTrace_GetFrameCount
+	V8StackTrace_GetFrame
+	// ICefV8StackFrame
+	V8StackFrameRef_UnWrap
+	V8StackFrame_IsValid
+	V8StackFrame_GetScriptName
+	V8StackFrame_GetScriptNameOrSourceUrl
+	V8StackFrame_GetFunctionName
+	V8StackFrame_GetLineNumber
+	V8StackFrame_GetColumn
+	V8StackFrame_IsEval
+	V8StackFrame_IsConstructor
 ) //end
