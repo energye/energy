@@ -74,6 +74,7 @@ func (m *LCLBrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lPar
 	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
 }
 
+// 该函数调用可能会影响窗口的一些默认行为，需要知道在合适的时机调用它
 func (m *LCLBrowserWindow) _HookWndProcMessage() {
 	switch m.WindowType() {
 	case consts.WT_DEV_TOOLS, consts.WT_VIEW_SOURCE:

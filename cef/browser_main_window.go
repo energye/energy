@@ -113,11 +113,7 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.defaultChromiumEvent()
 	wp := m.WindowProperty()
 	m.SetBounds(wp.X, wp.Y, wp.Width, wp.Height)
-	if wp.ShowInTaskBar {
-		m.SetShowInTaskBar()
-	} else {
-		m.SetNotInTaskBar()
-	}
+	m.TForm.SetShowInTaskBar(wp.ShowInTaskBar)
 	BrowserWindow.mainBrowserWindow = m
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()
@@ -160,12 +156,6 @@ func (m *browserWindow) createNextLCLPopupWindow() {
 	if m.popupWindow == nil {
 		if mw := m.MainWindow(); mw != nil && mw.IsLCL() {
 			// owner设置nil以防址多窗口时被连带关闭, 如果多窗口时也可指定为真实的主窗口
-			//var owner lcl.IComponent
-			//if disabledMainWindow != nil {
-			//	owner = disabledMainWindow // 真实的主窗口
-			//} else if enableMainWindow != nil {
-			//	owner = enableMainWindow // 未开启多窗口
-			//}
 			// 创建 LCL 窗口对象
 			m.popupWindow = NewLCLWindow(m.Config.WindowProperty, nil)
 			// 创建 Chromium 对象

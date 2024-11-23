@@ -100,11 +100,7 @@ func NewLCLWindow(windowProperty WindowProperty, owner lcl.IComponent) *LCLBrows
 	window.SetWindowType(windowProperty.WindowType)
 	window.SetDoubleBuffered(true)
 	window.FormCreate()
-	if windowProperty.ShowInTaskBar {
-		window.SetShowInTaskBar()
-	} else {
-		window.SetNotInTaskBar()
-	}
+	window.TForm.SetShowInTaskBar(window.windowProperty.ShowInTaskBar)
 	window.defaultWindowEvent()
 	window.SetProperty()
 	return window
