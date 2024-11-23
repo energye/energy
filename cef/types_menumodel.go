@@ -233,9 +233,9 @@ func (m *ICefMenuModel) IsSubMenu() bool {
 }
 
 // GetCount Returns the number of items in this menu.
-func (m *ICefMenuModel) GetCount() int32 {
+func (m *ICefMenuModel) GetCount() uint32 {
 	r1, _, _ := imports.Proc(def.CEFMenuModel_GetCount).Call(m.Instance())
-	return int32(r1)
+	return uint32(r1)
 }
 
 // AddItem Add an item to the menu. Returns true (1) on success.

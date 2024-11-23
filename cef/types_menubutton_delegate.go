@@ -57,7 +57,7 @@ func (m *ICefMenuButtonDelegate) SetOnMenuButtonPressed(fn onMenuButtonPressed) 
 	imports.Proc(def.MenuButtonDelegate_SetOnMenuButtonPressed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type onMenuButtonPressed func(button *ICefMenuButton, screenPoint *TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
+type onMenuButtonPressed func(button *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -67,7 +67,7 @@ func init() {
 		switch fn.(type) {
 		case onMenuButtonPressed:
 			button := &ICefMenuButton{&ICefLabelButton{&ICefButton{&ICefView{instance: getPtr(0)}}}}
-			screenPoint := (*TCefPoint)(getPtr(1))
+			screenPoint := *(*TCefPoint)(getPtr(1))
 			buttonPressedLock := &ICefMenuButtonPressedLock{base: TCefBaseRefCounted{instance: getPtr(3)}}
 			fn.(onMenuButtonPressed)(button, screenPoint, buttonPressedLock)
 		default:
