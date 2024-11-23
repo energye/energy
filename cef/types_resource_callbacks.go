@@ -16,7 +16,13 @@ import (
 	"unsafe"
 )
 
-// ************************** ICefResourceReadCallback ************************** //
+// ICefResourceReadCallback
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_read_callback_t)
+type ICefResourceReadCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefResourceReadCallback) Instance() uintptr {
@@ -47,7 +53,13 @@ func (m *ICefResourceReadCallback) Cont(bytesSkipped int64) {
 	imports.Proc(def.ResourceSkipCallback_Cont).Call(m.Instance(), uintptr(unsafe.Pointer(&bytesSkipped)))
 }
 
-// ************************** ICefResourceSkipCallback ************************** //
+// ICefResourceSkipCallback
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_skip_callback_t)
+type ICefResourceSkipCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefResourceSkipCallback) Instance() uintptr {

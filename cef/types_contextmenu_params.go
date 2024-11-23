@@ -16,7 +16,14 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// ICefContextMenuParams 菜单显示时参数，当前鼠标右键的frame & html元素参数
+type ICefContextMenuParams struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefContextMenuParams) Instance() uintptr {

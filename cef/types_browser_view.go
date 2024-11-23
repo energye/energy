@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefBrowserView
+// include/capi/views/cef_browser_view_capi.h (cef_browser_view_t)
+type ICefBrowserView struct {
+	*ICefView
+}
+
 // BrowserViewRef -> ICefBrowserView
 var BrowserViewRef browserView
 

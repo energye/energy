@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefDomVisitor
+type ICefDomVisitor struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // DomVisitorRef -> ICefDomVisitor
 var DomVisitorRef domVisitor
@@ -33,8 +37,6 @@ func (*domVisitor) New() *ICefDomVisitor {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefDomVisitor) Instance() uintptr {

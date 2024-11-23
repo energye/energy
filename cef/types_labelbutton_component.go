@@ -20,6 +20,11 @@ import (
 	"unsafe"
 )
 
+// TCEFLabelButtonComponent
+type TCEFLabelButtonComponent struct {
+	*TCEFButtonComponent
+}
+
 // LabelButtonComponentRef -> TCEFLabelButtonComponent
 var LabelButtonComponentRef labelButtonComponent
 

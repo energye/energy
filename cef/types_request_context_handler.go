@@ -19,7 +19,12 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefRequestContextHandler
+type ICefRequestContextHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
 
 // RequestContextHandlerRef -> ICefRequestContextHandler
 var RequestContextHandlerRef requestContextHandler
@@ -46,8 +51,6 @@ func (*requestContextHandler) NewForChromium(chromium IChromium) *ICefRequestCon
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefRequestContextHandler) Instance() uintptr {

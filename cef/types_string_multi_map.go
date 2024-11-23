@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefStringMultiMap 实例
+type ICefStringMultiMap struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // StringMultiMapRef -> ICefStringMultiMap
 var StringMultiMapRef stringMultiMap
 

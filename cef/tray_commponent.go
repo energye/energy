@@ -14,10 +14,8 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/pkgs/notice"
-	"github.com/energye/energy/v2/pkgs/systray"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"sync"
 )
 
 // TMouseEvent 鼠标事件
@@ -51,48 +49,6 @@ type ITray interface {
 	AsCEFTray() *CEFTray                         //AsCEFTray 尝试转换为 LCL+CEF 组件托盘, 如果创建的是其它类型托盘返回nil
 	AsLCLTray() *LCLTray                         //AsLCLTray 尝试转换为 LCL 组件托盘, 如果创建的是其它类型托盘返回nil
 	Notice(title, content string, timeout int32) //Notice 托盘系统通知
-}
-
-// LCLTray LCL组件 托盘
-type LCLTray struct {
-	owner     lcl.IComponent
-	trayIcon  *lcl.TTrayIcon
-	popupMenu *lcl.TPopupMenu
-}
-
-// ViewsFrameTray VF(views framework)组件+html 托盘
-type ViewsFrameTray struct {
-	trayWindow *ViewsFrameworkBrowserWindow
-	trayIcon   *lcl.TTrayIcon
-	visible    bool
-	x, y, w, h int32
-	mouseUp    TMouseEvent
-	isClosing  bool
-}
-
-// CEFTray CEF基于LCL组件+html 托盘
-type CEFTray struct {
-	*lcl.TForm
-	owner        lcl.IComponent
-	trayIcon     *lcl.TTrayIcon
-	chromium     IChromium
-	windowParent ICEFWindowParent
-	x, y, w, h   int32
-	mouseUp      TMouseEvent
-	isClosing    bool
-	url          string
-}
-
-// SysTray 系统原生
-type SysTray struct {
-	lock           sync.Mutex
-	menu           *SysMenu
-	icon           []byte
-	title, tooltip string
-	click          TrayICONClick
-	dClick         TrayICONClick
-	rClick         func(menu systray.IMenu)
-	start, stop    func()
 }
 
 func notification(tray lcl.IComponent, title, content string, timeout int32) {

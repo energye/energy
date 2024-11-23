@@ -16,6 +16,12 @@ import (
 	"unsafe"
 )
 
+// ICefFillLayout
+// include/capi/views/cef_fill_layout_capi.h (cef_fill_layout_t)
+type ICefFillLayout struct {
+	*ICefLayout
+}
+
 // FillLayoutRef -> ICefFillLayout
 var FillLayoutRef fillLayout
 

@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefResponse
+type ICefResponse struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ResponseRef -> ICefResponse
 var ResponseRef response
 

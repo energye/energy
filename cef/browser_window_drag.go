@@ -53,7 +53,7 @@ func (m *dragExtensionHandler) make(frameId string, context *ICefV8Context) {
 	if m.energyExtensionObject != nil {
 		m.clear(frameId)
 	}
-	m.energyExtensionObject = V8ValueRef.NewObject(nil)
+	m.energyExtensionObject = V8ValueRef.NewObject(nil, nil)
 	handler := V8HandlerRef.New()
 	handler.Execute(m.handler)
 	m.energyExtensionObject.setValueByKey("mouseUp", V8ValueRef.newFunction("mouseUp", handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)

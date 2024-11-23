@@ -20,6 +20,11 @@ import (
 	"unsafe"
 )
 
+// TCEFTextFieldComponent
+type TCEFTextFieldComponent struct {
+	*TCEFViewComponent
+}
+
 // TextFieldComponentRef -> TCEFTextFieldComponent
 var TextFieldComponentRef textFieldComponent
 
@@ -131,7 +136,8 @@ func (m *TCEFTextFieldComponent) ClearSelection() {
 }
 
 // SelectRange
-//  CEF 117 Remove
+//
+//	CEF 117 Remove
 func (m *TCEFTextFieldComponent) SelectRange(range_ TCefRange) {
 	if !m.IsValid() {
 		return
@@ -140,7 +146,8 @@ func (m *TCEFTextFieldComponent) SelectRange(range_ TCefRange) {
 }
 
 // SetSelectRange
-//  CEF 117 ~
+//
+//	CEF 117 ~
 func (m *TCEFTextFieldComponent) SetSelectRange(range_ TCefRange) {
 	if !m.IsValid() {
 		return
@@ -149,7 +156,8 @@ func (m *TCEFTextFieldComponent) SetSelectRange(range_ TCefRange) {
 }
 
 // GetSelectRange
-//  CEF 117 ~
+//
+//	CEF 117 ~
 func (m *TCEFTextFieldComponent) GetSelectRange() (result TCefRange) {
 	if !m.IsValid() {
 		return
@@ -159,7 +167,8 @@ func (m *TCEFTextFieldComponent) GetSelectRange() (result TCefRange) {
 }
 
 // CursorPosition
-//  CEF 117 ~
+//
+//	CEF 117 ~
 func (m *TCEFTextFieldComponent) CursorPosition() uint32 {
 	if !m.IsValid() {
 		return 0

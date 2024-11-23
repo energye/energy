@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefDialogHandler
+type ICefDialogHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // DialogHandlerRef -> ICefDialogHandler
 var DialogHandlerRef dialogHandler
@@ -34,8 +38,6 @@ func (*dialogHandler) New() *ICefDialogHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefDialogHandler) Instance() uintptr {

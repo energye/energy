@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefKeyboardHandler
+type ICefKeyboardHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // KeyboardHandlerRef -> ICefKeyboardHandler
 var KeyboardHandlerRef keyboardHandler
@@ -34,8 +38,6 @@ func (*keyboardHandler) New() *ICefKeyboardHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefKeyboardHandler) Instance() uintptr {

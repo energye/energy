@@ -26,6 +26,18 @@ import (
 	"unsafe"
 )
 
+// ICefV8Value
+//
+//	CEF V8 值类型, 对应到 JavaScrip 的类型, 使用该对象时需要合理的管理释放
+type ICefV8Value struct {
+	base         TCefBaseRefCounted
+	instance     unsafe.Pointer
+	valueType    consts.V8ValueType      // 值类型
+	valueByIndex []*ICefV8Value          // 当前对象的所有数组集合
+	valueByKeys  map[string]*ICefV8Value // 当前对象的所有key=value子集合
+	cantNotFree  bool                    // 是否允许释放, false时允许释放
+}
+
 func (m *ICefV8Value) Instance() uintptr {
 	if m == nil {
 		return 0
@@ -787,6 +799,14 @@ func (m *TCefV8ValueArray) Get(index int) *ICefV8Value {
 	return nil
 }
 
+// TCefV8ValueArray ICefV8Value 数组的替代结构
+type TCefV8ValueArray struct {
+	instance         unsafe.Pointer
+	arguments        uintptr
+	argumentsLength  int
+	argumentsCollect []*ICefV8Value
+}
+
 // Size 返回 ICefV8Value 数组长度
 func (m *TCefV8ValueArray) Size() int {
 	if m == nil {
@@ -911,8 +931,8 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 	}
 }
 
-// NewObject TODO 未增加 ICefV8Interceptor
-func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
+// NewObject
+func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
 	var result uintptr
 	if application.IsSpecVer49() {
 		// CEF49
@@ -922,11 +942,14 @@ func (*cefV8Value) NewObject(accessor *ICefV8Accessor) *ICefV8Value {
 			imports.Proc(def.CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(unsafe.Pointer(&result)))
 		}
 	} else {
-		if accessor == nil || accessor.instance == nil {
-			imports.Proc(def.CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(0), uintptr(unsafe.Pointer(&result)))
-		} else {
-			imports.Proc(def.CefV8ValueRef_NewObject).Call(accessor.Instance(), uintptr(0), uintptr(unsafe.Pointer(&result)))
+		var accessorPtr, interceptorPtr uintptr = 0, 0
+		if accessor != nil {
+			accessorPtr = accessor.Instance()
 		}
+		if interceptor != nil {
+			interceptorPtr = interceptor.Instance()
+		}
+		imports.Proc(def.CefV8ValueRef_NewObject).Call(accessorPtr, interceptorPtr, uintptr(unsafe.Pointer(&result)))
 	}
 	return &ICefV8Value{
 		instance:    unsafe.Pointer(result),
@@ -998,6 +1021,13 @@ func (*cefV8Value) UnWrap(data *ICefV8Value) *ICefV8Value {
 	data.base.Free(data.Instance())
 	data.instance = getInstance(result)
 	return data
+}
+
+// ICefV8ValueKeys
+type ICefV8ValueKeys struct {
+	keys     *lcl.TStrings
+	count    int
+	keyArray []string
 }
 
 func (m *ICefV8ValueKeys) Count() int {

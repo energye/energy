@@ -52,6 +52,25 @@ type IChromiumOptions interface {
 	SetChromeZoomBubble(value consts.TCefState)
 }
 
+type TChromiumOptions struct {
+	Chromium                   IChromium
+	javascript                 consts.TCefState
+	javascriptCloseWindows     consts.TCefState
+	javascriptAccessClipboard  consts.TCefState
+	javascriptDomPaste         consts.TCefState
+	imageLoading               consts.TCefState
+	imageShrinkStandaloneToFit consts.TCefState
+	textAreaResize             consts.TCefState
+	tabToLinks                 consts.TCefState
+	localStorage               consts.TCefState
+	databases                  consts.TCefState
+	webgl                      consts.TCefState
+	backgroundColor            types.TCefColor
+	acceptLanguageList         types.String // TODO Remove CEF 118
+	windowlessFrameRate        types.Integer
+	chromeStatusBubble         consts.TCefState
+}
+
 func NewChromiumOptions(chromium IChromium) IChromiumOptions {
 	return &TChromiumOptions{
 		javascript:                 consts.STATE_DEFAULT,

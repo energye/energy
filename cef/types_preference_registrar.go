@@ -14,7 +14,15 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// TCefPreferenceRegistrarRef
+// Class that manages custom preference registrations.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_preference_capi.h">CEF source file: /include/capi/cef_preference_capi.h (cef_preference_registrar_t)</see></para>
+type TCefPreferenceRegistrarRef struct {
+	instance unsafe.Pointer
+}
 
 // AddPreference
 // Register a preference with the specified |name| and |default_value|. To

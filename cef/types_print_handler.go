@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefPrintHandler
+type ICefPrintHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // PrintHandlerRef -> ICefPrintHandler
 var PrintHandlerRef printSpanHandler
@@ -33,8 +37,6 @@ func (*printSpanHandler) New() *ICefPrintHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefPrintHandler) Instance() uintptr {

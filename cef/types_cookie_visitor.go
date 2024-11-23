@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefCookieVisitor
+type ICefCookieVisitor struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // CookieVisitorRef -> ICefCookieVisitor
 var CookieVisitorRef cookieVisitor
 

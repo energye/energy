@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefDownloadHandler
+type ICefDownloadHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // DownloadHandlerRef -> ICefDownloadHandler
 var DownloadHandlerRef downloadHandler
@@ -33,8 +37,6 @@ func (*downloadHandler) New() *ICefDownloadHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefDownloadHandler) Instance() uintptr {

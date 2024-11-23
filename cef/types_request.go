@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefRequest
+type ICefRequest struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // RequestRef -> ICefRequest
 var RequestRef request
 

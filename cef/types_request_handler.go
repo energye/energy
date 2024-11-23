@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefRequestHandler
+type ICefRequestHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // RequestHandlerRef -> ICefRequestHandler
 var RequestHandlerRef requestHandler
@@ -34,8 +38,6 @@ func (*requestHandler) New() *ICefRequestHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefRequestHandler) Instance() uintptr {

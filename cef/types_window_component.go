@@ -25,6 +25,11 @@ import (
 	"unsafe"
 )
 
+// TCEFWindowComponent 窗口组件
+type TCEFWindowComponent struct {
+	*TCEFPanelComponent
+}
+
 // WindowComponentRef -> TCEFWindowComponent
 var WindowComponentRef windowComponent
 

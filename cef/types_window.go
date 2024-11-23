@@ -23,6 +23,12 @@ import (
 	"unsafe"
 )
 
+// ICefWindow
+// include/capi/views/cef_window_capi.h (cef_window_t)
+type ICefWindow struct {
+	*ICefPanel
+}
+
 // CefWindowRef -> ICefWindow
 var CefWindowRef cefWindow
 

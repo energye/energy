@@ -21,7 +21,13 @@ import (
 	"unsafe"
 )
 
-// ************************** ICefX509Certificate ************************** //
+// ICefX509Certificate
+//
+//	/include/capi/cef_x509_certificate_capi.h (cef_x509certificate_t)
+type ICefX509Certificate struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefX509Certificate) Instance() uintptr {
@@ -179,6 +185,14 @@ func (m *ICefX509Certificate) GetPEMEncodedIssuerChain(chainCount uint32) *TCefB
 
 // ************************** TCefX509CertificateArray ************************** //
 
+// TCefX509CertificateArray
+// []ICefX509Certificate
+type TCefX509CertificateArray struct {
+	instance     unsafe.Pointer
+	certificates []*ICefX509Certificate
+	count        uint32
+}
+
 func (m *TCefX509CertificateArray) Get(index uint32) *ICefX509Certificate {
 	if index < m.count {
 		if m.certificates == nil {
@@ -212,6 +226,13 @@ func (m *TCefX509CertificateArray) Free() {
 }
 
 // ************************** ICefX509CertPrincipal ************************** //
+
+// ICefX509CertPrincipal
+// include/capi/cef_x509_certificate_capi.h (cef_x509cert_principal_t)
+type ICefX509CertPrincipal struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefX509CertPrincipal) Instance() uintptr {
@@ -276,7 +297,8 @@ func (m *ICefX509CertPrincipal) GetCountryName() string {
 }
 
 // GetStreetAddresses
-//  CEF 115 Remove
+//
+//	CEF 115 Remove
 func (m *ICefX509CertPrincipal) GetStreetAddresses() *lcl.TStrings {
 	if !m.IsValid() {
 		return nil
@@ -305,7 +327,8 @@ func (m *ICefX509CertPrincipal) GetOrganizationUnitNames() *lcl.TStrings {
 }
 
 // GetDomainComponents
-//  CEF 115 Remove
+//
+//	CEF 115 Remove
 func (m *ICefX509CertPrincipal) GetDomainComponents() *lcl.TStrings {
 	if !m.IsValid() {
 		return nil
@@ -316,6 +339,14 @@ func (m *ICefX509CertPrincipal) GetDomainComponents() *lcl.TStrings {
 }
 
 // ************************** ICefX509CertPrincipal ************************** //
+
+// ICefSelectClientCertificateCallback
+//
+//	/include/capi/cef_request_handler_capi.h (cef_select_client_certificate_callback_t)
+type ICefSelectClientCertificateCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefSelectClientCertificateCallback) Instance() uintptr {
@@ -347,6 +378,14 @@ func (m *ICefSelectClientCertificateCallback) Select(cert *ICefX509Certificate) 
 }
 
 // ************************** ICefSslInfo ************************** //
+
+// ICefSslInfo
+//
+//	/include/capi/cef_ssl_info_capi.h (cef_sslinfo_t)
+type ICefSslInfo struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefSslInfo) Instance() uintptr {

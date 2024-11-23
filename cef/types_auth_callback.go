@@ -14,7 +14,14 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// ICefAuthCallback 授权回调
+type ICefAuthCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefAuthCallback) Instance() uintptr {

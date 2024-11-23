@@ -17,6 +17,12 @@ import (
 	"unsafe"
 )
 
+// ICefPostData
+type ICefPostData struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // PostDataRef -> ICefPostData
 var PostDataRef postData
 

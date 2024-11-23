@@ -18,7 +18,13 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefResourceHandler
+//
+//	/include/capi/cef_resource_handler_capi.h (cef_resource_handler_t)
+type ICefResourceHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // ResourceHandlerRef -> ICefResourceHandler
 var ResourceHandlerRef resourceHandler
@@ -33,8 +39,6 @@ func (*resourceHandler) New(browser *ICefBrowser, frame *ICefFrame, schemeName s
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefResourceHandler) Instance() uintptr {

@@ -14,7 +14,16 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
+	"unsafe"
 )
+
+// ICefFileDialogCallback
+//
+//	/include/capi/cef_dialog_handler_capi.h (cef_file_dialog_callback_t)
+type ICefFileDialogCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefFileDialogCallback) Instance() uintptr {

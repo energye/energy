@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefPdfPrintCallback
+type ICefPdfPrintCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // PdfPrintCallbackRef -> ICefPdfPrintCallback
 var PdfPrintCallbackRef pdfPrintCallback
 

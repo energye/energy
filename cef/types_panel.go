@@ -16,6 +16,12 @@ import (
 	"unsafe"
 )
 
+// ICefPanel
+// include/capi/views/cef_panel_capi.h (cef_panel_t)
+type ICefPanel struct {
+	*ICefView
+}
+
 // PanelRef -> ICefPanel
 var PanelRef panel
 

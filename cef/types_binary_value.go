@@ -25,10 +25,16 @@ import (
 	"unsafe"
 )
 
+// ICefBinaryValue -> ArgumentList
+type ICefBinaryValue struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // BinaryValueRef -> ICefBinaryValue
 var BinaryValueRef cefBinaryValue
 
-//cefBinaryValue
+// cefBinaryValue
 type cefBinaryValue uintptr
 
 // New 创建一个带有数据的二进对象
@@ -107,7 +113,14 @@ func (m *ICefBinaryValue) Free() {
 	}
 }
 
-// ************************** TCefBinaryValueArray ************************** //
+// TCefBinaryValueArray
+//
+//	[]ICefBinaryValue
+type TCefBinaryValueArray struct {
+	instance     unsafe.Pointer
+	binaryValues []*ICefBinaryValue
+	count        uint32
+}
 
 func (m *TCefBinaryValueArray) Get(index uint32) *ICefBinaryValue {
 	if index < m.count {

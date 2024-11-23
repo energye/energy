@@ -17,6 +17,13 @@ import (
 	"unsafe"
 )
 
+// ICefLayout
+// include/capi/views/cef_layout_capi.h (cef_layout_t)
+type ICefLayout struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // LayoutRef -> ICefLayout
 var LayoutRef layout
 

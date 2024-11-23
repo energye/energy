@@ -17,6 +17,14 @@ import (
 	"unsafe"
 )
 
+// ICefProcessMessage
+type ICefProcessMessage struct {
+	base         TCefBaseRefCounted
+	instance     unsafe.Pointer
+	argumentList *ICefListValue
+	name         string
+}
+
 // ProcessMessageRef -> ICefProcessMessage
 var ProcessMessageRef processMessage
 

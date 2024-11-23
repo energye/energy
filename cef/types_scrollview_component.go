@@ -18,6 +18,11 @@ import (
 	"unsafe"
 )
 
+// TCEFScrollViewComponent
+type TCEFScrollViewComponent struct {
+	*TCEFViewComponent
+}
+
 // ScrollViewComponentRef -> TCEFScrollViewComponent
 var ScrollViewComponentRef scrollViewComponent
 

@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefLabelButton
+// include/capi/views/cef_label_button_capi.h (cef_label_button_t)
+type ICefLabelButton struct {
+	*ICefButton
+}
+
 // LabelButtonRef -> ICefLabelButton
 var LabelButtonRef labelButton
 

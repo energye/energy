@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefButtonDelegate
+// include/capi/views/cef_button_delegate_capi.h (cef_button_delegate_t)
+type ICefButtonDelegate struct {
+	*ICefViewDelegate
+}
+
 // ButtonDelegateRef -> TCEFButtonDelegate
 var ButtonDelegateRef buttonDelegate
 

@@ -15,7 +15,13 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// TCefSchemeRegistrarRef
+type TCefSchemeRegistrarRef struct {
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *TCefSchemeRegistrarRef) Instance() uintptr {

@@ -20,7 +20,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefDragHandler
+type ICefDragHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // DragHandlerRef -> ICefDragHandler
 var DragHandlerRef dragHandler
@@ -35,8 +39,6 @@ func (*dragHandler) New() *ICefDragHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefDragHandler) Instance() uintptr {

@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefMenuButton
+// include/capi/views/cef_menu_button_capi.h (cef_menu_button_t)
+type ICefMenuButton struct {
+	*ICefLabelButton
+}
+
 // MenuButtonRef -> ICefMenuButton
 var MenuButtonRef menuButton
 

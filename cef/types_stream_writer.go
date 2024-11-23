@@ -17,6 +17,14 @@ import (
 	"unsafe"
 )
 
+// ICefStreamWriter
+//
+//	/include/capi/cef_stream_capi.h (cef_stream_writer_t)
+type ICefStreamWriter struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // StreamWriterRef -> ICefStreamWriter
 var StreamWriterRef streamWriter
 

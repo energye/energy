@@ -21,6 +21,11 @@ import (
 	"unsafe"
 )
 
+// TCEFBrowserViewComponent
+type TCEFBrowserViewComponent struct {
+	*TCEFViewComponent
+}
+
 // BrowserViewComponentRef -> TCEFBrowserViewComponent
 var BrowserViewComponentRef browserViewComponent
 

@@ -17,6 +17,11 @@ import (
 	"strings"
 )
 
+// TCefCommandLine 进程启动命令行参数设置
+type TCefCommandLine struct {
+	commandLines map[string]string
+}
+
 func (m *TCefCommandLine) AppendSwitch(name, value string) {
 	m.commandLines[name] = value
 }

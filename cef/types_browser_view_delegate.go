@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefBrowserViewDelegate
+// include/capi/views/cef_browser_view_delegate_capi.h (cef_browser_view_delegate_t)
+type ICefBrowserViewDelegate struct {
+	*ICefViewDelegate
+}
+
 // BrowserViewDelegateRef -> ICefBrowserViewDelegate
 var BrowserViewDelegateRef browserViewDelegate
 

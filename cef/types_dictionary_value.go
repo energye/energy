@@ -19,10 +19,20 @@ import (
 	"unsafe"
 )
 
+// ICefDictionaryValue -> ArgumentList
+type ICefDictionaryValue struct {
+	base             TCefBaseRefCounted
+	instance         unsafe.Pointer
+	values           map[string]*ICefValue
+	binaryValues     map[string]*ICefBinaryValue
+	dictionaryValues map[string]*ICefDictionaryValue
+	listValues       map[string]*ICefListValue
+}
+
 // DictionaryValueRef -> ICefDictionaryValue
 var DictionaryValueRef cefDictionaryValue
 
-//cefDictionaryValue
+// cefDictionaryValue
 type cefDictionaryValue uintptr
 
 // New 创建一个字典类型

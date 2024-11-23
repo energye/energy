@@ -18,7 +18,13 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefSchemeHandlerFactory
+//
+//	/include/capi/cef_scheme_capi.h (cef_scheme_handler_factory_t)
+type ICefSchemeHandlerFactory struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // SchemeHandlerFactoryRef -> ICefSchemeHandlerFactory
 var SchemeHandlerFactoryRef schemeHandlerFactory
@@ -33,8 +39,6 @@ func (*schemeHandlerFactory) New() *ICefSchemeHandlerFactory {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefSchemeHandlerFactory) Instance() uintptr {
@@ -64,8 +68,6 @@ func (m *ICefSchemeHandlerFactory) SetNew(fn schemeHandlerFactoryNew) {
 	}
 	imports.Proc(def.SchemeHandlerFactory_New).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
-
-// ************************** events ************************** //
 
 type schemeHandlerFactoryNew func(browser *ICefBrowser, frame *ICefFrame, schemeName string, request *ICefRequest) *ICefResourceHandler
 

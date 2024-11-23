@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefTextfield
+// include/capi/views/cef_textfield_capi.h (cef_textfield_t)
+type ICefTextfield struct {
+	*ICefView
+}
+
 // TextFieldRef -> ICefTextfield
 var TextFieldRef textField
 
@@ -28,9 +34,7 @@ func (*textField) New(delegate *ICefTextFieldDelegate) *ICefTextfield {
 	var result uintptr
 	imports.Proc(def.TextfieldRef_CreateTextField).Call(delegate.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
-		return &ICefTextfield{&ICefView{
-			instance: unsafe.Pointer(result),
-		}}
+		return &ICefTextfield{&ICefView{instance: unsafe.Pointer(result)}}
 	}
 	return nil
 }

@@ -18,6 +18,13 @@ import (
 	"unsafe"
 )
 
+// ICefRequestContext
+type ICefRequestContext struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
+// RequestContextRef -> ICefRequestContext
 var RequestContextRef requestContext
 
 type requestContext uintptr

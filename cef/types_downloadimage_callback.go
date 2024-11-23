@@ -18,7 +18,12 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// TCefDownloadImageCallback
+// include/capi/cef_browser_capi.h (cef_download_image_callback_t)
+type ICefDownloadImageCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // DownloadImageCallbackRef -> ICefDownloadImageCallback
 var DownloadImageCallbackRef downloadImageCallback
@@ -33,8 +38,6 @@ func (*downloadImageCallback) New() *ICefDownloadImageCallback {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefDownloadImageCallback) Instance() uintptr {

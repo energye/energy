@@ -20,7 +20,14 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefCookieAccessFilter
+//
+//	/include/capi/cef_resource_request_handler_capi.h (cef_cookie_access_filter_t)
+type ICefCookieAccessFilter struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
 
 // CookieAccessFilterRef -> ICefCookieAccessFilter
 var CookieAccessFilterRef cookieAccessFilter
@@ -44,8 +51,6 @@ func (*cookieAccessFilter) NewForChromium(chromium IChromium) *ICefCookieAccessF
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefCookieAccessFilter) Instance() uintptr {

@@ -18,6 +18,14 @@ import (
 	"unsafe"
 )
 
+// ICefAccessibilityHandler
+//
+//	/include/capi/cef_accessibility_handler_capi.h (cef_accessibility_handler_t)
+type ICefAccessibilityHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // AccessibilityHandlerRef -> ICefAccessibilityHandler
 var AccessibilityHandlerRef accessibilityHandler
 

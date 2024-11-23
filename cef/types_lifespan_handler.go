@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefLifeSpanHandler
+type ICefLifeSpanHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // LifeSpanHandlerRef -> ICefLifeSpanHandler
 var LifeSpanHandlerRef lifeSpanHandler
@@ -33,8 +37,6 @@ func (*lifeSpanHandler) New() *ICefLifeSpanHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefLifeSpanHandler) Instance() uintptr {

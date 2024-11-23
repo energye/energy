@@ -14,7 +14,18 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"unsafe"
 )
+
+// ICefMediaAccessCallback
+//
+//	This interface is declared twice with almost identical parameters. "allowed_permissions" is defined as int and uint32.
+//	/include/capi/cef_media_access_handler_capi.h (cef_media_access_callback_t)
+//	/include/capi/cef_permission_handler_capi.h (cef_media_access_callback_t)
+type ICefMediaAccessCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefMediaAccessCallback) Instance() uintptr {

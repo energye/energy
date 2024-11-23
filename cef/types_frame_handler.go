@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefFrameHandler
+type ICefFrameHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // FrameHandlerRef -> ICefFrameHandler
 var FrameHandlerRef frameHandler
@@ -33,8 +37,6 @@ func (*frameHandler) New() *ICefFrameHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefFrameHandler) Instance() uintptr {

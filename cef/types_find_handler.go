@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefFindHandler
+type ICefFindHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // FindHandlerRef -> ICefFindHandler
 var FindHandlerRef findHandler
@@ -33,8 +37,6 @@ func (*findHandler) New() *ICefFindHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefFindHandler) Instance() uintptr {

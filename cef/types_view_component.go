@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// TCEFViewComponent
+type TCEFViewComponent struct {
+	lcl.IComponent
+	instance unsafe.Pointer
+}
+
 // ViewComponentRef -> TCEFViewComponent
 var ViewComponentRef viewComponent
 

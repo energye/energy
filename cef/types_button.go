@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefButton
+// include/capi/views/cef_button_capi.h (cef_button_t)
+type ICefButton struct {
+	*ICefView
+}
+
 func (m *ICefButton) AsLabelButton() *ICefLabelButton {
 	if !m.IsValid() {
 		return nil

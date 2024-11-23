@@ -12,6 +12,18 @@
 
 package cef
 
+// TCefDraggableRegion 拖拽区域集
+type TCefDraggableRegion struct {
+	Bounds    TCefRect
+	Draggable bool
+}
+
+// TCefDraggableRegions 拖拽区域集合
+type TCefDraggableRegions struct {
+	regions      []TCefDraggableRegion
+	regionsCount int
+}
+
 // NewCefDraggableRegion 创建一个拖拽区域
 func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
 	return TCefDraggableRegion{

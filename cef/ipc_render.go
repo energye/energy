@@ -187,7 +187,7 @@ func (m *ipcRenderProcess) goExecuteJSEvent(browser *ICefBrowser, frame *ICefFra
 				if argsArray == nil {
 					argsArray = V8ValueArrayRef.New()
 				}
-				complete := V8ValueRef.NewObject(nil)
+				complete := V8ValueRef.NewObject(nil, nil)
 				complete.SetValueByKey("callback", callback.asyncHandler.callback, consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 				complete.SetValueByKey("id", V8ValueRef.NewInt(messageId), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 				argsArray.Add(complete)
@@ -826,12 +826,8 @@ func (m *ipcRenderProcess) makeIPC(frameId string, context *ICefV8Context) {
 		m.onHandler[frameId] = on
 	}
 
-	//m.onHandler.handler = V8HandlerRef.New()
-	//m.onHandler.handler.Execute(m.jsOnEvent)
-	//on.handler = V8HandlerRef.New()
-
 	// ipc object
-	m.ipcObject = V8ValueRef.NewObject(nil)
+	m.ipcObject = V8ValueRef.NewObject(nil, nil)
 	m.ipcObject.setValueByKey(internalIPCEmit, V8ValueRef.newFunction(internalIPCEmit, m.emitHandler.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCEmitWait, V8ValueRef.newFunction(internalIPCEmitWait, m.emitHandler.handlerSync), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	m.ipcObject.setValueByKey(internalIPCOn, V8ValueRef.newFunction(internalIPCOn, on.handler), consts.V8_PROPERTY_ATTRIBUTE_READONLY)

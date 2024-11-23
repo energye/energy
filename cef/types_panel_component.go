@@ -17,6 +17,10 @@ import (
 	"unsafe"
 )
 
+type TCEFPanelComponent struct {
+	*TCEFViewComponent
+}
+
 // PanelComponentRef -> TCEFPanelComponent
 var PanelComponentRef panelComponent
 

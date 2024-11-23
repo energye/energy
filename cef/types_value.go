@@ -21,10 +21,19 @@ import (
 	"unsafe"
 )
 
-//ValueRef -> ICefValue
+// ICefValue -> ArgumentList
+type ICefValue struct {
+	base            TCefBaseRefCounted
+	instance        unsafe.Pointer
+	binaryValue     *ICefBinaryValue
+	dictionaryValue *ICefDictionaryValue
+	listValue       *ICefListValue
+}
+
+// ValueRef -> ICefValue
 var ValueRef cefValue
 
-//cefValue
+// cefValue
 type cefValue uintptr
 
 func (*cefValue) New() *ICefValue {

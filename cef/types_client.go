@@ -18,14 +18,22 @@ import (
 	"unsafe"
 )
 
+// ICefClient
+type ICefClient struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
+
 // CefClientRef -> ICefClient
 var CefClientRef cefClient
 
 type cefClient uintptr
 
 // New
-//  创建 Client
-//	自定义处理器事件
+//
+//	 创建 Client
+//		自定义处理器事件
 func (*cefClient) New() *ICefClient {
 	var result uintptr
 	imports.Proc(def.CefClientRef_Create).Call(uintptr(unsafe.Pointer(&result)))
@@ -36,8 +44,9 @@ func (*cefClient) New() *ICefClient {
 }
 
 // NewForChromium
-//  创建 Client 事件传递至 Chromium Event
-//	获取处理器对象返回nil, 因为事件已传递至 Chromium Event 对应的事件中
+//
+//	 创建 Client 事件传递至 Chromium Event
+//		获取处理器对象返回nil, 因为事件已传递至 Chromium Event 对应的事件中
 func (*cefClient) NewForChromium(chromium IChromium, aDevToolsClient bool) *ICefClient {
 	if chromium == nil || chromium.Instance() == 0 {
 		return nil
@@ -66,14 +75,16 @@ func (m *ICefClient) Free() {
 }
 
 // IsSelfEvent
-//  当前client对象是自己事件代理
+//
+//	当前client对象是自己事件代理
 func (m *ICefClient) IsSelfEvent() bool {
 	return m.ct == consts.CtSelfOwn
 }
 
 // IsOtherEvent
-//  当前client对象是其他对象事件代理
-//  例如chromium events
+//
+//	当前client对象是其他对象事件代理
+//	例如chromium events
 func (m *ICefClient) IsOtherEvent() bool {
 	return m.ct == consts.CtOther
 }

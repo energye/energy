@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefRenderHandler
+type ICefRenderHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // RenderHandlerRef -> ICefPrintHandler
 var RenderHandlerRef renderSpanHandler
@@ -34,8 +38,6 @@ func (*renderSpanHandler) New() *ICefRenderHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefRenderHandler) Instance() uintptr {

@@ -13,7 +13,14 @@ package cef
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
+	"unsafe"
 )
+
+// ICefPrintDialogCallback
+type ICefPrintDialogCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefPrintDialogCallback) Instance() uintptr {

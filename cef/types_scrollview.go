@@ -17,6 +17,12 @@ import (
 	"unsafe"
 )
 
+// ICefScrollView
+// include/capi/views/cef_scroll_view_capi.h (cef_scroll_view_t)
+type ICefScrollView struct {
+	*ICefView
+}
+
 // ScrollViewRef -> ICefScrollView
 var ScrollViewRef scrollView
 

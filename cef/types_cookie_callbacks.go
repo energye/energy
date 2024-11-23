@@ -19,7 +19,12 @@ import (
 	"unsafe"
 )
 
-// ************************** ICefDeleteCookiesCallback ************************** //
+// ICefDeleteCookiesCallback
+type ICefDeleteCookiesCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
 
 // DeleteCookiesHandlerRef -> ICefDeleteCookiesCallback
 var DeleteCookiesHandlerRef deleteCookiesHandler
@@ -84,6 +89,13 @@ func (m *ICefDeleteCookiesCallback) SetOnComplete(fn deleteCookiesOnComplete) {
 }
 
 // ************************** ICefSetCookieCallback ************************** //
+
+// ICefSetCookieCallback
+type ICefSetCookieCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
 
 // SetCookieHandlerRef -> ICefSetCookieCallback
 var SetCookieHandlerRef setCookieHandler

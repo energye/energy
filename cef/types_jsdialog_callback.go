@@ -14,7 +14,16 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// ICefJsDialogCallback
+//
+//	/include/capi/cef_jsdialog_handler_capi.h (cef_jsdialog_callback_t)
+type ICefJsDialogCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefJsDialogCallback) Instance() uintptr {

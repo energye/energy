@@ -19,10 +19,20 @@ import (
 	"unsafe"
 )
 
+// ICefListValue -> ArgumentList
+type ICefListValue struct {
+	base             TCefBaseRefCounted
+	instance         unsafe.Pointer
+	values           map[int]*ICefValue
+	binaryValues     map[int]*ICefBinaryValue
+	dictionaryValues map[int]*ICefDictionaryValue
+	listValues       map[int]*ICefListValue
+}
+
 // ListValueRef -> ICefListValue
 var ListValueRef listValue
 
-//cefListValue
+// cefListValue
 type listValue uintptr
 
 // New 创建一个集合类型

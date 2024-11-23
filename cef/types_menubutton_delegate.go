@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefMenuButtonDelegate
+// include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_delegate_t)
+type ICefMenuButtonDelegate struct {
+	*ICefButtonDelegate
+}
+
 // MenuButtonDelegateRef -> ICefMenuModelDelegate
 var MenuButtonDelegateRef menuButtonDelegate
 

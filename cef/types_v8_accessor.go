@@ -22,21 +22,20 @@ import (
 	"unsafe"
 )
 
-// V8AccessorGet 读取时函数
-// name 字段或对象名
-// retVal 读取返回的值
-// exception 返回的异常信息
-// return true 读取成功-返回值有效
-type V8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool
+// ICefV8Accessor
+//
+//	Interface that should be implemented to handle V8 accessor calls. Accessor
+//	identifiers are registered by calling ICefV8value.SetValue(). The
+//	functions of this interface will be called on the thread associated with the
+//	V8 accessor.
+//	<para><see cref="uCEFTypes|TCefV8Accessor">Implements TCefV8Accessor</see></para>
+//	<para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/capi/cef_v8_capi.h">CEF source file: /include/capi/cef_v8_capi.h (cef_v8accessor_t)</see></para>
+type ICefV8Accessor struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
-// V8AccessorSet 写入时函数
-// name 字段或对象名
-// value 将要写入的新值
-// exception 返回的异常信息
-// return true 写入成功
-type V8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool
-
-//V8AccessorRef -> ICefV8Accessor
+// V8AccessorRef -> ICefV8Accessor
 var V8AccessorRef cefV8Accessor
 
 // cefV8Accessor
@@ -58,25 +57,44 @@ func (m *ICefV8Accessor) Instance() uintptr {
 	}
 	return uintptr(m.instance)
 }
-
-//Get 读取函数
-func (m *ICefV8Accessor) Get(fn V8AccessorGet) {
-	imports.Proc(def.CefV8Accessor_Get).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-//Set 写入访问函数
-func (m *ICefV8Accessor) Set(fn V8AccessorSet) {
-	imports.Proc(def.CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-func (m *ICefV8Accessor) Destroy() {
-	imports.Proc(def.CefV8Accessor_Destroy).Call(m.Instance())
+func (m *ICefV8Accessor) IsValid() bool {
+	if m == nil || m.instance == nil {
+		return false
+	}
+	return true
 }
 
 func (m *ICefV8Accessor) Free() {
-	m.Destroy()
-	m.instance = nil
+	if m != nil && m.instance != nil {
+		m.base.Free(m.Instance())
+		m.instance = nil
+	}
 }
+
+// OnGet
+//
+//	Handle retrieval the accessor value identified by |name|. |object| is the
+//	receiver ('this' object) of the accessor. If retrieval succeeds set
+//	|retval| to the return value. If retrieval fails set |exception| to the
+//	exception that will be thrown. Return true (1) if accessor retrieval was
+//	handled.
+func (m *ICefV8Accessor) OnGet(fn onV8AccessorGet) {
+	imports.Proc(def.CefV8Accessor_Get).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+// OnSet
+//
+//	Handle assignment of the accessor value identified by |name|. |object| is
+//	the receiver ('this' object) of the accessor. |value| is the new value
+//	being assigned to the accessor. If assignment fails set |exception| to the
+//	exception that will be thrown. Return true (1) if accessor assignment was
+//	handled.
+func (m *ICefV8Accessor) OnSet(fn onV8AccessorSet) {
+	imports.Proc(def.CefV8Accessor_Set).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type onV8AccessorGet func(name string, object *ICefV8Value, retVal *ResultV8Value, exception *ResultString) bool
+type onV8AccessorSet func(name string, object *ICefV8Value, value *ICefV8Value, exception *ResultString) bool
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -84,7 +102,7 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case V8AccessorGet:
+		case onV8AccessorGet:
 			name := api.GoStr(getVal(0))
 			object := &ICefV8Value{instance: getPtr(1)}
 			retValPtr := (*uintptr)(getPtr(2))
@@ -92,7 +110,7 @@ func init() {
 			exceptionPtr := (*uintptr)(getPtr(3))
 			exception := &ResultString{}
 			resultPtr := (*bool)(getPtr(4))
-			result := fn.(V8AccessorGet)(name, object, retVal, exception)
+			result := fn.(onV8AccessorGet)(name, object, retVal, exception)
 			if retVal.v8value != nil {
 				*retValPtr = retVal.v8value.Instance()
 			}
@@ -103,14 +121,14 @@ func init() {
 			}
 			*resultPtr = result
 			//object.Free()
-		case V8AccessorSet:
+		case onV8AccessorSet:
 			name := api.GoStr(getVal(0))
 			object := &ICefV8Value{instance: getPtr(1)}
 			value := &ICefV8Value{instance: getPtr(2)}
 			exceptionPtr := (*uintptr)(getPtr(3))
 			exception := &ResultString{}
 			resultPtr := (*bool)(getPtr(4))
-			result := fn.(V8AccessorSet)(name, object, value, exception)
+			result := fn.(onV8AccessorSet)(name, object, value, exception)
 			if exception.Value() != "" {
 				*exceptionPtr = api.PascalStr(exception.Value())
 			} else {

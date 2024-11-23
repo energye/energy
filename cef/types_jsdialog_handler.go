@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefJsDialogHandler
+type ICefJsDialogHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // JsDialogHandlerRef -> ICefJsDialogHandler
 var JsDialogHandlerRef jsDialogHandler
@@ -34,8 +38,6 @@ func (*jsDialogHandler) New() *ICefJsDialogHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefJsDialogHandler) Instance() uintptr {

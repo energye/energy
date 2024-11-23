@@ -17,6 +17,12 @@ import (
 	"unsafe"
 )
 
+// ICefPanelDelegate
+// include/capi/views/cef_panel_delegate_capi.h (cef_panel_delegate_t)
+type ICefPanelDelegate struct {
+	*ICefViewDelegate
+}
+
 // PanelDelegateRef -> ICefPanelDelegate
 var PanelDelegateRef panelDelegate
 

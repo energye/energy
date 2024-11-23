@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefWindowDelegate
+// include/capi/views/cef_window_delegate_capi.h (cef_window_delegate_t)
+type ICefWindowDelegate struct {
+	*ICefPanelDelegate
+}
+
 // WindowDelegateRef -> ICefWindowDelegate
 var WindowDelegateRef windowDelegateDelegate
 

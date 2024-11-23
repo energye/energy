@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefDomNode
+type ICefDomNode struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // Instance 实例
 func (m *ICefDomNode) Instance() uintptr {
 	if m == nil {

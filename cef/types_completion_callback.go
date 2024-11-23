@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefCompletionCallback
+type ICefCompletionCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // CompletionCallbackRef -> ICefCompletionCallback
 var CompletionCallbackRef completionCallback
 

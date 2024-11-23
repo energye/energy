@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefCommandLine
+type ICefCommandLine struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 var CommandLineRef commandLine
 
 type commandLine uintptr

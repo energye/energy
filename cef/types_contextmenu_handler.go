@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefContextMenuHandler
+type ICefContextMenuHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // ContextMenuHandlerRef -> ICefContextMenuHandler
 var ContextMenuHandlerRef contextMenuHandler
@@ -34,8 +38,6 @@ func (*contextMenuHandler) New() *ICefContextMenuHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefContextMenuHandler) Instance() uintptr {

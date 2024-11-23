@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefFocusHandler
+type ICefFocusHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // FocusHandlerRef -> ICefFocusHandler
 var FocusHandlerRef focusHandler

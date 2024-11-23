@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefDownloadItem 下载项
+type ICefDownloadItem struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // DownloadItemRef -> ICefDownloadItem
 var DownloadItemRef downloadItem
 
@@ -74,7 +80,8 @@ func (m *ICefDownloadItem) IsCanceled() bool {
 }
 
 // IsInterrupted
-//  CEF 114 ~
+//
+//	CEF 114 ~
 func (m *ICefDownloadItem) IsInterrupted() bool {
 	if !m.IsValid() {
 		return false
@@ -84,7 +91,8 @@ func (m *ICefDownloadItem) IsInterrupted() bool {
 }
 
 // GetInterruptReason
-//  CEF 114 ~
+//
+//	CEF 114 ~
 func (m *ICefDownloadItem) GetInterruptReason() consts.TCefDownloadInterruptReason {
 	if !m.IsValid() {
 		return 0
@@ -199,7 +207,7 @@ func (m *ICefDownloadItem) MimeType() string {
 	return api.GoStr(r1)
 }
 
-//State 下载状态 -1:下载之前 0:下载中 1:下载取消 2:下载完成
+// State 下载状态 -1:下载之前 0:下载中 1:下载取消 2:下载完成
 func (m *ICefDownloadItem) State() int32 {
 	if !m.IsValid() {
 		return 0
@@ -220,6 +228,14 @@ func (m *ICefDownloadItem) Free() {
 		m.base.Free(m.Instance())
 		m.instance = nil
 	}
+}
+
+// ICefDownloadItemCallback
+//
+// 下载中回调
+type ICefDownloadItemCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
 }
 
 // DownloadItemCallbackRef => ICefDownloadItemCallback
@@ -279,6 +295,14 @@ func (m *ICefDownloadItemCallback) Free() {
 		m.base.Free(m.Instance())
 		m.instance = nil
 	}
+}
+
+// ICefBeforeDownloadCallback
+//
+// 下载之前回调
+type ICefBeforeDownloadCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
 }
 
 func (m *ICefBeforeDownloadCallback) Instance() uintptr {

@@ -20,6 +20,12 @@ import (
 	"unsafe"
 )
 
+// ICefCookieManager
+type ICefCookieManager struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // Instance 实例
 func (m *ICefCookieManager) Instance() uintptr {
 	if m == nil {

@@ -16,7 +16,13 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
+	"unsafe"
 )
+
+// ICefV8Exception
+type ICefV8Exception struct {
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefV8Exception) Instance() uintptr {

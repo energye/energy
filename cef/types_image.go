@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefImage
+type ICefImage struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // ImageRef -> ICefImage
 var ImageRef image
 

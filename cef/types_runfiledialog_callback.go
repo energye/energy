@@ -18,7 +18,12 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// TCefRunFileDialogCallback
+// include/capi/cef_browser_capi.h (cef_run_file_dialog_callback_t)
+type ICefRunFileDialogCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // RunFileDialogCallbackRef -> ICefRunFileDialogCallback
 var RunFileDialogCallbackRef runFileDialogCallback
@@ -33,8 +38,6 @@ func (*runFileDialogCallback) New() *ICefRunFileDialogCallback {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefRunFileDialogCallback) Instance() uintptr {

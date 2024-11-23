@@ -14,7 +14,16 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"unsafe"
 )
+
+// ICefRunContextMenuCallback
+//
+//	/include/capi/cef_context_menu_handler_capi.h (cef_run_context_menu_callback_t)
+type ICefRunContextMenuCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefRunContextMenuCallback) Instance() uintptr {

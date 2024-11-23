@@ -94,10 +94,8 @@ func (m *v8ValueProcessMessageConvert) DictionaryValueToV8Value(dictionary *ICef
 	if keys == nil || keys.keys == nil || !keys.keys.IsValid() || keys.Count() == 0 {
 		return nil, errors.New("get dict keys error")
 	}
-	//bindSubObjectAccessor := V8AccessorRef.New()
-	//bindSubObjectAccessor.Get(ipcRender.bindSubObjectGet)
-	//bindSubObjectAccessor.Set(ipcRender.bindSubObjectSet)
-	result := V8ValueRef.NewObject(nil)
+
+	result := V8ValueRef.NewObject(nil, nil)
 	if !result.IsValid() {
 		return nil, errors.New("create v8 object error")
 	}
@@ -279,7 +277,7 @@ func (m *v8ValueProcessMessageConvert) JSONObjectToV8Value(object json.JSONObjec
 	if object == nil || !object.IsObject() {
 		return nil
 	}
-	result := V8ValueRef.NewObject(nil)
+	result := V8ValueRef.NewObject(nil, nil)
 	if !result.IsValid() {
 		return nil
 	}

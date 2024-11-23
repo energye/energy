@@ -18,6 +18,11 @@ import (
 	"unsafe"
 )
 
+// TCEFMenuButtonComponent
+type TCEFMenuButtonComponent struct {
+	*TCEFLabelButtonComponent
+}
+
 // MenuButtonComponentRef -> TCEFMenuButtonComponent
 var MenuButtonComponentRef menuButtonComponent
 

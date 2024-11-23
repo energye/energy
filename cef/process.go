@@ -30,7 +30,7 @@ func makeProcess(browser *ICefBrowser, frame *ICefFrame, context *ICefV8Context)
 		_processObject.Free()
 	}
 	// process
-	_processObject = V8ValueRef.NewObject(nil)
+	_processObject = V8ValueRef.NewObject(nil, nil)
 	_processObject.setValueByKey(internalProcessBrowserId, V8ValueRef.NewInt(browser.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 	_processObject.setValueByKey(internalProcessFrameId, V8ValueRef.NewString(frame.Identifier()), consts.V8_PROPERTY_ATTRIBUTE_READONLY)
 

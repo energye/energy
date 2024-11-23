@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefStreamReader
+type ICefStreamReader struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // StreamReaderRef -> ICefStreamReader
 var StreamReaderRef streamReader
 

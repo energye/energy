@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefPermissionHandler
+type ICefPermissionHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // PermissionHandlerRef -> ICefPermissionHandler
 var PermissionHandlerRef permissionHandler
@@ -34,8 +38,6 @@ func (*permissionHandler) New() *ICefPermissionHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefPermissionHandler) Instance() uintptr {

@@ -19,6 +19,14 @@ import (
 	"unsafe"
 )
 
+// ICefViewDelegate
+// include/capi/views/cef_view_delegate_capi.h (cef_view_delegate_t)
+type ICefViewDelegate struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
+
 // ViewDelegateRef -> ICefViewDelegate
 var ViewDelegateRef viewDelegate
 

@@ -21,6 +21,13 @@ import (
 	"unsafe"
 )
 
+// ICefFrame
+// Html <iframe></iframe>
+type ICefFrame struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // Instance 实例
 func (m *ICefFrame) Instance() uintptr {
 	if m == nil {

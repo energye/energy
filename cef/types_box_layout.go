@@ -16,6 +16,12 @@ import (
 	"unsafe"
 )
 
+// ICefBoxLayout
+// include/capi/views/cef_box_layout_capi.h (cef_box_layout_t)
+type ICefBoxLayout struct {
+	*ICefLayout
+}
+
 // BoxLayoutRef -> ICefBoxLayout
 var BoxLayoutRef boxLayout
 

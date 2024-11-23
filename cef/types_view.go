@@ -18,6 +18,51 @@ import (
 	"unsafe"
 )
 
+/*
+*********************************
+************* Views *************
+*********************************
+
+(*) Has CEF creation function
+(d) Has delegate
+
+----------------          ----------------------
+| TCefView (d) | -------> | TCefTextfield (*d) |
+----------------    |     ----------------------
+					|
+					|     ----------------------
+					|---> | TCefScrollView (*) |
+					|     ----------------------
+					|
+					|     ------------------          -------------------
+					|---> | TCefPanel (*d) | -------> | TCefWindow (*d) |
+					|     ------------------          -------------------
+					|
+					|     ------------------------
+					|---> | TCefBrowserView (*d) |
+					|     ------------------------
+					|
+					|     ------------------          -----------------------          -----------------------
+					|---> | TCefButton (d) | -------> | TCefLabelButton (*) | -------> | TCefMenuButton (*d) |
+						  ------------------          -----------------------          -----------------------
+
+
+--------------          -----------------
+| TCefLayout | -------> | TCefBoxLayout |
+--------------    |     -----------------
+				  |
+				  |     ------------------
+				  |---> | TCefFillLayout |
+				  		------------------
+*/
+
+// ICefView
+// include/capi/views/cef_view_capi.h (cef_view_t)
+type ICefView struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // Instance 实例
 func (m *ICefView) Instance() uintptr {
 	if m == nil {

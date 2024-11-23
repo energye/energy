@@ -25,6 +25,16 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+// ViewsFrameTray VF(views framework)组件+html 托盘
+type ViewsFrameTray struct {
+	trayWindow *ViewsFrameworkBrowserWindow
+	trayIcon   *lcl.TTrayIcon
+	visible    bool
+	x, y, w, h int32
+	mouseUp    TMouseEvent
+	isClosing  bool
+}
+
 // 创建系统托盘
 func newViewsFrameTray(owner lcl.IComponent, width, height int32, url string) *ViewsFrameTray {
 	var tray = &ViewsFrameTray{}

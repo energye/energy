@@ -1421,18 +1421,15 @@ const (
 	CefV8Accessor_Create
 	CefV8Accessor_Get
 	CefV8Accessor_Set
-	CefV8Accessor_Destroy
 	// ICefV8Handler
 	CefV8Handler_Create
 	CefV8Handler_Execute
-	CefV8Handler_Destroy
 	// ICefV8Interceptor
 	CefV8InterceptorRef_Create
 	CefV8Interceptor_GetByName
 	CefV8Interceptor_GetByIndex
 	CefV8Interceptor_SetByName
 	CefV8Interceptor_SetByIndex
-	CefV8Interceptor_Destroy
 	// ICefV8Context
 	CefV8Context_Eval
 	CefV8Context_Enter

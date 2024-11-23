@@ -19,7 +19,14 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefResourceRequestHandler
+//
+//	/include/capi/cef_resource_request_handler_capi.h (cef_resource_request_handler_t)
+type ICefResourceRequestHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+	ct       consts.CefCreateType
+}
 
 // ResourceRequestHandlerRef -> ICefResourceRequestHandler
 var ResourceRequestHandlerRef resourceRequestHandler
@@ -43,8 +50,6 @@ func (*resourceRequestHandler) NewForChromium(chromium IChromium) *ICefResourceR
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefResourceRequestHandler) Instance() uintptr {

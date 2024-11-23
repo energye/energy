@@ -14,7 +14,16 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"unsafe"
 )
+
+// ICefPermissionPromptCallback
+//
+//	/include/capi/cef_permission_handler_capi.h (cef_permission_prompt_callback_t)
+type ICefPermissionPromptCallback struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // Instance 实例
 func (m *ICefPermissionPromptCallback) Instance() uintptr {

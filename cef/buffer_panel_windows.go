@@ -17,6 +17,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -53,6 +54,23 @@ func (m *TBufferPanel) SetOnPointerUp(fn onHandledMessageEvent) {
 
 func (m *TBufferPanel) SetOnPointerUpdate(fn onHandledMessageEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnPointerUpdate, m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type TCefCompositionUnderlineArray struct {
+	count  int
+	ptr    uintptr
+	sizeOf uintptr
+}
+
+func (m *TCefCompositionUnderlineArray) Count() int {
+	return m.count
+}
+
+func (m *TCefCompositionUnderlineArray) Get(index int) *TCefCompositionUnderline {
+	if index >= 0 && index < m.count {
+		return (*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+	}
+	return nil
 }
 
 func init() {

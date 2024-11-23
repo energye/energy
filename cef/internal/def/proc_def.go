@@ -1421,18 +1421,15 @@ func init() {
 		dllimports.NewEnergyImport("CefV8Accessor_Create", 0),
 		dllimports.NewEnergyImport("CefV8Accessor_Get", 0),
 		dllimports.NewEnergyImport("CefV8Accessor_Set", 0),
-		dllimports.NewEnergyImport("CefV8Accessor_Destroy", 0),
 		//ICefV8Handler
 		dllimports.NewEnergyImport("CefV8Handler_Create", 0),
 		dllimports.NewEnergyImport("CefV8Handler_Execute", 0),
-		dllimports.NewEnergyImport("CefV8Handler_Destroy", 0),
 		//ICefV8Interceptor
 		dllimports.NewEnergyImport("CefV8InterceptorRef_Create", 0),
 		dllimports.NewEnergyImport("CefV8Interceptor_GetByName", 0),
 		dllimports.NewEnergyImport("CefV8Interceptor_GetByIndex", 0),
 		dllimports.NewEnergyImport("CefV8Interceptor_SetByName", 0),
 		dllimports.NewEnergyImport("CefV8Interceptor_SetByIndex", 0),
-		dllimports.NewEnergyImport("CefV8Interceptor_Destroy", 0),
 		//ICefV8Context
 		dllimports.NewEnergyImport("CefV8Context_Eval", 0),
 		dllimports.NewEnergyImport("CefV8Context_Enter", 0),

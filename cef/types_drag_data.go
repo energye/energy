@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefDragData
+type ICefDragData struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // Instance 实例
 func (m *ICefDragData) Instance() uintptr {
 	if m == nil {

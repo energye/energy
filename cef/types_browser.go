@@ -27,6 +27,17 @@ import (
 	"unsafe"
 )
 
+// ICefBrowser
+type ICefBrowser struct {
+	base           TCefBaseRefCounted
+	instance       unsafe.Pointer
+	mainFrame      *ICefFrame
+	requestContext *ICefRequestContext
+	windowHandle   types.HWND
+	idFrames       map[string]*ICefFrame
+	nameFrames     map[string]*ICefFrame
+}
+
 type frameNamesPtr struct {
 	Name  uintptr
 	Value uintptr

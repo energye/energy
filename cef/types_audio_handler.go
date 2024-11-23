@@ -18,7 +18,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefAudioHandler
+type ICefAudioHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // AudioHandlerRef -> ICefAudioHandler
 var AudioHandlerRef audioHandler
@@ -33,8 +37,6 @@ func (*audioHandler) New() *ICefAudioHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefAudioHandler) Instance() uintptr {

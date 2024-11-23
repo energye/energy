@@ -19,7 +19,13 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefResponseFilter
+//
+//	/include/capi/cef_response_filter_capi.h (cef_response_filter_t)
+type ICefResponseFilter struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // ResponseFilterRef -> ICefResourceHandler
 var ResponseFilterRef responseFilter
@@ -46,8 +52,6 @@ func (*responseFilter) UnWrap(data *ICefResponseFilter) *ICefResponseFilter {
 	data.instance = getInstance(result)
 	return data
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefResponseFilter) Instance() uintptr {
@@ -84,8 +88,6 @@ func (m *ICefResponseFilter) Filter(fn responseFilterFilter) {
 	}
 	imports.Proc(def.CefResponseFilter_Filter).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
-
-// ************************** events ************************** //
 
 type responseFilterInitFilter func() bool                                                                                                                                                   //InitFilter
 type responseFilterFilter func(dataIn uintptr, dataInSize uint32, dataInRead *uint32, dataOut uintptr, dataOutSize uint32, dataOutWritten *uint32) (status consts.TCefResponseFilterStatus) //Filter

@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefDisplay
+type ICefDisplay struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // DisplayRef -> ICefDisplay
 var DisplayRef display
 
@@ -144,6 +150,15 @@ func (m *ICefDisplay) IsValid() bool {
 		return false
 	}
 	return m.instance != nil
+}
+
+// ICefDisplayArray
+//
+//	[]ICefDisplayArray
+type ICefDisplayArray struct {
+	instance     unsafe.Pointer
+	binaryValues []*ICefDisplayArray
+	count        uint32
 }
 
 func (m *ICefDisplayArray) Instance() uintptr {

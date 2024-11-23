@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefPrintSettings
+type ICefPrintSettings struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // PrintSettingsRef -> ICefPdfPrintCallback
 var PrintSettingsRef printSettings
 

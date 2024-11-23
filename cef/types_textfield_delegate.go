@@ -18,6 +18,12 @@ import (
 	"unsafe"
 )
 
+// ICefTextFieldDelegate
+// include/capi/views/cef_textfield_delegate_capi.h (cef_textfield_delegate_t)
+type ICefTextFieldDelegate struct {
+	*ICefViewDelegate
+}
+
 // TextFieldDelegateRef -> ICefTextFieldDelegate
 var TextFieldDelegateRef textFieldDelegate
 

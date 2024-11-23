@@ -19,7 +19,11 @@ import (
 	"unsafe"
 )
 
-// ************************** creates ************************** //
+// ICefCommandHandler
+type ICefCommandHandler struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
 
 // CommandHandlerRef -> ICefCommandHandler
 var CommandHandlerRef commandHandler
@@ -34,8 +38,6 @@ func (*commandHandler) New() *ICefCommandHandler {
 	}
 	return nil
 }
-
-// ************************** impl ************************** //
 
 // Instance 实例
 func (m *ICefCommandHandler) Instance() uintptr {

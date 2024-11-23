@@ -19,6 +19,12 @@ import (
 	"unsafe"
 )
 
+// ICefPostDataElement
+type ICefPostDataElement struct {
+	base     TCefBaseRefCounted
+	instance unsafe.Pointer
+}
+
 // PostDataElementRef -> ICefPostDataElement
 var PostDataElementRef postDataElement
 
@@ -129,6 +135,13 @@ func (m *ICefPostDataElement) GetBytes() (result []byte, count uint32) {
 	r1, _, _ := imports.Proc(def.PostDataElement_GetBytes).Call(m.Instance(), uintptr(size), uintptr(unsafe.Pointer(&result)))
 	count = uint32(r1)
 	return result, count
+}
+
+// TCefPostDataElementArray
+type TCefPostDataElementArray struct {
+	instance              unsafe.Pointer
+	postDataElement       uintptr
+	postDataElementLength uint32
 }
 
 func (m *TCefPostDataElementArray) Get(index uint32) *ICefPostDataElement {

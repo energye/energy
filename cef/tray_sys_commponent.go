@@ -19,7 +19,20 @@ import (
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"io/ioutil"
+	"sync"
 )
+
+// SysTray 系统原生
+type SysTray struct {
+	lock           sync.Mutex
+	menu           *SysMenu
+	icon           []byte
+	title, tooltip string
+	click          TrayICONClick
+	dClick         TrayICONClick
+	rClick         func(menu systray.IMenu)
+	start, stop    func()
+}
 
 // 创建系统托盘
 func newSysTray() *SysTray {
