@@ -2785,6 +2785,37 @@ func init() {
 		dllimports.NewEnergyImport("OverlayController_SetVisible", 0),
 		dllimports.NewEnergyImport("OverlayController_IsVisible", 0),
 		dllimports.NewEnergyImport("OverlayController_IsDrawn", 0),
+		// ICefMediaRouter
+		dllimports.NewEnergyImport("MediaRouterRef_UnWrap", 0),
+		dllimports.NewEnergyImport("MediaRouterRef_Global", 0),
+		dllimports.NewEnergyImport("MediaRouter_AddObserver", 0),
+		dllimports.NewEnergyImport("MediaRouter_GetSource", 0),
+		dllimports.NewEnergyImport("MediaRouter_NotifyCurrentSinks", 0),
+		dllimports.NewEnergyImport("MediaRouter_CreateRoute", 0),
+		dllimports.NewEnergyImport("MediaRouter_NotifyCurrentRoutes", 0),
+		// ICefMediaSource
+		dllimports.NewEnergyImport("MediaSourceRef_UnWrap", 0),
+		dllimports.NewEnergyImport("MediaSource_GetId", 0),
+		dllimports.NewEnergyImport("MediaSource_IsCastSource", 0),
+		dllimports.NewEnergyImport("MediaSource_IsDialSource", 0),
+		// ICefMediaRoute
+		dllimports.NewEnergyImport("MediaRouteRef_UnWrap", 0),
+		dllimports.NewEnergyImport("MediaRoute_GetId", 0),
+		dllimports.NewEnergyImport("MediaRoute_GetSource", 0),
+		dllimports.NewEnergyImport("MediaRoute_GetSink", 0),
+		dllimports.NewEnergyImport("MediaRoute_SendRouteMessage", 0),
+		dllimports.NewEnergyImport("MediaRoute_Terminate", 0),
+		// TCefMediaRouteArray
+		dllimports.NewEnergyImport("MediaRouteArray_Get", 0),
+		// ICefMediaSource
+		dllimports.NewEnergyImport("MediaSinkRef_UnWrap", 0),
+		dllimports.NewEnergyImport("MediaSink_GetId", 0),
+		dllimports.NewEnergyImport("MediaSink_GetName", 0),
+		dllimports.NewEnergyImport("MediaSink_GetIconType", 0),
+		dllimports.NewEnergyImport("MediaSink_GetDeviceInfo", 0),
+		dllimports.NewEnergyImport("MediaSink_IsCastSink", 0),
+		dllimports.NewEnergyImport("MediaSink_IsDialSink", 0),
+		dllimports.NewEnergyImport("MediaSink_IsCompatibleWith", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

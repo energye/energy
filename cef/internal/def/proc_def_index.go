@@ -2785,4 +2785,35 @@ const (
 	OverlayController_SetVisible
 	OverlayController_IsVisible
 	OverlayController_IsDrawn
+	// ICefMediaRouter
+	MediaRouterRef_UnWrap
+	MediaRouterRef_Global
+	MediaRouter_AddObserver
+	MediaRouter_GetSource
+	MediaRouter_NotifyCurrentSinks
+	MediaRouter_CreateRoute
+	MediaRouter_NotifyCurrentRoutes
+	// ICefMediaSource
+	MediaSourceRef_UnWrap
+	MediaSource_GetId
+	MediaSource_IsCastSource
+	MediaSource_IsDialSource
+	// ICefMediaRoute
+	MediaRouteRef_UnWrap
+	MediaRoute_GetId
+	MediaRoute_GetSource
+	MediaRoute_GetSink
+	MediaRoute_SendRouteMessage
+	MediaRoute_Terminate
+	// TCefMediaRouteArray
+	MediaRouteArray_Get
+	// ICefMediaSource
+	MediaSinkRef_UnWrap
+	MediaSink_GetId
+	MediaSink_GetName
+	MediaSink_GetIconType
+	MediaSink_GetDeviceInfo
+	MediaSink_IsCastSink
+	MediaSink_IsDialSink
+	MediaSink_IsCompatibleWith
 ) //end
