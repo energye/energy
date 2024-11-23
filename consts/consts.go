@@ -651,20 +651,22 @@ const (
 type TCefShowState = types.Int32
 
 const (
-	CEF_SHOW_STATE_NORMAL     = TCefShowState(1)
-	CEF_SHOW_STATE_MINIMIZED  = TCefShowState(2)
-	CEF_SHOW_STATE_MAXIMIZED  = TCefShowState(3)
-	CEF_SHOW_STATE_FULLSCREEN = TCefShowState(4)
-	CEF_SHOW_STATE_HIDDEN     = TCefShowState(5)
+	CEF_SHOW_STATE_NORMAL     TCefShowState = 1
+	CEF_SHOW_STATE_MINIMIZED  TCefShowState = 2
+	CEF_SHOW_STATE_MAXIMIZED  TCefShowState = 3
+	CEF_SHOW_STATE_FULLSCREEN TCefShowState = 4
+	CEF_SHOW_STATE_HIDDEN     TCefShowState = 5
 )
 
-// include/internal/cef_types.h (cef_chrome_toolbar_type_t)
-type TCefChromeToolbarType = types.Int32
+// / Chrome toolbar types.
+// / <para>TCefChromeToolbarType values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_chrome_toolbar_type_t)</see></para>
+type TCefChromeToolbarType = int32
 
 const (
-	CEF_CTT_NONE     = TCefChromeToolbarType(1)
-	CEF_CTT_NORMAL   = TCefChromeToolbarType(2)
-	CEF_CTT_LOCATION = TCefChromeToolbarType(3)
+	CEF_CTT_NONE     TCefChromeToolbarType = 1
+	CEF_CTT_NORMAL   TCefChromeToolbarType = 2
+	CEF_CTT_LOCATION TCefChromeToolbarType = 3
 )
 
 // include/internal/cef_types.h (cef_drag_operations_mask_t)
