@@ -113,7 +113,11 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.defaultChromiumEvent()
 	wp := m.WindowProperty()
 	m.SetBounds(wp.X, wp.Y, wp.Width, wp.Height)
-	m.SetShowInTaskBar()
+	if wp.ShowInTaskBar {
+		m.SetShowInTaskBar()
+	} else {
+		m.SetNotInTaskBar()
+	}
 	BrowserWindow.mainBrowserWindow = m
 	if BrowserWindow.Config.browserWindowOnEventCallback != nil {
 		BrowserWindow.browserEvent.chromium = m.Chromium()

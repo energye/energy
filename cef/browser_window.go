@@ -69,6 +69,7 @@ type WindowProperty struct {
 	EnableDragFile            bool                  // 窗口 是否允许向窗口内拖拽文件
 	EnableMainWindow          bool                  // 窗口 是否启用主窗口 default: true, 值为false时不再有主子窗口区分
 	AlwaysOnTop               bool                  // 窗口 窗口置顶
+	ShowInTaskBar             bool                  // 窗口 是否显示在任务栏 default: true
 	X                         int32                 // 窗口 EnableCenterWindow=false X坐标 default: 100
 	Y                         int32                 // 窗口 EnableCenterWindow=false Y坐标 default: 100
 	Width                     int32                 // 窗口 宽 default: 1024
@@ -199,6 +200,7 @@ func NewWindowProperty() WindowProperty {
 		EnableCenterWindow:        true,
 		EnableWebkitAppRegionDClk: true,
 		EnableMainWindow:          true,
+		ShowInTaskBar:             true,
 		X:                         100,
 		Y:                         100,
 		Width:                     800,
