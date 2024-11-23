@@ -49,7 +49,7 @@ func (m *ViewsFramework) Create() {
 	m.windowComponent.SetOnWindowCreated(func(window *cef.ICefWindow) {
 		fmt.Println("OnWindowCreated")
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserViewComponent, nil, nil) {
-			m.windowComponent.AddChildView(m.browserViewComponent)
+			m.windowComponent.AddChildView(m.browserViewComponent.BrowserView().AsView())
 			// 窗口居中
 			display := m.windowComponent.Display()
 			if display.IsValid() {

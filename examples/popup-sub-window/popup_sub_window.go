@@ -64,11 +64,15 @@ func main() {
 						wp := cef.NewWindowProperty()
 						wp.Url = url
 						wp.Title = title
+						wp.ShowInTaskBar = lclTypes.StNever
 						browserWindow = cef.NewLCLBrowserWindow(nil, wp, nil)
 						browserWindow.SetWidth(width)
 						browserWindow.SetHeight(height)
-						browserWindow.SetShowInTaskBar()
+						browserWindow.HideTitle()
 						browserWindow.EnableAllDefaultEvent()
+						// 置顶控制
+						//browserWindow.SetFormStyle(lclTypes.FsSystemStayOnTop)
+						//browserWindow.SetFormStyle(lclTypes.FsStayOnTop)
 						browserWindow.Chromium().SetOnTitleChange(func(sender lcl.IObject, browser *cef.ICefBrowser, title string) {
 							fmt.Println("SetOnTitleChange", wp.Title, title)
 						})
@@ -96,6 +100,7 @@ func main() {
 				popupWindow.SetSize(800, 600)
 				popupWindow.HideTitle()
 				popupWindow.WindowProperty().EnableResize = false
+				popupWindow.WindowProperty().ShowInTaskBar = lclTypes.StNever
 			} else if strings.Index(beforePopupInfo.TargetUrl, "popup_2") > 0 {
 				popupWindow.SetSize(300, 300)
 				popupWindow.HideTitle()
