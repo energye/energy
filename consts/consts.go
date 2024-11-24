@@ -1477,6 +1477,17 @@ const (
 // include/internal/cef_types.h (cef_cert_status_t)
 type TCefCertStatus = types.Int32
 
+// / Supported SSL version values.
+// / <para>See the uCEFConstants unit for all possible values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_ssl_version_t)</see></para>
+// / <para><see href="https://source.chromium.org/chromium/chromium/src/+/main:net/ssl/ssl_connection_status_flags.h">See net/ssl/ssl_connection_status_flags.h for more information.</see></para>
+type TCefSSLVersion = types.Int32
+
+// / Supported SSL content status flags. See content/public/common/ssl_status.h for more information.
+// / <para>See the uCEFConstants unit for all possible values.</para>
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_ssl_content_status_t)</see></para>
+type TCefSSLContentStatus = types.UInt32
+
 // include/internal/cef_types.h (cef_media_route_create_result_t)
 type TCefMediaRouterCreateResult = types.Int32
 
@@ -2351,4 +2362,22 @@ const (
 	CEF_RUNTIME_STYLE_CHROME
 	// Use Alloy style.
 	CEF_RUNTIME_STYLE_ALLOY
+)
+
+// / Icon types for a MediaSink object. Should be kept in sync with Chromium's
+// / media_router::SinkIconType type.
+// / <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_media_sink_icon_type_t)</see></para>
+type TCefMediaSinkIconType = int32
+
+const (
+	CEF_MSIT_CAST TCefMediaSinkIconType = iota
+	CEF_MSIT_CAST_AUDIO_GROUP
+	CEF_MSIT_CAST_AUDIO
+	CEF_MSIT_MEETING
+	CEF_MSIT_HANGOUT
+	CEF_MSIT_EDUCATION
+	CEF_MSIT_WIRED_DISPLAY
+	CEF_MSIT_GENERIC
+	/// The total number of values.
+	CEF_MSIT_TOTAL_COUNT
 )

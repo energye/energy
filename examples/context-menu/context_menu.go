@@ -74,7 +74,7 @@ func main() {
 			menuIdEnable = model.CefMis.NextCommandId()
 			if isMenuIdEnable {
 				model.AddItem(menuIdEnable, "菜单-已启用")
-				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 111, 12, 200))
+				model.SetColor(menuIdEnable, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 111, 12, 200).ARGB())
 			} else {
 				model.AddItem(menuIdEnable, "菜单-已禁用")
 			}
@@ -84,7 +84,7 @@ func main() {
 			//为什么要用Visible而不是不创建这个菜单? 因为菜单项的ID是动态的啊。
 			model.SetVisible(menuIdEnableCtl, !isMenuIdEnable)
 			if !isMenuIdEnable {
-				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 222, 111, 0))
+				model.SetColor(menuIdEnableCtl, consts.CEF_MENU_COLOR_TEXT, consts.NewCefARGB(255, 222, 111, 0).ARGB())
 			}
 			model.AddSeparator()
 			//radio 1组
