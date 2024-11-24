@@ -56,6 +56,10 @@ func (*menuButtonDelegate) NewForCustom(menuButton *TCEFMenuButtonComponent) *IC
 	return nil
 }
 
+// / Called when |button| is pressed. Call ICefMenuButton.ShowMenu() to
+// / show a popup menu at |screen_point|. When showing a custom popup such as a
+// / window keep a reference to |button_pressed_lock| until the popup is hidden
+// / to maintain the pressed button state.
 func (m *ICefMenuButtonDelegate) SetOnMenuButtonPressed(fn onMenuButtonPressed) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return

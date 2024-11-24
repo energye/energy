@@ -19,6 +19,35 @@ import (
 	"unsafe"
 )
 
+/*
+*********************************
+************* Delegate **********
+*********************************
+
+(*) Has CEF creation function
+(d) Has delegate
+
+------------------------          ------------------------------
+| ICefViewDelegate (d) | -------> | ICefTextfieldDelegate (*d) |
+------------------------    |     ------------------------------
+					        |
+					        |     ----------------------
+					        |---> | TCefScrollView (*) |
+					        |     ----------------------
+					        |
+					        |     --------------------------          ---------------------------
+					        |---> | ICefPanelDelegate (*d) | -------> | ICefWindowDelegate (*d) |
+					        |     --------------------------          ---------------------------
+					        |
+					        |     --------------------------------
+					        |---> | ICefBrowserViewDelegate (*d) |
+					        |     --------------------------------
+					        |
+					        |     --------------------------          -------------------------------
+					        |---> | ICefButtonDelegate (d) | -------> | ICefMenuButtonDelegate (*)  |
+                                  --------------------------          -------------------------------
+*/
+
 // ICefViewDelegate
 // include/capi/views/cef_view_delegate_capi.h (cef_view_delegate_t)
 type ICefViewDelegate struct {
