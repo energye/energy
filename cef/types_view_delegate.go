@@ -39,9 +39,9 @@ import (
 					        |---> | ICefBrowserViewDelegate (*d) |
 					        |     --------------------------------
 					        |
-					        |     --------------------------          -------------------------------
-					        |---> | ICefButtonDelegate (d) | -------> | ICefMenuButtonDelegate (*)  |
-                                  --------------------------          -------------------------------
+					        |     ---------------------------          --------------------------------
+					        |---> | ICefButtonDelegate (*d) | -------> | ICefMenuButtonDelegate (*d)  |
+                                  ---------------------------          --------------------------------
 */
 
 // ICefViewDelegate
@@ -177,6 +177,12 @@ func (m *ICefViewDelegate) SetOnBlur(fn onBlur) {
 	}
 	imports.Proc(def.ViewDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
+func (m *ICefViewDelegate) SetOnThemeChanged(fn onThemeChanged) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.ViewDelegate_SetOnThemeChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
 
 type onGetPreferredSize func(view *ICefView, result *TCefSize)
 type onGetMinimumSize func(view *ICefView, result *TCefSize)
@@ -188,6 +194,7 @@ type onWindowChanged func(view *ICefView, added bool)
 type onLayoutChanged func(view *ICefView, newBounds *TCefRect)
 type onFocus func(view *ICefView)
 type onBlur func(view *ICefView)
+type onThemeChanged func(view *ICefView)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -236,6 +243,9 @@ func init() {
 		case onBlur:
 			view := &ICefView{instance: getPtr(0)}
 			fn.(onBlur)(view)
+		case onThemeChanged:
+			view := &ICefView{instance: getPtr(0)}
+			fn.(onThemeChanged)(view)
 		default:
 			return false
 		}

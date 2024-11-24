@@ -131,7 +131,7 @@ func (m *TCEFBrowserViewComponent) RuntimeStyle() consts.TCefRuntimeStyle {
 }
 
 // SetOnBrowserCreated
-func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn BrowserViewComponentOnBrowserCreated) {
+func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn browserViewOnBrowserCreated) {
 	if !m.IsValid() {
 		return
 	}
@@ -139,7 +139,7 @@ func (m *TCEFBrowserViewComponent) SetOnBrowserCreated(fn BrowserViewComponentOn
 }
 
 // SetOnBrowserDestroyed
-func (m *TCEFBrowserViewComponent) SetOnBrowserDestroyed(fn BrowserViewComponentOnBrowserDestroyed) {
+func (m *TCEFBrowserViewComponent) SetOnBrowserDestroyed(fn browserViewOnBrowserDestroyed) {
 	if !m.IsValid() {
 		return
 	}
@@ -147,7 +147,7 @@ func (m *TCEFBrowserViewComponent) SetOnBrowserDestroyed(fn BrowserViewComponent
 }
 
 // SetOnGetDelegateForPopupBrowserView
-func (m *TCEFBrowserViewComponent) SetOnGetDelegateForPopupBrowserView(fn BrowserViewComponentOnGetDelegateForPopupBrowserView) {
+func (m *TCEFBrowserViewComponent) SetOnGetDelegateForPopupBrowserView(fn browserViewOnGetDelegateForPopupBrowserView) {
 	if !m.IsValid() {
 		return
 	}
@@ -155,7 +155,7 @@ func (m *TCEFBrowserViewComponent) SetOnGetDelegateForPopupBrowserView(fn Browse
 }
 
 // SetOnPopupBrowserViewCreated
-func (m *TCEFBrowserViewComponent) SetOnPopupBrowserViewCreated(fn BrowserViewComponentOnPopupBrowserViewCreated) {
+func (m *TCEFBrowserViewComponent) SetOnPopupBrowserViewCreated(fn browserViewOnPopupBrowserViewCreated) {
 	if !m.IsValid() {
 		return
 	}
@@ -163,7 +163,7 @@ func (m *TCEFBrowserViewComponent) SetOnPopupBrowserViewCreated(fn BrowserViewCo
 }
 
 // SetOnGetChromeToolbarType
-func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewComponentOnGetChromeToolbarType) {
+func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn browserViewOnGetChromeToolbarType) {
 	if !m.IsValid() {
 		return
 	}
@@ -173,7 +173,7 @@ func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn BrowserViewCompo
 // SetOnUseFramelessWindowForPictureInPicture
 //
 //	CEF 113 ~
-func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn BrowserViewComponentOnUseFramelessWindowForPictureInPicture) {
+func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn browserViewOnUseFramelessWindowForPictureInPicture) {
 	if !m.IsValid() {
 		return
 	}
@@ -183,7 +183,7 @@ func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn
 // SetOnGestureCommand
 //
 //	CEF 113 ~
-func (m *TCEFBrowserViewComponent) SetOnGestureCommand(fn BrowserViewComponentOnGestureCommand) {
+func (m *TCEFBrowserViewComponent) SetOnGestureCommand(fn browserViewOnGestureCommand) {
 	if !m.IsValid() {
 		return
 	}
@@ -196,39 +196,39 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case BrowserViewComponentOnBrowserCreated:
+		case browserViewOnBrowserCreated:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browser := &ICefBrowser{instance: getPtr(2)}
-			fn.(BrowserViewComponentOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
-		case BrowserViewComponentOnBrowserDestroyed:
+			fn.(browserViewOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
+		case browserViewOnBrowserDestroyed:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browser := &ICefBrowser{instance: getPtr(2)}
-			fn.(BrowserViewComponentOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
-		case BrowserViewComponentOnGetDelegateForPopupBrowserView:
+			fn.(browserViewOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
+		case browserViewOnGetDelegateForPopupBrowserView:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
 			browserSettings := browserSettingsPtr.convert()
 			client := &ICefClient{instance: getPtr(3)}
 			resultPtr := (*uintptr)(getPtr(5))
-			result := fn.(BrowserViewComponentOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)))
+			result := fn.(browserViewOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)))
 			if result != nil {
 				*resultPtr = result.Instance()
 			}
-		case BrowserViewComponentOnPopupBrowserViewCreated:
+		case browserViewOnPopupBrowserViewCreated:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			popupBrowserView := &ICefBrowserView{&ICefView{instance: getPtr(2)}}
-			fn.(BrowserViewComponentOnPopupBrowserViewCreated)(lcl.AsObject(getPtr(0)), browserView, popupBrowserView, api.GoBool(getVal(3)), (*bool)(getPtr(4)))
-		case BrowserViewComponentOnGetChromeToolbarType:
-			fn.(BrowserViewComponentOnGetChromeToolbarType)(lcl.AsObject(getPtr(0)), (*consts.TCefChromeToolbarType)(getPtr(1)))
-		case BrowserViewComponentOnUseFramelessWindowForPictureInPicture:
+			fn.(browserViewOnPopupBrowserViewCreated)(lcl.AsObject(getPtr(0)), browserView, popupBrowserView, api.GoBool(getVal(3)), (*bool)(getPtr(4)))
+		case browserViewOnGetChromeToolbarType:
+			fn.(browserViewOnGetChromeToolbarType)(lcl.AsObject(getPtr(0)), (*consts.TCefChromeToolbarType)(getPtr(1)))
+		case browserViewOnUseFramelessWindowForPictureInPicture:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			result := (*bool)(getPtr(2))
-			*result = fn.(BrowserViewComponentOnUseFramelessWindowForPictureInPicture)(lcl.AsObject(getPtr(0)), browserView)
-		case BrowserViewComponentOnGestureCommand:
+			*result = fn.(browserViewOnUseFramelessWindowForPictureInPicture)(lcl.AsObject(getPtr(0)), browserView)
+		case browserViewOnGestureCommand:
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			gestureCommand := consts.TCefGestureCommand(getVal(2))
 			result := (*bool)(getPtr(3))
-			*result = fn.(BrowserViewComponentOnGestureCommand)(lcl.AsObject(getPtr(0)), browserView, gestureCommand)
+			*result = fn.(browserViewOnGestureCommand)(lcl.AsObject(getPtr(0)), browserView, gestureCommand)
 		default:
 			return false
 		}

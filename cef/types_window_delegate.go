@@ -14,7 +14,6 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
-	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -60,228 +59,163 @@ func (*windowDelegateDelegate) NewForCustom(window *TCEFWindowComponent) *ICefWi
 	return nil
 }
 
-//func (m *ICefWindowDelegate) SetOnGetPreferredSize(fn onGetPreferredSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnGetMinimumSize(fn onGetMinimumSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnGetMaximumSize(fn onGetMaximumSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnParentViewChanged(fn onParentViewChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnChildViewChanged(fn onChildViewChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnWindowChanged(fn onWindowChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnLayoutChanged(fn onLayoutChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnFocus(fn onFocus) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefWindowDelegate) SetOnBlur(fn onBlur) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.WindowDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-
-func (m *ICefWindowDelegate) SetOnWindowCreated(fn WindowComponentOnWindowCreated) {
+func (m *ICefWindowDelegate) SetOnWindowCreated(fn windowOnWindowCreated) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWindowClosing(fn WindowOnWindowClosing) {
+func (m *ICefWindowDelegate) SetOnWindowClosing(fn windowOnWindowClosing) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowClosing).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWindowDestroyed(fn WindowComponentOnWindowDestroyed) {
+func (m *ICefWindowDelegate) SetOnWindowDestroyed(fn windowOnWindowDestroyed) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWindowActivationChanged(fn WindowComponentOnWindowActivationChanged) {
+func (m *ICefWindowDelegate) SetOnWindowActivationChanged(fn windowOnWindowActivationChanged) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowActivationChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWindowBoundsChanged(fn WindowOnWindowBoundsChanged) {
+func (m *ICefWindowDelegate) SetOnWindowBoundsChanged(fn windowOnWindowBoundsChanged) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowBoundsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnGetParentWindow(fn WindowComponentOnGetParentWindow) {
+func (m *ICefWindowDelegate) SetOnGetParentWindow(fn windowOnGetParentWindow) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnIsWindowModalDialog(fn WindowComponentOnIsWindowModalDialog) {
+func (m *ICefWindowDelegate) SetOnIsWindowModalDialog(fn windowOnIsWindowModalDialog) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnIsWindowModalDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnGetInitialBounds(fn WindowComponentOnGetInitialBounds) {
+func (m *ICefWindowDelegate) SetOnGetInitialBounds(fn windowOnGetInitialBounds) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnGetInitialBounds).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnGetInitialShowState(fn WindowComponentOnGetInitialShowState) {
+func (m *ICefWindowDelegate) SetOnGetInitialShowState(fn windowOnGetInitialShowState) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnGetInitialShowState).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnIsFrameless(fn WindowComponentOnIsFrameless) {
+func (m *ICefWindowDelegate) SetOnIsFrameless(fn windowOnIsFrameless) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnIsFrameless).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWithStandardWindowButtons(fn WindowComponentOnWithStandardWindowButtons) {
+func (m *ICefWindowDelegate) SetOnWithStandardWindowButtons(fn windowOnWithStandardWindowButtons) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWithStandardWindowButtons).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnGetTitleBarHeight(fn WindowComponentOnGetTitleBarHeight) {
+func (m *ICefWindowDelegate) SetOnGetTitleBarHeight(fn windowOnGetTitleBarHeight) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnGetTitlebarHeight).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnCanResize(fn WindowComponentOnCanResize) {
+func (m *ICefWindowDelegate) SetOnAcceptsFirstMouse(fn windowOnAcceptsFirstMouse) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnAcceptsFirstMouse).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefWindowDelegate) SetOnCanResize(fn windowOnCanResize) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnCanResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnCanMaximize(fn WindowComponentOnCanMaximize) {
+func (m *ICefWindowDelegate) SetOnCanMaximize(fn windowOnCanMaximize) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnCanMaximize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnCanMinimize(fn WindowComponentOnCanMinimize) {
+func (m *ICefWindowDelegate) SetOnCanMinimize(fn windowOnCanMinimize) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnCanMinimize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnCanClose(fn WindowComponentOnCanClose) {
+func (m *ICefWindowDelegate) SetOnCanClose(fn windowOnCanClose) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnCanClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnAccelerator(fn WindowComponentOnAccelerator) {
+func (m *ICefWindowDelegate) SetOnAccelerator(fn windowOnAccelerator) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnAccelerator).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnKeyEvent(fn WindowComponentOnKey) {
+func (m *ICefWindowDelegate) SetOnKeyEvent(fn windowOnKey) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefWindowDelegate) SetOnWindowFullscreenTransition(fn WindowComponentOnWindowFullscreenTransition) {
+func (m *ICefWindowDelegate) SetOnWindowFullscreenTransition(fn windowOnWindowFullscreenTransition) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type WindowOnWindowClosing func(window *ICefWindow)
-type WindowOnWindowBoundsChanged func(window *ICefWindow, newBounds *TCefRect)
+func (m *ICefWindowDelegate) SetOnThemeColorsChanged(fn windowOnThemeColorsChanged) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnThemeColorsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
 
-func init() {
-	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
-		switch fn.(type) {
-		case WindowOnWindowClosing:
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(0))}}}
-			fn.(WindowOnWindowClosing)(window)
-		case WindowOnWindowBoundsChanged:
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(0))}}}
-			newBounds := (*TCefRect)(getPtr(1))
-			fn.(WindowOnWindowBoundsChanged)(window, newBounds)
-		default:
-			return false
-		}
-		return true
-	})
+func (m *ICefWindowDelegate) SetOnGetWindowRuntimeStyle(fn windowOnGetWindowRuntimeStyle) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnGetWindowRuntimeStyle).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefWindowDelegate) SetOnGetLinuxWindowProperties(fn windowOnGetLinuxWindowProperties) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.WindowDelegate_SetOnGetLinuxWindowProperties).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }

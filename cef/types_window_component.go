@@ -616,86 +616,102 @@ func (m *TCEFWindowComponent) RuntimeStyle() consts.TCefRuntimeStyle {
 }
 
 // SetOnWindowCreated 窗口创建回调事件
-func (m *TCEFWindowComponent) SetOnWindowCreated(fn WindowComponentOnWindowCreated) {
+func (m *TCEFWindowComponent) SetOnWindowCreated(fn windowOnWindowCreated) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnWindowDestroyed 窗口销毁回调事件
-func (m *TCEFWindowComponent) SetOnWindowDestroyed(fn WindowComponentOnWindowDestroyed) {
+func (m *TCEFWindowComponent) SetOnWindowDestroyed(fn windowOnWindowDestroyed) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnWindowActivationChanged 窗口激活改变回调事件
-func (m *TCEFWindowComponent) SetOnWindowActivationChanged(fn WindowComponentOnWindowActivationChanged) {
+func (m *TCEFWindowComponent) SetOnWindowActivationChanged(fn windowOnWindowActivationChanged) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowActivationChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetParentWindow 获取父组件回调事件
-func (m *TCEFWindowComponent) SetOnGetParentWindow(fn WindowComponentOnGetParentWindow) {
+func (m *TCEFWindowComponent) SetOnGetParentWindow(fn windowOnGetParentWindow) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnIsWindowModalDialog 窗口是否为模态弹窗
-func (m *TCEFWindowComponent) SetOnIsWindowModalDialog(fn WindowComponentOnIsWindowModalDialog) {
+func (m *TCEFWindowComponent) SetOnIsWindowModalDialog(fn windowOnIsWindowModalDialog) {
 	imports.Proc(def.CEFWindowComponent_SetOnIsWindowModalDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetInitialBounds 窗口初始窗口边界回调事件
-func (m *TCEFWindowComponent) SetOnGetInitialBounds(fn WindowComponentOnGetInitialBounds) {
+func (m *TCEFWindowComponent) SetOnGetInitialBounds(fn windowOnGetInitialBounds) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetInitialBounds).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnGetInitialShowState 窗口初始显示状态回调事件
-func (m *TCEFWindowComponent) SetOnGetInitialShowState(fn WindowComponentOnGetInitialShowState) {
+func (m *TCEFWindowComponent) SetOnGetInitialShowState(fn windowOnGetInitialShowState) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetInitialShowState).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnIsFrameless 窗口无边框回调事件
-func (m *TCEFWindowComponent) SetOnIsFrameless(fn WindowComponentOnIsFrameless) {
+func (m *TCEFWindowComponent) SetOnIsFrameless(fn windowOnIsFrameless) {
 	imports.Proc(def.CEFWindowComponent_SetOnIsFrameless).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFWindowComponent) SetOnWithStandardWindowButtons(fn WindowComponentOnWithStandardWindowButtons) {
+func (m *TCEFWindowComponent) SetOnWithStandardWindowButtons(fn windowOnWithStandardWindowButtons) {
 	imports.Proc(def.CEFWindowComponent_SetOnWithStandardWindowButtons).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFWindowComponent) SetOnGetTitleBarHeight(fn WindowComponentOnGetTitleBarHeight) {
+func (m *TCEFWindowComponent) SetOnGetTitleBarHeight(fn windowOnGetTitleBarHeight) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetTitlebarHeight).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *TCEFWindowComponent) SetOnAcceptsFirstMouse(fn windowOnAcceptsFirstMouse) {
+	imports.Proc(def.CEFWindowComponent_SetOnAcceptsFirstMouse).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 // SetOnCanResize 设置窗口是否允许调整大小回调事件
-func (m *TCEFWindowComponent) SetOnCanResize(fn WindowComponentOnCanResize) {
+func (m *TCEFWindowComponent) SetOnCanResize(fn windowOnCanResize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnCanMaximize 设置窗口是否允许最大化回调事件
-func (m *TCEFWindowComponent) SetOnCanMaximize(fn WindowComponentOnCanMaximize) {
+func (m *TCEFWindowComponent) SetOnCanMaximize(fn windowOnCanMaximize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanMaximize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnCanMinimize 设置窗口是否允许最小化回调事件
-func (m *TCEFWindowComponent) SetOnCanMinimize(fn WindowComponentOnCanMinimize) {
+func (m *TCEFWindowComponent) SetOnCanMinimize(fn windowOnCanMinimize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanMinimize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnCanClose 设置窗口是否允许关闭回调事件
-func (m *TCEFWindowComponent) SetOnCanClose(fn WindowComponentOnCanClose) {
+func (m *TCEFWindowComponent) SetOnCanClose(fn windowOnCanClose) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnAccelerator 设置快捷键回调事件
-func (m *TCEFWindowComponent) SetOnAccelerator(fn WindowComponentOnAccelerator) {
+func (m *TCEFWindowComponent) SetOnAccelerator(fn windowOnAccelerator) {
 	imports.Proc(def.CEFWindowComponent_SetOnAccelerator).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnKeyEvent 设置键盘事件回调事件
-func (m *TCEFWindowComponent) SetOnKeyEvent(fn WindowComponentOnKey) {
+func (m *TCEFWindowComponent) SetOnKeyEvent(fn windowOnKey) {
 	imports.Proc(def.CEFWindowComponent_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 // SetOnWindowFullscreenTransition
-func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn WindowComponentOnKey) {
+func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn windowOnWindowFullscreenTransition) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFWindowComponent) SetOnThemeColorsChanged(fn windowOnThemeColorsChanged) {
+	imports.Proc(def.CEFWindowComponent_SetOnThemeColorsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFWindowComponent) SetOnGetWindowRuntimeStyle(fn windowOnGetWindowRuntimeStyle) {
+	imports.Proc(def.CEFWindowComponent_SetOnGetWindowRuntimeStyle).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFWindowComponent) SetOnGetLinuxWindowProperties(fn windowOnGetLinuxWindowProperties) {
+	imports.Proc(def.CEFWindowComponent_SetOnGetLinuxWindowProperties).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 func init() {
@@ -703,100 +719,98 @@ func init() {
 		getPtr := func(i int) unsafe.Pointer {
 			return unsafe.Pointer(getVal(i))
 		}
+		var getWindow = func(index int) *ICefWindow {
+			return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(index))}}}
+		}
 		switch fn.(type) {
-		case WindowComponentOnWindowCreated:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnWindowCreated)(window)
-		case WindowComponentOnWindowDestroyed:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnWindowDestroyed)(window)
-		case WindowComponentOnWindowActivationChanged:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnWindowActivationChanged)(window, api.GoBool(getVal(2)))
-		case WindowComponentOnGetParentWindow:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			resultWindowPtr := (*uintptr)(getPtr(4))
-			resultWindow := &ICefWindow{}
-			fn.(WindowComponentOnGetParentWindow)(window, (*bool)(getPtr(2)), (*bool)(getPtr(3)), resultWindow)
-			*resultWindowPtr = resultWindow.Instance()
-		case WindowComponentOnIsWindowModalDialog:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnIsWindowModalDialog)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnGetInitialBounds:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			resultRectPtr := (*TCefRect)(getPtr(2))
+		case windowOnWindowCreated:
+			window := getWindow(0)
+			fn.(windowOnWindowCreated)(window)
+		case windowOnWindowDestroyed:
+			window := getWindow(0)
+			fn.(windowOnWindowDestroyed)(window)
+		case windowOnWindowActivationChanged:
+			window := getWindow(0)
+			fn.(windowOnWindowActivationChanged)(window, api.GoBool(getVal(1)))
+		case windowOnGetParentWindow:
+			window := getWindow(0)
+			resultWindowPtr := (*uintptr)(getPtr(3))
+			parentWindow := fn.(windowOnGetParentWindow)(window, (*bool)(getPtr(1)), (*bool)(getPtr(2)))
+			if window != nil {
+				*resultWindowPtr = parentWindow.Instance()
+			}
+		case windowOnIsWindowModalDialog:
+			window := getWindow(0)
+			fn.(windowOnIsWindowModalDialog)(window, (*bool)(getPtr(1)))
+		case windowOnGetInitialBounds:
+			window := getWindow(0)
+			resultRectPtr := (*TCefRect)(getPtr(1))
 			resultRect := new(TCefRect)
 			resultRect.X = 0
 			resultRect.Y = 0
-			resultRect.Width = 800
-			resultRect.Height = 600
-			fn.(WindowComponentOnGetInitialBounds)(window, resultRect)
+			resultRect.Width = 600
+			resultRect.Height = 400
+			fn.(windowOnGetInitialBounds)(window, resultRect)
 			*resultRectPtr = *resultRect
-		case WindowComponentOnGetInitialShowState:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			resultShowState := (*consts.TCefShowState)(getPtr(2))
-			fn.(WindowComponentOnGetInitialShowState)(window, resultShowState)
-		case WindowComponentOnIsFrameless:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnIsFrameless)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnWithStandardWindowButtons:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnWithStandardWindowButtons)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnGetTitleBarHeight:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			titleBarHeight := (*float32)(getPtr(2))
-			fn.(WindowComponentOnGetTitleBarHeight)(window, titleBarHeight, (*bool)(getPtr(3)))
-		case WindowComponentOnCanResize:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnCanResize)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnCanMaximize:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnCanMaximize)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnCanMinimize:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnCanMinimize)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnCanClose:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnCanClose)(window, (*bool)(getPtr(2)))
-		case WindowComponentOnAccelerator:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnAccelerator)(window, int32(getVal(2)), (*bool)(getPtr(3)))
-		case WindowComponentOnKey:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			keyEvent := (*TCefKeyEvent)(getPtr(2))
-			fn.(WindowComponentOnKey)(window, keyEvent, (*bool)(getPtr(3)))
-		case WindowComponentOnWindowFullscreenTransition:
-			_ = getPtr(0)
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			isCompleted := api.GoBool(getVal(2))
-			fn.(WindowComponentOnWindowFullscreenTransition)(window, isCompleted)
-		case WindowComponentOnThemeColorsChanged:
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			fn.(WindowComponentOnThemeColorsChanged)(window, int32(getVal(2)))
-		case WindowComponentOnGetWindowRuntimeStyle:
-			fn.(WindowComponentOnGetWindowRuntimeStyle)((*consts.TCefRuntimeStyle)(getPtr(1)))
-		case WindowComponentOnGetLinuxWindowProperties:
-			window := &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(1))}}}
-			propertiesPtr := (*tLinuxWindowPropertiesPtr)(getPtr(2))
+		case windowOnGetInitialShowState:
+			window := getWindow(0)
+			resultShowState := (*consts.TCefShowState)(getPtr(1))
+			fn.(windowOnGetInitialShowState)(window, resultShowState)
+		case windowOnIsFrameless:
+			window := getWindow(0)
+			fn.(windowOnIsFrameless)(window, (*bool)(getPtr(1)))
+		case windowOnWithStandardWindowButtons:
+			window := getWindow(0)
+			fn.(windowOnWithStandardWindowButtons)(window, (*bool)(getPtr(1)))
+		case windowOnGetTitleBarHeight:
+			window := getWindow(0)
+			titleBarHeight := (*float32)(getPtr(1))
+			fn.(windowOnGetTitleBarHeight)(window, titleBarHeight, (*bool)(getPtr(2)))
+		case windowOnCanResize:
+			window := getWindow(0)
+			fn.(windowOnCanResize)(window, (*bool)(getPtr(1)))
+		case windowOnCanMaximize:
+			window := getWindow(0)
+			fn.(windowOnCanMaximize)(window, (*bool)(getPtr(1)))
+		case windowOnCanMinimize:
+			window := getWindow(0)
+			fn.(windowOnCanMinimize)(window, (*bool)(getPtr(1)))
+		case windowOnCanClose:
+			window := getWindow(0)
+			fn.(windowOnCanClose)(window, (*bool)(getPtr(1)))
+		case windowOnAccelerator:
+			window := getWindow(0)
+			fn.(windowOnAccelerator)(window, int32(getVal(1)), (*bool)(getPtr(2)))
+		case windowOnKey:
+			window := getWindow(0)
+			keyEvent := (*TCefKeyEvent)(getPtr(1))
+			fn.(windowOnKey)(window, keyEvent, (*bool)(getPtr(2)))
+		case windowOnWindowFullscreenTransition:
+			window := getWindow(0)
+			isCompleted := api.GoBool(getVal(1))
+			fn.(windowOnWindowFullscreenTransition)(window, isCompleted)
+		case windowOnThemeColorsChanged:
+			window := getWindow(0)
+			fn.(windowOnThemeColorsChanged)(window, int32(getVal(1)))
+		case windowOnGetWindowRuntimeStyle:
+			fn.(windowOnGetWindowRuntimeStyle)((*consts.TCefRuntimeStyle)(getPtr(0)))
+		case windowOnGetLinuxWindowProperties:
+			window := getWindow(0)
+			propertiesPtr := (*tLinuxWindowPropertiesPtr)(getPtr(1))
 			properties := propertiesPtr.convert()
-			fn.(WindowComponentOnGetLinuxWindowProperties)(window, properties, (*bool)(getPtr(3)))
+			fn.(windowOnGetLinuxWindowProperties)(window, properties, (*bool)(getPtr(2)))
 			propertiesPtr = properties.ToPtr()
+		case windowOnWindowClosing:
+			window := getWindow(0)
+			fn.(windowOnWindowClosing)(window)
+		case windowOnWindowBoundsChanged:
+			window := getWindow(0)
+			newBounds := (*TCefRect)(getPtr(1))
+			fn.(windowOnWindowBoundsChanged)(window, newBounds)
+		case windowOnAcceptsFirstMouse:
+			window := getWindow(0)
+			result := (*consts.TCefState)(getPtr(1))
+			fn.(windowOnAcceptsFirstMouse)(window, result)
 		default:
 			return false
 		}

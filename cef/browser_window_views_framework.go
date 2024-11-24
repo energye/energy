@@ -31,25 +31,25 @@ import (
 //
 // 当创建应用配置时 MultiThreadedMessageLoop 和 ExternalMessagePump 属性同时为false(linux系统默认强制false)时启用ViewsFramework窗口
 type ViewsFrameworkBrowserWindow struct {
-	isClosing             bool                              //
-	windowType            consts.WINDOW_TYPE                //窗口类型
-	windowId              int32                             //
-	chromiumBrowser       ICEFChromiumBrowser               //
-	component             lcl.IComponent                    //
-	windowComponent       *TCEFWindowComponent              //
-	browserViewComponent  *TCEFBrowserViewComponent         //
-	windowProperty        *WindowProperty                   //窗口属性
-	auxTools              *auxTools                         //辅助工具
-	tray                  ITray                             //托盘
-	doOnWindowCreated     WindowComponentOnWindowCreated    //窗口创建
-	doOnGetInitialBounds  WindowComponentOnGetInitialBounds //窗口初始bounds
-	doOnCloseQuery        WindowComponentOnCanCloseEx       //
-	regions               *TCefDraggableRegions             //窗口内html拖拽区域
-	context               *ICefRequestContext               //
-	extraInfo             *ICefDictionaryValue              //
-	screen                IScreen                           //屏幕
-	created               bool                              //创建顶层窗口完成
-	canEnableDefaultEvent bool                              //是否启用了默认事件
+	isClosing             bool                      //
+	windowType            consts.WINDOW_TYPE        //窗口类型
+	windowId              int32                     //
+	chromiumBrowser       ICEFChromiumBrowser       //
+	component             lcl.IComponent            //
+	windowComponent       *TCEFWindowComponent      //
+	browserViewComponent  *TCEFBrowserViewComponent //
+	windowProperty        *WindowProperty           //窗口属性
+	auxTools              *auxTools                 //辅助工具
+	tray                  ITray                     //托盘
+	doOnWindowCreated     windowOnWindowCreated     //窗口创建
+	doOnGetInitialBounds  windowOnGetInitialBounds  //窗口初始bounds
+	doOnCloseQuery        windowOnCanCloseEx        //
+	regions               *TCefDraggableRegions     //窗口内html拖拽区域
+	context               *ICefRequestContext       //
+	extraInfo             *ICefDictionaryValue      //
+	screen                IScreen                   //屏幕
+	created               bool                      //创建顶层窗口完成
+	canEnableDefaultEvent bool                      //是否启用了默认事件
 }
 
 // NewViewsFrameworkBrowserWindow 创建 ViewsFrameworkBrowserWindow 窗口
@@ -343,12 +343,12 @@ func (m *ViewsFrameworkBrowserWindow) EnableAllDefaultEvent() {
 }
 
 // SetOnWindowCreated 窗口创建
-func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated WindowComponentOnWindowCreated) {
+func (m *ViewsFrameworkBrowserWindow) SetOnWindowCreated(onWindowCreated windowOnWindowCreated) {
 	m.doOnWindowCreated = onWindowCreated
 }
 
 // SetOnGetInitialBounds 窗口初始坐标和大小
-func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds WindowComponentOnGetInitialBounds) {
+func (m *ViewsFrameworkBrowserWindow) SetOnGetInitialBounds(onGetInitialBounds windowOnGetInitialBounds) {
 	m.doOnGetInitialBounds = onGetInitialBounds
 }
 
@@ -677,6 +677,6 @@ func (m *ViewsFrameworkBrowserWindow) RunOnMainThread(fn func()) {
 	RunOnMainThread(fn)
 }
 
-func (m *ViewsFrameworkBrowserWindow) SetOnCloseQuery(fn WindowComponentOnCanCloseEx) {
+func (m *ViewsFrameworkBrowserWindow) SetOnCloseQuery(fn windowOnCanCloseEx) {
 	m.doOnCloseQuery = fn
 }

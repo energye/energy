@@ -101,18 +101,42 @@ func (m *ICefBrowserViewDelegate) SetOnPopupBrowserViewCreated(fn onPopupBrowser
 	imports.Proc(def.BrowserViewDelegate_SetOnPopupBrowserViewCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefBrowserViewDelegate) GetChromeToolbarType() consts.TCefChromeToolbarType {
+func (m *ICefBrowserViewDelegate) SetOnGetChromeToolbarType(fn onGetChromeToolbarType) {
 	if !m.IsValid() || m.IsOtherEvent() {
-		return 0
+		return
 	}
-	r1, _, _ := imports.Proc(def.BrowserViewDelegate_GetChromeToolbarType).Call(m.Instance())
-	return consts.TCefChromeToolbarType(r1)
+	imports.Proc(def.BrowserViewDelegate_SetOnGetChromeToolbarType).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefBrowserViewDelegate) SetOnUseFramelessWindowForPictureInPicture(fn onUseFramelessWindowForPictureInPicture) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.BrowserViewDelegate_SetOnUseFramelessWindowForPictureInPicture).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefBrowserViewDelegate) SetOnGestureCommand(fn onGestureCommand) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.BrowserViewDelegate_SetOnGestureCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *ICefBrowserViewDelegate) SetOnGetBrowserRuntimeStyle(fn onGetBrowserRuntimeStyle) {
+	if !m.IsValid() || m.IsOtherEvent() {
+		return
+	}
+	imports.Proc(def.BrowserViewDelegate_SetOnGetBrowserRuntimeStyle).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type onBrowserCreated func(browserView *ICefBrowserView, browser *ICefBrowser)
 type onBrowserDestroyed func(browserView *ICefBrowserView, browser *ICefBrowser)
 type onGetDelegateForPopupBrowserView func(browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool) *ICefBrowserViewDelegate
 type onPopupBrowserViewCreated func(browserView, popupBrowserView *ICefBrowserView, isDevtools bool, aResult *bool)
+type onGetChromeToolbarType func(browserView *ICefBrowserView, result *consts.TCefChromeToolbarType)
+type onUseFramelessWindowForPictureInPicture func(browserView *ICefBrowserView, result *bool)
+type onGestureCommand func(browserView *ICefBrowserView, gestureCommand consts.TCefGestureCommand, result *bool)
+type onGetBrowserRuntimeStyle func(result *consts.TCefRuntimeStyle)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -142,6 +166,22 @@ func init() {
 			browserView := &ICefBrowserView{&ICefView{instance: getPtr(0)}}
 			popupBrowserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
 			fn.(onPopupBrowserViewCreated)(browserView, popupBrowserView, api.GoBool(getVal(2)), (*bool)(getPtr(3)))
+		case onGetChromeToolbarType:
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(0)}}
+			result := (*consts.TCefChromeToolbarType)(getPtr(1))
+			fn.(onGetChromeToolbarType)(browserView, result)
+		case onUseFramelessWindowForPictureInPicture:
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(0)}}
+			result := (*bool)(getPtr(1))
+			fn.(onUseFramelessWindowForPictureInPicture)(browserView, result)
+		case onGestureCommand:
+			browserView := &ICefBrowserView{&ICefView{instance: getPtr(0)}}
+			command := consts.TCefGestureCommand(getVal(1))
+			result := (*bool)(getPtr(2))
+			fn.(onGestureCommand)(browserView, command, result)
+		case onGetBrowserRuntimeStyle:
+			result := (*consts.TCefRuntimeStyle)(getPtr(0))
+			fn.(onGetBrowserRuntimeStyle)(result)
 		default:
 			return false
 		}

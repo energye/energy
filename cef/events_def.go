@@ -212,34 +212,37 @@ type TCloseQueryEvent func(sender lcl.IObject, canClose *bool) bool
 
 /************* TCEFWindowComponent *************/
 
-type WindowComponentOnWindowCreated func(window *ICefWindow)
-type WindowComponentOnWindowDestroyed func(window *ICefWindow)
-type WindowComponentOnWindowActivationChanged func(window *ICefWindow, active bool)
-type WindowComponentOnGetParentWindow func(window *ICefWindow, isMenu, canActivateMenu *bool, result *ICefWindow)
-type WindowComponentOnIsWindowModalDialog func(window *ICefWindow, result *bool)
-type WindowComponentOnGetInitialBounds func(window *ICefWindow, result *TCefRect)
-type WindowComponentOnGetInitialShowState func(window *ICefWindow, result *consts.TCefShowState)
-type WindowComponentOnIsFrameless func(window *ICefWindow, result *bool)
-type WindowComponentOnWithStandardWindowButtons func(window *ICefWindow, result *bool)
-type WindowComponentOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight *float32, result *bool)
-type WindowComponentOnCanResize func(window *ICefWindow, result *bool)
-type WindowComponentOnCanMaximize func(window *ICefWindow, result *bool)
-type WindowComponentOnCanMinimize func(window *ICefWindow, result *bool)
-type WindowComponentOnCanClose func(window *ICefWindow, result *bool)
-type WindowComponentOnCanCloseEx func(cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
-type WindowComponentOnAccelerator func(window *ICefWindow, commandId int32, result *bool)
-type WindowComponentOnKey func(window *ICefWindow, event *TCefKeyEvent, result *bool)
-type WindowComponentOnWindowFullscreenTransition func(window *ICefWindow, isCompleted bool)
-type WindowComponentOnThemeColorsChanged func(window *ICefWindow, chromeTheme int32)
-type WindowComponentOnGetWindowRuntimeStyle func(result *consts.TCefRuntimeStyle)
-type WindowComponentOnGetLinuxWindowProperties func(window *ICefWindow, properties TLinuxWindowProperties, result *bool)
+type windowOnWindowCreated func(window *ICefWindow)
+type windowOnWindowDestroyed func(window *ICefWindow)
+type windowOnWindowActivationChanged func(window *ICefWindow, active bool)
+type windowOnGetParentWindow func(window *ICefWindow, isMenu, canActivateMenu *bool) *ICefWindow
+type windowOnIsWindowModalDialog func(window *ICefWindow, result *bool)
+type windowOnGetInitialBounds func(window *ICefWindow, result *TCefRect)
+type windowOnGetInitialShowState func(window *ICefWindow, result *consts.TCefShowState)
+type windowOnIsFrameless func(window *ICefWindow, result *bool)
+type windowOnWithStandardWindowButtons func(window *ICefWindow, result *bool)
+type windowOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight *float32, result *bool)
+type windowOnCanResize func(window *ICefWindow, result *bool)
+type windowOnCanMaximize func(window *ICefWindow, result *bool)
+type windowOnCanMinimize func(window *ICefWindow, result *bool)
+type windowOnCanClose func(window *ICefWindow, result *bool)
+type windowOnCanCloseEx func(cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
+type windowOnAccelerator func(window *ICefWindow, commandId int32, result *bool)
+type windowOnKey func(window *ICefWindow, event *TCefKeyEvent, result *bool)
+type windowOnWindowFullscreenTransition func(window *ICefWindow, isCompleted bool)
+type windowOnThemeColorsChanged func(window *ICefWindow, chromeTheme int32)
+type windowOnGetWindowRuntimeStyle func(result *consts.TCefRuntimeStyle)
+type windowOnGetLinuxWindowProperties func(window *ICefWindow, properties TLinuxWindowProperties, result *bool)
+type windowOnWindowClosing func(window *ICefWindow)
+type windowOnWindowBoundsChanged func(window *ICefWindow, newBounds *TCefRect)
+type windowOnAcceptsFirstMouse func(window *ICefWindow, result *consts.TCefState)
 
 /************* TCEFBrowserViewComponent *************/
 
-type BrowserViewComponentOnBrowserCreated func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
-type BrowserViewComponentOnBrowserDestroyed func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
-type BrowserViewComponentOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool) *ICefBrowserViewDelegate
-type BrowserViewComponentOnPopupBrowserViewCreated func(sender lcl.IObject, browserView, popupBrowserView *ICefBrowserView, isDevtools bool, result *bool)
-type BrowserViewComponentOnGetChromeToolbarType func(sender lcl.IObject, result *consts.TCefChromeToolbarType)
-type BrowserViewComponentOnUseFramelessWindowForPictureInPicture func(sender lcl.IObject, browserView *ICefBrowserView) bool
-type BrowserViewComponentOnGestureCommand func(sender lcl.IObject, browserView *ICefBrowserView, gestureCommand consts.TCefGestureCommand) bool
+type browserViewOnBrowserCreated func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
+type browserViewOnBrowserDestroyed func(sender lcl.IObject, browserView *ICefBrowserView, browser *ICefBrowser)
+type browserViewOnGetDelegateForPopupBrowserView func(sender lcl.IObject, browserView *ICefBrowserView, browserSettings *TCefBrowserSettings, client *ICefClient, isDevtools bool) *ICefBrowserViewDelegate
+type browserViewOnPopupBrowserViewCreated func(sender lcl.IObject, browserView, popupBrowserView *ICefBrowserView, isDevtools bool, result *bool)
+type browserViewOnGetChromeToolbarType func(sender lcl.IObject, result *consts.TCefChromeToolbarType)
+type browserViewOnUseFramelessWindowForPictureInPicture func(sender lcl.IObject, browserView *ICefBrowserView) bool
+type browserViewOnGestureCommand func(sender lcl.IObject, browserView *ICefBrowserView, gestureCommand consts.TCefGestureCommand) bool

@@ -1259,6 +1259,7 @@ const (
 	CEFWindowComponent_SetOnIsFrameless
 	CEFWindowComponent_SetOnWithStandardWindowButtons
 	CEFWindowComponent_SetOnGetTitlebarHeight
+	CEFWindowComponent_SetOnAcceptsFirstMouse
 	CEFWindowComponent_SetOnCanResize
 	CEFWindowComponent_SetOnCanMaximize
 	CEFWindowComponent_SetOnCanMinimize
@@ -2473,6 +2474,7 @@ const (
 	ViewDelegate_SetOnLayoutChanged
 	ViewDelegate_SetOnFocus
 	ViewDelegate_SetOnBlur
+	ViewDelegate_SetOnThemeChanged
 	// ICefBrowserViewDelegate
 	BrowserViewDelegateRef_Create
 	BrowserViewDelegateRef_CreateForCustom
@@ -2480,7 +2482,10 @@ const (
 	BrowserViewDelegate_SetOnBrowserDestroyed
 	BrowserViewDelegate_SetOnGetDelegateForPopupBrowserView
 	BrowserViewDelegate_SetOnPopupBrowserViewCreated
-	BrowserViewDelegate_GetChromeToolbarType
+	BrowserViewDelegate_SetOnGetChromeToolbarType
+	BrowserViewDelegate_SetOnUseFramelessWindowForPictureInPicture
+	BrowserViewDelegate_SetOnGestureCommand
+	BrowserViewDelegate_SetOnGetBrowserRuntimeStyle
 	// ICefButton
 	Button_AsLabelButton
 	Button_SetState
@@ -2491,16 +2496,6 @@ const (
 	// ICefButtonDelegate
 	ButtonDelegateRef_Create
 	ButtonDelegateRef_CreateForCustom
-	//ButtonDelegate_SetOnGetPreferredSize
-	//ButtonDelegate_SetOnGetMinimumSize
-	//ButtonDelegate_SetOnGetMaximumSize
-	//ButtonDelegate_SetOnGetHeightForWidth
-	//ButtonDelegate_SetOnParentViewChanged
-	//ButtonDelegate_SetOnChildViewChanged
-	//ButtonDelegate_SetOnWindowChanged
-	//ButtonDelegate_SetOnLayoutChanged
-	//ButtonDelegate_SetOnFocus
-	//ButtonDelegate_SetOnBlur
 	ButtonDelegate_SetOnButtonPressed
 	ButtonDelegate_SetOnButtonStateChanged
 	// ICefLabelButton
@@ -2561,29 +2556,9 @@ const (
 	// ICefPanelDelegate
 	PanelDelegateRef_Create
 	PanelDelegateRef_CreateForCustom
-	//PanelDelegate_SetOnGetPreferredSize
-	//PanelDelegate_SetOnGetMinimumSize
-	//PanelDelegate_SetOnGetMaximumSize
-	//PanelDelegate_SetOnGetHeightForWidth
-	//PanelDelegate_SetOnParentViewChanged
-	//PanelDelegate_SetOnChildViewChanged
-	//PanelDelegate_SetOnWindowChanged
-	//PanelDelegate_SetOnLayoutChanged
-	//PanelDelegate_SetOnFocus
-	//PanelDelegate_SetOnBlur
 	// ICefWindowDelegate
 	WindowDelegate_Create
 	WindowDelegate_CreateForCustom
-	//WindowDelegate_SetOnGetPreferredSize
-	//WindowDelegate_SetOnGetMinimumSize
-	//WindowDelegate_SetOnGetMaximumSize
-	//WindowDelegate_SetOnGetHeightForWidth
-	//WindowDelegate_SetOnParentViewChanged
-	//WindowDelegate_SetOnChildViewChanged
-	//WindowDelegate_SetOnWindowChanged
-	//WindowDelegate_SetOnLayoutChanged
-	//WindowDelegate_SetOnFocus
-	//WindowDelegate_SetOnBlur
 	WindowDelegate_SetOnWindowCreated
 	WindowDelegate_SetOnWindowClosing
 	WindowDelegate_SetOnWindowDestroyed
@@ -2596,6 +2571,7 @@ const (
 	WindowDelegate_SetOnIsFrameless
 	WindowDelegate_SetOnWithStandardWindowButtons
 	WindowDelegate_SetOnGetTitlebarHeight
+	WindowDelegate_SetOnAcceptsFirstMouse
 	WindowDelegate_SetOnCanResize
 	WindowDelegate_SetOnCanMaximize
 	WindowDelegate_SetOnCanMinimize
@@ -2603,6 +2579,9 @@ const (
 	WindowDelegate_SetOnAccelerator
 	WindowDelegate_SetOnKeyEvent
 	WindowDelegate_SetOnWindowFullscreenTransition
+	WindowDelegate_SetOnThemeColorsChanged
+	WindowDelegate_SetOnGetWindowRuntimeStyle
+	WindowDelegate_SetOnGetLinuxWindowProperties
 	// TCEFPanelComponent
 	PanelComponent_Create
 	PanelComponent_CreatePanel
