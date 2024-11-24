@@ -342,14 +342,25 @@ func (m *ICefV8Value) IsUserCreated() bool {
 	return api.GoBool(r1)
 }
 
-//func (m *ICefV8Value) HasException() bool {
-//	r1, _, _ := imports.Proc(CefV8Value_HasException).Call(m.Instance())
-//	return api.GoBool(r1)
-//}
+func (m *ICefV8Value) HasException() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CefV8Value_HasException).Call(m.Instance())
+	return api.GoBool(r1)
+}
 
-//func (m *ICefV8Value) GetException() {
-//
-//}
+func (m *ICefV8Value) GetException() *ICefV8Exception {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CefV8Value_GetException).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	if result != 0 {
+		return &ICefV8Exception{instance: getInstance(result)}
+	}
+	return nil
+}
 
 func (m *ICefV8Value) ClearException() bool {
 	if !m.IsValid() {
