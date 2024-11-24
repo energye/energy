@@ -294,40 +294,16 @@ func (m *TCEFTextFieldComponent) SetAccessibleName(name string) {
 	imports.Proc(def.TextfieldComponent_SetAccessibleName).Call(m.Instance(), api.PascalStr(name))
 }
 
-func (m *TCEFTextFieldComponent) SetOnTextFieldKeyEvent(fn onTextFieldKeyEvent) {
+func (m *TCEFTextFieldComponent) SetOnTextFieldKeyEvent(fn textFieldOnTextFieldKeyEvent) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.TextfieldComponent_SetOnTextfieldKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFTextFieldComponent) SetOnAfterUserAction(fn onAfterUserAction) {
+func (m *TCEFTextFieldComponent) SetOnAfterUserAction(fn textFieldOnAfterUserAction) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.TextfieldComponent_SetOnAfterUserAction).Call(m.Instance(), api.MakeEventDataPtr(fn))
-}
-
-type onTextFieldKeyEvent func(textField *ICefTextfield, event *TCefKeyEvent) bool
-type onAfterUserAction func(textField *ICefTextfield)
-
-func init() {
-	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
-		switch fn.(type) {
-		case onTextFieldKeyEvent:
-			textField := (*ICefTextfield)(getPtr(0))
-			event := (*TCefKeyEvent)(getPtr(1))
-			resultPtr := (*bool)(getPtr(2))
-			*resultPtr = fn.(onTextFieldKeyEvent)(textField, event)
-		case onAfterUserAction:
-			textField := (*ICefTextfield)(getPtr(0))
-			fn.(onAfterUserAction)(textField)
-		default:
-			return false
-		}
-		return true
-	})
 }

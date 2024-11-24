@@ -171,8 +171,6 @@ func (m *TCEFBrowserViewComponent) SetOnGetChromeToolbarType(fn browserViewOnGet
 }
 
 // SetOnUseFramelessWindowForPictureInPicture
-//
-//	CEF 113 ~
 func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn browserViewOnUseFramelessWindowForPictureInPicture) {
 	if !m.IsValid() {
 		return
@@ -181,8 +179,6 @@ func (m *TCEFBrowserViewComponent) SetOnUseFramelessWindowForPictureInPicture(fn
 }
 
 // SetOnGestureCommand
-//
-//	CEF 113 ~
 func (m *TCEFBrowserViewComponent) SetOnGestureCommand(fn browserViewOnGestureCommand) {
 	if !m.IsValid() {
 		return
@@ -190,48 +186,6 @@ func (m *TCEFBrowserViewComponent) SetOnGestureCommand(fn browserViewOnGestureCo
 	imports.Proc(def.CEFBrowserViewComponent_SetOnGestureCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func init() {
-	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
-		getPtr := func(i int) unsafe.Pointer {
-			return unsafe.Pointer(getVal(i))
-		}
-		switch fn.(type) {
-		case browserViewOnBrowserCreated:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			browser := &ICefBrowser{instance: getPtr(2)}
-			fn.(browserViewOnBrowserCreated)(lcl.AsObject(getPtr(0)), browserView, browser)
-		case browserViewOnBrowserDestroyed:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			browser := &ICefBrowser{instance: getPtr(2)}
-			fn.(browserViewOnBrowserDestroyed)(lcl.AsObject(getPtr(0)), browserView, browser)
-		case browserViewOnGetDelegateForPopupBrowserView:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			browserSettingsPtr := (*tCefBrowserSettingsPtr)(getPtr(2))
-			browserSettings := browserSettingsPtr.convert()
-			client := &ICefClient{instance: getPtr(3)}
-			resultPtr := (*uintptr)(getPtr(5))
-			result := fn.(browserViewOnGetDelegateForPopupBrowserView)(lcl.AsObject(getPtr(0)), browserView, browserSettings, client, api.GoBool(getVal(4)))
-			if result != nil {
-				*resultPtr = result.Instance()
-			}
-		case browserViewOnPopupBrowserViewCreated:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			popupBrowserView := &ICefBrowserView{&ICefView{instance: getPtr(2)}}
-			fn.(browserViewOnPopupBrowserViewCreated)(lcl.AsObject(getPtr(0)), browserView, popupBrowserView, api.GoBool(getVal(3)), (*bool)(getPtr(4)))
-		case browserViewOnGetChromeToolbarType:
-			fn.(browserViewOnGetChromeToolbarType)(lcl.AsObject(getPtr(0)), (*consts.TCefChromeToolbarType)(getPtr(1)))
-		case browserViewOnUseFramelessWindowForPictureInPicture:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			result := (*bool)(getPtr(2))
-			*result = fn.(browserViewOnUseFramelessWindowForPictureInPicture)(lcl.AsObject(getPtr(0)), browserView)
-		case browserViewOnGestureCommand:
-			browserView := &ICefBrowserView{&ICefView{instance: getPtr(1)}}
-			gestureCommand := consts.TCefGestureCommand(getVal(2))
-			result := (*bool)(getPtr(3))
-			*result = fn.(browserViewOnGestureCommand)(lcl.AsObject(getPtr(0)), browserView, gestureCommand)
-		default:
-			return false
-		}
-		return true
-	})
+func (m *TCEFBrowserViewComponent) SetOnGetBrowserRuntimeStyle(fn browserViewOnGetBrowserRuntimeStyle) {
+	imports.Proc(def.CEFBrowserViewComponent_SetOnGetBrowserRuntimeStyle).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }

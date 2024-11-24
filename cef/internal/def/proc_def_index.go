@@ -1287,6 +1287,7 @@ const (
 	CEFBrowserViewComponent_SetOnGetChromeToolbarType
 	CEFBrowserViewComponent_SetOnUseFramelessWindowForPictureInPicture
 	CEFBrowserViewComponent_SetOnGestureCommand
+	CEFBrowserViewComponent_SetOnGetBrowserRuntimeStyle
 	// ICefDisplay
 	CEFDisplayRef_Primary
 	CEFDisplayRef_NearestPoint
@@ -2451,6 +2452,7 @@ const (
 	ViewComponent_SetOnLayoutChanged
 	ViewComponent_SetOnFocus
 	ViewComponent_SetOnBlur
+	ViewComponent_SetOnThemeChanged
 	// TCEFButtonComponent
 	ButtonComponent_Create
 	ButtonComponent_SetInkDropEnabled

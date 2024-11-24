@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -50,86 +51,38 @@ func (*buttonDelegate) NewForCustom(buttonComponent *TCEFButtonComponent) *ICefB
 	return nil
 }
 
-//func (m *ICefButtonDelegate) SetOnGetPreferredSize(fn onGetPreferredSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnGetMinimumSize(fn onGetMinimumSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnGetMaximumSize(fn onGetMaximumSize) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnParentViewChanged(fn onParentViewChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnChildViewChanged(fn onChildViewChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnWindowChanged(fn onWindowChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnLayoutChanged(fn onLayoutChanged) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnFocus(fn onFocus) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-//
-//func (m *ICefButtonDelegate) SetOnBlur(fn onBlur) {
-//	if !m.IsValid() || m.IsOtherEvent() {
-//		return
-//	}
-//	imports.Proc(def.ButtonDelegate_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
-//}
-
-func (m *ICefButtonDelegate) SetOnButtonPressed(fn onButtonPressed) {
+func (m *ICefButtonDelegate) SetOnButtonPressed(fn buttonOnButtonPressed) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ButtonDelegate_SetOnButtonPressed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefButtonDelegate) SetOnButtonStateChanged(fn onButtonStateChanged) {
+func (m *ICefButtonDelegate) SetOnButtonStateChanged(fn buttonOnButtonStateChanged) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.ButtonDelegate_SetOnButtonStateChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type buttonOnButtonPressed func(button *ICefButton)
+type buttonOnButtonStateChanged func(button *ICefButton)
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case buttonOnButtonPressed:
+			button := (*ICefButton)(getPtr(0))
+			fn.(buttonOnButtonPressed)(button)
+		case buttonOnButtonStateChanged:
+			button := (*ICefButton)(getPtr(0))
+			fn.(buttonOnButtonStateChanged)(button)
+		default:
+			return false
+		}
+		return true
+	})
 }

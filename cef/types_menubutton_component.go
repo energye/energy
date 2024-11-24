@@ -60,7 +60,7 @@ func (m *TCEFMenuButtonComponent) TriggerMenu() {
 	imports.Proc(def.MenuButtonComponent_TriggerMenu).Call(m.Instance())
 }
 
-func (m *TCEFMenuButtonComponent) SetOnMenuButtonPressed(fn onMenuButtonPressed) {
+func (m *TCEFMenuButtonComponent) SetOnMenuButtonPressed(fn menuButtonOnMenuButtonPressed) {
 	if !m.IsValid() {
 		return
 	}

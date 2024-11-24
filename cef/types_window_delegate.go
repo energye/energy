@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -218,4 +219,133 @@ func (m *ICefWindowDelegate) SetOnGetLinuxWindowProperties(fn windowOnGetLinuxWi
 		return
 	}
 	imports.Proc(def.WindowDelegate_SetOnGetLinuxWindowProperties).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type windowOnWindowCreated func(window *ICefWindow)
+type windowOnWindowDestroyed func(window *ICefWindow)
+type windowOnWindowActivationChanged func(window *ICefWindow, active bool)
+type windowOnGetParentWindow func(window *ICefWindow, isMenu, canActivateMenu *bool) *ICefWindow
+type windowOnIsWindowModalDialog func(window *ICefWindow, result *bool)
+type windowOnGetInitialBounds func(window *ICefWindow, result *TCefRect)
+type windowOnGetInitialShowState func(window *ICefWindow, result *consts.TCefShowState)
+type windowOnIsFrameless func(window *ICefWindow, result *bool)
+type windowOnWithStandardWindowButtons func(window *ICefWindow, result *bool)
+type windowOnGetTitleBarHeight func(window *ICefWindow, titleBarHeight *float32, result *bool)
+type windowOnCanResize func(window *ICefWindow, result *bool)
+type windowOnCanMaximize func(window *ICefWindow, result *bool)
+type windowOnCanMinimize func(window *ICefWindow, result *bool)
+type windowOnCanClose func(window *ICefWindow, result *bool)
+type windowOnCanCloseEx func(cefWindow *ICefWindow, window IBrowserWindow, canClose *bool) bool
+type windowOnAccelerator func(window *ICefWindow, commandId int32, result *bool)
+type windowOnKey func(window *ICefWindow, event *TCefKeyEvent, result *bool)
+type windowOnWindowFullscreenTransition func(window *ICefWindow, isCompleted bool)
+type windowOnThemeColorsChanged func(window *ICefWindow, chromeTheme int32)
+type windowOnGetWindowRuntimeStyle func(result *consts.TCefRuntimeStyle)
+type windowOnGetLinuxWindowProperties func(window *ICefWindow, properties TLinuxWindowProperties, result *bool)
+type windowOnWindowClosing func(window *ICefWindow)
+type windowOnWindowBoundsChanged func(window *ICefWindow, newBounds *TCefRect)
+type windowOnAcceptsFirstMouse func(window *ICefWindow, result *consts.TCefState)
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		var getWindow = func(index int) *ICefWindow {
+			return &ICefWindow{&ICefPanel{&ICefView{instance: getInstance(getPtr(index))}}}
+		}
+		switch fn.(type) {
+		case windowOnWindowCreated:
+			window := getWindow(0)
+			fn.(windowOnWindowCreated)(window)
+		case windowOnWindowDestroyed:
+			window := getWindow(0)
+			fn.(windowOnWindowDestroyed)(window)
+		case windowOnWindowActivationChanged:
+			window := getWindow(0)
+			fn.(windowOnWindowActivationChanged)(window, api.GoBool(getVal(1)))
+		case windowOnGetParentWindow:
+			window := getWindow(0)
+			resultWindowPtr := (*uintptr)(getPtr(3))
+			parentWindow := fn.(windowOnGetParentWindow)(window, (*bool)(getPtr(1)), (*bool)(getPtr(2)))
+			if window != nil {
+				*resultWindowPtr = parentWindow.Instance()
+			}
+		case windowOnIsWindowModalDialog:
+			window := getWindow(0)
+			fn.(windowOnIsWindowModalDialog)(window, (*bool)(getPtr(1)))
+		case windowOnGetInitialBounds:
+			window := getWindow(0)
+			resultRectPtr := (*TCefRect)(getPtr(1))
+			resultRect := new(TCefRect)
+			resultRect.X = 0
+			resultRect.Y = 0
+			resultRect.Width = 600
+			resultRect.Height = 400
+			fn.(windowOnGetInitialBounds)(window, resultRect)
+			*resultRectPtr = *resultRect
+		case windowOnGetInitialShowState:
+			window := getWindow(0)
+			resultShowState := (*consts.TCefShowState)(getPtr(1))
+			fn.(windowOnGetInitialShowState)(window, resultShowState)
+		case windowOnIsFrameless:
+			window := getWindow(0)
+			fn.(windowOnIsFrameless)(window, (*bool)(getPtr(1)))
+		case windowOnWithStandardWindowButtons:
+			window := getWindow(0)
+			fn.(windowOnWithStandardWindowButtons)(window, (*bool)(getPtr(1)))
+		case windowOnGetTitleBarHeight:
+			window := getWindow(0)
+			titleBarHeight := (*float32)(getPtr(1))
+			fn.(windowOnGetTitleBarHeight)(window, titleBarHeight, (*bool)(getPtr(2)))
+		case windowOnCanResize:
+			window := getWindow(0)
+			fn.(windowOnCanResize)(window, (*bool)(getPtr(1)))
+		case windowOnCanMaximize:
+			window := getWindow(0)
+			fn.(windowOnCanMaximize)(window, (*bool)(getPtr(1)))
+		case windowOnCanMinimize:
+			window := getWindow(0)
+			fn.(windowOnCanMinimize)(window, (*bool)(getPtr(1)))
+		case windowOnCanClose:
+			window := getWindow(0)
+			fn.(windowOnCanClose)(window, (*bool)(getPtr(1)))
+		case windowOnAccelerator:
+			window := getWindow(0)
+			fn.(windowOnAccelerator)(window, int32(getVal(1)), (*bool)(getPtr(2)))
+		case windowOnKey:
+			window := getWindow(0)
+			keyEvent := (*TCefKeyEvent)(getPtr(1))
+			fn.(windowOnKey)(window, keyEvent, (*bool)(getPtr(2)))
+		case windowOnWindowFullscreenTransition:
+			window := getWindow(0)
+			isCompleted := api.GoBool(getVal(1))
+			fn.(windowOnWindowFullscreenTransition)(window, isCompleted)
+		case windowOnThemeColorsChanged:
+			window := getWindow(0)
+			fn.(windowOnThemeColorsChanged)(window, int32(getVal(1)))
+		case windowOnGetWindowRuntimeStyle:
+			fn.(windowOnGetWindowRuntimeStyle)((*consts.TCefRuntimeStyle)(getPtr(0)))
+		case windowOnGetLinuxWindowProperties:
+			window := getWindow(0)
+			propertiesPtr := (*tLinuxWindowPropertiesPtr)(getPtr(1))
+			properties := propertiesPtr.convert()
+			fn.(windowOnGetLinuxWindowProperties)(window, properties, (*bool)(getPtr(2)))
+			propertiesPtr = properties.ToPtr()
+		case windowOnWindowClosing:
+			window := getWindow(0)
+			fn.(windowOnWindowClosing)(window)
+		case windowOnWindowBoundsChanged:
+			window := getWindow(0)
+			newBounds := (*TCefRect)(getPtr(1))
+			fn.(windowOnWindowBoundsChanged)(window, newBounds)
+		case windowOnAcceptsFirstMouse:
+			window := getWindow(0)
+			result := (*consts.TCefState)(getPtr(1))
+			fn.(windowOnAcceptsFirstMouse)(window, result)
+		default:
+			return false
+		}
+		return true
+	})
 }

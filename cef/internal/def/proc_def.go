@@ -1287,6 +1287,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetChromeToolbarType", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnUseFramelessWindowForPictureInPicture", 0),
 		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGestureCommand", 0),
+		dllimports.NewEnergyImport("CEFBrowserViewComponent_SetOnGetBrowserRuntimeStyle", 0),
 		//ICefDisplay
 		dllimports.NewEnergyImport("CEFDisplayRef_Primary", 0),
 		dllimports.NewEnergyImport("CEFDisplayRef_NearestPoint", 0),
@@ -2451,6 +2452,7 @@ func init() {
 		dllimports.NewEnergyImport("ViewComponent_SetOnLayoutChanged", 0),
 		dllimports.NewEnergyImport("ViewComponent_SetOnFocus", 0),
 		dllimports.NewEnergyImport("ViewComponent_SetOnBlur", 0),
+		dllimports.NewEnergyImport("ViewComponent_SetOnThemeChanged", 0),
 		// TCEFButtonComponent
 		dllimports.NewEnergyImport("ButtonComponent_Create", 0),
 		dllimports.NewEnergyImport("ButtonComponent_SetInkDropEnabled", 0),

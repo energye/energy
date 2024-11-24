@@ -14,6 +14,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -55,16 +56,40 @@ func (*textFieldDelegate) NewForCustom(textField *TCEFTextFieldComponent) *ICefT
 	return nil
 }
 
-func (m *ICefTextFieldDelegate) SetOnKeyEvent(fn onTextFieldKeyEvent) {
+func (m *ICefTextFieldDelegate) SetOnKeyEvent(fn textFieldOnTextFieldKeyEvent) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.TextfieldDelegate_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefTextFieldDelegate) SetOnAfterUserAction(fn onAfterUserAction) {
+func (m *ICefTextFieldDelegate) SetOnAfterUserAction(fn textFieldOnAfterUserAction) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.TextfieldDelegate_SetOnAfterUserAction).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+type textFieldOnTextFieldKeyEvent func(textField *ICefTextfield, event *TCefKeyEvent) bool
+type textFieldOnAfterUserAction func(textField *ICefTextfield)
+
+func init() {
+	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
+		getPtr := func(i int) unsafe.Pointer {
+			return unsafe.Pointer(getVal(i))
+		}
+		switch fn.(type) {
+		case textFieldOnTextFieldKeyEvent:
+			textField := (*ICefTextfield)(getPtr(0))
+			event := (*TCefKeyEvent)(getPtr(1))
+			resultPtr := (*bool)(getPtr(2))
+			*resultPtr = fn.(textFieldOnTextFieldKeyEvent)(textField, event)
+		case textFieldOnAfterUserAction:
+			textField := (*ICefTextfield)(getPtr(0))
+			fn.(textFieldOnAfterUserAction)(textField)
+		default:
+			return false
+		}
+		return true
+	})
 }

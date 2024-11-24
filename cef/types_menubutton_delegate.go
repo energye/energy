@@ -60,14 +60,14 @@ func (*menuButtonDelegate) NewForCustom(menuButton *TCEFMenuButtonComponent) *IC
 // / show a popup menu at |screen_point|. When showing a custom popup such as a
 // / window keep a reference to |button_pressed_lock| until the popup is hidden
 // / to maintain the pressed button state.
-func (m *ICefMenuButtonDelegate) SetOnMenuButtonPressed(fn onMenuButtonPressed) {
+func (m *ICefMenuButtonDelegate) SetOnMenuButtonPressed(fn menuButtonOnMenuButtonPressed) {
 	if !m.IsValid() || m.IsOtherEvent() {
 		return
 	}
 	imports.Proc(def.MenuButtonDelegate_SetOnMenuButtonPressed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type onMenuButtonPressed func(button *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
+type menuButtonOnMenuButtonPressed func(button *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -75,11 +75,11 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case onMenuButtonPressed:
+		case menuButtonOnMenuButtonPressed:
 			button := &ICefMenuButton{&ICefLabelButton{&ICefButton{&ICefView{instance: getPtr(0)}}}}
 			screenPoint := *(*TCefPoint)(getPtr(1))
 			buttonPressedLock := &ICefMenuButtonPressedLock{base: TCefBaseRefCounted{instance: getPtr(3)}}
-			fn.(onMenuButtonPressed)(button, screenPoint, buttonPressedLock)
+			fn.(menuButtonOnMenuButtonPressed)(button, screenPoint, buttonPressedLock)
 		default:
 			return false
 		}

@@ -482,42 +482,46 @@ func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 	return int32(r1)
 }
 
-func (m *TCEFViewComponent) SetOnGetPreferredSize(fn onGetPreferredSize) {
+func (m *TCEFViewComponent) SetOnGetPreferredSize(fn viewOnGetPreferredSize) {
 	imports.Proc(def.ViewComponent_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnGetMinimumSize(fn onGetMinimumSize) {
+func (m *TCEFViewComponent) SetOnGetMinimumSize(fn viewOnGetMinimumSize) {
 	imports.Proc(def.ViewComponent_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnGetMaximumSize(fn onGetMaximumSize) {
+func (m *TCEFViewComponent) SetOnGetMaximumSize(fn viewOnGetMaximumSize) {
 	imports.Proc(def.ViewComponent_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn onGetHeightForWidth) {
+func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn viewOnGetHeightForWidth) {
 	imports.Proc(def.ViewComponent_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnParentViewChanged(fn onParentViewChanged) {
+func (m *TCEFViewComponent) SetOnParentViewChanged(fn viewOnParentViewChanged) {
 	imports.Proc(def.ViewComponent_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnChildViewChanged(fn onChildViewChanged) {
+func (m *TCEFViewComponent) SetOnChildViewChanged(fn viewOnChildViewChanged) {
 	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnWindowChanged(fn onWindowChanged) {
+func (m *TCEFViewComponent) SetOnWindowChanged(fn viewOnWindowChanged) {
 	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnLayoutChanged(fn onLayoutChanged) {
+func (m *TCEFViewComponent) SetOnLayoutChanged(fn viewOnLayoutChanged) {
 	imports.Proc(def.ViewComponent_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnFocus(fn onFocus) {
+func (m *TCEFViewComponent) SetOnFocus(fn viewOnFocus) {
 	imports.Proc(def.ViewComponent_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TCEFViewComponent) SetOnBlur(fn onBlur) {
+func (m *TCEFViewComponent) SetOnBlur(fn viewOnBlur) {
 	imports.Proc(def.ViewComponent_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+func (m *TCEFViewComponent) SetOnThemeChanged(fn viewOnThemeChanged) {
+	imports.Proc(def.ViewComponent_SetOnThemeChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
