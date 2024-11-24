@@ -37,6 +37,8 @@ type Single = Float32
 type PChar = String
 type Char = byte
 type AnsiChar = Char
+
+// 32-bit ARGB color value, not premultiplied. The color components are always  in a known order. Equivalent to the SkColor type.
 type TCefColor = UInt32
 type Integer = Int32
 type LongInt = Int32
