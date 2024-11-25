@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
@@ -25,6 +26,9 @@ func main() {
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)
+	if common.IsLinux() {
+		app.SetDisableZygote(true)
+	}
 	app.SetOnContextInitialized(func() {
 		fmt.Println("OnContextInitialized")
 		fmt.Println("  GetScreenDPI:", cef.GetScreenDPI(), "GetDeviceScaleFactor:", cef.GetDeviceScaleFactor())
