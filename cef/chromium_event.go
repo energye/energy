@@ -88,58 +88,18 @@ func init() {
 			frame := &ICefFrame{instance: getPtr(2)}
 			request := &ICefRequest{instance: getPtr(3)}
 			response := &ICefResponse{instance: getPtr(4)}
-			cookie := *(*iCefCookiePtr)(getInstance(getVal(5)))
-			creation := *(*float64)(common.GetParamPtr(cookie.creation, 0))
-			lastAccess := *(*float64)(common.GetParamPtr(cookie.lastAccess, 0))
-			expires := *(*float64)(common.GetParamPtr(cookie.expires, 0))
-			iCookie := &ICefCookie{
-				Url:          api.GoStr(cookie.url),
-				Name:         api.GoStr(cookie.name),
-				Value:        api.GoStr(cookie.value),
-				Domain:       api.GoStr(cookie.domain),
-				Path:         api.GoStr(cookie.path),
-				Secure:       *(*bool)(common.GetParamPtr(cookie.secure, 0)),
-				Httponly:     *(*bool)(common.GetParamPtr(cookie.httponly, 0)),
-				HasExpires:   *(*bool)(common.GetParamPtr(cookie.hasExpires, 0)),
-				Creation:     common.DDateTimeToGoDateTime(creation),
-				LastAccess:   common.DDateTimeToGoDateTime(lastAccess),
-				Expires:      common.DDateTimeToGoDateTime(expires),
-				Count:        int32(cookie.count),
-				Total:        int32(cookie.total),
-				SameSite:     consts.TCefCookieSameSite(cookie.sameSite),
-				Priority:     consts.TCefCookiePriority(cookie.priority),
-				DeleteCookie: *(*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0)),
-			}
+			cookiePtr := (*tCefCookiePtr)(getInstance(getVal(5)))
+			cookie := cookiePtr.convert()
 			result := (*bool)(getInstance(getVal(6)))
-			*result = fn.(chromiumEventOnCanSaveCookie)(lcl.AsObject(getPtr(0)), browse, frame, request, response, iCookie)
+			*result = fn.(chromiumEventOnCanSaveCookie)(lcl.AsObject(getPtr(0)), browse, frame, request, response, cookie)
 		case chromiumEventOnCanSendCookie:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			frame := &ICefFrame{instance: getPtr(2)}
 			request := &ICefRequest{instance: getPtr(3)}
-			cookie := *(*iCefCookiePtr)(getInstance(getVal(4)))
-			creation := *(*float64)(common.GetParamPtr(cookie.creation, 0))
-			lastAccess := *(*float64)(common.GetParamPtr(cookie.lastAccess, 0))
-			expires := *(*float64)(common.GetParamPtr(cookie.expires, 0))
-			iCookie := &ICefCookie{
-				Url:          api.GoStr(cookie.url),
-				Name:         api.GoStr(cookie.name),
-				Value:        api.GoStr(cookie.value),
-				Domain:       api.GoStr(cookie.domain),
-				Path:         api.GoStr(cookie.path),
-				Secure:       *(*bool)(common.GetParamPtr(cookie.secure, 0)),
-				Httponly:     *(*bool)(common.GetParamPtr(cookie.httponly, 0)),
-				HasExpires:   *(*bool)(common.GetParamPtr(cookie.hasExpires, 0)),
-				Creation:     common.DDateTimeToGoDateTime(creation),
-				LastAccess:   common.DDateTimeToGoDateTime(lastAccess),
-				Expires:      common.DDateTimeToGoDateTime(expires),
-				Count:        int32(cookie.count),
-				Total:        int32(cookie.total),
-				SameSite:     consts.TCefCookieSameSite(cookie.sameSite),
-				Priority:     consts.TCefCookiePriority(cookie.priority),
-				DeleteCookie: *(*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0)),
-			}
+			cookiePtr := (*tCefCookiePtr)(getInstance(getVal(4)))
+			cookie := cookiePtr.convert()
 			result := (*bool)(getInstance(getVal(5)))
-			*result = fn.(chromiumEventOnCanSendCookie)(lcl.AsObject(getPtr(0)), browse, frame, request, iCookie)
+			*result = fn.(chromiumEventOnCanSendCookie)(lcl.AsObject(getPtr(0)), browse, frame, request, cookie)
 		case chromiumEventOnCertificateError:
 			browser := &ICefBrowser{instance: getPtr(1)}
 			certError := consts.TCefErrorCode(getVal(2))
@@ -578,7 +538,8 @@ func init() {
 			*result = ok
 		case chromiumEventOnTouchHandleStateChanged:
 			browser := &ICefBrowser{instance: getPtr(1)}
-			state := (*TCefTouchHandleState)(getPtr(2))
+			statePtr := (*tCefTouchHandleStatePtr)(getPtr(2))
+			state := statePtr.convert()
 			fn.(chromiumEventOnTouchHandleStateChanged)(lcl.AsObject(getPtr(0)), browser, state)
 		case chromiumEventOnUpdateDragCursor:
 			browser := &ICefBrowser{instance: getPtr(1)}
@@ -674,32 +635,11 @@ func init() {
 		case chromiumEventOnCookiesFlushed:
 			fn.(chromiumEventOnCookiesFlushed)(lcl.AsObject(getVal(0)))
 		case chromiumEventOnCookiesVisited:
-			cookie := *(*iCefCookiePtr)(getPtr(1))
-			creation := *(*float64)(common.GetParamPtr(cookie.creation, 0))
-			lastAccess := *(*float64)(common.GetParamPtr(cookie.lastAccess, 0))
-			expires := *(*float64)(common.GetParamPtr(cookie.expires, 0))
-			iCookie := &ICefCookie{
-				Url:            api.GoStr(cookie.url),
-				Name:           api.GoStr(cookie.name),
-				Value:          api.GoStr(cookie.value),
-				Domain:         api.GoStr(cookie.domain),
-				Path:           api.GoStr(cookie.path),
-				Secure:         *(*bool)(common.GetParamPtr(cookie.secure, 0)),
-				Httponly:       *(*bool)(common.GetParamPtr(cookie.httponly, 0)),
-				HasExpires:     *(*bool)(common.GetParamPtr(cookie.hasExpires, 0)),
-				Creation:       common.DDateTimeToGoDateTime(creation),
-				LastAccess:     common.DDateTimeToGoDateTime(lastAccess),
-				Expires:        common.DDateTimeToGoDateTime(expires),
-				Count:          int32(cookie.count),
-				Total:          int32(cookie.total),
-				ID:             int32(cookie.aID),
-				SameSite:       consts.TCefCookieSameSite(cookie.sameSite),
-				Priority:       consts.TCefCookiePriority(cookie.priority),
-				SetImmediately: *(*bool)(common.GetParamPtr(cookie.aSetImmediately, 0)),
-				DeleteCookie:   *(*bool)(common.GetParamPtr(cookie.aDeleteCookie, 0)),
-				Result:         *(*bool)(common.GetParamPtr(cookie.aResult, 0)),
-			}
-			fn.(chromiumEventOnCookiesVisited)(lcl.AsObject(getVal(0)), iCookie)
+			cookiePtr := (*tCefCookiePtr)(getPtr(1))
+			deleteCookiePtr := (*bool)(getPtr(2))
+			resultPtr := (*bool)(getPtr(3))
+			cookie := cookiePtr.convert()
+			fn.(chromiumEventOnCookiesVisited)(lcl.AsObject(getVal(0)), cookie, deleteCookiePtr, resultPtr)
 		case chromiumEventOnCookieVisitorDestroyed:
 			id := int32(getVal(1))
 			fn.(chromiumEventOnCookieVisitorDestroyed)(lcl.AsObject(getVal(0)), id)
@@ -819,10 +759,9 @@ func init() {
 			newFrame := &ICefFrame{instance: getPtr(3)}
 			fn.(chromiumEventOnMainFrameChanged)(lcl.AsObject(sender), browse, oldFrame, newFrame)
 		case chromiumEventOnBeforePopup:
-			sender := getPtr(0)
-			browse := &ICefBrowser{instance: getPtr(1)}
-			frame := &ICefFrame{instance: getPtr(2)}
 			var (
+				browse             = &ICefBrowser{instance: getPtr(1)}
+				frame              = &ICefFrame{instance: getPtr(2)}
 				beforePInfoPtr     = (*beforePopupInfoPtr)(getPtr(3))
 				popupFeaturesPtr   = (*tCefPopupFeaturesPtr)(getPtr(4))
 				windowInfoPtr      = (*tCefWindowInfoPtr)(getPtr(5))
@@ -838,13 +777,13 @@ func init() {
 			resultClient := &ICefClient{}
 			browserSettings := browserSettingsPtr.convert()
 			resultExtraInfo := &ICefDictionaryValue{}
-			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(sender), browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
+			*result = fn.(chromiumEventOnBeforePopup)(lcl.AsObject(getPtr(0)), browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
 			windowInfo.setInstanceValue()
-			if resultClient.instance != nil && resultClient.IsValid() {
+			if resultClient.IsValid() {
 				*resultClientPtr = resultClient.Instance()
 			}
 			browserSettings.setInstanceValue()
-			if resultExtraInfo.instance != nil && resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
+			if resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
 				*resultExtraInfoPtr = resultExtraInfo.Instance()
 			}
 		case chromiumEventOnOpenUrlFromTab:

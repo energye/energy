@@ -67,6 +67,12 @@ func (m *ICefMenuButtonDelegate) SetOnMenuButtonPressed(fn menuButtonOnMenuButto
 	imports.Proc(def.MenuButtonDelegate_SetOnMenuButtonPressed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// ICefMenuButtonPressedLock
+// include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_pressed_lock_t)
+type ICefMenuButtonPressedLock struct {
+	base TCefBaseRefCounted
+}
+
 type menuButtonOnMenuButtonPressed func(button *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
 
 func init() {

@@ -2324,6 +2324,7 @@ func init() {
 		dllimports.NewEnergyImport("BufferPanel_SetOnKeyUp", 0),
 		dllimports.NewEnergyImport("BufferPanel_SetOnKeyPress", 0),
 		dllimports.NewEnergyImport("BufferPanel_SetOnUTF8KeyPress", 0),
+		dllimports.NewEnergyImport("BufferPanelCompositionUnderline_Get", 0),
 		// TString
 		dllimports.NewEnergyImport("TString_Create", 0),
 		dllimports.NewEnergyImport("TString_Free", 0),

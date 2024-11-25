@@ -13,6 +13,7 @@
 package cef
 
 import (
+	"fmt"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/target"
@@ -74,7 +75,7 @@ type IChromiumProc interface {
 		creation, lastAccess, expires time.Time,
 		sameSite TCefCookieSameSite, priority TCefCookiePriority, aSetImmediately bool, aID int32)
 	FlushCookieStore(flushImmediately bool) bool // flushImmediately = true
-	SetProxy(cefProxy *TCefProxy)
+	SetProxy(cefProxy TCefProxy)
 	UpdatePreferences()
 	SendDevToolsMessage(message string) bool
 	ExecuteDevToolsMethod(messageId int32, method string, dictionaryValue *ICefDictionaryValue) int32
@@ -193,8 +194,8 @@ type IChromiumProc interface {
 	WasResized()
 	WasHidden(hidden bool)
 	NotifyScreenInfoChanged()
-	IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange *TCefRange)
-	IMECommitText(text string, replacementRange *TCefRange, relativeCursorPos int32)
+	IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange TCefRange)
+	IMECommitText(text string, replacementRange TCefRange, relativeCursorPos int32)
 	IMEFinishComposingText(keepSelection bool)
 	IMECancelComposition()
 	HasDevTools() bool
@@ -611,32 +612,26 @@ func (m *TCEFChromium) SetCookie(url, name, value, domain, path string,
 	if !m.IsValid() {
 		return
 	}
-	creationPtr := GoDateTimeToDDateTime(creation)
-	lastAccessPtr := GoDateTimeToDDateTime(lastAccess)
-	expiresPtr := GoDateTimeToDDateTime(expires)
-	cCookie := &iCefCookiePtr{
-		url:             api.PascalStr(url),
-		name:            api.PascalStr(name),
-		value:           api.PascalStr(value),
-		domain:          api.PascalStr(domain),
-		path:            api.PascalStr(path),
-		secure:          api.PascalBool(secure),
-		httponly:        api.PascalBool(httponly),
-		hasExpires:      api.PascalBool(hasExpires),
-		creation:        uintptr(unsafe.Pointer(&creationPtr)),
-		lastAccess:      uintptr(unsafe.Pointer(&lastAccessPtr)),
-		expires:         uintptr(unsafe.Pointer(&expiresPtr)),
-		sameSite:        uintptr(sameSite),
-		priority:        uintptr(priority),
-		aSetImmediately: api.PascalBool(aSetImmediately),
-		aID:             uintptr(aID),
-		aDeleteCookie:   uintptr(0),
-		aResult:         uintptr(0),
-		count:           uintptr(0),
-		total:           uintptr(0),
+	cookie := &TCefCookie{
+		Url:            url,
+		Name:           name,
+		Value:          value,
+		Domain:         domain,
+		Path:           path,
+		Secure:         secure,
+		Httponly:       httponly,
+		HasExpires:     hasExpires,
+		Creation:       creation,
+		LastAccess:     lastAccess,
+		Expires:        expires,
+		SameSite:       sameSite,
+		Priority:       priority,
+		SetImmediately: aSetImmediately,
+		ID:             aID,
 	}
-	imports.Proc(def.CEFChromium_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cCookie)))
-	cCookie = nil
+	cookiePtr := cookie.ToPtr()
+	fmt.Println("convert:", cookiePtr.convert())
+	imports.Proc(def.CEFChromium_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cookiePtr)))
 }
 
 func (m *TCEFChromium) FlushCookieStore(flushImmediately bool) bool {
@@ -647,22 +642,12 @@ func (m *TCEFChromium) FlushCookieStore(flushImmediately bool) bool {
 	return api.GoBool(r1)
 }
 
-func (m *TCEFChromium) SetProxy(cefProxy *TCefProxy) {
+func (m *TCEFChromium) SetProxy(proxy TCefProxy) {
 	if !m.IsValid() {
 		return
 	}
-	proxy := &tCefProxyPtr{
-		ProxyType:              uintptr(cefProxy.ProxyType),
-		ProxyScheme:            uintptr(cefProxy.ProxyScheme),
-		ProxyServer:            api.PascalStr(cefProxy.ProxyServer),
-		ProxyPort:              uintptr(cefProxy.ProxyPort),
-		ProxyUsername:          api.PascalStr(cefProxy.ProxyUsername),
-		ProxyPassword:          api.PascalStr(cefProxy.ProxyPassword),
-		ProxyScriptURL:         api.PascalStr(cefProxy.ProxyScriptURL),
-		ProxyByPassList:        api.PascalStr(cefProxy.ProxyByPassList),
-		MaxConnectionsPerProxy: uintptr(cefProxy.MaxConnectionsPerProxy),
-	}
-	imports.Proc(def.CEFChromium_SetProxy).Call(m.Instance(), uintptr(unsafe.Pointer(proxy)))
+	proxyPtr := proxy.ToPtr()
+	imports.Proc(def.CEFChromium_SetProxy).Call(m.Instance(), uintptr(unsafe.Pointer(proxyPtr)))
 }
 
 func (m *TCEFChromium) UpdatePreferences() {
@@ -1579,31 +1564,25 @@ func (m *TCEFChromium) NotifyScreenInfoChanged() {
 	imports.Proc(def.CEFChromium_NotifyScreenInfoChanged).Call(m.Instance())
 }
 
-func (m *TCEFChromium) IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange *TCefRange) {
+func (m *TCEFChromium) IMESetComposition(text string, underlines []*TCefCompositionUnderline, replacementRange, selectionRange TCefRange) {
 	if !m.IsValid() {
 		return
 	}
 	var size = len(underlines)
-	// 在这里使用结构指针的方式将复合类型传递过去
 	underlinesPtr := make([]tCefCompositionUnderlinePtr, size, size)
 	for i := 0; i < size; i++ {
-		underlinesPtr[i] = tCefCompositionUnderlinePtr{
-			Range:           uintptr(unsafe.Pointer(&underlines[i].Range)),
-			Color:           uintptr(underlines[i].Color),
-			BackgroundColor: uintptr(underlines[i].BackgroundColor),
-			Thick:           uintptr(underlines[i].Thick),
-			Style:           uintptr(underlines[i].Style),
-		}
+		line := underlines[i]
+		underlinesPtr[i] = *line.ToPtr()
 	}
-	imports.Proc(def.CEFChromium_IMESetComposition).Call(m.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(replacementRange)), uintptr(unsafe.Pointer(selectionRange)),
-		uintptr(unsafe.Pointer(&underlinesPtr[0])), uintptr(int32(size)))
+	imports.Proc(def.CEFChromium_IMESetComposition).Call(m.Instance(), api.PascalStr(text), uintptr(unsafePointer(&replacementRange)), uintptr(unsafePointer(&selectionRange)),
+		uintptr(unsafePointer(&underlinesPtr[0])), uintptr(int32(size)))
 }
 
-func (m *TCEFChromium) IMECommitText(text string, replacementRange *TCefRange, relativeCursorPos int32) {
+func (m *TCEFChromium) IMECommitText(text string, replacementRange TCefRange, relativeCursorPos int32) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFChromium_IMECommitText).Call(m.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(replacementRange)), uintptr(relativeCursorPos))
+	imports.Proc(def.CEFChromium_IMECommitText).Call(m.Instance(), api.PascalStr(text), uintptr(unsafe.Pointer(&replacementRange)), uintptr(relativeCursorPos))
 }
 
 func (m *TCEFChromium) IMEFinishComposingText(keepSelection bool) {

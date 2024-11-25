@@ -11,23 +11,117 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
-	"unsafe"
 )
 
-type iCefCookiePtr struct {
-	url, name, value, domain, path uintptr //string
-	secure, httponly, hasExpires   uintptr //bool
-	creation, lastAccess, expires  uintptr //float64
-	count, total, aID              uintptr //int32
-	sameSite                       uintptr //int32 TCefCookieSameSite
-	priority                       uintptr //int32 TCefCookiePriority
-	aSetImmediately                uintptr //bool
-	aDeleteCookie                  uintptr //bool
-	aResult                        uintptr //bool
+func fromPtrInt32(ptr uintptr) int32 {
+	if ptr == 0 {
+		return 0
+	}
+	return *(*int32)(unsafePointer(ptr))
 }
+
+func fromPtrUInt32(ptr uintptr) uint32 {
+	if ptr == 0 {
+		return 0
+	}
+	return *(*uint32)(unsafePointer(ptr))
+}
+
+func fromPtrBool(ptr uintptr) bool {
+	if ptr == 0 {
+		return false
+	}
+	return *(*bool)(unsafePointer(ptr))
+}
+
+func fromPtrStr(ptr uintptr) string {
+	if ptr == 0 {
+		return ""
+	}
+	return api.GoStr(ptr)
+}
+
+func fromPtrFloat64(ptr uintptr) float64 {
+	if ptr == 0 {
+		return 0
+	}
+	return *(*float64)(unsafePointer(ptr))
+}
+
+func fromPtrFloat32(ptr uintptr) float32 {
+	if ptr == 0 {
+		return 0
+	}
+	return *(*float32)(unsafePointer(ptr))
+}
+
+func fromPtrCefState(ptr uintptr) consts.TCefState {
+	if ptr == 0 {
+		return 0
+	}
+	return *(*consts.TCefState)(unsafePointer(ptr))
+}
+
+type tCefCookiePtr struct {
+	url, name, value, domain, path        uintptr //string
+	secure, httponly, hasExpires          uintptr //bool
+	creation, lastAccess, expires         uintptr //float64
+	count, total, aID, sameSite, priority uintptr //int32
+	setImmediately                        uintptr //bool
+}
+
+func (m *tCefCookiePtr) convert() *TCefCookie {
+	return &TCefCookie{
+		Url:            fromPtrStr(m.url),
+		Name:           fromPtrStr(m.name),
+		Value:          fromPtrStr(m.value),
+		Domain:         fromPtrStr(m.domain),
+		Path:           fromPtrStr(m.path),
+		Secure:         fromPtrBool(m.secure),
+		Httponly:       fromPtrBool(m.httponly),
+		HasExpires:     fromPtrBool(m.hasExpires),
+		Creation:       common.DDateTimeToGoDateTime(fromPtrFloat64(m.creation)),
+		LastAccess:     common.DDateTimeToGoDateTime(fromPtrFloat64(m.lastAccess)),
+		Expires:        common.DDateTimeToGoDateTime(fromPtrFloat64(m.expires)),
+		Count:          fromPtrInt32(m.count),
+		Total:          fromPtrInt32(m.total),
+		ID:             fromPtrInt32(m.aID),
+		SameSite:       *(*consts.TCefCookieSameSite)(unsafePointer(m.sameSite)),
+		Priority:       *(*consts.TCefCookiePriority)(unsafePointer(m.priority)),
+		SetImmediately: fromPtrBool(m.setImmediately),
+	}
+}
+
+func (m *TCefCookie) ToPtr() *tCefCookiePtr {
+	creationPtr := common.GoDateTimeToDDateTime(m.Creation)
+	lastAccessPtr := common.GoDateTimeToDDateTime(m.LastAccess)
+	expiresPtr := common.GoDateTimeToDDateTime(m.Expires)
+	return &tCefCookiePtr{
+		url:            api.PascalStr(m.Url),
+		name:           api.PascalStr(m.Name),
+		value:          api.PascalStr(m.Value),
+		domain:         api.PascalStr(m.Domain),
+		path:           api.PascalStr(m.Path),
+		secure:         uintptr(unsafePointer(&m.Secure)),
+		httponly:       uintptr(unsafePointer(&m.Httponly)),
+		hasExpires:     uintptr(unsafePointer(&m.HasExpires)),
+		creation:       uintptr(unsafePointer(&creationPtr)),
+		lastAccess:     uintptr(unsafePointer(&lastAccessPtr)),
+		expires:        uintptr(unsafePointer(&expiresPtr)),
+		sameSite:       uintptr(unsafePointer(&m.SameSite)),
+		priority:       uintptr(unsafePointer(&m.Priority)),
+		aID:            uintptr(unsafePointer(&m.ID)),
+		count:          uintptr(unsafePointer(&m.Count)),
+		total:          uintptr(unsafePointer(&m.Total)),
+		setImmediately: uintptr(unsafePointer(&m.SetImmediately)),
+	}
+}
+
+// ================
 
 type tCefRequestContextSettingsPtr struct {
 	CachePath                        uintptr //TCefString
@@ -37,58 +131,83 @@ type tCefRequestContextSettingsPtr struct {
 	CookieableSchemesExcludeDefaults uintptr //Int32
 }
 
-// TCefPopupFeatures
-type tCefPopupFeaturesPtr struct {
-	X                  UIntptr // Integer
-	XSet               UIntptr // Integer
-	Y                  UIntptr // Integer
-	YSet               UIntptr // Integer
-	Width              UIntptr // Integer
-	WidthSet           UIntptr // Integer
-	Height             UIntptr // Integer
-	HeightSet          UIntptr // Integer
-	MenuBarVisible     UIntptr // Integer // ~ CEF 109
-	StatusBarVisible   UIntptr // Integer // ~ CEF 109
-	ToolBarVisible     UIntptr // Integer // ~ CEF 109
-	LocationBarVisible UIntptr // Integer
-	ScrollbarsVisible  UIntptr // Integer // ~ CEF 109
-	IsPopup            UIntptr // Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
-	Resizable          UIntptr // Integer
-	Fullscreen         UIntptr // Integer
-	Dialog             UIntptr // Integer
-	AdditionalFeatures UIntptr // TCefStringList // Use-CEF:[49]
+func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
+	return &tCefRequestContextSettingsPtr{
+		CachePath:                        api.PascalStr(m.CachePath),
+		PersistSessionCookies:            uintptr(unsafePointer(&m.PersistSessionCookies)),
+		AcceptLanguageList:               api.PascalStr(m.AcceptLanguageList), // Remove CEF 118
+		CookieableSchemesList:            api.PascalStr(m.CookieableSchemesList),
+		CookieableSchemesExcludeDefaults: uintptr(unsafePointer(&m.CookieableSchemesExcludeDefaults)),
+	}
 }
 
-// TCefBrowserSettings
-type tCefBrowserSettingsPtr struct {
-	WindowlessFrameRate        UIntptr //Integer
-	StandardFontFamily         UIntptr //TCefString
-	FixedFontFamily            UIntptr //TCefString
-	SerifFontFamily            UIntptr //TCefString
-	SansSerifFontFamily        UIntptr //TCefString
-	CursiveFontFamily          UIntptr //TCefString
-	FantasyFontFamily          UIntptr //TCefString
-	DefaultFontSize            UIntptr //Integer
-	DefaultFixedFontSize       UIntptr //Integer
-	MinimumFontSize            UIntptr //Integer
-	MinimumLogicalFontSize     UIntptr //Integer
-	DefaultEncoding            UIntptr //TCefString
-	RemoteFonts                UIntptr //TCefState
-	Javascript                 UIntptr //TCefState
-	JavascriptCloseWindows     UIntptr //TCefState
-	JavascriptAccessClipboard  UIntptr //TCefState
-	JavascriptDomPaste         UIntptr //TCefState
-	ImageLoading               UIntptr //TCefState
-	ImageShrinkStandaLonetoFit UIntptr //TCefState
-	TextAreaResize             UIntptr //TCefState
-	TabToLinks                 UIntptr //TCefState
-	LocalStorage               UIntptr //TCefState
-	Databases                  UIntptr //TCefState
-	Webgl                      UIntptr //TCefState
-	BackgroundColor            UIntptr //TCefColor
-	ChromeStatusBubble         UIntptr //TCefState
-	ChromeZoomBubble           UIntptr //TCefState
+// ================
+
+type tCefPopupFeaturesPtr struct {
+	X                  uintptr // Integer
+	XSet               uintptr // Integer
+	Y                  uintptr // Integer
+	YSet               uintptr // Integer
+	Width              uintptr // Integer
+	WidthSet           uintptr // Integer
+	Height             uintptr // Integer
+	HeightSet          uintptr // Integer
+	MenuBarVisible     uintptr // Integer // ~ CEF 109
+	StatusBarVisible   uintptr // Integer // ~ CEF 109
+	ToolBarVisible     uintptr // Integer // ~ CEF 109
+	LocationBarVisible uintptr // Integer
+	ScrollbarsVisible  uintptr // Integer // ~ CEF 109
+	IsPopup            uintptr // Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
+	Resizable          uintptr // Integer
+	Fullscreen         uintptr // Integer
+	Dialog             uintptr // Integer
+	AdditionalFeatures uintptr // TCefStringList // Use-CEF:[49]
 }
+
+func (m *tCefPopupFeaturesPtr) convert() *TCefPopupFeatures {
+	getStringList := func(ptr uintptr) TCefStringList {
+		if ptr == 0 {
+			return 0
+		}
+		return *(*TCefStringList)(unsafePointer(ptr))
+	}
+	return &TCefPopupFeatures{
+		X:                  fromPtrInt32(m.X),
+		XSet:               fromPtrInt32(m.XSet),
+		Y:                  fromPtrInt32(m.Y),
+		YSet:               fromPtrInt32(m.YSet),
+		Width:              fromPtrInt32(m.Width),
+		WidthSet:           fromPtrInt32(m.WidthSet),
+		Height:             fromPtrInt32(m.Height),
+		HeightSet:          fromPtrInt32(m.HeightSet),
+		MenuBarVisible:     fromPtrInt32(m.MenuBarVisible),
+		StatusBarVisible:   fromPtrInt32(m.StatusBarVisible),
+		ToolBarVisible:     fromPtrInt32(m.ToolBarVisible),
+		LocationBarVisible: fromPtrInt32(m.LocationBarVisible),
+		ScrollbarsVisible:  fromPtrInt32(m.ScrollbarsVisible),
+		IsPopup:            fromPtrInt32(m.IsPopup),
+		Resizable:          fromPtrInt32(m.Resizable),
+		Fullscreen:         fromPtrInt32(m.Fullscreen),
+		Dialog:             fromPtrInt32(m.Dialog),
+		AdditionalFeatures: getStringList(m.AdditionalFeatures),
+	}
+}
+
+// ================
+
+type tCefRangePtr struct {
+	From uintptr //int32
+	To   uintptr //int32
+}
+
+func (m *TCefRange) ToPtr() *tCefRangePtr {
+	return &tCefRangePtr{
+		From: uintptr(unsafePointer(&m.From)),
+		To:   uintptr(unsafePointer(&m.To)),
+	}
+}
+
+// ================
 
 type tCefCompositionUnderlinePtr struct {
 	Range           uintptr //*TCefRange
@@ -98,9 +217,21 @@ type tCefCompositionUnderlinePtr struct {
 	Style           uintptr //TCefCompositionUnderlineStyle
 }
 
+func (m *TCefCompositionUnderline) ToPtr() *tCefCompositionUnderlinePtr {
+	return &tCefCompositionUnderlinePtr{
+		Range:           uintptr(unsafePointer(m.Range.ToPtr())),
+		Color:           uintptr(unsafePointer(&m.Color)),
+		BackgroundColor: uintptr(unsafePointer(&m.BackgroundColor)),
+		Thick:           uintptr(unsafePointer(&m.Thick)),
+		Style:           uintptr(unsafePointer(&m.Style)),
+	}
+}
+
+// ================
+
 type tCefProxyPtr struct {
 	ProxyType              uintptr //TCefProxyType
-	ProxyScheme            uintptr //TCefProxySchem
+	ProxyScheme            uintptr //TCefProxyScheme
 	ProxyServer            uintptr //string
 	ProxyPort              uintptr //int32
 	ProxyUsername          uintptr //string
@@ -110,26 +241,57 @@ type tCefProxyPtr struct {
 	MaxConnectionsPerProxy uintptr //int32
 }
 
-type beforePopupInfoPtr struct {
-	TargetUrl         UIntptr // string
-	TargetFrameName   UIntptr // string
-	TargetDisposition UIntptr // int32
-	UserGesture       UIntptr // bool
+func (m *TCefProxy) ToPtr() *tCefProxyPtr {
+	return &tCefProxyPtr{
+		ProxyType:              uintptr(unsafePointer(&m.ProxyType)),
+		ProxyScheme:            uintptr(unsafePointer(&m.ProxyScheme)),
+		ProxyServer:            api.PascalStr(m.ProxyServer),
+		ProxyPort:              uintptr(unsafePointer(&m.ProxyPort)),
+		ProxyUsername:          api.PascalStr(m.ProxyUsername),
+		ProxyPassword:          api.PascalStr(m.ProxyPassword),
+		ProxyScriptURL:         api.PascalStr(m.ProxyScriptURL),
+		ProxyByPassList:        api.PascalStr(m.ProxyByPassList),
+		MaxConnectionsPerProxy: uintptr(unsafePointer(&m.MaxConnectionsPerProxy)),
+	}
 }
 
-type tCefRectPtr struct {
-	X      uintptr //int32
-	Y      uintptr //int32
-	Width  uintptr //int32
-	Height uintptr //int32
+// ================
+
+type beforePopupInfoPtr struct {
+	TargetUrl         uintptr // string
+	TargetFrameName   uintptr // string
+	TargetDisposition uintptr // int32
+	UserGesture       uintptr // bool
 }
+
+func (m *beforePopupInfoPtr) convert() *BeforePopupInfo {
+	return &BeforePopupInfo{
+		TargetUrl:         fromPtrStr(m.TargetUrl),
+		TargetFrameName:   fromPtrStr(m.TargetFrameName),
+		TargetDisposition: *(*consts.TCefWindowOpenDisposition)(unsafePointer(m.TargetDisposition)),
+		UserGesture:       fromPtrBool(m.UserGesture),
+	}
+}
+
+func (m *BeforePopupInfo) ToPtr() *beforePopupInfoPtr {
+	return &beforePopupInfoPtr{
+		TargetUrl:         api.PascalStr(m.TargetUrl),
+		TargetFrameName:   api.PascalStr(m.TargetFrameName),
+		TargetDisposition: uintptr(unsafePointer(&m.TargetDisposition)),
+		UserGesture:       uintptr(unsafePointer(&m.UserGesture)),
+	}
+}
+
+// ================
 
 type tCustomHeader struct {
 	CustomHeaderName  uintptr //string
 	CustomHeaderValue uintptr //string
 }
 
-type cefPdfPrintSettingsPtr struct {
+// ================
+
+type tCefPdfPrintSettingsPtr struct {
 	landscape           uintptr //Integer
 	printBackground     uintptr //Integer
 	scale               uintptr //double
@@ -147,215 +309,192 @@ type cefPdfPrintSettingsPtr struct {
 	footerTemplate      uintptr //TCefString
 }
 
-// SetInstanceValue 实例指针设置值
-func (m *TCefBrowserSettings) setInstanceValue() {
-	if m.instance == nil {
-		return
-	}
-	// 字段指针引用赋值, 如果是字符串类型需直接赋值
-	m.instance.WindowlessFrameRate.SetValue(int32(m.WindowlessFrameRate))               // Integer
-	m.instance.StandardFontFamily = UIntptr(m.StandardFontFamily.ToPtr())               // TCefString
-	m.instance.FixedFontFamily = UIntptr(m.FixedFontFamily.ToPtr())                     // TCefString
-	m.instance.SerifFontFamily = UIntptr(m.SerifFontFamily.ToPtr())                     // TCefString
-	m.instance.SansSerifFontFamily = UIntptr(m.SansSerifFontFamily.ToPtr())             // TCefString
-	m.instance.CursiveFontFamily = UIntptr(m.CursiveFontFamily.ToPtr())                 // TCefString
-	m.instance.FantasyFontFamily = UIntptr(m.FantasyFontFamily.ToPtr())                 // TCefString
-	m.instance.DefaultFontSize.SetValue(int32(m.DefaultFontSize))                       // Integer
-	m.instance.DefaultFixedFontSize.SetValue(int32(m.DefaultFixedFontSize))             // Integer
-	m.instance.MinimumFontSize.SetValue(int32(m.MinimumFontSize))                       // Integer
-	m.instance.MinimumLogicalFontSize.SetValue(int32(m.MinimumLogicalFontSize))         // Integer
-	m.instance.DefaultEncoding = UIntptr(m.DefaultEncoding.ToPtr())                     // TCefString
-	m.instance.RemoteFonts.SetValue(int32(m.RemoteFonts))                               // TCefState
-	m.instance.Javascript.SetValue(int32(m.Javascript))                                 // TCefState
-	m.instance.JavascriptCloseWindows.SetValue(int32(m.JavascriptCloseWindows))         // TCefState
-	m.instance.JavascriptAccessClipboard.SetValue(int32(m.JavascriptAccessClipboard))   // TCefState
-	m.instance.JavascriptDomPaste.SetValue(int32(m.JavascriptDomPaste))                 // TCefState
-	m.instance.ImageLoading.SetValue(int32(m.ImageLoading))                             // TCefState
-	m.instance.ImageShrinkStandaLonetoFit.SetValue(int32(m.ImageShrinkStandaLonetoFit)) // TCefState
-	m.instance.TextAreaResize.SetValue(int32(m.TextAreaResize))                         // TCefState
-	m.instance.TabToLinks.SetValue(int32(m.TabToLinks))                                 // TCefState
-	m.instance.LocalStorage.SetValue(int32(m.LocalStorage))                             // TCefState
-	m.instance.Databases.SetValue(int32(m.Databases))                                   // TCefState
-	m.instance.Webgl.SetValue(int32(m.Webgl))                                           // TCefState
-	m.instance.BackgroundColor.SetValue(uint32(m.BackgroundColor))                      // TCefColor
-	m.instance.ChromeStatusBubble.SetValue(int32(m.ChromeStatusBubble))                 // TCefState
-	m.instance.ChromeZoomBubble.SetValue(int32(m.ChromeZoomBubble))                     // TCefState
-}
-
-// ToPtr 转换为指针
-func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
+func (m *TCefPdfPrintSettings) ToPtr() *tCefPdfPrintSettingsPtr {
 	if m == nil {
 		return nil
 	}
-	return &tCefBrowserSettingsPtr{
-		WindowlessFrameRate:        UIntptr(m.WindowlessFrameRate.ToPtr()),
-		StandardFontFamily:         UIntptr(m.StandardFontFamily.ToPtr()),
-		FixedFontFamily:            UIntptr(m.FixedFontFamily.ToPtr()),
-		SerifFontFamily:            UIntptr(m.SerifFontFamily.ToPtr()),
-		SansSerifFontFamily:        UIntptr(m.SansSerifFontFamily.ToPtr()),
-		CursiveFontFamily:          UIntptr(m.CursiveFontFamily.ToPtr()),
-		FantasyFontFamily:          UIntptr(m.FantasyFontFamily.ToPtr()),
-		DefaultFontSize:            UIntptr(m.DefaultFontSize.ToPtr()),
-		DefaultFixedFontSize:       UIntptr(m.DefaultFixedFontSize.ToPtr()),
-		MinimumFontSize:            UIntptr(m.MinimumFontSize.ToPtr()),
-		MinimumLogicalFontSize:     UIntptr(m.MinimumLogicalFontSize.ToPtr()),
-		DefaultEncoding:            UIntptr(m.DefaultEncoding.ToPtr()),
-		RemoteFonts:                UIntptr(m.RemoteFonts.ToPtr()),
-		Javascript:                 UIntptr(m.Javascript.ToPtr()),
-		JavascriptCloseWindows:     UIntptr(m.JavascriptCloseWindows.ToPtr()),
-		JavascriptAccessClipboard:  UIntptr(m.JavascriptAccessClipboard.ToPtr()),
-		JavascriptDomPaste:         UIntptr(m.JavascriptDomPaste.ToPtr()),
-		ImageLoading:               UIntptr(m.ImageLoading.ToPtr()),
-		ImageShrinkStandaLonetoFit: UIntptr(m.ImageShrinkStandaLonetoFit.ToPtr()),
-		TextAreaResize:             UIntptr(m.TextAreaResize.ToPtr()),
-		TabToLinks:                 UIntptr(m.TabToLinks.ToPtr()),
-		LocalStorage:               UIntptr(m.LocalStorage.ToPtr()),
-		Databases:                  UIntptr(m.Databases.ToPtr()),
-		Webgl:                      UIntptr(m.Webgl.ToPtr()),
-		BackgroundColor:            UIntptr(m.BackgroundColor.ToPtr()),
-		ChromeStatusBubble:         UIntptr(m.ChromeStatusBubble.ToPtr()),
-		ChromeZoomBubble:           UIntptr(m.ChromeZoomBubble.ToPtr()),
-	}
-}
-
-// Convert 转换为结构
-func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
-	getPtr := func(ptr uintptr) unsafe.Pointer {
-		return unsafe.Pointer(ptr)
-	}
-	getCefState := func(ptr uintptr) consts.TCefState {
-		if ptr == 0 {
-			return 0
-		}
-		return *(*consts.TCefState)(getPtr(ptr))
-	}
-	getInteger := func(ptr uintptr) Integer {
-		if ptr == 0 {
-			return 0
-		}
-		return *(*Integer)(getPtr(ptr))
-	}
-	return &TCefBrowserSettings{
-		instance:                   m,
-		WindowlessFrameRate:        getInteger(m.WindowlessFrameRate.ToPtr()),
-		StandardFontFamily:         TCefString(api.GoStr(m.StandardFontFamily.ToPtr())),
-		FixedFontFamily:            TCefString(api.GoStr(m.FixedFontFamily.ToPtr())),
-		SerifFontFamily:            TCefString(api.GoStr(m.SerifFontFamily.ToPtr())),
-		SansSerifFontFamily:        TCefString(api.GoStr(m.SansSerifFontFamily.ToPtr())),
-		CursiveFontFamily:          TCefString(api.GoStr(m.CursiveFontFamily.ToPtr())),
-		FantasyFontFamily:          TCefString(api.GoStr(m.FantasyFontFamily.ToPtr())),
-		DefaultFontSize:            getInteger(m.DefaultFontSize.ToPtr()),
-		DefaultFixedFontSize:       getInteger(m.DefaultFixedFontSize.ToPtr()),
-		MinimumFontSize:            getInteger(m.MinimumFontSize.ToPtr()),
-		MinimumLogicalFontSize:     getInteger(m.MinimumLogicalFontSize.ToPtr()),
-		DefaultEncoding:            TCefString(api.GoStr(m.DefaultEncoding.ToPtr())),
-		RemoteFonts:                getCefState(m.RemoteFonts.ToPtr()),
-		Javascript:                 getCefState(m.Javascript.ToPtr()),
-		JavascriptCloseWindows:     getCefState(m.JavascriptCloseWindows.ToPtr()),
-		JavascriptAccessClipboard:  getCefState(m.JavascriptAccessClipboard.ToPtr()),
-		JavascriptDomPaste:         getCefState(m.JavascriptDomPaste.ToPtr()),
-		ImageLoading:               getCefState(m.ImageLoading.ToPtr()),
-		ImageShrinkStandaLonetoFit: getCefState(m.ImageShrinkStandaLonetoFit.ToPtr()),
-		TextAreaResize:             getCefState(m.TextAreaResize.ToPtr()),
-		TabToLinks:                 getCefState(m.TabToLinks.ToPtr()),
-		LocalStorage:               getCefState(m.LocalStorage.ToPtr()),
-		Databases:                  getCefState(m.Databases.ToPtr()),
-		Webgl:                      getCefState(m.Webgl.ToPtr()),
-		BackgroundColor:            *(*TCefColor)(getPtr(m.BackgroundColor.ToPtr())),
-		ChromeStatusBubble:         getCefState(m.ChromeStatusBubble.ToPtr()),
-		ChromeZoomBubble:           getCefState(m.ChromeZoomBubble.ToPtr()),
-	}
-}
-
-func (m *CefPdfPrintSettings) ToPtr() *cefPdfPrintSettingsPtr {
-	if m == nil {
-		return nil
-	}
-	return &cefPdfPrintSettingsPtr{
-		landscape:           uintptr(m.Landscape),
-		printBackground:     uintptr(m.PrintBackground),
-		scale:               uintptr(unsafe.Pointer(&m.Scale)),
-		paperWidth:          uintptr(unsafe.Pointer(&m.PaperWidth)),
-		paperHeight:         uintptr(unsafe.Pointer(&m.PaperHeight)),
-		preferCssPageSize:   uintptr(m.PreferCssPageSize),
-		marginType:          uintptr(m.MarginType),
-		marginTop:           uintptr(unsafe.Pointer(&m.MarginTop)), //m.MarginTop,
-		marginRight:         uintptr(unsafe.Pointer(&m.MarginRight)),
-		marginBottom:        uintptr(unsafe.Pointer(&m.MarginBottom)),
-		marginLeft:          uintptr(unsafe.Pointer(&m.MarginLeft)),
+	return &tCefPdfPrintSettingsPtr{
+		landscape:           uintptr(unsafePointer(&m.Landscape)),
+		printBackground:     uintptr(unsafePointer(&m.PrintBackground)),
+		scale:               uintptr(unsafePointer(&m.Scale)),
+		paperWidth:          uintptr(unsafePointer(&m.PaperWidth)),
+		paperHeight:         uintptr(unsafePointer(&m.PaperHeight)),
+		preferCssPageSize:   uintptr(unsafePointer(&m.PreferCssPageSize)),
+		marginType:          uintptr(unsafePointer(&m.MarginType)),
+		marginTop:           uintptr(unsafePointer(&m.MarginTop)), //m.MarginTop,
+		marginRight:         uintptr(unsafePointer(&m.MarginRight)),
+		marginBottom:        uintptr(unsafePointer(&m.MarginBottom)),
+		marginLeft:          uintptr(unsafePointer(&m.MarginLeft)),
 		pageRanges:          api.PascalStr(m.PageRanges),
-		displayHeaderFooter: uintptr(m.DisplayHeaderFooter),
+		displayHeaderFooter: uintptr(unsafePointer(&m.DisplayHeaderFooter)),
 		headerTemplate:      api.PascalStr(m.HeaderTemplate),
 		footerTemplate:      api.PascalStr(m.FooterTemplate),
 	}
 }
 
-// Convert 转换为结构
-func (m *beforePopupInfoPtr) convert() *BeforePopupInfo {
-	return &BeforePopupInfo{
-		TargetUrl:         api.GoStr(m.TargetUrl.ToPtr()),
-		TargetFrameName:   api.GoStr(m.TargetFrameName.ToPtr()),
-		TargetDisposition: consts.TCefWindowOpenDisposition(m.TargetDisposition),
-		UserGesture:       api.GoBool(m.UserGesture.ToPtr()),
+// ================
+
+type tCefBrowserSettingsPtr struct {
+	WindowlessFrameRate        uintptr //Integer
+	StandardFontFamily         uintptr //TCefString
+	FixedFontFamily            uintptr //TCefString
+	SerifFontFamily            uintptr //TCefString
+	SansSerifFontFamily        uintptr //TCefString
+	CursiveFontFamily          uintptr //TCefString
+	FantasyFontFamily          uintptr //TCefString
+	DefaultFontSize            uintptr //Integer
+	DefaultFixedFontSize       uintptr //Integer
+	MinimumFontSize            uintptr //Integer
+	MinimumLogicalFontSize     uintptr //Integer
+	DefaultEncoding            uintptr //TCefString
+	RemoteFonts                uintptr //TCefState
+	Javascript                 uintptr //TCefState
+	JavascriptCloseWindows     uintptr //TCefState
+	JavascriptAccessClipboard  uintptr //TCefState
+	JavascriptDomPaste         uintptr //TCefState
+	ImageLoading               uintptr //TCefState
+	ImageShrinkStandaLonetoFit uintptr //TCefState
+	TextAreaResize             uintptr //TCefState
+	TabToLinks                 uintptr //TCefState
+	LocalStorage               uintptr //TCefState
+	Databases                  uintptr //TCefState
+	Webgl                      uintptr //TCefState
+	BackgroundColor            uintptr //TCefColor
+	ChromeStatusBubble         uintptr //TCefState
+	ChromeZoomBubble           uintptr //TCefState
+}
+
+// SetInstanceValue 实例指针设置值
+func (m *TCefBrowserSettings) setInstanceValue() {
+	if m.instance == nil {
+		return
+	}
+	*(*int32)(unsafePointer(m.instance.WindowlessFrameRate)) = m.WindowlessFrameRate
+	m.instance.StandardFontFamily = api.PascalStr(m.StandardFontFamily)
+	m.instance.FixedFontFamily = api.PascalStr(m.FixedFontFamily)
+	m.instance.SerifFontFamily = api.PascalStr(m.SerifFontFamily)
+	m.instance.SansSerifFontFamily = api.PascalStr(m.SansSerifFontFamily)
+	m.instance.CursiveFontFamily = api.PascalStr(m.CursiveFontFamily)
+	m.instance.FantasyFontFamily = api.PascalStr(m.FantasyFontFamily)
+	*(*int32)(unsafePointer(m.instance.DefaultFontSize)) = m.DefaultFontSize
+	*(*int32)(unsafePointer(m.instance.DefaultFixedFontSize)) = m.DefaultFixedFontSize
+	*(*int32)(unsafePointer(m.instance.MinimumFontSize)) = m.MinimumFontSize
+	*(*int32)(unsafePointer(m.instance.MinimumLogicalFontSize)) = m.MinimumLogicalFontSize
+	m.instance.DefaultEncoding = api.PascalStr(m.DefaultEncoding)
+	*(*consts.TCefState)(unsafePointer(m.instance.RemoteFonts)) = m.RemoteFonts
+	*(*consts.TCefState)(unsafePointer(m.instance.Javascript)) = m.Javascript
+	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptCloseWindows)) = m.JavascriptCloseWindows
+	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptAccessClipboard)) = m.JavascriptAccessClipboard
+	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptDomPaste)) = m.JavascriptDomPaste
+	*(*consts.TCefState)(unsafePointer(m.instance.ImageLoading)) = m.ImageLoading
+	*(*consts.TCefState)(unsafePointer(m.instance.ImageShrinkStandaLonetoFit)) = m.ImageShrinkStandaLonetoFit
+	*(*consts.TCefState)(unsafePointer(m.instance.TextAreaResize)) = m.TextAreaResize
+	*(*consts.TCefState)(unsafePointer(m.instance.TabToLinks)) = m.TabToLinks
+	*(*consts.TCefState)(unsafePointer(m.instance.LocalStorage)) = m.LocalStorage
+	*(*consts.TCefState)(unsafePointer(m.instance.Databases)) = m.Databases
+	*(*consts.TCefState)(unsafePointer(m.instance.Webgl)) = m.Webgl
+	*(*TCefColor)(unsafePointer(m.instance.BackgroundColor)) = m.BackgroundColor
+	*(*consts.TCefState)(unsafePointer(m.instance.ChromeStatusBubble)) = m.ChromeStatusBubble
+	*(*consts.TCefState)(unsafePointer(m.instance.ChromeZoomBubble)) = m.ChromeZoomBubble
+}
+
+func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {
+	if m == nil {
+		return nil
+	}
+	return &tCefBrowserSettingsPtr{
+		WindowlessFrameRate:        uintptr(unsafePointer(&m.WindowlessFrameRate)),
+		StandardFontFamily:         api.PascalStr(m.StandardFontFamily),
+		FixedFontFamily:            api.PascalStr(m.FixedFontFamily),
+		SerifFontFamily:            api.PascalStr(m.SerifFontFamily),
+		SansSerifFontFamily:        api.PascalStr(m.SansSerifFontFamily),
+		CursiveFontFamily:          api.PascalStr(m.CursiveFontFamily),
+		FantasyFontFamily:          api.PascalStr(m.FantasyFontFamily),
+		DefaultFontSize:            uintptr(unsafePointer(&m.DefaultFontSize)),
+		DefaultFixedFontSize:       uintptr(unsafePointer(&m.DefaultFixedFontSize)),
+		MinimumFontSize:            uintptr(unsafePointer(&m.MinimumFontSize)),
+		MinimumLogicalFontSize:     uintptr(unsafePointer(&m.MinimumLogicalFontSize)),
+		DefaultEncoding:            api.PascalStr(m.DefaultEncoding),
+		RemoteFonts:                uintptr(unsafePointer(&m.RemoteFonts)),
+		Javascript:                 uintptr(unsafePointer(&m.Javascript)),
+		JavascriptCloseWindows:     uintptr(unsafePointer(&m.JavascriptCloseWindows)),
+		JavascriptAccessClipboard:  uintptr(unsafePointer(&m.JavascriptAccessClipboard)),
+		JavascriptDomPaste:         uintptr(unsafePointer(&m.JavascriptDomPaste)),
+		ImageLoading:               uintptr(unsafePointer(&m.ImageLoading)),
+		ImageShrinkStandaLonetoFit: uintptr(unsafePointer(&m.ImageShrinkStandaLonetoFit)),
+		TextAreaResize:             uintptr(unsafePointer(&m.TextAreaResize)),
+		TabToLinks:                 uintptr(unsafePointer(&m.TabToLinks)),
+		LocalStorage:               uintptr(unsafePointer(&m.LocalStorage)),
+		Databases:                  uintptr(unsafePointer(&m.Databases)),
+		Webgl:                      uintptr(unsafePointer(&m.Webgl)),
+		BackgroundColor:            uintptr(unsafePointer(&m.BackgroundColor)),
+		ChromeStatusBubble:         uintptr(unsafePointer(&m.ChromeStatusBubble)),
+		ChromeZoomBubble:           uintptr(unsafePointer(&m.ChromeZoomBubble)),
 	}
 }
 
-// Convert 转换为结构
-func (m *tCefPopupFeaturesPtr) convert() *TCefPopupFeatures {
-	getPtr := func(ptr uintptr) unsafe.Pointer {
-		return unsafe.Pointer(ptr)
+func (m *tCefBrowserSettingsPtr) convert() *TCefBrowserSettings {
+	if m == nil {
+		return nil
 	}
-	getInteger := func(ptr uintptr) Integer {
-		if ptr == 0 {
-			return 0
-		}
-		return *(*Integer)(getPtr(ptr))
-	}
-	getStringList := func(ptr uintptr) TCefStringList {
-		if ptr == 0 {
-			return 0
-		}
-		return *(*TCefStringList)(getPtr(ptr))
-	}
-	return &TCefPopupFeatures{
-		X:                  getInteger(m.X.ToPtr()),
-		XSet:               getInteger(m.XSet.ToPtr()),
-		Y:                  getInteger(m.Y.ToPtr()),
-		YSet:               getInteger(m.YSet.ToPtr()),
-		Width:              getInteger(m.Width.ToPtr()),
-		WidthSet:           getInteger(m.WidthSet.ToPtr()),
-		Height:             getInteger(m.Height.ToPtr()),
-		HeightSet:          getInteger(m.HeightSet.ToPtr()),
-		MenuBarVisible:     getInteger(m.MenuBarVisible.ToPtr()),
-		StatusBarVisible:   getInteger(m.StatusBarVisible.ToPtr()),
-		ToolBarVisible:     getInteger(m.ToolBarVisible.ToPtr()),
-		LocationBarVisible: getInteger(m.LocationBarVisible.ToPtr()),
-		ScrollbarsVisible:  getInteger(m.ScrollbarsVisible.ToPtr()),
-		IsPopup:            getInteger(m.IsPopup.ToPtr()),
-		Resizable:          getInteger(m.Resizable.ToPtr()),
-		Fullscreen:         getInteger(m.Fullscreen.ToPtr()),
-		Dialog:             getInteger(m.Dialog.ToPtr()),
-		AdditionalFeatures: getStringList(m.AdditionalFeatures.ToPtr()),
+	return &TCefBrowserSettings{
+		instance:                   m,
+		WindowlessFrameRate:        fromPtrInt32(m.WindowlessFrameRate),
+		StandardFontFamily:         fromPtrStr(m.StandardFontFamily),
+		FixedFontFamily:            fromPtrStr(m.FixedFontFamily),
+		SerifFontFamily:            fromPtrStr(m.SerifFontFamily),
+		SansSerifFontFamily:        fromPtrStr(m.SansSerifFontFamily),
+		CursiveFontFamily:          fromPtrStr(m.CursiveFontFamily),
+		FantasyFontFamily:          fromPtrStr(m.FantasyFontFamily),
+		DefaultFontSize:            fromPtrInt32(m.DefaultFontSize),
+		DefaultFixedFontSize:       fromPtrInt32(m.DefaultFixedFontSize),
+		MinimumFontSize:            fromPtrInt32(m.MinimumFontSize),
+		MinimumLogicalFontSize:     fromPtrInt32(m.MinimumLogicalFontSize),
+		DefaultEncoding:            api.GoStr(m.DefaultEncoding),
+		RemoteFonts:                fromPtrCefState(m.RemoteFonts),
+		Javascript:                 fromPtrCefState(m.Javascript),
+		JavascriptCloseWindows:     fromPtrCefState(m.JavascriptCloseWindows),
+		JavascriptAccessClipboard:  fromPtrCefState(m.JavascriptAccessClipboard),
+		JavascriptDomPaste:         fromPtrCefState(m.JavascriptDomPaste),
+		ImageLoading:               fromPtrCefState(m.ImageLoading),
+		ImageShrinkStandaLonetoFit: fromPtrCefState(m.ImageShrinkStandaLonetoFit),
+		TextAreaResize:             fromPtrCefState(m.TextAreaResize),
+		TabToLinks:                 fromPtrCefState(m.TabToLinks),
+		LocalStorage:               fromPtrCefState(m.LocalStorage),
+		Databases:                  fromPtrCefState(m.Databases),
+		Webgl:                      fromPtrCefState(m.Webgl),
+		BackgroundColor:            *(*TCefColor)(unsafePointer(m.BackgroundColor)),
+		ChromeStatusBubble:         fromPtrCefState(m.ChromeStatusBubble),
+		ChromeZoomBubble:           fromPtrCefState(m.ChromeZoomBubble),
 	}
 }
+
+// ================
 
 type tLinuxWindowPropertiesPtr struct {
-	/// Main window's Wayland's app_id
 	WaylandAppId uintptr
-	/// Main window's WM_CLASS_CLASS in X11
 	WmClassClass uintptr
-	/// Main window's WM_CLASS_NAME in X11
-	WmClassName uintptr
-	/// Main window's WM_WINDOW_ROLE in X11
-	WmRoleName uintptr
+	WmClassName  uintptr
+	WmRoleName   uintptr
 }
 
-func (m *tLinuxWindowPropertiesPtr) convert() TLinuxWindowProperties {
-	return TLinuxWindowProperties{
-		WaylandAppId: api.GoStr(m.WaylandAppId),
-		WmClassClass: api.GoStr(m.WmClassClass),
-		WmClassName:  api.GoStr(m.WmClassName),
-		WmRoleName:   api.GoStr(m.WmRoleName),
+func (m *TLinuxWindowProperties) setInstanceValue() {
+	if m.instance == nil {
+		return
+	}
+	m.instance.WaylandAppId = api.PascalStr(m.WaylandAppId)
+	m.instance.WmClassClass = api.PascalStr(m.WmClassClass)
+	m.instance.WmClassName = api.PascalStr(m.WmClassName)
+	m.instance.WmRoleName = api.PascalStr(m.WmRoleName)
+}
+
+func (m *tLinuxWindowPropertiesPtr) convert() *TLinuxWindowProperties {
+	return &TLinuxWindowProperties{
+		instance:     m,
+		WaylandAppId: fromPtrStr(m.WaylandAppId),
+		WmClassClass: fromPtrStr(m.WmClassClass),
+		WmClassName:  fromPtrStr(m.WmClassName),
+		WmRoleName:   fromPtrStr(m.WmRoleName),
 	}
 }
 
@@ -368,6 +507,8 @@ func (m *TLinuxWindowProperties) ToPtr() *tLinuxWindowPropertiesPtr {
 	}
 }
 
+// ================
+
 type tCefInsetsPtr struct {
 	Top    uintptr //int32
 	Left   uintptr //int32
@@ -375,12 +516,12 @@ type tCefInsetsPtr struct {
 	Right  uintptr //int32
 }
 
-func (m *tCefInsetsPtr) convert() TCefInsets {
-	return TCefInsets{
-		Top:    *(*int32)(unsafePointer(m.Top)),
-		Left:   *(*int32)(unsafePointer(m.Left)),
-		Bottom: *(*int32)(unsafePointer(m.Bottom)),
-		Right:  *(*int32)(unsafePointer(m.Right)),
+func (m *tCefInsetsPtr) convert() *TCefInsets {
+	return &TCefInsets{
+		Top:    fromPtrInt32(m.Top),
+		Left:   fromPtrInt32(m.Left),
+		Bottom: fromPtrInt32(m.Bottom),
+		Right:  fromPtrInt32(m.Right),
 	}
 }
 
@@ -392,6 +533,8 @@ func (m *TCefInsets) ToPtr() *tCefInsetsPtr {
 		Right:  uintptr(unsafePointer(&m.Right)),
 	}
 }
+
+// ================
 
 type tCefBoxLayoutSettingsPtr struct {
 	Horizontal                    uintptr //Integer
@@ -407,15 +550,15 @@ type tCefBoxLayoutSettingsPtr struct {
 
 func (m *tCefBoxLayoutSettingsPtr) convert() *TCefBoxLayoutSettings {
 	return &TCefBoxLayoutSettings{
-		Horizontal:                    *(*int32)(unsafePointer(m.Horizontal)),
-		InsideBorderHorizontalSpacing: *(*int32)(unsafePointer(m.InsideBorderHorizontalSpacing)),
-		InsideBorderVerticalSpacing:   *(*int32)(unsafePointer(m.InsideBorderVerticalSpacing)),
-		InsideBorderInsets:            (*tCefInsetsPtr)(unsafe.Pointer(m.InsideBorderInsets)).convert(),
-		BetweenChildSpacing:           *(*int32)(unsafePointer(m.BetweenChildSpacing)),
+		Horizontal:                    fromPtrInt32(m.Horizontal),
+		InsideBorderHorizontalSpacing: fromPtrInt32(m.InsideBorderHorizontalSpacing),
+		InsideBorderVerticalSpacing:   fromPtrInt32(m.InsideBorderVerticalSpacing),
+		InsideBorderInsets:            *((*tCefInsetsPtr)(unsafePointer(m.InsideBorderInsets)).convert()),
+		BetweenChildSpacing:           fromPtrInt32(m.BetweenChildSpacing),
 		MainAxisAlignment:             *(*consts.TCefMainAxisAlignment)(unsafePointer(m.MainAxisAlignment)),
 		CrossAxisAlignment:            *(*consts.TCefMainAxisAlignment)(unsafePointer(m.CrossAxisAlignment)),
-		MinimumCrossAxisSize:          *(*int32)(unsafePointer(m.MinimumCrossAxisSize)),
-		DefaultFlex:                   *(*int32)(unsafePointer(m.DefaultFlex)),
+		MinimumCrossAxisSize:          fromPtrInt32(m.MinimumCrossAxisSize),
+		DefaultFlex:                   fromPtrInt32(m.DefaultFlex),
 	}
 }
 
@@ -430,5 +573,31 @@ func (m *TCefBoxLayoutSettings) ToPtr() *tCefBoxLayoutSettingsPtr {
 		CrossAxisAlignment:            uintptr(unsafePointer(&m.CrossAxisAlignment)),
 		MinimumCrossAxisSize:          uintptr(unsafePointer(&m.MinimumCrossAxisSize)),
 		DefaultFlex:                   uintptr(unsafePointer(&m.DefaultFlex)),
+	}
+}
+
+// ================
+
+type tCefTouchHandleStatePtr struct {
+	TouchHandleId    uintptr //int32
+	Flags            uintptr //uint32
+	Enabled          uintptr //int32
+	Orientation      uintptr //consts.TCefHorizontalAlignment
+	MirrorVertical   uintptr //int32
+	MirrorHorizontal uintptr //int32
+	Origin           uintptr //TCefPoint
+	Alpha            uintptr //float32
+}
+
+func (m *tCefTouchHandleStatePtr) convert() *TCefTouchHandleState {
+	return &TCefTouchHandleState{
+		TouchHandleId:    fromPtrInt32(m.TouchHandleId),
+		Flags:            fromPtrUInt32(m.Flags),
+		Enabled:          fromPtrInt32(m.Enabled),
+		Orientation:      *(*consts.TCefHorizontalAlignment)(unsafePointer(m.Orientation)),
+		MirrorVertical:   fromPtrInt32(m.MirrorVertical),
+		MirrorHorizontal: fromPtrInt32(m.MirrorHorizontal),
+		Origin:           *(*TCefPoint)(unsafePointer(m.Origin)),
+		Alpha:            fromPtrFloat32(m.Alpha),
 	}
 }

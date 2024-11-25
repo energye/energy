@@ -41,10 +41,7 @@ func (*requestContext) Global() *ICefRequestContext {
 // Creates a new context object with the specified |settings| and optional |handler|.
 // <param name="settings">Pointer to TCefRequestContextSettings.</param>
 // <param name="handler">Optional handler for the request context.</param>
-func (*requestContext) New(requestContextSettings *TCefRequestContextSettings, handler *ICefRequestContextHandler) *ICefRequestContext {
-	if requestContextSettings == nil {
-		requestContextSettings = &TCefRequestContextSettings{}
-	}
+func (*requestContext) New(requestContextSettings TCefRequestContextSettings, handler *ICefRequestContextHandler) *ICefRequestContext {
 	requestContextSettingsPtr := requestContextSettings.ToPtr()
 	var result uintptr
 	imports.Proc(def.RequestContextRef_New).Call(uintptr(unsafe.Pointer(requestContextSettingsPtr)), handler.Instance(), uintptr(unsafe.Pointer(&result)))

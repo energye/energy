@@ -17,7 +17,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -25,53 +24,57 @@ import (
 	"unsafe"
 )
 
-type onIMECommitTextEvent func(sender lcl.IObject, text string, replacementRange TCefRange, relativeCursorPos int32)
-type onIMESetCompositionEvent func(sender lcl.IObject, text string, underlines *TCefCompositionUnderlineArray, replacementRange, selectionRange TCefRange)
-type onHandledMessageEvent func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, handled *bool)
-
 func (m *TBufferPanel) SetOnIMECancelComposition(fn lcl.TNotifyEvent) {
 	imports.SysCallN(def.BufferPanel_SetOnIMECancelComposition, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnIMECommitText(fn onIMECommitTextEvent) {
+func (m *TBufferPanel) SetOnIMECommitText(fn bufferPanelOnIMECommitText) {
 	imports.SysCallN(def.BufferPanel_SetOnIMECommitText, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnIMESetComposition(fn onIMESetCompositionEvent) {
+func (m *TBufferPanel) SetOnIMESetComposition(fn bufferPanelOnIMESetComposition) {
 	imports.SysCallN(def.BufferPanel_SetOnIMESetComposition, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnCustomTouch(fn onHandledMessageEvent) {
+func (m *TBufferPanel) SetOnCustomTouch(fn bufferPanelOnHandledMessage) {
 	imports.SysCallN(def.BufferPanel_SetOnCustomTouch, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnPointerDown(fn onHandledMessageEvent) {
+func (m *TBufferPanel) SetOnPointerDown(fn bufferPanelOnHandledMessage) {
 	imports.SysCallN(def.BufferPanel_SetOnPointerDown, m.Instance(), api.MakeEventDataPtr(fn))
 }
-func (m *TBufferPanel) SetOnPointerUp(fn onHandledMessageEvent) {
+
+func (m *TBufferPanel) SetOnPointerUp(fn bufferPanelOnHandledMessage) {
 	imports.SysCallN(def.BufferPanel_SetOnPointerUp, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *TBufferPanel) SetOnPointerUpdate(fn onHandledMessageEvent) {
+func (m *TBufferPanel) SetOnPointerUpdate(fn bufferPanelOnHandledMessage) {
 	imports.SysCallN(def.BufferPanel_SetOnPointerUpdate, m.Instance(), api.MakeEventDataPtr(fn))
 }
 
 type TCefCompositionUnderlineArray struct {
-	count  int
-	ptr    uintptr
-	sizeOf uintptr
+	instance unsafe.Pointer
+	count    int
 }
 
 func (m *TCefCompositionUnderlineArray) Count() int {
 	return m.count
 }
 
-func (m *TCefCompositionUnderlineArray) Get(index int) *TCefCompositionUnderline {
-	if index >= 0 && index < m.count {
-		return (*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+func (m *TCefCompositionUnderlineArray) Get(index int) (compUnderLine TCefCompositionUnderline) {
+	if m.instance == nil {
+		return
 	}
-	return nil
+	if index >= 0 && index < m.count {
+		//(*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+		imports.SysCallN(def.BufferPanelCompositionUnderline_Get, uintptr(m.instance), uintptr(int32(index)), uintptr(unsafePointer(&compUnderLine)))
+	}
+	return
 }
+
+type bufferPanelOnIMECommitText func(sender lcl.IObject, text string, replacementRange TCefRange, relativeCursorPos int32)
+type bufferPanelOnIMESetComposition func(sender lcl.IObject, text string, underlines *TCefCompositionUnderlineArray, replacementRange, selectionRange TCefRange)
+type bufferPanelOnHandledMessage func(sender lcl.IObject, message *types.TMessage, lResult *types.LRESULT, handled *bool)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -79,21 +82,20 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case onIMECommitTextEvent:
-			fn.(onIMECommitTextEvent)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), *(*TCefRange)(getPtr(2)), int32(getVal(3)))
-		case onIMESetCompositionEvent:
+		case bufferPanelOnIMECommitText:
+			fn.(bufferPanelOnIMECommitText)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), *(*TCefRange)(getPtr(2)), int32(getVal(3)))
+		case bufferPanelOnIMESetComposition:
 			underlines := &TCefCompositionUnderlineArray{
-				count:  int(int32(getVal(3))),
-				ptr:    *(*uintptr)(getPtr(2)),
-				sizeOf: unsafe.Sizeof(TCefCompositionUnderline{}),
+				instance: getPtr(2),
+				count:    int(int32(getVal(3))),
 			}
 			replacementRange := *(*TCefRange)(getPtr(4))
 			selectionRange := *(*TCefRange)(getPtr(5))
-			fn.(onIMESetCompositionEvent)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), underlines, replacementRange, selectionRange)
-		case onHandledMessageEvent:
+			fn.(bufferPanelOnIMESetComposition)(lcl.AsObject(getPtr(0)), api.GoStr(getVal(1)), underlines, replacementRange, selectionRange)
+		case bufferPanelOnHandledMessage:
 			message := (*types.TMessage)(getPtr(1))
 			lResultPtr := (*types.LRESULT)(getPtr(2))
-			fn.(onHandledMessageEvent)(lcl.AsObject(getVal(0)), message, lResultPtr, (*bool)(getPtr(3)))
+			fn.(bufferPanelOnHandledMessage)(lcl.AsObject(getVal(0)), message, lResultPtr, (*bool)(getPtr(3)))
 		default:
 			return false
 		}

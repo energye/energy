@@ -32,8 +32,8 @@ type chromiumEventOnAudioStreamStopped func(sender lcl.IObject, browser *ICefBro
 type chromiumEventOnAutoResize func(sender lcl.IObject, browser *ICefBrowser, newSize *TCefSize) bool
 type chromiumEventOnBeforeUnloadDialog func(sender lcl.IObject, browser *ICefBrowser, messageText string, isReload bool, callback *ICefJsDialogCallback) bool
 type chromiumEventOnCanDownload func(sender lcl.IObject, browser *ICefBrowser, url, requestMethod string) bool
-type chromiumEventOnCanSaveCookie func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, cookie *ICefCookie) bool
-type chromiumEventOnCanSendCookie func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, cookie *ICefCookie) bool
+type chromiumEventOnCanSaveCookie func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, response *ICefResponse, cookie *TCefCookie) bool
+type chromiumEventOnCanSendCookie func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, cookie *TCefCookie) bool
 type chromiumEventOnCertificateError func(sender lcl.IObject, browser *ICefBrowser, certError consts.TCefErrorCode, requestUrl string, sslInfo *ICefSslInfo, callback *ICefCallback) bool
 type chromiumEventOnCertificateExceptionsCleared func(sender lcl.IObject)
 type chromiumEventOnChromeCommand func(sender lcl.IObject, browser *ICefBrowser, commandId int32, disposition consts.TCefWindowOpenDisposition) bool
@@ -141,7 +141,7 @@ type chromiumEventOnLoadEndEx func(sender lcl.IObject, browser *ICefBrowser, fra
 type chromiumEventOnCookieSet func(sender lcl.IObject, success bool, ID int32)
 type chromiumEventOnCookiesDeleted func(sender lcl.IObject, numDeleted int32)
 type chromiumEventOnCookiesFlushed func(sender lcl.IObject)
-type chromiumEventOnCookiesVisited func(sender lcl.IObject, cookie *ICefCookie)
+type chromiumEventOnCookiesVisited func(sender lcl.IObject, cookie *TCefCookie, deleteCookie, result *bool)
 type chromiumEventOnCookieVisitorDestroyed func(sender lcl.IObject, ID int32)
 type chromiumEventOnBeforeContextMenu func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel)
 type chromiumEventOnBeforeContextMenuEx func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, params *ICefContextMenuParams, model *ICefMenuModel, window IBrowserWindow) bool

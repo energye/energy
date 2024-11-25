@@ -2324,6 +2324,7 @@ const (
 	BufferPanel_SetOnKeyUp
 	BufferPanel_SetOnKeyPress
 	BufferPanel_SetOnUTF8KeyPress
+	BufferPanelCompositionUnderline_Get
 	// TString
 	TString_Create
 	TString_Free

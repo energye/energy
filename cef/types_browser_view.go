@@ -31,12 +31,10 @@ var BrowserViewRef browserView
 
 type browserView uintptr
 
-func (*browserView) New(client *ICefClient, url string, browserSettings *TCefBrowserSettings, extraInfo *ICefDictionaryValue, requestContext *ICefRequestContext, delegate *ICefBrowserViewDelegate) *ICefBrowserView {
-	var browserSettingsPtr = browserSettings.ToPtr()
+func (*browserView) New(client *ICefClient, url string, browserSettings TCefBrowserSettings, extraInfo *ICefDictionaryValue,
+	requestContext *ICefRequestContext, delegate *ICefBrowserViewDelegate) *ICefBrowserView {
+	browserSettingsPtr := browserSettings.ToPtr()
 	var result uintptr
-	if extraInfo == nil {
-		extraInfo = DictionaryValueRef.New()
-	}
 	imports.Proc(def.CefBrowserViewRef_Create).Call(client.Instance(), api.PascalStr(url), uintptr(unsafe.Pointer(browserSettingsPtr)), extraInfo.Instance(), requestContext.Instance(), delegate.Instance(), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefBrowserView{&ICefView{instance: unsafe.Pointer(result)}}

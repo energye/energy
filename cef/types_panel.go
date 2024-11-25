@@ -67,7 +67,8 @@ func (m *ICefPanel) SetToBoxLayout(settings TCefBoxLayoutSettings) *ICefBoxLayou
 		return nil
 	}
 	var result uintptr
-	imports.Proc(def.CEFPanel_SetToBoxLayout).Call(m.Instance(), uintptr(unsafe.Pointer(&settings)), uintptr(unsafe.Pointer(&result)))
+	settingsPtr := settings.ToPtr()
+	imports.Proc(def.CEFPanel_SetToBoxLayout).Call(m.Instance(), uintptr(unsafe.Pointer(settingsPtr)), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefBoxLayout{&ICefLayout{instance: getInstance(result)}}
 	}

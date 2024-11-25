@@ -60,28 +60,28 @@ func (m *ICefLifeSpanHandler) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefLifeSpanHandler) SetOnBeforePopup(fn onBeforePopup) {
+func (m *ICefLifeSpanHandler) SetOnBeforePopup(fn lifeSpanHandlerOnBeforePopup) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.CefLifeSpanHandler_OnBeforePopup).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefLifeSpanHandler) SetOnAfterCreated(fn onAfterCreated) {
+func (m *ICefLifeSpanHandler) SetOnAfterCreated(fn lifeSpanHandlerOnAfterCreated) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.CefLifeSpanHandler_OnAfterCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefLifeSpanHandler) SetDoClose(fn doClose) {
+func (m *ICefLifeSpanHandler) SetOnDoClose(fn lifeSpanHandlerOnDoClose) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.CefLifeSpanHandler_DoClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-func (m *ICefLifeSpanHandler) SetOnBeforeClose(fn onBeforeClose) {
+func (m *ICefLifeSpanHandler) SetOnBeforeClose(fn lifeSpanHandlerOnBeforeClose) {
 	if !m.IsValid() {
 		return
 	}
@@ -90,10 +90,10 @@ func (m *ICefLifeSpanHandler) SetOnBeforeClose(fn onBeforeClose) {
 
 // ************************** events ************************** //
 
-type onBeforePopup func(browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, resultClient *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
-type onAfterCreated func(browser *ICefBrowser)
-type doClose func(browser *ICefBrowser) bool
-type onBeforeClose func(browser *ICefBrowser)
+type lifeSpanHandlerOnBeforePopup func(browser *ICefBrowser, frame *ICefFrame, beforePopupInfo *BeforePopupInfo, popupFeatures *TCefPopupFeatures, windowInfo *TCefWindowInfo, resultClient *ICefClient, settings *TCefBrowserSettings, resultExtraInfo *ICefDictionaryValue, noJavascriptAccess *bool) bool
+type lifeSpanHandlerOnAfterCreated func(browser *ICefBrowser)
+type lifeSpanHandlerOnDoClose func(browser *ICefBrowser) bool
+type lifeSpanHandlerOnBeforeClose func(browser *ICefBrowser)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -101,10 +101,10 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case onBeforePopup:
-			browse := &ICefBrowser{instance: getPtr(0)}
-			frame := &ICefFrame{instance: getPtr(1)}
+		case lifeSpanHandlerOnBeforePopup:
 			var (
+				browse             = &ICefBrowser{instance: getPtr(0)}
+				frame              = &ICefFrame{instance: getPtr(1)}
 				beforePInfoPtr     = (*beforePopupInfoPtr)(getPtr(2))
 				popupFeaturesPtr   = (*tCefPopupFeaturesPtr)(getPtr(3))
 				windowInfoPtr      = (*tCefWindowInfoPtr)(getPtr(4))
@@ -120,25 +120,25 @@ func init() {
 			resultClient := &ICefClient{}
 			browserSettings := browserSettingsPtr.convert()
 			resultExtraInfo := &ICefDictionaryValue{}
-			*result = fn.(onBeforePopup)(browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
+			*result = fn.(lifeSpanHandlerOnBeforePopup)(browse, frame, beforePopupInfo, popupFeatures, windowInfo, resultClient, browserSettings, resultExtraInfo, noJavascriptAccess)
 			windowInfo.setInstanceValue()
-			if resultClient.instance != nil && resultClient.IsValid() {
+			if resultClient.IsValid() {
 				*resultClientPtr = resultClient.Instance()
 			}
 			browserSettings.setInstanceValue()
-			if resultExtraInfo.instance != nil && resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
+			if resultExtraInfo.IsValid() && *resultExtraInfoPtr != 0 {
 				*resultExtraInfoPtr = resultExtraInfo.Instance()
 			}
-		case onAfterCreated:
+		case lifeSpanHandlerOnAfterCreated:
 			browse := &ICefBrowser{instance: getPtr(0)}
-			fn.(onAfterCreated)(browse)
-		case doClose:
+			fn.(lifeSpanHandlerOnAfterCreated)(browse)
+		case lifeSpanHandlerOnDoClose:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			result := (*bool)(getPtr(1))
-			*result = fn.(doClose)(browse)
-		case onBeforeClose:
+			*result = fn.(lifeSpanHandlerOnDoClose)(browse)
+		case lifeSpanHandlerOnBeforeClose:
 			browse := &ICefBrowser{instance: getPtr(0)}
-			fn.(onBeforeClose)(browse)
+			fn.(lifeSpanHandlerOnBeforeClose)(browse)
 		default:
 			return false
 		}

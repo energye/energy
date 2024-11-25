@@ -256,21 +256,15 @@ func (m *ICefBrowser) GetFrameByName(frameName string) *ICefFrame {
 }
 
 // PrintToPdf
-func (m *ICefBrowser) PrintToPdf(path string, settings *CefPdfPrintSettings, callback *ICefPdfPrintCallback) {
+func (m *ICefBrowser) PrintToPdf(path string, settings TCefPdfPrintSettings, callback *ICefPdfPrintCallback) {
 	if !m.IsValid() {
 		return
 	}
-	var settingsPtr uintptr = 0
-	var setPtr *cefPdfPrintSettingsPtr
 	if callback == nil {
 		callback = PdfPrintCallbackRef.New()
 	}
-	if settings == nil {
-		settings = &CefPdfPrintSettings{}
-	}
-	setPtr = settings.ToPtr()
-	settingsPtr = uintptr(unsafe.Pointer(setPtr))
-	imports.Proc(def.CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), settingsPtr, callback.Instance())
+	settingsPtr := settings.ToPtr()
+	imports.Proc(def.CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), uintptr(unsafe.Pointer(settingsPtr)), callback.Instance())
 }
 
 // SendDevToolsMessage 发送开发者工具消息

@@ -39,15 +39,9 @@ func (*browserViewComponent) New(AOwner lcl.IComponent) *TCEFBrowserViewComponen
 }
 
 // CreateBrowserView
-func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, browserSettings *TCefBrowserSettings,
+func (m *TCEFBrowserViewComponent) CreateBrowserView(client *ICefClient, url string, browserSettings TCefBrowserSettings,
 	extraInfo *ICefDictionaryValue, requestContext *ICefRequestContext) {
-	if browserSettings == nil {
-		browserSettings = &TCefBrowserSettings{}
-	}
 	browserSettingsPtr := browserSettings.ToPtr()
-	if extraInfo == nil {
-		extraInfo = DictionaryValueRef.New()
-	}
 	imports.Proc(def.CEFBrowserViewComponent_CreateBrowserView).Call(m.Instance(), uintptr(client.instance), api.PascalStr(url),
 		uintptr(unsafe.Pointer(browserSettingsPtr)), extraInfo.Instance(), requestContext.Instance())
 }

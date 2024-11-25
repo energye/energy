@@ -12,7 +12,6 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
@@ -69,31 +68,23 @@ func (m *ICefCookieManager) SetCookie(url, name, value, domain, path string,
 	if !m.IsValid() {
 		return false
 	}
-	creationPtr := common.GoDateTimeToDDateTime(creation)
-	lastAccessPtr := common.GoDateTimeToDDateTime(lastAccess)
-	expiresPtr := common.GoDateTimeToDDateTime(expires)
-	cCookie := &iCefCookiePtr{
-		url:             api.PascalStr(url),
-		name:            api.PascalStr(name),
-		value:           api.PascalStr(value),
-		domain:          api.PascalStr(domain),
-		path:            api.PascalStr(path),
-		secure:          api.PascalBool(secure),
-		httponly:        api.PascalBool(httponly),
-		hasExpires:      api.PascalBool(hasExpires),
-		creation:        uintptr(unsafe.Pointer(&creationPtr)),
-		lastAccess:      uintptr(unsafe.Pointer(&lastAccessPtr)),
-		expires:         uintptr(unsafe.Pointer(&expiresPtr)),
-		sameSite:        uintptr(sameSite),
-		priority:        uintptr(priority),
-		aSetImmediately: uintptr(0),
-		aID:             uintptr(0),
-		aDeleteCookie:   uintptr(0),
-		aResult:         uintptr(0),
-		count:           uintptr(0),
-		total:           uintptr(0),
+	cookie := &TCefCookie{
+		Url:        url,
+		Name:       name,
+		Value:      value,
+		Domain:     domain,
+		Path:       path,
+		Secure:     secure,
+		Httponly:   httponly,
+		HasExpires: hasExpires,
+		Creation:   creation,
+		LastAccess: lastAccess,
+		Expires:    expires,
+		SameSite:   sameSite,
+		Priority:   priority,
 	}
-	r1, _, _ := imports.Proc(def.CefCookieManager_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cCookie)), callback.Instance())
+	cookiePtr := cookie.ToPtr()
+	r1, _, _ := imports.Proc(def.CefCookieManager_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cookiePtr)), callback.Instance())
 	return api.GoBool(r1)
 }
 

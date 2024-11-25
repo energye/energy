@@ -18,15 +18,14 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/types"
-	"github.com/energye/golcl/lcl/api"
 	"time"
 	"unsafe"
 )
 
 type unsafePointer = unsafe.Pointer
 
-// ICefCookie CEF Cookie
-type ICefCookie struct {
+// TCefCookie CEF Cookie
+type TCefCookie struct {
 	Url, Name, Value, Domain, Path string
 	Secure, Httponly, HasExpires   bool
 	Creation, LastAccess, Expires  time.Time
@@ -34,8 +33,6 @@ type ICefCookie struct {
 	SameSite                       consts.TCefCookieSameSite
 	Priority                       consts.TCefCookiePriority
 	SetImmediately                 bool
-	DeleteCookie                   bool
-	Result                         bool
 }
 
 // TCefKeyEvent CEF 键盘事件
@@ -52,38 +49,28 @@ type TCefKeyEvent struct {
 
 // TCefRequestContextSettings CEF 请求上下文配置
 type TCefRequestContextSettings struct {
-	CachePath                        TCefString
-	PersistSessionCookies            Int32
-	AcceptLanguageList               TCefString // Remove CEF 118
-	CookieableSchemesList            TCefString
-	CookieableSchemesExcludeDefaults Int32
-}
-
-func (m *TCefRequestContextSettings) ToPtr() *tCefRequestContextSettingsPtr {
-	return &tCefRequestContextSettingsPtr{
-		CachePath:                        api.PascalStr(string(m.CachePath)),
-		PersistSessionCookies:            uintptr(m.PersistSessionCookies),
-		AcceptLanguageList:               api.PascalStr(string(m.AcceptLanguageList)), // Remove CEF 118
-		CookieableSchemesList:            api.PascalStr(string(m.CookieableSchemesList)),
-		CookieableSchemesExcludeDefaults: uintptr(m.CookieableSchemesExcludeDefaults),
-	}
+	CachePath                        string
+	PersistSessionCookies            int32
+	AcceptLanguageList               string // Remove CEF 118
+	CookieableSchemesList            string
+	CookieableSchemesExcludeDefaults int32
 }
 
 // TCefBrowserSettings CEF Browser配置
 type TCefBrowserSettings struct {
 	instance                   *tCefBrowserSettingsPtr
-	WindowlessFrameRate        Integer
-	StandardFontFamily         TCefString
-	FixedFontFamily            TCefString
-	SerifFontFamily            TCefString
-	SansSerifFontFamily        TCefString
-	CursiveFontFamily          TCefString
-	FantasyFontFamily          TCefString
-	DefaultFontSize            Integer
-	DefaultFixedFontSize       Integer
-	MinimumFontSize            Integer
-	MinimumLogicalFontSize     Integer
-	DefaultEncoding            TCefString
+	WindowlessFrameRate        int32
+	StandardFontFamily         string
+	FixedFontFamily            string
+	SerifFontFamily            string
+	SansSerifFontFamily        string
+	CursiveFontFamily          string
+	FantasyFontFamily          string
+	DefaultFontSize            int32
+	DefaultFixedFontSize       int32
+	MinimumFontSize            int32
+	MinimumLogicalFontSize     int32
+	DefaultEncoding            string
 	RemoteFonts                consts.TCefState
 	Javascript                 consts.TCefState
 	JavascriptCloseWindows     consts.TCefState
@@ -240,24 +227,23 @@ type TCefScreenInfo struct {
 	AvailableRect     TCefRect
 }
 
-// TCefTouchHandleState
-//
-//	/include/internal/cef_types.h (cef_touch_handle_state_t)
+// Touch handle state.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_touch_handle_state_t)</see></para>
 type TCefTouchHandleState struct {
-	TouchHandleId    int32
-	Flags            uint32
-	Enabled          int32
+	//  Touch handle id. Increments for each new touch handle.
+	TouchHandleId int32
+	//  Combination of TCefTouchHandleStateFlags values indicating what state is set.
+	Flags uint32
+	//  Enabled state. Only set if |flags| contains CEF_THS_FLAG_ENABLED.
+	Enabled int32
+	//  Orientation state. Only set if |flags| contains CEF_THS_FLAG_ORIENTATION.
 	Orientation      consts.TCefHorizontalAlignment
 	MirrorVertical   int32
 	MirrorHorizontal int32
-	Origin           TCefPoint
-	Alpha            float32
-}
-
-// ICefMenuButtonPressedLock
-// include/capi/views/cef_menu_button_delegate_capi.h (cef_menu_button_pressed_lock_t)
-type ICefMenuButtonPressedLock struct {
-	base TCefBaseRefCounted
+	//  Origin state. Only set if |flags| contains CEF_THS_FLAG_ORIGIN.
+	Origin TCefPoint
+	//  Alpha state. Only set if |flags| contains CEF_THS_FLAG_ALPHA.
+	Alpha float32
 }
 
 // TCefRange
@@ -276,7 +262,7 @@ type TCefInsets struct {
 	Right  int32
 }
 
-type CefPdfPrintSettings struct {
+type TCefPdfPrintSettings struct {
 	Landscape           int32                         // Integer
 	PrintBackground     int32                         // Integer
 	Scale               float64                       // double
@@ -296,33 +282,41 @@ type CefPdfPrintSettings struct {
 
 // include/internal/cef_types.h (cef_popup_features_t)
 type TCefPopupFeatures struct {
-	X                  Integer
-	XSet               Integer
-	Y                  Integer
-	YSet               Integer
-	Width              Integer
-	WidthSet           Integer
-	Height             Integer
-	HeightSet          Integer
-	MenuBarVisible     Integer // Use-CEF:[49]
-	StatusBarVisible   Integer // Use-CEF:[49]
-	ToolBarVisible     Integer // Use-CEF:[49]
-	LocationBarVisible Integer
-	ScrollbarsVisible  Integer // Use-CEF:[49]
-	IsPopup            Integer // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
-	Resizable          Integer
-	Fullscreen         Integer
-	Dialog             Integer
+	X                  int32
+	XSet               int32
+	Y                  int32
+	YSet               int32
+	Width              int32
+	WidthSet           int32
+	Height             int32
+	HeightSet          int32
+	MenuBarVisible     int32 // Use-CEF:[49]
+	StatusBarVisible   int32 // Use-CEF:[49]
+	ToolBarVisible     int32 // Use-CEF:[49]
+	LocationBarVisible int32
+	ScrollbarsVisible  int32 // Use-CEF:[49]
+	IsPopup            int32 // CEF 110 ~ Current :True (1) if browser interface elements should be hidden.
+	Resizable          int32
+	Fullscreen         int32
+	Dialog             int32
 	AdditionalFeatures TCefStringList // Use-CEF:[49]
 }
 
-// include/internal/cef_types.h (cef_composition_underline_t)
+// Structure representing IME composition underline information. This is a thin
+// wrapper around Blink's WebCompositionUnderline class and should be kept in
+// sync with that.
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_time.h">CEF source file: /include/internal/cef_time.h (cef_composition_underline_t)</see></para>
 type TCefCompositionUnderline struct {
-	Range           TCefRange
-	Color           TCefColor
+	//  Underline character range.
+	Range TCefRange
+	//  Text color.
+	Color TCefColor
+	//  Background color.
 	BackgroundColor TCefColor
-	Thick           int32
-	Style           consts.TCefCompositionUnderlineStyle
+	//  Set to true (1) for thick underline.
+	Thick int32
+	//  Style.
+	Style consts.TCefCompositionUnderlineStyle
 }
 
 // Initialization settings. Specify NULL or 0 to get the recommended default
@@ -352,6 +346,20 @@ type TCefBoxLayoutSettings struct {
 	// views will overflow the parent, space is subtracted in these ratios. A
 	// flex of 0 means this view is not resized. Flex values must not be negative.
 	DefaultFlex int32
+}
+
+// TLinuxWindowProperties String version
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_linux_window_properties_t)</see></para>
+type TLinuxWindowProperties struct {
+	instance *tLinuxWindowPropertiesPtr
+	// Main window's Wayland's app_id
+	WaylandAppId string
+	// Main window's WM_CLASS_CLASS in X11
+	WmClassClass string
+	// Main window's WM_CLASS_NAME in X11
+	WmClassName string
+	// Main window's WM_WINDOW_ROLE in X11
+	WmRoleName string
 }
 
 // ResultString 字符串返回值
@@ -425,17 +433,4 @@ func (m *TCefKeyEvent) KeyDown() bool {
 
 func (m *TCefKeyEvent) KeyUp() bool {
 	return m.Kind == consts.KEYEVENT_KEYUP
-}
-
-// TLinuxWindowProperties String version
-// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_linux_window_properties_t)</see></para>
-type TLinuxWindowProperties struct {
-	// Main window's Wayland's app_id
-	WaylandAppId string
-	// Main window's WM_CLASS_CLASS in X11
-	WmClassClass string
-	// Main window's WM_CLASS_NAME in X11
-	WmClassName string
-	// Main window's WM_WINDOW_ROLE in X11
-	WmRoleName string
 }
