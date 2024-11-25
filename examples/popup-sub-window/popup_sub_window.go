@@ -94,8 +94,13 @@ func main() {
 			}
 		}
 		//弹出子窗口
-		event.SetOnBeforePopup(func(sender lcl.IObject, popupWindow cef.IBrowserWindow, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
+		event.SetOnBeforePopup(func(sender lcl.IObject, popupWindow cef.IBrowserWindow, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo,
+			popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 			fmt.Println("beforePopupInfo-TargetUrl", beforePopupInfo.TargetUrl, strings.Index(beforePopupInfo.TargetUrl, "popup_1"), strings.Index(beforePopupInfo.TargetUrl, "popup_2"))
+			fmt.Printf("beforePopupInfo: %+v\n", beforePopupInfo)
+			fmt.Printf("popupFeatures: %+v\n", popupFeatures)
+			fmt.Printf("windowInfo: %+v\n", windowInfo)
+			fmt.Printf("settings: %+v\n", settings)
 			if strings.Index(beforePopupInfo.TargetUrl, "popup_1") > 0 {
 				popupWindow.SetSize(800, 600)
 				popupWindow.HideTitle()

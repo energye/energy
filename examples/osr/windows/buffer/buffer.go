@@ -38,9 +38,10 @@ func main() {
 	global.SetDefaultInterval(10)
 	app.SetOnScheduleMessagePumpWork(nil)
 	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
-	app.StartMainProcess()
-	// 运行应用, 传入窗口
-	lcl.RunApp(&window)
+	if app.StartMainProcess() {
+		// 运行应用, 传入窗口
+		lcl.RunApp(&window)
+	}
 }
 
 // 窗口
@@ -114,7 +115,9 @@ func (m *WindowForm) chromiumEvent() {
 		m.bufferPanel.SetCursor(cef.CefCursorToWindowsCursor(cursorType))
 		return true
 	})
-	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
+	m.chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo,
+		popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings,
+		resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
 		return true // 阻止弹出窗口
 	})
 	m.chromium.SetOnTooltip(func(sender lcl.IObject, browser *cef.ICefBrowser, text *string) (result bool) {

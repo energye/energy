@@ -36,11 +36,12 @@ func main() {
 			url := frame.Url()
 			fmt.Println("manager:", manager, url)
 			visitor := cef.CookieVisitorRef.New()
-			visitor.SetOnVisit(func(cookie *cef.ICefCookie) (deleteCookie, result bool) {
+			visitor.SetOnVisit(func(cookie *cef.TCefCookie, deleteCookie, result *bool) {
 				fmt.Printf("cookie: %+v\n", cookie)
 				window.Chromium().SetCookie(url, cookie.Name, cookie.Value, cookie.Domain, cookie.Path, cookie.Secure, cookie.Httponly, cookie.HasExpires, cookie.Creation, cookie.LastAccess, cookie.Expires, cookie.SameSite, cookie.Priority, cookie.SetImmediately, cookie.ID)
 				fmt.Println("\tFlushCookieStore:", window.Chromium().FlushCookieStore(true))
-				return false, true
+				*result = true
+				return
 			})
 			manager.VisitAllCookies(visitor)
 		})

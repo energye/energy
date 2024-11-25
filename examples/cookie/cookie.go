@@ -55,7 +55,7 @@ func main() {
 	//在SetBrowserInit中设置cookie事件,这些事件将返回操作后的结果
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
 		//获取cookie时触发
-		event.SetOnCookiesVisited(func(sender lcl.IObject, cookie *cef.ICefCookie) {
+		event.SetOnCookiesVisited(func(sender lcl.IObject, cookie *cef.TCefCookie, deleteCookie, result *bool) {
 			fmt.Printf("SetOnCookiesVisited: %+v\n", cookie)
 			//将结果返回到html中
 			data, _ := json.Marshal(cookie)

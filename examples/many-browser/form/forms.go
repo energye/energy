@@ -5,7 +5,6 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
-	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
@@ -153,9 +152,9 @@ func newTabBrowser(window *cef.LCLBrowserWindow, page *lcl.TPageControl) {
 	var context *cef.ICefRequestContext
 	if switchCacheRadFalse.Checked() {
 		settings := cef.TCefRequestContextSettings{}
-		settings.CachePath = et.TCefString(filepath.Join(rootCachePath, fmt.Sprintf("sing_%v", name)))
+		settings.CachePath = filepath.Join(rootCachePath, fmt.Sprintf("sing_%v", name))
 		settings.PersistSessionCookies = 1 //bool: 0 或 1
-		context = cef.RequestContextRef.New(&settings, nil)
+		context = cef.RequestContextRef.New(settings, nil)
 	}
 	// 创建功能按钮
 	boxTop := lcl.NewPanel(window)

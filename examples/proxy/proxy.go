@@ -29,7 +29,7 @@ func main() {
 			model.AddCheckItem(loadEnergyUrl, "load-energy")
 			loadBaiduUrl = model.CefMis.NextCommandId()
 			model.AddCheckItem(loadBaiduUrl, "load-baidu")
-			return false
+			return true
 		})
 		event.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32, window cef.IBrowserWindow) bool {
 			if commandId == loadEnergyUrl {
@@ -65,7 +65,7 @@ func main() {
 				//	MaxConnectionsPerProxy: 100,
 				//}
 				proxyDict.SetString("mode", "fixed_servers")
-				proxyDict.SetString("server", "192.168.1.100:8888")
+				proxyDict.SetString("server", "127.0.0.1:10809")
 				// 最后通过 Value 将代理字典值设置到 requestContext.SetPreference("proxy", proxy)
 				proxy := cef.ValueRef.New()
 				proxy.SetDictionary(proxyDict)
