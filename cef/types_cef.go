@@ -23,6 +23,8 @@ import (
 	"unsafe"
 )
 
+type unsafePointer = unsafe.Pointer
+
 // ICefCookie CEF Cookie
 type ICefCookie struct {
 	Url, Name, Value, Domain, Path string
@@ -329,27 +331,27 @@ type TCefCompositionUnderline struct {
 // <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_box_layout_settings_t)</see></para>
 type TCefBoxLayoutSettings struct {
 	// If true (1) the layout will be horizontal, otherwise the layout will be vertical.
-	Horizontal Integer
+	Horizontal int32
 	// Adds additional horizontal space between the child view area and the host view border.
-	InsideBorderHorizontalSpacing Integer
+	InsideBorderHorizontalSpacing int32
 	// Adds additional vertical space between the child view area and the host view border.
-	InsideBorderVerticalSpacing Integer
+	InsideBorderVerticalSpacing int32
 	// Adds additional space around the child view area.
 	InsideBorderInsets TCefInsets
 	// Adds additional space between child views.
-	BetweenChildSpacing Integer
+	BetweenChildSpacing int32
 	// Specifies where along the main axis the child views should be laid out.
 	MainAxisAlignment consts.TCefMainAxisAlignment
 	// Specifies where along the cross axis the child views should be laid out.
 	CrossAxisAlignment consts.TCefMainAxisAlignment
 	// Minimum cross axis size.
-	MinimumCrossAxisSize Integer
+	MinimumCrossAxisSize int32
 	// Default flex for views when none is specified via CefBoxLayout methods.
 	// Using the preferred size as the basis, free space along the main axis is
 	// distributed to views in the ratio of their flex weights. Similarly, if the
 	// views will overflow the parent, space is subtracted in these ratios. A
 	// flex of 0 means this view is not resized. Flex values must not be negative.
-	DefaultFlex Integer
+	DefaultFlex int32
 }
 
 // ResultString 字符串返回值
@@ -436,13 +438,4 @@ type TLinuxWindowProperties struct {
 	WmClassName string
 	// Main window's WM_WINDOW_ROLE in X11
 	WmRoleName string
-}
-
-func (m *TLinuxWindowProperties) ToPtr() *tLinuxWindowPropertiesPtr {
-	return &tLinuxWindowPropertiesPtr{
-		WaylandAppId: api.PascalStr(m.WaylandAppId),
-		WmClassClass: api.PascalStr(m.WmClassClass),
-		WmClassName:  api.PascalStr(m.WmClassName),
-		WmRoleName:   api.PascalStr(m.WmRoleName),
-	}
 }

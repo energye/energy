@@ -358,3 +358,77 @@ func (m *tLinuxWindowPropertiesPtr) convert() TLinuxWindowProperties {
 		WmRoleName:   api.GoStr(m.WmRoleName),
 	}
 }
+
+func (m *TLinuxWindowProperties) ToPtr() *tLinuxWindowPropertiesPtr {
+	return &tLinuxWindowPropertiesPtr{
+		WaylandAppId: api.PascalStr(m.WaylandAppId),
+		WmClassClass: api.PascalStr(m.WmClassClass),
+		WmClassName:  api.PascalStr(m.WmClassName),
+		WmRoleName:   api.PascalStr(m.WmRoleName),
+	}
+}
+
+type tCefInsetsPtr struct {
+	Top    uintptr //int32
+	Left   uintptr //int32
+	Bottom uintptr //int32
+	Right  uintptr //int32
+}
+
+func (m *tCefInsetsPtr) convert() TCefInsets {
+	return TCefInsets{
+		Top:    *(*int32)(unsafePointer(m.Top)),
+		Left:   *(*int32)(unsafePointer(m.Left)),
+		Bottom: *(*int32)(unsafePointer(m.Bottom)),
+		Right:  *(*int32)(unsafePointer(m.Right)),
+	}
+}
+
+func (m *TCefInsets) ToPtr() *tCefInsetsPtr {
+	return &tCefInsetsPtr{
+		Top:    uintptr(unsafePointer(&m.Top)),
+		Left:   uintptr(unsafePointer(&m.Left)),
+		Bottom: uintptr(unsafePointer(&m.Bottom)),
+		Right:  uintptr(unsafePointer(&m.Right)),
+	}
+}
+
+type tCefBoxLayoutSettingsPtr struct {
+	Horizontal                    uintptr //Integer
+	InsideBorderHorizontalSpacing uintptr //Integer
+	InsideBorderVerticalSpacing   uintptr //Integer
+	InsideBorderInsets            uintptr //tCefInsetsPtr
+	BetweenChildSpacing           uintptr //Integer
+	MainAxisAlignment             uintptr //consts.TCefMainAxisAlignment
+	CrossAxisAlignment            uintptr //consts.TCefMainAxisAlignment
+	MinimumCrossAxisSize          uintptr //Integer
+	DefaultFlex                   uintptr //Integer
+}
+
+func (m *tCefBoxLayoutSettingsPtr) convert() *TCefBoxLayoutSettings {
+	return &TCefBoxLayoutSettings{
+		Horizontal:                    *(*int32)(unsafePointer(m.Horizontal)),
+		InsideBorderHorizontalSpacing: *(*int32)(unsafePointer(m.InsideBorderHorizontalSpacing)),
+		InsideBorderVerticalSpacing:   *(*int32)(unsafePointer(m.InsideBorderVerticalSpacing)),
+		InsideBorderInsets:            (*tCefInsetsPtr)(unsafe.Pointer(m.InsideBorderInsets)).convert(),
+		BetweenChildSpacing:           *(*int32)(unsafePointer(m.BetweenChildSpacing)),
+		MainAxisAlignment:             *(*consts.TCefMainAxisAlignment)(unsafePointer(m.MainAxisAlignment)),
+		CrossAxisAlignment:            *(*consts.TCefMainAxisAlignment)(unsafePointer(m.CrossAxisAlignment)),
+		MinimumCrossAxisSize:          *(*int32)(unsafePointer(m.MinimumCrossAxisSize)),
+		DefaultFlex:                   *(*int32)(unsafePointer(m.DefaultFlex)),
+	}
+}
+
+func (m *TCefBoxLayoutSettings) ToPtr() *tCefBoxLayoutSettingsPtr {
+	return &tCefBoxLayoutSettingsPtr{
+		Horizontal:                    uintptr(unsafePointer(&m.Horizontal)),
+		InsideBorderHorizontalSpacing: uintptr(unsafePointer(&m.InsideBorderHorizontalSpacing)),
+		InsideBorderVerticalSpacing:   uintptr(unsafePointer(&m.InsideBorderVerticalSpacing)),
+		InsideBorderInsets:            uintptr(unsafePointer(m.InsideBorderInsets.ToPtr())),
+		BetweenChildSpacing:           uintptr(unsafePointer(&m.BetweenChildSpacing)),
+		MainAxisAlignment:             uintptr(unsafePointer(&m.MainAxisAlignment)),
+		CrossAxisAlignment:            uintptr(unsafePointer(&m.CrossAxisAlignment)),
+		MinimumCrossAxisSize:          uintptr(unsafePointer(&m.MinimumCrossAxisSize)),
+		DefaultFlex:                   uintptr(unsafePointer(&m.DefaultFlex)),
+	}
+}
