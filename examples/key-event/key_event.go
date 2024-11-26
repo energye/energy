@@ -29,13 +29,12 @@ func main() {
 	}
 	//在主窗口初始化回调函数里设置浏览器事件
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, browserWindow cef.IBrowserWindow) {
-		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent *consts.TCefEventHandle, window cef.IBrowserWindow, result *bool) {
+		event.SetOnKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent consts.TCefEventHandle, window cef.IBrowserWindow, result *bool) {
 			fmt.Printf("%s  KeyEvent:%+v osEvent:%+v\n", string(rune(event.Character)), event, osEvent)
-			fmt.Println(window.Id())
 		})
-		browserWindow.Chromium().SetOnPreKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent *consts.TCefEventHandle) (isKeyboardShortcut, result bool) {
+		browserWindow.Chromium().SetOnPreKeyEvent(func(sender lcl.IObject, browser *cef.ICefBrowser, event *cef.TCefKeyEvent, osEvent consts.TCefEventHandle) (isKeyboardShortcut, result bool) {
 			fmt.Printf("%s  PreKeyEvent:%+v osEvent:%+v\n", string(rune(event.Character)), event, osEvent)
-			return false, false
+			return
 		})
 	})
 	//内置http服务链接安全配置

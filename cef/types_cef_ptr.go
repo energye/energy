@@ -627,3 +627,5 @@ func (m *tCefTouchHandleStatePtr) convert() *TCefTouchHandleState {
 		Alpha:            fromPtrFloat32(m.Alpha),
 	}
 }
+
+// ================

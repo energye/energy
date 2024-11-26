@@ -9,12 +9,16 @@
 //----------------------------------------
 
 //go:build windows
+// +build windows
 
 package consts
 
-import "github.com/energye/energy/v2/types"
+import (
+	"github.com/energye/energy/v2/types"
+	"unsafe"
+)
 
-type TCefMenuAccelerator = types.Int32
+type TCefMenuAccelerator = int32
 
 const (
 	MA_Shift                          = "SHIFT"
@@ -42,7 +46,8 @@ const (
 )
 
 // TCefEventHandle
-//  /include/internal/cef_types_win.h (cef_event_handle_t)
+//
+//	/include/internal/cef_types_win.h (cef_event_handle_t)
 type TCefEventHandle = MSG
 
 type MSG struct {
@@ -52,4 +57,11 @@ type MSG struct {
 	LParam  types.LPARAM
 	Time    types.DWORD
 	Pt      types.Point
+}
+
+func EventHandle(ptr uintptr) TCefEventHandle {
+	if ptr == 0 {
+		return TCefEventHandle{}
+	}
+	return *(*TCefEventHandle)(unsafe.Pointer(ptr))
 }

@@ -39,12 +39,12 @@ type TCefCookie struct {
 type TCefKeyEvent struct {
 	Kind                 consts.TCefKeyEventType // called 'type' in the original CEF source code
 	Modifiers            consts.TCefEventFlags
-	WindowsKeyCode       Int32
-	NativeKeyCode        Int32
-	IsSystemKey          Int32
-	Character            UInt16
-	UnmodifiedCharacter  UInt16
-	FocusOnEditableField Int32
+	WindowsKeyCode       int32
+	NativeKeyCode        int32
+	IsSystemKey          int32
+	Character            uint16
+	UnmodifiedCharacter  uint16
+	FocusOnEditableField int32
 }
 
 // TCefRequestContextSettings CEF 请求上下文配置

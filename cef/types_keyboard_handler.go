@@ -77,8 +77,8 @@ func (m *ICefKeyboardHandler) SetOnKeyEvent(fn onKeyEvent) {
 
 // ************************** events ************************** //
 
-type onPreKeyEvent func(browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle) (isKeyboardShortcut, result bool)
-type onKeyEvent func(browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle) bool
+type onPreKeyEvent func(browser *ICefBrowser, event *TCefKeyEvent, osEvent consts.TCefEventHandle) (isKeyboardShortcut, result bool)
+type onKeyEvent func(browser *ICefBrowser, event *TCefKeyEvent, osEvent consts.TCefEventHandle) bool
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -89,14 +89,14 @@ func init() {
 		case onPreKeyEvent:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			event := (*TCefKeyEvent)(getPtr(1))
-			osEvent := (*consts.TCefEventHandle)(getPtr(2))
+			osEvent := consts.EventHandle(getVal(2))
 			isKeyboardShortcut := (*bool)(getPtr(3))
 			result := (*bool)(getPtr(4))
 			*isKeyboardShortcut, *result = fn.(onPreKeyEvent)(browse, event, osEvent)
 		case onKeyEvent:
 			browse := &ICefBrowser{instance: getPtr(0)}
 			event := (*TCefKeyEvent)(getPtr(1))
-			osEvent := (*consts.TCefEventHandle)(getPtr(2))
+			osEvent := consts.EventHandle(getVal(2))
 			result := (*bool)(getPtr(3))
 			*result = fn.(onKeyEvent)(browse, event, osEvent)
 		default:

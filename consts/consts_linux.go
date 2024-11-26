@@ -44,5 +44,10 @@ const (
 )
 
 // TCefEventHandle
-//  /include/internal/cef_types_linux.h (cef_event_handle_t)
+//
+//	/include/internal/cef_types_linux.h (cef_event_handle_t)
 type TCefEventHandle = uintptr
+
+func EventHandle(ptr uintptr) TCefEventHandle {
+	return TCefEventHandle(ptr)
+}

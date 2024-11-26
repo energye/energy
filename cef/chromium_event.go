@@ -400,7 +400,7 @@ func init() {
 		case chromiumEventOnPreKey:
 			browse := &ICefBrowser{instance: getPtr(1)}
 			event := (*TCefKeyEvent)(getPtr(2))
-			osEvent := consts.TCefEventHandle(getVal(3))
+			osEvent := consts.EventHandle(getVal(3))
 			isKeyboardShortcut := (*bool)(getPtr(4))
 			result := (*bool)(getPtr(5))
 			*isKeyboardShortcut, *result = fn.(chromiumEventOnPreKey)(lcl.AsObject(getPtr(0)), browse, event, osEvent)
@@ -665,7 +665,7 @@ func init() {
 			sender := getPtr(0)
 			browse := &ICefBrowser{instance: getPtr(1)}
 			keyEvent := (*TCefKeyEvent)(getPtr(2))
-			osEvent := consts.TCefEventHandle(getVal(3))
+			osEvent := consts.EventHandle(getVal(3))
 			fn.(chromiumEventOnKey)(lcl.AsObject(sender), browse, keyEvent, osEvent, (*bool)(getPtr(4)))
 		case chromiumEventOnFullScreenModeChange:
 			sender := getPtr(0)
