@@ -74,7 +74,7 @@ type chromiumEventOnGetTouchHandleSize func(sender lcl.IObject, browser *ICefBro
 type chromiumEventOnGetViewRect func(sender lcl.IObject, browser *ICefBrowser) *TCefRect
 type chromiumEventOnGotFocus func(sender lcl.IObject, browser *ICefBrowser)
 type chromiumEventOnHttpAuthCredentialsCleared func(sender lcl.IObject)
-type chromiumEventOnIMECompositionRangeChanged func(sender lcl.IObject, browser *ICefBrowser, selectedRange *TCefRange, characterBoundsCount uint32, characterBounds *TCefRect)
+type chromiumEventOnIMECompositionRangeChanged func(sender lcl.IObject, browser *ICefBrowser, selectedRange TCefRange, characterBoundsCount uint32, characterBounds TCefRect)
 type chromiumEventOnJsDialog func(sender lcl.IObject, browser *ICefBrowser, originUrl string, dialogType consts.TCefJsDialogType, messageText, defaultPromptText string, callback *ICefJsDialogCallback) (suppressMessage bool, result bool)
 type chromiumEventOnMediaAccessChange func(sender lcl.IObject, browser *ICefBrowser, hasVideoAccess, hasAudioAccess bool)
 type chromiumEventOnMediaRouteCreateFinished func(sender lcl.IObject, result consts.TCefMediaRouterCreateResult, error string, route *ICefMediaRoute) // TODO ICefMediaRoute

@@ -343,9 +343,9 @@ func init() {
 			fn.(chromiumEventOnHttpAuthCredentialsCleared)(lcl.AsObject(getPtr(0)))
 		case chromiumEventOnIMECompositionRangeChanged:
 			browser := &ICefBrowser{instance: getPtr(1)}
-			rng := (*TCefRange)(getPtr(2))
+			rng := *(*TCefRange)(getPtr(2))
 			characterBoundsCount := *(*uint32)(getPtr(3))
-			characterBounds := (*TCefRect)(getPtr(4))
+			characterBounds := *(*TCefRect)(getPtr(4))
 			fn.(chromiumEventOnIMECompositionRangeChanged)(lcl.AsObject(getPtr(0)), browser, rng, characterBoundsCount, characterBounds)
 		case chromiumEventOnJsDialog:
 			browse := &ICefBrowser{instance: getPtr(1)}

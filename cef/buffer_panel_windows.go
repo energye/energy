@@ -17,6 +17,7 @@ package cef
 
 import (
 	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -55,6 +56,7 @@ func (m *TBufferPanel) SetOnPointerUpdate(fn bufferPanelOnHandledMessage) {
 type TCefCompositionUnderlineArray struct {
 	instance unsafe.Pointer
 	count    int
+	size     uintptr
 }
 
 func (m *TCefCompositionUnderlineArray) Count() int {
@@ -66,8 +68,8 @@ func (m *TCefCompositionUnderlineArray) Get(index int) (compUnderLine TCefCompos
 		return
 	}
 	if index >= 0 && index < m.count {
-		//(*TCefCompositionUnderline)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
-		imports.SysCallN(def.BufferPanelCompositionUnderline_Get, uintptr(m.instance), uintptr(int32(index)), uintptr(unsafePointer(&compUnderLine)))
+		compUnderLine = *(*TCefCompositionUnderline)(common.GetParamPtr(uintptr(m.instance), index*int(m.size)))
+		//imports.SysCallN(def.BufferPanelCompositionUnderline_Get, uintptr(m.instance), uintptr(int32(index)), uintptr(unsafePointer(&compUnderLine)))
 	}
 	return
 }
@@ -88,6 +90,7 @@ func init() {
 			underlines := &TCefCompositionUnderlineArray{
 				instance: getPtr(2),
 				count:    int(int32(getVal(3))),
+				size:     unsafe.Sizeof(TCefCompositionUnderline{}),
 			}
 			replacementRange := *(*TCefRange)(getPtr(4))
 			selectionRange := *(*TCefRange)(getPtr(5))

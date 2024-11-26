@@ -180,13 +180,12 @@ func (m *WindowForm) chromiumEvent() {
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 	})
 	// windows IME
-	m.chromium.SetOnIMECompositionRangeChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, selectedRange *cef.TCefRange, characterBoundsCount uint32, characterBounds *cef.TCefRect) {
-		fmt.Println("SetOnIMECompositionRangeChanged", *selectedRange, characterBoundsCount, *characterBounds)
+	m.chromium.SetOnIMECompositionRangeChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, selectedRange cef.TCefRange, characterBoundsCount uint32, characterBounds cef.TCefRect) {
+		fmt.Println("SetOnIMECompositionRangeChanged", selectedRange, characterBoundsCount, characterBounds)
 	})
 	// 在Paint内展示内容到窗口中
 	// 使用 bitmap
 	m.chromium.SetOnPaint(func(sender lcl.IObject, browser *cef.ICefBrowser, kind consts.TCefPaintElementType, dirtyRects *cef.TCefRectArray, buffer uintptr, width, height int32) {
-		fmt.Println("OnPaint kind:", kind)
 		if m.bufferPanel.BeginBufferDraw() {
 			if kind == consts.PET_POPUP {
 				if popUpBitmap == nil || popUpBitmap.Width() != width || popUpBitmap.Height() != height {
@@ -378,8 +377,16 @@ func (m *WindowForm) bufferPanelEvent() {
 			}
 		}
 	})
+	m.bufferPanel.SetOnIMECommitText(func(sender lcl.IObject, text string, replacementRange cef.TCefRange, relativeCursorPos int32) {
+		fmt.Println("SetOnIMECommitText", text, replacementRange, relativeCursorPos)
+		//m.chromium.IMECommitText(text, replacementRange, relativeCursorPos)
+	})
 	m.bufferPanel.SetOnIMESetComposition(func(sender lcl.IObject, text string, underlines *cef.TCefCompositionUnderlineArray, replacementRange, selectionRange cef.TCefRange) {
-		fmt.Println("SetOnIMESetComposition", replacementRange, selectionRange, underlines.Count(), underlines.Get(0))
+		fmt.Println("SetOnIMESetComposition", text, underlines.Count(), replacementRange, selectionRange)
+		for i := 0; i < underlines.Count(); i++ {
+			line := underlines.Get(i)
+			fmt.Println("i:", i, "line:", line)
+		}
 	})
 }
 
