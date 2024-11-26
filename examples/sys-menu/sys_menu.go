@@ -31,9 +31,10 @@ func main() {
 		// 在窗口初始化时重置窗口布局 默认仅有CEFWindowParent
 		// 在这里重新指定 CEFWindowParent 的父组件, 默认是主窗口
 		// 仅 lcl 窗口
-		if window.IsLCL() {
+		if window.IsViewsFramework() {
 			// 主窗口
-			bw := window.AsLCLBrowserWindow().BrowserWindow()
+			//bw := window.AsLCLBrowserWindow().BrowserWindow()
+			bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
 			// 拿到CEFWindowParent
 			//windowParent := bw.WindowParent()
 			// 恢复四角定位， 因为默认整个窗口自动调整大小
@@ -41,7 +42,7 @@ func main() {
 
 			// 系统菜单
 			// 开始创建菜单
-			createSysMenu(bw)
+			createSysMenu(bw.Component())
 
 			// html 内容
 			// 重新设置父组件
@@ -61,16 +62,16 @@ func main() {
 }
 
 // 创建菜单
-func createSysMenu(window *cef.LCLBrowserWindow) {
+func createSysMenu(owner lcl.IComponent) {
 	//  菜单通过 MainMenu popupMenu、menuitem组合
 	// 先创建 主菜单, 有很一些事件，也可以自己绘制菜单效果通过 canvas
-	mainMenu := lcl.NewMainMenu(window)
+	mainMenu := lcl.NewMainMenu(owner)
 	mainMenu.SetOnMeasureItem(func(sender lcl.IObject, aCanvas *lcl.TCanvas, width, height *int32) {
 	})
 	// 创建一级菜单
-	fileClassA := lcl.NewMenuItem(window)
+	fileClassA := lcl.NewMenuItem(owner)
 	fileClassA.SetCaption("文件(&F)") //菜单名称 alt + f
-	aboutClassA := lcl.NewMenuItem(window)
+	aboutClassA := lcl.NewMenuItem(owner)
 	aboutClassA.SetCaption("关于(&A)")
 
 	// 把一及菜单添加到主菜单
@@ -78,7 +79,7 @@ func createSysMenu(window *cef.LCLBrowserWindow) {
 	mainMenu.Items().Add(aboutClassA)
 
 	var createMenuItem = func(label, shortCut string, click func(lcl.IObject)) (result *lcl.TMenuItem) {
-		result = lcl.NewMenuItem(window)
+		result = lcl.NewMenuItem(owner)
 		result.SetCaption(label)               //菜单项显示的文字
 		result.SetShortCutFromString(shortCut) // 快捷键
 		result.SetOnClick(click)               // 触发事件，回调函数
@@ -95,11 +96,11 @@ func createSysMenu(window *cef.LCLBrowserWindow) {
 	})
 	fileClassA.Add(openItem) // 把创建好的菜单项添加到 第一个菜单中
 	// 分割线
-	separate := lcl.NewMenuItem(window)
+	separate := lcl.NewMenuItem(owner)
 	separate.SetCaption("-")
 	fileClassA.Add(separate) // 把创建好的菜单项添加到 第一个菜单中
 	//二级菜单
-	twoLevelMenu := lcl.NewMenuItem(window)
+	twoLevelMenu := lcl.NewMenuItem(owner)
 	twoLevelMenu.SetCaption("二级菜单")
 
 	// 给二级菜单添加菜单
@@ -113,13 +114,13 @@ func createSysMenu(window *cef.LCLBrowserWindow) {
 	twoLevelMenu.Add(twoLevelSubTwoMenu)
 	fileClassA.Add(twoLevelMenu) // 把创建好的菜单项添加到 第一个菜单中
 	// 分割线
-	separate = lcl.NewMenuItem(window)
+	separate = lcl.NewMenuItem(owner)
 	separate.SetCaption("-")
 	fileClassA.Add(separate)
 
 	// 退出
 	exit := createMenuItem("退出(&E)", "Ctrl+Q", func(object lcl.IObject) {
-		window.CloseBrowserWindow()
+		//window.CloseBrowserWindow()
 	})
 	fileClassA.Add(exit)
 	// help
@@ -134,10 +135,10 @@ func createSysMenu(window *cef.LCLBrowserWindow) {
 	if common.IsDarwin() {
 		// https://wiki.lazarus.freepascal.org/Mac_Preferences_and_About_Menu
 		// 动态添加的，静态好像是通过设计器将顶级的菜单标题设置为应用程序名，但动态的就是另一种方式
-		appMenu := lcl.NewMenuItem(window)
+		appMenu := lcl.NewMenuItem(owner)
 		// 动态添加的，设置一个Unicode Apple logo char
 		appMenu.SetCaption(types.AppleLogoChar)
-		subItem := lcl.NewMenuItem(window)
+		subItem := lcl.NewMenuItem(owner)
 
 		subItem.SetCaption("关于")
 		subItem.SetOnClick(func(sender lcl.IObject) {
@@ -145,11 +146,11 @@ func createSysMenu(window *cef.LCLBrowserWindow) {
 		})
 		appMenu.Add(subItem)
 
-		subItem = lcl.NewMenuItem(window)
+		subItem = lcl.NewMenuItem(owner)
 		subItem.SetCaption("-")
 		appMenu.Add(subItem)
 
-		subItem = lcl.NewMenuItem(window)
+		subItem = lcl.NewMenuItem(owner)
 		subItem.SetCaption("首选项...")
 		subItem.SetShortCutFromString("Meta+,")
 		subItem.SetOnClick(func(sender lcl.IObject) {

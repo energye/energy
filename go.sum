@@ -1,5 +1,5 @@
-github.com/energye/golcl v1.0.12 h1:1awoPXs0e/34bbqy3pUzT2qBTGVqrBRv2r3oY5ZNj1s=
-github.com/energye/golcl v1.0.12/go.mod h1:0wCrDx7NnHT5+gylUkKi1a9DKYewmMWZQf7xYyZuq9Y=
+github.com/energye/golcl v1.1.0 h1:0s6maDbnprwjD+wFJMn8rt29LgaCVwTUM6+QLQ8oAhk=
+github.com/energye/golcl v1.1.0/go.mod h1:0wCrDx7NnHT5+gylUkKi1a9DKYewmMWZQf7xYyZuq9Y=
 github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
 github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/mattn/go-pointer v0.0.1 h1:n+XhsuGeVO6MEAp7xyEukFINEa+Quek5psIR/ylA6o0=
