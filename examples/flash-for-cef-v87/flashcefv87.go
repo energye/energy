@@ -52,7 +52,7 @@ func main() {
 			err, ok = requestContext.SetPreference("plugins.allow_outdated", boolValue)
 			println("plugins.allow_outdated:", err, ok)
 		})
-		context := cef.RequestContextRef.New(nil, ch)
+		context := cef.RequestContextRef.New(cef.TCefRequestContextSettings{}, ch)
 		// 主窗口的扩展参数设置
 		window.SetCreateBrowserExtraInfo("", context, nil)
 		// 弹出窗口

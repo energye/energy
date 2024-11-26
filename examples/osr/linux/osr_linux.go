@@ -177,8 +177,8 @@ func (m *WindowForm) chromiumEvent() {
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 	})
 	// windows IME
-	m.chromium.SetOnIMECompositionRangeChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, selectedRange *cef.TCefRange, characterBoundsCount uint32, characterBounds *cef.TCefRect) {
-		fmt.Println("SetOnIMECompositionRangeChanged", *selectedRange, characterBoundsCount, *characterBounds)
+	m.chromium.SetOnIMECompositionRangeChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, selectedRange cef.TCefRange, characterBoundsCount uint32, characterBounds cef.TCefRect) {
+		fmt.Println("SetOnIMECompositionRangeChanged", selectedRange, characterBoundsCount, characterBounds)
 	})
 	// 在Paint内展示内容到窗口中
 	// 使用 bitmap
