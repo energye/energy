@@ -292,21 +292,45 @@ type tCustomHeader struct {
 // ================
 
 type tCefPdfPrintSettingsPtr struct {
-	landscape           uintptr //Integer
-	printBackground     uintptr //Integer
-	scale               uintptr //double
-	paperWidth          uintptr //double
-	paperHeight         uintptr //double
-	preferCssPageSize   uintptr //Integer
-	marginType          uintptr //TCefPdfPrintMarginType
-	marginTop           uintptr //double
-	marginRight         uintptr //double
-	marginBottom        uintptr //double
-	marginLeft          uintptr //double
-	pageRanges          uintptr //TCefString
-	displayHeaderFooter uintptr //Integer
-	headerTemplate      uintptr //TCefString
-	footerTemplate      uintptr //TCefString
+	landscape               uintptr //Integer
+	printBackground         uintptr //Integer
+	scale                   uintptr //double
+	paperWidth              uintptr //double
+	paperHeight             uintptr //double
+	preferCssPageSize       uintptr //Integer
+	marginType              uintptr //TCefPdfPrintMarginType
+	marginTop               uintptr //double
+	marginRight             uintptr //double
+	marginBottom            uintptr //double
+	marginLeft              uintptr //double
+	pageRanges              uintptr //TCefString
+	displayHeaderFooter     uintptr //Integer
+	headerTemplate          uintptr //TCefString
+	footerTemplate          uintptr //TCefString
+	generateTaggedPdf       uintptr // Integer
+	generateDocumentOutline uintptr // Integer
+}
+
+func (m *tCefPdfPrintSettingsPtr) convert() *TCefPdfPrintSettings {
+	return &TCefPdfPrintSettings{
+		Landscape:               fromPtrInt32(m.landscape),
+		PrintBackground:         fromPtrInt32(m.printBackground),
+		Scale:                   fromPtrFloat64(m.scale),
+		PaperWidth:              fromPtrFloat64(m.paperWidth),
+		PaperHeight:             fromPtrFloat64(m.paperHeight),
+		PreferCssPageSize:       fromPtrInt32(m.preferCssPageSize),
+		MarginType:              *(*consts.TCefPdfPrintMarginType)(unsafePointer(m.marginType)),
+		MarginTop:               fromPtrFloat64(m.marginTop),
+		MarginRight:             fromPtrFloat64(m.marginRight),
+		MarginBottom:            fromPtrFloat64(m.marginBottom),
+		MarginLeft:              fromPtrFloat64(m.marginLeft),
+		PageRanges:              fromPtrStr(m.pageRanges),
+		DisplayHeaderFooter:     fromPtrInt32(m.displayHeaderFooter),
+		HeaderTemplate:          fromPtrStr(m.headerTemplate),
+		FooterTemplate:          fromPtrStr(m.footerTemplate),
+		GenerateTaggedPdf:       fromPtrInt32(m.generateTaggedPdf),
+		GenerateDocumentOutline: fromPtrInt32(m.generateDocumentOutline),
+	}
 }
 
 func (m *TCefPdfPrintSettings) ToPtr() *tCefPdfPrintSettingsPtr {
@@ -314,21 +338,23 @@ func (m *TCefPdfPrintSettings) ToPtr() *tCefPdfPrintSettingsPtr {
 		return nil
 	}
 	return &tCefPdfPrintSettingsPtr{
-		landscape:           uintptr(unsafePointer(&m.Landscape)),
-		printBackground:     uintptr(unsafePointer(&m.PrintBackground)),
-		scale:               uintptr(unsafePointer(&m.Scale)),
-		paperWidth:          uintptr(unsafePointer(&m.PaperWidth)),
-		paperHeight:         uintptr(unsafePointer(&m.PaperHeight)),
-		preferCssPageSize:   uintptr(unsafePointer(&m.PreferCssPageSize)),
-		marginType:          uintptr(unsafePointer(&m.MarginType)),
-		marginTop:           uintptr(unsafePointer(&m.MarginTop)), //m.MarginTop,
-		marginRight:         uintptr(unsafePointer(&m.MarginRight)),
-		marginBottom:        uintptr(unsafePointer(&m.MarginBottom)),
-		marginLeft:          uintptr(unsafePointer(&m.MarginLeft)),
-		pageRanges:          api.PascalStr(m.PageRanges),
-		displayHeaderFooter: uintptr(unsafePointer(&m.DisplayHeaderFooter)),
-		headerTemplate:      api.PascalStr(m.HeaderTemplate),
-		footerTemplate:      api.PascalStr(m.FooterTemplate),
+		landscape:               uintptr(unsafePointer(&m.Landscape)),
+		printBackground:         uintptr(unsafePointer(&m.PrintBackground)),
+		scale:                   uintptr(unsafePointer(&m.Scale)),
+		paperWidth:              uintptr(unsafePointer(&m.PaperWidth)),
+		paperHeight:             uintptr(unsafePointer(&m.PaperHeight)),
+		preferCssPageSize:       uintptr(unsafePointer(&m.PreferCssPageSize)),
+		marginType:              uintptr(unsafePointer(&m.MarginType)),
+		marginTop:               uintptr(unsafePointer(&m.MarginTop)),
+		marginRight:             uintptr(unsafePointer(&m.MarginRight)),
+		marginBottom:            uintptr(unsafePointer(&m.MarginBottom)),
+		marginLeft:              uintptr(unsafePointer(&m.MarginLeft)),
+		pageRanges:              api.PascalStr(m.PageRanges),
+		displayHeaderFooter:     uintptr(unsafePointer(&m.DisplayHeaderFooter)),
+		headerTemplate:          api.PascalStr(m.HeaderTemplate),
+		footerTemplate:          api.PascalStr(m.FooterTemplate),
+		generateTaggedPdf:       uintptr(unsafePointer(&m.GenerateTaggedPdf)),
+		generateDocumentOutline: uintptr(unsafePointer(&m.GenerateDocumentOutline)),
 	}
 }
 

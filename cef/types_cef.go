@@ -262,22 +262,66 @@ type TCefInsets struct {
 	Right  int32
 }
 
+// Structure representing PDF print settings. These values match the parameters
+// supported by the DevTools Page.printToPDF function. See
+// https://chromedevtools.github.io/devtools-protocol/tot/Page/#method-printToPDF
+// <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_pdf_print_settings_t)</see></para>
 type TCefPdfPrintSettings struct {
-	Landscape           int32                         // Integer
-	PrintBackground     int32                         // Integer
-	Scale               float64                       // double
-	PaperWidth          float64                       // double
-	PaperHeight         float64                       // double
-	PreferCssPageSize   int32                         // Integer
-	MarginType          consts.TCefPdfPrintMarginType // TCefPdfPrintMarginType
-	MarginTop           float64                       // double
-	MarginRight         float64                       // double
-	MarginBottom        float64                       // double
-	MarginLeft          float64                       // double
-	PageRanges          string                        // TCefString
-	DisplayHeaderFooter int32                         // Integer
-	HeaderTemplate      string                        // TCefString
-	FooterTemplate      string                        // TCefString
+	//  Set to true (1) for landscape mode or false (0) for portrait mode.
+	Landscape int32 // Integer
+	//  Set to true (1) to print background graphics.
+	PrintBackground int32 // Integer
+	//  The percentage to scale the PDF by before printing (e.g. .5 is 50%).
+	//  If this value is less than or equal to zero the default value of 1.0
+	//  will be used.
+	Scale float64 // double
+	//  Output paper size in inches. If either of these values is less than or
+	//  equal to zero then the default paper size (letter, 8.5 x 11 inches) will
+	//  be used.
+	PaperWidth  float64 // double
+	PaperHeight float64 // double
+	//  Set to true (1) to prefer page size as defined by css. Defaults to false
+	//  (0), in which case the content will be scaled to fit the paper size.
+	PreferCssPageSize int32 // Integer
+	//  Margin type.
+	MarginType consts.TCefPdfPrintMarginType // TCefPdfPrintMarginType
+	//  Margins in inches. Only used if |margin_type| is set to
+	//  PDF_PRINT_MARGIN_CUSTOM.
+	MarginTop    float64 // double
+	MarginRight  float64 // double
+	MarginBottom float64 // double
+	MarginLeft   float64 // double
+	//  Paper ranges to print, one based, e.g., '1-5, 8, 11-13'. Pages are printed
+	//  in the document order, not in the order specified, and no more than once.
+	//  Defaults to empty string, which implies the entire document is printed.
+	//  The page numbers are quietly capped to actual page count of the document,
+	//  and ranges beyond the end of the document are ignored. If this results in
+	//  no pages to print, an error is reported. It is an error to specify a range
+	//  with start greater than end.
+	PageRanges string // TCefString
+	//  Set to true (1) to display the header and/or footer. Modify
+	//  |header_template| and/or |footer_template| to customize the display.
+	DisplayHeaderFooter int32 // Integer
+	//  HTML template for the print header. Only displayed if
+	//  |display_header_footer| is true (1). Should be valid HTML markup with
+	//  the following classes used to inject printing values into them:
+	//
+	//  - date: formatted print date
+	//  - title: document title
+	//  - url: document location
+	//  - pageNumber: current page number
+	//  - totalPages: total pages in the document
+	//
+	//  For example, "<span class=title></span>" would generate a span containing the title.
+	HeaderTemplate string // TCefString
+	//  HTML template for the print footer. Only displayed if
+	//  |display_header_footer| is true (1). Uses the same format as
+	//  |header_template|.
+	FooterTemplate string // TCefString
+	//  Set to true (1) to generate tagged (accessible) PDF.
+	GenerateTaggedPdf int32 // Integer
+	//  Set to true (1) to generate a document outline.
+	GenerateDocumentOutline int32 // Integer
 }
 
 // include/internal/cef_types.h (cef_popup_features_t)

@@ -57,17 +57,17 @@ func (m *ICefPdfPrintCallback) IsValid() bool {
 	return m.instance != nil
 }
 
-func (m *ICefPdfPrintCallback) OnPdfPrintFinished(fn OnPdfPrintFinished) {
+func (m *ICefPdfPrintCallback) OnPdfPrintFinished(fn onPdfPrintFinished) {
 	imports.Proc(def.CefPdfPrintCallback_OnPdfPrintFinished).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type OnPdfPrintFinished func(path string, ok bool)
+type onPdfPrintFinished func(path string, ok bool)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
 		switch fn.(type) {
-		case OnPdfPrintFinished:
-			fn.(OnPdfPrintFinished)(api.GoStr(getVal(0)), api.GoBool(getVal(1)))
+		case onPdfPrintFinished:
+			fn.(onPdfPrintFinished)(api.GoStr(getVal(0)), api.GoBool(getVal(1)))
 		default:
 			return false
 		}

@@ -260,9 +260,6 @@ func (m *ICefBrowser) PrintToPdf(path string, settings TCefPdfPrintSettings, cal
 	if !m.IsValid() {
 		return
 	}
-	if callback == nil {
-		callback = PdfPrintCallbackRef.New()
-	}
 	settingsPtr := settings.ToPtr()
 	imports.Proc(def.CEFBrowser_PrintToPdf).Call(m.Instance(), api.PascalStr(path), uintptr(unsafe.Pointer(settingsPtr)), callback.Instance())
 }
