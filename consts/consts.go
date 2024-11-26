@@ -1115,12 +1115,16 @@ const (
 	CEF_ALPHA_TYPE_POSTMULTIPLIED
 )
 
+// Margin type for PDF printing.
 // include/internal/cef_types.h (cef_pdf_print_margin_type_t)
 type TCefPdfPrintMarginType = types.Int32
 
 const (
+	// Default margins of 1cm (~0.4 inches).
 	PDF_PRINT_MARGIN_DEFAULT TCefPdfPrintMarginType = iota
+	// No margins.
 	PDF_PRINT_MARGIN_NONE
+	// Custom margins using the |margin_*| values from TCefPdfPrintSettings.
 	PDF_PRINT_MARGIN_CUSTOM
 )
 

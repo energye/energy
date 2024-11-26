@@ -39,7 +39,21 @@ func main() {
 		bw := cef.BrowserWindow.GetWindowInfo(context.BrowserId())
 		savePath := path.Join(wd, "examples", "print-pdf", "test.pdf")
 		fmt.Println("当前页面保存为PDF", savePath)
-		bw.Chromium().PrintToPDF(savePath)
+		//bw.Chromium().PrintToPDF(savePath)
+		settings := cef.TCefPdfPrintSettings{
+			DisplayHeaderFooter: 1,
+			PaperWidth:          10,
+			PaperHeight:         10,
+			PreferCssPageSize:   100,
+			FooterTemplate:      "FooterTemplate",
+			HeaderTemplate:      `HeaderTemplate`,
+		}
+		callback := cef.PdfPrintCallbackRef.New()
+		callback.OnPdfPrintFinished(func(path string, ok bool) {
+			fmt.Println("path:", path, "ok:", ok)
+			callback.Free()
+		})
+		bw.Chromium().Browser().PrintToPdf(savePath, settings, callback)
 	})
 	cef.BrowserWindow.SetBrowserInit(func(event *cef.BrowserEvent, window cef.IBrowserWindow) {
 		window.Chromium().SetOnPdfPrintFinished(func(sender lcl.IObject, ok bool) {
