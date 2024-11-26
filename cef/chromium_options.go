@@ -176,6 +176,14 @@ func (m *TChromiumOptions) SetWebgl(value consts.TCefState) {
 	imports.Proc(def.ChromiumOptions_SetWebgl).Call(m.chromium.Instance(), value.ToPtr())
 }
 
+// Background color used for the browser before a document is loaded and when
+// no document color is specified. The alpha component must be either fully
+// opaque (0xFF) or fully transparent (0x00). If the alpha component is fully
+// opaque then the RGB components will be used as the background color. If
+// the alpha component is fully transparent for a windowed browser then the
+// TCefSettings.background_color value will be used. If the alpha component is
+// fully transparent for a windowless (off-screen) browser then transparent
+// painting will be enabled.
 func (m *TChromiumOptions) SetBackgroundColor(value types.TCefColor) {
 	m.backgroundColor = value
 	imports.Proc(def.ChromiumOptions_SetBackgroundColor).Call(m.chromium.Instance(), value.ToPtr())

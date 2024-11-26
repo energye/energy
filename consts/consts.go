@@ -470,17 +470,11 @@ const (
 type TCefState = types.Int32
 
 const (
-
 	// Use the default state for the setting.
-
 	STATE_DEFAULT = TCefState(iota)
-
 	// Enable or allow the setting.
-
 	STATE_ENABLED
-
 	// Disable or disallow the setting.
-
 	STATE_DISABLED
 )
 
