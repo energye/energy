@@ -13,7 +13,6 @@
 package cef
 
 import (
-	"fmt"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/target"
@@ -630,7 +629,6 @@ func (m *TCEFChromium) SetCookie(url, name, value, domain, path string,
 		ID:             aID,
 	}
 	cookiePtr := cookie.ToPtr()
-	fmt.Println("convert:", cookiePtr.convert())
 	imports.Proc(def.CEFChromium_SetCookie).Call(m.Instance(), uintptr(unsafe.Pointer(cookiePtr)))
 }
 

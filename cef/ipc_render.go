@@ -14,7 +14,6 @@ package cef
 
 import (
 	"errors"
-	"fmt"
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/context"
@@ -28,7 +27,6 @@ import (
 // 渲染进程消息 - 默认实现
 func renderProcessMessageReceived(browser *ICefBrowser, frame *ICefFrame, message *ICefProcessMessage) (result bool) {
 	name := message.Name()
-	fmt.Println("renderProcessMessageReceived name:", name)
 	if name == internalIPCJSEmitReplay {
 		result = ipcRender.jsExecuteGoEventMessageReply(browser, frame, message)
 	} else if name == internalIPCGoEmit {
