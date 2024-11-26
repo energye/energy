@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/lclwidget"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	t "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/colors"
@@ -16,30 +16,34 @@ import (
 	"unsafe"
 )
 
-// 该示例未使用energy封装好的窗体, 而是完全使用energy框架底层创建
-// 其实在非OSR模式中也同样可以直接使用底层自己实现
-// 该示例演示了windows的OSR模式示例
+// 必须将执行文件和子进程执行文件放置在同一目录
 
 func main() {
 	cef.GlobalInit(nil, nil)
 	var window = &WindowForm{}
 	//创建应用
-	cefApp := cef.NewApplication(true)
+	app := cef.CreateApplication()
+	cef.SetApplication(app)
+	app.SetBrowserSubprocessPath("osr_subprocess")
 	// OSR 离屏渲染
-	cefApp.SetWindowlessRenderingEnabled(true)
+	app.SetWindowlessRenderingEnabled(true)
 	// 指定消息模式
-	cefApp.SetExternalMessagePump(true)
-	cefApp.SetMultiThreadedMessageLoop(false)
-	// create work schedule
+	app.SetExternalMessagePump(true)
+	app.SetMultiThreadedMessageLoop(false)
+	app.SetSetCurrentDir(true)
+	app.SetDisableZygote(true)
+	app.SetOnScheduleMessagePumpWork(nil)
+
 	global := cef.GlobalWorkSchedulerCreate(nil)
-	global.SetDefaultInterval(10)
-	cefApp.SetOnScheduleMessagePumpWork(nil)
-	// 启动主进程, 执行后，二进制执行程序会被CEF多次执行创建子进程
-	cefApp.StartMainProcess()
-	global.CreateThread()
-	lclwidget.CustomWidgetSetInitialization()
-	// 运行应用, 传入窗口
-	lcl.RunApp(&window)
+	fmt.Println("start main")
+	start := app.StartMainProcess()
+	fmt.Println("start main", start)
+	if start {
+		global.CreateThread()
+		api.CustomWidgetSetInitialization()
+		// 运行应用, 传入窗口
+		lcl.RunApp(&window)
+	}
 }
 
 // 窗口
@@ -53,10 +57,12 @@ type WindowForm struct {
 
 // 窗口创建时回调事件
 func (m *WindowForm) OnFormCreate(sender lcl.IObject) {
+	fmt.Println("window create")
 	m.SetCaption("Energy - OSR")
-	m.SetWidth(1400)
-	m.SetHeight(900)
+	m.SetWidth(800)
+	m.SetHeight(600)
 	m.ScreenCenter()
+	fmt.Println("window create 1")
 	// 创建 chromium
 	m.chromium = cef.NewChromium(m, nil)
 	m.chromiumEvent() //注册 chromium 事件
@@ -82,6 +88,7 @@ func (m *WindowForm) OnFormCreate(sender lcl.IObject) {
 	m.bufferPanel.SetAlign(types.AlClient) // 宽高同步和主窗口一样大小
 	m.bufferPanelEvent()                   //注册 bufferPanel 事件
 	m.SetOnShow(func(sender lcl.IObject) { //显示窗口时回调
+		fmt.Println("on show")
 		// 在这里创建初始化和创建chromium
 		m.chromium.Initialized()
 		m.chromium.CreateBrowser(nil, "", nil, nil)

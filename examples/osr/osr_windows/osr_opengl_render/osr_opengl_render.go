@@ -7,7 +7,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/examples/osr/windows/opengl/form"
+	"github.com/energye/energy/v2/examples/osr/osr_windows/osr_opengl_render/form"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
