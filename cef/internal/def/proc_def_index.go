@@ -1004,7 +1004,7 @@ const (
 	CEFChromium_SetWebsiteSetting
 	CEFChromium_GetContentSetting
 	CEFChromium_SetContentSetting
-	// ChromiumOptions
+	// TChromiumOptions
 	ChromiumOptions_SetJavascript
 	ChromiumOptions_SetJavascriptCloseWindows
 	ChromiumOptions_SetJavascriptAccessClipboard
@@ -1021,6 +1021,18 @@ const (
 	ChromiumOptions_SetWindowlessFrameRate
 	ChromiumOptions_SetChromeStatusBubble
 	ChromiumOptions_ChromeZoomBubble
+	// TChromiumFontOptions
+	ChromiumFontOptions_StandardFontFamily
+	ChromiumFontOptions_FixedFontFamily
+	ChromiumFontOptions_SerifFontFamily
+	ChromiumFontOptions_SansSerifFontFamily
+	ChromiumFontOptions_CursiveFontFamily
+	ChromiumFontOptions_FantasyFontFamily
+	ChromiumFontOptions_DefaultFontSize
+	ChromiumFontOptions_DefaultFixedFontSize
+	ChromiumFontOptions_MinimumFontSize
+	ChromiumFontOptions_MinimumLogicalFontSize
+	ChromiumFontOptions_RemoteFonts
 	// ICefFrame
 	CEFFrame_Undo
 	CEFFrame_Redo

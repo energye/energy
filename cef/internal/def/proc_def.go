@@ -1004,7 +1004,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetWebsiteSetting", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetContentSetting", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetContentSetting", 0),
-		// ChromiumOptions
+		// TChromiumOptions
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascript", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascriptCloseWindows", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascriptAccessClipboard", 0),
@@ -1021,6 +1021,18 @@ func init() {
 		dllimports.NewEnergyImport("ChromiumOptions_SetWindowlessFrameRate", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetChromeStatusBubble", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_ChromeZoomBubble", 0),
+		// TChromiumFontOptions
+		dllimports.NewEnergyImport("ChromiumFontOptions_StandardFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_FixedFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_SerifFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_SansSerifFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_CursiveFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_FantasyFontFamily", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_DefaultFontSize", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_DefaultFixedFontSize", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_MinimumFontSize", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_MinimumLogicalFontSize", 0),
+		dllimports.NewEnergyImport("ChromiumFontOptions_RemoteFonts", 0),
 		//ICefFrame
 		dllimports.NewEnergyImport("CEFFrame_Undo", 0),
 		dllimports.NewEnergyImport("CEFFrame_Redo", 0),

@@ -31,7 +31,8 @@ import (
 // IChromiumProc
 // Chromium 功能函数接口
 type IChromiumProc interface {
-	Options() IChromiumOptions
+	Options() *TChromiumOptions
+	FontOptions() *TChromiumFontOptions
 	Config() *TCefChromiumConfig
 	Browser() *ICefBrowser
 	BrowserById(id int32) *ICefBrowser
@@ -271,8 +272,18 @@ func (m *TCEFChromium) ToString() string {
 	return api.GoStr(r1)
 }
 
-func (m *TCEFChromium) Options() IChromiumOptions {
+func (m *TCEFChromium) Options() *TChromiumOptions {
+	if m.options == nil {
+		m.options = NewChromiumOptions(m)
+	}
 	return m.options
+}
+
+func (m *TCEFChromium) FontOptions() *TChromiumFontOptions {
+	if m.fontOptions == nil {
+		m.fontOptions = NewChromiumFontOptions(m)
+	}
+	return m.fontOptions
 }
 
 func (m *TCEFChromium) Config() *TCefChromiumConfig {

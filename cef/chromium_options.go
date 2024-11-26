@@ -17,43 +17,9 @@ import (
 	"github.com/energye/energy/v2/types"
 )
 
-type IChromiumOptions interface {
-	Javascript() consts.TCefState
-	JavascriptCloseWindows() consts.TCefState
-	JavascriptAccessClipboard() consts.TCefState
-	JavascriptDomPaste() consts.TCefState
-	ImageLoading() consts.TCefState
-	ImageShrinkStandaloneToFit() consts.TCefState
-	TextAreaResize() consts.TCefState
-	TabToLinks() consts.TCefState
-	LocalStorage() consts.TCefState
-	Databases() consts.TCefState
-	Webgl() consts.TCefState
-	BackgroundColor() types.TCefColor
-	AcceptLanguageList() types.String // Remove CEF 118
-	WindowlessFrameRate() types.Integer
-	ChromeStatusBubble() consts.TCefState
-	SetJavascript(value consts.TCefState)
-	SetJavascriptCloseWindows(value consts.TCefState)
-	SetJavascriptAccessClipboard(value consts.TCefState)
-	SetJavascriptDomPaste(value consts.TCefState)
-	SetImageLoading(value consts.TCefState)
-	SetImageShrinkStandaloneToFit(value consts.TCefState)
-	SetTextAreaResize(value consts.TCefState)
-	SetTabToLinks(value consts.TCefState)
-	SetLocalStorage(value consts.TCefState)
-	SetDatabases(value consts.TCefState)
-	SetWebgl(value consts.TCefState)
-	SetBackgroundColor(value types.TCefColor)
-	SetAcceptLanguageList(value types.String) // Remove CEF 118
-	SetWindowlessFrameRate(value types.Integer)
-	SetChromeStatusBubble(value consts.TCefState)
-	ChromeZoomBubble() consts.TCefState
-	SetChromeZoomBubble(value consts.TCefState)
-}
-
+// The TChromiumOptions properties used to fill the TCefBrowserSettings record which is used during the browser creation.
 type TChromiumOptions struct {
-	Chromium                   IChromium
+	chromium                   IChromium
 	javascript                 consts.TCefState
 	javascriptCloseWindows     consts.TCefState
 	javascriptAccessClipboard  consts.TCefState
@@ -71,7 +37,7 @@ type TChromiumOptions struct {
 	chromeStatusBubble         consts.TCefState
 }
 
-func NewChromiumOptions(chromium IChromium) IChromiumOptions {
+func NewChromiumOptions(chromium IChromium) *TChromiumOptions {
 	return &TChromiumOptions{
 		javascript:                 consts.STATE_DEFAULT,
 		javascriptCloseWindows:     consts.STATE_DEFAULT,
@@ -88,7 +54,7 @@ func NewChromiumOptions(chromium IChromium) IChromiumOptions {
 		acceptLanguageList:         "", // Remove CEF 118
 		windowlessFrameRate:        consts.CEF_OSR_FRAMERATE_DEFAULT,
 		chromeStatusBubble:         consts.STATE_DEFAULT,
-		Chromium:                   chromium,
+		chromium:                   chromium,
 	}
 }
 
@@ -157,85 +123,85 @@ func (m *TChromiumOptions) ChromeStatusBubble() consts.TCefState {
 
 func (m *TChromiumOptions) SetJavascript(value consts.TCefState) {
 	m.javascript = value
-	imports.Proc(def.ChromiumOptions_SetJavascript).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetJavascript).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetJavascriptCloseWindows(value consts.TCefState) {
 	m.javascriptCloseWindows = value
-	imports.Proc(def.ChromiumOptions_SetJavascriptCloseWindows).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetJavascriptCloseWindows).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetJavascriptAccessClipboard(value consts.TCefState) {
 	m.javascriptAccessClipboard = value
-	imports.Proc(def.ChromiumOptions_SetJavascriptAccessClipboard).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetJavascriptAccessClipboard).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetJavascriptDomPaste(value consts.TCefState) {
 	m.javascriptDomPaste = value
-	imports.Proc(def.ChromiumOptions_SetJavascriptDomPaste).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetJavascriptDomPaste).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetImageLoading(value consts.TCefState) {
 	m.imageLoading = value
-	imports.Proc(def.ChromiumOptions_SetImageLoading).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetImageLoading).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetImageShrinkStandaloneToFit(value consts.TCefState) {
 	m.imageShrinkStandaloneToFit = value
-	imports.Proc(def.ChromiumOptions_SetImageShrinkStandaloneToFit).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetImageShrinkStandaloneToFit).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetTextAreaResize(value consts.TCefState) {
 	m.textAreaResize = value
-	imports.Proc(def.ChromiumOptions_SetTextAreaResize).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetTextAreaResize).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetTabToLinks(value consts.TCefState) {
 	m.tabToLinks = value
-	imports.Proc(def.ChromiumOptions_SetTabToLinks).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetTabToLinks).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetLocalStorage(value consts.TCefState) {
 	m.localStorage = value
-	imports.Proc(def.ChromiumOptions_SetLocalStorage).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetLocalStorage).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetDatabases(value consts.TCefState) {
 	m.databases = value
-	imports.Proc(def.ChromiumOptions_SetDatabases).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetDatabases).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetWebgl(value consts.TCefState) {
 	m.webgl = value
-	imports.Proc(def.ChromiumOptions_SetWebgl).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetWebgl).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetBackgroundColor(value types.TCefColor) {
 	m.backgroundColor = value
-	imports.Proc(def.ChromiumOptions_SetBackgroundColor).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetBackgroundColor).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 // SetAcceptLanguageList Remove CEF 118
 func (m *TChromiumOptions) SetAcceptLanguageList(value types.String) {
 	m.acceptLanguageList = value
-	imports.Proc(def.ChromiumOptions_SetAcceptLanguageList).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetAcceptLanguageList).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetWindowlessFrameRate(value types.Integer) {
 	m.windowlessFrameRate = value
-	imports.Proc(def.ChromiumOptions_SetWindowlessFrameRate).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetWindowlessFrameRate).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) SetChromeStatusBubble(value consts.TCefState) {
 	m.chromeStatusBubble = value
-	imports.Proc(def.ChromiumOptions_SetChromeStatusBubble).Call(m.Chromium.Instance(), value.ToPtr())
+	imports.Proc(def.ChromiumOptions_SetChromeStatusBubble).Call(m.chromium.Instance(), value.ToPtr())
 }
 
 func (m *TChromiumOptions) ChromeZoomBubble() consts.TCefState {
-	r1, _, _ := imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.GetValue, m.Chromium.Instance(), 0)
+	r1, _, _ := imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.GetValue, m.chromium.Instance(), 0)
 	return consts.TCefState(r1)
 }
 
 func (m *TChromiumOptions) SetChromeZoomBubble(value consts.TCefState) {
-	imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.SetValue, m.Chromium.Instance(), uintptr(value))
+	imports.Proc(def.ChromiumOptions_ChromeZoomBubble).Call(consts.SetValue, m.chromium.Instance(), uintptr(value))
 }

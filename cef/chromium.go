@@ -32,7 +32,8 @@ type IChromium interface {
 type TCEFChromium struct {
 	*lcl.TComponent
 	instance      unsafe.Pointer
-	options       IChromiumOptions
+	options       *TChromiumOptions
+	fontOptions   *TChromiumFontOptions
 	config        *TCefChromiumConfig
 	browser       *ICefBrowser
 	idBrowsers    map[int32]*ICefBrowser
@@ -55,6 +56,7 @@ func NewChromium(owner lcl.IComponent, config *TCefChromiumConfig) IChromium {
 	m.instance = unsafe.Pointer(r1)
 	m.initDefault()
 	m.options = NewChromiumOptions(m)
+	m.fontOptions = NewChromiumFontOptions(m)
 	return m
 }
 
