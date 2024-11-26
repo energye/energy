@@ -245,7 +245,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 			}
 		})
 		//事件可以被覆盖
-		m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent *consts.TCefEventHandle, result *bool) {
+		m.Chromium().SetOnKeyEvent(func(sender lcl.IObject, browser *ICefBrowser, event *TCefKeyEvent, osEvent consts.TCefEventHandle, result *bool) {
 			if bwEvent.onKeyEvent != nil {
 				bwEvent.onKeyEvent(sender, browser, event, osEvent, m.window, result)
 			}
