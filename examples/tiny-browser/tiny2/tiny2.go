@@ -108,6 +108,10 @@ func main() {
 	if common.IsLinux() {
 		app.SetDisableZygote(true)
 	}
+	app.SetEnableGPU(true)
+	app.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
+		commandLine.AppendSwitch("enable-unsafe-swiftshader")
+	})
 	// 创建 ViewsFramework
 	app.SetOnContextInitialized(func() {
 		fmt.Println("OnContextInitialized")
