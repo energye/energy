@@ -310,7 +310,7 @@ const (
 	CM_MEDIATYPE_PLUGIN
 )
 
-type MenuId = types.Int32
+type MenuId = int32
 
 const (
 	MENU_ID_BACK                       MenuId = 100
