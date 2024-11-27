@@ -68,7 +68,13 @@ func (m *MenuBar) EnsureMenuPanel() *cef.ICefPanel {
 		//	fmt.Println("OnGetPreferredSize", result)
 		//})
 		m.menuPanel = cef.PanelRef.New(m.menuPanelDelegate)
-		m.menuPanelLayout = m.menuPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 1})
+		m.menuPanelLayout = m.menuPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
+			BetweenChildSpacing: 2,
+			Horizontal:          1,
+			//MainAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_STRETCH,
+			//CrossAxisAlignment: consts.CEF_AXIS_ALIGNMENT_STRETCH,
+			//DefaultFlex:        1,
+		})
 		m.idNext = ID_TOP_MENU_FIRST
 	}
 	return m.menuPanel
@@ -167,6 +173,7 @@ func (m *ToolBar) CreateBrowseButton(label string, id int32) *cef.ICefLabelButto
 	button.SetInkDropEnabled(true)
 	button.SetEnabled(true)    // 默认为关闭
 	button.SetFocusable(false) // 不要把焦点放在按钮上
+	button.SetMinimumSize(cef.TCefSize{})
 	m.buttons = append(m.buttons, button)
 	return button
 }
@@ -221,7 +228,13 @@ func (m *ToolBar) CreateToolComponent() {
 
 func (m *ToolBar) LayoutLocationBar() {
 	// 使用水平盒布局|面板|
-	layout := m.toolPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 1})
+	layout := m.toolPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
+		BetweenChildSpacing: 2,
+		Horizontal:          1,
+		//MainAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_STRETCH,
+		//CrossAxisAlignment: consts.CEF_AXIS_ALIGNMENT_STRETCH,
+		//DefaultFlex: 1,
+	})
 	layout.SetFlexForView(m.locationBar.AsView(), 1)
 }
 

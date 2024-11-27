@@ -6,6 +6,7 @@ import (
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/consts"
 	. "github.com/energye/energy/v2/examples/tiny-browser/cefclient/browse"
+	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/views_style"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/pkgs/libname"
@@ -101,6 +102,12 @@ func (m *ViewsFramework) Create() {
 		fmt.Println("OnAutoResize", newSize)
 		return true
 	})
+	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+		isLoading_ = isLoading
+		canGoBack_ = canGoBack
+		canGoForward_ = canGoForward
+		fmt.Println("OnLoadingStateChange:", isLoading_, canGoBack_, canGoForward_)
+	})
 	m.window.SetOnGetMinimumSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		if view.GetID() == ID_WINDOW {
 			//fmt.Println("OnGetMinimumSize", result)
@@ -112,6 +119,8 @@ func (m *ViewsFramework) Create() {
 	})
 	m.window.SetOnWindowBoundsChanged(func(window *cef.ICefWindow, newBounds cef.TCefRect) {
 		fmt.Println("OnWindowBoundsChanged", newBounds)
+		//m.window.SizeToPreferredSize()
+		//m.browserView.SetSize(cef.TCefSize{Width: newBounds.Width - minimumWindowSize.Height, Height: newBounds.Height})
 	})
 	m.window.SetOnCanClose(func(window *cef.ICefWindow, result *bool) {
 		fmt.Println("OnCanClose:", *result)
@@ -130,17 +139,20 @@ func (m *ViewsFramework) Create() {
 		result.Height = 600
 		fmt.Println("OnGetInitialBounds")
 	})
+	m.window.SetOnThemeColorsChanged(func(window *cef.ICefWindow, chromeTheme int32) {
+		views_style.WindowApplyTo(window)
+	})
 	m.window.SetOnAccelerator(func(window *cef.ICefWindow, commandId int32, result *bool) {
 		fmt.Println("OnAccelerator commandId:", commandId)
 		//表示已处理，否则还会执行多次
-		app.QuitMessageLoop()
+		m.chromium.CloseBrowser(true)
 		*result = true
 	})
-	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		isLoading_ = isLoading
-		canGoBack_ = canGoBack
-		canGoForward_ = canGoForward
-		fmt.Println("OnLoadingStateChange:", isLoading_, canGoBack_, canGoForward_)
+	m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
+		fmt.Println("OnWindowChanged added:", added)
+		if added {
+
+		}
 	})
 	m.window.SetOnWindowCreated(func(window *cef.ICefWindow) {
 		fmt.Println("OnWindowCreated")
@@ -153,6 +165,11 @@ func (m *ViewsFramework) Create() {
 
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserView, nil, nil) {
 			fmt.Println("ChromeToolbar:", m.browserView.ChromeToolbar().IsValid())
+			// 允许|browser_view_|增长并填充任何剩余空间。
+			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{
+				BetweenChildSpacing: 4,
+				CrossAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_STRETCH,
+			})
 
 			// 菜单栏, 创建菜单，并添加到菜单栏中
 			menuBar.CreateFileMenuItems()
@@ -161,22 +178,20 @@ func (m *ViewsFramework) Create() {
 			// 工具栏, 创建工具组件，并添加到工具栏中
 			toolBar.CreateToolComponent()
 
-			var minWidth int32 = toolBar.AllButtonWidth()
-			var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
-			minimumWindowSize = cef.TCefSize{Width: minWidth, Height: minHeight}
-			fmt.Println("minWidth:", minWidth, "minHeight:", minHeight)
+			//var minWidth int32 = toolBar.AllButtonWidth()
+			//var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
+			//minimumWindowSize = cef.TCefSize{Width: minWidth, Height: minHeight}
+			//fmt.Println("minWidth:", minWidth, "minHeight:", minHeight)
 
 			// 菜单栏添加到窗口
 			m.window.AddChildView(menuBar.EnsureMenuPanel().AsView())
+
 			// 工具栏添加到窗口
 			m.window.AddChildView(toolBar.EnsureToolPanel().AsView())
 
-			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 0, BetweenChildSpacing: 2})
-			fmt.Println("windowLayout:", windowLayout.IsValid())
-			// 允许|browser_view_|增长并填充任何剩余空间。
-			m.window.AddChildView(m.browserView.BrowserView().AsView())
 			// 浏览器view添加到窗口
-			windowLayout.SetFlexForView(m.browserView.BrowserView().AsView(), 1)
+			m.window.AddChildView(m.browserView.AsView())
+			windowLayout.SetFlexForView(m.browserView.AsView(), 1)
 
 			m.window.Layout()
 			// 窗口居中
