@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/views_style"
 	"github.com/energye/energy/v2/pkgs/assetserve"
@@ -165,6 +166,13 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 		m.toolPanelDelegate = cef.PanelDelegateRef.New()
 		m.toolPanel = cef.PanelRef.New(m.toolPanelDelegate)
 		m.locationBarDelegate = cef.TextFieldDelegateRef.New()
+		m.locationBarDelegate.SetOnKeyEvent(func(textField *cef.ICefTextfield, event *cef.TCefKeyEvent) bool {
+			if event.Kind == consts.KEYEVENT_RAW_KEYDOWN && event.WindowsKeyCode == winapi.VK_RETURN {
+				fmt.Println("OnKeyEvent", textField.GetID(), event.KeyDown(), textField.GetText())
+				return true
+			}
+			return false
+		})
 		m.buttonDelegate = cef.ButtonDelegateRef.New()
 		m.buttonDelegate.SetOnButtonPressed(func(button *cef.ICefButton) {
 			fmt.Println("OnButtonPressed", button.GetID())
@@ -204,6 +212,9 @@ func (m *ToolBar) CreateButton(label, icon string, id int32) *cef.ICefMenuButton
 func (m *ToolBar) CreateLocationBar() *cef.ICefTextfield {
 	m.locationBar = cef.TextFieldRef.New(m.locationBarDelegate)
 	m.locationBar.SetID(ID_URL_TEXTFIELD)
+	m.locationBar.SetTextColor(cef.CefColorSetARGB(255, 150, 99, 55))
+	m.locationBar.SetFontList("Microsoft YaHei, 微软雅黑, Arial, Bold 16px")
+	m.locationBar.SetBackgroundColor(cef.CefColorSetARGB(100, 55, 99, 150))
 	return m.locationBar
 }
 
@@ -245,14 +256,14 @@ func (m *ToolBar) AllButtonWidth() int32 {
 func (m *ToolBar) CreateToolComponent() {
 	m.EnsureToolPanel()
 
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Back", ID_BACK_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Forward", ID_FORWARD_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Reload", ID_RELOAD_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Stop", ID_STOP_BUTTON).AsView())
-	//m.toolPanel.AddChildView(m.CreateButton("单击返回", "back.png", ID_BACK_BUTTON).AsView())
-	//m.toolPanel.AddChildView(m.CreateButton("单击继续", "forward.png", ID_FORWARD_BUTTON).AsView())
-	//m.toolPanel.AddChildView(m.CreateButton("单击刷新", "refresh.png", ID_RELOAD_BUTTON).AsView())
-	//m.toolPanel.AddChildView(m.CreateButton("单击停止加载", "stop.png", ID_STOP_BUTTON).AsView())
+	//m.toolPanel.AddChildView(m.CreateBrowseButton("Back", ID_BACK_BUTTON).AsView())
+	//m.toolPanel.AddChildView(m.CreateBrowseButton("Forward", ID_FORWARD_BUTTON).AsView())
+	//m.toolPanel.AddChildView(m.CreateBrowseButton("Reload", ID_RELOAD_BUTTON).AsView())
+	//m.toolPanel.AddChildView(m.CreateBrowseButton("Stop", ID_STOP_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateButton("单击返回", "back.png", ID_BACK_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateButton("单击继续", "forward.png", ID_FORWARD_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateButton("单击刷新", "refresh.png", ID_RELOAD_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateButton("单击停止加载", "stop.png", ID_STOP_BUTTON).AsView())
 	m.MakeButtonsSameSize()
 
 	m.toolPanel.AddChildView(m.CreateLocationBar().AsView())
