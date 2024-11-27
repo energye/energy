@@ -196,6 +196,16 @@ func (m *ICefTextfield) GetSelectionBackgroundColor() (color types.TCefColor) {
 	return
 }
 
+// Sets the font list. The format is "<FONT_FAMILY_LIST>,[STYLES] <SIZE>",
+// where:
+//   - FONT_FAMILY_LIST is a comma-separated list of font family names,
+//   - STYLES is an optional space-separated list of style names (case-sensitive
+//     "Bold" and "Italic" are supported), and
+//   - SIZE is an integer font size in pixels with the suffix "px".
+//
+// Here are examples of valid font description strings:
+// - "Arial, Helvetica, Bold Italic 14px"
+// - "Arial, 14px"
 func (m *ICefTextfield) SetFontList(fontList string) {
 	if !m.IsValid() {
 		return
