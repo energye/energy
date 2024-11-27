@@ -46,6 +46,9 @@ func NewMenuBar(window *cef.TCEFWindowComponent) *MenuBar {
 func (m *MenuBar) EnsureMenuPanel() *cef.ICefPanel {
 	if m.menuPanel == nil {
 		m.menuPanelDelegate = cef.PanelDelegateRef.New()
+		m.menuPanelDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+			//m.menuPanel.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
+		})
 		m.menuModeDelegate = cef.MenuModelDelegateRef.New()
 		m.menuModeDelegate.SetOnExecuteCommand(func(menuModel *cef.ICefMenuModel, commandId int32, eventFlags consts.TCefEventFlags) {
 			fmt.Println("OnExecuteCommand commandId:", commandId, eventFlags)
@@ -99,6 +102,7 @@ func (m *MenuBar) CreateMenuModel(label, tooltipText string, menuId *int32) *cef
 	// 指定一个组ID，以便在不显示菜单时使用箭头键在MenuButtons之间进行焦点遍历。
 	button.SetGroupID(kMenuBarGroupId)
 	button.SetTooltipText(tooltipText)
+	button.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
 
 	// 添加新的菜单按钮到平面上。
 	m.menuPanel.AddChildView(button.AsView())
@@ -165,6 +169,9 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 	if m.toolPanel == nil {
 		m.toolPanelDelegate = cef.PanelDelegateRef.New()
 		m.toolPanel = cef.PanelRef.New(m.toolPanelDelegate)
+		m.toolPanelDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+			//m.toolPanel.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
+		})
 		m.locationBarDelegate = cef.TextFieldDelegateRef.New()
 		m.locationBarDelegate.SetOnKeyEvent(func(textField *cef.ICefTextfield, event *cef.TCefKeyEvent) bool {
 			if event.Kind == consts.KEYEVENT_RAW_KEYDOWN && event.WindowsKeyCode == winapi.VK_RETURN {
@@ -213,8 +220,8 @@ func (m *ToolBar) CreateLocationBar() *cef.ICefTextfield {
 	m.locationBar = cef.TextFieldRef.New(m.locationBarDelegate)
 	m.locationBar.SetID(ID_URL_TEXTFIELD)
 	m.locationBar.SetTextColor(cef.CefColorSetARGB(255, 150, 99, 55))
-	m.locationBar.SetFontList("Microsoft YaHei, 微软雅黑, Arial, Bold 16px")
-	m.locationBar.SetBackgroundColor(cef.CefColorSetARGB(100, 55, 99, 150))
+	m.locationBar.SetFontList("Microsoft YaHei, 微软雅黑, Bold 16px")
+	m.locationBar.SetBackgroundColor(cef.CefColorSetARGB(50, 55, 99, 150))
 	return m.locationBar
 }
 

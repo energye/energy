@@ -10,7 +10,6 @@ import (
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/views_style"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/pkgs/libname"
 	"os"
 	"path/filepath"
 )
@@ -46,10 +45,8 @@ func main() {
 	app.SetLocale(consts.LANGUAGE_zh_CN)
 	app.SetTouchEvents(consts.STATE_ENABLED)
 	app.SetDisableZygote(true)
-	fmt.Println("libname.LibName:", libname.LibName)
-	fmt.Println("WidgetUI:", api.WidgetUI())
-	fmt.Println("ChromeVersion:", app.ChromeVersion())
-	fmt.Println("LibCefVersion:", app.LibCefVersion())
+	//fmt.Println("libname.LibName:", libname.LibName)
+	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 
 	kPrefWindowRestore := "cefclient.window_restore"
 	app.SetOnRegisterCustomPreferences(func(type_ consts.TCefPreferencesType, registrar *cef.TCefPreferenceRegistrarRef) {
@@ -113,23 +110,42 @@ func (m *ViewsFramework) Create() {
 		canGoForward_ = canGoForward
 		fmt.Println("OnLoadingStateChange:", isLoading_, canGoBack_, canGoForward_)
 	})
+	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
+		fmt.Println("OnLoadEnd httpStatusCode:", httpStatusCode)
+	})
+	m.chromium.SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, regions *cef.TCefDraggableRegions) {
+		fmt.Println("OnDraggableRegionsChanged RegionsCount:", regions.RegionsCount())
+		for i := 0; i < regions.RegionsCount(); i++ {
+			fmt.Println("Region:", regions.Region(i))
+			regions.Region(i).Bounds.X = 0
+			regions.Region(i).Bounds.Y = 0
+			regions.Region(i).Bounds.Height = 30
+		}
+		m.window.SetDraggableRegions(regions.Regions())
+	})
 	m.window.SetOnGetMinimumSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		if view.GetID() == ID_WINDOW {
 			//fmt.Println("OnGetMinimumSize", result)
 			*result = minimumWindowSize
 		}
 	})
+	m.window.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+		m.window.SetBackgroundColor(cef.CefColorSetARGB(255, 33, 34, 38))
+	})
 	m.window.SetOnGetTitleBarHeight(func(window *cef.ICefWindow, titleBarHeight *float32, result *bool) {
 		fmt.Println("OnGetTitleBarHeight:", *titleBarHeight, *result)
 	})
 	m.window.SetOnWindowBoundsChanged(func(window *cef.ICefWindow, newBounds cef.TCefRect) {
-		fmt.Println("OnWindowBoundsChanged", newBounds)
+		//fmt.Println("OnWindowBoundsChanged", newBounds)
 		//m.window.SizeToPreferredSize()
 		//m.browserView.SetSize(cef.TCefSize{Width: newBounds.Width - minimumWindowSize.Height, Height: newBounds.Height})
 	})
 	m.window.SetOnCanClose(func(window *cef.ICefWindow, result *bool) {
 		fmt.Println("OnCanClose:", *result)
 		*result = m.chromium.TryCloseBrowser()
+	})
+	m.window.SetOnIsFrameless(func(window *cef.ICefWindow, result *bool) {
+		//*result = true
 	})
 	m.window.SetOnGetInitialBounds(func(window *cef.ICefWindow, result *cef.TCefRect) {
 		fmt.Println("OnGetInitialBounds")
@@ -153,12 +169,17 @@ func (m *ViewsFramework) Create() {
 		m.chromium.CloseBrowser(true)
 		*result = true
 	})
-	//m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
-	//	fmt.Println("OnWindowChanged added:", added)
-	//	if added {
-	//
-	//	}
+	titleBar := NewTitleBar(m.window)
+	m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
+		fmt.Println("OnWindowChanged added:", added)
+		if added {
+			//titleBar.CreateTitleBrowser(m)
+		}
+	})
+	//m.window.SetOnKeyEvent(func(window *cef.ICefWindow, event *cef.TCefKeyEvent, result *bool) {
+	//	fmt.Println("OnKeyEvent")
 	//})
+	//m.window.SetOnWithStandardWindowButtons()
 	m.window.SetOnWindowCreated(func(window *cef.ICefWindow) {
 		fmt.Println("OnWindowCreated")
 		m.window.SetID(ID_WINDOW)
@@ -170,10 +191,10 @@ func (m *ViewsFramework) Create() {
 
 		menuBar := NewMenuBar(m.window) // 顶部菜单栏
 		toolBar := NewToolBar(m.window) // 顶部工具栏
-		m.window.SetOnKeyEvent(func(window *cef.ICefWindow, event *cef.TCefKeyEvent, result *bool) {
-			fmt.Println("OnKeyEvent")
-		})
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserView, nil, nil) {
+			//regions := []cef.TCefDraggableRegion{}
+			//regions = append(regions, cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 130, Y: 0, Width: 100, Height: 30}})
+			//m.window.SetDraggableRegions(regions)
 			fmt.Println("ChromeToolbar:", m.browserView.ChromeToolbar().IsValid())
 			// 允许|browser_view_|增长并填充任何剩余空间。
 			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{
@@ -192,6 +213,9 @@ func (m *ViewsFramework) Create() {
 			//var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
 			//minimumWindowSize = cef.TCefSize{Width: minWidth, Height: minHeight}
 			//fmt.Println("minWidth:", minWidth, "minHeight:", minHeight)
+
+			// 标题栏添加到窗口
+			m.window.AddChildView(titleBar.EnsureTitlePanel().AsView())
 
 			// 菜单栏添加到窗口
 			m.window.AddChildView(menuBar.EnsureMenuPanel().AsView())
