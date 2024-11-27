@@ -64,9 +64,9 @@ func (m *MenuBar) EnsureMenuPanel() *cef.ICefPanel {
 			}
 			menuButton.ShowMenu(m.menuModels[menuButton.GetID()], point, consts.CEF_MENU_ANCHOR_TOPLEFT)
 		})
-		m.menuButtonDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
-			fmt.Println("OnGetPreferredSize", result)
-		})
+		//m.menuButtonDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+		//	fmt.Println("OnGetPreferredSize", result)
+		//})
 		m.menuPanel = cef.PanelRef.New(m.menuPanelDelegate)
 		m.menuPanelLayout = m.menuPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 1})
 		m.idNext = ID_TOP_MENU_FIRST
@@ -137,23 +137,24 @@ func (m *MenuBar) CreateFileMenuItems() {
 }
 
 type ToolBar struct {
-	toolPanel         *cef.ICefPanel
-	toolPanelDelegate *cef.ICefPanelDelegate
-	buttonDelegate    *cef.ICefButtonDelegate
-	textFieldDelegate *cef.ICefTextFieldDelegate
-	locationBar       *cef.ICefTextfield
-	window            *cef.TCEFWindowComponent
+	toolPanel           *cef.ICefPanel
+	toolPanelDelegate   *cef.ICefPanelDelegate
+	buttons             []*cef.ICefLabelButton
+	buttonDelegate      *cef.ICefButtonDelegate
+	locationBarDelegate *cef.ICefTextFieldDelegate
+	locationBar         *cef.ICefTextfield
+	window              *cef.TCEFWindowComponent
 }
 
 func NewToolBar(window *cef.TCEFWindowComponent) *ToolBar {
-	return &ToolBar{window: window}
+	return &ToolBar{window: window, buttons: make([]*cef.ICefLabelButton, 0)}
 }
 
 func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 	if m.toolPanel == nil {
 		m.toolPanelDelegate = cef.PanelDelegateRef.New()
 		m.toolPanel = cef.PanelRef.New(m.toolPanelDelegate)
-		m.textFieldDelegate = cef.TextFieldDelegateRef.New()
+		m.locationBarDelegate = cef.TextFieldDelegateRef.New()
 		m.buttonDelegate = cef.ButtonDelegateRef.New()
 	}
 	return m.toolPanel
@@ -164,31 +165,69 @@ func (m *ToolBar) CreateBrowseButton(label string, id int32) *cef.ICefLabelButto
 	button := cef.LabelButtonRef.New(m.buttonDelegate, label)
 	button.SetID(id)
 	button.SetInkDropEnabled(true)
-	button.SetEnabled(false)   // 默认为关闭
+	button.SetEnabled(true)    // 默认为关闭
 	button.SetFocusable(false) // 不要把焦点放在按钮上
+	m.buttons = append(m.buttons, button)
 	return button
 }
 
 func (m *ToolBar) CreateLocationBar() *cef.ICefTextfield {
-	m.locationBar = cef.TextFieldRef.New(m.textFieldDelegate)
+	m.locationBar = cef.TextFieldRef.New(m.locationBarDelegate)
 	m.locationBar.SetID(ID_URL_TEXTFIELD)
 	return m.locationBar
 }
 
+// 使所有的|按钮|相同的大小。
+func (m *ToolBar) MakeButtonsSameSize() {
+	size := cef.TCefSize{}
+	// 确定按钮的最大尺寸。
+	for _, button := range m.buttons {
+		buttonSize := button.GetPreferredSize()
+		if size.Width < buttonSize.Width {
+			size.Width = buttonSize.Width
+		}
+		if size.Height < buttonSize.Height {
+			size.Height = buttonSize.Height
+		}
+	}
+	for _, button := range m.buttons {
+		//设置按钮的最小尺寸。
+		button.SetMinimumSize(size)
+		//重新布局按钮和所有父视图。
+		button.InvalidateLayout()
+	}
+}
+
+func (m *ToolBar) AllButtonWidth() int32 {
+	return m.buttons[0].GetBounds().Width*int32(len(m.buttons)) + 100
+}
+
 func (m *ToolBar) CreateToolComponent() {
 	m.EnsureToolPanel()
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Back", ID_BACK_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Forward", ID_FORWARD_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Reload", ID_RELOAD_BUTTON).AsView())
-	m.toolPanel.AddChildView(m.CreateBrowseButton("Stop", ID_STOP_BUTTON).AsView())
-	//m.toolPanel.AddChildView(m.CreateLocationBar().AsView())
+
+	m.toolPanel.AddChildView(m.CreateBrowseButton("<", ID_BACK_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateBrowseButton(">", ID_FORWARD_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateBrowseButton("R", ID_RELOAD_BUTTON).AsView())
+	m.toolPanel.AddChildView(m.CreateBrowseButton("S", ID_STOP_BUTTON).AsView())
+	m.MakeButtonsSameSize()
+
+	m.toolPanel.AddChildView(m.CreateLocationBar().AsView())
+	m.LayoutLocationBar()
+
+}
+
+// 允许|location|增长并填充任何剩余空间。 todo
+//panel_layout->SetFlexForView(location_bar_, 1);
+
+func (m *ToolBar) LayoutLocationBar() {
+	// 使用水平盒布局|面板|
+	layout := m.toolPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 1})
+	layout.SetFlexForView(m.locationBar.AsView(), 1)
 }
 
 func StartServer() {
-	//通过内置http服务加载资源
 	server := assetserve.NewAssetsHttpServer()
-	server.PORT = 22022 //服务端口号
+	server.PORT = 22022
 	server.LocalAssets = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\examples\\tiny-browser\\cefclient\\assets"
-	//Assets 内置资源不支持热更新 - 适用应用发布
 	go server.StartHttpServer()
 }

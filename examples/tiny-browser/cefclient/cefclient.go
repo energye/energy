@@ -86,14 +86,33 @@ func (m *ViewsFramework) Create() {
 		fmt.Println("OnBeforeClose")
 		app.QuitMessageLoop()
 	})
+	var (
+		minimumWindowSize = cef.TCefSize{Width: 100, Height: 100}
+		canGoBack_        bool
+		canGoForward_     bool
+		isLoading_        bool
+	)
 	m.browserView = cef.BrowserViewComponentRef.New(m)
+	m.browserView.SetID(ID_BROWSER_VIEW)
 	//m.browserView.SetPreferAccelerators(true)
 	m.window = cef.WindowComponentRef.New(m)
+	m.window.SetID(ID_WINDOW)
 	m.chromium.SetOnAutoResize(func(sender lcl.IObject, browser *cef.ICefBrowser, newSize *cef.TCefSize) bool {
 		fmt.Println("OnAutoResize", newSize)
 		return true
 	})
-
+	m.window.SetOnGetMinimumSize(func(view *cef.ICefView, result *cef.TCefSize) {
+		if view.GetID() == ID_WINDOW {
+			//fmt.Println("OnGetMinimumSize", result)
+			*result = minimumWindowSize
+		}
+	})
+	m.window.SetOnGetTitleBarHeight(func(window *cef.ICefWindow, titleBarHeight *float32, result *bool) {
+		fmt.Println("OnGetTitleBarHeight:", *titleBarHeight, *result)
+	})
+	m.window.SetOnWindowBoundsChanged(func(window *cef.ICefWindow, newBounds cef.TCefRect) {
+		fmt.Println("OnWindowBoundsChanged", newBounds)
+	})
 	m.window.SetOnCanClose(func(window *cef.ICefWindow, result *bool) {
 		fmt.Println("OnCanClose:", *result)
 		*result = m.chromium.TryCloseBrowser()
@@ -103,7 +122,9 @@ func (m *ViewsFramework) Create() {
 		result.Width = width
 		result.Height = height
 	})
-
+	m.window.SetOnWindowActivationChanged(func(window *cef.ICefWindow, active bool) {
+		fmt.Println("OnWindowActivationChanged")
+	})
 	m.window.SetOnGetInitialBounds(func(window *cef.ICefWindow, result *cef.TCefRect) {
 		result.Width = 800
 		result.Height = 600
@@ -114,6 +135,12 @@ func (m *ViewsFramework) Create() {
 		//表示已处理，否则还会执行多次
 		app.QuitMessageLoop()
 		*result = true
+	})
+	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
+		isLoading_ = isLoading
+		canGoBack_ = canGoBack
+		canGoForward_ = canGoForward
+		fmt.Println("OnLoadingStateChange:", isLoading_, canGoBack_, canGoForward_)
 	})
 	m.window.SetOnWindowCreated(func(window *cef.ICefWindow) {
 		fmt.Println("OnWindowCreated")
@@ -126,9 +153,6 @@ func (m *ViewsFramework) Create() {
 
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserView, nil, nil) {
 			fmt.Println("ChromeToolbar:", m.browserView.ChromeToolbar().IsValid())
-			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 0, BetweenChildSpacing: 2})
-			fmt.Println("windowLayout:", windowLayout.IsValid())
-			windowLayout.SetFlexForView(m.browserView.BrowserView().AsView(), 1)
 
 			// 菜单栏, 创建菜单，并添加到菜单栏中
 			menuBar.CreateFileMenuItems()
@@ -137,13 +161,22 @@ func (m *ViewsFramework) Create() {
 			// 工具栏, 创建工具组件，并添加到工具栏中
 			toolBar.CreateToolComponent()
 
+			var minWidth int32 = toolBar.AllButtonWidth()
+			var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
+			minimumWindowSize = cef.TCefSize{Width: minWidth, Height: minHeight}
+			fmt.Println("minWidth:", minWidth, "minHeight:", minHeight)
+
 			// 菜单栏添加到窗口
 			m.window.AddChildView(menuBar.EnsureMenuPanel().AsView())
 			// 工具栏添加到窗口
 			m.window.AddChildView(toolBar.EnsureToolPanel().AsView())
 
+			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{Horizontal: 0, BetweenChildSpacing: 2})
+			fmt.Println("windowLayout:", windowLayout.IsValid())
+			// 允许|browser_view_|增长并填充任何剩余空间。
+			m.window.AddChildView(m.browserView.BrowserView().AsView())
 			// 浏览器view添加到窗口
-			//m.window.AddChildView(m.browserView.BrowserView().AsView())
+			windowLayout.SetFlexForView(m.browserView.BrowserView().AsView(), 1)
 
 			m.window.Layout()
 			// 窗口居中
