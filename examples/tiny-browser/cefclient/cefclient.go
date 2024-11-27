@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
@@ -29,7 +30,11 @@ type ViewsFramework struct {
 	homePage    string
 }
 
+//go:embed assets
+var assets embed.FS
+
 func main() {
+	Assets = assets
 	cef.GlobalInit(nil, nil)
 	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	app = cef.CreateApplication()
@@ -148,26 +153,31 @@ func (m *ViewsFramework) Create() {
 		m.chromium.CloseBrowser(true)
 		*result = true
 	})
-	m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
-		fmt.Println("OnWindowChanged added:", added)
-		if added {
-
-		}
-	})
+	//m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
+	//	fmt.Println("OnWindowChanged added:", added)
+	//	if added {
+	//
+	//	}
+	//})
 	m.window.SetOnWindowCreated(func(window *cef.ICefWindow) {
 		fmt.Println("OnWindowCreated")
 		m.window.SetID(ID_WINDOW)
 		//window.SetThemeColor()
 		m.window.ThemeChanged()
+		m.window.SetWindowIcon(LoadImage("app-icon.png"))
+		m.window.SetWindowAppIcon(LoadImage("app-icon.png"))
+		m.window.SetTitle("Go ENERGY Client")
 
 		menuBar := NewMenuBar(m.window) // 顶部菜单栏
 		toolBar := NewToolBar(m.window) // 顶部工具栏
-
+		m.window.SetOnKeyEvent(func(window *cef.ICefWindow, event *cef.TCefKeyEvent, result *bool) {
+			fmt.Println("OnKeyEvent")
+		})
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserView, nil, nil) {
 			fmt.Println("ChromeToolbar:", m.browserView.ChromeToolbar().IsValid())
 			// 允许|browser_view_|增长并填充任何剩余空间。
 			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{
-				BetweenChildSpacing: 4,
+				BetweenChildSpacing: 5,
 				CrossAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_STRETCH,
 			})
 
