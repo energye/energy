@@ -243,7 +243,7 @@ type windowOnThemeColorsChanged func(window *ICefWindow, chromeTheme int32)
 type windowOnGetWindowRuntimeStyle func(result *consts.TCefRuntimeStyle)
 type windowOnGetLinuxWindowProperties func(window *ICefWindow, properties *TLinuxWindowProperties, result *bool)
 type windowOnWindowClosing func(window *ICefWindow)
-type windowOnWindowBoundsChanged func(window *ICefWindow, newBounds *TCefRect)
+type windowOnWindowBoundsChanged func(window *ICefWindow, newBounds TCefRect)
 type windowOnAcceptsFirstMouse func(window *ICefWindow, result *consts.TCefState)
 
 func init() {
@@ -337,7 +337,7 @@ func init() {
 			fn.(windowOnWindowClosing)(window)
 		case windowOnWindowBoundsChanged:
 			window := getWindow(0)
-			newBounds := (*TCefRect)(getPtr(1))
+			newBounds := *(*TCefRect)(getPtr(1))
 			fn.(windowOnWindowBoundsChanged)(window, newBounds)
 		case windowOnAcceptsFirstMouse:
 			window := getWindow(0)

@@ -630,6 +630,10 @@ func (m *TCEFWindowComponent) SetOnWindowActivationChanged(fn windowOnWindowActi
 	imports.Proc(def.CEFWindowComponent_SetOnWindowActivationChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+func (m *TCEFWindowComponent) SetOnWindowBoundsChanged(fn windowOnWindowBoundsChanged) {
+	imports.Proc(def.CEFWindowComponent_SetOnWindowBoundsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
 // SetOnGetParentWindow 获取父组件回调事件
 func (m *TCEFWindowComponent) SetOnGetParentWindow(fn windowOnGetParentWindow) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))

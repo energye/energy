@@ -1265,6 +1265,7 @@ const (
 	CEFWindowComponent_SetOnWindowCreated
 	CEFWindowComponent_SetOnWindowDestroyed
 	CEFWindowComponent_SetOnWindowActivationChanged
+	CEFWindowComponent_SetOnWindowBoundsChanged
 	CEFWindowComponent_SetOnGetParentWindow
 	CEFWindowComponent_SetOnIsWindowModalDialog
 	CEFWindowComponent_SetOnGetInitialBounds

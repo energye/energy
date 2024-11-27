@@ -1265,6 +1265,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowCreated", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowDestroyed", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowActivationChanged", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowBoundsChanged", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetParentWindow", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnIsWindowModalDialog", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnGetInitialBounds", 0),
