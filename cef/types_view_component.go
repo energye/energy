@@ -155,6 +155,7 @@ func (m *TCEFViewComponent) Initialized() bool {
 	return api.GoBool(r1)
 }
 
+// Returns this control as a View.
 func (m *TCEFViewComponent) AsView() *ICefView {
 	if !m.IsValid() {
 		return nil
@@ -167,6 +168,7 @@ func (m *TCEFViewComponent) AsView() *ICefView {
 	return nil
 }
 
+// Returns this View as a BrowserView or NULL if this is not a BrowserView.
 func (m *TCEFViewComponent) AsBrowserView() *ICefBrowserView {
 	if !m.IsValid() {
 		return nil
@@ -179,6 +181,7 @@ func (m *TCEFViewComponent) AsBrowserView() *ICefBrowserView {
 	return nil
 }
 
+// Returns this View as a Button or NULL if this is not a Button.
 func (m *TCEFViewComponent) AsButton() *ICefButton {
 	if !m.IsValid() {
 		return nil
@@ -191,6 +194,7 @@ func (m *TCEFViewComponent) AsButton() *ICefButton {
 	return nil
 }
 
+// Returns this View as a Panel or NULL if this is not a Panel.
 func (m *TCEFViewComponent) AsPanel() *ICefPanel {
 	if !m.IsValid() {
 		return nil
@@ -203,6 +207,7 @@ func (m *TCEFViewComponent) AsPanel() *ICefPanel {
 	return nil
 }
 
+// Returns this View as a ScrollView or NULL if this is not a ScrollView.
 func (m *TCEFViewComponent) AsScrollView() *ICefScrollView {
 	if !m.IsValid() {
 		return nil
@@ -215,6 +220,7 @@ func (m *TCEFViewComponent) AsScrollView() *ICefScrollView {
 	return nil
 }
 
+// Returns this View as a Textfield or NULL if this is not a Textfield.
 func (m *TCEFViewComponent) AsTextfield() *ICefTextfield {
 	if !m.IsValid() {
 		return nil
@@ -227,6 +233,9 @@ func (m *TCEFViewComponent) AsTextfield() *ICefTextfield {
 	return nil
 }
 
+// Recursively descends the view tree starting at this View, and returns the
+// first child that it encounters with the given ID. Returns NULL if no
+// matching child view is found.
 func (m *TCEFViewComponent) GetViewForID(id int32) *ICefView {
 	if !m.IsValid() {
 		return nil
@@ -239,6 +248,7 @@ func (m *TCEFViewComponent) GetViewForID(id int32) *ICefView {
 	return nil
 }
 
+// Returns the delegate associated with this View, if any.
 func (m *TCEFViewComponent) IsAttached() bool {
 	if !m.IsValid() {
 		return false
@@ -259,6 +269,7 @@ func (m *TCEFViewComponent) GetDelegate() *ICefViewDelegate {
 	return nil
 }
 
+// Returns the top-level Window hosting this View, if any.
 func (m *TCEFViewComponent) GetWindow() *ICefWindow {
 	if !m.IsValid() {
 		return nil
@@ -271,6 +282,7 @@ func (m *TCEFViewComponent) GetWindow() *ICefWindow {
 	return nil
 }
 
+// Returns the View that contains this View, if any.
 func (m *TCEFViewComponent) GetParentView() *ICefView {
 	if !m.IsValid() {
 		return nil
@@ -283,6 +295,8 @@ func (m *TCEFViewComponent) GetParentView() *ICefView {
 	return nil
 }
 
+// Returns the bounds (size and position) of this View in DIP screen
+// coordinates.
 func (m *TCEFViewComponent) BoundsInScreen() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
@@ -291,6 +305,9 @@ func (m *TCEFViewComponent) BoundsInScreen() (bounds TCefRect) {
 	return
 }
 
+// Returns the size this View would like to be if enough space is available.
+// Size is in parent coordinates, or DIP screen coordinates if there is no
+// parent.
 func (m *TCEFViewComponent) GetPreferredSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
@@ -299,6 +316,8 @@ func (m *TCEFViewComponent) GetPreferredSize() (size TCefSize) {
 	return
 }
 
+// Returns the minimum size for this View. Size is in parent coordinates, or
+// DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) MinimumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
@@ -307,6 +326,8 @@ func (m *TCEFViewComponent) MinimumSize() (size TCefSize) {
 	return
 }
 
+// Returns the maximum size for this View. Size is in parent coordinates, or
+// DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) MaximumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
@@ -315,6 +336,12 @@ func (m *TCEFViewComponent) MaximumSize() (size TCefSize) {
 	return
 }
 
+// Returns whether this View is visible. A view may be visible but still not
+// drawn in a Window if any parent views are hidden. If this View is a Window
+// then a return value of true (1) indicates that this Window is currently
+// visible to the user on-screen. If this View is not a Window then call
+// is_drawn() to determine whether this View and all parent views are visible
+// and will be drawn.
 func (m *TCEFViewComponent) IsVisible() bool {
 	if !m.IsValid() {
 		return false
@@ -323,6 +350,13 @@ func (m *TCEFViewComponent) IsVisible() bool {
 	return api.GoBool(r1)
 }
 
+// Sets whether this View is visible. Windows are hidden by default and other
+// views are visible by default. This View and any parent views must be set
+// as visible for this View to be drawn in a Window. If this View is set as
+// hidden then it and any child views will not be drawn and, if any of those
+// views currently have focus, then focus will also be cleared. Painting is
+// scheduled as needed. If this View is a Window then calling this function
+// is equivalent to calling the Window show() and hide() functions.
 func (m *TCEFViewComponent) SetVisible(visible bool) {
 	if !m.IsValid() {
 		return
@@ -330,6 +364,11 @@ func (m *TCEFViewComponent) SetVisible(visible bool) {
 	imports.Proc(def.ViewComponent_SetVisible).Call(m.Instance(), api.PascalBool(visible))
 }
 
+// Returns whether this View is visible and drawn in a Window. A view is
+// drawn if it and all parent views are visible. If this View is a Window
+// then calling this function is equivalent to calling is_visible().
+// Otherwise, to determine if the containing Window is visible to the user
+// on-screen call is_visible() on the Window.
 func (m *TCEFViewComponent) IsDrawn() bool {
 	if !m.IsValid() {
 		return false
@@ -338,6 +377,10 @@ func (m *TCEFViewComponent) IsDrawn() bool {
 	return api.GoBool(r1)
 }
 
+// Set whether this View is enabled. A disabled View does not receive
+// keyboard or mouse inputs. If |enabled| differs from the current value the
+// View will be repainted. Also, clears focus if the focused View is
+// disabled.
 func (m *TCEFViewComponent) IsEnabled() bool {
 	if !m.IsValid() {
 		return false
@@ -353,6 +396,7 @@ func (m *TCEFViewComponent) SetEnabled(enabled bool) {
 	imports.Proc(def.ViewComponent_SetEnabled).Call(m.Instance(), api.PascalBool(enabled))
 }
 
+// Returns true (1) if this View is focusable, enabled and drawn.
 func (m *TCEFViewComponent) IsFocusable() bool {
 	if !m.IsValid() {
 		return false
@@ -361,6 +405,9 @@ func (m *TCEFViewComponent) IsFocusable() bool {
 	return api.GoBool(r1)
 }
 
+// Sets whether this View is capable of taking focus. It will clear focus if
+// the focused View is set to be non-focusable. This is false (0) by default
+// so that a View used as a container does not get the focus.
 func (m *TCEFViewComponent) SetFocusable(focusable bool) {
 	if !m.IsValid() {
 		return
@@ -368,7 +415,9 @@ func (m *TCEFViewComponent) SetFocusable(focusable bool) {
 	imports.Proc(def.ViewComponent_SetFocusable).Call(m.Instance(), api.PascalBool(focusable))
 }
 
-func (m *TCEFViewComponent) AccessibilityFocusable() bool {
+// Return whether this View is focusable when the user requires full keyboard
+// access, even though it may not be normally focusable.
+func (m *TCEFViewComponent) IsAccessibilityFocusable() bool {
 	if !m.IsValid() {
 		return false
 	}
@@ -376,6 +425,11 @@ func (m *TCEFViewComponent) AccessibilityFocusable() bool {
 	return api.GoBool(r1)
 }
 
+// Returns the background color for this View. If the background color is
+// unset then the current `GetThemeColor(CEF_ColorPrimaryBackground)` value
+// will be returned. If this View belongs to an overlay (created with
+// ICefWindow.AddOverlayView), and the background color is unset, then a
+// value of transparent (0) will be returned.
 func (m *TCEFViewComponent) GetBackgroundColor() (color types.TCefColor) {
 	if !m.IsValid() {
 		return 0
@@ -384,6 +438,8 @@ func (m *TCEFViewComponent) GetBackgroundColor() (color types.TCefColor) {
 	return
 }
 
+// Sets the background color for this View. The background color will be
+// automatically reset when ICefViewDelegate.OnThemeChanged is called.
 func (m *TCEFViewComponent) SetBackgroundColor(color types.TCefColor) {
 	if !m.IsValid() {
 		return
@@ -391,6 +447,7 @@ func (m *TCEFViewComponent) SetBackgroundColor(color types.TCefColor) {
 	imports.Proc(def.ViewComponent_SetBackgroundColor).Call(m.Instance(), uintptr(color))
 }
 
+// Returns the ID for this View.
 func (m *TCEFViewComponent) GetID() int32 {
 	if !m.IsValid() {
 		return 0
@@ -399,6 +456,8 @@ func (m *TCEFViewComponent) GetID() int32 {
 	return int32(r1)
 }
 
+// Sets the ID for this View. ID should be unique within the subtree that you
+// intend to search for it. 0 is the default ID for views.
 func (m *TCEFViewComponent) SetID(id int32) {
 	if !m.IsValid() {
 		return
@@ -406,7 +465,8 @@ func (m *TCEFViewComponent) SetID(id int32) {
 	imports.Proc(def.ViewComponent_SetID).Call(m.Instance(), uintptr(id))
 }
 
-func (m *TCEFViewComponent) GroupID() int32 {
+// Returns the group id of this View, or -1 if not set.
+func (m *TCEFViewComponent) GetGroupID() int32 {
 	if !m.IsValid() {
 		return 0
 	}
@@ -414,6 +474,9 @@ func (m *TCEFViewComponent) GroupID() int32 {
 	return int32(r1)
 }
 
+// A group id is used to tag Views which are part of the same logical group.
+// Focus can be moved between views with the same group using the arrow keys.
+// The group id is immutable once it's set.
 func (m *TCEFViewComponent) SetGroupID(groupId int32) {
 	if !m.IsValid() {
 		return
@@ -421,7 +484,9 @@ func (m *TCEFViewComponent) SetGroupID(groupId int32) {
 	imports.Proc(def.ViewComponent_SetGroupID).Call(m.Instance(), uintptr(groupId))
 }
 
-func (m *TCEFViewComponent) Bounds() (bounds TCefRect) {
+// Returns the bounds (size and position) of this View in parent coordinates,
+// or DIP screen coordinates if there is no parent.
+func (m *TCEFViewComponent) GetBounds() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
@@ -429,6 +494,8 @@ func (m *TCEFViewComponent) Bounds() (bounds TCefRect) {
 	return
 }
 
+// Sets the bounds (size and position) of this View. |bounds| is in parent
+// coordinates, or DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) SetBounds(bounds TCefRect) {
 	if !m.IsValid() {
 		return
@@ -436,6 +503,8 @@ func (m *TCEFViewComponent) SetBounds(bounds TCefRect) {
 	imports.Proc(def.ViewComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 }
 
+// Returns the size of this View in parent coordinates, or DIP screen
+// coordinates if there is no parent.
 func (m *TCEFViewComponent) GetSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
@@ -444,6 +513,8 @@ func (m *TCEFViewComponent) GetSize() (size TCefSize) {
 	return
 }
 
+// Sets the size of this View without changing the position. |size| in parent
+// coordinates, or DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) SetSize(size TCefSize) {
 	if !m.IsValid() {
 		return
@@ -451,6 +522,8 @@ func (m *TCEFViewComponent) SetSize(size TCefSize) {
 	imports.Proc(def.ViewComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
+// Returns the position of this View. Position is in parent coordinates, or
+// DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) GetPosition() (point TCefPoint) {
 	if !m.IsValid() {
 		return
@@ -459,6 +532,8 @@ func (m *TCEFViewComponent) GetPosition() (point TCefPoint) {
 	return
 }
 
+// Sets the position of this View without changing the size. |position| is in
+// parent coordinates, or DIP screen coordinates if there is no parent.
 func (m *TCEFViewComponent) SetPosition(position TCefPoint) {
 	if !m.IsValid() {
 		return
@@ -466,6 +541,8 @@ func (m *TCEFViewComponent) SetPosition(position TCefPoint) {
 	imports.Proc(def.ViewComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&position)))
 }
 
+// Returns the type of this View as a string. Used primarily for testing
+// purposes.
 func (m *TCEFViewComponent) GetTypeString() string {
 	if !m.IsValid() {
 		return ""
@@ -474,6 +551,7 @@ func (m *TCEFViewComponent) GetTypeString() string {
 	return api.GoStr(r1)
 }
 
+// Returns the height necessary to display this View with the provided width.
 func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 	if !m.IsValid() {
 		return 0
@@ -482,26 +560,45 @@ func (m *TCEFViewComponent) GetHeightForWidth(width int32) int32 {
 	return int32(r1)
 }
 
+// Return the preferred size for |view|. The Layout will use this information
+// to determine the display size.
 func (m *TCEFViewComponent) SetOnGetPreferredSize(fn viewOnGetPreferredSize) {
 	imports.Proc(def.ViewComponent_SetOnGetPreferredSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return the minimum size for |view|.
 func (m *TCEFViewComponent) SetOnGetMinimumSize(fn viewOnGetMinimumSize) {
 	imports.Proc(def.ViewComponent_SetOnGetMinimumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return the maximum size for |view|.
 func (m *TCEFViewComponent) SetOnGetMaximumSize(fn viewOnGetMaximumSize) {
 	imports.Proc(def.ViewComponent_SetOnGetMaximumSize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return the height necessary to display |view| with the provided |width|.
+// If not specified the result of get_preferred_size().height will be used by
+// default. Override if |view|'s preferred height depends upon the width (for
+// example, with Labels).
 func (m *TCEFViewComponent) SetOnGetHeightForWidth(fn viewOnGetHeightForWidth) {
 	imports.Proc(def.ViewComponent_SetOnGetHeightForWidth).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when the parent of |view| has changed. If |view| is being added to
+// |parent| then |added| will be true (1). If |view| is being removed from
+// |parent| then |added| will be false (0). If |view| is being reparented the
+// remove notification will be sent before the add notification. Do not
+// modify the view hierarchy in this callback.
 func (m *TCEFViewComponent) SetOnParentViewChanged(fn viewOnParentViewChanged) {
 	imports.Proc(def.ViewComponent_SetOnParentViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when a child of |view| has changed. If |child| is being added to
+// |view| then |added| will be true (1). If |child| is being removed from
+// |view| then |added| will be false (0). If |child| is being reparented the
+// remove notification will be sent to the old parent before the add
+// notification is sent to the new parent. Do not modify the view hierarchy
+// in this callback.
 func (m *TCEFViewComponent) SetOnChildViewChanged(fn viewOnChildViewChanged) {
 	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
@@ -511,18 +608,37 @@ func (m *TCEFViewComponent) SetOnWindowChanged(fn viewOnWindowChanged) {
 	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when the layout of |view| has changed.
 func (m *TCEFViewComponent) SetOnLayoutChanged(fn viewOnLayoutChanged) {
 	imports.Proc(def.ViewComponent_SetOnLayoutChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when |view| gains focus.
 func (m *TCEFViewComponent) SetOnFocus(fn viewOnFocus) {
 	imports.Proc(def.ViewComponent_SetOnFocus).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when |view| loses focus.
 func (m *TCEFViewComponent) SetOnBlur(fn viewOnBlur) {
 	imports.Proc(def.ViewComponent_SetOnBlur).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// <para>Called when the theme for |view| has changed, after the new theme colors
+// have already been applied. Views are notified via the component hierarchy
+// in depth-first reverse order (children before parents).</para>
+// <para>This will be called in the following cases:</para>
+// <code>
+//  1. When |view|, or a parent of |view|, is added to a Window.
+//  2. When the native/OS or Chrome theme changes for the Window that contains
+//     |view|. See ICefWindowDelegate.OnThemeColorsChanged documentation.
+//  3. When the client explicitly calls ICefWindow.ThemeChanged on the
+//     Window that contains |view|.
+//
+// </code>
+// <para>Optionally use this callback to override the new per-View theme colors by
+// calling ICefView.SetBackgroundColor or the appropriate component-
+// specific function. See ICefWindow.SetThemeColor documentation for how
+// to customize additional Window theme colors.</para>
 func (m *TCEFViewComponent) SetOnThemeChanged(fn viewOnThemeChanged) {
 	imports.Proc(def.ViewComponent_SetOnThemeChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
