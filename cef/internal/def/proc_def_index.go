@@ -1150,6 +1150,7 @@ const (
 	Misc_CefPostTask
 	Misc_CefPostDelayedTask
 	Misc_CefCurrentlyOn
+	Misc_CefIsRTL
 	// ICefRequest
 	CefRequestRef_New
 	CefRequestRef_UnWrap

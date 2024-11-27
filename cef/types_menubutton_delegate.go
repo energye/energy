@@ -73,7 +73,15 @@ type ICefMenuButtonPressedLock struct {
 	base TCefBaseRefCounted
 }
 
-type menuButtonOnMenuButtonPressed func(button *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
+// Instance 实例
+func (m *ICefMenuButtonPressedLock) Instance() uintptr {
+	if m == nil {
+		return 0
+	}
+	return uintptr(m.base.instance)
+}
+
+type menuButtonOnMenuButtonPressed func(menuButton *ICefMenuButton, screenPoint TCefPoint, buttonPressedLock *ICefMenuButtonPressedLock)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {

@@ -66,79 +66,71 @@ func (m *ICefMenuModelDelegate) IsValid() bool {
 	return m.instance != nil
 }
 
-// ExecuteCommand
 // Perform the action associated with the specified |command_id| and optional |event_flags|.
-func (m *ICefMenuModelDelegate) ExecuteCommand(fn executeCommand) {
+func (m *ICefMenuModelDelegate) SetOnExecuteCommand(fn menuModelDelegateOnExecuteCommand) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_ExecuteCommand).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// MouseOutsideMenu
-// / Called when the user moves the mouse outside the menu and over the owning window.
-func (m *ICefMenuModelDelegate) MouseOutsideMenu(fn mouseOutsideMenu) {
+// Called when the user moves the mouse outside the menu and over the owning window.
+func (m *ICefMenuModelDelegate) SetOnMouseOutsideMenu(fn menuModelDelegateOnMouseOutsideMenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MouseOutsideMenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// UnhandledOpenSubmenu
-// / Called on unhandled open submenu keyboard commands. |is_rtl| will be true
-// / (1) if the menu is displaying a right-to-left language.
-func (m *ICefMenuModelDelegate) UnhandledOpenSubmenu(fn unhandledOpenSubmenu) {
+// Called on unhandled open submenu keyboard commands. |is_rtl| will be true
+// (1) if the menu is displaying a right-to-left language.
+func (m *ICefMenuModelDelegate) SetOnUnhandledOpenSubmenu(fn menuModelDelegateOnUnhandledOpenSubmenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_UnhandledOpenSubmenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// UnhandledCloseSubmenu
-// / Called on unhandled close submenu keyboard commands. |is_rtl| will be true
-// / (1) if the menu is displaying a right-to-left language.
-func (m *ICefMenuModelDelegate) UnhandledCloseSubmenu(fn unhandledCloseSubmenu) {
+// Called on unhandled close submenu keyboard commands. |is_rtl| will be true
+// (1) if the menu is displaying a right-to-left language.
+func (m *ICefMenuModelDelegate) SetOnUnhandledCloseSubmenu(fn menuModelDelegateOnUnhandledCloseSubmenu) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_UnhandledCloseSubmenu).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// MenuWillShow
-// / The menu is about to show.
-func (m *ICefMenuModelDelegate) MenuWillShow(fn menuWillShow) {
+// The menu is about to show.
+func (m *ICefMenuModelDelegate) SetOnMenuWillShow(fn menuModelDelegateOnMenuWillShow) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MenuWillShow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// MenuClosed
-// / The menu has closed.
-func (m *ICefMenuModelDelegate) MenuClosed(fn menuClosed) {
+// The menu has closed.
+func (m *ICefMenuModelDelegate) SetOnMenuClosed(fn menuModelDelegateOnMenuClosed) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_MenuClosed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// FormatLabel
-// / Optionally modify a menu item label. Return true (1) if |label| was
-// / modified.
-func (m *ICefMenuModelDelegate) FormatLabel(fn formatLabel) {
+// Optionally modify a menu item label. Return true (1) if |label| was modified.
+func (m *ICefMenuModelDelegate) SetOnFormatLabel(fn menuModelDelegateOnFormatLabel) {
 	if !m.IsValid() {
 		return
 	}
 	imports.Proc(def.MenuModelDelegate_FormatLabel).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-type executeCommand func(menuModel *ICefMenuModel, commandId int32, eventFlags consts.TCefEventFlags)
-type mouseOutsideMenu func(menuModel *ICefMenuModel, screenPoint *TCefPoint)
-type unhandledOpenSubmenu func(menuModel *ICefMenuModel, isRTL bool)
-type unhandledCloseSubmenu func(menuModel *ICefMenuModel, isRTL bool)
-type menuWillShow func(menuModel *ICefMenuModel)
-type menuClosed func(menuModel *ICefMenuModel)
-type formatLabel func(menuModel *ICefMenuModel) (label string, result bool)
+type menuModelDelegateOnExecuteCommand func(menuModel *ICefMenuModel, commandId int32, eventFlags consts.TCefEventFlags)
+type menuModelDelegateOnMouseOutsideMenu func(menuModel *ICefMenuModel, screenPoint *TCefPoint)
+type menuModelDelegateOnUnhandledOpenSubmenu func(menuModel *ICefMenuModel, isRTL bool)
+type menuModelDelegateOnUnhandledCloseSubmenu func(menuModel *ICefMenuModel, isRTL bool)
+type menuModelDelegateOnMenuWillShow func(menuModel *ICefMenuModel)
+type menuModelDelegateOnMenuClosed func(menuModel *ICefMenuModel)
+type menuModelDelegateOnFormatLabel func(menuModel *ICefMenuModel) (label string, result bool)
 
 func init() {
 	lcl.RegisterExtEventCallback(func(fn interface{}, getVal func(idx int) uintptr) bool {
@@ -146,22 +138,22 @@ func init() {
 			return unsafe.Pointer(getVal(i))
 		}
 		switch fn.(type) {
-		case executeCommand:
-			fn.(executeCommand)(&ICefMenuModel{instance: getPtr(0)}, int32(getVal(1)), consts.TCefEventFlags(getVal(2)))
-		case mouseOutsideMenu:
-			fn.(mouseOutsideMenu)(&ICefMenuModel{instance: getPtr(0)}, (*TCefPoint)(getPtr(1)))
-		case unhandledOpenSubmenu:
-			fn.(unhandledOpenSubmenu)(&ICefMenuModel{instance: getPtr(0)}, api.GoBool(getVal(1)))
-		case unhandledCloseSubmenu:
-			fn.(unhandledCloseSubmenu)(&ICefMenuModel{instance: getPtr(0)}, api.GoBool(getVal(1)))
-		case menuWillShow:
-			fn.(menuWillShow)(&ICefMenuModel{instance: getPtr(0)})
-		case menuClosed:
-			fn.(menuClosed)(&ICefMenuModel{instance: getPtr(0)})
-		case formatLabel:
+		case menuModelDelegateOnExecuteCommand:
+			fn.(menuModelDelegateOnExecuteCommand)(&ICefMenuModel{instance: getPtr(0)}, int32(getVal(1)), consts.TCefEventFlags(getVal(2)))
+		case menuModelDelegateOnMouseOutsideMenu:
+			fn.(menuModelDelegateOnMouseOutsideMenu)(&ICefMenuModel{instance: getPtr(0)}, (*TCefPoint)(getPtr(1)))
+		case menuModelDelegateOnUnhandledOpenSubmenu:
+			fn.(menuModelDelegateOnUnhandledOpenSubmenu)(&ICefMenuModel{instance: getPtr(0)}, api.GoBool(getVal(1)))
+		case menuModelDelegateOnUnhandledCloseSubmenu:
+			fn.(menuModelDelegateOnUnhandledCloseSubmenu)(&ICefMenuModel{instance: getPtr(0)}, api.GoBool(getVal(1)))
+		case menuModelDelegateOnMenuWillShow:
+			fn.(menuModelDelegateOnMenuWillShow)(&ICefMenuModel{instance: getPtr(0)})
+		case menuModelDelegateOnMenuClosed:
+			fn.(menuModelDelegateOnMenuClosed)(&ICefMenuModel{instance: getPtr(0)})
+		case menuModelDelegateOnFormatLabel:
 			labelPtr := (*uintptr)(getPtr(1))
 			resultPtr := (*bool)(getPtr(2))
-			label, result := fn.(formatLabel)(&ICefMenuModel{instance: getPtr(0)})
+			label, result := fn.(menuModelDelegateOnFormatLabel)(&ICefMenuModel{instance: getPtr(0)})
 			*labelPtr = api.PascalStr(label)
 			*resultPtr = result
 		default:

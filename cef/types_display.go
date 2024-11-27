@@ -94,11 +94,11 @@ func (m *display) ScreenRectFromPixels(pixelsRect *types.TRect) (rect types.TRec
 	return
 }
 
-func (m *ICefDisplay) ID() (result int64) {
+func (m *ICefDisplay) ID() (id int64) {
 	if !m.IsValid() {
 		return 0
 	}
-	imports.Proc(def.CEFDisplay_ID).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_ID).Call(m.Instance(), uintptr(unsafe.Pointer(&id)))
 	return
 }
 
@@ -118,19 +118,19 @@ func (m *ICefDisplay) Rotation() int32 {
 	return int32(r1)
 }
 
-func (m *ICefDisplay) Bounds() (result TCefRect) {
+func (m *ICefDisplay) Bounds() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFDisplay_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 	return
 }
 
-func (m *ICefDisplay) WorkArea() (result TCefRect) {
+func (m *ICefDisplay) WorkArea() (workArea TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFDisplay_WorkArea).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplay_WorkArea).Call(m.Instance(), uintptr(unsafe.Pointer(&workArea)))
 	return
 }
 

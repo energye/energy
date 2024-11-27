@@ -226,6 +226,12 @@ func CefCurrentlyOn(threadId consts.TCefThreadId) bool {
 	return api.GoBool(r1)
 }
 
+// Returns true (1) if the application text direction is right-to-left.
+func CefIsRTL() bool {
+	r1, _, _ := imports.Proc(def.Misc_CefIsRTL).Call()
+	return api.GoBool(r1)
+}
+
 func CefCursorToWindowsCursor(cefCursor consts.TCefCursorType) (result t.TCursor) {
 	switch cefCursor {
 	case consts.CT_POINTER:

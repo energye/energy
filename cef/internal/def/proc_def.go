@@ -1150,6 +1150,7 @@ func init() {
 		dllimports.NewEnergyImport("Misc_CefPostTask", 0),
 		dllimports.NewEnergyImport("Misc_CefPostDelayedTask", 0),
 		dllimports.NewEnergyImport("Misc_CefCurrentlyOn", 0),
+		dllimports.NewEnergyImport("Misc_CefIsRTL", 0),
 		//ICefRequest
 		dllimports.NewEnergyImport("CefRequestRef_New", 0),
 		dllimports.NewEnergyImport("CefRequestRef_UnWrap", 0),
