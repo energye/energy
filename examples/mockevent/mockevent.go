@@ -9,7 +9,6 @@ import (
 	"github.com/energye/energy/v2/cef/ipc/types"
 	"github.com/energye/energy/v2/consts"
 	_ "github.com/energye/energy/v2/examples/syso"
-	t "github.com/energye/energy/v2/types"
 	lcltypes "github.com/energye/golcl/lcl/types"
 )
 
@@ -158,7 +157,7 @@ func keyPress(key string) *cef.TCefKeyEvent {
 	fmt.Sscanf(utf8Key.ToString(), "%c", &asciiCode)
 	fmt.Println("keyPress", key, asciiCode)
 	event.Kind = consts.KEYEVENT_CHAR
-	event.WindowsKeyCode = t.Int32(asciiCode)
+	event.WindowsKeyCode = int32(asciiCode)
 	event.FocusOnEditableField = 1 // 0=false, 1=true
 	return event
 }
