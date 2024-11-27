@@ -267,19 +267,19 @@ func (m *ICefView) SetBounds(bounds TCefRect) {
 	imports.Proc(def.View_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 }
 
-func (m *ICefView) GetBounds() (result TCefRect) {
+func (m *ICefView) GetBounds() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 	return
 }
 
-func (m *ICefView) GetBoundsInScreen() (result TCefRect) {
+func (m *ICefView) GetBoundsInScreen() (bounds TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetBoundsInScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetBoundsInScreen).Call(m.Instance(), uintptr(unsafe.Pointer(&bounds)))
 	return
 }
 
@@ -290,11 +290,11 @@ func (m *ICefView) SetSize(size TCefSize) {
 	imports.Proc(def.View_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
-func (m *ICefView) GetSize() (result TCefSize) {
+func (m *ICefView) GetSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
@@ -305,11 +305,11 @@ func (m *ICefView) SetPosition(position TCefPoint) {
 	imports.Proc(def.View_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&position)))
 }
 
-func (m *ICefView) GetPosition() (result TCefPoint) {
+func (m *ICefView) GetPosition() (point TCefPoint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 	return
 }
 
@@ -320,19 +320,19 @@ func (m *ICefView) SetInsets(insets TCefInsets) {
 	imports.Proc(def.View_SetInsets).Call(m.Instance(), uintptr(unsafe.Pointer(&insets)))
 }
 
-func (m *ICefView) GetInsets() (result TCefInsets) {
+func (m *ICefView) GetInsets() (insets TCefInsets) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetInsets).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetInsets).Call(m.Instance(), uintptr(unsafe.Pointer(&insets)))
 	return
 }
 
-func (m *ICefView) GetPreferredSize() (result TCefSize) {
+func (m *ICefView) GetPreferredSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetPreferredSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetPreferredSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
@@ -343,19 +343,19 @@ func (m *ICefView) SizeToPreferredSize() {
 	imports.Proc(def.View_SizeToPreferredSize).Call(m.Instance())
 }
 
-func (m *ICefView) GetMinimumSize() (result TCefSize) {
+func (m *ICefView) GetMinimumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
-func (m *ICefView) GetMaximumSize() (result TCefSize) {
+func (m *ICefView) GetMaximumSize() (size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.View_GetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.View_GetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 	return
 }
 
