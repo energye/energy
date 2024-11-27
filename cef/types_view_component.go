@@ -506,6 +506,7 @@ func (m *TCEFViewComponent) SetOnChildViewChanged(fn viewOnChildViewChanged) {
 	imports.Proc(def.ViewComponent_SetOnChildViewChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when |view| is added or removed from the ICefWindow.
 func (m *TCEFViewComponent) SetOnWindowChanged(fn viewOnWindowChanged) {
 	imports.Proc(def.ViewComponent_SetOnWindowChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }

@@ -1263,6 +1263,7 @@ const (
 	CEFWindowComponent_AddChildView
 	CEFWindowComponent_RuntimeStyle
 	CEFWindowComponent_SetOnWindowCreated
+	CEFWindowComponent_SetOnWindowClosing
 	CEFWindowComponent_SetOnWindowDestroyed
 	CEFWindowComponent_SetOnWindowActivationChanged
 	CEFWindowComponent_SetOnWindowBoundsChanged

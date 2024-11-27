@@ -1263,6 +1263,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFWindowComponent_AddChildView", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_RuntimeStyle", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowCreated", 0),
+		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowClosing", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowDestroyed", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowActivationChanged", 0),
 		dllimports.NewEnergyImport("CEFWindowComponent_SetOnWindowBoundsChanged", 0),

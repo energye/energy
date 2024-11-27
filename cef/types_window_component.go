@@ -227,25 +227,26 @@ func (m *TCEFWindowComponent) RemoveAllAccelerators() {
 }
 
 // SetThemeColor
-// / Override a standard theme color or add a custom color associated with
-// / |color_id|. See cef_color_ids.h for standard ID values. Recommended usage
-// / is as follows:</para>
-// / <code>
-// / 1. Customize the default native/OS theme by calling SetThemeColor before
-// /    showing the first Window. When done setting colors call
-// /    ICefWindow.ThemeChanged to trigger ICefViewDelegate.OnThemeChanged
-// /    notifications.
-// / 2. Customize the current native/OS or Chrome theme after it changes by
-// /    calling SetThemeColor from the ICefWindowDelegate.OnThemeColorsChanged
-// /    callback. ICefViewDelegate.OnThemeChanged notifications will then be
-// /    triggered automatically.
-// / </code>
-// / <para>The configured color will be available immediately via
-// / ICefView.GetThemeColor and will be applied to each View in this
-// / Window's component hierarchy when ICefViewDelegate.OnThemeChanged is
-// / called. See OnThemeColorsChanged documentation for additional details.</para>
-// / <para>Clients wishing to add custom colors should use |color_id| values >=
-// / CEF_ChromeColorsEnd.
+// Override a standard theme color or add a custom color associated with
+// |color_id|. See cef_color_ids.h for standard ID values. Recommended usage
+// is as follows:</para>
+// <code>
+//  1. Customize the default native/OS theme by calling SetThemeColor before
+//     showing the first Window. When done setting colors call
+//     ICefWindow.ThemeChanged to trigger ICefViewDelegate.OnThemeChanged
+//     notifications.
+//  2. Customize the current native/OS or Chrome theme after it changes by
+//     calling SetThemeColor from the ICefWindowDelegate.OnThemeColorsChanged
+//     callback. ICefViewDelegate.OnThemeChanged notifications will then be
+//     triggered automatically.
+//
+// </code>
+// <para>The configured color will be available immediately via
+// ICefView.GetThemeColor and will be applied to each View in this
+// Window's component hierarchy when ICefViewDelegate.OnThemeChanged is
+// called. See OnThemeColorsChanged documentation for additional details.</para>
+// <para>Clients wishing to add custom colors should use |color_id| values >=
+// CEF_ChromeColorsEnd.
 func (m *TCEFWindowComponent) SetThemeColor(colorId int32, color types.TCefColor) {
 	if !m.IsValid() {
 		return
@@ -254,12 +255,12 @@ func (m *TCEFWindowComponent) SetThemeColor(colorId int32, color types.TCefColor
 }
 
 // ThemeChanged
-// / Trigger ICefViewDelegate.OnThemeChanged callbacks for each View in
-// / this Window's component hierarchy. Unlike a native/OS or Chrome theme
-// / change this function does not reset theme colors to standard values and
-// / does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.
-// / Do not call this function from ICefWindowDelegate.OnThemeColorsChanged
-// / or ICefViewDelegate.OnThemeChanged.
+// Trigger ICefViewDelegate.OnThemeChanged callbacks for each View in
+// this Window's component hierarchy. Unlike a native/OS or Chrome theme
+// change this function does not reset theme colors to standard values and
+// does not result in a call to ICefWindowDelegate.OnThemeColorsChanged.
+// Do not call this function from ICefWindowDelegate.OnThemeColorsChanged
+// or ICefViewDelegate.OnThemeChanged.
 func (m *TCEFWindowComponent) ThemeChanged() {
 	if !m.IsValid() {
 		return
@@ -615,105 +616,183 @@ func (m *TCEFWindowComponent) RuntimeStyle() consts.TCefRuntimeStyle {
 	return consts.TCefRuntimeStyle(r1)
 }
 
-// SetOnWindowCreated 窗口创建回调事件
+// Called when |window| is created.
 func (m *TCEFWindowComponent) SetOnWindowCreated(fn windowOnWindowCreated) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowCreated).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnWindowDestroyed 窗口销毁回调事件
+// Called when |window| is closing.
+func (m *TCEFWindowComponent) SetOnWindowClosing(fn windowOnWindowClosing) {
+	imports.Proc(def.CEFWindowComponent_SetOnWindowClosing).Call(m.Instance(), api.MakeEventDataPtr(fn))
+}
+
+// Called when |window| is destroyed. Release all references to |window| and
+// do not attempt to execute any functions on |window| after this callbackreturns.
 func (m *TCEFWindowComponent) SetOnWindowDestroyed(fn windowOnWindowDestroyed) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowDestroyed).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnWindowActivationChanged 窗口激活改变回调事件
+// Called when |window| is activated or deactivated.
 func (m *TCEFWindowComponent) SetOnWindowActivationChanged(fn windowOnWindowActivationChanged) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowActivationChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Called when |window| bounds have changed. |new_bounds| will be in DIP
+// screen coordinates.
 func (m *TCEFWindowComponent) SetOnWindowBoundsChanged(fn windowOnWindowBoundsChanged) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowBoundsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnGetParentWindow 获取父组件回调事件
+// Return the parent for |window| or NULL if the |window| does not have a
+// parent. Windows with parents will not get a taskbar button. Set |is_menu|
+// to true (1) if |window| will be displayed as a menu, in which case it will
+// not be clipped to the parent window bounds. Set |can_activate_menu| to
+// false (0) if |is_menu| is true (1) and |window| should not be activated
+// (given keyboard focus) when displayed.
 func (m *TCEFWindowComponent) SetOnGetParentWindow(fn windowOnGetParentWindow) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetParentWindow).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnIsWindowModalDialog 窗口是否为模态弹窗
+// Return true (1) if |window| should be created as a window modal dialog.
+// Only called when a Window is returned via get_parent_window() with
+// |is_menu| set to false (0). All controls in the parent Window will be
+// disabled while |window| is visible. This functionality is not supported by
+// all Linux window managers. Alternately, use
+// ICefWindow.ShowAsBrowserModalDialog() for a browser modal dialog
+// that works on all platforms.
 func (m *TCEFWindowComponent) SetOnIsWindowModalDialog(fn windowOnIsWindowModalDialog) {
 	imports.Proc(def.CEFWindowComponent_SetOnIsWindowModalDialog).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnGetInitialBounds 窗口初始窗口边界回调事件
+// Return the initial bounds for |window| in density independent pixel (DIP)
+// coordinates. If this function returns an NULL CefRect then
+// GetPreferredSize() will be called to retrieve the size, and the window
+// will be placed on the screen with origin (0,0). This function can be used
+// in combination with ICefView.GetBoundsInScreen() to restore the
+// previous window bounds.
 func (m *TCEFWindowComponent) SetOnGetInitialBounds(fn windowOnGetInitialBounds) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetInitialBounds).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnGetInitialShowState 窗口初始显示状态回调事件
+// Return the initial show state for |window|.
 func (m *TCEFWindowComponent) SetOnGetInitialShowState(fn windowOnGetInitialShowState) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetInitialShowState).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnIsFrameless 窗口无边框回调事件
+// Return true (1) if |window| should be created without a frame or title
+// bar. The window will be resizable if can_resize() returns true (1). Use
+// ICefWindow.SetDraggableRegions() to specify draggable regions.
 func (m *TCEFWindowComponent) SetOnIsFrameless(fn windowOnIsFrameless) {
 	imports.Proc(def.CEFWindowComponent_SetOnIsFrameless).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return true (1) if |window| should be created with standard window buttons
+// like close, minimize and zoom. This function is only supported on macOS.
 func (m *TCEFWindowComponent) SetOnWithStandardWindowButtons(fn windowOnWithStandardWindowButtons) {
 	imports.Proc(def.CEFWindowComponent_SetOnWithStandardWindowButtons).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return whether the titlebar height should be overridden, and sets the
+// height of the titlebar in |titlebar_height|. On macOS, it can also be used
+// to adjust the vertical position of the traffic light buttons in frameless
+// windows. The buttons will be positioned halfway down the titlebar at a
+// height of |titlebar_height| / 2.
 func (m *TCEFWindowComponent) SetOnGetTitleBarHeight(fn windowOnGetTitleBarHeight) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetTitlebarHeight).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// <para>Return whether the view should accept the initial mouse-down event,
+// allowing it to respond to click-through behavior. If STATE_ENABLED is
+// returned, the view will be sent a mouseDown: message for an initial mouse-
+// down event, activating the view with one click, instead of clicking first
+// to make the window active and then clicking the view.</para>
+// <para>This function is only supported on macOS. For more details, refer to the
+// documentation of acceptsFirstMouse.</para>
 func (m *TCEFWindowComponent) SetOnAcceptsFirstMouse(fn windowOnAcceptsFirstMouse) {
 	imports.Proc(def.CEFWindowComponent_SetOnAcceptsFirstMouse).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnCanResize 设置窗口是否允许调整大小回调事件
+// Return true (1) if |window| can be resized.
 func (m *TCEFWindowComponent) SetOnCanResize(fn windowOnCanResize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanResize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnCanMaximize 设置窗口是否允许最大化回调事件
+// Return true (1) if |window| can be maximized.
 func (m *TCEFWindowComponent) SetOnCanMaximize(fn windowOnCanMaximize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanMaximize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnCanMinimize 设置窗口是否允许最小化回调事件
+// Return true (1) if |window| can be minimized.
 func (m *TCEFWindowComponent) SetOnCanMinimize(fn windowOnCanMinimize) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanMinimize).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnCanClose 设置窗口是否允许关闭回调事件
+// Return true (1) if |window| can be closed. This will be called for user-
+// initiated window close actions and when ICefWindow.close() is called.
 func (m *TCEFWindowComponent) SetOnCanClose(fn windowOnCanClose) {
 	imports.Proc(def.CEFWindowComponent_SetOnCanClose).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnAccelerator 设置快捷键回调事件
+// Called when a keyboard accelerator registered with
+// ICefWindow.SetAccelerator is triggered. Return true (1) if the
+// accelerator was handled or false (0) otherwise.
 func (m *TCEFWindowComponent) SetOnAccelerator(fn windowOnAccelerator) {
 	imports.Proc(def.CEFWindowComponent_SetOnAccelerator).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnKeyEvent 设置键盘事件回调事件
+// Called after all other controls in the window have had a chance to handle
+// the event. |event| contains information about the keyboard event. Return
+// true (1) if the keyboard event was handled or false (0) otherwise.
 func (m *TCEFWindowComponent) SetOnKeyEvent(fn windowOnKey) {
 	imports.Proc(def.CEFWindowComponent_SetOnKeyEvent).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
-// SetOnWindowFullscreenTransition
+// Called when |window| is transitioning to or from fullscreen mode. On MacOS
+// the transition occurs asynchronously with |is_competed| set to false (0)
+// when the transition starts and true (1) after the transition completes. On
+// other platforms the transition occurs synchronously with |is_completed|
+// set to true (1) after the transition completes. With Alloy style you must
+// also implement ICefDisplayHandler.OnFullscreenModeChange to handle
+// fullscreen transitions initiated by browser content.
 func (m *TCEFWindowComponent) SetOnWindowFullscreenTransition(fn windowOnWindowFullscreenTransition) {
 	imports.Proc(def.CEFWindowComponent_SetOnWindowFullscreenTransition).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// <para>Called after the native/OS or Chrome theme for |window| has changed.
+// |chrome_theme| will be true (1) if the notification is for a Chrome theme.</para>
+// <para>Native/OS theme colors are configured globally and do not need to be
+// customized for each Window individually. An example of a native/OS theme
+// change that triggers this callback is when the user switches between dark
+// and light mode during application lifespan. Native/OS theme changes can be
+// disabled by passing the `--force-dark-mode` or `--force-light-mode`
+// command-line flag.</para>
+// <para>Chrome theme colors will be applied and this callback will be triggered
+// if/when a BrowserView is added to the Window's component hierarchy. Chrome
+// theme colors can be configured on a per-RequestContext basis using
+// ICefRequestContext.SetChromeColorScheme or (Chrome style only) by
+// visiting chrome://settings/manageProfile. Any theme changes using those
+// mechanisms will also trigger this callback. Chrome theme colors will be
+// persisted and restored from disk cache.</para>
+// <para>This callback is not triggered on Window creation so clients that wish to
+// customize the initial native/OS theme must call
+// ICefWindow.SetThemeColor and ICefWindow.ThemeChanged before showing
+// the first Window.</para>
+// <para>Theme colors will be reset to standard values before this callback is
+// called for the first affected Window. Call ICefWindow.SetThemeColor
+// from inside this callback to override a standard color or add a custom
+// color. ICefViewDelegate.OnThemeChanged will be called after this
+// callback for the complete |window| component hierarchy.</para>
 func (m *TCEFWindowComponent) SetOnThemeColorsChanged(fn windowOnThemeColorsChanged) {
 	imports.Proc(def.CEFWindowComponent_SetOnThemeColorsChanged).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Optionally change the runtime style for this Window. See
+// TCefRuntimeStyle documentation for details.
 func (m *TCEFWindowComponent) SetOnGetWindowRuntimeStyle(fn windowOnGetWindowRuntimeStyle) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetWindowRuntimeStyle).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
 
+// Return Linux-specific window properties for correctly handling by window  managers.
 func (m *TCEFWindowComponent) SetOnGetLinuxWindowProperties(fn windowOnGetLinuxWindowProperties) {
 	imports.Proc(def.CEFWindowComponent_SetOnGetLinuxWindowProperties).Call(m.Instance(), api.MakeEventDataPtr(fn))
 }
