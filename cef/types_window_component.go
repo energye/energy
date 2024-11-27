@@ -289,7 +289,7 @@ func (m *TCEFWindowComponent) SetBackgroundColor(rect types.TCefColor) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_SetBackgroundColor).Call(m.Instance(), rect.ToPtr())
+	imports.Proc(def.CEFWindowComponent_SetBackgroundColor).Call(m.Instance(), uintptr(rect))
 }
 
 // Bounds 获取窗口边界
