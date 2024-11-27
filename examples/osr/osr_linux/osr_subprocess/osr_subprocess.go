@@ -8,6 +8,7 @@ import (
 
 // 必须构建子进程，并和主进程放置在同一目录
 func main() {
+	println("必须构建子进程，并和主进程放置在同一目录")
 	cef.GlobalInit(nil, nil)
 	app := cef.CreateApplication()
 	cef.SetApplication(app)

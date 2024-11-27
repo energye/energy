@@ -16,9 +16,10 @@ import (
 	"unsafe"
 )
 
-// 必须将执行文件和子进程执行文件放置在同一目录
+//
 
 func main() {
+	println("必须将执行文件(osr_linux)和子进程执行文件(osr_subprocess)放置在同一目录")
 	cef.GlobalInit(nil, nil)
 	var window = &WindowForm{}
 	//创建应用
@@ -271,7 +272,7 @@ func (m *WindowForm) bufferPanelEvent() {
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_RAW_KEYDOWN
 			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
+			keyEvent.WindowsKeyCode = int32(*key)
 			keyEvent.NativeKeyCode = 0
 			keyEvent.IsSystemKey = 0           // 0=false, 1=true
 			keyEvent.Character = '0'           // #0
@@ -287,7 +288,7 @@ func (m *WindowForm) bufferPanelEvent() {
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_KEYUP
 			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
+			keyEvent.WindowsKeyCode = int32(*key)
 			keyEvent.NativeKeyCode = 0
 			keyEvent.IsSystemKey = 0           // 0=false, 1=true
 			keyEvent.Character = '0'           // #0
@@ -325,11 +326,11 @@ func (m *WindowForm) bufferPanelEvent() {
 			keyEvent.Kind = consts.KEYEVENT_CHAR
 			//keyEvent.Modifiers = cef.GetCefKeyboardModifiers(t.WPARAM(asciiCode), 0) // windows
 			keyEvent.Modifiers = consts.EVENTFLAG_NONE // windows
-			keyEvent.WindowsKeyCode = t.Int32(*key)
-			keyEvent.NativeKeyCode = t.Int32(*key)
+			keyEvent.WindowsKeyCode = int32(*key)
+			keyEvent.NativeKeyCode = int32(*key)
 			keyEvent.IsSystemKey = 0 // 0=false, 1=true
-			keyEvent.Character = t.UInt16(*key)
-			keyEvent.UnmodifiedCharacter = t.UInt16(*key)
+			keyEvent.Character = *key
+			keyEvent.UnmodifiedCharacter = *key
 			keyEvent.FocusOnEditableField = 0 // 0=false, 1=true
 			m.chromium.SendKeyEvent(keyEvent)
 			//if (Key in [VK_LEFT, VK_RIGHT, VK_UP, VK_DOWN, VK_TAB]) then Key := 0;
