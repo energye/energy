@@ -13,19 +13,6 @@
 
 package consts
 
-import "github.com/energye/energy/v2/types"
-
-type TCefMenuAccelerator = types.Int32
-
-const (
-	MA_Shift                          = "SHIFT"
-	MA_Shift_Code TCefMenuAccelerator = 0x10 //  16
-	MA_Ctrl                           = "CTRL"
-	MA_Ctrl_Code  TCefMenuAccelerator = 0x11 //  17
-	MA_Alt                            = "ALT"
-	MA_Alt_Code   TCefMenuAccelerator = 0x12 //  18
-)
-
 // 功能和消息常量
 const (
 	CEF_PREFERENCES_SAVED = 0x000A00

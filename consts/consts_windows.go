@@ -18,17 +18,6 @@ import (
 	"unsafe"
 )
 
-type TCefMenuAccelerator = int32
-
-const (
-	MA_Shift                          = "SHIFT"
-	MA_Shift_Code TCefMenuAccelerator = 0x10 //  16
-	MA_Ctrl                           = "CTRL"
-	MA_Ctrl_Code  TCefMenuAccelerator = 0x11 //  17
-	MA_Alt                            = "ALT"
-	MA_Alt_Code   TCefMenuAccelerator = 0x12 //  18
-)
-
 const (
 	CEF_PREFERENCES_SAVED = WM_APP + 0x000A00
 	CEF_DOONCLOSE         = WM_APP + 0x000A01

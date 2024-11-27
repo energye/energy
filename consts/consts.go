@@ -35,12 +35,21 @@ const (
 )
 
 func init() {
-	// 当前执行目录，在其它目录执行目标执行文件时，返回当前执行目录
 	CurrentExecuteDir, _ = os.Getwd()
-	// 执行文件所在真实目录
 	ExePath = os.Args[0]
 	ExeDir, ExeName = filepath.Split(ExePath)
 }
+
+type TCefMenuAccelerator = int32
+
+const (
+	MA_Shift                          = "SHIFT"
+	MA_Shift_Code TCefMenuAccelerator = 0x10 //  16
+	MA_Ctrl                           = "CTRL"
+	MA_Ctrl_Code  TCefMenuAccelerator = 0x11 //  17
+	MA_Alt                            = "ALT"
+	MA_Alt_Code   TCefMenuAccelerator = 0x12 //  18
+)
 
 // Proc Get value and Set value
 const (
