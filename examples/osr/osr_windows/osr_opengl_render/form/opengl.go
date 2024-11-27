@@ -149,7 +149,7 @@ func (m *WindowForm) openGLEvent() {
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_RAW_KEYDOWN
 			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
+			keyEvent.WindowsKeyCode = int32(*key)
 			keyEvent.NativeKeyCode = 0
 			keyEvent.IsSystemKey = 0           // 0=false, 1=true
 			keyEvent.Character = '0'           // #0
@@ -165,7 +165,7 @@ func (m *WindowForm) openGLEvent() {
 		if *key != 0 {
 			keyEvent.Kind = consts.KEYEVENT_KEYUP
 			keyEvent.Modifiers = getModifiers(shift)
-			keyEvent.WindowsKeyCode = t.Int32(*key)
+			keyEvent.WindowsKeyCode = int32(*key)
 			keyEvent.NativeKeyCode = 0
 			keyEvent.IsSystemKey = 0           // 0=false, 1=true
 			keyEvent.Character = '0'           // #0
@@ -184,7 +184,7 @@ func (m *WindowForm) openGLEvent() {
 				keyEvent := &cef.TCefKeyEvent{}
 				keyEvent.Kind = consts.KEYEVENT_CHAR
 				keyEvent.Modifiers = cef.GetCefKeyboardModifiers(t.WPARAM(asciiCode), 0)
-				keyEvent.WindowsKeyCode = t.Int32(asciiCode)
+				keyEvent.WindowsKeyCode = int32(asciiCode)
 				keyEvent.NativeKeyCode = 0
 				keyEvent.IsSystemKey = 0
 				keyEvent.Character = '0'
