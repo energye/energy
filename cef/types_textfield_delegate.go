@@ -80,12 +80,12 @@ func init() {
 		}
 		switch fn.(type) {
 		case textFieldOnTextFieldKeyEvent:
-			textField := (*ICefTextfield)(getPtr(0))
+			textField := &ICefTextfield{&ICefView{instance: getPtr(0)}}
 			event := (*TCefKeyEvent)(getPtr(1))
 			resultPtr := (*bool)(getPtr(2))
 			*resultPtr = fn.(textFieldOnTextFieldKeyEvent)(textField, event)
 		case textFieldOnAfterUserAction:
-			textField := (*ICefTextfield)(getPtr(0))
+			textField := &ICefTextfield{&ICefView{instance: getPtr(0)}}
 			fn.(textFieldOnAfterUserAction)(textField)
 		default:
 			return false

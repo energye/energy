@@ -75,10 +75,10 @@ func init() {
 		}
 		switch fn.(type) {
 		case buttonOnButtonPressed:
-			button := (*ICefButton)(getPtr(0))
+			button := &ICefButton{&ICefView{instance: getPtr(0)}}
 			fn.(buttonOnButtonPressed)(button)
 		case buttonOnButtonStateChanged:
-			button := (*ICefButton)(getPtr(0))
+			button := &ICefButton{&ICefView{instance: getPtr(0)}}
 			fn.(buttonOnButtonStateChanged)(button)
 		default:
 			return false
