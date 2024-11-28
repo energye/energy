@@ -30,7 +30,6 @@ func (m *TitleBar) EnsureTitlePanel() *cef.ICefPanel {
 			m.titlePanel.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
 			regions := make([]cef.TCefDraggableRegion, 1)
 			regions[0] = cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 0, Y: 0, Width: m.window.GetBounds().Width, Height: 30}, Draggable: true}
-			fmt.Println("OnGetPreferredSize RegionsCount:", regions, m.window.GetBounds())
 			m.window.SetDraggableRegions(regions)
 		})
 

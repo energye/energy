@@ -50,9 +50,6 @@ func (m *ViewsFramework) Create() {
 	})
 	var (
 		minimumWindowSize = cef.TCefSize{Width: 100, Height: 100}
-		canGoBack_        bool
-		canGoForward_     bool
-		isLoading_        bool
 		titleBar          *TitleBar
 		menuBar           *MenuBar
 		toolBar           *ToolBar
@@ -67,10 +64,10 @@ func (m *ViewsFramework) Create() {
 		return true
 	})
 	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
-		isLoading_ = isLoading
-		canGoBack_ = canGoBack
-		canGoForward_ = canGoForward
-		fmt.Println("OnLoadingStateChange:", isLoading_, canGoBack_, canGoForward_)
+		fmt.Println("OnLoadingStateChange:", isLoading, canGoBack, canGoForward)
+		if toolBar != nil {
+			toolBar.UpdateBrowserStatus(isLoading, canGoBack, canGoForward)
+		}
 	})
 	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
 		fmt.Println("OnLoadEnd httpStatusCode:", httpStatusCode)
