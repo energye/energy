@@ -7,7 +7,6 @@ import (
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/views_style"
-	"github.com/energye/energy/v2/pkgs/assetserve"
 )
 
 var Assets embed.FS
@@ -297,11 +296,4 @@ func LoadImage(png string) *cef.ICefImage {
 	icon := cef.ImageRef.New()
 	icon.AddPng(1, pngData)
 	return icon
-}
-
-func StartServer() {
-	server := assetserve.NewAssetsHttpServer()
-	server.PORT = 22022
-	server.LocalAssets = "E:\\SWT\\gopath\\src\\github.com\\energye\\energy\\examples\\tiny-browser\\cefclient\\assets"
-	go server.StartHttpServer()
 }
