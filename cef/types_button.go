@@ -24,6 +24,7 @@ type ICefButton struct {
 	*ICefView
 }
 
+// Returns this Button as a LabelButton or NULL if this is not a LabelButton.
 func (m *ICefButton) AsLabelButton() *ICefLabelButton {
 	if !m.IsValid() {
 		return nil
@@ -36,6 +37,7 @@ func (m *ICefButton) AsLabelButton() *ICefLabelButton {
 	return nil
 }
 
+// Sets the current display state of the Button.
 func (m *ICefButton) SetState(state consts.TCefButtonState) {
 	if !m.IsValid() {
 		return
@@ -43,6 +45,7 @@ func (m *ICefButton) SetState(state consts.TCefButtonState) {
 	imports.Proc(def.Button_SetState).Call(m.Instance(), uintptr(state))
 }
 
+// Returns the current display state of the Button.
 func (m *ICefButton) GetState() consts.TCefButtonState {
 	if !m.IsValid() {
 		return 0
@@ -51,6 +54,7 @@ func (m *ICefButton) GetState() consts.TCefButtonState {
 	return consts.TCefButtonState(r1)
 }
 
+// Sets the Button will use an ink drop effect for displaying state changes.
 func (m *ICefButton) SetInkDropEnabled(enabled bool) {
 	if !m.IsValid() {
 		return
@@ -58,6 +62,8 @@ func (m *ICefButton) SetInkDropEnabled(enabled bool) {
 	imports.Proc(def.Button_SetInkDropEnabled).Call(m.Instance(), api.PascalBool(enabled))
 }
 
+// Sets the tooltip text that will be displayed when the user hovers the
+// mouse cursor over the Button.
 func (m *ICefButton) SetTooltipText(tooltipText string) {
 	if !m.IsValid() {
 		return
@@ -65,6 +71,8 @@ func (m *ICefButton) SetTooltipText(tooltipText string) {
 	imports.Proc(def.Button_SetTooltipText).Call(m.Instance(), api.PascalStr(tooltipText))
 }
 
+// Sets the accessible name that will be exposed to assistive technology
+// (AT).
 func (m *ICefButton) SetAccessibleName(name string) {
 	if !m.IsValid() {
 		return

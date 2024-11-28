@@ -36,6 +36,7 @@ func (*panel) New(delegate *ICefPanelDelegate) *ICefPanel {
 	return nil
 }
 
+// Returns this Panel as a Window or NULL if this is not a Window.
 func (m *ICefPanel) GetAsWindow() *ICefWindow {
 	if !m.IsValid() {
 		return nil
@@ -48,6 +49,7 @@ func (m *ICefPanel) GetAsWindow() *ICefWindow {
 	return nil
 }
 
+// Set this Panel's Layout to FillLayout and return the FillLayout object.
 func (m *ICefPanel) SetToFillLayout() *ICefFillLayout {
 	if !m.IsValid() {
 		return nil
@@ -62,6 +64,7 @@ func (m *ICefPanel) SetToFillLayout() *ICefFillLayout {
 	return nil
 }
 
+// Set this Panel's Layout to BoxLayout and return the BoxLayout object.
 func (m *ICefPanel) SetToBoxLayout(settings TCefBoxLayoutSettings) *ICefBoxLayout {
 	if !m.IsValid() {
 		return nil
@@ -75,6 +78,7 @@ func (m *ICefPanel) SetToBoxLayout(settings TCefBoxLayoutSettings) *ICefBoxLayou
 	return nil
 }
 
+// Get the Layout.
 func (m *ICefPanel) GetLayout() *ICefLayout {
 	if !m.IsValid() {
 		return nil
@@ -87,6 +91,8 @@ func (m *ICefPanel) GetLayout() *ICefLayout {
 	return nil
 }
 
+// Lay out the child Views (set their bounds based on sizing heuristics
+// specific to the current Layout).
 func (m *ICefPanel) Layout() {
 	if !m.IsValid() {
 		return
@@ -94,6 +100,7 @@ func (m *ICefPanel) Layout() {
 	imports.Proc(def.CEFPanel_Layout).Call(m.Instance())
 }
 
+// Add a child View.
 func (m *ICefPanel) AddChildView(view *ICefView) {
 	if !m.IsValid() {
 		return
@@ -101,6 +108,8 @@ func (m *ICefPanel) AddChildView(view *ICefView) {
 	imports.Proc(def.CEFPanel_AddChildView).Call(m.Instance(), view.Instance())
 }
 
+// Add a child View at the specified |index|. If |index| matches the result
+// of GetChildCount() then the View will be added at the end.
 func (m *ICefPanel) AddChildViewAt(view *ICefView, index int32) {
 	if !m.IsValid() {
 		return
@@ -108,6 +117,8 @@ func (m *ICefPanel) AddChildViewAt(view *ICefView, index int32) {
 	imports.Proc(def.CEFPanel_AddChildViewAt).Call(m.Instance(), view.Instance(), uintptr(index))
 }
 
+// Move the child View to the specified |index|. A negative value for |index|
+// will move the View to the end.
 func (m *ICefPanel) ReorderChildView(view *ICefView, index int32) {
 	if !m.IsValid() {
 		return
@@ -115,6 +126,7 @@ func (m *ICefPanel) ReorderChildView(view *ICefView, index int32) {
 	imports.Proc(def.CEFPanel_ReorderChildView).Call(m.Instance(), view.Instance(), uintptr(index))
 }
 
+// Remove a child View. The View can then be added to another Panel.
 func (m *ICefPanel) RemoveChildView(view *ICefView) {
 	if !m.IsValid() {
 		return
@@ -122,6 +134,8 @@ func (m *ICefPanel) RemoveChildView(view *ICefView) {
 	imports.Proc(def.CEFPanel_RemoveChildView).Call(m.Instance(), view.Instance())
 }
 
+// Remove all child Views. The removed Views will be deleted if the client
+// holds no references to them.
 func (m *ICefPanel) RemoveAllChildViews() {
 	if !m.IsValid() {
 		return
@@ -129,6 +143,7 @@ func (m *ICefPanel) RemoveAllChildViews() {
 	imports.Proc(def.CEFPanel_RemoveAllChildViews).Call(m.Instance())
 }
 
+// Returns the number of child Views.
 func (m *ICefPanel) GetChildViewCount() uint32 {
 	if !m.IsValid() {
 		return 0
@@ -137,6 +152,7 @@ func (m *ICefPanel) GetChildViewCount() uint32 {
 	return uint32(r1)
 }
 
+// Returns the child View at the specified |index|.
 func (m *ICefPanel) GetChildViewAt(index int32) *ICefView {
 	if !m.IsValid() {
 		return nil

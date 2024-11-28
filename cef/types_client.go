@@ -25,8 +25,8 @@ type ICefClient struct {
 	ct       consts.CefCreateType
 }
 
-// CefClientRef -> ICefClient
-var CefClientRef cefClient
+// ClientRef -> ICefClient
+var ClientRef cefClient
 
 type cefClient uintptr
 
