@@ -11,6 +11,7 @@ import (
 type ToolBar struct {
 	toolPanel           *cef.ICefPanel
 	toolPanelDelegate   *cef.ICefPanelDelegate
+	toolPanelLayout     *cef.ICefBoxLayout
 	buttons             []*cef.ICefLabelButton
 	buttonDelegate      *cef.ICefButtonDelegate
 	menuButtonDelegate  *cef.ICefMenuButtonDelegate
@@ -49,6 +50,9 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 			fmt.Println("OnButtonPressed", button.GetID())
 		})
 		m.menuButtonDelegate = cef.MenuButtonDelegateRef.New()
+		m.menuButtonDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+			*result = cef.TCefSize{Height: 40, Width: 40}
+		})
 		m.menuButtonDelegate.SetOnMenuButtonPressed(func(menuButton *cef.ICefMenuButton, screenPoint cef.TCefPoint, buttonPressedLock *cef.ICefMenuButtonPressedLock) {
 			fmt.Println("OnMenuButtonPressed", menuButton.GetID(), "IsMainThread:", api.DCurrentThreadId() == api.DMainThreadId())
 			browser := window.browserView.GetBrowser()
@@ -80,6 +84,11 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 					menuButton.ShowMenu(testMenu, point, consts.CEF_MENU_ANCHOR_TOPLEFT)
 				}
 			}
+		})
+		m.toolPanelLayout = m.toolPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
+			Horizontal:         1,
+			DefaultFlex:        1,
+			CrossAxisAlignment: consts.CEF_AXIS_ALIGNMENT_CENTER,
 		})
 	}
 	return m.toolPanel
@@ -127,6 +136,7 @@ func (m *ToolBar) CreateRightMenuButton() *cef.ICefMenuButton {
 	m.rightMenuButton.SetID(ID_MENU_BUTTON)
 	m.rightMenuButton.SetInkDropEnabled(true)
 	m.rightMenuButton.SetMinimumSize(cef.TCefSize{})
+	m.rightMenuButton.SetMaximumSize(cef.TCefSize{Height: 40, Width: 40})
 	m.rightMenuButton.SetImage(consts.CEF_BUTTON_STATE_NORMAL, LoadImage("right-menu.png"))
 	m.rightMenuButton.SetTooltipText("单击打开功能菜单")
 	return m.rightMenuButton
@@ -169,27 +179,25 @@ func (m *ToolBar) CreateToolComponent() {
 	m.btnForward = m.CreateButton("单击继续", "forward.png", ID_FORWARD_BUTTON)
 	m.btnReload = m.CreateButton("单击刷新", "refresh.png", ID_RELOAD_BUTTON)
 	m.btnStop = m.CreateButton("单击停止加载", "stop.png", ID_STOP_BUTTON)
+
 	m.toolPanel.AddChildView(m.btnBack.btn.AsView())
+	m.toolPanelLayout.SetFlexForView(m.btnBack.btn.AsView(), 0)
 	m.toolPanel.AddChildView(m.btnForward.AsView())
+	m.toolPanelLayout.SetFlexForView(m.btnForward.AsView(), 0)
 	m.toolPanel.AddChildView(m.btnReload.AsView())
+	m.toolPanelLayout.SetFlexForView(m.btnReload.AsView(), 0)
 	m.toolPanel.AddChildView(m.btnStop.AsView())
+	m.toolPanelLayout.SetFlexForView(m.btnStop.AsView(), 0)
 	m.btnStop.SetVisible(false)
+
 	m.MakeButtonsSameSize()
 
 	m.toolPanel.AddChildView(m.CreateLocationBar().AsView())
-	m.LayoutLocationBar()
+	m.toolPanelLayout.SetFlexForView(m.locationBar.AsView(), 1)
 
-	m.toolPanel.AddChildView(m.CreateRightMenuButton().AsView())
-}
-
-func (m *ToolBar) LayoutLocationBar() {
-	// 使用水平盒布局|面板|
-	layout := m.toolPanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
-		BetweenChildSpacing: 2,
-		Horizontal:          1,
-		CrossAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_CENTER,
-	})
-	layout.SetFlexForView(m.locationBar.AsView(), 1)
+	rightMenuButton := m.CreateRightMenuButton()
+	m.toolPanel.AddChildView(rightMenuButton.AsView())
+	m.toolPanelLayout.SetFlexForView(rightMenuButton.AsView(), 0)
 }
 
 func (m *ToolBar) UpdateBrowserStatus(isLoading, canGoBack, canGoForward bool) {

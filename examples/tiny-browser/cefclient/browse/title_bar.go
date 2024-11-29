@@ -49,12 +49,15 @@ func (m *TitleBar) EnsureTitlePanel() *cef.ICefPanel {
 			fmt.Println("titlePanelDelegate.SetOnGetPreferredSize")
 			m.titlePanel.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
 			regions := make([]cef.TCefDraggableRegion, 1)
-			regions[0] = cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 0, Y: 0, Width: m.window.GetBounds().Width, Height: titleHeight}, Draggable: true}
+			regions[0] = cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: m.GetWindowButtonAllWidth(), Y: 0, Width: m.window.GetBounds().Width, Height: titleHeight}, Draggable: true}
 			m.window.SetDraggableRegions(regions)
 			updateWindowButtonState()
 		})
 
 		m.menuButtonDelegate = cef.MenuButtonDelegateRef.New()
+		m.menuButtonDelegate.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
+			*result = cef.TCefSize{Height: 40, Width: 35}
+		})
 		m.menuButtonDelegate.SetOnMenuButtonPressed(func(menuButton *cef.ICefMenuButton, screenPoint cef.TCefPoint, buttonPressedLock *cef.ICefMenuButtonPressedLock) {
 			switch menuButton.GetID() {
 			case ID_WINDOW_MIN_BTN:
@@ -81,11 +84,12 @@ func (m *TitleBar) EnsureTitlePanel() *cef.ICefPanel {
 			fmt.Println("titlePanelDelegate.SetOnThemeChanged")
 		})
 		m.titlePanel = cef.PanelRef.New(m.titlePanelDelegate)
-		m.titlePanel.SetSize(cef.TCefSize{Height: titleHeight})
+		//m.titlePanel.SetSize(cef.TCefSize{Height: titleHeight})
 		m.titlePanel.SetBackgroundColor(cef.CefColorSetARGB(255, 77, 177, 177))
-		m.titlePanel.SetToFillLayout()
+		//m.titlePanel.SetToFillLayout()
 		m.titlePanelLayout = m.titlePanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
 			Horizontal:         1,
+			DefaultFlex:        1,
 			CrossAxisAlignment: consts.CEF_AXIS_ALIGNMENT_CENTER,
 		})
 	}
@@ -95,13 +99,25 @@ func (m *TitleBar) CreateButton(tooltip, iconEnable, iconDisable string, id int3
 	return CreateImageButton("", tooltip, iconEnable, iconDisable, id, m.menuButtonDelegate)
 }
 
+func (m *TitleBar) GetWindowButtonAllWidth() int32 {
+	var getWidth = func(btn *ImageButton) int32 {
+		if btn == nil {
+			return 0
+		}
+		return btn.btn.GetBounds().Width
+	}
+	return getWidth(m.closeBtn) + getWidth(m.maxBtn) + getWidth(m.minBtn)
+}
 func (m *TitleBar) CreateWindowButton() {
 	m.closeBtn = m.CreateButton("关闭", "btn-close.png", "", ID_WINDOW_CLOSE_BTN)
 	m.titlePanel.AddChildView(m.closeBtn.btn.AsView())
+	m.titlePanelLayout.SetFlexForView(m.closeBtn.btn.AsView(), 0)
 	m.maxBtn = m.CreateButton("最大化", "btn-max.png", "btn-max-re.png", ID_WINDOW_MAX_BTN)
 	m.titlePanel.AddChildView(m.maxBtn.btn.AsView())
+	m.titlePanelLayout.SetFlexForView(m.maxBtn.btn.AsView(), 0)
 	m.minBtn = m.CreateButton("最小化", "btn-min.png", "", ID_WINDOW_MIN_BTN)
 	m.titlePanel.AddChildView(m.minBtn.btn.AsView())
+	m.titlePanelLayout.SetFlexForView(m.minBtn.btn.AsView(), 0)
 }
 
 func (m *TitleBar) CreateICON() {

@@ -53,6 +53,7 @@ func CreateImageButton(text, tooltip, iconEnable, iconDisable string, id int32, 
 	button.btn.SetEnabled(true)    // 默认为关闭
 	button.btn.SetFocusable(false) // 不要把焦点放在按钮上
 	button.btn.SetMinimumSize(cef.TCefSize{})
+	button.btn.SetMaximumSize(cef.TCefSize{Height: 40, Width: 40})
 	button.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, button.enable)
 	button.btn.SetTooltipText(tooltip)
 	return button
