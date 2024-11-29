@@ -171,8 +171,8 @@ func DeviceToLogicalTouch(event *TCefTouchEvent, deviceScaleFactor float64) {
 	imports.Proc(def.Misc_DeviceToLogicalTouch).Call(uintptr(unsafe.Pointer(event)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
 }
 
-func DeviceToLogicalPoint(point *t.TPoint, deviceScaleFactor float64) {
-	imports.Proc(def.Misc_DeviceToLogicalPoint).Call(uintptr(unsafe.Pointer(point)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+func DeviceToLogicalPoint(point t.TPoint, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_DeviceToLogicalPoint).Call(uintptr(unsafe.Pointer(&point)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
 }
 
 func LogicalToDeviceInt32(value int32, deviceScaleFactor float64) int32 {
@@ -180,8 +180,8 @@ func LogicalToDeviceInt32(value int32, deviceScaleFactor float64) int32 {
 	return int32(r1)
 }
 
-func LogicalToDeviceRect(rect *TCefRect, deviceScaleFactor float64) {
-	imports.Proc(def.Misc_LogicalToDeviceRect).Call(uintptr(unsafe.Pointer(rect)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
+func LogicalToDeviceRect(rect TCefRect, deviceScaleFactor float64) {
+	imports.Proc(def.Misc_LogicalToDeviceRect).Call(uintptr(unsafe.Pointer(&rect)), uintptr(unsafe.Pointer(&deviceScaleFactor)))
 }
 
 func InitializeWindowHandle() consts.TCefWindowHandle {

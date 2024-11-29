@@ -82,11 +82,11 @@ func (m *ICefPrintSettings) IsLandscape() bool {
 	return api.GoBool(r1)
 }
 
-func (m *ICefPrintSettings) SetPrinterPrintableArea(physicalSizeDeviceUnits *TCefSize, printableAreaDeviceUnits *TCefRect, landscapeNeedsFlip bool) {
+func (m *ICefPrintSettings) SetPrinterPrintableArea(physicalSizeDeviceUnits TCefSize, printableAreaDeviceUnits TCefRect, landscapeNeedsFlip bool) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CefPrintSettings_SetPrinterPrintableArea).Call(m.Instance(), uintptr(unsafe.Pointer(physicalSizeDeviceUnits)), uintptr(unsafe.Pointer(printableAreaDeviceUnits)), api.PascalBool(landscapeNeedsFlip))
+	imports.Proc(def.CefPrintSettings_SetPrinterPrintableArea).Call(m.Instance(), uintptr(unsafe.Pointer(&physicalSizeDeviceUnits)), uintptr(unsafe.Pointer(&printableAreaDeviceUnits)), api.PascalBool(landscapeNeedsFlip))
 }
 
 func (m *ICefPrintSettings) SetDeviceName(name string) {

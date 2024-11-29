@@ -120,9 +120,9 @@ type IBrowserWindow interface {
 	WindowProperty() *WindowProperty                                                                          //窗口常用属性
 	SetWidth(value int32)                                                                                     //设置窗口宽
 	SetHeight(value int32)                                                                                    //设置窗口高
-	Point() *TCefPoint                                                                                        //窗口坐标
-	Size() *TCefSize                                                                                          //窗口宽高
-	Bounds() *TCefRect                                                                                        //窗口坐标和宽高
+	Point() TCefPoint                                                                                         //窗口坐标
+	Size() TCefSize                                                                                           //窗口宽高
+	Bounds() TCefRect                                                                                         //窗口坐标和宽高
 	SetPoint(x, y int32)                                                                                      //设置窗口坐标
 	SetSize(width, height int32)                                                                              //设置窗口宽高
 	SetBounds(x, y, width, height int32)                                                                      //设置窗口坐标和宽高
@@ -174,7 +174,7 @@ type IViewsFrameworkBrowserWindow interface {
 	IBrowserWindow
 	BrowserWindow() *ViewsFrameworkBrowserWindow                       //返回 ViewsFrameworkBrowserWindow 窗口结构
 	CreateTopLevelWindow()                                             //创建窗口, 在窗口组件中需要默认调用Show函数
-	CenterWindow(size *TCefSize)                                       //设置窗口居中，同时指定窗口大小
+	CenterWindow(size TCefSize)                                        //设置窗口居中，同时指定窗口大小
 	Component() lcl.IComponent                                         //窗口父组件
 	WindowComponent() *TCEFWindowComponent                             //窗口组件
 	BrowserViewComponent() *TCEFBrowserViewComponent                   //窗口浏览器组件

@@ -250,16 +250,12 @@ func (m *ICefDragData) GetImage() *ICefImage {
 	return nil
 }
 
-func (m *ICefDragData) GetImageHotspot() *TCefPoint {
+func (m *ICefDragData) GetImageHotspot() (point TCefPoint) {
 	if !m.IsValid() {
-		return nil
+		return
 	}
-	var result uintptr
-	imports.Proc(def.CefDragData_GetImageHotspot).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
-	if result != 0 {
-		return (*TCefPoint)(unsafe.Pointer(result))
-	}
-	return nil
+	imports.Proc(def.CefDragData_GetImageHotspot).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
+	return
 }
 
 func (m *ICefDragData) HasImage() bool {
