@@ -55,7 +55,7 @@ func (m *ViewsFramework) Create() {
 			display := m.windowComponent.Display()
 			if display.IsValid() {
 				workArea := display.WorkArea()
-				position := &cef.TCefPoint{
+				position := cef.TCefPoint{
 					X: ((workArea.Width - width) / 2) + workArea.X,
 					Y: ((workArea.Height - height) / 2) + workArea.Y,
 				}

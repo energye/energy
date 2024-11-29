@@ -176,7 +176,7 @@ func (m *WindowForm) chromiumEvent() {
 	m.chromium.SetOnPopupSize(func(sender lcl.IObject, browser *cef.ICefBrowser, rect *cef.TCefRect) {
 		screenScale := m.bufferPanel.ScreenScale()
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
-		cef.LogicalToDeviceRect(rect, float64(screenScale))
+		cef.LogicalToDeviceRect(*rect, float64(screenScale))
 		fmt.Println("PopupSize - rect:", rect, "screenScale:", screenScale)
 	})
 	// windows IME
