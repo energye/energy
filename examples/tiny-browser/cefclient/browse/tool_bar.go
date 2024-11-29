@@ -24,12 +24,6 @@ type ToolBar struct {
 	btnStop             *cef.ICefMenuButton
 }
 
-type ImageButton struct {
-	btn        *cef.ICefMenuButton
-	imgEnable  *cef.ICefImage
-	imgDisable *cef.ICefImage
-}
-
 func NewToolBar(window *cef.TCEFWindowComponent) *ToolBar {
 	return &ToolBar{window: window, buttons: make([]*cef.ICefLabelButton, 0)}
 }
@@ -115,19 +109,8 @@ func (m *ToolBar) CreateButton(label, icon string, id int32) *cef.ICefMenuButton
 	return button
 }
 
-func (m *ToolBar) CreateImageButton(label, iconEnable, iconDisable string, id int32) *ImageButton {
-	button := new(ImageButton)
-	button.imgEnable = LoadImage(iconEnable)
-	button.imgDisable = LoadImage(iconDisable)
-	button.btn = cef.MenuButtonRef.New(m.menuButtonDelegate, "")
-	button.btn.SetID(id)
-	button.btn.SetInkDropEnabled(true)
-	button.btn.SetEnabled(true)    // 默认为关闭
-	button.btn.SetFocusable(false) // 不要把焦点放在按钮上
-	button.btn.SetMinimumSize(cef.TCefSize{})
-	button.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, button.imgEnable)
-	button.btn.SetTooltipText(label)
-	return button
+func (m *ToolBar) CreateImageButton(tooltip, iconEnable, iconDisable string, id int32) *ImageButton {
+	return CreateImageButton("", tooltip, iconEnable, iconDisable, id, m.menuButtonDelegate)
 }
 
 func (m *ToolBar) CreateLocationBar() *cef.ICefTextfield {
@@ -214,9 +197,9 @@ func (m *ToolBar) UpdateBrowserStatus(isLoading, canGoBack, canGoForward bool) {
 	btnReload := m.toolPanel.GetViewForID(ID_RELOAD_BUTTON)
 	btnStop := m.toolPanel.GetViewForID(ID_STOP_BUTTON)
 	if canGoBack {
-		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.imgEnable)
+		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.enable)
 	} else {
-		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.imgDisable)
+		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.disable)
 	}
 	m.btnBack.btn.SetEnabled(canGoBack)
 	btnForward.SetVisible(canGoForward)

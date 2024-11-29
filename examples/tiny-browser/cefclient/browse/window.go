@@ -60,6 +60,8 @@ func (m *ViewsFramework) Create() {
 	//m.browserView.SetPreferAccelerators(true)
 	m.window = cef.WindowComponentRef.New(m)
 	m.window.SetID(ID_WINDOW)
+	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
+	})
 	m.chromium.SetOnAutoResize(func(sender lcl.IObject, browser *cef.ICefBrowser, newSize *cef.TCefSize) bool {
 		fmt.Println("OnAutoResize", newSize)
 		return true
@@ -68,6 +70,7 @@ func (m *ViewsFramework) Create() {
 		fmt.Println("OnLoadingStateChange:", isLoading, canGoBack, canGoForward)
 		if m.toolBar != nil {
 			m.toolBar.UpdateBrowserStatus(isLoading, canGoBack, canGoForward)
+			m.toolBar.locationBar.SetText(browser.MainFrame().Url())
 		}
 	})
 	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
@@ -83,10 +86,6 @@ func (m *ViewsFramework) Create() {
 		//}
 		//m.window.SetDraggableRegions(regions.Regions())
 	})
-	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-
-		//titleBar.CreateTitleBrowser(nil)
-	})
 	m.window.SetOnGetMinimumSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		if view.GetID() == ID_WINDOW {
 			//fmt.Println("OnGetMinimumSize", result)
@@ -95,6 +94,7 @@ func (m *ViewsFramework) Create() {
 	})
 	m.window.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		//m.window.SetBackgroundColor(cef.CefColorSetARGB(255, 33, 34, 38))
+		fmt.Println("OnGetPreferredSize")
 	})
 	m.window.SetOnGetTitleBarHeight(func(window *cef.ICefWindow, titleBarHeight *float32, result *bool) {
 		fmt.Println("OnGetTitleBarHeight:", *titleBarHeight, *result)
@@ -136,7 +136,6 @@ func (m *ViewsFramework) Create() {
 	m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
 		fmt.Println("OnWindowChanged added:", added)
 		if added {
-			//titleBar.CreateTitleBrowser(m)
 		}
 	})
 	m.window.SetOnGetWindowRuntimeStyle(func(result *consts.TCefRuntimeStyle) {
@@ -179,6 +178,7 @@ func (m *ViewsFramework) Create() {
 			// 工具栏, 创建工具组件，并添加到工具栏中
 			m.toolBar.CreateToolComponent()
 
+			m.titleBar.CreateTitleBrowser(m)
 			//var minWidth int32 = toolBar.AllButtonWidth()
 			//var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
 			//minimumWindowSize = cef.TCefSize{Width: minWidth, Height: minHeight}
