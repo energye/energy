@@ -21,6 +21,9 @@ type ViewsFramework struct {
 	window      *cef.TCEFWindowComponent
 	browserView *cef.TCEFBrowserViewComponent
 	homePage    string
+	titleBar    *TitleBar
+	menuBar     *MenuBar
+	toolBar     *ToolBar
 }
 
 func Application() *cef.TCEFApplication {
@@ -36,6 +39,7 @@ func MainWindow() *ViewsFramework {
 		window.homePage = "http://localhost:22022"
 		window.Create()
 		window.window.CreateTopLevelWindow()
+		lcl.Application.Initialize()
 		app.RunMessageLoop()
 	}
 	return window
@@ -50,9 +54,6 @@ func (m *ViewsFramework) Create() {
 	})
 	var (
 		minimumWindowSize = cef.TCefSize{Width: 100, Height: 100}
-		titleBar          *TitleBar
-		menuBar           *MenuBar
-		toolBar           *ToolBar
 	)
 	m.browserView = cef.BrowserViewComponentRef.New(m)
 	m.browserView.SetID(ID_BROWSER_VIEW)
@@ -65,8 +66,8 @@ func (m *ViewsFramework) Create() {
 	})
 	m.chromium.SetOnLoadingStateChange(func(sender lcl.IObject, browser *cef.ICefBrowser, isLoading, canGoBack, canGoForward bool) {
 		fmt.Println("OnLoadingStateChange:", isLoading, canGoBack, canGoForward)
-		if toolBar != nil {
-			toolBar.UpdateBrowserStatus(isLoading, canGoBack, canGoForward)
+		if m.toolBar != nil {
+			m.toolBar.UpdateBrowserStatus(isLoading, canGoBack, canGoForward)
 		}
 	})
 	m.chromium.SetOnLoadEnd(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, httpStatusCode int32) {
@@ -156,15 +157,15 @@ func (m *ViewsFramework) Create() {
 		m.window.SetWindowAppIcon(LoadImage("app-icon.png"))
 		m.window.SetTitle("Go ENERGY Client")
 
-		titleBar = NewTitleBar(m.window) // 顶部标题栏
-		menuBar = NewMenuBar(m.window)   // 顶部菜单栏
-		toolBar = NewToolBar(m.window)   // 顶部工具栏
+		m.titleBar = NewTitleBar(m.window) // 顶部标题栏
+		m.menuBar = NewMenuBar(m.window)   // 顶部菜单栏
+		m.toolBar = NewToolBar(m.window)   // 顶部工具栏
 
 		if m.chromium.CreateBrowserByBrowserViewComponent(m.homePage, m.browserView, nil, nil) {
 			//regions := []cef.TCefDraggableRegion{}
 			//regions = append(regions, cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 130, Y: 0, Width: 100, Height: 30}})
 			//m.window.SetDraggableRegions(regions)
-			fmt.Println("ChromeToolbar:", m.browserView.ChromeToolbar().IsValid())
+			fmt.Println("ChromeToolbar:", m.browserView.GetChromeToolbar().IsValid())
 			// 允许|browser_view_|增长并填充任何剩余空间。
 			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{
 				BetweenChildSpacing: 5,
@@ -172,11 +173,11 @@ func (m *ViewsFramework) Create() {
 			})
 
 			// 菜单栏, 创建菜单，并添加到菜单栏中
-			menuBar.CreateFileMenuItems()
-			menuBar.CreateTestMenuItems()
+			m.menuBar.CreateFileMenuItems()
+			m.menuBar.CreateTestMenuItems()
 
 			// 工具栏, 创建工具组件，并添加到工具栏中
-			toolBar.CreateToolComponent()
+			m.toolBar.CreateToolComponent()
 
 			//var minWidth int32 = toolBar.AllButtonWidth()
 			//var minHeight int32 = toolBar.EnsureToolPanel().GetBounds().Height + 100
@@ -184,13 +185,13 @@ func (m *ViewsFramework) Create() {
 			//fmt.Println("minWidth:", minWidth, "minHeight:", minHeight)
 
 			// 标题栏添加到窗口
-			m.window.AddChildView(titleBar.EnsureTitlePanel().AsView())
+			m.window.AddChildView(m.titleBar.EnsureTitlePanel().AsView())
 
 			// 菜单栏添加到窗口
-			m.window.AddChildView(menuBar.EnsureMenuPanel().AsView())
+			m.window.AddChildView(m.menuBar.EnsureMenuPanel().AsView())
 
 			// 工具栏添加到窗口
-			m.window.AddChildView(toolBar.EnsureToolPanel().AsView())
+			m.window.AddChildView(m.toolBar.EnsureToolPanel().AsView())
 
 			// 浏览器view添加到窗口
 			m.window.AddChildView(m.browserView.AsView())

@@ -24,6 +24,9 @@ const (
 const kMenuBarGroupId int32 = 100
 
 func LoadImage(png string) *cef.ICefImage {
+	if png == "" {
+		return nil
+	}
 	pngData, err := Assets.ReadFile("assets/icon/" + png)
 	if err != nil {
 		panic(err)

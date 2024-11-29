@@ -7,6 +7,8 @@ import (
 	"github.com/energye/golcl/lcl"
 )
 
+const titleHeight = 40
+
 type TitleBar struct {
 	chromium           cef.IChromium
 	browserView        *cef.TCEFBrowserViewComponent
@@ -29,7 +31,7 @@ func (m *TitleBar) EnsureTitlePanel() *cef.ICefPanel {
 			fmt.Println("titlePanelDelegate.SetOnGetPreferredSize")
 			m.titlePanel.SetBackgroundColor(cef.CefColorSetARGB(255, 237, 237, 237))
 			regions := make([]cef.TCefDraggableRegion, 1)
-			regions[0] = cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 0, Y: 0, Width: m.window.GetBounds().Width, Height: 30}, Draggable: true}
+			regions[0] = cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 0, Y: 0, Width: m.window.GetBounds().Width, Height: titleHeight}, Draggable: true}
 			m.window.SetDraggableRegions(regions)
 		})
 
@@ -57,13 +59,12 @@ func (m *TitleBar) EnsureTitlePanel() *cef.ICefPanel {
 			fmt.Println("titlePanelDelegate.SetOnThemeChanged")
 		})
 		m.titlePanel = cef.PanelRef.New(m.titlePanelDelegate)
-		m.titlePanel.SetSize(cef.TCefSize{Height: 40})
+		m.titlePanel.SetSize(cef.TCefSize{Height: titleHeight})
 		m.titlePanel.SetBackgroundColor(cef.CefColorSetARGB(255, 77, 177, 177))
 		m.titlePanel.SetToFillLayout()
 		m.titlePanelLayout = m.titlePanel.SetToBoxLayout(cef.TCefBoxLayoutSettings{
-			BetweenChildSpacing: 2,
-			Horizontal:          1,
-			CrossAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_CENTER,
+			Horizontal:         1,
+			CrossAxisAlignment: consts.CEF_AXIS_ALIGNMENT_CENTER,
 		})
 	}
 	return m.titlePanel

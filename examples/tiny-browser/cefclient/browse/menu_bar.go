@@ -70,8 +70,10 @@ func (m *MenuBar) EnsureMenuPanel() *cef.ICefPanel {
 func (m *MenuBar) CreateMenuModel(label, tooltipText string, menuId *int32) *cef.ICefMenuModel {
 	m.EnsureMenuPanel()
 	m.idNext++
-	if menuId != nil {
+	if menuId != nil && *menuId == 0 {
 		*menuId = m.idNext
+	} else {
+		m.idNext = *menuId
 	}
 	// 创建新的MenuModel。
 	model := cef.MenuModelRef.New(m.menuModeDelegate)
@@ -92,7 +94,7 @@ func (m *MenuBar) CreateMenuModel(label, tooltipText string, menuId *int32) *cef
 }
 
 func (m *MenuBar) CreateTestMenuItems() {
-	var id int32
+	var id = ID_MENU_BUTTON
 	menuModel := m.CreateMenuModel("&Tests", "测试菜单按钮", &id)
 	menuModel.AddItem(ID_TESTS_GETSOURCE, "Get Source")
 	menuModel.AddItem(ID_TESTS_GETTEXT, "Get Text(获取文本)")

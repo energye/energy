@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/consts"
+	"github.com/energye/golcl/lcl/api"
 )
 
 type ToolBar struct {
@@ -17,10 +18,16 @@ type ToolBar struct {
 	locationBar         *cef.ICefTextfield
 	rightMenuButton     *cef.ICefMenuButton
 	window              *cef.TCEFWindowComponent
-	btnBack             *cef.ICefMenuButton
+	btnBack             *ImageButton
 	btnForward          *cef.ICefMenuButton
 	btnReload           *cef.ICefMenuButton
 	btnStop             *cef.ICefMenuButton
+}
+
+type ImageButton struct {
+	btn        *cef.ICefMenuButton
+	imgEnable  *cef.ICefImage
+	imgDisable *cef.ICefImage
 }
 
 func NewToolBar(window *cef.TCEFWindowComponent) *ToolBar {
@@ -38,6 +45,7 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 		m.locationBarDelegate.SetOnKeyEvent(func(textField *cef.ICefTextfield, event *cef.TCefKeyEvent) bool {
 			if event.Kind == consts.KEYEVENT_RAW_KEYDOWN && event.WindowsKeyCode == winapi.VK_RETURN {
 				fmt.Println("OnKeyEvent", textField.GetID(), event.KeyDown(), textField.GetText())
+				window.chromium.LoadUrl(textField.GetText())
 				return true
 			}
 			return false
@@ -48,7 +56,36 @@ func (m *ToolBar) EnsureToolPanel() *cef.ICefPanel {
 		})
 		m.menuButtonDelegate = cef.MenuButtonDelegateRef.New()
 		m.menuButtonDelegate.SetOnMenuButtonPressed(func(menuButton *cef.ICefMenuButton, screenPoint cef.TCefPoint, buttonPressedLock *cef.ICefMenuButtonPressedLock) {
-			fmt.Println("OnMenuButtonPressed", menuButton.GetID())
+			fmt.Println("OnMenuButtonPressed", menuButton.GetID(), "IsMainThread:", api.DCurrentThreadId() == api.DMainThreadId())
+			browser := window.browserView.GetBrowser()
+			switch menuButton.GetID() {
+			case ID_BACK_BUTTON:
+				browser.GoBack()
+			case ID_FORWARD_BUTTON:
+				browser.GoForward()
+			case ID_STOP_BUTTON:
+				browser.StopLoad()
+			case ID_RELOAD_BUTTON:
+				browser.Reload()
+			case ID_MENU_BUTTON:
+				buttonBounds := menuButton.GetBoundsInScreen()
+				point := screenPoint
+				if cef.CefIsRTL() {
+					point.X += buttonBounds.Width - 4
+				} else {
+					point.X -= buttonBounds.Width - 4
+				}
+				testMenu := window.menuBar.menuModels[menuButton.GetID()]
+				if testMenu != nil {
+					displayBounds := menuButton.GetWindow().Display().WorkArea()
+					availableHeight := displayBounds.Y + displayBounds.Height - buttonBounds.Y - buttonBounds.Height
+					menuHeight := int32(testMenu.GetCount()) * buttonBounds.Height
+					if menuHeight > availableHeight {
+						point.Y -= buttonBounds.Height - 8
+					}
+					menuButton.ShowMenu(testMenu, point, consts.CEF_MENU_ANCHOR_TOPLEFT)
+				}
+			}
 		})
 	}
 	return m.toolPanel
@@ -75,6 +112,21 @@ func (m *ToolBar) CreateButton(label, icon string, id int32) *cef.ICefMenuButton
 	button.SetMinimumSize(cef.TCefSize{})
 	button.SetImage(consts.CEF_BUTTON_STATE_NORMAL, LoadImage(icon))
 	button.SetTooltipText(label)
+	return button
+}
+
+func (m *ToolBar) CreateImageButton(label, iconEnable, iconDisable string, id int32) *ImageButton {
+	button := new(ImageButton)
+	button.imgEnable = LoadImage(iconEnable)
+	button.imgDisable = LoadImage(iconDisable)
+	button.btn = cef.MenuButtonRef.New(m.menuButtonDelegate, "")
+	button.btn.SetID(id)
+	button.btn.SetInkDropEnabled(true)
+	button.btn.SetEnabled(true)    // 默认为关闭
+	button.btn.SetFocusable(false) // 不要把焦点放在按钮上
+	button.btn.SetMinimumSize(cef.TCefSize{})
+	button.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, button.imgEnable)
+	button.btn.SetTooltipText(label)
 	return button
 }
 
@@ -129,11 +181,12 @@ func (m *ToolBar) CreateToolComponent() {
 	//m.toolPanel.AddChildView(m.CreateBrowseButton("Forward", ID_FORWARD_BUTTON).AsView())
 	//m.toolPanel.AddChildView(m.CreateBrowseButton("Reload", ID_RELOAD_BUTTON).AsView())
 	//m.toolPanel.AddChildView(m.CreateBrowseButton("Stop", ID_STOP_BUTTON).AsView())
-	m.btnBack = m.CreateButton("单击返回", "back.png", ID_BACK_BUTTON)
+
+	m.btnBack = m.CreateImageButton("单击返回", "back.png", "back-disable.png", ID_BACK_BUTTON)
 	m.btnForward = m.CreateButton("单击继续", "forward.png", ID_FORWARD_BUTTON)
 	m.btnReload = m.CreateButton("单击刷新", "refresh.png", ID_RELOAD_BUTTON)
 	m.btnStop = m.CreateButton("单击停止加载", "stop.png", ID_STOP_BUTTON)
-	m.toolPanel.AddChildView(m.btnBack.AsView())
+	m.toolPanel.AddChildView(m.btnBack.btn.AsView())
 	m.toolPanel.AddChildView(m.btnForward.AsView())
 	m.toolPanel.AddChildView(m.btnReload.AsView())
 	m.toolPanel.AddChildView(m.btnStop.AsView())
@@ -157,11 +210,15 @@ func (m *ToolBar) LayoutLocationBar() {
 }
 
 func (m *ToolBar) UpdateBrowserStatus(isLoading, canGoBack, canGoForward bool) {
-	btnBack := m.toolPanel.GetViewForID(ID_BACK_BUTTON)
 	btnForward := m.toolPanel.GetViewForID(ID_FORWARD_BUTTON)
 	btnReload := m.toolPanel.GetViewForID(ID_RELOAD_BUTTON)
 	btnStop := m.toolPanel.GetViewForID(ID_STOP_BUTTON)
-	btnBack.SetEnabled(canGoBack)
+	if canGoBack {
+		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.imgEnable)
+	} else {
+		m.btnBack.btn.SetImage(consts.CEF_BUTTON_STATE_NORMAL, m.btnBack.imgDisable)
+	}
+	m.btnBack.btn.SetEnabled(canGoBack)
 	btnForward.SetVisible(canGoForward)
 	btnReload.SetVisible(!isLoading)
 	btnStop.SetVisible(isLoading)
