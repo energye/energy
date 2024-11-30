@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/assserv"
 	. "github.com/energye/energy/v2/examples/tiny-browser/cefclient/browse"
@@ -32,7 +33,16 @@ func main() {
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)
 	app.SetTouchEvents(consts.STATE_ENABLED)
-	app.SetDisableZygote(true)
+	//lp := common.FrameworkDir()
+	//if lp != "" {
+	//	app.SetFrameworkDirPath(lp)
+	//}
+	//app.SetDisableZygote(true)
+	if common.IsDarwin() {
+		app.AddCrDelegate()
+		cef.GlobalWorkSchedulerCreate(nil)
+		app.SetOnScheduleMessagePumpWork(nil)
+	}
 	//fmt.Println("libname.LibName:", libname.LibName)
 	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 
@@ -57,10 +67,17 @@ func main() {
 		fmt.Println("OnContextInitialized ProcessType:", process.Args.ProcessType())
 		fmt.Println("  GetScreenDPI:", cef.GetScreenDPI(), "GetDeviceScaleFactor:", cef.GetDeviceScaleFactor())
 	})
-	if app.StartMainProcess() {
-		fmt.Println("StartMainProcess Success")
-		assserv.StartServer()
-		// 创建窗口
-		MainWindow()
+	if common.IsDarwin() && !process.Args.IsMain() {
+		startSub := app.StartSubProcess()
+		fmt.Println("start sub:", startSub)
+		app.Free()
+	} else {
+		startMain := app.StartMainProcess()
+		fmt.Println("start main:", startMain)
+		if startMain {
+			assserv.StartServer()
+			// 创建窗口
+			MainWindow()
+		}
 	}
 }

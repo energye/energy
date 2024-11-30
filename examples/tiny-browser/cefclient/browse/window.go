@@ -98,6 +98,8 @@ func (m *ViewsFramework) Create() {
 	})
 	m.window.SetOnGetTitleBarHeight(func(window *cef.ICefWindow, titleBarHeight *float32, result *bool) {
 		fmt.Println("OnGetTitleBarHeight:", *titleBarHeight, *result)
+		*titleBarHeight = 30
+		*result = true
 	})
 	m.window.SetOnWindowBoundsChanged(func(window *cef.ICefWindow, newBounds cef.TCefRect) {
 		//fmt.Println("OnWindowBoundsChanged", newBounds)
