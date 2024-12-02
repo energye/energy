@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/consts/messages"
@@ -33,46 +34,66 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	app := cef.CreateApplication()
 	cef.SetApplication(app)
-	app.SetDisableZygote(true)
-	app.SetExternalMessagePump(false)
-	app.SetMultiThreadedMessageLoop(true)
-	// 指定 CEF Framework
-	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
-	if app.StartMainProcess() {
-		// 结束应用后释放资源
-		api.SetReleaseCallback(func() {
-			fmt.Println("Release")
-			app.Destroy()
-			app.Free()
-		})
-		// LCL窗口
-		lcl.Application.Initialize()
-		lcl.Application.SetMainFormOnTaskBar(true)
-		lcl.Application.CreateForm(&BW, true)
-		lcl.Application.Run()
+	if common.IsDarwin() {
+		app.SetUseMockKeyChain(true)
+		app.AddCrDelegate()
+		cef.GlobalWorkSchedulerCreate(nil)
+		app.SetOnScheduleMessagePumpWork(nil)
+		app.SetExternalMessagePump(true)
+		app.SetMultiThreadedMessageLoop(false)
+	} else {
+		// 指定 CEF Framework
+		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+		if common.IsLinux() {
+			app.SetDisableZygote(true)
+		}
+		app.SetExternalMessagePump(false)
+		app.SetMultiThreadedMessageLoop(true)
 	}
-	fmt.Println("app free")
+	if common.IsDarwin() && !process.Args.IsMain() {
+		startSub := app.StartSubProcess()
+		fmt.Println("start sub:", startSub)
+		app.Free()
+	} else {
+		startMain := app.StartMainProcess()
+		fmt.Println("start main:", startMain)
+		if startMain {
+			// 结束应用后释放资源
+			api.SetReleaseCallback(func() {
+				fmt.Println("Release")
+				app.Destroy()
+				app.Free()
+			})
+			// LCL窗口
+			lcl.Application.Initialize()
+			lcl.Application.SetMainFormOnTaskBar(true)
+			lcl.Application.CreateForm(&BW, true)
+			lcl.Application.Run()
+		}
+	}
 }
 
 func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ScreenCenter()
-	m.OnMessages()
 	m.SetOnWndProc(func(msg *types.TMessage) {
 		m.InheritedWndProc(msg)
 		//fmt.Println("SetOnWndProc")
 	})
 	m.chromium = cef.NewChromium(m, nil)
-	m.chromium.SetDefaultURL("https://www.baidu.com")
+	//m.chromium.SetDefaultURL("https://www.baidu.com")
+	m.chromium.SetDefaultURL("https://energye.github.io")
+	//m.chromium.SetDefaultURL("https://www.gitee.com")
 	m.windowParent = cef.NewCEFWindowParent(m)
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
 	m.windowParent.SetChromium(m.chromium, 0)
 	// 创建一个定时器, 用来createBrowser
 	m.timer = lcl.NewTimer(m)
-	m.timer.SetOnTimer(m.show)
+	m.timer.SetOnTimer(m.createBrowser)
+	m.timer.SetEnabled(false)
 	// 在show时创建chromium browser
-	m.TForm.SetOnShow(m.show)
-	m.TForm.SetOnActivate(m.active)
+	m.TForm.SetOnShow(m.createBrowser)
+	m.TForm.SetOnActivate(m.createBrowser)
 	m.TForm.SetOnResize(m.resize)
 	// 1. 关闭之前先调用chromium.CloseBrowser(true)，然后触发 chromium.SetOnClose
 	m.TForm.SetOnCloseQuery(m.closeQuery)
@@ -152,21 +173,13 @@ func (m *BrowserWindow) OnMessages() {
 	})
 }
 
-func (m *BrowserWindow) active(sender lcl.IObject) {
-	fmt.Println("active")
-	m.timer.SetEnabled(false)
-	m.chromium.Initialized()
-	if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
-		m.timer.SetEnabled(true)
-	}
-}
-func (m *BrowserWindow) show(sender lcl.IObject) {
-	fmt.Println("show")
+func (m *BrowserWindow) createBrowser(sender lcl.IObject) {
+	fmt.Println("createBrowser")
 	if !common.IsLinux() {
 		m.timer.SetEnabled(false)
 		m.chromium.Initialized()
 		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
-			m.timer.SetEnabled(true)
+			//m.timer.SetEnabled(true)
 		}
 	}
 }
