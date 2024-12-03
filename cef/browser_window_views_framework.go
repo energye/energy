@@ -405,49 +405,40 @@ func (m *ViewsFrameworkBrowserWindow) SetTitle(title string) {
 func (m *ViewsFrameworkBrowserWindow) SetWidth(value int32) {
 	m.WindowProperty().Width = value
 	size := m.Size()
-	if size != nil {
-		m.SetSize(value, size.Height)
-	}
+	m.SetSize(value, size.Height)
 }
 
 // SetHeight 设置窗口高
 func (m *ViewsFrameworkBrowserWindow) SetHeight(value int32) {
 	m.WindowProperty().Height = value
 	size := m.Size()
-	if size != nil {
-		m.SetSize(size.Width, value)
-	}
+	m.SetSize(size.Width, value)
 }
 
 // Point 返回窗口坐标
-func (m *ViewsFrameworkBrowserWindow) Point() *TCefPoint {
+func (m *ViewsFrameworkBrowserWindow) Point() TCefPoint {
 	result := m.WindowComponent().Position()
-	if result != nil {
-		m.WindowProperty().X = result.X
-		m.WindowProperty().Y = result.Y
-	}
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
 	return result
 }
 
 // Size 返回窗口宽高
-func (m *ViewsFrameworkBrowserWindow) Size() *TCefSize {
+func (m *ViewsFrameworkBrowserWindow) Size() TCefSize {
 	result := m.WindowComponent().Size()
-	if result != nil {
-		m.WindowProperty().Width = result.Width
-		m.WindowProperty().Height = result.Height
-	}
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
+
 	return result
 }
 
 // Bounds 返回窗口坐标和宽高
-func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
+func (m *ViewsFrameworkBrowserWindow) Bounds() TCefRect {
 	result := m.WindowComponent().Bounds()
-	if result != nil {
-		m.WindowProperty().X = result.X
-		m.WindowProperty().Y = result.Y
-		m.WindowProperty().Width = result.Width
-		m.WindowProperty().Height = result.Height
-	}
+	m.WindowProperty().X = result.X
+	m.WindowProperty().Y = result.Y
+	m.WindowProperty().Width = result.Width
+	m.WindowProperty().Height = result.Height
 	return result
 }
 
@@ -455,14 +446,14 @@ func (m *ViewsFrameworkBrowserWindow) Bounds() *TCefRect {
 func (m *ViewsFrameworkBrowserWindow) SetPoint(x, y int32) {
 	m.WindowProperty().X = x
 	m.WindowProperty().Y = y
-	m.WindowComponent().SetPosition(&TCefPoint{X: x, Y: y})
+	m.WindowComponent().SetPosition(TCefPoint{X: x, Y: y})
 }
 
 // SetSize 设置窗口宽高
 func (m *ViewsFrameworkBrowserWindow) SetSize(width, height int32) {
 	m.WindowProperty().Width = width
 	m.WindowProperty().Height = height
-	m.WindowComponent().SetSize(&TCefSize{Width: width, Height: height})
+	m.WindowComponent().SetSize(TCefSize{Width: width, Height: height})
 }
 
 // SetBounds 设置窗口坐标和宽高
@@ -591,7 +582,7 @@ func (m *ViewsFrameworkBrowserWindow) CreateTopLevelWindow() {
 }
 
 // CenterWindow 设置窗口居中，同时指定窗口大小
-func (m *ViewsFrameworkBrowserWindow) CenterWindow(size *TCefSize) {
+func (m *ViewsFrameworkBrowserWindow) CenterWindow(size TCefSize) {
 	m.WindowComponent().CenterWindow(size)
 }
 

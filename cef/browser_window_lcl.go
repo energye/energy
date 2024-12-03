@@ -327,11 +327,11 @@ func (m *LCLBrowserWindow) SetHeight(value int32) {
 }
 
 // Point 窗口坐标
-func (m *LCLBrowserWindow) Point() *TCefPoint {
+func (m *LCLBrowserWindow) Point() TCefPoint {
 	if m.TForm == nil {
-		return nil
+		return TCefPoint{}
 	}
-	result := &TCefPoint{
+	result := TCefPoint{
 		X: m.Left(),
 		Y: m.Top(),
 	}
@@ -341,11 +341,11 @@ func (m *LCLBrowserWindow) Point() *TCefPoint {
 }
 
 // Size 窗口宽高
-func (m *LCLBrowserWindow) Size() *TCefSize {
+func (m *LCLBrowserWindow) Size() TCefSize {
 	if m.TForm == nil {
-		return nil
+		return TCefSize{}
 	}
-	result := &TCefSize{
+	result := TCefSize{
 		Width:  m.Width(),
 		Height: m.Height(),
 	}
@@ -355,12 +355,12 @@ func (m *LCLBrowserWindow) Size() *TCefSize {
 }
 
 // Bounds 窗口坐标和宽高
-func (m *LCLBrowserWindow) Bounds() *TCefRect {
+func (m *LCLBrowserWindow) Bounds() TCefRect {
 	if m.TForm == nil {
-		return nil
+		return TCefRect{}
 	}
 	rect := m.BoundsRect()
-	result := &TCefRect{
+	result := TCefRect{
 		X:      rect.Left,
 		Y:      rect.Top,
 		Width:  rect.Width(),

@@ -306,11 +306,11 @@ func (m *ICefBrowser) IsAudioMuted() bool {
 }
 
 // SetAutoResizeEnabled 设置启用自动调整大小
-func (m *ICefBrowser) SetAutoResizeEnabled(enabled bool, minSize, maxSize *TCefSize) {
+func (m *ICefBrowser) SetAutoResizeEnabled(enabled bool, minSize, maxSize TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFBrowser_SetAutoResizeEnabled).Call(m.Instance(), api.PascalBool(enabled), uintptr(unsafe.Pointer(minSize)), uintptr(unsafe.Pointer(maxSize)))
+	imports.Proc(def.CEFBrowser_SetAutoResizeEnabled).Call(m.Instance(), api.PascalBool(enabled), uintptr(unsafe.Pointer(&minSize)), uintptr(unsafe.Pointer(&maxSize)))
 }
 
 // SetAccessibilityState 设置可访问性状态

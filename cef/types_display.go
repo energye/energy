@@ -40,18 +40,18 @@ func (m *display) Primary() *ICefDisplay {
 	return nil
 }
 
-func (m *display) NearestPoint(point *TCefPoint, inputPixelCoords bool) *ICefDisplay {
+func (m *display) NearestPoint(point TCefPoint, inputPixelCoords bool) *ICefDisplay {
 	var result uintptr
-	imports.Proc(def.CEFDisplayRef_NearestPoint).Call(uintptr(unsafe.Pointer(point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplayRef_NearestPoint).Call(uintptr(unsafe.Pointer(&point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDisplay{instance: getInstance(result)}
 	}
 	return nil
 }
 
-func (m *display) MatchingBounds(point *TCefRect, inputPixelCoords bool) *ICefDisplay {
+func (m *display) MatchingBounds(point TCefRect, inputPixelCoords bool) *ICefDisplay {
 	var result uintptr
-	imports.Proc(def.CEFDisplayRef_MatchingBounds).Call(uintptr(unsafe.Pointer(point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
+	imports.Proc(def.CEFDisplayRef_MatchingBounds).Call(uintptr(unsafe.Pointer(&point)), api.PascalBool(inputPixelCoords), uintptr(unsafe.Pointer(&result)))
 	if result != 0 {
 		return &ICefDisplay{instance: getInstance(result)}
 	}

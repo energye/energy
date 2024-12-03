@@ -25,9 +25,9 @@ type TCefDraggableRegions struct {
 }
 
 // NewCefDraggableRegion 创建一个拖拽区域
-func NewCefDraggableRegion(rect *TCefRect, draggable bool) TCefDraggableRegion {
+func NewCefDraggableRegion(rect TCefRect, draggable bool) TCefDraggableRegion {
 	return TCefDraggableRegion{
-		Bounds:    *rect,
+		Bounds:    rect,
 		Draggable: draggable,
 	}
 }

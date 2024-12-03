@@ -15,10 +15,12 @@ import (
 	"github.com/energye/energy/v2/cef/internal/cef"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/cef/process"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl/api"
+	"github.com/energye/golcl/lcl/api/dllimports"
 	"unsafe"
 )
 
@@ -73,9 +75,21 @@ func CreateApplication() *TCEFApplication {
 	return &TCEFApplication{instance: unsafe.Pointer(result), specificVersion: SV_INVALID}
 }
 
-// AddCrDelegate MacOSX Delegate
+// AddCrDelegate MacOS Delegate
 func (m *TCEFApplication) AddCrDelegate() {
-	imports.Proc(def.CEF_AddCrDelegate).Call()
+	if common.IsDarwin() {
+		m.SetCEFLibHandle()
+		imports.Proc(def.CEF_AddCrDelegate).Call()
+	}
+}
+
+// SetCEFLibHandle Set MacOS CEF Lib Handle
+func (m *TCEFApplication) SetCEFLibHandle() {
+	if common.IsDarwin() {
+		libCEF := "@executable_path/../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
+		cefLibHandle, _ := dllimports.NewDLL(libCEF)
+		imports.Proc(def.CEFAppConfig_SetLibHandle).Call(uintptr(unsafe.Pointer(&cefLibHandle)))
+	}
 }
 
 // registerDefaultEvent 注册默认事件

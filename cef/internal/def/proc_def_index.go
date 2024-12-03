@@ -538,6 +538,7 @@ const (
 	CEFAppConfig_SetMustFreeLibrary
 	CEFAppConfig_UpdateDeviceScaleFactor
 	CEFAppConfig_SpecificVersion
+	CEFAppConfig_SetLibHandle
 	// TCEFWindowParent
 	CEFWindow_Create
 	CEFWindow_GetHandle

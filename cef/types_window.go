@@ -92,11 +92,11 @@ func (m *ICefWindow) Hide() {
 }
 
 // CenterWindow 根据大小窗口居中
-func (m *ICefWindow) CenterWindow(size *TCefSize) {
+func (m *ICefWindow) CenterWindow(size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ICEFWindow_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.ICEFWindow_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
 // Close 关闭窗口， 主窗口调用
@@ -222,27 +222,27 @@ func (m *ICefWindow) SetBackgroundColor(rect types.TCefColor) {
 }
 
 // SetBounds 设置窗口边界
-func (m *ICefWindow) SetBounds(rect *TCefRect) {
+func (m *ICefWindow) SetBounds(rect TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ICEFWindow_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(rect)))
+	imports.Proc(def.ICEFWindow_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&rect)))
 }
 
 // SetSize 设置窗口宽高
-func (m *ICefWindow) SetSize(size *TCefSize) {
+func (m *ICefWindow) SetSize(size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ICEFWindow_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.ICEFWindow_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
 // SetPosition 设置窗口位置
-func (m *ICefWindow) SetPosition(point *TCefPoint) {
+func (m *ICefWindow) SetPosition(point TCefPoint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.ICEFWindow_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	imports.Proc(def.ICEFWindow_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 }
 
 // IsMaximized 是否最大化

@@ -82,11 +82,11 @@ func (m *TCEFWindowComponent) Hide() {
 }
 
 // CenterWindow 根据大小窗口居中
-func (m *TCEFWindowComponent) CenterWindow(size *TCefSize) {
-	if !m.IsValid() || size == nil {
+func (m *TCEFWindowComponent) CenterWindow(size TCefSize) {
+	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.CEFWindowComponent_CenterWindow).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
 // Close 关闭窗口， 主窗口调用
@@ -293,54 +293,54 @@ func (m *TCEFWindowComponent) SetBackgroundColor(rect types.TCefColor) {
 }
 
 // Bounds 获取窗口边界
-func (m *TCEFWindowComponent) Bounds() (result *TCefRect) {
+func (m *TCEFWindowComponent) Bounds() (result TCefRect) {
 	if !m.IsValid() {
-		return nil
+		return
 	}
-	imports.Proc(def.CEFWindowComponent_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
+	imports.Proc(def.CEFWindowComponent_Bounds).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // Size 获取窗口宽高
-func (m *TCEFWindowComponent) Size() (result *TCefSize) {
+func (m *TCEFWindowComponent) Size() (result TCefSize) {
 	if !m.IsValid() {
-		return nil
+		return
 	}
-	imports.Proc(def.CEFWindowComponent_Size).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
+	imports.Proc(def.CEFWindowComponent_Size).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // Position 获取窗口位置
-func (m *TCEFWindowComponent) Position() (result *TCefPoint) {
+func (m *TCEFWindowComponent) Position() (result TCefPoint) {
 	if !m.IsValid() {
-		return nil
+		return
 	}
-	imports.Proc(def.CEFWindowComponent_Position).Call(m.Instance(), uintptr(unsafe.Pointer(result)))
+	imports.Proc(def.CEFWindowComponent_Position).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
 	return
 }
 
 // SetBounds 设置窗口边界
-func (m *TCEFWindowComponent) SetBounds(rect *TCefRect) {
+func (m *TCEFWindowComponent) SetBounds(rect TCefRect) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(rect)))
+	imports.Proc(def.CEFWindowComponent_SetBounds).Call(m.Instance(), uintptr(unsafe.Pointer(&rect)))
 }
 
 // SetSize 设置窗口宽高
-func (m *TCEFWindowComponent) SetSize(size *TCefSize) {
+func (m *TCEFWindowComponent) SetSize(size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.CEFWindowComponent_SetSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
 // SetPosition 设置窗口位置
-func (m *TCEFWindowComponent) SetPosition(point *TCefPoint) {
+func (m *TCEFWindowComponent) SetPosition(point TCefPoint) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.CEFWindowComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(point)))
+	imports.Proc(def.CEFWindowComponent_SetPosition).Call(m.Instance(), uintptr(unsafe.Pointer(&point)))
 }
 
 // SetTitle 设置窗口标题

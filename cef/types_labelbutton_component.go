@@ -74,18 +74,18 @@ func (m *TCEFLabelButtonComponent) SetHorizontalAlignment(alignment consts.TCefH
 	imports.Proc(def.LabelButtonComponent_SetHorizontalAlignment).Call(m.Instance(), uintptr(alignment))
 }
 
-func (m *TCEFLabelButtonComponent) SetMinimumSize(size *TCefSize) {
+func (m *TCEFLabelButtonComponent) SetMinimumSize(size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.LabelButtonComponent_SetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.LabelButtonComponent_SetMinimumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
-func (m *TCEFLabelButtonComponent) SetMaximumSize(size *TCefSize) {
+func (m *TCEFLabelButtonComponent) SetMaximumSize(size TCefSize) {
 	if !m.IsValid() {
 		return
 	}
-	imports.Proc(def.LabelButtonComponent_SetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(size)))
+	imports.Proc(def.LabelButtonComponent_SetMaximumSize).Call(m.Instance(), uintptr(unsafe.Pointer(&size)))
 }
 
 func (m *TCEFLabelButtonComponent) GetText() string {

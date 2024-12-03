@@ -136,16 +136,6 @@ type BeforePopupInfo struct {
 	UserGesture       bool
 }
 
-// TCefRect
-//
-//	/include/internal/cef_types_geometry.h (cef_rect_t)
-type TCefRect struct {
-	X      int32
-	Y      int32
-	Width  int32
-	Height int32
-}
-
 type TCefRectArray struct {
 	ptr    uintptr
 	sizeOf uintptr
@@ -179,6 +169,16 @@ func (m *TCefRectArray) Get(index int) *TCefRect {
 		return nil
 	}
 	return (*TCefRect)(common.GetParamPtr(m.ptr, index*int(m.sizeOf)))
+}
+
+// TCefRect
+//
+//	/include/internal/cef_types_geometry.h (cef_rect_t)
+type TCefRect struct {
+	X      int32
+	Y      int32
+	Width  int32
+	Height int32
 }
 
 // TCefSize
@@ -446,8 +446,8 @@ func (m *ResultBytes) Value() []byte {
 }
 
 // NewCefRect
-func NewCefRect(x, y, width, height int32) *TCefRect {
-	return &TCefRect{
+func NewCefRect(x, y, width, height int32) TCefRect {
+	return TCefRect{
 		X:      x,
 		Y:      y,
 		Width:  width,
@@ -456,16 +456,16 @@ func NewCefRect(x, y, width, height int32) *TCefRect {
 }
 
 // NewCefSize
-func NewCefSize(width, height int32) *TCefSize {
-	return &TCefSize{
+func NewCefSize(width, height int32) TCefSize {
+	return TCefSize{
 		Width:  width,
 		Height: height,
 	}
 }
 
 // NewCefPoint
-func NewCefPoint(x, y int32) *TCefPoint {
-	return &TCefPoint{
+func NewCefPoint(x, y int32) TCefPoint {
+	return TCefPoint{
 		X: x,
 		Y: y,
 	}
