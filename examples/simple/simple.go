@@ -9,6 +9,7 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	//创建应用
 	app := cef.NewApplication()
+	app.SetUseMockKeyChain(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	//运行应用

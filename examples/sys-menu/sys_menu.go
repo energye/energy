@@ -16,6 +16,7 @@ func main() {
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	//创建应用
 	cefApp := cef.NewApplication()
+	cefApp.SetUseMockKeyChain(true)
 	//主窗口的配置
 	//
 	cef.BrowserWindow.Config.Url = "fs://energy"

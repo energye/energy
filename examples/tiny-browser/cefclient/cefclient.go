@@ -26,24 +26,27 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	app = Application()
-	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
-	app.SetMultiThreadedMessageLoop(false)
-	app.SetExternalMessagePump(false)
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)
-	app.SetTouchEvents(consts.STATE_ENABLED)
-	//lp := common.FrameworkDir()
-	//if lp != "" {
-	//	app.SetFrameworkDirPath(lp)
-	//}
-	//app.SetDisableZygote(true)
+	app.SetUseMockKeyChain(true)
 	if common.IsDarwin() {
-		app.AddCrDelegate()
+		if process.Args.IsMain() {
+			app.AddCrDelegate()
+		}
 		cef.GlobalWorkSchedulerCreate(nil)
 		app.SetOnScheduleMessagePumpWork(nil)
+		app.SetMultiThreadedMessageLoop(false)
+		app.SetExternalMessagePump(false)
+	} else {
+		// 指定 CEF Framework
+		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+		if common.IsLinux() {
+			app.SetDisableZygote(true)
+		}
+		app.SetExternalMessagePump(false)
+		app.SetMultiThreadedMessageLoop(true)
 	}
-	//fmt.Println("libname.LibName:", libname.LibName)
 	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 
 	kPrefWindowRestore := "cefclient.window_restore"

@@ -27,6 +27,7 @@ func main() {
 	})
 	//创建应用
 	cefApp := cef.NewApplication()
+	cefApp.SetUseMockKeyChain(true)
 	port := common.Port()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = fmt.Sprintf("http://localhost:%d/go-to-js.html", port)

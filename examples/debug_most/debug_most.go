@@ -7,7 +7,9 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/consts/messages"
+	exampleCommon "github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/energye/energy/v2/pkgs/assetserve"
 	et "github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -34,6 +36,7 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	app := cef.CreateApplication()
 	cef.SetApplication(app)
+	// setting
 	if common.IsDarwin() {
 		app.SetUseMockKeyChain(true)
 		app.AddCrDelegate()
@@ -50,6 +53,7 @@ func main() {
 		app.SetExternalMessagePump(false)
 		app.SetMultiThreadedMessageLoop(true)
 	}
+	// run
 	if common.IsDarwin() && !process.Args.IsMain() {
 		startSub := app.StartSubProcess()
 		fmt.Println("start sub:", startSub)
@@ -58,6 +62,7 @@ func main() {
 		startMain := app.StartMainProcess()
 		fmt.Println("start main:", startMain)
 		if startMain {
+			startServer()
 			// 结束应用后释放资源
 			api.SetReleaseCallback(func() {
 				fmt.Println("Release")
@@ -81,8 +86,8 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	})
 	m.chromium = cef.NewChromium(m, nil)
 	//m.chromium.SetDefaultURL("https://www.baidu.com")
-	m.chromium.SetDefaultURL("https://energye.github.io")
-	//m.chromium.SetDefaultURL("https://www.gitee.com")
+	//m.chromium.SetDefaultURL("https://energye.github.io")
+	m.chromium.SetDefaultURL("http://localhost:22022")
 	m.windowParent = cef.NewCEFWindowParent(m)
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
@@ -181,6 +186,8 @@ func (m *BrowserWindow) createBrowser(sender lcl.IObject) {
 		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
 			//m.timer.SetEnabled(true)
 		}
+		//m.chromium.LoadUrl("https://www.baidu.com")
+		//m.chromium.LoadUrl("https://www.gitee.com")
 	}
 }
 func (m *BrowserWindow) resize(sender lcl.IObject) {
@@ -214,4 +221,13 @@ func (m *BrowserWindow) chromiumBeforeClose(sender lcl.IObject, browser *cef.ICe
 	fmt.Println("chromiumBeforeClose")
 	m.canClose = true
 	rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+}
+
+func startServer() {
+	fmt.Println("主进程启动 创建一个内置http服务")
+	server := assetserve.NewAssetsHttpServer()
+	server.PORT = 22022
+	server.AssetsFSName = "resources" //必须设置目录名和资源文件夹同名
+	server.Assets = exampleCommon.ResourcesFS()
+	go server.StartHttpServer()
 }
