@@ -30,22 +30,20 @@ func main() {
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)
 	app.SetUseMockKeyChain(true)
+	app.SetMultiThreadedMessageLoop(false)
+	app.SetExternalMessagePump(false)
 	if common.IsDarwin() {
 		if process.Args.IsMain() {
 			app.AddCrDelegate()
 		}
 		cef.GlobalWorkSchedulerCreate(nil)
 		app.SetOnScheduleMessagePumpWork(nil)
-		app.SetMultiThreadedMessageLoop(false)
-		app.SetExternalMessagePump(false)
 	} else {
 		// 指定 CEF Framework
 		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
 		if common.IsLinux() {
 			app.SetDisableZygote(true)
 		}
-		app.SetExternalMessagePump(false)
-		app.SetMultiThreadedMessageLoop(true)
 	}
 	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 
