@@ -32,10 +32,10 @@ func main() {
 		// 在窗口初始化时重置窗口布局 默认仅有CEFWindowParent
 		// 在这里重新指定 CEFWindowParent 的父组件, 默认是主窗口
 		// 仅 lcl 窗口
-		if window.IsViewsFramework() {
+		if window.IsLCL() {
 			// 主窗口
 			//bw := window.AsLCLBrowserWindow().BrowserWindow()
-			bw := window.AsViewsFrameworkBrowserWindow().BrowserWindow()
+			bw := window.AsLCLBrowserWindow().BrowserWindow()
 			// 拿到CEFWindowParent
 			//windowParent := bw.WindowParent()
 			// 恢复四角定位， 因为默认整个窗口自动调整大小
@@ -43,7 +43,7 @@ func main() {
 
 			// 系统菜单
 			// 开始创建菜单
-			createSysMenu(bw.Component())
+			createSysMenu(bw)
 
 			// html 内容
 			// 重新设置父组件
