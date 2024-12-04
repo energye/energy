@@ -114,17 +114,22 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-supported-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-supported-success.svg?logo=Linux&logoColor=red)
 
-|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version     |
-|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|-------------------------|
-| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows XP SP3、 7、10、11 |
+|             | 32 Bit                                                                                     | 64 Bit                                                                                     | Test System Version                |
+|-------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|------------------------------------|
+| Windows     | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | ![Windows](https://img.shields.io/badge/supported-success.svg?logo=Windows&logoColor=blue) | Windows XP SP3、 7、10、11            |
 | MacOSX      | ![MacOSX](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                        | ![MacOSX](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                   | MacOSX 10.15                       |
 | MacOS M1 M2 | ![MacOS](https://img.shields.io/badge/N/A-inactive.svg?logo=MacOS)                         | ![MacOS](https://img.shields.io/badge/supported-success.svg?logo=MacOS)                    | MacOS M2                           |
 | Linux       | ![Linux](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)        | ![Linux](https://img.shields.io/badge/supported-success.svg?logo=Linux&logoColor=red)      | Deepin20.8、Ubuntu18.04、LinuxMint21 |
 | Linux ARM   | ![Linux ARM](https://img.shields.io/badge/SelfCompila-supported-success.svg?logo=Linux)    | ![Linux ARM](https://img.shields.io/badge/supported-success.svg?logo=Linux)                | Kylin-V10-SP1-2107                 |
 
-### Related Projects
+### v3.0 Related Projects
+- [LCL](https://github.com/energye/lcl)
+- [CEF](https://github.com/energye/cef)
+- [Webview2 Webkit2](https://github.com/energye/wv)
 
-- [CEF](https://github.com/chromiumembedded/cef)
+### Other Projects
+
+- [CEF(Chromium Embedded Framework)](https://github.com/chromiumembedded/cef)
 - [CEF4Delphi](https://github.com/salvadordf/CEF4Delphi)
 - [CefSharp](https://github.com/cefsharp/CefSharp)
 - [Java-CEF](https://bitbucket.org/chromiumembedded/java-cef)
