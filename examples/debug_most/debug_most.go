@@ -16,6 +16,7 @@ import (
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -34,7 +35,11 @@ func main() {
 	fmt.Println(time.Now().UnixNano()/1e6, time.Now().UnixNano())
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	app := cef.CreateApplication()
+	app.SetRootCache(rootCache)
+	app.SetCache(filepath.Join(rootCache, "cache"))
+	app.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	cef.SetApplication(app)
 	// setting
 	if common.IsDarwin() {
@@ -87,7 +92,7 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.chromium = cef.NewChromium(m, nil)
 	//m.chromium.SetDefaultURL("https://www.baidu.com")
 	//m.chromium.SetDefaultURL("https://energye.github.io")
-	m.chromium.SetDefaultURL("http://localhost:22022")
+	//m.chromium.SetDefaultURL("http://localhost:22022")
 	m.windowParent = cef.NewCEFWindowParent(m)
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
@@ -188,6 +193,7 @@ func (m *BrowserWindow) createBrowser(sender lcl.IObject) {
 		}
 		//m.chromium.LoadUrl("https://www.baidu.com")
 		//m.chromium.LoadUrl("https://www.gitee.com")
+		m.chromium.LoadUrl("http://localhost:22022")
 	}
 }
 func (m *BrowserWindow) resize(sender lcl.IObject) {
