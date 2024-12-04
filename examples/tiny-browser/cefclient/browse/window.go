@@ -129,11 +129,37 @@ func (m *ViewsFramework) Create() {
 	m.window.SetOnThemeColorsChanged(func(window *cef.ICefWindow, chromeTheme int32) {
 		views_style.WindowApplyTo(window)
 	})
+	const (
+		cmdIdCtrlA int32 = iota + 32800
+		cmdIdCtrlC
+		cmdIdCtrlX
+		cmdIdCtrlV
+	)
+	var addAccelerator = func() {
+		m.window.SetAccelerator(cmdIdCtrlA, 'A', false, true, false, false)
+		m.window.SetAccelerator(cmdIdCtrlC, 'C', false, true, false, false)
+		m.window.SetAccelerator(cmdIdCtrlX, 'X', false, true, false, false)
+		m.window.SetAccelerator(cmdIdCtrlV, 'V', false, true, false, false)
+	}
 	m.window.SetOnAccelerator(func(window *cef.ICefWindow, commandId int32, result *bool) {
 		fmt.Println("OnAccelerator commandId:", commandId)
-		//表示已处理，否则还会执行多次
-		m.chromium.CloseBrowser(true)
-		*result = true
+		if ID_QUIT == commandId {
+			//表示已处理，否则还会执行多次
+			m.chromium.CloseBrowser(true)
+			*result = true
+		} else if cmdIdCtrlA == commandId {
+			m.chromium.Browser().MainFrame().SelectAll()
+			*result = true
+		} else if cmdIdCtrlC == commandId {
+			m.chromium.Browser().MainFrame().Copy()
+			*result = true
+		} else if cmdIdCtrlX == commandId {
+			m.chromium.Browser().MainFrame().Cut()
+			*result = true
+		} else if cmdIdCtrlV == commandId {
+			m.chromium.Browser().MainFrame().Paste()
+			*result = true
+		}
 	})
 	m.window.SetOnWindowChanged(func(view *cef.ICefView, added bool) {
 		fmt.Println("OnWindowChanged added:", added)
@@ -200,6 +226,8 @@ func (m *ViewsFramework) Create() {
 			windowLayout.SetFlexForView(m.browserView.AsView(), 1)
 
 			m.window.Layout()
+
+			addAccelerator()
 			// 窗口居中
 			display := m.window.Display()
 			if display.IsValid() {

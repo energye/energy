@@ -85,10 +85,64 @@ func main() {
 
 func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.ScreenCenter()
-	m.SetOnWndProc(func(msg *types.TMessage) {
-		m.InheritedWndProc(msg)
-		//fmt.Println("SetOnWndProc")
+	//m.SetOnWndProc(func(msg *types.TMessage) {
+	//	m.InheritedWndProc(msg)
+	//	//fmt.Println("SetOnWndProc")
+	//})
+	mainMenu := lcl.NewMainMenu(m)
+	// 创建一级菜单
+	fileClassA := lcl.NewMenuItem(m)
+	fileClassA.SetCaption("文件(&F)") //菜单名称 alt + f
+	aboutClassA := lcl.NewMenuItem(m)
+	aboutClassA.SetCaption("关于(&A)")
+
+	var createMenuItem = func(label, shortCut string, click func(lcl.IObject)) (result *lcl.TMenuItem) {
+		result = lcl.NewMenuItem(m)
+		result.SetCaption(label)               //菜单项显示的文字
+		result.SetShortCutFromString(shortCut) // 快捷键
+		result.SetOnClick(click)               // 触发事件，回调函数
+		return
+	}
+	// 给一级菜单添加菜单项
+	createItem := createMenuItem("新建(&N)", "Meta+N", func(lcl.IObject) {
+		fmt.Println("单击了新建")
 	})
+	fileClassA.Add(createItem) // 把创建好的菜单项添加到 第一个菜单中
+	openItem := createMenuItem("打开(&O)", "Meta+O", func(lcl.IObject) {
+		fmt.Println("单击了打开")
+	})
+	fileClassA.Add(openItem) // 把创建好的菜单项添加到 第一个菜单中
+	mainMenu.Items().Add(fileClassA)
+	mainMenu.Items().Add(aboutClassA)
+	if common.IsDarwin() {
+		// https://wiki.lazarus.freepascal.org/Mac_Preferences_and_About_Menu
+		// 动态添加的，静态好像是通过设计器将顶级的菜单标题设置为应用程序名，但动态的就是另一种方式
+		appMenu := lcl.NewMenuItem(m)
+		// 动态添加的，设置一个Unicode Apple logo char
+		appMenu.SetCaption(types.AppleLogoChar)
+		subItem := lcl.NewMenuItem(m)
+
+		subItem.SetCaption("关于")
+		subItem.SetOnClick(func(sender lcl.IObject) {
+			lcl.ShowMessage("About")
+		})
+		appMenu.Add(subItem)
+
+		subItem = lcl.NewMenuItem(m)
+		subItem.SetCaption("-")
+		appMenu.Add(subItem)
+
+		subItem = lcl.NewMenuItem(m)
+		subItem.SetCaption("首选项")
+		subItem.SetShortCutFromString("Meta+,")
+		subItem.SetOnClick(func(sender lcl.IObject) {
+			lcl.ShowMessage("Preferences")
+		})
+		appMenu.Add(subItem)
+		// 添加
+		mainMenu.Items().Insert(0, appMenu)
+	}
+
 	m.chromium = cef.NewChromium(m, nil)
 	//m.chromium.SetDefaultURL("https://www.baidu.com")
 	//m.chromium.SetDefaultURL("https://energye.github.io")

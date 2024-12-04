@@ -23,6 +23,7 @@ var assets embed.FS
 
 func main() {
 	Assets = assets
+	assserv.Assets = assets
 	cef.GlobalInit(nil, nil)
 	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	app = Application()

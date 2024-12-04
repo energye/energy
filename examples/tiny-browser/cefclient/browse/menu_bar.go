@@ -125,7 +125,7 @@ func (m *MenuBar) CreateFileMenuItems() {
 	// 在菜单中显示快捷键文本。
 	menuModel.SetAcceleratorAt(menuModel.GetCount()-1, 'X', true, true, false)
 	// 还要在窗口添加快捷键，否则不触发 SetOnAccelerator
-	m.window.SetAccelerator(id, 'X', true, true, false, false)
+	m.window.SetAccelerator(ID_QUIT, 'X', true, true, false, false)
 	m.menuModels[id] = menuModel
 	fmt.Println("file menu Id:", id)
 	subMenuModel := menuModel.AddSubMenu(0, "子菜单")
