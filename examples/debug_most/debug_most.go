@@ -41,15 +41,18 @@ func main() {
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	app.SetShowMessageDlg(true)
-	app.SetDisableWebSecurity(true)
 	cef.SetApplication(app)
 	// setting
 	if common.IsDarwin() {
-		app.SetUseMockKeyChain(true)
-		cef.GlobalWorkSchedulerCreate(nil)
-		app.SetOnScheduleMessagePumpWork(nil)
-		app.SetExternalMessagePump(true)
-		app.SetMultiThreadedMessageLoop(false)
+		if process.Args.IsMain() {
+			app.SetUseMockKeyChain(true)
+			cef.GlobalWorkSchedulerCreate(nil)
+			app.SetOnScheduleMessagePumpWork(nil)
+			app.SetExternalMessagePump(true)
+			app.SetMultiThreadedMessageLoop(false)
+		} else {
+			app.InitLibLocationFromArgs()
+		}
 	} else {
 		// 指定 CEF Framework
 		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
@@ -90,64 +93,13 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	//	m.InheritedWndProc(msg)
 	//	//fmt.Println("SetOnWndProc")
 	//})
-	mainMenu := lcl.NewMainMenu(m)
-	// 创建一级菜单
-	fileClassA := lcl.NewMenuItem(m)
-	fileClassA.SetCaption("文件(&F)") //菜单名称 alt + f
-	aboutClassA := lcl.NewMenuItem(m)
-	aboutClassA.SetCaption("关于(&A)")
 
-	var createMenuItem = func(label, shortCut string, click func(lcl.IObject)) (result *lcl.TMenuItem) {
-		result = lcl.NewMenuItem(m)
-		result.SetCaption(label)               //菜单项显示的文字
-		result.SetShortCutFromString(shortCut) // 快捷键
-		result.SetOnClick(click)               // 触发事件，回调函数
-		return
-	}
-	// 给一级菜单添加菜单项
-	createItem := createMenuItem("新建(&N)", "Meta+N", func(lcl.IObject) {
-		fmt.Println("单击了新建")
-	})
-	fileClassA.Add(createItem) // 把创建好的菜单项添加到 第一个菜单中
-	openItem := createMenuItem("打开(&O)", "Meta+O", func(lcl.IObject) {
-		fmt.Println("单击了打开")
-	})
-	fileClassA.Add(openItem) // 把创建好的菜单项添加到 第一个菜单中
-	mainMenu.Items().Add(fileClassA)
-	mainMenu.Items().Add(aboutClassA)
-	if common.IsDarwin() {
-		// https://wiki.lazarus.freepascal.org/Mac_Preferences_and_About_Menu
-		// 动态添加的，静态好像是通过设计器将顶级的菜单标题设置为应用程序名，但动态的就是另一种方式
-		appMenu := lcl.NewMenuItem(m)
-		// 动态添加的，设置一个Unicode Apple logo char
-		appMenu.SetCaption(types.AppleLogoChar)
-		subItem := lcl.NewMenuItem(m)
-
-		subItem.SetCaption("关于")
-		subItem.SetOnClick(func(sender lcl.IObject) {
-			lcl.ShowMessage("About")
-		})
-		appMenu.Add(subItem)
-
-		subItem = lcl.NewMenuItem(m)
-		subItem.SetCaption("-")
-		appMenu.Add(subItem)
-
-		subItem = lcl.NewMenuItem(m)
-		subItem.SetCaption("首选项")
-		subItem.SetShortCutFromString("Meta+,")
-		subItem.SetOnClick(func(sender lcl.IObject) {
-			lcl.ShowMessage("Preferences")
-		})
-		appMenu.Add(subItem)
-		// 添加
-		mainMenu.Items().Insert(0, appMenu)
-	}
+	m.createMenu()
 
 	m.chromium = cef.NewChromium(m, nil)
 	//m.chromium.SetDefaultURL("https://www.baidu.com")
 	//m.chromium.SetDefaultURL("https://energye.github.io")
-	//m.chromium.SetDefaultURL("http://localhost:22022")
+	m.chromium.SetDefaultURL("http://localhost:22022")
 	m.windowParent = cef.NewCEFWindowParent(m)
 	m.windowParent.SetParent(m)
 	m.windowParent.SetAlign(types.AlClient)
@@ -201,7 +153,6 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	//	//fmt.Println("SetOnRenderCompMsg", *lResult, *aHandled)
 	//	//*aHandled = true
 	//})
-
 	//m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
 	//	fmt.Println("SetOnBeforeContextMenu")
 	//})
@@ -253,13 +204,15 @@ func (m *BrowserWindow) createBrowser(sender lcl.IObject) {
 	fmt.Println("createBrowser")
 	if !common.IsLinux() {
 		m.timer.SetEnabled(false)
-		m.chromium.Initialized()
-		if !m.chromium.CreateBrowser(m.windowParent, "", nil, nil) {
-			//m.timer.SetEnabled(true)
+		createBrowserOK := m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
+		initializedOK := m.chromium.Initialized()
+		if !createBrowserOK && !initializedOK {
+			m.timer.SetEnabled(true)
 		}
+		fmt.Println("CreateBrowser:", createBrowserOK, "Initialized:", initializedOK)
 		//m.chromium.LoadUrl("https://www.baidu.com")
 		//m.chromium.LoadUrl("https://www.gitee.com")
-		m.chromium.LoadUrl("http://localhost:22022")
+		//m.chromium.LoadUrl("http://localhost:22022")
 	}
 }
 func (m *BrowserWindow) resize(sender lcl.IObject) {
@@ -292,9 +245,70 @@ func (m *BrowserWindow) chromiumClose(sender lcl.IObject, browser *cef.ICefBrows
 func (m *BrowserWindow) chromiumBeforeClose(sender lcl.IObject, browser *cef.ICefBrowser) {
 	fmt.Println("chromiumBeforeClose")
 	m.canClose = true
-	rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+	if common.IsDarwin() {
+		cef.RunOnMainThread(func() {
+			m.Close()
+		})
+	} else {
+		rtl.PostMessage(m.Handle(), messages.WM_CLOSE, 0, 0)
+	}
 }
 
+func (m *BrowserWindow) createMenu() {
+	mainMenu := lcl.NewMainMenu(m)
+	// 创建一级菜单
+	fileClassA := lcl.NewMenuItem(m)
+	fileClassA.SetCaption("文件(&F)") //菜单名称 alt + f
+	aboutClassA := lcl.NewMenuItem(m)
+	aboutClassA.SetCaption("关于(&A)")
+
+	var createMenuItem = func(label, shortCut string, click func(lcl.IObject)) (result *lcl.TMenuItem) {
+		result = lcl.NewMenuItem(m)
+		result.SetCaption(label)               //菜单项显示的文字
+		result.SetShortCutFromString(shortCut) // 快捷键
+		result.SetOnClick(click)               // 触发事件，回调函数
+		return
+	}
+	// 给一级菜单添加菜单项
+	createItem := createMenuItem("新建(&N)", "Meta+N", func(lcl.IObject) {
+		fmt.Println("单击了新建")
+	})
+	fileClassA.Add(createItem) // 把创建好的菜单项添加到 第一个菜单中
+	openItem := createMenuItem("打开(&O)", "Meta+O", func(lcl.IObject) {
+		fmt.Println("单击了打开")
+	})
+	fileClassA.Add(openItem) // 把创建好的菜单项添加到 第一个菜单中
+	mainMenu.Items().Add(fileClassA)
+	mainMenu.Items().Add(aboutClassA)
+	if common.IsDarwin() {
+		// https://wiki.lazarus.freepascal.org/Mac_Preferences_and_About_Menu
+		// 动态添加的，静态好像是通过设计器将顶级的菜单标题设置为应用程序名，但动态的就是另一种方式
+		appMenu := lcl.NewMenuItem(m)
+		// 动态添加的，设置一个Unicode Apple logo char
+		appMenu.SetCaption(types.AppleLogoChar)
+		subItem := lcl.NewMenuItem(m)
+
+		subItem.SetCaption("关于")
+		subItem.SetOnClick(func(sender lcl.IObject) {
+			lcl.ShowMessage("About")
+		})
+		appMenu.Add(subItem)
+
+		subItem = lcl.NewMenuItem(m)
+		subItem.SetCaption("-")
+		appMenu.Add(subItem)
+
+		subItem = lcl.NewMenuItem(m)
+		subItem.SetCaption("首选项")
+		subItem.SetShortCutFromString("Meta+,")
+		subItem.SetOnClick(func(sender lcl.IObject) {
+			lcl.ShowMessage("Preferences")
+		})
+		appMenu.Add(subItem)
+		// 添加
+		mainMenu.Items().Insert(0, appMenu)
+	}
+}
 func startServer() {
 	fmt.Println("主进程启动 创建一个内置http服务")
 	server := assetserve.NewAssetsHttpServer()

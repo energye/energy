@@ -52,9 +52,8 @@ func (m *ViewsFramework) Create() {
 		fmt.Println("OnBeforeClose")
 		app.QuitMessageLoop()
 	})
-	var (
-		minimumWindowSize = cef.TCefSize{Width: 100, Height: 100}
-	)
+	var minimumWindowSize = cef.TCefSize{Width: 100, Height: 100}
+
 	m.browserView = cef.BrowserViewComponentRef.New(m)
 	m.browserView.SetID(ID_BROWSER_VIEW)
 	//m.browserView.SetPreferAccelerators(true)

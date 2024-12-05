@@ -19,7 +19,9 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
+	"path/filepath"
 	"unsafe"
 )
 
@@ -77,7 +79,7 @@ func CreateApplication() *TCEFApplication {
 
 // AddCrDelegate MacOS Delegate
 func AddCrDelegate() {
-	if common.IsDarwin() {
+	if common.IsDarwin() && process.Args.IsMain() {
 		imports.Proc(def.CEF_AddCrDelegate).Call()
 	}
 }
@@ -152,6 +154,25 @@ func (m *TCEFApplication) Free() {
 	if m.instance != nil {
 		imports.Proc(def.CEFApplication_Free).Call()
 		m.instance = nil
+	}
+}
+
+func (m *TCEFApplication) InitLibLocationFromArgs() {
+	libCEFFramework := "Contents/Frameworks/Chromium Embedded Framework.framework/"
+	libCEFDLL := "Chromium Embedded Framework"
+	frameworkPath := process.Args.Args("framework-dir-path")
+	mainBundlePath := process.Args.Args("main-bundle-path")
+	if frameworkPath != "" {
+		m.SetFrameworkDirPath(frameworkPath)
+	}
+	if mainBundlePath != "" {
+		m.SetMainBundlePath(frameworkPath)
+	}
+	if m.FrameworkDirPath() == "" && mainBundlePath != "" {
+		mainBundlePath = filepath.Join(mainBundlePath, libCEFFramework, libCEFDLL)
+		if tools.IsExist(mainBundlePath) {
+			m.SetFrameworkDirPath(mainBundlePath)
+		}
 	}
 }
 
