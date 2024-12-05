@@ -34,9 +34,6 @@ func main() {
 	app.SetMultiThreadedMessageLoop(false)
 	app.SetExternalMessagePump(false)
 	if common.IsDarwin() {
-		if process.Args.IsMain() {
-			app.AddCrDelegate()
-		}
 		cef.GlobalWorkSchedulerCreate(nil)
 		app.SetOnScheduleMessagePumpWork(nil)
 	} else {

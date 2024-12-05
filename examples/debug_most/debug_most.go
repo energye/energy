@@ -40,6 +40,8 @@ func main() {
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
+	app.SetShowMessageDlg(true)
+	app.SetDisableWebSecurity(true)
 	cef.SetApplication(app)
 	// setting
 	if common.IsDarwin() {
