@@ -538,7 +538,6 @@ func init() {
 		dllimports.NewEnergyImport("CEFAppConfig_SetMustFreeLibrary", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_UpdateDeviceScaleFactor", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SpecificVersion", 0),
-		dllimports.NewEnergyImport("CEFAppConfig_SetLibHandle", 0),
 		//CEFParentWindow
 		dllimports.NewEnergyImport("CEFWindow_Create", 0),
 		dllimports.NewEnergyImport("CEFWindow_GetHandle", 0),

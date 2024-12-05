@@ -20,7 +20,6 @@ import (
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/lcl/api"
-	"github.com/energye/golcl/lcl/api/dllimports"
 	"unsafe"
 )
 
@@ -70,25 +69,16 @@ func SetApplication(app *TCEFApplication) {
 //	创建CEF Application
 //	初始化CEF时必须创建，多进程模式每个application配置都应该相同
 func CreateApplication() *TCEFApplication {
+	AddCrDelegate()
 	var result uintptr
 	imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
 	return &TCEFApplication{instance: unsafe.Pointer(result), specificVersion: SV_INVALID}
 }
 
 // AddCrDelegate MacOS Delegate
-func (m *TCEFApplication) AddCrDelegate() {
+func AddCrDelegate() {
 	if common.IsDarwin() {
-		m.SetCEFLibHandle()
 		imports.Proc(def.CEF_AddCrDelegate).Call()
-	}
-}
-
-// SetCEFLibHandle Set MacOS CEF Lib Handle
-func (m *TCEFApplication) SetCEFLibHandle() {
-	if common.IsDarwin() {
-		libCEF := "@executable_path/../Frameworks/Chromium Embedded Framework.framework/Chromium Embedded Framework"
-		cefLibHandle, _ := dllimports.NewDLL(libCEF)
-		imports.Proc(def.CEFAppConfig_SetLibHandle).Call(uintptr(unsafe.Pointer(&cefLibHandle)))
 	}
 }
 

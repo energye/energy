@@ -44,7 +44,6 @@ func main() {
 	// setting
 	if common.IsDarwin() {
 		app.SetUseMockKeyChain(true)
-		app.AddCrDelegate()
 		cef.GlobalWorkSchedulerCreate(nil)
 		app.SetOnScheduleMessagePumpWork(nil)
 		app.SetExternalMessagePump(true)
@@ -201,13 +200,13 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	//	//*aHandled = true
 	//})
 
-	m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
-		fmt.Println("SetOnBeforeContextMenu")
-	})
-	m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
-		fmt.Println("SetOnContextMenuCommand")
-		return false
-	})
+	//m.chromium.SetOnBeforeContextMenu(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, model *cef.ICefMenuModel) {
+	//	fmt.Println("SetOnBeforeContextMenu")
+	//})
+	//m.chromium.SetOnContextMenuCommand(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, params *cef.ICefContextMenuParams, commandId consts.MenuId, eventFlags uint32) bool {
+	//	fmt.Println("SetOnContextMenuCommand")
+	//	return false
+	//})
 	//m.chromium.SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, request *cef.ICefRequest, callback *cef.ICefCallback, result *consts.TCefReturnValue) {
 	//	//fmt.Println("SetOnBeforeResourceLoad", frame.Url())
 	//})

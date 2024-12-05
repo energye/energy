@@ -115,7 +115,6 @@ func (m *TCEFApplication) DefaultMessageLoop() {
 		// https://bitbucket.org/chromiumembedded/cef/issues/2964/gpu-is-not-usable-error-during-cef
 		m.SetDisableZygote(true)
 	} else if common.IsDarwin() { // Darwin => LCL窗口
-		m.AddCrDelegate()
 		GlobalWorkSchedulerCreate(nil)
 		m.SetOnScheduleMessagePumpWork(nil)
 		// MacOSX 在使用LCL窗口组件必须将 ExternalMessagePump=true 和 MultiThreadedMessageLoop=false
