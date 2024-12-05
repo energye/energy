@@ -3,16 +3,20 @@ package main
 import (
 	"embed"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/logger"
 )
 
 //go:embed resources
 var resources embed.FS
 
 func main() {
+	logger.SetEnable(true)
+	logger.SetLevel(logger.LDebug)
 	// 全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	// 创建应用
 	app := cef.NewApplication()
+	app.SetUseMockKeyChain(true)
 	// 本地加载资源方式, 直接读取本地或内置执行文件资源
 	// 该模块不使用 http server
 	// 默认访问地址fs://energy/index.html, 仅能在应用内访问

@@ -14,9 +14,12 @@ import (
 func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
+	//rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	//创建应用
 	cefApp := cef.NewApplication()
 	cefApp.SetUseMockKeyChain(true)
+	//cefApp.SetRootCache(rootCache)
+	//cefApp.SetCache(filepath.Join(rootCache, "cache"))
 	//主窗口的配置
 	//
 	cef.BrowserWindow.Config.Url = "fs://energy"

@@ -15,6 +15,7 @@ func main() {
 	//创建应用
 	app := cef.NewApplication()
 	app.SetEnableGPU(true)
+	app.SetUseMockKeyChain(true)
 	//主进程窗口
 	src.MainBrowserWindow(app)
 

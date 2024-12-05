@@ -158,13 +158,12 @@ func (m *LocalLoadResource) loadDefaultURL(window IBrowserWindow, browser *ICefB
 			}
 			homeURL = defaultURL.String()
 		}
+		logger.Debug("LocalLoadResource Default-URL:", homeURL)
 		window.Chromium().LoadUrl(homeURL)
 	}
 }
 
-// getSchemeHandlerFactory
-//
-//	方式二 资源处理器默认实现，使用本地资源加载时开启
+// 方式二 资源处理器默认实现，使用本地资源加载时开启
 func (m *LocalLoadResource) getSchemeHandlerFactory(window IBrowserWindow, browser *ICefBrowser) {
 	if m.enable() {
 		handler := SchemeHandlerFactoryRef.New()
@@ -176,9 +175,7 @@ func (m *LocalLoadResource) getSchemeHandlerFactory(window IBrowserWindow, brows
 	return
 }
 
-// getResourceHandler
-//
-//	方式一 资源处理器默认实现，使用本地资源加载时开启
+// 方式一 资源处理器默认实现，使用本地资源加载时开启
 func (m *LocalLoadResource) getResourceHandler(browser *ICefBrowser, frame *ICefFrame, request *ICefRequest) *ICefResourceHandler {
 	if m.enable() {
 		if source, ok := m.checkRequest(request); ok {
@@ -271,6 +268,7 @@ func (m *source) readFile() {
 			//绝对路径
 			path = localLoadRes.ResRootDir
 		}
+		logger.Debug("LocalLoadResource", "ReadFile Local:", m.path)
 		m.bytes, m.err = ioutil.ReadFile(filepath.Join(path, m.path))
 		// 在本地读取
 		if m.err != nil {
@@ -278,6 +276,7 @@ func (m *source) readFile() {
 		}
 	} else {
 		//在fs读取
+		logger.Debug("LocalLoadResource", "ReadFile Embed:", m.path)
 		m.bytes, m.err = localLoadRes.FS.ReadFile(localLoadRes.ResRootDir + m.path)
 		if m.err != nil {
 			logger.Error("ReadFile:", m.err.Error())
@@ -293,6 +292,7 @@ func (m *source) open(request *ICefRequest, callback *ICefCallback) (handleReque
 	m.statusText = "Not Found"
 	m.err = nil
 	m.header = nil
+	logger.Debug("LocalLoadResource", "ResourceType:", m.resourceType)
 	// xhr 请求, 需要通过代理转发出去
 	if m.resourceType == RT_XHR && localLoadRes.Proxy != nil {
 		if result, err := localLoadRes.Proxy.Send(request); err == nil {
@@ -345,6 +345,7 @@ func (m *source) response(response *ICefResponse) (responseLength int64, redirec
 	response.SetStatusText(m.statusText)
 	response.SetMimeType(m.mimeType)
 	responseLength = int64(len(m.bytes))
+	logger.Debug("LocalLoadResource", "Response StatusCode:", m.statusCode, "StatusText:", m.statusText, "MimeType:", m.mimeType)
 	if m.header != nil {
 		header := response.GetHeaderMap() //StringMultiMapRef.New()
 		if header.IsValid() {
@@ -416,6 +417,7 @@ func (m *source) out(dataOut uintptr, bytesToRead int32) (bytesRead int32, resul
 // checkRequest = true, 读取bytes, 返回到dataOut
 func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResourceReadCallback) (bytesRead int32, result bool) {
 	bytesRead, result = m.out(dataOut, bytesToRead)
+	logger.Debug("LocalLoadResource", "Read BytesRead:", bytesRead, "Result:", result)
 	if result {
 		//callback.Cont(int64(bytesRead))
 	}
@@ -424,6 +426,7 @@ func (m *source) read(dataOut uintptr, bytesToRead int32, callback *ICefResource
 
 func (m *source) readResponse(dataOut uintptr, bytesToRead int32, callback *ICefCallback) (bytesRead int32, result bool) {
 	bytesRead, result = m.out(dataOut, bytesToRead)
+	logger.Debug("LocalLoadResource", "ReadResponse BytesRead:", bytesRead, "Result:", result)
 	if !result {
 		callback.Cont()
 	}

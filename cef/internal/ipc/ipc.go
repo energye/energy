@@ -46,7 +46,6 @@ type browserIPC struct {
 	emitCallbackMessageId int32
 	onLock                sync.Mutex
 	emitLock              sync.Mutex
-	messageLock           sync.Mutex
 	window                target.IWindow
 	browserWindow         target.IBrowserWindow
 }
@@ -92,8 +91,6 @@ func SetProcessMessage(pm target.IWindow) {
 	if pm == nil {
 		return
 	}
-	browser.messageLock.Lock()
-	defer browser.messageLock.Unlock()
 	browser.window = pm
 }
 

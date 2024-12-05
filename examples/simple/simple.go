@@ -11,7 +11,7 @@ func main() {
 	app := cef.NewApplication()
 	app.SetUseMockKeyChain(true)
 	//指定一个URL地址，或本地html文件目录
-	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
+	cef.BrowserWindow.Config.Url = "https://energye.github.io"
 	//运行应用
 	cef.Run(app)
 }
