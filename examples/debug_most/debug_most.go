@@ -35,7 +35,7 @@ func main() {
 	fmt.Println(time.Now().UnixNano()/1e6, time.Now().UnixNano())
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
-	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "debug_most")
 	app := cef.CreateApplication()
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))

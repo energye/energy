@@ -32,6 +32,7 @@ func MainBrowserWindow(app *cef.TCEFApplication) {
 		if window.IsViewsFramework() {
 			return
 		}
+		return
 		//if window.IsLCL() {
 		//在窗体初始化时创建窗口内的组件
 		back, forward, stop, refresh, progressLabel, addr := controlUI(window.AsLCLBrowserWindow().BrowserWindow())

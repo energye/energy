@@ -6,8 +6,10 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/consts"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"path/filepath"
 	"time"
 )
 
@@ -18,7 +20,12 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, resources)
 	//创建应用
-	cefApp := cef.NewApplication()
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "jstogo")
+	app := cef.NewApplication()
+	app.SetRootCache(rootCache)
+	app.SetCache(filepath.Join(rootCache, "cache"))
+	app.SetUseMockKeyChain(true)
+	app.SetEnableGPU(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/js-to-go.html"
 	cef.BrowserWindow.Config.Title = "Energy - js on event - go emit event"
@@ -39,7 +46,7 @@ func main() {
 		go timeTask(window)
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }
 
 // 定时执行web js

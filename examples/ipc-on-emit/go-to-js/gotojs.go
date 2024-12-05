@@ -9,9 +9,11 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
 	ipcTypes "github.com/energye/energy/v2/cef/ipc/types"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -25,9 +27,13 @@ func main() {
 	exception.SetOnException(func(message string) {
 		fmt.Println("message", message)
 	})
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "gotojs")
 	//创建应用
-	cefApp := cef.NewApplication()
-	cefApp.SetUseMockKeyChain(true)
+	app := cef.NewApplication()
+	app.SetRootCache(rootCache)
+	app.SetCache(filepath.Join(rootCache, "cache"))
+	app.SetUseMockKeyChain(true)
+	app.SetUseMockKeyChain(true)
 	port := common.Port()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = fmt.Sprintf("http://localhost:%d/go-to-js.html", port)
@@ -125,5 +131,5 @@ func main() {
 		go server.StartHttpServer()
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }

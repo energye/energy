@@ -16,10 +16,12 @@ import (
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/common/tray"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl/rtl/version"
+	"path/filepath"
 )
 
 //go:embed resources
@@ -34,8 +36,11 @@ func main() {
 	//resources := assets.AssetFile()
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, resources)
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "frameless")
 	//创建应用
 	app := cef.NewApplication()
+	app.SetRootCache(rootCache)
+	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetUseMockKeyChain(true) // MacOS dev:test mock key
 
 	//指定一个URL地址，或本地html文件目录

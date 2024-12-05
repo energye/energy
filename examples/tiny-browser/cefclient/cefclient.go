@@ -25,7 +25,7 @@ func main() {
 	Assets = assets
 	assserv.Assets = assets
 	cef.GlobalInit(nil, nil)
-	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "cefclient")
 	app = Application()
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))

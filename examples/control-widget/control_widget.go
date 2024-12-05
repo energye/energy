@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/control-widget/src"
 	_ "github.com/energye/energy/v2/examples/syso"
+	"path/filepath"
 )
 
 func main() {
@@ -12,8 +14,11 @@ func main() {
 	//环境变量 ENERGY_HOME="/app/cefframework" 配置框架所在目录
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
+	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache", "control_widget")
 	//创建应用
 	app := cef.NewApplication()
+	app.SetRootCache(rootCache)
+	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetEnableGPU(true)
 	app.SetUseMockKeyChain(true)
 	//主进程窗口
