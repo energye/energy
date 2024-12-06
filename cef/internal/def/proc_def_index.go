@@ -1004,6 +1004,7 @@ const (
 	CEFChromium_SetWebsiteSetting
 	CEFChromium_GetContentSetting
 	CEFChromium_SetContentSetting
+	CEFChromium_WindowHandle
 	// TChromiumOptions
 	ChromiumOptions_SetJavascript
 	ChromiumOptions_SetJavascriptCloseWindows

@@ -1004,6 +1004,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFChromium_SetWebsiteSetting", 0),
 		dllimports.NewEnergyImport("CEFChromium_GetContentSetting", 0),
 		dllimports.NewEnergyImport("CEFChromium_SetContentSetting", 0),
+		dllimports.NewEnergyImport("CEFChromium_WindowHandle", 0),
 		// TChromiumOptions
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascript", 0),
 		dllimports.NewEnergyImport("ChromiumOptions_SetJavascriptCloseWindows", 0),

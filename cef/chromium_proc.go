@@ -209,6 +209,7 @@ type IChromiumProc interface {
 	SetWebsiteSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value *ICefValue)
 	GetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes) TCefContentSettingValues
 	SetContentSetting(requestingUrl, topLevelUrl string, contentType TCefContentSettingTypes, value TCefContentSettingValues)
+	WindowHandle() TCefWindowHandle // Calls ICefBrowserHost.GetWindowHandle and returns the window handle for this browser.
 	AsTargetWindow() target.IWindow
 	IsClosing() bool
 	setClosing(v bool)
@@ -1748,6 +1749,15 @@ func (m *TCEFChromium) SetContentSetting(requestingUrl, topLevelUrl string, cont
 		return
 	}
 	imports.Proc(def.CEFChromium_SetContentSetting).Call(m.Instance(), api.PascalStr(requestingUrl), api.PascalStr(topLevelUrl), uintptr(contentType), uintptr(value))
+}
+
+func (m *TCEFChromium) WindowHandle() TCefWindowHandle {
+	if !m.IsValid() {
+		return 0
+	}
+	var result uintptr
+	imports.Proc(def.CEFChromium_WindowHandle).Call(m.Instance(), uintptr(unsafePointer(&result)))
+	return TCefWindowHandle(result)
 }
 
 // Target
