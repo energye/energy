@@ -40,6 +40,7 @@ type ICEFChromiumBrowser interface {
 	RegisterDefaultPopupEvent()
 	BroderDirectionAdjustments() et.BroderDirectionAdjustments       // 返回可以调整窗口大小的边框方向, 默认所有方向
 	SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) // 设置可以调整窗口大小的边框方向, 默认所有方向
+	Regions() *TCefDraggableRegions
 }
 
 // TCEFChromiumBrowser
@@ -121,6 +122,10 @@ func (m *TCEFChromiumBrowser) BroderDirectionAdjustments() et.BroderDirectionAdj
 // SetBroderDirectionAdjustments 设置可以调整窗口大小的边框方向, 默认所有方向
 func (m *TCEFChromiumBrowser) SetBroderDirectionAdjustments(val et.BroderDirectionAdjustments) {
 	m.broderDirectionAdjustments = val
+}
+
+func (m *TCEFChromiumBrowser) Regions() *TCefDraggableRegions { //窗口内html拖拽区域
+	return m.regions
 }
 
 // CreateBrowser
@@ -290,10 +295,10 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 		})
 		m.Chromium().SetOnDraggableRegionsChanged(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, regions *TCefDraggableRegions) {
 			if m.window.IsLCL() {
-				//m.regions = regions
+				m.regions = regions
 				//m.setDraggableRegions()
 			} else if m.window.IsViewsFramework() {
-				m.window.AsViewsFrameworkBrowserWindow().BrowserWindow().regions = regions
+				m.regions = regions
 				m.window.AsViewsFrameworkBrowserWindow().WindowComponent().SetDraggableRegions(regions.Regions())
 			}
 			if bwEvent.onDraggableRegionsChanged != nil {
@@ -382,9 +387,10 @@ func (m *TCEFChromiumBrowser) setDraggableRegions() {
 	})
 }
 
-func PtInRegion(x, y int, rectX, rectY, rectWidth, rectHeight int) bool {
+func PtInRegion(x, y int32, rectX, rectY, rectWidth, rectHeight int32) bool {
 	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
-	return x >= rectX && x < rectX+rectWidth && y >= rectY && y < rectY+rectHeight
+	return x >= rectX && x <= rectX+rectWidth &&
+		y >= rectY && y <= rectY+rectHeight
 }
 
 // 鼠标是否在标题栏区域

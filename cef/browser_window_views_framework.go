@@ -44,7 +44,6 @@ type ViewsFrameworkBrowserWindow struct {
 	doOnWindowCreated     windowOnWindowCreated     //窗口创建
 	doOnGetInitialBounds  windowOnGetInitialBounds  //窗口初始bounds
 	doOnCloseQuery        windowOnCanCloseEx        //
-	regions               *TCefDraggableRegions     //窗口内html拖拽区域
 	context               *ICefRequestContext       //
 	extraInfo             *ICefDictionaryValue      //
 	screen                IScreen                   //屏幕

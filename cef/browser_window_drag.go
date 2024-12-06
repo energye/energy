@@ -74,6 +74,9 @@ func (m *dragExtensionHandler) handler(name string, object *ICefV8Value, argumen
 	case mouseUp:
 		return true
 	case mouseDown:
+		if common.IsDarwin() {
+			return true
+		}
 		var dx, dy int32
 		if !common.IsWindows() && arguments.Size() > 0 {
 			point := arguments.Get(0)
@@ -93,6 +96,9 @@ func (m *dragExtensionHandler) handler(name string, object *ICefV8Value, argumen
 		m.sendMessage(message)
 		return true
 	case mouseMove:
+		if common.IsDarwin() {
+			return true
+		}
 		var mx, my, timeStamp int32
 		if !common.IsWindows() && arguments.Size() > 0 {
 			point := arguments.Get(0)
@@ -206,14 +212,15 @@ func (m dragExtensionHandler) drag(browser *ICefBrowser, frame *ICefFrame, messa
 //	The second method, Implemented using JavaScript, currently suitable for LCL windows on Windows and Mac OS
 //	VF window is already implemented and supported by default
 type drag struct {
-	T      int8           // data type
-	X, Y   int32          // data mouse point
-	HT     string         // mouse ht
-	TS     int32          // mouse timeStamp
-	window IBrowserWindow // window
-	wx, wy int32          // window point
-	dx, dy int32          // down mouse point
-	mx, my int32          // move mouse point
+	T       int8           // data type
+	X, Y    int32          // data mouse point
+	HT      string         // mouse ht
+	TS      int32          // mouse timeStamp
+	window  IBrowserWindow // window
+	wx, wy  int32          // window point
+	dx, dy  int32          // down mouse point
+	mx, my  int32          // move mouse point
+	canDrag bool
 }
 
 // Extension JS

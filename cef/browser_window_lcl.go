@@ -666,6 +666,7 @@ func (m *LCLBrowserWindow) FormCreate() {
 	}
 	m.isFormCreate = true
 	m.SetName(fmt.Sprintf("energy_window_name_%d", time.Now().UnixNano()/1e6))
+	m.drag = &drag{window: m}
 	m.onFormMessages()
 }
 

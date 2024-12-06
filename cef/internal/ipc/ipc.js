@@ -81,7 +81,7 @@ if (!__drag) {
 
     function mouseMove(e) {
         if (shouldDrag) {
-            if (isWindows()) {
+            if (isWindows() || isDarwin()) {
                 shouldDrag = false;// && !IsDarwin();
             }
             energyExtension.mouseMove({x: e.screenX, y: e.screenY, ts: parseInt(e.timeStamp)});

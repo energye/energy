@@ -44,31 +44,46 @@ void setWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
 void init() {
 	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
 		NSWindow* eventWindow = [event window];
-		if (eventWindow == nil ) {
+		if (eventWindow == nil) {
 			return event;
 		}
-		LogInfo(@"LeftMouseDown");
-		BOOL flag = ShouldDrag(eventWindow);
-		if(flag){
+		//LogInfo(@"LeftMouseDown");
+		BOOL flag = CanDrag(eventWindow);
+		int32_t titleBarHeight = GetTitlebarHeight(eventWindow);
+		if (flag) {
 			[eventWindow performWindowDragWithEvent:event];
+		} else if (titleBarHeight > 0) {
+			NSPoint location = [event locationInWindow];
+			NSRect frame = [eventWindow frame];
+			int32_t titleBarHeight = GetTitlebarHeight(eventWindow);
+			if(location.y > frame.size.height - titleBarHeight) {
+			  [eventWindow performWindowDragWithEvent:event];
+			}
 		}
-        NSPoint location = [event locationInWindow];
-        NSRect frame = [eventWindow frame];
-        //if( location.y > frame.size.height - self.invisibleTitleBarHeight ) {
-        //    [window performWindowDragWithEvent:event];
-        //    return;
-        //}
-		//[eventWindow performWindowDragWithEvent:event];
+		return event;
+	}];
+
+	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskMouseMoved handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
+		NSWindow* window = [event window];
+		if (window == nil) {
+			return event;
+		}
+        NSRect windowFrame = [window frame];
+		NSPoint locationInWindow = [event locationInWindow];
+		// 将左下角坐标转换为左上角坐标
+		CGFloat newY = NSHeight(windowFrame) - locationInWindow.y;
+		NSPoint adjustedLocation = NSMakePoint(locationInWindow.x, newY);
+		CheckDraggableRegions(window, (int32_t)adjustedLocation.x, (int32_t)adjustedLocation.y);
 		return event;
 	}];
 
 	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseUp handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
 		NSWindow* eventWindow = [event window];
-		if (eventWindow == nil ) {
+		if (eventWindow == nil) {
 			return event;
         }
-		LogInfo(@"LeftMouseUp");
-		SetShouldDrag(eventWindow, false);
+		//LogInfo(@"LeftMouseUp");
+		SetCanDrag(eventWindow, false);
 		return event;
 	}];
 }
@@ -101,12 +116,8 @@ func (m *PlatformWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
 	C.setWindowBackgroundColor(m.Instance(), C.int(red), C.int(green), C.int(blue), C.int(alpha))
 }
 
-func (m *PlatformWindow) Init() {
-	//C.init()
-}
-
 func (m *LCLBrowserWindow) PlatformWindow() *PlatformWindow {
-	return &PlatformWindow{m.TForm.PlatformWindow()}
+	return &PlatformWindow{NSWindow: m.TForm.PlatformWindow()}
 }
 
 func (m *LCLBrowserWindow) frameless() {
@@ -121,6 +132,8 @@ func (m *LCLBrowserWindow) frameless() {
 	nsWindow.SetStyleMask(mask)
 
 	C.setFrameless(nsWindow.Instance())
+
+	C.init()
 }
 
 func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {
