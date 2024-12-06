@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v2/cef/internal/ipc"
 	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
 	"github.com/energye/energy/v2/cef/ipc/target"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"runtime"
 	"strconv"
@@ -69,41 +70,71 @@ func (m *dragExtensionHandler) make(frameId string, context *ICefV8Context) {
 //  2. 通过IPC将鼠标消息发送到主进程，主进程监听到消息处理鼠标事件
 //  3. windows 使用win.api实现窗口拖拽
 func (m *dragExtensionHandler) handler(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) bool {
-	if name == mouseDown || name == mouseUp {
+	switch name {
+	case mouseUp:
 		return true
-	} else if name == mouseMove {
+	case mouseDown:
+		var dx, dy int32
+		if !common.IsWindows() && arguments.Size() > 0 {
+			point := arguments.Get(0)
+			v8ValX := point.getValueByKey("x")
+			v8ValY := point.getValueByKey("y")
+			dx = v8ValX.GetIntValue()
+			dy = v8ValY.GetIntValue()
+			v8ValX.Free()
+			v8ValY.Free()
+			point.Free()
+		}
+		message := &ipcArgument.List{
+			Id:   -1,
+			Name: internalIPCDRAG,
+			Data: &drag{T: dragDown, X: dx, Y: dy},
+		}
+		m.sendMessage(message)
+		return true
+	case mouseMove:
+		var mx, my, timeStamp int32
+		if !common.IsWindows() && arguments.Size() > 0 {
+			point := arguments.Get(0)
+			v8ValX := point.getValueByKey("x")
+			v8ValY := point.getValueByKey("y")
+			v8TimeStamp := point.getValueByKey("ts")
+			mx = v8ValX.GetIntValue()
+			my = v8ValY.GetIntValue()
+			timeStamp = v8TimeStamp.GetIntValue()
+			v8ValX.Free()
+			v8ValY.Free()
+			v8TimeStamp.Free()
+			point.Free()
+		}
 		// caption move
 		message := &ipcArgument.List{
 			Id:   -1,
 			Name: internalIPCDRAG,
-			Data: &drag{T: dragMove},
+			Data: &drag{T: dragMove, X: mx, Y: my, TS: timeStamp},
 		}
 		m.sendMessage(message)
 		return true
-	} else if name == mouseDblClick {
+	case mouseDblClick:
 		// caption double click
 		message := &ipcArgument.List{
-			Id: -1,
-			//BId:  ipc.RenderChan().BrowserId(),
+			Id:   -1,
 			Name: internalIPCDRAG,
 			Data: &drag{T: dragDblClick},
 		}
 		m.sendMessage(message)
-		//ipc.RenderChan().IPC().Send(message.Bytes())
 		return true
-	} else if name == mouseResize {
+	case mouseResize:
 		// window border resize
 		htValue := arguments.Get(0)
 		ht := htValue.GetStringValue()
 		htValue.Free()
 		message := &ipcArgument.List{
-			Id: -1,
-			//BId:  ipc.RenderChan().BrowserId(),
+			Id:   -1,
 			Name: internalIPCDRAG,
 			Data: &drag{T: dragResize, HT: ht},
 		}
 		m.sendMessage(message)
-		//ipc.RenderChan().IPC().Send(message.Bytes())
 		return true
 	}
 	return false
@@ -138,9 +169,7 @@ func (m dragExtensionHandler) drag(browser *ICefBrowser, frame *ICefFrame, messa
 			return
 		}
 	}
-	var (
-		argumentList ipcArgument.IList // json.JSONArray
-	)
+	var argumentList ipcArgument.IList // json.JSONArray
 	if messageDataBytes != nil {
 		argumentList = ipcArgument.UnList(messageDataBytes)
 		messageDataBytes = nil
