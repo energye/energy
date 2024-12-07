@@ -21,6 +21,7 @@ func main() {
 	cef.GlobalInit(nil, demoCommon.ResourcesFS())
 	//创建应用
 	var app = cef.NewApplication()
+	app.SetUseMockKeyChain(true)
 	// 这是使用LCL dialog和CEF dialog示例
 	// 两者区别
 	//   1. LCL 有更多的方式, CEF 仅有限几种方式
