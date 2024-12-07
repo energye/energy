@@ -72,6 +72,18 @@ func setCefStateVal(ptr uintptr, val consts.TCefState) {
 	}
 }
 
+func setInt32Val(ptr uintptr, val int32) {
+	if ptr != 0 {
+		*(*int32)(unsafePointer(ptr)) = val
+	}
+}
+
+func setUInt32Val(ptr uintptr, val uint32) {
+	if ptr != 0 {
+		*(*uint32)(unsafePointer(ptr)) = val
+	}
+}
+
 type tCefCookiePtr struct {
 	url, name, value, domain, path        uintptr //string
 	secure, httponly, hasExpires          uintptr //bool
@@ -401,17 +413,17 @@ func (m *TCefBrowserSettings) setInstanceValue() {
 	if m.instance == nil {
 		return
 	}
-	*(*int32)(unsafePointer(m.instance.WindowlessFrameRate)) = m.WindowlessFrameRate
+	setInt32Val(m.instance.WindowlessFrameRate, m.WindowlessFrameRate)
 	m.instance.StandardFontFamily = api.PascalStr(m.StandardFontFamily)
 	m.instance.FixedFontFamily = api.PascalStr(m.FixedFontFamily)
 	m.instance.SerifFontFamily = api.PascalStr(m.SerifFontFamily)
 	m.instance.SansSerifFontFamily = api.PascalStr(m.SansSerifFontFamily)
 	m.instance.CursiveFontFamily = api.PascalStr(m.CursiveFontFamily)
 	m.instance.FantasyFontFamily = api.PascalStr(m.FantasyFontFamily)
-	*(*int32)(unsafePointer(m.instance.DefaultFontSize)) = m.DefaultFontSize
-	*(*int32)(unsafePointer(m.instance.DefaultFixedFontSize)) = m.DefaultFixedFontSize
-	*(*int32)(unsafePointer(m.instance.MinimumFontSize)) = m.MinimumFontSize
-	*(*int32)(unsafePointer(m.instance.MinimumLogicalFontSize)) = m.MinimumLogicalFontSize
+	setInt32Val(m.instance.DefaultFontSize, m.DefaultFontSize)
+	setInt32Val(m.instance.DefaultFixedFontSize, m.DefaultFixedFontSize)
+	setInt32Val(m.instance.MinimumFontSize, m.MinimumFontSize)
+	setInt32Val(m.instance.MinimumLogicalFontSize, m.MinimumLogicalFontSize)
 	m.instance.DefaultEncoding = api.PascalStr(m.DefaultEncoding)
 	setCefStateVal(m.instance.RemoteFonts, m.RemoteFonts)
 	setCefStateVal(m.instance.Javascript, m.Javascript)
@@ -425,7 +437,7 @@ func (m *TCefBrowserSettings) setInstanceValue() {
 	setCefStateVal(m.instance.LocalStorage, m.LocalStorage)
 	setCefStateVal(m.instance.Databases, m.Databases)
 	setCefStateVal(m.instance.Webgl, m.Webgl)
-	*(*TCefColor)(unsafePointer(m.instance.BackgroundColor)) = m.BackgroundColor
+	setUInt32Val(m.instance.BackgroundColor, uint32(m.BackgroundColor))
 	setCefStateVal(m.instance.ChromeStatusBubble, m.ChromeStatusBubble)
 	setCefStateVal(m.instance.ChromeZoomBubble, m.ChromeZoomBubble)
 }
