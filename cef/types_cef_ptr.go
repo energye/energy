@@ -66,6 +66,12 @@ func fromPtrCefState(ptr uintptr) consts.TCefState {
 	return *(*consts.TCefState)(unsafePointer(ptr))
 }
 
+func setCefStateVal(ptr uintptr, val consts.TCefState) {
+	if ptr != 0 {
+		*(*consts.TCefState)(unsafePointer(ptr)) = val
+	}
+}
+
 type tCefCookiePtr struct {
 	url, name, value, domain, path        uintptr //string
 	secure, httponly, hasExpires          uintptr //bool
@@ -407,21 +413,21 @@ func (m *TCefBrowserSettings) setInstanceValue() {
 	*(*int32)(unsafePointer(m.instance.MinimumFontSize)) = m.MinimumFontSize
 	*(*int32)(unsafePointer(m.instance.MinimumLogicalFontSize)) = m.MinimumLogicalFontSize
 	m.instance.DefaultEncoding = api.PascalStr(m.DefaultEncoding)
-	*(*consts.TCefState)(unsafePointer(m.instance.RemoteFonts)) = m.RemoteFonts
-	*(*consts.TCefState)(unsafePointer(m.instance.Javascript)) = m.Javascript
-	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptCloseWindows)) = m.JavascriptCloseWindows
-	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptAccessClipboard)) = m.JavascriptAccessClipboard
-	*(*consts.TCefState)(unsafePointer(m.instance.JavascriptDomPaste)) = m.JavascriptDomPaste
-	*(*consts.TCefState)(unsafePointer(m.instance.ImageLoading)) = m.ImageLoading
-	*(*consts.TCefState)(unsafePointer(m.instance.ImageShrinkStandaLonetoFit)) = m.ImageShrinkStandaLonetoFit
-	*(*consts.TCefState)(unsafePointer(m.instance.TextAreaResize)) = m.TextAreaResize
-	*(*consts.TCefState)(unsafePointer(m.instance.TabToLinks)) = m.TabToLinks
-	*(*consts.TCefState)(unsafePointer(m.instance.LocalStorage)) = m.LocalStorage
-	*(*consts.TCefState)(unsafePointer(m.instance.Databases)) = m.Databases
-	*(*consts.TCefState)(unsafePointer(m.instance.Webgl)) = m.Webgl
+	setCefStateVal(m.instance.RemoteFonts, m.RemoteFonts)
+	setCefStateVal(m.instance.Javascript, m.Javascript)
+	setCefStateVal(m.instance.JavascriptCloseWindows, m.JavascriptCloseWindows)
+	setCefStateVal(m.instance.JavascriptAccessClipboard, m.JavascriptAccessClipboard)
+	setCefStateVal(m.instance.JavascriptDomPaste, m.JavascriptDomPaste)
+	setCefStateVal(m.instance.ImageLoading, m.ImageLoading)
+	setCefStateVal(m.instance.ImageShrinkStandaLonetoFit, m.ImageShrinkStandaLonetoFit)
+	setCefStateVal(m.instance.TextAreaResize, m.TextAreaResize)
+	setCefStateVal(m.instance.TabToLinks, m.TabToLinks)
+	setCefStateVal(m.instance.LocalStorage, m.LocalStorage)
+	setCefStateVal(m.instance.Databases, m.Databases)
+	setCefStateVal(m.instance.Webgl, m.Webgl)
 	*(*TCefColor)(unsafePointer(m.instance.BackgroundColor)) = m.BackgroundColor
-	*(*consts.TCefState)(unsafePointer(m.instance.ChromeStatusBubble)) = m.ChromeStatusBubble
-	*(*consts.TCefState)(unsafePointer(m.instance.ChromeZoomBubble)) = m.ChromeZoomBubble
+	setCefStateVal(m.instance.ChromeStatusBubble, m.ChromeStatusBubble)
+	setCefStateVal(m.instance.ChromeZoomBubble, m.ChromeZoomBubble)
 }
 
 func (m *TCefBrowserSettings) ToPtr() *tCefBrowserSettingsPtr {

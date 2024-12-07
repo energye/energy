@@ -41,6 +41,7 @@ func main() {
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	app.SetShowMessageDlg(true)
+	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 	cef.SetApplication(app)
 	// setting
 	if common.IsDarwin() {
