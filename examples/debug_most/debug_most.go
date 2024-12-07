@@ -109,7 +109,9 @@ func (m *BrowserWindow) OnFormCreate(sender lcl.IObject) {
 	m.timer.SetOnTimer(m.createBrowser)
 	m.timer.SetEnabled(false)
 	// 在show时创建chromium browser
-	m.TForm.SetOnShow(m.createBrowser)
+	if !common.IsLinux() {
+		m.TForm.SetOnShow(m.createBrowser)
+	}
 	m.TForm.SetOnActivate(m.createBrowser)
 	m.TForm.SetOnResize(m.resize)
 	// 1. 关闭之前先调用chromium.CloseBrowser(true)，然后触发 chromium.SetOnClose
@@ -202,18 +204,16 @@ func (m *BrowserWindow) OnMessages() {
 
 func (m *BrowserWindow) createBrowser(sender lcl.IObject) {
 	fmt.Println("createBrowser")
-	if !common.IsLinux() {
-		m.timer.SetEnabled(false)
-		createBrowserOK := m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
-		initializedOK := m.chromium.Initialized()
-		if !createBrowserOK && !initializedOK {
-			m.timer.SetEnabled(true)
-		}
-		fmt.Println("CreateBrowser:", createBrowserOK, "Initialized:", initializedOK)
-		//m.chromium.LoadUrl("https://www.baidu.com")
-		//m.chromium.LoadUrl("https://www.gitee.com")
-		//m.chromium.LoadUrl("http://localhost:22022")
+	m.timer.SetEnabled(false)
+	createBrowserOK := m.chromium.CreateBrowser(m.windowParent, "", nil, nil)
+	initializedOK := m.chromium.Initialized()
+	if !createBrowserOK && !initializedOK {
+		m.timer.SetEnabled(true)
 	}
+	fmt.Println("CreateBrowser:", createBrowserOK, "Initialized:", initializedOK)
+	//m.chromium.LoadUrl("https://www.baidu.com")
+	//m.chromium.LoadUrl("https://www.gitee.com")
+	//m.chromium.LoadUrl("http://localhost:22022")
 }
 func (m *BrowserWindow) resize(sender lcl.IObject) {
 	fmt.Println("resize")
@@ -245,7 +245,7 @@ func (m *BrowserWindow) chromiumClose(sender lcl.IObject, browser *cef.ICefBrows
 func (m *BrowserWindow) chromiumBeforeClose(sender lcl.IObject, browser *cef.ICefBrowser) {
 	fmt.Println("chromiumBeforeClose")
 	m.canClose = true
-	if common.IsDarwin() {
+	if !common.IsWindows() {
 		cef.RunOnMainThread(func() {
 			m.Close()
 		})
