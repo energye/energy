@@ -21,6 +21,7 @@ func main() {
 		fmt.Println("Global Exception message", message)
 	})
 	app := cef.NewApplication()
+	app.SetUseMockKeyChain(true)
 	cef.BrowserWindow.Config.Title = "Energy - ipc async result"
 	cef.BrowserWindow.Config.Url = "http://localhost:22111/index.html"
 

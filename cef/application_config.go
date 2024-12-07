@@ -927,6 +927,8 @@ func (m *TCEFApplication) UseMockKeyChain() bool {
 	return api.GoBool(r1)
 }
 
+// SetUseMockKeyChain Uses mock keychain for testing purposes, which prevents blocking dialogs from causing timeouts.
+// <para><see href="https://peter.sh/experiments/chromium-command-line-switches/">Uses the following command line switch: --use-mock-keychain</see></para>
 func (m *TCEFApplication) SetUseMockKeyChain(value bool) {
 	imports.Proc(def.CEFAppConfig_SetUseMockKeyChain).Call(api.PascalBool(value))
 }
