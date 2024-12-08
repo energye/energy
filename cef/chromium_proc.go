@@ -369,7 +369,7 @@ func (m *TCEFChromium) SetDefaultURL(defaultURL string) {
 
 // SetEnableMultiBrowserMode 设置启用多浏览器模式
 func (m *TCEFChromium) SetEnableMultiBrowserMode(enableMultiBrowserMode bool) {
-	if !m.IsValid() {
+	if !m.IsValid() || application.Is49() {
 		return
 	}
 	imports.Proc(def.CEFChromium_SetMultiBrowserMode).Call(m.Instance(), api.PascalBool(enableMultiBrowserMode))
