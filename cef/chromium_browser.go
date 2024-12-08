@@ -174,7 +174,7 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 	})
 	m.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *consts.TCefReturnValue) {
 		if assetserve.AssetsServerHeaderKeyValue != "" {
-			if application.IsSpecVer49() {
+			if application.Is49() {
 				headerMap := request.GetHeaderMap()
 				headerMap.Append(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue)
 				request.SetHeaderMap(headerMap)

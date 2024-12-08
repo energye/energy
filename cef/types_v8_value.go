@@ -945,7 +945,7 @@ func (*cefV8Value) NewString(value string) *ICefV8Value {
 // NewObject
 func (*cefV8Value) NewObject(accessor *ICefV8Accessor, interceptor *ICefV8Interceptor) *ICefV8Value {
 	var result uintptr
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		// CEF49
 		if accessor == nil || accessor.instance == nil {
 			imports.Proc(def.CefV8ValueRef_NewObject).Call(uintptr(0), uintptr(unsafe.Pointer(&result)))

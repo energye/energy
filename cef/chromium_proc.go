@@ -1688,7 +1688,7 @@ func (m *TCEFChromium) EmitRender(messageId int32, eventName string, target targ
 		browse := BrowserWindow.GetBrowser(target.BrowserId())
 		//browse := m.BrowserById(target.BrowserId())
 		if browse != nil && browse.IsValid() {
-			if application.IsSpecVer49() {
+			if application.Is49() {
 				// CEF49
 				browse.EmitRender(messageId, eventName, target, data...)
 			} else {

@@ -214,7 +214,7 @@ func (m *ipcRenderProcess) goExecuteJSEvent(browser *ICefBrowser, frame *ICefFra
 		// MSync: 同步模式
 		if callback.mode == types.MSync {
 			var processMessage target.IProcessMessage
-			if application.IsSpecVer49() {
+			if application.Is49() {
 				// CEF49
 				processMessage = browser
 			} else {
@@ -523,7 +523,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 					messageId = m.emitHandler.addCallback(callback)
 				}
 				var message target.IProcessMessage
-				if application.IsSpecVer49() {
+				if application.Is49() {
 					// CEF49
 					message = v8ctx.Browser()
 				} else {
@@ -606,7 +606,7 @@ func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName strin
 	//发送消息到主进程
 	//ipc.RenderChan().IPC().Send(message.Bytes())
 	var processMessage target.IProcessMessage
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		// CEF49
 		processMessage = v8ctx.Browser()
 	} else {

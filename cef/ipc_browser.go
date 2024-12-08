@@ -110,7 +110,7 @@ func (m *ipcBrowserProcess) jsExecuteGoMethodMessage(browser *ICefBrowser, frame
 						replyMessage.Data = replay.Result()
 					}
 				}
-				if application.IsSpecVer49() {
+				if application.Is49() {
 					// CEF49
 					browser.SendProcessMessageForJSONBytes(internalIPCJSEmitReplay, consts.PID_RENDER, replyMessage.Bytes())
 				} else {
@@ -239,7 +239,7 @@ func (m *ipcBrowserProcess) jsExecuteGoWaitMethodMessage(browser *ICefBrowser, f
 	}
 	//回复结果消息
 	var processMessage target.IProcessMessage
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		// CEF49
 		processMessage = browser
 	} else {

@@ -49,7 +49,7 @@ func (m *TCefSchemeRegistrarRef) AddCustomScheme(schemeName string, options cons
 	if !m.IsValid() {
 		return false
 	}
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		// CEF49
 		var (
 			isStandard, isLocal, isDisplayIsolated bool

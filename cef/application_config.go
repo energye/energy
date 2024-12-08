@@ -226,7 +226,7 @@ func (m *TCEFApplication) EnableVFWindow(e bool) {
 }
 
 func (m *TCEFApplication) ExternalMessagePump() bool {
-	if !m.IsSpecVer49() {
+	if !m.Is49() {
 		r1, _, _ := imports.Proc(def.CEFAppConfig_ExternalMessagePump).Call()
 		return api.GoBool(r1)
 	}
@@ -234,7 +234,7 @@ func (m *TCEFApplication) ExternalMessagePump() bool {
 }
 
 func (m *TCEFApplication) SetExternalMessagePump(value bool) {
-	if !m.IsSpecVer49() {
+	if !m.Is49() {
 		m.externalMessagePump = value
 		imports.Proc(def.CEFAppConfig_SetExternalMessagePump).Call(api.PascalBool(value))
 	}
@@ -737,7 +737,7 @@ func (m *TCEFApplication) EnablePrintPreview() bool {
 }
 
 func (m *TCEFApplication) SetEnablePrintPreview(value bool) {
-	if !m.IsSpecVer49() {
+	if !m.Is49() {
 		imports.Proc(def.CEFAppConfig_SetEnablePrintPreview).Call(api.PascalBool(value))
 	}
 }
@@ -1161,11 +1161,6 @@ func (m *TCEFApplication) LibCefVersion() string {
 	return api.GoStr(r1)
 }
 
-// LibVersion 返回 lib-lcl 版本, TODO 暂时移除
-func (m *TCEFApplication) LibVersion() string {
-	return ""
-}
-
 func (m *TCEFApplication) LibCefPath() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_LibCefPath).Call()
 	return api.GoStr(r1)
@@ -1354,45 +1349,42 @@ func (m *TCEFApplication) LastErrorMessage() string {
 	return api.GoStr(r1)
 }
 
-// SpecificVersion 返回当前支持的CEF特定版本
-//
-//	0: 非针特定本，当前版本或当前最新版本
-//	49:  特定 WindowsXP
-//	87:  特定 Flash
-//	106: 特定 Linux GTK2
-//	109: 特定 7, 8/8.1 and Windows Server 2012
+// SpecificVersion CEF特定版本
 func (m *TCEFApplication) SpecificVersion() SpecificVersion {
-	if m.specificVersion == SV_INVALID {
-		r1, _, _ := imports.Proc(def.CEFAppConfig_SpecificVersion).Call()
-		switch SpecificVersion(r1) {
-		case SV_CEF, SV_CEF49, SV_CEF87, SV_CEF106, SV_CEF109:
-			m.specificVersion = SpecificVersion(r1)
+	if m.specificVersion == 0 {
+		cefVersion := strings.Split(m.LibCefVersion(), ".")
+		major := common.StrToInt32(cefVersion[0])
+		switch SpecificVersion(major) {
+		case Sv49, Sv87, Sv101, Sv109:
+			m.specificVersion = SpecificVersion(major)
+		default:
+			m.specificVersion = SvLatest
 		}
 	}
 	return m.specificVersion
 }
 
-// IsNotSpecVer 非针特定本，当前版本或当前最新版本
-func (m *TCEFApplication) IsNotSpecVer() bool {
-	return m.SpecificVersion() == SV_CEF
+// IsLatest The current version or the latest version
+func (m *TCEFApplication) IsLatest() bool {
+	return m.SpecificVersion() == SvLatest
 }
 
-// IsSpecVer49 特定 WindowsXP
-func (m *TCEFApplication) IsSpecVer49() bool {
-	return m.SpecificVersion() == SV_CEF49
+// Is49 WindowsXP
+func (m *TCEFApplication) Is49() bool {
+	return m.SpecificVersion() == Sv49
 }
 
-// IsSpecVer87 特定 Flash
-func (m *TCEFApplication) IsSpecVer87() bool {
-	return m.SpecificVersion() == SV_CEF87
+// Is87 Flash
+func (m *TCEFApplication) Is87() bool {
+	return m.SpecificVersion() == Sv87
 }
 
-// IsSpecVer106 特定 Linux GTK2
-func (m *TCEFApplication) IsSpecVer106() bool {
-	return m.SpecificVersion() == SV_CEF106
+// Is101 Linux 32
+func (m *TCEFApplication) Is101() bool {
+	return m.SpecificVersion() == Sv101
 }
 
-// IsSpecVer109 特定 7, 8/8.1 and Windows Server 2012
-func (m *TCEFApplication) IsSpecVer109() bool {
-	return m.SpecificVersion() == SV_CEF109
+// Is109  7, 8/8.1 and Windows Server 2012
+func (m *TCEFApplication) Is109() bool {
+	return m.SpecificVersion() == Sv109
 }

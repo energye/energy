@@ -603,7 +603,7 @@ func (m *LCLBrowserWindow) ChromiumCreate(config *TCefChromiumConfig, defaultUrl
 		config = NewChromiumConfig()
 	}
 	m.chromiumBrowser = NewChromiumBrowser(m, config)
-	if !application.IsSpecVer49() {
+	if !application.Is49() {
 		m.Chromium().SetEnableMultiBrowserMode(true)
 	}
 	if defaultUrl != "" {

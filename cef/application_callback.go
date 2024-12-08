@@ -40,7 +40,7 @@ func regCustomSchemes(registrar *TCefSchemeRegistrarRef) {
 		case "HTTP", "HTTPS", "FILE", "FTP", "ABOUT", "DATA":
 			return
 		}
-		if application.IsSpecVer49() {
+		if application.Is49() {
 			registrar.AddCustomScheme(localLoadRes.Scheme, consts.CEF_SCHEME_OPTION_STANDARD|consts.CEF_SCHEME_OPTION_LOCAL)
 		} else {
 			registrar.AddCustomScheme(localLoadRes.Scheme,

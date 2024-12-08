@@ -150,7 +150,7 @@ func (m *dragExtensionHandler) sendMessage(message *ipcArgument.List) {
 	v8ctx := V8ContextRef.Current()
 	defer v8ctx.Free()
 	var processMessage target.IProcessMessage
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		// CEF49
 		processMessage = v8ctx.Browser()
 	} else {

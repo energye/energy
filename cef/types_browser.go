@@ -565,7 +565,7 @@ func (m *ICefBrowser) GetRequestContext() *ICefRequestContext {
 //
 //	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessage(targetProcess CefProcessId, message *ICefProcessMessage) {
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		if !m.IsValid() {
 			return
 		}
@@ -578,7 +578,7 @@ func (m *ICefBrowser) SendProcessMessage(targetProcess CefProcessId, message *IC
 //
 //	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessageForJSONBytes(messageName string, targetProcess CefProcessId, data []byte) {
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		if !m.IsValid() {
 			return
 		}
@@ -590,7 +590,7 @@ func (m *ICefBrowser) SendProcessMessageForJSONBytes(messageName string, targetP
 //
 //	仅支持 CEF49
 func (m *ICefBrowser) SendProcessMessageForV8Value(messageName string, targetProcess CefProcessId, arguments *ICefV8Value) {
-	if application.IsSpecVer49() {
+	if application.Is49() {
 		if !m.IsValid() {
 			return
 		}
@@ -604,7 +604,7 @@ func (m *ICefBrowser) SendProcessMessageForV8Value(messageName string, targetPro
 //
 //	仅支持 CEF49
 func (m *ICefBrowser) EmitRender(messageId int32, eventName string, target target.ITarget, data ...interface{}) bool {
-	if !application.IsSpecVer49() {
+	if !application.Is49() {
 		return false
 	}
 	if !m.IsValid() {

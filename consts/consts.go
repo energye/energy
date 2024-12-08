@@ -72,16 +72,15 @@ const (
 	Ct_Client
 )
 
-// SpecificVersion 特定版本: CEF49，CEF87，CEF106，CEF109
+// SpecificVersion 特定版本
 type SpecificVersion = types.Int32
 
 const (
-	SV_INVALID = SpecificVersion(-1)  // 无效
-	SV_CEF     = SpecificVersion(0)   // 非特定版本，当前版本或当前最新版本
-	SV_CEF49   = SpecificVersion(49)  // 特定 WindowsXP
-	SV_CEF87   = SpecificVersion(87)  // 特定 Flash
-	SV_CEF106  = SpecificVersion(106) // 特定 Linux GTK2
-	SV_CEF109  = SpecificVersion(109) // 特定 Windows 7, 8/8.1 and Windows Server 2012
+	Sv49     SpecificVersion = 49   // WindowsXP
+	Sv87     SpecificVersion = 87   // Flash
+	Sv101    SpecificVersion = 101  // Linux32
+	Sv109    SpecificVersion = 109  // Windows 7, 8/8.1 and Windows Server 2012
+	SvLatest SpecificVersion = 9999 // 当前版本或当前最新版本
 )
 
 // 功能和消息常量

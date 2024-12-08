@@ -74,7 +74,7 @@ func CreateApplication() *TCEFApplication {
 	AddCrDelegate()
 	var result uintptr
 	imports.Proc(def.CEFApplication_Create).Call(uintptr(unsafe.Pointer(&result)))
-	return &TCEFApplication{instance: unsafe.Pointer(result), specificVersion: SV_INVALID}
+	return &TCEFApplication{instance: unsafe.Pointer(result)}
 }
 
 // AddCrDelegate MacOS Delegate
@@ -343,47 +343,28 @@ func (m *TCEFApplication) SetOnRenderLoadingStateChange(fn GlobalCEFAppEventOnRe
 }
 
 func (m *TCEFApplication) SetOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-	if m.IsSpecVer49() {
+	if m.Is49() {
 		return
 	}
-	//m.onRenderLoadStart = fn
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
 }
 
-//func (m *TCEFApplication) setOnRenderLoadStart(fn GlobalCEFAppEventOnRenderLoadStart) {
-//	if m.IsSpecVer49() {
-//		return
-//	}
-//	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadStart).Call(api.MakeEventDataPtr(fn))
-//}
-
-//func (m *TCEFApplication) defaultSetOnRenderLoadStart() {
-//	if m.IsSpecVer49() {
-//		return
-//	}
-//	m.setOnRenderLoadStart(func(browser *ICefBrowser, frame *ICefFrame, transitionType TCefTransitionType) {
-//		if m.onRenderLoadStart != nil {
-//			m.onRenderLoadStart(browser, frame, transitionType)
-//		}
-//	})
-//}
-
 func (m *TCEFApplication) SetOnRenderLoadEnd(fn GlobalCEFAppEventOnRenderLoadEnd) {
-	if m.IsSpecVer49() {
+	if m.Is49() {
 		return
 	}
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadEnd).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnRenderLoadError(fn GlobalCEFAppEventOnRenderLoadError) {
-	if m.IsSpecVer49() {
+	if m.Is49() {
 		return
 	}
 	imports.Proc(def.CEFGlobalApp_SetOnRenderLoadError).Call(api.MakeEventDataPtr(fn))
 }
 
 func (m *TCEFApplication) SetOnScheduleMessagePumpWork(fn GlobalCEFAppEventOnScheduleMessagePumpWork) {
-	if m.IsSpecVer49() {
+	if m.Is49() {
 		return
 	}
 	var callback uintptr

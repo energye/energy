@@ -43,7 +43,7 @@ func (m *ICefBrowser) createBrowserViewSource(currentWindow IBrowserWindow) {
 			}
 			if assetserve.AssetsServerHeaderKeyValue != "" {
 				viewSourceWindow.Chromium().SetOnBeforeResourceLoad(func(sender lcl.IObject, browser *ICefBrowser, frame *ICefFrame, request *ICefRequest, callback *ICefCallback, result *TCefReturnValue) {
-					if application.IsSpecVer49() {
+					if application.Is49() {
 						headerMap := request.GetHeaderMap()
 						headerMap.Append(assetserve.AssetsServerHeaderKeyName, assetserve.AssetsServerHeaderKeyValue)
 						request.SetHeaderMap(headerMap)
