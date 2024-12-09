@@ -26,7 +26,7 @@
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
-### [项目简介](https://energy.yanghy.cn/course/what-is-energy)
+### [项目简介](https://energye.github.io/course/what-is-energy)
 
 > Energy 是 Go 基于 [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) 和 [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework) 开发的 GUI 框架, 用于开发Windows、MacOS 和 Linux 跨平台桌面应用.
 >
@@ -52,7 +52,7 @@
 - [![LCL](https://img.shields.io/badge/LCL-green)](https://github.com/energye/golcl)
 - [![CEF-CEF4Delphi](https://img.shields.io/badge/CEF(Chromium%20Embedded%20Framework)%20CEF4Delphi-green)](https://github.com/salvadordf/CEF4Delphi)
 
-### [开发环境](https://energy.yanghy.cn/course/getting-started)
+### [开发环境](https://energye.github.io/course/getting-started)
 
 #### 基本需求
 
@@ -61,17 +61,17 @@
 
 #### 环境安装
 
-> 使用 [energy cli](https://energy.yanghy.cn/course/cli-use-instructions) 自动安装完整开发环境
+> 使用 [energy cli](https://energye.github.io/course/cli-use-instructions) 自动安装完整开发环境
 
-### 入门指南 - [传送门](https://energy.yanghy.cn/course/getting-started)
+### 入门指南 - [传送门](https://energye.github.io/course/getting-started)
 
-- [教程](https://energy.yanghy.cn/course/getting-started)
-- [示例](https://energy.yanghy.cn/examples)
-- [文档](https://energy.yanghy.cn/document)
+- [教程](https://energye.github.io/course/getting-started)
+- [示例](https://energye.github.io/examples)
+- [文档](https://energye.github.io/document)
 
 ### 快速入门
 
-> [快速入门](https://energy.yanghy.cn/course/getting-started)
+> [快速入门](https://energye.github.io/course/getting-started)
 
 ### 三个步骤运行一个简单应用
 
@@ -96,7 +96,7 @@ func main() {
    //创建应用
    app := cef.NewApplication()
    //指定一个URL地址，或本地html文件目录
-   cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
+   cef.BrowserWindow.Config.Url = "https://energye.github.io"
    //运行应用
    cef.Run(app)
 }
@@ -111,7 +111,7 @@ func main() {
    - linux    使用`dpkg`制作deb安装包
    - macos    生成`xxx.app`
 
-### 系统支持
+### [系统支持](https://energye.github.io/document/version-details)
 
 ![Windows](https://img.shields.io/badge/Windows-✔️-success.svg?logo=Windows&logoColor=blue)
 ![MacOS](https://img.shields.io/badge/MacOS-✔️-success.svg?logo=MacOS)
@@ -124,7 +124,6 @@ func main() {
 | MacOS (Apple Silicon) | ❌      | ️✔️    |
 | Linux                 | ️✔️    | ️✔️    |
 | Linux ARM             | ️✔️    | ️✔️    |
-
 
 
 ### v3.0 相关项目
@@ -142,15 +141,11 @@ func main() {
 
 ---
 
-### 欢迎加入
+### ENERGY QQ交流群 & 微信
 
-energy仍处于建设的过程中，有很多的事情无法独自完成，如果有感兴趣的同学想参与energy的实现或学习，可通过微信或QQ联系我。
-
-如果你觉得此项目对你有帮助，请点亮 Star
+**创新功能破难题，点亮 `star` 共奋进！**
 
 ---
-
-### ENERGY QQ交流群 & 微信
 
 <p align="center">
     <img src="https://energye.github.io/imgs/assets/qq-group.jpg" width="250" title="QQ交流群: 541258627" alt="QQ交流群: 541258627">

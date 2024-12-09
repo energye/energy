@@ -108,7 +108,7 @@ func main() {
     - linux: Using `dpkg` create deb installation package
     - macos: Generate `xxx.app`
 
-### System support
+### [System support](https://energye.github.io/en/document/version-details)
 
 ![Windows](https://img.shields.io/badge/Windows-✔️-success.svg?logo=Windows&logoColor=blue)
 ![MacOS](https://img.shields.io/badge/MacOS-✔️-success.svg?logo=MacOS)
@@ -138,15 +138,11 @@ func main() {
 
 ---
 
-### Welcome to join
+### ENERGY QQ Group & WeChat
 
-join energy throwing in the process of construction, there are many things that cannot be completed alone, if there are interested students who want to participate in the realization or learning of energy, you can contact me through WeChat or QQ.
-
-If this project is helpful to you, please give me a star
+**Innovative functions break through difficulties. Light up the `star` and strive forward together!**
 
 ---
-
-### ENERGY QQ Group & WeChat
 
 <p align="center">
     <img src="https://energye.github.io/imgs/assets/qq-group.jpg" width="250" title="QQ Group: 541258627" alt="QQ Group: 541258627">
