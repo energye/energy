@@ -41,7 +41,6 @@ func main() {
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLogSeverity(consts.LOGSEVERITY_DEBUG)
 	app.SetShowMessageDlg(true)
-	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 	cef.SetApplication(app)
 	// setting
 	if common.IsDarwin() {
@@ -72,6 +71,8 @@ func main() {
 		startMain := app.StartMainProcess()
 		fmt.Println("start main:", startMain)
 		if startMain {
+			fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
+			fmt.Println("LibAbout:", api.DLibAbout())
 			startServer()
 			// 结束应用后释放资源
 			api.SetReleaseCallback(func() {
