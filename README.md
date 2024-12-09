@@ -114,13 +114,13 @@ func main() {
 ![MacOS](https://img.shields.io/badge/MacOS-✔️-success.svg?logo=MacOS)
 ![Linux](https://img.shields.io/badge/Linux-✔️-success.svg?logo=Linux&logoColor=red)
 
-| OS                    | 32-bit | 64-bit | details |
-|-----------------------|--------|--------|---------|
-| Windows               | ️✔️    | ️✔️    |         |
-| MacOSX (Intel)        | ❌      | ️✔️    |         |
-| MacOS (Apple Silicon) | ❌      | ️✔️    |         |
-| Linux                 | ️✔️    | ️✔️    |         |
-| Linux ARM             | ️✔️    | ️✔️    |         |
+| OS                    | 32-bit | 64-bit |
+|-----------------------|--------|--------|
+| Windows               | ️✔️    | ️✔️    |
+| MacOSX (Intel)        | ❌      | ️✔️    |
+| MacOS (Apple Silicon) | ❌      | ️✔️    |
+| Linux                 | ️✔️    | ️✔️    |
+| Linux ARM             | ️✔️    | ️✔️    |
 
 ### v3.0 Related Projects
 - [LCL](https://github.com/energye/lcl)
