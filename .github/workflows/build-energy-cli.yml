@@ -27,11 +27,14 @@ jobs:
         cd ./cmd/energy/md5
         go install
         cd ../
-        .\build.bat
+        ./build.bat
         7z a energy-windows-32.zip      energy-windows-32.exe
         7z a energy-windows-64.zip      energy-windows-64.exe
         7z a energy-darwin-64.zip       energy-darwin-64
         7z a energy-darwinarm-64.zip    energy-darwinarm-64
+        7z a energy-linux-32.zip        energy-linux-32
         7z a energy-linux-64.zip        energy-linux-64
         7z a energy-linuxarm-64.zip     energy-linuxarm-64
-        dir
+        7z a energy-linuxarm.zip        energy-linuxarm
+        ls
+      shell: bash
