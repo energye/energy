@@ -1,6 +1,6 @@
 # Upgrade Log
 
-### 2.5.0 - next
+### 2.5.0 - 2024/12/11
 - Note: Weight update, supporting CEF 130.1.16, adjusted to support CEF special edition updates, removed version 106, 
 replaced with version 101, and added dynamic library builds for all supported CEF platforms except Windows ARM64.
 - Upgrade. Due to the large number of apis optimized and fixed after the upgrade,
