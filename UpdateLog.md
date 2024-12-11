@@ -1,11 +1,18 @@
 # Upgrade Log
 
 ### 2.5.0 - next
-- UP: Upgrade CEF130.1.16, after the upgrade, a small number of apis are incompatible, and the extension component API is removed
+- Note: Weight update, supporting CEF 130.1.16, adjusted to support CEF special edition updates, removed version 106, 
+replaced with version 101, and added dynamic library builds for all supported CEF platforms except Windows ARM64.
+- Upgrade. Due to the large number of apis optimized and fixed after the upgrade,
+  Some functions are backward incompatible, and the extension component interface has been removed.
 - R: Remove the Go implementation's internal IPC package, pkgs/channel, and keep it available as a separate module to resolve potential issues
 - R: The trigger targets (TgJs, TgGoSub, TgGoMain) in IPc.ON listening mode are removed, so that only JS is On the Go trigger ipc receiver
 - U: Modified ipc implementation to fully use CEF process messages, previous version of some functions used pkgs/channel implementation
 - U: Modified the drag energyExtension JS extension
+- U: Adjust the structure of all interface types to implement their own place
+- Optimize and fix historical legacy issues
+- Fix: Incorrect keyboard event parameter value
+- Fix: Fixed errors in compound base type parameter passing
 
 ### 2.4.6 - 2024/11/14
 - U: CLI > 2.4.6, In future release versions of the CLI, the version number will be synchronized with the main version number.
