@@ -144,7 +144,10 @@ type Bindata struct {
 }
 
 type EnergyConfig struct {
-	Registry string `json:"registry"`
+	Framework string `json:"framework"`
+	CEF       string `json:"cef"`
+	VER       string `json:"ver"`
+	Registry  string `json:"registry"`
 }
 
 func (m OS) IsWindows() bool {
