@@ -21,7 +21,9 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -42,14 +44,18 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	if iconPath, err = generaICON(proj); err != nil {
 		return err
 	}
-	if _, err = generaSYSO(iconPath, proj); err != nil {
+	if _, err = generaSYSO(iconPath, c, proj); err != nil {
 		return err
 	}
 	// go build
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = proj.ProjectPath
 	cmd.IsPrint = false
-	term.Section.Println("Building", proj.OutputFilename)
+	outputFilename := proj.OutputFilename
+	if c.Build.Out != "" {
+		outputFilename = c.Build.Out
+	}
+	term.Section.Println("Building", outputFilename)
 	var args = []string{"build"}
 	if c.Build.Args != "" {
 		// go build args
@@ -59,15 +65,22 @@ func build(c *command.Config, proj *project.Project) (err error) {
 		}
 	}
 	args = append(args, "-ldflags", "-s -w -H windowsgui")
-	args = append(args, "-o", proj.OutputFilename)
+	args = append(args, "-o", outputFilename)
+	// GOOS=windows GOARCH=386
+	if c.Build.OS != "" {
+		os.Setenv("GOOS", c.Build.OS)
+	}
+	if c.Build.ARCH != "" {
+		os.Setenv("GOARCH", c.Build.ARCH)
+	}
 	cmd.Command("go", args...)
 	// upx
 	if c.Build.Upx && tools.CommandExists("upx") {
 		term.Section.Println("Upx compression")
-		args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
+		args = []string{"--best", "--no-color", "--no-progress", outputFilename}
 		if c.Build.UpxFlag != "" {
 			args = strings.Split(c.Build.UpxFlag, " ")
-			args = append(args, proj.OutputFilename)
+			args = append(args, outputFilename)
 		}
 		cmd.Command("upx", args...)
 	}
@@ -80,8 +93,12 @@ func build(c *command.Config, proj *project.Project) (err error) {
 }
 
 // 生成syso图标
-func generaSYSO(iconPath string, proj *project.Project) (string, error) {
-	return gen.GeneraSYSO(proj.Name, iconPath, proj.Info.Manifest, proj.ProjectPath, "", proj.Info)
+func generaSYSO(iconPath string, c *command.Config, proj *project.Project) (string, error) {
+	arch := runtime.GOARCH
+	if c.Build.ARCH != "" {
+		arch = c.Build.ARCH
+	}
+	return gen.GeneraSYSO(proj.Name, iconPath, proj.Info.Manifest, proj.ProjectPath, arch, proj.Info)
 }
 
 // 生成应用图标，如果配置的是png图标，把png转换ico

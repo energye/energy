@@ -5,6 +5,7 @@
 !include "FileFunc.nsh"
 
 !define INFO_ProjectName "{{.Name}}"
+!define INFO_InstallerFileName "{{.InstallerFileName}}"
 !define INFO_CompanyName "{{.Info.CompanyName}}"
 !define INFO_ProductName "{{.Info.ProductName}}"
 !define INFO_FileVersion "{{.Info.FileVersion}}"
@@ -31,7 +32,7 @@ RequestExecutionLevel "${REQUEST_EXECUTION_LEVEL}" ; admin or ""
 
 !macro energy.files
 
-    File "/oname=${PRODUCT_EXECUTABLE}" "{{.ProjectPath}}\{{.Name}}.exe" ; app.exe path, ..\..\app.exe
+    File "/oname=${PRODUCT_EXECUTABLE}" "{{.ProjectPath}}\{{.ExeName}}.exe" ; app.exe path, ..\..\app.exe
 
 {{if .NSIS.CompressFile}}
     File "{{.NSIS.CompressFile}}"

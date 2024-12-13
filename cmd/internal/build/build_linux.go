@@ -27,7 +27,11 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = proj.ProjectPath
 	cmd.IsPrint = false
-	term.Section.Println("Building", proj.OutputFilename)
+	outputFilename := proj.OutputFilename
+	if c.Build.Out != "" {
+		outputFilename = c.Build.Out
+	}
+	term.Section.Println("Building", outputFilename)
 	var args = []string{"build"}
 	if c.Build.Args != "" {
 		gbargs := strings.Split(c.Build.Args, " ")
@@ -36,16 +40,16 @@ func build(c *command.Config, proj *project.Project) (err error) {
 		}
 	}
 	args = append(args, "-ldflags", "-s -w")
-	args = append(args, "-o", proj.OutputFilename)
+	args = append(args, "-o", outputFilename)
 	cmd.Command("go", args...)
-	cmd.Command("strip", proj.OutputFilename)
+	cmd.Command("strip", outputFilename)
 	// upx
 	if c.Build.Upx && tools.CommandExists("upx") {
 		term.Section.Println("Upx compression")
-		args = []string{"--best", "--no-color", "--no-progress", proj.OutputFilename}
+		args = []string{"--best", "--no-color", "--no-progress", outputFilename}
 		if c.Build.UpxFlag != "" {
 			args = strings.Split(c.Build.UpxFlag, " ")
-			args = append(args, proj.OutputFilename)
+			args = append(args, outputFilename)
 		}
 		cmd.Command("upx", args...)
 	}

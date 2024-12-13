@@ -44,7 +44,7 @@ VIAddVersionKey "LegalCopyright"  "${INFO_Copyright}"
 ;!finalize 'signtool --file "%1"'
 
 Name "${INFO_ProductName}"
-OutFile ".\${INFO_ProjectName}-installer.exe" # Name of the installer's file.
+OutFile ".\${INFO_InstallerFileName}.exe" # Name of the installer's file.
 InstallDir "$PROGRAMFILES64\${INFO_CompanyName}\${INFO_ProductName}" # Default installing folder ($PROGRAMFILES is Program Files folder).
 ShowInstDetails show # This will always show the installation details.
 

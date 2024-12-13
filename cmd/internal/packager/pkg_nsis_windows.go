@@ -17,12 +17,14 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	command "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	cmd "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -30,7 +32,7 @@ const (
 	windowsNsisTools = "windows/installer-tools.nsh"
 )
 
-func GeneraInstaller(proj *project.Project) error {
+func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	if !tools.CommandExists("makensis") {
 		return errors.New("failed to create application installation program. Could not find the makensis command")
 	}
@@ -58,13 +60,13 @@ func GeneraInstaller(proj *project.Project) error {
 	}
 
 	// 生成 nsis 脚本
-	if err = windows(proj); err != nil {
+	if err = windows(c, proj); err != nil {
 		return err
 	}
 
 	// make
 	var outInstall string
-	if outInstall, err = makeNSIS(proj); err != nil {
+	if outInstall, err = makeNSIS(c, proj); err != nil {
 		return err
 	}
 	term.Section.Println("Success \n\tInstall package:", outInstall)
@@ -91,7 +93,7 @@ func compressCEF7za(proj *project.Project) (string, error) {
 		return "", err
 	}
 
-	cmd := command.NewCMD()
+	cmd := cmd.NewCMD()
 	cmd.IsPrint = false
 	var args = []string{"a", outFilePath, filepath.FromSlash(fmt.Sprintf("%s/*", proj.FrameworkPath))}
 	for _, exc := range proj.NSIS.Exclude {
@@ -102,7 +104,7 @@ func compressCEF7za(proj *project.Project) (string, error) {
 	return outFilePath, nil
 }
 
-func windows(proj *project.Project) error {
+func windows(c *command.Config, proj *project.Project) error {
 	term.Logger.Info("Generate NSIS script")
 	// 生成安装生成配置文件 nsis.nsi
 	if nsisData, err := assets.ReadFile(proj, assetsFSPath, windowsNsis); err != nil {
@@ -116,8 +118,19 @@ func windows(proj *project.Project) error {
 	if toolsData, err := assets.ReadFile(proj, assetsFSPath, windowsNsisTools); err != nil {
 		return err
 	} else {
+		exeName := proj.Name
+		if c.Package.File != "" {
+			exeName = c.Package.File
+			if strings.LastIndex(exeName, ".") != -1 {
+				exeName = exeName[:strings.LastIndex(exeName, ".")]
+			}
+		}
+		installerFileName := installFileName(c, proj)
+
 		data := make(map[string]interface{})
 		data["Name"] = proj.Name
+		data["ExeName"] = exeName
+		data["InstallerFileName"] = installerFileName
 		data["ProjectPath"] = filepath.FromSlash(proj.ProjectPath)
 		data["FrameworkPath"] = filepath.FromSlash(proj.FrameworkPath)
 		proj.Info.FromSlash()
@@ -133,12 +146,23 @@ func windows(proj *project.Project) error {
 	return nil
 }
 
+func installFileName(c *command.Config, proj *project.Project) string {
+	installPackage := proj.Name + "-installer"
+	if c.Package.OutFileName != "" {
+		installPackage = c.Package.OutFileName
+		if strings.LastIndex(installPackage, ".") != -1 {
+			installPackage = installPackage[:strings.LastIndex(installPackage, ".")]
+		}
+	}
+	return installPackage
+}
+
 // 使用nsis生成安装包
-func makeNSIS(proj *project.Project) (string, error) {
-	installPackage := proj.Name + "-installer.exe"
+func makeNSIS(c *command.Config, proj *project.Project) (string, error) {
+	installPackage := installFileName(c, proj)
 	term.Logger.Info("NSIS Making Installation, Almost complete", term.Logger.Args("Install Package", installPackage))
 	var args []string
-	cmd := command.NewCMD()
+	cmd := cmd.NewCMD()
 	cmd.IsPrint = false
 	cmd.Dir = proj.ProjectPath
 	cmd.MessageCallback = func(bytes []byte, err error) {

@@ -17,11 +17,13 @@ import (
 )
 
 var CmdPackage = &command.Command{
-	UsageLine: "package -p [path] -c [clean]",
+	UsageLine: "package -p [path] -c [clean] -f [file] -o [outfile]",
 	Short:     "Making an Installation Package",
 	Long: `
 	-p Project path, default current path. Can be configured in energy.json
 	-c Clear configuration and regenerate the default configuration
+	-f Execution file name
+	-o Installation package file name
 
 Making an Installation Package
 	Windows: 
@@ -44,7 +46,7 @@ func runPackage(c *command.Config) error {
 	} else {
 		proj.Clean = c.Package.Clean
 		proj.PList.Pkgbuild = c.Package.Pkgbuild
-		if err = packager.GeneraInstaller(proj); err != nil {
+		if err = packager.GeneraInstaller(c, proj); err != nil {
 			return err
 		}
 	}

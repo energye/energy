@@ -1,10 +1,10 @@
-zip -r energy-windows-32.zip 	energy-windows-32.exe
-zip -r energy-windows-64.zip 	energy-windows-64.exe
-zip -r energy-darwin-64.zip  	energy-darwin-64
-zip -r energy-darwinarm-64.zip 	energy-darwinarm-64
-zip -r energy-linux-32.zip 		energy-linux-32
-zip -r energy-linux-64.zip 		energy-linux-64
+zip -r energy-windows32.zip 	energy-windows32.exe
+zip -r energy-windowsx64.zip 	energy-windowsx64.exe
+zip -r energy-macosx64.zip  	energy-macosx64
+zip -r energy-macosarm64.zip 	energy-macosarm64
+zip -r energy-linux32.zip 		energy-linux32
+zip -r energy-linuxx64.zip 		energy-linuxx64
 zip -r energy-linuxarm.zip 	    energy-linuxarm
-zip -r energy-linuxarm-64.zip 	energy-linuxarm-64
+zip -r energy-linuxarm64.zip 	energy-linuxarm64
 
 pause

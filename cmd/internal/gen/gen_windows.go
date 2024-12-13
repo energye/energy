@@ -146,7 +146,7 @@ func GeneraSYSO(exeName, iconFilePath, manifestFilePath, outPath, arch string, i
 	}
 	targetArch, supported := archs[defaultArch]
 	if !supported {
-		return targetFile, fmt.Errorf("arch '%s' not supported", runtime.GOARCH)
+		return targetFile, fmt.Errorf("arch '%s' not supported", defaultArch)
 	}
 	err = rs.WriteObject(fout, targetArch)
 	if err != nil {

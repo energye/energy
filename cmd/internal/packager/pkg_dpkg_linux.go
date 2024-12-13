@@ -17,11 +17,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	command "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	cmd "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"io"
 	"io/fs"
 	"os"
@@ -47,7 +48,7 @@ const (
 	linuxARMStartup = "linux/startup.sh"
 )
 
-func GeneraInstaller(proj *project.Project) error {
+func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	if !tools.CommandExists("dpkg") {
 		return errors.New("failed to create application installation program. Could not find the dpkg command")
 	}
@@ -107,7 +108,7 @@ func dpkgB(proj *project.Project) (string, error) {
 	debName := fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
 	outFile := filepath.Join(dir, debName)
 	term.Logger.Info("Generate dpkg package. Almost complete", term.Logger.Args("deb", debName))
-	cmd := command.NewCMD()
+	cmd := cmd.NewCMD()
 	cmd.IsPrint = false
 	cmd.Dir = dir
 	var err error

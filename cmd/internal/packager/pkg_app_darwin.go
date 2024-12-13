@@ -17,11 +17,12 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
-	command "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	cmd "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"io"
 	"io/fs"
 	"os"
@@ -70,7 +71,7 @@ var (
 	projectPath string
 )
 
-func GeneraInstaller(proj *project.Project) error {
+func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	appRoot := fmt.Sprintf("darwin/%s.app", proj.Name)
 	buildOutDir := assets.BuildOutPath(proj)
 	buildOutDir = filepath.Join(buildOutDir, appRoot)
@@ -211,7 +212,7 @@ func pkgbuild(proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate app pkgbuild", term.Logger.Args("cmd work dir", cmdWorkDir))
 	// remove xxx.pkg
 	os.Remove(filepath.Join(cmdWorkDir, fmt.Sprintf("%s.pkg", proj.Name)))
-	cmd := command.NewCMD()
+	cmd := cmd.NewCMD()
 	//cmd.IsPrint = false
 	cmd.Dir = cmdWorkDir
 	cmd.MessageCallback = func(bytes []byte, err error) {
@@ -242,7 +243,7 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 	// 设置为helper选项
 	proj.PList.LSUIElement = true
 	proj.AppType = project.AtHelper
-	cmd := command.NewCMD()
+	cmd := cmd.NewCMD()
 	cmd.IsPrint = false
 	cmd.MessageCallback = func(bytes []byte, e error) {
 		if e != nil {
@@ -380,7 +381,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 		closeSrc()
 		name := icnsName[:len(icnsName)-4]
 		// 生成图标
-		cmd := command.NewCMD()
+		cmd := cmd.NewCMD()
 		cmd.Dir = tmpWorkDir
 		cmd.IsPrint = false
 		cmd.MessageCallback = func(bytes []byte, e error) {
