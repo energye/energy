@@ -94,11 +94,17 @@ func Install(cliConfig *command.Config) error {
 			printer.CheckmarkANSI()
 			printer.DefaultText = "Optional Installation"
 			printer.Filter = false
-			selectedOptions, err := printer.Show()
-			if err != nil {
-				return err
+			var selectedOptions []string
+			var err error
+			if cliConfig.Install.All {
+				selectedOptions = options
+			} else {
+				selectedOptions, err = printer.Show()
+				if err != nil {
+					return err
+				}
+				term.Section.Printfln("Selected : %s", pterm.Green(selectedOptions))
 			}
-			term.Section.Printfln("Selected : %s", pterm.Green(selectedOptions))
 			for _, option := range selectedOptions {
 				for _, wi := range willInstall {
 					if option == wi.name {

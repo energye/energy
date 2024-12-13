@@ -77,6 +77,7 @@ type Install struct {
 	Version  string `short:"v" long:"version" description:"Specifying a version number"`
 	Name     string `short:"n" long:"name" description:"Name of the framework directory after installation" default:"EnergyFramework"`
 	Download string `short:"d" long:"download" description:"Download Source, 0:gitee or 1:github, Default empty" default:""`
+	All      bool   `long:"all" description:"Install All Software"`
 	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current system: os"`
 	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm64], Default current system: architecture"`
 	CEFVer   string `long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. options: 109(support windows7), 106(support linux gtk2), 87(support flash)" default:""`
