@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	"os"
 	"strings"
 )
 
@@ -41,6 +42,13 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	}
 	args = append(args, "-ldflags", "-s -w")
 	args = append(args, "-o", outputFilename)
+	// GOOS=windows GOARCH=386
+	if c.Build.OS != "" {
+		os.Setenv("GOOS", c.Build.OS)
+	}
+	if c.Build.ARCH != "" {
+		os.Setenv("GOARCH", c.Build.ARCH)
+	}
 	cmd.Command("go", args...)
 	cmd.Command("strip", outputFilename)
 	// upx
