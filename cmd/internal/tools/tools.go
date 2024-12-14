@@ -12,7 +12,6 @@ package tools
 
 import (
 	"bytes"
-	"github.com/energye/energy/v2/cmd/internal/consts"
 	"math"
 	"os"
 	"os/exec"
@@ -96,6 +95,10 @@ func ToInt(v interface{}) int {
 	}
 }
 
+func Equals(s1, s2 string) bool {
+	return strings.ToLower(s1) == strings.ToLower(s2)
+}
+
 func ToRNilString(v interface{}, new string) string {
 	if v == nil {
 		return new
@@ -155,23 +158,6 @@ func Compare(compare1, compare2 string) bool {
 	ev, _ := strconv.Atoi(strings.Replace(compare2, ".", "", -1))
 	if ev < cv {
 		return true
-	}
-	return false
-}
-
-func CheckCEFDir() bool {
-	var lib = func() string {
-		if consts.IsWindows {
-			return "libcef.dll"
-		} else if consts.IsLinux {
-			return "libcef.so"
-		} else if consts.IsDarwin {
-			return "cef_sandbox.a"
-		}
-		return ""
-	}()
-	if lib != "" {
-		return IsExist(filepath.Join(os.Getenv(consts.EnergyHomeKey), lib))
 	}
 	return false
 }

@@ -33,7 +33,7 @@ func init() {
 func runCli(c *command.Config) error {
 	var downloadURL string
 	if c.Cli.Version || c.Cli.Update {
-		downloadURL = cli.CheckVersion(c.EnergyCfg)
+		downloadURL = cli.CheckVersion()
 	}
 	if c.Cli.Update && downloadURL != "" {
 		err := cli.OnlineUpdate(downloadURL)

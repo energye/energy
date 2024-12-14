@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -42,16 +43,13 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	term.Section.Println("Install CEF")
 
 	extractOSConfig := config.ModeBaseConfig.Extract.Item(string(c.Install.OS))
-	latestVersion := config.LatestVersion
-	versionList, err := remotecfg.VersionUpgradeList(c.EnergyCfg)
+	latestVersion := config.LatestVersion //最新版本号
+	versionList, err := remotecfg.VersionUpgradeList()
 	if err != nil {
 		term.Logger.Error(err.Error())
 		return "", nil
 	}
 
-	// -c cef args value
-	// default(empty), windows7, gtk2, flash
-	cefVer := strings.ToLower(c.Install.CEFVer)
 	// 安装目录名称
 	installPathName := cefInstallPathName(c)
 	term.Section.Println("Install Path", installPathName)
@@ -76,7 +74,7 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 		term.Logger.Error("Invalid version number " + c.Install.Version)
 		return "", nil
 	}
-	// 相同版配置
+	// 找到相同版配置
 	for {
 		if installVersion.Identical != "" {
 			if v, ok := versionList[installVersion.Identical]; ok {
@@ -97,28 +95,35 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	// 当前版本 cef 和 liblcl 版本选择
 	var (
 		cefModuleName, liblclModuleName string
+		// CEF 版本号
+		cef = strings.ToLower(c.Install.CEF)
 	)
-	if consts.IsWindows {
-		// 判断当前 windows 版本, 当小于windows 10，使用CEF109，CEF 109是最后一个支持windows7的版本
-		majorVersion, _, _ := versionNumber()
-		if majorVersion < 10 {
-			cefVer = consts.Cef109
+	if cef == "" {
+		if consts.IsWindows {
+			// 判断 windows 当小于 windows 10，默认使用 CEF 109
+			majorVersion, _, _ := versionNumber()
+			if majorVersion < 10 {
+				cef = consts.CEF109
+			}
 		}
 	}
-	// 判断是否指定了 cefVer 特定版本号版本号
-	if cefVer == consts.Cef106 {
-		cefModuleName = "cef-106" // CEF 106.1.1, linux gtk2
-	} else if cefVer == consts.Cef109 {
-		cefModuleName = "cef-109"       // CEF 109.1.18
-		liblclModuleName = "liblcl-109" // liblcl 109, windows7
-	} else if cefVer == consts.Cef87 {
-		// cef 87 要和 liblcl 87 配对
-		cefModuleName = "cef-87"       // CEF 87.1.14
-		liblclModuleName = "liblcl-87" // liblcl 87, flash
+	// 匹配固定的几个模块名
+	if cef == consts.CEF109 {
+		cefModuleName = "cef-109"
+		liblclModuleName = "liblcl-109"
+	} else if cef == consts.CEF106 {
+		cefModuleName = "cef-106"
+		liblclModuleName = "liblcl-106"
+	} else if cef == consts.CEF101 {
+		cefModuleName = "cef-101"
+		liblclModuleName = "liblcl-101"
+	} else if cef == consts.CEF87 {
+		cefModuleName = "cef-87"
+		liblclModuleName = "liblcl-87"
 	}
-	term.Section.Println("Install CEF-V: " + cefVer)
+	term.Section.Println("Install CEF-VER: " + cef)
 
-	// 如未指定CEF参数、或参数不正确，选择当前支持CEF版本最（新）大的版本号
+	// CEF 如未匹配到模块，找到当前支持CEF版本最大的版本号
 	if cefModuleName == "" {
 		var (
 			cefDefault string
@@ -139,10 +144,12 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 			}
 		}
 		cefModuleName = cefDefault
+		liblclModuleName = "liblcl" // 固定名前缀
 	}
-	// liblcl 在未指定版本时，它是空 ""
-	if liblclModuleName == "" {
-		liblclModuleName = "liblcl"
+	// 判断模块名是否为空
+	if liblclModuleName == "" || cefModuleName == "" {
+		term.Logger.Error("The supported version is not matched, CEF Version: " + cef)
+		return "", nil
 	}
 	// 当前安装版本的所有模块
 	modules := installVersion.DependenceModule
@@ -165,36 +172,40 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 		term.Logger.Error("CEF module " + cefModuleName + " is not configured in the current version")
 		return "", nil
 	}
+
+	// CEF 版本号 109, 101 ...
 	moduleVersion := cefModuleName
 	if strings.Index(moduleVersion, "-") != -1 {
 		moduleVersion = strings.Split(moduleVersion, "-")[1]
 	}
+
 	// 下载集合
 	var downloads = make(map[string]*downloadInfo)
-	// 当前模块版本支持系统，如果支持返回下载地址
-	libCEFOS, isSupport := cefOS(c, moduleVersion, cefItem.SupportOSArch)
+
+	// CEF 当前模块版本支持系统，如果支持返回下载地址
+	libCEFOS := cefOS(c)
+	// https://cef-builds.spotifycdn.com/cef_binary_{version}_{OSARCH}_minimal.tar.bz2
+	// https://www.xxx.xxx/xxx/releases/download/{version}/cef_binary_{version}_{OSARCH}_minimal.7z
 	downloadCefURL := cefDownloadItem.Url
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefModuleVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloads[consts.CefKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
+	downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 
 	// liblcl
 	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
 	// 最后根据模块名称来确定使用哪个liblcl
-	libEnergyOS, isSupport := liblclOS(c, moduleVersion, lclItem.SupportOSArch)
+	libEnergyOS := liblclOS(c)
+	useLibLCLModuleNameGTK3 := linuxUseGTK3(c, liblclModuleName, moduleVersion)
+	// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
 	downloadEnergyURL := lclDownloadItem.Url
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", liblclModuleName)
+	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-	downloads[consts.LiblclKey] = &downloadInfo{isSupport: isSupport, fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
+	downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 
 	// 在线下载框架二进制包
 	for key, dl := range downloads {
 		term.Section.Println("Download", key, ":", dl.url)
-		if !dl.isSupport {
-			term.Logger.Warn("Warn module is not built or configured [" + dl.module + "]")
-			continue
-		}
 		err = tools.DownloadFile(dl.url, dl.downloadPath, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
@@ -205,10 +216,6 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	// 解压文件, 并根据配置提取文件
 	term.Logger.Info("Unpack files")
 	for key, di := range downloads {
-		if !di.isSupport {
-			term.Logger.Warn("module is not built or configured [" + di.module + "]")
-			continue
-		}
 		if di.success {
 			if key == consts.CefKey {
 				processBar, err := pterm.DefaultProgressbar.WithShowCount(false).WithShowPercentage(false).WithMaxWidth(1).Start()
@@ -245,111 +252,90 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	}
 }
 
-func cefOS(c *command.Config, moduleVersion, buildSupportOSArch string) (string, bool) {
-	archs := strings.Split(buildSupportOSArch, ",")
-	var isSupport = func(goarch string) bool {
-		for _, v := range archs {
-			if goarch == v {
-				return true
-			}
-		}
-		return false
+// 返回 CEF 支持的系统, 格式 [os][arch] 示例 windows32, windows64, macosx64 ...
+func cefOS(c *command.Config) string {
+	ins := c.Install
+	os := command.OS(runtime.GOOS)
+	arch := command.Arch(runtime.GOARCH)
+	if ins.OS != "" {
+		os = ins.OS
 	}
-
-	if c.Install.OS.IsWindows() { // windows arm for 64 bit, windows for 32/64 bit
-		if c.Install.Arch.IsARM64() {
-			return "windowsarm64", isSupport(consts.WindowsARM64)
-		}
-		if c.Install.Arch.Is386() {
-			return "windows32", isSupport(consts.Windows32)
-		}
-		return "windows64", isSupport(consts.Windows64)
-	} else if c.Install.OS.IsLinux() { //linux for 64 bit
-		if c.Install.Arch.IsARM64() {
-			if moduleVersion == consts.Cef106 {
-				return "linuxarm64", isSupport(consts.LinuxARM64GTK2)
-			}
-			return "linuxarm64", isSupport(consts.LinuxARM64) || isSupport(consts.LinuxARM64GTK3)
-		} else if c.Install.Arch.IsAMD64() {
-			if moduleVersion == consts.Cef106 {
-				return "linux64", isSupport(consts.Linux64GTK2)
-			}
-			return "linux64", isSupport(consts.Linux64) || isSupport(consts.Linux64GTK3)
-		}
-	} else if c.Install.OS.IsDarwin() { // macosx for 64 bit
-		if c.Install.Arch.IsARM64() {
-			return "macosarm64", isSupport(consts.MacOSARM64)
-		} else if c.Install.Arch.IsAMD64() {
-			return "macosx64", isSupport(consts.MacOSX64)
+	if ins.Arch != "" {
+		arch = ins.Arch
+	}
+	if os.IsMacOS() {
+		os = "macos"
+		if arch.IsAMD64() {
+			os += "x"
 		}
 	}
-	//not support
-	return fmt.Sprintf("%v %v", c.Install.OS, c.Install.Arch), false
+	if arch.Is386() {
+		arch = "32"
+	} else if arch.IsAMD64() {
+		arch = "64"
+	}
+	return fmt.Sprintf("%v%v", os, arch)
 }
 
-var liblclFileNames = map[string]string{
-	"windows386":     consts.Windows32,
-	"windowsamd64":   consts.Windows64,
-	"windowsarm64":   consts.WindowsARM64,
-	"linuxarm64":     consts.LinuxARM64,
-	"linuxarm64gtk2": consts.LinuxARM64GTK2,
-	"linuxamd64":     consts.Linux64,
-	"linuxamd64gtk2": consts.Linux64GTK2,
-	"darwinamd64":    consts.MacOSX64,
-	"darwinarm64":    consts.MacOSARM64,
-}
+// 返回 liblcl 在 linux 版本号大于 106 版本默认使用 GTK3
+// 格式: liblcl[-ver][-GTK3]
+func linuxUseGTK3(c *command.Config, liblclModuleName, moduleVersion string) string {
+	ins := c.Install
+	os := command.OS(runtime.GOOS)
+	if ins.OS != "" {
+		os = ins.OS
+	}
 
-func liblclName(c *command.Config, moduleVersion string) (string, bool) {
-	var key string
-	var isOld bool
-	if c.Install.Arch.IsARM64() {
-		if c.Install.OS.IsLinux() && moduleVersion == consts.Cef106 { // 只linux区别liblcl gtk2
-			key = "linuxarm64gtk2"
+	if os.IsLinux() && !tools.Equals(c.Install.WS, "GTK2") {
+		isGT106 := false         // 标记大于106
+		if moduleVersion == "" { // 空值是最新版本, 默认用GTK3
+			isGT106 = true
 		} else {
-			key = fmt.Sprintf("%sarm64", c.Install.OS) // linux arm64, macos arm64
-		}
-	} else {
-		if c.Install.OS.IsLinux() && moduleVersion == consts.Cef106 { // 只linux区别liblcl gtk2
-			key = "linuxamd64gtk2"
-		} else {
-			key = fmt.Sprintf("%s%s", c.Install.OS, c.Install.Arch) // windows 386 amd64, linux amd64, macos amd64
-		}
-	}
-	if key != "" {
-		return liblclFileNames[key], isOld
-	}
-	return "", false
-}
-
-// 命名规则 OS+[ARCH]+BIT+[GTK2]
-//
-//	ARCH: 非必需, ARM 时填写, AMD为空
-//	GTK2: 非必需, GTK2(Linux CEF 106) 时填写, 非Linux或GTK3时为空
-func liblclOS(c *command.Config, moduleVersion, buildSupportOSArch string) (string, bool) {
-	archs := strings.Split(buildSupportOSArch, ",")
-	var goarch string
-	if c.Install.OS.IsWindows() && c.Install.Arch.Is386() {
-		goarch = "32" // windows32 = > windows386
-	} else {
-		goarch = string(c.Install.Arch)
-	}
-	noSuport := fmt.Sprintf("%v %v", c.Install.OS, goarch)
-	var isSupport = func(goarch string) bool {
-		for _, v := range archs {
-			if goarch == v {
-				return true
+			if v, err := strconv.Atoi(moduleVersion); err == nil && v > 106 {
+				isGT106 = true
 			}
 		}
-		return false
-	}
-	if name, isOld := liblclName(c, moduleVersion); isOld {
-		if name == "" {
-			return noSuport, false
+		if isGT106 {
+			return liblclModuleName + "-GTK3"
 		}
-		return name, true
-	} else {
-		return name, isSupport(name)
 	}
+	return liblclModuleName
+}
+
+// 返回 CEF 支持的系统, 格式 [os][arch] 示例 windows32, windows64, macosx64 ...
+func liblclOS(c *command.Config) string {
+	var LibLCLFileNames = map[string]string{
+		"windows32":    consts.Windows32,
+		"windows64":    consts.Windows64,
+		"windowsarm64": consts.WindowsARM64,
+		"linuxarm":     consts.LinuxARM,
+		"linuxarm64":   consts.LinuxARM64,
+		"linux32":      consts.Linux32,
+		"linux64":      consts.Linux64,
+		"macosx64":     consts.MacOSX64,
+		"macosarm64":   consts.MacOSARM64,
+	}
+	ins := c.Install
+	os := command.OS(runtime.GOOS)
+	arch := command.Arch(runtime.GOARCH)
+	if ins.OS != "" {
+		os = ins.OS
+	}
+	if ins.Arch != "" {
+		arch = ins.Arch
+	}
+	if os.IsMacOS() {
+		os = "macos"
+		if arch.IsAMD64() {
+			os += "x"
+		}
+	}
+	if arch.Is386() {
+		arch = "32"
+	} else if arch.IsAMD64() {
+		arch = "64"
+	}
+	return LibLCLFileNames[fmt.Sprintf("%v%v", os, arch)]
 }
 
 // 提取文件

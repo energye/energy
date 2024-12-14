@@ -12,8 +12,8 @@ package remotecfg
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
 
@@ -28,8 +28,8 @@ type TDependenceModule struct {
 	CEF map[string]string `json:"cef"`
 }
 
-func VersionUpgradeList(c command.EnergyConfig) (map[string]TVersionsUpgrade, error) {
-	data, err := tools.Get(consts.RemoteURL(c, consts.VERSIONS_UPGRADE_URL))
+func VersionUpgradeList() (map[string]TVersionsUpgrade, error) {
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL))
 	if err != nil {
 		return nil, err
 	}

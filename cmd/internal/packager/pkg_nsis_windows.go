@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -33,7 +34,7 @@ const (
 )
 
 func GeneraInstaller(c *command.Config, proj *project.Project) error {
-	if !tools.CommandExists("makensis") {
+	if env.GlobalDevEnvConfig.NSISCMD() == "" {
 		return errors.New("failed to create application installation program. Could not find the makensis command")
 	}
 	var err error
@@ -49,7 +50,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	comper := proj.NSIS.Compress
 	switch comper {
 	case "7z", "7za":
-		proj.NSIS.UseCompress = tools.CommandExists(comper)
+		proj.NSIS.UseCompress = env.GlobalDevEnvConfig.Z7ZCMD() != ""
 	}
 	if proj.NSIS.UseCompress {
 		if cef7zFile, err := compressCEF7za(proj); err != nil {
@@ -99,7 +100,7 @@ func compressCEF7za(proj *project.Project) (string, error) {
 	for _, exc := range proj.NSIS.Exclude {
 		args = append(args, "-xr!"+exc)
 	}
-	cmd.Command(proj.NSIS.Compress, args...)
+	cmd.Command(env.GlobalDevEnvConfig.Z7ZCMD(), args...)
 	cmd.Close()
 	return outFilePath, nil
 }
@@ -170,7 +171,7 @@ func makeNSIS(c *command.Config, proj *project.Project) (string, error) {
 	}
 	nsisScriptPath := filepath.Join(assets.BuildOutPath(proj), windowsNsis)
 	args = append(args, nsisScriptPath)
-	cmd.Command("makensis", args...)
+	cmd.Command(env.GlobalDevEnvConfig.NSISCMD(), args...)
 	outInstall := filepath.Join(filepath.Dir(nsisScriptPath), installPackage)
 	return outInstall, nil
 }

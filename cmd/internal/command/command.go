@@ -14,21 +14,20 @@ type OS string
 type Arch string
 
 type Config struct {
-	Index     int
-	Wd        string
-	EnergyCfg EnergyConfig
-	Install   Install `command:"install" description:"install energy development dependency environment"`
-	Package   Package `command:"package" description:"energy application production and installation package"`
-	Version   Version `command:"version" description:"list all release version numbers of energy"`
-	Setenv    Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
-	Env       Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
-	Init      Init    `command:"init" description:"initialize the energy application project"`
-	Build     Build   `command:"build" description:"building an energy project"`
-	Bindata   Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
-	Gen       Gen     `command:"gen" description:"generate icons or syso commands"`
-	Upg       Upgrade `command:"upg" description:"check and upgrade the current version"`
-	Help      Help    `command:"help" description:"energy [cmd] help"`
-	Cli       Cli     `command:"cli" description:"energy cli"`
+	Index   int
+	Wd      string
+	Install Install `command:"install" description:"install energy development dependency environment"`
+	Package Package `command:"package" description:"energy application production and installation package"`
+	Version Version `command:"version" description:"list all release version numbers of energy"`
+	Setenv  Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
+	Env     Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
+	Init    Init    `command:"init" description:"initialize the energy application project"`
+	Build   Build   `command:"build" description:"building an energy project"`
+	Bindata Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
+	Gen     Gen     `command:"gen" description:"generate icons or syso commands"`
+	Upg     Upgrade `command:"upg" description:"check and upgrade the current version"`
+	Help    Help    `command:"help" description:"energy [cmd] help"`
+	Cli     Cli     `command:"cli" description:"energy cli"`
 }
 
 type Command struct {
@@ -74,13 +73,14 @@ type SYSO struct {
 
 type Install struct {
 	Path     string `short:"p" long:"path" description:"Installation directory Default current directory"`
-	Version  string `short:"v" long:"version" description:"Specifying a version number"`
+	Version  string `short:"v" long:"version" description:"Specifying a version number" default:"latest"`
 	Name     string `short:"n" long:"name" description:"Name of the framework directory after installation" default:"EnergyFramework"`
-	Download string `short:"d" long:"download" description:"Download Source, 0:gitee or 1:github, Default empty" default:""`
-	All      bool   `long:"all" description:"Install All Software"`
-	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current system: os"`
-	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm64], Default current system: architecture"`
-	CEFVer   string `long:"cef" description:"Install system supports CEF version, provide 4 options, default empty. options: 109(support windows7), 106(support linux gtk2), 87(support flash)" default:""`
+	Download string `short:"d" long:"download" description:"Download Source. Details: https://energye.github.io/data/model-base-config.json" default:""`
+	All      bool   `long:"all" description:"Skip select. Install All Software"`
+	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current os"`
+	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm, arm64], default current arch"`
+	CEF      string `long:"cef" description:"Install system supports CEF version. options: latest, 109, 101, 87, 49" default:""`
+	WS       string `long:"ws" description:"Set this parameter when GTK2 is used on Linux" default:""`
 	IGolang  bool   // 是否安装Golang
 	ICEF     bool   // 是否安装CEF
 	INSIS    bool   // 是否安装nsis
@@ -149,13 +149,6 @@ type Bindata struct {
 	Paths      string `long:"paths" description:"Static resource directory, Multiple Catalogs: ./resource,./libs" default:""`
 }
 
-type EnergyConfig struct {
-	Framework string `json:"framework"`
-	CEF       string `json:"cef"`
-	VER       string `json:"ver"`
-	Registry  string `json:"registry"`
-}
-
 func (m OS) IsWindows() bool {
 	return m == "windows"
 }
@@ -164,18 +157,22 @@ func (m OS) IsLinux() bool {
 	return m == "linux"
 }
 
-func (m OS) IsDarwin() bool {
-	return m == "darwin"
+func (m OS) IsMacOS() bool {
+	return m == "macos" || m == "darwin"
 }
 
 func (m Arch) Is386() bool {
-	return m == "386" || m == "32" // windows32
+	return m == "386" || m == "i386" || m == "32"
 }
 
 func (m Arch) IsAMD64() bool {
-	return m == "amd64"
+	return m == "amd64" || m == "64" || m == "x64"
 }
 
 func (m Arch) IsARM64() bool {
 	return m == "arm64"
+}
+
+func (m Arch) IsARM() bool {
+	return m == "arm"
 }

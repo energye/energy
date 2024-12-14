@@ -41,31 +41,36 @@ var (
 )
 
 const (
-	IsWindows = runtime.GOOS == "windows" //support
-	IsLinux   = runtime.GOOS == "linux"   //support
-	IsDarwin  = runtime.GOOS == "darwin"  //support
-	IsAMD64   = runtime.GOARCH == "amd64"
-	IsARM64   = runtime.GOARCH == "arm64"
+	IsWindows = runtime.GOOS == "windows"
+	IsLinux   = runtime.GOOS == "linux"
+	IsDarwin  = runtime.GOOS == "darwin"
 	Is386     = runtime.GOARCH == "386"
+	IsAMD64   = runtime.GOARCH == "amd64"
+	IsARM     = runtime.GOARCH == "arm"
+	IsARM64   = runtime.GOARCH == "arm64"
 )
 
 const (
-	CefEmpty = ""
-	Cef109   = "109" // CEF 109.1.18
-	Cef106   = "106" // CEF 106.1.1
-	Cef87    = "87"  // CEF 87.1.14
+	CEFLatestEmpty = ""
+	CEFLatest      = "latest"
+	CEF109         = "109"      // CEF 109
+	CEF109118      = "109.1.18" // CEF 109.1.18
+	CEF101         = "101"      // CEF 101
+	CEF101018      = "101.0.18" // CEF 101.0.18
+	CEF106         = "106"      // CEF 106
+	CEF10611       = "106.1.1"  // CEF 106.1.1
+	CEF87          = "87"       // CEF 87
+	CEF87114       = "87.1.14"  // CEF 87.1.14
 )
 
 const (
-	Windows64      = "Windows64"
-	Windows32      = "Windows32"
-	WindowsARM64   = "WindowsARM64"
-	MacOSX64       = "MacOSX64"
-	MacOSARM64     = "MacOSARM64"
-	Linux64        = "Linux64"
-	Linux64GTK2    = "Linux64GTK2"
-	Linux64GTK3    = "Linux64GTK3"
-	LinuxARM64     = "LinuxARM64"
-	LinuxARM64GTK2 = "LinuxARM64GTK2"
-	LinuxARM64GTK3 = "LinuxARM64GTK3"
+	Windows32    = "Windows32"
+	Windows64    = "Windows64"
+	WindowsARM64 = "WindowsARM64"
+	MacOSX64     = "MacOSX64"
+	MacOSARM64   = "MacOSARM64"
+	Linux32      = "Linux32"
+	Linux64      = "Linux64"
+	LinuxARM     = "LinuxARM"
+	LinuxARM64   = "LinuxARM64"
 )

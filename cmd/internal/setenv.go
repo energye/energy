@@ -36,7 +36,8 @@ func runSetenv(c *command.Config) error {
 	if !tools.IsExist(c.Setenv.Path) {
 		return errors.New("Directory [" + c.Setenv.Path + "] does not exist")
 	}
-	env.SetEnergyHomeEnv(c.Setenv.Path)
+	env.GlobalDevEnvConfig.Framework = c.Setenv.Path
+	env.GlobalDevEnvConfig.Update()
 	println("SUCCESS")
 	return nil
 }

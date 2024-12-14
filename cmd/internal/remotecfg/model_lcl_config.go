@@ -12,8 +12,8 @@ package remotecfg
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
 
@@ -21,8 +21,8 @@ type TModelLCLConfigs map[string]TModelLCLConfig
 
 type TModelLCLConfig map[string]TModelItem
 
-func ModelLCLConfig(c command.EnergyConfig) (TModelLCLConfigs, error) {
-	data, err := tools.Get(consts.RemoteURL(c, consts.MODEL_LCL_URL))
+func ModelLCLConfig() (TModelLCLConfigs, error) {
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.MODEL_LCL_URL))
 	if err != nil {
 		return nil, err
 	}

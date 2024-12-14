@@ -12,8 +12,8 @@ package remotecfg
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"strings"
 )
@@ -25,8 +25,8 @@ type TLatestVersion struct {
 	Build   int32  `json:"-"`
 }
 
-func LatestVersion(c command.EnergyConfig) (*TLatestVersion, error) {
-	data, err := tools.Get(consts.RemoteURL(c, consts.LATEST_VERSION_URL))
+func LatestVersion() (*TLatestVersion, error) {
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.LATEST_VERSION_URL))
 	if err != nil {
 		return nil, err
 	}

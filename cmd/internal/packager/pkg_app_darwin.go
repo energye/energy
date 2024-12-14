@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -184,9 +184,9 @@ func copyFrameworkFile(proj *project.Project, appRoot string) error {
 	if !tools.IsExist(exeDir) {
 		return fmt.Errorf("execution file not found: %s", exeDir)
 	}
-	cefDir := os.Getenv(consts.EnergyHomeKey)
+	cefDir := env.GlobalDevEnvConfig.Framework
 	if !tools.IsExist(cefDir) {
-		return fmt.Errorf("%s not found: %s", consts.EnergyHomeKey, cefDir)
+		return fmt.Errorf("%s not found", cefDir)
 	}
 	term.Logger.Info("Generate app copy:", term.Logger.Args("execution", exeDir))
 	// Contents/MacOS/exe

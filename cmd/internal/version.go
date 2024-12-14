@@ -27,11 +27,11 @@ func init() {
 }
 
 func runVersion(c *command.Config) error {
-	vu, err := remotecfg.VersionUpgradeList(c.EnergyCfg)
+	vu, err := remotecfg.VersionUpgradeList()
 	if err != nil {
 		return err
 	}
-	latestVersion, err := remotecfg.LatestVersion(c.EnergyCfg)
+	latestVersion, err := remotecfg.LatestVersion()
 	if err != nil {
 		return err
 	}

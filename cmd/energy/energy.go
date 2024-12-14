@@ -95,17 +95,13 @@ func termRun() {
 		if cmd.Short != "" {
 			term.Section.Println(cmd.Short)
 		}
-		readConfig(cc)
+		env.InitDevEnvConfig()
 		signalHandler()
 		if err := cmd.Run(cc); err != nil {
 			term.Section.Println(err.Error())
 			os.Exit(1)
 		}
 	}
-}
-
-func readConfig(c *command.Config) {
-	c.EnergyCfg = *env.DevEnvReadUpdate()
 }
 
 func signalHandler() {

@@ -31,7 +31,6 @@ type downloadInfo struct {
 	downloadPath  string
 	url           string
 	success       bool
-	isSupport     bool
 	module        string
 }
 
@@ -43,7 +42,7 @@ type softEnf struct {
 }
 
 func Install(cliConfig *command.Config) error {
-	config, err := remotecfg.BaseConfig(cliConfig.EnergyCfg)
+	config, err := remotecfg.BaseConfig()
 	if err != nil {
 		return err
 	}
@@ -133,37 +132,36 @@ func Install(cliConfig *command.Config) error {
 	goRoot, goSuccessCallback = installGolang(config, cliConfig)
 	// 设置 go 环境变量
 	if goRoot != "" {
-		env.SetGoEnv(goRoot)
+		env.GlobalDevEnvConfig.GoRoot = goRoot
 	}
 
 	// 安装CEF二进制框架
 	cefFrameworkRoot, cefFrameworkSuccessCallback = installCEFFramework(config, cliConfig)
 	// 设置 energy cef 环境变量
 	if cefFrameworkRoot != "" && cliConfig.Install.IsSame {
-		env.SetEnergyHomeEnv(cefFrameworkRoot)
+		env.GlobalDevEnvConfig.Framework = cefFrameworkRoot
 	}
 
 	// 安装nsis安装包制作工具, 仅windows - amd64
 	nsisRoot, nsisSuccessCallback = installNSIS(config, cliConfig)
 	// 设置nsis环境变量
 	if nsisRoot != "" {
-		env.SetNSISEnv(nsisRoot)
+		env.GlobalDevEnvConfig.NSIS = nsisRoot
 	}
 
 	// 安装upx, 内置, 仅windows, linux
 	upxRoot, upxSuccessCallback = installUPX(config, cliConfig)
 	// 设置upx环境变量
 	if upxRoot != "" {
-		env.SetUPXEnv(upxRoot)
+		env.GlobalDevEnvConfig.UPX = upxRoot
 	}
 
 	// 安装7za
 	z7zRoot, z7zSuccessCallback = install7z(config, cliConfig)
 	// 设置7za环境变量
 	if z7zRoot != "" {
-		env.Set7zaEnv(z7zRoot)
+		env.GlobalDevEnvConfig.Z7Z = z7zRoot
 	}
-	env.SourceEnvFiles()
 
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil || z7zSuccessCallback != nil {
@@ -185,6 +183,8 @@ func Install(cliConfig *command.Config) error {
 	if z7zSuccessCallback != nil {
 		z7zSuccessCallback()
 	}
+
+	env.GlobalDevEnvConfig.Update()
 
 	//cfg := env.DevEnvReadUpdate(goRoot, cefFrameworkRoot, nsisRoot, upxRoot, z7zRoot)
 	copyEnergyCMD(goRoot)
@@ -303,7 +303,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 	check(func() (string, bool) {
 		if c.Install.IsSame {
 			// 检查环境变量是否配置
-			return "All", tools.CheckCEFDir()
+			return "All", env.CheckCEFDir()
 		}
 		// 非当前系统架构时检查一下目标安装路径是否已经存在
 		var lib = func() string {
@@ -311,7 +311,7 @@ func checkInstallEnv(c *command.Config) (result []*softEnf) {
 				return "libcef.dll"
 			} else if c.Install.OS.IsLinux() {
 				return "libcef.so"
-			} else if c.Install.OS.IsDarwin() {
+			} else if c.Install.OS.IsMacOS() {
 				return "cef_sandbox.a"
 			}
 			return ""

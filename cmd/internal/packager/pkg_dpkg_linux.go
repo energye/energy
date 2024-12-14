@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -86,7 +87,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	comper := proj.NSIS.Compress
 	switch comper {
 	case "7z", "7za":
-		proj.NSIS.UseCompress = tools.CommandExists(comper)
+		proj.NSIS.UseCompress = env.GlobalDevEnvConfig.Z7ZCMD() != ""
 	}
 
 	// dpkg -b
@@ -149,9 +150,9 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	}
 
 	term.Logger.Info("Generate dpkg execution " + exeDir)
-	cefDir := os.Getenv(consts.EnergyHomeKey)
+	cefDir := env.GlobalDevEnvConfig.Framework
 	if !tools.IsExist(cefDir) {
-		return fmt.Errorf("%s not found: %s", consts.EnergyHomeKey, cefDir)
+		return fmt.Errorf("%s not found", cefDir)
 	}
 	term.Logger.Info("Generate dpkg framework " + cefDir)
 	var copyFiles = func(src, dst string) error {

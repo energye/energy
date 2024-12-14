@@ -13,6 +13,7 @@ package build
 import (
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io"
@@ -41,7 +42,7 @@ func Build(c *command.Config) error {
 				os.MkdirAll(emfsPath, os.ModePerm)
 			}
 			// copy
-			libsrc := path.Join(os.Getenv("ENERGY_HOME"), tools.GetDLLName())
+			libsrc := path.Join(env.GlobalDevEnvConfig.Framework, tools.GetDLLName())
 			src, err := os.Open(libsrc)
 			if err != nil {
 				return err

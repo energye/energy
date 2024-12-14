@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
@@ -128,7 +129,7 @@ func generaProject(c *command.Config) error {
 	data := make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	data["ProjectPath"] = filepath.ToSlash(projectPath)
-	data["FrameworkPath"] = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+	data["FrameworkPath"] = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
 	data["OutputFilename"] = c.Init.Name
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
@@ -145,8 +146,8 @@ func generaProject(c *command.Config) error {
 		return err
 	}
 	term.Logger.Info("Get latest release number")
-	latest := "latest"                                         // 默认
-	latestVersion, err := remotecfg.LatestVersion(c.EnergyCfg) // tools.Get(consts.LatestVersionURL)
+	latest := "latest"                              // 默认
+	latestVersion, err := remotecfg.LatestVersion() // tools.Get(consts.LatestVersionURL)
 	if err == nil {
 		latest = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
 	} else {
@@ -255,7 +256,7 @@ func checkEnv(init *command.Init) {
 		}
 	}
 	// 检查ENERGY_HOME
-	if !tools.CheckCEFDir() {
+	if !env.CheckCEFDir() {
 		term.Logger.Warn(`Energy dependent CEF Framework is not installed
 	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install"))
 	} else {

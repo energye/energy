@@ -14,6 +14,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/ioutil"
 	"os"
@@ -58,12 +59,12 @@ func (m *Project) setDefaults() {
 	if m.FrameworkPath == "" || m.FrameworkPath[0] == '$' {
 		if m.FrameworkPath[0] == '$' {
 			if m.FrameworkPath == "$ENERGY_HOME" {
-				m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+				m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
 			} else {
 				m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
 			}
 		} else {
-			m.FrameworkPath = filepath.ToSlash(os.Getenv(consts.EnergyHomeKey))
+			m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
 		}
 	}
 	if !tools.IsExist(m.FrameworkPath) {
