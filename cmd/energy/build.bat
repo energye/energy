@@ -32,8 +32,8 @@ md5.exe energy-linuxx64
 
 set GOARCH=arm64
 set GOOS=linux
-go build -trimpath -ldflags "-s -w" -o energy-linuxarmx64 energy.go
-md5.exe energy-linuxarmx64
+go build -trimpath -ldflags "-s -w" -o energy-linuxarm64 energy.go
+md5.exe energy-linuxarm64
 
 set GOARCH=arm
 set GOOS=linux
