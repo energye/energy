@@ -14,12 +14,10 @@ type OS string
 type Arch string
 
 type Config struct {
-	Index   int
 	Wd      string
 	Install Install `command:"install" description:"install energy development dependency environment"`
 	Package Package `command:"package" description:"energy application production and installation package"`
 	Version Version `command:"version" description:"list all release version numbers of energy"`
-	Setenv  Setenv  `command:"setenv" description:"set ENERGY_ HOME framework environment"`
 	Env     Env     `command:"env" description:"display ENERGY_ HOME framework environment directory"`
 	Init    Init    `command:"init" description:"initialize the energy application project"`
 	Build   Build   `command:"build" description:"building an energy project"`
@@ -98,6 +96,8 @@ type Package struct {
 }
 
 type Env struct {
+	Write string `short:"w" long:"write" description:"Set the configuration environment. set=key:value"`
+	Get   string `short:"g" long:"get" description:"Get the configuration environment value. get=key"`
 }
 
 type Help struct {

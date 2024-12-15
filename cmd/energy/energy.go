@@ -24,20 +24,18 @@ import (
 	"syscall"
 )
 
-var commands = []*command.Command{
-	/*0*/ nil,
-	/*1*/ internal.CmdInstall,
-	/*2*/ internal.CmdPackage,
-	/*3*/ internal.CmdVersion,
-	/*4*/ internal.CmdSetenv,
-	/*5*/ internal.CmdEnv,
-	/*6*/ internal.CmdInit,
-	/*7*/ internal.CmdBuild,
-	/*8*/ internal.CmdBindata,
-	/*9*/ internal.CmdGen,
-	/*10*/ internal.CmdUpgrade,
-	/*11*/ internal.CmdHelp,
-	/*12*/ internal.CmdCli,
+var commands = map[string]*command.Command{
+	"install": internal.CmdInstall,
+	"package": internal.CmdPackage,
+	"version": internal.CmdVersion,
+	"env":     internal.CmdEnv,
+	"init":    internal.CmdInit,
+	"build":   internal.CmdBuild,
+	"bindata": internal.CmdBindata,
+	"gen":     internal.CmdGen,
+	"upg":     internal.CmdUpgrade,
+	"help":    internal.CmdHelp,
+	"cli":     internal.CmdCli,
 }
 
 func main() {
@@ -57,33 +55,10 @@ func termRun() {
 		println(err.Error())
 		return
 	} else {
-		switch parser.Active.Name {
-		case "install":
-			cc.Index = 1
-		case "package":
-			cc.Index = 2
-		case "version":
-			cc.Index = 3
-		case "setenv":
-			cc.Index = 4
-		case "env":
-			cc.Index = 5
-		case "init":
-			cc.Index = 6
-		case "build":
-			cc.Index = 7
-		case "bindata":
-			cc.Index = 8
-		case "gen":
-			cc.Index = 9
-		case "upg":
-			cc.Index = 10
-		case "help":
-			cc.Index = 11
-		case "cli":
-			cc.Index = 12
+		cmd, ok := commands[parser.Active.Name]
+		if !ok {
+			parser.WriteHelp(term.TermOut)
 		}
-		cmd := commands[cc.Index]
 		// energy [cmd] help
 		if len(extraArgs) > 0 {
 			name := extraArgs[0]
