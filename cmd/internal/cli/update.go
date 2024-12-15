@@ -12,6 +12,7 @@ package cli
 
 import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"net/url"
@@ -36,7 +37,7 @@ func OnlineUpdate(downloadURL string) error {
 	fileName := uPath[strings.LastIndex(uPath, "/"):]
 	path, _ = filepath.Split(path)
 	savePath := filepath.Join(path, fileName)
-	err = tools.DownloadFile(downloadURL, savePath, nil)
+	err = tools.DownloadFile(downloadURL, savePath, env.GlobalDevEnvConfig.Proxy, nil)
 	if err != nil {
 		return err
 	}

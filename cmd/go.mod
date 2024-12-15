@@ -5,13 +5,13 @@ go 1.20
 require (
 	atomicgo.dev/cursor v0.2.0
 	atomicgo.dev/keyboard v0.2.9
-	github.com/energye/rawhttp v1.0.1
+	github.com/energye/rawhttp v1.0.2
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pterm/pterm v0.12.66
 	github.com/tc-hib/winres v0.3.1
 	golang.org/x/image v0.20.0
-	golang.org/x/sys v0.25.0
+	golang.org/x/sys v0.28.0
 )
 
 require (
@@ -22,6 +22,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646 // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
-	golang.org/x/term v0.16.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 )

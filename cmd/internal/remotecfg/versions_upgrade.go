@@ -29,7 +29,7 @@ type TDependenceModule struct {
 }
 
 func VersionUpgradeList() (map[string]TVersionsUpgrade, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

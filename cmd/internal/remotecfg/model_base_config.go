@@ -56,7 +56,7 @@ type TExtract struct {
 }
 
 func ModeBaseConfig() (*TModeBaseConfig, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.BASE_CONFIG_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.BASE_CONFIG_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

@@ -26,7 +26,7 @@ type TLatestVersion struct {
 }
 
 func LatestVersion() (*TLatestVersion, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.LATEST_VERSION_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.LATEST_VERSION_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

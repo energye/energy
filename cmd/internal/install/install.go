@@ -150,7 +150,7 @@ func Install(cliConfig *command.Config) error {
 	}
 
 	// 安装upx, 内置, 仅windows, linux
-	upxRoot, upxSuccessCallback = installUPX(config, cliConfig)
+	upxRoot, upxSuccessCallback = installUPX(cliConfig)
 	// 设置upx环境变量
 	if upxRoot != "" {
 		env.GlobalDevEnvConfig.UPX = upxRoot

@@ -27,7 +27,7 @@ type TCMDVersion struct {
 }
 
 func CMDVersion() (*TCMDVersion, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.CMD_VERSION_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.CMD_VERSION_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

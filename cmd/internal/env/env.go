@@ -56,7 +56,6 @@ func InitDevEnvConfig() {
 				Registry: consts.DomainGithub,
 			}
 			GlobalDevEnvConfig.Update()
-			return
 		} else {
 			// 读取&更新
 			cfgJSON, err := ioutil.ReadFile(config)
@@ -90,6 +89,7 @@ type EnergyConfig struct {
 	CEF       string `json:"cef"`
 	VER       string `json:"ver"`
 	Registry  string `json:"registry"`
+	Proxy     string `json:"proxy"`
 }
 
 func (m *EnergyConfig) Update() {

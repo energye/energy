@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -37,7 +38,7 @@ func installNSIS(config *remotecfg.TConfig, c *command.Config) (string, func()) 
 	if !tools.IsExist(savePath) {
 		term.Logger.Info("NSIS Download URL: " + downloadUrl)
 		term.Logger.Info("NSIS Save Path: " + savePath)
-		err = tools.DownloadFile(downloadUrl, savePath, nil)
+		err = tools.DownloadFile(downloadUrl, savePath, env.GlobalDevEnvConfig.Proxy, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 		} else {

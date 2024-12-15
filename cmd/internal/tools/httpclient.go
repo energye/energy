@@ -11,18 +11,22 @@
 package tools
 
 import (
+	"github.com/energye/rawhttp"
 	"io/ioutil"
-	"net/http"
 	"time"
 )
 
-func Get(url string) ([]byte, error) {
-	client := http.Client{Timeout: time.Duration(30 * time.Second)}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
+func Get(url string, proxy string) ([]byte, error) {
+	options := &rawhttp.Options{
+		Timeout:                30 * time.Second,
+		FollowRedirects:        true,
+		MaxRedirects:           10,
+		AutomaticHostHeader:    true,
+		AutomaticContentLength: true,
+		Proxy:                  proxy,
 	}
-	resp, err := client.Do(req)
+	client := rawhttp.NewClient(options)
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}

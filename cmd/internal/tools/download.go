@@ -24,7 +24,7 @@ import (
 // DownloadFile 下载文件
 //
 //	如果文件存在大小一样不再下载
-func DownloadFile(url string, localPath string, callback func(totalLength, processLength int64)) error {
+func DownloadFile(url, localPath, proxy string, callback func(totalLength, processLength int64)) error {
 	var (
 		fsize   int64
 		buf     = make([]byte, 1024*10)
@@ -37,7 +37,9 @@ func DownloadFile(url string, localPath string, callback func(totalLength, proce
 		MaxRedirects:           10,
 		AutomaticHostHeader:    true,
 		AutomaticContentLength: true,
+		Proxy:                  proxy,
 	}
+
 	client := rawhttp.NewClient(options)
 	resp, err := client.Get(url)
 	if err != nil {

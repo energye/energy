@@ -22,7 +22,7 @@ type TModelLCLConfigs map[string]TModelLCLConfig
 type TModelLCLConfig map[string]TModelItem
 
 func ModelLCLConfig() (TModelLCLConfigs, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.MODEL_LCL_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.MODEL_LCL_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

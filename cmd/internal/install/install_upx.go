@@ -14,7 +14,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
@@ -22,7 +21,7 @@ import (
 	"path/filepath"
 )
 
-func installUPX(config *remotecfg.TConfig, c *command.Config) (string, func()) {
+func installUPX(c *command.Config) (string, func()) {
 	if !c.Install.IUPX {
 		return "", nil
 	}

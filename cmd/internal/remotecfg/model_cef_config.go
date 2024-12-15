@@ -22,7 +22,7 @@ type TModelCEFConfigs map[string]TModelCEFConfig
 type TModelCEFConfig map[string]TModelItem
 
 func ModelCEFConfig() (TModelCEFConfigs, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.MODEL_CEF_URL))
+	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.MODEL_CEF_URL), env.GlobalDevEnvConfig.Proxy)
 	if err != nil {
 		return nil, err
 	}

@@ -14,6 +14,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -206,7 +207,7 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	// 在线下载框架二进制包
 	for key, dl := range downloads {
 		term.Section.Println("Download", key, ":", dl.url)
-		err = tools.DownloadFile(dl.url, dl.downloadPath, nil)
+		err = tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
 			return "", nil
