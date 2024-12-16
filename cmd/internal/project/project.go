@@ -56,12 +56,11 @@ func (m *Project) setDefaults() {
 		// 设置当前执行目录为项目目录
 		m.ProjectPath = tools.CurrentExecuteDir()
 	}
-	if m.FrameworkPath == "" || m.FrameworkPath[0] == '$' {
-		if m.FrameworkPath[0] == '$' {
-			m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
-		} else {
-			m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.FrameworkPath())
-		}
+	if len(m.FrameworkPath) > 0 && m.FrameworkPath[0] == '$' {
+		m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
+	}
+	if m.FrameworkPath == "" {
+		m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.FrameworkPath())
 	}
 	if !tools.IsExist(m.FrameworkPath) {
 		panic("energy framework directory does not exist: " + m.FrameworkPath)

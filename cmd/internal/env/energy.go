@@ -40,7 +40,7 @@ func InitDevEnvConfig(wd string) {
 	if GlobalDevEnvConfig == nil {
 		home, err := homedir.Dir()
 		if err != nil {
-			term.Section.Println(err.Error())
+			term.Logger.Error(err.Error())
 			return
 		}
 		config := filepath.Join(home, ".energy")
@@ -61,7 +61,7 @@ func InitDevEnvConfig(wd string) {
 			// 读取&更新
 			cfgJSON, err := ioutil.ReadFile(config)
 			if err != nil {
-				term.Section.Println(err.Error())
+				term.Logger.Error(err.Error())
 				return
 			}
 			GlobalDevEnvConfig = &EnergyConfig{
@@ -69,7 +69,7 @@ func InitDevEnvConfig(wd string) {
 			}
 			err = json.Unmarshal(cfgJSON, GlobalDevEnvConfig)
 			if err != nil {
-				term.Section.Println(err.Error())
+				term.Logger.Error(err.Error())
 				return
 			}
 			if strings.TrimSpace(GlobalDevEnvConfig.Registry) == "" {
@@ -117,7 +117,7 @@ func (m *EnergyConfig) Update() {
 }
 
 func (m *EnergyConfig) FrameworkPath() string {
-	return filepath.Join(m.Root, m.Framework)
+	return filepath.Join(m.Root, consts.ENERGY, m.Framework)
 }
 
 func (m *EnergyConfig) GoCMD() string {
