@@ -55,7 +55,6 @@ func envfiles() (result []string) {
 	} else if consts.IsDarwin {
 		result = []string{".profile", ".zshrc", ".bash_profile"}
 	}
-	result = []string{".profile", ".zshrc", ".bashrc"}
 	return
 }
 
