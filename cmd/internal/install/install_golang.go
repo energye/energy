@@ -26,40 +26,50 @@ import (
 )
 
 // 下载go并配置安装
-func installGolang(config *remotecfg.TConfig, c *command.Config) (string, func()) {
-	if !c.Install.IGolang {
+func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+	if !cmdConfig.Install.IGolang {
 		return "", nil
 	}
 	pterm.Println()
 	term.Section.Println("Install Golang")
-	s := goInstallPathName(c) // 安装目录
+	installPath := goInstallPathName(cmdConfig) // 安装目录
 	exts := map[string]string{
 		"darwin":  "tar.gz",
 		"linux":   "tar.gz",
 		"windows": "zip",
 	}
-	golang := config.ModeBaseConfig.DownloadSourceItem.GoLang.Item(0)
+	golang := rtmConfig.ModeBaseConfig.DownloadSourceItem.GoLang.Item(0)
 	// 开始下载并安装Go开发环境
 	version := golang.Version
 	gos := runtime.GOOS
 	arch := runtime.GOARCH
 	ext := exts[gos]
-	if !tools.IsExist(s) {
-		term.Section.Println("Creating directory.", s)
-		if err := os.MkdirAll(s, fs.ModePerm); err != nil {
+	if !tools.IsExist(installPath) {
+		term.Section.Println("Creating directory.", installPath)
+		if err := os.MkdirAll(installPath, fs.ModePerm); err != nil {
 			term.Section.Println("Failed to create goroot directory", err.Error())
 			return "", nil
 		}
+	} else {
+		// 检查 golang 的 go cmd 是否存在
+		gocmd := filepath.Join(installPath, "bin", "go")
+		if tools.IsExist(gocmd) {
+			return installPath, func() {
+				term.Logger.Info("Golang has been installed")
+			}
+		}
 	}
+	// 下载文件名
 	fileName := fmt.Sprintf("go%s.%s-%s.%s", version, gos, arch, ext)
-	saveFilePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
+	// 下载保存目录
+	saveFileCachPath := filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, fileName)
 	var err error
-	if !tools.IsExist(saveFilePath) {
+	if !tools.IsExist(saveFileCachPath) {
 		// Go下载源, 格式只能是 https://xxx.xxx.xx/dl/%s
 		downloadUrl := fmt.Sprintf(golang.Url, fileName)
 		term.Logger.Info("Golang Download URL: " + downloadUrl)
-		term.Logger.Info("Golang Save Path: " + saveFilePath)
-		err = downloadGolang(downloadUrl, saveFilePath, fileName, 0)
+		term.Logger.Info("Golang Save Path: " + saveFileCachPath)
+		err = downloadGolang(downloadUrl, saveFileCachPath, fileName, 0)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
 		} else {
@@ -68,22 +78,21 @@ func installGolang(config *remotecfg.TConfig, c *command.Config) (string, func()
 	}
 	if err == nil {
 		// 安装目录
-		targetPath := s
 		// 释放文件
 		if consts.IsWindows {
 			//zip
-			if err = tools.ExtractUnZip(saveFilePath, targetPath, true); err != nil {
+			if err = tools.ExtractUnZip(saveFileCachPath, installPath, true); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}
 		} else {
 			//tar
-			if err = tools.ExtractUnTar(saveFilePath, targetPath); err != nil {
+			if err = tools.ExtractUnTar(saveFileCachPath, installPath); err != nil {
 				term.Logger.Error(err.Error())
 				return "", nil
 			}
 		}
-		return targetPath, func() {
+		return installPath, func() {
 			term.Logger.Info("Golang Installed Successfully", term.Logger.Args("Version", version))
 		}
 	}

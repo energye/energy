@@ -21,16 +21,16 @@ import (
 	"path/filepath"
 )
 
-func installNSIS7z(config *remotecfg.TConfig, c *command.Config) (string, func()) {
+func installNSIS7z(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
 	pterm.Println()
 	term.Section.Println("Install NSIS7za")
 	// 下载并安装配置NSIS7za
-	s := nsisInstallPathName(c) // 安装目录
+	s := nsisInstallPathName(cmdConfig) // 安装目录
 	downloadItem := config.ModeBaseConfig.DownloadSourceItem.NSIS7Z.Item(0)
 	version := downloadItem.Version
 	fileName := fmt.Sprintf("nsis7z.windows.386-%s.zip", version)
 	downloadUrl := fmt.Sprintf(downloadItem.Url, fileName)
-	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
+	savePath := filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
 	if !tools.IsExist(savePath) {
 		term.Logger.Info("NSIS7z Download URL: " + downloadUrl)

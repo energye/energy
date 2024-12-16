@@ -40,10 +40,6 @@ func Env(c *command.Config) error {
 			term.Section.Println(GlobalDevEnvConfig.Proxy)
 		case "registry":
 			term.Section.Println(GlobalDevEnvConfig.Registry)
-		case "cef":
-			term.Section.Println(GlobalDevEnvConfig.CEF)
-		case "ver":
-			term.Section.Println(GlobalDevEnvConfig.VER)
 		}
 	} else if env.Write != "" {
 		keyval := strings.Split(env.Write, ":")
@@ -65,10 +61,6 @@ func Env(c *command.Config) error {
 				GlobalDevEnvConfig.Proxy = val
 			case "registry":
 				GlobalDevEnvConfig.Registry = val
-			case "cef":
-				GlobalDevEnvConfig.CEF = val
-			case "ver":
-				GlobalDevEnvConfig.VER = val
 			}
 			GlobalDevEnvConfig.Update()
 		}
@@ -97,8 +89,6 @@ func PrintENV() {
 	tableData := pterm.TableData{
 		{"Name", "Directory"},
 	}
-	tableData = append(tableData, []string{"CEF", GlobalDevEnvConfig.CEF})
-	tableData = append(tableData, []string{"VER", GlobalDevEnvConfig.VER})
 	tableData = append(tableData, []string{"Golang", GlobalDevEnvConfig.GoRoot})
 	tableData = append(tableData, []string{"Framework", GlobalDevEnvConfig.Framework})
 	tableData = append(tableData, []string{"NSIS", GlobalDevEnvConfig.NSIS})

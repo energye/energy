@@ -36,7 +36,7 @@ func (m *EnergyConfig) RemoteURL(targetURL string) string {
 }
 
 // InitDevEnvConfig 开发环境信息读取和修改
-func InitDevEnvConfig() {
+func InitDevEnvConfig(wd string) {
 	if GlobalDevEnvConfig == nil {
 		home, err := homedir.Dir()
 		if err != nil {
@@ -54,6 +54,7 @@ func InitDevEnvConfig() {
 			GlobalDevEnvConfig = &EnergyConfig{
 				homedir:  config,
 				Registry: consts.DomainGithub,
+				Root:     wd,
 			}
 			GlobalDevEnvConfig.Update()
 		} else {
@@ -75,6 +76,10 @@ func InitDevEnvConfig() {
 				GlobalDevEnvConfig.Registry = consts.DomainGithub
 				GlobalDevEnvConfig.Update()
 			}
+			if strings.TrimSpace(GlobalDevEnvConfig.Root) == "" {
+				GlobalDevEnvConfig.Root = wd
+				GlobalDevEnvConfig.Update()
+			}
 		}
 	}
 }
@@ -85,9 +90,8 @@ type EnergyConfig struct {
 	NSIS      string `json:"nsis"`
 	Z7Z       string `json:"z7z"`
 	UPX       string `json:"upx"`
+	Root      string `json:"root"`
 	Framework string `json:"framework"`
-	CEF       string `json:"cef"`
-	VER       string `json:"ver"`
 	Registry  string `json:"registry"`
 	Proxy     string `json:"proxy"`
 }

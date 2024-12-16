@@ -21,21 +21,21 @@ import (
 	"path/filepath"
 )
 
-func installUPX(c *command.Config) (string, func()) {
-	if !c.Install.IUPX {
+func installUPX(cmdConfig *command.Config) (string, func()) {
+	if !cmdConfig.Install.IUPX {
 		return "", nil
 	}
 	pterm.Println()
 	term.Section.Println("Install UPX")
-	s := upxInstallPathName(c) // 安装目录
-	if !tools.IsExist(s) {
-		os.MkdirAll(s, 0755)
+	installPath := upxInstallPathName(cmdConfig) // 安装目录
+	if !tools.IsExist(installPath) {
+		os.MkdirAll(installPath, 0755)
 	}
 	var upxName = "upx"
 	if consts.IsWindows {
 		upxName += ".exe"
 	}
-	targetFileName := filepath.Join(s, upxName) // 保存安装目录
+	targetFileName := filepath.Join(installPath, upxName) // 保存安装目录
 
 	if targetFile, err := os.OpenFile(targetFileName, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, os.ModePerm); err == nil {
 		defer targetFile.Close()
@@ -73,7 +73,7 @@ func installUPX(c *command.Config) (string, func()) {
 			p.Add(total - cn)
 		}
 		p.Stop()
-		return s, func() {
+		return installPath, func() {
 			term.Logger.Info("UPX Installed Successfully ", term.Logger.Args("Version", assets.UpxVersion))
 		}
 	} else {

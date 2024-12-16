@@ -34,124 +34,34 @@ import (
 //	 MacOS
 //			CEF 最新版本
 //	 Linux
-//	   Gtk2: CEF = 106
+//	   Gtk2: CEF 最新版本
 //	   Gtk3: CEF 最新版本
-func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, func()) {
-	if !c.Install.ICEF {
+func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+	if !cmdConfig.Install.ICEF {
 		return "", nil
 	}
 	pterm.Println()
 	term.Section.Println("Install CEF")
 
-	extractOSConfig := config.ModeBaseConfig.Extract.Item(string(c.Install.OS))
-	latestVersion := config.LatestVersion //最新版本号
-	versionList, err := remotecfg.VersionUpgradeList()
-	if err != nil {
-		term.Logger.Error(err.Error())
+	// 安装目录名称
+	installPathName := config.GetFrameworkInstallPath(cmdConfig)
+	if installPathName == "" {
+		term.Logger.Error("Failed to obtain the frame installation directory")
 		return "", nil
 	}
-
-	// 安装目录名称
-	installPathName := cefInstallPathName(c)
 	term.Section.Println("Install Path", installPathName)
 
 	term.Section.Println("Start downloading CEF and Energy dependency")
 
 	// 获取到当前安装版本
-	var installVersion *remotecfg.TVersionsUpgrade
-	if c.Install.Version == "latest" {
-		// 获取最新版本号, latest=vx.x.x
-		if v, ok := versionList[latestVersion.Version]; ok {
-			installVersion = &v
-		}
-	} else {
-		// 自己选择版本
-		if v, ok := versionList[c.Install.Version]; ok {
-			installVersion = &v
-		}
-	}
-	term.Section.Println("Check version")
-	if installVersion == nil {
-		term.Logger.Error("Invalid version number " + c.Install.Version)
-		return "", nil
-	}
-	// 找到相同版配置
-	for {
-		if installVersion.Identical != "" {
-			if v, ok := versionList[installVersion.Identical]; ok {
-				installVersion = &v
-				break
-			} else {
-				term.Logger.Error("Incorrect version configuration. Identical: " + installVersion.Identical)
-				return "", nil
-			}
-		} else {
-			break
-		}
-	}
-	if installVersion == nil {
-		term.Logger.Error("Invalid version number " + c.Install.Version)
-		return "", nil
-	}
-	// 当前版本 cef 和 liblcl 版本选择
-	var (
-		cefModuleName, liblclModuleName string
-		// CEF 版本号
-		cef = strings.ToLower(c.Install.CEF)
-	)
-	if cef == "" {
-		if consts.IsWindows {
-			// 判断 windows 当小于 windows 10，默认使用 CEF 109
-			majorVersion, _, _ := versionNumber()
-			if majorVersion < 10 {
-				cef = consts.CEF109
-			}
-		}
-	}
-	// 匹配固定的几个模块名
-	if cef == consts.CEF109 {
-		cefModuleName = "cef-109"
-		liblclModuleName = "liblcl-109"
-	} else if cef == consts.CEF106 {
-		cefModuleName = "cef-106"
-		liblclModuleName = "liblcl-106"
-	} else if cef == consts.CEF101 {
-		cefModuleName = "cef-101"
-		liblclModuleName = "liblcl-101"
-	} else if cef == consts.CEF87 {
-		cefModuleName = "cef-87"
-		liblclModuleName = "liblcl-87"
-	}
-	term.Section.Println("Install CEF-VER: " + cef)
-
-	// CEF 如未匹配到模块，找到当前支持CEF版本最大的版本号
-	if cefModuleName == "" {
-		var (
-			cefDefault string
-			number     int
-		)
-		for module, _ := range installVersion.DependenceModule.CEF {
-			// module = "cef-xxx"
-			if s := strings.Split(module, "-"); len(s) == 2 {
-				n, _ := strconv.Atoi(s[1])
-				if n >= number {
-					number = n
-					cefDefault = module
-				}
-			} else {
-				// module = "cef"
-				cefDefault = module
-				break
-			}
-		}
-		cefModuleName = cefDefault
-		liblclModuleName = "liblcl" // 固定名前缀
-	}
+	installVersion, cefModuleName, liblclModuleName := config.GetInstallVersion(cmdConfig)
 	// 判断模块名是否为空
-	if liblclModuleName == "" || cefModuleName == "" {
-		term.Logger.Error("The supported version is not matched, CEF Version: " + cef)
+	if installVersion == nil || liblclModuleName == "" || cefModuleName == "" {
+		term.Logger.Error("The supported version is not matched, Version: " + cmdConfig.Install.Version)
 		return "", nil
 	}
+	term.Section.Println("Install CEF-VER: " + strings.ToUpper(cefModuleName))
+
 	// 当前安装版本的所有模块
 	modules := installVersion.DependenceModule
 
@@ -184,30 +94,30 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	var downloads = make(map[string]*downloadInfo)
 
 	// CEF 当前模块版本支持系统，如果支持返回下载地址
-	libCEFOS := cefOS(c)
+	libCEFOS := cefOS(cmdConfig)
 	// https://cef-builds.spotifycdn.com/cef_binary_{version}_{OSARCH}_minimal.tar.bz2
 	// https://www.xxx.xxx/xxx/releases/download/{version}/cef_binary_{version}_{OSARCH}_minimal.7z
 	downloadCefURL := cefDownloadItem.Url
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefModuleVersion)
 	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
+	downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 
 	// liblcl
 	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
 	// 最后根据模块名称来确定使用哪个liblcl
-	libEnergyOS := liblclOS(c)
-	useLibLCLModuleNameGTK3 := linuxUseGTK3(c, liblclModuleName, moduleVersion)
+	libEnergyOS := liblclOS(cmdConfig)
+	useLibLCLModuleNameGTK3 := linuxUseGTK3(cmdConfig, liblclModuleName, moduleVersion)
 	// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
 	downloadEnergyURL := lclDownloadItem.Url
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
 	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-	downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(c.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
+	downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 
-	// 在线下载框架二进制包
+	// 在线下载 CEF 框架二进制包
 	for key, dl := range downloads {
 		term.Section.Println("Download", key, ":", dl.url)
-		err = tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
+		err := tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
 		if err != nil {
 			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
 			return "", nil
@@ -216,27 +126,40 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 	}
 	// 解压文件, 并根据配置提取文件
 	term.Logger.Info("Unpack files")
+
+	extractOSConfig := config.ModeBaseConfig.Extract.Item(string(cmdConfig.Install.OS))
 	for key, di := range downloads {
 		if di.success {
 			if key == consts.CefKey {
-				processBar, err := pterm.DefaultProgressbar.WithShowCount(false).WithShowPercentage(false).WithMaxWidth(1).Start()
-				if err != nil {
-					term.Logger.Error(err.Error())
-					return "", nil
-				}
-				tarName, err := tools.UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
-					processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
-				})
-				processBar.Stop()
-				if err != nil {
-					term.Logger.Error(err.Error())
-					return "", nil
-				}
-				if err := extractFiles(key, tarName, di, extractOSConfig.CEF); err != nil {
-					term.Logger.Error(err.Error())
-					return "", nil
+				if filepath.Ext(di.downloadPath) == ".bz2" {
+					processBar, err := pterm.DefaultProgressbar.WithShowCount(false).WithShowPercentage(false).WithMaxWidth(1).Start()
+					if err != nil {
+						term.Logger.Error(err.Error())
+						return "", nil
+					}
+					// 解压 tar bz2
+					tarSourcePath, err := tools.UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
+						processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
+					})
+					processBar.Stop()
+					if err != nil {
+						term.Logger.Error(err.Error())
+						return "", nil
+					}
+					// 释放文件
+					if err := extractFiles(key, tarSourcePath, di, extractOSConfig.CEF); err != nil {
+						term.Logger.Error(err.Error())
+						return "", nil
+					}
+				} else {
+					// 释放文件
+					if err := extractFiles(key, di.downloadPath, di, extractOSConfig.CEF); err != nil {
+						term.Logger.Error(err.Error())
+						return "", nil
+					}
 				}
 			} else if key == consts.LiblclKey {
+				// 释放文件
 				if err := extractFiles(key, di.downloadPath, di, extractOSConfig.LCL); err != nil {
 					term.Logger.Error(err.Error())
 					return "", nil
@@ -245,8 +168,8 @@ func installCEFFramework(config *remotecfg.TConfig, c *command.Config) (string, 
 			term.Section.Println("Unpack file", key, "success")
 		}
 	}
-	return installPathName, func() {
-		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", c.Install.Version, "liblcl", liblclModuleVersion))
+	return config.GetFrameworkName(cmdConfig), func() {
+		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", cmdConfig.Install.Version, "liblcl", liblclModuleVersion))
 		if liblclModuleName == "" {
 			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version`)
 		}
@@ -342,12 +265,14 @@ func liblclOS(c *command.Config) string {
 // 提取文件
 func extractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig []string) error {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
-	if keyName == consts.CefKey {
-		//tar
+	ext := filepath.Ext(sourcePath)
+	switch ext {
+	case ".tar":
 		return tools.ExtractUnTar(sourcePath, di.frameworkPath, extractOSConfig...)
-	} else if keyName == consts.LiblclKey {
-		//zip
+	case ".zip":
 		return tools.ExtractUnZip(sourcePath, di.frameworkPath, false, extractOSConfig...)
+	case ".7z":
+		// 7z 直接解压目录内所有文件
 	}
 	return errors.New("not module")
 }

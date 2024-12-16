@@ -70,7 +70,7 @@ func termRun() {
 		if cmd.Short != "" {
 			term.Section.Println(cmd.Short)
 		}
-		env.InitDevEnvConfig()
+		env.InitDevEnvConfig(wd) //初始化本地配置文件
 		signalHandler()
 		if err := cmd.Run(cc); err != nil {
 			term.Section.Println(err.Error())

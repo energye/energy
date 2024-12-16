@@ -21,19 +21,19 @@ import (
 	"path/filepath"
 )
 
-func installNSIS(config *remotecfg.TConfig, c *command.Config) (string, func()) {
-	if !c.Install.INSIS {
+func installNSIS(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+	if !cmdConfig.Install.INSIS {
 		return "", nil
 	}
 	pterm.Println()
 	term.Section.Println("Install NSIS")
 	// 下载并安装配置NSIS
-	s := nsisInstallPathName(c) // 安装目录
+	installPath := nsisInstallPathName(cmdConfig) // 安装目录
 	downloadItem := config.ModeBaseConfig.DownloadSourceItem.NSIS.Item(0)
 	version := downloadItem.Version
 	fileName := fmt.Sprintf("nsis.windows.386-%s.zip", version)
 	downloadUrl := fmt.Sprintf(downloadItem.Url, fileName)
-	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
+	savePath := filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
 	if !tools.IsExist(savePath) {
 		term.Logger.Info("NSIS Download URL: " + downloadUrl)
@@ -47,16 +47,15 @@ func installNSIS(config *remotecfg.TConfig, c *command.Config) (string, func()) 
 	}
 	if err == nil {
 		// 安装目录
-		targetPath := s
 		// 释放文件
 		//zip
-		if err = tools.ExtractUnZip(savePath, targetPath, true); err != nil {
+		if err = tools.ExtractUnZip(savePath, installPath, true); err != nil {
 			term.Logger.Error(err.Error())
 			return "", nil
 		}
 		// 安装nsis7z插件
-		installNSIS7z(config, c)
-		return targetPath, func() {
+		installNSIS7z(config, cmdConfig)
+		return installPath, func() {
 			term.Logger.Info("NSIS Installed Successfully", term.Logger.Args("Version", version))
 		}
 	}

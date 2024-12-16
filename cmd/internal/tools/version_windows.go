@@ -11,14 +11,14 @@
 //go:build windows
 // +build windows
 
-package install
+package tools
 
 import (
 	"syscall"
 	"unsafe"
 )
 
-func versionNumber() (majorVersion, minorVersion, buildNumber uint32) {
+func VersionNumber() (majorVersion, minorVersion, buildNumber uint32) {
 	ntdll := syscall.NewLazyDLL("ntdll.dll")
 	procRtlGetNtVersionNumbers := ntdll.NewProc("RtlGetNtVersionNumbers")
 	procRtlGetNtVersionNumbers.Call(uintptr(unsafe.Pointer(&majorVersion)), uintptr(unsafe.Pointer(&minorVersion)), uintptr(unsafe.Pointer(&buildNumber)))

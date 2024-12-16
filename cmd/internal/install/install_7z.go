@@ -22,17 +22,17 @@ import (
 	"path/filepath"
 )
 
-func install7z(config *remotecfg.TConfig, c *command.Config) (string, func()) {
-	if !c.Install.I7za {
+func install7z(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+	if !cmdConfig.Install.I7za {
 		return "", nil
 	}
 	pterm.Println()
-	s := z7zInstallPathName(c) // 安装目录
+	installPath := z7zInstallPathName(cmdConfig) // 安装目录
 	downloadItem := config.ModeBaseConfig.DownloadSourceItem.Z7z.Item(0)
 	version := downloadItem.Version
 	fileName := fmt.Sprintf("7za.windows.all-%s.zip", version)
 	downloadUrl := fmt.Sprintf(downloadItem.Url, fileName)
-	savePath := filepath.Join(c.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
+	savePath := filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, fileName) // 下载保存目录
 	var err error
 	term.Logger.Info("7za Download URL: " + downloadUrl)
 	term.Logger.Info("7za Save Path: " + savePath)
@@ -45,15 +45,13 @@ func install7z(config *remotecfg.TConfig, c *command.Config) (string, func()) {
 		}
 	}
 	if err == nil {
-		// 安装目录
-		targetPath := s
 		// 释放文件
 		// zip
-		if err = tools.ExtractUnZip(savePath, targetPath, false); err != nil {
+		if err = tools.ExtractUnZip(savePath, installPath, false); err != nil {
 			term.Logger.Error(err.Error())
 			return "", nil
 		}
-		return targetPath, func() {
+		return installPath, func() {
 			term.Logger.Info("NSIS Installed Successfully", term.Logger.Args("Version", version))
 		}
 	}

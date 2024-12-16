@@ -71,8 +71,7 @@ type SYSO struct {
 
 type Install struct {
 	Path     string `short:"p" long:"path" description:"Installation directory Default current directory"`
-	Version  string `short:"v" long:"version" description:"Specifying a version number" default:"latest"`
-	Name     string `short:"n" long:"name" description:"Name of the framework directory after installation" default:"EnergyFramework"`
+	Version  string `short:"v" long:"version" description:"Specifying a version number. x.x.x" default:"latest"`
 	Download string `short:"d" long:"download" description:"Download Source. Details: https://energye.github.io/data/model-base-config.json" default:""`
 	All      bool   `long:"all" description:"Skip select. Install All Software"`
 	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current os"`
@@ -84,7 +83,6 @@ type Install struct {
 	INSIS    bool   // 是否安装nsis
 	IUPX     bool   // 是否安装upx
 	I7za     bool   // 是否安装7za
-	IsSame   bool   // 安装的OS和Arch是否为当前系统架构, 默认当前系统架构
 }
 
 type Package struct {

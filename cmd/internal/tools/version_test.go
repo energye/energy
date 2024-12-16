@@ -8,11 +8,11 @@
 //
 //----------------------------------------
 
-//go:build !windows
-// +build !windows
+package tools
 
-package install
+import "testing"
 
-func versionNumber() (majorVersion, minorVersion, buildNumber uint32) {
-	return
+func TestVersion(t *testing.T) {
+	majorVersion, minorVersion, buildNumber := VersionNumber()
+	println(majorVersion, minorVersion, buildNumber)
 }

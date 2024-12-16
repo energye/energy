@@ -17,6 +17,8 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
 
+var upgradeList map[string]TVersionsUpgrade
+
 type TVersionsUpgrade struct {
 	Enable           int               `json:"enable"`
 	Identical        string            `json:"identical"`
@@ -28,15 +30,19 @@ type TDependenceModule struct {
 	CEF map[string]string `json:"cef"`
 }
 
+// 版本发布升级列表
 func VersionUpgradeList() (map[string]TVersionsUpgrade, error) {
-	data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL), env.GlobalDevEnvConfig.Proxy)
-	if err != nil {
-		return nil, err
+	if upgradeList == nil {
+		data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL), env.GlobalDevEnvConfig.Proxy)
+		if err != nil {
+			return nil, err
+		}
+		var vu map[string]TVersionsUpgrade
+		err = json.Unmarshal(data, &vu)
+		if err != nil {
+			return nil, err
+		}
+		upgradeList = vu
 	}
-	var vu map[string]TVersionsUpgrade
-	err = json.Unmarshal(data, &vu)
-	if err != nil {
-		return nil, err
-	}
-	return vu, nil
+	return upgradeList, nil
 }

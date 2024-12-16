@@ -312,8 +312,8 @@ func ExtractUnTar(filePath, targetPath string, files ...string) error {
 }
 
 // UnBz2ToTar 释放bz2文件到tar
-func UnBz2ToTar(name string, callback func(totalLength, processLength int64)) (string, error) {
-	fileBz2, err := os.Open(name)
+func UnBz2ToTar(bz2FilePath string, callback func(totalLength, processLength int64)) (string, error) {
+	fileBz2, err := os.Open(bz2FilePath)
 	if err != nil {
 		return "", err
 	}

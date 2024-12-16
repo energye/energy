@@ -27,17 +27,14 @@ const (
 const (
 	CefKey         = "cef"
 	LiblclKey      = "liblcl"
-	GolanHomeKey   = "GOROOT"
-	NSISHomeKey    = "NSIS_HOME"
-	Z7ZHomeKey     = "Z7Z_HOME"
-	UPXHomeKey     = "UPX_HOME"
-	EnergyHomeKey  = "ENERGY_HOME"
 	FrameworkCache = "EnergyFrameworkDownloadCache"
 )
 
 var (
+	// 生成项目多平台配置文件
 	EnergyProjectConfig = []string{"energy_darwin.json", "energy_linux.json", "energy_windows.json"}
-	ConfigFile          = "energy_%s.json"
+	// 项目配置模板
+	ConfigFile = "energy_%s.json"
 )
 
 const (
