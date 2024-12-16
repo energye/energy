@@ -137,6 +137,7 @@ func Install(cmdConfig *command.Config) error {
 	// 设置 go 环境变量
 	if goRoot != "" {
 		env.GlobalDevEnvConfig.GoRoot = goRoot
+		env.SetGoEnv(goRoot)
 	}
 
 	// 安装CEF二进制框架
@@ -200,21 +201,22 @@ func copyEnergyCMD(rmtConfig *remotecfg.TConfig, cmdConfig *command.Config) {
 	term.Logger.Info("Install ENERGY CLI")
 
 	energyRoot := filepath.Join(env.GlobalDevEnvConfig.Root, consts.ENERGY)
-
+	energyCLIDir := filepath.Join(energyRoot, "cli")
 	exeDir, err := os.Executable()
 	if err != nil {
 		term.Logger.Error(err.Error())
 		return
 	}
-	energyName := "energy"
+	cli := "energy"
 	if consts.IsWindows {
-		energyName += ".exe"
+		cli += ".exe"
 	}
-	energyCLI := filepath.Join(energyRoot, energyName)
+	energyCLI := filepath.Join(energyCLIDir, cli)
 	if filepath.ToSlash(exeDir) == filepath.ToSlash(energyCLI) {
 		term.Logger.Info("Current ENERGY CLI, Do not replace.")
 		return
 	}
+	os.MkdirAll(energyCLIDir, 0755)
 	if tools.IsExist(energyCLI) {
 		os.Remove(energyCLI)
 	}
@@ -235,6 +237,7 @@ func copyEnergyCMD(rmtConfig *remotecfg.TConfig, cmdConfig *command.Config) {
 		term.Logger.Error(err.Error())
 		return
 	}
+	env.SetEnergyCLIEnv(energyCLIDir)
 }
 
 func goInstallPathName(c *command.Config) string {
