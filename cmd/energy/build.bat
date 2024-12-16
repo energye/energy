@@ -7,8 +7,8 @@ md5.exe energy-windows32.exe
 
 set GOARCH=amd64
 set GOOS=windows
-go build -trimpath -ldflags "-s -w" -o energy-windowsx64.exe energy.go
-md5.exe energy-windowsx64.exe
+go build -trimpath -ldflags "-s -w" -o energy-windows64.exe energy.go
+md5.exe energy-windows64.exe
 
 set GOARCH=amd64
 set GOOS=darwin
@@ -27,17 +27,17 @@ md5.exe energy-linux32
 
 set GOARCH=amd64
 set GOOS=linux
-go build -trimpath -ldflags "-s -w" -o energy-linuxx64 energy.go
-md5.exe energy-linuxx64
-
-set GOARCH=arm64
-set GOOS=linux
-go build -trimpath -ldflags "-s -w" -o energy-linuxarm64 energy.go
-md5.exe energy-linuxarm64
+go build -trimpath -ldflags "-s -w" -o energy-linux64 energy.go
+md5.exe energy-linux64
 
 set GOARCH=arm
 set GOOS=linux
 go build -trimpath -ldflags "-s -w" -o energy-linuxarm energy.go
 md5.exe energy-linuxarm
+
+set GOARCH=arm64
+set GOOS=linux
+go build -trimpath -ldflags "-s -w" -o energy-linuxarm64 energy.go
+md5.exe energy-linuxarm64
 
 pause
