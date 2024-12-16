@@ -10,8 +10,8 @@
 
 package command
 
-type OS string
-type Arch string
+type OS string   // windows, macos, linux
+type Arch string // 386, amd64, arm, arm64
 
 type Config struct {
 	Wd      string
@@ -74,7 +74,7 @@ type Install struct {
 	Version  string `short:"v" long:"version" description:"Specifying a version number. x.x.x" default:"latest"`
 	Download string `short:"d" long:"download" description:"Download Source. Details: https://energye.github.io/data/model-base-config.json" default:""`
 	All      bool   `long:"all" description:"Skip select. Install All Software"`
-	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, darwin], default current os"`
+	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, macos], default current os"`
 	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm, arm64], default current arch"`
 	CEF      string `long:"cef" description:"Install system supports CEF version. options: latest, 109, 101, 87, 49" default:""`
 	WS       string `long:"ws" description:"Set this parameter when GTK2 is used on Linux" default:""`
@@ -126,8 +126,8 @@ type Build struct {
 	Args    string `long:"args" description:"go build [args]" default:""`
 	Libemfs bool   `long:"libemfs" description:"Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation"`
 	Out     string `short:"o" long:"out" description:"Build out file path"`
-	OS      string `long:"os" description:"Build OS for windows | darwin | linux"`
-	ARCH    string `long:"arch" description:"Build ARCH for 386 | amd64 | arm | arm64"`
+	OS      OS     `long:"os" description:"Build OS for windows | darwin | linux"`
+	ARCH    Arch   `long:"arch" description:"Build ARCH for 386 | amd64 | arm | arm64"`
 }
 
 type Bindata struct {
@@ -156,7 +156,11 @@ func (m OS) IsLinux() bool {
 }
 
 func (m OS) IsMacOS() bool {
-	return m == "macos" || m == "darwin"
+	return m == "macos"
+}
+
+func (m OS) Value() string {
+	return string(m)
 }
 
 func (m Arch) Is386() bool {
@@ -173,4 +177,15 @@ func (m Arch) IsARM64() bool {
 
 func (m Arch) IsARM() bool {
 	return m == "arm"
+}
+
+func (m Arch) Value() string {
+	switch m {
+	case "386", "i386", "32":
+		return "32"
+	case "amd64", "64", "x64":
+		return "64"
+	default:
+		return string(m)
+	}
 }

@@ -12,6 +12,7 @@ package remotecfg
 
 import (
 	"encoding/json"
+	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
@@ -68,8 +69,8 @@ func ModeBaseConfig() (*TModeBaseConfig, error) {
 	return &mbc, nil
 }
 
-func (m TExtracts) Item(os string) TExtract {
-	return m[os]
+func (m TExtracts) Item(os command.OS) TExtract {
+	return m[os.Value()]
 }
 
 func (m TDownloadItems) Item(index int) TDownloadItem {

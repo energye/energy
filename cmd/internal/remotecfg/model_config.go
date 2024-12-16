@@ -171,7 +171,7 @@ func (m TConfig) GetFrameworkInstallPath(c *command.Config) string {
 func (m TConfig) GetFrameworkName(c *command.Config) string {
 	_, cefModuleName, _ := m.GetInstallVersion(c)
 	if cefModuleName != "" {
-		frameworkName := fmt.Sprintf("%s_%s_%s", cefModuleName, c.Install.OS, c.Install.Arch)
+		frameworkName := fmt.Sprintf("%s_%s_%s", cefModuleName, c.Install.OS.Value(), c.Install.Arch.Value())
 		return strings.ToUpper(frameworkName)
 	}
 	return ""

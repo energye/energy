@@ -127,7 +127,7 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 	// 解压文件, 并根据配置提取文件
 	term.Logger.Info("Unpack files")
 
-	extractOSConfig := config.ModeBaseConfig.Extract.Item(string(cmdConfig.Install.OS))
+	extractOSConfig := config.ModeBaseConfig.Extract.Item(cmdConfig.Install.OS)
 	for key, di := range downloads {
 		if di.success {
 			if key == consts.CefKey {

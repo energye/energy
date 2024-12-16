@@ -68,10 +68,10 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	args = append(args, "-o", outputFilename)
 	// GOOS=windows GOARCH=386
 	if c.Build.OS != "" {
-		os.Setenv("GOOS", c.Build.OS)
+		os.Setenv("GOOS", c.Build.OS.Value())
 	}
 	if c.Build.ARCH != "" {
-		os.Setenv("GOARCH", c.Build.ARCH)
+		os.Setenv("GOARCH", c.Build.ARCH.Value())
 	}
 	gocmd := env.GlobalDevEnvConfig.GoCMD()
 	if gocmd != "" {
@@ -106,7 +106,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 func generaSYSO(iconPath string, c *command.Config, proj *project.Project) (string, error) {
 	arch := runtime.GOARCH
 	if c.Build.ARCH != "" {
-		arch = c.Build.ARCH
+		arch = string(c.Build.ARCH)
 	}
 	return gen.GeneraSYSO(proj.Name, iconPath, proj.Info.Manifest, proj.ProjectPath, arch, proj.Info)
 }
