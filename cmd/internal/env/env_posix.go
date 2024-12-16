@@ -32,8 +32,7 @@ func homeKey(homeKey string) string {
 }
 
 func SetGoEnv(goRoot string) {
-	//goBin := filepath.Join(goRoot, "bin", "go")
-	goBin := filepath.Join(goRoot, "bin", "go.exe")
+	goBin := filepath.Join(goRoot, "bin", "go")
 	if !tools.IsExist(goBin) {
 		term.Logger.Error("Failed to set the Golang environment variable, not a correct Golang installation directory. " + goRoot)
 		return
