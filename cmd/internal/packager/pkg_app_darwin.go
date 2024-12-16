@@ -184,7 +184,7 @@ func copyFrameworkFile(proj *project.Project, appRoot string) error {
 	if !tools.IsExist(exeDir) {
 		return fmt.Errorf("execution file not found: %s", exeDir)
 	}
-	cefDir := env.GlobalDevEnvConfig.Framework
+	cefDir := env.GlobalDevEnvConfig.FrameworkPath()
 	if !tools.IsExist(cefDir) {
 		return fmt.Errorf("%s not found", cefDir)
 	}

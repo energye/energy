@@ -129,7 +129,7 @@ func generaProject(c *command.Config) error {
 	data := make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	data["ProjectPath"] = filepath.ToSlash(projectPath)
-	data["FrameworkPath"] = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
+	data["FrameworkPath"] = filepath.ToSlash(env.GlobalDevEnvConfig.FrameworkPath())
 	data["OutputFilename"] = c.Init.Name
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
@@ -255,7 +255,7 @@ func checkEnv(init *command.Init) {
 			init.IUPX = true
 		}
 	}
-	// 检查ENERGY_HOME
+	// 检查 CEF Frameworks
 	if !env.CheckCEFDir() {
 		term.Logger.Warn(`Energy dependent CEF Framework is not installed
 	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install"))

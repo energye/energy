@@ -142,7 +142,7 @@ func Install(cmdConfig *command.Config) error {
 	// 安装CEF二进制框架
 	cefFrameworkName, cefFrameworkSuccessCallback = installCEFFramework(rmtConfig, cmdConfig)
 	if cefFrameworkName != "" {
-		// 框架名, 不是目录
+		// 设置 CEF 框架, 此处是框架名不是目录
 		env.GlobalDevEnvConfig.Framework = cefFrameworkName
 	}
 

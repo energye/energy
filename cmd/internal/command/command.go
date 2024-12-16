@@ -10,6 +10,8 @@
 
 package command
 
+import "strings"
+
 type OS string   // windows, macos, linux
 type Arch string // 386, amd64, arm, arm64
 
@@ -96,6 +98,8 @@ type Package struct {
 type Env struct {
 	Write string `short:"w" long:"write" description:"Set the configuration environment. set=key:value"`
 	Get   string `short:"g" long:"get" description:"Get the configuration environment value. get=key"`
+	List  bool   `short:"l" long:"list" description:"Lists the CEF Framework installed"`
+	Use   string `long:"use" description:"Use the installed CEF Framework. use=ver"`
 }
 
 type Help struct {
@@ -148,15 +152,15 @@ type Bindata struct {
 }
 
 func (m OS) IsWindows() bool {
-	return m == "windows"
+	return strings.ToLower(m.Value()) == "windows"
 }
 
 func (m OS) IsLinux() bool {
-	return m == "linux"
+	return strings.ToLower(m.Value()) == "linux"
 }
 
 func (m OS) IsMacOS() bool {
-	return m == "macos"
+	return strings.ToLower(m.Value()) == "macos"
 }
 
 func (m OS) Value() string {
@@ -164,19 +168,19 @@ func (m OS) Value() string {
 }
 
 func (m Arch) Is386() bool {
-	return m == "386" || m == "i386" || m == "32"
+	return m == "386" || strings.ToLower(m.Value()) == "i386" || m == "32"
 }
 
 func (m Arch) IsAMD64() bool {
-	return m == "amd64" || m == "64" || m == "x64"
+	return strings.ToLower(m.Value()) == "amd64" || m == "64" || strings.ToLower(m.Value()) == "x64"
 }
 
 func (m Arch) IsARM64() bool {
-	return m == "arm64"
+	return strings.ToLower(m.Value()) == "arm64"
 }
 
 func (m Arch) IsARM() bool {
-	return m == "arm"
+	return strings.ToLower(m.Value()) == "arm"
 }
 
 func (m Arch) Value() string {

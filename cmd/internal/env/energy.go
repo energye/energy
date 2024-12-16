@@ -116,6 +116,10 @@ func (m *EnergyConfig) Update() {
 	}
 }
 
+func (m *EnergyConfig) FrameworkPath() string {
+	return filepath.Join(m.Root, m.Framework)
+}
+
 func (m *EnergyConfig) GoCMD() string {
 	if tools.CommandExists("go") {
 		return "go"

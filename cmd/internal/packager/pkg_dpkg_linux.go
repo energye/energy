@@ -150,7 +150,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	}
 
 	term.Logger.Info("Generate dpkg execution " + exeDir)
-	cefDir := env.GlobalDevEnvConfig.Framework
+	cefDir := env.GlobalDevEnvConfig.FrameworkPath()
 	if !tools.IsExist(cefDir) {
 		return fmt.Errorf("%s not found", cefDir)
 	}

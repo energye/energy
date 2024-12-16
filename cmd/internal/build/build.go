@@ -26,12 +26,12 @@ const (
 )
 
 func Build(c *command.Config) error {
-	// 读取项目配置文件 energy.json 在main函数目录
+	// 读取项目配置文件 config/energy_[os].json 在main函数目录
 	if proj, err := project.NewProject(c.Build.Path); err != nil {
 		return err
 	} else {
-		// libemfs 标志开启后,如果使用了内置libs到执行文件, 项目energy.json配置将ENERGY_HOME环境变量下的liblcl库复制到内置目录
-		// 这里仅仅是在编译时把liblcl复制到内置资源目录中
+		// libemfs 标志开启后,如果使用了内置libs到执行文件, 项目 config/energy_[os].json 配置 frameworkPath 量下的 liblcl 动态库复制到内置目录
+		// 在编译时把 liblcl 复制到内置资源目录中
 		if !consts.IsDarwin && c.Build.Libemfs {
 			// 复制liblcl到内置目录
 			emfsPath := path.Join(proj.ProjectPath, proj.LibEMFS)
@@ -42,7 +42,7 @@ func Build(c *command.Config) error {
 				os.MkdirAll(emfsPath, os.ModePerm)
 			}
 			// copy
-			libsrc := path.Join(env.GlobalDevEnvConfig.Framework, tools.GetDLLName())
+			libsrc := path.Join(env.GlobalDevEnvConfig.FrameworkPath(), tools.GetDLLName())
 			src, err := os.Open(libsrc)
 			if err != nil {
 				return err

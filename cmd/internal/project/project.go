@@ -58,13 +58,9 @@ func (m *Project) setDefaults() {
 	}
 	if m.FrameworkPath == "" || m.FrameworkPath[0] == '$' {
 		if m.FrameworkPath[0] == '$' {
-			if m.FrameworkPath == "$ENERGY_HOME" {
-				m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
-			} else {
-				m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
-			}
+			m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
 		} else {
-			m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.Framework)
+			m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.FrameworkPath())
 		}
 	}
 	if !tools.IsExist(m.FrameworkPath) {
