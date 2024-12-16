@@ -212,14 +212,11 @@ func copyEnergyCMD(rmtConfig *remotecfg.TConfig, cmdConfig *command.Config) {
 		cli += ".exe"
 	}
 	energyCLI := filepath.Join(energyCLIDir, cli)
-	if filepath.ToSlash(exeDir) == filepath.ToSlash(energyCLI) {
+	if filepath.ToSlash(exeDir) == filepath.ToSlash(energyCLI) || tools.IsExist(energyCLI) {
 		term.Logger.Info("Current ENERGY CLI, Do not replace.")
 		return
 	}
 	os.MkdirAll(energyCLIDir, 0755)
-	if tools.IsExist(energyCLI) {
-		os.Remove(energyCLI)
-	}
 	src, err := os.Open(exeDir)
 	if err != nil {
 		term.Logger.Error(err.Error())

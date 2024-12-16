@@ -145,6 +145,8 @@ func useInstalledFrameworks(ver string) error {
 	if frameworkName != "" {
 		GlobalDevEnvConfig.Framework = frameworkName
 		GlobalDevEnvConfig.Update()
+		msg := fmt.Sprintf("Now using CEF Framework %v", ver)
+		term.Logger.Info(msg)
 		return nil
 	} else {
 		err := fmt.Sprintf("Not Installed %v. Use CLI: [energy install --cef %v]", ver, ver)
