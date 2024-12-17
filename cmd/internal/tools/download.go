@@ -19,6 +19,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 // DownloadFile 下载文件
@@ -32,7 +33,7 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 	)
 	tmpFilePath := localPath + ".download"
 	options := &rawhttp.Options{
-		Timeout:                -1,
+		Timeout:                30 * time.Second,
 		FollowRedirects:        true,
 		MaxRedirects:           10,
 		AutomaticHostHeader:    true,
