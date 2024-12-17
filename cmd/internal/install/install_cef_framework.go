@@ -23,6 +23,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // 安装CEF和liblcl框架
@@ -137,8 +138,13 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 						return "", nil, err
 					}
 					// 解压 tar bz2
+					beginTime := time.Now()
 					tarSourcePath, err := tools.UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
-						processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
+						nowTime := time.Now()
+						if nowTime.Sub(beginTime) >= time.Second { //1秒更新一次
+							beginTime = nowTime
+							processBar.UpdateTitle(fmt.Sprintf("Unpack file %s, process: %d", key, processLength)) // Update the title of the progressbar.
+						}
 					})
 					processBar.Stop()
 					if err != nil {
