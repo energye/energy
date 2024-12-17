@@ -117,14 +117,19 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 	}
 	// 在线下载 CEF 框架二进制包
-	for key, dl := range downloads {
-		term.Section.Println("Download", key, ":", dl.url)
-		err := tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
-		if err != nil {
-			return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
+	var sortsKeys = []string{consts.LiblclKey, consts.CefKey}
+	for _, key := range sortsKeys {
+		dl, ok := downloads[key]
+		if ok {
+			term.Section.Println("Download", key, ":", dl.url)
+			err := tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
+			if err != nil {
+				return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
+			}
+			dl.success = err == nil
 		}
-		dl.success = err == nil
 	}
+
 	// 解压文件, 并根据配置提取文件
 	term.Logger.Info("Unpack files")
 
