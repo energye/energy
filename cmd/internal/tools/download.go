@@ -14,12 +14,11 @@ import (
 	"bufio"
 	"errors"
 	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/rawhttp"
+	"github.com/energye/energy/v2/cmd/internal/tools/rawhttp"
 	"github.com/pterm/pterm"
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 )
 
 // DownloadFile 下载文件
@@ -32,10 +31,14 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 		written int64
 	)
 	tmpFilePath := localPath + ".download"
+
+	//headers := map[string][]string{}
+	//headers["User-Agent"] = []string{"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.0"}
+
 	options := &rawhttp.Options{
-		Timeout:                30 * time.Second,
+		Timeout:                0,
 		FollowRedirects:        true,
-		MaxRedirects:           10,
+		MaxRedirects:           50,
 		AutomaticHostHeader:    true,
 		AutomaticContentLength: true,
 		Proxy:                  proxy,
@@ -43,6 +46,8 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 
 	client := rawhttp.NewClient(options)
 	resp, err := client.Get(url)
+
+	//resp, err := client.DoRaw("GET", url, "", headers, nil)
 	if err != nil {
 		return err
 	}
@@ -64,12 +69,6 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 	defer resp.Body.Close()
 	total := 100
 	_, fileName := filepath.Split(localPath)
-	if len(fileName) > 70 {
-		c := len(fileName) - 70
-		for i := 0; i < c; i++ {
-
-		}
-	}
 	p, err := pterm.DefaultProgressbar.WithMaxWidth(80).WithTotal(total).WithTitle("Download " + fileName).Start()
 	if err != nil {
 		return err

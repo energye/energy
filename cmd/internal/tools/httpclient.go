@@ -11,7 +11,7 @@
 package tools
 
 import (
-	"github.com/energye/rawhttp"
+	"github.com/energye/energy/v2/cmd/internal/tools/rawhttp"
 	"io/ioutil"
 	"time"
 )

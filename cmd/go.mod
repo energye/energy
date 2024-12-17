@@ -5,7 +5,6 @@ go 1.20
 require (
 	atomicgo.dev/cursor v0.2.0
 	atomicgo.dev/keyboard v0.2.9
-	github.com/energye/rawhttp v1.0.2
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/pterm/pterm v0.12.66
