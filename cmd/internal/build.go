@@ -19,9 +19,9 @@ import (
 
 var CmdBuild = &command.Command{
 	UsageLine: "build -p [path] -u [upx] -o [out] --os --arch --upxFlag --args --libemfs",
-	Short:     "build energy project",
+	Short:     "Build ENERGY PROJECT",
 	Long: `
-Building energy project:
+Building ENERGY PROJECT:
   -p Project path, default current path. Can be configured in energy.json
   -u Set this parameter and install upx. Use upx to compress the execution file.
      --upxFlag: Upx command line parameters
