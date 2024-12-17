@@ -210,7 +210,7 @@ func checkEnv(init *command.Init) {
 	term.Logger.Info("Check the current environment and follow the prompts if there are any")
 	// 检查Go环境
 	if !tools.CommandExists("go") {
-		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "energy-install", "energy install"))
+		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "ENERGY CLI", "energy install"))
 	} else {
 		var version string
 		cmd := toolsCommand.NewCMD()
@@ -255,10 +255,14 @@ func checkEnv(init *command.Init) {
 			init.IUPX = true
 		}
 	}
-	// 检查 CEF Frameworks
-	if !env.CheckCEFDir() {
-		term.Logger.Warn(`Energy dependent CEF Framework is not installed
-	Installing using the energy command-line tool`, term.Logger.Args("command-line", "energy install"))
+	// 检查当前已安装且使用的框架是否正确
+	isCEF, isLCL := env.CheckCEFDir()
+	if !isCEF {
+		term.Logger.Warn(`CEF Framework is not installed
+	Installing using ENERGY CLI`, term.Logger.Args("ENERGY CLI", "energy install"))
+	} else if !isLCL {
+		term.Logger.Warn(`LibLCL is not installed
+	Installing using ENERGY CLI`, term.Logger.Args("ENERGY CLI", "energy install"))
 	} else {
 		term.Logger.Info("CEF Framework OK")
 		init.IEnv = true

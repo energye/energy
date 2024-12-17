@@ -93,28 +93,28 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 
 	// 下载集合
 	var downloads = make(map[string]*downloadInfo)
-
-	// CEF 当前模块版本支持系统，如果支持返回下载地址
-	libCEFOS := cefOS(cmdConfig)
-	// https://cef-builds.spotifycdn.com/cef_binary_{version}_{OSARCH}_minimal.tar.bz2
-	// https://www.xxx.xxx/xxx/releases/download/{version}/cef_binary_{version}_{OSARCH}_minimal.7z
-	downloadCefURL := cefDownloadItem.Url
-	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefModuleVersion)
-	downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-	downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
-
-	// liblcl
-	// 如果选定的cef 106，在linux会指定liblcl gtk2 版本, 其它系统和版本以默认的形式区分
-	// 最后根据模块名称来确定使用哪个liblcl
-	libEnergyOS := liblclOS(cmdConfig)
-	useLibLCLModuleNameGTK3 := linuxUseGTK3(cmdConfig, liblclModuleName, moduleVersion)
-	// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
-	downloadEnergyURL := lclDownloadItem.Url
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
-	downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-	downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
-
+	isCEF, isLCL := CheckBeingInstalledFramework(config, cmdConfig)
+	if !isCEF {
+		// CEF 当前模块版本支持系统
+		libCEFOS := cefOS(cmdConfig)
+		// https://cef-builds.spotifycdn.com/cef_binary_{version}_{OSARCH}_minimal.tar.bz2
+		// https://www.xxx.xxx/xxx/releases/download/{version}/cef_binary_{version}_{OSARCH}_minimal.7z
+		downloadCefURL := cefDownloadItem.Url
+		downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefModuleVersion)
+		downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
+		downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
+	}
+	if !isLCL {
+		// liblcl 当前模块版本支持系统
+		libEnergyOS := liblclOS(cmdConfig)
+		useLibLCLModuleNameGTK3 := linuxUseGTK3(cmdConfig, liblclModuleName, moduleVersion)
+		// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
+		downloadEnergyURL := lclDownloadItem.Url
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
+		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
+		downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
+	}
 	// 在线下载 CEF 框架二进制包
 	for key, dl := range downloads {
 		term.Section.Println("Download", key, ":", dl.url)
@@ -196,24 +196,25 @@ func cefOS(c *command.Config) string {
 }
 
 // 返回 liblcl 在 linux 版本号大于 106 版本默认使用 GTK3
-// 格式: liblcl[-ver][-GTK3]
+// 完整格式: liblcl[-ver][-GTK3]
 func linuxUseGTK3(c *command.Config, liblclModuleName, moduleVersion string) string {
 	ins := c.Install
 	os := command.OS(runtime.GOOS)
 	if ins.OS != "" {
 		os = ins.OS
 	}
-
+	// Linux 从106版本以后默认使用 GTK3
 	if os.IsLinux() && !tools.Equals(c.Install.WS, "GTK2") {
 		isGT106 := false         // 标记大于106
 		if moduleVersion == "" { // 空值是最新版本, 默认用GTK3
 			isGT106 = true
 		} else {
-			if v, err := strconv.Atoi(moduleVersion); err == nil && v > 106 {
+			if ver, err := strconv.Atoi(moduleVersion); err == nil && ver > 106 {
 				isGT106 = true
 			}
 		}
 		if isGT106 {
+			// GTK3 的 liblcl 库压缩文件名 + -GTK3
 			return liblclModuleName + "-GTK3"
 		}
 	}

@@ -180,7 +180,7 @@ func Install(cmdConfig *command.Config) error {
 
 	// success 输出
 	if nsisSuccessCallback != nil || goSuccessCallback != nil || upxSuccessCallback != nil || cefFrameworkSuccessCallback != nil || z7zSuccessCallback != nil {
-		term.BoxPrintln("Hint: Reopen the cmd window for command to take effect.")
+		term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect.")
 	}
 
 	if nsisSuccessCallback != nil {
@@ -310,20 +310,9 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 
 	// cef
 	check(func() (string, bool) {
-		// 非当前系统架构时检查一下目标安装路径是否已经存在
-		var lib = func() string {
-			if cmdConfig.Install.OS.IsWindows() {
-				return "libcef.dll"
-			} else if cmdConfig.Install.OS.IsLinux() {
-				return "libcef.so"
-			} else if cmdConfig.Install.OS.IsMacOS() {
-				return "cef_sandbox.a"
-			}
-			return ""
-		}()
-		// 检查目录是否已安装
-		path := filepath.Join(config.GetFrameworkInstallPath(cmdConfig), lib)
-		return "All", tools.IsExist(path)
+		// 当前安装的框架检查
+		cef, lcl := CheckBeingInstalledFramework(config, cmdConfig)
+		return "All", cef && lcl
 	}, "CEF Framework", func() {
 		cmdConfig.Install.ICEF = true //yes callback
 	})
@@ -377,6 +366,29 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 	if consts.IsDarwin {
 		//
 	}
+	return
+}
+
+// 检查当前正在安装的框架lib库是否正确
+func CheckBeingInstalledFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (isCEF, isLCL bool) {
+	// 当前安装的框架检查
+	var libcef, liblcl = func() (string, string) {
+		if cmdConfig.Install.OS.IsWindows() {
+			return "libcef.dll", "liblcl.dll"
+		} else if cmdConfig.Install.OS.IsLinux() {
+			return "libcef.so", "liblcl.so"
+		} else if cmdConfig.Install.OS.IsMacOS() {
+			return "cef_sandbox.a", "liblcl.dylib"
+		}
+		return "", ""
+	}()
+	if libcef == "" || liblcl == "" {
+		return
+	}
+	// 检查目录是否已安装
+	// 根据安装目录（按规则取名）验证
+	isCEF = tools.IsExist(filepath.Join(config.GetFrameworkInstallPath(cmdConfig), libcef))
+	isLCL = tools.IsExist(filepath.Join(config.GetFrameworkInstallPath(cmdConfig), liblcl))
 	return
 }
 

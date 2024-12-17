@@ -40,13 +40,13 @@ func SetGoEnv(goRoot string) {
 	goCMD := filepath.Join(goRoot, "bin")
 	term.Logger.Info("Setting Golang env: ", term.Logger.Args("PATH", "export PATH=$PATH:"+goCMD))
 	setEnvToPath(goCMD)
-	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect..")
+	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect.")
 }
 
 func SetEnergyCLIEnv(energyCLI string) {
 	term.Logger.Info("Setting ENERGY CLI env: ", term.Logger.Args("PATH", "export PATH=$PATH:"+energyCLI))
 	setEnvToPath(energyCLI)
-	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect..")
+	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect.")
 }
 
 func envfiles() (result []string) {

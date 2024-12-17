@@ -31,13 +31,13 @@ func SetGoEnv(goRoot string) {
 	term.Logger.Info("Setting Golang environment Variables: ", term.Logger.Args("GOROOT", goRoot, "PATH", "%GOROOT%\\bin"))
 	setWindowsEnv("GOROOT", goRoot)
 	appendWindowsEnv("Path", "%GOROOT%\\bin")
-	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect..")
+	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect.")
 }
 
 func SetEnergyCLIEnv(energyCLI string) {
 	term.Logger.Info("Setting ENERGY CLI env: ", term.Logger.Args("PATH", energyCLI))
 	appendWindowsEnv("Path", energyCLI)
-	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect..")
+	term.BoxPrintln("Hint: Restart the terminal and development tools for the commands to take effect.")
 }
 
 func setWindowsEnv(name, value string) {

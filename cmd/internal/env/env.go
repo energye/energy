@@ -82,19 +82,23 @@ func Env(c *command.Config) error {
 	return nil
 }
 
+var numberReg = regexp.MustCompile("^\\d+$")
+
+func chkOS(os command.OS) bool {
+	return os.IsWindows() || os.IsLinux() || os.IsMacOS()
+}
+
+func chkARCH(arch command.Arch) bool {
+	return arch.Is386() || arch.IsAMD64() || arch.IsARM() || arch.IsARM64()
+}
+
 // 按完全匹配规则: CEF-[VER]_[OS]_[ARCH]
 func getInstalledFrameworks() ([]string, error) {
 	dirs, err := os.ReadDir(filepath.Join(GlobalDevEnvConfig.Root, consts.ENERGY))
 	if err != nil {
 		return nil, err
 	}
-	numberReg := regexp.MustCompile("^\\d+$")
-	chkOS := func(os command.OS) bool {
-		return os.IsWindows() || os.IsLinux() || os.IsMacOS()
-	}
-	chkARCH := func(arch command.Arch) bool {
-		return arch.Is386() || arch.IsAMD64() || arch.IsARM() || arch.IsARM64()
-	}
+
 	var result []string
 	for _, dir := range dirs {
 		if !dir.IsDir() {
@@ -175,21 +179,45 @@ func printInstalledFrameworks() error {
 	return nil
 }
 
-func CheckCEFDir() bool {
-	var lib = func() string {
-		if consts.IsWindows {
-			return "libcef.dll"
-		} else if consts.IsLinux {
-			return "libcef.so"
-		} else if consts.IsDarwin {
-			return "cef_sandbox.a"
-		}
-		return ""
-	}()
-	if lib != "" {
-		return tools.IsExist(filepath.Join(GlobalDevEnvConfig.FrameworkPath(), lib))
+// 检查当前已安装且使用的框架是否正确
+// Framework: CEF-[VER]_[OS]_[ARCH]
+func CheckCEFDir() (isCEF bool, isLCL bool) {
+	var libcef, liblcl = GetCurrentFrameworkLibName()
+	if libcef == "" || liblcl == "" {
+		return
 	}
-	return false
+	isCEF = tools.IsExist(filepath.Join(GlobalDevEnvConfig.FrameworkPath(), libcef))
+	isLCL = tools.IsExist(filepath.Join(GlobalDevEnvConfig.FrameworkPath(), liblcl))
+	return
+}
+
+// 获取当前使用的框架的lib动态库名
+// Framework: CEF-[VER]_[OS]_[ARCH]
+func GetCurrentFrameworkLibName() (libcef, liblcl string) {
+	framework := GlobalDevEnvConfig.Framework
+	split := strings.Split(framework, "-")
+	if len(split) != 2 {
+		return
+	}
+	verosarch := strings.Split(split[1], "_")
+	if len(verosarch) != 3 {
+		return
+	}
+	isName := tools.Equals(split[0], "CEF")       // CEF
+	isVER := numberReg.MatchString(verosarch[0])  // VER 100
+	isOS := chkOS(command.OS(verosarch[1]))       // WINDOWS, LINUX, MACOS
+	isARCH := chkARCH(command.Arch(verosarch[2])) // ARCH
+	if isName && isVER && isOS && isARCH {
+		OS := command.OS(verosarch[1])
+		if OS.IsWindows() {
+			return "libcef.dll", "liblcl.dll"
+		} else if OS.IsLinux() {
+			return "libcef.so", "liblcl.so"
+		} else if OS.IsMacOS() {
+			return "cef_sandbox.a", "liblcl.dylib"
+		}
+	}
+	return "", ""
 }
 
 func PrintENV() {
