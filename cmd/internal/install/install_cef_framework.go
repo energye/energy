@@ -175,9 +175,9 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		}
 	}
 	return config.GetFrameworkName(cmdConfig), func() {
-		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", cmdConfig.Install.Version, "liblcl", liblclModuleVersion))
+		term.Logger.Info("CEF Installed Successfully", term.Logger.Args("Version", strings.ToUpper(cefModuleVersion), "LibLCL", liblclModuleVersion))
 		if liblclModuleName == "" {
-			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version`)
+			term.Section.Println("Hint: LibLCL Module", liblclModuleName, `is not configured in the current version`)
 		}
 	}, nil
 }

@@ -74,7 +74,7 @@ func installUPX(cmdConfig *command.Config) (string, func()) {
 		}
 		p.Stop()
 		return installPath, func() {
-			term.Logger.Info("UPX Installed Successfully ", term.Logger.Args("Version", assets.UpxVersion))
+			term.Logger.Info("UPX Installed Successfully", term.Logger.Args("Version", assets.UpxVersion))
 		}
 	} else {
 		term.Logger.Error("CreateWriteFile: " + err.Error())
