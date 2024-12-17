@@ -46,9 +46,7 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 		return err
 	}
 	fsize = resp.ContentLength
-	if err != nil {
-		return err
-	}
+	term.Section.Println("Download File Size: ", fsize)
 	fileExist := IsExistAndSize(localPath, fsize)
 	if fileExist {
 		term.Section.Println("File already exists")
@@ -131,6 +129,11 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 		if err != nil {
 			return err
 		}
+		inf, err := os.Stat(localPath)
+		if err != nil {
+			return err
+		}
+		term.Section.Println("File Size: ", inf.Size())
 	}
 	return err
 }
