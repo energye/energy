@@ -12,6 +12,7 @@ package tools
 
 import (
 	"bytes"
+	"github.com/energye/energy/v2/cmd/internal/consts"
 	"math"
 	"os"
 	"os/exec"
@@ -32,6 +33,13 @@ func init() {
 	exePath, _ = filepath.Split(os.Args[0])
 	// 当前执行目录，在其它目录执行目标执行文件时，返回当前执行目录
 	currentExecuteDir, _ = os.Getwd()
+}
+
+func FixCMDName(name string) string {
+	if consts.IsWindows {
+		name += ".exe"
+	}
+	return name
 }
 
 // CommandExists 命令是否存在

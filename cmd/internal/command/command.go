@@ -84,7 +84,7 @@ type Install struct {
 	ICEF     bool   // 是否安装CEF
 	INSIS    bool   // 是否安装nsis
 	IUPX     bool   // 是否安装upx
-	I7za     bool   // 是否安装7za
+	I7z      bool   // 是否安装7z
 }
 
 type Package struct {

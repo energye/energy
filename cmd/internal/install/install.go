@@ -351,8 +351,8 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 			} else {
 				return "Non Windows skipping UPX.", true
 			}
-		}, "7za", func() {
-			cmdConfig.Install.I7za = true //yes callback
+		}, "7z", func() {
+			cmdConfig.Install.I7z = true //yes callback
 		})
 	}
 
@@ -447,7 +447,7 @@ func initInstall(rmtConfig *remotecfg.TConfig, c *command.Config) (err error) {
 			}
 		}
 	}
-	if c.Install.I7za {
+	if c.Install.I7z {
 		if z7zCanInstall() {
 			err = os.MkdirAll(z7zInstallPathName(c), fs.ModePerm) //upx
 			if err != nil {

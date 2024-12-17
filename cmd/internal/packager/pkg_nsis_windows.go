@@ -75,7 +75,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 }
 
 func compressCEF7za(proj *project.Project) (string, error) {
-	term.Logger.Info("7za compress " + proj.NSIS.CompressName + ", This may take some time")
+	term.Logger.Info("7z compress " + proj.NSIS.CompressName + ", This may take some time")
 	buildWindowsPath := filepath.Join(assets.BuildOutPath(proj), "windows")
 	outFilePath := filepath.FromSlash(filepath.Join(buildWindowsPath, proj.NSIS.CompressName))
 	if proj.Clean {

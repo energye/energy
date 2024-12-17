@@ -135,7 +135,8 @@ func (m *EnergyConfig) NSISCMD() string {
 	//if tools.CommandExists("makensis") {
 	//	return "makensis"
 	//}
-	nsis := filepath.Join(m.NSIS, "makensis")
+
+	nsis := filepath.Join(m.NSIS, tools.FixCMDName("makensis"))
 	if tools.IsExist(nsis) {
 		return nsis
 	}
@@ -149,15 +150,15 @@ func (m *EnergyConfig) Z7ZCMD() string {
 	//if tools.CommandExists("7za") {
 	//	return "7za"
 	//}
-	z7z := filepath.Join(m.Z7Z, "7z")
+	z7z := filepath.Join(m.Z7Z, tools.FixCMDName("7z"))
 	if tools.IsExist(z7z) {
 		return z7z
 	}
-	z7z = filepath.Join(m.Z7Z, "7za")
+	z7z = filepath.Join(m.Z7Z, tools.FixCMDName("7za"))
 	if tools.IsExist(z7z) {
 		return z7z
 	}
-	z7z = filepath.Join(m.Z7Z, "7zz")
+	z7z = filepath.Join(m.Z7Z, tools.FixCMDName("7zz"))
 	if tools.IsExist(z7z) {
 		return z7z
 	}
@@ -168,7 +169,7 @@ func (m *EnergyConfig) UPXCMD() string {
 	//if tools.CommandExists("upx") {
 	//	return "upx"
 	//}
-	upx := filepath.Join(m.UPX, "upx")
+	upx := filepath.Join(m.UPX, tools.FixCMDName("upx"))
 	if tools.IsExist(upx) {
 		return upx
 	}

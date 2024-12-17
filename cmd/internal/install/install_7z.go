@@ -23,7 +23,7 @@ import (
 )
 
 func install7z(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
-	if !cmdConfig.Install.I7za {
+	if !cmdConfig.Install.I7z {
 		return "", nil
 	}
 	pterm.Println()
