@@ -36,9 +36,9 @@ import (
 //	 Linux
 //	   Gtk2: CEF 最新版本
 //	   Gtk3: CEF 最新版本
-func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (string, func(), error) {
 	if !cmdConfig.Install.ICEF {
-		return "", nil
+		return "", nil, nil
 	}
 	pterm.Println()
 	term.Section.Println("Install CEF")
@@ -47,18 +47,20 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 	installPathName := config.GetFrameworkInstallPath(cmdConfig)
 	if installPathName == "" {
 		term.Logger.Error("Failed to obtain the frame installation directory")
-		return "", nil
+		return "", nil, nil
 	}
 	term.Section.Println("Install Path", installPathName)
 
 	term.Section.Println("Start downloading CEF and Energy dependency")
 
 	// 获取到当前安装版本
-	installVersion, cefModuleName, liblclModuleName := config.GetInstallVersion(cmdConfig)
+	installVersion, cefModuleName, liblclModuleName, err := config.GetInstallVersion(cmdConfig)
+	if err != nil {
+		return "", nil, err
+	}
 	// 判断模块名是否为空
 	if installVersion == nil || liblclModuleName == "" || cefModuleName == "" {
-		term.Logger.Error("The supported version is not matched, Version: " + cmdConfig.Install.Version)
-		return "", nil
+		return "", nil, errors.New("The supported version is not matched, Version: " + cmdConfig.Install.Version)
 	}
 	term.Section.Println("Install CEF-VER: " + strings.ToUpper(cefModuleName))
 
@@ -80,8 +82,7 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		lclDownloadItem = config.ModeBaseConfig.DownloadSourceItem.LCL.Item(lclItem.DownloadSource)
 	)
 	if cefModuleVersion == "" || liblclModuleVersion == "" {
-		term.Logger.Error("CEF module " + cefModuleName + " is not configured in the current version")
-		return "", nil
+		return "", nil, errors.New("CEF module " + cefModuleName + " is not configured in the current version")
 	}
 
 	// CEF 版本号 109, 101 ...
@@ -119,8 +120,7 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		term.Section.Println("Download", key, ":", dl.url)
 		err := tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
 		if err != nil {
-			term.Logger.Error("Download [" + dl.fileName + "] " + err.Error())
-			return "", nil
+			return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
 		}
 		dl.success = err == nil
 	}
@@ -134,8 +134,7 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 				if filepath.Ext(di.downloadPath) == ".bz2" {
 					processBar, err := pterm.DefaultProgressbar.WithShowCount(false).WithShowPercentage(false).WithMaxWidth(1).Start()
 					if err != nil {
-						term.Logger.Error(err.Error())
-						return "", nil
+						return "", nil, err
 					}
 					// 解压 tar bz2
 					tarSourcePath, err := tools.UnBz2ToTar(di.downloadPath, func(totalLength, processLength int64) {
@@ -143,26 +142,22 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 					})
 					processBar.Stop()
 					if err != nil {
-						term.Logger.Error(err.Error())
-						return "", nil
+						return "", nil, err
 					}
 					// 释放文件
 					if err := extractFiles(key, tarSourcePath, di, extractOSConfig.CEF); err != nil {
-						term.Logger.Error(err.Error())
-						return "", nil
+						return "", nil, err
 					}
 				} else {
 					// 释放文件
 					if err := extractFiles(key, di.downloadPath, di, extractOSConfig.CEF); err != nil {
-						term.Logger.Error(err.Error())
-						return "", nil
+						return "", nil, err
 					}
 				}
 			} else if key == consts.LiblclKey {
 				// 释放文件
 				if err := extractFiles(key, di.downloadPath, di, extractOSConfig.LCL); err != nil {
-					term.Logger.Error(err.Error())
-					return "", nil
+					return "", nil, err
 				}
 			}
 			term.Section.Println("Unpack file", key, "success")
@@ -173,19 +168,18 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		if liblclModuleName == "" {
 			term.Section.Println("hint: liblcl module", liblclModuleName, `is not configured in the current version`)
 		}
-	}
+	}, nil
 }
 
 // 返回 CEF 支持的系统, 格式 [os][arch] 示例 windows32, windows64, macosx64 ...
 func cefOS(c *command.Config) string {
-	ins := c.Install
 	os := command.OS(runtime.GOOS)
 	arch := command.Arch(runtime.GOARCH)
-	if ins.OS != "" {
-		os = ins.OS
+	if c.Install.OS != "" {
+		os = c.Install.OS
 	}
-	if ins.Arch != "" {
-		arch = ins.Arch
+	if c.Install.Arch != "" {
+		arch = c.Install.Arch
 	}
 	if os.IsMacOS() {
 		os = "macos"

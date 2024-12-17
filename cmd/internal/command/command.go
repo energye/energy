@@ -168,28 +168,33 @@ func (m OS) Value() string {
 }
 
 func (m Arch) Is386() bool {
-	return m == "386" || strings.ToLower(m.Value()) == "i386" || m == "32"
+	v := m.Value()
+	return v == "386" || v == "i386" || v == "32"
 }
 
 func (m Arch) IsAMD64() bool {
-	return strings.ToLower(m.Value()) == "amd64" || m == "64" || strings.ToLower(m.Value()) == "x64"
+	v := strings.ToLower(m.Value())
+	return v == "amd64" || v == "64" || v == "x64"
 }
 
 func (m Arch) IsARM64() bool {
-	return strings.ToLower(m.Value()) == "arm64"
+	v := strings.ToLower(m.Value())
+	return v == "arm64"
 }
 
 func (m Arch) IsARM() bool {
-	return strings.ToLower(m.Value()) == "arm"
+	v := strings.ToLower(m.Value())
+	return v == "arm"
 }
 
 func (m Arch) Value() string {
-	switch m {
+	v := string(m)
+	switch v {
 	case "386", "i386", "32":
 		return "32"
 	case "amd64", "64", "x64":
 		return "64"
 	default:
-		return string(m)
+		return v
 	}
 }

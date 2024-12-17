@@ -11,10 +11,10 @@
 package remotecfg
 
 import (
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"path/filepath"
 	"strconv"
@@ -65,10 +65,10 @@ func BaseConfig() (*TConfig, error) {
 }
 
 // 获取当前安装的版本
-func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersionsUpgrade, cefModuleName string, liblclModuleName string) {
+func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersionsUpgrade, cefModuleName string, liblclModuleName string, retErr error) {
 	releaseList, err := VersionUpgradeList()
 	if err != nil {
-		term.Logger.Error(err.Error())
+		retErr = err
 		return
 	}
 	if c.Install.Version == "latest" {
@@ -83,7 +83,7 @@ func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersions
 		}
 	}
 	if installVersion == nil {
-		term.Logger.Error("Invalid version number " + c.Install.Version)
+		retErr = errors.New("Invalid Version Number: " + c.Install.Version)
 		return
 	}
 	// 找到相同版配置
@@ -93,7 +93,7 @@ func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersions
 				installVersion = &v
 				break
 			} else {
-				term.Logger.Error("Incorrect version configuration. Identical: " + installVersion.Identical)
+				retErr = errors.New("Incorrect version configuration. Identical: " + installVersion.Identical)
 				return
 			}
 		} else {
@@ -101,7 +101,7 @@ func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersions
 		}
 	}
 	if installVersion == nil {
-		term.Logger.Error("Identical Invalid version number " + c.Install.Version)
+		retErr = errors.New("Identical Invalid Version Number: " + c.Install.Version)
 		return
 	}
 	// 指定支持的固定 CEF 版本号
@@ -169,8 +169,8 @@ func (m TConfig) GetFrameworkInstallPath(c *command.Config) string {
 
 // 获取 CEF 完整名 CEF_[VER]_[OS]_[ARCH]
 func (m TConfig) GetFrameworkName(c *command.Config) string {
-	_, cefModuleName, _ := m.GetInstallVersion(c)
-	if cefModuleName != "" {
+	_, cefModuleName, _, err := m.GetInstallVersion(c)
+	if cefModuleName != "" && err == nil {
 		frameworkName := fmt.Sprintf("%s_%s_%s", cefModuleName, c.Install.OS.Value(), c.Install.Arch.Value())
 		return strings.ToUpper(frameworkName)
 	}

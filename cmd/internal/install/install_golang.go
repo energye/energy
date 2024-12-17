@@ -26,9 +26,9 @@ import (
 )
 
 // 下载go并配置安装
-func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (string, func()) {
+func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (string, func(), error) {
 	if !cmdConfig.Install.IGolang {
-		return "", nil
+		return "", nil, nil
 	}
 	pterm.Println()
 	term.Section.Println("Install Golang")
@@ -48,7 +48,7 @@ func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (str
 		term.Section.Println("Creating directory.", installPath)
 		if err := os.MkdirAll(installPath, fs.ModePerm); err != nil {
 			term.Section.Println("Failed to create goroot directory", err.Error())
-			return "", nil
+			return "", nil, err
 		}
 	} else {
 		// 检查 golang 的 go cmd 是否存在
@@ -56,7 +56,7 @@ func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (str
 		if tools.IsExist(gocmd) {
 			return installPath, func() {
 				term.Logger.Info("Golang has been installed")
-			}
+			}, nil
 		}
 	}
 	// 下载文件名
@@ -72,6 +72,7 @@ func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (str
 		err = downloadGolang(downloadUrl, saveFileCachPath, fileName, 0)
 		if err != nil {
 			term.Logger.Error("Download [" + fileName + "] failed: " + err.Error())
+			return "", nil, err
 		} else {
 			term.Logger.Info("Download [" + fileName + "] success")
 		}
@@ -82,21 +83,20 @@ func installGolang(rtmConfig *remotecfg.TConfig, cmdConfig *command.Config) (str
 		if consts.IsWindows {
 			//zip
 			if err = tools.ExtractUnZip(saveFileCachPath, installPath, true); err != nil {
-				term.Logger.Error(err.Error())
-				return "", nil
+				return "", nil, err
 			}
 		} else {
 			//tar
 			if err = tools.ExtractUnTar(saveFileCachPath, installPath); err != nil {
 				term.Logger.Error(err.Error())
-				return "", nil
+				return "", nil, err
 			}
 		}
 		return installPath, func() {
 			term.Logger.Info("Golang Installed Successfully", term.Logger.Args("Version", version))
-		}
+		}, nil
 	}
-	return "", nil
+	return "", nil, err
 }
 
 func downloadGolang(downloadUrl, savePath, fileName string, count int) error {

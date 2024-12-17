@@ -47,9 +47,13 @@ func Install(cmdConfig *command.Config) error {
 	}
 	// 设置默认参数
 	defaultInstallConfig(cmdConfig)
-	// 检查环境
-	willInstall := checkInstallEnv(rmtConfig, cmdConfig)
-
+	// 检查本地环境
+	willInstall := checkLocalInstallEnv(rmtConfig, cmdConfig)
+	// 检查本地环境当前安装版本
+	_, _, _, err = rmtConfig.GetInstallVersion(cmdConfig)
+	if err != nil {
+		return err
+	}
 	var (
 		goRoot                      string
 		goSuccessCallback           func()
@@ -133,7 +137,10 @@ func Install(cmdConfig *command.Config) error {
 	}
 
 	// 安装Go开发环境
-	goRoot, goSuccessCallback = installGolang(rmtConfig, cmdConfig)
+	goRoot, goSuccessCallback, err = installGolang(rmtConfig, cmdConfig)
+	if err != nil {
+		return err
+	}
 	// 设置 go 环境变量
 	if goRoot != "" {
 		env.GlobalDevEnvConfig.GoRoot = goRoot
@@ -141,7 +148,10 @@ func Install(cmdConfig *command.Config) error {
 	}
 
 	// 安装CEF二进制框架
-	cefFrameworkName, cefFrameworkSuccessCallback = installCEFFramework(rmtConfig, cmdConfig)
+	cefFrameworkName, cefFrameworkSuccessCallback, err = installCEFFramework(rmtConfig, cmdConfig)
+	if err != nil {
+		return err
+	}
 	if cefFrameworkName != "" {
 		// 设置 CEF 框架, 此处是框架名不是目录
 		env.GlobalDevEnvConfig.Framework = cefFrameworkName
@@ -284,7 +294,7 @@ func z7zCanInstall() bool {
 //	nsis: windows
 //	cef: all os
 //	upx: windows amd64, 386, linux amd64, arm64
-func checkInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) (result []*softEnf) {
+func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) (result []*softEnf) {
 	result = make([]*softEnf, 0)
 	var check = func(chkInstall func() (string, bool), name string, yes func()) {
 		desc, ok := chkInstall()

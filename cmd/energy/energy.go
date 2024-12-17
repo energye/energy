@@ -73,7 +73,7 @@ func termRun() {
 		env.InitDevEnvConfig(wd) //初始化本地配置文件
 		signalHandler()
 		if err := cmd.Run(cc); err != nil {
-			term.Section.Println(err.Error())
+			term.Logger.Error(err.Error())
 			os.Exit(1)
 		}
 	}
