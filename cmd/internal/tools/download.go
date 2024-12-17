@@ -13,12 +13,15 @@ package tools
 import (
 	"bufio"
 	"errors"
+	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools/rawhttp"
 	"github.com/pterm/pterm"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // DownloadFile 下载文件
@@ -58,6 +61,7 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 		term.Section.Println("File already exists")
 		return nil
 	}
+
 	file, err := os.Create(tmpFilePath)
 	if err != nil {
 		return err
@@ -134,6 +138,11 @@ func DownloadFile(url, localPath, proxy string, callback func(totalLength, proce
 			return err
 		}
 		term.Section.Println("File Size: ", inf.Size())
+		// todo test
+		if strings.Contains(localPath, "liblcl") {
+			data, _ := ioutil.ReadFile(localPath)
+			fmt.Println("data:", string(data))
+		}
 	}
 	return err
 }
