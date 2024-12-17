@@ -14,6 +14,7 @@
 package build
 
 import (
+	"errors"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/env"
@@ -77,7 +78,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	if gocmd != "" {
 		cmd.Command(gocmd, args...)
 	} else {
-		term.Logger.Error("No Go command found")
+		return errors.New("no Go command found")
 	}
 	// upx
 	if c.Build.Upx {
