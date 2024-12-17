@@ -13,17 +13,13 @@ package tools
 import (
 	"github.com/energye/energy/v2/cmd/internal/tools/rawhttp"
 	"io/ioutil"
-	"time"
 )
 
 func Get(url string, proxy string) ([]byte, error) {
 	options := &rawhttp.Options{
-		Timeout:                30 * time.Second,
-		FollowRedirects:        true,
-		MaxRedirects:           10,
-		AutomaticHostHeader:    true,
-		AutomaticContentLength: true,
-		Proxy:                  proxy,
+		MaxRedirects:        10,
+		AutomaticHostHeader: true,
+		Proxy:               proxy,
 	}
 	client := rawhttp.NewClient(options)
 	resp, err := client.Get(url)
