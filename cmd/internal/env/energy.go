@@ -132,9 +132,9 @@ func (m *EnergyConfig) GoCMD() string {
 }
 
 func (m *EnergyConfig) NSISCMD() string {
-	if tools.CommandExists("makensis") {
-		return "makensis"
-	}
+	//if tools.CommandExists("makensis") {
+	//	return "makensis"
+	//}
 	nsis := filepath.Join(m.NSIS, "makensis")
 	if tools.IsExist(nsis) {
 		return nsis
@@ -143,12 +143,12 @@ func (m *EnergyConfig) NSISCMD() string {
 }
 
 func (m *EnergyConfig) Z7ZCMD() string {
-	if tools.CommandExists("7z") {
-		return "7z"
-	}
-	if tools.CommandExists("7za") {
-		return "7za"
-	}
+	//if tools.CommandExists("7z") {
+	//	return "7z"
+	//}
+	//if tools.CommandExists("7za") {
+	//	return "7za"
+	//}
 	z7z := filepath.Join(m.Z7Z, "7z")
 	if tools.IsExist(z7z) {
 		return z7z
@@ -165,9 +165,9 @@ func (m *EnergyConfig) Z7ZCMD() string {
 }
 
 func (m *EnergyConfig) UPXCMD() string {
-	if tools.CommandExists("upx") {
-		return "upx"
-	}
+	//if tools.CommandExists("upx") {
+	//	return "upx"
+	//}
 	upx := filepath.Join(m.UPX, "upx")
 	if tools.IsExist(upx) {
 		return upx

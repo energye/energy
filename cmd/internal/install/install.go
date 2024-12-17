@@ -272,7 +272,7 @@ func upxInstallPathName(c *command.Config) string {
 }
 
 func z7zInstallPathName(c *command.Config) string {
-	return filepath.Join(c.Install.Path, consts.ENERGY, "7za")
+	return filepath.Join(c.Install.Path, consts.ENERGY, "7z")
 }
 
 func nsisCanInstall() bool {
@@ -316,8 +316,9 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 	}, "CEF Framework", func() {
 		cmdConfig.Install.ICEF = true //yes callback
 	})
+
+	// NSIS
 	if nsisCanInstall() {
-		// nsis
 		check(func() (string, bool) {
 			if nsisCanInstall() {
 				return "Windows", env.GlobalDevEnvConfig.NSISCMD() != ""
@@ -328,16 +329,11 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 			cmdConfig.Install.INSIS = true //yes callback
 		})
 	}
+
+	// upx
 	if upxCanInstall() {
-		// upx
 		check(func() (string, bool) {
 			if upxCanInstall() {
-				if consts.IsDarwin {
-					if tools.CommandExists("upx") {
-						return "All", true
-					}
-					return "Install: brew install upx", true
-				}
 				return "All", env.GlobalDevEnvConfig.UPXCMD() != ""
 			} else {
 				return "Unsupported platform UPX.", true
@@ -346,8 +342,9 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 			cmdConfig.Install.IUPX = true //yes callback
 		})
 	}
+
+	// 7z
 	if z7zCanInstall() {
-		// 7za
 		check(func() (string, bool) {
 			if z7zCanInstall() {
 				return "Windows", env.GlobalDevEnvConfig.Z7ZCMD() != ""
@@ -358,11 +355,15 @@ func checkLocalInstallEnv(config *remotecfg.TConfig, cmdConfig *command.Config) 
 			cmdConfig.Install.I7za = true //yes callback
 		})
 	}
+
+	// linux
 	if consts.IsLinux {
 		// gtk2
 		// gtk3
 		// dpkg
 	}
+
+	// macos
 	if consts.IsDarwin {
 		//
 	}

@@ -46,9 +46,8 @@ func installNSIS(config *remotecfg.TConfig, cmdConfig *command.Config) (string, 
 		}
 	}
 	if err == nil {
-		// 安装目录
-		// 释放文件
-		//zip
+		// 安装目录 释放文件
+		// zip
 		if err = tools.ExtractUnZip(savePath, installPath, true); err != nil {
 			term.Logger.Error(err.Error())
 			return "", nil
