@@ -52,7 +52,7 @@ func build(c *command.Config, proj *project.Project) (err error) {
 		os.Setenv("GOARCH", string(c.Build.ARCH))
 	}
 	if c.Build.OS != "" || c.Build.ARCH != "" {
-		if tools.Equals(c.Build.OS.Value(), runtime.GOOS) || !tools.Equals(c.Build.ARCH.Value(), runtime.GOARCH) {
+		if !tools.Equals(c.Build.OS.Value(), runtime.GOOS) || !tools.Equals(c.Build.ARCH.Value(), runtime.GOARCH) {
 			os.Setenv("CGO_ENABLED", "1")
 		}
 	}
