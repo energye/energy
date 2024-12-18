@@ -72,7 +72,7 @@ var (
 )
 
 func GeneraInstaller(c *command.Config, proj *project.Project) error {
-	appRoot := fmt.Sprintf("darwin/%s.app", proj.Name)
+	appRoot := fmt.Sprintf("darwin/%s.app", getAppName(c, proj))
 	buildOutDir := assets.BuildOutPath(proj)
 	buildOutDir = filepath.Join(buildOutDir, appRoot)
 	projectPath = proj.ProjectPath
@@ -87,24 +87,40 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	if err := generateICNS(proj, appRoot); err != nil {
 		return err
 	}
-	if err := createAppInfoPList(proj, appRoot); err != nil {
+	if err := createAppInfoPList(c, proj, appRoot, getExeName(c, proj)); err != nil {
 		return err
 	}
 	if err := createAppPkgInfo(proj, appRoot); err != nil {
 		return err
 	}
-	if err := copyFrameworkFile(proj, appRoot); err != nil {
+	if err := copyFrameworkFile(c, proj, appRoot); err != nil {
 		return err
 	}
-	if err := copyHelperFile(proj, appRoot); err != nil {
+	if err := copyHelperFile(c, proj, appRoot); err != nil {
 		return err
 	}
 	if proj.PList.Pkgbuild {
-		if err := pkgbuild(proj, appRoot); err != nil {
+		if err := pkgbuild(c, proj, appRoot); err != nil {
 			return err
 		}
 	}
 	return nil
+}
+
+func getAppName(c *command.Config, proj *project.Project) string {
+	appName := proj.OutputFilename
+	if c.Package.OutFileName != "" {
+		appName = c.Package.OutFileName
+	}
+	return appName
+}
+
+func getExeName(c *command.Config, proj *project.Project) string {
+	exeName := proj.Name
+	if c.Package.File != "" {
+		exeName = c.Package.File
+	}
+	return exeName
 }
 
 func copyFiles(proj *project.Project, src, dst string) error {
@@ -173,14 +189,14 @@ func copyFiles(proj *project.Project, src, dst string) error {
 	return nil
 }
 
-func copyFrameworkFile(proj *project.Project, appRoot string) error {
+func copyFrameworkFile(c *command.Config, proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate app copy framework:",
 		term.Logger.Args("company", proj.Info.CompanyName, "product", proj.Info.ProductName))
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
 	// Contents
 	contents := filepath.Join(appDir, appContents)
-	exeDir := filepath.Join(proj.ProjectPath, proj.OutputFilename)
+	exeDir := filepath.Join(proj.ProjectPath, getExeName(c, proj))
 	if !tools.IsExist(exeDir) {
 		return fmt.Errorf("execution file not found: %s", exeDir)
 	}
@@ -204,14 +220,14 @@ func copyFrameworkFile(proj *project.Project, appRoot string) error {
 }
 
 // pkgbuild --root demo.app --identifier com.demo.demo --version 1.0.0 --install-location /Applications/demo.app demo.pkg
-func pkgbuild(proj *project.Project, appRoot string) error {
+func pkgbuild(c *command.Config, proj *project.Project, appRoot string) error {
 	proj.AppType = project.AtApp
 	proj.ProjectPath = projectPath
 	buildOutDir := assets.BuildOutPath(proj)
 	cmdWorkDir := filepath.Join(buildOutDir, "darwin")
 	term.Logger.Info("Generate app pkgbuild", term.Logger.Args("cmd work dir", cmdWorkDir))
 	// remove xxx.pkg
-	os.Remove(filepath.Join(cmdWorkDir, fmt.Sprintf("%s.pkg", proj.Name)))
+	os.Remove(filepath.Join(cmdWorkDir, fmt.Sprintf("%s.pkg", getAppName(c, proj))))
 	cmd := cmd.NewCMD()
 	//cmd.IsPrint = false
 	cmd.Dir = cmdWorkDir
@@ -221,11 +237,11 @@ func pkgbuild(proj *project.Project, appRoot string) error {
 			println(msg)
 		}
 	}
-	var args = []string{"--root", fmt.Sprintf("%s.app", proj.Name),
+	var args = []string{"--root", fmt.Sprintf("%s.app", getAppName(c, proj)),
 		"--identifier", fmt.Sprintf("com.%s.%s", proj.PList.CompanyName, proj.PList.ProductName),
 		"--version", proj.PList.CFBundleVersion,
-		"--install-location", fmt.Sprintf("/Applications/%s.app", proj.Name),
-		fmt.Sprintf("%s.pkg", proj.Name)}
+		"--install-location", fmt.Sprintf("/Applications/%s.app", getAppName(c, proj)),
+		fmt.Sprintf("%s.pkg", getAppName(c, proj))}
 	cmd.Command("pkgbuild", args...)
 	cmd.Close()
 	// remove xxx.app
@@ -233,7 +249,7 @@ func pkgbuild(proj *project.Project, appRoot string) error {
 	return nil
 }
 
-func copyHelperFile(proj *project.Project, appRoot string) error {
+func copyHelperFile(c *command.Config, proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate app copy cef helper")
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
@@ -263,7 +279,7 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 			return err
 		}
 		_, helperExeFilename := filepath.Split(proj.HelperFilePath)
-		// xxx + Helper = xxx.app/Contents/MacOSs/xxxHelper
+		// xxx + Helper = xxx.app/Contents/MacOS/xxx Helper
 		helperProcessFilename = fmt.Sprintf("%sHelper", helperExeFilename)
 		helperFilePath := filepath.Join(contents, appContentsMacOS, helperProcessFilename)
 		helperFile, err := os.OpenFile(helperFilePath, os.O_CREATE|os.O_WRONLY, 0755)
@@ -275,13 +291,14 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 	}
 	for _, app := range helpers {
 		proj.ProjectPath = frameworksDir
-		helperAppRoot := fmt.Sprintf("%s %s.app", proj.Name, app)
+		helperAppRoot := fmt.Sprintf("%s %s.app", getExeName(c, proj), app)
+		helperAppExeName := fmt.Sprintf("%s %s", getExeName(c, proj), app)
 		// helper app
 		if err = createApp(proj, helperAppRoot); err != nil {
 			return err
 		}
 		// helper app Info.plist
-		if err = createAppInfoPList(proj, helperAppRoot); err != nil {
+		if err = createAppInfoPList(c, proj, helperAppRoot, helperAppExeName); err != nil {
 			return err
 		}
 		// helper PkgInfo
@@ -302,13 +319,12 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 		if helperProcessFilename != "" {
 			helperSource = fmt.Sprintf("../../../../MacOS/%s", helperProcessFilename)
 		} else {
-			helperSource = fmt.Sprintf("../../../../MacOS/%s", proj.OutputFilename)
+			helperSource = fmt.Sprintf("../../../../MacOS/%s", getExeName(c, proj))
 		}
-		helperDest := fmt.Sprintf("%s %s", proj.OutputFilename, app)
 		// remove ln helper process file
-		os.Remove(filepath.Join(helperWork, helperDest))
+		os.Remove(filepath.Join(helperWork, helperAppExeName))
 		cmd.Dir = helperWork
-		cmd.Command("ln", "-s", helperSource, helperDest)
+		cmd.Command("ln", "-s", helperSource, helperAppExeName)
 		if err != nil {
 			// for error
 			return err
@@ -319,7 +335,7 @@ func copyHelperFile(proj *project.Project, appRoot string) error {
 }
 
 func createApp(proj *project.Project, appRoot string) error {
-	term.Logger.Info("Generate app create app dir: " + appRoot)
+	term.Logger.Info("Generate App Create Dir: " + appRoot)
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
 	os.Remove(appDir)
@@ -419,15 +435,14 @@ func generateICNS(proj *project.Project, appRoot string) error {
 	return nil
 }
 
-func createAppInfoPList(proj *project.Project, appRoot string) error {
+func createAppInfoPList(c *command.Config, proj *project.Project, appRoot, appExeName string) error {
 	term.Logger.Info("Generate app Info.plist")
 	// Contents/Info.plist
 	if plistData, err := assets.ReadFile(proj, assetsFSPath, darwinInfoPList); err != nil {
 		return err
 	} else {
 		data := make(map[string]interface{})
-		data["Name"] = proj.Name
-		data["OutputFilename"] = proj.OutputFilename
+		data["Executable"] = appExeName
 		data["PList"] = proj.PList
 		if content, err := tools.RenderTemplate(string(plistData), data); err != nil {
 			return err

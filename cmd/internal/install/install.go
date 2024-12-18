@@ -280,7 +280,7 @@ func nsisCanInstall() bool {
 }
 
 func upxCanInstall() bool {
-	return (consts.IsWindows && !consts.IsARM64) || consts.IsLinux || consts.IsDarwin
+	return (consts.IsWindows && !consts.IsARM64) || consts.IsLinux
 }
 
 func z7zCanInstall() bool {

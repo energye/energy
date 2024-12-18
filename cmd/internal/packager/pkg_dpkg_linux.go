@@ -104,7 +104,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 }
 
 func appDebFileName(c *command.Config, proj *project.Project) string {
-	debName := fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
+	debName := fmt.Sprintf("%s-%s-%s.deb", proj.OutputFilename, runtime.GOOS, runtime.GOARCH)
 	if c.Package.OutFileName != "" {
 		debName = c.Package.OutFileName
 	}
@@ -118,7 +118,7 @@ func dpkgB(c *command.Config, proj *project.Project) (string, error) {
 	dir := filepath.Join(assets.BuildOutPath(proj), "linux")
 	//sudo dpkg -b demo-1.0.0/ demo-[os]-[arch].deb
 	app := fmt.Sprintf("%s-%s", proj.Name, proj.Info.ProductVersion)
-	debName := appDebFileName(c, proj) //fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
+	debName := appDebFileName(c, proj)
 	outFile := filepath.Join(dir, debName)
 	term.Logger.Info("Generate dpkg package. Almost complete", term.Logger.Args("deb", debName))
 	cmd := cmd.NewCMD()

@@ -2,9 +2,9 @@
 <plist version="1.0">
     <dict>
         <key>CFBundleExecutable</key>
-        <string>{{.OutputFilename}}</string>
+        <string>{{.Executable}}</string>
         <key>CFBundleName</key>
-        <string>{{.Name}}</string>
+        <string>{{.PList.BundleName}}</string>
         <key>CFBundleLocalizations</key>
         <array>{{range $i,$value := .PList.Locals }}
             <string>{{$value}}</string>{{end}}

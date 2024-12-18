@@ -148,7 +148,7 @@ func windows(c *command.Config, proj *project.Project) error {
 }
 
 func installFileName(c *command.Config, proj *project.Project) string {
-	installPackage := proj.Name + "-installer"
+	installPackage := proj.OutputFilename + "-installer"
 	if c.Package.OutFileName != "" {
 		installPackage = c.Package.OutFileName
 		if strings.LastIndex(installPackage, ".") != -1 {

@@ -195,6 +195,7 @@ type PList struct {
 	Include                    []string `json:"include"`                    //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	Exclude                    []string `json:"exclude"`                    //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	Icon                       string   `json:"icon"`                       //应用图标, png 或 icns, 如果指定png则生成icns, 如果指定icns则直接使用
+	BundleName                 string   `json:"bundleName"`                 //Application Nmee
 	CompanyName                string   `json:"companyName"`                //公司名称
 	ProductName                string   `json:"productName"`                //产品名称
 	FileVersion                string   `json:"FileVersion"`                //文件版本
