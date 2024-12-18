@@ -160,7 +160,8 @@ func (m OS) IsLinux() bool {
 }
 
 func (m OS) IsMacOS() bool {
-	return strings.ToLower(m.Value()) == "macos"
+	v := strings.ToLower(m.Value())
+	return v == "macos" || v == "darwin"
 }
 
 func (m OS) Value() string {
