@@ -128,7 +128,7 @@ func Install(cmdConfig *command.Config) error {
 	}
 
 	// 检查目录 框架下载缓存是否存在
-	saveCachePath := filepath.Join(cmdConfig.Install.Path, consts.ENERGY, consts.FrameworkCache)
+	saveCachePath := filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache)
 	if !tools.IsExist(saveCachePath) {
 		term.Section.Println("Creating Download Cache Directory:", saveCachePath)
 		if err := os.MkdirAll(saveCachePath, fs.ModePerm); err != nil {

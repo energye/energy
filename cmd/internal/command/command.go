@@ -99,7 +99,7 @@ type Env struct {
 	Write string `short:"w" long:"write" description:"Set the configuration environment. set=key:value"`
 	Get   string `short:"g" long:"get" description:"Get the configuration environment value. get=key"`
 	List  bool   `short:"l" long:"list" description:"Lists the CEF Framework installed"`
-	Use   string `long:"use" description:"Use the installed CEF Framework. use=ver"`
+	Use   string `long:"use" description:"Use the installed CEF Framework Version. use=ver"`
 }
 
 type Help struct {

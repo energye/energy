@@ -26,20 +26,20 @@ import (
 
 func Env(c *command.Config) error {
 	env := c.Env
-	if env.Write == "" && env.Get == "" && !env.List && env.Use == "" {
-		PrintENV()
-	} else if env.List {
+	if env.List {
 		if err := printInstalledFrameworks(); err != nil {
 			return err
 		}
 	} else if env.Use != "" {
-		if err := useInstalledFrameworks(env.Use); err != nil {
+		if err := useInstalledFrameworks(env); err != nil {
 			return err
 		}
 	} else if env.Get != "" {
 		switch strings.ToLower(env.Get) {
 		case "golang", "go", "goroot":
 			term.Section.Println(GlobalDevEnvConfig.GoRoot)
+		case "root":
+			term.Section.Println(GlobalDevEnvConfig.Root, "=>", filepath.Join(GlobalDevEnvConfig.Root, consts.ENERGY))
 		case "framework":
 			term.Section.Println(GlobalDevEnvConfig.FrameworkPath())
 		case "nsis":
@@ -78,6 +78,8 @@ func Env(c *command.Config) error {
 			}
 			GlobalDevEnvConfig.Update()
 		}
+	} else {
+		PrintENV()
 	}
 	return nil
 }
@@ -125,7 +127,8 @@ func getInstalledFrameworks() ([]string, error) {
 }
 
 // 切换已安装的版本, 只做 CEF 版本号验证
-func useInstalledFrameworks(ver string) error {
+func useInstalledFrameworks(env command.Env) error {
+	// CEF-[VER]_[OS]_[ARCH]
 	dirs, err := getInstalledFrameworks()
 	if err != nil {
 		return err
@@ -136,12 +139,13 @@ func useInstalledFrameworks(ver string) error {
 		if len(split) != 2 {
 			continue
 		}
+		// [VER]_[OS]_[ARCH]
 		verosarch := strings.Split(split[1], "_")
 		if len(verosarch) != 3 {
 			continue
 		}
 		// 先只验证版本号，不验证系统和架构
-		if ver == verosarch[0] {
+		if env.Use == verosarch[0] {
 			frameworkName = dir
 			break
 		}
@@ -149,11 +153,11 @@ func useInstalledFrameworks(ver string) error {
 	if frameworkName != "" {
 		GlobalDevEnvConfig.Framework = frameworkName
 		GlobalDevEnvConfig.Update()
-		msg := fmt.Sprintf("Now using CEF Framework %v", ver)
+		msg := fmt.Sprintf("Now using CEF Framework %v", env.Use)
 		term.Logger.Info(msg)
 		return nil
 	} else {
-		err := fmt.Sprintf("Not Installed %v. Use CLI: [energy install --cef %v]", ver, ver)
+		err := fmt.Sprintf("Not Installed %v. Use CLI: [energy install --cef %v]", env.Use, env.Use)
 		return errors.New(err)
 	}
 }
