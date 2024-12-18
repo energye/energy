@@ -53,6 +53,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	if !tools.CommandExists("dpkg") {
 		return errors.New("failed to create application installation program. Could not find the dpkg command")
 	}
+
 	// 创建构建输出目录
 	appRoot := fmt.Sprintf("linux/%s-%s", proj.Name, proj.Info.ProductVersion)
 	buildOutDir := assets.BuildOutPath(proj)
@@ -72,15 +73,15 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 		return err
 	}
 	// create app.desktop
-	if err = linuxDesktop(proj, appRoot); err != nil {
+	if err = linuxDesktop(c, proj, appRoot); err != nil {
 		return err
 	}
 	// copy source
-	if err = linuxOptCopy(proj, appRoot); err != nil {
+	if err = linuxOptCopy(c, proj, appRoot); err != nil {
 		return err
 	}
 	// copy linux arm startup.sh
-	if err = linuxARMStartupSH(proj, appRoot); err != nil {
+	if err = linuxARMStartupSH(c, proj, appRoot); err != nil {
 		return err
 	}
 	// 7zz 压缩 CEF
@@ -92,7 +93,7 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 
 	// dpkg -b
 	var debName string
-	if debName, err = dpkgB(proj); err != nil {
+	if debName, err = dpkgB(c, proj); err != nil {
 		return err
 	}
 	// out log
@@ -102,11 +103,22 @@ func GeneraInstaller(c *command.Config, proj *project.Project) error {
 	return nil
 }
 
-func dpkgB(proj *project.Project) (string, error) {
+func appDebFileName(c *command.Config, proj *project.Project) string {
+	debName := fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
+	if c.Package.OutFileName != "" {
+		debName = c.Package.OutFileName
+	}
+	if strings.LastIndex(debName, ".deb") == -1 {
+		debName += ".deb"
+	}
+	return debName
+}
+
+func dpkgB(c *command.Config, proj *project.Project) (string, error) {
 	dir := filepath.Join(assets.BuildOutPath(proj), "linux")
 	//sudo dpkg -b demo-1.0.0/ demo-[os]-[arch].deb
 	app := fmt.Sprintf("%s-%s", proj.Name, proj.Info.ProductVersion)
-	debName := fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
+	debName := appDebFileName(c, proj) //fmt.Sprintf("%s-%s-%s.deb", proj.Name, runtime.GOOS, runtime.GOARCH)
 	outFile := filepath.Join(dir, debName)
 	term.Logger.Info("Generate dpkg package. Almost complete", term.Logger.Args("deb", debName))
 	cmd := cmd.NewCMD()
@@ -125,11 +137,19 @@ func dpkgB(proj *project.Project) (string, error) {
 	return debName, err
 }
 
-func opt(proj *project.Project) string {
+func optDir(proj *project.Project) string {
 	return filepath.Join("/opt", proj.Info.CompanyName, proj.Info.ProductName)
 }
 
-func linuxOptCopy(proj *project.Project, appRoot string) error {
+func getExeName(c *command.Config, proj *project.Project) string {
+	exeName := proj.Name
+	if c.Package.File != "" {
+		exeName = c.Package.File
+	}
+	return exeName
+}
+
+func linuxOptCopy(c *command.Config, proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate dpkg copy:",
 		term.Logger.Args("company", proj.Info.CompanyName, "product", proj.Info.ProductName, "opt",
 			fmt.Sprintf("/opt/%s/%s", proj.Info.CompanyName, proj.Info.ProductName)))
@@ -140,7 +160,8 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	if err := os.MkdirAll(optDir, 0755); err != nil {
 		return fmt.Errorf("unable to create directory: %w", err)
 	}
-	exeDir := filepath.Join(proj.ProjectPath, proj.OutputFilename)
+	// 完整执行文件路径
+	exeDir := filepath.Join(proj.ProjectPath, getExeName(c, proj))
 	if !tools.IsExist(exeDir) {
 		return fmt.Errorf("execution file not found: %s", exeDir)
 	}
@@ -235,7 +256,7 @@ func linuxOptCopy(proj *project.Project, appRoot string) error {
 	return nil
 }
 
-func linuxARMStartupSH(proj *project.Project, appRoot string) error {
+func linuxARMStartupSH(c *command.Config, proj *project.Project, appRoot string) error {
 	if consts.IsLinux && consts.IsARM64 {
 		term.Logger.Info("Generate dpkg startup.sh")
 		buildOutDir := assets.BuildOutPath(proj)
@@ -244,13 +265,13 @@ func linuxARMStartupSH(proj *project.Project, appRoot string) error {
 			return err
 		} else {
 			data := make(map[string]interface{})
-			data["INSTALLPATH"] = opt(proj)
-			data["EXECUTE"] = proj.Name
+			data["INSTALLPATH"] = optDir(proj)
+			data["EXECUTE"] = getExeName(c, proj)
 			sh := strings.NewReplacer("\r", "")
 			if content, err := tools.RenderTemplate(sh.Replace(string(startupshData)), data); err != nil {
 				return err
 			} else {
-				optDir := opt(proj)
+				optDir := optDir(proj)
 				outFilePath := filepath.Join(appDir, optDir, fmt.Sprintf("%s.sh", proj.Name))
 				outFile, err := os.OpenFile(outFilePath, os.O_CREATE|os.O_WRONLY, 0755)
 				if err != nil {
@@ -265,7 +286,7 @@ func linuxARMStartupSH(proj *project.Project, appRoot string) error {
 	return nil
 }
 
-func linuxDesktop(proj *project.Project, appRoot string) error {
+func linuxDesktop(c *command.Config, proj *project.Project, appRoot string) error {
 	term.Logger.Info("Generate dpkg desktop")
 	buildOutDir := assets.BuildOutPath(proj)
 	appDir := filepath.Join(buildOutDir, appRoot)
@@ -277,9 +298,9 @@ func linuxDesktop(proj *project.Project, appRoot string) error {
 	if desktopData, err := assets.ReadFile(proj, assetsFSPath, linuxAppDesktop); err != nil {
 		return err
 	} else {
-		optDir := opt(proj)
+		optDir := optDir(proj)
 		_, icon := filepath.Split(proj.Info.Icon)
-		startup := proj.Name
+		startup := getExeName(c, proj)
 		if consts.IsLinux && consts.IsARM64 {
 			startup += ".sh"
 		}
