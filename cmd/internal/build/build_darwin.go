@@ -18,8 +18,10 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"os"
+	"runtime"
 	"strings"
 )
 
@@ -49,13 +51,21 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	if c.Build.ARCH != "" {
 		os.Setenv("GOARCH", string(c.Build.ARCH))
 	}
+	if c.Build.OS != "" || c.Build.ARCH != "" {
+		if tools.Equals(c.Build.OS.Value(), runtime.GOOS) || !tools.Equals(c.Build.ARCH.Value(), runtime.GOARCH) {
+			os.Setenv("CGO_ENABLED", "1")
+		}
+	}
+
 	gocmd := env.GlobalDevEnvConfig.GoCMD()
 	if gocmd != "" {
 		cmd.Command(gocmd, args...)
 	} else {
 		term.Logger.Error("No Go command found")
 	}
-	cmd.Command("strip", outputFilename)
+	if c.Build.OS.IsMacOS() {
+		cmd.Command("strip", outputFilename)
+	}
 	// upx
 	if c.Build.Upx {
 		upxcmd := env.GlobalDevEnvConfig.UPXCMD()
