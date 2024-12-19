@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Go Energy</title>
+    <style>
+        .logo {
+            width: 300px;
+            height: 300px;
+            margin: 40px auto 0;
+        }
+
+        .logo img {
+            width: 100%;
+        }
+
+        .module {
+            text-align: center;
+            padding: 0 20px;
+            margin: 0px auto;
+            color: #000;
+        }
+
+        .module .content {
+            margin-right: 20px;
+            text-align: center;
+        }
+
+        .module p {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+<div class="logo">
+    <img src="icon.png">
+</div>
+<div class="module">
+    <div class="content">
+        <p style="font-weight: bold; font-size: 14px; color: #000;">Welcome to your new project!</p>
+        <p>OS Info: <span id="osInfo">--</span></p>
+    </div>
+    <div class="content">
+        <p style="font-weight: bold; font-size: 14px; color: #000">Getting start</p>
+        <a href="https://github.com/energye/energy">Github</a>
+        <a href="https://energye.github.io/course/what-is-energy">Course</a>
+        <a href="https://energye.github.io/examples">Example</a>
+        <a href="https://energye.github.io/document">Document</a>
+    </div>
+</div>
+<script>
+    // js on osInfo
+    ipc.on("osInfo", function (os) {
+        document.getElementById("osInfo").innerText = os;
+    });
+    // js emit send count++
+    let count = 0;
+    setInterval(function () {
+        count++
+        ipc.emit("count", [count]);
+    }, 1000)
+</script>
+</body>
+</html>

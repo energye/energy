@@ -1,0 +1,27 @@
+{
+  "name": "demo-actions",
+  "projectPath": "@",
+  "frameworkPath": "$ENERGY_HOME",
+  "assetsDir": "assets",
+  "outputFilename": "demo-actions",
+  "helperFilePath": "",
+  "plist": {
+    "icon": "@/resources/icon.png",
+    "companyName": "demo-actions",
+    "productName": "demo-actions",
+    "locals": [
+      "zh_CN",
+      "en"
+    ],
+    "cfBundleVersion": "1.0.0",
+    "cfBundleShortVersionString": "1.0.0",
+    "copyright": "Copyright.....",
+    "comments": "Built using ENERGY (https://github.com/energye/energy)",
+    "include": [],
+    "exclude": ["cache"]
+  },
+  "author": {
+    "name": "yanghy",
+    "email": "snxamdf@126.com"
+  }
+}

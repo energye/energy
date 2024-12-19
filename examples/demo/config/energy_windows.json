@@ -1,0 +1,34 @@
+{
+  "name": "demo-actions",
+  "projectPath": "@",
+  "frameworkPath": "$ENERGY_HOME",
+  "assetsDir": "assets",
+  "outputFilename": "demo-actions",
+  "libemfs": "libs",
+  "info": {
+    "manifest": "@/demo-actions.manifest",
+    "icon": "@/resources/icon.ico",
+    "companyName": "demo-actions",
+    "productName": "demo-actions",
+    "fileVersion": "1.0.0",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright.....",
+    "comments": "Built using ENERGY (https://github.com/energye/energy)",
+    "fileDescription": "Built using ENERGY (https://github.com/energye/energy)"
+  },
+  "nsis": {
+    "include": [],
+    "exclude": ["cache"],
+    "icon": "@/resources/icon.ico",
+    "unIcon": "@/resources/icon.ico",
+    "license": "",
+    "language": "english",
+    "requestExecutionLevel": "admin",
+    "compress": "7za",
+    "compressName": "framework.7z"
+  },
+  "author": {
+    "name": "yanghy",
+    "email": "snxamdf@126.com"
+  }
+}
