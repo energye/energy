@@ -1,3 +1,5 @@
+del md5.txt
+
 SET CGO_ENABLED=0
 
 set GOARCH=386
