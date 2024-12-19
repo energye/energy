@@ -237,15 +237,16 @@ func pkgbuild(c *command.Config, proj *project.Project, appRoot string) error {
 			println(msg)
 		}
 	}
-	var args = []string{"--root", fmt.Sprintf("%s.app", getAppName(c, proj)),
+	app := fmt.Sprintf("%s.app", getAppName(c, proj))
+	pkg := fmt.Sprintf("%s.pkg", getAppName(c, proj))
+	var args = []string{"--root", app,
 		"--identifier", fmt.Sprintf("com.%s.%s", proj.PList.CompanyName, proj.PList.ProductName),
 		"--version", proj.PList.CFBundleVersion,
-		"--install-location", fmt.Sprintf("/Applications/%s.app", getAppName(c, proj)),
-		fmt.Sprintf("%s.pkg", getAppName(c, proj))}
+		"--install-location", fmt.Sprintf("/Applications/%s", app), pkg}
 	cmd.Command("pkgbuild", args...)
 	cmd.Close()
 	// remove xxx.app
-	os.Remove(filepath.Join(buildOutDir, appRoot))
+	os.RemoveAll(filepath.Join(cmdWorkDir, app))
 	return nil
 }
 
