@@ -13,12 +13,15 @@
 package cef
 
 import (
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/cef/i18n"
 	"github.com/energye/energy/v2/cef/internal/def"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	. "github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
+	"github.com/energye/golcl/energy/consts"
+	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
 	"path/filepath"
 	"strings"
@@ -80,19 +83,32 @@ func (m *TCEFApplication) initDefaultSettings() {
 		panic("Unsupported system, currently only supports Windows, Mac OS, and Linux")
 	}
 	if m.FrameworkDirPath() == "" {
-		// 默认CEF框架目录
-		// 当前执行文件所在目录或ENERGY_HOME环境配置目录
-		lp := common.FrameworkDir()
-		if lp != "" {
-			m.SetFrameworkDirPath(lp)
+		// 默认 CEF Framework 目录
+		cfg := config.GetConfig()
+		if cfg != nil {
+			libCef := func() string {
+				if common.IsWindows() {
+					return "libcef.dll"
+				} else if common.IsLinux() {
+					return "libcef.so"
+				}
+				return ""
+			}()
+			if libCef != "" {
+				if tools.IsExist(filepath.Join(consts.ExeDir, libCef)) {
+					m.SetFrameworkDirPath(consts.ExeDir)
+				} else if frameworkDir := cfg.FrameworkPath(); tools.IsExist(filepath.Join(frameworkDir, libCef)) {
+					m.SetFrameworkDirPath(frameworkDir)
+				}
+			}
 		}
 	}
 
 	m.SetLocale(LANGUAGE_zh_CN)
 	m.SetLogSeverity(LOGSEVERITY_DISABLE)
 	m.SetEnablePrintPreview(true)
-	//m.SetEnableGPU(true) 默认还是关闭GPU加速
-	// 以下条件判断根据不同平台, 启动不同的窗口组件
+	// m.SetEnableGPU(true) 默认还是关闭GPU加速
+	// DefaultMessageLoop() 根据不同平台, 启动不同的窗口组件
 	// ViewsFrameworkBrowserWindow 简称(VF)窗口组件, 同时支持 Windows/Linux/MacOSX
 	// LCL 窗口组件,同时支持 Windows/MacOSX, CEF版本<=106.xx时支持GTK2, CEF版本 >= 107.xx时默认开启 GTK3 且不支持 GTK2 和 LCL提供的各种组件
 	m.DefaultMessageLoop()
@@ -168,7 +184,6 @@ func (m *TCEFApplication) FrameworkDirPath() string {
 }
 
 func (m *TCEFApplication) SetFrameworkDirPath(value string) {
-	common.SetFrameworkEnv(value)
 	imports.Proc(def.CEFAppConfig_SetFrameworkDirPath).Call(api.PascalStr(value))
 	// resources 和 locals 在同一目录
 	m.SetResourcesDirPath(value)

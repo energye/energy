@@ -29,11 +29,6 @@ var (
 	Separator         = string(filepath.Separator) // 平台目录分隔符
 )
 
-const (
-	ENERGY_HOME_KEY = "ENERGY_HOME"
-	MemoryNetwork   = "unix"
-)
-
 func init() {
 	CurrentExecuteDir, _ = os.Getwd()
 	ExePath = os.Args[0]

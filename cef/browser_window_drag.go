@@ -242,5 +242,5 @@ func dragExtensionJS(frame *ICefFrame, window IBrowserWindow) {
 //  2. 通过IPC将鼠标消息发送到主进程，主进程监听到消息处理鼠标事件
 //  3. macos 使用窗口坐标实现窗口拖拽
 func registerDragExtensionHandler() {
-	RegisterExtension("__drag", string(ipc.IPCJS), nil)
+	RegisterExtension("__drag", ipc.IPCJS, nil)
 }

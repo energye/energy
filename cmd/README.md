@@ -7,3 +7,15 @@ go install github.com/energye/energy/v2/cmd/energy
 ```
 
 https://energye.github.io/course/cli-use-instructions
+
+macos:
+```
+brew install nsis
+brew install llvm
+```
+
+ubuntu:
+```
+sudo apt install nsis
+sudo apt install lld llvm
+```

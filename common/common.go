@@ -15,12 +15,8 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/decimal"
-	"github.com/energye/golcl/energy/tools"
 	"math"
-	"os"
-	"path/filepath"
 	"reflect"
 	"runtime"
 	"strconv"
@@ -543,6 +539,7 @@ func GoStr(ptr uintptr) string {
 	return *(*string)(unsafe.Pointer(resultString))
 
 }
+
 func string2bytes1(s string) []byte {
 	stringHeader := (*reflect.StringHeader)(unsafe.Pointer(&s))
 	var b []byte
@@ -551,37 +548,4 @@ func string2bytes1(s string) []byte {
 	pbytes.Len = stringHeader.Len
 	pbytes.Cap = stringHeader.Len
 	return b
-}
-
-func libCef() string {
-	if IsWindows() {
-		return "libcef.dll"
-	} else if IsLinux() {
-		return "libcef.so"
-	}
-	return ""
-}
-
-// FrameworkDir
-//  返回CEF框架目录, 以当前执行文件所在目录开始查找
-//  如果当前执行文件目录未找到，再从ENERGY_HOME环境变量查找
-//  Darwin 平台除外
-func FrameworkDir() string {
-	var lib = libCef() // 根据CEF libcef.xx 动态库
-	if lib != "" {
-		//当前目录
-		if tools.IsExist(filepath.Join(consts.ExeDir, lib)) {
-			return consts.ExeDir
-		}
-		//环境变量
-		var env = os.Getenv(consts.ENERGY_HOME_KEY)
-		if tools.IsExist(filepath.Join(env, lib)) {
-			return env
-		}
-	}
-	return ""
-}
-
-func SetFrameworkEnv(value string) {
-	os.Setenv(consts.ENERGY_HOME_KEY, value)
 }

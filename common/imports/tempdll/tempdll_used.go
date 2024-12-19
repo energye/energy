@@ -27,7 +27,8 @@ func init() {
 }
 
 // CheckAndReleaseDLL
-//  检查动态库并释放
+//
+//	检查动态库并释放
 func CheckAndReleaseDLL(dllName string) (filePath string, fileFullPath string, ok bool) {
 	if TempDLL == nil || TempDLL.DllSaveDirType() == TddInvalid || emfs.GetLibsFS() == nil {
 		return
@@ -45,7 +46,7 @@ func CheckAndReleaseDLL(dllName string) (filePath string, fileFullPath string, o
 	case TddCurrent:
 		tempDLLDir = consts.ExeDir
 	case TddEnergyHome:
-		tempDLLDir = os.Getenv(consts.ENERGY_HOME_KEY)
+		//tempDLLDir = os.Getenv(consts.ENERGY_HOME_KEY)// TODO
 	case TddCustom:
 		if TempDLL.DllSaveDir() != "" {
 			tempDLLDir = TempDLL.DllSaveDir()

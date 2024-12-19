@@ -27,9 +27,6 @@ import (
 	"time"
 )
 
-//go:embed ipc.js
-var IPCJS []byte
-
 var (
 	isMainProcess bool
 	isSubProcess  bool

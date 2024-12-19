@@ -32,6 +32,10 @@ import (
 	"strings"
 )
 
+const (
+	MemoryNetwork = "unix"
+)
+
 var (
 	protocolHeader       = []byte{0x01, 0x09, 0x08, 0x07, 0x00, 0x08, 0x02, 0x02}                                                                 // 协议头
 	protocolHeaderLength = int32(len(protocolHeader))                                                                                             // 协议头长度
