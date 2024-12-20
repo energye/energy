@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io/ioutil"
-	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
@@ -55,9 +54,6 @@ func (m *Project) setDefaults() {
 	if m.ProjectPath == "" || m.ProjectPath[0] == '@' {
 		// 设置当前执行目录为项目目录
 		m.ProjectPath = tools.CurrentExecuteDir()
-	}
-	if len(m.FrameworkPath) > 0 && m.FrameworkPath[0] == '$' {
-		m.FrameworkPath = filepath.ToSlash(os.Getenv(m.FrameworkPath[1:]))
 	}
 	if m.FrameworkPath == "" {
 		m.FrameworkPath = filepath.ToSlash(env.GlobalDevEnvConfig.FrameworkPath())

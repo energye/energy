@@ -1,7 +1,7 @@
 {
   "name": "{{.Name}}",
   "projectPath": "@",
-  "frameworkPath": "$ENERGY_HOME",
+  "frameworkPath": "",
   "assetsDir": "assets",
   "outputFilename": "{{.OutputFilename}}",
   "libemfs": "libs",
