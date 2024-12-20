@@ -124,14 +124,14 @@ type Init struct {
 }
 
 type Build struct {
-	Path    string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy.json" default:""`
-	Upx     bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file"`
-	UpxFlag string `long:"upxFlag" description:"Upx command line parameters" default:""`
-	Args    string `long:"args" description:"go build [args]" default:""`
-	Libemfs bool   `long:"libemfs" description:"Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation"`
-	Out     string `short:"o" long:"out" description:"Build out file path"`
-	OS      OS     `long:"os" description:"Build OS for windows | darwin | linux"`
-	ARCH    Arch   `long:"arch" description:"Build ARCH for 386 | amd64 | arm | arm64"`
+	Path      string `short:"p" long:"path" description:"Project path, default current path. Can be configured in energy_[os].json" default:""`
+	Upx       bool   `short:"u" long:"upx" description:"Set this parameter and install upx. Use upx to compress the execution file"`
+	UpxFlag   string `long:"upxFlag" description:"Upx command line parameters" default:""`
+	BuildArgs bool   `long:"buildargs" description:"go build [args]. Parameter tags should be in the last position, and the parameters following them will be passed as build parameters."`
+	Libemfs   bool   `long:"libemfs" description:"Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation"`
+	Out       string `short:"o" long:"out" description:"Build out file path"`
+	OS        OS     `long:"os" description:"Build OS for windows | darwin | linux"`
+	ARCH      Arch   `long:"arch" description:"Build ARCH for 386 | amd64 | arm | arm64"`
 }
 
 type Bindata struct {

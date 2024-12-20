@@ -18,18 +18,19 @@ import (
 )
 
 var CmdBuild = &command.Command{
-	UsageLine: "build -p [path] -u [upx] -o [out] --os --arch --upxFlag --args --libemfs",
+	UsageLine: "build -p [path] -u [upx] -o [out] --os --arch --upxFlag --libemfs --buildargs",
 	Short:     "Build ENERGY PROJECT",
 	Long: `
 Building ENERGY PROJECT:
-  -p Project path, default current path. Can be configured in energy.json
+  -p Project path, default current path. Can be configured in energy_[os].json
   -u Set this parameter and install upx. Use upx to compress the execution file.
      --upxFlag: Upx command line parameters
   -o Build out file path
   --os Build OS for windows | darwin | linux
   --arch Build ARCH for 386 | amd64 | arm | arm64
-  --args Set go build [args]
   --libemfs Built in dynamic libraries to executable files, Copy liblcl to the built-in directory every compilation
+  --args go build [args]. Parameter tags should be in the last position, and the parameters following them will be passed as build parameters.
+     energy build -p=/app/root/path --buildargs -tags prod,other1,other2 -ldflags="-X 'main.config=value'"
 `,
 }
 

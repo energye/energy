@@ -51,7 +51,16 @@ func termRun() {
 		parser.WriteHelp(term.TermOut)
 		os.Exit(0)
 	}
-	if extraArgs, err := parser.ParseArgs(os.Args[1:]); err != nil {
+
+	// Go 构建参数, 它应出现在 cli 有效参数最后一个位置
+	// 之后的参数做为 go build [args] 传递进去
+	buildArgsIdx := tools.GetBuildArgsFlagIndex()
+	var args = os.Args[1:]
+	if buildArgsIdx > 1 { // energy build --buildargs 索引一定大于 1
+		// 拿到 cli 有效参数
+		args = os.Args[1:buildArgsIdx]
+	}
+	if extraArgs, err := parser.ParseArgs(args); err != nil {
 		println(err.Error())
 		return
 	} else {

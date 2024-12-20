@@ -15,22 +15,19 @@ package build
 
 import (
 	"errors"
+	"flag"
 	"github.com/energye/energy/v2/cmd/internal/assets"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/gen"
 	"github.com/energye/energy/v2/cmd/internal/project"
 	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
-)
-
-const (
-	windowManifest    = "windows/app.exe.manifest"
-	windowVersionInfo = "windows/version.info.json"
 )
 
 // 构建windows执行程序
@@ -57,15 +54,32 @@ func build(c *command.Config, proj *project.Project) (err error) {
 		outputFilename = c.Build.Out
 	}
 	term.Section.Println("Building", outputFilename)
-	var args = []string{"build"}
-	if c.Build.Args != "" {
+	args := []string{"build"}
+	if c.Build.BuildArgs {
 		// go build args
-		gbargs := strings.Split(c.Build.Args, " ")
-		for i := range gbargs {
-			args = append(args, gbargs[i])
+		// 在 energy build 时，如果设置 go 的构建参数, 需要设置 --buildargs 标记，并且让其在 cli 命令最一个有效参数位置
+		// 其之后参数都将做为 go build [args] 传递
+		buildArgs := os.Args[tools.GetBuildArgsFlagIndex():]
+		cmdLine := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
+		tags := cmdLine.String("tags", "", "")
+		ldflags := cmdLine.String("ldflags", "", "")
+		cmdLine.Parse(buildArgs)
+		if tags != nil && *tags != "" {
+			args = append(args, "-tags", "prod,"+*tags)
+		} else {
+			args = append(args, "-tags", "prod")
 		}
+		if ldflags != nil && *ldflags != "" {
+			args = append(args, "-ldflags", "-s -w -H windowsgui "+*ldflags)
+		} else {
+			args = append(args, "-ldflags", "-s -w -H windowsgui")
+		}
+	} else {
+		// 默认构建参数
+		args = append(args, "-tags", "prod")
+		args = append(args, "-ldflags", "-s -w -H windowsgui")
 	}
-	args = append(args, "-ldflags", "-s -w -H windowsgui")
+	args = append(args, "-trimpath")
 	args = append(args, "-o", outputFilename)
 	// GOOS=windows GOARCH=386
 	if c.Build.OS != "" {
