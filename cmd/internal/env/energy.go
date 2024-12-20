@@ -50,6 +50,26 @@ func InitDevEnvConfig(wd string) {
 			}
 		}
 		if !tools.IsExist(config) {
+			//var frameworkDir string
+			//println("Use Current Directory install framework? (Y)")
+			//println("Current Directory:", wd)
+			//var input string
+			//for {
+			//	print("(Y) Or Other Directory: ")
+			//	fmt.Scan(&input)
+			//	println()
+			//	input = strings.ToLower(strings.TrimSpace(input))
+			//	if input == "y" || input == "yes" || input == "" {
+			//		frameworkDir = wd
+			//		break
+			//	} else {
+			//		if filepath.IsAbs(input) {
+			//			frameworkDir = input
+			//			break
+			//		}
+			//	}
+			//}
+
 			// 创建
 			GlobalDevEnvConfig = &EnergyConfig{
 				homedir:  config,

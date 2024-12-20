@@ -226,7 +226,7 @@ func GetCurrentFrameworkLibName() (libcef, liblcl string) {
 
 func PrintENV() {
 	tableData := pterm.TableData{
-		{"Name", "Directory"},
+		{"Name", "Value"},
 	}
 	tableData = append(tableData, []string{"Golang", GlobalDevEnvConfig.GoRoot})
 	tableData = append(tableData, []string{"Root", GlobalDevEnvConfig.Root})
