@@ -17,6 +17,9 @@ type Config struct {
 	Framework string `json:"framework"`
 }
 
+// 返回 config 环境
+// mode: dev 使用 .energy
+// prod 使用自定义或当前执行目录
 func GetConfig() *Config {
 	return config
 }

@@ -78,7 +78,7 @@ func Run(app *TCEFApplication) {
 			appContextInitialized()
 		}
 		// Linux Gtk3
-		widgetInit := common.IsLinux() && app.IsUIGtk3()
+		widgetInit := common.IsLinux() && api.WidgetUI().IsGTK3()
 		if widgetInit {
 			// linux widget init
 			// TODO:

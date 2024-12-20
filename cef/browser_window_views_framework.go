@@ -21,6 +21,7 @@ import (
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"os"
 )
@@ -190,9 +191,10 @@ func (m *ViewsFrameworkBrowserWindow) TryCloseWindowAndTerminate() {
 		if m.tray != nil {
 			m.tray.close()
 		}
+		ui := api.WidgetUI()
 		application.QuitMessageLoop()
 		// TODO 当前使用 os.Exit(0) 正确退出应用程序
-		if application.IsUIGtk3() {
+		if ui.IsGTK3() {
 			os.Exit(0)
 		}
 	}

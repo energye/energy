@@ -42,46 +42,8 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 	//imports.Proc(CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
 }
 
-func (m *TCEFApplication) IsUIWin32() bool {
-	return m.ui == UitWin32
-}
-
-func (m *TCEFApplication) IsUICocoa() bool {
-	return m.ui == UitCocoa
-}
-
-func (m *TCEFApplication) IsUIGtk2() bool {
-	return m.ui == UitGtk2
-}
-
-func (m *TCEFApplication) IsUIGtk3() bool {
-	return m.ui == UitGtk3
-}
-
 // initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
-	if common.IsWindows() {
-		m.ui = UitWin32
-	} else if common.IsDarwin() {
-		m.ui = UitCocoa
-	} else if common.IsLinux() {
-		cefVersion := strings.Split(m.LibCefVersion(), ".")
-		if len(cefVersion) > 0 {
-			major := common.StrToInt32(cefVersion[0])
-			// cef version <= 106.1.1 default use gtk2
-			if major <= 106 {
-				m.ui = UitGtk2
-			} else {
-				// cef version > 106.1.1 default use gtk3
-				m.ui = UitGtk3
-			}
-		} else {
-			// default use gtk3
-			m.ui = UitGtk3
-		}
-	} else {
-		panic("Unsupported system, currently only supports Windows, Mac OS, and Linux")
-	}
 	if m.FrameworkDirPath() == "" {
 		// 默认 CEF Framework 目录
 		cfg := config.GetConfig()
@@ -117,12 +79,13 @@ func (m *TCEFApplication) initDefaultSettings() {
 // DefaultMessageLoop 默认消息轮询, 在创建 CEF Application 时确定使用什么方式
 func (m *TCEFApplication) DefaultMessageLoop() {
 	if common.IsLinux() { // Linux => (VF)View Framework 窗口
-		if m.IsUIGtk3() {
+		ui := api.WidgetUI()
+		if ui.IsGTK3() {
 			// Linux CEF >= 107.xxx 版本以后，默认启用的GTK3，106及以前版本默认支持GTK2但无法正常输入中文
 			// Linux 默认设置为false,将启用 ViewsFrameworkBrowserWindow 窗口
 			m.SetExternalMessagePump(false)
 			m.SetMultiThreadedMessageLoop(false)
-		} else if m.IsUIGtk2() {
+		} else if ui.IsGTK2() {
 			// GTK2 默认支持LCL,但还未解决无法输入中文问题
 			m.SetExternalMessagePump(false)
 			m.SetMultiThreadedMessageLoop(true)

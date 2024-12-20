@@ -77,8 +77,8 @@ func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 			panic(`Hint:
   Failed initialize LibLCL, check the development environment
   Use CLI: 
-    "energy env" : Check the configuration of the development environment
-    "energy install" : Installation development environment
+    [energy env] : Check the configuration of the development environment
+    [energy install] : Installation development environment
 `)
 		} else {
 			imports.LibEnergy().SetOk(true)

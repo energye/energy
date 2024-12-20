@@ -31,7 +31,6 @@ var application *TCEFApplication
 type TCEFApplication struct {
 	instance                 unsafe.Pointer
 	specificVersion          SpecificVersion // 特定版本 default -1
-	ui                       UITool
 	onContextCreated         GlobalCEFAppEventOnContextCreated
 	onProcessMessageReceived RenderProcessMessageReceived
 	onWebKitInitialized      GlobalCEFAppEventOnWebKitInitialized
