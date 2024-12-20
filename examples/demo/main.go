@@ -22,6 +22,7 @@ func main() {
 	app := cef.NewApplication()
 	//http's url
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
+	cef.BrowserWindow.Config.Title = "demo actions 示例"
 	//Security key and value settings for built-in static resource services
 	assetserve.AssetsServerHeaderKeyName = "energy"
 	assetserve.AssetsServerHeaderKeyValue = "energy"

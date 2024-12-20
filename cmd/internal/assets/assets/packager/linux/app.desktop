@@ -1,9 +1,10 @@
 [Desktop Entry]
 Type=Application
-Terminal=false
 Name={{.Name}}
 Exec={{.Exec}}
 Icon={{.Icon}}
 Comment={{.Comments}}
-Encoding=UTF-8
 Categories=Utility;
+Terminal=false
+StartupNotify=true
+Encoding=UTF-8

@@ -6,6 +6,7 @@
   "outputFilename": "demo-actions",
   "libemfs": "libs",
   "info": {
+    "title": "demo示例",
     "icon": "@/resources/icon.png",
     "companyName": "demo-actions",
     "productName": "demo-actions",
