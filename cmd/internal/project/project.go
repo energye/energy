@@ -168,6 +168,7 @@ type NSIS struct {
 	Icon                  string   `json:"icon"`                  //安装包图标
 	Include               []string `json:"include"`               //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
 	Exclude               []string `json:"exclude"`               //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	ShortCutName          string   `json:"shortCutName"`          //快捷方式名称
 	UnIcon                string   `json:"unIcon"`                //安装包卸载图标
 	License               string   `json:"license"`               //安装包授权信息,(license.txt)文件路径
 	Language              string   `json:"language"`              //安装包语言, 中文: SimpChinese, 英文: English, 语言在 NSIS_HOME/Contrib/Language files

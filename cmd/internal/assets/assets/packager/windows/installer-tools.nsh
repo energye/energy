@@ -8,6 +8,7 @@
 !define INFO_InstallerFileName "{{.InstallerFileName}}"
 !define INFO_CompanyName "{{.Info.CompanyName}}"
 !define INFO_ProductName "{{.Info.ProductName}}"
+!define INFO_ShortCutName "{{.NSIS.ShortCutName}}"
 !define INFO_FileVersion "{{.Info.FileVersion}}"
 !define INFO_ProductVersion "{{.Info.ProductVersion}}"
 !define INFO_FileDescription "{{.Info.FileDescription}}"

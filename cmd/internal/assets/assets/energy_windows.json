@@ -19,6 +19,7 @@
   "nsis": {
     "include": [],
     "exclude": ["cache"],
+    "shortCutName": "{{.ProductName}}",
     "icon": "@/resources/icon.ico",
     "unIcon": "@/resources/icon.ico",
     "license": "",

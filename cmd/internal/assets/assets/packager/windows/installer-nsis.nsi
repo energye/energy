@@ -58,8 +58,8 @@ Section
     
     !insertmacro energy.files
 
-    CreateShortcut "$SMPROGRAMS\${INFO_ProductName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
-    CreateShortCut "$DESKTOP\${INFO_ProductName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+    CreateShortcut "$SMPROGRAMS\${INFO_ShortCutName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
+    CreateShortCut "$DESKTOP\${INFO_ShortCutName}.lnk" "$INSTDIR\${PRODUCT_EXECUTABLE}"
 
     !insertmacro energy.compressNsis7z
 
@@ -69,12 +69,12 @@ SectionEnd
 Section "uninstall" 
     !insertmacro energy.setShellContext
 
-    RMDir /r "$AppData\${PRODUCT_EXECUTABLE}" # Remove the WebView2 DataPath
+    RMDir /r "$AppData\${PRODUCT_EXECUTABLE}"
 
     RMDir /r $INSTDIR
 
-    Delete "$SMPROGRAMS\${INFO_ProductName}.lnk"
-    Delete "$DESKTOP\${INFO_ProductName}.lnk"
+    Delete "$SMPROGRAMS\${INFO_ShortCutName}.lnk"
+    Delete "$DESKTOP\${INFO_ShortCutName}.lnk"
 
     !insertmacro energy.deleteUninstaller
 SectionEnd
