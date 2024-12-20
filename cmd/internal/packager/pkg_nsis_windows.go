@@ -148,11 +148,11 @@ func windows(c *command.Config, proj *project.Project) error {
 }
 
 func installFileName(c *command.Config, proj *project.Project) string {
-	installPackage := proj.OutputFilename + "-installer"
+	installPackage := proj.OutputFilename
 	if c.Package.OutFileName != "" {
 		installPackage = c.Package.OutFileName
-		if strings.LastIndex(installPackage, ".") != -1 {
-			installPackage = installPackage[:strings.LastIndex(installPackage, ".")]
+		if !strings.HasSuffix(installPackage, ".exe") {
+			installPackage += ".exe"
 		}
 	}
 	return installPackage
