@@ -126,6 +126,7 @@ func (m *Project) setDefaults() {
 
 type Info struct {
 	Manifest        string  `json:"manifest"`        //应用 manifest
+	Title           string  `json:"title"`           //标题 desktop-name
 	Icon            string  `json:"icon"`            //应用图标
 	CompanyName     string  `json:"companyName"`     //公司名称
 	ProductName     string  `json:"productName"`     //产品名称

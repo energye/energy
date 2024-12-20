@@ -305,7 +305,7 @@ func linuxDesktop(c *command.Config, proj *project.Project, appRoot string) erro
 			startup += ".sh"
 		}
 		data := make(map[string]interface{})
-		data["Name"] = proj.Name
+		data["Name"] = proj.Info.Title
 		data["Exec"] = filepath.Join(optDir, startup)
 		data["Icon"] = filepath.Join(optDir, icon)
 		data["Comments"] = proj.Info.Comments

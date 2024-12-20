@@ -6,6 +6,7 @@
   "outputFilename": "{{.OutputFilename}}",
   "libemfs": "libs",
   "info": {
+    "title": "{{.Name}}",
     "icon": "@/resources/icon.png",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",
