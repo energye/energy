@@ -2,6 +2,7 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/pkgs/assetserve"
@@ -11,8 +12,10 @@ import (
 
 //go:embed resources
 var resources embed.FS
+var config string
 
 func main() {
+	fmt.Println("config:", config)
 	//Global initialization must be called
 	cef.GlobalInit(nil, &resources)
 	//Create an application
