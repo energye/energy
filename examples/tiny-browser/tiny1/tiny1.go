@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
-	"os"
 	"path/filepath"
 )
 
@@ -19,13 +19,14 @@ func main() {
 	cef.GlobalInit(nil, nil)
 	rootCache := filepath.Join(consts.CurrentExecuteDir, "rootcache")
 	app := cef.CreateApplication()
-	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+	app.SetFrameworkDirPath(config.Get().FrameworkPath())
 	app.SetMultiThreadedMessageLoop(false)
 	app.SetExternalMessagePump(false)
 	app.SetDisablePopupBlocking(true)
 	app.SetRootCache(rootCache)
 	app.SetCache(filepath.Join(rootCache, "cache"))
 	app.SetLocale(consts.LANGUAGE_zh_CN)
+	app.SetFrameworkDirPath(config.Get().FrameworkPath())
 	if common.IsLinux() {
 		app.SetDisableZygote(true)
 	}

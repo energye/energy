@@ -20,7 +20,6 @@ var app *cef.TCEFApplication
 // CGO_ENABLED=1
 // {$APPTYPE CONSOLE}
 func main() {
-	//libname.LibName = filepath.Join(os.Getenv("ENERGY_HOME"), "liblcl.dll")
 	cef.GlobalInit(nil, nil)
 	var window = &form.WindowForm{}
 	//创建应用

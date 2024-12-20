@@ -5,12 +5,12 @@ package main
 
 import "C"
 import (
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/types/messages"
 	"github.com/energye/golcl/pkgs/libname"
-	"os"
 	"path/filepath"
 	"runtime"
 
@@ -64,7 +64,7 @@ func initApplication() {
 	Println("initApplication")
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
-	libname.LibName = filepath.Join(os.Getenv("ENERGY_HOME"), "liblcl.dll")
+	libname.LibName = filepath.Join(config.Get().FrameworkPath(), "liblcl.dll")
 	inits.Init(nil, nil)
 	Println("Libenergy.dll initApplication - inits.Init")
 

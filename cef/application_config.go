@@ -46,7 +46,7 @@ func (m *TCEFApplication) SetObjectRootName(name string) {
 func (m *TCEFApplication) initDefaultSettings() {
 	if m.FrameworkDirPath() == "" {
 		// 默认 CEF Framework 目录
-		cfg := config.GetConfig()
+		cfg := config.Get()
 		if cfg != nil {
 			libCef := func() string {
 				if common.IsWindows() {

@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/consts"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
-	"os"
 	"path/filepath"
 	//_ "net/http/pprof"
 )
@@ -19,9 +19,8 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://www.baidu.com"
 	cef.BrowserWindow.Config.Title = "Energy - cookie-manager"
-	envPath := os.Getenv("ENERGY_HOME")
+	envPath := config.Get().FrameworkPath()
 	if envPath == "" {
-		// 未配置 ENERGY_HOME 环境变量， 在当前目录保存cache
 		envPath = consts.ExeDir
 		envPath = filepath.Join(envPath, "cache")
 	} else {

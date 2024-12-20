@@ -36,7 +36,7 @@ type Project struct {
 	Clean          bool    `json:"-"`              // 清空配置重新生成
 	Name           string  `json:"name"`           // 应用名称
 	ProjectPath    string  `json:"projectPath"`    // 项目目录
-	FrameworkPath  string  `json:"frameworkPath"`  // 框架目录 未指定时使用环境变量 ENERGY_HOME
+	FrameworkPath  string  `json:"frameworkPath"`  // CEF 框架目录
 	AssetsDir      string  `json:"assetsDir"`      // 构建配置所在目录 未指定使用田默认内置配置
 	OutputFilename string  `json:"outputFilename"` // 输出安装包文件名
 	HelperFilePath string  `json:"helperFilePath"` // MacOS helper 进程二进制文件目录

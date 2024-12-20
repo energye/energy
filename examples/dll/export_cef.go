@@ -7,6 +7,7 @@ import "C"
 
 import (
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
@@ -14,7 +15,6 @@ import (
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"
 	"github.com/energye/golcl/pkgs/libname"
-	"os"
 	"path/filepath"
 	"runtime"
 )
@@ -29,7 +29,7 @@ func initCEFApplication() {
 	Println("initApplication")
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
-	libname.LibName = filepath.Join(os.Getenv("ENERGY_HOME"), "liblcl.dll")
+	libname.LibName = filepath.Join(config.Get().FrameworkPath(), "liblcl.dll")
 	cef.GlobalInit(nil, nil)
 	Println("Libenergy.dll initCEFApplication - inits.Init process-type: ", process.Args.ProcessType())
 

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
@@ -15,7 +16,6 @@ import (
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"
-	"os"
 	"path/filepath"
 	"time"
 )
@@ -55,7 +55,7 @@ func main() {
 		}
 	} else {
 		// 指定 CEF Framework
-		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+		app.SetFrameworkDirPath(config.Get().FrameworkPath())
 		if common.IsLinux() {
 			app.SetDisableZygote(true)
 		}

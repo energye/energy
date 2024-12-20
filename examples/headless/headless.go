@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/examples/common"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
@@ -35,7 +36,7 @@ func main() {
 	app.SetMultiThreadedMessageLoop(true)
 	app.SetWindowlessRenderingEnabled(true) // 设不设置感觉没什么区别
 	// 指定 CEF Framework
-	app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+	app.SetFrameworkDirPath(config.Get().FrameworkPath())
 	if app.StartMainProcess() {
 		// 结束应用后释放资源
 		api.SetReleaseCallback(func() {

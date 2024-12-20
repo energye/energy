@@ -4,13 +4,13 @@ import (
 	"embed"
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/assserv"
 	. "github.com/energye/energy/v2/examples/tiny-browser/cefclient/browse"
 	"github.com/energye/golcl/lcl/api"
-	"os"
 	"path/filepath"
 )
 
@@ -20,6 +20,8 @@ var (
 
 //go:embed assets
 var assets embed.FS
+
+// 这个示例在 CEF 130 以正常运行
 
 func main() {
 	Assets = assets
@@ -38,7 +40,7 @@ func main() {
 		app.SetOnScheduleMessagePumpWork(nil)
 	} else {
 		// 指定 CEF Framework
-		app.SetFrameworkDirPath(os.Getenv("ENERGY_HOME"))
+		app.SetFrameworkDirPath(config.Get().FrameworkPath())
 		if common.IsLinux() {
 			app.SetDisableZygote(true)
 		}

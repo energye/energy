@@ -56,8 +56,8 @@ func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 				libPath = currentPathLibPath
 			} else {
 				// 开发环境配置目录
-				if config.GetConfig() != nil {
-					libPath = filepath.Join(config.GetConfig().FrameworkPath(), libname.GetDLLName())
+				if config.Get() != nil {
+					libPath = filepath.Join(config.Get().FrameworkPath(), libname.GetDLLName())
 				} else {
 					// 最后尝试相对目录
 					libPath = libname.GetDLLName()

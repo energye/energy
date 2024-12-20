@@ -2,10 +2,10 @@ package main
 
 import (
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/energy/v2/consts"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
-	"os"
 	"path/filepath"
 )
 
@@ -18,7 +18,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://www.ultrasounds.com" // flash 在线测试地址
-	eh := os.Getenv("ENERGY_HOME")
+	eh := config.Get().FrameworkPath()
 	if eh == "" {
 		eh = consts.ExeDir
 	}
@@ -29,7 +29,7 @@ func main() {
 	cefApp.AddCustomCommandLine("ppapi-flash-version", "34.0.0.289")                                      // 版本号和flash dll一样
 	cefApp.AddCustomCommandLine("allow-outdated-plugins", "allow")
 	cefApp.SetOnBeforeChildProcessLaunch(func(commandLine *cef.ICefCommandLine) {
-		eh := os.Getenv("ENERGY_HOME")
+		eh := config.Get().FrameworkPath()
 		if eh == "" {
 			eh = consts.ExeDir
 		}
