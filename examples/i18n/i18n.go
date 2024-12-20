@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/energye/golcl/lcl/api"
 )
 
 //go:embed resources
@@ -35,7 +36,7 @@ func main() {
 	i18n.Switch(consts.LANGUAGE_zh_CN)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/i18n.html"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
+	if common.IsLinux() && api.WidgetUI().IsGTK3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

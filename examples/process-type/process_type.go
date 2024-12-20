@@ -5,6 +5,7 @@ import (
 	"github.com/energye/energy/v2/cef/process"
 	"github.com/energye/energy/v2/common"
 	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/energye/golcl/lcl/api"
 )
 
 func main() {
@@ -29,7 +30,7 @@ func main() {
 	cefApp := cef.NewApplication()
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "https://energy.yanghy.cn"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
+	if common.IsLinux() && api.WidgetUI().IsGTK3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

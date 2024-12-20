@@ -9,6 +9,7 @@ import (
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 )
 
 //go:embed resources
@@ -22,7 +23,7 @@ func main() {
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/key-event.html"
 	cef.BrowserWindow.Config.Title = "Energy - Key Event"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
+	if common.IsLinux() && api.WidgetUI().IsGTK3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"

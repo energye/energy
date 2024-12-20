@@ -12,6 +12,7 @@ import (
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/energy/v2/types"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	lclTypes "github.com/energye/golcl/lcl/types"
 	"strings"
 )
@@ -29,7 +30,7 @@ func main() {
 	//cefApp.EnableVFWindow(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
-	if common.IsLinux() && cefApp.IsUIGtk3() {
+	if common.IsLinux() && api.WidgetUI().IsGTK3() {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.png"
 	} else {
 		cef.BrowserWindow.Config.IconFS = "resources/icon.ico"
