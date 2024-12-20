@@ -19,6 +19,7 @@
   "nsis": {
     "include": [],
     "exclude": ["cache"],
+    "shortCutName": "demo-action 示例",
     "icon": "@/resources/icon.ico",
     "unIcon": "@/resources/icon.ico",
     "license": "",
