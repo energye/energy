@@ -39,7 +39,6 @@ func MainWindow() *ViewsFramework {
 		window.homePage = "http://localhost:22022"
 		window.Create()
 		window.window.CreateTopLevelWindow()
-		lcl.Application.Initialize()
 		app.RunMessageLoop()
 	}
 	return window
@@ -59,6 +58,7 @@ func (m *ViewsFramework) Create() {
 	//m.browserView.SetPreferAccelerators(true)
 	m.window = cef.WindowComponentRef.New(m)
 	m.window.SetID(ID_WINDOW)
+	m.window.SetTitle("energy cefclient")
 	m.chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
 	})
 	m.chromium.SetOnAutoResize(func(sender lcl.IObject, browser *cef.ICefBrowser, newSize *cef.TCefSize) bool {

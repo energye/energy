@@ -10,6 +10,7 @@ import (
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/examples/tiny-browser/cefclient/assserv"
 	. "github.com/energye/energy/v2/examples/tiny-browser/cefclient/browse"
+	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"path/filepath"
 )
@@ -73,6 +74,7 @@ func main() {
 		fmt.Println("start sub:", startSub)
 		app.Free()
 	} else {
+		lcl.Application.Initialize()
 		startMain := app.StartMainProcess()
 		fmt.Println("start main:", startMain)
 		if startMain {

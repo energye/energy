@@ -1,7 +1,7 @@
 {
   "name": "demo-actions",
   "projectPath": "@",
-  "frameworkPath": "$ENERGY_HOME",
+  "frameworkPath": "",
   "assetsDir": "assets",
   "outputFilename": "demo-actions",
   "helperFilePath": "",
