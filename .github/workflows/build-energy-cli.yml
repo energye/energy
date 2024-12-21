@@ -30,4 +30,5 @@ jobs:
         ./build.bat
         ./compress-zip.bat
         ls
+        pwd
       shell: bash
