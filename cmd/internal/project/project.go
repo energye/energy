@@ -190,20 +190,20 @@ type DPKG struct {
 }
 
 type PList struct {
-	Include                    []string `json:"include"`                    //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
-	Exclude                    []string `json:"exclude"`                    //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
-	Icon                       string   `json:"icon"`                       //应用图标, png 或 icns, 如果指定png则生成icns, 如果指定icns则直接使用
-	BundleName                 string   `json:"bundleName"`                 //Application Nmee
-	CompanyName                string   `json:"companyName"`                //公司名称
-	ProductName                string   `json:"productName"`                //产品名称
-	FileVersion                string   `json:"FileVersion"`                //文件版本
-	Locals                     []string `json:"locals"`                     //语言
-	CFBundleVersion            string   `json:"cfBundleVersion"`            //内部版本
-	CFBundleShortVersionString string   `json:"cfBundleShortVersionString"` //发布版本号版本
-	Copyright                  *string  `json:"copyright"`                  //版权
-	Comments                   *string  `json:"comments"`                   //exe详情描述
-	LSUIElement                bool     `json:"-"`                          //UI
-	Pkgbuild                   bool     `json:"-"`                          // 生成pkg安装包
+	Include                  []string `json:"include"`                  //打包资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Exclude                  []string `json:"exclude"`                  //打包排除资源目录、或文件 ["/to/path/file.txt", "/to/dir/*.*", "/to/dir"]
+	Icon                     string   `json:"icon"`                     //应用图标, png 或 icns, 如果指定png则生成icns, 如果指定icns则直接使用
+	BundleName               string   `json:"bundleName"`               //Application bundleName
+	BundleDisplayName        string   `json:"bundleDisplayName"`        //Application bundleDisplayName
+	BundleIdentifier         string   `json:"bundleIdentifier"`         //Application bsundleIdentifier
+	FileVersion              string   `json:"fileVersion"`              //文件版本
+	Locals                   []string `json:"locals"`                   //语言
+	BundleVersion            string   `json:"bundleVersion"`            //内部版本
+	BundleShortVersionString string   `json:"bundleShortVersionString"` //发布版本号版本
+	Copyright                *string  `json:"copyright"`                //版权
+	Comments                 *string  `json:"comments"`                 //exe详情描述
+	LSUIElement              bool     `json:"-"`                        //UI
+	Pkgbuild                 bool     `json:"-"`                        // 生成pkg安装包
 }
 
 type Author struct {

@@ -240,8 +240,8 @@ func pkgbuild(c *command.Config, proj *project.Project, appRoot string) error {
 	app := fmt.Sprintf("%s.app", getAppName(c, proj))
 	pkg := fmt.Sprintf("%s.pkg", getAppName(c, proj))
 	var args = []string{"--root", app,
-		"--identifier", fmt.Sprintf("com.%s.%s", proj.PList.CompanyName, proj.PList.ProductName),
-		"--version", proj.PList.CFBundleVersion,
+		"--identifier", proj.PList.BundleIdentifier,
+		"--version", proj.PList.BundleVersion,
 		"--install-location", fmt.Sprintf("/Applications/%s", app), pkg}
 	cmd.Command("pkgbuild", args...)
 	cmd.Close()

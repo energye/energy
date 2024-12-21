@@ -5,16 +5,18 @@
         <string>{{.Executable}}</string>
         <key>CFBundleName</key>
         <string>{{.PList.BundleName}}</string>
+        <key>CFBundleDisplayName</key>
+        <string>{{.PList.BundleDisplayName}}</string>
         <key>CFBundleLocalizations</key>
         <array>{{range $i,$value := .PList.Locals }}
             <string>{{$value}}</string>{{end}}
         </array>
         <key>CFBundleIdentifier</key>
-        <string>com.{{.PList.CompanyName}}.{{.PList.ProductName}}</string>
+        <string>{{.PList.BundleIdentifier}}</string>
         <key>CFBundleVersion</key>
-        <string>{{.PList.CFBundleVersion}}</string>
+        <string>{{.PList.BundleVersion}}</string>
         <key>CFBundleShortVersionString</key>
-        <string>{{.PList.CFBundleShortVersionString}}</string>
+        <string>{{.PList.BundleShortVersionString}}</string>
         <key>CFBundleGetInfoString</key>
         <string>{{.PList.Comments}}</string>
         <key>CFBundleIconFile</key>
