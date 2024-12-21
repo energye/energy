@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"path/filepath"
 	"strconv"
@@ -39,6 +40,7 @@ type TModelItem struct {
 
 func BaseConfig() (*TConfig, error) {
 	if configInstance == nil {
+		term.Section.Println("Getting the latest version information from remote service...")
 		configInstance = new(TConfig)
 		lv, err := LatestVersion()
 		if err != nil {
