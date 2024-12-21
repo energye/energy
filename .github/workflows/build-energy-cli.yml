@@ -22,6 +22,11 @@ jobs:
       with:
         go-version: '1.20'
 
+    - name: Config Base Environment  # 配置基础环境
+      run: |
+        mkdir D:/clis
+      shell: bash
+
     - name: Build CLI
       run: |
         cd ./cmd/energy/md5
@@ -29,6 +34,18 @@ jobs:
         cd ../
         ./build.bat
         ./compress-zip.bat
-        ls
-        pwd
+        
+        mv energy-windows32.zip D:/clis
+        mv energy-windows64.zip D:/clis
+        mv energy-macosx64.zip D:/clis
+        mv energy-macosarm64.zip D:/clis
+        mv energy-linux32.zip D:/clis
+        mv energy-linux64.zip D:/clis
+        mv energy-linuxarm.zip D:/clis
+        mv energy-linuxarm64.zip D:/clis
+      shell: bash
+
+    - name: Build CLI END
+      run: |
+        ls -l D:/clis
       shell: bash

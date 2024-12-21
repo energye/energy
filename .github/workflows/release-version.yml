@@ -2,10 +2,9 @@ name: Release Version
 
 on:
   workflow_dispatch:
-#  push:
-#    branches: [ "main" ]
-#    tags:
-#      - 'v*.*.*'
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   windows-64:
