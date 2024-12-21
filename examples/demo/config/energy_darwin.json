@@ -8,14 +8,14 @@
   "plist": {
     "icon": "@/resources/icon.png",
     "bundleName": "demo-app-示例",
-    "companyName": "energy",
-    "productName": "app-id",
+    "bundleDisplayName": "energy-demo-示例",
+    "bundleIdentifier": "com.energye.energy",
     "locals": [
       "zh_CN",
       "en"
     ],
-    "cfBundleVersion": "1.0.0",
-    "cfBundleShortVersionString": "1.0.0",
+    "bundleVersion": "1.0.0",
+    "bundleShortVersionString": "1.0.0",
     "copyright": "Copyright.....",
     "comments": "Built using ENERGY (https://github.com/energye/energy)",
     "include": [],
