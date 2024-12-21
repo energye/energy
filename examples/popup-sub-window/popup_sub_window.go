@@ -7,6 +7,7 @@ import (
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/cef/winapi"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/consts"
 	_ "github.com/energye/energy/v2/examples/syso"
 	"github.com/energye/energy/v2/logger"
 	"github.com/energye/energy/v2/pkgs/assetserve"
@@ -26,7 +27,10 @@ func main() {
 	//全局初始化 每个应用都必须调用的
 	cef.GlobalInit(nil, nil)
 	//创建应用
-	cefApp := cef.NewApplication()
+	app := cef.NewApplication()
+	if common.IsDarwin() {
+		app.SetUseMockKeyChain(true)
+	}
 	//cefApp.EnableVFWindow(true)
 	//指定一个URL地址，或本地html文件目录
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -55,7 +59,7 @@ func main() {
 						btn.SetOnClick(func(sender lcl.IObject) {
 							lcl.ShowMessage("新窗口的按钮事件提示")
 						})
-						newForm.ShowModal()
+						newForm.Show()
 					})
 				}
 			})
@@ -65,11 +69,14 @@ func main() {
 						wp := cef.NewWindowProperty()
 						wp.Url = url
 						wp.Title = title
+						wp.EnableHideCaption = true
 						wp.ShowInTaskBar = lclTypes.StNever
 						browserWindow = cef.NewLCLBrowserWindow(nil, wp, nil)
 						browserWindow.SetWidth(width)
 						browserWindow.SetHeight(height)
-						browserWindow.HideTitle()
+						// 必须设置为子窗口
+						browserWindow.SetWindowType(consts.WT_POPUP_SUB_BROWSER)
+						//browserWindow.HideTitle()
 						browserWindow.EnableAllDefaultEvent()
 						// 置顶控制
 						//browserWindow.SetFormStyle(lclTypes.FsSystemStayOnTop)
@@ -147,5 +154,5 @@ func main() {
 		go server.StartHttpServer()
 	})
 	//运行应用
-	cef.Run(cefApp)
+	cef.Run(app)
 }
