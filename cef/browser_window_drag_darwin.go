@@ -83,6 +83,9 @@ func CheckDraggableRegions(nsWindow unsafe.Pointer, mouseX, mouseY int32) {
 func currentWindow(windowHandle lcl.NSWindow) *LCLBrowserWindow {
 	var window *LCLBrowserWindow
 	for _, win := range BrowserWindow.GetWindowInfos() {
+		if win.IsClosing() {
+			break
+		}
 		windowPtr := win.AsLCLBrowserWindow().BrowserWindow().TForm.PlatformWindow()
 		if windowPtr == windowHandle {
 			window = win.AsLCLBrowserWindow().BrowserWindow()

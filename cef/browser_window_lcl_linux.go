@@ -20,6 +20,10 @@ import (
 	"github.com/energye/golcl/lcl/types"
 )
 
+func (m *LCLBrowserWindow) initDragEventListeners() {
+	// no impl
+}
+
 func (m *LCLBrowserWindow) frameless() {
 	// no impl
 }

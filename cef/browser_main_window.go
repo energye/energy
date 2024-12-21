@@ -120,6 +120,8 @@ func (m *lclBrowserWindow) OnFormCreate(sender lcl.IObject) {
 		BrowserWindow.Config.browserWindowOnEventCallback(BrowserWindow.browserEvent, m)
 	}
 	m.SetProperty()
+	// 初始化拖拽监听事件
+	m.initDragEventListeners()
 
 	//m.PlatformWindow().Init()
 
@@ -185,7 +187,7 @@ func (m *browserWindow) GetWindowInfos() map[int32]IBrowserWindow {
 // PutWindowInfo 创建一个窗口这后我们需要添加到windowInfo中维护列表中
 // Chromium 回调函数 SetOnBeforeBrowser 内设置
 func (m *browserWindow) PutWindowInfo(browser *ICefBrowser, windowInfo IBrowserWindow) {
-	m.windowInfo[browser.BrowserId()] = windowInfo
+	m.windowInfo[browser.Identifier()] = windowInfo
 }
 
 // removeWindowInfo 窗口关闭会从windowInfo移除

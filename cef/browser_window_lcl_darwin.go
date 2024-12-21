@@ -41,7 +41,7 @@ void setWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
 	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
 }
 
-void init() {
+void initDragEventListeners() {
 	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
 		NSWindow* eventWindow = [event window];
 		if (eventWindow == nil) {
@@ -120,6 +120,10 @@ func (m *LCLBrowserWindow) PlatformWindow() *PlatformWindow {
 	return &PlatformWindow{NSWindow: m.TForm.PlatformWindow()}
 }
 
+func (m *LCLBrowserWindow) initDragEventListeners() {
+	C.initDragEventListeners()
+}
+
 func (m *LCLBrowserWindow) frameless() {
 	nsWindow := m.PlatformWindow()
 	nsWindow.SetTitleBarAppearsTransparent(true)
@@ -132,8 +136,6 @@ func (m *LCLBrowserWindow) frameless() {
 	nsWindow.SetStyleMask(mask)
 
 	C.setFrameless(nsWindow.Instance())
-
-	C.init()
 }
 
 func (m *LCLBrowserWindow) SetRoundRectRgn(rgn int) {

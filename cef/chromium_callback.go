@@ -67,7 +67,7 @@ func chromiumOnBeforeBrowser(window IBrowserWindow, browser *ICefBrowser, frame 
 	//localLoadRes.getSchemeHandlerFactory(window, browser) // TODO
 }
 
-// chromiumOnBeforeClose - chromium 关闭之前
+// chromium 关闭之前
 func chromiumOnBeforeClose(m IBrowserWindow, browser *ICefBrowser) {
 	// 移除当前关闭所在的集合窗口维护
 	BrowserWindow.removeWindowInfo(browser.Identifier())
