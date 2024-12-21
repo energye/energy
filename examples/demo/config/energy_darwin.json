@@ -7,9 +7,9 @@
   "helperFilePath": "",
   "plist": {
     "icon": "@/resources/icon.png",
-    "bundleName": "demo-app",
-    "companyName": "demo-actions",
-    "productName": "demo-actions",
+    "bundleName": "demo-app-示例",
+    "companyName": "energy",
+    "productName": "app-id",
     "locals": [
       "zh_CN",
       "en"
