@@ -38,6 +38,7 @@ func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	if common.IsDarwin() {
 		macapp.MacApp.IsCEF(true)
 		macapp.MacApp.SetEnergyEnv("dev")
+		macapp.MacApp.SetBaseCefFrameworksDir(config.Get().FrameworkPath())
 	}
 	// LCL 初始化时回调， 返回 lib 地址
 	api.SetLoadLibCallback(func() (liblcl dllimports.DLL, err error) {
