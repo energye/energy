@@ -35,14 +35,7 @@ jobs:
           ./build.bat
           ./compress-zip.bat
           
-          mv energy-windows32.zip D:/clis
-          mv energy-windows64.zip D:/clis
-          mv energy-macosx64.zip D:/clis
-          mv energy-macosarm64.zip D:/clis
-          mv energy-linux32.zip D:/clis
-          mv energy-linux64.zip D:/clis
-          mv energy-linuxarm.zip D:/clis
-          mv energy-linuxarm64.zip D:/clis
+          mv energy-*.zip D:/clis
         shell: bash
 
       - name: Build CLI END
