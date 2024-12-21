@@ -44,7 +44,6 @@ jobs:
           mv energy-linux64.zip D:/clis
           mv energy-linuxarm.zip D:/clis
           mv energy-linuxarm64.zip D:/clis
-          
         shell: bash
 
       - name: Build CLI END
