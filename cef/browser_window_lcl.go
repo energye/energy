@@ -989,6 +989,10 @@ func (m *LCLBrowserWindow) CloseBrowserWindow() {
 			logger.Debug("CloseBrowserWindow WindowType:", m.WindowType())
 			//main window close
 			if m.WindowType() == consts.WT_MAIN_BROWSER {
+				if !m.Visible() {
+					// 窗口关闭时，如果隐藏，先显示再调用关闭, 以让消息正确传递
+					m.Show()
+				}
 				m.Close()
 			} else {
 				//sub window close

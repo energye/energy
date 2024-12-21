@@ -50,6 +50,9 @@ func main() {
 			lclWindow.SetVisible(!isShow)
 		})
 		tray := newTray.AsLCLTray()
+		tray.AddMenuItem("显示", func(sender lcl.IObject) {
+			window.Show()
+		})
 		tray.AddMenuItem("退出", func(sender lcl.IObject) {
 			isTrayClose = true
 			window.CloseBrowserWindow()
@@ -58,9 +61,11 @@ func main() {
 		lclWindow.SetOnCloseQuery(func(sender lcl.IObject, canClose *bool) bool {
 			fmt.Println("关闭主窗口")
 			if isTrayClose {
+				fmt.Println("从托盘关闭窗口")
 				// 托盘点击退出，关闭主窗口，退出应用
 				return false
 			} else {
+				fmt.Println("其它关闭方式都给窗口隐藏掉")
 				// 点击窗口关闭按钮，不关闭它，把主窗口隐藏掉
 				*canClose = false
 				window.Hide()
