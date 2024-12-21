@@ -91,6 +91,13 @@ func (m *ViewsFramework) Create() {
 			*result = minimumWindowSize
 		}
 	})
+	m.window.SetOnGetLinuxWindowProperties(func(window *cef.ICefWindow, properties *cef.TLinuxWindowProperties, result *bool) {
+		fmt.Println("OnGetLinuxWindowProperties", *result)
+		//properties.WmClassName = "energy-cefclient"
+		properties.WmClassClass = "energy-cefclient"
+		//properties.WmRoleName = "energy-cefclient"
+		//*result = true
+	})
 	m.window.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		//m.window.SetBackgroundColor(cef.CefColorSetARGB(255, 33, 34, 38))
 		fmt.Println("OnGetPreferredSize")
@@ -182,6 +189,7 @@ func (m *ViewsFramework) Create() {
 		m.window.SetWindowIcon(LoadImage("app-icon.png"))
 		m.window.SetWindowAppIcon(LoadImage("app-icon.png"))
 		m.window.SetTitle("Go ENERGY Client")
+		cef.SetWMClass("Go ENERGY Client", "Go ENERGY Client", m.window.WindowHandle().ToPtr())
 
 		m.titleBar = NewTitleBar(m.window) // 顶部标题栏
 		m.menuBar = NewMenuBar(m.window)   // 顶部菜单栏
@@ -192,12 +200,12 @@ func (m *ViewsFramework) Create() {
 			//regions = append(regions, cef.TCefDraggableRegion{Bounds: cef.TCefRect{X: 130, Y: 0, Width: 100, Height: 30}})
 			//m.window.SetDraggableRegions(regions)
 			fmt.Println("ChromeToolbar:", m.browserView.GetChromeToolbar().IsValid())
+			fmt.Println("WindowHandle:", m.window.WindowHandle())
 			// 允许|browser_view_|增长并填充任何剩余空间。
 			windowLayout := m.window.SetToBoxLayout(cef.TCefBoxLayoutSettings{
 				BetweenChildSpacing: 5,
 				CrossAxisAlignment:  consts.CEF_AXIS_ALIGNMENT_STRETCH,
 			})
-
 			// 菜单栏, 创建菜单，并添加到菜单栏中
 			m.menuBar.CreateFileMenuItems()
 			m.menuBar.CreateTestMenuItems()
