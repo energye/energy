@@ -12,11 +12,18 @@ import (
 // 主要给linux提供的，推荐linux中使用, 非linux 使用 lcl 实现的它更好用
 func SYSTray(browserWindow cef.IBrowserWindow) {
 	sysTray := browserWindow.NewSysTray()
+	var (
+		icon1 string
+		icon2 string
+	)
 	if common.IsLinux() {
-		sysTray.SetIconFS("resources/icon.png")
+		icon1 = "resources/icon.png"
+		icon2 = "resources/icon_red.png"
 	} else {
-		sysTray.SetIconFS("resources/icon.ico")
+		icon1 = "resources/icon.ico"
+		icon2 = "resources/icon_red.ico"
 	}
+	sysTray.SetIconFS(icon1)
 	sysTray.SetHint("中文hint\n换行中文")
 	sysTray.SetOnClick(func() {
 		fmt.Println("SetOnClick")
@@ -36,7 +43,7 @@ func SYSTray(browserWindow cef.IBrowserWindow) {
 	menuItem := tray.AddMenuItem("1级菜单1", func() {
 		fmt.Println("1级菜单1")
 	})
-	menuItem.SetIconFS("resources/icon.ico")
+	menuItem.SetIconFS(icon1)
 	tray.AddSeparator()
 	item := tray.AddMenuItem("1级菜单2")
 	item.AddSubMenu("2级子菜单1")
@@ -60,15 +67,15 @@ func SYSTray(browserWindow cef.IBrowserWindow) {
 			b = !b
 			if b {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				sysTray.SetIconFS("resources/icon.ico")
-				menuItem.SetIconFS("resources/icon.ico")
+				sysTray.SetIconFS(icon1)
+				menuItem.SetIconFS(icon1)
 				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				enable.Enable()
 				check.Check()
 			} else {
 				sysTray.SetHint(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
-				sysTray.SetIconFS("resources/icon_red.ico")
-				menuItem.SetIconFS("resources/icon_red.ico")
+				sysTray.SetIconFS(icon2)
+				menuItem.SetIconFS(icon2)
 				enable.SetLabel(fmt.Sprintf("%d\n%v", time.Now().Second(), b))
 				enable.Disable()
 				check.Uncheck()
