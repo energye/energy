@@ -51,9 +51,8 @@ const (
 )
 
 var (
-	internalObjectRootName = "energy"         // GO 和 V8Value 绑定根对象名
-	ipcRender              *ipcRenderProcess  // 渲染进程 IPC
-	ipcBrowser             *ipcBrowserProcess // 主进程 IPC
+	ipcRender  *ipcRenderProcess  // 渲染进程 IPC
+	ipcBrowser *ipcBrowserProcess // 主进程 IPC
 )
 
 // ipc.emit 处理器

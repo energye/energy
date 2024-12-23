@@ -18,7 +18,6 @@ import (
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/energy/emfs"
-	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/api/dllimports"
@@ -70,6 +69,4 @@ func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 		return
 	})
 	emfs.SetEMFS(libs, resources)
-	// go lcl init
-	inits.InitAll()
 }

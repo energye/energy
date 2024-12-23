@@ -15,16 +15,15 @@ package initialize
 
 import (
 	"github.com/energye/energy/v2/cef/config"
+	"github.com/energye/energy/v2/cef/internal/initialize/macapp"
 	"github.com/energye/energy/v2/common"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/golcl/energy/emfs"
-	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/api/dllimports"
 	"github.com/energye/golcl/pkgs/libname"
-	"github.com/energye/golcl/pkgs/macapp"
 	"path"
 	"path/filepath"
 )
@@ -36,9 +35,13 @@ import (
 // 获得一个完整目录 [root]+energy+[framework]
 func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	if common.IsDarwin() {
-		macapp.MacApp.IsCEF(true)
-		macapp.MacApp.SetEnergyEnv("dev")
-		macapp.MacApp.SetBaseCefFrameworksDir(config.Get().FrameworkPath())
+		cfg := config.Get()
+		// CEF 版本大于 109 时，helper 进程使用 ln 软链接执行文件
+		// 109 及以下版本 helper 进程 copy 执行文件, 不然启动 helper 进程失败
+		macapp.MacApp.IsLinked(cfg.Version() > 109)
+		macapp.MacApp.SetBaseCefFrameworksDir(cfg.FrameworkPath())
+		// 开发模式 自动生成 xxx.app
+		macapp.MacApp.Init()
 	}
 	// LCL 初始化时回调， 返回 lib 地址
 	api.SetLoadLibCallback(func() (liblcl dllimports.DLL, err error) {
@@ -90,6 +93,4 @@ func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 		return
 	})
 	emfs.SetEMFS(libs, resources)
-	// go lcl init
-	inits.InitAll()
 }

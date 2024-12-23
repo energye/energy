@@ -28,20 +28,6 @@ import (
 	"unsafe"
 )
 
-// SetObjectRootName
-//
-// GO绑定JS对象类型所属对象名定义
-func (m *TCEFApplication) SetObjectRootName(name string) {
-	if name == "" {
-		//默认值
-		name = internalObjectRootName
-	} else {
-		//自定义
-		internalObjectRootName = name
-	}
-	//imports.Proc(CEFV8ValueRef_SetObjectRootName).Call(api.PascalStr(internalObjectRootName))
-}
-
 // initDefaultSettings 初始 energy 默认设置
 func (m *TCEFApplication) initDefaultSettings() {
 	if m.FrameworkDirPath() == "" {
