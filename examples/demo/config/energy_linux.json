@@ -8,7 +8,7 @@
   "info": {
     "title": "energy-demo-示例",
     "wmClass": "energy.app",
-    "icon": "@/resources/icon.png",
+    "icon": "@/resources/demoicon.png",
     "companyName": "demo-actions",
     "productName": "demo-actions",
     "productVersion": "1.0.0",

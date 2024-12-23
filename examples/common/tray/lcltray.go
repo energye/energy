@@ -3,6 +3,7 @@ package tray
 import (
 	"fmt"
 	"github.com/energye/energy/v2/cef"
+	"github.com/energye/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )
@@ -13,10 +14,22 @@ import (
 func LCLTray(browserWindow cef.IBrowserWindow) {
 	window := browserWindow.AsLCLBrowserWindow().BrowserWindow()
 	//托盘 windows linux macos 系统托盘
+	var (
+		icon1 string
+		icon2 string
+	)
+	if common.IsLinux() || common.IsDarwin() {
+		icon1 = "resources/icon.png"
+		icon2 = "resources/icon_red.png"
+	} else {
+		icon1 = "resources/icon.ico"
+		icon2 = "resources/icon_red.ico"
+	}
+
 	newTray := window.NewTray()
 	newTray.SetTitle("任务管理器里显示的标题")
 	newTray.SetHint("这里是文字\n文字啊")
-	newTray.SetIconFS("resources/icon.png")
+	newTray.SetIconFS(icon1)
 	// 托盘图标事件
 	newTray.SetOnClick(func() {
 		fmt.Println("click")
@@ -137,9 +150,9 @@ func LCLTray(browserWindow cef.IBrowserWindow) {
 			return
 		}
 		if trayICON {
-			newTray.SetIconFS("resources/icon.png")
+			newTray.SetIconFS(icon1)
 		} else {
-			newTray.SetIconFS("resources/icon_red.png")
+			newTray.SetIconFS(icon2)
 		}
 		trayICON = !trayICON
 		fmt.Println("timer", trayICON)

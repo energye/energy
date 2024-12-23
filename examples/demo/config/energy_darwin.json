@@ -6,7 +6,7 @@
   "outputFilename": "demo-actions",
   "helperFilePath": "",
   "plist": {
-    "icon": "@/resources/icon.png",
+    "icon": "@/resources/demoicon.png",
     "bundleName": "demo-app-示例",
     "bundleDisplayName": "energy-demo-示例",
     "bundleIdentifier": "com.energy.app",

@@ -2,11 +2,14 @@ package main
 
 import (
 	"embed"
+	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
+	"github.com/energye/energy/v2/examples/common/tray"
 	"github.com/energye/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
+	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl/version"
 )
 
@@ -22,6 +25,7 @@ func main() {
 	if common.IsDarwin() {
 		app.SetUseMockKeyChain(true)
 	}
+	fmt.Println("WidgetUI:", api.WidgetUI(), "ChromeVersion:", app.ChromeVersion(), "LibCefVersion:", app.LibCefVersion())
 	//app.SetSingleProcess(true)
 	//http's url
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
@@ -44,6 +48,11 @@ func main() {
 
 // run main process and main thread
 func browserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+	if window.IsLCL() {
+		tray.LCLTray(window)
+	} else {
+		tray.SYSTray(window)
+	}
 	event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, window cef.IBrowserWindow) bool {
 		if window.IsViewsFramework() {
 			// 设置 WM 以正确显示应用名
