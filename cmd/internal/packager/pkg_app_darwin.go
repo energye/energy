@@ -397,7 +397,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 	tmpWorkDir := filepath.Join(buildOutDir, "tmp")
 	os.Remove(tmpWorkDir)
 	if iconExt == ".png" {
-		term.Logger.Info("\tcreate icnns")
+		term.Logger.Info("\tCreate icons")
 		src, err := os.Open(proj.PList.Icon)
 		if err != nil {
 			return err
@@ -409,6 +409,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 			}
 		}
 		defer closeSrc()
+		// 图标名
 		_, icnsName := filepath.Split(proj.PList.Icon)
 		os.MkdirAll(tmpWorkDir, fs.ModePerm)
 
@@ -422,6 +423,7 @@ func generateICNS(proj *project.Project, appRoot string) error {
 		io.Copy(dst, src)
 		dst.Close()
 		closeSrc()
+		// 删除扩展名 .png
 		name := icnsName[:len(icnsName)-4]
 		// 生成图标
 		cmd := cmd.NewCMD()
@@ -433,14 +435,16 @@ func generateICNS(proj *project.Project, appRoot string) error {
 			}
 		}
 		for _, arg := range sipsCmds {
-			cmd.Command("sips", strings.Split(fmt.Sprintf(arg, icnsName, name), " ")...)
+			cmd.Command("sips", strings.Split(fmt.Sprintf(arg, icnsName, "icon"), " ")...)
 		}
-		cmd.Command("iconutil", strings.Split(fmt.Sprintf("-c icns icons.iconset -o %s.icns", name), " ")...)
+		icnsOutName := fmt.Sprintf("%s.icns", name)
+		icnsArgs := []string{"-c", "icns", "-o", icnsOutName, "icons.iconset"}
+		cmd.Command("iconutil", icnsArgs...)
 		cmd.Close()
 		if err != nil {
 			return err
 		}
-		proj.PList.Icon = filepath.Join(tmpWorkDir, name+".icns")
+		proj.PList.Icon = filepath.Join(tmpWorkDir, icnsOutName)
 	}
 	iconExt = strings.ToLower(filepath.Ext(proj.PList.Icon))
 	if iconExt == ".icns" {
