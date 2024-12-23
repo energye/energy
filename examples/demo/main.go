@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"github.com/energye/energy/v2/cef"
 	"github.com/energye/energy/v2/cef/ipc"
 	"github.com/energye/energy/v2/common"
@@ -16,7 +15,6 @@ var resources embed.FS
 var config string
 
 func main() {
-	fmt.Println("config:", config)
 	//Global initialization must be called
 	cef.GlobalInit(nil, &resources)
 	//Create an application
@@ -24,6 +22,7 @@ func main() {
 	if common.IsDarwin() {
 		app.SetUseMockKeyChain(true)
 	}
+	//app.SetSingleProcess(true)
 	//http's url
 	cef.BrowserWindow.Config.Url = "http://localhost:22022/index.html"
 	cef.BrowserWindow.Config.Title = "demo actions 示例"
@@ -45,6 +44,13 @@ func main() {
 
 // run main process and main thread
 func browserInit(event *cef.BrowserEvent, window cef.IBrowserWindow) {
+	event.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser, window cef.IBrowserWindow) bool {
+		if window.IsViewsFramework() {
+			// 设置 WM 以正确显示应用名
+			window.AsViewsFrameworkBrowserWindow().WindowComponent().SetLinuxWindowProperties("energy.app", "energy.app")
+		}
+		return false
+	})
 	// index.html ipc.emit("count", [count++])
 	ipc.On("count", func(value int) {
 		println("count", value)

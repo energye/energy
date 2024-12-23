@@ -7,6 +7,7 @@
   "libemfs": "libs",
   "info": {
     "title": "{{.Name}}",
+    "wmClass": "{{.Name}}",
     "icon": "@/resources/icon.png",
     "companyName": "{{.CompanyName}}",
     "productName": "{{.ProductName}}",

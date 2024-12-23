@@ -306,6 +306,7 @@ func linuxDesktop(c *command.Config, proj *project.Project, appRoot string) erro
 		}
 		data := make(map[string]interface{})
 		data["Name"] = proj.Info.Title
+		data["WMClass"] = proj.Info.WMClass
 		data["Exec"] = filepath.Join(optDir, startup)
 		data["Icon"] = filepath.Join(optDir, icon)
 		data["Comments"] = proj.Info.Comments

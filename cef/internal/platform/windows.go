@@ -8,10 +8,10 @@
 //
 //----------------------------------------
 
-//go:build darwin
-// +build darwin
+//go:build windows
+// +build windows
 
-package cef
+package platform
 
 func SetWMClass(className, classClass string, windowHandle uintptr) {
 

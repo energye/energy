@@ -13,6 +13,7 @@ package cef
 import (
 	"errors"
 	"github.com/energye/energy/v2/cef/internal/def"
+	"github.com/energye/energy/v2/cef/internal/platform"
 	"github.com/energye/energy/v2/common/imports"
 	"github.com/energye/energy/v2/consts"
 	"github.com/energye/energy/v2/types"
@@ -614,6 +615,16 @@ func (m *TCEFWindowComponent) RuntimeStyle() consts.TCefRuntimeStyle {
 	}
 	r1, _, _ := imports.Proc(def.CEFWindowComponent_RuntimeStyle).Call(m.Instance())
 	return consts.TCefRuntimeStyle(r1)
+}
+
+// SetLinuxWindowProperties Linux-specific window properties for correctly handling by window managers.
+// Main window's WM_CLASS_CLASS in X11
+// Main window's WM_CLASS_NAME in X11
+func (m *TCEFWindowComponent) SetLinuxWindowProperties(wmClassName, wmClassClass string) {
+	handle := uintptr(m.WindowHandle())
+	if handle != 0 {
+		platform.SetWMClass(wmClassName, wmClassClass, handle)
+	}
 }
 
 // Called when |window| is created.

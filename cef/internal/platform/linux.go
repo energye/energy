@@ -11,7 +11,7 @@
 //go:build linux
 // +build linux
 
-package cef
+package platform
 
 /*
 #cgo linux pkg-config: x11
@@ -27,7 +27,9 @@ void setWMClass(Display *display, Window win, const char *res_name, const char *
 }
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // linux window properties
 func SetWMClass(className, classClass string, windowHandle uintptr) {
@@ -37,9 +39,18 @@ func SetWMClass(className, classClass string, windowHandle uintptr) {
 	}
 	defer C.XCloseDisplay(xDisplay)
 	xWindow := C.Window(windowHandle)
+
 	classNamePtr := C.CString(className)
 	classClassPtr := C.CString(classClass)
+
+	//classHint := C.XClassHint{
+	//	res_name:  classNamePtr,
+	//	res_class: classClassPtr,
+	//}
+	//C.XSetClassHint(xDisplay, xWindow, &classHint)
+
 	C.setWMClass(xDisplay, xWindow, classNamePtr, classClassPtr)
+
 	C.free(unsafe.Pointer(classNamePtr))
 	C.free(unsafe.Pointer(classClassPtr))
 }

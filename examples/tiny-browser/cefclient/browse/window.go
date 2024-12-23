@@ -93,10 +93,10 @@ func (m *ViewsFramework) Create() {
 	})
 	m.window.SetOnGetLinuxWindowProperties(func(window *cef.ICefWindow, properties *cef.TLinuxWindowProperties, result *bool) {
 		fmt.Println("OnGetLinuxWindowProperties", *result)
-		//properties.WmClassName = "energy-cefclient"
+		properties.WmClassName = "energy-cefclient"
 		properties.WmClassClass = "energy-cefclient"
-		//properties.WmRoleName = "energy-cefclient"
-		//*result = true
+		properties.WmRoleName = "energy-cefclient"
+		*result = true
 	})
 	m.window.SetOnGetPreferredSize(func(view *cef.ICefView, result *cef.TCefSize) {
 		//m.window.SetBackgroundColor(cef.CefColorSetARGB(255, 33, 34, 38))
@@ -189,7 +189,7 @@ func (m *ViewsFramework) Create() {
 		m.window.SetWindowIcon(LoadImage("app-icon.png"))
 		m.window.SetWindowAppIcon(LoadImage("app-icon.png"))
 		m.window.SetTitle("Go ENERGY Client")
-		cef.SetWMClass("Go ENERGY Client", "Go ENERGY Client", m.window.WindowHandle().ToPtr())
+		m.window.SetLinuxWindowProperties("energy-cefclient", "energy-cefclient")
 
 		m.titleBar = NewTitleBar(m.window) // 顶部标题栏
 		m.menuBar = NewMenuBar(m.window)   // 顶部菜单栏
