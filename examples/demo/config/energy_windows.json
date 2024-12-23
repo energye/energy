@@ -7,7 +7,7 @@
   "libemfs": "libs",
   "info": {
     "manifest": "@/demo-actions.manifest",
-    "icon": "@/resources/icon.ico",
+    "icon": "@/resources/demoicon.ico",
     "companyName": "demo-actions",
     "productName": "demo-actions",
     "fileVersion": "1.0.0",
