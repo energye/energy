@@ -35,13 +35,8 @@ import (
 // 获得一个完整目录 [root]+energy+[framework]
 func loadLibLCL(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	if common.IsDarwin() {
-		cfg := config.Get()
-		// CEF 版本大于 109 时，helper 进程使用 ln 软链接执行文件
-		// 109 及以下版本 helper 进程 copy 执行文件, 不然启动 helper 进程失败
-		macapp.MacApp.IsLinked(cfg.Version() > 109)
-		macapp.MacApp.SetBaseCefFrameworksDir(cfg.FrameworkPath())
 		// 开发模式 自动生成 xxx.app
-		macapp.MacApp.Init()
+		macapp.Init()
 	}
 	// LCL 初始化时回调， 返回 lib 地址
 	api.SetLoadLibCallback(func() (liblcl dllimports.DLL, err error) {

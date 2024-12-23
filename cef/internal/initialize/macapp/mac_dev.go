@@ -1,3 +1,13 @@
+// ----------------------------------------
+//
+// Copyright © yanghy. All Rights Reserved.
+//
+// # Licensed under Apache License Version 2.0, January 2004
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+// ----------------------------------------
+
 //go:build darwin && !prod
 // +build darwin,!prod
 
@@ -7,6 +17,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/energye/energy/v2/cef/config"
 	"github.com/energye/golcl/energy/consts"
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/tools/command"
@@ -122,16 +133,21 @@ func copyFile(src, dest string) (w int64, err error) {
 	return io.Copy(dstFile, srcFile)
 }
 
-func (m *macApp) Init() {
+func Init() {
 	if strings.Contains(os.Args[0], ".app/Contents/MacOS") {
 		return
 	}
-	m.isMain = true
+	cfg := config.Get()
+	// CEF 版本大于 109 时，helper 进程使用 ln 软链接执行文件
+	// 109 及以下版本 helper 进程 copy 执行文件, 不然启动 helper 进程失败
+	MacApp.IsLinked(cfg.Version() > 109)
+	MacApp.SetBaseCefFrameworksDir(cfg.FrameworkPath())
+	MacApp.isMain = true
 	// 创建 xxx.app
-	if m.createMacOSApp(m) {
-		m.copyDylib()
-		m.createCEFHelper()
-		m.runMacOSApp()
+	if MacApp.createMacOSApp(MacApp) {
+		MacApp.copyDylib()
+		MacApp.createCEFHelper()
+		MacApp.runMacOSApp()
 	}
 }
 

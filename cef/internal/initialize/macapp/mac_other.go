@@ -8,10 +8,11 @@
 //
 // ----------------------------------------
 
-//go:build darwin
-// +build darwin
+//go:build !darwin
+// +build !darwin
 
-package initialize
+package macapp
 
-func APIInit() {
+func Init() {
+
 }
