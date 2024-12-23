@@ -269,6 +269,7 @@ func copyHelperFile(c *command.Config, proj *project.Project, appRoot string) er
 	}
 	// helper process
 	var helperProcessFilename string
+	// helper 进程是单独执行文件(非同一个 main exe)
 	if proj.HelperFilePath != "" {
 		term.Logger.Info("Copy helper process: " + proj.HelperFilePath)
 		if !tools.IsExist(proj.HelperFilePath) {
@@ -314,21 +315,46 @@ func copyHelperFile(c *command.Config, proj *project.Project, appRoot string) er
 			return err
 		}
 
-		// helper exe ln
+		// CEF 版本大于 109 时，helper 进程使用 ln 软链接执行文件, 减小 .app 体积
+		// 109 及以下版本 helper 进程 copy 执行文件, 不然启动 helper 进程失败，会增大 .app 体积
+		isLinked := env.GlobalDevEnvConfig.Version() > 109
 		helperWork := filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsMacOS)
-		var helperSource string
-		if helperProcessFilename != "" {
-			helperSource = fmt.Sprintf("../../../../MacOS/%s", helperProcessFilename)
-		} else {
-			helperSource = fmt.Sprintf("../../../../MacOS/%s", getExeName(c, proj))
-		}
+		helperExeFilePath := filepath.Join(helperWork, helperAppExeName)
 		// remove ln helper process file
-		os.Remove(filepath.Join(helperWork, helperAppExeName))
-		cmd.Dir = helperWork
-		cmd.Command("ln", "-s", helperSource, helperAppExeName)
-		if err != nil {
-			// for error
-			return err
+		os.Remove(helperExeFilePath)
+		if isLinked {
+			// 使用 ln 方式
+			var helperSource string
+			if helperProcessFilename != "" {
+				helperSource = fmt.Sprintf("../../../../MacOS/%s", helperProcessFilename)
+			} else {
+				helperSource = fmt.Sprintf("../../../../MacOS/%s", getExeName(c, proj))
+			}
+			cmd.Dir = helperWork
+			cmd.Command("ln", "-s", helperSource, helperAppExeName)
+			if err != nil {
+				// for error
+				return err
+			}
+		} else {
+			// 复制文件到 helper 进程
+			var sourceExec string
+			if helperProcessFilename != "" {
+				sourceExec = filepath.Join(contents, appContentsMacOS, helperProcessFilename)
+			} else {
+				sourceExec = filepath.Join(contents, appContentsMacOS, getExeName(c, proj))
+			}
+			sourceFile, err := os.Open(sourceExec)
+			if err != nil {
+				return err
+			}
+			helperFile, err := os.OpenFile(helperExeFilePath, os.O_CREATE|os.O_WRONLY, 0755)
+			if err != nil {
+				return err
+			}
+			io.Copy(helperFile, sourceFile)
+			helperFile.Close()
+			sourceFile.Close()
 		}
 	}
 	cmd.Close()
