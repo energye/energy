@@ -163,6 +163,54 @@ func (m *EnergyConfig) Version() int {
 	return ver
 }
 
+// 返回当前使用的 CEF Framework 系统 (windows, darwin, linux)
+// 规则 Framework: CEF-[VER]_[OS]_[ARCH]
+// 返回 OS
+func (m *EnergyConfig) OS() string {
+	framework := strings.Split(m.Framework, "-")
+	// CEF [VER]_[OS]_[ARCH]
+	if len(framework) != 2 {
+		return ""
+	}
+	// split: [VER]_[OS]_[ARCH]
+	framework = strings.Split(framework[1], "_")
+	if len(framework) != 3 {
+		return ""
+	}
+	// [VER] [OS] [ARCH]
+	os := strings.ToLower(framework[1])
+	return os
+}
+
+// 返回当前使用的 CEF Framework 架构 (386, amd64, arm, arm64)
+// 规则 Framework: CEF-[VER]_[OS]_[ARCH]
+// 返回 ARCH
+func (m *EnergyConfig) Arch() string {
+	framework := strings.Split(m.Framework, "-")
+	// CEF [VER]_[OS]_[ARCH]
+	if len(framework) != 2 {
+		return ""
+	}
+	// split: [VER]_[OS]_[ARCH]
+	framework = strings.Split(framework[1], "_")
+	if len(framework) != 3 {
+		return ""
+	}
+	// [VER] [OS] [ARCH]
+	arch := strings.ToLower(framework[2])
+	switch arch {
+	case "386", "i386", "32":
+		return "386"
+	case "amd64", "64", "x64", "x86_64":
+		return "amd64"
+	case "arm64":
+		return "arm64"
+	case "arm":
+		return "arm"
+	}
+	return ""
+}
+
 func (m *EnergyConfig) GoCMD() string {
 	if tools.CommandExists("go") {
 		return "go"

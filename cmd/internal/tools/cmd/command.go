@@ -16,6 +16,7 @@ import (
 	"os"
 	"os/exec"
 	"runtime"
+	"strings"
 )
 
 type CMD struct {
@@ -42,7 +43,7 @@ func (m *CMD) Close() {
 
 func (m *CMD) Command(name string, args ...string) {
 	if m.IsPrint {
-		fmt.Println("command name:", name, "args:", args)
+		fmt.Println(name, strings.Join(args, " "))
 	}
 	cmd := exec.Command(name, args...)
 	if m.Dir != "" {

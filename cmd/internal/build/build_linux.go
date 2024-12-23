@@ -29,7 +29,6 @@ func build(c *command.Config, proj *project.Project) (err error) {
 	// go build
 	cmd := toolsCommand.NewCMD()
 	cmd.Dir = proj.ProjectPath
-	cmd.IsPrint = false
 	outputFilename := proj.OutputFilename
 	if c.Build.Out != "" {
 		outputFilename = c.Build.Out

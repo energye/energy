@@ -15,6 +15,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"io"
 	"os"
@@ -59,6 +60,14 @@ func Build(c *command.Config) error {
 				return err
 			}
 		}
+		// 默认值
+		if c.Build.OS == "" {
+			c.Build.OS = command.OS(env.GlobalDevEnvConfig.OS())
+		}
+		if c.Build.ARCH == "" {
+			c.Build.ARCH = command.Arch(env.GlobalDevEnvConfig.Arch())
+		}
+		term.Section.Println("Build env GOOS:", c.Build.OS, "GOARCH:", c.Build.ARCH)
 		return build(c, proj)
 	}
 }
