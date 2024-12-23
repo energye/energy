@@ -9,7 +9,7 @@
     "icon": "@/resources/icon.png",
     "bundleName": "demo-app-示例",
     "bundleDisplayName": "energy-demo-示例",
-    "bundleIdentifier": "com.energye.energy",
+    "bundleIdentifier": "com.energy.app",
     "locals": [
       "zh_CN",
       "en"

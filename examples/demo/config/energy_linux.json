@@ -6,7 +6,7 @@
   "outputFilename": "demo-actions",
   "libemfs": "libs",
   "info": {
-    "title": "demo示例",
+    "title": "energy-demo-示例",
     "wmClass": "energy.app",
     "icon": "@/resources/icon.png",
     "companyName": "demo-actions",
