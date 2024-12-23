@@ -133,6 +133,10 @@ func generaProject(c *command.Config) error {
 	data["OutputFilename"] = c.Init.Name
 	data["CompanyName"] = c.Init.Name
 	data["ProductName"] = c.Init.Name
+	// MacOS
+	data["BundleName"] = c.Init.Name
+	data["BundleDisplayName"] = c.Init.Name
+	data["BundleIdentifier"] = c.Init.Name
 	for _, fileName := range consts.EnergyProjectConfig {
 		energyTemp := fmt.Sprintf("assets/%s", fileName)
 		outPath := project.PlatformConfigFile(fileName)
