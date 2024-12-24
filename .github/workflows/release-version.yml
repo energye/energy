@@ -35,6 +35,7 @@ jobs:
           ./build.bat
           ./compress-zip.bat
           
+          mv md5.txt D:/clis
           mv energy-*.zip D:/clis
         shell: bash
 

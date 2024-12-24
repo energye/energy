@@ -23,7 +23,7 @@ type TCMDVersion struct {
 	Major       int32  `json:"major"`
 	Minor       int32  `json:"minor"`
 	Build       int32  `json:"build"`
-	DownloadURL string `json:"downloadUrl"`
+	DownloadURL string `json:"vDownloadUrl"`
 }
 
 func CMDVersion() (*TCMDVersion, error) {

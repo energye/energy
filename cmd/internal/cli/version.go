@@ -42,8 +42,9 @@ func CheckVersion() string {
 	if err := version(); err != nil {
 		return ""
 	}
-	term.Section.Println("CLI Current:", fmt.Sprintf("%d.%d.%d", term.Major, term.Minor, term.Build))
-	term.Section.Println("CLI Latest :", fmt.Sprintf("%d.%d.%d", remoteVersion.Major, remoteVersion.Minor, remoteVersion.Build))
+	term.Section.Println("CLI Current:", fmt.Sprintf("v%d.%d.%d", term.Major, term.Minor, term.Build))
+	remoteVer := fmt.Sprintf("v%d.%d.%d", remoteVersion.Major, remoteVersion.Minor, remoteVersion.Build)
+	term.Section.Println("CLI Latest :", remoteVer)
 	cv, err := strconv.Atoi(fmt.Sprintf("%d%d%d", term.Major, term.Minor, term.Build))
 	if err != nil {
 		term.Logger.Error("Check cli version failed: " + err.Error())
@@ -55,13 +56,16 @@ func CheckVersion() string {
 		return ""
 	}
 	if cv < rv {
-		// 先这样，以后在规范名字
+		// 下载 URL 规则:
+		// https://sourceforge.net/projects/energye/files/vx.x.x/energy-[os][arch].zip
+		// https://github.com/energye/energy/releases/download/vx.x.x/energy-[os][arch].zip
+		// https://gitee.com/energye/energy/releases/download/vx.x.x/energy-[os][arch].zip
 		cliName := CliFileName() + ".zip"
 		downloadURL := remoteVersion.DownloadURL
 		if strings.LastIndex(downloadURL, "/") != len(downloadURL) {
 			downloadURL += "/"
 		}
-		downloadURL = downloadURL + cliName
+		downloadURL = fmt.Sprintf("%v%v/%v", downloadURL, remoteVer, cliName)
 		term.Section.Println("There new version available.\n  Download:", downloadURL)
 		return downloadURL
 	}
@@ -70,13 +74,14 @@ func CheckVersion() string {
 
 func CliFileName() string {
 	cliName := consts.ENERGY + "-" + runtime.GOOS
-	if consts.IsARM64 {
-		cliName += "arm"
-	}
-	if consts.IsWindows && consts.Is386 {
-		cliName += "-32"
+	arch := runtime.GOARCH
+	if arch == "amd64" {
+		cliName += "64"
+	} else if arch == "386" {
+		cliName += "32"
 	} else {
-		cliName += "-64"
+		// arm64, arm
+		cliName += arch
 	}
 	return cliName
 }
