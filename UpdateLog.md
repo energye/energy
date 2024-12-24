@@ -1,5 +1,21 @@
 # Upgrade Log
 
+### 2.5.1 - 2024/12/24
+- Note: This upgrade optimizes CLI and adjusts the energy dynamic library loading. Fixes and optimizes known issues.
+- Fix: types/message_386arm, build tags
+- R: Remove the ENERGY_HOME environment variable configuration and change it to the ~/.energy configuration
+- U: Optimized LibLCL library loading
+- U: api WidgetUI Condition processing
+- Fix: new 2.5.x MacOS drag bug
+- Fix: main window hidden state, bug when closing
+- A: Linux API LinuxWindowProperties, Set WM Class, Name
+- CLI: install --all, Add the -all parameter, skip manual selection, and install all required software by default
+- CLI: package argument, Add file, outfile
+- CLI: env, add .energy Proxy config
+- CLI: A lot of optimization and modification, for the development environment, build, installation package production
+- CLI: Build binaries based on your current environment
+- U: examples
+
 ### 2.5.0 - 2024/12/11
 - Note: Weight update, supporting CEF 130.1.16, adjusted to support CEF special edition updates, removed version 106, 
 replaced with version 101, and added dynamic library builds for all supported CEF platforms except Windows ARM64.
