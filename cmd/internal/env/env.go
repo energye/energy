@@ -91,7 +91,7 @@ func chkOS(os command.OS) bool {
 }
 
 func chkARCH(arch command.Arch) bool {
-	return arch.Is386() || arch.IsAMD64() || arch.IsARM() || arch.IsARM64()
+	return arch.Is386() || arch.IsAMD64() || arch.IsARM() || arch.IsARM64() || arch.IsLoong64()
 }
 
 // 按完全匹配规则: CEF-[VER]_[OS]_[ARCH]

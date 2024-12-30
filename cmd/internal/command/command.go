@@ -188,6 +188,11 @@ func (m Arch) IsARM() bool {
 	return v == "arm"
 }
 
+func (m Arch) IsLoong64() bool {
+	v := strings.ToLower(m.Value())
+	return v == "loong64"
+}
+
 func (m Arch) Value() string {
 	v := string(m)
 	switch v {
