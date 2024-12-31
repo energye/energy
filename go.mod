@@ -2,7 +2,7 @@ module github.com/energye/energy/v2
 
 go 1.16
 
-require github.com/energye/golcl v1.1.1
+require github.com/energye/golcl v1.1.2
 
 require (
 	github.com/godbus/dbus/v5 v5.1.0
