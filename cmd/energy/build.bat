@@ -42,4 +42,9 @@ set GOOS=linux
 go build -trimpath -ldflags "-s -w" -o energy-linuxarm64 energy.go
 md5.exe energy-linuxarm64
 
+set GOARCH=loong64
+set GOOS=linux
+go build -trimpath -ldflags "-s -w" -o energy-linuxloong64 energy.go
+md5.exe energy-linuxloong64
+
 pause
