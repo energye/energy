@@ -18,7 +18,7 @@ import (
 const (
 	Major = 2
 	Minor = 5
-	Build = 1
+	Build = 2
 )
 
 var Logger *pterm.Logger

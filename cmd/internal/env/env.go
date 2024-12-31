@@ -20,28 +20,27 @@ import (
 	"github.com/pterm/pterm"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
 func Env(c *command.Config) error {
 	env := c.Env
-	if env.List {
+	if env.List { // -l --list 列出当前安装的 CEF Framework 列表
 		if err := printInstalledFrameworks(); err != nil {
 			return err
 		}
-	} else if env.Use != "" {
+	} else if env.Use != "" { // --use 切换 CEF Framework
 		if err := useInstalledFrameworks(env); err != nil {
 			return err
 		}
-	} else if env.Get != "" {
+	} else if env.Get != "" { // -g --get 返回指定 name 值
 		switch strings.ToLower(env.Get) {
 		case "golang", "go", "goroot":
 			term.Section.Println(GlobalDevEnvConfig.GoRoot)
 		case "root":
 			term.Section.Println(GlobalDevEnvConfig.Root, "=>", filepath.Join(GlobalDevEnvConfig.Root, consts.ENERGY))
 		case "framework":
-			term.Section.Println(GlobalDevEnvConfig.FrameworkPath())
+			term.Section.Println(GlobalDevEnvConfig.Framework, "=>", GlobalDevEnvConfig.FrameworkPath())
 		case "nsis":
 			term.Section.Println(GlobalDevEnvConfig.NSIS)
 		case "7z":
@@ -52,8 +51,10 @@ func Env(c *command.Config) error {
 			term.Section.Println(GlobalDevEnvConfig.Proxy)
 		case "registry":
 			term.Section.Println(GlobalDevEnvConfig.Registry)
+		case "version":
+			term.Section.Println(GlobalDevEnvConfig.Version)
 		}
-	} else if env.Write != "" {
+	} else if env.Write != "" { // -w --write 写入指定 name 的值
 		keyval := strings.Split(env.Write, ":")
 		if len(keyval) > 1 {
 			key := strings.TrimSpace(keyval[0])
@@ -75,16 +76,24 @@ func Env(c *command.Config) error {
 				GlobalDevEnvConfig.Proxy = val
 			case "registry":
 				GlobalDevEnvConfig.Registry = val
+			case "version":
+				// 修复版本号
+				if val[0] != 'v' {
+					val = "v" + val
+				}
+				// 验证版本号格式
+				if tools.VerifyRelease(val) {
+					return errors.New("incorrect version format '" + val + "'. example: v1.0.0")
+				}
+				GlobalDevEnvConfig.Version = val
 			}
 			GlobalDevEnvConfig.Update()
 		}
-	} else {
+	} else { // 默认展示当前环境配置
 		PrintENV()
 	}
 	return nil
 }
-
-var numberReg = regexp.MustCompile("^\\d+$")
 
 func chkOS(os command.OS) bool {
 	return os.IsWindows() || os.IsLinux() || os.IsMacOS()
@@ -116,7 +125,7 @@ func getInstalledFrameworks() ([]string, error) {
 			continue
 		}
 		isName := tools.Equals(split[0], "CEF")
-		isVER := numberReg.MatchString(verosarch[0])
+		isVER := tools.IsInt(verosarch[0])
 		isOS := chkOS(command.OS(verosarch[1]))
 		isARCH := chkARCH(command.Arch(verosarch[2]))
 		if isName && isVER && isOS && isARCH {
@@ -126,7 +135,7 @@ func getInstalledFrameworks() ([]string, error) {
 	return result, nil
 }
 
-// 切换已安装的版本, 只做 CEF 版本号验证
+// 切换已安装的版本, 只做 CEF 版本和 ARCH 验证
 func useInstalledFrameworks(env command.Env) error {
 	// CEF-[VER]_[OS]_[ARCH]
 	dirs, err := getInstalledFrameworks()
@@ -139,21 +148,35 @@ func useInstalledFrameworks(env command.Env) error {
 		if len(split) != 2 {
 			continue
 		}
-		// [VER]_[OS]_[ARCH]
+		// CEF Framework: [VER]_[OS]_[ARCH]
 		verosarch := strings.Split(split[1], "_")
 		if len(verosarch) != 3 {
 			continue
 		}
-		// 先只验证版本号，不验证系统和架构
-		if env.Use == verosarch[0] {
-			frameworkName = dir
-			break
+		ver := verosarch[0]
+		use := strings.Split(env.Use, ":")
+		if len(use) == 1 {
+			// 只验证版本号
+			useVer := use[0]
+			if useVer == ver {
+				frameworkName = dir
+				break
+			}
+		} else if len(use) == 2 {
+			// 验证版本号和架构
+			arch := command.Arch(verosarch[2])
+			useVer := use[0]
+			useArch := command.Arch(use[1])
+			if useVer == ver && useArch.Value() == arch.Value() {
+				frameworkName = dir
+				break
+			}
 		}
 	}
 	if frameworkName != "" {
 		GlobalDevEnvConfig.Framework = frameworkName
 		GlobalDevEnvConfig.Update()
-		msg := fmt.Sprintf("Now using CEF Framework %v", env.Use)
+		msg := fmt.Sprintf("Now using CEF Framework %v", frameworkName)
 		term.Logger.Info(msg)
 		return nil
 	} else {
@@ -208,7 +231,7 @@ func GetCurrentFrameworkLibName() (libcef, liblcl string) {
 		return
 	}
 	isName := tools.Equals(split[0], "CEF")       // CEF
-	isVER := numberReg.MatchString(verosarch[0])  // VER 100
+	isVER := tools.IsInt(verosarch[0])            // VER 100
 	isOS := chkOS(command.OS(verosarch[1]))       // WINDOWS, LINUX, MACOS
 	isARCH := chkARCH(command.Arch(verosarch[2])) // ARCH
 	if isName && isVER && isOS && isARCH {
@@ -229,6 +252,7 @@ func PrintENV() {
 		{"Name", "Value"},
 	}
 	tableData = append(tableData, []string{"Golang", GlobalDevEnvConfig.GoRoot})
+	tableData = append(tableData, []string{"Version", GlobalDevEnvConfig.Version})
 	tableData = append(tableData, []string{"Root", GlobalDevEnvConfig.Root})
 	tableData = append(tableData, []string{"Framework", GlobalDevEnvConfig.Framework})
 	tableData = append(tableData, []string{"NSIS", GlobalDevEnvConfig.NSIS})

@@ -68,6 +68,7 @@ func (c *Client) send(method, uri string, headers map[string][]string, body io.R
 			return nil
 		},
 		Transport: &http.Transport{
+			//TLSClientConfig: &tls.Config{InsecureSkipVerify: true },
 			Proxy: http.ProxyURL(c.proxyURL),
 		},
 	}

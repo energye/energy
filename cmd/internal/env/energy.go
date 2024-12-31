@@ -74,7 +74,7 @@ func InitDevEnvConfig(wd string) {
 			// 创建
 			GlobalDevEnvConfig = &EnergyConfig{
 				homedir:  config,
-				Registry: consts.DomainGithub,
+				Registry: consts.DomainYangHY,
 				Root:     wd,
 			}
 			GlobalDevEnvConfig.Update()
@@ -94,7 +94,7 @@ func InitDevEnvConfig(wd string) {
 				return
 			}
 			if strings.TrimSpace(GlobalDevEnvConfig.Registry) == "" {
-				GlobalDevEnvConfig.Registry = consts.DomainGithub
+				GlobalDevEnvConfig.Registry = consts.DomainYangHY
 				GlobalDevEnvConfig.Update()
 			}
 			if strings.TrimSpace(GlobalDevEnvConfig.Root) == "" {
@@ -107,14 +107,15 @@ func InitDevEnvConfig(wd string) {
 
 type EnergyConfig struct {
 	homedir   string `json:"-"`
-	GoRoot    string `json:"goroot"`
-	NSIS      string `json:"nsis"`
-	Z7Z       string `json:"z7z"`
-	UPX       string `json:"upx"`
-	Root      string `json:"root"`
-	Framework string `json:"framework"`
-	Registry  string `json:"registry"`
-	Proxy     string `json:"proxy"`
+	GoRoot    string `json:"goroot"`    // Go根目录, 如果配置构建时使用
+	Version   string `json:"version"`   // 全局默认版本号 vx.x.x
+	NSIS      string `json:"nsis"`      // nsis 路径
+	Z7Z       string `json:"z7z"`       // 7z 路径
+	UPX       string `json:"upx"`       // upx 路径
+	Root      string `json:"root"`      // framework 根目录， 不包括 "energy" 目录
+	Framework string `json:"framework"` // CEF framework 名
+	Registry  string `json:"registry"`  // 远程版本信息获取源
+	Proxy     string `json:"proxy"`     // 代理
 }
 
 func (m *EnergyConfig) Update() {
@@ -144,7 +145,7 @@ func (m *EnergyConfig) FrameworkPath() string {
 // 返回当前使用的 CEF Framework 版本号
 // 规则 Framework: CEF-[VER]_[OS]_[ARCH]
 // 返回 VER
-func (m *EnergyConfig) Version() int {
+func (m *EnergyConfig) CEFVersion() int {
 	framework := strings.Split(m.Framework, "-")
 	// CEF [VER]_[OS]_[ARCH]
 	if len(framework) != 2 {
@@ -182,7 +183,7 @@ func (m *EnergyConfig) OS() string {
 	return os
 }
 
-// 返回当前使用的 CEF Framework 架构 (386, amd64, arm, arm64)
+// 返回当前使用的 CEF Framework 架构 (386, amd64, arm, arm64, loong64)
 // 规则 Framework: CEF-[VER]_[OS]_[ARCH]
 // 返回 ARCH
 func (m *EnergyConfig) Arch() string {
@@ -203,10 +204,8 @@ func (m *EnergyConfig) Arch() string {
 		return "386"
 	case "amd64", "64", "x64", "x86_64":
 		return "amd64"
-	case "arm64":
-		return "arm64"
-	case "arm":
-		return "arm"
+	case "arm", "arm64", "loong64":
+		return arch
 	}
 	return ""
 }

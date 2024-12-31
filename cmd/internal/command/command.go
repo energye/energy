@@ -97,9 +97,9 @@ type Package struct {
 
 type Env struct {
 	Write string `short:"w" long:"write" description:"Set the configuration environment. set=key:value"`
-	Get   string `short:"g" long:"get" description:"Get the configuration environment value. get=key"`
+	Get   string `short:"g" long:"get" description:"Get the configuration environment value. name"`
 	List  bool   `short:"l" long:"list" description:"Lists the CEF Framework installed"`
-	Use   string `long:"use" description:"Use the installed CEF Framework Version. use=ver"`
+	Use   string `long:"use" description:"Use the installed CEF Framework Version. ver:arch"`
 }
 
 type Help struct {
@@ -116,6 +116,7 @@ type Version struct {
 type Init struct {
 	Name    string `short:"n" long:"name" description:"Initialized project name"`
 	ResLoad string `short:"r" long:"resload" description:"Resource loading method, 1: HTTP, 2: Local Load, default 1 HTTP"`
+	Version string `short:"v" long:"version" description:"Specify the use of the energy release version. example: vx.x.x"`
 	IGo     bool
 	INSIS   bool
 	IUPX    bool

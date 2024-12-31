@@ -17,6 +17,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strconv"
 	"strings"
@@ -70,6 +71,25 @@ func StrToFloat64(value string) float64 {
 func StrToFloat32(value string) float32 {
 	v, _ := strconv.ParseFloat(value, 32)
 	return float32(v)
+}
+
+var numberReg = regexp.MustCompile("^\\d+$")
+
+func IsInt(v string) bool {
+	return numberReg.MatchString(v)
+}
+
+// 验证发行版本，入参: vx.x.x
+func VerifyRelease(v string) bool {
+	// 验证版本号格式
+	tmpVers := strings.Split(v[1:], ".")
+	if len(tmpVers) != 3 {
+		return false
+	}
+	if !IsInt(tmpVers[0]) || !IsInt(tmpVers[1]) || !IsInt(tmpVers[2]) {
+		return false
+	}
+	return true
 }
 
 func ToInt(v interface{}) int {

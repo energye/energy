@@ -317,7 +317,7 @@ func copyHelperFile(c *command.Config, proj *project.Project, appRoot string) er
 
 		// CEF 版本大于 109 时，helper 进程使用 ln 软链接执行文件, 减小 .app 体积
 		// 109 及以下版本 helper 进程 copy 执行文件, 不然启动 helper 进程失败，会增大 .app 体积
-		isLinked := env.GlobalDevEnvConfig.Version() > 109
+		isLinked := env.GlobalDevEnvConfig.CEFVersion() > 109
 		helperWork := filepath.Join(proj.ProjectPath, helperAppRoot, appContents, appContentsMacOS)
 		helperExeFilePath := filepath.Join(helperWork, helperAppExeName)
 		// remove ln helper process file

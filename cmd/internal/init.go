@@ -13,10 +13,14 @@
 package internal
 
 import (
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/initialize"
+	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
 	"os"
 	"strings"
@@ -44,7 +48,39 @@ func runInit(c *command.Config) error {
 			println()
 		}
 	}
+	// 创建的项目名
 	m.Name = strings.TrimSpace(m.Name)
+	if m.Version == "" {
+		// 使用全局默认版本号
+		m.Version = env.GlobalDevEnvConfig.Version
+	}
+	if m.Version == "" {
+		// 使用从远程服务获取最新版本号
+		latestVersion, err := remotecfg.LatestVersion()
+		if err == nil {
+			m.Version = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
+		} else {
+			//获取失败, 要求输入版本号
+			term.Logger.Error("Failed to retrieve version information from the remote service.")
+			term.Logger.Error(err.Error())
+			var inputVersion string
+			for strings.TrimSpace(inputVersion) == "" {
+				print("Enter energy release. (vx.x.x): ")
+				fmt.Scan(&inputVersion)
+				println()
+			}
+			m.Version = inputVersion
+		}
+		// 修复版本号
+		m.Version = strings.ToLower(m.Version)
+		if m.Version[0] != 'v' {
+			m.Version = "v" + m.Version
+		}
+	}
+	// 验证版本号格式
+	if tools.VerifyRelease(m.Version) {
+		return errors.New("incorrect version format '" + m.Version + "'. example: v1.0.0")
+	}
 
 	options := []string{"HTTP", "Local Load"}
 	printer := term.DefaultInteractiveSelect.WithOnInterruptFunc(func() {

@@ -17,7 +17,6 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
@@ -149,20 +148,14 @@ func generaProject(c *command.Config) error {
 	if err := createFile(fmt.Sprintf("assets/initialize/main.go.%s", c.Init.ResLoad), "main.go", nil, 0666); err != nil {
 		return err
 	}
-	term.Logger.Info("Get latest release number")
-	latest := "latest" // 默认
-	latestVersion, err := remotecfg.LatestVersion()
-	if err == nil {
-		latest = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
-	} else {
-		term.Logger.Error(err.Error())
-	}
-	term.Logger.Info("ENERGY latest release number: " + latest)
+
+	term.Logger.Info("ENERGY Release: " + c.Init.Version)
+
 	// 创建 go.mod
 	data = make(map[string]interface{})
 	data["Name"] = c.Init.Name
 	data["GoVersion"] = "1.18"
-	data["EnergyVersion"] = latest
+	data["EnergyVersion"] = c.Init.Version
 	if err := createFile("assets/initialize/go.mod.t", "go.mod", data, 0666); err != nil {
 		return err
 	}
@@ -196,15 +189,15 @@ func generaProject(c *command.Config) error {
 	if c.Init.IGo {
 		// cmd go env -w GO111MODULE=on
 		term.Logger.Info("Enable Go mod management", term.Logger.Args("command-line", "go env -w GO111MODULE=on"))
-		cmd.Command("go", []string{"env", "-w", "GO111MODULE=on"}...)
+		cmd.Command("go", "env", "-w", "GO111MODULE=on")
 
 		// cmd go env -w GOPROXY=https://goproxy.io,direct
 		term.Logger.Info("Configure mod proxy", term.Logger.Args("command-line", "go env -w GOPROXY=https://goproxy.io,direct"))
-		cmd.Command("go", []string{"env", "-w", "GOPROXY=https://goproxy.io,direct"}...)
+		cmd.Command("go", "env", "-w", "GOPROXY=https://goproxy.io,direct")
 
 		// cmd go mod tidy
-		term.Logger.Info("Update Energy dependencies", term.Logger.Args("command-line", "go mod tidy", "version", "latest"))
-		cmd.Command("go", []string{"mod", "tidy"}...)
+		term.Logger.Info("Update Energy dependencies", term.Logger.Args("command-line", "go mod tidy", "version", c.Init.Version))
+		cmd.Command("go", "mod", "tidy")
 	}
 	cmd.Close()
 	return nil
