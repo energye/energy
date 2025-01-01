@@ -33,7 +33,7 @@ var commands = map[string]*command.Command{
 	"build":   internal.CmdBuild,
 	"bindata": internal.CmdBindata,
 	"gen":     internal.CmdGen,
-	"upg":     internal.CmdUpgrade,
+	"update":  internal.CmdUpdate,
 	"help":    internal.CmdHelp,
 	"cli":     internal.CmdCli,
 }

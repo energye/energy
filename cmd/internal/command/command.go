@@ -25,7 +25,7 @@ type Config struct {
 	Build   Build   `command:"build" description:"building an energy project"`
 	Bindata Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
 	Gen     Gen     `command:"gen" description:"generate icons or syso commands"`
-	Upg     Upgrade `command:"upg" description:"check and upgrade the current version"`
+	Update  Update  `command:"update" description:"check and update the version"`
 	Help    Help    `command:"help" description:"energy [cmd] help"`
 	Cli     Cli     `command:"cli" description:"energy cli"`
 }
@@ -35,7 +35,9 @@ type Command struct {
 	UsageLine, Short, Long string
 }
 
-type Upgrade struct {
+type Update struct {
+	Version string `short:"v" long:"version" description:"Upgrade energy to the specified version" default:""`
+	Path    string `short:"p" long:"path" description:"Project path" default:""`
 }
 
 type Cli struct {
