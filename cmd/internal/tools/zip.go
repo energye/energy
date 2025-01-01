@@ -15,6 +15,7 @@ import (
 	"archive/zip"
 	"compress/bzip2"
 	"compress/gzip"
+	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/pterm/pterm"
@@ -332,4 +333,18 @@ func UnBz2ToTar(bz2FilePath string, callback func(totalLength, processLength int
 		term.Section.Println("File already exists")
 	}
 	return dirName, nil
+}
+
+// 提取文件
+func ExtractFiles(sourcePath, targetPath string, extractOSConfig []string) error {
+	ext := filepath.Ext(sourcePath)
+	switch ext {
+	case ".tar":
+		return ExtractUnTar(sourcePath, targetPath, extractOSConfig...)
+	case ".zip":
+		return ExtractUnZip(sourcePath, targetPath, false, extractOSConfig...)
+	case ".7z":
+		// 7z 直接解压目录内所有文件
+	}
+	return errors.New("not module")
 }

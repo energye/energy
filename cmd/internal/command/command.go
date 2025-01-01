@@ -38,6 +38,7 @@ type Command struct {
 type Update struct {
 	Version string `short:"v" long:"version" description:"Upgrade energy to the specified version" default:""`
 	Path    string `short:"p" long:"path" description:"Project path" default:""`
+	WS      string `long:"ws" description:"Set this parameter when GTK2 is used on Linux" default:""`
 }
 
 type Cli struct {

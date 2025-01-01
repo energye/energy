@@ -13,6 +13,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
+	"github.com/energye/energy/v2/cmd/internal/common"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/env"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
@@ -21,7 +22,6 @@ import (
 	"github.com/pterm/pterm"
 	"path/filepath"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -103,18 +103,18 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		downloadCefURL := cefDownloadItem.Url
 		downloadCefURL = strings.ReplaceAll(downloadCefURL, "{version}", cefModuleVersion)
 		downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
-		downloads[consts.CefKey] = &downloadInfo{fileName: urlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
+		downloads[consts.CefKey] = &downloadInfo{fileName: common.UrlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, common.UrlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 	}
 	if !isLCL {
 		// liblcl 当前模块版本支持系统
-		libEnergyOS := liblclOS(cmdConfig)
-		useLibLCLModuleNameGTK3 := linuxUseGTK3(cmdConfig, liblclModuleName, moduleVersion)
+		libEnergyOS := common.LibLCLOS(cmdConfig)
+		useLibLCLModuleNameGTK3 := common.LibLCLLinuxUseGTK3(cmdConfig.Install.OS, cmdConfig.Install.WS, liblclModuleName, moduleVersion)
 		// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
 		downloadEnergyURL := lclDownloadItem.Url
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
 		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
-		downloads[consts.LiblclKey] = &downloadInfo{fileName: urlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, urlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
+		downloads[consts.LiblclKey] = &downloadInfo{fileName: common.UrlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, common.UrlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 	}
 	// 在线下载 CEF 框架二进制包
 	var sortsKeys = []string{consts.LiblclKey, consts.CefKey}
@@ -206,85 +206,8 @@ func cefOS(c *command.Config) string {
 	return fmt.Sprintf("%v%v", os, arch)
 }
 
-// 返回 liblcl 在 linux 版本号大于 106 版本默认使用 GTK3
-// 完整格式: liblcl[-ver][-GTK3]
-func linuxUseGTK3(c *command.Config, liblclModuleName, moduleVersion string) string {
-	ins := c.Install
-	os := command.OS(runtime.GOOS)
-	if ins.OS != "" {
-		os = ins.OS
-	}
-	// Linux 从106版本以后默认使用 GTK3
-	if os.IsLinux() && !tools.Equals(c.Install.WS, "GTK2") {
-		isGT106 := false         // 标记大于106
-		if moduleVersion == "" { // 空值是最新版本, 默认用GTK3
-			isGT106 = true
-		} else {
-			if ver, err := strconv.Atoi(moduleVersion); err == nil && ver > 106 {
-				isGT106 = true
-			}
-		}
-		if isGT106 {
-			// GTK3 的 liblcl 库压缩文件名 + -GTK3
-			return liblclModuleName + "-GTK3"
-		}
-	}
-	return liblclModuleName
-}
-
-// 返回 CEF 支持的系统, 格式 [os][arch] 示例 windows32, windows64, macosx64 ...
-func liblclOS(c *command.Config) string {
-	var LibLCLFileNames = map[string]string{
-		"windows32":    consts.Windows32,
-		"windows64":    consts.Windows64,
-		"windowsarm64": consts.WindowsARM64,
-		"linuxarm":     consts.LinuxARM,
-		"linuxarm64":   consts.LinuxARM64,
-		"linux32":      consts.Linux32,
-		"linux64":      consts.Linux64,
-		"macosx64":     consts.MacOSX64,
-		"macosarm64":   consts.MacOSARM64,
-	}
-	ins := c.Install
-	os := command.OS(runtime.GOOS)
-	arch := command.Arch(runtime.GOARCH)
-	if ins.OS != "" {
-		os = ins.OS
-	}
-	if ins.Arch != "" {
-		arch = ins.Arch
-	}
-	if os.IsMacOS() {
-		os = "macos"
-		if arch.IsAMD64() {
-			os += "x"
-		}
-	}
-	if arch.Is386() {
-		arch = "32"
-	} else if arch.IsAMD64() {
-		arch = "64"
-	}
-	return LibLCLFileNames[fmt.Sprintf("%v%v", os, arch)]
-}
-
 // 提取文件
 func extractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig []string) error {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
-	ext := filepath.Ext(sourcePath)
-	switch ext {
-	case ".tar":
-		return tools.ExtractUnTar(sourcePath, di.frameworkPath, extractOSConfig...)
-	case ".zip":
-		return tools.ExtractUnZip(sourcePath, di.frameworkPath, false, extractOSConfig...)
-	case ".7z":
-		// 7z 直接解压目录内所有文件
-	}
-	return errors.New("not module")
-}
-
-// url文件名
-func urlName(downloadUrl string) string {
-	downloadUrl = downloadUrl[strings.LastIndex(downloadUrl, "/")+1:]
-	return downloadUrl
+	return tools.ExtractFiles(sourcePath, di.frameworkPath, extractOSConfig)
 }

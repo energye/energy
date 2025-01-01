@@ -71,4 +71,5 @@ const (
 	Linux64      = "Linux64"
 	LinuxARM     = "LinuxARM"
 	LinuxARM64   = "LinuxARM64"
+	LinuxLoong64 = "LinuxLoong64"
 )
