@@ -1,5 +1,24 @@
 # Upgrade Log
 
+### 2.5.2 -
+- cli Add optimization function
+- sdk update
+1. .energy The global parameter version is added to the current development environment energy version vx.x.x
+2. sdk Write the current version number in.energy > version after installation
+
+- init optimization
+1. Added the -v[version] parameter, which is used to specify the energy version x.x.x | vx.x
+2. If -v is not specified, it is directly used from.energy > version when the version number is available
+3. If -v is not specified, no version is available from.energy > version. The remote network obtains the latest version. If the obtaining fails, enter the specified version
+
+- cli update
+1. -v (energy version) Upgrades go.mod energy
+2. -p project app path
+3. --ws Used linux args GTK2
+
+- Added initial LoongArch64 support, LibLCL is not yet available
+
+
 ### 2.5.1 - 2024/12/24
 - Note: This upgrade optimizes CLI and adjusts the energy dynamic library loading. Fixes and optimizes known issues.
 - Fix: types/message_386arm, build tags
