@@ -58,11 +58,15 @@ func Update(c *command.Config) (err error) {
 	}
 	// 检查当前执行目录使用的 energy 版本号, 同时也验证了是否 energy 项目
 	currentVersion := GetCurrentModVersion(update)
+	isOK := tools.VerifyRelease(currentVersion)
 	// 判断结果是否为版本号 vx.x.x
 	// 如果版本号验证失败，说明没使用 energy
-	if currentVersion != update.Version && tools.VerifyRelease(currentVersion) {
-		// 使用了 energy 项目，更新版本号
-		go UpdateCurrentModVersion(update)
+	if currentVersion != update.Version && isOK {
+		// 进入这个条件，证明使用了 energy 项目，更新版本号
+		UpdateCurrentModVersion(update)
+	}
+	if isOK {
+		term.Logger.Info("Update energy finish")
 	}
 	// 更新当前使用的 CEF Framework
 	// 更新逻辑: 当前 energy version 使用的 CEF Framework 支持的最新 LibLCL
@@ -71,11 +75,12 @@ func Update(c *command.Config) (err error) {
 
 // 更新当前 energy version 使用的 CEF Framework 支持的最新 LibLCL
 func UpdateCurretFrameworkLibLCL(u *command.Update) error {
+	term.Logger.Info("Start updating LibLCL")
 	// 解析当前使用 CEF Framework 信息
 	cefVer := env.GlobalDevEnvConfig.CEFVersion()
 	cefOS := command.OS(env.GlobalDevEnvConfig.OS())
 	cefARCH := command.Arch(env.GlobalDevEnvConfig.Arch())
-	term.Logger.Info("CEF Framework", term.Logger.Args("ENERGY", u.Version, "CEF", cefVer, "CEF-OS", cefOS, "CEF-ARCH", cefARCH))
+	term.Logger.Info("Current CEF Framework", term.Logger.Args("ENERGY", u.Version, "CEF", cefVer, "CEF-OS", cefOS, "CEF-ARCH", cefARCH))
 	// 从远程服务获取配置信息
 	baseConfig, err := remotecfg.ModeBaseConfig()
 	if err != nil {
@@ -95,7 +100,7 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 	version := u.Version[1:]
 	upgInfo, ok := upgraeList[version]
 	if !ok {
-		return errors.New("获取 energy 版本[" + u.Version + "]升级信息失败，该版本不存在")
+		return errors.New("Get energy version[" + u.Version + "]The upgrade information failed because the version does not exist")
 	}
 	// 升级模块依赖
 	dependInfo := upgInfo.DependenceModule
@@ -124,12 +129,12 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 	lclModule := "liblcl" + matchCEFVer()
 	lclVersion, ok := dependInfo.LCL[lclModule]
 	if !ok {
-		return errors.New("获取 LibLCL 版本[" + u.Version + "]升级信息失败")
+		return errors.New("Get LibLCL version[" + u.Version + "]upgrade information failed because the version does not exist")
 	}
 	// LibLCL 模块配置信息
 	lclModuleConfig := lclConfig.Model(lclModule)
 	if lclModuleConfig == nil {
-		return errors.New("获取 LibLCL 模块[" + lclModule + "]信息失败")
+		return errors.New("Get LibLCL Module[" + lclModule + "] config failure, module does not exist")
 	}
 	// 获取模块里的版本配置信息
 	lclModuleItem := lclModuleConfig.Item(version)
