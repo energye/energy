@@ -45,6 +45,7 @@ const (
 	IsAMD64   = runtime.GOARCH == "amd64"
 	IsARM     = runtime.GOARCH == "arm"
 	IsARM64   = runtime.GOARCH == "arm64"
+	IsLoong64 = runtime.GOARCH == "loong64"
 )
 
 const (

@@ -77,13 +77,16 @@ func Env(c *command.Config) error {
 			case "registry":
 				GlobalDevEnvConfig.Registry = val
 			case "version":
-				// 修复版本号
-				if val[0] != 'v' {
-					val = "v" + val
-				}
-				// 验证版本号格式
-				if tools.VerifyRelease(val) {
-					return errors.New("incorrect version format '" + val + "'. example: v1.0.0")
+				if val != "" {
+					// 修复版本号
+					if val[0] != 'v' {
+						val = "v" + val
+					}
+					// 验证版本号格式
+					if !tools.VerifyRelease(val) {
+						err := fmt.Sprintf("Incorrect version format '%v'. Example: v1.0.0", val)
+						return errors.New(err)
+					}
 				}
 				GlobalDevEnvConfig.Version = val
 			}

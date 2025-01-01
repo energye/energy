@@ -73,7 +73,7 @@ func generaProject(c *command.Config) error {
 	term.Logger.Info("Create Project", term.Logger.Args("Name", c.Init.Name))
 	if tools.IsExist(projectPath) {
 		term.Logger.Warn(fmt.Sprintf("Project dir `%s` exist, delete init default files.", c.Init.Name))
-		var deleteFiles = []string{ /*"resources", */ "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
+		deleteFiles := []string{ /*"resources", */ "main.go", "go.mod", "go.sum", "resources/index.html", "README.md"}
 		for _, fileName := range consts.EnergyProjectConfig {
 			deleteFiles = append(deleteFiles, project.PlatformConfigFile(fileName))
 		}
@@ -118,7 +118,7 @@ func generaProject(c *command.Config) error {
 		return nil
 	}
 
-	if consts.IsLinux && consts.IsARM64 {
+	if consts.IsLinux && (consts.IsARM64 || consts.IsLoong64) {
 		if err := createFile("assets/initialize/run.sh", "run.sh", nil, 0755, "\r", ""); err != nil {
 			return err
 		}
@@ -206,7 +206,7 @@ func generaProject(c *command.Config) error {
 func checkEnv(init *command.Init) {
 	term.Logger.Info("Check the current environment and follow the prompts if there are any")
 	// 检查Go环境
-	if !tools.CommandExists("go") {
+	if env.GlobalDevEnvConfig.GoCMD() == "" {
 		term.Logger.Warn("Golang development environment not installed, Download-URL: ", term.Logger.Args("Download-URL", "https://golang.google.cn/dl/", "ENERGY CLI", "energy install"))
 	} else {
 		var version string
@@ -236,7 +236,7 @@ func checkEnv(init *command.Init) {
 	}
 	if consts.IsWindows {
 		// 检查nsis
-		if !tools.CommandExists("makensis") {
+		if env.GlobalDevEnvConfig.NSISCMD() == "" {
 			term.Logger.Warn(`NSIS not installed, Unable to create installation package through energy command line.`)
 		} else {
 			term.Logger.Info(`NSIS OK`)
@@ -245,7 +245,7 @@ func checkEnv(init *command.Init) {
 	}
 	if !consts.IsDarwin {
 		// 检查upx
-		if !tools.CommandExists("upx") {
+		if env.GlobalDevEnvConfig.UPXCMD() == "" {
 			term.Logger.Warn(`UPX not installed`)
 		} else {
 			term.Logger.Info(`UPX OK`)
@@ -257,10 +257,12 @@ func checkEnv(init *command.Init) {
 	if !isCEF {
 		term.Logger.Warn(`CEF Framework is not installed
 	Installing using ENERGY CLI`, term.Logger.Args("ENERGY CLI", "energy install"))
-	} else if !isLCL {
+	}
+	if !isLCL {
 		term.Logger.Warn(`LibLCL is not installed
 	Installing using ENERGY CLI`, term.Logger.Args("ENERGY CLI", "energy install"))
-	} else {
+	}
+	if isCEF && isLCL {
 		term.Logger.Info("CEF Framework OK")
 		init.IEnv = true
 	}

@@ -50,17 +50,19 @@ func runInit(c *command.Config) error {
 	}
 	// 创建的项目名
 	m.Name = strings.TrimSpace(m.Name)
+	// 设置 go.mod 里使用的版本号
 	if m.Version == "" {
-		// 使用全局默认版本号
+		// 尝试全局默认版本号
 		m.Version = env.GlobalDevEnvConfig.Version
 	}
 	if m.Version == "" {
-		// 使用从远程服务获取最新版本号
+		// 尝试使用从远程服务获取最新版本号
 		latestVersion, err := remotecfg.LatestVersion()
+		err = errors.New("ttt")
 		if err == nil {
 			m.Version = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
 		} else {
-			//获取失败, 要求输入版本号
+			//最后获取失败, 要求输入版本号
 			term.Logger.Error("Failed to retrieve version information from the remote service.")
 			term.Logger.Error(err.Error())
 			var inputVersion string
@@ -71,33 +73,35 @@ func runInit(c *command.Config) error {
 			}
 			m.Version = inputVersion
 		}
-		// 修复版本号
-		m.Version = strings.ToLower(m.Version)
-		if m.Version[0] != 'v' {
-			m.Version = "v" + m.Version
+	}
+	// 修复版本号
+	m.Version = strings.ToLower(m.Version)
+	if m.Version[0] != 'v' {
+		m.Version = "v" + m.Version
+	}
+	// 验证版本号格式, vx.x.x
+	if !tools.VerifyRelease(m.Version) {
+		err := fmt.Sprintf("Incorrect version format '%v'. Example: v1.0.0", m.Version)
+		return errors.New(err)
+	}
+	if m.ResLoad == "" || (m.ResLoad != "1" && m.ResLoad != "2") {
+		options := []string{"HTTP", "Local Load"}
+		printer := term.DefaultInteractiveSelect.WithOnInterruptFunc(func() {
+			os.Exit(1)
+		}).WithOptions(options)
+		printer.CheckmarkANSI()
+		printer.DefaultText = "Resource Loading. Default HTTP"
+		printer.Filter = false
+		selectedOption, err := printer.Show()
+		if err != nil {
+			return err
 		}
-	}
-	// 验证版本号格式
-	if tools.VerifyRelease(m.Version) {
-		return errors.New("incorrect version format '" + m.Version + "'. example: v1.0.0")
-	}
-
-	options := []string{"HTTP", "Local Load"}
-	printer := term.DefaultInteractiveSelect.WithOnInterruptFunc(func() {
-		os.Exit(1)
-	}).WithOptions(options)
-	printer.CheckmarkANSI()
-	printer.DefaultText = "Resource Loading. Default HTTP"
-	printer.Filter = false
-	selectedOption, err := printer.Show()
-	if err != nil {
-		return err
-	}
-	pterm.Info.Printfln("Selected: %s", pterm.Green(selectedOption))
-	if selectedOption == "" || selectedOption == "HTTP" {
-		m.ResLoad = "1"
-	} else if selectedOption == "Local Load" {
-		m.ResLoad = "2"
+		pterm.Info.Printfln("Selected: %s", pterm.Green(selectedOption))
+		if selectedOption == "" || selectedOption == "HTTP" {
+			m.ResLoad = "1"
+		} else if selectedOption == "Local Load" {
+			m.ResLoad = "2"
+		}
 	}
 
 	return initialize.InitEnergyProject(c)
