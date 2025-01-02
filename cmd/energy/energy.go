@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/term"
 	"github.com/energye/energy/v2/cmd/internal/tools"
 	"github.com/jessevdk/go-flags"
+	"github.com/pterm/pterm"
 	"os"
 	"os/signal"
 	"syscall"
@@ -40,7 +41,9 @@ var commands = map[string]*command.Command{
 // 编译参数修改windows的 /help 为 --help  -tags="forceposix"
 
 func main() {
-	//term.GoENERGY()
+	if os.Getenv("term.disablecolor") != "" {
+		pterm.DisableColor()
+	}
 	termRun()
 }
 
