@@ -17,7 +17,9 @@ import (
 	"github.com/energye/energy/v2/cmd/internal/tools"
 )
 
-var upgradeList map[string]TVersionsUpgrade
+type VersionsUpgradeList map[string]TVersionsUpgrade
+
+var upgradeList VersionsUpgradeList
 
 type TVersionsUpgrade struct {
 	Enable           int               `json:"enable"`
@@ -31,7 +33,7 @@ type TDependenceModule struct {
 }
 
 // 版本发布升级列表
-func VersionUpgradeList() (map[string]TVersionsUpgrade, error) {
+func VersionUpgradeList() (VersionsUpgradeList, error) {
 	if upgradeList == nil {
 		data, err := tools.Get(env.GlobalDevEnvConfig.RemoteURL(consts.VERSIONS_UPGRADE_URL), env.GlobalDevEnvConfig.Proxy)
 		if err != nil {
@@ -45,4 +47,23 @@ func VersionUpgradeList() (map[string]TVersionsUpgrade, error) {
 		upgradeList = vu
 	}
 	return upgradeList, nil
+}
+
+// 参数 ver: x.x.x
+func (m VersionsUpgradeList) Item(ver string) *TVersionsUpgrade {
+	// 找到相同版配置
+	installVersion, ok := m[ver]
+	if !ok {
+		return nil
+	}
+	for {
+		if installVersion.Identical != "" {
+			if installVersion, ok = m[installVersion.Identical]; !ok {
+				return nil
+			}
+		} else {
+			break
+		}
+	}
+	return &installVersion
 }

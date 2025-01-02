@@ -96,8 +96,9 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 	}
 	// 去除 v
 	version := u.Version[1:]
-	upgInfo, ok := upgraeList[version]
-	if !ok {
+
+	upgInfo := upgraeList.Item(version)
+	if upgInfo == nil {
 		return errors.New("Get energy version[" + u.Version + "]The upgrade information failed because the version does not exist")
 	}
 	// 升级模块依赖
@@ -116,7 +117,7 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 			}
 		}
 		if maxVer == cefVer {
-			// 最大版本号，返回 ""
+			// CEF 的最大版本号，返回 "", 因为支持的最新版本在 liblcl.xxx.zip 不加版本号
 			return ""
 		} else {
 			// 其它是指定支持版本，返回 -cefver
@@ -135,7 +136,7 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 		return errors.New("Get LibLCL Module[" + lclModule + "] config failure, module does not exist")
 	}
 	// 获取模块里的版本配置信息
-	lclModuleItem := lclModuleConfig.Item(version)
+	lclModuleItem := lclModuleConfig.Item(lclVersion)
 
 	// 组装下载地址, 使用 sourceforge(sf)
 	lclDownloadSource := baseConfig.DownloadSourceItem.LCL
@@ -144,6 +145,7 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 
 	// https://xxxx/xxx/xxx/xxx/{version}/{module}.{OSARCH}.zip
 	libOS := common.OS(cefOS, cefARCH)
+	// 要是Linux默认是GTK3，否则需要传递 --ws gtk2 指定
 	libModule := common.LibLCLLinuxUseGTK3(cefOS, u.WS, lclModule, strconv.Itoa(cefVer))
 	downloadURL := lclDownloadItem.Url
 	downloadURL = strings.ReplaceAll(downloadURL, "{version}", "v"+lclVersion)

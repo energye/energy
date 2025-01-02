@@ -73,37 +73,21 @@ func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersions
 		retErr = err
 		return
 	}
+
 	if c.Install.Version == "latest" {
-		// 最新版本, latest=vx.x.x
-		if v, ok := releaseList[m.LatestVersion.Version]; ok {
-			installVersion = &v
-		}
+		// 最新版本, latest=x.x.x
+		installVersion = releaseList.Item(m.LatestVersion.Version)
 	} else {
 		// 自己选择版本
-		if v, ok := releaseList[c.Install.Version]; ok {
-			installVersion = &v
+		ver := c.Install.Version
+		// 去除 v
+		if ver[0] == 'v' {
+			ver = ver[1:]
 		}
+		installVersion = releaseList.Item(ver)
 	}
 	if installVersion == nil {
 		retErr = errors.New("Invalid Version Number: " + c.Install.Version)
-		return
-	}
-	// 找到相同版配置
-	for {
-		if installVersion.Identical != "" {
-			if v, ok := releaseList[installVersion.Identical]; ok {
-				installVersion = &v
-				break
-			} else {
-				retErr = errors.New("Incorrect version configuration. Identical: " + installVersion.Identical)
-				return
-			}
-		} else {
-			break
-		}
-	}
-	if installVersion == nil {
-		retErr = errors.New("Identical Invalid Version Number: " + c.Install.Version)
 		return
 	}
 	// 指定支持的固定 CEF 版本号
