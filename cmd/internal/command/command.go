@@ -59,20 +59,6 @@ type Gen struct {
 	InfoFilePath     string `short:"i" long:"infoFilePath" description:"Generate directory for syso information data files in JSON format."`
 }
 
-type Icon struct {
-	IconFilePath string `short:"p" long:"iconFilePath" description:"Icon Directory: Supporting ICO, PNG formats, recommended as a 1024x1024 PNG"`
-	OutPath      string `short:"o" long:"outPath" description:"ICO output save directory"`
-}
-
-type SYSO struct {
-	Name             string `short:"n" long:"name" description:""`
-	IconFilePath     string `short:"p" long:"iconFilePath" description:"Icon Directory: Supporting .ICO formats"`
-	ManifestFilePath string `short:"m" long:"manifestFilePath" description:"Manifest file directory, if empty, will use the default template"`
-	OutPath          string `short:"o" long:"outPath" description:".syso output save directory"`
-	Arch             string `short:"a" long:"arch" description:"amd64 or i386 or arm64, if empty, the current system architecture"`
-	SysoInfoFilePath string `short:"s" long:"sysoInfoFilePath" description:"Generate directory for syso information data files in JSON format."`
-}
-
 type Install struct {
 	Path     string `short:"p" long:"path" description:"Installation directory Default current directory"`
 	Version  string `short:"v" long:"version" description:"Specifying a version number. x.x.x" default:"latest"`
@@ -102,10 +88,6 @@ type Env struct {
 	Get   string `short:"g" long:"get" description:"Get the configuration environment value. name"`
 	List  bool   `short:"l" long:"list" description:"Lists the CEF Framework installed"`
 	Use   string `long:"use" description:"Use the installed CEF Framework Version. ver:arch"`
-}
-
-type Setenv struct {
-	Path string `short:"p" long:"path" description:"Energy framework dir"`
 }
 
 type Version struct {
