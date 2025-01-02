@@ -34,6 +34,8 @@ func runCli(c *command.Config) error {
 	var downloadURL string
 	if c.Cli.Version || c.Cli.Update {
 		downloadURL = cli.CheckVersion()
+	} else {
+		cli.PrintCLIVersion()
 	}
 	if c.Cli.Update && downloadURL != "" {
 		err := cli.OnlineUpdate(downloadURL)

@@ -58,14 +58,12 @@ func Update(c *command.Config) (err error) {
 	}
 	// 检查当前执行目录使用的 energy 版本号, 同时也验证了是否 energy 项目
 	currentVersion := GetCurrentModVersion(update)
-	isOK := tools.VerifyRelease(currentVersion)
+	checkVersionOK := tools.VerifyRelease(currentVersion)
 	// 判断结果是否为版本号 vx.x.x
 	// 如果版本号验证失败，说明没使用 energy
-	if currentVersion != update.Version && isOK {
-		// 进入这个条件，证明使用了 energy 项目，更新版本号
+	if currentVersion != update.Version && checkVersionOK {
+		// 进入这个条件，说明使用了 energy 项目，并更新版本号
 		UpdateCurrentModVersion(update)
-	}
-	if isOK {
 		term.Logger.Info("Update energy finish")
 	}
 	// 更新当前使用的 CEF Framework

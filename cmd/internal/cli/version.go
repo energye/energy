@@ -11,13 +11,10 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/remotecfg"
 	"github.com/energye/energy/v2/cmd/internal/term"
-	"io/ioutil"
-	"net/http"
 	"runtime"
 	"strconv"
 	"strings"
@@ -35,6 +32,10 @@ func version() error {
 		}
 	}
 	return nil
+}
+
+func PrintCLIVersion() {
+	term.Section.Println(fmt.Sprintf("v%d.%d.%d", term.Major, term.Minor, term.Build))
 }
 
 // CheckVersion 检查版本
@@ -84,32 +85,4 @@ func CliFileName() string {
 		cliName += arch
 	}
 	return cliName
-}
-
-type GeoInfo struct {
-	Country string `json:"country"`
-}
-
-func area() {
-	resp, err := http.Get("http://ip-api.com/json/") // 使用公共API，注意实际使用时选择合适的服务
-	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		fmt.Println("Error reading body:", err)
-		return
-	}
-
-	var geoInfo GeoInfo
-	err = json.Unmarshal(body, &geoInfo)
-	if err != nil {
-		fmt.Println("Error parsing JSON:", err)
-		return
-	}
-
-	fmt.Println("Country:", geoInfo.Country)
 }

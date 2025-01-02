@@ -81,6 +81,9 @@ func IsInt(v string) bool {
 
 // 验证发行版本，入参: vx.x.x
 func VerifyRelease(v string) bool {
+	if v == "" {
+		return false
+	}
 	// 验证版本号格式
 	tmpVers := strings.Split(v[1:], ".")
 	if len(tmpVers) != 3 {

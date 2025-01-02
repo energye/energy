@@ -11,10 +11,13 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v2/cmd/internal/command"
 	"github.com/energye/energy/v2/cmd/internal/consts"
 	"github.com/energye/energy/v2/cmd/internal/tools"
+	"io/ioutil"
+	"net/http"
 	"runtime"
 	"strconv"
 	"strings"
@@ -96,4 +99,32 @@ func LibLCLLinuxUseGTK3(insOS command.OS, insWS, liblclModuleName, moduleVersion
 func UrlName(downloadUrl string) string {
 	downloadUrl = downloadUrl[strings.LastIndex(downloadUrl, "/")+1:]
 	return downloadUrl
+}
+
+func Area() {
+	resp, err := http.Get("http://ip-api.com/json/") // 使用公共API，注意实际使用时选择合适的服务
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading body:", err)
+		return
+	}
+
+	var geoInfo GeoInfo
+	err = json.Unmarshal(body, &geoInfo)
+	if err != nil {
+		fmt.Println("Error parsing JSON:", err)
+		return
+	}
+
+	fmt.Println("Country:", geoInfo.Country)
+}
+
+type GeoInfo struct {
+	Country string `json:"country"`
 }

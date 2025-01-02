@@ -34,9 +34,10 @@ var commands = map[string]*command.Command{
 	"bindata": internal.CmdBindata,
 	"gen":     internal.CmdGen,
 	"update":  internal.CmdUpdate,
-	"help":    internal.CmdHelp,
 	"cli":     internal.CmdCli,
 }
+
+// 编译参数修改windows的 /help 为 --help  -tags="forceposix"
 
 func main() {
 	//term.GoENERGY()
@@ -60,21 +61,14 @@ func termRun() {
 		// 拿到 cli 有效参数
 		args = os.Args[1:buildArgsIdx]
 	}
-	if extraArgs, err := parser.ParseArgs(args); err != nil {
-		println(err.Error())
-		return
+	if _, err := parser.ParseArgs(args); err != nil {
+		parser.WriteHelp(term.TermOut)
+		os.Exit(0)
 	} else {
 		cmd, ok := commands[parser.Active.Name]
 		if !ok {
 			parser.WriteHelp(term.TermOut)
-		}
-		// energy [cmd] help
-		if len(extraArgs) > 0 {
-			name := extraArgs[0]
-			if name == "help" {
-				term.Section.Println(cmd.UsageLine, "\n", cmd.Long)
-				os.Exit(0)
-			}
+			os.Exit(0)
 		}
 		if cmd.Short != "" {
 			term.Section.Println(cmd.Short)

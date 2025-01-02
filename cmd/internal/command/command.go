@@ -26,7 +26,6 @@ type Config struct {
 	Bindata Bindata `command:"bindata" description:"if the go version is less than 1.16, you can use bindata to embed static resources"`
 	Gen     Gen     `command:"gen" description:"generate icons or syso commands"`
 	Update  Update  `command:"update" description:"check and update the version"`
-	Help    Help    `command:"help" description:"energy [cmd] help"`
 	Cli     Cli     `command:"cli" description:"energy cli"`
 }
 
@@ -51,7 +50,7 @@ type Gen struct {
 	Syso bool `long:"syso" description:"Generate the application program xxx.syso, and when compiling the execution file, the execution file information can be written into it"`
 	// 参数
 	// icon, syso
-	IconFilePath string `short:"p" long:"iconFilePath" description:"Icon file directory:"`
+	IconFilePath string `short:"p" long:"iconFilePath" description:"Icon file directory"`
 	OutPath      string `short:"o" long:"outPath" description:"Save directory"`
 	// syso
 	Name             string `short:"n" long:"name" description:"Generate the syso file name and move it to the application name"`
@@ -103,9 +102,6 @@ type Env struct {
 	Get   string `short:"g" long:"get" description:"Get the configuration environment value. name"`
 	List  bool   `short:"l" long:"list" description:"Lists the CEF Framework installed"`
 	Use   string `long:"use" description:"Use the installed CEF Framework Version. ver:arch"`
-}
-
-type Help struct {
 }
 
 type Setenv struct {
