@@ -58,7 +58,7 @@ English
 
 #### Environmental installation
 
-Automatic installation development environment using the energy [command-line tool](https://energye.github.io/en/course/cli-use-instructions)
+Automatic installation development environment using the energy [command-line tool](https://energye.github.io/en/course/cli-use/)
 
 ### Guide to Start - [Link](https://energye.github.io/en/course/getting-started)
 

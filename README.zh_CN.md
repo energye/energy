@@ -61,7 +61,7 @@
 
 #### 环境安装
 
-> 使用 [energy cli](https://energye.github.io/course/cli-use-instructions) 自动安装完整开发环境
+> 使用 [energy cli](https://energye.github.io/course/cli-use/) 自动安装完整开发环境
 
 ### 入门指南 - [传送门](https://energye.github.io/course/getting-started)
 
