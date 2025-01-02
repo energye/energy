@@ -1,6 +1,6 @@
 # Upgrade Log
 
-### 2.5.2 -
+### 2.5.2 - 2025/01/02
 - cli Add optimization CMD
 - sdk update
 1. .energy The global parameter version is added to the current development environment energy version vx.x.x
