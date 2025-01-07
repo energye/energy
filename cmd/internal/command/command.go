@@ -60,19 +60,18 @@ type Gen struct {
 }
 
 type Install struct {
-	Path     string `short:"p" long:"path" description:"Installation directory Default current directory"`
-	Version  string `short:"v" long:"version" description:"Specifying a version number. x.x.x" default:"latest"`
-	Download string `short:"d" long:"download" description:"Download Source. Details: https://energye.github.io/data/model-base-config.json" default:""`
-	All      bool   `long:"all" description:"Skip select. Install All Software"`
-	OS       OS     `long:"os" description:"Specify install OS: [windows, linux, macos], default current os"`
-	Arch     Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm, arm64], default current arch"`
-	CEF      string `long:"cef" description:"Install system supports CEF version. options: latest, 109, 101, 87, 49" default:""`
-	WS       string `long:"ws" description:"Set this parameter when GTK2 is used on Linux" default:""`
-	IGolang  bool   // 是否安装Golang
-	ICEF     bool   // 是否安装CEF
-	INSIS    bool   // 是否安装nsis
-	IUPX     bool   // 是否安装upx
-	I7z      bool   // 是否安装7z
+	Path    string `short:"p" long:"path" description:"Installation directory Default current directory"`
+	Version string `short:"v" long:"version" description:"Specifying a version number. x.x.x" default:"latest"`
+	All     bool   `long:"all" description:"Skip select. Install All Software"`
+	OS      OS     `long:"os" description:"Specify install OS: [windows, linux, macos], default current os"`
+	Arch    Arch   `long:"arch" description:"Specify install ARCH: [386, amd64, arm, arm64], default current arch"`
+	CEF     string `long:"cef" description:"Install system supports CEF version. options: latest, 109, 101, 87, 49" default:""`
+	WS      string `long:"ws" description:"Set this parameter when GTK2 is used on Linux" default:""`
+	IGolang bool   // 是否安装Golang
+	ICEF    bool   // 是否安装CEF
+	INSIS   bool   // 是否安装nsis
+	IUPX    bool   // 是否安装upx
+	I7z     bool   // 是否安装7z
 }
 
 type Package struct {

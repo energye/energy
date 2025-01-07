@@ -6,7 +6,7 @@
     "0000": {
       "ProductVersion": "{{.Info.ProductVersion}}",
       "CompanyName": "{{.Info.CompanyName}}",
-      "FileDescription": "{{.Info.ProductName}}",
+      "FileDescription": "{{.Info.FileDescription}}",
       "LegalCopyright": "{{.Info.Copyright}}",
       "ProductName": "{{.Info.ProductName}}",
       "Comments": "{{.Info.Comments}}"
