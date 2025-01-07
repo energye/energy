@@ -23,9 +23,8 @@ type TExtracts map[string]TExtract
 type TDownloadItems map[string]TDownloadItem
 
 type TModeBaseConfig struct {
-	DownloadSourceItem TDownloadSourceItem `json:"downloadSourceItem"`
-	Environment        TEnvironment        `json:"environment"`
-	Extract            TExtracts           `json:"extract"`
+	DownloadSourceItem TDownloadSourceItem `json:"downloadSourceItem"` // 下载源集合配置
+	Extract            TExtracts           `json:"extract"`            // 压缩包提取目录文件规则
 }
 
 type TDownloadSourceItem struct {
@@ -38,17 +37,10 @@ type TDownloadSourceItem struct {
 }
 
 type TDownloadItem struct {
-	Label   string `json:"label"`
-	Url     string `json:"url"`
-	Md5     string `json:"md5"`
-	Version string `json:"version"`
-}
-
-type TEnvironment struct {
-	EnergyHomeKey string
-	GolanHomeKey  string
-	NSISHomeKey   string
-	Z7ZHomeKey    string
+	Label   string `json:"label"`   // 显示的下载源名
+	Url     string `json:"url"`     // 下载地址
+	Md5     string `json:"md5"`     // 下载md5
+	Version string `json:"version"` // 其它工具下载版本
 }
 
 type TExtract struct {

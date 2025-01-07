@@ -80,7 +80,6 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		lclItem = lclCfg.Item(liblclModuleVersion)
 		// 当前安装下载源
 		cefDownloadItem = config.ModeBaseConfig.DownloadSourceItem.CEF.Item(cefItem.DownloadSource)
-		lclDownloadItem = config.ModeBaseConfig.DownloadSourceItem.LCL.Item(lclItem.DownloadSource)
 	)
 	if cefModuleVersion == "" || liblclModuleVersion == "" {
 		return "", nil, errors.New("CEF module " + cefModuleName + " is not configured in the current version")
@@ -105,26 +104,73 @@ func installCEFFramework(config *remotecfg.TConfig, cmdConfig *command.Config) (
 		downloadCefURL = strings.ReplaceAll(downloadCefURL, "{OSARCH}", libCEFOS)
 		downloads[consts.CefKey] = &downloadInfo{fileName: common.UrlName(downloadCefURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, common.UrlName(downloadCefURL)), frameworkPath: installPathName, url: downloadCefURL, module: cefModuleName}
 	}
+	// LibLCL 动态链接库 下载地址, 在下面下载失败时自动切换下一个下载源使用
+	var getLibLCLDownUrl func() string
 	if !isLCL {
 		// liblcl 当前模块版本支持系统
 		libEnergyOS := common.LibLCLOS(cmdConfig)
 		useLibLCLModuleNameGTK3 := common.LibLCLLinuxUseGTK3(cmdConfig.Install.OS, cmdConfig.Install.WS, liblclModuleName, moduleVersion)
 		// https://www.xxx.xxx/xxx/releases/download/{version}/{module}.{OSARCH}.zip
-		downloadEnergyURL := lclDownloadItem.Url
-		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{version}", "v"+liblclModuleVersion)
-		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{module}", useLibLCLModuleNameGTK3)
-		downloadEnergyURL = strings.ReplaceAll(downloadEnergyURL, "{OSARCH}", libEnergyOS)
+		downSrcList := lclItem.DownloadSourceList[:]
+		// 默认使用下载源
+		useDownSrc := lclItem.DownloadSource
+		// 删除当前使用下载源，以在失败情况下可以获取下一个
+		removeDownSrcForListAndSetNext := func() {
+			for i, v := range downSrcList {
+				if v == useDownSrc {
+					// 删除这个
+					downSrcList = append(downSrcList[:i], downSrcList[i+1:]...)
+					break
+				}
+			}
+			// 重新设置下载源，如果下载失败
+			if len(downSrcList) > 0 {
+				useDownSrc = downSrcList[0]
+			}
+		}
+		// 获取 LibLCL 下载源，返回空表示已经被全部使用过了
+		getLibLCLDownUrl = func() string {
+			if len(downSrcList) == 0 {
+				return ""
+			}
+			lclDownloadItem := config.ModeBaseConfig.DownloadSourceItem.LCL.Item(useDownSrc)
+			downloadURL := lclDownloadItem.Url
+			downloadURL = strings.ReplaceAll(downloadURL, "{version}", "v"+liblclModuleVersion)
+			downloadURL = strings.ReplaceAll(downloadURL, "{module}", useLibLCLModuleNameGTK3)
+			downloadURL = strings.ReplaceAll(downloadURL, "{OSARCH}", libEnergyOS)
+			// 删除 downSrcList 当前下载源，表示已经使用过
+			// 将当前使用的在 下载集合里 删除掉
+			removeDownSrcForListAndSetNext()
+			return downloadURL
+		}
+		// 获取下载地址
+		downloadEnergyURL := getLibLCLDownUrl()
 		downloads[consts.LiblclKey] = &downloadInfo{fileName: common.UrlName(downloadEnergyURL), downloadPath: filepath.Join(cmdConfig.Install.Path, consts.FrameworkCache, common.UrlName(downloadEnergyURL)), frameworkPath: installPathName, url: downloadEnergyURL, module: liblclModuleName}
 	}
 	// 在线下载 CEF 框架二进制包
 	var sortsKeys = []string{consts.LiblclKey, consts.CefKey}
-	for _, key := range sortsKeys {
+	for i := 0; i < len(sortsKeys); i++ {
+		key := sortsKeys[i]
 		dl, ok := downloads[key]
 		if ok {
 			term.Section.Println("Download", key, ":", dl.url)
 			err := tools.DownloadFile(dl.url, dl.downloadPath, env.GlobalDevEnvConfig.Proxy, nil)
-			if err != nil {
-				return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
+			if key == consts.LiblclKey {
+				if err != nil {
+					// 失败尝试使用下个下载源
+					if downURL := getLibLCLDownUrl(); downURL != "" {
+						term.Logger.Error("Download", term.Logger.Args("ERROR", err.Error(), "Auto switch download source", downURL))
+						dl.url = downURL
+						i--
+						continue
+					} else {
+						return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
+					}
+				}
+			} else {
+				if err != nil {
+					return "", nil, errors.New("Download [" + dl.fileName + "] " + err.Error())
+				}
 			}
 			dl.success = err == nil
 		}
