@@ -58,7 +58,6 @@ func runInit(c *command.Config) error {
 	if m.Version == "" {
 		// 尝试使用从远程服务获取最新版本号
 		latestVersion, err := remotecfg.LatestVersion()
-		err = errors.New("ttt")
 		if err == nil {
 			m.Version = fmt.Sprintf("v%v.%v.%v", latestVersion.Major, latestVersion.Minor, latestVersion.Build)
 		} else {
