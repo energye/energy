@@ -1,5 +1,8 @@
 # Upgrade Log
 
+### 2.5.3 - 2025/01/15
+- U: CLI 2.5.3
+
 ### 2.5.2 - 2025/01/02
 - cli Add optimization CMD
 - sdk update
