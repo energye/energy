@@ -15,7 +15,6 @@
 package ipc
 
 import (
-	_ "embed"
 	"github.com/energye/energy/v2/cef/internal/cef"
 	"github.com/energye/energy/v2/cef/ipc/callback"
 	"github.com/energye/energy/v2/cef/ipc/context"
