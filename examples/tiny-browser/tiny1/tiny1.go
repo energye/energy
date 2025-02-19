@@ -41,10 +41,6 @@ func main() {
 			app.QuitMessageLoop()
 		})
 		var tabURL string
-		chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
-			fmt.Println("OnAfterCreated", browser.Identifier())
-			browser.MainFrame().LoadUrl("https://www.baidu.com")
-		})
 		chromium.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
 			fmt.Println("OnLoadStart", browser.Identifier())
 			if tabURL != "" {
