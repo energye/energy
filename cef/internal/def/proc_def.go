@@ -660,6 +660,12 @@ func init() {
 		dllimports.NewEnergyImport("CEFBrowser_StopFinding", 0),
 		dllimports.NewEnergyImport("CEFBrowser_GetRequestContext", 0),
 		dllimports.NewEnergyImport("CEFBrowserRef_UnWrap", 0),
+		dllimports.NewEnergyImport("CEFBrowser_IsFullscreen", 0),
+		dllimports.NewEnergyImport("CEFBrowser_ExitFullscreen", 0),
+		dllimports.NewEnergyImport("CEFBrowser_CanExecuteChromeCommand", 0),
+		dllimports.NewEnergyImport("CEFBrowser_ExecuteChromeCommand", 0),
+		dllimports.NewEnergyImport("CEFBrowser_IsRenderProcessUnresponsive", 0),
+		dllimports.NewEnergyImport("CEFBrowser_GetRuntimeStyle", 0),
 		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessage", 0),             // CEF 49
 		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessageForJSONBytes", 0), // CEF 49
 		dllimports.NewEnergyImport("CEFBrowser_SendProcessMessageForV8Value", 0),   // CEF 49

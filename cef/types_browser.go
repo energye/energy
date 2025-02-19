@@ -628,6 +628,51 @@ func (m *ICefBrowser) EmitRender(messageId int32, eventName string, target targe
 	return true
 }
 
+func (m *ICefBrowser) IsFullscreen() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFBrowser_IsFullscreen).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *ICefBrowser) ExitFullscreen(willCauseResize bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFBrowser_ExitFullscreen).Call(m.Instance(), api.PascalBool(willCauseResize))
+}
+
+func (m *ICefBrowser) CanExecuteChromeCommand(commandId int32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFBrowser_CanExecuteChromeCommand).Call(m.Instance(), uintptr(commandId))
+}
+
+func (m *ICefBrowser) ExecuteChromeCommand(commandId int32, disposition TCefWindowOpenDisposition) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFBrowser_ExecuteChromeCommand).Call(m.Instance(), uintptr(commandId), uintptr(disposition))
+}
+
+func (m *ICefBrowser) IsRenderProcessUnresponsive() bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFBrowser_IsRenderProcessUnresponsive).Call(m.Instance())
+	return api.GoBool(r1)
+}
+
+func (m *ICefBrowser) GetRuntimeStyle() TCefRuntimeStyle {
+	if !m.IsValid() {
+		return 0
+	}
+	r1, _, _ := imports.Proc(def.CEFBrowser_GetRuntimeStyle).Call(m.Instance())
+	return TCefRuntimeStyle(r1)
+}
+
 func (m *ICefBrowser) Free() {
 	if !m.IsValid() {
 		return

@@ -660,6 +660,12 @@ const (
 	CEFBrowser_StopFinding
 	CEFBrowser_GetRequestContext
 	CEFBrowserRef_UnWrap
+	CEFBrowser_IsFullscreen
+	CEFBrowser_ExitFullscreen
+	CEFBrowser_CanExecuteChromeCommand
+	CEFBrowser_ExecuteChromeCommand
+	CEFBrowser_IsRenderProcessUnresponsive
+	CEFBrowser_GetRuntimeStyle
 	CEFBrowser_SendProcessMessage             // CEF 49
 	CEFBrowser_SendProcessMessageForJSONBytes // CEF 49
 	CEFBrowser_SendProcessMessageForV8Value   // CEF 49
