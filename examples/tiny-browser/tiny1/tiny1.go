@@ -40,11 +40,27 @@ func main() {
 		chromium.SetOnBeforeClose(func(sender lcl.IObject, browser *cef.ICefBrowser) {
 			app.QuitMessageLoop()
 		})
+		var tabURL string
+		chromium.SetOnAfterCreated(func(sender lcl.IObject, browser *cef.ICefBrowser) {
+			fmt.Println("OnAfterCreated", browser.Identifier())
+			browser.MainFrame().LoadUrl("https://www.baidu.com")
+		})
+		chromium.SetOnLoadStart(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, transitionType consts.TCefTransitionType) {
+			fmt.Println("OnLoadStart", browser.Identifier())
+			if tabURL != "" {
+				frame.LoadUrl(tabURL)
+				tabURL = ""
+			}
+		})
 		chromium.SetOnBeforePopup(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, beforePopupInfo *cef.BeforePopupInfo, popupFeatures *cef.TCefPopupFeatures, windowInfo *cef.TCefWindowInfo, resultClient *cef.ICefClient, settings *cef.TCefBrowserSettings, resultExtraInfo *cef.ICefDictionaryValue, noJavascriptAccess *bool) bool {
+			browser.ExecuteChromeCommand(consts.IDC_NEW_TAB, consts.CEF_WOD_CURRENT_TAB)
+			tabURL = beforePopupInfo.TargetUrl
+			fmt.Println("OnBeforePopup", tabURL)
 			return true
 		})
 		chromium.SetOnOpenUrlFromTab(func(sender lcl.IObject, browser *cef.ICefBrowser, frame *cef.ICefFrame, targetUrl string, targetDisposition consts.TCefWindowOpenDisposition, userGesture bool) bool {
-			return true
+			fmt.Println("OpenUrlFromTab", tabURL)
+			return false
 		})
 		chromium.CreateBrowserByWindowHandle(handle, rect, "tiny browser", nil, nil, true)
 	})
