@@ -11,9 +11,10 @@
 package wv
 
 import (
-	"github.com/energye/lcl/api/libname"
+	"github.com/energye/examples/wv/windows/wv2load"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/wv/windows"
+	"path/filepath"
 )
 
 // application
@@ -32,7 +33,9 @@ func NewApplication() *Application {
 			IWVLoader:  wv.GlobalWebView2Loader(),
 			mainWindow: &MainWindow{},
 		}
-		application.SetLoaderDllPath(libname.GetLibPath("WebView2Loader.dll"))
+		webview2Home, wv2Loader := wv2load.Wv2Load()
+		application.SetUserDataFolder(filepath.Join(webview2Home, "webview2Cache"))
+		application.SetLoaderDllPath(wv2Loader)
 		application.defaultEvent()
 	}
 	return application
