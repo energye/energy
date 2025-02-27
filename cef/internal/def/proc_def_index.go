@@ -1010,6 +1010,15 @@ const (
 	CEFChromium_GetContentSetting
 	CEFChromium_SetContentSetting
 	CEFChromium_WindowHandle
+	CEFChromium_SimulateKeyEvent
+	CEFChromium_SimulateMouseEvent
+	CEFChromium_SimulateTouchEvent
+	CEFChromium_SimulateEditingCommand
+	CEFChromium_ClearCertificateExceptions
+	CEFChromium_ClearHttpAuthCredentials
+	CEFChromium_GetNavigationEntries
+	CEFChromium_SavePreferences
+	CEFChromium_ExecuteTaskOnCefThread
 	// TChromiumOptions
 	ChromiumOptions_SetJavascript
 	ChromiumOptions_SetJavascriptCloseWindows

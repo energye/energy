@@ -213,6 +213,15 @@ type IChromiumProc interface {
 	AsTargetWindow() target.IWindow
 	IsClosing() bool
 	setClosing(v bool)
+	SimulateKeyEvent(keyEvent TSimulateKeyEvent, timestamp float32, text, unmodifiedtext, keyIdentifier, code, key string)
+	SimulateMouseEvent(mouseEvent TSimulateMouseEvent, x, y, timestamp, force, tangentialPressure, tiltX, tiltY, deltaX, deltaY float32)
+	SimulateTouchEvent(type_ TCefSimulatedTouchEventType, touchPoints []*TCefSimulatedTouchPoint, modifiers int32, timestamp float32)
+	SimulateEditingCommand(command TCefEditingCommand)
+	ClearCertificateExceptions(clearImmediately bool) bool
+	ClearHttpAuthCredentials(clearImmediately bool) bool
+	GetNavigationEntries(currentOnly bool)
+	SavePreferences(fileName string)
+	ExecuteTaskOnCefThread(cefThreadId TCefThreadId, taskID uint32, delayMs int64) bool
 }
 
 // IsValid 实例有效
@@ -1388,7 +1397,7 @@ func (m *TCEFChromium) ClearDataForOrigin(origin string, storageTypes ...TCefCle
 	if len(storageTypes) > 0 {
 		st = storageTypes[0]
 	}
-	imports.Proc(def.CEFChromium_ClearDataForOrigin).Call(m.Instance(), api.PascalStr(origin), st.ToPtr())
+	imports.Proc(def.CEFChromium_ClearDataForOrigin).Call(m.Instance(), api.PascalStr(origin), uintptr(st))
 }
 
 func (m *TCEFChromium) ClearCache() {
@@ -1798,4 +1807,79 @@ func (m *TCEFChromium) IsClosing() bool {
 // 当窗口关闭时设置为true
 func (m *TCEFChromium) setClosing(v bool) {
 	m.isClosing = v
+}
+
+func (m *TCEFChromium) SimulateKeyEvent(keyEvent TSimulateKeyEvent, timestamp float32, text, unmodifiedtext, keyIdentifier, code, key string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SimulateKeyEvent).Call(m.Instance(), uintptr(unsafePointer(&keyEvent)), uintptr(unsafePointer(&timestamp)), api.PascalStr(text),
+		api.PascalStr(unmodifiedtext), api.PascalStr(keyIdentifier), api.PascalStr(code), api.PascalStr(key))
+}
+
+func (m *TCEFChromium) SimulateMouseEvent(mouseEvent TSimulateMouseEvent, x, y, timestamp, force, tangentialPressure, tiltX, tiltY, deltaX, deltaY float32) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SimulateMouseEvent).Call(m.Instance(), uintptr(unsafePointer(&mouseEvent)), uintptr(unsafePointer(&x)),
+		uintptr(unsafePointer(&y)), uintptr(unsafePointer(&timestamp)), uintptr(unsafePointer(&force)), uintptr(unsafePointer(&tangentialPressure)),
+		uintptr(unsafePointer(&tiltX)), uintptr(unsafePointer(&tiltY)), uintptr(unsafePointer(&deltaX)), uintptr(unsafePointer(&deltaY)))
+}
+
+func (m *TCEFChromium) SimulateTouchEvent(type_ TCefSimulatedTouchEventType, touchPoints []*TCefSimulatedTouchPoint, modifiers int32, timestamp float32) {
+	if !m.IsValid() {
+		return
+	}
+	var size = len(touchPoints)
+	touchPointsPtr := make([]tCefSimulatedTouchPointPtr, size, size)
+	for i := 0; i < size; i++ {
+		tp := touchPoints[i]
+		touchPointsPtr[i] = *tp.ToPtr()
+	}
+	imports.Proc(def.CEFChromium_SimulateTouchEvent).Call(m.Instance(), uintptr(type_), uintptr(unsafePointer(&touchPointsPtr[0])), uintptr(int32(size)), uintptr(modifiers), uintptr(unsafePointer(&timestamp)))
+}
+
+func (m *TCEFChromium) SimulateEditingCommand(command TCefEditingCommand) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SimulateEditingCommand).Call(m.Instance(), uintptr(command))
+}
+
+func (m *TCEFChromium) ClearCertificateExceptions(clearImmediately bool) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_ClearCertificateExceptions).Call(m.Instance(), api.PascalBool(clearImmediately))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) ClearHttpAuthCredentials(clearImmediately bool) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_ClearHttpAuthCredentials).Call(m.Instance(), api.PascalBool(clearImmediately))
+	return api.GoBool(r1)
+}
+
+func (m *TCEFChromium) GetNavigationEntries(currentOnly bool) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_GetNavigationEntries).Call(m.Instance(), api.PascalBool(currentOnly))
+}
+
+func (m *TCEFChromium) SavePreferences(fileName string) {
+	if !m.IsValid() {
+		return
+	}
+	imports.Proc(def.CEFChromium_SavePreferences).Call(m.Instance(), api.PascalStr(fileName))
+}
+
+func (m *TCEFChromium) ExecuteTaskOnCefThread(cefThreadId TCefThreadId, taskID uint32, delayMs int64) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CEFChromium_ExecuteTaskOnCefThread).Call(m.Instance(), uintptr(cefThreadId), uintptr(taskID), uintptr(unsafePointer(&delayMs)))
+	return api.GoBool(r1)
 }

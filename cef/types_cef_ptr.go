@@ -245,6 +245,36 @@ func (m *TCefCompositionUnderline) ToPtr() *tCefCompositionUnderlinePtr {
 	}
 }
 
+type tCefSimulatedTouchPointPtr struct {
+	Id                 uintptr //int32
+	X                  uintptr //int32
+	Y                  uintptr //int32
+	RadiusX            uintptr //float32
+	RadiusY            uintptr //float32
+	RotationAngle      uintptr //float32
+	Force              uintptr //float32
+	TangentialPressure uintptr //float32
+	TiltX              uintptr //int32
+	TiltY              uintptr //int32
+	Twist              uintptr //int32
+}
+
+func (m *TCefSimulatedTouchPoint) ToPtr() *tCefSimulatedTouchPointPtr {
+	return &tCefSimulatedTouchPointPtr{
+		Id:                 uintptr(m.Id),
+		X:                  uintptr(m.X),
+		Y:                  uintptr(m.Y),
+		RadiusX:            uintptr(unsafePointer(&m.RadiusX)),
+		RadiusY:            uintptr(unsafePointer(&m.RadiusY)),
+		RotationAngle:      uintptr(unsafePointer(&m.RotationAngle)),
+		Force:              uintptr(unsafePointer(&m.Force)),
+		TangentialPressure: uintptr(unsafePointer(&m.TangentialPressure)),
+		TiltX:              uintptr(m.TiltX),
+		TiltY:              uintptr(m.TiltY),
+		Twist:              uintptr(m.Twist),
+	}
+}
+
 // ================
 
 type tCefProxyPtr struct {

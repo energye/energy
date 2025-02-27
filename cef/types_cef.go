@@ -268,9 +268,9 @@ type TCefInsets struct {
 // <para><see href="https://bitbucket.org/chromiumembedded/cef/src/master/include/internal/cef_types.h">CEF source file: /include/internal/cef_types.h (cef_pdf_print_settings_t)</see></para>
 type TCefPdfPrintSettings struct {
 	//  Set to true (1) for landscape mode or false (0) for portrait mode.
-	Landscape int32 // Integer
+	Landscape int32 // int32
 	//  Set to true (1) to print background graphics.
-	PrintBackground int32 // Integer
+	PrintBackground int32 // int32
 	//  The percentage to scale the PDF by before printing (e.g. .5 is 50%).
 	//  If this value is less than or equal to zero the default value of 1.0
 	//  will be used.
@@ -282,7 +282,7 @@ type TCefPdfPrintSettings struct {
 	PaperHeight float64 // double
 	//  Set to true (1) to prefer page size as defined by css. Defaults to false
 	//  (0), in which case the content will be scaled to fit the paper size.
-	PreferCssPageSize int32 // Integer
+	PreferCssPageSize int32 // int32
 	//  Margin type.
 	MarginType consts.TCefPdfPrintMarginType // TCefPdfPrintMarginType
 	//  Margins in inches. Only used if |margin_type| is set to
@@ -301,7 +301,7 @@ type TCefPdfPrintSettings struct {
 	PageRanges string // TCefString
 	//  Set to true (1) to display the header and/or footer. Modify
 	//  |header_template| and/or |footer_template| to customize the display.
-	DisplayHeaderFooter int32 // Integer
+	DisplayHeaderFooter int32 // int32
 	//  HTML template for the print header. Only displayed if
 	//  |display_header_footer| is true (1). Should be valid HTML markup with
 	//  the following classes used to inject printing values into them:
@@ -319,9 +319,9 @@ type TCefPdfPrintSettings struct {
 	//  |header_template|.
 	FooterTemplate string // TCefString
 	//  Set to true (1) to generate tagged (accessible) PDF.
-	GenerateTaggedPdf int32 // Integer
+	GenerateTaggedPdf int32 // int32
 	//  Set to true (1) to generate a document outline.
-	GenerateDocumentOutline int32 // Integer
+	GenerateDocumentOutline int32 // int32
 }
 
 // include/internal/cef_types.h (cef_popup_features_t)
@@ -477,4 +477,53 @@ func (m *TCefKeyEvent) KeyDown() bool {
 
 func (m *TCefKeyEvent) KeyUp() bool {
 	return m.Kind == consts.KEYEVENT_KEYUP
+}
+
+// Structure representing a simulated touch point.
+// <para><see href="https://chromedevtools.github.io/devtools-protocol/tot/Input/#type-TouchPoint">See the Input.TouchPoint type in the DevTools docs.</see></para>
+type TCefSimulatedTouchPoint struct {
+	// Identifier used to track touch sources between events, must be unique within an event. This is an optional value.
+	Id int32
+	// X coordinate of the event relative to the main frame's viewport in CSS pixels.
+	X int32
+	// Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	Y int32
+	// X radius of the touch area (default: 1.0). This is an optional value.
+	RadiusX float32
+	// Y radius of the touch area (default: 1.0). This is an optional value.
+	RadiusY float32
+	// Rotation angle (default: 0.0). This is an optional value.
+	RotationAngle float32
+	// Force (default: 1.0). This is an optional value.
+	Force float32
+	// The normalized tangential pressure, which has a range of [-1,1] (default: 0). This is an optional value.
+	TangentialPressure float32
+	// The plane angle between the Y-Z plane and the plane containing both the stylus axis and the Y axis, in degrees of the range [-90,90], a positive tiltX is to the right (default: 0) This is an optional value.
+	TiltX int32
+	// The plane angle between the X-Z plane and the plane containing both the stylus axis and the X axis, in degrees of the range [-90,90], a positive tiltY is towards the user (default: 0). This is an optional value.
+	TiltY int32
+	// The clockwise rotation of a pen stylus around its own major axis, in degrees in the range [0,359] (default: 0).  This is an optional value.
+	Twist int32
+}
+
+type TSimulateKeyEvent struct {
+	Type_                 consts.TSimulatedCefKeyEventType
+	Modifiers             int32
+	WindowsVirtualKeyCode int32
+	NativeVirtualKeyCode  int32
+	AutoRepeat            bool
+	IsKeypad              bool
+	IsSystemKey           bool
+	Location              consts.TCefKeyLocation
+	Commands              consts.TCefEditingCommand
+}
+
+type TSimulateMouseEvent struct {
+	Type_       consts.TCefSimulatedMouseEventType
+	Modifiers   int32
+	Button      consts.TCefSimulatedMouseButton
+	Buttons     int32
+	ClickCount  int32
+	Twist       int32
+	PointerType consts.TCefSimulatedPointerType
 }

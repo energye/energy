@@ -1314,21 +1314,6 @@ const (
 	DOM_NODE_TYPE_DOCUMENT_FRAGMENT
 )
 
-type TCefClearDataStorageTypes = types.Int32
-
-const (
-	CdstAppCache TCefClearDataStorageTypes = iota
-	CdstCookies
-	CdstFileSystems
-	CdstIndexeddb
-	CdstLocalStorage
-	CdstShaderCache
-	CdstWebsql
-	CdstServiceWorkers
-	CdstCacheStorage
-	CdstAll // default
-)
-
 // include/internal/cef_types.h (cef_composition_underline_style_t)
 type TCefCompositionUnderlineStyle int32
 

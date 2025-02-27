@@ -1703,3 +1703,259 @@ const (
 	CEF_COOKIE_PREF_BLOCK                       = 2
 	CEF_DEFAULT_ENABLEFOCUSDELAY                = 500 // delay in ms to enable the browser focus
 )
+
+// / Event type used by TChromiumCore.SimulateKeyEvent
+type TSimulatedCefKeyEventType = int32
+
+const (
+	KetKeyDown TSimulatedCefKeyEventType = iota
+	KetKeyUp
+	KetRawKeyDown
+	KetChar
+)
+
+// Modifier values used in the Input.dispatchTouchEvent and Input.dispatchMouseEvent DevTools methods.
+// Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
+// https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchTouchEvent
+type TCefMousetouchEventModifiers = int32
+
+const (
+	CEF_MOUSETOUCH_EVENT_MODIFIERS_NONE    TCefMousetouchEventModifiers = 0
+	CEF_MOUSETOUCH_EVENT_MODIFIERS_ALT     TCefMousetouchEventModifiers = 1 << 0
+	CEF_MOUSETOUCH_EVENT_MODIFIERS_CTRL    TCefMousetouchEventModifiers = 1 << 1
+	CEF_MOUSETOUCH_EVENT_MODIFIERS_METACMD TCefMousetouchEventModifiers = 1 << 2
+	CEF_MOUSETOUCH_EVENT_MODIFIERS_SHIFT   TCefMousetouchEventModifiers = 1 << 3
+)
+
+// / Key location value used in the TChromiumCore.dispatchKeyEvent DevTools method.
+type TCefKeyLocation = int32
+
+const (
+	CEF_KEYLOCATION_NONE TCefKeyLocation = iota
+	CEF_KEYLOCATION_LEFT
+	CEF_KEYLOCATION_RIGHT
+)
+
+// / Mouse button in the TChromiumCore.SimulateMouseEvent function.
+// / <para><see href="https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchMouseEvent">See the Input.dispatchMouseEvent DevTools method</see></para>
+type TCefSimulatedMouseButton = int32
+
+const (
+	CEF_SIMULATEDMOUSEBUTTON_NONE TCefSimulatedMouseButton = iota
+	CEF_SIMULATEDMOUSEBUTTON_LEFT
+	CEF_SIMULATEDMOUSEBUTTON_MIDDLE
+	CEF_SIMULATEDMOUSEBUTTON_RIGHT
+	CEF_SIMULATEDMOUSEBUTTON_BACK
+	CEF_SIMULATEDMOUSEBUTTON_FORWARD
+)
+
+// Modifier values used in the Input.dispatchMouseEvent DevTools method.
+// A number indicating which buttons are pressed on the mouse when a mouse event is triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
+// https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchMouseEvent
+type TCefPressedMouseButtons = int32
+
+const (
+	CEF_PRESSED_MOUSE_BUTTONS_NONE    TCefPressedMouseButtons = 0
+	CEF_PRESSED_MOUSE_BUTTONS_LEFT    TCefPressedMouseButtons = 1 << 0
+	CEF_PRESSED_MOUSE_BUTTONS_RIGHT   TCefPressedMouseButtons = 1 << 1
+	CEF_PRESSED_MOUSE_BUTTONS_MIDDLE  TCefPressedMouseButtons = 1 << 2
+	CEF_PRESSED_MOUSE_BUTTONS_BACK    TCefPressedMouseButtons = 1 << 3
+	CEF_PRESSED_MOUSE_BUTTONS_FORWARD TCefPressedMouseButtons = 1 << 4
+)
+
+// / Pointer type in the TChromiumCore.SimulateMouseEvent function.
+// / <para><see href="https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchMouseEvent">See the Input.dispatchMouseEvent DevTools method</see></para>
+type TCefSimulatedPointerType = int32
+
+const (
+	CEF_SIMULATEDPOINTERTYPE_MOUSE TCefSimulatedPointerType = iota
+	CEF_SIMULATEDPOINTERTYPE_PEN
+)
+
+// / Type of touch event in the TChromiumCore.SimulateTouchEvent function.
+// / <para><see href="https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchTouchEvent">See the Input.dispatchTouchEvent DevTools method</see></para>
+type TCefSimulatedTouchEventType = int32
+
+const (
+	TouchStart TCefSimulatedTouchEventType = iota
+	TouchEnd
+	TouchMove
+	TouchCancel
+)
+
+// / <summary>
+// / Storage types used by the Storage.clearDataForOrigin DevTools method in TChromiumCore.ClearDataForOrigin.
+// / </summary>
+type TCefClearDataStorageTypes = int32
+
+const (
+	CdstAppCache TCefClearDataStorageTypes = iota
+	CdstCookies
+	CdstFileSystems
+	CdstIndexeddb
+	CdstLocalStorage
+	CdstShaderCache
+	CdstWebsql
+	CdstServiceWorkers
+	CdstCacheStorage
+	CdstAll // default
+)
+
+// / Blink editing commands used by the "Input.dispatchKeyEvent" DevTools method.
+// / <para><see href="https://chromedevtools.github.io/devtools-protocol/1-3/Input/#method-dispatchKeyEvent">See the "Input.dispatchKeyEvent" DevTools method.</see></para>
+// / <para><see href="https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h">See the Chromium sources.</see></para>
+type TCefEditingCommand = int32
+
+const (
+	EcNone TCefEditingCommand = iota
+	EcAlignCenter
+	EcAlignJustified
+	EcAlignLeft
+	EcAlignRight
+	EcBackColor
+	EcBackwardDelete
+	EcBold
+	EcCopy
+	EcCreateLink
+	EcCut
+	EcDefaultParagraphSeparator
+	EcDelete
+	EcDeleteBackward
+	EcDeleteBackwardByDecomposingPreviousCharacter
+	EcDeleteForward
+	EcDeleteToBeginningOfLine
+	EcDeleteToBeginningOfParagraph
+	EcDeleteToEndOfLine
+	EcDeleteToEndOfParagraph
+	EcDeleteToMark
+	EcDeleteWordBackward
+	EcDeleteWordForward
+	EcFindString
+	EcFontName
+	EcFontSize
+	EcFontSizeDelta
+	EcForeColor
+	EcFormatBlock
+	EcForwardDelete
+	EcHiliteColor
+	EcIgnoreSpelling
+	EcIndent
+	EcInsertBacktab
+	EcInsertHorizontalRule
+	EcInsertHTML
+	EcInsertImage
+	EcInsertLineBreak
+	EcInsertNewline
+	EcInsertNewlineInQuotedContent
+	EcInsertOrderedList
+	EcInsertParagraph
+	EcInsertTab
+	EcInsertText
+	EcInsertUnorderedList
+	EcItalic
+	EcJustifyCenter
+	EcJustifyFull
+	EcJustifyLeft
+	EcJustifyNone
+	EcJustifyRight
+	EcMakeTextWritingDirectionLeftToRight
+	EcMakeTextWritingDirectionNatural
+	EcMakeTextWritingDirectionRightToLeft
+	EcMoveBackward
+	EcMoveBackwardAndModifySelection
+	EcMoveDown
+	EcMoveDownAndModifySelection
+	EcMoveForward
+	EcMoveForwardAndModifySelection
+	EcMoveLeft
+	EcMoveLeftAndModifySelection
+	EcMovePageDown
+	EcMovePageDownAndModifySelection
+	EcMovePageUp
+	EcMovePageUpAndModifySelection
+	EcMoveParagraphBackward
+	EcMoveParagraphBackwardAndModifySelection
+	EcMoveParagraphForward
+	EcMoveParagraphForwardAndModifySelection
+	EcMoveRight
+	EcMoveRightAndModifySelection
+	EcMoveToBeginningOfDocument
+	EcMoveToBeginningOfDocumentAndModifySelection
+	EcMoveToBeginningOfLine
+	EcMoveToBeginningOfLineAndModifySelection
+	EcMoveToBeginningOfParagraph
+	EcMoveToBeginningOfParagraphAndModifySelection
+	EcMoveToBeginningOfSentence
+	EcMoveToBeginningOfSentenceAndModifySelection
+	EcMoveToEndOfDocument
+	EcMoveToEndOfDocumentAndModifySelection
+	EcMoveToEndOfLine
+	EcMoveToEndOfLineAndModifySelection
+	EcMoveToEndOfParagraph
+	EcMoveToEndOfParagraphAndModifySelection
+	EcMoveToEndOfSentence
+	EcMoveToEndOfSentenceAndModifySelection
+	EcMoveToLeftEndOfLine
+	EcMoveToLeftEndOfLineAndModifySelection
+	EcMoveToRightEndOfLine
+	EcMoveToRightEndOfLineAndModifySelection
+	EcMoveUp
+	EcMoveUpAndModifySelection
+	EcMoveWordBackward
+	EcMoveWordBackwardAndModifySelection
+	EcMoveWordForward
+	EcMoveWordForwardAndModifySelection
+	EcMoveWordLeft
+	EcMoveWordLeftAndModifySelection
+	EcMoveWordRight
+	EcMoveWordRightAndModifySelection
+	EcOutdent
+	EcOverWrite
+	EcPaste
+	EcPasteAndMatchStyle
+	EcPasteGlobalSelection
+	EcPrint
+	EcRedo
+	EcRemoveFormat
+	EcScrollLineDown
+	EcScrollLineUp
+	EcScrollPageBackward
+	EcScrollPageForward
+	EcScrollToBeginningOfDocument
+	EcScrollToEndOfDocument
+	EcSelectAll
+	EcSelectLine
+	EcSelectParagraph
+	EcSelectSentence
+	EcSelectToMark
+	EcSelectWord
+	EcSetMark
+	EcStrikethrough
+	EcStyleWithCSS
+	EcSubscript
+	EcSuperscript
+	EcSwapWithMark
+	EcToggleBold
+	EcToggleItalic
+	EcToggleUnderline
+	EcTranspose
+	EcUnderline
+	EcUndo
+	EcUnlink
+	EcUnscript
+	EcUnselect
+	EcUseCSS
+	EcYank
+	EcYankAndSelect
+)
+
+// / Type of mouse event in the TChromiumCore.SimulateMouseEvent function.
+// / <para><see href="https://chromedevtools.github.io/devtools-protocol/tot/Input/#method-dispatchMouseEvent">See the Input.dispatchMouseEvent DevTools method</see></para>
+type TCefSimulatedMouseEventType = int32
+
+const (
+	MousePressed TCefSimulatedMouseEventType = iota
+	MouseReleased
+	MouseMoved
+	MouseWheel
+)
