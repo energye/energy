@@ -1,5 +1,10 @@
 # Upgrade Log
 
+### 2.5.4 - 2025/02/27
+- Fix: #54 Popup default chromium browser window
+- R: IPC embed package
+- CEF 130 Some commonly used APIs
+
 ### 2.5.3 - 2025/01/15
 - U: CLI 2.5.3
 
