@@ -114,6 +114,9 @@ func (m TConfig) GetInstallVersion(c *command.Config) (installVersion *TVersions
 	} else if cef == consts.CEF87 {
 		cefModuleName = "cef-87"
 		liblclModuleName = "liblcl-87"
+	} else if cef == consts.CEF89 {
+		cefModuleName = "cef-89"
+		liblclModuleName = "liblcl-89"
 	}
 	// 未匹配到, 找到当前安装 energy 版本所支持的最新 CEF 版本号, 规则为取版本号最大数字
 	if cefModuleName == "" {
