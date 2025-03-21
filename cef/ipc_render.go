@@ -46,19 +46,6 @@ type ipcRenderProcess struct {
 	waitChan        *ipc.WaitChan
 }
 
-func (m *ipcRenderProcess) clear(frameId string) {
-	if m.ipcObject != nil {
-		m.ipcObject.Free()
-		m.ipcObject = nil
-	}
-	if m.onHandler != nil {
-		if on, ok := m.onHandler[frameId]; ok {
-			on.clear()
-			delete(m.onHandler, frameId)
-		}
-	}
-}
-
 // JS ipc.on 监听事件
 func (m *ipcOnHandler) jsOnEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	var size int
@@ -802,10 +789,6 @@ func (m *ipcRenderProcess) jsExecuteGoSyncEventMessageReply(browser *ICefBrowser
 
 // ipc
 func (m *ipcRenderProcess) makeIPC(frameId string, context *ICefV8Context) {
-	if m.ipcObject != nil {
-		// 刷新时释放掉
-		m.clear(frameId)
-	}
 	// ipc emit
 	m.emitHandler.handler = V8HandlerRef.New()
 	m.emitHandler.handler.Execute(m.jsExecuteGoEvent)
