@@ -13,10 +13,10 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/i18n"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/logger"
+	"github.com/cyber-xxm/energy/v2/cef/i18n"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/logger"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"

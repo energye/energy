@@ -12,10 +12,10 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/v2/cef/winapi"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/assetserve"
-	et "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef/winapi"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
+	et "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 )

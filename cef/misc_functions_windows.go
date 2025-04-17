@@ -16,10 +16,10 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/winapi"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/consts/messages"
-	"github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef/winapi"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts/messages"
+	"github.com/cyber-xxm/energy/v2/types"
 )
 
 func CefIsKeyDown(wparam types.WPARAM) bool {

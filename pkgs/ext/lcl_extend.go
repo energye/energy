@@ -11,8 +11,8 @@
 package ext
 
 import (
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/common/imports"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/api/dllimports"

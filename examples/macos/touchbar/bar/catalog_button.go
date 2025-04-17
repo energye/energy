@@ -1,10 +1,11 @@
 //go:build darwin
+// +build darwin
 
 package bar
 
 import (
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
-	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barutils"
 )
 
 func makeButtonCatalog(switcher barutils.Switcher) barbuilder.Item {

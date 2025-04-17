@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/consts"
-	demoCommon "github.com/energye/energy/v2/examples/common"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/consts"
+	demoCommon "github.com/cyber-xxm/energy/v2/examples/common"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"

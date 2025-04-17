@@ -9,7 +9,7 @@ import (
 	"image/png"
 	"io"
 
-	"github.com/energye/energy/v2/pkgs/winicon/internal/winicon"
+	"github.com/cyber-xxm/energy/v2/pkgs/winicon/internal/winicon"
 	"golang.org/x/image/draw"
 )
 

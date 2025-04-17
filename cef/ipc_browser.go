@@ -13,13 +13,13 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/internal/ipc"
-	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/cyber-xxm/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/cyber-xxm/energy/v2/cef/ipc/argument"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/callback"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/context"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/json"
 )
 
 // ipcBrowserProcess 主进程

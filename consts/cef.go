@@ -1,6 +1,6 @@
 package consts
 
-import "github.com/energye/energy/v2/types"
+import "github.com/cyber-xxm/energy/v2/types"
 
 type CEF_NET_ERROR = types.Int32
 

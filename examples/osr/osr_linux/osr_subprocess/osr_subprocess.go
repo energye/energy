@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef"
 	"github.com/energye/golcl/pkgs/libname"
 )
 

@@ -1,4 +1,4 @@
-module github.com/energye/energy/v2/cmd
+module github.com/cyber-xxm/energy/v2/cmd
 
 go 1.20
 

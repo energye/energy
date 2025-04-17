@@ -16,14 +16,15 @@ package json
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"reflect"
 	"strconv"
 	"strings"
 )
 
 // JSONArray
-//  Manipulate data according to subscript, failure to return the default value of the data type
+//
+//	Manipulate data according to subscript, failure to return the default value of the data type
 type JSONArray interface {
 	JSON
 	Add(value ...interface{})                // Add data of any type
@@ -43,10 +44,11 @@ type JSONArray interface {
 }
 
 // NewJSONArray
-//  byte JSONArray, array & slice convert
-//  value:
-//    []byte("[...]")
-//    []slice
+//
+//	byte JSONArray, array & slice convert
+//	value:
+//	  []byte("[...]")
+//	  []slice
 func NewJSONArray(value interface{}) JSONArray {
 	if value != nil {
 		// 如果 []byte 就必须是 字节JSONArray

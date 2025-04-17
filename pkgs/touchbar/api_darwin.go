@@ -1,9 +1,10 @@
 //go:build darwin
+// +build darwin
 
 package touchbar
 
 import (
-	"github.com/energye/energy/v2/pkgs/touchbar/internal/darwin"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/internal/darwin"
 )
 
 // New allows to create a new Touch Bar for this application

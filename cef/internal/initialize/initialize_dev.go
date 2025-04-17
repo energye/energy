@@ -14,11 +14,11 @@
 package initialize
 
 import (
-	"github.com/energye/energy/v2/cef/config"
-	"github.com/energye/energy/v2/cef/internal/initialize/macapp"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/common/imports"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef/config"
+	"github.com/cyber-xxm/energy/v2/cef/internal/initialize/macapp"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/common/imports"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/tools"
 	"github.com/energye/golcl/lcl/api"

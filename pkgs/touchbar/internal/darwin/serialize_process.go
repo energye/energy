@@ -1,10 +1,11 @@
 //go:build darwin
+// +build darwin
 
 package darwin
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 func processItem(prefix string, i int, item barbuilder.Item, principal *identifier, dict map[identifier]item, handlers *handlers) (identifier, interface{}, error) {

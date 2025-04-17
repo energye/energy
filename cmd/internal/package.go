@@ -11,9 +11,9 @@
 package internal
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/packager"
-	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/packager"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/project"
 )
 
 var CmdPackage = &command.Command{

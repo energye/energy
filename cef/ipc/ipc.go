@@ -16,9 +16,9 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/internal/ipc"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/cef/ipc/types"
+	"github.com/cyber-xxm/energy/v2/cef/internal/ipc"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/types"
 )
 
 // On

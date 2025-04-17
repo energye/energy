@@ -4,8 +4,8 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 )
 
 func main() {
