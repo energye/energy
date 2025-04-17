@@ -1,9 +1,9 @@
 package views_style
 
 import (
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/types"
 )
 
 var (

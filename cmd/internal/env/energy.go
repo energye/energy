@@ -12,10 +12,10 @@ package env
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	"github.com/energye/energy/v2/cmd/internal/tools/homedir"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools/homedir"
 	"io/ioutil"
 	"net/url"
 	"os"

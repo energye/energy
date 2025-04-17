@@ -6,9 +6,9 @@ package main
 import "C"
 
 import (
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/config"
-	"github.com/energye/energy/v2/cef/process"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/config"
+	"github.com/cyber-xxm/energy/v2/cef/process"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/rtl"

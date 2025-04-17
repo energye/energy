@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/config"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/config"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"path/filepath"

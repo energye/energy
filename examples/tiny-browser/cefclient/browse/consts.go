@@ -1,6 +1,6 @@
 package browse
 
-import "github.com/energye/energy/v2/consts"
+import "github.com/cyber-xxm/energy/v2/consts"
 
 const BINARY consts.MenuId = 256
 const IDC_MYICON consts.MenuId = 2

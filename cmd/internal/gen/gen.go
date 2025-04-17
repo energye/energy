@@ -13,9 +13,9 @@ package gen
 import (
 	"encoding/json"
 	"errors"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/project"
-	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/project"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
 	"io/ioutil"
 )
 

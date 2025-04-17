@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 )
 
 // 资源目录，内置到执行程序中

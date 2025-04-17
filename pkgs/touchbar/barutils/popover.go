@@ -1,10 +1,11 @@
 //go:build darwin
+// +build darwin
 
 package barutils
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 // Switcher is used to manipulate the internal state of a stackable bar created with `MakeStackableBar`

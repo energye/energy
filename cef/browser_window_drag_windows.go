@@ -14,7 +14,7 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/consts/messages"
+	"github.com/cyber-xxm/energy/v2/consts/messages"
 	"github.com/energye/golcl/lcl/win"
 )
 

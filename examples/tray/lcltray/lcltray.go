@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/examples/common"
-	"github.com/energye/energy/v2/examples/common/tray"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/examples/common"
+	"github.com/cyber-xxm/energy/v2/examples/common/tray"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 )
 
 func main() {

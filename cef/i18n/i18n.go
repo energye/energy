@@ -9,13 +9,14 @@
 //----------------------------------------
 
 // Package i18n Multilingual resources
-//  Resource usage file loading
-//  File name format: locale.[lang].json | locale.[lang].ini => locale.en-US.json | locale.zh-CN.ini
+//
+//	Resource usage file loading
+//	File name format: locale.[lang].json | locale.[lang].ini => locale.en-US.json | locale.zh-CN.ini
 package i18n
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/energy/emfs"
 	"io/ioutil"
 	"path/filepath"
@@ -32,23 +33,26 @@ var (
 )
 
 // SetLocalPath
+//
 //	设置本地资源在本地目录加载
 func SetLocalPath(localPath string) {
 	lPath = localPath
 }
 
 // SetLocalFS
+//
 //	设置本地资源在FS中加载-优先
 //	lFS: 内置对象
-// 	lFSPath: 资源所在目录 to/path
+//	lFSPath: 资源所在目录 to/path
 func SetLocalFS(localFS emfs.IEmbedFS, localFSPath string) {
 	lFS = localFS
 	lFSPath = localFSPath
 }
 
 // Switch
-//  切换语言
-//	默认先在内置FS中加载
+//
+//	 切换语言
+//		默认先在内置FS中加载
 func Switch(lang consts.LANGUAGE) {
 	if currentLang == lang {
 		// 如果当前语言和切换语言一样
@@ -76,6 +80,7 @@ func Switch(lang consts.LANGUAGE) {
 }
 
 // loadJSONConvertResource
+//
 //	加载JSON格式并转换资源
 func loadJSONConvertResource() bool {
 	jsonFileName := "locale." + string(currentLang) + ".json"
@@ -95,6 +100,7 @@ func loadJSONConvertResource() bool {
 }
 
 // loadINIConvertResource
+//
 //	加载INI格式并转换资源
 func loadINIConvertResource() bool {
 	iniFileName := "locale." + string(currentLang) + ".ini"
@@ -114,6 +120,7 @@ func loadINIConvertResource() bool {
 }
 
 // loadResource
+//
 //	加载资源-优先在内置FS中加载
 func loadResource(fileName string) []byte {
 	//加载资源
@@ -137,19 +144,22 @@ func loadResource(fileName string) []byte {
 }
 
 // RegisterResource
+//
 //	注册资源, 在代码中手动设置在静态资源
 func RegisterResource(name, value string) {
 	resources[name] = value
 }
 
 // RegisterVarResource
+//
 //	注册变量资源, 在代码中手动设置, 切换资源时变量值会被同步
 func RegisterVarResource(name string, value *string) {
 	resourcesVar[name] = value
 }
 
 // Resource
-//  返回资源-优先在静态资源中查找
+//
+//	返回资源-优先在静态资源中查找
 func Resource(name string) string {
 	if v, ok := resources[name]; ok {
 		return v

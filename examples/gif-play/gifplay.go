@@ -3,8 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef/gifanim"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef/gifanim"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/energy/inits"
 	"github.com/energye/golcl/lcl"

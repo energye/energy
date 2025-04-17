@@ -14,7 +14,7 @@
 package consts
 
 import (
-	"github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/types"
 	"unsafe"
 )
 

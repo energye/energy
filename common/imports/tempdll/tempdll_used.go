@@ -12,7 +12,7 @@ package tempdll
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/energy/emfs"
 	"hash/crc32"
 	"io/ioutil"

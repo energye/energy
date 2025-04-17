@@ -2,7 +2,7 @@ package gen
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/project"
 	"io/fs"
 	"os"
 	"path/filepath"

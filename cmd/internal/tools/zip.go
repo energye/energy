@@ -17,7 +17,7 @@ import (
 	"compress/gzip"
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
 	"github.com/pterm/pterm"
 	"io"
 	"io/fs"

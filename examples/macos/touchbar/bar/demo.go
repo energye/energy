@@ -1,15 +1,16 @@
 //go:build darwin
+// +build darwin
 
 package bar
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barutils"
 	"sync"
 	"time"
 
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 func MakeDemo(switcher barutils.Switcher) barbuilder.Item {

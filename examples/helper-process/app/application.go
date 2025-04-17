@@ -1,6 +1,6 @@
 package app
 
-import "github.com/energye/energy/v2/cef"
+import "github.com/cyber-xxm/energy/v2/cef"
 
 var application *cef.TCEFApplication
 

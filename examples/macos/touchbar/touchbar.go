@@ -6,13 +6,13 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/examples/macos/touchbar/bar"
-	"github.com/energye/energy/v2/pkgs/touchbar"
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
-	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/examples/macos/touchbar/bar"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barutils"
 	"os"
 )
 

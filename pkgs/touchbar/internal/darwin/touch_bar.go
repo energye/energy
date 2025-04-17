@@ -1,4 +1,5 @@
 //go:build darwin
+// +build darwin
 
 package darwin
 
@@ -6,7 +7,7 @@ import (
 	"sync"
 	"unsafe"
 
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 type touchBar struct {

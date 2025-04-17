@@ -13,10 +13,10 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 	"github.com/energye/erod/examples/devtools/crawling"
 	"github.com/energye/golcl/lcl"
 )

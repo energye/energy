@@ -16,8 +16,8 @@ package json
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/common"
-	. "github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/common"
+	. "github.com/cyber-xxm/energy/v2/consts"
 	"reflect"
 	"strconv"
 )
@@ -53,6 +53,7 @@ type JSON interface {
 }
 
 // JsonData
+//
 //	Data structure
 type JsonData struct {
 	t      reflect.Kind // type
@@ -65,6 +66,7 @@ type JsonData struct {
 }
 
 // NewJsonData
+//
 //	create Json
 //	t: data type
 //	s: data size
@@ -74,10 +76,11 @@ func NewJsonData(t reflect.Kind, s int, v interface{}) *JsonData {
 }
 
 // NewJSON
-//	return JSON Object, JSONArray or JSONObject
-//  data:
-//    []byte("{...}") object
-//    []byte("[...]") array
+//
+//		return JSON Object, JSONArray or JSONObject
+//	 data:
+//	   []byte("{...}") object
+//	   []byte("[...]") array
 func NewJSON(data []byte) JSON {
 	if data == nil {
 		return nil
