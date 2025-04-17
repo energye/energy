@@ -13,10 +13,10 @@
 package cef
 
 import (
-	_ "github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/internal/initialize"
-	. "github.com/energye/energy/v2/cef/process"
-	. "github.com/energye/energy/v2/common"
+	_ "github.com/cyber-xxm/energy/v2/cef/internal/def"
+	"github.com/cyber-xxm/energy/v2/cef/internal/initialize"
+	. "github.com/cyber-xxm/energy/v2/cef/process"
+	. "github.com/cyber-xxm/energy/v2/common"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"os"

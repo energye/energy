@@ -2,8 +2,8 @@ package mask
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/gifanim"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/gifanim"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"

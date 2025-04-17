@@ -2,10 +2,10 @@ package main
 
 import (
 	"embed"
-	"github.com/energye/energy/v2/cef"
-	_ "github.com/energye/energy/v2/examples/syso"
-	"github.com/energye/energy/v2/examples/vue/src"
-	"github.com/energye/energy/v2/examples/vue/src/env"
+	"github.com/cyber-xxm/energy/v2/cef"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/examples/vue/src"
+	"github.com/cyber-xxm/energy/v2/examples/vue/src/env"
 )
 
 //go:embed resources

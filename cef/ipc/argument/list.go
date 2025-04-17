@@ -12,11 +12,12 @@ package argument
 
 import (
 	goJSON "encoding/json"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/cyber-xxm/energy/v2/pkgs/json"
 	"reflect"
 )
 
 // IList
+//
 //	IPC Argument List Interface
 type IList interface {
 	MessageId() int32     // messageId
@@ -30,6 +31,7 @@ type IList interface {
 }
 
 // List
+//
 //	IPC Argument List
 type List struct {
 	Id        int32       `json:"id"`        // messageId

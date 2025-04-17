@@ -14,7 +14,7 @@
 package config
 
 import (
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 )
 
 func init() {

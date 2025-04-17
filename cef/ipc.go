@@ -13,12 +13,12 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/internal/ipc"
-	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/cef/ipc/types"
-	"github.com/energye/energy/v2/cef/process"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/cyber-xxm/energy/v2/cef/ipc/argument"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/types"
+	"github.com/cyber-xxm/energy/v2/cef/process"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"sync"
 )
 

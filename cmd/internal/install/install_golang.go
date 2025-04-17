@@ -11,12 +11,12 @@ package install
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/env"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/env"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/remotecfg"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
 	"github.com/pterm/pterm"
 	"io/fs"
 	"os"

@@ -11,9 +11,9 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
-	. "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/consts"
+	. "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 )
 

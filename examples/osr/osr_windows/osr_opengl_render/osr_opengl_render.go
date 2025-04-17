@@ -6,10 +6,10 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/examples/osr/osr_windows/osr_opengl_render/form"
-	_ "github.com/energye/energy/v2/examples/syso"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/examples/osr/osr_windows/osr_opengl_render/form"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 

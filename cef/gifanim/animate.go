@@ -15,7 +15,7 @@ package gifanim
 import (
 	"bytes"
 	"encoding/binary"
-	"github.com/energye/energy/v2/pkgs/ext"
+	"github.com/cyber-xxm/energy/v2/pkgs/ext"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"image"

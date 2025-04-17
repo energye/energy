@@ -17,7 +17,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cef/config"
+	"github.com/cyber-xxm/energy/v2/cef/config"
 	"github.com/energye/golcl/energy/consts"
 	"github.com/energye/golcl/pkgs/libname"
 	"github.com/energye/golcl/tools/command"

@@ -5,9 +5,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	_ "github.com/energye/energy/v2/examples/syso"
-	"github.com/energye/energy/v2/pkgs/ext/opengl"
+	"github.com/cyber-xxm/energy/v2/cef"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/pkgs/ext/opengl"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/go-gl/gl/v4.6-core/gl"
@@ -406,7 +406,7 @@ var cubeVertices = []float32{
 
 // Set the working directory to the root of Go package, so that its assets can be accessed.
 func init() {
-	dir, err := importPathToDir("github.com/energye/energy/v2/examples/opengl-cube")
+	dir, err := importPathToDir("github.com/cyber-xxm/energy/v2/examples/opengl-cube")
 	if err != nil {
 		log.Fatalln("Unable to find Go package in your GOPATH, it's needed to load assets:", err)
 	}

@@ -14,13 +14,13 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/v2/cef/internal/ipc"
-	ipcArgument "github.com/energye/energy/v2/cef/ipc/argument"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/cef/ipc/types"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/cyber-xxm/energy/v2/cef/internal/ipc"
+	ipcArgument "github.com/cyber-xxm/energy/v2/cef/ipc/argument"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/context"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/types"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/json"
 	"time"
 )
 

@@ -12,7 +12,7 @@
 
 package target
 
-import "github.com/energye/energy/v2/consts"
+import "github.com/cyber-xxm/energy/v2/consts"
 
 // ITarget
 //

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
-	demoCommon "github.com/energye/energy/v2/examples/common"
-	"github.com/energye/energy/v2/examples/common/tray"
+	"github.com/cyber-xxm/energy/v2/cef"
+	demoCommon "github.com/cyber-xxm/energy/v2/examples/common"
+	"github.com/cyber-xxm/energy/v2/examples/common/tray"
 )
 
 func main() {

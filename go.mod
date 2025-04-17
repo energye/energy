@@ -1,4 +1,4 @@
-module github.com/energye/energy/v2
+module github.com/cyber-xxm/energy/v2
 
 go 1.16
 

@@ -15,9 +15,9 @@ package env
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	toolsCommand "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
+	toolsCommand "github.com/cyber-xxm/energy/v2/cmd/internal/tools/cmd"
 	"path/filepath"
 	"strings"
 )

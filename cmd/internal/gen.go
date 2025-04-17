@@ -13,8 +13,8 @@
 package internal
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/gen"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/gen"
 )
 
 var CmdGen = &command.Command{

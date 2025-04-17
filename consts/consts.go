@@ -12,7 +12,7 @@
 package consts
 
 import (
-	"github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/energy/homedir"
 	"math"
 	"os"
@@ -1471,7 +1471,7 @@ type LocalProxyScheme int
 const (
 	LpsHttp  LocalProxyScheme = iota // http
 	LpsHttps                         // https
-	//LpsTcp                           // tcp
+	LpsTcp                           // tcp
 )
 
 type TCefPermissionRequestTypes int32

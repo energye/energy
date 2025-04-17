@@ -2,8 +2,8 @@ package crawling
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
 	"github.com/energye/erod"
 	"strings"
 	"time"

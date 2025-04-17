@@ -13,9 +13,9 @@ package common
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
 	"io/ioutil"
 	"net/http"
 	"runtime"

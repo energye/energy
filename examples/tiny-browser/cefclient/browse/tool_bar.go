@@ -2,9 +2,9 @@ package browse
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/winapi"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/winapi"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/lcl/api"
 )
 

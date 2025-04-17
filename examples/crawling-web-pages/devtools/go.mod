@@ -1,9 +1,11 @@
 module devtools
 
-go 1.18
+go 1.21
+
+toolchain go1.23.8
 
 require (
-	github.com/energye/energy/v2 v2.4.5
+	github.com/cyber-xxm/energy/v2 v2.4.5
 	github.com/energye/erod v0.0.5
 	github.com/energye/golcl v1.0.12
 	github.com/go-rod/rod v0.116.2

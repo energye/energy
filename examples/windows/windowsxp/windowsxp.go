@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	_ "github.com/energye/energy/v2/examples/syso"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/cef"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 )
 
 // CEF 49是最后一个支持Windows XP的CEF版本

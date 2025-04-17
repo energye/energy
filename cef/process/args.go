@@ -14,7 +14,7 @@ package process
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/logger"
+	"github.com/cyber-xxm/energy/v2/logger"
 	"os"
 	"strings"
 )
@@ -51,7 +51,8 @@ func (m *_args) Size() int {
 }
 
 // ProcessType
-//  返回进程类型
+//
+//	返回进程类型
 func (m *_args) ProcessType() PRCESS_TYPE {
 	if v, ok := m.value["type"]; ok {
 		return v
@@ -85,6 +86,7 @@ func (m *_args) IsUtility() bool {
 }
 
 // Args
+//
 //	根据name返回指定的命令行参数值
 func (m *_args) Args(name string) string {
 	if v, ok := m.value[name]; ok {
@@ -94,6 +96,7 @@ func (m *_args) Args(name string) string {
 }
 
 // Print
+//
 //	打印到控制台
 func (m *_args) Print() {
 	logger.Debug("command line:", m.size)
