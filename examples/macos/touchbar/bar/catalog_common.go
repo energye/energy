@@ -3,8 +3,8 @@
 package bar
 
 import (
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
-	"github.com/energye/energy/v2/pkgs/touchbar/barutils"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barutils"
 )
 
 func makeCommonCatalog(switcher barutils.Switcher) barbuilder.Item {

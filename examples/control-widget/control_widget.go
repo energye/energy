@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/examples/control-widget/src"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/examples/control-widget/src"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 	"path/filepath"
 )
 

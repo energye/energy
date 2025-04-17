@@ -2,4 +2,4 @@ module {{.Name}}
 
 go {{.GoVersion}}
 
-require github.com/energye/energy/v2 {{.EnergyVersion}}
+require github.com/cyber-xxm/energy/v2 {{.EnergyVersion}}

@@ -13,8 +13,8 @@ package tools
 import (
 	"bufio"
 	"errors"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools/rawhttp"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools/rawhttp"
 	"github.com/pterm/pterm"
 	"io"
 	"os"

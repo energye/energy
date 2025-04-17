@@ -13,7 +13,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/v2/consts"
+	. "github.com/cyber-xxm/energy/v2/consts"
 )
 
 type KeyEventCallback func(browse *ICefBrowser, event *TCefKeyEvent, result *bool)

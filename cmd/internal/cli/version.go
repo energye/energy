@@ -12,9 +12,9 @@ package cli
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
-	"github.com/energye/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/remotecfg"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
 	"runtime"
 	"strconv"
 	"strings"

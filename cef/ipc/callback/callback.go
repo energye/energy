@@ -12,8 +12,8 @@ package callback
 
 import (
 	goJSON "encoding/json"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/pkgs/json"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/context"
+	"github.com/cyber-xxm/energy/v2/pkgs/json"
 	"reflect"
 )
 

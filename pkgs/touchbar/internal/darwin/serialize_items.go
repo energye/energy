@@ -3,7 +3,7 @@
 package darwin
 
 import (
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 type item interface{}

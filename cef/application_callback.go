@@ -13,8 +13,8 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/internal/process"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef/internal/process"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"strings"
 )
 

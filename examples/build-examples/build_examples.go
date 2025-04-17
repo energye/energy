@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/examples/build-examples/syso"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/examples/build-examples/syso"
 	"github.com/energye/golcl/tools/command"
 	"io/ioutil"
 	"os"

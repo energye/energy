@@ -12,7 +12,7 @@ package tools
 
 import (
 	"bytes"
-	"github.com/energye/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
 	"math"
 	"os"
 	"os/exec"

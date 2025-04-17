@@ -13,14 +13,14 @@ package update
 import (
 	"errors"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/common"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/env"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
-	"github.com/energye/energy/v2/cmd/internal/term"
-	"github.com/energye/energy/v2/cmd/internal/tools"
-	cmd "github.com/energye/energy/v2/cmd/internal/tools/cmd"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/common"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/env"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/remotecfg"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/term"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
+	cmd "github.com/cyber-xxm/energy/v2/cmd/internal/tools/cmd"
 	"os/exec"
 	"path/filepath"
 	"runtime"
@@ -176,7 +176,7 @@ func UpdateCurretFrameworkLibLCL(u *command.Update) error {
 
 // 获取当前 go.mod 的 energy 版本
 func GetCurrentModVersion(u *command.Update) string {
-	comd := exec.Command("go", "list", "-m", "-f", "{{.Version}}", "github.com/energye/energy/v2")
+	comd := exec.Command("go", "list", "-m", "-f", "{{.Version}}", "github.com/cyber-xxm/energy/v2")
 	if runtime.GOOS == "windows" {
 		comd.SysProcAttr = cmd.HideWindow(true)
 	}
@@ -194,7 +194,7 @@ func GetCurrentModVersion(u *command.Update) string {
 func UpdateCurrentModVersion(u *command.Update) {
 	term.Logger.Info("Update energy by mod", term.Logger.Args("version", u.Version))
 	// go get
-	comd := exec.Command("go", "get", "github.com/energye/energy/v2@"+u.Version)
+	comd := exec.Command("go", "get", "github.com/cyber-xxm/energy/v2@"+u.Version)
 	if runtime.GOOS == "windows" {
 		comd.SysProcAttr = cmd.HideWindow(true)
 	}

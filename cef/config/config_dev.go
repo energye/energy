@@ -15,7 +15,7 @@ package config
 
 import (
 	"encoding/json"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"io/ioutil"
 	"path/filepath"
 )

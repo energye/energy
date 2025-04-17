@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
-	demoCommon "github.com/energye/energy/v2/examples/common"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/common"
+	demoCommon "github.com/cyber-xxm/energy/v2/examples/common"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/energye/golcl/lcl/win"

@@ -11,8 +11,8 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/common/imports"
+	"github.com/cyber-xxm/energy/v2/cef/internal/def"
+	"github.com/cyber-xxm/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )
@@ -66,7 +66,8 @@ func (m *TCEFBitmapBitBuffer) Empty() bool {
 }
 
 // Scanline
-//  return PByte = byte pointer
+//
+//	return PByte = byte pointer
 func (m *TCEFBitmapBitBuffer) Scanline(i int32) uintptr {
 	return imports.SysCallN(def.BitmapBitBuffer_Scanline, m.Instance(), uintptr(i))
 }
@@ -80,7 +81,8 @@ func (m *TCEFBitmapBitBuffer) BufferScanlineSize() int32 {
 }
 
 // BufferBits
-//  Bits Pointer
+//
+//	Bits Pointer
 func (m *TCEFBitmapBitBuffer) BufferBits() uintptr {
 	return imports.SysCallN(def.BitmapBitBuffer_BufferScanlineSize, m.Instance())
 }

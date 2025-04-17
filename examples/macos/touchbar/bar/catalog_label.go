@@ -3,7 +3,7 @@
 package bar
 
 import (
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 func makeLabelCatalog() barbuilder.Item {

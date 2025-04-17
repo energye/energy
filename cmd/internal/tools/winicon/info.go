@@ -4,7 +4,7 @@ import (
 	"encoding/binary"
 	"io"
 
-	"github.com/energye/energy/v2/cmd/internal/tools/winicon/internal/winicon"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools/winicon/internal/winicon"
 )
 
 // Icon stores the data for a single icon

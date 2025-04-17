@@ -16,8 +16,8 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/consts"
-	. "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/consts"
+	. "github.com/cyber-xxm/energy/v2/types"
 )
 
 // TCefWindowInfo /include/internal/cef_types_win.h (cef_window_info_t)

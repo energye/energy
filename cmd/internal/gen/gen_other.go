@@ -15,7 +15,7 @@ package gen
 
 import (
 	"errors"
-	"github.com/energye/energy/v2/cmd/internal/project"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/project"
 )
 
 func GeneraICON(iconFilePath, outPath string) (string, error) {
