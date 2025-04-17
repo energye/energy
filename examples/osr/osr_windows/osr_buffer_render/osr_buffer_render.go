@@ -5,11 +5,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
-	_ "github.com/energye/energy/v2/examples/syso"
-	t "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/consts"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
+	t "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/rtl"
 	"github.com/energye/golcl/lcl/types"

@@ -13,9 +13,9 @@ package project
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/energye/energy/v2/cmd/internal/consts"
-	"github.com/energye/energy/v2/cmd/internal/env"
-	"github.com/energye/energy/v2/cmd/internal/tools"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/consts"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/env"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/tools"
 	"io/ioutil"
 	"path/filepath"
 	"runtime"

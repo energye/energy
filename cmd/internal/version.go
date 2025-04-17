@@ -11,8 +11,8 @@
 package internal
 
 import (
-	"github.com/energye/energy/v2/cmd/internal/command"
-	"github.com/energye/energy/v2/cmd/internal/remotecfg"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/command"
+	"github.com/cyber-xxm/energy/v2/cmd/internal/remotecfg"
 	"sort"
 )
 

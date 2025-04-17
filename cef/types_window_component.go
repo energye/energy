@@ -12,11 +12,11 @@ package cef
 
 import (
 	"errors"
-	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/cef/internal/platform"
-	"github.com/energye/energy/v2/common/imports"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef/internal/def"
+	"github.com/cyber-xxm/energy/v2/cef/internal/platform"
+	"github.com/cyber-xxm/energy/v2/common/imports"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/energy/emfs"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"

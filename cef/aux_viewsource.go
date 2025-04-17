@@ -14,9 +14,9 @@ package cef
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/common"
-	. "github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/common"
+	. "github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 	"github.com/energye/golcl/lcl"
 )
 

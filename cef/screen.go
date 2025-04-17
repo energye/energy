@@ -11,13 +11,14 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/common"
 	"github.com/energye/golcl/lcl"
 )
 
 // IScreen
-//  Two ways to obtain screen information
-//  They are: 1. Using LCL, 2 Using CEF
+//
+//	Two ways to obtain screen information
+//	They are: 1. Using LCL, 2 Using CEF
 type IScreen interface {
 	Primary() (info Display)      // Returns the primary Display.
 	Count() int                   // Returns display count
@@ -27,7 +28,8 @@ type IScreen interface {
 }
 
 // Display
-//  Screen brief information
+//
+//	Screen brief information
 type Display struct {
 	ID                int
 	WorkArea          TCefRect
@@ -42,8 +44,9 @@ type Screen struct {
 }
 
 // LCLScreen
-//  Use this function when using the LCL window
-//  If using VF windows under Windows, this function can also be used
+//
+//	Use this function when using the LCL window
+//	If using VF windows under Windows, this function can also be used
 func (m *Screen) LCLScreen() *lcl.TScreen {
 	if m.window == nil {
 		return nil
@@ -62,7 +65,8 @@ func (m *Screen) LCLScreen() *lcl.TScreen {
 }
 
 // VFScreen
-//  Use this function when using the CEF ViewFramework
+//
+//	Use this function when using the CEF ViewFramework
 func (m *Screen) VFScreen() *display {
 	if m.window == nil {
 		return nil
@@ -74,7 +78,8 @@ func (m *Screen) VFScreen() *display {
 }
 
 // Count
-//  Returns all display count
+//
+//	Returns all display count
 func (m *Screen) Count() int {
 	if m.window == nil {
 		return 0
@@ -88,7 +93,8 @@ func (m *Screen) Count() int {
 }
 
 // Primary
-//  Returns the primary Display.
+//
+//	Returns the primary Display.
 func (m *Screen) Primary() (info Display) {
 	if m.window.IsLCL() {
 		screen := m.LCLScreen()

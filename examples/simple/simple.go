@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/energye/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef"
 )
 
 func main() {

@@ -9,14 +9,16 @@
 //----------------------------------------
 
 // Package exception
-//  Underlying dynamic link library exception capture
-//  Supports: Windows, MacOS.
+//
+//	Underlying dynamic link library exception capture
+//	Supports: Windows, MacOS.
 package exception
 
-import "github.com/energye/energy/v2/cef/internal/exception"
+import "github.com/cyber-xxm/energy/v2/cef/internal/exception"
 
 // SetOnException 设置 liblcl -> CEF 低层异常捕获回调函数
-//  Supports: Windows, MacOS.
+//
+//	Supports: Windows, MacOS.
 func SetOnException(fn exception.Callback) {
 	exception.HandlerInit(fn)
 }

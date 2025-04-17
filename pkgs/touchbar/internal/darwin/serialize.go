@@ -5,7 +5,7 @@ package darwin
 import (
 	"fmt"
 
-	"github.com/energye/energy/v2/pkgs/touchbar/barbuilder"
+	"github.com/cyber-xxm/energy/v2/pkgs/touchbar/barbuilder"
 )
 
 const namespace = "com.energy.touchbar"

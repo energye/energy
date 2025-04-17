@@ -15,12 +15,12 @@
 package ipc
 
 import (
-	"github.com/energye/energy/v2/cef/internal/cef"
-	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/context"
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/cef/ipc/types"
-	"github.com/energye/energy/v2/cef/process"
+	"github.com/cyber-xxm/energy/v2/cef/internal/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/callback"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/context"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/types"
+	"github.com/cyber-xxm/energy/v2/cef/process"
 	"reflect"
 	"sync"
 	"time"

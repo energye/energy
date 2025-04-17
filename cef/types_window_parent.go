@@ -13,13 +13,14 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 	"github.com/energye/golcl/lcl"
 )
 
 // ICEFWindowParent 接口定义
-//  Windows return TCEFWindowParent
-//  MacOSX, Linux return TCEFLinkedWindowParent
+//
+//	Windows return TCEFWindowParent
+//	MacOSX, Linux return TCEFLinkedWindowParent
 type ICEFWindowParent interface {
 	lcl.IWinControl
 	Type() consts.TCefWindowHandleType         // 组件类型, Windows TCEFWindowParent 组件，MacOSX, Linux TCEFLinkedWindowParent 组件

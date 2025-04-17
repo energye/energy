@@ -3,7 +3,7 @@ package assserv
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/pkgs/assetserve"
+	"github.com/cyber-xxm/energy/v2/pkgs/assetserve"
 	"os"
 )
 

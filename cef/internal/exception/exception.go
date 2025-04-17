@@ -9,13 +9,14 @@
 //----------------------------------------
 
 // Package exception
-//  Underlying dynamic link library exception capture
-//  Supports: Windows, MacOS.
+//
+//	Underlying dynamic link library exception capture
+//	Supports: Windows, MacOS.
 package exception
 
 import (
-	"github.com/energye/energy/v2/cef/internal/def"
-	"github.com/energye/energy/v2/common/imports"
+	"github.com/cyber-xxm/energy/v2/cef/internal/def"
+	"github.com/cyber-xxm/energy/v2/common/imports"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/api/dllimports"
 )

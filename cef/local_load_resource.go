@@ -12,9 +12,9 @@ package cef
 
 import (
 	"bytes"
-	"github.com/energye/energy/v2/cef/process"
-	. "github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/logger"
+	"github.com/cyber-xxm/energy/v2/cef/process"
+	. "github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/logger"
 	"github.com/energye/golcl/energy/emfs"
 	"io/ioutil"
 	"net/url"

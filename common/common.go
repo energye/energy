@@ -15,7 +15,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"github.com/energye/energy/v2/pkgs/decimal"
+	"github.com/cyber-xxm/energy/v2/pkgs/decimal"
 	"math"
 	"reflect"
 	"runtime"

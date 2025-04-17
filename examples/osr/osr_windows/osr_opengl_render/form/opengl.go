@@ -5,10 +5,10 @@ package form
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/pkgs/ext/opengl"
-	t "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/pkgs/ext/opengl"
+	t "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/types"
 	"github.com/go-gl/gl/v2.1/gl"

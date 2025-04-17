@@ -3,9 +3,9 @@ package main
 import (
 	"embed"
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
-	_ "github.com/energye/energy/v2/examples/syso"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/consts"
+	_ "github.com/cyber-xxm/energy/v2/examples/syso"
 	"github.com/energye/golcl/lcl"
 	"io/ioutil"
 	"path/filepath"

@@ -2,10 +2,10 @@ package src
 
 import (
 	"fmt"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/cef/ipc"
-	"github.com/energye/energy/v2/cef/ipc/callback"
-	"github.com/energye/energy/v2/cef/ipc/context"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/cef/ipc"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/callback"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/context"
 	"github.com/energye/golcl/lcl/rtl/version"
 	"time"
 )

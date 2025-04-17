@@ -11,7 +11,7 @@
 package types
 
 import (
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/consts"
 )
 
 type IArrayValue interface {

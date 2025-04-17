@@ -14,11 +14,11 @@
 package cef
 
 import (
-	"github.com/energye/energy/v2/cef/ipc/target"
-	"github.com/energye/energy/v2/common"
-	"github.com/energye/energy/v2/consts"
-	"github.com/energye/energy/v2/logger"
-	et "github.com/energye/energy/v2/types"
+	"github.com/cyber-xxm/energy/v2/cef/ipc/target"
+	"github.com/cyber-xxm/energy/v2/common"
+	"github.com/cyber-xxm/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/logger"
+	et "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl"
 	"github.com/energye/golcl/lcl/api"
 	"github.com/energye/golcl/lcl/types"

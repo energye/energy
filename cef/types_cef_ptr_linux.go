@@ -14,7 +14,7 @@
 package cef
 
 import (
-	. "github.com/energye/energy/v2/types"
+	. "github.com/cyber-xxm/energy/v2/types"
 	"github.com/energye/golcl/lcl/api"
 	"unsafe"
 )

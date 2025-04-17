@@ -2,8 +2,8 @@ package browse
 
 import (
 	"embed"
-	"github.com/energye/energy/v2/cef"
-	"github.com/energye/energy/v2/consts"
+	"github.com/cyber-xxm/energy/v2/cef"
+	"github.com/cyber-xxm/energy/v2/consts"
 )
 
 var Assets embed.FS

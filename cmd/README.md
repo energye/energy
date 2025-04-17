@@ -3,7 +3,7 @@
 # use
 
 ```
-go install github.com/energye/energy/v2/cmd/energy
+go install github.com/cyber-xxm/energy/v2/cmd/energy
 ```
 
 https://energye.github.io/course/cli-use/
