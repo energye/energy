@@ -519,6 +519,7 @@ func init() {
 		dllimports.NewEnergyImport("CEFAppConfig_AvailableSystemMemory", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_SystemMemoryLoad", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_ApiHashUniversal", 0),
+		dllimports.NewEnergyImport("CEFAppConfig_ApiVersion", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_ApiHashPlatform", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_ApiHashCommit", 0),
 		dllimports.NewEnergyImport("CEFAppConfig_LastErrorMessage", 0),
@@ -2845,6 +2846,10 @@ func init() {
 		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallbackRef_Create", 0),
 		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallbackRef_CustomCreate", 0),
 		dllimports.NewEnergyImport("MediaSinkDeviceInfoCallback_OnMediaSinkDeviceInfo", 0),
+		// ICefCustomUserData
+		dllimports.NewEnergyImport("CustomUserData_Create", 0),
+		dllimports.NewEnergyImport("CustomUserData_UserDataType", 0),
+		dllimports.NewEnergyImport("CustomUserData_UserData", 0),
 	} //end
 	imports.LibEnergy().SetImportTable(energyImportDefs)
 }

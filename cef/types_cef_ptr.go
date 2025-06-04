@@ -310,6 +310,7 @@ type beforePopupInfoPtr struct {
 	TargetFrameName   uintptr // string
 	TargetDisposition uintptr // int32
 	UserGesture       uintptr // bool
+	PopupId           uintptr // int32
 }
 
 func (m *beforePopupInfoPtr) convert() *BeforePopupInfo {
@@ -318,15 +319,7 @@ func (m *beforePopupInfoPtr) convert() *BeforePopupInfo {
 		TargetFrameName:   fromPtrStr(m.TargetFrameName),
 		TargetDisposition: *(*consts.TCefWindowOpenDisposition)(unsafePointer(m.TargetDisposition)),
 		UserGesture:       fromPtrBool(m.UserGesture),
-	}
-}
-
-func (m *BeforePopupInfo) ToPtr() *beforePopupInfoPtr {
-	return &beforePopupInfoPtr{
-		TargetUrl:         api.PascalStr(m.TargetUrl),
-		TargetFrameName:   api.PascalStr(m.TargetFrameName),
-		TargetDisposition: uintptr(unsafePointer(&m.TargetDisposition)),
-		UserGesture:       uintptr(unsafePointer(&m.UserGesture)),
+		PopupId:           *(*int32)(unsafePointer(m.PopupId)),
 	}
 }
 

@@ -519,6 +519,7 @@ const (
 	CEFAppConfig_AvailableSystemMemory
 	CEFAppConfig_SystemMemoryLoad
 	CEFAppConfig_ApiHashUniversal
+	CEFAppConfig_ApiVersion
 	CEFAppConfig_ApiHashPlatform
 	CEFAppConfig_ApiHashCommit
 	CEFAppConfig_LastErrorMessage
@@ -2845,4 +2846,8 @@ const (
 	MediaSinkDeviceInfoCallbackRef_Create
 	MediaSinkDeviceInfoCallbackRef_CustomCreate
 	MediaSinkDeviceInfoCallback_OnMediaSinkDeviceInfo
+	// ICefCustomUserData
+	CustomUserData_Create
+	CustomUserData_UserDataType
+	CustomUserData_UserData
 ) //end

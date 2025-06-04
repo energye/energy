@@ -598,6 +598,27 @@ func (m *ICefV8Value) GetUserData() *ICefV8Value {
 	}
 }
 
+// SetUserDataByCustomUserData use CEF >= 136
+func (m *ICefV8Value) SetUserDataByCustomUserData(data *ICefCustomUserData) bool {
+	if !m.IsValid() {
+		return false
+	}
+	r1, _, _ := imports.Proc(def.CefV8Value_SetUserData).Call(m.Instance(), data.Instance())
+	return api.GoBool(r1)
+}
+
+// GetUserDataByCustomUserData use CEF >= 136
+func (m *ICefV8Value) GetUserDataByCustomUserData() *ICefCustomUserData {
+	if !m.IsValid() {
+		return nil
+	}
+	var result uintptr
+	imports.Proc(def.CefV8Value_GetUserData).Call(m.Instance(), uintptr(unsafe.Pointer(&result)))
+	return &ICefCustomUserData{
+		instance: unsafe.Pointer(result),
+	}
+}
+
 func (m *ICefV8Value) GetExternallyAllocatedMemory() int32 {
 	if !m.IsValid() {
 		return 0

@@ -1298,6 +1298,12 @@ func (m *TCEFApplication) ApiHashUniversal() string {
 	return api.GoStr(r1)
 }
 
+// ApiVersion use CEF >= 136
+func (m *TCEFApplication) ApiVersion() string {
+	r1, _, _ := imports.Proc(def.CEFAppConfig_ApiVersion).Call()
+	return api.GoStr(r1)
+}
+
 func (m *TCEFApplication) ApiHashPlatform() string {
 	r1, _, _ := imports.Proc(def.CEFAppConfig_ApiHashPlatform).Call()
 	return api.GoStr(r1)

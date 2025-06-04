@@ -134,6 +134,7 @@ type BeforePopupInfo struct {
 	TargetFrameName   string
 	TargetDisposition consts.TCefWindowOpenDisposition
 	UserGesture       bool
+	PopupId           int32 // use CEF >= 136
 }
 
 type TCefRectArray struct {
