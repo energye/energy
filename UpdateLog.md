@@ -1,5 +1,10 @@
 # Upgrade Log
 
+### 2.5.5 - 2025/06/06
+- Fix: cli , version CEF89 cannot be installed
+- Fix: CEF 130: JS listening for IPC event fails after opening devtools
+- Update to CEF 136
+
 ### 2.5.4 - 2025/02/27
 - Fix: #54 Popup default chromium browser window
 - R: IPC embed package
