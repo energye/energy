@@ -11,6 +11,7 @@
 package i18n
 
 // initZhCn
+//
 //	初始 zh_CN
 func initZhCn() {
 	resources["undo"] = "撤销"
@@ -28,11 +29,12 @@ func initZhCn() {
 	resources["closeBrowser"] = "关闭页面"
 	resources["refresh"] = "刷新"
 	resources["forcedRefresh"] = "强制刷新"
-	resources["viewPageSource"] = "查看网面源代码"
+	resources["viewPageSource"] = "查看网页源代码"
 	resources["devTools"] = "开发者工具(F12)"
 }
 
 // initEnUs
+//
 //	初始 en_US
 func initEnUs() {
 	resources["undo"] = "Undo"
