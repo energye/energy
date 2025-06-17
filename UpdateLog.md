@@ -1,5 +1,8 @@
 # Upgrade Log
 
+### 2.5.6 - 2025/06/17
+- Fix: Shortcut key issue with default support in the new CEF version
+
 ### 2.5.5 - 2025/06/06
 - Fix: cli , version CEF89 cannot be installed
 - Fix: CEF 130: JS listening for IPC event fails after opening devtools
