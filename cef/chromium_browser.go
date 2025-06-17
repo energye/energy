@@ -258,13 +258,19 @@ func (m *TCEFChromiumBrowser) RegisterDefaultEvent() {
 				if m.window == nil || m.window.WindowType() == consts.WT_DEV_TOOLS || m.window.WindowType() == consts.WT_VIEW_SOURCE {
 					return
 				}
-				if m.Chromium().Config().EnableDevTools() {
-					if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
-						browser.ShowDevTools(m.window, m)
+				if event.WindowsKeyCode == consts.VkF12 {
+					if event.Kind == consts.KEYEVENT_RAW_KEYDOWN {
+						if m.Chromium().Config().EnableDevTools() {
+							browser.ShowDevTools(m.window, m)
+						}
 						*result = true
-					} else if event.WindowsKeyCode == consts.VkF12 && event.Kind == consts.KEYEVENT_KEYUP {
+					} else if event.Kind == consts.KEYEVENT_KEYUP {
 						*result = true
 					}
+				}
+				isCtrlPressed := (event.Modifiers & consts.EVENTFLAG_CONTROL_DOWN) != 0
+				if isCtrlPressed && event.WindowsKeyCode == consts.VkU {
+					*result = true
 				}
 				if KeyAccelerator.accelerator(browser, event, result) {
 					return

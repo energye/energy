@@ -59,15 +59,16 @@ func (m *keyEventAccelerator) AddAcceleratorCustom(accelerator *AcceleratorCusto
 	accelerator.Accelerator = strings.Replace(strings.ToUpper(accelerator.Accelerator), " ", "", -1)
 	as := strings.Split(accelerator.Accelerator, "+")
 	if len(as) > 0 && len(as) <= 4 {
-		var shift = ArrayIndexOf(as, MA_Shift) != -1
-		var ctrl = ArrayIndexOf(as, MA_Ctrl) != -1
-		var alt = ArrayIndexOf(as, MA_Alt) != -1
-		var keyCode = rune(strings.ToUpper(as[len(as)-1])[0])
+		shift := ArrayIndexOf(as, MA_Shift) != -1
+		ctrl := ArrayIndexOf(as, MA_Ctrl) != -1
+		alt := ArrayIndexOf(as, MA_Alt) != -1
+		keyCode := rune(strings.ToUpper(as[len(as)-1])[0])
 		accelerator.Accelerator = acceleratorCode(shift, ctrl, alt, keyCode)
 		m.acceleratorCustom[accelerator.Accelerator] = accelerator
 	}
 }
 
+// 自定义快捷键
 func (m *keyEventAccelerator) acceleratorCustomCallback(accelerator string, browse *ICefBrowser, event *TCefKeyEvent, result *bool) bool {
 	if item, ok := m.acceleratorCustom[accelerator]; ok {
 		if item.Callback != nil {
@@ -123,6 +124,7 @@ func (m *keyEventAccelerator) accelerator(browse *ICefBrowser, event *TCefKeyEve
 	return false
 }
 
+// 右键快捷键
 func (m *keyEventAccelerator) acceleratorEventCallback(browse *ICefBrowser, accelerator string, result *bool) bool {
 	if item, ok := m.acceleratorItems[accelerator]; ok {
 		if item.Callback != nil {
@@ -147,7 +149,6 @@ func (m *ICefMenuModel) AddMenuItem(item *MenuItem) bool {
 	if item.CommandId == 0 {
 		item.CommandId = KeyAccelerator.NextCommandId()
 	}
-	//if item.CommandId >= MENU_ID_USER_FIRST && item.CommandId <= MENU_ID_USER_LAST {
 	if item.MenuType == CMT_NONE {
 		m.AddItem(item.CommandId, item.Text)
 	} else if item.MenuType == CMT_CHECK {
