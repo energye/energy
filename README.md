@@ -26,6 +26,8 @@ English
 [![license](https://img.shields.io/github/license/energye/energy.svg?logo=git&logoColor=red)](http://www.apache.org/licenses/LICENSE-2.0)
 ---
 
+### 我正在参加 Gitee 2025 最受欢迎的开源软件投票活动，快来给我投票吧！https://gitee.com/activity/2025opensource?ident=I9NTFU
+
 ### [Project Introduction](https://energye.github.io/en/course/what-is-energy)
 
 - Energy is a GUI framework developed in Go, based on [LCL](https://gitlab.com/freepascal.org/lazarus/lazarus) and [CEF](https://bitbucket.org/chromiumembedded/cef)(Chromium Embedded Framework), which is used to develop cross-platform desktop applications for Windows, MacOS, and Linux.
