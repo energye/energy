@@ -16,7 +16,7 @@ import (
 
 // process
 const (
-	internalProcess          = "process"
+	internalProcess          = "engProcess"
 	internalProcessBrowserId = "browserId"
 	internalProcessFrameId   = "frameId"
 )
