@@ -60,7 +60,7 @@ func (m *Application) Run() {
 	if m.StartWebView2() {
 		lcl.Application.Initialize()
 		lcl.Application.SetMainFormOnTaskBar(true)
-		lcl.Application.CreateForm(m.mainWindow)
+		lcl.Application.NewForm(m.mainWindow)
 		lcl.Application.Run()
 	}
 }
@@ -79,7 +79,7 @@ func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) 
 }
 
 func (m *Application) initDefaultEvent() {
-	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
+	m.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}

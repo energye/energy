@@ -39,7 +39,7 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 // released after the resource processing is complete
 func (m *LocalLoadResource) releaseStream(path string) {
 	if stream, ok := m.streams[path]; ok {
-		stream.Free()
+		stream.FreeAndNil()
 		delete(m.streams, path)
 	}
 }

@@ -17,6 +17,7 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
@@ -26,6 +27,7 @@ import (
 type TBrowserWindow struct {
 	browserId                     uint32
 	isClose                       bool
+	box                           lcl.IPanel
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
 	messageReceivedDelegate       ipc.IMessageReceivedDelegate
@@ -44,12 +46,25 @@ type TBrowserWindow struct {
 
 func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
 	m := &TBrowserWindow{browserId: getBrowserID()}
+	m.box = lcl.NewPanel(owner)
+	m.box.SetParentColor(true)
+	m.box.SetParentDoubleBuffered(true)
+	m.box.SetBevelInner(types.BvNone)
+	m.box.SetBevelOuter(types.BvNone)
+	m.box.SetAlign(types.AlCustom)
+	m.box.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
+	m.box.SetBounds(0, 0, application.options.Width, application.options.Height)
+	m.box.SetParent(owner)
+
 	m.windowParent = wv.NewWindowParent(owner)
-	m.windowParent.SetParent(owner)
+	m.windowParent.SetParent(m.box)
+
 	m.browser = wv.NewBrowser(owner)
+	
 	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
+	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
 	return m
 }

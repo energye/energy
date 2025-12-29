@@ -40,7 +40,7 @@ const (
 type ProcessMessage struct {
 	Type MessageType `json:"t"` // MessageType, Used to distinguish message types, this constant is defined the same in GO and JS
 	Name string      `json:"n"` // Message name
-	Data interface{} `json:"d"` // Message payload
+	Data any         `json:"d"` // Message payload
 	Id   uint32      `json:"i"` // Not 0 (js or go) ipc.emit has callback function
 }
 

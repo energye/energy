@@ -54,7 +54,7 @@ import (
 //
 //	energy webview2 window, It consists of TForm and WVBrowser
 type BrowserWindow struct {
-	lcl.TForm
+	lcl.TEngForm
 	browserId                          uint32
 	isClosing                          bool
 	windowParent                       wv.IWVWindowParent
