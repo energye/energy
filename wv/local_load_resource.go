@@ -18,15 +18,16 @@ type LocalLoadResource struct {
 	streams map[string]lcl.IMemoryStream
 }
 
-func newLocalLoadResource(ll *LocalLoad) *LocalLoadResource {
-	if ll != nil {
-		newLocalLoad := *ll
+func NewLocalLoadResource(localLoad *LocalLoad) *LocalLoadResource {
+	if localLoad != nil {
+		newLocalLoad := *localLoad
 		ret := &LocalLoadResource{
 			LocalLoad: &newLocalLoad,
 			streams:   make(map[string]lcl.IMemoryStream),
 		}
-		ret.LocalLoad.defaultInit()
+		ret.LocalLoad.initDefault()
 		return ret
+
 	}
 	return nil
 }

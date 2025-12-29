@@ -8,18 +8,6 @@
 //
 //----------------------------------------
 
+//go:build darwin
+
 package wv
-
-import "sync/atomic"
-
-// global browser id
-var globalBrowserID uint32
-
-// return next browser id
-func getBrowserID() uint32 {
-	atomic.AddUint32(&globalBrowserID, 1)
-	return globalBrowserID
-}
-
-type IBrowserWindow interface {
-}

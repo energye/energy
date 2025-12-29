@@ -65,9 +65,9 @@ func (m *MainWindow) FormAfterCreate(sender lcl.IObject) {
 	}
 }
 
-// NewBrowserWindow create browser window
-func NewBrowserWindow(options Options) IBrowserWindow {
-	var window = &BrowserWindow{options: options}
-	lcl.Application.CreateForm(window)
-	return window
-}
+//// NewBrowserWindow create browser window
+//func NewBrowserWindow(options Options) IBrowserWindow {
+//	var window = &BrowserWindow{options: options}
+//	lcl.Application.CreateForm(window)
+//	return window
+//}

@@ -12,7 +12,7 @@ package wv
 
 import (
 	"github.com/energye/lcl/emfs"
-	"github.com/energye/lcl/tools/exec"
+	"github.com/energye/lcl/tool/exec"
 )
 
 const (
@@ -36,7 +36,7 @@ type LocalLoad struct {
 	exePath    string
 }
 
-func (m *LocalLoad) defaultInit() {
+func (m *LocalLoad) initDefault() {
 	if m.Domain == "" {
 		m.Domain = localDomain
 	}

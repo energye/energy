@@ -11,32 +11,47 @@
 package wv
 
 import (
-	"github.com/energye/examples/wv/windows/wv2load"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/wv/windows"
+	wv "github.com/energye/wv/windows"
 	"path/filepath"
 )
 
 // application
-var application *Application
+var (
+	application    *Application
+	globalWVLoader wv.IWVLoader
+)
+
+func NewWVLoader() wv.IWVLoader {
+	if globalWVLoader == nil {
+		if globalWVLoader = wv.GetGlobalWebView2Loader(); globalWVLoader != nil {
+			return globalWVLoader
+		} else {
+			globalWVLoader = wv.NewLoader(nil)
+			wv.SetGlobalWebView2Loader(globalWVLoader)
+		}
+	}
+	return globalWVLoader
+}
 
 type Application struct {
 	wv.IWVLoader
 	mainWindow         *MainWindow
-	onGetCustomSchemes wv.TOnLoaderGetCustomSchemesEvent
-	localLoad          *LocalLoad
+	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
+	options            Options
+	localLoad          *LocalLoadResource
 }
 
 func NewApplication() *Application {
 	if application == nil {
 		application = &Application{
-			IWVLoader:  wv.GlobalWebView2Loader(),
+			IWVLoader:  NewWVLoader(),
 			mainWindow: &MainWindow{},
 		}
 		webview2Home, wv2Loader := wv2load.Wv2Load()
 		application.SetUserDataFolder(filepath.Join(webview2Home, "webview2Cache"))
 		application.SetLoaderDllPath(wv2Loader)
-		application.defaultEvent()
+		application.initDefaultEvent()
 	}
 	return application
 }
@@ -51,36 +66,32 @@ func (m *Application) Run() {
 }
 
 func (m *Application) SetOptions(options Options) {
-	m.mainWindow.options = options
+	m.options = options
 }
 
 func (m *Application) SetLocalLoad(localLoad LocalLoad) {
-	m.localLoad = &localLoad
+	m.localLoad = NewLocalLoadResource(&localLoad)
+	m.localLoad.LocalLoad = &localLoad
 }
 
-func (m *Application) SetOnWindowCreate(fn OnCreate) {
-	m.mainWindow.onWindowCreate = fn
-}
-
-func (m *Application) SetOnWindowAfterCreate(fn OnCreate) {
-	m.mainWindow.onWindowAfterCreate = fn
-}
-
-func (m *Application) SetOnGetCustomSchemes(fn wv.TOnLoaderGetCustomSchemesEvent) {
+func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {
 	m.onGetCustomSchemes = fn
 }
 
-func (m *Application) defaultEvent() {
-	m.IWVLoader.SetOnGetCustomSchemes(func(sender wv.IObject, customSchemes *wv.TWVCustomSchemeInfoArray) {
+func (m *Application) initDefaultEvent() {
+	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}
 		if m.localLoad != nil {
-			*customSchemes = append(*customSchemes, &wv.TWVCustomSchemeInfo{
-				SchemeName:            m.localLoad.Scheme,
-				TreatAsSecure:         true,
-				HasAuthorityComponent: true,
-			})
+			if customSchemes == nil {
+				*customSchemes = wv.NewCustomSchemeInfoArrayWrapWithInt(1)
+				(*customSchemes).SetValue((*customSchemes).Size()-1, wv.TWVCustomSchemeInfo{
+					SchemeName:            m.localLoad.Scheme,
+					TreatAsSecure:         1,
+					HasAuthorityComponent: 1,
+				})
+			}
 		}
 	})
 }

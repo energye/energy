@@ -18,7 +18,7 @@ import (
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
-	"github.com/energye/wv/windows"
+	wv "github.com/energye/wv/windows"
 	"net/url"
 )
 
@@ -26,10 +26,14 @@ type TNotifyEvent = wv.TNotifyEvent
 type TOnWebMessageReceivedEvent = wv.TOnWebMessageReceivedEvent
 type TOnNavigationStartingEvent = wv.TOnNavigationStartingEvent
 type TOnContentLoadingEvent = wv.TOnContentLoadingEvent
-type TOnNewWindowRequestedEventEx func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
+type TOnNewWindowRequestedEventEx func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs, callback *NewWindowCallback)
 type TOnContextMenuRequestedEvent = wv.TOnContextMenuRequestedEvent
-type TOnWebResourceRequestedEvent func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) bool
-type TOnWebResourceResponseReceivedEvent func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) bool
+type TOnWebResourceRequestedEvent func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) bool
+type TOnWebResourceResponseReceivedEvent func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) bool
+
+type TOnWindowResize func(ht string)
+
+type TOnWindowDrag func(message ipc.ProcessMessage)
 
 type NewWindowCallback struct {
 	args    wv.ICoreWebView2NewWindowRequestedEventArgs
@@ -95,13 +99,13 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 		m.windowParent.UpdateSize()
 	})
-	m.browser.SetOnContentLoading(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
+	m.browser.SetOnContentLoading(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
 		m.navigationStarting()
 		if m.onContentLoading != nil {
 			m.onContentLoading(sender, webview, args)
 		}
 	})
-	m.browser.SetOnContextMenuRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
+	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
 		if m.options.DisableContextMenu {
 			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
 			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
@@ -113,7 +117,7 @@ func (m *BrowserWindow) defaultEvent() {
 		}
 	})
 	// process message received
-	m.browser.SetOnWebMessageReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
+	m.browser.SetOnWebMessageReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
 		var handle bool
 		if m.ipcMessageReceivedDelegate != nil {
 			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
@@ -148,7 +152,7 @@ func (m *BrowserWindow) defaultEvent() {
 			m.onWebMessageReceived(sender, webview, args)
 		}
 	})
-	m.browser.SetOnNewWindowRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs) {
+	m.browser.SetOnNewWindowRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs) {
 		callback := &NewWindowCallback{args: args}
 		if m.onNewWindowRequested != nil {
 			m.onNewWindowRequested(sender, webview, args, callback)
@@ -168,7 +172,7 @@ func (m *BrowserWindow) defaultEvent() {
 			})
 		}
 	})
-	m.browser.SetOnWebResourceResponseReceived(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
+	m.browser.SetOnWebResourceResponseReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
 		var handle bool
 		if m.onWebResourceResponseReceivedEvent != nil {
 			handle = m.onWebResourceResponseReceivedEvent(sender, webview, args)
@@ -183,7 +187,7 @@ func (m *BrowserWindow) defaultEvent() {
 			}
 		}
 	})
-	m.browser.SetOnWebResourceRequested(func(sender wv.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
+	m.browser.SetOnWebResourceRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 		var handle bool
 		if m.onWebResourceRequestedEvent != nil {
 			handle = m.onWebResourceRequestedEvent(sender, webview, args)

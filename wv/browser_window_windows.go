@@ -9,53 +9,63 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
 package wv
 
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/energye/energy/v3/internal/assets"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/pkgs/win"
-	"github.com/energye/lcl/types"
-	"github.com/energye/lcl/types/messages"
+	wvTypes "github.com/energye/wv/types/windows"
+	wv "github.com/energye/wv/windows"
+	"net/url"
 	"runtime"
 )
 
-func (m *BrowserWindow) platformCreate() {
-	if m.options.Windows.ICON == nil {
-		lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
-	} else {
-		lcl.Application.Icon().LoadFromBytes(m.options.Windows.ICON)
-	}
-	switch m.options.Windows.Theme {
-	case SystemDefault:
-		win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
-	case Light:
-		win32.ChangeTheme(m.Handle(), false)
-	case Dark:
-		win32.ChangeTheme(m.Handle(), true)
-	}
+type TBrowserWindow struct {
+	browserId                     uint32
+	isClose                       bool
+	windowParent                  wv.IWVWindowParent
+	browser                       wv.IWVBrowser
+	messageReceivedDelegate       ipc.IMessageReceivedDelegate
+	onWebMessageReceived          wv.TOnWebMessageReceivedEvent
+	onContextMenuRequested        wv.TOnContextMenuRequestedEvent
+	onContentLoading              wv.TOnContentLoadingEvent
+	onAfterCreated                lcl.TNotifyEvent
+	onWindowClose                 lcl.TCloseEvent
+	onWindowShow                  lcl.TNotifyEvent
+	onWindowDestroy               lcl.TNotifyEvent
+	onWebResourceRequested        TOnWebResourceRequestedEvent
+	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
+	onWindowResize                TOnWindowResize
+	onWindowDrag                  TOnWindowDrag
 }
 
-var (
-	frameWidth  = win.GetSystemMetrics(32)
-	frameHeight = win.GetSystemMetrics(33)
-	frameCorner = frameWidth + frameHeight
-)
+func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
+	m := &TBrowserWindow{browserId: getBrowserID()}
+	m.windowParent = wv.NewWindowParent(owner)
+	m.windowParent.SetParent(owner)
+	m.browser = wv.NewBrowser(owner)
+	m.windowParent.SetBrowser(m.browser)
+	// ipc message received
+	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
+	m.initDefaultEvent()
+	return m
+}
 
-func (m *BrowserWindow) navigationStarting() {
+func (m *TBrowserWindow) BrowserID() uint32 {
+	return m.browserId
+}
+
+func (m *TBrowserWindow) navigationStarting() {
 	jsCode := &bytes.Buffer{}
 	var envJS = func(json string) {
 		jsCode.WriteString(`window.energy.setOptionsEnv(`)
 		jsCode.WriteString(json)
 		jsCode.WriteString(`);`)
 	}
-	optionsJSON, err := json.Marshal(m.options)
+	optionsJSON, err := json.Marshal(application.options)
 	if err == nil {
 		envJS(string(optionsJSON))
 	}
@@ -72,96 +82,139 @@ func (m *BrowserWindow) navigationStarting() {
 	m.browser.ExecuteScript(`window.energy.drag().setup();`, 0)
 }
 
-func (m *BrowserWindow) Resize(ht string) {
-	if m.IsFullScreen() || m.options.DisableResize {
-		return
-	}
-	if win.ReleaseCapture() {
-		var borderHT uintptr
-		switch ht {
-		case "n-resize":
-			borderHT = messages.HTTOP
-		case "ne-resize":
-			borderHT = messages.HTTOPRIGHT
-		case "e-resize":
-			borderHT = messages.HTRIGHT
-		case "se-resize":
-			borderHT = messages.HTBOTTOMRIGHT
-		case "s-resize":
-			borderHT = messages.HTBOTTOM
-		case "sw-resize":
-			borderHT = messages.HTBOTTOMLEFT
-		case "w-resize":
-			borderHT = messages.HTLEFT
-		case "nw-resize":
-			borderHT = messages.HTTOPLEFT
+// Default preset function implementation
+//
+//	Users have two options when implementing event behavior on their own
+//	1. Use Browser() to obtain the browser object and remove and override the current specified event
+//	2. Specify the event function in the current window and retain the default event behavior
+func (m *TBrowserWindow) initDefaultEvent() {
+	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
+		// local load
+		if application.localLoad != nil {
+			m.browser.AddWebResourceRequestedFilter(application.localLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
-		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
-	}
-}
-
-func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
-	if m.IsFullScreen() {
-		return
-	}
-	switch message.Type {
-	case ipc.MT_DRAG_MOVE:
-		if m.IsFullScreen() {
-			return
+		// current browser ipc javascript
+		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
+		// CoreWebView2Settings
+		settings := m.browser.CoreWebView2Settings()
+		// Global control of devtools account open and clos
+		settings.SetAreDevToolsEnabled(!application.options.DisableDevTools)
+		if m.onAfterCreated != nil {
+			m.onAfterCreated(sender)
 		}
-		if win.ReleaseCapture() {
-			win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+		m.windowParent.UpdateSize()
+	})
+	m.browser.SetOnContentLoading(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
+		m.navigationStarting()
+		if m.onContentLoading != nil {
+			m.onContentLoading(sender, webview, args)
 		}
-	case ipc.MT_DRAG_DOWN:
-	case ipc.MT_DRAG_UP:
-	case ipc.MT_DRAG_DBLCLICK:
-		m.Maximize()
-	}
-}
-
-func (m *BrowserWindow) borderFramelessForLine() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME|win.WS_BORDER))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-func (m *BrowserWindow) borderFrameless() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-func (m *BrowserWindow) FullScreen() {
-	if m.IsFullScreen() {
-		return
-	}
-	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.IsMinimize() || m.IsMaximize() {
-			m.Restore()
+	})
+	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
+		if application.options.DisableContextMenu {
+			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
+			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
+			menuItemCollection.RemoveAllMenuItems()
+			menuItemCollection.Free()
+			args.Free()
+		} else if m.onContextMenuRequested != nil {
+			m.onContextMenuRequested(sender, webview, args)
 		}
-		m.windowsState = types.WsFullScreen
-		// save current window rect, use ExitFullScreen
-		m.previousWindowPlacement = m.BoundsRect()
-		monitorRect := m.Monitor().BoundsRect()
-		if !m.options.Frameless {
-			// save current window style, use ExitFullScreen
-			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
-			m.borderFrameless()
-			m.SetWindowState(types.WsFullScreen)
+	})
+	// process message received
+	m.browser.SetOnWebMessageReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
+		var handle bool
+		if m.messageReceivedDelegate != nil {
+			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
+			message := args.WebMessageAsString()
+			args.Free()
+			// ipc message
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal([]byte(message), &pMessage)
+			if err == nil {
+				switch pMessage.Type {
+				case ipc.MT_READY:
+					// ipc ready
+					handle = true
+				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
+					// ipc on, emit event
+					handle = m.messageReceivedDelegate.Received(m.BrowserID(), &pMessage)
+				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					// ipc drag window
+					if m.onWindowDrag != nil {
+						m.onWindowDrag(pMessage)
+						handle = true
+					}
+				case ipc.MT_DRAG_RESIZE:
+					// border drag resize
+					if m.onWindowResize != nil {
+						ht := pMessage.Data.(string)
+						m.onWindowResize(ht)
+					}
+				case ipc.MT_DRAG_BORDER_WMSZ:
+					//fmt.Println("pMessage.Data", pMessage.Data)
+					//m._SetCursor(17)
+				}
+			}
 		}
-		win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
+		if !handle && m.onWebMessageReceived != nil {
+			m.onWebMessageReceived(sender, webview, args)
+		}
+	})
+	m.browser.SetOnWebResourceResponseReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
+		var handle bool
+		if m.onWebResourceResponseReceived != nil {
+			handle = m.onWebResourceResponseReceived(sender, webview, args)
+		}
+		if !handle && application.localLoad != nil {
+			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
+			defer tempArgs.Free()
+			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
+			defer tempRequest.Free()
+			if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
+				application.localLoad.releaseStream(reqUrl.Path)
+			}
+		}
+	})
+	m.browser.SetOnWebResourceRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
+		var handle bool
+		if m.onWebResourceRequested != nil {
+			handle = m.onWebResourceRequested(sender, webview, args)
+		}
+		if !handle && application.localLoad != nil {
+			lcl.RunOnMainThreadSync(func() {
+				application.localLoad.resourceRequested(m.browser, webview, args)
+			})
+		}
 	})
 }
 
-func (m *BrowserWindow) ExitFullScreen() {
-	if m.IsFullScreen() {
-		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !m.options.Frameless {
-				win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.oldWindowStyle)
-			}
-			m.windowsState = types.WsNormal
-			m.SetWindowState(types.WsNormal)
-			m.SetBoundsRect(&m.previousWindowPlacement)
-		})
+// 在窗口时调用
+func (m *TBrowserWindow) CreateBrowser() {
+	if application.InitializationError() {
+		// Log ???
+	} else {
+		if application.Initialized() {
+			m.browser.CreateBrowserWithHandleBool(m.windowParent.Handle(), true)
+		}
 	}
+}
+
+// BrowserId Window ID, generated by accumulating sequence numbers
+func (m *TBrowserWindow) BrowserId() uint32 {
+	return m.browserId
+}
+
+func (m *TBrowserWindow) SendMessage(payload []byte) {
+	if m.isClose {
+		return
+	}
+	m.browser.PostWebMessageAsString(string(payload))
+}
+
+func (m *TBrowserWindow) Close() {
+	m.isClose = true
+	m.windowParent.Free()
+	deleteBrowserWindow(m)
+	ipc.UnRegisterProcessMessage(m)
 }

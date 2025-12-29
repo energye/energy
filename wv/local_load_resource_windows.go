@@ -9,7 +9,6 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
 package wv
 
@@ -17,7 +16,7 @@ import (
 	"github.com/energye/energy/v3/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
-	"github.com/energye/wv/windows"
+	wv "github.com/energye/wv/windows"
 	"io/ioutil"
 	"net/url"
 	"path/filepath"
@@ -40,7 +39,7 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 // released after the resource processing is complete
 func (m *LocalLoadResource) releaseStream(path string) {
 	if stream, ok := m.streams[path]; ok {
-		stream.FreeAndNil()
+		stream.Free()
 		delete(m.streams, path)
 	}
 }
@@ -75,7 +74,7 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 			stream = lcl.NewMemoryStream()
 			streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
 			defer streamAdapter.Nil()
-			stream.Write(data)
+			lcl.StreamHelper.Write(stream, data)
 			// current resource is set temp cache
 			// released after the resource processing is complete
 			m.setTempStream(reqUrl.Path, stream)
@@ -97,5 +96,6 @@ func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.
 
 	if response != nil {
 		response.Nil()
+		response.Free()
 	}
 }
