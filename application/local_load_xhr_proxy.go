@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package wv
+package application
 
 import (
 	"bytes"
@@ -16,7 +16,7 @@ import (
 	"crypto/x509"
 	"errors"
 	"github.com/energye/lcl/emfs"
-	"github.com/energye/wv/windows"
+	wv "github.com/energye/wv/windows"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"

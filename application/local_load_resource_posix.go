@@ -8,6 +8,6 @@
 //
 //----------------------------------------
 
-//go:build darwin
+//go:build !windows
 
-package wv
+package application

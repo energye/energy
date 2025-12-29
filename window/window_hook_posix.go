@@ -9,9 +9,8 @@
 //----------------------------------------
 
 //go:build !windows
-// +build !windows
 
-package wv
+package window
 
 func (m *BrowserWindow) _HookWndProcMessage() {
 

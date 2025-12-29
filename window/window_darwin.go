@@ -8,7 +8,6 @@
 //
 //----------------------------------------
 
-//go:build !windows
-// +build !windows
+//go:build darwin
 
-package wv
+package window

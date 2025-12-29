@@ -9,13 +9,12 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
-package wv
+package window
 
 import (
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/pkgs/win32"
-	"github.com/energye/lcl/api/winapi"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
@@ -23,7 +22,7 @@ import (
 	"unsafe"
 )
 
-func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
+func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
 	switch message {
 	case messages.WM_SETTINGCHANGE:
 		settingChanged := win32.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
@@ -40,7 +39,7 @@ func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam 
 		//case messages.PBT_POWERSETTINGCHANGE:
 		//}
 	}
-	if m.options.Frameless {
+	if application.GApplication.Options.Frameless {
 		switch message {
 		case messages.WM_ACTIVATE:
 			// If we want to have a frameless window but with the default frame decorations, extend the DWM client area.
@@ -63,11 +62,11 @@ func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam 
 					rect := (*types.TRect)(unsafe.Pointer(lParam))
 					// m.Monitor().WorkareaRect(): When minimizing windows and restoring windows on multiple monitors, the main monitor is obtained.
 					// Need to obtain correct monitor information to prevent error freezing message loops from occurring
-					monitor := winapi.MonitorFromRect(*rect, winapi.MONITOR_DEFAULTTONULL)
+					monitor := win.MonitorFromRect(rect, win.MONITOR_DEFAULTTONULL)
 					if monitor != 0 {
-						var monitorInfo types.TagMonitorInfo
+						var monitorInfo types.TMonitorInfo
 						monitorInfo.CbSize = types.DWORD(unsafe.Sizeof(monitorInfo))
-						if winapi.GetMonitorInfo(monitor, &monitorInfo) {
+						if win.GetMonitorInfo(monitor, &monitorInfo) {
 							*rect = monitorInfo.RcWork
 						}
 					}
@@ -79,7 +78,7 @@ func (m *BrowserWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam 
 	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
 }
 
-func (m *BrowserWindow) _HookWndProcMessage() {
+func (m *TWindow) _HookWndProcMessage() {
 	if m.oldWndPrc == 0 {
 		wndProcCallback := syscall.NewCallback(m.wndProc)
 		m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
@@ -90,7 +89,7 @@ func (m *BrowserWindow) _HookWndProcMessage() {
 	}
 }
 
-func (m *BrowserWindow) _RestoreWndProc() {
+func (m *TWindow) _RestoreWndProc() {
 	if m.oldWndPrc != 0 {
 		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
 		m.oldWndPrc = 0

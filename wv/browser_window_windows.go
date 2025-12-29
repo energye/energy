@@ -17,11 +17,18 @@ import (
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
 	"runtime"
+)
+
+var (
+	frameWidth  = win.GetSystemMetrics(32)
+	frameHeight = win.GetSystemMetrics(33)
+	frameCorner = frameWidth + frameHeight
 )
 
 type TBrowserWindow struct {
@@ -53,14 +60,14 @@ func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
 	m.box.SetBevelOuter(types.BvNone)
 	m.box.SetAlign(types.AlCustom)
 	m.box.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
-	m.box.SetBounds(0, 0, application.options.Width, application.options.Height)
+	m.box.SetBounds(0, 0, gApplication.Options.Width, gApplication.Options.Height)
 	m.box.SetParent(owner)
 
 	m.windowParent = wv.NewWindowParent(owner)
 	m.windowParent.SetParent(m.box)
 
 	m.browser = wv.NewBrowser(owner)
-	
+
 	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
@@ -80,7 +87,7 @@ func (m *TBrowserWindow) navigationStarting() {
 		jsCode.WriteString(json)
 		jsCode.WriteString(`);`)
 	}
-	optionsJSON, err := json.Marshal(application.options)
+	optionsJSON, err := json.Marshal(gApplication.Options)
 	if err == nil {
 		envJS(string(optionsJSON))
 	}
@@ -105,15 +112,15 @@ func (m *TBrowserWindow) navigationStarting() {
 func (m *TBrowserWindow) initDefaultEvent() {
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
-		if application.localLoad != nil {
-			m.browser.AddWebResourceRequestedFilter(application.localLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
+		if gApplication.LocalLoad != nil {
+			m.browser.AddWebResourceRequestedFilter(gApplication.LocalLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
 		}
 		// current browser ipc javascript
 		m.browser.CoreWebView2().AddScriptToExecuteOnDocumentCreated(string(ipcJS), m.browser)
 		// CoreWebView2Settings
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos
-		settings.SetAreDevToolsEnabled(!application.options.DisableDevTools)
+		settings.SetAreDevToolsEnabled(!gApplication.Options.DisableDevTools)
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)
 		}
@@ -126,7 +133,7 @@ func (m *TBrowserWindow) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
-		if application.options.DisableContextMenu {
+		if gApplication.Options.DisableContextMenu {
 			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
 			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
 			menuItemCollection.RemoveAllMenuItems()
@@ -181,13 +188,13 @@ func (m *TBrowserWindow) initDefaultEvent() {
 		if m.onWebResourceResponseReceived != nil {
 			handle = m.onWebResourceResponseReceived(sender, webview, args)
 		}
-		if !handle && application.localLoad != nil {
+		if !handle && gApplication.LocalLoad != nil {
 			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
 			defer tempArgs.Free()
 			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
 			defer tempRequest.Free()
 			if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
-				application.localLoad.releaseStream(reqUrl.Path)
+				gApplication.LocalLoad.ReleaseStream(reqUrl.Path)
 			}
 		}
 	})
@@ -196,9 +203,9 @@ func (m *TBrowserWindow) initDefaultEvent() {
 		if m.onWebResourceRequested != nil {
 			handle = m.onWebResourceRequested(sender, webview, args)
 		}
-		if !handle && application.localLoad != nil {
+		if !handle && gApplication.LocalLoad != nil {
 			lcl.RunOnMainThreadSync(func() {
-				application.localLoad.resourceRequested(m.browser, webview, args)
+				gApplication.LocalLoad.ResourceRequested(m.browser, webview, args)
 			})
 		}
 	})
@@ -206,10 +213,10 @@ func (m *TBrowserWindow) initDefaultEvent() {
 
 // 在窗口时调用
 func (m *TBrowserWindow) CreateBrowser() {
-	if application.InitializationError() {
+	if gApplication.InitializationError() {
 		// Log ???
 	} else {
-		if application.Initialized() {
+		if gApplication.Initialized() {
 			m.browser.CreateBrowserWithHandleBool(m.windowParent.Handle(), true)
 		}
 	}
@@ -230,6 +237,5 @@ func (m *TBrowserWindow) SendMessage(payload []byte) {
 func (m *TBrowserWindow) Close() {
 	m.isClose = true
 	m.windowParent.Free()
-	deleteBrowserWindow(m)
 	ipc.UnRegisterProcessMessage(m)
 }

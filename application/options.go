@@ -8,7 +8,7 @@
 //
 //----------------------------------------
 
-package wv
+package application
 
 import "github.com/energye/lcl/types"
 

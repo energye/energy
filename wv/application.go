@@ -11,67 +11,54 @@
 package wv
 
 import (
+	"github.com/energye/energy/v3/application"
+	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool/exec"
 	wv "github.com/energye/wv/windows"
 	"path/filepath"
 )
 
 // application
 var (
-	application    *Application
-	globalWVLoader wv.IWVLoader
+	gApplication    *Application
+	gGlobalWVLoader wv.IWVLoader
 )
 
+const _WebView2Loader = "WebView2Loader.dll"
+
 func NewWVLoader() wv.IWVLoader {
-	if globalWVLoader == nil {
-		if globalWVLoader = wv.GetGlobalWebView2Loader(); globalWVLoader != nil {
-			return globalWVLoader
+	if gGlobalWVLoader == nil {
+		if gGlobalWVLoader = wv.GetGlobalWebView2Loader(); gGlobalWVLoader != nil {
+			return gGlobalWVLoader
 		} else {
-			globalWVLoader = wv.NewLoader(nil)
-			wv.SetGlobalWebView2Loader(globalWVLoader)
+			gGlobalWVLoader = wv.NewLoader(nil)
+			wv.SetGlobalWebView2Loader(gGlobalWVLoader)
 		}
 	}
-	return globalWVLoader
+	return gGlobalWVLoader
 }
 
 type Application struct {
 	wv.IWVLoader
-	mainWindow         *MainWindow
+	application.Application
 	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
-	options            Options
-	localLoad          *LocalLoadResource
+	localLoad          *application.LocalLoadResource
 }
 
 func NewApplication() *Application {
-	if application == nil {
-		application = &Application{
-			IWVLoader:  NewWVLoader(),
-			mainWindow: &MainWindow{},
+	if gApplication == nil {
+		gApplication = &Application{
+			IWVLoader: NewWVLoader(),
 		}
-		webview2Home, wv2Loader := wv2load.Wv2Load()
-		application.SetUserDataFolder(filepath.Join(webview2Home, "webview2Cache"))
-		application.SetLoaderDllPath(wv2Loader)
-		application.initDefaultEvent()
+		gApplication.SetUserDataFolder(filepath.Join(exec.AppDir(), "energyCache"))
+		dir, _ := filepath.Split(libname.LibName)
+		wv2Loader := filepath.Join(dir, _WebView2Loader)
+		gApplication.SetLoaderDllPath(wv2Loader)
+		gApplication.initDefaultEvent()
+		application.GApplication = &gApplication.Application
 	}
-	return application
-}
-
-func (m *Application) Run() {
-	if m.StartWebView2() {
-		lcl.Application.Initialize()
-		lcl.Application.SetMainFormOnTaskBar(true)
-		lcl.Application.NewForm(m.mainWindow)
-		lcl.Application.Run()
-	}
-}
-
-func (m *Application) SetOptions(options Options) {
-	m.options = options
-}
-
-func (m *Application) SetLocalLoad(localLoad LocalLoad) {
-	m.localLoad = NewLocalLoadResource(&localLoad)
-	m.localLoad.LocalLoad = &localLoad
+	return gApplication
 }
 
 func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {

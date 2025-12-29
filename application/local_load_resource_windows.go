@@ -10,7 +10,7 @@
 
 //go:build windows
 
-package wv
+package application
 
 import (
 	"github.com/energye/energy/v3/mime"
@@ -37,7 +37,7 @@ func (m *LocalLoadResource) read(path string) ([]byte, error) {
 }
 
 // released after the resource processing is complete
-func (m *LocalLoadResource) releaseStream(path string) {
+func (m *LocalLoadResource) ReleaseStream(path string) {
 	if stream, ok := m.streams[path]; ok {
 		stream.FreeAndNil()
 		delete(m.streams, path)
@@ -49,7 +49,7 @@ func (m *LocalLoadResource) setTempStream(path string, stream lcl.IMemoryStream)
 	m.streams[path] = stream
 }
 
-func (m *LocalLoadResource) resourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
+func (m *LocalLoadResource) ResourceRequested(browser wv.IWVBrowser, webView wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
 	// temp object
 	tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
 	defer tempArgs.FreeAndNil()

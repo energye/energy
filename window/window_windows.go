@@ -9,70 +9,43 @@
 //----------------------------------------
 
 //go:build windows
-// +build windows
 
-package wv
+package window
 
 import (
-	"bytes"
-	"encoding/json"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
-	"runtime"
 )
 
-func (m *BrowserWindow) platformCreate() {
+func (m *TWindow) borderFrameless() {
+	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
+	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
+	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+}
+
+func (m *TWindow) platformCreate() {
 	//if m.options.Windows.ICON == nil {
 	//	lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
 	//} else {
 	//	lcl.Application.Icon().LoadFromBytes(m.options.Windows.ICON)
 	//}
-	switch m.options.Windows.Theme {
-	case SystemDefault:
+	switch application.GApplication.Options.Windows.Theme {
+	case application.SystemDefault:
 		win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
-	case Light:
+	case application.Light:
 		win32.ChangeTheme(m.Handle(), false)
-	case Dark:
+	case application.Dark:
 		win32.ChangeTheme(m.Handle(), true)
 	}
 }
 
-var (
-	frameWidth  = win.GetSystemMetrics(32)
-	frameHeight = win.GetSystemMetrics(33)
-	frameCorner = frameWidth + frameHeight
-)
-
-func (m *BrowserWindow) navigationStarting() {
-	jsCode := &bytes.Buffer{}
-	var envJS = func(json string) {
-		jsCode.WriteString(`window.energy.setOptionsEnv(`)
-		jsCode.WriteString(json)
-		jsCode.WriteString(`);`)
-	}
-	optionsJSON, err := json.Marshal(m.options)
-	if err == nil {
-		envJS(string(optionsJSON))
-	}
-	env := make(map[string]interface{})
-	env["frameWidth"] = frameWidth
-	env["frameHeight"] = frameHeight
-	env["frameCorner"] = frameCorner
-	env["os"] = runtime.GOOS
-	envJSON, err := json.Marshal(env)
-	if err == nil {
-		envJS(string(envJSON))
-	}
-	m.browser.ExecuteScript(jsCode.String(), 0)
-	m.browser.ExecuteScript(`window.energy.drag().setup();`, 0)
-}
-
-func (m *BrowserWindow) Resize(ht string) {
-	if m.IsFullScreen() || m.options.DisableResize {
+func (m *TWindow) Resize(ht string) {
+	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
 		return
 	}
 	if win.ReleaseCapture() {
@@ -99,7 +72,7 @@ func (m *BrowserWindow) Resize(ht string) {
 	}
 }
 
-func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
+func (m *TWindow) Drag(message ipc.ProcessMessage) {
 	if m.IsFullScreen() {
 		return
 	}
@@ -118,19 +91,7 @@ func (m *BrowserWindow) Drag(message ipc.ProcessMessage) {
 	}
 }
 
-func (m *BrowserWindow) borderFramelessForLine() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME|win.WS_BORDER))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-func (m *BrowserWindow) borderFrameless() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
-}
-
-func (m *BrowserWindow) FullScreen() {
+func (m *TWindow) FullScreen() {
 	if m.IsFullScreen() {
 		return
 	}
@@ -142,7 +103,7 @@ func (m *BrowserWindow) FullScreen() {
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
 		monitorRect := m.Monitor().BoundsRect()
-		if !m.options.Frameless {
+		if !application.GApplication.Options.Frameless {
 			// save current window style, use ExitFullScreen
 			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
 			m.borderFrameless()
@@ -152,10 +113,10 @@ func (m *BrowserWindow) FullScreen() {
 	})
 }
 
-func (m *BrowserWindow) ExitFullScreen() {
+func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !m.options.Frameless {
+			if !application.GApplication.Options.Frameless {
 				win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.oldWindowStyle)
 			}
 			m.windowsState = types.WsNormal
@@ -163,4 +124,42 @@ func (m *BrowserWindow) ExitFullScreen() {
 			m.SetBoundsRect(m.previousWindowPlacement)
 		})
 	}
+}
+
+func (m *TWindow) Maximize() {
+	if m.IsFullScreen() || application.GApplication.Options.DisableMaximize {
+		return
+	}
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		if m.WindowState() == types.WsNormal {
+			m.SetWindowState(types.WsMaximized)
+		} else {
+			m.SetWindowState(types.WsNormal)
+		}
+	})
+}
+
+func (m *TWindow) Restore() {
+	// In the case of a title bar
+	// If the current state is full screen and the extracted state is Ws Maximized,
+	// So let's first perform IsFullScreen() judgment here
+	if m.IsFullScreen() {
+		m.ExitFullScreen()
+	} else if m.IsMinimize() || m.IsMaximize() {
+		lcl.RunOnMainThreadAsync(func(id uint32) {
+			m.SetWindowState(types.WsNormal)
+		})
+	}
+}
+
+func (m *TWindow) IsFullScreen() bool {
+	return m.windowsState == types.WsFullScreen
+}
+
+func (m *TWindow) IsMinimize() bool {
+	return m.WindowState() == types.WsMinimized
+}
+
+func (m *TWindow) IsMaximize() bool {
+	return m.WindowState() == types.WsMaximized
 }

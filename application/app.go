@@ -1,14 +1,11 @@
-//----------------------------------------
-//
-// Copyright © yanghy. All Rights Reserved.
-//
-// Licensed under Apache License Version 2.0, January 2004
-//
-// https://www.apache.org/licenses/LICENSE-2.0
-//
-//----------------------------------------
+package application
 
-package wv
+var GApplication *Application
+
+type Application struct {
+	Options   Options
+	LocalLoad *LocalLoadResource
+}
 
 // LocalCustomerScheme 本地资源加载自定义固定协议
 //
@@ -31,3 +28,12 @@ const (
 	LpsHttps                         // https
 	//LpsTcp                           // tcp
 )
+
+func (m *Application) SetOptions(options Options) {
+	m.Options = options
+}
+
+func (m *Application) SetLocalLoad(localLoad LocalLoad) {
+	m.LocalLoad = NewLocalLoadResource(&localLoad)
+	m.LocalLoad.LocalLoad = &localLoad
+}
