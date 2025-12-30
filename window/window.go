@@ -11,9 +11,16 @@
 package window
 
 import (
+	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
+
+type IWebviewWindow interface {
+	lcl.IEngForm
+	Resize(ht string)
+	Drag(message ipc.ProcessMessage)
+}
 
 type TWebviewWindow struct {
 	lcl.TEngForm

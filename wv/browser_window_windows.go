@@ -16,6 +16,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
@@ -32,9 +33,10 @@ var (
 )
 
 type TBrowserWindow struct {
+	lcl.IPanel
 	browserId                     uint32
 	isClose                       bool
-	box                           lcl.IPanel
+	window                        window.IWebviewWindow
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
 	messageReceivedDelegate       ipc.IMessageReceivedDelegate
@@ -47,26 +49,25 @@ type TBrowserWindow struct {
 	onWindowDestroy               lcl.TNotifyEvent
 	onWebResourceRequested        TOnWebResourceRequestedEvent
 	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
-	onWindowResize                TOnWindowResize
-	onWindowDrag                  TOnWindowDrag
 }
 
-func NewBrowserWindow(owner lcl.IWinControl) *TBrowserWindow {
-	m := &TBrowserWindow{browserId: getNextBrowserID()}
-	//m.box = lcl.NewPanel(owner)
-	//m.box.SetParentColor(true)
-	//m.box.SetParentDoubleBuffered(true)
-	//m.box.SetBevelInner(types.BvNone)
-	//m.box.SetBevelOuter(types.BvNone)
-	//m.box.SetAlign(types.AlClient)
-	////m.box.SetBounds(0, 0, 100, 100)
-	//m.box.SetParent(owner)
+func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
+	m := &TBrowserWindow{browserId: getNextBrowserID(), window: window}
+	m.IPanel = lcl.NewPanel(window)
+	m.IPanel.SetParentColor(true)
+	m.IPanel.SetParentDoubleBuffered(true)
+	m.IPanel.SetBevelInner(types.BvNone)
+	m.IPanel.SetBevelOuter(types.BvNone)
+	//m.IPanel.SetAlign(types.AlClient)
+	m.IPanel.SetBounds(0, 0, 100, 100)
+	m.IPanel.SetParent(window)
 
-	m.windowParent = wv.NewWindowParent(owner)
+	m.windowParent = wv.NewWindowParent(window)
 	m.windowParent.SetAlign(types.AlClient)
-	m.windowParent.SetParent(owner)
+	m.windowParent.SetParent(m)
+	//m.windowParent.SetParent(owner)
 
-	m.browser = wv.NewBrowser(owner)
+	m.browser = wv.NewBrowser(window)
 
 	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
@@ -159,16 +160,12 @@ func (m *TBrowserWindow) initDefaultEvent() {
 					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
-					if m.onWindowDrag != nil {
-						m.onWindowDrag(pMessage)
-						handle = true
-					}
+					m.window.Drag(pMessage)
+					handle = true
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
-					if m.onWindowResize != nil {
-						ht := pMessage.Data.(string)
-						m.onWindowResize(ht)
-					}
+					ht := pMessage.Data.(string)
+					m.window.Resize(ht)
 				case ipc.MT_DRAG_BORDER_WMSZ:
 					//fmt.Println("pMessage.Data", pMessage.Data)
 					//m._SetCursor(17)
@@ -274,12 +271,4 @@ func (m *TBrowserWindow) SetOnWebResourceRequested(fn TOnWebResourceRequestedEve
 
 func (m *TBrowserWindow) SetOnWebResourceResponseReceived(fn TOnWebResourceResponseReceivedEvent) {
 	m.onWebResourceResponseReceived = fn
-}
-
-func (m *TBrowserWindow) SetOnWindowResize(fn TOnWindowResize) {
-	m.onWindowResize = fn
-}
-
-func (m *TBrowserWindow) SetOnWindowDrag(fn TOnWindowDrag) {
-	m.onWindowDrag = fn
 }
