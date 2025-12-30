@@ -22,13 +22,13 @@ import (
 	"github.com/energye/lcl/types/messages"
 )
 
-func (m *TWindow) borderFrameless() {
+func (m *TWebviewWindow) borderFrameless() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
-func (m *TWindow) platformCreate() {
+func (m *TWebviewWindow) platformCreate() {
 	//if m.options.Windows.ICON == nil {
 	//	lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
 	//} else {
@@ -44,7 +44,7 @@ func (m *TWindow) platformCreate() {
 	}
 }
 
-func (m *TWindow) Resize(ht string) {
+func (m *TWebviewWindow) Resize(ht string) {
 	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
 		return
 	}
@@ -72,7 +72,7 @@ func (m *TWindow) Resize(ht string) {
 	}
 }
 
-func (m *TWindow) Drag(message ipc.ProcessMessage) {
+func (m *TWebviewWindow) Drag(message ipc.ProcessMessage) {
 	if m.IsFullScreen() {
 		return
 	}
@@ -91,7 +91,7 @@ func (m *TWindow) Drag(message ipc.ProcessMessage) {
 	}
 }
 
-func (m *TWindow) FullScreen() {
+func (m *TWebviewWindow) FullScreen() {
 	if m.IsFullScreen() {
 		return
 	}
@@ -113,7 +113,7 @@ func (m *TWindow) FullScreen() {
 	})
 }
 
-func (m *TWindow) ExitFullScreen() {
+func (m *TWebviewWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			if !application.GApplication.Options.Frameless {
@@ -126,7 +126,7 @@ func (m *TWindow) ExitFullScreen() {
 	}
 }
 
-func (m *TWindow) Maximize() {
+func (m *TWebviewWindow) Maximize() {
 	if m.IsFullScreen() || application.GApplication.Options.DisableMaximize {
 		return
 	}
@@ -139,7 +139,7 @@ func (m *TWindow) Maximize() {
 	})
 }
 
-func (m *TWindow) Restore() {
+func (m *TWebviewWindow) Restore() {
 	// In the case of a title bar
 	// If the current state is full screen and the extracted state is Ws Maximized,
 	// So let's first perform IsFullScreen() judgment here
@@ -152,14 +152,14 @@ func (m *TWindow) Restore() {
 	}
 }
 
-func (m *TWindow) IsFullScreen() bool {
+func (m *TWebviewWindow) IsFullScreen() bool {
 	return m.windowsState == types.WsFullScreen
 }
 
-func (m *TWindow) IsMinimize() bool {
+func (m *TWebviewWindow) IsMinimize() bool {
 	return m.WindowState() == types.WsMinimized
 }
 
-func (m *TWindow) IsMaximize() bool {
+func (m *TWebviewWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
 }

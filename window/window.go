@@ -15,7 +15,7 @@ import (
 	"github.com/energye/lcl/types"
 )
 
-type TWindow struct {
+type TWebviewWindow struct {
 	lcl.TEngForm
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr

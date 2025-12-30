@@ -46,7 +46,7 @@ type Application struct {
 	localLoad          *application.LocalLoadResource
 }
 
-func NewApplication() *Application {
+func NewWebviewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{
 			IWVLoader: NewWVLoader(),
@@ -81,4 +81,8 @@ func (m *Application) initDefaultEvent() {
 			}
 		}
 	})
+}
+
+func (m *Application) Start() {
+	m.StartWebView2()
 }

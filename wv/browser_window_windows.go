@@ -51,20 +51,20 @@ type TBrowserWindow struct {
 	onWindowDrag                  TOnWindowDrag
 }
 
-func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
+func NewBrowserWindow(owner lcl.IWinControl) *TBrowserWindow {
 	m := &TBrowserWindow{browserId: getNextBrowserID()}
-	m.box = lcl.NewPanel(owner)
-	m.box.SetParentColor(true)
-	m.box.SetParentDoubleBuffered(true)
-	m.box.SetBevelInner(types.BvNone)
-	m.box.SetBevelOuter(types.BvNone)
-	m.box.SetAlign(types.AlCustom)
-	m.box.SetAnchors(types.NewSet(types.AkTop, types.AkLeft, types.AkRight, types.AkBottom))
-	m.box.SetBounds(0, 0, gApplication.Options.Width, gApplication.Options.Height)
-	m.box.SetParent(owner)
+	//m.box = lcl.NewPanel(owner)
+	//m.box.SetParentColor(true)
+	//m.box.SetParentDoubleBuffered(true)
+	//m.box.SetBevelInner(types.BvNone)
+	//m.box.SetBevelOuter(types.BvNone)
+	//m.box.SetAlign(types.AlClient)
+	////m.box.SetBounds(0, 0, 100, 100)
+	//m.box.SetParent(owner)
 
 	m.windowParent = wv.NewWindowParent(owner)
-	m.windowParent.SetParent(m.box)
+	m.windowParent.SetAlign(types.AlClient)
+	m.windowParent.SetParent(owner)
 
 	m.browser = wv.NewBrowser(owner)
 
@@ -234,6 +234,10 @@ func (m *TBrowserWindow) Close() {
 	m.isClose = true
 	m.windowParent.Free()
 	ipc.UnRegisterProcessMessage(m)
+}
+
+func (m *TBrowserWindow) SetDefaultURL(url string) {
+	m.browser.SetDefaultURL(url)
 }
 
 func (m *TBrowserWindow) SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
