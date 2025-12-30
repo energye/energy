@@ -49,6 +49,8 @@ func (m *TWindow) platformCreate() {
 func (m *TWindow) SetOptions(windowId uint32) {
 	m.windowId = windowId
 	m.platformCreate()
+	m._HookWndProcMessage()
+	m._AfterCreate()
 	options := application.GApplication.Options
 	if options.Width <= 0 {
 		options.Width = m.Width()

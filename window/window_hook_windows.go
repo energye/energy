@@ -95,3 +95,33 @@ func (m *TWindow) _RestoreWndProc() {
 		m.oldWndPrc = 0
 	}
 }
+
+func (m *TWindow) _AfterCreate() { // after
+	if application.GApplication.Options.Frameless {
+
+	} else {
+		if application.GApplication.Options.DisableResize {
+			m.SetBorderStyleToFormBorderStyle(types.BsSingle)
+			m.EnabledMaximize(false)
+		}
+		if application.GApplication.Options.DisableMinimize {
+			m.EnabledMinimize(false)
+		}
+		if application.GApplication.Options.DisableMaximize {
+			m.EnabledMaximize(false)
+		}
+		if application.GApplication.Options.DisableSystemMenu {
+			m.EnabledSystemMenu(false)
+		}
+	}
+	constr := m.Constraints()
+	if application.GApplication.Options.MaxWidth > 0 || application.GApplication.Options.MaxHeight > 0 {
+		constr.SetMaxWidth(application.GApplication.Options.MaxWidth)
+		constr.SetMaxHeight(application.GApplication.Options.MaxHeight)
+	}
+	if application.GApplication.Options.MinWidth > 0 || application.GApplication.Options.MinHeight > 0 {
+		constr.SetMinWidth(application.GApplication.Options.MinWidth)
+		constr.SetMinHeight(application.GApplication.Options.MinHeight)
+	}
+	m.platformCreate()
+}
