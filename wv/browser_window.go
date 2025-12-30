@@ -16,7 +16,7 @@ import "sync/atomic"
 var globalBrowserID uint32
 
 // return next browser id
-func getBrowserID() uint32 {
+func getNextBrowserID() uint32 {
 	atomic.AddUint32(&globalBrowserID, 1)
 	return globalBrowserID
 }

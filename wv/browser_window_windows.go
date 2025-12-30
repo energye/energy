@@ -16,7 +16,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
-	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
@@ -35,7 +34,6 @@ var (
 type TBrowserWindow struct {
 	browserId                     uint32
 	isClose                       bool
-	window                        window.IWindow
 	box                           lcl.IPanel
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
@@ -54,7 +52,7 @@ type TBrowserWindow struct {
 }
 
 func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
-	m := &TBrowserWindow{browserId: getBrowserID()}
+	m := &TBrowserWindow{browserId: getNextBrowserID()}
 	m.box = lcl.NewPanel(owner)
 	m.box.SetParentColor(true)
 	m.box.SetParentDoubleBuffered(true)
@@ -76,10 +74,6 @@ func NewBrowserWindow(owner lcl.IWinControl) IBrowserWindow {
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
 	return m
-}
-
-func (m *TBrowserWindow) BrowserID() uint32 {
-	return m.browserId
 }
 
 func (m *TBrowserWindow) navigationStarting() {
@@ -162,7 +156,7 @@ func (m *TBrowserWindow) initDefaultEvent() {
 					handle = true
 				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
 					// ipc on, emit event
-					handle = m.messageReceivedDelegate.Received(m.BrowserID(), &pMessage)
+					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					if m.onWindowDrag != nil {
@@ -240,4 +234,48 @@ func (m *TBrowserWindow) Close() {
 	m.isClose = true
 	m.windowParent.Free()
 	ipc.UnRegisterProcessMessage(m)
+}
+
+func (m *TBrowserWindow) SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
+	m.onWebMessageReceived = fn
+}
+
+func (m *TBrowserWindow) SetOnContextMenuRequested(fn wv.TOnContextMenuRequestedEvent) {
+	m.onContextMenuRequested = fn
+}
+
+func (m *TBrowserWindow) SetOnContentLoading(fn wv.TOnContentLoadingEvent) {
+	m.onContentLoading = fn
+}
+
+func (m *TBrowserWindow) SetOnAfterCreated(fn lcl.TNotifyEvent) {
+	m.onAfterCreated = fn
+}
+
+func (m *TBrowserWindow) SetOnWindowClose(fn lcl.TCloseEvent) {
+	m.onWindowClose = fn
+}
+
+func (m *TBrowserWindow) SetOnWindowShow(fn lcl.TNotifyEvent) {
+	m.onWindowShow = fn
+}
+
+func (m *TBrowserWindow) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
+	m.onWindowDestroy = fn
+}
+
+func (m *TBrowserWindow) SetOnWebResourceRequested(fn TOnWebResourceRequestedEvent) {
+	m.onWebResourceRequested = fn
+}
+
+func (m *TBrowserWindow) SetOnWebResourceResponseReceived(fn TOnWebResourceResponseReceivedEvent) {
+	m.onWebResourceResponseReceived = fn
+}
+
+func (m *TBrowserWindow) SetOnWindowResize(fn TOnWindowResize) {
+	m.onWindowResize = fn
+}
+
+func (m *TBrowserWindow) SetOnWindowDrag(fn TOnWindowDrag) {
+	m.onWindowDrag = fn
 }
