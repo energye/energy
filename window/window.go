@@ -20,6 +20,7 @@ type IWebviewWindow interface {
 	lcl.IEngForm
 	Resize(ht string)
 	Drag(message ipc.ProcessMessage)
+	SetOptions()
 }
 
 type TWebviewWindow struct {

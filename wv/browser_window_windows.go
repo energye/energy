@@ -60,12 +60,9 @@ func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
 	m.IPanel.SetBevelOuter(types.BvNone)
 	//m.IPanel.SetAlign(types.AlClient)
 	m.IPanel.SetBounds(0, 0, 100, 100)
-	m.IPanel.SetParent(window)
 
 	m.windowParent = wv.NewWindowParent(window)
 	m.windowParent.SetAlign(types.AlClient)
-	m.windowParent.SetParent(m)
-	//m.windowParent.SetParent(owner)
 
 	m.browser = wv.NewBrowser(window)
 
@@ -74,7 +71,13 @@ func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
+	window.SetOptions()
 	return m
+}
+
+func (m *TBrowserWindow) SetParent(window lcl.IWinControl) {
+	m.IPanel.SetParent(window)
+	m.windowParent.SetParent(m)
 }
 
 func (m *TBrowserWindow) navigationStarting() {
