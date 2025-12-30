@@ -58,8 +58,6 @@ func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
 	m.IPanel.SetParentDoubleBuffered(true)
 	m.IPanel.SetBevelInner(types.BvNone)
 	m.IPanel.SetBevelOuter(types.BvNone)
-	//m.IPanel.SetAlign(types.AlClient)
-	m.IPanel.SetBounds(0, 0, 100, 100)
 
 	m.windowParent = wv.NewWindowParent(window)
 	m.windowParent.SetAlign(types.AlClient)
