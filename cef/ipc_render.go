@@ -128,7 +128,7 @@ func (m *ipcRenderProcess) ipcGoExecuteJSEvent(browser *ICefBrowser, frame *ICef
 	}()
 
 	if callback := on.getCallback(emitName); callback != nil {
-		var callbackArgsBytes interface{}
+		var callbackArgsBytes any
 		//enter v8context
 		ctx := frame.V8Context()
 		if ctx.Enter() {
@@ -400,7 +400,7 @@ func (*ipcRenderProcess) jsExecuteGoRule(name string, arguments *TCefV8ValueArra
 // JS 执行 GO 监听事件
 func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, arguments *TCefV8ValueArray, retVal *ResultV8Value, exception *ResultString) (result bool) {
 	result = true
-	var args interface{}
+	var args any
 	defer func() {
 		if args != nil {
 			args = nil
@@ -495,7 +495,7 @@ func (m *ipcRenderProcess) jsExecuteGoEvent(name string, object *ICefV8Value, ar
 }
 
 // 多进程消息 -  当前进程
-func (m *ipcRenderProcess) multiProcessCurrentProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data interface{}) {
+func (m *ipcRenderProcess) multiProcessCurrentProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data any) {
 	// 主进程
 	eventCallback := ipc.CheckOnEvent(emitName)
 	var ipcContext context.IContext
@@ -520,7 +520,7 @@ func (m *ipcRenderProcess) multiProcessCurrentProcess(v8ctx *ICefV8Context, emit
 }
 
 // 单进程
-func (m *ipcRenderProcess) singleProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data interface{}) {
+func (m *ipcRenderProcess) singleProcess(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, data any) {
 	if ipcBrowser == nil {
 		return
 	}
@@ -538,11 +538,11 @@ func (m *ipcRenderProcess) singleProcess(v8ctx *ICefV8Context, emitName string, 
 }
 
 // 多进程消息 - 会阻塞渲染进程，并等待 delay 时间后自动返回
-func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, delay time.Duration, data interface{}) {
+func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName string, callback *ipcCallback, delay time.Duration, data any) {
 	//延迟等待接收结果，默认5秒
 	messageId := m.waitChan.NextMessageId()
-	resultChan := make(chan interface{})
-	m.waitChan.Pending.Store(messageId, func(result interface{}) {
+	resultChan := make(chan any)
+	m.waitChan.Pending.Store(messageId, func(result any) {
 		select {
 		case resultChan <- result:
 		}
@@ -580,7 +580,7 @@ func (m *ipcRenderProcess) multiProcessWait(v8ctx *ICefV8Context, emitName strin
 }
 
 // 多进程消息 - 异步
-func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessage, messageId int32, emitName string, data interface{}) bool {
+func (m *ipcRenderProcess) multiProcessAsync(processMessage target.IProcessMessage, messageId int32, emitName string, data any) bool {
 	if processMessage != nil {
 		message := &ipcArgument.List{
 			Id:        messageId,

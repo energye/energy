@@ -75,7 +75,7 @@ type TApplication struct {
 }
 
 // AsApplication Convert a pointer object to an existing class object
-func AsApplication(obj interface{}) IApplication {
+func AsApplication(obj any) IApplication {
 	instance := cef.GetInstance(obj)
 	if instance == nil {
 		return nil

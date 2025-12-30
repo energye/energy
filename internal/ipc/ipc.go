@@ -83,7 +83,7 @@ func (m *MessageReceivedDelegate) handlerJSEMIT(browserId uint32, message *Proce
 	listenerLock.Lock()
 	fn, ok := listener.onCallbacks[message.Name]
 	listenerLock.Unlock()
-	var result interface{}
+	var result any
 	if ok {
 		ctx := callback.NewContext(browserId, message.Data)
 		// call ipc.on callback function
@@ -143,7 +143,7 @@ func GetProcessMessage(browserId uint32) IProcessMessage {
 // createCallback
 //
 //	Create and return a callback function
-func createCallback(fn interface{}) callback.ICallback {
+func createCallback(fn any) callback.ICallback {
 	switch fn.(type) {
 	case callback.EventCallback:
 		return callback.New(fn.(callback.EventCallback))
@@ -180,7 +180,7 @@ func RemoveOn(name string) {
 //	windowId: target window, default 0 = mainWindow, otherwise, it must be a valid window identifier
 //	name: emit message name
 //	arguments: emit message data
-func Emit(browserId uint32, name string, arguments ...interface{}) {
+func Emit(browserId uint32, name string, arguments ...any) {
 	if browserId == 0 {
 		browserId = defaultBrowserId // default main browser window id
 	}

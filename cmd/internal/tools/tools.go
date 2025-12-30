@@ -46,7 +46,7 @@ func CommandExists(name string) bool {
 	return true
 }
 
-func ToString(v interface{}) string {
+func ToString(v any) string {
 	if v == nil {
 		return ""
 	}
@@ -67,7 +67,7 @@ func StrToFloat32(value string) float32 {
 	return float32(v)
 }
 
-func ToInt(v interface{}) int {
+func ToInt(v any) int {
 	switch v.(type) {
 	case string:
 		return int(StrToInt64(v.(string)))
@@ -98,7 +98,7 @@ func ToInt(v interface{}) int {
 	}
 }
 
-func ToRNilString(v interface{}, new string) string {
+func ToRNilString(v any, new string) string {
 	if v == nil {
 		return new
 	}
@@ -131,7 +131,7 @@ func IsExistAndSize(path string, size int64) bool {
 	return true
 }
 
-func RenderTemplate(templateText string, data map[string]interface{}) ([]byte, error) {
+func RenderTemplate(templateText string, data map[string]any) ([]byte, error) {
 	tmpl, err := template.New("").Parse(templateText)
 	if err != nil {
 		return nil, err

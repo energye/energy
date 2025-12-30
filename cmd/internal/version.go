@@ -40,13 +40,13 @@ func runVersion(c *command.Config) error {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	var edv map[string]interface{}
+	var edv map[string]any
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		fmt.Fprint(os.Stderr, err.Error()+"\n")
 		os.Exit(1)
 	}
-	if versionList, ok := edv["versionList"].(map[string]interface{}); ok {
+	if versionList, ok := edv["versionList"].(map[string]any); ok {
 		var keys []string
 		for k, _ := range versionList {
 			keys = append(keys, k)
@@ -56,7 +56,7 @@ func runVersion(c *command.Config) error {
 		println("Version list")
 		for i := len(keys) - 1; i >= 0; i-- {
 			var version = keys[i]
-			var ver = versionList[version].(map[string]interface{})
+			var ver = versionList[version].(map[string]any)
 			if c.Version.All {
 				wrt := &bytes.Buffer{}
 				wrt.WriteString("  ")

@@ -16,6 +16,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
@@ -34,6 +35,7 @@ var (
 type TBrowserWindow struct {
 	browserId                     uint32
 	isClose                       bool
+	window                        window.IWindow
 	box                           lcl.IPanel
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
@@ -91,7 +93,7 @@ func (m *TBrowserWindow) navigationStarting() {
 	if err == nil {
 		envJS(string(optionsJSON))
 	}
-	env := make(map[string]interface{})
+	env := make(map[string]any)
 	env["frameWidth"] = frameWidth
 	env["frameHeight"] = frameHeight
 	env["frameCorner"] = frameCorner

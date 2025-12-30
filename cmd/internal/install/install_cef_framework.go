@@ -47,13 +47,13 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		term.Logger.Error(err.Error())
 		return "", nil
 	}
-	var extractConfig map[string]interface{}
+	var extractConfig map[string]any
 	extractData = bytes.TrimPrefix(extractData, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(extractData, &extractConfig); err != nil {
 		term.Logger.Error(err.Error())
 		return "", nil
 	}
-	extractOSConfig := extractConfig[string(c.Install.OS)].(map[string]interface{})
+	extractOSConfig := extractConfig[string(c.Install.OS)].(map[string]any)
 
 	// 获取安装版本配置
 	downloadJSON, err := tools.HttpRequestGET(consts.DownloadVersionURL)
@@ -61,7 +61,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		term.Logger.Error(err.Error())
 		return "", nil
 	}
-	var edv map[string]interface{}
+	var edv map[string]any
 	downloadJSON = bytes.TrimPrefix(downloadJSON, []byte("\xef\xbb\xbf"))
 	if err := json.Unmarshal(downloadJSON, &edv); err != nil {
 		term.Logger.Error(err.Error())
@@ -81,19 +81,19 @@ func installCEFFramework(c *command.Config) (string, func()) {
 
 	term.Section.Println("Start downloading CEF and Energy dependency")
 	// 所有版本列表
-	var versionList = edv["versionList"].(map[string]interface{})
+	var versionList = edv["versionList"].(map[string]any)
 
 	// 获取到当前安装版本
-	var installVersion map[string]interface{}
+	var installVersion map[string]any
 	if c.Install.Version == "latest" {
 		// 获取最新版本号, latest=vx.x.x
 		if v, ok := versionList[edv["latest"].(string)]; ok {
-			installVersion = v.(map[string]interface{})
+			installVersion = v.(map[string]any)
 		}
 	} else {
 		// 自己选择版本
 		if v, ok := versionList[c.Install.Version]; ok {
-			installVersion = v.(map[string]interface{})
+			installVersion = v.(map[string]any)
 		}
 	}
 	term.Section.Println("Check version")
@@ -152,19 +152,19 @@ func installCEFFramework(c *command.Config) (string, func()) {
 		liblclModuleName = "liblcl"
 	}
 	// 当前安装版本的所有模块
-	var modules map[string]interface{}
+	var modules map[string]any
 	if m, ok := installVersion["modules"]; ok {
-		modules = m.(map[string]interface{})
+		modules = m.(map[string]any)
 	}
 	// 根据模块名拿到对应的模块配置
 	var (
-		cefModule, liblclModule map[string]interface{}
+		cefModule, liblclModule map[string]any
 	)
 	if module, ok := modules[cefModuleName]; ok {
-		cefModule = module.(map[string]interface{})
+		cefModule = module.(map[string]any)
 	}
 	if module, ok := modules[liblclModuleName]; ok {
-		liblclModule = module.(map[string]interface{})
+		liblclModule = module.(map[string]any)
 	}
 	if cefModule == nil {
 		term.Logger.Error("CEF module " + cefModuleName + " is not configured in the current version")
@@ -266,7 +266,7 @@ func installCEFFramework(c *command.Config) (string, func()) {
 	}
 }
 
-func cefOS(c *command.Config, module map[string]interface{}) (string, bool) {
+func cefOS(c *command.Config, module map[string]any) (string, bool) {
 	buildSupportOSArch := tools.ToString(module["buildSupportOSArch"])
 	mod := tools.ToString(module["module"])
 	archs := strings.Split(buildSupportOSArch, ",")
@@ -387,9 +387,9 @@ func liblclOS(c *command.Config, cef, version, buildSupportOSArch string) (strin
 }
 
 // 提取文件
-func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]interface{}) error {
+func ExtractFiles(keyName, sourcePath string, di *downloadInfo, extractOSConfig map[string]any) error {
 	println("Extract", keyName, "sourcePath:", sourcePath, "targetPath:", di.frameworkPath)
-	files := extractOSConfig[keyName].([]interface{})
+	files := extractOSConfig[keyName].([]any)
 	if keyName == consts.CefKey {
 		//tar
 		return ExtractUnTar(sourcePath, di.frameworkPath, files...)

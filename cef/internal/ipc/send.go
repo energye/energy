@@ -18,7 +18,7 @@ import (
 // emitSendToChannel
 //
 //	trigger the specified target Go channel event
-func emitSendToGoChannel(messageId int32, tag target.ITarget, eventName string, arguments []interface{}) {
+func emitSendToGoChannel(messageId int32, tag target.ITarget, eventName string, arguments []any) {
 	message := &argument.List{
 		Id:        messageId,
 		Name:      InternalIPCGoExecuteGoEvent,

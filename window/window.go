@@ -11,9 +11,15 @@
 package window
 
 import (
+	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
+
+type IWindow interface {
+	WindowResize(ht string)
+	WindowDrag(message ipc.ProcessMessage)
+}
 
 type TWindow struct {
 	lcl.TEngForm

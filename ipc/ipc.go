@@ -22,7 +22,7 @@ import (
 type OptionsEvent struct {
 	BrowserId uint32
 	Name      string
-	Data      interface{}
+	Data      any
 	Callback  callback.EventCallback
 }
 
@@ -43,7 +43,7 @@ func RemoveOn(name string) {
 //
 //	Event that triggers listening
 //	default to triggering the main process
-func Emit(name string, arguments ...interface{}) {
+func Emit(name string, arguments ...any) {
 	if name == "" {
 		return
 	}

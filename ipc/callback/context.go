@@ -14,25 +14,25 @@ package callback
 //
 //	Inter process IPC communication callback context
 type IContext interface {
-	Data() interface{}          // ArgumentList
-	Result(data ...interface{}) // callback function return Result
-	BrowserId() uint32          // browser id
+	Data() any          // ArgumentList
+	Result(data ...any) // callback function return Result
+	BrowserId() uint32  // browser id
 }
 
 type IOnCallbackContext interface {
 	IContext
-	GetResult() interface{} // callback function result
+	GetResult() any // callback function result
 }
 
 // Context IPC Context
 type Context struct {
 	browserId uint32
-	data      interface{}
-	result    []interface{}
+	data      any
+	result    []any
 }
 
 // NewContext create IPC event message
-func NewContext(browserId uint32, data interface{}) IOnCallbackContext {
+func NewContext(browserId uint32, data any) IOnCallbackContext {
 	ctx := &Context{
 		browserId: browserId,
 		data:      data,
@@ -45,14 +45,14 @@ func (m *Context) BrowserId() uint32 {
 	return m.browserId
 }
 
-func (m *Context) Data() interface{} {
+func (m *Context) Data() any {
 	return m.data
 }
 
-func (m *Context) Result(results ...interface{}) {
+func (m *Context) Result(results ...any) {
 	m.result = results
 }
 
-func (m *Context) GetResult() interface{} {
+func (m *Context) GetResult() any {
 	return m.result
 }

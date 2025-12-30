@@ -14,7 +14,7 @@ package callback
 type EventCallback = func(context IContext)
 
 type ICallback interface {
-	Invoke(context IOnCallbackContext) interface{}
+	Invoke(context IOnCallbackContext) any
 }
 
 // Callback IPC Listening callback function
@@ -23,7 +23,7 @@ type Callback struct {
 }
 
 // Invoke event function
-func (m *Callback) Invoke(context IOnCallbackContext) interface{} {
+func (m *Callback) Invoke(context IOnCallbackContext) any {
 	if m.callback != nil {
 		m.callback(context)
 		return context.GetResult()
