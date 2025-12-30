@@ -45,7 +45,7 @@ func (m *LocalLoadResource) ReleaseStream(path string) {
 }
 
 // current resource is set temp cache
-func (m *LocalLoadResource) setTempStream(path string, stream lcl.IMemoryStream) {
+func (m *LocalLoadResource) SetTempStream(path string, stream lcl.IMemoryStream) {
 	m.streams[path] = stream
 }
 
@@ -77,7 +77,7 @@ func (m *LocalLoadResource) ResourceRequested(browser wv.IWVBrowser, webView wv.
 			lcl.StreamHelper.Write(stream, data)
 			// current resource is set temp cache
 			// released after the resource processing is complete
-			m.setTempStream(reqUrl.Path, stream)
+			m.SetTempStream(reqUrl.Path, stream)
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
 			environment := browser.CoreWebView2Environment()
 			// success response resource
