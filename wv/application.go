@@ -11,6 +11,7 @@
 package wv
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/api/libname"
 	"github.com/energye/lcl/lcl"
@@ -43,7 +44,6 @@ type Application struct {
 	wv.IWVLoader
 	application.Application
 	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
-	localLoad          *application.LocalLoadResource
 }
 
 func NewWebviewApplication() *Application {
@@ -66,19 +66,19 @@ func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) 
 }
 
 func (m *Application) initDefaultEvent() {
-	m.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
+	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
 		if m.onGetCustomSchemes != nil {
 			m.onGetCustomSchemes(sender, customSchemes)
 		}
-		if m.localLoad != nil {
-			if customSchemes == nil {
-				*customSchemes = wv.NewCustomSchemeInfoArrayWrapWithInt(1)
-				(*customSchemes).SetValue((*customSchemes).Size()-1, wv.TWVCustomSchemeInfo{
-					SchemeName:            m.localLoad.Scheme,
-					TreatAsSecure:         1,
-					HasAuthorityComponent: 1,
-				})
-			}
+		if m.LocalLoad != nil {
+			//*customSchemes = wv.NewCustomSchemeInfoArrayWrapWithInt(1)
+			fmt.Println("size:", (*customSchemes).Size())
+			(*customSchemes).SetValue(-1, wv.TWVCustomSchemeInfo{
+				SchemeName:            m.LocalLoad.Scheme,
+				TreatAsSecure:         1,
+				HasAuthorityComponent: 1,
+			})
+			fmt.Println("size:", (*customSchemes).Size())
 		}
 	})
 }

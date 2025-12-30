@@ -13,6 +13,7 @@
 package application
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -75,6 +76,7 @@ func (m *LocalLoadResource) ResourceRequested(browser wv.IWVBrowser, webView wv.
 			streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
 			defer streamAdapter.Nil()
 			lcl.StreamHelper.Write(stream, data)
+			fmt.Println("streamAdapter-size:", streamAdapter.Stream().Size(), len(data))
 			// current resource is set temp cache
 			// released after the resource processing is complete
 			m.setTempStream(reqUrl.Path, stream)

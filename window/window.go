@@ -21,6 +21,7 @@ type IWindow interface {
 	Resize(ht string)
 	Drag(message ipc.ProcessMessage)
 	SetOptions(windowId uint32)
+	BrowserId() uint32
 }
 
 type TWindow struct {
@@ -30,4 +31,8 @@ type TWindow struct {
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
 	previousWindowPlacement types.TRect
+}
+
+func (m *TWindow) BrowserId() uint32 {
+	return m.windowId
 }
