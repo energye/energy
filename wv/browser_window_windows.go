@@ -36,7 +36,7 @@ type TBrowserWindow struct {
 	lcl.IPanel
 	browserId                     uint32
 	isClose                       bool
-	window                        window.IWebviewWindow
+	window                        window.IWindow
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
 	messageReceivedDelegate       ipc.IMessageReceivedDelegate
@@ -51,7 +51,7 @@ type TBrowserWindow struct {
 	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
 }
 
-func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
+func NewBrowserWindow(window window.IWindow) *TBrowserWindow {
 	m := &TBrowserWindow{browserId: getNextBrowserID(), window: window}
 	m.IPanel = lcl.NewPanel(window)
 	m.IPanel.SetParentColor(true)

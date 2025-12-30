@@ -22,7 +22,7 @@ import (
 	"unsafe"
 )
 
-func (m *TWebviewWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
+func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
 	switch message {
 	case messages.WM_SETTINGCHANGE:
 		settingChanged := win32.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
@@ -78,7 +78,7 @@ func (m *TWebviewWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam
 	return win.CallWindowProc(m.oldWndPrc, uintptr(hwnd), message, wParam, lParam)
 }
 
-func (m *TWebviewWindow) _HookWndProcMessage() {
+func (m *TWindow) _HookWndProcMessage() {
 	if m.oldWndPrc == 0 {
 		wndProcCallback := syscall.NewCallback(m.wndProc)
 		m.oldWndPrc = win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, wndProcCallback)
@@ -89,7 +89,7 @@ func (m *TWebviewWindow) _HookWndProcMessage() {
 	}
 }
 
-func (m *TWebviewWindow) _RestoreWndProc() {
+func (m *TWindow) _RestoreWndProc() {
 	if m.oldWndPrc != 0 {
 		win.SetWindowLongPtr(m.Handle(), win.GWL_WNDPROC, m.oldWndPrc)
 		m.oldWndPrc = 0

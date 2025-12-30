@@ -16,14 +16,14 @@ import (
 	"github.com/energye/lcl/types"
 )
 
-type IWebviewWindow interface {
+type IWindow interface {
 	lcl.IEngForm
 	Resize(ht string)
 	Drag(message ipc.ProcessMessage)
 	SetOptions(windowId uint32)
 }
 
-type TWebviewWindow struct {
+type TWindow struct {
 	lcl.TEngForm
 	windowId                uint32
 	oldWndPrc               uintptr

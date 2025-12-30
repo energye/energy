@@ -22,13 +22,13 @@ import (
 	"github.com/energye/lcl/types/messages"
 )
 
-func (m *TWebviewWindow) borderFrameless() {
+func (m *TWindow) borderFrameless() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
-func (m *TWebviewWindow) platformCreate() {
+func (m *TWindow) platformCreate() {
 	//if m.options.Windows.ICON == nil {
 	//	lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
 	//} else {
@@ -45,8 +45,8 @@ func (m *TWebviewWindow) platformCreate() {
 }
 
 // SetOptions 设置webview窗口的选项配置
-// 该方法用于配置TWebviewWindow实例的各种选项参数
-func (m *TWebviewWindow) SetOptions(windowId uint32) {
+// 该方法用于配置*TWindow实例的各种选项参数
+func (m *TWindow) SetOptions(windowId uint32) {
 	m.windowId = windowId
 	m.platformCreate()
 	options := application.GApplication.Options
@@ -59,11 +59,11 @@ func (m *TWebviewWindow) SetOptions(windowId uint32) {
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 }
 
-func (m *TWebviewWindow) WindowId() uint32 {
+func (m *TWindow) WindowId() uint32 {
 	return m.windowId
 }
 
-func (m *TWebviewWindow) Resize(ht string) {
+func (m *TWindow) Resize(ht string) {
 	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
 		return
 	}
@@ -91,7 +91,7 @@ func (m *TWebviewWindow) Resize(ht string) {
 	}
 }
 
-func (m *TWebviewWindow) Drag(message ipc.ProcessMessage) {
+func (m *TWindow) Drag(message ipc.ProcessMessage) {
 	if m.IsFullScreen() {
 		return
 	}
@@ -110,7 +110,7 @@ func (m *TWebviewWindow) Drag(message ipc.ProcessMessage) {
 	}
 }
 
-func (m *TWebviewWindow) FullScreen() {
+func (m *TWindow) FullScreen() {
 	if m.IsFullScreen() {
 		return
 	}
@@ -132,7 +132,7 @@ func (m *TWebviewWindow) FullScreen() {
 	})
 }
 
-func (m *TWebviewWindow) ExitFullScreen() {
+func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			if !application.GApplication.Options.Frameless {
@@ -145,7 +145,7 @@ func (m *TWebviewWindow) ExitFullScreen() {
 	}
 }
 
-func (m *TWebviewWindow) Maximize() {
+func (m *TWindow) Maximize() {
 	if m.IsFullScreen() || application.GApplication.Options.DisableMaximize {
 		return
 	}
@@ -158,7 +158,7 @@ func (m *TWebviewWindow) Maximize() {
 	})
 }
 
-func (m *TWebviewWindow) Restore() {
+func (m *TWindow) Restore() {
 	// In the case of a title bar
 	// If the current state is full screen and the extracted state is Ws Maximized,
 	// So let's first perform IsFullScreen() judgment here
@@ -171,14 +171,14 @@ func (m *TWebviewWindow) Restore() {
 	}
 }
 
-func (m *TWebviewWindow) IsFullScreen() bool {
+func (m *TWindow) IsFullScreen() bool {
 	return m.windowsState == types.WsFullScreen
 }
 
-func (m *TWebviewWindow) IsMinimize() bool {
+func (m *TWindow) IsMinimize() bool {
 	return m.WindowState() == types.WsMinimized
 }
 
-func (m *TWebviewWindow) IsMaximize() bool {
+func (m *TWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
 }
