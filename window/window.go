@@ -20,11 +20,12 @@ type IWebviewWindow interface {
 	lcl.IEngForm
 	Resize(ht string)
 	Drag(message ipc.ProcessMessage)
-	SetOptions()
+	SetOptions(windowId uint32)
 }
 
 type TWebviewWindow struct {
 	lcl.TEngForm
+	windowId                uint32
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState

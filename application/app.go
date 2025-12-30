@@ -29,10 +29,12 @@ const (
 	//LpsTcp                           // tcp
 )
 
+// SetOptions 设置应用程序的选项配置
 func (m *Application) SetOptions(options Options) {
 	m.Options = options
 }
 
+// SetLocalLoad 设置本地负载配置
 func (m *Application) SetLocalLoad(localLoad LocalLoad) {
 	m.LocalLoad = NewLocalLoadResource(&localLoad)
 	m.LocalLoad.LocalLoad = &localLoad

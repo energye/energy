@@ -69,7 +69,7 @@ func NewBrowserWindow(window window.IWebviewWindow) *TBrowserWindow {
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
-	window.SetOptions()
+	window.SetOptions(m.browserId)
 	return m
 }
 

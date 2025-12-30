@@ -46,7 +46,8 @@ func (m *TWebviewWindow) platformCreate() {
 
 // SetOptions 设置webview窗口的选项配置
 // 该方法用于配置TWebviewWindow实例的各种选项参数
-func (m *TWebviewWindow) SetOptions() {
+func (m *TWebviewWindow) SetOptions(windowId uint32) {
+	m.windowId = windowId
 	m.platformCreate()
 	options := application.GApplication.Options
 	if options.Width <= 0 {
@@ -56,6 +57,10 @@ func (m *TWebviewWindow) SetOptions() {
 		options.Height = m.Height()
 	}
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
+}
+
+func (m *TWebviewWindow) WindowId() uint32 {
+	return m.windowId
 }
 
 func (m *TWebviewWindow) Resize(ht string) {
