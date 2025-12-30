@@ -13,7 +13,7 @@
 package application
 
 import (
-	"github.com/energye/energy/v3/mime"
+	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/windows"
