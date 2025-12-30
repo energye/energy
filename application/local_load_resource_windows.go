@@ -83,7 +83,7 @@ func (m *LocalLoadResource) ResourceRequested(browser wv.IWVBrowser, webView wv.
 			headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
 			environment := browser.CoreWebView2Environment()
 			// success response resource
-			environment.CreateWebResourceResponse(streamAdapter, statusCode, reasonPhrase, headers, &response)
+			environment.CreateWebResourceResponse(lcl.AsStreamAdapter(streamAdapter.AsIntfStream()), statusCode, reasonPhrase, headers, &response)
 		}
 	}
 	// No matter what error, return 404
