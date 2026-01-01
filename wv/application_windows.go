@@ -64,27 +64,24 @@ func NewApplication() *Application {
 type Application struct {
 	wv.IWVLoader
 	application.Application
-	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
+	onCustomSchemes wv.TLoaderGetCustomSchemesEvent
 }
 
-func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {
-	m.onGetCustomSchemes = fn
+func (m *Application) SetOnCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {
+	m.onCustomSchemes = fn
 }
 
 func (m *Application) initDefaultEvent() {
 	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
-		if m.onGetCustomSchemes != nil {
-			m.onGetCustomSchemes(sender, customSchemes)
+		if m.onCustomSchemes != nil {
+			m.onCustomSchemes(sender, customSchemes)
 		}
 		if m.LocalLoad != nil {
-			//*customSchemes = wv.NewCustomSchemeInfoArrayWrapWithInt(1)
-			fmt.Println("size:", (*customSchemes).Size())
-			(*customSchemes).SetValue(-1, wv.TWVCustomSchemeInfo{
+			(*customSchemes).AddValue(wv.TWVCustomSchemeInfo{
 				SchemeName:            m.LocalLoad.Scheme,
 				TreatAsSecure:         1,
 				HasAuthorityComponent: 1,
 			})
-			fmt.Println("size:", (*customSchemes).Size())
 		}
 	})
 }
