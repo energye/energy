@@ -1,12 +1,14 @@
-// ----------------------------------------
+//----------------------------------------
 //
 // Copyright © yanghy. All Rights Reserved.
 //
-// # Licensed under Apache License Version 2.0, January 2004
+// Licensed under Apache License Version 2.0, January 2004
 //
 // https://www.apache.org/licenses/LICENSE-2.0
 //
-// ----------------------------------------
+//----------------------------------------
+
+//go:build windows
 
 package wv
 
@@ -18,15 +20,19 @@ import (
 	"github.com/energye/lcl/tool/exec"
 	wv "github.com/energye/wv/windows"
 	"path/filepath"
+	"runtime"
 )
 
 // application
 var (
 	gApplication    *Application
 	gGlobalWVLoader wv.IWVLoader
+	gWebView2Loader = "WebView2Loader-%s.dll"
 )
 
-const _WebView2Loader = "WebView2Loader.dll"
+func init() {
+	gWebView2Loader = fmt.Sprintf(gWebView2Loader, runtime.GOARCH)
+}
 
 func NewWVLoader() wv.IWVLoader {
 	if gGlobalWVLoader == nil {
@@ -40,25 +46,25 @@ func NewWVLoader() wv.IWVLoader {
 	return gGlobalWVLoader
 }
 
-type Application struct {
-	wv.IWVLoader
-	application.Application
-	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
-}
-
-func NewWebviewApplication() *Application {
+func NewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{
 			IWVLoader: NewWVLoader(),
 		}
 		gApplication.SetUserDataFolder(filepath.Join(exec.AppDir(), "energyCache"))
 		dir, _ := filepath.Split(libname.LibName)
-		wv2Loader := filepath.Join(dir, _WebView2Loader)
+		wv2Loader := filepath.Join(dir, gWebView2Loader)
 		gApplication.SetLoaderDllPath(wv2Loader)
 		gApplication.initDefaultEvent()
 		application.GApplication = &gApplication.Application
 	}
 	return gApplication
+}
+
+type Application struct {
+	wv.IWVLoader
+	application.Application
+	onGetCustomSchemes wv.TLoaderGetCustomSchemesEvent
 }
 
 func (m *Application) SetOnGetCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {
