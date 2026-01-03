@@ -10,7 +10,14 @@
 
 package lcl
 
-import "github.com/energye/lcl/lcl"
+import (
+	"github.com/energye/lcl/emfs"
+	"github.com/energye/lcl/lcl"
+)
+
+func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
+	lcl.Init(libs, resources)
+}
 
 func Run(forms ...lcl.IEngForm) {
 	// 初始化应用程序实例
