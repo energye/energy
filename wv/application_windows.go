@@ -42,6 +42,7 @@ func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) *Application {
 	return NewApplication()
 }
 
+// NewWVLoader 创建并返回一个WebView2加载器实例
 func NewWVLoader() wv.IWVLoader {
 	if gGlobalWVLoader == nil {
 		if gGlobalWVLoader = wv.GetGlobalWebView2Loader(); gGlobalWVLoader != nil {
@@ -54,6 +55,8 @@ func NewWVLoader() wv.IWVLoader {
 	return gGlobalWVLoader
 }
 
+// NewApplication 创建并返回单例Application实例
+// 如果全局Application实例尚未初始化，则进行初始化设置
 func NewApplication() *Application {
 	if gApplication == nil {
 		gApplication = &Application{

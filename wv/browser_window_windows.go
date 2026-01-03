@@ -51,6 +51,7 @@ type TBrowserWindow struct {
 	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
 }
 
+// NewBrowserWindow 创建一个新的浏览器窗口实例
 func NewBrowserWindow(window window.IWindow) *TBrowserWindow {
 	m := &TBrowserWindow{browserId: getNextBrowserID(), window: window}
 	m.IPanel = lcl.NewPanel(window)
@@ -74,6 +75,7 @@ func NewBrowserWindow(window window.IWindow) *TBrowserWindow {
 	return m
 }
 
+// SetBrowserOptions 设置浏览器窗口的选项配置
 func (m *TBrowserWindow) SetBrowserOptions() {
 	options := gApplication.Options
 	if options.DefaultURL != "" {
@@ -81,6 +83,8 @@ func (m *TBrowserWindow) SetBrowserOptions() {
 	}
 }
 
+// SetParent 设置浏览器窗口的父控件
+// 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TBrowserWindow) SetParent(window lcl.IWinControl) {
 	m.IPanel.SetParent(window)
 	m.windowParent.SetParent(m)
