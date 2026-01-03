@@ -16,6 +16,7 @@ import (
 	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/api/libname"
+	"github.com/energye/lcl/emfs"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/tool/exec"
 	wv "github.com/energye/wv/windows"
@@ -34,6 +35,13 @@ func init() {
 	gWebView2Loader = fmt.Sprintf(gWebView2Loader, runtime.GOARCH)
 }
 
+// Init 全局初始化, 需手动调用的函数
+func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) *Application {
+	lcl.Init(libs, resources)
+	wv.Init()
+	return NewApplication()
+}
+
 func NewWVLoader() wv.IWVLoader {
 	if gGlobalWVLoader == nil {
 		if gGlobalWVLoader = wv.GetGlobalWebView2Loader(); gGlobalWVLoader != nil {
@@ -48,7 +56,6 @@ func NewWVLoader() wv.IWVLoader {
 
 func NewApplication() *Application {
 	if gApplication == nil {
-		wv.Init()
 		gApplication = &Application{
 			IWVLoader: NewWVLoader(),
 		}
