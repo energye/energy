@@ -48,6 +48,7 @@ func NewWVLoader() wv.IWVLoader {
 
 func NewApplication() *Application {
 	if gApplication == nil {
+		wv.Init()
 		gApplication = &Application{
 			IWVLoader: NewWVLoader(),
 		}
@@ -86,6 +87,6 @@ func (m *Application) initDefaultEvent() {
 	})
 }
 
-func (m *Application) Start() {
-	m.StartWebView2()
+func (m *Application) Start() bool {
+	return m.StartWebView2()
 }
