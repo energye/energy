@@ -97,6 +97,9 @@ func (m *Application) initDefaultEvent() {
 	})
 }
 
+// Start 启动应用程序
+// 该方法调用StartWebView2来启动WebView2组件
+// 在所有设置后调用
 func (m *Application) Start() bool {
 	return m.StartWebView2()
 }
