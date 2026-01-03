@@ -9,3 +9,15 @@
 //----------------------------------------
 
 package wv
+
+import (
+	engLCL "github.com/energye/energy/v3/lcl"
+	"github.com/energye/lcl/lcl"
+)
+
+func Run(forms ...lcl.IEngForm) {
+	if gApplication != nil {
+		gApplication.Start()
+	}
+	engLCL.Run(forms...)
+}
