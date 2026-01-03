@@ -29,12 +29,8 @@ func (m *TWindow) borderFrameless() {
 }
 
 func (m *TWindow) platformCreate() {
-	//if m.options.Windows.ICON == nil {
-	//	lcl.Application.Icon().LoadFromBytes(assets.ICON.ICO())
-	//} else {
-	//	lcl.Application.Icon().LoadFromBytes(m.options.Windows.ICON)
-	//}
-	switch application.GApplication.Options.Windows.Theme {
+	options := application.GApplication.Options
+	switch options.Windows.Theme {
 	case application.SystemDefault:
 		win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
 	case application.Light:
@@ -58,6 +54,7 @@ func (m *TWindow) SetOptions(windowId uint32) {
 	if options.Height <= 0 {
 		options.Height = m.Height()
 	}
+	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 }
 

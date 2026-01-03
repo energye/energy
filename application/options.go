@@ -47,7 +47,6 @@ const (
 )
 
 type Windows struct {
-	ICON []byte `json:"-"` // window icon
 	// Theme (Dark / Light / SystemDefault)
 	// Default: SystemDefault - The application will follow system theme changes.
 	Theme Theme

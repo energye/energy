@@ -70,7 +70,15 @@ func NewBrowserWindow(window window.IWindow) *TBrowserWindow {
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
 	window.SetOptions(m.browserId)
+	m.SetBrowserOptions()
 	return m
+}
+
+func (m *TBrowserWindow) SetBrowserOptions() {
+	options := gApplication.Options
+	if options.DefaultURL != "" {
+		m.browser.SetDefaultURL(options.DefaultURL)
+	}
 }
 
 func (m *TBrowserWindow) SetParent(window lcl.IWinControl) {
