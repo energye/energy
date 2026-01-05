@@ -33,7 +33,7 @@ var (
 )
 
 type TWebview struct {
-	lcl.ICustomPanel
+	lcl.IPanel
 	browserId                     uint32
 	isClose                       bool
 	window                        window.IWindow
@@ -52,13 +52,13 @@ type TWebview struct {
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
-func NewWebview(owner lcl.IComponent) *TWebview {
+func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-	m.ICustomPanel = lcl.NewCustomPanel(owner)
-	m.ICustomPanel.SetParentColor(true)
-	m.ICustomPanel.SetParentDoubleBuffered(true)
-	m.ICustomPanel.SetBevelInner(types.BvNone)
-	m.ICustomPanel.SetBevelOuter(types.BvNone)
+	m.IPanel = lcl.NewPanel(owner)
+	m.IPanel.SetParentColor(true)
+	m.IPanel.SetParentDoubleBuffered(true)
+	m.IPanel.SetBevelInner(types.BvNone)
+	m.IPanel.SetBevelOuter(types.BvNone)
 
 	m.windowParent = wv.NewWindowParent(owner)
 	m.windowParent.SetAlign(types.AlClient)
@@ -74,13 +74,12 @@ func NewWebview(owner lcl.IComponent) *TWebview {
 	return m
 }
 
-func TWebviewClass(owner lcl.IComponent) *TWebview {
-	m := &TWebview{}
-	m.ICustomPanel = lcl.NewCustomPanel(owner)
-	m.ICustomPanel.SetParentColor(true)
-	m.ICustomPanel.SetParentDoubleBuffered(true)
-	m.ICustomPanel.SetBevelInner(types.BvNone)
-	m.ICustomPanel.SetBevelOuter(types.BvNone)
+func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
+	m := lcl.NewPanel(owner)
+	m.SetParentColor(true)
+	m.SetParentDoubleBuffered(true)
+	m.SetBevelInner(types.BvNone)
+	m.SetBevelOuter(types.BvNone)
 	return m
 }
 
@@ -102,8 +101,8 @@ func (m *TWebview) SetBrowserOptions() {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(window lcl.IWinControl) {
-	m.ICustomPanel.SetParent(window)
-	m.windowParent.SetParent(m.ICustomPanel)
+	m.IPanel.SetParent(window)
+	m.windowParent.SetParent(m.IPanel)
 }
 
 func (m *TWebview) navigationStarting() {
@@ -282,6 +281,14 @@ func (m *TWebview) SetOnContentLoading(fn wv.TOnContentLoadingEvent) {
 	m.onContentLoading = fn
 }
 
+func (m *TWebview) SetOnWebResourceRequested(fn TOnWebResourceRequestedEvent) {
+	m.onWebResourceRequested = fn
+}
+
+func (m *TWebview) SetOnWebResourceResponseReceived(fn TOnWebResourceResponseReceivedEvent) {
+	m.onWebResourceResponseReceived = fn
+}
+
 func (m *TWebview) SetOnAfterCreated(fn lcl.TNotifyEvent) {
 	m.onAfterCreated = fn
 }
@@ -296,12 +303,4 @@ func (m *TWebview) SetOnWindowShow(fn lcl.TNotifyEvent) {
 
 func (m *TWebview) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
 	m.onWindowDestroy = fn
-}
-
-func (m *TWebview) SetOnWebResourceRequested(fn TOnWebResourceRequestedEvent) {
-	m.onWebResourceRequested = fn
-}
-
-func (m *TWebview) SetOnWebResourceResponseReceived(fn TOnWebResourceResponseReceivedEvent) {
-	m.onWebResourceResponseReceived = fn
 }

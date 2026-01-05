@@ -10,7 +10,11 @@
 
 package wv
 
-import "sync/atomic"
+import (
+	"github.com/energye/energy/v3/window"
+	"github.com/energye/lcl/lcl"
+	"sync/atomic"
+)
 
 // global browser id
 var globalBrowserID uint32
@@ -21,5 +25,18 @@ func getNextBrowserID() uint32 {
 	return globalBrowserID
 }
 
-type IBrowserWindow interface {
+type IWebview interface {
+	lcl.IPanel
+	SetWindow(window window.IWindow)
+	SetBrowserOptions()
+	SetParent(window lcl.IWinControl)
+	CreateBrowser()
+	BrowserId() uint32
+	SendMessage(payload []byte)
+	Close()
+	SetDefaultURL(url string)
+	SetOnAfterCreated(fn lcl.TNotifyEvent)
+	SetOnWindowClose(fn lcl.TCloseEvent)
+	SetOnWindowShow(fn lcl.TNotifyEvent)
+	SetOnWindowDestroy(fn lcl.TNotifyEvent)
 }
