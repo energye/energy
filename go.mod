@@ -7,9 +7,14 @@ require (
 )
 
 replace (
-	github.com/energye/lcl => ../lcl
+	github.com/energye/lcl => ../lcl@v0.0.1-dev
+	github.com/energye/wv => ../wv@v0.0.1-dev
+	github.com/energye/cef => ../cef@v0.0.1-dev
 )
 
 require (
 	github.com/energye/lcl v0.0.0-beta
+	github.com/energye/lcl v0.0.0-00010101000000-000000000000
+	github.com/energye/wv v0.0.0-00010101000000-000000000000
+	github.com/energye/cef v0.0.0-00010101000000-000000000000
 )
