@@ -13,7 +13,6 @@ replace (
 )
 
 require (
-	github.com/energye/lcl v0.0.0-beta
 	github.com/energye/lcl v0.0.0-00010101000000-000000000000
 	github.com/energye/wv v0.0.0-00010101000000-000000000000
 	github.com/energye/cef v0.0.0-00010101000000-000000000000
