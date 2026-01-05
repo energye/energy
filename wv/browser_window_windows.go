@@ -19,6 +19,7 @@ import (
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
+	"github.com/energye/lcl/types"
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
@@ -32,10 +33,11 @@ var (
 )
 
 type TWebview struct {
-	wv.IWVWindowParent
+	lcl.ICustomPanel
 	browserId                     uint32
 	isClose                       bool
 	window                        window.IWindow
+	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
 	messageReceivedDelegate       ipc.IMessageReceivedDelegate
 	onWebMessageReceived          wv.TOnWebMessageReceivedEvent
@@ -52,14 +54,33 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) *TWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-	m.IWVWindowParent = wv.NewWindowParent(owner)
+	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel.SetParentColor(true)
+	m.ICustomPanel.SetParentDoubleBuffered(true)
+	m.ICustomPanel.SetBevelInner(types.BvNone)
+	m.ICustomPanel.SetBevelOuter(types.BvNone)
+
+	m.windowParent = wv.NewWindowParent(owner)
+	m.windowParent.SetAlign(types.AlClient)
+
 	m.browser = wv.NewBrowser(owner)
-	m.IWVWindowParent.SetBrowser(m.browser)
+
+	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
 	m.SetBrowserOptions()
+	return m
+}
+
+func TWebviewClass(owner lcl.IComponent) *TWebview {
+	m := &TWebview{}
+	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel.SetParentColor(true)
+	m.ICustomPanel.SetParentDoubleBuffered(true)
+	m.ICustomPanel.SetBevelInner(types.BvNone)
+	m.ICustomPanel.SetBevelOuter(types.BvNone)
 	return m
 }
 
@@ -76,6 +97,13 @@ func (m *TWebview) SetBrowserOptions() {
 	if options.DefaultURL != "" {
 		m.browser.SetDefaultURL(options.DefaultURL)
 	}
+}
+
+// SetParent 设置浏览器窗口的父控件
+// 该方法会同时设置内部面板的父控件和窗口父控件的引用
+func (m *TWebview) SetParent(window lcl.IWinControl) {
+	m.ICustomPanel.SetParent(window)
+	m.windowParent.SetParent(m.ICustomPanel)
 }
 
 func (m *TWebview) navigationStarting() {
@@ -122,7 +150,7 @@ func (m *TWebview) initDefaultEvent() {
 		if m.onAfterCreated != nil {
 			m.onAfterCreated(sender)
 		}
-		m.UpdateSize()
+		m.windowParent.UpdateSize()
 	})
 	m.browser.SetOnContentLoading(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
 		m.navigationStarting()
@@ -215,7 +243,7 @@ func (m *TWebview) CreateBrowser() {
 		// Log ???
 	} else {
 		if gApplication.Initialized() {
-			m.browser.CreateBrowserWithHandleBool(m.Handle(), true)
+			m.browser.CreateBrowserWithHandleBool(m.windowParent.Handle(), true)
 		}
 	}
 }
@@ -234,7 +262,7 @@ func (m *TWebview) SendMessage(payload []byte) {
 
 func (m *TWebview) Close() {
 	m.isClose = true
-	m.IWVWindowParent.Free()
+	m.windowParent.Free()
 	ipc.UnRegisterProcessMessage(m)
 }
 
