@@ -54,7 +54,7 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) *TWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel = lcl.NewCustomPanel(owner)
 	m.ICustomPanel.SetParentColor(true)
 	m.ICustomPanel.SetParentDoubleBuffered(true)
 	m.ICustomPanel.SetBevelInner(types.BvNone)
@@ -76,7 +76,7 @@ func NewWebview(owner lcl.IComponent) *TWebview {
 
 func TWebviewClass(owner lcl.IComponent) *TWebview {
 	m := &TWebview{}
-	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel = lcl.NewCustomPanel(owner)
 	m.ICustomPanel.SetParentColor(true)
 	m.ICustomPanel.SetParentDoubleBuffered(true)
 	m.ICustomPanel.SetBevelInner(types.BvNone)
