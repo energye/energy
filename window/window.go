@@ -20,17 +20,22 @@ type IWindow interface {
 	lcl.IEngForm
 	Resize(ht string)
 	Drag(message ipc.ProcessMessage)
-	SetOptions(windowId uint32)
+	SetOptions()
+	SetBrowserId(windowId uint32)
 	BrowserId() uint32
 }
 
 type TWindow struct {
 	lcl.TEngForm
-	windowId                uint32
+	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
 	previousWindowPlacement types.TRect
+}
+
+func (m *TWindow) SetBrowserId(windowId uint32) {
+	m.windowId = windowId
 }
 
 func (m *TWindow) BrowserId() uint32 {

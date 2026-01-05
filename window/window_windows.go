@@ -42,8 +42,7 @@ func (m *TWindow) platformCreate() {
 
 // SetOptions 设置webview窗口的选项配置
 // 该方法用于配置*TWindow实例的各种选项参数
-func (m *TWindow) SetOptions(windowId uint32) {
-	m.windowId = windowId
+func (m *TWindow) SetOptions() {
 	m.platformCreate()
 	m._HookWndProcMessage()
 	m._AfterCreate()

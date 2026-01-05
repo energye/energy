@@ -86,7 +86,10 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 func (m *TWebview) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
-		m.window.SetOptions(m.browserId)
+		if m.window.BrowserId() == 0 {
+			m.window.SetBrowserId(m.browserId)
+		}
+		m.window.SetOptions()
 	}
 }
 
