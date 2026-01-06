@@ -181,8 +181,8 @@ func (m *TWebview) navigationStarting() {
 	if err == nil {
 		envJS(string(envJSON))
 	}
-	m.browser.ExecuteScript(jsCode.String(), 0)
-	m.browser.ExecuteScript(`window.energy.drag().setup();`, 0)
+	m.browser.ExecuteScript(jsCode.String())
+	m.browser.ExecuteScript(`window.energy.drag().setup();`)
 }
 
 func (m *TWebview) initDefaultEvent() {
