@@ -324,6 +324,7 @@
 
         setup() {
             let that = this;
+
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
                 energy.processMessage(JSON.stringify(payload));

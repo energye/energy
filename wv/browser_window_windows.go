@@ -44,7 +44,7 @@ type TWebview struct {
 	onWindowClose                 lcl.TCloseEvent
 	onWindowShow                  lcl.TNotifyEvent
 	onWindowDestroy               lcl.TNotifyEvent
-	onWebMessageReceived          wv.TOnWebMessageReceivedEvent
+	onProcessMessage              TOnProcessMessageEvent
 	onContextMenuRequested        wv.TOnContextMenuRequestedEvent
 	onContentLoading              wv.TOnContentLoadingEvent
 	onWebResourceRequested        TOnWebResourceRequestedEvent
@@ -165,10 +165,10 @@ func (m *TWebview) initDefaultEvent() {
 	// process message received
 	m.browser.SetOnWebMessageReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebMessageReceivedEventArgs) {
 		var handle bool
+		args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
+		message := args.WebMessageAsString()
+		args.Free()
 		if m.messageReceivedDelegate != nil {
-			args = wv.NewCoreWebView2WebMessageReceivedEventArgs(args)
-			message := args.WebMessageAsString()
-			args.Free()
 			// ipc message
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
@@ -191,6 +191,7 @@ func (m *TWebview) initDefaultEvent() {
 					if m.window != nil {
 						ht := pMessage.Data.(string)
 						m.window.Resize(ht)
+						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
 					//fmt.Println("pMessage.Data", pMessage.Data)
@@ -198,8 +199,8 @@ func (m *TWebview) initDefaultEvent() {
 				}
 			}
 		}
-		if !handle && m.onWebMessageReceived != nil {
-			m.onWebMessageReceived(sender, webview, args)
+		if !handle && m.onProcessMessage != nil {
+			m.onProcessMessage(message)
 		}
 	})
 	m.browser.SetOnWebResourceResponseReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {

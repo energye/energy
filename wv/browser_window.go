@@ -51,3 +51,5 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 	m.SetBevelOuter(types.BvNone)
 	return m
 }
+
+type TOnProcessMessageEvent func(message string)

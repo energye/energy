@@ -15,13 +15,16 @@ package wv
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
+	"path/filepath"
 	"runtime"
+	"unsafe"
 )
 
 var (
@@ -44,7 +47,7 @@ type TWebview struct {
 	onWindowClose           lcl.TCloseEvent
 	onWindowShow            lcl.TNotifyEvent
 	onWindowDestroy         lcl.TNotifyEvent
-	//onWebMessageReceived          wv.TOnWebMessageReceivedEvent
+	onProcessMessage        TOnProcessMessageEvent
 	//onContextMenuRequested        wv.TOnContextMenuRequestedEvent
 	//onContentLoading              wv.TOnContentLoadingEvent
 	//onWebResourceRequested        TOnWebResourceRequestedEvent
@@ -66,6 +69,17 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.windowParent.SetParentDoubleBuffered(true)
 
 	m.browser = wv.NewWebview(m)
+	if gWk2Context == nil {
+		gWk2Context = wv.WebContext.Default()
+	}
+	if gApplication.onCustomSchemes != nil {
+		customSchemes := &TCustomSchemes{}
+		gApplication.onCustomSchemes(customSchemes)
+		for _, scheme := range customSchemes.schemes {
+			gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
+		}
+	}
+	m.browser.RegisterScriptCode(string(ipcJS))
 	m.browser.RegisterScriptMessageHandler("processMessage")
 
 	m.settings = wv.NewSettings()
@@ -186,5 +200,100 @@ func (m *TWebview) navigationStarting() {
 }
 
 func (m *TWebview) initDefaultEvent() {
+	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
+		fmt.Println("OnLoadChange wkLoadEvent:", loadEvent)
 
+	})
+	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
+		fmt.Println("OnContextMenu defaultAction:", defaultAction)
+		tempContextMenu := wv.NewContextMenu(contextMenu)
+		defer tempContextMenu.Free()
+		tempMenuItemSep := wv.ContextMenuItem.NewSeparator()
+		defer tempMenuItemSep.Free()
+		tempContextMenu.Append(tempMenuItemSep.Data())
+		tempMenuItemClose := wv.ContextMenuItem.NewFromAction(defaultAction, "关闭", 10001)
+		defer tempMenuItemClose.Free()
+		tempContextMenu.Append(tempMenuItemClose.Data())
+		return false
+	})
+	m.browser.SetOnContextMenuCommand(func(sender lcl.IObject, menuID int32) {
+		fmt.Println("OnContextMenuCommand menuID:", menuID)
+		if menuID == 10001 {
+
+		}
+	})
+	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
+		fmt.Println("OnWebProcessTerminated reason:", reason)
+		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				m.Close()
+			})
+		}
+	})
+	m.browser.SetOnProcessMessage(func(sender lcl.IObject, jsValue wv.IWkJSValue, processId wvTypes.TWkProcessId) {
+		var handle bool
+		message := jsValue.StringValue()
+		if m.messageReceivedDelegate != nil {
+			// ipc message
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal([]byte(message), &pMessage)
+			if err == nil {
+				switch pMessage.Type {
+				case ipc.MT_READY:
+					// ipc ready
+					handle = true
+				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
+					// ipc on, emit event
+					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
+				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					// ipc drag window
+					if m.window != nil {
+						m.window.Drag(pMessage)
+						handle = true
+					}
+				case ipc.MT_DRAG_RESIZE:
+					// border drag resize
+					if m.window != nil {
+						ht := pMessage.Data.(string)
+						m.window.Resize(ht)
+						handle = true
+					}
+				case ipc.MT_DRAG_BORDER_WMSZ:
+					//fmt.Println("pMessage.Data", pMessage.Data)
+					//m._SetCursor(17)
+				}
+			}
+		}
+		if !handle && m.onProcessMessage != nil {
+			m.onProcessMessage(message)
+		}
+	})
+	m.browser.SetOnURISchemeRequest(func(sender lcl.IObject, wkURISchemeRequest wvTypes.WebKitURISchemeRequest) {
+		fmt.Println("OnURISchemeRequest")
+		uriSchemeRequest := wv.NewURISchemeRequest(wkURISchemeRequest)
+		defer uriSchemeRequest.Free()
+		fmt.Println("uri:", uriSchemeRequest.Uri(), "method:", uriSchemeRequest.Method(), "path:", uriSchemeRequest.Path())
+		path := uriSchemeRequest.Path()
+		if path == "" {
+			path = "index.html"
+		}
+		assetsPath := filepath.Join("assets", path)
+		data, _ := resources.ReadFile(assetsPath)
+		ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
+		uriSchemeRequest.Finish(ins.Data(), int64(len(data)), "text/html")
+		headers := wv.NewHeaders(uriSchemeRequest.Headers())
+		headers.Append("test", "test")
+		headList := headers.List()
+		if headList != nil {
+			fmt.Println("headList:", headList.Count())
+			count := int(headList.Count())
+			for i := 0; i < count; i++ {
+				key := headList.Names(int32(i))
+				val := headList.Values(key)
+				fmt.Println("header name:", key, "value:", val)
+			}
+			headList.Free()
+		}
+		headers.Free()
+	})
 }

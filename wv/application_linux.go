@@ -69,15 +69,5 @@ func DestroyGlobalWebView2Loader() {
 // 在所有设置后调用
 func (m *Application) Start() bool {
 	v := m.StartWebKit2()
-	//if gWk2Context == nil {
-	//	gWk2Context = wv.WebContext.Default()
-	//}
-	//if gApplication.onCustomSchemes != nil {
-	//	customSchemes := &TCustomSchemes{}
-	//	gApplication.onCustomSchemes(customSchemes)
-	//	for _, scheme := range customSchemes.schemes {
-	//		gWk2Context.RegisterURIScheme("energy", m.webview.AsSchemeRequestDelegate())
-	//	}
-	//}
 	return v
 }
