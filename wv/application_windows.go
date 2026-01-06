@@ -72,23 +72,35 @@ func NewApplication() *Application {
 	return gApplication
 }
 
+func DestroyGlobalWebView2Loader() {
+	wv.DestroyGlobalWebView2Loader()
+}
+
 type Application struct {
 	wv.IWVLoader
 	application.Application
-	onCustomSchemes wv.TLoaderGetCustomSchemesEvent
+	onCustomSchemes TApplicationOnCustomSchemesEvent
 }
 
-func (m *Application) SetOnCustomSchemes(fn wv.TLoaderGetCustomSchemesEvent) {
+func (m *Application) SetOnCustomSchemes(fn TApplicationOnCustomSchemesEvent) {
 	m.onCustomSchemes = fn
 }
 
 func (m *Application) initDefaultEvent() {
-	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemes *wv.IWVCustomSchemeInfoArrayWrap) {
+	m.IWVLoader.SetOnGetCustomSchemes(func(sender lcl.IObject, customSchemeArray *wv.IWVCustomSchemeInfoArrayWrap) {
 		if m.onCustomSchemes != nil {
-			m.onCustomSchemes(sender, customSchemes)
+			customSchemes := &TCustomSchemes{}
+			m.onCustomSchemes(customSchemes)
+			for _, scheme := range customSchemes.schemes {
+				(*customSchemeArray).AddValue(wv.TWVCustomSchemeInfo{
+					SchemeName:            scheme.Scheme,
+					TreatAsSecure:         1,
+					HasAuthorityComponent: 1,
+				})
+			}
 		}
 		if m.LocalLoad != nil {
-			(*customSchemes).AddValue(wv.TWVCustomSchemeInfo{
+			(*customSchemeArray).AddValue(wv.TWVCustomSchemeInfo{
 				SchemeName:            m.LocalLoad.Scheme,
 				TreatAsSecure:         1,
 				HasAuthorityComponent: 1,
@@ -98,7 +110,6 @@ func (m *Application) initDefaultEvent() {
 }
 
 // Start 启动应用程序
-// 该方法调用StartWebView2来启动WebView2组件
 // 在所有设置后调用
 func (m *Application) Start() bool {
 	return m.StartWebView2()
