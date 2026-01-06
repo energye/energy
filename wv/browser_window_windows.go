@@ -272,6 +272,10 @@ func (m *TWebview) SetDefaultURL(url string) {
 	m.browser.SetDefaultURL(url)
 }
 
+func (m *TWebview) LoadURL(url string) {
+	m.browser.Navigate(url)
+}
+
 func (m *TWebview) SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
 	m.onWebMessageReceived = fn
 }

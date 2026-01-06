@@ -35,6 +35,7 @@ type IWebview interface {
 	SendMessage(payload []byte)
 	Close()
 	SetDefaultURL(url string)
+	LoadURL(url string)
 	SetOnAfterCreated(fn lcl.TNotifyEvent)
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
