@@ -40,13 +40,13 @@ type TWebview struct {
 	windowParent                  wv.IWVWindowParent
 	browser                       wv.IWVBrowser
 	messageReceivedDelegate       ipc.IMessageReceivedDelegate
-	onWebMessageReceived          wv.TOnWebMessageReceivedEvent
-	onContextMenuRequested        wv.TOnContextMenuRequestedEvent
-	onContentLoading              wv.TOnContentLoadingEvent
 	onAfterCreated                lcl.TNotifyEvent
 	onWindowClose                 lcl.TCloseEvent
 	onWindowShow                  lcl.TNotifyEvent
 	onWindowDestroy               lcl.TNotifyEvent
+	onWebMessageReceived          wv.TOnWebMessageReceivedEvent
+	onContextMenuRequested        wv.TOnContextMenuRequestedEvent
+	onContentLoading              wv.TOnContentLoadingEvent
 	onWebResourceRequested        TOnWebResourceRequestedEvent
 	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
 }
@@ -71,15 +71,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	ipc.RegisterProcessMessage(m)
 	m.initDefaultEvent()
 	m.SetBrowserOptions()
-	return m
-}
-
-func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
-	m := lcl.NewPanel(owner)
-	m.SetParentColor(true)
-	m.SetParentDoubleBuffered(true)
-	m.SetBevelInner(types.BvNone)
-	m.SetBevelOuter(types.BvNone)
 	return m
 }
 
@@ -239,7 +230,7 @@ func (m *TWebview) initDefaultEvent() {
 	})
 }
 
-// 在窗口时调用
+// 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
 	if gApplication.InitializationError() {
 		// Log ???

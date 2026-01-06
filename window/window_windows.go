@@ -57,10 +57,6 @@ func (m *TWindow) SetOptions() {
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 }
 
-func (m *TWindow) WindowId() uint32 {
-	return m.windowId
-}
-
 func (m *TWindow) Resize(ht string) {
 	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
 		return

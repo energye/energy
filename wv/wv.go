@@ -14,7 +14,6 @@ import (
 	engLCL "github.com/energye/energy/v3/lcl"
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
-	wv "github.com/energye/wv/windows"
 )
 
 func Run(forms ...lcl.IEngForm) {
@@ -22,7 +21,7 @@ func Run(forms ...lcl.IEngForm) {
 		gApplication.Start()
 	}
 	api.SetOnReleaseCallback(func() {
-		wv.DestroyGlobalWebView2Loader()
+		DestroyGlobalWebView2Loader()
 	})
 	engLCL.Run(forms...)
 }

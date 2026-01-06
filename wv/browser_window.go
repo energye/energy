@@ -13,6 +13,7 @@ package wv
 import (
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/types"
 	"sync/atomic"
 )
 
@@ -40,4 +41,13 @@ type IWebview interface {
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowDestroy(fn lcl.TNotifyEvent)
+}
+
+func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
+	m := lcl.NewPanel(owner)
+	m.SetParentColor(true)
+	m.SetParentDoubleBuffered(true)
+	m.SetBevelInner(types.BvNone)
+	m.SetBevelOuter(types.BvNone)
+	return m
 }
