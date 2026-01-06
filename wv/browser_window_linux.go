@@ -52,6 +52,7 @@ type TWebview struct {
 	//onContentLoading              wv.TOnContentLoadingEvent
 	//onWebResourceRequested        TOnWebResourceRequestedEvent
 	//onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
+	onResourceRequest TOnResourceRequest
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -281,19 +282,15 @@ func (m *TWebview) initDefaultEvent() {
 		data, _ := resources.ReadFile(assetsPath)
 		ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
 		uriSchemeRequest.Finish(ins.Data(), int64(len(data)), "text/html")
-		headers := wv.NewHeaders(uriSchemeRequest.Headers())
-		headers.Append("test", "test")
-		headList := headers.List()
-		if headList != nil {
-			fmt.Println("headList:", headList.Count())
-			count := int(headList.Count())
-			for i := 0; i < count; i++ {
-				key := headList.Names(int32(i))
-				val := headList.Values(key)
-				fmt.Println("header name:", key, "value:", val)
-			}
-			headList.Free()
+
+		var handle bool
+		if m.onResourceRequest != nil {
+			handle = m.onWebResourceRequested(sender, webview, args)
 		}
-		headers.Free()
+		if !handle && gApplication.LocalLoad != nil {
+			lcl.RunOnMainThreadSync(func() {
+				gApplication.LocalLoad.ResourceRequested(m.browser, webview, args)
+			})
+		}
 	})
 }
