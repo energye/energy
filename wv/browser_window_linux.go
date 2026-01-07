@@ -80,12 +80,15 @@ func NewWebview(owner lcl.IComponent) IWebview {
 			gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
 		}
 	}
+	if gApplication.LocalLoad != nil {
+		gWk2Context.RegisterURIScheme(gApplication.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
+	}
 	m.browser.RegisterScriptCode(string(ipcJS))
 	m.browser.RegisterScriptMessageHandler("processMessage")
 
 	m.settings = wv.NewSettings()
 	m.settings.SetEnableDeveloperExtras(true)
-	m.settings.SetUserAgentWithApplicationDetails("energy.io", "3.0")
+	m.settings.SetUserAgentWithApplicationDetails("energy", "3.0")
 	m.settings.SetEnablePageCache(true)
 	// 需要动态判断当前系统环境是否支持？
 	m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER)
@@ -211,7 +214,6 @@ func (m *TWebview) navigationStarting() {
 func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
 		fmt.Println("OnLoadChange wkLoadEvent:", loadEvent)
-
 	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
 		fmt.Println("OnContextMenu defaultAction:", defaultAction)
@@ -277,6 +279,29 @@ func (m *TWebview) initDefaultEvent() {
 			m.onProcessMessage(message)
 		}
 	})
+	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
+		fmt.Println("OnDecidePolicy type_:", type_)
+		tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
+		defer tempDecision.Free()
+		if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION || type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION {
+			tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
+			defer tempNavigationAction.Free()
+			tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
+			defer tempURIRequest.Free()
+			newWindowURL := tempURIRequest.URI()
+			fmt.Println("NewWindow URL:", newWindowURL)
+			// new window
+			if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION {
+
+			}
+		} else {
+			tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
+			defer tempResponsePolicyDecision.Free()
+			tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
+			defer tempURIRequest.Free()
+		}
+		return true
+	})
 	m.browser.SetOnURISchemeRequest(func(sender lcl.IObject, wkURISchemeRequest wvTypes.WebKitURISchemeRequest) {
 		uriSchemeRequest := wv.NewURISchemeRequest(wkURISchemeRequest)
 		defer uriSchemeRequest.Free()
@@ -308,7 +333,7 @@ func (m *TWebview) initDefaultEvent() {
 			data, err := gApplication.LocalLoad.Read(path)
 			if err != nil {
 				// 404
-				uriSchemeRequest.FinishError(404, err.Error())
+				uriSchemeRequest.FinishError(3, 404, err.Error())
 				return
 			}
 			ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
@@ -319,7 +344,7 @@ func (m *TWebview) initDefaultEvent() {
 			uriSchemeRequest.Finish(ins.Data(), int64(len(data)), contentType)
 		} else {
 			// 404
-			uriSchemeRequest.FinishError(404, "Not Found")
+			uriSchemeRequest.FinishError(3, 404, "Not Found")
 		}
 	})
 }
