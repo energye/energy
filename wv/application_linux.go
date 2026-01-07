@@ -62,7 +62,7 @@ func NewApplication() *Application {
 	return gApplication
 }
 
-func DestroyGlobalWebView2Loader() {
+func DestroyGlobalLoader() {
 }
 
 // Start 启动应用程序

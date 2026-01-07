@@ -21,7 +21,7 @@ func Run(forms ...lcl.IEngForm) {
 		gApplication.Start()
 	}
 	api.SetOnReleaseCallback(func() {
-		DestroyGlobalWebView2Loader()
+		DestroyGlobalLoader()
 	})
 	engLCL.Run(forms...)
 }

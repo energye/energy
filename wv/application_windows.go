@@ -72,7 +72,7 @@ func NewApplication() *Application {
 	return gApplication
 }
 
-func DestroyGlobalWebView2Loader() {
+func DestroyGlobalLoader() {
 	wv.DestroyGlobalWebView2Loader()
 }
 
