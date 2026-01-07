@@ -146,7 +146,13 @@ func (m *TWebview) SendMessage(payload []byte) {
 	if m.isClose {
 		return
 	}
-	m.browser.ExecuteScript(string(payload))
+	js := m.evalExecuteEventJS(payload)
+	m.browser.ExecuteScript(js)
+}
+
+func (m *TWebview) evalExecuteEventJS(js []byte) string {
+	evalJS := "if (typeof window.energy !== 'undefined' && typeof window.energy.__executeEvent === 'function') {window.energy.__executeEvent('" + string(js) + "');}"
+	return evalJS
 }
 
 func (m *TWebview) Close() {

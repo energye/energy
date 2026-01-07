@@ -111,9 +111,6 @@
                 // webkit
                 // render process send message => go
                 this.processMessage = (message) => window.webkit.messageHandlers.processMessage.postMessage(message);
-                window.message = (message) => {
-                    window.energy.__executeEvent(message);
-                };
             } else {
                 throw new Error("Unsupported Platform");
             }
@@ -217,7 +214,6 @@
          * @private
          */
         __executeEvent(messageData) {
-            console.log('__executeEvent:', messageData)
             try {
                 this.#notifyListeners(JSON.parse(messageData));
             } catch (e) {
