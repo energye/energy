@@ -122,6 +122,9 @@ func SetMainDefaultBrowserId(browserId uint32) {
 // RegisterProcessMessage register process message object
 func RegisterProcessMessage(window IProcessMessage) {
 	processMessageLock.Lock()
+	if defaultBrowserId == 0 {
+		SetMainDefaultBrowserId(window.BrowserId())
+	}
 	processMessage[window.BrowserId()] = window
 	processMessageLock.Unlock()
 }
