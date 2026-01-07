@@ -90,7 +90,6 @@
             this.#eventListeners = new Map();
             this.#emitCallbacks = new Map();
             this.#executionID = 0;
-            console.log("",window)
             // process message
             if (this.#deepTest(["chrome", "webview", "postMessage"])) {
                 // webview2
