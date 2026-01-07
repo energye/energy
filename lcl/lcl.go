@@ -40,3 +40,7 @@ func Run(forms ...lcl.IEngForm) {
 	// 启动应用程序消息循环
 	lcl.Application.Run()
 }
+
+func Application() lcl.IApp {
+	return lcl.Application
+}
