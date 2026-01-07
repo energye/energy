@@ -15,6 +15,12 @@ import (
 	"github.com/energye/lcl/lcl"
 )
 
+var beforeRun []func()
+
+func SetOnBeforeRun(fn func()) {
+	beforeRun = append(beforeRun, fn)
+}
+
 func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) {
 	lcl.Init(libs, resources)
 }
@@ -26,6 +32,9 @@ func Run(forms ...lcl.IEngForm) {
 	lcl.Application.SetMainFormOnTaskBar(true)
 	// 启用自动缩放功能以支持高DPI显示器
 	lcl.Application.SetScaled(true)
+	for _, fn := range beforeRun {
+		fn()
+	}
 	// 创建所有窗体
 	lcl.Application.NewForms(forms...)
 	// 启动应用程序消息循环
