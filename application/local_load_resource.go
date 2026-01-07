@@ -10,7 +10,11 @@
 
 package application
 
-import "github.com/energye/lcl/lcl"
+import (
+	"github.com/energye/lcl/lcl"
+	"io/ioutil"
+	"path/filepath"
+)
 
 // LocalLoadResource Local or built-in resource loading
 type LocalLoadResource struct {
@@ -30,4 +34,18 @@ func NewLocalLoadResource(localLoad *LocalLoad) *LocalLoadResource {
 
 	}
 	return nil
+}
+
+func (m *LocalLoadResource) Read(path string) ([]byte, error) {
+	if m.FS == nil {
+		var rootPath string
+		if m.ResRootDir[0] == '@' {
+			rootPath = filepath.Join(m.exePath, m.ResRootDir[1:])
+		} else {
+			rootPath = m.ResRootDir
+		}
+		return ioutil.ReadFile(filepath.Join(rootPath, path))
+	} else {
+		return m.FS.ReadFile(m.ResRootDir + path)
+	}
 }

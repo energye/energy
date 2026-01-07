@@ -53,4 +53,4 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 }
 
 type TOnProcessMessageEvent func(message string)
-type TOnResourceRequest func(url string) (resource string, ok bool)
+type TOnResourceRequest func(url, path, method string, header map[string]string) (resource string, ok bool)

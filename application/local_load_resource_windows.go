@@ -17,24 +17,8 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/windows"
-	"io/ioutil"
 	"net/url"
-	"path/filepath"
 )
-
-func (m *LocalLoadResource) read(path string) ([]byte, error) {
-	if m.FS == nil {
-		var rootPath string
-		if m.ResRootDir[0] == '@' {
-			rootPath = filepath.Join(m.exePath, m.ResRootDir[1:])
-		} else {
-			rootPath = m.ResRootDir
-		}
-		return ioutil.ReadFile(filepath.Join(rootPath, path))
-	} else {
-		return m.FS.ReadFile(m.ResRootDir + path)
-	}
-}
 
 // released after the resource processing is complete
 func (m *LocalLoadResource) ReleaseStream(path string) {

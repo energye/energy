@@ -17,12 +17,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
-	"path/filepath"
 	"runtime"
 	"unsafe"
 )
@@ -270,27 +270,48 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnURISchemeRequest(func(sender lcl.IObject, wkURISchemeRequest wvTypes.WebKitURISchemeRequest) {
-		fmt.Println("OnURISchemeRequest")
 		uriSchemeRequest := wv.NewURISchemeRequest(wkURISchemeRequest)
 		defer uriSchemeRequest.Free()
-		fmt.Println("uri:", uriSchemeRequest.Uri(), "method:", uriSchemeRequest.Method(), "path:", uriSchemeRequest.Path())
-		path := uriSchemeRequest.Path()
-		if path == "" {
-			path = "index.html"
-		}
-		assetsPath := filepath.Join("assets", path)
-		data, _ := resources.ReadFile(assetsPath)
-		ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
-		uriSchemeRequest.Finish(ins.Data(), int64(len(data)), "text/html")
-
-		var handle bool
+		var (
+			resource    string
+			handle      bool
+			uri         = uriSchemeRequest.Uri()
+			path        = uriSchemeRequest.Path()
+			method      = uriSchemeRequest.Method()
+			contentType = "Content-Type: " + mime.GetMimeType(path)
+		)
 		if m.onResourceRequest != nil {
-			handle = m.onWebResourceRequested(sender, webview, args)
+			header := make(map[string]string)
+			headers := wv.NewHeaders(uriSchemeRequest.Headers())
+			defer headers.Free()
+			headList := headers.List()
+			if headList != nil {
+				defer headList.Free()
+				count := int(headList.Count())
+				for i := 0; i < count; i++ {
+					key := headList.Names(int32(i))
+					val := headList.Values(key)
+					header[key] = val
+				}
+			}
+			resource, handle = m.onResourceRequest(uri, path, method, header)
 		}
-		if !handle && gApplication.LocalLoad != nil {
-			lcl.RunOnMainThreadSync(func() {
-				gApplication.LocalLoad.ResourceRequested(m.browser, webview, args)
-			})
+		if !handle {
+			data, err := gApplication.LocalLoad.Read(path)
+			if err != nil {
+				// 404
+				uriSchemeRequest.FinishError(404, err.Error())
+				return
+			}
+			ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
+			uriSchemeRequest.Finish(ins.Data(), int64(len(data)), contentType)
+		} else if handle && resource != "" {
+			data := []byte(resource)
+			ins := wv.InputStream.New(uintptr(unsafe.Pointer(&data[0])), int64(len(data)))
+			uriSchemeRequest.Finish(ins.Data(), int64(len(data)), contentType)
+		} else {
+			// 404
+			uriSchemeRequest.FinishError(404, "Not Found")
 		}
 	})
 }

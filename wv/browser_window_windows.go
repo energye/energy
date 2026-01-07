@@ -16,6 +16,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
@@ -227,6 +228,41 @@ func (m *TWebview) initDefaultEvent() {
 			lcl.RunOnMainThreadSync(func() {
 				gApplication.LocalLoad.ResourceRequested(m.browser, webview, args)
 			})
+		}
+
+		tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
+		defer tempArgs.FreeAndNil()
+		request := tempArgs.Request()
+		tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
+		defer tempRequest.FreeAndNil()
+		reqUrl, err := url.Parse(tempRequest.URI())
+		if err != nil {
+			// No matter what error, return 404
+			statusCode = 404
+			reasonPhrase = "Not Found"
+			environment := m.browser.CoreWebView2Environment()
+			// empty response resource
+			environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
+			tempArgs.SetResponse(response)
+
+			if response != nil {
+				response.Nil()
+				response.Free()
+			}
+			return
+		}
+		var (
+			resource    string
+			handle      bool
+			uri         = tempRequest.URI()
+			path        = reqUrl.Path
+			method      = tempRequest.Method()
+			contentType = "Content-Type: " + mime.GetMimeType(path)
+		)
+		if m.onResourceRequest != nil {
+			header := make(map[string]string)
+
+			resource, handle = m.onResourceRequest(uri, path, method, header)
 		}
 	})
 }
