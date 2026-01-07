@@ -11,6 +11,7 @@
 package wv
 
 import (
+	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -52,5 +53,7 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 	return m
 }
 
+type TOnWindowResize func(ht string)
+type TOnWindowDrag func(message ipc.ProcessMessage)
 type TOnProcessMessageEvent func(message string)
-type TOnResourceRequest func(url, path, method string, header map[string]string) (resource string, ok bool)
+type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)

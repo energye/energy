@@ -35,21 +35,20 @@ var (
 
 type TWebview struct {
 	lcl.IPanel
-	browserId                     uint32
-	isClose                       bool
-	window                        window.IWindow
-	windowParent                  wv.IWVWindowParent
-	browser                       wv.IWVBrowser
-	messageReceivedDelegate       ipc.IMessageReceivedDelegate
-	onAfterCreated                lcl.TNotifyEvent
-	onWindowClose                 lcl.TCloseEvent
-	onWindowShow                  lcl.TNotifyEvent
-	onWindowDestroy               lcl.TNotifyEvent
-	onProcessMessage              TOnProcessMessageEvent
-	onContextMenuRequested        wv.TOnContextMenuRequestedEvent
-	onContentLoading              wv.TOnContentLoadingEvent
-	onWebResourceRequested        TOnWebResourceRequestedEvent
-	onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
+	browserId               uint32
+	isClose                 bool
+	window                  window.IWindow
+	windowParent            wv.IWVWindowParent
+	browser                 wv.IWVBrowser
+	messageReceivedDelegate ipc.IMessageReceivedDelegate
+	onAfterCreated          lcl.TNotifyEvent
+	onWindowClose           lcl.TCloseEvent
+	onWindowShow            lcl.TNotifyEvent
+	onWindowDestroy         lcl.TNotifyEvent
+	onProcessMessage        TOnProcessMessageEvent
+	onResourceRequest       TOnResourceRequestEvent
+	onContextMenuRequested  wv.TOnContextMenuRequestedEvent
+	onContentLoading        wv.TOnContentLoadingEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -130,6 +129,7 @@ func (m *TWebview) navigationStarting() {
 //	1. Use Browser() to obtain the browser object and remove and override the current specified event
 //	2. Specify the event function in the current window and retain the default event behavior
 func (m *TWebview) initDefaultEvent() {
+	streams := make(map[string]lcl.IMemoryStream)
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
 		if gApplication.LocalLoad != nil {
@@ -205,64 +205,92 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnWebResourceResponseReceived(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceResponseReceivedEventArgs) {
-		var handle bool
-		if m.onWebResourceResponseReceived != nil {
-			handle = m.onWebResourceResponseReceived(sender, webview, args)
-		}
-		if !handle && gApplication.LocalLoad != nil {
-			tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
-			defer tempArgs.Free()
-			tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
-			defer tempRequest.Free()
-			if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
-				gApplication.LocalLoad.ReleaseStream(reqUrl.Path)
+		tempArgs := wv.NewCoreWebView2WebResourceResponseReceivedEventArgs(args)
+		defer tempArgs.Free()
+		tempRequest := wv.NewCoreWebView2WebResourceRequestRef(tempArgs.Request())
+		defer tempRequest.Free()
+		if reqUrl, err := url.Parse(tempRequest.URI()); err == nil {
+			if stream, ok := streams[reqUrl.Path]; ok {
+				stream.FreeAndNil()
+				delete(streams, reqUrl.Path)
 			}
 		}
 	})
 	m.browser.SetOnWebResourceRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2WebResourceRequestedEventArgs) {
-		var handle bool
-		if m.onWebResourceRequested != nil {
-			handle = m.onWebResourceRequested(sender, webview, args)
-		}
-		if !handle && gApplication.LocalLoad != nil {
-			lcl.RunOnMainThreadSync(func() {
-				gApplication.LocalLoad.ResourceRequested(m.browser, webview, args)
-			})
-		}
-
 		tempArgs := wv.NewCoreWebView2WebResourceRequestedEventArgs(args)
 		defer tempArgs.FreeAndNil()
 		request := tempArgs.Request()
 		tempRequest := wv.NewCoreWebView2WebResourceRequestRef(request)
 		defer tempRequest.FreeAndNil()
-		reqUrl, err := url.Parse(tempRequest.URI())
+		var (
+			statusCode    int32 = 200
+			reasonPhrase        = "OK"
+			headers             = ""
+			response      wv.ICoreWebView2WebResourceResponse
+			stream        lcl.IMemoryStream
+			streamAdapter lcl.IStreamAdapter
+			uri           = tempRequest.URI()
+			reqUrl, err   = url.Parse(uri)
+		)
+		if err == nil {
+			var (
+				resource string
+				handle   bool
+				data     []byte
+				path     = reqUrl.Path
+				method   = tempRequest.Method()
+			)
+			if m.onResourceRequest != nil {
+				header := make(map[string]string)
+				//tempHeaders := wv.NewCoreWebView2HttpRequestHeaders(tempRequest.Headers())
+				//defer tempHeaders.Free()
+				iterator := tempRequest.Headers().Iterator() //wv.NewCoreWebView2HttpHeadersCollectionIterator(tempHeaders.Iterator())
+				if iterator != nil {
+					defer iterator.Free()
+					var (
+						name  string
+						value string
+					)
+					for {
+						iterator.GetCurrentHeader(&name, &value)
+						if !iterator.MoveNext() {
+							break
+						}
+						header[name] = value
+					}
+				}
+				resource, handle = m.onResourceRequest(uri, path, method, header)
+			}
+			if handle && resource != "" {
+				data = []byte(resource)
+			} else if !handle {
+				data, err = gApplication.LocalLoad.Read(path)
+			}
+			if err == nil {
+				stream = lcl.NewMemoryStream()
+				streamAdapter = lcl.NewStreamAdapter(stream, types.SoOwned)
+				defer streamAdapter.Nil()
+				lcl.StreamHelper.Write(stream, data)
+				// current resource is set temp cache
+				// released after the resource processing is complete
+				streams[path] = stream
+				headers = "Content-Type: " + mime.GetMimeType(reqUrl.Path)
+				environment := m.browser.CoreWebView2Environment()
+				// success response resource
+				environment.CreateWebResourceResponse(lcl.AsStreamAdapter(streamAdapter.AsIntfStream()), statusCode, reasonPhrase, headers, &response)
+			}
+		}
 		if err != nil {
-			// No matter what error, return 404
 			statusCode = 404
 			reasonPhrase = "Not Found"
 			environment := m.browser.CoreWebView2Environment()
 			// empty response resource
 			environment.CreateWebResourceResponse(nil, statusCode, reasonPhrase, headers, &response)
-			tempArgs.SetResponse(response)
-
-			if response != nil {
-				response.Nil()
-				response.Free()
-			}
-			return
 		}
-		var (
-			resource    string
-			handle      bool
-			uri         = tempRequest.URI()
-			path        = reqUrl.Path
-			method      = tempRequest.Method()
-			contentType = "Content-Type: " + mime.GetMimeType(path)
-		)
-		if m.onResourceRequest != nil {
-			header := make(map[string]string)
-
-			resource, handle = m.onResourceRequest(uri, path, method, header)
+		tempArgs.SetResponse(response)
+		if response != nil {
+			response.Nil()
+			response.Free()
 		}
 	})
 }
@@ -304,26 +332,6 @@ func (m *TWebview) LoadURL(url string) {
 	m.browser.Navigate(url)
 }
 
-func (m *TWebview) SetOnWebMessageReceived(fn wv.TOnWebMessageReceivedEvent) {
-	m.onWebMessageReceived = fn
-}
-
-func (m *TWebview) SetOnContextMenuRequested(fn wv.TOnContextMenuRequestedEvent) {
-	m.onContextMenuRequested = fn
-}
-
-func (m *TWebview) SetOnContentLoading(fn wv.TOnContentLoadingEvent) {
-	m.onContentLoading = fn
-}
-
-func (m *TWebview) SetOnWebResourceRequested(fn TOnWebResourceRequestedEvent) {
-	m.onWebResourceRequested = fn
-}
-
-func (m *TWebview) SetOnWebResourceResponseReceived(fn TOnWebResourceResponseReceivedEvent) {
-	m.onWebResourceResponseReceived = fn
-}
-
 func (m *TWebview) SetOnAfterCreated(fn lcl.TNotifyEvent) {
 	m.onAfterCreated = fn
 }
@@ -338,4 +346,12 @@ func (m *TWebview) SetOnWindowShow(fn lcl.TNotifyEvent) {
 
 func (m *TWebview) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
 	m.onWindowDestroy = fn
+}
+
+func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
+	m.onResourceRequest = fn
+}
+
+func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
+	m.onProcessMessage = fn
 }

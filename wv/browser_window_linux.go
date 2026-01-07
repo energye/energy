@@ -48,11 +48,11 @@ type TWebview struct {
 	onWindowShow            lcl.TNotifyEvent
 	onWindowDestroy         lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
+	onResourceRequest       TOnResourceRequestEvent
 	//onContextMenuRequested        wv.TOnContextMenuRequestedEvent
 	//onContentLoading              wv.TOnContentLoadingEvent
 	//onWebResourceRequested        TOnWebResourceRequestedEvent
 	//onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
-	onResourceRequest TOnResourceRequest
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -174,6 +174,14 @@ func (m *TWebview) SetOnWindowShow(fn lcl.TNotifyEvent) {
 
 func (m *TWebview) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
 	m.onWindowDestroy = fn
+}
+
+func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
+	m.onResourceRequest = fn
+}
+
+func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
+	m.onProcessMessage = fn
 }
 
 func (m *TWebview) navigationStarting() {
