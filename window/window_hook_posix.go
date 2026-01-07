@@ -12,10 +12,10 @@
 
 package window
 
-func (m *BrowserWindow) _HookWndProcMessage() {
+func (m *TWindow) _HookWndProcMessage() {
 
 }
 
-func (m *BrowserWindow) _RestoreWndProc() {
+func (m *TWindow) _RestoreWndProc() {
 
 }

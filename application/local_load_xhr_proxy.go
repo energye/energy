@@ -16,7 +16,6 @@ import (
 	"crypto/x509"
 	"errors"
 	"github.com/energye/lcl/emfs"
-	wv "github.com/energye/wv/windows"
 	"io/ioutil"
 	"net/http"
 	"net/http/cookiejar"
@@ -31,7 +30,7 @@ import (
 //
 //	本地资源加载 XHR 请求代理接口
 type IXHRProxy interface {
-	Send(request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) // 被动调用，发送请求，在浏览器进程同步执行
+	Send(uri string) (*XHRProxyResponse, error) // 被动调用，发送请求，在浏览器进程同步执行
 }
 
 // XHRProxy
@@ -84,11 +83,11 @@ func (m *XHRProxySSL) skipVerify() bool {
 // Send
 //
 //	被动调用，发送请求，在浏览器进程同步执行
-func (m *XHRProxy) Send(request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) {
+func (m *XHRProxy) Send(uri string) (*XHRProxyResponse, error) {
 	if m.Scheme == LpsHttp {
-		return m.sendHttp(request)
+		return m.sendHttp(uri)
 	} else if m.Scheme == LpsHttps {
-		return m.sendHttps(request)
+		return m.sendHttps(uri)
 	} /* else if m.Scheme == LpsTcp {
 		return m.sendTcp(request)
 	}*/
@@ -183,16 +182,16 @@ func (m *XHRProxy) init() {
 	}
 }
 
-func (m *XHRProxy) sendHttp(request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) {
-	return m.send("http://", request)
+func (m *XHRProxy) sendHttp(uri string) (*XHRProxyResponse, error) {
+	return m.send("http://", uri)
 }
 
-func (m *XHRProxy) sendHttps(request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) {
-	return m.send("https://", request)
+func (m *XHRProxy) sendHttps(uri string) (*XHRProxyResponse, error) {
+	return m.send("https://", uri)
 }
 
-func (m *XHRProxy) send(scheme string, request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) {
-	reqUrl, err := url.Parse(request.URI())
+func (m *XHRProxy) send(scheme, uri string) (*XHRProxyResponse, error) {
+	reqUrl, err := url.Parse(uri)
 	if err != nil {
 		return nil, err
 	}
@@ -212,6 +211,6 @@ func (m *XHRProxy) send(scheme string, request wv.ICoreWebView2WebResourceReques
 	return nil, nil
 }
 
-func (m *XHRProxy) sendTcp(request wv.ICoreWebView2WebResourceRequestRef) (*XHRProxyResponse, error) {
+func (m *XHRProxy) sendTcp(uri string) (*XHRProxyResponse, error) {
 	return nil, errors.New("tcp unrealized")
 }
