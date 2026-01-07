@@ -90,6 +90,7 @@
             this.#eventListeners = new Map();
             this.#emitCallbacks = new Map();
             this.#executionID = 0;
+            console.log("",window)
             // process message
             if (this.#deepTest(["chrome", "webview", "postMessage"])) {
                 // webview2
@@ -106,7 +107,7 @@
                 //let bufferData = new TextDecoder().decode(new Uint8Array(buffer));
                 // console.log("buffer:", bufferData);
                 //});
-            } else if (this.#deepTest(["webkit", "messageHandlers", "external", "postMessage"])) {
+            } else if (this.#deepTest(["webkit", "messageHandlers", "processMessage", "postMessage"])) {
                 // webkit
                 // render process send message => go
                 this.processMessage = (message) => window.webkit.messageHandlers.external.postMessage(message);
