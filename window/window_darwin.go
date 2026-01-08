@@ -11,3 +11,7 @@
 //go:build darwin
 
 package window
+
+type TWindow struct {
+	TEnergyWindow
+}

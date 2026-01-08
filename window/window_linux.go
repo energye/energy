@@ -15,13 +15,21 @@ package window
 import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
 
+type TWindow struct {
+	TEnergyWindow
+	gtkWindow *gtk3.Window
+}
+
 // SetOptions 设置webview窗口的选项配置
 // 该方法用于配置*TWindow实例的各种选项参数
 func (m *TWindow) SetOptions() {
+	gtkHandle := lcl.PlatformHandle(m.Handle())
+	m.gtkWindow = gtk3.ToGtkWindow(uintptr(gtkHandle.Gtk3Window()))
 	options := application.GApplication.Options
 	if options.Width <= 0 {
 		options.Width = m.Width()
@@ -31,6 +39,9 @@ func (m *TWindow) SetOptions() {
 	}
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
+	if options.Frameless {
+		m.SetBorderStyleToFormBorderStyle(types.BsNone)
+	}
 }
 
 func (m *TWindow) Resize(ht string) {

@@ -26,7 +26,7 @@ type IWindow interface {
 	BrowserId() uint32
 }
 
-type TWindow struct {
+type TEnergyWindow struct {
 	lcl.TEngForm
 	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
 	oldWndPrc               uintptr

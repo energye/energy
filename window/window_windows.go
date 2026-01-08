@@ -22,6 +22,10 @@ import (
 	"github.com/energye/lcl/types/messages"
 )
 
+type TWindow struct {
+	TEnergyWindow
+}
+
 func (m *TWindow) borderFrameless() {
 	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
 	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
