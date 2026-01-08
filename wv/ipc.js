@@ -87,7 +87,6 @@
          * @memberof Energy
          */
         constructor() {
-            console.log('ipc.js new energy')
             this.#eventListeners = new Map();
             this.#emitCallbacks = new Map();
             this.#executionID = 0;
@@ -304,14 +303,14 @@
 
     class Drag {
         #shouldDrag = false;
-        #cssDragProperty = "-webkit-app-region";
+        #cssDragProperty = "--webkit-app-region";
         #cssDragValue = "drag";
 
         constructor() {
         }
 
         #test(e) {
-            let v = window.getComputedStyle(e.target)[this.#cssDragProperty];
+            let v = window.getComputedStyle(e.target).getPropertyValue(this.#cssDragProperty);
             if (v) {
                 v = v.trim();
                 if (v !== this.#cssDragValue) {
@@ -328,17 +327,17 @@
 
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
-                energy.processMessage(JSON.stringify(payload));
+                window.energy.processMessage(JSON.stringify(payload));
             }
 
             let idcCursor = null;
-            let frameWidth = energy.getEnv("frameWidth") || 4;
-            let frameHeight = energy.getEnv("frameHeight") || 4;
-            let frameCorner = energy.getEnv("frameCorner") || 8;
-            let disableResize = energy.getEnv("disableResize") || false;
-            let disableWebkitAppRegionDClk = energy.getEnv("disableWebkitAppRegionDClk") || false;
-            let isWindows = energy.getEnv("os") === "windows";
-            let frameless = energy.getEnv("frameless") || false;
+            let frameWidth = window.energy.getEnv("frameWidth") || 4;
+            let frameHeight = window.energy.getEnv("frameHeight") || 4;
+            let frameCorner = window.energy.getEnv("frameCorner") || 8;
+            let disableResize = window.energy.getEnv("disableResize") || false;
+            let disableWebkitAppRegionDClk = window.energy.getEnv("disableWebkitAppRegionDClk") || false;
+            let isWindows = window.energy.getEnv("os") === "windows";
+            let frameless = window.energy.getEnv("frameless") || false;
 
             function setCursor(cursor, ht) {
                 if (idcCursor !== cursor) {
@@ -384,7 +383,7 @@
                         that.#shouldDrag = false;
                     }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
-                } else if (!disableResize && isWindows && frameless) {
+                } else if (!disableResize /*&& isWindows*/ && frameless) {
                     mouseDragResize(e)
                 }
             }
@@ -403,7 +402,9 @@
                     dragMessage(MT_DRAG_RESIZE, 'resize', idcCursor);
                 } else if (!(e.offsetX > e.target.clientWidth || e.offsetY > e.target.clientHeight) && that.#test(e)) {
                     e.preventDefault();
-                    that.#shouldDrag = true;
+                    if (isWindows) {
+                        that.#shouldDrag = true;
+                    }
                     dragMessage(MT_DRAG_DOWN, 'down', {x: e.screenX, y: e.screenY});
                 } else {
                     that.#shouldDrag = false;

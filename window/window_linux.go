@@ -40,7 +40,6 @@ func (m *TWindow) SetOptions() {
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 	if options.Frameless {
-		//m.SetBorderStyleToFormBorderStyle(types.BsNone)
 		m.gtkWindow.SetDecorated(false)
 	}
 }
@@ -53,22 +52,7 @@ func (m *TWindow) Resize(ht string) {
 }
 
 func (m *TWindow) Drag(message ipc.ProcessMessage) {
-	if m.IsFullScreen() {
-		return
-	}
-	switch message.Type {
-	case ipc.MT_DRAG_MOVE:
-		if m.IsFullScreen() {
-			return
-		}
-		//if win.ReleaseCapture() {
-		//	win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
-		//}
-	case ipc.MT_DRAG_DOWN:
-	case ipc.MT_DRAG_UP:
-	case ipc.MT_DRAG_DBLCLICK:
-		m.Maximize()
-	}
+
 }
 
 func (m *TWindow) FullScreen() {

@@ -28,7 +28,7 @@ func getNextBrowserID() uint32 {
 }
 
 type IWebview interface {
-	lcl.IPanel
+	lcl.ICustomPanel
 	SetWindow(window window.IWindow)
 	SetBrowserOptions()
 	SetParent(window lcl.IWinControl)
@@ -42,6 +42,9 @@ type IWebview interface {
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowDestroy(fn lcl.TNotifyEvent)
+	//SetAlign(v types.TAlign)
+	SetWidth(v int32)
+	SetHeight(v int32)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {

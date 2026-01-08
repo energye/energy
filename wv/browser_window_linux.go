@@ -34,7 +34,7 @@ var (
 )
 
 type TWebview struct {
-	lcl.IPanel
+	lcl.ICustomPanel
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
@@ -58,18 +58,18 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
-	m.IPanel = lcl.NewPanel(owner)
-	m.IPanel.SetParentColor(true)
-	m.IPanel.SetParentDoubleBuffered(true)
-	m.IPanel.SetBevelInner(types.BvNone)
-	m.IPanel.SetBevelOuter(types.BvNone)
+	m.ICustomPanel = lcl.NewPanel(owner)
+	m.ICustomPanel.SetParentDoubleBuffered(true)
+	m.ICustomPanel.SetBevelInner(types.BvNone)
+	m.ICustomPanel.SetBevelOuter(types.BvNone)
 
 	m.windowParent = wv.NewWebviewParent(m)
-	m.windowParent.SetParent(m)
-	m.windowParent.SetAlign(types.AlClient)
+	m.windowParent.SetWidth(m.Width())
+	m.windowParent.SetHeight(m.Height())
+	m.windowParent.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
 	m.windowParent.SetParentDoubleBuffered(true)
 
-	m.browser = wv.NewWebview(m)
+	m.browser = wv.NewWebview(owner)
 	if gWk2Context == nil {
 		gWk2Context = wv.WebContext.Default()
 	}
@@ -102,6 +102,28 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
+//func (m *TWebview) SetAlign(v types.TAlign) {
+//	switch v {
+//	case types.AlClient:
+//		part := m.Parent()
+//		m.SetWidth(part.Width())
+//		m.SetHeight(part.Height())
+//		m.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+//	default:
+//		m.ICustomPanel.SetAlign(v)
+//	}
+//}
+
+func (m *TWebview) SetWidth(v int32) {
+	m.ICustomPanel.SetWidth(v + 1) // Gtk3 box width + 1
+	m.windowParent.SetWidth(v)
+}
+
+func (m *TWebview) SetHeight(v int32) {
+	m.ICustomPanel.SetHeight(v + 1) // Gtk3 box height + 1
+	m.windowParent.SetHeight(v)
+}
+
 func (m *TWebview) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
@@ -123,8 +145,8 @@ func (m *TWebview) SetBrowserOptions() {
 // SetParent 设置浏览器窗口的父控件
 // 该方法会同时设置内部面板的父控件和窗口父控件的引用
 func (m *TWebview) SetParent(window lcl.IWinControl) {
-	m.IPanel.SetParent(window)
-	m.windowParent.SetParent(m.IPanel)
+	m.ICustomPanel.SetParent(window)
+	m.windowParent.SetParent(m)
 }
 
 // 在窗口显示时调用
@@ -220,6 +242,10 @@ func (m *TWebview) navigationStarting() {
 func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
 		fmt.Println("OnLoadChange wkLoadEvent:", loadEvent)
+		switch loadEvent {
+		case wvTypes.WEBKIT_LOAD_FINISHED:
+			m.navigationStarting()
+		}
 	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
 		fmt.Println("OnContextMenu defaultAction:", defaultAction)
@@ -251,6 +277,7 @@ func (m *TWebview) initDefaultEvent() {
 		var handle bool
 		message := jsValue.StringValue()
 		if m.messageReceivedDelegate != nil {
+			fmt.Println("message:", message)
 			// ipc message
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
@@ -265,7 +292,7 @@ func (m *TWebview) initDefaultEvent() {
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					if m.window != nil {
-						m.window.Drag(pMessage)
+						m.browser.StartDrag(m.window)
 						handle = true
 					}
 				case ipc.MT_DRAG_RESIZE:
