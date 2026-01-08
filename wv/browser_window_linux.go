@@ -28,8 +28,8 @@ import (
 )
 
 var (
-	frameWidth  = 4
-	frameHeight = 4
+	frameWidth  = int32(4)
+	frameHeight = int32(4)
 	frameCorner = frameWidth + frameHeight
 )
 
@@ -379,5 +379,63 @@ func (m *TWebview) initDefaultEvent() {
 			// 404
 			uriSchemeRequest.FinishError(3, 404, "Not Found")
 		}
+	})
+	var (
+		cursor    bool
+		setCursor = func(value types.TCursor) {
+			if value == types.CrDefault {
+				cursor = false
+			} else {
+				cursor = true
+			}
+			lcl.Screen.SetCursor(value)
+		}
+	)
+	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
+		fmt.Println("SetOnMouseMove:", event.X, event.Y, event.XRoot, event.YRoot, lcl.Screen.Cursor())
+		br := m.window.BoundsRect()
+		w, h := br.Width(), br.Height()
+		x, y := event.X, event.Y
+		leftBorder := x < frameWidth
+		topBorder := y < frameHeight
+		rightBorder := w-x < frameWidth
+		bottomBorder := h-y < frameHeight
+		leftCorner := x < frameWidth+frameCorner
+		topCorner := y < frameHeight+frameCorner
+		rightCorner := w-x < frameWidth+frameCorner
+		bottomCorner := h-y < frameHeight+frameCorner
+		if !leftBorder && !topBorder && !rightBorder && !bottomBorder {
+			setCursor(types.CrDefault)
+		} else if rightCorner && bottomCorner {
+			setCursor(types.CrSizeSE)
+		} else if leftCorner && bottomCorner {
+			setCursor(types.CrSizeSW)
+		} else if leftCorner && topCorner {
+			setCursor(types.CrSizeNW)
+		} else if topCorner && rightCorner {
+			setCursor(types.CrSizeNE)
+		} else if leftBorder {
+			setCursor(types.CrSizeW)
+		} else if topBorder {
+			setCursor(types.CrSizeN)
+		} else if bottomBorder {
+			setCursor(types.CrSizeS)
+		} else if rightBorder {
+			setCursor(types.CrSizeE)
+		} else {
+			setCursor(types.CrDefault)
+		}
+		return cursor
+	})
+	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
+		fmt.Println("SetOnMousePress:", event.X, event.Y, event.XRoot, event.YRoot)
+		if cursor {
+
+		}
+		return false
+	})
+	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
+		fmt.Println("SetOnMouseRelease:", event.X, event.Y, event.XRoot, event.YRoot)
+		return false
 	})
 }
