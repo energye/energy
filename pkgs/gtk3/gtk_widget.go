@@ -23,6 +23,13 @@ type Widget struct {
 	InitiallyUnowned
 }
 
+func GtkWidget(widget IWidget) *C.GtkWidget {
+	if widget == nil {
+		return (*C.GtkWidget)(nil)
+	}
+	return widget.toWidget()
+}
+
 func wrapWidget(obj *Object) *Widget {
 	if obj == nil {
 		return nil
@@ -261,7 +268,7 @@ func (v *Widget) SetVisible(visible bool) {
 
 // SetParent is a wrapper around gtk_widget_set_parent().
 func (v *Widget) SetParent(parent IWidget) {
-	C.gtk_widget_set_parent(v.native(), parent.toWidget())
+	C.gtk_widget_set_parent(v.native(), GtkWidget(parent))
 }
 
 // GetParent is a wrapper around gtk_widget_get_parent().
@@ -417,7 +424,7 @@ func (v *Widget) SetTooltipText(text string) {
 func (v *Widget) TranslateCoordinates(dest IWidget, srcX, srcY int) (destX, destY int, e error) {
 	var cdest *C.GtkWidget = nil
 	if dest != nil {
-		cdest = dest.toWidget()
+		cdest = GtkWidget(dest)
 	}
 	var cdestX, cdestY C.gint
 	c := C.gtk_widget_translate_coordinates(v.native(), cdest, C.gint(srcX), C.gint(srcY), &cdestX, &cdestY)

@@ -29,7 +29,7 @@ func ToGtkWindow(gtkWindow uintptr) *Window {
 }
 
 func ToWindowFromWidget(window IWidget) *Window {
-	widget := unsafe.Pointer(window.toWidget())
+	widget := unsafe.Pointer(GtkWidget(window))
 	return toWindow((*C.GdkWindow)(widget))
 }
 
@@ -44,7 +44,7 @@ func toWindow(s *C.GdkWindow) *Window {
 
 // SetTitlebar is a wrapper around gtk_window_set_titlebar().
 func (v *Window) SetTitlebar(titlebar IWidget) {
-	C.gtk_window_set_titlebar(v.native(), titlebar.toWidget())
+	C.gtk_window_set_titlebar(v.native(), GtkWidget(titlebar))
 }
 
 // native returns a pointer to the underlying GtkWindow.
@@ -132,7 +132,7 @@ func (v *Window) GetGravity() Gravity {
 func (v *Window) SetAttachedTo(attachWidget IWidget) {
 	var aW *C.GtkWidget = nil
 	if attachWidget != nil {
-		aW = attachWidget.toWidget()
+		aW = GtkWidget(attachWidget)
 	}
 	C.gtk_window_set_attached_to(v.native(), aW)
 }
@@ -189,7 +189,7 @@ func (v *Window) GetDefaultWidget() IWidget {
 // SetDefault is a wrapper around gtk_window_set_default().
 // See GetDefaultWidget() for the getter.
 func (v *Window) SetDefault(widget IWidget) {
-	C.gtk_window_set_default(v.native(), widget.toWidget())
+	C.gtk_window_set_default(v.native(), GtkWidget(widget))
 }
 
 // Present is a wrapper around gtk_window_present().

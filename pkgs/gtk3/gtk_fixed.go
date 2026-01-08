@@ -44,10 +44,10 @@ func NewFixed() (*Fixed, error) {
 
 // Put is a wrapper around gtk_fixed_put().
 func (v *Fixed) Put(w IWidget, x, y int) {
-	C.gtk_fixed_put(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+	C.gtk_fixed_put(v.native(), GtkWidget(w), C.gint(x), C.gint(y))
 }
 
 // Move is a wrapper around gtk_fixed_move().
 func (v *Fixed) Move(w IWidget, x, y int) {
-	C.gtk_fixed_move(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+	C.gtk_fixed_move(v.native(), GtkWidget(w), C.gint(x), C.gint(y))
 }

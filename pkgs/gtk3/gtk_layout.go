@@ -49,12 +49,12 @@ func NewLayout(hadjustment, vadjustment *Adjustment) (*Layout, error) {
 
 // Layout.Put is a wrapper around gtk_layout_put().
 func (v *Layout) Put(w IWidget, x, y int) {
-	C.gtk_layout_put(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+	C.gtk_layout_put(v.native(), GtkWidget(w), C.gint(x), C.gint(y))
 }
 
 // Layout.Move is a wrapper around gtk_layout_move().
 func (v *Layout) Move(w IWidget, x, y int) {
-	C.gtk_layout_move(v.native(), w.toWidget(), C.gint(x), C.gint(y))
+	C.gtk_layout_move(v.native(), GtkWidget(w), C.gint(x), C.gint(y))
 }
 
 // Layout.SetSize is a wrapper around gtk_layout_set_size

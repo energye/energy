@@ -175,7 +175,7 @@ func registerAction(widget IWidget, signal EventSignalName, cb *Callback) *Signa
 	default:
 		cCb = C.GCallback(C.go_on_event_handler)
 	}
-	cWidget := widget.toWidget()
+	cWidget := GtkWidget(widget)
 	sh := registerSignal(cWidget, cCb, signal)
 	RegisterEvent(sh.id, cb)
 	return sh

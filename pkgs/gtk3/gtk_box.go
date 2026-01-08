@@ -66,14 +66,12 @@ func NewBox(orientation Orientation, spacing int) *Box {
 
 // PackStart is a wrapper around gtk_box_pack_start().
 func (v *Box) PackStart(child IWidget, expand, fill bool, padding uint) {
-	C.gtk_box_pack_start(v.native(), child.toWidget(), CBool(expand),
-		CBool(fill), C.guint(padding))
+	C.gtk_box_pack_start(v.native(), GtkWidget(child), CBool(expand), CBool(fill), C.guint(padding))
 }
 
 // PackEnd is a wrapper around gtk_box_pack_end().
 func (v *Box) PackEnd(child IWidget, expand, fill bool, padding uint) {
-	C.gtk_box_pack_end(v.native(), child.toWidget(), CBool(expand),
-		CBool(fill), C.guint(padding))
+	C.gtk_box_pack_end(v.native(), GtkWidget(child), CBool(expand), CBool(fill), C.guint(padding))
 }
 
 // GetHomogeneous is a wrapper around gtk_box_get_homogeneous().
@@ -100,7 +98,7 @@ func (v *Box) SetSpacing(spacing int) {
 
 // ReorderChild is a wrapper around gtk_box_reorder_child().
 func (v *Box) ReorderChild(child IWidget, position int) {
-	C.gtk_box_reorder_child(v.native(), child.toWidget(), C.gint(position))
+	C.gtk_box_reorder_child(v.native(), GtkWidget(child), C.gint(position))
 }
 
 // QueryChildPacking is a wrapper around gtk_box_query_child_packing().
@@ -109,14 +107,14 @@ func (v *Box) QueryChildPacking(child IWidget) (expand, fill bool, padding uint,
 	var cpadding C.guint
 	var cpackType C.GtkPackType
 
-	C.gtk_box_query_child_packing(v.native(), child.toWidget(), &cexpand,
+	C.gtk_box_query_child_packing(v.native(), GtkWidget(child), &cexpand,
 		&cfill, &cpadding, &cpackType)
 	return GoBool(cexpand), GoBool(cfill), uint(cpadding), PackType(cpackType)
 }
 
 // SetChildPacking is a wrapper around gtk_box_set_child_packing().
 func (v *Box) SetChildPacking(child IWidget, expand, fill bool, padding uint, packType PackType) {
-	C.gtk_box_set_child_packing(v.native(), child.toWidget(), CBool(expand),
+	C.gtk_box_set_child_packing(v.native(), GtkWidget(child), CBool(expand),
 		CBool(fill), C.guint(padding), C.GtkPackType(packType))
 }
 

@@ -100,7 +100,7 @@ func (v *Button) GetUseUnderline() bool {
 
 // SetImage is a wrapper around gtk_button_set_image().
 func (v *Button) SetImage(image IWidget) {
-	C.gtk_button_set_image(v.native(), image.toWidget())
+	C.gtk_button_set_image(v.native(), GtkWidget(image))
 }
 
 // GetImage is a wrapper around gtk_button_get_image().

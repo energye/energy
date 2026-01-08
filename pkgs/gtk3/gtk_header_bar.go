@@ -70,17 +70,17 @@ func (v *HeaderBar) GetSubtitle() string {
 
 // SetCustomTitle is a wrapper around gtk_header_bar_set_custom_title().
 func (v *HeaderBar) SetCustomTitle(titleWidget IWidget) {
-	C.gtk_header_bar_set_custom_title(v.native(), titleWidget.toWidget())
+	C.gtk_header_bar_set_custom_title(v.native(), GtkWidget(titleWidget))
 }
 
 // PackStart is a wrapper around gtk_header_bar_pack_start().
 func (v *HeaderBar) PackStart(child IWidget) {
-	C.gtk_header_bar_pack_start(v.native(), child.toWidget())
+	C.gtk_header_bar_pack_start(v.native(), GtkWidget(child))
 }
 
 // PackEnd is a wrapper around gtk_header_bar_pack_end().
 func (v *HeaderBar) PackEnd(child IWidget) {
-	C.gtk_header_bar_pack_end(v.native(), child.toWidget())
+	C.gtk_header_bar_pack_end(v.native(), GtkWidget(child))
 }
 
 // SetShowCloseButton is a wrapper around gtk_header_bar_set_show_close_button().

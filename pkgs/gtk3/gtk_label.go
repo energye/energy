@@ -270,7 +270,7 @@ func (v *Label) GetMnemonicKeyval() uint {
 
 // SetMnemonicWidget is a wrapper around gtk_label_set_mnemonic_widget().
 func (v *Label) SetMnemonicWidget(widget IWidget) {
-	C.gtk_label_set_mnemonic_widget(v.native(), widget.toWidget())
+	C.gtk_label_set_mnemonic_widget(v.native(), GtkWidget(widget))
 }
 
 // GetXAlign is a wrapper around gtk_label_get_xalign().

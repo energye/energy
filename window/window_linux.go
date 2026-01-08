@@ -40,7 +40,8 @@ func (m *TWindow) SetOptions() {
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 	if options.Frameless {
-		m.SetBorderStyleToFormBorderStyle(types.BsNone)
+		//m.SetBorderStyleToFormBorderStyle(types.BsNone)
+		m.gtkWindow.SetDecorated(false)
 	}
 }
 

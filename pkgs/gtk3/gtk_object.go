@@ -47,12 +47,12 @@ func wrapContainer(obj *Object) *Container {
 
 // Add is a wrapper around gtk_container_add().
 func (v *Container) Add(w IWidget) {
-	C.gtk_container_add(v.native(), w.toWidget())
+	C.gtk_container_add(v.native(), GtkWidget(w))
 }
 
 // Remove is a wrapper around gtk_container_remove().
 func (v *Container) Remove(w IWidget) {
-	C.gtk_container_remove(v.native(), w.toWidget())
+	C.gtk_container_remove(v.native(), GtkWidget(w))
 }
 
 // CheckResize is a wrapper around gtk_container_check_resize().
@@ -62,7 +62,7 @@ func (v *Container) CheckResize() {
 
 // SetFocusChild is a wrapper around gtk_container_set_focus_child().
 func (v *Container) SetFocusChild(child IWidget) {
-	C.gtk_container_set_focus_child(v.native(), child.toWidget())
+	C.gtk_container_set_focus_child(v.native(), GtkWidget(child))
 }
 
 // GetFocusVAdjustment is a wrapper around gtk_container_get_focus_vadjustment().
@@ -99,7 +99,7 @@ func (v *Container) SetFocusHAdjustment(adjustment *Adjustment) {
 func (v *Container) ChildNotify(child IWidget, childProperty string) {
 	cstr := C.CString(childProperty)
 	defer C.free(unsafe.Pointer(cstr))
-	C.gtk_container_child_notify(v.native(), child.toWidget(),
+	C.gtk_container_child_notify(v.native(), GtkWidget(child),
 		(*C.gchar)(cstr))
 }
 
