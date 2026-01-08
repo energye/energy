@@ -12,7 +12,7 @@ package application
 
 import (
 	"github.com/energye/lcl/lcl"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 )
 
@@ -44,7 +44,7 @@ func (m *LocalLoadResource) Read(path string) ([]byte, error) {
 		} else {
 			rootPath = m.ResRootDir
 		}
-		return ioutil.ReadFile(filepath.Join(rootPath, path))
+		return os.ReadFile(filepath.Join(rootPath, path))
 	} else {
 		return m.FS.ReadFile(m.ResRootDir + path)
 	}
