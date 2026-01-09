@@ -18,7 +18,6 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
-	"github.com/energye/lcl/types/messages"
 )
 
 type TWindow struct {
@@ -58,34 +57,6 @@ func (m *TWindow) SetOptions() {
 	}
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
-}
-
-func (m *TWindow) Resize(ht string) {
-	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
-		return
-	}
-	if win.ReleaseCapture() {
-		var borderHT uintptr
-		switch ht {
-		case "n-resize":
-			borderHT = messages.HTTOP
-		case "ne-resize":
-			borderHT = messages.HTTOPRIGHT
-		case "e-resize":
-			borderHT = messages.HTRIGHT
-		case "se-resize":
-			borderHT = messages.HTBOTTOMRIGHT
-		case "s-resize":
-			borderHT = messages.HTBOTTOM
-		case "sw-resize":
-			borderHT = messages.HTBOTTOMLEFT
-		case "w-resize":
-			borderHT = messages.HTLEFT
-		case "nw-resize":
-			borderHT = messages.HTTOPLEFT
-		}
-		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
-	}
 }
 
 func (m *TWindow) FullScreen() {

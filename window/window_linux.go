@@ -14,7 +14,6 @@ package window
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/gtk3"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -42,17 +41,6 @@ func (m *TWindow) SetOptions() {
 	if options.Frameless {
 		m.gtkWindow.SetDecorated(false)
 	}
-}
-
-func (m *TWindow) Resize(ht string) {
-	if m.IsFullScreen() || application.GApplication.Options.DisableResize {
-		return
-	}
-
-}
-
-func (m *TWindow) Drag(message ipc.ProcessMessage) {
-
 }
 
 func (m *TWindow) FullScreen() {

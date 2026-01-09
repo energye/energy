@@ -21,11 +21,13 @@ type IWindow interface {
 	SetOptions()
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
-	IsFullScreen() bool
 	Restore()
 	Maximize()
 	IsMinimize() bool
 	IsMaximize() bool
+	FullScreen()
+	ExitFullScreen()
+	IsFullScreen() bool
 }
 
 type TEnergyWindow struct {
