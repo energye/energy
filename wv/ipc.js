@@ -339,11 +339,10 @@
             let isWindows = window.energy.getEnv("os") === "windows";
             let frameless = window.energy.getEnv("frameless") || false;
 
-            function setCursor(cursor, ht) {
+            function setCursor(cursor) {
                 if (idcCursor !== cursor) {
                     document.documentElement.style.cursor = cursor || 'auto';
                     idcCursor = cursor;
-                    // dragMessage(MT_DRAG_BORDER_WMSZ, 'wmsz', ht);
                 }
             }
 
@@ -359,21 +358,21 @@
                 if (!leftBorder && !topBorder && !rightBorder && !bottomBorder && idcCursor !== void 0) {
                     setCursor();
                 } else if (rightCorner && bottomCorner) {
-                    setCursor("se-resize", 17);
+                    setCursor("se-resize");
                 } else if (leftCorner && bottomCorner) {
-                    setCursor("sw-resize", 16);
+                    setCursor("sw-resize");
                 } else if (leftCorner && topCorner) {
-                    setCursor("nw-resize", 13);
+                    setCursor("nw-resize");
                 } else if (topCorner && rightCorner) {
-                    setCursor("ne-resize", 14);
+                    setCursor("ne-resize");
                 } else if (leftBorder) {
-                    setCursor("w-resize", 10);
+                    setCursor("w-resize");
                 } else if (topBorder) {
-                    setCursor("n-resize", 12);
+                    setCursor("n-resize");
                 } else if (bottomBorder) {
-                    setCursor("s-resize", 15);
+                    setCursor("s-resize");
                 } else if (rightBorder) {
-                    setCursor("e-resize", 11);
+                    setCursor("e-resize");
                 }
             }
 

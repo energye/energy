@@ -38,6 +38,7 @@ type TWebview struct {
 	browserId               uint32
 	isClose                 bool
 	isCreated               bool
+	resizeHT                string
 	window                  window.IWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
@@ -249,13 +250,6 @@ func (m *TWebview) navigationStarting() {
 }
 
 func (m *TWebview) initDefaultEvent() {
-	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
-		fmt.Println("OnLoadChange wkLoadEvent:", loadEvent)
-		switch loadEvent {
-		case wvTypes.WEBKIT_LOAD_FINISHED:
-			m.navigationStarting()
-		}
-	})
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
 		fmt.Println("OnContextMenu defaultAction:", defaultAction)
 		tempContextMenu := wv.NewContextMenu(contextMenu)
@@ -272,6 +266,13 @@ func (m *TWebview) initDefaultEvent() {
 		fmt.Println("OnContextMenuCommand menuID:", menuID)
 		if menuID == 10001 {
 
+		}
+	})
+	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
+		fmt.Println("OnLoadChange wkLoadEvent:", loadEvent)
+		switch loadEvent {
+		case wvTypes.WEBKIT_LOAD_FINISHED:
+			m.navigationStarting()
 		}
 	})
 	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
@@ -307,7 +308,7 @@ func (m *TWebview) initDefaultEvent() {
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
 					if m.window != nil {
-						//ht := pMessage.Data.(string)
+						m.resizeHT = pMessage.Data.(string)
 						//m.window.Resize(ht)
 						handle = true
 					}
@@ -391,105 +392,47 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	var (
 		mouseCursor types.TCursor
-		setCursor   = func(value types.TCursor) {
+		setCursor   = func(value types.TCursor, ht string) {
+			m.resizeHT = ht
 			mouseCursor = value
 			lcl.Screen.SetCursor(value)
 		}
 		isDown                 bool
 		mouseDownX, mouseDownY int32
 		windowBr               types.TRect
-		resize                 = func() {
-			if !isDown || mouseCursor == types.CrDefault || m.window == nil {
-				return
-			}
-			currentX := windowBr.Left
-			currentY := windowBr.Top
-			currentW := windowBr.Width()
-			currentH := windowBr.Height()
-
-			pos := lcl.Mouse.CursorPos()
-			mouseMoveX, mouseMoveY := pos.X, pos.Y
-			dx := mouseMoveX - mouseDownX
-			dy := mouseMoveY - mouseDownY
-
-			newX, newY := currentX, currentY
-			newW, newH := currentW, currentH
-
-			switch mouseCursor {
-			case types.CrSizeSE: // 右下角
-				newW = currentW + dx
-				newH = currentH + dy
-			case types.CrSizeSW: // 左下角
-				newW = currentW - dx
-				newH = currentH + dy
-				newX = currentX + dx
-			case types.CrSizeNW: // 左上角
-				newW = currentW - dx
-				newH = currentH - dy
-				newX = currentX + dx
-				newY = currentY + dy
-			case types.CrSizeNE: // 右上角
-				newW = currentW + dx
-				newH = currentH - dy
-				newY = currentY + dy
-			case types.CrSizeW: // 左
-				newW = currentW - dx
-				newX = currentX + dx
-			case types.CrSizeN: // 上
-				newH = currentH - dy
-				newY = currentY + dy
-			case types.CrSizeS: // 底
-				newH = currentH + dy
-			case types.CrSizeE: // 右
-				newW = currentW + dx
-			}
-			m.window.SetBounds(newX, newY, newW, newH)
-		}
 	)
-	_ = resize
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		fmt.Println("SetOnMouseMove:", event.X, event.Y, event.XRoot, event.YRoot, lcl.Screen.Cursor())
-		br := m.windowParent.BoundsRect()
-		w, h := br.Width(), br.Height()
 		if !isDown {
+			br := m.BoundsRect()
+			w, h := br.Width(), br.Height()
 			x, y := event.X, event.Y
-			leftBorder := x < frameWidth
-			topBorder := y < frameHeight
-			rightBorder := w-x < frameWidth
-			bottomBorder := h-y < frameHeight
-			leftCorner := x < frameWidth+frameCorner
-			topCorner := y < frameHeight+frameCorner
-			rightCorner := w-x < frameWidth+frameCorner
-			bottomCorner := h-y < frameHeight+frameCorner
-			if rightCorner && bottomCorner {
-				setCursor(types.CrSizeSE)
-			} else if leftCorner && bottomCorner {
-				setCursor(types.CrSizeSW)
-			} else if leftCorner && topCorner {
-				setCursor(types.CrSizeNW)
-			} else if topCorner && rightCorner {
-				setCursor(types.CrSizeNE)
-			} else if leftBorder {
-				setCursor(types.CrSizeW)
-			} else if topBorder {
-				setCursor(types.CrSizeN)
-			} else if bottomBorder {
-				setCursor(types.CrSizeS)
-			} else if rightBorder {
-				setCursor(types.CrSizeE)
+			if (w-x) < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeSE, "se-resize")
+			} else if x < (frameWidth+frameCorner) && (h-y) < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeSW, "sw-resize")
+			} else if x < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeNW, "nw-resize")
+			} else if (w-x) < (frameWidth+frameCorner) && y < (frameHeight+frameCorner) {
+				setCursor(types.CrSizeNE, "ne-resize")
+			} else if x < frameWidth {
+				setCursor(types.CrSizeW, "w-resize")
+			} else if y < frameHeight {
+				setCursor(types.CrSizeN, "n-resize")
+			} else if (h - y) < frameHeight {
+				setCursor(types.CrSizeS, "s-resize")
+			} else if (w - x) < frameWidth {
+				setCursor(types.CrSizeE, "e-resize")
 			} else {
-				setCursor(types.CrDefault)
+				setCursor(types.CrDefault, "")
 			}
 		} else if isDown && mouseCursor != types.CrDefault {
-			resize()
-			return true
+			return m.resize(isDown, windowBr, mouseDownX, mouseDownY)
 		} else {
-			setCursor(types.CrDefault)
+			setCursor(types.CrDefault, "")
 		}
 		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		fmt.Println("SetOnMousePress:", event.X, event.Y, event.XRoot, event.YRoot)
 		isDown = true
 		if mouseCursor != types.CrDefault && m.window != nil {
 			pos := lcl.Mouse.CursorPos()
@@ -500,8 +443,56 @@ func (m *TWebview) initDefaultEvent() {
 		return false
 	})
 	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
-		fmt.Println("SetOnMouseRelease:", event.X, event.Y, event.XRoot, event.YRoot)
 		isDown = false
 		return false
 	})
+}
+
+func (m *TWebview) resize(isDown bool, windowBr types.TRect, mouseDownX, mouseDownY int32) bool {
+	if !isDown || m.resizeHT == "" || m.window == nil {
+		return false
+	}
+	currentX := windowBr.Left
+	currentY := windowBr.Top
+	currentW := windowBr.Width()
+	currentH := windowBr.Height()
+
+	pos := lcl.Mouse.CursorPos()
+	mouseMoveX, mouseMoveY := pos.X, pos.Y
+	dx := mouseMoveX - mouseDownX
+	dy := mouseMoveY - mouseDownY
+
+	newX, newY := currentX, currentY
+	newW, newH := currentW, currentH
+
+	switch m.resizeHT {
+	case "se-resize": // 右下角
+		newW = currentW + dx
+		newH = currentH + dy
+	case "sw-resize": // 左下角
+		newW = currentW - dx
+		newH = currentH + dy
+		newX = currentX + dx
+	case "nw-resize": // 左上角
+		newW = currentW - dx
+		newH = currentH - dy
+		newX = currentX + dx
+		newY = currentY + dy
+	case "ne-resize": // 右上角
+		newW = currentW + dx
+		newH = currentH - dy
+		newY = currentY + dy
+	case "w-resize": // 左
+		newW = currentW - dx
+		newX = currentX + dx
+	case "n-resize": // 上
+		newH = currentH - dy
+		newY = currentY + dy
+	case "s-resize": // 下
+		newH = currentH + dy
+	case "e-resize": // 右
+		newW = currentW + dx
+	}
+	m.window.SetBounds(newX, newY, newW, newH)
+	return true
 }
