@@ -12,18 +12,20 @@ package window
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 )
 
 type IWindow interface {
 	lcl.IEngForm
-	Resize(ht string)
-	Drag(message ipc.ProcessMessage)
 	SetOptions()
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
+	IsFullScreen() bool
+	Restore()
+	Maximize()
+	IsMinimize() bool
+	IsMaximize() bool
 }
 
 type TEnergyWindow struct {

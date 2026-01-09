@@ -15,12 +15,14 @@ package wv
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/messages"
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
@@ -184,14 +186,14 @@ func (m *TWebview) initDefaultEvent() {
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
 					if m.window != nil {
-						m.window.Drag(pMessage)
+						m.drag(pMessage)
 						handle = true
 					}
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
 					if m.window != nil {
 						ht := pMessage.Data.(string)
-						m.window.Resize(ht)
+						m.resize(ht)
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
@@ -354,4 +356,56 @@ func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
 
 func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
+}
+
+func (m *TWebview) drag(message ipc.ProcessMessage) {
+	if m.window == nil {
+		return
+	}
+	if m.window.IsFullScreen() {
+		return
+	}
+	switch message.Type {
+	case ipc.MT_DRAG_MOVE:
+		if m.window.IsFullScreen() {
+			return
+		}
+		if win.ReleaseCapture() {
+			win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
+		}
+	case ipc.MT_DRAG_DOWN:
+	case ipc.MT_DRAG_UP:
+	case ipc.MT_DRAG_DBLCLICK:
+		m.window.Maximize()
+	}
+}
+func (m *TWebview) resize(ht string) {
+	if m.window == nil {
+		return
+	}
+	if m.window.IsFullScreen() || application.GApplication.Options.DisableResize {
+		return
+	}
+	if win.ReleaseCapture() {
+		var borderHT uintptr
+		switch ht {
+		case "n-resize":
+			borderHT = messages.HTTOP
+		case "ne-resize":
+			borderHT = messages.HTTOPRIGHT
+		case "e-resize":
+			borderHT = messages.HTRIGHT
+		case "se-resize":
+			borderHT = messages.HTBOTTOMRIGHT
+		case "s-resize":
+			borderHT = messages.HTBOTTOM
+		case "sw-resize":
+			borderHT = messages.HTBOTTOMLEFT
+		case "w-resize":
+			borderHT = messages.HTLEFT
+		case "nw-resize":
+			borderHT = messages.HTTOPLEFT
+		}
+		win.PostMessage(m.window.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
+	}
 }

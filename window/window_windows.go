@@ -14,7 +14,6 @@ package window
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
@@ -86,25 +85,6 @@ func (m *TWindow) Resize(ht string) {
 			borderHT = messages.HTTOPLEFT
 		}
 		win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, borderHT, 0)
-	}
-}
-
-func (m *TWindow) Drag(message ipc.ProcessMessage) {
-	if m.IsFullScreen() {
-		return
-	}
-	switch message.Type {
-	case ipc.MT_DRAG_MOVE:
-		if m.IsFullScreen() {
-			return
-		}
-		if win.ReleaseCapture() {
-			win.PostMessage(m.Handle(), messages.WM_NCLBUTTONDOWN, messages.HTCAPTION, 0)
-		}
-	case ipc.MT_DRAG_DOWN:
-	case ipc.MT_DRAG_UP:
-	case ipc.MT_DRAG_DBLCLICK:
-		m.Maximize()
 	}
 }
 
