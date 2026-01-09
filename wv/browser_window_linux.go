@@ -307,8 +307,8 @@ func (m *TWebview) initDefaultEvent() {
 				case ipc.MT_DRAG_RESIZE:
 					// border drag resize
 					if m.window != nil {
-						ht := pMessage.Data.(string)
-						m.window.Resize(ht)
+						//ht := pMessage.Data.(string)
+						//m.window.Resize(ht)
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
@@ -390,61 +390,112 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	var (
-		cursor    bool
-		setCursor = func(value types.TCursor) {
-			if value == types.CrDefault {
-				cursor = false
-			} else {
-				cursor = true
-			}
+		mouseCursor types.TCursor
+		setCursor   = func(value types.TCursor) {
+			mouseCursor = value
 			lcl.Screen.SetCursor(value)
 		}
-		isDown bool
+		isDown                 bool
+		mouseDownX, mouseDownY int32
+		windowBr               types.TRect
+		resize                 = func() {
+			if !isDown || mouseCursor == types.CrDefault || m.window == nil {
+				return
+			}
+			currentX := windowBr.Left
+			currentY := windowBr.Top
+			currentW := windowBr.Width()
+			currentH := windowBr.Height()
+
+			pos := lcl.Mouse.CursorPos()
+			mouseMoveX, mouseMoveY := pos.X, pos.Y
+			dx := mouseMoveX - mouseDownX
+			dy := mouseMoveY - mouseDownY
+
+			newX, newY := currentX, currentY
+			newW, newH := currentW, currentH
+
+			switch mouseCursor {
+			case types.CrSizeSE: // 右下角
+				newW = currentW + dx
+				newH = currentH + dy
+			case types.CrSizeSW: // 左下角
+				newW = currentW - dx
+				newH = currentH + dy
+				newX = currentX + dx
+			case types.CrSizeNW: // 左上角
+				newW = currentW - dx
+				newH = currentH - dy
+				newX = currentX + dx
+				newY = currentY + dy
+			case types.CrSizeNE: // 右上角
+				newW = currentW + dx
+				newH = currentH - dy
+				newY = currentY + dy
+			case types.CrSizeW: // 左
+				newW = currentW - dx
+				newX = currentX + dx
+			case types.CrSizeN: // 上
+				newH = currentH - dy
+				newY = currentY + dy
+			case types.CrSizeS: // 底
+				newH = currentH + dy
+			case types.CrSizeE: // 右
+				newW = currentW + dx
+			}
+			m.window.SetBounds(newX, newY, newW, newH)
+		}
 	)
+	_ = resize
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMouseMove:", event.X, event.Y, event.XRoot, event.YRoot, lcl.Screen.Cursor())
 		br := m.windowParent.BoundsRect()
 		w, h := br.Width(), br.Height()
-		x, y := event.X, event.Y
-		leftBorder := x < frameWidth
-		topBorder := y < frameHeight
-		rightBorder := w-x < frameWidth
-		bottomBorder := h-y < frameHeight
-		leftCorner := x < frameWidth+frameCorner
-		topCorner := y < frameHeight+frameCorner
-		rightCorner := w-x < frameWidth+frameCorner
-		bottomCorner := h-y < frameHeight+frameCorner
-		if !leftBorder && !topBorder && !rightBorder && !bottomBorder {
-			setCursor(types.CrDefault)
-		} else if rightCorner && bottomCorner {
-			setCursor(types.CrSizeSE)
-		} else if leftCorner && bottomCorner {
-			setCursor(types.CrSizeSW)
-		} else if leftCorner && topCorner {
-			setCursor(types.CrSizeNW)
-		} else if topCorner && rightCorner {
-			setCursor(types.CrSizeNE)
-		} else if leftBorder {
-			setCursor(types.CrSizeW)
-		} else if topBorder {
-			setCursor(types.CrSizeN)
-		} else if bottomBorder {
-			setCursor(types.CrSizeS)
-		} else if rightBorder {
-			setCursor(types.CrSizeE)
+		if !isDown {
+			x, y := event.X, event.Y
+			leftBorder := x < frameWidth
+			topBorder := y < frameHeight
+			rightBorder := w-x < frameWidth
+			bottomBorder := h-y < frameHeight
+			leftCorner := x < frameWidth+frameCorner
+			topCorner := y < frameHeight+frameCorner
+			rightCorner := w-x < frameWidth+frameCorner
+			bottomCorner := h-y < frameHeight+frameCorner
+			if rightCorner && bottomCorner {
+				setCursor(types.CrSizeSE)
+			} else if leftCorner && bottomCorner {
+				setCursor(types.CrSizeSW)
+			} else if leftCorner && topCorner {
+				setCursor(types.CrSizeNW)
+			} else if topCorner && rightCorner {
+				setCursor(types.CrSizeNE)
+			} else if leftBorder {
+				setCursor(types.CrSizeW)
+			} else if topBorder {
+				setCursor(types.CrSizeN)
+			} else if bottomBorder {
+				setCursor(types.CrSizeS)
+			} else if rightBorder {
+				setCursor(types.CrSizeE)
+			} else {
+				setCursor(types.CrDefault)
+			}
+		} else if isDown && mouseCursor != types.CrDefault {
+			resize()
+			return true
 		} else {
 			setCursor(types.CrDefault)
-		}
-		if isDown {
-
 		}
 		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMousePress:", event.X, event.Y, event.XRoot, event.YRoot)
 		isDown = true
-		if cursor {
-
+		if mouseCursor != types.CrDefault && m.window != nil {
+			pos := lcl.Mouse.CursorPos()
+			mouseDownX, mouseDownY = pos.X, pos.Y
+			windowBr = m.window.BoundsRect()
+			return true
 		}
 		return false
 	})
