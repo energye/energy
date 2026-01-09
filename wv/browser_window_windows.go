@@ -359,10 +359,7 @@ func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {
-	if m.window == nil {
-		return
-	}
-	if m.window.IsFullScreen() {
+	if m.window == nil || m.window.IsFullScreen() {
 		return
 	}
 	switch message.Type {

@@ -54,14 +54,12 @@ func (m *TWindow) FullScreen() {
 		m.windowsState = types.WsFullScreen
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
-		//monitorRect := m.Monitor().BoundsRect()
+		monitorRect := m.Monitor().WorkareaRect()
 		if !application.GApplication.Options.Frameless {
 			// save current window style, use ExitFullScreen
-			//m.oldWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
-			//m.borderFrameless()
 			m.SetWindowState(types.WsFullScreen)
 		}
-		//win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
+		m.SetBounds(monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height())
 	})
 }
 
@@ -69,7 +67,7 @@ func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
 			if !application.GApplication.Options.Frameless {
-				//win.SetWindowLong(m.Handle(), win.GWL_STYLE, m.oldWindowStyle)
+				m.SetBoundsRect(m.previousWindowPlacement)
 			}
 			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
