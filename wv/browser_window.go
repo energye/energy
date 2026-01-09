@@ -45,6 +45,8 @@ type IWebview interface {
 	//SetAlign(v types.TAlign)
 	SetWidth(v int32)
 	SetHeight(v int32)
+	SetBoundsRect(value types.TRect)
+	SetBounds(left int32, top int32, width int32, height int32)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {

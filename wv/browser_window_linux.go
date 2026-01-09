@@ -124,6 +124,15 @@ func (m *TWebview) SetHeight(v int32) {
 	m.windowParent.SetHeight(v)
 }
 
+func (m *TWebview) SetBoundsRect(value types.TRect) {
+	m.SetBounds(value.Left, value.Top, value.Width(), value.Height())
+}
+
+func (m *TWebview) SetBounds(left int32, top int32, width int32, height int32) {
+	m.ICustomPanel.SetBounds(left, top, width+1, height+1) // Gtk3 box width + 1 height + 1
+	m.windowParent.SetBounds(0, 0, width, height)
+}
+
 func (m *TWebview) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
@@ -390,10 +399,11 @@ func (m *TWebview) initDefaultEvent() {
 			}
 			lcl.Screen.SetCursor(value)
 		}
+		isDown bool
 	)
 	m.browser.SetOnMouseMove(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMouseMove:", event.X, event.Y, event.XRoot, event.YRoot, lcl.Screen.Cursor())
-		br := m.window.BoundsRect()
+		br := m.windowParent.BoundsRect()
 		w, h := br.Width(), br.Height()
 		x, y := event.X, event.Y
 		leftBorder := x < frameWidth
@@ -425,10 +435,14 @@ func (m *TWebview) initDefaultEvent() {
 		} else {
 			setCursor(types.CrDefault)
 		}
+		if isDown {
+
+		}
 		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMousePress:", event.X, event.Y, event.XRoot, event.YRoot)
+		isDown = true
 		if cursor {
 
 		}
@@ -436,6 +450,7 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnMouseRelease(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMouseRelease:", event.X, event.Y, event.XRoot, event.YRoot)
+		isDown = false
 		return false
 	})
 }
