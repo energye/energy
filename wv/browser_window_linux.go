@@ -425,7 +425,7 @@ func (m *TWebview) initDefaultEvent() {
 		} else {
 			setCursor(types.CrDefault)
 		}
-		return cursor
+		return false
 	})
 	m.browser.SetOnMousePress(func(sender lcl.IObject, event wv.TWkButtonEvent) bool {
 		fmt.Println("SetOnMousePress:", event.X, event.Y, event.XRoot, event.YRoot)

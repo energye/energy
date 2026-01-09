@@ -316,8 +316,8 @@
                 if (v !== this.#cssDragValue) {
                     return false;
                 }
-                // return e.buttons === 1;
-                return e.detail === 1 || e.detail === 2;
+                return e.buttons === 1;
+                // return e.detail === 1 || e.detail === 2;
             }
             return false;
         }
