@@ -22,6 +22,7 @@ type IWindow interface {
 	SetBrowserId(windowId uint32)
 	BrowserId() uint32
 	Restore()
+	Minimize()
 	Maximize()
 	IsMinimize() bool
 	IsMaximize() bool
@@ -45,6 +46,12 @@ func (m *TWindow) SetBrowserId(windowId uint32) {
 
 func (m *TWindow) BrowserId() uint32 {
 	return m.windowId
+}
+
+func (m *TWindow) Minimize() {
+	lcl.RunOnMainThreadAsync(func(id uint32) {
+		m.SetWindowState(types.WsMinimized)
+	})
 }
 
 func (m *TWindow) Maximize() {

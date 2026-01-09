@@ -287,7 +287,6 @@ func (m *TWebview) initDefaultEvent() {
 		var handle bool
 		message := jsValue.StringValue()
 		if m.messageReceivedDelegate != nil {
-			fmt.Println("message:", message)
 			// ipc message
 			var pMessage ipc.ProcessMessage
 			err := json.Unmarshal([]byte(message), &pMessage)
