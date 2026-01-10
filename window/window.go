@@ -29,6 +29,10 @@ type IWindow interface {
 	FullScreen()
 	ExitFullScreen()
 	IsFullScreen() bool
+	SetOnWindowCreate(fn lcl.TNotifyEvent)
+	SetOnWindowShow(fn lcl.TNotifyEvent)
+	SetOnWindowClose(fn lcl.TCloseEvent)
+	SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
 }
 
 type TEnergyWindow struct {
@@ -38,6 +42,26 @@ type TEnergyWindow struct {
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
 	previousWindowPlacement types.TRect
+	onWindowCreate          []lcl.TNotifyEvent
+	onWindowShow            []lcl.TNotifyEvent
+	onWindowClose           []lcl.TCloseEvent
+	onWindowCloseQuery      []lcl.TCloseQueryEvent
+}
+
+func (m *TEnergyWindow) SetOnWindowCreate(fn lcl.TNotifyEvent) {
+	m.onWindowCreate = append(m.onWindowCreate, fn)
+}
+
+func (m *TEnergyWindow) SetOnWindowShow(fn lcl.TNotifyEvent) {
+	m.onWindowShow = append(m.onWindowShow, fn)
+}
+
+func (m *TEnergyWindow) SetOnWindowClose(fn lcl.TCloseEvent) {
+	m.onWindowClose = append(m.onWindowClose, fn)
+}
+
+func (m *TEnergyWindow) SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent) {
+	m.onWindowCloseQuery = append(m.onWindowCloseQuery, fn)
 }
 
 func (m *TWindow) SetBrowserId(windowId uint32) {
@@ -90,4 +114,28 @@ func (m *TWindow) IsMinimize() bool {
 
 func (m *TWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
+}
+
+func (m *TWindow) OnFormCreate(sender lcl.IObject) {
+	for _, fn := range m.onWindowCreate {
+		fn(sender)
+	}
+}
+
+func (m *TWindow) OnShow(sender lcl.IObject) {
+	for _, fn := range m.onWindowShow {
+		fn(sender)
+	}
+}
+
+func (m *TWindow) OnCloseQuery(sender lcl.IObject, canClose *bool) {
+	for _, fn := range m.onWindowCloseQuery {
+		fn(sender, canClose)
+	}
+}
+
+func (m *TWindow) OnClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+	for _, fn := range m.onWindowClose {
+		fn(sender, closeAction)
+	}
 }

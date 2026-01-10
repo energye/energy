@@ -39,14 +39,12 @@ type TWebview struct {
 	lcl.IPanel
 	browserId               uint32
 	isClose                 bool
+	created                 bool
 	window                  window.IWindow
 	windowParent            wv.IWVWindowParent
 	browser                 wv.IWVBrowser
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
-	onAfterCreated          lcl.TNotifyEvent
-	onWindowClose           lcl.TCloseEvent
-	onWindowShow            lcl.TNotifyEvent
-	onWindowDestroy         lcl.TNotifyEvent
+	onBrowserAfterCreated   lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
 	onResourceRequest       TOnResourceRequestEvent
 	onContextMenuRequested  wv.TOnContextMenuRequestedEvent
@@ -76,6 +74,9 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	return m
 }
 
+// SetWindow 设置webview的窗口实例，并初始化相关回调函数
+//
+//	window - 窗口接口实例，用于承载webview内容
 func (m *TWebview) SetWindow(window window.IWindow) {
 	m.window = window
 	if m.window != nil {
@@ -84,6 +85,10 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		}
 		m.window.SetOptions()
 	}
+	window.SetOnWindowCreate(m.onWindowCreate)
+	window.SetOnWindowShow(m.onWindowShow)
+	window.SetOnWindowClose(m.onWindowClose)
+	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -143,8 +148,8 @@ func (m *TWebview) initDefaultEvent() {
 		settings := m.browser.CoreWebView2Settings()
 		// Global control of devtools account open and clos
 		settings.SetAreDevToolsEnabled(!gApplication.Options.DisableDevTools)
-		if m.onAfterCreated != nil {
-			m.onAfterCreated(sender)
+		if m.onBrowserAfterCreated != nil {
+			m.onBrowserAfterCreated(sender)
 		}
 		m.windowParent.UpdateSize()
 	})
@@ -299,6 +304,10 @@ func (m *TWebview) initDefaultEvent() {
 
 // 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
+	if m.created {
+		return
+	}
+	m.created = true
 	if gApplication.InitializationError() {
 		// Log ???
 	} else {
@@ -334,20 +343,28 @@ func (m *TWebview) LoadURL(url string) {
 	m.browser.Navigate(url)
 }
 
-func (m *TWebview) SetOnAfterCreated(fn lcl.TNotifyEvent) {
-	m.onAfterCreated = fn
+func (m *TWebview) Browser() wv.IWVBrowser {
+	return m.browser
 }
 
-func (m *TWebview) SetOnWindowClose(fn lcl.TCloseEvent) {
-	m.onWindowClose = fn
+func (m *TWebview) onWindowCreate(sender lcl.IObject) {
 }
 
-func (m *TWebview) SetOnWindowShow(fn lcl.TNotifyEvent) {
-	m.onWindowShow = fn
+func (m *TWebview) onWindowShow(sender lcl.IObject) {
+	m.CreateBrowser()
 }
 
-func (m *TWebview) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
-	m.onWindowDestroy = fn
+func (m *TWebview) onWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
+}
+
+func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+	if m.browser != nil {
+		m.browser.Stop()
+	}
+}
+
+func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
+	m.onBrowserAfterCreated = fn
 }
 
 func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {

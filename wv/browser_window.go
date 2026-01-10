@@ -11,7 +11,6 @@
 package wv
 
 import (
-	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
@@ -38,11 +37,6 @@ type IWebview interface {
 	Close()
 	SetDefaultURL(url string)
 	LoadURL(url string)
-	SetOnAfterCreated(fn lcl.TNotifyEvent)
-	SetOnWindowClose(fn lcl.TCloseEvent)
-	SetOnWindowShow(fn lcl.TNotifyEvent)
-	SetOnWindowDestroy(fn lcl.TNotifyEvent)
-	//SetAlign(v types.TAlign)
 	SetWidth(v int32)
 	SetHeight(v int32)
 	SetBoundsRect(value types.TRect)
@@ -58,7 +52,5 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 	return m
 }
 
-type TOnWindowResize func(ht string)
-type TOnWindowDrag func(message ipc.ProcessMessage)
 type TOnProcessMessageEvent func(message string)
 type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
