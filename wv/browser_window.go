@@ -58,5 +58,14 @@ func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
 	return m
 }
 
+type TLoadChange int32
+
+const (
+	LcStart TLoadChange = iota
+	LcLoading
+	LcFinish
+)
+
 type TOnProcessMessageEvent func(message string)
 type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
+type TOnLoadChangeEvent func(url, title string, load TLoadChange)
