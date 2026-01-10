@@ -255,6 +255,10 @@ func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
 }
 
+func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
+	m.onLoadChange = fn
+}
+
 func (m *TWebview) navigationStarting() {
 	jsCode := &bytes.Buffer{}
 	var envJS = func(json string) {

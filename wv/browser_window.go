@@ -47,6 +47,7 @@ type IWebview interface {
 	SetOnBrowserAfterCreated(fn lcl.TNotifyEvent)
 	SetOnResourceRequest(fn TOnResourceRequestEvent)
 	SetOnProcessMessage(fn TOnProcessMessageEvent)
+	SetOnLoadChange(fn TOnLoadChangeEvent)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
