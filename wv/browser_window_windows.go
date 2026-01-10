@@ -47,8 +47,7 @@ type TWebview struct {
 	onBrowserAfterCreated   lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
 	onResourceRequest       TOnResourceRequestEvent
-	onContextMenuRequested  wv.TOnContextMenuRequestedEvent
-	onContentLoading        wv.TOnContentLoadingEvent
+	onLoadChange            TOnLoadChangeEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -153,9 +152,31 @@ func (m *TWebview) initDefaultEvent() {
 		m.windowParent.UpdateSize()
 	})
 	m.browser.SetOnContentLoading(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
+		if m.onLoadChange != nil {
+			webview = wv.NewCoreWebView2(webview)
+			defer webview.Free()
+			uri := webview.Source()
+			title := webview.DocumentTitle()
+			m.onLoadChange(uri, title, LcLoading)
+		}
+	})
+	m.browser.SetOnNavigationCompleted(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationCompletedEventArgs) {
+		if m.onLoadChange != nil {
+			webview = wv.NewCoreWebView2(webview)
+			defer webview.Free()
+			uri := webview.Source()
+			title := webview.DocumentTitle()
+			m.onLoadChange(uri, title, LcFinish)
+		}
+	})
+	m.browser.SetOnNavigationStarting(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
 		m.navigationStarting()
-		if m.onContentLoading != nil {
-			m.onContentLoading(sender, webview, args)
+		if m.onLoadChange != nil {
+			webview = wv.NewCoreWebView2(webview)
+			defer webview.Free()
+			uri := webview.Source()
+			title := webview.DocumentTitle()
+			m.onLoadChange(uri, title, LcStart)
 		}
 	})
 	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
@@ -165,8 +186,6 @@ func (m *TWebview) initDefaultEvent() {
 			menuItemCollection.RemoveAllMenuItems()
 			menuItemCollection.Free()
 			args.Free()
-		} else if m.onContextMenuRequested != nil {
-			m.onContextMenuRequested(sender, webview, args)
 		}
 	})
 	// process message received
@@ -389,6 +408,10 @@ func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
 // 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
 func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
+}
+
+func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
+	m.onLoadChange = fn
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {
