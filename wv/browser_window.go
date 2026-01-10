@@ -44,6 +44,9 @@ type IWebview interface {
 	SetHeight(v int32)
 	SetBoundsRect(value types.TRect)
 	SetBounds(left int32, top int32, width int32, height int32)
+	SetOnBrowserAfterCreated(fn lcl.TNotifyEvent)
+	SetOnResourceRequest(fn TOnResourceRequestEvent)
+	SetOnProcessMessage(fn TOnProcessMessageEvent)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
