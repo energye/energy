@@ -304,7 +304,7 @@ func (m *TWebview) initDefaultEvent() {
 // CreateBrowser 创建浏览器实例
 // 该方法负责初始化webview浏览器，确保只创建一次，并在应用程序初始化完成后创建浏览器窗口
 func (m *TWebview) CreateBrowser() {
-	if m.created {
+	if m.created || m.window == nil {
 		return
 	}
 	m.created = true
@@ -318,7 +318,6 @@ func (m *TWebview) CreateBrowser() {
 }
 
 // BrowserId 返回TWebview实例关联的浏览器ID
-// 该方法用于获取当前webview组件所对应的浏览器标识符
 func (m *TWebview) BrowserId() uint32 {
 	return m.browserId
 }
@@ -332,7 +331,6 @@ func (m *TWebview) SendMessage(payload []byte) {
 }
 
 // Close 关闭webview窗口并清理相关资源
-// 该方法会设置关闭标志，释放窗口父级资源，并取消进程消息注册
 func (m *TWebview) Close() {
 	if m.isClose {
 		return
@@ -353,7 +351,6 @@ func (m *TWebview) LoadURL(url string) {
 }
 
 // Browser 返回TWebview实例关联的浏览器对象
-// 该方法提供对底层IWVBrowser接口的访问
 func (m *TWebview) Browser() wv.IWVBrowser {
 	return m.browser
 }

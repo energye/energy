@@ -44,16 +44,9 @@ type TWebview struct {
 	browser                 wv.IWkWebview
 	settings                wv.IWkSettings
 	messageReceivedDelegate ipc.IMessageReceivedDelegate
-	onAfterCreated          lcl.TNotifyEvent
-	onWindowClose           lcl.TCloseEvent
-	onWindowShow            lcl.TNotifyEvent
-	onWindowDestroy         lcl.TNotifyEvent
+	onBrowserAfterCreated   lcl.TNotifyEvent
 	onProcessMessage        TOnProcessMessageEvent
 	onResourceRequest       TOnResourceRequestEvent
-	//onContextMenuRequested        wv.TOnContextMenuRequestedEvent
-	//onContentLoading              wv.TOnContentLoadingEvent
-	//onWebResourceRequested        TOnWebResourceRequestedEvent
-	//onWebResourceResponseReceived TOnWebResourceResponseReceivedEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -142,6 +135,9 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		}
 		m.window.SetOptions()
 	}
+	window.SetOnWindowShow(m.onWindowShow)
+	window.SetOnWindowClose(m.onWindowClose)
+	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置
@@ -161,7 +157,7 @@ func (m *TWebview) SetParent(window lcl.IWinControl) {
 
 // 在窗口显示时调用
 func (m *TWebview) CreateBrowser() {
-	if m.isCreated {
+	if m.isCreated || m.window == nil {
 		return
 	}
 	m.isCreated = true
@@ -174,6 +170,7 @@ func (m *TWebview) BrowserId() uint32 {
 	return m.browserId
 }
 
+// SendMessage 发送消息到webview浏览器
 func (m *TWebview) SendMessage(payload []byte) {
 	if m.isClose {
 		return
@@ -187,40 +184,69 @@ func (m *TWebview) evalExecuteEventJS(js []byte) string {
 	return evalJS
 }
 
+// Close 关闭webview窗口并清理相关资源
 func (m *TWebview) Close() {
+	if m.isClose {
+		return
+	}
 	m.isClose = true
 	m.windowParent.Free()
 	ipc.UnRegisterProcessMessage(m)
 }
 
+// SetDefaultURL 设置WebView的默认URL
 func (m *TWebview) SetDefaultURL(url string) {
 	m.browser.LoadURL(url)
 }
 
+// LoadURL 加载指定的URL地址到webview中
 func (m *TWebview) LoadURL(url string) {
 	m.browser.LoadURL(url)
 }
 
-func (m *TWebview) SetOnAfterCreated(fn lcl.TNotifyEvent) {
-	m.onAfterCreated = fn
+// Browser 返回TWebview实例关联的浏览器对象
+func (m *TWebview) Browser() wv.IWkWebview {
+	return m.browser
 }
 
-func (m *TWebview) SetOnWindowClose(fn lcl.TCloseEvent) {
-	m.onWindowClose = fn
+// onWindowShow 是窗口显示事件的回调函数
+// 当窗口显示时触发此函数，用于创建浏览器实例
+func (m *TWebview) onWindowShow(sender lcl.IObject) {
+	m.CreateBrowser()
 }
 
-func (m *TWebview) SetOnWindowShow(fn lcl.TNotifyEvent) {
-	m.onWindowShow = fn
+// onWindowClose 处理窗口关闭事件的回调函数
+// 当窗口接收到关闭信号时，该函数会停止浏览器实例以确保资源被正确释放
+func (m *TWebview) onWindowClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 }
 
-func (m *TWebview) SetOnWindowDestroy(fn lcl.TNotifyEvent) {
-	m.onWindowDestroy = fn
+// onWindowCloseQuery 处理窗口关闭查询事件
+// 当用户尝试关闭窗口时触发此回调函数
+func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
+	*canClose = m.window.IsClose()
+	if !m.window.IsClose() {
+		m.window.SetClose(true)
+		m.browser.Stop()
+		m.browser.TerminateWebProcess()
+	}
+	//if *canClose && m.isMainWindow {
+	//	os.Exit(0)
+	//}
 }
 
+// SetOnBrowserAfterCreated 设置浏览器创建后的回调事件处理函数
+func (m *TWebview) SetOnBrowserAfterCreated(fn lcl.TNotifyEvent) {
+	m.onBrowserAfterCreated = fn
+}
+
+// SetOnResourceRequest 设置资源请求事件处理函数
+// 该方法用于注册一个回调函数，当webview发起资源请求时会触发此回调
 func (m *TWebview) SetOnResourceRequest(fn TOnResourceRequestEvent) {
 	m.onResourceRequest = fn
 }
 
+// SetOnProcessMessage 设置处理进程消息的回调函数
+// 该方法用于注册一个回调函数，当接收到进程消息时会触发该回调
 func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 	m.onProcessMessage = fn
 }
@@ -279,7 +305,7 @@ func (m *TWebview) initDefaultEvent() {
 		fmt.Println("OnWebProcessTerminated reason:", reason)
 		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
 			lcl.RunOnMainThreadAsync(func(id uint32) {
-				m.Close()
+				m.window.Close()
 			})
 		}
 	})

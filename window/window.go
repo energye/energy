@@ -29,6 +29,8 @@ type IWindow interface {
 	FullScreen()
 	ExitFullScreen()
 	IsFullScreen() bool
+	SetClose(v bool)
+	IsClose() bool
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
@@ -37,6 +39,7 @@ type IWindow interface {
 type TEnergyWindow struct {
 	lcl.TEngForm
 	windowId                uint32 // 窗口 ID 对应第一个浏览器 ID
+	isClose                 bool
 	oldWndPrc               uintptr
 	oldWindowStyle          uintptr
 	windowsState            types.TWindowState
@@ -45,6 +48,14 @@ type TEnergyWindow struct {
 	onWindowShow            []lcl.TNotifyEvent
 	onWindowClose           []lcl.TCloseEvent
 	onWindowCloseQuery      []lcl.TCloseQueryEvent
+}
+
+func (m *TEnergyWindow) SetClose(v bool) {
+	m.isClose = v
+}
+
+func (m *TEnergyWindow) IsClose() bool {
+	return m.isClose
 }
 
 func (m *TEnergyWindow) SetOnWindowCreate(fn lcl.TNotifyEvent) {
