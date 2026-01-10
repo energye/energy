@@ -135,6 +135,15 @@ func (m *TWebview) navigationStarting() {
 //	2. Specify the event function in the current window and retain the default event behavior
 func (m *TWebview) initDefaultEvent() {
 	streams := make(map[string]lcl.IMemoryStream)
+	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
+		if gApplication.Options.DisableContextMenu {
+			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
+			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
+			menuItemCollection.RemoveAllMenuItems()
+			menuItemCollection.Free()
+			args.Free()
+		}
+	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
 		if gApplication.LocalLoad != nil {
@@ -177,15 +186,6 @@ func (m *TWebview) initDefaultEvent() {
 			uri := webview.Source()
 			title := webview.DocumentTitle()
 			m.onLoadChange(uri, title, LcStart)
-		}
-	})
-	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
-		if gApplication.Options.DisableContextMenu {
-			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
-			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
-			menuItemCollection.RemoveAllMenuItems()
-			menuItemCollection.Free()
-			args.Free()
 		}
 	})
 	// process message received
