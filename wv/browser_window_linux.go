@@ -39,6 +39,7 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	contextMenu             TContextMenu
 	window                  window.IWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
@@ -285,6 +286,12 @@ func (m *TWebview) navigationStarting() {
 
 func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
+		if gApplication.Options.DisableContextMenu {
+			tempContextMenu := wv.NewContextMenu(contextMenu)
+			defer tempContextMenu.Free()
+			tempContextMenu.RemoveAll()
+			return true
+		}
 		fmt.Println("OnContextMenu defaultAction:", defaultAction)
 		tempContextMenu := wv.NewContextMenu(contextMenu)
 		defer tempContextMenu.Free()
@@ -301,6 +308,29 @@ func (m *TWebview) initDefaultEvent() {
 		if menuID == 10001 {
 
 		}
+	})
+	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
+		fmt.Println("OnDecidePolicy type_:", type_)
+		tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
+		defer tempDecision.Free()
+		if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION || type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION {
+			tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
+			defer tempNavigationAction.Free()
+			tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
+			defer tempURIRequest.Free()
+			newWindowURL := tempURIRequest.URI()
+			fmt.Println("NewWindow URL:", newWindowURL)
+			// new window
+			if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION {
+
+			}
+		} else {
+			tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
+			defer tempResponsePolicyDecision.Free()
+			tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
+			defer tempURIRequest.Free()
+		}
+		return true
 	})
 	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
 		switch loadEvent {
@@ -321,7 +351,6 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
-		fmt.Println("OnWebProcessTerminated reason:", reason)
 		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
 			lcl.RunOnMainThreadAsync(func(id uint32) {
 				m.window.Close()
@@ -365,29 +394,6 @@ func (m *TWebview) initDefaultEvent() {
 		if !handle && m.onProcessMessage != nil {
 			m.onProcessMessage(message)
 		}
-	})
-	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
-		fmt.Println("OnDecidePolicy type_:", type_)
-		tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
-		defer tempDecision.Free()
-		if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION || type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION {
-			tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
-			defer tempNavigationAction.Free()
-			tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
-			defer tempURIRequest.Free()
-			newWindowURL := tempURIRequest.URI()
-			fmt.Println("NewWindow URL:", newWindowURL)
-			// new window
-			if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION {
-
-			}
-		} else {
-			tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
-			defer tempResponsePolicyDecision.Free()
-			tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
-			defer tempURIRequest.Free()
-		}
-		return true
 	})
 	m.browser.SetOnURISchemeRequest(func(sender lcl.IObject, wkURISchemeRequest wvTypes.WebKitURISchemeRequest) {
 		uriSchemeRequest := wv.NewURISchemeRequest(wkURISchemeRequest)

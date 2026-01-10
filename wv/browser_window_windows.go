@@ -143,6 +143,7 @@ func (m *TWebview) initDefaultEvent() {
 			menuItemCollection.RemoveAllMenuItems()
 			menuItemCollection.Free()
 			args.Free()
+			return true
 		}
 	})
 	// 代理事件, 自定义菜单项选择事件回调
