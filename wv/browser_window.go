@@ -28,6 +28,9 @@ func getNextBrowserID() uint32 {
 
 type IWebview interface {
 	lcl.ICustomPanel
+	// SetWindow 设置webview的窗口实例，并初始化相关回调函数
+	//
+	//	window - 窗口接口实例，用于承载webview内容
 	SetWindow(window window.IWindow)
 	SetBrowserOptions()
 	SetParent(window lcl.IWinControl)

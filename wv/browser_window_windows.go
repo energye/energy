@@ -85,7 +85,6 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 		}
 		m.window.SetOptions()
 	}
-	window.SetOnWindowCreate(m.onWindowCreate)
 	window.SetOnWindowShow(m.onWindowShow)
 	window.SetOnWindowClose(m.onWindowClose)
 	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)

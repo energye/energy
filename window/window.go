@@ -29,7 +29,6 @@ type IWindow interface {
 	FullScreen()
 	ExitFullScreen()
 	IsFullScreen() bool
-	SetOnWindowCreate(fn lcl.TNotifyEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
@@ -114,12 +113,6 @@ func (m *TWindow) IsMinimize() bool {
 
 func (m *TWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
-}
-
-func (m *TWindow) OnFormCreate(sender lcl.IObject) {
-	for _, fn := range m.onWindowCreate {
-		fn(sender)
-	}
 }
 
 func (m *TWindow) OnShow(sender lcl.IObject) {
