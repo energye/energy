@@ -142,6 +142,7 @@ func (m *TWebview) initDefaultEvent() {
 			menuItemCollection.RemoveAllMenuItems()
 			menuItemCollection.Free()
 			args.Free()
+			return true
 		}
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
