@@ -15,6 +15,7 @@ package wv
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -143,6 +144,12 @@ func (m *TWebview) initDefaultEvent() {
 			menuItemCollection.Free()
 			args.Free()
 		}
+	})
+	// 代理事件, 自定义菜单项选择事件回调
+	m.browser.SetOnCustomItemSelected(func(sender lcl.IObject, menuItem wv.ICoreWebView2ContextMenuItem) {
+		menuItem = wv.NewCoreWebView2ContextMenuItem(menuItem)
+		defer menuItem.Free()
+		fmt.Println("SetOnCustomItemSelected", menuItem.CommandId())
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
