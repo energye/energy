@@ -15,6 +15,7 @@ type TContextMenuKind int32
 const (
 	CmkCommand TContextMenuKind = iota
 	CmkSub
+	CmkSeparator
 )
 
 // TContextMenuItem 右键菜单

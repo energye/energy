@@ -161,6 +161,8 @@ func (m *TWebview) initDefaultEvent() {
 					itemKind = wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND
 				case CmkSub:
 					itemKind = wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SUBMENU
+				case CmkSeparator:
+					itemKind = wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SEPARATOR
 				default:
 					return nil, 0
 				}
