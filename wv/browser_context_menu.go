@@ -10,5 +10,24 @@
 
 package wv
 
-type TContextMenu struct {
+type TContextMenuKind int32
+
+const (
+	CmkCommand TContextMenuKind = iota
+	CmkSub
+)
+
+// TContextMenuItem 右键菜单
+type TContextMenuItem struct {
+	add   func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
+	clear func()
+}
+
+// Add 向上下文菜单中添加一个新的菜单项
+func (m *TContextMenuItem) Add(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+	return m.add(text, kind)
+}
+
+func (m *TContextMenuItem) Clear() {
+	m.clear()
 }

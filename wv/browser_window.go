@@ -48,6 +48,8 @@ type IWebview interface {
 	SetOnResourceRequest(fn TOnResourceRequestEvent)
 	SetOnProcessMessage(fn TOnProcessMessageEvent)
 	SetOnLoadChange(fn TOnLoadChangeEvent)
+	SetOnContextMenu(fn TOnContextMenuEvent)
+	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
@@ -70,3 +72,5 @@ const (
 type TOnProcessMessageEvent func(message string)
 type TOnResourceRequestEvent func(url, path, method string, header map[string]string) (resource string, ok bool)
 type TOnLoadChangeEvent func(url, title string, load TLoadChange)
+type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
+type TOnContextMenuCommandEvent func(commandId int32)

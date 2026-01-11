@@ -15,7 +15,6 @@ package wv
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -49,6 +48,8 @@ type TWebview struct {
 	onProcessMessage        TOnProcessMessageEvent
 	onResourceRequest       TOnResourceRequestEvent
 	onLoadChange            TOnLoadChangeEvent
+	onContextMenu           TOnContextMenuEvent
+	onContextMenuCommand    TOnContextMenuCommandEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -137,20 +138,65 @@ func (m *TWebview) navigationStarting() {
 func (m *TWebview) initDefaultEvent() {
 	streams := make(map[string]lcl.IMemoryStream)
 	m.browser.SetOnContextMenuRequested(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContextMenuRequestedEventArgs) {
+		args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
+		defer args.Free()
+		menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
+		defer menuItemCollection.Free()
+		clear := func(menuItems wv.ICoreWebView2ContextMenuItemCollection) {
+			menuItems.RemoveAllMenuItems()
+		}
 		if gApplication.Options.DisableContextMenu {
-			args = wv.NewCoreWebView2ContextMenuRequestedEventArgs(args)
-			menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
-			menuItemCollection.RemoveAllMenuItems()
-			menuItemCollection.Free()
-			args.Free()
-			return true
+			clear(menuItemCollection)
+			return
+		}
+		if m.onContextMenu != nil {
+			var (
+				environment = m.browser.CoreWebView2Environment()
+				add         func(text string, kind TContextMenuKind, menuItems wv.ICoreWebView2ContextMenuItemCollection) (*TContextMenuItem, int32)
+			)
+			add = func(text string, kind TContextMenuKind, menuItems wv.ICoreWebView2ContextMenuItemCollection) (*TContextMenuItem, int32) {
+				var itemKind wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND
+				switch kind {
+				case CmkCommand:
+					itemKind = wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_COMMAND
+				case CmkSub:
+					itemKind = wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND_SUBMENU
+				default:
+					return nil, 0
+				}
+				var tempMenuItemBaseIntf wv.ICoreWebView2ContextMenuItem
+				if environment.CreateContextMenuItem(text, nil, itemKind, &tempMenuItemBaseIntf) {
+					menuItem := wv.NewCoreWebView2ContextMenuItem(tempMenuItemBaseIntf)
+					menuItem.AddAllBrowserEvents(m.browser)
+					menuItems.AppendValue(menuItem.BaseIntf())
+					menuItemId := menuItem.CommandId()
+					childMenuItems := wv.NewCoreWebView2ContextMenuItemCollection(menuItem.Children())
+					contextMenu := &TContextMenuItem{clear: func() {
+						clear(childMenuItems)
+					}}
+					contextMenu.add = func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+						return add(text, kind, childMenuItems)
+					}
+					return contextMenu, menuItemId
+				}
+				return nil, 0
+			}
+			contextMenu := &TContextMenuItem{clear: func() {
+				clear(menuItemCollection)
+			}}
+			contextMenu.add = func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+				return add(text, kind, menuItemCollection)
+			}
+			m.onContextMenu(contextMenu)
 		}
 	})
 	// 代理事件, 自定义菜单项选择事件回调
 	m.browser.SetOnCustomItemSelected(func(sender lcl.IObject, menuItem wv.ICoreWebView2ContextMenuItem) {
-		menuItem = wv.NewCoreWebView2ContextMenuItem(menuItem)
-		defer menuItem.Free()
-		fmt.Println("SetOnCustomItemSelected", menuItem.CommandId())
+		if m.onContextMenuCommand != nil {
+			menuItem = wv.NewCoreWebView2ContextMenuItem(menuItem)
+			defer menuItem.Free()
+			m.onContextMenuCommand(menuItem.CommandId())
+		}
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
@@ -420,6 +466,14 @@ func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 
 func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
 	m.onLoadChange = fn
+}
+
+func (m *TWebview) SetOnContextMenu(fn TOnContextMenuEvent) {
+	m.onContextMenu = fn
+}
+
+func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
+	m.onContextMenuCommand = fn
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {
