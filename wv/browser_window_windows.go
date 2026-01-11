@@ -175,7 +175,9 @@ func (m *TWebview) initDefaultEvent() {
 						clear(childMenuItems)
 					}}
 					contextMenu.add = func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
-						return add(text, kind, childMenuItems)
+						newMenuItem, newCommandId := add(text, kind, childMenuItems)
+						childMenuItems.Free()
+						return newMenuItem, newCommandId
 					}
 					return contextMenu, menuItemId
 				}
