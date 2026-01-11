@@ -39,7 +39,6 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
-	contextMenu             TContextMenu
 	window                  window.IWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
@@ -49,6 +48,8 @@ type TWebview struct {
 	onProcessMessage        TOnProcessMessageEvent
 	onResourceRequest       TOnResourceRequestEvent
 	onLoadChange            TOnLoadChangeEvent
+	onContextMenu           TOnContextMenuEvent
+	onContextMenuCommand    TOnContextMenuCommandEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -258,6 +259,14 @@ func (m *TWebview) SetOnProcessMessage(fn TOnProcessMessageEvent) {
 
 func (m *TWebview) SetOnLoadChange(fn TOnLoadChangeEvent) {
 	m.onLoadChange = fn
+}
+
+func (m *TWebview) SetOnContextMenu(fn TOnContextMenuEvent) {
+	m.onContextMenu = fn
+}
+
+func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
+	m.onContextMenuCommand = fn
 }
 
 func (m *TWebview) navigationStarting() {
