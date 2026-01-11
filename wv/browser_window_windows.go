@@ -142,11 +142,11 @@ func (m *TWebview) initDefaultEvent() {
 		defer args.Free()
 		menuItemCollection := wv.NewCoreWebView2ContextMenuItemCollection(args.MenuItems())
 		defer menuItemCollection.Free()
-		clear := func(menuItems wv.ICoreWebView2ContextMenuItemCollection) {
+		menuItemClear := func(menuItems wv.ICoreWebView2ContextMenuItemCollection) {
 			menuItems.RemoveAllMenuItems()
 		}
 		if gApplication.Options.DisableContextMenu {
-			clear(menuItemCollection)
+			menuItemClear(menuItemCollection)
 			return
 		}
 		if m.onContextMenu != nil {
@@ -171,24 +171,26 @@ func (m *TWebview) initDefaultEvent() {
 					menuItems.AppendValue(menuItem.BaseIntf())
 					menuItemId := menuItem.CommandId()
 					childMenuItems := wv.NewCoreWebView2ContextMenuItemCollection(menuItem.Children())
-					contextMenu := &TContextMenuItem{clear: func() {
-						clear(childMenuItems)
-					}}
-					contextMenu.add = func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
-						newMenuItem, newCommandId := add(text, kind, childMenuItems)
-						childMenuItems.Free()
-						return newMenuItem, newCommandId
-					}
+					contextMenu := &TContextMenuItem{
+						clear: func() {
+							menuItemClear(childMenuItems)
+						},
+						add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+							newMenuItem, newCommandId := add(text, kind, childMenuItems)
+							childMenuItems.Free()
+							return newMenuItem, newCommandId
+						}}
 					return contextMenu, menuItemId
 				}
 				return nil, 0
 			}
-			contextMenu := &TContextMenuItem{clear: func() {
-				clear(menuItemCollection)
-			}}
-			contextMenu.add = func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
-				return add(text, kind, menuItemCollection)
-			}
+			contextMenu := &TContextMenuItem{
+				clear: func() {
+					menuItemClear(menuItemCollection)
+				},
+				add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+					return add(text, kind, menuItemCollection)
+				}}
 			m.onContextMenu(contextMenu)
 		}
 	})
