@@ -81,15 +81,6 @@ func (m *TWebview) createEnergyJavasScript() {
 	m.ExecuteScript(`window.energy.drag().setup();`)
 }
 
-func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
-	m := lcl.NewPanel(owner)
-	m.SetParentColor(true)
-	m.SetParentDoubleBuffered(true)
-	m.SetBevelInner(types.BvNone)
-	m.SetBevelOuter(types.BvNone)
-	return m
-}
-
 type TLoadChange int32
 
 const (
