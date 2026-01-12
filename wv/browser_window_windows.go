@@ -107,28 +107,8 @@ func (m *TWebview) SetParent(window lcl.IWinControl) {
 	m.windowParent.SetParent(m.IPanel)
 }
 
-func (m *TWebview) navigationStarting() {
-	jsCode := &bytes.Buffer{}
-	var envJS = func(json string) {
-		jsCode.WriteString(`window.energy.setOptionsEnv(`)
-		jsCode.WriteString(json)
-		jsCode.WriteString(`);`)
-	}
-	optionsJSON, err := json.Marshal(gApplication.Options)
-	if err == nil {
-		envJS(string(optionsJSON))
-	}
-	env := make(map[string]any)
-	env["frameWidth"] = frameWidth
-	env["frameHeight"] = frameHeight
-	env["frameCorner"] = frameCorner
-	env["os"] = runtime.GOOS
-	envJSON, err := json.Marshal(env)
-	if err == nil {
-		envJS(string(envJSON))
-	}
-	m.browser.ExecuteScript(jsCode.String(), 0)
-	m.browser.ExecuteScript(`window.energy.drag().setup();`, 0)
+func (m *TWebview) ExecuteScript(javaScript string) {
+	m.browser.ExecuteScript(javaScript, 0)
 }
 
 // Default preset function implementation
@@ -244,6 +224,7 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnNavigationCompleted(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationCompletedEventArgs) {
+		m.navigationStarting()
 		if m.onLoadChange != nil {
 			webview = wv.NewCoreWebView2(webview)
 			defer webview.Free()
@@ -253,7 +234,6 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnNavigationStarting(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationStartingEventArgs) {
-		m.navigationStarting()
 		if m.onLoadChange != nil {
 			webview = wv.NewCoreWebView2(webview)
 			defer webview.Free()

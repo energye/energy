@@ -11,9 +11,12 @@
 package wv
 
 import (
+	"bytes"
+	"encoding/json"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
+	"runtime"
 	"sync/atomic"
 )
 
@@ -40,6 +43,7 @@ type IWebview interface {
 	Close()
 	SetDefaultURL(url string)
 	LoadURL(url string)
+	ExecuteScript(javaScript string)
 	SetWidth(v int32)
 	SetHeight(v int32)
 	SetBoundsRect(value types.TRect)
@@ -51,6 +55,30 @@ type IWebview interface {
 	SetOnContextMenu(fn TOnContextMenuEvent)
 	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
 	SetOnPopupWindow(fn TOnPopupWindowEvent)
+}
+
+func (m *TWebview) navigationStarting() {
+	jsCode := &bytes.Buffer{}
+	var envJS = func(json string) {
+		jsCode.WriteString(`window.energy.setOptionsEnv(`)
+		jsCode.WriteString(json)
+		jsCode.WriteString(`);`)
+	}
+	optionsJSON, err := json.Marshal(gApplication.Options)
+	if err == nil {
+		envJS(string(optionsJSON))
+	}
+	env := make(map[string]any)
+	env["frameWidth"] = frameWidth
+	env["frameHeight"] = frameHeight
+	env["frameCorner"] = frameCorner
+	env["os"] = runtime.GOOS
+	envJSON, err := json.Marshal(env)
+	if err == nil {
+		envJS(string(envJSON))
+	}
+	m.ExecuteScript(jsCode.String())
+	m.ExecuteScript(`window.energy.drag().setup();`)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {

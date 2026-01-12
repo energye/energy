@@ -13,7 +13,6 @@
 package wv
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
@@ -23,7 +22,6 @@ import (
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/linux"
 	wvTypes "github.com/energye/wv/types/linux"
-	"runtime"
 	"unsafe"
 )
 
@@ -269,28 +267,8 @@ func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
 	m.onContextMenuCommand = fn
 }
 
-func (m *TWebview) navigationStarting() {
-	jsCode := &bytes.Buffer{}
-	var envJS = func(json string) {
-		jsCode.WriteString(`window.energy.setOptionsEnv(`)
-		jsCode.WriteString(json)
-		jsCode.WriteString(`);`)
-	}
-	optionsJSON, err := json.Marshal(gApplication.Options)
-	if err == nil {
-		envJS(string(optionsJSON))
-	}
-	env := make(map[string]any)
-	env["frameWidth"] = frameWidth
-	env["frameHeight"] = frameHeight
-	env["frameCorner"] = frameCorner
-	env["os"] = runtime.GOOS
-	envJSON, err := json.Marshal(env)
-	if err == nil {
-		envJS(string(envJSON))
-	}
-	m.browser.ExecuteScript(jsCode.String())
-	m.browser.ExecuteScript(`window.energy.drag().setup();`)
+func (m *TWebview) ExecuteScript(javaScript string) {
+	m.browser.ExecuteScript(javaScript)
 }
 
 func (m *TWebview) initDefaultEvent() {
