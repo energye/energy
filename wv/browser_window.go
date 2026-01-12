@@ -50,6 +50,7 @@ type IWebview interface {
 	SetOnLoadChange(fn TOnLoadChangeEvent)
 	SetOnContextMenu(fn TOnContextMenuEvent)
 	SetOnContextMenuCommand(fn TOnContextMenuCommandEvent)
+	SetOnPopupWindow(fn TOnPopupWindowEvent)
 }
 
 func TWebviewDesigner(owner lcl.IComponent) lcl.IPanel {
@@ -74,3 +75,4 @@ type TOnResourceRequestEvent func(url, path, method string, header map[string]st
 type TOnLoadChangeEvent func(url, title string, load TLoadChange)
 type TOnContextMenuEvent func(contextMenu *TContextMenuItem)
 type TOnContextMenuCommandEvent func(commandId int32)
+type TOnPopupWindowEvent func(targetURL string) bool

@@ -50,6 +50,7 @@ type TWebview struct {
 	onLoadChange            TOnLoadChangeEvent
 	onContextMenu           TOnContextMenuEvent
 	onContextMenuCommand    TOnContextMenuCommandEvent
+	onPopupWindow           TOnPopupWindowEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -200,7 +201,6 @@ func (m *TWebview) initDefaultEvent() {
 			}
 		}
 	})
-	// 代理事件, 自定义菜单项选择事件回调
 	m.browser.SetOnCustomItemSelected(func(sender lcl.IObject, menuItem wv.ICoreWebView2ContextMenuItem) {
 		if m.onContextMenuCommand != nil {
 			menuItem = wv.NewCoreWebView2ContextMenuItem(menuItem)
@@ -211,11 +211,12 @@ func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnNewWindowRequested(func(sender lcl.IObject, webView wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs) {
 		args = wv.NewCoreWebView2NewWindowRequestedEventArgs(args)
 		defer args.Free()
-		// 阻止新窗口
-		args.SetHandled(true)
-		// 创建新的窗口
-		//targetURL := args.URI()
-
+		handle := false
+		if m.onPopupWindow != nil {
+			targetURL := args.URI()
+			handle = m.onPopupWindow(targetURL)
+		}
+		args.SetHandled(handle)
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
@@ -493,6 +494,10 @@ func (m *TWebview) SetOnContextMenu(fn TOnContextMenuEvent) {
 
 func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
 	m.onContextMenuCommand = fn
+}
+
+func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
+	m.onPopupWindow = fn
 }
 
 func (m *TWebview) drag(message ipc.ProcessMessage) {
