@@ -204,6 +204,15 @@ func (m *TWebview) initDefaultEvent() {
 			m.onContextMenuCommand(menuItem.CommandId())
 		}
 	})
+	m.browser.SetOnNewWindowRequested(func(sender lcl.IObject, webView wv.ICoreWebView2, args wv.ICoreWebView2NewWindowRequestedEventArgs) {
+		args = wv.NewCoreWebView2NewWindowRequestedEventArgs(args)
+		defer args.Free()
+		// 阻止新窗口
+		args.SetHandled(true)
+		// 创建新的窗口
+		//targetURL := args.URI()
+
+	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
 		// local load
 		if gApplication.LocalLoad != nil {
