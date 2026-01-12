@@ -57,7 +57,7 @@ type IWebview interface {
 	SetOnPopupWindow(fn TOnPopupWindowEvent)
 }
 
-func (m *TWebview) navigationStarting() {
+func (m *TWebview) createEnergyJavasScript() {
 	jsCode := &bytes.Buffer{}
 	var envJS = func(json string) {
 		jsCode.WriteString(`window.energy.setOptionsEnv(`)

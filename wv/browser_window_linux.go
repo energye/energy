@@ -14,7 +14,6 @@ package wv
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -362,33 +361,34 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
-		fmt.Println("OnDecidePolicy type_:", type_)
-		handle := false
-		tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
-		defer tempDecision.Free()
 		switch type_ {
 		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION:
 			if m.onPopupWindow != nil {
+				tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
+				defer tempDecision.Free()
 				tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
 				defer tempNavigationAction.Free()
 				tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
 				defer tempURIRequest.Free()
 				targetURL := tempURIRequest.URI()
-				handle = m.onPopupWindow(targetURL)
+				handle := m.onPopupWindow(targetURL)
+				return handle
 			}
 		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
+			return true
 		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
 			//tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
 			//defer tempResponsePolicyDecision.Free()
 			//tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
 			//defer tempURIRequest.Free()
+			return true
 		}
-		return !handle
+		return false
 	})
 	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
 		switch loadEvent {
 		case wvTypes.WEBKIT_LOAD_FINISHED:
-			m.navigationStarting()
+			m.createEnergyJavasScript()
 		}
 		if m.onLoadChange != nil {
 			uri := m.browser.GetURI()

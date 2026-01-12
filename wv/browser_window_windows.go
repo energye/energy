@@ -13,7 +13,6 @@
 package wv
 
 import (
-	"bytes"
 	"encoding/json"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
@@ -26,7 +25,6 @@ import (
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
 	"net/url"
-	"runtime"
 )
 
 var (
@@ -224,7 +222,7 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnNavigationCompleted(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2NavigationCompletedEventArgs) {
-		m.navigationStarting()
+		m.createEnergyJavasScript()
 		if m.onLoadChange != nil {
 			webview = wv.NewCoreWebView2(webview)
 			defer webview.Free()
