@@ -405,6 +405,9 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnWebProcessTerminated(func(sender lcl.IObject, reason wvTypes.WebKitWebProcessTerminationReason) {
 		if reason == wvTypes.WEBKIT_WEB_PROCESS_TERMINATED_BY_API { //  call m.webview.TerminateWebProcess()
+			if m.window.IsClose() {
+				return
+			}
 			lcl.RunOnMainThreadAsync(func(id uint32) {
 				m.window.Close()
 			})
