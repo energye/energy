@@ -191,7 +191,7 @@ func (m *TWebview) SendMessage(payload []byte) {
 		return
 	}
 	js := m.evalExecuteEventJS(payload)
-	m.browser.ExecuteScript(js)
+	m.ExecuteScript(js)
 }
 
 func (m *TWebview) evalExecuteEventJS(js []byte) string {
