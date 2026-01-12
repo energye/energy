@@ -15,6 +15,7 @@ package wv
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
@@ -48,6 +49,7 @@ type TWebview struct {
 	onLoadChange            TOnLoadChangeEvent
 	onContextMenu           TOnContextMenuEvent
 	onContextMenuCommand    TOnContextMenuCommandEvent
+	onPopupWindow           TOnPopupWindowEvent
 }
 
 // NewWebview 创建一个新的浏览器窗口实例
@@ -72,22 +74,32 @@ func NewWebview(owner lcl.IComponent) IWebview {
 		customSchemes := &TCustomSchemes{}
 		gApplication.onCustomSchemes(customSchemes)
 		for _, scheme := range customSchemes.schemes {
-			gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
+			if !setRegisterSchemeCache(scheme.Scheme) {
+				gWk2Context.RegisterURIScheme(scheme.Scheme, m.browser.AsSchemeRequestDelegate())
+			}
 		}
 	}
 	if gApplication.LocalLoad != nil {
-		gWk2Context.RegisterURIScheme(gApplication.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
+		if !setRegisterSchemeCache(gApplication.LocalLoad.Scheme) {
+			gWk2Context.RegisterURIScheme(gApplication.LocalLoad.Scheme, m.browser.AsSchemeRequestDelegate())
+		}
 	}
 	m.browser.RegisterScriptCode(string(ipcJS))
-	m.browser.RegisterScriptMessageHandler("processMessage")
+	m.browser.RegisterScriptMessageHandler(energyProcessMessage)
 
 	m.settings = wv.NewSettings()
 	m.settings.SetEnableDeveloperExtras(true)
-	m.settings.SetUserAgentWithApplicationDetails("energy", "3.0")
+	m.settings.SetUserAgentWithApplicationDetails(energyApplicationName, energyApplicationVersion)
 	m.settings.SetEnablePageCache(true)
 	// 需要动态判断当前系统环境是否支持？
-	m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER)
-	//setting.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS)
+	switch gApplication.Options.Linux.HardwareGPU {
+	case application.HGPUDefault:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ON_DEMAND) // default
+	case application.HGPUEnable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_ALWAYS) // 有GPU并安装了驱动
+	case application.HGPUDisable:
+		m.settings.SetHardwareAccelerationPolicy(wvTypes.WEBKIT_HARDWARE_ACCELERATION_POLICY_NEVER) // 没有驱动或虚拟机时使用
+	}
 	m.browser.SetSettings(m.settings)
 	// ipc message received
 	m.messageReceivedDelegate = ipc.NewMessageReceivedDelegate()
@@ -267,6 +279,10 @@ func (m *TWebview) SetOnContextMenuCommand(fn TOnContextMenuCommandEvent) {
 	m.onContextMenuCommand = fn
 }
 
+func (m *TWebview) SetOnPopupWindow(fn TOnPopupWindowEvent) {
+	m.onPopupWindow = fn
+}
+
 func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript)
 }
@@ -347,26 +363,27 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
 		fmt.Println("OnDecidePolicy type_:", type_)
+		handle := false
 		tempDecision := wv.NewNavigationPolicyDecision(wkDecision)
 		defer tempDecision.Free()
-		if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION || type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION {
-			tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
-			defer tempNavigationAction.Free()
-			tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
-			defer tempURIRequest.Free()
-			newWindowURL := tempURIRequest.URI()
-			fmt.Println("NewWindow URL:", newWindowURL)
-			// new window
-			if type_ == wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION {
-
+		switch type_ {
+		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_NEW_WINDOW_ACTION:
+			if m.onPopupWindow != nil {
+				tempNavigationAction := wv.NewNavigationAction(tempDecision.GetNavigationAction())
+				defer tempNavigationAction.Free()
+				tempURIRequest := wv.NewURIRequest(tempNavigationAction.GetRequest())
+				defer tempURIRequest.Free()
+				targetURL := tempURIRequest.URI()
+				handle = m.onPopupWindow(targetURL)
 			}
-		} else {
-			tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
-			defer tempResponsePolicyDecision.Free()
-			tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
-			defer tempURIRequest.Free()
+		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION:
+		case wvTypes.WEBKIT_POLICY_DECISION_TYPE_RESPONSE:
+			//tempResponsePolicyDecision := wv.NewResponsePolicyDecision(wkDecision)
+			//defer tempResponsePolicyDecision.Free()
+			//tempURIRequest := wv.NewURIRequest(tempResponsePolicyDecision.GetRequest())
+			//defer tempURIRequest.Free()
 		}
-		return true
+		return !handle
 	})
 	m.browser.SetOnLoadChange(func(sender lcl.IObject, loadEvent wvTypes.WebKitLoadEvent) {
 		switch loadEvent {

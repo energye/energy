@@ -19,11 +19,24 @@ import (
 	wv "github.com/energye/wv/linux"
 )
 
+const energyProcessMessage = "processMessage"
+const energyApplicationName = "energy"
+const energyApplicationVersion = "3.0"
+
 var (
-	gApplication    *Application
-	gGlobalWkLoader wv.IWkLoader
-	gWk2Context     wv.IWkWebContext
+	gApplication         *Application
+	gGlobalWkLoader      wv.IWkLoader
+	gWk2Context          wv.IWkWebContext
+	gRegisterSchemeCache = make(map[string]bool)
 )
+
+func setRegisterSchemeCache(scheme string) bool {
+	if _, ok := gRegisterSchemeCache[scheme]; !ok {
+		gRegisterSchemeCache[scheme] = true
+		return false
+	}
+	return true
+}
 
 // Init 全局初始化, 需手动调用的函数
 func Init(libs emfs.IEmbedFS, resources emfs.IEmbedFS) *Application {

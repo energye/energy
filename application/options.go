@@ -12,6 +12,14 @@ package application
 
 import "github.com/energye/lcl/types"
 
+type THardwareGPU int32
+
+const (
+	HGPUDefault THardwareGPU = iota
+	HGPUEnable
+	HGPUDisable
+)
+
 // Options App config option
 type Options struct {
 	Caption                    string                `json:"-"`                          // window title
@@ -56,5 +64,5 @@ type MacOS struct {
 }
 
 type Linux struct {
-	ICON []byte `json:"-"` // window icon
+	HardwareGPU THardwareGPU `json:"-"` //
 }
