@@ -151,8 +151,9 @@ func (m *TWebview) initDefaultEvent() {
 		}
 		if m.onContextMenu != nil {
 			var (
-				environment = m.browser.CoreWebView2Environment()
-				add         func(text string, kind TContextMenuKind, menuItems wv.ICoreWebView2ContextMenuItemCollection) (*TContextMenuItem, int32)
+				environment              = m.browser.CoreWebView2Environment()
+				add                      func(text string, kind TContextMenuKind, menuItems wv.ICoreWebView2ContextMenuItemCollection) (*TContextMenuItem, int32)
+				tempFreeContextMenuItems []wv.ICoreWebView2ContextMenuItemCollection
 			)
 			add = func(text string, kind TContextMenuKind, menuItems wv.ICoreWebView2ContextMenuItemCollection) (*TContextMenuItem, int32) {
 				var itemKind wvTypes.COREWEBVIEW2_CONTEXT_MENU_ITEM_KIND
@@ -173,13 +174,13 @@ func (m *TWebview) initDefaultEvent() {
 					menuItems.AppendValue(menuItem.BaseIntf())
 					menuItemId := menuItem.CommandId()
 					childMenuItems := wv.NewCoreWebView2ContextMenuItemCollection(menuItem.Children())
+					tempFreeContextMenuItems = append(tempFreeContextMenuItems, childMenuItems)
 					contextMenu := &TContextMenuItem{
 						clear: func() {
 							menuItemClear(childMenuItems)
 						},
 						add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
 							newMenuItem, newCommandId := add(text, kind, childMenuItems)
-							childMenuItems.Free()
 							return newMenuItem, newCommandId
 						}}
 					return contextMenu, menuItemId
@@ -194,6 +195,9 @@ func (m *TWebview) initDefaultEvent() {
 					return add(text, kind, menuItemCollection)
 				}}
 			m.onContextMenu(contextMenu)
+			for _, item := range tempFreeContextMenuItems {
+				item.Free()
+			}
 		}
 	})
 	// 代理事件, 自定义菜单项选择事件回调

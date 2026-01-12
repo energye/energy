@@ -18,6 +18,13 @@ const (
 	CmkSeparator
 )
 
+var gContextMenuCommandId int32 = 10000
+
+func nextContextMenuCommandId() int32 {
+	gContextMenuCommandId++
+	return gContextMenuCommandId
+}
+
 // TContextMenuItem 右键菜单
 type TContextMenuItem struct {
 	add   func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)

@@ -295,27 +295,76 @@ func (m *TWebview) navigationStarting() {
 
 func (m *TWebview) initDefaultEvent() {
 	m.browser.SetOnContextMenu(func(sender lcl.IObject, contextMenu wvTypes.WebKitContextMenu, defaultAction wvTypes.PWkAction) bool {
+		rootContextMenu := wv.NewContextMenu(contextMenu)
+		defer rootContextMenu.Free()
+		menuItemClear := func(menuItems wv.IWkContextMenu) {
+			if menuItems == nil {
+				return
+			}
+			menuItems.RemoveAll()
+		}
 		if gApplication.Options.DisableContextMenu {
-			tempContextMenu := wv.NewContextMenu(contextMenu)
-			defer tempContextMenu.Free()
-			tempContextMenu.RemoveAll()
+			menuItemClear(rootContextMenu)
 			return true
 		}
-		fmt.Println("OnContextMenu defaultAction:", defaultAction)
-		tempContextMenu := wv.NewContextMenu(contextMenu)
-		defer tempContextMenu.Free()
-		tempMenuItemSep := wv.ContextMenuItem.NewSeparator()
-		defer tempMenuItemSep.Free()
-		tempContextMenu.Append(tempMenuItemSep.Data())
-		tempMenuItemClose := wv.ContextMenuItem.NewFromAction(defaultAction, "关闭", 10001)
-		defer tempMenuItemClose.Free()
-		tempContextMenu.Append(tempMenuItemClose.Data())
+		if m.onContextMenu != nil {
+			var (
+				add                      func(text string, kind TContextMenuKind, menuItems wv.IWkContextMenu) (*TContextMenuItem, int32)
+				tempFreeContextMenus     []wv.IWkContextMenu
+				tempFreeContextMenuItems []wv.IWkContextMenuItem
+			)
+			add = func(text string, kind TContextMenuKind, menuItems wv.IWkContextMenu) (*TContextMenuItem, int32) {
+				var (
+					newMenuItem    wv.IWkContextMenuItem
+					subContextMenu wv.IWkContextMenu
+				)
+				commandId := nextContextMenuCommandId()
+				switch kind {
+				case CmkCommand:
+					newMenuItem = wv.ContextMenuItem.NewFromAction(defaultAction, text, commandId)
+				case CmkSub:
+					newMenuItem = wv.ContextMenuItem.NewFromAction(defaultAction, text, commandId)
+					subContextMenu = wv.ContextMenu.New()
+					newMenuItem.SetSubmenu(subContextMenu.Data())
+					tempFreeContextMenus = append(tempFreeContextMenus, subContextMenu)
+				case CmkSeparator:
+					newMenuItem = wv.ContextMenuItem.NewSeparator()
+				default:
+					return nil, 0
+				}
+				tempFreeContextMenuItems = append(tempFreeContextMenuItems, newMenuItem)
+
+				menuItems.Append(newMenuItem.Data())
+				childContextMenu := &TContextMenuItem{
+					clear: func() {
+						menuItemClear(subContextMenu)
+					},
+					add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+						newMenuItem, newCommandId := add(text, kind, subContextMenu)
+						return newMenuItem, newCommandId
+					}}
+				return childContextMenu, commandId
+			}
+			contextMenuItem := &TContextMenuItem{
+				clear: func() {
+					menuItemClear(rootContextMenu)
+				},
+				add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+					return add(text, kind, rootContextMenu)
+				}}
+			m.onContextMenu(contextMenuItem)
+			for _, item := range tempFreeContextMenuItems {
+				item.Free()
+			}
+			for _, item := range tempFreeContextMenus {
+				item.Free()
+			}
+		}
 		return false
 	})
 	m.browser.SetOnContextMenuCommand(func(sender lcl.IObject, menuID int32) {
-		fmt.Println("OnContextMenuCommand menuID:", menuID)
-		if menuID == 10001 {
-
+		if m.onContextMenuCommand != nil {
+			m.onContextMenuCommand(menuID)
 		}
 	})
 	m.browser.SetOnDecidePolicy(func(sender lcl.IObject, wkDecision wvTypes.WebKitPolicyDecision, type_ wvTypes.WebKitPolicyDecisionType) bool {
