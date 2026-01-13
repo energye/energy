@@ -10,6 +10,22 @@
 
 package wv
 
+const energyProcessMessage = "processMessage"
+const energyApplicationName = "energy"
+const energyApplicationVersion = "3.0"
+
+var (
+	gRegisterSchemeCache = make(map[string]bool)
+)
+
+func setRegisterSchemeCache(scheme string) bool {
+	if _, ok := gRegisterSchemeCache[scheme]; !ok {
+		gRegisterSchemeCache[scheme] = true
+		return false
+	}
+	return true
+}
+
 type TCustomSchemes struct {
 	schemes []TCustomScheme
 }
