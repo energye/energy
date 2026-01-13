@@ -13,11 +13,13 @@
 package wv
 
 import (
+	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
+	wvTypes "github.com/energye/wv/types/darwin"
 )
 
 var (
@@ -264,5 +266,26 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 }
 
 func (m *TWebview) initDefaultEvent() {
-
+	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, data string) {
+		fmt.Println("OnProcessMessage", name, "message:", data)
+	})
+	m.browser.SetOnStartProvisionalNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
+		fmt.Println("OnStartProvisionalNavigation")
+	})
+	m.browser.SetOnFinishNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
+		fmt.Println("OnFinishNavigation")
+	})
+	m.browser.SetOnDecidePolicyForNavigationActionPreferences(func(sender lcl.IObject, navigationAction wvTypes.WKNavigationAction, actionPolicy *wvTypes.WKNavigationActionPolicy, preferences *wvTypes.WKWebpagePreferences) {
+		fmt.Println("OnDecidePolicyForNavigationActionPreferences")
+	})
+	m.browser.SetOnCreateWebView(func(sender lcl.IObject, configuration wvTypes.WKWebViewConfiguration, navigationAction wvTypes.WKNavigationAction, windowFeatures wvTypes.WKWindowFeatures) wvTypes.WKWebView {
+		fmt.Println("OnCreateWebView")
+		return 0
+	})
+	m.browser.SetOnStartURLSchemeTask(func(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
+		fmt.Println("OnStartURLSchemeTask")
+	})
+	m.browser.SetOnStopURLSchemeTask(func(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
+		fmt.Println("OnStopURLSchemeTask")
+	})
 }
