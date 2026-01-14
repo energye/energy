@@ -218,7 +218,7 @@ func (m *TWebview) onWindowClose(sender lcl.IObject, closeAction *types.TCloseAc
 // onWindowCloseQuery 处理窗口关闭查询事件
 // 当用户尝试关闭窗口时触发此回调函数
 func (m *TWebview) onWindowCloseQuery(sender lcl.IObject, canClose *bool) {
-	*canClose = m.window.IsClose()
+	//*canClose = m.window.IsClose()
 	if !m.window.IsClose() {
 		m.window.SetClose(true)
 		m.browser.StopLoading()
@@ -285,6 +285,12 @@ func (m *TWebview) initDefaultEvent() {
 		fmt.Println("OnCreateWebView")
 		return 0
 	})
+	m.browser.SetOnWebViewDidClose(func(sender lcl.IObject) {
+		fmt.Println("OnWebViewDidClose")
+	})
+	m.browser.SetOnWebContentProcessDidTerminate(func(sender lcl.IObject) {
+		fmt.Println("OnWebContentProcessDidTerminate")
+	})
 	m.browser.SetOnStartURLSchemeTask(m.onStartURLSchemeTask)
 	m.browser.SetOnStopURLSchemeTask(m.onStopURLSchemeTask)
 }
@@ -301,7 +307,6 @@ func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvType
 		method      = request.HTTPMethod()
 		contentType = "Content-Type: " + mime.GetMimeType(path)
 	)
-	fmt.Println(uri, path, method)
 	if m.onResourceRequest != nil {
 		header := make(map[string]string)
 		headers := request.AllHTTPHeaderFields()
