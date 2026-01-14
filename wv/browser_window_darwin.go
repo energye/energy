@@ -99,6 +99,9 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	configuration.SetPreferences(preference.Data())
 	preference.SetTabFocusesLinks(true)
 	preference.SetFraudulentWebsiteWarningEnabled(true)
+	if !gApplication.Options.DisableDevTools {
+		preference.SetBoolValueForKey(true, "developerExtrasEnabled")
+	}
 	//preference.EnableDevtools()
 
 	navigationDelegate := wv.NewNavigationDelegate(m.browser.AsWKNavigationDelegate())
