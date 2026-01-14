@@ -269,14 +269,55 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 }
 
 func (m *TWebview) initDefaultEvent() {
-	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, data string) {
-		fmt.Println("OnProcessMessage", name, "message:", data)
+	getWindow := func() *window.TWindow {
+		if m.window == nil {
+			return nil
+		}
+		return m.window.(*window.TWindow)
+	}
+	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
+		fmt.Println("OnProcessMessage", name, "message:", message)
+		var handle bool
+		if m.messageReceivedDelegate != nil {
+			// ipc message
+			var pMessage ipc.ProcessMessage
+			err := json.Unmarshal([]byte(message), &pMessage)
+			if err == nil {
+				switch pMessage.Type {
+				case ipc.MT_READY:
+					// ipc ready
+					handle = true
+				case ipc.MT_EVENT_GO_EMIT, ipc.MT_EVENT_JS_EMIT, ipc.MT_EVENT_GO_EMIT_CALLBACK, ipc.MT_EVENT_JS_EMIT_CALLBACK:
+					// ipc on, emit event
+					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
+				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
+					// ipc drag window
+					if window := getWindow(); window != nil {
+						handle = true
+					}
+				case ipc.MT_DRAG_RESIZE:
+					// border drag resize
+					if m.window != nil {
+						//m.resizeHT = pMessage.Data.(string)
+						//m.window.Resize(ht)
+						handle = true
+					}
+				case ipc.MT_DRAG_BORDER_WMSZ:
+					//fmt.Println("pMessage.Data", pMessage.Data)
+					//m._SetCursor(17)
+				}
+			}
+		}
+		if !handle && m.onProcessMessage != nil {
+			m.onProcessMessage(message)
+		}
 	})
 	m.browser.SetOnStartProvisionalNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
 		fmt.Println("OnStartProvisionalNavigation")
 	})
 	m.browser.SetOnFinishNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
 		fmt.Println("OnFinishNavigation")
+		m.createEnergyJavasScript()
 	})
 	m.browser.SetOnDecidePolicyForNavigationActionPreferences(func(sender lcl.IObject, navigationAction wvTypes.WKNavigationAction, actionPolicy *wvTypes.WKNavigationActionPolicy, preferences *wvTypes.WKWebpagePreferences) {
 		fmt.Println("OnDecidePolicyForNavigationActionPreferences")

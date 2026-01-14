@@ -46,7 +46,7 @@ void InitDragEventListeners() {
 		if (eventWindow == nil) {
 			return event;
 		}
-		//LogInfo(@"LeftMouseDown");
+		LogInfo(@"LeftMouseDown");
 		BOOL flag = CanDrag(eventWindow);
 		int32_t titleBarHeight = GetTitlebarHeight(eventWindow);
 		if (flag) {
@@ -67,6 +67,7 @@ void InitDragEventListeners() {
 		if (window == nil) {
 			return event;
 		}
+		//LogInfo(@"MouseMove");
         NSRect windowFrame = [window frame];
 		NSPoint locationInWindow = [event locationInWindow];
 		// 将左下角坐标转换为左上角坐标
@@ -159,6 +160,7 @@ func (m *TWindow) SetOptions() {
 	m.SetCaption(options.Caption)
 	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 	if options.Frameless {
+		m.Frameless()
 	}
 }
 
