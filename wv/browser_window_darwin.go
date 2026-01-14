@@ -269,11 +269,11 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 }
 
 func (m *TWebview) initDefaultEvent() {
-	getWindow := func() *window.TWindow {
+	getWindow := func() window.IDarwinWindow {
 		if m.window == nil {
 			return nil
 		}
-		return m.window.(*window.TWindow)
+		return m.window.(window.IDarwinWindow)
 	}
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
 		fmt.Println("OnProcessMessage", name, "message:", message)

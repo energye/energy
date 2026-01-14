@@ -19,6 +19,7 @@ package window
 import "C"
 import (
 	"github.com/energye/lcl/lcl"
+	"sync"
 	"unsafe"
 )
 
@@ -57,6 +58,7 @@ func GetTitlebarHeight(nsWindow unsafe.Pointer) int32 {
 //export CheckDraggableRegions
 func CheckDraggableRegions(nsWindow unsafe.Pointer, mouseX, mouseY int32) {
 	var window = currentWindow(lcl.NSWindow(nsWindow))
+	//fmt.Println("mouseX, mouseY", mouseX, mouseY, window)
 	if window != nil {
 		//window.drag.canDrag = false
 		//regions := window.ChromiumBrowser().Regions()
@@ -88,17 +90,14 @@ func CheckDraggableRegions(nsWindow unsafe.Pointer, mouseX, mouseY int32) {
 	}
 }
 
-func currentWindow(windowHandle lcl.NSWindow) IWindow {
-	var window IWindow
-	//for _, win := range BrowserWindow.GetWindowInfos() {
-	//	if win.IsClosing() {
-	//		break
-	//	}
-	//	windowPtr := win.AsLCLBrowserWindow().BrowserWindow().TForm.PlatformWindow()
-	//	if windowPtr == windowHandle {
-	//		window = win.AsLCLBrowserWindow().BrowserWindow()
-	//		break
-	//	}
-	//}
-	return window
+var (
+	gDarwinWindowCache = sync.Map{}
+)
+
+func currentWindow(windowHandle lcl.NSWindow) IDarwinWindow {
+	tempWindow, ok := gDarwinWindowCache.Load(windowHandle)
+	if ok {
+		return tempWindow.(IDarwinWindow)
+	}
+	return nil
 }

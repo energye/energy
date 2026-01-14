@@ -105,6 +105,12 @@ const (
 	NSWindowStyleMaskResizable      = 8 // 窗口可以调整大小
 )
 
+type IDarwinWindow interface {
+	IWindow
+	NSInstance() unsafe.Pointer
+	NSWindow() lcl.NSWindow
+}
+
 type TWindow struct {
 	TEnergyWindow
 	initDragEventListen bool
@@ -128,6 +134,7 @@ func (m *TWindow) InitDragEventListeners() {
 	}
 	m.initDragEventListen = true
 	C.InitDragEventListeners()
+	gDarwinWindowCache.Store(m.NSWindow(), m)
 }
 
 func (m *TWindow) Frameless() {
@@ -145,6 +152,9 @@ func (m *TWindow) Frameless() {
 
 func (m *TWindow) _BeforeFormCreate() {
 	m.InitDragEventListeners()
+	m.SetOnWindowClose(func(sender lcl.IObject, closeAction *types.TCloseAction) {
+		gDarwinWindowCache.Delete(m.NSWindow())
+	})
 }
 
 // SetOptions 设置webview窗口的选项配置
