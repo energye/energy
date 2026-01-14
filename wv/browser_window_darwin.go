@@ -13,13 +13,16 @@
 package wv
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
+	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
 	wvTypes "github.com/energye/wv/types/darwin"
+	"unsafe"
 )
 
 var (
@@ -282,10 +285,60 @@ func (m *TWebview) initDefaultEvent() {
 		fmt.Println("OnCreateWebView")
 		return 0
 	})
-	m.browser.SetOnStartURLSchemeTask(func(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
-		fmt.Println("OnStartURLSchemeTask")
-	})
-	m.browser.SetOnStopURLSchemeTask(func(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
-		fmt.Println("OnStopURLSchemeTask")
-	})
+	m.browser.SetOnStartURLSchemeTask(m.onStartURLSchemeTask)
+	m.browser.SetOnStopURLSchemeTask(m.onStopURLSchemeTask)
+}
+
+func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
+	schemeTask := wv.NewURLSchemeTask(urlSchemeTask)
+	request := wv.NewURLRequest(schemeTask.Request())
+	url := wv.NewURL(request.URL())
+	var (
+		resource    string
+		handle      bool
+		uri         = url.AbsoluteString()
+		path        = url.Path()
+		method      = request.HTTPMethod()
+		contentType = "Content-Type: " + mime.GetMimeType(path)
+	)
+	fmt.Println(uri, path, method)
+	if m.onResourceRequest != nil {
+		header := make(map[string]string)
+		headers := request.AllHTTPHeaderFields()
+		_ = json.Unmarshal([]byte(headers), &header)
+		resource, handle = m.onResourceRequest(uri, path, method, header)
+	}
+	response := wv.URLResponse.New()
+	finish := func(data []byte, length int32, err bool) {
+		if err {
+			schemeTask.FailWithError(404, string(data))
+		} else {
+			response.InitWithURLMIMETypeExpectedContentLengthTextEncodingName(url.Data(), contentType, length, "utf-8")
+			schemeTask.ReceiveResponse(response.Data())
+			schemeTask.ReceiveData(uintptr(unsafe.Pointer(&data[0])), length)
+			schemeTask.Finish()
+		}
+	}
+	if !handle {
+		data, err := gApplication.LocalLoad.Read(path)
+		if err != nil {
+			// 404
+			resource = "Not Found"
+			finish([]byte(resource), int32(len(resource)), true)
+			return
+		}
+		resource = string(data)
+	} else if handle && resource == "" {
+		// 404
+		resource = "Not Found"
+		finish([]byte(resource), int32(len(resource)), true)
+		return
+	}
+	finish([]byte(resource), int32(len(resource)), false)
+	schemeTask.Free()
+	response.Free()
+}
+
+func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
+	fmt.Println("OnStopURLSchemeTask")
 }
