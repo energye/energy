@@ -24,6 +24,10 @@ type TWindow struct {
 	gtkWindow *gtk3.Window
 }
 
+func (m *TWindow) _BeforeFormCreate() {
+
+}
+
 // SetOptions 设置webview窗口的选项配置
 // 该方法用于配置*TWindow实例的各种选项参数
 func (m *TWindow) SetOptions() {

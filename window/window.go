@@ -31,6 +31,7 @@ type IWindow interface {
 	IsFullScreen() bool
 	SetClose(v bool)
 	IsClose() bool
+	SetOnWindowCreate(fn lcl.TNotifyEvent)
 	SetOnWindowShow(fn lcl.TNotifyEvent)
 	SetOnWindowClose(fn lcl.TCloseEvent)
 	SetOnWindowCloseQuery(fn lcl.TCloseQueryEvent)
@@ -126,6 +127,13 @@ func (m *TWindow) IsMaximize() bool {
 	return m.WindowState() == types.WsMaximized
 }
 
+func (m *TWindow) FormCreate(sender lcl.IObject) {
+	m._BeforeFormCreate()
+	for _, fn := range m.onWindowCreate {
+		fn(sender)
+	}
+}
+
 func (m *TWindow) OnShow(sender lcl.IObject) {
 	for _, fn := range m.onWindowShow {
 		fn(sender)
@@ -142,4 +150,9 @@ func (m *TWindow) OnClose(sender lcl.IObject, closeAction *types.TCloseAction) {
 	for _, fn := range m.onWindowClose {
 		fn(sender, closeAction)
 	}
+}
+
+func PtInRegion(x, y int32, rectX, rectY, rectWidth, rectHeight int32) bool {
+	// 检查点(x, y)是否在矩形(rectX, rectY, rectWidth, rectHeight)内
+	return x >= rectX && x <= rectX+rectWidth && y >= rectY && y <= rectY+rectHeight
 }

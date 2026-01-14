@@ -423,6 +423,14 @@
             window.addEventListener("dblclick", dblClick);
         }
     }
+    function contextMenuHandler(event) {
+        let element = event.target;
+        let x = event.clientX;
+        let y = event.clientY;
+        let data = {n:"contextmenu",x: x, y: y}
+        event.preventDefault();
+    }
+    window.addEventListener('contextmenu', contextMenuHandler);
 
     window.energy = new Energy();
     window.ipc = new IPC();
