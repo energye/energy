@@ -317,33 +317,68 @@ func (m *TWebview) initDefaultEvent() {
 		}
 	})
 	m.browser.SetOnStartProvisionalNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
-		fmt.Println("OnStartProvisionalNavigation")
+		if m.onLoadChange != nil {
+			nsurl := m.browser.URL()
+			wkNsUrl := wv.NewURL(nsurl)
+			defer wkNsUrl.Free()
+			url := wkNsUrl.AbsoluteString()
+			title := m.browser.Title()
+			m.onLoadChange(url, title, LcStart)
+		}
+	})
+	m.browser.SetOnCommitNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
+		if m.onLoadChange != nil {
+			nsurl := m.browser.URL()
+			wkNsUrl := wv.NewURL(nsurl)
+			defer wkNsUrl.Free()
+			url := wkNsUrl.AbsoluteString()
+			title := m.browser.Title()
+			m.onLoadChange(url, title, LcLoading)
+		}
 	})
 	m.browser.SetOnFinishNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
-		fmt.Println("OnFinishNavigation")
 		m.createEnergyJavasScript()
+		if m.onLoadChange != nil {
+			nsurl := m.browser.URL()
+			wkNsUrl := wv.NewURL(nsurl)
+			defer wkNsUrl.Free()
+			url := wkNsUrl.AbsoluteString()
+			title := m.browser.Title()
+			m.onLoadChange(url, title, LcFinish)
+		}
 	})
-	m.browser.SetOnDecidePolicyForNavigationActionPreferences(func(sender lcl.IObject, navigationAction wvTypes.WKNavigationAction, actionPolicy *wvTypes.WKNavigationActionPolicy, preferences *wvTypes.WKWebpagePreferences) {
-		fmt.Println("OnDecidePolicyForNavigationActionPreferences")
-	})
+	//m.browser.SetOnDecidePolicyForNavigationActionPreferences(func(sender lcl.IObject, navigationAction wvTypes.WKNavigationAction, actionPolicy *wvTypes.WKNavigationActionPolicy, preferences *wvTypes.WKWebpagePreferences) {
+	//	fmt.Println("OnDecidePolicyForNavigationActionPreferences")
+	//})
 	m.browser.SetOnCreateWebView(func(sender lcl.IObject, configuration wvTypes.WKWebViewConfiguration, navigationAction wvTypes.WKNavigationAction, windowFeatures wvTypes.WKWindowFeatures) wvTypes.WKWebView {
-		fmt.Println("OnCreateWebView")
+		if m.onPopupWindow != nil {
+			wkNavigationAction := wv.NewNavigationAction(navigationAction)
+			request := wv.NewURLRequest(wkNavigationAction.Request())
+			if request.IsValid() {
+				url := wv.NewURL(request.URL())
+				defer url.Free()
+				targetURL := url.AbsoluteString()
+				m.onPopupWindow(targetURL)
+			}
+		}
 		return 0
 	})
-	m.browser.SetOnWebViewDidClose(func(sender lcl.IObject) {
-		fmt.Println("OnWebViewDidClose")
-	})
-	m.browser.SetOnWebContentProcessDidTerminate(func(sender lcl.IObject) {
-		fmt.Println("OnWebContentProcessDidTerminate")
-	})
+	//m.browser.SetOnWebViewDidClose(func(sender lcl.IObject) {
+	//	fmt.Println("OnWebViewDidClose")
+	//})
+	//m.browser.SetOnWebContentProcessDidTerminate(func(sender lcl.IObject) {
+	//	fmt.Println("OnWebContentProcessDidTerminate")
+	//})
 	m.browser.SetOnStartURLSchemeTask(m.onStartURLSchemeTask)
-	m.browser.SetOnStopURLSchemeTask(m.onStopURLSchemeTask)
+	//m.browser.SetOnStopURLSchemeTask(m.onStopURLSchemeTask)
 }
 
 func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
 	schemeTask := wv.NewURLSchemeTask(urlSchemeTask)
 	request := wv.NewURLRequest(schemeTask.Request())
+	defer request.Free()
 	url := wv.NewURL(request.URL())
+	defer url.Free()
 	var (
 		resource    string
 		handle      bool
