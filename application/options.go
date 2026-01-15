@@ -33,8 +33,8 @@ type Options struct {
 	MaxWidth                   types.TConstraintSize `json:"-"`                          // max width of the window
 	MaxHeight                  types.TConstraintSize `json:"-"`                          // max height of the window
 	DefaultWindowStatus        types.TWindowState    `json:"-"`                          // initial window state
-	DisableDevTools            bool                  `json:"-"`                          //
-	DisableContextMenu         bool                  `json:"-"`                          //
+	DisableDevTools            bool                  `json:"disableDevTools"`            //
+	DisableContextMenu         bool                  `json:"disableContextMenu"`         //
 	DisableWebkitAppRegionDClk bool                  `json:"disableWebkitAppRegionDClk"` //
 	DisableResize              bool                  `json:"disableResize"`              //
 	DisableMinimize            bool                  `json:"-"`                          //
