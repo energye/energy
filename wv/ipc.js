@@ -22,6 +22,7 @@
     const MT_DRAG_DBLCLICK = MT_DRAG_UP + 1;
     const MT_DRAG_RESIZE = MT_DRAG_DBLCLICK + 1;
     const MT_DRAG_BORDER_WMSZ = MT_DRAG_RESIZE + 1;
+    const MT_CONTEXTMENU = MT_DRAG_BORDER_WMSZ + 1;
 
     // Energy
     class Energy {
@@ -229,6 +230,18 @@
             this.#executionID++;
             return this.#executionID;
         };
+
+        __listenDarwinContextMenu() {
+            let that = this;
+            function contextMenuHandler(event) {
+                event.preventDefault();
+                let x = event.clientX;
+                let y = event.clientY;
+                let data = {t: MT_CONTEXTMENU, d: {x: x, y: y},}
+                that.processMessage(JSON.stringify(data));
+            }
+            window.addEventListener('contextmenu', contextMenuHandler);
+        }
     }
 
     // IPC
@@ -425,19 +438,8 @@
         }
     }
 
-    function contextMenuHandler(event) {
-        let element = event.target;
-        let x = event.clientX;
-        let y = event.clientY;
-        let data = {n: "contextmenu", x: x, y: y}
-        event.preventDefault();
-    }
-
-    //window.addEventListener('contextmenu', contextMenuHandler);
 
     window.energy = new Energy();
     window.ipc = new IPC();
     //window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
-
-
 })();
