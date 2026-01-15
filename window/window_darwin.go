@@ -141,7 +141,6 @@ func (m *TWindow) SetOptions() {
 }
 
 func (m *TWindow) SetWindowState(value types.TWindowState) {
-	//m.TEnergyWindow.SetWindowState(value)
 	m.windowsState = value
 	switch value {
 	case types.WsMaximized:
@@ -151,10 +150,7 @@ func (m *TWindow) SetWindowState(value types.TWindowState) {
 		window.Restore(m.NSInstance())
 	case types.WsMinimized:
 		window.Minimized(m.NSInstance())
-	case types.WsFullScreen:
 	}
-	//isMaximize := window.IsMaximize(m.NSInstance())
-	//fmt.Println("isMaximize", isMaximize)
 }
 
 func (m *TWindow) WindowState() types.TWindowState {
