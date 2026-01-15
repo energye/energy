@@ -48,17 +48,16 @@ void DragWindow(void* nsWindow) {
         return;
     }
     if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        LogInfo(@"获取当前事件失败：非左键按下事件，事件类型");
+        LogInfo(@"获取当前事件失败：非左键按下事件");
         return;
     }
     //NSWindow* window = (NSWindow*)nsWindow;
 	NSWindow* window = [currentMouseEvent window];
  	//NSWindow *window = [NSApp keyWindow];
     if (!window) {
-        LogInfo(@"获取当前事件失败");
+        LogInfo(@"获取当前事件窗口失败");
         return;
     }
-
     [window performWindowDragWithEvent:currentMouseEvent];
 }
 */
