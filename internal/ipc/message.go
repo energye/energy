@@ -35,6 +35,7 @@ const (
 	MT_DRAG_DBLCLICK
 	MT_DRAG_RESIZE
 	MT_DRAG_BORDER_WMSZ
+	MT_CONTEXTMENU
 )
 
 type ProcessMessage struct {

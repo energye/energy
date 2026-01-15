@@ -14,9 +14,11 @@ package wv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
+	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
@@ -273,7 +275,7 @@ func (m *TWebview) initDefaultEvent() {
 		return m.window.(window.IDarwinWindow)
 	}
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
-		//println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
+		println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
 		var handle bool
 		if m.messageReceivedDelegate != nil {
 			// ipc message
@@ -301,8 +303,16 @@ func (m *TWebview) initDefaultEvent() {
 						handle = true
 					}
 				case ipc.MT_DRAG_BORDER_WMSZ:
-					//fmt.Println("pMessage.Data", pMessage.Data)
-					//m._SetCursor(17)
+				//fmt.Println("pMessage.Data", pMessage.Data)
+				//m._SetCursor(17)
+				case ipc.MT_CONTEXTMENU:
+					if m.onContextMenu != nil {
+						data := pMessage.Data.(map[string]any)
+						x := int32(data["x"].(float64))
+						y := int32(data["y"].(float64))
+						fmt.Println("ipc.MT_CONTEXTMENU", pMessage.Data, err, x, y)
+						m.contextMenu(x, y)
+					}
 				}
 			}
 		}
@@ -332,6 +342,7 @@ func (m *TWebview) initDefaultEvent() {
 	})
 	m.browser.SetOnFinishNavigation(func(sender lcl.IObject, navigation wvTypes.WKNavigation) {
 		m.createEnergyJavasScript()
+		m.listenDarwinContextMenuJavaScript()
 		if m.onLoadChange != nil {
 			nsurl := m.browser.URL()
 			wkNsUrl := wv.NewURL(nsurl)
@@ -407,6 +418,24 @@ func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvType
 	finish([]byte(resource), int32(len(resource)), false)
 	schemeTask.Free()
 	response.Free()
+}
+
+func (m *TWebview) listenDarwinContextMenuJavaScript() {
+	m.ExecuteScript(`window.energy.__listenDarwinContextMenu();`)
+}
+
+func (m *TWebview) contextMenu(x, y int32) {
+	var (
+		add func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
+	)
+	contextMenuItem := &TContextMenuItem{
+		clear: func() {
+
+		},
+		add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+			return add(text, kind)
+		}}
+	m.onContextMenu(contextMenuItem)
 }
 
 //func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
