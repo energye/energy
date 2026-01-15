@@ -242,9 +242,9 @@
                 that.processMessage(JSON.stringify(data));
             }
             // 禁用开发者工具时使用自定义右键菜单
-            if(disableDevTools){
+            // if(disableDevTools){
                 window.addEventListener('contextmenu', contextMenuHandler);
-            }
+            // }
         }
     }
 

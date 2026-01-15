@@ -446,12 +446,12 @@ func (m *TWebview) contextMenu(x, y int32) {
 	})
 	items.Add(newReloadItem)
 	if !gApplication.Options.DisableDevTools {
-		//newDevtoolItem, _ := createMenuItem("开发者工具", func(commandId int32) {
-		//	lcl.RunOnMainThreadAsync(func(id uint32) {
-		//		m.ExecuteScript("webkit.inspectElement(0, 0);")
-		//	})
-		//})
-		//items.Add(newDevtoolItem)
+		newDevtoolItem, _ := createMenuItem("开发者工具", func(commandId int32) {
+			lcl.RunOnMainThreadAsync(func(id uint32) {
+				m.ExecuteScript("webkit.inspectElement(100, 100);")
+			})
+		})
+		items.Add(newDevtoolItem)
 	}
 	menuItemClear := func(menuItems lcl.IMenuItem) {
 		if menuItems == nil {
