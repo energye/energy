@@ -18,6 +18,7 @@ import (
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
+	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
@@ -279,7 +280,7 @@ func (m *TWebview) initDefaultEvent() {
 		return m.window.(window.IDarwinWindow)
 	}
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
-		fmt.Println("OnProcessMessage", name, "message:", message)
+		fmt.Println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
 		var handle bool
 		if m.messageReceivedDelegate != nil {
 			// ipc message
@@ -295,7 +296,8 @@ func (m *TWebview) initDefaultEvent() {
 					handle = m.messageReceivedDelegate.Received(m.BrowserId(), &pMessage)
 				case ipc.MT_DRAG_MOVE, ipc.MT_DRAG_DOWN, ipc.MT_DRAG_UP, ipc.MT_DRAG_DBLCLICK:
 					// ipc drag window
-					if window := getWindow(); window != nil {
+					if currentWindow := getWindow(); currentWindow != nil {
+						currentWindow.DragWindow()
 						handle = true
 					}
 				case ipc.MT_DRAG_RESIZE:

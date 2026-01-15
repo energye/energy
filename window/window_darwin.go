@@ -40,52 +40,26 @@ void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
 	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
 }
 
-void InitDragEventListeners() {
-	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseDown handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
-		NSWindow* eventWindow = [event window];
-		if (eventWindow == nil) {
-			return event;
-		}
-		LogInfo(@"LeftMouseDown");
-		BOOL flag = CanDrag(eventWindow);
-		int32_t titleBarHeight = GetTitlebarHeight(eventWindow);
-		if (flag) {
-			[eventWindow performWindowDragWithEvent:event];
-		} else if (titleBarHeight > 0) {
-			NSPoint location = [event locationInWindow];
-			NSRect frame = [eventWindow frame];
-			int32_t titleBarHeight = GetTitlebarHeight(eventWindow);
-			if(location.y > frame.size.height - titleBarHeight) {
-			  [eventWindow performWindowDragWithEvent:event];
-			}
-		}
-		return event;
-	}];
+void DragWindow(void* nsWindow) {
+    NSEvent *currentMouseEvent = [NSApp currentEvent];
 
-	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskMouseMoved handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
-		NSWindow* window = [event window];
-		if (window == nil) {
-			return event;
-		}
-		//LogInfo(@"MouseMove");
-        NSRect windowFrame = [window frame];
-		NSPoint locationInWindow = [event locationInWindow];
-		// 将左下角坐标转换为左上角坐标
-		CGFloat newY = NSHeight(windowFrame) - locationInWindow.y;
-		NSPoint adjustedLocation = NSMakePoint(locationInWindow.x, newY);
-		CheckDraggableRegions(window, (int32_t)adjustedLocation.x, (int32_t)adjustedLocation.y);
-		return event;
-	}];
+    if (!currentMouseEvent) {
+        LogInfo(@"获取当前事件失败：事件为 nil");
+        return;
+    }
+    if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
+        LogInfo(@"获取当前事件失败：非左键按下事件，事件类型");
+        return;
+    }
+    //NSWindow* window = (NSWindow*)nsWindow;
+	NSWindow* window = [currentMouseEvent window];
+ 	//NSWindow *window = [NSApp keyWindow];
+    if (!window) {
+        LogInfo(@"获取当前事件失败");
+        return;
+    }
 
-	[NSEvent addLocalMonitorForEventsMatchingMask:NSEventMaskLeftMouseUp handler:^NSEvent * _Nullable(NSEvent * _Nonnull event) {
-		NSWindow* eventWindow = [event window];
-		if (eventWindow == nil) {
-			return event;
-        }
-		//LogInfo(@"LeftMouseUp");
-		SetCanDrag(eventWindow, false);
-		return event;
-	}];
+    [window performWindowDragWithEvent:currentMouseEvent];
 }
 */
 import "C"
@@ -109,11 +83,15 @@ type IDarwinWindow interface {
 	IWindow
 	NSInstance() unsafe.Pointer
 	NSWindow() lcl.NSWindow
+	DragWindow()
 }
 
 type TWindow struct {
 	TEnergyWindow
-	initDragEventListen bool
+}
+
+func (m *TWindow) DragWindow() {
+	C.DragWindow(m.NSInstance())
 }
 
 func (m *TWindow) NSInstance() unsafe.Pointer {
@@ -126,15 +104,6 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 
 func (m *TWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
 	C.SetWindowBackgroundColor(m.NSInstance(), C.int(red), C.int(green), C.int(blue), C.int(alpha))
-}
-
-func (m *TWindow) InitDragEventListeners() {
-	if m.initDragEventListen {
-		return
-	}
-	m.initDragEventListen = true
-	C.InitDragEventListeners()
-	gDarwinWindowCache.Store(m.NSWindow(), m)
 }
 
 func (m *TWindow) Frameless() {
@@ -151,7 +120,7 @@ func (m *TWindow) Frameless() {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	m.InitDragEventListeners()
+	gDarwinWindowCache.Store(m.NSWindow(), m)
 	m.SetOnWindowClose(func(sender lcl.IObject, closeAction *types.TCloseAction) {
 		gDarwinWindowCache.Delete(m.NSWindow())
 	})
