@@ -84,15 +84,11 @@ func NewWebview(owner lcl.IComponent) IWebview {
 		customSchemes := &TCustomSchemes{}
 		gApplication.onCustomSchemes(customSchemes)
 		for _, scheme := range customSchemes.schemes {
-			if !setRegisterSchemeCache(scheme.Scheme) {
-				configuration.SetURLSchemeHandlerForURLScheme(URLSchemeHandler.Data(), scheme.Scheme)
-			}
+			configuration.SetURLSchemeHandlerForURLScheme(URLSchemeHandler.Data(), scheme.Scheme)
 		}
 	}
 	if gApplication.LocalLoad != nil {
-		if !setRegisterSchemeCache(gApplication.LocalLoad.Scheme) {
-			configuration.SetURLSchemeHandlerForURLScheme(URLSchemeHandler.Data(), gApplication.LocalLoad.Scheme)
-		}
+		configuration.SetURLSchemeHandlerForURLScheme(URLSchemeHandler.Data(), gApplication.LocalLoad.Scheme)
 	}
 
 	preference := wv.NewPreferences(configuration.Preferences())
@@ -102,7 +98,6 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	if !gApplication.Options.DisableDevTools {
 		preference.SetBoolValueForKey(true, "developerExtrasEnabled")
 	}
-	//preference.EnableDevtools()
 
 	navigationDelegate := wv.NewNavigationDelegate(m.browser.AsWKNavigationDelegate())
 	uiDelegate := wv.NewUIDelegate(m.browser.AsWKUIDelegate())
@@ -347,9 +342,6 @@ func (m *TWebview) initDefaultEvent() {
 			m.onLoadChange(url, title, LcFinish)
 		}
 	})
-	//m.browser.SetOnDecidePolicyForNavigationActionPreferences(func(sender lcl.IObject, navigationAction wvTypes.WKNavigationAction, actionPolicy *wvTypes.WKNavigationActionPolicy, preferences *wvTypes.WKWebpagePreferences) {
-	//	fmt.Println("OnDecidePolicyForNavigationActionPreferences")
-	//})
 	m.browser.SetOnCreateWebView(func(sender lcl.IObject, configuration wvTypes.WKWebViewConfiguration, navigationAction wvTypes.WKNavigationAction, windowFeatures wvTypes.WKWindowFeatures) wvTypes.WKWebView {
 		if m.onPopupWindow != nil {
 			wkNavigationAction := wv.NewNavigationAction(navigationAction)
@@ -363,14 +355,7 @@ func (m *TWebview) initDefaultEvent() {
 		}
 		return 0
 	})
-	//m.browser.SetOnWebViewDidClose(func(sender lcl.IObject) {
-	//	fmt.Println("OnWebViewDidClose")
-	//})
-	//m.browser.SetOnWebContentProcessDidTerminate(func(sender lcl.IObject) {
-	//	fmt.Println("OnWebContentProcessDidTerminate")
-	//})
 	m.browser.SetOnStartURLSchemeTask(m.onStartURLSchemeTask)
-	//m.browser.SetOnStopURLSchemeTask(m.onStopURLSchemeTask)
 }
 
 func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
@@ -387,6 +372,7 @@ func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvType
 		method      = request.HTTPMethod()
 		contentType = "Content-Type: " + mime.GetMimeType(path)
 	)
+	println("StartURLSchemeTask:", uri, path, method)
 	if m.onResourceRequest != nil {
 		header := make(map[string]string)
 		headers := request.AllHTTPHeaderFields()
