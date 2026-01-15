@@ -14,7 +14,6 @@ package wv
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
@@ -274,7 +273,7 @@ func (m *TWebview) initDefaultEvent() {
 		return m.window.(window.IDarwinWindow)
 	}
 	m.browser.SetOnProcessMessage(func(sender lcl.IObject, userContentController wvTypes.WKUserContentController, name string, message string) {
-		//fmt.Println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
+		//println("OnProcessMessage", name, "message:", message, api.MainThreadId() == api.CurrentThreadId())
 		var handle bool
 		if m.messageReceivedDelegate != nil {
 			// ipc message
@@ -372,7 +371,7 @@ func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvType
 		method      = request.HTTPMethod()
 		contentType = "Content-Type: " + mime.GetMimeType(path)
 	)
-	println("StartURLSchemeTask:", uri, path, method)
+	//println("StartURLSchemeTask:", uri, path, method)
 	if m.onResourceRequest != nil {
 		header := make(map[string]string)
 		headers := request.AllHTTPHeaderFields()
@@ -410,6 +409,6 @@ func (m *TWebview) onStartURLSchemeTask(sender lcl.IObject, urlSchemeTask wvType
 	response.Free()
 }
 
-func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
-	fmt.Println("OnStopURLSchemeTask")
-}
+//func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {
+//	fmt.Println("OnStopURLSchemeTask")
+//}
