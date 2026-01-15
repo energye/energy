@@ -38,6 +38,7 @@ type TWebview struct {
 	isClose                 bool
 	isCreated               bool
 	resizeHT                string
+	menu                    lcl.IPopupMenu
 	window                  window.IWindow
 	windowParent            wv.IWkWebviewParent
 	browser                 wv.IWkWebview
@@ -54,6 +55,8 @@ type TWebview struct {
 // NewWebview 创建一个新的浏览器窗口实例
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
+	m.menu = lcl.NewPopupMenu(owner)
+
 	m.ICustomPanel = lcl.NewPanel(owner)
 	m.ICustomPanel.SetParentDoubleBuffered(true)
 	m.ICustomPanel.SetBevelInner(types.BvNone)
@@ -425,17 +428,87 @@ func (m *TWebview) listenDarwinContextMenuJavaScript() {
 }
 
 func (m *TWebview) contextMenu(x, y int32) {
+	items := m.menu.Items()
+	items.Clear()
+	createMenuItem := func(text string, fn func(commandId int32)) (lcl.IMenuItem, int32) {
+		commandId := nextContextMenuCommandId()
+		item := lcl.NewMenuItem(m)
+		item.SetCaption(text)
+		if text != "-" && fn != nil {
+			item.SetOnClick(func(lcl.IObject) {
+				fn(commandId)
+			})
+		}
+		return item, commandId
+	}
+	newReloadItem, _ := createMenuItem("重新载入", func(commandId int32) {
+		m.browser.Reload()
+	})
+	items.Add(newReloadItem)
+	if !gApplication.Options.DisableDevTools {
+		newDevtoolItem, _ := createMenuItem("开发者工具", func(commandId int32) {
+			m.ExecuteScript("webkit.inspectElement(0, 0);")
+		})
+		items.Add(newDevtoolItem)
+	}
+	menuItemClear := func(menuItems lcl.IMenuItem) {
+		if menuItems == nil {
+			return
+		}
+		menuItems.Clear()
+	}
+	if gApplication.Options.DisableContextMenu {
+		menuItemClear(items)
+		return
+	}
 	var (
-		add func(text string, kind TContextMenuKind) (*TContextMenuItem, int32)
+		add func(text string, kind TContextMenuKind, menuItems lcl.IMenuItem) (*TContextMenuItem, int32)
 	)
+	add = func(text string, kind TContextMenuKind, menuItems lcl.IMenuItem) (*TContextMenuItem, int32) {
+		var (
+			newCtxMenuItem lcl.IMenuItem
+			newCommandId   int32
+		)
+		switch kind {
+		case CmkCommand:
+			newCtxMenuItem, newCommandId = createMenuItem(text, func(commandId int32) {
+				if m.onContextMenuCommand != nil {
+					m.onContextMenuCommand(commandId)
+				}
+			})
+			menuItems.Add(newCtxMenuItem)
+		case CmkSub:
+			newCtxMenuItem, newCommandId = createMenuItem(text, func(commandId int32) {
+				if m.onContextMenuCommand != nil {
+					m.onContextMenuCommand(commandId)
+				}
+			})
+			menuItems.Add(newCtxMenuItem)
+		case CmkSeparator:
+			newCtxMenuItem, _ = createMenuItem("-", nil)
+			menuItems.Add(newCtxMenuItem)
+		default:
+			return nil, 0
+		}
+		childContextMenu := &TContextMenuItem{
+			clear: func() {
+				menuItemClear(newCtxMenuItem)
+			},
+			add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
+				newMenuItem, newCommandId := add(text, kind, newCtxMenuItem)
+				return newMenuItem, newCommandId
+			}}
+		return childContextMenu, newCommandId
+	}
 	contextMenuItem := &TContextMenuItem{
 		clear: func() {
-
+			items.Clear()
 		},
 		add: func(text string, kind TContextMenuKind) (*TContextMenuItem, int32) {
-			return add(text, kind)
+			return add(text, kind, items)
 		}}
 	m.onContextMenu(contextMenuItem)
+	m.menu.PopUpWithIntX2(x+1, y+1)
 }
 
 //func (m *TWebview) onStopURLSchemeTask(sender lcl.IObject, urlSchemeTask wvTypes.WKURLSchemeTask) {

@@ -235,8 +235,8 @@
             let that = this;
             function contextMenuHandler(event) {
                 event.preventDefault();
-                let x = event.clientX;
-                let y = event.clientY;
+                let x = event.screenX;
+                let y = event.screenY;
                 let data = {t: MT_CONTEXTMENU, d: {x: x, y: y},}
                 that.processMessage(JSON.stringify(data));
             }
