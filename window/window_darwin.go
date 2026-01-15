@@ -65,6 +65,7 @@ import "C"
 
 import (
 	"github.com/energye/energy/v3/application"
+	"github.com/energye/energy/v3/pkgs/cocoa/window"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/types"
 	"unsafe"
@@ -139,35 +140,42 @@ func (m *TWindow) SetOptions() {
 	}
 }
 
+func (m *TWindow) SetWindowState(value types.TWindowState) {
+	//m.TEnergyWindow.SetWindowState(value)
+	m.windowsState = value
+	switch value {
+	case types.WsMaximized:
+		window.ExitMinimized(m.NSInstance())
+		window.Maximize(m.NSInstance())
+	case types.WsNormal:
+		window.Restore(m.NSInstance())
+	case types.WsMinimized:
+		window.Minimized(m.NSInstance())
+	case types.WsFullScreen:
+	}
+	//isMaximize := window.IsMaximize(m.NSInstance())
+	//fmt.Println("isMaximize", isMaximize)
+}
+
+func (m *TWindow) WindowState() types.TWindowState {
+	return m.windowsState
+}
+
 func (m *TWindow) FullScreen() {
 	if m.IsFullScreen() {
 		return
 	}
 	lcl.RunOnMainThreadAsync(func(id uint32) {
-		if m.IsMinimize() || m.IsMaximize() {
-			m.Restore()
-		}
-		m.windowsState = types.WsFullScreen
-		// save current window rect, use ExitFullScreen
-		m.previousWindowPlacement = m.BoundsRect()
-		monitorRect := m.Monitor().WorkareaRect()
-		if !application.GApplication.Options.Frameless {
-			// save current window style, use ExitFullScreen
-			m.SetWindowState(types.WsFullScreen)
-		}
-		m.SetBounds(monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height())
+		m.SetWindowState(types.WsFullScreen)
+		window.EnterFullScreen(m.NSInstance())
 	})
 }
 
 func (m *TWindow) ExitFullScreen() {
 	if m.IsFullScreen() {
 		lcl.RunOnMainThreadAsync(func(id uint32) {
-			if !application.GApplication.Options.Frameless {
-				m.SetBoundsRect(m.previousWindowPlacement)
-			}
-			m.windowsState = types.WsNormal
 			m.SetWindowState(types.WsNormal)
-			m.SetBoundsRect(m.previousWindowPlacement)
+			window.ExitFullScreen(m.NSInstance())
 		})
 	}
 }

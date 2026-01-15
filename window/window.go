@@ -13,7 +13,6 @@ package window
 import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 )
 
@@ -99,10 +98,6 @@ func (m *TWindow) Maximize() {
 			m.SetWindowState(types.WsMaximized)
 		} else {
 			m.SetWindowState(types.WsNormal)
-			if tool.IsDarwin() { //要这样重复设置2次不然不启作用
-				m.SetWindowState(types.WsMaximized)
-				m.SetWindowState(types.WsNormal)
-			}
 		}
 	})
 }
