@@ -324,7 +324,6 @@
 
         setup() {
             let that = this;
-
             function dragMessage(t, n, d) {
                 const payload = {t: t, n: n, d: d};
                 window.energy.processMessage(JSON.stringify(payload));
@@ -337,6 +336,8 @@
             let disableResize = window.energy.getEnv("disableResize") || false;
             let disableWebkitAppRegionDClk = window.energy.getEnv("disableWebkitAppRegionDClk") || false;
             let isWindows = window.energy.getEnv("os") === "windows";
+            let isLinux = window.energy.getEnv("os") === "linux";
+            let isDarwin = window.energy.getEnv("os") === "darwin";
             let frameless = window.energy.getEnv("frameless") || false;
 
             function setCursor(cursor) {
@@ -382,7 +383,7 @@
                         that.#shouldDrag = false;
                     }
                     dragMessage(MT_DRAG_MOVE, 'move', {x: e.screenX, y: e.screenY});
-                } else if (!disableResize /*&& isWindows*/ && frameless) {
+                } else if (!disableResize && !isDarwin && frameless) {
                     mouseDragResize(e)
                 }
             }
@@ -423,16 +424,20 @@
             window.addEventListener("dblclick", dblClick);
         }
     }
+
     function contextMenuHandler(event) {
         let element = event.target;
         let x = event.clientX;
         let y = event.clientY;
-        let data = {n:"contextmenu",x: x, y: y}
+        let data = {n: "contextmenu", x: x, y: y}
         event.preventDefault();
     }
-    window.addEventListener('contextmenu', contextMenuHandler);
+
+    //window.addEventListener('contextmenu', contextMenuHandler);
 
     window.energy = new Energy();
     window.ipc = new IPC();
     //window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
+
+
 })();

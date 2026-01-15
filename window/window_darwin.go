@@ -120,10 +120,7 @@ func (m *TWindow) Frameless() {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	gDarwinWindowCache.Store(m.NSWindow(), m)
-	m.SetOnWindowClose(func(sender lcl.IObject, closeAction *types.TCloseAction) {
-		gDarwinWindowCache.Delete(m.NSWindow())
-	})
+
 }
 
 // SetOptions 设置webview窗口的选项配置
