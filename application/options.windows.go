@@ -9,3 +9,11 @@
 //----------------------------------------
 
 package application
+
+type Theme uintptr
+
+const (
+	SystemDefault Theme = iota // SystemDefault will use whatever the system theme is. The application will follow system theme changes.
+	Dark                       // Dark Mode
+	Light                      // Light Mode
+)
