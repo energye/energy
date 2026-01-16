@@ -13,53 +13,11 @@
 package window
 
 /*
-#cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
-#cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
+#cgo darwin CFLAGS: -DDARWIN -x objective-c
+#cgo darwin LDFLAGS: -framework Cocoa
 
-#include "Cocoa/Cocoa.h"
 #include "window_darwin.h"
 
-// objective-c log > go println
-void LogInfo(NSString* message) {
-    const char* msg = [message cStringUsingEncoding:NSUTF8StringEncoding];
-	GoLog((char *)msg);
-}
-
-void SetFrameless(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-	NSView* contentView = window.contentView; // view := NSView(win.contentView);
-	[contentView setWantsLayer:YES]; // view.setWantsLayer(true);
-	CALayer* layer = contentView.layer; // contentView.layer
-	window.backgroundColor = [NSColor clearColor]; // window.setBackgroundColor(NSColor.clearColor);
-	layer.backgroundColor = [NSColor whiteColor].CGColor; // layer.setBackgroundColor(NSColor.whiteColor.CGColor);
-	layer.cornerRadius = 8.0; // layer.setCornerRadius(8.0);
-	layer.masksToBounds = YES;
-}
-
-void SetWindowBackgroundColor(void* nsWindow, int r, int g, int b, int alpha) {
-	[(NSWindow*)nsWindow setBackgroundColor:[NSColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:alpha/255.0]];
-}
-
-void DragWindow(void* nsWindow) {
-    NSEvent *currentMouseEvent = [NSApp currentEvent];
-
-    if (!currentMouseEvent) {
-        LogInfo(@"获取当前事件失败：事件为 nil");
-        return;
-    }
-    if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        LogInfo(@"获取当前事件失败：非左键按下事件");
-        return;
-    }
-    //NSWindow* window = (NSWindow*)nsWindow;
-	NSWindow* window = [currentMouseEvent window];
- 	//NSWindow *window = [NSApp keyWindow];
-    if (!window) {
-        LogInfo(@"获取当前事件窗口失败");
-        return;
-    }
-    [window performWindowDragWithEvent:currentMouseEvent];
-}
 */
 import "C"
 
@@ -88,10 +46,11 @@ type IDarwinWindow interface {
 
 type TWindow struct {
 	TEnergyWindow
+	frostedView unsafe.Pointer
 }
 
-func (m *TWindow) DragWindow() {
-	C.DragWindow(m.NSInstance())
+func (m *TWindow) NSWindowInstance() unsafe.Pointer {
+	return unsafe.Pointer(lcl.PlatformHandle(m.Handle()))
 }
 
 func (m *TWindow) NSInstance() unsafe.Pointer {
@@ -100,23 +59,6 @@ func (m *TWindow) NSInstance() unsafe.Pointer {
 
 func (m *TWindow) NSWindow() lcl.NSWindow {
 	return lcl.PlatformWindow(m.Instance())
-}
-
-func (m *TWindow) SetBackgroundColor(red, green, blue, alpha uint8) {
-	C.SetWindowBackgroundColor(m.NSInstance(), C.int(red), C.int(green), C.int(blue), C.int(alpha))
-}
-
-func (m *TWindow) Frameless() {
-	nsWindow := m.NSWindow()
-	nsWindow.SetTitleBarAppearsTransparent(true)
-	nsWindow.SetTitleVisibility(types.NSWindowTitleHidden)
-	mask := uint(NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable | NSWindowStyleMaskResizable)
-	options := application.GApplication.Options
-	if options.DisableResize {
-		mask ^= NSWindowStyleMaskResizable
-	}
-	nsWindow.SetStyleMask(mask)
-	C.SetFrameless(m.NSInstance())
 }
 
 func (m *TWindow) _BeforeFormCreate() {
