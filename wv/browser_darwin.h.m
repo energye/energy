@@ -1,7 +1,7 @@
 #import "Cocoa/Cocoa.h"
 #import <WebKit/WebKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "browser_window_darwin.h"
+#import "browser_darwin.h"
 
 // 设置webview透明属性
 void SetWebviewTransparent(void* nsWebview, bool isTransparent) {

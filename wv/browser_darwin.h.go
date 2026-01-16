@@ -16,7 +16,7 @@ package wv
 #cgo darwin CFLAGS: -DDARWIN -x objective-c
 #cgo darwin LDFLAGS: -framework Cocoa
 
-#include "browser_window_darwin.h"
+#include "browser_darwin.h"
 */
 import "C"
 import "unsafe"
