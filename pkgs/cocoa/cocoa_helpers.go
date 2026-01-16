@@ -91,3 +91,24 @@ func VerifyWidget(handle uintptr) bool {
 	}
 	return ok
 }
+
+// 获取对象的完整继承链（包括自身）
+func GetObjectInheritanceChain(handle unsafe.Pointer) (classNames []string) {
+	chain := C.getObjectInheritanceChain(handle)
+	defer C.freeInheritanceChain(&chain)
+	if chain.count == 0 {
+		return nil
+	}
+	for i := 0; i < int(chain.count); i++ {
+		tempClassNames := (*[1 << 20]*C.char)(unsafe.Pointer(chain.classNames))
+		className := C.GoString(tempClassNames[i])
+		classNames = append(classNames, className)
+	}
+	return
+}
+
+// 获取对象的类名
+func GetObjectClassName(handle unsafe.Pointer) string {
+	className := C.getObjectClassName(handle)
+	return C.GoString(className)
+}
