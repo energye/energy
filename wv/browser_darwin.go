@@ -15,12 +15,12 @@ package wv
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/energye/designer/pkg/tool"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
 	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
+	"github.com/energye/lcl/tool"
 	"github.com/energye/lcl/types"
 	wv "github.com/energye/wv/darwin"
 	wvTypes "github.com/energye/wv/types/darwin"
@@ -64,12 +64,12 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.ICustomPanel.SetBevelOuter(types.BvNone)
 
 	m.windowParent = wv.NewWebviewParent(m)
-	if tool.IsDarwin || tool.IsWindows {
-		m.windowParent.SetAlign(types.AlClient)
-	} else {
+	if tool.IsLinux() {
 		m.windowParent.SetWidth(m.Width())
 		m.windowParent.SetHeight(m.Height())
 		m.windowParent.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+	} else {
+		m.windowParent.SetAlign(types.AlClient)
 	}
 	m.windowParent.SetParentDoubleBuffered(true)
 
