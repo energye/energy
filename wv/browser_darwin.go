@@ -15,6 +15,7 @@ package wv
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/energye/designer/pkg/tool"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
 	"github.com/energye/energy/v3/window"
@@ -63,9 +64,13 @@ func NewWebview(owner lcl.IComponent) IWebview {
 	m.ICustomPanel.SetBevelOuter(types.BvNone)
 
 	m.windowParent = wv.NewWebviewParent(m)
-	m.windowParent.SetWidth(m.Width())
-	m.windowParent.SetHeight(m.Height())
-	m.windowParent.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+	if tool.IsDarwin || tool.IsWindows {
+		m.windowParent.SetAlign(types.AlClient)
+	} else {
+		m.windowParent.SetWidth(m.Width())
+		m.windowParent.SetHeight(m.Height())
+		m.windowParent.SetAnchors(types.NewSet(types.AkLeft, types.AkTop, types.AkRight, types.AkBottom))
+	}
 	m.windowParent.SetParentDoubleBuffered(true)
 
 	m.browser = wv.NewWebview(owner)
