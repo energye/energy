@@ -2,7 +2,6 @@
 #import <objc/runtime.h>
 #import <WebKit/WebKit.h>
 #import <QuartzCore/QuartzCore.h>
-#import "window_darwin.h"
 
 #include <stdlib.h>
 #include <string.h>

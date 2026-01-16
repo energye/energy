@@ -39,18 +39,18 @@ void DragWindow(void* nsWindow) {
     NSEvent *currentMouseEvent = [NSApp currentEvent];
 
     if (!currentMouseEvent) {
-        LogInfo(@"获取当前事件失败：事件为 nil");
+        LogInfo(@"DragWindow 获取当前事件失败：事件为 nil");
         return;
     }
     if (currentMouseEvent.type != NSEventTypeLeftMouseDown) {
-        LogInfo(@"获取当前事件失败：非左键按下事件");
+        LogInfo(@"DragWindow 获取当前事件失败：非左键按下事件");
         return;
     }
     //NSWindow* window = (NSWindow*)nsWindow;
 	NSWindow* window = [currentMouseEvent window];
  	//NSWindow *window = [NSApp keyWindow];
     if (!window) {
-        LogInfo(@"获取当前事件窗口失败");
+        LogInfo(@"DragWindow 获取当前事件窗口失败");
         return;
     }
     [window performWindowDragWithEvent:currentMouseEvent];
@@ -60,7 +60,7 @@ void DragWindow(void* nsWindow) {
 NSVisualEffectView* SetWindowTransparent(void* nsWindow) {
 	NSWindow* window = (NSWindow*)nsWindow;
     if (!window) {
-        LogInfo(@"SetWindowTransparent 窗口为 nil");
+        LogInfo(@"SetWindowTransparent window nil");
         return nil;
     }
 	NSView *contentView = [window contentView];
