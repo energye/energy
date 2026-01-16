@@ -133,7 +133,9 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 	window.SetOnWindowShow(m.onWindowShow)
 	window.SetOnWindowClose(m.onWindowClose)
 	window.SetOnWindowCloseQuery(m.onWindowCloseQuery)
-	m.SetWebviewTransparent(true)
+	if gApplication.Options.WebviewIsTransparent {
+		m.SetWebviewTransparent(true)
+	}
 }
 
 // SetBrowserOptions 设置浏览器窗口的选项配置

@@ -31,10 +31,6 @@ func GoLog(message *C.char) {
 	println(msg)
 }
 
-// NSWindowAbove = 1;
-// NSWindowBelow = -1;
-// NSWindowOut = 0;
-
 func (m *TWindow) DragWindow() {
 	C.DragWindow(m.NSInstance())
 }
@@ -48,8 +44,8 @@ func (m *TWindow) SetWindowTransparent() {
 	m.frostedView = unsafe.Pointer(frostedView)
 }
 
-func (m *TWindow) SwitchFrostedMaterial(appearanceName string) {
-	C.SwitchFrostedMaterial(m.frostedView, m.NSWindowInstance(), C.CString(appearanceName))
+func (m *TWindow) SwitchFrostedMaterial(appearanceName application.AppearanceNamed) {
+	C.SwitchFrostedMaterial(m.frostedView, m.NSWindowInstance(), C.CString(string(appearanceName)))
 }
 
 func (m *TWindow) Frameless() {

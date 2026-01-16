@@ -41,6 +41,8 @@ type Options struct {
 	DisableMaximize            bool                  `json:"-"`                          //
 	DisableSystemMenu          bool                  `json:"-"`                          //
 	Frameless                  bool                  `json:"frameless"`                  //
+	WindowIsTransparent        bool                  `json:"-"`                          //
+	WebviewIsTransparent       bool                  `json:"-"`                          //
 	Windows                    Windows               `json:"-"`                          //
 	MacOS                      MacOS                 `json:"-"`                          //
 	Linux                      Linux                 `json:"-"`                          //
@@ -61,6 +63,7 @@ type Windows struct {
 }
 
 type MacOS struct {
+	AppearanceNamed AppearanceNamed
 }
 
 type Linux struct {

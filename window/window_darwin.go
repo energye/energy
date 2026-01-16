@@ -80,6 +80,10 @@ func (m *TWindow) SetOptions() {
 	if options.Frameless {
 		m.Frameless()
 	}
+	if options.WindowIsTransparent || options.WebviewIsTransparent {
+		m.SetWindowTransparent()
+		m.SwitchFrostedMaterial(options.MacOS.AppearanceNamed)
+	}
 }
 
 func (m *TWindow) SetWindowState(value types.TWindowState) {
