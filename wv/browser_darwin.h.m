@@ -10,7 +10,7 @@ void SetWebviewTransparent(void* nsWebview, bool isTransparent) {
         NSLog(@"SetWebviewTransparent webview nil");
         return;
     }
-   [webview setOpaque:NO];
-   [webview setBackgroundColor:[NSColor clearColor]];
+//   [webview setOpaque:NO];
+//   [webview setBackgroundColor:[NSColor clearColor]];
    [webview setValue:[NSNumber numberWithBool:isTransparent] forKey:@"drawsBackground"];
 }
