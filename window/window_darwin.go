@@ -68,6 +68,9 @@ func (m *TWindow) _BeforeFormCreate() {
 // SetOptions 设置webview窗口的选项配置
 // 该方法用于配置*TWindow实例的各种选项参数
 func (m *TWindow) SetOptions() {
+	if application.GApplication == nil {
+		return
+	}
 	options := application.GApplication.Options
 	if options.Width <= 0 {
 		options.Width = m.Width()
