@@ -178,10 +178,16 @@ func isWindowsVersionAtLeast(major, minor, build int) bool {
 	return windowsVersion.Build >= build
 }
 
-func SetWindowDisplayAffinity(hwnd uintptr, affinity uint32) bool {
+func SetWindowDisplayAffinity(hWnd types.HWND, affinity uint32) bool {
 	if affinity == win.WDA_EXCLUDEFROMCAPTURE && !isWindowsVersionAtLeast(10, 0, 19041) {
 		// for older windows versions, use WDA_MONITOR
 		affinity = win.WDA_MONITOR
 	}
-	return win.SetWindowDisplayAffinity(hwnd, affinity)
+	return win.SetWindowDisplayAffinity(hWnd, affinity)
+}
+
+func SetBackgroundColour(hWnd types.HWND, r, g, b uint8) bool {
+	hbrush := win.CreateSolidBrush(r, g, b)
+	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, hbrush)
+	return ret
 }
