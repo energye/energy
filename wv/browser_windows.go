@@ -128,6 +128,13 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 	if m.window != nil && color != nil {
 		setColor := func() {
 			hWnd := m.window.Handle()
+			// control.DefaultBackgroundColor() > https://learn.microsoft.com/en-us/microsoft-edge/webview2/reference/win32/icorewebview2controller2#get_defaultbackgroundcolor
+			if color.A > 0 && color.A < 255 {
+				color.A = 255
+			}
+			if gApplication.Options.WebviewIsTransparent {
+				color.A = 0
+			}
 			newColor := types.TColor(color.ARGB())
 			control := m.browser.CoreWebView2Controller()
 			if control != nil && control.IsValid() {

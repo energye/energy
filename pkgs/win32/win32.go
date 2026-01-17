@@ -120,14 +120,13 @@ func SetBorderColour(hWnd uintptr, titleBorderColour int32) {
 }
 
 func SetTranslucentBackground(hWnd types.HWND) {
-	var accent = win.ACCENT_POLICY{
+	accent := win.ACCENT_POLICY{
 		AccentState: win.ACCENT_ENABLE_BLURBEHIND,
 	}
-	var data win.WINDOWCOMPOSITIONATTRIBDATA
+	data := win.WINDOWCOMPOSITIONATTRIBDATA{}
 	data.Attrib = win.WCA_ACCENT_POLICY
 	data.PvData = unsafe.Pointer(&accent)
 	data.CbData = unsafe.Sizeof(accent)
-
 	win.SetWindowCompositionAttribute(hWnd, &data)
 }
 
@@ -149,6 +148,7 @@ func SetWindowExtendedStyle(hWnd types.HWND, style uintptr, enable bool) {
 func ConfigureWindowDefaultExStyles(hWnd types.HWND) {
 	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_CONTROLPARENT), true)
 	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_APPWINDOW), true)
+	//SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_NOREDIRECTIONBITMAP), true)
 }
 
 func isWindowsVersionAtLeast(major, minor, build int) bool {

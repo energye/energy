@@ -31,23 +31,18 @@ func (m *TWindow) borderFrameless() {
 	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
-func (m *TWindow) platformCreate() {
-	options := application.GApplication.Options
-	switch options.Windows.Theme {
-	case application.SystemDefault:
-		win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
-	case application.Light:
-		win32.ChangeTheme(m.Handle(), false)
-	case application.Dark:
-		win32.ChangeTheme(m.Handle(), true)
-	}
-}
-
 func (m *TWindow) _BeforeFormCreate() {
-
 }
 
 func (m *TWindow) _BeforeFormShow() {
+	if application.GApplication == nil {
+		return
+	}
+}
+
+// SetOptions 设置webview窗口的选项配置
+func (m *TWindow) SetOptions() {
+	m._HookWndProcMessage()
 	if application.GApplication != nil {
 		hWnd := m.Handle()
 		options := application.GApplication.Options
@@ -65,17 +60,38 @@ func (m *TWindow) _BeforeFormShow() {
 			m.SetColor(color)
 			win32.SetBackgroundColour(hWnd, r, g, b)
 		}
-	}
-}
-
-// SetOptions 设置webview窗口的选项配置
-// 该方法用于配置*TWindow实例的各种选项参数
-func (m *TWindow) SetOptions() {
-	m.platformCreate()
-	m._HookWndProcMessage()
-	m._AfterCreate()
-	if application.GApplication != nil {
-		options := application.GApplication.Options
+		switch options.Windows.Theme {
+		case application.SystemDefault:
+			win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
+		case application.Light:
+			win32.ChangeTheme(m.Handle(), false)
+		case application.Dark:
+			win32.ChangeTheme(m.Handle(), true)
+		}
+		if !application.GApplication.Options.Frameless {
+			if application.GApplication.Options.DisableResize {
+				m.SetBorderStyleToFormBorderStyle(types.BsSingle)
+				m.EnabledMaximize(false)
+			}
+			if application.GApplication.Options.DisableMinimize {
+				m.EnabledMinimize(false)
+			}
+			if application.GApplication.Options.DisableMaximize {
+				m.EnabledMaximize(false)
+			}
+			if application.GApplication.Options.DisableSystemMenu {
+				m.EnabledSystemMenu(false)
+			}
+		}
+		constr := m.Constraints()
+		if application.GApplication.Options.MaxWidth > 0 || application.GApplication.Options.MaxHeight > 0 {
+			constr.SetMaxWidth(application.GApplication.Options.MaxWidth)
+			constr.SetMaxHeight(application.GApplication.Options.MaxHeight)
+		}
+		if application.GApplication.Options.MinWidth > 0 || application.GApplication.Options.MinHeight > 0 {
+			constr.SetMinWidth(application.GApplication.Options.MinWidth)
+			constr.SetMinHeight(application.GApplication.Options.MinHeight)
+		}
 		if options.Width <= 0 {
 			options.Width = m.Width()
 		}
