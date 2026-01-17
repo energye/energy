@@ -44,6 +44,10 @@ func (m *TWindow) platformCreate() {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
+
+}
+
+func (m *TWindow) _BeforeFormShow() {
 	if application.GApplication != nil {
 		hWnd := m.Handle()
 		options := application.GApplication.Options

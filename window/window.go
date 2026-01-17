@@ -135,6 +135,7 @@ func (m *TWindow) FormCreate(sender lcl.IObject) {
 }
 
 func (m *TWindow) OnShow(sender lcl.IObject) {
+	m._BeforeFormShow()
 	for _, fn := range m.onWindowShow {
 		fn(sender)
 	}
