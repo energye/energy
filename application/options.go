@@ -51,7 +51,8 @@ type Options struct {
 type Windows struct {
 	// Theme (Dark / Light / SystemDefault)
 	// Default: SystemDefault - The application will follow system theme changes.
-	Theme Theme
+	Theme       Theme
+	CustomTheme *ThemeSettings
 }
 
 type MacOS struct {

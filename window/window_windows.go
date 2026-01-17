@@ -97,3 +97,48 @@ func (m *TWindow) ExitFullScreen() {
 		})
 	}
 }
+
+func (m *TWindow) UpdateTheme() {
+	if win.IsCurrentlyHighContrastMode() {
+		return
+	}
+	if !win32.SupportsThemes() {
+		return
+	}
+	options := application.GApplication.Options
+	var isDarkMode bool
+	switch options.Windows.Theme {
+	case application.SystemDefault:
+		isDarkMode = win32.IsCurrentlyDarkMode()
+	case application.Dark:
+		isDarkMode = true
+	case application.Light:
+		isDarkMode = false
+	}
+	hWnd := m.Handle()
+	win32.ChangeTheme(hWnd, isDarkMode)
+	customTheme := options.Windows.CustomTheme
+	if win32.SupportsThemes() && customTheme != nil {
+		if m.Active() {
+			if isDarkMode {
+				win32.SetTitleBarColour(hWnd, customTheme.DarkModeTitleBar)
+				win32.SetTitleTextColour(hWnd, customTheme.DarkModeTitleText)
+				win32.SetBorderColour(hWnd, customTheme.DarkModeBorder)
+			} else {
+				win32.SetTitleBarColour(hWnd, customTheme.LightModeTitleBar)
+				win32.SetTitleTextColour(hWnd, customTheme.LightModeTitleText)
+				win32.SetBorderColour(hWnd, customTheme.LightModeBorder)
+			}
+		} else {
+			if isDarkMode {
+				win32.SetTitleBarColour(hWnd, customTheme.DarkModeTitleBarInactive)
+				win32.SetTitleTextColour(hWnd, customTheme.DarkModeTitleTextInactive)
+				win32.SetBorderColour(hWnd, customTheme.DarkModeBorderInactive)
+			} else {
+				win32.SetTitleBarColour(hWnd, customTheme.LightModeTitleBarInactive)
+				win32.SetTitleTextColour(hWnd, customTheme.LightModeTitleTextInactive)
+				win32.SetBorderColour(hWnd, customTheme.LightModeBorderInactive)
+			}
+		}
+	}
+}

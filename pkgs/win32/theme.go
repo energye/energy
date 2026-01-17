@@ -15,6 +15,7 @@ package win32
 import (
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/rtl/version"
+	"github.com/energye/lcl/types"
 	"golang.org/x/sys/windows/registry"
 	"unsafe"
 )
@@ -45,7 +46,11 @@ func SupportsImmersiveDarkMode() bool {
 	return IsWindowsVersionAtLeast(10, 0, 18985)
 }
 
-func ChangeTheme(hwnd uintptr, useDarkMode bool) {
+func SupportsBackdropTypes() bool {
+	return IsWindowsVersionAtLeast(10, 0, 22621)
+}
+
+func ChangeTheme(hWnd types.HWND, useDarkMode bool) {
 	if SupportsThemes() {
 		attr := win.DwmwaUseImmersiveDarkModeBefore20h1
 		if SupportsImmersiveDarkMode() {
@@ -55,6 +60,6 @@ func ChangeTheme(hwnd uintptr, useDarkMode bool) {
 		if useDarkMode {
 			winDark = 1
 		}
-		win.DwmSetWindowAttribute(hwnd, attr, unsafe.Pointer(&winDark), unsafe.Sizeof(winDark))
+		win.DwmSetWindowAttribute(hWnd, attr, unsafe.Pointer(&winDark), unsafe.Sizeof(winDark))
 	}
 }
