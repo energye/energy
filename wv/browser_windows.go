@@ -103,7 +103,8 @@ func (m *TWebview) SetWindow(window window.IWindow) {
 func (m *TWebview) SetBrowserOptions() {
 	options := gApplication.Options
 	if options.DefaultURL != "" {
-		m.browser.SetDefaultURL(options.DefaultURL)
+		m.SetDefaultURL(options.DefaultURL)
+		//m.LoadURL(options.DefaultURL)
 	}
 }
 

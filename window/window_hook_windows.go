@@ -26,7 +26,6 @@ func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintpt
 	case messages.WM_SETTINGCHANGE:
 		settingChanged := win.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
 		if settingChanged == "ImmersiveColorSet" {
-			println("WM_SETTINGCHANGE settingChanged:", settingChanged)
 			m.UpdateTheme()
 		}
 
