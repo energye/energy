@@ -14,7 +14,6 @@ package window
 
 import (
 	"github.com/energye/energy/v3/application"
-	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
 	"github.com/energye/lcl/types/messages"
@@ -25,7 +24,7 @@ import (
 func (m *TWindow) wndProc(hwnd types.HWND, message uint32, wParam, lParam uintptr) uintptr {
 	switch message {
 	case messages.WM_SETTINGCHANGE:
-		settingChanged := win32.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
+		settingChanged := win.UTF16PtrToString((*uint16)(unsafe.Pointer(lParam)))
 		if settingChanged == "ImmersiveColorSet" {
 			//fmt.Println("WM_SETTINGCHANGE settingChanged:", settingChanged)
 		}
