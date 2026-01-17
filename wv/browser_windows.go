@@ -17,10 +17,13 @@ import (
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
+	"github.com/energye/energy/v3/pkgs/win32"
 	"github.com/energye/energy/v3/window"
+	"github.com/energye/lcl/api"
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/colors"
 	"github.com/energye/lcl/types/messages"
 	wvTypes "github.com/energye/wv/types/windows"
 	wv "github.com/energye/wv/windows"
@@ -55,15 +58,21 @@ type TWebview struct {
 func NewWebview(owner lcl.IComponent) IWebview {
 	m := &TWebview{browserId: getNextBrowserID()}
 	m.IPanel = lcl.NewPanel(owner)
-	m.IPanel.SetParentColor(true)
-	m.IPanel.SetParentDoubleBuffered(true)
+	m.IPanel.SetDoubleBuffered(true)
 	m.IPanel.SetBevelInner(types.BvNone)
 	m.IPanel.SetBevelOuter(types.BvNone)
 
 	m.windowParent = wv.NewWindowParent(owner)
+	m.windowParent.SetDoubleBuffered(true)
 	m.windowParent.SetAlign(types.AlClient)
 
 	m.browser = wv.NewBrowser(owner)
+	options := application.GApplication.Options
+	if options.BackgroundColor != nil {
+		r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
+		color := colors.TColor(colors.RGB(r, g, b))
+		m.SetColor(color)
+	}
 
 	m.windowParent.SetBrowser(m.browser)
 	// ipc message received
@@ -105,8 +114,36 @@ func (m *TWebview) SetParent(window lcl.IWinControl) {
 	m.windowParent.SetParent(m.IPanel)
 }
 
+func (m *TWebview) SetColor(color colors.TColor) {
+	m.IPanel.SetColor(color)
+	m.windowParent.SetColor(color)
+}
+
 func (m *TWebview) ExecuteScript(javaScript string) {
 	m.browser.ExecuteScript(javaScript, 0)
+}
+
+func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
+	if m.window != nil && color != nil {
+		setColor := func() {
+			hWnd := m.window.Handle()
+			newColor := types.TColor(color.ARGB())
+			control := m.browser.CoreWebView2Controller()
+			if control != nil && control.IsValid() {
+				r, g, b := byte(color.R), byte(color.G), byte(color.B)
+				win32.SetBackgroundColour(hWnd, r, g, b)
+				m.SetColor(newColor)
+				control.SetDefaultBackgroundColor(newColor)
+			}
+		}
+		if api.MainThreadId() == api.CurrentThreadId() {
+			setColor()
+		} else {
+			lcl.RunOnMainThreadSync(func() {
+				setColor()
+			})
+		}
+	}
 }
 
 // Default preset function implementation
@@ -197,6 +234,8 @@ func (m *TWebview) initDefaultEvent() {
 		args.SetHandled(handle)
 	})
 	m.browser.SetOnAfterCreated(func(sender lcl.IObject) {
+		m.SetDefaultBackgroundColor(gApplication.Options.BackgroundColor)
+		m.windowParent.UpdateSize()
 		// local load
 		if gApplication.LocalLoad != nil {
 			m.browser.AddWebResourceRequestedFilter(gApplication.LocalLoad.Scheme+"*", wvTypes.COREWEBVIEW2_WEB_RESOURCE_CONTEXT_ALL)
@@ -210,7 +249,6 @@ func (m *TWebview) initDefaultEvent() {
 		if m.onBrowserAfterCreated != nil {
 			m.onBrowserAfterCreated(sender)
 		}
-		m.windowParent.UpdateSize()
 	})
 	m.browser.SetOnContentLoading(func(sender lcl.IObject, webview wv.ICoreWebView2, args wv.ICoreWebView2ContentLoadingEventArgs) {
 		if m.onLoadChange != nil {

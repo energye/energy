@@ -99,17 +99,7 @@ func SetWindowMica(hWnd types.HWND, enable bool, isMainWindow bool) {
 	}
 }
 
-type BackdropType int32
-
-const (
-	Auto    BackdropType = 0
-	None    BackdropType = 1
-	Mica    BackdropType = 2
-	Acrylic BackdropType = 3
-	Tabbed  BackdropType = 4
-)
-
-func EnableTranslucency(hWnd types.HWND, backdrop BackdropType) {
+func EnableTranslucency(hWnd types.HWND, backdrop int32) {
 	if SupportsBackdropTypes() {
 		win.DwmSetWindowAttribute(hWnd, win.DwmwaSystemBackdropType, unsafe.Pointer(&backdrop), unsafe.Sizeof(backdrop))
 	} else {

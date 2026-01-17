@@ -10,7 +10,10 @@
 
 package application
 
-import "github.com/energye/lcl/types"
+import (
+	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/colors"
+)
 
 type THardwareGPU int32
 
@@ -43,16 +46,16 @@ type Options struct {
 	Frameless                  bool                  `json:"frameless"`                  //
 	WindowIsTransparent        bool                  `json:"-"`                          //
 	WebviewIsTransparent       bool                  `json:"-"`                          //
+	BackgroundColor            *colors.TARGB         `json:"-"`                          //
 	Windows                    Windows               `json:"-"`                          //
 	MacOS                      MacOS                 `json:"-"`                          //
 	Linux                      Linux                 `json:"-"`                          //
 }
 
 type Windows struct {
-	// Theme (Dark / Light / SystemDefault)
-	// Default: SystemDefault - The application will follow system theme changes.
-	Theme       Theme
-	CustomTheme *ThemeSettings
+	Theme        Theme
+	CustomTheme  *ThemeSettings
+	BackdropType BackdropType
 }
 
 type MacOS struct {

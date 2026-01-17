@@ -445,5 +445,5 @@
 
     window.energy = new Energy();
     window.ipc = new IPC();
-    //window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
+    // window.energy.processMessage(JSON.stringify({t: MT_READY, n: 'ready'}));
 })();

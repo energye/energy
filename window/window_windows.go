@@ -18,6 +18,7 @@ import (
 	"github.com/energye/lcl/lcl"
 	"github.com/energye/lcl/pkgs/win"
 	"github.com/energye/lcl/types"
+	"github.com/energye/lcl/types/colors"
 )
 
 type TWindow struct {
@@ -43,7 +44,24 @@ func (m *TWindow) platformCreate() {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-
+	if application.GApplication != nil {
+		hWnd := m.Handle()
+		options := application.GApplication.Options
+		if options.WindowIsTransparent {
+			win32.ConfigureWindowDefaultExStyles(hWnd)
+			if !win32.SupportsBackdropTypes() {
+				win32.SetTranslucentBackground(hWnd)
+			} else {
+				win32.EnableTranslucency(hWnd, int32(options.Windows.BackdropType))
+			}
+		}
+		if options.BackgroundColor != nil {
+			r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
+			color := colors.TColor(colors.RGB(r, g, b))
+			m.SetColor(color)
+			win32.SetBackgroundColour(hWnd, r, g, b)
+		}
+	}
 }
 
 // SetOptions 设置webview窗口的选项配置
@@ -52,15 +70,17 @@ func (m *TWindow) SetOptions() {
 	m.platformCreate()
 	m._HookWndProcMessage()
 	m._AfterCreate()
-	options := application.GApplication.Options
-	if options.Width <= 0 {
-		options.Width = m.Width()
+	if application.GApplication != nil {
+		options := application.GApplication.Options
+		if options.Width <= 0 {
+			options.Width = m.Width()
+		}
+		if options.Height <= 0 {
+			options.Height = m.Height()
+		}
+		m.SetCaption(options.Caption)
+		m.SetBounds(options.X, options.Y, options.Width, options.Height)
 	}
-	if options.Height <= 0 {
-		options.Height = m.Height()
-	}
-	m.SetCaption(options.Caption)
-	m.SetBounds(options.X, options.Y, options.Width, options.Height)
 }
 
 func (m *TWindow) FullScreen() {
