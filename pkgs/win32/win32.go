@@ -187,7 +187,7 @@ func SetWindowDisplayAffinity(hWnd types.HWND, affinity uint32) bool {
 }
 
 func SetBackgroundColour(hWnd types.HWND, r, g, b uint8) bool {
-	hbrush := win.CreateSolidBrush(r, g, b)
-	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, hbrush)
+	sbrush := win.CreateSolidBrush(r, g, b)
+	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, sbrush)
 	return ret
 }
