@@ -54,7 +54,7 @@ type Options struct {
 
 type Windows struct {
 	Theme        Theme
-	CustomTheme  *ThemeSettings
+	ThemeSetting *ThemeSetting
 	BackdropType BackdropType
 }
 

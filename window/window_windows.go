@@ -130,38 +130,38 @@ func (m *TWindow) UpdateTheme() {
 		return
 	}
 	options := application.GApplication.Options
-	var isDarkMode bool
+	var isDark bool
 	switch options.Windows.Theme {
 	case application.SystemDefault:
-		isDarkMode = win32.IsCurrentlyDarkMode()
+		isDark = win32.IsCurrentlyDarkMode()
 	case application.Dark:
-		isDarkMode = true
+		isDark = true
 	case application.Light:
-		isDarkMode = false
+		isDark = false
 	}
 	hWnd := m.Handle()
-	win32.ChangeTheme(hWnd, isDarkMode)
-	customTheme := options.Windows.CustomTheme
-	if win32.SupportsThemes() && customTheme != nil {
+	win32.ChangeTheme(hWnd, isDark)
+	themeSetting := options.Windows.ThemeSetting
+	if win32.SupportsThemes() && themeSetting != nil {
 		if m.Active() {
-			if isDarkMode {
-				win32.SetTitleBarColour(hWnd, customTheme.DarkModeTitleBar)
-				win32.SetTitleTextColour(hWnd, customTheme.DarkModeTitleText)
-				win32.SetBorderColour(hWnd, customTheme.DarkModeBorder)
+			if isDark {
+				win32.SetTitleBarColour(hWnd, themeSetting.DarkTitleBar)
+				win32.SetTitleTextColour(hWnd, themeSetting.DarkTitleText)
+				win32.SetBorderColour(hWnd, themeSetting.DarkBorder)
 			} else {
-				win32.SetTitleBarColour(hWnd, customTheme.LightModeTitleBar)
-				win32.SetTitleTextColour(hWnd, customTheme.LightModeTitleText)
-				win32.SetBorderColour(hWnd, customTheme.LightModeBorder)
+				win32.SetTitleBarColour(hWnd, themeSetting.LightTitleBar)
+				win32.SetTitleTextColour(hWnd, themeSetting.LightTitleText)
+				win32.SetBorderColour(hWnd, themeSetting.LightBorder)
 			}
 		} else {
-			if isDarkMode {
-				win32.SetTitleBarColour(hWnd, customTheme.DarkModeTitleBarInactive)
-				win32.SetTitleTextColour(hWnd, customTheme.DarkModeTitleTextInactive)
-				win32.SetBorderColour(hWnd, customTheme.DarkModeBorderInactive)
+			if isDark {
+				win32.SetTitleBarColour(hWnd, themeSetting.DarkTitleBarInactive)
+				win32.SetTitleTextColour(hWnd, themeSetting.DarkTitleTextInactive)
+				win32.SetBorderColour(hWnd, themeSetting.DarkBorderInactive)
 			} else {
-				win32.SetTitleBarColour(hWnd, customTheme.LightModeTitleBarInactive)
-				win32.SetTitleTextColour(hWnd, customTheme.LightModeTitleTextInactive)
-				win32.SetBorderColour(hWnd, customTheme.LightModeBorderInactive)
+				win32.SetTitleBarColour(hWnd, themeSetting.LightTitleBarInactive)
+				win32.SetTitleTextColour(hWnd, themeSetting.LightTitleTextInactive)
+				win32.SetBorderColour(hWnd, themeSetting.LightBorderInactive)
 			}
 		}
 	}
