@@ -55,7 +55,7 @@ type Options struct {
 type Windows struct {
 	Theme        Theme
 	ThemeSetting *ThemeSetting
-	BackdropType BackdropType
+	BackdropType TBackdropType
 }
 
 type MacOS struct {

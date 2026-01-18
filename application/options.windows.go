@@ -18,14 +18,14 @@ const (
 	Light                      // Light Mode
 )
 
-type BackdropType int32
+type TBackdropType int32
 
 const (
-	Auto    BackdropType = 0
-	None    BackdropType = 1
-	Mica    BackdropType = 2
-	Acrylic BackdropType = 3
-	Tabbed  BackdropType = 4
+	BtAuto TBackdropType = iota
+	BtNone
+	BtMica
+	BtAcrylic
+	BtTabbed
 )
 
 type ThemeSetting struct {

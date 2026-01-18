@@ -148,7 +148,7 @@ func SetWindowExtendedStyle(hWnd types.HWND, style uintptr, enable bool) {
 func ConfigureWindowDefaultExStyles(hWnd types.HWND) {
 	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_CONTROLPARENT), true)
 	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_APPWINDOW), true)
-	//SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_NOREDIRECTIONBITMAP), true)
+	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_NOREDIRECTIONBITMAP), true)
 }
 
 func isWindowsVersionAtLeast(major, minor, build int) bool {
