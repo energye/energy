@@ -100,10 +100,10 @@ func SetWindowMica(hWnd types.HWND, enable bool, isMainWindow bool) {
 }
 
 func EnableTranslucency(hWnd types.HWND, backdrop int32) {
-	if SupportsBackdropTypes() {
+	if Windows1122H2() {
 		win.DwmSetWindowAttribute(hWnd, win.DwmwaSystemBackdropType, unsafe.Pointer(&backdrop), unsafe.Sizeof(backdrop))
 	} else {
-		println("Warning: Translucency type unavailable on Windows < 22621")
+		println("Warning: Windows < 11 22H2")
 	}
 }
 

@@ -35,9 +35,6 @@ func (m *TWindow) _BeforeFormCreate() {
 }
 
 func (m *TWindow) _BeforeFormShow() {
-	if application.GApplication == nil {
-		return
-	}
 }
 
 // SetOptions 设置webview窗口的选项配置
@@ -47,11 +44,10 @@ func (m *TWindow) SetOptions() {
 		hWnd := m.Handle()
 		options := application.GApplication.Options
 		if options.WindowIsTransparent {
-			win32.ConfigureWindowDefaultExStyles(hWnd)
-			if !win32.SupportsBackdropTypes() {
-				win32.SetTranslucentBackground(hWnd)
-			} else {
+			if win32.Windows1122H2() {
 				win32.EnableTranslucency(hWnd, int32(options.Windows.BackdropType))
+			} else {
+				win32.SetTranslucentBackground(hWnd)
 			}
 		}
 		if options.BackgroundColor != nil {
@@ -142,7 +138,7 @@ func (m *TWindow) UpdateTheme() {
 	if win.IsCurrentlyHighContrastMode() {
 		return
 	}
-	if !win32.SupportsThemes() {
+	if !win32.Windows101809() {
 		return
 	}
 	options := application.GApplication.Options
@@ -158,7 +154,7 @@ func (m *TWindow) UpdateTheme() {
 	hWnd := m.Handle()
 	win32.ChangeTheme(hWnd, isDark)
 	themeSetting := options.Windows.ThemeSetting
-	if win32.SupportsThemes() && themeSetting != nil {
+	if win32.Windows101809() && themeSetting != nil {
 		if m.Active() {
 			if isDark {
 				win32.SetTitleBarColour(hWnd, themeSetting.DarkTitleBar)

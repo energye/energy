@@ -13,19 +13,19 @@ package application
 type Theme uintptr
 
 const (
-	SystemDefault Theme = iota // SystemDefault will use whatever the system theme is. The application will follow system theme changes.
-	Dark                       // Dark Mode
-	Light                      // Light Mode
+	SystemDefault Theme = iota // 跟随系统主题设置
+	Dark                       // 强制使用深色主题
+	Light                      // 强制使用浅色主题
 )
 
 type TBackdropType int32
 
 const (
-	BtAuto TBackdropType = iota
-	BtNone
-	BtMica
-	BtAcrylic
-	BtTabbed
+	BtAuto    TBackdropType = iota // 自动选择最合适的背景材质
+	BtNone                         // 无特殊背景效果，纯色或普通背景
+	BtMica                         // 色调的轻度模糊背景
+	BtAcrylic                      // Acrylic（亚克力）材质：高斯模糊 + 噪点纹理
+	BtTabbed                       // Tabbed Acrylic：专为标签页设计的 Acrylic 变体
 )
 
 type ThemeSetting struct {

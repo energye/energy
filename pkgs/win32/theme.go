@@ -38,22 +38,26 @@ func IsWindowsVersionAtLeast(major, minor, buildNumber int) bool {
 	return version.OSVersion.Major >= major && version.OSVersion.Minor >= minor && version.OSVersion.Build >= buildNumber
 }
 
-func SupportsThemes() bool {
+// Windows101809 Windows >= 10 1809
+func Windows101809() bool {
 	return IsWindowsVersionAtLeast(10, 0, 17763)
 }
 
-func SupportsImmersiveDarkMode() bool {
+// Windows102004 Windows >= 10 2004
+func Windows102004() bool {
 	return IsWindowsVersionAtLeast(10, 0, 18985)
 }
 
-func SupportsBackdropTypes() bool {
+// Windows1122H2 Windows >= 11 22H2
+func Windows1122H2() bool {
 	return IsWindowsVersionAtLeast(10, 0, 22621)
 }
 
+// ChangeTheme windows 10 theme
 func ChangeTheme(hWnd types.HWND, useDarkMode bool) {
-	if SupportsThemes() {
+	if Windows101809() {
 		attr := win.DwmwaUseImmersiveDarkModeBefore20h1
-		if SupportsImmersiveDarkMode() {
+		if Windows102004() {
 			attr = win.DwmwaUseImmersiveDarkMode
 		}
 		var winDark int32

@@ -14,6 +14,7 @@ package wv
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/energye/energy/v3/application"
 	"github.com/energye/energy/v3/internal/ipc"
 	"github.com/energye/energy/v3/pkgs/mime"
@@ -125,6 +126,7 @@ func (m *TWebview) ExecuteScript(javaScript string) {
 }
 
 func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
+	fmt.Println("SetDefaultBackgroundColor")
 	if m.window != nil && color != nil {
 		setColor := func() {
 			hWnd := m.window.Handle()

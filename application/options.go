@@ -56,12 +56,15 @@ type Windows struct {
 	Theme        Theme
 	ThemeSetting *ThemeSetting
 	BackdropType TBackdropType
+	// titlebar
 }
 
 type MacOS struct {
 	AppearanceNamed AppearanceNamed
+	// titlebar
 }
 
 type Linux struct {
-	HardwareGPU THardwareGPU `json:"-"` //
+	HardwareGPU THardwareGPU
+	// title bar
 }
