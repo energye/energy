@@ -51,11 +51,14 @@ func (m *TWindow) SetOptions() {
 				win32.SetTranslucentBackground(hWnd)
 			}
 		}
+		if options.Windows.WindowProtected {
+			win32.SetWindowDisplayAffinity(hWnd, win.WDA_EXCLUDEFROMCAPTURE)
+		}
 		if options.BackgroundColor != nil {
 			r, g, b := byte(options.BackgroundColor.R), byte(options.BackgroundColor.G), byte(options.BackgroundColor.B)
 			color := colors.TColor(colors.RGB(r, g, b))
 			m.SetColor(color)
-			win32.SetBackgroundColour(hWnd, r, g, b)
+			win32.SetBackgroundColor(hWnd, r, g, b)
 		}
 		switch options.Windows.Theme {
 		case application.SystemDefault:
@@ -159,23 +162,23 @@ func (m *TWindow) UpdateTheme() {
 	if win32.Windows101809() && themeSetting != nil {
 		if m.Active() {
 			if isDark {
-				win32.SetTitleBarColour(hWnd, themeSetting.DarkTitleBar)
-				win32.SetTitleTextColour(hWnd, themeSetting.DarkTitleText)
-				win32.SetBorderColour(hWnd, themeSetting.DarkBorder)
+				win32.SetTitleBarColor(hWnd, themeSetting.DarkTitleBar)
+				win32.SetTitleTextColor(hWnd, themeSetting.DarkTitleText)
+				win32.SetBorderColor(hWnd, themeSetting.DarkBorder)
 			} else {
-				win32.SetTitleBarColour(hWnd, themeSetting.LightTitleBar)
-				win32.SetTitleTextColour(hWnd, themeSetting.LightTitleText)
-				win32.SetBorderColour(hWnd, themeSetting.LightBorder)
+				win32.SetTitleBarColor(hWnd, themeSetting.LightTitleBar)
+				win32.SetTitleTextColor(hWnd, themeSetting.LightTitleText)
+				win32.SetBorderColor(hWnd, themeSetting.LightBorder)
 			}
 		} else {
 			if isDark {
-				win32.SetTitleBarColour(hWnd, themeSetting.DarkTitleBarInactive)
-				win32.SetTitleTextColour(hWnd, themeSetting.DarkTitleTextInactive)
-				win32.SetBorderColour(hWnd, themeSetting.DarkBorderInactive)
+				win32.SetTitleBarColor(hWnd, themeSetting.DarkTitleBarInactive)
+				win32.SetTitleTextColor(hWnd, themeSetting.DarkTitleTextInactive)
+				win32.SetBorderColor(hWnd, themeSetting.DarkBorderInactive)
 			} else {
-				win32.SetTitleBarColour(hWnd, themeSetting.LightTitleBarInactive)
-				win32.SetTitleTextColour(hWnd, themeSetting.LightTitleTextInactive)
-				win32.SetBorderColour(hWnd, themeSetting.LightBorderInactive)
+				win32.SetTitleBarColor(hWnd, themeSetting.LightTitleBarInactive)
+				win32.SetTitleTextColor(hWnd, themeSetting.LightTitleTextInactive)
+				win32.SetBorderColor(hWnd, themeSetting.LightBorderInactive)
 			}
 		}
 	}

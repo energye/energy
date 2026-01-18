@@ -42,3 +42,11 @@ type ThemeSetting struct {
 	LightBorder            int32
 	LightBorderInactive    int32
 }
+
+type Windows struct {
+	Theme           Theme
+	ThemeSetting    *ThemeSetting
+	BackdropType    TBackdropType
+	WindowProtected bool
+	// TODO add titlebar
+}

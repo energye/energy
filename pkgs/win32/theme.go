@@ -34,23 +34,30 @@ func IsCurrentlyDarkMode() bool {
 	return AppsUseLightTheme == 0
 }
 
-func IsWindowsVersionAtLeast(major, minor, buildNumber int) bool {
-	return version.OSVersion.Major >= major && version.OSVersion.Minor >= minor && version.OSVersion.Build >= buildNumber
+func IsWindowsVersionLeast(major, minor, buildNumber int) bool {
+	return version.OSVersion.Major >= major &&
+		version.OSVersion.Minor >= minor &&
+		version.OSVersion.Build >= buildNumber
 }
 
 // Windows101809 Windows >= 10 1809
 func Windows101809() bool {
-	return IsWindowsVersionAtLeast(10, 0, 17763)
+	return IsWindowsVersionLeast(10, 0, 17763)
 }
 
 // Windows102004 Windows >= 10 2004
 func Windows102004() bool {
-	return IsWindowsVersionAtLeast(10, 0, 18985)
+	return IsWindowsVersionLeast(10, 0, 18985)
+}
+
+// Windows1019041 Windows >= 10 19041
+func Windows1019041() bool {
+	return IsWindowsVersionLeast(10, 0, 19041)
 }
 
 // Windows1122H2 Windows >= 11 22H2
 func Windows1122H2() bool {
-	return IsWindowsVersionAtLeast(10, 0, 22621)
+	return IsWindowsVersionLeast(10, 0, 22621)
 }
 
 // ChangeTheme windows 10 theme

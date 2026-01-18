@@ -14,7 +14,6 @@ package win32
 
 import (
 	"github.com/energye/lcl/pkgs/win"
-	"github.com/energye/lcl/rtl/version"
 	"github.com/energye/lcl/types"
 	"unsafe"
 )
@@ -52,73 +51,47 @@ func SetWindowBlurBehind(hWnd types.HWND, enable bool) {
 	_ = win.DwmEnableBlurBehindWindow(hWnd, blurBehind)
 }
 
-// SetWindowAcrylic 设置窗口亚克力效果
-// hWnd：LCL窗口句柄
-// enable：true=开启亚克力，false=关闭亚克力（恢复系统默认背景）
-func SetWindowAcrylic(hWnd types.HWND, enable bool) {
-	var backdropType uint32
-	if enable {
-		backdropType = win.DWMSBT_ACRYLIC // 启用亚克力效果
-	} else {
-		backdropType = 0 // 恢复系统默认背景类型
-	}
-
-	// 调用DWM API设置亚克力效果
-	win.DwmSetWindowAttribute(
-		hWnd,
-		win.DWMWA_SYSTEMBACKDROP_TYPE, // 通用系统背景属性
-		unsafe.Pointer(&backdropType),
-		unsafe.Sizeof(backdropType),
-	)
-}
-
-// SetWindowMica ：设置窗口云母效果（独立效果，仅Windows 11+）
-// hWnd：LCL窗口句柄
-// enable：true=开启云母，false=关闭云母
-// isMainWindow：true=主窗口风格（DWMSBT_MAINWINDOW），false=临时窗口风格（DWMSBT_TRANSIENTWINDOW）
-func SetWindowMica(hWnd types.HWND, enable bool, isMainWindow bool) {
-	var backdropType uint32
-	if enable {
-		if isMainWindow {
-			backdropType = win.DWMSBT_MAINWINDOW // 云母（主窗口，系统默认）
-		} else {
-			backdropType = win.DWMSBT_TRANSIENTWINDOW // 云母（临时窗口，更浅的哑光）
-		}
-	} else {
-		backdropType = 0 // 恢复系统默认背景类型
-	}
-
-	// 调用DWM API设置云母效果（两种调用方式兼容Win11不同版本）
-	// 方式1：通用系统背景属性（推荐）
-	win.DwmSetWindowAttribute(hWnd, win.DWMWA_SYSTEMBACKDROP_TYPE, unsafe.Pointer(&backdropType), unsafe.Sizeof(backdropType))
-
-	// 方式2：Win11专属云母属性（兜底，兼容早期Win11版本）
-	if enable {
-		micaEffect := uint32(1) // 1=启用云母，0=禁用
-		win.DwmSetWindowAttribute(hWnd, win.DWMWA_MICA_EFFECT, unsafe.Pointer(&micaEffect), unsafe.Sizeof(micaEffect))
-	}
-}
-
+// EnableTranslucency 启用窗口透明效果
+// 该函数根据Windows版本设置窗口的背景类型属性，实现透明效果
+//
+//	hWnd     - 窗口句柄
+//	backdrop - 背景类型值，指定窗口背景的显示模式
 func EnableTranslucency(hWnd types.HWND, backdrop int32) {
 	if Windows1122H2() {
 		win.DwmSetWindowAttribute(hWnd, win.DwmwaSystemBackdropType, unsafe.Pointer(&backdrop), unsafe.Sizeof(backdrop))
 	} else {
-		println("Warning: Windows < 11 22H2")
+		println("WARN: Windows < 11 22H2")
 	}
 }
 
-func SetTitleBarColour(hWnd types.HWND, titleBarColour int32) {
-	win.DwmSetWindowAttribute(hWnd, win.DwmwaCaptionColor, unsafe.Pointer(&titleBarColour), unsafe.Sizeof(titleBarColour))
+// SetTitleBarColor 设置窗口标题栏颜色
+//
+//	hWnd   - 窗口句柄
+//	color - 颜色值，32位整数表示的颜色值
+func SetTitleBarColor(hWnd types.HWND, color int32) {
+	win.DwmSetWindowAttribute(hWnd, win.DwmwaCaptionColor, unsafe.Pointer(&color), unsafe.Sizeof(color))
 }
 
-func SetTitleTextColour(hWnd uintptr, titleTextColour int32) {
-	win.DwmSetWindowAttribute(hWnd, win.DwmwaTextColor, unsafe.Pointer(&titleTextColour), unsafe.Sizeof(titleTextColour))
+// SetTitleTextColor 设置窗口标题栏文本颜色
+//
+//	hWnd   - 窗口句柄
+//	color - 颜色值，32位整数表示的颜色值
+func SetTitleTextColor(hWnd uintptr, color int32) {
+	win.DwmSetWindowAttribute(hWnd, win.DwmwaTextColor, unsafe.Pointer(&color), unsafe.Sizeof(color))
 }
 
-func SetBorderColour(hWnd uintptr, titleBorderColour int32) {
-	win.DwmSetWindowAttribute(hWnd, win.DwmwaBorderColor, unsafe.Pointer(&titleBorderColour), unsafe.Sizeof(titleBorderColour))
+// SetBorderColor 设置窗口边框颜色
+//
+//	hWnd   - 窗口句柄
+//	color - 颜色值，32位整数表示的颜色值
+func SetBorderColor(hWnd uintptr, color int32) {
+	win.DwmSetWindowAttribute(hWnd, win.DwmwaBorderColor, unsafe.Pointer(&color), unsafe.Sizeof(color))
 }
 
+// SetTranslucentBackground 设置窗口的半透明背景效果
+// 该函数通过Windows API为指定窗口启用模糊背景效果
+//
+//	hWnd - 窗口句柄，类型为types.HWND，表示要设置背景效果的目标窗口
 func SetTranslucentBackground(hWnd types.HWND) {
 	accent := win.ACCENT_POLICY{
 		AccentState: win.ACCENT_ENABLE_BLURBEHIND,
@@ -130,54 +103,26 @@ func SetTranslucentBackground(hWnd types.HWND) {
 	win.SetWindowCompositionAttribute(hWnd, &data)
 }
 
-// SetWindowExtendedStyle ：单独配置窗口扩展样式（添加/移除）
-// hWnd：窗口句柄
-func SetWindowExtendedStyle(hWnd types.HWND, style uintptr, enable bool) {
-	exStyle := win.GetWindowLongPtr(hWnd, win.GWL_EXSTYLE)
-	var newExStyle uintptr
-	if enable {
-		newExStyle = exStyle | style
-	} else {
-		newExStyle = exStyle &^ style
-	}
-	win.SetWindowLongPtr(hWnd, win.GWL_EXSTYLE, newExStyle)
-}
-
-// ConfigureWindowDefaultExStyles 设置默认扩展样式
-// hWnd：窗口句柄
-func ConfigureWindowDefaultExStyles(hWnd types.HWND) {
-	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_CONTROLPARENT), true)
-	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_APPWINDOW), true)
-	SetWindowExtendedStyle(hWnd, uintptr(win.WS_EX_NOREDIRECTIONBITMAP), true)
-}
-
-func isWindowsVersionAtLeast(major, minor, build int) bool {
-	windowsVersion := version.OSVersion
-	if windowsVersion.Major > major {
-		return true
-	}
-	if windowsVersion.Major < major {
-		return false
-	}
-	if windowsVersion.Minor > minor {
-		return true
-	}
-	if windowsVersion.Minor < minor {
-		return false
-	}
-	return windowsVersion.Build >= build
-}
-
+// SetWindowDisplayAffinity 设置窗口显示亲和性，用于控制窗口是否被屏幕捕获
+// 在Windows 10 19041版本之前，如果设置为WDA_EXCLUDEFROMCAPTURE，则自动降级为WDA_MONITOR
+//
+//	hWnd: 窗口句柄
+//	affinity: 显示亲和性标志，可选值包括WDA_MONITOR、WDA_EXCLUDEFROMCAPTURE等
 func SetWindowDisplayAffinity(hWnd types.HWND, affinity uint32) bool {
-	if affinity == win.WDA_EXCLUDEFROMCAPTURE && !isWindowsVersionAtLeast(10, 0, 19041) {
-		// for older windows versions, use WDA_MONITOR
+	if affinity == win.WDA_EXCLUDEFROMCAPTURE && !Windows1019041() {
 		affinity = win.WDA_MONITOR
 	}
 	return win.SetWindowDisplayAffinity(hWnd, affinity)
 }
 
-func SetBackgroundColour(hWnd types.HWND, r, g, b uint8) bool {
-	sbrush := win.CreateSolidBrush(r, g, b)
-	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, sbrush)
+// SetBackgroundColor 设置窗口的背景颜色
+//
+//	hWnd: 窗口句柄，指定要设置背景颜色的窗口
+//	r: 红色分量值，范围0-255
+//	g: 绿色分量值，范围0-255
+//	b: 蓝色分量值，范围0-255
+func SetBackgroundColor(hWnd types.HWND, r, g, b uint8) bool {
+	brush := win.CreateSolidBrush(r, g, b)
+	ret := win.SetClassLongPtr(hWnd, win.GCLP_HBRBACKGROUND, brush)
 	return ret
 }

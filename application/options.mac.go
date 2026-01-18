@@ -28,3 +28,8 @@ const (
 	// NSAppearanceNameAccessibilityHighContrastVibrantDark - A high-contrast version of the dark vibrant appearance.
 	NSAppearanceNameAccessibilityHighContrastVibrantDark AppearanceNamed = "NSAppearanceNameAccessibilityHighContrastVibrantDark"
 )
+
+type MacOS struct {
+	AppearanceNamed AppearanceNamed
+	// TODO add titlebar
+}

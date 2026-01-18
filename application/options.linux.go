@@ -9,3 +9,8 @@
 //----------------------------------------
 
 package application
+
+type Linux struct {
+	HardwareGPU THardwareGPU
+	// TODO add titlebar
+}

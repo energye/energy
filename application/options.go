@@ -51,20 +51,3 @@ type Options struct {
 	MacOS                      MacOS                 `json:"-"`                          //
 	Linux                      Linux                 `json:"-"`                          //
 }
-
-type Windows struct {
-	Theme        Theme
-	ThemeSetting *ThemeSetting
-	BackdropType TBackdropType
-	// titlebar
-}
-
-type MacOS struct {
-	AppearanceNamed AppearanceNamed
-	// titlebar
-}
-
-type Linux struct {
-	HardwareGPU THardwareGPU
-	// title bar
-}
