@@ -42,15 +42,6 @@ void WindowRestore(void* nsWindow) {
     //}
 }
 
-BOOL WindowIsMaximize(void* nsWindow) {
-    NSWindow* window = (NSWindow*)nsWindow;
-    if (!window) {
-        NSLog(@"窗口为 nil");
-        return NO;
-    }
-    return window.isZoomed;
-}
-
 // 最小化
 
 void WindowMinimized(void* nsWindow) {
@@ -98,13 +89,6 @@ void WindowExitFullScreen(void* nsWindow) {
 */
 import "C"
 import "unsafe"
-
-func IsMaximize(window unsafe.Pointer) bool {
-	if window == nil {
-		return false
-	}
-	return bool(C.WindowIsMaximize(window))
-}
 
 func Restore(window unsafe.Pointer) {
 	if window == nil {
