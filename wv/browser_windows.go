@@ -141,7 +141,7 @@ func (m *TWebview) SetDefaultBackgroundColor(color *colors.TARGB) {
 			control := m.browser.CoreWebView2Controller()
 			if control != nil && control.IsValid() {
 				r, g, b := byte(color.R), byte(color.G), byte(color.B)
-				win32.SetBackgroundColour(hWnd, r, g, b)
+				win32.SetBackgroundColor(hWnd, r, g, b)
 				m.SetColor(newColor)
 				control.SetDefaultBackgroundColor(newColor)
 			}
