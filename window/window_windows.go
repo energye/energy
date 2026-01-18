@@ -26,9 +26,10 @@ type TWindow struct {
 }
 
 func (m *TWindow) borderFrameless() {
-	gwlStyle := win.GetWindowLong(m.Handle(), win.GWL_STYLE)
-	win.SetWindowLong(m.Handle(), win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
-	win.SetWindowPos(m.Handle(), 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
+	hWnd := m.Handle()
+	gwlStyle := win.GetWindowLong(hWnd, win.GWL_STYLE)
+	win.SetWindowLong(hWnd, win.GWL_STYLE, uintptr(gwlStyle&^win.WS_CAPTION&^win.WS_THICKFRAME))
+	win.SetWindowPos(hWnd, 0, 0, 0, 0, 0, uint32(win.SWP_NOMOVE|win.SWP_NOSIZE|win.SWP_FRAMECHANGED))
 }
 
 func (m *TWindow) _BeforeFormCreate() {
@@ -58,11 +59,11 @@ func (m *TWindow) SetOptions() {
 		}
 		switch options.Windows.Theme {
 		case application.SystemDefault:
-			win32.ChangeTheme(m.Handle(), win32.IsCurrentlyDarkMode())
+			win32.ChangeTheme(hWnd, win32.IsCurrentlyDarkMode())
 		case application.Light:
-			win32.ChangeTheme(m.Handle(), false)
+			win32.ChangeTheme(hWnd, false)
 		case application.Dark:
-			win32.ChangeTheme(m.Handle(), true)
+			win32.ChangeTheme(hWnd, true)
 		}
 		if !application.GApplication.Options.Frameless {
 			if application.GApplication.Options.DisableResize {
@@ -107,17 +108,18 @@ func (m *TWindow) FullScreen() {
 		if m.IsMinimize() || m.IsMaximize() {
 			m.Restore()
 		}
+		hWnd := m.Handle()
 		m.windowsState = types.WsFullScreen
 		// save current window rect, use ExitFullScreen
 		m.previousWindowPlacement = m.BoundsRect()
 		monitorRect := m.Monitor().BoundsRect()
 		if !application.GApplication.Options.Frameless {
 			// save current window style, use ExitFullScreen
-			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(m.Handle(), win.GWL_STYLE))
+			m.oldWindowStyle = uintptr(win.GetWindowLongPtr(hWnd, win.GWL_STYLE))
 			m.borderFrameless()
 			m.SetWindowState(types.WsFullScreen)
 		}
-		win.SetWindowPos(m.Handle(), win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
+		win.SetWindowPos(hWnd, win.HWND_TOP, monitorRect.Left, monitorRect.Top, monitorRect.Width(), monitorRect.Height(), win.SWP_NOOWNERZORDER|win.SWP_FRAMECHANGED)
 	})
 }
 
