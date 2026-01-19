@@ -21,13 +21,14 @@ package cocoa
 
 */
 import "C"
-import "github.com/energye/lcl/lcl"
+import (
+	"unsafe"
+)
 
-func NewToolBar(form lcl.IForm, config ToolbarConfiguration) {
-	nsWindow := uintptr(lcl.PlatformWindow(form.Instance()))
-	if nsWindow == 0 {
+func NewToolBar(window unsafe.Pointer, config ToolbarConfiguration) {
+	if window == nil {
 		return
 	}
 	cConfig := ToolbarConfigurationToOC(config)
-	C.CreateToolbar(C.ulong(nsWindow), cConfig)
+	C.CreateToolbar(window, cConfig)
 }
