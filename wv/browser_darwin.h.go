@@ -19,11 +19,12 @@ package wv
 #include "browser_darwin.h"
 */
 import "C"
-import "unsafe"
+import (
+	"unsafe"
+)
 
 func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 	handle := unsafe.Pointer(m.browser.Data())
-	// macos 10.15
 	isTransparent = !isTransparent
 	v := _BoolToCInt(isTransparent)
 	C.SetWebviewTransparent(handle, v)
