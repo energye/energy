@@ -10,6 +10,6 @@
 
 //go:build darwin
 
-package toolbar
+package widget
 
 // 未完成实现

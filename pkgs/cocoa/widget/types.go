@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package toolbar
+package widget
 
 /*
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c

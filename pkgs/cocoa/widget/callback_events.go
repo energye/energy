@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package toolbar
+package widget
 
 type Callback struct {
 	type_ TccType
