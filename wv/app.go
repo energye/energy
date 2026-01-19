@@ -11,7 +11,7 @@
 package wv
 
 const energyProcessMessage = "processMessage"
-const energyApplicationName = "energy"
+const energyApplicationName = "energy.cn"
 const energyApplicationVersion = "3.0"
 
 var (
