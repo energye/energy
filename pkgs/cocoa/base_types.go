@@ -85,8 +85,8 @@ func (m *ControlProperty) ToOC() C.ControlProperty {
 		bezelStyle:         C.NSBezelStyle(m.BezelStyle),
 		controlSize:        C.NSControlSize(m.ControlSize),
 		font:               (*C.NSFont)(m.Font),
-		IsNavigational:     C.BOOL(m.IsNavigational),
-		IsCenteredItem:     C.BOOL(m.IsCenteredItem),
+		IsNavigational:     _BoolToCInt(m.IsNavigational),
+		IsCenteredItem:     _BoolToCInt(m.IsCenteredItem),
 		VisibilityPriority: C.NSInteger(m.VisibilityPriority),
 	}
 	return cProperty
@@ -104,8 +104,8 @@ func (m *ControlProperty) ToOCMalloc() *C.ControlProperty {
 	cPropertyPtr.bezelStyle = C.NSBezelStyle(m.BezelStyle)
 	cPropertyPtr.controlSize = C.NSControlSize(m.ControlSize)
 	cPropertyPtr.font = (*C.NSFont)(m.Font) // 注意：m.Font需确保是C侧合法指针（如ObjC传过来的NSFont*）
-	cPropertyPtr.IsNavigational = C.BOOL(m.IsNavigational)
-	cPropertyPtr.IsCenteredItem = C.BOOL(m.IsCenteredItem)
+	cPropertyPtr.IsNavigational = _BoolToCInt(m.IsNavigational)
+	cPropertyPtr.IsCenteredItem = _BoolToCInt(m.IsCenteredItem)
 	cPropertyPtr.VisibilityPriority = C.NSInteger(m.VisibilityPriority)
 	return cPropertyPtr
 }
@@ -134,10 +134,10 @@ type ToolbarConfiguration struct {
 
 func ToolbarConfigurationToOC(config ToolbarConfiguration) C.ToolbarConfiguration {
 	cConfig := C.ToolbarConfiguration{
-		IsAllowsUserCustomization: C.BOOL(config.IsAllowsUserCustomization),
-		IsAutoSavesConfiguration:  C.BOOL(config.IsAutoSavesConfiguration),
-		Transparent:               C.BOOL(config.Transparent),
-		ShowsToolbarButton:        C.BOOL(config.ShowsToolbarButton),
+		IsAllowsUserCustomization: _BoolToCInt(config.IsAllowsUserCustomization),
+		IsAutoSavesConfiguration:  _BoolToCInt(config.IsAutoSavesConfiguration),
+		Transparent:               _BoolToCInt(config.Transparent),
+		ShowsToolbarButton:        _BoolToCInt(config.ShowsToolbarButton),
 		SeparatorStyle:            C.NSUInteger(config.SeparatorStyle),
 		DisplayMode:               C.NSUInteger(config.DisplayMode),
 		SizeMode:                  C.NSUInteger(config.SizeMode),
@@ -160,7 +160,7 @@ func nextSerialNumber(type_ string) string {
 	return type_ + strconv.Itoa(r)
 }
 
-func BoolToCInt(value bool) C.int {
+func _BoolToCInt(value bool) C.int {
 	if value {
 		return C.int(1)
 	}

@@ -24,10 +24,10 @@ typedef struct {
 
 // 工具栏配置选项
 typedef struct {
-    BOOL            IsAllowsUserCustomization;
-    BOOL            IsAutoSavesConfiguration;
-	BOOL            Transparent;
-	BOOL            ShowsToolbarButton;
+    int             IsAllowsUserCustomization;  // bool
+    int             IsAutoSavesConfiguration;   // bool
+	int             Transparent;                // bool
+	int             ShowsToolbarButton;         // bool
 	NSUInteger      SeparatorStyle;
     NSUInteger      DisplayMode;
     NSUInteger      SizeMode;
@@ -43,8 +43,8 @@ typedef struct {
     NSBezelStyle    bezelStyle;
     NSControlSize   controlSize;
     NSFont          *font;
-    BOOL            IsNavigational;
-    BOOL            IsCenteredItem;
+    int             IsNavigational;      // bool
+    int             IsCenteredItem;      // bool
     NSInteger       VisibilityPriority;
 } ControlProperty;
 
