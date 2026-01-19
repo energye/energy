@@ -17,21 +17,17 @@ package cocoa
 #cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
 
 #include "Cocoa/Cocoa.h"
+#include "ns_toolbar.h"
 
 */
 import "C"
-import (
-	"github.com/energye/lcl/lcl"
-	"github.com/energye/lcl/tool"
-)
+import "github.com/energye/lcl/lcl"
 
-// NSToolBar 绑定到指定窗口
-// 具有 toolbar delegate 实例
-type NSToolBar struct {
-	owner        lcl.IForm
-	toolbar      Pointer
-	delegate     Pointer
-	config       *ToolbarConfiguration
-	windowResize NotifyEvent
-	items        tool.ArrayMap[string, IView]
+func NewToolBar(form lcl.IForm, config ToolbarConfiguration) {
+	nsWindow := uintptr(lcl.PlatformWindow(form.Instance()))
+	if nsWindow == 0 {
+		return
+	}
+	cConfig := ToolbarConfigurationToOC(config)
+	C.CreateToolbar(C.ulong(nsWindow), cConfig)
 }

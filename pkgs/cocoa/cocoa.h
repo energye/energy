@@ -1,4 +1,5 @@
 #import <Cocoa/Cocoa.h>
+#import <go_arguments.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -24,29 +25,8 @@ typedef struct {
 
 // 工具栏配置选项
 typedef struct {
-    int             IsAllowsUserCustomization;  // bool
-    int             IsAutoSavesConfiguration;   // bool
-	int             Transparent;                // bool
-	int             ShowsToolbarButton;         // bool
-	NSUInteger      SeparatorStyle;
-    NSUInteger      DisplayMode;
-    NSUInteger      SizeMode;
-    NSUInteger      Style;
+    int             ShowSeparator;  // bool
 } ToolbarConfiguration;
-
-// 控件样式结构体
-typedef struct {
-    CGFloat         width;
-    CGFloat         height;
-    CGFloat         minWidth;
-    CGFloat         maxWidth;
-    NSBezelStyle    bezelStyle;
-    NSControlSize   controlSize;
-    NSFont          *font;
-    int             IsNavigational;      // bool
-    int             IsCenteredItem;      // bool
-    NSInteger       VisibilityPriority;
-} ControlProperty;
 
 // 主线程回调函数-测试或使用
 typedef void (*RunOnMainThreadCallback)(long id);
