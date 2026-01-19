@@ -10,7 +10,7 @@
 extern "C" {
 #endif
 
-void SetWebviewTransparent(void* nsWebview, BOOL isTransparent);
+void SetWebviewTransparent(void* nsWebview, int isTransparent);
 
 #ifdef __cplusplus
 }

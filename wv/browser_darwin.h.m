@@ -4,7 +4,7 @@
 #import "browser_darwin.h"
 
 // 设置webview透明属性
-void SetWebviewTransparent(void* nsWebview, BOOL isTransparent) {
+void SetWebviewTransparent(void* nsWebview, int isTransparent) {
 	WKWebView* webview = (WKWebView*)nsWebview;
     if (!webview) {
         NSLog(@"SetWebviewTransparent webview nil");

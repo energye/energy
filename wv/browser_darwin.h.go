@@ -24,9 +24,14 @@ import "unsafe"
 func (m *TWebview) SetWebviewTransparent(isTransparent bool) {
 	handle := unsafe.Pointer(m.browser.Data())
 	// macos 10.15
-	v := C.BOOL(1)
-	if isTransparent {
-		v = C.BOOL(0)
-	}
+	isTransparent = !isTransparent
+	v := _BoolToCInt(isTransparent)
 	C.SetWebviewTransparent(handle, v)
+}
+
+func _BoolToCInt(value bool) C.int {
+	if value {
+		return C.int(1)
+	}
+	return C.int(0)
 }
