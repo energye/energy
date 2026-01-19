@@ -10,7 +10,7 @@
 
 //go:build darwin
 
-package window
+package cocoa
 
 /*
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
@@ -90,42 +90,42 @@ void WindowExitFullScreen(void* nsWindow) {
 import "C"
 import "unsafe"
 
-func Restore(window unsafe.Pointer) {
+func WindowRestore(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}
 	C.WindowRestore(window)
 }
 
-func Minimized(window unsafe.Pointer) {
+func WindowMinimized(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}
 	C.WindowMinimized(window)
 }
 
-func ExitMinimized(window unsafe.Pointer) {
+func WindowExitMinimized(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}
 	C.WindowExitMinimized(window)
 }
 
-func Maximize(window unsafe.Pointer) {
+func WindowMaximize(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}
 	C.WindowMaximize(window)
 }
 
-func EnterFullScreen(window unsafe.Pointer) {
+func WindowEnterFullScreen(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}
 	C.WindowEnterFullScreen(window)
 }
 
-func ExitFullScreen(window unsafe.Pointer) {
+func WindowExitFullScreen(window unsafe.Pointer) {
 	if window == nil {
 		return
 	}

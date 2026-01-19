@@ -10,22 +10,27 @@
 
 //go:build darwin
 
-package widget
+package cocoa
 
 /*
 #cgo CFLAGS: -mmacosx-version-min=10.15 -x objective-c
 #cgo LDFLAGS: -mmacosx-version-min=10.15 -framework Cocoa
-#include "config.h"
+#import <Cocoa/Cocoa.h>
 
+static void DockHide() {
+  [[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyProhibited];
+}
+
+static void DockShow() {
+  [[NSApplication sharedApplication] setActivationPolicy:NSApplicationActivationPolicyRegular];
+}
 */
 import "C"
 
-func (m *NSToolBar) AddFlexibleSpace() {
-	m.items.Add(GetStringConstValue(C.NSToolbarFlexibleSpaceItemIdentifier), nil)
-	C.AddToolbarFlexibleSpace(m.toolbar)
+func DockHide() {
+	C.DockHide()
 }
 
-func (m *NSToolBar) AddSpace() {
-	m.items.Add(GetStringConstValue(C.NSToolbarSpaceItemIdentifier), nil)
-	C.AddToolbarSpace(m.toolbar)
+func DockShow() {
+	C.DockShow()
 }
