@@ -5,6 +5,13 @@
 extern "C" {
 #endif
 
+// 窗口事件唯一标识
+typedef enum {
+    TWindowEventEnterFullScreen = 10000,
+    TWindowEventExitFullScreen = 10001,
+    TWindowEventWillUseFullScreenPresentationOptions = 10002
+} TWindowEvent;
+
 // 颜色
 typedef struct {
     CGFloat Red;

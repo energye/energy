@@ -26,7 +26,7 @@
         [self.originalDelegate windowWillEnterFullScreen:notification];
     }
     if (self._callback) {
-        NSString *eventId = [NSString stringWithFormat:@"__doWindowEnterFullScreen_%p", self.window];
+        NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventEnterFullScreen, self.window];
         TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
@@ -46,7 +46,7 @@
          [self.originalDelegate windowDidExitFullScreen:notification];
      }
     if (self._callback) {
-        NSString *eventId = [NSString stringWithFormat:@"__doWindowExitFullScreen_%p", self.window];
+        NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventExitFullScreen, self.window];
         TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
@@ -68,11 +68,16 @@
 //        return myOptions | originalOptions;
 //    }
     if (self._callback) {
-        NSString *eventId = [NSString stringWithFormat:@"__doWindowUseFullScreenPresentationOptions_%p", self.window];
+        NSString *eventId = [NSString stringWithFormat:@"%d_%p", TWindowEventWillUseFullScreenPresentationOptions, self.window];
         TCallbackContext *context = CreateCallbackContext(eventId, @"", -1, nil, self.window);
         GoArguments *result;
         @try{
             result = self._callback(context);
+            if(result){
+                for (int i = 0; i < result->Count; i++) {
+                    //
+                }
+            }
         } @finally {
             if (result) {
                 FreeGoArguments(result);

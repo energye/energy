@@ -62,19 +62,22 @@ func (m *TWindow) NSWindow() lcl.NSWindow {
 }
 
 func (m *TWindow) _BeforeFormCreate() {
-	cocoa.CreateWindowDelegate(m.NSInstance())
-	eventID := fmt.Sprintf("%v", m.NSInstance())
-	fmt.Println("_BeforeFormCreate", eventID)
-	cocoa.RegisterEvent("__doWindowEnterFullScreen_"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("EnterFullScreen", m.BrowserId(), uintptr(sender))
+	nsWindow := m.NSInstance()
+	cocoa.CreateWindowDelegate(nsWindow)
+	baseEventID := fmt.Sprintf("%v", nsWindow)
+	EnterFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventEnterFullScreen, baseEventID)
+	cocoa.RegisterEvent(EnterFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("EnterFullScreen", m.BrowserId(), sender)
 		return nil
 	}))
-	cocoa.RegisterEvent("__doWindowExitFullScreen"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("ExitFullScreen", m.BrowserId(), uintptr(sender))
+	ExitFullScreen := fmt.Sprintf("%d_%v", cocoa.TWindowEventExitFullScreen, baseEventID)
+	cocoa.RegisterEvent(ExitFullScreen, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("ExitFullScreen", m.BrowserId(), sender)
 		return nil
 	}))
-	cocoa.RegisterEvent("__doWindowUseFullScreenPresentationOptions_"+eventID, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
-		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), uintptr(sender))
+	UseFullScreenPresentationOptions := fmt.Sprintf("%d_%v", cocoa.TWindowEventWillUseFullScreenPresentationOptions, baseEventID)
+	cocoa.RegisterEvent(UseFullScreenPresentationOptions, cocoa.MakeNotifyEvent(func(identifier string, owner cocoa.Pointer, sender cocoa.Pointer) *cocoa.GoArguments {
+		fmt.Println("UseFullScreenPresentationOptions", m.BrowserId(), (sender))
 		return nil
 	}))
 }
